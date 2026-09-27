@@ -760,6 +760,26 @@ exemples:
     carriere: {naissance: "1964-12", sexe: H, affiliation: agent_ieg, liquidation: "2021-12", trimestres_valides: 159}
     attendu: {trimestres_requis: 167, date_age_legal: "2020-12", taux_liquidation: 0.675}
 
+  # ---- CRPCEN (clercs et employés de notaires) ---------------------------
+  # La page « La décote » de la CRPCEN, mise à jour le 16 janvier 2026, lue
+  # le 27 septembre 2026. Son second exemple, Philippe, est en situation de
+  # handicap, que le modèle ne porte pas : il n'est pas rejoué.
+  - id: crpcen_decote_maria
+    source: {editeur: "CRPCEN", reference: "crpcen.fr, « La décote », mise à jour du 16 janvier 2026, exemple 1, Maria", verifie_le: "2026-09-27"}
+    enonce: >-
+      « Maria est née le 12 novembre 1961. Elle a droit à sa pension de
+      retraite CRPCEN à 61 ans et 8 mois, soit à partir du 12 juillet 2023.
+      Maria sollicite le bénéfice de sa pension au 1er janvier 2024 » ; elle a
+      validé 165 trimestres, « nombre de trimestres requis : 168 » ; « 168 –
+      165 = 3 trimestres », moins que par l'âge ; « La pension de retraite de
+      Maria est donc réduite de 3,75 % ». Taux : 75 % × (1 − 3,75 %). L'âge
+      d'annulation que l'exemple écrit, 66 ans et 2 mois, est celui des nés
+      de janvier à octobre 1961 ; le tableau de la même page en donne 66 ans
+      et 5 mois aux nés de novembre, comme le modèle : le décompte par l'âge
+      ne décide pas, et il n'est pas rejoué.
+    carriere: {naissance: "1961-11", sexe: F, affiliation: clerc_de_notaire, liquidation: "2024-01", trimestres_valides: 165}
+    attendu: {trimestres_requis: 168, date_age_legal: "2023-07", taux_liquidation: 0.721875}
+
   # ---- Agirc-Arrco -------------------------------------------------------
   # Le dépliant « Décrypter la retraite complémentaire Agirc tranche C »
   # (01/2025) et la table « Les coefficients de minoration applicables à la

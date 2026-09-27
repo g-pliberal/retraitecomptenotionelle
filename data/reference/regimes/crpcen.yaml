@@ -77,6 +77,9 @@ periodes:
     age_taux_plein: 60
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -85,6 +88,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -98,13 +102,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -115,6 +127,9 @@ periodes:
     age_taux_plein: 60.5
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -123,6 +138,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -136,13 +152,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -153,6 +177,9 @@ periodes:
     age_taux_plein: 61
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -161,6 +188,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -174,13 +202,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -191,6 +227,9 @@ periodes:
     age_taux_plein: 61.5
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -199,6 +238,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -212,13 +252,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -229,6 +277,9 @@ periodes:
     age_taux_plein: 62.25
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -237,6 +288,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -250,13 +302,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -267,6 +327,9 @@ periodes:
     age_taux_plein: 63
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -275,6 +338,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -288,13 +352,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -305,6 +377,9 @@ periodes:
     age_taux_plein: 63.75
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -313,6 +388,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -326,13 +402,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -343,6 +427,9 @@ periodes:
     age_taux_plein: 64.5
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -351,6 +438,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -364,13 +452,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -381,6 +477,9 @@ periodes:
     age_taux_plein: 65.33
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -389,6 +488,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -402,13 +502,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -419,6 +527,9 @@ periodes:
     age_taux_plein: 65.67
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -427,6 +538,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -440,13 +552,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -457,6 +577,9 @@ periodes:
     age_taux_plein: 66
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -465,6 +588,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -478,13 +602,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -495,6 +627,9 @@ periodes:
     age_taux_plein: 66.33
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -503,6 +638,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -516,13 +652,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -533,6 +677,9 @@ periodes:
     age_taux_plein: 66.67
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -541,6 +688,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -554,13 +702,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -571,6 +727,9 @@ periodes:
     age_taux_plein: 67
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -579,6 +738,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -592,13 +752,21 @@ periodes:
       ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
       (second semestre 1956) pour qui a vingt-cinq années de versement,
       soixante ans sinon, et soixante ans et quatre mois à soixante et un
-      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
-      calendrier par année de liquidation — l'âge de la génération qui
-      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
-      la table du régime général, que le drapeau `age_ouverture_par_generation`
-      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
-      décret lui donne cinquante-sept ans et trois mois. L'âge de
-      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      ans et huit mois pour les générations 1957 à 1961. La fiche le lit PAR
+      GÉNÉRATION, dans la voie des vingt-cinq années (`age_table:
+      crpcen_2011`, `legislation/ages_regimes.csv`). Elle portait l'âge de
+      la seule génération qui l'atteint l'année de la liquidation, juste
+      pour elle et faux pour les autres, et, avant encore, la table du
+      régime général, que le drapeau `age_ouverture_par_generation` lisait
+      ici, et qui donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de référence
+      de la décote suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT À LA
+      DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS (article 85-2, I) : le
+      calendrier de 2008, 151 à 166 trimestres de juillet 2008 à juillet
+      2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
+      table par génération de 2014 à compter du 1er juillet 2019
+      (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
+      commune de L. 161-17-3. Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -608,9 +776,12 @@ periodes:
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
+    age_table: crpcen_2023
+    age_taux_plein_a_l_ouverture: decote_regimes_speciaux
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [crpcen_2023, crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
@@ -619,6 +790,7 @@ periodes:
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
@@ -629,4 +801,22 @@ periodes:
       n° 2023-689 (LEGIARTI000047910068) : « le droit à pension est ouvert
       à partir de l'âge prévu à l'article L. 161-17-2 » pour les assurés
       nés à compter du 1er janvier 1970, abaissé pour les générations
-      antérieures ; lu à la génération, comme la durée.
+      antérieures ; lu à la génération, comme la durée. La fiche lit sa
+      table (`age_table: crpcen_2023`) : soixante-deux ans pour 1962, puis
+      trois mois de plus par génération jusqu'à soixante-trois ans et neuf
+      mois pour 1969, que la suspension de 2026 ne touche pas, l'article
+      écrivant ces âges sans renvoyer à L. 161-17-2. Elle lisait la table
+      commune, suspendue : soixante-deux ans et six mois pour 1962,
+      soixante-deux ans et neuf mois de 1963 à mars 1965, soixante-trois ans
+      et trois mois pour 1966, de trois à six mois trop tard. L'ÂGE DE
+      RÉFÉRENCE est de soixante-sept ans (article 85-1, I, 1°,
+      LEGIARTI000047909834) ; qui a réuni les conditions avant le 1er
+      juillet 2024 garde celui d'avant, l'âge d'ouverture majoré de cinq
+      ans, que réduit la diminution de l'article 85-2, II
+      (`age_taux_plein_a_l_ouverture`, qui le lit dans la période de l'année
+      où le droit s'ouvre) : 65 ans et 4 mois pour les nés de janvier et
+      février 1960, 66 ans et 9 mois pour le premier semestre 1962, comme la
+      caisse le publie. LA DURÉE : la table de 2023 pour qui réunit les
+      conditions depuis 2025 (169 trimestres pour 1963, 172 dès 1966), celle
+      de 2014 et le calendrier de 2008 pour qui les a réunies avant (I bis
+      de l'article 85-2).

@@ -3948,6 +3948,48 @@ def test_la_surcote_des_regimes_speciaux_ne_compte_que_depuis_juillet_2008(simul
             carriere, 159, 150, age) == 0
 
 
+def test_la_crpcen_rend_la_table_de_decote_qu_elle_publie(simulateur):
+    """La page « La décote » de la CRPCEN, génération par génération.
+
+    L'âge d'ouverture est celui de l'article 84, écrit par génération, et non
+    celui de la génération qui l'atteint l'année de la liquidation ; la durée
+    est celle de l'article 85-2, et non la table commune ; depuis 2025, l'âge
+    de référence est de soixante-sept ans, mais qui a réuni les conditions
+    avant le 1er juillet 2024 garde celui d'avant, l'âge d'ouverture majoré de
+    cinq ans, moins la diminution de l'année. La caisse publie le résultat :
+    de 65 ans et 4 mois pour les nés de janvier et février 1960 à 67 ans à
+    compter du second semestre 1962.
+    """
+    scenario = simulateur.scenario_actuel
+    publie = [  # naissance, trimestres requis, âge d'annulation
+        ((1960, 1), 167, 65 + 4 / 12), ((1960, 3), 167, 65 + 7 / 12),
+        ((1961, 1), 168, 66 + 2 / 12), ((1961, 11), 168, 66 + 5 / 12),
+        ((1962, 1), 168, 66 + 9 / 12), ((1962, 7), 168, 67.0),
+        ((1963, 1), 169, 67.0), ((1964, 1), 170, 67.0), ((1965, 1), 171, 67.0),
+        ((1966, 1), 172, 67.0),
+    ]
+    for (annee, mois), requis, annulation in publie:
+        carriere = simulateur.carriere_simple(
+            annee_naissance=annee, mois_naissance=mois, sexe="F",
+            affiliation="clerc_de_notaire", age_debut=22, age_liquidation=64.0,
+            niveau_salaire=1.0,
+        )
+        periode = simulateur.catalogue["crpcen"].periode(carriere.annee_liquidation)
+        assert ouvrir.duree_requise(scenario, periode, carriere)[0] == requis, (annee, mois)
+        _, age, _ = liquider.decote_opposable(
+            scenario, periode, carriere, carriere.annee_liquidation)
+        assert age == pytest.approx(annulation, abs=1e-3), (annee, mois)
+    # L'âge d'ouverture de l'article 84, que la suspension de 2026 ne touche
+    # pas : soixante-trois ans pour la génération 1966, non les soixante-trois
+    # ans et trois mois de la table commune.
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1966, sexe="F", affiliation="clerc_de_notaire",
+        age_debut=22, age_liquidation=64.0, niveau_salaire=1.0,
+    )
+    periode = simulateur.catalogue["crpcen"].periode(carriere.annee_liquidation)
+    assert ouvrir.age_ouverture(scenario, periode, carriere) == pytest.approx(63.0)
+
+
 def test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant(simulateur):
     """Deux règles que la CNIEG applique, et que le moteur ne suivait pas.
 

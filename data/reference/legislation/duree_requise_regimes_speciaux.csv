@@ -90,6 +90,19 @@
 # « applicable avant l'entrée en vigueur du décret n° 2023-692 » est celle de
 # `ieg_2014` ou du calendrier, selon la date où l'agent a réuni les conditions.
 #
+# LA CRPCEN A SES DEUX TABLES, au I de l'article 85-2 du décret n° 90-1215,
+# après le même calendrier de 2008, lues le 27 septembre 2026 :
+#   `crpcen_2014` — rédaction du 26 juin 2014 (LEGIARTI000029134271), « A
+#       compter du 1er juillet 2019 » : 167 trimestres des nés du 1er juillet
+#       1959 à 1960, 168 pour 1961-1963, 169 pour 1964-1966, 170 pour
+#       1967-1969, 171 pour 1970-1972, 172 à compter de 1973.
+#   `crpcen_2023` — rédaction du 1er janvier 2025 (LEGIARTI000047909829) : 167,
+#       puis 168 pour 1961-1962, 169 pour 1963, 170 pour 1964, 171 pour 1965,
+#       172 à compter de 1966 ; son I bis garde la table d'avant à qui a réuni
+#       les conditions avant 2025. La fiche lisait la table commune de L.
+#       161-17-3 : 169 trimestres, et non 168, à une clerc née en novembre 1961
+#       dont le droit s'ouvre en juillet 2023, comme la caisse l'écrit.
+#
 # LA COLONNE `age_de_lecture` N'EXISTE QUE POUR `ieg_2014`. L'article 9-1 de
 # l'annexe 3 des IEG, en vigueur du 1er janvier 2017 au 31 décembre 2024
 # (LEGIARTI000029150204 à LEGIARTI000047908882, abrogé par la rédaction du
@@ -159,3 +172,15 @@ ieg_2014,2019-07,1964,169,0,haute,60
 ieg_2014,2019-07,1967,170,0,haute,60
 ieg_2014,2019-07,1970,171,0,haute,60
 ieg_2014,2019-07,1973,172,0,haute,60
+crpcen_2023,2025-01,1959.5,167,0,haute,
+crpcen_2023,2025-01,1961,168,0,haute,
+crpcen_2023,2025-01,1963,169,0,haute,
+crpcen_2023,2025-01,1964,170,0,haute,
+crpcen_2023,2025-01,1965,171,0,haute,
+crpcen_2023,2025-01,1966,172,0,haute,
+crpcen_2014,2019-07,1959.5,167,0,haute,
+crpcen_2014,2019-07,1961,168,0,haute,
+crpcen_2014,2019-07,1964,169,0,haute,
+crpcen_2014,2019-07,1967,170,0,haute,
+crpcen_2014,2019-07,1970,171,0,haute,
+crpcen_2014,2019-07,1973,172,0,haute,

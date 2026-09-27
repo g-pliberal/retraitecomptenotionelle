@@ -99,6 +99,34 @@
 #       même calendrier, puis trois mois de plus par génération jusqu'à
 #       cinquante-huit ans et neuf mois pour 1974, cinquante-neuf ans à compter
 #       de 1975 ; référence à soixante-deux ans (article 45 et I de l'article 10).
+#
+# LA CRPCEN AUSSI, dont la fiche portait un âge par année de liquidation. Son
+# article 84 (décret n° 90-1215) écrit ses âges génération par génération, lus
+# le 27 septembre 2026 dans l'index LEGI :
+#   `crpcen_2011` — rédactions du 19 septembre 2011 (décret n° 2011-1112) au
+#       31 décembre 2024 (LEGIARTI000047909844) : cinquante-cinq ans avant
+#       juillet 1953 pour qui a vingt-cinq années de versement, six mois de plus
+#       au second semestre 1953 et à chaque semestre de 1954, cinquante-sept
+#       ans et trois mois au premier semestre 1955, puis neuf mois de plus par
+#       semestre jusqu'à cinquante-neuf ans et six mois au second semestre 1956 ;
+#       soixante ans et quatre mois pour 1957, quatre mois de plus par
+#       génération jusqu'à soixante-deux ans pour 1962. Référence de la décote
+#       cinq ans au-dessus. Les rédactions du 18 février 2008 (décret n°
+#       2008-147, LEGIARTI000018129122) et du 1er janvier 2009
+#       (LEGIARTI000020057019), six mois de plus par semestre de naissance
+#       jusqu'à cinquante-neuf ans et six mois pour 1957, donnaient les mêmes
+#       âges à qui pouvait partir avant le 19 septembre 2011 : ceux que la
+#       rédaction de 2011 change ne s'atteignent qu'après.
+#   `crpcen_2023` — rédaction du 1er janvier 2025 (LEGIARTI000047910068) : les
+#       mêmes âges jusqu'à 1962, puis trois mois de plus par génération jusqu'à
+#       soixante-trois ans et neuf mois pour 1969, et l'âge de L. 161-17-2 à
+#       compter de 1970 (case vide) ; référence à soixante-sept ans pour tous
+#       (article 85-1, I, 1°, LEGIARTI000047909834). La suspension de 2026 n'y
+#       touche pas : l'article écrit ses âges sans renvoyer à L. 161-17-2 avant
+#       1970. Qui a réuni les conditions avant le 1er juillet 2024 garde la
+#       référence d'avant, que la diminution de l'article 85-2, II, réduit : la
+#       période de 2025 la lit dans celle de l'année où le droit s'ouvre
+#       (`age_taux_plein_a_l_ouverture`).
 table,generation,age_ouverture,age_taux_plein,fiabilite,decote_par_trimestre
 cavom,1900,60,65,certifiee,
 cavom,1956,60.5,65.5,certifiee,
@@ -191,3 +219,39 @@ ieg_actif_2023,1972,58.25,62,haute,
 ieg_actif_2023,1973,58.5,62,haute,
 ieg_actif_2023,1974,58.75,62,haute,
 ieg_actif_2023,1975,59,62,haute,
+crpcen_2011,1900,55,60,haute,
+crpcen_2011,1953.5,55.5,60.5,haute,
+crpcen_2011,1954,56,61,haute,
+crpcen_2011,1954.5,56.5,61.5,haute,
+crpcen_2011,1955,57.25,62.25,haute,
+crpcen_2011,1955.5,58,63,haute,
+crpcen_2011,1956,58.75,63.75,haute,
+crpcen_2011,1956.5,59.5,64.5,haute,
+crpcen_2011,1957,60.333333,65.333333,haute,
+crpcen_2011,1958,60.666667,65.666667,haute,
+crpcen_2011,1959,61,66,haute,
+crpcen_2011,1960,61.333333,66.333333,haute,
+crpcen_2011,1961,61.666667,66.666667,haute,
+crpcen_2011,1962,62,67,haute,
+crpcen_2023,1900,55,67,haute,
+crpcen_2023,1953.5,55.5,67,haute,
+crpcen_2023,1954,56,67,haute,
+crpcen_2023,1954.5,56.5,67,haute,
+crpcen_2023,1955,57.25,67,haute,
+crpcen_2023,1955.5,58,67,haute,
+crpcen_2023,1956,58.75,67,haute,
+crpcen_2023,1956.5,59.5,67,haute,
+crpcen_2023,1957,60.333333,67,haute,
+crpcen_2023,1958,60.666667,67,haute,
+crpcen_2023,1959,61,67,haute,
+crpcen_2023,1960,61.333333,67,haute,
+crpcen_2023,1961,61.666667,67,haute,
+crpcen_2023,1962,62,67,haute,
+crpcen_2023,1963,62.25,67,haute,
+crpcen_2023,1964,62.5,67,haute,
+crpcen_2023,1965,62.75,67,haute,
+crpcen_2023,1966,63,67,haute,
+crpcen_2023,1967,63.25,67,haute,
+crpcen_2023,1968,63.5,67,haute,
+crpcen_2023,1969,63.75,67,haute,
+crpcen_2023,1970,,67,haute,

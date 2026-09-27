@@ -8,7 +8,7 @@ intitule: >-
   d'annulation est l'âge de référence du régime diminué de seize trimestres, diminution
   réduite de deux trimestres chaque 1er juillet jusqu'en 2013, puis d'un jusqu'au 30 juin
   2024.
-etat: approchee
+etat: conforme
 etape: liquider_chaque_regime
 effet: >-
   Les agents de la SNCF, de la RATP, des IEG, de la CRPCEN et de la Comédie-Française qui
@@ -26,12 +26,18 @@ effet: >-
   trimestres cotisés depuis l'ouverture du droit (`liquider.borne_de_la_duree`) : un
   agent des IEG né en juillet 1967, parti à l'ouverture de son droit avec 140 trimestres
   pour 169, en perd dix-neuf et non vingt. Aucun des 535 témoins ne bouge : leurs agents
-  naissent en janvier, où les deux lectures s'accordent, et partent avec leur durée. Un
-  écart reste. CRPCEN : depuis 2025, la diminution se retranche de l'âge de
-  référence d'avant le décret n° 2023-689, l'âge d'ouverture de l'article 84 majoré de
-  cinq ans, comme la caisse le publie ; le moteur la retranche de soixante-sept ans, et
-  oppose jusqu'à quatre trimestres de trop (cinq points) aux générations 1959 et 1960, un
-  ou deux à celle de 1961. Un quatrième est corrigé, aux IEG : la CNIEG garde les
+  naissent en janvier, où les deux lectures s'accordent, et partent avec leur durée.
+  CRPCEN : depuis 2025, l'âge de référence est de soixante-sept ans (article 85-1, I,
+  1°), mais la diminution se retranche de celui d'avant le décret n° 2023-689, l'âge
+  d'ouverture de l'article 84 majoré de cinq ans (article 85-2, II), comme la caisse le
+  publie ; le moteur la retranchait de soixante-sept ans, avec des âges d'ouverture lus
+  par année de liquidation, et opposait jusqu'à quatre trimestres de trop (cinq points)
+  aux générations 1959 et 1960, un ou deux à celle de 1961. Il lit désormais l'âge
+  d'ouverture et la durée de la CRPCEN par génération (fiche
+  `regimes_speciaux_par_generation`) et l'âge de référence dans la période de l'année
+  où le droit s'ouvre (`age_taux_plein_a_l_ouverture`) : la table que la caisse publie,
+  de 65 ans et 4 mois pour les nés de janvier et février 1960 à 67 ans, est rendue
+  génération par génération, et l'exemple de Maria avec elle. Aux IEG : la CNIEG garde les
   paramètres d'avant la réforme de 2023 à qui a ouvert son droit avant le 1er janvier
   2025, « quelle que soit la date d'effet », et le moteur retranchait la diminution de
   soixante-deux ans pour toute pension de 2025 et après, opposant jusqu'à trois
@@ -45,11 +51,6 @@ sources:
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Après la phase 8 : CRPCEN, pour les pensions de 2025 et après, retrancher la diminution de
-    l'âge d'ouverture de l'article 84 d'avant le décret n° 2023-689 (LEGIARTI000047909844)
-    majoré de cinq ans, et non de soixante-sept ans, comme la caisse le publie : 65 ans et 4
-    mois à 66 ans et 9 mois pour les assurés nés de 1960 au 30 juin 1962.
-  - >-
     RATP : le 2° du VII de l'article 51-1 fixe l'âge d'annulation, de 2025 à 2033, à l'âge de
     référence d'avant le décret n° 2023-690, sans dire si la diminution du II de l'article 51
     vaut encore pour qui a réuni les conditions avant juillet 2024 ; le moteur la retranche,
@@ -62,11 +63,12 @@ sources:
     5, que le § 6 reprend à quatre, et sa durée de 167 trimestres, que le modèle rend
     depuis que la fiche `regimes_speciaux_par_generation` lit l'article 9-1 ; ses autres
     agents sont sédentaires, ouvrent leur droit à soixante ans ou plus, ou partent à une
-    date qu'elle ne donne pas. Celui de Maria (page « La décote » de la
-    CRPCEN) : le modèle lui oppose 169 trimestres au lieu de 168 et ouvre son droit en
-    novembre 2023 au lieu de juillet : il lit l'âge de la CRPCEN à l'année de liquidation
-    et sa durée dans la table commune (action 121 de la feuille de route) ; à porter en
-    écart connu quand une fiche le déclarera. La fiche reste `approchee` tant que les écarts ci-dessus demeurent.
+    date qu'elle ne donne pas. Celui de Maria (page « La décote » de la CRPCEN) est porté,
+    `crpcen_decote_maria`, et le modèle le rend : 168 trimestres, droit ouvert en juillet
+    2023, trois trimestres de décote ; l'âge d'annulation qu'il écrit, 66 ans et 2 mois,
+    contredit le tableau de la même page (66 ans et 5 mois pour novembre 1961), que le
+    modèle suit, sans rien changer au décompte. Celui de Philippe est en situation de
+    handicap, que le modèle ne porte pas.
   lectures_divergentes:
   - >-
     IEG, âge d'annulation de la décote des pensions de 2025 et après : le II de l'article 45
@@ -94,6 +96,15 @@ sources:
       LEGIARTI000047909834), à la Comédie-Française (article 12, LEGIARTI000029134341) et à
       l'Opéra (article 14, LEGIARTI000029135161), et déjà dans leurs rédactions de 2008. Lu
       dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 90-1215 (CRPCEN), rédactions du 1er janvier 2025 : article 85-1, I, 1°
+      (LEGIARTI000047909834), « la durée qui sépare l'âge auquel la pension est liquidée de
+      l'âge de soixante-sept ans » ; article 85-2, II (LEGIARTI000047909829), la diminution
+      retranchée de « l'âge de référence mentionné au 1° du I de l'article 85-1 dans sa
+      rédaction antérieure au décret n° 2023-689 » ; article 84 (LEGIARTI000047910068), les
+      âges par génération. Lu dans l'index LEGI du dépôt
     date: 2026-09-27
   - type: legifrance
     reference: >-
@@ -405,9 +416,11 @@ textes_sans_effet:
 exemples:
 - cnieg_decote_madame_d
 - cnieg_2024_15_monsieur_a
+- crpcen_decote_maria
 code:
   interrupteurs:
     bareme_decote: regimes_speciaux
+    age_taux_plein_a_l_ouverture: true
   moteur: >-
     `bareme_decote: regimes_speciaux` applique le barème de la fonction publique avec
     QUATRE ANS DE RETARD, celui que la réforme de 2008 a donné aux régimes spéciaux :
@@ -418,3 +431,8 @@ code:
     conditions sont réunies (`liquider.millesime_du_bareme`) ; et il borne le décompte par
     la durée à la durée requise moins 150, moins les trimestres cotisés depuis l'ouverture
     du droit (`liquider.borne_de_la_duree`).
+    `age_taux_plein_a_l_ouverture`, que pose la période de 2025 de la CRPCEN : l'âge de
+    référence se lit dans la période en vigueur l'année où le droit s'ouvre, l'âge
+    d'ouverture d'avant le décret n° 2023-689 majoré de cinq ans pour qui a réuni les
+    conditions avant 2025 — la diminution s'en retranche (article 85-2, II) —, soixante-sept
+    ans ensuite (article 85-1, I, 1°).

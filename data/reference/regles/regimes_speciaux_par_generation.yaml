@@ -1,7 +1,7 @@
 schema_version: 1
 id: regimes_speciaux_par_generation
 intitule: >-
-  SNCF, RATP, IEG : les âges d'ouverture et de référence se lisent à la GÉNÉRATION,
+  SNCF, RATP, IEG, CRPCEN : les âges d'ouverture et de référence se lisent à la GÉNÉRATION,
   pour tous les agents ; la durée requise au mois où l'agent réunit les conditions
   — calendrier de 2008 (150 avant juillet 2008, 151 à 166 jusqu'en juillet 2018),
   table de 2014 à compter du 1er juillet 2019, table de 2023 à compter du 1er janvier
@@ -30,7 +30,17 @@ effet: >-
   circulaire CNIEG n° 2024/15, que le modèle rend. Sur les témoins, l'agent né en 1965
   parti à soixante-quatre ans gagne 1,2 % de pension, un trimestre de surcote ; celui
   parti à soixante ans en 2025, 3,2 %, dont 0,6 point pour la durée et le reste pour
-  l'âge d'annulation qu'il garde (fiche `age_reference_decote_ieg`).
+  l'âge d'annulation qu'il garde (fiche `age_reference_decote_ieg`). La CRPCEN suit, le
+  27 septembre 2026 : sa fiche portait encore un âge par année de liquidation, puis,
+  depuis 2025, l'âge et la durée de la table commune, quand l'article 84 du décret n°
+  90-1215 écrit ses âges génération par génération, de cinquante-cinq ans avant
+  juillet 1953 à soixante-trois ans et neuf mois pour 1969 — sans renvoyer, avant
+  1970, à L. 161-17-2 ni à sa suspension —, et l'article 85-2 le calendrier de 2008
+  puis ses tables. Tables `crpcen_2011` et `crpcen_2023` dans `ages_regimes.csv`,
+  `crpcen_2014` et `crpcen_2023` dans `duree_requise_regimes_speciaux.csv`. Une clerc
+  née en 1966 ouvre son droit à soixante-trois ans, et non à soixante-trois ans et
+  trois mois ; née en novembre 1961, en juillet 2023 et non en novembre, avec 168
+  trimestres et non 169 : c'est l'exemple de Maria que la caisse publie.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
@@ -43,6 +53,22 @@ sources:
     table prolonge la lecture par période jusqu'en 2032 ; et si la SNCF et la RATP
     portent une règle semblable.
   lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 90-1215 (CRPCEN), article 84 : rédactions du 18 février 2008 et du 1er
+      janvier 2009 (LEGIARTI000018129122, LEGIARTI000020057019), cinquante-cinq ans avant
+      juillet 1953 pour vingt-cinq années de versement, puis six mois de plus par semestre
+      de naissance ; rédaction d'avant 2025 (LEGIARTI000047909844), « à cinquante-sept ans
+      et trois mois pour les assurés nés entre le 1er janvier 1955 et le 30 juin 1955 », …, «
+      à soixante et un ans et huit mois pour les assurés nés en 1961 », soixante-deux ans à
+      compter de 1962 ; rédaction du 1er janvier 2025 (LEGIARTI000047910068), les mêmes, puis
+      « à soixante-deux ans et trois mois pour les assurés nés en 1963 » jusqu'à « soixante-trois
+      ans et neuf mois pour les assurés nés en 1969 », et l'âge de L. 161-17-2 pour les nés à
+      compter de 1970. Article 85-2, I, rédactions du 26 juin 2014 (LEGIARTI000029134271) et du
+      1er janvier 2025 (LEGIARTI000047909829) : le calendrier de 2008, puis « A compter du 1er
+      juillet 2019 » 167 à 172 trimestres par génération ; I bis, la durée d'avant pour qui
+      réunit les conditions avant 2025. Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
   - type: legifrance
     reference: >-
       les trois articles de durée, versions de 2014 et en vigueur : « 151 trimestres
@@ -99,13 +125,20 @@ textes_a_rattacher:
 - reference: >-
     annexe 3 du statut des IEG, article 45 (LEGIARTI000042597001, LEGIARTI000052046924)
 - reference: >-
+    décret n° 90-1215 (CRPCEN), article 84, rédactions du 18 février 2008 au 1er janvier
+    2025 (LEGIARTI000018129122, LEGIARTI000020057019, LEGIARTI000024573555,
+    LEGIARTI000047909844, LEGIARTI000047910068), et article 85-2 (LEGIARTI000029134271,
+    LEGIARTI000047909829)
+- reference: >-
     annexe 3 du statut des IEG, article 9-1, du 1er janvier 2017 au 31 décembre 2024
     (LEGIARTI000029150204, LEGIARTI000034764555, LEGIARTI000036755043,
     LEGIARTI000038189976, LEGIARTI000042597001, LEGIARTI000047908882), abrogé par la
     rédaction du 1er janvier 2025 (LEGIARTI000047909955)
 exemples:
 - cnieg_2024_15_monsieur_a
+- crpcen_decote_maria
 reformes:
+- crpcen_2008
 - regimes_speciaux_2008
 - speciaux_bornes_2017
 - reforme_2023

@@ -23,11 +23,17 @@ sources:
   a_relire:
   - >-
     L'âge au-delà duquel la surcote se compte est, à la CRPCEN, « l'âge mentionné au premier
-    alinéa du 1° du I de l'article 84 » dans les rédactions de 2011 à 2024 : soixante-deux ans,
-    que l'alinéa suivant abaisse pour les générations antérieures ; le moteur lit l'âge
-    abaissé, celui de l'ouverture du droit. La rédaction de 2009 disait « l'âge de soixante
-    ans ». Chercher ce que la caisse applique ; même question à la Comédie-Française et à
-    l'Opéra, dont le moteur compte la surcote depuis l'âge d'ouverture de la période.
+    alinéa du 1° du I de l'article 84 » dans les rédactions de 2011 et après : soixante-deux
+    ans, que l'alinéa suivant abaisse pour les générations antérieures, par la voie des
+    vingt-cinq années (a) ou par génération (b et c). La fiche le lit sans la voie des
+    vingt-cinq années, comme l'âge du 1° du I de l'article 16 aux IEG, qui ne compte pas
+    l'abaissement des services actifs, et comme la rédaction de 2009 disait « l'âge de
+    soixante ans » pour tous : soixante ans avant 1957, puis le calendrier du b et du c,
+    qui est celui de la SNCF et de la RATP (`age_surcote_regimes_speciaux`). Le moteur
+    comptait la surcote depuis l'âge d'ouverture, cinquante-cinq ans pour les nés avant
+    juillet 1953. Chercher ce que la caisse applique ; même question à la
+    Comédie-Française et à l'Opéra, dont le moteur compte la surcote depuis l'âge
+    d'ouverture de la période.
   - >-
     Trouver un exemple publié de surcote de l'un de ces régimes (CNIEG, CRPCEN, CPRPSNCF, CRP
     RATP) : la fiche reste `transcrite` jusque-là.
@@ -62,9 +68,15 @@ textes_a_rattacher:
 reformes:
 - regimes_speciaux_2008
 code:
+  interrupteurs:
+    age_surcote_regimes_speciaux: true
   moteur: >-
     `liquider.trimestres_de_surcote_regimes_speciaux`, pour toute période dont le barème de
     décote est celui des régimes spéciaux (`bareme_decote`, fiche `decote_regimes_speciaux`) :
     rien sous cent soixante trimestres ; sinon le plus petit des trimestres au-delà de la
     durée requise et des trimestres cotisés depuis l'âge de la surcote (`ouvrir.age_surcote`)
     et depuis le 1er juillet 2008, au mois près, jusqu'à la date d'effet de la pension.
+    `age_surcote_regimes_speciaux`, que posent les périodes de la CRPCEN depuis 2008 : l'âge
+    de la surcote se lit dans `legislation/age_surcote_regimes_speciaux.csv`, le calendrier
+    du b et du c de l'article 84, soixante ans avant 1957, soixante-quatre ans à compter de
+    1970.
