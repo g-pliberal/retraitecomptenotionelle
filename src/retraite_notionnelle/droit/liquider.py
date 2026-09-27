@@ -219,9 +219,10 @@ def _coefficient_anticipation(trimestres_manquants: float,
     return max(0.0, coefficient)
 
 #: Barèmes de décote lus dans une table, et non dans la fiche du régime : le
-#: coefficient et l'âge d'annulation y montent en charge à l'année de
-#: liquidation. ``regimes_speciaux_age_fixe`` prend le coefficient de la table
-#: des régimes spéciaux mais garde l'âge d'annulation écrit dans la fiche.
+#: coefficient et l'âge d'annulation y montent en charge avec la date où le
+#: droit s'ouvre. ``regimes_speciaux_age_fixe`` prend le coefficient de la table
+#: des régimes spéciaux, et l'âge d'annulation propre au ballet de l'Opéra, que
+#: borne celui écrit dans la fiche.
 _BAREMES_DECOTE_EN_TABLE = frozenset(
     {"fonction_publique", "regimes_speciaux", "regimes_speciaux_age_fixe"}
 )
@@ -1350,9 +1351,18 @@ def decote_opposable(moteur, periode: PeriodeRegime, carriere: Carriere,
             # de l'orchestre — n'ont pas l'âge de référence de droit
             # commun : le V de l'article 14 leur donne « l'âge minimum
             # d'ouverture du droit à pension qui leur est applicable majoré
-            # de […] huit trimestres », un âge fixe que la montée en charge
-            # ne recule pas. La fiche le porte tel quel.
-            return coefficient, age_annulation, fiabilite
+            # de quatre trimestres pour la période du 1er juillet 2010 au
+            # 30 juin 2011 inclus, six trimestres pour la période du 1er
+            # juillet 2011 au 30 juin 2012 inclus et huit trimestres pour
+            # les périodes postérieures au 30 juin 2012 ». Aux mêmes dates,
+            # ce sont les vingt trimestres de la réforme moins la diminution
+            # de la table — seize, quatorze, douze —, bornés à l'âge que la
+            # fiche porte, celui des huit trimestres. Le moteur gardait
+            # quarante-deux ans dès 2010 pour le ballet.
+            ouverture = ouvrir.age_ouverture(moteur, periode, carriere)
+            return (coefficient,
+                    min(age_annulation, ouverture + (20 - trimestres_avant) / 4.0),
+                    fiabilite)
         return coefficient, age_annulation - trimestres_avant / 4.0, fiabilite
     if periode.decote_par_trimestre is None:
         return None, age_annulation, None

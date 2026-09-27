@@ -6,7 +6,7 @@ intitule: >-
   mais un âge d'annulation propre, leur âge minimum d'ouverture majoré de quatre trimestres
   pour qui réunit les conditions de juillet 2010 à juin 2011, de six l'année suivante et de
   huit ensuite.
-etat: approchee
+etat: transcrite
 etape: liquider_chaque_regime
 effet: >-
   Les artistes du ballet de l'Opéra national de Paris, seul emploi de l'Opéra que le
@@ -16,28 +16,15 @@ effet: >-
   de référence que le 1° du II fixe pour eux ; le taux est celui des autres régimes
   spéciaux, 0,125 % par trimestre la première année, un huitième de point de plus chaque
   1er juillet, 1,25 % depuis juillet 2019, dans la limite de vingt trimestres. Le moteur
-  garde quarante-deux ans dès 2010 : il oppose quatre trimestres de trop, à 0,125 %, à qui
-  a eu quarante ans au premier semestre 2011, et deux, à 0,25 %, au premier semestre 2012,
-  soit un demi-point de pension au plus. Il lit le taux à l'année des quarante ans et sert
-  au second semestre la marche d'avant : rien au second semestre 2010, où le droit
-  retirait un demi-point au plus, puis un huitième de point de moins par trimestre
-  jusqu'en 2019, un point de pension au plus, en faveur du danseur. Pour qui a quarante
-  ans depuis le 1er janvier 2020, le moteur suit le texte.
+  lit l'un et l'autre au mois où le danseur a quarante ans (`liquider.millesime_du_bareme`)
+  : l'âge d'annulation est l'âge d'ouverture majoré des vingt trimestres de la réforme
+  moins la diminution du barème, quatre, six puis huit trimestres, borné aux quarante-deux
+  ans que la période porte. Une danseuse qui a quarante ans en janvier 2011 et part
+  aussitôt se voit opposer quatre trimestres à 0,125 %, un demi-point de pension.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
   a_relire:
-  - >-
-    Après la phase 8 : donner au ballet l'âge d'annulation du V pour qui a quarante ans du 1er
-    juillet 2010 au 30 juin 2012, quarante et un ans puis quarante et un ans et demi, et non
-    quarante-deux ; lire le taux au mois où les conditions sont réunies, et non à l'année
-    (voir `decote_regimes_speciaux`). Le `code.moteur` de cette fiche et le commentaire de
-    `droit/liquider.py` disent « huit trimestres » qui « ne recule pas » : le V écrit quatre,
-    six, puis huit.
-  - >-
-    Après la phase 8 : la note de la période 2009-2013 de `regimes/opera_de_paris.yaml`
-    chiffre l'excès de 2011 à « un quart de point de pension » ; quatre trimestres à 0,125 %
-    en font un demi.
   - >-
     Hors du modèle, qui ne porte que le ballet : les musiciens, chefs de chant et pianistes,
     âge de référence de soixante-deux ans ; les artistes des chœurs, qui ont depuis le décret
@@ -45,8 +32,7 @@ sources:
     par date de naissance (dernier alinéa du V).
   - >-
     Aucun exemple chiffré publié : la caisse (cropera.fr) ne publie ni le barème ni un
-    exemple de la décote. La fiche reste `approchee` tant que l'âge de 2010-2012 et la lecture
-    à l'année demeurent.
+    exemple de la décote. La fiche reste `transcrite`.
   lectures:
   - type: legifrance
     reference: >-
@@ -155,7 +141,10 @@ code:
     bareme_decote: regimes_speciaux_age_fixe
   moteur: >-
     `bareme_decote: regimes_speciaux_age_fixe` prend le coefficient du barème des régimes
-    spéciaux mais garde l'âge d'annulation écrit dans la période : c'est ce que le V de
-    l'article 14 fait pour les catégories d'âge atypique, artistes du ballet et musiciens
-    de l'orchestre, dont l'âge d'annulation est leur âge d'ouverture majoré de huit trimestres
-    et ne recule pas avec la montée en charge.
+    spéciaux, et un âge d'annulation propre : l'âge d'ouverture majoré de vingt trimestres
+    moins la diminution de la même marche, borné à l'âge écrit dans la période. C'est ce que
+    le V de l'article 14 fait pour les catégories d'âge atypique, artistes du ballet et
+    musiciens de l'orchestre, dont l'âge d'annulation est leur âge d'ouverture majoré de
+    quatre trimestres de juillet 2010 à juin 2011, de six l'année suivante, de huit ensuite,
+    au lieu de l'âge de référence diminué de seize trimestres, puis de quatorze, puis de
+    douze, comme dans les autres régimes spéciaux.

@@ -3948,6 +3948,34 @@ def test_la_surcote_des_regimes_speciaux_ne_compte_que_depuis_juillet_2008(simul
             carriere, 159, 150, age) == 0
 
 
+def test_le_ballet_de_l_opera_a_l_age_d_annulation_que_le_v_ecrit(simulateur):
+    """« l'âge minimum d'ouverture du droit à pension qui leur est applicable
+    majoré de quatre trimestres pour la période du 1er juillet 2010 au 30 juin
+    2011 inclus, six trimestres pour la période du 1er juillet 2011 au 30 juin
+    2012 inclus et huit trimestres pour les périodes postérieures au 30 juin
+    2012 » (décret n° 68-382, article 14, V). Le danseur ouvre son droit à
+    quarante ans : l'âge d'annulation est de quarante et un ans, puis de
+    quarante et un ans et demi, puis de quarante-deux ans, aux dates où il a
+    quarante ans, avec le taux de la même marche.
+    """
+    scenario = simulateur.scenario_actuel
+    attendu = [  # naissance, taux par trimestre, âge d'annulation
+        ((1970, 9), 0.00125, 41.0), ((1971, 1), 0.00125, 41.0),
+        ((1971, 9), 0.0025, 41.5), ((1972, 3), 0.0025, 41.5),
+        ((1972, 9), 0.00375, 42.0), ((1980, 1), 0.0125, 42.0),
+    ]
+    for (annee, mois), taux, annulation in attendu:
+        carriere = simulateur.carriere_simple(
+            annee_naissance=annee, mois_naissance=mois, sexe="F",
+            affiliation="personnel_opera", age_debut=18, age_liquidation=40.0,
+            niveau_salaire=1.0,
+        )
+        periode = simulateur.catalogue["opera_de_paris"].periode(carriere.annee_liquidation)
+        coefficient, age, _ = liquider.decote_opposable(
+            scenario, periode, carriere, carriere.annee_liquidation)
+        assert coefficient == pytest.approx(taux), (annee, mois)
+        assert age == pytest.approx(annulation), (annee, mois)
+
 def test_la_crpcen_rend_la_table_de_decote_qu_elle_publie(simulateur):
     """La page « La décote » de la CRPCEN, génération par génération.
 

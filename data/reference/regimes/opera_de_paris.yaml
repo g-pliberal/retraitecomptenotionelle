@@ -121,10 +121,11 @@ periodes:
       2010, diminution qui s'efface jusqu'en 2024 ; pour le ballet et les
       musiciens il écrit au contraire un âge fixe — ouverture « majoré de
       quatre trimestres » de juillet 2010 à juin 2011, « six trimestres »
-      l'année suivante, « huit trimestres » ensuite. La fiche porte l'âge
-      d'arrivée, quarante-deux ans : un danseur liquidant en 2011 se voit
-      donc opposer jusqu'à quatre trimestres de décote de trop, au taux de
-      0,125 % — un quart de point de pension.
+      l'année suivante, « huit trimestres » ensuite. La période porte l'âge
+      d'arrivée, quarante-deux ans, et le moteur l'abaisse aux dates du V
+      (fiche `decote_opera_de_paris`) : une danseuse qui a quarante ans en
+      janvier 2011 et part aussitôt se voit opposer quatre trimestres de
+      décote, au taux de 0,125 % — un demi-point de pension.
   - debut: 2014
     fin: null
     type_calcul: annuites
