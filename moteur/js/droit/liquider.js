@@ -1205,8 +1205,28 @@ export function tauxPleinAnticipe(moteur, periode, carriere, ageLiquidation) {
  * est plus favorable. `ircec_age_seul` est le RACL de 2014 à 2024 : 5 % par
  * année, sans autre voie que l'âge. Voir le docstring du modèle Python.
  */
+/** RACL, de 2014 à mai 2024 : l'annexe de l'arrêté du 21 novembre 2013 pour
+ * les générations d'avant 1955 — âge normal de liquidation, coefficient par
+ * bloc de un à quatre trimestres d'anticipation. Voir le modèle Python. */
+const MINORATION_RACL_2014 = new Map([
+  [1952, [65.0, [0.06, 0.12, 0.18, 0.24, 0.30]]],
+  [1953, [65 + 8 / 12, [0.05, 0.10, 0.15, 0.21, 0.27]]],
+  [1954, [66 + 4 / 12, [0.04, 0.08, 0.13, 0.18, 0.24]]],
+]);
+
 export function abattementIrcec(moteur, periode, carriere, trimestres, requis, ageLiquidation,
   anneeLiquidation) {
+  if (periode.abattement_points === "ircec_age_seul" && carriere.annee_naissance < 1955) {
+    // Les générations d'avant 1955 ont leur annexe (arrêté du 21 novembre 2013).
+    const [ageNormal, bareme] = MINORATION_RACL_2014.get(
+      Math.max(carriere.annee_naissance, 1952),
+    );
+    if (ageLiquidation >= ageNormal - 1e-9) {
+      return 1.0;
+    }
+    const anticipation = auTrimestreSuperieur((ageNormal - ageLiquidation) * 4);
+    return Math.max(0.0, 1.0 - bareme[Math.min(bareme.length, Math.ceil(anticipation / 4)) - 1]);
+  }
   const ageTauxPlein = ouvrir.ageTauxPlein(moteur, periode, carriere);
   // `cavom` est la même règle que `ircec_age_seul`, sous un autre
   // règlement : 5 % par année manquante, et seul l'âge ouvre le taux plein.
@@ -1298,9 +1318,10 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
  * 5). La durée à un âge est celle de la liquidation, moins ce que les lignes
  * de la carrière ont validé depuis, au mois près.
  */
-export function ageDeLaDureeAtteinte(moteur, periode, carriere, trimestres, requis) {
+export function ageDeLaDureeAtteinte(moteur, periode, carriere, trimestres, requis,
+  ageLiquidation) {
   const legal = ouvrir.ageOuvertureCommun(moteur, periode, carriere);
-  const fin = carriere.dateLiquidation;
+  const fin = carriere.dateNaissance.plusMois(enMois(ageLiquidation));
   for (let trimestre = 0; ; trimestre += 1) {
     const age = legal + trimestre / 4.0;
     const debut = carriere.dateNaissance.plusMois(enMois(age));
@@ -1447,7 +1468,9 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
     debut = ouvrir.ageTauxPlein(moteur, periode, carriere);
   }
   if (periode.surcote_depuis_la_duree) {
-    const parLaDuree = ageDeLaDureeAtteinte(moteur, periode, carriere, trimestres, requis);
+    const parLaDuree = ageDeLaDureeAtteinte(
+      moteur, periode, carriere, trimestres, requis, ageLiquidation,
+    );
     if (parLaDuree !== null) {
       debut = Math.min(debut, parLaDuree);
     }
@@ -1506,15 +1529,12 @@ export function surcoteIrcantec(moteur, periode, carriere, trimestres, requis, a
   let supplementaires = 0;
   const ageOuverture = ouvrir.ageOuvertureCommun(moteur, periode, carriere);
   if (ageLiquidation >= ageOuverture) {
-    const avant = Math.min(
-      trimestres,
-      trimestresValidesAvant(carriere, ageTauxPlein, anneeLiquidation),
+    const [cotises, avant] = fenetreIrcantec(
+      carriere, trimestres, ageOuverture, ageTauxPlein, ageLiquidation,
     );
     supplementaires = Math.max(0, avant - requis);
     if (supplementaires > 0) {
-      supplementaires = Math.min(supplementaires, trimestresCotisesEntre(
-        carriere, ageOuverture, ageTauxPlein, anneeLiquidation,
-      ));
+      supplementaires = Math.min(supplementaires, cotises);
     }
   }
   return 1.0
@@ -1665,26 +1685,30 @@ function _assietteDeReference(periode, ligne) {
 }
 
 /**
- * Durée d'assurance acquise avant l'année où l'assuré atteint ``age``, périodes
- * assimilées comprises : c'est la durée qu'oppose la condition de taux plein.
+ * La fenêtre du 2° de la surcote de l'Ircantec : les trimestres cotisés de
+ * l'âge d'ouverture à l'âge du taux plein, d'anniversaire à anniversaire, au
+ * mois près, et la durée atteinte à la fin de la fenêtre. Celle que l'âge du
+ * taux plein ferme compte son trimestre entamé (article 16, IV, rédaction du
+ * 14 septembre 2023). Voir le modèle Python.
  */
-function trimestresValidesAvant(carriere, age, anneeLiquidation) {
-  return carriere.trimestresCumules(carriere.lignes.filter(
-    (ligne) => ligne.annee <= anneeLiquidation
-      && ligne.annee - carriere.annee_naissance < age,
-  ));
-}
-
-/**
- * Trimestres cotisés entre deux âges — bas inclus, haut exclu, à l'âge atteint
- * dans l'année.
- */
-function trimestresCotisesEntre(carriere, ageBas, ageHaut, anneeLiquidation) {
-  return carriere.trimestresCumules(carriere.lignes.filter((ligne) => {
-    const age = ligne.annee - carriere.annee_naissance;
-    return ligne.cotise && ligne.annee <= anneeLiquidation
-      && age >= ageBas && age < ageHaut;
-  }));
+function fenetreIrcantec(carriere, trimestres, ageBas, ageHaut, ageLiquidation) {
+  const naissance = carriere.dateNaissance;
+  const debut = naissance.plusMois(enMois(ageBas));
+  const borne = naissance.plusMois(enMois(ageHaut));
+  const fin = naissance.plusMois(enMois(ageLiquidation));
+  const fermee = borne.rang < fin.rang;
+  const haut = fermee ? borne : fin;
+  const compte = (total) => (fermee ? Math.ceil(total - 1e-9) : Math.floor(total + 1e-9));
+  const origine = new DateMois(carriere.annee_naissance, 1);
+  let cotises = 0;
+  let avant = 0;
+  for (const ligne of carriere.lignes) {
+    if (ligne.cotise) {
+      cotises += trimestresDeLaLigneEntre(carriere, ligne, debut, haut);
+    }
+    avant += trimestresDeLaLigneEntre(carriere, ligne, origine, haut);
+  }
+  return [compte(cotises), Math.min(trimestres, compte(avant))];
 }
 
 /**

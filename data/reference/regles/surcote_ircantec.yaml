@@ -5,7 +5,7 @@ intitule: >-
   entier écoulé entre l'âge du taux plein automatique et l'entrée en jouissance, 0,625 %
   par trimestre cotisé après l'âge légal et au-delà de la durée requise, avant cet âge ;
   les deux s'ajoutent.
-etat: approchee
+etat: transcrite
 etape: liquider_chaque_regime
 effet: >-
   Les affiliés de l'Ircantec qui cotisent après l'âge légal au-delà de la durée requise,
@@ -14,20 +14,15 @@ effet: >-
   deux s'additionnent. Le moteur suit le texte pour les deux taux, leurs bornes d'âge
   (soixante et soixante-cinq ans jusqu'au 30 juin 2011, puis les âges des articles
   L. 161-17-2 et L. 351-8, 1°, à la génération), la date du 1er janvier 2010 et la somme
-  des deux majorations. Il s'en écarte sur la fenêtre du 2° : il la compte par année
-  civile, à l'âge atteint dans l'année, et non d'anniversaire à anniversaire en trimestres
-  de 90 jours ; l'année de l'âge du taux plein en sort entière, avec le trimestre à cheval
-  que la rédaction du 14 septembre 2023 range au 2°. L'écart, de quelques trimestres au
-  plus à 0,625 % chacun, n'est pas mesuré.
+  des deux majorations. Il compte la fenêtre du 2° d'anniversaire à anniversaire, au mois
+  près, et y range le trimestre à cheval sur l'âge du taux plein, comme la rédaction du 14
+  septembre 2023 (`liquider._fenetre_ircantec`) : il la comptait par année civile, à l'âge
+  atteint dans l'année. Il compte en mois, non en trimestres de 90 jours, et ne retire pas
+  du 1° le mois du trimestre à cheval qui suit l'âge du taux plein.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
   a_relire:
-  - >-
-    Après la phase 8 : compter la fenêtre du 2° d'anniversaire à anniversaire, au mois
-    près comme le 1°, en trimestres de 90 jours, et y ranger le trimestre à cheval sur
-    l'âge du taux plein (IV de la rédaction du 14 septembre 2023) ; mesurer l'écart sur
-    les témoins.
   - >-
     Les deux pages lues du régime ne donnent pas d'exemple chiffré : en chercher un
     (autres pages de la base documentaire, guide du régime) qui rejoue les deux taux.
@@ -127,4 +122,6 @@ code:
     1970, entré en vigueur le 1er janvier 2010 : deux taux et deux bornes d'âge — 0,75
     % par trimestre ENTIER écoulé entre l'âge du taux plein et la liquidation (son 1°),
     0,625 % par trimestre COTISÉ au-delà de la durée requise entre l'âge légal et l'âge
-    du taux plein (son 2°), sans qu'une même période puisse être comptée deux fois.
+    du taux plein (son 2°), sans qu'une même période puisse être comptée deux fois. La
+    fenêtre du 2° se compte au mois, et celle que l'âge du taux plein ferme garde son
+    trimestre entamé (`liquider._fenetre_ircantec`).

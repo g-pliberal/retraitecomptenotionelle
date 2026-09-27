@@ -4631,6 +4631,55 @@ def test_la_surcote_ircantec_ne_paie_pas_deux_fois_la_meme_periode(simulateur):
     assert deux_ans_plus_tard == pytest.approx(1.0 + 0.00625 * 20 + 0.0075 * 8)
 
 
+
+def test_la_surcote_ircantec_compte_sa_fenetre_au_mois(simulateur):
+    """Le 2° se compte d'anniversaire à anniversaire, comme le 1°, « un
+    trimestre équiva[lant] à une période de 90 jours » (article 16, IV,
+    rédaction du 14 septembre 2023). Né en juillet 1955 et parti à soixante-six
+    ans et demi, en janvier 2022, un agent a cotisé dix-huit trimestres depuis
+    ses soixante-deux ans, en juillet 2017 : 11,25 %. Compté par année civile,
+    de 2017 à 2021, il en avait vingt.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1955, mois_naissance=7, sexe="H",
+        affiliation="contractuel_public", age_debut=20, age_liquidation=66.5,
+    )
+    resultat = scenario.calculer(carriere)
+    assert resultat.trimestres_valides - resultat.trimestres_requis == 20
+    periode = simulateur.catalogue["ircantec"].periode(carriere.annee_liquidation)
+    assert liquider.abattement_points(
+        scenario, periode, carriere, resultat.trimestres_valides,
+        resultat.trimestres_requis, 66.5, carriere.annee_liquidation,
+    ) == pytest.approx(1.0 + 0.00625 * 18)
+
+
+def test_le_racl_minorait_les_generations_d_avant_1955_par_leur_annexe(simulateur):
+    """Arrêté du 21 novembre 2013, article 21 du RACL : « pour les adhérents nés
+    antérieurement au 1er janvier 1953, le coefficient de minoration est égal à
+    6 % par année d'anticipation » avant soixante-cinq ans ; nés en 1953 et
+    1954, « Le tableau joint en annexe » — 15 % à trois ans d'anticipation
+    avant 65 ans et 8 mois, 13 % avant 66 ans et 4 mois. Le moteur leur
+    opposait 5 % par année avant l'âge d'annulation de leur génération. Les
+    nés à compter de 1955 gardent 5 % par année manquante.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def coefficient(annee, age):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=annee, sexe="H", affiliation="auteur_lyrique",
+            age_debut=25, age_liquidation=age,
+        )
+        periode = simulateur.catalogue["ircec_racl"].periode(carriere.annee_liquidation)
+        return liquider.abattement_points(
+            scenario, periode, carriere, 150, 166, age, carriere.annee_liquidation)
+
+    assert coefficient(1950, 64) == pytest.approx(0.94)
+    assert coefficient(1952, 62) == pytest.approx(0.82)
+    assert coefficient(1953, 63) == pytest.approx(0.85)
+    assert coefficient(1954, 64) == pytest.approx(0.87)
+    assert coefficient(1955, 62) == pytest.approx(0.75)
+
 def test_la_surcote_ircantec_n_existe_pas_avant_2010(simulateur):
     """« À compter du 1er janvier 2010 », dit le paragraphe 4, et c'est ce qui
     coupe la fiche en deux au milieu de sa période 2009-2010. Une liquidation
@@ -4970,12 +5019,12 @@ def test_la_carpimko_majore_des_que_la_duree_du_regime_de_base_est_atteinte(simu
         age_debut=20, age_liquidation=64,
     )
     periode = _periode(simulateur, "carpimko_complementaire", 2025)
-    assert liquider.age_de_la_duree_atteinte(scenario, periode, carriere, 176, 168) == (
+    assert liquider.age_de_la_duree_atteinte(scenario, periode, carriere, 176, 168, 64.0) == (
         pytest.approx(62.0))
     assert liquider.abattement_points(
         scenario, periode, carriere, 176, 168, 64.0, 2025) == pytest.approx(1.10)
     # Sans la durée, l'âge du taux plein de la table, 67 ans : l'abattement.
-    assert liquider.age_de_la_duree_atteinte(scenario, periode, carriere, 150, 168) is None
+    assert liquider.age_de_la_duree_atteinte(scenario, periode, carriere, 150, 168, 64.0) is None
 
 def test_les_exploitants_agricoles_ont_la_surcote_du_regime_general(simulateur):
     """D. 732-42 : la durée « accomplie à compter du 1er janvier 2004, au-delà

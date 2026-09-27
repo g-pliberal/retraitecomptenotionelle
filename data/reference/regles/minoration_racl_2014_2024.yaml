@@ -11,20 +11,19 @@ etat: approchee
 etape: liquider_chaque_regime
 effet: >-
   Les auteurs et compositeurs lyriques partis avant l'âge du taux plein, de 2014 à mai 2025.
-  Nés à compter de 1955, le moteur suit l'article 21 : 5 % par année manquante jusqu'à
-  soixante-sept ans, une année entamée comptant entière comme dans le tableau de l'annexe,
-  et la durée d'assurance n'en dispense pas ; 25 % à soixante-deux ans. Trois écarts. Nés
-  avant 1953, le texte retire 6 % par année d'anticipation avant soixante-cinq ans, le
-  moteur 5 % par année avant l'âge d'annulation de la décote de leur génération : parti à
-  soixante-quatre ans en 2014, un adhérent né en 1950 perd 6 %, et le moteur lui retire 5 % ;
-  parti à soixante-deux ans en 2014, un adhérent né en 1952 perd 18 %, et le moteur lui
-  retire 20 %. Nés en 1953 et 1954, le tableau de l'annexe n'est pas porté : non mesuré. Et
-  le moteur passe à la règle de 2025 au 1er janvier, quand l'arrêté du 13 mai 2025, publié
-  le 15, n'a pas de date d'effet propre : les pensions de janvier à mai 2025 relevaient
-  encore de celle-ci ; non mesuré. Reste un doute : pour les générations 1955 et suivantes,
-  la colonne « 1955 ET APRÈS » de l'annexe de 2013 chiffre 2,5 % par année les deux
-  premières, 20 % à cinq ans, contre 25 % à l'article ; si la caisse l'a suivie jusqu'à son
-  abrogation en mai 2024, le moteur retire cinq points de trop à soixante-deux ans.
+  Le moteur suit l'article 21 et son annexe : nés à compter de 1955, 5 % par année
+  manquante jusqu'à soixante-sept ans, une année entamée comptant entière, sans que la
+  durée d'assurance en dispense, 25 % à soixante-deux ans ; nés avant 1953, 6 % par année
+  d'anticipation avant soixante-cinq ans ; nés en 1953 et 1954, le tableau de l'annexe,
+  par blocs de quatre trimestres avant 65 ans et 8 mois (5, 10, 15, 21 et 27 %) et avant
+  66 ans et 4 mois (4, 8, 13, 18 et 24 %). Un écart reste, et un doute. Le moteur passe à
+  la règle de 2025 au 1er janvier, quand l'arrêté du 13 mai 2025, publié le 15, n'a pas de
+  date d'effet propre : les pensions de janvier à mai 2025 relevaient encore de celle-ci ;
+  non mesuré, jusqu'aux versions datées (docs/architecture.md, § 4.6). Et pour les
+  générations 1955 et suivantes, la colonne « 1955 ET APRÈS » de l'annexe de 2013 chiffre
+  2,5 % par année les deux premières, 20 % à cinq ans, contre 25 % à l'article ; si la
+  caisse l'a suivie jusqu'à son abrogation en mai 2024, le moteur retire cinq points de
+  trop à soixante-deux ans.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
@@ -37,15 +36,8 @@ sources:
     2021, 2023 et 2025 ne publient pas le taux du RACL, et l'Internet Archive n'a pas
     répondu le 27 septembre 2026. Sans solliciter la caisse (docs/architecture.md, § 3.5).
   - >-
-    Après la phase 8 : servir 6 % par année d'anticipation avant soixante-cinq ans aux
-    générations nées avant 1953, et le tableau de l'annexe de 2013 aux générations 1953 et
-    1954 ; passer à la règle de 2025 à la publication de l'arrêté du 13 mai 2025, et non au
-    1er janvier.
-  - >-
-    Après la phase 8 : dans la note de la période 2014-2024 d'ircec_racl, l'annexe ne porte
-    pas « 2,5 % la première année » mais 2,5 % pour chacune des deux premières (« 2,50 % »
-    d'un à quatre trimestres, « 5 % » de cinq à huit) ; et docs/limites.md, où la note
-    renvoie, ne décrit pas les générations nées avant 1955.
+    Passer à la règle de 2025 à la publication de l'arrêté du 13 mai 2025, et non au 1er
+    janvier, quand le moteur saura dater une règle au mois (docs/architecture.md, § 4.6).
   lectures:
   - type: jorf
     reference: >-
@@ -132,4 +124,6 @@ code:
     abattement_points: ircec_age_seul
   moteur: >-
     `abattement_points: ircec_age_seul` est le RACL de 2014 à 2024 : 5 % par année manquante,
-    et seul l'âge ouvre le taux plein.
+    et seul l'âge ouvre le taux plein ; les générations d'avant 1955 ont l'annexe de
+    l'arrêté du 21 novembre 2013, 6 % par année avant soixante-cinq ans jusqu'en 1952 et
+    son tableau pour 1953 et 1954 (`liquider._MINORATION_RACL_2014`).

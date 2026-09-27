@@ -93,14 +93,18 @@ periodes:
       2013 : « 5 % par année manquante entre la date d'effet de la
       liquidation pour un départ à l'âge du taux plein et la date de
       prise d'effet de la pension », sans renvoi au régime de base, et
-      un taux plein que seul l'âge ouvre. L'annexe du même arrêté
-      portait 2,5 % la première année pour les générations 1955 et
-      suivantes : c'est l'article que la fiche suit.
+      un taux plein que seul l'âge ouvre. L'annexe du même arrêté porte,
+      pour les générations 1955 et suivantes, 2,5 % pour chacune des deux
+      premières années (« 2,50 % » d'un à quatre trimestres, « 5 % » de
+      cinq à huit), puis 10, 15 et 20 % : c'est l'article que la fiche
+      suit (fiche `minoration_racl_2014_2024`).
       Une année entamée compte entière : l'annexe de l'arrêté du 21
       novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
-      trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
-      leurs propres coefficients, que la période ne porte pas (voir
-      `docs/limites.md`).
+      trimestre. Les générations nées avant 1955 ont jusqu'en 2024 leurs
+      propres coefficients, que le moteur sert : 6 % par année
+      d'anticipation avant soixante-cinq ans jusqu'en 1952, et, pour 1953
+      et 1954, le tableau de l'annexe, avant 65 ans et 8 mois puis 66 ans
+      et 4 mois.
       Taux, assiette et points : ceux de la première période.
   - debut: 2025
     fin: null

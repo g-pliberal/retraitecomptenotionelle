@@ -27,6 +27,7 @@ que le moteur du scénario 1 tient, jusqu'aux fiches (phase 6). Son jumeau est
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from datetime import date
 from typing import TYPE_CHECKING
@@ -1793,6 +1794,22 @@ def abattement_regime_de_base(moteur, periode: PeriodeRegime,
     return max(0.0, 1.0 - decote * trimestres_decote)
 
 
+#: RACL, de 2014 à mai 2024 : l'annexe « Coefficients d'applications en cas
+#: de départ en retraite avant l'âge du taux plein » de l'arrêté du 21
+#: novembre 2013 (JORFARTI000028254004), pour les générations d'avant 1955 —
+#: l'âge normal de liquidation, et le coefficient de un à quatre, cinq à huit,
+#: neuf à douze, treize à seize, dix-sept à vingt trimestres d'anticipation.
+#: « Pour les adhérents nés antérieurement au 1er janvier 1953, le
+#: coefficient de minoration est égal à 6 % par année d'anticipation » avant
+#: soixante-cinq ans ; 1953 et 1954, « Le tableau joint en annexe ». Les nés
+#: à compter de 1955 suivent l'article 21, 5 % par année manquante.
+_MINORATION_RACL_2014 = {
+    1952: (65.0, (0.06, 0.12, 0.18, 0.24, 0.30)),
+    1953: (65 + 8 / 12, (0.05, 0.10, 0.15, 0.21, 0.27)),
+    1954: (66 + 4 / 12, (0.04, 0.08, 0.13, 0.18, 0.24)),
+}
+
+
 def abattement_ircec(moteur, periode: PeriodeRegime, carriere: Carriere,
                       trimestres: int, requis: int,
                       age_liquidation: float,
@@ -1834,6 +1851,17 @@ def abattement_ircec(moteur, periode: PeriodeRegime, carriere: Carriere,
     annule, et un officier ministériel parti à l'âge légal avec sa durée
     ne perdait rien de sa complémentaire.
     """
+    if (periode.abattement_points == "ircec_age_seul"
+            and carriere.annee_naissance < 1955):
+        # Les générations d'avant 1955 ont leur annexe : 6 % par année avant
+        # soixante-cinq ans jusqu'en 1952, un tableau pour 1953 et 1954. Le
+        # moteur leur opposait 5 % par année avant l'âge d'annulation de leur
+        # génération.
+        age_normal, bareme = _MINORATION_RACL_2014[max(carriere.annee_naissance, 1952)]
+        if age_liquidation >= age_normal - 1e-9:
+            return 1.0
+        anticipation = _au_trimestre_superieur((age_normal - age_liquidation) * 4)
+        return max(0.0, 1.0 - bareme[min(len(bareme), -(-anticipation // 4)) - 1])
     age_taux_plein = ouvrir.age_taux_plein(moteur, periode, carriere)
     age_seul = periode.abattement_points in _ABATTEMENTS_PAR_ANNEE_AGE_SEUL
     if age_liquidation >= age_taux_plein - 1e-9:
@@ -2053,7 +2081,7 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         debut = ouvrir.age_taux_plein(moteur, periode, carriere)
     if periode.surcote_depuis_la_duree:
         par_la_duree = age_de_la_duree_atteinte(moteur, periode, carriere,
-                                                trimestres, requis)
+                                                trimestres, requis, age_liquidation)
         if par_la_duree is not None:
             debut = min(debut, par_la_duree)
     fin = age_liquidation
@@ -2092,7 +2120,8 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
 
 
 def age_de_la_duree_atteinte(moteur, periode: PeriodeRegime, carriere: Carriere,
-                             trimestres: int, requis: int) -> float | None:
+                             trimestres: int, requis: int,
+                             age_liquidation: float) -> float | None:
     """Le premier âge, depuis l'âge légal de droit commun et de trimestre en
     trimestre, où la durée d'assurance atteint la durée requise ; ``None`` si
     elle ne l'atteint pas avant la liquidation.
@@ -2110,7 +2139,7 @@ def age_de_la_duree_atteinte(moteur, periode: PeriodeRegime, carriere: Carriere,
     la carrière ont validé depuis, au mois près.
     """
     legal = ouvrir.age_ouverture_commun(moteur, periode, carriere)
-    fin = carriere.date_liquidation
+    fin = carriere.date_naissance.plus_mois(en_mois(age_liquidation))
     trimestre = 0
     while True:
         age = legal + trimestre / 4.0
@@ -2143,21 +2172,11 @@ def surcote_ircantec(moteur, periode: PeriodeRegime, carriere: Carriere,
     supplementaires = 0
     age_ouverture = ouvrir.age_ouverture_commun(moteur, periode, carriere)
     if age_liquidation >= age_ouverture:
-        avant = min(
-            trimestres,
-            _trimestres_valides_avant(
-                carriere, age_taux_plein, annee_liquidation
-            ),
-        )
+        cotises, avant = _fenetre_ircantec(
+            carriere, trimestres, age_ouverture, age_taux_plein, age_liquidation)
         supplementaires = max(0, avant - requis)
         if supplementaires > 0:
-            supplementaires = min(
-                supplementaires,
-                _trimestres_cotises_entre(
-                    carriere, age_ouverture, age_taux_plein,
-                    annee_liquidation,
-                ),
-            )
+            supplementaires = min(supplementaires, cotises)
     return (1.0
             + _SURCOTE_IRCANTEC_AGE * ecoules
             + _SURCOTE_IRCANTEC_DUREE * supplementaires)
@@ -2179,37 +2198,40 @@ def _trimestres_cotises_apres(carriere: Carriere, age: float,
     )
 
 
-def _trimestres_valides_avant(carriere: Carriere, age: float,
-                              annee_liquidation: int) -> int:
-    """Durée d'assurance acquise avant l'année où l'assuré atteint ``age``.
+def _fenetre_ircantec(carriere: Carriere, trimestres: int, age_bas: float,
+                      age_haut: float, age_liquidation: float) -> tuple[int, int]:
+    """La fenêtre du 2° de la surcote de l'Ircantec : les trimestres cotisés
+    de l'âge d'ouverture à l'âge du taux plein, et la durée d'assurance que
+    les lignes de la carrière atteignent à la fin de la fenêtre, bornée par
+    celle de la liquidation.
 
-    Périodes assimilées comprises : c'est la durée d'assurance qu'oppose la
-    condition de taux plein, et non la seule durée cotisée.
+    Elle se compte d'anniversaire à anniversaire, au mois près, comme le 1°,
+    un trimestre valant une période de quatre-vingt-dix jours ; et « lorsque
+    le trimestre ayant donné lieu à cotisation débute avant l'âge prévu au 1°
+    et se termine après l'atteinte de ce même âge, le trimestre accompli est
+    pris en compte dans la durée d'assurance donnant lieu à la majoration du
+    total des points prévus au présent 2° » (arrêté du 30 décembre 1970,
+    article 16, IV, rédaction du 14 septembre 2023) : la fenêtre que l'âge du
+    taux plein ferme compte son trimestre entamé. Le moteur la comptait par
+    année civile, à l'âge atteint dans l'année : jusqu'à deux trimestres
+    d'écart à chaque bout.
     """
-    return carriere.trimestres_cumules(
-        ligne
-        for ligne in carriere.lignes
-        if ligne.annee <= annee_liquidation
-        and ligne.annee - carriere.annee_naissance < age
-    )
+    naissance = carriere.date_naissance
+    debut = naissance.plus_mois(en_mois(age_bas))
+    borne = naissance.plus_mois(en_mois(age_haut))
+    fin = naissance.plus_mois(en_mois(age_liquidation))
+    fermee = borne.rang < fin.rang
+    haut = borne if fermee else fin
 
+    def compte(total: float) -> int:
+        return int(math.ceil(total - 1e-9)) if fermee else int(total + 1e-9)
 
-def _trimestres_cotises_entre(carriere: Carriere, age_bas: float, age_haut: float,
-                              annee_liquidation: int) -> int:
-    """Trimestres cotisés entre deux âges — bas inclus, haut exclu.
-
-    C'est la fenêtre de la surcote de l'Ircantec à la durée, entre l'âge
-    d'ouverture et l'âge du taux plein, lue à l'âge atteint dans l'année. La
-    surcote parentale, dont la fenêtre tombe en cours d'année, se compte au
-    mois près : :func:`_trimestres_entre_dates`.
-    """
-    return carriere.trimestres_cumules(
-        ligne
-        for ligne in carriere.lignes
-        if ligne.cotise
-        and ligne.annee <= annee_liquidation
-        and age_bas <= ligne.annee - carriere.annee_naissance < age_haut
-    )
+    cotises = compte(sum(trimestres_de_la_ligne_entre(carriere, ligne, debut, haut)
+                         for ligne in carriere.lignes if ligne.cotise))
+    origine = DateMois(carriere.annee_naissance, 1)
+    avant = compte(sum(trimestres_de_la_ligne_entre(carriere, ligne, origine, haut)
+                       for ligne in carriere.lignes))
+    return cotises, min(trimestres, avant)
 
 
 def _assiette_de_reference(periode: PeriodeRegime, ligne) -> float:
