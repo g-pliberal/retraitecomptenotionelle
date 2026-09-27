@@ -15,6 +15,19 @@ population: >-
   musique (SACEM) : ils cotisent au RAAP comme tout artiste-auteur, mais à
   la MOITIÉ du taux, parce qu'ils cotisent déjà au RACD ou au RACL.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 160
+  population: Auteurs dramatiques (SACD) et compositeurs (SACEM), qui cotisent au RAAP à la moitié du taux
+  couverture: partiel
+  statuts: [auteur_dramatique, auteur_lyrique]
+  textes:
+    - {reference: "décret n° 62-420 du 11 avril 1962, article 2 II (« le taux de la cotisation […] est égal à la moitié de celui prévu au I »), rédaction du décret n° 2015-1877", id: LEGIARTI000041766050}
+  manque: >-
+    Un barème du RAAP, non un régime : la moitié du taux pour qui cotise au
+    RACD ou au RACL, dont les points sont ceux du RAAP. Il en partage les
+    manques — seuil d'affiliation de 900 SMIC horaires et minimum de trente
+    points non appliqués.
 periodes:
   - debut: 2016
     fin: 2016

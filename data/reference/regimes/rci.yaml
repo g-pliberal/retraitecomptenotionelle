@@ -14,6 +14,16 @@ population: >-
   régime complémentaire obligatoire des artisans et du nouveau régime
   complémentaire des industriels et commerçants.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 70
+  population: Artisans, industriels et commerçants
+  couverture: modelise
+  statuts: [artisan, commercant,
+            gerant_debit_tabac, micro_entrepreneur,
+            liberal_non_reglemente]
+  textes:
+    - {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire obligatoire d'assurance vieillesse des indépendants", id: LEGIARTI000025397326}
 periodes:
   - debut: 2013
     fin: 2024

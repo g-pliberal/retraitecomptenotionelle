@@ -1,0 +1,21 @@
+code: regime_local_alsace_moselle
+nom: Régime local d'assurance invalidité-vieillesse d'Alsace-Moselle
+famille: base_prive
+population: Salariés du Bas-Rhin, du Haut-Rhin et de la Moselle
+creation: 1919
+fermeture: 1946
+extinction: 1946
+succede_a: []
+integre_dans: regime_general
+inventaire:
+  section: prive_base
+  rang: 30
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "décret n° 76-405 du 10 mai 1976, modalités d'application aux assurés relevant de l'ex-régime local", id: LEGITEXT000006062483}
+  raison_hors_champ: >-
+    Législation allemande de 1889 et 1911 maintenue après 1918, fondue dans
+    le régime général en 1946 : les droits acquis sous ce régime sont liquidés
+    par le régime général selon les décrets de 1974 à 1977. Aucun assuré
+    vivant n'y a cotisé assez longtemps pour que ses règles pèsent.

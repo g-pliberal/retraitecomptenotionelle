@@ -11,6 +11,22 @@ succede_a: [ipacte, igrante]
 integre_dans: null
 population: Agents non titulaires des trois fonctions publiques, élus locaux.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 110
+  nom: Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités publiques
+  population: >-
+    Agents non titulaires des trois fonctions publiques, élus locaux,
+    praticiens hospitaliers (le « régime des médecins » de l'échantillon
+    interrégimes : une assiette aux deux tiers des émoluments, non un
+    régime distinct)
+  couverture: modelise
+  statuts: [contractuel_public,
+            elu_local]
+  textes:
+    - {reference: "décret n° 70-1277 du 23 décembre 1970", id: null}
+    - {reference: "arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime", id: LEGITEXT000024251295}
+    - {reference: "arrêté du 18 juillet 1983 et arrêté du 7 mars 1986 relatifs à l'assiette de cotisations à l'Ircantec de certains membres du corps médical des établissements hospitaliers publics (deux tiers des émoluments hospitaliers, hors gardes et astreintes)", id: LEGITEXT000006073794}
 periodes:
   - debut: 1971
     fin: 1982

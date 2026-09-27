@@ -13,6 +13,16 @@ population: >-
   Personnel de la Société d'exploitation industrielle des tabacs et
   allumettes. Régime fermé, en extinction, financé par l'État.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 110
+  population: Personnels recrutés avant 1981
+  couverture: modelise
+  statuts: [agent_seita]
+  textes:
+    - {reference: "ordonnance n° 59-80 du 7 janvier 1959, article 3", id: null}
+    - {reference: "loi n° 84-603 du 13 juillet 1984, article 6", id: LEGIARTI000006302124}
+    - {reference: "décret n° 85-844 du 8 août 1985 portant statut du personnel de la SEITA, article 63", id: LEGIARTI000006325837}
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 62-766, article 118 (LEGIARTI000006324645) : 10 % pour
 # les trois premiers enfants et 5 % par enfant au-delà. Barème

@@ -14,6 +14,15 @@ population: >-
   1er janvier 2004 par la loi du 21 août 2003 ; fondue dans le RCI au
   1er janvier 2013.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 50
+  population: Industriels et commerçants
+  couverture: modelise
+  statuts: [commercant,
+            gerant_debit_tabac, micro_entrepreneur]
+  textes:
+    - {reference: "décret n° 2004-848 du 23 août 2004 (régime complémentaire obligatoire des industriels et commerçants)", id: null}
 periodes:
   - debut: 2004
     fin: 2004

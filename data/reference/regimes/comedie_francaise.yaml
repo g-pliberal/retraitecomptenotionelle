@@ -11,6 +11,16 @@ succede_a: []
 integre_dans: null
 population: Personnels de la Comédie-Française.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 90
+  nom: Régime de retraite du personnel de la Comédie-Française
+  population: Personnels de la Comédie-Française
+  couverture: modelise
+  statuts: [personnel_comedie_francaise]
+  textes:
+    - {reference: "décret n° 68-960 du 11 octobre 1968 relatif à la caisse de retraites des personnels de la Comédie-Française", id: null}
+    - {reference: "code de la sécurité sociale, R. 711-1 10°", id: LEGIARTI000048031379}
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 68-960, article 16 VI (LEGIARTI000006765450) : 10 % pour
 # les trois premiers enfants et 5 % par enfant au-delà. La fiche ne la

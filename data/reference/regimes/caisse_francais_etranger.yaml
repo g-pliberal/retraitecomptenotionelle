@@ -1,0 +1,20 @@
+code: caisse_francais_etranger
+nom: Caisse des Français de l'étranger et assurance volontaire vieillesse
+famille: base_prive
+population: Français expatriés, sur adhésion
+creation: 1984
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: non_salaries
+  rang: 240
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi n° 84-604 du 13 juillet 1984 et décret n° 84-780 du 9 août 1984", id: LEGITEXT000006064599}
+  raison_hors_champ: >-
+    Adhésion facultative qui ouvre des droits au régime général : ce n'est
+    pas un régime distinct, et le modèle ne décrit que des affiliations
+    obligatoires.

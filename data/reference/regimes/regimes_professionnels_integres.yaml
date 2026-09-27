@@ -18,6 +18,37 @@ population: >-
   servis à la place de l'Arrco et de l'Agirc jusqu'à leur intégration. La
   fiche porte le barème bancaire, le seul lisible, pour tous.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 190
+  nom: Régimes professionnels de salariés intégrés à l'Agirc-Arrco
+  population: >-
+    Personnels des banques (régime professionnel AFB, intégré en 1994), des
+    organismes de sécurité sociale (CPPOSS, 1994), des caisses d'épargne
+    (CGRCE, 2000), du Crédit agricole, des chambres de commerce et
+    d'industrie (régime annexé au statut de 1973), VRP (IRREP), cadres et
+    salariés agricoles (CAMARCA, 1973), personnel au sol statutaire
+    d'Air France (règlement de retraite approuvé par arrêté, 1956, devenu
+    régime différentiel au-dessus de l'Agirc-Arrco en 1993)
+  couverture: partiel
+  statuts: [salarie_regime_professionnel_integre]
+  textes:
+    - {reference: "loi n° 99-532 du 25 juin 1999, article 32 (caisses d'épargne)", id: LEGIARTI000006711574}
+    - {reference: "arrêté du 13 novembre 1973 portant homologation du statut du personnel administratif des CCI, régime de retraite annexé", id: LEGIARTI000006610583}
+    - {reference: "décret n° 2002-1012 du 19 juillet 2002, article 21 (affiliation à la CAMARCA)", id: LEGIARTI000006602079}
+    - {reference: "Fondation IFRAP, « La réforme des retraites des banques » (72 à 75 % du dernier salaire en 42 ans, cotisation de 12 à 20 %)", id: null}
+    - {reference: "accord professionnel de la banque du 13 septembre 1993 (intégration à l'Arrco et à l'Agirc au 1er janvier 1994, droits figés au 31 décembre 1993, complément bancaire différentiel), modifié par l'accord du 25 février 2005 (hors JORF)", id: null}
+    - {reference: "arrêté du 4 mai 1956 portant approbation d'une refonte du règlement de retraites du personnel au sol de la Compagnie nationale Air France (affiliation obligatoire du personnel statutaire, modifié jusqu'à l'arrêté du 31 décembre 1991)", id: JORFTEXT000000434601}
+    - {reference: "arrêté du 1er juin 1993 approuvant le règlement de retraite et le règlement du régime différentiel du personnel au sol d'Air France, qui se substituent au règlement antérieur", id: JORFTEXT000000712110}
+    - {reference: "arrêté du 11 janvier 1994 portant extension de l'avenant du 14 décembre 1992 étendant la convention collective nationale du 14 mars 1947 (Agirc) au personnel au sol d'Air France", id: JORFTEXT000000729483}
+  manque: >-
+    La fiche porte le barème bancaire pour toutes les populations : le
+    complément de 35 % du dernier salaire en 42 ans, la Sécurité sociale
+    déduite, et 16 % de cotisation ; les barèmes propres de la CPPOSS, de
+    la CGRCE, des CCI, de l'IRREP, de la CAMARCA et du personnel au sol
+    d'Air France (règlement de 1956, régime différentiel de 1993), le
+    complément différentiel de 1994 et son rabot, et l'Agirc du cadre
+    bancaire ne le sont pas.
 periodes:
   - debut: 1947
     fin: 1993

@@ -11,6 +11,21 @@ succede_a: []
 integre_dans: arrco
 population: Salariés non cadres, avant la généralisation de 1961.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 20
+  population: Non-cadres du secteur privé, avant l'Arrco
+  couverture: partiel
+  statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente,
+            maitre_enseignement_prive, agent_chemins_fer_secondaires]
+  textes:
+    - {reference: "accord du 15 mai 1957 créant l'UNIRS (hors JORF)", id: null}
+  manque: >-
+    L'UNIRS tient lieu de toutes les institutions fédérées avant 1961 — CRI,
+    CIRCC, CGRCR, IRPSIMMEC, CAPIMMEC et les autres —, dont aucune n'a de
+    fiche propre : chacune avait son barème, et le dépôt n'en connaît qu'un ;
+    et ce barème n'est chiffré nulle part dans l'index (deux occurrences du
+    nom avant 1975, sans taux) : 2,5 % par continuité avec l'Arrco de 1962.
 periodes:
   - debut: 1957
     fin: 1961

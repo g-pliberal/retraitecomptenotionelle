@@ -14,6 +14,14 @@ population: >-
   rémunération au-dessus du plafond ; barème imposé aux nouvelles adhérentes,
   plus élevé que celui des entreprises déjà adhérentes jusqu'en 1995.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 60
+  population: Cadres des entreprises créées à compter du 1er janvier 1981, tranches B et C
+  couverture: modelise
+  statuts: [salarie_prive_cadre_entreprise_recente]
+  textes:
+    - {reference: "convention collective nationale du 14 mars 1947, avenant A75 du 26 juin 1978 et avenant A99 du 15 juin 1983 (hors JORF et hors KALI)", id: null}
 periodes:
   - debut: 1981
     fin: 1982

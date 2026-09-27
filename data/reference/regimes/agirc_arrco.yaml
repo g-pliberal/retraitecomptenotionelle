@@ -11,6 +11,24 @@ succede_a: [agirc, arrco]
 integre_dans: null
 population: Ensemble des salariés du secteur privé.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 80
+  population: Salariés du secteur privé
+  couverture: modelise
+  statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
+            agent_sncf, agent_ratp, agent_ieg, mineur, clerc_de_notaire,
+            agent_banque_de_france, agent_seita,
+            agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
+            salarie_prive_non_cadre_entreprise_recente,
+            maitre_enseignement_prive,
+            salarie_saint_pierre_et_miquelon,
+            membre_cese, salarie_nouvelle_caledonie,
+            salarie_regime_professionnel_integre]
+  textes:
+    - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
+    - {reference: "arrêté du 24 avril 2018 portant extension et élargissement de l'accord", id: JORFTEXT000036847920}
+    - {reference: "avenant n° 17 du 22 novembre 2023, arrêté d'extension du 15 avril 2024", id: JORFTEXT000049424935}
 periodes:
   - debut: 2019
     fin: 2023

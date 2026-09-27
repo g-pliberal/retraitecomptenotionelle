@@ -1,0 +1,20 @@
+code: ortf
+nom: Régime de retraite des personnels de l'ORTF
+famille: special
+population: Personnels de l'Office de radiodiffusion-télévision française
+creation: 1964
+fermeture: 1975
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: speciaux
+  rang: 170
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "arrêté du 14 avril 1980, validation pour la retraite des services accomplis à l'ORTF", id: JORFTEXT000000855476}
+    - {reference: "lois de finances, programme 195, action « versements liés à la liquidation de l'ORTF »", id: JORFARTI000023316030}
+  raison_hors_champ: >-
+    Régime en extinction dont l'État verse les derniers engagements ; aucun
+    cotisant depuis 1975.

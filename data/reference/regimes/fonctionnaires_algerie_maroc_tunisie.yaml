@@ -1,0 +1,35 @@
+code: fonctionnaires_algerie_maroc_tunisie
+nom: Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et Société de prévoyance des fonctionnaires tunisiens (pensions garanties)
+famille: fonction_publique
+population: Fonctionnaires français des cadres d'Algérie, du Maroc et de Tunisie, agents des communes d'Algérie
+creation: 1903
+fermeture: 1962
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: fonction_publique
+  rang: 100
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi du 30 décembre 1903 portant fixation du budget général de l'exercice 1904 (création de la caisse des retraites de l'Algérie, d'après le Journal officiel lu sur Gallica ; abrogée par la loi n° 2019-1332)", id: JORFARTI000039480075}
+    - {reference: "décret du 16 juillet 1907 relatif au fonctionnement de la caisse des retraites de l'Algérie", id: JORFTEXT000000664903}
+    - {reference: "décret du 2 février 1926 portant réforme du régime des pensions servies par la caisse des retraites de l'Algérie, puis décrets d'affiliation de nouvelles catégories de personnel jusqu'au décret du 11 mars 1937", id: JORFTEXT000000849029}
+    - {reference: "loi n° 52-432 du 28 avril 1952 portant statut général du personnel des communes, article 94 C (affiliation obligatoire à la caisse générale des retraites de l'Algérie)", id: LEGIARTI000006399171}
+    - {reference: "code des pensions civiles et militaires de retraite, R. 35 (coordination avec la caisse générale des retraites de l'Algérie et la caisse marocaine de retraites)", id: LEGIARTI000006362950}
+    - {reference: "loi n° 75-1278 du 30 décembre 1975, article 73 I (les fonctionnaires français de ces trois caisses admis aux avantages du régime général des retraites)", id: LEGIARTI000006272976}
+    - {reference: "loi n° 81-734 du 3 août 1981 de finances rectificative, article 26 (pensions garanties par l'État aux ressortissants de l'Algérie)", id: LEGIARTI000006273652}
+    - {reference: "décret du 22 janvier 1951 homologuant des décisions de l'assemblée algérienne (application de nouvelles catégories de personnels au régime de la caisse générale des retraites)", id: JORFTEXT000000670381}
+    - {reference: "loi n° 58-108 du 7 février 1958 modifiant les lois n° 56-782 du 4 août 1956 et n° 57-261 du 2 mars 1957 (reclassement en France des agents affiliés à la société de prévoyance des fonctionnaires et employés tunisiens ou à la caisse marocaine des retraites)", id: JORFTEXT000000317027}
+    - {reference: "décret n° 68-326 du 5 avril 1968 fixant les règles de validation et de coordination des services accomplis en Algérie du 1er avril 1938 au 1er juillet 1962 sous le régime de la caisse générale des retraites de l'Algérie", id: JORFTEXT000000514424}
+  raison_hors_champ: >-
+    Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés
+    aux Français avec l'indépendance et dont l'État garantit les pensions
+    depuis. La caisse des retraites de l'Algérie, créée par la loi de
+    finances du 30 décembre 1903 et organisée par le décret du 16 juillet
+    1907, a ses décrets de 1907 à 1937 dans l'index ; ses règles d'après
+    1947, décisions de l'assemblée algérienne homologuées par décret, et
+    les dahirs marocains et tunisiens n'y sont que par leurs homologations
+    et les règles de coordination (services du 1er avril 1938 au 1er
+    juillet 1962). Aucun cotisant depuis 1962.

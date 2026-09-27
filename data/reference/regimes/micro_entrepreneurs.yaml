@@ -1,0 +1,28 @@
+code: micro_entrepreneurs
+nom: Régime micro-social des micro-entrepreneurs
+famille: non_salarie
+population: Micro-entrepreneurs (artisans, commerçants, libéraux non réglementés)
+creation: 2009
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: non_salaries
+  rang: 80
+  couverture: routage
+  statuts: [micro_entrepreneur]
+  textes:
+    - {reference: "loi n° 2008-776 du 4 août 2008 de modernisation de l'économie, article 1er (L. 133-6-8)", id: LEGIARTI000019284945}
+    - {reference: "décret n° 2018-1120 du 10 décembre 2018 relatif aux modalités d'application du régime micro-social aux professionnels libéraux", id: LEGITEXT000037798308}
+    - {reference: "code de la sécurité sociale, L. 133-6-8 (prestations calculées sur le chiffre d'affaires après abattement de 71 %, 50 % ou 34 %)", id: LEGIARTI000033712872}
+    - {reference: "code de la sécurité sociale, D. 131-6-3 (fraction du taux pendant l'exonération de début d'activité)", id: LEGIARTI000034163578}
+  manque: >-
+    Le statut `micro_entrepreneur` route les régimes du commerçant sur le
+    revenu reconstitué (chiffre d'affaires après abattement) : la
+    cotisation micro-sociale ventilée entre les branches reproduit, par
+    construction, celle du commerçant — 12,3 % du chiffre d'affaires dont
+    58,3 % pour la retraite, sur 29 % de revenu, font 24,7 % contre 24,75
+    % —, et les trimestres se valident sur ce revenu depuis 2023. Non
+    portés : les seuils de chiffre d'affaires d'avant 2023, les variantes
+    de l'abattement (50 % services, 34 % libéral).

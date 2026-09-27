@@ -822,7 +822,7 @@ def fiche_regime(**reglages: str) -> float:
     a = int(reglages.get("a", reglages.get("de", 9999)))
     filtres = {c: v for c, v in reglages.items() if c not in speciaux}
     champ = reglages["champ"]
-    valeurs = [float(p[champ]) for p in regime["periodes"]
+    valeurs = [float(p[champ]) for p in regime.get("periodes", [])
                if de <= int(p["debut"]) <= a and p.get(champ) is not None
                and all(str(p.get(c)) == v for c, v in filtres.items())]
     if not valeurs:

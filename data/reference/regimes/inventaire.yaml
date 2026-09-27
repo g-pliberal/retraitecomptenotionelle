@@ -1,30 +1,18 @@
 # Inventaire des régimes de retraite obligatoires français
 # ==========================================================
-# Le catalogue (`*.yaml` de ce dossier) ne contient que les régimes que le
-# modèle CALCULE. Ce fichier-ci les énumère TOUS — ceux qui existent, ceux qui
-# ont existé, ceux qu'on ne calculera pas — et dit pour chacun où en est le
-# dépôt. `docs/limites.md` écrivait que la liste des régimes manquants n'était
-# « dérivée d'aucun fichier, et c'est une limite en soi » : ce fichier est ce
-# fichier, et `tests/test_donnees.py` le tient aligné sur le catalogue.
+# FABRIQUÉ par scripts/construire_inventaire.py : ne pas le modifier à la main,
+# mais le fichier du régime, puis relancer le script. Chaque régime, calculé ou
+# non, a son fichier dans ce dossier, et ce fichier porte sa ligne : le bloc
+# `inventaire`, que `_schema.yaml` décrit champ par champ. Les champs d'identité
+# (nom, famille, population, dates, lignée) sont ceux du régime, sauf le nom et
+# la population que le bloc raccourcit.
 #
-# Champs :
-#   code          code du catalogue si le régime est calculé, sinon un code libre
-#   nom, famille  famille : même énumération que `_schema.yaml`
-#   population    qui cotise
-#   creation, fermeture (aux nouveaux entrants), extinction, succede_a,
-#                 integre_dans : mêmes valeurs que la fiche quand elle existe
-#   couverture    modelise    : fiche complète sur toute son histoire connue
-#                 partiel     : fiche calculée, mais un étage, un barème ou une
-#                               période manque — `manque` dit lequel
-#                 a_modeliser : aucune fiche — `manque` dit ce qui bloque
-#                 routage     : pas un régime, une affiliation portée par un
-#                               statut de `legislation/affiliations.yaml` —
-#                               `manque` dit ce que le statut ne lit pas
-#                 hors_champ  : ne sera pas modélisé — `raison_hors_champ`
-#   statuts       statuts de `legislation/affiliations.yaml` qui y routent
-#   textes        textes fondateurs ou de référence ; `id` est l'identifiant
-#                 DILA (LEGITEXT/LEGIARTI/JORFTEXT) lu dans l'index du dépôt,
-#                 `null` si le texte n'y est pas (antérieur à 1947, hors JORF)
+# Le catalogue ne contient que les régimes que le modèle CALCULE. Ce fichier-ci
+# les énumère TOUS — ceux qui existent, ceux qui ont existé, ceux qu'on ne
+# calculera pas — et dit pour chacun où en est le dépôt. `docs/limites.md`
+# écrivait que la liste des régimes manquants n'était « dérivée d'aucun
+# fichier, et c'est une limite en soi » : ce fichier est ce fichier, et
+# `tests/test_donnees.py` le tient aligné sur le catalogue.
 #
 # Ancrages de la liste : R. 711-1 du code de la sécurité sociale (les régimes
 # spéciaux), D. 643-1 (les sections des professions libérales), L. 921-1 et
@@ -43,7 +31,8 @@ inventaire:
   - code: retraites_ouvrieres_paysannes
     nom: Retraites ouvrières et paysannes
     famille: base_prive
-    population: Salariés de l'industrie, du commerce et de l'agriculture, à bas revenus
+    population: >-
+      Salariés de l'industrie, du commerce et de l'agriculture, à bas revenus
     creation: 1911
     fermeture: 1930
     extinction: 1930
@@ -52,28 +41,28 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "loi du 5 avril 1910 sur les retraites ouvrières et paysannes", id: null}
+    - {reference: loi du 5 avril 1910 sur les retraites ouvrières et paysannes, id: null}
     raison_hors_champ: >-
-      Régime en capitalisation, antérieur à 1930, l'année où le modèle commence :
-      aucun assuré vivant n'y a cotisé, et le texte n'est pas dans le dump de la
-      DILA, qui commence en 1947.
+      Régime en capitalisation, antérieur à 1930, l'année où le modèle commence : aucun
+      assuré vivant n'y a cotisé, et le texte n'est pas dans le dump de la DILA, qui
+      commence en 1947.
 
   - code: assurances_sociales
     nom: Assurances sociales (assurance vieillesse)
     famille: base_prive
-    population: Salariés de l'industrie et du commerce sous plafond de rémunération
+    population: >-
+      Salariés de l'industrie et du commerce sous plafond de rémunération
     creation: 1930
     fermeture: 1945
     extinction: 1945
     succede_a: []
     integre_dans: regime_general
     couverture: modelise
-    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole,
-              salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
-              salarie_regime_professionnel_integre]
+    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, salarie_prive_cadre_entreprise_recente,
+      salarie_prive_non_cadre_entreprise_recente, salarie_regime_professionnel_integre]
     textes:
-      - {reference: "loi du 5 avril 1928 sur les assurances sociales", id: null}
-      - {reference: "loi du 30 avril 1930 modifiant la loi du 5 avril 1928", id: null}
+    - {reference: loi du 5 avril 1928 sur les assurances sociales, id: null}
+    - {reference: loi du 30 avril 1930 modifiant la loi du 5 avril 1928, id: null}
 
   - code: regime_local_alsace_moselle
     nom: Régime local d'assurance invalidité-vieillesse d'Alsace-Moselle
@@ -87,12 +76,13 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "décret n° 76-405 du 10 mai 1976, modalités d'application aux assurés relevant de l'ex-régime local", id: LEGITEXT000006062483}
+    - {reference: "décret n° 76-405 du 10 mai 1976, modalités d'application aux assurés\
+        \ relevant de l'ex-régime local", id: LEGITEXT000006062483}
     raison_hors_champ: >-
-      Législation allemande de 1889 et 1911 maintenue après 1918, fondue dans
-      le régime général en 1946 : les droits acquis sous ce régime sont liquidés
-      par le régime général selon les décrets de 1974 à 1977. Aucun assuré
-      vivant n'y a cotisé assez longtemps pour que ses règles pèsent.
+      Législation allemande de 1889 et 1911 maintenue après 1918, fondue dans le régime
+      général en 1946 : les droits acquis sous ce régime sont liquidés par le régime
+      général selon les décrets de 1974 à 1977. Aucun assuré vivant n'y a cotisé assez
+      longtemps pour que ses règles pèsent.
 
   - code: avts
     nom: Allocation aux vieux travailleurs salariés
@@ -106,32 +96,32 @@ inventaire:
     couverture: modelise
     statuts: []
     textes:
-      - {reference: "loi du 14 mars 1941 relative à l'allocation aux vieux travailleurs salariés", id: null}
+    - {reference: "loi du 14 mars 1941 relative à l'allocation aux vieux travailleurs\
+        \ salariés", id: null}
 
   - code: regime_general
     nom: Régime général de la Sécurité sociale (Cnav)
     famille: base_prive
-    population: Salariés du secteur privé, et depuis 2018 les artisans et commerçants
+    population: >-
+      Salariés du secteur privé, et depuis 2018 les artisans et commerçants
     creation: 1945
     fermeture: null
     extinction: null
     succede_a: [assurances_sociales, avts]
     integre_dans: null
     couverture: modelise
-    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan, commercant,
-              artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg, mineur,
-              clerc_de_notaire, agent_banque_de_france, agent_seita,
-              agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
-              salarie_prive_non_cadre_entreprise_recente,
-              maitre_enseignement_prive,
-              elu_local, auteur_dramatique, auteur_lyrique, gerant_debit_tabac, micro_entrepreneur,
-              membre_cese,
-              salarie_regime_professionnel_integre,
-              liberal_non_reglemente]
+    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan,
+      commercant, artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg,
+      mineur, clerc_de_notaire, agent_banque_de_france, agent_seita, agent_chemins_fer_secondaires,
+      salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
+      maitre_enseignement_prive, elu_local, auteur_dramatique, auteur_lyrique, gerant_debit_tabac,
+      micro_entrepreneur, membre_cese, salarie_regime_professionnel_integre, liberal_non_reglemente]
     textes:
-      - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
-      - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
-      - {reference: "code de la sécurité sociale, L. 351-1 et suivants", id: null}
+    - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la\
+        \ sécurité sociale", id: null}
+    - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances\
+        \ sociales", id: null}
+    - {reference: 'code de la sécurité sociale, L. 351-1 et suivants', id: null}
 
   - code: msa_salaries
     nom: Assurances sociales agricoles, salariés (MSA)
@@ -145,16 +135,18 @@ inventaire:
     couverture: modelise
     statuts: [salarie_agricole]
     textes:
-      - {reference: "loi du 30 avril 1930, titre II (assurances sociales agricoles)", id: null}
-      - {reference: "code rural et de la pêche maritime, L. 722-20 et suivants", id: null}
+    - {reference: 'loi du 30 avril 1930, titre II (assurances sociales agricoles)',
+      id: null}
+    - {reference: 'code rural et de la pêche maritime, L. 722-20 et suivants', id: null}
 
   - code: cssm_mayotte
-    nom: Régime de retraite des salariés de Mayotte (Caisse de sécurité sociale de Mayotte)
+    nom: >-
+      Régime de retraite des salariés de Mayotte (Caisse de sécurité sociale de Mayotte)
     famille: base_prive
     population: >-
-      Salariés du secteur privé et agents de droit privé à Mayotte ; depuis
-      2012, travailleurs non salariés artisans, commerçants, libéraux et
-      agricoles de Mayotte (assurance de base des non-salariés, même caisse)
+      Salariés du secteur privé et agents de droit privé à Mayotte ; depuis 2012, travailleurs
+      non salariés artisans, commerçants, libéraux et agricoles de Mayotte (assurance
+      de base des non-salariés, même caisse)
     creation: 1987
     fermeture: null
     extinction: null
@@ -163,27 +155,39 @@ inventaire:
     couverture: partiel
     statuts: [salarie_mayotte]
     textes:
-      - {reference: "loi n° 85-10 du 3 janvier 1985, article 98", id: LEGIARTI000006756839}
-      - {reference: "décret n° 87-175 du 16 mars 1987 portant création d'un régime de retraite au profit des salariés de Mayotte, articles 2 et 3", id: LEGIARTI000006770150}
-      - {reference: "ordonnance n° 2002-411 du 27 mars 2002 et décret n° 2003-589 du 1er juillet 2003, articles 2, 9, 10 et 11 (âge, durée, taux plein, coefficient de minoration)", id: LEGIARTI000033155436}
-      - {reference: "décret n° 2024-766 du 8 juillet 2024 et décret n° 2026-345 du 7 mai 2026 (relèvement de l'âge, générations 1962 à 1969)", id: LEGIARTI000054059636}
-      - {reference: "ordonnance n° 2011-1923 du 22 décembre 2011, article 20 (chapitre II « Assurance de base des travailleurs non salariés des professions artisanales, industrielles et commerciales, et agricoles », articles 23-1 à 23-4 de l'ordonnance de 2002)", id: LEGIARTI000025017034}
-      - {reference: "ordonnance n° 2002-411, article 23-4 (la pension des non-salariés suit les règles du chapitre Ier, revenu annuel moyen adapté par décret)", id: LEGIARTI000025021012}
-      - {reference: "décret n° 2012-1168 du 17 octobre 2012 relatif au développement de la sécurité sociale à Mayotte, article 9 (chapitre III : dispositions relatives aux travailleurs non salariés, articles 31 et suivants du décret n° 2003-589)", id: JORFARTI000026511524}
+    - {reference: 'loi n° 85-10 du 3 janvier 1985, article 98', id: LEGIARTI000006756839}
+    - {reference: "décret n° 87-175 du 16 mars 1987 portant création d'un régime de\
+        \ retraite au profit des salariés de Mayotte, articles 2 et 3", id: LEGIARTI000006770150}
+    - {reference: "ordonnance n° 2002-411 du 27 mars 2002 et décret n° 2003-589 du 1er\
+        \ juillet 2003, articles 2, 9, 10 et 11 (âge, durée, taux plein, coefficient\
+        \ de minoration)", id: LEGIARTI000033155436}
+    - {reference: "décret n° 2024-766 du 8 juillet 2024 et décret n° 2026-345 du 7 mai\
+        \ 2026 (relèvement de l'âge, générations 1962 à 1969)", id: LEGIARTI000054059636}
+    - {reference: "ordonnance n° 2011-1923 du 22 décembre 2011, article 20 (chapitre\
+        \ II « Assurance de base des travailleurs non salariés des professions artisanales,\
+        \ industrielles et commerciales, et agricoles », articles 23-1 à 23-4 de l'ordonnance\
+        \ de 2002)", id: LEGIARTI000025017034}
+    - {reference: "ordonnance n° 2002-411, article 23-4 (la pension des non-salariés\
+        \ suit les règles du chapitre Ier, revenu annuel moyen adapté par décret)",
+      id: LEGIARTI000025021012}
+    - {reference: "décret n° 2012-1168 du 17 octobre 2012 relatif au développement de\
+        \ la sécurité sociale à Mayotte, article 9 (chapitre III : dispositions relatives\
+        \ aux travailleurs non salariés, articles 31 et suivants du décret n° 2003-589)",
+      id: JORFARTI000026511524}
     manque: >-
-      Le SMIG mahorais, qui valide les trimestres (200 puis 150 heures par
-      trimestre), n'est pas une série du dépôt : la validation se fait au
-      SMIC national. Taux et plafond de la caisse de sécurité sociale de
-      Mayotte, en convergence jusqu'en 2036, remplacés par ceux du régime
-      général. Salaire de référence supposé sur vingt-cinq ans dès 2003.
-      Les non-salariés de Mayotte, affiliés à la même caisse depuis 2012
-      avec une pension calculée selon les mêmes règles (article 23-4),
-      n'ont aucun statut qui les y route : seul `salarie_mayotte` atteint
-      la fiche, et le chapitre III du décret n° 2003-589, écrit en 2012 pour
-      adapter leur revenu annuel moyen, n'est pas lu.
+      Le SMIG mahorais, qui valide les trimestres (200 puis 150 heures par trimestre),
+      n'est pas une série du dépôt : la validation se fait au SMIC national. Taux et
+      plafond de la caisse de sécurité sociale de Mayotte, en convergence jusqu'en 2036,
+      remplacés par ceux du régime général. Salaire de référence supposé sur vingt-cinq
+      ans dès 2003. Les non-salariés de Mayotte, affiliés à la même caisse depuis 2012
+      avec une pension calculée selon les mêmes règles (article 23-4), n'ont aucun statut
+      qui les y route : seul `salarie_mayotte` atteint la fiche, et le chapitre III
+      du décret n° 2003-589, écrit en 2012 pour adapter leur revenu annuel moyen, n'est
+      pas lu.
 
   - code: cps_saint_pierre_et_miquelon
-    nom: Régime de retraite de la Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon
+    nom: >-
+      Régime de retraite de la Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon
     famille: base_prive
     population: Salariés et non-salariés de Saint-Pierre-et-Miquelon
     creation: 1987
@@ -194,18 +198,22 @@ inventaire:
     couverture: partiel
     statuts: [salarie_saint_pierre_et_miquelon]
     textes:
-      - {reference: "loi n° 87-563 du 17 juillet 1987 portant réforme du régime d'assurance vieillesse applicable à Saint-Pierre-et-Miquelon, article 5 (table de durée et âges par génération)", id: LEGIARTI000054477924}
-      - {reference: "décret n° 89-110 du 20 février 1989, article 9 (durée transitoire de 108 trimestres en 1987, plus 4 par an)", id: LEGIARTI000006774247}
-      - {reference: "décret n° 2017-1000 du 10 mai 2017 relatif à l'assurance vieillesse-veuvage applicable à Saint-Pierre-et-Miquelon, article 3", id: LEGIARTI000034740766}
+    - {reference: "loi n° 87-563 du 17 juillet 1987 portant réforme du régime d'assurance\
+        \ vieillesse applicable à Saint-Pierre-et-Miquelon, article 5 (table de durée\
+        \ et âges par génération)", id: LEGIARTI000054477924}
+    - {reference: "décret n° 89-110 du 20 février 1989, article 9 (durée transitoire\
+        \ de 108 trimestres en 1987, plus 4 par an)", id: LEGIARTI000006774247}
+    - {reference: "décret n° 2017-1000 du 10 mai 2017 relatif à l'assurance vieillesse-veuvage\
+        \ applicable à Saint-Pierre-et-Miquelon, article 3", id: LEGIARTI000034740766}
     manque: >-
-      Taux de cotisation et plafond de la caisse de prévoyance sociale,
-      fixés localement et absents de l'index : ceux du régime général
-      tiennent lieu. Le régime d'avant août 1987 (ordonnance n° 77-1102)
-      n'est pas porté. La table par génération est lue en dur, année par
-      année, faute d'un drapeau qui la décale de sept ans.
+      Taux de cotisation et plafond de la caisse de prévoyance sociale, fixés localement
+      et absents de l'index : ceux du régime général tiennent lieu. Le régime d'avant
+      août 1987 (ordonnance n° 77-1102) n'est pas porté. La table par génération est
+      lue en dur, année par année, faute d'un drapeau qui la décale de sept ans.
 
   - code: cps_polynesie
-    nom: Régime de retraite des travailleurs salariés de Polynésie française (CPS)
+    nom: >-
+      Régime de retraite des travailleurs salariés de Polynésie française (CPS)
     famille: base_prive
     population: Salariés de Polynésie française
     creation: 1968
@@ -216,18 +224,28 @@ inventaire:
     couverture: partiel
     statuts: [salarie_polynesie]
     textes:
-      - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française » et fiche de cotisations 2026 (délibérations de l'assemblée de la Polynésie française, compétence locale, hors JORF)", id: null}
-      - {reference: "arrêté n° 1336 IT du 28 septembre 1956 portant organisation et fonctionnement de la caisse de prévoyance sociale ; délibération n° 67-110 AT du 24 août 1967 créant le régime de retraite polynésien ; délibération n° 87-11 AT du 29 janvier 1987 portant institution d'un régime de retraite des travailleurs salariés (tranche A) ; loi du pays n° 2019-6 du 1er février 2019 — cités par le rapport de l'assemblée de la Polynésie française du 14 août 2025 sur l'harmonisation des allocations familiales (hors JORF)", id: null}
+    - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française\
+        \ » et fiche de cotisations 2026 (délibérations de l'assemblée de la Polynésie\
+        \ française, compétence locale, hors JORF)", id: null}
+    - {reference: "arrêté n° 1336 IT du 28 septembre 1956 portant organisation et fonctionnement\
+        \ de la caisse de prévoyance sociale ; délibération n° 67-110 AT du 24 août\
+        \ 1967 créant le régime de retraite polynésien ; délibération n° 87-11 AT du\
+        \ 29 janvier 1987 portant institution d'un régime de retraite des travailleurs\
+        \ salariés (tranche A) ; loi du pays n° 2019-6 du 1er février 2019 — cités par\
+        \ le rapport de l'assemblée de la Polynésie française du 14 août 2025 sur l'harmonisation\
+        \ des allocations familiales (hors JORF)", id: null}
     manque: >-
-      Seuls les paramètres de 2026 sont lus, projetés sur toute la période ;
-      le plafond de 269 000 FCFP par mois n'est pas une série du dépôt et le
-      plafond national, plus haut, tient lieu ; la montée en charge de la
-      réforme de 2023 n'est pas lue.
+      Seuls les paramètres de 2026 sont lus, projetés sur toute la période ; le plafond
+      de 269 000 FCFP par mois n'est pas une série du dépôt et le plafond national,
+      plus haut, tient lieu ; la montée en charge de la réforme de 2023 n'est pas lue.
 
   - code: cps_polynesie_tranche_b
-    nom: Régime de retraite des travailleurs salariés de Polynésie française, tranche B (CPS)
+    nom: >-
+      Régime de retraite des travailleurs salariés de Polynésie française, tranche B
+      (CPS)
     famille: base_prive
-    population: Salariés de Polynésie française au-dessus du plafond de la tranche A
+    population: >-
+      Salariés de Polynésie française au-dessus du plafond de la tranche A
     creation: 1995
     fermeture: null
     extinction: null
@@ -236,16 +254,21 @@ inventaire:
     couverture: partiel
     statuts: [salarie_polynesie]
     textes:
-      - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française » (points de la tranche B : salaire minimum horaire de référence 1 024,74 FCFP, point à 20,49 FCFP)", id: null}
-      - {reference: "délibération n° 95-180 AT du 26 octobre 1995 instituant un régime de retraite tranche B au profit des ressortissants du régime général des salariés, citée par le rapport de l'assemblée de la Polynésie française du 14 août 2025 (hors JORF)", id: null}
+    - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française\
+        \ » (points de la tranche B : salaire minimum horaire de référence 1 024,74\
+        \ FCFP, point à 20,49 FCFP)", id: null}
+    - {reference: "délibération n° 95-180 AT du 26 octobre 1995 instituant un régime\
+        \ de retraite tranche B au profit des ressortissants du régime général des salariés,\
+        \ citée par le rapport de l'assemblée de la Polynésie française du 14 août 2025\
+        \ (hors JORF)", id: null}
     manque: >-
-      La tranche 269 000-525 000 FCFP est écrite comme la tranche entre un et
-      deux plafonds nationaux, la borne la plus proche du catalogue ; le
-      barème de 2026 est projeté sur toute la période, depuis la délibération
-      de 1995 qui institue la tranche.
+      La tranche 269 000-525 000 FCFP est écrite comme la tranche entre un et deux plafonds
+      nationaux, la borne la plus proche du catalogue ; le barème de 2026 est projeté
+      sur toute la période, depuis la délibération de 1995 qui institue la tranche.
 
   - code: cafat_nouvelle_caledonie
-    nom: Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT)
+    nom: >-
+      Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT)
     famille: base_prive
     population: Salariés de Nouvelle-Calédonie
     creation: 1958
@@ -256,18 +279,26 @@ inventaire:
     couverture: partiel
     statuts: [salarie_nouvelle_caledonie]
     textes:
-      - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Nouvelle-Calédonie » et fiche de cotisations 2026 ; page « Le montant de ma retraite » de la CAFAT (délibérations du congrès, compétence locale, hors JORF)", id: null}
-      - {reference: "fiche du CLEISS, retraite complémentaire : « tous les salariés [...] soumis à titre obligatoire au régime d'assurance vieillesse de base géré par la CAFAT relèvent obligatoirement des régimes Agirc-Arrco » (accord collectif, hors JORF)", id: null}
-      - {reference: "accord interprofessionnel territorial du 29 août 1994 pour la généralisation des régimes de retraite complémentaire ARRCO et AGIRC en Nouvelle-Calédonie, étendu par arrêté n° 1745-T du 25 avril 1995 (JONC n° 7063 du 2 mai 1995), avenants des 24 août et 12 décembre 1995 (direction du travail de Nouvelle-Calédonie, hors JORF)", id: null}
+    - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Nouvelle-Calédonie\
+        \ » et fiche de cotisations 2026 ; page « Le montant de ma retraite » de la\
+        \ CAFAT (délibérations du congrès, compétence locale, hors JORF)", id: null}
+    - {reference: "fiche du CLEISS, retraite complémentaire : « tous les salariés [...]\
+        \ soumis à titre obligatoire au régime d'assurance vieillesse de base géré par\
+        \ la CAFAT relèvent obligatoirement des régimes Agirc-Arrco » (accord collectif,\
+        \ hors JORF)", id: null}
+    - {reference: "accord interprofessionnel territorial du 29 août 1994 pour la généralisation\
+        \ des régimes de retraite complémentaire ARRCO et AGIRC en Nouvelle-Calédonie,\
+        \ étendu par arrêté n° 1745-T du 25 avril 1995 (JONC n° 7063 du 2 mai 1995),\
+        \ avenants des 24 août et 12 décembre 1995 (direction du travail de Nouvelle-Calédonie,\
+        \ hors JORF)", id: null}
     manque: >-
-      La valeur de référence qui convertit les cotisations en points n'est
-      pas publiée : le rendement est estimé ; taux et barème de 2026
-      projetés sur toute la période ; plafond de 548 600 FCFP remplacé par
-      le plafond national. Les salariés du privé de Nouvelle-Calédonie
-      relèvent aussi, obligatoirement, de l'Agirc-Arrco depuis l'accord
-      territorial de 1994, étendu en 1995 et généralisé au 1er janvier 1995
-      avec validation des services passés : le statut
-      `salarie_nouvelle_caledonie` ne route pas vers la complémentaire.
+      La valeur de référence qui convertit les cotisations en points n'est pas publiée
+      : le rendement est estimé ; taux et barème de 2026 projetés sur toute la période
+      ; plafond de 548 600 FCFP remplacé par le plafond national. Les salariés du privé
+      de Nouvelle-Calédonie relèvent aussi, obligatoirement, de l'Agirc-Arrco depuis
+      l'accord territorial de 1994, étendu en 1995 et généralisé au 1er janvier 1995
+      avec validation des services passés : le statut `salarie_nouvelle_caledonie` ne
+      route pas vers la complémentaire.
 
   - code: wallis_et_futuna
     nom: Retraite des salariés de Wallis-et-Futuna
@@ -281,16 +312,18 @@ inventaire:
     couverture: partiel
     statuts: [salarie_wallis_et_futuna]
     textes:
-      - {reference: "Caisse des prestations sociales des îles Wallis et Futuna, pages « Retraites » et « Les taux de cotisation » (délibérations de l'assemblée territoriale, hors JORF)", id: null}
+    - {reference: "Caisse des prestations sociales des îles Wallis et Futuna, pages\
+        \ « Retraites » et « Les taux de cotisation » (délibérations de l'assemblée\
+        \ territoriale, hors JORF)", id: null}
+    manque: >-
+      Le régime existe bel et bien, contrairement à ce que l'inventaire disait : 60
+      ans, quinze ans de cotisation, 2,6 % puis 1,3 % par an sur les quinze meilleures
+      années. Non lus : le plafond, la date de création, le barème d'avant 2009, la
+      réforme en préparation (65 ans).
 
   # ---------------------------------------------------------------------
   # Salariés du privé — complémentaires
   # ---------------------------------------------------------------------
-    manque: >-
-      Le régime existe bel et bien, contrairement à ce que l'inventaire
-      disait : 60 ans, quinze ans de cotisation, 2,6 % puis 1,3 % par an sur
-      les quinze meilleures années. Non lus : le plafond, la date de
-      création, le barème d'avant 2009, la réforme en préparation (65 ans).
 
   - code: agirc
     nom: Association générale des institutions de retraite des cadres
@@ -304,8 +337,9 @@ inventaire:
     couverture: modelise
     statuts: [salarie_prive_cadre, personnel_navigant, salarie_prive_cadre_entreprise_recente]
     textes:
-      - {reference: "convention collective nationale du 14 mars 1947 (hors JORF et hors KALI)", id: null}
-      - {reference: "code de la sécurité sociale, L. 921-1 et L. 921-4", id: LEGIARTI000006745499}
+    - {reference: "convention collective nationale du 14 mars 1947 (hors JORF et hors\
+        \ KALI)", id: null}
+    - {reference: 'code de la sécurité sociale, L. 921-1 et L. 921-4', id: LEGIARTI000006745499}
 
   - code: unirs
     nom: Union nationale des institutions de retraite des salariés
@@ -317,16 +351,16 @@ inventaire:
     succede_a: []
     integre_dans: arrco
     couverture: partiel
-    statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente,
-              maitre_enseignement_prive, agent_chemins_fer_secondaires]
+    statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente, maitre_enseignement_prive,
+      agent_chemins_fer_secondaires]
     textes:
-      - {reference: "accord du 15 mai 1957 créant l'UNIRS (hors JORF)", id: null}
+    - {reference: accord du 15 mai 1957 créant l'UNIRS (hors JORF), id: null}
     manque: >-
-      L'UNIRS tient lieu de toutes les institutions fédérées avant 1961 — CRI,
-      CIRCC, CGRCR, IRPSIMMEC, CAPIMMEC et les autres —, dont aucune n'a de
-      fiche propre : chacune avait son barème, et le dépôt n'en connaît qu'un ;
-      et ce barème n'est chiffré nulle part dans l'index (deux occurrences du
-      nom avant 1975, sans taux) : 2,5 % par continuité avec l'Arrco de 1962.
+      L'UNIRS tient lieu de toutes les institutions fédérées avant 1961 — CRI, CIRCC,
+      CGRCR, IRPSIMMEC, CAPIMMEC et les autres —, dont aucune n'a de fiche propre :
+      chacune avait son barème, et le dépôt n'en connaît qu'un ; et ce barème n'est
+      chiffré nulle part dans l'index (deux occurrences du nom avant 1975, sans taux)
+      : 2,5 % par continuité avec l'Arrco de 1962.
 
   - code: arrco
     nom: Association des régimes de retraite complémentaire des salariés
@@ -339,19 +373,19 @@ inventaire:
     integre_dans: agirc_arrco
     couverture: partiel
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
-              mineur, agent_seita, agent_chemins_fer_secondaires,
-              salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
-              maitre_enseignement_prive,
-              salarie_saint_pierre_et_miquelon, salarie_nouvelle_caledonie,
-              salarie_regime_professionnel_integre]
+      mineur, agent_seita, agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
+      salarie_prive_non_cadre_entreprise_recente, maitre_enseignement_prive, salarie_saint_pierre_et_miquelon,
+      salarie_nouvelle_caledonie, salarie_regime_professionnel_integre]
     textes:
-      - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
-      - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: null}
-      - {reference: "code de la sécurité sociale, L. 921-1", id: LEGIARTI000006745499}
+    - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)",
+      id: null}
+    - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite\
+        \ complémentaire", id: null}
+    - {reference: 'code de la sécurité sociale, L. 921-1', id: LEGIARTI000006745499}
     manque: >-
-      Routée à tous les salariés dès 1961, alors que l'affiliation n'est
-      obligatoire pour tous que depuis la loi du 29 décembre 1972 : entre 1961
-      et 1972 le modèle prête une complémentaire à qui n'en avait pas.
+      Routée à tous les salariés dès 1961, alors que l'affiliation n'est obligatoire
+      pour tous que depuis la loi du 29 décembre 1972 : entre 1961 et 1972 le modèle
+      prête une complémentaire à qui n'en avait pas.
 
   - code: arrco_tranche_2
     nom: Arrco, tranche 2 des non-cadres
@@ -363,21 +397,20 @@ inventaire:
     succede_a: []
     integre_dans: agirc_arrco
     couverture: modelise
-    statuts: [salarie_prive_non_cadre, salarie_agricole, mineur, agent_seita,
-              agent_chemins_fer_secondaires,
-              maitre_enseignement_prive,
-              salarie_saint_pierre_et_miquelon, salarie_nouvelle_caledonie,
-              salarie_regime_professionnel_integre]
+    statuts: [salarie_prive_non_cadre, salarie_agricole, mineur, agent_seita, agent_chemins_fer_secondaires,
+      maitre_enseignement_prive, salarie_saint_pierre_et_miquelon, salarie_nouvelle_caledonie,
+      salarie_regime_professionnel_integre]
     textes:
-      - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
-      - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
+    - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)",
+      id: null}
+    - {reference: 'accord du 25 avril 1996, article 26 (hors JORF)', id: null}
 
   - code: arrco_cultes
-    nom: Retraite complémentaire obligatoire des cultes (Arrco, puis Agirc-Arrco)
+    nom: >-
+      Retraite complémentaire obligatoire des cultes (Arrco, puis Agirc-Arrco)
     famille: complementaire_prive
     population: >-
-      Ministres des cultes et religieux percevant une rémunération
-      individuelle
+      Ministres des cultes et religieux percevant une rémunération individuelle
     creation: 2006
     fermeture: null
     extinction: null
@@ -386,18 +419,20 @@ inventaire:
     couverture: partiel
     statuts: [ministre_du_culte]
     textes:
-      - {reference: "code de la sécurité sociale, L. 921-1, complété par la loi n° 2005-1579 du 19 décembre 2005, article 75, VII", id: LEGIARTI000047452643}
-      - {reference: "circulaires de la CAVIMAC sur le recouvrement des cotisations de retraite complémentaire des cultes, n° 2021/04 à 2026/03", id: null}
+    - {reference: "code de la sécurité sociale, L. 921-1, complété par la loi n° 2005-1579\
+        \ du 19 décembre 2005, article 75, VII", id: LEGIARTI000047452643}
+    - {reference: "circulaires de la CAVIMAC sur le recouvrement des cotisations de\
+        \ retraite complémentaire des cultes, n° 2021/04 à 2026/03", id: null}
     manque: >-
-      Le taux de base seul : les huit taux spécifiques de la CAVIMAC, de
-      11,13 à 21,31 %, ne sont pas portés ; avant 2019, le taux est celui de
-      la tranche 1 de l'Arrco, aucune circulaire antérieure à novembre 2021
-      n'étant lisible.
+      Le taux de base seul : les huit taux spécifiques de la CAVIMAC, de 11,13 à 21,31
+      %, ne sont pas portés ; avant 2019, le taux est celui de la tranche 1 de l'Arrco,
+      aucune circulaire antérieure à novembre 2021 n'étant lisible.
 
   - code: agirc_entreprises_nouvelles
     nom: Agirc, barème des entreprises créées après 1981
     famille: complementaire_prive
-    population: Cadres des entreprises créées à compter du 1er janvier 1981, tranches B et C
+    population: >-
+      Cadres des entreprises créées à compter du 1er janvier 1981, tranches B et C
     creation: 1981
     fermeture: 2018
     extinction: 2018
@@ -406,12 +441,15 @@ inventaire:
     couverture: modelise
     statuts: [salarie_prive_cadre_entreprise_recente]
     textes:
-      - {reference: "convention collective nationale du 14 mars 1947, avenant A75 du 26 juin 1978 et avenant A99 du 15 juin 1983 (hors JORF et hors KALI)", id: null}
+    - {reference: "convention collective nationale du 14 mars 1947, avenant A75 du 26\
+        \ juin 1978 et avenant A99 du 15 juin 1983 (hors JORF et hors KALI)", id: null}
 
   - code: arrco_tranche_2_entreprises_nouvelles
     nom: Arrco, tranche 2 des entreprises créées après 1997
     famille: complementaire_prive
-    population: Non-cadres des entreprises créées à compter du 1er janvier 1997, entre un et trois plafonds
+    population: >-
+      Non-cadres des entreprises créées à compter du 1er janvier 1997, entre un et trois
+      plafonds
     creation: 1997
     fermeture: 2018
     extinction: 2018
@@ -420,7 +458,7 @@ inventaire:
     couverture: modelise
     statuts: [salarie_prive_non_cadre_entreprise_recente]
     textes:
-      - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
+    - {reference: 'accord du 25 avril 1996, article 26 (hors JORF)', id: null}
 
   - code: agirc_arrco
     nom: Régime unifié Agirc-Arrco
@@ -433,23 +471,24 @@ inventaire:
     integre_dans: null
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
-              agent_sncf, agent_ratp, agent_ieg, mineur, clerc_de_notaire,
-              agent_banque_de_france, agent_seita,
-              agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
-              salarie_prive_non_cadre_entreprise_recente,
-              maitre_enseignement_prive,
-              salarie_saint_pierre_et_miquelon,
-              membre_cese, salarie_nouvelle_caledonie,
-              salarie_regime_professionnel_integre]
+      agent_sncf, agent_ratp, agent_ieg, mineur, clerc_de_notaire, agent_banque_de_france,
+      agent_seita, agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
+      salarie_prive_non_cadre_entreprise_recente, maitre_enseignement_prive, salarie_saint_pierre_et_miquelon,
+      membre_cese, salarie_nouvelle_caledonie, salarie_regime_professionnel_integre]
     textes:
-      - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
-      - {reference: "arrêté du 24 avril 2018 portant extension et élargissement de l'accord", id: JORFTEXT000036847920}
-      - {reference: "avenant n° 17 du 22 novembre 2023, arrêté d'extension du 15 avril 2024", id: JORFTEXT000049424935}
+    - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)",
+      id: null}
+    - {reference: "arrêté du 24 avril 2018 portant extension et élargissement de l'accord",
+      id: JORFTEXT000036847920}
+    - {reference: "avenant n° 17 du 22 novembre 2023, arrêté d'extension du 15 avril\
+        \ 2024", id: JORFTEXT000049424935}
 
   - code: ipacte
-    nom: Institution de prévoyance des agents contractuels et temporaires de l'État
+    nom: >-
+      Institution de prévoyance des agents contractuels et temporaires de l'État
     famille: complementaire_prive
-    population: Agents contractuels et temporaires de l'État, au-dessus du plafond, avant l'Ircantec
+    population: >-
+      Agents contractuels et temporaires de l'État, au-dessus du plafond, avant l'Ircantec
     creation: 1951
     fermeture: 1970
     extinction: 1971
@@ -458,20 +497,25 @@ inventaire:
     couverture: partiel
     statuts: [contractuel_public]
     textes:
-      - {reference: "décret n° 51-1445 du 12 décembre 1951", id: LEGITEXT000006060604}
-      - {reference: "arrêté du 12 décembre 1951, article 8 (salaires de référence 1951-1970)", id: LEGIARTI000006381673}
-      - {reference: "arrêté du 30 août 1952 approuvant la convention Agirc-IPACTE", id: JORFTEXT000000797895}
-      - {reference: "décret n° 70-1277 du 23 décembre 1970 (abrogation au 1er janvier 1971)", id: JORFTEXT000000306984}
+    - {reference: décret n° 51-1445 du 12 décembre 1951, id: LEGITEXT000006060604}
+    - {reference: "arrêté du 12 décembre 1951, article 8 (salaires de référence 1951-1970)",
+      id: LEGIARTI000006381673}
+    - {reference: arrêté du 30 août 1952 approuvant la convention Agirc-IPACTE, id: JORFTEXT000000797895}
+    - {reference: "décret n° 70-1277 du 23 décembre 1970 (abrogation au 1er janvier\
+        \ 1971)", id: JORFTEXT000000306984}
     manque: >-
-      Le taux (4,25 % et 8,25 %) est lu dans l'article 7, mais dans une version
-      consolidée unique, et le taux d'appel est celui de l'Ircantec de 1971
-      prolongé en arrière ; l'âge de liquidation n'est écrit nulle part dans
-      l'index (article 5 absent de LEGI) et prend le barème du successeur.
+      Le taux (4,25 % et 8,25 %) est lu dans l'article 7, mais dans une version consolidée
+      unique, et le taux d'appel est celui de l'Ircantec de 1971 prolongé en arrière
+      ; l'âge de liquidation n'est écrit nulle part dans l'index (article 5 absent de
+      LEGI) et prend le barème du successeur.
 
   - code: igrante
-    nom: Institution générale de retraite des agents non titulaires de l'État
+    nom: >-
+      Institution générale de retraite des agents non titulaires de l'État
     famille: complementaire_prive
-    population: Non-titulaires de l'État, sous le plafond (jusqu'à trois plafonds hors IPACTE), avant l'Ircantec
+    population: >-
+      Non-titulaires de l'État, sous le plafond (jusqu'à trois plafonds hors IPACTE),
+      avant l'Ircantec
     creation: 1960
     fermeture: 1970
     extinction: 1971
@@ -480,37 +524,41 @@ inventaire:
     couverture: partiel
     statuts: [contractuel_public]
     textes:
-      - {reference: "décret n° 59-1569 du 31 décembre 1959, article 2 (assiette)", id: LEGITEXT000006060876}
-      - {reference: "arrêté du 17 février 1960, article 15 (répartition)", id: LEGIARTI000006381706}
-      - {reference: "décret n° 68-1029 du 26 novembre 1968 (taux, corps absent de l'index)", id: JORFTEXT000000869583}
+    - {reference: 'décret n° 59-1569 du 31 décembre 1959, article 2 (assiette)', id: LEGITEXT000006060876}
+    - {reference: 'arrêté du 17 février 1960, article 15 (répartition)', id: LEGIARTI000006381706}
+    - {reference: "décret n° 68-1029 du 26 novembre 1968 (taux, corps absent de l'index)",
+      id: JORFTEXT000000869583}
     manque: >-
-      Le taux (1,40 % et 2,10 %) est lu dans l'article 2, version consolidée
-      unique, l'appel est prolongé de l'Ircantec et l'âge prend le barème du
-      successeur (article 5 bis absent de LEGI) ; et la fiche ne porte que la
-      tranche sous le plafond, celle de l'agent qui relève aussi de l'IPACTE —
-      les autres non-titulaires cotisaient jusqu'à trois plafonds, part
-      qu'aucun statut ne distingue.
+      Le taux (1,40 % et 2,10 %) est lu dans l'article 2, version consolidée unique,
+      l'appel est prolongé de l'Ircantec et l'âge prend le barème du successeur (article
+      5 bis absent de LEGI) ; et la fiche ne porte que la tranche sous le plafond, celle
+      de l'agent qui relève aussi de l'IPACTE — les autres non-titulaires cotisaient
+      jusqu'à trois plafonds, part qu'aucun statut ne distingue.
 
   - code: ircantec
-    nom: Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités publiques
+    nom: >-
+      Institution de retraite complémentaire des agents non titulaires de l'État et
+      des collectivités publiques
     famille: complementaire_prive
     population: >-
-      Agents non titulaires des trois fonctions publiques, élus locaux,
-      praticiens hospitaliers (le « régime des médecins » de l'échantillon
-      interrégimes : une assiette aux deux tiers des émoluments, non un
-      régime distinct)
+      Agents non titulaires des trois fonctions publiques, élus locaux, praticiens hospitaliers
+      (le « régime des médecins » de l'échantillon interrégimes : une assiette aux deux
+      tiers des émoluments, non un régime distinct)
     creation: 1971
     fermeture: null
     extinction: null
     succede_a: [ipacte, igrante]
     integre_dans: null
     couverture: modelise
-    statuts: [contractuel_public,
-              elu_local]
+    statuts: [contractuel_public, elu_local]
     textes:
-      - {reference: "décret n° 70-1277 du 23 décembre 1970", id: null}
-      - {reference: "arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime", id: LEGITEXT000024251295}
-      - {reference: "arrêté du 18 juillet 1983 et arrêté du 7 mars 1986 relatifs à l'assiette de cotisations à l'Ircantec de certains membres du corps médical des établissements hospitaliers publics (deux tiers des émoluments hospitaliers, hors gardes et astreintes)", id: LEGITEXT000006073794}
+    - {reference: décret n° 70-1277 du 23 décembre 1970, id: null}
+    - {reference: "arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement\
+        \ du régime", id: LEGITEXT000024251295}
+    - {reference: "arrêté du 18 juillet 1983 et arrêté du 7 mars 1986 relatifs à l'assiette\
+        \ de cotisations à l'Ircantec de certains membres du corps médical des établissements\
+        \ hospitaliers publics (deux tiers des émoluments hospitaliers, hors gardes\
+        \ et astreintes)", id: LEGITEXT000006073794}
 
   - code: elus_locaux_ircantec
     nom: Affiliation des élus locaux à l'Ircantec
@@ -524,19 +572,24 @@ inventaire:
     couverture: routage
     statuts: [elu_local]
     textes:
-      - {reference: "loi n° 72-1201 du 23 décembre 1972 portant affiliation des maires et adjoints au régime de retraite complémentaire des agents non titulaires, article 1", id: LEGIARTI000006338235}
-      - {reference: "code général des collectivités territoriales, L. 2123-28 (affiliation des élus indemnisés à l'Ircantec)", id: LEGIARTI000006390053}
-      - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice des mandats locaux", id: null}
+    - {reference: "loi n° 72-1201 du 23 décembre 1972 portant affiliation des maires\
+        \ et adjoints au régime de retraite complémentaire des agents non titulaires,\
+        \ article 1", id: LEGIARTI000006338235}
+    - {reference: "code général des collectivités territoriales, L. 2123-28 (affiliation\
+        \ des élus indemnisés à l'Ircantec)", id: LEGIARTI000006390053}
+    - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice\
+        \ des mandats locaux", id: null}
     manque: >-
-      Le statut `elu_local` route l'Ircantec depuis 1973 et, depuis 2013, le
-      régime général au-dessus de la moitié du plafond, le seuil de L.
-      382-31 étant lu année par année sur l'indemnité. Non portés : l'élu
-      qui a cessé toute activité professionnelle, assujetti même sous le
-      seuil ; les régimes de retraite par rente (FONPEL, CAREL),
+      Le statut `elu_local` route l'Ircantec depuis 1973 et, depuis 2013, le régime
+      général au-dessus de la moitié du plafond, le seuil de L. 382-31 étant lu année
+      par année sur l'indemnité. Non portés : l'élu qui a cessé toute activité professionnelle,
+      assujetti même sous le seuil ; les régimes de retraite par rente (FONPEL, CAREL),
       facultatifs.
 
   - code: crpnpac
-    nom: Caisse de retraite du personnel navigant professionnel de l'aéronautique civile, tranche 1
+    nom: >-
+      Caisse de retraite du personnel navigant professionnel de l'aéronautique civile,
+      tranche 1
     famille: special
     population: Personnel navigant technique et commercial
     creation: 1963
@@ -547,13 +600,14 @@ inventaire:
     couverture: partiel
     statuts: [personnel_navigant]
     textes:
-      - {reference: "code de l'aviation civile, R. 426-1 et suivants (abrogés au 1er novembre 2023)", id: null}
-      - {reference: "code des transports, partie réglementaire, depuis le 1er novembre 2023", id: null}
+    - {reference: "code de l'aviation civile, R. 426-1 et suivants (abrogés au 1er novembre\
+        \ 2023)", id: null}
+    - {reference: "code des transports, partie réglementaire, depuis le 1er novembre\
+        \ 2023", id: null}
     manque: >-
-      Le taux d'appel de 1995 à 2011 n'est pas appliqué, ceux de 2016 à 2025
-      ne sont pas publiés (105 % retenu, 111 % en 2026) ; le dispositif
-      transitoire des navigants nés avant 1971 et les conditions montantes de
-      2012 à 2021 ne sont pas portés.
+      Le taux d'appel de 1995 à 2011 n'est pas appliqué, ceux de 2016 à 2025 ne sont
+      pas publiés (105 % retenu, 111 % en 2026) ; le dispositif transitoire des navigants
+      nés avant 1971 et les conditions montantes de 2012 à 2021 ne sont pas portés.
 
   - code: crpnpac_tranche_2
     nom: Caisse de retraite du personnel navigant, tranche 2
@@ -567,9 +621,10 @@ inventaire:
     couverture: partiel
     statuts: [personnel_navigant]
     textes:
-      - {reference: "code de l'aviation civile, R. 426-16-1-1", id: null}
+    - {reference: 'code de l''aviation civile, R. 426-16-1-1', id: null}
     manque: >-
-      Mêmes limites que la tranche 1 : taux d'appel de 2016 à 2025 non publiés, dispositif transitoire et conditions de 2012 à 2021 non portés.
+      Mêmes limites que la tranche 1 : taux d'appel de 2016 à 2025 non publiés, dispositif
+      transitoire et conditions de 2012 à 2021 non portés.
 
   - code: ircec_raap
     nom: Régime des artistes-auteurs professionnels (IRCEC)
@@ -581,26 +636,29 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: partiel
-    statuts: [artiste_auteur,
-              auteur_dramatique, auteur_lyrique]
+    statuts: [artiste_auteur, auteur_dramatique, auteur_lyrique]
     textes:
-      - {reference: "décret n° 62-420 du 11 avril 1962 relatif au régime d'assurance vieillesse complémentaire commun aux artistes", id: LEGIARTI000006781618}
-      - {reference: "arrêté du 21 novembre 2013 portant approbation des statuts de l'IRCEC", id: LEGIARTI000028255012}
-      - {reference: "décret n° 62-420, article 2, rédaction du 1er janvier 1981 : cinq classes, classe spéciale d'office à défaut d'option", id: LEGIARTI000006781619}
+    - {reference: "décret n° 62-420 du 11 avril 1962 relatif au régime d'assurance vieillesse\
+        \ complémentaire commun aux artistes", id: LEGIARTI000006781618}
+    - {reference: "arrêté du 21 novembre 2013 portant approbation des statuts de l'IRCEC",
+      id: LEGIARTI000028255012}
+    - {reference: "décret n° 62-420, article 2, rédaction du 1er janvier 1981 : cinq\
+        \ classes, classe spéciale d'office à défaut d'option", id: LEGIARTI000006781619}
     manque: >-
-      De 1981 à 2015 la cotisation est la classe spéciale d'office, six points
-      par an au montant du décret de l'exercice ; les musiciens étaient en
-      classe A d'office jusqu'en 2004, et la forme d'avant 1981 n'est pas
-      connue (8 %). Le seuil d'affiliation de 900 SMIC horaires n'est pas
-      appliqué, ni le minimum de trente points.
-      La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les
-      générations nées avant 1955 jusqu'en 2024, elle est approchée (voir
-      `docs/limites.md`).
+      De 1981 à 2015 la cotisation est la classe spéciale d'office, six points par an
+      au montant du décret de l'exercice ; les musiciens étaient en classe A d'office
+      jusqu'en 2004, et la forme d'avant 1981 n'est pas connue (8 %). Le seuil d'affiliation
+      de 900 SMIC horaires n'est pas appliqué, ni le minimum de trente points. La minoration
+      de l'IRCEC est lue depuis 2014 ; avant, et pour les générations nées avant 1955
+      jusqu'en 2024, elle est approchée (voir `docs/limites.md`).
 
   - code: ircec_raap_taux_amenage
-    nom: RAAP au taux aménagé des auteurs affiliés au RACD ou au RACL (IRCEC)
+    nom: >-
+      RAAP au taux aménagé des auteurs affiliés au RACD ou au RACL (IRCEC)
     famille: liberal
-    population: Auteurs dramatiques (SACD) et compositeurs (SACEM), qui cotisent au RAAP à la moitié du taux
+    population: >-
+      Auteurs dramatiques (SACD) et compositeurs (SACEM), qui cotisent au RAAP à la
+      moitié du taux
     creation: 2016
     fermeture: null
     extinction: null
@@ -609,12 +667,13 @@ inventaire:
     couverture: partiel
     statuts: [auteur_dramatique, auteur_lyrique]
     textes:
-      - {reference: "décret n° 62-420 du 11 avril 1962, article 2 II (« le taux de la cotisation […] est égal à la moitié de celui prévu au I »), rédaction du décret n° 2015-1877", id: LEGIARTI000041766050}
+    - {reference: "décret n° 62-420 du 11 avril 1962, article 2 II (« le taux de la\
+        \ cotisation […] est égal à la moitié de celui prévu au I »), rédaction du décret\
+        \ n° 2015-1877", id: LEGIARTI000041766050}
     manque: >-
-      Un barème du RAAP, non un régime : la moitié du taux pour qui cotise au
-      RACD ou au RACL, dont les points sont ceux du RAAP. Il en partage les
-      manques — seuil d'affiliation de 900 SMIC horaires et minimum de trente
-      points non appliqués.
+      Un barème du RAAP, non un régime : la moitié du taux pour qui cotise au RACD ou
+      au RACL, dont les points sont ceux du RAAP. Il en partage les manques — seuil
+      d'affiliation de 900 SMIC horaires et minimum de trente points non appliqués.
 
   - code: ircec_racd
     nom: Régime des auteurs et compositeurs dramatiques (IRCEC)
@@ -628,15 +687,16 @@ inventaire:
     couverture: partiel
     statuts: [auteur_dramatique]
     textes:
-      - {reference: "décret n° 64-226 du 11 mars 1964 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs dramatiques, article 2 (8 % des droits)", id: LEGIARTI000006761271}
-      - {reference: "mémo des valeurs 2026 de l'IRCEC (prix d'achat 4,78 €, valeur de service 0,421 €)", id: null}
+    - {reference: "décret n° 64-226 du 11 mars 1964 relatif au régime d'assurance vieillesse\
+        \ complémentaire des auteurs et compositeurs dramatiques, article 2 (8 % des\
+        \ droits)", id: LEGIARTI000006761271}
+    - {reference: "mémo des valeurs 2026 de l'IRCEC (prix d'achat 4,78 €, valeur de\
+        \ service 0,421 €)", id: null}
     manque: >-
-      Le barème du point est celui du seul mémo 2026 de l'IRCEC, appliqué en
-      rendement à toute la carrière ; le plafond de 597 500 € est arrondi à
-      treize plafonds de la Sécurité sociale.
-      La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les
-      générations nées avant 1955 jusqu'en 2024, elle est approchée (voir
-      `docs/limites.md`).
+      Le barème du point est celui du seul mémo 2026 de l'IRCEC, appliqué en rendement
+      à toute la carrière ; le plafond de 597 500 € est arrondi à treize plafonds de
+      la Sécurité sociale. La minoration de l'IRCEC est lue depuis 2014 ; avant, et
+      pour les générations nées avant 1955 jusqu'en 2024, elle est approchée (voir `docs/limites.md`).
 
   - code: ircec_racl
     nom: Régime des auteurs et compositeurs lyriques (IRCEC)
@@ -650,29 +710,30 @@ inventaire:
     couverture: partiel
     statuts: [auteur_lyrique]
     textes:
-      - {reference: "décret n° 61-1304 du 4 décembre 1961 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs de musique, article 1", id: LEGIARTI000006781613}
-      - {reference: "arrêté du 9 mars 1987 portant approbation des modifications apportées aux régimes complémentaires de retraite", id: LEGIARTI000006784842}
-      - {reference: "mémo des valeurs 2026 de l'IRCEC (6,5 % des droits, prix d'achat 10,304 €, valeur de service 0,618 €)", id: null}
+    - {reference: "décret n° 61-1304 du 4 décembre 1961 relatif au régime d'assurance\
+        \ vieillesse complémentaire des auteurs et compositeurs de musique, article\
+        \ 1", id: LEGIARTI000006781613}
+    - {reference: "arrêté du 9 mars 1987 portant approbation des modifications apportées\
+        \ aux régimes complémentaires de retraite", id: LEGIARTI000006784842}
+    - {reference: "mémo des valeurs 2026 de l'IRCEC (6,5 % des droits, prix d'achat\
+        \ 10,304 €, valeur de service 0,618 €)", id: null}
     manque: >-
-      Le taux de 6,5 % et le barème du point viennent du seul mémo 2026 de
-      l'IRCEC, appliqués à toute la carrière ; le seuil d'affiliation (3 170
-      €) est ignoré et le plafond de 435 938 € arrondi à huit plafonds de la
-      Sécurité sociale.
-      La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les
-      générations nées avant 1955 jusqu'en 2024, elle est approchée (voir
-      `docs/limites.md`).
+      Le taux de 6,5 % et le barème du point viennent du seul mémo 2026 de l'IRCEC,
+      appliqués à toute la carrière ; le seuil d'affiliation (3 170 €) est ignoré et
+      le plafond de 435 938 € arrondi à huit plafonds de la Sécurité sociale. La minoration
+      de l'IRCEC est lue depuis 2014 ; avant, et pour les générations nées avant 1955
+      jusqu'en 2024, elle est approchée (voir `docs/limites.md`).
 
   - code: regimes_professionnels_integres
     nom: Régimes professionnels de salariés intégrés à l'Agirc-Arrco
     famille: complementaire_prive
     population: >-
-      Personnels des banques (régime professionnel AFB, intégré en 1994), des
-      organismes de sécurité sociale (CPPOSS, 1994), des caisses d'épargne
-      (CGRCE, 2000), du Crédit agricole, des chambres de commerce et
-      d'industrie (régime annexé au statut de 1973), VRP (IRREP), cadres et
-      salariés agricoles (CAMARCA, 1973), personnel au sol statutaire
-      d'Air France (règlement de retraite approuvé par arrêté, 1956, devenu
-      régime différentiel au-dessus de l'Agirc-Arrco en 1993)
+      Personnels des banques (régime professionnel AFB, intégré en 1994), des organismes
+      de sécurité sociale (CPPOSS, 1994), des caisses d'épargne (CGRCE, 2000), du Crédit
+      agricole, des chambres de commerce et d'industrie (régime annexé au statut de
+      1973), VRP (IRREP), cadres et salariés agricoles (CAMARCA, 1973), personnel au
+      sol statutaire d'Air France (règlement de retraite approuvé par arrêté, 1956,
+      devenu régime différentiel au-dessus de l'Agirc-Arrco en 1993)
     creation: 1947
     fermeture: 1993
     extinction: null
@@ -681,25 +742,39 @@ inventaire:
     couverture: partiel
     statuts: [salarie_regime_professionnel_integre]
     textes:
-      - {reference: "loi n° 99-532 du 25 juin 1999, article 32 (caisses d'épargne)", id: LEGIARTI000006711574}
-      - {reference: "arrêté du 13 novembre 1973 portant homologation du statut du personnel administratif des CCI, régime de retraite annexé", id: LEGIARTI000006610583}
-      - {reference: "décret n° 2002-1012 du 19 juillet 2002, article 21 (affiliation à la CAMARCA)", id: LEGIARTI000006602079}
-      - {reference: "Fondation IFRAP, « La réforme des retraites des banques » (72 à 75 % du dernier salaire en 42 ans, cotisation de 12 à 20 %)", id: null}
-      - {reference: "accord professionnel de la banque du 13 septembre 1993 (intégration à l'Arrco et à l'Agirc au 1er janvier 1994, droits figés au 31 décembre 1993, complément bancaire différentiel), modifié par l'accord du 25 février 2005 (hors JORF)", id: null}
-      - {reference: "arrêté du 4 mai 1956 portant approbation d'une refonte du règlement de retraites du personnel au sol de la Compagnie nationale Air France (affiliation obligatoire du personnel statutaire, modifié jusqu'à l'arrêté du 31 décembre 1991)", id: JORFTEXT000000434601}
-      - {reference: "arrêté du 1er juin 1993 approuvant le règlement de retraite et le règlement du régime différentiel du personnel au sol d'Air France, qui se substituent au règlement antérieur", id: JORFTEXT000000712110}
-      - {reference: "arrêté du 11 janvier 1994 portant extension de l'avenant du 14 décembre 1992 étendant la convention collective nationale du 14 mars 1947 (Agirc) au personnel au sol d'Air France", id: JORFTEXT000000729483}
+    - {reference: 'loi n° 99-532 du 25 juin 1999, article 32 (caisses d''épargne)',
+      id: LEGIARTI000006711574}
+    - {reference: "arrêté du 13 novembre 1973 portant homologation du statut du personnel\
+        \ administratif des CCI, régime de retraite annexé", id: LEGIARTI000006610583}
+    - {reference: "décret n° 2002-1012 du 19 juillet 2002, article 21 (affiliation à\
+        \ la CAMARCA)", id: LEGIARTI000006602079}
+    - {reference: "Fondation IFRAP, « La réforme des retraites des banques » (72 à 75\
+        \ % du dernier salaire en 42 ans, cotisation de 12 à 20 %)", id: null}
+    - {reference: "accord professionnel de la banque du 13 septembre 1993 (intégration\
+        \ à l'Arrco et à l'Agirc au 1er janvier 1994, droits figés au 31 décembre 1993,\
+        \ complément bancaire différentiel), modifié par l'accord du 25 février 2005\
+        \ (hors JORF)", id: null}
+    - {reference: "arrêté du 4 mai 1956 portant approbation d'une refonte du règlement\
+        \ de retraites du personnel au sol de la Compagnie nationale Air France (affiliation\
+        \ obligatoire du personnel statutaire, modifié jusqu'à l'arrêté du 31 décembre\
+        \ 1991)", id: JORFTEXT000000434601}
+    - {reference: "arrêté du 1er juin 1993 approuvant le règlement de retraite et le\
+        \ règlement du régime différentiel du personnel au sol d'Air France, qui se\
+        \ substituent au règlement antérieur", id: JORFTEXT000000712110}
+    - {reference: "arrêté du 11 janvier 1994 portant extension de l'avenant du 14 décembre\
+        \ 1992 étendant la convention collective nationale du 14 mars 1947 (Agirc) au\
+        \ personnel au sol d'Air France", id: JORFTEXT000000729483}
     manque: >-
-      La fiche porte le barème bancaire pour toutes les populations : le
-      complément de 35 % du dernier salaire en 42 ans, la Sécurité sociale
-      déduite, et 16 % de cotisation ; les barèmes propres de la CPPOSS, de
-      la CGRCE, des CCI, de l'IRREP, de la CAMARCA et du personnel au sol
-      d'Air France (règlement de 1956, régime différentiel de 1993), le
-      complément différentiel de 1994 et son rabot, et l'Agirc du cadre
+      La fiche porte le barème bancaire pour toutes les populations : le complément
+      de 35 % du dernier salaire en 42 ans, la Sécurité sociale déduite, et 16 % de
+      cotisation ; les barèmes propres de la CPPOSS, de la CGRCE, des CCI, de l'IRREP,
+      de la CAMARCA et du personnel au sol d'Air France (règlement de 1956, régime différentiel
+      de 1993), le complément différentiel de 1994 et son rabot, et l'Agirc du cadre
       bancaire ne le sont pas.
 
   - code: enseignants_prive_additionnel
-    nom: Régime additionnel de retraite des enseignants du privé sous contrat
+    nom: >-
+      Régime additionnel de retraite des enseignants du privé sous contrat
     famille: special
     population: Maîtres de l'enseignement privé sous contrat
     creation: 2005
@@ -710,10 +785,14 @@ inventaire:
     couverture: modelise
     statuts: [maitre_enseignement_prive]
     textes:
-      - {reference: "loi n° 2005-5 du 5 janvier 2005 relative à la situation des maîtres des établissements d'enseignement privés sous contrat", id: null}
-      - {reference: "décret n° 2005-1233 du 30 septembre 2005 relatif au régime additionnel de retraite des personnels enseignants", id: LEGITEXT000006052499}
-      - {reference: "décret n° 2005-1233, article 2 (assiette) et article 7 (fraction des pensions de base et complémentaire)", id: LEGIARTI000027090124}
-      - {reference: "arrêté du 28 juillet 2006 pris pour l'application du décret n° 2005-1233, article 1 (taux de 0,75 %, 1 %, puis 1,5 % patronal et salarial)", id: LEGIARTI000049688551}
+    - {reference: "loi n° 2005-5 du 5 janvier 2005 relative à la situation des maîtres\
+        \ des établissements d'enseignement privés sous contrat", id: null}
+    - {reference: "décret n° 2005-1233 du 30 septembre 2005 relatif au régime additionnel\
+        \ de retraite des personnels enseignants", id: LEGITEXT000006052499}
+    - {reference: "décret n° 2005-1233, article 2 (assiette) et article 7 (fraction\
+        \ des pensions de base et complémentaire)", id: LEGIARTI000027090124}
+    - {reference: "arrêté du 28 juillet 2006 pris pour l'application du décret n° 2005-1233,\
+        \ article 1 (taux de 0,75 %, 1 %, puis 1,5 % patronal et salarial)", id: LEGIARTI000049688551}
 
   # ---------------------------------------------------------------------
   # Fonction publique et assimilés
@@ -730,13 +809,15 @@ inventaire:
     integre_dans: fonction_publique_etat
     couverture: modelise
     statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
-              militaire, militaire_officier]
+      militaire, militaire_officier]
     textes:
-      - {reference: "loi du 9 juin 1853 sur les pensions civiles", id: null}
-      - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles et militaires", id: null}
+    - {reference: loi du 9 juin 1853 sur les pensions civiles, id: null}
+    - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles\
+        \ et militaires", id: null}
 
   - code: fonction_publique_etat
-    nom: Pensions civiles et militaires de retraite (Service des retraites de l'État)
+    nom: >-
+      Pensions civiles et militaires de retraite (Service des retraites de l'État)
     famille: fonction_publique
     population: Fonctionnaires civils de l'État, magistrats, militaires
     creation: 1948
@@ -746,31 +827,40 @@ inventaire:
     integre_dans: null
     couverture: partiel
     statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
-              militaire, militaire_officier]
+      militaire, militaire_officier]
     textes:
-      - {reference: "loi n° 48-1450 du 20 septembre 1948 portant réforme du régime des pensions civiles et militaires", id: null}
-      - {reference: "loi n° 64-1339 du 26 décembre 1964 portant réforme du code des pensions civiles et militaires de retraite", id: null}
-      - {reference: "code des pensions civiles et militaires de retraite, L. 1 et suivants", id: null}
-      - {reference: "code des pensions civiles et militaires de retraite, L. 24 (catégorie active, âge anticipé et âge minoré ; pension militaire après dix-sept ou vingt-sept ans de services)", id: LEGIARTI000047452804}
-      - {reference: "code des pensions civiles et militaires de retraite, L. 14 bis (âge d'annulation de la décote, par classement)", id: LEGIARTI000047449763}
-      - {reference: "code des pensions civiles et militaires de retraite, L. 25 (jouissance différée de la pension militaire)", id: LEGIARTI000047452796}
-      - {reference: "loi n° 2023-270 du 14 avril 2023, article 10, XXIV (montée en charge des âges classés et militaires)", id: LEGIARTI000047447812}
-      - {reference: "décret n° 2011-2103 du 30 décembre 2011, articles 2 et 4 (relèvement des âges classés et des durées de services militaires)", id: LEGIARTI000025100416}
+    - {reference: "loi n° 48-1450 du 20 septembre 1948 portant réforme du régime des\
+        \ pensions civiles et militaires", id: null}
+    - {reference: "loi n° 64-1339 du 26 décembre 1964 portant réforme du code des pensions\
+        \ civiles et militaires de retraite", id: null}
+    - {reference: "code des pensions civiles et militaires de retraite, L. 1 et suivants",
+      id: null}
+    - {reference: "code des pensions civiles et militaires de retraite, L. 24 (catégorie\
+        \ active, âge anticipé et âge minoré ; pension militaire après dix-sept ou vingt-sept\
+        \ ans de services)", id: LEGIARTI000047452804}
+    - {reference: "code des pensions civiles et militaires de retraite, L. 14 bis (âge\
+        \ d'annulation de la décote, par classement)", id: LEGIARTI000047449763}
+    - {reference: "code des pensions civiles et militaires de retraite, L. 25 (jouissance\
+        \ différée de la pension militaire)", id: LEGIARTI000047452796}
+    - {reference: "loi n° 2023-270 du 14 avril 2023, article 10, XXIV (montée en charge\
+        \ des âges classés et militaires)", id: LEGIARTI000047447812}
+    - {reference: "décret n° 2011-2103 du 30 décembre 2011, articles 2 et 4 (relèvement\
+        \ des âges classés et des durées de services militaires)", id: LEGIARTI000025100416}
     manque: >-
-      Les bonifications de SERVICE — dépaysement, campagne, cinquième — ne sont
-      pas servies, faute de connaître le corps et le détail des services ; la
-      radiation par limite d'âge de grade, qui ouvre la pension militaire quelle
-      que soit la durée accomplie, ne l'est pas non plus, le grade n'étant pas
-      saisi. Les fonctionnaires de La Poste et d'Orange ont la même pension
-      mais une contribution employeur propre depuis 2006, non distinguée. Le
-      temps partiel ne compte qu'à sa quotité dans les services, et le modèle,
-      qui ne la saisit pas, le compte à temps plein ; ni le rachat d'études ni
-      la surcotisation ne sont servis ; le plafond du dernier traitement de la
-      majoration pour enfants (L. 18, V) et l'écrêtement du minimum garanti
-      par le total des pensions ne sont pas appliqués.
+      Les bonifications de SERVICE — dépaysement, campagne, cinquième — ne sont pas
+      servies, faute de connaître le corps et le détail des services ; la radiation
+      par limite d'âge de grade, qui ouvre la pension militaire quelle que soit la durée
+      accomplie, ne l'est pas non plus, le grade n'étant pas saisi. Les fonctionnaires
+      de La Poste et d'Orange ont la même pension mais une contribution employeur propre
+      depuis 2006, non distinguée. Le temps partiel ne compte qu'à sa quotité dans les
+      services, et le modèle, qui ne la saisit pas, le compte à temps plein ; ni le
+      rachat d'études ni la surcotisation ne sont servis ; le plafond du dernier traitement
+      de la majoration pour enfants (L. 18, V) et l'écrêtement du minimum garanti par
+      le total des pensions ne sont pas appliqués.
 
   - code: cnracl
-    nom: Caisse nationale de retraites des agents des collectivités locales
+    nom: >-
+      Caisse nationale de retraites des agents des collectivités locales
     famille: fonction_publique
     population: Fonctionnaires territoriaux et hospitaliers
     creation: 1945
@@ -779,16 +869,17 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: modelise
-    statuts: [fonctionnaire_territorial_hospitalier,
-              fonctionnaire_territorial_hospitalier_actif,
-              fonctionnaire_territorial_hospitalier_super_actif]
+    statuts: [fonctionnaire_territorial_hospitalier, fonctionnaire_territorial_hospitalier_actif,
+      fonctionnaire_territorial_hospitalier_super_actif]
     textes:
-      - {reference: "ordonnance n° 45-993 du 17 mai 1945", id: null}
-      - {reference: "décret n° 47-1846 du 19 septembre 1947", id: null}
-      - {reference: "décret n° 2003-1306 du 26 décembre 2003 relatif au régime de retraite des fonctionnaires affiliés à la CNRACL", id: null}
+    - {reference: ordonnance n° 45-993 du 17 mai 1945, id: null}
+    - {reference: décret n° 47-1846 du 19 septembre 1947, id: null}
+    - {reference: "décret n° 2003-1306 du 26 décembre 2003 relatif au régime de retraite\
+        \ des fonctionnaires affiliés à la CNRACL", id: null}
 
   - code: caisses_communales_avant_1945
-    nom: Caisses communales de retraite et Caisse intercommunale de retraites
+    nom: >-
+      Caisses communales de retraite et Caisse intercommunale de retraites
     famille: fonction_publique
     population: Agents des communes et des départements, avant la CNRACL
     creation: 1930
@@ -799,14 +890,16 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "loi du 5 avril 1910 et règlements communaux (hors JORF numérisé)", id: null}
+    - {reference: loi du 5 avril 1910 et règlements communaux (hors JORF numérisé),
+      id: null}
     raison_hors_champ: >-
-      Fondues dans la CNRACL en 1945, qui a repris leurs droits ; le statut
-      territorial route vers la CNRACL dès 1945 et personne de vivant n'a
-      liquidé sous une caisse communale.
+      Fondues dans la CNRACL en 1945, qui a repris leurs droits ; le statut territorial
+      route vers la CNRACL dès 1945 et personne de vivant n'a liquidé sous une caisse
+      communale.
 
   - code: fspoeie
-    nom: Fonds spécial des pensions des ouvriers des établissements industriels de l'État
+    nom: >-
+      Fonds spécial des pensions des ouvriers des établissements industriels de l'État
     famille: fonction_publique
     population: Ouvriers de l'État
     creation: 1928
@@ -817,9 +910,11 @@ inventaire:
     couverture: modelise
     statuts: [ouvrier_etat, ouvrier_etat_actif]
     textes:
-      - {reference: "loi du 21 mars 1928", id: null}
-      - {reference: "décret n° 67-711 du 18 août 1967 fixant les conditions d'application du régime des pensions des ouvriers des établissements industriels de l'État", id: LEGIARTI000006767403}
-      - {reference: "décret n° 2004-1056 du 5 octobre 2004", id: null}
+    - {reference: loi du 21 mars 1928, id: null}
+    - {reference: "décret n° 67-711 du 18 août 1967 fixant les conditions d'application\
+        \ du régime des pensions des ouvriers des établissements industriels de l'État",
+      id: LEGIARTI000006767403}
+    - {reference: décret n° 2004-1056 du 5 octobre 2004, id: null}
 
   - code: rafp
     nom: Retraite additionnelle de la fonction publique
@@ -832,18 +927,21 @@ inventaire:
     integre_dans: null
     couverture: modelise
     statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
-              fonctionnaire_territorial_hospitalier,
-              fonctionnaire_territorial_hospitalier_actif,
-              fonctionnaire_territorial_hospitalier_super_actif,
-              militaire, militaire_officier, ouvrier_etat, ouvrier_etat_actif]
+      fonctionnaire_territorial_hospitalier, fonctionnaire_territorial_hospitalier_actif,
+      fonctionnaire_territorial_hospitalier_super_actif, militaire, militaire_officier,
+      ouvrier_etat, ouvrier_etat_actif]
     textes:
-      - {reference: "loi n° 2003-775 du 21 août 2003, article 76", id: null}
-      - {reference: "décret n° 2004-569 du 18 juin 2004 relatif à la retraite additionnelle de la fonction publique", id: null}
+    - {reference: 'loi n° 2003-775 du 21 août 2003, article 76', id: null}
+    - {reference: "décret n° 2004-569 du 18 juin 2004 relatif à la retraite additionnelle\
+        \ de la fonction publique", id: null}
 
   - code: assemblees_parlementaires
-    nom: Caisses de retraite des anciens députés, des anciens sénateurs et des personnels des assemblées
+    nom: >-
+      Caisses de retraite des anciens députés, des anciens sénateurs et des personnels
+      des assemblées
     famille: special
-    population: Députés, sénateurs, fonctionnaires de l'Assemblée nationale et du Sénat
+    population: >-
+      Députés, sénateurs, fonctionnaires de l'Assemblée nationale et du Sénat
     creation: 1904
     fermeture: null
     extinction: null
@@ -852,18 +950,23 @@ inventaire:
     couverture: partiel
     statuts: [parlementaire]
     textes:
-      - {reference: "règlement de la Caisse de pensions des députés et des anciens députés, consolidé au 1er janvier 2018, publié par l'Assemblée nationale (hors JORF)", id: null}
-      - {reference: "arrêté des Questeurs n° 15-043 du 14 avril 2015 relatif au taux de cotisation à la Caisse de pensions (9,34 % en 2015, 10,85 % en 2020)", id: null}
-      - {reference: "Bureau du Sénat du 12 juillet 2023, transposition de la loi du 14 avril 2023 à la caisse des retraites des anciens sénateurs (62 à 64 ans, 43 annuités)", id: null}
+    - {reference: "règlement de la Caisse de pensions des députés et des anciens députés,\
+        \ consolidé au 1er janvier 2018, publié par l'Assemblée nationale (hors JORF)",
+      id: null}
+    - {reference: "arrêté des Questeurs n° 15-043 du 14 avril 2015 relatif au taux de\
+        \ cotisation à la Caisse de pensions (9,34 % en 2015, 10,85 % en 2020)", id: null}
+    - {reference: "Bureau du Sénat du 12 juillet 2023, transposition de la loi du 14\
+        \ avril 2023 à la caisse des retraites des anciens sénateurs (62 à 64 ans, 43\
+        \ annuités)", id: null}
     manque: >-
-      La fiche est celle des députés, lue dans le règlement de 2018 ; les
-      sénateurs y sont assimilés faute d'un règlement publié, et les
-      fonctionnaires des assemblées restent hors fiche. La part versée par
-      l'Assemblée n'est pas écrite : seule la retenue du député est portée.
-      La retenue d'avant 2015 est estimée.
+      La fiche est celle des députés, lue dans le règlement de 2018 ; les sénateurs
+      y sont assimilés faute d'un règlement publié, et les fonctionnaires des assemblées
+      restent hors fiche. La part versée par l'Assemblée n'est pas écrite : seule la
+      retenue du député est portée. La retenue d'avant 2015 est estimée.
 
   - code: cese_membres
-    nom: Caisse de retraite des anciens membres du Conseil économique, social et environnemental
+    nom: >-
+      Caisse de retraite des anciens membres du Conseil économique, social et environnemental
     famille: special
     population: Membres du CESE
     creation: 1957
@@ -874,18 +977,24 @@ inventaire:
     couverture: partiel
     statuts: [membre_cese]
     textes:
-      - {reference: "règlement de la Caisse de retraites des membres du Conseil économique, social et environnemental au 1er janvier 2025, articles 4, 7 et 17 (lecese.fr, hors JORF)", id: null}
-      - {reference: "loi n° 57-761 du 10 juillet 1957 et décret n° 59-601 du 5 mai 1959 (institution de la caisse)", id: null}
+    - {reference: "règlement de la Caisse de retraites des membres du Conseil économique,\
+        \ social et environnemental au 1er janvier 2025, articles 4, 7 et 17 (lecese.fr,\
+        \ hors JORF)", id: null}
+    - {reference: "loi n° 57-761 du 10 juillet 1957 et décret n° 59-601 du 5 mai 1959\
+        \ (institution de la caisse)", id: null}
     manque: >-
-      La retenue de 3,42 fois celle de la fonction publique est lue, la
-      contribution du Conseil ne l'est pas ; l'assiette de référence de 2,06
-      fois la rémunération et le plafond des trois quarts sont écrits comme
-      un taux plein de 154,5 % de l'indemnité.
+      La retenue de 3,42 fois celle de la fonction publique est lue, la contribution
+      du Conseil ne l'est pas ; l'assiette de référence de 2,06 fois la rémunération
+      et le plafond des trois quarts sont écrits comme un taux plein de 154,5 % de l'indemnité.
 
   - code: crfom
-    nom: Caisse intercoloniale de retraites, puis Caisse de retraites de la France d'outre-mer (CRFOM)
+    nom: >-
+      Caisse intercoloniale de retraites, puis Caisse de retraites de la France d'outre-mer
+      (CRFOM)
     famille: fonction_publique
-    population: Fonctionnaires et agents des cadres locaux des colonies, protectorats et territoires d'outre-mer
+    population: >-
+      Fonctionnaires et agents des cadres locaux des colonies, protectorats et territoires
+      d'outre-mer
     creation: 1924
     fermeture: 1976
     extinction: null
@@ -894,20 +1003,30 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles et militaires, article 71 (création de la caisse intercoloniale de retraites)", id: LEGIARTI000020851163}
-      - {reference: "décret n° 50-1348 du 27 octobre 1950, articles 43 et 46 (retenue de 6 % des tributaires de la caisse de retraites de la France d'outre-mer, régime du décret du 21 avril 1950)", id: LEGIARTI000006504747}
-      - {reference: "loi n° 75-1278 du 30 décembre 1975 de finances pour 1976, article 73 (les fonctionnaires en activité du régime du décret du 21 avril 1950 sont affiliés d'office, au 1er janvier 1976, au régime des pensions civiles et militaires)", id: LEGIARTI000006272976}
+    - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles\
+        \ et militaires, article 71 (création de la caisse intercoloniale de retraites)",
+      id: LEGIARTI000020851163}
+    - {reference: "décret n° 50-1348 du 27 octobre 1950, articles 43 et 46 (retenue\
+        \ de 6 % des tributaires de la caisse de retraites de la France d'outre-mer,\
+        \ régime du décret du 21 avril 1950)", id: LEGIARTI000006504747}
+    - {reference: "loi n° 75-1278 du 30 décembre 1975 de finances pour 1976, article\
+        \ 73 (les fonctionnaires en activité du régime du décret du 21 avril 1950 sont\
+        \ affiliés d'office, au 1er janvier 1976, au régime des pensions civiles et\
+        \ militaires)", id: LEGIARTI000006272976}
     raison_hors_champ: >-
-      Régime des cadres coloniaux fermé par la loi de finances pour 1976 :
-      ses derniers actifs ont été affiliés d'office aux pensions civiles et
-      militaires au 1er janvier 1976, et ses pensions sont servies par
-      l'État. Le statut `fonctionnaire_etat` porte la carrière ; le dépôt
-      n'a pas le règlement du décret du 21 avril 1950.
+      Régime des cadres coloniaux fermé par la loi de finances pour 1976 : ses derniers
+      actifs ont été affiliés d'office aux pensions civiles et militaires au 1er janvier
+      1976, et ses pensions sont servies par l'État. Le statut `fonctionnaire_etat`
+      porte la carrière ; le dépôt n'a pas le règlement du décret du 21 avril 1950.
 
   - code: fonctionnaires_algerie_maroc_tunisie
-    nom: Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et Société de prévoyance des fonctionnaires tunisiens (pensions garanties)
+    nom: >-
+      Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et
+      Société de prévoyance des fonctionnaires tunisiens (pensions garanties)
     famille: fonction_publique
-    population: Fonctionnaires français des cadres d'Algérie, du Maroc et de Tunisie, agents des communes d'Algérie
+    population: >-
+      Fonctionnaires français des cadres d'Algérie, du Maroc et de Tunisie, agents des
+      communes d'Algérie
     creation: 1903
     fermeture: 1962
     extinction: null
@@ -916,31 +1035,54 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "loi du 30 décembre 1903 portant fixation du budget général de l'exercice 1904 (création de la caisse des retraites de l'Algérie, d'après le Journal officiel lu sur Gallica ; abrogée par la loi n° 2019-1332)", id: JORFARTI000039480075}
-      - {reference: "décret du 16 juillet 1907 relatif au fonctionnement de la caisse des retraites de l'Algérie", id: JORFTEXT000000664903}
-      - {reference: "décret du 2 février 1926 portant réforme du régime des pensions servies par la caisse des retraites de l'Algérie, puis décrets d'affiliation de nouvelles catégories de personnel jusqu'au décret du 11 mars 1937", id: JORFTEXT000000849029}
-      - {reference: "loi n° 52-432 du 28 avril 1952 portant statut général du personnel des communes, article 94 C (affiliation obligatoire à la caisse générale des retraites de l'Algérie)", id: LEGIARTI000006399171}
-      - {reference: "code des pensions civiles et militaires de retraite, R. 35 (coordination avec la caisse générale des retraites de l'Algérie et la caisse marocaine de retraites)", id: LEGIARTI000006362950}
-      - {reference: "loi n° 75-1278 du 30 décembre 1975, article 73 I (les fonctionnaires français de ces trois caisses admis aux avantages du régime général des retraites)", id: LEGIARTI000006272976}
-      - {reference: "loi n° 81-734 du 3 août 1981 de finances rectificative, article 26 (pensions garanties par l'État aux ressortissants de l'Algérie)", id: LEGIARTI000006273652}
-      - {reference: "décret du 22 janvier 1951 homologuant des décisions de l'assemblée algérienne (application de nouvelles catégories de personnels au régime de la caisse générale des retraites)", id: JORFTEXT000000670381}
-      - {reference: "loi n° 58-108 du 7 février 1958 modifiant les lois n° 56-782 du 4 août 1956 et n° 57-261 du 2 mars 1957 (reclassement en France des agents affiliés à la société de prévoyance des fonctionnaires et employés tunisiens ou à la caisse marocaine des retraites)", id: JORFTEXT000000317027}
-      - {reference: "décret n° 68-326 du 5 avril 1968 fixant les règles de validation et de coordination des services accomplis en Algérie du 1er avril 1938 au 1er juillet 1962 sous le régime de la caisse générale des retraites de l'Algérie", id: JORFTEXT000000514424}
+    - {reference: "loi du 30 décembre 1903 portant fixation du budget général de l'exercice\
+        \ 1904 (création de la caisse des retraites de l'Algérie, d'après le Journal\
+        \ officiel lu sur Gallica ; abrogée par la loi n° 2019-1332)", id: JORFARTI000039480075}
+    - {reference: "décret du 16 juillet 1907 relatif au fonctionnement de la caisse\
+        \ des retraites de l'Algérie", id: JORFTEXT000000664903}
+    - {reference: "décret du 2 février 1926 portant réforme du régime des pensions servies\
+        \ par la caisse des retraites de l'Algérie, puis décrets d'affiliation de nouvelles\
+        \ catégories de personnel jusqu'au décret du 11 mars 1937", id: JORFTEXT000000849029}
+    - {reference: "loi n° 52-432 du 28 avril 1952 portant statut général du personnel\
+        \ des communes, article 94 C (affiliation obligatoire à la caisse générale des\
+        \ retraites de l'Algérie)", id: LEGIARTI000006399171}
+    - {reference: "code des pensions civiles et militaires de retraite, R. 35 (coordination\
+        \ avec la caisse générale des retraites de l'Algérie et la caisse marocaine\
+        \ de retraites)", id: LEGIARTI000006362950}
+    - {reference: "loi n° 75-1278 du 30 décembre 1975, article 73 I (les fonctionnaires\
+        \ français de ces trois caisses admis aux avantages du régime général des retraites)",
+      id: LEGIARTI000006272976}
+    - {reference: "loi n° 81-734 du 3 août 1981 de finances rectificative, article 26\
+        \ (pensions garanties par l'État aux ressortissants de l'Algérie)", id: LEGIARTI000006273652}
+    - {reference: "décret du 22 janvier 1951 homologuant des décisions de l'assemblée\
+        \ algérienne (application de nouvelles catégories de personnels au régime de\
+        \ la caisse générale des retraites)", id: JORFTEXT000000670381}
+    - {reference: "loi n° 58-108 du 7 février 1958 modifiant les lois n° 56-782 du 4\
+        \ août 1956 et n° 57-261 du 2 mars 1957 (reclassement en France des agents affiliés\
+        \ à la société de prévoyance des fonctionnaires et employés tunisiens ou à la\
+        \ caisse marocaine des retraites)", id: JORFTEXT000000317027}
+    - {reference: "décret n° 68-326 du 5 avril 1968 fixant les règles de validation\
+        \ et de coordination des services accomplis en Algérie du 1er avril 1938 au\
+        \ 1er juillet 1962 sous le régime de la caisse générale des retraites de l'Algérie",
+      id: JORFTEXT000000514424}
     raison_hors_champ: >-
-      Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés
-      aux Français avec l'indépendance et dont l'État garantit les pensions
-      depuis. La caisse des retraites de l'Algérie, créée par la loi de
-      finances du 30 décembre 1903 et organisée par le décret du 16 juillet
-      1907, a ses décrets de 1907 à 1937 dans l'index ; ses règles d'après
-      1947, décisions de l'assemblée algérienne homologuées par décret, et
-      les dahirs marocains et tunisiens n'y sont que par leurs homologations
-      et les règles de coordination (services du 1er avril 1938 au 1er
-      juillet 1962). Aucun cotisant depuis 1962.
+      Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés aux Français
+      avec l'indépendance et dont l'État garantit les pensions depuis. La caisse des
+      retraites de l'Algérie, créée par la loi de finances du 30 décembre 1903 et organisée
+      par le décret du 16 juillet 1907, a ses décrets de 1907 à 1937 dans l'index ;
+      ses règles d'après 1947, décisions de l'assemblée algérienne homologuées par décret,
+      et les dahirs marocains et tunisiens n'y sont que par leurs homologations et les
+      règles de coordination (services du 1er avril 1938 au 1er juillet 1962). Aucun
+      cotisant depuis 1962.
 
   - code: crfm_mayotte
-    nom: Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM)
+    nom: >-
+      Caisse de retraite des fonctionnaires et agents des collectivités publiques de
+      Mayotte (CRFM)
     famille: fonction_publique
-    population: Agents titulaires de la collectivité, des communes et des établissements publics de Mayotte, avant leur intégration dans les fonctions publiques
+    population: >-
+      Agents titulaires de la collectivité, des communes et des établissements publics
+      de Mayotte, avant leur intégration dans les fonctions publiques
     creation: 1977
     fermeture: 2010
     extinction: null
@@ -949,24 +1091,36 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "loi n° 2001-616 du 11 juillet 2001 relative à Mayotte, article 64-1 (intégration des agents dans les fonctions publiques au plus tard le 31 décembre 2010 ; IX : dissolution de la caisse)", id: LEGIARTI000025950147}
-      - {reference: "décret n° 2012-1256 du 13 novembre 2012 relatif au règlement des droits à pension des agents publics de Mayotte intégrés ou titularisés (préliquidation par la CRFM de la part antérieure)", id: LEGITEXT000026637100}
-      - {reference: "décret n° 2013-255 du 26 mars 2013, article 2 (pensions dues par la CRFM versées par la CNRACL ou par le service des retraites de l'État)", id: LEGIARTI000027239454}
-      - {reference: "répertoire Sirene, établissement public administratif n° 200 025 260 créé le 16 mars 1977 (hors JORF)", id: null}
-      - {reference: "Outre-mer La 1ère, « La Caisse de retraite des fonctionnaires de Mayotte pourrait bientôt fermer ses portes », 17 septembre 2025 (créée en mars 1977, cotisations reprises au niveau national en 2007, trois agents, liquidation en cours)", id: null}
+    - {reference: "loi n° 2001-616 du 11 juillet 2001 relative à Mayotte, article 64-1\
+        \ (intégration des agents dans les fonctions publiques au plus tard le 31 décembre\
+        \ 2010 ; IX : dissolution de la caisse)", id: LEGIARTI000025950147}
+    - {reference: "décret n° 2012-1256 du 13 novembre 2012 relatif au règlement des\
+        \ droits à pension des agents publics de Mayotte intégrés ou titularisés (préliquidation\
+        \ par la CRFM de la part antérieure)", id: LEGITEXT000026637100}
+    - {reference: "décret n° 2013-255 du 26 mars 2013, article 2 (pensions dues par\
+        \ la CRFM versées par la CNRACL ou par le service des retraites de l'État)",
+      id: LEGIARTI000027239454}
+    - {reference: "répertoire Sirene, établissement public administratif n° 200 025\
+        \ 260 créé le 16 mars 1977 (hors JORF)", id: null}
+    - {reference: "Outre-mer La 1ère, « La Caisse de retraite des fonctionnaires de\
+        \ Mayotte pourrait bientôt fermer ses portes », 17 septembre 2025 (créée en\
+        \ mars 1977, cotisations reprises au niveau national en 2007, trois agents,\
+        \ liquidation en cours)", id: null}
     raison_hors_champ: >-
-      Caisse locale créée en mars 1977 par délibération hors Journal
-      officiel, fermée par l'intégration de ses affiliés dans les fonctions
-      publiques d'État, territoriale et hospitalière au plus tard fin 2010,
-      en liquidation depuis : ses pensions sont versées par la CNRACL ou par
-      l'État, la caisse ne préliquidant plus que la part antérieure. Les
-      statuts de fonctionnaire portent la carrière ; le règlement de la
-      caisse n'est pas dans l'index.
+      Caisse locale créée en mars 1977 par délibération hors Journal officiel, fermée
+      par l'intégration de ses affiliés dans les fonctions publiques d'État, territoriale
+      et hospitalière au plus tard fin 2010, en liquidation depuis : ses pensions sont
+      versées par la CNRACL ou par l'État, la caisse ne préliquidant plus que la part
+      antérieure. Les statuts de fonctionnaire portent la carrière ; le règlement de
+      la caisse n'est pas dans l'index.
 
   - code: elus_pacifique
-    nom: Régimes de retraite des élus des assemblées de Polynésie française et de Nouvelle-Calédonie
+    nom: >-
+      Régimes de retraite des élus des assemblées de Polynésie française et de Nouvelle-Calédonie
     famille: special
-    population: Représentants à l'assemblée et membres du gouvernement de la Polynésie française ; membres du congrès, des assemblées de province et du gouvernement de la Nouvelle-Calédonie
+    population: >-
+      Représentants à l'assemblée et membres du gouvernement de la Polynésie française
+      ; membres du congrès, des assemblées de province et du gouvernement de la Nouvelle-Calédonie
     creation: null
     fermeture: null
     extinction: null
@@ -975,23 +1129,35 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "loi organique n° 99-209 du 19 mars 1999 relative à la Nouvelle-Calédonie, article 78 (le congrès fixe le régime de sécurité sociale et de retraite de ses membres)", id: LEGIARTI000028213954}
-      - {reference: "loi organique n° 99-209, article 163 (même compétence de l'assemblée de province pour ses membres)", id: LEGIARTI000028213949}
-      - {reference: "Radio 1 Tahiti, « Les détails du texte qui doit faire cotiser les élus à la CPS » : proposition de loi du pays affiliant les représentants au régime de base des salariés, le régime par capitalisation existant étant maintenu à titre complémentaire (hors JORF)", id: null}
-      - {reference: "TNTV, « Les membres du gouvernement vont cotiser au régime de retraite », 24 avril 2024 : arrêté du conseil des ministres affiliant les membres du gouvernement au régime de base des salariés de la CPS au 1er juin 2024 (hors JORF)", id: null}
-      - {reference: "Outre-mer La 1ère, « Le gouvernement va cotiser au régime de retraite de la CPS », 30 avril 2024 : « représentants et ministres souscrivent à des régimes de retraite privés », cotisation d'environ 3 % des indemnités ministérielles (hors JORF)", id: null}
+    - {reference: "loi organique n° 99-209 du 19 mars 1999 relative à la Nouvelle-Calédonie,\
+        \ article 78 (le congrès fixe le régime de sécurité sociale et de retraite de\
+        \ ses membres)", id: LEGIARTI000028213954}
+    - {reference: "loi organique n° 99-209, article 163 (même compétence de l'assemblée\
+        \ de province pour ses membres)", id: LEGIARTI000028213949}
+    - {reference: "Radio 1 Tahiti, « Les détails du texte qui doit faire cotiser les\
+        \ élus à la CPS » : proposition de loi du pays affiliant les représentants au\
+        \ régime de base des salariés, le régime par capitalisation existant étant maintenu\
+        \ à titre complémentaire (hors JORF)", id: null}
+    - {reference: "TNTV, « Les membres du gouvernement vont cotiser au régime de retraite\
+        \ », 24 avril 2024 : arrêté du conseil des ministres affiliant les membres du\
+        \ gouvernement au régime de base des salariés de la CPS au 1er juin 2024 (hors\
+        \ JORF)", id: null}
+    - {reference: "Outre-mer La 1ère, « Le gouvernement va cotiser au régime de retraite\
+        \ de la CPS », 30 avril 2024 : « représentants et ministres souscrivent à des\
+        \ régimes de retraite privés », cotisation d'environ 3 % des indemnités ministérielles\
+        \ (hors JORF)", id: null}
     raison_hors_champ: >-
-      Régimes fixés par les assemblées elles-mêmes, hors Journal officiel de
-      la République. En Polynésie, les représentants ont un régime par
-      capitalisation auprès d'un assureur privé, exclu des comptes
-      notionnels comme toute capitalisation, et les membres du gouvernement
-      ne cotisent au régime de base de la CPS que depuis le 1er juin 2024 ;
-      en Nouvelle-Calédonie, la loi organique confie au congrès et aux
-      assemblées de province le régime de retraite de leurs membres, et le
-      dépôt n'a lu aucune de leurs délibérations. Aucun barème lu.
+      Régimes fixés par les assemblées elles-mêmes, hors Journal officiel de la République.
+      En Polynésie, les représentants ont un régime par capitalisation auprès d'un assureur
+      privé, exclu des comptes notionnels comme toute capitalisation, et les membres
+      du gouvernement ne cotisent au régime de base de la CPS que depuis le 1er juin
+      2024 ; en Nouvelle-Calédonie, la loi organique confie au congrès et aux assemblées
+      de province le régime de retraite de leurs membres, et le dépôt n'a lu aucune
+      de leurs délibérations. Aucun barème lu.
 
   - code: fonctionnaires_pacifique
-    nom: Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française
+    nom: >-
+      Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française
     famille: fonction_publique
     population: Fonctionnaires territoriaux et communaux du Pacifique
     creation: 1959
@@ -1002,17 +1168,19 @@ inventaire:
     couverture: partiel
     statuts: [fonctionnaire_pacifique]
     textes:
-      - {reference: "Direction des ressources humaines et de la fonction publique de Nouvelle-Calédonie, « Mesures d'urgence en faveur de la CLR » (3 octobre 2023) et « Mesures favorisant la pérennité du régime de retraite des fonctionnaires » (16 septembre 2024) — lois du pays et délibérations du congrès, hors JORF", id: null}
+    - {reference: "Direction des ressources humaines et de la fonction publique de Nouvelle-Calédonie,\
+        \ « Mesures d'urgence en faveur de la CLR » (3 octobre 2023) et « Mesures favorisant\
+        \ la pérennité du régime de retraite des fonctionnaires » (16 septembre 2024)\
+        \ — lois du pays et délibérations du congrès, hors JORF", id: null}
+    manque: >-
+      La fiche est celle de la Caisse locale de retraites de Nouvelle- Calédonie ; les
+      fonctionnaires de Polynésie relèvent de la CPS, portée par le statut salarié.
+      Les cotisations d'avant 2023 sont projetées ; la durée de services requise et
+      la table exacte de l'âge après 2025 restent à lire dans la loi du pays.
 
   # ---------------------------------------------------------------------
   # Régimes spéciaux de salariés
   # ---------------------------------------------------------------------
-    manque: >-
-      La fiche est celle de la Caisse locale de retraites de Nouvelle-
-      Calédonie ; les fonctionnaires de Polynésie relèvent de la CPS, portée
-      par le statut salarié. Les cotisations d'avant 2023 sont projetées ;
-      la durée de services requise et la table exacte de l'âge après 2025
-      restent à lire dans la loi du pays.
 
   - code: sncf
     nom: Régime spécial des agents du cadre permanent de la SNCF
@@ -1026,9 +1194,11 @@ inventaire:
     couverture: modelise
     statuts: [agent_sncf]
     textes:
-      - {reference: "loi du 21 juillet 1909 relative aux conditions de retraite du personnel des grands réseaux de chemins de fer", id: null}
-      - {reference: "code de la sécurité sociale, R. 711-1 6°", id: LEGIARTI000048031379}
-      - {reference: "décret n° 2008-639 du 30 juin 2008 relatif au régime spécial de retraite du personnel de la SNCF", id: null}
+    - {reference: "loi du 21 juillet 1909 relative aux conditions de retraite du personnel\
+        \ des grands réseaux de chemins de fer", id: null}
+    - {reference: 'code de la sécurité sociale, R. 711-1 6°', id: LEGIARTI000048031379}
+    - {reference: "décret n° 2008-639 du 30 juin 2008 relatif au régime spécial de retraite\
+        \ du personnel de la SNCF", id: null}
 
   - code: ratp
     nom: Régime spécial de retraite du personnel de la RATP
@@ -1042,8 +1212,10 @@ inventaire:
     couverture: modelise
     statuts: [agent_ratp]
     textes:
-      - {reference: "loi n° 48-506 du 21 mars 1948 (organisation des transports parisiens)", id: null}
-      - {reference: "décret n° 2008-1514 du 30 décembre 2008 relatif au régime spécial de retraite du personnel de la RATP", id: null}
+    - {reference: "loi n° 48-506 du 21 mars 1948 (organisation des transports parisiens)",
+      id: null}
+    - {reference: "décret n° 2008-1514 du 30 décembre 2008 relatif au régime spécial\
+        \ de retraite du personnel de la RATP", id: null}
 
   - code: ieg
     nom: Régime spécial des industries électriques et gazières (CNIEG)
@@ -1057,13 +1229,15 @@ inventaire:
     couverture: modelise
     statuts: [agent_ieg]
     textes:
-      - {reference: "loi n° 46-628 du 8 avril 1946, article 47, et décret n° 46-1541 du 22 juin 1946 (statut national), annexe 3", id: LEGIARTI000006632496}
-      - {reference: "code de la sécurité sociale, R. 711-1 8°", id: LEGIARTI000048031379}
+    - {reference: "loi n° 46-628 du 8 avril 1946, article 47, et décret n° 46-1541 du\
+        \ 22 juin 1946 (statut national), annexe 3", id: LEGIARTI000006632496}
+    - {reference: 'code de la sécurité sociale, R. 711-1 8°', id: LEGIARTI000048031379}
 
   - code: marins
     nom: Régime des marins (ENIM)
     famille: special
-    population: Marins du commerce, de la pêche et de la plaisance professionnelle
+    population: >-
+      Marins du commerce, de la pêche et de la plaisance professionnelle
     creation: 1673
     fermeture: null
     extinction: null
@@ -1072,25 +1246,25 @@ inventaire:
     couverture: partiel
     statuts: [marin]
     textes:
-      - {reference: "décret-loi du 17 juin 1938 relatif à la réorganisation et à l'unification du régime d'assurance des marins", id: null}
-      - {reference: "code des pensions de retraite des marins, R. 13", id: null}
-      - {reference: "code de la sécurité sociale, R. 711-1 4°", id: LEGIARTI000048031379}
-      - {reference: "arrêtés annuels portant majoration des salaires forfaitaires des marins, 2008-2026 (grille des vingt catégories)", id: JORFARTI000017964781}
+    - {reference: "décret-loi du 17 juin 1938 relatif à la réorganisation et à l'unification\
+        \ du régime d'assurance des marins", id: null}
+    - {reference: 'code des pensions de retraite des marins, R. 13', id: null}
+    - {reference: 'code de la sécurité sociale, R. 711-1 4°', id: LEGIARTI000048031379}
+    - {reference: "arrêtés annuels portant majoration des salaires forfaitaires des\
+        \ marins, 2008-2026 (grille des vingt catégories)", id: JORFARTI000017964781}
     manque: >-
-      La grille des vingt catégories est lue au Journal officiel depuis 2008
-      (`salaires_forfaitaires.csv`, arrêtés annuels) et appliquée : le marin
-      est rangé chaque année dans la catégorie dont le forfait approche le
-      plus son revenu annualisé, convention nommée dans la fiche. Avant 2008,
-      les textes de l'index ne portent pas les montants : la grille de 2008
-      est ramenée par le salaire moyen, au niveau estimé. Les trois âges
-      sont appliqués depuis le 22 septembre 2026 (ancienneté à cinquante ans
-      pour vingt-cinq ans de services, proportionnelle à cinquante-cinq,
-      spéciale avec l'autre pension ou à soixante ans), comme la levée du
-      plafond de vingt-cinq annuités à cinquante-deux ans et demi et la
-      bonification dès deux enfants. Manquent : la catégorie MOYENNE des
-      trente-six derniers mois (R. 11) et le décompte au semestre (R. 12),
-      le taux de 1 % de la petite pêche outre-mer, la pension d'invalidité,
-      la cessation anticipée amiante.
+      La grille des vingt catégories est lue au Journal officiel depuis 2008 (`salaires_forfaitaires.csv`,
+      arrêtés annuels) et appliquée : le marin est rangé chaque année dans la catégorie
+      dont le forfait approche le plus son revenu annualisé, convention nommée dans
+      la fiche. Avant 2008, les textes de l'index ne portent pas les montants : la grille
+      de 2008 est ramenée par le salaire moyen, au niveau estimé. Les trois âges sont
+      appliqués depuis le 22 septembre 2026 (ancienneté à cinquante ans pour vingt-cinq
+      ans de services, proportionnelle à cinquante-cinq, spéciale avec l'autre pension
+      ou à soixante ans), comme la levée du plafond de vingt-cinq annuités à cinquante-deux
+      ans et demi et la bonification dès deux enfants. Manquent : la catégorie MOYENNE
+      des trente-six derniers mois (R. 11) et le décompte au semestre (R. 12), le taux
+      de 1 % de la petite pêche outre-mer, la pension d'invalidité, la cessation anticipée
+      amiante.
 
   - code: mines
     nom: Régime spécial de sécurité sociale dans les mines (CANSSM)
@@ -1104,14 +1278,18 @@ inventaire:
     couverture: modelise
     statuts: [mineur]
     textes:
-      - {reference: "loi du 29 juin 1894 sur les caisses de secours et de retraites des ouvriers mineurs", id: null}
-      - {reference: "décret n° 46-2769 du 27 novembre 1946 portant organisation de la sécurité sociale dans les mines", id: null}
-      - {reference: "code de la sécurité sociale, R. 711-1 5°", id: LEGIARTI000048031379}
+    - {reference: "loi du 29 juin 1894 sur les caisses de secours et de retraites des\
+        \ ouvriers mineurs", id: null}
+    - {reference: "décret n° 46-2769 du 27 novembre 1946 portant organisation de la\
+        \ sécurité sociale dans les mines", id: null}
+    - {reference: 'code de la sécurité sociale, R. 711-1 5°', id: LEGIARTI000048031379}
 
   - code: crpcen
-    nom: Caisse de retraite et de prévoyance des clercs et employés de notaires
+    nom: >-
+      Caisse de retraite et de prévoyance des clercs et employés de notaires
     famille: special
-    population: Clercs et employés de notaires recrutés avant le 1er septembre 2023
+    population: >-
+      Clercs et employés de notaires recrutés avant le 1er septembre 2023
     creation: 1937
     fermeture: 2023
     extinction: null
@@ -1120,15 +1298,19 @@ inventaire:
     couverture: partiel
     statuts: [clerc_de_notaire]
     textes:
-      - {reference: "loi du 12 juillet 1937 instituant une caisse de retraite et de prévoyance des clercs et employés de notaires", id: null}
-      - {reference: "ordonnance n° 45-2574 du 31 octobre 1945 modifiant la loi du 12 juillet 1937", id: LEGITEXT000045170442}
-      - {reference: "décret n° 90-1215 du 20 décembre 1990, article 84 (âge d'ouverture, neuf versions)", id: LEGIARTI000006775247}
-      - {reference: "loi n° 2023-270 du 14 avril 2023, article 1er III (fermeture aux clercs et employés recrutés à compter du 1er septembre 2023)", id: JORFARTI000047445082}
+    - {reference: "loi du 12 juillet 1937 instituant une caisse de retraite et de prévoyance\
+        \ des clercs et employés de notaires", id: null}
+    - {reference: "ordonnance n° 45-2574 du 31 octobre 1945 modifiant la loi du 12 juillet\
+        \ 1937", id: LEGITEXT000045170442}
+    - {reference: "décret n° 90-1215 du 20 décembre 1990, article 84 (âge d'ouverture,\
+        \ neuf versions)", id: LEGIARTI000006775247}
+    - {reference: "loi n° 2023-270 du 14 avril 2023, article 1er III (fermeture aux\
+        \ clercs et employés recrutés à compter du 1er septembre 2023)", id: JORFARTI000047445082}
     manque: >-
-      Deux âges avant 2008 — soixante ans, ou cinquante-cinq pour l'assurée
-      justifiant de vingt-cinq années de cotisations — et le moteur n'en porte
-      qu'un : la fiche garde le second. Les décrets de taux (1977, 1979, 1986)
-      donnent la cotisation de tous les risques, pas la part vieillesse.
+      Deux âges avant 2008 — soixante ans, ou cinquante-cinq pour l'assurée justifiant
+      de vingt-cinq années de cotisations — et le moteur n'en porte qu'un : la fiche
+      garde le second. Les décrets de taux (1977, 1979, 1986) donnent la cotisation
+      de tous les risques, pas la part vieillesse.
 
   - code: banque_de_france
     nom: Régime spécial de retraite de la Banque de France
@@ -1142,14 +1324,18 @@ inventaire:
     couverture: modelise
     statuts: [agent_banque_de_france]
     textes:
-      - {reference: "décret n° 2007-262 du 27 février 2007 relatif au régime de retraite des agents titulaires de la Banque de France, article 1er (« s'applique aux agents titulaires recrutés avant le 1er septembre 2023 »)", id: LEGIARTI000047909408}
-      - {reference: "loi n° 2023-270 du 14 avril 2023, article 1er II (fermeture aux agents recrutés à compter du 1er septembre 2023)", id: JORFARTI000047445082}
-      - {reference: "code de la sécurité sociale, R. 711-1 9°", id: LEGIARTI000048031379}
+    - {reference: "décret n° 2007-262 du 27 février 2007 relatif au régime de retraite\
+        \ des agents titulaires de la Banque de France, article 1er (« s'applique aux\
+        \ agents titulaires recrutés avant le 1er septembre 2023 »)", id: LEGIARTI000047909408}
+    - {reference: "loi n° 2023-270 du 14 avril 2023, article 1er II (fermeture aux agents\
+        \ recrutés à compter du 1er septembre 2023)", id: JORFARTI000047445082}
+    - {reference: 'code de la sécurité sociale, R. 711-1 9°', id: LEGIARTI000048031379}
 
   - code: opera_de_paris
     nom: Régime de retraite du personnel de l'Opéra national de Paris
     famille: special
-    population: Personnels de l'Opéra, artistes du ballet et de l'orchestre compris
+    population: >-
+      Personnels de l'Opéra, artistes du ballet et de l'orchestre compris
     creation: 1698
     fermeture: null
     extinction: null
@@ -1158,8 +1344,9 @@ inventaire:
     couverture: modelise
     statuts: [personnel_opera]
     textes:
-      - {reference: "décret n° 68-382 du 5 avril 1968 portant statut de la caisse de retraites des personnels de l'Opéra", id: null}
-      - {reference: "code de la sécurité sociale, R. 711-1 10°", id: LEGIARTI000048031379}
+    - {reference: "décret n° 68-382 du 5 avril 1968 portant statut de la caisse de retraites\
+        \ des personnels de l'Opéra", id: null}
+    - {reference: 'code de la sécurité sociale, R. 711-1 10°', id: LEGIARTI000048031379}
 
   - code: comedie_francaise
     nom: Régime de retraite du personnel de la Comédie-Française
@@ -1173,8 +1360,9 @@ inventaire:
     couverture: modelise
     statuts: [personnel_comedie_francaise]
     textes:
-      - {reference: "décret n° 68-960 du 11 octobre 1968 relatif à la caisse de retraites des personnels de la Comédie-Française", id: null}
-      - {reference: "code de la sécurité sociale, R. 711-1 10°", id: LEGIARTI000048031379}
+    - {reference: "décret n° 68-960 du 11 octobre 1968 relatif à la caisse de retraites\
+        \ des personnels de la Comédie-Française", id: null}
+    - {reference: 'code de la sécurité sociale, R. 711-1 10°', id: LEGIARTI000048031379}
 
   - code: port_strasbourg
     nom: Régime de retraite du personnel du port autonome de Strasbourg
@@ -1188,14 +1376,14 @@ inventaire:
     couverture: partiel
     statuts: [agent_port_strasbourg]
     textes:
-      - {reference: "règlement de retraite du port autonome de Strasbourg (acte de l'établissement, hors JORF)", id: null}
+    - {reference: "règlement de retraite du port autonome de Strasbourg (acte de l'établissement,\
+        \ hors JORF)", id: null}
     manque: >-
-      Le règlement de retraite est un acte de l'établissement, absent de LEGI
-      et du JORF, qui ne portent que le décret constitutif de 1925
-      (LEGIARTI000021290664), l'affiliation au régime local d'Alsace-Moselle
-      (L. 325-1, LEGIARTI000006742525), la liste des régimes spéciaux de 2014
-      (JORFARTI000029964983) et des décrets de compensation : un seul jeu de
-      règles pour 1930-2026, au niveau `estimee`.
+      Le règlement de retraite est un acte de l'établissement, absent de LEGI et du
+      JORF, qui ne portent que le décret constitutif de 1925 (LEGIARTI000021290664),
+      l'affiliation au régime local d'Alsace-Moselle (L. 325-1, LEGIARTI000006742525),
+      la liste des régimes spéciaux de 2014 (JORFARTI000029964983) et des décrets de
+      compensation : un seul jeu de règles pour 1930-2026, au niveau `estimee`.
 
   - code: seita
     nom: Régime de retraite du personnel de la SEITA
@@ -1209,14 +1397,18 @@ inventaire:
     couverture: modelise
     statuts: [agent_seita]
     textes:
-      - {reference: "ordonnance n° 59-80 du 7 janvier 1959, article 3", id: null}
-      - {reference: "loi n° 84-603 du 13 juillet 1984, article 6", id: LEGIARTI000006302124}
-      - {reference: "décret n° 85-844 du 8 août 1985 portant statut du personnel de la SEITA, article 63", id: LEGIARTI000006325837}
+    - {reference: 'ordonnance n° 59-80 du 7 janvier 1959, article 3', id: null}
+    - {reference: 'loi n° 84-603 du 13 juillet 1984, article 6', id: LEGIARTI000006302124}
+    - {reference: "décret n° 85-844 du 8 août 1985 portant statut du personnel de la\
+        \ SEITA, article 63", id: LEGIARTI000006325837}
 
   - code: chemins_fer_secondaires
-    nom: Caisse autonome mutuelle de retraites des chemins de fer secondaires et tramways (CAMR)
+    nom: >-
+      Caisse autonome mutuelle de retraites des chemins de fer secondaires et tramways
+      (CAMR)
     famille: special
-    population: Agents des chemins de fer d'intérêt local et des tramways, recrutés avant 1954
+    population: >-
+      Agents des chemins de fer d'intérêt local et des tramways, recrutés avant 1954
     creation: 1922
     fermeture: 1954
     extinction: null
@@ -1225,11 +1417,11 @@ inventaire:
     couverture: partiel
     statuts: [agent_chemins_fer_secondaires]
     textes:
-      - {reference: "loi du 22 juillet 1922 relative aux retraites des agents des chemins de fer secondaires et des tramways", id: null}
-      - {reference: "code de la sécurité sociale, R. 711-1 7°", id: LEGIARTI000048031379}
+    - {reference: "loi du 22 juillet 1922 relative aux retraites des agents des chemins\
+        \ de fer secondaires et des tramways", id: null}
+    - {reference: 'code de la sécurité sociale, R. 711-1 7°', id: LEGIARTI000048031379}
     manque: >-
-      Une seule période, au niveau `estimee`, depuis le texte fondateur sans
-      recontrôle.
+      Une seule période, au niveau `estimee`, depuis le texte fondateur sans recontrôle.
 
   - code: cavimac
     nom: Régime des cultes (CAVIMAC)
@@ -1243,11 +1435,13 @@ inventaire:
     couverture: modelise
     statuts: [ministre_du_culte, membre_congregation]
     textes:
-      - {reference: "loi n° 78-4 du 2 janvier 1978 relative aux régimes d'assurance maladie, maternité, invalidité, vieillesse applicables aux ministres des cultes", id: null}
-      - {reference: "code de la sécurité sociale, L. 382-15 et suivants", id: LEGIARTI000031686004}
+    - {reference: "loi n° 78-4 du 2 janvier 1978 relative aux régimes d'assurance maladie,\
+        \ maternité, invalidité, vieillesse applicables aux ministres des cultes", id: null}
+    - {reference: 'code de la sécurité sociale, L. 382-15 et suivants', id: LEGIARTI000031686004}
 
   - code: gerants_debits_tabac
-    nom: Régime d'allocation viagère des gérants de débits de tabac (RAVGDT)
+    nom: >-
+      Régime d'allocation viagère des gérants de débits de tabac (RAVGDT)
     famille: special
     population: Gérants de débits de tabac
     creation: 1963
@@ -1258,14 +1452,16 @@ inventaire:
     couverture: partiel
     statuts: [gerant_debit_tabac]
     textes:
-      - {reference: "décret n° 63-1104 du 30 octobre 1963 relatif au régime d'allocation viagère des gérants de débits de tabac, modifié par le décret n° 90-424 du 16 mai 1990", id: LEGIARTI000006774753}
-      - {reference: "arrêté du 13 novembre 1963 pris pour l'application du décret du 30 octobre 1963, articles 5, 5 bis, 6 et 17", id: LEGIARTI000006787842}
+    - {reference: "décret n° 63-1104 du 30 octobre 1963 relatif au régime d'allocation\
+        \ viagère des gérants de débits de tabac, modifié par le décret n° 90-424 du\
+        \ 16 mai 1990", id: LEGIARTI000006774753}
+    - {reference: "arrêté du 13 novembre 1963 pris pour l'application du décret du 30\
+        \ octobre 1963, articles 5, 5 bis, 6 et 17", id: LEGIARTI000006787842}
     manque: >-
-      Le revenu saisi tient lieu de remises sur les tabacs, sans le plafond
-      de remises de l'article 6 ; le barème du point (4,94 € d'achat en
-      2026, 2,42 € de service en 2025) est celui de la Caisse des dépôts,
-      hors index, appliqué en rendement à toute la carrière ; le taux
-      d'avant 1990 est projeté.
+      Le revenu saisi tient lieu de remises sur les tabacs, sans le plafond de remises
+      de l'article 6 ; le barème du point (4,94 € d'achat en 2026, 2,42 € de service
+      en 2025) est celui de la Caisse des dépôts, hors index, appliqué en rendement
+      à toute la carrière ; le taux d'avant 1990 est projeté.
 
   - code: imprimerie_nationale
     nom: Caisse des retraites de l'Imprimerie nationale
@@ -1279,14 +1475,16 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "loi du 29 juin 1927 (régime de retraites des personnels de l'Imprimerie nationale), citée par R*77 du code des pensions", id: LEGIARTI000006363032}
-      - {reference: "code de la sécurité sociale, R. 711-1 1°", id: LEGIARTI000048031379}
-      - {reference: "projets annuels de performances du programme 195 « Régimes de retraite des mines, de la SEITA et divers » (dix affiliés en 2007, régime éteint fin 2013 au décès du dernier pensionné)", id: JORFARTI000023316030}
+    - {reference: "loi du 29 juin 1927 (régime de retraites des personnels de l'Imprimerie\
+        \ nationale), citée par R*77 du code des pensions", id: LEGIARTI000006363032}
+    - {reference: 'code de la sécurité sociale, R. 711-1 1°', id: LEGIARTI000048031379}
+    - {reference: "projets annuels de performances du programme 195 « Régimes de retraite\
+        \ des mines, de la SEITA et divers » (dix affiliés en 2007, régime éteint fin\
+        \ 2013 au décès du dernier pensionné)", id: JORFARTI000023316030}
     raison_hors_champ: >-
-      Régime éteint : les documents budgétaires du programme 195 comptent
-      dix affiliés en 2007 et constatent l'extinction fin 2013 « avec le
-      décès du dernier pensionné » ; aucun assuré vivant n'y a de droit, il
-      n'y a rien à simuler.
+      Régime éteint : les documents budgétaires du programme 195 comptent dix affiliés
+      en 2007 et constatent l'extinction fin 2013 « avec le décès du dernier pensionné
+      » ; aucun assuré vivant n'y a de droit, il n'y a rien à simuler.
 
   - code: credit_foncier
     nom: Régime spécial de retraite du Crédit foncier de France
@@ -1300,11 +1498,13 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "décret n° 89-157 du 8 mars 1989 fixant les modalités du transfert au régime général, au 1er janvier 1989, du régime spécial du Crédit foncier", id: LEGIARTI000006774339}
+    - {reference: "décret n° 89-157 du 8 mars 1989 fixant les modalités du transfert\
+        \ au régime général, au 1er janvier 1989, du régime spécial du Crédit foncier",
+      id: LEGIARTI000006774339}
     raison_hors_champ: >-
-      Transféré au régime général au 1er janvier 1989, pensions et cotisants
-      compris : les droits acquis sont servis par le régime général et le
-      dépôt n'a pas de source pour le barème d'avant.
+      Transféré au régime général au 1er janvier 1989, pensions et cotisants compris
+      : les droits acquis sont servis par le régime général et le dépôt n'a pas de source
+      pour le barème d'avant.
 
   - code: ortf
     nom: Régime de retraite des personnels de l'ORTF
@@ -1318,14 +1518,18 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "arrêté du 14 avril 1980, validation pour la retraite des services accomplis à l'ORTF", id: JORFTEXT000000855476}
-      - {reference: "lois de finances, programme 195, action « versements liés à la liquidation de l'ORTF »", id: JORFARTI000023316030}
+    - {reference: "arrêté du 14 avril 1980, validation pour la retraite des services\
+        \ accomplis à l'ORTF", id: JORFTEXT000000855476}
+    - {reference: "lois de finances, programme 195, action « versements liés à la liquidation\
+        \ de l'ORTF »", id: JORFARTI000023316030}
     raison_hors_champ: >-
-      Régime en extinction dont l'État verse les derniers engagements ; aucun
-      cotisant depuis 1975.
+      Régime en extinction dont l'État verse les derniers engagements ; aucun cotisant
+      depuis 1975.
 
   - code: regies_ferroviaires_outre_mer
-    nom: Caisse des retraites des régies ferroviaires d'outre-mer et caisses des chemins de fer d'Afrique du Nord
+    nom: >-
+      Caisse des retraites des régies ferroviaires d'outre-mer et caisses des chemins
+      de fer d'Afrique du Nord
     famille: special
     population: Anciens agents des chemins de fer coloniaux et d'Afrique du Nord
     creation: 1930
@@ -1336,15 +1540,18 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "décret n° 58-1090 du 6 novembre 1958 portant affiliation au régime général des retraités de la caisse des retraites des régies ferroviaires", id: JORFTEXT000000669975}
-      - {reference: "décret n° 93-1150 du 29 septembre 1993, transfert à l'État de la gestion du régime des anciennes régies ferroviaires d'outre-mer", id: JORFTEXT000000332371}
+    - {reference: "décret n° 58-1090 du 6 novembre 1958 portant affiliation au régime\
+        \ général des retraités de la caisse des retraites des régies ferroviaires",
+      id: JORFTEXT000000669975}
+    - {reference: "décret n° 93-1150 du 29 septembre 1993, transfert à l'État de la\
+        \ gestion du régime des anciennes régies ferroviaires d'outre-mer", id: JORFTEXT000000332371}
     raison_hors_champ: >-
-      Régimes de rapatriés en extinction, gérés par l'État depuis 1993 ; les
-      services sont validés au régime général par les lois de 1964 et 1965 sur
-      les rapatriés.
+      Régimes de rapatriés en extinction, gérés par l'État depuis 1993 ; les services
+      sont validés au régime général par les lois de 1964 et 1965 sur les rapatriés.
 
   - code: sapeurs_pompiers_volontaires
-    nom: Prestation de fidélisation et de reconnaissance des sapeurs-pompiers volontaires
+    nom: >-
+      Prestation de fidélisation et de reconnaissance des sapeurs-pompiers volontaires
     famille: special
     population: Sapeurs-pompiers volontaires
     creation: 2005
@@ -1355,17 +1562,18 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "loi n° 96-370 du 3 mai 1996, article 15-1 (rédaction de 2004)", id: LEGIARTI000006367738}
+    - {reference: 'loi n° 96-370 du 3 mai 1996, article 15-1 (rédaction de 2004)', id: LEGIARTI000006367738}
     raison_hors_champ: >-
-      Une prestation financée par les collectivités, sans cotisation du
-      bénéficiaire : ce n'est pas un régime de retraite au sens du modèle.
+      Une prestation financée par les collectivités, sans cotisation du bénéficiaire
+      : ce n'est pas un régime de retraite au sens du modèle.
 
   # ---------------------------------------------------------------------
   # Non-salariés non agricoles
   # ---------------------------------------------------------------------
 
   - code: cancava
-    nom: Caisse autonome nationale de compensation de l'assurance vieillesse artisanale
+    nom: >-
+      Caisse autonome nationale de compensation de l'assurance vieillesse artisanale
     famille: non_salarie
     population: Artisans
     creation: 1949
@@ -1376,7 +1584,8 @@ inventaire:
     couverture: modelise
     statuts: [artisan]
     textes:
-      - {reference: "loi n° 48-101 du 17 janvier 1948 instituant une allocation de vieillesse pour les personnes non salariées", id: null}
+    - {reference: "loi n° 48-101 du 17 janvier 1948 instituant une allocation de vieillesse\
+        \ pour les personnes non salariées", id: null}
 
   - code: organic
     nom: Organisation autonome nationale de l'industrie et du commerce
@@ -1388,10 +1597,9 @@ inventaire:
     succede_a: []
     integre_dans: rsi
     couverture: modelise
-    statuts: [commercant,
-              gerant_debit_tabac, micro_entrepreneur]
+    statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
-      - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}
+    - {reference: loi n° 48-101 du 17 janvier 1948, id: null}
 
   - code: rsi
     nom: Régime social des indépendants
@@ -1403,11 +1611,12 @@ inventaire:
     succede_a: [cancava, organic]
     integre_dans: regime_general
     couverture: modelise
-    statuts: [artisan, commercant,
-              gerant_debit_tabac, micro_entrepreneur]
+    statuts: [artisan, commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
-      - {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création du régime social des indépendants", id: null}
-      - {reference: "loi n° 2017-1836 du 30 décembre 2017 de financement de la sécurité sociale pour 2018, article 15", id: null}
+    - {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création\
+        \ du régime social des indépendants", id: null}
+    - {reference: "loi n° 2017-1836 du 30 décembre 2017 de financement de la sécurité\
+        \ sociale pour 2018, article 15", id: null}
 
   - code: rco_artisans
     nom: Régime complémentaire obligatoire des artisans
@@ -1421,7 +1630,8 @@ inventaire:
     couverture: modelise
     statuts: [artisan]
     textes:
-      - {reference: "décret n° 78-351 du 14 mars 1978 (régime complémentaire obligatoire d'assurance vieillesse des artisans)", id: null}
+    - {reference: "décret n° 78-351 du 14 mars 1978 (régime complémentaire obligatoire\
+        \ d'assurance vieillesse des artisans)", id: null}
 
   - code: nric
     nom: Nouveau régime complémentaire des industriels et commerçants
@@ -1433,15 +1643,19 @@ inventaire:
     succede_a: []
     integre_dans: rci
     couverture: modelise
-    statuts: [commercant,
-              gerant_debit_tabac, micro_entrepreneur]
+    statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
-      - {reference: "décret n° 2004-848 du 23 août 2004 (régime complémentaire obligatoire des industriels et commerçants)", id: null}
+    - {reference: "décret n° 2004-848 du 23 août 2004 (régime complémentaire obligatoire\
+        \ des industriels et commerçants)", id: null}
 
   - code: organic_conjoints_batiment
-    nom: Régimes complémentaires des conjoints de commerçants et des entrepreneurs du bâtiment (Organic)
+    nom: >-
+      Régimes complémentaires des conjoints de commerçants et des entrepreneurs du bâtiment
+      (Organic)
     famille: non_salarie
-    population: Conjoints des industriels et commerçants ; entrepreneurs du bâtiment et des travaux publics
+    population: >-
+      Conjoints des industriels et commerçants ; entrepreneurs du bâtiment et des travaux
+      publics
     creation: 1973
     fermeture: 2003
     extinction: 2004
@@ -1450,18 +1664,23 @@ inventaire:
     couverture: partiel
     statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
-      - {reference: "code de la sécurité sociale, D. 635-32 (institution du régime en faveur des conjoints) et D. 635-34 (objet : maintenir au conjoint les avantages d'avant 1973)", id: LEGIARTI000006738054}
-      - {reference: "code de la sécurité sociale, D. 635-35 (cotisation additionnelle à la charge de tous les assujettis du régime de base)", id: LEGIARTI000006738057}
-      - {reference: "code de la sécurité sociale, D. 635-36 : 0,50 % et 1,82 % (1985-1997), 1,5 % et 3,5 % (1998), 2,5 % et 3,95 % (1999-2003)", id: LEGIARTI000006738097}
-      - {reference: "décret n° 50-60 du 11 janvier 1950 (régime complémentaire des entrepreneurs du bâtiment), fermé et sans cotisation depuis le 25 mars 1998", id: LEGIARTI000006781229}
-      - {reference: "arrêté du 9 février 2012 portant approbation du règlement du RCI, reprise des points de l'ancien régime des conjoints", id: LEGIARTI000025397326}
+    - {reference: "code de la sécurité sociale, D. 635-32 (institution du régime en\
+        \ faveur des conjoints) et D. 635-34 (objet : maintenir au conjoint les avantages\
+        \ d'avant 1973)", id: LEGIARTI000006738054}
+    - {reference: "code de la sécurité sociale, D. 635-35 (cotisation additionnelle\
+        \ à la charge de tous les assujettis du régime de base)", id: LEGIARTI000006738057}
+    - {reference: "code de la sécurité sociale, D. 635-36 : 0,50 % et 1,82 % (1985-1997),\
+        \ 1,5 % et 3,5 % (1998), 2,5 % et 3,95 % (1999-2003)", id: LEGIARTI000006738097}
+    - {reference: "décret n° 50-60 du 11 janvier 1950 (régime complémentaire des entrepreneurs\
+        \ du bâtiment), fermé et sans cotisation depuis le 25 mars 1998", id: LEGIARTI000006781229}
+    - {reference: "arrêté du 9 février 2012 portant approbation du règlement du RCI,\
+        \ reprise des points de l'ancien régime des conjoints", id: LEGIARTI000025397326}
     manque: >-
-      La fiche porte la cotisation du commerçant, qui entre au compte
-      notionnel, et rien dans le scénario actuel : la pension va au
-      conjoint, droit dérivé que la carrière individuelle ne porte pas. Le
-      volet bâtiment n'a aucun chiffre dans LEGI (articles 2 à 5 du décret
-      n° 50-60 abrogés, point fixé par la caisse) et n'est pas porté ; les
-      taux d'avant 1985 sont projetés.
+      La fiche porte la cotisation du commerçant, qui entre au compte notionnel, et
+      rien dans le scénario actuel : la pension va au conjoint, droit dérivé que la
+      carrière individuelle ne porte pas. Le volet bâtiment n'a aucun chiffre dans LEGI
+      (articles 2 à 5 du décret n° 50-60 abrogés, point fixé par la caisse) et n'est
+      pas porté ; les taux d'avant 1985 sont projetés.
 
   - code: rci
     nom: Régime complémentaire des indépendants
@@ -1473,16 +1692,16 @@ inventaire:
     succede_a: [rco_artisans, nric]
     integre_dans: null
     couverture: modelise
-    statuts: [artisan, commercant,
-              gerant_debit_tabac, micro_entrepreneur,
-              liberal_non_reglemente]
+    statuts: [artisan, commercant, gerant_debit_tabac, micro_entrepreneur, liberal_non_reglemente]
     textes:
-      - {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire obligatoire d'assurance vieillesse des indépendants", id: LEGIARTI000025397326}
+    - {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime\
+        \ complémentaire obligatoire d'assurance vieillesse des indépendants", id: LEGIARTI000025397326}
 
   - code: micro_entrepreneurs
     nom: Régime micro-social des micro-entrepreneurs
     famille: non_salarie
-    population: Micro-entrepreneurs (artisans, commerçants, libéraux non réglementés)
+    population: >-
+      Micro-entrepreneurs (artisans, commerçants, libéraux non réglementés)
     creation: 2009
     fermeture: null
     extinction: null
@@ -1491,24 +1710,29 @@ inventaire:
     couverture: routage
     statuts: [micro_entrepreneur]
     textes:
-      - {reference: "loi n° 2008-776 du 4 août 2008 de modernisation de l'économie, article 1er (L. 133-6-8)", id: LEGIARTI000019284945}
-      - {reference: "décret n° 2018-1120 du 10 décembre 2018 relatif aux modalités d'application du régime micro-social aux professionnels libéraux", id: LEGITEXT000037798308}
-      - {reference: "code de la sécurité sociale, L. 133-6-8 (prestations calculées sur le chiffre d'affaires après abattement de 71 %, 50 % ou 34 %)", id: LEGIARTI000033712872}
-      - {reference: "code de la sécurité sociale, D. 131-6-3 (fraction du taux pendant l'exonération de début d'activité)", id: LEGIARTI000034163578}
+    - {reference: "loi n° 2008-776 du 4 août 2008 de modernisation de l'économie, article\
+        \ 1er (L. 133-6-8)", id: LEGIARTI000019284945}
+    - {reference: "décret n° 2018-1120 du 10 décembre 2018 relatif aux modalités d'application\
+        \ du régime micro-social aux professionnels libéraux", id: LEGITEXT000037798308}
+    - {reference: "code de la sécurité sociale, L. 133-6-8 (prestations calculées sur\
+        \ le chiffre d'affaires après abattement de 71 %, 50 % ou 34 %)", id: LEGIARTI000033712872}
+    - {reference: "code de la sécurité sociale, D. 131-6-3 (fraction du taux pendant\
+        \ l'exonération de début d'activité)", id: LEGIARTI000034163578}
     manque: >-
-      Le statut `micro_entrepreneur` route les régimes du commerçant sur le
-      revenu reconstitué (chiffre d'affaires après abattement) : la
-      cotisation micro-sociale ventilée entre les branches reproduit, par
-      construction, celle du commerçant — 12,3 % du chiffre d'affaires dont
-      58,3 % pour la retraite, sur 29 % de revenu, font 24,7 % contre 24,75
-      % —, et les trimestres se valident sur ce revenu depuis 2023. Non
-      portés : les seuils de chiffre d'affaires d'avant 2023, les variantes
-      de l'abattement (50 % services, 34 % libéral).
+      Le statut `micro_entrepreneur` route les régimes du commerçant sur le revenu reconstitué
+      (chiffre d'affaires après abattement) : la cotisation micro-sociale ventilée entre
+      les branches reproduit, par construction, celle du commerçant — 12,3 % du chiffre
+      d'affaires dont 58,3 % pour la retraite, sur 29 % de revenu, font 24,7 % contre
+      24,75 % —, et les trimestres se valident sur ce revenu depuis 2023. Non portés
+      : les seuils de chiffre d'affaires d'avant 2023, les variantes de l'abattement
+      (50 % services, 34 % libéral).
 
   - code: cnavpl
-    nom: Caisse nationale d'assurance vieillesse des professions libérales, régime de base
+    nom: >-
+      Caisse nationale d'assurance vieillesse des professions libérales, régime de base
     famille: liberal
-    population: Professions libérales réglementées et, jusqu'en 2018, non réglementées
+    population: >-
+      Professions libérales réglementées et, jusqu'en 2018, non réglementées
     creation: 1949
     fermeture: null
     extinction: null
@@ -1516,24 +1740,26 @@ inventaire:
     integre_dans: null
     couverture: partiel
     statuts: [profession_liberale, liberal_non_reglemente, auxiliaire_medical, pharmacien,
-              expert_comptable, agent_general_assurance, notaire, veterinaire,
-              officier_ministeriel, chirurgien_dentiste_ou_sage_femme, medecin_liberal]
+      expert_comptable, agent_general_assurance, notaire, veterinaire, officier_ministeriel,
+      chirurgien_dentiste_ou_sage_femme, medecin_liberal]
     textes:
-      - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}
-      - {reference: "code de la sécurité sociale, L. 640-1 (professions affiliées, rédaction de la LFSS 2018)", id: LEGIARTI000036391511}
-      - {reference: "loi n° 2017-1836 du 30 décembre 2017, article 15 (les libéraux hors L. 640-1 affiliés avant le 1er janvier 2019 restent à la CNAVPL et à la Cipav)", id: JORFARTI000036339157}
-      - {reference: "code de la sécurité sociale, D. 643-1", id: LEGIARTI000029825121}
-      - {reference: "code de la sécurité sociale, L. 643-1-1 (majoration de durée d'assurance pour enfants, pensions prenant effet depuis le 1er avril 2010)", id: LEGIARTI000021537910}
+    - {reference: loi n° 48-101 du 17 janvier 1948, id: null}
+    - {reference: "code de la sécurité sociale, L. 640-1 (professions affiliées, rédaction\
+        \ de la LFSS 2018)", id: LEGIARTI000036391511}
+    - {reference: "loi n° 2017-1836 du 30 décembre 2017, article 15 (les libéraux hors\
+        \ L. 640-1 affiliés avant le 1er janvier 2019 restent à la CNAVPL et à la Cipav)",
+      id: JORFARTI000036339157}
+    - {reference: 'code de la sécurité sociale, D. 643-1', id: LEGIARTI000029825121}
+    - {reference: "code de la sécurité sociale, L. 643-1-1 (majoration de durée d'assurance\
+        \ pour enfants, pensions prenant effet depuis le 1er avril 2010)", id: LEGIARTI000021537910}
     manque: >-
-      Le libéral non réglementé installé depuis 2019 relève du régime général
-      et du RCI, celui installé avant reste à la CNAVPL et à la Cipav : le
-      statut `liberal_non_reglemente` le route ainsi, à la date d'installation.
-      Le droit d'option de 2019 à 2023, par lequel un affilié d'avant pouvait
-      rejoindre la sécurité sociale des indépendants, n'est pas porté ; ni la
-      cotisation de la CNAVPL sur les revenus d'avant 1949, qui n'existait pas.
-      Les cent points que D. 643-1 attribue au trimestre d'un accouchement ne
-      le sont pas non plus : le modèle ne connaît pas la date de naissance des
-      enfants.
+      Le libéral non réglementé installé depuis 2019 relève du régime général et du
+      RCI, celui installé avant reste à la CNAVPL et à la Cipav : le statut `liberal_non_reglemente`
+      le route ainsi, à la date d'installation. Le droit d'option de 2019 à 2023, par
+      lequel un affilié d'avant pouvait rejoindre la sécurité sociale des indépendants,
+      n'est pas porté ; ni la cotisation de la CNAVPL sur les revenus d'avant 1949,
+      qui n'existait pas. Les cent points que D. 643-1 attribue au trimestre d'un accouchement
+      ne le sont pas non plus : le modèle ne connaît pas la date de naissance des enfants.
 
   - code: carmf_complementaire
     nom: Complémentaire des médecins (CARMF)
@@ -1547,11 +1773,15 @@ inventaire:
     couverture: modelise
     statuts: [medecin_liberal]
     textes:
-      - {reference: "décret n° 49-579 du 22 avril 1949 et statuts du régime complémentaire (arrêtés d'approbation)", id: null}
-      - {reference: "chronologie de la CARMF (tables « Cotisations forfaitaires », « Cotisations proportionnelles », valeurs du point) : soixante-deux périodes de 1949 à 2026, et le coefficient de 1,33 des points d'avant 1991", id: null}
+    - {reference: "décret n° 49-579 du 22 avril 1949 et statuts du régime complémentaire\
+        \ (arrêtés d'approbation)", id: null}
+    - {reference: "chronologie de la CARMF (tables « Cotisations forfaitaires », « Cotisations\
+        \ proportionnelles », valeurs du point) : soixante-deux périodes de 1949 à 2026,\
+        \ et le coefficient de 1,33 des points d'avant 1991", id: null}
 
   - code: carcdsf_complementaire
-    nom: Complémentaire des chirurgiens-dentistes et des sages-femmes (CARCDSF)
+    nom: >-
+      Complémentaire des chirurgiens-dentistes et des sages-femmes (CARCDSF)
     famille: liberal
     population: Chirurgiens-dentistes et sages-femmes libéraux
     creation: 1949
@@ -1562,18 +1792,21 @@ inventaire:
     couverture: partiel
     statuts: [chirurgien_dentiste_ou_sage_femme]
     textes:
-      - {reference: "décret n° 2008-1490 du 30 décembre 2008 (fusion de la CARCD et de la CARSAF)", id: null}
-      - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 1er octobre 2007", id: JORFTEXT000000252172}
-      - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 13 avril 2011", id: JORFTEXT000023909782}
-      - {reference: "règlement du régime complémentaire approuvé par l'arrêté du 10 juillet 2026", id: JORFTEXT000054435736}
+    - {reference: "décret n° 2008-1490 du 30 décembre 2008 (fusion de la CARCD et de\
+        \ la CARSAF)", id: null}
+    - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 1er octobre\
+        \ 2007", id: JORFTEXT000000252172}
+    - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 13 avril\
+        \ 2011", id: JORFTEXT000023909782}
+    - {reference: "règlement du régime complémentaire approuvé par l'arrêté du 10 juillet\
+        \ 2026", id: JORFTEXT000054435736}
     manque: >-
-      La CARSAF des sages-femmes, fusionnée dans la CARCDSF en 2009, avait son
-      propre barème avant : les sages-femmes d'avant 2009 reçoivent celui des
-      dentistes. Les statuts d'avant 2007, publiés au Bulletin officiel, ne
-      sont pas lus : avant 2008 la fiche garde la règle d'âge du régime de
-      base. Le tableau de minoration des nés de juillet 1951 à 1954 (arrêté du
-      9 juillet 2012) n'est publié qu'en image, et 1,25 % par trimestre en
-      tient lieu.
+      La CARSAF des sages-femmes, fusionnée dans la CARCDSF en 2009, avait son propre
+      barème avant : les sages-femmes d'avant 2009 reçoivent celui des dentistes. Les
+      statuts d'avant 2007, publiés au Bulletin officiel, ne sont pas lus : avant 2008
+      la fiche garde la règle d'âge du régime de base. Le tableau de minoration des
+      nés de juillet 1951 à 1954 (arrêté du 9 juillet 2012) n'est publié qu'en image,
+      et 1,25 % par trimestre en tient lieu.
 
   - code: cavp_complementaire
     nom: Complémentaire des pharmaciens (CAVP)
@@ -1587,23 +1820,25 @@ inventaire:
     couverture: partiel
     statuts: [pharmacien]
     textes:
-      - {reference: "statuts du régime complémentaire de la CAVP (arrêtés d'approbation)", id: null}
+    - {reference: "statuts du régime complémentaire de la CAVP (arrêtés d'approbation)",
+      id: null}
     manque: >-
-      Les dix versions de l'article 2 du décret n° 49-580 datent les grilles
-      de classes (option de 1978 à 2015, classes d'office en plafonds depuis
-      2015, onze classes depuis 2020), mais la cotisation de référence de
-      chaque année n'est pas dans le texte : le forfait indexé sur les prix
-      en tient lieu, et rien n'est consolidé avant 1978 ; le volet en
-      capitalisation par classes n'est pas chiffré. Les coefficients
-      d'anticipation des nés jusqu'en 1955, « en annexe » des statuts de 2011,
-      ne sont pas dans l'index : les deux pentes de la minoration leur sont
-      appliquées depuis leur propre âge du taux plein, et leur valeur de
-      service n'est pas affectée du coefficient de 0,96.
+      Les dix versions de l'article 2 du décret n° 49-580 datent les grilles de classes
+      (option de 1978 à 2015, classes d'office en plafonds depuis 2015, onze classes
+      depuis 2020), mais la cotisation de référence de chaque année n'est pas dans le
+      texte : le forfait indexé sur les prix en tient lieu, et rien n'est consolidé
+      avant 1978 ; le volet en capitalisation par classes n'est pas chiffré. Les coefficients
+      d'anticipation des nés jusqu'en 1955, « en annexe » des statuts de 2011, ne sont
+      pas dans l'index : les deux pentes de la minoration leur sont appliquées depuis
+      leur propre âge du taux plein, et leur valeur de service n'est pas affectée du
+      coefficient de 0,96.
 
   - code: carpimko_complementaire
     nom: Complémentaire des auxiliaires médicaux (CARPIMKO)
     famille: liberal
-    population: Infirmiers, masseurs-kinésithérapeutes, pédicures-podologues, orthophonistes, orthoptistes
+    population: >-
+      Infirmiers, masseurs-kinésithérapeutes, pédicures-podologues, orthophonistes,
+      orthoptistes
     creation: 1984
     fermeture: null
     extinction: null
@@ -1612,7 +1847,7 @@ inventaire:
     couverture: modelise
     statuts: [auxiliaire_medical]
     textes:
-      - {reference: "décret n° 84-143 du 22 février 1984", id: null}
+    - {reference: décret n° 84-143 du 22 février 1984, id: null}
 
   - code: carpv_complementaire
     nom: Complémentaire des vétérinaires (CARPV)
@@ -1626,17 +1861,17 @@ inventaire:
     couverture: partiel
     statuts: [veterinaire]
     textes:
-      - {reference: "décrets annuels fixant les cotisations du régime complémentaire des vétérinaires (depuis 2016)", id: null}
+    - {reference: "décrets annuels fixant les cotisations du régime complémentaire des\
+        \ vétérinaires (depuis 2016)", id: null}
     manque: >-
-      Dix périodes suivent les onze versions de l'article 2 du décret n°
-      50-1318 (actes médicaux par âge de 1950 à 1997, classes de revenu en
-      AMV de 1998 à 2014, points depuis 2015), mais aucun montant d'époque
-      n'est dans le texte — la valeur de l'acte et le prix du point sont
-      fixés hors index — : la grille de 2016 indexée sur les prix tient lieu
-      de montant avant 2016. La règle d'âge — taux plein à 65 ans, 1,25 % par
-      trimestre avant, que la durée n'annule pas — et la bonification pour
-      trois enfants ne sont lues que dans les statuts de 2021 : la première
-      est supposée la même avant, la seconde n'est servie que depuis 2022.
+      Dix périodes suivent les onze versions de l'article 2 du décret n° 50-1318 (actes
+      médicaux par âge de 1950 à 1997, classes de revenu en AMV de 1998 à 2014, points
+      depuis 2015), mais aucun montant d'époque n'est dans le texte — la valeur de l'acte
+      et le prix du point sont fixés hors index — : la grille de 2016 indexée sur les
+      prix tient lieu de montant avant 2016. La règle d'âge — taux plein à 65 ans, 1,25
+      % par trimestre avant, que la durée n'annule pas — et la bonification pour trois
+      enfants ne sont lues que dans les statuts de 2021 : la première est supposée la
+      même avant, la seconde n'est servie que depuis 2022.
 
   - code: cavamac_complementaire
     nom: Complémentaire des agents généraux d'assurance (CAVAMAC)
@@ -1650,18 +1885,22 @@ inventaire:
     couverture: partiel
     statuts: [agent_general_assurance]
     textes:
-      - {reference: "décret n° 68-1101 du 5 décembre 1968 et délibérations du conseil d'administration", id: null}
-      - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 23 juin 2011, articles 15, 16 et 18 (âges, minoration, majorations)", id: JORFARTI000024270173}
-      - {reference: "arrêté du 4 août 2023 portant approbation des modifications des statuts (taux plein à 67 ans, minoration trimestrielle au 1er janvier 2024)", id: JORFARTI000047977908}
+    - {reference: "décret n° 68-1101 du 5 décembre 1968 et délibérations du conseil\
+        \ d'administration", id: null}
+    - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 23 juin\
+        \ 2011, articles 15, 16 et 18 (âges, minoration, majorations)", id: JORFARTI000024270173}
+    - {reference: "arrêté du 4 août 2023 portant approbation des modifications des statuts\
+        \ (taux plein à 67 ans, minoration trimestrielle au 1er janvier 2024)", id: JORFARTI000047977908}
     manque: >-
-      L'assiette est reconstituée par un facteur moyen de commissions, qui ne
-      décrit aucun assuré en particulier. La règle d'âge d'avant 2011, publiée
-      au seul Bulletin officiel, est supposée celle des statuts de 2011 ; la
-      liquidation des carrières longues à 15 % de minoration et le capital
-      unique versé sous 1 500 points ne sont pas portés.
+      L'assiette est reconstituée par un facteur moyen de commissions, qui ne décrit
+      aucun assuré en particulier. La règle d'âge d'avant 2011, publiée au seul Bulletin
+      officiel, est supposée celle des statuts de 2011 ; la liquidation des carrières
+      longues à 15 % de minoration et le capital unique versé sous 1 500 points ne sont
+      pas portés.
 
   - code: cavec_complementaire
-    nom: Complémentaire des experts-comptables et commissaires aux comptes (CAVEC)
+    nom: >-
+      Complémentaire des experts-comptables et commissaires aux comptes (CAVEC)
     famille: liberal
     population: Experts-comptables et commissaires aux comptes libéraux
     creation: 1953
@@ -1672,14 +1911,19 @@ inventaire:
     couverture: modelise
     statuts: [expert_comptable]
     textes:
-      - {reference: "statuts du régime complémentaire de la CAVEC (arrêtés d'approbation)", id: null}
-      - {reference: "statuts approuvés par l'arrêté du 22 février 2008, article 3.13 (taux plein à 65 ans, abattement de 1,25 % par trimestre manquant dès 60 ans)", id: JORFARTI000018197778}
-      - {reference: "arrêté du 4 juillet 2025, article 20 des statuts (majoration de 10 % pour trois enfants)", id: JORFARTI000051849616}
+    - {reference: "statuts du régime complémentaire de la CAVEC (arrêtés d'approbation)",
+      id: null}
+    - {reference: "statuts approuvés par l'arrêté du 22 février 2008, article 3.13 (taux\
+        \ plein à 65 ans, abattement de 1,25 % par trimestre manquant dès 60 ans)",
+      id: JORFARTI000018197778}
+    - {reference: "arrêté du 4 juillet 2025, article 20 des statuts (majoration de 10\
+        \ % pour trois enfants)", id: JORFARTI000051849616}
 
   - code: cavom_complementaire
     nom: Complémentaire des officiers ministériels (CAVOM)
     famille: liberal
-    population: Huissiers, commissaires-priseurs, greffiers des tribunaux de commerce
+    population: >-
+      Huissiers, commissaires-priseurs, greffiers des tribunaux de commerce
     creation: 1979
     fermeture: null
     extinction: null
@@ -1688,34 +1932,43 @@ inventaire:
     couverture: partiel
     statuts: [officier_ministeriel]
     textes:
-      - {reference: "décret n° 79-265 du 27 mars 1979, article 2 (classes jusqu'en 2015, cotisation proportionnelle depuis 2016)", id: LEGIARTI000054168585}
-      - {reference: "décret n° 2015-1875 du 30 décembre 2015 (passage à la cotisation proportionnelle, plafond de quatre à huit PASS)", id: JORFTEXT000031740732}
-      - {reference: "arrêté du 12 décembre 2024 portant approbation des modifications des statuts (âges et coefficient d'anticipation)", id: JORFTEXT000050823047}
-      - {reference: "arrêté du 10 juillet 2026 portant approbation du règlement du régime complémentaire", id: JORFTEXT000054435960}
+    - {reference: "décret n° 79-265 du 27 mars 1979, article 2 (classes jusqu'en 2015,\
+        \ cotisation proportionnelle depuis 2016)", id: LEGIARTI000054168585}
+    - {reference: "décret n° 2015-1875 du 30 décembre 2015 (passage à la cotisation\
+        \ proportionnelle, plafond de quatre à huit PASS)", id: JORFTEXT000031740732}
+    - {reference: "arrêté du 12 décembre 2024 portant approbation des modifications\
+        \ des statuts (âges et coefficient d'anticipation)", id: JORFTEXT000050823047}
+    - {reference: "arrêté du 10 juillet 2026 portant approbation du règlement du régime\
+        \ complémentaire", id: JORFTEXT000054435960}
     manque: >-
-      Le régime par classes de 1979 à 2015 (décret n° 79-265, art. 2, trois
-      grilles de points) dépend de bornes de revenu fixées par les statuts,
-      hors index, et de montants par décret annuel : le taux proportionnel
-      de 2016 est projeté en arrière sur ces trente-sept ans au niveau
-      estimé, et le rendement de 2016 avec lui.
+      Le régime par classes de 1979 à 2015 (décret n° 79-265, art. 2, trois grilles
+      de points) dépend de bornes de revenu fixées par les statuts, hors index, et de
+      montants par décret annuel : le taux proportionnel de 2016 est projeté en arrière
+      sur ces trente-sept ans au niveau estimé, et le rendement de 2016 avec lui.
 
   - code: cipav_complementaire
     nom: Complémentaire de la Cipav
     famille: liberal
-    population: Architectes, ingénieurs-conseils, géomètres, psychologues, ostéopathes et professions non réglementées
+    population: >-
+      Architectes, ingénieurs-conseils, géomètres, psychologues, ostéopathes et professions
+      non réglementées
     creation: 1979
     fermeture: null
     extinction: null
     succede_a: []
     integre_dans: null
     couverture: modelise
-    statuts: [profession_liberale,
-              liberal_non_reglemente]
+    statuts: [profession_liberale, liberal_non_reglemente]
     textes:
-      - {reference: "décret n° 79-262 du 21 mars 1979 instituant le complémentaire des architectes", id: null}
-      - {reference: "arrêté du 9 mars 1987 portant approbation des régimes complémentaires (architectes, ingénieurs, techniciens, experts et conseils)", id: LEGIARTI000006784842}
-      - {reference: "décret n° 99-913 du 21 octobre 1999, article 6 (bonification pour enfants des géomètres intégrés au 1er janvier 2000)", id: JORFTEXT000000561136}
-      - {reference: "décret n° 2026-418 du 29 mai 2026, article 20 : articles 5-1 à 5-6 du décret n° 79-262 (âges, minoration, majoration pour trois enfants, report)", id: JORFARTI000054153655}
+    - {reference: "décret n° 79-262 du 21 mars 1979 instituant le complémentaire des\
+        \ architectes", id: null}
+    - {reference: "arrêté du 9 mars 1987 portant approbation des régimes complémentaires\
+        \ (architectes, ingénieurs, techniciens, experts et conseils)", id: LEGIARTI000006784842}
+    - {reference: "décret n° 99-913 du 21 octobre 1999, article 6 (bonification pour\
+        \ enfants des géomètres intégrés au 1er janvier 2000)", id: JORFTEXT000000561136}
+    - {reference: "décret n° 2026-418 du 29 mai 2026, article 20 : articles 5-1 à 5-6\
+        \ du décret n° 79-262 (âges, minoration, majoration pour trois enfants, report)",
+      id: JORFARTI000054153655}
 
   - code: cprn_complementaire
     nom: Complémentaire des notaires (CPRN), section C
@@ -1729,21 +1982,24 @@ inventaire:
     couverture: partiel
     statuts: [notaire]
     textes:
-      - {reference: "statuts du régime complémentaire de la CPRN (arrêtés d'approbation)", id: null}
+    - {reference: "statuts du régime complémentaire de la CPRN (arrêtés d'approbation)",
+      id: null}
     manque: >-
-      La section B, par classes, n'est pas modélisée : ses bornes ne sont
-      publiées nulle part, mais le décret n° 2026-418 en écrit la règle —
-      huit classes d'environ un huitième des notaires en activité chacune —
-      et la caisse la grille des montants, k fois la classe 1 pour 10 k
-      points. Les versions de 1983, 2005 et 2014 de l'article 2 du décret
-      n° 49-578 datent la section C à 4,5 % des produits de l'office, mais
-      rien n'est consolidé avant 1983 ; les statuts d'avant 2014 ne sont
-      pas dans l'index.
+      La section B, par classes, n'est pas modélisée : ses bornes ne sont publiées nulle
+      part, mais le décret n° 2026-418 en écrit la règle — huit classes d'environ un
+      huitième des notaires en activité chacune — et la caisse la grille des montants,
+      k fois la classe 1 pour 10 k points. Les versions de 1983, 2005 et 2014 de l'article
+      2 du décret n° 49-578 datent la section C à 4,5 % des produits de l'office, mais
+      rien n'est consolidé avant 1983 ; les statuts d'avant 2014 ne sont pas dans l'index.
 
   - code: crea
-    nom: Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA)
+    nom: >-
+      Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme
+      (CREA)
     famille: liberal
-    population: Enseignants libéraux, professeurs de musique et musiciens, artistes hors AGESSA, professions du sport et du tourisme, vendeurs-colporteurs de presse
+    population: >-
+      Enseignants libéraux, professeurs de musique et musiciens, artistes hors AGESSA,
+      professions du sport et du tourisme, vendeurs-colporteurs de presse
     creation: 1949
     fermeture: 2004
     extinction: 2004
@@ -1752,25 +2008,40 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "décret n° 50-1089 du 2 septembre 1950 modifiant les règlements d'administration publique n° 48-1179 du 19 juillet 1948 et n° 49-456 du 30 mars 1949 (comités provisoires des sections professionnelles des artistes, des professeurs de musique et musiciens, des gens de lettres et auteurs)", id: JORFTEXT000000489029}
-      - {reference: "arrêté du 21 juillet 1952 fixant le taux des cotisations d'assurance vieillesse de la section professionnelle des professeurs de musique et des musiciens", id: JORFTEXT000000622970}
-      - {reference: "arrêté du 4 juillet 1977 approuvant les statuts de la section professionnelle des artistes auteurs ne relevant pas de l'article L. 631-1, des professeurs de musique et des musiciens, qui prend le nom de « Caisse de retraite de l'enseignement et des arts appliqués »", id: JORFTEXT000000488757}
-      - {reference: "décret n° 94-404 du 16 mai 1994 (rattachement des vendeurs-colporteurs de presse à la CREA)", id: JORFTEXT000000183429}
-      - {reference: "arrêté du 22 juillet 2003 relatif à l'échantillon interrégimes de cotisants, article 2, 18° (régime de base et régime complémentaire de la CREA)", id: LEGIARTI000006221466}
-      - {reference: "décret n° 2004-461 du 27 mai 2004, article 13 VIII (les affiliés de la CREA soumis, au 1er janvier 2004, à la Cipav)", id: LEGIARTI000006781338}
+    - {reference: "décret n° 50-1089 du 2 septembre 1950 modifiant les règlements d'administration\
+        \ publique n° 48-1179 du 19 juillet 1948 et n° 49-456 du 30 mars 1949 (comités\
+        \ provisoires des sections professionnelles des artistes, des professeurs de\
+        \ musique et musiciens, des gens de lettres et auteurs)", id: JORFTEXT000000489029}
+    - {reference: "arrêté du 21 juillet 1952 fixant le taux des cotisations d'assurance\
+        \ vieillesse de la section professionnelle des professeurs de musique et des\
+        \ musiciens", id: JORFTEXT000000622970}
+    - {reference: "arrêté du 4 juillet 1977 approuvant les statuts de la section professionnelle\
+        \ des artistes auteurs ne relevant pas de l'article L. 631-1, des professeurs\
+        \ de musique et des musiciens, qui prend le nom de « Caisse de retraite de l'enseignement\
+        \ et des arts appliqués »", id: JORFTEXT000000488757}
+    - {reference: "décret n° 94-404 du 16 mai 1994 (rattachement des vendeurs-colporteurs\
+        \ de presse à la CREA)", id: JORFTEXT000000183429}
+    - {reference: "arrêté du 22 juillet 2003 relatif à l'échantillon interrégimes de\
+        \ cotisants, article 2, 18° (régime de base et régime complémentaire de la CREA)",
+      id: LEGIARTI000006221466}
+    - {reference: "décret n° 2004-461 du 27 mai 2004, article 13 VIII (les affiliés\
+        \ de la CREA soumis, au 1er janvier 2004, à la Cipav)", id: LEGIARTI000006781338}
     raison_hors_champ: >-
-      Section de la CNAVPL dès l'organisation de 1949 (professeurs de
-      musique et musiciens, artistes hors L. 631-1), nommée CREA en 1977 et
-      fondue dans la Cipav au 1er janvier 2004, qui a repris ses affiliés et
-      leurs points ; le statut `profession_liberale` route vers la Cipav sur
-      toute la période, et le barème propre de la CREA n'est pas au Journal
-      officiel, qui n'a que l'arrêté de 1952 sur ses taux et les arrêtés
+      Section de la CNAVPL dès l'organisation de 1949 (professeurs de musique et musiciens,
+      artistes hors L. 631-1), nommée CREA en 1977 et fondue dans la Cipav au 1er janvier
+      2004, qui a repris ses affiliés et leurs points ; le statut `profession_liberale`
+      route vers la Cipav sur toute la période, et le barème propre de la CREA n'est
+      pas au Journal officiel, qui n'a que l'arrêté de 1952 sur ses taux et les arrêtés
       d'approbation de ses statuts.
 
   - code: asv_conventionnes
-    nom: Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV)
+    nom: >-
+      Prestations complémentaires de vieillesse des professionnels de santé conventionnés
+      (ASV)
     famille: liberal
-    population: Médecins, chirurgiens-dentistes, sages-femmes, auxiliaires médicaux et directeurs de laboratoire conventionnés
+    population: >-
+      Médecins, chirurgiens-dentistes, sages-femmes, auxiliaires médicaux et directeurs
+      de laboratoire conventionnés
     creation: 1972
     fermeture: null
     extinction: null
@@ -1779,21 +2050,27 @@ inventaire:
     couverture: partiel
     statuts: [medecin_liberal]
     textes:
-      - {reference: "décret n° 72-968 du 27 octobre 1972, article 2 (points par année cotisée)", id: LEGIARTI000024871109}
-      - {reference: "code de la sécurité sociale, D. 645-2 (cotisation en multiples du tarif de la consultation) et D. 645-3 (part des caisses d'assurance maladie)", id: LEGIARTI000006738166}
-      - {reference: "décret n° 2011-1644 du 25 novembre 2011 (forfait en euros, cotisation d'ajustement, valeur de service)", id: LEGIARTI000033090911}
-      - {reference: "décret n° 2007-458 du 25 mars 2007 (chirurgiens-dentistes : forfait de 3 150 à 3 900 €, dix points, ajustement 1,45 %)", id: LEGIARTI000034762381}
-      - {reference: "décret n° 2017-1812 du 28 décembre 2017 (sages-femmes) et décret n° 2007-597 du 24 avril 2007 (directeurs de laboratoire : 0,30 %, cinquante points, point à 0,96 €)", id: LEGIARTI000026885155}
+    - {reference: "décret n° 72-968 du 27 octobre 1972, article 2 (points par année\
+        \ cotisée)", id: LEGIARTI000024871109}
+    - {reference: "code de la sécurité sociale, D. 645-2 (cotisation en multiples du\
+        \ tarif de la consultation) et D. 645-3 (part des caisses d'assurance maladie)",
+      id: LEGIARTI000006738166}
+    - {reference: "décret n° 2011-1644 du 25 novembre 2011 (forfait en euros, cotisation\
+        \ d'ajustement, valeur de service)", id: LEGIARTI000033090911}
+    - {reference: "décret n° 2007-458 du 25 mars 2007 (chirurgiens-dentistes : forfait\
+        \ de 3 150 à 3 900 €, dix points, ajustement 1,45 %)", id: LEGIARTI000034762381}
+    - {reference: "décret n° 2017-1812 du 28 décembre 2017 (sages-femmes) et décret\
+        \ n° 2007-597 du 24 avril 2007 (directeurs de laboratoire : 0,30 %, cinquante\
+        \ points, point à 0,96 €)", id: LEGIARTI000026885155}
     manque: >-
-      La fiche ne porte que les médecins, et la seule part qu'ils paient :
-      les deux tiers versés par les caisses d'assurance maladie sont
-      décrits, non comptés. Les points d'ajustement sont pris au plafond de
-      neuf par an, atteint dès 68 000 € de revenu. Les chirurgiens-dentistes
-      (décret n° 2007-458 : dix points par forfait, ajustement 1,45 %), les
-      sages-femmes (2017-1812), les auxiliaires médicaux et les directeurs
-      de laboratoire (2007-597) ont chacun leur barème, lu mais non porté ;
-      leurs statuts restent sans ASV. Le tarif de la consultation, base du
-      forfait de 1985 à 2011, n'est pas une série du dépôt.
+      La fiche ne porte que les médecins, et la seule part qu'ils paient : les deux
+      tiers versés par les caisses d'assurance maladie sont décrits, non comptés. Les
+      points d'ajustement sont pris au plafond de neuf par an, atteint dès 68 000 €
+      de revenu. Les chirurgiens-dentistes (décret n° 2007-458 : dix points par forfait,
+      ajustement 1,45 %), les sages-femmes (2017-1812), les auxiliaires médicaux et
+      les directeurs de laboratoire (2007-597) ont chacun leur barème, lu mais non porté
+      ; leurs statuts restent sans ASV. Le tarif de la consultation, base du forfait
+      de 1985 à 2011, n'est pas une série du dépôt.
 
   - code: cnbf
     nom: Caisse nationale des barreaux français, régime de base
@@ -1807,17 +2084,18 @@ inventaire:
     couverture: partiel
     statuts: [avocat]
     textes:
-      - {reference: "loi n° 48-1490 du 31 décembre 1948", id: null}
-      - {reference: "code de la sécurité sociale, L. 723-1 (rédaction de 1985)", id: LEGIARTI000006744085}
-      - {reference: "code de la sécurité sociale, R. 653-3 (surcote à 0,75 % puis 1,25 % depuis le 1er juillet 2010)", id: LEGIARTI000047985846}
-      - {reference: "code de la sécurité sociale, L. 653-3 (majoration pour trois enfants depuis 2023)", id: LEGIARTI000047453367}
+    - {reference: loi n° 48-1490 du 31 décembre 1948, id: null}
+    - {reference: 'code de la sécurité sociale, L. 723-1 (rédaction de 1985)', id: LEGIARTI000006744085}
+    - {reference: "code de la sécurité sociale, R. 653-3 (surcote à 0,75 % puis 1,25\
+        \ % depuis le 1er juillet 2010)", id: LEGIARTI000047985846}
+    - {reference: "code de la sécurité sociale, L. 653-3 (majoration pour trois enfants\
+        \ depuis 2023)", id: LEGIARTI000047453367}
     manque: >-
-      La progression de la cotisation forfaitaire sur les cinq premières années
-      et la contribution équivalente aux droits de plaidoirie ne sont pas
-      portées, ni la majoration de durée d'assurance pour enfants, ni la
-      surcote parentale. La retraite forfaitaire et la cotisation de
-      croisière sont celles de chaque barème depuis 2016 ; avant, celles de
-      2016 ramenées par les prix.
+      La progression de la cotisation forfaitaire sur les cinq premières années et la
+      contribution équivalente aux droits de plaidoirie ne sont pas portées, ni la majoration
+      de durée d'assurance pour enfants, ni la surcote parentale. La retraite forfaitaire
+      et la cotisation de croisière sont celles de chaque barème depuis 2016 ; avant,
+      celles de 2016 ramenées par les prix.
 
   - code: cnbf_complementaire
     nom: Complémentaire des avocats (CNBF)
@@ -1831,10 +2109,12 @@ inventaire:
     couverture: modelise
     statuts: [avocat]
     textes:
-      - {reference: "décret n° 79-316 du 19 avril 1979 (régime complémentaire des avocats)", id: null}
+    - {reference: "décret n° 79-316 du 19 avril 1979 (régime complémentaire des avocats)",
+      id: null}
 
   - code: caisse_francais_etranger
-    nom: Caisse des Français de l'étranger et assurance volontaire vieillesse
+    nom: >-
+      Caisse des Français de l'étranger et assurance volontaire vieillesse
     famille: base_prive
     population: Français expatriés, sur adhésion
     creation: 1984
@@ -1845,11 +2125,11 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "loi n° 84-604 du 13 juillet 1984 et décret n° 84-780 du 9 août 1984", id: LEGITEXT000006064599}
+    - {reference: "loi n° 84-604 du 13 juillet 1984 et décret n° 84-780 du 9 août 1984",
+      id: LEGITEXT000006064599}
     raison_hors_champ: >-
-      Adhésion facultative qui ouvre des droits au régime général : ce n'est
-      pas un régime distinct, et le modèle ne décrit que des affiliations
-      obligatoires.
+      Adhésion facultative qui ouvre des droits au régime général : ce n'est pas un
+      régime distinct, et le modèle ne décrit que des affiliations obligatoires.
 
   # ---------------------------------------------------------------------
   # Non-salariés agricoles
@@ -1867,18 +2147,20 @@ inventaire:
     couverture: partiel
     statuts: [exploitant_agricole]
     textes:
-      - {reference: "loi n° 52-799 du 10 juillet 1952 assurant la mise en œuvre du régime de l'allocation de vieillesse des personnes non salariées", id: null}
-      - {reference: "code rural et de la pêche maritime, L. 732-18 et suivants, R. 732-70 et R. 732-71", id: null}
+    - {reference: "loi n° 52-799 du 10 juillet 1952 assurant la mise en œuvre du régime\
+        \ de l'allocation de vieillesse des personnes non salariées", id: null}
+    - {reference: "code rural et de la pêche maritime, L. 732-18 et suivants, R. 732-70\
+        \ et R. 732-71", id: null}
     manque: >-
-      Le barème en points d'avant 1990 n'est pas lu ; la réforme du 28 février
-      2025, en vigueur depuis 2026, renvoie deux de ses trois paramètres à un
-      décret absent de la base ; conjoints et aides familiaux sont
-      sous-estimés.
+      Le barème en points d'avant 1990 n'est pas lu ; la réforme du 28 février 2025,
+      en vigueur depuis 2026, renvoie deux de ses trois paramètres à un décret absent
+      de la base ; conjoints et aides familiaux sont sous-estimés.
 
   - code: msa_rco
     nom: Retraite complémentaire obligatoire des non-salariés agricoles
     famille: agricole
-    population: Chefs d'exploitation, et depuis 2011 conjoints et aides familiaux
+    population: >-
+      Chefs d'exploitation, et depuis 2011 conjoints et aides familiaux
     creation: 2003
     fermeture: null
     extinction: null
@@ -1887,16 +2169,17 @@ inventaire:
     couverture: partiel
     statuts: [exploitant_agricole]
     textes:
-      - {reference: "loi n° 2002-308 du 4 mars 2002 tendant à la création d'un régime de retraite complémentaire obligatoire pour les non-salariés agricoles", id: null}
-      - {reference: "code rural et de la pêche maritime, D. 732-166", id: null}
-      - {reference: "code rural et de la pêche maritime, L. 732-56, D. 732-151 et D. 732-154 : points gratuits des chefs d'exploitation", id: null}
+    - {reference: "loi n° 2002-308 du 4 mars 2002 tendant à la création d'un régime\
+        \ de retraite complémentaire obligatoire pour les non-salariés agricoles", id: null}
+    - {reference: 'code rural et de la pêche maritime, D. 732-166', id: null}
+    - {reference: "code rural et de la pêche maritime, L. 732-56, D. 732-151 et D. 732-154\
+        \ : points gratuits des chefs d'exploitation", id: null}
     manque: >-
-      Les points gratuits des chefs d'exploitation pour leurs années d'avant
-      2003 sont servis ; ceux du V et du VI de L. 732-56 ne le sont pas — 66
-      par an, dix-sept annuités au plus, pour les années de conjoint, d'aide
-      familial ou de collaborateur d'avant 2011 et pour celles du chef qui n'a
-      pas dix-sept ans et demi comme chef —, le modèle ne connaissant que le
-      statut de chef.
+      Les points gratuits des chefs d'exploitation pour leurs années d'avant 2003 sont
+      servis ; ceux du V et du VI de L. 732-56 ne le sont pas — 66 par an, dix-sept
+      annuités au plus, pour les années de conjoint, d'aide familial ou de collaborateur
+      d'avant 2011 et pour celles du chef qui n'a pas dix-sept ans et demi comme chef
+      —, le modèle ne connaissant que le statut de chef.
 
   - code: cotisants_solidarite
     nom: Cotisants de solidarité agricoles
@@ -1910,7 +2193,7 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
-      - {reference: "code rural et de la pêche maritime, L. 731-23", id: null}
+    - {reference: 'code rural et de la pêche maritime, L. 731-23', id: null}
     raison_hors_champ: >-
-      La cotisation de solidarité n'ouvre aucun droit à retraite : il n'y a
-      rien à porter au compte.
+      La cotisation de solidarité n'ouvre aucun droit à retraite : il n'y a rien à porter
+      au compte.

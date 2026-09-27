@@ -19,6 +19,26 @@ population: >-
   Salariés du secteur privé, et depuis 2018 les travailleurs indépendants
   (ex-RSI) pour leur retraite de base.
 hors_repartition: false
+inventaire:
+  section: prive_base
+  rang: 50
+  nom: Régime général de la Sécurité sociale (Cnav)
+  population: Salariés du secteur privé, et depuis 2018 les artisans et commerçants
+  couverture: modelise
+  statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan, commercant,
+            artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg, mineur,
+            clerc_de_notaire, agent_banque_de_france, agent_seita,
+            agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
+            salarie_prive_non_cadre_entreprise_recente,
+            maitre_enseignement_prive,
+            elu_local, auteur_dramatique, auteur_lyrique, gerant_debit_tabac, micro_entrepreneur,
+            membre_cese,
+            salarie_regime_professionnel_integre,
+            liberal_non_reglemente]
+  textes:
+    - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
+    - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
+    - {reference: "code de la sécurité sociale, L. 351-1 et suivants", id: null}
 periodes:
 
   - debut: 1945

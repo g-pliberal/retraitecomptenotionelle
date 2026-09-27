@@ -21,6 +21,17 @@ population: >-
   même fiche verraient la seconde ignorée en silence. Le dépôt sépare déjà
   de la même façon la CNBF de sa complémentaire et le régime agricole de sa
   RCO.
+inventaire:
+  section: prive_complementaires
+  rang: 140
+  nom: Caisse de retraite du personnel navigant, tranche 2
+  population: Personnel navigant, entre quatre et huit plafonds
+  couverture: partiel
+  statuts: [personnel_navigant]
+  textes:
+    - {reference: "code de l'aviation civile, R. 426-16-1-1", id: null}
+  manque: >-
+    Mêmes limites que la tranche 1 : taux d'appel de 2016 à 2025 non publiés, dispositif transitoire et conditions de 2012 à 2021 non portés.
 periodes:
   - debut: 1963
     fin: 1994

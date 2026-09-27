@@ -11,6 +11,20 @@ succede_a: []
 integre_dans: null
 population: Ensemble des fonctionnaires des trois versants.
 hors_repartition: true
+inventaire:
+  section: fonction_publique
+  rang: 60
+  nom: Retraite additionnelle de la fonction publique
+  population: Fonctionnaires des trois fonctions publiques, sur leurs primes
+  couverture: modelise
+  statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
+            fonctionnaire_territorial_hospitalier,
+            fonctionnaire_territorial_hospitalier_actif,
+            fonctionnaire_territorial_hospitalier_super_actif,
+            militaire, militaire_officier, ouvrier_etat, ouvrier_etat_actif]
+  textes:
+    - {reference: "loi n° 2003-775 du 21 août 2003, article 76", id: null}
+    - {reference: "décret n° 2004-569 du 18 juin 2004 relatif à la retraite additionnelle de la fonction publique", id: null}
 periodes:
   - debut: 2005
     fin: 2010

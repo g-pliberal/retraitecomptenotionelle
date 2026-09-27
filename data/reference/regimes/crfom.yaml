@@ -1,0 +1,24 @@
+code: crfom
+nom: Caisse intercoloniale de retraites, puis Caisse de retraites de la France d'outre-mer (CRFOM)
+famille: fonction_publique
+population: Fonctionnaires et agents des cadres locaux des colonies, protectorats et territoires d'outre-mer
+creation: 1924
+fermeture: 1976
+extinction: null
+succede_a: []
+integre_dans: fonction_publique_etat
+inventaire:
+  section: fonction_publique
+  rang: 90
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles et militaires, article 71 (création de la caisse intercoloniale de retraites)", id: LEGIARTI000020851163}
+    - {reference: "décret n° 50-1348 du 27 octobre 1950, articles 43 et 46 (retenue de 6 % des tributaires de la caisse de retraites de la France d'outre-mer, régime du décret du 21 avril 1950)", id: LEGIARTI000006504747}
+    - {reference: "loi n° 75-1278 du 30 décembre 1975 de finances pour 1976, article 73 (les fonctionnaires en activité du régime du décret du 21 avril 1950 sont affiliés d'office, au 1er janvier 1976, au régime des pensions civiles et militaires)", id: LEGIARTI000006272976}
+  raison_hors_champ: >-
+    Régime des cadres coloniaux fermé par la loi de finances pour 1976 :
+    ses derniers actifs ont été affiliés d'office aux pensions civiles et
+    militaires au 1er janvier 1976, et ses pensions sont servies par
+    l'État. Le statut `fonctionnaire_etat` porte la carrière ; le dépôt
+    n'a pas le règlement du décret du 21 avril 1950.

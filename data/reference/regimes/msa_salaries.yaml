@@ -11,6 +11,16 @@ succede_a: []
 integre_dans: null
 population: Salariés de l'agriculture.
 hors_repartition: false
+inventaire:
+  section: prive_base
+  rang: 60
+  nom: Assurances sociales agricoles, salariés (MSA)
+  population: Salariés agricoles
+  couverture: modelise
+  statuts: [salarie_agricole]
+  textes:
+    - {reference: "loi du 30 avril 1930, titre II (assurances sociales agricoles)", id: null}
+    - {reference: "code rural et de la pêche maritime, L. 722-20 et suivants", id: null}
 periodes:
   - debut: 1945
     fin: 1971

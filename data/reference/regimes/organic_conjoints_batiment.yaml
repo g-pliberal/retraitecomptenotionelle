@@ -16,6 +16,26 @@ population: >-
   finance une pension servie à leur conjoint coexistant ou survivant.
   Reprise par le NRIC en 2004, puis par le RCI.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 60
+  nom: Régimes complémentaires des conjoints de commerçants et des entrepreneurs du bâtiment (Organic)
+  population: Conjoints des industriels et commerçants ; entrepreneurs du bâtiment et des travaux publics
+  couverture: partiel
+  statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
+  textes:
+    - {reference: "code de la sécurité sociale, D. 635-32 (institution du régime en faveur des conjoints) et D. 635-34 (objet : maintenir au conjoint les avantages d'avant 1973)", id: LEGIARTI000006738054}
+    - {reference: "code de la sécurité sociale, D. 635-35 (cotisation additionnelle à la charge de tous les assujettis du régime de base)", id: LEGIARTI000006738057}
+    - {reference: "code de la sécurité sociale, D. 635-36 : 0,50 % et 1,82 % (1985-1997), 1,5 % et 3,5 % (1998), 2,5 % et 3,95 % (1999-2003)", id: LEGIARTI000006738097}
+    - {reference: "décret n° 50-60 du 11 janvier 1950 (régime complémentaire des entrepreneurs du bâtiment), fermé et sans cotisation depuis le 25 mars 1998", id: LEGIARTI000006781229}
+    - {reference: "arrêté du 9 février 2012 portant approbation du règlement du RCI, reprise des points de l'ancien régime des conjoints", id: LEGIARTI000025397326}
+  manque: >-
+    La fiche porte la cotisation du commerçant, qui entre au compte
+    notionnel, et rien dans le scénario actuel : la pension va au
+    conjoint, droit dérivé que la carrière individuelle ne porte pas. Le
+    volet bâtiment n'a aucun chiffre dans LEGI (articles 2 à 5 du décret
+    n° 50-60 abrogés, point fixé par la caisse) et n'est pas porté ; les
+    taux d'avant 1985 sont projetés.
 periodes:
   - debut: 1973
     fin: 1984

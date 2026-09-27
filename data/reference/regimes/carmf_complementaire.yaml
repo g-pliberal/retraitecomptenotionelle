@@ -16,6 +16,16 @@ population: >-
   cotisation maximale dépasse 19 000 € par an en 2026 quand celle de la
   base plafonne bien plus bas.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 100
+  nom: Complémentaire des médecins (CARMF)
+  population: Médecins libéraux
+  couverture: modelise
+  statuts: [medecin_liberal]
+  textes:
+    - {reference: "décret n° 49-579 du 22 avril 1949 et statuts du régime complémentaire (arrêtés d'approbation)", id: null}
+    - {reference: "chronologie de la CARMF (tables « Cotisations forfaitaires », « Cotisations proportionnelles », valeurs du point) : soixante-deux périodes de 1949 à 2026, et le coefficient de 1,33 des points d'avant 1991", id: null}
 periodes:
   - debut: 1949
     fin: 1949

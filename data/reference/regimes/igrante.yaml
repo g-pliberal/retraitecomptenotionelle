@@ -14,6 +14,23 @@ population: >-
   assurances sociales — et jusqu'à trois plafonds pour ceux qui ne relèvent
   pas de l'IPACTE.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 100
+  population: Non-titulaires de l'État, sous le plafond (jusqu'à trois plafonds hors IPACTE), avant l'Ircantec
+  couverture: partiel
+  statuts: [contractuel_public]
+  textes:
+    - {reference: "décret n° 59-1569 du 31 décembre 1959, article 2 (assiette)", id: LEGITEXT000006060876}
+    - {reference: "arrêté du 17 février 1960, article 15 (répartition)", id: LEGIARTI000006381706}
+    - {reference: "décret n° 68-1029 du 26 novembre 1968 (taux, corps absent de l'index)", id: JORFTEXT000000869583}
+  manque: >-
+    Le taux (1,40 % et 2,10 %) est lu dans l'article 2, version consolidée
+    unique, l'appel est prolongé de l'Ircantec et l'âge prend le barème du
+    successeur (article 5 bis absent de LEGI) ; et la fiche ne porte que la
+    tranche sous le plafond, celle de l'agent qui relève aussi de l'IPACTE —
+    les autres non-titulaires cotisaient jusqu'à trois plafonds, part
+    qu'aucun statut ne distingue.
 periodes:
   - debut: 1960
     fin: 1970

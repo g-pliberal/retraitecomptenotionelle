@@ -17,6 +17,23 @@ population: >-
   durée requise et âges propres, en retard de sept générations sur la
   table nationale.
 hors_repartition: false
+inventaire:
+  section: prive_base
+  rang: 80
+  nom: Régime de retraite de la Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon
+  population: Salariés et non-salariés de Saint-Pierre-et-Miquelon
+  couverture: partiel
+  statuts: [salarie_saint_pierre_et_miquelon]
+  textes:
+    - {reference: "loi n° 87-563 du 17 juillet 1987 portant réforme du régime d'assurance vieillesse applicable à Saint-Pierre-et-Miquelon, article 5 (table de durée et âges par génération)", id: LEGIARTI000054477924}
+    - {reference: "décret n° 89-110 du 20 février 1989, article 9 (durée transitoire de 108 trimestres en 1987, plus 4 par an)", id: LEGIARTI000006774247}
+    - {reference: "décret n° 2017-1000 du 10 mai 2017 relatif à l'assurance vieillesse-veuvage applicable à Saint-Pierre-et-Miquelon, article 3", id: LEGIARTI000034740766}
+  manque: >-
+    Taux de cotisation et plafond de la caisse de prévoyance sociale,
+    fixés localement et absents de l'index : ceux du régime général
+    tiennent lieu. Le régime d'avant août 1987 (ordonnance n° 77-1102)
+    n'est pas porté. La table par génération est lue en dur, année par
+    année, faute d'un drapeau qui la décale de sept ans.
 periodes:
   - debut: 1987
     fin: 1987

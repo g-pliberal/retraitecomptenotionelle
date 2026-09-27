@@ -13,6 +13,22 @@ population: >-
   Agents contractuels et temporaires de l'État, sur la part de rémunération
   au-dessus du plafond des assurances sociales.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 90
+  population: Agents contractuels et temporaires de l'État, au-dessus du plafond, avant l'Ircantec
+  couverture: partiel
+  statuts: [contractuel_public]
+  textes:
+    - {reference: "décret n° 51-1445 du 12 décembre 1951", id: LEGITEXT000006060604}
+    - {reference: "arrêté du 12 décembre 1951, article 8 (salaires de référence 1951-1970)", id: LEGIARTI000006381673}
+    - {reference: "arrêté du 30 août 1952 approuvant la convention Agirc-IPACTE", id: JORFTEXT000000797895}
+    - {reference: "décret n° 70-1277 du 23 décembre 1970 (abrogation au 1er janvier 1971)", id: JORFTEXT000000306984}
+  manque: >-
+    Le taux (4,25 % et 8,25 %) est lu dans l'article 7, mais dans une version
+    consolidée unique, et le taux d'appel est celui de l'Ircantec de 1971
+    prolongé en arrière ; l'âge de liquidation n'est écrit nulle part dans
+    l'index (article 5 absent de LEGI) et prend le barème du successeur.
 periodes:
   - debut: 1951
     fin: 1970

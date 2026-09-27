@@ -1,0 +1,19 @@
+code: cotisants_solidarite
+nom: Cotisants de solidarité agricoles
+famille: agricole
+population: Exploitants en dessous du seuil d'assujettissement
+creation: 1980
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: agricoles
+  rang: 30
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "code rural et de la pêche maritime, L. 731-23", id: null}
+  raison_hors_champ: >-
+    La cotisation de solidarité n'ouvre aucun droit à retraite : il n'y a
+    rien à porter au compte.

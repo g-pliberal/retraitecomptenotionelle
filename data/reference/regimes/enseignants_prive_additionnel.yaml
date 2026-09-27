@@ -17,6 +17,18 @@ population: >-
   l'Agirc-Arrco, la loi n° 2005-5 du 5 janvier 2005 leur ajoute cet étage
   pour rapprocher leur pension de celle des enseignants publics.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 200
+  nom: Régime additionnel de retraite des enseignants du privé sous contrat
+  population: Maîtres de l'enseignement privé sous contrat
+  couverture: modelise
+  statuts: [maitre_enseignement_prive]
+  textes:
+    - {reference: "loi n° 2005-5 du 5 janvier 2005 relative à la situation des maîtres des établissements d'enseignement privés sous contrat", id: null}
+    - {reference: "décret n° 2005-1233 du 30 septembre 2005 relatif au régime additionnel de retraite des personnels enseignants", id: LEGITEXT000006052499}
+    - {reference: "décret n° 2005-1233, article 2 (assiette) et article 7 (fraction des pensions de base et complémentaire)", id: LEGIARTI000027090124}
+    - {reference: "arrêté du 28 juillet 2006 pris pour l'application du décret n° 2005-1233, article 1 (taux de 0,75 %, 1 %, puis 1,5 % patronal et salarial)", id: LEGIARTI000049688551}
 periodes:
   - debut: 2005
     fin: 2012

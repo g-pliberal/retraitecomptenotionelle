@@ -19,6 +19,19 @@ population: >-
   « par défaut » du régime de base des libéraux, et le statut
   `profession_liberale` y route pour cette raison.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 180
+  nom: Complémentaire de la Cipav
+  population: Architectes, ingénieurs-conseils, géomètres, psychologues, ostéopathes et professions non réglementées
+  couverture: modelise
+  statuts: [profession_liberale,
+            liberal_non_reglemente]
+  textes:
+    - {reference: "décret n° 79-262 du 21 mars 1979 instituant le complémentaire des architectes", id: null}
+    - {reference: "arrêté du 9 mars 1987 portant approbation des régimes complémentaires (architectes, ingénieurs, techniciens, experts et conseils)", id: LEGIARTI000006784842}
+    - {reference: "décret n° 99-913 du 21 octobre 1999, article 6 (bonification pour enfants des géomètres intégrés au 1er janvier 2000)", id: JORFTEXT000000561136}
+    - {reference: "décret n° 2026-418 du 29 mai 2026, article 20 : articles 5-1 à 5-6 du décret n° 79-262 (âges, minoration, majoration pour trois enfants, report)", id: JORFARTI000054153655}
 periodes:
   - debut: 1979
     fin: 1999

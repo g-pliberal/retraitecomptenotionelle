@@ -16,6 +16,21 @@ population: >-
   que le fonds des redevances finance aux deux tiers (décret n° 63-1104 du
   30 octobre 1963).
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 140
+  population: Gérants de débits de tabac
+  couverture: partiel
+  statuts: [gerant_debit_tabac]
+  textes:
+    - {reference: "décret n° 63-1104 du 30 octobre 1963 relatif au régime d'allocation viagère des gérants de débits de tabac, modifié par le décret n° 90-424 du 16 mai 1990", id: LEGIARTI000006774753}
+    - {reference: "arrêté du 13 novembre 1963 pris pour l'application du décret du 30 octobre 1963, articles 5, 5 bis, 6 et 17", id: LEGIARTI000006787842}
+  manque: >-
+    Le revenu saisi tient lieu de remises sur les tabacs, sans le plafond
+    de remises de l'article 6 ; le barème du point (4,94 € d'achat en
+    2026, 2,42 € de service en 2025) est celui de la Caisse des dépôts,
+    hors index, appliqué en rendement à toute la carrière ; le taux
+    d'avant 1990 est projeté.
 periodes:
   - debut: 1963
     fin: 1989

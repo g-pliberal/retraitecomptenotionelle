@@ -1,0 +1,23 @@
+code: imprimerie_nationale
+nom: Caisse des retraites de l'Imprimerie nationale
+famille: special
+population: Personnels de l'Imprimerie nationale
+creation: 1927
+fermeture: 1994
+extinction: 2013
+succede_a: []
+integre_dans: null
+inventaire:
+  section: speciaux
+  rang: 150
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi du 29 juin 1927 (régime de retraites des personnels de l'Imprimerie nationale), citée par R*77 du code des pensions", id: LEGIARTI000006363032}
+    - {reference: "code de la sécurité sociale, R. 711-1 1°", id: LEGIARTI000048031379}
+    - {reference: "projets annuels de performances du programme 195 « Régimes de retraite des mines, de la SEITA et divers » (dix affiliés en 2007, régime éteint fin 2013 au décès du dernier pensionné)", id: JORFARTI000023316030}
+  raison_hors_champ: >-
+    Régime éteint : les documents budgétaires du programme 195 comptent
+    dix affiliés en 2007 et constatent l'extinction fin 2013 « avec le
+    décès du dernier pensionné » ; aucun assuré vivant n'y a de droit, il
+    n'y a rien à simuler.

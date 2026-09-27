@@ -15,6 +15,20 @@ population: >-
   tranche A : des points sur la fraction comprise entre 269 000 et 525 000
   FCFP par mois (2026).
 hors_repartition: false
+inventaire:
+  section: prive_base
+  rang: 100
+  population: Salariés de Polynésie française au-dessus du plafond de la tranche A
+  couverture: partiel
+  statuts: [salarie_polynesie]
+  textes:
+    - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française » (points de la tranche B : salaire minimum horaire de référence 1 024,74 FCFP, point à 20,49 FCFP)", id: null}
+    - {reference: "délibération n° 95-180 AT du 26 octobre 1995 instituant un régime de retraite tranche B au profit des ressortissants du régime général des salariés, citée par le rapport de l'assemblée de la Polynésie française du 14 août 2025 (hors JORF)", id: null}
+  manque: >-
+    La tranche 269 000-525 000 FCFP est écrite comme la tranche entre un et
+    deux plafonds nationaux, la borne la plus proche du catalogue ; le
+    barème de 2026 est projeté sur toute la période, depuis la délibération
+    de 1995 qui institue la tranche.
 periodes:
   - debut: 1995
     fin: null

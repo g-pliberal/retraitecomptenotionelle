@@ -15,6 +15,23 @@ population: >-
   sont perçus par la SACD : second étage obligatoire, en plus du RAAP,
   depuis le décret n° 64-226 du 11 mars 1964.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 170
+  nom: Régime des auteurs et compositeurs dramatiques (IRCEC)
+  population: Auteurs et compositeurs dramatiques, auteurs de l'audiovisuel
+  couverture: partiel
+  statuts: [auteur_dramatique]
+  textes:
+    - {reference: "décret n° 64-226 du 11 mars 1964 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs dramatiques, article 2 (8 % des droits)", id: LEGIARTI000006761271}
+    - {reference: "mémo des valeurs 2026 de l'IRCEC (prix d'achat 4,78 €, valeur de service 0,421 €)", id: null}
+  manque: >-
+    Le barème du point est celui du seul mémo 2026 de l'IRCEC, appliqué en
+    rendement à toute la carrière ; le plafond de 597 500 € est arrondi à
+    treize plafonds de la Sécurité sociale.
+    La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les
+    générations nées avant 1955 jusqu'en 2024, elle est approchée (voir
+    `docs/limites.md`).
 periodes:
   - debut: 1964
     fin: 2013

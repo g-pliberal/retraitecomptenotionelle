@@ -11,6 +11,15 @@ succede_a: []
 integre_dans: agirc_arrco
 population: Cadres et assimilés, sur la part de rémunération au-dessus du plafond.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 10
+  population: Cadres du secteur privé, tranches B et C
+  couverture: modelise
+  statuts: [salarie_prive_cadre, personnel_navigant, salarie_prive_cadre_entreprise_recente]
+  textes:
+    - {reference: "convention collective nationale du 14 mars 1947 (hors JORF et hors KALI)", id: null}
+    - {reference: "code de la sécurité sociale, L. 921-1 et L. 921-4", id: LEGIARTI000006745499}
 periodes:
   - debut: 1947
     fin: 1951

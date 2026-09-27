@@ -13,6 +13,17 @@ population: >-
   Mineurs et assimilés. Fermé aux nouveaux entrants au 1er septembre 2010 ;
   régime en extinction, gestion transférée à la CDC puis à la CNAV.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 50
+  nom: Régime spécial de sécurité sociale dans les mines (CANSSM)
+  population: Ouvriers et employés des mines, recrutés avant septembre 2010
+  couverture: modelise
+  statuts: [mineur]
+  textes:
+    - {reference: "loi du 29 juin 1894 sur les caisses de secours et de retraites des ouvriers mineurs", id: null}
+    - {reference: "décret n° 46-2769 du 27 novembre 1946 portant organisation de la sécurité sociale dans les mines", id: null}
+    - {reference: "code de la sécurité sociale, R. 711-1 5°", id: LEGIARTI000048031379}
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 46-2769, article 139 (LEGIARTI000006765039) : pensions «
 # majorées d'un dixième » pour qui a eu au moins trois enfants, sans

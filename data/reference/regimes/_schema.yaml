@@ -1,10 +1,14 @@
 # Schéma commun des fiches de régime
 # ===================================
 # Un fichier par régime, dans ce dossier, nommé de son code : `sncf.yaml` porte
-# le régime `sncf`, et ses champs sont ceux de ce schéma. Les autres fichiers
-# YAML du dossier ne sont pas des régimes : celui-ci, l'inventaire
-# (`inventaire.yaml`) et les pivots (`pivots.yaml`). Le chargeur
-# src/retraite_notionnelle/donnees/regimes.py valide contre ce schéma.
+# le régime `sncf`, et ses champs sont ceux de ce schéma. Tout régime a le sien,
+# calculé ou non, et y porte sa ligne d'inventaire (le bloc `inventaire`) ; ceux
+# que le modèle calcule portent en plus leur rang, leur source, leur fiabilité
+# et leurs périodes. Les autres fichiers YAML du dossier ne sont pas des
+# régimes : celui-ci, l'inventaire (`inventaire.yaml`, fabriqué depuis les
+# blocs `inventaire` par scripts/construire_inventaire.py) et les pivots
+# (`pivots.yaml`). Le chargeur src/retraite_notionnelle/donnees/regimes.py
+# valide contre ce schéma.
 #
 # Version 2, depuis la phase 6 de docs/architecture.md : les régimes étaient
 # rangés par familles en cinq fichiers, dont chacun portait une liste
@@ -19,7 +23,7 @@ schema_version: 2
 champs_regime:
   code:        "identifiant court, stable, en minuscules (clé primaire) ; le nom du fichier"
   rang: >-
-    rang du régime dans le catalogue, un entier que nul autre régime ne porte.
+    rang d'un régime calculé dans le catalogue, un entier que nul autre régime ne porte.
     Le catalogue parcourt les régimes dans cet ordre, et il n'est pas
     indifférent : à égalité, la fusion des régimes (moteur/fusion.py) retient
     le premier rencontré, et une moyenne s'y additionne dans cet ordre. Le
@@ -51,7 +55,51 @@ champs_regime:
   integre_dans: "code du régime absorbant, le cas échéant"
   population:  "description de la population couverte"
   hors_repartition: "true si le régime est en capitalisation (exclu des comptes notionnels)"
-  periodes:    "liste de fiches de paramètres, cf. champs_periode"
+  periodes:    "liste de fiches de paramètres, cf. champs_periode ; un régime que le modèle ne calcule pas n'en a pas"
+  inventaire:
+    description: >-
+      la ligne du régime dans l'inventaire de tous les régimes, calculés ou
+      non, que scripts/construire_inventaire.py fabrique depuis ces blocs
+      (`inventaire.yaml`). Tout régime en porte une. La famille, les dates
+      (création, fermeture aux nouveaux entrants, extinction) et la lignée
+      (`succede_a`, `integre_dans`) de la ligne sont celles du régime ; son
+      nom et sa population aussi, à moins que le bloc ne les raccourcisse.
+      `code` est celui du catalogue si le régime est calculé, sinon un code
+      libre.
+    champs:
+      section:
+        description: "la section de l'inventaire où la ligne se range, dans l'ordre où il les donne"
+        valeurs:
+          prive_base: "Salariés du privé — régimes de base"
+          prive_complementaires: "Salariés du privé — complémentaires"
+          fonction_publique: "Fonction publique et assimilés"
+          speciaux: "Régimes spéciaux de salariés"
+          non_salaries: "Non-salariés non agricoles"
+          agricoles: "Non-salariés agricoles"
+      rang: "le rang de la ligne dans sa section, un entier que nulle autre n'y porte, de dix en dix"
+      nom: "le nom de la ligne, quand il diffère du nom du régime"
+      population: "qui cotise, quand la ligne le dit plus court que la population du régime"
+      couverture:
+        description: >-
+          ce que le dépôt sait faire du régime. `modelise` et `partiel` sont
+          les régimes du catalogue, que le modèle calcule : eux seuls portent
+          un rang et des périodes.
+        valeurs:
+          modelise: "fiche complète sur toute son histoire connue"
+          partiel: "fiche calculée, mais un étage, un barème ou une période manque — `manque` dit lequel"
+          a_modeliser: "aucune fiche — `manque` dit ce qui bloque"
+          routage: >-
+            pas un régime, une affiliation portée par un statut de
+            `legislation/affiliations.yaml` — `manque` dit ce que le statut ne
+            lit pas
+          hors_champ: "ne sera pas modélisé — `raison_hors_champ`"
+      statuts: "statuts de `legislation/affiliations.yaml` qui y routent"
+      textes: >-
+        textes fondateurs ou de référence ; `id` est l'identifiant DILA
+        (LEGITEXT/LEGIARTI/JORFTEXT) lu dans l'index du dépôt, `null` si le
+        texte n'y est pas (antérieur à 1947, hors JORF)
+      manque: "ce qui manque au régime, ou ce qui bloque"
+      raison_hors_champ: "pourquoi le régime ne sera pas modélisé"
 
 champs_periode:
   debut: "première année d'application (incluse)"

@@ -20,6 +20,16 @@ population: >-
   c'est pourquoi le régime est rangé en `special` et non en
   `non_salarie` : il a bel et bien un payeur employeur.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 130
+  nom: Régime des cultes (CAVIMAC)
+  population: Ministres des cultes et membres des congrégations religieuses
+  couverture: modelise
+  statuts: [ministre_du_culte, membre_congregation]
+  textes:
+    - {reference: "loi n° 78-4 du 2 janvier 1978 relative aux régimes d'assurance maladie, maternité, invalidité, vieillesse applicables aux ministres des cultes", id: null}
+    - {reference: "code de la sécurité sociale, L. 382-15 et suivants", id: LEGIARTI000031686004}
 periodes:
   - debut: 1979
     fin: 1982

@@ -16,6 +16,25 @@ population: >-
   après une montée de 60 à 62 ans et de 35 à 37 ans engagée en 2023. Taux
   et barème de 2026 projetés sur toute la période.
 hors_repartition: false
+inventaire:
+  section: prive_base
+  rang: 110
+  population: Salariés de Nouvelle-Calédonie
+  couverture: partiel
+  statuts: [salarie_nouvelle_caledonie]
+  textes:
+    - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Nouvelle-Calédonie » et fiche de cotisations 2026 ; page « Le montant de ma retraite » de la CAFAT (délibérations du congrès, compétence locale, hors JORF)", id: null}
+    - {reference: "fiche du CLEISS, retraite complémentaire : « tous les salariés [...] soumis à titre obligatoire au régime d'assurance vieillesse de base géré par la CAFAT relèvent obligatoirement des régimes Agirc-Arrco » (accord collectif, hors JORF)", id: null}
+    - {reference: "accord interprofessionnel territorial du 29 août 1994 pour la généralisation des régimes de retraite complémentaire ARRCO et AGIRC en Nouvelle-Calédonie, étendu par arrêté n° 1745-T du 25 avril 1995 (JONC n° 7063 du 2 mai 1995), avenants des 24 août et 12 décembre 1995 (direction du travail de Nouvelle-Calédonie, hors JORF)", id: null}
+  manque: >-
+    La valeur de référence qui convertit les cotisations en points n'est
+    pas publiée : le rendement est estimé ; taux et barème de 2026
+    projetés sur toute la période ; plafond de 548 600 FCFP remplacé par
+    le plafond national. Les salariés du privé de Nouvelle-Calédonie
+    relèvent aussi, obligatoirement, de l'Agirc-Arrco depuis l'accord
+    territorial de 1994, étendu en 1995 et généralisé au 1er janvier 1995
+    avec validation des services passés : le statut
+    `salarie_nouvelle_caledonie` ne route pas vers la complémentaire.
 periodes:
   - debut: 1958
     fin: 2022

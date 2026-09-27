@@ -867,22 +867,67 @@ def test_regime_inconnu_leve_une_erreur_explicite(catalogue):
 def test_un_fichier_par_regime_nomme_de_son_code(catalogue):
     """Un régime, un fichier, qui porte le code qui le nomme (phase 6).
 
-    Tout fichier YAML du dossier est un régime, hors le schéma, l'inventaire et
-    les pivots : un fichier d'une autre nature qu'on y poserait serait chargé
-    comme un régime. Le catalogue suit l'ordre des rangs, qui départage la
-    fusion ; un rang pris deux fois laisserait le chargeur choisir sans le dire.
+    Tout fichier YAML du dossier est un régime, calculé ou non, hors le schéma,
+    l'inventaire et les pivots : un fichier d'une autre nature qu'on y poserait
+    serait chargé comme un régime. Le catalogue — les régimes calculés — suit
+    l'ordre des rangs, qui départage la fusion ; un rang pris deux fois
+    laisserait le chargeur choisir sans le dire.
     """
     from retraite_notionnelle.donnees.regimes import (
-        FICHIERS_HORS_REGIMES, fiches_de_regimes)
+        FICHIERS_HORS_REGIMES, fiches_de_regimes, fichiers_de_regimes)
 
     dossier = RACINE_DONNEES / "reference" / "regimes"
-    fiches = fiches_de_regimes(RACINE_DONNEES)
-    autres = {c.name for c in dossier.glob("*.yaml")} - {c.name for c, _ in fiches}
+    tous = fichiers_de_regimes(RACINE_DONNEES)
+    autres = {c.name for c in dossier.glob("*.yaml")} - {c.name for c, _ in tous}
     assert autres == {"_schema.yaml", *FICHIERS_HORS_REGIMES}
-    assert all(chemin.stem == fiche["code"] for chemin, fiche in fiches)
+    assert all(chemin.stem == fiche["code"] for chemin, fiche in tous)
+    fiches = fiches_de_regimes(RACINE_DONNEES)
     rangs = [fiche["rang"] for _, fiche in fiches]
     assert rangs == sorted(set(rangs))
     assert [fiche["code"] for _, fiche in fiches] == [r.code for r in catalogue]
+    assert all("rang" not in fiche for _, fiche in tous if "periodes" not in fiche)
+
+
+def test_l_inventaire_est_la_vue_des_fichiers_de_regimes():
+    """`inventaire.yaml` ne s'écrit plus à la main : chaque régime porte sa
+    ligne, et `scripts/construire_inventaire.py` les réunit (phase 6). Ce test
+    refuse un inventaire qui ne serait plus celui que le script produit."""
+    import importlib.util
+
+    chemin = Path(__file__).resolve().parents[1] / "scripts" / "construire_inventaire.py"
+    specification = importlib.util.spec_from_file_location("construire_inventaire", chemin)
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    assert module.produire() == module.INVENTAIRE.read_text(encoding="utf-8"), (
+        "inventaire.yaml est périmé : lancer python scripts/construire_inventaire.py"
+    )
+
+
+def test_le_chargeur_refuse_une_ligne_d_inventaire_qui_ment(tmp_path):
+    """Un régime calculé porte des périodes, un régime qui ne l'est pas n'en
+    porte pas ; un champ inconnu dans la ligne serait perdu sans bruit."""
+    import shutil
+
+    import yaml
+
+    from retraite_notionnelle.donnees.regimes import fichiers_de_regimes
+
+    source = RACINE_DONNEES / "reference" / "regimes"
+    dossier = tmp_path / "reference" / "regimes"
+    dossier.mkdir(parents=True)
+    for nom in ("avts.yaml", "ortf.yaml", "_schema.yaml"):
+        shutil.copy(source / nom, dossier / nom)
+    assert [c.stem for c, _ in fichiers_de_regimes(tmp_path)] == ["avts", "ortf"]
+    ortf = yaml.safe_load((source / "ortf.yaml").read_text(encoding="utf-8"))
+    for ecart, message in (
+        ({"periodes": []}, "porte des périodes"),
+        ({"inventaire": {**ortf["inventaire"], "couverture": "partiel"}}, "sans période"),
+        ({"inventaire": {**ortf["inventaire"], "manques": "x"}}, "champs inconnus"),
+    ):
+        (dossier / "ortf.yaml").write_text(
+            yaml.safe_dump({**ortf, **ecart}, allow_unicode=True), encoding="utf-8")
+        with pytest.raises(ValueError, match=message):
+            fichiers_de_regimes(tmp_path)
 
 
 def test_le_chargeur_refuse_un_rang_pris_ou_un_fichier_mal_nomme(tmp_path):

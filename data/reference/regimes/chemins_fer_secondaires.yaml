@@ -11,6 +11,19 @@ succede_a: []
 integre_dans: null
 population: Agents des réseaux ferroviaires secondaires, régime en extinction.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 120
+  nom: Caisse autonome mutuelle de retraites des chemins de fer secondaires et tramways (CAMR)
+  population: Agents des chemins de fer d'intérêt local et des tramways, recrutés avant 1954
+  couverture: partiel
+  statuts: [agent_chemins_fer_secondaires]
+  textes:
+    - {reference: "loi du 22 juillet 1922 relative aux retraites des agents des chemins de fer secondaires et des tramways", id: null}
+    - {reference: "code de la sécurité sociale, R. 711-1 7°", id: LEGIARTI000048031379}
+  manque: >-
+    Une seule période, au niveau `estimee`, depuis le texte fondateur sans
+    recontrôle.
 periodes:
   - debut: 1930
     fin: 1954

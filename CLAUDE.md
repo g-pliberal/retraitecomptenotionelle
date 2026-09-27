@@ -67,6 +67,7 @@ et l'on réécrit depuis les sources rebasées.
 
 ```bash
 git rebase origin/main          # pousser.sh l'a refusé, on le reprend à la main
+python scripts/construire_inventaire.py  # l'inventaire, depuis les fichiers de régimes
 python scripts/construire_donnees.py
 python scripts/construire_temoins.py
 python scripts/chiffrage_plf.py     # ses tableaux, dans le .md, sont des chiffres ancrés
@@ -98,9 +99,11 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   dans `moteur/js/`, puis `python scripts/construire_temoins.py` : le diff des
   témoins montre, chiffre par chiffre, ce qu'elle déplace. Après toute
   modification des données ou du style : `python scripts/construire_donnees.py`.
-- **Les données** sont dans `data/`. Tous les régimes, calculés ou non :
-  `data/reference/regimes/inventaire.yaml`, où toute fiche du catalogue prend
-  sa ligne. L'histoire des règles : `reformes.yaml` et `pivots.yaml` ;
+- **Les données** sont dans `data/`. Tous les régimes, calculés ou non : un
+  fichier par régime dans `data/reference/regimes/`, qui porte sa ligne
+  d'inventaire ; `inventaire.yaml`, qui les énumère, s'en fabrique par
+  `python scripts/construire_inventaire.py`. L'histoire des règles :
+  `reformes.yaml` et `pivots.yaml` ;
   `python scripts/calendrier_regimes.py --regime X` dit ce qu'une fiche ne
   coupe pas, `--carte` imprime le tableau des jeux de règles, et toute
   réforme qui touche un régime est coupée, absorbée ou déclarée

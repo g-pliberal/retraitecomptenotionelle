@@ -1,0 +1,28 @@
+code: crfm_mayotte
+nom: Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM)
+famille: fonction_publique
+population: Agents titulaires de la collectivité, des communes et des établissements publics de Mayotte, avant leur intégration dans les fonctions publiques
+creation: 1977
+fermeture: 2010
+extinction: null
+succede_a: []
+integre_dans: cnracl
+inventaire:
+  section: fonction_publique
+  rang: 110
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi n° 2001-616 du 11 juillet 2001 relative à Mayotte, article 64-1 (intégration des agents dans les fonctions publiques au plus tard le 31 décembre 2010 ; IX : dissolution de la caisse)", id: LEGIARTI000025950147}
+    - {reference: "décret n° 2012-1256 du 13 novembre 2012 relatif au règlement des droits à pension des agents publics de Mayotte intégrés ou titularisés (préliquidation par la CRFM de la part antérieure)", id: LEGITEXT000026637100}
+    - {reference: "décret n° 2013-255 du 26 mars 2013, article 2 (pensions dues par la CRFM versées par la CNRACL ou par le service des retraites de l'État)", id: LEGIARTI000027239454}
+    - {reference: "répertoire Sirene, établissement public administratif n° 200 025 260 créé le 16 mars 1977 (hors JORF)", id: null}
+    - {reference: "Outre-mer La 1ère, « La Caisse de retraite des fonctionnaires de Mayotte pourrait bientôt fermer ses portes », 17 septembre 2025 (créée en mars 1977, cotisations reprises au niveau national en 2007, trois agents, liquidation en cours)", id: null}
+  raison_hors_champ: >-
+    Caisse locale créée en mars 1977 par délibération hors Journal
+    officiel, fermée par l'intégration de ses affiliés dans les fonctions
+    publiques d'État, territoriale et hospitalière au plus tard fin 2010,
+    en liquidation depuis : ses pensions sont versées par la CNRACL ou par
+    l'État, la caisse ne préliquidant plus que la part antérieure. Les
+    statuts de fonctionnaire portent la carrière ; le règlement de la
+    caisse n'est pas dans l'index.

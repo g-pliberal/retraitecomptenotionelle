@@ -11,6 +11,17 @@ succede_a: []
 integre_dans: fonction_publique_etat
 population: Fonctionnaires civils et militaires de l'État.
 hors_repartition: false
+inventaire:
+  section: fonction_publique
+  rang: 10
+  nom: Pensions civiles et militaires, loi de 1853
+  population: Fonctionnaires de l'État et militaires, avant 1948
+  couverture: modelise
+  statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
+            militaire, militaire_officier]
+  textes:
+    - {reference: "loi du 9 juin 1853 sur les pensions civiles", id: null}
+    - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles et militaires", id: null}
 periodes:
   - debut: 1930
     fin: 1948

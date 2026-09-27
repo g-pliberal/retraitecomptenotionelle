@@ -1,0 +1,19 @@
+code: sapeurs_pompiers_volontaires
+nom: Prestation de fidélisation et de reconnaissance des sapeurs-pompiers volontaires
+famille: special
+population: Sapeurs-pompiers volontaires
+creation: 2005
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: speciaux
+  rang: 190
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi n° 96-370 du 3 mai 1996, article 15-1 (rédaction de 2004)", id: LEGIARTI000006367738}
+  raison_hors_champ: >-
+    Une prestation financée par les collectivités, sans cotisation du
+    bénéficiaire : ce n'est pas un régime de retraite au sens du modèle.

@@ -1,0 +1,20 @@
+code: credit_foncier
+nom: Régime spécial de retraite du Crédit foncier de France
+famille: special
+population: Personnels du Crédit foncier de France
+creation: 1930
+fermeture: 1988
+extinction: 1988
+succede_a: []
+integre_dans: regime_general
+inventaire:
+  section: speciaux
+  rang: 160
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "décret n° 89-157 du 8 mars 1989 fixant les modalités du transfert au régime général, au 1er janvier 1989, du régime spécial du Crédit foncier", id: LEGIARTI000006774339}
+  raison_hors_champ: >-
+    Transféré au régime général au 1er janvier 1989, pensions et cotisants
+    compris : les droits acquis sont servis par le régime général et le
+    dépôt n'a pas de source pour le barème d'avant.

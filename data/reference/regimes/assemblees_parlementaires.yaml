@@ -17,6 +17,23 @@ population: >-
   publique. Les fonctionnaires des assemblées, dont le règlement n'est pas
   publié, restent hors fiche.
 hors_repartition: false
+inventaire:
+  section: fonction_publique
+  rang: 70
+  nom: Caisses de retraite des anciens députés, des anciens sénateurs et des personnels des assemblées
+  population: Députés, sénateurs, fonctionnaires de l'Assemblée nationale et du Sénat
+  couverture: partiel
+  statuts: [parlementaire]
+  textes:
+    - {reference: "règlement de la Caisse de pensions des députés et des anciens députés, consolidé au 1er janvier 2018, publié par l'Assemblée nationale (hors JORF)", id: null}
+    - {reference: "arrêté des Questeurs n° 15-043 du 14 avril 2015 relatif au taux de cotisation à la Caisse de pensions (9,34 % en 2015, 10,85 % en 2020)", id: null}
+    - {reference: "Bureau du Sénat du 12 juillet 2023, transposition de la loi du 14 avril 2023 à la caisse des retraites des anciens sénateurs (62 à 64 ans, 43 annuités)", id: null}
+  manque: >-
+    La fiche est celle des députés, lue dans le règlement de 2018 ; les
+    sénateurs y sont assimilés faute d'un règlement publié, et les
+    fonctionnaires des assemblées restent hors fiche. La part versée par
+    l'Assemblée n'est pas écrite : seule la retenue du député est portée.
+    La retenue d'avant 2015 est estimée.
 periodes:
   - debut: 1930
     fin: 2008

@@ -1,0 +1,25 @@
+code: elus_locaux_ircantec
+nom: Affiliation des élus locaux à l'Ircantec
+famille: complementaire_prive
+population: Maires, adjoints et élus indemnisés
+creation: 1973
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: prive_complementaires
+  rang: 120
+  couverture: routage
+  statuts: [elu_local]
+  textes:
+    - {reference: "loi n° 72-1201 du 23 décembre 1972 portant affiliation des maires et adjoints au régime de retraite complémentaire des agents non titulaires, article 1", id: LEGIARTI000006338235}
+    - {reference: "code général des collectivités territoriales, L. 2123-28 (affiliation des élus indemnisés à l'Ircantec)", id: LEGIARTI000006390053}
+    - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice des mandats locaux", id: null}
+  manque: >-
+    Le statut `elu_local` route l'Ircantec depuis 1973 et, depuis 2013, le
+    régime général au-dessus de la moitié du plafond, le seuil de L.
+    382-31 étant lu année par année sur l'indemnité. Non portés : l'élu
+    qui a cessé toute activité professionnelle, assujetti même sous le
+    seuil ; les régimes de retraite par rente (FONPEL, CAREL),
+    facultatifs.

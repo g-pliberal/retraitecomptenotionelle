@@ -11,6 +11,21 @@ succede_a: []
 integre_dans: null
 population: Chefs d'exploitation, conjoints collaborateurs, aides familiaux.
 hors_repartition: false
+inventaire:
+  section: agricoles
+  rang: 10
+  nom: Assurance vieillesse des non-salariés agricoles (MSA)
+  population: Chefs d'exploitation, conjoints collaborateurs, aides familiaux
+  couverture: partiel
+  statuts: [exploitant_agricole]
+  textes:
+    - {reference: "loi n° 52-799 du 10 juillet 1952 assurant la mise en œuvre du régime de l'allocation de vieillesse des personnes non salariées", id: null}
+    - {reference: "code rural et de la pêche maritime, L. 732-18 et suivants, R. 732-70 et R. 732-71", id: null}
+  manque: >-
+    Le barème en points d'avant 1990 n'est pas lu ; la réforme du 28 février
+    2025, en vigueur depuis 2026, renvoie deux de ses trois paramètres à un
+    décret absent de la base ; conjoints et aides familiaux sont
+    sous-estimés.
 periodes:
   - debut: 1952
     fin: 1985

@@ -72,7 +72,9 @@ def _fiche_regime(code: str) -> dict:
 
 
 def _fiches_regimes() -> list[dict]:
-    """Toutes les fiches de régime écrites, dans l'ordre du catalogue (leur rang)."""
+    """Les fiches écrites des régimes que le modèle calcule, dans l'ordre du
+    catalogue (leur rang) ; les régimes qu'il ne calcule pas n'ont que leur
+    ligne d'inventaire, sans période."""
     import yaml
 
     fiches = [
@@ -80,7 +82,7 @@ def _fiches_regimes() -> list[dict]:
         for chemin in sorted((REFERENCE / "regimes").glob("*.yaml"))
         if not chemin.name.startswith("_") and chemin.name not in FICHIERS_HORS_REGIMES
     ]
-    return sorted(fiches, key=lambda fiche: fiche["rang"])
+    return sorted((f for f in fiches if "periodes" in f), key=lambda fiche: fiche["rang"])
 
 #: Première année du fichier des espérances de vie : avant elle, aucune série
 #: du dépôt n'en a besoin.

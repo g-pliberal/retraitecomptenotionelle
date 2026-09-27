@@ -13,6 +13,15 @@ population: >-
   Avocats. Régime en points, obligatoire, à trois classes de cotisation —
   C1, C2 et C2+ — dont seule la première s'impose sans option.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 230
+  nom: Complémentaire des avocats (CNBF)
+  population: Avocats
+  couverture: modelise
+  statuts: [avocat]
+  textes:
+    - {reference: "décret n° 79-316 du 19 avril 1979 (régime complémentaire des avocats)", id: null}
 periodes:
   - debut: 1979
     fin: 2015

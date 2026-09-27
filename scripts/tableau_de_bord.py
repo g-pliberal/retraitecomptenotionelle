@@ -80,7 +80,7 @@ REGISTRES = {
     "data/reference/legislation/veille.yaml",
     "data/reference/legislation/frontiere_contributive.yaml",
     "data/reference/prose/zones.yaml", "data/reference/site/affirmations.yaml",
-    "data/reference/regimes/inventaire.yaml", "data/reference/legislation/reformes.yaml",
+    "data/reference/legislation/reformes.yaml",
     "data/reference/regimes/pivots.yaml",
 }
 #: Les étapes qui construisent le relevé des droits (docs/architecture.md, § 7.2) :

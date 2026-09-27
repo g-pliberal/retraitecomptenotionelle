@@ -21,6 +21,22 @@ population: >-
   sert les points. Fiche à part de l'Arrco parce que son ASSIETTE n'est
   pas un salaire mais un forfait.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 50
+  population: >-
+    Ministres des cultes et religieux percevant une rémunération
+    individuelle
+  couverture: partiel
+  statuts: [ministre_du_culte]
+  textes:
+    - {reference: "code de la sécurité sociale, L. 921-1, complété par la loi n° 2005-1579 du 19 décembre 2005, article 75, VII", id: LEGIARTI000047452643}
+    - {reference: "circulaires de la CAVIMAC sur le recouvrement des cotisations de retraite complémentaire des cultes, n° 2021/04 à 2026/03", id: null}
+  manque: >-
+    Le taux de base seul : les huit taux spécifiques de la CAVIMAC, de
+    11,13 à 21,31 %, ne sont pas portés ; avant 2019, le taux est celui de
+    la tranche 1 de l'Arrco, aucune circulaire antérieure à novembre 2021
+    n'étant lisible.
 periodes:
   - debut: 2006
     fin: 2010

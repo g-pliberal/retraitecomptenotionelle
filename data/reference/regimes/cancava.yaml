@@ -11,6 +11,14 @@ succede_a: []
 integre_dans: rsi
 population: Artisans.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 10
+  population: Artisans
+  couverture: modelise
+  statuts: [artisan]
+  textes:
+    - {reference: "loi n° 48-101 du 17 janvier 1948 instituant une allocation de vieillesse pour les personnes non salariées", id: null}
 periodes:
   - debut: 1949
     fin: 1972

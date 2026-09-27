@@ -1,12 +1,15 @@
 # Les régimes de retraite français, tous — et ce que le dépôt en calcule
 
-**Le fichier qui fait foi est [`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml).**
-Ce document en est la lecture commentée — ses tableaux et sa phrase de compte
-sont produits par `python scripts/construire_regimes_md.py`, et un test refuse
-qu'ils vieillissent ; la page **Données** du site l'affiche
-telle qu'elle est, et `tests/test_donnees.py` le tient aligné sur le catalogue :
-une fiche de régime sans ligne d'inventaire, ou une ligne qui prétend calculer
-ce qu'aucune fiche ne calcule, fait échouer les tests.
+**L'inventaire, [`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml),
+se fabrique depuis les fichiers de régimes** — un par régime, calculé ou non,
+dont le bloc `inventaire` porte la ligne — par
+`python scripts/construire_inventaire.py`. Ce document en est la lecture
+commentée — ses tableaux et sa phrase de compte sont produits par
+`python scripts/construire_regimes_md.py`, et un test refuse qu'ils
+vieillissent ; la page **Données** du site l'affiche telle qu'elle est, et
+`tests/test_donnees.py` le tient aligné sur le catalogue : une fiche de régime
+sans ligne d'inventaire, ou une ligne qui prétend calculer ce qu'aucune fiche
+ne calcule, fait échouer les tests.
 
 Pourquoi ce fichier existe : `docs/limites.md` disait que la liste des régimes
 manquants « n'est pas dérivée d'un fichier, et c'est une limite en soi — un

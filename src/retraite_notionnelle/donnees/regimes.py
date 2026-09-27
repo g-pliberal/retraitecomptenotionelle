@@ -1095,23 +1095,22 @@ def dater_les_taux(periodes: tuple[PeriodeRegime, ...],
 FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml")
 
 
-def fiches_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
-    """Les fiches de régime telles qu'elles sont écrites, dans l'ordre du catalogue.
+#: Les champs du bloc ``inventaire`` d'un fichier de régime (``_schema.yaml``).
+CHAMPS_DE_L_INVENTAIRE = ("section", "rang", "nom", "population", "couverture",
+                          "statuts", "textes", "manque", "raison_hors_champ")
+
+
+def fichiers_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
+    """Tous les fichiers de régime, calculés ou non, dans l'ordre de leurs noms.
 
     Un fichier par régime, dans ``data/reference/regimes/``, nommé de son
-    code : ``sncf.yaml`` pour ``sncf``. L'ordre est celui des rangs, et il
-    n'est pas indifférent : à égalité, la fusion des régimes
-    (``moteur/fusion.py``) retient le premier rencontré, et une moyenne
-    s'additionne dans cet ordre. Les rangs sont ceux de l'ordre où les cinq
-    fichiers d'avant la phase 6 (docs/architecture.md, § 11) chargeaient
-    leurs régimes, de dix en dix.
-
-    La fiche ÉCRITE, avant que :func:`dater_les_taux` ne découpe ses périodes :
-    c'est ce que lisent les contrôles qui confrontent un taux saisi à sa
-    source.
+    code : ``sncf.yaml`` pour ``sncf``. Chacun porte sa ligne d'inventaire, le
+    bloc ``inventaire``. Ceux que le modèle calcule — couverture ``modelise``
+    ou ``partiel`` — portent en plus leur rang et leurs périodes ; les autres,
+    leur identité et leur ligne seulement.
     """
     dossier = racine / "reference" / "regimes"
-    fiches: list[tuple[Path, dict]] = []
+    fichiers: list[tuple[Path, dict]] = []
     for chemin in sorted(dossier.glob("*.yaml")):
         if chemin.name.startswith("_") or chemin.name in FICHIERS_HORS_REGIMES:
             continue
@@ -1121,11 +1120,42 @@ def fiches_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
                 f"{chemin.name} : un fichier de régime porte le code qui le nomme, "
                 f"pas {fiche.get('code')!r}"
             )
-        if type(fiche.get("rang")) is not int:
-            raise ValueError(f"{chemin.name} : rang manquant, ou qui n'est pas un entier")
-        fiches.append((chemin, fiche))
+        ligne = fiche.get("inventaire")
+        if not isinstance(ligne, dict):
+            raise ValueError(f"{chemin.name} : pas de ligne d'inventaire (le bloc `inventaire`)")
+        inconnus = set(ligne) - set(CHAMPS_DE_L_INVENTAIRE)
+        if inconnus:
+            raise ValueError(
+                f"{chemin.name} : champs inconnus dans `inventaire` : {sorted(inconnus)}")
+        calcule = ligne.get("couverture") in COUVERTURES_CALCULEES
+        if calcule != ("periodes" in fiche):
+            raise ValueError(
+                f"{chemin.name} : un régime {ligne.get('couverture')!r} "
+                + ("porte des périodes" if not calcule else "sans période")
+            )
+        fichiers.append((chemin, fiche))
+    return tuple(fichiers)
+
+
+def fiches_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
+    """Les fiches des régimes que le modèle calcule, écrites, dans l'ordre du catalogue.
+
+    L'ordre est celui des rangs, et il n'est pas indifférent : à égalité, la
+    fusion des régimes (``moteur/fusion.py``) retient le premier rencontré, et
+    une moyenne s'additionne dans cet ordre. Les rangs sont ceux de l'ordre où
+    les cinq fichiers d'avant la phase 6 (docs/architecture.md, § 11)
+    chargeaient leurs régimes, de dix en dix.
+
+    La fiche ÉCRITE, avant que :func:`dater_les_taux` ne découpe ses périodes :
+    c'est ce que lisent les contrôles qui confrontent un taux saisi à sa
+    source.
+    """
+    fiches = [(chemin, fiche) for chemin, fiche in fichiers_de_regimes(racine)
+              if "periodes" in fiche]
     rangs: dict[int, str] = {}
     for chemin, fiche in fiches:
+        if type(fiche.get("rang")) is not int:
+            raise ValueError(f"{chemin.name} : rang manquant, ou qui n'est pas un entier")
         if fiche["rang"] in rangs:
             raise ValueError(
                 f"{chemin.name} : rang {fiche['rang']} déjà pris par "
@@ -1507,11 +1537,15 @@ class CatalogueRegimes:
 
 #: Ce que le dépôt sait faire d'un régime de l'inventaire.
 COUVERTURES = ("modelise", "partiel", "a_modeliser", "routage", "hors_champ")
+#: Les couvertures d'un régime que le modèle calcule : il est au catalogue.
+COUVERTURES_CALCULEES = ("modelise", "partiel")
 
 
 @dataclass(frozen=True)
 class RegimeInventaire:
-    """Une ligne de ``data/reference/regimes/inventaire.yaml``.
+    """Une ligne de ``data/reference/regimes/inventaire.yaml``, que
+    ``scripts/construire_inventaire.py`` fabrique depuis les fichiers de régimes
+    (voir :func:`lignes_d_inventaire`).
 
     Le catalogue ne connaît que les régimes qu'il calcule ; l'inventaire les
     nomme tous — vivants, disparus, et ceux qu'on ne calculera pas — avec,
@@ -1540,7 +1574,7 @@ class RegimeInventaire:
 
     @property
     def au_catalogue(self) -> bool:
-        return self.couverture in ("modelise", "partiel")
+        return self.couverture in COUVERTURES_CALCULEES
 
     def dictionnaire(self) -> dict:
         return {
@@ -1618,6 +1652,52 @@ def charger_inventaire(racine: Path) -> tuple[RegimeInventaire, ...]:
     if not lignes:
         raise ValueError(f"aucun régime dans {chemin}")
     return tuple(lignes)
+
+
+def sections_d_inventaire(racine: Path) -> dict[str, str]:
+    """Les sections de l'inventaire, dans son ordre : leur code, et leur titre."""
+    schema = charger_yaml(racine / "reference" / "regimes" / "_schema.yaml")
+    return dict(schema["champs_regime"]["inventaire"]["champs"]["section"]["valeurs"])
+
+
+def lignes_d_inventaire(racine: Path) -> list[tuple[str, dict]]:
+    """Les lignes de l'inventaire, faites des fichiers de régimes : (section, ligne).
+
+    C'est la vue que ``scripts/construire_inventaire.py`` écrit dans
+    ``inventaire.yaml`` : section par section, dans l'ordre des rangs. Le nom
+    et la population sont ceux de la ligne quand elle les raccourcit, ceux du
+    régime sinon ; la famille, les dates et la lignée sont toujours ceux du
+    régime, qui ne les écrit qu'une fois.
+    """
+    sections = list(sections_d_inventaire(racine))
+    places: dict[tuple[int, int], str] = {}
+    lignes: list[tuple[tuple[int, int], str, dict]] = []
+    for chemin, fiche in fichiers_de_regimes(racine):
+        bloc = fiche["inventaire"]
+        if bloc.get("section") not in sections:
+            raise ValueError(f"{chemin.name} : section d'inventaire inconnue "
+                             f"{bloc.get('section')!r}")
+        if type(bloc.get("rang")) is not int:
+            raise ValueError(f"{chemin.name} : rang d'inventaire manquant, ou qui "
+                             "n'est pas un entier")
+        place = (sections.index(bloc["section"]), bloc["rang"])
+        if place in places:
+            raise ValueError(f"{chemin.name} : rang {bloc['rang']} de la section "
+                             f"{bloc['section']} déjà pris par {places[place]}")
+        places[place] = fiche["code"]
+        ligne = {
+            "code": fiche["code"],
+            "nom": bloc.get("nom", fiche.get("nom")),
+            "famille": fiche.get("famille"),
+            "population": bloc.get("population", fiche.get("population")),
+        }
+        for champ in ("creation", "fermeture", "extinction", "succede_a", "integre_dans"):
+            ligne[champ] = fiche.get(champ)
+        for champ in ("couverture", "statuts", "textes", "manque", "raison_hors_champ"):
+            if champ in bloc:
+                ligne[champ] = bloc[champ]
+        lignes.append((place, bloc["section"], ligne))
+    return [(section, ligne) for _, section, ligne in sorted(lignes, key=lambda l: l[0])]
 
 
 # ---------------------------------------------------------------------------

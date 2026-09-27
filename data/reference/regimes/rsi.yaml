@@ -11,6 +11,16 @@ succede_a: [cancava, organic]
 integre_dans: regime_general
 population: Artisans, commerçants et industriels.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 30
+  population: Artisans, industriels et commerçants
+  couverture: modelise
+  statuts: [artisan, commercant,
+            gerant_debit_tabac, micro_entrepreneur]
+  textes:
+    - {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création du régime social des indépendants", id: null}
+    - {reference: "loi n° 2017-1836 du 30 décembre 2017 de financement de la sécurité sociale pour 2018, article 15", id: null}
 periodes:
   - debut: 2006
     fin: 2008

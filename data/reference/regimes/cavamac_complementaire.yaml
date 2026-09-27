@@ -17,6 +17,23 @@ population: >-
   particularité qu'aucune autre section libérale ne partage : les
   COMPAGNIES MANDANTES en paient une part.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 150
+  nom: Complémentaire des agents généraux d'assurance (CAVAMAC)
+  population: Agents généraux d'assurance
+  couverture: partiel
+  statuts: [agent_general_assurance]
+  textes:
+    - {reference: "décret n° 68-1101 du 5 décembre 1968 et délibérations du conseil d'administration", id: null}
+    - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 23 juin 2011, articles 15, 16 et 18 (âges, minoration, majorations)", id: JORFARTI000024270173}
+    - {reference: "arrêté du 4 août 2023 portant approbation des modifications des statuts (taux plein à 67 ans, minoration trimestrielle au 1er janvier 2024)", id: JORFARTI000047977908}
+  manque: >-
+    L'assiette est reconstituée par un facteur moyen de commissions, qui ne
+    décrit aucun assuré en particulier. La règle d'âge d'avant 2011, publiée
+    au seul Bulletin officiel, est supposée celle des statuts de 2011 ; la
+    liquidation des carrières longues à 15 % de minoration et le capital
+    unique versé sous 1 500 points ne sont pas portés.
 periodes:
   - debut: 1968
     fin: 1970

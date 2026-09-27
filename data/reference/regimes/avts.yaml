@@ -11,6 +11,15 @@ succede_a: [assurances_sociales]
 integre_dans: regime_general
 population: Salariés âgés sans ressources suffisantes.
 hors_repartition: false
+inventaire:
+  section: prive_base
+  rang: 40
+  nom: Allocation aux vieux travailleurs salariés
+  population: Salariés âgés démunis
+  couverture: modelise
+  statuts: []
+  textes:
+    - {reference: "loi du 14 mars 1941 relative à l'allocation aux vieux travailleurs salariés", id: null}
 periodes:
   - debut: 1941
     fin: 1945

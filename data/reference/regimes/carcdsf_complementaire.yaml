@@ -19,6 +19,26 @@ population: >-
   entrent qu'en 2009, quand la CARSAF rejoint la CARCDSF ; avant cette
   date, la fiche ne vaut que pour les chirurgiens-dentistes.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 110
+  nom: Complémentaire des chirurgiens-dentistes et des sages-femmes (CARCDSF)
+  population: Chirurgiens-dentistes et sages-femmes libéraux
+  couverture: partiel
+  statuts: [chirurgien_dentiste_ou_sage_femme]
+  textes:
+    - {reference: "décret n° 2008-1490 du 30 décembre 2008 (fusion de la CARCD et de la CARSAF)", id: null}
+    - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 1er octobre 2007", id: JORFTEXT000000252172}
+    - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 13 avril 2011", id: JORFTEXT000023909782}
+    - {reference: "règlement du régime complémentaire approuvé par l'arrêté du 10 juillet 2026", id: JORFTEXT000054435736}
+  manque: >-
+    La CARSAF des sages-femmes, fusionnée dans la CARCDSF en 2009, avait son
+    propre barème avant : les sages-femmes d'avant 2009 reçoivent celui des
+    dentistes. Les statuts d'avant 2007, publiés au Bulletin officiel, ne
+    sont pas lus : avant 2008 la fiche garde la règle d'âge du régime de
+    base. Le tableau de minoration des nés de juillet 1951 à 1954 (arrêté du
+    9 juillet 2012) n'est publié qu'en image, et 1,25 % par trimestre en
+    tient lieu.
 periodes:
   - debut: 1949
     fin: 1996

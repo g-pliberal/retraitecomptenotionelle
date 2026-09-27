@@ -13,6 +13,16 @@ population: >-
   Agents statutaires d'EDF, GDF et des entreprises de la branche.
   Fermé aux embauches à compter du 1er septembre 2023.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 30
+  nom: Régime spécial des industries électriques et gazières (CNIEG)
+  population: Personnels statutaires des IEG recrutés avant septembre 2023
+  couverture: modelise
+  statuts: [agent_ieg]
+  textes:
+    - {reference: "loi n° 46-628 du 8 avril 1946, article 47, et décret n° 46-1541 du 22 juin 1946 (statut national), annexe 3", id: LEGIARTI000006632496}
+    - {reference: "code de la sécurité sociale, R. 711-1 8°", id: LEGIARTI000048031379}
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — statut national, annexe 3, article 21 (LEGIARTI000052046924), et
 # déjà la version de 1946 (LEGIARTI000006632496) : « 10 % pour trois

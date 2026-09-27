@@ -11,6 +11,22 @@ succede_a: []
 integre_dans: null
 population: Agents du Port autonome de Strasbourg.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 100
+  nom: Régime de retraite du personnel du port autonome de Strasbourg
+  population: Agents du port autonome de Strasbourg
+  couverture: partiel
+  statuts: [agent_port_strasbourg]
+  textes:
+    - {reference: "règlement de retraite du port autonome de Strasbourg (acte de l'établissement, hors JORF)", id: null}
+  manque: >-
+    Le règlement de retraite est un acte de l'établissement, absent de LEGI
+    et du JORF, qui ne portent que le décret constitutif de 1925
+    (LEGIARTI000021290664), l'affiliation au régime local d'Alsace-Moselle
+    (L. 325-1, LEGIARTI000006742525), la liste des régimes spéciaux de 2014
+    (JORFARTI000029964983) et des décrets de compensation : un seul jeu de
+    règles pour 1930-2026, au niveau `estimee`.
 periodes:
   - debut: 1930
     fin: null

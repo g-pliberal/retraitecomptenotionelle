@@ -11,6 +11,16 @@ succede_a: []
 integre_dans: null
 population: Ouvriers d'État (arsenaux, ateliers industriels de l'État).
 hors_repartition: false
+inventaire:
+  section: fonction_publique
+  rang: 50
+  population: Ouvriers de l'État
+  couverture: modelise
+  statuts: [ouvrier_etat, ouvrier_etat_actif]
+  textes:
+    - {reference: "loi du 21 mars 1928", id: null}
+    - {reference: "décret n° 67-711 du 18 août 1967 fixant les conditions d'application du régime des pensions des ouvriers des établissements industriels de l'État", id: LEGIARTI000006767403}
+    - {reference: "décret n° 2004-1056 du 5 octobre 2004", id: null}
 periodes:
   - debut: 1930
     fin: 1947

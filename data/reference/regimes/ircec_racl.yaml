@@ -16,6 +16,25 @@ population: >-
   obligatoire, en plus du RAAP, depuis le décret n° 61-1304 du 4 décembre
   1961.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 180
+  nom: Régime des auteurs et compositeurs lyriques (IRCEC)
+  population: Auteurs et compositeurs lyriques
+  couverture: partiel
+  statuts: [auteur_lyrique]
+  textes:
+    - {reference: "décret n° 61-1304 du 4 décembre 1961 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs de musique, article 1", id: LEGIARTI000006781613}
+    - {reference: "arrêté du 9 mars 1987 portant approbation des modifications apportées aux régimes complémentaires de retraite", id: LEGIARTI000006784842}
+    - {reference: "mémo des valeurs 2026 de l'IRCEC (6,5 % des droits, prix d'achat 10,304 €, valeur de service 0,618 €)", id: null}
+  manque: >-
+    Le taux de 6,5 % et le barème du point viennent du seul mémo 2026 de
+    l'IRCEC, appliqués à toute la carrière ; le seuil d'affiliation (3 170
+    €) est ignoré et le plafond de 435 938 € arrondi à huit plafonds de la
+    Sécurité sociale.
+    La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les
+    générations nées avant 1955 jusqu'en 2024, elle est approchée (voir
+    `docs/limites.md`).
 periodes:
   - debut: 1962
     fin: 2013

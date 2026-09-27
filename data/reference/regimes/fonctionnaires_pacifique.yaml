@@ -16,6 +16,22 @@ population: >-
   année de services jusqu'à 80 % du traitement indiciaire, à 60 ans puis
   62 ans à partir de 2025.
 hors_repartition: false
+inventaire:
+  section: fonction_publique
+  rang: 130
+  nom: Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française
+  population: Fonctionnaires territoriaux et communaux du Pacifique
+  couverture: partiel
+  statuts: [fonctionnaire_pacifique]
+  textes:
+    - {reference: "Direction des ressources humaines et de la fonction publique de Nouvelle-Calédonie, « Mesures d'urgence en faveur de la CLR » (3 octobre 2023) et « Mesures favorisant la pérennité du régime de retraite des fonctionnaires » (16 septembre 2024) — lois du pays et délibérations du congrès, hors JORF", id: null}
+
+  manque: >-
+    La fiche est celle de la Caisse locale de retraites de Nouvelle-
+    Calédonie ; les fonctionnaires de Polynésie relèvent de la CPS, portée
+    par le statut salarié. Les cotisations d'avant 2023 sont projetées ;
+    la durée de services requise et la table exacte de l'âge après 2025
+    restent à lire dans la loi du pays.
 periodes:
   - debut: 1959
     fin: 2023

@@ -14,6 +14,17 @@ population: >-
   à compter du 1er janvier 2020 (loi du 27 juin 2018) : les nouveaux
   entrants relèvent du régime général et de l'Agirc-Arrco.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 10
+  nom: Régime spécial des agents du cadre permanent de la SNCF
+  population: Agents du cadre permanent recrutés avant 2020
+  couverture: modelise
+  statuts: [agent_sncf]
+  textes:
+    - {reference: "loi du 21 juillet 1909 relative aux conditions de retraite du personnel des grands réseaux de chemins de fer", id: null}
+    - {reference: "code de la sécurité sociale, R. 711-1 6°", id: LEGIARTI000048031379}
+    - {reference: "décret n° 2008-639 du 30 juin 2008 relatif au régime spécial de retraite du personnel de la SNCF", id: null}
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 2008-639, article 16 (LEGIARTI000048240189) : « une
 # majoration de 10 % » pour trois enfants, « 5 % de la pension […]

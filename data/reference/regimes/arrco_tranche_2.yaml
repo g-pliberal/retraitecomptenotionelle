@@ -16,6 +16,20 @@ population: >-
   cette tranche forme une fiche à part, que l'affiliation donne aux uns et
   pas aux autres.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 40
+  nom: Arrco, tranche 2 des non-cadres
+  population: Non-cadres, entre un et trois plafonds
+  couverture: modelise
+  statuts: [salarie_prive_non_cadre, salarie_agricole, mineur, agent_seita,
+            agent_chemins_fer_secondaires,
+            maitre_enseignement_prive,
+            salarie_saint_pierre_et_miquelon, salarie_nouvelle_caledonie,
+            salarie_regime_professionnel_integre]
+  textes:
+    - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
+    - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
 periodes:
   - debut: 1961
     fin: 1966

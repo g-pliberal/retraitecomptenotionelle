@@ -1,0 +1,29 @@
+code: elus_pacifique
+nom: Régimes de retraite des élus des assemblées de Polynésie française et de Nouvelle-Calédonie
+famille: special
+population: Représentants à l'assemblée et membres du gouvernement de la Polynésie française ; membres du congrès, des assemblées de province et du gouvernement de la Nouvelle-Calédonie
+creation: null
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: fonction_publique
+  rang: 120
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi organique n° 99-209 du 19 mars 1999 relative à la Nouvelle-Calédonie, article 78 (le congrès fixe le régime de sécurité sociale et de retraite de ses membres)", id: LEGIARTI000028213954}
+    - {reference: "loi organique n° 99-209, article 163 (même compétence de l'assemblée de province pour ses membres)", id: LEGIARTI000028213949}
+    - {reference: "Radio 1 Tahiti, « Les détails du texte qui doit faire cotiser les élus à la CPS » : proposition de loi du pays affiliant les représentants au régime de base des salariés, le régime par capitalisation existant étant maintenu à titre complémentaire (hors JORF)", id: null}
+    - {reference: "TNTV, « Les membres du gouvernement vont cotiser au régime de retraite », 24 avril 2024 : arrêté du conseil des ministres affiliant les membres du gouvernement au régime de base des salariés de la CPS au 1er juin 2024 (hors JORF)", id: null}
+    - {reference: "Outre-mer La 1ère, « Le gouvernement va cotiser au régime de retraite de la CPS », 30 avril 2024 : « représentants et ministres souscrivent à des régimes de retraite privés », cotisation d'environ 3 % des indemnités ministérielles (hors JORF)", id: null}
+  raison_hors_champ: >-
+    Régimes fixés par les assemblées elles-mêmes, hors Journal officiel de
+    la République. En Polynésie, les représentants ont un régime par
+    capitalisation auprès d'un assureur privé, exclu des comptes
+    notionnels comme toute capitalisation, et les membres du gouvernement
+    ne cotisent au régime de base de la CPS que depuis le 1er juin 2024 ;
+    en Nouvelle-Calédonie, la loi organique confie au congrès et aux
+    assemblées de province le régime de retraite de leurs membres, et le
+    dépôt n'a lu aucune de leurs délibérations. Aucun barème lu.

@@ -14,6 +14,14 @@ population: >-
   régime de base aligné sur le régime général depuis 1973 ; fondu dans le
   RCI au 1er janvier 2013.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 40
+  population: Artisans
+  couverture: modelise
+  statuts: [artisan]
+  textes:
+    - {reference: "décret n° 78-351 du 14 mars 1978 (régime complémentaire obligatoire d'assurance vieillesse des artisans)", id: null}
 periodes:
   - debut: 1979
     fin: 1984

@@ -1,0 +1,20 @@
+code: retraites_ouvrieres_paysannes
+nom: Retraites ouvrières et paysannes
+famille: base_prive
+population: Salariés de l'industrie, du commerce et de l'agriculture, à bas revenus
+creation: 1911
+fermeture: 1930
+extinction: 1930
+succede_a: []
+integre_dans: assurances_sociales
+inventaire:
+  section: prive_base
+  rang: 10
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi du 5 avril 1910 sur les retraites ouvrières et paysannes", id: null}
+  raison_hors_champ: >-
+    Régime en capitalisation, antérieur à 1930, l'année où le modèle commence :
+    aucun assuré vivant n'y a cotisé, et le texte n'est pas dans le dump de la
+    DILA, qui commence en 1947.

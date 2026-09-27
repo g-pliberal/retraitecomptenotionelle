@@ -18,6 +18,34 @@ population: >-
   générations 1969-1973. Aucune complémentaire obligatoire : l'Agirc-Arrco
   n'y est pas applicable.
 hors_repartition: false
+inventaire:
+  section: prive_base
+  rang: 70
+  population: >-
+    Salariés du secteur privé et agents de droit privé à Mayotte ; depuis
+    2012, travailleurs non salariés artisans, commerçants, libéraux et
+    agricoles de Mayotte (assurance de base des non-salariés, même caisse)
+  couverture: partiel
+  statuts: [salarie_mayotte]
+  textes:
+    - {reference: "loi n° 85-10 du 3 janvier 1985, article 98", id: LEGIARTI000006756839}
+    - {reference: "décret n° 87-175 du 16 mars 1987 portant création d'un régime de retraite au profit des salariés de Mayotte, articles 2 et 3", id: LEGIARTI000006770150}
+    - {reference: "ordonnance n° 2002-411 du 27 mars 2002 et décret n° 2003-589 du 1er juillet 2003, articles 2, 9, 10 et 11 (âge, durée, taux plein, coefficient de minoration)", id: LEGIARTI000033155436}
+    - {reference: "décret n° 2024-766 du 8 juillet 2024 et décret n° 2026-345 du 7 mai 2026 (relèvement de l'âge, générations 1962 à 1969)", id: LEGIARTI000054059636}
+    - {reference: "ordonnance n° 2011-1923 du 22 décembre 2011, article 20 (chapitre II « Assurance de base des travailleurs non salariés des professions artisanales, industrielles et commerciales, et agricoles », articles 23-1 à 23-4 de l'ordonnance de 2002)", id: LEGIARTI000025017034}
+    - {reference: "ordonnance n° 2002-411, article 23-4 (la pension des non-salariés suit les règles du chapitre Ier, revenu annuel moyen adapté par décret)", id: LEGIARTI000025021012}
+    - {reference: "décret n° 2012-1168 du 17 octobre 2012 relatif au développement de la sécurité sociale à Mayotte, article 9 (chapitre III : dispositions relatives aux travailleurs non salariés, articles 31 et suivants du décret n° 2003-589)", id: JORFARTI000026511524}
+  manque: >-
+    Le SMIG mahorais, qui valide les trimestres (200 puis 150 heures par
+    trimestre), n'est pas une série du dépôt : la validation se fait au
+    SMIC national. Taux et plafond de la caisse de sécurité sociale de
+    Mayotte, en convergence jusqu'en 2036, remplacés par ceux du régime
+    général. Salaire de référence supposé sur vingt-cinq ans dès 2003.
+    Les non-salariés de Mayotte, affiliés à la même caisse depuis 2012
+    avec une pension calculée selon les mêmes règles (article 23-4),
+    n'ont aucun statut qui les y route : seul `salarie_mayotte` atteint
+    la fiche, et le chapitre III du décret n° 2003-589, écrit en 2012 pour
+    adapter leur revenu annuel moyen, n'est pas lu.
 periodes:
   - debut: 1987
     fin: 2002

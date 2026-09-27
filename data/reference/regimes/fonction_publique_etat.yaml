@@ -11,6 +11,35 @@ succede_a: [pensions_civiles_1853]
 integre_dans: null
 population: Fonctionnaires titulaires de l'État, magistrats, militaires.
 hors_repartition: false
+inventaire:
+  section: fonction_publique
+  rang: 20
+  nom: Pensions civiles et militaires de retraite (Service des retraites de l'État)
+  population: Fonctionnaires civils de l'État, magistrats, militaires
+  couverture: partiel
+  statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
+            militaire, militaire_officier]
+  textes:
+    - {reference: "loi n° 48-1450 du 20 septembre 1948 portant réforme du régime des pensions civiles et militaires", id: null}
+    - {reference: "loi n° 64-1339 du 26 décembre 1964 portant réforme du code des pensions civiles et militaires de retraite", id: null}
+    - {reference: "code des pensions civiles et militaires de retraite, L. 1 et suivants", id: null}
+    - {reference: "code des pensions civiles et militaires de retraite, L. 24 (catégorie active, âge anticipé et âge minoré ; pension militaire après dix-sept ou vingt-sept ans de services)", id: LEGIARTI000047452804}
+    - {reference: "code des pensions civiles et militaires de retraite, L. 14 bis (âge d'annulation de la décote, par classement)", id: LEGIARTI000047449763}
+    - {reference: "code des pensions civiles et militaires de retraite, L. 25 (jouissance différée de la pension militaire)", id: LEGIARTI000047452796}
+    - {reference: "loi n° 2023-270 du 14 avril 2023, article 10, XXIV (montée en charge des âges classés et militaires)", id: LEGIARTI000047447812}
+    - {reference: "décret n° 2011-2103 du 30 décembre 2011, articles 2 et 4 (relèvement des âges classés et des durées de services militaires)", id: LEGIARTI000025100416}
+  manque: >-
+    Les bonifications de SERVICE — dépaysement, campagne, cinquième — ne sont
+    pas servies, faute de connaître le corps et le détail des services ; la
+    radiation par limite d'âge de grade, qui ouvre la pension militaire quelle
+    que soit la durée accomplie, ne l'est pas non plus, le grade n'étant pas
+    saisi. Les fonctionnaires de La Poste et d'Orange ont la même pension
+    mais une contribution employeur propre depuis 2006, non distinguée. Le
+    temps partiel ne compte qu'à sa quotité dans les services, et le modèle,
+    qui ne la saisit pas, le compte à temps plein ; ni le rachat d'études ni
+    la surcotisation ne sont servis ; le plafond du dernier traitement de la
+    majoration pour enfants (L. 18, V) et l'écrêtement du minimum garanti
+    par le total des pensions ne sont pas appliqués.
 periodes:
   - debut: 1948
     fin: 1963

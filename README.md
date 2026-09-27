@@ -1268,7 +1268,8 @@ data/
     mortalite/                  espérances de vie et quotients par âge observés
     regimes/                    74 fiches de régime, un fichier par régime
                                 nommé de son code, + schéma + valeurs du point,
-                                et l'inventaire de tous les régimes (inventaire.yaml)
+                                et l'inventaire de tous les régimes (inventaire.yaml),
+                                fabriqué depuis ces fichiers
     legislation/                âges et durées par génération, barèmes des
                                 minima, décote de la fonction publique,
                                 catégorie active et pension militaire,

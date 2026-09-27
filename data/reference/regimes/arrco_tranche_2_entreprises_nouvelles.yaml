@@ -13,6 +13,14 @@ population: >-
   Salariés non cadres des entreprises créées à compter du 1er janvier 1997,
   sur la part de salaire comprise entre un et trois plafonds.
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 70
+  population: Non-cadres des entreprises créées à compter du 1er janvier 1997, entre un et trois plafonds
+  couverture: modelise
+  statuts: [salarie_prive_non_cadre_entreprise_recente]
+  textes:
+    - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
 periodes:
   - debut: 1997
     fin: 1998

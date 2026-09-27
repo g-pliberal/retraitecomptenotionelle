@@ -11,6 +11,18 @@ succede_a: []
 integre_dans: null
 population: Fonctionnaires territoriaux et hospitaliers.
 hors_repartition: false
+inventaire:
+  section: fonction_publique
+  rang: 30
+  population: Fonctionnaires territoriaux et hospitaliers
+  couverture: modelise
+  statuts: [fonctionnaire_territorial_hospitalier,
+            fonctionnaire_territorial_hospitalier_actif,
+            fonctionnaire_territorial_hospitalier_super_actif]
+  textes:
+    - {reference: "ordonnance n° 45-993 du 17 mai 1945", id: null}
+    - {reference: "décret n° 47-1846 du 19 septembre 1947", id: null}
+    - {reference: "décret n° 2003-1306 du 26 décembre 2003 relatif au régime de retraite des fonctionnaires affiliés à la CNRACL", id: null}
 periodes:
   - debut: 1945
     fin: 1983

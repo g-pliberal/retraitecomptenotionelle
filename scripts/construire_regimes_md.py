@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Régénère, dans ``docs/regimes.md``, ce qui se déduit de l'inventaire.
 
-Le fichier qui fait foi est ``data/reference/regimes/inventaire.yaml`` ; le
-document en est la lecture commentée. Ses tableaux — un par section de
+L'inventaire, ``data/reference/regimes/inventaire.yaml``, se fabrique depuis
+les fichiers de régimes (``scripts/construire_inventaire.py``) ; le document en
+est la lecture commentée. Ses tableaux — un par section de
 l'inventaire, dans l'ordre du fichier — et sa phrase de compte étaient
 recopiés à la main, et ils ont vieilli : ils disaient encore « à modéliser »
 de vingt lignes que quatre tranches de travail avaient depuis portées. Ce

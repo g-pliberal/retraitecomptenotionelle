@@ -13,6 +13,26 @@ population: >-
   Tous les salariés du privé (non-cadres pour la totalité du salaire,
   cadres pour la tranche sous plafond).
 hors_repartition: false
+inventaire:
+  section: prive_complementaires
+  rang: 30
+  nom: Association des régimes de retraite complémentaire des salariés
+  population: Salariés du secteur privé, tranche 1
+  couverture: partiel
+  statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
+            mineur, agent_seita, agent_chemins_fer_secondaires,
+            salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
+            maitre_enseignement_prive,
+            salarie_saint_pierre_et_miquelon, salarie_nouvelle_caledonie,
+            salarie_regime_professionnel_integre]
+  textes:
+    - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
+    - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: null}
+    - {reference: "code de la sécurité sociale, L. 921-1", id: LEGIARTI000006745499}
+  manque: >-
+    Routée à tous les salariés dès 1961, alors que l'affiliation n'est
+    obligatoire pour tous que depuis la loi du 29 décembre 1972 : entre 1961
+    et 1972 le modèle prête une complémentaire à qui n'en avait pas.
 periodes:
   - debut: 1961
     fin: 1966

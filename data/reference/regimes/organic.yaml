@@ -11,6 +11,15 @@ succede_a: []
 integre_dans: rsi
 population: Commerçants et industriels.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 20
+  population: Industriels et commerçants
+  couverture: modelise
+  statuts: [commercant,
+            gerant_debit_tabac, micro_entrepreneur]
+  textes:
+    - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}
 periodes:
   - debut: 1949
     fin: 1972

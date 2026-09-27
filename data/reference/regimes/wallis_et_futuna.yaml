@@ -16,6 +16,21 @@ population: >-
   annuités sur les quinze meilleures années, 2,6 % par an pour quinze ans
   puis 1,3 %, à 60 ans.
 hors_repartition: false
+inventaire:
+  section: prive_base
+  rang: 120
+  nom: Retraite des salariés de Wallis-et-Futuna
+  population: Salariés de Wallis-et-Futuna
+  couverture: partiel
+  statuts: [salarie_wallis_et_futuna]
+  textes:
+    - {reference: "Caisse des prestations sociales des îles Wallis et Futuna, pages « Retraites » et « Les taux de cotisation » (délibérations de l'assemblée territoriale, hors JORF)", id: null}
+
+  manque: >-
+    Le régime existe bel et bien, contrairement à ce que l'inventaire
+    disait : 60 ans, quinze ans de cotisation, 2,6 % puis 1,3 % par an sur
+    les quinze meilleures années. Non lus : le plafond, la date de
+    création, le barème d'avant 2009, la réforme en préparation (65 ans).
 periodes:
   - debut: 1975
     fin: 2008

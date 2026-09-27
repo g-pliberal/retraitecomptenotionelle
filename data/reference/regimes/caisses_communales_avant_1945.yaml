@@ -1,0 +1,20 @@
+code: caisses_communales_avant_1945
+nom: Caisses communales de retraite et Caisse intercommunale de retraites
+famille: fonction_publique
+population: Agents des communes et des départements, avant la CNRACL
+creation: 1930
+fermeture: 1945
+extinction: 1945
+succede_a: []
+integre_dans: cnracl
+inventaire:
+  section: fonction_publique
+  rang: 40
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi du 5 avril 1910 et règlements communaux (hors JORF numérisé)", id: null}
+  raison_hors_champ: >-
+    Fondues dans la CNRACL en 1945, qui a repris leurs droits ; le statut
+    territorial route vers la CNRACL dès 1945 et personne de vivant n'a
+    liquidé sous une caisse communale.

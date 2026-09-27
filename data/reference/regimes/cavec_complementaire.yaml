@@ -17,6 +17,17 @@ population: >-
   professions libérales, et pilote en propre ce complémentaire — qui pèse
   l'essentiel de la pension.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 160
+  nom: Complémentaire des experts-comptables et commissaires aux comptes (CAVEC)
+  population: Experts-comptables et commissaires aux comptes libéraux
+  couverture: modelise
+  statuts: [expert_comptable]
+  textes:
+    - {reference: "statuts du régime complémentaire de la CAVEC (arrêtés d'approbation)", id: null}
+    - {reference: "statuts approuvés par l'arrêté du 22 février 2008, article 3.13 (taux plein à 65 ans, abattement de 1,25 % par trimestre manquant dès 60 ans)", id: JORFARTI000018197778}
+    - {reference: "arrêté du 4 juillet 2025, article 20 des statuts (majoration de 10 % pour trois enfants)", id: JORFARTI000051849616}
 periodes:
   - debut: 1953
     fin: 2007

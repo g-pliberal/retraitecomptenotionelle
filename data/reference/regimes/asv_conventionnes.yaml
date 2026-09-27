@@ -20,6 +20,29 @@ population: >-
   2017-1812, 2007-597) : la fiche ne porte que les médecins, voir
   l'inventaire.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 210
+  nom: Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV)
+  population: Médecins, chirurgiens-dentistes, sages-femmes, auxiliaires médicaux et directeurs de laboratoire conventionnés
+  couverture: partiel
+  statuts: [medecin_liberal]
+  textes:
+    - {reference: "décret n° 72-968 du 27 octobre 1972, article 2 (points par année cotisée)", id: LEGIARTI000024871109}
+    - {reference: "code de la sécurité sociale, D. 645-2 (cotisation en multiples du tarif de la consultation) et D. 645-3 (part des caisses d'assurance maladie)", id: LEGIARTI000006738166}
+    - {reference: "décret n° 2011-1644 du 25 novembre 2011 (forfait en euros, cotisation d'ajustement, valeur de service)", id: LEGIARTI000033090911}
+    - {reference: "décret n° 2007-458 du 25 mars 2007 (chirurgiens-dentistes : forfait de 3 150 à 3 900 €, dix points, ajustement 1,45 %)", id: LEGIARTI000034762381}
+    - {reference: "décret n° 2017-1812 du 28 décembre 2017 (sages-femmes) et décret n° 2007-597 du 24 avril 2007 (directeurs de laboratoire : 0,30 %, cinquante points, point à 0,96 €)", id: LEGIARTI000026885155}
+  manque: >-
+    La fiche ne porte que les médecins, et la seule part qu'ils paient :
+    les deux tiers versés par les caisses d'assurance maladie sont
+    décrits, non comptés. Les points d'ajustement sont pris au plafond de
+    neuf par an, atteint dès 68 000 € de revenu. Les chirurgiens-dentistes
+    (décret n° 2007-458 : dix points par forfait, ajustement 1,45 %), les
+    sages-femmes (2017-1812), les auxiliaires médicaux et les directeurs
+    de laboratoire (2007-597) ont chacun leur barème, lu mais non porté ;
+    leurs statuts restent sans ASV. Le tarif de la consultation, base du
+    forfait de 1985 à 2011, n'est pas une série du dépôt.
 periodes:
   - debut: 1972
     fin: 1980

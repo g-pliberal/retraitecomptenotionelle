@@ -15,6 +15,17 @@ population: >-
   n° 2007-262, art. 1er, LEGIARTI000047909408) ; 2007 est l'année de la
   réforme du règlement, non d'une fermeture.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 70
+  nom: Régime spécial de retraite de la Banque de France
+  population: Agents titulaires recrutés avant le 1er septembre 2023
+  couverture: modelise
+  statuts: [agent_banque_de_france]
+  textes:
+    - {reference: "décret n° 2007-262 du 27 février 2007 relatif au régime de retraite des agents titulaires de la Banque de France, article 1er (« s'applique aux agents titulaires recrutés avant le 1er septembre 2023 »)", id: LEGIARTI000047909408}
+    - {reference: "loi n° 2023-270 du 14 avril 2023, article 1er II (fermeture aux agents recrutés à compter du 1er septembre 2023)", id: JORFARTI000047445082}
+    - {reference: "code de la sécurité sociale, R. 711-1 9°", id: LEGIARTI000048031379}
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 2007-262, annexe, article 35 IV (LEGIARTI000047909725) :
 # « 8, 5 % de son montant pour les trois premiers enfants et à 4, 25 %

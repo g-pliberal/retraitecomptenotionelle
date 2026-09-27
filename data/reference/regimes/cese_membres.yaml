@@ -16,6 +16,21 @@ population: >-
   du 5 mai 1959) : pension en annuités sur l'indemnité de membre, financée
   par une retenue égale à 3,42 fois celle de la fonction publique.
 hors_repartition: false
+inventaire:
+  section: fonction_publique
+  rang: 80
+  nom: Caisse de retraite des anciens membres du Conseil économique, social et environnemental
+  population: Membres du CESE
+  couverture: partiel
+  statuts: [membre_cese]
+  textes:
+    - {reference: "règlement de la Caisse de retraites des membres du Conseil économique, social et environnemental au 1er janvier 2025, articles 4, 7 et 17 (lecese.fr, hors JORF)", id: null}
+    - {reference: "loi n° 57-761 du 10 juillet 1957 et décret n° 59-601 du 5 mai 1959 (institution de la caisse)", id: null}
+  manque: >-
+    La retenue de 3,42 fois celle de la fonction publique est lue, la
+    contribution du Conseil ne l'est pas ; l'assiette de référence de 2,06
+    fois la rémunération et le plafond des trois quarts sont écrits comme
+    un taux plein de 154,5 % de l'indemnité.
 periodes:
   - debut: 1957
     fin: 2004

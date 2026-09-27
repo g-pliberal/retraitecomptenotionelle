@@ -1,0 +1,21 @@
+code: regies_ferroviaires_outre_mer
+nom: Caisse des retraites des régies ferroviaires d'outre-mer et caisses des chemins de fer d'Afrique du Nord
+famille: special
+population: Anciens agents des chemins de fer coloniaux et d'Afrique du Nord
+creation: 1930
+fermeture: 1962
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: speciaux
+  rang: 180
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "décret n° 58-1090 du 6 novembre 1958 portant affiliation au régime général des retraités de la caisse des retraites des régies ferroviaires", id: JORFTEXT000000669975}
+    - {reference: "décret n° 93-1150 du 29 septembre 1993, transfert à l'État de la gestion du régime des anciennes régies ferroviaires d'outre-mer", id: JORFTEXT000000332371}
+  raison_hors_champ: >-
+    Régimes de rapatriés en extinction, gérés par l'État depuis 1993 ; les
+    services sont validés au régime général par les lois de 1964 et 1965 sur
+    les rapatriés.

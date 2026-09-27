@@ -1,0 +1,29 @@
+code: crea
+nom: Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA)
+famille: liberal
+population: Enseignants libéraux, professeurs de musique et musiciens, artistes hors AGESSA, professions du sport et du tourisme, vendeurs-colporteurs de presse
+creation: 1949
+fermeture: 2004
+extinction: 2004
+succede_a: []
+integre_dans: cipav_complementaire
+inventaire:
+  section: non_salaries
+  rang: 200
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "décret n° 50-1089 du 2 septembre 1950 modifiant les règlements d'administration publique n° 48-1179 du 19 juillet 1948 et n° 49-456 du 30 mars 1949 (comités provisoires des sections professionnelles des artistes, des professeurs de musique et musiciens, des gens de lettres et auteurs)", id: JORFTEXT000000489029}
+    - {reference: "arrêté du 21 juillet 1952 fixant le taux des cotisations d'assurance vieillesse de la section professionnelle des professeurs de musique et des musiciens", id: JORFTEXT000000622970}
+    - {reference: "arrêté du 4 juillet 1977 approuvant les statuts de la section professionnelle des artistes auteurs ne relevant pas de l'article L. 631-1, des professeurs de musique et des musiciens, qui prend le nom de « Caisse de retraite de l'enseignement et des arts appliqués »", id: JORFTEXT000000488757}
+    - {reference: "décret n° 94-404 du 16 mai 1994 (rattachement des vendeurs-colporteurs de presse à la CREA)", id: JORFTEXT000000183429}
+    - {reference: "arrêté du 22 juillet 2003 relatif à l'échantillon interrégimes de cotisants, article 2, 18° (régime de base et régime complémentaire de la CREA)", id: LEGIARTI000006221466}
+    - {reference: "décret n° 2004-461 du 27 mai 2004, article 13 VIII (les affiliés de la CREA soumis, au 1er janvier 2004, à la Cipav)", id: LEGIARTI000006781338}
+  raison_hors_champ: >-
+    Section de la CNAVPL dès l'organisation de 1949 (professeurs de
+    musique et musiciens, artistes hors L. 631-1), nommée CREA en 1977 et
+    fondue dans la Cipav au 1er janvier 2004, qui a repris ses affiliés et
+    leurs points ; le statut `profession_liberale` route vers la Cipav sur
+    toute la période, et le barème propre de la CREA n'est pas au Journal
+    officiel, qui n'a que l'arrêté de 1952 sur ses taux et les arrêtés
+    d'approbation de ses statuts.

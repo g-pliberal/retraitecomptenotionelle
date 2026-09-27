@@ -13,6 +13,16 @@ population: >-
   Agents statutaires de la RATP. Fermé aux agents recrutés à compter du
   1er septembre 2023 (loi du 14 avril 2023).
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 20
+  nom: Régime spécial de retraite du personnel de la RATP
+  population: Agents statutaires recrutés avant septembre 2023
+  couverture: modelise
+  statuts: [agent_ratp]
+  textes:
+    - {reference: "loi n° 48-506 du 21 mars 1948 (organisation des transports parisiens)", id: null}
+    - {reference: "décret n° 2008-1514 du 30 décembre 2008 relatif au régime spécial de retraite du personnel de la RATP", id: null}
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 2008-637, article 25 (LEGIARTI000047910443) : 10 % pour
 # les trois premiers enfants et 5 % par enfant au-delà. Le règlement

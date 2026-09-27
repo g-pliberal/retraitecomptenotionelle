@@ -11,6 +11,16 @@ succede_a: []
 integre_dans: null
 population: Personnels de l'Opéra national de Paris.
 hors_repartition: false
+inventaire:
+  section: speciaux
+  rang: 80
+  nom: Régime de retraite du personnel de l'Opéra national de Paris
+  population: Personnels de l'Opéra, artistes du ballet et de l'orchestre compris
+  couverture: modelise
+  statuts: [personnel_opera]
+  textes:
+    - {reference: "décret n° 68-382 du 5 avril 1968 portant statut de la caisse de retraites des personnels de l'Opéra", id: null}
+    - {reference: "code de la sécurité sociale, R. 711-1 10°", id: LEGIARTI000048031379}
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 68-382, article 18 (LEGIARTI000019138600) : 10 % pour
 # les trois premiers enfants et 5 % par enfant au-delà. La fiche ne la

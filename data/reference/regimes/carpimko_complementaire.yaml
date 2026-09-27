@@ -16,6 +16,15 @@ population: >-
   sections professionnelles de la CNAVPL — plus de treize mille
   immatriculations par an.
 hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 130
+  nom: Complémentaire des auxiliaires médicaux (CARPIMKO)
+  population: Infirmiers, masseurs-kinésithérapeutes, pédicures-podologues, orthophonistes, orthoptistes
+  couverture: modelise
+  statuts: [auxiliaire_medical]
+  textes:
+    - {reference: "décret n° 84-143 du 22 février 1984", id: null}
 periodes:
   - debut: 1984
     fin: 1995

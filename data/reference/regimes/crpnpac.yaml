@@ -16,6 +16,21 @@ population: >-
   Pilotes, mécaniciens et personnel de cabine de l'aéronautique civile.
   Régime spécial LÉGALEMENT OBLIGATOIRE qui s'ajoute au régime général et à
   l'Agirc-Arrco, et non un régime de base : un navigant cotise aux trois.
+inventaire:
+  section: prive_complementaires
+  rang: 130
+  nom: Caisse de retraite du personnel navigant professionnel de l'aéronautique civile, tranche 1
+  population: Personnel navigant technique et commercial
+  couverture: partiel
+  statuts: [personnel_navigant]
+  textes:
+    - {reference: "code de l'aviation civile, R. 426-1 et suivants (abrogés au 1er novembre 2023)", id: null}
+    - {reference: "code des transports, partie réglementaire, depuis le 1er novembre 2023", id: null}
+  manque: >-
+    Le taux d'appel de 1995 à 2011 n'est pas appliqué, ceux de 2016 à 2025
+    ne sont pas publiés (105 % retenu, 111 % en 2026) ; le dispositif
+    transitoire des navigants nés avant 1971 et les conditions montantes de
+    2012 à 2021 ne sont pas portés.
 periodes:
   - debut: 1963
     fin: 1994
