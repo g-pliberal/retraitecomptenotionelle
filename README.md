@@ -239,7 +239,7 @@ poids de ce qu'on voulait exécuter.
 Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->535<!--/--> simulations complètes et
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->535<!--/--> simulations complètes, et depuis le site
 <!--chiffre:entrees(tests/temoins/pages.json:)-->55<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->90 342<!--/--> nombres,
@@ -248,10 +248,12 @@ au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->93,
 écart n'est pas celui d'un calcul mais d'une soustraction : le complément de
 la garantie vieillesse retranche d'un plancher une pension qui en est proche,
 et les quelques *ulp* sur lesquels les deux moteurs diffèrent pour la pension
-en deviennent des centaines pour le complément. Les pages, elles, sont comparées caractère par caractère : le
-formatage à la française reproduit jusqu'à l'arrondi au pair de Python, faute de
-quoi un « <!--chiffre:illustration()-->−12,5<!--/--> % » deviendrait
-« <!--chiffre:illustration()-->−13<!--/--> % » d'un côté et « <!--chiffre:illustration()-->−12<!--/--> % » de l'autre.
+en deviennent des centaines pour le complément. Les pages, elles, ne s'écrivent
+qu'une fois, en JavaScript, et sont figées en témoins. Leur formatage à la
+française reproduit jusqu'à l'arrondi au pair de Python, pour que le site écrive
+les nombres comme la prose qui le cite, faute de quoi un
+« <!--chiffre:illustration()-->−12,5<!--/--> % » deviendrait
+« <!--chiffre:illustration()-->−13<!--/--> % » sur la page et « <!--chiffre:illustration()-->−12<!--/--> % » dans la prose.
 
 Des cas figés ne prouvent que ce qu'on a pensé à figer. Un second contrôle tire
 donc des carrières au hasard — graine fixe, donc reproductible —, les calcule en

@@ -1442,7 +1442,14 @@ def _(m: Modele):
 
 @controle("portage_compare_aux_temoins")
 def _(m: Modele):
-    assert (RACINE / "tests" / "js" / "comparer-pages.mjs").exists()
+    """Les carrières témoins sont calculées par les deux moteurs et comparées
+    nombre par nombre ; les pages, dont le texte n'est écrit qu'en JavaScript
+    depuis la phase 8, sont figées en témoins, que le portage rejoue."""
+    simulations = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
+                             .read_text(encoding="utf-8"))
+    assert len(simulations) > 100
+    moteur = (RACINE / "tests" / "js" / "moteur.test.js").read_text(encoding="utf-8")
+    assert "temoinsSimulations" in moteur and "temoinsPages" in moteur
     assert (RACINE / "moteur" / "js" / "pages.js").exists()
     assert len(TEMOINS_PAR_NOM) > 10
 

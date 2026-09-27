@@ -1948,7 +1948,9 @@ affirmations:
   - id: methode.portage_javascript
     page: /methode
     extrait: "portage en JavaScript"
-    porte: le portage est comparé au modèle sur les témoins, page par page
+    porte: >-
+      le portage est comparé au modèle nombre par nombre sur les carrières
+      témoins, et ses pages, écrites une fois, sont figées en témoins
     etat: verifiee
     controle: portage_compare_aux_temoins
 

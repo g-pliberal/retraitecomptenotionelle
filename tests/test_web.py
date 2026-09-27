@@ -2479,36 +2479,42 @@ def test_le_portage_javascript_arrondit_comme_python():
     assert execution.returncode == 0, execution.stdout + execution.stderr
 
 
-def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
-    """Le HTML, et pas seulement les nombres, sur des saisies non prévues.
+def _refus_du_modele(contexte, requete: dict) -> str | None:
+    """Ce que le modèle Python refuse de cette saisie, ou ``None`` s'il la calcule."""
+    try:
+        contexte.simuler(Saisie.depuis_requete(requete))
+    except ErreurSaisie as erreur:
+        return str(erreur)
+    return None
 
-    La comparaison des seuls résultats ne voit ni les libellés, ni les aides
-    chiffrées, ni le lien de bascule d'unité — c'est-à-dire précisément là où
-    l'arrondi d'AFFICHAGE se décide. Les paramètres du modèle restent fixes :
-    ce que ce test balaie, c'est la saisie du revenu, dans les deux unités et
-    jusqu'à ses bords.
+
+def _refus_de_la_page(corps: str) -> str | None:
+    """Le refus que la page écrit, ou ``None`` si elle calcule."""
+    trouve = re.search(r'<div class="erreur"><strong>Saisie refusée\.</strong> (.*?)</div>',
+                       corps, re.S)
+    return html.unescape(trouve.group(1)) if trouve else None
+
+
+#: Ce qu'un rendu ne doit jamais laisser passer : un nombre que le calcul n'a
+#: pas su écrire, une valeur absente, un objet écrit tel quel.
+TROUS = ("NaN", "undefined", "Infinity", "[object Object]")
+
+
+def test_les_pages_au_hasard_calculent_et_refusent_comme_le_modele(contexte):
+    """Des saisies auxquelles personne n'a pensé, dans les deux unités et
+    jusqu'à leurs bords.
+
+    Jusqu'à la phase 8, ce test comparait ces pages, caractère par caractère, à
+    celles que rendait le Python — le texte du site était écrit deux fois. Il
+    ne l'est plus qu'en JavaScript ; ce qui reste à confronter, ce sont les
+    deux moteurs. Une saisie que le modèle refuse, la page la refuse du même
+    mot ; une saisie qu'il calcule, la page la rend sans trou — ni ``NaN``, ni
+    ``undefined``, ni ``Infinity``. La comparaison des seuls résultats
+    (``tests/js/comparer.mjs``) ne voit ni les libellés, ni les aides chiffrées,
+    ni le lien de bascule d'unité : c'est là que ces trous se logeraient.
     """
-    import importlib.util
-    import json
     import random
 
-    from retraite_notionnelle.web.pages import rendre as rendre_python
-    import shutil
-    import subprocess
-    import tempfile
-    from pathlib import Path
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-
-    racine = Path(__file__).resolve().parents[1]
-    specification = importlib.util.spec_from_file_location(
-        "construire_temoins", racine / "scripts" / "construire_temoins.py"
-    )
-    temoins = importlib.util.module_from_spec(specification)
-    specification.loader.exec_module(temoins)
-
-    contexte = Contexte()
     alea = random.Random(20260910)
     statuts = list(contexte.simulateur().affiliations.codes)
     # Les bords comptent plus que le milieu : ce sont eux que l'arrondi fait
@@ -2520,8 +2526,8 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
     multiples = ["0.099", "0.1", "10", "10.001", "1", "0.0005",
                  f"{alea.uniform(0.1, 10):.4f}", f"{alea.uniform(0.1, 10):.6f}"]
 
-    cas = []
-    for numero in range(40):
+    requetes = []
+    for _ in range(40):
         unite = alea.choice(["euros_mois", "moyen"])
         debut = alea.randint(14, 30)
         requete = {
@@ -2544,11 +2550,7 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
             requete[f"metier{rang}_salaire"] = alea.choice(
                 euros if unite == "euros_mois" else multiples
             )
-        cas.append({
-            "nom": f"page_{numero}",
-            "requete": requete,
-            "corps": temoins.sans_bloc_json(rendre_python(contexte, "/simuler", requete)[1]),
-        })
+        requetes.append(requete)
 
     # LA SAISIE PAR LA PENSION A SA PROPRE SÉRIE, et elle est plus courte parce
     # qu'elle coûte vingt fois plus cher : chacune de ces pages inverse le
@@ -2559,9 +2561,9 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
     # sûrement comparer sur des carrières auxquelles personne n'a pensé. Les
     # montants tirés balaient les trois refus autant que les inversions qui
     # aboutissent.
-    for numero in range(12):
+    for _ in range(12):
         debut = alea.randint(14, 30)
-        requete = {
+        requetes.append({
             "naissance": str(alea.randint(1930, 2000)),
             "naissance_mois": str(alea.randint(1, 12)),
             "sexe": alea.choice(["H", "F"]),
@@ -2574,57 +2576,27 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
                 ["1", "500", "1200", "1500", "2400", "9000",
                  f"{alea.uniform(200, 5000):.2f}"]
             ),
-        }
-        cas.append({
-            "nom": f"pension_{numero}",
-            "requete": requete,
-            "corps": temoins.sans_bloc_json(rendre_python(contexte, "/simuler", requete)[1]),
         })
 
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(cas, fichier, ensure_ascii=False)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", "tests/js/comparer-pages.mjs", chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False,
-        )
-    finally:
-        Path(chemin).unlink(missing_ok=True)
-    assert execution.returncode == 0, execution.stdout + execution.stderr
+    for requete in requetes:
+        corps = re.sub(r'(<pre class="json">).*?(</pre>)', r"\1\2",
+                       rendre("/simuler", requete)[1], flags=re.S)
+        assert _refus_de_la_page(corps) == _refus_du_modele(contexte, requete), requete
+        for trou in TROUS:
+            assert trou not in corps, (trou, requete)
 
 
-def test_les_refus_de_saisie_sont_ecrits_a_l_identique_par_les_deux_moteurs():
-    """Un refus est une page comme une autre, et il se compare comme telle.
+def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
+    """Un refus est une page comme une autre, et le modèle en dit le mot.
 
-    Le tirage au hasard de la page précédente ne produit que des carrières
-    valides : il ne dirait rien des phrases que le simulateur écrit quand il
-    refuse. Ce sont pourtant elles que le lecteur lit le plus souvent, et elles
-    citent des bornes — années, motifs, âges — qu'un portage peut écrire
-    autrement sans qu'aucun chiffre ne bouge.
+    Le tirage au hasard de la page précédente ne produit guère que des
+    carrières valides : il ne dirait rien des phrases que le simulateur écrit
+    quand il refuse. Ce sont pourtant elles que le lecteur lit le plus
+    souvent, et elles citent des bornes — années, motifs, âges — que les deux
+    moteurs pourraient écrire autrement sans qu'aucun chiffre ne bouge. La
+    saisie se lit dans les deux langages : le refus de la page doit être
+    celui du modèle, mot pour mot.
     """
-    import importlib.util
-    import json
-    import random
-    import shutil
-    import subprocess
-    import tempfile
-    from pathlib import Path
-
-    from retraite_notionnelle.web.pages import rendre as rendre_python
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-
-    racine = Path(__file__).resolve().parents[1]
-    specification = importlib.util.spec_from_file_location(
-        "construire_temoins", racine / "scripts" / "construire_temoins.py"
-    )
-    temoins = importlib.util.module_from_spec(specification)
-    specification.loader.exec_module(temoins)
-
-    contexte = Contexte()
     refuses = [
         {"interruptions": "0:999999999:chomage_indemnise"},
         {"interruptions": "1200:1300:maladie"},
@@ -2659,36 +2631,18 @@ def test_les_refus_de_saisie_sont_ecrits_a_l_identique_par_les_deux_moteurs():
         {"enfants": str(ENFANTS_MAXIMUM)},
     ]
 
-    cas = []
-    for prefixe, champs_, refuse in (("refus", refuses, True),
-                                     ("accepte", acceptees, False)):
-        for numero, champs in enumerate(champs_):
+    for champs_, refuse in ((refuses, True), (acceptees, False)):
+        for champs in champs_:
             requete = {"naissance": "1975", **champs}
-            corps = temoins.sans_bloc_json(rendre_python(contexte, "/simuler", requete)[1])
+            page = _refus_de_la_page(rendre("/simuler", requete)[1])
+            modele = _refus_du_modele(contexte, requete)
             # Le test ne vaut que si chaque saisie tombe du côté attendu : une
             # borne relâchée les ferait toutes calculer, et la comparaison
             # passerait sans rien couvrir.
-            assert ('class="erreur"' in corps) is refuse, (
-                f"{prefixe}_{numero} {requete} : le simulateur "
-                + ("calcule au lieu de refuser" if refuse
-                   else "refuse au lieu de calculer")
-            )
-            cas.append({
-                "nom": f"{prefixe}_{numero}", "requete": requete, "corps": corps,
-            })
-
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(cas, fichier, ensure_ascii=False)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", "tests/js/comparer-pages.mjs", chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False,
-        )
-    finally:
-        Path(chemin).unlink(missing_ok=True)
-    assert execution.returncode == 0, execution.stdout + execution.stderr
+            assert (page is not None) is refuse, (
+                f"{requete} : le simulateur "
+                + ("calcule au lieu de refuser" if refuse else "refuse au lieu de calculer"))
+            assert page == modele, requete
 
 
 def _sans_nan(valeur):
@@ -6438,7 +6392,8 @@ def test_la_methode_dit_comment_le_site_est_construit():
     assert section, "le dépliant de construction manque"
     dedans = section.group(1)
     for attendu in (f'href="{g.DEPOT}/tree/main/src"', "portage en JavaScript",
-                    "comparée caractère par caractère", f'href="{g.DEPOT}/tree/main/tests"',
+                    "comparées nombre par nombre", "chaque page est figée en témoin",
+                    f'href="{g.DEPOT}/tree/main/tests"',
                     'href="#/methode" data-vers="sources"'):
         assert attendu in dedans, attendu
     assert not re.search(r"\b\d{3,} (?:tests|témoins|carrières)", dedans), (

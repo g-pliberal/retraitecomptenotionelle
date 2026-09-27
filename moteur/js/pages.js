@@ -10422,9 +10422,10 @@ modèle, sans aucune bibliothèque, qui tourne entièrement dans votre navigateu
 : rien de ce que vous saisissez n'est envoyé nulle part. Le portage ne s'écarte
 pas du modèle, et ce n'est pas une promesse : des centaines de carrières
 témoins (chaque statut d'affiliation, à six générations) sont calculées par
-les deux, et comparées nombre par nombre ; chaque page du site est rendue par
-les deux, et comparée caractère par caractère. Toute divergence fait échouer
-les tests.</p>
+les deux et comparées nombre par nombre ; toute divergence fait échouer les
+tests. Le texte des pages, lui, n'est écrit qu'une fois, dans ce portage :
+chaque page est figée en témoin, et le moindre mot qui change se lit dans
+l'historique du dépôt.</p>
 <p>Les données que le site charge sont produites par un script à partir des
 mêmes fichiers que le modèle, et un test refuse un paquet périmé. Les séries
 sont recontrôlées contre le fichier de l'institution qui les produit — la
