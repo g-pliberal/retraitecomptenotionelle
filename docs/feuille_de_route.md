@@ -2188,3 +2188,6 @@ complète tient en neuf minutes et demie. Le moteur pèse 16 Ko compressés de p
 - **Le repère `phase-5` n'est pas posé** : comme les précédents, il attend
   l'accord du propriétaire. La phase 6 suit : un fichier par régime, et les
   interrupteurs deviennent des renvois aux fiches.
+
+Le repère `phase-5` est posé sur 4db363e, le 27 septembre 2026, à la demande
+du propriétaire, par `repere-phase-5.yml`, lancé une fois puis supprimé.
