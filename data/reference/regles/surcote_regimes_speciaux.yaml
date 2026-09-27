@@ -1,0 +1,70 @@
+schema_version: 1
+id: surcote_regimes_speciaux
+intitule: >-
+  Surcote des régimes spéciaux réformés en 2008, SNCF, RATP, IEG, CRPCEN, Comédie-Française
+  et Opéra : un coefficient par trimestre d'assurance cotisé et effectué après le 1er juillet
+  2008, au-delà de l'âge que fixe chaque décret et en sus de la durée requise, pour qui
+  totalise au moins cent soixante trimestres.
+etat: transcrite
+etape: liquider_chaque_regime
+effet: >-
+  Les agents de ces six régimes qui partent au-delà de leur durée requise. Le moteur leur
+  appliquait la règle du régime général : ni le seuil de cent soixante trimestres, ni la date
+  du 1er juillet 2008, et l'âge compté à l'année. Les agents nés en 1945 partis à
+  soixante-quatre ans, en janvier 2009, recevaient de huit à seize trimestres de surcote,
+  comptés depuis l'âge d'ouverture ou l'âge propre de leur régime ; le texte ne leur en
+  compte que deux, ceux du second semestre 2008 : leurs pensions baissent de 9 à 15 % sur les
+  six témoins. Comptés au mois près, les trimestres d'après l'âge en gagnent un aux agents de
+  la SNCF et de la RATP nés en 1965 partis à soixante-quatre ans (+1,2 %). Neuf témoins sur
+  535 bougent, le bilan et les pages non.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    L'âge au-delà duquel la surcote se compte est, à la CRPCEN, « l'âge mentionné au premier
+    alinéa du 1° du I de l'article 84 » dans les rédactions de 2011 à 2024 : soixante-deux ans,
+    que l'alinéa suivant abaisse pour les générations antérieures ; le moteur lit l'âge
+    abaissé, celui de l'ouverture du droit. La rédaction de 2009 disait « l'âge de soixante
+    ans ». Chercher ce que la caisse applique ; même question à la Comédie-Française et à
+    l'Opéra, dont le moteur compte la surcote depuis l'âge d'ouverture de la période.
+  - >-
+    Trouver un exemple publié de surcote de l'un de ces régimes (CNIEG, CRPCEN, CPRPSNCF, CRP
+    RATP) : la fiche reste `transcrite` jusque-là.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639 (SNCF), article 13, II, rédaction du 7 août 2026
+      (LEGIARTI000054622824) : « Lorsque la durée d'assurance, définie au III ci-après, est
+      supérieure au nombre de trimestres nécessaires pour obtenir le pourcentage maximum de la
+      pension mentionné à l'article 12, sans être inférieure à cent soixante trimestres, et
+      que l'agent a atteint l'âge mentionné au premier alinéa de l'article L. 161-17-2 du code
+      de la sécurité sociale, un coefficient de majoration s'applique […]. Le nombre de
+      trimestres pris en compte pour ce calcul est égal, à la date de liquidation de la
+      pension, au nombre de trimestres d'assurance au sens du III ci-après, cotisés et
+      effectués après le 1er juillet 2008, au-delà de l'âge mentionné au premier alinéa de
+      l'article L. 161-17-2 […] et en sus du nombre de trimestres mentionné à l'alinéa
+      précédent » ; le même alinéa, chacun avec l'âge de son article, à la RATP (article 24,
+      II, LEGIARTI000047914227, « trimestres de services effectués après le 1er juillet 2008
+      »), aux IEG (annexe 3, article 10, II, LEGIARTI000052046924), à la CRPCEN (article 85-1,
+      II, LEGIARTI000047909834, et « l'âge de soixante ans » dans la rédaction de 2009,
+      LEGIARTI000020057012), à la Comédie-Française (article 12, III, LEGIARTI000029134341) et
+      à l'Opéra (article 14, III, LEGIARTI000029135161). Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+textes_a_rattacher:
+- reference: décret n° 2008-639, article 13, II (LEGIARTI000054622824)
+- reference: décret n° 2008-637, article 24, II (LEGIARTI000047914227)
+- reference: annexe 3 du statut des IEG, article 10, II (LEGIARTI000052046924)
+- reference: >-
+    décret n° 90-1215, article 85-1, II (LEGIARTI000047909834, LEGIARTI000020057012)
+- reference: décret n° 68-960, article 12, III (LEGIARTI000029134341)
+- reference: décret n° 68-382, article 14, III (LEGIARTI000029135161)
+reformes:
+- regimes_speciaux_2008
+code:
+  moteur: >-
+    `liquider.trimestres_de_surcote_regimes_speciaux`, pour toute période dont le barème de
+    décote est celui des régimes spéciaux (`bareme_decote`, fiche `decote_regimes_speciaux`) :
+    rien sous cent soixante trimestres ; sinon le plus petit des trimestres au-delà de la
+    durée requise et des trimestres cotisés depuis l'âge de la surcote (`ouvrir.age_surcote`)
+    et depuis le 1er juillet 2008, au mois près, jusqu'à la date d'effet de la pension.

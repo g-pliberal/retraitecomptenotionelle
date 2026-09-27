@@ -428,10 +428,12 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
             fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteSurcote);
           }
         } else {
-          supplementaires = Math.min(
-            supplementaires,
-            trimestresCotisesApres(carriere, ageOuverture, anneeLiquidation),
-          );
+          supplementaires = BAREMES_REGIMES_SPECIAUX.has(periode.bareme_decote)
+            ? trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis, ageOuverture)
+            : Math.min(
+              supplementaires,
+              trimestresCotisesApres(carriere, ageOuverture, anneeLiquidation),
+            );
           if (supplementaires > 0) {
             coefficientSurcote = 1.0 + periode.surcote_par_trimestre * supplementaires;
           }
@@ -869,6 +871,35 @@ export function millesimeDuBareme(moteur, periode, carriere, anneeLiquidation) {
   }
   const ouverture = DateMois.depuisRang(ouvrir.moisOuvertureDesDroits(moteur, periode, carriere));
   return ouverture.annee + (ouverture.mois >= 7 ? 1 : 0);
+}
+
+/** La surcote des régimes spéciaux ne compte que les trimestres d'après le 1er juillet 2008. */
+const SURCOTE_REGIMES_SPECIAUX_DEPUIS = new DateMois(2008, 7);
+
+/**
+ * Les trimestres de surcote des régimes spéciaux réformés en 2008 — portage de
+ * `trimestres_de_surcote_regimes_speciaux` : rien sous cent soixante
+ * trimestres, et seuls ceux « cotisés et effectués après le 1er juillet
+ * 2008, au-delà de l'âge » et en sus de la durée requise, au mois près.
+ */
+export function trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis, ageSurcote) {
+  if (trimestres < 160) {
+    return 0;
+  }
+  let debut = carriere.dateNaissance.plusMois(enMois(ageSurcote));
+  if (debut.rang < SURCOTE_REGIMES_SPECIAUX_DEPUIS.rang) {
+    debut = SURCOTE_REGIMES_SPECIAUX_DEPUIS;
+  }
+  const fin = carriere.dateLiquidation;
+  let apres = 0.0;
+  if (debut.rang < fin.rang) {
+    for (const ligne of carriere.lignes) {
+      if (ligne.cotise) {
+        apres += trimestresDeLaLigneEntre(carriere, ligne, debut, fin);
+      }
+    }
+  }
+  return Math.min(Math.max(0, trimestres - requis), Math.floor(apres + 1e-9));
 }
 
 /**

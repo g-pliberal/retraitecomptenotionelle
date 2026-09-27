@@ -3921,6 +3921,33 @@ def test_la_decote_des_regimes_speciaux_se_lit_au_mois_et_borne_la_duree(simulat
             scenario, periode, carriere, trimestres, requis, age, age_annulation) == borne
 
 
+def test_la_surcote_des_regimes_speciaux_ne_compte_que_depuis_juillet_2008(simulateur):
+    """« cotisés et effectués après le 1er juillet 2008, au-delà de l'âge […] et
+    en sus » de la durée requise, et rien sous cent soixante trimestres : le
+    même alinéa dans les six décrets de la réforme. Un agent né en janvier
+    1945 parti à soixante-quatre ans, en janvier 2009, n'a que les deux
+    trimestres du second semestre 2008 ; la règle du régime général, que le
+    moteur lui appliquait, lui comptait ceux d'après son âge propre.
+    """
+    scenario = simulateur.scenario_actuel
+    for affiliation, regime in (("agent_ieg", "ieg"), ("agent_sncf", "sncf"),
+                                ("clerc_de_notaire", "crpcen")):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1945, sexe="H", affiliation=affiliation,
+            age_debut=21, age_liquidation=64.0, niveau_salaire=1.0,
+        )
+        periode = simulateur.catalogue[regime].periode(carriere.annee_liquidation)
+        trimestres = scenario.calculer(carriere).trimestres_valides
+        requis = ouvrir.duree_requise(scenario, periode, carriere)[0]
+        age = ouvrir.age_surcote(scenario, periode, carriere)
+        assert trimestres - requis > 2, affiliation
+        assert liquider.trimestres_de_surcote_regimes_speciaux(
+            carriere, trimestres, requis, age) == 2, affiliation
+        # Sous cent soixante trimestres, rien, même au-delà de la durée requise.
+        assert liquider.trimestres_de_surcote_regimes_speciaux(
+            carriere, 159, 150, age) == 0
+
+
 def test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant(simulateur):
     """Deux règles que la CNIEG applique, et que le moteur ne suivait pas.
 

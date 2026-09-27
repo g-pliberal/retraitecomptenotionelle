@@ -679,12 +679,16 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     if fiabilite_surcote is not None:
                         fiabilite_globale = min(fiabilite_globale, fiabilite_surcote)
                 else:
-                    supplementaires = min(
-                        supplementaires,
-                        _trimestres_cotises_apres(
-                            carriere, age_ouverture, annee_liquidation
-                        ),
-                    )
+                    if periode.bareme_decote in _BAREMES_REGIMES_SPECIAUX:
+                        supplementaires = trimestres_de_surcote_regimes_speciaux(
+                            carriere, trimestres, requis, age_ouverture)
+                    else:
+                        supplementaires = min(
+                            supplementaires,
+                            _trimestres_cotises_apres(
+                                carriere, age_ouverture, annee_liquidation
+                            ),
+                        )
                     if supplementaires > 0:
                         coefficient_surcote = (
                             1.0 + periode.surcote_par_trimestre * supplementaires
@@ -1214,6 +1218,50 @@ def millesime_du_bareme(moteur, periode: PeriodeRegime, carriere: Carriere,
     ouverture = DateMois.depuis_rang(
         ouvrir.mois_ouverture_des_droits(moteur, periode, carriere))
     return ouverture.annee + (1 if ouverture.mois >= 7 else 0)
+
+
+#: La surcote des régimes spéciaux ne compte que les trimestres « cotisés et
+#: effectués après le 1er juillet 2008 » (:func:`trimestres_de_surcote_regimes_speciaux`).
+SURCOTE_REGIMES_SPECIAUX_DEPUIS = DateMois(2008, 7)
+
+
+def trimestres_de_surcote_regimes_speciaux(carriere: Carriere, trimestres: int,
+                                           requis: int, age_surcote: float) -> int:
+    """Les trimestres de surcote des régimes spéciaux réformés en 2008.
+
+    Chacun des six décrets écrit la même règle : « Lorsque la durée
+    d'assurance […] est supérieure au nombre de trimestres nécessaires pour
+    obtenir le pourcentage maximum de la pension […], sans être inférieure à
+    cent soixante trimestres, et que l'agent a atteint l'âge [de son
+    article], […] le nombre de trimestres pris en compte […] est égal […] au
+    nombre de trimestres d'assurance […] cotisés et effectués après le
+    1er juillet 2008, au-delà de l'âge [de son article] et en sus du nombre
+    de trimestres mentionné à l'alinéa précédent » (décret n° 2008-639,
+    article 13, II ; le même à la RATP, aux IEG, à la CRPCEN, à la
+    Comédie-Française et à l'Opéra). Le moteur leur appliquait la règle du
+    régime général : ni le seuil de cent soixante trimestres, ni la date,
+    et l'âge lu à l'année. Un clerc de notaire né en 1945, dont le droit
+    s'ouvre à cinquante-cinq ans et qui part en 2009, se voyait compter en
+    surcote ses trimestres d'après cinquante-cinq ans, quand le texte ne lui
+    en compte que deux, ceux du second semestre 2008.
+
+    Les trimestres au-delà de la durée requise sont les derniers de la
+    carrière, comme ceux d'après l'âge et la date : le plus petit des deux
+    nombres est leur intersection. Ceux d'après l'âge et la date se comptent
+    au mois près, jusqu'à la date d'effet de la pension.
+    """
+    if trimestres < 160:
+        return 0
+    debut = carriere.date_naissance.plus_mois(en_mois(age_surcote))
+    if debut.rang < SURCOTE_REGIMES_SPECIAUX_DEPUIS.rang:
+        debut = SURCOTE_REGIMES_SPECIAUX_DEPUIS
+    fin = carriere.date_liquidation
+    apres = 0.0
+    if debut.rang < fin.rang:
+        for ligne in carriere.lignes:
+            if ligne.cotise:
+                apres += trimestres_de_la_ligne_entre(carriere, ligne, debut, fin)
+    return min(max(0, trimestres - requis), int(apres + 1e-9))
 
 
 def borne_de_la_duree(moteur, periode: PeriodeRegime, carriere: Carriere,
