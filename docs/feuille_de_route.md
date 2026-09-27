@@ -2316,3 +2316,12 @@ les fiches, reste aux tests (`univers.controler`).
 - **Le repère `phase-7` n'est pas posé** : comme les précédents, il attend
   l'accord du propriétaire. La phase 8 suit : le texte du site écrit une
   fois.
+
+**Une correction de la note qui précède**, le même jour : la phase a fait
+quatre commits, non trois, et l'un est parti sur main avant la fin de la
+suite complète qui l'éprouvait. Le hook de fin de tour a poussé l'étape 2
+(d15d401) pendant qu'elle tournait ; elle a trouvé un échec, `test_prose.py`,
+les poids du paquet que la prose annonçait, et de9e6a6 l'a réparé, rejoué par
+GitHub sans échec. Le message de d15d401 dit « N tests passés » : c'était
+2 660, et cet échec. Une session qui commite avant que la suite complète ait
+fini ne finit pas son tour : le hook publierait le commit.
