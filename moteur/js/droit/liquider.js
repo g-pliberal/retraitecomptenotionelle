@@ -20,6 +20,7 @@ import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../reval
 import { Fiabilite, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
 import { derniereAnnee } from "./commun.js";
+import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
 import * as ouvrir from "./ouvrir.js";
@@ -43,6 +44,9 @@ const SURCOTE_AGE_MAJORE = 65;
 const BAREMES_DECOTE_EN_TABLE = new Set([
   "fonction_publique", "regimes_speciaux", "regimes_speciaux_age_fixe",
 ]);
+
+/** Ceux des régimes spéciaux réformés en 2008 : marches au 1er juillet, borne de la durée. */
+const BAREMES_REGIMES_SPECIAUX = new Set(["regimes_speciaux", "regimes_speciaux_age_fixe"]);
 
 /**
  * Trimestres dont l'âge d'annulation de la décote est minoré pour ouvrir le
@@ -852,6 +856,42 @@ export function dureeProratisation(moteur, periode, carriere, requis) {
  *
  * @returns {[number|null, number, number|null]} coefficient, âge, fiabilité.
  */
+/**
+ * La ligne du barème de décote en table qui vaut pour cet assuré — portage de
+ * `millesime_du_bareme`. La fonction publique la lit à l'année civile où les
+ * conditions sont réunies ; les régimes spéciaux, dont les marches tombent au
+ * 1er juillet, au mois : un droit ouvert de juillet à décembre lit la ligne de
+ * l'année qui suit.
+ */
+export function millesimeDuBareme(moteur, periode, carriere, anneeLiquidation) {
+  if (!BAREMES_REGIMES_SPECIAUX.has(periode.bareme_decote)) {
+    return ouvrir.anneeOuvertureDesDroits(moteur, periode, carriere, anneeLiquidation);
+  }
+  const ouverture = DateMois.depuisRang(ouvrir.moisOuvertureDesDroits(moteur, periode, carriere));
+  return ouverture.annee + (ouverture.mois >= 7 ? 1 : 0);
+}
+
+/**
+ * Le plus grand décompte de la décote par la durée, aux régimes spéciaux —
+ * portage de `borne_de_la_duree` : la durée que le 2° oppose moins 150, moins
+ * les trimestres cotisés depuis l'ouverture du droit, au mois près.
+ */
+export function borneDeLaDuree(moteur, periode, carriere, cible) {
+  const ouverture = carriere.dateNaissance.plusMois(
+    enMois(ouvrir.ageOuverture(moteur, periode, carriere)),
+  );
+  const fin = carriere.dateLiquidation;
+  let apres = 0.0;
+  if (ouverture.rang < fin.rang) {
+    for (const ligne of carriere.lignes) {
+      if (ligne.cotise) {
+        apres += trimestresDeLaLigneEntre(carriere, ligne, ouverture, fin);
+      }
+    }
+  }
+  return Math.max(0, cible - 150 - Math.floor(apres + 1e-9));
+}
+
 export function decoteOpposable(moteur, periode, carriere, anneeLiquidation) {
   const ageAnnulation = ouvrir.ageTauxPlein(moteur, periode, carriere);
   if (BAREMES_DECOTE_EN_TABLE.has(periode.bareme_decote)) {
@@ -859,7 +899,7 @@ export function decoteOpposable(moteur, periode, carriere, anneeLiquidation) {
       ? moteur.decoteFonctionPublique
       : moteur.decoteRegimesSpeciaux;
     const parametres = table.parametres(
-      ouvrir.anneeOuvertureDesDroits(moteur, periode, carriere, anneeLiquidation),
+      millesimeDuBareme(moteur, periode, carriere, anneeLiquidation),
     );
     if (parametres === null || parametres === undefined) {
       return [null, ageAnnulation, null];
@@ -931,10 +971,15 @@ export function trimestresDeDecote(moteur, periode, carriere, trimestres, requis
   let trimestresDecote;
   if (periode.decote_par_la_duree_seule) {
     trimestresDecote = manquantsAge <= 0 ? 0 : Math.max(0, requis - trimestres);
+  } else if (periode.decote_annulee_par_la_duree) {
+    // Et les régimes spéciaux bornent ce décompte (`borneDeLaDuree`).
+    let parDuree = Math.max(0, cible - trimestres);
+    if (BAREMES_REGIMES_SPECIAUX.has(periode.bareme_decote)) {
+      parDuree = Math.min(parDuree, borneDeLaDuree(moteur, periode, carriere, cible));
+    }
+    trimestresDecote = Math.min(parDuree, manquantsAge);
   } else {
-    trimestresDecote = periode.decote_annulee_par_la_duree
-      ? Math.min(Math.max(0, cible - trimestres), manquantsAge)
-      : manquantsAge;
+    trimestresDecote = manquantsAge;
   }
   if (trimestresDecote <= 0) {
     return 0.0;

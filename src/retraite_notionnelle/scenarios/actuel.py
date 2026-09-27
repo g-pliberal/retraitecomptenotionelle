@@ -1078,8 +1078,8 @@ class DecoteRegimesSpeciaux(DecoteFonctionPublique):
     — l'âge d'ouverture du droit majoré de cinq ans, non la limite d'âge du
     grade — diminué de seize trimestres en 2010, de rien à partir de 2024.
 
-    La table et sa lecture au millésime sont documentées dans
-    ``legislation/decote_regimes_speciaux.csv``.
+    La table, et sa lecture au mois où les conditions sont réunies, sont
+    documentées dans ``legislation/decote_regimes_speciaux.csv``.
     """
 
     FICHIER = "decote_regimes_speciaux.csv"

@@ -36,6 +36,7 @@ from ..carriere import salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
 from .. import revalorisation
 from . import acquerir, coordonner, ouvrir
+from .compter import trimestres_de_la_ligne_entre
 from .commun import PensionRegime, derniere_annee
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
 
@@ -224,6 +225,11 @@ def _coefficient_anticipation(trimestres_manquants: float,
 _BAREMES_DECOTE_EN_TABLE = frozenset(
     {"fonction_publique", "regimes_speciaux", "regimes_speciaux_age_fixe"}
 )
+
+#: Ceux des régimes spéciaux réformés en 2008 : leurs marches tombent au
+#: 1er juillet (:func:`millesime_du_bareme`), et leur décompte par la durée a
+#: sa borne (:func:`borne_de_la_duree`).
+_BAREMES_REGIMES_SPECIAUX = frozenset({"regimes_speciaux", "regimes_speciaux_age_fixe"})
 
 
 @dataclass(frozen=True)
@@ -1184,6 +1190,62 @@ def duree_proratisation(moteur, periode: PeriodeRegime, carriere: Carriere,
     return min(par_generation[0], requis), par_generation[1]
 
 
+def millesime_du_bareme(moteur, periode: PeriodeRegime, carriere: Carriere,
+                        annee_liquidation: int) -> int:
+    """La ligne du barème de décote en table qui vaut pour cet assuré.
+
+    La fonction publique titre sa colonne à l'année civile où les conditions
+    sont réunies (loi du 21 août 2003, article 66, III). Les régimes spéciaux
+    ont leurs marches au 1er juillet : « pour les personnes remplissant les
+    conditions […] entre le 1er juillet 2010 et le 30 juin 2011 inclus », puis
+    « au 1er juillet de chaque année ». Chaque ligne de leur table porte donc
+    la règle du 1er juillet de l'année précédente au 30 juin de l'année
+    écrite, et se lit au MOIS où l'assuré réunit les conditions, comme la
+    durée requise (:func:`ouvrir.mois_ouverture_des_droits`) : un droit ouvert
+    de juillet à décembre lit la ligne de l'année qui suit. Le moteur lisait
+    l'année civile, et servait au second semestre la marche d'avant : rien au
+    second semestre 2010, puis un huitième de point de moins par trimestre et
+    un ou deux trimestres de moins à l'âge d'annulation — quatorze trimestres
+    à 1,125 % au lieu de quinze à 1,25 % au second semestre 2019.
+    """
+    if periode.bareme_decote not in _BAREMES_REGIMES_SPECIAUX:
+        return ouvrir.annee_ouverture_des_droits(moteur, periode, carriere,
+                                                 annee_liquidation)
+    ouverture = DateMois.depuis_rang(
+        ouvrir.mois_ouverture_des_droits(moteur, periode, carriere))
+    return ouverture.annee + (1 if ouverture.mois >= 7 else 0)
+
+
+def borne_de_la_duree(moteur, periode: PeriodeRegime, carriere: Carriere,
+                      cible: int) -> int:
+    """Le plus grand décompte de la décote par la durée, aux régimes spéciaux.
+
+    Le 2° de chaque décret de la réforme de 2008 compte les trimestres qui
+    manquent à la durée requise, mais : « Toutefois, le nombre de trimestres
+    pris en compte ne peut excéder la différence entre ledit nombre de
+    trimestres permettant d'obtenir le pourcentage maximum de la pension et
+    150, ce maximum étant réduit, le cas échéant, du nombre de trimestres
+    d'assurance […] cotisés et effectués au-delà de l'âge auquel le droit à
+    pension est ouvert » (décret n° 2008-639, article 13, I, 2° ; le même
+    alinéa à la RATP, aux IEG, à la CRPCEN, à la Comédie-Française et à
+    l'Opéra). La CNIEG l'applique ainsi : Madame D, 165 trimestres requis,
+    quatre cotisés depuis l'ouverture de son droit, n'en compte pas plus de
+    onze par la durée (circulaire n° 2024/15, § 4). ``cible`` est la durée
+    que le 2° oppose, abaissée à la SNCF pour la décote (article 35, II).
+    Les trimestres d'après l'ouverture se comptent au mois près, jusqu'à la
+    date d'effet de la pension.
+    """
+    ouverture = carriere.date_naissance.plus_mois(
+        en_mois(ouvrir.age_ouverture(moteur, periode, carriere)))
+    fin = carriere.date_liquidation
+    apres = 0.0
+    if ouverture.rang < fin.rang:
+        for ligne in carriere.lignes:
+            if ligne.cotise:
+                apres += trimestres_de_la_ligne_entre(carriere, ligne, ouverture, fin)
+    return max(0, cible - 150 - int(apres + 1e-9))
+
+
 def decote_opposable(moteur, periode: PeriodeRegime, carriere: Carriere,
             annee_liquidation: int
             ) -> tuple[float | None, float, Fiabilite | None]:
@@ -1194,8 +1256,9 @@ def decote_opposable(moteur, periode: PeriodeRegime, carriere: Carriere,
     ``None`` dans la fiche reste ``None`` ici, et le coefficient renvoyé
     est ``None``.
 
-    **Les barèmes en table se lisent à l'année d'ouverture du droit, pas à
-    celle de la liquidation.** Le III de l'article 66 de la loi du 21 août
+    **Les barèmes en table se lisent à l'ouverture du droit, pas à la
+    liquidation** — à l'année, et au mois pour les régimes spéciaux
+    (:func:`millesime_du_bareme`). Le III de l'article 66 de la loi du 21 août
     2003 titre sa colonne « Année au cours de laquelle sont réunies les
     conditions mentionnées au I et au II de l'article L. 24 », et les
     décrets de 2008 des régimes spéciaux visent « les personnes remplissant
@@ -1229,7 +1292,7 @@ def decote_opposable(moteur, periode: PeriodeRegime, carriere: Carriere,
                  if periode.bareme_decote == "fonction_publique"
                  else moteur.decote_regimes_speciaux)
         parametres = table.parametres(
-            ouvrir.annee_ouverture_des_droits(moteur, periode, carriere, annee_liquidation)
+            millesime_du_bareme(moteur, periode, carriere, annee_liquidation)
         )
         if parametres is None:
             return None, age_annulation, None
@@ -1329,9 +1392,13 @@ def trimestres_de_decote(moteur, periode: PeriodeRegime, carriere: Carriere,
     elif periode.decote_annulee_par_la_duree:
         # La SNCF compte la décote par la durée sur une cible abaissée de
         # deux à dix trimestres selon la génération (décret n° 2008-639,
-        # article 35, II) ; partout ailleurs, rien n'est retranché.
+        # article 35, II) ; partout ailleurs, rien n'est retranché. Et les
+        # régimes spéciaux bornent ce décompte (:func:`borne_de_la_duree`).
         cible = requis - retranche_decote(moteur, periode, carriere)
-        trimestres_decote = min(max(0, cible - trimestres), manquants_age)
+        par_duree = max(0, cible - trimestres)
+        if periode.bareme_decote in _BAREMES_REGIMES_SPECIAUX:
+            par_duree = min(par_duree, borne_de_la_duree(moteur, periode, carriere, cible))
+        trimestres_decote = min(par_duree, manquants_age)
     else:
         # Avant l'ordonnance du 26 mars 1982, le taux ne dépendait QUE de
         # l'âge : le régime général servait 20 % à 60 ans, majorés de

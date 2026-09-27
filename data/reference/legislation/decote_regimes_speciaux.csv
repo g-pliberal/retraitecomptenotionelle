@@ -31,8 +31,14 @@
 #   1er juillet de chaque année jusqu'au 30 juin 2013 inclus puis d'un
 #   trimestre au 1er juillet de chaque année jusqu'au 30 juin 2024 inclus. »
 #
-# La même phrase se lit, aux mêmes dates, dans les décrets de réforme des
-# autres régimes spéciaux : c'est un calendrier commun, décidé une fois.
+# Le même calendrier se lit, aux mêmes dates et aux mêmes pas, dans les
+# décrets de réforme des autres régimes spéciaux, décidé une fois ; non le
+# même mot à mot : chacun renvoie à son article du taux (« son taux est fixé
+# […] au premier alinéa du I de l'article 13 » à la SNCF), et, depuis le
+# 1er janvier 2025, les IEG réservent la diminution aux pensions prenant
+# effet avant cette date (article 45, II, de l'annexe 3) quand la CRPCEN la
+# retranche de l'âge de référence d'avant le décret n° 2023-689 (article
+# 85-2, II).
 #
 #   âge d'annulation de la décote = âge de référence − trimestres_avant / 4
 #
@@ -40,17 +46,19 @@
 # l'ÂGE D'OUVERTURE DU DROIT MAJORÉ DE CINQ ANS — non la limite d'âge du
 # grade, comme dans la fonction publique.
 #
-# POURQUOI LES LIGNES SONT DÉCALÉES D'UN AN. Les marches tombent au 1er juillet
-# et le modèle lit un millésime. Chaque ligne porte donc la règle en vigueur du
-# 1er juillet de l'année PRÉCÉDENTE au 30 juin de l'année écrite : la ligne
-# 2011 est celle du 1er juillet 2010. C'est la lecture qui n'oppose jamais à
-# l'assuré plus que le droit — une liquidation du second semestre se voit
-# appliquer la marche de l'année précédente, jamais celle de l'année suivante —
-# et c'est celle qui laisse 2010 sans décote, comme la première phrase du texte
-# le veut pour sa première moitié.
+# POURQUOI LES LIGNES SONT DÉCALÉES D'UN AN. Les marches tombent au 1er juillet.
+# Chaque ligne porte donc la règle en vigueur du 1er juillet de l'année
+# PRÉCÉDENTE au 30 juin de l'année écrite : la ligne 2011 est celle du
+# 1er juillet 2010 au 30 juin 2011. Le moteur la lit au MOIS où l'assuré réunit
+# les conditions (`liquider.millesime_du_bareme`) : de janvier à juin, la ligne
+# de l'année ; de juillet à décembre, celle de l'année qui suit. Il lisait
+# l'année civile, et servait au second semestre la marche d'avant : rien au
+# second semestre 2010, quatorze trimestres à 1,125 % au lieu de quinze à
+# 1,25 % au second semestre 2019.
 #
-# Avant 2011 : aucune ligne, donc aucune décote. Après 2025 : la dernière ligne
-# vaut, l'âge d'annulation est l'âge de référence lui-même.
+# Avant la ligne 2011, donc avant le 1er juillet 2010 : aucune décote. Après
+# 2025 : la dernière ligne vaut, l'âge d'annulation est l'âge de référence
+# lui-même.
 #
 # Niveau `haute` : ces quinze lignes sont la mise en table d'un article lu dans
 # la base LEGI, non la sortie d'un script de collecte.

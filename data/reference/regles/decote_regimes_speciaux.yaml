@@ -16,14 +16,18 @@ effet: >-
   écrivent le même calendrier, aux mêmes dates et aux mêmes pas, seul le renvoi à
   l'article du taux changeant ; les quinze lignes de
   `legislation/decote_regimes_speciaux.csv` le reprennent exactement, et la CNIEG publie
-  les mêmes tables. Trois écarts. Le moteur lit la table à l'ANNÉE où les conditions sont
-  réunies, et sert au second semestre la marche d'avant : rien au second semestre 2010,
-  puis un huitième de point de moins par trimestre et un ou deux trimestres de moins à
-  l'âge d'annulation, jusqu'à trois points de pension en faveur de l'assuré (quatorze
-  trimestres à 1,125 % au lieu de quinze à 1,25 % au second semestre 2019). Il ne porte
-  pas la borne du 2° de chaque article, durée requise moins 150 : effet non mesuré, de
-  l'ordre d'un trimestre de trop, pour qui réunit les conditions à compter de juillet 2023
-  sans cotiser au-delà. CRPCEN : depuis 2025, la diminution se retranche de l'âge de
+  les mêmes tables. Le moteur lit la table au MOIS où les conditions sont réunies
+  (`liquider.millesime_du_bareme`) : il la lisait à l'année, et servait au second semestre
+  la marche d'avant — rien au second semestre 2010, puis un huitième de point de moins
+  par trimestre et un ou deux trimestres de moins à l'âge d'annulation, jusqu'à trois
+  points de pension en faveur de l'assuré (quatorze trimestres à 1,125 % au lieu de quinze
+  à 1,25 % au second semestre 2019). Et il porte la borne du 2° de chaque article, le
+  décompte par la durée ne pouvant excéder la durée requise moins 150, réduite des
+  trimestres cotisés depuis l'ouverture du droit (`liquider.borne_de_la_duree`) : un
+  agent des IEG né en juillet 1967, parti à l'ouverture de son droit avec 140 trimestres
+  pour 169, en perd dix-neuf et non vingt. Aucun des 535 témoins ne bouge : leurs agents
+  naissent en janvier, où les deux lectures s'accordent, et partent avec leur durée. Un
+  écart reste. CRPCEN : depuis 2025, la diminution se retranche de l'âge de
   référence d'avant le décret n° 2023-689, l'âge d'ouverture de l'article 84 majoré de
   cinq ans, comme la caisse le publie ; le moteur la retranche de soixante-sept ans, et
   oppose jusqu'à quatre trimestres de trop (cinq points) aux générations 1959 et 1960, un
@@ -33,30 +37,18 @@ effet: >-
   soixante-deux ans pour toute pension de 2025 et après, opposant jusqu'à trois
   trimestres de trop (3,75 points) aux agents nés en 1964 et 1965, un ou deux à ceux de
   1966 ; il lit désormais l'âge de référence dans la période en vigueur l'année où le
-  droit s'ouvre (`age_taux_plein_a_l_ouverture`, fiche `age_reference_decote_ieg`).
+  droit s'ouvre (`age_taux_plein_a_l_ouverture`, fiche `age_reference_decote_ieg`). Avec
+  la lecture au mois, Monsieur A, droit ouvert en décembre 2020, a l'âge d'annulation de
+  la CNIEG, « 56 ans + 16 trimestres, soit 60 ans », et non 59 ans et 9 mois.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Après la phase 8 : lire le barème au MOIS où les conditions sont réunies, comme la durée
-    requise (`ouvrir.mois_ouverture_des_droits`), et non à l'année : la ligne d'une année vaut
-    du 1er juillet précédent au 30 juin, et le second semestre reçoit aujourd'hui la marche
-    d'avant.
-  - >-
     Après la phase 8 : CRPCEN, pour les pensions de 2025 et après, retrancher la diminution de
     l'âge d'ouverture de l'article 84 d'avant le décret n° 2023-689 (LEGIARTI000047909844)
     majoré de cinq ans, et non de soixante-sept ans, comme la caisse le publie : 65 ans et 4
     mois à 66 ans et 9 mois pour les assurés nés de 1960 au 30 juin 1962.
-  - >-
-    Après la phase 8 : porter la borne du 2° de chaque article, le décompte par la durée ne
-    pouvant excéder la durée requise moins 150, réduite des trimestres cotisés au-delà de
-    l'âge d'ouverture, que la CNIEG applique (circulaire 2024/15, § 4).
-  - >-
-    Après la phase 8 : l'en-tête du CSV écrit que « La même phrase se lit, aux mêmes dates »
-    dans les autres décrets ; c'est vrai des dates et des pas, non du mot à mot (« son taux est
-    fixé […] au premier alinéa du I de l'article 13 » à la SNCF), ni, depuis 2025, des IEG et
-    de la CRPCEN.
   - >-
     RATP : le 2° du VII de l'article 51-1 fixe l'âge d'annulation, de 2025 à 2033, à l'âge de
     référence d'avant le décret n° 2023-690, sans dire si la diminution du II de l'article 51
@@ -87,6 +79,22 @@ sources:
     (docs/architecture.md, § 3.3), et le moteur la suit (`age_taux_plein_a_l_ouverture`,
     fiche `age_reference_decote_ieg`).
   lectures:
+  - type: legifrance
+    reference: >-
+      la borne du 2°, décret n° 2008-639 (SNCF), article 13, I, rédactions du 7 janvier 2024
+      (LEGIARTI000048897107) et du 7 août 2026 (LEGIARTI000054622824, décret n° 2026-738,
+      qui ne change que le décompte des temps partiels) : « Toutefois, le nombre de
+      trimestres pris en compte ne peut excéder la différence entre ledit nombre de
+      trimestres permettant d'obtenir le pourcentage maximum de la pension et 150, ce
+      maximum étant réduit, le cas échéant, du nombre de trimestres d'assurance au sens du
+      III ci-après, cotisés et effectués au-delà de l'âge auquel le droit à pension est
+      ouvert lorsqu'il existe une telle condition d'âge » ; le même alinéa à la RATP
+      (article 24, LEGIARTI000047914227), aux IEG (annexe 3, article 10, I, « cent
+      cinquante », LEGIARTI000052046924), à la CRPCEN (article 85-1, I,
+      LEGIARTI000047909834), à la Comédie-Française (article 12, LEGIARTI000029134341) et à
+      l'Opéra (article 14, LEGIARTI000029135161), et déjà dans leurs rédactions de 2008. Lu
+      dans l'index LEGI du dépôt
+    date: 2026-09-27
   - type: legifrance
     reference: >-
       décret n° 2008-639 (SNCF), article 35, II, en vigueur depuis le 7 janvier 2024
@@ -406,4 +414,7 @@ code:
     rien avant le 1er juillet 2010, un dixième du taux plein ensuite, 1,25 % seulement
     en 2019, et un âge d'annulation qui est l'âge de référence du régime — l'âge d'ouverture
     majoré de cinq ans — diminué de seize trimestres en 2010 puis de rien à partir de
-    2024 (`legislation/decote_regimes_speciaux.csv`).
+    2024 (`legislation/decote_regimes_speciaux.csv`), la table se lisant au mois où les
+    conditions sont réunies (`liquider.millesime_du_bareme`) ; et il borne le décompte par
+    la durée à la durée requise moins 150, moins les trimestres cotisés depuis l'ouverture
+    du droit (`liquider.borne_de_la_duree`).

@@ -3876,6 +3876,51 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     assert age_annulation == pytest.approx(57.0)
 
 
+def test_la_decote_des_regimes_speciaux_se_lit_au_mois_et_borne_la_duree(simulateur):
+    """Deux règles des décrets de 2008, écrites dans chacun.
+
+    LES MARCHES TOMBENT AU 1er JUILLET. Un agent de conduite né en avril
+    1967 ouvre son droit à cinquante ans et quatre mois, en août 2017 : il a
+    la marche du 1er juillet 2017, 1 % par trimestre et sept trimestres de
+    diminution, et non celle de 2016, que la lecture à l'année lui servait.
+
+    LE DÉCOMPTE PAR LA DURÉE EST BORNÉ : il « ne peut excéder la différence
+    entre ledit nombre de trimestres […] et 150, ce maximum étant réduit […]
+    du nombre de trimestres d'assurance […] cotisés et effectués au-delà de
+    l'âge auquel le droit à pension est ouvert ». Un agent des IEG né en
+    juillet 1967 qui part à l'ouverture de son droit, en juillet 2024, avec
+    140 trimestres pour 169 requis, en perd dix-neuf et non vingt ; un an
+    plus tard, quatre trimestres cotisés depuis l'ouverture ramènent la
+    borne à quinze.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def agent(affiliation: str, annee: int, mois: int, age_debut: float, age: float):
+        return simulateur.carriere_simple(
+            annee_naissance=annee, mois_naissance=mois, sexe="H", affiliation=affiliation,
+            age_debut=age_debut, age_liquidation=age, niveau_salaire=1.0,
+        )
+
+    carriere = agent("agent_sncf", 1967, 4, 20, 52.0)
+    periode = simulateur.catalogue["sncf"].periode(carriere.annee_liquidation)
+    coefficient, age_annulation, _ = liquider.decote_opposable(
+        scenario, periode, carriere, carriere.annee_liquidation)
+    assert coefficient == pytest.approx(0.01)
+    assert age_annulation == pytest.approx(55.33 - 7 / 4)
+
+    for age, borne in ((57.0, 19), (58.0, 15)):
+        carriere = agent("agent_ieg", 1967, 7, 22, age)
+        periode = simulateur.catalogue["ieg"].periode(carriere.annee_liquidation)
+        requis = ouvrir.duree_requise(scenario, periode, carriere)[0]
+        assert requis == 169
+        assert liquider.borne_de_la_duree(scenario, periode, carriere, requis) == borne
+        _, age_annulation, _ = liquider.decote_opposable(
+            scenario, periode, carriere, carriere.annee_liquidation)
+        trimestres = scenario.calculer(carriere).trimestres_valides
+        assert liquider.trimestres_de_decote(
+            scenario, periode, carriere, trimestres, requis, age, age_annulation) == borne
+
+
 def test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant(simulateur):
     """Deux règles que la CNIEG applique, et que le moteur ne suivait pas.
 
