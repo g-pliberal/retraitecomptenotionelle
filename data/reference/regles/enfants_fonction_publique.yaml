@@ -153,7 +153,7 @@ versions:
       beneficiaire: mere
       condition: ne_avant_radiation
       fiabilite: moyenne
-  exemples: [sp_f37311_bonification_avant_2004]
+  exemples: [sp_f37311_bonification_avant_2004, sp_f37311_bonification_de_part_et_d_autre_de_2004]
 - id: l12bis
   statut: lue
   textes:
@@ -194,7 +194,10 @@ versions:
       beneficiaire: mere
       condition: accouchement_apres_recrutement
       fiabilite: moyenne
-  exemples: [sp_f37311_bonification_depuis_2004]
+  exemples:
+  - sp_f37311_bonification_depuis_2004
+  - sp_f37311_bonification_de_part_et_d_autre_de_2004
+  - sp_f37311_accouchement_avant_le_recrutement
 approximations:
 - version: [l12b_2004, l12b_2011_decret, l12b_2011]
   ecart: >-

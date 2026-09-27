@@ -2646,6 +2646,38 @@ au lieu de seize pour ses deux enfants, 133 cent-soixantièmes au lieu de
 les constats du 25 septembre consignés dans la fiche sont clos, sauf le
 dernier : les rédactions de L. 351-4 depuis 2013, à couper en versions.
 
+**Le domaine se clôt le même jour**, le gabarit du § 11 rempli :
+- **les exemples publiés** : deux de plus, tirés de la fiche F37311 aux
+  enfants datés — la fonctionnaire mère d'un enfant né en 2001 et d'un autre
+  né en 2006 réunit six trimestres, celle qui a accouché en 2006 avant son
+  recrutement de 2010 n'en reçoit aucun de la fonction publique —, que le
+  modèle rend tous deux ; les exemples officiels savent désormais dater les
+  enfants (`naissances_enfants`) ;
+- **la relation** `priorite_majorations_enfants` mûrit : elle relie les deux
+  fiches découpées, porte son domaine, ses régimes, son rang, et six
+  versions, les rédactions de l'article 16 du décret n° 75-109 (1975, 1982)
+  et de R. 173-15 (1985, 2001, 2008, 2011), lues dans l'index LEGI. Elle
+  passe `approchee` : le moteur applique partout la règle de 1982, où le
+  texte de 1975 et la circulaire Cnav n° 31/75 écartaient le régime général
+  dès qu'un régime spécial était en cause ;
+- **la page Coût** ne bouge pas : aucun de ses chiffres n'a changé dans les
+  commits du domaine ;
+- **la décision de la proposition** est déjà prise : la couche
+  `comptes_notionnels` neutralise l'étape `compter_les_durees`, où
+  s'appliquent les trois fiches du domaine, et le README le dit (« Ni
+  majorations enfants, ni MDA, ni AVPF, ni bonifications ») ; les naissances
+  n'y changent rien, comme le formulaire l'annonce ;
+- **la référence de conservation** est refigée
+  (`python scripts/conservation.py --figer`) : elle tient désormais les
+  récits nés depuis la phase 8, ceux du domaine compris.
+
+Restent, hors du domaine clos, et consignés dans ses fiches : les rédactions
+de L. 351-4 depuis 2013, à couper en versions ; l'adoption, que la chronologie
+ne connaît pas encore ; l'enfant handicapé ; la majoration d'éducation d'un
+enfant de moins de quatre ans depuis 2010 ; l'exception de la CRPCEN. Le
+domaine suivant se mesurera à son ouverture : la réversion paraît devoir
+précéder l'invalidité.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.14, du 27 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.15, du 27 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -1570,8 +1570,8 @@ Un domaine se clôt en refigeant la référence de conservation (§ 12).
 
 L'ordre se fixe par le nombre de personnes concernées, mesuré sur les sources
 publiques au moment de choisir. Le premier l'a été le 27 septembre 2026, et
-s'est ouvert ce jour-là (feuille de route, action 130) ; les suivants le seront
-chacun à son tour. En première lecture :
+s'est ouvert et clos ce jour-là (feuille de route, action 130) ; les suivants
+le seront chacun à son tour. En première lecture :
 
 1. les dates des enfants ;
 2. les périodes assimilées manquantes ;
@@ -2393,6 +2393,7 @@ Rien ne s'y efface.
 ## Les versions
 
 - **5.14**, 27 septembre 2026 : le premier domaine, les dates des enfants, mesuré et ouvert (§ 11). Deux fiches sont découpées en versions, et le moteur les lit, enfant par enfant, à la place de la table qu'elles remplacent (annexe B) ; le schéma de l'étape « compter les durées » passe en version 2, qui compte les enfants un par un.
+- **5.15**, 27 septembre 2026 : le premier domaine, les dates des enfants, clos (§ 11). Le formulaire date les enfants ; trois bornes approchées sont corrigées au jour, chacune avec le diff de ses témoins ; deux exemples publiés rejouent des enfants datés ; la relation de priorité entre régimes relie les deux fiches, en six versions ; la référence de conservation est refigée (§ 12).
 
 - **5.13**, 27 septembre 2026 : le contrôle de conservation reste après la phase 8, à la demande du propriétaire : les domaines déplacent encore des fichiers, et un récit ne se réécrit pas, quelle que soit la phase. Sa référence se refige à la fin de chaque domaine (§ 11 et § 12).
 

@@ -62,7 +62,9 @@
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
 # l'impose. Les dates s'écrivent année-mois : le modèle ne connaît pas le jour,
-# et la pension prend effet le premier du mois.
+# et la pension prend effet le premier du mois. `naissances_enfants` date les
+# premiers enfants, à l'année ou au mois, comme le formulaire ; ceux qu'elle ne
+# date pas sont présumés nés aux trente ans de leur mère.
 #
 # UN EXEMPLE QUE LE MODÈLE NE REPRODUIT PAS ENTRE QUAND MÊME, à l'état
 # « écart connu » (docs/architecture.md, § 9.2) : ce qu'on apprend n'est
@@ -453,6 +455,30 @@ exemples:
       réunit 4 trimestres pour deux enfants, et non 8.
     carriere: {naissance: "1974-05", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2038-05", age_debut: 22, nombre_enfants: 2}
     attendu: {trimestres_de_majoration_enfants: 4}
+
+  # Les mêmes règles, aux enfants datés : chacun compte à sa date, et la
+  # fiche l'écrit enfant par enfant (« chaque enfant vous donne droit à 4
+  # trimestres », « pour chacun de vos enfants nés depuis le 1er janvier
+  # 2004, et après votre recrutement »).
+  - id: sp_f37311_bonification_de_part_et_d_autre_de_2004
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F37311, Comment les enfants sont-ils pris en compte pour la retraite de l'agent public ?", verifie_le: "2026-09-01"}
+    enonce: >-
+      Quatre trimestres pour chaque enfant né avant le 1er janvier 2004, deux
+      pour chaque enfant né depuis et après le recrutement. Une fonctionnaire
+      recrutée à vingt-deux ans, mère d'un enfant né en 2001 et d'un autre né
+      en 2006, réunit donc 6 trimestres.
+    carriere: {naissance: "1970-05", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2034-05", age_debut: 22, nombre_enfants: 2, naissances_enfants: ["2001", "2006"]}
+    attendu: {trimestres_de_majoration_enfants: 6}
+
+  - id: sp_f37311_accouchement_avant_le_recrutement
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F37311, Comment les enfants sont-ils pris en compte pour la retraite de l'agent public ?", verifie_le: "2026-09-01"}
+    enonce: >-
+      Les deux trimestres d'un enfant né depuis le 1er janvier 2004 vont à la
+      fonctionnaire qui a accouché après son recrutement. Recrutée à trente
+      ans, en 2010, la mère d'un enfant né en 2006 n'en reçoit aucun de la
+      fonction publique.
+    carriere: {naissance: "1980-05", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2044-05", age_debut: 30, nombre_enfants: 1, naissances_enfants: ["2006"]}
+    attendu: {trimestres_de_majoration_enfants: 0}
 
   # ---- Cnav, circulaire 2022-26 du 14 octobre 2022 (majoration 10 %) -----
   # L'assiette des 10 % est la retraite TELLE QUE CALCULÉE. La circulaire le

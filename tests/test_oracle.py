@@ -1517,6 +1517,8 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
         niveau_salaire=float(c.get("niveau_salaire", 1.0)),
         profil_carriere=c.get("profil_carriere", "ascendant"),
         nombre_enfants=0 if sans_enfants else int(c.get("nombre_enfants", 0)),
+        naissances_enfants=() if sans_enfants else tuple(
+            str(jour) for jour in c.get("naissances_enfants") or ()),
         interruptions={int(k): v for k, v in (c.get("interruptions") or {}).items()},
     )
     actuel = simulateur.scenario_actuel

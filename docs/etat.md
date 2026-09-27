@@ -14,35 +14,35 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | régime partiel | 4 268 431 | 11 % |
 | sections libérales, couverture mêlée | 424 386 | 1 % |
 
-*Modélisé ne veut pas dire exact* : les 34 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
+*Modélisé ne veut pas dire exact* : les 35 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
 
 **La carte des règles** (`data/reference/regles/`) : 112 fiches, dont 1 relation. La veille en est une vue (`python scripts/veille_droit.py`).
 
 | État | Fiches |
 |---|---|
 | conformes | 44 |
-| transcrites | 24 |
-| approchées | 34 |
+| transcrites | 23 |
+| approchées | 35 |
 | pas encore modélisées | 5 |
 | manquantes | 4 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **29 sur 112** (64 exemples : 63 reproduits, 1 en écart connu, section 2).
+- Confrontées à au moins un exemple officiel : **29 sur 112** (66 exemples : 65 reproduits, 1 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **22 sur 112**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **40 sur 112**, par 2 180 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
-- Mûres, sans rien qui manque à leur contrat : **2 sur 112**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **2 sur 112**, soit 13 versions, dont 1 supposées ; le partage des versions se contrôle sur chacune.
+- Mûres, sans rien qui manque à leur contrat : **3 sur 112**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
+- Découpées en versions : **3 sur 112**, soit 20 versions, dont 2 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 109, dont 11 déclarées non appliquées.
 
 **La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 11 505 rédactions d'articles, de 65 textes, lues le 2026-09-27 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20260926-210736). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 14 |
+| rattachées à une version | 23 |
 | sans effet | 54 |
-| à rattacher | 329 |
+| à rattacher | 325 |
 | à examiner | 695 |
-| sans statut | 10 413 |
+| sans statut | 10 408 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré et ses enfants —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 7 présomptions au vocabulaire, dont 1 pose son fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -149,6 +149,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `minoration_ircec` | approchee | Tout départ anticipé d'un artiste-auteur, d'un auteur dramatique ou d'un compositeur qui n'a pas sa durée : à soixante-deux ans, 20 % de mi… |
 | `minoration_racl_2014_2024` | approchee | Les auteurs et compositeurs lyriques partis avant l'âge du taux plein, de 2014 à mai 2025. |
 | `pension_mines` | approchee | Mineurs. |
+| `priorite_majorations_enfants` | approchee | Toute mère passée par un régime spécial et par un régime aligné. |
 | `raap_classe_speciale` | approchee | La fiche prélevait 8 % du revenu avant 2016 — un taux qu'aucun texte ne porte — et servait donc, à un revenu moyen, quatre à six fois les p… |
 | `rafp_majoration_capital` | approchee | Le modèle servait la valeur de service nue à tout âge : 22 % de moins à 67 ans. |
 | `retraite_proportionnelle_msa` | approchee | Les chefs d'exploitation, pour leurs années depuis 1990. |
@@ -157,9 +158,9 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `surcote_par_age_seul` | approchee | Les complémentaires de la CARMF, de la CARPIMKO, de la CAVEC, de la CAVP, de la Cipav et de la CPRN, et l'ASV des médecins, dont les périod… |
 | `un_statut_par_annee` | approchee | DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux moteurs : chacune verse à son régime, sur son revenu, et… |
 
-**Un état peut-être périmé.** Pour 17 des 34 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
+**Un état peut-être périmé.** Pour 17 des 35 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
 
-**Des approximations non déclarées.** 32 des 34 fiches approchées ne déclarent encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
+**Des approximations non déclarées.** 32 des 35 fiches approchées ne déclarent encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
 
 **Les exemples officiels que le modèle ne reproduit pas**, entrés en écart connu, avec la règle qui le déclare :
 
@@ -190,22 +191,21 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - et 20 sources sans régime désigné.
 - **Les fiches sans exemple officiel** : 83.
 - **Les domaines sans décision** (§ 8) : 68 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 6 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `retablissement_fonction_publique`, `retraite_proportionnelle_msa`. Les 62 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
-- **Faire mûrir la carte** : 835 champs obligatoires manquent, à 110 fiches. Par champ :
+- **Faire mûrir la carte** : 827 champs obligatoires manquent, à 109 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |
   |---|---|
-  | `dates_qui_decident` | 110 |
-  | `domaine` | 110 |
-  | `ecrit` | 110 |
-  | `lit` | 110 |
-  | `regimes` | 110 |
-  | `versions` | 110 |
+  | `dates_qui_decident` | 109 |
+  | `domaine` | 109 |
+  | `ecrit` | 109 |
+  | `lit` | 109 |
+  | `regimes` | 109 |
+  | `versions` | 109 |
   | `etape` | 78 |
-  | `code` | 64 |
+  | `code` | 63 |
   | `approximations` | 32 |
-  | `rang` | 1 |
 
-- **Les textes** : 329 rédactions à rattacher à une version de la fiche qui les cite, 695 à examiner, et 10 413 sans statut, que le cliquet tient à 10 413 au plus. Les textes qui en ont le plus : `css` 5 349, `rural` 975, `decret_46_2769` 946, `cpcmr` 686, `decret_90_1215` 335 (`python scripts/textes.py`).
+- **Les textes** : 325 rédactions à rattacher à une version de la fiche qui les cite, 695 à examiner, et 10 408 sans statut, que le cliquet tient à 10 408 au plus. Les textes qui en ont le plus : `css` 5 345, `rural` 975, `decret_46_2769` 946, `cpcmr` 686, `decret_90_1215` 335 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`) ; 2026-12-31 (`coefficients_anticipation_agirc_arrco`).
 - **Les régimes hors champ** : 15, chacun avec sa raison dans l'inventaire.
 

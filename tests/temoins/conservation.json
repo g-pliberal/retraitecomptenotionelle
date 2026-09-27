@@ -233,12 +233,14 @@
    "duree_requise_ieg",
    "duree_requise_par_generation",
    "duree_requise_sncf_ratp",
+   "enfants_fonction_publique",
    "fin_de_la_suspension_2028",
    "inaptitude_invalidite_penibilite_amiante",
    "interpenetration_fonction_publique",
    "ircantec_valeurs_point",
    "liquidation_unique_regimes_alignes",
    "majoration_dix_pour_cent",
+   "majoration_duree_apres_65_ans",
    "majoration_duree_assurance_enfants",
    "majoration_enfants_agirc_arrco",
    "majoration_enfants_ircec",
@@ -283,6 +285,7 @@
    "surcote_par_age_seul",
    "surcote_parentale",
    "surcote_regime_general",
+   "surcote_regimes_speciaux",
    "taux_maximum_fonction_publique",
    "taux_plein_et_proratisation",
    "temps_partiel_fonction_publique",
@@ -377,6 +380,9 @@
    "2026-09-27 | architecture, phase 6 : un fichier par régime, et les interrupteurs deviennent des renvois aux fiches",
    "2026-09-27 | architecture, phase 7 : la proposition réécrite en univers de droit",
    "2026-09-27 | architecture, phase 8 : le texte du site écrit une fois, en JavaScript",
+   "2026-09-27 | l'action 130, le domaine des enfants clos : le bloc du formulaire, trois bornes corrigées au jour, les exemples publiés, la relation de priorité",
+   "2026-09-27 | l'action 130, le premier domaine ouvert : les dates des enfants, chaque enfant comptant à sa date",
+   "2026-09-27 | les premières corrections de l'action 131, préparées pendant la phase 8 sur une branche à part et publiées la phase close : la complémentaire agricole, les IEG",
    "2026-09-27 | relecture à la source des dix fiches nées à la phase 6, menée pendant la phase 7 sans rien lui prendre",
    "2026-09-27 | suite de la relecture des dix fiches, pendant la phase 8 : les exemples publiés, et les textes que les index ne portaient pas"
   ],
@@ -1354,6 +1360,8 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "b6f2b67f6bda342a",
+    "1bf9d63b843d36b2",
     "12bfa602d4e0272e",
     "4aa643bbcee06734",
     "2d78256b7bb0bccc",
@@ -5542,6 +5550,9 @@
    ],
    "Les actions en cours": [
     "12843a9770b8672a"
+   ],
+   "Les actions à faire": [
+    "7407c2842cf065fd"
    ]
   },
   "docs/frontiere_contributive.md": {
