@@ -90,7 +90,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors du modèle.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR), et le modèle n'en calcule aucune.
 
-**La feuille de route** compte 133 actions : 123 fait, 7 en cours, 1 archivée, 1 abandonnée, 1 à faire. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 134 actions : 123 fait, 8 en cours, 1 archivée, 1 abandonnée, 1 à faire. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -169,7 +169,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 7 actions en cours** de la feuille de route :
+- **Les 8 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
@@ -177,6 +177,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
   - 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir
   - 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger
+  - 133. La retraite de base et ses complémentaires, sous le montant du système 1
 - **Les sources à exploiter** : 114 à explorer sur 260 (58 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)

@@ -2,6 +2,7 @@ code: rci
 rang: 340
 nom: Régime complémentaire des indépendants
 famille: non_salarie
+etage: complementaire
 source_id: dila_legi_rci
 fiabilite: haute
 creation: 2013

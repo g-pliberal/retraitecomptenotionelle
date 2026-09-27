@@ -3,6 +3,7 @@ rang: 360
 nom: >-
   Régime des artistes et auteurs professionnels (RAAP), géré par l'IRCEC
 famille: liberal
+etage: complementaire
 source_id: ircec_memos
 fiabilite: haute
 creation: 1962

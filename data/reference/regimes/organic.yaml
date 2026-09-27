@@ -2,6 +2,7 @@ code: organic
 rang: 300
 nom: Organisation autonome nationale de l'industrie et du commerce
 famille: non_salarie
+etage: base
 source_id: cor_panorama_regimes
 fiabilite: estimee
 creation: 1949

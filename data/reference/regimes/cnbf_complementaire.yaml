@@ -2,6 +2,7 @@ code: cnbf_complementaire
 rang: 490
 nom: Régime complémentaire obligatoire des avocats (CNBF)
 famille: liberal
+etage: complementaire
 source_id: cnbf_baremes
 fiabilite: haute
 creation: 1979

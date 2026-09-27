@@ -2,6 +2,7 @@ code: regime_general
 rang: 30
 nom: Régime général d'assurance vieillesse (CNAV)
 famille: base_prive
+etage: base
 # Taux de cotisation des périodes postérieures à 1971 : moyenne des taux
 # annuels publiés par OpenFisca-France (part salariale + part patronale,
 # plafonnée + déplafonnée), récupérés par scripts/fetch/openfisca_cotisations.py

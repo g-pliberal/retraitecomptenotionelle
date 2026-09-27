@@ -2,6 +2,7 @@ code: cnavpl
 rang: 350
 nom: Régime de base des professions libérales (CNAVPL)
 famille: liberal
+etage: base
 source_id: cnavpl_parametres
 fiabilite: moyenne
 creation: 1949

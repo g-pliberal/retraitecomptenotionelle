@@ -4,6 +4,7 @@ nom: >-
   Régime complémentaire des experts-comptables et des commissaires aux
   comptes (CAVEC)
 famille: liberal
+etage: complementaire
 source_id: cavec_guide_annuel
 fiabilite: moyenne
 creation: 1953

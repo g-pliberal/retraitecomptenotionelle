@@ -4,6 +4,7 @@ nom: >-
   Caisse de retraite du personnel navigant professionnel de l'aéronautique
   civile — seconde tranche de salaire
 famille: special
+etage: complementaire
 source_id: dila_legi_crpn
 fiabilite: haute
 creation: 1963

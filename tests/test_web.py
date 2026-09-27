@@ -1999,7 +1999,10 @@ def test_le_tableau_du_detail_s_additionne_a_l_ecran(nom, champs):
               # depuis que les tableaux en portent : les deux balises sont
               # admises ici, faute de quoi les lignes « + avantage » ne
               # seraient plus exclues et le total serait compté deux fois.
-              or re.search(r"<t[dh][^>]*>\+ ", ligne)):
+              or re.search(r"<t[dh][^>]*>\+ ", ligne)
+              # Une ligne en retrait détaille l'étage du dessus, dont la
+              # ligne porte déjà la somme.
+              or re.search(r'<t[dh][^>]*><span class="dont">', ligne)):
             continue
         elif "€" in ligne:
             regimes.append(somme(ligne))
@@ -2018,6 +2021,80 @@ def test_le_tableau_du_detail_s_additionne_a_l_ecran(nom, champs):
         f"{nom} : les lignes affichées font {sum(regimes):.2f} €, "
         f"le total affiché {total:.2f} €"
     )
+
+
+def _systeme_actuel(champs: dict[str, str]) -> tuple[int, str]:
+    """Le montant du système 1, tel qu'il s'affiche, et la ligne qui le compose."""
+    corps = rendre("/simuler", champs)[1]
+    bloc = _bloc(corps, '<div class="scenario">', '<div class="barre actuel">')
+    montant = re.search(r'<span class="chiffre principal">.*?'
+                        r'<span class="somme">([^<]+)</span>', bloc, re.S).group(1)
+    composition = bloc.partition('<span class="composition">')[2]
+    ligne = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", composition)))
+    return int(re.sub(r"\D", "", montant)), ligne.strip()
+
+
+@pytest.mark.parametrize("nom,champs,libelles", [
+    ("cadre", {"naissance": "1962", "statut": "salarie_prive_cadre", "debut": "22",
+               "liquidation": "64", "unite_revenu": "moyen", "salaire": "1.6"},
+     ["retraite de base", "retraite complémentaire"]),
+    # Trois étages : l'ASV des médecins conventionnés s'ajoute aux deux autres.
+    ("médecin", {"naissance": "1965", "statut": "medecin_liberal", "debut": "28",
+                 "liquidation": "66", "unite_revenu": "moyen", "salaire": "2"},
+     ["retraite de base", "retraite complémentaire", "retraite additionnelle"]),
+    # Déjà parti : les montants sont ceux d'aujourd'hui, chaque régime
+    # revalorisé par sa règle, et la majoration pour enfants avec eux.
+    ("retraité, deux enfants", {"naissance": "1945", "statut": "salarie_prive_cadre",
+                                "debut": "20", "liquidation": "60", "enfants": "2",
+                                "unite_revenu": "moyen", "salaire": "1.5"},
+     ["retraite de base", "retraite complémentaire"]),
+    # Le minimum vieillesse, qu'aucun régime ne sert : un terme à part.
+    ("petite pension, minimum vieillesse",
+     {"naissance": "1950", "sexe": "F", "debut": "30", "liquidation": "65",
+      "unite_revenu": "moyen", "salaire": "0.15"},
+     ["retraite de base", "retraite complémentaire", "minimum vieillesse"]),
+])
+def test_le_systeme_actuel_dit_sa_base_et_ses_complementaires(nom, champs, libelles):
+    """Sous le montant du système 1, ce qu'il additionne : la retraite de base,
+    puis ce qui s'y ajoute. Les parts sont arrondies à l'euro, et font le
+    montant affiché : un lecteur les additionne de tête."""
+    montant, ligne = _systeme_actuel(champs)
+    termes = re.findall(r"(\d[\d   ]*) ?€ de ([^+]+?)(?: \+|$)", ligne)
+    assert [libelle.strip() for _, libelle in termes] == [
+        f"{libelle}" for libelle in libelles], f"{nom} : {ligne}"
+    parts = [int(re.sub(r"\D", "", euros)) for euros, _ in termes]
+    assert sum(parts) == montant, f"{nom} : {ligne} ne fait pas {montant} €"
+
+
+def test_un_regime_integre_se_dit_d_une_seule_pension():
+    """Un agent de la SNCF n'a pas de complémentaire : son régime tient les
+    deux rôles, et la ligne le dit au lieu de ne rien écrire."""
+    montant, ligne = _systeme_actuel({"naissance": "1960", "statut": "agent_sncf",
+                                      "liquidation": "57"})
+    assert montant > 0
+    assert ligne.startswith("une seule pension, sans complémentaire à part"), ligne
+    assert "€" not in ligne
+
+
+def test_le_detail_range_la_base_avant_les_complementaires():
+    """Le moteur rend les régimes dans l'ordre alphabétique de leurs codes,
+    l'Agirc avant le régime général. Le détail les range par étage — la base,
+    puis les complémentaires, chacune en retrait sous leur somme —, et la
+    somme est celle des lignes affichées."""
+    corps = rendre("/simuler", {"naissance": "1962", "statut": "salarie_prive_cadre",
+                                "debut": "22", "liquidation": "64",
+                                "unite_revenu": "moyen", "salaire": "1.6"})[1]
+    tableau = _bloc(corps, "de quoi votre pension actuelle est faite", "</table>")
+    ordre = ["Retraite de base", "Régime général", "Retraite complémentaire",
+             "Association générale des institutions de retraite des cadres",
+             "Association pour le régime de retraite complémentaire des salariés",
+             "Régime unifié Agirc-Arrco", "<strong>Pension du système actuel"]
+    rangs = [tableau.index(texte) for texte in ordre]
+    assert rangs == sorted(rangs)
+    complementaires = _nombres(_bloc(tableau, "Retraite complémentaire",
+                                     "Pension du système actuel"))
+    somme, *lignes = complementaires
+    assert len(lignes) == 3 and round(sum(lignes), 2) == somme
 
 
 def _nombres(bloc: str) -> list[float]:

@@ -2,6 +2,7 @@ code: rsi
 rang: 310
 nom: Régime social des indépendants
 famille: non_salarie
+etage: base
 source_id: cor_panorama_regimes
 fiabilite: moyenne
 creation: 2006

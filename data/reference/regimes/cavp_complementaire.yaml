@@ -3,6 +3,7 @@ rang: 400
 nom: >-
   Régime complémentaire par répartition des pharmaciens (CAVP)
 famille: liberal
+etage: complementaire
 source_id: cavp_mementos
 fiabilite: moyenne
 creation: 1949

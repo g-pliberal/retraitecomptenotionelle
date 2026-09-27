@@ -3,6 +3,7 @@ rang: 210
 nom: >-
   Régime additionnel de retraite des maîtres de l'enseignement privé sous contrat (RAFEP)
 famille: special
+etage: additionnel
 source_id: legifrance_textes
 fiabilite: estimee
 creation: 2005

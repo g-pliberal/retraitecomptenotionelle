@@ -2638,3 +2638,68 @@ lecture au mois des pas de 2010 à 2024), `coefficients_anticipation_agirc_arrco
 `retraite_proportionnelle_msa`, `surcote_ircantec`, `decote_opera_de_paris` et
 `trimestres_retenus_1972_1974` ; et les notes de `carmf_complementaire`,
 `cavec_complementaire`, `ircec_racl` et `opera_de_paris`.
+
+### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
+
+**Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
+du montant des retraites dans les différents scénarios, c'est normal ? On ne
+devrait pas avoir la retraite de base et ensuite toutes les complémentaires
+qui s'ajoutent par-dessus ? », puis « Vas-y ».
+
+**La réponse.** Pour les systèmes notionnels, c'est voulu : le compte reçoit
+chaque année les cotisations de tous les régimes, base et complémentaires
+ensemble, et ne sert qu'une pension ; la proposition affiche déjà ses seules
+lignes, répartition et rentes capitalisées. Pour le système 1, le détail
+existait (`pensions_par_regime`), mais seulement dans le dernier dépliant, « Le
+détail du calcul », et dans l'ordre alphabétique des codes, qui mettait l'Agirc
+avant le régime général et coupait la complémentaire d'un cadre en trois lignes
+sans les réunir.
+
+**Ce qui est fait.**
+
+- Chaque fiche de régime calculé porte son `etage`, une ligne sous `famille` :
+  `base` (17), `complementaire` (34), `integre` (19 — la fonction publique et
+  les régimes spéciaux, dont la pension tient les deux rôles) ou `additionnel`
+  (4 — RAFP, ASV, RAFEP, allocation des gérants de débits de tabac). La
+  famille ne suffisait pas : la CNAVPL et la CARMF sont toutes deux `liberal`.
+  Le schéma le décrit, avec sa source pour « intégré » (Fipeco, « Les retraites
+  des fonctionnaires ») ; le chargeur refuse une autre valeur ; le paquet le
+  porte au site. La tranche B de Polynésie reste à la base : le CLEISS range
+  tout le régime de la CPS dans l'assurance vieillesse de base, l'Agirc-Arrco y
+  étant la complémentaire, facultative (« La sécurité sociale des salariés en
+  Polynésie française », lu le 27 septembre 2026).
+- Sous le montant du système 1, une ligne : « 1 652 € de retraite de base +
+  1 335 € de retraite complémentaire », pour le cadre né en 1962. Elle est dans
+  l'unité du montant, arrondie au plus fort reste, pour que les parts fassent le
+  montant affiché. La majoration pour enfants y suit le régime qui la sert, le
+  minimum vieillesse y est un terme à part, et pour qui est déjà parti chaque
+  régime y porte sa propre revalorisation. Un régime intégré seul écrit « une
+  seule pension, sans complémentaire à part », et le glossaire définit « régime
+  intégré ».
+- « Le détail du calcul » range les régimes par étage, dans l'ordre du
+  catalogue ; un étage de plusieurs régimes a sa ligne de somme, chacun en
+  retrait dessous.
+- Deux tests de données (l'étage de chaque régime ; un régime intégré n'est
+  routé avec aucune base ni complémentaire) et trois tests de page (la ligne
+  fait le montant sur quatre profils, dont un minimum vieillesse et un
+  retraité ; le régime intégré ; l'ordre et la somme du détail).
+
+**Ce qu'il déplace.** Aucun chiffre du modèle : les témoins de simulation sont
+identiques. Les 29 témoins de pages qui calculent gagnent la ligne et le
+nouveau tableau, et le paquet du site un kilo-octet.
+
+**Ce qui reste.**
+
+- L'étage `integre` de cinq régimes spéciaux — mines, marins, SEITA, chemins
+  de fer secondaires, port de Strasbourg — ne repose que sur le routage, qui ne
+  leur adjoint aucune complémentaire ; il n'a pas été lu à la source. Qui
+  trouvera la leur, celle des mineurs par exemple, la routera et passera
+  l'étage à `base` : le test l'y obligera.
+- La ligne de la proposition arrondit ses termes un à un : 2 316 + 10 + 10 font
+  2 336 € sous un montant affiché de 2 337 €, pour le même cadre. Le plus fort
+  reste la ferait s'additionner ; le parcours de présentation en cite peut-être
+  les chiffres.
+- Découper aussi la pension notionnelle selon l'origine des cotisations — tant
+  venu de ce qui a été cotisé au régime général, tant de l'Agirc-Arrco : le
+  compte ne garde que le total de chaque année. C'est un choix de présentation
+  de la proposition, qui attend le propriétaire.

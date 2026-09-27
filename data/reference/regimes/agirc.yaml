@@ -2,6 +2,7 @@ code: agirc
 rang: 100
 nom: Association générale des institutions de retraite des cadres
 famille: complementaire_prive
+etage: complementaire
 source_id: agirc_arrco_points
 fiabilite: haute
 creation: 1947

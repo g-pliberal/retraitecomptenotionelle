@@ -3,6 +3,7 @@ rang: 50
 nom: >-
   Régime de retraite des salariés de Mayotte (Caisse de sécurité sociale de Mayotte)
 famille: base_prive
+etage: base
 source_id: legifrance_textes
 fiabilite: estimee
 creation: 1987

@@ -3,6 +3,7 @@ rang: 280
 nom: >-
   Caisse locale de retraites de Nouvelle-Calédonie (fonctionnaires territoriaux et communaux)
 famille: fonction_publique
+etage: integre
 source_id: sites_institutionnels
 fiabilite: estimee
 creation: 1959

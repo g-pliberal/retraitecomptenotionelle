@@ -3,6 +3,7 @@ rang: 40
 nom: >-
   Régime d'assurance vieillesse de Saint-Pierre-et-Miquelon (Caisse de prévoyance sociale)
 famille: base_prive
+etage: base
 source_id: legifrance_textes
 fiabilite: estimee
 creation: 1987

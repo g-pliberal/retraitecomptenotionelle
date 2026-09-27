@@ -2,6 +2,7 @@ code: fspoeie
 rang: 260
 nom: Fonds spécial des pensions des ouvriers des établissements industriels de l'État
 famille: fonction_publique
+etage: integre
 source_id: cdc_cnracl
 fiabilite: moyenne
 creation: 1928

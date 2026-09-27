@@ -4,6 +4,7 @@ nom: >-
   Régime complémentaire de la Caisse autonome de retraite et de prévoyance
   des vétérinaires (CARPV)
 famille: liberal
+etage: complementaire
 source_id: carpv_bareme
 fiabilite: moyenne
 creation: 1950

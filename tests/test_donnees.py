@@ -853,6 +853,50 @@ def test_regimes_capitalises_sont_marques(catalogue):
     assert catalogue["regime_general"].hors_repartition is False
 
 
+def test_chaque_regime_dit_son_etage(catalogue):
+    """La page Simuler écrit sous le système 1 ce que sont ses pensions :
+    tant de retraite de base, tant de complémentaire. La famille ne le dit
+    pas — la CNAVPL et la CARMF sont toutes deux `liberal` —, l'étage le dit,
+    et le chargeur refuse une fiche qui n'en porte pas un des quatre."""
+    import yaml
+
+    from retraite_notionnelle.donnees.regimes import ETAGES
+
+    assert {regime.etage for regime in catalogue} == ETAGES
+    attendus = {"regime_general": "base", "agirc_arrco": "complementaire",
+                "cnavpl": "base", "carmf_complementaire": "complementaire",
+                "asv_conventionnes": "additionnel", "rafp": "additionnel",
+                "fonction_publique_etat": "integre", "sncf": "integre",
+                "cavimac": "base", "arrco_cultes": "complementaire"}
+    assert {code: catalogue[code].etage for code in attendus} == attendus
+
+    chemin = RACINE_DONNEES / "reference" / "regimes" / "regime_general.yaml"
+    fiche = yaml.safe_load(chemin.read_text(encoding="utf-8"))
+    for fausse in ({**fiche, "etage": "premier"},
+                   {cle: valeur for cle, valeur in fiche.items() if cle != "etage"}):
+        with pytest.raises(ValueError, match="étage inconnu"):
+            CatalogueRegimes._construire(fausse, chemin, RACINE_DONNEES, {})
+
+
+def test_un_regime_integre_n_est_route_avec_aucune_base_ni_complementaire(catalogue):
+    """Un régime intégré sert UNE pension, qui tient lieu de base et de
+    complémentaire : la page l'écrit ainsi. S'il était routé avec l'une ou
+    l'autre, elle dirait d'une pension qu'elle est les deux à la fois quand
+    l'assuré en touche une autre à côté. Qui lui trouverait une
+    complémentaire — celle des mineurs, par exemple — change son étage en
+    `base`."""
+    affiliations = _affiliations()
+    ecarts = []
+    for statut in affiliations.codes:
+        for periode in affiliations.periodes(statut):
+            codes = periode["regimes"] or ()
+            etages = {catalogue[code].etage for code in codes}
+            if "integre" in etages and not etages <= {"integre", "additionnel"}:
+                ecarts.append(f"{statut} {periode['debut']} : {', '.join(codes)}")
+    assert not ecarts, "régimes intégrés routés avec une base ou une complémentaire : " + (
+        "; ".join(ecarts))
+
+
 def test_resolution_de_succession(catalogue):
     assert catalogue.resoudre_succession("organic", 2010) == "rsi"
     assert catalogue.resoudre_succession("organic", 2020) == "regime_general"

@@ -2,6 +2,7 @@ code: arrco
 rang: 110
 nom: Association pour le régime de retraite complémentaire des salariés
 famille: complementaire_prive
+etage: complementaire
 source_id: agirc_arrco_points
 fiabilite: haute
 creation: 1961

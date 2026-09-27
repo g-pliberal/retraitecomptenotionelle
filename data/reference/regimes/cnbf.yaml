@@ -2,6 +2,7 @@ code: cnbf
 rang: 480
 nom: Caisse nationale des barreaux français
 famille: liberal
+etage: base
 source_id: cnbf_parametres
 fiabilite: moyenne
 creation: 1948

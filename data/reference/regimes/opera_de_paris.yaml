@@ -2,6 +2,7 @@ code: opera_de_paris
 rang: 670
 nom: Caisse de retraites des personnels de l'Opéra national de Paris
 famille: special
+etage: integre
 source_id: cor_panorama_regimes
 fiabilite: moyenne
 creation: 1698

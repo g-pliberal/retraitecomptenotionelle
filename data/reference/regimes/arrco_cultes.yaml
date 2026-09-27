@@ -4,6 +4,7 @@ nom: >-
   Retraite complémentaire obligatoire des cultes (Arrco, puis
   Agirc-Arrco)
 famille: complementaire_prive
+etage: complementaire
 source_id: rs_cavimac_circulaires
 fiabilite: haute
 creation: 2006

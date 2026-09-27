@@ -3,6 +3,7 @@ rang: 370
 nom: >-
   RAAP au taux aménagé des auteurs affiliés au RACD ou au RACL (IRCEC)
 famille: liberal
+etage: complementaire
 source_id: legifrance_textes
 fiabilite: haute
 creation: 2016

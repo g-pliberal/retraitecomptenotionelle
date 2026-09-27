@@ -2,6 +2,7 @@ code: fonction_publique_etat
 rang: 240
 nom: Régime des pensions civiles et militaires de retraite (Service des retraites de l'État)
 famille: fonction_publique
+etage: integre
 source_id: sre_rapport_annuel
 fiabilite: moyenne
 creation: 1948

@@ -2,6 +2,7 @@ code: marins
 rang: 600
 nom: Établissement national des invalides de la marine (ENIM)
 famille: special
+etage: integre
 source_id: rs_enim
 fiabilite: estimee
 creation: 1673

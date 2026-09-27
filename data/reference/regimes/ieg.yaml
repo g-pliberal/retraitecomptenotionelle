@@ -2,6 +2,7 @@ code: ieg
 rang: 590
 nom: Régime des industries électriques et gazières (CNIEG)
 famille: special
+etage: integre
 source_id: rs_cnieg
 fiabilite: moyenne
 creation: 1946

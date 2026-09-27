@@ -2,6 +2,7 @@ code: agirc_entreprises_nouvelles
 rang: 150
 nom: Agirc, barème des entreprises créées après 1981
 famille: complementaire_prive
+etage: complementaire
 source_id: agirc_arrco_points
 fiabilite: haute
 creation: 1981

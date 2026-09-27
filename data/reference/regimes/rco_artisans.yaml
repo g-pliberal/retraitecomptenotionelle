@@ -2,6 +2,7 @@ code: rco_artisans
 rang: 320
 nom: Régime complémentaire obligatoire des artisans
 famille: non_salarie
+etage: complementaire
 source_id: dila_legi_rci
 fiabilite: haute
 creation: 1979

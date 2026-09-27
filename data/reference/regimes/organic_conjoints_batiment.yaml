@@ -3,6 +3,7 @@ rang: 560
 nom: >-
   Régime complémentaire obligatoire des conjoints des industriels et commerçants (Organic)
 famille: non_salarie
+etage: complementaire
 source_id: legifrance_textes
 fiabilite: moyenne
 creation: 1973

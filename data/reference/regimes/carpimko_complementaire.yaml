@@ -3,6 +3,7 @@ rang: 410
 nom: >-
   Régime complémentaire des auxiliaires médicaux (CARPIMKO)
 famille: liberal
+etage: complementaire
 source_id: jorf_cotisations_liberales
 fiabilite: haute
 creation: 1984

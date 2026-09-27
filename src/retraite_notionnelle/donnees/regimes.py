@@ -21,6 +21,10 @@ FAMILLES = {
     "additionnel_capitalise",
 }
 
+#: Étages d'une pension dans la retraite de l'assuré, que décrit
+#: ``_schema.yaml`` : la page Simuler les écrit sous le système 1.
+ETAGES = {"base", "complementaire", "integre", "additionnel"}
+
 #: Assiettes reconnues et leur borne exprimée en plafonds de la Sécurité sociale.
 #: ``None`` signifie « pas de borne supérieure ».
 BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
@@ -619,6 +623,8 @@ class Regime:
     code: str
     nom: str
     famille: str
+    #: Base, complémentaire, intégré ou additionnel : voir :data:`ETAGES`.
+    etage: str
     source_id: str
     fiabilite: Fiabilite
     creation: int
@@ -1320,6 +1326,10 @@ class CatalogueRegimes:
             raise ValueError(
                 f"{chemin.name} / {fiche['code']} : famille inconnue {fiche['famille']!r}"
             )
+        if fiche.get("etage") not in ETAGES:
+            raise ValueError(
+                f"{chemin.name} / {fiche['code']} : étage inconnu {fiche.get('etage')!r}"
+            )
         periodes = tuple(
             PeriodeRegime(
                 regime=fiche["code"],
@@ -1610,6 +1620,7 @@ class CatalogueRegimes:
             code=fiche["code"],
             nom=fiche["nom"],
             famille=fiche["famille"],
+            etage=fiche["etage"],
             source_id=fiche.get("source_id", ""),
             fiabilite=Fiabilite.depuis_texte(fiche["fiabilite"]),
             creation=int(fiche["creation"]),

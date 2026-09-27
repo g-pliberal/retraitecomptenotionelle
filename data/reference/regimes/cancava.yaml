@@ -2,6 +2,7 @@ code: cancava
 rang: 290
 nom: Caisse autonome nationale de compensation de l'assurance vieillesse artisanale
 famille: non_salarie
+etage: base
 source_id: cor_panorama_regimes
 fiabilite: estimee
 creation: 1949

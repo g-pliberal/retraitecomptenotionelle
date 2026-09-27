@@ -2,6 +2,7 @@ code: msa_rco
 rang: 520
 nom: Retraite complémentaire obligatoire des non-salariés agricoles (RCO)
 famille: agricole
+etage: complementaire
 source_id: dila_legi_msa
 fiabilite: haute
 creation: 2003

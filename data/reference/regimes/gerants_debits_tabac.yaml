@@ -3,6 +3,7 @@ rang: 720
 nom: >-
   Régime d'allocation viagère des gérants de débits de tabac (RAVGDT)
 famille: special
+etage: additionnel
 source_id: legifrance_textes
 fiabilite: estimee
 creation: 1963

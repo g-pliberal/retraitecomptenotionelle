@@ -3,6 +3,7 @@ rang: 530
 nom: >-
   Prestations complémentaires de vieillesse des médecins conventionnés (ASV)
 famille: liberal
+etage: additionnel
 source_id: legifrance_textes
 fiabilite: estimee
 creation: 1972

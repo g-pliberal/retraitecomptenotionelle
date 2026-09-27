@@ -3,6 +3,7 @@ rang: 220
 nom: >-
   Régimes professionnels de salariés intégrés à l'Agirc-Arrco (banques AFB, organismes de sécurité sociale, caisses d'épargne)
 famille: complementaire_prive
+etage: complementaire
 source_id: sites_institutionnels
 fiabilite: estimee
 creation: 1947

@@ -568,6 +568,7 @@ def _regimes() -> list[dict]:
             "code": regime.code,
             "nom": regime.nom,
             "famille": regime.famille,
+            "etage": regime.etage,
             "source_id": regime.source_id,
             "fiabilite": int(regime.fiabilite),
             "creation": regime.creation,

@@ -2598,6 +2598,112 @@ function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
 }
 
 /**
+ * Les étages d'une pension du système 1, dans l'ordre où la page les écrit :
+ * le code du champ `etage` des fiches de régime, le titre de son groupe dans
+ * « Le détail du calcul », et ce que la ligne sous le montant en dit. Le
+ * régime intégré vient en tête : sa pension tient lieu de la base.
+ */
+const ETAGES_ACTUEL = [
+  ["integre", "Régime intégré, base et complémentaire à la fois",
+    `de ${g.terme("régime intégré")}`],
+  ["base", "Retraite de base", "de retraite de base"],
+  ["complementaire", "Retraite complémentaire", "de retraite complémentaire"],
+  ["additionnel", "Retraite additionnelle", "de retraite additionnelle"],
+];
+
+/**
+ * Ce que le système 1 sert, étage par étage, dans les euros de son montant
+ * affiché : ceux du départ, ou ceux d'aujourd'hui pour qui est déjà parti.
+ *
+ * Chaque régime porte sa ligne à son étage, et la part qu'il sert de la
+ * majoration pour enfants, que le moteur compte à côté des lignes ; un minimum
+ * contributif ou garanti est déjà dans la ligne du régime qui le sert. Le
+ * minimum vieillesse, qu'aucun régime ne sert, est un terme à part. Rend
+ * `null` quand ces termes ne font pas le total : la page n'écrit pas une
+ * somme fausse.
+ */
+function etagesActuels(comparaison, catalogue) {
+  const actuel = comparaison.actuel;
+  const servi = comparaison.aujourd_hui === null ? null : comparaison.aujourd_hui.actuel;
+  const isoler = comparaison.parametres.isoler_capitalisation;
+  const coefficients = new Map(
+    servi === null ? [] : servi.regimes.map((r) => [r.regime, r.coefficient]));
+  const etages = new Map();
+  const porter = (code, montant) => {
+    const regime = catalogue.obtenir(code);
+    if (isoler && regime.hors_repartition) return;
+    const coefficient = coefficients.has(code) ? coefficients.get(code) : 1.0;
+    etages.set(regime.etage, (etages.get(regime.etage) ?? 0.0) + montant * coefficient);
+  };
+  let minimum = 0.0;
+  for (const pension of actuel.pensions_par_regime) porter(pension.regime, pension.montant);
+  for (const avantage of actuel.avantages_appliques) {
+    if (avantage.code === "majoration_enfants") {
+      for (const [code, part] of avantage.par_regime ?? []) porter(code, part);
+    } else if (avantage.code === "minimum_vieillesse") {
+      minimum += avantage.montant;
+    }
+  }
+  if (servi !== null) minimum = servi.minimum_vieillesse;
+  const total = servi === null ? actuel.pension_annuelle : servi.pension_annuelle;
+  let somme = minimum;
+  for (const montant of etages.values()) somme += montant;
+  return Math.abs(somme - total) <= 0.01 ? { etages, minimum, total } : null;
+}
+
+/**
+ * Des parts arrondies à l'euro qui font, ensemble, leur total arrondi : la
+ * méthode du plus fort reste. Arrondies une à une, trois parts de 1 000,40 €
+ * feraient 3 000 € sous un total affiché de 3 001 €.
+ */
+function arrondisQuiSadditionnent(parts, total) {
+  const arrondis = parts.map((part) => Math.floor(part));
+  let reste = Number(formatFixe(total, 0))
+    - arrondis.reduce((somme, arrondi) => somme + arrondi, 0);
+  const ordre = parts.map((part, rang) => [part - arrondis[rang], rang])
+    .sort((a, b) => b[0] - a[0] || a[1] - b[1]);
+  for (const [, rang] of ordre) {
+    if (reste <= 0) break;
+    arrondis[rang] += 1;
+    reste -= 1;
+  }
+  return arrondis;
+}
+
+/**
+ * Sous le montant du système 1, ce qu'il additionne : la retraite de base et
+ * ce qui s'y ajoute, dans l'unité du montant — mensuelle, nette ou brute, en
+ * euros de l'année de référence. C'est ce que chaque caisse verse ; le
+ * détail, régime par régime, est dans « Le détail du calcul ».
+ *
+ * `constant` est le montant annuel affiché, en euros constants : chaque étage
+ * en prend sa part, puisque la conversion est la même pour tous.
+ */
+function compositionActuelle(comparaison, catalogue, montants, constant) {
+  const composition = etagesActuels(comparaison, catalogue);
+  if (composition === null || composition.total <= 0 || constant <= 0) return "";
+  const mensuel = (montant) => montants.pension(
+    constant * montant / composition.total) / 12;
+  const termes = ETAGES_ACTUEL
+    .filter(([etage]) => composition.etages.has(etage))
+    .map(([etage, , libelle]) => [etage, libelle, mensuel(composition.etages.get(etage))]);
+  if (composition.minimum > 0) {
+    termes.push(["minimum", "de minimum vieillesse", mensuel(composition.minimum)]);
+  }
+  const arrondis = arrondisQuiSadditionnent(
+    termes.map(([, , montant]) => montant), montants.pension(constant) / 12);
+  const lus = termes.map(([etage, libelle], rang) => [etage, libelle, arrondis[rang]])
+    .filter(([, , euros]) => euros > 0);
+  if (lus.length === 1 && lus[0][0] === "integre") {
+    return '<span class="composition">une seule pension, sans complémentaire à '
+      + `part : votre régime est ${g.terme("intégré", "régime intégré")}</span>`;
+  }
+  if (lus.length < 2) return "";
+  return `<span class="composition">${
+    lus.map(([, libelle, euros]) => `${g.euros(euros)} ${libelle}`).join(" + ")}</span>`;
+}
+
+/**
  * Les quatre pensions que la page affiche, et la rente capitalisée.
  *
  * En euros constants de l'année de référence, et DE QUAND ? Du départ pour qui
@@ -2751,7 +2857,7 @@ function resultats(contexte, saisie) {
 
 
   const bloc = (cle, titre, glose, variation, tauxRemplacement,
-                partCapitalisee = 0.0, partVolontaire = 0.0) => {
+                partCapitalisee = 0.0, partVolontaire = 0.0, composition = "") => {
     const montant = constants[cle];
     const variationHtml = variation === null
       ? '<span class="discret">référence</span>'
@@ -2770,7 +2876,9 @@ function resultats(contexte, saisie) {
     if (manque > 0) {
       barre += `<span class="manque" style="width:${formatFixe(manque / reference * 100, 1)}%"></span>`;
     }
-    let partage = "";
+    // De quoi le montant est fait, sous lui : les étages du système 1, ou
+    // la répartition et la rente capitalisée de la proposition.
+    let partage = composition;
     if (partCapitalisee > 0) {
       barre += `<span class="capitalise" style="width:${formatFixe(partCapitalisee / reference * 100, 1)}%"></span>`;
       // Trois montants nommés plutôt que deux dès qu'il y a du volontaire, ET
@@ -2843,7 +2951,9 @@ function resultats(contexte, saisie) {
   // recalculée, et à quel taux. C'est ce qui explique l'ordre des montants.
   const scenarios = bloc("actuel", "1. Système de répartition actuel",
     "le droit en vigueur, minima et majorations compris",
-    ecarts.actuel, comparaison.tauxRemplacementActuel)
+    ecarts.actuel, comparaison.tauxRemplacementActuel, 0.0, 0.0,
+    compositionActuelle(comparaison, contexte.simulateur(comparaison.parametres).catalogue,
+      montants, constants.actuel))
     + bloc("retroactif", "2. Ce que vous avez cotisé, part salariale seule",
       "toute la carrière recalculée depuis 1941, sur la seule part "
       + "salariale — 11,3 % du brut pour un salarié du privé",
@@ -4613,7 +4723,35 @@ function detail(contexte, comparaison) {
   ];
   const repartis = pensions.filter((p) => !catalogue.obtenir(p.regime).hors_repartition);
   const provisionnes = pensions.filter((p) => catalogue.obtenir(p.regime).hors_repartition);
-  const lignesActuel = repartis.map(ligne);
+  // Les pensions rangées par étage, la base avant ce qui s'y ajoute, et dans
+  // un étage selon l'ordre du catalogue — le moteur les rend dans l'ordre
+  // alphabétique de leurs codes, qui mettait l'Agirc avant le régime général.
+  // Un étage d'un seul régime tient sur une ligne ; celui de plusieurs a la
+  // sienne, qui les additionne, et chacun se lit dessous, en retrait.
+  const rangs = new Map([...catalogue].map((regime, rang) => [regime.code, rang]));
+  const lignesActuel = [];
+  for (const [etage, titre] of ETAGES_ACTUEL) {
+    const groupe = repartis
+      .filter((p) => catalogue.obtenir(p.regime).etage === etage)
+      .sort((a, b) => rangs.get(a.regime) - rangs.get(b.regime));
+    if (groupe.length === 1) {
+      const [nom, montant, calcul] = ligne(groupe[0]);
+      lignesActuel.push([`${titre}<br><span class="dont">${nom}</span>`,
+        `<strong>${montant}</strong>`, calcul]);
+    } else if (groupe.length > 1) {
+      // La somme des lignes AFFICHÉES, chacune au centime : celle des
+      // montants exacts écrivait 17 617,97 € au-dessus de trois lignes qui
+      // font 17 617,98 €.
+      const somme = groupe.reduce(
+        (total, p) => total + Number(formatFixe(p.montant, 2)), 0.0);
+      lignesActuel.push([titre, `<strong>${g.eurosCentimes(somme)}</strong>`,
+        '<span class="discret">la somme des lignes qui suivent</span>']);
+      for (const pension of groupe) {
+        const [nom, montant, calcul] = ligne(pension);
+        lignesActuel.push([`<span class="dont">${nom}</span>`, montant, calcul]);
+      }
+    }
+  }
   if (lignesActuel.length > 0 && actuel.avantages_appliques.length > 0) {
     lignesActuel.push([
       "<strong>Sous-total contributif</strong>",
@@ -4714,7 +4852,9 @@ l'année du départ.${g.bulle(
   )}</p>
 <h4>Système 1 — de quoi votre pension actuelle est faite${g.bulle(
     "Comment lire ce tableau",
-    "Chaque régime d'abord, puis les avantages que le droit en vigueur ajoute "
+    "La retraite de base d'abord, puis les complémentaires ; un étage de "
+    + "plusieurs régimes les additionne, et chacun se lit dessous, en retrait. "
+    + "Viennent ensuite les avantages que le droit en vigueur ajoute "
     + "par-dessus ; le total est la pension du système 1. Un minimum est déjà "
     + "compris dans la ligne du régime qui le sert : le sous-total contributif "
     + "l'en retire, et la ligne suivante le rend visible — c'est la même "

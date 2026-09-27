@@ -3,6 +3,7 @@ rang: 60
 nom: >-
   Régime de retraite des travailleurs salariés de Polynésie française, tranche A (CPS)
 famille: base_prive
+etage: base
 source_id: sites_institutionnels
 fiabilite: estimee
 creation: 1968

@@ -4,6 +4,7 @@ nom: >-
   Régime complémentaire de la Caisse interprofessionnelle de prévoyance et
   d'assurance vieillesse (CIPAV)
 famille: liberal
+etage: complementaire
 source_id: cipav_fiches_pratiques
 fiabilite: moyenne
 creation: 1979

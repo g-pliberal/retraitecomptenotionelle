@@ -2,6 +2,7 @@ code: igrante
 rang: 190
 nom: Institution générale de retraite des agents non titulaires de l'État
 famille: complementaire_prive
+etage: complementaire
 source_id: ircantec_points
 fiabilite: moyenne
 creation: 1960

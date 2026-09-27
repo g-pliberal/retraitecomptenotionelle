@@ -2,6 +2,7 @@ code: ratp
 rang: 580
 nom: Caisse de retraites du personnel de la RATP (CRPRATP)
 famille: special
+etage: integre
 source_id: rs_crpratp
 fiabilite: moyenne
 creation: 1900

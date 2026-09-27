@@ -2,6 +2,7 @@ code: unirs
 rang: 200
 nom: Union nationale des institutions de retraite des salariés
 famille: complementaire_prive
+etage: complementaire
 source_id: agirc_arrco_points
 fiabilite: estimee
 creation: 1957

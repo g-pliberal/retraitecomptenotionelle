@@ -2,6 +2,7 @@ code: cnracl
 rang: 250
 nom: Caisse nationale de retraites des agents des collectivités locales
 famille: fonction_publique
+etage: integre
 source_id: cdc_cnracl
 fiabilite: moyenne
 creation: 1945

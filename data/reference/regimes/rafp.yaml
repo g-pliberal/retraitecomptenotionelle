@@ -2,6 +2,7 @@ code: rafp
 rang: 270
 nom: Retraite additionnelle de la fonction publique (ERAFP)
 famille: additionnel_capitalise
+etage: additionnel
 source_id: erafp_parametres
 fiabilite: haute
 creation: 2005

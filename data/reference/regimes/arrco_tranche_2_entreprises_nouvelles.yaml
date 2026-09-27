@@ -2,6 +2,7 @@ code: arrco_tranche_2_entreprises_nouvelles
 rang: 160
 nom: Arrco, tranche 2 des entreprises créées après 1997
 famille: complementaire_prive
+etage: complementaire
 source_id: agirc_arrco_points
 fiabilite: haute
 creation: 1997

@@ -4,6 +4,7 @@ nom: >-
   Régime complémentaire de la Caisse d'assurance vieillesse des officiers
   ministériels, des officiers publics et des compagnies judiciaires (CAVOM)
 famille: liberal
+etage: complementaire
 source_id: cavom_guide
 fiabilite: moyenne
 creation: 1979

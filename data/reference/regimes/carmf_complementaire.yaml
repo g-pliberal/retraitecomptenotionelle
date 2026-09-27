@@ -3,6 +3,7 @@ rang: 380
 nom: >-
   Régime complémentaire vieillesse des médecins libéraux (CARMF)
 famille: liberal
+etage: complementaire
 source_id: carmf_chronologie
 fiabilite: haute
 creation: 1949

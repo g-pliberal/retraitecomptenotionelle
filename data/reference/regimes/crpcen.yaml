@@ -2,6 +2,7 @@ code: crpcen
 rang: 650
 nom: Caisse de retraite et de prévoyance des clercs et employés de notaires
 famille: special
+etage: integre
 source_id: cor_panorama_regimes
 fiabilite: moyenne
 creation: 1937

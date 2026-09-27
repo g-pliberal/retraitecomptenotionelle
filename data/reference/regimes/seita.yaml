@@ -2,6 +2,7 @@ code: seita
 rang: 700
 nom: Régime de retraite du personnel de la SEITA
 famille: special
+etage: integre
 source_id: cor_panorama_regimes
 fiabilite: moyenne
 creation: 1935

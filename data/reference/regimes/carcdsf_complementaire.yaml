@@ -4,6 +4,7 @@ nom: >-
   Régime complémentaire des chirurgiens-dentistes et des sages-femmes
   (CARCDSF)
 famille: liberal
+etage: complementaire
 source_id: carcdsf_notices
 fiabilite: moyenne
 creation: 1949

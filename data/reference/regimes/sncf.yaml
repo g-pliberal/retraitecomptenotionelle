@@ -2,6 +2,7 @@ code: sncf
 rang: 570
 nom: Régime spécial de retraite du personnel de la SNCF (CPRPSNCF)
 famille: special
+etage: integre
 source_id: rs_cprpsncf
 fiabilite: moyenne
 creation: 1909

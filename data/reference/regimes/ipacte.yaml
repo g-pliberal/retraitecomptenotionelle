@@ -2,6 +2,7 @@ code: ipacte
 rang: 180
 nom: Institution de prévoyance des agents contractuels et temporaires de l'État
 famille: complementaire_prive
+etage: complementaire
 source_id: ircantec_points
 fiabilite: moyenne
 creation: 1951

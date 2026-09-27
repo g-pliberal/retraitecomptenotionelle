@@ -3,6 +3,7 @@ rang: 80
 nom: >-
   Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT)
 famille: base_prive
+etage: base
 source_id: sites_institutionnels
 fiabilite: estimee
 creation: 1958

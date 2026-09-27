@@ -2,6 +2,7 @@ code: chemins_fer_secondaires
 rang: 710
 nom: Régimes des chemins de fer secondaires d'intérêt général
 famille: special
+etage: integre
 source_id: cor_panorama_regimes
 fiabilite: estimee
 creation: 1922

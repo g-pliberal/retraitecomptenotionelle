@@ -2,6 +2,7 @@ code: mines
 rang: 610
 nom: Régime spécial des mines (CANSSM)
 famille: special
+etage: integre
 source_id: cor_panorama_regimes
 fiabilite: estimee
 creation: 1894

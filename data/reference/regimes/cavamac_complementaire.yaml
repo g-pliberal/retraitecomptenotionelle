@@ -3,6 +3,7 @@ rang: 430
 nom: >-
   Régime complémentaire des agents généraux d'assurance (CAVAMAC, RCO)
 famille: liberal
+etage: complementaire
 source_id: cavamac_parametres
 fiabilite: moyenne
 creation: 1968

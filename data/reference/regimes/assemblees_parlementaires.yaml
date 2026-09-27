@@ -3,6 +3,7 @@ rang: 730
 nom: >-
   Caisse de pensions des députés et des anciens députés (et, par assimilation, des sénateurs)
 famille: special
+etage: integre
 source_id: sites_institutionnels
 fiabilite: estimee
 creation: 1904

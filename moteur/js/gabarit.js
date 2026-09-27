@@ -411,6 +411,13 @@ export const GLOSSAIRE = Object.freeze({
     + "fonctionnaire, artisan, agent de la SNCF… — et qui décide à quels "
     + "régimes vous cotisez, donc à quel taux et sous quelle règle. Vous ne "
     + "choisissez pas vos régimes : ils découlent de ce statut.",
+  "régime intégré":
+    "Un régime qui verse une seule pension, tenant lieu à la fois de "
+    + "retraite de base et de retraite complémentaire : celui des "
+    + "fonctionnaires, et ceux des régimes spéciaux — SNCF, RATP, industries "
+    + "électriques et gazières… Aucune complémentaire ne s'y ajoute ; les "
+    + "fonctionnaires ont seulement, à part, une retraite additionnelle, le "
+    + "RAFP.",
   "âge de référence":
     "L'âge auquel la pension du régime général est servie entière quelle "
     + "que soit la durée cotisée. Le simulateur ne s'en sert que pour "

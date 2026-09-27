@@ -2,6 +2,7 @@ code: arrco_tranche_2
 rang: 120
 nom: Arrco, tranche 2 (non-cadres)
 famille: complementaire_prive
+etage: complementaire
 source_id: agirc_arrco_points
 fiabilite: haute
 creation: 1961

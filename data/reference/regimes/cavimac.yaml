@@ -4,6 +4,7 @@ nom: >-
   Régime d'assurance vieillesse des ministres des cultes et des membres des
   congrégations et collectivités religieuses (CAVIMAC)
 famille: special
+etage: base
 source_id: dila_legi_cultes
 fiabilite: haute
 creation: 1979

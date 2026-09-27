@@ -2,6 +2,7 @@ code: banque_de_france
 rang: 660
 nom: Caisse de réserve des employés de la Banque de France
 famille: special
+etage: integre
 source_id: cor_panorama_regimes
 fiabilite: moyenne
 creation: 1806

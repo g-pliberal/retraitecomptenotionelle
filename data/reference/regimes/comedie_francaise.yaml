@@ -2,6 +2,7 @@ code: comedie_francaise
 rang: 680
 nom: Caisse de retraites des personnels de la Comédie-Française
 famille: special
+etage: integre
 source_id: cor_panorama_regimes
 fiabilite: moyenne
 creation: 1812

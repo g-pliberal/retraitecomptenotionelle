@@ -4,6 +4,7 @@ nom: >-
   Régime complémentaire des notaires (CPRN) — part proportionnelle,
   sections A et U puis section C
 famille: liberal
+etage: complementaire
 source_id: cprn_guide
 fiabilite: estimee
 creation: 1949

@@ -2,6 +2,7 @@ code: avts
 rang: 20
 nom: Allocation aux vieux travailleurs salariés (loi du 14 mars 1941)
 famille: base_prive
+etage: base
 source_id: legifrance_textes
 fiabilite: estimee
 creation: 1941

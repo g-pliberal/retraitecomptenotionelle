@@ -57,6 +57,30 @@ champs_regime:
       liberal: "travailleurs non salariés : libéraux, avocats"
       agricole: "exploitants et salariés agricoles"
       additionnel_capitalise: "régime additionnel de la fonction publique, en capitalisation (`hors_repartition`)"
+  etage:
+    description: >-
+      la place de sa pension dans la retraite de l'assuré. La famille dit à
+      qui le régime s'adresse, et elle ne suffit pas : un libéral cotise à un
+      régime de base et à un complémentaire de la même famille. C'est l'étage
+      que la page Simuler écrit sous le montant du système 1 — tant de
+      retraite de base, tant de complémentaire —, et qui range son détail.
+      Tout régime calculé en porte un ; le chargeur refuse une autre valeur.
+    valeurs:
+      base: "le régime de base, celui sur lequel les autres s'ajoutent"
+      complementaire: "un régime complémentaire, servi en plus d'une pension de base"
+      integre: >-
+        un régime « intégré », dont la pension tient à elle seule les deux
+        rôles : les fonctionnaires ont des régimes « intégrés », qui « leur
+        versent des pensions qui, sans les distinguer, correspondent à fois
+        [sic] à des retraites de base et complémentaires » (Fipeco, « Les
+        retraites des fonctionnaires », lu le 27 septembre 2026). De même les
+        régimes spéciaux, dont les nouveaux entrants relèvent, à la
+        fermeture, du régime général ET de l'Agirc-Arrco. Le routage ne lui
+        adjoint ni base ni complémentaire, et un test y veille.
+      additionnel: >-
+        un étage de plus, par-dessus la base et la complémentaire : le RAFP
+        des fonctionnaires, l'ASV des médecins conventionnés, le RAFEP des
+        maîtres du privé, l'allocation des gérants de débits de tabac
   source_id:   "identifiant du jeu de données dans data/sources.yaml"
   fiabilite:   "haute | moyenne | estimee — niveau de certification des paramètres"
   creation:    "année de création du régime"

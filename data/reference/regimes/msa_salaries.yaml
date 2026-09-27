@@ -2,6 +2,7 @@ code: msa_salaries
 rang: 500
 nom: Régime des salariés agricoles (MSA)
 famille: agricole
+etage: base
 source_id: msa_parametres
 fiabilite: moyenne
 creation: 1930

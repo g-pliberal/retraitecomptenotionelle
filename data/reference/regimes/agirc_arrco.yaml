@@ -2,6 +2,7 @@ code: agirc_arrco
 rang: 130
 nom: Régime unifié Agirc-Arrco
 famille: complementaire_prive
+etage: complementaire
 source_id: agirc_arrco_points
 fiabilite: haute
 creation: 2019

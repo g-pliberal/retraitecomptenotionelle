@@ -2,6 +2,7 @@ code: port_strasbourg
 rang: 690
 nom: Régime de retraite du Port autonome de Strasbourg
 famille: special
+etage: integre
 source_id: cor_panorama_regimes
 fiabilite: estimee
 creation: 1926

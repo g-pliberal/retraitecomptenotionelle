@@ -3,6 +3,7 @@ rang: 90
 nom: >-
   Régime de retraite des salariés de Wallis-et-Futuna (CPSWF)
 famille: base_prive
+etage: base
 source_id: sites_institutionnels
 fiabilite: estimee
 creation: 1975
