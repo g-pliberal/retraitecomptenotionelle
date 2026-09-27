@@ -2472,11 +2472,22 @@ def test_valeur_du_point_de_la_complementaire_agricole_est_sourcee(simulateur):
     assert "msa_non_salaries" in catalogue
     rco = catalogue["msa_rco"].periode(2020)
     assert rco.type_calcul == "points"
-    # Le barème est en POINTS : 100 points pour 1 820 SMIC, et le nombre de
-    # points ne dépend donc pas du taux de cotisation — ce qui est heureux,
-    # puisque c'est le barème qui est publié, pas le prix d'achat.
-    assert rco.points_maximum == 100
-    assert rco.assiette_repere_smic == 1820
+    # Le barème est en POINTS : le minimum d'assiette de l'année ouvre N
+    # points, et les points sont proportionnels au-delà (D. 732-155, « P = N
+    # x RP/1820 SMIC »). Le nombre de points ne dépend donc pas du taux de
+    # cotisation — ce qui est heureux, puisque c'est le barème qui est
+    # publié, pas le prix d'achat. Le minimum et N, année par année : décret
+    # n° 2003-146, article 5 (2003), décret n° 2004-1068 (2004), D. 732-155
+    # dans ses rédactions de 2005, 2006 et 2017 ; le taux, D. 732-165.
+    attendu = {2003: (2028, 100, 0.0297), 2004: (1957, 100, 0.0297),
+               2005: (1888, 100, 0.0297), 2009: (1820, 100, 0.0297),
+               2010: (1820, 100, 0.03), 2016: (1820, 100, 0.03),
+               2017: (1820, 117, 0.035), 2018: (1820, 133, 0.04),
+               2020: (1820, 133, 0.04)}
+    for annee, (repere, points, taux) in attendu.items():
+        periode = catalogue["msa_rco"].periode(annee)
+        assert (periode.assiette_repere_smic, periode.points_maximum,
+                periode.taux_cotisation_retraite) == (repere, points, taux), annee
     assert rco.assiette_plancher is True
 
 
@@ -3292,12 +3303,17 @@ def test_le_regime_de_base_des_liberaux_est_calcule_en_points(simulateur):
     assert points_riche < 550 * annees
 
 
-def test_la_complementaire_agricole_ouvre_cent_points_a_l_assiette_minimale(simulateur):
-    """1 820 SMIC cotisés valent 100 points, et l'assiette ne descend pas plus bas.
+def test_la_complementaire_agricole_ouvre_ses_points_a_l_assiette_minimale(simulateur):
+    """L'assiette minimale ouvre 100 points par an jusqu'en 2016, 117 en 2017
+    et 133 depuis 2018, et l'assiette ne descend pas plus bas (D. 732-155 du
+    code rural : « égal à 100 par an pour les périodes postérieures au 31
+    décembre 2002 et antérieures au 1er janvier 2017, à 117 par an pour
+    l'année 2017, à 133 par an à compter de l'année 2018 »).
 
     Le nombre de points ne dépend pas du taux de cotisation : c'est le barème
     qui est publié, pas le prix d'achat — et c'est ce qui débloque le calcul,
-    la valeur d'achat du point de RCO restant introuvable.
+    la valeur d'achat du point de RCO restant introuvable. Jusqu'au 27
+    septembre 2026, le modèle servait 100 points toutes les années.
     """
     carriere = simulateur.carriere_simple(
         annee_naissance=1960, sexe="H", affiliation="exploitant_agricole",
@@ -3306,12 +3322,38 @@ def test_la_complementaire_agricole_ouvre_cent_points_a_l_assiette_minimale(simu
     pension = next(p for p in simulateur.scenario_actuel.calculer(
         carriere).pensions_par_regime if p.regime == "msa_rco")
     points = float(pension.detail.split(" points")[0].replace(",", ""))
-    # 2003 à 2023 inclus, cent points par an au minimum. Pas un point gratuit
-    # pour les années d'avant : à ce revenu, trois trimestres validés par an
-    # ne font pas le taux plein à 64 ans (voir le test suivant).
-    assert points == pytest.approx(100 * 21, rel=0.01)
+    # 2003 à 2023 inclus, au minimum : cent points de 2003 à 2016, 117 en
+    # 2017, 133 de 2018 à 2023. Pas un point gratuit pour les années d'avant :
+    # à ce revenu, trois trimestres validés par an ne font pas le taux plein
+    # à 64 ans (voir le test suivant).
+    assert points == pytest.approx(100 * 14 + 117 + 133 * 6, rel=0.01)
     assert pension.montant > 0
 
+
+def test_la_base_agricole_ouvre_quinze_points_au_minimum_avant_2004(simulateur):
+    """Le minimum d'assiette de la retraite proportionnelle agricole est de 400
+    SMIC horaires jusqu'au décret n° 2004-783, de 600 ensuite : quinze points,
+    puis 22,5, au chef dont le revenu est plus bas (décret n° 90-498, article
+    9, II : « 800 et 400 fois le montant du salaire minimum de croissance » ;
+    décret n° 2001-584, article 11, II ; D. 731-120). Jusqu'au 27 septembre
+    2026, le modèle relevait le revenu à 600 SMIC dès 1990, et servait 22,5
+    points. L'année 2004, que le décret ne date pas, est prise à 600 SMIC,
+    comme la fiche `assiette_minimale_agricole` le déclare.
+    """
+    from retraite_notionnelle.droit import acquerir, compter, coordonner
+
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1945, sexe="H", affiliation="exploitant_agricole",
+        age_debut=45, age_liquidation=65, niveau_salaire=0.05,
+    )
+    actuel = simulateur.scenario_actuel
+    coordination = coordonner.coordonner(actuel, carriere)
+    droits = acquerir.acquerir(actuel, coordination,
+                               compter.compter(actuel, coordination))
+    base = {annee: points for regime, annee, points, _ in droits.points
+            if regime == "msa_non_salaries"}
+    assert all(base[annee] == pytest.approx(15.0) for annee in range(1990, 2004))
+    assert all(base[annee] == pytest.approx(22.5) for annee in range(2004, 2010))
 
 def _rco(resultat):
     """La pension de RCO et la ligne de cascade de ses points gratuits."""
