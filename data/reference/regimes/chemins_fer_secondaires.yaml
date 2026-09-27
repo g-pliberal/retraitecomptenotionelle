@@ -2,6 +2,12 @@ code: chemins_fer_secondaires
 rang: 710
 nom: Régimes des chemins de fer secondaires d'intérêt général
 famille: special
+# Intégré jusqu'à sa fermeture, lu le 27 septembre 2026 : le régime
+# complémentaire de ce personnel est institué en 1954 avec elle, par le décret
+# n° 54-953 du 14 septembre 1954, et le décret n° 55-1297 (article 5, dans sa
+# rédaction de 1962, LEGIARTI000006767289) l'affilie à la caisse autonome de
+# retraites complémentaires et de prévoyance du transport. Aucun texte lu ne
+# lui en donne un avant 1954.
 etage: integre
 source_id: cor_panorama_regimes
 fiabilite: estimee
@@ -24,7 +30,12 @@ inventaire:
     - {reference: "code de la sécurité sociale, R. 711-1 7°", id: LEGIARTI000048031379}
   manque: >-
     Une seule période, au niveau `estimee`, depuis le texte fondateur sans
-    recontrôle.
+    recontrôle. Et, après la fermeture, le routage ne porte aucune
+    complémentaire en 1955 et 1956, puis celle de l'UNIRS : le régime
+    complémentaire du personnel, institué par le décret n° 54-953 du
+    14 septembre 1954, est celui de la caisse autonome de retraites
+    complémentaires et de prévoyance du transport (décret n° 55-1297,
+    article 5), dont les taux ne sont pas lus.
 periodes:
   - debut: 1930
     fin: 1954

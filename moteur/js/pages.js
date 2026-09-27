@@ -2904,17 +2904,31 @@ function resultats(contexte, saisie) {
       // jusqu'à leur échéance, et c'est ce qui autorise le mot « jusqu'à » :
       // le montant du haut s'atteint par une décision, pas par un coup de
       // bourse.
+      //
+      // Les termes s'additionnent à l'euro près : arrondis un à un,
+      // 2 316 + 10 + 10 faisaient 2 336 € sous « jusqu'à 2 337 ». Le montant
+      // et le plancher gardent chacun leur arrondi — celui du grand nombre,
+      // celui du résumé en tête de page —, la rente volontaire est leur
+      // écart, et le plancher se partage entre répartition et rente
+      // obligatoire au plus fort reste.
+      const mensuel = (annuel) => montants.pension(annuel) / 12;
+      const arrondi = (annuel) => Number(formatFixe(mensuel(annuel), 0));
+      const plancher = montant - partVolontaire;
+      const [enRepartition, obligatoire] = arrondisQuiSadditionnent(
+        [mensuel(repartition), mensuel(partCapitalisee - partVolontaire)],
+        mensuel(plancher));
+      const volontaire = arrondi(montant) - arrondi(plancher);
       const detail = partVolontaire > 0 ? `
-        ${g.euros(montants.pension(partCapitalisee - partVolontaire) / 12)}
+        ${g.euros(obligatoire)}
         de rente capitalisée obligatoire — soit
-        ${g.euros(montants.pension(montant - partVolontaire) / 12)} par
+        ${g.euros(enRepartition + obligatoire)} par
         mois sans rien ajouter — et
-        ${g.euros(montants.pension(partVolontaire) / 12)} de plus si
+        ${g.euros(volontaire)} de plus si
         vous placez les cinq points rendus, sans risque` : `
-        ${g.euros(montants.pension(partCapitalisee) / 12)} de rente
+        ${g.euros(obligatoire)} de rente
         capitalisée, par mois`;
       partage = `
-      <span class="composition">${g.euros(montants.pension(repartition) / 12)}
+      <span class="composition">${g.euros(enRepartition)}
         de pension par répartition +${detail}</span>`;
     }
     // Le troisième chiffre n'apparaît QUE là où le coefficient est sous un,

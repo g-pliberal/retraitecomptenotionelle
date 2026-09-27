@@ -2,6 +2,12 @@ code: seita
 rang: 700
 nom: Régime de retraite du personnel de la SEITA
 famille: special
+# Intégré, lu le 27 septembre 2026 : aucun des textes lus ne lui adjoint de
+# complémentaire — loi n° 84-603, article 6 (LEGIARTI000006302124) ; décret
+# n° 85-844, article 63 (LEGIARTI000006325837) ; décret n° 95-99, article 1er
+# (LEGIARTI000006778213) ; arrêté du 9 mai 1995 (JORFTEXT000000169500). Le
+# routage ne donne une complémentaire, l'Arrco, qu'aux agents recrutés après
+# la fermeture.
 etage: integre
 source_id: cor_panorama_regimes
 fiabilite: moyenne

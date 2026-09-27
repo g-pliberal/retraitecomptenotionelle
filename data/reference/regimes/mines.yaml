@@ -2,7 +2,9 @@ code: mines
 rang: 610
 nom: Régime spécial des mines (CANSSM)
 famille: special
-etage: integre
+# Base, et non intégré, lu le 27 septembre 2026 : ses assurés ont une
+# complémentaire, que la ligne d'inventaire dit dans son `manque`.
+etage: base
 source_id: cor_panorama_regimes
 fiabilite: estimee
 creation: 1894
@@ -19,12 +21,25 @@ inventaire:
   rang: 50
   nom: Régime spécial de sécurité sociale dans les mines (CANSSM)
   population: Ouvriers et employés des mines, recrutés avant septembre 2010
-  couverture: modelise
+  couverture: partiel
   statuts: [mineur]
   textes:
     - {reference: "loi du 29 juin 1894 sur les caisses de secours et de retraites des ouvriers mineurs", id: null}
     - {reference: "décret n° 46-2769 du 27 novembre 1946 portant organisation de la sécurité sociale dans les mines", id: null}
     - {reference: "code de la sécurité sociale, R. 711-1 5°", id: LEGIARTI000048031379}
+  manque: >-
+    La complémentaire des mineurs n'est pas routée : le statut `mineur` ne
+    cotise qu'au régime des mines. Les employés des mines avaient leur caisse
+    de retraite complémentaire (arrêté du 5 octobre 1949, JORFTEXT000000828616,
+    et ses modifications de 1950 à 1956, « retraite complémentaire des
+    employés des mines »), les ouvriers leur régime complémentaire (arrêté du
+    6 novembre 1967, JORFTEXT000000849607, sur le protocole du 25 avril 1960
+    entre l'UNIRS et les Charbonnages de France) et leur caisse, la CARCOM,
+    « caisse de retraites complémentaires des ouvriers mineurs » (statuts
+    approuvés en 1990, 1992 et 1995, JORFARTI000001551380). Le scénario 1
+    sert donc à un mineur sa seule pension de base, et les comptes notionnels
+    n'en portent pas les cotisations complémentaires. Lu le 27 septembre 2026
+    dans l'index JORF ; les taux et les barèmes de ces régimes restent à lire.
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 46-2769, article 139 (LEGIARTI000006765039) : pensions «
 # majorées d'un dixième » pour qui a eu au moins trois enfants, sans

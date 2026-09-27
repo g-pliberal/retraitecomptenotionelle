@@ -2097,6 +2097,48 @@ def test_le_detail_range_la_base_avant_les_complementaires():
     assert len(lignes) == 3 and round(sum(lignes), 2) == somme
 
 
+def _euros(texte: str) -> list[int]:
+    """Les montants à l'euro d'un texte, dans l'ordre où ils s'y lisent."""
+    return [int(re.sub(r"\D", "", euros))
+            for euros in re.findall(r"(\d[\d   ]*) ?€", texte)]
+
+
+@pytest.mark.parametrize("nom,champs", [
+    ("carrière ordinaire", {"naissance": "1975"}),
+    ("cadre", {"naissance": "1962", "statut": "salarie_prive_cadre", "debut": "22",
+               "liquidation": "64", "unite_revenu": "moyen", "salaire": "1.6"}),
+    ("petit salaire", {"naissance": "1980", "unite_revenu": "moyen", "salaire": "0.6"}),
+    ("haut salaire", {"naissance": "1985", "statut": "salarie_prive_cadre",
+                      "unite_revenu": "moyen", "salaire": "3.2"}),
+    ("fonctionnaire", {"naissance": "1975", "sexe": "F", "statut": "fonctionnaire_etat",
+                       "debut": "22", "liquidation": "64", "primes": "0.2"}),
+    ("médecin", {"naissance": "1965", "statut": "medecin_liberal", "debut": "28",
+                 "liquidation": "66", "unite_revenu": "moyen", "salaire": "2"}),
+    ("montants bruts", {"naissance": "1990", "montants": "brut",
+                        "unite_revenu": "moyen", "salaire": "1.3"}),
+])
+def test_la_ligne_de_la_proposition_fait_ses_montants(nom, champs):
+    """Sous le montant de la proposition, la répartition et la rente
+    obligatoire font le plancher « sans rien ajouter », et le plancher plus la
+    rente volontaire fait le montant affiché : à l'euro, comme un lecteur les
+    additionne. Arrondis un à un, 2 316 + 10 + 10 y faisaient 2 336 € sous
+    « jusqu'à 2 337 ». Le plancher est aussi celui que le résumé écrit en tête
+    de page."""
+    corps = rendre("/simuler", champs)[1]
+    bloc = _bloc(corps, '<span class="titre">4. La proposition',
+                 '<div class="barre liberal">')
+    montant = int(re.sub(r"\D", "", re.search(
+        r'<span class="chiffre principal">.*?<span class="somme">([^<]+)</span>',
+        bloc, re.S).group(1)))
+    ligne = html.unescape(re.sub(r"\s+", " ", re.sub(
+        r"<[^>]+>", " ", bloc.partition('<span class="composition">')[2])))
+    repartition, obligatoire, plancher, volontaire = _euros(ligne)
+    assert repartition + obligatoire == plancher, f"{nom} : {ligne}"
+    assert plancher + volontaire == montant, f"{nom} : {ligne} sous {montant} €"
+    resume = _bloc(corps, "Avec notre proposition", "</p>")
+    assert _euros(resume)[:2] == [plancher, montant], f"{nom} : {resume}"
+
+
 def _nombres(bloc: str) -> list[float]:
     """Les montants d'un fragment de HTML, dans l'ordre où ils s'y lisent."""
     return [float(m.replace("\u202f", "").replace(",", "."))

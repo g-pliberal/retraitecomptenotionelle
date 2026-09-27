@@ -2,6 +2,13 @@ code: marins
 rang: 600
 nom: Établissement national des invalides de la marine (ENIM)
 famille: special
+# Intégré, lu le 27 septembre 2026 : la pension de l'ENIM, 2 % du salaire
+# forfaitaire par annuité, est la seule des services en mer. Ni la page du
+# ministère de la mer (« Focus sur l'Enim : cotisations sociales,
+# prestations, contacts », registre international français), ni celle du
+# portail commun des régimes (« La retraite des marins »), ni le rapport
+# d'information du Sénat n° 707 (2012-2013) sur le régime ne lui adjoignent
+# de complémentaire.
 etage: integre
 source_id: rs_enim
 fiabilite: estimee

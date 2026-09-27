@@ -867,7 +867,10 @@ def test_chaque_regime_dit_son_etage(catalogue):
                 "cnavpl": "base", "carmf_complementaire": "complementaire",
                 "asv_conventionnes": "additionnel", "rafp": "additionnel",
                 "fonction_publique_etat": "integre", "sncf": "integre",
-                "cavimac": "base", "arrco_cultes": "complementaire"}
+                "cavimac": "base", "arrco_cultes": "complementaire",
+                # Spécial, mais pas intégré : ses assurés ont une
+                # complémentaire, que le routage ne porte pas encore.
+                "mines": "base"}
     assert {code: catalogue[code].etage for code in attendus} == attendus
 
     chemin = RACINE_DONNEES / "reference" / "regimes" / "regime_general.yaml"

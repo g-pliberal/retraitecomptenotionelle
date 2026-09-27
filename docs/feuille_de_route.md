@@ -24,7 +24,7 @@ ici, pas dans un commentaire de code.
 
 **Le constat de septembre 2026, qui fonde ce classement.** La couverture des
 régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->91<!--/--> lignes d'inventaire, plus aucune ligne « à modéliser »,
-<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->39<!--/--> fiches partielles dont chaque mur est documenté dans `regimes.md` et
+<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->40<!--/--> fiches partielles dont chaque mur est documenté dans `regimes.md` et
 `limites.md` §4. Continuer sur cet axe rapporte peu : les manques restants
 portent sur des populations minuscules ou des barèmes que personne ne publie.
 Les gains sont sur ce qui porte les résultats de tête du README : les agrégats
@@ -2856,3 +2856,53 @@ nouveau tableau, et le paquet du site un kilo-octet.
   venu de ce qui a été cotisé au régime général, tant de l'Agirc-Arrco : le
   compte ne garde que le total de chaque année. C'est un choix de présentation
   de la proposition, qui attend le propriétaire.
+
+**La suite, le 27 septembre 2026 au soir.** « Continue l'action 133. Ne fais
+pas d'erreur. » Deux des trois points restants sont faits ; le troisième est
+posé au propriétaire.
+
+- **Les cinq régimes spéciaux, lus à la source**, dans l'index JORF et LEGI
+  du dépôt et sur les sites officiels. Les mines passent à `base` : leurs
+  assurés avaient une complémentaire — la caisse de retraite complémentaire
+  des employés des mines (arrêté du 5 octobre 1949 et ses modifications
+  jusqu'en 1956), le régime complémentaire des ouvriers mineurs des
+  Charbonnages de France (arrêté du 6 novembre 1967, sur le protocole UNIRS du
+  25 avril 1960), et leur caisse, la CARCOM (statuts de 1990 à 1995). Le routage ne
+  la porte pas : la fiche passe de `modelise` à `partiel`, et son `manque` le
+  dit, textes cités. Les quatre autres restent `integre`, et chaque fiche dit
+  en commentaire ce qui a été lu : l'ENIM (page du ministère de la mer,
+  portail commun des régimes, rapport du Sénat n° 707 de 2012-2013), la SEITA
+  (loi n° 84-603, décret n° 85-844, décret n° 95-99, arrêté du 9 mai 1995),
+  le port de Strasbourg (portail commun des régimes) et les chemins de fer
+  secondaires, dont le régime complémentaire n'est institué qu'en 1954, avec
+  la fermeture (décret n° 54-953 ; décret n° 55-1297, article 5). Chemin
+  faisant : le routage de ces derniers ne porte aucune complémentaire en 1955
+  et 1956, puis celle de l'UNIRS, quand le texte les affilie à la caisse
+  autonome de retraites complémentaires et de prévoyance du transport ; leur
+  `manque` le dit aussi. L'arrêté du 20 juillet 2018 sur le répertoire de
+  gestion des carrières unique, lu en passant, range la CRPN, l'IRCEC, le RCI,
+  l'Agirc-Arrco et l'Ircantec parmi les régimes complémentaires, comme leurs
+  étages. Le schéma ne prête plus à tous les régimes spéciaux la fermeture
+  vers le régime général et l'Agirc-Arrco : il la nomme pour ceux dont le
+  routage la porte.
+- **La ligne de la proposition s'additionne.** Le montant et le plancher « sans
+  rien ajouter » gardent chacun leur arrondi, celui du grand nombre et celui
+  du résumé en tête de page ; la rente volontaire est leur écart, et le
+  plancher se partage au plus fort reste. Un test le tient sur sept profils :
+  l'ancien code en manquait quatre.
+
+**Ce qu'il déplace.** Aucun chiffre du modèle. L'inventaire compte un régime
+modélisé de moins et un partiel de plus ; les pages des résultats écrivent la
+ligne de la proposition à l'euro près.
+
+**Ce qui reste, à cette date.**
+
+- L'étage `integre` de six autres régimes ne repose encore que sur le
+  routage : l'Opéra, la Comédie-Française, les assemblées, le CESE, les
+  fonctionnaires du Pacifique et les ouvriers de l'État. Leurs textes restent
+  à lire, comme l'ont été ce soir ceux des cinq premiers.
+- Router la complémentaire des mineurs, et celle des chemins de fer
+  secondaires en 1955 et 1956 : leurs taux et leurs barèmes restent à lire.
+  C'est un changement du scénario 1, qui relève de la session des données.
+- Découper la pension notionnelle selon l'origine des cotisations : la
+  question est posée au propriétaire.

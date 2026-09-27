@@ -2,6 +2,11 @@ code: port_strasbourg
 rang: 690
 nom: Régime de retraite du Port autonome de Strasbourg
 famille: special
+# Intégré, lu le 27 septembre 2026 : un « régime spécial de sécurité
+# sociale » des personnels titulaires du port (portail commun des régimes,
+# « La retraite des salariés du port autonome de Strasbourg »). Aucune source
+# ne lui adjoint de complémentaire ; son règlement n'est ni dans LEGI ni au
+# JORF.
 etage: integre
 source_id: cor_panorama_regimes
 fiabilite: estimee
