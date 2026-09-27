@@ -3876,6 +3876,66 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     assert age_annulation == pytest.approx(57.0)
 
 
+def test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant(simulateur):
+    """Deux règles que la CNIEG applique, et que le moteur ne suivait pas.
+
+    LA DURÉE EST CELLE DE LA GÉNÉRATION QUI ATTEINT SOIXANTE ANS À L'OUVERTURE.
+    L'article 9-1 de l'annexe 3, du 1er janvier 2017 au 31 décembre 2024,
+    oppose à l'agent qui peut liquider avant soixante ans « celle exigée des
+    agents atteignant l'âge de soixante ans l'année à compter de laquelle la
+    liquidation peut intervenir ». Monsieur A, né en décembre 1964, dont le
+    droit s'ouvre à cinquante-six ans en décembre 2020, doit 167 trimestres —
+    c'est l'exemple 1 de la circulaire CNIEG n° 2024/15 —, non les 169 de sa
+    génération.
+
+    ET L'ÂGE D'ANNULATION D'AVANT 2025 SE GARDE. La CNIEG garde à qui a ouvert
+    son droit avant le 1er janvier 2025 l'âge de référence d'avant le décret
+    n° 2023-692, l'âge d'ouverture majoré de cinq ans, « quelle que soit la
+    date d'effet » ; soixante-deux ans ne vaut que pour qui l'ouvre ensuite.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def agent(annee: int, mois: int, age_liquidation: float):
+        return simulateur.carriere_simple(
+            annee_naissance=annee, mois_naissance=mois, sexe="H",
+            affiliation="agent_ieg", age_debut=21, age_liquidation=age_liquidation,
+            niveau_salaire=1.0,
+        )
+
+    def requis(carriere) -> int:
+        periode = simulateur.catalogue["ieg"].periode(carriere.annee_liquidation)
+        return ouvrir.duree_requise(scenario, periode, carriere)[0]
+
+    assert requis(agent(1964, 12, 57.0)) == 167
+    # La table de 2014 s'ouvre en juillet 2019, à la génération de juillet
+    # 1959 : l'agent né en novembre 1963, dont le droit s'ouvre ce mois-là à
+    # cinquante-cinq ans et huit mois, doit 167 trimestres, non 168 ; un mois
+    # plus tôt, c'est le calendrier de 2008 qui répond, 166.
+    assert requis(agent(1963, 11, 58.0)) == 167
+    assert requis(agent(1963, 10, 58.0)) == 166
+    # Le dernier droit ouvert avant 2025, en décembre 2024 : la génération
+    # 1964, 169 trimestres, non les 170 de 1967.
+    assert requis(agent(1967, 12, 57.0)) == 169
+    # Ouvert à compter de 2025, quand l'article est abrogé : la table des
+    # dix-sept ans de services actifs, à la génération de l'agent.
+    assert requis(agent(1968, 1, 59.0)) == 170
+
+    # Né en janvier 1965, droit ouvert à cinquante-six ans et quatre mois en
+    # mai 2021, parti à soixante ans en janvier 2025 : la référence reste
+    # soixante et un ans et quatre mois, dont le barème retranche les quatre
+    # trimestres de 2021, et non soixante-deux ans.
+    carriere = agent(1965, 1, 60.0)
+    periode = simulateur.catalogue["ieg"].periode(2025)
+    assert ouvrir.age_taux_plein(scenario, periode, carriere) == pytest.approx(61.33)
+    _, age_annulation, _ = liquider.decote_opposable(scenario, periode, carriere, 2025)
+    assert age_annulation == pytest.approx(60.33)
+    # Né en janvier 1968, droit ouvert en avril 2025 : soixante-deux ans.
+    carriere = agent(1968, 1, 59.0)
+    periode = simulateur.catalogue["ieg"].periode(2027)
+    _, age_annulation, _ = liquider.decote_opposable(scenario, periode, carriere, 2027)
+    assert age_annulation == pytest.approx(62.0)
+
+
 def test_l_age_d_annulation_du_ballet_de_l_opera_est_quarante_deux_ans(simulateur):
     """Le seul âge de référence qui ne soit pas l'âge d'ouverture plus cinq ans.
 

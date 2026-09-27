@@ -1002,7 +1002,27 @@ def age_taux_plein(moteur, periode: PeriodeRegime, carriere: Carriere) -> float:
     en super-active — puis, depuis la réforme de 2023, l'âge que l'article
     L. 14 bis attache au classement. Le barème de la fonction publique en
     retranche ensuite les trimestres de sa propre montée en charge.
+
+    ET QUI A OUVERT SON DROIT AVANT UNE RÉFORME PEUT GARDER L'ÂGE D'AVANT,
+    quand la période le dit (``age_taux_plein_a_l_ouverture``) : l'âge se lit
+    alors dans la période en vigueur l'année où l'assuré réunit les
+    conditions. Aux IEG, le II de l'article 45 de l'annexe 3 fixe à
+    soixante-deux ans l'âge d'annulation des pensions de 2025 et après ; la
+    CNIEG garde à qui a ouvert son droit avant le 1er janvier 2025 « les
+    paramètres en vigueur avant la réforme, quelle que soit la date
+    d'effet », sur le I ter du même article (circulaire n° 2024/15) : l'âge
+    d'ouverture majoré de cinq ans, dont le barème retranche la diminution
+    de l'année. Un agent né en janvier 1965, dont le droit s'ouvre à
+    cinquante-six ans et quatre mois en mai 2021, voit sa décote s'annuler à
+    soixante ans et quatre mois, et non à soixante et un ans : parti à
+    soixante ans en janvier 2025, il perd deux trimestres, non quatre.
     """
+    if periode.age_taux_plein_a_l_ouverture:
+        ouverture = DateMois.depuis_rang(
+            mois_ouverture_des_droits(moteur, periode, carriere))
+        en_vigueur = moteur.catalogue[periode.regime].periode(ouverture.annee)
+        if en_vigueur is not None:
+            periode = en_vigueur
     derogation = derogation_active(moteur, periode, carriere)
     if derogation is not None:
         return derogation.age_annulation

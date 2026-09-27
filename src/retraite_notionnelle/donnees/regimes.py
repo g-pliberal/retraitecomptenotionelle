@@ -191,6 +191,12 @@ class PeriodeRegime:
     #: L'âge d'annulation de la décote suit-il la génération ? Vrai depuis la
     #: loi du 9 novembre 2010 pour les régimes alignés (65 -> 67 ans).
     age_taux_plein_par_generation: bool
+    #: L'âge d'annulation de la décote se lit-il dans la période en vigueur
+    #: l'année où l'assuré RÉUNIT LES CONDITIONS, et non dans celle de la
+    #: liquidation ? Vrai aux IEG depuis 2025 : la CNIEG garde les paramètres
+    #: d'avant la réforme de 2023 à qui a ouvert son droit avant le 1er
+    #: janvier 2025, « quelle que soit la date d'effet » de sa pension.
+    age_taux_plein_a_l_ouverture: bool
     #: Table d'âges PROPRE au régime, lue à la génération dans
     #: ``legislation/ages_regimes.csv`` : l'âge d'ouverture et l'âge du taux
     #: plein que le règlement d'une section écrit lui-même, et qui ne sont pas
@@ -1110,6 +1116,7 @@ INTERRUPTEURS: dict[str, object] = {
     "duree_requise_par_generation": False,
     "age_ouverture_par_generation": False,
     "age_taux_plein_par_generation": False,
+    "age_taux_plein_a_l_ouverture": False,
     "age_surcote_regimes_speciaux": False,
     "decote_par_generation": False,
     "duree_proratisation_par_generation": False,
@@ -1313,6 +1320,9 @@ class CatalogueRegimes:
                 ),
                 age_taux_plein_par_generation=bool(
                     p.get("age_taux_plein_par_generation", False)
+                ),
+                age_taux_plein_a_l_ouverture=bool(
+                    p.get("age_taux_plein_a_l_ouverture", False)
                 ),
                 age_table=p.get("age_table"),
                 decote_par_generation=bool(p.get("decote_par_generation", False)),
