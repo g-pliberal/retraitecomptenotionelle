@@ -1,8 +1,9 @@
 # Architecture du dépôt
 
-*Version 5.5, décidée par le propriétaire le 25 septembre 2026. Ce document
-dit l'état de l'architecture : il reste vrai tant qu'aucune décision ne le
-change, et la liste de ses changements est en bas (« Les versions »). Il est
+*Version 5.13, du 27 septembre 2026 ; l'architecture a été décidée par le
+propriétaire le 25 septembre 2026. Ce document dit son état : il reste
+vrai tant qu'aucune décision ne le change, et la liste de ses changements
+est en bas (« Les versions »). Il est
 tiré de la note de décision
 [`docs/decisions/0001-architecture.md`](decisions/0001-architecture.md), la
 « note 0001 », gelée, qui garde en plus ses récits : pourquoi cette
@@ -1565,6 +1566,8 @@ Chaque domaine suit le même gabarit :
 - dépense de la page Coût ;
 - décision de la proposition.
 
+Un domaine se clôt en refigeant la référence de conservation (§ 12).
+
 L'ordre se fixe par le nombre de personnes concernées, mesuré sur les sources
 publiques au moment de choisir. En première lecture, à confirmer par cette
 mesure :
@@ -1603,12 +1606,17 @@ mesure :
   la phase 8 : leur rendu était celui du portage, caractère pour caractère, et
   leur calcul est passé dans `saisie.py` et `contexte.py`.
 - Un script de conservation vérifie que chaque paragraphe des documents et
-  chaque entrée des registres d'aujourd'hui se retrouvent dans le nouveau
-  rangement. Il se retire après la phase 8, quand plus rien ne se déplace.
+  chaque entrée des registres se retrouvent dans le nouveau rangement.
   C'est `scripts/conservation.py` : `--depuis HEAD` vérifie un déplacement
   avant qu'on le commite, et un test tient, contre une référence figée
   (`tests/temoins/conservation.json`), les récits, les notes de décision, les
   archives et les entrées des registres.
+- Il reste après la phase 8 : les domaines déplacent encore des fichiers, et
+  un récit ne se réécrit pas, quelle que soit la phase. Sa référence se
+  refige à la fin de chaque domaine (`python scripts/conservation.py
+  --figer`), pour tenir à leur tour les récits nés depuis. Elle ne se fige
+  pas par-dessus une perte, sauf à l'accepter (`--accepter-les-pertes`) et
+  à dire pourquoi dans le commit.
 - L'historique git garde le reste.
 
 ---
@@ -2382,6 +2390,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.13**, 27 septembre 2026 : le contrôle de conservation reste après la phase 8, à la demande du propriétaire : les domaines déplacent encore des fichiers, et un récit ne se réécrit pas, quelle que soit la phase. Sa référence se refige à la fin de chaque domaine (§ 11 et § 12).
 
 - **5.12**, 27 septembre 2026 : la phase 8 faite. Le texte du site n'est écrit qu'une fois, en JavaScript : `web/pages.py` et `web/gabarit.py` sont retirés, leur calcul passé dans `saisie.py` et `contexte.py` et dans leurs portages, la feuille de style devenue sa propre source ; le Python lit le site par `web/site.py`. L'annexe B dit où chaque chose est allée.
 

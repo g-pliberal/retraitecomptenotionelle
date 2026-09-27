@@ -2416,6 +2416,26 @@ fois. Cinq commits. Un seul résultat bouge, celui que la phase rendait faux :
 Le repère `phase-8` est posé sur 9799ba4, le 27 septembre 2026, avec l'accord
 du propriétaire, par `repere-phase-8.yml`, lancé une fois puis supprimé.
 
+**Le contrôle de conservation reste**, décidé par le propriétaire le même
+jour. Le § 12 le retirait « après la phase 8, quand plus rien ne se
+déplace » ; or les domaines déplaceront encore des fichiers, et un récit ne
+se réécrit pas, quelle que soit la phase.
+- Il a tenu les déplacements des phases 1, 2 et 6.
+- Le 26 septembre, pendant la phase 4, il a refusé la réécriture d'un
+  récit : la liste des fichiers observés le 17 septembre, dans
+  `docs/integration-partiliberalfrancais.md`, à laquelle une mise à jour
+  ajoutait `moteur/js/droit/*.js`, qui n'existait pas encore.
+
+Sa référence se refige désormais à la fin de chaque domaine, pour protéger
+les récits nés depuis : `docs/architecture.md`, version 5.13 (§ 11 et
+§ 12), et `CLAUDE.md`. Elle l'a été en dernier par a8e8139, après la phase 8.
+
+Une correction de la phase 8, le même jour : `.gitattributes` tenait encore
+`moteur/style.css` pour un fichier fabriqué, que git ne fusionne pas et
+qu'un script refait. Il ne l'est plus depuis e483229. Un conflit sur lui
+aurait gardé un seul côté, sans script pour refaire l'autre ; il se
+fusionne désormais comme tout texte écrit à la main.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

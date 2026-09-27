@@ -1,10 +1,11 @@
 """Rien de perdu (docs/architecture.md, § 12) : ce qui est gelé se retrouve.
 
-Les phases 1 à 8 déplacent la documentation et les registres sans changer un
-résultat. Ce test joue le filet de ``scripts/conservation.py`` : les
-paragraphes des récits, des notes de décision et des archives, et les entrées
-des registres, que la référence figée tient, doivent se retrouver quelque part
-dans le dépôt. Un récit réécrit y apparaît comme perdu : un récit est gelé.
+Les phases 1 à 8 ont déplacé la documentation et les registres sans changer
+un résultat, et les domaines en déplacent encore. Ce test joue le filet de
+``scripts/conservation.py`` : les paragraphes des récits, des notes de
+décision et des archives, et les entrées des registres, que la référence
+figée tient, doivent se retrouver quelque part dans le dépôt. Un récit
+réécrit y apparaît comme perdu : un récit est gelé.
 """
 
 from __future__ import annotations

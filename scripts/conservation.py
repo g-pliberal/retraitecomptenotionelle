@@ -4,11 +4,12 @@
     python scripts/conservation.py --depuis HEAD    # un déplacement, avant de le commiter
     python scripts/conservation.py --figer          # fige la référence
 
-``docs/architecture.md`` (§ 12) le demande pour les phases 1 à 8, qui
-réorganisent le dépôt sans changer un résultat : « Un script de conservation
-vérifie que chaque paragraphe des documents et chaque entrée des registres
-d'aujourd'hui se retrouvent dans le nouveau rangement. Il se retire après la
-phase 8, quand plus rien ne se déplace. »
+``docs/architecture.md`` (§ 12) : « Un script de conservation vérifie que
+chaque paragraphe des documents et chaque entrée des registres se retrouvent
+dans le nouveau rangement. » Né pour les phases 1 à 8, qui réorganisaient le
+dépôt sans changer un résultat, il reste après elles (version 5.13) : les
+domaines déplacent encore des fichiers, et un récit ne se réécrit pas,
+quelle que soit la phase.
 
 Il sert de deux façons.
 
@@ -28,7 +29,10 @@ cours, qui vivent, et les tableaux que ``scripts/chiffrage_plf.py`` réécrit �
 et l'identifiant de chaque entrée des registres. Un récit est gelé : s'il
 manque, il a été perdu ou réécrit. Une section d'état, elle, change avec le
 dépôt, et l'historique git garde ses versions. La référence ne se fige pas par
-dessus une perte : ``--figer`` refuse tant que le filet n'est pas vert.
+dessus une perte : ``--figer`` refuse tant que le filet n'est pas vert. Elle se
+refige à la fin de chaque domaine, pour tenir à leur tour les récits nés
+depuis : ce qui n'est pas encore dans la référence n'est protégé que par
+``--depuis``, quand on le lance.
 
 Deux paragraphes sont les mêmes s'ils ne diffèrent que par les blancs, les
 dièses d'un titre, ou la valeur d'un chiffre ancré, que

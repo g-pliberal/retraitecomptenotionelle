@@ -130,7 +130,10 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
 - **Rien ne se perd** (`docs/architecture.md`, § 12) : un récit ne se réécrit
   pas, et un déplacement de fichiers se vérifie avant d'être commité, par
   `python scripts/conservation.py --depuis HEAD`. Une seule session déplace
-  des fichiers à la fois.
+  des fichiers à la fois. À la fin de chaque domaine, la référence du test de
+  conservation (`tests/temoins/conservation.json`) se refige, pour protéger
+  les récits nés depuis : `python scripts/conservation.py --figer`, qui
+  refuse s'il y a une perte.
 - **Les dépendances** : PyYAML seul hors bibliothèque standard ; le portage
   JavaScript n'en a aucune ; pytest et pytest-xdist ne servent qu'aux tests.
   Node, qui fait tourner le portage, sert aussi au Python qui lit le site :
