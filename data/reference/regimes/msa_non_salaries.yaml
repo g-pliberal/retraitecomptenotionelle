@@ -105,7 +105,7 @@ periodes:
     assiette: plafonnee
     taux_cotisation_retraite: 0.085
     bareme_points: retraite_proportionnelle_msa
-    assiette_repere_smic: 600
+    assiette_repere_smic: 400
     assiette_plancher: assiette_minimale_agricole
     valeur_point_euros: 4.589
     valeur_point_annee: 2025
@@ -120,6 +120,11 @@ periodes:
       nombre de points qui dépend du revenu par un escalier à quatre marches
       écrit à l'article R. 732-71 — voir `points_msa` dans le moteur (droit/acquerir.py), et
       la section de docs/limites.md qui refait l'arithmétique.
+      Le minimum d'assiette de la cotisation qui ouvre ces points est de 400
+      SMIC horaires jusqu'au décret n° 2004-783 (décret n° 90-498, article 9,
+      II ; décret n° 94-690, article 14, II ; décret n° 2001-584, article 11,
+      II), soit quinze points : le moteur y servait les 600 SMIC d'après, et
+      22,5 points, jusqu'au 27 septembre 2026.
       Âge de soixante ans depuis la loi du 6 janvier 1986, taux plein à
       soixante-cinq ans ou avec cent cinquante trimestres tous régimes
       (L. 732-25, LEGIARTI000006585545) ; la loi du 22 juillet 1993 n'a
@@ -135,7 +140,7 @@ periodes:
     assiette: plafonnee
     taux_cotisation_retraite: 0.1737
     bareme_points: retraite_proportionnelle_msa
-    assiette_repere_smic: 600
+    assiette_repere_smic: 400
     assiette_plancher: assiette_minimale_agricole
     valeur_point_euros: 4.589
     valeur_point_annee: 2025
@@ -160,7 +165,9 @@ periodes:
       maximum M que R. 732-70 définit par (PM − AVTS) / (37,5 × valeur du
       point). Les « 23 à 113 points » que la caisse annonce sans publier la
       formule en sortent : 22,5 au minimum d'assiette du chef d'exploitation
-      (600 SMIC horaires), 113,4 au plafond en 2025.
+      depuis qu'il est de 600 SMIC horaires, 113,4 au plafond en 2025 ; en
+      2003, ce minimum est encore de 400 SMIC (décret n° 2001-584, article
+      11, II), qui ouvrent quinze points.
       La valeur du point est celle du code rural (R. 732-66, 4,589 € au
       1er janvier 2025), recoupée par le communiqué de la MSA et par le COR
       pour 2023 (4,264 €) ; les années antérieures sont ramenées sur les
@@ -180,16 +187,17 @@ periodes:
       SÉLECTIONNÉES DANS DES CONDITIONS FIXÉES PAR VOIE RÉGLEMENTAIRE ».
       Son IV ajoute : « les modalités d'application du présent article sont
       définies par décret en Conseil d'État ».
-      CE DÉCRET N'EST PAS DANS LA BASE. Un dépouillement de la législation
-      consolidée ne rend, pour le 1er janvier 2026, que des articles
-      LÉGISLATIFS — L. 732-21, L. 732-24, L. 732-35, L. 732-60 — et aucun
-      article réglementaire nouveau. Les articles R. 732-60, R. 732-63 et
-      R. 732-66, qui décrivent le calcul en points, courent toujours
-      jusqu'à 2999. Deux des trois inconnues de la formule nouvelle — le
-      maximum de la part forfaitaire d'avant 2016, le nombre d'années
-      retenues pour la part proportionnelle — ne sont donc écrites nulle
-      part, et la formule ne peut pas être calculée. La fiche sert celle
-      d'avant, la seule dont les paramètres existent, et le dit.
+      LES DÉCRETS SONT PARUS : n° 2025-1409 et n° 2025-1410 du 30 décembre
+      2025, au Journal officiel du lendemain, lus le 27 septembre 2026 dans
+      l'index JORF du dépôt. Les pensions qui prennent effet en 2026 et en
+      2027 restent liquidées par l'ancienne section (décret n° 2025-1409,
+      article 6), à deux choses près : la part proportionnelle d'avant 2016 se
+      calcule sur la moyenne des points des années les plus avantageuses (R.
+      732-66, rédaction de 2026), et un nouveau calcul intervient au plus tard
+      le 31 mars 2028, retenu s'il est plus favorable (loi n° 2025-199,
+      article 87, VIII, B ; décret n° 2025-1410, article 13). La fiche sert
+      encore la somme de tous les points, sans moyenne ni nouveau calcul :
+      voir la fiche retraite_proportionnelle_msa.
       Voir docs/limites.md.
       LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
       naît de la loi du 21 août 2003, pour les liquidations de 2004, à
@@ -258,16 +266,17 @@ periodes:
       SÉLECTIONNÉES DANS DES CONDITIONS FIXÉES PAR VOIE RÉGLEMENTAIRE ».
       Son IV ajoute : « les modalités d'application du présent article sont
       définies par décret en Conseil d'État ».
-      CE DÉCRET N'EST PAS DANS LA BASE. Un dépouillement de la législation
-      consolidée ne rend, pour le 1er janvier 2026, que des articles
-      LÉGISLATIFS — L. 732-21, L. 732-24, L. 732-35, L. 732-60 — et aucun
-      article réglementaire nouveau. Les articles R. 732-60, R. 732-63 et
-      R. 732-66, qui décrivent le calcul en points, courent toujours
-      jusqu'à 2999. Deux des trois inconnues de la formule nouvelle — le
-      maximum de la part forfaitaire d'avant 2016, le nombre d'années
-      retenues pour la part proportionnelle — ne sont donc écrites nulle
-      part, et la formule ne peut pas être calculée. La fiche sert celle
-      d'avant, la seule dont les paramètres existent, et le dit.
+      LES DÉCRETS SONT PARUS : n° 2025-1409 et n° 2025-1410 du 30 décembre
+      2025, au Journal officiel du lendemain, lus le 27 septembre 2026 dans
+      l'index JORF du dépôt. Les pensions qui prennent effet en 2026 et en
+      2027 restent liquidées par l'ancienne section (décret n° 2025-1409,
+      article 6), à deux choses près : la part proportionnelle d'avant 2016 se
+      calcule sur la moyenne des points des années les plus avantageuses (R.
+      732-66, rédaction de 2026), et un nouveau calcul intervient au plus tard
+      le 31 mars 2028, retenu s'il est plus favorable (loi n° 2025-199,
+      article 87, VIII, B ; décret n° 2025-1410, article 13). La fiche sert
+      encore la somme de tous les points, sans moyenne ni nouveau calcul :
+      voir la fiche retraite_proportionnelle_msa.
       Voir docs/limites.md.
       LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
       naît de la loi du 21 août 2003, pour les liquidations de 2004, à
@@ -350,16 +359,17 @@ periodes:
       SÉLECTIONNÉES DANS DES CONDITIONS FIXÉES PAR VOIE RÉGLEMENTAIRE ».
       Son IV ajoute : « les modalités d'application du présent article sont
       définies par décret en Conseil d'État ».
-      CE DÉCRET N'EST PAS DANS LA BASE. Un dépouillement de la législation
-      consolidée ne rend, pour le 1er janvier 2026, que des articles
-      LÉGISLATIFS — L. 732-21, L. 732-24, L. 732-35, L. 732-60 — et aucun
-      article réglementaire nouveau. Les articles R. 732-60, R. 732-63 et
-      R. 732-66, qui décrivent le calcul en points, courent toujours
-      jusqu'à 2999. Deux des trois inconnues de la formule nouvelle — le
-      maximum de la part forfaitaire d'avant 2016, le nombre d'années
-      retenues pour la part proportionnelle — ne sont donc écrites nulle
-      part, et la formule ne peut pas être calculée. La fiche sert celle
-      d'avant, la seule dont les paramètres existent, et le dit.
+      LES DÉCRETS SONT PARUS : n° 2025-1409 et n° 2025-1410 du 30 décembre
+      2025, au Journal officiel du lendemain, lus le 27 septembre 2026 dans
+      l'index JORF du dépôt. Les pensions qui prennent effet en 2026 et en
+      2027 restent liquidées par l'ancienne section (décret n° 2025-1409,
+      article 6), à deux choses près : la part proportionnelle d'avant 2016 se
+      calcule sur la moyenne des points des années les plus avantageuses (R.
+      732-66, rédaction de 2026), et un nouveau calcul intervient au plus tard
+      le 31 mars 2028, retenu s'il est plus favorable (loi n° 2025-199,
+      article 87, VIII, B ; décret n° 2025-1410, article 13). La fiche sert
+      encore la somme de tous les points, sans moyenne ni nouveau calcul :
+      voir la fiche retraite_proportionnelle_msa.
       Voir docs/limites.md.
       LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
       naît de la loi du 21 août 2003, pour les liquidations de 2004, à
@@ -438,16 +448,17 @@ periodes:
       SÉLECTIONNÉES DANS DES CONDITIONS FIXÉES PAR VOIE RÉGLEMENTAIRE ».
       Son IV ajoute : « les modalités d'application du présent article sont
       définies par décret en Conseil d'État ».
-      CE DÉCRET N'EST PAS DANS LA BASE. Un dépouillement de la législation
-      consolidée ne rend, pour le 1er janvier 2026, que des articles
-      LÉGISLATIFS — L. 732-21, L. 732-24, L. 732-35, L. 732-60 — et aucun
-      article réglementaire nouveau. Les articles R. 732-60, R. 732-63 et
-      R. 732-66, qui décrivent le calcul en points, courent toujours
-      jusqu'à 2999. Deux des trois inconnues de la formule nouvelle — le
-      maximum de la part forfaitaire d'avant 2016, le nombre d'années
-      retenues pour la part proportionnelle — ne sont donc écrites nulle
-      part, et la formule ne peut pas être calculée. La fiche sert celle
-      d'avant, la seule dont les paramètres existent, et le dit.
+      LES DÉCRETS SONT PARUS : n° 2025-1409 et n° 2025-1410 du 30 décembre
+      2025, au Journal officiel du lendemain, lus le 27 septembre 2026 dans
+      l'index JORF du dépôt. Les pensions qui prennent effet en 2026 et en
+      2027 restent liquidées par l'ancienne section (décret n° 2025-1409,
+      article 6), à deux choses près : la part proportionnelle d'avant 2016 se
+      calcule sur la moyenne des points des années les plus avantageuses (R.
+      732-66, rédaction de 2026), et un nouveau calcul intervient au plus tard
+      le 31 mars 2028, retenu s'il est plus favorable (loi n° 2025-199,
+      article 87, VIII, B ; décret n° 2025-1410, article 13). La fiche sert
+      encore la somme de tous les points, sans moyenne ni nouveau calcul :
+      voir la fiche retraite_proportionnelle_msa.
       Voir docs/limites.md.
       LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
       naît de la loi du 21 août 2003, pour les liquidations de 2004, à

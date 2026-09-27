@@ -31,7 +31,7 @@ inventaire:
     statut de chef.
 periodes:
   - debut: 2003
-    fin: null
+    fin: 2003
     type_calcul: points
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
@@ -41,6 +41,194 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     points_maximum: 100
+    assiette_repere_smic: 2028
+    assiette_plancher: assiette_minimale_agricole
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0297
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    points_gratuits:
+      regime: msa_non_salaries
+      avant: 2003
+      points_par_annee: 100
+      annees_minimum: 17.5
+      annees_maximum: 37.5
+      taux_plein_depuis: "2023-09"
+    notes: >-
+      Première année de la RCO. Décret n° 2003-146 du 20 février 2003, article 5 :
+      le minimum d'assiette « est fixé à 2 028 fois le montant du salaire minimum de
+      croissance », qui ouvre 100 points, et au-delà P = 100 × RP / 2 028 SMIC ;
+      décret n° 2003-147, article 1er : une cotisation de 2,97 %. Lus dans l'index
+      JORF du dépôt le 27 septembre 2026.
+  - debut: 2004
+    fin: 2004
+    type_calcul: points
+    age_ouverture: 64
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    points_maximum: 100
+    assiette_repere_smic: 1957
+    assiette_plancher: assiette_minimale_agricole
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0297
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    points_gratuits:
+      regime: msa_non_salaries
+      avant: 2003
+      points_par_annee: 100
+      annees_minimum: 17.5
+      annees_maximum: 37.5
+      taux_plein_depuis: "2023-09"
+    notes: >-
+      Décret n° 2004-1068 du 7 octobre 2004, article 1er : « pour l'année 2004, à
+      2,97 % des revenus professionnels [...] sans que cette assiette puisse être
+      inférieure à 1 957 fois le montant du salaire minimum de croissance » ; D.
+      732-155, première rédaction (22 avril 2005) : 100 points à ce minimum, P = 100
+      × RP / 1957 SMIC au-delà. Lus le 27 septembre 2026.
+  - debut: 2005
+    fin: 2005
+    type_calcul: points
+    age_ouverture: 64
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    points_maximum: 100
+    assiette_repere_smic: 1888
+    assiette_plancher: assiette_minimale_agricole
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0297
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    points_gratuits:
+      regime: msa_non_salaries
+      avant: 2003
+      points_par_annee: 100
+      annees_minimum: 17.5
+      annees_maximum: 37.5
+      taux_plein_depuis: "2023-09"
+    notes: >-
+      D. 732-165, rédaction du 16 novembre 2005 : « pour l'année 2005, à 2,97 %
+      [...] sans que cette assiette puisse être inférieure à 1888 fois le montant du
+      salaire minimum de croissance » ; D. 732-155, même date : P = 100 × RP / 1888
+      SMIC. Lus dans l'index LEGI du dépôt le 27 septembre 2026.
+  - debut: 2006
+    fin: 2009
+    type_calcul: points
+    age_ouverture: 64
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    points_maximum: 100
+    assiette_repere_smic: 1820
+    assiette_plancher: assiette_minimale_agricole
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0297
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    points_gratuits:
+      regime: msa_non_salaries
+      avant: 2003
+      points_par_annee: 100
+      annees_minimum: 17.5
+      annees_maximum: 37.5
+      taux_plein_depuis: "2023-09"
+    notes: >-
+      D. 732-155, rédaction du 19 octobre 2006 : un minimum de 1 820 SMIC, qui ouvre
+      100 points, et P = 100 × RP / 1820 SMIC au-delà ; D. 732-165, rédactions de
+      2006 à 2009 : 2,97 % chaque année. Lus dans l'index LEGI du dépôt le 27
+      septembre 2026.
+  - debut: 2010
+    fin: 2016
+    type_calcul: points
+    age_ouverture: 64
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    points_maximum: 100
+    assiette_repere_smic: 1820
+    assiette_plancher: assiette_minimale_agricole
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.03
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    points_gratuits:
+      regime: msa_non_salaries
+      avant: 2003
+      points_par_annee: 100
+      annees_minimum: 17.5
+      annees_maximum: 37.5
+      taux_plein_depuis: "2023-09"
+    notes: >-
+      D. 732-165, rédactions de 2010 à 2016 : 3 % chaque année, sur 1 820 SMIC au
+      moins ; D. 732-155 : 100 points à ce minimum « pour les périodes postérieures
+      au 31 décembre 2002 et antérieures au 1er janvier 2017 ». Lus dans l'index
+      LEGI du dépôt le 27 septembre 2026.
+  - debut: 2017
+    fin: 2017
+    type_calcul: points
+    age_ouverture: 64
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    points_maximum: 117
+    assiette_repere_smic: 1820
+    assiette_plancher: assiette_minimale_agricole
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.035
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    points_gratuits:
+      regime: msa_non_salaries
+      avant: 2003
+      points_par_annee: 100
+      annees_minimum: 17.5
+      annees_maximum: 37.5
+      taux_plein_depuis: "2023-09"
+    notes: >-
+      D. 732-155, rédaction du 5 mai 2017 : « à 117 par an pour l'année 2017 », et P
+      = N × RP / 1820 SMIC au-delà, N valant 117 ; D. 732-165, rédaction du 31
+      décembre 2016 : « pour l'année 2017 à 3,5 % ». Lus dans l'index LEGI du dépôt
+      le 27 septembre 2026.
+  - debut: 2018
+    fin: null
+    type_calcul: points
+    age_ouverture: 64
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    points_maximum: 133
     assiette_repere_smic: 1820
     assiette_plancher: assiette_minimale_agricole
     salaire_reference: carriere_entiere
@@ -70,15 +258,19 @@ periodes:
       D. 732-166 (base LEGI de la DILA).
       Ce qui débloque le calcul n'est pas un prix d'achat — l'arrêté qui le
       fixe ne modifie pas le code, et il reste introuvable — mais le BARÈME
-      EN POINTS, qui, lui, est public : cotiser sur l'assiette minimale de
-      1 820 SMIC ouvre 100 points, et les points sont proportionnels
-      au-delà, sans plafond. Le nombre de points ne dépend donc pas du taux
-      de cotisation.
-      Le taux de 4 % est celui en vigueur (assiette minimale 1 820 SMIC pour
-      les chefs d'exploitation, 1 200 pour les aides familiaux). Sa série
-      historique n'est pas sourcée : la RCO a démarré en 2003 à un taux plus
-      bas. Cela ne déplace pas la pension calculée ici, qui ne dépend que du
-      barème en points, mais seulement le flux versé au compte notionnel.
+      EN POINTS, qui, lui, est public : cotiser sur l'assiette minimale
+      ouvre le nombre de points que fixe D. 732-155 — 100 jusqu'en 2016,
+      117 en 2017, 133 à compter de 2018 —, et les points sont
+      proportionnels au-delà, sans plafond (P = N × RP / 1 820 SMIC). Le
+      nombre de points ne dépend donc pas du taux de cotisation.
+      Le taux de 4 % est celui en vigueur depuis 2018 (D. 732-165 ;
+      assiette minimale 1 820 SMIC pour les chefs d'exploitation, 1 200 pour
+      les aides familiaux). Les périodes précédentes portent 2,97 % de 2003
+      à 2009, 3 % de 2010 à 2016 et 3,5 % en 2017, et un minimum de 2 028,
+      1 957 puis 1 888 SMIC de 2003 à 2005, lus le 27 septembre 2026 : une
+      seule période portait jusque-là 1 820 SMIC, 100 points et 4 % depuis
+      2003. Le taux ne déplace pas la pension calculée ici, qui ne dépend
+      que du barème en points, mais le flux versé au compte notionnel.
       LES POINTS GRATUITS DES CHEFS D'EXPLOITATION SONT SERVIS
       (`points_gratuits`, lus sur Légifrance et sur la page de la MSA le 23
       septembre 2026) : cent par année de chef d'avant 2003, dans la limite

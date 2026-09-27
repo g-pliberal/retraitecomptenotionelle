@@ -10,33 +10,28 @@ etat: approchee
 etape: acquerir_les_droits
 effet: >-
   Les chefs d'exploitation aux revenus faibles, et, à la complémentaire, tous les chefs
-  qui cotisent depuis 2017. Le moteur s'écarte du texte en trois points. À la base, il
-  relève le revenu à 600 SMIC horaires dès 1990, quand les textes ne le relevaient qu'à
-  400 SMIC avant le décret n° 2004-783 : de 1990 à 2003 au moins, un chef sous 400 SMIC
-  reçoit 22,5 points au lieu de 15, la moitié en plus, et porte au compte une cotisation
-  assise sur une fois et demie l'assiette due. À la complémentaire, le minimum était de
-  2 028 SMIC en 2003, 1 957 en 2004 et 1 888 en 2005, et non de 1 820 : au-dessus, le
-  moteur compte jusqu'à 11,4 %, 7,5 % et 3,7 % de points de trop, et au minimum une
-  cotisation plus faible de 10,3 %, 7,0 % et 3,6 %. Surtout, l'assiette minimale ouvre
-  117 points en 2017 et 133 depuis 2018, et non 100, et les points au-dessus suivent («
-  P = N x RP/1820 SMIC ») : le moteur en compte 14,5 % de moins en 2017 et 24,8 % de
-  moins depuis 2018. Un chef au minimum de 2003 à 2025 a 2 581 points cotisés ; le
-  moteur lui en donne 2 300, 10,9 % de moins. Depuis 2026, le plancher de la base reste
-  de 600 SMIC, celui de la complémentaire de 1 820 SMIC, qui ouvrent 133 points.
+  qui cotisent depuis 2017. Le moteur suit les textes depuis la correction préparée le 27
+  septembre 2026 et publiée après la phase 8 : à la base, un plancher de 400 SMIC horaires
+  de 1990 à 2003, qui ouvre quinze points, puis de 600 ; à la complémentaire, un minimum
+  de 2 028, 1 957 et 1 888 SMIC de 2003 à 2005, puis de 1 820, qui ouvre 100 points par an
+  jusqu'en 2016, 117 en 2017 et 133 depuis 2018, les points au-dessus suivant (« P = N x
+  RP/1820 SMIC »), et une cotisation de 2,97 % jusqu'en 2009, 3 % jusqu'en 2016, 3,5 % en
+  2017 et 4 % depuis (D. 732-165). Jusque-là, une seule période portait 1 820 SMIC, 100
+  points et 4 % depuis 2003, et la base relevait le revenu à 600 SMIC dès 1990. Sur les
+  témoins, la pension d'aujourd'hui d'un chef né en 1975, parti à 64 ans au salaire moyen,
+  passe de 29 393 € à 30 109 € (+2,4 %), celle d'un chef né en 1965 de 23 483 € à 23 802 €
+  (+1,4 %) ; les scénarios rétroactifs de la proposition, dont le compte reçoit désormais
+  la cotisation au taux de chaque année, baissent de 1 à 3 %. Reste une approximation : la
+  première année de cotisation sur 600 SMIC, que le moteur place en 2004 et que le décret
+  n° 2004-783 ne date pas.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Après la phase 8 : relever l'assiette de la base à 400 SMIC horaires, et non 600, pour
-    les cotisations d'avant le décret n° 2004-783, en scindant la période 1990-2002 de
-    `msa_non_salaries` ; porter le repère de `msa_rco` à 2 028 SMIC en 2003, 1 957 en 2004
-    et 1 888 en 2005 ; faire ouvrir à ce repère 117 points en 2017 et 133 depuis 2018, au
-    lieu de `points_maximum: 100`, qui ne vaut que de 2003 à 2016.
-  - >-
     Dire la première année de cotisation assise sur 600 SMIC : le décret n° 2004-783,
     publié au Journal officiel du 1er août 2004, ne la nomme pas dans ce qui en a été lu,
-    et 2004 comme 2005 restent possibles.
+    et 2004 comme 2005 restent possibles ; le moteur la place en 2004.
   lectures:
   - type: legifrance
     reference: >-
