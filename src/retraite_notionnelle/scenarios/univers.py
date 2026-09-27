@@ -76,7 +76,10 @@ class CalculNotionnel:
 
     def donnees(self) -> dict:
         """Ce que le paquet du site porte : le portage ne résout pas les
-        couches, la fabrication l'a fait (§ 13.5)."""
+        couches, la fabrication l'a fait (§ 13.5). Tiré sans paramètres, un
+        paramètre qui se lit dans un autre y reste un renvoi,
+        ``{"parametre": "taux_cotisation_liberal"}``, que le site lit sous ses
+        propres réglages."""
         return {
             "univers": self.univers, "libelle": self.libelle,
             "prospectif": self.prospectif,
@@ -88,9 +91,10 @@ class CalculNotionnel:
         }
 
 
-def calcul_notionnel(univers: Univers, parametres: Parametres) -> CalculNotionnel:
+def calcul_notionnel(univers: Univers, parametres: Parametres | None) -> CalculNotionnel:
     """Ce que le moteur fait de ``univers``, sous ``parametres`` ; ce qu'il ne
-    sait pas faire l'arrête."""
+    sait pas faire l'arrête. Sans paramètres, les valeurs restent telles que
+    les couches les écrivent : c'est la forme que le paquet du site porte."""
     nom = univers.id
     if univers.est_le_droit_reel:
         raise ValueError(f"univers {nom} : le droit réel se calcule par l'échéancier")
@@ -117,7 +121,9 @@ def calcul_notionnel(univers: Univers, parametres: Parametres) -> CalculNotionne
         if fiche != COMPTE or parametre not in PARAMETRES_DU_COMPTE:
             raise ValueError(f"univers {nom} : le moteur ne sait pas changer "
                              f"{fiche}.{parametre}")
-        if isinstance(valeur, dict):
+        if parametres is None:
+            pass                        # la forme du paquet, que le site résout
+        elif isinstance(valeur, dict):
             valeur = getattr(parametres, valeur["parametre"])
         elif isinstance(types[parametre], type) and issubclass(types[parametre], Enum):
             valeur = types[parametre](valeur)

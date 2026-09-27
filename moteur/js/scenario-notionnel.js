@@ -242,9 +242,17 @@ export class ScenarioNotionnel {
    * Pour un assuré dont la retraite est déjà liquidée à la bascule, ce scénario
    * ne peut rien changer : ses droits sont intégralement acquis. On renvoie
    * alors sa pension actuelle, de sorte que le tableau comparatif reste lisible.
+   *
+   * `neutralisations` est ce que la couche d'un seul calcul de l'univers retire
+   * à la liquidation fictive des droits acquis
+   * (`data/reference/couches/contributif_seul.yaml`) : un ensemble de noms de
+   * la liste `neutralisations`, que l'univers donne. Voir le Python.
    */
   prospectif(carriere, regimeFusionne,
-             libelle = "Comptes notionnels à compter de la bascule") {
+             libelle = "Comptes notionnels à compter de la bascule", neutralisations) {
+    if (!(neutralisations instanceof Set)) {
+      throw new Error("prospectif : l'univers dit ce que sa liquidation fictive neutralise");
+    }
     const anneeLiquidation = carriere.anneeLiquidation;
     const ageLiquidation = carriere.age_liquidation || 0.0;
     const bascule = this.parametres.annee_bascule;
@@ -253,7 +261,7 @@ export class ScenarioNotionnel {
       return this._dejaLiquide(carriere);
     }
 
-    const droitsAcquis = this._droitsAcquis(carriere, bascule);
+    const droitsAcquis = this._droitsAcquis(carriere, bascule, neutralisations);
     const capitalAcquis = droitsAcquis === null ? 0.0 : droitsAcquis.capital;
 
     const compte = this.constructeur.construire(
@@ -312,9 +320,10 @@ export class ScenarioNotionnel {
    *
    * Les droits sont ceux qu'aurait produits la carrière si elle s'était
    * arrêtée à la bascule, calculés selon les règles actuelles mais DÉBARRASSÉS
-   * des avantages non contributifs. La valorisation se fait à l'année de
-   * bascule, sans décote ni surcote : on mesure des droits déjà ouverts, pas
-   * une liquidation anticipée.
+   * de ce que `neutralisations` retire — les avantages non contributifs, les
+   * points gratuits, la décote et la surcote, que la couche « au contributif
+   * seul » neutralise. La valorisation se fait à l'année de bascule : on mesure
+   * des droits déjà ouverts, pas une liquidation anticipée.
    *
    * Reste l'âge auquel prendre le diviseur, et c'est le paramètre
    * ``age_conversion_droits_acquis`` qui tranche : l'âge de référence fait
@@ -324,7 +333,7 @@ export class ScenarioNotionnel {
    *
    * Renvoie les étapes de la cascade, ou ``null`` si rien n'a été acquis.
    */
-  _droitsAcquis(carriere, bascule) {
+  _droitsAcquis(carriere, bascule, neutralisations) {
     const lignesAvant = carriere.lignes.filter((ligne) => ligne.annee < bascule);
     if (lignesAvant.length === 0) {
       return null;
@@ -341,9 +350,15 @@ export class ScenarioNotionnel {
       identifiant: `${carriere.identifiant} (droits figés ${bascule})`,
     });
     // Une liquidation FICTIVE (docs/architecture.md, § 7.3) : calculée sans
-    // être servie, au contributif seul, décote et surcote neutralisées.
+    // être servie, avec ce que la couche d'un seul calcul neutralise.
     const droits = this.scenarioActuel.calculer(
-      carriereTronquee, true, false, true, true, null, "fictive");
+      carriereTronquee,
+      neutralisations.has("decote_surcote"),
+      !neutralisations.has("avantages_non_contributifs"),
+      !neutralisations.has("avpf"),
+      !neutralisations.has("successions"),
+      !neutralisations.has("points_gratuits"),
+      "fictive");
 
     const ageConversion = this.parametres.age_conversion_droits_acquis
         === AgeConversionDroitsAcquis.REFERENCE

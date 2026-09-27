@@ -7,9 +7,7 @@
  */
 
 import { Carriere, salaireMoyenAnnuel } from "./carriere.js";
-import {
-  ContributionEtat, PARAMETRES_DEFAUT, PartCotisation, SourceCotisations,
-} from "./config.js";
+import { ContributionEtat, PARAMETRES_DEFAUT, PartCotisation } from "./config.js";
 import { ConstructeurCompte } from "./compte.js";
 import { Convertisseur } from "./conversion.js";
 import { AgeReference } from "./age-reference.js";
@@ -36,34 +34,59 @@ import {
 } from "./serie.js";
 
 /**
+ * Les résultats notionnels qu'une comparaison sait porter, un par univers de
+ * la proposition : un univers de plus demande de savoir l'afficher.
+ */
+export const CHAMPS_NOTIONNELS = Object.freeze([
+  "notionnel_retroactif", "notionnel_prospectif", "notionnel_retroactif_employeur",
+  "notionnel_prospectif_employeur", "notionnel_liberal",
+]);
+
+/**
  * Les cinq scénarios notionnels, dans l'ordre où ils s'affichent, avec le
- * numéro et le titre sous lesquels le tableau, la page et l'API les citent.
+ * numéro et le titre sous lesquels le tableau, la page et l'API les citent :
+ * les univers de la proposition que le paquet porte (docs/architecture.md,
+ * § 4.8), dont chacun est une pile de couches posée sur le droit réel.
  *
  * Deux paires, puis un sixième : 2 et 3 ne portent au compte que la part
- * SALARIALE de la cotisation, 4 et 5 y ajoutent la part PATRONALE. À
- * l'intérieur de chaque paire, l'un est rétroactif et l'autre prospectif. Le 4
- * se lit contre le 2, le 5 contre le 3, et l'écart mesure exactement ce que
- * l'employeur verse. Le 6 se lit contre le 4 : même compte rétroactif,
- * cotisation entière aux taux réels jusqu'à la bascule, puis un taux unique de
- * 18 % pour tous à compter d'elle, et une garantie vieillesse individualisée,
- * financée par l'impôt, par-dessus.
+ * SALARIALE de la cotisation, 4 et 5 y ajoutent la couche de la part
+ * PATRONALE. À l'intérieur de chaque paire, l'un est rétroactif et l'autre
+ * prospectif, par la transition de la bascule. Le 4 se lit contre le 2, le 5
+ * contre le 3, et l'écart mesure exactement ce que l'employeur verse. Le 6 se
+ * lit contre le 4 : même compte rétroactif, cotisation entière aux taux réels
+ * jusqu'à la bascule, puis un taux unique de 18 % pour tous à compter d'elle,
+ * et une garantie vieillesse individualisée, financée par l'impôt, par-dessus.
  */
-export const SCENARIOS_NOTIONNELS = Object.freeze([
-  ["notionnel_retroactif", 2, "Notionnel rétroactif, part salariale"],
-  ["notionnel_prospectif", 3, "Notionnel dès {bascule}, part salariale"],
-  ["notionnel_retroactif_employeur", 4,
-    "Notionnel rétroactif, salariale + patronale"],
-  ["notionnel_prospectif_employeur", 5,
-    "Notionnel dès {bascule}, salariale + patronale"],
-  ["notionnel_liberal", 6,
-    "Notionnel rétroactif, 18 % dès {bascule}, garantie vieillesse"],
-]);
+export function scenariosNotionnels(paquet) {
+  return paquet.univers.filter((u) => u.calcul !== null).map((u) => [u.id, u.numero, u.nom]);
+}
+
+/**
+ * Ce que le site fait d'un univers : le calcul que la fabrication en a tiré, car
+ * le site ne résout pas les couches (docs/architecture.md, § 13.5). Un paramètre
+ * qui se lit dans un autre — le taux unique, dans `taux_cotisation_liberal` —
+ * se lit sous les réglages du site. Voir `scenarios/univers.py`.
+ */
+export function calculNotionnel(calcul, parametres) {
+  const modifications = {};
+  for (const [nom, valeur] of Object.entries(calcul.modifications)) {
+    modifications[nom] = valeur !== null && typeof valeur === "object"
+      ? parametres[valeur.parametre] : valeur;
+  }
+  return { ...calcul, modifications, neutralisations: new Set(calcul.neutralisations) };
+}
+
+/** Les paramètres que les couches changent, en clé : deux univers qui changent
+ *  les mêmes partagent le même compte. */
+function cleDesModifications(modifications) {
+  return JSON.stringify(Object.entries(modifications)
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
+}
 
 /** Les six résultats, côte à côte, pour une même carrière. */
 export class Comparaison {
   constructor({
-    carriere, actuel, notionnelRetroactif, notionnelProspectif,
-    notionnelRetroactifEmployeur, notionnelProspectifEmployeur, notionnelLiberal,
+    carriere, actuel, notionnels, scenarios,
     regimeFusionne, parametres, coefficientEurosConstants = 1.0,
     dernierRevenuAnnualise = 0.0, remuneration = null, niveauInverse = null,
     aujourdhui = null, coefficientEurosAujourdhui = 1.0,
@@ -72,11 +95,12 @@ export class Comparaison {
   }) {
     this.carriere = carriere;
     this.actuel = actuel;
-    this.notionnel_retroactif = notionnelRetroactif;
-    this.notionnel_prospectif = notionnelProspectif;
-    this.notionnel_retroactif_employeur = notionnelRetroactifEmployeur;
-    this.notionnel_prospectif_employeur = notionnelProspectifEmployeur;
-    this.notionnel_liberal = notionnelLiberal;
+    //: Les cinq scénarios notionnels, `[clé, numéro, titre]`, dans l'ordre où
+    //: ils s'affichent : voir `scenariosNotionnels`.
+    this.scenarios = scenarios;
+    for (const cle of CHAMPS_NOTIONNELS) {
+      this[cle] = notionnels[cle];
+    }
     this.regime_fusionne = regimeFusionne;
     this.parametres = parametres;
     //: Coefficient de passage des euros de l'année de liquidation aux euros
@@ -323,7 +347,7 @@ export class Comparaison {
             code: a.code, libelle: a.libelle, montant: a.montant, detail: a.detail,
           })),
         },
-        ...Object.fromEntries(SCENARIOS_NOTIONNELS.map(([cle]) => [
+        ...Object.fromEntries(this.scenarios.map(([cle]) => [
           cle,
           resumeNotionnel(
             this[cle], this.tauxRemplacement(cle), this.variation(cle),
@@ -564,45 +588,6 @@ export class Simulateur {
     this.scenarioActuel = new ScenarioActuel(
       paquet, this.macro, this.catalogue, this.affiliations, parametres,
     );
-    this.scenarioNotionnel = new ScenarioNotionnel(
-      this.constructeur, this.convertisseur, this.ageReference,
-      this.scenarioActuel, parametres,
-    );
-
-    // Les scénarios 4 et 5 ne diffèrent du scénario 2 que par leur flux de
-    // cotisations : mêmes données, même indexation, même liquidation. Ils se
-    // construisent donc en dérivant les paramètres, ce qui garantit qu'aucune
-    // autre différence ne peut s'y glisser à l'insu du lecteur.
-    // Scénarios 4 et 5 : un seul scénario pour les deux, comme
-    // `scenarioNotionnel` sert aux scénarios 2 et 3.
-    // Il est nommé parce qu'il sert deux fois : aux scénarios 4 et 5, et à la
-    // page « Coût », qui lui demande ce que le DROIT EN VIGUEUR prélève sur une
-    // carrière — le même compte, sans régime fusionné. C'est le dénominateur du
-    // rapport de recettes.
-    this.constructeurEmployeur = new ConstructeurCompte(
-      this.macro, this.catalogue, this.affiliations, this.indexation,
-      { ...parametres, part_cotisation: PartCotisation.TOTALE },
-    );
-    // Sauf sous `retraite_seule`, le défaut : le compte d'un agent de l'État
-    // n'y reçoit que la part de son taux que la Cour des comptes rattache à sa
-    // retraite, quand l'État verse le taux entier. Le réglage change ce qui est
-    // PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ, et le dénominateur du rapport de
-    // recettes se calcule sur le taux entier. Voir le Python.
-    this.constructeurPrelevement =
-      parametres.contribution_etat === ContributionEtat.ENTIERE
-        ? this.constructeurEmployeur
-        : new ConstructeurCompte(
-          this.macro, this.catalogue, this.affiliations, this.indexation,
-          {
-            ...parametres,
-            part_cotisation: PartCotisation.TOTALE,
-            contribution_etat: ContributionEtat.ENTIERE,
-          },
-        );
-    this.scenarioEmployeur = new ScenarioNotionnel(
-      this.constructeurEmployeur,
-      this.convertisseur, this.ageReference, this.scenarioActuel, parametres,
-    );
     // Le pilier de capitalisation obligatoire, et la courbe sans risque qui
     // l'alimente : ils n'entrent que dans la proposition. Son convertisseur est
     // celui du TAUX TECHNIQUE de la rente — nul par défaut, donc le même
@@ -626,24 +611,107 @@ export class Simulateur {
       }, this.macro, this.distribution),
       parametres,
     );
-    // Scénario 6 : le constructeur du scénario 4 jusqu'à la bascule — taux
-    // réels, salariale et patronale confondues —, puis le taux unique de la
-    // proposition, prélevé une fois sur la rémunération, à compter d'elle, et
-    // le pilier capitalisé par-dessus.
-    this.scenarioLiberal = new ScenarioNotionnel(
-      new ConstructeurCompte(
-        this.macro, this.catalogue, this.affiliations, this.indexation,
-        {
-          ...parametres,
-          part_cotisation: PartCotisation.TOTALE,
-          source_cotisations: SourceCotisations.TAUX_HISTORIQUES_PUIS_UNIFORME,
-          taux_cotisation_uniforme: parametres.taux_cotisation_liberal,
-        },
-      ),
-      this.convertisseur, this.ageReference, this.scenarioActuel, parametres,
-      this.constructeurCapitalisation,
-    );
+
+    // Les cinq scénarios de la proposition, chacun un univers de droit, tels
+    // que la fabrication les a résolus (docs/architecture.md, § 4.8 et 13.5).
+    // Ils ne diffèrent que par ce qui alimente le compte : mêmes données, même
+    // indexation, même liquidation. Chacun se construit donc en dérivant les
+    // paramètres, ce qui garantit qu'aucune autre différence ne peut s'y
+    // glisser à l'insu du lecteur ; deux univers qui changent les mêmes
+    // paramètres partagent le même compte, comme 2 et 3, ou 4 et 5.
+    this.scenarios = scenariosNotionnels(paquet);
+    this.calculs = Object.fromEntries(paquet.univers.filter((u) => u.calcul !== null)
+      .map((u) => [u.id, calculNotionnel(u.calcul, parametres)]));
+    this._constructeurs = new Map();
+    this._scenarios = new Map();
+    this.scenarioNotionnel = this.scenarioDe(this.calculs.notionnel_retroactif);
+    // Scénarios 4 et 5 : un seul compte pour les deux, que la couche
+    // `part_patronale` dérive. Il est nommé parce qu'il sert deux fois : aux
+    // scénarios 4 et 5, et à la page « Coût », qui lui demande ce que le DROIT
+    // EN VIGUEUR prélève sur une carrière — le même compte, sans régime
+    // fusionné. C'est le dénominateur du rapport de recettes.
+    this.constructeurEmployeur = this.constructeurDe(
+      this.calculs.notionnel_retroactif_employeur);
+    // Sauf sous `retraite_seule`, le défaut : le compte d'un agent de l'État
+    // n'y reçoit que la part de son taux que la Cour des comptes rattache à sa
+    // retraite, quand l'État verse le taux entier. Le réglage change ce qui est
+    // PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ, et le dénominateur du rapport de
+    // recettes se calcule sur le taux entier. Voir le Python.
+    this.constructeurPrelevement =
+      parametres.contribution_etat === ContributionEtat.ENTIERE
+        ? this.constructeurEmployeur
+        : new ConstructeurCompte(
+          this.macro, this.catalogue, this.affiliations, this.indexation,
+          {
+            ...parametres,
+            part_cotisation: PartCotisation.TOTALE,
+            contribution_etat: ContributionEtat.ENTIERE,
+          },
+        );
+    this.scenarioEmployeur = this.scenarioDe(this.calculs.notionnel_retroactif_employeur);
+    // Scénario 6 : le compte du scénario 4 jusqu'à la bascule — taux réels,
+    // salariale et patronale confondues —, puis le taux unique de la
+    // proposition, et le pilier capitalisé par-dessus.
+    this.scenarioLiberal = this.scenarioDe(this.calculs.notionnel_liberal);
     this._regimeFusionne = null;
+  }
+
+  /**
+   * Le compte d'un univers : celui du simulateur, sous les paramètres que ses
+   * couches changent.
+   */
+  constructeurDe(calcul) {
+    if (Object.keys(calcul.modifications).length === 0) {
+      return this.constructeur;
+    }
+    const cle = cleDesModifications(calcul.modifications);
+    if (!this._constructeurs.has(cle)) {
+      this._constructeurs.set(cle, new ConstructeurCompte(
+        this.macro, this.catalogue, this.affiliations, this.indexation,
+        { ...this.parametres, ...calcul.modifications },
+      ));
+    }
+    return this._constructeurs.get(cle);
+  }
+
+  /**
+   * Le scénario notionnel d'un univers. Le pilier capitalisé n'est construit
+   * que pour l'univers qui l'ajoute : les autres ne le reçoivent pas, et ne
+   * peuvent donc pas le servir par inadvertance.
+   */
+  scenarioDe(calcul) {
+    const cle = JSON.stringify([cleDesModifications(calcul.modifications),
+      calcul.capitalisation]);
+    if (!this._scenarios.has(cle)) {
+      this._scenarios.set(cle, new ScenarioNotionnel(
+        this.constructeurDe(calcul), this.convertisseur, this.ageReference,
+        this.scenarioActuel, this.parametres,
+        calcul.capitalisation ? this.constructeurCapitalisation : null,
+      ));
+    }
+    return this._scenarios.get(cle);
+  }
+
+  /**
+   * Un univers de la proposition sur cette carrière, telle quelle : l'âge légal
+   * que l'univers ajoute, c'est à `carriereProposition` de l'appliquer. Une
+   * transition ouvre le compte à la bascule, sur les droits acquis que sa
+   * liquidation fictive valorise, et sur le régime unique toujours ; la
+   * garantie vieillesse se sert après le compte rétroactif et son pilier ;
+   * sinon, le compte rétroactif. Voir `simulateur.py`.
+   */
+  calculerUnivers(cle, carriere) {
+    const calcul = this.calculs[cle];
+    const scenario = this.scenarioDe(calcul);
+    const fusionne = this.parametres.fusion_au_plus_defavorable ? this.regimeFusionne : null;
+    if (calcul.prospectif) {
+      return scenario.prospectif(carriere, this.regimeFusionne, calcul.libelle,
+        calcul.neutralisations);
+    }
+    if (calcul.garantie) {
+      return scenario.liberal(carriere, fusionne, calcul.libelle);
+    }
+    return scenario.retroactif(carriere, fusionne, calcul.libelle);
   }
 
   /**
@@ -763,8 +831,7 @@ export class Simulateur {
    * génération de la grille.
    */
   proposition(carriere) {
-    const fusionne = this.parametres.fusion_au_plus_defavorable ? this.regimeFusionne : null;
-    return this.scenarioLiberal.liberal(carriere, fusionne);
+    return this.calculerUnivers("notionnel_liberal", carriere);
   }
 
   /** Calcule les six scénarios pour une carrière. */
@@ -778,27 +845,26 @@ export class Simulateur {
       this._verifierFiabilite(proposition);
     }
 
-    const fusionne = this.parametres.fusion_au_plus_defavorable ? this.regimeFusionne : null;
-
     // LE SCÉNARIO 1 PASSE PAR L'ÉCHÉANCIER (docs/architecture.md, § 7.4) : le
     // départ appelle la liquidation, puis l'ASPA du jour ; l'échéance, pour qui
     // a liquidé avant l'année courante, fait vivre les pensions jusque-là. Tout
     // s'inscrit à son journal.
     const echeancier = this.echeancier(carriere);
+    // Les cinq autres sont les univers de la proposition, dans l'ordre de leurs
+    // numéros ; celui qui ajoute l'âge légal part à cet âge.
+    const notionnels = {};
+    for (const [cle, calcul] of Object.entries(this.calculs)) {
+      if (!CHAMPS_NOTIONNELS.includes(cle)) {
+        throw new Error(`univers ${cle} : la comparaison ne connaît que `
+          + `${CHAMPS_NOTIONNELS.join(", ")}, et ne sait pas encore en afficher un autre`);
+      }
+      notionnels[cle] = this.calculerUnivers(cle, calcul.age_legal ? proposition : carriere);
+    }
     const comparaison = new Comparaison({
       carriere,
       actuel: echeancier.auDepart,
-      notionnelRetroactif: this.scenarioNotionnel.retroactif(carriere, fusionne),
-      notionnelProspectif: this.scenarioNotionnel.prospectif(carriere, this.regimeFusionne),
-      notionnelRetroactifEmployeur: this.scenarioEmployeur.retroactif(
-        carriere, fusionne,
-        "Comptes notionnels rétroactifs, cotisation salariale et patronale",
-      ),
-      notionnelProspectifEmployeur: this.scenarioEmployeur.prospectif(
-        carriere, this.regimeFusionne,
-        "Comptes notionnels à compter de la bascule, cotisation salariale et patronale",
-      ),
-      notionnelLiberal: this.proposition(proposition),
+      notionnels,
+      scenarios: this.scenarios,
       regimeFusionne: this.regimeFusionne,
       parametres: this.parametres,
       coefficientEurosConstants: this.macro.coefficientPrix(

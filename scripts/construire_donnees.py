@@ -71,6 +71,7 @@ from retraite_notionnelle.donnees.mortalite import (  # noqa: E402
     DonneesMortalite,
     serialiser_calibrations,
 )
+from retraite_notionnelle.noyau import univers as univers_de_droit  # noqa: E402
 from retraite_notionnelle.noyau import vocabulaire  # noqa: E402
 from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
 from retraite_notionnelle.restitution import POSTES_REMUNERATION  # noqa: E402
@@ -80,6 +81,7 @@ from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     CatalogueRegimes,
     charger_inventaire,
 )
+from retraite_notionnelle.scenarios.univers import calcul_notionnel  # noqa: E402
 from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     AgesAnnulationDecote,
     AgesJouissanceMilitaire,
@@ -1199,6 +1201,18 @@ def _neutralisations() -> list[str]:
     return sorted(vocabulaire.liste("neutralisations"))
 
 
+def _univers() -> list[dict]:
+    """Les six scénarios, chacun un univers de droit (docs/architecture.md,
+    § 4.8), dans l'ordre de leurs numéros. Le site ne résout pas les couches :
+    la fabrication l'a fait (§ 13.5), et il lit ce que le moteur en tire. Un
+    paramètre qu'une couche lit dans un autre — le taux unique, dans
+    ``taux_cotisation_liberal`` — y reste un renvoi, que le site lit sous ses
+    propres réglages."""
+    return [{"id": u.id, "numero": u.numero, "nom": u.nom, "couches": list(u.couches),
+             "calcul": None if u.est_le_droit_reel else calcul_notionnel(u, None).donnees()}
+            for u in univers_de_droit.charger().values()]
+
+
 def _services_ouvrant_pension() -> dict:
     """Durée de services qui ouvre une pension, par régime spécial et par date
     de radiation : la condition de priorité de R. 173-15."""
@@ -1605,6 +1619,7 @@ def construire(bilan: bytes) -> bytes:
         "presomptions": _presomptions(),
         "sortes_d_evenement": _sortes_d_evenement(),
         "neutralisations": _neutralisations(),
+        "univers": _univers(),
         "services_ouvrant_pension": _services_ouvrant_pension(),
         "surcote_parentale": _surcote_parentale(),
         "majoration_enfants_points": _majoration_enfants_points(),

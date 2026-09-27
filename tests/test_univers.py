@@ -367,3 +367,69 @@ def test_le_simulateur_partage_ce_que_les_univers_partagent():
     assert compte["notionnel_liberal"] is simulateur.constructeur_liberal
     assert [cle for cle, calcul in simulateur.calculs.items()
             if simulateur.scenario_de(calcul).capitalisation is not None] == ["notionnel_liberal"]
+
+
+# -- le portage -----------------------------------------------------------------------
+
+def _node(script: str) -> object:
+    """Ce que le portage rend, lu par ``node`` depuis la racine du dépôt."""
+    import json
+    import subprocess
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    sortie = subprocess.run(["node", "--input-type=module", "-e", script], cwd=RACINE,
+                            capture_output=True, text=True, encoding="utf-8", check=True)
+    return json.loads(sortie.stdout)
+
+
+def test_le_paquet_porte_les_univers_resolus(tous):
+    """Le site ne résout pas les couches : la fabrication l'a fait (§ 13.5).
+    Le paquet porte chaque univers et ce que le moteur en tire, un paramètre
+    qui se lit ailleurs restant un renvoi que le site lit sous ses réglages."""
+    import json
+
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    assert [u["id"] for u in paquet["univers"]] == list(tous)
+    for porte in paquet["univers"]:
+        u = tous[porte["id"]]
+        assert (porte["numero"], porte["nom"], porte["couches"]) == (u.numero, u.nom,
+                                                                     list(u.couches))
+        attendu = None if u.est_le_droit_reel else moteur.calcul_notionnel(u, None).donnees()
+        assert porte["calcul"] == attendu, u.id
+    liberal = next(u for u in paquet["univers"] if u["id"] == "notionnel_liberal")
+    assert liberal["calcul"]["modifications"]["taux_cotisation_uniforme"] == {
+        "parametre": "taux_cotisation_liberal"}
+
+
+def test_les_deux_moteurs_tirent_la_meme_chose_des_univers(calculs):
+    """Le portage résout les renvois sous ses réglages comme le Python sous
+    les siens, bâtit les mêmes scénarios, partage les mêmes comptes, et range
+    les mêmes univers parmi les prospectifs de la page Coût."""
+    from retraite_notionnelle import cout
+    from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
+
+    lu = _node(
+        'import { readFileSync } from "node:fs";'
+        'import { Simulateur } from "./moteur/js/simulateur.js";'
+        'import { CLES_PROSPECTIVES } from "./moteur/js/cout.js";'
+        'const s = new Simulateur(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));'
+        'const c = s.calculs;'
+        "process.stdout.write(JSON.stringify({"
+        "  scenarios: s.scenarios,"
+        "  calculs: Object.fromEntries(Object.entries(c).map(([k, v]) => ["
+        "    k, { ...v, neutralisations: [...v.neutralisations].sort() }])),"
+        "  partages: ["
+        "    s.scenarioDe(c.notionnel_prospectif).constructeur === s.constructeur,"
+        "    s.scenarioDe(c.notionnel_prospectif_employeur).constructeur === s.constructeurEmployeur,"
+        "    s.scenarioLiberal.capitalisation !== null,"
+        "    s.scenarioNotionnel.capitalisation === null],"
+        "  prospectives: [...CLES_PROSPECTIVES].sort(),"
+        "}));")
+    assert [tuple(s) for s in lu["scenarios"]] == list(SCENARIOS_NOTIONNELS)
+    for cle, calcul in calculs.items():
+        attendu = calcul.donnees()
+        attendu["neutralisations"] = sorted(calcul.neutralisations)
+        assert lu["calculs"][cle] == attendu, cle
+    assert lu["partages"] == [True, True, True, True]
+    assert lu["prospectives"] == sorted(cout.CLES_PROSPECTIVES)

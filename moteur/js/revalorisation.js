@@ -500,10 +500,13 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
 
   const notionnels = {};
   const coefficients = {};
-  for (const cle of ["notionnel_retroactif", "notionnel_prospectif",
-    "notionnel_retroactif_employeur", "notionnel_prospectif_employeur"]) {
+  for (const [cle, calcul] of Object.entries(simulateur.calculs)) {
+    if (calcul.garantie) {
+      continue; // la garantie se calcule aujourd'hui : plus bas
+    }
     const pension = comparaison[cle].pension_annuelle;
-    const prospectif = cle.startsWith("notionnel_prospectif");
+    // Un univers qui porte une transition ne change rien avant elle.
+    const prospectif = calcul.prospectif;
     if (prospectif && liquidation <= bascule) {
       if (annee <= bascule) {
         notionnels[cle] = actuel.pension_annuelle;
