@@ -1,0 +1,60 @@
+code: nric
+rang: 330
+nom: Nouveau régime complémentaire des industriels et commerçants
+famille: non_salarie
+source_id: dila_legi_rci
+fiabilite: haute
+creation: 2004
+fermeture: 2012
+extinction: 2013
+succede_a: []
+integre_dans: rci
+population: >-
+  Commerçants et industriels. Complémentaire rendue obligatoire au
+  1er janvier 2004 par la loi du 21 août 2003 ; fondue dans le RCI au
+  1er janvier 2013.
+hors_repartition: false
+periodes:
+  - debut: 2004
+    fin: 2004
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 160
+    taux_plein: 1.0
+    age_ouverture_par_generation: true
+    age_taux_plein_par_generation: true
+    decote_par_generation: true
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.0400
+    notes: >-
+      D. 635-10, état du 24 août 2004 : 3,5 % au premier semestre et 4,5 % au second, soit 4 % sur l'année — la convention du dépôt étant un taux annuel, c'est la moyenne des deux semestres qui est portée.
+      LE RÉGIME ACCUMULE DE VRAIS POINTS, lui aussi, depuis que les barèmes
+      IPP versent son salaire de référence et sa valeur de service de 2004 à
+      2012. Son rendement y est stable à 7,20 %, là où le repli de
+      `rendements_points.csv` lui prêtait 6,74 %.
+      À LA FUSION DE 2013 ses points sont repris UN POUR UN : le point du
+      RCI est celui du commerçant — c'est lui qui sert de dénominateur au
+      coefficient appliqué aux artisans.
+  - debut: 2005
+    fin: 2012
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 160
+    taux_plein: 1.0
+    age_ouverture_par_generation: true
+    age_taux_plein_par_generation: true
+    decote_par_generation: true
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.0650
+    notes: >-
+      D. 635-10, état du 26 mars 2005 : 6,5 % dans la limite de trois fois le plafond, inchangé jusqu'à la fusion dans le RCI.

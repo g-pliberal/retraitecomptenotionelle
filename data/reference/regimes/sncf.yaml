@@ -1,0 +1,208 @@
+code: sncf
+rang: 570
+nom: Régime spécial de retraite du personnel de la SNCF (CPRPSNCF)
+famille: special
+source_id: rs_cprpsncf
+fiabilite: moyenne
+creation: 1909
+fermeture: 2020
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Agents du cadre permanent de la SNCF. Régime fermé aux agents recrutés
+  à compter du 1er janvier 2020 (loi du 27 juin 2018) : les nouveaux
+  entrants relèvent du régime général et de l'Agirc-Arrco.
+hors_repartition: false
+# MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+# — décret n° 2008-639, article 16 (LEGIARTI000048240189) : « une
+# majoration de 10 % » pour trois enfants, « 5 % de la pension […]
+# pour chaque enfant au-delà du troisième ». Le règlement d'avant
+# juillet 2008 n'est pas dans l'index LEGI : le même barème lui est
+# prêté. Barème `taux_majoration_enfants` de chaque période.
+periodes:
+  - debut: 1930
+    fin: 2008
+    type_calcul: annuites
+    age_ouverture: 50
+    age_taux_plein: 50
+    duree_requise_trimestres: 150
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.079
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    notes: >-
+      Ouverture à 50 ans pour les agents de conduite, 55 ans pour les autres
+      agents du cadre permanent. Aucune décote avant 2008 : un départ à
+      50 ans avec 150 trimestres donnait 75 % du dernier traitement.
+      C'est le cas où l'écart à l'âge de référence atteint 15 ans.
+  - debut: 2009
+    fin: 2017
+    type_calcul: annuites
+    age_ouverture: 52
+    age_taux_plein: 57
+    duree_requise_trimestres: 160
+    duree_requise_par_generation: true
+    age_table: sncf_conduite_2011
+    duree_requise_table: [sncf_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0892
+    perimetre_taux: agent_seul
+    decote_par_trimestre: 0.0125
+    bareme_decote: regimes_speciaux
+    surcote_par_trimestre: 0.0075
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    age_surcote_regimes_speciaux: true
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    notes: >-
+      RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, portée ici par le décret n°
+      2008-639 du 30 juin 2008 : décote, durée alignée progressivement. LA
+      DÉCOTE ARRIVE AVEC QUATRE ANS DE RETARD, et la fiche la servait
+      pleine dès 2009. Le calendrier est écrit mot pour mot, et à
+      l'identique, dans chacun des décrets de la réforme : « le
+      coefficient de minoration […] n'est applicable qu'aux personnes
+      remplissant les conditions […] à compter du 1er juillet 2010 […] il
+      est fixé par trimestre manquant à un dixième du taux prévu […] ce
+      taux augmente du même montant au 1er juillet de chaque année ». Un
+      départ de 2011 décotait donc de 0,125 % par trimestre manquant, non
+      de 1,25 % : dix fois moins, et le plafond de vingt trimestres
+      retirait 2,5 % de la pension au lieu de 25 %. L'âge d'annulation
+      monte de même, de l'âge de référence diminué de seize trimestres en
+      2010 jusqu'à l'âge de référence lui-même en 2024. La période branche
+      donc `bareme_decote: regimes_speciaux`, qui lit ce calendrier dans
+      `legislation/decote_regimes_speciaux.csv`. LA DURÉE REQUISE SE LIT À
+      LA DATE OÙ L'AGENT RÉUNIT LES CONDITIONS, pour les retraités comme
+      pour les actifs. La réforme de 2008 la fait monter de 151 à 166
+      trimestres selon cette date, de juillet 2008 à juillet 2018
+      (`duree_requise_calendrier: regimes_speciaux_2008`) ; la table par
+      génération de 2014 ne vaut qu'à compter du 1er juillet 2019, et
+      celle de 2023 qu'à compter du 1er janvier 2025, les décrets gardant
+      « les règles applicables avant » à qui a réuni les conditions plus
+      tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
+      opposait à tous la table commune par génération : 167 trimestres à
+      un agent né en 1960 parti en 2010, dont le droit en demande 154.
+
+  - debut: 2018
+    fin: 2024
+    type_calcul: annuites
+    age_ouverture: 52
+    age_taux_plein: 57
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    age_table: sncf_conduite_2011
+    duree_requise_table: [sncf_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul
+    decote_par_trimestre: 0.0125
+    bareme_decote: regimes_speciaux
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    age_surcote_regimes_speciaux: true
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    notes: >-
+      LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par
+      année de naissance : l'article 37-1 du décret n° 2008-639
+      (LEGIARTI000023732614, en vigueur au 1er janvier 2017) fixe l'âge
+      d'ouverture de la catégorie agent de conduite à cinquante ans pour
+      les agents nés avant 1967, cinquante ans et quatre mois pour 1967,
+      et huit mois pour 1968, cinquante et un ans pour 1969, et quatre
+      mois pour 1970, et huit mois pour 1971, cinquante-deux ans à compter
+      de 1972 ; cinquante-cinq à cinquante-sept ans, générations 1962 à
+      1967, pour les autres agents. La fiche le lit PAR GÉNÉRATION
+      (`age_table`) : chaque agent a l'âge de sa génération, quelle que
+      soit l'année où il part, et non celui de la seule génération qui
+      l'atteint l'année de la liquidation, comme le faisaient ses périodes
+      annuelles. L'âge de référence de la décote (`bareme_decote:
+      regimes_speciaux`) suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT
+      À LA DATE OÙ L'AGENT RÉUNIT LES CONDITIONS, pour les retraités comme
+      pour les actifs. La réforme de 2008 la fait monter de 151 à 166
+      trimestres selon cette date, de juillet 2008 à juillet 2018
+      (`duree_requise_calendrier: regimes_speciaux_2008`) ; la table par
+      génération de 2014 ne vaut qu'à compter du 1er juillet 2019, et
+      celle de 2023 qu'à compter du 1er janvier 2025, les décrets gardant
+      « les règles applicables avant » à qui a réuni les conditions plus
+      tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
+      opposait à tous la table commune par génération : 167 trimestres à
+      un agent né en 1960 parti en 2010, dont le droit en demande 154.
+
+  - debut: 2025
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 54
+    age_taux_plein: 57
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    age_table: sncf_conduite_2023
+    duree_requise_table: [sncf_conduite, sncf_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul
+    decote_par_trimestre: 0.0125
+    bareme_decote: regimes_speciaux
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    age_surcote_regimes_speciaux: true
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    notes: >-
+      LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+      trois mois par année de naissance, aux pensions prenant effet à
+      compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
+      dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
+      (LEGIARTI000048896987, en vigueur, relu le 22 septembre 2026) porte
+      l'âge d'ouverture de la catégorie agent de conduite de
+      cinquante-deux ans (nés en 1972) à cinquante-deux ans et trois mois
+      (1973), six mois (1974), neuf mois (1975), cinquante-trois ans
+      (1976), et trois mois (1977), six mois (1978), neuf mois (1979),
+      cinquante-quatre ans à compter de 1980 ; l'âge des autres agents de
+      cinquante-sept à cinquante-neuf ans, générations 1968 à 1975. La
+      fiche le lit PAR GÉNÉRATION (`age_table`), pour tous les agents.
+      L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE
+      : le 1° du I de l'article 13, dans sa rédaction issue du même décret
+      (LEGIARTI000048897107, puis LEGIARTI000054622824 depuis le décret n°
+      2026-738 du 4 août 2026, qui n'y touche pas), le FIXE « à
+      cinquante-sept ans pour les agents mentionnés au 1° du I de
+      l'article 1 et à soixante-deux ans pour les agents mentionnés au 2°
+      ». La fiche le faisait monter cinq ans au-dessus de l'âge
+      d'ouverture, jusqu'à cinquante-neuf ans : un agent de conduite né en
+      1980 parti à cinquante-quatre ans se voyait opposer vingt trimestres
+      de décote au lieu de douze, soit 10 % de pension. La CPRPSNCF
+      l'écrit de son côté (« Réforme des retraites 2023 », lue le 22
+      septembre 2026) : « L'âge d'annulation de la décote est inchangé »,
+      cinquante-sept ans pour les agents de conduite nés à compter de
+      1975. Les soixante-deux à soixante-quatre ans des générations 1963 à
+      1970 que la fiche prenait pour l'âge d'annulation sont ceux de la
+      SURCOTE (IV de l'article 37-1, qui renvoie au II de l'article 13).
+      LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
+      de l'article 35 (LEGIARTI000048897024) donne aux agents de conduite
+      167 trimestres des nés de novembre 1968 à 1969, puis un de plus par
+      marche jusqu'à 172 à compter de 1978, et son II en retranche deux à
+      dix pour compter la décote par la durée (`duree_requise_table:
+      sncf_conduite`). La suspension de 2026 n'a pas été reprise par le
+      décret de la SNCF. Un ou deux trimestres sont retranchés aux durées
+      des carrières longues des générations 1968-1977 (VI de l'article
+      37-1, non porté). LA DURÉE REQUISE SE LIT À LA DATE OÙ L'AGENT
+      RÉUNIT LES CONDITIONS, pour les retraités comme pour les actifs. La
+      réforme de 2008 la fait monter de 151 à 166 trimestres selon cette
+      date, de juillet 2008 à juillet 2018 (`duree_requise_calendrier:
+      regimes_speciaux_2008`) ; la table par génération de 2014 ne vaut
+      qu'à compter du 1er juillet 2019, et celle de 2023 qu'à compter du
+      1er janvier 2025, les décrets gardant « les règles applicables avant
+      » à qui a réuni les conditions plus tôt (`duree_requise_table`,
+      essayées dans l'ordre). La fiche opposait à tous la table commune
+      par génération : 167 trimestres à un agent né en 1960 parti en 2010,
+      dont le droit en demande 154.

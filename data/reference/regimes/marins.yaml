@@ -1,0 +1,132 @@
+code: marins
+rang: 600
+nom: Établissement national des invalides de la marine (ENIM)
+famille: special
+source_id: rs_enim
+fiabilite: estimee
+creation: 1673
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: Marins du commerce, de la pêche et de la plaisance professionnelle.
+hors_repartition: false
+periodes:
+  - debut: 1930
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 55
+    age_taux_plein: 55
+    duree_requise_trimestres: 150
+    age_ouverture_services: 50
+    services_ouverture_annees: 25
+    pension_speciale_services_annees: 15
+    pension_speciale_age_sans_autre_pension: 60
+    duree_maximum_avant_age: 55
+    duree_maximum_avant_age_trimestres: 100
+    duree_maximum_levee_age: 52.5
+    duree_maximum_levee_trimestres: 150
+    taux_plein: 0.75
+    salaire_reference: dernier_salaire
+    assiette: forfaitaire
+    assiette_grille: marins
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    taux_majoration_enfants: [0.0, 0.0, 0.05, 0.10, 0.15]
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    notes: >-
+      LA FORMULE, ELLE, EST STABLE ET VÉRIFIÉE : « les pensions servies en
+      application des dispositions du présent code sont calculées à raison
+      de 2 % du salaire annuel défini à l'article R. 11 par annuité de
+      service. Le maximum des annuités liquidables dans les pensions
+      d'ancienneté est fixé à trente-sept annuités et demie. Il peut être
+      porté à quarante annuités du chef des bonifications » — article R. 13
+      du code des pensions de retraite des marins, dans sa rédaction en
+      vigueur depuis le 7 novembre 1985, lue dans la base LEGI. Les 150
+      trimestres et les 75 % de cette fiche sont donc ceux du droit, et la
+      période unique est justifiée pour ce qui est de la formule.
+      LE PLAFOND DE VINGT-CINQ ANNUITÉS EST PORTÉ, depuis que le même
+      article a été lu en entier : « en outre, le maximum des annuités
+      liquidables dans les pensions d'ancienneté dont la liquidation est
+      demandée avant cinquante-cinq ans est fixé à vingt-cinq annuités ».
+      Un marin parti à cinquante ans ne dépasse donc pas 50 % du salaire
+      forfaitaire, quand la fiche lui en accordait 75 %. C'est la seule
+      règle du catalogue où l'ÂGE borne la DURÉE, d'où les deux champs
+      `duree_maximum_avant_age` que le moteur a appris à lire.
+      L'EXCEPTION DES CINQUANTE-DEUX ANS ET DEMI EST PORTÉE depuis le
+      22 septembre 2026 : le même alinéa écarte le plafond « au profit
+      d'un marin âgé d'au moins cinquante-deux ans et demi, réunissant
+      trente-sept annuités et demie de services » (`duree_maximum_levee_*`)
+      — l'embarqué de quinze ans, que la page de l'ENIM range sous
+      « 52 ans et demi ». Celle de la pension d'invalidité (L. 6, R. 4)
+      ne l'est pas : le modèle ne liquide pas d'invalidité.
+      LES ÂGES SONT CEUX DE 1968, ET N'ONT PAS BOUGÉ : l'article R. 2
+      — inchangé depuis le 31 mars 1968 — acquiert le droit « lorsque se
+      trouve remplie la double condition de cinquante ans d'âge et de
+      vingt-cinq années de services » et fixe « l'âge d'entrée en jouissance
+      de la pension à cinquante-cinq ans ». Ces cinquante-cinq ans sont
+      ceux du deuxième alinéa de l'ancien L. 4, aujourd'hui L. 5552-5 du
+      code des transports : la borne de l'entrée en jouissance de celui
+      qui CONTINUE à naviguer, non l'âge d'ouverture. La fiche portait
+      cinquante-cinq et refusait donc le départ à cinquante ans que le
+      plafond de R. 13 suppose et que l'ENIM décrit — « Gaspard, marin, a
+      50 ans et réunit 25 ans de services […] Il peut prétendre au
+      versement d'une pension d'ancienneté ». Elle porte depuis le
+      22 septembre 2026 `age_ouverture_services: 50` pour vingt-cinq ans
+      de services dans le régime ; `age_ouverture` reste cinquante-cinq,
+      l'âge de la pension proportionnelle (quinze ans, R. 3) et de la
+      pension spéciale (moins de quinze ans, R. 5 et L. 5552-12).
+      LA PENSION SPÉCIALE, moins de quinze ans de services, entre en
+      jouissance avec l'autre pension de base de l'assuré, jamais avant
+      cinquante-cinq ans, et à soixante ans sans autre pension (L. 5552-12
+      du code des transports, R. 5) : `pension_speciale_*` depuis le
+      22 septembre 2026. Avant, le modèle l'ouvrait à cinquante-cinq ans
+      dans tous les cas, et un polypensionné passé dix ans par la mer
+      liquidait TOUTE sa carrière à cinquante-cinq ans, régime général
+      compris. La page de l'ENIM, elle, écrit « l'âge légal
+      d'ouverture du droit à pension de retraite du régime général […]
+      (64 ans pour les assurés nés à partir de 1968) » et, trois lignes
+      plus bas, l'exemple d'Henry « à 60 ans » : la page se contredit, et
+      c'est R. 5, lu dans LEGI, qui dit soixante.
+      LA BONIFICATION POUR ENFANTS EST PORTÉE depuis le 22 septembre
+      2026 : 5 % pour deux enfants, 10 % pour trois, 15 % au-delà (R. 14,
+      `taux_majoration_enfants`). La fiche ne la déclarait pas, et le
+      marin père de deux enfants perdait 5 % de pension.
+      Le plus ancien régime de retraite français (Colbert, 1673).
+      Cotisations et pensions assises sur des SALAIRES FORFAITAIRES par
+      catégorie, non sur la rémunération réelle.
+      CE QUI MANQUE N'EST PAS SEULEMENT LA GRILLE, et c'est ce qui rend
+      l'obstacle plus sérieux qu'il n'y paraît. Le décret n° 2020-649 du
+      28 mai 2020, qui réécrit le décret n° 48-1709 du 5 novembre 1948,
+      définit bien « les vingt catégories de classement des fonctions des
+      marins » — mais il les définit par le MÉTIER, non par le revenu :
+      « 1re : apprenti ; 2e : matelot de moins de 18 ans ; 3e : élève
+      officier, matelot léger… ». Et il renvoie les montants ailleurs : « le
+      montant des salaires forfaitaires est fixé par arrêté des ministres
+      chargés de la mer, de la sécurité sociale et du budget ».
+      LA GRILLE EST LUE, ET APPLIQUÉE. Les arrêtés annuels « portant
+      majoration des salaires forfaitaires » publient les vingt montants
+      depuis 2008 (JORFARTI000017964781 … JORFARTI000053743024 en 2026),
+      et `salaires_forfaitaires.csv` les porte, lus au Journal officiel
+      par `scripts/fetch/jorf_salaires_forfaitaires_marins.py`, grille en
+      vigueur au 1er juillet de chaque année. Une carrière saisie porte
+      un revenu, pas une fonction à bord : le moteur range le marin,
+      chaque année, dans la catégorie dont le forfait approche le plus
+      son revenu annualisé (`assiette_grille: marins`), et cotise comme
+      il liquide sur ce forfait — le salaire de référence est celui de
+      la catégorie de la dernière année, quand R. 11 retient la catégorie
+      MOYENNE des trente-six derniers mois, ou celle de fonctions
+      supérieures tenues cinq ans au moins ; et le décompte des services
+      se fait au semestre (R. 12 : la fraction égale ou supérieure à trois
+      mois compte pour six, l'autre est négligée), quand le modèle compte
+      au trimestre. La grille de 2026 a été recoupée le 22 septembre 2026
+      sur la page « Les salaires forfaitaires » de l'ENIM : les vingt
+      montants, au centime. C'est une
+      CONVENTION, la seule qui rende la grille applicable, et elle est
+      nommée. Avant 2008, les textes de l'index ne portent pas les
+      montants (décrets de 1956 à 1961, arrêtés de 1991 à 2006 : visas et
+      titres seuls) : la grille de 2008 est ramenée par le salaire moyen,
+      et ces années sont marquées estimées.
+      Ouverture dès 50 ans sous conditions de services embarqués.

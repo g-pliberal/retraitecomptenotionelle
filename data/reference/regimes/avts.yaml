@@ -1,0 +1,35 @@
+code: avts
+rang: 20
+nom: Allocation aux vieux travailleurs salariés (loi du 14 mars 1941)
+famille: base_prive
+source_id: legifrance_textes
+fiabilite: estimee
+creation: 1941
+fermeture: 1945
+extinction: 1945
+succede_a: [assurances_sociales]
+integre_dans: regime_general
+population: Salariés âgés sans ressources suffisantes.
+hors_repartition: false
+periodes:
+  - debut: 1941
+    fin: 1945
+    type_calcul: forfaitaire
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: null
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.08
+    part_salariale: 0.50   # financée par la cotisation des assurances sociales, partagée par moitié
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse]
+    notes: >-
+      PREMIER MÉCANISME EN RÉPARTITION : les cotisations des actifs
+      financent immédiatement les allocations des retraités. C'est la date
+      retenue par défaut comme origine du système par répartition
+      (paramètre `annee_debut_repartition`, modifiable à 1945).
+      Prestation forfaitaire sous condition de ressources : intégralement
+      non contributive, donc neutralisée dans les scénarios notionnels.

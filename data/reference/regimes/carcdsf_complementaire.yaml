@@ -1,0 +1,647 @@
+code: carcdsf_complementaire
+rang: 390
+nom: >-
+  Régime complémentaire des chirurgiens-dentistes et des sages-femmes
+  (CARCDSF)
+famille: liberal
+source_id: carcdsf_notices
+fiabilite: moyenne
+creation: 1949
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Chirurgiens-dentistes et sages-femmes libéraux. Étage complémentaire
+  au-dessus du régime de base des professions libérales, et l'essentiel de
+  la pension d'un dentiste — la caisse écrit qu'il en représente environ la
+  moitié, et le quart de celle d'une sage-femme. Les sages-femmes n'y
+  entrent qu'en 2009, quand la CARSAF rejoint la CARCDSF ; avant cette
+  date, la fiche ne vaut que pour les chirurgiens-dentistes.
+hors_repartition: false
+periodes:
+  - debut: 1949
+    fin: 1996
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    notes: >-
+      RÉGIME PUREMENT FORFAITAIRE. La cotisation proportionnelle n'est
+      instituée qu'en 1997 — « en plus de la cotisation forfaitaire qui
+      existait déjà pour les chirurgiens dentistes », écrit le barème IPP en
+      note de l'exercice 1997 —, et le taux est donc nul ici : seul le
+      forfait alimente le compte.
+      LE MONTANT DU FORFAIT EST EXTRAPOLÉ. La caisse ne publie ses mémentos
+      que depuis 2020 ; celui de 2020 est le plus ancien qui soit encore en
+      ligne, et les millésimes antérieurs sont des PDF numérisés, sans texte.
+      Le forfait de 2020 est donc reconduit vers l'amont EN EUROS CONSTANTS —
+      le moteur le ramène à chaque exercice par l'indice des prix —, ce qui
+      est la convention du dépôt pour un montant sans série publiée.
+  - debut: 1997
+    fin: 2000
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.08
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    notes: >-
+      LA COTISATION PROPORTIONNELLE EST INSTITUÉE EN 1997, sur la tranche
+      0,85 – 5 plafonds. Son taux vient du barème IPP « Cotisation de
+      sécurité sociale pour la retraite complémentaire des professions
+      libérales », colonne des chirurgiens-dentistes, qui le tient des
+      décrets annuels : 8 % en 1997 (décret 97-830 du 4 septembre 1997),
+      puis un relèvement presque chaque année jusqu'à 10,65 % en 2018.
+      Là où le barème IPP et les mémentos de la caisse se recouvrent —
+      2020, 2021 et 2022 —, ils donnent le même taux ; à partir de 2023
+      le barème IPP n'est plus tenu à jour et c'est la caisse qui fait
+      foi. Le forfait, lui, reste extrapolé depuis 2020.
+  - debut: 2001
+    fin: 2001
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.083
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2002
+    fin: 2003
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.09
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2004
+    fin: 2007
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.095
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2008
+    fin: 2008
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: null
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.095
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    notes: >-
+      LES STATUTS DE 2007, PREMIERS LUS. L'arrêté du 1er octobre 2007
+      (JORFTEXT000000252172) approuve les statuts du régime complémentaire
+      de la caisse des chirurgiens-dentistes et abroge ceux de 1955, que
+      l'index ne porte pas, non plus que les modifications publiées au
+      Bulletin officiel (1985 à 1997) : la fiche les sert à partir de
+      2008, première année pleine, et rien avant. Article 20 : taux plein
+      « à partir de 65 ans », et avant « un coefficient de minoration,
+      fonction de l'âge » — 25 % au cours de la 61e année, 20 % de la 62e,
+      15 %, 10 % puis 5 % de la 65e, c'est-à-dire 5 % par année manquante,
+      l'année entamée comptant entière, et la durée d'assurance n'y peut
+      rien : `abattement_points: cavom`. La fiche portait 62, 67 et la
+      décote du régime de base, que la durée annule. Les adhérentes ayant
+      élevé des enfants partent sans minoration « à partir de 64 ans pour
+      un enfant » jusqu'à « 60 ans pour cinq enfants ou plus » :
+      `taux_plein_anticipe_par_enfant_annees`. Article 23 : « majoré de 10
+      % au profit des allocataires ayant eu au moins trois enfants ».
+      Aucune majoration pour report. Lu le 23 septembre 2026 (action 89).
+  - debut: 2009
+    fin: 2009
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: null
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.099
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2010
+    fin: 2010
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: null
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.0995
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2011
+    fin: 2011
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    notes: >-
+      LES STATUTS DU 13 AVRIL 2011 (JORFTEXT000023909782). Ouverture à
+      l'âge de L. 161-17-2, taux plein à ce même âge « majoré de cinq ans
+      » — l'âge d'annulation des tables communes pour toutes les
+      générations concernées —, et une minoration « fonction de l'âge
+      atteint », que la durée n'annule pas : 5 % par année d'anticipation
+      pour les nés avant le 1er juillet 1951, 1,50 % par trimestre
+      manquant pour les nés à compter du 1er janvier 1955 depuis l'arrêté
+      du 9 juillet 2012 (JORFTEXT000026208359), et entre les deux un
+      tableau que le Journal officiel ne publie qu'en image, où 1,25 %
+      tient lieu. Les taux sont lus à la génération dans la table
+      `carcdsf_2011` de `legislation/ages_regimes.csv`. « A taux majoré »
+      : 1 % par trimestre civil entier d'exercice libéral au-delà de l'âge
+      du taux plein, dans la limite de 20 %. L'anticipation des mères
+      devient d'« une année d'anticipation par enfant mis au monde, dans
+      la limite de cinq années ».
+  - debut: 2012
+    fin: 2012
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1005
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2013
+    fin: 2013
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.102
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2014
+    fin: 2014
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.103
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2015
+    fin: 2015
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.104
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2016
+    fin: 2016
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.105
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2017
+    fin: 2017
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.106
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - debut: 2018
+    fin: 2019
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1065
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    notes: >-
+      Dernier palier avant les mémentos : le taux est celui du barème IPP,
+      que les mémentos de 2020 à 2022 confirmeront à l'identique.
+  - debut: 2020
+    fin: 2020
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1065
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    notes: >-
+      PREMIER EXERCICE LU DANS UN MÉMENTO. « Cotisation forfaitaire :
+      2 690,40 €. Cotisation proportionnelle : 10,65 % des revenus
+      professionnels non-salariés 2019 compris entre 0,85 % et 5 fois la
+      valeur du PASS 2020, soit entre 34 966 € et 205 680 €. »
+      Le même mémento donne les six points du forfait et la valeur de
+      service en regard — 26,53 € —, d'où un prix du point de 448,40 € et
+      un rendement de 5,92 %. Sa note 5 tranche enfin la question que
+      cette fiche posait en hypothèse : « 18 181 € / 448,40 € = 40,54
+      points », c'est-à-dire que la part PROPORTIONNELLE achète au prix du
+      forfait. Ce n'est plus une supposition, c'est l'arithmétique de la
+      caisse.
+  - debut: 2021
+    fin: 2021
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1065
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2021
+  - debut: 2022
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1065
+    cotisation_forfaitaire_euros: 2769.0
+    cotisation_forfaitaire_annee: 2022
+    notes: >-
+      Forfait 2 769 € pour six points, soit 461,50 € le point, servi
+      27,55 € : rendement 5,97 %, le haut de la bande.
+  - debut: 2023
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: carcdsf_2011
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.015
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.01
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.108
+    cotisation_forfaitaire_euros: 2959.8
+    cotisation_forfaitaire_annee: 2023
+    notes: >-
+      Le taux passe à 10,80 % et l'assiette suit le plafond : 37 393 € –
+      219 960 €. Forfait 2 959,80 € pour six points, soit 493,30 € le
+      point, servi 29,34 €.
+      C'est ici que le barème IPP décroche : il porte encore 10,65 % pour
+      2023, 2024, 2025 et 2026, quand les mémentos de la caisse écrivent
+      10,80 % puis 11,35 %. La colonne des chirurgiens-dentistes n'y est
+      plus tenue à jour ; en cas de désaccord, le mémento gagne.
+  - debut: 2024
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.108
+    cotisation_forfaitaire_euros: 3108.0
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      Forfait 3 108 € pour six points — 518 € le point, servi 30,81 € —,
+      assiette 39 413 € – 231 840 €.
+      L'ARRÊTÉ DU 27 DÉCEMBRE 2023 (JORFTEXT000048880697), repris par le
+      règlement du 10 juillet 2026 (article 3). Taux plein à l'âge du 1°
+      de L. 351-8 ; minoration de « 1,25 % par trimestre manquant […] dans
+      la limite de 15 % » — douze trimestres, `decote_trimestres_maximum:
+      12` — que la durée n'annule toujours pas ; majoration de 1 % par
+      trimestre accompli avant le 1er janvier 2024 dans la limite de 20 %,
+      de 1,25 % depuis dans la limite de 25 %. La fiche sert 1,25 % à tous
+      les trimestres des liquidations de 2024 et après, à l'année près. La
+      page de la caisse, lue le 23 septembre 2026, écrit les mêmes règles,
+      sans le plafond de 15 %, et donne l'exemple : « si vous avez eu 2
+      enfants, vous pouvez bénéficier du taux plein pour ce régime dès 65
+      ans ».
+  - debut: 2025
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.108
+    cotisation_forfaitaire_euros: 3178.8
+    cotisation_forfaitaire_annee: 2025
+    notes: >-
+      Forfait 3 178,80 € pour six points — 529,80 € le point, servi
+      31,50 €. La valeur de service ne se lit pas directement : le mémento
+      2025 la compose dans une police sans table de correspondance, et il a
+      fallu reconstruire l'alphabet sur les nombres que le même document
+      écrit deux fois. L'exemple de la caisse vérifie le tout : pour
+      100 000 € de revenus, « cotisation proportionnelle de 6 476 € →
+      12,22 points », et 6 476 / 529,80 = 12,22.
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 20
+    taux_plein_anticipe_par_enfant_annees: 1
+    taux_plein_anticipe_maximum_annees: 5
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_065_5_pass
+    taux_cotisation_retraite: 0.1135
+    cotisation_forfaitaire_euros: 3210.6
+    cotisation_forfaitaire_annee: 2026
+    notes: >-
+      La réforme de l'assiette sociale des indépendants élargit la tranche
+      — de 0,65 à 5 plafonds au lieu de 0,85 à 5, soit 31 239 € – 240 300 €
+      — et porte le taux à 11,35 %. Le forfait passe à 3 210,60 €, toujours
+      pour six points, d'où un prix du point de 535,10 € ; la valeur de
+      service étant de 31,82 €, le rendement reste 5,95 %.

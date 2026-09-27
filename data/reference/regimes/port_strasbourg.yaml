@@ -1,0 +1,33 @@
+code: port_strasbourg
+rang: 690
+nom: Régime de retraite du Port autonome de Strasbourg
+famille: special
+source_id: cor_panorama_regimes
+fiabilite: estimee
+creation: 1926
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: Agents du Port autonome de Strasbourg.
+hors_repartition: false
+periodes:
+  - debut: 1930
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: 150
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, reversion]
+    notes: >-
+      RÉGIME TOUJOURS OUVERT. La fiche le disait fermé aux recrutements
+      depuis le 1er septembre 2023 : l'article 1er de la loi n° 2023-270
+      (JORFARTI000047445082) ne ferme que la RATP, les IEG, la CRPCEN, la
+      Banque de France et le CESE, et aucun texte ne nomme le port.

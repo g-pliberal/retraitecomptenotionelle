@@ -1,0 +1,535 @@
+code: banque_de_france
+rang: 660
+nom: Caisse de réserve des employés de la Banque de France
+famille: special
+source_id: cor_panorama_regimes
+fiabilite: moyenne
+creation: 1806
+fermeture: 2023
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Agents titulaires de la Banque de France recrutés avant le 1er septembre
+  2023 (loi n° 2023-270, art. 1er II, JORFARTI000047445082 ; décret
+  n° 2007-262, art. 1er, LEGIARTI000047909408) ; 2007 est l'année de la
+  réforme du règlement, non d'une fermeture.
+hors_repartition: false
+# MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+# — décret n° 2007-262, annexe, article 35 IV (LEGIARTI000047909725) :
+# « 8, 5 % de son montant pour les trois premiers enfants et à 4, 25 %
+# par enfant au-delà du troisième ». Avant 2007, le même barème est
+# prêté. Barème `taux_majoration_enfants` de chaque période.
+periodes:
+  - debut: 1930
+    fin: 2007
+    type_calcul: annuites
+    age_ouverture: 55
+    age_taux_plein: 55
+    duree_requise_trimestres: 150
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
+    notes: Aligné sur le code des pensions civiles à compter de 2007.
+  - debut: 2008
+    fin: 2008
+    type_calcul: annuites
+    age_ouverture: 60
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 160
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      ALIGNÉ SUR LE CODE DES PENSIONS CIVILES À COMPTER DE 2007, et la fiche
+      s'arrêtait là. Elle portait une seule période ouverte en 2008, avec l'âge
+      de 64 ans et la retenue de 11,10 % — c'est-à-dire le droit de 2023 — pour
+      un agent parti en 2009. Les périodes qui suivent sont celles de la
+      fonction publique d'État, sur lesquelles le régime est aligné : 2008-2008
+      (60 ans, 160 trimestres, retenue de 7,85 %), 2009-2010, 2011-2022 (âges
+      reportés de deux ans), 2023 (64 ans).
+  - debut: 2009
+    fin: 2010
+    type_calcul: annuites
+    age_ouverture: 60
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 160
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      La surcote passe de 0,75 % à 1,25 % par trimestre au 1er janvier 2009.
+  - debut: 2011
+    fin: 2012
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2013
+    fin: 2013
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0812
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2014
+    fin: 2014
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0854
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2015
+    fin: 2015
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0886
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2016
+    fin: 2016
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0928
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2017
+    fin: 2017
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0965
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2018
+    fin: 2018
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0997
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2019
+    fin: 2019
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1029
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2020
+    fin: 2020
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1056
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2021
+    fin: 2021
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1083
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2022
+    fin: 2022
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1110
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+      au décret n° 2007-262, article 72, table par génération), retenue
+      pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+      COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+      jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+      (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+      (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+      définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+      : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+      % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+      l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+      de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+      Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+      invariants sur les quatorze versions.
+  - debut: 2023
+    fin: 2024
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 67
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1110
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      FERMETURE SANS RELÈVEMENT : le décret n° 2023-693 du 28 juillet 2023
+      ferme le régime aux agents recrutés à compter du 1er septembre 2023
+      (article 1er, LEGIARTI000047909408) mais la version du règlement en
+      vigueur du 1er septembre 2023 au 1er janvier 2025
+      (LEGIARTI000047909413) garde soixante-deux ans à l'article 26 et la
+      table de 2010 à l'article 72 : la fiche coupait au 1er septembre
+      2023 avec soixante-quatre ans, deux ans trop tôt. Les âges sont ici
+      écrits en dur — la table nationale lue à la génération porterait
+      déjà le relèvement de 2023 aux nés de 1961.
+  - debut: 2025
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 64
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.111
+    perimetre_taux: agent_seul
+    bareme_decote: fonction_publique
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      RELÈVEMENT AU 1ER JANVIER 2025 : version du règlement en vigueur
+      depuis le 1er janvier 2025 (LEGIARTI000047909725, décret n°
+      2023-839) — l'article 26 renvoie « à l'âge mentionné au premier
+      alinéa de l'article L. 161-17-2 […] ou au moins cet âge abaissé de
+      cinq années », l'article 72 donne la table : soixante-deux ans avant
+      1963, et trois mois par génération jusqu'à soixante-quatre ans pour
+      les nés à compter du 1er janvier 1970 (cinquante-sept à cinquante-
+      neuf ans, générations 1968 à 1975, pour les catégories à
+      nomenclature) ; l'article 31 fixe la durée à 172 trimestres ;
+      l'article 68 réécrit les carrières longues en trois bornes, 58, 60
+      et 62 ans. Les âges sont lus à la génération dans la table
+      nationale, qui est la même.

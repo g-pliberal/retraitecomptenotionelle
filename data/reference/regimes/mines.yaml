@@ -1,0 +1,1212 @@
+code: mines
+rang: 610
+nom: Régime spécial des mines (CANSSM)
+famille: special
+source_id: cor_panorama_regimes
+fiabilite: estimee
+creation: 1894
+fermeture: 2010
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Mineurs et assimilés. Fermé aux nouveaux entrants au 1er septembre 2010 ;
+  régime en extinction, gestion transférée à la CDC puis à la CNAV.
+hors_repartition: false
+# MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+# — décret n° 46-2769, article 139 (LEGIARTI000006765039) : pensions «
+# majorées d'un dixième » pour qui a eu au moins trois enfants, sans
+# supplément au-delà. La fiche ne la déclarait pas, et le mineur père
+# ou mère de trois enfants n'en recevait rien.
+periodes:
+  - debut: 1930
+    fin: 1973
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 11.32
+    valeur_point_annee: 1974
+    notes: >-
+      LA PENSION DU MINEUR N'A JAMAIS DÉPENDU DE SON SALAIRE. C'est un
+      FORFAIT PAR TRIMESTRE DE SERVICE, et il est le même pour l'abatteur
+      et pour l'ingénieur : « le montant annuel de la pension de vieillesse
+      est proportionnel à la durée de service ; il est égal au produit du
+      montant de pension pour un trimestre de services et du nombre de
+      trimestres de services effectués » (article 131 du décret n° 46-2769
+      du 27 novembre 1946). La fiche servait 75 % du dernier salaire : pour
+      un mineur payé au salaire moyen, elle inventait deux fois la pension
+      que le décret lui donne.
+      LA PÉRIODE LA PLUS ANCIENNE EST UNE EXTENSION. La base LEGI ne porte
+      aucune version du montant avant 1974 : la valeur de 1974 est reportée
+      en arrière par l'indice des prix, ce qui suppose que le forfait a
+      suivi les prix depuis 1930. Il ne les a pas suivis — il a longtemps
+      suivi les salaires —, et une liquidation des années 1950 est donc
+      incertaine dans les deux sens.
+  - debut: 1974
+    fin: 1974
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 11.32
+    valeur_point_annee: 1974
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1975
+    fin: 1975
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 12.4
+    valeur_point_annee: 1975
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1976
+    fin: 1976
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 13.58
+    valeur_point_annee: 1976
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1977
+    fin: 1977
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 14.87
+    valeur_point_annee: 1977
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1978
+    fin: 1978
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 16.29
+    valeur_point_annee: 1978
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1979
+    fin: 1979
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 17.84
+    valeur_point_annee: 1979
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1980
+    fin: 1980
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 19.54
+    valeur_point_annee: 1980
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1981
+    fin: 1981
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 21.41
+    valeur_point_annee: 1981
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1982
+    fin: 1982
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 23.44
+    valeur_point_annee: 1982
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1983
+    fin: 1983
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 25.68
+    valeur_point_annee: 1983
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1984
+    fin: 1984
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 28.13
+    valeur_point_annee: 1984
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1985
+    fin: 1985
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 30.8
+    valeur_point_annee: 1985
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1986
+    fin: 1986
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 33.74
+    valeur_point_annee: 1986
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1987
+    fin: 1987
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 36.95
+    valeur_point_annee: 1987
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1988
+    fin: 1988
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 40.48
+    valeur_point_annee: 1988
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1989
+    fin: 1989
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 44.33
+    valeur_point_annee: 1989
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1990
+    fin: 1990
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 48.56
+    valeur_point_annee: 1990
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1991
+    fin: 1991
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 53.18
+    valeur_point_annee: 1991
+    notes: >-
+      SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+      sa rédaction du 1er avril 1974 : « le montant de la pension dont
+      bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+      justifient soit de cinquante-cinq ans d'âge et de trente années de
+      travail à la mine, soit de cinquante ans d'âge et de trente années de
+      travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+      majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+      et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+      l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+      moitié pour la moitié des trimestres. La fiche porte la valeur en
+      euros au taux officiel de 6,55957 F.
+      CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+      SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+      prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+      Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+      intermédiaires sont des arrêtés annuels, que la version consolidée du
+      décret ne conserve pas.
+      LA VALEUR DE CE MILLÉSIME EST RECONSTITUÉE. Entre 74,26 F au 1er
+      avril 1974 et 382,08 F au 1er juillet 1992, la base LEGI ne porte
+      aucune version intermédiaire : les revalorisations étaient des
+      arrêtés annuels, que la version consolidée du décret ne garde pas et
+      que le dépouillement du Journal officiel n'a pas retrouvés. La fiche
+      interpole donc GÉOMÉTRIQUEMENT entre les deux valeurs sourcées — 9,9
+      % l'an, une période par millésime. Porter la valeur de 1974 par
+      l'indice des prix, comme le faisait cette fiche, la laissait 32 %
+      sous celle de 1992 : la pension d'un mineur liquidant en 1991
+      bondissait de 47 % l'année suivante, ce qui n'était certainement pas
+      le droit. L'interpolation ne l'est pas non plus, et le décret n°
+      2002-800 dit pourquoi : il est pris après un protocole « relatif aux
+      mesures de revalorisation et de rattrapage des avantages miniers du
+      fait de leur décrochage par rapport aux pensions de vieillesse du
+      régime général ». Le forfait minier n'a donc suivi ni les prix, ni
+      les salaires, ni les pensions du régime général — il a décroché puis
+      rattrapé. Entre deux points connus, la ligne droite est ce qu'on
+      peut dire de moins faux.
+  - debut: 1992
+    fin: 2000
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 58.25
+    valeur_point_annee: 1992
+    bareme_trimestre: mines
+    notes: >-
+      « Le montant de pension pour un trimestre de services s'élève, pour
+      les pensions liquidées à compter du 1er juillet 1992, à 382,08 F »
+      (article 131, rédaction du 1er janvier 1993), soit 58,25 € au taux
+      officiel. Trente ans de mine valaient donc 45 850 F par an, moins de
+      7 000 €. DEPUIS CETTE DATE, LA VALEUR SUIT LES PENSIONS, et non les
+      prix : `legislation/bareme_trimestre_mines.csv` la porte date par date,
+      chaîne des coefficients de revalorisation de la Cnav qui retombe au
+      centime sur 67,73 € en 2001, 69,22 € en 2002, 82,83 € en 2013 et
+      97,15 € en 2026 ; `bareme_trimestre` l'y fait lire. La valeur écrite
+      ci-dessus ne sert plus qu'avant juillet 1992.
+  - debut: 2001
+    fin: 2012
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 69.22
+    valeur_point_annee: 2002
+    bareme_trimestre: mines
+    notes: >-
+      « La valeur du trimestre de services servant au calcul de ces pensions
+      et allocation s'élève à 67,73 euros au 1er janvier 2001 et à 69,22
+      euros au 1er janvier 2002 » (article 131, rédaction du 5 mai 2002).
+      Ces deux valeurs sont dans `legislation/bareme_trimestre_mines.csv`,
+      qui porte aussi ce que la fiche ignorait : le COEFFICIENT DE
+      MAJORATION de la durée de services, créé par le décret n° 2002-800
+      (article 131-1) — 1,17 en 2002, 1,319 en 2013 —, et les 17 % dont
+      l'article 131-2 majore les trimestres des pensions prenant effet en
+      2001. Une pension de trente ans liquidée en 2012 valait 120 × 1,305 ×
+      81,77 € = 12 805 € par an, et la fiche en servait 9 891.
+  - debut: 2013
+    fin: null
+    type_calcul: points
+    age_ouverture: 55
+    age_ouverture_services: 50
+    services_ouverture_annees: 30
+    age_taux_plein: 55
+    duree_requise_trimestres: 120
+    trimestres_maximum: 120
+    trimestres_maximum_leve_avant_age: 55
+    taux_plein: 1.0
+    points_par_trimestre_valide: 1
+    salaire_reference: sans_objet
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    valeur_point_euros: 82.83
+    valeur_point_annee: 2013
+    bareme_trimestre: mines
+    notes: >-
+      « La valeur du trimestre de services […] s'élève à 82,83 euros au
+      1er avril 2013 » (article 131, rédaction du 6 septembre 2015), et
+      c'est la dernière que le décret porte : trente ans de mine valent
+      9 940 € par an avant le coefficient de majoration de l'article 131-1,
+      qui la porte à 13 110 € (1,319 au 1er avril 2013). La valeur est
+      ensuite revalorisée comme les pensions (article 181) : 97,15 € en 2026,
+      avec un coefficient de 1,473, soit 17 172 € pour trente ans — la
+      fiche en servait 12 299, 28 % de moins, faute du coefficient, et
+      alors même qu'elle portait la valeur par les prix, à 102,49 €. Voir
+      `legislation/bareme_trimestre_mines.csv`. Et QUARANTE ANS NE VALENT
+      PAS PLUS QUE TRENTE, sauf ce qui précède cinquante-cinq ans : « le
+      nombre maximum de trimestres susceptibles d'être pris en compte pour
+      le calcul de la pension est de cent-vingt ; toutefois, pour les
+      affiliés qui ont réalisé cette durée avant l'âge de cinquante-cinq
+      ans, les trimestres accomplis postérieurement sont pris en compte
+      jusqu'à ce que cet âge soit atteint » (article 136 ; article 147 dès
+      1974). `trimestres_maximum` le porte, sur toutes les périodes.
+      FERMÉ AUX NOUVEAUX ENTRANTS depuis le 1er septembre 2010 (décret
+      n° 2010-975 du 27 août 2010), et à eux seuls : le mineur qui était
+      déjà là garde son régime jusqu'à sa retraite, et ses règles ne
+      changent pas. C'est un régime en EXTINCTION, que les réformes de 2010,
+      2014 et 2023 ont laissé où il était — l'article 125 garantit toujours
+      la pension « aux affiliés âgés de cinquante-cinq ans au moins » —, et
+      non un régime réformé.
+      L'ÂGE EST CINQUANTE-CINQ ANS, ET CINQUANTE AVEC TRENTE ANS DE MINE.
+      L'article 125 garantit la pension « aux affiliés âgés de cinquante-cinq
+      ans au moins » ; l'article 127 abaisse cet âge « à raison d'un an par
+      tranche de quatre années de service au fond et sans pouvoir être
+      inférieur à cinquante ans, pour les travailleurs comptant au moins
+      trente années d'affiliation » (article 146 de 1985 à 1992 ; avant 1985,
+      cinquante ans pour trente années dont vingt au fond). La page de la
+      Caisse des dépôts l'écrit en trimestres : 120 de services dont 16 au
+      fond pour 54 ans, 80 au fond pour 50. La fiche servait cinquante ans à
+      TOUS, même au mineur de dix ans ; elle sert désormais cinquante-cinq
+      ans, et cinquante à qui réunit trente ans de services
+      (`age_ouverture_services`). Le moteur ne sait toujours pas où un
+      mineur a travaillé : à trente ans de mine, il lui donne l'âge du fond,
+      et non la majoration de 0,15 % par trimestre au fond de l'article 138
+      — ce que `docs/limites.md` dit.

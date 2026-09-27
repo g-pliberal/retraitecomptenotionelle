@@ -1,0 +1,33 @@
+code: pensions_civiles_1853
+rang: 230
+nom: Régime des pensions civiles et militaires (loi du 9 juin 1853)
+famille: fonction_publique
+source_id: legifrance_textes
+fiabilite: estimee
+creation: 1853
+fermeture: 1948
+extinction: 1948
+succede_a: []
+integre_dans: fonction_publique_etat
+population: Fonctionnaires civils et militaires de l'État.
+hors_repartition: false
+periodes:
+  - debut: 1930
+    fin: 1948
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: 120
+    taux_plein: 0.60
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.06
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, categorie_active, reversion]
+    notes: >-
+      Antérieur à la répartition généralisée, mais versé sur crédits
+      budgétaires courants : fonctionnellement en répartition dès l'origine.
+      Retenue pour pension de 5 % puis 6 %. Catalogué à partir de 1930 pour
+      couvrir les carrières entrant dans le champ du modèle.

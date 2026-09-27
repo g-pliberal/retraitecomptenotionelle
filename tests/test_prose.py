@@ -411,11 +411,12 @@ def test_partout_refuse_une_valeur_qui_ne_l_est_plus():
     """`partout` dit « toutes les entrées portent ce nombre », et c'est une
     affirmation : le jour où l'une s'en écarte, la prose qui l'annonce une
     fois est devenue fausse, et la sonde doit le dire plutôt que choisir."""
-    fiches = "data/reference/regimes/complementaires_prive.yaml:regimes"
+    fiches = ("data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml"
+              " + data/reference/regimes/unirs.yaml")
     assert verifier_prose.sonde_partout(
-        f"{fiches}.*.periodes.*.plafond_majoration_enfants") == 2367
+        f"{fiches}:periodes.*.plafond_majoration_enfants") == 2367
     with pytest.raises(ValueError):
-        verifier_prose.sonde_partout(f"{fiches}.*.periodes.*.debut")
+        verifier_prose.sonde_partout(f"{fiches}:periodes.*.debut")
 
 
 def test_une_sonde_peut_traverser_un_cran_d_entrees():

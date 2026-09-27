@@ -1,0 +1,619 @@
+code: cnavpl
+rang: 350
+nom: Régime de base des professions libérales (CNAVPL)
+famille: liberal
+source_id: cnavpl_parametres
+fiabilite: moyenne
+creation: 1949
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Professions libérales réparties en dix sections professionnelles
+  (CARMF, CARPIMKO, CARCDSF, CAVP, CAVEC, CAVAMAC, CAVOM, CIPAV, CRN, CAVA).
+hors_repartition: false
+periodes:
+  - debut: 1949
+    fin: 2003
+    type_calcul: points
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.085
+    points_par_trimestre_valide: 100
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      LE DROIT D'AVANT 2004 N'EST PAS PROPORTIONNEL AU REVENU, et la fiche
+      le faisait croire. Le régime servait une ALLOCATION VIEILLESSE, la
+      même pour le notaire et pour le kinésithérapeute : la moitié de
+      l'AVTS à l'origine, son montant entier depuis le décret n° 62-439 du
+      14 avril 1962, puis, le 1er janvier 1983, « 1/15e d'AVTS par année
+      cotisée », la condition de quinze années d'activité ayant été
+      supprimée (les périodes au-delà de quinze ans comptent depuis le
+      1er juillet 1978). La réforme du 21 août 2003 a converti ce droit en
+      points, et la règle de conversion est publiée : « les trimestres
+      validés avant le 1er janvier 2004 sont convertis en points à raison
+      de cent points par trimestre » (D. 643-1, cité par le recueil
+      statistique de la CNAVPL). C'est `points_par_trimestre_valide`, et le
+      revenu n'y entre que par les trimestres qu'il valide.
+      Le moteur portait auparavant 8,5 % du revenu ENTIER, sans plafond, au
+      rendement de 8 % : trente ans de carrière à 200 000 € y ouvraient
+      40 000 € de pension de base, quand le régime en servait 3 809 € en
+      moyenne en 2003 — quarante ans de cotisations ne pouvant dépasser
+      16 000 points, soit 10 500 € au point de 2025.
+      CE QUI RESTE CONVENTIONNEL EST LA COTISATION, non la pension. La
+      cotisation de base était forfaitaire jusqu'en 1992 ; le 1er janvier
+      1993 (loi n° 91-73 du 18 janvier 1991), « une fraction de la
+      cotisation du régime de base est devenue proportionnelle aux revenus,
+      dans la limite de 5 fois le plafond de la sécurité sociale ». Faute de
+      la série des forfaits, le compte notionnel prélève ici 8,5 % du revenu
+      BORNÉ À CINQ PLAFONDS — le plafond que le régime s'est lui-même donné
+      en 1993. C'est une convention, et elle est nommée : elle ne touche que
+      le scénario notionnel, la pension du système actuel ne dépendant plus,
+      pour ces années, que des trimestres.
+  - debut: 2004
+    fin: 2009
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 450
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_085_pass
+    taux_cotisation_retraite: 0.086
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      Réforme du 21 août 2003 : régime de base unique en points,
+      proportionnel au revenu, sur DEUX TRANCHES — d'où deux fiches par
+      période, qui se cumulent comme le fait la cotisation elle-même.
+      PREMIÈRE TRANCHE avant 2015 : 0 à 0,85 plafond, 450 points au maximum
+      (D. 643-1 dans sa rédaction de 2004). Le régime n'attribue pas un nombre
+      de points proportionnel à la cotisation mais un nombre PLAFONNÉ de points
+      par tranche : c'est un barème en points, et c'est lui — et non un prix
+      d'achat, que la caisse ne publie pas — qui convertit ici le revenu en
+      droits.
+      L'ASSIETTE MINIMALE est portée hors de la fiche, par
+      `legislation/assiette_minimale_independants.csv`, que le moteur lit
+      pour tous les libéraux : D. 642-4 la chiffre sans discontinuer — 200
+      fois le SMIC horaire de 2004 à 2011, 5,25 % du plafond de 2012 à
+      2014, 7,70 % en 2015, 11,5 % de 2016 à 2022, 450 fois le SMIC horaire
+      depuis 2023 —, et elle valide trois trimestres. La note qui la disait
+      absente datait d'avant ce fichier.
+      LE TAUX EST CELUI DE LA LOI, et il bouge quatre fois en onze ans :
+      8,6 % de 2004 à 2011, 8,63 % en 2012, 9,75 % en 2013, 10,1 % en 2014
+      (D. 642-3, versions successives lues dans la base LEGI). La fiche portait
+      8,23 % sur toute la période — le taux de 2015, reporté en arrière faute
+      de série. Cela ne déplace pas les points acquis, qui ne dépendent pas du
+      taux, mais le flux versé au compte notionnel, sous-estimé de près d'un
+      cinquième en 2014.
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+  - debut: 2010
+    fin: 2011
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 450
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_085_pass
+    taux_cotisation_retraite: 0.086
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
+    notes: >-
+      Réforme du 21 août 2003 : régime de base unique en points,
+      proportionnel au revenu, sur DEUX TRANCHES — d'où deux fiches par
+      période, qui se cumulent comme le fait la cotisation elle-même.
+      PREMIÈRE TRANCHE avant 2015 : 0 à 0,85 plafond, 450 points au maximum
+      (D. 643-1 dans sa rédaction de 2004). Le régime n'attribue pas un nombre
+      de points proportionnel à la cotisation mais un nombre PLAFONNÉ de points
+      par tranche : c'est un barème en points, et c'est lui — et non un prix
+      d'achat, que la caisse ne publie pas — qui convertit ici le revenu en
+      droits.
+      L'ASSIETTE MINIMALE est portée hors de la fiche, par
+      `legislation/assiette_minimale_independants.csv`, que le moteur lit
+      pour tous les libéraux : D. 642-4 la chiffre sans discontinuer — 200
+      fois le SMIC horaire de 2004 à 2011, 5,25 % du plafond de 2012 à
+      2014, 7,70 % en 2015, 11,5 % de 2016 à 2022, 450 fois le SMIC horaire
+      depuis 2023 —, et elle valide trois trimestres. La note qui la disait
+      absente datait d'avant ce fichier.
+      LE TAUX EST CELUI DE LA LOI, et il bouge quatre fois en onze ans :
+      8,6 % de 2004 à 2011, 8,63 % en 2012, 9,75 % en 2013, 10,1 % en 2014
+      (D. 642-3, versions successives lues dans la base LEGI). La fiche portait
+      8,23 % sur toute la période — le taux de 2015, reporté en arrière faute
+      de série. Cela ne déplace pas les points acquis, qui ne dépendent pas du
+      taux, mais le flux versé au compte notionnel, sous-estimé de près d'un
+      cinquième en 2014.
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+      LES TRIMESTRES POUR ENFANTS, DEPUIS 2010. L. 643-1-1, créé par la loi
+      de financement pour 2010 « pour les pensions de retraite prenant effet
+      à compter du 1er avril 2010 » (LEGIARTI000021537910), rend aux
+      assurés de ce régime la majoration de durée d'assurance de L. 351-4,
+      puis de L. 351-4-1 et L. 351-4-2 : quatre trimestres de maternité et
+      quatre d'éducation par enfant, comme au régime général. La fiche
+      n'en portait rien, et le moteur ne l'aurait pas servie : il ne
+      cherchait la majoration que dans les régimes en annuités. Une
+      majoration de durée ne joue pourtant que sur la durée — la décote et
+      la surcote, qu'un régime en points comme celui-ci compte aussi —, et
+      `mda` est désormais lu dans toute fiche qui le porte. Une libérale
+      qui n'a cotisé qu'ici perdait jusqu'à 1,25 % de sa pension par
+      trimestre que la loi lui donnait. Servie à partir de 2010, dont neuf
+      mois sur douze sont couverts.
+  - debut: 2012
+    fin: 2012
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 450
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_085_pass
+    taux_cotisation_retraite: 0.0863
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
+    notes: >-
+      8,63 % pour la seule année 2012 : le décret de juillet 2012 réécrit
+      D. 642-3 avec un taux par année, et il est lui-même remplacé six mois
+      plus tard.
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+  - debut: 2013
+    fin: 2013
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 450
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_085_pass
+    taux_cotisation_retraite: 0.0975
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
+    notes: >-
+      9,75 % en 2013, première marche d'une hausse que la réforme de 2015
+      effacera en élargissant la tranche au plafond entier.
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+  - debut: 2014
+    fin: 2014
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 450
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_085_pass
+    taux_cotisation_retraite: 0.101
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
+    notes: >-
+      10,1 % en 2014 : le taux le plus haut qu'ait porté la première tranche,
+      et celui que la fiche remplaçait par 8,23 %.
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+  - debut: 2004
+    fin: 2009
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 100
+    salaire_reference: carriere_entiere
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.016
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      Seconde tranche avant 2015 : 0,85 à 5 plafonds, 100 points au maximum.
+      1,6 % de 2004 à 2012 (D. 642-3).
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+  - debut: 2010
+    fin: 2012
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 100
+    salaire_reference: carriere_entiere
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.016
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
+    notes: >-
+      Seconde tranche avant 2015 : 0,85 à 5 plafonds, 100 points au maximum.
+      1,6 % de 2004 à 2012 (D. 642-3).
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+      LES TRIMESTRES POUR ENFANTS, DEPUIS 2010. L. 643-1-1, créé par la loi
+      de financement pour 2010 « pour les pensions de retraite prenant effet
+      à compter du 1er avril 2010 » (LEGIARTI000021537910), rend aux
+      assurés de ce régime la majoration de durée d'assurance de L. 351-4,
+      puis de L. 351-4-1 et L. 351-4-2 : quatre trimestres de maternité et
+      quatre d'éducation par enfant, comme au régime général. La fiche
+      n'en portait rien, et le moteur ne l'aurait pas servie : il ne
+      cherchait la majoration que dans les régimes en annuités. Une
+      majoration de durée ne joue pourtant que sur la durée — la décote et
+      la surcote, qu'un régime en points comme celui-ci compte aussi —, et
+      `mda` est désormais lu dans toute fiche qui le porte. Une libérale
+      qui n'a cotisé qu'ici perdait jusqu'à 1,25 % de sa pension par
+      trimestre que la loi lui donnait. Servie à partir de 2010, dont neuf
+      mois sur douze sont couverts.
+  - debut: 2013
+    fin: 2013
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 100
+    salaire_reference: carriere_entiere
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.0181
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
+    notes: >-
+      1,81 % pour la seule année 2013.
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+  - debut: 2014
+    fin: 2014
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 100
+    salaire_reference: carriere_entiere
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.0187
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
+    notes: >-
+      1,87 % à compter de 2014 — le taux de la seconde tranche n'a plus bougé
+      depuis, la réforme de 2015 ne touchant que sa borne.
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+  - debut: 2015
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 525
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0823
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
+    notes: >-
+      De 2015 à 2024 : première tranche de 0 à 1 plafond, 525 points au
+      maximum. Chaque section professionnelle gère en outre un régime
+      complémentaire obligatoire aux paramètres propres, décrit par sa
+      propre fiche.
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+  - debut: 2024
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 525
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0823
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion, majoration_enfants, surcote_parentale]
+    notes: >-
+      De 2015 à 2024 : première tranche de 0 à 1 plafond, 525 points au
+      maximum. Chaque section professionnelle gère en outre un régime
+      complémentaire obligatoire aux paramètres propres, décrit par sa
+      propre fiche.
+      LA SURCOTE PASSE À 1,25 % : R. 643-8 dans sa rédaction du décret
+      n° 2023-799 du 21 août 2023 (LEGIARTI000047985850), « 0,75 % par
+      trimestre accompli avant le 1er septembre 2023 et à 1,25 % par
+      trimestre accompli à compter de la même date ». La fiche
+      l'applique aux liquidations à partir de 2024, première année
+      pleine ; les trimestres d'avant septembre 2023 y sont donc servis
+      à 1,25 % au lieu de 0,75 %, même approximation que la fiche du
+      régime général en 2009.
+      TROIS ENFANTS, DEPUIS 2023. L. 643-1-1, créé par l'article 21 de la
+      loi n° 2023-270, étend aux professions libérales L. 351-12, la
+      majoration de 10 % pour trois enfants, pour les pensions prenant
+      effet depuis le 1er septembre 2023 : `majoration_enfants` sur les
+      périodes de 2024 et après, à l'année près. La majoration de durée
+      d'assurance que le même article ouvre (L. 351-4 à L. 351-4-2) l'est
+      depuis 2010, voir la période qui commence cette année-là. Lu le 23 septembre 2026 (LEGIARTI000047453363) ; la CAVOM
+      l'écrit dans sa formule de la pension.
+      LA SURCOTE PARENTALE, DEPUIS 2024. Le I de L. 643-3 dans sa rédaction
+      de la loi n° 2023-270 (LEGIARTI000047453031, pensions prenant effet
+      depuis le 1er septembre 2023) écrit pour les libéraux la règle de
+      L. 351-1-2-1 : l'assuré qui a au moins un trimestre de majoration pour
+      enfants et sa durée requise dès l'année qui précède un âge légal
+      d'au moins 63 ans voit les trimestres cotisés de cette année majorer
+      sa pension comme une surcote. `surcote_parentale`, servie comme la
+      majoration pour trois enfants à partir de 2024, première année
+      pleine ; la CAVAMAC la décrit pour « les générations nées à partir
+      du 1er avril 1965 ».
+  - debut: 2025
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 557
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0873
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion, majoration_enfants, surcote_parentale]
+    notes: >-
+      LE TAUX DE T1 PASSE À 8,73 % EN 2025, et le barème en points suit :
+      557 points au plafond au lieu de 525, soit exactement le rapport des
+      deux taux — le prix d'achat d'un point ne bouge pas. La hausse
+      accompagne la réforme de l'assiette des indépendants (article 18 de
+      la loi n° 2023-1250 du 26 décembre 2023), qui asseoit la cotisation,
+      à partir de 2026 et sur le revenu 2025, sur le chiffre d'affaires
+      diminué des charges puis d'un abattement de 26 %. Les recueils
+      statistiques 2024 et 2025 de la CNAVPL portent l'un et l'autre ce
+      tableau, et ils concordent. La fiche le lisait encore à 8,23 % et
+      525 points : le taux venait d'une phrase de l'historique — « le taux
+      de la première tranche est de 8,23 % » — qui décrit la réforme de
+      2015, non l'année du recueil. La réforme de l'assiette, elle, n'est
+      pas modélisée : la carrière saisie porte un revenu, pas un chiffre
+      d'affaires. D. 642-3 lu version par version (quinze versions,
+      LEGIARTI000006738112 → LEGIARTI000049904651) : 8,6 % sous 85 % du
+      plafond et 1,6 % au-delà dès 2004 (LEGIARTI000006738115), 9,75 % et
+      1,81 % en 2013, 10,1 % et 1,87 % en 2014 (LEGIARTI000026704782),
+      8,23 % sous le plafond et 1,87 % jusqu'à cinq plafonds dès le 19
+      juillet 2015 (LEGIARTI000030910750), 8,73 % pour les périodes
+      courant à compter du 1er janvier 2025 (LEGIARTI000049904651) : la
+      fiche coïncide. L. 643-3 dans sa rédaction de la loi n° 2025-1403 du
+      30 décembre 2025 (LEGIARTI000053280388), aux pensions prenant effet
+      à compter du 1er septembre 2026, ouvre une majoration de pension
+      pour les trimestres cotisés l'année précédant l'âge légal aux
+      assurés qui ont des trimestres d'enfants : non portée.
+      LA SURCOTE PASSE À 1,25 % : R. 643-8 dans sa rédaction du décret
+      n° 2023-799 du 21 août 2023 (LEGIARTI000047985850), « 0,75 % par
+      trimestre accompli avant le 1er septembre 2023 et à 1,25 % par
+      trimestre accompli à compter de la même date ». La fiche
+      l'applique aux liquidations à partir de 2024, première année
+      pleine ; les trimestres d'avant septembre 2023 y sont donc servis
+      à 1,25 % au lieu de 0,75 %, même approximation que la fiche du
+      régime général en 2009.
+  - debut: 2015
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 25
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.0187
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
+    notes: >-
+      Seconde tranche depuis 2015 : 0 à 5 plafonds, 25 points au maximum.
+      Elle part de zéro et recouvre donc la première — c'est bien la règle
+      du régime, les deux cotisations se cumulant sous le plafond.
+      LA SURCOTE EST SERVIE, ET C'EST CELLE DU RÉGIME GÉNÉRAL : R. 643-8
+      (LEGIARTI000006751834) la donne « au titre des périodes d'activité
+      ayant donné lieu à cotisations à la charge de l'assuré accomplies
+      à compter du 1er janvier 2004 après l'âge prévu au premier alinéa
+      de l'article L. 351-1 et au-delà de la limite mentionnée au
+      deuxième alinéa du même article », à 0,75 % par trimestre. La
+      branche en points du moteur ne lisait pas ce champ, et la fiche
+      l'écrivait pour rien ; `surcote_points: regime_general` la fait
+      compter comme la branche en annuités, trimestres cotisés au-delà
+      de l'âge légal et de la durée requise.
+
+  - debut: 2024
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    decote_par_generation: true
+    points_maximum: 25
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.0187
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion, majoration_enfants, surcote_parentale]
+    notes: >-
+      Seconde tranche depuis 2015 : 0 à 5 plafonds, 25 points au maximum.
+      Elle part de zéro et recouvre donc la première — c'est bien la règle
+      du régime, les deux cotisations se cumulant sous le plafond.
+      LA SURCOTE PASSE À 1,25 % : R. 643-8 dans sa rédaction du décret
+      n° 2023-799 du 21 août 2023 (LEGIARTI000047985850), « 0,75 % par
+      trimestre accompli avant le 1er septembre 2023 et à 1,25 % par
+      trimestre accompli à compter de la même date ». La fiche
+      l'applique aux liquidations à partir de 2024, première année
+      pleine ; les trimestres d'avant septembre 2023 y sont donc servis
+      à 1,25 % au lieu de 0,75 %, même approximation que la fiche du
+      régime général en 2009.

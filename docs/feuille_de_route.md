@@ -1291,7 +1291,7 @@ statuts ; les huit taux spécifiques de l'Arrco des cultes. Les lignes
 de veille et les quatre récits de `limites.md` en tiennent le détail.
 
 **Fichiers.** `data/reference/regimes/_schema.yaml`,
-`data/reference/regimes/fonction_publique.yaml`, `non_salaries.yaml`,
+`data/reference/regimes/rafp.yaml`, `msa_rco.yaml`,
 `inventaire.yaml` et `pivots.yaml` ;
 `src/retraite_notionnelle/donnees/regimes.py`, `scenarios/actuel.py`,
 `moteur/compte.py`, et leurs pendants `moteur/js/regimes.js`,

@@ -1,0 +1,1411 @@
+code: carmf_complementaire
+rang: 380
+nom: >-
+  Régime complémentaire vieillesse des médecins libéraux (CARMF)
+famille: liberal
+source_id: carmf_chronologie
+fiabilite: haute
+creation: 1949
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Médecins libéraux. Étage complémentaire obligatoire au-dessus du régime
+  de base des professions libérales, et le plus lourd des deux : sa
+  cotisation maximale dépasse 19 000 € par an en 2026 quand celle de la
+  base plafonne bien plus bas.
+hors_repartition: false
+periodes:
+  - debut: 1949
+    fin: 1949
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 16.01
+    cotisation_forfaitaire_annee: 1949
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      LA PART FORFAITAIRE, ENFIN CHIFFRÉE. Cette fiche portait jusqu'ici l'aveu
+      qu'elle ne la modélisait pas — « dont le nombre de points n'est pas publié
+      […] ce qui SOUS-ESTIME les droits acquis avant cette date » —, et prêtait
+      au régime, avant 1983, un taux proportionnel de 2 % qui n'existait pas.
+      Les deux erreurs tombent ensemble.
+      La colonne « Complémentaire » de la table « Cotisations forfaitaires » de
+      la chronologie de la CARMF donne le montant, année par année, de 1949 à
+      1995 : 16,01 € en 1949 — la table le vérifie elle-même, base 10,67 +
+      complémentaire 16,01 = total 26,68 —, 402,47 € en 1970, 2 405,65 € en
+      1990. Le barème IPP « Cotisation de sécurité sociale pour la retraite
+      complémentaire des professions libérales », colonne « Part forfaitaire
+      retraite complémentaire CARMF », publie la même série, du même endroit,
+      et les deux concordent chiffre pour chiffre.
+      Les montants sont en EUROS COURANTS de chaque exercice : la fiche porte
+      donc une période par année, chacune avec sa propre année de référence.
+      AVANT 1983 LE RÉGIME EST PUREMENT FORFAITAIRE : le barème IPP ne donne
+      aucun taux proportionnel avant cette date, et la chronologie de la CARMF
+      n'en publie pas davantage. Le taux est donc nul, et le forfait est toute
+      la cotisation.
+  - debut: 1950
+    fin: 1950
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 32.01
+    cotisation_forfaitaire_annee: 1950
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1951
+    fin: 1951
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 42.69
+    cotisation_forfaitaire_annee: 1951
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1952
+    fin: 1952
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 44.82
+    cotisation_forfaitaire_annee: 1952
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1953
+    fin: 1953
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 44.82
+    cotisation_forfaitaire_annee: 1953
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1954
+    fin: 1954
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 48.48
+    cotisation_forfaitaire_annee: 1954
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1955
+    fin: 1955
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 48.48
+    cotisation_forfaitaire_annee: 1955
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1956
+    fin: 1956
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 57.63
+    cotisation_forfaitaire_annee: 1956
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1957
+    fin: 1957
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 65.86
+    cotisation_forfaitaire_annee: 1957
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1958
+    fin: 1958
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 78.36
+    cotisation_forfaitaire_annee: 1958
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1959
+    fin: 1959
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 89.34
+    cotisation_forfaitaire_annee: 1959
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1960
+    fin: 1960
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 94.82
+    cotisation_forfaitaire_annee: 1960
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1961
+    fin: 1961
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 100.62
+    cotisation_forfaitaire_annee: 1961
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1962
+    fin: 1962
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 114.34
+    cotisation_forfaitaire_annee: 1962
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1963
+    fin: 1963
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 121.96
+    cotisation_forfaitaire_annee: 1963
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+  - debut: 1964
+    fin: 1964
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 132.63
+    cotisation_forfaitaire_annee: 1964
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      TROIS ENFANTS, DEPUIS 1964. L'arrêté du 16 janvier 1964 (JORF du 2
+      février 1964, JORFTEXT000000482076) ajoute un article 22 au
+      règlement du régime pour les « allocataires ayant élevé au moins
+      trois enfants jusqu'à l'âge de seize ans » ; l'index n'en porte que
+      le titre, et le taux est celui de l'article 23 du règlement approuvé
+      le 10 juillet 2026 : « le montant total de la pension est majoré de
+      10 % au profit des allocataires ayant eu au moins trois enfants ».
+      `majoration_enfants` sur toutes les périodes depuis 1964 ; la fiche
+      n'en portait aucune.
+  - debut: 1965
+    fin: 1965
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 157.02
+    cotisation_forfaitaire_annee: 1965
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1966
+    fin: 1966
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 221.05
+    cotisation_forfaitaire_annee: 1966
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1967
+    fin: 1967
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 321.67
+    cotisation_forfaitaire_annee: 1967
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1968
+    fin: 1968
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 336.61
+    cotisation_forfaitaire_annee: 1968
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1969
+    fin: 1969
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 402.47
+    cotisation_forfaitaire_annee: 1969
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1970
+    fin: 1970
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 402.47
+    cotisation_forfaitaire_annee: 1970
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1971
+    fin: 1971
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 448.20
+    cotisation_forfaitaire_annee: 1971
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1972
+    fin: 1972
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 505.52
+    cotisation_forfaitaire_annee: 1972
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1973
+    fin: 1973
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 551.26
+    cotisation_forfaitaire_annee: 1973
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1974
+    fin: 1974
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 608.27
+    cotisation_forfaitaire_annee: 1974
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1975
+    fin: 1975
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 698.83
+    cotisation_forfaitaire_annee: 1975
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1976
+    fin: 1976
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 781.15
+    cotisation_forfaitaire_annee: 1976
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1977
+    fin: 1977
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 881.77
+    cotisation_forfaitaire_annee: 1977
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1978
+    fin: 1978
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 1025.07
+    cotisation_forfaitaire_annee: 1978
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1979
+    fin: 1979
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 1125.07
+    cotisation_forfaitaire_annee: 1979
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1980
+    fin: 1980
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 1211.05
+    cotisation_forfaitaire_annee: 1980
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1981
+    fin: 1981
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 1309.84
+    cotisation_forfaitaire_annee: 1981
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1982
+    fin: 1982
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0000
+    cotisation_forfaitaire_euros: 1556.81
+    cotisation_forfaitaire_annee: 1982
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1983
+    fin: 1983
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0200
+    cotisation_forfaitaire_euros: 1679.38
+    cotisation_forfaitaire_annee: 1983
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      La cotisation proportionnelle apparaît, à 2 %, sans faire disparaître le
+      forfait : les deux coexistent jusqu'en 1995. Le taux vient de la table
+      « Régime complémentaire / Cotisations proportionnelles » de la
+      chronologie de la CARMF, que le barème IPP confirme.
+  - debut: 1984
+    fin: 1984
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0200
+    cotisation_forfaitaire_euros: 1803.78
+    cotisation_forfaitaire_annee: 1984
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1985
+    fin: 1985
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0200
+    cotisation_forfaitaire_euros: 1864.15
+    cotisation_forfaitaire_annee: 1985
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1986
+    fin: 1986
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0200
+    cotisation_forfaitaire_euros: 1975.74
+    cotisation_forfaitaire_annee: 1986
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1987
+    fin: 1987
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0200
+    cotisation_forfaitaire_euros: 2037.94
+    cotisation_forfaitaire_annee: 1987
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1988
+    fin: 1988
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0200
+    cotisation_forfaitaire_euros: 2268.44
+    cotisation_forfaitaire_annee: 1988
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1989
+    fin: 1989
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0200
+    cotisation_forfaitaire_euros: 2336.13
+    cotisation_forfaitaire_annee: 1989
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1990
+    fin: 1990
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0200
+    cotisation_forfaitaire_euros: 2405.65
+    cotisation_forfaitaire_annee: 1990
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1991
+    fin: 1991
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0500
+    cotisation_forfaitaire_euros: 1871.46
+    cotisation_forfaitaire_annee: 1991
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Le taux passe de 2 à 5 % avec la réforme du 1er janvier 1991, et le
+      forfait RECULE du même coup — 2 405,65 € en 1990, 1 871,46 € en 1991 :
+      le régime déplace son poids du montant vers le revenu.
+      Cette réforme crée un point NOUVEAU : les points acquis auparavant sont
+      servis affectés d'un coefficient de 1,33 (statuts du régime), ce que le
+      rapport des deux séries publiées confirme à 1,3333 près. Le moteur
+      l'applique par une ligne d'ÉCHELLE dans `conversions_points.csv`
+      (carmf_complementaire, 1991, 1,333333) : les points acquis avant
+      1991 et liquidés depuis valent un tiers de plus, comme le régime les
+      sert. La fiche disait sous-estimer d'un tiers les droits d'avant
+      1991 ; ce n'est plus le cas.
+  - debut: 1992
+    fin: 1992
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0500
+    cotisation_forfaitaire_euros: 1937.32
+    cotisation_forfaitaire_annee: 1992
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1993
+    fin: 1993
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0500
+    cotisation_forfaitaire_euros: 1997.69
+    cotisation_forfaitaire_annee: 1993
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1994
+    fin: 1994
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0500
+    cotisation_forfaitaire_euros: 2078.19
+    cotisation_forfaitaire_annee: 1994
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1995
+    fin: 1995
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0500
+    cotisation_forfaitaire_euros: 2166.00
+    cotisation_forfaitaire_annee: 1995
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+  - debut: 1996
+    fin: 1996
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0750
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Le régime devient TOTALEMENT PROPORTIONNEL : la part forfaitaire disparaît et la cotisation maximale ouvre dix points pleins. À partir d'ici la fiche est exacte, taux et rendement venant tous deux des tables de la caisse.
+  - debut: 1997
+    fin: 1998
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0810
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+  - debut: 1999
+    fin: 1999
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0870
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+  - debut: 2000
+    fin: 2007
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0900
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_pas_trimestres: 4
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
+      décembre 2016, l'article 15 des statuts ouvre le régime « à 65 ans
+      », ou dès l'âge de l'article L. 161-17-2 « avec application d'un
+      coefficient d'anticipation égal à 0,75 à 60 ans, 0,80 à 61 ans,
+      0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
+      par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
+      172 trimestres, la décote du régime de base. Le report au-delà de
+      65 ans est majoré par l'article 32, « de 5 % par année pleine de
+      différé » : `surcote_pas_trimestres: 4` ne compte que les années
+      pleines. Cet article n'est lu que dans l'état consolidé des
+      statuts, sans date d'origine : la fiche le sert à partir de 2000,
+      borne de période, et rien avant.
+      LA MINORATION COMPTE DES ANNÉES D'ÂGE. « 0,75 à 60 ans, 0,80 à 61
+      ans, 0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » : l'âge atteint,
+      en années, et non les trimestres. La fiche l'écrivait en 1,25 % par
+      trimestre avec `duree_requise_trimestres: null` pour dire que la
+      durée n'y jouait aucun rôle ; or le moteur oppose à un régime en
+      points la durée de la carrière, qui annulait la minoration : un
+      médecin parti à soixante-quatre ans en 2009 avec sa durée ne perdait
+      rien. `abattement_points: cavom` — 5 % par année manquante jusqu'au
+      taux plein, l'année entamée comptant entière, et seul l'âge l'annule
+      — est cette règle-là. Corrigé le 23 septembre 2026 (action 89, lot
+      des professions de santé).
+  - debut: 2008
+    fin: 2008
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0910
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_pas_trimestres: 4
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
+      décembre 2016, l'article 15 des statuts ouvre le régime « à 65 ans
+      », ou dès l'âge de l'article L. 161-17-2 « avec application d'un
+      coefficient d'anticipation égal à 0,75 à 60 ans, 0,80 à 61 ans,
+      0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
+      par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
+      172 trimestres, la décote du régime de base. Le report au-delà de
+      65 ans est majoré par l'article 32, « de 5 % par année pleine de
+      différé » : `surcote_pas_trimestres: 4` ne compte que les années
+      pleines. Cet article n'est lu que dans l'état consolidé des
+      statuts, sans date d'origine : la fiche le sert à partir de 2000,
+      borne de période, et rien avant.
+  - debut: 2009
+    fin: 2012
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0920
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_pas_trimestres: 4
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
+      décembre 2016, l'article 15 des statuts ouvre le régime « à 65 ans
+      », ou dès l'âge de l'article L. 161-17-2 « avec application d'un
+      coefficient d'anticipation égal à 0,75 à 60 ans, 0,80 à 61 ans,
+      0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
+      par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
+      172 trimestres, la décote du régime de base. Le report au-delà de
+      65 ans est majoré par l'article 32, « de 5 % par année pleine de
+      différé » : `surcote_pas_trimestres: 4` ne compte que les années
+      pleines. Cet article n'est lu que dans l'état consolidé des
+      statuts, sans date d'origine : la fiche le sert à partir de 2000,
+      borne de période, et rien avant.
+  - debut: 2013
+    fin: 2013
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0930
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_pas_trimestres: 4
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
+      décembre 2016, l'article 15 des statuts ouvre le régime « à 65 ans
+      », ou dès l'âge de l'article L. 161-17-2 « avec application d'un
+      coefficient d'anticipation égal à 0,75 à 60 ans, 0,80 à 61 ans,
+      0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
+      par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
+      172 trimestres, la décote du régime de base. Le report au-delà de
+      65 ans est majoré par l'article 32, « de 5 % par année pleine de
+      différé » : `surcote_pas_trimestres: 4` ne compte que les années
+      pleines. Cet article n'est lu que dans l'état consolidé des
+      statuts, sans date d'origine : la fiche le sert à partir de 2000,
+      borne de période, et rien avant.
+  - debut: 2014
+    fin: 2014
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0940
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_pas_trimestres: 4
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
+      décembre 2016, l'article 15 des statuts ouvre le régime « à 65 ans
+      », ou dès l'âge de l'article L. 161-17-2 « avec application d'un
+      coefficient d'anticipation égal à 0,75 à 60 ans, 0,80 à 61 ans,
+      0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
+      par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
+      172 trimestres, la décote du régime de base. Le report au-delà de
+      65 ans est majoré par l'article 32, « de 5 % par année pleine de
+      différé » : `surcote_pas_trimestres: 4` ne compte que les années
+      pleines. Cet article n'est lu que dans l'état consolidé des
+      statuts, sans date d'origine : la fiche le sert à partir de 2000,
+      borne de période, et rien avant.
+  - debut: 2015
+    fin: 2015
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0950
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_pas_trimestres: 4
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
+      décembre 2016, l'article 15 des statuts ouvre le régime « à 65 ans
+      », ou dès l'âge de l'article L. 161-17-2 « avec application d'un
+      coefficient d'anticipation égal à 0,75 à 60 ans, 0,80 à 61 ans,
+      0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
+      par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
+      172 trimestres, la décote du régime de base. Le report au-delà de
+      65 ans est majoré par l'article 32, « de 5 % par année pleine de
+      différé » : `surcote_pas_trimestres: 4` ne compte que les années
+      pleines. Cet article n'est lu que dans l'état consolidé des
+      statuts, sans date d'origine : la fiche le sert à partir de 2000,
+      borne de période, et rien avant.
+  - debut: 2016
+    fin: 2016
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0960
+    decote_par_trimestre: 0.0125
+    abattement_points: cavom
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_pas_trimestres: 4
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
+      décembre 2016, l'article 15 des statuts ouvre le régime « à 65 ans
+      », ou dès l'âge de l'article L. 161-17-2 « avec application d'un
+      coefficient d'anticipation égal à 0,75 à 60 ans, 0,80 à 61 ans,
+      0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
+      par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
+      172 trimestres, la décote du régime de base. Le report au-delà de
+      65 ans est majoré par l'article 32, « de 5 % par année pleine de
+      différé » : `surcote_pas_trimestres: 4` ne compte que les années
+      pleines. Cet article n'est lu que dans l'état consolidé des
+      statuts, sans date d'origine : la fiche le sert à partir de 2000,
+      borne de période, et rien avant.
+  - debut: 2017
+    fin: 2017
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: false
+    age_taux_plein: 62
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0970
+    decote_par_trimestre: null
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 62
+    surcote_age_maximum: 70
+    surcote_palier_age: 65
+    surcote_par_trimestre_apres_palier: 0.0075
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
+      30 novembre 2016, JORFARTI000033521562) : le régime s'ouvre à taux
+      plein à l'âge légal, sans décote ni durée, et « si le médecin
+      demande à bénéficier de la retraite complémentaire après cet âge,
+      il est fait application d'un coefficient de majoration de 1,25 %
+      par trimestre séparant le premier jour du trimestre civil suivant
+      celui où le médecin atteint cet âge de la date d'effet de la
+      retraite », « réduit à 0,75 % par trimestre à partir du premier
+      jour du trimestre civil suivant celui où le médecin atteint l'âge
+      de 65 ans, sans pouvoir s'appliquer au-delà du premier jour du
+      trimestre civil suivant le soixante-dixième anniversaire ». Le
+      règlement approuvé le 10 juillet 2026 (LEGIARTI000054437501) écrit
+      « après l'âge de 62 ans » en toutes lettres ; la fiche retient 62
+      ans sur toute la période et ne porte pas les 64 ans que la loi du
+      14 avril 2023 y a mis entre septembre 2023 et 2025.
+  - debut: 2018
+    fin: 2021
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: false
+    age_taux_plein: 62
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.0980
+    decote_par_trimestre: null
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 62
+    surcote_age_maximum: 70
+    surcote_palier_age: 65
+    surcote_par_trimestre_apres_palier: 0.0075
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
+      30 novembre 2016, JORFARTI000033521562) : le régime s'ouvre à taux
+      plein à l'âge légal, sans décote ni durée, et « si le médecin
+      demande à bénéficier de la retraite complémentaire après cet âge,
+      il est fait application d'un coefficient de majoration de 1,25 %
+      par trimestre séparant le premier jour du trimestre civil suivant
+      celui où le médecin atteint cet âge de la date d'effet de la
+      retraite », « réduit à 0,75 % par trimestre à partir du premier
+      jour du trimestre civil suivant celui où le médecin atteint l'âge
+      de 65 ans, sans pouvoir s'appliquer au-delà du premier jour du
+      trimestre civil suivant le soixante-dixième anniversaire ». Le
+      règlement approuvé le 10 juillet 2026 (LEGIARTI000054437501) écrit
+      « après l'âge de 62 ans » en toutes lettres ; la fiche retient 62
+      ans sur toute la période et ne porte pas les 64 ans que la loi du
+      14 avril 2023 y a mis entre septembre 2023 et 2025.
+  - debut: 2022
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: false
+    age_taux_plein: 62
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.1000
+    decote_par_trimestre: null
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 62
+    surcote_age_maximum: 70
+    surcote_palier_age: 65
+    surcote_par_trimestre_apres_palier: 0.0075
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
+      30 novembre 2016, JORFARTI000033521562) : le régime s'ouvre à taux
+      plein à l'âge légal, sans décote ni durée, et « si le médecin
+      demande à bénéficier de la retraite complémentaire après cet âge,
+      il est fait application d'un coefficient de majoration de 1,25 %
+      par trimestre séparant le premier jour du trimestre civil suivant
+      celui où le médecin atteint cet âge de la date d'effet de la
+      retraite », « réduit à 0,75 % par trimestre à partir du premier
+      jour du trimestre civil suivant celui où le médecin atteint l'âge
+      de 65 ans, sans pouvoir s'appliquer au-delà du premier jour du
+      trimestre civil suivant le soixante-dixième anniversaire ». Le
+      règlement approuvé le 10 juillet 2026 (LEGIARTI000054437501) écrit
+      « après l'âge de 62 ans » en toutes lettres ; la fiche retient 62
+      ans sur toute la période et ne porte pas les 64 ans que la loi du
+      14 avril 2023 y a mis entre septembre 2023 et 2025.
+  - debut: 2024
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: false
+    age_taux_plein: 62
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.1020
+    decote_par_trimestre: null
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 62
+    surcote_age_maximum: 70
+    surcote_palier_age: 65
+    surcote_par_trimestre_apres_palier: 0.0075
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
+      30 novembre 2016, JORFARTI000033521562) : le régime s'ouvre à taux
+      plein à l'âge légal, sans décote ni durée, et « si le médecin
+      demande à bénéficier de la retraite complémentaire après cet âge,
+      il est fait application d'un coefficient de majoration de 1,25 %
+      par trimestre séparant le premier jour du trimestre civil suivant
+      celui où le médecin atteint cet âge de la date d'effet de la
+      retraite », « réduit à 0,75 % par trimestre à partir du premier
+      jour du trimestre civil suivant celui où le médecin atteint l'âge
+      de 65 ans, sans pouvoir s'appliquer au-delà du premier jour du
+      trimestre civil suivant le soixante-dixième anniversaire ». Le
+      règlement approuvé le 10 juillet 2026 (LEGIARTI000054437501) écrit
+      « après l'âge de 62 ans » en toutes lettres ; la fiche retient 62
+      ans sur toute la période et ne porte pas les 64 ans que la loi du
+      14 avril 2023 y a mis entre septembre 2023 et 2025.
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: false
+    age_taux_plein: 62
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_3_5_pass
+    taux_cotisation_retraite: 0.1180
+    decote_par_trimestre: null
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 62
+    surcote_age_maximum: 70
+    surcote_palier_age: 65
+    surcote_par_trimestre_apres_palier: 0.0075
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Taux de la table « Cotisations proportionnelles » de la chronologie
+      de la CARMF. L'article 2 du décret n° 49-579 n'est consolidé dans
+      LEGI qu'à partir du 29 mai 2004 (LEGIARTI000006781640) et porte « 14
+      % » dans toutes ses versions (LEGIARTI000024194100 en 2011,
+      LEGIARTI000026885080, LEGIARTI000050865167, LEGIARTI000054168125) :
+      c'est le taux contractuel, appelé aux taux annuels de la chronologie
+      de la caisse que la fiche porte.
+      LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
+      30 novembre 2016, JORFARTI000033521562) : le régime s'ouvre à taux
+      plein à l'âge légal, sans décote ni durée, et « si le médecin
+      demande à bénéficier de la retraite complémentaire après cet âge,
+      il est fait application d'un coefficient de majoration de 1,25 %
+      par trimestre séparant le premier jour du trimestre civil suivant
+      celui où le médecin atteint cet âge de la date d'effet de la
+      retraite », « réduit à 0,75 % par trimestre à partir du premier
+      jour du trimestre civil suivant celui où le médecin atteint l'âge
+      de 65 ans, sans pouvoir s'appliquer au-delà du premier jour du
+      trimestre civil suivant le soixante-dixième anniversaire ». Le
+      règlement approuvé le 10 juillet 2026 (LEGIARTI000054437501) écrit
+      « après l'âge de 62 ans » en toutes lettres ; la fiche retient 62
+      ans sur toute la période et ne porte pas les 64 ans que la loi du
+      14 avril 2023 y a mis entre septembre 2023 et 2025.

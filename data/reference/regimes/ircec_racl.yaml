@@ -1,0 +1,114 @@
+code: ircec_racl
+rang: 550
+nom: >-
+  Régime de retraite complémentaire des auteurs et compositeurs lyriques (RACL, IRCEC)
+famille: liberal
+source_id: legifrance_textes
+fiabilite: estimee
+creation: 1962
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Auteurs et compositeurs de musique dont les droits d'exécution publique
+  et de reproduction mécanique sont perçus par la SACEM : second étage
+  obligatoire, en plus du RAAP, depuis le décret n° 61-1304 du 4 décembre
+  1961.
+hors_repartition: false
+periodes:
+  - debut: 1962
+    fin: 2013
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_8_pass
+    taux_cotisation_retraite: 0.0650
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      LIQUIDATIONS ANTÉRIEURES À 2014 : le règlement servait alors le
+      taux plein à soixante-cinq ans, et ses coefficients d'anticipation,
+      que l'arrêté du 21 novembre 2013 a remplacés, ne sont pas reproduits
+      au Journal officiel. La période garde la décote du régime de base,
+      faute d'eux.
+      TAUX : le décret ne fixe qu'un seuil d'affiliation et renvoie au
+      règlement (décret n° 61-1304, art. 1, LEGIARTI000006781613,
+      LEGIARTI000018123908 dès 2004 ; arrêté du 9 mars 1987,
+      LEGIARTI000006784842, statuts modifiés sans être reproduits) ; le
+      mémo 2026 de l'IRCEC écrit 6,5 % des droits compris entre 3 170,46 €
+      et 435 938,46 € — un peu plus de neuf plafonds, la fiche s'arrête à
+      huit, borne la plus proche, et ignore le seuil. POINTS : prix
+      d'achat 10,304 €, valeur de service 0,618 € en 2026, soit 6,0
+      centimes de rente par euro dans `rendements_points.csv`, appliqués à
+      toute la carrière ; niveau `estimee`. Âges de la fiche
+      `ircec_raap`.
+  - debut: 2014
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_8_pass
+    taux_cotisation_retraite: 0.0650
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    abattement_points: ircec_age_seul
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      MINORATION DE L'IRCEC, et non celle du régime de base : règlement
+      du RACL, art. 21, dans la rédaction de l'arrêté du 21 novembre
+      2013 : « 5 % par année manquante entre la date d'effet de la
+      liquidation pour un départ à l'âge du taux plein et la date de
+      prise d'effet de la pension », sans renvoi au régime de base, et
+      un taux plein que seul l'âge ouvre. L'annexe du même arrêté
+      portait 2,5 % la première année pour les générations 1955 et
+      suivantes : c'est l'article que la fiche suit.
+      Une année entamée compte entière : l'annexe de l'arrêté du 21
+      novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
+      trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
+      leurs propres coefficients, que la période ne porte pas (voir
+      `docs/limites.md`).
+      Taux, assiette et points : ceux de la première période.
+  - debut: 2025
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_8_pass
+    taux_cotisation_retraite: 0.0650
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    abattement_points: ircec
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      MINORATION DE L'IRCEC, et non celle du régime de base : l'arrêté
+      du 13 mai 2025 (JORFARTI000051592840) aligne le RACL sur le RAAP
+      et le RACD : 2,5 % pour chacune des deux premières années
+      manquantes, 5 % au-delà, les coefficients du régime de base s'ils
+      sont plus favorables, et le taux plein dès l'âge légal si la
+      pension du régime de base l'est.
+      Une année entamée compte entière : l'annexe de l'arrêté du 21
+      novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
+      trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
+      leurs propres coefficients, que la période ne porte pas (voir
+      `docs/limites.md`).
+      Taux, assiette et points : ceux de la première période.

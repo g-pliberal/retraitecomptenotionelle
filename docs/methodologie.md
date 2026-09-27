@@ -596,7 +596,7 @@ ligne :
 | pension de réversion | **non** — elle ne concerne pas l'assuré lui-même |
 | bonifications, catégorie active | **non** — elles supposent des informations que le modèle n'a pas |
 | périodes assimilées | oui, motif par motif — et ce qu'elles ouvrent en services, à part |
-| garantie minimale de points | oui, <!--chiffre:partout(data/reference/regimes/complementaires_prive.yaml:regimes.*.periodes.*.points_minimum_annuels)-->120<!--/--> points par an de 1989 à 2018 |
+| garantie minimale de points | oui, <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.*.points_minimum_annuels)-->120<!--/--> points par an de 1989 à 2018 |
 | carrières longues | oui, pour dire si le droit ouvre la liquidation |
 | décote et surcote | oui, barème propre à la fonction publique compris |
 | coefficient de solidarité Agirc-Arrco | **non** — dispositif éteint, voir `docs/limites.md` |
@@ -1159,18 +1159,18 @@ retenue de l'agent. Toute autre période doit porter une valeur explicite, et
 
 | Régime | Période | Part salariale | Origine |
 |---|---|---:|---|
-| Régime général | 1945-1971 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1945)-->34,88<!--/--> % | mesurée sur 1968-1971, OpenFisca ne remontant pas plus haut |
-| Régime général | 1972-1982 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1972)-->33,43<!--/--> % | OpenFisca, moyenne de période |
-| Régime général | 1983-1993 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1983)-->43,90<!--/--> % | idem |
-| Régime général | 1994-2022 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1994&a=2011&stat=min)-->44,41<!--/--> à <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1994&a=2011&stat=max)-->44,63<!--/--> % | idem |
-| Régime général | 2023- | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=2023)-->44,66<!--/--> % | idem |
-| Arrco, Agirc-Arrco | toutes | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=arrco&de=1961&a=2018)-->40<!--/--> % | règle de répartition 40-60 (ANI du 17 novembre 2017, art. 38) |
-| Ircantec, tranche 1 | 1971-2025 | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=ircantec&de=1971&a=2017&assiette=tranche_1)-->40<!--/--> % | idem ; <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=ircantec&de=2026&assiette=tranche_1)-->39,9<!--/--> % depuis 2026 |
-| Ircantec, tranche 2 | toutes | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=ircantec&de=1971&a=2008&assiette=tranche_2_ircantec&stat=min)-->34<!--/--> à <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=ircantec&de=2009&a=2026&assiette=tranche_2&stat=max)-->35,64<!--/--> % | OpenFisca, moyenne de période |
-| Agirc | 1947-1993 | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=agirc&de=1947&a=1993)-->25<!--/--> % | OpenFisca : un quart, trois quarts |
-| Agirc | 1994-2018 | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=agirc&de=1994&a=2015&stat=min)-->30<!--/--> à <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=agirc&de=1994&a=2015&stat=max)-->38<!--/--> % | OpenFisca, moyenne de période |
-| RAFP | 2005- | <!--chiffre:mesure(fiche_regime?fichier=fonction_publique&regime=rafp&champ=part_salariale&de=2005&a=2011)-->50<!--/--> % | décret 2004-569 : <!--chiffre:mesure(fiche_regime?fichier=fonction_publique&regime=rafp&champ=taux_cotisation_retraite&de=2005&a=2011)-->10<!--/--> %, moitié agent, moitié employeur |
-| Assurances sociales, AVTS | 1930-1945 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=assurances_sociales&champ=part_salariale&de=1930)-->50<!--/--> % | loi du 30 avril 1930 : <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=assurances_sociales&champ=taux_cotisation_retraite&de=1930)-->8<!--/--> %, moitié ouvrier moitié patron |
+| Régime général | 1945-1971 | <!--chiffre:mesure(fiche_regime?regime=regime_general&champ=part_salariale&de=1945)-->34,88<!--/--> % | mesurée sur 1968-1971, OpenFisca ne remontant pas plus haut |
+| Régime général | 1972-1982 | <!--chiffre:mesure(fiche_regime?regime=regime_general&champ=part_salariale&de=1972)-->33,43<!--/--> % | OpenFisca, moyenne de période |
+| Régime général | 1983-1993 | <!--chiffre:mesure(fiche_regime?regime=regime_general&champ=part_salariale&de=1983)-->43,90<!--/--> % | idem |
+| Régime général | 1994-2022 | <!--chiffre:mesure(fiche_regime?regime=regime_general&champ=part_salariale&de=1994&a=2011&stat=min)-->44,41<!--/--> à <!--chiffre:mesure(fiche_regime?regime=regime_general&champ=part_salariale&de=1994&a=2011&stat=max)-->44,63<!--/--> % | idem |
+| Régime général | 2023- | <!--chiffre:mesure(fiche_regime?regime=regime_general&champ=part_salariale&de=2023)-->44,66<!--/--> % | idem |
+| Arrco, Agirc-Arrco | toutes | <!--chiffre:mesure(fiche_regime?champ=part_salariale&regime=arrco&de=1961&a=2018)-->40<!--/--> % | règle de répartition 40-60 (ANI du 17 novembre 2017, art. 38) |
+| Ircantec, tranche 1 | 1971-2025 | <!--chiffre:mesure(fiche_regime?champ=part_salariale&regime=ircantec&de=1971&a=2017&assiette=tranche_1)-->40<!--/--> % | idem ; <!--chiffre:mesure(fiche_regime?champ=part_salariale&regime=ircantec&de=2026&assiette=tranche_1)-->39,9<!--/--> % depuis 2026 |
+| Ircantec, tranche 2 | toutes | <!--chiffre:mesure(fiche_regime?champ=part_salariale&regime=ircantec&de=1971&a=2008&assiette=tranche_2_ircantec&stat=min)-->34<!--/--> à <!--chiffre:mesure(fiche_regime?champ=part_salariale&regime=ircantec&de=2009&a=2026&assiette=tranche_2&stat=max)-->35,64<!--/--> % | OpenFisca, moyenne de période |
+| Agirc | 1947-1993 | <!--chiffre:mesure(fiche_regime?champ=part_salariale&regime=agirc&de=1947&a=1993)-->25<!--/--> % | OpenFisca : un quart, trois quarts |
+| Agirc | 1994-2018 | <!--chiffre:mesure(fiche_regime?champ=part_salariale&regime=agirc&de=1994&a=2015&stat=min)-->30<!--/--> à <!--chiffre:mesure(fiche_regime?champ=part_salariale&regime=agirc&de=1994&a=2015&stat=max)-->38<!--/--> % | OpenFisca, moyenne de période |
+| RAFP | 2005- | <!--chiffre:mesure(fiche_regime?regime=rafp&champ=part_salariale&de=2005&a=2011)-->50<!--/--> % | décret 2004-569 : <!--chiffre:mesure(fiche_regime?regime=rafp&champ=taux_cotisation_retraite&de=2005&a=2011)-->10<!--/--> %, moitié agent, moitié employeur |
+| Assurances sociales, AVTS | 1930-1945 | <!--chiffre:mesure(fiche_regime?regime=assurances_sociales&champ=part_salariale&de=1930)-->50<!--/--> % | loi du 30 avril 1930 : <!--chiffre:mesure(fiche_regime?regime=assurances_sociales&champ=taux_cotisation_retraite&de=1930)-->8<!--/--> %, moitié ouvrier moitié patron |
 
 La part est une **moyenne sur la période**, comme le taux lui-même : les fiches
 sont découpées par période législative, et les parts salariale et patronale

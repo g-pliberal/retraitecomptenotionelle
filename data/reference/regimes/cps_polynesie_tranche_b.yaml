@@ -1,0 +1,47 @@
+code: cps_polynesie_tranche_b
+rang: 70
+nom: >-
+  Régime de retraite des travailleurs salariés de Polynésie française, tranche B (CPS)
+famille: base_prive
+source_id: sites_institutionnels
+fiabilite: estimee
+creation: 1995
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Salariés de Polynésie française dont le salaire dépasse le plafond de la
+  tranche A : des points sur la fraction comprise entre 269 000 et 525 000
+  FCFP par mois (2026).
+hors_repartition: false
+periodes:
+  - debut: 1995
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiches du CLEISS (voir `cps_polynesie`). COTISATION 2026 :
+      « vieillesse tranche B : 11,62 % [employeur], 5,81 % [salarié],
+      entre 269 000 FCFP et 525 000 FCFP » par mois — 0,69 à 1,35 plafond
+      national, la fiche prend la tranche entre un et deux plafonds, la
+      borne la plus proche du catalogue. POINTS : « le total des points
+      est obtenu en divisant le salaire annuel par le salaire minimum
+      horaire de référence (1 024,74 FCFP depuis le 1er mai 2024) » et «
+      la valeur du point s'obtient en multipliant 1 024,74 FCFP par 2 %
+      soit 20,49 FCFP », pension « (total des points × valeur du point) /
+      12 » : deux pour cent du salaire de la tranche par année, soit 11,5
+      centimes de rente par euro cotisé à 17,43 %, dans
+      `rendements_points.csv`. Année de création prise à 1995, date de la
+      tranche B selon le rapport 2020 du Conseil d'orientation et de suivi
+      des retraites polynésien ; niveau `estimee`.

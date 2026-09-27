@@ -1,0 +1,315 @@
+code: cavimac
+rang: 620
+nom: >-
+  Régime d'assurance vieillesse des ministres des cultes et des membres des
+  congrégations et collectivités religieuses (CAVIMAC)
+famille: special
+source_id: dila_legi_cultes
+fiabilite: haute
+creation: 1979
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Ministres des cultes et membres des congrégations et collectivités
+  religieuses. Régime créé par la loi du 2 janvier 1978, géré par la
+  CAMAVIC puis, depuis 1998, par la CAVIMAC. Un assuré n'y a pas de
+  salaire : la cotisation porte sur un forfait égal au SMIC mensuel,
+  supporté pour partie par lui et pour partie par sa congrégation —
+  c'est pourquoi le régime est rangé en `special` et non en
+  `non_salarie` : il a bel et bien un payeur employeur.
+hors_repartition: false
+periodes:
+  - debut: 1979
+    fin: 1982
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference_par_generation: true
+    decote_par_generation: true
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 2028
+    assiette_forfaitaire: true
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      2028 heures de SMIC par an (169 heures par mois).
+      LA SURCOTE N'EXISTAIT PAS, et la fiche en servait une. Le régime des
+      cultes reprend les règles du régime général — c'est ce que dit déjà
+      la note sur les taux —, et le régime général n'a de surcote que
+      depuis la loi du 21 août 2003, appliquée aux liquidations de 2004 :
+      0,75 % par trimestre jusqu'en 2008, 1,25 % ensuite. La fiche servait
+      1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
+      la durée requise voyait sa pension majorée de dix pour cent que
+      personne ne lui devait.
+  - debut: 1983
+    fin: 1993
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference_par_generation: true
+    decote_par_generation: true
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 2028
+    assiette_forfaitaire: true
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 0.4390
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      2028 heures de SMIC par an (169 heures par mois).
+      LA SURCOTE N'EXISTAIT PAS, et la fiche en servait une. Le régime des
+      cultes reprend les règles du régime général — c'est ce que dit déjà
+      la note sur les taux —, et le régime général n'a de surcote que
+      depuis la loi du 21 août 2003, appliquée aux liquidations de 2004 :
+      0,75 % par trimestre jusqu'en 2008, 1,25 % ensuite. La fiche servait
+      1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
+      la durée requise voyait sa pension majorée de dix pour cent que
+      personne ne lui devait.
+  - debut: 1994
+    fin: 2001
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference_par_generation: true
+    decote_par_generation: true
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 2028
+    assiette_forfaitaire: true
+    taux_cotisation_retraite: 0.1475
+    part_salariale: 0.4441
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      2028 heures de SMIC par an (169 heures par mois).
+      LA SURCOTE N'EXISTAIT PAS, et la fiche en servait une. Le régime des
+      cultes reprend les règles du régime général — c'est ce que dit déjà
+      la note sur les taux —, et le régime général n'a de surcote que
+      depuis la loi du 21 août 2003, appliquée aux liquidations de 2004 :
+      0,75 % par trimestre jusqu'en 2008, 1,25 % ensuite. La fiche servait
+      1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
+      la durée requise voyait sa pension majorée de dix pour cent que
+      personne ne lui devait.
+  - debut: 2002
+    fin: 2003
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference_par_generation: true
+    decote_par_generation: true
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: true
+    taux_cotisation_retraite: 0.1475
+    part_salariale: 0.4441
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      1820 heures de SMIC par an (151,67 heures par mois).
+      LA SURCOTE N'EXISTAIT PAS, et la fiche en servait une. Le régime des
+      cultes reprend les règles du régime général — c'est ce que dit déjà
+      la note sur les taux —, et le régime général n'a de surcote que
+      depuis la loi du 21 août 2003, appliquée aux liquidations de 2004 :
+      0,75 % par trimestre jusqu'en 2008, 1,25 % ensuite. La fiche servait
+      1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
+      la durée requise voyait sa pension majorée de dix pour cent que
+      personne ne lui devait.
+  - debut: 2004
+    fin: 2008
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference_par_generation: true
+    decote_par_generation: true
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: true
+    taux_cotisation_retraite: 0.1487
+    part_salariale: 0.4445
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_bareme: regime_general
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      1820 heures de SMIC par an (151,67 heures par mois).
+      LA SURCOTE N'EXISTAIT PAS, et la fiche en servait une. Le régime des
+      cultes reprend les règles du régime général — c'est ce que dit déjà
+      la note sur les taux —, et le régime général n'a de surcote que
+      depuis la loi du 21 août 2003, appliquée aux liquidations de 2004 :
+      0,75 % par trimestre jusqu'en 2008, 1,25 % ensuite. La fiche servait
+      1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
+      la durée requise voyait sa pension majorée de dix pour cent que
+      personne ne lui devait.
+  - debut: 2009
+    fin: 2010
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference_par_generation: true
+    decote_par_generation: true
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: true
+    taux_cotisation_retraite: 0.1495
+    part_salariale: 0.4448
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_bareme: regime_general
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      1820 heures de SMIC par an (151,67 heures par mois).
+  - debut: 2011
+    fin: 2022
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference_par_generation: true
+    decote_par_generation: true
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: true
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_bareme: regime_general
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      1820 heures de SMIC par an (151,67 heures par mois).
+  - debut: 2023
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference_par_generation: true
+    decote_par_generation: true
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: true
+    taux_cotisation_retraite: 0.1545
+    part_salariale: 0.4466
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_bareme: regime_general
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      1820 heures de SMIC par an (151,67 heures par mois).
+      LE SALAIRE ANNUEL MOYEN EST FAIT DU FORFAIT, et non du revenu saisi :
+      la caisse le calcule « sur la base du SMIC [...] pour tous les assurés
+      cultuels » (page « Demander ma retraite de base », lue le 23 septembre
+      2026), ce que le moteur fait depuis dans `assiette_de_reference`
+      (`droit/liquider.py`). Il
+      applique en revanche les règles d'après 1998 à toute la carrière, et
+      ne compte pas les années d'avant 1979, que la caisse valide
+      gratuitement : voir `docs/limites.md`.

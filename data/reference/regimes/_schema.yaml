@@ -1,15 +1,47 @@
 # Schéma commun des fiches de régime
 # ===================================
-# Chaque fichier regimes/*.yaml (hors celui-ci) contient une clé `regimes`
-# qui est une liste de fiches conformes à ce schéma. Le chargeur
+# Un fichier par régime, dans ce dossier, nommé de son code : `sncf.yaml` porte
+# le régime `sncf`, et ses champs sont ceux de ce schéma. Les autres fichiers
+# YAML du dossier ne sont pas des régimes : celui-ci, l'inventaire
+# (`inventaire.yaml`) et les pivots (`pivots.yaml`). Le chargeur
 # src/retraite_notionnelle/donnees/regimes.py valide contre ce schéma.
+#
+# Version 2, depuis la phase 6 de docs/architecture.md : les régimes étaient
+# rangés par familles en cinq fichiers, dont chacun portait une liste
+# `regimes` — `base_prive.yaml`, `complementaires_prive.yaml`,
+# `fonction_publique.yaml`, `non_salaries.yaml`, `regimes_speciaux.yaml`.
+# Chacun a désormais le sien, et son `rang` garde l'ordre où ils se
+# chargeaient. Ce que disaient les en-têtes de ces cinq fichiers est passé
+# dans la description des familles, ci-dessous.
 
-schema_version: 1
+schema_version: 2
 
 champs_regime:
-  code:        "identifiant court, stable, en minuscules (clé primaire)"
+  code:        "identifiant court, stable, en minuscules (clé primaire) ; le nom du fichier"
+  rang: >-
+    rang du régime dans le catalogue, un entier que nul autre régime ne porte.
+    Le catalogue parcourt les régimes dans cet ordre, et il n'est pas
+    indifférent : à égalité, la fusion des régimes (moteur/fusion.py) retient
+    le premier rencontré, et une moyenne s'y additionne dans cet ordre. Le
+    paquet du portage les range de même. De dix en dix, pour qu'un régime
+    nouveau prenne place sans renuméroter les autres.
   nom:         "libellé complet"
-  famille:     "base_prive | complementaire_prive | fonction_publique | special | non_salarie | agricole | liberal | additionnel_capitalise"
+  famille:
+    description: "la famille du régime"
+    valeurs:
+      base_prive: "régimes de base des salariés du secteur privé, 1930 -> aujourd'hui"
+      complementaire_prive: "régimes complémentaires des salariés, 1947 -> aujourd'hui"
+      fonction_publique: "régimes de la fonction publique, 1853 -> aujourd'hui"
+      special: >-
+        régimes spéciaux, vivants et éteints. Ces régimes concentrent les âges
+        d'ouverture les plus précoces du système (50 à 55 ans, 40 ans pour les
+        danseurs de l'Opéra). Ce sont eux qui produisent les écarts à l'âge de
+        référence les plus élevés, et donc les révisions à la baisse les plus
+        fortes dans les scénarios notionnels.
+      non_salarie: "travailleurs non salariés : artisans, commerçants"
+      liberal: "travailleurs non salariés : libéraux, avocats"
+      agricole: "exploitants et salariés agricoles"
+      additionnel_capitalise: "régime additionnel de la fonction publique, en capitalisation (`hors_repartition`)"
   source_id:   "identifiant du jeu de données dans data/sources.yaml"
   fiabilite:   "haute | moyenne | estimee — niveau de certification des paramètres"
   creation:    "année de création du régime"

@@ -1,0 +1,85 @@
+code: cps_polynesie
+rang: 60
+nom: >-
+  Régime de retraite des travailleurs salariés de Polynésie française, tranche A (CPS)
+famille: base_prive
+source_id: sites_institutionnels
+fiabilite: estimee
+creation: 1968
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Salariés de Polynésie française, affiliés à la Caisse de prévoyance
+  sociale depuis 1968 (régime général des salariés, RGS) : pension de la
+  tranche A en annuités, sept dixièmes du salaire moyen des quinze
+  meilleures années pour trente-huit ans cotisés ; la tranche B, en
+  points, est une fiche à part. Les taux et plafonds de 2026 sont projetés
+  sur toute la période.
+hors_repartition: false
+periodes:
+  - debut: 1968
+    fin: 2022
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: 140
+    taux_plein: 0.70
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiche « La sécurité sociale des salariés en Polynésie
+      française » et fiche de cotisations 2026 du CLEISS (cleiss.fr, lues
+      par scripts/fetch/sites_institutionnels.py), qui résument les
+      délibérations de l'assemblée de la Polynésie française, hors JORF.
+      TRANCHE A : « 70 % × salaire mensuel moyen × (nombre de mois cotisés
+      / 456 mois) », salaire moyen « des 180 meilleures rémunérations
+      mensuelles […] au cours des 240 derniers mois », droits « ouverts à
+      partir de 62 ans depuis le 1er janvier 2023 », taux plein avec « 38
+      ans soit 456 mois ou 152 trimestres depuis 2023 ». COTISATION 2026 :
+      « vieillesse tranche A : 15,69 % [employeur], 7,84 % [salarié], 269
+      000 FCFP » par mois, soit 23,53 % dont un tiers salarial ; le
+      plafond de 269 000 FCFP (2 254 €) est lu comme 0,69 plafond national
+      — la fiche prend le plafond national, plus haut. AVANT 2023 : 60 ans
+      et 35 ans cotisés (420 mois), les paramètres d'avant la réforme de
+      2023 tels que la fiche du CLEISS les oppose à ceux « depuis 2023 » ;
+      la montée en charge n'est pas lue, la fiche coupe au 1er janvier
+      2023. Salaire de référence : quinze ans, écrit ici comme les dix
+      meilleures années, la valeur la plus proche du catalogue.
+  - debut: 2023
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: 152
+    taux_plein: 0.70
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiche « La sécurité sociale des salariés en Polynésie
+      française » et fiche de cotisations 2026 du CLEISS (cleiss.fr, lues
+      par scripts/fetch/sites_institutionnels.py), qui résument les
+      délibérations de l'assemblée de la Polynésie française, hors JORF.
+      TRANCHE A : « 70 % × salaire mensuel moyen × (nombre de mois cotisés
+      / 456 mois) », salaire moyen « des 180 meilleures rémunérations
+      mensuelles […] au cours des 240 derniers mois », droits « ouverts à
+      partir de 62 ans depuis le 1er janvier 2023 », taux plein avec « 38
+      ans soit 456 mois ou 152 trimestres depuis 2023 ». COTISATION 2026 :
+      « vieillesse tranche A : 15,69 % [employeur], 7,84 % [salarié], 269
+      000 FCFP » par mois, soit 23,53 % dont un tiers salarial ; le
+      plafond de 269 000 FCFP (2 254 €) est lu comme 0,69 plafond national
+      — la fiche prend le plafond national, plus haut. DEPUIS 2023 : 62
+      ans, 456 mois (152 trimestres), 70 % ; le salaire moyen de 180 mois
+      sur les 240 derniers est écrit comme les dix meilleures années, la
+      valeur la plus proche du catalogue.

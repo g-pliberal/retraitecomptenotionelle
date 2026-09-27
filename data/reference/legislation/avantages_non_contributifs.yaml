@@ -472,8 +472,8 @@ avantages:
     etat_modele: declare
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Déclarée dans cinq périodes de non_salaries.yaml ; aucun code du moteur ne
-      la lit. `Neutralisations` la range d'ailleurs dans « ce que le scénario 1
+      Déclarée dans cinq périodes, quatre de msa_non_salaries.yaml et une de
+      msa_rco.yaml ; aucun code du moteur ne la lit. `Neutralisations` la range d'ailleurs dans « ce que le scénario 1
       ne sert pas ».
     sans_chiffre: >-
       déclarée par cinq fiches du catalogue et servie par aucun code : la
@@ -1445,7 +1445,8 @@ avantages:
     etat_modele: declare
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Déclaré dans deux périodes de complementaires_prive.yaml, sans effet :
+      Déclaré dans trois périodes, deux de agirc_arrco.yaml et une de
+      arrco_cultes.yaml, sans effet :
       l'abattement est TEMPORAIRE, et le modèle ne calcule qu'une pension
       annuelle unique. Le porter tel quel le rendrait faussement permanent.
     sans_chiffre: >-

@@ -1,0 +1,85 @@
+code: ipacte
+rang: 180
+nom: Institution de prévoyance des agents contractuels et temporaires de l'État
+famille: complementaire_prive
+source_id: ircantec_points
+fiabilite: moyenne
+creation: 1951
+fermeture: 1970
+extinction: 1971
+succede_a: []
+integre_dans: ircantec
+population: >-
+  Agents contractuels et temporaires de l'État, sur la part de rémunération
+  au-dessus du plafond des assurances sociales.
+hors_repartition: false
+periodes:
+  - debut: 1951
+    fin: 1970
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    abattement_points: ircantec
+    assiette: tranche_b
+    taux_cotisation_retraite: 0.075   # 12,5 % contractuels × appel 60 %
+    part_salariale: 0.34   # 4,25 % agent / 8,25 % employeur, décret 51-1445 art. 7
+    decote_par_trimestre: 0.01
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      UNE FICHE FERMÉE SE LIQUIDE SOUS LE DROIT D'APRÈS SA FERMETURE.
+      L'abattement d'anticipation ne s'applique « à l'âge seul » que jusqu'à l'ASF de 1983, qui exonère qui a le taux plein au régime de base ; le moteur lit cette règle dans la période du régime à l'ANNÉE DE LIQUIDATION, et la dernière période d'un régime fermé avant 1983 est forcément antérieure — alors qu'aucune de ses pensions n'a été liquidée avant.
+      `duree_requise_par_generation` le dit : cette fiche est liquidée sous le droit commun, exonération comprise.
+      Sans lui, un assuré au taux plein voyait cette ligne-là abattue de 4 à 22 %.
+      TAUX LUS DANS LE TEXTE : « les taux de cotisation à la charge des
+      bénéficiaires et des services employeurs sont respectivement fixés à
+      4,25 p. 100 et à 8,25 p. 100 » — 12,5 % en tout, dont 34 % à la
+      charge de l'agent —, article 7 du décret n° 51-1445
+      (LEGIARTI000006368159), le même article qui donne l'assiette. Ce
+      sont des taux CONTRACTUELS : le même article prévoit une réduction
+      des cotisations qui « n'affecte pas le calcul des points ni celui de
+      la valeur du point », c'est-à-dire un taux d'appel, que l'index ne
+      chiffre pas (arrêté du 31 décembre 1953 « suspensions et réduction
+      du montant des cotisations », JORFTEXT000000283470, titre seul).
+      L'Ircantec, qui reprend ces taux mot pour mot au 1er janvier 1971
+      (décret n° 70-1277, article 7, LEGIARTI000006368121 : « 4,25 % et
+      8,25 % » au-dessus du plafond), les appelle à 60 % (Caisse des
+      dépôts, série certifiée) : ce taux d'appel est prolongé sur
+      1951-1970 dans regimes/valeurs_point.csv au niveau `estimee`, et la
+      fiche porte l'effectif, 12,5 % × 0,6 = 7,5 %, comme partout. RÉSERVE
+      : LEGI ne conserve qu'une version de l'article, consolidée dans son
+      dernier état (vers 1970) ; les décrets n° 53-1305
+      (JORFTEXT000000302906) et n° 68-1028 (JORFTEXT000000887488) ont
+      modifié ce taux et n'ont que leur titre au Journal officiel — d'où
+      le niveau `moyenne`. ÂGES ESTIMÉS : les articles qui les portaient
+      (décret, art. 5 ; arrêté du 12 décembre 1951, art. 5 et 10 ; décret
+      n° 67-64, JORFTEXT000000515354) sont absents de LEGI ; la fiche
+      prend le barème du successeur, seul écrit — 65 ans, anticipation
+      abattue par l'escalier de l'arrêté du 30 décembre 1970 (art. 16,
+      LEGIARTI000006381606) : 0,88 à 62 ans, 0,78 à 60, 0,43 à 55. DÉCRET N° 51-1445 DU 12
+      DÉCEMBRE 1951 (LEGITEXT000006060604), régime de retraites
+      complémentaire des agents contractuels et temporaires de l'État,
+      abrogé et remplacé par l'Ircantec au 1er janvier 1971 (décret n°
+      70-1277, JORFTEXT000000306984). La fiche le faisait naître en 1959,
+      année de l'IGRANTE : il a huit ans de plus, et LEGI porte ses
+      salaires de référence de 1951 à 1970 (arrêté du 12 décembre 1951,
+      article 8, LEGIARTI000006381673 : 63 F pour 1951, 2,59 F pour 1970),
+      qui sont, à une valeur près, ceux que regimes/valeurs_point.csv
+      porte — 1955 y vaut 0,130 € quand l'arrêté dit 74 F, soit 0,113 €.
+      L'ASSIETTE est lue dans l'article 7 (LEGIARTI000006368159) : « la
+      fraction de la rémunération excédant le plafond des assurances
+      sociales […] dans la limite du quadruple dudit plafond ; toutefois
+      et à compter du 1er janvier 1961, cette limite est portée à 4,75
+      fois le plafond ». C'est la tranche B du moteur, de un à quatre
+      plafonds ; le trois-quarts de plafond ajouté en 1961 n'a pas
+      d'assiette et ne touche que les rémunérations entre quatre et 4,75
+      plafonds. Sous le plafond, l'agent relève de l'IGRANTE à partir de
+      1960 (décret n° 59-1569, article 2). LEGI ne conserve du décret que
+      les articles 1, 2, 6 à 10 : aucun n'écrit le taux ni l'âge, et
+      l'index du JORF n'a que des titres (accord Agirc-IPACTE de 1952,
+      JORFTEXT000000797895). La conversion en points Ircantec est de un
+      pour un (regimes/conversions_points.csv).

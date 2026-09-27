@@ -1089,13 +1089,68 @@ def dater_les_taux(periodes: tuple[PeriodeRegime, ...],
     return tuple(resultat)
 
 
-class CatalogueRegimes:
-    """Ensemble des régimes chargés depuis ``data/reference/regimes/*.yaml``.
+#: Les fichiers YAML du dossier des régimes qui ne sont pas des régimes : tout
+#: autre fichier ``*.yaml`` en est un, hors ceux dont le nom commence par
+#: « _ » (le schéma).
+FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml")
 
-    Les taux de cotisation des régimes que `taux_cotisation_annuels.csv`
-    couvre sont datés année par année au chargement : voir
-    :func:`dater_les_taux`. Le portage JavaScript reçoit les périodes ainsi
-    découpées dans le paquet de données, et n'a rien à refaire.
+
+def fiches_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
+    """Les fiches de régime telles qu'elles sont écrites, dans l'ordre du catalogue.
+
+    Un fichier par régime, dans ``data/reference/regimes/``, nommé de son
+    code : ``sncf.yaml`` pour ``sncf``. L'ordre est celui des rangs, et il
+    n'est pas indifférent : à égalité, la fusion des régimes
+    (``moteur/fusion.py``) retient le premier rencontré, et une moyenne
+    s'additionne dans cet ordre. Les rangs sont ceux de l'ordre où les cinq
+    fichiers d'avant la phase 6 (docs/architecture.md, § 11) chargeaient
+    leurs régimes, de dix en dix.
+
+    La fiche ÉCRITE, avant que :func:`dater_les_taux` ne découpe ses périodes :
+    c'est ce que lisent les contrôles qui confrontent un taux saisi à sa
+    source.
+    """
+    dossier = racine / "reference" / "regimes"
+    fiches: list[tuple[Path, dict]] = []
+    for chemin in sorted(dossier.glob("*.yaml")):
+        if chemin.name.startswith("_") or chemin.name in FICHIERS_HORS_REGIMES:
+            continue
+        fiche = charger_yaml(chemin)
+        if fiche.get("code") != chemin.stem:
+            raise ValueError(
+                f"{chemin.name} : un fichier de régime porte le code qui le nomme, "
+                f"pas {fiche.get('code')!r}"
+            )
+        if type(fiche.get("rang")) is not int:
+            raise ValueError(f"{chemin.name} : rang manquant, ou qui n'est pas un entier")
+        fiches.append((chemin, fiche))
+    rangs: dict[int, str] = {}
+    for chemin, fiche in fiches:
+        if fiche["rang"] in rangs:
+            raise ValueError(
+                f"{chemin.name} : rang {fiche['rang']} déjà pris par "
+                f"{rangs[fiche['rang']]}"
+            )
+        rangs[fiche["rang"]] = fiche["code"]
+    return tuple(sorted(fiches, key=lambda couple: couple[1]["rang"]))
+
+
+def fiche_de_regime(racine: Path, code: str) -> dict:
+    """La fiche écrite d'un régime, par son code."""
+    chemin = racine / "reference" / "regimes" / f"{code}.yaml"
+    if code.startswith("_") or chemin.name in FICHIERS_HORS_REGIMES or not chemin.exists():
+        raise KeyError(f"aucun fichier de régime pour {code!r}")
+    return charger_yaml(chemin)
+
+
+class CatalogueRegimes:
+    """Ensemble des régimes chargés depuis ``data/reference/regimes/``.
+
+    Un fichier par régime, dans l'ordre de leurs rangs : voir
+    :func:`fiches_de_regimes`. Les taux de cotisation des régimes que
+    `taux_cotisation_annuels.csv` couvre sont datés année par année au
+    chargement : voir :func:`dater_les_taux`. Le portage JavaScript reçoit les
+    périodes ainsi découpées dans le paquet de données, et n'a rien à refaire.
     """
 
     def __init__(self, racine: Path) -> None:
@@ -1103,18 +1158,12 @@ class CatalogueRegimes:
         self._regimes: dict[str, Regime] = {}
         self.taux_annuels = charger_taux_annuels(racine)
         dossier = racine / "reference" / "regimes"
-        for chemin in sorted(dossier.glob("*.yaml")):
-            if chemin.name.startswith("_"):
-                continue
-            contenu = charger_yaml(chemin)
-            for fiche in contenu.get("regimes", []):
-                regime = self._construire(fiche, chemin)
-                if regime.code in self._regimes:
-                    raise ValueError(f"code de régime dupliqué : {regime.code}")
-                if regime.code in self.taux_annuels:
-                    regime = replace(regime, periodes=dater_les_taux(
-                        regime.periodes, self.taux_annuels[regime.code]))
-                self._regimes[regime.code] = regime
+        for chemin, fiche in fiches_de_regimes(racine):
+            regime = self._construire(fiche, chemin)
+            if regime.code in self.taux_annuels:
+                regime = replace(regime, periodes=dater_les_taux(
+                    regime.periodes, self.taux_annuels[regime.code]))
+            self._regimes[regime.code] = regime
         if not self._regimes:
             raise ValueError(f"aucun régime chargé depuis {dossier}")
         inconnus = set(self.taux_annuels) - set(self._regimes)

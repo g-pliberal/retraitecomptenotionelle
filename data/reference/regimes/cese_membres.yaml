@@ -1,0 +1,589 @@
+code: cese_membres
+rang: 740
+nom: >-
+  Caisse de retraites des anciens membres du Conseil économique, social et environnemental
+famille: special
+source_id: sites_institutionnels
+fiabilite: estimee
+creation: 1957
+fermeture: 2023
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Membres du Conseil économique et social puis du CESE désignés avant le
+  1er septembre 2023 (loi n° 57-761 du 10 juillet 1957, décret n° 59-601
+  du 5 mai 1959) : pension en annuités sur l'indemnité de membre, financée
+  par une retenue égale à 3,42 fois celle de la fonction publique.
+hors_repartition: false
+periodes:
+  - debut: 1957
+    fin: 2004
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 142
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1303
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 2,11 % pour les mandats jusqu'au
+      31/8/2004 » (art. 17), soit 4,35 % de la rémunération par annuité,
+      35,5 annuités pour le maximum ; retenue 3,42 × 7,85 % / 2,06 = 26,85
+      %.
+  - debut: 2005
+    fin: 2010
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 149
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1303
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 2,02 % pour tout mandat effectué du
+      1/9/2004 au 30/9/2010 » : 4,16 % par annuité, 37,1 annuités ;
+      retenue 3,42 × 7,85 % / 2,06.
+  - debut: 2011
+    fin: 2011
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 154
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1368
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,95 % pour tout mandat effectué entre
+      le 28/10/2010 et le 27/10/2011 » ; retenue 3,42 × 8,24 % / 2,06
+      (taux L61 de 2011).
+  - debut: 2012
+    fin: 2012
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 158
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1415
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,90 % pour tout mandat effectué entre
+      le 28/10/2011 et le 27/10/2012 » ; retenue 3,42 × 8,52 % / 2,06.
+  - debut: 2013
+    fin: 2013
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 162
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,85 % pour tout mandat effectué entre
+      le 28/10/2012 et le 27/10/2013 » ; retenue 3,42 × 8,80 % / 2,06.
+  - debut: 2014
+    fin: 2014
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 165
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1507
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,82 % pour tout mandat effectué à
+      compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
+      41,2 annuités pour le maximum ; retenue 3,42 × 9.08 % (taux L61 de
+      2014).
+  - debut: 2015
+    fin: 2015
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 165
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1554
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,82 % pour tout mandat effectué à
+      compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
+      41,2 annuités pour le maximum ; retenue 3,42 × 9.36 % (taux L61 de
+      2015).
+  - debut: 2016
+    fin: 2016
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 165
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1594
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,82 % pour tout mandat effectué à
+      compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
+      41,2 annuités pour le maximum ; retenue 3,42 × 9.60 % (taux L61 de
+      2016).
+  - debut: 2017
+    fin: 2017
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 165
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1650
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,82 % pour tout mandat effectué à
+      compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
+      41,2 annuités pour le maximum ; retenue 3,42 × 9.94 % (taux L61 de
+      2017).
+  - debut: 2018
+    fin: 2018
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 165
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1708
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,82 % pour tout mandat effectué à
+      compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
+      41,2 annuités pour le maximum ; retenue 3,42 × 10.29 % (taux L61 de
+      2018).
+  - debut: 2019
+    fin: 2019
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 165
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1753
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,82 % pour tout mandat effectué à
+      compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
+      41,2 annuités pour le maximum ; retenue 3,42 × 10.56 % (taux L61 de
+      2019).
+  - debut: 2020
+    fin: 2020
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 165
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1798
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,82 % pour tout mandat effectué à
+      compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
+      41,2 annuités pour le maximum ; retenue 3,42 × 10.83 % (taux L61 de
+      2020).
+  - debut: 2021
+    fin: 2022
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 165
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1843
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,82 % pour tout mandat effectué à
+      compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
+      41,2 annuités pour le maximum ; retenue 3,42 × 11.10 % (taux L61 de
+      2021)..
+  - debut: 2023
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 165
+    taux_plein: 0.7500
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1843
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de retraites des membres du Conseil
+      économique, social et environnemental au 1er janvier 2025
+      (lecese.fr, lu par scripts/fetch/sites_institutionnels.py), hors
+      JORF. RETENUE : « égal à 3,42 fois celui prévu au 2° de l'article
+      L61 du code des pensions civiles et militaires » (art. 4), sur la
+      rémunération des membres « à l'exclusion de l'indemnité de résidence
+      et du supplément familial » — la fiche multiplie le taux de la
+      fonction publique de l'année par 3,42 ; le Conseil ne verse pas de
+      part employeur écrite. PENSION : « l'assiette de référence servant
+      au calcul des pensions est égale à 2,06 fois la rémunération » et la
+      pension vaut, par annuité, un pourcentage de cette assiette (art.
+      17), sans excéder « les trois-quarts » de l'assiette. LE REVENU
+      SAISI EST PRIS POUR L'ASSIETTE DE RÉFÉRENCE — l'indemnité entière,
+      dont la rémunération de base de l'article 4 est le 2,06e — : le taux
+      par annuité s'applique tel quel, le taux plein est de 75 %, atteint
+      en autant d'annuités que la division l'exige, et la retenue de 3,42
+      fois L. 61, assise sur la seule rémunération de base, est divisée
+      par 2,06. ÂGE : « l'âge mentionné à l'article L. 161-17-2 » (art.
+      7), avec « un minimum de cinq années de mandat ». FERMETURE : les
+      membres désignés dès le 1er septembre 2023 relèvent du régime
+      général et de l'Ircantec. « 1,82 % pour tout mandat effectué à
+      compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
+      41,2 annuités pour le maximum ; retenue 3,42 × 11.10 % (taux L61 de
+      2021). Régime fermé aux membres désignés à compter du 1er septembre
+      2023, portés au régime général et à
+      l'Ircantec par le routage.

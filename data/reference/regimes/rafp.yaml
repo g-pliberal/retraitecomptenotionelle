@@ -1,0 +1,96 @@
+code: rafp
+rang: 270
+nom: Retraite additionnelle de la fonction publique (ERAFP)
+famille: additionnel_capitalise
+source_id: erafp_parametres
+fiabilite: haute
+creation: 2005
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: Ensemble des fonctionnaires des trois versants.
+hors_repartition: true
+periodes:
+  - debut: 2005
+    fin: 2010
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: primes_uniquement
+    plafond_primes_traitement: 0.20   # décret 2004-569, art. 2
+    taux_cotisation_retraite: 0.10
+    part_salariale: 0.50   # décret 2004-569 : 5 % agent, 5 % employeur
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    surcote_points: rafp
+    capital_seuil_points: 5125
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      RÉGIME PAR CAPITALISATION PROVISIONNÉE — EXCLU DU PÉRIMÈTRE NOTIONNEL.
+      5 % agent + 5 % employeur sur les primes, dans la limite de 20 % du
+      traitement indiciaire. Conformément à la demande, les droits RAFP sont
+      isolés dans un compartiment de capitalisation distinct et ne sont pas
+      convertis en capital notionnel (cf. moteur/compte.py).
+      LE PLAFOND DE 20 % EST APPLIQUÉ (`plafond_primes_traitement`) : les
+      primes cotisent « dans la limite de 20 % du traitement indiciaire
+      brut total perçu au cours de l'année considérée », écrit l'article 2
+      du décret n° 2004-569 dans ses six versions, de la première
+      (LEGIARTI000006453300) à celle en vigueur depuis le 17 avril 2024
+      (LEGIARTI000049424057, « ou de la solde brute totale » pour les
+      militaires depuis 2019), et l'ERAFP le redit en tête de sa page sur
+      les cotisations. La fiche l'écrivait sans que le moteur le lise : un
+      agent dont les primes font 25 % de la rémunération cotisait sur 25 %
+      au lieu de 15 %. Les deux exceptions de l'ERAFP ne sont pas portées :
+      la GIPA, cotisée sans plafond, et les jours de compte épargne-temps
+      convertis en points.
+      L'ÂGE EST DATÉ PAR L'ARTICLE 9 DU DÉCRET N° 2004-569 : jusqu'au 2 juin
+      2011 (LEGIARTI000006453304), « l'ouverture des droits est subordonnée
+      à la condition qu'ils aient atteint l'âge de soixante ans » ; la
+      fiche opposait 62 ans dès 2005. Aucune décote : l'âge d'ouverture est
+      aussi celui du taux plein.
+  - debut: 2011
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 62
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: primes_uniquement
+    plafond_primes_traitement: 0.20   # décret 2004-569, art. 2
+    taux_cotisation_retraite: 0.10
+    part_salariale: 0.50   # décret 2004-569 : 5 % agent, 5 % employeur
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    surcote_points: rafp
+    capital_seuil_points: 5125
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      RÉGIME PAR CAPITALISATION PROVISIONNÉE — EXCLU DU PÉRIMÈTRE NOTIONNEL.
+      5 % agent + 5 % employeur sur les primes, dans la limite de 20 % du
+      traitement indiciaire, plafond appliqué — voir la première période.
+      Conformément à la demande, les droits RAFP sont isolés dans un
+      compartiment de capitalisation distinct et ne sont pas convertis en
+      capital notionnel (cf. moteur/compte.py).
+      Depuis le 3 juin 2011 (LEGIARTI000024113145, puis LEGIARTI000036070843),
+      l'article 9 subordonne l'ouverture des droits à « l'âge mentionné à
+      l'article L. 161-17-2 » : 62 ans pour la génération 1955, 64 pour
+      1968 et les suivantes, lu à la génération. Le régime n'a pas de
+      décote ni d'âge d'annulation propre : `age_taux_plein` reste la
+      valeur de repli de l'ouverture et n'est pas lu.
+      LA VALEUR DE SERVICE EST MODULÉE PAR L'ÂGE : « en fonction de l'âge
+      de liquidation de la retraite additionnelle » (art. 8,
+      LEGIARTI000037483754), selon le barème actuariel que publie l'ERAFP
+      — 1,00 jusqu'à 62 ans, 1,08 à 64, 1,22 à 67, 1,40 à 70, 1,80 dès 75.
+      SOUS 5 125 POINTS, UN CAPITAL : la prestation est « servie sous forme
+      de capital lorsque le nombre de points acquis est inférieur à 5 125 »
+      (art. 9, LEGIARTI000037483756), au coefficient de conversion de
+      l'âge — 25,57 à 64 ans, interpolé au mois. La calculette de l'ERAFP
+      donne, pour 3 000 points à 65 ans en 2026, 4 723,63 € : 3 000 ×
+      1,12 × 0,05671 × 24,79. Le montant annuel de la fiche reste celui
+      de la rente équivalente, le capital est écrit dans le détail.

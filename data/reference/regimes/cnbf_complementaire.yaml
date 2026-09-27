@@ -1,0 +1,1167 @@
+code: cnbf_complementaire
+rang: 490
+nom: Régime complémentaire obligatoire des avocats (CNBF)
+famille: liberal
+source_id: cnbf_baremes
+fiabilite: haute
+creation: 1979
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Avocats. Régime en points, obligatoire, à trois classes de cotisation —
+  C1, C2 et C2+ — dont seule la première s'impose sans option.
+hors_repartition: false
+periodes:
+  - debut: 1979
+    fin: 2015
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0800
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      Avant 2016, la CNBF ne met en ligne aucun barème : ces années
+      restent au rendement instantané, sur un taux moyen de 8 %. La grille
+      de 2016 donne 3,20 % à 8,80 % en classe C1 : ce taux moyen est donc
+      celui d'un revenu élevé, et SURESTIME les cotisations d'un revenu
+      modeste. La progressivité par tranches n'est pas reproduite ici.
+
+  - debut: 2016
+    fin: 2016
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 41674
+    taux_cotisation_retraite: 0.0320
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      Première tranche de la grille, classe C1 (barème 2016).
+      GRILLES LUES ANNÉE PAR ANNÉE dans les barèmes de la caisse, de 2016
+      à 2026 (celui de 2016 est une image, celui de 2024 n'est plus en
+      ligne et a été lu dans Internet Archive, capture du 15 juillet
+      2024). La fiche portait depuis 2019 la grille de 2026, alors que le
+      taux de la première tranche a doublé en dix ans : 3,20 % en 2016,
+      3,80 % en 2019, 5,00 % en 2024, 7,00 % en 2026. Elle surestimait
+      donc, sur les années 2019 à 2024, les cotisations et les points
+      d'un avocat au revenu modeste de près de moitié.
+      CLASSE C1 RETENUE. Plusieurs classes coexistent, et rien ne permet
+      de deviner celle d'un avocat donné. C1 est celle qui s'applique
+      SANS option, et le modèle ne prête jamais à personne un avantage
+      facultatif.
+      LES TRANCHES SONT FIXÉES EN EUROS, ET LA CAISSE NE LES INDEXE PAS :
+      41 674 € de 2016 à 2020, 42 507 € depuis 2021, quand le plafond de
+      la Sécurité sociale passait de 38 616 à 48 060 €. D'où le champ
+      `borne_haute_euros`.
+      2025 : deux barèmes coexistent, l'ancien sur l'assiette nette
+      (5,20 % en première tranche) et le nouveau sur l'assiette de la
+      réforme des indépendants (7,00 %). La fiche suit, comme tout le
+      catalogue, l'année du revenu : le revenu de 2025 relève du nouveau.
+      Au-delà de la dernière borne, la cotisation ne progresse plus : le
+      revenu excédentaire n'ouvre aucun droit complémentaire.
+
+  - debut: 2016
+    fin: 2016
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 41674
+    borne_haute_euros: 83348
+    taux_cotisation_retraite: 0.0640
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2016).
+
+  - debut: 2016
+    fin: 2016
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 83348
+    borne_haute_euros: 125022
+    taux_cotisation_retraite: 0.0720
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Troisième tranche de la grille, classe C1 (barème 2016).
+
+  - debut: 2016
+    fin: 2016
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 125022
+    borne_haute_euros: 166696
+    taux_cotisation_retraite: 0.0800
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2016).
+
+  - debut: 2016
+    fin: 2016
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 166696
+    borne_haute_euros: 208370
+    taux_cotisation_retraite: 0.0880
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2016).
+
+  - debut: 2017
+    fin: 2017
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 41674
+    taux_cotisation_retraite: 0.0340
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Première tranche de la grille, classe C1 (barème 2017).
+
+  - debut: 2017
+    fin: 2017
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 41674
+    borne_haute_euros: 83348
+    taux_cotisation_retraite: 0.0680
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2017).
+
+  - debut: 2017
+    fin: 2017
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 83348
+    borne_haute_euros: 125022
+    taux_cotisation_retraite: 0.0770
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Troisième tranche de la grille, classe C1 (barème 2017).
+
+  - debut: 2017
+    fin: 2017
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 125022
+    borne_haute_euros: 166696
+    taux_cotisation_retraite: 0.0860
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2017).
+
+  - debut: 2017
+    fin: 2017
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 166696
+    borne_haute_euros: 208370
+    taux_cotisation_retraite: 0.0950
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2017).
+
+  - debut: 2018
+    fin: 2018
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 41674
+    taux_cotisation_retraite: 0.0360
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Première tranche de la grille, classe C1 (barème 2018).
+
+  - debut: 2018
+    fin: 2018
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 41674
+    borne_haute_euros: 83348
+    taux_cotisation_retraite: 0.0720
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2018).
+
+  - debut: 2018
+    fin: 2018
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 83348
+    borne_haute_euros: 125022
+    taux_cotisation_retraite: 0.0820
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Troisième tranche de la grille, classe C1 (barème 2018).
+
+  - debut: 2018
+    fin: 2018
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 125022
+    borne_haute_euros: 166696
+    taux_cotisation_retraite: 0.0920
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2018).
+
+  - debut: 2018
+    fin: 2018
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 166696
+    borne_haute_euros: 208370
+    taux_cotisation_retraite: 0.1020
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2018).
+
+  - debut: 2019
+    fin: 2019
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 41674
+    taux_cotisation_retraite: 0.0380
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Première tranche de la grille, classe C1 (barème 2019).
+
+  - debut: 2019
+    fin: 2019
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 41674
+    borne_haute_euros: 83348
+    taux_cotisation_retraite: 0.0760
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2019).
+
+  - debut: 2019
+    fin: 2019
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 83348
+    borne_haute_euros: 125022
+    taux_cotisation_retraite: 0.0870
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Troisième tranche de la grille, classe C1 (barème 2019).
+
+  - debut: 2019
+    fin: 2019
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 125022
+    borne_haute_euros: 166696
+    taux_cotisation_retraite: 0.0980
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2019).
+
+  - debut: 2019
+    fin: 2019
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 166696
+    borne_haute_euros: 208370
+    taux_cotisation_retraite: 0.1090
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2019).
+
+  - debut: 2020
+    fin: 2020
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 41674
+    taux_cotisation_retraite: 0.0400
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Première tranche de la grille, classe C1 (barème 2020).
+
+  - debut: 2020
+    fin: 2020
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 41674
+    borne_haute_euros: 83348
+    taux_cotisation_retraite: 0.0800
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2020).
+
+  - debut: 2020
+    fin: 2020
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 83348
+    borne_haute_euros: 125022
+    taux_cotisation_retraite: 0.0920
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Troisième tranche de la grille, classe C1 (barème 2020).
+
+  - debut: 2020
+    fin: 2020
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 125022
+    borne_haute_euros: 166696
+    taux_cotisation_retraite: 0.1040
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2020).
+
+  - debut: 2020
+    fin: 2020
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 166696
+    borne_haute_euros: 208370
+    taux_cotisation_retraite: 0.1160
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2020).
+
+  - debut: 2021
+    fin: 2021
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 42507
+    taux_cotisation_retraite: 0.0420
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Première tranche de la grille, classe C1 (barème 2021).
+
+  - debut: 2021
+    fin: 2021
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 42507
+    borne_haute_euros: 85014
+    taux_cotisation_retraite: 0.0840
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2021).
+
+  - debut: 2021
+    fin: 2021
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 85014
+    borne_haute_euros: 127521
+    taux_cotisation_retraite: 0.0970
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Troisième tranche de la grille, classe C1 (barème 2021).
+
+  - debut: 2021
+    fin: 2021
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 127521
+    borne_haute_euros: 170028
+    taux_cotisation_retraite: 0.1100
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2021).
+
+  - debut: 2021
+    fin: 2021
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 170028
+    borne_haute_euros: 212535
+    taux_cotisation_retraite: 0.1230
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2021).
+
+  - debut: 2022
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 42507
+    taux_cotisation_retraite: 0.0460
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Première tranche de la grille, classe C1 (barème 2022).
+
+  - debut: 2022
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 42507
+    borne_haute_euros: 85014
+    taux_cotisation_retraite: 0.0880
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2022).
+
+  - debut: 2022
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 85014
+    borne_haute_euros: 127521
+    taux_cotisation_retraite: 0.1020
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Troisième tranche de la grille, classe C1 (barème 2022).
+
+  - debut: 2022
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 127521
+    borne_haute_euros: 170028
+    taux_cotisation_retraite: 0.1160
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2022).
+
+  - debut: 2022
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 170028
+    borne_haute_euros: 212535
+    taux_cotisation_retraite: 0.1300
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2022).
+
+  - debut: 2023
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 42507
+    taux_cotisation_retraite: 0.0480
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Première tranche de la grille, classe C1 (barème 2023).
+
+  - debut: 2023
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 42507
+    borne_haute_euros: 85014
+    taux_cotisation_retraite: 0.0920
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2023).
+
+  - debut: 2023
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 85014
+    borne_haute_euros: 127521
+    taux_cotisation_retraite: 0.1070
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Troisième tranche de la grille, classe C1 (barème 2023).
+
+  - debut: 2023
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 127521
+    borne_haute_euros: 170028
+    taux_cotisation_retraite: 0.1220
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2023).
+
+  - debut: 2023
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 170028
+    borne_haute_euros: 212535
+    taux_cotisation_retraite: 0.1370
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2023).
+
+  - debut: 2024
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 42507
+    taux_cotisation_retraite: 0.0500
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Première tranche de la grille, classe C1 (barème 2024).
+      Depuis 2024, la majoration de 10 % pour trois enfants que l'article
+      16-1 du règlement du régime complémentaire, approuvé par l'arrêté du
+      11 décembre 2023 (JORFARTI000048567124), attribue « dans les mêmes
+      conditions que celles prévues aux articles L. 653-3 et L. 351-12 »
+      pour le régime de base.
+
+  - debut: 2024
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 42507
+    borne_haute_euros: 85014
+    taux_cotisation_retraite: 0.0960
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2024).
+
+  - debut: 2024
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 85014
+    borne_haute_euros: 127521
+    taux_cotisation_retraite: 0.1120
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Troisième tranche de la grille, classe C1 (barème 2024).
+
+  - debut: 2024
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 127521
+    borne_haute_euros: 170028
+    taux_cotisation_retraite: 0.1280
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2024).
+
+  - debut: 2024
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 170028
+    borne_haute_euros: 212535
+    taux_cotisation_retraite: 0.1440
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2024).
+
+  - debut: 2025
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 42507
+    taux_cotisation_retraite: 0.0700
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Première tranche de la grille, classe C1 (barème 2025).
+
+  - debut: 2025
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 42507
+    borne_haute_euros: 85014
+    taux_cotisation_retraite: 0.1020
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2025).
+
+  - debut: 2025
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 85014
+    borne_haute_euros: 127521
+    taux_cotisation_retraite: 0.1170
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Troisième tranche de la grille, classe C1 (barème 2025).
+
+  - debut: 2025
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 127521
+    borne_haute_euros: 170028
+    taux_cotisation_retraite: 0.1340
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2025).
+
+  - debut: 2025
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 170028
+    borne_haute_euros: 212535
+    taux_cotisation_retraite: 0.1510
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2025).
+
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 0
+    borne_haute_euros: 42507
+    taux_cotisation_retraite: 0.0700
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Première tranche de la grille, classe C1 (barème 2026).
+
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 42507
+    borne_haute_euros: 85014
+    taux_cotisation_retraite: 0.1040
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Deuxième tranche de la grille, classe C1 (barème 2026).
+
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 85014
+    borne_haute_euros: 127521
+    taux_cotisation_retraite: 0.1220
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Troisième tranche de la grille, classe C1 (barème 2026).
+
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 127521
+    borne_haute_euros: 170028
+    taux_cotisation_retraite: 0.1400
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Quatrième tranche de la grille, classe C1 (barème 2026).
+
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    borne_basse_euros: 170028
+    borne_haute_euros: 212535
+    taux_cotisation_retraite: 0.1580
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: Cinquième tranche de la grille, classe C1 (barème 2026).

@@ -1,0 +1,402 @@
+code: cavamac_complementaire
+rang: 430
+nom: >-
+  Régime complémentaire des agents généraux d'assurance (CAVAMAC, RCO)
+famille: liberal
+source_id: cavamac_parametres
+fiabilite: moyenne
+creation: 1968
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Agents généraux d'assurance et mandataires non salariés d'assurance —
+  12 452 cotisants en 2025. Le régime est « propre aux agents généraux,
+  piloté par eux à travers les conseils d'administration », et il a une
+  particularité qu'aucune autre section libérale ne partage : les
+  COMPAGNIES MANDANTES en paient une part.
+hors_repartition: false
+periodes:
+  - debut: 1968
+    fin: 1970
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.036
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    abattement_points: cavom
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      L'ASSIETTE N'EST PAS LE REVENU, ET C'EST CE QUI TENAIT CETTE SECTION
+      HORS DU CATALOGUE. « À la différence des cotisations de retraite de
+      base assises sur votre revenu professionnel, vos cotisations de
+      retraite complémentaire sont calculées sur la base de vos COMMISSIONS
+      ET RÉMUNÉRATIONS BRUTES réalisées l'année précédente », écrit la
+      caisse — celles que les compagnies versent à l'agent, avant qu'il
+      n'ait payé un loyer, un salarié ou une charge.
+      LE FACTEUR VIENT DE LA CAISSE ELLE-MÊME, et de deux phrases de la même
+      page de statistiques : « la commission moyenne plafonnée augmente de
+      5,0 %, passant de 275 525 € à 286 168 € » et « le revenu moyen déclaré
+      en 2024 par les agents s'élève à 115 443 euros ». Le rapport des deux
+      grandeurs de 2024 — 275 525 / 115 443 — vaut 2,387, et c'est lui que
+      porte `assiette_facteur_revenu`. C'est une MOYENNE DE SECTION : deux
+      agents à même revenu n'ont pas les mêmes commissions, et la fiche ne
+      prétend pas décrire l'un d'eux. Sans ce facteur, elle se tromperait
+      d'un facteur deux et demi, ce qui est pire.
+      LE PLAFOND EST INDEXÉ SUR LA COMMISSION MOYENNE, pas sur celui de la
+      Sécurité sociale : la caisse l'a porté à 625 777 € pour 2026,
+      « soit une augmentation de 4 %, conformément à l'évolution de la
+      commission moyenne ». Treize plafonds de la Sécurité sociale en sont
+      la meilleure approximation indexable — 624 780 € contre 625 777 € en
+      2026, à un millième près ; l'écart atteint 6 % en 2024, et joue sur
+      les seules commissions supérieures à douze plafonds.
+      3,60 % À L'ORIGINE. Le régime est institué par le décret n° 67-1169 du
+      22 décembre 1967 ; le taux double en 1971.
+      LA RÈGLE D'ÂGE N'EST LUE QU'À PARTIR DE 2011, ET ELLE EST PORTÉE EN
+      ARRIÈRE. Les statuts de 1967 et leurs modifications jusqu'en 2007
+      n'ont été publiés qu'au Bulletin officiel : le Journal officiel n'en
+      porte que les titres, ou des articles sans rapport avec l'âge. Le
+      premier texte complet est celui des statuts approuvés par l'arrêté
+      du 23 juin 2011 (JORFARTI000024270173) : taux plein à l'âge de
+      l'article L. 161-17-2 augmenté de cinq ans, liquidation dès cet âge
+      avec une minoration de 5 % par tranche de douze mois d'anticipation,
+      et AUCUNE condition de durée (articles 15 et 16). C'est
+      `abattement_points: cavom`, que la CAVOM, la CARMF de 2000 à 2016 et
+      la CARCDSF de 2008 à 2010 écrivent aussi ; la période la suppose
+      identique avant 2011, comme la fiche de la CAVOM le fait de la
+      sienne. La fiche opposait jusqu'au 23 septembre 2026 la décote du
+      régime de base, que la durée annule : un agent parti à l'âge légal
+      avec sa durée ne perdait rien de sa complémentaire, là où les
+      statuts lui retirent le quart.
+      L'ÂGE DU TAUX PLEIN se lit à la génération dans la table du 1° de
+      L. 351-8, qui commence à la génération 1930 ; `age_taux_plein`, 65
+      ans, vaut pour les générations d'avant, que les statuts de 2011
+      plaçaient au même âge — l'âge légal de 60 ans augmenté de cinq.
+  - debut: 1971
+    fin: 1992
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.063
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    abattement_points: cavom
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      6,30 %, ET CE TAUX N'A JAMAIS CHANGÉ DEPUIS. C'est le taux
+      STATUTAIRE, celui qui ouvre des droits ; tout ce qui bouge après 1992
+      est le TAUX D'APPEL, qui prélève davantage sans rien ouvrir de plus.
+      Jusqu'en 1992 les deux coïncident : appel à 100 %, cotisation égale au
+      droit.
+  - debut: 1993
+    fin: 1997
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.0693
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    abattement_points: cavom
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      LE PREMIER TAUX D'APPEL, et le décret n° 92-1372 du 29 décembre 1992
+      dit exactement ce qu'il fait : « la cotisation définie à l'article 1er
+      est appelée à hauteur de 110 %. La majoration de cotisation afférente
+      à la fraction du taux d'appel excédant 100 % N'OUVRE PAS DE DROIT
+      SUPPLÉMENTAIRE. » 6,30 % × 110 % = 6,93 % prélevés pour 6,30 % de
+      droits — et c'est le montant PRÉLEVÉ qu'un compte notionnel porte.
+      Le rendement de ce qui est versé baisse d'autant : voir
+      `rendements_points.csv`.
+  - debut: 1998
+    fin: 2000
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.080325
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    abattement_points: cavom
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      APPEL PORTÉ À 127,5 % par le décret n° 97-1056 du 13 novembre 1997, et
+      sa notice dit pourquoi en toutes lettres : « d'après les projections
+      réalisées par la CAVAMAC, à rendement inchangé, les réserves du régime
+      seraient totalement épuisées en 2004 […] un projet de réforme visant à
+      en DIMINUER LE RENDEMENT par un relèvement du taux d'appel de la
+      cotisation de 127,5 % ». 6,30 % × 1,275 = 8,0325 %.
+  - debut: 2001
+    fin: 2003
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.081585
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    abattement_points: cavom
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      Appel à 129,5 % (décret n° 2001-864 du 17 septembre 2001), soit
+      8,1585 %.
+  - debut: 2004
+    fin: 2011
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.09
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    abattement_points: cavom
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      LE SOMMET : appel à 142,86 % (décret n° 2003-1255 du 26 décembre
+      2003), soit 9 % prélevés pour 6,30 % de droits. Quinze ans durant, un
+      agent général verse sept euros pour cinq euros de droits — et le
+      rendement de ce qu'il verse tombe à 3,53 %, le plus bas du catalogue
+      libéral.
+  - debut: 2012
+    fin: 2018
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.09
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    abattement_points: cavom
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      LE SOMMET : appel à 142,86 % (décret n° 2003-1255 du 26 décembre
+      2003), soit 9 % prélevés pour 6,30 % de droits. Quinze ans durant, un
+      agent général verse sept euros pour cinq euros de droits — et le
+      rendement de ce qu'il verse tombe à 3,53 %, le plus bas du catalogue
+      libéral.
+      LES STATUTS DE 2011, servis à partir de 2012, première année
+      pleine : l'arrêté du 23 juin 2011 les met en vigueur le 1er juillet
+      (JORFARTI000024270156, annexe JORFARTI000024270173). Taux plein « à
+      l'âge prévu à l'article L. 161-17-2 du code de la sécurité sociale
+      augmenté de cinq années » (article 15) — 65 ans avant la génération
+      de juillet 1951, 67 ans depuis celle de 1955, soit la table du 1° de
+      L. 351-8 que la fiche lit à la génération. Avant cet âge, « 5 %
+      lorsque la liquidation […] intervient dans les douze mois précédant
+      l'âge requis », 10 % du 13e au 24e mois, jusqu'à 25 % du 49e au 60e
+      (article 16) : l'année entamée compte entière, et la durée
+      d'assurance n'ouvre rien. Au-delà, « une majoration de 5 % du nombre
+      de points de retraite acquis […] pour chaque année pleine différée
+      […] dans la limite maximum de 25 % » : 1,25 % par trimestre compté
+      par années pleines, vingt trimestres au plus. Et « le nombre des
+      points de retraite acquis dans le présent régime est majoré de 10 %
+      au profit de l'adhérent ayant eu au moins trois enfants »
+      (article 18). NON PORTÉS : la majoration de 5 % par enfant ouvrant
+      droit à l'allocation d'éducation de l'enfant handicapé (article 19),
+      que le modèle ne sait pas dire, et le capital unique de dix-huit
+      fois la pension annuelle versé sous 1 500 points (article 21) — la
+      pension reste servie en rente, comme celle du RAFP sous son seuil.
+  - debut: 2019
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 65
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.0816
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    abattement_points: cavom
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Appel ramené à 129,5 %, soit 8,16 %. C'est le dernier taux que le
+      barème de l'IPP porte, et il le porte encore pour 2026 : la caisse,
+      elle, a publié autre chose — voir la période suivante.
+      Règles d'âge des statuts de 2011, jusqu'au 31 décembre 2023 : voir
+      la période 2012-2018. L'arrêté du 4 août 2023 fixe le taux plein à
+      67 ans dès le 1er septembre 2023 — ce que la table du 1° de L. 351-8
+      donne déjà à toutes les générations qui liquidaient cette année-là
+      — et ne rend la minoration trimestrielle qu'au 1er janvier 2024.
+  - debut: 2024
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.0816
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
+    surcote_trimestres_cotises: true
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Appel ramené à 129,5 %, soit 8,16 %. C'est le dernier taux que le
+      barème de l'IPP porte, et il le porte encore pour 2026 : la caisse,
+      elle, a publié autre chose — voir la période suivante.
+      LA MINORATION DEVIENT TRIMESTRIELLE AU 1ER JANVIER 2024. L'arrêté
+      du 4 août 2023 (annexe JORFARTI000047977908, dates d'effet à son
+      article 2, JORFARTI000047977903) réécrit les articles 15 et 16 des
+      statuts : taux plein « de 67 ans » au 1er septembre 2023, puis, au
+      1er janvier 2024, une minoration « de 1,25 % par trimestre manquant
+      pour atteindre l'âge mentionné au premier alinéa de l'article 15 »
+      — l'âge seul, toujours, dès l'âge légal, 25 % au plus à soixante-deux
+      ans —, et une majoration de 5 % « pour chaque année pleine COTISÉE
+      dans le présent régime » au-delà de 67 ans, hors années de cumul
+      emploi-retraite. `surcote_trimestres_cotises` ne compte donc que les
+      trimestres cotisés depuis 67 ans, là où les statuts de 2011
+      comptaient le temps écoulé. La caisse l'écrit de même et en publie
+      un exemple chiffré — né le 8 août 1960, départ le 1er juillet 2026,
+      cinq trimestres jusqu'à la date d'effet du taux plein, 6,25 % —, que
+      `tests/temoins/exemples_officiels.yaml` rejoue. NON PORTÉE : la
+      liquidation dès 62 ou 63 ans des assurés qui ont commencé avant 20
+      ou 21 ans, « avec l'application d'un coefficient de minoration de
+      15 % » ; le modèle leur oppose la minoration ordinaire, 25 % à 62 ans
+      et 20 % à 63. La majoration pour trois enfants et ce qui n'est pas
+      porté sont ceux des statuts de 2011, voir la période 2012-2018.
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.0766
+    part_salariale: 0.673629
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
+    surcote_trimestres_cotises: true
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      LA BAISSE DU TAUX D'APPEL, que la caisse annonce dans son tableau de
+      paramètres 2026 : « le taux de cotisation statutaire est de 6,30 %
+      au taux d'appel de 121,6 %, soit un taux de cotisation effectif de
+      7,66 % des commissions et rémunérations brutes limitées au plafond,
+      dont 2,50 % (concours des compagnies mandantes) et 5,16 % (part à la
+      charge de l'assuré) ». Le barème de l'IPP porte encore 8,16 % ; la
+      caisse fait foi, comme toujours dans ce dépôt. UN TIERS EST PAYÉ PAR
+      QUELQU'UN D'AUTRE, ET CE N'EST PAS UN EMPLOYEUR. La fiche des taux
+      de la caisse l'énumère à part : « taux de cotisation créateur de
+      droits RCO : 6,30 % ; CONCOURS CONVENTIONNEL DES COMPAGNIES
+      MANDANTES : 2,50 % des commissions brutes plafonnées ; taux d'appel
+      : 121,6 % ; taux de cotisation effectif : 7,66 % », et son tableau
+      de paramètres détaille les 7,66 % « dont 2,50 % (concours des
+      compagnies mandantes) et 5,16 % (part à la charge de l'assuré) ».
+      D'où `part_salariale` = 5,16 / 7,66 = 67,36 %. CE CONCOURS EST AUSSI
+      VIEUX QUE LA PROFESSION L'EST SOUS SA FORME ACTUELLE. Le
+      gouvernement l'a rappelé au Sénat en 2021 : « depuis 1952, des
+      accords conventionnels successifs » font financer le régime en
+      partie par les compagnies, et ce concours représentait alors «
+      environ 90 millions d'euros, soit plus du tiers des ressources du
+      régime » — la même proportion qu'aujourd'hui. C'est pourquoi la part
+      de 2026 est reportée sur toutes les périodes : seul son niveau exact
+      est daté, son existence ne l'est pas. Le statut
+      `agent_general_assurance` n'est DONC PAS marqué `sans_employeur` —
+      c'est le seul libéral du catalogue dans ce cas, et il l'est parce
+      qu'un tiers paie réellement pour lui. LE RENDEMENT EST PUBLIÉ, ET IL
+      EST STABLE : « le coefficient de référence, correspondant au prix
+      d'achat d'un point de retraite : fixé à 8,1806 €, maintenant ainsi
+      le taux de rendement du régime à 5,04 % ». Valeur de service 0,4123
+      € en 2026 : 0,4123 / 8,1806 = 5,0399 %. Le même calcul tombe sur
+      5,04 % en 2023 (0,3829 / 7,597) et en 2024 (0,3994 / 7,9246) — la
+      caisse pilote ce rendement, et le dit. C'est le rendement HORS TAUX
+      D'APPEL ; celui de ce qui est versé se lit dans
+      `rendements_points.csv`. LE DÉCRET NE BOUGE PAS : l'article 2 du
+      décret n° 67-1169, dans ses onze versions (LEGIARTI000006776899 →
+      LEGIARTI000046813836), fixe « la cotisation à 6,30 % du montant des
+      commissions et rémunérations » de 1967 à aujourd'hui ; ce qui change
+      est l'assiette — commissions brutes (2010), plafond de 413 028 €
+      pour 2011 (LEGIARTI000024744283) puis revalorisé chaque année — et
+      le taux d'appel, que les délibérations fixent. Les taux de la fiche
+      sont les taux appelés reconstitués ; 6,30 % est le contractuel.
+      Règles d'âge de l'arrêté du 4 août 2023 : voir la période 2024-2025.

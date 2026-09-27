@@ -352,10 +352,27 @@ def _charge(argument: str):
 
     Un cran ``champ=valeur`` choisit, dans une liste, l'entrée qui le porte :
     ``regimes.code=regime_general.periodes.debut=2023.part_salariale``.
+
+    Le fichier peut aussi être un motif, ou plusieurs joints par « + »
+    (:func:`_fichiers`) : la clé se lit alors dans chacun, et la sonde réunit
+    ce qu'ils rendent, en passant ceux qui ne la portent pas. Depuis que chaque
+    régime a son fichier (docs/architecture.md, phase 6), c'est ainsi qu'une
+    phrase parle de plusieurs : ``data/reference/regimes/agirc*.yaml``.
     """
     if ":" not in argument:
         raise ValueError("il faut « fichier:clé.sous_clé »")
     chemin, cle = argument.split(":", 1)
+    if any(signe in chemin for signe in "*?[") or re.search(r"\s[+-]\s", chemin):
+        reuni = []
+        for fichier in _fichiers(chemin):
+            try:
+                valeur = _charge(f"{fichier.relative_to(RACINE)}:{cle}")
+            except ValueError:
+                continue      # un fichier qui ne porte pas la clé
+            reuni += valeur if isinstance(valeur, list) else [valeur]
+        if not reuni:
+            raise ValueError(f"« {cle} » ne rend rien dans {chemin}")
+        return reuni
     texte = (RACINE / chemin).read_text(encoding="utf-8")
     donnees = json.loads(texte) if chemin.endswith(".json") \
         else yaml.safe_load(texte)

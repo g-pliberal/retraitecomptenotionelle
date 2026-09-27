@@ -1,0 +1,175 @@
+code: cafat_nouvelle_caledonie
+rang: 80
+nom: >-
+  Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT)
+famille: base_prive
+source_id: sites_institutionnels
+fiabilite: estimee
+creation: 1958
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Salariés de Nouvelle-Calédonie, affiliés à la CAFAT : pension en points,
+  servie à taux plein à 62 ans avec trente-sept années d'activité (2026),
+  après une montée de 60 à 62 ans et de 35 à 37 ans engagée en 2023. Taux
+  et barème de 2026 projetés sur toute la période.
+hors_repartition: false
+periodes:
+  - debut: 1958
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: 140
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30
+    decote_par_trimestre: 0.015
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+      Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+      montant de ma retraite » de la CAFAT (cafat.nc), lues par
+      scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+      hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+      [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+      plafond national — la fiche prend le plafond national). POINTS : «
+      les cotisations que vous avez versées ont été divisées chaque année
+      par une valeur de référence dont le montant est fixé par le conseil
+      d'administration », « la valeur du point retraite est de 256,09
+      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+      publiée nulle part de lisible : le rendement de
+      `rendements_points.csv` (10 centimes par euro) est celui
+      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+      pour trente-sept ans, niveau `estimee`. AVANT 2023 : 60 ans et 35
+      années d'activité, « 1,5 % de réduction par trimestre d'anticipation
+      manquant », dans la limite de dix trimestres.
+  - debut: 2023
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 60.5
+    age_taux_plein: 60.5
+    duree_requise_trimestres: 144
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30
+    decote_par_trimestre: 0.015
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+      Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+      montant de ma retraite » de la CAFAT (cafat.nc), lues par
+      scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+      hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+      [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+      plafond national — la fiche prend le plafond national). POINTS : «
+      les cotisations que vous avez versées ont été divisées chaque année
+      par une valeur de référence dont le montant est fixé par le conseil
+      d'administration », « la valeur du point retraite est de 256,09
+      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+      publiée nulle part de lisible : le rendement de
+      `rendements_points.csv` (10 centimes par euro) est celui
+      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+      pour trente-sept ans, niveau `estimee`. « 01/01/2023 : 60 ans 6 mois
+      » ; durée relevée d'une demi-année par an, 36 ans en 2023.
+  - debut: 2024
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 61
+    age_taux_plein: 61
+    duree_requise_trimestres: 144
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30
+    decote_par_trimestre: 0.015
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+      Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+      montant de ma retraite » de la CAFAT (cafat.nc), lues par
+      scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+      hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+      [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+      plafond national — la fiche prend le plafond national). POINTS : «
+      les cotisations que vous avez versées ont été divisées chaque année
+      par une valeur de référence dont le montant est fixé par le conseil
+      d'administration », « la valeur du point retraite est de 256,09
+      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+      publiée nulle part de lisible : le rendement de
+      `rendements_points.csv` (10 centimes par euro) est celui
+      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+      pour trente-sept ans, niveau `estimee`. « 01/01/2024 : 61 ans » ; 36
+      ans.
+  - debut: 2025
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 61.5
+    age_taux_plein: 61.5
+    duree_requise_trimestres: 146
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30
+    decote_par_trimestre: 0.015
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+      Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+      montant de ma retraite » de la CAFAT (cafat.nc), lues par
+      scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+      hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+      [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+      plafond national — la fiche prend le plafond national). POINTS : «
+      les cotisations que vous avez versées ont été divisées chaque année
+      par une valeur de référence dont le montant est fixé par le conseil
+      d'administration », « la valeur du point retraite est de 256,09
+      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+      publiée nulle part de lisible : le rendement de
+      `rendements_points.csv` (10 centimes par euro) est celui
+      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+      pour trente-sept ans, niveau `estimee`. « 01/01/2025 : 61 ans 6 mois
+      » ; 36 ans et demi.
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: 148
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30
+    decote_par_trimestre: 0.015
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+      Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+      montant de ma retraite » de la CAFAT (cafat.nc), lues par
+      scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+      hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+      [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+      plafond national — la fiche prend le plafond national). POINTS : «
+      les cotisations que vous avez versées ont été divisées chaque année
+      par une valeur de référence dont le montant est fixé par le conseil
+      d'administration », « la valeur du point retraite est de 256,09
+      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+      publiée nulle part de lisible : le rendement de
+      `rendements_points.csv` (10 centimes par euro) est celui
+      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+      pour trente-sept ans, niveau `estimee`. « 01/01/2026 : 62 ans », «
+      37 années d'activité » en 2026 (148 trimestres).

@@ -798,7 +798,7 @@ def part_pensions_sous(**reglages: str) -> float:
 def fiche_regime(**reglages: str) -> float:
     """Un champ des périodes d'une fiche de régime, telle qu'elle est écrite.
 
-    ``fichier=base_prive&regime=regime_general&champ=part_salariale`` ;
+    ``regime=regime_general&champ=part_salariale`` ;
     ``de`` et ``a`` bornent l'année de DÉBUT des périodes retenues (``a``
     vaut ``de`` si on l'omet), tout autre réglage filtre sur un champ de la
     période (``assiette=tranche_b``). ``stat=min`` ou ``stat=max`` quand
@@ -807,15 +807,17 @@ def fiche_regime(**reglages: str) -> float:
 
     La fiche ÉCRITE, et non le catalogue chargé : le régime général y reçoit
     ses taux année par année, et la méthodologie dit précisément ce que les
-    fiches portent avant ce découpage.
+    fiches portent avant ce découpage. Un fichier par régime, nommé de son
+    code ; avant la phase 6, la sonde demandait aussi le fichier (``fichier=``)
+    où le régime était rangé.
     """
-    from retraite_notionnelle.donnees.chargement import charger_yaml
+    from retraite_notionnelle.donnees.regimes import fiche_de_regime
 
-    speciaux = {"fichier", "regime", "champ", "de", "a", "stat"}
-    donnees = charger_yaml(RACINE / "data/reference/regimes" / f"{reglages['fichier']}.yaml")
-    regime = next((r for r in donnees["regimes"] if r["code"] == reglages["regime"]), None)
-    if regime is None:
-        raise ValueError(f"{reglages['fichier']} n'a pas de régime « {reglages['regime']} »")
+    speciaux = {"regime", "champ", "de", "a", "stat"}
+    try:
+        regime = fiche_de_regime(RACINE / "data", reglages["regime"])
+    except KeyError:
+        raise ValueError(f"aucun régime « {reglages['regime']} »") from None
     de = int(reglages.get("de", 0))
     a = int(reglages.get("a", reglages.get("de", 9999)))
     filtres = {c: v for c, v in reglages.items() if c not in speciaux}

@@ -58,6 +58,30 @@ DONNEES = RACINE / "data"
 BRUT = DONNEES / "brut"
 REFERENCE = DONNEES / "reference"
 
+#: Les fichiers YAML du dossier des régimes qui ne sont pas des régimes (le
+#: chargeur du catalogue en tient la même liste).
+FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml")
+
+
+def _fiche_regime(code: str) -> dict:
+    """La fiche d'un régime telle qu'elle est écrite : un fichier par régime."""
+    import yaml
+
+    return yaml.safe_load(
+        (REFERENCE / "regimes" / f"{code}.yaml").read_text(encoding="utf-8"))
+
+
+def _fiches_regimes() -> list[dict]:
+    """Toutes les fiches de régime écrites, dans l'ordre du catalogue (leur rang)."""
+    import yaml
+
+    fiches = [
+        yaml.safe_load(chemin.read_text(encoding="utf-8"))
+        for chemin in sorted((REFERENCE / "regimes").glob("*.yaml"))
+        if not chemin.name.startswith("_") and chemin.name not in FICHIERS_HORS_REGIMES
+    ]
+    return sorted(fiches, key=lambda fiche: fiche["rang"])
+
 #: Première année du fichier des espérances de vie : avant elle, aucune série
 #: du dépôt n'en a besoin.
 PREMIERE_ANNEE_ESPERANCE = 1946
@@ -6700,42 +6724,35 @@ def controle_part_salariale() -> list[str]:
     Ce contrôle ne dépend d'aucune source et ne certifie rien : il vérifie que
     la fiche dit ce qu'elle doit dire, et que la valeur est plausible.
     """
-    import yaml
-
     anomalies: list[str] = []
     verifiees = 0
-    for chemin in sorted((REFERENCE / "regimes").glob("*.yaml")):
-        if chemin.name.startswith("_"):
-            continue
-        for fiche in (yaml.safe_load(chemin.read_text(encoding="utf-8")) or {}).get(
-            "regimes", []
-        ):
-            attendue = (fiche["famille"] in FAMILLES_AVEC_EMPLOYEUR
-                        or fiche["code"] in REGIMES_SALARIES_HORS_FAMILLE)
-            for periode in fiche.get("periodes", []):
-                borne = f"{fiche['code']} {periode['debut']}-{periode.get('fin')}"
-                part = periode.get("part_salariale")
-                if periode.get("perimetre_taux") == "agent_seul":
-                    if part is not None:
-                        anomalies.append(
-                            f"SUSPECT part salariale {borne} : période `agent_seul`, "
-                            "dont le taux est déjà la seule retenue de l'agent — "
-                            "`part_salariale` n'y a pas de sens"
-                        )
-                    continue
-                if attendue and part is None:
+    for fiche in _fiches_regimes():
+        attendue = (fiche["famille"] in FAMILLES_AVEC_EMPLOYEUR
+                    or fiche["code"] in REGIMES_SALARIES_HORS_FAMILLE)
+        for periode in fiche.get("periodes", []):
+            borne = f"{fiche['code']} {periode['debut']}-{periode.get('fin')}"
+            part = periode.get("part_salariale")
+            if periode.get("perimetre_taux") == "agent_seul":
+                if part is not None:
                     anomalies.append(
-                        f"MANQUE  part salariale {borne} : période de salariés sans "
-                        "`part_salariale`, le compte y porterait la part patronale"
+                        f"SUSPECT part salariale {borne} : période `agent_seul`, "
+                        "dont le taux est déjà la seule retenue de l'agent — "
+                        "`part_salariale` n'y a pas de sens"
                     )
-                    continue
-                if part is None:
-                    continue
-                verifiees += 1
-                if not 0.0 < float(part) <= 1.0:
-                    anomalies.append(
-                        f"SUSPECT part salariale {borne} : {part}, hors de ]0, 1]"
-                    )
+                continue
+            if attendue and part is None:
+                anomalies.append(
+                    f"MANQUE  part salariale {borne} : période de salariés sans "
+                    "`part_salariale`, le compte y porterait la part patronale"
+                )
+                continue
+            if part is None:
+                continue
+            verifiees += 1
+            if not 0.0 < float(part) <= 1.0:
+                anomalies.append(
+                    f"SUSPECT part salariale {borne} : {part}, hors de ]0, 1]"
+                )
     messages = [
         f"OK      part salariale : {verifiees} périodes renseignées, "
         f"{len(anomalies)} anomalie(s)"
@@ -6925,14 +6942,9 @@ def controle_vraisemblance_cotisations() -> list[str]:
             "(lancer scripts/fetch/openfisca_cotisations.py)"
         ]
 
-    import yaml
-
     serie = json.loads(chemin.read_text(encoding="utf-8"))["serie"]
     couverture = {int(a) for a in serie}
-    fiches = yaml.safe_load(
-        (REFERENCE / "regimes" / "base_prive.yaml").read_text(encoding="utf-8")
-    )
-    regime = next(r for r in fiches["regimes"] if r["code"] == "regime_general")
+    regime = _fiche_regime("regime_general")
 
     messages, anomalies = [], []
     comparees = 0
@@ -7031,14 +7043,12 @@ def controle_vraisemblance_cotisations() -> list[str]:
     # elles se confrontent à sa série, pas à celle du dépôt.
     variantes = brut.get("complementaires_variantes", {})
     parts_variantes = brut.get("part_salariale_variantes", {})
-    fiches = yaml.safe_load(
-        (REFERENCE / "regimes" / "complementaires_prive.yaml").read_text(
-            encoding="utf-8")
-    )
     # La tranche 2 des non-cadres emprunte le barème de l'Arrco (`points_de`) :
     # elle se confronte à la série de l'Arrco, sur sa propre assiette.
     complementaires = 0
-    for regime in fiches["regimes"]:
+    for regime in _fiches_regimes():
+        if regime["famille"] != "complementaire_prive":
+            continue
         code_serie = regime["code"]
         if code_serie not in par_regime:
             code_serie = next(
@@ -7119,13 +7129,9 @@ def controle_vraisemblance_cotisations() -> list[str]:
     par_famille = {"public": brut.get("public", {}),
                    "independants": brut.get("independants", {})}
     publics_et_independants = 0
-    for fichier, code, assiette, famille, series, *champ in CONFRONTATIONS_TAUX:
+    for code, assiette, famille, series, *champ in CONFRONTATIONS_TAUX:
         champ = champ[0] if champ else "taux_cotisation_retraite"
-        fiches = yaml.safe_load(
-            (REFERENCE / "regimes" / fichier).read_text(encoding="utf-8"))
-        regime = next((r for r in fiches["regimes"] if r["code"] == code), None)
-        if regime is None:
-            continue
+        regime = _fiche_regime(code)
         tables = [par_famille[famille].get(s) for s in series]
         if not all(tables):
             continue
@@ -7259,40 +7265,40 @@ def controle_ancrage_taux_cotisation() -> list[str]:
     return messages + anomalies
 
 
-#: Fiche, régime, assiette -> séries d'OpenFisca à additionner pour obtenir
+#: Régime, assiette -> séries d'OpenFisca à additionner pour obtenir
 #: la grandeur que la fiche porte, et le champ de la fiche quand ce n'est pas
 #: `taux_cotisation_retraite`. La retenue de l'agent (`agent_seul`) se lit
 #: telle quelle ; le RAFP additionne ses deux parts ; les ouvriers de l'État
 #: suivent l'article L. 61 par renvoi, et donc la série de l'État.
 CONFRONTATIONS_TAUX = (
-    ("fonction_publique.yaml", "fonction_publique_etat", "hors_primes",
+    ("fonction_publique_etat", "hors_primes",
      "public", ("fonction_publique_etat",)),
-    ("fonction_publique.yaml", "cnracl", "hors_primes", "public", ("cnracl",)),
-    ("fonction_publique.yaml", "fspoeie", "hors_primes",
+    ("cnracl", "hors_primes", "public", ("cnracl",)),
+    ("fspoeie", "hors_primes",
      "public", ("fonction_publique_etat",)),
-    ("fonction_publique.yaml", "rafp", "primes_uniquement",
+    ("rafp", "primes_uniquement",
      "public", ("rafp_salarie", "rafp_employeur")),
-    ("non_salaries.yaml", "cancava", "plafonnee",
+    ("cancava", "plafonnee",
      "independants", ("artisans_base_plafonnee",)),
-    ("non_salaries.yaml", "organic", "plafonnee",
+    ("organic", "plafonnee",
      "independants", ("commercants_base_plafonnee",)),
-    ("non_salaries.yaml", "rsi", "plafonnee",
+    ("rsi", "plafonnee",
      "independants", ("artisans_base_plafonnee",)),
-    ("non_salaries.yaml", "rsi", "plafonnee",
+    ("rsi", "plafonnee",
      "independants", ("independants_base_deplafonnee",), "taux_cotisation_deplafonnee"),
-    ("non_salaries.yaml", "rco_artisans", "plafonnee",
+    ("rco_artisans", "plafonnee",
      "independants", ("rco_artisans_tranche_1",)),
-    ("non_salaries.yaml", "rco_artisans", "tranche_1_4_pass",
+    ("rco_artisans", "tranche_1_4_pass",
      "independants", ("rco_artisans_tranche_2",)),
-    ("non_salaries.yaml", "rci", "plafonnee", "independants", ("rci_tranche_1",)),
-    ("non_salaries.yaml", "rci", "tranche_1_4_pass",
+    ("rci", "plafonnee", "independants", ("rci_tranche_1",)),
+    ("rci", "tranche_1_4_pass",
      "independants", ("rci_tranche_2",)),
-    ("non_salaries.yaml", "cnavpl", "plafonnee_085_pass",
+    ("cnavpl", "plafonnee_085_pass",
      "independants", ("cnavpl_tranche_1_085",)),
-    ("non_salaries.yaml", "cnavpl", "tranche_085_5_pass",
+    ("cnavpl", "tranche_085_5_pass",
      "independants", ("cnavpl_tranche_2_085_5",)),
-    ("non_salaries.yaml", "cnavpl", "plafonnee", "independants", ("cnavpl_tranche_1",)),
-    ("non_salaries.yaml", "cnavpl", "plafonnee_5_pass",
+    ("cnavpl", "plafonnee", "independants", ("cnavpl_tranche_1",)),
+    ("cnavpl", "plafonnee_5_pass",
      "independants", ("cnavpl_tranche_2",)),
 )
 

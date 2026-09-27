@@ -1780,7 +1780,7 @@ institutions:
         url: https://www.agirc-arrco.fr/storage/2024/10/Coefficients-de-minorations-AA.pdf
         acces: document
         statut_integration: saisi
-        cible: data/reference/regimes/complementaires_prive.yaml
+        cible: data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml + data/reference/regimes/unirs.yaml
         note: >-
           Le régime n'applique pas la décote du régime de base : il publie deux
           tables de coefficients d'anticipation — l'une indexée sur les
@@ -1984,7 +1984,7 @@ institutions:
         url: https://www.cavamac.fr/documents-utiles-et-formulaires/
         acces: fichier
         statut_integration: saisi
-        cible: data/reference/regimes/non_salaries.yaml
+        cible: data/reference/regimes/cavamac_complementaire.yaml
         note: >-
           CETTE CAISSE ÉTAIT DONNÉE POUR SANS ESPOIR : « aucun texte ne publie
           le prix du point », concluait une passe précédente, et l'arrêté du
@@ -2020,7 +2020,7 @@ institutions:
         url: https://cprn.fr/je-suis-affilie/je-suis-actif/mes-cotisations/
         acces: fichier
         statut_integration: saisi
-        cible: data/reference/regimes/non_salaries.yaml
+        cible: data/reference/regimes/cprn_complementaire.yaml
         note: >-
           LE GUIDE PORTE LE TABLEAU QUI MANQUAIT : coût d'acquisition et valeur
           de service, pour les quatre étages du régime. Base T1 7,99 € et
@@ -2289,7 +2289,7 @@ institutions:
         url: https://www.ircantec.retraites.fr/
         acces: document
         statut_integration: saisi
-        cible: data/reference/regimes/complementaires_prive.yaml
+        cible: data/reference/regimes/ircantec.yaml
 
       - id: ircantec_annexes_baremes
         titre: >-
@@ -2299,7 +2299,7 @@ institutions:
         url: https://baseircantec.retraites.fr/
         acces: document
         statut_integration: saisi
-        cible: data/reference/regimes/complementaires_prive.yaml
+        cible: data/reference/regimes/ircantec.yaml
         note: >-
           La base documentaire que la Caisse des dépôts tient pour les
           gestionnaires du régime, à côté des deux CSV de
@@ -2358,7 +2358,7 @@ institutions:
         url: https://www.cavimac.fr/publications
         acces: document
         statut_integration: saisi
-        cible: data/reference/regimes/complementaires_prive.yaml
+        cible: data/reference/regimes/arrco_cultes.yaml
         note: >-
           Une circulaire par relèvement du SMIC, lisibles de la n° 2021/04 (15
           novembre 2021) à la n° 2026/03 (27 mai 2026) ; les précédentes sont
@@ -3145,7 +3145,7 @@ institutions:
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
         acces: api
         statut_integration: saisi
-        cible: data/reference/regimes/regimes_speciaux.yaml
+        cible: data/reference/regimes/crpnpac*.yaml
         note: >-
           Le seul régime du dépôt dont les paramètres ne sont pas dans le code
           de la sécurité sociale : ils sont dans le CODE DE L'AVIATION CIVILE,
@@ -3176,7 +3176,7 @@ institutions:
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
         acces: api
         statut_integration: saisi
-        cible: data/reference/regimes/non_salaries.yaml
+        cible: data/reference/regimes/cavimac.yaml
         note: >-
           Le seul régime de ce dépouillement que le code spécifie ENTIÈREMENT,
           et sans donner un seul chiffre propre. L'assiette : R. 382-89 et
@@ -3198,7 +3198,7 @@ institutions:
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
         acces: api
         statut_integration: saisi
-        cible: data/reference/regimes/non_salaries.yaml
+        cible: data/reference/regimes/rco_artisans.yaml + data/reference/regimes/nric.yaml + data/reference/regimes/rci.yaml
         recuperation: scripts/fetch/dila_legi_rci.py
         note: >-
           Articles D. 635-6 puis D. 635-7 du code de la sécurité sociale pour
@@ -3246,7 +3246,7 @@ institutions:
         url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
         acces: api
         statut_integration: saisi
-        cible: data/reference/regimes/non_salaries.yaml
+        cible: data/reference/regimes/rco_artisans.yaml
         note: >-
           LEGI ne remonte pas avant la codification du 21 décembre 1985 : les
           six premières années du régime, 1979-1984, n'y ont aucun état daté.
@@ -3846,7 +3846,7 @@ institutions:
         url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
         acces: fichier
         statut_integration: saisi
-        cible: data/reference/regimes/non_salaries.yaml
+        cible: data/reference/regimes/*_complementaire.yaml - data/reference/regimes/cnbf_complementaire.yaml
         recuperation: scripts/fetch/jorf_cotisations_liberales.py
         note: >-
           LA SOURCE QUE DEUX PASSES AVAIENT MANQUÉE, parce qu'elles
@@ -4096,7 +4096,7 @@ institutions:
         url: https://baremes.ipp.eu/parameters/prelevements-sociaux/prelevements_sociaux.professions_liberales.ret_comp_pl/csv
         acces: fichier
         statut_integration: saisi
-        cible: data/reference/regimes/non_salaries.yaml
+        cible: data/reference/regimes/*_complementaire.yaml - data/reference/regimes/cnbf_complementaire.yaml
         note: >-
           Un CSV d'une colonne par section professionnelle, chaque ligne étant
           une DATE D'EFFET : une année absente veut dire que rien n'a changé.

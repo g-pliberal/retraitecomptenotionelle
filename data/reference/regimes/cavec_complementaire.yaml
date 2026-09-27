@@ -1,0 +1,301 @@
+code: cavec_complementaire
+rang: 440
+nom: >-
+  Régime complémentaire des experts-comptables et des commissaires aux
+  comptes (CAVEC)
+famille: liberal
+source_id: cavec_guide_annuel
+fiabilite: moyenne
+creation: 1953
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Experts-comptables et commissaires aux comptes, libéraux comme salariés.
+  La caisse gère pour le compte de la CNAVPL le régime de base des
+  professions libérales, et pilote en propre ce complémentaire — qui pèse
+  l'essentiel de la pension.
+hors_repartition: false
+periodes:
+  - debut: 1953
+    fin: 2007
+    type_calcul: points
+    age_ouverture: 60
+    age_ouverture_par_generation: false
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_4_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    avantages_non_contributifs: [reversion]
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    notes: >-
+      COTISATION PAR CLASSES depuis l'origine : « institué en 1953, ce
+      régime fonctionnait selon un système de points avec cotisations
+      INDÉPENDANTES DU REVENU », écrit la caisse dans son histoire. Il l'est
+      resté, à ceci près que la classe est aujourd'hui déterminée par le
+      revenu. Le guide annuel 2026 en donne la grille : neuf classes, de
+      898 € jusqu'à 14 919 € de revenus à 30 616 € au-delà de 181 208 €.
+      UNE OPTION EXISTE, ET LE MODÈLE NE LA PREND PAS. « Vous pouvez opter
+      pour la classe immédiatement supérieure à celle qui correspond à vos
+      revenus », écrit le guide. C'est un avantage facultatif, et le dépôt
+      ne prête jamais à personne un choix qu'il ne peut pas connaître —
+      même règle que pour la classe C1 des avocats.
+      LE RENDEMENT SE VÉRIFIE SUR CHAQUE LIGNE. Le guide donne, en regard de
+      chaque classe, le nombre de points qu'elle ouvre, et la valeur de
+      service 2026 est de 1,3850 €. La classe D cotise 8 282 € pour 498
+      points, soit 498 × 1,3850 / 8 282 = 8,33 % — et les neuf classes
+      donnent le même à un dix-millième près. C'est ce qui autorise à
+      convertir la cotisation par le rendement plutôt que par une table de
+      points, et 8,33 % est aussi le chiffre que la caisse annonce.
+      UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2026, ramené aux autres
+      exercices par le rapport des plafonds. Pour la Cipav cette règle est
+      démontrée par l'arithmétique de sa grille ; ici elle est un CHOIX —
+      les neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
+      3,77 plafonds, et rien n'y est rond. Soixante-dix ans reportés depuis
+      une seule grille : c'est la limite de cette fiche, et elle est
+      grande.
+      AUCUNE MAJORATION DE REPORT N'EST LUE AVANT 2008 : la fiche
+      portait 1,25 % sur toute la période sans texte, et le moteur ne le
+      lisait pas ; le premier état des statuts dans l'index est l'arrêté
+      du 22 février 2008.
+      L'ÂGE SEUL, ET SOIXANTE-CINQ ANS, AVANT 2008 AUSSI. La règle de 2008
+      — taux plein à 65 ans, abattement de 1,25 % par trimestre manquant
+      entre 60 et 65 ans, sans condition de durée — est portée en arrière,
+      et ce n'est pas qu'une supposition commode : la caisse raconte dans
+      son livre des soixante-dix ans qu'en 1983 ses administrateurs
+      « choisissent de ne pas abaisser l'âge de départ en retraite à 60 ans
+      (comme annoncé pour le régime général […]). Il reste et restera fixé
+      à 65 ans. » La fiche lisait jusqu'au 23 septembre 2026 les âges et la
+      durée du régime général : 67 ans lus à la génération, et un taux
+      plein que la durée ouvrait dès l'âge légal. Le taux de l'abattement
+      d'avant 2008, lui, n'est pas connu.
+  - debut: 2008
+    fin: 2018
+    type_calcul: points
+    age_ouverture: 60
+    age_ouverture_par_generation: false
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_4_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    avantages_non_contributifs: [reversion]
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_trimestres_maximum: 20
+    notes: >-
+      COTISATION PAR CLASSES depuis l'origine : « institué en 1953, ce
+      régime fonctionnait selon un système de points avec cotisations
+      INDÉPENDANTES DU REVENU », écrit la caisse dans son histoire. Il l'est
+      resté, à ceci près que la classe est aujourd'hui déterminée par le
+      revenu. Le guide annuel 2026 en donne la grille : neuf classes, de
+      898 € jusqu'à 14 919 € de revenus à 30 616 € au-delà de 181 208 €.
+      UNE OPTION EXISTE, ET LE MODÈLE NE LA PREND PAS. « Vous pouvez opter
+      pour la classe immédiatement supérieure à celle qui correspond à vos
+      revenus », écrit le guide. C'est un avantage facultatif, et le dépôt
+      ne prête jamais à personne un choix qu'il ne peut pas connaître —
+      même règle que pour la classe C1 des avocats.
+      LE RENDEMENT SE VÉRIFIE SUR CHAQUE LIGNE. Le guide donne, en regard de
+      chaque classe, le nombre de points qu'elle ouvre, et la valeur de
+      service 2026 est de 1,3850 €. La classe D cotise 8 282 € pour 498
+      points, soit 498 × 1,3850 / 8 282 = 8,33 % — et les neuf classes
+      donnent le même à un dix-millième près. C'est ce qui autorise à
+      convertir la cotisation par le rendement plutôt que par une table de
+      points, et 8,33 % est aussi le chiffre que la caisse annonce.
+      UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2026, ramené aux autres
+      exercices par le rapport des plafonds. Pour la Cipav cette règle est
+      démontrée par l'arithmétique de sa grille ; ici elle est un CHOIX —
+      les neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
+      3,77 plafonds, et rien n'y est rond. Soixante-dix ans reportés depuis
+      une seule grille : c'est la limite de cette fiche, et elle est
+      grande.
+      L'ÂGE SEUL COMMANDE, ET LES STATUTS LE DATENT. Arrêté du 22
+      février 2008 (JORFARTI000018197778), article 3.13 : la retraite
+      est liquidée « à 65 ans à taux plein ; entre 60 et 65 ans, avec
+      application d'un abattement définitif de 1,25 % par trimestre
+      manquant » — aucune durée d'assurance n'y entre, et la fiche
+      portait 67 ans et 172 trimestres. Article 3.14 : « le compte de
+      points de l'assuré qui diffère la liquidation de la retraite au-
+      delà du 65e anniversaire est majoré de 1,25 % par trimestre plein
+      de prorogation dans la limite de 25 % », soit vingt trimestres.
+      Rien n'est lu avant 2008, et la fiche ne sert rien avant.
+      LA DURÉE N'Y ANNULE RIEN, ET LE MOTEUR L'IGNORAIT. La note le disait
+      depuis la passe des professions juridiques, mais la période laissait
+      `decote_annulee_par_la_duree` à sa valeur par défaut : le moteur
+      prenait la durée requise de la carrière et un expert-comptable parti
+      à 62 ans avec sa durée ne perdait rien, là où l'article 3.13 lui
+      retire 15 %. Le drapeau est posé, sur toutes les périodes. Et
+      l'ouverture est à 60 ans pour toutes les générations, comme le
+      texte l'écrit : elle ne joue que pour qui liquide avant l'âge légal
+      — carrière longue, handicap —, et le règlement ne prévoit alors
+      aucune dispense, l'abattement court jusqu'à 65 ans.
+  - debut: 2019
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 60
+    age_ouverture_par_generation: false
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_4_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    avantages_non_contributifs: [reversion]
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.0075
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_trimestres_maximum: 20
+    notes: >-
+      COTISATION PAR CLASSES depuis l'origine : « institué en 1953, ce
+      régime fonctionnait selon un système de points avec cotisations
+      INDÉPENDANTES DU REVENU », écrit la caisse dans son histoire. Il l'est
+      resté, à ceci près que la classe est aujourd'hui déterminée par le
+      revenu. Le guide annuel 2026 en donne la grille : neuf classes, de
+      898 € jusqu'à 14 919 € de revenus à 30 616 € au-delà de 181 208 €.
+      UNE OPTION EXISTE, ET LE MODÈLE NE LA PREND PAS. « Vous pouvez opter
+      pour la classe immédiatement supérieure à celle qui correspond à vos
+      revenus », écrit le guide. C'est un avantage facultatif, et le dépôt
+      ne prête jamais à personne un choix qu'il ne peut pas connaître —
+      même règle que pour la classe C1 des avocats.
+      LE RENDEMENT SE VÉRIFIE SUR CHAQUE LIGNE. Le guide donne, en regard de
+      chaque classe, le nombre de points qu'elle ouvre, et la valeur de
+      service 2026 est de 1,3850 €. La classe D cotise 8 282 € pour 498
+      points, soit 498 × 1,3850 / 8 282 = 8,33 % — et les neuf classes
+      donnent le même à un dix-millième près. C'est ce qui autorise à
+      convertir la cotisation par le rendement plutôt que par une table de
+      points, et 8,33 % est aussi le chiffre que la caisse annonce.
+      UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2026, ramené aux autres
+      exercices par le rapport des plafonds. Pour la Cipav cette règle est
+      démontrée par l'arithmétique de sa grille ; ici elle est un CHOIX —
+      les neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
+      3,77 plafonds, et rien n'y est rond. Soixante-dix ans reportés depuis
+      une seule grille : c'est la limite de cette fiche, et elle est
+      grande.
+      LA MAJORATION TOMBE À 0,75 % : arrêté du 20 août 2018
+      (JORFARTI000037363871), article 13, « une majoration de 0,75 % par
+      trimestre plein de prorogation au-delà de cet âge, dans la limite
+      maximale de 15 % » — toujours vingt trimestres. Appliqué aux
+      liquidations à partir de 2019, première année pleine.
+  - debut: 2026
+    fin: 2026
+    type_calcul: points
+    age_ouverture: 60
+    age_ouverture_par_generation: false
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_4_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_trimestres_maximum: 20
+    notes: >-
+      COTISATION PAR CLASSES depuis l'origine : « institué en 1953, ce
+      régime fonctionnait selon un système de points avec cotisations
+      INDÉPENDANTES DU REVENU », écrit la caisse dans son histoire. Il l'est
+      resté, à ceci près que la classe est aujourd'hui déterminée par le
+      revenu. Le guide annuel 2026 en donne la grille : neuf classes, de
+      898 € jusqu'à 14 919 € de revenus à 30 616 € au-delà de 181 208 €.
+      UNE OPTION EXISTE, ET LE MODÈLE NE LA PREND PAS. « Vous pouvez opter
+      pour la classe immédiatement supérieure à celle qui correspond à vos
+      revenus », écrit le guide. C'est un avantage facultatif, et le dépôt
+      ne prête jamais à personne un choix qu'il ne peut pas connaître —
+      même règle que pour la classe C1 des avocats.
+      LE RENDEMENT SE VÉRIFIE SUR CHAQUE LIGNE. Le guide donne, en regard de
+      chaque classe, le nombre de points qu'elle ouvre, et la valeur de
+      service 2026 est de 1,3850 €. La classe D cotise 8 282 € pour 498
+      points, soit 498 × 1,3850 / 8 282 = 8,33 % — et les neuf classes
+      donnent le même à un dix-millième près. C'est ce qui autorise à
+      convertir la cotisation par le rendement plutôt que par une table de
+      points, et 8,33 % est aussi le chiffre que la caisse annonce.
+      UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2026, ramené aux autres
+      exercices par le rapport des plafonds. Pour la Cipav cette règle est
+      démontrée par l'arithmétique de sa grille ; ici elle est un CHOIX —
+      les neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
+      3,77 plafonds, et rien n'y est rond. Soixante-dix ans reportés depuis
+      une seule grille : c'est la limite de cette fiche, et elle est
+      grande.
+      LA MAJORATION REVIENT À 1,25 % : règlement approuvé par l'arrêté
+      du 10 juillet 2026 (LEGIARTI000054437585), « une majoration de
+      1,25 % par trimestre plein de prorogation au-delà de cet âge, dans
+      la limite maximale de 25 % » ; le guide 2026 de la caisse
+      l'annonçait déjà, « après 65 ans avec 1,25 % de majoration ». La
+      fiche la sert dès 2026.
+      TROIS ENFANTS, DEPUIS L'ARRÊTÉ DU 4 JUILLET 2025 (JORFARTI000051849616,
+      article 20 des statuts, puis article 1.3.1 du règlement de 2026) :
+      « le montant de la première pension personnelle et de la pension de
+      réversion […] des assurés ayant eu au moins trois enfants est majoré
+      de 10 % ». La caisse l'écrit sur sa page de calcul ; le guide 2026
+      de la CNAVPL, édité en mars, dit encore « le régime ne prévoit pas
+      de majoration ». L'arrêté n'a pas de date d'effet propre : la fiche
+      la sert aux liquidations de 2026, première année pleine.
+  - debut: 2027
+    fin: null
+    type_calcul: points
+    age_ouverture: 60
+    age_ouverture_par_generation: false
+    age_taux_plein: 65
+    age_taux_plein_par_generation: false
+    duree_requise_trimestres: null
+    duree_requise_par_generation: false
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_4_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_age_debut: 65
+    surcote_trimestres_maximum: 20
+    notes: >-
+      Les statuts approuvés par l'arrêté du 4 juillet 2025 fixent une cible
+      au conseil : « ces paramètres sont déterminés de sorte que le taux de
+      rendement du régime d'assurance vieillesse complémentaire atteigne
+      8,25 % à échéance de l'année 2027 ». C'est ce rendement que porte
+      `rendements_points.csv` à partir de cet exercice — un chiffre écrit au
+      Journal officiel, et non une extrapolation.
+      LA MAJORATION REVIENT À 1,25 % : règlement approuvé par l'arrêté
+      du 10 juillet 2026 (LEGIARTI000054437585), « une majoration de
+      1,25 % par trimestre plein de prorogation au-delà de cet âge, dans
+      la limite maximale de 25 % » ; le guide 2026 de la caisse
+      l'annonçait déjà, « après 65 ans avec 1,25 % de majoration ». La
+      fiche la sert dès 2026.
+      TROIS ENFANTS, DEPUIS L'ARRÊTÉ DU 4 JUILLET 2025 (JORFARTI000051849616,
+      article 20 des statuts, puis article 1.3.1 du règlement de 2026) :
+      « le montant de la première pension personnelle et de la pension de
+      réversion […] des assurés ayant eu au moins trois enfants est majoré
+      de 10 % ». La caisse l'écrit sur sa page de calcul ; le guide 2026
+      de la CNAVPL, édité en mars, dit encore « le régime ne prévoit pas
+      de majoration ». L'arrêté n'a pas de date d'effet propre : la fiche
+      la sert aux liquidations de 2026, première année pleine.

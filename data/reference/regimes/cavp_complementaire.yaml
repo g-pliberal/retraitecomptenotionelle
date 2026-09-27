@@ -1,0 +1,387 @@
+code: cavp_complementaire
+rang: 400
+nom: >-
+  Régime complémentaire par répartition des pharmaciens (CAVP)
+famille: liberal
+source_id: cavp_mementos
+fiabilite: moyenne
+creation: 1949
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Pharmaciens et biologistes libéraux. Le complémentaire de la CAVP a DEUX
+  VOLETS : celui-ci, en répartition, et un volet en CAPITALISATION par
+  classes, qui n'est pas au catalogue — un compte notionnel ne porte que la
+  répartition. Sa grille, longtemps réputée illisible, se lit pourtant : la
+  part capitalisée vaut (classe − 1) fois une cotisation de référence de
+  1 453 € en 2026, sur un revenu de référence qui commence à 85 369 € et
+  monte par paliers de 17 662 €. Ce qui manque est la CONVERSION du capital
+  en rente, « actuariellement neutre », dont ni les coefficients ni le
+  rendement du plan ne sont publiés.
+hors_repartition: false
+periodes:
+  - debut: 1949
+    fin: 1977
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+      cotisation de référence est fixée chaque année par le conseil
+      d'administration puis, depuis 2009, par décret : le forfait de la
+      fiche, indexé sur les prix, en tient lieu. 1949-1977 : aucune
+      version consolidée ; le forfait est reconduit en arrière, niveau
+      estimé. COTISATION FORFAITAIRE, ET ELLE L'EST VRAIMENT. Le volet
+      capitalisé de ce régime est réparti en classes, mais le volet en
+      RÉPARTITION ne l'est pas : le mémento de la caisse aligne les
+      classes 3 à 13 en colonnes et la ligne « Part gérée par répartition
+      » y porte le même montant partout. 6 880 € en 2024, quel que soit le
+      revenu. LA PENSION SE COMPTE EN ANNUITÉS, pas en points : « RÉGIME
+      COMPLÉMENTAIRE PAR RÉPARTITION : nombre d'années validées × 320,75
+      », écrit le mémento 2024. Le moteur, lui, convertit une cotisation
+      par un rendement — et les deux écritures coïncident exactement, la
+      cotisation étant constante : 6 880 × 4,66 % = 320,75 €. Une carrière
+      de N années rend N × 320,75 € des deux façons. Le régime est
+      institué par le décret n° 49-580 du 22 avril 1949, que les arrêtés
+      d'approbation de ses statuts visent encore aujourd'hui. UN SEUL
+      MILLÉSIME EST PUBLIÉ ICI AUSSI : le forfait de 2024, reconduit en
+      euros constants vers l'amont — soixante-quinze ans depuis un seul
+      chiffre, et la fiche ne vaut pas mieux que cela.
+  - debut: 1978
+    fin: 1986
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+      cotisation de référence est fixée chaque année par le conseil
+      d'administration puis, depuis 2009, par décret : le forfait de la
+      fiche, indexé sur les prix, en tient lieu. 1978-1986
+      (LEGIARTI000006770075) : OPTION entre les classes 1, 3, 5, 7 et 9,
+      de quatre à douze fois la cotisation de référence, classe 1 d'office
+      ; classes 2 et 4 maintenues à titre transitoire pour les options
+      d'avant 1974.
+  - debut: 1987
+    fin: 2008
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+      cotisation de référence est fixée chaque année par le conseil
+      d'administration puis, depuis 2009, par décret : le forfait de la
+      fiche, indexé sur les prix, en tient lieu. 1987-2008
+      (LEGIARTI000006770076, puis LEGIARTI000006770077 en 1989 et
+      LEGIARTI000006770078 en 2002, euro) : sept classes 1, 3, 5, 7, 9, 11
+      et 13, de cinq à dix-sept fois la cotisation de référence.
+  - debut: 2009
+    fin: 2011
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: cavp
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+      cotisation de référence est fixée chaque année par le conseil
+      d'administration puis, depuis 2009, par décret : le forfait de la
+      fiche, indexé sur les prix, en tient lieu. 2009-2014
+      (LEGIARTI000020081467, 1er juillet 2009) : classe 1 supprimée,
+      classe 3 d'office (sept fois la référence), option de 3 à 13 ; la
+      cotisation de référence est fixée par décret depuis le 1er janvier
+      2009.
+      AUCUNE MAJORATION DE REPORT AVANT L'ARRÊTÉ DU 23 JUIN 2011 : « pas
+      de majoration de pension pour un départ après 65 ans », dit son
+      annexe pour les assurés nés avant le 30 juin 1951 ; la fiche
+      portait 0,5 % sans texte, que le moteur ne lisait pas.
+      LES STATUTS DU 11 MAI 2009 (JORFTEXT000020694598), PREMIERS LUS :
+      ceux d'avant sont au Bulletin officiel, et la fiche ne les sert qu'à
+      partir de 2009. Article 12 : la retraite entière est acquise « à
+      l'âge de 65 ans » ; article 15 : dès 60 ans, « un coefficient
+      d'anticipation qui est fonction du nombre de trimestres manquants, à
+      la date d'effet des droits, pour atteindre l'âge de 65 ans. Ce
+      coefficient est égal à 1,25 % par trimestre manquant dans la limite
+      de 20 trimestres » — l'âge seul, la durée n'y peut rien :
+      `decote_annulee_par_la_duree: false`, et l'âge du taux plein lu dans
+      la table `cavp`. La fiche lisait l'âge d'annulation et la décote du
+      régime de base, que la durée annule. Article 17 : « une bonification
+      d'un dixième pour tout allocataire ayant eu au moins trois enfants »
+      : `majoration_enfants`. Lu le 23 septembre 2026 (action 89).
+  - debut: 2012
+    fin: 2014
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: cavp
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    decote_palier_age: 65
+    decote_par_trimestre_apres_palier: 0.005
+    surcote_par_trimestre: 0.005
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 12
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+      cotisation de référence est fixée chaque année par le conseil
+      d'administration puis, depuis 2009, par décret : le forfait de la
+      fiche, indexé sur les prix, en tient lieu. 2009-2014
+      (LEGIARTI000020081467, 1er juillet 2009) : classe 1 supprimée,
+      classe 3 d'office (sept fois la référence), option de 3 à 13 ; la
+      cotisation de référence est fixée par décret depuis le 1er janvier
+      2009.
+      LA MAJORATION DE REPORT DATE DE 2011 : l'arrêté du 23 juin 2011
+      (JORFARTI000024270214) écrit à l'article 12 que « la pension de
+      retraite est majorée lorsqu'elle est liquidée au-delà de l'âge
+      permettant d'obtenir une retraite à taux plein et jusqu'à cet âge
+      augmenté de 3 ans pour les affiliés nés à compter du 1er janvier
+      1956. Cette majoration est égale à 0,5 % par trimestre », et le
+      règlement du 10 juillet 2026 (LEGIARTI000054437738) le reprend.
+      Douze trimestres au plus, depuis l'âge du taux plein lu à la
+      génération ; les générations 1951 à 1955, bornées à un ou deux
+      ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
+      n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
+      Servie à partir de 2012.
+      DEUX PENTES DEPUIS L'ARRÊTÉ DU 23 JUIN 2011 (JORFTEXT000024270202),
+      repris par l'article 12 du règlement du 10 juillet 2026. Taux plein
+      à l'âge du 1° de L. 351-8 pour les nés depuis 1956, à 65 ans
+      jusqu'en 1952 et à 66 ans de 1953 à 1955 (table `cavp`) ; minoration
+      « 1,25 % par trimestre manquant pour un âge de départ à la retraite
+      compris entre l'âge d'ouverture du droit à pension de retraite et 65
+      ans ; 0,5 % par trimestre manquant pour un âge de départ à la
+      retraite compris entre 65 ans et l'âge permettant d'obtenir une
+      pension de retraite à taux plein » : `decote_palier_age: 65`. Un
+      pharmacien né en 1975 parti à soixante-quatre ans perd 9 % de cette
+      retraite, qu'il ait ou non sa durée, là où la fiche ne lui retirait
+      rien. Pour les nés jusqu'en 1955, « les coefficients d'anticipation
+      figurent dans un tableau en annexe des présents statuts », que
+      l'index ne porte pas : les deux pentes leur sont appliquées depuis
+      leur propre âge du taux plein. Le montant des nés depuis 1956 est
+      majoré de 4 % et celui des nés de 1953 à 1955 de 2 %, ce que le
+      règlement de 2026 écrit en affectant la valeur de service des autres
+      générations de 0,96 et de 0,96/0,98 : non porté, le rendement de la
+      fiche étant calé sur les générations d'aujourd'hui.
+  - debut: 2015
+    fin: 2019
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: cavp
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    decote_palier_age: 65
+    decote_par_trimestre_apres_palier: 0.005
+    surcote_par_trimestre: 0.005
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 12
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+      cotisation de référence est fixée chaque année par le conseil
+      d'administration puis, depuis 2009, par décret : le forfait de la
+      fiche, indexé sur les prix, en tient lieu. 2015-2019
+      (LEGIARTI000029843618, 1er juillet 2015) : FIN DE L'OPTION — six
+      classes d'office selon la moyenne des revenus de la quatrième à la
+      deuxième année précédente, bornées en plafonds de la Sécurité
+      sociale : classe 3 jusqu'à 2 PASS (sept fois la référence), 5 de 2 à
+      2,75 PASS (neuf fois), 7 de 2,75 à 3,5 (onze), 9 de 3,5 à 4,25
+      (treize), 11 de 4,25 à 5 (quinze), 13 au-delà (dix-sept) ;
+      LEGIARTI000038358448 (2019) : assiette de l'avant-dernière année, L.
+      131-6.
+      LA MAJORATION DE REPORT DATE DE 2011 : l'arrêté du 23 juin 2011
+      (JORFARTI000024270214) écrit à l'article 12 que « la pension de
+      retraite est majorée lorsqu'elle est liquidée au-delà de l'âge
+      permettant d'obtenir une retraite à taux plein et jusqu'à cet âge
+      augmenté de 3 ans pour les affiliés nés à compter du 1er janvier
+      1956. Cette majoration est égale à 0,5 % par trimestre », et le
+      règlement du 10 juillet 2026 (LEGIARTI000054437738) le reprend.
+      Douze trimestres au plus, depuis l'âge du taux plein lu à la
+      génération ; les générations 1951 à 1955, bornées à un ou deux
+      ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
+      n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
+      Servie à partir de 2012.
+  - debut: 2020
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: cavp
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    decote_palier_age: 65
+    decote_par_trimestre_apres_palier: 0.005
+    surcote_par_trimestre: 0.005
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 12
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+      cotisation de référence est fixée chaque année par le conseil
+      d'administration puis, depuis 2009, par décret : le forfait de la
+      fiche, indexé sur les prix, en tient lieu. 2020-2025
+      (LEGIARTI000038358500, décret n° 2019-288) : onze classes, de 1,8125
+      PASS (classe 3, sept fois la référence) par marches de 0,375 PASS
+      jusqu'à la classe 13. COTISATION FORFAITAIRE, ET ELLE L'EST
+      VRAIMENT. Le volet capitalisé de ce régime est réparti en classes,
+      mais le volet en RÉPARTITION ne l'est pas : le mémento de la caisse
+      aligne les classes 3 à 13 en colonnes et la ligne « Part gérée par
+      répartition » y porte le même montant partout. 6 880 € en 2024, quel
+      que soit le revenu. LA PENSION SE COMPTE EN ANNUITÉS, pas en points
+      : « RÉGIME COMPLÉMENTAIRE PAR RÉPARTITION : nombre d'années validées
+      × 320,75 », écrit le mémento 2024. Le moteur, lui, convertit une
+      cotisation par un rendement — et les deux écritures coïncident
+      exactement, la cotisation étant constante : 6 880 × 4,66 % = 320,75
+      €. Une carrière de N années rend N × 320,75 € des deux façons. Le
+      régime est institué par le décret n° 49-580 du 22 avril 1949, que
+      les arrêtés d'approbation de ses statuts visent encore aujourd'hui.
+      UN SEUL MILLÉSIME EST PUBLIÉ ICI AUSSI : le forfait de 2024,
+      reconduit en euros constants vers l'amont — soixante-quinze ans
+      depuis un seul chiffre, et la fiche ne vaut pas mieux que cela.
+      LA MAJORATION DE REPORT DATE DE 2011 : l'arrêté du 23 juin 2011
+      (JORFARTI000024270214) écrit à l'article 12 que « la pension de
+      retraite est majorée lorsqu'elle est liquidée au-delà de l'âge
+      permettant d'obtenir une retraite à taux plein et jusqu'à cet âge
+      augmenté de 3 ans pour les affiliés nés à compter du 1er janvier
+      1956. Cette majoration est égale à 0,5 % par trimestre », et le
+      règlement du 10 juillet 2026 (LEGIARTI000054437738) le reprend.
+      Douze trimestres au plus, depuis l'âge du taux plein lu à la
+      génération ; les générations 1951 à 1955, bornées à un ou deux
+      ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
+      n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
+      Servie à partir de 2012.
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    age_table: cavp
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    decote_palier_age: 65
+    decote_par_trimestre_apres_palier: 0.005
+    surcote_par_trimestre: 0.005
+    surcote_points: par_age_seul
+    surcote_trimestres_maximum: 12
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    cotisation_forfaitaire_euros: 7657.00
+    cotisation_forfaitaire_annee: 2026
+    notes: >-
+      7 657 € en 2026, et le rendement recule : la cotisation « intègre en
+      2026 un TAUX D'APPEL DE 105,4 % QUI NE PRODUIRA AUCUN DROIT de
+      retraite afin de garantir la soutenabilité financière du volet géré
+      en répartition », écrit la caisse. Le décret n° 2025-1076 du 10
+      novembre 2025 le prévoit.
+      Le compte notionnel porte ce qui est VERSÉ, taux d'appel compris ;
+      c'est donc le rendement qui absorbe l'écart — 328,80 € servis pour
+      7 657 € appelés, soit 4,29 % contre 4,66 % en 2024.
+      LA MAJORATION DE REPORT DATE DE 2011 : l'arrêté du 23 juin 2011
+      (JORFARTI000024270214) écrit à l'article 12 que « la pension de
+      retraite est majorée lorsqu'elle est liquidée au-delà de l'âge
+      permettant d'obtenir une retraite à taux plein et jusqu'à cet âge
+      augmenté de 3 ans pour les affiliés nés à compter du 1er janvier
+      1956. Cette majoration est égale à 0,5 % par trimestre », et le
+      règlement du 10 juillet 2026 (LEGIARTI000054437738) le reprend.
+      Douze trimestres au plus, depuis l'âge du taux plein lu à la
+      génération ; les générations 1951 à 1955, bornées à un ou deux
+      ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
+      n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
+      Servie à partir de 2012.

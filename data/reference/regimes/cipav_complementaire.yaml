@@ -1,0 +1,414 @@
+code: cipav_complementaire
+rang: 460
+nom: >-
+  Régime complémentaire de la Caisse interprofessionnelle de prévoyance et
+  d'assurance vieillesse (CIPAV)
+famille: liberal
+source_id: cipav_fiches_pratiques
+fiabilite: moyenne
+creation: 1979
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Professions libérales non rattachées à une section spécialisée :
+  architectes, ingénieurs-conseils, géomètres, psychologues, ostéopathes,
+  guides, et une longue liste de métiers non réglementés — la plus grosse
+  population libérale après les auxiliaires médicaux. C'est la section
+  « par défaut » du régime de base des libéraux, et le statut
+  `profession_liberale` y route pour cette raison.
+hors_repartition: false
+periodes:
+  - debut: 1979
+    fin: 1999
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    notes: >-
+      DÉCRET N° 79-262 DU 21 MARS 1979, ARTICLE 2 (LEGIARTI000006767473,
+      puis LEGIARTI000006767474 en 1985 pour les conditions d'option,
+      classes inchangées) : six classes de cotisation portant attribution
+      de quatre (classe 1), huit (2), douze (3), vingt (5), vingt-huit (7)
+      et quarante (10) points, aux montants de un à dix fois la cotisation
+      de la classe 1, la classe étant fixée par le revenu professionnel
+      net selon les statuts ; les classes 5, 7 et 10 ne deviennent
+      obligatoires qu'en 1980, 1981 et 1982. Les bornes de revenu sont
+      dans les statuts, hors index : la grille de `classes_cotisation.csv`
+      la plus ancienne, indexée sur les prix, tient lieu de montant.
+      COTISATION PAR CLASSES, et c'est la première fiche du dépôt de cette
+      forme. La caisse ne prélevait ni un taux ni un forfait : elle
+      rangeait l'assuré dans l'un de huit paliers selon son revenu, et
+      appelait le montant du palier. Sa fiche pratique 2022 en donne la
+      grille entière — 1 527 € jusqu'à 26 580 € de revenus, puis 3 055, 4
+      582, 7 637, 10 692, 16 802, 18 329 et 19 857 € au-delà de 123 300 €
+      —, et elle est portée dans `classes_cotisation.csv`. LA CLASSE EST
+      SUBIE, PAS CHOISIE. Le même document écrit du complémentaire que «
+      son montant est DÉTERMINÉ selon ce tableau », et de l'invalidité-
+      décès, présenté juste à côté, que l'assuré « a la possibilité de
+      CHOISIR sa classe de cotisation, quels que soient ses revenus ».
+      Seule la première forme est modélisable, et le dépôt ne prête jamais
+      à personne un choix qu'il ne peut pas connaître. UN SEUL MILLÉSIME
+      EST PUBLIÉ, celui de 2022, et il vaut pour toute la période — ramené
+      aux autres exercices par le rapport des plafonds, parce que la
+      grille est écrite en plafonds : ses sept bornes valent 0,65, 1,2,
+      1,4, 1,6, 2, 2,5 et 3 plafonds de 2022, et ses huit montants 1, 2,
+      3, 5, 7, 11, 12 et 13 fois une unité qui vaut 3,71 % du plafond.
+      C'est ce qui autorise à la reporter ; ce n'est pas ce qui prouve
+      qu'elle avait déjà cette forme en 1979, et plus on remonte, moins la
+      fiche vaut. La borne de début est celle du décret n° 79-262 du 21
+      mars 1979, qui institue le complémentaire des architectes — le noyau
+      de la caisse.
+      AUCUNE SURCOTE LUE AVANT 2013 : la fiche portait 1,25 % sans
+      texte, et le moteur ne le lisait pas.
+  - debut: 2000
+    fin: 2012
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    notes: >-
+      DÉCRET N° 79-262 DU 21 MARS 1979, ARTICLE 2 (LEGIARTI000006767473,
+      puis LEGIARTI000006767474 en 1985 pour les conditions d'option,
+      classes inchangées) : six classes de cotisation portant attribution
+      de quatre (classe 1), huit (2), douze (3), vingt (5), vingt-huit (7)
+      et quarante (10) points, aux montants de un à dix fois la cotisation
+      de la classe 1, la classe étant fixée par le revenu professionnel
+      net selon les statuts ; les classes 5, 7 et 10 ne deviennent
+      obligatoires qu'en 1980, 1981 et 1982. Les bornes de revenu sont
+      dans les statuts, hors index : la grille de `classes_cotisation.csv`
+      la plus ancienne, indexée sur les prix, tient lieu de montant.
+      COTISATION PAR CLASSES, et c'est la première fiche du dépôt de cette
+      forme. La caisse ne prélevait ni un taux ni un forfait : elle
+      rangeait l'assuré dans l'un de huit paliers selon son revenu, et
+      appelait le montant du palier. Sa fiche pratique 2022 en donne la
+      grille entière — 1 527 € jusqu'à 26 580 € de revenus, puis 3 055, 4
+      582, 7 637, 10 692, 16 802, 18 329 et 19 857 € au-delà de 123 300 €
+      —, et elle est portée dans `classes_cotisation.csv`. LA CLASSE EST
+      SUBIE, PAS CHOISIE. Le même document écrit du complémentaire que «
+      son montant est DÉTERMINÉ selon ce tableau », et de l'invalidité-
+      décès, présenté juste à côté, que l'assuré « a la possibilité de
+      CHOISIR sa classe de cotisation, quels que soient ses revenus ».
+      Seule la première forme est modélisable, et le dépôt ne prête jamais
+      à personne un choix qu'il ne peut pas connaître. UN SEUL MILLÉSIME
+      EST PUBLIÉ, celui de 2022, et il vaut pour toute la période — ramené
+      aux autres exercices par le rapport des plafonds, parce que la
+      grille est écrite en plafonds : ses sept bornes valent 0,65, 1,2,
+      1,4, 1,6, 2, 2,5 et 3 plafonds de 2022, et ses huit montants 1, 2,
+      3, 5, 7, 11, 12 et 13 fois une unité qui vaut 3,71 % du plafond.
+      C'est ce qui autorise à la reporter ; ce n'est pas ce qui prouve
+      qu'elle avait déjà cette forme en 1979, et plus on remonte, moins la
+      fiche vaut. La borne de début est celle du décret n° 79-262 du 21
+      mars 1979, qui institue le complémentaire des architectes — le noyau
+      de la caisse.
+      AUCUNE SURCOTE LUE AVANT 2013 : la fiche portait 1,25 % sans
+      texte, et le moteur ne le lisait pas.
+      LA MAJORATION POUR ENFANTS EST ATTESTÉE DEPUIS 2000. Le décret
+      n° 99-913 du 21 octobre 1999, qui intègre les géomètres experts à la
+      Cipav au 1er janvier 2000, leur ouvre pour les périodes postérieures
+      « une bonification pour enfants dans les conditions prévues » par les
+      statuts du complémentaire (article 6) : elle existait donc. Sa forme
+      n'est lue que dans les textes d'aujourd'hui — « il est majoré de
+      10 % au profit du demandeur ayant eu au moins trois enfants »,
+      article 5-2 du décret n° 79-262 dans la rédaction du décret
+      n° 2026-418 ; la fiche pratique de 2026 écrit de même — et la fiche
+      la suppose identique depuis 2000. Avant, rien n'est lu, rien n'est
+      servi.
+  - debut: 2013
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_affiliation_minimale_trimestres: 120
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    notes: >-
+      DÉCRET N° 79-262, ARTICLE 2, VERSION DU 1ER JANVIER 2013
+      (LEGIARTI000026892951) : refonte en huit classes A à H portant
+      attribution de 36, 72, 108, 180, 252, 396, 432 et 468 points, aux
+      montants de 1, 2, 3, 5, 7, 11, 12 et 13 fois la classe A, selon le
+      revenu d'activité de l'article L. 131-6 ; montants fixés par décret
+      annuel. C'est la grille que la fiche pratique 2022 de la Cipav
+      décrit. COTISATION PAR CLASSES, et c'est la première fiche du dépôt
+      de cette forme. La caisse ne prélevait ni un taux ni un forfait :
+      elle rangeait l'assuré dans l'un de huit paliers selon son revenu,
+      et appelait le montant du palier. Sa fiche pratique 2022 en donne la
+      grille entière — 1 527 € jusqu'à 26 580 € de revenus, puis 3 055, 4
+      582, 7 637, 10 692, 16 802, 18 329 et 19 857 € au-delà de 123 300 €
+      —, et elle est portée dans `classes_cotisation.csv`. LA CLASSE EST
+      SUBIE, PAS CHOISIE. Le même document écrit du complémentaire que «
+      son montant est DÉTERMINÉ selon ce tableau », et de l'invalidité-
+      décès, présenté juste à côté, que l'assuré « a la possibilité de
+      CHOISIR sa classe de cotisation, quels que soient ses revenus ».
+      Seule la première forme est modélisable, et le dépôt ne prête jamais
+      à personne un choix qu'il ne peut pas connaître. UN SEUL MILLÉSIME
+      EST PUBLIÉ, celui de 2022, et il vaut pour toute la période — ramené
+      aux autres exercices par le rapport des plafonds, parce que la
+      grille est écrite en plafonds : ses sept bornes valent 0,65, 1,2,
+      1,4, 1,6, 2, 2,5 et 3 plafonds de 2022, et ses huit montants 1, 2,
+      3, 5, 7, 11, 12 et 13 fois une unité qui vaut 3,71 % du plafond.
+      C'est ce qui autorise à la reporter ; ce n'est pas ce qui prouve
+      qu'elle avait déjà cette forme en 1979, et plus on remonte, moins la
+      fiche vaut. La borne de début est celle du décret n° 79-262 du 21
+      mars 1979, qui institue le complémentaire des architectes — le noyau
+      de la caisse.
+      LA SURCOTE SE COMPTE EN ANNÉES PLEINES, DEPUIS L'ÂGE DU TAUX PLEIN
+      : la fiche pratique « À quel âge prendre ma retraite » (2022)
+      écrit, pour le complémentaire, « avec surcote (appliquée sur les
+      points acquis au titre des 30 premières années de cotisations) à
+      partir de 67 ans : 5 % par année pleine de différé si, à 67 ans,
+      vous réunissez 30 années d'affiliation à la Cipav », et entre 62
+      et 67 ans « le même abattement que celui appliqué à votre retraite
+      de base ». Le moteur retient 1,25 % par trimestre, par années
+      pleines, depuis l'âge du taux plein lu à la génération, sous
+      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      les points et non ceux des trente premières années, ce que rien
+      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      règle dans l'index : elle est servie depuis 2013, borne de
+      période, et rien avant.
+  - debut: 2023
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_affiliation_minimale_trimestres: 120
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.09
+    notes: >-
+      LA RÉFORME DE 2023 REND LE RÉGIME PROPORTIONNEL : « les cotisations de
+      retraite complémentaire ne sont plus forfaitaires mais
+      proportionnelles au revenu », écrit le guide pratique de la caisse.
+      9 % de zéro à un plafond, et 22 % d'un à trois — la seconde tranche
+      est la période jumelle de celle-ci.
+      Les points s'achètent, et la caisse déroule l'arithmétique : « 40 000 €
+      x 9 % = 3 600 € de cotisations. 3 600 € / 47,40 € (valeur d'achat du
+      point en 2026) = 75,9 points ». Valeur de service 2,89 € en 2026, d'où
+      un rendement de 6,10 % que la caisse publie elle-même — c'est lui que
+      porte `rendements_points.csv`.
+      LA SURCOTE SE COMPTE EN ANNÉES PLEINES, DEPUIS L'ÂGE DU TAUX PLEIN
+      : la fiche pratique « À quel âge prendre ma retraite » (2022)
+      écrit, pour le complémentaire, « avec surcote (appliquée sur les
+      points acquis au titre des 30 premières années de cotisations) à
+      partir de 67 ans : 5 % par année pleine de différé si, à 67 ans,
+      vous réunissez 30 années d'affiliation à la Cipav », et entre 62
+      et 67 ans « le même abattement que celui appliqué à votre retraite
+      de base ». Le moteur retient 1,25 % par trimestre, par années
+      pleines, depuis l'âge du taux plein lu à la génération, sous
+      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      les points et non ceux des trente premières années, ce que rien
+      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      règle dans l'index : elle est servie depuis 2013, borne de
+      période, et rien avant.
+  - debut: 2023
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_affiliation_minimale_trimestres: 120
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_1_3_pass
+    taux_cotisation_retraite: 0.22
+    notes: >-
+      Seconde tranche de la cotisation proportionnelle : 22 % des revenus
+      compris entre un et trois plafonds pour l'exercice 2023. Article 2
+      du décret n° 79-262 (LEGIARTI000054168526) : « une et trois fois le
+      plafond précité pour l'exercice 2023 ; une et trois fois et demie le
+      même plafond pour l'exercice 2024 ; une et quatre fois le même
+      plafond à compter de l'exercice 2025 ». La fiche prolongeait les
+      trois plafonds jusqu'à aujourd'hui ; la page des taux 2026 de
+      l'Urssaf et le simulateur de la caisse, confrontés le 22 septembre
+      2026, appliquent quatre plafonds.
+      LA SURCOTE SE COMPTE EN ANNÉES PLEINES, DEPUIS L'ÂGE DU TAUX PLEIN
+      : la fiche pratique « À quel âge prendre ma retraite » (2022)
+      écrit, pour le complémentaire, « avec surcote (appliquée sur les
+      points acquis au titre des 30 premières années de cotisations) à
+      partir de 67 ans : 5 % par année pleine de différé si, à 67 ans,
+      vous réunissez 30 années d'affiliation à la Cipav », et entre 62
+      et 67 ans « le même abattement que celui appliqué à votre retraite
+      de base ». Le moteur retient 1,25 % par trimestre, par années
+      pleines, depuis l'âge du taux plein lu à la génération, sous
+      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      les points et non ceux des trente premières années, ce que rien
+      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      règle dans l'index : elle est servie depuis 2013, borne de
+      période, et rien avant.
+
+  - debut: 2024
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_affiliation_minimale_trimestres: 120
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_1_3_5_pass
+    taux_cotisation_retraite: 0.22
+    notes: >-
+      Seconde tranche, exercice 2024 : 22 % des revenus compris entre un
+      et trois plafonds et demi (article 2 du décret n° 79-262,
+      LEGIARTI000054168526).
+      LA SURCOTE SE COMPTE EN ANNÉES PLEINES, DEPUIS L'ÂGE DU TAUX PLEIN
+      : la fiche pratique « À quel âge prendre ma retraite » (2022)
+      écrit, pour le complémentaire, « avec surcote (appliquée sur les
+      points acquis au titre des 30 premières années de cotisations) à
+      partir de 67 ans : 5 % par année pleine de différé si, à 67 ans,
+      vous réunissez 30 années d'affiliation à la Cipav », et entre 62
+      et 67 ans « le même abattement que celui appliqué à votre retraite
+      de base ». Le moteur retient 1,25 % par trimestre, par années
+      pleines, depuis l'âge du taux plein lu à la génération, sous
+      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      les points et non ceux des trente premières années, ce que rien
+      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      règle dans l'index : elle est servie depuis 2013, borne de
+      période, et rien avant.
+
+  - debut: 2025
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_affiliation_minimale_trimestres: 120
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.11
+    notes: >-
+      LE DÉCRET CONTREDIT LA BROCHURE DE LA CAISSE, ET C'EST LUI QUI FAIT
+      FOI. Le décret n° 2025-1076 du 10 novembre 2025 fixe pour 2025 « taux
+      de la cotisation proportionnelle de première tranche : 11 % ; taux de
+      la cotisation proportionnelle de la deuxième tranche : 21 % » ; son
+      article pour 2026 ne revient pas sur la Cipav, donc ces taux valent
+      aussi pour 2026. La fiche pratique 2026 de la caisse imprime pourtant
+      encore 9 % et 22 %, et son exemple chiffré applique 9 % — ce sont les
+      taux de 2023, que le décret de cette année-là confirme mot pour mot.
+      La brochure n'a pas suivi.
+      La valeur d'achat du point, elle, ne bouge pas : 47,40 €, écrite dans
+      le décret comme dans la brochure.
+      LA SURCOTE SE COMPTE EN ANNÉES PLEINES, DEPUIS L'ÂGE DU TAUX PLEIN
+      : la fiche pratique « À quel âge prendre ma retraite » (2022)
+      écrit, pour le complémentaire, « avec surcote (appliquée sur les
+      points acquis au titre des 30 premières années de cotisations) à
+      partir de 67 ans : 5 % par année pleine de différé si, à 67 ans,
+      vous réunissez 30 années d'affiliation à la Cipav », et entre 62
+      et 67 ans « le même abattement que celui appliqué à votre retraite
+      de base ». Le moteur retient 1,25 % par trimestre, par années
+      pleines, depuis l'âge du taux plein lu à la génération, sous
+      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      les points et non ceux des trente premières années, ce que rien
+      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      règle dans l'index : elle est servie depuis 2013, borne de
+      période, et rien avant.
+  - debut: 2025
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_affiliation_minimale_trimestres: 120
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: tranche_1_4_pass
+    taux_cotisation_retraite: 0.21
+    notes: >-
+      Seconde tranche : 21 % des revenus compris entre un et QUATRE
+      plafonds depuis 2025 (article 2 du décret n° 79-262,
+      LEGIARTI000054168526, « une et quatre fois le même plafond à compter
+      de l'exercice 2025 »), soit 48 060 € et 192 240 € en 2026, contre
+      22 % en 2023 et 2024. La page des taux 2026 de l'Urssaf écrit les
+      mêmes bornes.
+      LA SURCOTE SE COMPTE EN ANNÉES PLEINES, DEPUIS L'ÂGE DU TAUX PLEIN
+      : la fiche pratique « À quel âge prendre ma retraite » (2022)
+      écrit, pour le complémentaire, « avec surcote (appliquée sur les
+      points acquis au titre des 30 premières années de cotisations) à
+      partir de 67 ans : 5 % par année pleine de différé si, à 67 ans,
+      vous réunissez 30 années d'affiliation à la Cipav », et entre 62
+      et 67 ans « le même abattement que celui appliqué à votre retraite
+      de base ». Le moteur retient 1,25 % par trimestre, par années
+      pleines, depuis l'âge du taux plein lu à la génération, sous
+      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      les points et non ceux des trente premières années, ce que rien
+      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      règle dans l'index : elle est servie depuis 2013, borne de
+      période, et rien avant.

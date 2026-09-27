@@ -1,0 +1,50 @@
+code: unirs
+rang: 200
+nom: Union nationale des institutions de retraite des salariés
+famille: complementaire_prive
+source_id: agirc_arrco_points
+fiabilite: estimee
+creation: 1957
+fermeture: 1961
+extinction: 1962
+succede_a: []
+integre_dans: arrco
+population: Salariés non cadres, avant la généralisation de 1961.
+hors_repartition: false
+periodes:
+  - debut: 1957
+    fin: 1961
+    type_calcul: points
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    abattement_points: agirc_arrco
+    plafond_majoration_enfants: 2367
+    plafond_majoration_annee: 2025
+    salaire_reference: carriere_entiere
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.025
+    part_salariale: 0.40   # prédécesseur de l'Arrco, même répartition — estimée
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      UNE FICHE FERMÉE SE LIQUIDE SOUS LE DROIT D'APRÈS SA FERMETURE.
+      L'abattement d'anticipation ne s'applique « à l'âge seul » que jusqu'à l'ASF de 1983, qui exonère qui a le taux plein au régime de base ; le moteur lit cette règle dans la période du régime à l'ANNÉE DE LIQUIDATION, et la dernière période d'un régime fermé avant 1983 est forcément antérieure — alors qu'aucune de ses pensions n'a été liquidée avant.
+      `duree_requise_par_generation` le dit : cette fiche est liquidée sous le droit commun, exonération comprise.
+      Sans lui, un assuré au taux plein voyait cette ligne-là abattue de 4 à 22 %.
+      Accord du 15 mai 1957 créant l'UNIRS, hors JORF ; l'index n'en porte
+      que le nom, avant 1975, dans un arrêté d'approbation (protocole
+      UNIRS-Charbonnages de France, JORFTEXT000000849607) et un décret de
+      subvention (n° 74-127, JORFTEXT000000875512), et rien dans LEGI.
+      AUCUNE SOURCE NE DATE SON BARÈME : la fiche portait 4 %, le taux
+      minimal de l'Arrco de 1967. Elle porte désormais 2,5 %, la première
+      valeur datée de l'Arrco (1er janvier 1962, OpenFisca-France), par
+      continuité — l'UNIRS est la caisse dont le point a servi de
+      référence au régime unifié, et l'accord de 1961 a généralisé son
+      barème sans le relever. Le niveau reste `estimee`. Les valeurs du
+      point sont celles de la fédération (regimes/valeurs_point.csv, série
+      `unirs` depuis 1949), et la conversion de 1999 est portée par
+      regimes/conversions_points.csv.

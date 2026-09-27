@@ -864,6 +864,51 @@ def test_regime_inconnu_leve_une_erreur_explicite(catalogue):
         catalogue["nexiste_pas"]
 
 
+def test_un_fichier_par_regime_nomme_de_son_code(catalogue):
+    """Un régime, un fichier, qui porte le code qui le nomme (phase 6).
+
+    Tout fichier YAML du dossier est un régime, hors le schéma, l'inventaire et
+    les pivots : un fichier d'une autre nature qu'on y poserait serait chargé
+    comme un régime. Le catalogue suit l'ordre des rangs, qui départage la
+    fusion ; un rang pris deux fois laisserait le chargeur choisir sans le dire.
+    """
+    from retraite_notionnelle.donnees.regimes import (
+        FICHIERS_HORS_REGIMES, fiches_de_regimes)
+
+    dossier = RACINE_DONNEES / "reference" / "regimes"
+    fiches = fiches_de_regimes(RACINE_DONNEES)
+    autres = {c.name for c in dossier.glob("*.yaml")} - {c.name for c, _ in fiches}
+    assert autres == {"_schema.yaml", *FICHIERS_HORS_REGIMES}
+    assert all(chemin.stem == fiche["code"] for chemin, fiche in fiches)
+    rangs = [fiche["rang"] for _, fiche in fiches]
+    assert rangs == sorted(set(rangs))
+    assert [fiche["code"] for _, fiche in fiches] == [r.code for r in catalogue]
+
+
+def test_le_chargeur_refuse_un_rang_pris_ou_un_fichier_mal_nomme(tmp_path):
+    import shutil
+
+    from retraite_notionnelle.donnees.regimes import fiches_de_regimes
+
+    source = RACINE_DONNEES / "reference" / "regimes"
+    dossier = tmp_path / "reference" / "regimes"
+    dossier.mkdir(parents=True)
+    for nom in ("regime_general.yaml", "avts.yaml", "inventaire.yaml", "_schema.yaml"):
+        shutil.copy(source / nom, dossier / nom)
+    # L'ordre est celui des rangs, et non celui des noms.
+    assert [c.stem for c, _ in fiches_de_regimes(tmp_path)] == ["avts", "regime_general"]
+    texte = (dossier / "avts.yaml").read_text(encoding="utf-8")
+    (dossier / "avts.yaml").write_text(
+        texte.replace("rang: 20\n", "rang: 30  # celui du régime général\n"),
+        encoding="utf-8")
+    with pytest.raises(ValueError, match="déjà pris"):
+        fiches_de_regimes(tmp_path)
+    (dossier / "avts.yaml").unlink()
+    (dossier / "avts_bis.yaml").write_text(texte, encoding="utf-8")
+    with pytest.raises(ValueError, match="porte le code qui le nomme"):
+        fiches_de_regimes(tmp_path)
+
+
 # -- cohérence entre le catalogue et le routage ------------------------------
 #
 # Ce sont deux fichiers séparés — `regimes/*.yaml` dit ce qu'est un régime,

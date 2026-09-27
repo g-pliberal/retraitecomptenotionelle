@@ -1,0 +1,750 @@
+code: assemblees_parlementaires
+rang: 730
+nom: >-
+  Caisse de pensions des députés et des anciens députés (et, par assimilation, des sénateurs)
+famille: special
+source_id: sites_institutionnels
+fiabilite: estimee
+creation: 1904
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Députés et, faute d'un règlement publié, sénateurs : pension en annuités
+  sur l'indemnité parlementaire, servie par la caisse de chaque assemblée,
+  réformée en 2010, 2014, 2018 et 2023 sur le modèle de la fonction
+  publique. Les fonctionnaires des assemblées, dont le règlement n'est pas
+  publié, restent hors fiche.
+hors_repartition: false
+periodes:
+  - debut: 1930
+    fin: 2008
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: 160
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0785
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Avant 2009 : « jusqu'en 2008 : 2,1100 % — 40
+      annuités » (tableau de l'art. 21), soit un taux plein de 84,4 % de
+      l'indemnité, à 60 ans (« anciens députés ayant atteint leur
+      soixantième anniversaire avant le 1er janvier 2008 », art. 21 ter).
+      La retenue d'avant l'arrêté de 2015 n'est pas dans le document :
+      7,85 %, le taux de la fonction publique de la même époque, tient
+      lieu, niveau `estimee` ; la double cotisation possible jusqu'en 2017
+      n'est pas portée.
+  - debut: 2009
+    fin: 2009
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: 161
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0785
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « 2009 : 2,0969 % — 40,25 annuités ».
+  - debut: 2010
+    fin: 2010
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: 162
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0785
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « 2010 : 2,0840 % — 40,5 annuités ».
+  - debut: 2011
+    fin: 2011
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: 163
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0785
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « 2011 : 2,0712 % — 40,75 annuités ».
+  - debut: 2012
+    fin: 2012
+    type_calcul: annuites
+    age_ouverture: 60.75
+    age_taux_plein: 60.75
+    duree_requise_trimestres: 164
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0785
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « 2012 : 2,0585 % — 41 annuités » ; l'âge suit la
+      montée de 60 à 62 ans « à raison de trois mois par génération »
+      (art. 8, 2).
+  - debut: 2013
+    fin: 2014
+    type_calcul: annuites
+    age_ouverture: 61.17
+    age_taux_plein: 61.17
+    duree_requise_trimestres: 165
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0785
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « 2013-2014 : 2,0461 % — 41,25 annuités ».
+  - debut: 2015
+    fin: 2015
+    type_calcul: annuites
+    age_ouverture: 61.58
+    age_taux_plein: 61.58
+    duree_requise_trimestres: 166
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0934
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « 2015-2017 : 2,0337 % — 41,5 annuités » ;
+      retenue « à compter du 1er juin 2015 : 9,34 % » (arrêté des
+      Questeurs n° 15-043 du 14 avril 2015).
+  - debut: 2016
+    fin: 2016
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: 166
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0969
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Retenue « à compter du 1er janvier 2016 : 9,69 %
+      » (arrêté n° 15-043) ; 62 ans dès la génération 1955.
+  - debut: 2017
+    fin: 2017
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: 166
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1004
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Retenue « à compter du 1er janvier 2017 : 10,04 %
+      » ; la réforme du 8 novembre 2017 supprime le régime complémentaire
+      facultatif au 1er janvier 2018.
+  - debut: 2018
+    fin: 2018
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: 167
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1031
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « 2018-2020 : 2,0216 % — 41,75 annuités » ;
+      retenue « à compter du 1er janvier 2018 : 10,31 % ».
+  - debut: 2019
+    fin: 2019
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: 167
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1058
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Retenue « à compter du 1er janvier 2019 : 10,58 %
+      ».
+  - debut: 2020
+    fin: 2020
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: 167
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Retenue « à compter du 1er janvier 2020 : 10,85 %
+      », dernier taux écrit, reconduit ensuite.
+  - debut: 2021
+    fin: 2022
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: 168
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « janvier 2021 - août 2023 : 2,0095 % — 42
+      annuités ».
+  - debut: 2023
+    fin: 2023
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 62
+    duree_requise_trimestres: 169
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « septembre 2023 - juin 2025 : 1,9976 % — 42,25
+      annuités » ; transposition de la loi du 14 avril 2023 : « tout
+      ancien député né à compter du 1er janvier 1969 et âgé de soixante-
+      quatre ans révolus » (art. 8, 1), montée de trois mois par
+      génération dès la génération 1961 (art. 8, 2).
+  - debut: 2024
+    fin: 2024
+    type_calcul: annuites
+    age_ouverture: 62.25
+    age_taux_plein: 62.25
+    duree_requise_trimestres: 169
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Génération 1962 : 62 ans et 3 mois.
+  - debut: 2025
+    fin: 2025
+    type_calcul: annuites
+    age_ouverture: 62.5
+    age_taux_plein: 62.5
+    duree_requise_trimestres: 170
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « juillet 2025 - décembre 2027 : 1,9859 % — 42,5
+      annuités » ; génération 1963.
+  - debut: 2026
+    fin: 2026
+    type_calcul: annuites
+    age_ouverture: 62.75
+    age_taux_plein: 62.75
+    duree_requise_trimestres: 170
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Génération 1964 : 62 ans et 9 mois.
+  - debut: 2027
+    fin: 2027
+    type_calcul: annuites
+    age_ouverture: 63
+    age_taux_plein: 63
+    duree_requise_trimestres: 170
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Génération 1965 : 63 ans.
+  - debut: 2028
+    fin: 2028
+    type_calcul: annuites
+    age_ouverture: 63.25
+    age_taux_plein: 63.25
+    duree_requise_trimestres: 171
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « janvier 2028 - décembre 2028 : 1,9743 % — 42,75
+      annuités » ; génération 1966.
+  - debut: 2029
+    fin: 2029
+    type_calcul: annuites
+    age_ouverture: 63.5
+    age_taux_plein: 63.5
+    duree_requise_trimestres: 172
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. « après 2028 : 1,9628 % — 43 annuités » ;
+      génération 1967.
+  - debut: 2030
+    fin: 2030
+    type_calcul: annuites
+    age_ouverture: 63.75
+    age_taux_plein: 63.75
+    duree_requise_trimestres: 172
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Génération 1968 : 63 ans et 9 mois.
+  - debut: 2031
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 64
+    age_taux_plein: 64
+    duree_requise_trimestres: 172
+    taux_plein: 0.8440
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, consolidé au 1er janvier 2018 et publié par
+      l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-
+      janvier-2018.pdf, lu par scripts/fetch/sites_institutionnels.py),
+      hors JORF. BASE : « une retenue obligatoire sur l'indemnité
+      parlementaire augmentée de l'indemnité de résidence et de
+      l'indemnité de fonction » (art. 5). PENSION : « pour chaque annuité,
+      à un pourcentage des sommes soumises à retenue » (art. 21), la
+      valeur de l'annuité et le nombre maximal d'annuités étant ceux « en
+      vigueur au soixante-quatrième anniversaire » (art. 21 ter). La fiche
+      écrit le taux plein comme valeur de l'annuité × nombre maximal
+      d'annuités, et la durée requise comme ce nombre en trimestres. LA
+      PART DE L'ASSEMBLÉE n'est pas écrite dans le règlement : la fiche ne
+      porte que la retenue du député (part salariale 1), ce qui sous-
+      estime l'effort contributif total ; le Sénat, dont le site ne publie
+      que « 62 à 64 ans » et « 43 annuités » (12 juillet 2023), est traité
+      comme l'Assemblée. Génération 1969 et suivantes : 64 ans, 43
+      annuités à 1,9628 %, soit 84,4 % de l'indemnité au maximum.

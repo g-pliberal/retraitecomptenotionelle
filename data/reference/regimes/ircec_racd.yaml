@@ -1,0 +1,111 @@
+code: ircec_racd
+rang: 540
+nom: >-
+  Régime de retraite complémentaire des auteurs et compositeurs dramatiques (RACD, IRCEC)
+famille: liberal
+source_id: legifrance_textes
+fiabilite: estimee
+creation: 1964
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Auteurs et compositeurs dramatiques et auteurs de films, dont les droits
+  sont perçus par la SACD : second étage obligatoire, en plus du RAAP,
+  depuis le décret n° 64-226 du 11 mars 1964.
+hors_repartition: false
+periodes:
+  - debut: 1964
+    fin: 2013
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    taux_cotisation_retraite: 0.0800
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      LIQUIDATIONS ANTÉRIEURES À 2014 : le règlement servait alors le
+      taux plein à soixante-cinq ans, et ses coefficients d'anticipation,
+      que l'arrêté du 21 novembre 2013 a remplacés, ne sont pas reproduits
+      au Journal officiel. La période garde la décote du régime de base,
+      faute d'eux.
+      TAUX : « la cotisation complémentaire […] est fixée à 8 % de la
+      totalité du montant des droits perçus pendant l'année dans la limite
+      d'un maximum fixé par le règlement » (décret n° 64-226, art. 2,
+      LEGIARTI000006761271, puis LEGIARTI000006761272 dès 2004) ; 8 %
+      encore au mémo 2026 de l'IRCEC, sous un plafond de 597 500 € —
+      treize plafonds de la Sécurité sociale, la borne la plus proche du
+      catalogue. POINTS : le règlement, hors index, fixe le prix d'achat
+      (4,78 € en 2026) et la valeur de service (0,421 €) :
+      `rendements_points.csv` porte leur rapport, 8,8 centimes de rente
+      par euro, appliqué à toute la carrière faute de série ancienne ;
+      niveau `estimee`. Âges de la fiche `ircec_raap`.
+  - debut: 2014
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    taux_cotisation_retraite: 0.0800
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    abattement_points: ircec
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      MINORATION DE L'IRCEC, et non celle du régime de base : règlement
+      du RACD, art. 21, dans la rédaction de l'arrêté du 21 novembre
+      2013 puis de celui du 17 avril 2024 (JORFARTI000049490796) : 2,5 %
+      pour chacune des deux premières années manquantes, 5 % au-delà, ou
+      les coefficients du régime de base s'ils sont plus favorables ;
+      taux plein dès l'âge légal si la pension du régime de base l'est.
+      L'annexe de 2013 portait 5 % dès la première année pour les
+      générations 1955 et suivantes, contre son propre article : c'est
+      l'article que la fiche suit, et celui qu'a gardé l'arrêté de 2024.
+      Une année entamée compte entière : l'annexe de l'arrêté du 21
+      novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
+      trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
+      leurs propres coefficients, que la période ne porte pas (voir
+      `docs/limites.md`).
+      Taux, assiette et points : ceux de la première période. AUCUNE
+      MAJORATION POUR ENFANTS avant 2024 : voir la période suivante.
+  - debut: 2024
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_13_pass
+    taux_cotisation_retraite: 0.0800
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    abattement_points: ircec
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      MAJORATION POUR ENFANTS DEPUIS L'ARRÊTÉ DU 17 AVRIL 2024
+      (JORFARTI000049490796), qui l'a insérée à l'article 23 du règlement :
+      la pension « est majorée de 10 % au profit de l'adhérent ayant eu au
+      moins trois enfants », ou les ayant élevés neuf ans avant leurs seize
+      ans. Le RACD n'en servait aucune avant — le guide 2026 de la caisse
+      et sa foire aux questions l'écrivent désormais, au RACD comme au
+      RAAP. Minoration, taux, assiette et points : ceux de la période
+      précédente.

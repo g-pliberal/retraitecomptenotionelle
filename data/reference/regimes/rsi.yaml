@@ -1,0 +1,109 @@
+code: rsi
+rang: 310
+nom: Régime social des indépendants
+famille: non_salarie
+source_id: cor_panorama_regimes
+fiabilite: moyenne
+creation: 2006
+fermeture: 2018
+extinction: 2020
+succede_a: [cancava, organic]
+integre_dans: regime_general
+population: Artisans, commerçants et industriels.
+hors_repartition: false
+periodes:
+  - debut: 2006
+    fin: 2008
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.50
+    age_taux_plein_par_generation: true
+    decote_par_generation: true
+    salaire_reference_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1665
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_bareme: regime_general
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+       reversion, periodes_assimilees]
+    notes: >-
+      Fusion CANCAVA + ORGANIC + AMPI. Supprimé au 1er janvier 2018
+      (« suppression du RSI »), adossement au régime général achevé en 2020
+      sous le nom de Sécurité sociale des indépendants puis intégration
+      complète à la CNAV.
+      TAUX DE COTISATION : 16,65 %, taux plafonné que transcrit OpenFisca-France
+      pour 2006-2008 (`ret_ac/artisans/sous_pss`, identique pour les
+      commerçants). La fiche portait 17,75 % — le total plafonnée plus
+      déplafonnée de 2017 — sur toute la vie du régime.
+  - debut: 2009
+    fin: 2013
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.50
+    age_taux_plein_par_generation: true
+    decote_par_generation: true
+    salaire_reference_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1673
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_bareme: regime_general
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+       reversion, periodes_assimilees]
+    notes: >-
+      Loi de financement de la sécurité sociale pour 2009 : la surcote passe
+      de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
+      même barème par ailleurs — seul le taux de surcote change.
+      TAUX DE COTISATION : 16,73 % est la moyenne 2009-2013 de la cotisation
+      plafonnée que transcrit OpenFisca-France (`ret_ac/artisans/sous_pss`) —
+      16,65 % jusqu'en 2011, 16,85 % à compter de novembre 2012. La fiche
+      portait 17,75 %, le total plafonnée plus déplafonnée de 2017, sur toute
+      la période 2009-2018.
+  - debut: 2014
+    fin: 2018
+    type_calcul: annuites
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.50
+    age_taux_plein_par_generation: true
+    decote_par_generation: true
+    salaire_reference_par_generation: true
+    duree_proratisation_par_generation: true
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1709
+    taux_cotisation_deplafonnee: 0.0045
+    part_salariale_deplafonnee: 1.0
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_bareme: regime_general
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+       reversion, periodes_assimilees]
+    notes: >-
+      UNE COTISATION DÉPLAFONNÉE EST CRÉÉE AU 1er JANVIER 2014, et la période
+      se coupe là. 17,09 % est la moyenne 2014-2018 de la cotisation
+      plafonnée que transcrit OpenFisca-France — 16,95 % en 2014, 17,05 % en
+      2015, 17,15 % depuis 2016 — et 0,45 % celle de la cotisation
+      déplafonnée (`ret_ac/tous_independants/tout_salaire` : 0,20 %, 0,35 %,
+      0,50 %, puis 0,60 % depuis 2017), portée à part comme au régime
+      général et intégralement personnelle, l'indépendant n'ayant pas
+      d'employeur. Même barème par ailleurs.

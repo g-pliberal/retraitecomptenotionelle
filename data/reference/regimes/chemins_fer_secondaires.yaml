@@ -1,0 +1,29 @@
+code: chemins_fer_secondaires
+rang: 710
+nom: Régimes des chemins de fer secondaires d'intérêt général
+famille: special
+source_id: cor_panorama_regimes
+fiabilite: estimee
+creation: 1922
+fermeture: 1954
+extinction: null
+succede_a: []
+integre_dans: null
+population: Agents des réseaux ferroviaires secondaires, régime en extinction.
+hors_repartition: false
+periodes:
+  - debut: 1930
+    fin: 1954
+    type_calcul: annuites
+    age_ouverture: 55
+    age_taux_plein: 55
+    duree_requise_trimestres: 150
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.07
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [bonifications, reversion]
+    notes: Paramètres à certifier ; régime résiduel.

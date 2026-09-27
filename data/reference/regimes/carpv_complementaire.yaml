@@ -1,0 +1,407 @@
+code: carpv_complementaire
+rang: 420
+nom: >-
+  Régime complémentaire de la Caisse autonome de retraite et de prévoyance
+  des vétérinaires (CARPV)
+famille: liberal
+source_id: carpv_bareme
+fiabilite: moyenne
+creation: 1950
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Vétérinaires non salariés inscrits à l'Ordre national des vétérinaires,
+  « exerçant à titre principal, exclusif ou accessoire » : la caisse écrit
+  que le régime complémentaire leur est obligatoire à tous. C'est la plus
+  petite des dix sections professionnelles de la CNAVPL, et le
+  complémentaire y pèse plus lourd que la base : un vétérinaire à 76 000 €
+  de revenus verse 10 234 € au premier en 2026 et 5 377 € au second.
+hors_repartition: false
+periodes:
+  - debut: 1950
+    fin: 1953
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. 1950-1953 (LEGIARTI000006776818) : « la
+      cotisation annuelle des vétérinaires est calculée en fonction d'un
+      certain nombre d'actes médicaux, compte tenu de l'âge des intéressés
+      », sans tableau.
+  - debut: 1954
+    fin: 1966
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. 1954-1966 (LEGIARTI000006776819) : premier
+      tableau par âge — 50 actes avant trente-cinq ans, 80 de trente-cinq
+      à soixante-cinq ans, 50 au-delà ; coefficients de réduction
+      transitoires jusqu'en 1956 pour les moins de quarante-cinq ans. La
+      cotisation dépend de l'ÂGE, non du revenu.
+  - debut: 1967
+    fin: 1981
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. 1967-1981 (LEGIARTI000006776820) : tableau
+      par âge relevé — 95 actes avant trente-cinq ans, 152 de trente-cinq
+      à soixante-cinq ans, 95 au-delà.
+  - debut: 1982
+    fin: 1992
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. 1982-1992 (LEGIARTI000006776821) : 144 / 228
+      / 144 actes selon l'âge, qui forment la classe obligatoire A ; deux
+      classes spéciales I et II ouvertes aux revenus inférieurs aux
+      plafonds des statuts.
+  - debut: 1993
+    fin: 1997
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. 1993-1997 (LEGIARTI000006776822) : 144 actes
+      avant trente-deux ans ou après soixante-cinq, 228 entre les deux ;
+      classes spéciales I (48 actes) et II.
+  - debut: 1998
+    fin: 2012
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. 1998-2012 (LEGIARTI000006776823, décret du 2
+      décembre 1997) : PASSAGE AUX CLASSES DE REVENU — classe B (revenu
+      inférieur à 4 500 AMV) 480 AMV, classe C (4 500 à 6 000 AMV) 600
+      AMV, classe D (au-delà) 720 AMV ; classes réduites super spéciale I
+      (60 AMV) à A (360 AMV) sous 3 000 AMV de revenu. C'est la première
+      grille par revenu, celle que `cotisation_par_classes` décrit.
+  - debut: 2013
+    fin: 2014
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. 2013-2014 (LEGIARTI000026885093) : mêmes
+      classes et montants, l'assiette devient le revenu d'activité de
+      l'article L. 131-6.
+  - debut: 2015
+    fin: 2021
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. 2015-2021 (LEGIARTI000030774327, décret du 23
+      juin 2015) : PASSAGE AU POINT — la cotisation est « le prix d'achat
+      du point (PA) multiplié par le nombre de points correspondant à la
+      tranche de revenu » : classe B 16 PA (revenu inférieur à 4 500 ×
+      IR), C 20 PA, D 24 PA ; l'indice de référence IR est fixé par le
+      conseil d'administration, le PA par décret annuel.
+  - debut: 2022
+    fin: 2025
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. 2022-2025 (LEGIARTI000044223137, décret n°
+      2021-1358) : l'assiette passe de l'avant-dernière à l'année
+      précédente ; classes inchangées. COTISATION PAR CLASSES, et la
+      grille est une TABLE DE POINTS déguisée. Chaque classe divise
+      exactement par son nombre de points en la valeur d'achat du point
+      que fixe le décret annuel : 9 124,16 € pour 16 points en 2024, soit
+      570,26 € ; 10 234 € pour 17 points en 2026, soit 602,00 €. Le
+      rendement est donc le simple rapport de la valeur de service à la
+      valeur d'achat, identique sur toutes les classes — 39,54 / 602 =
+      6,5681 % en 2026. LA GRILLE A CHANGÉ DE FORME EN 2026. Jusqu'en 2025
+      elle ne comptait que TROIS classes, à 16, 20 et 24 points ; le
+      rapport annuel 2024 de la caisse annonce la réforme : « un point
+      supplémentaire pour les classes B, C et D qui passent respectivement
+      de 16 à 17 points, de 20 à 21 points et de 24 à 25 points, ainsi que
+      la CRÉATION D'UNE CLASSE E à 28 points ». En 2026 : 10 234 € jusqu'à
+      76 994 € de revenus, 12 642 € de 76 995 à 102 659 €, 15 050 € de 102
+      660 à 128 324 €, 16 856 € au-delà. LA CLASSE EST SUBIE, ET DEUX
+      CHOIX NE SONT PAS PRIS. « Les vétérinaires dont les revenus sont
+      inférieurs à 76 995 € sont appelés en classe B », écrit la caisse :
+      c'est le revenu de l'année N-1 qui range l'assuré, et le dépôt sait
+      le calculer. Restent deux facultés qu'il ne prête à personne —
+      l'option pour une classe supérieure, que les statuts font « pour
+      trois ans », et les cinq CLASSES D'ALLÈGEMENT, de « Super Spéciale I
+      » à « Classe A », qui n'ouvrent que 2 à 12 points et ne s'obtiennent
+      que sur demande. La première majorerait la pension, les secondes la
+      minoreraient ; aucune n'est prévisible. CE QUE LES LIVRETS DONNENT,
+      ET OÙ LE DÉCRET PREND LE RELAIS. Les livrets annuels de la caisse
+      publient la grille entière — bornes, montants et points — pour 2024,
+      2025 et 2026 ; ces trois millésimes sont saisis tels quels. Pour
+      2016 à 2023, le décret annuel donne la « valeur d'achat du point » —
+      446 € en 2016, 539 € en 2023 — et les montants s'en déduisent en la
+      multipliant par les points de chaque classe ; les bornes sont celles
+      de 2024 indexées sur le plafond, faute d'autre ancre. Les trois
+      millésimes publiés disent ce que vaut cette convention : les bornes
+      ont monté de 1,68 % entre 2024 et 2025 quand le plafond montait de
+      1,58 %. AVANT 2016 LE DÉCRET FIXAIT TOUT AUTRE CHOSE, un « taux
+      d'appel de la cotisation » monté de 78,5 % en 2002 à 104 % en 2015,
+      appliqué à des montants de classe que rien ne publie. Deux inconnues
+      s'ajoutent alors : la grille de 2024 y est reportée par le rapport
+      des plafonds, et ce report IGNORE le taux d'appel — une cotisation
+      de 2002 est donc surestimée d'un quart environ, et les droits
+      qu'elle porte avec elle. Soixante-cinq ans reportés depuis une
+      grille : c'est la limite de cette fiche, et elle est grande. L'ÂGE
+      SEUL COMMANDE, PAS LA DURÉE. « Il fonctionne selon un système à
+      points et prend en compte uniquement l'âge de départ (et non la
+      durée de cotisation) », écrit la caisse : départ possible à 60 ans,
+      taux plein automatique à 65 ans, décote de 1,25 % par trimestre
+      manquant avant 65 ans, et « il n'existe pas de surcote dans le
+      régime complémentaire au-delà du taux plein ». D'où une durée
+      requise nulle et une surcote absente, là où les autres sections
+      libérales suivent la génération. UNE MAJORATION N'EST PAS PORTÉE :
+      la bonification de 10 % pour trois enfants et plus, que la caisse
+      accorde dans les deux régimes. Les fiches voisines ne la portent pas
+      davantage. La borne de début est celle du décret n° 50-1318 du 21
+      octobre 1950, qui institue le régime au sein de la caisse créée deux
+      ans plus tôt.
+      L'ÂGE SEUL, ET TROIS ENFANTS. Les statuts dans la rédaction de
+      l'arrêté du 18 octobre 2021 (JORFTEXT000044220734), premiers que
+      l'index porte en entier, puis l'article 2 du règlement du 10 juillet
+      2026 : « La pension de retraite complémentaire est attribuée à taux
+      plein à l'âge de soixante-cinq ans », et dès soixante ans « à un
+      taux réduit par application d'un coefficient d'anticipation fixé
+      suivant l'âge à l'entrée en jouissance, soit 1,25 % par trimestre
+      manquant avant l'âge de soixante-cinq ans ». La fiche le disait en
+      laissant `duree_requise_trimestres` vide ; le moteur opposait
+      pourtant à ce régime la durée de la carrière, qui annulait la
+      minoration — un vétérinaire parti à soixante-quatre ans avec sa
+      durée ne perdait rien, là où la caisse lui retire 5 %.
+      `decote_annulee_par_la_duree: false` l'écrit comme le moteur le lit,
+      sur toutes les périodes, la règle d'âge de la fiche étant la même
+      depuis 1950. Article 37, puis 5 : « une bonification de 10 % du
+      montant de la pension de retraite complémentaire est accordée aux
+      bénéficiaires ayant eu au moins trois enfants » — servie depuis
+      2022, première année pleine du texte lu. Aucune majoration pour
+      report. Lu le 23 septembre 2026 (action 89).
+  - debut: 2026
+    fin: null
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: true
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: false
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+      VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+      chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+      (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+      annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+      indexée sur les prix, tient lieu de montant, et la période dit ce
+      que le droit exigeait. Depuis 2026 (LEGIARTI000052567915, décret n°
+      2025-1076, périodes courant à compter du 1er janvier 2026 ; puis
+      LEGIARTI000054168212, décret n° 2026-418 du 29 mai 2026, en vigueur
+      le 1er juillet 2026). COTISATION PAR CLASSES, et la grille est une
+      TABLE DE POINTS déguisée. Chaque classe divise exactement par son
+      nombre de points en la valeur d'achat du point que fixe le décret
+      annuel : 9 124,16 € pour 16 points en 2024, soit 570,26 € ; 10 234 €
+      pour 17 points en 2026, soit 602,00 €. Le rendement est donc le
+      simple rapport de la valeur de service à la valeur d'achat,
+      identique sur toutes les classes — 39,54 / 602 = 6,5681 % en 2026.
+      LA GRILLE A CHANGÉ DE FORME EN 2026. Jusqu'en 2025 elle ne comptait
+      que TROIS classes, à 16, 20 et 24 points ; le rapport annuel 2024 de
+      la caisse annonce la réforme : « un point supplémentaire pour les
+      classes B, C et D qui passent respectivement de 16 à 17 points, de
+      20 à 21 points et de 24 à 25 points, ainsi que la CRÉATION D'UNE
+      CLASSE E à 28 points ». En 2026 : 10 234 € jusqu'à 76 994 € de
+      revenus, 12 642 € de 76 995 à 102 659 €, 15 050 € de 102 660 à 128
+      324 €, 16 856 € au-delà. LA CLASSE EST SUBIE, ET DEUX CHOIX NE SONT
+      PAS PRIS. « Les vétérinaires dont les revenus sont inférieurs à 76
+      995 € sont appelés en classe B », écrit la caisse : c'est le revenu
+      de l'année N-1 qui range l'assuré, et le dépôt sait le calculer.
+      Restent deux facultés qu'il ne prête à personne — l'option pour une
+      classe supérieure, que les statuts font « pour trois ans », et les
+      cinq CLASSES D'ALLÈGEMENT, de « Super Spéciale I » à « Classe A »,
+      qui n'ouvrent que 2 à 12 points et ne s'obtiennent que sur demande.
+      La première majorerait la pension, les secondes la minoreraient ;
+      aucune n'est prévisible. CE QUE LES LIVRETS DONNENT, ET OÙ LE DÉCRET
+      PREND LE RELAIS. Les livrets annuels de la caisse publient la grille
+      entière — bornes, montants et points — pour 2024, 2025 et 2026 ; ces
+      trois millésimes sont saisis tels quels. Pour 2016 à 2023, le décret
+      annuel donne la « valeur d'achat du point » — 446 € en 2016, 539 €
+      en 2023 — et les montants s'en déduisent en la multipliant par les
+      points de chaque classe ; les bornes sont celles de 2024 indexées
+      sur le plafond, faute d'autre ancre. Les trois millésimes publiés
+      disent ce que vaut cette convention : les bornes ont monté de 1,68 %
+      entre 2024 et 2025 quand le plafond montait de 1,58 %. AVANT 2016 LE
+      DÉCRET FIXAIT TOUT AUTRE CHOSE, un « taux d'appel de la cotisation »
+      monté de 78,5 % en 2002 à 104 % en 2015, appliqué à des montants de
+      classe que rien ne publie. Deux inconnues s'ajoutent alors : la
+      grille de 2024 y est reportée par le rapport des plafonds, et ce
+      report IGNORE le taux d'appel — une cotisation de 2002 est donc
+      surestimée d'un quart environ, et les droits qu'elle porte avec
+      elle. Soixante-cinq ans reportés depuis une grille : c'est la limite
+      de cette fiche, et elle est grande. L'ÂGE SEUL COMMANDE, PAS LA
+      DURÉE. « Il fonctionne selon un système à points et prend en compte
+      uniquement l'âge de départ (et non la durée de cotisation) », écrit
+      la caisse : départ possible à 60 ans, taux plein automatique à 65
+      ans, décote de 1,25 % par trimestre manquant avant 65 ans, et « il
+      n'existe pas de surcote dans le régime complémentaire au-delà du
+      taux plein ». D'où une durée requise nulle et une surcote absente,
+      là où les autres sections libérales suivent la génération. UNE
+      MAJORATION N'EST PAS PORTÉE : la bonification de 10 % pour trois
+      enfants et plus, que la caisse accorde dans les deux régimes. Les
+      fiches voisines ne la portent pas davantage. La borne de début est
+      celle du décret n° 50-1318 du 21 octobre 1950, qui institue le
+      régime au sein de la caisse créée deux ans plus tôt.

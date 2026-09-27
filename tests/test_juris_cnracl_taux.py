@@ -86,10 +86,9 @@ def _au_premier_janvier(champ: int) -> dict[int, float]:
 
 @pytest.fixture(scope="module")
 def retenues_fiche() -> dict[int, float]:
-    fiches = yaml.safe_load(
-        (RACINE / "data" / "reference" / "regimes" / "fonction_publique.yaml")
+    fiche = yaml.safe_load(
+        (RACINE / "data" / "reference" / "regimes" / "cnracl.yaml")
         .read_text(encoding="utf-8"))
-    fiche = next(r for r in fiches["regimes"] if r["code"] == "cnracl")
     serie = {}
     for periode in fiche["periodes"]:
         fin = periode["fin"] or DERNIERE

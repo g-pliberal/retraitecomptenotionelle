@@ -1,0 +1,139 @@
+code: agirc_arrco
+rang: 130
+nom: Régime unifié Agirc-Arrco
+famille: complementaire_prive
+source_id: agirc_arrco_points
+fiabilite: haute
+creation: 2019
+fermeture: null
+extinction: null
+succede_a: [agirc, arrco]
+integre_dans: null
+population: Ensemble des salariés du secteur privé.
+hors_repartition: false
+periodes:
+  - debut: 2019
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    abattement_points: agirc_arrco
+    plafond_majoration_enfants: 2367
+    plafond_majoration_annee: 2025
+    salaire_reference: carriere_entiere
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0787
+    part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
+    notes: >-
+      ACCORD NATIONAL INTERPROFESSIONNEL DU 17 NOVEMBRE 2017, étendu et
+      élargi par l'arrêté du 24 avril 2018 (JORFTEXT000036847920, articles
+      JORFARTI000036847923 et JORFARTI000036847926, au visa de L. 921-4) :
+      régime unique au 1er janvier 2019, deux tranches, taux de calcul des
+      points 6,20 % sur la tranche 1 (0 → 1 PASS) et 17 % sur la tranche 2
+      (1 → 8 PASS), taux d'appel 127 % (loi n° 2018-32,
+      JORFARTI000036526047) — 7,87 % et 21,59 % prélevés, répartis 40/60
+      (article 38). L'abattement n'est pas la décote du régime de base :
+      le régime publie ses propres COEFFICIENTS D'ANTICIPATION, en deux
+      tables — l'une indexée sur les trimestres manquants (0,99 à 0,78 de
+      un à vingt), l'autre sur l'âge (1 à 0,43 pour dix ans
+      d'anticipation) — et retient la plus avantageuse ; l'âge du taux
+      plein et la durée sont lus à la génération, ce qui porte la loi du
+      14 avril 2023. La majoration pour enfants est PLAFONNÉE en euros : 2
+      367 € par an pour les pensions servies depuis le 1er novembre 2025,
+      revalorisés comme la valeur de service du point, opposables aux
+      seuls assurés nés à compter du 2 août 1951. COEFFICIENTS DE
+      SOLIDARITÉ (ANI du 30 octobre 2015, JORFARTI000031602387) : malus de
+      10 % pendant trois ans, au plus jusqu'à 67 ans, pour les assurés nés
+      à compter de 1957 liquidant au taux plein sans différer d'un an, et
+      coefficients majorants pour qui diffère de deux ans ou plus. Ce sont
+      des dispositifs d'incitation d'âge : le coefficient de conversion
+      actuariel les remplace dans les scénarios notionnels.
+
+  - debut: 2024
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    abattement_points: agirc_arrco
+    plafond_majoration_enfants: 2367
+    plafond_majoration_annee: 2025
+    salaire_reference: carriere_entiere
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0787
+    part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      AVENANT N° 17 DU 22 NOVEMBRE 2023 (avis JORFARTI000049224707, arrêté
+      d'extension du 15 avril 2024, JORFTEXT000049424935) : « suppression
+      des coefficients de solidarité et des coefficients majorants
+      appliqués dans le régime depuis 2019 », pour les retraites prenant
+      effet à compter du 1er décembre 2023 et, à compter du 1er avril
+      2024, pour celles déjà minorées. Le barème ne change pas ; seule la
+      liste des avantages perd le coefficient de solidarité. La fiche
+      coupe au 1er janvier 2024, sa granularité étant l'année.
+
+  - debut: 2019
+    fin: 2023
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    abattement_points: agirc_arrco
+    plafond_majoration_enfants: 2367
+    plafond_majoration_annee: 2025
+    salaire_reference: carriere_entiere
+    assiette: tranche_2
+    taux_cotisation_retraite: 0.2159
+    part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
+    notes: >-
+      Tranche 2, de 1 à 8 plafonds de la Sécurité sociale : 17 % de taux
+      de calcul appelés à 127 %, 21,59 % prélevés. Elle remplace la
+      tranche B et la tranche C de l'Agirc comme la tranche 2 de l'Arrco
+      (loi n° 2018-32, JORFARTI000036526047 : « fusion de la tranche T2 et
+      de la tranche TB »).
+
+  - debut: 2024
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    abattement_points: agirc_arrco
+    plafond_majoration_enfants: 2367
+    plafond_majoration_annee: 2025
+    salaire_reference: carriere_entiere
+    assiette: tranche_2
+    taux_cotisation_retraite: 0.2159
+    part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      Tranche 2 depuis l'avenant n° 17 : barème inchangé, coefficient de
+      solidarité supprimé.

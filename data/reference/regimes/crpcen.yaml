@@ -1,0 +1,616 @@
+code: crpcen
+rang: 650
+nom: Caisse de retraite et de prévoyance des clercs et employés de notaires
+famille: special
+source_id: cor_panorama_regimes
+fiabilite: moyenne
+creation: 1937
+fermeture: 2023
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Clercs et employés de notaires recrutés avant le 1er septembre 2023
+  (loi n° 2023-270, art. 1er III, JORFARTI000047445082) ; les recrutés
+  depuis relèvent du régime général et de l'Agirc-Arrco pour la vieillesse.
+hors_repartition: false
+# MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+# — décret n° 90-1215, article 94 (LEGIARTI000047909826, et la version
+# de 1990) : 10 % pour les trois premiers enfants et 5 % par enfant
+# au-delà. Avant 1990, le même barème est prêté. Barème
+# `taux_majoration_enfants` de chaque période.
+periodes:
+  - debut: 1937
+    fin: 2007
+    type_calcul: annuites
+    age_ouverture: 55
+    age_taux_plein: 60
+    duree_requise_trimestres: 150
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.11
+    perimetre_taux: agent_seul
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      Loi du 12 juillet 1937, appliquée par le décret n° 90-1215 du
+      20 décembre 1990. L'âge de 55 ans est celui de la DÉROGATION qui fait
+      la réputation du régime : l'article 84 ouvre le droit à pension à
+      soixante ans, mais ne l'oppose pas aux clercs justifiant de vingt-cinq
+      années de cotisation — c'est la voie que la réforme de 2008 referme
+      progressivement, jusqu'au 1er janvier 2018. La fiche retient cette
+      voie pour toute la période, parce qu'elle était la règle commune d'un
+      métier où l'on entrait jeune ; c'est une approximation nommée.
+      DEUX ÂGES, ET LA FICHE N'EN PORTE QU'UN. Le décret n° 51-721 du
+      8 juin 1951, article 27 (LEGIARTI000006773239, version de 1977),
+      puis l'article 84 du décret n° 90-1215 (LEGIARTI000006775247, de
+      1990 à février 2008) ouvrent le droit à pension « à partir de
+      soixante ans », condition d'âge « non opposable à l'assurée âgée de
+      cinquante-cinq ans et qui compte vingt-cinq années de versement ».
+      Cinquante-cinq ans est donc l'âge des femmes ayant fait carrière
+      dans le notariat — l'essentiel des affiliés —, soixante ans celui
+      des hommes et des carrières courtes ; la fiche garde le premier, et
+      l'inventaire porte le second comme manque.
+  - debut: 2008
+    fin: 2008
+    type_calcul: annuites
+    age_ouverture: 55
+    age_taux_plein: 60
+    duree_requise_trimestres: 160
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.11
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2009
+    fin: 2009
+    type_calcul: annuites
+    age_ouverture: 55.5
+    age_taux_plein: 60.5
+    duree_requise_trimestres: 160
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2010
+    fin: 2010
+    type_calcul: annuites
+    age_ouverture: 56
+    age_taux_plein: 61
+    duree_requise_trimestres: 160
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2011
+    fin: 2011
+    type_calcul: annuites
+    age_ouverture: 56.5
+    age_taux_plein: 61.5
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2012
+    fin: 2012
+    type_calcul: annuites
+    age_ouverture: 57.25
+    age_taux_plein: 62.25
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2013
+    fin: 2013
+    type_calcul: annuites
+    age_ouverture: 58
+    age_taux_plein: 63
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2014
+    fin: 2014
+    type_calcul: annuites
+    age_ouverture: 58.75
+    age_taux_plein: 63.75
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2015
+    fin: 2016
+    type_calcul: annuites
+    age_ouverture: 59.5
+    age_taux_plein: 64.5
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2017
+    fin: 2017
+    type_calcul: annuites
+    age_ouverture: 60.33
+    age_taux_plein: 65.33
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2018
+    fin: 2019
+    type_calcul: annuites
+    age_ouverture: 60.67
+    age_taux_plein: 65.67
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2020
+    fin: 2020
+    type_calcul: annuites
+    age_ouverture: 61
+    age_taux_plein: 66
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2021
+    fin: 2021
+    type_calcul: annuites
+    age_ouverture: 61.33
+    age_taux_plein: 66.33
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2022
+    fin: 2023
+    type_calcul: annuites
+    age_ouverture: 61.67
+    age_taux_plein: 66.67
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2024
+    fin: 2024
+    type_calcul: annuites
+    age_ouverture: 62
+    age_taux_plein: 67
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
+      le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
+      porte de cinquante-cinq ans avec vingt-cinq années de cotisations
+      s'ouvre à tous les assurés nés avant le 1er juillet 1953, puis six
+      mois de plus par semestre de naissance ; depuis le 19 septembre
+      2011 (décret n° 2011-1112, LEGIARTI000024573555), soixante-deux ans
+      pour les assurés nés à compter de 1962, abaissés à cinquante-cinq
+      ans (nés avant juillet 1953) jusqu'à cinquante-neuf ans et six mois
+      (second semestre 1956) pour qui a vingt-cinq années de versement,
+      soixante ans sinon, et soixante ans et quatre mois à soixante et un
+      ans et huit mois pour les générations 1957 à 1961. La fiche suit ce
+      calendrier par année de liquidation — l'âge de la génération qui
+      l'atteint cette année-là, dans la voie des vingt-cinq années — ;
+      la table du régime général, que le drapeau `age_ouverture_par_generation`
+      lisait ici, donnait soixante-deux ans à la génération 1955 quand le
+      décret lui donne cinquante-sept ans et trois mois. L'âge de
+      référence de la décote suit, cinq ans au-dessus. Depuis le 1er
+      janvier 2025 (LEGIARTI000047910068), l'âge est celui de
+      l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
+      lit à la génération.
+  - debut: 2025
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 64
+    age_ouverture_par_generation: true
+    age_taux_plein: 67
+    age_taux_plein_par_generation: true
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: true
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+    bareme_decote: regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      Loi du 14 avril 2023 : l'âge d'ouverture passe à 64 ans. La fiche
+      s'arrêtait à 62 — celui de 2011 —, et servait donc à un clerc
+      liquidant aujourd'hui la borne d'âge d'il y a douze ans.
+      Depuis le 1er janvier 2025, article 84 dans sa version du décret
+      n° 2023-689 (LEGIARTI000047910068) : « le droit à pension est ouvert
+      à partir de l'âge prévu à l'article L. 161-17-2 » pour les assurés
+      nés à compter du 1er janvier 1970, abaissé pour les générations
+      antérieures ; lu à la génération, comme la durée.

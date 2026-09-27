@@ -1,0 +1,71 @@
+code: igrante
+rang: 190
+nom: Institution générale de retraite des agents non titulaires de l'État
+famille: complementaire_prive
+source_id: ircantec_points
+fiabilite: moyenne
+creation: 1960
+fermeture: 1970
+extinction: 1971
+succede_a: []
+integre_dans: ircantec
+population: >-
+  Agents non titulaires de l'État, sur la rémunération jusqu'au plafond des
+  assurances sociales — et jusqu'à trois plafonds pour ceux qui ne relèvent
+  pas de l'IPACTE.
+hors_repartition: false
+periodes:
+  - debut: 1960
+    fin: 1970
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    duree_requise_par_generation: true
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    abattement_points: ircantec
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.021   # 3,5 % contractuels × appel 60 %
+    part_salariale: 0.40   # 1,40 % agent / 2,10 % employeur, décret 59-1569 art. 2
+    decote_par_trimestre: 0.01
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      UNE FICHE FERMÉE SE LIQUIDE SOUS LE DROIT D'APRÈS SA FERMETURE.
+      L'abattement d'anticipation ne s'applique « à l'âge seul » que jusqu'à l'ASF de 1983, qui exonère qui a le taux plein au régime de base ; le moteur lit cette règle dans la période du régime à l'ANNÉE DE LIQUIDATION, et la dernière période d'un régime fermé avant 1983 est forcément antérieure — alors qu'aucune de ses pensions n'a été liquidée avant.
+      `duree_requise_par_generation` le dit : cette fiche est liquidée sous le droit commun, exonération comprise.
+      Sans lui, un assuré au taux plein voyait cette ligne-là abattue de 4 à 22 %.
+      TAUX LUS DANS LE TEXTE : « les taux de cotisation à la charge des
+      bénéficiaires et des services employeurs sont respectivement fixés à
+      1,40 p. 100 et 2,10 p. 100 » — 3,5 % en tout, 40 % à la charge de
+      l'agent, ce que l'article 15 de l'arrêté du 17 février 1960 confirme
+      par un second chemin —, article 2 du décret n° 59-1569
+      (LEGIARTI000006368165), celui de l'assiette. L'Ircantec reprend ces
+      taux mot pour mot au 1er janvier 1971 (décret n° 70-1277, art. 7,
+      LEGIARTI000006368121 : « 1,40 % et 2,10 % » sous le plafond) et les
+      appelle à 60 % : appel prolongé sur 1960-1970
+      (regimes/valeurs_point.csv, `estimee`), effectif 3,5 % × 0,6 = 2,1
+      %. Réserve : version consolidée unique ; le décret n° 68-1029
+      (JORFTEXT000000869583) a modifié ce taux et n'a que son titre. Âges
+      estimés, barème du successeur (65 ans, l'escalier de l'article 16 de
+      l'arrêté du 30 décembre 1970 : 0,88 à 62 ans, 0,78 à 60, 0,43 à 55) : l'article 5 bis ajouté par le
+      décret n° 60-1019 (JORFTEXT000000305990, « limite d'âge ») est
+      absent de LEGI. DÉCRET N° 59-1569 DU 31 DÉCEMBRE 1959
+      (LEGITEXT000006060876, JORFTEXT000000486546), en vigueur en 1960,
+      abrogé et remplacé par l'Ircantec au 1er janvier 1971. L'ASSIETTE
+      est lue dans l'article 2 (LEGIARTI000006368165) : « l'ensemble de la
+      rémunération […] dans la limite du triple du plafond des cotisations
+      du régime général. Toutefois, en ce qui concerne le personnel
+      affilié au régime […] créé par le décret du 12 décembre 1951, les
+      cotisations ne sont assises que sur la fraction de la rémunération
+      inférieure audit plafond ». La fiche porte cette dernière assiette —
+      la tranche 1 —, celle de l'agent qui relève aussi de l'IPACTE :
+      c'est ainsi que le statut `contractuel_public` route les deux
+      institutions sans qu'elles se recouvrent. Les agents hors IPACTE
+      cotisaient jusqu'à trois plafonds, part que le modèle ne leur prête
+      pas faute d'un statut qui les distingue. La RÉPARTITION vient de
+      l'article 15 de l'arrêté du 17 février 1960 (LEGIARTI000006381706) :
+      « le service employeur effectue un versement égal à une fois et
+      demie le précédent », soit 40/60 — ce que le rapport 1,40 / 3,50 dit
+      aussi.
