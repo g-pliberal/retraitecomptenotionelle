@@ -1,0 +1,39 @@
+# Pose le repère git `phase-5` (docs/architecture.md, § 12) sur le dernier
+# commit de la phase 5 de l'architecture, 4db363e, qui porte la note de sa
+# fin (feuille de route, action 130).
+#
+# Le jeton d'une session Claude Code n'a pas le droit d'écrire un tag :
+# `git push origin phase-5` y répond HTTP 403. Celui d'un workflow, avec
+# `contents: write`, l'a. D'où ce fichier, lancé une fois puis supprimé,
+# comme `repere-phase-1.yml` à `repere-phase-4.yml` avant lui. Le
+# propriétaire l'a demandé le 27 septembre 2026.
+#
+# Le repère est un tag léger : il ne porte aucune identité, donc aucune
+# adresse. S'il existe déjà, le workflow le dit et n'y touche pas.
+
+name: Repère phase-5
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repere:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poser phase-5 sur 4db363e
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+        run: |
+          commit=4db363e4302ac59189f595da38136a534ea8eea3
+          # Un tag absent fait rendre à gh le message d'erreur sur la sortie
+          # standard : seul son code de retour dit que le tag n'existe pas.
+          if actuel=$(gh api "repos/$DEPOT/git/ref/tags/phase-5" --jq .object.sha 2>/dev/null); then
+            echo "phase-5 existe déjà, sur $actuel : rien n'est touché"
+          else
+            gh api "repos/$DEPOT/git/refs" -f ref=refs/tags/phase-5 -f sha="$commit" --jq .object.sha
+            echo "phase-5 posé sur $commit"
+          fi
