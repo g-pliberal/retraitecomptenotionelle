@@ -1,0 +1,42 @@
+schema_version: 1
+id: trimestres_retenus_1972_1974
+intitule: >-
+  Au régime général, la loi n° 71-1132 porte de 120 à 150 le nombre de trimestres
+  retenus pour calculer la pension, par paliers : 128 au plus pour une pension qui
+  prend effet en 1972, 136 en 1973, 144 en 1974, 150 à compter de 1975.
+etat: manquante
+effet: >-
+  Les pensions du régime général prenant effet de 1972 à 1974 : la période de 1972 à
+  1982 du fichier `regime_general` retient 150 trimestres dès 1972. Qui en avait plus
+  de 128 en 1972, de 136 en 1973 ou de 144 en 1974 se voit compter des trimestres que
+  le texte ne retient pas ; le sens et la taille de l'écart tiennent au dénominateur de
+  la proratisation de ces années, qui reste à lire : non mesuré. Trouvée le 27
+  septembre 2026 en relisant la fiche `decote_avant_1983`.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Après la phase 8 : borner à 128, 136 et 144 les trimestres retenus pour une pension
+    du régime général qui prend effet en 1972, 1973 et 1974, et mesurer l'effet sur les
+    témoins.
+  - >-
+    Lire le texte que la circulaire applique : les articles 1er à 7 de la loi n° 71-1132
+    du 31 décembre 1971 et le décret n° 72-78 du 28 janvier 1972, que ni l'index LEGI ni
+    l'index JORF du dépôt ne portent ; et dire si les salariés agricoles suivent les mêmes
+    paliers.
+  lectures:
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2/72 du 31 janvier 1972, application de la loi n° 71-1132 et
+      du décret n° 72-78 du 28 janvier 1972, point I : « Le nombre de trimestres à
+      retenir ne peut être supérieur à » 128 « si le point de départ de la pension est
+      fixé en 1972 », 136 en 1973, 144 en 1974, et 150 « si la pension prend effet
+      postérieurement au 31 décembre 1974 »
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_272_31011972.aspx
+    date: 2026-09-27
+textes_a_rattacher:
+- reference: >-
+    loi n° 71-1132 du 31 décembre 1971 portant amélioration des pensions de vieillesse
+    du régime général, articles 1er à 7, et décret n° 72-78 du 28 janvier 1972

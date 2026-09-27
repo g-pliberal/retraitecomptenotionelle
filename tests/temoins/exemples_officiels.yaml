@@ -719,3 +719,98 @@ exemples:
       172 à partir de 1971.
     carriere: {naissance: "1968-06", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2026-03", age_debut: 22}
     attendu: {trimestres_requis: 170, liquidation_ouverte: true}
+
+  # ---- CNIEG (industries électriques et gazières) ------------------------
+  # La page « Décote » de la CNIEG, lue le 27 septembre 2026. Son second
+  # exemple, Monsieur E, est sédentaire, quand le statut `agent_ieg` ne porte
+  # que l'agent actif : il n'est pas rejoué. La circulaire n° 2024/15 ne l'est
+  # pas non plus. Son exemple 1 se contredit (huit trimestres de décote au
+  # § 5, quatre au § 6), et la durée qu'il oppose, 167 trimestres — celle des
+  # agents qui ont soixante ans l'année où le droit s'ouvre, article 9-1 de
+  # l'annexe 3 —, le modèle la lisait le 27 septembre 2026 dans la table par
+  # génération : 169. Ses autres agents ouvrent leur droit à soixante ou
+  # soixante-deux ans (exemple 2, § 4), sont sédentaires (§ 7), n'anticipent
+  # que de deux ans (exemple 3) ou partent à une date qu'elle ne donne pas
+  # (§ 2).
+  - id: cnieg_decote_madame_d
+    source: {editeur: "CNIEG", reference: "cnieg.fr, Réglementation, Droit à la retraite, Calcul de la retraite, « Décote », exemple de Madame D", verifie_le: "2026-09-27"}
+    enonce: >-
+      « Madame D, née le 14 septembre 1962 effectue toute sa carrière en
+      services actifs. Sa date d'ouverture de droit à retraite est fixée à 55
+      ans et 4 mois, soit le 14 janvier 2018. Elle liquide sa pension le 1er
+      février 2019 » avec 147 trimestres pour 165 requis ; âge d'annulation
+      « 55 ans et 4 mois + 13 trimestres = 58 ans et 7 mois » : 9 trimestres
+      par l'âge, 18 par la durée, que la borne de 150 ramène à 11 ; « 1,0% x
+      9 trimestres = 9,0% ». Taux : 75 % × (1 − 9 %).
+    carriere: {naissance: "1962-09", sexe: F, affiliation: agent_ieg, liquidation: "2019-02", trimestres_valides: 147}
+    attendu: {trimestres_requis: 165, date_age_legal: "2018-01", taux_liquidation: 0.6825}
+
+  # ---- Agirc-Arrco -------------------------------------------------------
+  # Le dépliant « Décrypter la retraite complémentaire Agirc tranche C »
+  # (01/2025) et la table « Les coefficients de minoration applicables à la
+  # retraite complémentaire Agirc-Arrco » (septembre 2026), lus le 27
+  # septembre 2026. Le coefficient du dépliant ne vise que les points de
+  # tranche C acquis avant 2016, que le modèle ne distingue pas : il ne se
+  # compare au coefficient d'un régime entier que si tous les points en
+  # reçoivent un même, donc sans le taux plein au régime de base ; l'écart que
+  # déclare la fiche, ces points servis sans coefficient au taux plein, reste
+  # sans exemple. Celui de la table, « à 61 ans », suppose la complémentaire
+  # prise sans la retraite de base, que le modèle ne liquide pas à part : il
+  # n'est pas rejoué.
+  - id: agirc_arrco_tranche_c_63_ans_11_mois
+    source: {editeur: "Agirc-Arrco", reference: "dépliant « Décrypter la retraite complémentaire Agirc tranche C » (01/2025), tableau des coefficients d'anticipation pour âge ; table « Les coefficients de minoration applicables à la retraite complémentaire Agirc-Arrco », septembre 2026, tableaux 1 à 3", verifie_le: "2026-09-27"}
+    enonce: >-
+      « En cas de départ en retraite avant 67 ans, un coefficient
+      d'anticipation s'applique définitivement aux points de retraite
+      complémentaire tranche C acquis avant 2016 » ; « si j'ai 63 ans et 11
+      mois à la date de mon départ à la retraite, le coefficient retenu est
+      celui correspondant à l'âge de 63 ans et 9 mois, soit 0,8675 ». Ici un
+      cadre payé au-delà de quatre plafonds, né en janvier 1962 — 169
+      trimestres pour le taux plein (tableau 1) — et parti à 63 ans et 11
+      mois avec 153 : il lui en manque seize, et la caisse retient pour ses
+      autres points « la plus
+      faible minoration des deux », celle de l'âge (13,25 %) plutôt que celle
+      des seize trimestres (17 %). Tous ses points valent donc 0,8675.
+    carriere: {naissance: "1962-01", sexe: H, affiliation: salarie_prive_cadre, liquidation: "2025-12", trimestres_valides: 153, niveau_salaire: 6, profil_carriere: plat}
+    attendu: {trimestres_requis: 169, liquidation_ouverte: true, coefficients_des_regimes: {agirc: 0.8675, arrco: 0.8675, agirc_arrco: 0.8675}}
+
+  # ---- CARMF, guide « Préparez votre retraite en temps choisi » ----------
+  # Le guide de juin 2026, lu le 27 septembre 2026 : un médecin né le 15 mai
+  # 1965, dont la retraite s'ouvre à 63 ans quand la majoration court de 62.
+  # Là où `carmf_report_62_65_ans` fixe les 15 % d'un médecin dont l'âge légal
+  # est de 62 ans, ces trois dates fixent les 5 % dès l'ouverture, les 15 % à
+  # 65 ans et le plafond de 30 % à 70 ans, avec la décote puis la surcote du
+  # régime de base que donne l'exemple de calcul.
+  - id: carmf_2026_temps_choisi_63_ans
+    source: {editeur: "CARMF", reference: "carmf.fr, guide « Préparez votre retraite en temps choisi », juin 2026, « Âge de départ en retraite », p. 12 et 13, exemple de départ en retraite et exemple de calcul de retraite", verifie_le: "2026-09-27"}
+    enonce: >-
+      « Si vous êtes né le 15 mai 1965 » : régime de base « entre le 1er
+      juillet 2028 et le 1er avril 2032 avec décote » faute des 171
+      trimestres ; régimes complémentaire et ASV « à partir du 1er juillet
+      2028, avec une majoration de 5 % ». L'exemple de calcul, un médecin né
+      en mai 1965 qui prend sa retraite à 63 ans avec 167 trimestres : « Sa
+      retraite de base subira donc une décote de : 1,25 % × 4 = 5 % », et
+      « + 5 % de majoration » en complémentaire comme à l'ASV.
+    carriere: {naissance: "1965-05", sexe: H, affiliation: medecin_liberal, liquidation: "2028-07", trimestres_valides: 167}
+    attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.05, asv_conventionnes: 1.05, cnavpl: 0.95}}
+
+  - id: carmf_2026_temps_choisi_65_ans
+    source: {editeur: "CARMF", reference: "carmf.fr, guide « Préparez votre retraite en temps choisi », juin 2026, « Âge de départ en retraite », p. 12 et 13, exemple de départ en retraite et exemple de calcul de retraite", verifie_le: "2026-09-27"}
+    enonce: >-
+      Le même médecin, qui « poursuit son activité jusqu'à 65 ans » : « Chaque
+      trimestre cotisé supplémentaire augmentera la majoration qui atteindra
+      15 % en cas de départ en retraite au 1er juillet 2030 » ; au régime de
+      base, 175 trimestres, « soit 4 trimestres de plus que les 171 requis »,
+      et « une surcote de 1,25 % × 4 = 5 % ».
+    carriere: {naissance: "1965-05", sexe: H, affiliation: medecin_liberal, liquidation: "2030-07", trimestres_valides: 175}
+    attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.15, asv_conventionnes: 1.15, cnavpl: 1.05}}
+
+  - id: carmf_2026_temps_choisi_70_ans
+    source: {editeur: "CARMF", reference: "carmf.fr, guide « Préparez votre retraite en temps choisi », juin 2026, « Âge de départ en retraite », p. 12, exemple de départ en retraite et « Retraite en temps choisi »", verifie_le: "2026-09-27"}
+    enonce: >-
+      Le même, s'il diffère jusqu'à 70 ans : la majoration atteint « un
+      maximum à 30 % au 1er juillet 2035 » — « 1,25 % par trimestre séparant
+      le 1er jour du trimestre civil suivant » ses 62 ans « de la date de
+      votre retraite », majoration « réduite à 0,75 % entre 65 et 70 ans ».
+    carriere: {naissance: "1965-05", sexe: H, affiliation: medecin_liberal, liquidation: "2035-07", age_debut: 30}
+    attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.30, asv_conventionnes: 1.30}}

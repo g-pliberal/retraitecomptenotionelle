@@ -28,14 +28,14 @@ sources:
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Après la phase 7 : donner au ballet l'âge d'annulation du V pour qui a quarante ans du 1er
+    Après la phase 8 : donner au ballet l'âge d'annulation du V pour qui a quarante ans du 1er
     juillet 2010 au 30 juin 2012, quarante et un ans puis quarante et un ans et demi, et non
     quarante-deux ; lire le taux au mois où les conditions sont réunies, et non à l'année
     (voir `decote_regimes_speciaux`). Le `code.moteur` de cette fiche et le commentaire de
     `droit/liquider.py` disent « huit trimestres » qui « ne recule pas » : le V écrit quatre,
     six, puis huit.
   - >-
-    Après la phase 7 : la note de la période 2009-2013 de `regimes/opera_de_paris.yaml`
+    Après la phase 8 : la note de la période 2009-2013 de `regimes/opera_de_paris.yaml`
     chiffre l'excès de 2011 à « un quart de point de pension » ; quatre trimestres à 0,125 %
     en font un demi.
   - >-

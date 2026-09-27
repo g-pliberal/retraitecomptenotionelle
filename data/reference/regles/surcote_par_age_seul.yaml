@@ -29,52 +29,59 @@ effet: >-
   mesuré sur la population. CAVP : rien pour les nés jusqu'au 30 juin 1951, rien au-delà
   de 66 ans pour les nés de juillet 1951 à 1952, ni de 68 ans pour ceux de 1953 à 1955 ;
   le moteur leur sert douze trimestres, jusqu'à 6, 4 et 2 points de trop. Cipav : un
-  report « de 1 à 5 ans » depuis le 1er juillet 2026, que le moteur ne borne pas, 5 points
-  de trop par année au-delà de 72 ans. CAVEC : 0,75 % dès le 4 septembre 2018 et 1,25 %
+  report « de 1 à 5 ans », borne que ses statuts portaient avant 2022 et que le décret
+  n° 79-262 reprend depuis le 1er juillet 2026, compté de 65 ans jusqu'au 31 décembre
+  2021 ; le moteur, qui le sert depuis 2013 de l'âge d'annulation de la génération et
+  sans borne, donne avant 2022 jusqu'à 10 points de moins aux générations 1953 et 1954,
+  et 5 points de trop par année au-delà de cinq ans de report. CAVEC : 0,75 % dès le 4 septembre 2018 et 1,25 %
   dès le 6 juillet 2025, que le moteur sert en 2019 et en 2026, jusqu'à 10 points d'écart
   aux liquidations du 1er octobre 2018 et du 1er octobre 2025 ; jusqu'en septembre 2018,
   les points acquis après 65 ans n'étaient pas majorés, et le moteur les majore, non
   mesuré. CPRN : seuls comptent les trimestres d'exercice ; le moteur compte le temps
   jusqu'à la liquidation, trop pour qui cesse d'exercer avant de liquider, non mesuré.
-  Restent à lire dans leurs statuts la CARMF de 2000 à 2016 et la Cipav avant juillet
-  2026.
+  Restent à lire la rédaction d'origine de l'article 32 des statuts de la CARMF et
+  l'article 3.15 des statuts de la Cipav de 2006, publiés au Bulletin officiel.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Après la phase 7 : CARPIMKO, faire courir la majoration de l'âge où l'assuré pouvait
+    Après la phase 8 : CARPIMKO, faire courir la majoration de l'âge où l'assuré pouvait
     liquider sans abattement — celui de L. 161-17-2 quand il a la durée du régime de base
     (règlement de 2026, articles 3, 2°, et 5 ; statuts de 2015, articles 11 et 12 ter) —,
     et non de la seule table `carpimko_2016`.
   - >-
-    Après la phase 7 : CAVP, borner la majoration par génération — rien pour les nés
+    Après la phase 8 : CAVP, borner la majoration par génération — rien pour les nés
     jusqu'au 30 juin 1951, jusqu'à 66 ans pour les nés du 1er juillet 1951 à 1952, jusqu'à
     68 ans pour ceux de 1953 à 1955 (annexe à l'article 15 des statuts de 2011, article 12
     du règlement de 2026).
   - >-
-    Après la phase 7 : Cipav, borner le report à vingt trimestres sur les liquidations du
-    1er juillet 2026 et après. Puis lire l'article 3.15 des statuts d'avant le décret
-    n° 2026-418, que l'index ne porte que par son complément de 2023, pour dater la borne
-    et la règle que la fiche de régime sert depuis 2013.
+    Après la phase 8 : Cipav, borner le report à cinq années entières, borne que les
+    statuts portaient avant 2022 (ni l'arrêté du 16 décembre 2021 ni celui du 20 mars
+    2023 ne l'y ont mise), et le compter de 65 ans jusqu'au 31 décembre 2021, de l'âge
+    du 1° de L. 351-8 ensuite. Puis lire l'article 3.15 des statuts de 2006 (arrêté du 3
+    octobre 2006, publié au Bulletin officiel d'octobre 2006), pour dater la borne.
   - >-
-    Après la phase 7 : CAVEC, servir 0,75 % dès le 4 septembre 2018 et 1,25 % dès le 6
+    Après la phase 8 : CAVEC, servir 0,75 % dès le 4 septembre 2018 et 1,25 % dès le 6
     juillet 2025. Le retour à 1,25 % vient de l'arrêté du 4 juillet 2025, et non du
     règlement de 2026, auquel la note de la fiche de régime et `cavec_report_2026`
     l'attribuent. Jusqu'au 4 septembre 2018, ne majorer que les points acquis jusqu'à la
     fin de l'année, puis, depuis 2012, du trimestre du 65e anniversaire.
   - >-
-    Après la phase 7 : CPRN, ne compter que les trimestres d'exercice
+    Après la phase 8 : CPRN, ne compter que les trimestres d'exercice
     (`surcote_trimestres_cotises`).
   - >-
     CPRN : trancher la lecture divergente de la borne de 70 ans par ce que la caisse publie
     d'autre de la règle qu'elle applique, sans la solliciter (docs/architecture.md, § 3.5).
   - >-
-    Après la phase 7 : CARMF, corriger la note des périodes de 2017 et après, qui croit la
+    Après la phase 8 : CARMF, corriger la note des périodes de 2017 et après, qui croit la
     majoration comptée depuis l'âge légal de 2023 à 2025 : l'arrêté du 22 mars 2017 écrit
-    « après l'âge de 62 ans ». Lire les statuts d'avant 2017, dont l'article 32 (« 5 % par
-    année pleine de différé » après 65 ans), que la fiche de régime sert de 2000 à 2016
-    sans l'avoir lu au Journal officiel ; l'index ne les porte pas.
+    « après l'âge de 62 ans ». L'article 32 des statuts, que la fiche de régime sert de
+    2000 à 2016, est lu dans les statuts que publie la caisse, à jour de l'arrêté du 7
+    janvier 2025 : « 5 % par année pleine de différé » pour le médecin « remplissant
+    toutes les conditions », sans nommer 65 ans. Dater sa rédaction d'origine (Bulletin
+    officiel), et dire si la caisse l'a cumulé avec la majoration de l'article 15 de 2017
+    à 2026.
   - >-
     CARCDSF : l'article 35 de ses statuts, dans la rédaction de l'arrêté du 27 décembre
     2023, ne compte que les trimestres « d'exercice libéral », que `par_age_seul` confond
@@ -258,8 +265,8 @@ sources:
       Cipav, arrêté du 20 mars 2023 (JORFARTI000047334800), 17° : l'article 3.15 des
       statuts est complété par « Pour la détermination des trente années de cotisation,
       les années au titre desquelles l'adhérent a obtenu une exonération ou une réduction
-      de cotisation sont prises en compte. » L'article 3.15 lui-même n'est dans aucun des
-      arrêtés de l'index, de 2012 à 2025.
+      de cotisation sont prises en compte. » L'arrêté du 16 décembre 2021 touche aussi
+      l'article 3.15 : lecture plus bas, faite le même jour.
     date: 2026-09-27
   - type: autre
     reference: >-
@@ -320,6 +327,74 @@ sources:
       alinéa du présent c et accompli à compter du 1er janvier 2024, dans la limite de
       25 % ».
     date: 2026-09-27
+  - type: autre
+    reference: >-
+      CARMF, « Statuts du Régime Complémentaire d'Assurance Vieillesse », publiés par la
+      caisse, précédés de l'arrêté du 7 janvier 2025, article 32 : « Le médecin remplissant
+      toutes les conditions pour bénéficier de la retraite complémentaire peut demander à en
+      différer l'entrée en jouissance. La retraite est alors majorée de 5 % par année pleine
+      de différé » ; note 5, « Rappel du texte antérieur au 1er janvier 2017 », article 15 :
+      « 1. être âgé de 65 ans ou de l'âge prévu à l'article L. 161-17-2 du code de la
+      sécurité sociale », ou dès cet âge « avec application d'un coefficient d'anticipation
+      égal à : 0,75 à 60 ans » jusqu'à « 0,95 à 64 ans ». L'article 32 ne nomme pas 65 ans ;
+      il figure encore dans ces statuts, à côté de la majoration de l'article 15, et n'est
+      pas dans le règlement approuvé par l'arrêté du 10 juillet 2026 (LEGIARTI000054890209)
+    url: https://www.carmf.fr/doc/documents/statuts/d297-3.pdf
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CARMF, index JORF : aucun arrêté approuvant les statuts du régime complémentaire ne
+      nomme l'article 32, ni ceux dont le texte est au Journal officiel, du 9 août 2010
+      (JORFARTI000022758875) au 21 décembre 2016 (JORFARTI000033702968) — celui du 28
+      septembre 2011 (JORFARTI000024612007) écrit « 3. Cesser l'exercice de la médecine non
+      salariée » —, ni les résumés qui énumèrent les articles modifiés de 1982 à 2006, dont
+      celui du 23 mai 1997 (JORFARTI000002386574 : « art. 3, 4, 7, 8, 9 bis, 10, 12, 13, 15,
+      16, 18 à 27, 29, 29 bis, 31, 32 bis, 34 à 36 […] ») ; « L'arrêté du 23 mai 1997 sera
+      publié intégralement au Bulletin officiel du ministère du travail et des affaires
+      sociales no 97-29 ». Les statuts sont approuvés par « l'arrêté du 27 février 1974
+      modifié » (visa de l'arrêté du 10 décembre 2010, JORFTEXT000023720566)
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      Cipav, arrêté du 16 décembre 2021 (JORFARTI000044554134), dont les modifications
+      « entrent en vigueur le 1er janvier 2022 » (article 2, JORFARTI000044554130) : 18°,
+      l'article 3.13 ouvre la pension à taux plein « à partir de l'âge du taux plein prévu au
+      1° de l'article L. 351-8 du code de la sécurité sociale » ; 19°, « Au premier alinéa de
+      l'article 3.15, les mots : « âgé de 65 ans » sont remplacés par les mots : « qui a
+      atteint l'âge prévu au deuxième alinéa du 1° de l'article 3.13, » ». Arrêté du 20 mars
+      2023 (JORFARTI000047334800), 17° a) : « Au dernier alinéa, les mots : « , telles
+      qu'elles sont définies à l'article 3.6 » sont supprimés ». Des arrêtés publiés au
+      Journal officiel depuis 2007, ces deux seuls touchent l'article 3.15. Les statuts de
+      2006 (arrêté du 3 octobre 2006, qui abroge au 1er janvier 2007 ceux de 1979 et « sera
+      publié intégralement au Bulletin officiel d'octobre 2006 ») ne sont pas lus
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Cipav, « Statuts Cipav au 01/01/2023 », publiés par la caisse, article 3.15 :
+      « L'adhérent qui a atteint l'âge prévu au deuxième alinéa du 1° de l'article 3.13 et
+      comptant un minimum de trente années d'affiliation à la C•I•P•A•V, peut différer la
+      date d'entrée en jouissance de la pension de retraite complémentaire de 1 à 5 ans. Le
+      compte de points qui est alors établi est majoré de 5% par année entière de
+      prorogation » ; mêmes mots dans les statuts de janvier 2024 et de septembre 2025. Ni
+      l'arrêté de 2021 ni celui de 2023 n'y ont mis « de 1 à 5 ans » : la borne précède 2022
+    url: https://www.lacipav.fr/sites/default/files/2023-04/Statuts%20CIPAV_1janvier2023.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Cipav, Guide pratique 2019, page 30 : « À partir de 65 ans À taux plein. Avec
+      majoration (appliquée sur les points acquis au titre des 30 premières années de
+      cotisations) de 5 % par année pleine de report différé si, à 65 ans, vous réunissez 30
+      années d'affiliation à la Cipav »
+    url: https://www.lacipav.fr/sites/default/files/2021-01/CIPAV%20-%20Guide%20Pratique%20-%20web.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Cipav, Guide pratique 2022, page 28 : « À partir de 67 ans À taux plein. Avec
+      majoration (appliquée sur les points acquis au titre des 30 premières années de
+      cotisations) de 5 % par année pleine de report différé si, à 67 ans, vous réunissez 30
+      années d'affiliation à la Cipav »
+    url: https://www.lacipav.fr/sites/default/files/2022-01/Guide%20pratique%202022%20-%20Professionnels%20lib%C3%A9raux%20-%20La%20Cipav_0.pdf
+    date: 2026-09-27
 textes_a_rattacher:
 - reference: >-
     CARMF : statuts du régime complémentaire, article 15, dans la rédaction des arrêtés du
@@ -361,6 +436,10 @@ textes_a_rattacher:
     CARCDSF et CAVAMAC : les textes que rattachent leurs fiches, dont l'article 35 des
     statuts de la CARCDSF dans la rédaction de l'arrêté du 27 décembre 2023
     (JORFTEXT000048880697)
+exemples:
+- carmf_2026_temps_choisi_63_ans
+- carmf_2026_temps_choisi_65_ans
+- carmf_2026_temps_choisi_70_ans
 code:
   interrupteurs:
     surcote_points: par_age_seul

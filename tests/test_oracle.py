@@ -1736,7 +1736,8 @@ def test_le_temoin_des_exemples_officiels_est_source():
         source = exemple["source"]
         assert source["editeur"] in (
             "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
-            "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL",
+            "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL", "CNIEG",
+            "Agirc-Arrco",
         ), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]

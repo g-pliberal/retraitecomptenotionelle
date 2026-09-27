@@ -2,8 +2,8 @@ schema_version: 1
 id: decote_avant_1983
 intitule: >-
   Jusqu'au 31 mars 1983, au régime général et chez les salariés agricoles, le taux de la
-  pension croissait avec l'âge seul — de 1973 à 1983, 25 % du salaire annuel moyen à
-  soixante ans pour 150 trimestres, majorés de 5 points par année postérieure — ; la durée
+  pension croissait avec l'âge seul — de 1972 à 1983, 25 % du salaire annuel moyen à
+  soixante ans, majorés de 1,25 point par trimestre d'ajournement — ; la durée
   n'ouvrait le taux de soixante-cinq ans qu'à des catégories nommées, dont, depuis 1978,
   les femmes justifiant de trente-sept ans et demi d'assurance.
 etat: approchee
@@ -12,38 +12,61 @@ effet: >-
   Les pensions du régime général et des salariés agricoles liquidées avant 1983, et celles
   des artisans et commerçants de 1973 à 1982 : le moteur leur oppose une décote comptée
   sur l'âge seul, 2,5 % du taux plein par trimestre manquant jusqu'à soixante-cinq ans,
-  soit, sur un taux plein de 50 %, les 25 % à soixante ans et les 5 points par année de
-  l'article 70 lu depuis 1973. Il s'écarte du texte en quatre points, aucun mesuré. Les
-  femmes de 150 trimestres au régime général et chez les salariés agricoles avaient le
-  taux de soixante-cinq ans dès soixante-trois ans en 1978, dès soixante ans de 1979 au 31
-  mars 1983 : à soixante ans, le moteur ne leur sert que la moitié de ce taux. Une pension
-  de janvier à mars 1983 relève encore de l'âge seul : le moteur, qui choisit la période à
-  l'année, lui applique la règle d'avril et sert le taux plein à soixante ans à qui a 150
-  trimestres. Avant le 1er avril 1983, le taux croissait encore après soixante-cinq ans
-  (« coefficients d'ajournement ») : le moteur l'arrête au taux plein. Et il compte au
-  trimestre la majoration que le texte écrit « par année postérieure ». Les autres taux
-  pleins d'avant 1983 — inaptitude, déportation, services de guerre, travail manuel,
-  ouvrières mères de famille, agents non titulaires de soixante-trois ans dès le 1er
-  juillet 1982 — tiennent à des faits que le modèle ne porte pas. Pour les artisans et
-  commerçants, le moteur passe à la règle nouvelle en 1983, quand les textes lus datent
-  leur taux plein à soixante ans du 1er juillet 1984 ; la date de leur part alignée reste
-  à lire.
+  arrondi au trimestre supérieur. Il compte ainsi comme la caisse : sur 40 % jusqu'en
+  1971, « le pourcentage de 20% étant augmenté en cas d'ajournement de 1 % par trimestre
+  postérieur au soixantième anniversaire » (circulaire n° 93 SS du 17 mai 1951) ; sur 50 %
+  depuis le 1er janvier 1972, 25 % à soixante ans, « majoré de 1,25 % (au lieu de 1 %) par
+  trimestre d'ajournement » (circulaire Cnav n° 2/72). Il s'écarte du texte en quatre
+  points, aucun mesuré. Au régime général, pour une pension prenant effet avant le 1er
+  janvier 1951, la majoration ne s'acquérait que « par année d'assurance accomplie
+  postérieurement » à soixante ans : le moteur la sert à l'âge, même à qui n'a plus été
+  assuré après soixante ans. Les femmes de 150 trimestres au régime général et chez les
+  salariés agricoles avaient le taux de soixante-cinq ans dès soixante-trois ans en 1978,
+  dès soixante ans de 1979 au 31 mars 1983 : à soixante ans, le moteur ne leur sert que la
+  moitié de ce taux. Une pension de janvier à mars 1983 relève encore de l'âge seul : le
+  moteur, qui choisit la période à l'année, lui applique la règle d'avril et sert le taux
+  plein à soixante ans à qui a 150 trimestres. Avant le 1er avril 1983, le taux croissait
+  encore après soixante-cinq ans, « sans limitation », dit la circulaire Cnav n° 22/83, et
+  qui avait passé cet âge au 1er avril 1983 gardait le taux acquis au 31 mars, si sa
+  pension y gagnait : le moteur l'arrête au taux plein. Les autres taux pleins d'avant
+  1983 — inaptitude, travaux pénibles de l'ordonnance de 1945, déportation, services de
+  guerre, travail manuel, ouvrières mères de famille, agents non titulaires de
+  soixante-trois ans dès le 1er juillet 1982 — tiennent à des faits que le modèle ne porte
+  pas. Chez les salariés agricoles, la rédaction du 6 juin 1951 ne majorait le taux que
+  pour une liquidation demandée « après soixante et un ans » : si la caisse la lisait
+  ainsi, le moteur sert jusqu'à trois points de trop entre soixante et soixante et un ans.
+  Pour les artisans et commerçants, le moteur passe à la règle nouvelle en 1983, quand les
+  textes lus datent leur taux plein à soixante ans du 1er juillet 1984 ; la date de leur
+  part alignée reste à lire.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Après la phase 7 : servir le taux de soixante-cinq ans aux femmes qui justifient de
+    Après la phase 8 : servir le taux de soixante-cinq ans aux femmes qui justifient de
     150 trimestres au régime général et chez les salariés agricoles (ces deux régimes
     seuls comptent), dès soixante-trois ans pour une pension prenant effet en 1978, dès
     soixante ans du 1er janvier 1979 au 31 mars 1983 (article 70-2, c, du décret du 29
     décembre 1945 ; article 1er bis du décret n° 51-727).
   - >-
-    Après la phase 7 : couper au 1er avril 1983 la période de 1983 du régime général et
+    Après la phase 8 : couper au 1er avril 1983 la période de 1983 du régime général et
     des salariés agricoles (ordonnance, article 9 ; décret n° 82-1054, article 2), et
-    servir avant cette date la majoration au-delà de soixante-cinq ans que l'article 70 ne
-    borne pas (décret n° 82-628, article 16 : « coefficients de majoration acquis au 31
-    mars 1983 ») ; sa limite éventuelle reste à lire.
+    servir avant cette date le taux qui croît encore après soixante-cinq ans, sans autre
+    borne que le maximum des pensions : un point par trimestre entier au-delà de 40 %
+    jusqu'en 1971 (article 63 de l'ordonnance ; circulaire n° 93 SS), 1,25 point au-delà
+    de 50 % depuis 1972 (circulaire Cnav n° 22/83, « sans limitation ») ; à qui avait
+    passé soixante-cinq ans au 1er avril 1983, garder le taux acquis au 31 mars quand la
+    pension y gagne (ordonnance, article 11 ; décret n° 82-628, article 16).
+  - >-
+    Après la phase 8 : au régime général, pour une pension prenant effet avant le 1er
+    janvier 1951, ne majorer les 20 % que des années d'assurance accomplies après
+    soixante ans, et non des années d'âge (article 63 de l'ordonnance, rédactions de 1945
+    et de 1948 ; loi n° 51-374, article 15, § 2).
+  - >-
+    Inscrire dans tests/temoins/exemples_officiels.yaml, en écart connu tant que le
+    moteur arrête le taux à 50 %, l'exemple du point 313 de la circulaire Cnav n° 22/83 :
+    assuré né en mars 1917, pension prenant effet le 1er septembre 1983, « Coefficient
+    acquis au 31-3-83 : 55 % », avec 60, 145 et 117 trimestres.
   - >-
     Artisans et commerçants : le décret n° 84-560 (article 12-2 du décret n° 73-937) ouvre
     le 1er juillet 1984 le taux plein à soixante ans, pour 150 trimestres, aux prestations
@@ -52,18 +75,29 @@ sources:
     moteur ouvre ce taux plein dès 1983 dans les fiches cancava et organic. Lire, pour la
     part alignée (L. 663-1), l'ancien article L. 663-1, les articles 1 à 4, 6 et 7 de
     l'ordonnance et l'article 2 du décret n° 73-937 avant le 24 février 1984, que l'index
-    ne porte pas ; si rien n'avance la date, après la phase 7, décaler au 1er juillet 1984
-    la période de 1983 de ces deux fiches.
+    ne porte pas ; si rien n'avance la date, après la phase 8, décaler au 1er juillet 1984
+    la période de 1983 de ces deux fiches. Gallica s'arrête en 1955 ; la base de la Cnav
+    ne donne de l'ordonnance que son titre et son article 9, et ne porte aucune circulaire
+    Organic ou Cancava de 1983 ou 1984.
   - >-
-    Lire le droit de 1945 à 1972, absent des deux index : les articles 63 à 72 de
-    l'ordonnance n° 45-2454 du 19 octobre 1945, les rédactions des articles 70 et 71 du
-    décret du 29 décembre 1945 antérieures au 1er janvier 1973 (les 20 % à soixante ans et
-    les 4 points par année que la fiche du régime général écrit sans source lue), et
-    l'article 55 du décret n° 50-1225 avant le 1er juillet 1972.
+    Lire ce qui reste du droit de 1945 à 1972, que ni les index, ni Gallica, ni la base
+    de la Cnav ne portent : l'article L. 331 du code de la sécurité sociale de 1956 à
+    1971, dont la circulaire n° 20 SS de 1961 recopie la règle ; les articles 1er à 7 de
+    la loi n° 71-1132 et le décret n° 72-78 du 28 janvier 1972, que la circulaire Cnav n°
+    2/72 applique ; les rédactions des articles 70 et 71 du décret de 1945 issues des
+    décrets n° 51-1321 et n° 56-144, qui touchent, selon les résumés de l'index JORF, à
+    l'entrée en jouissance et à la détermination des droits (le Journal officiel du 20
+    novembre 1951 manque à Gallica). Chez les salariés agricoles, les rédactions de
+    l'article 8 du décret du 30 octobre 1935 de 1951 à 1972, et l'usage de la caisse
+    centrale : celle du 6 juin 1951 ne majore « de 4 p. 100 par année postérieure à
+    soixante ans » que « lorsque la liquidation en est demandée après soixante et un
+    ans », sans dire si ces 4 p. 100 portent sur le salaire ou sur la pension ; et la date
+    où les 25 % les ont atteints, que l'article 55 du décret n° 50-1225 ne porte qu'au 1er
+    juillet 1972.
   - >-
-    Lire comment la caisse comptait une fraction d'année entre deux anniversaires :
-    l'article 70 majore « par année postérieure à cet âge », le moteur au trimestre, 1,25
-    point par trimestre (circulaire de la Cnav d'avant 1983).
+    La même circulaire borne à 128, 136 et 144 les trimestres retenus pour une pension
+    prenant effet en 1972, 1973 et 1974, quand le moteur en retient 150 dès 1972 :
+    déclaré dans la fiche `trimestres_retenus_1972_1974`.
   lectures:
   - type: legifrance
     reference: >-
@@ -194,6 +228,140 @@ sources:
       retraite de base au taux plein a soixante ans »
     url: https://questions.assemblee-nationale.fr/dyn/8/questions/QANR5L8QE32721.pdf
     date: 2026-09-27
+  - type: jorf
+    reference: >-
+      ordonnance n° 45-2454 du 19 octobre 1945, Journal officiel du 20 octobre 1945, page
+      6726, lue sur l'image : article 63, « L'assurance vieillesse garantit une pension de
+      retraite à l'assuré qui atteint l'âge de 60 ans. Pour les assurés qui justifient d'au
+      moins trente années d'assurance, la pension est égale à 20 p. 100 du salaire annuel
+      de base. Lorsque l'assuré demande la liquidation de sa pension après l'âge de 60 ans,
+      cette pension est majorée de 4 p. 100 du salaire annuel de base par année d'assurance
+      accomplie postérieurement à cet âge. » ; article 64, 40 p. 100 « à un âge compris
+      entre 60 et 65 ans » pour trente années d'assurance et vingt années d'une activité
+      « particulièrement pénible », ou l'inaptitude ; article 65, de quinze à trente années
+      d'assurance, « autant de trentièmes » de cette pension. Gallica, vue 34 ; l'OCR lit
+      « Art. 61 » pour l'article 64
+    date: 2026-09-27
+    url: https://gallica.bnf.fr/ark:/12148/bpt6k2033716d/f34.item
+  - type: jorf
+    reference: >-
+      loi n° 48-1306 du 23 août 1948, Journal officiel du 24 août 1948, page 8308, lue sur
+      l'image, article 1er : « Les articles 63 à 72, 75 à 78, 115 à 123 de l'ordonnance n°
+      45-2454 du 19 octobre 1945 sont abrogés et remplacés par les dispositions
+      suivantes » ; l'article 63 nouveau garde les 20 p. 100 pour trente années d'assurance
+      et la majoration « de 4 p. 100 du salaire annuel de base par année d'assurance
+      accomplie postérieurement à cet âge ». Gallica, vue 4 ; l'OCR lit « 75 à 79, 115 à
+      128 », et « 6303 » pour la page
+    date: 2026-09-27
+    url: https://gallica.bnf.fr/ark:/12148/bpt6k1576644d/f4.item
+  - type: jorf
+    reference: >-
+      loi n° 51-374 du 27 mars 1951 relative au régime de l'assurance vieillesse, Journal
+      officiel du 29 mars 1951, page 3141, lue sur l'image, article 15 : « § 1er. — Le
+      troisième alinéa de l'article 63 de l'ordonnance n° 45-2454 du 19 octobre 1945 est
+      abrogé et remplacé par le texte suivant : « Lorsque l'assuré demande la liquidation de
+      sa pension après l'âge de soixante ans, cette pension est majorée de 4 p. 100 du
+      salaire annuel de base par année postérieure à cet âge ». § 2. — Les dispositions du
+      paragraphe qui précède sont applicables aux liquidations intervenant avec entrée en
+      jouissance postérieure au 31 décembre 1950. » Gallica, vue 5 ; le dernier chiffre de
+      1950 est à demi effacé et l'OCR lit 1959, la circulaire n° 93 SS dit 1950
+    date: 2026-09-27
+    url: https://gallica.bnf.fr/ark:/12148/bpt6k1575311p/f5.item
+  - type: jorf
+    reference: >-
+      décret n° 45-0179 du 29 décembre 1945, articles 70 et 71, dans leur rédaction
+      initiale (Journal officiel du 30 décembre 1945, page 8712, Gallica
+      ark:/12148/bpt6k2033778h, vue 20) et dans celle du décret n° 49-328 du 7 mars 1949
+      (Journal officiel du 12 mars 1949, page 2557, lue sur l'image) : aucun taux ; l'entrée
+      en jouissance est « nécessairement le premier jour d'un trimestre civil », et les
+      droits se déterminent en tenant compte « 1° Des cotisations versées au titre de la
+      législation sur les assurances sociales et arrêtées au dernier jour du trimestre civil
+      précédant la date prévue pour l'entrée en jouissance de la pension ou rente ; 2° De
+      l'âge atteint par l'intéressé à cette dernière date ; 3° Du nombre de trimestres
+      d'assurance valables pour le calcul de la pension. » Les 20 % et les 4 points sont à
+      l'article 63 de l'ordonnance, non au décret
+    date: 2026-09-27
+    url: https://gallica.bnf.fr/ark:/12148/bpt6k15682555/f13.item
+  - type: jorf
+    reference: >-
+      salariés agricoles : décret n° 50-1225 du 21 septembre 1950, Journal officiel du 4
+      octobre 1950, page 10322 (Gallica ark:/12148/bpt6k1565900p, vue 30), article 55 dans
+      sa rédaction initiale, lu sur l'image : « La pension d'invalidité prend fin à l'âge de
+      soixante ans. Elle est remplacée à cet âge par la pension de vieillesse à laquelle
+      l'assuré a droit. », sans aucun taux ; décret n° 51-727 du 6 juin 1951, Journal
+      officiel du 9 juin 1951, page 6058, article 1er, qui réécrit l'article 8 du décret du
+      30 octobre 1935, lu sur l'image : « Les personnes qui justifient avoir été assurées
+      plus de trente ans ont droit à une pension égale à 20 p. 100 au moins de leur salaire
+      annuel moyen de base. […] Le montant des pensions prévues au présent paragraphe est
+      majoré de 4 p. 100 par année postérieure à soixante ans lorsque la liquidation en est
+      demandée après soixante et un ans. »
+    date: 2026-09-27
+    url: https://gallica.bnf.fr/ark:/12148/bpt6k15818791/f18.item
+  - type: autre
+    reference: >-
+      circulaire ministérielle n° 93 SS du 17 mai 1951, « Modalités d'application de la loi
+      n° 51-374 du 27 mars 1951 relative au régime de l'assurance vieillesse », base de
+      législation de la Cnav, point D : « L'article 15 § 1er de la loi du 27 mars 1951
+      substitue au membre de phrase : " par année d'assurance accomplie postérieurement à
+      cet âge " les mots : " par année postérieure à cet âge. " Il s'ensuit que le
+      pourcentage applicable au salaire annuel moyen n'est plus fonction des années
+      d'assurance accomplies après 60 ans, mais uniquement de la période écoulée du
+      soixantième anniversaire à la date fixée pour l'entrée en jouissance de la pension, le
+      pourcentage de 20% étant augmenté en cas d'ajournement de 1 % par trimestre postérieur
+      au soixantième anniversaire. »
+    date: 2026-09-27
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_MIN_93SS_17051951.aspx
+  - type: autre
+    reference: >-
+      circulaire ministérielle n° 20 SS du 6 février 1961 (assurance volontaire des
+      salariés français du Maroc et de la Tunisie), base de législation de la Cnav, qui
+      recopie la règle alors en vigueur : « Pour les assurés qui justifient d'au moins
+      trente années d'assurance, la pension est égale à 20 p. 100 du salaire annuel de base,
+      calculé sur la moyenne des dix dernières années avant la liquidation. Lorsque la
+      liquidation de la pension est demandée après l'âge de soixante ans, cette pension est
+      majorée de 4 p. 100 du salaire annuel de base par année postérieure à cet âge. »
+    date: 2026-09-27
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_MIN_20SS_06021961.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2/72 du 31 janvier 1972, application de la loi n° 71-1132 et du
+      décret n° 72-78 du 28 janvier 1972, point I A : « A partir du 1er janvier 1972, le
+      taux de la pension est fixé à 25 % (au lieu de 20 %) lorsque l'assuré demande la
+      liquidation de ses droits à 60 ans. Ce taux est majoré de 1,25 % (au lieu de 1 %) par
+      trimestre d'ajournement au-delà de cet âge. » ; les inaptes et les anciens déportés
+      ou internés « ont droit d'office aux taux de 50 % (au lieu de 40 %) » ; « Le nombre
+      de trimestres à retenir ne peut être supérieur à » 128 « si le point de départ de la
+      pension est fixé en 1972 », 136 en 1973, 144 en 1974, et 150 « si la pension prend
+      effet postérieurement au 31 décembre 1974 »
+    date: 2026-09-27
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_272_31011972.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 22/83 du 16 février 1983, application des ordonnances n° 82-270 et
+      n° 82-290 et du décret n° 82-628, point 313 : « En application des articles 11 de
+      l'ordonnance n° 82-270 du 26 mars 1982 et 16 du décret n° 82-628 du 21 juillet 1982,
+      la pension de vieillesse ne peut pas être d'un montant inférieur à celui qu'elle
+      aurait atteint si la liquidation en était intervenue avant le 1er avril 1983 compte
+      tenu de l'âge de l'assuré à cette date ; ainsi l'assuré conserve le bénéfice des
+      coefficients de majoration acquis au 31 mars 1983 » ; sa remarque : « en application
+      de la législation en vigueur jusqu'au 31 mars 1983, le taux de 50 % augmente, sans
+      limitation, de 2,5 % par trimestre d'âge après 65 ans » ; son exemple d'un assuré né
+      en mars 1917, dont la pension prend effet le 1er septembre 1983 : « Coefficient acquis
+      au 31-3-83 : 55 % » ; point 322, pour la pension calculée selon ce droit, « le taux
+      applicable au salaire limite soumis à cotisations est celui qui a servi au calcul de
+      la pension de vieillesse »
+    date: 2026-09-27
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2283_16021983.aspx
+  - type: legifrance
+    reference: >-
+      ordonnance n° 82-270, article 11, en vigueur du 1er avril 1983 au 31 juillet 1987
+      (LEGIARTI000006759664) : « Les dispositions de l'article L. 331 du code de la sécurité
+      sociale, telles qu'elles résultent de la présente ordonnance, ne sauraient avoir pour
+      effet de réduire le montant de la pension à un montant inférieur à celui qu'elle
+      aurait atteint si la liquidation en était intervenue avant le 1er avril 1983, compte
+      tenu de l'âge atteint à cette date. » Lu dans l'index LEGI du dépôt, qui ne porte
+      toujours pas les articles 1er à 4, 6 et 7
+    date: 2026-09-27
 textes_a_rattacher:
 - id: LEGIARTI000006760656
   reference: >-
@@ -246,6 +414,34 @@ textes_a_rattacher:
 - id: LEGIARTI000006756030
   reference: >-
     loi n° 71-1132 du 31 décembre 1971, article 11 : effet au 1er janvier 1972
+- id: JORFTEXT000000333985
+  reference: >-
+    ordonnance n° 45-2454 du 19 octobre 1945, articles 63 à 65, rédaction initiale : 20 %
+    pour trente années d'assurance, 4 points par année d'assurance accomplie après
+    soixante ans, des trentièmes de quinze à trente années
+- id: JORFTEXT000000684490
+  reference: >-
+    loi n° 48-1306 du 23 août 1948, article 1er : les articles 63 à 72 de l'ordonnance
+    réécrits, la même règle
+- id: JORFTEXT000000336226
+  reference: >-
+    loi n° 51-374 du 27 mars 1951, article 15 : la majoration « par année postérieure à cet
+    âge », pour une entrée en jouissance postérieure au 31 décembre 1950
+- id: JORFTEXT000000848692
+  reference: >-
+    décret n° 49-328 du 7 mars 1949, articles 70 et 71 du décret du 29 décembre 1945 :
+    l'entrée en jouissance au premier jour d'un trimestre civil, l'âge atteint au dernier
+    jour du trimestre qui la précède
+- id: JORFTEXT000000868022
+  reference: >-
+    décret n° 51-727 du 6 juin 1951, article 1er (article 8 du décret du 30 octobre 1935) :
+    20 % au moins pour trente ans chez les salariés agricoles, 4 p. 100 par année
+    postérieure à soixante ans pour une liquidation demandée après soixante et un ans
+- id: LEGIARTI000006759664
+  reference: >-
+    ordonnance n° 82-270, article 11 : la pension ne peut être inférieure à celle qu'aurait
+    donnée une liquidation avant le 1er avril 1983, compte tenu de l'âge atteint à cette
+    date
 code:
   interrupteurs:
     decote_annulee_par_la_duree: false

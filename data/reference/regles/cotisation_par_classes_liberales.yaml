@@ -14,43 +14,76 @@ effet: >-
   classes, d'une à treize fois la classe A) et à la CAVEC en 2026 (neuf classes, de 54 à
   1 841 points). Mais hors des millésimes publiés, la CARPV depuis 2016, la Cipav en 2022 et
   la CAVEC en 2026, le moteur reporte une seule grille par le rapport des plafonds, et les
-  textes la démentent. Cipav : six classes, d'une à dix fois la classe 1, jusqu'en 2012, et
-  non huit jusqu'à treize fois ; à rang égal, la première classe du moteur passe celle du
-  décret annuel de 84 % en 1990, 72 % en 2001, 34 % en 2008, 16 % en 2013 et 5 % en 2021.
-  CAVEC : six classes de 48 à 180 points en 1980, sept jusqu'à 216 points en 1987, huit de
-  48 à 1 500 points de 2008 à 2025, et le moteur en sert neuf, de 54 à 1 841 points ; sa
-  classe A passe celle du décret de 24 % en 2012 et de 12,5 % en 2025, et en 1992 il appelle
-  de 411 € à 13 996 € quand le décret fixait de 1 045 € (classe 3) à 6 273 € (classe 18).
-  CARPV : avant 1998, un nombre d'actes selon l'âge, sans égard au revenu ; de 1998 à 2015,
-  des actes médicaux au taux d'appel du décret annuel (77 % en 1998, 104 % en 2015), que rien
-  ne publie en euros ; le moteur y reporte la grille de 2016. Partout, le moteur range
-  l'assuré sur le revenu de l'année, quand les textes prennent celui de l'avant-dernière
-  année (CARPV jusqu'en 2021) ou de l'année précédente (CARPV depuis 2022, CAVEC en 2026).
-  Les points suivent la cotisation ; l'effet sur les pensions n'est pas mesuré.
+  textes la démentent ; les caisses aussi, dont les bornes publiées restent fixes quand le
+  plafond monte : de 16 190 € à 132 780 € à la CAVEC chaque année de 2022 à 2025, de 26 580 €
+  à 123 300 € à la Cipav en 2019 comme en 2022. En 2022, le moteur borne la classe A de la
+  CAVEC à 12 770 € et l'appelle 769 €, pour 16 190 € et 670 € publiés ; en 2019, il appelle
+  1 504 € la classe A de la Cipav, pour 1 353 €. Cipav : six classes, d'une à dix fois la
+  classe 1, jusqu'en 2012, et non huit jusqu'à treize fois ; à rang égal, la première classe
+  du moteur passe celle du décret annuel de 84 % en 1990, 72 % en 2001, 34 % en 2008, 16 % en
+  2013 et 5 % en 2021. CAVEC : en 1953, cinq classes de 12 à 60 points, pour l'une
+  desquelles l'assujetti « opte, dans les conditions fixées par les statuts », sans que le
+  décret nomme le revenu ; six classes de 48 à 180 points en 1980, sept jusqu'à 216 points
+  en 1987, huit de 48 à 1 500 points de 2008 à 2025, et le moteur en sert neuf, de 54 à
+  1 841 points, selon le revenu ; sa classe A passe celle du décret de 24 % en
+  2012 et de 12,5 % en 2025, et en 1992 il appelle de 411 € à 13 996 € quand le décret
+  fixait de 1 045 € (classe 3) à 6 273 € (classe 18). CARPV : avant 1998, un nombre d'actes
+  selon l'âge, sans égard au revenu ; de 1998 à 2015, des actes médicaux vétérinaires, dont
+  l'ordre fixait la valeur, au taux d'appel du décret annuel (77 % en 1998, 104 % en 2015),
+  que rien ne publie en euros ; le moteur y reporte la grille de 2016. Le moteur range
+  l'assuré sur le revenu de l'année, comme la Cipav, qui régularise sur l'année même
+  « depuis le 1er janvier 2021 » ; les autres textes prennent celui de l'avant-dernière
+  année (CARPV jusqu'en 2021, CAVEC de 2008 à 2018) ou de l'année précédente (CARPV depuis
+  2022, CAVEC depuis les statuts de 2018, Cipav selon ses statuts de 2016). Il n'appelle pas
+  non plus la classe de début d'activité que les textes imposent. Les points suivent la
+  cotisation ; l'effet sur les pensions n'est pas mesuré.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Après la phase 7 : servir à chaque exercice la grille de son texte plutôt qu'une grille
+    Après la phase 8 : servir à chaque exercice la grille de son texte plutôt qu'une grille
     reportée. Les points de chaque classe sont dans l'article 2, version par version ; les
     montants, dans les décrets annuels de l'index LEGI (classe 1 puis A de la Cipav, classe
-    A de la CAVEC, taux d'appel puis valeur d'achat du point de la CARPV). Manquent les
-    bornes de revenu, que fixent les statuts, et la valeur de l'acte médical vétérinaire.
+    A de la CAVEC, taux d'appel puis valeur d'achat du point de la CARPV). Les bornes de
+    revenu ne sont dans aucun texte publié au Journal officiel : les statuts les renvoient au
+    conseil d'administration (CAVEC depuis 2008, Cipav depuis 2016) ; à la CARPV, le décret
+    les écrit en actes médicaux vétérinaires, dont l'ordre fixait la valeur, puis, depuis
+    2015, en multiples d'un indice de référence que fixe le conseil. Porter dans
+    classes_cotisation.csv les grilles que les caisses publient, lues le 27 septembre 2026 :
+    CAVEC de 2022 à 2025, Cipav de 2019.
   - >-
-    Après la phase 7 : ranger l'assuré sur le revenu de l'année que le texte désigne, et
-    appeler la première année d'activité en classe B à la CARPV et en classe A à la CAVEC
-    depuis 2026.
+    Chercher les autres millésimes de bornes dans ce que publient les caisses : guides de la
+    CAVEC d'avant 2022 et de la Cipav d'avant 2019, livrets de la CARPV d'avant 2024 (celui
+    de 2021 n'est plus sur carpv.fr) ; la valeur de l'acte médical que fixait l'ordre des
+    vétérinaires, et celle de l'indice de référence, que les livrets de 2024 à 2026 ne
+    donnent pas. L'Internet Archive n'a pas répondu le 27 septembre 2026.
   - >-
-    Chercher les bornes de revenu des classes dans les statuts approuvés par arrêté (index
-    JORF). Pour la CAVEC d'avant 1980, l'index LEGI ne porte pas l'article 2, et l'index
-    JORF n'a que les titres des décrets qui l'ont modifié de 1966 à 1977.
+    Après la phase 8 : ranger l'assuré sur le revenu de l'année que le texte désigne —
+    l'avant-dernière à la CAVEC (statuts de 2008 à 2018) et à la CARPV (jusqu'en 2021),
+    l'année précédente à la CAVEC (statuts de 2018), à la CARPV (depuis 2022) et à la Cipav
+    (statuts de 2016, classe provisoire sur l'avant-dernière), l'année même à la Cipav
+    « depuis le 1er janvier 2021 », dont la fiche pratique de 2021 régularise déjà
+    l'exercice 2020 —, et appeler la classe de début d'activité : à la CAVEC, la classe A les
+    deux premières années civiles (statuts de 2012), la première depuis ceux de 2018 ; à la
+    CARPV, la classe B les deux premières années (statuts de 2014 et de 2015), la première
+    depuis ceux de 2021 ; à la Cipav, la classe A jusqu'au premier jour de la deuxième année
+    civile (statuts de 2016), à titre provisionnel depuis 2021.
   - >-
-    Relire l'exemple de la fiche pratique 2022 de la Cipav que cite classes_cotisation.csv
-    (27 000 € de revenus, classe B, 3 055 €) : elle n'est plus sur lacipav.fr, et l'Internet
-    Archive n'a pas répondu le 27 septembre 2026. Puis l'inscrire aux exemples officiels.
+    CAVEC d'avant 1980 : le décret de 1953 fait opter l'assujetti, « dans les conditions
+    fixées par les statuts », pour l'une de cinq classes, sans nommer le revenu ; quand la
+    classe a suivi le revenu, avant 1980, n'est pas lu. Les quinze décrets qui modifient
+    l'article 2 de 1955 à 1974 n'ont que leur titre dans l'index JORF ; Gallica n'a pas le
+    Journal officiel après 1955, ni le numéro du 5 février 1955 (décret n° 55-188) ; les
+    statuts d'avant 2008 sont au Bulletin officiel du ministère, non lu. Après la phase 8 :
+    ne servir à la CAVEC d'avant 1980 une grille de revenu que si ses statuts, une fois lus,
+    l'écrivent.
   - >-
-    Après la phase 7 : corriger les notes des périodes. CARPV : la grille y est dite
+    Inscrire aux exemples officiels l'exemple de la fiche pratique 2022 de la Cipav,
+    « Comment sont calculées mes cotisations ? », que cite classes_cotisation.csv : 27 000 €
+    de revenus de 2022, classe B, 3 055 € ; relue sur lacipav.fr le 27 septembre 2026.
+  - >-
+    Après la phase 8 : corriger les notes des périodes. CARPV : la grille y est dite
     « indexée sur les prix », le moteur la ramène par le rapport des plafonds ; les décrets
     modificatifs sont le n° 97-1112 du 26 novembre 1997 et le n° 2015-712 du 22 juin 2015.
     Cipav : la version de 1985 ne touche pas l'option, elle ouvre un « appel réduit », à
@@ -149,6 +182,142 @@ sources:
     url: >-
       https://www.carpv.fr/vos-retraites/comprendre-vos-cotisations-et-vos-appels-de-cotisations/
     date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CAVEC, décret n° 53-506 du 21 mai 1953 (JORFTEXT000000670150), article 2, rédaction
+      d'origine, lue au Journal officiel du 24 mai 1953 sur Gallica (fac-similé, page 34 du
+      numéro) : « Chaque assujetti opte, dans les conditions fixées par les statuts, pour une
+      des classes de cotisation I à V correspondant à un nombre de points de retraite fixé
+      comme suit », de « Classe I » à 12 points à « Classe V » à 60 points ; « Le montant de
+      la cotisation annuelle de chaque classe est fixé, chaque année, proportionnellement au
+      nombre de points correspondants, par arrêté du ministre du travail et de la sécurité
+      sociale et du ministre chargé du budget, après avis du conseil d'administration de la
+      section professionnelle des experts comptables ». L'index JORF n'a que le titre des
+      quinze décrets qui modifient l'article 2 de 1955 (n° 55-188) à 1974 (n° 74-199), et le
+      résumé du décret n° 80-439 : « POSSIBILITE POUR LES ADHERENTS D'OPTER POUR LA CLASSE
+      IMMEDIATEMENT SUPERIEURE A CELLE QUI CORRESPOND A LEUR REVENU »
+    url: https://gallica.bnf.fr/ark:/12148/bpt6k1578913h/f34.item
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CAVEC, statuts, index JORF. Arrêté du 22 février 2008 (JORFARTI000018197778), article
+      3.3 : « Le conseil d'administration fixe, chaque année, les tranches de revenu
+      professionnel correspondant aux différentes classes de cotisation ainsi que la
+      cotisation correspondant à un point de retraite » ; article 3.4 : « en fonction de son
+      revenu professionnel net provenant de l'ensemble des activités libérales de
+      l'avant-dernière année ». Arrêté du 9 février 2012 (JORFARTI000025395367), article
+      3.4 : « b) Sauf option pour la classe B, l'adhérent est inscrit d'office en classe A
+      pour les deux premières années civiles d'exercice », que reprend l'arrêté du 27 mars
+      2012 (JORFARTI000025687514). Arrêté du 20 août 2018 (JORFARTI000037363871), partie 2,
+      article 2 : « Le conseil d'administration fixe, chaque année, les tranches de revenu
+      professionnel issu de l'activité non salariée et correspondant aux différentes classes
+      de cotisation » ; article 3 : « en fonction de son revenu d'activité provenant de
+      l'ensemble des activités non salariées non agricoles de l'exercice précédent », « Sauf
+      option pour la classe B, l'affilié est inscrit d'office en classe A pour sa première
+      année civile d'exercice ». Avant 2008, les arrêtés d'approbation renvoient au Bulletin
+      officiel : « L'arrêté du 13 mai 1994 sera publié intégralement au Bulletin officiel du
+      ministère no 94-17 »
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CARPV. Décret n° 97-1112, article 1er (JORFARTI000001804631), et article 2 du décret
+      n° 50-1318 dans sa rédaction de 1997 (LEGIARTI000006776823) : « La cotisation est
+      exprimée sous la forme d'un multiple de l'acte médical vétérinaire (AMV) dont la
+      valeur est fixée par le conseil de l'ordre de la profession ». Statuts, arrêté du 16
+      avril 2014 (JORFARTI000028939421), titre II, article 4 : « Les tranches de cotisations
+      et les cotisations sont exprimées en actes médicaux vétérinaires dont la valeur est
+      égale à l'acte médical ordinal (AMO) fixée par le Conseil supérieur de l'ordre des
+      vétérinaires » ; « La cotisation des vétérinaires à la date d'effet de leur
+      affiliation est appelée sur la base de la classe B pendant les deux premières années
+      civiles d'activité », phrase que garde l'arrêté du 2 novembre 2015
+      (JORFARTI000031549970). Décret n° 2015-712 (JORFTEXT000030769278), notice : « à la
+      suite de l'abandon par le Conseil supérieur de l'ordre des vétérinaires de la notion
+      d'acte médical ordinal, qui servait jusqu'à présent de référence pour la définition des
+      tranches de revenu et des taux de cotisation » ; article 2 dans cette rédaction
+      (LEGIARTI000030774327) : un « indice de référence (IR), dont la valeur est fixée chaque
+      année par le conseil d'administration de la caisse ». Statuts, arrêté du 18 octobre
+      2021 (JORFARTI000044220745), en vigueur le 1er janvier 2022 : revenus « de l'année
+      précédente (N-1) » (article 42) ; « La cotisation est appelée sur la base de la classe
+      B la première année civile d'activité » (article 44)
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      Cipav, statuts, index JORF. Arrêté du 18 décembre 2015 (JORFARTI000031680320), en
+      vigueur le 1er janvier 2016, article 3.4 : « Les tranches de revenus d'activité non
+      salarié correspondant aux différentes classes de cotisations visées à l'article 3.3
+      sont fixées chaque année par une délibération du conseil d'administration, soumise à
+      l'approbation du ministre chargé de la sécurité sociale » ; « Chaque année, cette
+      classe de cotisation est déterminée à titre provisoire en fonction du revenu
+      d'activité non salarié de l'avant dernière année. Dès connaissance par la caisse du
+      revenu d'activité non salarié de la dernière année, la classe de cotisation est
+      ajustée en fonction de ce revenu » ; « Sauf option pour la classe B, l'adhérent qui
+      commence son activité est inscrit d'office en classe A jusqu'au premier jour de la
+      deuxième année civile qui suit le début de l'activité professionnelle libérale ».
+      Arrêté du 16 mars 2021 (JORFARTI000043302736), article 3.3 : les tranches « sont
+      fixées chaque année par une délibération du conseil d'administration » ; « La
+      cotisation due au titre du régime d'assurance vieillesse complémentaire est calculée
+      dans les conditions définies aux articles L. 131-6-2 du même code » ; article 3.4 :
+      « L'adhérent qui commence son activité relève d'office à titre provisionnel de la
+      classe A jusqu'à connaissance du revenu déclaré au titre de sa première année
+      d'activité ». Les statuts de 2006 sont au Bulletin officiel : l'arrêté du 3 octobre
+      2006 « sera publié intégralement au Bulletin officiel d'octobre 2006 »
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CAVEC, « Quel est le montant de vos cotisations en 2022 ? », publié le 4 janvier 2022,
+      tableau en image : « Montant de vos revenus nets non salariés 2021 », « Montant de
+      votre cotisation 2022 », de « Jusqu'à 16 190 € », « Classe A = 670 € », « 48 pts » à
+      « Au-delà de 132 780 € », « Classe H = 20 925 € », « 1 500 pts », bornes
+      intermédiaires 32 350, 44 790, 64 560, 79 040 et 94 850 €
+    url: https://www.cavec.fr/2022/01/04/quel-est-le-montant-de-vos-cotisations-en-2022/
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CAVEC, « Quels seront les montants de cotisations de retraite complémentaire en 2025 ? »,
+      publié le 16 décembre 2024 : « Votre cotisation 2025 est fixée selon un barème, en
+      fonction des revenus professionnels nets non salariés de l'année 2024 » ; classe A
+      « De 0€ à 16 190€ », « 782€ », « 48 points » ; classe H « Au-delà de 132780€ »,
+      « 24 450€ », « 1 500 points » ; mêmes bornes aux pages du 4 janvier 2023 (classe A
+      « 711€ ») et du 8 janvier 2024 (« 760€ »)
+    url: >-
+      https://www.cavec.fr/2024/12/16/quels-seront-les-montants-de-cotisations-de-retraite-complementaire-en-2025/
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Cipav, Guide pratique 2019, page 17 : « son montant est déterminé selon un barème de
+      huit tranches de revenus » ; « VOS REVENUS NETS D'ACTIVITÉS INDÉPENDANTES (2018 PUIS
+      2019) », de « - de 26 580 € Classe A = 1 353 € 36 » à « 123 300 € et + Classe H =
+      17 583 € 468 », bornes intermédiaires 49 280, 57 850, 66 400, 83 060 et 103 180 €,
+      celles de 2022 ; « Chaque année, vos cotisations de retraite complémentaire seraient
+      calculées à titre définitif en fonction de votre revenu de l'année et non plus sur
+      celui de l'année précédente ». La classe A est celle du décret n° 2019-1484
+      (JORFARTI000039684598) : « classe A : 1 353 euros »
+    url: >-
+      https://www.lacipav.fr/sites/default/files/2021-01/CIPAV%20-%20Guide%20Pratique%20-%20web.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Cipav, fiche pratique « Comment sont calculées mes cotisations ? » (2022) : « Son
+      montant est déterminé selon ce tableau », de « Jusqu'à 26 580 € classe a : 1 527 € » à
+      « 123 301 € et plus classe h : 19 857 € » ; exemple : « En 2023, il déclare un revenu
+      de 27 000 € au titre de l'année 2022 », « Compris entre 26 581 € et 49 280 € »,
+      « Classe B : 3 055 € », « Sa cotisation définitive pour l'année 2022 au régime
+      complémentaire s'élève à 3 055 € »
+    url: >-
+      https://www.lacipav.fr/sites/default/files/2022-01/Comment%20sont%20calcul%C3%A9es%20mes%20cotisations%20-%202022.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Cipav, fiche pratique « Les nouvelles modalités de la régularisation de vos
+      cotisations » (2021) : « À compter de l'année 2021, votre cotisation au régime
+      complémentaire est régularisée sur vos revenus de l'année « n » » ; « Depuis le 1er
+      janvier 2021, vos cotisations de retraite complémentaire font l'objet d'une
+      régularisation sur vos revenus de l'année « N » au même titre que vos cotisations de
+      retraite de base » ; en 2021, la caisse pourra « régulariser vos cotisations de retraite
+      de base et complémentaire pour l'exercice de l'année 2020 »
+    url: >-
+      https://www.lacipav.fr/sites/default/files/2021-02/Fiche%20pratique%20-%20Les%20nouvelles%20modalit%C3%A9s%20de%20r%C3%A9gularisation%20de%20vos%20cotisations%20-%20La%20Cipav.pdf
+    date: 2026-09-27
 textes_a_rattacher:
 - id: LEGIARTI000006776818
   reference: >-
@@ -231,6 +400,44 @@ textes_a_rattacher:
   reference: >-
     décret n° 79-262, article 2, version du 1er janvier 2023 : deux tranches
     proportionnelles, fin des classes à la Cipav
+- id: JORFTEXT000000670150
+  reference: >-
+    décret n° 53-506 du 21 mai 1953, article 2, rédaction d'origine (Journal officiel du
+    24 mai 1953) : cinq classes, de 12 à 60 points, pour l'une desquelles l'assujetti opte
+- id: JORFTEXT000018197770
+  reference: >-
+    arrêté du 22 février 2008 (CAVEC), statuts, articles 3.3 et 3.4 (JORFARTI000018197778) :
+    tranches fixées chaque année par le conseil d'administration, revenu de l'avant-dernière
+    année
+- id: JORFTEXT000025395360
+  reference: >-
+    arrêté du 9 février 2012 (CAVEC), statuts, article 3.4 (JORFARTI000025395367) : classe A
+    d'office les deux premières années civiles d'exercice
+- id: JORFTEXT000037363865
+  reference: >-
+    arrêté du 20 août 2018 (CAVEC), statuts, partie 2, articles 2 et 3
+    (JORFARTI000037363871) : revenu de l'exercice précédent, classe A d'office la première
+    année
+- id: JORFTEXT000028939415
+  reference: >-
+    arrêté du 16 avril 2014 (CARPV), statuts, titre II, article 4 (JORFARTI000028939421) :
+    acte médical vétérinaire égal à l'acte médical ordinal que fixe l'ordre, classe B les
+    deux premières années civiles
+- id: JORFTEXT000044220734
+  reference: >-
+    arrêté du 18 octobre 2021 (CARPV), statuts, articles 42 et 44 (JORFARTI000044220745), en
+    vigueur le 1er janvier 2022 : revenu de l'année précédente, classe B la première année
+- id: JORFTEXT000031680311
+  reference: >-
+    arrêté du 18 décembre 2015 (Cipav), statuts, article 3.4 (JORFARTI000031680320), en
+    vigueur le 1er janvier 2016 : tranches fixées par délibération du conseil, classe
+    provisoire sur l'avant-dernière année, ajustée sur la dernière, classe A en début
+    d'activité
+- id: JORFTEXT000043302728
+  reference: >-
+    arrêté du 16 mars 2021 (Cipav), statuts, articles 3.3 et 3.4 (JORFARTI000043302736) :
+    tranches fixées par délibération du conseil, cotisation calculée selon l'article
+    L. 131-6-2, classe A provisionnelle en début d'activité
 textes_sans_effet:
 - id: LEGIARTI000026885130
   reference: >-

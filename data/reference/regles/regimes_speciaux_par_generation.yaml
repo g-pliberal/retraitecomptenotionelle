@@ -5,8 +5,10 @@ intitule: >-
   pour tous les agents ; la durée requise au mois où l'agent réunit les conditions
   — calendrier de 2008 (150 avant juillet 2008, 151 à 166 jusqu'en juillet 2018),
   table de 2014 à compter du 1er juillet 2019, table de 2023 à compter du 1er janvier
-  2025.
-etat: conforme
+  2025. Aux IEG, du 1er janvier 2017 au 31 décembre 2024, l'agent qui peut liquider
+  avant soixante ans doit la durée exigée des agents qui atteignent soixante ans
+  l'année où sa liquidation peut intervenir.
+etat: approchee
 effet: >-
   Les trois fiches portaient un âge par année de liquidation, celui de la seule
   génération qui l'atteint cette année-là, et la table commune de durée par génération.
@@ -15,14 +17,33 @@ effet: >-
   le modèle lui en demandait 167 ; un agent des IEG né en 1960 ouvrait à 55 ans,
   le modèle disait 55 ans et 4 mois. Corrigé par les tables d'âges par génération
   et la durée lue au mois des conditions réunies ; les pensions de leurs retraités
-  remontent de 3 à 11 %.
+  remontent de 3 à 11 %. Un écart reste, trouvé le 27 septembre 2026 en portant les
+  exemples de la CNIEG : aux IEG, l'agent qui peut partir avant soixante ans (services
+  actifs, parents) et réunit les conditions du 1er juillet 2019 au 31 décembre 2024
+  doit, par l'article 9-1 de l'annexe 3, la durée de la génération qui atteint soixante
+  ans l'année où sa liquidation peut intervenir, et le moteur lui demande celle de sa
+  propre génération. Un agent actif né le 1er décembre 1964, dont le droit s'ouvre le
+  1er décembre 2020, doit 167 trimestres selon la CNIEG ; le modèle lui en demande 169.
+  Des trimestres de trop, deux pour lui, donc plus de décote et une pension proratisée
+  plus bas : non mesuré.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Dix autres fiches portent encore un âge par année : voir l'action 121 de la
     feuille de route.
+  - >-
+    Après la phase 8 : aux IEG, lire la durée requise de l'agent qui peut liquider avant
+    soixante ans à l'année où sa liquidation peut intervenir, du 1er juillet 2019 au 31
+    décembre 2024 (article 9-1 de l'annexe 3), comme la table de la CNIEG, et non à sa
+    génération ; puis porter l'exemple 1 de la circulaire CNIEG n° 2024/15 (Monsieur A,
+    167 trimestres), dont seule la décote se contredit (huit trimestres au § 5, quatre
+    au § 6).
+  - >-
+    Lire ce que la CNIEG applique après 2024, quand l'article 9-1 est abrogé et que sa
+    table prolonge la lecture par période jusqu'en 2032 ; et si la SNCF et la RATP
+    portent une règle semblable.
   lectures:
   - type: legifrance
     reference: >-
@@ -42,6 +63,31 @@ sources:
       janvier 2025, l'âge et la durée « sont égaux à ceux applicables avant » les
       décrets de 2023
     date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      IEG, annexe 3 du statut, article 9-1, dans les rédactions du 1er janvier 2017
+      (LEGIARTI000029150204) au 1er janvier 2025 (LEGIARTI000047908882), dont celle du 3
+      décembre 2020 (LEGIARTI000042597001) : « La durée des services et des bonifications
+      nécessaire à l'obtention du pourcentage maximum de la pension est celle qui est en
+      vigueur lorsque les agents atteignent l'âge de soixante ans. Par dérogation à
+      l'alinéa précédent, la durée des services et des bonifications exigée des agents
+      qui remplissent les conditions de liquidation d'une pension avant l'âge de soixante
+      ans est celle exigée des agents atteignant l'âge de soixante ans l'année à compter
+      de laquelle la liquidation peut intervenir. » Absent des rédactions de 2008 à 2016 ;
+      « Article 9-1 (Abrogé) » dans celle du 1er janvier 2025 (LEGIARTI000047909955). Lu
+      dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CNIEG, circulaire n° 2024/15, « La décote » : la durée requise par période où le
+      droit s'ouvre, « De juillet 1959 à décembre 1960 » 167 « Du 01/07/2019 au 31/12/2020
+      », « 1961-1962-1963 » 168 « 2021-2022-2023 », « 1964-1965-1966 » 169 «
+      2024-2025-2026 », et ainsi jusqu'en 2032 ; exemple 1 : « Monsieur A, né le 1er
+      décembre 1964 », droit ouvert à 56 ans au titre de 15 ans de services actifs le 1er
+      décembre 2020, « a un nombre de trimestres requis de 167 »
+    url: >-
+      https://www.cnieg.fr/files/live/sites/portail/files/documents/Juridique/circulaire2024/J_Circulaire2024_15_Decote.pdf
+    date: 2026-09-27
 textes_a_rattacher:
 - reference: >-
     décret n° 2008-639, articles 35 et 37-1 (LEGIARTI000029165209, LEGIARTI000048897024,
@@ -51,6 +97,11 @@ textes_a_rattacher:
     LEGIARTI000047914257)
 - reference: >-
     annexe 3 du statut des IEG, article 45 (LEGIARTI000042597001, LEGIARTI000052046924)
+- reference: >-
+    annexe 3 du statut des IEG, article 9-1, du 1er janvier 2017 au 31 décembre 2024
+    (LEGIARTI000029150204, LEGIARTI000034764555, LEGIARTI000036755043,
+    LEGIARTI000038189976, LEGIARTI000042597001, LEGIARTI000047908882), abrogé par la
+    rédaction du 1er janvier 2025 (LEGIARTI000047909955)
 reformes:
 - regimes_speciaux_2008
 - speciaux_bornes_2017

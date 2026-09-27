@@ -37,12 +37,12 @@ sources:
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Après la phase 7 : lire le barème au MOIS où les conditions sont réunies, comme la durée
+    Après la phase 8 : lire le barème au MOIS où les conditions sont réunies, comme la durée
     requise (`ouvrir.mois_ouverture_des_droits`), et non à l'année : la ligne d'une année vaut
     du 1er juillet précédent au 30 juin, et le second semestre reçoit aujourd'hui la marche
     d'avant.
   - >-
-    Après la phase 7 : IEG, garder à toute date d'effet l'âge d'annulation d'avant la réforme
+    Après la phase 8 : IEG, garder à toute date d'effet l'âge d'annulation d'avant la réforme
     de 2023, l'âge minimum majoré de vingt trimestres moins la diminution, à qui a ouvert son
     droit avant le 1er janvier 2025, comme la CNIEG (circulaire 2024/15, § 3), et réserver
     soixante-deux ans sans diminution à qui l'ouvre ensuite ; à reprendre avec
@@ -51,16 +51,16 @@ sources:
     janvier 2025 », et la caisse s'appuie sur le I ter : lecture divergente, inscrite
     ci-dessous.
   - >-
-    Après la phase 7 : CRPCEN, pour les pensions de 2025 et après, retrancher la diminution de
+    Après la phase 8 : CRPCEN, pour les pensions de 2025 et après, retrancher la diminution de
     l'âge d'ouverture de l'article 84 d'avant le décret n° 2023-689 (LEGIARTI000047909844)
     majoré de cinq ans, et non de soixante-sept ans, comme la caisse le publie : 65 ans et 4
     mois à 66 ans et 9 mois pour les assurés nés de 1960 au 30 juin 1962.
   - >-
-    Après la phase 7 : porter la borne du 2° de chaque article, le décompte par la durée ne
+    Après la phase 8 : porter la borne du 2° de chaque article, le décompte par la durée ne
     pouvant excéder la durée requise moins 150, réduite des trimestres cotisés au-delà de
     l'âge d'ouverture, que la CNIEG applique (circulaire 2024/15, § 4).
   - >-
-    Après la phase 7 : l'en-tête du CSV écrit que « La même phrase se lit, aux mêmes dates »
+    Après la phase 8 : l'en-tête du CSV écrit que « La même phrase se lit, aux mêmes dates »
     dans les autres décrets ; c'est vrai des dates et des pas, non du mot à mot (« son taux est
     fixé […] au premier alinéa du I de l'article 13 » à la SNCF), ni, depuis 2025, des IEG et
     de la CRPCEN.
@@ -71,9 +71,16 @@ sources:
     comme la CNIEG le fait aux IEG. La CRP RATP et la CPRPSNCF ne publient pas la décote sur
     leurs pages publiques : chercher une circulaire.
   - >-
-    Rejouer un exemple publié : la CNIEG (page « Décote », circulaire 2024/15) et la CRPCEN
-    (page « La décote ») en publient. La fiche reste `approchee` tant que les écarts ci-dessus
-    demeurent.
+    Les exemples publiés : celui de Madame D (page « Décote » de la CNIEG) est porté,
+    `cnieg_decote_madame_d`, et le modèle le rend. L'exemple 1 de la circulaire CNIEG
+    2024/15 se contredit sur la décote (huit trimestres au § 5, quatre au § 6), et sa durée
+    de 167 trimestres montre l'écart que déclare la fiche `regimes_speciaux_par_generation`
+    ; ses autres agents sont sédentaires, ouvrent leur droit à soixante ans ou plus, ou
+    partent à une date qu'elle ne donne pas. Celui de Maria (page « La décote » de la
+    CRPCEN) : le modèle lui oppose 169 trimestres au lieu de 168 et ouvre son droit en
+    novembre 2023 au lieu de juillet : il lit l'âge de la CRPCEN à l'année de liquidation
+    et sa durée dans la table commune (action 121 de la feuille de route) ; à porter en
+    écart connu quand une fiche le déclarera. La fiche reste `approchee` tant que les écarts ci-dessus demeurent.
   lectures_divergentes:
   - >-
     IEG, âge d'annulation de la décote des pensions de 2025 et après : le II de l'article 45
@@ -393,6 +400,8 @@ textes_sans_effet:
     le II, jusqu'à la surcote, et le V de la décote, de « Le coefficient de minoration prévu
     au II ci-dessus n'est applicable » à « jusqu'au 30 juin 2024 inclus », y sont ceux de la
     rédaction précédente au mot près
+exemples:
+- cnieg_decote_madame_d
 code:
   interrupteurs:
     bareme_decote: regimes_speciaux

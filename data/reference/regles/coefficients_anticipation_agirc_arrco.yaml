@@ -29,7 +29,7 @@ sources:
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Après la phase 7 : appliquer aux points Agirc de la tranche C acquis avant 2016 le
+    Après la phase 8 : appliquer aux points Agirc de la tranche C acquis avant 2016 le
     coefficient pour âge de l'article 84, 2 de l'accord du 17 novembre 2017 quand la
     liquidation précède l'âge du 1° de l'article L. 351-8, même au taux plein, ou servir
     ces points sans abattement à cet âge (article 102) ; il faut pour cela les distinguer
@@ -42,32 +42,36 @@ sources:
     2011, article 3), où l'âge légal montait « à raison de quatre mois par génération »
     jusqu'à 62 ans pour la génération 1956. Le moteur lit l'âge d'annulation du régime de
     base, qui suit la rédaction du 23 décembre 2011 : 65,75 ans pour 1952, 66,17 pour
-    1953, 66,58 pour 1954, 67 pour 1955. Par déduction — le décret des âges de 2010 n'est
-    pas lu —, la rédaction figée donnerait 65 ans et 8 mois, 66 ans, 66 ans et 4 mois et
-    66 ans et 8 mois : jusqu'à deux trimestres d'anticipation de trop pour ces générations
-    liquidées avant 2019. Chercher une publication de la caisse de ces années qui donne
-    l'âge par génération ; si elle confirme, après la phase 7 : une table d'âges propre à
+    1953, 66,58 pour 1954, 67 pour 1955. La rédaction figée, lue depuis dans D. 161-2-1-9
+    (rédaction du second semestre 2011) augmenté des cinq ans du 1° de L. 351-8, donne 65
+    ans et 8 mois, 66 ans, 66 ans et 4 mois et 66 ans et 8 mois : jusqu'à deux trimestres
+    d'anticipation de trop pour ces générations liquidées avant 2019. Reste à lire ce que
+    la caisse a appliqué, dans ses circulaires 2011-6-DRE et 2011-17-DRE, introuvables le
+    27 septembre 2026 ; si elles confirment, après la phase 8 : une table d'âges propre à
     ces périodes.
   - >-
     À lire : les articles 84, 3 et 85, 3 nomment le régime général et le régime des
     assurances sociales agricoles ; le moteur accorde l'exonération et la table des
-    trimestres manquants sur la durée de la base, quelle qu'elle soit. Ce que la caisse
-    fait pour les statuts du régime dont la base est un régime spécial, clercs de notaire
-    ou mineurs, n'a pas été lu.
+    trimestres manquants sur la durée de la base, quelle qu'elle soit. Pour les mineurs, la
+    circulaire 2020-02-DRJ sert la complémentaire sans coefficient dès 60 ans avec trente
+    ans de services miniers, comme l'article 5 de l'annexe V de 1947 : ce que le moteur en
+    fait reste à vérifier. Rien n'est lu pour les clercs de notaire.
   - >-
     Non lus : la version consolidée de l'accord au 1er janvier 2026, sur Calaméo, qui
-    refuse la requête — ses avenants l'ont été par les circulaires de la caisse, sauf
-    2023-01-DRJ, dont le lien mène à une autre circulaire ; l'accord du 4 février 1983
-    (ASF) et les textes d'origine de 1947 et de 1961. Ni l'âge seul d'avant 1983, ni la
+    refuse la requête — ses avenants l'ont été par les circulaires de la caisse, 2023-01-DRJ
+    comprise, qui ne touche ni l'article 84, ni le 85, ni le 102 ; l'accord du 4 février
+    1983 (ASF), dont seul le résumé de l'agrément est lu (arrêté du 21 mars 1983, Journal
+    officiel du 15 avril 1983), et les textes d'origine de 1947 et de 1961. Ni l'âge seul d'avant 1983, ni la
     table des trimestres manquants dès 1983, que le moteur applique, ne sont donc
     confirmés : les plus anciens textes lus sont l'accord Arrco du 25 avril 1996 pour
     l'âge (65 ans, 0,43 à 55 ans, à compter de 1999) et les annexes E et V de 2018 pour
     les trimestres.
   - >-
-    Porter dans tests/temoins/exemples_officiels.yaml l'exemple du dépliant de la caisse
-    « Décrypter la retraite Agirc tranche C » (01/2025) : 63 ans et 11 mois, coefficient
-    0,8675. La table de septembre 2026 en donne un second, à 61 ans sans la retraite de
-    base : « vous percevrez 71 % ».
+    L'exemple du dépliant « Décrypter la retraite Agirc tranche C » (63 ans et 11 mois,
+    0,8675) est porté, `agirc_arrco_tranche_c_63_ans_11_mois`, pour un cadre sans le taux
+    plein : l'écart de la tranche C au taux plein reste sans exemple. Celui de la table
+    de septembre 2026, « à 61 ans … vous percevrez 71 % », suppose la complémentaire prise
+    sans la retraite de base, que le modèle ne liquide pas à part.
   lectures:
   - type: autre
     reference: >-
@@ -230,6 +234,86 @@ sources:
       par génération pour les assurés nés entre le 1er janvier 1952 et le 31 décembre
       1954 ». Lus dans l'index LEGI du dépôt
     date: 2026-09-27
+  - type: autre
+    reference: >-
+      Circulaire Agirc-Arrco 2023-01-DRJ du 19 janvier 2023, « Actualisation du texte de
+      base » : « L'avenant n°14 modifie les articles 65 et 78 de l'Accord National
+      Interprofessionnel du 17 novembre 2017, relatifs à la validation des périodes de
+      chômage des travailleurs frontaliers et aux salariés en congé parental d'éducation » ;
+      « La Délibération n°5 étend l'application du f) de l'article 98 à tous les
+      bénéficiaires d'une pension d'invalidité équivalant à une pension de 2ème ou 3ème
+      catégorie du régime général ». Rien sur les articles 84, 85 et 102
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2023/01/2023-01-DRJ_Circulaire_actualisation_du_texte_de_base.pdf
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      Code de la sécurité sociale, D. 161-2-1-9 (LEGIARTI000023388636, du 1er juillet au 31
+      décembre 2011), issu du décret n° 2010-1734 du 30 décembre 2010, article 11 : « L'âge
+      prévu au second alinéa de l'article L. 161-17-2 est fixé à : 1° Soixante ans pour les
+      assurés nés avant le 1er juillet 1951 ; 2° Soixante ans et quatre mois pour les
+      assurés nés entre le 1er juillet 1951 et le 31 décembre 1951 inclus ; 3° Soixante ans
+      et huit mois pour les assurés nés en 1952 ; 4° Soixante et un ans pour les assurés nés
+      en 1953 ; 5° Soixante et un ans et quatre mois pour les assurés nés en 1954 ; 6°
+      Soixante et un ans et huit mois pour les assurés nés en 1955 ». Augmenté des cinq
+      années du 1° de L. 351-8 (LEGIARTI000023030950), l'âge de la rédaction figée est de 65
+      ans et 4 mois (second semestre 1951), 65 ans et 8 mois, 66 ans, 66 ans et 4 mois et 66
+      ans et 8 mois (1952 à 1955). Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Accord du 18 mars 2011, article 1er (recueil « Accords nationaux des partenaires
+      sociaux ») : sans abattement pour qui a la pension de base à taux plein « soit en
+      application combinée des articles L. 161-17-2 et L. 351-1 du code de la Sécurité
+      sociale », « soit en application du dernier alinéa de l'article 87 de la loi n°
+      2010-1330 du 9 novembre 2010 » ; « Les dispositions du présent article s'appliquent
+      sur la base de la rédaction en vigueur, à la date du présent accord, de l'ensemble des
+      dispositions législatives susvisées, pour toute liquidation d'allocations AGIRC et/ou
+      ARRCO prenant effet à compter du 1er juillet 2011 et jusqu'au 31 décembre 2018 au plus
+      tard ». Aucune publication de la caisse de 2011 à 2018 donnant l'âge par génération
+      n'est lue
+    url: https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Convention du 14 mars 1947, « Mise à jour au 1 janvier 2018 », annexe V, note (1) :
+      « Les dispositions de la présente annexe s'appliquent sur la base de la rédaction au
+      18 mars 2011 de l'ensemble des dispositions législatives qui y sont visées, pour toute
+      liquidation prenant effet à compter du 1er juillet 2011 » ; article 2 : « avoir versé
+      les cotisations ASF et AGFF fixées par les accords successifs des Partenaires sociaux
+      depuis celui du 4 février 1983 » ; article 5 : « Bénéficient également des
+      dispositions de la présente annexe les participants de l'AGIRC relevant de la
+      profession minière et comptant le nombre de trimestres visé au 2ème alinéa de
+      l'article L. 351-1 du Code de la sécurité sociale au titre : - de services validés par
+      la CAN, de retraite minière, […] - et de services validés par un ou plusieurs régimes
+      obligatoires »
+    url: https://www.agirc-arrco.fr/storage/2021/11/CCN_14mars1947-1.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, « Réglementation applicable aux
+      individus », fiche 3, I.1.3.1 : « Les salariés, relevant du régime spécial de la
+      sécurité sociale dans les mines, qui ont accompli 30 ans de services miniers validés
+      par la Caisse Autonome Nationale de Sécurité Sociale dans les Mines (CANSSM), dont 15
+      ans au fond dans un emploi au plus égal à l'échelle 12 (échelle 4,5 pour les mines de
+      fer de l'Est), peuvent bénéficier d'une retraite complémentaire liquidée sans
+      application de coefficients d'anticipation à partir de 60 ans » ; rien sur les clercs
+      de notaire ni les autres régimes spéciaux ; I.1.3.3, la table des trimestres
+      manquants, de 0,78 pour vingt à 0,99 pour un
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2020-02-DRJ_Regime_Agirc-Arrco_Reglementation_applicable_aux_individus.pdf
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      Arrêté du 21 mars 1983 (JORFTEXT000000286775, Journal officiel du 15 avril 1983),
+      résumé de l'index JORF : « AGREMENT DE L'ACCORD DU 04-02-1983 RELATIF A L'ABAISSEMENT
+      DE L'AGE DE LA RETRAITE DANS LES REGIMES COMPLEMENTAIRES DE RETRAITE DES SALARIES DU
+      SECTEUR PRIVE (AGIRC ET DE L'ARRCO): POSSIBILITE D'ADMISSION A LA RETRAITE DES
+      SALARIES DU SECTEUR PRIVE,AGES DE 60 A 65 ANS QUI JUSTIFIENT DE 37 ANNEES ET DEMIE DE
+      COTISATION D'ASSURANCE ET QUI ONT FAIT LIQUIDER LEUR PENSION D'ASSURANCE VIEILLESSE »,
+      « APPLICATION A COMPTER DU 01-04-1983 » ; rien sur les trimestres manquants. Avenants
+      du 25 février 1986 et du 28 juin 1988, agréés les 5 janvier 1988 et 31 janvier 1989 :
+      titres seuls. Le texte de l'accord n'est ni dans l'index ni dans le recueil de la
+      caisse, qui commence en 1993
+    date: 2026-09-27
 textes_a_rattacher:
 - reference: >-
     accord national interprofessionnel du 17 novembre 2017 instituant le régime
@@ -251,6 +335,8 @@ textes_a_rattacher:
     code de la sécurité sociale, L. 351-8, 1° (LEGIARTI000023030950) et L. 161-17-2
     (LEGIARTI000023030935), dans la rédaction que l'accord du 18 mars 2011 fige pour
     l'âge de référence de 2011 à 2018
+exemples:
+- agirc_arrco_tranche_c_63_ans_11_mois
 code:
   interrupteurs:
     abattement_points: agirc_arrco
