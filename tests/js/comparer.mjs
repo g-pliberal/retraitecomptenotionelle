@@ -17,7 +17,8 @@
 
 import { readFileSync } from "node:fs";
 
-import { Contexte, Saisie } from "../../moteur/js/pages.js";
+import { Saisie } from "../../moteur/js/saisie.js";
+import { Contexte } from "../../moteur/js/contexte.js";
 
 /** Voir tests/js/moteur.test.js : un ulp de bruit sur ``exp``, pas davantage. */
 const TOLERANCE = 1e-9;

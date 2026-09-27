@@ -22,17 +22,15 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.web.pages import (
+from retraite_notionnelle.saisie import (
     AGE_DEBUT_MAXIMAL,
     AGE_DEBUT_MINIMAL,
     AGE_LIQUIDATION_MAXIMAL,
     AGE_LIQUIDATION_MINIMAL,
-    Contexte,
     Saisie,
-    _formulaire,
-    _simulateur_court,
-    rendre,
 )
+from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.web.pages import _formulaire, _simulateur_court, rendre
 
 RACINE = Path(__file__).resolve().parents[1]
 

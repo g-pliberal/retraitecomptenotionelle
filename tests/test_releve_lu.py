@@ -21,7 +21,8 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.web.pages import Contexte, rendre
+from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.web.pages import rendre
 from retraite_notionnelle.web.releve_lu import REGIMES, lire_releve
 
 RACINE = Path(__file__).resolve().parents[1]

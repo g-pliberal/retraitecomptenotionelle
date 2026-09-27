@@ -72,14 +72,19 @@ from retraite_notionnelle.droit.liquider import _coefficient_anticipation
 from retraite_notionnelle.scenarios.actuel import MinimumVieillesse
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web import gabarit as g
-from retraite_notionnelle.web.pages import (
+from retraite_notionnelle.saisie import (
     CLES_MODELISATION,
-    COMPOSANTE_GARANTIE,
     INDEXATIONS,
+    MODES_MONTANT,
+    ErreurSaisie,
+    Saisie,
+)
+from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.web.pages import (
+    COMPOSANTE_GARANTIE,
     LIGNES_DEPENSES,
     LIGNES_RECETTES,
     MARCHES_SYSTEMES,
-    MODES_MONTANT,
     NATURES_PART_EMPLOYEUR,
     ORGANISMES,
     POSTES_TRANSFERTS,
@@ -88,9 +93,6 @@ from retraite_notionnelle.web.pages import (
     TAUX_ACTUEL_SALARIAL,
     TAUX_ACTUEL_TOTAL,
     TITRES,
-    Contexte,
-    ErreurSaisie,
-    Saisie,
     _annees_flux,
     _caisse_flux,
     _compte_flux,

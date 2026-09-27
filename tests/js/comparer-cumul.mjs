@@ -13,7 +13,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { Contexte } from "../../moteur/js/pages.js";
+import { Contexte } from "../../moteur/js/contexte.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const paquet = JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8"));

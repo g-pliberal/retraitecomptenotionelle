@@ -16,7 +16,9 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
-import { Contexte, Saisie, rendre } from "../../moteur/js/pages.js";
+import { Saisie } from "../../moteur/js/saisie.js";
+import { Contexte } from "../../moteur/js/contexte.js";
+import { rendre } from "../../moteur/js/pages.js";
 import { Affiliations } from "../../moteur/js/regimes.js";
 import { complementMinimum } from "../../moteur/js/droit/completer.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";

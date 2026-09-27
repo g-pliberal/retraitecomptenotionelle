@@ -1473,7 +1473,8 @@ def _bilan(contexte=None) -> dict:
     Elle est calculée sous les réglages de RÉFÉRENCE, et ``donnees/bilan.py``
     dit ce que ce figeage coûte et ce qu'il ne coûte pas.
     """
-    from retraite_notionnelle.web.pages import Contexte, SCENARIOS_COMPARES
+    from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.web.pages import SCENARIOS_COMPARES
 
     # ``contexte`` n'est pas une option de commodité : c'est ce qui permet au
     # test du paquet de réutiliser le coût que d'autres tests du même module

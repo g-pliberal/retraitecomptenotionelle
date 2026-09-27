@@ -281,7 +281,7 @@ L'ordre des opérations compte, et il est fixé dans `Indexation.taux` :
    moyenne pourrait repasser sous le seuil ne serait pas un plancher.
 
 La fenêtre se saisit librement dans le formulaire : n'importe quel entier de
-1 à <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=LISSAGE_MAXIMUM)-->30<!--/--> ans. La borne haute n'est pas une limite du
+1 à <!--chiffre:mesure(constante?de=retraite_notionnelle.saisie&nom=LISSAGE_MAXIMUM)-->30<!--/--> ans. La borne haute n'est pas une limite du
 moteur mais un garde-fou de sens — au-delà d'une trentaine d'années la moyenne
 couvre presque toute une carrière, tous les millésimes reçoivent à peu près le
 même taux, et ce n'est plus un lissage mais un taux fixe reconstitué.
@@ -2328,7 +2328,7 @@ les rapports entre scénarios**, qui sont l'objet du modèle.
 Il commande en revanche la traduction d'un salaire en multiple, et donc les
 repères que le site affiche sous le champ — SMIC, salaire moyen, plafond de la
 Sécurité sociale — pour que l'échelle soit visible au lieu d'être supposée. Le
-SMIC mensuel y est calculé sur <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=HEURES_SMIC_PAR_MOIS)-->151,67<!--/--> heures, la durée légale actuelle ; l'année
+SMIC mensuel y est calculé sur <!--chiffre:mesure(constante?de=retraite_notionnelle.saisie&nom=HEURES_SMIC_PAR_MOIS)-->151,67<!--/--> heures, la durée légale actuelle ; l'année
 de référence étant celle du modèle, aucune durée du travail passée n'a à être
 supposée.
 

@@ -17,7 +17,8 @@
 
 import { readFileSync } from "node:fs";
 
-import { Contexte, rendre } from "../../moteur/js/pages.js";
+import { Contexte } from "../../moteur/js/contexte.js";
+import { rendre } from "../../moteur/js/pages.js";
 
 const [, , fichierCas, fichierPaquet = "moteur/donnees.json"] = process.argv;
 if (!fichierCas) {

@@ -23,7 +23,9 @@ import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.web.pages import Contexte, ErreurSaisie, Saisie, rendre
+from retraite_notionnelle.saisie import ErreurSaisie, Saisie
+from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.web.pages import rendre
 
 
 @pytest.fixture(scope="module")

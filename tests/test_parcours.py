@@ -38,7 +38,9 @@ from urllib.parse import parse_qsl
 
 import pytest
 
-from retraite_notionnelle.web.pages import Contexte, Saisie, rendre
+from retraite_notionnelle.saisie import Saisie
+from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.web.pages import rendre
 
 RACINE = Path(__file__).resolve().parents[1]
 PARCOURS = RACINE / "docs" / "parcours_presentation.md"

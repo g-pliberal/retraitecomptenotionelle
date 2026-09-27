@@ -8,7 +8,8 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { Contexte, Saisie } from "../moteur/js/pages.js";
+import { Saisie } from "../moteur/js/saisie.js";
+import { Contexte } from "../moteur/js/contexte.js";
 import { Simulateur } from "../moteur/js/simulateur.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..");

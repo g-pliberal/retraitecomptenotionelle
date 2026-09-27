@@ -27,6 +27,8 @@
      annoncer tous ici les fait partir ensemble, dès la lecture de l'en-tête.
      La liste est verrouillée sur le contenu de moteur/js/ par un test. -->
 <link rel="modulepreload" href="moteur/js/pages.js">
+<link rel="modulepreload" href="moteur/js/saisie.js">
+<link rel="modulepreload" href="moteur/js/contexte.js">
 <link rel="modulepreload" href="moteur/js/simulateur.js">
 <link rel="modulepreload" href="moteur/js/scenario-notionnel.js">
 <link rel="modulepreload" href="moteur/js/age-reference.js">
@@ -131,8 +133,11 @@
 
 <script type="module">
 import {
-  ANCIENNES_ROUTES, CLES_MODELISATION, CODES_SANS_EMPLOI, Contexte, DESCRIPTIONS,
-  RELEVE_MAXIMUM, Saisie, TITRES, rendre, requeteBasculee,
+  CLES_MODELISATION, CODES_SANS_EMPLOI, RELEVE_MAXIMUM, Saisie,
+} from "./moteur/js/saisie.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import {
+  ANCIENNES_ROUTES, DESCRIPTIONS, TITRES, rendre, requeteBasculee,
 } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";

@@ -270,7 +270,8 @@ def _requetes() -> list[dict]:
 def _python(requetes: list[dict]) -> list[dict]:
     """Ce que chaque étape écrit, en Python, pour chaque requête."""
     sys.path.insert(0, str(RACINE / "src"))
-    from retraite_notionnelle.web.pages import Contexte, Saisie
+    from retraite_notionnelle.saisie import Saisie
+    from retraite_notionnelle.contexte import Contexte
 
     contexte = Contexte()
     saisies: list = []

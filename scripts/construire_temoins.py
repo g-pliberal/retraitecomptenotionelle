@@ -33,12 +33,9 @@ sys.path.insert(0, str(RACINE / "src"))
 from retraite_notionnelle.carriere import Affiliations  # noqa: E402
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
 from retraite_notionnelle.droit import liquidation as _liquidation  # noqa: E402
-from retraite_notionnelle.web.pages import (  # noqa: E402
-    AGE_DEBUT_MINIMAL,
-    Contexte,
-    Saisie,
-    rendre,
-)
+from retraite_notionnelle.saisie import AGE_DEBUT_MINIMAL, Saisie  # noqa: E402
+from retraite_notionnelle.contexte import Contexte  # noqa: E402
+from retraite_notionnelle.web.pages import rendre  # noqa: E402
 
 DOSSIER = RACINE / "tests" / "temoins"
 SIMULATIONS = DOSSIER / "simulations.json"

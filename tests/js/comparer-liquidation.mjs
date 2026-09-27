@@ -16,7 +16,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { appels } from "../../moteur/js/droit/liquidation.js";
-import { Contexte, Saisie } from "../../moteur/js/pages.js";
+import { Saisie } from "../../moteur/js/saisie.js";
+import { Contexte } from "../../moteur/js/contexte.js";
 import { Simulateur } from "../../moteur/js/simulateur.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");

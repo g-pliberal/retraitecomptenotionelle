@@ -2327,7 +2327,7 @@ def test_le_portage_javascript_rend_les_memes_recettes_aux_six_scenarios():
     import subprocess
     from pathlib import Path
 
-    from retraite_notionnelle.web.pages import Contexte
+    from retraite_notionnelle.contexte import Contexte
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
@@ -2337,7 +2337,7 @@ def test_le_portage_javascript_rend_les_memes_recettes_aux_six_scenarios():
     scenarios = [cle for cle, _ in SCENARIOS]
     script = """
 import { readFileSync } from "node:fs";
-import { Contexte } from "./moteur/js/pages.js";
+import { Contexte } from "./moteur/js/contexte.js";
 const [annees, scenarios] = process.argv.slice(1).map((texte) => JSON.parse(texte));
 const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
 const solde = contexte.cout().solde;
@@ -3153,7 +3153,8 @@ def test_la_carte_du_solde_garde_le_meme_axe_sous_tous_les_scenarios():
     """
     import re
 
-    from retraite_notionnelle.web.pages import Contexte, rendre
+    from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.web.pages import rendre
 
     contexte = Contexte(Parametres())
     axes = {}

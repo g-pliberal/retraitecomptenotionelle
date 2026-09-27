@@ -12,6 +12,10 @@ import re
 from dataclasses import dataclass
 from html import escape
 
+# Les deux écritures d'un nombre que les refus de la saisie citent aussi :
+# elles vivent avec la saisie, et le gabarit les reprend.
+from ..saisie import euros, nombre  # noqa: F401
+
 FEUILLE_DE_STYLE = """
 /* La page est un outil du site partiliberalfrancais.fr, servi sous /retraite/.
    Elle ne charge rien de ce site — ni feuille, ni police, ni script — et ne lui
@@ -2224,21 +2228,6 @@ def pied() -> str:
 
 
 # -- fragments ---------------------------------------------------------------
-
-
-def nombre(valeur: float, decimales: int = 2) -> str:
-    """Nombre \u00e0 la fran\u00e7aise : virgule d\u00e9cimale, espace ins\u00e9cable des milliers."""
-    return f"{valeur:,.{decimales}f}".replace(",", "\u202f").replace(".", ",")
-
-
-def euros(montant: float) -> str:
-    """Montant en euros, à l'euro près.
-
-    L'unité de tout ce qui n'est pas une pension : capital notionnel,
-    cotisations cumulées, salaires portés au compte. Les centimes y seraient du
-    bruit — ces grandeurs se lisent par leur ordre de grandeur.
-    """
-    return nombre(montant, 0) + "\u202f\u20ac"
 
 
 def euros_centimes(montant: float) -> str:

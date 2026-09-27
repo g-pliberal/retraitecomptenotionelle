@@ -29,7 +29,8 @@ def carrieres() -> list:
     """Les (simulateur, carrière) que les témoins simulent."""
     from construire_temoins import _cas
     from retraite_notionnelle.simulateur import Simulateur
-    from retraite_notionnelle.web.pages import Contexte, Saisie
+    from retraite_notionnelle.saisie import Saisie
+    from retraite_notionnelle.contexte import Contexte
 
     saisies: list = []
     original = Simulateur.simuler

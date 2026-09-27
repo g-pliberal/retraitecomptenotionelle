@@ -28,6 +28,29 @@ from retraite_notionnelle.donnees.chargement import (
     DonneeInsuffisante,
     charger_periodes_non_travaillees,
 )
+from retraite_notionnelle.saisie import (
+    AGE_DEBUT_MINIMAL,
+    AGE_LIQUIDATION_MAXIMAL,
+    AGES_REFERENCE,
+    ANNEE_CARRIERE_MAXIMALE,
+    ANNEE_CARRIERE_MINIMALE,
+    ANNEE_MAXIMALE,
+    ANNEE_MINIMALE,
+    ENFANTS_MAXIMUM,
+    INDEXATIONS,
+    LISSAGE_MAXIMUM,
+    METIERS_MAXIMUM,
+    PROFILS,
+    PROJECTIONS,
+    RELEVE_MAXIMUM,
+    SANS_EMPLOI,
+    POPULATIONS,
+    RATTACHEMENTS,
+    TABLES,
+    ErreurSaisie,
+    Saisie,
+)
+from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.web.pages import (
     _annee_flux,
     _annees_cascade,
@@ -45,33 +68,12 @@ from retraite_notionnelle.web.pages import (
     MARCHES_SYSTEMES,
     _VUES_DE_PAGE,
     SCENARIOS_MONTRES,
-    AGE_DEBUT_MINIMAL,
-    AGE_LIQUIDATION_MAXIMAL,
-    AGES_REFERENCE,
-    ANNEE_CARRIERE_MAXIMALE,
-    ANNEE_CARRIERE_MINIMALE,
     DECIMALES_DIVISEUR,
     DECIMALES_FACTEUR,
     DECIMALES_MULTIPLE,
-    ANNEE_MAXIMALE,
-    ANNEE_MINIMALE,
-    ENFANTS_MAXIMUM,
-    INDEXATIONS,
-    LISSAGE_MAXIMUM,
-    METIERS_MAXIMUM,
     PAGES_AGREGEES,
     PAS_MULTIPLE,
-    PROFILS,
-    PROJECTIONS,
-    RELEVE_MAXIMUM,
-    SANS_EMPLOI,
-    POPULATIONS,
-    RATTACHEMENTS,
-    TABLES,
     TITRES,
-    Contexte,
-    ErreurSaisie,
-    Saisie,
     _champs_modelisation,
     _fraction_en_mots,
     _ordre_de_grandeur,
@@ -2920,7 +2922,7 @@ def test_le_moteur_javascript_est_versionne():
         "regimes.js", "indexation.js", "conversion.js", "fusion.js",
         "age-reference.js", "carriere.js", "compte.js", "scenario-actuel.js",
         "scenario-notionnel.js", "simulateur.js", "castypes.js", "gabarit.js",
-        "pages.js", "restitution.js",
+        "pages.js", "saisie.js", "contexte.js", "restitution.js",
     }
     assert attendus <= modules, f"manquant : {attendus - modules}"
 
@@ -7261,7 +7263,7 @@ def test_le_reglage_des_frais_du_pilier_voyage_avec_les_autres():
     """« frais=detail » se lit, s'applique aux paramètres et se réécrit dans
     l'adresse ; le défaut ne s'écrit pas."""
     from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.web.pages import CLES_MODELISATION, Saisie
+    from retraite_notionnelle.saisie import CLES_MODELISATION, Saisie
 
     assert "frais" in CLES_MODELISATION
     defaut = Saisie.depuis_requete({})
@@ -7283,7 +7285,8 @@ def test_la_colonne_aspa_de_l_accueil_sert_le_bareme_de_l_aspa():
     23 septembre 2026. Le couple à 300 € et 300 € reçoit aujourd'hui 1 020 € et
     en recevrait 1 000 ; la personne seule à 300 €, 744 € contre 750."""
     from retraite_notionnelle.web import gabarit as g
-    from retraite_notionnelle.web.pages import Contexte, FOYERS_GARANTIE, _tableau_garantie
+    from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.web.pages import FOYERS_GARANTIE, _tableau_garantie
 
     contexte = Contexte()
     annee = contexte.base.annee_euros_garantie_vieillesse

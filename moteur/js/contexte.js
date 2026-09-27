@@ -1,0 +1,570 @@
+/**
+ * Le contexte du site : ses données, et le jeu de règles sous lequel il calcule.
+ *
+ * Portage de ``src/retraite_notionnelle/contexte.py``.
+ */
+
+import { MOIS_PAR_AN } from "./calendrier.js";
+import { salaireMoyenAnnuel } from "./carriere.js";
+import { formaterBorne } from "./regimes.js";
+import { PARAMETRES_DEFAUT, cleParametres } from "./config.js";
+import { AssietteActivite } from "./assiette.js";
+import { calculerAvantages, chargerAvantages } from "./avantages.js";
+import { chargerFrontiere } from "./frontiere.js";
+import { calculerCout } from "./cout.js";
+import { chargerBilan } from "./bilan.js";
+import { DistributionPensions } from "./distribution.js";
+import { DepensesRetraite } from "./depenses.js";
+import { ComptesRetraite, varianteDuScenario } from "./equilibre.js";
+import { Restitution } from "./restitution.js";
+import { Population } from "./population.js";
+import { salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
+import { Simulateur, niveauPourPension } from "./simulateur.js";
+import * as g from "./gabarit.js";
+import {
+  Echelle, ErreurSaisie, HEURES_SMIC_PAR_MOIS, NIVEAU_MAXIMAL, NIVEAU_MINIMAL, refus,
+} from "./saisie.js";
+
+/**
+ * Pourquoi aucune carrière ne sert la pension saisie, et ce qui la sert.
+ *
+ * Les trois refus disent une règle du droit, jamais une limite du calcul, et
+ * c'est ce qui les rend utiles : celui qui les lit apprend pourquoi sa pension
+ * ne se déduit pas d'un revenu, et ce qu'il faut changer — le montant, ou la
+ * carrière décrite au-dessus.
+ *
+ * Les montants sont rendus dans la langue du formulaire — mensuels, nets si la
+ * page est en net, en euros de l'année de référence —, faute de quoi le refus
+ * opposerait des annuels bruts à quelqu'un qui vient de taper un net mensuel.
+ */
+function refusDePension(trouve, montants, constants) {
+  const afficher = (annuel) => g.euros(
+    montants.pension((annuel * constants) / MOIS_PAR_AN),
+  );
+  if (trouve.sousLePlancher) {
+    return "Aucune carrière de cette forme ne sert une pension si petite : au "
+      + `revenu le plus bas que le formulaire accepte, elle sert déjà `
+      + `${afficher(trouve.plancher)} par mois — le minimum contributif et `
+      + "l'ASPA font ce plancher. Saisissez au moins ce montant, ou décrivez "
+      + "une carrière plus courte ou plus interrompue.";
+  }
+  if (trouve.auDessusDuPlafond) {
+    return "Aucune carrière de cette forme ne sert une pension si grande : le "
+      + `système actuel plafonne à ${afficher(trouve.plafond)} par mois. `
+      + "Au-delà du plafond de la tranche la plus haute de ce statut, cotiser "
+      + "davantage n'acquiert plus rien, et toutes les carrières mieux payées "
+      + "servent la même pension.";
+  }
+  return "Aucune carrière de cette forme ne sert exactement cette pension : "
+    + `entre ${afficher(trouve.pension_dessous)} et ${afficher(trouve.pension)} `
+    + "par mois, il n'y a rien. Une année ne valide quatre trimestres qu'à "
+    + "partir de 150 heures de SMIC ; au-dessous, la carrière compte pour "
+    + "moins qu'elle n'a duré et le minimum contributif est proratisé "
+    + "d'autant, si bien que la pension saute dès que le seuil est franchi. "
+    + "Saisissez l'un de ces deux montants, ou décrivez la carrière — sa "
+    + "durée, ses interruptions — telle qu'elle a été.";
+}
+
+/**
+ * Combien d'agrégats le contexte garde en mémoire, tous jeux de règles
+ * confondus. Deux par jeu — le coût et les avantages —, donc trois jeux de
+ * règles : celui par défaut, et les deux derniers essayés.
+ */
+const AGREGATS_MEMORISES = 6;
+
+/**
+ * Les données du site, et le jeu de règles sous lequel on les lit.
+ *
+ * Un contexte, c'est deux choses : des données coûteuses à charger, et UN jeu
+ * de paramètres — `base` — sous lequel tout ce que la page demande est
+ * calculé. `simulateur()`, `cout()` et `avantages()` répondent tous trois sous
+ * ce jeu-là, sans qu'aucune page ait à le leur redire.
+ *
+ * Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages — se rendent donc
+ * sous un contexte dérivé par `pour`, portant les réglages que l'adresse
+ * demande. Le corps des pages n'en sait rien : il lit `contexte.base` comme il
+ * l'a toujours fait, et y trouve les règles en vigueur au lieu des règles par
+ * défaut. C'est ce qui évite de faire passer un jeu de paramètres à la main
+ * dans la trentaine d'endroits qui les lisent.
+ *
+ * Les mémoires sont des `Map` partagées, et c'est ce qui fait tenir la
+ * dérivation : un contexte dérivé PARTAGE ce que le contexte d'origine a déjà
+ * chargé. Le chargement des données coûte quelques dixièmes de seconde, une
+ * simulation en coûte dix, un agrégat une seconde : rien de tout cela ne doit
+ * se refaire parce qu'on a changé une règle.
+ */
+export class Contexte {
+  constructor(paquet, base = PARAMETRES_DEFAUT, memoires = null) {
+    this.paquet = paquet;
+    this.base = base;
+    // Un simulateur par jeu de paramètres rencontré.
+    this._instances = memoires ? memoires.instances : new Map();
+    // Ce qui ne dépend d'AUCUN paramètre : dépense observée, comptes du COR,
+    // population, distribution des pensions, assiette, inventaire des
+    // avantages. Ces séries sont lues, jamais calculées : un changement de
+    // règle ne les déplace pas.
+    this._donnees = memoires ? memoires.donnees : new Map();
+    // Les agrégats, eux, dépendent des règles : un coût par jeu de paramètres.
+    this._agregats = memoires ? memoires.agregats : new Map();
+  }
+
+  /**
+   * Le même contexte, sous un autre jeu de règles.
+   *
+   * Les mémoires sont partagées, pas recopiées : dériver ne coûte rien, et ce
+   * que l'un charge, l'autre le trouve chargé.
+   */
+  pour(parametres) {
+    if (cleParametres(parametres) === cleParametres(this.base)) { return this; }
+    return new Contexte(this.paquet, parametres, {
+      instances: this._instances,
+      donnees: this._donnees,
+      agregats: this._agregats,
+    });
+  }
+
+  /** Une donnée indépendante des règles, chargée une fois pour toutes. */
+  _donnee(nom, fabrique) {
+    if (!this._donnees.has(nom)) {
+      this._donnees.set(nom, fabrique());
+    }
+    return this._donnees.get(nom);
+  }
+
+  /**
+   * Un agrégat, mémorisé par jeu de règles — et en nombre borné.
+   *
+   * Sans borne, une adresse suffirait à faire enfler la mémoire de l'onglet
+   * d'un jeu de règles à l'autre : le calcul se fait chez le lecteur, et
+   * l'adresse EST la saisie. Le plus ancien s'en va ; revenir aux réglages par
+   * défaut après en avoir essayé trois recalcule, une seconde.
+   */
+  _agregat(nom, fabrique) {
+    const cle = `${nom}|${cleParametres(this.base)}`;
+    if (!this._agregats.has(cle)) {
+      if (this._agregats.size >= AGREGATS_MEMORISES) {
+        this._agregats.delete(this._agregats.keys().next().value);
+      }
+      this._agregats.set(cle, fabrique());
+    }
+    return this._agregats.get(cle);
+  }
+
+  simulateur(parametres = null) {
+    const retenus = parametres || this.base;
+    const cle = cleParametres(retenus);
+    if (!this._instances.has(cle)) {
+      this._instances.set(cle, new Simulateur(this.paquet, retenus));
+    }
+    return this._instances.get(cle);
+  }
+
+  depenses() {
+    return this._donnee("depenses", () => new DepensesRetraite(this.paquet));
+  }
+
+  /**
+   * Le second terme du bilan : ce que le système de retraite encaisse.
+   *
+   * SOUS LA VARIANTE DES RÈGLES DE `base`. La page lisait le scénario de
+   * référence du COR quel que soit le scénario demandé, si bien que la
+   * croissance déplaçait la dépense des systèmes notionnels, qui est calculée,
+   * sans déplacer celle du droit en vigueur, qui est empruntée.
+   *
+   * La mémoire porte le nom de la variante : deux jeux de règles qui ne
+   * diffèrent que par leur scénario ne doivent pas se partager un compte.
+   */
+  comptes() {
+    const variante = varianteDuScenario(
+      this.base.scenario_projection, this.paquet);
+    return this._donnee(`comptes:${variante}`,
+                        () => new ComptesRetraite(this.paquet, variante));
+  }
+
+  /**
+   * Ce que la proposition rend au salaire, et ce qu'elle éteint en dette.
+   * Mémorisé par jeu de règles et non une fois pour toutes : le partage est un
+   * RÉGLAGE, et deux contextes n'ont pas forcément le même.
+   */
+  restitution() {
+    return this._agregat("restitution", () => new Restitution(
+      this.paquet, this.base.part_rendue_aux_salaires,
+    ));
+  }
+
+  population() {
+    return this._donnee("population", () => new Population(this.paquet));
+  }
+
+  /** La distribution des pensions — elle seule chiffre un plancher. */
+  distribution() {
+    return this._donnee("distribution", () => new DistributionPensions(this.paquet));
+  }
+
+  /** Sur quoi l'on prélève : sans elle, un taux ne se convertit pas en recette. */
+  assiette() {
+    return this._donnee("assiette", () => new AssietteActivite(this.paquet));
+  }
+
+  /**
+   * Le bilan des quatre systèmes, figé — une DONNÉE, pas un agrégat.
+   *
+   * La page des résultats en a besoin à chaque frappe, et le calculer coûte
+   * une seconde : elle lit donc la table que `scripts/construire_donnees.py` a
+   * écrite dans le paquet. `bilan.js` dit ce que ce figeage coûte — rien sur
+   * le système actuel, dont le coefficient est le compte du COR, et une
+   * dépendance aux réglages de référence sur les trois autres.
+   */
+  bilan() {
+    return this._donnee("bilan", () => chargerBilan(this.paquet.bilan_equilibre));
+  }
+
+  /** L'inventaire des avantages non contributifs — une donnée, pas un calcul. */
+  inventaireAvantages() {
+    return this._donnee("inventaireAvantages", () => chargerAvantages(this.paquet));
+  }
+
+  /** Le versant inverse : ce qu'on cotise sans rien acquérir. Une donnée. */
+  frontiere() {
+    return this._donnee("frontiere", () => chargerFrontiere(this.paquet));
+  }
+
+  /** Ce que les avantages non contributifs coûtent — une seconde, une fois. */
+  avantages() {
+    return this._agregat("avantages", () => calculerAvantages(
+      this.simulateur(), this.depenses(), this.population(),
+    ));
+  }
+
+  /**
+   * Le coût agrégé de tous les systèmes — une seconde de calcul, une fois.
+   *
+   * Sous les règles de `base`, et non sous celles par défaut : c'est ce qui
+   * fait que la page Coût chiffre ce que le simulateur calcule.
+   */
+  cout() {
+    return this._agregat("cout", () => calculerCout(
+      this.simulateur(), this.depenses(), this.population(), this.comptes(),
+      undefined, undefined, undefined, this.assiette(),
+    ));
+  }
+
+  /**
+   * L'échelle des salaires de l'année courante, pour cette saisie. L'année est
+   * celle du modèle — on saisit un salaire d'aujourd'hui —, et les séries sont
+   * CELLES DE LA SAISIE : au-delà de la dernière année observée, le salaire
+   * moyen dépend du scénario de projection choisi.
+   */
+  echelle(saisie) {
+    const parametres = saisie.parametres(this.base);
+    const macro = this.simulateur(parametres).macro;
+    const annee = parametres.annee_courante;
+    const simulateur = this.simulateur(parametres);
+    const bareme = simulateur.baremePrelevements;
+    const versBrut = (netMensuel, statut) => salaireBrutDepuisNet(
+      bareme, macro, simulateur.catalogue, simulateur.affiliations,
+      statut, annee, netMensuel * MOIS_PAR_AN,
+    ) / MOIS_PAR_AN;
+    const versNet = (brutMensuel, statut) => salaireNetDepuisBrut(
+      bareme, macro, simulateur.catalogue, simulateur.affiliations,
+      statut, annee, brutMensuel * MOIS_PAR_AN,
+    ) / MOIS_PAR_AN;
+    return new Echelle({
+      moyen: salaireMoyenAnnuel(macro, annee),
+      smic: HEURES_SMIC_PAR_MOIS * macro.smic_horaire.valeur(annee),
+      plafond: macro.plafond_securite_sociale.valeur(annee) / MOIS_PAR_AN,
+      versBrut: saisie.saisieEnNet ? versBrut : null,
+      versNet,
+      versBrutDirect: versBrut,
+    });
+  }
+
+  simuler(saisie) {
+    const simulateur = this.simulateur(saisie.parametres(this.base));
+    // Les motifs viennent des données, pas d'une liste écrite ici : le moteur y
+    // lit ce que chaque période ouvre, et une saisie refusée doit l'être sur la
+    // même table que celle qui calcule.
+    const motifs = Object.keys(this.paquet.periodes_non_travaillees ?? {});
+    if (saisie.releveActif) {
+      return simulateur.simuler(this.carriereRelevee(simulateur, saisie, motifs));
+    }
+    const parcours = saisie.parcours(this.echelle(saisie));
+    for (const metier of parcours) {
+      if (!simulateur.affiliations.contient(metier.affiliation)) {
+        throw new ErreurSaisie(
+          `Statut d'affiliation inconnu : « ${metier.affiliation} ».`,
+        );
+      }
+    }
+    const batir = (niveaux) => simulateur.carriereParcours({
+      annee_naissance: saisie.naissance,
+      mois_naissance: saisie.naissance_mois,
+      sexe: saisie.sexe,
+      metiers: parcours.map((metier, rang) => ({
+        ...metier,
+        niveau_salaire: niveaux[rang],
+      })),
+      age_liquidation: saisie.liquidation,
+      profil_carriere: saisie.profil,
+      interruptions: saisie.interruptionsDeCarriere(motifs),
+      nombre_enfants: saisie.enfants,
+      part_primes: saisie.primes,
+      identifiant: "assuré",
+    });
+
+    if (saisie.parPension) {
+      return this._simulerParPension(simulateur, saisie, batir, parcours);
+    }
+    const carriere = batir(parcours.map((metier) => metier.niveau_salaire));
+    verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
+    return simulateur.simuler(carriere);
+  }
+
+  /**
+   * La carrière que la pension suppose, puis les quatre systèmes dessus.
+   *
+   * UN SEUL NIVEAU POUR TOUTE LA CARRIÈRE. Inverser une pension ne donne qu'un
+   * nombre, et une carrière en compte autant qu'elle a de métiers : il faut
+   * donc une convention, et la plus simple est la seule qui n'invente rien —
+   * le même niveau partout, que le profil de carrière déforme ensuite comme il
+   * le fait toujours. Qui veut un revenu par métier le saisit, ou dépose son
+   * relevé.
+   *
+   * LA CIBLE EST RAMENÉE À CE QUE LE MODÈLE CALCULE, et dans cet ordre : la
+   * pension saisie est mensuelle, nette peut-être, en euros constants de
+   * l'année de référence ; le scénario 1 rend une pension annuelle, brute, en
+   * euros de l'année de liquidation. Le coefficient des euros constants ne
+   * dépend que de l'année de liquidation, jamais du niveau de revenu : il se
+   * calcule une fois, avant la dichotomie, et non à chaque tour.
+   */
+  _simulerParPension(simulateur, saisie, batir, parcours) {
+    const montants = Montants.depuis(saisie, simulateur);
+    // Pour un retraité, la cible est la pension d'AUJOURD'HUI : il saisit ce
+    // qu'il touche, pas ce qu'il touchait le premier mois. Voir
+    // `_simuler_par_pension` dans `contexte.py`.
+    const parametres = simulateur.parametres;
+    const retraite = saisie.dateDe(saisie.liquidation).annee < parametres.annee_courante;
+    const constants = simulateur.macro.coefficientPrix(
+      retraite ? parametres.annee_courante : saisie.dateDe(saisie.liquidation).annee,
+      parametres.annee_euros_constants,
+    );
+    const brute = saisie.enNet
+      ? saisie.pension / (1.0 - montants.tauxPension) : saisie.pension;
+    const cible = brute * MOIS_PAR_AN / constants;
+    const combien = parcours.length;
+    const pensionDeNiveau = (niveau) => {
+      const carriere = batir(new Array(combien).fill(niveau));
+      return retraite
+        ? simulateur.pensionActuelleAujourdhui(carriere)
+        : simulateur.scenarioActuel.calculer(carriere).pension_annuelle;
+    };
+
+    const trouve = niveauPourPension(pensionDeNiveau, cible,
+      NIVEAU_MINIMAL, NIVEAU_MAXIMAL);
+    if (!trouve.atteinte) {
+      throw new ErreurSaisie(refusDePension(trouve, montants, constants));
+    }
+    const carriere = batir(new Array(combien).fill(trouve.niveau));
+    verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
+    const comparaison = simulateur.simuler(carriere);
+    comparaison.niveau_inverse = trouve;
+    return comparaison;
+  }
+
+  /**
+   * La carrière telle que le relevé la donne, sans rien reconstituer.
+   *
+   * Aucune échelle des salaires n'intervient : le relevé est déjà en euros de
+   * chaque année, quand le formulaire paramétrique saisit un revenu
+   * d'aujourd'hui que le modèle promène ensuite le long du salaire moyen. C'est
+   * ce qui fait de ce chemin le plus exact — et le seul où l'euro n'est pas
+   * converti.
+   */
+  carriereRelevee(simulateur, saisie, motifs) {
+    const releve = saisie.releveAnalyse(motifs);
+    for (const ligne of releve) {
+      if (!simulateur.affiliations.contient(ligne.affiliation)) {
+        throw new ErreurSaisie(
+          `Relevé, année ${ligne.annee} : statut d'affiliation inconnu `
+          + `« ${ligne.affiliation} ».`,
+        );
+      }
+    }
+    const carriere = simulateur.carriereReleve({
+      annee_naissance: saisie.naissance,
+      mois_naissance: saisie.naissance_mois,
+      sexe: saisie.sexe,
+      releve,
+      age_liquidation: saisie.liquidation,
+      nombre_enfants: saisie.enfants,
+      part_primes: saisie.primes,
+      identifiant: "assuré",
+    });
+    verifierStatutsReleve(simulateur.affiliations, carriere);
+    return carriere;
+  }
+}
+
+/**
+ * Un statut ne se déclare qu'aux dates où son régime recrutait.
+ *
+ * Un jeune d'aujourd'hui ne peut pas se déclarer mineur : le régime des mines
+ * est fermé aux recrutés depuis septembre 2010. Le routage le savait déjà —
+ * il envoyait ce mineur-là au régime général, en silence, et la page
+ * affichait « Mineur » au-dessus d'une pension de salarié du privé. Le refus
+ * dit la date, et le statut de droit commun qui porte le même calcul.
+ *
+ * La date opposée est celle de l'ENTRÉE dans le statut, au mois près, telle
+ * que le parcours l'a datée : un agent entré à la RATP en octobre 2022 n'y a
+ * sa première ligne qu'en 2023, et n'est pas recruté après la fermeture pour
+ * autant.
+ */
+function verifierStatutsOuverts(affiliations, carriere, parcours) {
+  parcours.forEach((metier, index) => {
+    const ferme = statutFerme(affiliations, carriere, metier.affiliation);
+    if (ferme === null) {
+      return;
+    }
+    const [fermeture, entree] = ferme;
+    throw refus(index + 1, phraseStatutFerme(
+      affiliations, metier.affiliation, fermeture,
+      `ce métier commence en ${entree}`,
+    ));
+  });
+}
+
+/**
+ * Le même refus, opposé à un relevé de carrière.
+ *
+ * Le relevé ne compte pas de métiers : il porte des ANNÉES, dont chacune nomme
+ * son statut. La date opposée à la fermeture est donc la première année
+ * déclarée sous ce statut — janvier, faute d'un mois que le relevé ne donne
+ * pas —, et la phrase le dit plutôt que de parler d'un « métier n° 2 » qui
+ * n'existe nulle part sur la page.
+ */
+function verifierStatutsReleve(affiliations, carriere) {
+  for (const code of carriere.affiliationsUtilisees()) {
+    const ferme = statutFerme(affiliations, carriere, code);
+    if (ferme === null) {
+      continue;
+    }
+    const [fermeture, entree] = ferme;
+    throw new ErreurSaisie(phraseStatutFerme(
+      affiliations, code, fermeture,
+      `la première année déclarée sous ce statut est ${entree.annee}`,
+    ));
+  }
+}
+
+/** `[fermeture, entrée]` si ce statut se déclare trop tard, sinon `null`. */
+function statutFerme(affiliations, carriere, code) {
+  const fermeture = affiliations.fermetureEntrants(code);
+  if (fermeture === null) {
+    return null;
+  }
+  const entree = carriere.dateEntree(code);
+  if (entree === null || entree.rang < fermeture.rang) {
+    return null;
+  }
+  return [fermeture, entree];
+}
+
+/**
+ * Le refus, écrit une fois pour les deux formes de saisie. `quand` est la seule
+ * chose qui les sépare : un métier commence à un mois, une ligne de relevé n'a
+ * qu'une année. Écrire les deux phrases en entier les laisserait diverger.
+ */
+function phraseStatutFerme(affiliations, code, fermeture, quand) {
+  const releve = affiliations.relevePar(code);
+  return `Le statut « ${affiliations.libelle(code)} » est `
+    + `fermé aux recrutés depuis ${formaterBorne(fermeture)} ; ${quand}. `
+    + `Depuis cette date, il relève des mêmes régimes que `
+    + `« ${affiliations.libelle(releve)} » : choisir ce statut.`;
+}
+
+/**
+ * Le mode net/brut, et ce qu'il fait à chaque montant affiché.
+ *
+ * Un seul objet, construit une fois par rendu, pour que la bascule n'existe
+ * qu'à un endroit. Deux grandeurs n'ont pas le même barème — un salaire
+ * supporte des cotisations, une pension n'en supporte plus — et deux autres
+ * n'ont pas de net du tout : un CAPITAL notionnel et une ASSIETTE de cotisation
+ * sont bruts par nature, et le site les laisse tels quels.
+ */
+export class Montants {
+  constructor(net, tauxPension, rapportNetBrutSalaire = 0, rapportNetBrutProposition = 0) {
+    this.net = net;
+    this.tauxPension = tauxPension;
+    // Ce qu'un euro de salaire brut laisse en net, au DERNIER revenu
+    // d'activité. Zéro quand le statut n'a pas de fiche de paie : le taux
+    // reste alors brut, faute de pouvoir le netter honnêtement.
+    this.rapportNetBrutSalaire = rapportNetBrutSalaire;
+    // Le même, sur la fiche de paie de la PROPOSITION.
+    this.rapportNetBrutProposition = rapportNetBrutProposition;
+  }
+
+  static depuis(saisie, simulateur, comparaison = null) {
+    // Le rapport net/brut du salaire se lit sur la DERNIÈRE fiche de paie de
+    // la carrière, celle de l'année du départ : c'est l'année dont le revenu
+    // sert de dénominateur au taux de remplacement.
+    // La proposition a SA fiche de paie : elle prélève moins sur le même
+    // brut, et le dernier salaire net auquel sa pension se compare est le sien.
+    let rapport = 0;
+    let rapportProposition = 0;
+    const remuneration = comparaison ? comparaison.remuneration : null;
+    if (remuneration !== null && remuneration !== undefined) {
+      const derniere = remuneration.annees[remuneration.annees.length - 1];
+      if (derniere.droitEnVigueur.brut > 0) {
+        rapport = derniere.droitEnVigueur.net / derniere.droitEnVigueur.brut;
+      }
+      if (derniere.proposition.brut > 0) {
+        rapportProposition = derniere.proposition.net / derniere.proposition.brut;
+      }
+    }
+    return new Montants(saisie.enNet,
+      simulateur.baremePrelevements.pensions.tauxTotal, rapport, rapportProposition);
+  }
+
+  /**
+   * Le taux de remplacement, dans la langue du mode.
+   *
+   * Le modèle le calcule brut sur brut. Affiché à côté de montants NETS, il
+   * serait le seul chiffre de la page à parler l'autre langue — et il
+   * mentirait dans un sens précis : une pension est moins prélevée qu'un
+   * salaire, 9,1 % contre une vingtaine de points, si bien que le taux NET
+   * dépasse le taux brut de plusieurs points. C'est un fait connu, et rarement
+   * montré.
+   */
+  tauxRemplacement(tauxBrut, proposition = false) {
+    // `proposition` prend le rapport de SA fiche de paie : le même brut y
+    // laisse un net plus élevé. Voir `Montants.taux_remplacement`.
+    const rapport = proposition ? this.rapportNetBrutProposition : this.rapportNetBrutSalaire;
+    if (!this.net || rapport <= 0) {
+      return tauxBrut;
+    }
+    return tauxBrut * (1 - this.tauxPension) / rapport;
+  }
+
+  /** Une pension, une rente, une garantie : tout ce qui se sert après. */
+  pension(brut) {
+    return this.net ? brut * (1 - this.tauxPension) : brut;
+  }
+
+  /** Un salaire, lu sur la fiche de paie qui porte déjà les deux. */
+  salaire(fiche) {
+    return this.net ? fiche.net : fiche.brut;
+  }
+
+  get mot() {
+    return this.net ? "net" : "brut";
+  }
+
+  get uniteSalaire() {
+    return this.net ? "€ net/mois" : "€ brut/mois";
+  }
+
+  get unitePension() {
+    return this.net ? "€ net/mois" : "€ brut/mois";
+  }
+}
+

@@ -385,7 +385,8 @@ def _python(requetes: list[dict]) -> list[dict]:
     """Ce que la liquidation et l'échéancier écrivent, en Python, pour chaque
     requête : la liquidation et ses étapes, le journal, et les appels."""
     sys.path.insert(0, str(RACINE / "src"))
-    from retraite_notionnelle.web.pages import Contexte, Saisie
+    from retraite_notionnelle.saisie import Saisie
+    from retraite_notionnelle.contexte import Contexte
 
     contexte = Contexte()
     saisies: list = []

@@ -1050,7 +1050,7 @@ général. Il a fallu un drapeau au moteur, `assiette_forfaitaire` : un ministre
 du culte n'a pas de salaire dont on prélèverait une fraction, l'assiette EST le
 forfait, là où `assiette_plancher` ne relevait que les assiettes trop basses.
 
-**Ce que la fiche des cultes approxime.** Le passage du forfait de <!--chiffre:illustration()-->169<!--/--> à <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=HEURES_SMIC_PAR_MOIS)-->151,67<!--/--> heures mensuelles est daté de 2002, ce
+**Ce que la fiche des cultes approxime.** Le passage du forfait de <!--chiffre:illustration()-->169<!--/--> à <!--chiffre:mesure(constante?de=retraite_notionnelle.saisie&nom=HEURES_SMIC_PAR_MOIS)-->151,67<!--/--> heures mensuelles est daté de 2002, ce
 que la clause transitoire de R. 382-89 rend probable sans l'écrire ; et la
 garantie mensuelle de rémunération qui, du 1<sup>er</sup> janvier 2002 au
 30 juin 2005, s'ajoutait à cette base n'est pas modélisée — ces quatre années

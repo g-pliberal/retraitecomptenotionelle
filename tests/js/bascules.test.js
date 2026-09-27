@@ -18,7 +18,9 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
-import { Contexte, Saisie, rendre, requeteBasculee } from "../../moteur/js/pages.js";
+import { Saisie } from "../../moteur/js/saisie.js";
+import { Contexte } from "../../moteur/js/contexte.js";
+import { rendre, requeteBasculee } from "../../moteur/js/pages.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const paquet = JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8"));
