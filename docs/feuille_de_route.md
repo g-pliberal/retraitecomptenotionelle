@@ -6,7 +6,10 @@ prendre l'action la plus haute qui n'est pas commencée, la mener au bout, puis
 mettre à jour ce fichier. *Précisé le 23 septembre 2026* : aucune action n'est
 plus « à faire », la liste s'allongeant par la fin à mesure que les sessions
 ouvrent les leurs ; une session commence donc par les actions `en cours` et ce
-que leurs dernières notes laissent ouvert. Deux numéros servent deux fois,
+que leurs dernières notes laissent ouvert. *Précisé le 27 septembre 2026* : une
+action peut de nouveau naître « à faire », quand le propriétaire l'ouvre pour
+plus tard ; elle attend qu'il la lance, et une session ne la prend pas
+d'elle-même. Deux numéros servent deux fois,
 37 et 38 : chaque paire se distingue par son titre, et les renvois du dépôt
 nomment l'une ou l'autre. Il ne remplace ni `limites.md`, qui dit ce que vaut
 chaque chiffre, ni `regimes.md`, journal de la campagne sur les régimes.
@@ -42,10 +45,10 @@ passé au passé le 23 septembre 2026.
 **Les actions closes sont dans l'archive**, `docs/archives/feuille_de_route.md`,
 avec le journal : faites, archivées ou abandonnées, elles y gardent leur
 numéro, leur texte et leur ordre (`docs/architecture.md`, § 9.3). Ce fichier
-ne garde que ce qui vit : ce qui est délibérément en bas, et les actions
-`en cours`, à la fin, où les sessions ouvrent les leurs. Une action qui se
-clôt passe, telle quelle, à la fin de l'archive ; un test refuse une action
-close ici, ou ouverte là-bas.
+ne garde que ce qui vit : ce qui est délibérément en bas, les actions
+`à faire`, et les actions `en cours`, à la fin, où les sessions ouvrent les
+leurs. Une action qui se clôt passe, telle quelle, à la fin de l'archive ; un
+test refuse une action close ici, ou ouverte là-bas.
 
 ---
 
@@ -140,6 +143,92 @@ close ici, ou ouverte là-bas.
   servi à l'identique par les six scénarios et ne départage rien. Le réglage
   `liquidation` reste disponible en variante, pour que la mesure soit
   reproductible.
+
+---
+
+## Les actions à faire
+
+### 132. La naissance au jour : l'âge se compte du 1er du mois qui suit l'anniversaire, sauf pour qui est né un 1er — `à faire`
+
+**Demande**, le 27 septembre 2026 : « On fait tout au mois pour l'instant.
+Est-ce qu'il serait logique de descendre au jour ? […] Est-ce que ce serait
+dur à réaliser ? », puis, la réponse lue : « Ouvre uniquement l'action. On
+traitera le sujet plus tard. » L'action attend donc que le propriétaire la
+lance. Rien n'est commencé : ni code, ni fiche, ni témoin.
+
+**Ce qui descend au jour, et ce qui reste au mois.** Le pas du moteur est
+l'année, parce que les données le sont ; les dates sont au mois
+(`calendrier.py`) ; la chronologie est au jour depuis la phase 3 (contrat
+C.1), mais remplie au 1er du mois (`precision: mois`) et relue au mois
+(`chronologie.mois_de`). Le pas du moteur ne descend pas : le récit du
+passage de l'année au mois (`docs/archives/limites.md`) a établi qu'un pas
+plus fin « redonne exactement le total annuel ». Le jour qui compte pour
+tous les assurés est celui de leur naissance.
+
+**L'écart.** La caisse fait partir la pension le 1er du mois qui suit celui
+où l'âge est atteint, sauf pour qui est né un 1er (R. 351-37 CSS ; fiche
+`date_effet_mois_suivant`, `approchee` ; `docs/limites.md`, « La date
+d'effet est le mois de l'anniversaire »). Le modèle compte les âges du 1er
+du mois de naissance : à date de départ égale, il donne un mois d'âge de
+trop à qui est né après le 1er. L'exemple 1 de la circulaire Cnav 2026-07
+le montre : né le 16/05/1964, départ au plus tôt le 01/03/2027 ; le modèle
+tient l'âge légal pour atteint en février 2027. Le site demande pourtant le
+jour, et l'adresse le porte (`naissance=1975-03-15`), mais il « n'entre dans
+aucun calcul » (`Saisie.naissance_jour`). La surcote de la fonction publique
+suppose, elle, une naissance après le 1er (`surcote_fonction_publique`) :
+deux conventions contraires, et l'exemple 3 de la CNRACL, dont l'agent est
+né un 1er janvier, n'est pas rejoué (`docs/exploration_sources.md`).
+
+**Ce que ce mois déplace**, mesuré le même jour sur les 535 témoins de main
+à 81192a3, sans rien modifier : un mois d'âge de moins à date de départ
+égale, la génération gardée au vrai mois — ce que le jour changerait à qui
+est né après le 1er.
+
+| Scénario | Témoins qui bougent | Effet |
+|---|---|---|
+| 1 | 70 sur 529 | −0,83 % en médiane, 32 au-delà de −1 %, jusqu'à −3,25 % pour des professions libérales parties à un âge rond ; 7 hausses, de +0,25 % au plus |
+| 2 et 4 | 531 sur 531 | −0,29 % en médiane, le diviseur ; de −0,39 à −0,15 % |
+| 3 et 5 | 275 sur 531 | −0,29 % en médiane, jusqu'à −2,53 % ; 30 hausses |
+| 6 | 527 sur 531 | −0,28 % en médiane, de −0,39 à +0,36 % ; 203 hausses |
+
+**Ce que le propriétaire tranche d'abord** : ce que le modèle présume quand
+le jour n'est pas connu — relevé déposé, cas types, page Coût, adresses
+d'avant. C'est une présomption du § 5.6, à écrire au vocabulaire avec sa
+valeur et sa raison. Garder le 1er ne déplace que les cinq témoins qui
+déclarent un 15 ; présumer une naissance après le 1er est juste pour
+vingt-neuf naissances sur trente environ, et déplace les témoins comme
+ci-dessus.
+
+**Ce qu'il y aura à faire**, une fois l'action lancée :
+
+1. La veille du scénario 1 (`python scripts/veille_droit.py`), et R. 351-37
+   lu sur Légifrance : la fiche le range encore dans `textes_a_rattacher`,
+   sans identifiant ; la circulaire 2026-07 est déjà lue.
+2. Lire la naissance de deux façons. La génération reste au vrai mois : les
+   coupures du 1er juillet 1951 et du 1er septembre 1961, le trimestre de
+   naissance de la carrière longue (`scenarios/actuel.py`). Les âges se
+   comptent du mois qui suit quand le jour n'est pas le 1er. Le moteur reste
+   au mois : né le 15 mars, on a, à tout 1er du mois, l'âge en mois révolus
+   de qui est né le 1er avril. Le travail est le tri, lecture par lecture :
+   de l'ordre de 150 lectures de la naissance en Python, dont 46 dans
+   `carriere.py`, et de 130 dans le portage.
+3. La chronologie pose le jour déclaré (`precision: jour`), et la saisie en
+   tire l'âge (`_age_saisi`, et `ageSaisi` dans le portage).
+4. Des témoins nés en milieu de mois, et en d'autres mois que janvier : 520
+   des 535 naissent en janvier et 529 ne disent pas leur jour, si bien
+   qu'une lecture mal triée ne ferait aucun bruit. Les trois exemples de la
+   circulaire 2026-07, nés le 16/05/1964, le 24/02/1965 et le 08/07/1965,
+   deviennent des tests de la date d'effet ; l'exemple 3 de la CNRACL entre
+   au témoin.
+5. Le changement de résultats dans un commit à part, avec le diff de ses
+   témoins (`docs/architecture.md`, § 12) ; la fiche passe `conforme`,
+   `docs/limites.md` suit, et le journal de veille dit ce qui a été lu.
+
+**Hors de l'action.** Le moteur au pas du jour : aucune source ne porte un
+salaire, un plafond ou un quotient de mortalité au jour. Les durées que
+quelques régimes comptent au jour — l'Ircantec en trimestres de 90 jours,
+la CRPN en jours divisés par 360, l'ENIM au semestre — restent à leurs
+fiches ; celle de l'Ircantec est à l'action 131.
 
 ---
 
