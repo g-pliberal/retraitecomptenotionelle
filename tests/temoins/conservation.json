@@ -286,6 +286,7 @@
    "taux_maximum_fonction_publique",
    "taux_plein_et_proratisation",
    "temps_partiel_fonction_publique",
+   "trimestres_retenus_1972_1974",
    "un_statut_par_annee"
   ],
   "data/reference/legislation/veille.yaml:journal": [
@@ -375,7 +376,9 @@
    "2026-09-26 | architecture, phase 5 : la liquidation en fonction pure, le journal, l'échéancier et le pilote",
    "2026-09-27 | architecture, phase 6 : un fichier par régime, et les interrupteurs deviennent des renvois aux fiches",
    "2026-09-27 | architecture, phase 7 : la proposition réécrite en univers de droit",
-   "2026-09-27 | relecture à la source des dix fiches nées à la phase 6, menée pendant la phase 7 sans rien lui prendre"
+   "2026-09-27 | architecture, phase 8 : le texte du site écrit une fois, en JavaScript",
+   "2026-09-27 | relecture à la source des dix fiches nées à la phase 6, menée pendant la phase 7 sans rien lui prendre",
+   "2026-09-27 | suite de la relecture des dix fiches, pendant la phase 8 : les exemples publiés, et les textes que les index ne portaient pas"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1351,6 +1354,7 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "12bfa602d4e0272e",
     "4aa643bbcee06734",
     "2d78256b7bb0bccc",
     "75f4904559e8a962",
@@ -4737,16 +4741,13 @@
     "3c3d4d2efb316066"
    ],
    "A. Variante rétroactive — trajectoire annuelle": [
-    "62fcb7d6e384e81b",
-    "d50606c64938039f"
+    "62fcb7d6e384e81b"
    ],
    "B. Variante rétroactive — horizon long": [
-    "67f4d456afbe6b13",
-    "74dd9878ab0b9a72"
+    "67f4d456afbe6b13"
    ],
    "C. Variante prospective — trajectoire annuelle": [
-    "e65674bcb7616e3d",
-    "c4abc6a7d7de51df"
+    "e65674bcb7616e3d"
    ],
    "Ce que ce document chiffre": [
     "f1c720d56a34b301",
@@ -4766,18 +4767,15 @@
     "16d8bdf3d924c206"
    ],
    "D. Variante prospective — horizon long": [
-    "8ec8b25f52ed93b0",
-    "d7cda6edfee6a705"
+    "8ec8b25f52ed93b0"
    ],
    "E. Prélèvements retraite, avant et après, et ce que l'État verse à part": [
     "a6dfa3327ee5520b",
-    "fca4e1c69ca99e88",
     "0c27d772fdad7c82",
     "4aa58becd59063b7"
    ],
    "F. Agrégats sur la projection": [
     "cd46cd1b98356f10",
-    "fae96d4db29b8035",
     "fb6154d0ac65fa4c",
     "d03ed2f2b3511cf1",
     "cd88f5527573a496",
@@ -4794,7 +4792,6 @@
    ],
    "Le fait central": [
     "f501af9748046147",
-    "284a77fe7f6364f8",
     "915c4cd55757c894",
     "38d24341811d9f6d",
     "80b8994a400b1630",
@@ -4807,8 +4804,7 @@
    "Les quatre arbitrages qui déplacent le chiffrage": [
     "6a3df91d91c32724",
     "d1b055ed454ac1f9",
-    "87abdab584cc086e",
-    "7f72bc9081f3802e"
+    "87abdab584cc086e"
    ],
    "Reproduire ces chiffres": [
     "56ea0b9805322a78",

@@ -54,7 +54,7 @@ FEUILLE = "docs/feuille_de_route.md"
 
 sys.path.insert(0, str(RACINE / "scripts"))
 from verifier_prose import (  # noqa: E402
-    Zonage, _blocs_de_code, decouper, paragraphes_geles)
+    Zonage, _blocs_de_code, decouper, lignes_produites, paragraphes_geles)
 
 #: Les registres, et ce qui identifie une entrée dans chacun : une clé, ou
 #: plusieurs jointes. Une section qui est un dictionnaire s'identifie par ses
@@ -219,7 +219,11 @@ def geles(arbre: Arbre) -> dict[str, dict[str, list[str]]]:
 
     Ceux des récits, des notes de décision (``docs/decisions/``) et des
     archives (``docs/archives/``), hors les actions vivantes de la feuille de
-    route et les tableaux qu'un script écrit.
+    route et ce qu'un script écrit : les tableaux, et tout bloc que
+    ``zones.yaml`` déclare produit (``blocs_produits``), repères compris. Un
+    tableau collé à son repère ``<!-- nom:debut -->`` ne commence pas par une
+    barre : ceux de ``docs/chiffrage_plf.md`` étaient gelés, et la première
+    correction du modèle qui déplaçait leurs chiffres les disait perdus.
     """
     zonage = Zonage(yaml.safe_load(arbre.lire(ZONES) or "") or {})
     sortie: dict[str, dict[str, list[str]]] = {}
@@ -233,13 +237,14 @@ def geles(arbre: Arbre) -> dict[str, dict[str, list[str]]]:
         lignes = texte.split("\n")
         sections = decouper(texte)
         recits = paragraphes_geles(lignes, zonage.prefixes_recit(chemin))
+        produites = lignes_produites(lignes, zonage.blocs_produits(chemin))
         vivantes = _vivantes(texte) if chemin == FEUILLE else set()
         for debut, fin, bloc in paragraphes(texte):
             section = next(s for s in sections if s.debut <= debut <= s.fin)
             regime = "recit" if tout_gele else zonage.regime(chemin, section)
             if regime != "recit" and debut not in recits:
                 continue
-            if debut in vivantes:
+            if debut in vivantes or debut in produites:
                 continue
             if chemin in TABLEAUX_PRODUITS and bloc.lstrip().startswith("|"):
                 continue

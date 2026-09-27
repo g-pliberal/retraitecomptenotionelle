@@ -55,6 +55,33 @@ def test_une_action_en_cours_n_est_pas_gelee():
     assert "Figée." not in vivantes and "Figée aussi." not in vivantes
 
 
+def test_un_bloc_produit_n_est_pas_gele(tmp_path):
+    """Ce qu'un script écrit entre ses repères (`blocs_produits`) change avec le
+    modèle, même dans un récit : le filet ne le gèle pas. Collé au repère, le
+    tableau ne commence pas par une barre ; ceux de `docs/chiffrage_plf.md`
+    étaient gelés, et la première correction qui déplaçait leurs chiffres les
+    disait perdus. La prose autour reste gelée."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "data" / "reference" / "prose").mkdir(parents=True)
+    (tmp_path / conservation.ZONES).write_text(
+        "fichiers:\n  docs/avis.md:\n    defaut: recit\n    blocs_produits: [annuel]\n",
+        encoding="utf-8")
+    avis = tmp_path / "docs" / "avis.md"
+    avis.write_text("# Avis\n\nLe coût est tenable.\n\n<!-- annuel:debut -->\n"
+                    "| Année | Pensions |\n|---|---:|\n| 2026 | 8,50 |\n"
+                    "<!-- annuel:fin -->\n", encoding="utf-8")
+    arbre = conservation.Arbre(racine=tmp_path)
+    reference = conservation.figer(arbre)
+    assert reference["paragraphes"] == {"docs/avis.md": {"Avis": [
+        conservation.empreinte("# Avis"), conservation.empreinte("Le coût est tenable.")]}}
+    avis.write_text(avis.read_text(encoding="utf-8").replace("8,50", "8,49"),
+                    encoding="utf-8")
+    assert conservation.verifier(reference, arbre) == []
+    avis.write_text(avis.read_text(encoding="utf-8").replace("tenable", "intenable"),
+                    encoding="utf-8")
+    assert conservation.verifier(reference, arbre)
+
+
 def test_le_filet_voit_un_recit_perdu_et_le_retrouve_archive(tmp_path):
     """Sur un dépôt miniature : un paragraphe de récit supprimé est perdu ;
     déplacé dans une archive, il est retrouvé ; un paragraphe d'état peut
