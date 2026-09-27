@@ -97,13 +97,19 @@ export const GENERATION_REFORME_2023 = 1961.667;
  * suspension de 2026, qui a abaissé la table commune, ne les a pas touchées. La
  * table de la SNCF porte en plus ce que le II de l'article 35 du décret
  * n° 2008-639 retranche à la durée requise pour compter la décote par la durée.
+ * Et la table de 2014 des IEG se lit, pour qui réunit les conditions avant
+ * soixante ans, à la génération qui atteint cet âge ce mois-là (annexe 3,
+ * article 9-1, de 2017 à 2024 : `age_de_lecture`).
  */
 export class DureesRequisesRegimes {
   constructor(paquet) {
     this._tables = Object.fromEntries(
       Object.entries(paquet.durees_requises_regimes ?? {})
-        .map(([table, { depuis, lignes }]) => [
-          table, { depuis, lignes: new TableParGeneration(lignes) },
+        .map(([table, { depuis, age_de_lecture: ageDeLecture, lignes }]) => [
+          table, {
+            depuis, ageDeLecture: ageDeLecture ?? null,
+            lignes: new TableParGeneration(lignes),
+          },
         ]),
     );
   }
@@ -118,7 +124,13 @@ export class DureesRequisesRegimes {
     if (lue === undefined || ouverture < lue.depuis) {
       return null;
     }
-    return lue.lignes.valeur(generation);
+    let lueA = generation;
+    if (lue.ageDeLecture !== null) {
+      const date = DateMois.depuisRang(ouverture);
+      lueA = Math.min(generation, Math.round(
+        (date.annee - lue.ageDeLecture + (date.mois - 1) / 12) * 1000) / 1000);
+    }
+    return lue.lignes.valeur(lueA);
   }
 }
 

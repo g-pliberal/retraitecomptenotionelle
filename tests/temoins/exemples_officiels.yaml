@@ -723,15 +723,15 @@ exemples:
   # ---- CNIEG (industries électriques et gazières) ------------------------
   # La page « Décote » de la CNIEG, lue le 27 septembre 2026. Son second
   # exemple, Monsieur E, est sédentaire, quand le statut `agent_ieg` ne porte
-  # que l'agent actif : il n'est pas rejoué. La circulaire n° 2024/15 ne l'est
-  # pas non plus. Son exemple 1 se contredit (huit trimestres de décote au
-  # § 5, quatre au § 6), et la durée qu'il oppose, 167 trimestres — celle des
+  # que l'agent actif : il n'est pas rejoué. De la circulaire n° 2024/15, seul
+  # l'exemple 1 l'est. La durée qu'il oppose, 167 trimestres — celle des
   # agents qui ont soixante ans l'année où le droit s'ouvre, article 9-1 de
-  # l'annexe 3 —, le modèle la lisait le 27 septembre 2026 dans la table par
-  # génération : 169. Ses autres agents ouvrent leur droit à soixante ou
-  # soixante-deux ans (exemple 2, § 4), sont sédentaires (§ 7), n'anticipent
-  # que de deux ans (exemple 3) ou partent à une date qu'elle ne donne pas
-  # (§ 2).
+  # l'annexe 3 —, le modèle la lisait jusqu'au 27 septembre 2026 dans la table
+  # par génération : 169. Et il se contredit sur la décote, huit trimestres au
+  # § 5, que le § 6 reprend à quatre : le témoin retient le § 5, qui les
+  # compte. Ses autres agents ouvrent leur droit à soixante ou soixante-deux
+  # ans (exemple 2, § 4), sont sédentaires (§ 7), n'anticipent que de deux ans
+  # (exemple 3) ou partent à une date qu'elle ne donne pas (§ 2).
   - id: cnieg_decote_madame_d
     source: {editeur: "CNIEG", reference: "cnieg.fr, Réglementation, Droit à la retraite, Calcul de la retraite, « Décote », exemple de Madame D", verifie_le: "2026-09-27"}
     enonce: >-
@@ -744,6 +744,21 @@ exemples:
       9 trimestres = 9,0% ». Taux : 75 % × (1 − 9 %).
     carriere: {naissance: "1962-09", sexe: F, affiliation: agent_ieg, liquidation: "2019-02", trimestres_valides: 147}
     attendu: {trimestres_requis: 165, date_age_legal: "2018-01", taux_liquidation: 0.6825}
+  - id: cnieg_2024_15_monsieur_a
+    source: {editeur: "CNIEG", reference: "circulaire CNIEG n° 2024/15 du 30 octobre 2024, « La décote », § 5, exemple 1, et § 6", verifie_le: "2026-09-27"}
+    enonce: >-
+      « Monsieur A, né le 1er décembre 1964 bénéficie d'un droit à pension à
+      56 ans au titre de 15 ans de services actifs au 1er décembre 2020. Il
+      liquide sa pension à 57 ans le 1er décembre 2021. » « A la date au plus
+      tôt d'ouverture des droits, Monsieur A a un nombre de trimestres requis
+      de 167 », ceux des agents qui ont soixante ans en 2020 ; il en totalise
+      159 : huit manquent par la durée, douze par l'âge (« 56 ans + 16
+      trimestres, soit 60 ans »), et « Le nombre de trimestres de décote à
+      retenir est donc égal à 8 trimestres ». Le § 6, « reprenant l'exemple
+      de Monsieur A », écrit « N = 4 trimestres de décote » : le témoin
+      retient le décompte du § 5. Taux : 75 % × (1 − 8 × 1,25 %).
+    carriere: {naissance: "1964-12", sexe: H, affiliation: agent_ieg, liquidation: "2021-12", trimestres_valides: 159}
+    attendu: {trimestres_requis: 167, date_age_legal: "2020-12", taux_liquidation: 0.675}
 
   # ---- Agirc-Arrco -------------------------------------------------------
   # Le dépliant « Décrypter la retraite complémentaire Agirc tranche C »

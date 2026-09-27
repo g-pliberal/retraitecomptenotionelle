@@ -10,10 +10,16 @@ effet: >-
   La fiche lisait la table commune, suspension de 2026 comprise. Le cas type des
   IEG part à l'âge légal abaissé de cinq ans, celui des dix-sept ans de services
   actifs (2° du I de l'article 16) : il lit désormais leur table, `ieg_actif_17`
-  dans `legislation/duree_requise_regimes_speciaux.csv` — 169 trimestres pour les
-  nés de 1964 à 1966, 170 pour 1967 à 1970, 171 pour 1971-1972, 172 à compter de
-  1973. Un agent né en 1968 doit 170 trimestres au lieu de 172. Les quatre autres
-  tables, de cinq à quatorze ans, sont transcrites sans qu'aucune fiche ne les lise.
+  dans `legislation/duree_requise_regimes_speciaux.csv` — 170 trimestres pour les
+  nés de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973 —, et en deçà la
+  table d'avant le décret n° 2023-692. Un agent né en 1968 doit 170 trimestres au
+  lieu de 172. Les agents nés avant 1968, qui ont tous ouvert leur droit avant 2025,
+  lisent cette table d'avant à la génération qui atteint soixante ans à l'ouverture
+  (article 9-1 de l'annexe 3, fiche `regimes_speciaux_par_generation`) : 167
+  trimestres pour les nés en 1964, 168 pour 1965 et 1966, 169 pour 1967, au lieu des
+  169 de leur génération, et 170 pour 1967, que le modèle leur opposait. Les quatre
+  autres tables, de cinq à quatorze ans, sont transcrites sans qu'aucune fiche ne les
+  lise.
   La lecture du 22 septembre, qui voulait brancher la table du I, se trompait de
   population : elle est celle des sédentaires.
 sources:

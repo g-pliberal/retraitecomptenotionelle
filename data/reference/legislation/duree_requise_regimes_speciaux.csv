@@ -89,53 +89,73 @@
 # commencent donc plus qu'à leur première marche propre : en deçà, la durée
 # « applicable avant l'entrée en vigueur du décret n° 2023-692 » est celle de
 # `ieg_2014` ou du calendrier, selon la date où l'agent a réuni les conditions.
-table,depuis,generation,trimestres,retranche_decote,fiabilite
-sncf_conduite,2025-01,1968.833,167,0,haute
-sncf_conduite,2025-01,1970,168,0,haute
-sncf_conduite,2025-01,1972,169,0,haute
-sncf_conduite,2025-01,1973,170,2,haute
-sncf_conduite,2025-01,1974,170,3,haute
-sncf_conduite,2025-01,1976,171,5,haute
-sncf_conduite,2025-01,1977,171,6,haute
-sncf_conduite,2025-01,1978,172,8,haute
-sncf_conduite,2025-01,1979,172,9,haute
-sncf_conduite,2025-01,1980,172,10,haute
-ratp,2025-01,1959.5,167,0,haute
-ratp,2025-01,1961,168,0,haute
-ratp,2025-01,1963,169,0,haute
-ratp,2025-01,1964,170,0,haute
-ratp,2025-01,1966,171,0,haute
-ratp,2025-01,1968,172,0,haute
-ieg_actif_5,2025-01,1964,170,0,haute
-ieg_actif_5,2025-01,1967,171,0,haute
-ieg_actif_5,2025-01,1969,172,0,haute
-ieg_actif_8,2025-01,1965,170,0,haute
-ieg_actif_8,2025-01,1968,171,0,haute
-ieg_actif_8,2025-01,1970,172,0,haute
-ieg_actif_11,2025-01,1966,170,0,haute
-ieg_actif_11,2025-01,1969,171,0,haute
-ieg_actif_11,2025-01,1971,172,0,haute
-ieg_actif_14,2025-01,1967,170,0,haute
-ieg_actif_14,2025-01,1970,171,0,haute
-ieg_actif_14,2025-01,1972,172,0,haute
-ieg_actif_17,2025-01,1968,170,0,haute
-ieg_actif_17,2025-01,1971,171,0,haute
-ieg_actif_17,2025-01,1973,172,0,haute
-sncf_2014,2019-07,1964.5,167,0,haute
-sncf_2014,2019-07,1966,168,0,haute
-sncf_2014,2019-07,1969,169,0,haute
-sncf_2014,2019-07,1972,170,0,haute
-sncf_2014,2019-07,1975,171,0,haute
-sncf_2014,2019-07,1978,172,0,haute
-ratp_2014,2019-07,1959.5,167,0,haute
-ratp_2014,2019-07,1961,168,0,haute
-ratp_2014,2019-07,1964,169,0,haute
-ratp_2014,2019-07,1967,170,0,haute
-ratp_2014,2019-07,1970,171,0,haute
-ratp_2014,2019-07,1973,172,0,haute
-ieg_2014,2019-07,1959.5,167,0,haute
-ieg_2014,2019-07,1961,168,0,haute
-ieg_2014,2019-07,1964,169,0,haute
-ieg_2014,2019-07,1967,170,0,haute
-ieg_2014,2019-07,1970,171,0,haute
-ieg_2014,2019-07,1973,172,0,haute
+#
+# LA COLONNE `age_de_lecture` N'EXISTE QUE POUR `ieg_2014`. L'article 9-1 de
+# l'annexe 3 des IEG, en vigueur du 1er janvier 2017 au 31 décembre 2024
+# (LEGIARTI000029150204 à LEGIARTI000047908882, abrogé par la rédaction du
+# 1er janvier 2025, LEGIARTI000047909955, lues le 27 septembre 2026), fixe la
+# durée « en vigueur lorsque les agents atteignent l'âge de soixante ans » et,
+# « par dérogation », oppose à ceux qui peuvent liquider avant cet âge « celle
+# exigée des agents atteignant l'âge de soixante ans l'année à compter de
+# laquelle la liquidation peut intervenir ». La table se lit donc, pour qui
+# réunit les conditions avant soixante ans, à la génération qui les atteint
+# au mois où il les réunit ; la CNIEG l'écrit en regard de sa table, « De
+# juillet 1959 à décembre 1960 », 167 trimestres, « Du 01/07/2019 au
+# 31/12/2020 » (circulaire n° 2024/15). Les agents actifs, qui ouvrent tous
+# leur droit avant soixante ans, lisaient la table à leur propre génération :
+# 169 trimestres au lieu de 167 pour un agent né en décembre 1964 dont le
+# droit s'ouvre en décembre 2020. Avant le 1er juillet 2019, le calendrier lu
+# au mois des conditions réunies donne déjà la durée de la génération qui
+# atteint soixante ans ce mois-là. Et les tables de 2023, qui ne répondent
+# qu'aux conditions réunies depuis 2025, quand l'article est abrogé, se lisent
+# à la génération de l'agent : leur colonne reste vide.
+table,depuis,generation,trimestres,retranche_decote,fiabilite,age_de_lecture
+sncf_conduite,2025-01,1968.833,167,0,haute,
+sncf_conduite,2025-01,1970,168,0,haute,
+sncf_conduite,2025-01,1972,169,0,haute,
+sncf_conduite,2025-01,1973,170,2,haute,
+sncf_conduite,2025-01,1974,170,3,haute,
+sncf_conduite,2025-01,1976,171,5,haute,
+sncf_conduite,2025-01,1977,171,6,haute,
+sncf_conduite,2025-01,1978,172,8,haute,
+sncf_conduite,2025-01,1979,172,9,haute,
+sncf_conduite,2025-01,1980,172,10,haute,
+ratp,2025-01,1959.5,167,0,haute,
+ratp,2025-01,1961,168,0,haute,
+ratp,2025-01,1963,169,0,haute,
+ratp,2025-01,1964,170,0,haute,
+ratp,2025-01,1966,171,0,haute,
+ratp,2025-01,1968,172,0,haute,
+ieg_actif_5,2025-01,1964,170,0,haute,
+ieg_actif_5,2025-01,1967,171,0,haute,
+ieg_actif_5,2025-01,1969,172,0,haute,
+ieg_actif_8,2025-01,1965,170,0,haute,
+ieg_actif_8,2025-01,1968,171,0,haute,
+ieg_actif_8,2025-01,1970,172,0,haute,
+ieg_actif_11,2025-01,1966,170,0,haute,
+ieg_actif_11,2025-01,1969,171,0,haute,
+ieg_actif_11,2025-01,1971,172,0,haute,
+ieg_actif_14,2025-01,1967,170,0,haute,
+ieg_actif_14,2025-01,1970,171,0,haute,
+ieg_actif_14,2025-01,1972,172,0,haute,
+ieg_actif_17,2025-01,1968,170,0,haute,
+ieg_actif_17,2025-01,1971,171,0,haute,
+ieg_actif_17,2025-01,1973,172,0,haute,
+sncf_2014,2019-07,1964.5,167,0,haute,
+sncf_2014,2019-07,1966,168,0,haute,
+sncf_2014,2019-07,1969,169,0,haute,
+sncf_2014,2019-07,1972,170,0,haute,
+sncf_2014,2019-07,1975,171,0,haute,
+sncf_2014,2019-07,1978,172,0,haute,
+ratp_2014,2019-07,1959.5,167,0,haute,
+ratp_2014,2019-07,1961,168,0,haute,
+ratp_2014,2019-07,1964,169,0,haute,
+ratp_2014,2019-07,1967,170,0,haute,
+ratp_2014,2019-07,1970,171,0,haute,
+ratp_2014,2019-07,1973,172,0,haute,
+ieg_2014,2019-07,1959.5,167,0,haute,60
+ieg_2014,2019-07,1961,168,0,haute,60
+ieg_2014,2019-07,1964,169,0,haute,60
+ieg_2014,2019-07,1967,170,0,haute,60
+ieg_2014,2019-07,1970,171,0,haute,60
+ieg_2014,2019-07,1973,172,0,haute,60

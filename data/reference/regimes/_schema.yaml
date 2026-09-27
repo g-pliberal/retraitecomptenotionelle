@@ -185,6 +185,17 @@ champs_periode:
     renvoi: true
     valeurs: [true]
     defaut: false
+  age_taux_plein_a_l_ouverture:
+    description: >-
+      L'âge d'annulation de la décote se lit-il dans la période en vigueur
+      l'ANNÉE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS, et non dans celle de la
+      liquidation ? La période de 2025 des IEG le pose : qui a ouvert son droit
+      avant le 1er janvier 2025 garde l'âge de référence d'avant le décret
+      n° 2023-692, l'âge d'ouverture majoré de cinq ans, quelle que soit la
+      date d'effet de sa pension.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
 
   age_table:
     description: >-

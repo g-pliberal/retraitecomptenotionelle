@@ -3,7 +3,9 @@ id: age_reference_decote_ieg
 intitule: >-
   Âge d'annulation de la décote du régime spécial des IEG : l'âge minimum d'ouverture
   majoré de TROIS ans depuis le 1er janvier 2025, et soixante-deux ans pour les
-  agents en services actifs nés avant 1975.
+  agents en services actifs nés avant 1975 ; à qui a ouvert son droit avant le 1er
+  janvier 2025, la CNIEG garde, quelle que soit la date d'effet, l'âge d'avant, l'âge
+  minimum majoré de cinq ans dont se retranche la diminution de l'année.
 etat: conforme
 effet: >-
   La fiche portait l'âge d'ouverture majoré de CINQ ans — 63,75 ans pour les liquidations
@@ -13,9 +15,21 @@ effet: >-
   au système actuel passe de −23 % à −32 % pour la génération 1970 et de −38 % à
   −45 % pour celle de 2000 : le cas type des IEG devient, en tête de la page Cas
   types, la carrière la moins bien traitée par la proposition, à la place du militaire
-  non officier.
+  non officier. Et qui a ouvert son droit avant le 1er janvier 2025 garde, pour la
+  CNIEG, les paramètres d'avant la réforme « quelle que soit la date d'effet de la
+  retraite IEG », sur le I ter de l'article 45, quand le II du même article écrit
+  soixante-deux ans pour toute pension de 2025 et après : lecture divergente, que la
+  fiche `decote_regimes_speciaux` inscrit, et la hiérarchie retient la caisse. Le moteur
+  retranchait la diminution de soixante-deux ans : un agent actif né en janvier 1965,
+  dont le droit s'ouvre en mai 2021, parti à soixante ans en janvier 2025, perdait quatre
+  trimestres de décote au lieu de deux. Il lit désormais l'âge dans la période en
+  vigueur l'année où le droit s'ouvre (`age_taux_plein_a_l_ouverture`) : les agents nés
+  de 1964 à 1966 partis en 2025 et après avant leur âge d'annulation perdent un à trois
+  trimestres de décote de moins ; sur les témoins, celui né en 1965 parti à soixante ans
+  gagne 3,2 % de pension, dont 2,6 points pour l'âge d'annulation. Les générations 1968
+  et suivantes, qui ouvrent leur droit en 2025 ou après, gardent soixante-deux ans.
 sources:
-  lu_le: 2026-09-22
+  lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -36,9 +50,40 @@ sources:
     url: >-
       https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote/age-annulation-decote.html
     date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      même annexe, même rédaction (LEGIARTI000052046924), article 45, II : « Pour les
+      pensions prenant effet à compter du 1er janvier 2025, l'âge auquel le coefficient de
+      minoration s'annule est égal à : - soixante-deux ans pour les agents mentionnés au 2°
+      du I de l'article 16 nés avant le 1er janvier 1975 » ; I ter : l'âge d'ouverture et
+      la durée des « assurés remplissant les conditions de liquidation de la pension avant
+      le 1er janvier 2025 sont égaux à ceux applicables avant l'entrée en vigueur du décret
+      n° 2023-692 ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CNIEG, circulaire n° 2024/15 du 30 octobre 2024, « La décote », § 3 : « les assurés
+      dont la date d'ouverture de droit est fixée jusqu'au 31 décembre 2024 bénéficient du
+      maintien des paramètres en vigueur avant la réforme, quelle que soit la date d'effet
+      de la retraite IEG (cf art. 45 - I ter de l'annexe III) » ; § 3.1, pour eux, l'âge
+      d'annulation « Age minimum d'ouverture du droit + 4 trimestres » la première année,
+      jusqu'à « + 20 trimestres » du 1er juillet au 31 décembre 2024
+    url: >-
+      https://www.cnieg.fr/files/live/sites/portail/files/documents/Juridique/circulaire2024/J_Circulaire2024_15_Decote.pdf
+    date: 2026-09-27
 textes_a_rattacher:
 - reference: >-
     annexe 3 du décret n° 46-1541 du 22 juin 1946, article 10 I et article 45 (LEGIARTI000052046924)
 - reference: décret n° 2023-692 du 28 juillet 2023
 reformes:
 - reforme_2023
+code:
+  interrupteurs:
+    age_taux_plein_a_l_ouverture: true
+  moteur: >-
+    `age_taux_plein_a_l_ouverture` : sur la période de 2025 des IEG, l'âge d'annulation se
+    lit dans la période en vigueur l'année où l'agent réunit les conditions. Qui les réunit
+    avant le 1er janvier 2025 garde l'âge de référence de la période de 2017 à 2024,
+    l'âge d'ouverture majoré de cinq ans (`ieg_actif_2011` dans `legislation/ages_regimes.csv`),
+    dont le barème des régimes spéciaux retranche la diminution de l'année ; qui les
+    réunit ensuite a soixante-deux ans (`ieg_actif_2023`), sans diminution.

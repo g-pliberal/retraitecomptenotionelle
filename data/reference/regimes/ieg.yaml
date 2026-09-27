@@ -250,6 +250,15 @@ periodes:
       La fiche opposait à tous la table commune par génération : 167
       trimestres à un agent né en 1960 parti en 2010, dont le droit en
       demande 154.
+      L'AGENT QUI RÉUNIT LES CONDITIONS AVANT SOIXANTE ANS DOIT, DE 2017 À
+      2024, LA DURÉE DE LA GÉNÉRATION QUI ATTEINT CET ÂGE CE MOIS-LÀ :
+      l'article 9-1 de l'annexe 3 lui oppose « celle exigée des agents
+      atteignant l'âge de soixante ans l'année à compter de laquelle la
+      liquidation peut intervenir », et la CNIEG la lit à la date
+      d'ouverture au plus tôt du droit (circulaire n° 2024/15, § 3.1). La
+      table de 2014 se lit donc pour lui à cette génération
+      (`age_de_lecture`) : 167 trimestres, et non 169, à l'agent actif né en
+      décembre 1964 dont le droit s'ouvre en décembre 2020.
 
   - debut: 2025
     fin: null
@@ -259,6 +268,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: ieg_actif_2023
+    age_taux_plein_a_l_ouverture: age_reference_decote_ieg
     duree_requise_table: [ieg_actif_17, ieg_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
@@ -323,7 +333,17 @@ periodes:
       % de pension. La CNIEG l'écrit de son côté en toutes lettres : « à
       compter du 1er janvier 2025 […] âge minimum + 3 ans (sauf
       exceptions) », « de façon à maintenir un âge d'annulation de la
-      décote au plus tard à 67 ans ». LA DURÉE REQUISE SE LIT À LA DATE OÙ
+      décote au plus tard à 67 ans ».
+      QUI A OUVERT SON DROIT AVANT LE 1er JANVIER 2025 GARDE L'ÂGE D'AVANT :
+      la CNIEG maintient « les paramètres en vigueur avant la réforme,
+      quelle que soit la date d'effet de la retraite IEG (cf art. 45 - I ter
+      de l'annexe III) » (circulaire n° 2024/15, § 3), c'est-à-dire l'âge
+      minimum majoré de cinq ans, dont se retranche la diminution de l'année
+      ; la période le lit dans celle de 2017 à 2024
+      (`age_taux_plein_a_l_ouverture`). Un agent né en janvier 1965, dont le
+      droit s'ouvre en mai 2021, parti à soixante ans en janvier 2025,
+      perdait quatre trimestres de décote au lieu de deux.
+      LA DURÉE REQUISE SE LIT À LA DATE OÙ
       L'AGENT RÉUNIT LES CONDITIONS, pour les retraités comme pour les
       actifs. La réforme de 2008 la fait monter de 151 à 166 trimestres
       selon cette date, de juillet 2008 à juillet 2018
@@ -334,3 +354,12 @@ periodes:
       tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
       opposait à tous la table commune par génération : 167 trimestres à
       un agent né en 1960 parti en 2010, dont le droit en demande 154.
+      L'AGENT QUI RÉUNIT LES CONDITIONS AVANT SOIXANTE ANS DOIT, S'IL LES A
+      RÉUNIES DE 2017 À 2024, LA DURÉE DE LA GÉNÉRATION QUI ATTEINT CET ÂGE
+      CE MOIS-LÀ : l'article 9-1 de l'annexe 3 lui oppose « celle exigée des
+      agents atteignant l'âge de soixante ans l'année à compter de laquelle
+      la liquidation peut intervenir », et la CNIEG la lit à la date
+      d'ouverture au plus tôt du droit (circulaire n° 2024/15, § 3.1). La
+      table de 2014 se lit donc pour lui à cette génération
+      (`age_de_lecture`) : 167 trimestres, et non 169, à l'agent actif né en
+      décembre 1964 dont le droit s'ouvre en décembre 2020.

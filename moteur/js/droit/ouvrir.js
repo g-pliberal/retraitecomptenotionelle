@@ -844,8 +844,22 @@ export function ageTauxPleinDroit(moteur, carriereSaisie) {
  * Pour un emploi classé, ce n'est pas soixante-sept ans mais la limite d'âge
  * du grade — soixante-deux ans en catégorie active, cinquante-sept en
  * super-active —, puis l'âge que l'article L. 14 bis attache au classement.
+ *
+ * Et qui a ouvert son droit avant une réforme peut garder l'âge d'avant, quand
+ * la période le dit (`age_taux_plein_a_l_ouverture`) : l'âge se lit alors dans
+ * la période en vigueur l'année où l'assuré réunit les conditions — aux IEG,
+ * l'âge d'ouverture majoré de cinq ans, et non soixante-deux ans, à qui a
+ * ouvert son droit avant le 1er janvier 2025, comme la CNIEG l'applique.
  */
-export function ageTauxPlein(moteur, periode, carriere) {
+export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
+  let periode = periodeLiquidation;
+  if (periode.age_taux_plein_a_l_ouverture) {
+    const ouverture = DateMois.depuisRang(moisOuvertureDesDroits(moteur, periode, carriere));
+    const enVigueur = moteur.catalogue.obtenir(periode.regime).periode(ouverture.annee);
+    if (enVigueur !== null && enVigueur !== undefined) {
+      periode = enVigueur;
+    }
+  }
   const derogation = derogationActive(moteur, periode, carriere);
   if (derogation !== null) {
     return derogation.ageAnnulation;

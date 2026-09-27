@@ -16,22 +16,24 @@ effet: >-
   écrivent le même calendrier, aux mêmes dates et aux mêmes pas, seul le renvoi à
   l'article du taux changeant ; les quinze lignes de
   `legislation/decote_regimes_speciaux.csv` le reprennent exactement, et la CNIEG publie
-  les mêmes tables. Quatre écarts. Le moteur lit la table à l'ANNÉE où les conditions sont
+  les mêmes tables. Trois écarts. Le moteur lit la table à l'ANNÉE où les conditions sont
   réunies, et sert au second semestre la marche d'avant : rien au second semestre 2010,
   puis un huitième de point de moins par trimestre et un ou deux trimestres de moins à
   l'âge d'annulation, jusqu'à trois points de pension en faveur de l'assuré (quatorze
   trimestres à 1,125 % au lieu de quinze à 1,25 % au second semestre 2019). Il ne porte
   pas la borne du 2° de chaque article, durée requise moins 150 : effet non mesuré, de
   l'ordre d'un trimestre de trop, pour qui réunit les conditions à compter de juillet 2023
-  sans cotiser au-delà. IEG : la CNIEG garde les paramètres d'avant la réforme de 2023 à
-  qui a ouvert son droit avant le 1er janvier 2025, « quelle que soit la date d'effet » ;
-  le moteur retranche la diminution de soixante-deux ans pour toute pension de 2025 et
-  après, et oppose jusqu'à trois trimestres de trop (3,75 points) aux agents nés en 1964
-  et 1965, un ou deux à ceux de 1966. CRPCEN : depuis 2025, la diminution se retranche de
-  l'âge de référence d'avant le décret n° 2023-689, l'âge d'ouverture de l'article 84
-  majoré de cinq ans, comme la caisse le publie ; le moteur la retranche de soixante-sept ans,
-  et oppose jusqu'à quatre trimestres de trop (cinq points) aux générations 1959 et 1960,
-  un ou deux à celle de 1961.
+  sans cotiser au-delà. CRPCEN : depuis 2025, la diminution se retranche de l'âge de
+  référence d'avant le décret n° 2023-689, l'âge d'ouverture de l'article 84 majoré de
+  cinq ans, comme la caisse le publie ; le moteur la retranche de soixante-sept ans, et
+  oppose jusqu'à quatre trimestres de trop (cinq points) aux générations 1959 et 1960, un
+  ou deux à celle de 1961. Un quatrième est corrigé, aux IEG : la CNIEG garde les
+  paramètres d'avant la réforme de 2023 à qui a ouvert son droit avant le 1er janvier
+  2025, « quelle que soit la date d'effet », et le moteur retranchait la diminution de
+  soixante-deux ans pour toute pension de 2025 et après, opposant jusqu'à trois
+  trimestres de trop (3,75 points) aux agents nés en 1964 et 1965, un ou deux à ceux de
+  1966 ; il lit désormais l'âge de référence dans la période en vigueur l'année où le
+  droit s'ouvre (`age_taux_plein_a_l_ouverture`, fiche `age_reference_decote_ieg`).
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
@@ -41,15 +43,6 @@ sources:
     requise (`ouvrir.mois_ouverture_des_droits`), et non à l'année : la ligne d'une année vaut
     du 1er juillet précédent au 30 juin, et le second semestre reçoit aujourd'hui la marche
     d'avant.
-  - >-
-    Après la phase 8 : IEG, garder à toute date d'effet l'âge d'annulation d'avant la réforme
-    de 2023, l'âge minimum majoré de vingt trimestres moins la diminution, à qui a ouvert son
-    droit avant le 1er janvier 2025, comme la CNIEG (circulaire 2024/15, § 3), et réserver
-    soixante-deux ans sans diminution à qui l'ouvre ensuite ; à reprendre avec
-    `age_reference_decote_ieg`, dont la table de 2025 prête soixante-deux ans à toutes les
-    générations. Le II de l'article 45 écrit « Pour les pensions prenant effet avant le 1er
-    janvier 2025 », et la caisse s'appuie sur le I ter : lecture divergente, inscrite
-    ci-dessous.
   - >-
     Après la phase 8 : CRPCEN, pour les pensions de 2025 et après, retrancher la diminution de
     l'âge d'ouverture de l'article 84 d'avant le décret n° 2023-689 (LEGIARTI000047909844)
@@ -73,10 +66,11 @@ sources:
   - >-
     Les exemples publiés : celui de Madame D (page « Décote » de la CNIEG) est porté,
     `cnieg_decote_madame_d`, et le modèle le rend. L'exemple 1 de la circulaire CNIEG
-    2024/15 se contredit sur la décote (huit trimestres au § 5, quatre au § 6), et sa durée
-    de 167 trimestres montre l'écart que déclare la fiche `regimes_speciaux_par_generation`
-    ; ses autres agents sont sédentaires, ouvrent leur droit à soixante ans ou plus, ou
-    partent à une date qu'elle ne donne pas. Celui de Maria (page « La décote » de la
+    2024/15 l'est aussi, `cnieg_2024_15_monsieur_a` : ses huit trimestres de décote au §
+    5, que le § 6 reprend à quatre, et sa durée de 167 trimestres, que le modèle rend
+    depuis que la fiche `regimes_speciaux_par_generation` lit l'article 9-1 ; ses autres
+    agents sont sédentaires, ouvrent leur droit à soixante ans ou plus, ou partent à une
+    date qu'elle ne donne pas. Celui de Maria (page « La décote » de la
     CRPCEN) : le modèle lui oppose 169 trimestres au lieu de 168 et ouvre son droit en
     novembre 2023 au lieu de juillet : il lit l'âge de la CRPCEN à l'année de liquidation
     et sa durée dans la table commune (action 121 de la feuille de route) ; à porter en
@@ -90,8 +84,8 @@ sources:
     garde les paramètres d'avant la réforme de 2023 à qui a ouvert son droit avant le 1er
     janvier 2025, « quelle que soit la date d'effet de la retraite IEG », en s'appuyant sur
     le I ter du même article. La hiérarchie retient ce que la caisse applique et documente
-    (docs/architecture.md, § 3.3) ; le moteur ne suit pas encore celle de la caisse pour les
-    agents nés de 1964 à 1966 (voir l'effet).
+    (docs/architecture.md, § 3.3), et le moteur la suit (`age_taux_plein_a_l_ouverture`,
+    fiche `age_reference_decote_ieg`).
   lectures:
   - type: legifrance
     reference: >-
@@ -402,6 +396,7 @@ textes_sans_effet:
     rédaction précédente au mot près
 exemples:
 - cnieg_decote_madame_d
+- cnieg_2024_15_monsieur_a
 code:
   interrupteurs:
     bareme_decote: regimes_speciaux

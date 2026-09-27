@@ -657,6 +657,10 @@ def _regimes() -> list[dict]:
                     "cotisation_forfaitaire_annee": p.cotisation_forfaitaire_annee,
                     "avantages_non_contributifs": list(p.avantages_non_contributifs),
                     "notes": p.notes,
+                    # Une seule période le pose, celle de 2025 des IEG : absent,
+                    # le moteur JavaScript le lit faux.
+                    **({"age_taux_plein_a_l_ouverture": True}
+                       if p.age_taux_plein_a_l_ouverture else {}),
                     **_regles_des_marins(p),
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),
@@ -1041,13 +1045,16 @@ def _minimum_contributif() -> dict:
 
 def _durees_requises_regimes() -> dict:
     """Durée requise propre à un régime spécial, par table et par génération,
-    avec le mois (rang) à compter duquel chaque table vaut."""
+    avec le mois (rang) à compter duquel chaque table vaut, et l'âge auquel
+    une table se lit, quand elle en porte un."""
     from retraite_notionnelle.scenarios.actuel import DureesRequisesRegimes
 
     tables = DureesRequisesRegimes(DONNEES)
     return {
         table: {
             "depuis": tables._depuis[table],
+            **({"age_de_lecture": tables._age_de_lecture[table]}
+               if table in tables._age_de_lecture else {}),
             "lignes": {
                 (str(int(generation)) if float(generation).is_integer()
                  else str(generation)): [trimestres, retranche, int(fiabilite)]

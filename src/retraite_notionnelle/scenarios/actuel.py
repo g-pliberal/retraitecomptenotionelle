@@ -268,6 +268,17 @@ class DureesRequisesRegimes:
     La table de la SNCF porte en plus ce que le II de l'article 35 du décret
     n° 2008-639 retranche à la durée requise pour compter la décote par la
     durée — jusqu'à dix trimestres pour un agent de conduite né en 1980.
+
+    ET UNE TABLE PEUT SE LIRE À UNE AUTRE GÉNÉRATION QUE CELLE DE L'ASSURÉ
+    (colonne `age_de_lecture`). L'article 9-1 de l'annexe 3 des IEG, du
+    1er janvier 2017 au 31 décembre 2024, oppose à l'agent qui peut liquider
+    avant soixante ans « celle exigée des agents atteignant l'âge de soixante
+    ans l'année à compter de laquelle la liquidation peut intervenir » : la
+    table de 2014 se lit pour lui à la génération qui atteint soixante ans
+    au mois où il réunit les conditions, comme la CNIEG l'écrit (circulaire
+    n° 2024/15). Un agent actif né en décembre 1964, dont le droit s'ouvre
+    en décembre 2020, doit 167 trimestres, ceux de la génération 1960, et
+    non les 169 de la sienne.
     """
 
     FICHIER = "duree_requise_regimes_speciaux.csv"
@@ -275,6 +286,7 @@ class DureesRequisesRegimes:
     def __init__(self, racine: Path) -> None:
         self._table: dict[str, dict[float, tuple[int, int, Fiabilite]]] = {}
         self._depuis: dict[str, int] = {}
+        self._age_de_lecture: dict[str, float] = {}
         chemin = racine / "reference" / "legislation" / self.FICHIER
         if chemin.exists():
             with chemin.open(encoding="utf-8") as flux:
@@ -285,6 +297,9 @@ class DureesRequisesRegimes:
                     ] = (int(ligne["trimestres"]), int(ligne["retranche_decote"]),
                          Fiabilite.depuis_texte(ligne["fiabilite"]))
                     self._depuis[ligne["table"]] = _rang_mois(ligne["depuis"])
+                    age = (ligne.get("age_de_lecture") or "").strip()
+                    if age:
+                        self._age_de_lecture[ligne["table"]] = float(age)
         self._generations = {cle: tuple(sorted(valeurs))
                              for cle, valeurs in self._table.items()}
 
@@ -293,11 +308,18 @@ class DureesRequisesRegimes:
         """Trimestres requis, trimestres retranchés pour la décote, fiabilité.
 
         ``ouverture`` est le rang du mois où l'assuré réunit les conditions ;
-        avant la date d'effet de la table, elle ne répond pas.
+        avant la date d'effet de la table, elle ne répond pas. Une table qui
+        porte un âge de lecture répond, à qui réunit les conditions avant cet
+        âge, pour la génération qui l'atteint ce mois-là.
         """
         generations = self._generations.get(table)
         if not generations or ouverture < self._depuis[table]:
             return None
+        age = self._age_de_lecture.get(table)
+        if age is not None:
+            date = DateMois.depuis_rang(ouverture)
+            generation = min(generation,
+                             round(date.annee - age + (date.mois - 1) / 12, 3))
         return valeur_par_generation(self._table[table], generations, generation)
 
 
