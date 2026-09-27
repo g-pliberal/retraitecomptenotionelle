@@ -593,9 +593,13 @@ reformes:
     absorbee_par: []
     non_appliquee:
       msa_non_salaries: >-
-        Réforme en vigueur depuis le 1er janvier 2026 mais non calculable :
-        deux de ses trois paramètres sont renvoyés à un décret absent de la
-        base LEGI ; la fiche sert la formule d'avant et le dit.
+        Réforme en vigueur depuis le 1er janvier 2026, que le moteur ne calcule
+        pas encore : ses décrets, n° 2025-1409 et n° 2025-1410 du 30 décembre
+        2025, et R. 173-3-2 dans la rédaction du décret n° 2026-699, sont
+        depuis dans l'index LEGI, mais la répartition des années entre les
+        périodes d'avant et d'après 2016 et le revenu annuel moyen restent à
+        porter ; la fiche retraite_proportionnelle_msa sert la formule d'avant
+        et le dit.
 
   - code: assiette_liberaux_2026
     date: 2026-01-01

@@ -11,9 +11,9 @@ etat: approchee
 etape: acquerir_les_droits
 effet: >-
   Les chefs d'exploitation, pour leurs années depuis 1990. Le barème du moteur est celui
-  que le décret n° 80-808, puis R. 732-70 et R. 732-71, écrivent depuis 1990, à deux
-  écarts près. Il n'arrondit pas les points à l'entier : 22,5 au plancher de 600 SMIC, et
-  non 23, soit 2,2 % de moins. Il calcule le maximum M avec la retraite forfaitaire de la
+  que le décret n° 80-808, puis R. 732-70 et R. 732-71, écrivent depuis 1990, points
+  arrondis à l'entier le plus proche — 23 au plancher de 600 SMIC —, à un écart près pour
+  les pensions d'avant 2026. Il calcule le maximum M avec la retraite forfaitaire de la
   fiche, ramenée sur les prix, au lieu de l'allocation aux vieux travailleurs salariés :
   115,1 points au plafond en 2025, quand la MSA publie une échelle « comprise entre 23 et
   113 points ». Pour les pensions prenant effet depuis le 1er janvier 2026, l'écart est
@@ -29,12 +29,12 @@ sources:
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Après la phase 8 : arrondir à l'entier le plus proche les points de chaque année
-    (R. 732-71, dernier alinéa, comme déjà l'article 8-1 du décret n° 80-808), et calculer
-    le maximum M avec l'allocation aux vieux travailleurs salariés de l'année, qu'il faut
-    d'abord faire entrer au dépôt, au lieu de la retraite forfaitaire.
+    Calculer le maximum M avec l'allocation aux vieux travailleurs salariés de l'année, au
+    lieu de la retraite forfaitaire, quand sa série, lue dans ses décrets de
+    revalorisation, sera entrée au dépôt (zone des données).
   - >-
-    Après la phase 8 : pour les pensions prenant effet depuis le 1er janvier 2026, servir
+    La réforme des vingt-cinq meilleures années, chantier à part : pour les pensions
+    prenant effet depuis le 1er janvier 2026, servir
     la part d'avant 2016 par la moyenne des points des meilleures années, en nombre fixé
     par R. 173-3-2 du code de la sécurité sociale, arrondie à l'entier, multipliée par le
     quart des trimestres validés avant 2016 et par cent cinquante sur la durée requise
@@ -43,9 +43,24 @@ sources:
     le calcul de 2028 ; pour celles de 2028 et après, remplacer les points des années
     depuis 2016 par le revenu annuel moyen (L. 732-24, I, 1°, et L. 732-18).
   - >-
-    Lire R. 173-3-2 du code de la sécurité sociale, que cette relecture n'a pas ouvert,
-    avant la correction.
+    Porter la répartition du nombre d'années entre les périodes d'avant et d'après 2016,
+    et entre régimes, que le II de R. 173-3-2 écrit (rédaction du décret n° 2026-699,
+    LEGIARTI000054589934, lue le 27 septembre 2026 : vingt-cinq années, réparties « au
+    prorata des durées d'assurance », arrondies « à l'entier non nul le plus proche »).
   lectures:
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 173-3-2, rédaction du 1er août 2026
+      (LEGIARTI000054589934, décret n° 2026-699, pensions prenant effet à compter du 1er
+      septembre 2026) : « Le nombre d'années retenu dans les régimes mentionnés à l'article
+      L. 173-1-2 et le régime des personnes non salariées des professions agricoles pour
+      déterminer le salaire moyen, le revenu moyen ou le nombre de points annuel moyen
+      servant au calcul de la pension est égal à vingt-cinq » ; le II le répartit « au
+      prorata des durées d'assurance », dans le régime agricole entre les périodes
+      antérieures au 1er janvier 2016 et celles qui courent depuis, les nombres étant
+      « arrondis à chaque étape à l'entier non nul le plus proche ». Lu dans l'index LEGI du
+      dépôt
+    date: 2026-09-27
   - type: legifrance
     reference: >-
       décret n° 80-808 du 14 octobre 1980, article 8-1 (LEGIARTI000006769212, du 21

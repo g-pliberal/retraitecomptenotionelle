@@ -21,6 +21,7 @@ Ce que l'étape écrit, :class:`Droits`, suit son schéma,
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -82,7 +83,8 @@ def points_msa(moteur: ScenarioActuel, periode: PeriodeRegime, annee: int,
 
     **Le barème s'auto-vérifie.** Au minimum d'assiette du chef
     d'exploitation — six cents fois le SMIC horaire, D. 731-120 —, la deuxième marche
-    donne 22,5 points, et au plafond la quatrième en donne 113,4 en 2025 :
+    donne 22,5 points, et au plafond la quatrième en donne 113,4 en 2025 avec
+    l'AVTS, que le dernier alinéa arrondit « au nombre entier le plus proche » :
     ce sont les « 23 à 113 points » que la MSA et le ministère annoncent
     sans jamais publier la formule. Et la pension maximale qui en résulte
     pour une carrière pleine vaut exactement ``PM − AVTS``, la valeur du
@@ -109,14 +111,20 @@ def points_msa(moteur: ScenarioActuel, periode: PeriodeRegime, annee: int,
     minimum_contributif, _, _, _ = moteur.minimum_contributif.valeurs(annee)
     maximum = (0.5 * pass_annuel - avts) / (37.5 * valeur_point)
     if revenu <= 400 * smic:
-        return 15.0
-    if revenu <= 800 * smic:
-        return min(30.0, 15.0 + 15.0 * (revenu - 400 * smic) / (400 * smic))
-    if revenu <= 2 * minimum_contributif or pass_annuel <= 2 * minimum_contributif:
-        return 30.0
-    return min(maximum, 30.0 + (maximum - 30.0)
-               * (revenu - 2 * minimum_contributif)
-               / (pass_annuel - 2 * minimum_contributif))
+        points = 15.0
+    elif revenu <= 800 * smic:
+        points = min(30.0, 15.0 + 15.0 * (revenu - 400 * smic) / (400 * smic))
+    elif revenu <= 2 * minimum_contributif or pass_annuel <= 2 * minimum_contributif:
+        points = 30.0
+    else:
+        points = min(maximum, 30.0 + (maximum - 30.0)
+                     * (revenu - 2 * minimum_contributif)
+                     / (pass_annuel - 2 * minimum_contributif))
+    # « Le nombre de points résultant de l'application des formules énoncées
+    # ci-dessus est arrondi au nombre entier le plus proche » (R. 732-71,
+    # dernier alinéa ; déjà l'article 8-1 du décret n° 80-808 depuis 1990) :
+    # 23 points au plancher de 600 SMIC, et non 22,5.
+    return float(math.floor(points + 0.5 + 1e-9))
 
 
 def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,

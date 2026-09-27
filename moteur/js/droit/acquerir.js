@@ -54,18 +54,20 @@ export function pointsMsa(moteur, periode, annee, revenu) {
     * moteur.macro.coefficientPrix(periode.pension_forfaitaire_annee ?? annee, annee);
   const minimumContributif = moteur.minimumContributif.valeurs(annee)[0];
   const maximum = (0.5 * passAnnuel - avts) / (37.5 * valeurPoint);
+  let points;
   if (revenu <= 400 * smic) {
-    return 15.0;
+    points = 15.0;
+  } else if (revenu <= 800 * smic) {
+    points = Math.min(30.0, 15.0 + 15.0 * (revenu - 400 * smic) / (400 * smic));
+  } else if (revenu <= 2 * minimumContributif || passAnnuel <= 2 * minimumContributif) {
+    points = 30.0;
+  } else {
+    points = Math.min(maximum, 30.0 + (maximum - 30.0)
+      * (revenu - 2 * minimumContributif)
+      / (passAnnuel - 2 * minimumContributif));
   }
-  if (revenu <= 800 * smic) {
-    return Math.min(30.0, 15.0 + 15.0 * (revenu - 400 * smic) / (400 * smic));
-  }
-  if (revenu <= 2 * minimumContributif || passAnnuel <= 2 * minimumContributif) {
-    return 30.0;
-  }
-  return Math.min(maximum, 30.0 + (maximum - 30.0)
-    * (revenu - 2 * minimumContributif)
-    / (passAnnuel - 2 * minimumContributif));
+  // Arrondi « au nombre entier le plus proche » (R. 732-71, dernier alinéa).
+  return Math.floor(points + 0.5 + 1e-9);
 }
 
 /**

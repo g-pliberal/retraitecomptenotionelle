@@ -3367,10 +3367,11 @@ def test_la_base_agricole_ouvre_quinze_points_au_minimum_avant_2004(simulateur):
     SMIC horaires jusqu'au décret n° 2004-783, de 600 ensuite : quinze points,
     puis 22,5, au chef dont le revenu est plus bas (décret n° 90-498, article
     9, II : « 800 et 400 fois le montant du salaire minimum de croissance » ;
-    décret n° 2001-584, article 11, II ; D. 731-120). Jusqu'au 27 septembre
-    2026, le modèle relevait le revenu à 600 SMIC dès 1990, et servait 22,5
-    points. L'année 2004, que le décret ne date pas, est prise à 600 SMIC,
-    comme la fiche `assiette_minimale_agricole` le déclare.
+    décret n° 2001-584, article 11, II ; D. 731-120), « arrondi au nombre
+    entier le plus proche » : 23 (R. 732-71, dernier alinéa). Jusqu'au 27
+    septembre 2026, le modèle relevait le revenu à 600 SMIC dès 1990, et
+    servait 22,5 points. L'année 2004, que le décret ne date pas, est prise à
+    600 SMIC, comme la fiche `assiette_minimale_agricole` le déclare.
     """
     from retraite_notionnelle.droit import acquerir, compter, coordonner
 
@@ -3385,7 +3386,7 @@ def test_la_base_agricole_ouvre_quinze_points_au_minimum_avant_2004(simulateur):
     base = {annee: points for regime, annee, points, _ in droits.points
             if regime == "msa_non_salaries"}
     assert all(base[annee] == pytest.approx(15.0) for annee in range(1990, 2004))
-    assert all(base[annee] == pytest.approx(22.5) for annee in range(2004, 2010))
+    assert all(base[annee] == pytest.approx(23.0) for annee in range(2004, 2010))
 
 def _rco(resultat):
     """La pension de RCO et la ligne de cascade de ses points gratuits."""
