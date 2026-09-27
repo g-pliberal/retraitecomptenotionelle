@@ -153,7 +153,11 @@ def test_l_accueil_cite_le_taux_du_regime_unique_et_le_cout_des_18_pour_cent(res
     doivent être celles qu'il rend, à la précision où la page les écrit. Le
     dépôt les écrivait dans le texte jusqu'au 23 septembre 2026, et le coût des
     18 % y était resté à 2,3 points quand le modèle en donnait 2,4."""
-    from retraite_notionnelle.web.pages import MESURES_BLOCAGES
+    from retraite_notionnelle.web.site import disponible, module
+
+    if not disponible():
+        pytest.skip("node absent : le site ne se lit pas sans lui")
+    MESURES_BLOCAGES = module("pages").MESURES_BLOCAGES
 
     assert round(resultat_a.taux_effectif * 100, 1) == MESURES_BLOCAGES["taux_regime_unique"]
     lectures = resultat_a.lectures[C.CONVENTION_ASSIETTE]
@@ -177,7 +181,11 @@ def test_l_accueil_cite_le_solde_la_dette_et_le_coefficient_du_cout_par_defaut(r
     2070 et le coefficient d'équilibre : les mêmes sondes que le README, à la
     précision de l'accueil. Celui-ci écrivait −1,5, 103 % et 0,92 quand le
     modèle donnait −1,4, 97 % et 1,00."""
-    from retraite_notionnelle.web.pages import MESURES_BLOCAGES as m
+    from retraite_notionnelle.web.site import disponible, module
+
+    if not disponible():
+        pytest.skip("node absent : le site ne se lit pas sans lui")
+    m = module("pages").MESURES_BLOCAGES
 
     solde, dette = reference.solde, reference.dette
     assert round(solde.solde_moyen("notionnel_liberal", 2026, C.HORIZON) * 100, 1) \

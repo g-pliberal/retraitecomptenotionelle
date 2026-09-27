@@ -160,7 +160,7 @@ const LIBELLES_SYSTEMES = {
 };
 
 /** Les mêmes, appariés et dans l'ordre. */
-const SCENARIOS_COMPARES = SCENARIOS_MONTRES.map(
+export const SCENARIOS_COMPARES = SCENARIOS_MONTRES.map(
   (scenario) => [scenario, LIBELLES_SYSTEMES[scenario]],
 );
 
@@ -196,7 +196,7 @@ const MATURITES_MONTREES = [2, 10, 30];
 
 /** Le premier du mois est un ORDINAL en français : « 1er », et non « 1 ». */
 /** « 2026-09-13 » -> « 13 septembre 2026 », la date telle qu'on la lit. */
-function dateEnClair(iso) {
+export function dateEnClair(iso) {
   const [annee, mois, jour] = iso.split("-").map(Number);
   return `${jourEnClair(jour)} ${NOMS_DE_MOIS[mois - 1]} ${annee}`;
 }
@@ -395,7 +395,7 @@ export function rendre(contexte, cheminDemande, parametres = null) {
  * regard ne change aucun chiffre : il choisit lequel on montre, et il ne vaut
  * que pour sa page. Copie de `_VUES_DE_PAGE` dans `web/pages.py`.
  */
-const VUES_DE_PAGE = {
+export const VUES_DE_PAGE = {
   "/cout": ["cascade", "flux"],
 };
 
@@ -403,7 +403,7 @@ const VUES_DE_PAGE = {
  * Les trois pages qui AGRÈGENT : elles ne calculent aucune carrière saisie,
  * mais elles obéissent aux mêmes règles que le simulateur. Voir `agregee`.
  */
-const PAGES_AGREGEES = {
+export const PAGES_AGREGEES = {
   "/cas-types": casTypes,
   "/cout": cout,
   "/avantages": avantages,
@@ -461,7 +461,7 @@ function libelleDate(affiliations, code) {
  * reçoit pas — une carrière commence quand on commence à travailler —, et
  * aucune date ne les ferme : on peut être au chômage en 1950 comme en 2050.
  */
-function optionsStatuts(affiliations, entree, sansEmploi = false) {
+export function optionsStatuts(affiliations, entree, sansEmploi = false) {
   // Les statuts sont rendus PAR FAMILLE — un `<optgroup>` par valeur de
   // FAMILLES_STATUT, dans l'ordre de cette table — : soixante-deux options à
   // la file ne se parcourent pas. Les périodes sans emploi forment le
@@ -735,7 +735,7 @@ function reglagesSansChamp(saisie) {
  * l'adresse. Le bloc de réglages les emporte en champs cachés pour ne pas les
  * perdre au passage du formulaire.
  */
-function champsModelisation(saisie) {
+export function champsModelisation(saisie) {
   return [
     g.liste("indexation", "Règle d'indexation", INDEXATIONS, saisie.indexation,
       "revalorisation des comptes et des pensions", {},
@@ -859,7 +859,7 @@ function consigneDuFormulaire(saisie) {
     : "L'exemple est déjà rempli. Calculez-le tel quel, ou saisissez la vôtre.";
 }
 
-function formulaire(saisie, contexte) {
+export function formulaire(saisie, contexte) {
   const affiliations = contexte.simulateur().affiliations;
   const echelle = contexte.echelle(saisie);
   // La bascule net/brut traduit la pension saisie comme elle traduit les
@@ -3224,7 +3224,7 @@ function reportProposition(comparaison) {
     + "graphique « Ce que chaque système finit par verser » les montre.</p>";
 }
 
-const NATURES_PART_EMPLOYEUR = {
+export const NATURES_PART_EMPLOYEUR = {
   appelee: "contribution appelée par décret ou par arrêté",
   implicite: "taux implicite reconstitué par les documents budgétaires",
   repli: "aucune série publiée : effort du privé de la même année",
@@ -4697,7 +4697,7 @@ function nomScenario(scenario, libelle) {
  * lendemain matin, et la phrase est restée. Les deux pages composent
  * désormais leur lecture à partir de ces nombres.
  */
-function reglageProposition(solde) {
+export function reglageProposition(solde) {
   const debut = solde.premiereAnneeProjetee;
   const fin = solde.derniereAnnee;
   const annees = [];
@@ -4722,7 +4722,7 @@ function reglageProposition(solde) {
  * la TVA à taux unique, le plus bas de la proposition est de 0,999. Copie de
  * `_decimales_sous_un`.
  */
-function decimalesSousUn(valeur) {
+export function decimalesSousUn(valeur) {
   for (const decimales of [2, 3, 4]) {
     const facteur = 10 ** decimales;
     if (Math.round(valeur * facteur) / facteur < 1.0) return decimales;
@@ -4809,7 +4809,7 @@ qui sont la seule chose que ce site mesure.</div>`;
  * Médiane basse — l'élément de rang `n / 2` arrondi vers le bas — pour que les
  * deux implémentations retrouvent le même nombre sans convention de départage.
  */
-function deplacementDesEcarts(resultat, solde, scenario) {
+export function deplacementDesEcarts(resultat, solde, scenario) {
   const deplacements = [];
   for (const cas of CAS_TYPES) {
     for (const generation of GENERATIONS) {
@@ -5059,7 +5059,7 @@ const COULEURS_SCENARIOS = {
 };
 
 /** Un montant en millions d'euros, écrit en milliards. */
-function milliards(millions, decimales = 0) {
+export function milliards(millions, decimales = 0) {
   return `${g.nombre(millions / 1000, decimales)} Md €`;
 }
 
@@ -5069,7 +5069,7 @@ function milliards(millions, decimales = 0) {
  * sinon — la même part de l'économie d'aujourd'hui. Portage de
  * `_pib_de_conversion`, dont le docstring porte la règle et ce qui la fonde.
  */
-function pibDeConversion(comptes, annee) {
+export function pibDeConversion(comptes, annee) {
   return comptes.pib.valeur(Math.min(annee, comptes.pib.derniereAnnee));
 }
 
@@ -5079,7 +5079,7 @@ function enMilliards(comptes, part, annee, signe = false) {
 }
 
 /** « 14,1 % · 422 Md € » : une part du PIB, et ce qu'elle vaut en milliards. */
-function partEtMilliards(part, millions, decimales = 1, signe = false) {
+export function partEtMilliards(part, millions, decimales = 1, signe = false) {
   return `${g.pourcentage(part, signe, decimales)} · ${g.milliards(millions, signe)}`;
 }
 
@@ -6784,7 +6784,7 @@ euros constants de ${euros} : ceux de la trajectoire du modèle.</p>
  * `libellesCascade` — aucun nombre n'est écrit en toutes lettres, sous peine
  * qu'un réglage de la page démente son étiquette.
  */
-const MARCHES_SYSTEMES = {
+export const MARCHES_SYSTEMES = {
   notionnel_retroactif: [
     "Pensions recalculées",
     "la part salariale seule, rendue au franc le franc : diviseur "
@@ -6811,7 +6811,7 @@ const MARCHES_SYSTEMES = {
 /** Les trois marches qui ne sont pas des systèmes, et leur place dans la chaîne. */
 const MARCHE_REVERSION = "reversion";
 const MARCHE_REPRISES = "reprises";
-const MARCHES_HORS_SYSTEMES = {
+export const MARCHES_HORS_SYSTEMES = {
   [MARCHE_REVERSION]: [
     "Réversion supprimée",
     "{reversion} de la masse versée cette année-là, et le premier avantage "
@@ -6836,7 +6836,7 @@ const MARCHES_HORS_SYSTEMES = {
  * que l'adresse porte, et la part de réversion tombe d'un dixième aujourd'hui à
  * un dix-huitième en 2070.
  */
-function libellesCascade(contexte, partDerives, partReprise) {
+export function libellesCascade(contexte, partDerives, partReprise) {
   const base = contexte.base;
   const ageLegal = base.age_legal_liberal ?? null;
   return {
@@ -6870,7 +6870,7 @@ function marcheCascade(code, valeur, libelles) {
  * `SCENARIOS_MONTRES`. Voir `_marches_cascade` dans `web/pages.py` : elles sont
  * exactement additives, et `test_web` le vérifie.
  */
-function marchesCascade(base, partDerives, rapports, libelles, partReprise = 0.0) {
+export function marchesCascade(base, partDerives, rapports, libelles, partReprise = 0.0) {
   const directe = base * (1.0 - partDerives);
   const marches = [marcheCascade(MARCHE_REVERSION, -base * partDerives, libelles)];
   let precedent = 1.0;
@@ -6897,7 +6897,7 @@ function marchesCascade(base, partDerives, rapports, libelles, partReprise = 0.0
 const PAS_ANNEES_CASCADE = 10;
 
 /** Les millésimes offerts, dans l'ordre, sans doublon. */
-function anneesCascade(solde, bascule) {
+export function anneesCascade(solde, bascule) {
   const obs = solde.derniereAnneeObservee;
   const fin = solde.derniereAnnee;
   const annees = [obs, Math.max(bascule, obs)];
@@ -6933,12 +6933,12 @@ function anneeCascade(solde, bascule, regards) {
  * compter de la bascule — avant elle, la proposition n'est pas appliquée. Voir
  * `_annees_flux` dans `web/pages.py`.
  */
-function anneesFlux(solde, bascule) {
+export function anneesFlux(solde, bascule) {
   return anneesCascade(solde, bascule).filter((annee) => annee >= bascule);
 }
 
 /** L'année que l'adresse demande aux schémas, ou la première offerte. */
-function anneeFlux(solde, bascule, regards) {
+export function anneeFlux(solde, bascule, regards) {
   const offertes = anneesFlux(solde, bascule);
   const demandee = (regards || {}).flux || "";
   if (estEntier(demandee) && offertes.includes(Number(demandee))) {
@@ -7257,7 +7257,7 @@ const SYSTEMES_DETTE_PUBLIQUE = ["actuel", "notionnel_liberal"];
  * code dans `postesRessources` ou `postesDepenses`, son libellé et son rang :
  * `poste` s'ajoute au total, `dont` ventile la ligne du dessus.
  */
-const LIGNES_RECETTES = [
+export const LIGNES_RECETTES = [
   ["cotisations", "Cotisations sociales", "poste"],
   ["contribution_equilibre_etat", "Contribution d'équilibre de l'État", "poste"],
   ["subventions_equilibre", "Subventions d'équilibre aux régimes spéciaux", "poste"],
@@ -7270,7 +7270,7 @@ const LIGNES_RECETTES = [
   ["transferts_autres", "Dont autres transferts", "dont"],
   ["autres_produits", "Autres produits", "poste"],
 ];
-const LIGNES_DEPENSES = [
+export const LIGNES_DEPENSES = [
   ["droits_directs", "Pensions de droit direct", "poste"],
   ["droits_derives", "Pensions de réversion (droit dérivé)", "poste"],
 ];
@@ -7451,7 +7451,7 @@ function montantFlux(meur) {
  * ses pensions, et ce qui reste — placé, donc un usage. `pib` est celui de la
  * dernière année publiée. Copie de `_caisse_flux`.
  */
-function caisseFlux(ligne, pib, systeme, libelle, cotisations) {
+export function caisseFlux(ligne, pib, systeme, libelle, cotisations) {
   const postes = ligne.postesRessources(systeme);
   const sources = [];
   for (const groupe of GROUPES) {
@@ -7492,7 +7492,7 @@ function caisseFlux(ligne, pib, systeme, libelle, cotisations) {
  * et ce que les successions en rendent ; le pilier capitalisé. Copie de
  * `_compte_flux`.
  */
-function compteFlux(contexte, annee) {
+export function compteFlux(contexte, annee) {
   const comptes = contexte.comptes();
   const c = contexte.cout();
   const base = contexte.base;
@@ -9074,7 +9074,7 @@ méthode sur la page <a href="${g.lien("/methode")}">Méthode</a>.</p>
  * va de la règle demandée à celle que la théorie désigne, en passant par celle
  * que le droit applique.
  */
-const REGLES_COMPAREES = [
+export const REGLES_COMPAREES = [
   ["Triple lock inversé, littéral", ModeIndexation.TRIPLE_LOCK_INVERSE, 1],
   ["Moyenne des trois taux", ModeIndexation.MOYENNE_TROIS_TAUX, 1],
   ["Triple lock inversé, tout en nominal",
@@ -9093,8 +9093,8 @@ const REGLES_COMPAREES = [
  * l'année SUIVANTE : les taux appliqués sont donc ceux de 1941 à 2025 inclus,
  * ce que l'intitulé de la colonne appelle « appliquée 1941-2025 ».
  */
-const ANNEE_VERSEMENT_COMPARE = 1940;
-const ANNEE_ARRIVEE_COMPAREE = 2025;
+export const ANNEE_VERSEMENT_COMPARE = 1940;
+export const ANNEE_ARRIVEE_COMPAREE = 2025;
 
 /**
  * La cotisation et les deux liquidations qui illustrent la loterie de cohorte.
@@ -9135,7 +9135,7 @@ function loterieDeCohorte(contexte) {
  * rendait faciles à recopier, et l'un d'eux avait fini par mentir de trois
  * dixièmes de point.
  */
-function cumulsIndexation(contexte) {
+export function cumulsIndexation(contexte) {
   const simulateur = contexte.simulateur();
   const cumuls = new Map();
   for (const [libelle, mode, lissage] of REGLES_COMPAREES) {
@@ -9152,15 +9152,15 @@ function cumulsIndexation(contexte) {
  * Les trois niveaux de salaire de la page Risque, sur une même carrière de
  * référence. Voir `NIVEAUX_RISQUE` dans `web/pages.py`.
  */
-const NIVEAUX_RISQUE = [
+export const NIVEAUX_RISQUE = [
   ["Au SMIC", 0.55],
   ["Au salaire moyen", 1.0],
   ["À deux fois le salaire moyen", 2.0],
 ];
 
-const NAISSANCE_RISQUE = 1990;
-const DEBUT_RISQUE = 22;
-const LIQUIDATION_RISQUE = 64;
+export const NAISSANCE_RISQUE = 1990;
+export const DEBUT_RISQUE = 22;
+export const LIQUIDATION_RISQUE = 64;
 
 /** La carrière de référence de la page Risque, à un niveau de salaire. */
 function risqueExemple(contexte, niveau) {
@@ -11051,7 +11051,7 @@ const FRACTIONS_EN_MOTS = [
 ];
 
 /** La fraction de `FRACTIONS_EN_MOTS` la plus proche de `part`. */
-function fractionEnMots(part) {
+export function fractionEnMots(part) {
   let [valeur, mots] = FRACTIONS_EN_MOTS[0];
   for (const [candidate, texte] of FRACTIONS_EN_MOTS.slice(1)) {
     if (Math.abs(candidate - part) < Math.abs(valeur - part)) {
@@ -11066,7 +11066,7 @@ function fractionEnMots(part) {
  * des deux écarts médians de ce qu'on touche sans rien ajouter. Portage de
  * `_ordre_de_grandeur`.
  */
-function ordreDeGrandeur(ecarts) {
+export function ordreDeGrandeur(ecarts) {
   const parts = [-ecarts.aVenir, -ecarts.dejaLiquidees].sort((a, b) => a - b);
   const [bas, haut] = parts.map(fractionEnMots);
   const texte = bas === haut ? bas : `${bas} à ${haut}`;
@@ -11338,9 +11338,9 @@ sans que personne ne l'ait voté.</p>
  * additionnées. Copie de `TAUX_ACTUEL_*` dans `web/pages.py`, où la
  * décomposition ligne à ligne est écrite.
  */
-const TAUX_ACTUEL_SALARIAL = 0.1131;
-const TAUX_ACTUEL_PATRONAL = 0.1667;
-const TAUX_ACTUEL_TOTAL = TAUX_ACTUEL_SALARIAL + TAUX_ACTUEL_PATRONAL;
+export const TAUX_ACTUEL_SALARIAL = 0.1131;
+export const TAUX_ACTUEL_PATRONAL = 0.1667;
+export const TAUX_ACTUEL_TOTAL = TAUX_ACTUEL_SALARIAL + TAUX_ACTUEL_PATRONAL;
 
 /** L'âge d'ouverture de la garantie, celui de l'ASPA. */
 const AGE_OUVERTURE_GARANTIE = 65;
@@ -11424,7 +11424,7 @@ function engagements(contexte) {
  *
  * Copie de `_simulateur_court` dans `web/pages.py`.
  */
-function simulateurCourt(contexte, vers = "/simuler") {
+export function simulateurCourt(contexte, vers = "/simuler") {
   const saisie = new Saisie();
   const affiliations = contexte.simulateur().affiliations;
   const champs = [
@@ -11470,7 +11470,7 @@ function simulateurCourt(contexte, vers = "/simuler") {
 }
 
 /** Les foyers du tableau de l'accueil : les pensions mensuelles de chacun. */
-const FOYERS_GARANTIE = [[300, 300], [300, 1500], [900, 900], [300, 5000], [300]];
+export const FOYERS_GARANTIE = [[300, 300], [300, 1500], [900, 900], [300, 5000], [300]];
 
 /**
  * Ce que le plancher individualisé change, en cinq lignes : l'argument le
@@ -11478,7 +11478,7 @@ const FOYERS_GARANTIE = [[300, 300], [300, 1500], [900, 900], [300, 5000], [300]
  * sont calculées : l'ASPA sur ses deux barèmes lus, la garantie sur ses deux
  * montants — voir le Python.
  */
-function tableauGarantie(contexte) {
+export function tableauGarantie(contexte) {
   const base = contexte.base;
   const annee = base.annee_euros_garantie_vieillesse;
   const minimum = contexte.simulateur().scenarioActuel.minimumVieillesse;

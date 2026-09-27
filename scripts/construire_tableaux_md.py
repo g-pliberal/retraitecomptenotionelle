@@ -8,7 +8,7 @@ Le problème qu'il traite
 ------------------------
 
 Le site calcule le tableau des règles d'indexation à chaque rendu — c'est
-``_cumuls_indexation`` de ``web/pages.py``, quatre millisecondes — et la prose
+``cumulsIndexation`` de ``moteur/js/pages.js``, quatre millisecondes — et la prose
 en porte deux copies, dans le README et dans la méthodologie, recopiées à la
 main. La page l'a déjà payé une fois : ses neuf nombres y étaient écrits en dur
 et l'un d'eux mentait de trois dixièmes de point. Les deux copies de la prose
@@ -40,13 +40,17 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle import Parametres  # noqa: E402
-from retraite_notionnelle.moteur.indexation import Indexation  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
-from retraite_notionnelle.web.pages import (  # noqa: E402
-    ANNEE_ARRIVEE_COMPAREE,
-    ANNEE_VERSEMENT_COMPARE,
-    REGLES_COMPAREES,
-)
+from retraite_notionnelle.moteur.indexation import cumuls as cumuls_indexation  # noqa: E402
+from retraite_notionnelle.web.site import module  # noqa: E402
+
+#: Les règles que le site compare, et les bornes de leur cumul : le texte du
+#: site les écrit, en JavaScript (``moteur/js/pages.js``), et ce script les y
+#: lit, par node. Le modèle Python, lui, calcule ce qu'elles rendent.
+_SITE = module("pages")
+REGLES_COMPAREES = tuple(tuple(regle) for regle in _SITE.REGLES_COMPAREES)
+ANNEE_VERSEMENT_COMPARE = _SITE.ANNEE_VERSEMENT_COMPARE
+ANNEE_ARRIVEE_COMPAREE = _SITE.ANNEE_ARRIVEE_COMPAREE
 
 #: Les documents qui portent une copie du tableau, et l'intitulé de leur
 #: première colonne — le README parle des « comptes », la méthodologie de la
@@ -82,13 +86,8 @@ def nombre(valeur: float, decimales: int = 1) -> str:
 def cumuls() -> dict[str, float]:
     """Le rendement cumulé de chaque règle, tel que le site le calcule."""
     simulateur = Simulateur(Parametres())
-    rendus: dict[str, float] = {}
-    for libelle, mode, lissage in REGLES_COMPAREES:
-        parametres = replace(simulateur.parametres, mode_indexation=mode,
-                             lissage_indexation=lissage)
-        rendus[libelle] = Indexation(simulateur.macro, parametres).coefficient(
-            ANNEE_VERSEMENT_COMPARE, ANNEE_ARRIVEE_COMPAREE)
-    return rendus
+    return cumuls_indexation(simulateur.macro, simulateur.parametres, REGLES_COMPAREES,
+                             ANNEE_VERSEMENT_COMPARE, ANNEE_ARRIVEE_COMPAREE)
 
 
 def tableau(entete: str) -> str:

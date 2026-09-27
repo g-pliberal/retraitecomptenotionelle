@@ -185,6 +185,7 @@
    "age_reference_decote_ieg",
    "age_reference_decote_sncf_ratp",
    "age_surcote_sncf_ratp",
+   "assiette_minimale_agricole",
    "assiette_minimale_independants",
    "asv_medecins_ajustement",
    "avpf",
@@ -213,14 +214,19 @@
    "cnavpl_valeur_service",
    "cnbf_surcote",
    "coefficient_anticipation_ircantec",
+   "coefficients_anticipation_agirc_arrco",
+   "cotisation_par_classes_liberales",
    "cprn_ages_decote_enfants",
    "cultes_retraite_complementaire",
    "cultes_salaire_annuel_moyen",
    "cumul_emploi_retraite_et_retraite_progressive",
    "date_effet_mois_suivant",
+   "decote_avant_1983",
    "decote_crpn",
    "decote_fonction_publique",
+   "decote_opera_de_paris",
    "decote_regime_general",
+   "decote_regimes_speciaux",
    "decret_2026_418_liberaux",
    "duree_opposee_aux_regimes_en_points",
    "duree_requise_carriere_longue_fonction_publique",
@@ -247,6 +253,7 @@
    "minimum_garanti",
    "minimum_vieillesse",
    "minoration_ircec",
+   "minoration_racl_2014_2024",
    "parametres_annuels_2026",
    "pension_differee_fonction_publique",
    "pension_mines",
@@ -264,6 +271,7 @@
    "regimes_speciaux_par_generation",
    "retablissement_fonction_publique",
    "retraite_anticipee_handicap",
+   "retraite_proportionnelle_msa",
    "revalorisation_des_pensions",
    "reversion",
    "salaire_annuel_moyen",
@@ -271,6 +279,8 @@
    "sections_liberales_majoration_enfants",
    "services_et_duree_fonction_publique",
    "surcote_fonction_publique",
+   "surcote_ircantec",
+   "surcote_par_age_seul",
    "surcote_parentale",
    "surcote_regime_general",
    "taux_maximum_fonction_publique",
@@ -359,7 +369,13 @@
    "2026-09-24 | action 89, suite : la priorité du régime spécial pour les trimestres des enfants",
    "2026-09-24 | action 89, suite : le rétablissement de la fonction publique",
    "2026-09-25 | architecture, après la phase 0 : les constats du scénario 1 que la note 0001 avait laissés",
-   "2026-09-26 | architecture, phase 2 : la carte des règles, les contrats, la liste de contrôle des textes"
+   "2026-09-26 | architecture, phase 2 : la carte des règles, les contrats, la liste de contrôle des textes",
+   "2026-09-26 | architecture, phase 3 : la chronologie datée et le réseau de personnes, les présomptions d'aujourd'hui par défaut",
+   "2026-09-26 | architecture, phase 4 : l'acquisition en étapes et le relevé des droits",
+   "2026-09-26 | architecture, phase 5 : la liquidation en fonction pure, le journal, l'échéancier et le pilote",
+   "2026-09-27 | architecture, phase 6 : un fichier par régime, et les interrupteurs deviennent des renvois aux fiches",
+   "2026-09-27 | architecture, phase 7 : la proposition réécrite en univers de droit",
+   "2026-09-27 | relecture à la source des dix fiches nées à la phase 6, menée pendant la phase 7 sans rien lui prendre"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1335,6 +1351,12 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "4aa643bbcee06734",
+    "2d78256b7bb0bccc",
+    "75f4904559e8a962",
+    "4903e480e809a70e",
+    "a41a70a4b81ec01a",
+    "d461793fde8da074",
     "8c472892f7610eb2"
    ]
   },
@@ -5784,7 +5806,7 @@
    ],
    "Précision des coefficients affichés": [
     "d5638e59ba4fcf21",
-    "1e7d58e19a5393d7"
+    "2294b4e022e7b4ce"
    ],
    "Scénario 1 — le système actuel": [
     "ce29ac0b1557f1af",

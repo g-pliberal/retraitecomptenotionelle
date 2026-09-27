@@ -1474,7 +1474,7 @@ def _bilan(contexte=None) -> dict:
     dit ce que ce figeage coûte et ce qu'il ne coûte pas.
     """
     from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.web.pages import SCENARIOS_COMPARES
+    from retraite_notionnelle.web.site import module
 
     # ``contexte`` n'est pas une option de commodité : c'est ce qui permet au
     # test du paquet de réutiliser le coût que d'autres tests du même module
@@ -1483,7 +1483,9 @@ def _bilan(contexte=None) -> dict:
     contexte = contexte or Contexte()
     solde = contexte.cout().solde
     assiette = contexte.assiette()
-    scenarios = [scenario for scenario, _ in SCENARIOS_COMPARES]
+    # Les systèmes que le site compare : c'est lui qui les choisit, dans son
+    # texte (``SCENARIOS_MONTRES`` de ``moteur/js/pages.js``), et le bilan les suit.
+    scenarios = list(module("pages").SCENARIOS_MONTRES)
     # Le PIB de la dernière année PUBLIÉE, et elle seule : au-delà, un montant
     # en milliards ne serait qu'une hypothèse de croissance déguisée en
     # observation. C'est ce qui permet à la page de dire un manque de 2070 en

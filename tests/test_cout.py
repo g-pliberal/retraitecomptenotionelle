@@ -3154,13 +3154,13 @@ def test_la_carte_du_solde_garde_le_meme_axe_sous_tous_les_scenarios():
     import re
 
     from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.web.pages import rendre
+    from retraite_notionnelle.web.site import rendre
 
     contexte = Contexte(Parametres())
     axes = {}
     for scenario in ("cor_reference", "cor_productivite_haute",
                      "cor_productivite_basse"):
-        _, corps = rendre(contexte, "/cout", {"projection": scenario})
+        _, corps = rendre("/cout", {"projection": scenario})
         carte = next(
             m.group(0) for m in re.finditer(r"<svg\b.*?</svg>", corps, re.S)
             if "% du PIB" in m.group(0) and "projection" in m.group(0)

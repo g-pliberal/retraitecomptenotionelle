@@ -152,7 +152,11 @@ def test_l_accueil_cite_ce_que_la_tva_rapporte(tva):
     """Les points de blocage de l'accueil citent ce que la TVA rapporte de plus
     que les quatre taux d'aujourd'hui, à la précision où ils l'écrivent : zéro
     quand elle n'est pas réformée, et l'accueil n'en dit alors rien."""
-    from retraite_notionnelle.web.pages import MESURES_BLOCAGES
+    from retraite_notionnelle.web.site import disponible, module
+
+    if not disponible():
+        pytest.skip("node absent : le site ne se lit pas sans lui")
+    MESURES_BLOCAGES = module("pages").MESURES_BLOCAGES
 
     rapporte = tva.recette_supplementaire(Parametres().taux_tva_liberal) * 100
     assert round(rapporte, 1) == MESURES_BLOCAGES["tva_affectee"]

@@ -22,8 +22,8 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.web.pages import rendre
 from retraite_notionnelle.web.releve_lu import REGIMES, lire_releve
+from retraite_notionnelle.web.site import rendre
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -304,7 +304,7 @@ def test_la_saisie_produite_se_simule_sans_refus():
     formulaire accepte. Une saisie que le simulateur refuse serait un import
     qui échoue chez le lecteur, après le dépôt de son relevé."""
     parametres = _lire("regime_general").parametres()
-    _, corps = rendre(Contexte(), "/simuler", {
+    _, corps = rendre("/simuler", {
         "naissance": "1978-05-01", "depart": "2043-05-01",
         "releve": parametres["releve"], "interruptions": parametres["interruptions"],
     })

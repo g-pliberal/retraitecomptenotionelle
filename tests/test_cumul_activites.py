@@ -25,7 +25,7 @@ from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.web.pages import rendre
+from retraite_notionnelle.web.site import rendre
 
 
 @pytest.fixture(scope="module")
@@ -311,7 +311,7 @@ def test_ce_que_le_formulaire_refuse(ajout, motif):
 
 def test_la_page_dit_l_activite_ajoutee():
     contexte = Contexte()
-    _, page = rendre(contexte, "/simuler", {
+    _, page = rendre("/simuler", {
         **_SAISIE, "metier2_debut": "36", "metier2_statut": "medecin_liberal",
         "metier2_salaire": "0.6", "metier2_cumul": "oui"})
     assert "Deuxième métier, en plus" in page

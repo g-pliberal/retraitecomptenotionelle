@@ -67,11 +67,13 @@ from retraite_notionnelle.garantie import (
     cout_garantie_par_sexe,
 )
 from retraite_notionnelle.moteur.indexation import Indexation
+from retraite_notionnelle.moteur.indexation import cumuls as cumuls_indexation
 from retraite_notionnelle.remuneration import AnneeComparee, charger_prelevements
 from retraite_notionnelle.droit.liquider import _coefficient_anticipation
 from retraite_notionnelle.scenarios.actuel import MinimumVieillesse
 from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.web import gabarit as g
+from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
+from retraite_notionnelle.donnees.equilibre import ORGANISMES, POSTES_TRANSFERTS
 from retraite_notionnelle.saisie import (
     CLES_MODELISATION,
     INDEXATIONS,
@@ -80,31 +82,16 @@ from retraite_notionnelle.saisie import (
     Saisie,
 )
 from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.web.pages import (
-    COMPOSANTE_GARANTIE,
-    LIGNES_DEPENSES,
-    LIGNES_RECETTES,
-    MARCHES_SYSTEMES,
-    NATURES_PART_EMPLOYEUR,
-    ORGANISMES,
-    POSTES_TRANSFERTS,
-    SCENARIOS_MONTRES,
-    TAUX_ACTUEL_PATRONAL,
-    TAUX_ACTUEL_SALARIAL,
-    TAUX_ACTUEL_TOTAL,
-    TITRES,
-    _annees_flux,
-    _caisse_flux,
-    _compte_flux,
-    _cumuls_indexation,
-    _deplacement_des_ecarts,
-    _fraction_en_mots,
-    _libelles_cascade,
-    _marches_cascade,
-    _options_statuts,
-    _ordre_de_grandeur,
-    _reglage_proposition,
-)
+from retraite_notionnelle.web.site import disponible, module, site
+
+#: Le texte du site n'est écrit qu'une fois, en JavaScript : ses constantes et
+#: ses fonctions se lisent dans le portage, par node (``web/site.py``). Sans
+#: node, rien du site ne se lit, et ses contrôles sont sautés.
+pytestmark = pytest.mark.skipif(not disponible(),
+                                reason="node absent : le site ne se lit pas sans lui")
+g = module("gabarit")
+pages = module("pages")
+TITRES = pages.TITRES if disponible() else {}
 
 RACINE = Path(__file__).resolve().parents[1]
 CATALOGUE = RACINE / "data" / "reference" / "site" / "affirmations.yaml"
@@ -166,8 +153,9 @@ def _charger_temoins() -> dict[str, dict]:
     }
     # Le pied de page est commun à toutes et n'est pas dans les témoins : il
     # entre sous le chemin « * », que le catalogue emploie pour lui.
-    temoins["*pied"] = {"chemin": "*", "parametres": {}, "corps": g.pied(),
-                        "texte": normaliser(g.pied())}
+    pied = g.pied() if disponible() else ""
+    temoins["*pied"] = {"chemin": "*", "parametres": {}, "corps": pied,
+                        "texte": normaliser(pied)}
     return temoins
 
 
@@ -280,7 +268,9 @@ class Modele:
 
     @cached_property
     def cumuls(self) -> dict[str, float]:
-        return _cumuls_indexation(self.contexte)
+        """Ce que rend chaque règle que le site compare, calculé par le modèle."""
+        return cumuls_indexation(self.sim.macro, self.base, pages.REGLES_COMPAREES,
+                                 pages.ANNEE_VERSEMENT_COMPARE, pages.ANNEE_ARRIVEE_COMPAREE)
 
     @property
     def solde(self):
@@ -589,9 +579,9 @@ def _(m: Modele):
     # L'ordre de grandeur annoncé en tête ne suppose pas l'épargne volontaire :
     # ses bornes sont les fractions des deux écarts qu'on touche sans rien
     # ajouter, et chacun a la sienne dans la phrase.
-    ordre = _ordre_de_grandeur(fige)
+    ordre = pages._ordre_de_grandeur(site().contexte.bilan().ecarts)
     for ecart in (fige.a_venir, fige.deja_liquidees):
-        assert _fraction_en_mots(-ecart) in ordre
+        assert pages._fraction_en_mots(-ecart) in ordre
 
 
 @controle("les_cases_se_lisent_contre_la_promesse")
@@ -606,13 +596,13 @@ def _(m: Modele):
     """
     for comparaison in m.grille_cas_types.resultats.values():
         promesse = comparaison.en_euros_constants(comparaison.actuel.pension_annuelle)
-        for scenario in SCENARIOS_MONTRES[1:]:
+        for scenario in pages.SCENARIOS_MONTRES[1:]:
             servie = comparaison.en_euros_constants(
                 comparaison.pension_totale(scenario), scenario)
             assert _proche(comparaison.variation_totale(scenario),
                            servie / promesse - 1.0)
     ligne = m.horizon
-    for scenario in SCENARIOS_MONTRES:
+    for scenario in pages.SCENARIOS_MONTRES:
         assert _proche(ligne.coefficient(scenario) * ligne.depense(scenario),
                        ligne.ressources_de(scenario))
     assert not _proche(ligne.coefficient("actuel"), 1.0, 1e-3)
@@ -620,9 +610,9 @@ def _(m: Modele):
 
 @controle("quatre_systemes_meme_carriere")
 def _(m: Modele):
-    assert len(SCENARIOS_MONTRES) == 4 and SCENARIOS_MONTRES[0] == "actuel"
+    assert len(pages.SCENARIOS_MONTRES) == 4 and pages.SCENARIOS_MONTRES[0] == "actuel"
     comparaison = m.defaut
-    for scenario in SCENARIOS_MONTRES:
+    for scenario in pages.SCENARIOS_MONTRES:
         assert getattr(comparaison, scenario).pension_annuelle > 0
     assert comparaison.variation("notionnel_retroactif") == (
         comparaison.notionnel_retroactif.pension_annuelle
@@ -994,7 +984,7 @@ def _(m: Modele):
 
 @controle("effort_inchange")
 def _(m: Modele):
-    assert round(m.base.taux_retraite_propose * 100) == round(TAUX_ACTUEL_TOTAL * 100)
+    assert round(m.base.taux_retraite_propose * 100) == round(pages.TAUX_ACTUEL_TOTAL * 100)
     assert _proche(m.base.taux_retraite_propose,
                    m.base.taux_cotisation_liberal + m.base.taux_capitalisation_applique)
 
@@ -1130,14 +1120,10 @@ def _(m: Modele):
 @controle("prelevement_mensuel_du_salaire_moyen")
 def _(m: Modele):
     """Ce que la retraite prélève chaque mois : les deux parts de la fiche."""
-    from retraite_notionnelle.web.pages import (
-        DEBUT_RISQUE, LIQUIDATION_RISQUE, NAISSANCE_RISQUE, NIVEAUX_RISQUE,
-    )
-
-    _, niveau = NIVEAUX_RISQUE[1]
-    comparaison = m.simuler(naissance=NAISSANCE_RISQUE,
-                            statut="salarie_prive_non_cadre", debut=DEBUT_RISQUE,
-                            liquidation=LIQUIDATION_RISQUE, salaire=niveau,
+    _, niveau = pages.NIVEAUX_RISQUE[1]
+    comparaison = m.simuler(naissance=pages.NAISSANCE_RISQUE,
+                            statut="salarie_prive_non_cadre", debut=pages.DEBUT_RISQUE,
+                            liquidation=pages.LIQUIDATION_RISQUE, salaire=niveau,
                             unite_revenu="moyen")
     fiche = comparaison.remuneration.reference.droit_en_vigueur
     prelevement = fiche.retraite_totale / 12.0
@@ -1196,9 +1182,9 @@ def _(m: Modele):
     total = m.base.taux_cotisation_liberal + m.base.taux_capitalisation_obligatoire
     # Ce que la page écrit : la part patronale des 23 points est exactement
     # celle qu'un employeur verse aujourd'hui, et la retenue est le reste.
-    assert _proche(total * (1 - part), TAUX_ACTUEL_PATRONAL, 1e-3)
-    assert _proche(total * part, total - TAUX_ACTUEL_PATRONAL, 1e-3)
-    assert total * part < TAUX_ACTUEL_SALARIAL
+    assert _proche(total * (1 - part), pages.TAUX_ACTUEL_PATRONAL, 1e-3)
+    assert _proche(total * part, total - pages.TAUX_ACTUEL_PATRONAL, 1e-3)
+    assert total * part < pages.TAUX_ACTUEL_SALARIAL
     # Et la baisse arrive sans passer par le brut : il ne bouge qu'à la marge,
     # par l'allègement recalculé, quand la retenue tombe de plus d'un tiers.
     reference = m.defaut.remuneration.reference
@@ -1295,7 +1281,7 @@ def _(m: Modele):
     employeur = m.fonctionnaire.contribution_employeur
     assert employeur.concerne_un_regime_public
     assert employeur.annees_par_origine
-    assert set(employeur.annees_par_origine) <= set(NATURES_PART_EMPLOYEUR)
+    assert set(employeur.annees_par_origine) <= set(pages.NATURES_PART_EMPLOYEUR)
 
 
 @controle("avertissement_smic")
@@ -1392,10 +1378,11 @@ def _(m: Modele):
 
 @controle("statut_ferme_apres_son_recrutement")
 def _(m: Modele):
-    affiliations = m.sim.affiliations
+    affiliations = site().contexte.simulateur().affiliations
 
     def ratp(entree: DateMois):
-        for _, options in _options_statuts(affiliations, entree):
+        entree = module("calendrier").DateMois(entree.annee, entree.mois)
+        for _, options in pages._options_statuts(affiliations, entree):
             for code, _, ouvert, attributs in options:
                 if code == "agent_ratp":
                     return ouvert, attributs
@@ -1500,11 +1487,13 @@ def _(m: Modele):
     """
     ligne = m.horizon
     coefficients = {scenario: ligne.coefficient(scenario)
-                    for scenario in SCENARIOS_MONTRES}
+                    for scenario in pages.SCENARIOS_MONTRES}
     assert len(set(round(valeur, 6) for valeur in coefficients.values())) == len(
-        SCENARIOS_MONTRES), coefficients
-    deplacement, cases = _deplacement_des_ecarts(
-        m.grille_cas_types, m.solde, "notionnel_liberal")
+        pages.SCENARIOS_MONTRES), coefficients
+    # La grille et le solde du site, ceux que sa page Cas types lit.
+    grille = module("castypes").calculer_cas_types(site().contexte.simulateur())
+    deplacement, cases = pages._deplacement_des_ecarts(
+        grille, site().contexte.cout().solde, "notionnel_liberal")
     assert cases > 50, cases
     # « Déplacerait les écarts » n'est pas une figure de style : le
     # déplacement médian se compte en points, pas en centièmes de point.
@@ -1524,7 +1513,7 @@ def _(m: Modele):
     ecarts = [abs(ligne.coefficient("notionnel_liberal") - 1.0) for ligne in m.projetees]
     assert max(ecarts) > 0.01
     ligne = m.horizon
-    for scenario in SCENARIOS_MONTRES:
+    for scenario in pages.SCENARIOS_MONTRES:
         assert _proche(ligne.coefficient(scenario) * ligne.depense(scenario),
                        ligne.ressources_de(scenario))
     assert not _proche(ligne.depense("notionnel_liberal"),
@@ -1540,7 +1529,7 @@ def _(m: Modele):
     calculent depuis ``_reglage_proposition`` depuis le 20 septembre 2026, et
     ce contrôle vérifie que les nombres écrits sont ceux du solde.
     """
-    reglage = _reglage_proposition(m.solde)
+    reglage = pages._reglage_proposition(site().contexte.cout().solde)
     assert reglage["total"] > 0
     sous_un = reglage["sous_un"] == reglage["total"]
     assert sous_un == all(ligne.coefficient("notionnel_liberal") < 1.0
@@ -1770,7 +1759,7 @@ def _(m: Modele):
     Et cela À CHAQUE ANNÉE que la carte des flux propose : le lecteur choisit
     la sienne, de la bascule à l'horizon, et la phrase doit tenir sur toutes.
     """
-    annees = _annees_flux(m.solde, m.base.annee_bascule)
+    annees = pages._annees_flux(site().contexte.cout().solde, m.base.annee_bascule)
     assert annees[0] == m.base.annee_bascule and annees[-1] == m.solde.derniere_annee
     # Le budget de l'État n'entre plus au régime unique, sous aucune forme :
     # ni impôt affecté, ni contribution d'équilibre, ni subvention. Le système
@@ -1780,7 +1769,7 @@ def _(m: Modele):
     budget = ("impots_et_taxes", "contribution_equilibre_etat", "subventions_equilibre")
     libelles = lambda caisse: {noeud.libelle for noeud in caisse.sources}
     for annee in annees:
-        compte = _compte_flux(m.contexte, annee)
+        compte = pages._compte_flux(site().contexte, annee)
         ligne = compte.ligne
         assert ligne.recette_par_assiette, (annee, "le taux unique doit s'appliquer")
         proposition = ligne.postes_ressources("notionnel_liberal")
@@ -1805,10 +1794,10 @@ def _(m: Modele):
         # régime unique, quand il en entre un aux régimes d'aujourd'hui ; la
         # TVA à taux unique y entre sous son nom.
         pib = compte.pib
-        payeurs = libelles(_caisse_flux(ligne, pib, "notionnel_liberal", "", "C"))
+        payeurs = libelles(pages._caisse_flux(ligne, pib, "notionnel_liberal", "", "C"))
         assert "Impôts" not in payeurs, annee
         assert ("TVA" in payeurs) == (ligne.tva_de("notionnel_liberal") > 0.0), annee
-        assert "Impôts" in libelles(_caisse_flux(ligne, pib, "actuel", "", "C")), annee
+        assert "Impôts" in libelles(pages._caisse_flux(ligne, pib, "actuel", "", "C")), annee
 
 
 @controle("depense_totale_et_repartition")
@@ -1882,8 +1871,8 @@ def _(m: Modele):
 
 @controle("postes_somment_aux_totaux")
 def _(m: Modele):
-    recettes = [code for code, _, rang in LIGNES_RECETTES if rang == "poste"]
-    depenses = [code for code, _, rang in LIGNES_DEPENSES if rang == "poste"]
+    recettes = [code for code, _, rang in pages.LIGNES_RECETTES if rang == "poste"]
+    depenses = [code for code, _, rang in pages.LIGNES_DEPENSES if rang == "poste"]
     for ligne in (m.observe, m.horizon):
         for scenario in ("actuel", "notionnel_liberal"):
             postes = ligne.postes_ressources(scenario)
@@ -2036,9 +2025,9 @@ def _somme_cascade(marches) -> float:
 
 def _cascade_de(m: Modele, ligne, base: float, part_reprise: float = 0.0):
     """Les marches d'une année, nommées sous les réglages du modèle."""
-    return _marches_cascade(
+    return pages._marches_cascade(
         base, ligne.part_derives, ligne.rapports,
-        _libelles_cascade(m.contexte, ligne.part_derives, part_reprise),
+        pages._libelles_cascade(site().contexte, ligne.part_derives, part_reprise),
         part_reprise)
 
 
@@ -2077,8 +2066,8 @@ def _(m: Modele):
     # seul droit sous le taux unique.
     # Le libellé se DÉDUIT du réglage, comme l'étiquette de la figure : l'écrire
     # ici en toutes lettres referait l'erreur que la figure ne fait plus.
-    nom = MARCHES_SYSTEMES["notionnel_liberal"][0].format(
-        **_libelles_cascade(m.contexte, m.observe.part_derives, 0.0))
+    nom = pages.MARCHES_SYSTEMES["notionnel_liberal"][0].format(
+        **pages._libelles_cascade(site().contexte, m.observe.part_derives, 0.0))
     marches = _cascade_de(m, m.observe, m.observe.depense_meur("actuel"))
     taux_unique = next(marche for marche in marches if marche.libelle == nom)
     assert g.signe_cascade(taux_unique.valeur, 1) == g.nombre(0.0, 1)
@@ -2202,7 +2191,7 @@ def _(m: Modele):
 @controle("dette_part_de_zero")
 def _(m: Modele):
     premiere = m.cout.dette.annees[0]
-    for scenario in SCENARIOS_MONTRES:
+    for scenario in pages.SCENARIOS_MONTRES:
         assert _proche(premiere.stock(scenario), -premiere.solde(scenario))
 
 
@@ -2514,8 +2503,8 @@ def _(m: Modele):
     lignes du relevé, la saisie qu'elles rendent, la page qui la calcule — sur
     un relevé à la forme de ceux des caisses.
     """
-    from retraite_notionnelle.web.pages import rendre
     from retraite_notionnelle.web.releve_lu import lire_releve
+    from retraite_notionnelle.web.site import rendre
 
     lecture = lire_releve([
         "Relevé de carrière",
@@ -2527,7 +2516,7 @@ def _(m: Modele):
     assert [ligne.annee for ligne in lecture.lignes] == [2010, 2011]
     parametres = lecture.parametres()
     assert parametres["releve"].startswith("2010:salarie_prive_non_cadre:29500:4")
-    _, corps = rendre(m.contexte, "/simuler", {
+    _, corps = rendre("/simuler", {
         "naissance": "1985-01-01", "depart": "2050-01-01",
         "releve": parametres["releve"],
     })

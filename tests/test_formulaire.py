@@ -29,15 +29,19 @@ from retraite_notionnelle.saisie import (
     AGE_LIQUIDATION_MINIMAL,
     Saisie,
 )
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.web.pages import _formulaire, _simulateur_court, rendre
+from retraite_notionnelle.web.site import disponible, module, rendre, site
+
+#: Le formulaire est du texte du site : il se lit dans le portage, par node.
+pytestmark = pytest.mark.skipif(not disponible(),
+                                reason="node absent : le site ne se lit pas sans lui")
+pages = module("pages")
+
+
+def _formulaire(requete: dict) -> str:
+    """Le formulaire que le site rend pour cette saisie, lue par sa saisie à lui."""
+    return pages.formulaire(module("saisie").Saisie.depuis_requete(requete), site().contexte)
 
 RACINE = Path(__file__).resolve().parents[1]
-
-
-@pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
 
 
 class _Soumission(HTMLParser):
@@ -154,18 +158,18 @@ SAISIES = {
 
 
 @pytest.mark.parametrize("nom", list(SAISIES))
-def test_le_formulaire_renvoie_tout_ce_qu_il_a_recu(contexte, nom):
+def test_le_formulaire_renvoie_tout_ce_qu_il_a_recu(nom):
     """Rendre une saisie dans le formulaire, puis le soumettre tel quel, rend la
     même saisie. Un champ que le formulaire ne porte pas — la situation, la
     saisie par la pension, l'âge de référence — se perdait au premier
     « Calculer », et rien ne le disait : la page revenait, calculée sur autre
     chose."""
     saisie = Saisie.depuis_requete(SAISIES[nom])
-    renvoyee = Saisie.depuis_requete(_soumettre(_formulaire(saisie, contexte)))
+    renvoyee = Saisie.depuis_requete(_soumettre(_formulaire(SAISIES[nom])))
     assert renvoyee.requete() == saisie.requete()
 
 
-def test_une_saisie_refusee_se_remontre_telle_qu_elle_a_ete_envoyee(contexte):
+def test_une_saisie_refusee_se_remontre_telle_qu_elle_a_ete_envoyee():
     """Le refus dit quoi corriger ; le formulaire garde tout le reste. Il
     repartait de l'exemple, et c'est une carrière de trois métiers qu'il
     fallait retaper pour une date."""
@@ -177,7 +181,7 @@ def test_une_saisie_refusee_se_remontre_telle_qu_elle_a_ete_envoyee(contexte):
         "metier3_debut": "1995-06-01", "metier3_statut": "artisan",
         "metier3_salaire": "2400",
     }
-    _, corps = rendre(contexte, "/simuler", envoyee)
+    _, corps = rendre("/simuler", envoyee)
     assert "Saisie refusée" in corps and "Métier n° 3" in corps
     assert 'id="resultats"' not in corps
     soumise = _soumettre(corps)
@@ -186,13 +190,13 @@ def test_une_saisie_refusee_se_remontre_telle_qu_elle_a_ete_envoyee(contexte):
     # Un retraité refusé garde sa pension : le formulaire reste le sien.
     retraite = {**SAISIES["un retraité, par sa pension"],
                 "liquidation": "1970-01-01"}
-    _, corps = rendre(contexte, "/simuler", retraite)
+    _, corps = rendre("/simuler", retraite)
     assert "Saisie refusée" in corps
     soumise = _soumettre(corps)
     assert {cle: soumise.get(cle) for cle in retraite} == retraite
 
 
-def test_une_ligne_incomplete_laisse_les_autres_en_place(contexte):
+def test_une_ligne_incomplete_laisse_les_autres_en_place():
     """Une ligne de métier à moitié remplie ne se lit pas : la lecture s'y
     arrête, les lignes d'avant restent, et c'est la ligne vide qui suit qui
     la recevra — le script de la page y remet ce qui a été envoyé."""
@@ -200,7 +204,7 @@ def test_une_ligne_incomplete_laisse_les_autres_en_place(contexte):
         **BASE, "metier2_debut": "2000-01-01", "metier2_statut": "salarie_prive_cadre",
         "metier2_salaire": "3900", "metier3_debut": "2008-01-01",
     }
-    _, corps = rendre(contexte, "/simuler", envoyee)
+    _, corps = rendre("/simuler", envoyee)
     assert "Saisie refusée" in corps and "Métier n° 3" in corps
     soumise = _soumettre(corps)
     assert {cle: soumise[cle] for cle in envoyee if cle != "metier3_debut"} == {
@@ -209,11 +213,11 @@ def test_une_ligne_incomplete_laisse_les_autres_en_place(contexte):
     assert 'name="metier3_debut"' in corps and 'name="metier4_debut"' not in corps
 
 
-def test_une_adresse_forgee_retombe_sur_l_exemple_sans_perdre_sa_forme(contexte):
+def test_une_adresse_forgee_retombe_sur_l_exemple_sans_perdre_sa_forme():
     """Ce qui ne se lit pas du tout repart de l'exemple, mais garde ce qui décide
     de la forme du formulaire : un retraité y retrouve le champ de sa pension,
     et non celui d'un revenu."""
-    _, corps = rendre(contexte, "/simuler", {
+    _, corps = rendre("/simuler", {
         "situation": "retraite", "montants": "brut", "naissance": "hier",
     })
     assert "Saisie refusée" in corps
@@ -223,12 +227,12 @@ def test_une_adresse_forgee_retombe_sur_l_exemple_sans_perdre_sa_forme(contexte)
     assert "salaire" not in soumise
 
 
-def test_la_consigne_ne_parle_de_l_exemple_que_devant_l_exemple(contexte):
+def test_la_consigne_ne_parle_de_l_exemple_que_devant_l_exemple():
     """« L'exemple est déjà rempli » au-dessus d'une carrière saisie — la sienne,
     une adresse partagée, la saisie que le navigateur a gardée — la faisait
     passer pour l'exemple."""
-    vierge = _formulaire(Saisie.depuis_requete({}), contexte)
-    saisie = _formulaire(Saisie.depuis_requete(BASE), contexte)
+    vierge = _formulaire({})
+    saisie = _formulaire(BASE)
     assert "L'exemple est déjà rempli" in vierge
     assert "L'exemple est déjà rempli" not in saisie
     assert "Modifiez ce qu'il faut, puis recalculez." in saisie
@@ -236,12 +240,12 @@ def test_la_consigne_ne_parle_de_l_exemple_que_devant_l_exemple(contexte):
         assert 'class="consigne"' in html
 
 
-def test_le_simulateur_court_deplace_ses_bornes_avec_la_naissance(contexte):
+def test_le_simulateur_court_deplace_ses_bornes_avec_la_naissance():
     """Ses dates portent leurs âges limites, comme celles du formulaire entier :
     sans eux, le script de la page ne déplaçait pas les bornes du calendrier, et
     elles restaient celles d'un assuré né en 1975 — un départ à 64 ans devenait
     impossible à envoyer pour qui était né en 1990."""
-    court = _simulateur_court(contexte)
+    court = pages.simulateur_court(site().contexte)
     for nom, (mini, maxi) in {
         "debut": (AGE_DEBUT_MINIMAL, AGE_DEBUT_MAXIMAL),
         "liquidation": (AGE_LIQUIDATION_MINIMAL, AGE_LIQUIDATION_MAXIMAL),
@@ -263,7 +267,7 @@ def _fonction(script: str, nom: str) -> str:
     return script[debut:script.index("\n}\n", debut)]
 
 
-def test_la_saisie_n_est_gardee_que_par_le_navigateur(contexte):
+def test_la_saisie_n_est_gardee_que_par_le_navigateur():
     """Le stockage local, et lui seul, garde la saisie : il ne sort pas de la
     machine. Trois fonctions y touchent, et chacune sous ``try`` — un
     navigateur qui le refuse, en navigation privée, doit laisser le simulateur
@@ -279,7 +283,7 @@ def test_la_saisie_n_est_gardee_que_par_le_navigateur(contexte):
     for autre in ("sessionStorage", "indexedDB", "document.cookie"):
         assert autre not in script
 
-    _, corps = rendre(contexte, "/simuler", {})
+    _, corps = rendre("/simuler", {})
     assert "Tout se calcule et se garde dans votre navigateur : rien n'en sort." \
         in corps
     assert '<button type="button" class="second oublier" hidden>Effacer ma saisie</button>' \

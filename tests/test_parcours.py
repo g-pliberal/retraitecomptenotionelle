@@ -39,8 +39,7 @@ from urllib.parse import parse_qsl
 import pytest
 
 from retraite_notionnelle.saisie import Saisie
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.web.pages import rendre
+from retraite_notionnelle.web.site import rendre
 
 RACINE = Path(__file__).resolve().parents[1]
 PARCOURS = RACINE / "docs" / "parcours_presentation.md"
@@ -114,11 +113,6 @@ COMPTE = re.compile(r"(?<![\d  ])(?!0\d)(\d[\d   ]*)\s("
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
-
-
-@pytest.fixture(scope="module")
 def parcours() -> str:
     return PARCOURS.read_text(encoding="utf-8")
 
@@ -131,7 +125,7 @@ def _prose(corps: str) -> str:
 def _saisie_par_defaut() -> dict[str, str]:
     """Les paramètres de l'exemple que le simulateur ouvre déjà rempli.
 
-    `rendre(contexte, "/simuler", {})` ne calcule rien : la page attend qu'on
+    `rendre("/simuler", {})` ne calcule rien : la page attend qu'on
     clique. Le parcours, lui, décrit l'écran d'APRÈS le clic, et ses chiffres
     en viennent. La requête est celle que le site écrit lui-même pour sa
     saisie par défaut, jamais une liste de paramètres recopiée ici.
@@ -139,9 +133,9 @@ def _saisie_par_defaut() -> dict[str, str]:
     return dict(parse_qsl(html.unescape(Saisie().requete().lstrip("?"))))
 
 
-def _rendue(contexte: Contexte, chemin: str) -> str:
+def _rendue(chemin: str) -> str:
     parametres = _saisie_par_defaut() if chemin == "/simuler" else {}
-    return _prose(rendre(contexte, chemin, parametres)[1])
+    return _prose(rendre(chemin, parametres)[1])
 
 
 def _nombre(somme: str) -> float:
@@ -181,9 +175,9 @@ def _ecrit(signe: str, corps: str, brute: str) -> str:
     return re.sub(r"[  ]", " ", f"{signe}{corps.strip()} {_unite(brute)}")
 
 
-def _lignes_rendues(contexte: Contexte, chemin: str, parametres: dict) -> dict:
+def _lignes_rendues(chemin: str, parametres: dict) -> dict:
     """Les lignes de résultat du simulateur, par numéro : titre, pension, écart."""
-    corps = rendre(contexte, chemin, parametres)[1]
+    corps = rendre(chemin, parametres)[1]
     lignes = {}
     for bloc, glose in BLOC_SCENARIO.findall(corps):
         titre = re.search(r'<span class="titre">(\d)\. ([^<]+)</span>', bloc)
@@ -223,7 +217,7 @@ def test_les_sections_nommees_existent_toutes(parcours):
         f"{manquants} — le titre a changé, ou la section a disparu")
 
 
-def test_le_parcours_rejoue_ses_carrieres(contexte, parcours):
+def test_le_parcours_rejoue_ses_carrieres(parcours):
     """Chaque adresse du parcours est rejouée, et son tableau confronté.
 
     Le document donne l'adresse complète, paramètres compris : le test la lit,
@@ -236,7 +230,7 @@ def test_le_parcours_rejoue_ses_carrieres(contexte, parcours):
         chemin, requete = adresse.group(1), html.unescape(adresse.group(2))
         parametres = dict(parse_qsl(requete))
         qui = f"{parametres.get('statut')} {parametres.get('salaire')}"
-        rendues = _lignes_rendues(contexte, chemin, parametres)
+        rendues = _lignes_rendues(chemin, parametres)
         assert rendues, f"{chemin} ne rend aucune ligne de résultat pour {qui}"
         suite = parcours[adresse.end():adresse.end() + 900]
         lignes = LIGNE_TABLEAU.findall(suite)
@@ -266,7 +260,7 @@ def test_le_parcours_rejoue_ses_carrieres(contexte, parcours):
 
 
 @pytest.mark.parametrize("titre,chemin", sorted(PAGES_DES_SECTIONS.items()))
-def test_chaque_chiffre_du_parcours_est_sur_sa_page(contexte, parcours, titre, chemin):
+def test_chaque_chiffre_du_parcours_est_sur_sa_page(parcours, titre, chemin):
     """Tout montant et tout pourcentage d'une section se lit sur sa page.
 
     C'est le contrôle qui a manqué : « le salaire net baisse de 117 € » ne
@@ -277,7 +271,7 @@ def test_chaque_chiffre_du_parcours_est_sur_sa_page(contexte, parcours, titre, c
     # Les tableaux de carrières ont leur propre contrôle, plus précis : les
     # sauter ici évite de redire la même chose deux fois.
     section = LIGNE_TABLEAU.sub("", section)
-    portees = _valeurs(_rendue(contexte, chemin))
+    portees = _valeurs(_rendue(chemin))
     exemptes = HORS_PAGE.get(chemin, {})
     absents = []
     for signe, corps, brute in NOMBRE.findall(section):
@@ -294,7 +288,7 @@ def test_chaque_chiffre_du_parcours_est_sur_sa_page(contexte, parcours, titre, c
 
 
 @pytest.mark.parametrize("titre,chemin", sorted(PAGES_DES_SECTIONS.items()))
-def test_chaque_compte_du_parcours_est_sur_sa_page(contexte, parcours, titre, chemin):
+def test_chaque_compte_du_parcours_est_sur_sa_page(parcours, titre, chemin):
     """Les comptes sans unité, que l'œil ne signale pas.
 
     « 43 dispositifs », « 96 séries », « 51 points » : trois chiffres qui
@@ -303,7 +297,7 @@ def test_chaque_compte_du_parcours_est_sur_sa_page(contexte, parcours, titre, ch
     cherché tel quel dans la page, la casse en moins.
     """
     section = _sections(parcours)[titre]
-    page = _rendue(contexte, chemin).lower()
+    page = _rendue(chemin).lower()
     absents = [f"{nombre.strip()} {nom}"
                for nombre, nom in COMPTE.findall(section)
                if not any(f"{graphie} {nom}" in page

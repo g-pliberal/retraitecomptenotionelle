@@ -100,7 +100,11 @@ def test_l_accueil_cite_le_solde_de_la_variante_prospective(prospective):
     """L'accueil l'écarte comme infinançable, chiffre à l'appui : ce chiffre doit
     être celui que le script rend. Il y était écrit −3,9 jusqu'au 23 septembre
     2026, quand le modèle donnait −3,5."""
-    from retraite_notionnelle.web.pages import MESURES_BLOCAGES
+    from retraite_notionnelle.web.site import disponible, module
+
+    if not disponible():
+        pytest.skip("node absent : le site ne se lit pas sans lui")
+    MESURES_BLOCAGES = module("pages").MESURES_BLOCAGES
 
     moyen = prospective.lectures[proposition_prospective.LIBERAL].solde_moyen
     assert round(moyen * 100, 1) == MESURES_BLOCAGES["solde_moyen_prospectif"]

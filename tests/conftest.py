@@ -44,6 +44,8 @@ COMPLETS = {
     # JavaScript (``node --test`` compris), son formulaire, le parcours de
     # présentation.
     "test_web.py", "test_formulaire.py", "test_parcours.py",
+    # Le pont par lequel le Python lit le site : il lance node.
+    "test_site.py",
     # La page Coût et les scripts qui la déplacent : chacun recalcule le coût
     # agrégé, sous une variante.
     "test_cout.py", "test_cout_age_depart.py", "test_age_conjoncturel.py",

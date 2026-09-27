@@ -1860,17 +1860,17 @@ export function cascade(titre, marches, unite = "", decimales = 1,
 // comparés caractère par caractère.
 
 const LARGEUR_SANKEY = 720;
-const LARGEUR_NOEUD_SANKEY = 14;
+export const LARGEUR_NOEUD_SANKEY = 14;
 const X_SOURCES_SANKEY = 152;
 const X_USAGES_SANKEY = 528;
-const X_CAISSE_SANKEY = Math.floor(
+export const X_CAISSE_SANKEY = Math.floor(
   (X_SOURCES_SANKEY + LARGEUR_NOEUD_SANKEY + X_USAGES_SANKEY - LARGEUR_NOEUD_SANKEY) / 2,
 );
-const ECART_NOEUDS_SANKEY = 32;
+export const ECART_NOEUDS_SANKEY = 32;
 const ECART_CAISSES_SANKEY = 64;
 const MARGE_HAUT_SANKEY = 44;
 const MARGE_BAS_SANKEY = 6;
-const HAUTEUR_SANKEY = 240;
+export const HAUTEUR_SANKEY = 240;
 const RETRAIT_SANKEY = 8;
 
 /**

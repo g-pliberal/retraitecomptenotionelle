@@ -239,3 +239,20 @@ class Indexation:
     def fiabilite_sur(self, debut: int, fin: int) -> Fiabilite:
         return min((self.taux(a).fiabilite for a in range(debut, fin + 1)),
                    default=Fiabilite.ESTIMEE)
+
+
+def cumuls(macro: DonneesMacro, parametres: Parametres, regles, de: int,
+           a: int) -> dict[str, float]:
+    """Le rendement cumulé de chaque règle, de ``de`` à ``a`` : ``{libellé: coefficient}``.
+
+    ``regles`` : des triplets (libellé, mode d'indexation, fenêtre de lissage).
+    Ce sont ceux que le site compare — ``REGLES_COMPAREES`` de
+    ``moteur/js/pages.js``, qui les calcule à chaque rendu ; la prose et ses
+    contrôles les recalculent ici, par le modèle qui fait foi.
+    """
+    rendus: dict[str, float] = {}
+    for libelle, mode, lissage in regles:
+        variante = replace(parametres, mode_indexation=ModeIndexation(mode),
+                           lissage_indexation=int(lissage))
+        rendus[libelle] = Indexation(macro, variante).coefficient(de, a)
+    return rendus

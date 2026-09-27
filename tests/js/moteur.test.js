@@ -142,11 +142,12 @@ test("les pages rendent le même HTML que le modèle Python", () => {
 });
 
 test("un paquet d'avant les écarts médians ne fait pas tomber l'accueil", () => {
+  // Un bilan écrit avant les écarts médians : l'accueil se tait sur le chiffre.
   // Le site lit son paquet en `force-cache` : un lecteur revenu après le
   // 23 septembre 2026 peut recevoir le nouveau code et l'ancien paquet, dont le
-  // bilan ne porte pas les écarts médians. L'accueil se tait alors sur le
-  // chiffre, comme `test_un_paquet_sans_ecarts_ne_fait_pas_tomber_l_accueil`
-  // l'exige du Python.
+  // bilan ne porte pas les écarts médians. L'accueil ne doit pas en tomber ; il
+  // retrouve la réponse d'avant, sans chiffre, et le tableau sa ligne d'avant.
+  // Le Python l'exigeait aussi de son rendu, jusqu'à la phase 8 qui l'a retiré.
   const bilan = { ...paquet.bilan_equilibre };
   delete bilan.ecarts_medians;
   const [, corps] = rendre(new Contexte({ ...paquet, bilan_equilibre: bilan }), "/", {});
@@ -155,6 +156,7 @@ test("un paquet d'avant les écarts médians ne fait pas tomber l'accueil", () =
     + "que le système actuel promet.</strong> Votre retraite vaudra"));
   assert.ok(!texte.includes("baisse médiane"));
   assert.ok(!texte.includes("Votre retraite</th>"));
+  assert.ok(texte.includes("c'est une avance, reprise sur la succession. Pour votre cas"));
 });
 
 /**

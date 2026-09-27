@@ -3,17 +3,21 @@
 
 Le modèle Python reste la **référence** : c'est lui qui a été écrit contre les
 sources, testé et documenté. Le moteur JavaScript qui fait tourner le site doit
-en reproduire les chiffres, pas les réinventer. Ce script fige donc, depuis le
-Python, ce que le JavaScript doit retrouver :
+en reproduire les chiffres, pas les réinventer. Ce script fige donc ce que le
+JavaScript doit retrouver :
 
 * ``tests/temoins/simulations.json`` — un jeu de carrières et de réglages, avec
   la sortie complète de ``Comparaison.dictionnaire()`` pour chacun ;
-* ``tests/temoins/pages.json`` — le HTML rendu de chaque page du site.
+* ``tests/temoins/pages.json`` — le HTML rendu de chaque page du site, par le
+  site lui-même : son texte n'est écrit qu'en JavaScript (docs/architecture.md,
+  § 8), et ``web/site.py`` le fait rendre par node, sur le paquet
+  ``moteur/donnees.json`` — qu'il faut donc avoir reconstruit d'abord.
 
 Les deux fichiers sont versionnés : une différence de chiffre entre les deux
 implémentations apparaît alors dans ``node --test``, et une modification voulue
-du modèle apparaît en diff dans le dépôt, chiffre par chiffre. C'est ce qui
-rend le portage vérifiable plutôt que crédible.
+du modèle, ou du texte du site, apparaît en diff dans le dépôt, chiffre par
+chiffre et mot par mot. C'est ce qui rend le portage vérifiable plutôt que
+crédible.
 
     python scripts/construire_temoins.py            # régénère les témoins
     python scripts/construire_temoins.py --verifier # échoue s'ils sont périmés
@@ -35,7 +39,7 @@ from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
 from retraite_notionnelle.droit import liquidation as _liquidation  # noqa: E402
 from retraite_notionnelle.saisie import AGE_DEBUT_MINIMAL, Saisie  # noqa: E402
 from retraite_notionnelle.contexte import Contexte  # noqa: E402
-from retraite_notionnelle.web.pages import rendre  # noqa: E402
+from retraite_notionnelle.web.site import rendre  # noqa: E402
 
 DOSSIER = RACINE / "tests" / "temoins"
 SIMULATIONS = DOSSIER / "simulations.json"
@@ -791,7 +795,7 @@ REGLES_AUTRES = {
 }
 
 
-def _pages(contexte: Contexte) -> dict:
+def _pages() -> dict:
     demandes = [
         ("simuler", "/simuler", {}),
         ("simuler_calcul", "/simuler", BASE),
@@ -1047,7 +1051,7 @@ def _pages(contexte: Contexte) -> dict:
     ]
     pages = {}
     for nom, chemin, parametres in demandes:
-        titre, corps = rendre(contexte, chemin, parametres)
+        titre, corps = rendre(chemin, parametres)
         pages[nom] = {
             "chemin": chemin,
             "parametres": parametres,
@@ -1061,7 +1065,7 @@ def construire() -> dict[Path, bytes]:
     contexte = Contexte()
     fichiers = {
         SIMULATIONS: _simulations(contexte),
-        PAGES: _pages(contexte),
+        PAGES: _pages(),
     }
     return {
         chemin: (json.dumps(contenu, ensure_ascii=False, sort_keys=True, indent=1) + "\n")

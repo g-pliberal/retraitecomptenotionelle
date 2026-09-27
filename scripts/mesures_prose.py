@@ -257,10 +257,11 @@ def conserve(**reglages: str) -> float:
 
     La colonne du tableau des règles d'indexation, celle que le site affiche.
     """
-    from retraite_notionnelle.web.pages import (ANNEE_ARRIVEE_COMPAREE,
-                                                ANNEE_VERSEMENT_COMPARE)
+    from retraite_notionnelle.web.site import module
 
-    bornes = {"de": str(ANNEE_VERSEMENT_COMPARE), "a": str(ANNEE_ARRIVEE_COMPAREE)}
+    # Les bornes que le site compare : son texte les écrit, en JavaScript.
+    site = module("pages")
+    bornes = {"de": str(site.ANNEE_VERSEMENT_COMPARE), "a": str(site.ANNEE_ARRIVEE_COMPAREE)}
     regle = cumul_indexation(**{**reglages, **bornes})
     prix = cumul_indexation(regle="prix", **bornes)
     return regle / prix * 100
@@ -459,20 +460,27 @@ def constante(**reglages: str) -> float:
 
     Pour les bornes que le code fixe et que la prose annonce — la fenêtre de
     lissage la plus longue, l'âge d'entrée de la carrière de référence. Le
-    module se nomme depuis ``src/`` (``retraite_notionnelle.web.pages``) ou
-    depuis ``scripts/`` (``construire_tableaux_md``).
+    module se nomme depuis ``src/`` (``retraite_notionnelle.saisie``), depuis
+    ``scripts/`` (``construire_tableaux_md``), ou dans le portage
+    (``moteur/js/pages.js``) pour une constante du texte du site, qui ne
+    s'écrit qu'en JavaScript et se lit par node.
     """
     import importlib
 
-    sys.path.insert(0, str(RACINE / "scripts"))
-    objet = importlib.import_module(reglages["de"])
+    if reglages["de"].startswith("moteur/js/") and reglages["de"].endswith(".js"):
+        from retraite_notionnelle.web.site import module
+
+        objet = module(reglages["de"][len("moteur/js/"):-len(".js")])
+    else:
+        sys.path.insert(0, str(RACINE / "scripts"))
+        objet = importlib.import_module(reglages["de"])
     # Une constante de classe se nomme par son chemin : l'âge d'ouverture de
     # l'ASPA est ``MinimumVieillesse.AGE_OUVERTURE``.
     # un rang désigne l'élément d'un couple — le salaire d'ancrage est
     # ``ANCRAGE_SALAIRE_MOYEN.1``, l'année qui le porte ``.0`` —, et une clé
     # l'entrée d'une table : ``TRANCHES_CATEGORIE.Y_LT30``.
     for morceau in reglages["nom"].split("."):
-        if morceau.isdigit() and isinstance(objet, tuple) and int(morceau) < len(objet):
+        if morceau.isdigit() and isinstance(objet, (tuple, list)) and int(morceau) < len(objet):
             objet = objet[int(morceau)]
         elif isinstance(objet, dict) and morceau in objet:
             objet = objet[morceau]
@@ -1090,7 +1098,7 @@ def _solde_annee(reglages: dict[str, str]):
 def _milliards_de_part(part: float, annee: int) -> float:
     """Une part du PIB de ``annee`` (en fraction), en milliards d'euros.
 
-    La règle du site, ``_pib_de_conversion`` dans ``web/pages.py`` : le PIB de
+    La règle du site, ``pibDeConversion`` dans ``moteur/js/pages.js`` : le PIB de
     l'année quand l'INSEE le publie, celui de la dernière année publiée pour
     une année projetée — la même part de l'économie d'aujourd'hui. C'est ce qui
     fait qu'un milliard de la prose est celui que la page Coût affiche au même

@@ -1,8 +1,10 @@
 """Tests du contenu du site.
 
-Le site tourne entièrement dans le navigateur ; ce qu'il affiche est produit ici
-par :mod:`retraite_notionnelle.web.pages`, qui ne dépend que de la bibliothèque
-standard et sert de référence au portage JavaScript.
+Le site tourne entièrement dans le navigateur, et son texte n'est écrit qu'une
+fois, en JavaScript (``moteur/js/pages.js`` et ``gabarit.js``). Ces tests le
+lisent là où il est, par :mod:`retraite_notionnelle.web.site` ; ce qu'ils
+confrontent aux pages — la saisie, les simulations, les agrégats — vient du
+modèle Python, qui fait foi.
 """
 
 from __future__ import annotations
@@ -11,18 +13,12 @@ import dataclasses
 import html
 import itertools
 import re
+from pathlib import Path
 from urllib.parse import parse_qsl
 
 import pytest
 
-from retraite_notionnelle.web import gabarit as g
-from retraite_notionnelle.web.gabarit import (
-    Cellule,
-    euros,
-    franciser,
-    pourcentage,
-    tableau,
-)
+from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
 from retraite_notionnelle.donnees.bilan import EcartsFiges
 from retraite_notionnelle.donnees.chargement import (
     DonneeInsuffisante,
@@ -51,35 +47,23 @@ from retraite_notionnelle.saisie import (
     Saisie,
 )
 from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.web.pages import (
-    _annee_flux,
-    _annees_cascade,
-    _annees_flux,
-    _caisse_flux,
-    _compte_flux,
-    _date_en_clair,
-    _libelles_cascade,
-    _marches_cascade,
-    _milliards,
-    _part_et_milliards,
-    _pib_de_conversion,
-    COMPOSANTE_GARANTIE,
-    MARCHES_HORS_SYSTEMES,
-    MARCHES_SYSTEMES,
-    _VUES_DE_PAGE,
-    SCENARIOS_MONTRES,
-    DECIMALES_DIVISEUR,
-    DECIMALES_FACTEUR,
-    DECIMALES_MULTIPLE,
-    PAGES_AGREGEES,
-    PAS_MULTIPLE,
-    TITRES,
-    _champs_modelisation,
-    _fraction_en_mots,
-    _ordre_de_grandeur,
-    rendre,
-    statuts,
-)
+from retraite_notionnelle.web.site import disponible, module, rendre, site
+
+
+#: Le site, en JavaScript : ses pages et ses modules se lisent par node
+#: (``web/site.py``), le Python ne les rendant plus depuis la phase 8. Sans
+#: node, rien du site ne se lit, et ses tests sont sautés.
+pytestmark = pytest.mark.skipif(not disponible(),
+                                reason="node absent : le site ne se lit pas sans lui")
+g = module("gabarit")
+pages = module("pages")
+#: Les pages et les pages agrégées, que des tests parcourent : lues à la
+#: collecte, puisque ``parametrize`` les demande.
+TITRES = pages.TITRES if disponible() else {}
+PAGES_AGREGEES = pages.PAGES_AGREGEES if disponible() else {}
+#: La feuille de style du site, telle qu'il la charge.
+FEUILLE_DE_STYLE = (Path(__file__).resolve().parents[1] / "moteur" / "style.css").read_text(
+    encoding="utf-8")
 
 
 @pytest.fixture(scope="module")
@@ -97,7 +81,7 @@ def _echelle():
 
 
 @pytest.fixture(scope="module")
-def page(contexte):
+def page():
     """Rend une page entière, comme le fait ``index.html`` dans le navigateur.
 
     Le site n'assemble jamais autre chose : l'en-tête, le corps rendu, le pied.
@@ -112,8 +96,7 @@ def page(contexte):
         arguments = {nom: str(valeur) for nom, valeur in parametres.items()}
         cle = (chemin, tuple(sorted(arguments.items())))
         if cle not in memo:
-            _, corps = rendre(contexte, chemin, arguments)
-            memo[cle] = g.entete(chemin) + corps + g.pied()
+            memo[cle] = site().page(chemin, arguments)
         return memo[cle]
 
     return rendu
@@ -222,8 +205,8 @@ def test_pas_de_decomposition_si_l_indexation_est_deja_choisie(page):
 # portage JavaScript doit retrouver à l'identique.
 
 
-def test_statuts_proposes(contexte):
-    donnees = statuts(contexte)
+def test_statuts_proposes():
+    donnees = pages.statuts(site().contexte)
     codes = {entree["code"] for entree in donnees}
     assert "salarie_prive_non_cadre" in codes
     assert all(entree["libelle"] for entree in donnees)
@@ -328,7 +311,7 @@ def test_le_menu_des_statuts_est_date(page, contexte):
     assert regimes({"naissance": "1985", "statut": "liberal_non_reglemente",
                     "debut": "25", "liquidation": "64"}) >= {"cnavpl", "cipav_complementaire"}
 
-    dates = {s["code"]: s for s in statuts(contexte)}
+    dates = {s["code"]: s for s in pages.statuts(site().contexte)}
     assert dates["mineur"]["fermeture_entrants"] == "2010-09"
     assert dates["mineur"]["releve_par"] == "salarie_prive_non_cadre"
     assert dates["artiste_auteur"]["ouverture"] == 1977
@@ -397,14 +380,14 @@ def test_le_nombre_d_enfants_reste_borne():
             Saisie.depuis_requete({"enfants": refuse})
 
 
-def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur(contexte):
+def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur():
     """Aucun champ numérique ne doit être borné dans le seul HTML.
 
     Le formulaire porte des attributs « min » et « max » ; le navigateur les
     respecte, une adresse partagée non. Ce test relit le formulaire rendu et
     vérifie que chaque borne déclarée est bien refusée par le modèle.
     """
-    formulaire = rendre(contexte, "/simuler", {})[1]
+    formulaire = rendre("/simuler", {})[1]
     champs = re.findall(
         r'<input type="number" id="([a-z_0-9]+)" name="[^"]*" value="[^"]*"'
         r'(?: min="(-?[0-9.]+)")?(?: max="(-?[0-9.]+)")?',
@@ -421,7 +404,7 @@ def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur(contexte):
                 Saisie.depuis_requete({nom: valeur})
 
 
-def test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur(contexte):
+def test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur():
     """Même exigence pour les dates que pour les nombres.
 
     Un calendrier s'ouvre sur les seules dates que le modèle accepte — « min »
@@ -429,7 +412,7 @@ def test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur(contexte)
     forgée à la main ne passe par aucun calendrier. Ce test relit les champs
     date du formulaire rendu et vérifie que le mois d'à côté est refusé.
     """
-    formulaire = rendre(contexte, "/simuler", {})[1]
+    formulaire = rendre("/simuler", {})[1]
     champs = re.findall(
         r'<input type="date" id="([a-z_0-9]+)"[^>]*?'
         r' min="(\d{4}-\d{2})-\d{2}" max="(\d{4}-\d{2})-\d{2}"',
@@ -655,9 +638,9 @@ def test_l_unite_vaut_pour_tous_les_metiers():
     assert second == pytest.approx(2 * premier)
 
 
-def _lien_de_bascule(contexte, parametres):
+def _lien_de_bascule(parametres):
     """L'adresse que porte le lien « saisir plutôt … », lue comme une requête."""
-    corps = rendre(contexte, "/simuler", parametres)[1]
+    corps = rendre("/simuler", parametres)[1]
     # La bascule d'unité écrit ses deux états ; celui qui s'applique n'est pas
     # un lien. On cherche donc la branche PROPOSÉE, dans la bascule « Unité ».
     bloc = re.search(r'<div class="bascule" role="group" aria-label="Unité">'
@@ -676,14 +659,13 @@ def test_la_bascule_d_unite_convertit_les_montants(contexte):
     aurait refusé la saisie au lieu de la traduire. Le lien, lui, porte les
     montants déjà convertis.
     """
-    suite, libelle = _lien_de_bascule(
-        contexte, {"naissance": "1975", "montants": "brut"})
+    suite, libelle = _lien_de_bascule({"naissance": "1975", "montants": "brut"})
     assert libelle == "× salaire moyen"
     assert suite["unite_revenu"] == "moyen"
     # 3 500 € par mois, à l'échelle d'un salaire moyen de 3 475 € : environ 1.
     assert float(suite["salaire"]) == pytest.approx(1.0, abs=0.05)
     # Et la page qui suit ce lien calcule, au lieu de refuser.
-    corps = rendre(contexte, "/simuler", suite)[1]
+    corps = rendre("/simuler", suite)[1]
     assert "Saisie refusée" not in corps
 
 
@@ -698,10 +680,10 @@ def test_la_bascule_revient_au_meme_revenu(contexte):
     aller-retour semble exact alors qu'il ne l'est pas.
     """
     echelle = contexte.echelle(Saisie())
-    borne = echelle.mensuel(PAS_MULTIPLE) / 2 + 1
+    borne = echelle.mensuel(pages.PAS_MULTIPLE) / 2 + 1
 
     def aller_retour(euros: int) -> int:
-        return round(echelle.mensuel(round(echelle.niveau(euros), DECIMALES_MULTIPLE)))
+        return round(echelle.mensuel(round(echelle.niveau(euros), pages.DECIMALES_MULTIPLE)))
 
     plancher, plafond = round(echelle.mensuel(0.1)), round(echelle.mensuel(10))
     pire = max(abs(aller_retour(euros) - euros)
@@ -719,7 +701,7 @@ def test_la_bascule_ne_fait_jamais_sortir_des_bornes(contexte):
     """
     echelle = contexte.echelle(Saisie())
     for euros in range(round(echelle.mensuel(0.1)), round(echelle.mensuel(10)) + 1):
-        multiple = round(echelle.niveau(euros), DECIMALES_MULTIPLE)
+        multiple = round(echelle.niveau(euros), pages.DECIMALES_MULTIPLE)
         assert 0.1 <= multiple <= 10, f"{euros} € donne {multiple}"
     for millieme in range(100, 10001):
         euros = round(echelle.mensuel(millieme / 1000))
@@ -745,7 +727,7 @@ def test_les_bornes_annoncees_par_le_refus_sont_acceptees(contexte):
 
 
 def test_la_bascule_convertit_tous_les_metiers(contexte):
-    suite, _ = _lien_de_bascule(contexte, {
+    suite, _ = _lien_de_bascule({
         "naissance": "1975", "unite_revenu": "euros_mois", "salaire": "2900",
         "montants": "brut",
         "metier2_debut": "40", "metier2_statut": "artisan",
@@ -764,14 +746,14 @@ def test_les_valeurs_du_lien_tombent_sur_le_pas_des_champs(contexte):
     """
     for parametres in ({"naissance": "1975"},
                        {"naissance": "1975", "unite_revenu": "moyen", "salaire": "1.2"}):
-        suite, _ = _lien_de_bascule(contexte, parametres)
-        corps = rendre(contexte, "/simuler", suite)[1]
+        suite, _ = _lien_de_bascule(parametres)
+        corps = rendre("/simuler", suite)[1]
         champ = re.search(r'id="salaire"[^>]*value="([^"]*)"[^>]*step="([^"]*)"', corps)
         valeur, pas = float(champ.group(1)), float(champ.group(2))
         assert round(valeur / pas) == pytest.approx(valeur / pas, abs=1e-9)
 
 
-def test_le_formulaire_renvoie_l_unite_qu_il_affiche(contexte):
+def test_le_formulaire_renvoie_l_unite_qu_il_affiche():
     """L'unité n'est plus un champ visible : le formulaire doit la porter caché.
 
     Sans cela, valider le formulaire après avoir suivi le lien de bascule
@@ -779,13 +761,13 @@ def test_le_formulaire_renvoie_l_unite_qu_il_affiche(contexte):
     """
     for unite in ("euros_mois", "moyen"):
         salaire = "3500" if unite == "euros_mois" else "1"
-        corps = rendre(contexte, "/simuler", {"unite_revenu": unite, "salaire": salaire})[1]
+        corps = rendre("/simuler", {"unite_revenu": unite, "salaire": salaire})[1]
         assert f'<input type="hidden" name="unite_revenu" value="{unite}">' in corps
 
 
-def test_un_refus_garde_l_unite_de_saisie(contexte):
+def test_un_refus_garde_l_unite_de_saisie():
     """Une faute de frappe ailleurs ne doit pas changer d'unité sous les doigts."""
-    corps = rendre(contexte, "/simuler", {
+    corps = rendre("/simuler", {
         "naissance": "1700", "unite_revenu": "moyen", "salaire": "1.2",
     })[1]
     assert "Saisie refusée" in corps
@@ -793,7 +775,7 @@ def test_un_refus_garde_l_unite_de_saisie(contexte):
     assert "Niveau de revenu" in corps
 
 
-def test_le_formulaire_dit_brut_ou_net_et_donne_l_echelle(contexte):
+def test_le_formulaire_dit_brut_ou_net_et_donne_l_echelle():
     """La question posée — « brut ou net ? » — trouve sa réponse sur le champ.
 
     Et elle la trouve DANS LE MODE COURANT : demander un « revenu brut » sous
@@ -803,7 +785,7 @@ def test_le_formulaire_dit_brut_ou_net_et_donne_l_echelle(contexte):
     """
     for mode, ligne in (("brut", "la ligne « brut » de la fiche de paie"),
                         ("net", "la ligne « net à payer » de la fiche de paie")):
-        _, corps = rendre(contexte, "/simuler", {"montants": mode})
+        _, corps = rendre("/simuler", {"montants": mode})
         assert f"Revenu d&#x27;activité {mode} mensuel" in corps
         assert ligne in corps
         # L'échelle est chiffrée : « 1 = salaire moyen » ne dit rien à personne.
@@ -814,15 +796,15 @@ def test_le_formulaire_dit_brut_ou_net_et_donne_l_echelle(contexte):
 
     # Et les deux repères sont bien convertis, non recopiés : le SMIC net d'un
     # salarié du privé vaut environ 79 % de son brut.
-    _, brut = rendre(contexte, "/simuler", {"montants": "brut"})
-    _, net = rendre(contexte, "/simuler", {"montants": "net"})
+    _, brut = rendre("/simuler", {"montants": "brut"})
+    _, net = rendre("/simuler", {"montants": "net"})
     def smic(corps):
         return float(re.search(r"SMIC ([\d\u202f]+)\u202f€", corps)
                      .group(1).replace("\u202f", ""))
     assert 0.75 < smic(net) / smic(brut) < 0.85
 
 
-def test_le_champ_de_revenu_ecarte_la_pension(contexte):
+def test_le_champ_de_revenu_ecarte_la_pension():
     """Un retraité ne doit pas pouvoir y écrire sa pension sans être averti.
 
     « Revenu mensuel », sous une date de départ déjà passée, se lit comme « ce
@@ -833,7 +815,7 @@ def test_le_champ_de_revenu_ecarte_la_pension(contexte):
     """
     for unite, libelle in (("euros_mois", "Revenu d&#x27;activité"),
                            ("moyen", "Niveau de revenu d&#x27;activité")):
-        _, corps = rendre(contexte, "/simuler", {"unite_revenu": unite})
+        _, corps = rendre("/simuler", {"unite_revenu": unite})
         assert libelle in corps
         assert "Jamais une pension" in corps
         assert "déposez votre relevé" in corps
@@ -842,7 +824,7 @@ def test_le_champ_de_revenu_ecarte_la_pension(contexte):
 # -- la saisie par la pension ------------------------------------------------
 
 
-def _pension_affichee(contexte, corps: str) -> float:
+def _pension_affichee(corps: str) -> float:
     """Le montant que la page écrit sur la barre du système actuel.
 
     Lu sur le HTML et non recalculé : c'est ce que le lecteur voit qui doit
@@ -877,17 +859,17 @@ def test_la_pension_saisie_est_celle_que_le_systeme_actuel_sert(
     déduit ne serait le revenu de personne, et les trois autres systèmes
     seraient calculés sur une carrière qui n'est pas celle du lecteur.
     """
-    _, corps = rendre(contexte, "/simuler", {
+    _, corps = rendre("/simuler", {
         "saisie_par": "pension", "pension": str(pension), "montants": mode,
         "naissance": "1955-06-01", "debut": "1975-01", "liquidation": "2017-06",
     })
     assert "Saisie refusée" not in corps
-    assert abs(_pension_affichee(contexte, corps) - pension) < 0.5
+    assert abs(_pension_affichee(corps) - pension) < 0.5
 
 
-def test_le_revenu_deduit_est_annonce_avant_les_quatre_montants(contexte):
+def test_le_revenu_deduit_est_annonce_avant_les_quatre_montants():
     """La réponse à la question posée passe devant la réponse aux autres."""
-    _, corps = rendre(contexte, "/simuler", {
+    _, corps = rendre("/simuler", {
         "saisie_par": "pension", "pension": "1500",
         "naissance": "1955-06-01", "debut": "1975-01", "liquidation": "2017-06",
     })
@@ -906,7 +888,7 @@ def test_le_lien_de_reprise_decrit_la_meme_carriere(contexte):
     lien perdait le revenu, le lecteur qui veut corriger sa carrière repartirait
     de la valeur par défaut sans que rien ne le dise.
     """
-    _, corps = rendre(contexte, "/simuler", {
+    _, corps = rendre("/simuler", {
         "saisie_par": "pension", "pension": "1500",
         "naissance": "1955-06-01", "debut": "1975-01", "liquidation": "2017-06",
     })
@@ -921,20 +903,18 @@ def test_le_lien_de_reprise_decrit_la_meme_carriere(contexte):
     assert lien, "la page ne propose pas de reprendre la carrière en revenu"
     requete = dict(parse_qsl(html.unescape(lien.group(1))))
     assert requete["saisie_par"] == "revenu"
-    _, repris = rendre(contexte, "/simuler", requete)
+    _, repris = rendre("/simuler", requete)
     assert "Saisie refusée" not in repris
     # L'arrondi à l'euro du revenu écrit dans le lien déplace la pension de
     # quelques euros : c'est la même carrière, pas le même centime.
-    assert abs(_pension_affichee(contexte, repris) - 1500) < 15
+    assert abs(_pension_affichee(repris) - 1500) < 15
 
 
 @pytest.mark.parametrize("pension,phrase", [
     ("9000", "plafonne à"),
     ("1", "font ce plancher"),
 ])
-def test_une_pension_que_nulle_carriere_ne_sert_est_refusee(
-    contexte, pension, phrase,
-):
+def test_une_pension_que_nulle_carriere_ne_sert_est_refusee(pension, phrase):
     """Les refus disent une règle du droit, jamais une limite du calcul.
 
     Au-dessus du plafond de tranche, cotiser n'acquiert plus rien ; au-dessous
@@ -942,7 +922,7 @@ def test_une_pension_que_nulle_carriere_ne_sert_est_refusee(
     descendre. Rendre malgré tout un revenu approché aurait été le pire des
     trois choix : un chiffre faux, vraisemblable, et que rien ne signale.
     """
-    _, corps = rendre(contexte, "/simuler", {
+    _, corps = rendre("/simuler", {
         "saisie_par": "pension", "pension": pension,
         "naissance": "1955-06-01", "debut": "1975-01", "liquidation": "2017-06",
     })
@@ -950,7 +930,7 @@ def test_une_pension_que_nulle_carriere_ne_sert_est_refusee(
     assert phrase in corps
 
 
-def test_la_situation_est_la_premiere_question_et_commande_la_saisie(contexte):
+def test_la_situation_est_la_premiere_question_et_commande_la_saisie():
     """« En activité ou à la retraite » vient avant tout, et décide du reste.
 
     C'est la question qui a remplacé « je saisis : mon revenu / ma pension » —
@@ -959,14 +939,14 @@ def test_la_situation_est_la_premiere_question_et_commande_la_saisie(contexte):
     elle ce que le formulaire demande : un actif ne connaît pas sa pension, un
     retraité ne se souvient pas de son salaire.
     """
-    _, actif = rendre(contexte, "/simuler", {})
+    _, actif = rendre("/simuler", {})
     assert "Vous êtes" in actif
     assert actif.index("Vous êtes") < actif.index('id="naissance"'), (
         "la situation ne vient plus avant le premier champ"
     )
     assert 'id="salaire"' in actif and 'id="pension"' not in actif
 
-    _, retraite = rendre(contexte, "/simuler", {"situation": "retraite"})
+    _, retraite = rendre("/simuler", {"situation": "retraite"})
     assert 'id="pension"' in retraite and 'id="salaire"' not in retraite
 
     # Le lien de la bascule porte les DEUX réglages : cliquer reconfigure le
@@ -979,7 +959,7 @@ def test_la_situation_est_la_premiere_question_et_commande_la_saisie(contexte):
     assert requete["saisie_par"] == "pension"
 
 
-def test_une_adresse_qui_ne_dit_que_la_situation_ouvre_la_bonne_saisie(contexte):
+def test_une_adresse_qui_ne_dit_que_la_situation_ouvre_la_bonne_saisie():
     """Le défaut suit la situation ; l'explicite l'emporte.
 
     Une adresse partagée à la main — « ?situation=retraite » — doit ouvrir le
@@ -993,7 +973,7 @@ def test_une_adresse_qui_ne_dit_que_la_situation_ouvre_la_bonne_saisie(contexte)
         {"situation": "retraite", "saisie_par": "revenu"}).saisie_par == "revenu"
 
 
-def test_le_desaccord_de_situation_est_dit_et_non_corrige(contexte):
+def test_le_desaccord_de_situation_est_dit_et_non_corrige():
     """La situation et la date peuvent se contredire, et c'est sans danger.
 
     Le modèle ne lit QUE la date : aucun chiffre ne dépend de la situation
@@ -1003,24 +983,24 @@ def test_le_desaccord_de_situation_est_dit_et_non_corrige(contexte):
     """
     # L'exemple par défaut est celui d'un actif : se déclarer retraité le
     # contredit, et c'est le premier clic de qui vient pour sa pension.
-    _, incoherent = rendre(contexte, "/simuler", {"situation": "retraite"})
+    _, incoherent = rendre("/simuler", {"situation": "retraite"})
     assert "Vous vous dites à la retraite" in incoherent
     assert "Saisie refusée" not in incoherent
 
     # Et dans l'autre sens.
-    _, inverse = rendre(contexte, "/simuler", {
+    _, inverse = rendre("/simuler", {
         "situation": "actif", "naissance": "1955-06-01", "debut": "1975-01",
         "liquidation": "2017-06"})
     assert "Vous vous dites en activité" in inverse
 
     # Une situation cohérente ne dit rien du tout.
-    _, coherent = rendre(contexte, "/simuler", {
+    _, coherent = rendre("/simuler", {
         "situation": "retraite", "naissance": "1955-06-01",
         "debut": "1975-01", "liquidation": "2017-06"})
     assert "Vous vous dites" not in coherent
 
 
-def test_un_retraite_peut_encore_saisir_ce_qu_il_gagnait(contexte):
+def test_un_retraite_peut_encore_saisir_ce_qu_il_gagnait():
     """L'échappatoire est offerte là où elle sert, et dans ce sens-là seul.
 
     Un retraité qui a gardé ses fiches de paie doit pouvoir donner son revenu ;
@@ -1030,7 +1010,7 @@ def test_un_retraite_peut_encore_saisir_ce_qu_il_gagnait(contexte):
     il passe par la situation, et la page dit alors que c'est la date qui
     compte.
     """
-    _, retraite = rendre(contexte, "/simuler", {"situation": "retraite"})
+    _, retraite = rendre("/simuler", {"situation": "retraite"})
     # PAR SON TEXTE, et non par le premier lien venu : la bascule de situation
     # porte elle aussi « saisie_par=revenu », mais elle change de situation en
     # même temps. Chercher au plus court aurait mesuré la bascule.
@@ -1040,11 +1020,11 @@ def test_un_retraite_peut_encore_saisir_ce_qu_il_gagnait(contexte):
     assert lien, "un retraité ne peut plus saisir ce qu'il gagnait"
     requete = dict(parse_qsl(html.unescape(lien.group(1))))
     assert requete["situation"] == "retraite" and requete["saisie_par"] == "revenu"
-    _, repris = rendre(contexte, "/simuler", requete)
+    _, repris = rendre("/simuler", requete)
     assert 'id="salaire"' in repris and 'id="pension"' not in repris
 
     # En activité, aucune ligne de ce genre : le formulaire reste nu.
-    _, actif = rendre(contexte, "/simuler", {})
+    _, actif = rendre("/simuler", {})
     assert "Ou saisir" not in actif
 
 
@@ -1060,7 +1040,7 @@ def test_la_bascule_net_brut_traduit_la_pension_saisie(contexte):
     base = {"saisie_par": "pension", "pension": "1800",
             "naissance": "1975-01-01", "debut": "1996-01",
             "liquidation": "2039-01"}
-    _, corps = rendre(contexte, "/simuler", base)
+    _, corps = rendre("/simuler", base)
     bloc = re.search(r'<div class="bascule"[^>]*aria-label="Montants".*?</div>',
                      corps, re.S)
     assert bloc, "la bascule des montants a disparu"
@@ -1075,12 +1055,12 @@ def test_la_bascule_net_brut_traduit_la_pension_saisie(contexte):
     )
     # Et la carrière est la même des deux côtés : le revenu déduit en brut est
     # celui du net, converti par la fiche de paie du statut.
-    _, en_brut = rendre(contexte, "/simuler", vers_brut)
-    assert abs(_pension_affichee(contexte, en_brut)
+    _, en_brut = rendre("/simuler", vers_brut)
+    assert abs(_pension_affichee(en_brut)
                - float(vers_brut["pension"])) < 1.5
 
 
-def test_les_deux_revenus_de_la_page_ne_se_contredisent_pas(contexte):
+def test_les_deux_revenus_de_la_page_ne_se_contredisent_pas():
     """La page en affiche deux, et elle doit dire pourquoi ils diffèrent.
 
     Le bloc du haut donne le revenu du MILIEU de carrière — celui que le
@@ -1092,7 +1072,7 @@ def test_les_deux_revenus_de_la_page_ne_se_contredisent_pas(contexte):
     commun = {"saisie_par": "pension", "pension": "1800",
               "naissance": "1975-01-01", "debut": "1996-01",
               "liquidation": "2039-01"}
-    _, ascendant = rendre(contexte, "/simuler", commun)
+    _, ascendant = rendre("/simuler", commun)
     assert "Les barres en portent un second" in ascendant
     deduit = re.search(r'<p class="cle-chiffre">([\d\u202f]+)', ascendant)
     paie = re.search(r'<span class="chiffre salaire">.*?'
@@ -1106,18 +1086,18 @@ def test_les_deux_revenus_de_la_page_ne_se_contredisent_pas(contexte):
     # Sous un profil PLAT, le revenu ne bouge pas avec l'âge : les deux
     # tombent sur le même euro, et la phrase se tait plutôt que d'expliquer
     # une différence qui n'existe pas.
-    _, plat = rendre(contexte, "/simuler", {**commun, "profil": "plat"})
+    _, plat = rendre("/simuler", {**commun, "profil": "plat"})
     assert "Les barres en portent un second" not in plat
 
 
-def test_le_formulaire_de_pension_retire_les_revenus(contexte):
+def test_le_formulaire_de_pension_retire_les_revenus():
     """Les deux nombres ne peuvent pas compter à la fois.
 
     Laisser les champs de revenu à côté du champ de pension ferait croire que
     la carrière porte les deux, alors que l'un est saisi et l'autre cherché.
     """
-    _, revenu = rendre(contexte, "/simuler", {"saisie_par": "revenu"})
-    _, pension = rendre(contexte, "/simuler", {
+    _, revenu = rendre("/simuler", {"saisie_par": "revenu"})
+    _, pension = rendre("/simuler", {
         "saisie_par": "pension", "pension": "1500"})
     assert 'id="salaire"' in revenu and 'id="pension"' not in revenu
     assert 'id="pension"' in pension and 'id="salaire"' not in pension
@@ -1125,8 +1105,8 @@ def test_le_formulaire_de_pension_retire_les_revenus(contexte):
     assert "× salaire moyen" in revenu and "× salaire moyen" not in pension
 
 
-def test_le_multiple_est_traduit_en_euros(contexte):
-    _, corps = rendre(contexte, "/simuler", {"unite_revenu": "moyen", "salaire": "1"})
+def test_le_multiple_est_traduit_en_euros():
+    _, corps = rendre("/simuler", {"unite_revenu": "moyen", "salaire": "1"})
     assert "1 = salaire moyen, soit" in corps
 
 
@@ -1513,7 +1493,7 @@ def test_aucun_menu_ne_propose_deux_fois_la_meme_valeur(page):
         assert not doublons, f"valeurs proposées deux fois : {doublons}"
 
 
-def test_le_premier_metier_reste_une_affiliation(contexte):
+def test_le_premier_metier_reste_une_affiliation():
     """« sans_activite » est aussi une affiliation — celle de qui n'a jamais
     travaillé —, et les adresses qui la portent en premier métier ne doivent pas
     changer de sens."""
@@ -1525,7 +1505,7 @@ def test_le_premier_metier_reste_une_affiliation(contexte):
     ]
     # Et le menu de la première ligne la propose toujours sous son nom de
     # statut, quand celui des lignes suivantes la range avec les creux.
-    texte = rendre(contexte, "/simuler", {})[1]
+    texte = rendre("/simuler", {})[1]
     premier = texte.split('name="metier2_statut"')[0]
     assert '<option value="sans_activite">Sans activité professionnelle' in premier
 
@@ -1624,20 +1604,18 @@ def test_la_proposition_se_compare_a_taux_egal_cotise(contexte):
     C'est la raison d'être des cinq points volontaires : sans eux, le site
     opposerait deux systèmes qui ne coûtent pas le même prix.
     """
-    from retraite_notionnelle.web.pages import TAUX_ACTUEL_TOTAL
-
     base = contexte.base
     assert base.taux_retraite_propose == pytest.approx(
-        round(TAUX_ACTUEL_TOTAL, 2))
-    programme = _prose(rendre(contexte, "/", {})[1])
+        round(pages.TAUX_ACTUEL_TOTAL, 2))
+    programme = _prose(rendre("/", {})[1])
     assert "que personne ne vous impose" in programme
     # La ligne du total est une ligne de TABLEAU, que `_prose` retire : on la
     # cherche donc dans le corps rendu, et la phrase qui la commente en prose.
-    cout = rendre(contexte, "/cout", {})[1]
+    cout = rendre("/cout", {})[1]
     assert "Total versé si les points rendus sont replacés" in cout
     assert "le simulateur, lui, montre la seconde ligne du total" in (
         _prose(cout).lower())
-    methode = _prose(rendre(contexte, "/methode", {})[1])
+    methode = _prose(rendre("/methode", {})[1])
     assert "convention de comparaison" in methode
 
 
@@ -1645,13 +1623,13 @@ def test_la_proposition_se_compare_a_taux_egal_cotise(contexte):
 
 
 def test_les_nombres_sont_a_la_francaise():
-    assert euros(1234567) == "1 234 567 €"
-    assert pourcentage(-0.937, signe=True) == "-93,7 %"
-    assert pourcentage(0.5, signe=True) == "+50,0 %"
+    assert g.euros(1234567) == "1 234 567 €"
+    assert g.pourcentage(-0.937, signe=True) == "-93,7 %"
+    assert g.pourcentage(0.5, signe=True) == "+50,0 %"
 
 
 def test_franciser_les_libelles_du_moteur():
-    assert franciser("SR 17,542 € × taux 63.75%") == (
+    assert g.franciser("SR 17,542 € × taux 63.75%") == (
         "SR 17 542 € × taux 63,75 %"
     )
 
@@ -1663,9 +1641,9 @@ def test_l_echappement_protege_des_injections(page):
 
 
 def test_cellule_teintee_selon_la_valeur():
-    assert "background" in Cellule("-90 %", intensite=-0.9).style()
-    assert Cellule("+0 %", intensite=0.0).style() == ""
-    rendu = tableau(["a"], [[Cellule("x", intensite=-0.5)]], ["nombre"])
+    assert "background" in g.Cellule("-90 %", intensite=-0.9).style()
+    assert g.Cellule("+0 %", intensite=0.0).style() == ""
+    rendu = g.tableau(["a"], [[g.Cellule("x", intensite=-0.5)]], ["nombre"])
     assert "rgba(162, 71, 46" in rendu
 
 
@@ -1673,14 +1651,14 @@ def test_cellule_teintee_selon_la_valeur():
 
 
 @pytest.mark.parametrize("chemin", ["/", "/simuler", "/cas-types", "/methode"])
-def test_rendre_produit_un_corps_pour_chaque_page(contexte, chemin):
-    titre, corps = rendre(contexte, chemin)
+def test_rendre_produit_un_corps_pour_chaque_page(chemin):
+    titre, corps = rendre(chemin)
     assert titre
     assert len(corps) > 500
 
 
 @pytest.mark.parametrize("chemin", ["/simuler", "/cas-types", "/methode"])
-def test_les_ages_rendus_ne_doublent_pas_leur_unite(contexte, chemin):
+def test_les_ages_rendus_ne_doublent_pas_leur_unite(chemin):
     """« 64 ans ans ».
 
     L'âge s'écrivait « 64 » et les appelants ajoutaient « ans ». Le jour où il
@@ -1691,7 +1669,7 @@ def test_les_ages_rendus_ne_doublent_pas_leur_unite(contexte, chemin):
     """
     import re
 
-    _, corps = rendre(contexte, chemin, {
+    _, corps = rendre(chemin, {
         "naissance": "1962", "naissance_mois": "3", "debut": "22",
         "liquidation": "64", "liquidation_mois": "7",
         "statut": "salarie_prive_non_cadre",
@@ -1703,36 +1681,36 @@ def test_les_ages_rendus_ne_doublent_pas_leur_unite(contexte, chemin):
         assert re.search(r"64 ans et 7 mois", corps)
 
 
-def test_rendre_ignore_un_chemin_inconnu(contexte):
-    titre, _ = rendre(contexte, "/n-importe-quoi")
+def test_rendre_ignore_un_chemin_inconnu():
+    titre, _ = rendre("/n-importe-quoi")
     assert titre == "Programme"
 
 
-def test_rendre_ne_leve_jamais_sur_une_saisie_invalide(contexte):
-    _, corps = rendre(contexte, "/simuler", {"naissance": "1700"})
+def test_rendre_ne_leve_jamais_sur_une_saisie_invalide():
+    _, corps = rendre("/simuler", {"naissance": "1700"})
     assert "Saisie refusée" in corps
 
 
-def test_statuts(contexte):
-    codes = {entree["code"] for entree in statuts(contexte)}
+def test_statuts():
+    codes = {entree["code"] for entree in pages.statuts(site().contexte)}
     assert "salarie_prive_non_cadre" in codes
 
 
 # -- liens -------------------------------------------------------------------
 
 
-def test_les_liens_passent_par_l_ancre(contexte):
+def test_les_liens_passent_par_l_ancre():
     """Sur GitHub Pages le site est servi dans un sous-chemin : pas de lien absolu."""
-    _, corps = rendre(contexte, "/simuler")
+    _, corps = rendre("/simuler")
     entete = g.entete("/")
     assert 'href="#/cas-types"' in entete
     assert 'href="/cas-types"' not in entete
     assert 'action="#/simuler"' in corps
 
 
-def test_aucun_renvoi_vers_un_service_qui_n_existe_pas(contexte):
+def test_aucun_renvoi_vers_un_service_qui_n_existe_pas():
     """Il n'y a pas de serveur : proposer une adresse d'API serait un lien mort."""
-    _, corps = rendre(contexte, "/simuler", {"naissance": "1960",
+    _, corps = rendre("/simuler", {"naissance": "1960",
                                       "statut": "salarie_prive_non_cadre",
                                       "debut": "20", "liquidation": "62"})
     assert "/api/" not in corps
@@ -1996,14 +1974,14 @@ def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
     ("bas salaire, minimum contributif",
      {"naissance": "1955", "unite_revenu": "moyen", "salaire": "0.4"}),
 ])
-def test_le_tableau_du_detail_s_additionne_a_l_ecran(contexte, nom, champs):
+def test_le_tableau_du_detail_s_additionne_a_l_ecran(nom, champs):
     """Ce que la page affirme du tableau doit se vérifier sur les nombres AFFICHÉS.
 
     Pas sur ceux du modèle : un lecteur additionne ce qu'il lit. Le contrôle
     porte donc sur le HTML rendu, lignes de régime d'un côté, total de l'autre,
     la ligne « hors total » exclue puisqu'elle s'annonce comme telle.
     """
-    corps = rendre(contexte, "/simuler", champs)[1]
+    corps = rendre("/simuler", champs)[1]
     debut = corps.index("de quoi votre pension actuelle est faite")
     tableau = corps[debut:corps.index("</table>", debut)]
     lignes = re.findall(r"<tr>(.*?)</tr>", tableau, re.S)
@@ -2070,7 +2048,7 @@ def _bloc(corps: str, debut: str, fin: str) -> str:
                        "salaire": "1", "metier2_debut": "40",
                        "metier2_statut": "artisan", "metier2_salaire": "1.5"}),
 ])
-def test_les_chaines_de_calcul_se_refont_depuis_l_ecran(contexte, nom, champs):
+def test_les_chaines_de_calcul_se_refont_depuis_l_ecran(nom, champs):
     """Chaque ligne d'une chaîne doit se retrouver depuis celles du dessus.
 
     C'est ce que la page promet : « la chaîne de calcul est arithmétique ». Le
@@ -2079,9 +2057,9 @@ def test_les_chaines_de_calcul_se_refont_depuis_l_ecran(contexte, nom, champs):
     raison. Les bornes ne sont pas choisies : elles se déduisent des précisions
     d'affichage, et suivront si celles-ci changent.
     """
-    corps = rendre(contexte, "/simuler", champs)[1]
-    pas_diviseur = 0.5 * 10 ** -DECIMALES_DIVISEUR
-    pas_facteur = 0.5 * 10 ** -DECIMALES_FACTEUR
+    corps = rendre("/simuler", champs)[1]
+    pas_diviseur = 0.5 * 10 ** -pages.DECIMALES_DIVISEUR
+    pas_facteur = 0.5 * 10 ** -pages.DECIMALES_FACTEUR
 
     # -- la cascade du scénario 1 au scénario 3 -----------------------------
     # Muette quand la bascule est postérieure au départ : il n'y a alors pas de
@@ -2125,7 +2103,7 @@ def _verifier_cascade(nom, corps, pas_diviseur, pas_facteur):
     assert abs(valeur["e"] / coefficient["f"] - valeur["f"]) <= borne, f"{nom} : f)"
 
 
-def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie(contexte):
+def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie():
     """Le même nombre est écrit à deux endroits : il doit y être le même.
 
     Ce test remplace celui qui vérifiait « mensuel × 12 = annuel » sur chaque
@@ -2135,7 +2113,7 @@ def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie(contexte):
     chaque carte, et une seconde fois dans la fiche de paie repliée. Deux
     chemins de calcul, deux rendus, un seul nombre attendu.
     """
-    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
     assert len(blocs) == 4, f"{len(blocs)} systèmes affichés, quatre attendus"
     # Le nombre des cartes est NU depuis que l'unité est passée sous lui
@@ -2162,14 +2140,14 @@ def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie(contexte):
         )
 
 
-def test_les_colonnes_derivees_de_la_page_cout_se_refont(contexte):
+def test_les_colonnes_derivees_de_la_page_cout_se_refont():
     """Écarts et économies de la page Coût, reconstitués depuis les cumuls affichés.
 
     Ces colonnes ne sont pas des mesures : ce sont des différences et des
     rapports entre deux nombres de la même ligne ou de la ligne de référence.
     Elles doivent donc se retrouver, aux arrondis d'affichage près.
     """
-    corps = rendre(contexte, "/cout", {})[1]
+    corps = rendre("/cout", {})[1]
     tableaux = re.findall(r"<table.*?</table>", corps, re.S)
     for tableau in tableaux:
         lignes = _cellules(tableau)
@@ -2328,7 +2306,7 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                                "debut": "20", "liquidation": "64",
                                "unite_revenu": "moyen", "salaire": "1"}),
     ]
-    for statut in [affiliation["code"] for affiliation in statuts(contexte)]:
+    for statut in [affiliation["code"] for affiliation in pages.statuts(site().contexte)]:
         # Quatre carrières par statut : complète, très anticipée, ancienne, et
         # une carrière COURTE — c'est elle qui déclenche les planchers, minimum
         # contributif et minimum garanti, et aucune des trois autres ne les
@@ -2393,7 +2371,7 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
     )
 
 
-def test_les_selecteurs_du_resume_vocal_existent_dans_le_html(contexte):
+def test_les_selecteurs_du_resume_vocal_existent_dans_le_html():
     """Le résumé lu par les synthèses vocales vise des classes du HTML rendu.
 
     Elles vivent dans deux fichiers que rien ne relie : le sélecteur est écrit
@@ -2414,7 +2392,7 @@ def test_les_selecteurs_du_resume_vocal_existent_dans_le_html(contexte):
     classes = set()
     for champs in ({"naissance": "1975"}, {"naissance": "1700"}):
         for attribut in re.findall(r'class="([^"]*)"',
-                                   rendre(contexte, "/simuler", champs)[1]):
+                                   rendre("/simuler", champs)[1]):
             classes.update(attribut.split())
     for selecteur in selecteurs:
         for classe in re.findall(r"\.([a-z-]+)", selecteur):
@@ -2423,7 +2401,7 @@ def test_les_selecteurs_du_resume_vocal_existent_dans_le_html(contexte):
             )
 
 
-def test_le_resume_vocal_annonce_bien_les_montants(contexte):
+def test_le_resume_vocal_annonce_bien_les_montants():
     """Et le sélecteur doit trouver quelque chose, pas seulement exister.
 
     L'étiquette compte autant que le montant : le système 4 annonce
@@ -2432,7 +2410,7 @@ def test_le_resume_vocal_annonce_bien_les_montants(contexte):
     un plafond. Un scénario dont l'étiquette ne commencerait plus par
     « retraite » ferait dire à l'oreille autre chose qu'à l'œil.
     """
-    corps = rendre(contexte, "/simuler", {"naissance": "1975"})[1]
+    corps = rendre("/simuler", {"naissance": "1975"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
     assert len(blocs) == 4
     etiquettes = []
@@ -2513,6 +2491,8 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
     import importlib.util
     import json
     import random
+
+    from retraite_notionnelle.web.pages import rendre as rendre_python
     import shutil
     import subprocess
     import tempfile
@@ -2567,7 +2547,7 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
         cas.append({
             "nom": f"page_{numero}",
             "requete": requete,
-            "corps": temoins.sans_bloc_json(rendre(contexte, "/simuler", requete)[1]),
+            "corps": temoins.sans_bloc_json(rendre_python(contexte, "/simuler", requete)[1]),
         })
 
     # LA SAISIE PAR LA PENSION A SA PROPRE SÉRIE, et elle est plus courte parce
@@ -2598,7 +2578,7 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
         cas.append({
             "nom": f"pension_{numero}",
             "requete": requete,
-            "corps": temoins.sans_bloc_json(rendre(contexte, "/simuler", requete)[1]),
+            "corps": temoins.sans_bloc_json(rendre_python(contexte, "/simuler", requete)[1]),
         })
 
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
@@ -2631,6 +2611,8 @@ def test_les_refus_de_saisie_sont_ecrits_a_l_identique_par_les_deux_moteurs():
     import subprocess
     import tempfile
     from pathlib import Path
+
+    from retraite_notionnelle.web.pages import rendre as rendre_python
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
@@ -2682,7 +2664,7 @@ def test_les_refus_de_saisie_sont_ecrits_a_l_identique_par_les_deux_moteurs():
                                      ("accepte", acceptees, False)):
         for numero, champs in enumerate(champs_):
             requete = {"naissance": "1975", **champs}
-            corps = temoins.sans_bloc_json(rendre(contexte, "/simuler", requete)[1])
+            corps = temoins.sans_bloc_json(rendre_python(contexte, "/simuler", requete)[1])
             # Le test ne vaut que si chaque saisie tombe du côté attendu : une
             # borne relâchée les ferait toutes calculer, et la comparaison
             # passerait sans rien couvrir.
@@ -2733,7 +2715,7 @@ def test_la_page_ne_depend_d_aucun_service_exterieur():
     #: Les deux polices de l'affiche sont servies par le dépôt — les charger
     #: chez Google aurait emporté l'adresse IP du lecteur chez un tiers à
     #: chaque visite, et fait mentir la phrase « rien n'est envoyé ».
-    feuille = g.FEUILLE_DE_STYLE
+    feuille = FEUILLE_DE_STYLE
     assert "fonts.googleapis.com" not in feuille
     assert "fonts.gstatic.com" not in feuille
     polices = Path(__file__).resolve().parents[1] / "moteur" / "polices"
@@ -3085,7 +3067,7 @@ def _couleur(nom: str) -> str:
     palette en noir sur blanc pour ne pas coûter une cartouche par page, et
     qu'aucun écran ne voit.
     """
-    ecran = g.FEUILLE_DE_STYLE.split("@media print")[0]
+    ecran = FEUILLE_DE_STYLE.split("@media print")[0]
     trouvees = re.findall(rf"--{nom}:\s*(#[0-9a-f]{{6}})\s*;", ecran)
     assert trouvees, f"couleur « --{nom} » absente de la feuille de style"
     return trouvees[0]
@@ -3145,7 +3127,7 @@ def test_la_feuille_de_style_respecte_le_reglage_mouvement_reduit():
 
     Le système le signale, et la feuille l'écoute — WCAG 2.2.2 et 2.3.3.
     """
-    bloc = g.FEUILLE_DE_STYLE.split("@media (prefers-reduced-motion: reduce)")
+    bloc = FEUILLE_DE_STYLE.split("@media (prefers-reduced-motion: reduce)")
     assert len(bloc) == 2, "la feuille ne tient pas compte du mouvement réduit"
     assert "animation-iteration-count: 1 !important" in bloc[1], (
         "une animation qui boucle doit cesser de boucler"
@@ -3153,14 +3135,14 @@ def test_la_feuille_de_style_respecte_le_reglage_mouvement_reduit():
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_chaque_tableau_porte_un_titre_et_des_en_tetes_de_ligne(contexte, chemin):
+def test_chaque_tableau_porte_un_titre_et_des_en_tetes_de_ligne(chemin):
     """Un tableau sans titre s'annonce « tableau, 7 colonnes, 12 lignes ».
 
     Et sans en-tête de ligne, une cellule lue au hasard n'est rattachée à rien :
     la synthèse vocale énonce « moins 31 % » sans dire de quel cas type ni de
     quelle génération. RGAA 4.1, critères 5.4 et 5.7.
     """
-    corps = rendre(contexte, chemin, {})[1]
+    corps = rendre(chemin, {})[1]
     tableaux = re.findall(r"<table[^>]*>(.*?)</table>", corps, re.S)
     for rang, tableau_html in enumerate(tableaux, start=1):
         assert tableau_html.startswith("<caption>"), (
@@ -3174,14 +3156,14 @@ def test_chaque_tableau_porte_un_titre_et_des_en_tetes_de_ligne(contexte, chemin
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_toute_zone_defilante_est_atteignable_au_clavier(contexte, chemin):
+def test_toute_zone_defilante_est_atteignable_au_clavier(chemin):
     """Une boîte qui défile sans être focusable est hors d'atteinte au clavier.
 
     Les moteurs ne s'accordent pas sur ce point — Firefox rend focusables les
     boîtes défilantes, les autres non —, et un tableau plus large que l'écran
     devient alors impossible à parcourir sans souris. WCAG 2.1.1.
     """
-    corps = rendre(contexte, chemin, {})[1]
+    corps = rendre(chemin, {})[1]
     for ouverture in re.findall(r'<div class="defilant"[^>]*>', corps):
         assert 'tabindex="0"' in ouverture, (
             f"{chemin} : zone défilante inatteignable au clavier — {ouverture}"
@@ -3189,13 +3171,13 @@ def test_toute_zone_defilante_est_atteignable_au_clavier(contexte, chemin):
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_aucune_information_ne_vit_dans_une_infobulle(contexte, chemin):
+def test_aucune_information_ne_vit_dans_une_infobulle(chemin):
     """``title`` ne s'ouvre ni au clavier, ni au doigt, ni sous synthèse vocale.
 
     Les gloses des douze cas types et des huit systèmes y ont vécu : elles sont
     désormais en clair, sous le tableau qu'elles expliquent.
     """
-    corps = rendre(contexte, chemin, {})[1]
+    corps = rendre(chemin, {})[1]
     assert ' title="' not in corps, (
         f"{chemin} : une information n'est accessible qu'au survol de la souris"
     )
@@ -3266,7 +3248,7 @@ def _mots_visibles(corps: str) -> int:
     return len(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", texte)).split())
 
 
-def test_le_simulateur_tient_en_peu_de_mots(contexte):
+def test_le_simulateur_tient_en_peu_de_mots():
     """Le formulaire s'ouvrait sur quatre-vingt-dix mots avant le premier champ.
 
     Ce qui est nécessaire pour remplir un champ ou lire un chiffre reste écrit ;
@@ -3284,10 +3266,10 @@ def test_le_simulateur_tient_en_peu_de_mots(contexte):
     # l'apprendre. La barre descend donc SOUS ce qu'elle valait avant les deux
     # changements. C'est le seul sens dans lequel on la déplace sans se
     # justifier ; la monter demande, chaque fois, qu'un contrôle l'exige.
-    vierge = rendre(contexte, "/simuler", {})[1]
+    vierge = rendre("/simuler", {})[1]
     assert _mots_visibles(vierge) <= 162, "le formulaire reprend de la prose"
 
-    resultats = rendre(contexte, "/simuler", {
+    resultats = rendre("/simuler", {
         "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
         "unite_revenu": "euros_mois", "salaire": "2600",
     })[1]
@@ -3325,7 +3307,7 @@ def test_le_sexe_ne_change_rien_par_defaut(contexte):
     assert resultat(sexe="H", enfants="2") != resultat(sexe="F", enfants="2")
     # Et le champ n'est plus dans la grille d'identité : il est dans le
     # dépliant des options, avec la table et les enfants.
-    corps = rendre(contexte, "/simuler", {})[1]
+    corps = rendre("/simuler", {})[1]
     avant_options = corps.split('<details class="options">')[0]
     assert 'id="sexe"' not in avant_options
     assert 'id="sexe"' in corps
@@ -3343,7 +3325,7 @@ def test_les_champs_qui_decrivent_la_personne_sont_reconnaissables(page):
     assert 'id="sexe"' in texte and 'autocomplete="sex"' in texte
 
 
-def test_le_lien_d_evitement_ouvre_chaque_page(contexte):
+def test_le_lien_d_evitement_ouvre_chaque_page():
     """Premier élément parcouru au clavier, et seul moyen d'atteindre le contenu
     sans retraverser l'en-tête à chaque page. RGAA 12.7."""
     entete = g.entete("/")
@@ -3364,7 +3346,7 @@ def test_le_pied_avertit_depuis_toute_page():
     assert "CC BY-SA 4.0" in pied, "le pied doit dire sous quelle licence citer"
 
 
-def test_le_site_ne_porte_aucune_mention_legale(contexte):
+def test_le_site_ne_porte_aucune_mention_legale():
     """Le simulateur est encarté dans partiliberalfrancais.fr, qui l'édite et
     l'héberge : l'identification de l'éditeur, la politique de données
     personnelles et la déclaration d'accessibilité sont les siennes.
@@ -3379,28 +3361,28 @@ def test_le_site_ne_porte_aucune_mention_legale(contexte):
                  "conformité partielle", "règlement (UE) 2016/679",
                  "défenseurdesdroits", "RGAA")
     pages = [("pied", g.pied())] + [
-        (chemin, rendre(contexte, chemin, {})[1]) for chemin in TITRES
+        (chemin, rendre(chemin, {})[1]) for chemin in TITRES
     ]
     for ou, corps in pages:
         for interdit in interdits:
             assert interdit not in corps, f"{interdit!r} est revenu sur {ou}"
 
 
-def test_la_page_des_donnees_dit_sous_quelle_licence_reprendre(contexte):
+def test_la_page_des_donnees_dit_sous_quelle_licence_reprendre():
     """Ce que l'hôte ne peut pas porter à la place du dépôt : ses licences.
 
     Une mention légale se délègue à l'éditeur du site d'accueil ; la licence
     du code, celle des infographies et l'obligation de citer le producteur
     d'une série, non — elles portent sur ce fichier-ci.
     """
-    _, corps = rendre(contexte, "/methode", {})
+    _, corps = rendre("/methode", {})
     assert "Apache 2.0" in corps
     assert "CC BY-SA" in corps
     assert "Licence Ouverte" in corps
     assert "cite le producteur, pas ce site" in corps
 
 
-def test_chaque_page_du_site_est_comparee_au_portage(contexte):
+def test_chaque_page_du_site_est_comparee_au_portage():
     """Une page qui n'a pas de témoin n'est comparée à rien.
 
     Les deux rendus — Python et JavaScript — ne divergeraient alors qu'à
@@ -3536,19 +3518,19 @@ def test_la_cascade_suit_la_liste_des_systemes():
     figure à qui il manque une marche — laquelle sommerait encore juste, ce qui
     est le pire des cas : fausse et d'apparence intacte.
     """
-    assert SCENARIOS_MONTRES[0] == "actuel", "l'étalon ouvre la chaîne"
-    assert set(MARCHES_SYSTEMES) == set(SCENARIOS_MONTRES[1:]), (
+    assert pages.SCENARIOS_MONTRES[0] == "actuel", "l'étalon ouvre la chaîne"
+    assert set(pages.MARCHES_SYSTEMES) == set(pages.SCENARIOS_MONTRES[1:]), (
         "MARCHES_SYSTEMES et SCENARIOS_MONTRES ont divergé : "
-        f"{set(MARCHES_SYSTEMES) ^ set(SCENARIOS_MONTRES[1:])}"
+        f"{set(pages.MARCHES_SYSTEMES) ^ set(pages.SCENARIOS_MONTRES[1:])}"
     )
     # Et l'ordre des marches est celui de la liste, non celui du dictionnaire.
-    libelles = _libelles_cascade(Contexte(), 0.1, 0.4)
-    rapports = {code: 1.0 for code in SCENARIOS_MONTRES}
+    libelles = pages._libelles_cascade(site().contexte, 0.1, 0.4)
+    rapports = {code: 1.0 for code in pages.SCENARIOS_MONTRES}
     rapports[COMPOSANTE_GARANTIE] = 0.0
-    marches = _marches_cascade(1000.0, 0.1, rapports, libelles)
+    marches = pages._marches_cascade(1000.0, 0.1, rapports, libelles)
     attendus = ["Réversion supprimée"] + [
-        MARCHES_SYSTEMES[code][0].format(**libelles)
-        for code in SCENARIOS_MONTRES[1:]
+        pages.MARCHES_SYSTEMES[code][0].format(**libelles)
+        for code in pages.SCENARIOS_MONTRES[1:]
     ] + ["Garantie vieillesse"]
     assert [marche.libelle for marche in marches] == attendus
 
@@ -3562,24 +3544,24 @@ def test_aucune_etiquette_de_cascade_n_ecrit_un_nombre_en_dur(contexte):
     chiffre : ils portent des accolades, que ``_libelles_cascade`` remplit.
     """
     chiffre = re.compile(r"\d")
-    for code, (libelle, glose) in {**MARCHES_SYSTEMES, **MARCHES_HORS_SYSTEMES}.items():
+    for code, (libelle, glose) in {**pages.MARCHES_SYSTEMES, **pages.MARCHES_HORS_SYSTEMES}.items():
         assert not chiffre.search(libelle), f"{code} : chiffre en dur dans « {libelle} »"
         assert not chiffre.search(glose), f"{code} : chiffre en dur dans sa glose"
     # Et le rendu, lui, en porte : les accolades ont bien été remplies.
-    corps = rendre(contexte, "/cout", {})[1]
+    corps = rendre("/cout", {})[1]
     taux = g.pourcentage(contexte.base.taux_cotisation_liberal, decimales=0)
     assert f"Cotisation unique de {taux}" in corps
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_aucun_graphique_n_est_livre_sans_ses_chiffres(contexte, chemin):
+def test_aucun_graphique_n_est_livre_sans_ses_chiffres(chemin):
     """Le tableau est émis par ``graphique()`` : il ne peut donc pas manquer.
 
     Ce test le vérifie sur les pages réellement rendues — c'est lui qui
     échouerait si quelqu'un réécrivait un tracé à la main, hors de la fonction
     qui en produit la description.
     """
-    corps = rendre(contexte, chemin, {})[1]
+    corps = rendre(chemin, {})[1]
     traces = corps.count('<figure class="graphique"')
     tableaux = corps.count('<details class="donnees-graphique">')
     assert traces == tableaux, (
@@ -3587,9 +3569,9 @@ def test_aucun_graphique_n_est_livre_sans_ses_chiffres(contexte, chemin):
     )
 
 
-def test_le_graphique_de_la_trajectoire_porte_ses_ages(contexte):
+def test_le_graphique_de_la_trajectoire_porte_ses_ages():
     """Sur la page de résultats, le seul graphique qui ne se lit pas en années."""
-    corps = rendre(contexte, "/simuler", {
+    corps = rendre("/simuler", {
         "naissance": "1975", "statut": "salarie_prive_non_cadre",
         "debut": "21", "liquidation": "64", "salaire": "3500",
         "unite_revenu": "euros_mois",
@@ -3642,7 +3624,7 @@ def test_le_tableau_des_regles_d_indexation_sort_bien_du_modele(contexte):
         ("PIB nominal lissé sur 5 ans (Italie)", ModeIndexation.PIB_NOMINAL, 5),
     ]
 
-    corps = rendre(contexte, "/methode", {})[1]
+    corps = rendre("/methode", {})[1]
     debut = corps.index("Règle appliquée 1941-2025")
     tableau_html = corps[debut:corps.index("</table>", debut)]
     # La mise en valeur d'une cellule — la ligne littérale est en gras — n'est
@@ -3685,7 +3667,7 @@ def test_le_tableau_des_regles_d_indexation_sort_bien_du_modele(contexte):
     assert f"×{g.nombre(cumul(ModeIndexation.TRIPLE_LOCK_INVERSE), 1)}" in corps
 
 
-def test_la_correction_des_trois_generations_se_retrouve(contexte):
+def test_la_correction_des_trois_generations_se_retrouve():
     """Le seul chiffre du site qui reste écrit à la main, et pourquoi.
 
     La page Méthode dit de combien la ligne de neutralisation — revalorisation
@@ -3718,7 +3700,7 @@ def test_la_correction_des_trois_generations_se_retrouve(contexte):
         return (ecarts[ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE]
                 - ecarts[ModeIndexation.PRIX])
 
-    corps = rendre(contexte, "/methode", {})[1]
+    corps = rendre("/methode", {})[1]
     assert "un salarié du privé non cadre" in corps, (
         "la page doit dire sur quelle carrière ces points sont mesurés"
     )
@@ -4031,7 +4013,7 @@ def test_un_mot_du_glossaire_ne_coupe_pas_son_paragraphe():
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_aucun_depliant_ne_coupe_un_paragraphe(contexte, chemin):
+def test_aucun_depliant_ne_coupe_un_paragraphe(chemin):
     """Et la règle vaut pour toute la page, pas seulement pour le glossaire.
 
     ``<details>``, ``<div>``, ``<ul>``, ``<h2>`` ferment un ``<p>`` ouvert. Le
@@ -4039,7 +4021,7 @@ def test_aucun_depliant_ne_coupe_un_paragraphe(contexte, chemin):
     se décale sans que rien ne le dise. Ce contrôle regarde ce que le gabarit
     écrit, avant que l'analyseur ne le corrige.
     """
-    corps = rendre(contexte, chemin, {})[1]
+    corps = rendre(chemin, {})[1]
     for paragraphe in re.findall(r"<p\b[^>]*>(.*?)</p>", corps, re.S):
         for balise in ("<details", "<div", "<ul", "<ol", "<h2", "<h3", "<h4",
                        "<table", "<figure", "<section"):
@@ -4050,7 +4032,7 @@ def test_aucun_depliant_ne_coupe_un_paragraphe(contexte, chemin):
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_chaque_mot_du_glossaire_porte_sa_definition(contexte, chemin):
+def test_chaque_mot_du_glossaire_porte_sa_definition(chemin):
     """Un mot signalé sans définition serait un bouton qui n'ouvre rien.
 
     Le bouton porte ``aria-expanded`` — sans quoi une synthèse vocale l'annonce
@@ -4058,7 +4040,7 @@ def test_chaque_mot_du_glossaire_porte_sa_definition(contexte, chemin):
     bulle le suit immédiatement, repliée : c'est sur cette adjacence que le
     script d'``index.html`` s'appuie pour la trouver.
     """
-    corps = rendre(contexte, chemin, {})[1]
+    corps = rendre(chemin, {})[1]
     mots = re.findall(r'<span class="mot">(.*?)</span></span>', corps, re.S)
     assert len(mots) == corps.count('<span class="mot">'), (
         f"{chemin} : un mot du glossaire est mal formé"
@@ -4078,7 +4060,7 @@ def test_chaque_mot_du_glossaire_porte_sa_definition(contexte, chemin):
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_aucune_page_ne_montre_de_balise_echappee(contexte, chemin):
+def test_aucune_page_ne_montre_de_balise_echappee(chemin):
     """Une balise échappée s'affiche en toutes lettres au lecteur.
 
     La légende d'un tableau est échappée par ``g.tableau``, et c'est voulu :
@@ -4089,7 +4071,7 @@ def test_aucune_page_ne_montre_de_balise_echappee(contexte, chemin):
     nouveau venu y voyait, relevée le 23 septembre 2026. Le mot du glossaire
     se pose dans une phrase, jamais dans une légende.
     """
-    corps = rendre(contexte, chemin, {})[1]
+    corps = rendre(chemin, {})[1]
     echappees = re.findall(r"&lt;/?[a-z][a-z0-9]*\b", corps)
     assert not echappees, f"{chemin} : balises affichées en clair, {echappees[:3]}"
 
@@ -4184,7 +4166,7 @@ def test_le_pont_vers_le_site_parent_ressort_de_tout_cadre():
     assert exterieures == set(), exterieures
     # Dans le cadre, le site pose ``plf-embedded`` sur ``<body>`` ; sa propre
     # navigation est alors juste au-dessus, et le pont ferait doublon.
-    assert "body.plf-embedded footer .retour-site" in g.FEUILLE_DE_STYLE
+    assert "body.plf-embedded footer .retour-site" in FEUILLE_DE_STYLE
 
 
 def test_la_coquille_est_la_meme_des_deux_cotes_du_portage():
@@ -4210,7 +4192,7 @@ def test_la_coquille_est_la_meme_des_deux_cotes_du_portage():
     assert json.loads(lecture.stdout) == [g.entete("/cout"), g.pied()]
 
 
-def test_le_site_ne_dessine_plus_aucun_pictogramme_a_la_main(contexte):
+def test_le_site_ne_dessine_plus_aucun_pictogramme_a_la_main():
     """Ni emoji, ni caractère détourné en icône.
 
     C'est ce qui rendait l'ancienne icône de page laide et instable : un emoji
@@ -4223,7 +4205,7 @@ def test_le_site_ne_dessine_plus_aucun_pictogramme_a_la_main(contexte):
     racine = Path(__file__).resolve().parents[1]
     emoji = re.compile(r"[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B00-\u2BFF\uFE0F]")
     for chemin in TITRES:
-        corps = rendre(contexte, chemin, {})[1]
+        corps = rendre(chemin, {})[1]
         assert not emoji.findall(corps), f"{chemin} porte un emoji"
     for fichier in ("index.html", "moteur/style.css"):
         texte = (racine / fichier).read_text(encoding="utf-8")
@@ -4248,7 +4230,7 @@ def test_l_icone_du_site_est_un_fichier_de_la_meme_grille():
 
 def _regles_du_telephone() -> str:
     """Le contenu de la requête média des écrans étroits."""
-    return g.FEUILLE_DE_STYLE.split("@media (max-width: 34rem)")[1].split("\n}\n")[0]
+    return FEUILLE_DE_STYLE.split("@media (max-width: 34rem)")[1].split("\n}\n")[0]
 
 
 def test_le_titre_d_un_scenario_ne_reserve_pas_de_hauteur_sur_telephone():
@@ -4294,22 +4276,22 @@ def test_l_appel_d_une_bulle_tient_la_cible_tactile():
     Le padding seul dimensionnait l'appel en proportion du texte qui le porte :
     dans une glose ou une note, il tombait à 19 px. Les minima l'en empêchent.
     """
-    regle = g.FEUILLE_DE_STYLE.split(".mot > .terme.appel {")[1].split("}")[0]
+    regle = FEUILLE_DE_STYLE.split(".mot > .terme.appel {")[1].split("}")[0]
     assert "min-width: 1.5rem" in regle and "min-height: 1.5rem" in regle
 
 
-def test_tous_les_depliants_portent_le_meme_chevron(contexte):
+def test_tous_les_depliants_portent_le_meme_chevron():
     """Le marqueur natif d'un ``<details>`` n'a ni la même forme ni la même
     taille d'un navigateur à l'autre : chaque résumé porte donc le chevron du
     jeu, et la feuille de style masque celui du navigateur."""
     for chemin in TITRES:
-        corps = rendre(contexte, chemin, {})[1]
+        corps = rendre(chemin, {})[1]
         resumes = re.findall(r"<summary>(.{0,40})", corps, re.S)
         for debut in resumes:
             assert debut.startswith('<svg class="icone" '), (
                 f"{chemin} : un dépliant sans chevron — {debut!r}"
             )
-    style = g.FEUILLE_DE_STYLE
+    style = FEUILLE_DE_STYLE
     assert 'summary::marker { content: ""; }' in style
     assert "details[open] > summary > .icone { transform: rotate(180deg); }" in style
 
@@ -4535,7 +4517,7 @@ def test_aucune_page_ne_depasse_son_budget_de_lecture(contexte, chemin):
     """
     mots_max, traces_max, tableaux_max, mots_tableaux_max = \
         BUDGETS_DE_LECTURE[chemin]
-    visible = _hors_depliants(rendre(contexte, chemin, {})[1])
+    visible = _hors_depliants(rendre(chemin, {})[1])
 
     # LA PROSE ET LES TABLEAUX NE SE LISENT PAS DE LA MÊME FAÇON, et les
     # compter ensemble faisait payer à la prose ce qu'un inventaire coûte en
@@ -4581,7 +4563,7 @@ SIMULATION_TEMOIN = {
 }
 
 
-def test_la_page_de_resultats_replie_son_detail(contexte):
+def test_la_page_de_resultats_replie_son_detail():
     """Qui vient de calculer sa pension veut son chiffre, pas une leçon.
 
     La page alignait sous ses six montants sept sections ouvertes — un
@@ -4592,7 +4574,7 @@ def test_la_page_de_resultats_replie_son_detail(contexte):
     faut traverser.
     """
     mots_max = BUDGETS_DE_LECTURE["/simuler"][0]
-    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
     assert "Résultats" in corps, "la simulation témoin ne calcule rien"
 
     visible = _hors_depliants(corps)
@@ -4620,7 +4602,7 @@ def test_la_page_de_resultats_replie_son_detail(contexte):
 #: reviendrait à leur demander d'abord d'en écrire le contenu.
 @pytest.mark.parametrize("chemin", ["/", "/cas-types", "/cout", "/methode",
                                     "/risque"])
-def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
+def test_chaque_page_range_son_detail_dans_des_sections(chemin):
     """Replier n'est pas supprimer : ce qui sort du chemin doit y être rangé.
 
     Une page qui tiendrait son budget de lecture en ayant simplement perdu la
@@ -4628,7 +4610,7 @@ def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
     l'autre moitié du marché : le détail est là, dans des sections nommées, et
     il pèse plus que ce qui reste ouvert.
     """
-    corps = rendre(contexte, chemin, {})[1]
+    corps = rendre(chemin, {})[1]
     # Un panneau d'onglet replié est une section nommée qu'on ouvre à la
     # demande, comme un dépliant : la page Cas types en range quatre.
     sections = (len(re.findall(r'<details class="section"[ >]', corps))
@@ -4645,10 +4627,10 @@ def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
         assert len(titre.split()) >= 3, f"{chemin} : section mal nommée — {titre}"
 
 
-def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent(contexte):
+def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent():
     """Le poste « transferts » est ventilé par celui qui paie, et la page en tire
     la seule chose que le coefficient ne dit pas : la recette suit le droit."""
-    corps = rendre(contexte, "/cout", {})[1]
+    corps = rendre("/cout", {})[1]
     texte = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", corps)))
     assert "Ce que d'autres caisses versent" in texte
     assert "Assurance vieillesse des parents au foyer" in texte
@@ -4663,7 +4645,7 @@ def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent(contexte):
     assert "et le système 2" in texte
 
 
-def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
+def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert():
     """Le temps du lecteur n'est pas gratuit, et cette page le dépensait.
 
     Elle portait sept graphiques et neuf tableaux dépliés, huit mille mots à
@@ -4674,7 +4656,7 @@ def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
     Les bornes sont larges à dessein : elles n'interdisent pas d'écrire, elles
     interdisent de revenir à une page qu'on ne lit pas.
     """
-    corps = rendre(contexte, "/cout", {})[1]
+    corps = rendre("/cout", {})[1]
     visible = _hors_depliants(corps)
 
     traces = visible.count('<figure class="graphique"')
@@ -4699,13 +4681,13 @@ def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
     assert corps.count('<figure class="graphique"') > traces
 
 
-def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse(contexte):
+def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse():
     """Une carte sans réponse est un graphique nu : le lecteur doit le lire.
 
     L'ordre compte autant que la présence — question, réponse, tracé — parce
     que c'est lui qui permet de s'arrêter à la deuxième ligne.
     """
-    corps = rendre(contexte, "/cout", {})[1]
+    corps = rendre("/cout", {})[1]
     cartes = re.findall(r'<section class="cle"[^>]*>(.*?)</section>', corps, re.S)
     assert len(cartes) == 3, f"{len(cartes)} cartes, trois attendues"
     for carte in cartes:
@@ -4858,9 +4840,9 @@ def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
     part la garantie vieillesse, comme le pilier capitalisé est placé à part.
     Par défaut, l'année est celle de la bascule.
     """
-    bilan = _compte_flux(contexte, contexte.base.annee_bascule)
+    bilan = pages._compte_flux(site().contexte, contexte.base.annee_bascule)
     ligne = bilan.ligne
-    caisses = {s: _caisse_flux(ligne, bilan.pib, s, s, "Cotisations")
+    caisses = {s: pages._caisse_flux(ligne, bilan.pib, s, s, "Cotisations")
                for s in ("actuel", "notionnel_liberal")}
     for systeme, caisse in caisses.items():
         # Au dix-millième : les parts que le COR publie, arrondies, ne somment
@@ -4880,7 +4862,7 @@ def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
     assert ("TVA" in sources["notionnel_liberal"]) == (contexte.base.taux_tva_liberal > 0.0)
     assert {n.libelle for n in caisses["actuel"].usages} >= {"Pensions de réversion"}
 
-    corps = rendre(contexte, "/cout", {})[1]
+    corps = rendre("/cout", {})[1]
     carte = re.search(r'<section class="cle" id="cout-flux".*?</section>', corps, re.S)
     assert carte, "la carte des flux a disparu de la page Coût"
     schemas = re.findall(r'<figure class="sankey".*?</figure>', carte.group(0), re.S)
@@ -4912,22 +4894,22 @@ def test_les_schemas_offrent_les_annees_de_la_cascade_a_compter_de_la_bascule(co
     pas encore appliquée, et son schéma serait celui du système actuel sous un
     autre nom. Une année qu'on ne propose pas retombe sur la première, sans
     erreur — une adresse partagée doit afficher les schémas."""
-    solde = contexte.cout().solde
+    solde = site().contexte.cout().solde
     obs, fin = solde.derniere_annee_observee, solde.derniere_annee
     bascule = contexte.base.annee_bascule
     assert bascule > obs, "le témoin suppose une bascule postérieure à l'année mesurée"
-    offertes = _annees_flux(solde, bascule)
-    assert offertes == tuple(a for a in _annees_cascade(solde, bascule) if a >= bascule)
+    offertes = pages._annees_flux(solde, bascule)
+    assert offertes == [a for a in pages._annees_cascade(solde, bascule) if a >= bascule]
     assert offertes[0] == bascule and offertes[-1] == fin and obs not in offertes
     # Une bascule déjà passée : l'année mesurée ouvre la liste, comme celle de
     # la cascade ; une bascule à l'horizon : l'horizon seul.
-    assert _annees_flux(solde, obs - 5)[0] == obs
-    assert _annees_flux(solde, fin) == (fin,)
+    assert pages._annees_flux(solde, obs - 5)[0] == obs
+    assert pages._annees_flux(solde, fin) == [fin]
     for demandee, attendue in (("", bascule), ("2070", 2070), (str(obs), bascule),
                                ("2035", bascule), ("deux mille", bascule),
                                ('"><script>', bascule)):
-        assert _annee_flux(solde, bascule, {"flux": demandee}) == attendue, demandee
-    assert _annee_flux(solde, bascule, None) == bascule
+        assert pages._annee_flux(solde, bascule, {"flux": demandee}) == attendue, demandee
+    assert pages._annee_flux(solde, bascule, None) == bascule
 
 
 def test_chaque_annee_des_schemas_tombe_juste(contexte):
@@ -4935,13 +4917,13 @@ def test_chaque_annee_des_schemas_tombe_juste(contexte):
     et ce qu'elle verse. La garantie de l'année est payée par l'impôt et, de
     plus en plus, par ce que les successions en rendent : les deux somment à
     la garantie, et la part des successions croît avec les années."""
-    solde = contexte.cout().solde
+    solde = site().contexte.cout().solde
     bascule = contexte.base.annee_bascule
     reprises = []
-    for annee in _annees_flux(solde, bascule):
-        compte = _compte_flux(contexte, annee)
+    for annee in pages._annees_flux(solde, bascule):
+        compte = pages._compte_flux(site().contexte, annee)
         for systeme in ("actuel", "notionnel_liberal"):
-            caisse = _caisse_flux(compte.ligne, compte.pib, systeme, systeme, "C")
+            caisse = pages._caisse_flux(compte.ligne, compte.pib, systeme, systeme, "C")
             assert sum(n.valeur for n in caisse.sources) == pytest.approx(
                 caisse.valeur, rel=1e-4), (annee, systeme)
             assert sum(n.valeur for n in caisse.usages) == pytest.approx(
@@ -4950,7 +4932,7 @@ def test_chaque_annee_des_schemas_tombe_juste(contexte):
         assert compte.garantie == pytest.approx(
             compte.ligne.postes_depenses("notionnel_liberal")["garantie_vieillesse"])
         # Les milliards suivent la règle du site entier, et nulle autre.
-        assert compte.pib == _pib_de_conversion(contexte.comptes(), annee)
+        assert compte.pib == pages._pib_de_conversion(site().contexte.comptes(), annee)
         reprises.append(compte.reprises / compte.garantie)
     assert reprises[-1] > reprises[0], "les successions rendent plus à l'horizon"
 
@@ -4959,7 +4941,7 @@ def test_l_annee_des_schemas_se_choisit_et_garde_celle_de_la_cascade(contexte):
     """``flux`` pose l'année des schémas ; les deux sélecteurs de la page se
     gardent l'un l'autre ; le tableau poste par poste reste à la bascule."""
     bascule = contexte.base.annee_bascule
-    corps = rendre(contexte, "/cout", {"flux": "2070", "cascade": "2040"})[1]
+    corps = rendre("/cout", {"flux": "2070", "cascade": "2040"})[1]
     carte = re.search(r'<section class="cle" id="cout-flux".*?</section>', corps, re.S)
     assert carte
     carte = carte.group(0)
@@ -4983,12 +4965,12 @@ def test_l_annee_des_schemas_se_choisit_et_garde_celle_de_la_cascade(contexte):
     assert f"Ressources et dépenses du système de retraite en {bascule}," in corps
     # Une valeur qui n'est pas une année offerte ne voyage pas : elle est
     # ramenée, et c'est l'année ramenée que les liens de la cascade portent.
-    corps = rendre(contexte, "/cout", {"flux": '"><script>alert(1)</script>'})[1]
+    corps = rendre("/cout", {"flux": '"><script>alert(1)</script>'})[1]
     assert "<script>alert" not in corps
     assert f'<a href="#/cout?cascade=2030&flux={bascule}">2030</a>' in corps
 
 
-def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture(contexte):
+def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture():
     """La page Partager demandait une capture d'écran ; elle n'en demande plus.
 
     Les cartes étaient rendues à leur taille réelle dans un cadre qui défilait,
@@ -4997,7 +4979,7 @@ def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture(contexte):
     MÊME barre que les graphiques — un seul jeu de classes, un seul code —, et
     chacune emporte le compte et l'adresse.
     """
-    corps = rendre(contexte, "/partager", {})[1]
+    corps = rendre("/partager", {})[1]
     cartes = re.findall(r'<figure class="carte">(.*?)</figure>', corps, re.S)
     assert len(cartes) == 4, f"{len(cartes)} cartes, quatre attendues"
     for carte in cartes:
@@ -5016,13 +4998,13 @@ def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture(contexte):
     )
 
 
-def test_la_barre_de_partage_n_est_ecrite_qu_une_fois(contexte):
+def test_la_barre_de_partage_n_est_ecrite_qu_une_fois():
     """Deux endroits partagent — la carte d'un graphique, la carte à publier —
     et ils ne doivent pas diverger. Le gabarit n'en écrit qu'une, et les deux
     pages la reprennent telle quelle."""
     barre = g.barre_partage()
     for chemin in ("/cout", "/partager"):
-        corps = rendre(contexte, chemin, {})[1]
+        corps = rendre(chemin, {})[1]
         assert barre in corps, f"{chemin} écrit sa propre barre de partage"
     # Deux gestes, et pas un de plus : le troisième bouton demandait de choisir
     # avant d'agir, et laissait chacun des trois incomplet.
@@ -5245,7 +5227,7 @@ def test_le_glossaire_est_le_meme_des_deux_cotes_du_portage():
         )
 
 
-def test_le_jargon_du_relecteur_porte_sa_definition(contexte):
+def test_le_jargon_du_relecteur_porte_sa_definition():
     """Les mots que la revue extérieure relevait comme non définis.
 
     Chacun est un mot du glossaire là où il paraît : sur les résultats du
@@ -5265,7 +5247,7 @@ def test_le_jargon_du_relecteur_porte_sa_definition(contexte):
         return " ".join(re.findall(r'<span class="bulle" role="note" hidden>(.*?)</span>',
                                    corps))
 
-    resultats = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    resultats = rendre("/simuler", SIMULATION_TEMOIN)[1]
     assert {"taux de remplacement", "coefficient de conversion",
             } <= termes(resultats)
     assert any(mot.startswith("capital notionnel") for mot in termes(resultats))
@@ -5275,13 +5257,13 @@ def test_le_jargon_du_relecteur_porte_sa_definition(contexte):
                 "part patronale", "indexation"):
         assert g.GLOSSAIRE[cle] in bulles(resultats), cle
 
-    accueil = rendre(contexte, "/", {})[1]
+    accueil = rendre("/", {})[1]
     assert {"trimestres", "décote", "surcote", "taux plein", "répartition",
             "25 meilleures années"} <= termes(accueil)
-    cout = rendre(contexte, "/cout", {})[1]
+    cout = rendre("/cout", {})[1]
     assert {"répartition", "part du PIB", "comptes notionnels",
             "taux de remplacement"} <= termes(cout)
-    assert "réglage annuel" in termes(rendre(contexte, "/cas-types", {})[1])
+    assert "réglage annuel" in termes(rendre("/cas-types", {})[1])
 
 # L'âge de référence ne se règle plus, et sa note n'existe plus : la
 # conversion des droits acquis était propre aux deux variantes « dès la
@@ -5317,7 +5299,7 @@ def test_le_menu_des_statuts_est_groupe_par_famille(page):
                              '<option value="" selected>— aucun —</option><optgroup')
 
 
-def test_la_page_cas_types_ouvre_sur_la_proposition(contexte):
+def test_la_page_cas_types_ouvre_sur_la_proposition():
     """Le lecteur pressé s'arrêtait sur un contrefactuel.
 
     Les cinq grilles sont derrière des onglets — des boutons radio, un
@@ -5325,7 +5307,7 @@ def test_la_page_cas_types_ouvre_sur_la_proposition(contexte):
     6. Les quatre autres panneaux sont dans la page, ``hidden`` : là où
     ``:has()`` manque, la page montre le premier et cache les autres.
     """
-    corps = rendre(contexte, "/cas-types", {})[1]
+    corps = rendre("/cas-types", {})[1]
     radios = re.findall(r'<input type="radio" name="grille" id="grille-([^"]+)"( checked)?>',
                         corps)
     assert [code for code, _ in radios] == [
@@ -5340,7 +5322,7 @@ def test_la_page_cas_types_ouvre_sur_la_proposition(contexte):
     assert '<label for="grille-notionnel_liberal">4. La proposition</label>' in corps
     # La feuille de style sait montrer chacun des trois panneaux.
     for code, _ in radios:
-        assert f'.onglets:has(#grille-{code}:checked) ~ .panneaux > .panneau[data-onglet="{code}"]' in g.FEUILLE_DE_STYLE, code
+        assert f'.onglets:has(#grille-{code}:checked) ~ .panneaux > .panneau[data-onglet="{code}"]' in FEUILLE_DE_STYLE, code
     # Et les trois chiffres d'ouverture sont lus sur cette grille-là.
     assert "génération 2000, système 4" in corps
 
@@ -5355,7 +5337,7 @@ COMPTES_LEGITIMES = (
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_aucune_page_ne_compte_plus_de_quatre_systemes(contexte, chemin):
+def test_aucune_page_ne_compte_plus_de_quatre_systemes(chemin):
     """Le site en compare QUATRE, et doit le dire partout de la même façon.
 
     Passer de six à quatre a touché cinquante-deux phrases. Les tests de
@@ -5377,7 +5359,7 @@ def test_aucune_page_ne_compte_plus_de_quatre_systemes(contexte, chemin):
     commentaires du code le disent. Ce test ne lit que ce qui s'affiche, sur
     les huit routes — c'est là que vivaient les deux phrases fausses.
     """
-    corps = rendre(contexte, chemin,
+    corps = rendre(chemin,
                    {"naissance": "1975-01-01"}
                    if chemin == "/simuler" else {})[1]
     texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", corps)))
@@ -5425,7 +5407,7 @@ def test_une_classe_du_bloc_scenario_ne_reprend_pas_un_composant():
     """
     import re
 
-    feuille = re.sub(r"/\*.*?\*/", "", g.FEUILLE_DE_STYLE, flags=re.S)
+    feuille = re.sub(r"/\*.*?\*/", "", FEUILLE_DE_STYLE, flags=re.S)
     selecteurs = [
         " ".join(morceau.split())
         for tete in re.findall(r"(?:^|\})\s*([^{}@][^{}]*?)\{", feuille, re.S)
@@ -5441,7 +5423,7 @@ def test_une_classe_du_bloc_scenario_ne_reprend_pas_un_composant():
         )
 
 
-def test_les_pages_longues_portent_leur_plan(contexte):
+def test_les_pages_longues_portent_leur_plan():
     """Un plan déduit des sections, et qui les ouvre sans toucher à la route.
 
     Coût et Données listent, sous leurs trois chiffres, chaque carte et chaque
@@ -5458,7 +5440,7 @@ def test_les_pages_longues_portent_leur_plan(contexte):
                    "cout-frise", "cout-garantie", "cout-capitalisation", "cout-poids", "cout-sources",
                    "cout-limites"]),
     ):
-        corps = rendre(contexte, chemin, {})[1]
+        corps = rendre(chemin, {})[1]
         plan = re.search(r'<nav class="plan" aria-label="Dans cette page">.*?</nav>', corps, re.S)
         assert plan, f"{chemin} : pas de plan"
         liens = re.findall(r'<a href="([^"]+)" data-vers="([^"]+)">', plan.group(0))
@@ -5470,7 +5452,7 @@ def test_les_pages_longues_portent_leur_plan(contexte):
         # carte ensuite.
         assert corps.index('<div class="fiches reperes">') < corps.index('<nav class="plan"')
     for chemin in ("/", "/cas-types", "/methode", "/simuler"):
-        assert '<nav class="plan"' not in rendre(contexte, chemin, {})[1], chemin
+        assert '<nav class="plan"' not in rendre(chemin, {})[1], chemin
 
     from pathlib import Path
 
@@ -5489,7 +5471,7 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
     from retraite_notionnelle.config import RACINE_DONNEES
     from retraite_notionnelle.donnees.regimes import charger_inventaire
 
-    corps = rendre(contexte, "/methode", {})[1]
+    corps = rendre("/methode", {})[1]
     lignes = charger_inventaire(RACINE_DONNEES)
     table = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
     rangs = re.findall(r'<tr data-famille="([^"]+)" data-couverture="([^"]+)" data-fiabilite="[^"]*">', table)
@@ -5521,11 +5503,11 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
     assert 'closest("th > button.tri")' in page_html and 'setAttribute("aria-sort"' in page_html
 
 
-def test_aucun_chemin_de_fichier_n_est_cite_en_texte_brut(contexte):
+def test_aucun_chemin_de_fichier_n_est_cite_en_texte_brut():
     """« docs/limites.md » se lisait sans qu'on puisse l'ouvrir : chaque renvoi
     à un document du dépôt est un lien vers ce document."""
     for chemin in TITRES:
-        corps = rendre(contexte, chemin, {})[1]
+        corps = rendre(chemin, {})[1]
         for cite in re.findall(r"<code>(docs/[^<]+|scripts/[^<]+|data/[^<]+)</code>", corps):
             assert False, f"{chemin} : « {cite} » cité en texte brut"
 
@@ -5533,7 +5515,7 @@ def test_aucun_chemin_de_fichier_n_est_cite_en_texte_brut(contexte):
 # -- la revue du 15 septembre 2026 : le thème « clarté des arguments » ----------
 
 
-def test_la_cle_de_lecture_des_cas_types_precede_les_chiffres(contexte):
+def test_la_cle_de_lecture_des_cas_types_precede_les_chiffres():
     """Le scénario 6 affiche des écarts rouges : la clé dit contre quoi ils se lisent.
 
     La clé était sur la page Coût ; elle est en tête de Cas types, AVANT les
@@ -5547,7 +5529,7 @@ def test_la_cle_de_lecture_des_cas_types_precede_les_chiffres(contexte):
     quoi ils se lisent — la promesse du système actuel —, et ne peut plus
     démentir, un clic plus loin, ce que l'accueil affirme.
     """
-    corps = rendre(contexte, "/cas-types", {})[1]
+    corps = rendre("/cas-types", {})[1]
     cle = corps.index("Ces pourcentages se lisent contre une")
     assert cle < corps.index('<div class="fiches reperes">')
     assert cle < corps.index('<div class="panneaux">')
@@ -5581,8 +5563,8 @@ def test_cas_types_dit_du_reglage_ce_que_le_solde_dit(contexte):
     """
     debut, fin, coefficients, annee_minimum = _reglage_proposition_attendu(contexte)
     sous_un = sum(1 for c in coefficients.values() if c < 1.0)
-    cas_types = rendre(contexte, "/cas-types", {})[1]
-    cout = rendre(contexte, "/cout", {})[1]
+    cas_types = rendre("/cas-types", {})[1]
+    cout = rendre("/cout", {})[1]
     minimum = g.nombre(coefficients[annee_minimum], 2)
     dernier = g.nombre(coefficients[fin], 2)
 
@@ -5603,10 +5585,8 @@ def test_cas_types_dit_du_reglage_ce_que_le_solde_dit(contexte):
     else:
         # Assez de décimales pour qu'un plus bas sous un ne s'écrive pas 1,00 :
         # c'est le cas depuis la TVA à taux unique, 0,999 en 2044.
-        from retraite_notionnelle.web.pages import _decimales_sous_un
-
         precis = g.nombre(coefficients[annee_minimum],
-                          _decimales_sous_un(coefficients[annee_minimum]))
+                          pages.decimales_sous_un(coefficients[annee_minimum]))
         assert f"inférieur à un {sous_un} années sur {len(coefficients)}" in cas_types
         assert f"{precis} en {annee_minimum}" in cas_types
         assert f"{dernier} en {fin}" in cas_types
@@ -5634,7 +5614,9 @@ def test_le_README_donne_le_solde_que_la_page_cout_calcule(contexte):
 
     readme = (Path(__file__).resolve().parents[1] / "README.md").read_text(encoding="utf-8")
     solde = contexte.cout().solde
-    comptes = contexte.comptes()
+    # Le PIB par lequel la page convertit une part en milliards : celui des
+    # comptes du site, que sa règle lit.
+    comptes = site().contexte.comptes()
     observe = solde.annee(solde.derniere_annee_observee)
     horizon = solde.annee(solde.derniere_annee)
 
@@ -5654,12 +5636,12 @@ def test_le_README_donne_le_solde_que_la_page_cout_calcule(contexte):
         moyen = solde.solde_moyen(scenario, solde.premiere_annee_projetee,
                                   solde.derniere_annee)
         attendu = [
-            _part_et_milliards(
+            pages._part_et_milliards(
                 observe.solde(scenario),
-                observe.solde(scenario) * _pib_de_conversion(comptes, observe.annee),
+                observe.solde(scenario) * pages._pib_de_conversion(comptes, observe.annee),
                 decimales=2, signe=True),
-            _part_et_milliards(
-                moyen, moyen * _pib_de_conversion(comptes, solde.derniere_annee),
+            pages._part_et_milliards(
+                moyen, moyen * pages._pib_de_conversion(comptes, solde.derniere_annee),
                 decimales=2, signe=True),
             g.nombre(horizon.coefficient(scenario), 2),
         ]
@@ -5689,7 +5671,7 @@ def test_les_comparaisons_rappellent_que_le_systeme_actuel_derive(contexte):
     attendu_horizon = g.pourcentage(-comptes.solde(horizon), decimales=2)
     assert horizon > obs + 20, "les comptes ne portent plus la projection"
 
-    cas_types = rendre(contexte, "/cas-types", {})[1]
+    cas_types = rendre("/cas-types", {})[1]
     rappel = re.search(r"« Aujourd'hui » n'est pas un point fixe.*?</p>",
                        cas_types, re.S)
     assert rappel, "Cas types ne rappelle plus la trajectoire du système actuel"
@@ -5698,26 +5680,26 @@ def test_les_comparaisons_rappellent_que_le_systeme_actuel_derive(contexte):
     assert "système\nqui dérive" in rappel.group(0)
     assert rappel.start() > cas_types.index('<div class="panneaux">')
 
-    cout = rendre(contexte, "/cout", {})[1]
+    cout = rendre("/cout", {})[1]
     assert "comparer un scénario à lui, c'est le\ncomparer à un système qui dérive" in cout
     assert f"{attendu_obs}\ndu PIB en {obs}" in cout
 
 
-def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel(contexte):
+def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel():
     """Un badge là où l'erreur de lecture se produit, non dans un préambule.
 
     Sur Cas types, chaque panneau porte le sien dans son titre ; sur Coût, les
     quatre tableaux qui alignent les systèmes le portent en tête de ligne.
     Le système actuel n'en a pas : c'est la référence.
     """
-    cas_types = rendre(contexte, "/cas-types", {})[1]
+    cas_types = rendre("/cas-types", {})[1]
     titres = re.findall(r'<div class="panneau" data-onglet="([^"]+)"[^>]*><h3>.*?'
                         r'<span class="badge (\w+)">', cas_types)
     assert titres == [("notionnel_liberal", "proposition")] + [
         (code, "contrefactuel") for code in ("notionnel_retroactif",
                                              "notionnel_retroactif_employeur")]
 
-    cout = rendre(contexte, "/cout", {})[1]
+    cout = rendre("/cout", {})[1]
     lignes = re.findall(r'<th class="" scope="row">(\d)\. [^<]*(?:<span class="badge (\w+)">)?',
                         cout)
     # Quatre tableaux à quatre lignes : le passé, l'avenir, l'équilibre, la
@@ -5726,17 +5708,17 @@ def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel(cont
     assert lignes.count(("4", "proposition")) == 4
     for numero in "23":
         assert lignes.count((numero, "contrefactuel")) == 4, numero
-    assert ".badge.proposition" in g.FEUILLE_DE_STYLE
+    assert ".badge.proposition" in FEUILLE_DE_STYLE
 
 
-def test_les_pages_techniques_s_ouvrent_en_langage_courant(contexte):
+def test_les_pages_techniques_s_ouvrent_en_langage_courant():
     """Trois ou quatre phrases simples avant le détail, sur Coût, Méthode et
     Données — et elles se lisent sans rien déplier."""
     for chemin, phrase in (
         ("/cout", "ont coûté un peu plus qu&#x27;elles n&#x27;ont rapporté"),
         ("/methode", "Votre pension serait votre\ncompte divisé par le nombre d&#x27;années"),
     ):
-        corps = rendre(contexte, chemin, {})[1]
+        corps = rendre(chemin, {})[1]
         resume = re.search(r'<div class="note resume"><strong>En clair\.</strong>(.*?)</div>',
                            corps, re.S)
         assert resume, f"{chemin} : pas de résumé en langage courant"
@@ -5750,28 +5732,28 @@ def test_les_pages_techniques_s_ouvrent_en_langage_courant(contexte):
     # La partie « D'où viennent les chiffres » de Méthode et sources, qui a été
     # la page Sources, garde sa phrase en langage courant : elle est devenue
     # l'introduction de la partie, une page ne portant qu'un « En clair ».
-    methode = rendre(contexte, "/methode", {})[1]
+    methode = rendre("/methode", {})[1]
     sources = methode[methode.index('<h2 id="sources" tabindex="-1">'):]
     assert "viennent des\ninstitutions qui les produisent" in sources
     assert methode.count("<strong>En clair.</strong>") == 1
 
 
-def test_l_autocritique_de_la_page_cout_est_un_encart_de_vigilance(contexte):
+def test_l_autocritique_de_la_page_cout_est_un_encart_de_vigilance():
     """La comparaison à la projection du COR est un gage de sérieux : elle est
     marquée comme un point de vigilance, non noyée dans un paragraphe."""
-    corps = rendre(contexte, "/cout", {})[1]
+    corps = rendre("/cout", {})[1]
     encart = re.search(r'<div class="note vigilance"><strong>Point de vigilance : notre '
                        r"projection\ns'écarte de celle du COR\.</strong>(.*?)</div>",
                        corps, re.S)
     assert encart, "le point de vigilance a disparu"
     assert "celui du COR recule" in re.sub(r"\s+", " ", encart.group(1))
-    assert ".note.vigilance" in g.FEUILLE_DE_STYLE
+    assert ".note.vigilance" in FEUILLE_DE_STYLE
 
 
 # -- action 29 : l'entrée, pour qui arrive du site du parti --------------------
 
 
-def test_l_accueil_ouvre_sur_le_simulateur_avant_les_engagements(contexte):
+def test_l_accueil_ouvre_sur_le_simulateur_avant_les_engagements():
     """Un visiteur doit savoir en dix secondes que le site est un simulateur,
     et où cliquer.
 
@@ -5784,7 +5766,7 @@ def test_l_accueil_ouvre_sur_le_simulateur_avant_les_engagements(contexte):
     rappel du bas de page reste. Dans le cadre que le site du parti ouvre sur
     cette page, le titre du simulateur est masqué par l'hôte : ce bloc est
     alors la seule chose qui dise « simulez »."""
-    corps = rendre(contexte, "/", {})[1]
+    corps = rendre("/", {})[1]
     visible = _hors_depliants(corps)
     formulaire = visible.index('<form class="creme simulateur-court"')
     engagements = visible.index('<section class="engagements"')
@@ -5803,7 +5785,7 @@ def test_l_accueil_ouvre_sur_le_simulateur_avant_les_engagements(contexte):
         assert f'name="{champ}"' in brut, f"le champ {champ} manque"
     bouton = f'<a class="bouton" href="{g.lien("/simuler")}">'
     assert visible.count(bouton) == 1, "le rappel du bas de page a disparu"
-    assert ".simulateur-court .grille" in g.FEUILLE_DE_STYLE
+    assert ".simulateur-court .grille" in FEUILLE_DE_STYLE
 
 
 def test_le_formulaire_dit_que_l_exemple_est_rempli(page):
@@ -5815,13 +5797,13 @@ def test_le_formulaire_dit_que_l_exemple_est_rempli(page):
     assert "Résultats" not in texte
 
 
-def test_les_resultats_s_ouvrent_sur_le_resume_la_cle_puis_les_montants(contexte):
+def test_les_resultats_s_ouvrent_sur_le_resume_la_cle_puis_les_montants():
     """Sous « Résultats » : trois phrases qui répondent à la question de
     l'électeur, puis la clé qui dit ce qu'on regarde, puis les quatre montants,
     puis seulement les repères techniques. Dans l'ordre inverse, un téléphone
     montrait un coefficient de conversion et pas un euro ; sans le résumé, il
     montrait dix nombres et rien qui dise lesquels comparer."""
-    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
     visible = _hors_depliants(corps)
     resultats = visible.index('id="resultats"')
     bref = visible.index('<section class="en-bref"', resultats)
@@ -5864,14 +5846,14 @@ def _somme_affichee(texte: str) -> float:
     return float(texte.replace("\u202f", "").replace(",", "."))
 
 
-def test_la_vue_des_resultats_est_a_l_euro(contexte):
+def test_la_vue_des_resultats_est_a_l_euro():
     """« 2 795 € » dans « En bref », « 2 795,42 » sur la barre juste dessous :
     deux écritures du même nombre, relevées le 23 septembre 2026. Ce qui se
     lit sans rien déplier — les quatre barres, la ligne qui compose le
     système 4, ce que le salaire devient — est à l'euro. Le centime, que la
     caisse verse, reste dans les dépliants, là où l'on refait le calcul.
     """
-    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
     visible = _hors_depliants(corps)
     au_centime = re.findall(
         r'\d,\d\d\u202f€|<span class="somme">[\d\u202f]+,\d\d<', visible)
@@ -5879,7 +5861,7 @@ def test_la_vue_des_resultats_est_a_l_euro(contexte):
     assert re.search(r"\d,\d\d\u202f€", corps), "le détail a perdu ses centimes"
 
 
-def test_le_resume_des_resultats_redit_les_chiffres_des_barres(contexte):
+def test_le_resume_des_resultats_redit_les_chiffres_des_barres():
     """« En bref » ne calcule rien : il redit, arrondis à l'euro, les montants
     que les barres affichent juste dessous — le système actuel, la
     proposition sans rien ajouter puis avec les points rendus, le salaire net.
@@ -5889,7 +5871,7 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres(contexte):
     le taire pour l'un flatterait l'autre (action 62). Les systèmes 2 et 3,
     étalons et non choix, n'y figurent pas.
     """
-    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
     bref = re.search(r'<section class="en-bref".*?</section>', corps, re.S).group(0)
     # Les blancs ORDINAIRES seuls sont repliés : `split()` couperait aussi
     # l'espace fine insécable des milliers, que les montants portent.
@@ -5903,7 +5885,7 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres(contexte):
             bloc, re.S).group(1))
 
     def euro(montant: float) -> str:
-        return euros(montant)
+        return g.euros(montant)
 
     assert euro(principal(actuel)) in texte
     assert euro(principal(liberal)) in texte
@@ -5941,7 +5923,7 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres(contexte):
     assert 'id="resultats-financement"' in corps
 
 
-def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee(contexte):
+def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee():
     """La première question d'un retraité : « et la mienne ? ». L'étape 2 du
     programme y répond — les pensions liquidées avant la bascule sont
     recalculées sur ce qui a été cotisé —, et le résumé le dit dans ces mots,
@@ -5951,7 +5933,7 @@ def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee(contexte):
     qu'il a saisie : 1 600 € nets en 2026, et non 1 600 € en avril 2017. Le
     résumé disait « votre retraite était de », et donnait la pension du
     départ ramenée par les prix — ce que personne n'a jamais touché."""
-    corps = rendre(contexte, "/simuler", {
+    corps = rendre("/simuler", {
         "situation": "retraite", "saisie": "pension", "unite_revenu": "euros_mois",
         "naissance": "1955-03-01", "liquidation": "2017-04-01",
         "debut": "1975-09-01", "statut": "salarie_prive_non_cadre",
@@ -5964,7 +5946,7 @@ def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee(contexte):
     assert "Pendant que vous travaillez" not in texte
 
 
-def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart(contexte):
+def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart():
     """Le cas type de ``tests/test_revalorisation.py``, saisi sur le site : un
     non-cadre né en 1950, parti en janvier 2012. Sa pension de 2026 est
     1 780,61 € bruts par mois — celle de son départ, 1 477,46 €, menée par
@@ -5973,7 +5955,7 @@ def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart(contexte):
     régime, dit la tranche de 2020 — 1 537,80 € en décembre 2019, donc 1 % —
     et ce que la page affichait avant : la pension du départ ramenée par les
     prix, 1 844,09 €, que ce retraité n'a jamais touchée."""
-    corps = rendre(contexte, "/simuler", {
+    corps = rendre("/simuler", {
         "situation": "retraite", "saisie_par": "revenu", "salaire": "0.8",
         "unite_revenu": "moyen", "naissance": "1950-01-01", "liquidation": "62",
         "debut": "20", "statut": "salarie_prive_non_cadre", "sexe": "H"})[1]
@@ -5988,7 +5970,7 @@ def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart(contexte):
     assert "Pour vous, 1 537,80 € en décembre 2019 : +1,0 %." in texte
 
 
-def test_aucun_lien_ne_remplace_la_route_par_une_ancre(contexte):
+def test_aucun_lien_ne_remplace_la_route_par_une_ancre():
     """Ici l'adresse EST la route : un lien « #resultats-financement » la
     remplaçait, et le routeur, ne reconnaissant aucune page, rendait
     l'accueil — le lecteur qui cliquait dans la clé de lecture perdait sa
@@ -5996,12 +5978,12 @@ def test_aucun_lien_ne_remplace_la_route_par_une_ancre(contexte):
     ``data-vers``, que le script de la page traite sans toucher à l'adresse."""
     pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
     for chemin, parametres in pages:
-        corps = rendre(contexte, chemin, parametres)[1]
+        corps = rendre(chemin, parametres)[1]
         ancres = re.findall(r'href="(#[^/"][^"]*)"', corps)
         assert not ancres, f"{chemin} : {ancres}"
 
 
-def test_tout_lien_interne_mene_a_une_page_qui_existe(contexte):
+def test_tout_lien_interne_mene_a_une_page_qui_existe():
     """Un lien vers « #/methode/ » ne mène pas à la page Méthode : le routeur
     ne connaît pas cette route, et rend l'accueil. Trois liens du site
     portaient cette barre de trop — vers Méthode depuis l'accueil et depuis
@@ -6009,12 +5991,12 @@ def test_tout_lien_interne_mene_a_une_page_qui_existe(contexte):
     les suivait revenait au programme sans comprendre pourquoi."""
     pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
     for chemin, parametres in pages:
-        corps = g.entete(chemin) + rendre(contexte, chemin, parametres)[1]
+        corps = g.entete(chemin) + rendre(chemin, parametres)[1]
         for cible in re.findall(r'href="#(/[^"?]*)', corps):
             assert cible in TITRES, f"{chemin} : lien vers {cible!r}, route inconnue"
 
 
-def test_chaque_renvoi_vise_une_section_qui_existe(contexte):
+def test_chaque_renvoi_vise_une_section_qui_existe():
     """``data-vers`` ouvre une section sans toucher à la route : une cible
     absente laisse le lien agir en lien ordinaire, et le lecteur arrive en
     haut d'une page au lieu de la section promise. La cible est cherchée sur
@@ -6023,12 +6005,12 @@ def test_chaque_renvoi_vise_une_section_qui_existe(contexte):
     pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
     rendues = {}
     for chemin, parametres in pages:
-        corps = rendre(contexte, chemin, parametres)[1]
+        corps = rendre(chemin, parametres)[1]
         rendues.setdefault(chemin, corps)
         for route, cible in re.findall(
                 r'href="#(/[^"?]*)[^"]*" data-vers="([^"]+)"', corps):
             destination = corps if route == chemin else rendues.setdefault(
-                route, rendre(contexte, route, {})[1])
+                route, rendre(route, {})[1])
             assert f'id="{cible}"' in destination, (
                 f"{chemin} : section {cible!r} absente de {route}")
 
@@ -6066,7 +6048,7 @@ DEVELOPPEMENTS_DES_QUESTIONS = {
 }
 
 
-def test_l_accueil_range_chaque_sujet_sous_une_seule_question(contexte):
+def test_l_accueil_range_chaque_sujet_sous_une_seule_question():
     """« Même moi je m'y perds » (23 septembre 2026).
 
     L'accueil alignait deux piles de dépliants : onze questions de l'électeur,
@@ -6078,7 +6060,7 @@ def test_l_accueil_range_chaque_sujet_sous_une_seule_question(contexte):
     dépliants qui ne faisaient que redire sont partis — le calcul, que les
     trois gestes disent en clair, et un plan du site que le bandeau porte.
     """
-    corps = html.unescape(rendre(contexte, "/", {})[1])
+    corps = html.unescape(rendre("/", {})[1])
     assert "Pour aller plus loin" not in corps
     depliants = re.findall(
         r'<details class="section"(?: id="[^"]+")?><summary>.*?<span>(.*?)</span>'
@@ -6104,7 +6086,7 @@ def test_l_accueil_repond_aux_questions_de_l_electeur(contexte):
     et ne coûte rien au budget de lecture. La première est celle qui coûte, et
     sa réponse dit ce que le simulateur montrera.
     """
-    corps = rendre(contexte, "/", {})[1]
+    corps = rendre("/", {})[1]
     texte = html.unescape(corps)
     rangs = [texte.index(f"<span>{question}</span></summary>")
              for question in QUESTIONS_DE_L_ELECTEUR]
@@ -6145,11 +6127,11 @@ def test_l_accueil_dit_de_combien_la_retraite_baisse(contexte):
     signe parce que la phrase dit « baisse » ; l'ordre de grandeur en toutes
     lettres est tiré des deux écarts de ce qu'on touche sans rien ajouter.
     """
-    corps = rendre(contexte, "/", {})[1]
+    corps = rendre("/", {})[1]
     texte = _replier(html.unescape(corps))
     ecarts = contexte.bilan().ecarts
     assert ecarts is not None, "le bilan figé ne porte pas les écarts médians"
-    ordre = _ordre_de_grandeur(ecarts)
+    ordre = pages._ordre_de_grandeur(site().contexte.bilan().ecarts)
 
     # Le tableau, sans rien déplier.
     visible = _replier(html.unescape(_hors_depliants(corps)))
@@ -6162,11 +6144,11 @@ def test_l_accueil_dit_de_combien_la_retraite_baisse(contexte):
             f"système actuel promet, {ordre}.</strong>") in texte
     for ecart in (ecarts.a_venir, ecarts.a_venir_volontaire, ecarts.deja_liquidees):
         assert ecart < 0.0
-        assert f"{pourcentage(-ecart, decimales=0)}" in texte
-    assert (f"la baisse médiane est de {pourcentage(-ecarts.a_venir, decimales=0)} "
+        assert f"{g.pourcentage(-ecart, decimales=0)}" in texte
+    assert (f"la baisse médiane est de {g.pourcentage(-ecarts.a_venir, decimales=0)} "
             "pour qui n'est pas encore à la retraite") in texte
     assert (f"la pension d'aujourd'hui baisse ainsi de "
-            f"{pourcentage(-ecarts.deja_liquidees, decimales=0)} en médiane") in texte
+            f"{g.pourcentage(-ecarts.deja_liquidees, decimales=0)} en médiane") in texte
     # La preuve est à un clic : la grille des carrières types.
     assert '<a href="#/cas-types">treize carrières types</a>' in texte
 
@@ -6176,46 +6158,27 @@ def test_l_accueil_dit_de_combien_la_retraite_baisse(contexte):
     (0.48, "la moitié"), (0.05, "un dixième"), (0.9, "trois quarts"),
 ])
 def test_une_part_se_dit_par_la_fraction_la_plus_proche(part, mots):
-    assert _fraction_en_mots(part) == mots
+    assert pages._fraction_en_mots(part) == mots
 
 
 def test_l_ordre_de_grandeur_elide_ce_qu_il_faut():
     """« d'un quart », mais « de la moitié » et « de deux cinquièmes »."""
-    def ecarts(a_venir, deja):
-        return EcartsFiges(a_venir=a_venir, a_venir_volontaire=a_venir,
-                           deja_liquidees=deja, cases_a_venir=1,
-                           cases_deja_liquidees=1)
+    def ecarts(a_venir, deja, volontaire=None):
+        """Les écarts du bilan, tels que le site les lit dans son paquet."""
+        return module("bilan").EcartsFiges(dataclasses.asdict(EcartsFiges(
+            a_venir=a_venir, a_venir_volontaire=a_venir if volontaire is None else volontaire,
+            deja_liquidees=deja, cases_a_venir=1, cases_deja_liquidees=1)))
 
-    assert _ordre_de_grandeur(ecarts(-0.31, -0.26)) == "de l'ordre d'un quart à un tiers"
-    assert _ordre_de_grandeur(ecarts(-0.33, -0.34)) == "de l'ordre d'un tiers"
-    assert _ordre_de_grandeur(ecarts(-0.5, -0.4)) == (
+    assert pages._ordre_de_grandeur(ecarts(-0.31, -0.26)) == "de l'ordre d'un quart à un tiers"
+    assert pages._ordre_de_grandeur(ecarts(-0.33, -0.34)) == "de l'ordre d'un tiers"
+    assert pages._ordre_de_grandeur(ecarts(-0.5, -0.4)) == (
         "de l'ordre de deux cinquièmes à la moitié")
     # Les cinq points volontaires n'entrent pas dans l'ordre de grandeur.
-    assert _ordre_de_grandeur(EcartsFiges(
-        a_venir=-0.31, a_venir_volontaire=-0.05, deja_liquidees=-0.31,
-        cases_a_venir=1, cases_deja_liquidees=1)) == "de l'ordre d'un tiers"
+    assert pages._ordre_de_grandeur(ecarts(-0.31, -0.31, volontaire=-0.05)) == (
+        "de l'ordre d'un tiers")
 
 
-def test_un_paquet_sans_ecarts_ne_fait_pas_tomber_l_accueil():
-    """Un bilan écrit avant les écarts médians : l'accueil se tait sur le chiffre.
-
-    Le navigateur garde le paquet en cache (``force-cache``) : un lecteur
-    revenu après le 23 septembre 2026 peut recevoir le nouveau code et l'ancien
-    paquet. L'accueil ne doit pas en tomber ; il retrouve la réponse d'avant,
-    sans chiffre, et le tableau sa ligne d'avant.
-    """
-    ancien = Contexte()
-    ancien._donnees["bilan"] = dataclasses.replace(ancien.bilan(), ecarts=None)
-    corps = rendre(ancien, "/", {})[1]
-    texte = _replier(html.unescape(corps))
-    assert ("<strong>Le plus souvent, elle sera plus basse que ce que le "
-            "système actuel promet.</strong> Votre retraite vaudra") in texte
-    assert "baisse médiane" not in texte
-    assert "Votre retraite</th>" not in texte
-    assert "c'est une avance, reprise sur la succession. Pour votre cas" in texte
-
-
-def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
+def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference():
     """UNE PENSION par scénario, et dans une seule unité.
 
     Chaque ligne portait deux nombres pour la même grandeur : le pouvoir
@@ -6235,7 +6198,7 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
     Une seule chose reste exigée — un seul `chiffre principal`, celui de la
     pension, et lui seul dans les euros de l'année de référence.
     """
-    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
     depart = SIMULATION_TEMOIN["liquidation"][:4]
     for bloc in corps.split('<div class="scenario">')[1:]:
         entete = bloc.split('<div class="barre')[0]
@@ -6266,7 +6229,7 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
             in " ".join(corps.split()))
 
 
-def test_le_salaire_net_se_lit_a_cote_de_chaque_pension(contexte):
+def test_le_salaire_net_se_lit_a_cote_de_chaque_pension():
     """Les quatre systèmes portent leur salaire net, et trois portent le même.
 
     C'est le propos : les systèmes 1, 2 et 3 ne changent pas ce qui est
@@ -6274,7 +6237,7 @@ def test_le_salaire_net_se_lit_a_cote_de_chaque_pension(contexte):
     fois puis un quatrième différent est ce qui le montre sans une phrase.
     L'écart n'est donc écrit que sur la ligne qui en a un.
     """
-    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
     entetes = [bloc.split('<div class="barre')[0]
                for bloc in corps.split('<div class="scenario">')[1:]]
     assert len(entetes) == 4
@@ -6305,11 +6268,11 @@ def test_le_salaire_net_se_lit_a_cote_de_chaque_pension(contexte):
     assert sum(len(_ecarts_de_salaire(entete)) for entete in entetes[:3]) == 0
 
 
-def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):
+def test_le_tableau_du_plancher_est_en_haut_de_l_accueil():
     """L'argument le plus parlant du site — « 300 € et 1 500 € : 0 € aujourd'hui,
     500 € avec la garantie » — se lit sans rien déplier, avant le tableau qui
     oppose les deux systèmes, et n'est plus répété dans le dépliant."""
-    corps = rendre(contexte, "/", {})[1]
+    corps = rendre("/", {})[1]
     visible = _hors_depliants(corps)
     assert "Ce que le plancher individualisé change, par mois" in visible
     # Des espaces insécables : « 1 500 / € » se coupait en deux sur un téléphone.
@@ -6366,20 +6329,20 @@ def test_la_navigation_met_l_electeur_d_abord():
     assert list(TITRES) == [chemin for chemin, _ in g.LIENS]
     # L'étiquette est masquée à l'œil, pas à l'oreille ; celle du groupe
     # secondaire, elle, se voit.
-    assert "nav .etiquette" in g.FEUILLE_DE_STYLE
-    etiquette = g.FEUILLE_DE_STYLE.split("nav .etiquette {")[1].split("}")[0]
+    assert "nav .etiquette" in FEUILLE_DE_STYLE
+    etiquette = FEUILLE_DE_STYLE.split("nav .etiquette {")[1].split("}")[0]
     assert "clip-path" in etiquette and "display: none" not in etiquette, (
         "une étiquette en display:none quitte aussi l'arbre d'accessibilité"
     )
-    visible = g.FEUILLE_DE_STYLE.split("nav .groupe.secondaire .etiquette {")[1].split("}")[0]
+    visible = FEUILLE_DE_STYLE.split("nav .groupe.secondaire .etiquette {")[1].split("}")[0]
     assert "clip-path: none" in visible
     # L'onglet courant ne se signale pas QUE par la couleur : un soulignement
     # épais le marque, et `aria-current` l'annonce.
-    actif = g.FEUILLE_DE_STYLE.split('nav a[aria-current="page"] {')[1].split("}")[0]
+    actif = FEUILLE_DE_STYLE.split('nav a[aria-current="page"] {')[1].split("}")[0]
     assert "border-bottom-color" in actif
 
 
-def test_les_adresses_des_pages_parties_menent_a_leur_contenu(contexte):
+def test_les_adresses_des_pages_parties_menent_a_leur_contenu():
     """Huit pages au lieu de dix (23 septembre 2026) : « Cumul versé » redisait
     un dépliant des résultats, « Sources » est devenue la fin de Méthode.
 
@@ -6389,14 +6352,12 @@ def test_les_adresses_des_pages_parties_menent_a_leur_contenu(contexte):
     """
     from pathlib import Path
 
-    from retraite_notionnelle.web.pages import ANCIENNES_ROUTES
-
-    assert set(ANCIENNES_ROUTES) == {"/trajectoire", "/donnees"}
-    for ancienne, (page, section) in ANCIENNES_ROUTES.items():
+    assert set(pages.ANCIENNES_ROUTES) == {"/trajectoire", "/donnees"}
+    for ancienne, (page, section) in pages.ANCIENNES_ROUTES.items():
         assert ancienne not in TITRES and page in TITRES
         parametres = SIMULATION_TEMOIN if page == "/simuler" else {}
-        titre, corps = rendre(contexte, ancienne, parametres)
-        assert (titre, corps) == rendre(contexte, page, parametres), ancienne
+        titre, corps = rendre(ancienne, parametres)
+        assert (titre, corps) == rendre(page, parametres), ancienne
         assert f'id="{section}"' in corps, (ancienne, section)
 
     racine = Path(__file__).resolve().parents[1]
@@ -6434,7 +6395,7 @@ def test_sur_un_telephone_le_groupe_pour_verifier_se_replie():
     for chemin, _ in secondaires:
         assert 'aria-expanded="true"' in bouton(chemin), chemin
 
-    style = g.FEUILLE_DE_STYLE
+    style = FEUILLE_DE_STYLE
     assert "nav .deplier { display: none; }" in style
     etroit = style.split("@media (max-width: 48rem) {\n  nav .groupe.secondaire { display: contents; }")
     assert len(etroit) == 2, "le repli n'est plus réservé à l'écran étroit"
@@ -6446,14 +6407,14 @@ def test_sur_un_telephone_le_groupe_pour_verifier_se_replie():
     assert 'bouton.setAttribute("aria-expanded", String(ouvrir));' in script
 
 
-def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre(contexte):
+def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre():
     """Programme, Méthode et Cas types se renvoient dans les deux sens.
 
     Programme renvoyait à Méthode et à Cas types ; rien ne revenait. Méthode
     renvoie désormais au programme et aux treize carrières, Cas types à la
     proposition. Le contrôle porte sur les six sens.
     """
-    pages = {chemin: rendre(contexte, chemin, {})[1]
+    pages = {chemin: rendre(chemin, {})[1]
              for chemin in ("/", "/methode", "/cas-types")}
     for depuis, vers in (("/", "/methode"), ("/", "/cas-types"),
                          ("/methode", "/"), ("/methode", "/cas-types"),
@@ -6463,14 +6424,14 @@ def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre(contexte):
     assert '<a href="#/">la proposition</a>' in pages["/cas-types"]
 
 
-def test_la_methode_dit_comment_le_site_est_construit(contexte):
+def test_la_methode_dit_comment_le_site_est_construit():
     """L'argument de confiance d'un public technique, sur la page Méthode.
 
     Un dépliant dit le modèle de référence, le portage sans bibliothèque, les
     témoins comparés, le paquet de données — sans un nombre de tests ni de
     témoins, qui dériveraient : le README les porte, et un test les recalcule.
     """
-    corps = rendre(contexte, "/methode", {})[1]
+    corps = rendre("/methode", {})[1]
     section = re.search(r'<details class="section"><summary>.*?<span>Comment ce site est '
                         r'construit, et comment on le vérifie</span></summary>(.*?)</details>',
                         corps, re.S)
@@ -6496,12 +6457,16 @@ def test_la_page_risque_chiffre_le_prelevement_depuis_le_modele(contexte):
     change, un compte du COR mis à jour, et c'est ici que la phrase périmée
     apparaît.
     """
-    from retraite_notionnelle.web.pages import (
-        MOIS_PAR_AN, NIVEAUX_RISQUE, _risque_exemple,
-    )
+    from retraite_notionnelle.calendrier import MOIS_PAR_AN
 
-    corps = rendre(contexte, "/risque", {})[1]
-    exemples = [_risque_exemple(contexte, niveau) for _, niveau in NIVEAUX_RISQUE]
+    corps = rendre("/risque", {})[1]
+    # La carrière de référence de la page, à ses trois niveaux de salaire,
+    # simulée par le modèle.
+    exemples = [contexte.simuler(Saisie(
+        naissance=pages.NAISSANCE_RISQUE, statut="salarie_prive_non_cadre",
+        debut=pages.DEBUT_RISQUE, liquidation=pages.LIQUIDATION_RISQUE,
+        salaire=niveau, unite_revenu="moyen", demandee=True,
+    )) for _, niveau in pages.NIVEAUX_RISQUE]
 
     # Les trois lignes du tableau des salaires, au centime.
     for comparaison in exemples:
@@ -6537,7 +6502,7 @@ def test_la_page_risque_chiffre_le_prelevement_depuis_le_modele(contexte):
     assert f'scope="row">{solde.derniere_annee_observee} (observé)</th>' in corps
 
 
-def test_la_page_risque_cite_le_COR_mot_pour_mot(contexte):
+def test_la_page_risque_cite_le_COR_mot_pour_mot():
     """Les phrases du COR sont citées, pas résumées.
 
     Elles portent l'essentiel de l'argumentaire, et elles valent parce
@@ -6545,7 +6510,7 @@ def test_la_page_risque_cite_le_COR_mot_pour_mot(contexte):
     affaiblirait, et les déformer serait pire. Ce test tient les citations à
     la lettre. Elles ont été relevées dans le rapport annuel de juin 2026.
     """
-    corps = rendre(contexte, "/risque", {})[1]
+    corps = rendre("/risque", {})[1]
     # Sur la prose remise à plat : le gabarit coupe les lignes où il veut, et
     # une citation ne doit pas dépendre de l'endroit où elle est coupée.
     texte = _prose(corps)
@@ -6563,9 +6528,9 @@ def test_la_page_risque_cite_le_COR_mot_pour_mot(contexte):
     assert corps.count("<blockquote>") == 2
 
 
-def test_la_page_risque_range_ses_sections_et_se_relie(contexte):
+def test_la_page_risque_range_ses_sections_et_se_relie():
     """Le plan, l'ordre des sections, et les liens qui font le tour du site."""
-    corps = rendre(contexte, "/risque", {})[1]
+    corps = rendre("/risque", {})[1]
     plan = re.search(r'<nav class="plan".*?</nav>', corps, re.S).group(0)
     assert re.findall(r'data-vers="([^"]+)"', plan) == [
         "risque-prelevement", "risque-promesse", "risque-salaire",
@@ -6575,7 +6540,7 @@ def test_la_page_risque_range_ses_sections_et_se_relie(contexte):
     ]
     for chemin in ("/simuler", "/cout", "/"):
         assert f'href="{g.lien(chemin)}"' in corps, chemin
-    assert f'href="{g.lien("/risque")}"' in rendre(contexte, "/", {})[1]
+    assert f'href="{g.lien("/risque")}"' in rendre("/", {})[1]
 
     # La bibliographie est dans le dépôt, à l'adresse annoncée.
     from pathlib import Path
@@ -6592,10 +6557,10 @@ def test_la_page_risque_range_ses_sections_et_se_relie(contexte):
     assert not re.search(r"probabilité de \d", _prose(corps))
 
 
-def test_la_page_donnees_se_lit_comme_une_base(contexte):
+def test_la_page_donnees_se_lit_comme_une_base():
     """Deux tables filtrables et triables : l'inventaire, croisé par famille,
     couverture et fiabilité, et les séries certifiées, par niveau."""
-    corps = rendre(contexte, "/methode", {})[1]
+    corps = rendre("/methode", {})[1]
     inventaire = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
     assert 'id="inventaire-fiabilite"' in corps and 'data-filtre="fiabilite"' in corps
     fiabilites = re.findall(r'data-fiabilite="([^"]*)"', inventaire)
@@ -6625,8 +6590,7 @@ def test_chaque_route_porte_sa_description():
     import subprocess
     from pathlib import Path
 
-    from retraite_notionnelle.web.pages import DESCRIPTIONS
-
+    DESCRIPTIONS = pages.DESCRIPTIONS
     assert set(DESCRIPTIONS) == set(TITRES)
     for chemin, description in DESCRIPTIONS.items():
         assert 60 <= len(description) <= 250, f"{chemin} : {len(description)} caractères"
@@ -6686,13 +6650,13 @@ INCISES_MAXIMUM = {
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_les_incises_en_tiret_restent_rares(contexte, chemin):
+def test_les_incises_en_tiret_restent_rares(chemin):
     """Le tiret cadratin en incise — « — c'est-à-dire […] — » — est le tic de
     ponctuation le plus reconnaissable d'un texte généré, et le site en
     faisait un usage dense : quatorze phrases sur l'accueil, une quarantaine
     sur Coût. La plupart sont devenues des parenthèses, des deux-points ou des
     phrases séparées ; ce test tient le compte."""
-    prose = _prose(rendre(contexte, chemin, {})[1])
+    prose = _prose(rendre(chemin, {})[1])
     phrases = [p for p in re.split(r"(?<=[.!?])\s+", prose) if " — " in p]
     assert len(phrases) <= INCISES_MAXIMUM[chemin], (
         f"{chemin} : {len(phrases)} phrases avec une incise en tiret, "
@@ -6701,18 +6665,18 @@ def test_les_incises_en_tiret_restent_rares(contexte, chemin):
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_le_procede_ce_n_est_pas_x_c_est_y_a_disparu(contexte, chemin):
+def test_le_procede_ce_n_est_pas_x_c_est_y_a_disparu(chemin):
     """« Ce n'est pas une économie, c'est une marge » : efficace une fois,
     reconnaissable comme procédé à la dixième. Le site le répétait sur chaque
     page ; il n'en reste aucun, et les contrastes se disent autrement — une
     comparaison, un exemple, une question."""
-    prose = _prose(rendre(contexte, chemin, {})[1])
+    prose = _prose(rendre(chemin, {})[1])
     procede = re.compile(r"(?:n'est pas|ne sont pas)[^.;]{0,80}?(?:, c'est|: c'est)|, et non |\bnon pas ")
     trouves = procede.findall(prose)
     assert not trouves, f"{chemin} : {trouves}"
 
 
-def test_le_programme_casse_ses_triades_et_porte_une_voix(contexte):
+def test_le_programme_casse_ses_triades_et_porte_une_voix():
     """« Il est illisible. Il est inégal. Il n'est pas piloté. » est devenu une
     liste asymétrique, et l'accueil porte une note signée : qui publie ce
     site, pourquoi, et avec quelles réserves.
@@ -6725,7 +6689,7 @@ def test_le_programme_casse_ses_triades_et_porte_une_voix(contexte):
     désormais à « Ces chiffres sont-ils fiables ? », qui est la même question.
     Ce qui reste visible est l'engagement, en une phrase sur le panneau
     crème : tout est chiffré, sur des données publiques et un modèle ouvert."""
-    corps = rendre(contexte, "/", {})[1]
+    corps = rendre("/", {})[1]
     assert "Il est illisible." not in corps and "Il n'est pas piloté." not in corps
     assert "Illisible, d'abord." in corps and "Et personne ne le pilote." in corps
     note = re.search(r'<div class="note signee">(.*?)</div>', corps, re.S)
@@ -6750,15 +6714,15 @@ def test_le_programme_casse_ses_triades_et_porte_une_voix(contexte):
 RESERVES_MAXIMUM = 8
 
 
-def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(contexte):
+def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron():
     """« Ce que cette page ne dit pas » était un titre de gabarit, le même
     d'une page à l'autre ; celui de Coût dit ce qu'il contient, et une phrase
     d'entrée dit pourquoi il est là."""
     for chemin in TITRES:
-        corps = rendre(contexte, chemin, {})[1]
+        corps = rendre(chemin, {})[1]
         assert "<span>Ce que cette page ne dit pas</span>" not in corps, chemin
         assert "ne dit pas</span>" not in corps, chemin
-    cout = rendre(contexte, "/cout", {})[1]
+    cout = rendre("/cout", {})[1]
     # Le titre ne compte plus. Il disait « Dix » le 17 septembre et « Quatorze »
     # le 20 : chaque chantier de la page y ajoutait sa ligne, et le compteur
     # était devenu un aveu. Ce qui se règle est dit sous son réglage, ce qui
@@ -6775,7 +6739,7 @@ def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(context
     assert "La recette réagit sur quatre points" in cout[cout.index('id="cout-postes"'):]
     assert "Seul le système actuel sert la pension de" in cout[cout.index('id="cout-postes"'):]
     assert "sans toucher aux écarts entre carrières" in cout[cout.index('id="cout-equilibre"'):]
-    simuler = rendre(contexte, "/simuler", {})[1]
+    simuler = rendre("/simuler", {})[1]
     assert "où ce stock est éteint" in simuler
 
 
@@ -6783,7 +6747,7 @@ def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(context
 # -- action 13 : la certification datée série par série -------------------------
 
 
-def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification(contexte):
+def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification():
     """« Recontrôlé le 16 septembre » était la date du dernier passage, fût-il
     partiel. La page dit désormais le MINIMUM des dates de fiche — la seule
     affirmation que le journal soutient —, et la table date chaque série."""
@@ -6792,9 +6756,9 @@ def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification(contexte):
 
     journal = journal_certification(RACINE_DONNEES)
     dates = sorted(trace["verifiee_le"] for trace in journal["series"].values())
-    corps = rendre(contexte, "/methode", {})[1]
-    ancienne = _date_en_clair(dates[0])
-    recente = _date_en_clair(dates[-1])
+    corps = rendre("/methode", {})[1]
+    ancienne = pages._date_en_clair(dates[0])
+    recente = pages._date_en_clair(dates[-1])
     assert f"la vérification la plus ancienne remonte au {ancienne}" in re.sub(
         r"\s+", " ", corps)
     assert f"la plus récente au {recente}" in re.sub(r"\s+", " ", corps)
@@ -6841,7 +6805,7 @@ def test_une_page_agregee_au_defaut_ne_dit_rien_des_reglages(page, chemin):
     corps = page(chemin)
     assert "ne sont pas ceux des réglages par défaut" not in corps
     assert '<a href="#/cout"' in corps or '<a href="#/simuler"' in corps
-    vues = {cle for cles in _VUES_DE_PAGE.values() for cle in cles}
+    vues = {cle for cles in pages._VUES_DE_PAGE.values() for cle in cles}
     for requete in re.findall(r'<a href="#/[a-z-]+\?([^"]*)"', corps):
         portees = {couple.split("=")[0] for couple in requete.split("&")}
         assert portees <= vues, (
@@ -6945,15 +6909,15 @@ def test_un_contexte_derive_partage_ce_qui_ne_depend_pas_des_regles(contexte):
     assert contexte.pour(contexte.base) is contexte
 
 
-def test_les_champs_de_modelisation_sont_ecrits_une_seule_fois(contexte):
+def test_les_champs_de_modelisation_sont_ecrits_une_seule_fois():
     """Le simulateur et les pages agrégées proposent le MÊME jeu de règles.
 
     Deux listes de champs auraient suffi à les faire diverger, et deux pages du
     même site auraient alors proposé deux jeux de règles qui n'en sont qu'un.
     """
-    champs = _champs_modelisation(Saisie())
-    assert champs in rendre(contexte, "/simuler", {})[1]
-    assert champs in rendre(contexte, "/cout", {})[1]
+    champs = pages._champs_modelisation(module("saisie").Saisie())
+    assert champs in rendre("/simuler", {})[1]
+    assert champs in rendre("/cout", {})[1]
 
 
 def test_le_routeur_ne_prend_pas_une_adresse_reglee_pour_une_simulation():
@@ -6975,7 +6939,7 @@ def test_le_routeur_ne_prend_pas_une_adresse_reglee_pour_une_simulation():
     assert "!CLES_MODELISATION.includes(cle)" in page
 
 
-def test_la_bascule_net_brut_decrit_la_meme_carriere(contexte):
+def test_la_bascule_net_brut_decrit_la_meme_carriere():
     """Le piège que ce lien existe pour éviter, et c'est le même qu'à l'unité.
 
     En mode net, le nombre du formulaire est un NET. Le recopier tel quel dans
@@ -6989,7 +6953,7 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere(contexte):
     # La bascule écrit ses DEUX états ; celui qui s'applique n'est pas un lien.
     # On cherche donc la branche « brut » sous sa forme de lien, et on vérifie
     # au passage que « net » est bien marqué comme l'état courant.
-    corps = rendre(contexte, "/simuler", depart)[1]
+    corps = rendre("/simuler", depart)[1]
     assert '<span class="actif" aria-current="true">net</span>' in corps
     lien = re.search(r'<a href="#/simuler\?([^"]*)">brut</a>', corps)
     assert lien, "la page ne porte pas de branche « brut »"
@@ -6998,7 +6962,7 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere(contexte):
     # Un net de 2 500 € vaut un brut d'environ 3 160 € pour un salarié du privé.
     assert 3000 < float(vers_brut["salaire"]) < 3300
 
-    retour = rendre(contexte, "/simuler", vers_brut)[1]
+    retour = rendre("/simuler", vers_brut)[1]
     assert '<span class="actif" aria-current="true">brut</span>' in retour
     lien = re.search(r'<a href="#/simuler\?([^"]*)">net</a>', retour)
     assert lien, "la page ne porte pas de branche « net »"
@@ -7006,7 +6970,7 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere(contexte):
     assert float(vers_net["salaire"]) == pytest.approx(2500, abs=2)
 
 
-def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres(contexte):
+def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres():
     """Même carrière, deux modes : le rapport des pensions est celui du barème.
 
     C'est le seul test qui relie les deux moitiés de la bascule — la saisie,
@@ -7014,7 +6978,7 @@ def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres(contexte):
     pension. S'il tombe, l'une des deux a bougé sans l'autre.
     """
     def pension(parametres):
-        corps = rendre(contexte, "/simuler", parametres)[1]
+        corps = rendre("/simuler", parametres)[1]
         entete = corps.split('<div class="scenario">')[1].split('<div class="barre')[0]
         brut = re.search(r'class="chiffre principal">\s*'
                          r'<span class="categorie">retraite</span>\s*'
@@ -7032,7 +6996,7 @@ def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres(contexte):
     assert en_net == pytest.approx(en_brut * (1 - 0.091), rel=2e-3)
 
 
-def test_le_mode_des_montants_voyage_dans_l_adresse(contexte):
+def test_le_mode_des_montants_voyage_dans_l_adresse():
     """Une adresse partagée décrit la carrière qu'on a calculée, mode compris.
 
     Le mode gouverne l'interprétation du nombre « salaire » : une adresse qui
@@ -7043,11 +7007,11 @@ def test_le_mode_des_montants_voyage_dans_l_adresse(contexte):
     assert "montants=brut" in saisie.requete()
     assert "montants=net" in Saisie.depuis_requete({"naissance": "1975"}).requete()
     # Et le formulaire le renvoie quand on le soumet, par un champ caché.
-    corps = rendre(contexte, "/simuler", {"naissance": "1975", "montants": "brut"})[1]
+    corps = rendre("/simuler", {"naissance": "1975", "montants": "brut"})[1]
     assert '<input type="hidden" name="montants" value="brut">' in corps
 
 
-def test_le_taux_de_remplacement_parle_la_langue_du_mode(contexte):
+def test_le_taux_de_remplacement_parle_la_langue_du_mode():
     """Le défaut que la question « obtient-on les mêmes chiffres ? » a révélé.
 
     Le modèle calcule le taux de remplacement BRUT sur BRUT. Affiché tel quel à
@@ -7062,7 +7026,7 @@ def test_le_taux_de_remplacement_parle_la_langue_du_mode(contexte):
               "liquidation": "2049-03-01", "unite_revenu": "euros_mois"}
 
     def taux(parametres):
-        corps = rendre(contexte, "/simuler", parametres)[1]
+        corps = rendre("/simuler", parametres)[1]
         lus = []
         for bloc in corps.split('<div class="scenario">')[1:]:
             glose = bloc.split('class="glose"')[1].split("</div>")[0]
@@ -7086,7 +7050,7 @@ def test_le_taux_de_remplacement_parle_la_langue_du_mode(contexte):
         assert bornes[0] < net / brut < bornes[1], f"{net} / {brut}"
 
 
-def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique(contexte):
+def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique():
     """Ce qui sépare une bascule d'un lien, et pourquoi elle l'a remplacé.
 
     Un lien seul — « Voir les montants en brut » — demande au lecteur de
@@ -7099,7 +7063,7 @@ def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique(contexte):
     quoi une synthèse vocale lirait deux mots sans savoir lequel s'applique.
     """
     for mode, autre in (("net", "brut"), ("brut", "net")):
-        corps = rendre(contexte, "/simuler",
+        corps = rendre("/simuler",
                        {"naissance": "1975", "montants": mode})[1]
         bascules = re.findall(
             r'<div class="bascule" role="group" aria-label="Montants">.*?</div>',
@@ -7114,7 +7078,7 @@ def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique(contexte):
             assert 'role="group"' in bloc and 'aria-label="Montants"' in bloc
 
 
-def test_l_aide_du_champ_ne_promet_pas_une_conversion_qui_n_aura_pas_lieu(contexte):
+def test_l_aide_du_champ_ne_promet_pas_une_conversion_qui_n_aura_pas_lieu():
     """Deux phrases contradictoires à deux lignes d'écart, et rien pour trancher.
 
     Sous un statut dont le dépôt n'a pas les prélèvements hors retraite — la
@@ -7129,20 +7093,20 @@ def test_l_aide_du_champ_ne_promet_pas_une_conversion_qui_n_aura_pas_lieu(contex
             "salaire": "1800", "montants": "net"}
     promesse = "remonte au brut par les prélèvements de votre statut"
     # Là où la conversion a lieu, l'aide la décrit.
-    corps = rendre(contexte, "/simuler",
+    corps = rendre("/simuler",
                    {**base, "statut": "salarie_prive_non_cadre"})[1]
     assert promesse in corps
     assert "il ne peut pas remonter au brut" not in corps
     # Là où elle n'a pas lieu, l'aide le dit, et l'avertissement la double.
     for statut in ("salarie_agricole", "elu_local", "salarie_mayotte",
                    "sans_activite"):
-        corps = rendre(contexte, "/simuler", {**base, "statut": statut})[1]
+        corps = rendre("/simuler", {**base, "statut": statut})[1]
         assert promesse not in corps, f"{statut} : l'aide promet une conversion"
         assert "il ne peut pas remonter au brut" in corps, statut
         assert "lu <strong>tel quel</strong>" in corps, statut
 
 
-def test_la_cle_de_lecture_ne_dement_jamais_les_chiffres_qu_elle_explique(contexte):
+def test_la_cle_de_lecture_ne_dement_jamais_les_chiffres_qu_elle_explique():
     """Une clé de lecture fausse est pire qu'absente : elle enseigne l'erreur.
 
     Elle a dit « Montants BRUTS et au centime, comme la caisse les verse :
@@ -7161,7 +7125,7 @@ def test_la_cle_de_lecture_ne_dement_jamais_les_chiffres_qu_elle_explique(contex
         "brut": ("Montants <strong>bruts</strong>", "un brut sur un brut"),
     }
     for mode, (montants, rapport) in attendu.items():
-        corps = rendre(contexte, "/simuler", {**saisie, "montants": mode})[1]
+        corps = rendre("/simuler", {**saisie, "montants": mode})[1]
         assert montants in corps, f"{mode} : la clé de lecture ne dit pas l'unité"
         assert rapport in corps, f"{mode} : le taux de remplacement est mal décrit"
         # Et surtout : elle ne dit pas l'autre.
@@ -7173,7 +7137,7 @@ def test_la_cle_de_lecture_ne_dement_jamais_les_chiffres_qu_elle_explique(contex
     assert "Ici, un brut sur un brut" not in g.GLOSSAIRE["taux de remplacement"]
 
 
-def test_aucune_adresse_du_site_ne_porte_deux_croisillons(contexte):
+def test_aucune_adresse_du_site_ne_porte_deux_croisillons():
     """Le bogue qui a cassé la bascule, et que rien ne voyait venir.
 
     Ici la ROUTE vit dans le fragment : `#/simuler?...`. Ajouter une ancre de
@@ -7193,7 +7157,7 @@ def test_aucune_adresse_du_site_ne_porte_deux_croisillons(contexte):
               ("/simuler", {"naissance": "1975", "montants": "brut"}),
               ("/", {}), ("/cout", {}), ("/methode", {}), ("/programme", {})]
     for route, parametres in routes:
-        corps = rendre(contexte, route, parametres)[1]
+        corps = rendre(route, parametres)[1]
         for adresse in re.findall(r'href="([^"]*)"', corps):
             fragment = html.unescape(adresse)
             assert fragment.count("#") <= 1, (
@@ -7202,7 +7166,7 @@ def test_aucune_adresse_du_site_ne_porte_deux_croisillons(contexte):
                 "la requête")
 
 
-def test_les_deux_branches_d_une_bascule_ne_se_separent_jamais(contexte):
+def test_les_deux_branches_d_une_bascule_ne_se_separent_jamais():
     """Sur un téléphone, c'est la légende qui passe à la ligne, pas le contrôle.
 
     La première version mettait la légende et les deux branches à plat dans un
@@ -7212,7 +7176,7 @@ def test_les_deux_branches_d_une_bascule_ne_se_separent_jamais(contexte):
     lisent comme deux boutons. Les branches vivent donc dans une enveloppe
     commune, que la feuille de style déclare insécable.
     """
-    corps = rendre(contexte, "/simuler", {"naissance": "1975"})[1]
+    corps = rendre("/simuler", {"naissance": "1975"})[1]
     bascules = re.findall(
         r'<div class="bascule" role="group" aria-label="[^"]+">(.*?)</div>',
         corps, re.S)
@@ -7226,18 +7190,18 @@ def test_les_deux_branches_d_une_bascule_ne_se_separent_jamais(contexte):
         assert choix.group(1).count("<a href=") == 1
         assert 'class="actif"' in choix.group(1)
         assert 'class="legende"' not in choix.group(1)
-    assert ".bascule > .choix" in g.FEUILLE_DE_STYLE
-    assert "flex-wrap: nowrap" in g.FEUILLE_DE_STYLE
+    assert ".bascule > .choix" in FEUILLE_DE_STYLE
+    assert "flex-wrap: nowrap" in FEUILLE_DE_STYLE
 
 
-def test_la_bascule_des_resultats_precede_les_montants(contexte):
+def test_la_bascule_des_resultats_precede_les_montants():
     """Un réglage qu'on découvre après avoir lu les chiffres arrive trop tard.
 
     Elle était sous les quatre systèmes, entre eux et la fiabilité : on lisait
     quatre nombres, puis on apprenait qu'on aurait pu les lire autrement. Elle
     ouvre maintenant la carte.
     """
-    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
     carte = corps.split('<h2 id="resultats"')[1]
     assert carte.index('class="bascule"') < carte.index('<div class="scenario">')
 
@@ -7284,9 +7248,7 @@ def test_la_colonne_aspa_de_l_accueil_sert_le_bareme_de_l_aspa():
     garantie appliqués au foyer, que la colonne recopiait jusqu'au
     23 septembre 2026. Le couple à 300 € et 300 € reçoit aujourd'hui 1 020 € et
     en recevrait 1 000 ; la personne seule à 300 €, 744 € contre 750."""
-    from retraite_notionnelle.web import gabarit as g
     from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.web.pages import FOYERS_GARANTIE, _tableau_garantie
 
     contexte = Contexte()
     annee = contexte.base.annee_euros_garantie_vieillesse
@@ -7294,8 +7256,8 @@ def test_la_colonne_aspa_de_l_accueil_sert_le_bareme_de_l_aspa():
     seul = minimum.plafond(annee)[0] / 12
     couple = minimum.plafond_couple(annee)[0] / 12
     assert seul == pytest.approx(1043.59) and couple == pytest.approx(1620.18)
-    rendu = _tableau_garantie(contexte)
-    for foyer in FOYERS_GARANTIE:
+    rendu = pages.tableau_garantie(site().contexte)
+    for foyer in pages.FOYERS_GARANTIE:
         plafond = seul if len(foyer) == 1 else couple
         assert g.euros(max(0.0, plafond - sum(foyer))) in rendu, foyer
     assert g.euros(1020.18) in rendu and g.euros(743.59) in rendu

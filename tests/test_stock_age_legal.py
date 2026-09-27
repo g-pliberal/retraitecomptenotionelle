@@ -99,7 +99,11 @@ def test_l_accueil_cite_ce_que_coute_le_diviseur_de_l_age_de_l_assure(reference,
     rien dès 2050, avant que la proposition ne fixe son âge légal à 65 ans :
     le report garde plus longtemps dans le compte ceux que le diviseur de leur
     âge avantageait."""
-    from retraite_notionnelle.web.pages import MESURES_BLOCAGES
+    from retraite_notionnelle.web.site import disponible, module
+
+    if not disponible():
+        pytest.skip("node absent : le site ne se lit pas sans lui")
+    MESURES_BLOCAGES = module("pages").MESURES_BLOCAGES
 
     liberal = "notionnel_liberal"
     ecart = (reference.lectures[liberal].solde_moyen
