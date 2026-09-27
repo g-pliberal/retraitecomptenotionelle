@@ -54,3 +54,9 @@ reformes:
 - woerth_2010
 - reforme_2023
 - cavec_report_2026
+code:
+  interrupteurs:
+    decote_annulee_par_la_duree: false
+  moteur: >-
+    `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas la minoration,
+    que seul l'âge efface.

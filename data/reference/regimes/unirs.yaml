@@ -33,9 +33,9 @@ periodes:
     age_ouverture: 65
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere

@@ -1,0 +1,33 @@
+schema_version: 1
+id: surcote_par_age_seul
+intitule: >-
+  Majoration des complémentaires libérales liquidées après l'âge du taux plein : par trimestre
+  civil entier écoulé depuis cet âge, sans condition de durée ni de cotisation.
+etat: a_verifier
+etape: liquider_chaque_regime
+effet: >-
+  Les complémentaires de la CARMF, de la CARCDSF, de la CAVP, de la CARPIMKO, de la CAVAMAC,
+  de la CAVEC, de la Cipav et de la CPRN, et l'ASV. Fiche née à la phase 6 (docs/architecture.md,
+  § 11) de ce que le schéma des régimes disait de l'interrupteur `surcote_points` : elle
+  dit la règle que le moteur applique déjà, et les textes que le dépôt citait pour elle
+  ; elle reste à relire à la source.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Relire, caisse par caisse, l'article des statuts qui majore la pension différée, et
+    le rattacher ; les fiches de la CARCDSF et de la CAVAMAC le font déjà pour leur caisse.
+textes_a_rattacher:
+- reference: >-
+    statuts des régimes complémentaires des sections professionnelles libérales, article
+    de la majoration pour liquidation différée
+code:
+  interrupteurs:
+    surcote_points: par_age_seul
+  moteur: >-
+    `surcote_points: par_age_seul` : trimestres civils ENTIERS écoulés entre `surcote_age_debut`
+    — l'âge du taux plein de la période, lu à la génération, si le champ est nul — et
+    la liquidation, sans condition de durée ni de cotisation, au taux `surcote_par_trimestre`
+    ; c'est la forme qu'écrivent les statuts des sections libérales, bornée par les autres
+    champs `surcote_*` de la période.

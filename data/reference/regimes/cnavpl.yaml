@@ -86,20 +86,20 @@ periodes:
     fin: 2009
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.086
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, reversion]
     notes: >-
       Réforme du 21 août 2003 : régime de base unique en points,
@@ -139,20 +139,20 @@ periodes:
     fin: 2011
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.086
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       Réforme du 21 août 2003 : régime de base unique en points,
@@ -206,20 +206,20 @@ periodes:
     fin: 2012
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.0863
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       8,63 % pour la seule année 2012 : le décret de juillet 2012 réécrit
@@ -239,20 +239,20 @@ periodes:
     fin: 2013
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.0975
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       9,75 % en 2013, première marche d'une hausse que la réforme de 2015
@@ -271,20 +271,20 @@ periodes:
     fin: 2014
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.101
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       10,1 % en 2014 : le taux le plus haut qu'ait porté la première tranche,
@@ -303,20 +303,20 @@ periodes:
     fin: 2009
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 100
     salaire_reference: carriere_entiere
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.016
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, reversion]
     notes: >-
       Seconde tranche avant 2015 : 0,85 à 5 plafonds, 100 points au maximum.
@@ -335,20 +335,20 @@ periodes:
     fin: 2012
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 100
     salaire_reference: carriere_entiere
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.016
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       Seconde tranche avant 2015 : 0,85 à 5 plafonds, 100 points au maximum.
@@ -381,20 +381,20 @@ periodes:
     fin: 2013
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 100
     salaire_reference: carriere_entiere
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.0181
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       1,81 % pour la seule année 2013.
@@ -412,20 +412,20 @@ periodes:
     fin: 2014
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 100
     salaire_reference: carriere_entiere
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.0187
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       1,87 % à compter de 2014 — le taux de la seconde tranche n'a plus bougé
@@ -444,20 +444,20 @@ periodes:
     fin: 2023
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 525
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.0823
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       De 2015 à 2024 : première tranche de 0 à 1 plafond, 525 points au
@@ -478,20 +478,20 @@ periodes:
     fin: 2024
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 525
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.0823
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion, majoration_enfants, surcote_parentale]
     notes: >-
       De 2015 à 2024 : première tranche de 0 à 1 plafond, 525 points au
@@ -528,20 +528,20 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 557
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.0873
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion, majoration_enfants, surcote_parentale]
     notes: >-
       LE TAUX DE T1 PASSE À 8,73 % EN 2025, et le barème en points suit :
@@ -581,20 +581,20 @@ periodes:
     fin: 2023
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 25
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.0187
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       Seconde tranche depuis 2015 : 0 à 5 plafonds, 25 points au maximum.
@@ -615,20 +615,20 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 25
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.0187
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion, majoration_enfants, surcote_parentale]
     notes: >-
       Seconde tranche depuis 2015 : 0 à 5 plafonds, 25 points au maximum.

@@ -40,3 +40,12 @@ textes_a_rattacher:
 - reference: >-
     R. 426-11 et R. 426-12 du code de l'aviation civile, de 2012 au 31 octobre 2023
 - reference: L. 6521-4 du code des transports, version du 10 octobre 2021
+code:
+  interrupteurs:
+    decote_par_la_duree_seule: true
+  moteur: >-
+    `decote_par_la_duree_seule` : la décote se compte sur la SEULE durée manquante, l'âge
+    `age_taux_plein` ne faisant que l'annuler une fois atteint. C'est la CRPN depuis le
+    1er janvier 2022 : 5 % par annuité manquante sous trente annuités (R. 6527-22 du code
+    des transports), sans décote à partir de soixante ans, l'âge du premier alinéa de
+    L. 6521-4 (R. 6527-23). Prime sur `decote_annulee_par_la_duree`.

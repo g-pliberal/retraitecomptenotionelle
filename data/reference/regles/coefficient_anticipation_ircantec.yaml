@@ -39,3 +39,10 @@ textes_a_rattacher:
 - reference: >-
     article 16 de l'arrêté du 30 décembre 1970 (LEGIARTI000006381606, LEGIARTI000024266924)
 - reference: L. 351-8 1° CSS
+code:
+  interrupteurs:
+    abattement_points: ircantec
+  moteur: >-
+    `abattement_points: ircantec` applique le barème de l'article 16 de l'arrêté du 30
+    décembre 1970, qui est le MÊME escalier que celui de l'Agirc-Arrco, aux mêmes marches,
+    et se lit de la même façon.

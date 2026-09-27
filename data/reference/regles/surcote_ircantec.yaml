@@ -1,0 +1,34 @@
+schema_version: 1
+id: surcote_ircantec
+intitule: >-
+  Majoration de l'Ircantec pour une liquidation après le taux plein, depuis 2010 : 0,75
+  % par trimestre entier au-delà de l'âge du taux plein, 0,625 % par trimestre cotisé
+  au-delà de la durée requise avant cet âge.
+etat: a_verifier
+etape: liquider_chaque_regime
+effet: >-
+  Les agents non titulaires qui liquident l'Ircantec après l'âge légal. Fiche née à la
+  phase 6 (docs/architecture.md, § 11) de ce que le schéma des régimes disait de l'interrupteur
+  `surcote_points` : elle dit la règle que le moteur applique déjà, et les textes que
+  le dépôt citait pour elle ; elle reste à relire à la source.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Relire le IV de l'article 16 de l'arrêté du 30 décembre 1970 dans l'index LEGI et
+    le rattacher.
+textes_a_rattacher:
+- id: LEGIARTI000048065521
+  reference: >-
+    arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime (Ircantec),
+    article 16, IV, état courant
+code:
+  interrupteurs:
+    surcote_points: ircantec
+  moteur: >-
+    `surcote_points: ircantec` applique le IV de l'article 16 de l'arrêté du 30 décembre
+    1970, entré en vigueur le 1er janvier 2010 : deux taux et deux bornes d'âge — 0,75
+    % par trimestre ENTIER écoulé entre l'âge du taux plein et la liquidation (son 1°),
+    0,625 % par trimestre COTISÉ au-delà de la durée requise entre l'âge légal et l'âge
+    du taux plein (son 2°), sans qu'une même période puisse être comptée deux fois.

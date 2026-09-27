@@ -1,0 +1,34 @@
+schema_version: 1
+id: decote_avant_1983
+intitule: >-
+  Jusqu'en 1982, la durée d'assurance n'annulait pas la décote au régime général et dans
+  les régimes alignés : le taux ne dépendait que de l'âge, et le taux plein s'obtenait
+  à soixante-cinq ans.
+etat: a_verifier
+etape: liquider_chaque_regime
+effet: >-
+  Les pensions du régime général, des salariés agricoles, des artisans et des commerçants
+  liquidées avant 1983. Fiche née à la phase 6 (docs/architecture.md, § 11) de ce que
+  le schéma des régimes disait de l'interrupteur `decote_annulee_par_la_duree` : elle
+  dit la règle que le moteur applique déjà, et les textes que le dépôt citait pour elle
+  ; elle reste à relire à la source.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Lire à la source l'ordonnance n° 82-270 du 26 mars 1982 et le droit qu'elle remplace,
+    dans l'index JORF du dépôt : le taux selon l'âge seul avant elle, et la date à laquelle
+    la durée commence d'annuler la décote.
+textes_a_rattacher:
+- id: JORFTEXT000000888522
+  reference: >-
+    ordonnance n° 82-270 du 26 mars 1982 relative à l'abaissement de l'âge de la retraite
+    des assurés du régime général et du régime des assurances sociales agricoles
+code:
+  interrupteurs:
+    decote_annulee_par_la_duree: false
+  moteur: >-
+    La durée d'assurance annule la décote depuis l'ordonnance du 26 mars 1982, qui ouvre
+    le taux plein à 60 ans à qui a la durée requise. `decote_annulee_par_la_duree: false`
+    pour les périodes antérieures, où le taux ne dépendait QUE de l'âge.

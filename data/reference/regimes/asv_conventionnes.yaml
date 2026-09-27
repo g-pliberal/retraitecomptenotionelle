@@ -48,11 +48,11 @@ periodes:
     fin: 1980
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -92,11 +92,11 @@ periodes:
     fin: 1984
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -123,11 +123,11 @@ periodes:
     fin: 1992
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -168,11 +168,11 @@ periodes:
     fin: 1993
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -206,11 +206,11 @@ periodes:
     fin: 1994
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -239,11 +239,11 @@ periodes:
     fin: 1998
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -281,11 +281,11 @@ periodes:
     fin: 2003
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -322,11 +322,11 @@ periodes:
     fin: 2011
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -363,11 +363,11 @@ periodes:
     fin: 2012
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -413,11 +413,11 @@ periodes:
     fin: 2013
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -451,11 +451,11 @@ periodes:
     fin: 2014
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -488,11 +488,11 @@ periodes:
     fin: 2015
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -524,11 +524,11 @@ periodes:
     fin: 2016
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -568,11 +568,8 @@ periodes:
     fin: 2017
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: false
     age_taux_plein: 62
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -586,7 +583,7 @@ periodes:
     valeur_point_annee: 2017
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 62
     surcote_age_maximum: 70
     surcote_palier_age: 65
@@ -618,11 +615,8 @@ periodes:
     fin: 2018
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: false
     age_taux_plein: 62
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -636,7 +630,7 @@ periodes:
     valeur_point_annee: 2017
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 62
     surcote_age_maximum: 70
     surcote_palier_age: 65
@@ -668,11 +662,8 @@ periodes:
     fin: 2019
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: false
     age_taux_plein: 62
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -686,7 +677,7 @@ periodes:
     valeur_point_annee: 2017
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 62
     surcote_age_maximum: 70
     surcote_palier_age: 65
@@ -718,11 +709,8 @@ periodes:
     fin: 2020
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: false
     age_taux_plein: 62
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -736,7 +724,7 @@ periodes:
     valeur_point_annee: 2017
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 62
     surcote_age_maximum: 70
     surcote_palier_age: 65
@@ -769,11 +757,8 @@ periodes:
     fin: 2021
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: false
     age_taux_plein: 62
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -787,7 +772,7 @@ periodes:
     valeur_point_annee: 2021
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 62
     surcote_age_maximum: 70
     surcote_palier_age: 65
@@ -820,11 +805,8 @@ periodes:
     fin: 2022
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: false
     age_taux_plein: 62
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -838,7 +820,7 @@ periodes:
     valeur_point_annee: 2022
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 62
     surcote_age_maximum: 70
     surcote_palier_age: 65
@@ -871,11 +853,8 @@ periodes:
     fin: 2024
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: false
     age_taux_plein: 62
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -889,7 +868,7 @@ periodes:
     valeur_point_annee: 2023
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 62
     surcote_age_maximum: 70
     surcote_palier_age: 65
@@ -922,11 +901,8 @@ periodes:
     fin: 2025
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: false
     age_taux_plein: 62
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -940,7 +916,7 @@ periodes:
     valeur_point_annee: 2025
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 62
     surcote_age_maximum: 70
     surcote_palier_age: 65
@@ -973,11 +949,8 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: false
     age_taux_plein: 62
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
@@ -991,7 +964,7 @@ periodes:
     valeur_point_annee: 2025
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 62
     surcote_age_maximum: 70
     surcote_palier_age: 65

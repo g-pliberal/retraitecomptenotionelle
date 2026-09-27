@@ -40,9 +40,9 @@ periodes:
     fin: 1961
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -110,9 +110,9 @@ periodes:
     fin: 1982
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -178,9 +178,9 @@ periodes:
     fin: 2004
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -252,9 +252,9 @@ periodes:
     fin: 2013
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -326,9 +326,9 @@ periodes:
     fin: 2016
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cprn_2014
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -337,9 +337,9 @@ periodes:
     assiette_facteur_revenu: 2.553
     taux_cotisation_retraite: 0.045
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -423,9 +423,9 @@ periodes:
     fin: 2017
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cprn_2014
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -434,9 +434,9 @@ periodes:
     assiette_facteur_revenu: 2.553
     taux_cotisation_retraite: 0.0414
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -458,9 +458,9 @@ periodes:
     fin: 2018
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cprn_2014
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -469,9 +469,9 @@ periodes:
     assiette_facteur_revenu: 2.553
     taux_cotisation_retraite: 0.041
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -490,9 +490,9 @@ periodes:
     fin: 2021
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cprn_2014
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -501,9 +501,9 @@ periodes:
     assiette_facteur_revenu: 2.553
     taux_cotisation_retraite: 0.040
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -524,9 +524,9 @@ periodes:
     fin: 2023
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cprn_2014
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -535,9 +535,9 @@ periodes:
     assiette_facteur_revenu: 2.553
     taux_cotisation_retraite: 0.041
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -572,9 +572,9 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -582,9 +582,9 @@ periodes:
     assiette_facteur_revenu: 2.553
     taux_cotisation_retraite: 0.041
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       4,10 % DEPUIS 2022, sur la moyenne des produits de base des trois

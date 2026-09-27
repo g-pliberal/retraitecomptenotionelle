@@ -37,11 +37,11 @@ periodes:
     fin: 1999
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
@@ -49,7 +49,7 @@ periodes:
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     notes: >-
       DÉCRET N° 79-262 DU 21 MARS 1979, ARTICLE 2 (LEGIARTI000006767473,
       puis LEGIARTI000006767474 en 1985 pour les conditions d'option,
@@ -90,11 +90,11 @@ periodes:
     fin: 2012
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
@@ -102,7 +102,7 @@ periodes:
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     notes: >-
       DÉCRET N° 79-262 DU 21 MARS 1979, ARTICLE 2 (LEGIARTI000006767473,
       puis LEGIARTI000006767474 en 1985 pour les conditions d'option,
@@ -154,22 +154,22 @@ periodes:
     fin: 2022
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     notes: >-
       DÉCRET N° 79-262, ARTICLE 2, VERSION DU 1ER JANVIER 2013
       (LEGIARTI000026892951) : refonte en huit classes A à H portant
@@ -218,16 +218,16 @@ periodes:
     fin: 2024
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -262,16 +262,16 @@ periodes:
     fin: 2023
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -306,16 +306,16 @@ periodes:
     fin: 2024
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -344,16 +344,16 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -389,16 +389,16 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]

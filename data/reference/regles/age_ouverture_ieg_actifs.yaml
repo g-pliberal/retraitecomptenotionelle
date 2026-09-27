@@ -53,3 +53,11 @@ textes_a_rattacher:
 reformes:
 - reforme_2023
 - lfss_2026_suspension
+code:
+  interrupteurs:
+    age_surcote_regimes_speciaux: true
+  moteur: >-
+    `age_surcote_regimes_speciaux` : la surcote des IEG ne se compte qu'au-delà de l'âge
+    du 1° du I de l'article 16 de l'annexe 3, dont le 1° du V de l'article 45 écrit le
+    même calendrier que la SNCF et la RATP ; le moteur le lit dans la même table, `legislation/age_surcote_regimes_speciaux.csv`,
+    que la fiche `age_surcote_sncf_ratp` décrit.

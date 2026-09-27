@@ -77,7 +77,7 @@ periodes:
     pension_forfaitaire_annuelle: 3628.98
     pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.025
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, reversion]
     notes: >-
@@ -104,15 +104,15 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.085
-    bareme_points: msa_proportionnelle
+    bareme_points: retraite_proportionnelle_msa
     assiette_repere_smic: 600
-    assiette_plancher: true
+    assiette_plancher: assiette_minimale_agricole
     valeur_point_euros: 4.589
     valeur_point_annee: 2025
     pension_forfaitaire_annuelle: 3628.98
     pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.025
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, reversion]
     notes: >-
@@ -134,15 +134,15 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.1737
-    bareme_points: msa_proportionnelle
+    bareme_points: retraite_proportionnelle_msa
     assiette_repere_smic: 600
-    assiette_plancher: true
+    assiette_plancher: assiette_minimale_agricole
     valeur_point_euros: 4.589
     valeur_point_annee: 2025
     pension_forfaitaire_annuelle: 3628.98
     pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.025
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
     avantages_non_contributifs:
       [minimum_vieillesse, pension_majoree_reference, reversion]
@@ -206,22 +206,22 @@ periodes:
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 160
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.1737
-    bareme_points: msa_proportionnelle
+    bareme_points: retraite_proportionnelle_msa
     assiette_repere_smic: 600
-    assiette_plancher: true
+    assiette_plancher: assiette_minimale_agricole
     valeur_point_euros: 4.589
     valeur_point_annee: 2025
     pension_forfaitaire_annuelle: 3628.98
     pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.0125
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: 0.0075
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs:
       [minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
@@ -298,22 +298,22 @@ periodes:
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 160
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.1737
-    bareme_points: msa_proportionnelle
+    bareme_points: retraite_proportionnelle_msa
     assiette_repere_smic: 600
-    assiette_plancher: true
+    assiette_plancher: assiette_minimale_agricole
     valeur_point_euros: 4.589
     valeur_point_annee: 2025
     pension_forfaitaire_annuelle: 3628.98
     pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.0125
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: 0.0125
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs:
       [minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
@@ -382,26 +382,26 @@ periodes:
     fin: null
     type_calcul: mixte
     age_ouverture: 64
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.1737
-    bareme_points: msa_proportionnelle
+    bareme_points: retraite_proportionnelle_msa
     assiette_repere_smic: 600
-    assiette_plancher: true
+    assiette_plancher: assiette_minimale_agricole
     valeur_point_euros: 4.589
     valeur_point_annee: 2025
     pension_forfaitaire_annuelle: 3628.98
     pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.0125
-    decote_par_generation: true
+    decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: 0.0125
-    surcote_points: regime_general
+    surcote_points: surcote_regime_general
     avantages_non_contributifs:
       [minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-

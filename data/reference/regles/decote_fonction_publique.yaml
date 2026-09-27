@@ -30,3 +30,11 @@ exemples:
 - sre_decote_brigitte
 reformes:
 - reforme_2023
+code:
+  interrupteurs:
+    bareme_decote: fonction_publique
+  moteur: >-
+    `bareme_decote: fonction_publique` applique le barème de l'article L. 14 du code des
+    pensions : le coefficient ET l'âge d'annulation y montent en charge de 2006 à 2020,
+    ce dernier étant la LIMITE D'ÂGE du grade diminuée d'un nombre décroissant de trimestres
+    (`legislation/decote_fonction_publique.csv`).

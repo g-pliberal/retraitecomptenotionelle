@@ -55,3 +55,9 @@ textes_a_rattacher:
 reformes:
 - cprn_report_2014
 - cprn_report_2024
+code:
+  interrupteurs:
+    decote_annulee_par_la_duree: false
+  moteur: >-
+    `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas la décote,
+    que seul l'âge efface.

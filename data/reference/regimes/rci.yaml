@@ -29,15 +29,15 @@ periodes:
     fin: 2024
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    decote_par_generation: true
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
@@ -55,15 +55,15 @@ periodes:
     fin: 2024
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    decote_par_generation: true
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
@@ -74,15 +74,15 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    decote_par_generation: true
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
@@ -93,15 +93,15 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    decote_par_generation: true
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass

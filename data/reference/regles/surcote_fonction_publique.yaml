@@ -72,3 +72,9 @@ exemples:
 - sre_surcote_brigitte
 reformes:
 - lfss_2009_surcote
+code:
+  interrupteurs:
+    surcote_bareme: fonction_publique
+  moteur: >-
+    `surcote_bareme: fonction_publique` : 0,75 % dans la limite de vingt trimestres jusqu'en
+    2008, 1,25 % depuis (L. 14 III).

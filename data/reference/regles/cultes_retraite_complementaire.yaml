@@ -69,3 +69,10 @@ textes_a_rattacher:
     congrégations » ; le texte de l'accord n'est pas lu
 reformes:
 - cultes_arrco_2006
+code:
+  interrupteurs:
+    assiette_forfaitaire: true
+  moteur: >-
+    `assiette_forfaitaire` : la cotisation se prélève sur l'assiette forfaitaire des autres
+    cotisations des cultes, le SMIC mensuel, que la fiche `cultes_salaire_annuel_moyen`
+    décrit.

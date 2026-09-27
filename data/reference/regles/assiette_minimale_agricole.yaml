@@ -1,0 +1,32 @@
+schema_version: 1
+id: assiette_minimale_agricole
+intitule: >-
+  Assiette minimale des non-salariés agricoles : un revenu inférieur au repère est relevé
+  jusqu'à lui, à la retraite proportionnelle depuis 1990 comme à la complémentaire obligatoire
+  depuis 2003.
+etat: a_verifier
+etape: acquerir_les_droits
+effet: >-
+  Les chefs d'exploitation aux revenus faibles. Fiche née à la phase 6 (docs/architecture.md,
+  § 11) de ce que le schéma des régimes disait de l'interrupteur `assiette_plancher` :
+  elle dit la règle que le moteur applique déjà, et les textes que le dépôt citait pour
+  elle ; elle reste à relire à la source.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Relire R. 732-70 et R. 732-71 du code rural pour la base, et l'article qui fixe l'assiette
+    minimale de la complémentaire obligatoire (L. 732-56 et suivants), dans l'index LEGI,
+    et les rattacher.
+textes_a_rattacher:
+- reference: code rural et de la pêche maritime, R. 732-70 et R. 732-71
+- reference: >-
+    loi du 4 mars 2002, code rural et de la pêche maritime, L. 732-56 et suivants
+code:
+  interrupteurs:
+    assiette_plancher: true
+  moteur: >-
+    `assiette_plancher` : l'assiette est relevée au repère (`assiette_repere_smic`) quand
+    elle lui est inférieure. C'est l'assiette minimale de la complémentaire agricole,
+    qui ouvre ses cent points même à un revenu plus faible.

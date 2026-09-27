@@ -49,9 +49,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -75,9 +75,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -102,9 +102,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -127,9 +127,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -153,9 +153,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -178,9 +178,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -206,9 +206,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -231,9 +231,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -259,9 +259,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
@@ -356,9 +356,9 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carpv_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-

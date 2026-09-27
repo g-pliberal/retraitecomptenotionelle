@@ -2987,3 +2987,80 @@ def test_les_coefficients_de_fusion_se_recalculent_depuis_les_valeurs_de_point()
     # L'Arrco garde son point : la valeur de service du régime unifié EST la
     # sienne, le quotient vaut donc exactement un.
     assert conversions[("arrco", 2019)] == pytest.approx(1.0, abs=1e-9)
+
+
+# -- les interrupteurs, renvois aux fiches (phase 6) -------------------------
+
+
+def test_chaque_interrupteur_renvoie_a_une_fiche_qui_le_declare():
+    """Un interrupteur ne porte plus de valeur : il nomme la fiche de la carte
+    qui décrit la règle, et c'est elle qui déclare ce que le moteur lit
+    (docs/architecture.md, phase 6). Le chargeur le refuse autrement ; ce test
+    le dit fichier par fichier, et dit aussi qu'aucune fiche ne déclare un
+    interrupteur que nulle période ne lui demande."""
+    from retraite_notionnelle.donnees.regimes import (
+        INTERRUPTEURS, fiches_de_regimes, interrupteurs_de_la_fiche)
+
+    demandes: dict[str, set[str]] = {}
+    for chemin, fiche in fiches_de_regimes(RACINE_DONNEES):
+        for periode in fiche["periodes"]:
+            for champ in INTERRUPTEURS:
+                renvoi = periode.get(champ)
+                if renvoi is None:
+                    continue
+                assert isinstance(renvoi, str), (chemin.name, periode["debut"], champ)
+                assert champ in interrupteurs_de_la_fiche(RACINE_DONNEES, renvoi), (
+                    chemin.name, periode["debut"], champ, renvoi)
+                demandes.setdefault(renvoi, set()).add(champ)
+    for chemin in sorted((RACINE_DONNEES / "reference" / "regles").glob("*.yaml")):
+        declares = set(interrupteurs_de_la_fiche(RACINE_DONNEES, chemin.stem))
+        assert declares <= set(INTERRUPTEURS), (chemin.stem, declares - set(INTERRUPTEURS))
+        assert declares == demandes.get(chemin.stem, set()), (
+            f"{chemin.stem} déclare {sorted(declares)}, les périodes lui demandent "
+            f"{sorted(demandes.get(chemin.stem, set()))}")
+
+
+def test_le_schema_dit_les_interrupteurs_que_le_chargeur_connait():
+    """`_schema.yaml` marque `renvoi: true` les champs que le chargeur résout, avec
+    le même défaut ; et toute valeur qu'une fiche déclare est l'une de celles que
+    le schéma énumère."""
+    import yaml
+
+    from retraite_notionnelle.donnees.regimes import (
+        INTERRUPTEURS, interrupteurs_de_la_fiche)
+
+    schema = yaml.safe_load(
+        (RACINE_DONNEES / "reference" / "regimes" / "_schema.yaml").read_text(
+            encoding="utf-8"))["champs_periode"]
+    marques = {c: v for c, v in schema.items() if isinstance(v, dict) and v.get("renvoi")}
+    assert set(marques) == set(INTERRUPTEURS)
+    for champ, entree in marques.items():
+        assert entree.get("defaut") == INTERRUPTEURS[champ], champ
+    for chemin in sorted((RACINE_DONNEES / "reference" / "regles").glob("*.yaml")):
+        for champ, valeur in interrupteurs_de_la_fiche(RACINE_DONNEES, chemin.stem).items():
+            assert valeur in marques[champ]["valeurs"], (chemin.stem, champ, valeur)
+            assert valeur != INTERRUPTEURS[champ], (chemin.stem, champ, "le défaut")
+
+
+def test_le_chargeur_refuse_un_interrupteur_qui_ne_renvoie_pas(tmp_path):
+    """Une valeur écrite à la place du renvoi, une fiche qui n'existe pas, une
+    fiche qui ne déclare pas le champ : aucun ne vaut le défaut en silence."""
+    import shutil
+
+    import yaml
+
+    source = RACINE_DONNEES / "reference"
+    dossier = tmp_path / "reference" / "regimes"
+    dossier.mkdir(parents=True)
+    shutil.copytree(source / "regles", tmp_path / "reference" / "regles")
+    shutil.copy(source / "regimes" / "_schema.yaml", dossier / "_schema.yaml")
+    regime = yaml.safe_load((source / "regimes" / "avts.yaml").read_text(encoding="utf-8"))
+    for renvoi, message in ((True, "et non à la valeur"),
+                            ("nexiste_pas", "qui n'existe pas"),
+                            ("salaire_annuel_moyen", "ne déclare pas")):
+        fausse = {**regime, "periodes": [{**p, "decote_par_generation": renvoi}
+                                         for p in regime["periodes"]]}
+        (dossier / "avts.yaml").write_text(yaml.safe_dump(fausse, allow_unicode=True),
+                                           encoding="utf-8")
+        with pytest.raises(ValueError, match=message):
+            CatalogueRegimes(tmp_path)

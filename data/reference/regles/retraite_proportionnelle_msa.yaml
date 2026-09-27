@@ -1,0 +1,30 @@
+schema_version: 1
+id: retraite_proportionnelle_msa
+intitule: >-
+  Retraite proportionnelle des non-salariés agricoles : des points par palier d'assiette
+  en SMIC horaires, quinze jusqu'à 400 SMIC, trente de 800 SMIC à deux fois le minimum
+  contributif, puis une pente jusqu'au maximum.
+etat: a_verifier
+etape: acquerir_les_droits
+effet: >-
+  Les chefs d'exploitation, depuis 1990. Fiche née à la phase 6 (docs/architecture.md,
+  § 11) de ce que le schéma des régimes disait de l'interrupteur `bareme_points` : elle
+  dit la règle que le moteur applique déjà, et les textes que le dépôt citait pour elle
+  ; elle reste à relire à la source.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Relire R. 732-70 et R. 732-71 du code rural dans l'index LEGI et les rattacher.
+textes_a_rattacher:
+- reference: code rural et de la pêche maritime, R. 732-70 et R. 732-71
+code:
+  interrupteurs:
+    bareme_points: msa_proportionnelle
+  moteur: >-
+    `bareme_points: msa_proportionnelle` : la retraite proportionnelle des non-salariés
+    agricoles — quinze points jusqu'à 400 SMIC horaires, une pente jusqu'à trente à 800
+    SMIC, un plateau à trente jusqu'à deux fois le minimum contributif, puis une pente
+    jusqu'au maximum de l'année (R. 732-70 et R. 732-71 du code rural). La pension multiplie
+    ensuite les points par 37,5 / la durée requise en années.

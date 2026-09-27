@@ -27,3 +27,11 @@ textes_a_rattacher:
 - reference: R. 351-29-1 CSS (générations d'avant 1948)
 exemples:
 - sp_f21552_taux_plein_170
+code:
+  interrupteurs:
+    salaire_reference_par_generation: true
+  moteur: >-
+    `salaire_reference_par_generation` : le nombre d'années retenues au salaire annuel
+    moyen est lu dans `legislation/annees_salaire_reference.csv` à l'ANNÉE DE NAISSANCE
+    : dix à vingt-cinq années, une par génération, de 1934 à 1948 (loi du 22 juillet 1993).
+    Ne vaut que pour un `salaire_reference` en meilleures années.

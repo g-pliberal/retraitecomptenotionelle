@@ -31,9 +31,9 @@ periodes:
     age_taux_plein: 65
     duree_requise_trimestres: 160
     taux_plein: 1.0
-    age_ouverture_par_generation: true
-    age_taux_plein_par_generation: true
-    decote_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
@@ -56,9 +56,9 @@ periodes:
     age_taux_plein: 65
     duree_requise_trimestres: 160
     taux_plein: 1.0
-    age_ouverture_par_generation: true
-    age_taux_plein_par_generation: true
-    decote_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null

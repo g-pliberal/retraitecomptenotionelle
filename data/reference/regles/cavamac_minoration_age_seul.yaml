@@ -65,3 +65,19 @@ exemples:
 reformes:
 - cavamac_statuts_2011
 - cavamac_2024
+code:
+  interrupteurs:
+    abattement_points: cavom
+    decote_annulee_par_la_duree: false
+    surcote_points: par_age_seul
+    surcote_trimestres_cotises: true
+  moteur: >-
+    `abattement_points: cavom`, le barème par année d'âge manquante que la fiche `cavom_ages_minoration`
+    décrit ; `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas
+    la minoration ; `surcote_points: par_age_seul`, la majoration par l'âge seul que la
+    fiche `surcote_par_age_seul` décrit. `surcote_trimestres_cotises` : ne compter que
+    les trimestres COTISÉS depuis l'âge de départ du décompte, et non le temps écoulé
+    — « pour chaque année pleine cotisée dans le présent régime » (CAVAMAC, statuts dans
+    la rédaction de l'arrêté du 4 août 2023, article 16, depuis le 1er janvier 2024 ;
+    ils disaient « différée » auparavant). Sans ce renvoi, le temps écoulé suffit, comme
+    dans les autres sections.

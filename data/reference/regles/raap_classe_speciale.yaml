@@ -56,3 +56,11 @@ textes_a_rattacher:
     libérales et des artistes, 1984 à 2015 (n° 84-435 à n° 2015-1802)
 reformes:
 - ircec_1981_classes
+code:
+  interrupteurs:
+    assiette_forfaitaire: true
+    cotisation_par_classes: true
+  moteur: >-
+    `cotisation_par_classes` : de 1981 à 2015, le RAAP prélève le montant de sa classe
+    (`classes_cotisation.csv`), et non un taux ; `assiette_forfaitaire` : l'assiette est
+    le repère de la période, quel que soit le revenu.

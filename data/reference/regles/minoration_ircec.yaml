@@ -60,3 +60,12 @@ textes_a_rattacher:
     2014
 - reference: arrêté du 17 avril 2024 (JORFARTI000049490796)
 - reference: arrêté du 13 mai 2025 (JORFARTI000051592840)
+code:
+  interrupteurs:
+    abattement_points: ircec
+  moteur: >-
+    `abattement_points: ircec` est celui des trois régimes de l'IRCEC depuis 2014 (RAAP,
+    RACD ; RACL depuis 2025) : des ANNÉES manquantes jusqu'à l'âge du taux plein, une
+    année entamée comptant entière, 2,5 % pour chacune des deux premières et 5 % au-delà,
+    ou la décote du régime de base si elle est plus favorable ; pas de minoration si la
+    durée requise est réunie.

@@ -42,11 +42,11 @@ periodes:
     fin: 1980
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_pass
@@ -77,18 +77,18 @@ periodes:
     fin: 2013
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: raap_classe_speciale
     points_maximum: 6
-    assiette_forfaitaire: true
+    assiette_forfaitaire: raap_classe_speciale
     assiette_repere_smic: 1
     valeur_point_euros: 9.75
     valeur_point_annee: 2026
@@ -134,24 +134,24 @@ periodes:
     fin: 2015
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: raap_classe_speciale
     points_maximum: 6
-    assiette_forfaitaire: true
+    assiette_forfaitaire: raap_classe_speciale
     assiette_repere_smic: 1
     valeur_point_euros: 9.75
     valeur_point_annee: 2026
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
-    abattement_points: ircec
+    abattement_points: minoration_ircec
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       MINORATION DE L'IRCEC, et non celle du régime de base : « 2,5 %
@@ -178,11 +178,11 @@ periodes:
     fin: 2016
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_pass
@@ -191,7 +191,7 @@ periodes:
     valeur_point_annee: 2026
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
-    abattement_points: ircec
+    abattement_points: minoration_ircec
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       MONTÉE EN CHARGE DU DÉCRET DU 30 DÉCEMBRE 2015, que la fiche ignorait
@@ -207,11 +207,11 @@ periodes:
     fin: 2017
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_pass
@@ -220,7 +220,7 @@ periodes:
     valeur_point_annee: 2026
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
-    abattement_points: ircec
+    abattement_points: minoration_ircec
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Deuxième palier de la montée en charge : 6 % des revenus de 2017,
@@ -229,11 +229,11 @@ periodes:
     fin: 2018
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_pass
@@ -242,7 +242,7 @@ periodes:
     valeur_point_annee: 2026
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
-    abattement_points: ircec
+    abattement_points: minoration_ircec
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Troisième palier : 7 % des revenus de 2018, appelés en 2019.
@@ -250,11 +250,11 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_pass
@@ -263,7 +263,7 @@ periodes:
     valeur_point_annee: 2026
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
-    abattement_points: ircec
+    abattement_points: minoration_ircec
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       TAUX PLEIN DE LA RÉFORME, atteint sur les revenus de 2019 au terme

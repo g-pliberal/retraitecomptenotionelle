@@ -1099,6 +1099,70 @@ FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml")
 CHAMPS_DE_L_INVENTAIRE = ("section", "rang", "nom", "population", "couverture",
                           "statuts", "textes", "manque", "raison_hors_champ")
 
+#: Les interrupteurs d'une période, et ce qu'ils valent quand elle n'en pose
+#: pas. Un interrupteur choisit une règle au lieu de porter un paramètre ; il ne
+#: prend pas de valeur, il RENVOIE à la fiche de ``data/reference/regles/`` qui
+#: décrit la règle, et c'est elle qui déclare la valeur (``code.interrupteurs``)
+#: et dit ce que le moteur en fait (``code.moteur``). Ils étaient écrits en
+#: valeurs jusqu'à la phase 6 (docs/architecture.md, § 11) : c'est ce
+#: contournement du noyau que le § 13.4 nomme.
+INTERRUPTEURS: dict[str, object] = {
+    "duree_requise_par_generation": False,
+    "age_ouverture_par_generation": False,
+    "age_taux_plein_par_generation": False,
+    "age_surcote_regimes_speciaux": False,
+    "decote_par_generation": False,
+    "duree_proratisation_par_generation": False,
+    "salaire_reference_par_generation": False,
+    "decote_annulee_par_la_duree": True,
+    "decote_par_la_duree_seule": False,
+    "surcote_trimestres_cotises": False,
+    "assiette_plancher": False,
+    "assiette_forfaitaire": False,
+    "cotisation_par_classes": False,
+    "bareme_decote": "regime_aligne",
+    "surcote_bareme": None,
+    "abattement_points": "decote_du_regime_de_base",
+    "surcote_points": "aucune",
+    "bareme_points": None,
+}
+
+
+def interrupteurs_de_la_fiche(racine: Path, fiche: str) -> dict:
+    """Les interrupteurs qu'une fiche de la carte déclare, et leur valeur."""
+    chemin = racine / "reference" / "regles" / f"{fiche}.yaml"
+    if not chemin.exists():
+        raise KeyError(fiche)
+    return dict((charger_yaml(chemin).get("code") or {}).get("interrupteurs") or {})
+
+
+def resoudre_les_renvois(periode: dict, racine: Path, lieu: str) -> dict:
+    """La période, chaque interrupteur remplacé par la valeur que déclare sa fiche.
+
+    Un interrupteur absent, ou nul, vaut son défaut. Une valeur écrite à la
+    place d'un renvoi, une fiche qui n'existe pas, une fiche qui ne déclare pas
+    le champ arrêtent le chargement : aucun ne vaut « le défaut » sans le dire.
+    """
+    resolue = {cle: valeur for cle, valeur in periode.items() if cle not in INTERRUPTEURS}
+    for champ in INTERRUPTEURS:
+        renvoi = periode.get(champ)
+        if renvoi is None:
+            continue
+        if not isinstance(renvoi, str):
+            raise ValueError(
+                f"{lieu} : `{champ}` renvoie à une fiche de data/reference/regles/, "
+                f"et non à la valeur {renvoi!r}")
+        try:
+            declares = interrupteurs_de_la_fiche(racine, renvoi)
+        except KeyError:
+            raise ValueError(f"{lieu} : `{champ}` renvoie à la fiche {renvoi}, "
+                             "qui n'existe pas") from None
+        if champ not in declares:
+            raise ValueError(f"{lieu} : la fiche {renvoi} ne déclare pas `{champ}` "
+                             "dans `code.interrupteurs`")
+        resolue[champ] = declares[champ]
+    return resolue
+
 
 def fichiers_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
     """Tous les fichiers de régime, calculés ou non, dans l'ordre de leurs noms.
@@ -1189,7 +1253,7 @@ class CatalogueRegimes:
         self.taux_annuels = charger_taux_annuels(racine)
         dossier = racine / "reference" / "regimes"
         for chemin, fiche in fiches_de_regimes(racine):
-            regime = self._construire(fiche, chemin)
+            regime = self._construire(fiche, chemin, racine)
             if regime.code in self.taux_annuels:
                 regime = replace(regime, periodes=dater_les_taux(
                     regime.periodes, self.taux_annuels[regime.code]))
@@ -1204,7 +1268,7 @@ class CatalogueRegimes:
             )
 
     @staticmethod
-    def _construire(fiche: dict, chemin: Path) -> Regime:
+    def _construire(fiche: dict, chemin: Path, racine: Path) -> Regime:
         manquants = {"code", "nom", "famille", "fiabilite"} - set(fiche)
         if manquants:
             raise ValueError(f"{chemin.name} : champs manquants {sorted(manquants)}")
@@ -1468,7 +1532,10 @@ class CatalogueRegimes:
                 points_gratuits=_points_gratuits(p.get("points_gratuits")),
                 notes=(p.get("notes") or "").strip(),
             )
-            for p in fiche.get("periodes", [])
+            for p in (
+                resoudre_les_renvois(p, racine, f"{chemin.name}, période {p.get('debut')}")
+                for p in fiche.get("periodes", [])
+            )
         )
         return Regime(
             code=fiche["code"],

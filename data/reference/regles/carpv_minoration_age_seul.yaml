@@ -42,3 +42,9 @@ textes_a_rattacher:
     (JORFTEXT000054436022)
 reformes:
 - carpv_statuts_2021
+code:
+  interrupteurs:
+    decote_annulee_par_la_duree: false
+  moteur: >-
+    `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas la minoration,
+    que seul l'âge efface.

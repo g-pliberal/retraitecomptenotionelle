@@ -1,0 +1,41 @@
+schema_version: 1
+id: decote_regimes_speciaux
+intitule: >-
+  Décote des régimes spéciaux depuis leur réforme de 2008 : le barème de la fonction publique
+  avec quatre ans de retard, rien avant le 1er juillet 2010, et un âge d'annulation tiré
+  de l'âge de référence du régime.
+etat: a_verifier
+etape: liquider_chaque_regime
+effet: >-
+  Les agents de la SNCF, de la RATP, des IEG, de la CRPCEN et de la Comédie-Française
+  qui réunissent les conditions d'ouverture après le 1er juillet 2010. Fiche née à la
+  phase 6 (docs/architecture.md, § 11) de ce que le schéma des régimes disait de l'interrupteur
+  `bareme_decote` : elle dit la règle que le moteur applique déjà, et les textes que le
+  dépôt citait pour elle ; elle reste à relire à la source.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Relire, régime par régime, l'article de décote du décret de réforme de 2008 (SNCF,
+    RATP, IEG, CRPCEN, Comédie-Française) dans l'index LEGI, et rattacher chacun : `legislation/decote_regimes_speciaux.csv`
+    ne cite mot pour mot que celui de l'Opéra, et écrit que la même phrase se lit dans
+    les autres.
+textes_a_rattacher:
+- reference: >-
+    décret n° 68-382 du 5 avril 1968 (Opéra national de Paris), article 14 V, cité mot
+    pour mot par legislation/decote_regimes_speciaux.csv
+- reference: >-
+    décret n° 2008-639 du 30 juin 2008 relatif au régime spécial de retraite du personnel
+    de la SNCF
+- reference: décret n° 2008-637 du 30 juin 2008 (RATP)
+code:
+  interrupteurs:
+    bareme_decote: regimes_speciaux
+  moteur: >-
+    `bareme_decote: regimes_speciaux` applique le barème de la fonction publique avec
+    QUATRE ANS DE RETARD, celui que la réforme de 2008 a donné aux régimes spéciaux :
+    rien avant le 1er juillet 2010, un dixième du taux plein ensuite, 1,25 % seulement
+    en 2019, et un âge d'annulation qui est l'âge de référence du régime — l'âge d'ouverture
+    majoré de cinq ans — diminué de seize trimestres en 2010 puis de rien à partir de
+    2024 (`legislation/decote_regimes_speciaux.csv`).

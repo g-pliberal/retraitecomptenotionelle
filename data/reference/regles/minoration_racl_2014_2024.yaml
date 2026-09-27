@@ -1,0 +1,31 @@
+schema_version: 1
+id: minoration_racl_2014_2024
+intitule: >-
+  Minoration du RACL de 2014 à 2024 : 5 % par année manquante, et seul l'âge ouvre le
+  taux plein, jusqu'à ce que le régime rejoigne en 2025 la règle des deux autres régimes
+  de l'IRCEC.
+etat: a_verifier
+etape: liquider_chaque_regime
+effet: >-
+  Les auteurs et compositeurs lyriques partis avant l'âge du taux plein de 2014 à 2024.
+  Fiche née à la phase 6 (docs/architecture.md, § 11) de ce que le schéma des régimes
+  disait de l'interrupteur `abattement_points` : elle dit la règle que le moteur applique
+  déjà, et les textes que le dépôt citait pour elle ; elle reste à relire à la source.
+  La fiche `minoration_ircec` en a lu le texte le 22 septembre 2026, et dit la règle dans
+  son intitulé.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Rattacher ici la lecture que la fiche `minoration_ircec` a faite de l'article 21 du
+    règlement du RACL (arrêté du 21 novembre 2013), et dire l'état.
+textes_a_rattacher:
+- reference: >-
+    règlement du RACL, art. 21, annexé à l'arrêté du 21 novembre 2013 (JORFARTI000028254004)
+code:
+  interrupteurs:
+    abattement_points: ircec_age_seul
+  moteur: >-
+    `abattement_points: ircec_age_seul` est le RACL de 2014 à 2024 : 5 % par année manquante,
+    et seul l'âge ouvre le taux plein.

@@ -63,3 +63,11 @@ sources:
     date: 2026-09-22
 textes_a_rattacher:
 - reference: R. 643-7 CSS, version du 1er septembre 2023
+code:
+  interrupteurs:
+    decote_par_generation: true
+  moteur: >-
+    `decote_par_generation` : le coefficient de minoration est lu dans la table du régime
+    général, `legislation/coefficient_minoration.csv`, à l'ANNÉE DE NAISSANCE, comme la
+    fiche `decote_regime_general` le décrit ; R. 732-61 en donne les onze mêmes valeurs
+    aux non-salariés agricoles.

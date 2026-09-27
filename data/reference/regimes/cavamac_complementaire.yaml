@@ -39,9 +39,9 @@ periodes:
     fin: 1970
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -50,8 +50,8 @@ periodes:
     taux_cotisation_retraite: 0.036
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
+    abattement_points: cavamac_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -104,9 +104,9 @@ periodes:
     fin: 1992
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -115,8 +115,8 @@ periodes:
     taux_cotisation_retraite: 0.063
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
+    abattement_points: cavamac_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -129,9 +129,9 @@ periodes:
     fin: 1997
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -140,8 +140,8 @@ periodes:
     taux_cotisation_retraite: 0.0693
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
+    abattement_points: cavamac_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -157,9 +157,9 @@ periodes:
     fin: 2000
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -168,8 +168,8 @@ periodes:
     taux_cotisation_retraite: 0.080325
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
+    abattement_points: cavamac_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -183,9 +183,9 @@ periodes:
     fin: 2003
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -194,8 +194,8 @@ periodes:
     taux_cotisation_retraite: 0.081585
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
+    abattement_points: cavamac_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -205,9 +205,9 @@ periodes:
     fin: 2011
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -216,8 +216,8 @@ periodes:
     taux_cotisation_retraite: 0.09
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
+    abattement_points: cavamac_minoration_age_seul
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -230,9 +230,9 @@ periodes:
     fin: 2018
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -241,10 +241,10 @@ periodes:
     taux_cotisation_retraite: 0.09
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
+    abattement_points: cavamac_minoration_age_seul
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: cavamac_minoration_age_seul
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -279,9 +279,9 @@ periodes:
     fin: 2023
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -290,10 +290,10 @@ periodes:
     taux_cotisation_retraite: 0.0816
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
+    abattement_points: cavamac_minoration_age_seul
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: cavamac_minoration_age_seul
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -310,9 +310,8 @@ periodes:
     fin: 2025
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -321,12 +320,12 @@ periodes:
     taux_cotisation_retraite: 0.0816
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: cavamac_minoration_age_seul
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
-    surcote_trimestres_cotises: true
+    surcote_trimestres_cotises: cavamac_minoration_age_seul
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Appel ramené à 129,5 %, soit 8,16 %. C'est le dernier taux que le
@@ -356,9 +355,8 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -367,12 +365,12 @@ periodes:
     taux_cotisation_retraite: 0.0766
     part_salariale: 0.673629
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavamac_minoration_age_seul
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: cavamac_minoration_age_seul
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
-    surcote_trimestres_cotises: true
+    surcote_trimestres_cotises: cavamac_minoration_age_seul
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA BAISSE DU TAUX D'APPEL, que la caisse annonce dans son tableau de

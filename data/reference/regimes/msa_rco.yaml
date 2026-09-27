@@ -34,15 +34,15 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 64
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     points_maximum: 100
     assiette_repere_smic: 1820
-    assiette_plancher: true
+    assiette_plancher: assiette_minimale_agricole
     salaire_reference: carriere_entiere
     assiette: deplafonnee
     taux_cotisation_retraite: 0.04

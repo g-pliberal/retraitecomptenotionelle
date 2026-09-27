@@ -33,3 +33,12 @@ exemples:
 - sp_f19666_decote
 - cnav_2026_07_decote_1961
 - sp_f21552_65_ans_158
+code:
+  interrupteurs:
+    decote_par_generation: true
+  moteur: >-
+    `decote_par_generation` : le coefficient de minoration est lu dans `legislation/coefficient_minoration.csv`
+    à l'ANNÉE DE NAISSANCE. La table de l'article R. 351-27 vaut aussi bien pour l'ancien
+    droit (2,5 % par trimestre) que pour la montée en charge de la loi Fillon (jusqu'à
+    1,25 % à partir de la génération 1953) : elle se branche donc sur toutes les périodes
+    des régimes alignés depuis 1983.

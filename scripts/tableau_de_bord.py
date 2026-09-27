@@ -48,6 +48,7 @@ from pathlib import Path
 
 import yaml
 
+from retraite_notionnelle.donnees.regimes import INTERRUPTEURS, fiches_de_regimes
 from retraite_notionnelle.noyau import carte, textes, vocabulaire
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -250,6 +251,12 @@ def page() -> str:
         p.read_text(encoding="utf-8", errors="ignore")
         for motif in ("src/**/*.py", "moteur/js/**/*.js") for p in sorted(RACINE.glob(motif)))
     citees = sum(1 for r in veille if r["id"] in code_source)
+    # Les fiches que désignent les interrupteurs des périodes de régime (phase 6) :
+    # chacune déclare la valeur que le moteur lit.
+    renvois = collections.Counter(
+        periode[champ] for _, fiche in fiches_de_regimes(RACINE / "data")
+        for periode in fiche["periodes"] for champ in INTERRUPTEURS
+        if periode.get(champ) is not None)
     relations = [r for r in veille if carte.est_relation(r)]
     mures = [r for r in veille if r["id"] not in manques]
     decoupees = [r for r in veille if r.get("versions")]
@@ -361,6 +368,9 @@ def page() -> str:
          else "aucun en écart connu)."))
     w(f"- Citées dans le code par leur identifiant : **{citees} sur {len(veille)}**. "
       "Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.")
+    w(f"- Désignées par les interrupteurs des périodes de régime : **{len(renvois)} sur "
+      f"{len(veille)}**, par {milliers(sum(renvois.values()))} renvois ; chacune déclare la "
+      "valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.")
     w(f"- Mûres, sans rien qui manque à leur contrat : **{len(mures)} sur {len(veille)}**. "
       "Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape "
       "ni ses versions : ce qui lui manque est à faire (section 3).")
@@ -556,8 +566,10 @@ def page() -> str:
       "dénominateur est la loi (section 1). Les situations des fiches service-public et des "
       "circulaires, les accords Agirc-Arrco et les statuts des caisses n'ont pas encore de "
       "liste.")
-    w("- **Les règles du code qui ont leur fiche.** Une fiche dira son code ; aucune ne le "
-      "dit encore, et le tableau compte en attendant les identifiants que le code cite.")
+    w("- **Les règles du code qui ont leur fiche.** Une fiche dira son code. Celles que "
+      "les interrupteurs des régimes désignent disent la valeur qu'elles y posent ; aucune "
+      "ne nomme encore sa fonction, et le tableau compte en attendant les identifiants que "
+      "le code cite.")
     w("- **Les limites propres à une simulation.** Le site les montrera avec chaque "
       "résultat, et les présomptions qu'elle emploie : la chronologie les liste, le site "
       "ne les affiche pas encore.")

@@ -36,10 +36,10 @@ periodes:
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    abattement_points: ircantec
+    abattement_points: coefficient_anticipation_ircantec
     assiette: tranche_b
     taux_cotisation_retraite: 0.075   # 12,5 % contractuels × appel 60 %
     part_salariale: 0.34   # 4,25 % agent / 8,25 % employeur, décret 51-1445 art. 7

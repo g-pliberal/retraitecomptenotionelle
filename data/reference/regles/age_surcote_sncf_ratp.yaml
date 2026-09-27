@@ -45,3 +45,12 @@ textes_a_rattacher:
     décret n° 2008-637, article 24, II, et article 51-1, II, 3° (LEGIARTI000047914257)
 reformes:
 - reforme_2023
+code:
+  interrupteurs:
+    age_surcote_regimes_speciaux: true
+  moteur: >-
+    `age_surcote_regimes_speciaux` : la surcote ne se compte qu'au-delà de l'âge lu dans
+    `legislation/age_surcote_regimes_speciaux.csv` à l'ANNÉE DE NAISSANCE — l'âge légal
+    décalé de cinq générations que les décrets de la SNCF (article 37-1, IV) et de la
+    RATP (article 51-1, II, 3°) écrivent, soixante-quatre ans à compter de la génération
+    1970 —, et non au-delà de l'âge d'ouverture de la période.

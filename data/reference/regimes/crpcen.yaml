@@ -76,13 +76,13 @@ periodes:
     age_ouverture: 55
     age_taux_plein: 60
     duree_requise_trimestres: 160
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.11
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -114,13 +114,13 @@ periodes:
     age_ouverture: 55.5
     age_taux_plein: 60.5
     duree_requise_trimestres: 160
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -152,13 +152,13 @@ periodes:
     age_ouverture: 56
     age_taux_plein: 61
     duree_requise_trimestres: 160
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -190,13 +190,13 @@ periodes:
     age_ouverture: 56.5
     age_taux_plein: 61.5
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -228,13 +228,13 @@ periodes:
     age_ouverture: 57.25
     age_taux_plein: 62.25
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -266,13 +266,13 @@ periodes:
     age_ouverture: 58
     age_taux_plein: 63
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -304,13 +304,13 @@ periodes:
     age_ouverture: 58.75
     age_taux_plein: 63.75
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -342,13 +342,13 @@ periodes:
     age_ouverture: 59.5
     age_taux_plein: 64.5
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -380,13 +380,13 @@ periodes:
     age_ouverture: 60.33
     age_taux_plein: 65.33
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -418,13 +418,13 @@ periodes:
     age_ouverture: 60.67
     age_taux_plein: 65.67
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -456,13 +456,13 @@ periodes:
     age_ouverture: 61
     age_taux_plein: 66
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -494,13 +494,13 @@ periodes:
     age_ouverture: 61.33
     age_taux_plein: 66.33
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -532,13 +532,13 @@ periodes:
     age_ouverture: 61.67
     age_taux_plein: 66.67
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -570,13 +570,13 @@ periodes:
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -606,17 +606,17 @@ periodes:
     fin: null
     type_calcul: annuites
     age_ouverture: 64
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]

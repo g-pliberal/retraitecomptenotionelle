@@ -67,3 +67,13 @@ reformes:
 - carcdsf_statuts_2011
 - carcdsf_bornes_2012
 - carcdsf_2024
+code:
+  interrupteurs:
+    abattement_points: cavom
+    decote_annulee_par_la_duree: false
+    surcote_points: par_age_seul
+  moteur: >-
+    `abattement_points: cavom`, le barème par année d'âge manquante que la fiche `cavom_ages_minoration`
+    décrit ; `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas
+    la minoration ; `surcote_points: par_age_seul`, la majoration par l'âge seul que la
+    fiche `surcote_par_age_seul` décrit.

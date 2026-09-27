@@ -42,9 +42,9 @@ periodes:
     fin: 2015
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavom
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -52,8 +52,8 @@ periodes:
     assiette: plafonnee_8_pass
     taux_cotisation_retraite: 0.125
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavom_ages_minoration
+    abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -85,9 +85,9 @@ periodes:
     fin: 2016
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavom
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -96,8 +96,8 @@ periodes:
     assiette_minimale_pass: 0.25
     taux_cotisation_retraite: 0.125
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavom_ages_minoration
+    abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -151,9 +151,9 @@ periodes:
     fin: 2017
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavom
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -162,8 +162,8 @@ periodes:
     assiette_minimale_pass: 0.25
     taux_cotisation_retraite: 0.125
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavom_ages_minoration
+    abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -174,9 +174,9 @@ periodes:
     fin: 2018
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavom
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -185,8 +185,8 @@ periodes:
     assiette_minimale_pass: 0.25
     taux_cotisation_retraite: 0.125
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavom_ages_minoration
+    abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -197,9 +197,9 @@ periodes:
     fin: 2019
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavom
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -208,8 +208,8 @@ periodes:
     assiette_minimale_pass: 0.19
     taux_cotisation_retraite: 0.125
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavom_ages_minoration
+    abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -221,9 +221,9 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavom
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -232,8 +232,8 @@ periodes:
     assiette_minimale_pass: 0.19
     taux_cotisation_retraite: 0.125
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
-    abattement_points: cavom
+    decote_annulee_par_la_duree: cavom_ages_minoration
+    abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-

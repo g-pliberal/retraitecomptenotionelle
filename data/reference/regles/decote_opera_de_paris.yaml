@@ -1,0 +1,31 @@
+schema_version: 1
+id: decote_opera_de_paris
+intitule: >-
+  Décote des artistes du ballet et des musiciens de l'orchestre de l'Opéra : le coefficient
+  des régimes spéciaux, mais un âge d'annulation qui ne recule pas, leur âge d'ouverture
+  majoré de huit trimestres.
+etat: a_verifier
+etape: liquider_chaque_regime
+effet: >-
+  Les danseurs et les musiciens de l'Opéra national de Paris. Fiche née à la phase 6 (docs/architecture.md,
+  § 11) de ce que le schéma des régimes disait de l'interrupteur `bareme_decote` : elle
+  dit la règle que le moteur applique déjà, et les textes que le dépôt citait pour elle
+  ; elle reste à relire à la source.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Relire l'article 14 V du décret n° 68-382 dans l'index LEGI et le rattacher.
+textes_a_rattacher:
+- reference: >-
+    décret n° 68-382 du 5 avril 1968 (Opéra national de Paris), article 14 V
+code:
+  interrupteurs:
+    bareme_decote: regimes_speciaux_age_fixe
+  moteur: >-
+    `bareme_decote: regimes_speciaux_age_fixe` prend le coefficient du barème des régimes
+    spéciaux mais garde l'âge d'annulation écrit dans la période : c'est ce que le V de
+    l'article 14 fait pour les catégories d'âge atypique, artistes du ballet et musiciens
+    de l'orchestre, dont l'âge d'annulation est leur âge d'ouverture majoré de huit trimestres
+    et ne recule pas avec la montée en charge.

@@ -33,19 +33,16 @@ periodes:
     fin: 2007
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: false
     age_taux_plein: 65
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_4_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     avantages_non_contributifs: [reversion]
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavec_minoration_age_seul
     surcote_par_trimestre: null
     notes: >-
       COTISATION PAR CLASSES depuis l'origine : « institué en 1953, ce
@@ -92,21 +89,18 @@ periodes:
     fin: 2018
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: false
     age_taux_plein: 65
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_4_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     avantages_non_contributifs: [reversion]
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavec_minoration_age_seul
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 65
     surcote_trimestres_maximum: 20
     notes: >-
@@ -159,21 +153,18 @@ periodes:
     fin: 2025
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: false
     age_taux_plein: 65
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_4_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     avantages_non_contributifs: [reversion]
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavec_minoration_age_seul
     surcote_par_trimestre: 0.0075
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 65
     surcote_trimestres_maximum: 20
     notes: >-
@@ -211,21 +202,18 @@ periodes:
     fin: 2026
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: false
     age_taux_plein: 65
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_4_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     avantages_non_contributifs: [reversion, majoration_enfants]
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavec_minoration_age_seul
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 65
     surcote_trimestres_maximum: 20
     notes: >-
@@ -272,21 +260,18 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: false
     age_taux_plein: 65
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: null
-    duree_requise_par_generation: false
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_4_pass
     taux_cotisation_retraite: 0.0
-    cotisation_par_classes: true
+    cotisation_par_classes: cotisation_par_classes_liberales
     avantages_non_contributifs: [reversion, majoration_enfants]
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavec_minoration_age_seul
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_age_debut: 65
     surcote_trimestres_maximum: 20
     notes: >-

@@ -23,3 +23,12 @@ exemples:
 - cnav_2026_07_decote_1961
 reformes:
 - reforme_2023
+code:
+  interrupteurs:
+    age_taux_plein_par_generation: true
+  moteur: >-
+    `age_taux_plein_par_generation` : l'âge d'annulation de la décote est lu dans `legislation/age_annulation_decote.csv`
+    à l'ANNÉE DE NAISSANCE, et la valeur de la période (`age_taux_plein`) ne sert que
+    de repli. La loi du 9 novembre 2010 fait passer cet âge de 65 à 67 ans pour les seules
+    générations 1951-1955 : opposer 67 ans dès 2011, comme le faisait la fiche du régime,
+    l'appliquait à des générations que la loi n'a jamais visées.

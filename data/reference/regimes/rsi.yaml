@@ -26,21 +26,21 @@ periodes:
     fin: 2008
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.50
-    age_taux_plein_par_generation: true
-    decote_par_generation: true
-    salaire_reference_par_generation: true
-    duree_proratisation_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
+    salaire_reference_par_generation: salaire_annuel_moyen
+    duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     taux_cotisation_retraite: 0.1665
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_bareme: regime_general
+    surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
@@ -57,21 +57,21 @@ periodes:
     fin: 2013
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.50
-    age_taux_plein_par_generation: true
-    decote_par_generation: true
-    salaire_reference_par_generation: true
-    duree_proratisation_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
+    salaire_reference_par_generation: salaire_annuel_moyen
+    duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     taux_cotisation_retraite: 0.1673
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_bareme: regime_general
+    surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
@@ -88,15 +88,15 @@ periodes:
     fin: 2018
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.50
-    age_taux_plein_par_generation: true
-    decote_par_generation: true
-    salaire_reference_par_generation: true
-    duree_proratisation_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
+    salaire_reference_par_generation: salaire_annuel_moyen
+    duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     taux_cotisation_retraite: 0.1709
@@ -104,7 +104,7 @@ periodes:
     part_salariale_deplafonnee: 1.0
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_bareme: regime_general
+    surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]

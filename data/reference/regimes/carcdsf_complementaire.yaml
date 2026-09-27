@@ -44,11 +44,11 @@ periodes:
     fin: 1996
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
@@ -74,11 +74,11 @@ periodes:
     fin: 2000
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
@@ -103,11 +103,11 @@ periodes:
     fin: 2001
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
@@ -121,11 +121,11 @@ periodes:
     fin: 2003
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
@@ -139,11 +139,11 @@ periodes:
     fin: 2007
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
@@ -157,15 +157,14 @@ periodes:
     fin: 2008
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    abattement_points: cavom
+    abattement_points: carcdsf_minoration_age_seul
     surcote_par_trimestre: null
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -196,15 +195,14 @@ periodes:
     fin: 2009
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    abattement_points: cavom
+    abattement_points: carcdsf_minoration_age_seul
     surcote_par_trimestre: null
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -217,15 +215,14 @@ periodes:
     fin: 2010
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: false
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    abattement_points: cavom
+    abattement_points: carcdsf_minoration_age_seul
     surcote_par_trimestre: null
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -238,18 +235,18 @@ periodes:
     fin: 2011
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -278,18 +275,18 @@ periodes:
     fin: 2012
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -302,18 +299,18 @@ periodes:
     fin: 2013
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -326,18 +323,18 @@ periodes:
     fin: 2014
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -350,18 +347,18 @@ periodes:
     fin: 2015
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -374,18 +371,18 @@ periodes:
     fin: 2016
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -398,18 +395,18 @@ periodes:
     fin: 2017
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -422,18 +419,18 @@ periodes:
     fin: 2019
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -449,18 +446,18 @@ periodes:
     fin: 2020
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -485,18 +482,18 @@ periodes:
     fin: 2021
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -509,18 +506,18 @@ periodes:
     fin: 2022
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -536,18 +533,18 @@ periodes:
     fin: 2023
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: carcdsf_2011
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -568,18 +565,18 @@ periodes:
     fin: 2024
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     decote_trimestres_maximum: 12
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -607,18 +604,18 @@ periodes:
     fin: 2025
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     decote_trimestres_maximum: 12
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -639,18 +636,18 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     decote_trimestres_maximum: 12
     surcote_par_trimestre: 0.0125
-    surcote_points: par_age_seul
+    surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5

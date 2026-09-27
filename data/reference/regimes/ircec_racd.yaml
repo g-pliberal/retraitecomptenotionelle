@@ -37,11 +37,11 @@ periodes:
     fin: 2013
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_13_pass
@@ -70,18 +70,18 @@ periodes:
     fin: 2023
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_13_pass
     taux_cotisation_retraite: 0.0800
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
-    abattement_points: ircec
+    abattement_points: minoration_ircec
     avantages_non_contributifs: [reversion]
     notes: >-
       MINORATION DE L'IRCEC, et non celle du régime de base : règlement
@@ -104,18 +104,18 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_13_pass
     taux_cotisation_retraite: 0.0800
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
-    abattement_points: ircec
+    abattement_points: minoration_ircec
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       MAJORATION POUR ENFANTS DEPUIS L'ARRÊTÉ DU 17 AVRIL 2024

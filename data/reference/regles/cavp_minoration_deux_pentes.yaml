@@ -60,3 +60,9 @@ textes_a_relire:
     CAVP annexé à l'arrêté du 10 juillet 2026, les trois « premier » par
     « deuxième » : lire lequel des trois règlements, et si l'article touche la
     minoration ou son âge.
+code:
+  interrupteurs:
+    decote_annulee_par_la_duree: false
+  moteur: >-
+    `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas la minoration,
+    que seul l'âge efface.

@@ -16,7 +16,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 *Modélisé ne veut pas dire exact* : les 25 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
 
-**La carte des règles** (`data/reference/regles/`) : 98 fiches, dont 1 relation. La veille en est une vue (`python scripts/veille_droit.py`).
+**La carte des règles** (`data/reference/regles/`) : 108 fiches, dont 1 relation. La veille en est une vue (`python scripts/veille_droit.py`).
 
 | État | Fiches |
 |---|---|
@@ -25,12 +25,13 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | approchées | 25 |
 | pas encore modélisées | 5 |
 | manquantes | 3 |
-| à vérifier | 1 |
+| à vérifier | 11 |
 
-- Confrontées à au moins un exemple officiel : **22 sur 98** (54 exemples : 54 reproduits, aucun en écart connu).
-- Citées dans le code par leur identifiant : **17 sur 98**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
-- Mûres, sans rien qui manque à leur contrat : **0 sur 98**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **aucune sur 98** ; le partage des versions, qui se contrôle sur chaque fiche, n'a encore rien à contrôler.
+- Confrontées à au moins un exemple officiel : **22 sur 108** (54 exemples : 54 reproduits, aucun en écart connu).
+- Citées dans le code par leur identifiant : **19 sur 108**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Désignées par les interrupteurs des périodes de régime : **38 sur 108**, par 2 103 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
+- Mûres, sans rien qui manque à leur contrat : **0 sur 108**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
+- Découpées en versions : **aucune sur 108** ; le partage des versions, qui se contrôle sur chaque fiche, n'a encore rien à contrôler.
 - Réformes du calendrier : 109, dont 11 déclarées non appliquées.
 
 **La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 10 738 rédactions d'articles, de 33 textes, lues le 2026-09-27 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20260926-210736). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
@@ -39,9 +40,9 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 |---|---|
 | rattachées à une version | 0 |
 | sans effet | 0 |
-| à rattacher | 189 |
+| à rattacher | 191 |
 | à examiner | 0 |
-| sans statut | 10 549 |
+| sans statut | 10 547 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré et ses enfants —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 7 présomptions au vocabulaire, dont 1 pose son fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -62,14 +63,14 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `preparer_la_chronologie` | `droit/preparer.py` | la chronologie, présomptions posées (contrat C.1) | aucune encore |
 | `coordonner_les_affiliations` | `droit/coordonner.py` | les régimes qui reçoivent chaque ligne, les rétablissements, les groupes | `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `retablissement_fonction_publique` |
 | `compter_les_durees` | `droit/compter.py` | les trimestres de chaque compte, par régime et par année ; ceux des enfants | `majoration_duree_assurance_enfants`, `priorite_majorations_enfants`, `services_et_duree_fonction_publique` |
-| `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `assiette_minimale_independants`, `asv_medecins_ajustement`, `rco_points_gratuits` |
+| `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `assiette_minimale_agricole`, `assiette_minimale_independants`, `asv_medecins_ajustement`, `cotisation_par_classes_liberales`, `rco_points_gratuits`, `retraite_proportionnelle_msa` |
 
 **La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types sans rien liquider. Les 535 témoins font chacun de 1 à 6 appels de `liquider`, liquidations d'essai comprises ; aucun ne dépasse les 6 que le nombre déclaré accorde (§ 7.8).
 
 | Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |
 |---|---|---|---|
 | `ouvrir_le_droit` | `droit/ouvrir.py` | l'âge d'ouverture et son motif, la durée requise, les trimestres cotisés | `age_legal_par_generation`, `carriere_longue`, `duree_requise_par_generation` |
-| `liquider_chaque_regime` | `droit/liquider.py` | la pension de chaque régime et sa formule, les régimes qui portent les minima | `decote_regime_general`, `salaire_annuel_moyen`, `surcote_regime_general`, `taux_plein_et_proratisation` |
+| `liquider_chaque_regime` | `droit/liquider.py` | la pension de chaque régime et sa formule, les régimes qui portent les minima | `coefficients_anticipation_agirc_arrco`, `decote_avant_1983`, `decote_opera_de_paris`, `decote_regime_general`, `decote_regimes_speciaux`, `minoration_racl_2014_2024`, `salaire_annuel_moyen`, `surcote_ircantec`, `surcote_par_age_seul`, `surcote_regime_general`, `taux_plein_et_proratisation` |
 | `completer_tous_regimes` | `droit/completer.py` | les minima, la surcote parentale, la majoration pour enfants | `majoration_dix_pour_cent`, `minimum_contributif`, `minimum_garanti`, `surcote_parentale` |
 | `faire_vivre` | `revalorisation.py` | le coefficient de chaque pension, du départ à l'échéance | `revalorisation_des_pensions` |
 | `foyer_et_net` | `droit/foyer.py` | l'ASPA, au départ puis à chaque échéance | `minimum_vieillesse` |
@@ -108,7 +109,17 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `rachats_et_versements` | pas_encore_modelisee | Non saisissables dans le simulateur. |
 | `retraite_anticipee_handicap` | pas_encore_modelisee | Demande une information médicale que le modèle ne collecte pas : l'assuré est déclaré non ouvert. |
 | `reversion` | pas_encore_modelisee | Le modèle décrit une carrière, pas un ménage. |
+| `assiette_minimale_agricole` | a_verifier | Les chefs d'exploitation aux revenus faibles. |
+| `coefficients_anticipation_agirc_arrco` | a_verifier | Toute liquidation anticipée d'une complémentaire des salariés du privé. |
+| `cotisation_par_classes_liberales` | a_verifier | Les vétérinaires, les experts-comptables et les affiliés de la Cipav. |
+| `decote_avant_1983` | a_verifier | Les pensions du régime général, des salariés agricoles, des artisans et des commerçants liquidées avant 1983. |
+| `decote_opera_de_paris` | a_verifier | Les danseurs et les musiciens de l'Opéra national de Paris. |
+| `decote_regimes_speciaux` | a_verifier | Les agents de la SNCF, de la RATP, des IEG, de la CRPCEN et de la Comédie-Française qui réunissent les conditions d'ouverture après le 1er… |
 | `fin_de_la_suspension_2028` | a_verifier | Tout changement de calendrier touche les générations 1965 et suivantes. |
+| `minoration_racl_2014_2024` | a_verifier | Les auteurs et compositeurs lyriques partis avant l'âge du taux plein de 2014 à 2024. |
+| `retraite_proportionnelle_msa` | a_verifier | Les chefs d'exploitation, depuis 1990. |
+| `surcote_ircantec` | a_verifier | Les agents non titulaires qui liquident l'Ircantec après l'âge légal. |
+| `surcote_par_age_seul` | a_verifier | Les complémentaires de la CARMF, de la CARCDSF, de la CAVP, de la CARPIMKO, de la CAVAMAC, de la CAVEC, de la Cipav et de la CPRN, et l'ASV. |
 | `assiette_minimale_independants` | approchee | Un indépendant à 3 000 € validait un trimestre au lieu de trois et n'avait ni le salaire ni les points du minimum. |
 | `asv_medecins_ajustement` | approchee | La fiche servait 36 points à tout médecin, soit jusqu'à 7,75 points de trop sous 70 000 €. |
 | `carcdsf_minoration_age_seul` | approchee | La fiche lisait 62 et 67 ans et la décote du régime de base, que la durée annule : un dentiste parti à 64 ans avec sa durée ne perdait rien… |
@@ -159,24 +170,24 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Régime des auteurs et compositeurs lyriques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - Assurance vieillesse des non-salariés agricoles (MSA) : 1 source(s) (msa_reforme_25_meilleures_annees)
   - et 20 sources sans régime désigné.
-- **Les fiches sans exemple officiel** : 76.
-- **Faire mûrir la carte** : 783 champs obligatoires manquent, à 98 fiches. Par champ :
+- **Les fiches sans exemple officiel** : 86.
+- **Faire mûrir la carte** : 815 champs obligatoires manquent, à 108 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |
   |---|---|
-  | `dates_qui_decident` | 98 |
-  | `domaine` | 98 |
-  | `ecrit` | 98 |
-  | `lit` | 98 |
-  | `regimes` | 98 |
-  | `versions` | 98 |
-  | `code` | 93 |
+  | `dates_qui_decident` | 108 |
+  | `domaine` | 108 |
+  | `ecrit` | 108 |
+  | `lit` | 108 |
+  | `regimes` | 108 |
+  | `versions` | 108 |
   | `etape` | 76 |
+  | `code` | 65 |
   | `approximations` | 25 |
   | `rang` | 1 |
 
-- **Les textes** : 189 rédactions à rattacher à une version de la fiche qui les cite, 0 à examiner, et 10 549 sans statut, que le cliquet tient à 10 549 au plus. Les textes qui en ont le plus : `css` 5 367, `rural` 1 000, `decret_46_2769` 946, `cpcmr` 696, `decret_90_1215` 350 (`python scripts/textes.py`).
-- **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`) ; 2026-12-31 (`duree_requise_par_generation`).
+- **Les textes** : 191 rédactions à rattacher à une version de la fiche qui les cite, 0 à examiner, et 10 547 sans statut, que le cliquet tient à 10 547 au plus. Les textes qui en ont le plus : `css` 5 367, `rural` 1 000, `decret_46_2769` 946, `cpcmr` 696, `decret_90_1215` 350 (`python scripts/textes.py`).
+- **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`assiette_minimale_agricole`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 15, chacun avec sa raison dans l'inventaire.
 
 ## 4. Ce que ce tableau ne sait pas encore dire
@@ -184,6 +195,6 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 - **L'effet chiffré de chaque limite.** Les fiches le disent en mots. Le pilote le mesurera, en neutralisant la règle sur les cas types pondérés.
 - **La part des pensions qui ne passent que par des règles conformes.** Il faut pour cela que chaque ligne du relevé cite sa fiche, ce que l'architecture prévoit aux phases 4 et 5.
 - **Ce que personne n'a encore noté, hors des articles.** Pour les articles, le dénominateur est la loi (section 1). Les situations des fiches service-public et des circulaires, les accords Agirc-Arrco et les statuts des caisses n'ont pas encore de liste.
-- **Les règles du code qui ont leur fiche.** Une fiche dira son code ; aucune ne le dit encore, et le tableau compte en attendant les identifiants que le code cite.
+- **Les règles du code qui ont leur fiche.** Une fiche dira son code. Celles que les interrupteurs des régimes désignent disent la valeur qu'elles y posent ; aucune ne nomme encore sa fonction, et le tableau compte en attendant les identifiants que le code cite.
 - **Les limites propres à une simulation.** Le site les montrera avec chaque résultat, et les présomptions qu'elle emploie : la chronologie les liste, le site ne les affiche pas encore.
 - **Le coût du travail** se relève sur l'historique git, et change à chaque commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`, avec la taille du dépôt — ses lignes, ses tests —, que la prose ne porte plus.

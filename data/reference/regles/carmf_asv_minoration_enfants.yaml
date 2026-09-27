@@ -48,3 +48,9 @@ exemples:
 reformes:
 - carmf_trois_enfants_1964
 - asv_trois_enfants_1981
+code:
+  interrupteurs:
+    abattement_points: cavom
+  moteur: >-
+    `abattement_points: cavom`, le barème par année d'âge manquante que la fiche `cavom_ages_minoration`
+    décrit, et dont la CARMF écrivait les coefficients de 2000 à 2016.

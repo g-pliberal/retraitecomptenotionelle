@@ -186,7 +186,7 @@ periodes:
     part_salariale: 0.3600
     decote_par_trimestre: 0.0125
     decote_trimestres_maximum: 40
-    decote_par_la_duree_seule: true
+    decote_par_la_duree_seule: decote_crpn
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -256,7 +256,7 @@ periodes:
     part_salariale: 0.3600
     decote_par_trimestre: 0.0125
     decote_trimestres_maximum: 40
-    decote_par_la_duree_seule: true
+    decote_par_la_duree_seule: decote_crpn
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-

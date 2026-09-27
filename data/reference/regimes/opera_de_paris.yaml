@@ -91,13 +91,13 @@ periodes:
     age_ouverture: 40
     age_taux_plein: 42
     duree_requise_trimestres: 160
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.1085
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux_age_fixe
+    bareme_decote: decote_opera_de_paris
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -131,13 +131,13 @@ periodes:
     age_ouverture: 40
     age_taux_plein: 42
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.1085
     perimetre_taux: agent_seul
-    bareme_decote: regimes_speciaux_age_fixe
+    bareme_decote: decote_opera_de_paris
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]

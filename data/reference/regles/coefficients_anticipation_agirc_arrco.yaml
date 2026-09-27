@@ -1,0 +1,31 @@
+schema_version: 1
+id: coefficients_anticipation_agirc_arrco
+intitule: >-
+  Coefficients d'anticipation de l'Agirc-Arrco, et avant elle de l'Agirc et de l'Arrco
+  : deux tables, l'une par trimestre manquant, l'autre par année d'âge manquante, dont
+  la plus avantageuse est retenue.
+etat: a_verifier
+etape: liquider_chaque_regime
+effet: >-
+  Toute liquidation anticipée d'une complémentaire des salariés du privé. Fiche née à
+  la phase 6 (docs/architecture.md, § 11) de ce que le schéma des régimes disait de l'interrupteur
+  `abattement_points` : elle dit la règle que le moteur applique déjà, et les textes que
+  le dépôt citait pour elle ; elle reste à relire à la source.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Relire les deux tables publiées par la caisse (source `agirc_arrco_coefficients` de
+    data/sources.yaml) et leur fondement dans les accords, et les rattacher.
+textes_a_rattacher:
+- reference: >-
+    accord national interprofessionnel du 17 novembre 2017 (régime Agirc-Arrco), et les
+    tables de coefficients de minoration publiées par la caisse
+code:
+  interrupteurs:
+    abattement_points: agirc_arrco
+  moteur: >-
+    `abattement_points: agirc_arrco` applique les coefficients d'anticipation propres
+    à ce régime — deux tables, l'une indexée sur les trimestres manquants, l'autre sur
+    l'âge, dont la plus avantageuse est retenue.

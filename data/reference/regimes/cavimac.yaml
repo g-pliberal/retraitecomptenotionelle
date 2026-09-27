@@ -35,19 +35,19 @@ periodes:
     fin: 1982
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
-    duree_proratisation_par_generation: true
-    salaire_reference_par_generation: true
-    decote_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     assiette_repere_smic: 2028
-    assiette_forfaitaire: true
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
     taux_cotisation_retraite: 0.1119
     part_salariale: 0.3343
     decote_par_trimestre: 0.0125
@@ -73,19 +73,19 @@ periodes:
     fin: 1993
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
-    duree_proratisation_par_generation: true
-    salaire_reference_par_generation: true
-    decote_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     assiette_repere_smic: 2028
-    assiette_forfaitaire: true
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
     taux_cotisation_retraite: 0.1461
     part_salariale: 0.4390
     decote_par_trimestre: 0.0125
@@ -111,19 +111,19 @@ periodes:
     fin: 2001
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
-    duree_proratisation_par_generation: true
-    salaire_reference_par_generation: true
-    decote_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     assiette_repere_smic: 2028
-    assiette_forfaitaire: true
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
     taux_cotisation_retraite: 0.1475
     part_salariale: 0.4441
     decote_par_trimestre: 0.0125
@@ -149,19 +149,19 @@ periodes:
     fin: 2003
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
-    duree_proratisation_par_generation: true
-    salaire_reference_par_generation: true
-    decote_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     assiette_repere_smic: 1820
-    assiette_forfaitaire: true
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
     taux_cotisation_retraite: 0.1475
     part_salariale: 0.4441
     decote_par_trimestre: 0.0125
@@ -187,24 +187,24 @@ periodes:
     fin: 2008
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
-    duree_proratisation_par_generation: true
-    salaire_reference_par_generation: true
-    decote_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     assiette_repere_smic: 1820
-    assiette_forfaitaire: true
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
     taux_cotisation_retraite: 0.1487
     part_salariale: 0.4445
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
-    surcote_bareme: regime_general
+    surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, reversion]
     notes: >-
@@ -226,24 +226,24 @@ periodes:
     fin: 2010
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
-    duree_proratisation_par_generation: true
-    salaire_reference_par_generation: true
-    decote_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     assiette_repere_smic: 1820
-    assiette_forfaitaire: true
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
     taux_cotisation_retraite: 0.1495
     part_salariale: 0.4448
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_bareme: regime_general
+    surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, reversion]
     notes: >-
@@ -257,24 +257,24 @@ periodes:
     fin: 2022
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
-    duree_proratisation_par_generation: true
-    salaire_reference_par_generation: true
-    decote_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     assiette_repere_smic: 1820
-    assiette_forfaitaire: true
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
     taux_cotisation_retraite: 0.1533
     part_salariale: 0.4463
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_bareme: regime_general
+    surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, reversion]
     notes: >-
@@ -288,24 +288,24 @@ periodes:
     fin: null
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
-    duree_proratisation_par_generation: true
-    salaire_reference_par_generation: true
-    decote_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
     assiette_repere_smic: 1820
-    assiette_forfaitaire: true
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
     taux_cotisation_retraite: 0.1545
     part_salariale: 0.4466
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
-    surcote_bareme: regime_general
+    surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, reversion]
     notes: >-

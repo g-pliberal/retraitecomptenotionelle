@@ -1,0 +1,32 @@
+schema_version: 1
+id: cotisation_par_classes_liberales
+intitule: >-
+  Cotisation par classes de trois complémentaires libérales : un montant par palier de
+  revenu, et non un taux, à la CARPV, à la CAVEC et à la Cipav jusqu'en 2022.
+etat: a_verifier
+etape: acquerir_les_droits
+effet: >-
+  Les vétérinaires, les experts-comptables et les affiliés de la Cipav. Fiche née à la
+  phase 6 (docs/architecture.md, § 11) de ce que le schéma des régimes disait de l'interrupteur
+  `cotisation_par_classes` : elle dit la règle que le moteur applique déjà, et les textes
+  que le dépôt citait pour elle ; elle reste à relire à la source. Les notes des périodes
+  disent ce qui a été lu de chaque décret.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Rattacher l'article 2 de chacun des deux décrets, dont les notes des périodes citent
+    les versions lues, et le texte qui fixe les classes de la CAVEC, que ses notes ne
+    citent pas ; puis dire l'état.
+textes_a_rattacher:
+- reference: décret n° 50-1318 du 21 octobre 1950, article 2 (CARPV)
+- id: LEGIARTI000026892951
+  reference: >-
+    décret n° 79-262 du 21 mars 1979, article 2, version du 1er janvier 2013 (Cipav)
+code:
+  interrupteurs:
+    cotisation_par_classes: true
+  moteur: >-
+    `cotisation_par_classes` : c'est la forme de la Cipav d'avant 2023 : 1 527 € jusqu'à
+    26 580 € de revenus, 3 055 € jusqu'à 49 280 €, et ainsi de huit paliers.

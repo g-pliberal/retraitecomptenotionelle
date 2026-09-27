@@ -17,8 +17,19 @@
 # Chacun a désormais le sien, et son `rang` garde l'ordre où ils se
 # chargeaient. Ce que disaient les en-têtes de ces cinq fichiers est passé
 # dans la description des familles, ci-dessous.
+#
+# VERSION 3 : LES INTERRUPTEURS DEVIENNENT DES RENVOIS. Un interrupteur est un
+# champ de période qui choisit une règle au lieu de porter un paramètre : lire
+# la durée requise à la génération, appliquer le barème de décote de la
+# fonction publique. Il ne prend plus de valeur : il renvoie à la fiche de
+# data/reference/regles/ qui décrit la règle, et c'est la fiche qui déclare la
+# valeur (`code.interrupteurs`) et dit ce que le moteur en fait
+# (`code.moteur`) — ce que ce schéma en disait y est passé. Les champs
+# marqués `renvoi: true` sont ces interrupteurs ; absents, ils valent leur
+# `defaut`. Le chargeur refuse une valeur à la place d'un renvoi, une fiche
+# qui n'existe pas, ou une fiche qui ne déclare pas le champ.
 
-schema_version: 2
+schema_version: 3
 
 champs_regime:
   code:        "identifiant court, stable, en minuscules (clé primaire) ; le nom du fichier"
@@ -118,13 +129,12 @@ champs_periode:
   duree_requise_trimestres: "durée d'assurance requise pour le taux plein (null si sans objet)"
   duree_requise_par_generation:
     description: >-
-      Si vrai, la durée requise est lue dans
-      `legislation/duree_assurance_requise.csv` à l'ANNÉE DE NAISSANCE, et la
-      valeur ci-dessus ne sert que de repli pour les générations hors table.
-      C'est la règle depuis la loi du 22 juillet 1993 : deux assurés qui
-      liquident le même jour n'ont pas la même exigence s'ils ne sont pas de la
-      même génération. Absent ou faux, la durée est celle de la période, lue à
-      l'année de liquidation — ce qui reste correct avant 1993.
+      La durée requise se lit-elle à l'ANNÉE DE NAISSANCE, dans
+      `legislation/duree_assurance_requise.csv`, la valeur ci-dessus ne
+      servant que de repli ? Sans renvoi, la durée est celle de la période,
+      lue à l'année de liquidation.
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   duree_requise_table:
@@ -152,29 +162,28 @@ champs_periode:
 
   age_surcote_regimes_speciaux:
     description: >-
-      Si vrai, la surcote ne se compte qu'au-delà de l'âge lu dans
-      `legislation/age_surcote_regimes_speciaux.csv` à l'ANNÉE DE NAISSANCE —
-      l'âge légal décalé de cinq générations que les décrets de la SNCF
-      (article 37-1, IV) et de la RATP (article 51-1, II, 3°) écrivent,
-      soixante-quatre ans à compter de la génération 1970 —, et non au-delà de
-      l'âge d'ouverture de la fiche.
+      La surcote ne se compte-t-elle qu'au-delà de l'âge lu à l'ANNÉE DE
+      NAISSANCE dans `legislation/age_surcote_regimes_speciaux.csv`, et non
+      au-delà de l'âge d'ouverture de la période ?
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   age_ouverture_par_generation:
     description: >-
-      Si vrai, l'âge d'ouverture est lu dans
-      `legislation/age_ouverture_requis.csv` à l'ANNÉE DE NAISSANCE, et la
-      valeur ci-dessus ne sert que de repli. Réservé aux régimes alignés sur
-      l'âge légal général : les régimes spéciaux gardent le leur.
+      L'âge d'ouverture se lit-il à l'ANNÉE DE NAISSANCE, dans
+      `legislation/age_ouverture_requis.csv`, la valeur ci-dessus ne servant
+      que de repli ?
+    renvoi: true
+    valeurs: [true]
     defaut: false
   age_taux_plein_par_generation:
     description: >-
-      Si vrai, l'âge d'annulation de la décote est lu dans
-      `legislation/age_annulation_decote.csv` à l'ANNÉE DE NAISSANCE, et la
-      valeur ci-dessus ne sert que de repli. La loi du 9 novembre 2010 fait
-      passer cet âge de 65 à 67 ans pour les seules générations 1951-1955 :
-      opposer 67 ans dès 2011, comme le faisait la fiche, l'appliquait à des
-      générations que la loi n'a jamais visées.
+      L'âge d'annulation de la décote se lit-il à l'ANNÉE DE NAISSANCE, dans
+      `legislation/age_annulation_decote.csv`, la valeur ci-dessus ne servant
+      que de repli ?
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   age_table:
@@ -196,42 +205,28 @@ champs_periode:
 
   decote_par_generation:
     description: >-
-      Si vrai, le coefficient de minoration est lu dans
-      `legislation/coefficient_minoration.csv` à l'ANNÉE DE NAISSANCE. La table
-      de l'article R. 351-27 vaut aussi bien pour l'ancien droit (2,5 % par
-      trimestre) que pour la montée en charge de la loi Fillon (jusqu'à 1,25 %
-      à partir de la génération 1953) : elle se branche donc sur toutes les
-      périodes des régimes alignés depuis 1983.
+      Le coefficient de minoration se lit-il à l'ANNÉE DE NAISSANCE, dans
+      `legislation/coefficient_minoration.csv` ?
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   duree_proratisation_par_generation:
     description: >-
-      Si vrai, le DÉNOMINATEUR de la proratisation est lu dans
-      `legislation/duree_proratisation.csv` à l'ANNÉE DE NAISSANCE, et non dans
-      la durée requise pour le taux plein. Ce sont deux paramètres distincts :
-      la loi du 22 juillet 1993 a fait monter la durée requise de 150 à 160
-      trimestres pour les générations 1934-1943, et n'a touché à la durée
-      maximale prise en compte par la proratisation (article R. 351-6) que pour
-      les générations 1944-1948. Un assuré né en 1945 se voit donc opposer
-      160 trimestres pour le taux et 154 pour la proratisation.
-
-      Le drapeau est réservé aux régimes qui suivent la règle du CODE DE LA
-      SÉCURITÉ SOCIALE — le régime général et les régimes alignés. La fonction
-      publique et les régimes spéciaux ont leur propre durée de proratisation,
-      calendaire et non générationnelle (article L. 13 du code des pensions) ;
-      elle n'est pas modélisée, et leur durée requise continue d'y faire office.
-
-      Quoi qu'il arrive, la durée de proratisation retenue ne dépasse jamais la
-      durée requise : les périodes anciennes, dont la durée maximale est plus
-      courte que 150 trimestres, gardent la leur.
+      Le DÉNOMINATEUR de la proratisation se lit-il à l'ANNÉE DE NAISSANCE,
+      dans `legislation/duree_proratisation.csv`, et non dans la durée requise
+      pour le taux plein ?
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   salaire_reference_par_generation:
     description: >-
-      Si vrai, le nombre d'années retenues au salaire annuel moyen est lu dans
-      `legislation/annees_salaire_reference.csv` à l'ANNÉE DE NAISSANCE : dix à
-      vingt-cinq années, une par génération, de 1934 à 1948 (loi du 22 juillet
-      1993). Ne vaut que pour un `salaire_reference` en meilleures années.
+      Le nombre d'années retenues au salaire annuel moyen se lit-il à l'ANNÉE
+      DE NAISSANCE, dans `legislation/annees_salaire_reference.csv` ? Ne vaut
+      que pour un `salaire_reference` en meilleures années.
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   taux_plein: "taux de liquidation maximal (0.50 = 50 %)"
@@ -415,22 +410,9 @@ champs_periode:
     description: >-
       Barème de décote applicable. `regime_aligne` applique le coefficient
       `decote_par_trimestre` ci-dessus, éventuellement lu à la génération, et
-      annule la décote à `age_taux_plein`. `fonction_publique` applique celui
-      de l'article L. 14 du code des pensions : le coefficient ET l'âge
-      d'annulation y montent en charge de 2006 à 2020, ce dernier étant la
-      LIMITE D'ÂGE du grade diminuée d'un nombre décroissant de trimestres
-      (`legislation/decote_fonction_publique.csv`). `regimes_speciaux`
-      applique le même barème avec QUATRE ANS DE RETARD, celui que la réforme
-      de 2008 a donné aux régimes spéciaux : rien avant le 1er juillet 2010,
-      un dixième du taux plein ensuite, 1,25 % seulement en 2019, et un âge
-      d'annulation qui est l'âge de référence du régime — l'âge d'ouverture
-      majoré de cinq ans — diminué de seize trimestres en 2010 puis de rien à
-      partir de 2024 (`legislation/decote_regimes_speciaux.csv`).
-      `regimes_speciaux_age_fixe` en prend le coefficient mais garde l'âge
-      d'annulation écrit dans la fiche : c'est ce que le V de l'article 14 fait
-      pour les catégories d'âge atypique, artistes du ballet et musiciens de
-      l'orchestre, dont l'âge d'annulation est leur âge d'ouverture majoré de
-      huit trimestres et ne recule pas avec la montée en charge.
+      annule la décote à `age_taux_plein`. Les autres barèmes sont décrits
+      dans la fiche à laquelle la période renvoie.
+    renvoi: true
     valeurs: ["regime_aligne", "fonction_publique", "regimes_speciaux",
               "regimes_speciaux_age_fixe"]
     defaut: regime_aligne
@@ -440,18 +422,19 @@ champs_periode:
       La durée d'assurance annule-t-elle la décote ? Vrai depuis l'ordonnance
       du 26 mars 1982, qui ouvre le taux plein à 60 ans à qui a la durée
       requise ; le nombre de trimestres de décote est alors le plus faible des
-      deux décomptes, durée manquante ou âge manquant. `false` pour les
-      périodes antérieures, où le taux ne dépendait QUE de l'âge.
+      deux décomptes, durée manquante ou âge manquant. Une période où elle ne
+      l'annule pas renvoie à la fiche qui le dit.
+    renvoi: true
+    valeurs: [false]
     defaut: true
 
   decote_par_la_duree_seule:
     description: >-
-      La décote se compte sur la SEULE durée manquante, l'âge `age_taux_plein`
-      ne faisant que l'annuler une fois atteint. C'est la CRPN depuis le 1er
-      janvier 2022 : 5 % par annuité manquante sous trente annuités (R. 6527-22
-      du code des transports), sans décote à partir de soixante ans, l'âge du
-      premier alinéa de L. 6521-4 (R. 6527-23). Prime sur
+      La décote se compte-t-elle sur la SEULE durée manquante, l'âge
+      `age_taux_plein` ne faisant que l'annuler une fois atteint ? Prime sur
       `decote_annulee_par_la_duree`.
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   decote_trimestres_maximum:
@@ -498,41 +481,23 @@ champs_periode:
   surcote_bareme:
     description: >-
       Barème DATÉ de la surcote, quand le taux dépend de la date à laquelle
-      chaque trimestre a été accompli et non de l'année du départ.
-      `regime_general` : 0,75 % de 2004 à 2006 ; en 2007 et 2008, 0,75 % les
-      quatre premiers trimestres puis 1 %, et 1,25 % après soixante-cinq ans ;
-      1,25 % depuis 2009 (D. 351-1-4). `fonction_publique` : 0,75 % dans la
-      limite de vingt trimestres jusqu'en 2008, 1,25 % depuis (L. 14 III).
-      `cnbf` : 0,75 % pour les trimestres accomplis du 1er janvier 2004 au 30
-      juin 2010, 1,25 % depuis le 1er juillet 2010 (R. 653-3).
+      chaque trimestre a été accompli et non de l'année du départ ; la fiche à
+      laquelle la période renvoie dit ses taux.
       Les trimestres se comptent par trimestres civils depuis celui qui suit
       l'âge légal, ou le mois qui suit la durée requise ;
       `legislation/surcote_baremes.csv` porte les taux. `null` : le taux plat
       `surcote_par_trimestre` de la période, appliqué à tous les trimestres.
+    renvoi: true
+    valeurs: ["regime_general", "fonction_publique", "cnbf"]
     defaut: null
 
   abattement_points:
     description: >-
       Barème d'abattement d'un régime EN POINTS liquidé avant le taux plein.
       `decote_du_regime_de_base` applique le coefficient de minoration ci-dessus ;
-      `agirc_arrco` applique les coefficients d'anticipation propres à ce
-      régime — deux tables, l'une indexée sur les trimestres manquants, l'autre
-      sur l'âge, dont la plus avantageuse est retenue. `ircantec` applique le
-      barème de l'article 16 de l'arrêté du 30 décembre 1970, qui est le MÊME
-      escalier, aux mêmes marches, et se lit de la même façon. `ircec` est
-      celui des trois régimes de l'IRCEC depuis 2014 (RAAP, RACD ; RACL depuis
-      2025) : des ANNÉES manquantes jusqu'à l'âge du taux plein, une année
-      entamée comptant entière, 2,5 % pour chacune des deux premières et 5 %
-      au-delà, ou la décote du régime de base si elle est plus favorable ; pas
-      de minoration si la durée requise est réunie. `ircec_age_seul` est le
-      RACL de 2014 à 2024 : 5 % par année manquante, et seul l'âge ouvre le
-      taux plein. `cavom` est la même règle, que le règlement de la CAVOM
-      écrit « non susceptible de fractionnement » ; c'est aussi celle de la
-      CARMF de 2000 à 2016 (« 0,75 à 60 ans […] 0,95 à 64 ans »), de la
-      CARCDSF de 2008 à 2010 (« 25 % pour un départ en retraite au cours de la
-      61e année […] 5 % […] au cours de la 65e année ») et de la CAVAMAC de
-      2011 à 2023 (« 5 % lorsque la liquidation […] intervient dans les douze
-      mois précédant l'âge requis », 10 % du 13e au 24e mois, jusqu'à 25 %).
+      les autres barèmes sont décrits dans la fiche à laquelle la période
+      renvoie.
+    renvoi: true
     valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec", "ircec", "ircec_age_seul", "cavom"]
     defaut: decote_du_regime_de_base
 
@@ -541,24 +506,9 @@ champs_periode:
       Barème de MAJORATION d'un régime en points liquidé après le taux plein,
       pendant du champ précédent. `aucune` : le régime n'en sert pas — et c'est
       ce que doit porter toute période en points dont `surcote_par_trimestre`
-      est nul, un test l'exige dans les deux sens. `regime_general` : la règle
-      de l'article L. 351-1-2, telle que la branche en annuités la sert —
-      trimestres COTISÉS après l'âge légal et au-delà de la durée requise, au
-      taux `surcote_par_trimestre` ; c'est celle de la CNAVPL (R. 643-8) et de
-      la MSA des non-salariés (D. 732-42). `par_age_seul` : trimestres civils
-      ENTIERS écoulés entre `surcote_age_debut` — l'âge du taux plein de la
-      fiche, lu à la génération, si le champ est nul — et la liquidation, sans
-      condition de durée ni de cotisation, au taux `surcote_par_trimestre` ;
-      c'est la forme qu'écrivent les statuts des sections libérales, bornée
-      par les champs qui suivent. `ircantec` applique le IV de l'article 16 de
-      l'arrêté du 30 décembre 1970, entré en vigueur le 1er janvier 2010 :
-      deux taux et deux bornes d'âge — 0,75 % par trimestre ENTIER écoulé
-      entre l'âge du taux plein et la liquidation (son 1°), 0,625 % par
-      trimestre COTISÉ au-delà de la durée requise entre l'âge légal et l'âge
-      du taux plein (son 2°), sans qu'une même période puisse être comptée
-      deux fois. `rafp` : le barème actuariel de l'ERAFP, un coefficient par
-      âge entier à la date d'effet, de 1,00 à 62 ans à 1,80 à 75 (décret
-      n° 2004-569, art. 8), sans taux par trimestre.
+      est nul, un test l'exige dans les deux sens. Les autres barèmes sont
+      décrits dans la fiche à laquelle la période renvoie.
+    renvoi: true
     valeurs: ["aucune", "regime_general", "par_age_seul", "ircantec", "rafp"]
     defaut: aucune
 
@@ -617,12 +567,11 @@ champs_periode:
 
   surcote_trimestres_cotises:
     description: >-
-      `par_age_seul` seulement : ne compter que les trimestres COTISÉS depuis
-      l'âge de départ du décompte, et non le temps écoulé — « pour chaque
-      année pleine cotisée dans le présent régime » (CAVAMAC, statuts dans la
-      rédaction de l'arrêté du 4 août 2023, article 16, depuis le 1er janvier
-      2024 ; ils disaient « différée » auparavant). `false` : le temps écoulé
-      suffit, comme dans les autres sections.
+      Avec `surcote_points` en `par_age_seul` seulement : ne compter que les
+      trimestres COTISÉS depuis l'âge de départ du décompte, et non le temps
+      écoulé ? Sans renvoi, le temps écoulé suffit.
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   taux_majoration_enfants:
@@ -705,14 +654,11 @@ champs_periode:
   bareme_points:
     description: >-
       Barème de points NOMMÉ, dont la formule vit dans le moteur parce qu'elle
-      ne s'écrit pas en colonnes. Seule valeur connue : `msa_proportionnelle`,
-      la retraite proportionnelle des non-salariés agricoles — quinze points
-      jusqu'à 400 SMIC horaires, une pente jusqu'à trente à 800 SMIC, un
-      plateau à trente jusqu'à deux fois le minimum contributif, puis une pente
-      jusqu'au maximum de l'année (R. 732-70 et R. 732-71 du code rural). La
-      pension multiplie ensuite les points par 37,5 / la durée requise en
-      années. `null` : le régime n'a pas de barème nommé.
+      ne s'écrit pas en colonnes ; la fiche à laquelle la période renvoie la
+      décrit. `null` : le régime n'a pas de barème nommé.
+    renvoi: true
     valeurs: ["msa_proportionnelle"]
+    defaut: null
 
   points_de:
     description: >-
@@ -787,8 +733,8 @@ champs_periode:
   assiette_plancher:
     description: >-
       L'assiette est-elle relevée au repère quand elle lui est inférieure ?
-      C'est l'assiette minimale de la complémentaire agricole, qui ouvre ses
-      cent points même à un revenu plus faible.
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   assiette_minimale_pass:
@@ -850,25 +796,23 @@ champs_periode:
   assiette_forfaitaire:
     description: >-
       L'assiette EST le repère, quel que soit le revenu — et non un plancher.
-      C'est la base forfaitaire du régime des cultes : les articles R. 382-89
-      et R. 382-90 l'égalent au SMIC mensuel, que l'assuré perçoive davantage,
-      moins, ou rien du tout. Un ministre du culte n'a pas de salaire dont on
-      prélèverait une fraction ; la congrégation et lui cotisent sur un
-      forfait. Suppose un repère : `assiette_repere_smic`, ou une borne haute
+      Suppose un repère : `assiette_repere_smic`, ou une borne haute
       d'assiette à défaut.
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   cotisation_par_classes:
     description: >-
       Le régime ne prélève ni un taux ni un forfait mais un MONTANT PAR PALIER
-      de revenu, lu dans `classes_cotisation.csv`. C'est la forme de la Cipav
-      d'avant 2023 : 1 527 € jusqu'à 26 580 € de revenus, 3 055 € jusqu'à
-      49 280 €, et ainsi de huit paliers. Quand ce drapeau est levé, le taux et
-      le forfait de la période sont ignorés — c'est la grille qui décide —, et
-      la période doit donc porter un taux nul.
+      de revenu, lu dans `classes_cotisation.csv`. Quand une période y
+      renvoie, le taux et le forfait de la période sont ignorés — c'est la
+      grille qui décide —, et la période doit donc porter un taux nul.
       La grille est celle du millésime publié, bornes ET montants ramenés par
       le rapport des plafonds pour les autres exercices — elle est écrite en
       plafonds, pas en euros.
+    renvoi: true
+    valeurs: [true]
     defaut: false
 
   avantages_non_contributifs:

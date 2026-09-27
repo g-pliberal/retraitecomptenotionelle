@@ -86,3 +86,13 @@ exemples:
 reformes:
 - reforme_2023
 - lfss_2026_suspension
+code:
+  interrupteurs:
+    duree_requise_par_generation: true
+  moteur: >-
+    `duree_requise_par_generation` : la durée requise est lue dans `legislation/duree_assurance_requise.csv`
+    à l'ANNÉE DE NAISSANCE, et la valeur de la période (`duree_requise_trimestres`) ne
+    sert que de repli pour les générations hors table. C'est la règle depuis la loi du
+    22 juillet 1993 : deux assurés qui liquident le même jour n'ont pas la même exigence
+    s'ils ne sont pas de la même génération. Sans renvoi, la durée est celle de la période,
+    lue à l'année de liquidation — ce qui reste correct avant 1993.

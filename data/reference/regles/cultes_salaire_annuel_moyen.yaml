@@ -57,3 +57,11 @@ textes_a_rattacher:
     code de la sécurité sociale, R. 382-89 et R. 382-90 (LEGIARTI000006749795, LEGIARTI000006749796)
     : la base forfaitaire, « valeur horaire du salaire minimum de croissance en
     vigueur, multipliée par le nombre légal d'heures de travail mensuel »
+code:
+  interrupteurs:
+    assiette_forfaitaire: true
+  moteur: >-
+    `assiette_forfaitaire` : c'est la base forfaitaire du régime des cultes : les articles
+    R. 382-89 et R. 382-90 l'égalent au SMIC mensuel, que l'assuré perçoive davantage,
+    moins, ou rien du tout. Un ministre du culte n'a pas de salaire dont on prélèverait
+    une fraction ; la congrégation et lui cotisent sur un forfait.

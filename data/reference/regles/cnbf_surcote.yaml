@@ -39,3 +39,9 @@ textes_a_rattacher:
 - reference: >-
     code de la sécurité sociale, R. 653-3, versions du 8 juillet 2019 (LEGIARTI000038770288)
     et du 1er septembre 2023 (LEGIARTI000047985846)
+code:
+  interrupteurs:
+    surcote_bareme: cnbf
+  moteur: >-
+    `surcote_bareme: cnbf` : 0,75 % pour les trimestres accomplis du 1er janvier 2004
+    au 30 juin 2010, 1,25 % depuis le 1er juillet 2010 (R. 653-3).

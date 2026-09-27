@@ -58,7 +58,7 @@ periodes:
     age_ouverture: 52
     age_taux_plein: 57
     duree_requise_trimestres: 160
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     age_table: sncf_conduite_2011
     duree_requise_table: [sncf_2014]
     duree_requise_calendrier: regimes_speciaux_2008
@@ -68,10 +68,10 @@ periodes:
     taux_cotisation_retraite: 0.0892
     perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0075
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    age_surcote_regimes_speciaux: true
+    age_surcote_regimes_speciaux: age_surcote_sncf_ratp
     avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
     notes: >-
       RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, portée ici par le décret n°
@@ -107,7 +107,7 @@ periodes:
     age_ouverture: 52
     age_taux_plein: 57
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     age_table: sncf_conduite_2011
     duree_requise_table: [sncf_2014]
     duree_requise_calendrier: regimes_speciaux_2008
@@ -117,10 +117,10 @@ periodes:
     taux_cotisation_retraite: 0.1085
     perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    age_surcote_regimes_speciaux: true
+    age_surcote_regimes_speciaux: age_surcote_sncf_ratp
     avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
     notes: >-
       LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par
@@ -154,7 +154,7 @@ periodes:
     age_ouverture: 54
     age_taux_plein: 57
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     age_table: sncf_conduite_2023
     duree_requise_table: [sncf_conduite, sncf_2014]
     duree_requise_calendrier: regimes_speciaux_2008
@@ -164,10 +164,10 @@ periodes:
     taux_cotisation_retraite: 0.1085
     perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
-    bareme_decote: regimes_speciaux
+    bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    age_surcote_regimes_speciaux: true
+    age_surcote_regimes_speciaux: age_surcote_sncf_ratp
     avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
     notes: >-
       LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,

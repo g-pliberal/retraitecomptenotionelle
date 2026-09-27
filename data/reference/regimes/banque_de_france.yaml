@@ -52,17 +52,17 @@ periodes:
     fin: 2008
     type_calcul: annuites
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 160
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.0785
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -80,17 +80,17 @@ periodes:
     fin: 2010
     type_calcul: annuites
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 160
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.0785
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -102,17 +102,17 @@ periodes:
     fin: 2012
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.0785
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -137,17 +137,17 @@ periodes:
     fin: 2013
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.0812
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -172,17 +172,17 @@ periodes:
     fin: 2014
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.0854
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -207,17 +207,17 @@ periodes:
     fin: 2015
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.0886
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -242,17 +242,17 @@ periodes:
     fin: 2016
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.0928
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -277,17 +277,17 @@ periodes:
     fin: 2017
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.0965
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -312,17 +312,17 @@ periodes:
     fin: 2018
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.0997
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -347,17 +347,17 @@ periodes:
     fin: 2019
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.1029
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -382,17 +382,17 @@ periodes:
     fin: 2020
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.1056
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -417,17 +417,17 @@ periodes:
     fin: 2021
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.1083
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -452,17 +452,17 @@ periodes:
     fin: 2022
     type_calcul: annuites
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.1110
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -489,13 +489,13 @@ periodes:
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.1110
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -515,17 +515,17 @@ periodes:
     fin: null
     type_calcul: annuites
     age_ouverture: 64
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
     taux_cotisation_retraite: 0.111
     perimetre_taux: agent_seul
-    bareme_decote: fonction_publique
+    bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]

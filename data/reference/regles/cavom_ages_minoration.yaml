@@ -50,3 +50,17 @@ textes_a_rattacher:
     l'arrêté du 10 juillet 2026 (JORFTEXT000054435960)
 reformes:
 - cavom_ages_2025
+code:
+  interrupteurs:
+    abattement_points: cavom
+    decote_annulee_par_la_duree: false
+  moteur: >-
+    `abattement_points: cavom` : 5 % par année manquante, et seul l'âge ouvre le taux
+    plein — la règle du RACL de 2014 à 2024 (`ircec_age_seul`) —, que le règlement de
+    la CAVOM écrit « non susceptible de fractionnement » ; c'est aussi celle de la CARMF
+    de 2000 à 2016 (« 0,75 à 60 ans […] 0,95 à 64 ans »), de la CARCDSF de 2008 à 2010
+    (« 25 % pour un départ en retraite au cours de la 61e année […] 5 % […] au cours de
+    la 65e année ») et de la CAVAMAC de 2011 à 2023 (« 5 % lorsque la liquidation […]
+    intervient dans les douze mois précédant l'âge requis », 10 % du 13e au 24e mois,
+    jusqu'à 25 %). `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule
+    pas la minoration.

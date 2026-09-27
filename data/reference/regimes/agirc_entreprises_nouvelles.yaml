@@ -30,7 +30,7 @@ periodes:
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -63,12 +63,12 @@ periodes:
     fin: 1985
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -96,12 +96,12 @@ periodes:
     fin: 1986
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -122,12 +122,12 @@ periodes:
     fin: 1988
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -148,12 +148,12 @@ periodes:
     fin: 1989
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -178,12 +178,12 @@ periodes:
     fin: 1993
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -205,12 +205,12 @@ periodes:
     fin: 1994
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -234,12 +234,12 @@ periodes:
     fin: 1995
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -261,12 +261,12 @@ periodes:
     fin: 1996
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -289,12 +289,12 @@ periodes:
     fin: 1997
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -319,12 +319,12 @@ periodes:
     fin: 1998
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -346,12 +346,12 @@ periodes:
     fin: 2005
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -374,12 +374,12 @@ periodes:
     fin: 2010
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -406,13 +406,13 @@ periodes:
     fin: 2013
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -436,13 +436,13 @@ periodes:
     fin: 2014
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -466,13 +466,13 @@ periodes:
     fin: 2018
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -499,12 +499,12 @@ periodes:
     fin: 1993
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -531,12 +531,12 @@ periodes:
     fin: 1994
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -559,12 +559,12 @@ periodes:
     fin: 1995
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -585,12 +585,12 @@ periodes:
     fin: 1996
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -612,12 +612,12 @@ periodes:
     fin: 1997
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -641,12 +641,12 @@ periodes:
     fin: 1998
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -667,12 +667,12 @@ periodes:
     fin: 2005
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -694,12 +694,12 @@ periodes:
     fin: 2010
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -725,13 +725,13 @@ periodes:
     fin: 2013
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -754,13 +754,13 @@ periodes:
     fin: 2014
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -783,13 +783,13 @@ periodes:
     fin: 2018
     type_calcul: points
     age_ouverture: 60
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
-    abattement_points: agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere

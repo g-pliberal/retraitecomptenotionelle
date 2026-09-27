@@ -46,11 +46,11 @@ periodes:
     fin: 1977
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: sans_objet
@@ -87,11 +87,11 @@ periodes:
     fin: 1986
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: sans_objet
@@ -115,11 +115,11 @@ periodes:
     fin: 2008
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: sans_objet
@@ -142,18 +142,18 @@ periodes:
     fin: 2011
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavp
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
@@ -189,22 +189,22 @@ periodes:
     fin: 2014
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavp
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     decote_palier_age: 65
     decote_par_trimestre_apres_palier: 0.005
     surcote_par_trimestre: 0.005
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
@@ -254,22 +254,22 @@ periodes:
     fin: 2019
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavp
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     decote_palier_age: 65
     decote_par_trimestre_apres_palier: 0.005
     surcote_par_trimestre: 0.005
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
@@ -304,22 +304,22 @@ periodes:
     fin: 2025
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavp
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     decote_palier_age: 65
     decote_par_trimestre_apres_palier: 0.005
     surcote_par_trimestre: 0.005
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
@@ -364,22 +364,22 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
-    age_ouverture_par_generation: true
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: true
+    age_taux_plein_par_generation: age_annulation_decote
     age_table: cavp
     duree_requise_trimestres: 172
-    duree_requise_par_generation: true
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
     decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: false
+    decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     decote_palier_age: 65
     decote_par_trimestre_apres_palier: 0.005
     surcote_par_trimestre: 0.005
-    surcote_points: par_age_seul
+    surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 7657.00

@@ -33,3 +33,10 @@ sources:
 textes_a_rattacher:
 - reference: décret n° 2004-569, article 8 (LEGIARTI000037483754)
 - reference: décret n° 2004-569, article 9 (LEGIARTI000037483756)
+code:
+  interrupteurs:
+    surcote_points: rafp
+  moteur: >-
+    `surcote_points: rafp` : le barème actuariel de l'ERAFP, un coefficient par âge entier
+    à la date d'effet, de 1,00 à 62 ans à 1,80 à 75 (décret n° 2004-569, art. 8), sans
+    taux par trimestre.
