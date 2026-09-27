@@ -2494,3 +2494,38 @@ autre session et doit garder ses témoins au bit près : les fiches disent
 (`carmf_complementaire`, `cavec_complementaire`, `ircec_racl`, `opera_de_paris`,
 `msa_non_salaries`) attendent avec elles, puisqu'elles passent dans le paquet du
 site.
+
+**Les premières corrections, le 27 septembre 2026, la phase 8 close.**
+Préparées pendant la phase sur une branche à part, sans rien publier, puis
+reprises sur son dernier commit ; chacune a son commit et le diff de ses
+témoins, et la suite complète est passée sur chacune :
+- **La complémentaire agricole et le plancher de la base**
+  (`assiette_minimale_agricole`, `retraite_proportionnelle_msa`) : la RCO lue
+  année par année, sept périodes au lieu d'une (le minimum d'assiette, les
+  points qu'il ouvre, le taux), et le plancher de la base à 400 SMIC de 1990 à
+  2003 ; les notes de `msa_rco` et de `msa_non_salaries` avec elles. Cinq
+  témoins sur 535 : +2,4 % pour un chef d'exploitation né en 1975, +1,4 % pour
+  un chef né en 1965, et de 1 à 3 % de moins dans les scénarios rétroactifs.
+  La dette de la proposition en 2070 passe de 32,85 % à 32,48 % du PIB :
+  l'accueil et la page Programme disent 32 % au lieu de 33.
+- **Les IEG** (`regimes_speciaux_par_generation`, `age_reference_decote_ieg`) :
+  la durée de l'agent qui ouvre son droit avant soixante ans, de 2019 à 2024,
+  est celle de la génération qui atteint cet âge ce mois-là (article 9-1 de
+  l'annexe 3) ; qui a ouvert son droit avant 2025 garde l'âge d'annulation
+  d'avant, quelle que soit la date d'effet, comme la CNIEG l'applique. Deux
+  témoins : +3,2 % et +1,2 % pour des agents nés en 1965. L'exemple 1 de la
+  circulaire CNIEG n° 2024/15, Monsieur A, entre au témoin, et le modèle le
+  rend ; `regimes_speciaux_par_generation` repasse `conforme`.
+- **En chemin, le filet de conservation** (`docs/architecture.md`, § 12)
+  gelait les tableaux que `scripts/chiffrage_plf.py` réécrit, collés à leur
+  repère : la première correction les disait perdus. Il lit désormais les
+  `blocs_produits` de `zones.yaml`, et sa référence est refigée sans rien
+  perdre.
+
+Restent, de la liste : `cotisation_par_classes_liberales`, `decote_avant_1983`,
+`decote_regimes_speciaux` (la CRPCEN depuis 2025, la borne par la durée, la
+lecture au mois des pas de 2010 à 2024), `coefficients_anticipation_agirc_arrco`,
+`surcote_par_age_seul`, `minoration_racl_2014_2024`, les autres écarts de
+`retraite_proportionnelle_msa`, `surcote_ircantec`, `decote_opera_de_paris` et
+`trimestres_retenus_1972_1974` ; et les notes de `carmf_complementaire`,
+`cavec_complementaire`, `ircec_racl` et `opera_de_paris`.
