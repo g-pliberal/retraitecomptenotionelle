@@ -141,7 +141,8 @@ def test_la_fonctionnaire_passee_au_prive_garde_sa_bonification(simulateur):
                                                           "bonifications")
     assert (majoration.trimestres, majoration.services) == (8, 8)
     # Le régime général en aurait accordé deux fois plus.
-    mda = actuel.majorations_enfants.par_enfant("mda", "F", "1992-01-01", "2026-01-01", 2)
+    mda = actuel.majorations_enfants.par_enfant("mda", "F", "1992-01-01", "2026-01-01",
+                                                 ["1992-01-01", "1992-01-01"])
     assert mda.trimestres * 2 == 16 > majoration.trimestres
     resultat = actuel.calculer(carriere)
     assert _pension(resultat, "fonction_publique_etat").detail.endswith("× 120/169")
@@ -316,14 +317,16 @@ def test_deux_enfants_de_part_et_d_autre_de_2004(simulateur):
 def test_un_enfant_ne_apres_la_date_d_effet_n_ouvre_rien(simulateur):
     """Le vocabulaire tient pour impossible un enfant né après la date d'effet
     de la pension (§ 4.2) : le moteur ne lui compte rien, et compte les
-    autres."""
+    autres. La date d'effet est prise en 2011, où aucune version n'exige plus
+    un âge de l'enfant : de 1972 à 2003, l'enfant d'un an n'aurait rien ouvert
+    pour une autre raison, n'ayant pas été élevé neuf ans."""
     carriere = _carriere(simulateur, 1962, [("salarie_prive_non_cadre", 22)], 64,
-                         naissances=("1990",))
+                         naissances=("1990", "2012"))
     avant = compter.majoration_pour_enfants(
         simulateur.scenario_actuel, carriere, _regimes(simulateur, carriere),
         carriere.annee_liquidation)
     apres = compter.majoration_pour_enfants(
-        simulateur.scenario_actuel, carriere, _regimes(simulateur, carriere), 1991)
+        simulateur.scenario_actuel, carriere, _regimes(simulateur, carriere), 2011)
     assert [e.enfant for e in avant.enfants] == ["enfant_1", "enfant_2"]
     assert [e.enfant for e in apres.enfants] == ["enfant_1"]
 

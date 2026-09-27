@@ -264,14 +264,16 @@ listes:
           personne, daté, et son défaut légal s'écrit dans la version de la
           règle (§ 5.6)
       enfant_eleve_neuf_ans:
-        dit: chaque enfant a été élevé neuf ans avant son seizième anniversaire
+        dit: chaque enfant qui a neuf ans à la date d'effet a été élevé neuf ans avant son seizième anniversaire
         valeur: élevé neuf ans
-        appliquee_par: les versions mda_1972 et mda_1975 de la fiche majoration_duree_assurance_enfants, qui servent la majoration sans condition de durée d'éducation
+        appliquee_par: les versions mda_1972 et mda_1975 de la fiche majoration_duree_assurance_enfants, qui écartent l'enfant de moins de neuf ans et présument les autres élevés par leur mère
         entrera_a: compter_les_durees
         raison: >-
-          la loi n° 75-3 ouvre la majoration dès le premier enfant à condition
-          qu'il ait été élevé neuf ans avant ses seize ans ; le formulaire ne
-          demande pas qui a élevé l'enfant, ni combien de temps
+          la loi n° 71-1132 puis la loi n° 75-3 servent la majoration pour
+          l'enfant élevé neuf ans avant ses seize ans (circulaires Cnav n° 2/72
+          et n° 31/75) ; celui qui n'a pas neuf ans à la date d'effet ne peut pas
+          l'avoir été, mais le formulaire ne demande pas qui a élevé les autres,
+          ni combien de temps
       interruption_d_activite_par_la_mere:
         dit: la mère a interrompu ou réduit son activité pour chaque enfant, et elle seule
         valeur: remplie par la mère seule

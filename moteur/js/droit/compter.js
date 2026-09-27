@@ -348,7 +348,7 @@ export function majorationPourEnfants(moteur, carriere, trimestresParRegime, ann
     let fiabiliteEcartes = Fiabilite.CERTIFIEE;
     for (const [code, valides, dispositif, periode] of candidats) {
       const accorde = moteur.majorationsEnfants.parEnfant(
-        dispositif, carriere.sexe, naissance, dateEffet, nes.length,
+        dispositif, carriere.sexe, naissance, dateEffet, nes.map(([, jour]) => jour),
       );
       if (accorde === null) {
         continue;

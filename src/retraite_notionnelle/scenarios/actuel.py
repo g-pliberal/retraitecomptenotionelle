@@ -63,6 +63,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from .. import chronologie
 from ..calendrier import DateMois
 from ..carriere import Affiliations, Carriere
 from ..config import Parametres
@@ -843,17 +844,23 @@ class MajorationsPourEnfants:
         return {fiche["id"]: fiche for fiche in self._fiches.values()}
 
     def par_enfant(self, dispositif: str, sexe: str, naissance: str, date_effet: str,
-                   nombre_enfants: int) -> TrimestresAccordes | None:
+                   naissances: list[str] | tuple[str, ...]) -> TrimestresAccordes | None:
         """Ce que le dispositif accorde pour un enfant né ce jour (AAAA-MM-JJ),
         à une pension qui prend effet à ``date_effet``.
 
-        ``nombre_enfants`` est celui des enfants de l'assurée : la loi Boulin
-        n'accordait rien à la mère d'un seul enfant.
+        ``naissances`` sont celles de tous les enfants de l'assurée nés avant
+        la date d'effet : la loi Boulin n'accordait rien à la mère d'un seul
+        enfant élevé neuf ans.
 
-        ``None`` couvre les quatre cas où le droit ne donne rien : le
-        dispositif n'existe pas encore à ces dates, il n'a jamais existé dans ce
-        régime, l'assurée n'en est pas la bénéficiaire, ou elle n'a pas le
-        nombre d'enfants que la version exige.
+        Une version peut exiger un âge de l'enfant à la date d'effet
+        (``age_minimum``) : de 1972 à 2003, la majoration va à l'enfant élevé
+        neuf ans avant ses seize ans, et celui qui n'a pas neuf ans à la date
+        d'effet ne peut pas l'avoir été.
+
+        ``None`` couvre les cinq cas où le droit ne donne rien : le dispositif
+        n'existe pas encore à ces dates, il n'a jamais existé dans ce régime,
+        l'assurée n'en est pas la bénéficiaire, l'enfant n'a pas l'âge que la
+        version exige, ou elle n'a pas le nombre d'enfants qu'elle exige.
         """
         fiche = self._fiches.get(dispositif)
         if fiche is None:
@@ -864,8 +871,14 @@ class MajorationsPourEnfants:
         if version is None:
             return None
         parametres = version["parametres"]
+        age_minimum = parametres.get("age_minimum")
+
+        def eleve(jour: str) -> bool:
+            return (age_minimum is None
+                    or chronologie.annees_revolues(jour, date_effet) >= int(age_minimum))
+
         trimestres = int(parametres["trimestres_par_enfant"])
-        if trimestres <= 0:
+        if trimestres <= 0 or not eleve(naissance):
             return None
         beneficiaire = parametres["beneficiaire"]
         if beneficiaire not in self.BENEFICIAIRES:
@@ -873,7 +886,7 @@ class MajorationsPourEnfants:
                              f"{beneficiaire!r}")
         if beneficiaire == "mere" and sexe != "F":
             return None
-        if nombre_enfants < int(parametres.get("enfants_minimum", 1)):
+        if sum(1 for jour in naissances if eleve(jour)) < int(parametres.get("enfants_minimum", 1)):
             return None
         return TrimestresAccordes(
             fiche=fiche["id"], version=version["id"], texte=version["texte"],

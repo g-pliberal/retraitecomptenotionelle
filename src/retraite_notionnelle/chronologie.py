@@ -92,6 +92,17 @@ def _plus_ans(jour: str, ans: int) -> str:
     return f"{annee:04d}-{mois:02d}-{quantieme:02d}"
 
 
+def annees_revolues(debut: str, fin: str) -> int:
+    """Les années révolues de ``debut`` à ``fin`` (AAAA-MM-JJ) : les
+    anniversaires de l'un atteints au plus tard à l'autre, zéro si ``fin`` le
+    précède. L'âge d'un enfant à la date d'effet d'une pension, ou les années
+    d'éducation accomplies avant elle."""
+    ans = int(fin[:4]) - int(debut[:4])
+    if ans > 0 and _plus_ans(debut, ans) > fin:
+        ans -= 1
+    return max(ans, 0)
+
+
 def fait(ident: str, personne: str, sorte: str, debut: str, fin: str | None = None,
          attributs: dict | None = None, presomption: str | None = None) -> dict:
     """Un fait du contrat C.1 : déclaré, ou posé par la présomption qu'il

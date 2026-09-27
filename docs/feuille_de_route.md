@@ -2610,6 +2610,27 @@ de son enfant né en 2005, 133 cent-soixante-neuvièmes au lieu de 134, et sa
 pension passe de 23 561 à 23 386 euros par an. Un test tient la veille et le
 jour de la borne (`tests/test_trimestres_enfants.py`).
 
+**Deuxième correction : la loi n° 75-3 à sa date, et l'enfant élevé neuf
+ans.** Deux circulaires de la Cnav, lues dans sa base législative, disent ce
+que les textes laissaient à déduire : la n° 2/72 (§ II B 1°), que la loi
+Boulin sert « une année d'assurance supplémentaire par enfant élevé » neuf
+ans avant ses seize ans, à la mère d'au moins deux tels enfants, « Un enfant
+n'ouvre aucun droit » ; la n° 31/75, que les deux années par enfant « le
+premier enfant y ouvrant droit » valent, comme toute la loi n° 75-3, pour
+les avantages prenant effet après le 30 juin 1974 (§ 35 et 7). Les versions
+`mda_1972` et `mda_1975` se coupent donc au 1er juillet 1974, et leur
+condition d'éducation se lit sur l'âge de l'enfant à la date d'effet : celui
+qui n'a pas neuf ans ne peut pas avoir été élevé neuf ans, et ne compte ni
+pour la majoration ni pour les deux enfants de la loi Boulin. La présomption
+`enfant_eleve_neuf_ans` ne porte plus que sur ce qu'on ne sait pas : que la
+mère a élevé les autres. Deux témoins bougent, ceux des bascules : la mère
+d'un seul enfant partie en juillet 1974 reçoit huit trimestres (126
+cent-cinquantièmes au lieu de 118, 1 394 euros par an au lieu de 1 320) ; la
+mère partie en 1990 perd ceux de son enfant de cinq ans (seize trimestres
+ramenés à huit, taux de 32,5 % ramené à 25 %, 5 791 euros par an au lieu de
+7 460). `par_enfant` reçoit désormais les naissances de tous les enfants,
+et les deux chronologies savent compter des années révolues.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

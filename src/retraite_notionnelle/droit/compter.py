@@ -424,7 +424,8 @@ def majoration_pour_enfants(moteur: ScenarioActuel, carriere: Carriere,
         fiabilite_ecartes = Fiabilite.CERTIFIEE
         for code, valides, dispositif, periode in candidats:
             accorde = moteur.majorations_enfants.par_enfant(
-                dispositif, carriere.sexe, naissance, date_effet, len(nes))
+                dispositif, carriere.sexe, naissance, date_effet,
+                [jour for _, jour in nes])
             if accorde is None:
                 continue
             ouvre = TrimestresEnfant(

@@ -10995,7 +10995,8 @@ contributifs que la carrière suffit à déterminer :</p>
   salaire ;</li>
   <li><strong>les trimestres accordés au titre des enfants</strong>, datés : la
   majoration de durée d'assurance du régime général et des régimes alignés naît
-  en 1972 à un an par enfant, passe à deux ans en 1975 et va à la mère ; la
+  en 1972 à un an par enfant, passe à deux ans pour les pensions prenant effet
+  après le 30 juin 1974 et va à la mère ; la
   fonction publique et les régimes spéciaux servent leur bonification, un an par
   enfant né avant 2004 et deux trimestres pour les enfants nés depuis. Ils sont
   attribués à l'intérieur d'un régime, jamais au-dessus des régimes : ils comptent donc aussi dans

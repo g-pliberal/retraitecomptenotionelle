@@ -1,4 +1,5 @@
 import { DateMois } from "./calendrier.js";
+import { anneesRevolues } from "./chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte } from "./serie.js";
 import { applicable } from "./versions.js";
 
@@ -913,10 +914,12 @@ export class MajorationsPourEnfants {
    * pension qui prend effet à `dateEffet` : `{fiche, version, texte,
    * trimestres, services, condition, fiabilite}`, ou `null` quand le droit ne
    * donne rien — dispositif pas encore né ou jamais né dans ce régime, assuré
-   * qui n'en est pas le bénéficiaire, nombre d'enfants que la version exige
-   * non atteint. Voir `par_enfant` du Python.
+   * qui n'en est pas le bénéficiaire, enfant qui n'a pas l'âge que la version
+   * exige, nombre d'enfants qu'elle exige non atteint. `naissances` sont
+   * celles de tous les enfants nés avant la date d'effet. Voir `par_enfant`
+   * du Python.
    */
-  parEnfant(dispositif, sexe, naissance, dateEffet, nombreEnfants) {
+  parEnfant(dispositif, sexe, naissance, dateEffet, naissances) {
     const fiche = this._fiches.get(dispositif);
     if (fiche === undefined) {
       return null;
@@ -931,8 +934,11 @@ export class MajorationsPourEnfants {
       return null;
     }
     const parametres = version.parametres;
+    const ageMinimum = parametres.age_minimum ?? null;
+    const eleve = (jour) => ageMinimum === null
+      || anneesRevolues(jour, dateEffet) >= Number(ageMinimum);
     const trimestres = Number(parametres.trimestres_par_enfant);
-    if (trimestres <= 0) {
+    if (trimestres <= 0 || !eleve(naissance)) {
       return null;
     }
     const beneficiaire = parametres.beneficiaire;
@@ -942,7 +948,7 @@ export class MajorationsPourEnfants {
     if (beneficiaire === "mere" && sexe !== "F") {
       return null;
     }
-    if (nombreEnfants < Number(parametres.enfants_minimum ?? 1)) {
+    if (naissances.filter(eleve).length < Number(parametres.enfants_minimum ?? 1)) {
       return null;
     }
     return {

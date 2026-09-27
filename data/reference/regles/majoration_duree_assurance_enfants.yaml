@@ -62,15 +62,19 @@ versions:
     en_vigueur: 1972-01-01
   nee_de: LEGITEXT000006068397
   bornes:
-    liquidation.date_effet: [1972-01-01, 1975-01-01]
+    liquidation.date_effet: [1972-01-01, 1974-07-01]
   contenu:
     droit: 4 trimestres par enfant élevé neuf ans avant ses seize ans
     beneficiaire: la mère d'au moins deux enfants
+    conditions: >-
+      l'enfant a été élevé neuf ans avant ses seize ans : il a au moins neuf ans à
+      la date d'effet
     parametres:
       trimestres_par_enfant: 4
       services_par_enfant: 4
       beneficiaire: mere
       enfants_minimum: 2
+      age_minimum: 9
       fiabilite: haute
   exemples: aucun trouvé
 - id: mda_1975
@@ -81,14 +85,18 @@ versions:
   - {id: LEGIARTI000006742626, article: L. 351-4, en_vigueur: 2001-12-26}
   nee_de: LEGITEXT000006068508
   bornes:
-    liquidation.date_effet: [1975-01-01, 2004-01-01]
+    liquidation.date_effet: [1974-07-01, 2004-01-01]
   contenu:
     droit: 8 trimestres par enfant élevé neuf ans avant ses seize ans
     beneficiaire: la mère
+    conditions: >-
+      l'enfant a été élevé neuf ans avant ses seize ans : il a au moins neuf ans à
+      la date d'effet
     parametres:
       trimestres_par_enfant: 8
       services_par_enfant: 8
       beneficiaire: mere
+      age_minimum: 9
       fiabilite: haute
   exemples: aucun trouvé
 - id: mda_2003
@@ -168,19 +176,6 @@ approximations:
   effet: >-
     les mères dont un enfant a moins de sept ans à la date d'effet, de 2004 au 31 mars
     2010 ; non mesuré
-- version: [mda_1972, mda_1975]
-  ecart: >-
-    la loi n° 75-3 s'applique « au 1er juillet 1974 » hors son titre II (article 21),
-    et le décret n° 75-109 aux avantages prenant effet après le 30 juin 1974 (article
-    20) ; la borne est posée au 1er janvier 1975, où le modèle la mettait
-  effet: >-
-    les pensions prenant effet au second semestre 1974 reçoivent quatre trimestres
-    par enfant, à partir du deuxième, au lieu de huit dès le premier ; non mesuré
-- version: [mda_1972, mda_1975]
-  ecart: >-
-    la condition d'éducation — l'enfant élevé neuf ans avant ses seize ans — est présumée
-    remplie, même pour un enfant qui n'a pas neuf ans à la date d'effet
-  effet: non mesuré
 - version: [mda_2010_nes_avant, mda_2010]
   ecart: >-
     la majoration d'éducation d'un enfant de moins de quatre ans à la date d'effet
@@ -198,7 +193,8 @@ presomptions:
   pas_d_accord_des_parents: >-
     le bénéficiaire des trimestres, la mère à défaut d'accord
   enfant_eleve_neuf_ans: >-
-    la condition d'éducation de la majoration, depuis la loi n° 75-3
+    la condition d'éducation de la majoration, de 1972 à 2003 : l'enfant qui a neuf
+    ans à la date d'effet est présumé élevé par sa mère neuf ans avant ses seize ans
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2026-12-31
@@ -285,6 +281,27 @@ sources:
       « s'appliquent aux avantages prenant effet postérieurement au 30 juin 1974
       »
     date: 1975-02-26
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2/72 du 31 janvier 1972, § II B 1° « Nombre d'enfants » :
+      « La femme assurée ayant élevé au moins deux enfants pendant 9 ans avant l'âge
+      de 16 ans à sa charge ou à celle de son conjoint bénéficie d'une année d'assurance
+      supplémentaire par enfant élevé dans les conditions précitées et ceci sans aucune
+      limitation. Un enfant n'ouvre aucun droit. » Lue le 27 septembre 2026 dans la
+      base législative de la Cnav
+    date: 1972-01-31
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_272_31011972.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 31/75 du 5 mars 1975, § 35 : « la majoration d'années d'assurance
+      pour enfants est portée à 2 ans par enfant, le premier enfant y ouvrant droit
+      » ; § 7 : « l'ensemble des nouvelles dispositions s'appliquent aux avantages
+      prenant effet postérieurement au 30 juin 1974 », la majoration n'étant pas
+      parmi les réserves. Lue le 27 septembre 2026 dans la base législative de la Cnav
+    date: 1975-03-05
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_3175_05031975.aspx
 textes_a_rattacher:
 - {id: LEGIARTI000027432121, en_vigueur: 2013-05-19, change: "entre deux parents de même sexe, la majoration d'éducation se partage par moitié"}
 - {id: LEGIARTI000033713911, en_vigueur: 2016-12-25, change: le tuteur de l'enfant est admis}
@@ -329,13 +346,18 @@ historique:
   2026-09-27 — la fiche est découpée en versions, que le moteur lit enfant par enfant
   à la place des lignes `mda` de majoration_duree_assurance.csv, qui disparaît ;
   la bonification de la fonction publique passe à sa fiche.
+- >-
+  2026-09-27 — la loi n° 75-3 à sa date : les pensions prenant effet après le 30 juin
+  1974 reçoivent huit trimestres par enfant dès le premier, et non quatre par enfant
+  aux seules mères de deux enfants au moins ; et la condition d'éducation de 1972
+  à 2003 se lit sur l'âge de l'enfant à la date d'effet, qui ne peut avoir été élevé
+  neuf ans s'il n'en a pas neuf. La présomption ne porte plus que sur ce qu'on ne
+  sait pas : que la mère l'a élevé.
 reformes:
 - parents_2026
 effet: >-
   Toute mère affiliée au régime général ou à un régime aligné : la règle commande la
   décote, la proratisation, la surcote parentale et le salaire annuel moyen des parents.
   Le modèle sert d'un coup les huit trimestres par enfant que le décret de 2003 attribue
-  un par un de 2004 à mars 2010, et fait commencer la loi n° 75-3 au 1er janvier 1975
-  au lieu du 1er juillet 1974 : effets non mesurés, qui ne touchent que les mères
-  d'enfants de moins de sept ans à la date d'effet, et les pensions du second semestre
-  1974.
+  un par un de 2004 à mars 2010 : un effet non mesuré, qui ne touche que les mères
+  d'enfants de moins de sept ans à la date d'effet.

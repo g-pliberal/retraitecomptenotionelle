@@ -51,6 +51,19 @@ function plusAns(date, ans) {
   return `${quatre(annee)}-${deux(mois)}-${deux(quantieme)}`;
 }
 
+/**
+ * Les années révolues de `debut` à `fin` (AAAA-MM-JJ) : les anniversaires de
+ * l'un atteints au plus tard à l'autre, zéro si `fin` le précède. Voir
+ * `annees_revolues` du Python.
+ */
+export function anneesRevolues(debut, fin) {
+  let ans = Number(fin.slice(0, 4)) - Number(debut.slice(0, 4));
+  if (ans > 0 && plusAns(debut, ans) > fin) {
+    ans -= 1;
+  }
+  return Math.max(ans, 0);
+}
+
 /** Un fait du contrat C.1 : déclaré, ou posé par la présomption qu'il nomme. */
 export function fait(ident, personne, sorte, debut, fin = null, attributs = null,
   presomption = null) {
