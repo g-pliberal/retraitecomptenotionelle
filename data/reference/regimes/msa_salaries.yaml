@@ -35,6 +35,7 @@ periodes:
     part_salariale: 0.3488
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
@@ -74,6 +75,7 @@ periodes:
     part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
@@ -102,6 +104,7 @@ periodes:
     part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
@@ -122,12 +125,60 @@ periodes:
     part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972, avec 144 trimestres retenus au plus pour une
       pension qui prend effet en 1974 (décret n° 50-1225, article 59-1).
   - debut: 1975
+    fin: 1977
+    type_calcul: 'annuites'
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    taux_plein: 0.5
+    decote_par_generation: decote_regime_general
+    salaire_reference: '10_meilleures_annees'
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Les règles de 1972, les 150 trimestres du dénominateur étant tous
+      retenus depuis 1975 : le décret n° 50-1225, article 59-1, ne fixe de
+      palier que pour les pensions qui prennent effet de 1972 à 1974.
+  - debut: 1978
+    fin: 1978
+    type_calcul: 'annuites'
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    taux_plein: 0.5
+    decote_par_generation: decote_regime_general
+    salaire_reference: '10_meilleures_annees'
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
+    age_taux_plein_femmes: 63
+    duree_taux_plein_femmes_trimestres: 150
+    duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Les règles de 1975, et le taux de soixante-cinq ans dès soixante-trois
+      ans aux femmes qui réunissent trente-sept ans et demi d'assurance, pour
+      une pension qui prend effet en 1978 (décret n° 51-727, article 1er bis,
+      LEGIARTI000006773767). Le modèle compte, comme au régime général, les
+      deux régimes et les assurances sociales d'avant 1945.
+  - debut: 1979
     fin: 1982
     type_calcul: 'annuites'
     age_ouverture: 60
@@ -141,12 +192,16 @@ periodes:
     part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
+    age_taux_plein_femmes: 60
+    duree_taux_plein_femmes_trimestres: 150
+    duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
-      Les règles de 1972, les 150 trimestres du dénominateur étant tous
-      retenus depuis 1975 : le décret n° 50-1225, article 59-1, ne fixe de
-      palier que pour les pensions qui prennent effet de 1972 à 1974.
+      Les règles de 1978, le taux de soixante-cinq ans servi dès soixante
+      ans aux femmes de trente-sept ans et demi d'assurance pour une pension
+      qui prend effet à compter du 1er janvier 1979 (même article).
   - debut: 1983
     fin: 1993
     type_calcul: 'annuites'

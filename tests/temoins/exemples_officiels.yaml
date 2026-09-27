@@ -353,6 +353,63 @@ exemples:
     carriere: {naissance: "1944-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2009-05", trimestres_valides: 171}
     attendu: {trimestres_requis: 160, taux_liquidation: 0.55125}
 
+  # ---- Cnav, circulaire 22/83 du 16 février 1983 (taux acquis) -----------
+  # Trois cas d'un même assuré, né en mars 1917, dont la pension prend effet
+  # le 1er septembre 1983 : elle ne peut être inférieure à celle que donnait
+  # le droit d'avant le 1er avril 1983, au taux de l'âge atteint le 31 mars,
+  # 55 %. La Cnav compare les deux pensions, la nouvelle sur la durée
+  # « corrigée » après soixante-cinq ans, chacune ramenée au maximum. Le
+  # salaire annuel moyen de l'exemple ne se reconstruit pas ; le taux retenu,
+  # et la pension rapportée à ce salaire avant le maximum, si.
+  - id: cnav_22_83_taux_acquis_60_trimestres
+    source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 1er cas", verifie_le: "2026-09-27"}
+    enonce: >-
+      « Assuré né en mars 1917 - fixe l'entrée en jouissance de sa pension au
+      1er septembre 1983 » ; « L'assuré totalise 60 trimestres » ;
+      « Coefficient acquis au 31-3-83 : 55 % », 97 859 × 55 × 60 / (100 ×
+      150) = 21 528,98 ; durée corrigée « 60 + (60 x 12,50 %) = 67,5 arrondi
+      à 68 », 97 859 × 50 × 68 / (100 × 150) = 22 181,37 : « On retiendra la
+      pension qui résulte des dispositions applicables à partir du 1-4-83 ».
+      Taux 50 %, pension de 50 % × 68/150 du salaire annuel moyen.
+    carriere: {naissance: "1917-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 60}
+    attendu: {taux_liquidation: 0.5, pension_base_sur_sam: 0.22666666666666666}
+    ecart_connu:
+      modele: {taux_liquidation: 0.55, pension_base_sur_sam: 0.22}
+      explication: >-
+        Le moteur ne majore pas la durée de qui liquide après soixante-cinq ans
+        sans 150 trimestres (décret n° 45-0179, article 70-6, puis R. 351-7) :
+        la pension nouvelle reste à 50 % × 60/150, sous celle du taux acquis,
+        55 % × 60/150, qu'il sert. Porter la majoration de durée rendrait la
+        valeur publiée.
+      fiche: majoration_duree_apres_65_ans
+      depuis: "2026-09-27"
+
+  - id: cnav_22_83_taux_acquis_145_trimestres
+    source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 2ème cas", verifie_le: "2026-09-27"}
+    enonce: >-
+      « L'assuré totalise 145 trimestres » ; « Coefficient acquis au 31-3-83 :
+      55 % », 97 859 × 55 × 145 / (100 × 150) = 52 028,36, ramenée au
+      maximum, 48 906 ; durée corrigée 150, 97 859 × 50 × 150 / (100 × 150)
+      = 48 929,50, ramenée au maximum, 44 460 : « On retiendra la prestation
+      qui résulte des dispositions antérieures au 1-4-83 ». Taux 55 %,
+      pension de 55 % × 145/150 du salaire annuel moyen avant le maximum.
+    carriere: {naissance: "1917-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 145}
+    attendu: {taux_liquidation: 0.55, pension_base_sur_sam: 0.5316666666666666}
+
+  - id: cnav_22_83_taux_acquis_117_trimestres
+    source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 3ème cas", verifie_le: "2026-09-27"}
+    enonce: >-
+      « L'assuré totalise 117 trimestres », salaire annuel moyen de 152 000
+      F ; « Coefficient acquis au 31-3-83 : 55 % », 152 000 × 55 × 117 / (100
+      × 150) = 65 208, ramenée au maximum, 48 906 ; durée corrigée 132, 152
+      000 × 50 × 132 / (100 × 150) = 66 880, ramenée au maximum, 44 460 : « on
+      retiendra la pension qui résulte de cette dernière législation ». Taux
+      55 %, pension de 55 % × 117/150 du salaire annuel moyen avant le
+      maximum. Le modèle, qui ne porte ni le maximum ni la durée corrigée,
+      retient la même législation, par l'autre comparaison.
+    carriere: {naissance: "1917-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 117}
+    attendu: {taux_liquidation: 0.55, pension_base_sur_sam: 0.429}
+
   # ---- Les trimestres accordés au titre des enfants ----------------------
   # Ni la caisse ni service-public ne publient une carrière entière dont ils
   # donnent la durée d'assurance : ce qu'ils publient, c'est le NOMBRE DE

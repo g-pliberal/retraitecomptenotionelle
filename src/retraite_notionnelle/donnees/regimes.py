@@ -290,6 +290,26 @@ class PeriodeRegime:
     #: diminués de 5 points par année anticipée ensuite. Une carrière longue
     #: n'y changeait rien.
     decote_annulee_par_la_duree: bool
+    #: Le taux croît-il encore au-delà de l'âge du taux plein ? Jusqu'au 31
+    #: mars 1983, au régime général et chez les salariés agricoles, « le taux
+    #: de 50 % augmente, sans limitation, de 2,5 % par trimestre d'âge après
+    #: 65 ans » (circulaire Cnav n° 22/83), comme il croissait de soixante à
+    #: soixante-cinq ans ; et qui avait passé soixante-cinq ans au 1er avril
+    #: 1983 garde le taux acquis au 31 mars (ordonnance n° 82-270, article 11).
+    majoration_d_ajournement: bool
+    #: L'écart au taux plein se compte-t-il en ANNÉES D'ASSURANCE accomplies
+    #: après l'âge d'ouverture, et non en âge ? Le régime général avant 1951 :
+    #: « 4 p. 100 du salaire annuel de base par année d'assurance accomplie
+    #: postérieurement à cet âge » (ordonnance du 19 octobre 1945, article 63).
+    ajournement_par_annee_d_assurance: bool
+    #: Âge dès lequel une femme qui réunit la durée écrite dans les régimes
+    #: nommés reçoit le taux de l'âge du taux plein : soixante-trois ans en
+    #: 1978, soixante ans de 1979 au 31 mars 1983, pour trente-sept ans et demi
+    #: d'assurance « dans le régime général ou dans ce régime et celui des
+    #: salariés agricoles » (décret n° 45-0179, article 70-2, c).
+    age_taux_plein_femmes: float | None
+    duree_taux_plein_femmes_trimestres: int | None
+    duree_taux_plein_femmes_regimes: tuple[str, ...]
     #: La décote se compte-t-elle sur la SEULE durée, l'âge ne faisant que
     #: l'annuler une fois atteint ? C'est la CRPN depuis le 1er janvier 2022 :
     #: « une décote égale à 5 % par annuité manquante » sous trente annuités
@@ -1129,6 +1149,8 @@ INTERRUPTEURS: dict[str, object] = {
     "duree_proratisation_par_generation": False,
     "salaire_reference_par_generation": False,
     "decote_annulee_par_la_duree": True,
+    "majoration_d_ajournement": False,
+    "ajournement_par_annee_d_assurance": False,
     "decote_par_la_duree_seule": False,
     "surcote_trimestres_cotises": False,
     "assiette_plancher": False,
@@ -1398,6 +1420,23 @@ class CatalogueRegimes:
                 bareme_decote=p.get("bareme_decote", "regime_aligne"),
                 decote_annulee_par_la_duree=bool(
                     p.get("decote_annulee_par_la_duree", True)
+                ),
+                majoration_d_ajournement=bool(
+                    p.get("majoration_d_ajournement", False)
+                ),
+                ajournement_par_annee_d_assurance=bool(
+                    p.get("ajournement_par_annee_d_assurance", False)
+                ),
+                age_taux_plein_femmes=(
+                    None if p.get("age_taux_plein_femmes") is None
+                    else float(p["age_taux_plein_femmes"])
+                ),
+                duree_taux_plein_femmes_trimestres=(
+                    None if p.get("duree_taux_plein_femmes_trimestres") is None
+                    else int(p["duree_taux_plein_femmes_trimestres"])
+                ),
+                duree_taux_plein_femmes_regimes=tuple(
+                    p.get("duree_taux_plein_femmes_regimes") or ()
                 ),
                 decote_par_la_duree_seule=bool(
                     p.get("decote_par_la_duree_seule", False)

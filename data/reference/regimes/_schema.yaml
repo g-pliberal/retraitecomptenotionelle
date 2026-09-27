@@ -392,6 +392,29 @@ champs_periode:
     unite: trimestres
     defaut: null
 
+  age_taux_plein_femmes:
+    description: >-
+      Âge dès lequel une femme qui réunit `duree_taux_plein_femmes_trimestres`
+      dans les régimes `duree_taux_plein_femmes_regimes` reçoit le taux de
+      l'âge du taux plein, avant 1983 : soixante-trois ans pour une pension
+      qui prend effet en 1978, soixante ans ensuite, à qui réunit trente-sept
+      ans et demi d'assurance « dans le régime général ou dans ce régime et
+      celui des salariés agricoles » (décret n° 45-0179, article 70-2, c ;
+      décret n° 51-727, article 1er bis ; fiche `decote_avant_1983`).
+    defaut: null
+
+  duree_taux_plein_femmes_trimestres:
+    description: "durée qui ouvre `age_taux_plein_femmes`"
+    unite: trimestres
+    defaut: null
+
+  duree_taux_plein_femmes_regimes:
+    description: >-
+      Régimes dont la durée compte pour `age_taux_plein_femmes` : le régime
+      général, les assurances sociales d'avant 1945, que le modèle tient à
+      part, et les salariés agricoles.
+    defaut: []
+
   age_ouverture_services:
     description: >-
       Âge d'ouverture ABAISSÉ pour qui réunit `services_ouverture_annees` de
@@ -451,6 +474,32 @@ champs_periode:
     renvoi: true
     valeurs: [false]
     defaut: true
+
+  majoration_d_ajournement:
+    description: >-
+      Le taux croît-il encore au-delà de l'âge du taux plein ? Jusqu'au 31 mars
+      1983, au régime général et chez les salariés agricoles, il dépendait de
+      l'âge seul, au-delà de soixante-cinq ans comme en deçà : « le taux de 50
+      % augmente, sans limitation, de 2,5 % par trimestre d'âge après 65 ans »
+      (circulaire Cnav n° 22/83). Le coefficient est celui de la décote, par
+      trimestre civil entier ; et qui avait passé soixante-cinq ans au 1er
+      avril 1983 garde le taux acquis au 31 mars, que les périodes suivantes
+      lisent dans celle de 1982. Une période où il croît renvoie à la fiche
+      qui le dit.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
+  ajournement_par_annee_d_assurance:
+    description: >-
+      L'écart au taux plein se compte-t-il en années d'assurance accomplies
+      après l'âge d'ouverture, et non en âge ? C'est le régime général avant
+      1951 : l'article 63 de l'ordonnance du 19 octobre 1945 majorait les 20 %
+      « de 4 p. 100 du salaire annuel de base par année d'assurance accomplie
+      postérieurement à cet âge ».
+    renvoi: true
+    valeurs: [true]
+    defaut: false
 
   decote_par_la_duree_seule:
     description: >-

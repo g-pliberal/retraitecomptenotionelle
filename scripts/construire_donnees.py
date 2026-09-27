@@ -666,6 +666,7 @@ def _regimes() -> list[dict]:
                     # JavaScript le lit nul.
                     **({"trimestres_retenus_maximum": p.trimestres_retenus_maximum}
                        if p.trimestres_retenus_maximum is not None else {}),
+                    **_regles_d_avant_1983(p),
                     **_regles_des_marins(p),
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),
@@ -713,6 +714,24 @@ def _regles_des_sections(p) -> dict:
         "taux_plein_anticipe_maximum_annees": p.taux_plein_anticipe_maximum_annees,
         # La surcote de la CAVAMAC depuis 2024, par années COTISÉES.
         "surcote_trimestres_cotises": p.surcote_trimestres_cotises or None,
+    }
+    return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
+
+
+def _regles_d_avant_1983(p) -> dict:
+    """L'ajournement et le taux des femmes d'avant le 1er avril 1983, et
+    seulement là : les périodes du régime général et des salariés agricoles
+    d'avant 1983. Même raison que pour les marins : le moteur JavaScript lit
+    leur absence comme leur fausseté, ou leur nullité.
+    """
+    champs = {
+        "majoration_d_ajournement": p.majoration_d_ajournement or None,
+        "ajournement_par_annee_d_assurance":
+            p.ajournement_par_annee_d_assurance or None,
+        "age_taux_plein_femmes": p.age_taux_plein_femmes,
+        "duree_taux_plein_femmes_trimestres": p.duree_taux_plein_femmes_trimestres,
+        "duree_taux_plein_femmes_regimes":
+            list(p.duree_taux_plein_femmes_regimes) or None,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 

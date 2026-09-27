@@ -1,0 +1,98 @@
+schema_version: 1
+id: majoration_duree_apres_65_ans
+intitule: >-
+  Depuis le 1er avril 1983, au régime général et chez les salariés agricoles, l'assuré
+  qui liquide après soixante-cinq ans sans réunir 150 trimestres dans le régime voit sa
+  durée d'assurance majorée de 2,5 % par trimestre postérieur à son soixante-cinquième
+  anniversaire, arrondie au trimestre supérieur, sans pouvoir dépasser 150 trimestres.
+etat: manquante
+effet: >-
+  Les assurés du régime général et des salariés agricoles qui liquident après
+  soixante-cinq ans sans la durée : le moteur ne majore pas leur durée. Parti à
+  soixante-six ans et trois mois avec 136 trimestres, un assuré en a 150 pour la Cnav
+  (« 136 + (136 x 12,5 %) = 153 ramené à 150 trimestres ») et 136 pour le moteur : 9,3 %
+  de pension en moins. Né en mars 1917, avec 60 trimestres, le taux acquis au 31 mars
+  1983 lui en rend l'essentiel, 55 % sur 60 trimestres au lieu de 50 % sur 68 (circulaire
+  Cnav n° 22/83, point 313, premier cas, en écart connu). Depuis le 15 février 2004, la
+  règle vaut pour les périodes antérieures à 2004 et s'étend aux autres régimes ;
+  combien de pensions elle touche, et comment elle se combine à la surcote, restent à
+  lire. Trouvée le 27 septembre 2026 en relisant la fiche `decote_avant_1983`.
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Lire L. 351-6 dans ses rédactions depuis 1985, et R. 351-7 depuis le 3 juin 2011
+    (LEGIARTI000024113035, LEGIARTI000047633307, LEGIARTI000053335592), qui ne la donnent
+    plus qu'« à l'âge de soixante-cinq ans s'il remplit les » conditions qu'elles
+    écrivent ; puis porter la majoration dans le moteur, avant la surcote, en disant
+    comment les deux se partagent les trimestres d'après 2003.
+  - >-
+    Chercher un exemple publié de la rédaction de 2004 ou d'après, circulaire Cnav ou
+    fiche de l'Assurance retraite.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179 du 29 décembre 1945, article 70-6, rédaction du 23 juillet 1982 au
+      21 décembre 1985 (LEGIARTI000006760668) : « L'assuré âgé de plus de soixante-cinq ans
+      et qui ne justifie pas de 150 trimestres d'assurance dans le régime général de la
+      sécurité sociale bénéficie, en application de l'article L. 342-3 du code de la
+      sécurité sociale, d'une majoration de sa durée d'assurance dans ce régime égale à 2,5
+      p. 100 par trimestre postérieur à son soixante-cinquième anniversaire sans que cette
+      majoration puisse avoir pour effet de porter au-delà de 150 trimestres sa durée
+      d'assurance. Le nombre total de trimestres d'assurance obtenu en application de
+      l'alinéa précédent est éventuellement arrondi au chiffre immédiatement supérieur,
+      sans pouvoir excéder 150. » Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 351-7, rédaction du 21 décembre 1985 au 15 février
+      2004 (LEGIARTI000006749350) : la même phrase, « en application de l'article L.
+      351-6 » ; rédaction du 15 février 2004 au 3 juin 2011 (LEGIARTI000006749351) :
+      « L'assuré âgé d'au moins soixante-cinq ans bénéficie, en application de l'article L.
+      351-6, d'une majoration de sa durée d'assurance dans le régime général de sécurité
+      sociale égale à 2,5 % par trimestre postérieur à son soixante-cinquième anniversaire :
+      1° Au titre des périodes antérieures au 1er janvier 2004 ; 2° Au titre des périodes
+      accomplies dans ce régime et, le cas échéant, dans un ou plusieurs autres régimes
+      obligatoires postérieurement au 31 décembre 2003 », sans porter la durée « au-delà
+      de la limite prévue au troisième alinéa de l'article L. 351-1 ». Lu dans l'index LEGI
+      du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      salariés agricoles : décret n° 50-1225 du 21 septembre 1950, article 55-6, rédaction
+      du 15 décembre 1982 au 22 avril 2005 (LEGIARTI000006774017) : la même règle, « dans
+      le régime des assurances sociales agricoles », en application de l'article 1er bis
+      (par. 9) du décret n° 51-727. Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 22/83 du 16 février 1983, point 312 : « L'assuré qui demande sa
+      pension après 65 ans alors qu'il ne totalise pas 150 trimestres d'assurance au seul
+      régime général, bénéficie d'une majoration de sa durée d'assurance, justifiée à la
+      date d'entrée en jouissance de sa pension, de 2,50 % par trimestre postérieur au 65ème
+      anniversaire » ; « L'attribution de cette majoration est indépendante du fait d'avoir
+      exercé ou non une activité professionnelle entre le 65ème anniversaire et le point de
+      départ de la pension » ; ses exemples, 136 trimestres à soixante-six ans et trois mois
+      (« ramené à 150 trimestres »), 92 à soixante-sept ans et trois mois (« 112,70 arrondi
+      à 113 trimestres ») ; et le premier cas du point 313, 60 trimestres « arrondi à 68 »
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2283_16021983.aspx
+    date: 2026-09-27
+textes_a_rattacher:
+- id: LEGIARTI000006760668
+  reference: >-
+    décret n° 45-0179 du 29 décembre 1945, article 70-6, rédaction du 23 juillet 1982 : la
+    majoration de durée de 2,5 % par trimestre après soixante-cinq ans
+- id: LEGIARTI000006749350
+  reference: code de la sécurité sociale, R. 351-7, rédaction du 21 décembre 1985
+- id: LEGIARTI000006749351
+  reference: >-
+    code de la sécurité sociale, R. 351-7, rédaction du 15 février 2004 : les périodes
+    d'avant 2004, et celles d'après dans tous les régimes
+- id: LEGIARTI000006774017
+  reference: >-
+    décret n° 50-1225 du 21 septembre 1950, article 55-6, rédaction du 15 décembre 1982 :
+    la même règle chez les salariés agricoles
+exemples:
+- cnav_22_83_taux_acquis_60_trimestres

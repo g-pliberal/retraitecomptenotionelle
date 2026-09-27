@@ -660,6 +660,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 periode, carriere, trimestres, requis, age_liquidation,
                 age_annulation
             )
+            if taux_plein_des_femmes(periode, carriere, durees, age_liquidation):
+                trimestres_decote = 0.0
             if decote and trimestres_decote > 0:
                 # Les régimes sans décote (fonction publique avant 2004,
                 # régimes spéciaux avant 2008) ne subissent que la
@@ -667,6 +669,18 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 if fiabilite_decote is not None:
                     fiabilite_globale = min(fiabilite_globale, fiabilite_decote)
                 taux *= max(0.0, 1.0 - decote * trimestres_decote)
+            if periode.majoration_d_ajournement and decote:
+                # Avant le 1er avril 1983, le taux croît avec l'âge seul,
+                # au-delà de soixante-cinq ans comme en deçà.
+                ajournement = ecart_au_taux_plein(
+                    moteur, periode, carriere, age_liquidation, age_annulation)
+                if ajournement > 0:
+                    coefficient_surcote = 1.0 + decote * ajournement
+                    taux *= coefficient_surcote
+            acquis = taux_acquis_au_31_mars_1983(moteur, periode, carriere)
+            if acquis is not None and acquis > taux:
+                coefficient_surcote = acquis / (periode.taux_plein or 0.5)
+                taux = acquis
             # La surcote ne récompense que les trimestres COTISÉS APRÈS
             # l'âge légal ET au-delà de la durée requise. Les compter tous
             # majorait la pension de qui a commencé tôt sans jamais
@@ -1479,11 +1493,119 @@ def trimestres_de_decote(moteur, periode: PeriodeRegime, carriere: Carriere,
         # plein à 60 ans à des générations auxquelles la loi ne l'a jamais
         # donné.
         trimestres_decote = manquants_age
+        if periode.ajournement_par_annee_d_assurance:
+            trimestres_decote = float(max(0, -ecart_au_taux_plein(
+                moteur, periode, carriere, age_liquidation, age_annulation)))
     if trimestres_decote <= 0:
         return 0.0
     if periode.decote_trimestres_maximum is not None:
         trimestres_decote = min(trimestres_decote, periode.decote_trimestres_maximum)
     return trimestres_decote
+
+
+#: L'ordonnance n° 82-270 du 26 mars 1982 entre en vigueur le 1er avril 1983
+#: (article 9) : jusqu'au 31 mars, le taux dépend de l'âge seul.
+ORDONNANCE_DU_26_MARS_1982 = DateMois(1983, 4)
+
+
+def ecart_au_taux_plein(moteur, periode: PeriodeRegime, carriere: Carriere,
+                        age_liquidation: float, age_annulation: float) -> int:
+    """Avant le 1er avril 1983, les trimestres qui séparent la liquidation du
+    taux plein : négatifs en deçà, la décote ; positifs au-delà, la
+    majoration d'ajournement.
+
+    **Au-delà de soixante-cinq ans, le taux croissait encore.** « En
+    application de la législation en vigueur jusqu'au 31 mars 1983, le taux
+    de 50 % augmente, sans limitation, de 2,5 % par trimestre d'âge après 65
+    ans » (circulaire Cnav n° 22/83, point 313) ; jusqu'en 1971, les 20 %
+    étaient « augmenté[s] en cas d'ajournement de 1 % par trimestre
+    postérieur au soixantième anniversaire » (circulaire n° 93 SS du 17 mai
+    1951), sans borne non plus. Le moteur arrêtait le taux au taux plein. Au
+    delà, il compte les trimestres civils entiers, comme en deçà.
+
+    **Avant 1951, des années d'assurance, et non d'âge.** L'article 63 de
+    l'ordonnance du 19 octobre 1945 majorait les 20 % « de 4 p. 100 du
+    salaire annuel de base par année d'assurance accomplie postérieurement à
+    cet âge » : qui cessait de cotiser à soixante ans gardait 20 % à tout
+    âge. La loi n° 51-374 n'en fait des années d'âge que pour une entrée en
+    jouissance postérieure au 31 décembre 1950 (``ajournement_par_annee_d_assurance``).
+    """
+    if periode.ajournement_par_annee_d_assurance:
+        age_ouverture = ouvrir.age_ouverture(moteur, periode, carriere)
+        annees = _trimestres_cotises_apres(
+            carriere, age_ouverture, carriere.annee_liquidation) // 4
+        return 4 * annees - round((age_annulation - age_ouverture) * 4)
+    if age_liquidation >= age_annulation:
+        return int((age_liquidation - age_annulation + 1e-9) * 4)
+    return -_au_trimestre_superieur((age_annulation - age_liquidation) * 4)
+
+
+def taux_plein_des_femmes(periode: PeriodeRegime, carriere: Carriere, durees,
+                          age_liquidation: float) -> bool:
+    """Le taux de soixante-cinq ans, avant 1983, aux femmes de trente-sept ans
+    et demi d'assurance.
+
+    « La pension est également calculée au taux normalement applicable à
+    soixante-cinq ans au profit : […] c) Des femmes assurées […] qui
+    réunissent trente-sept ans et demi d'assurance dans le régime général ou
+    dans ce régime et celui des salariés agricoles : Lorsque la pension prend
+    effet à une date comprise dans la période du 1er janvier au 31 décembre
+    1978 et qu'à cette date l'intéressée a atteint l'âge de soixante-trois
+    ans ; Lorsque la pension prend effet à une date postérieure au 31
+    décembre 1978 et qu'à cette date l'intéressée a atteint l'âge de soixante
+    ans » (décret n° 45-0179, article 70-2 ; décret n° 51-727, article 1er
+    bis, chez les salariés agricoles). Le moteur leur servait la moitié du
+    taux à soixante ans. La durée est celle des régimes que la période
+    nomme : le régime général, les assurances sociales d'avant 1945, que le
+    modèle tient à part, et les salariés agricoles.
+    """
+    if (periode.age_taux_plein_femmes is None or carriere.sexe != "F"
+            or age_liquidation < periode.age_taux_plein_femmes - 1e-9):
+        return False
+    return (durees.cumul_plafonne("assurance", periode.duree_taux_plein_femmes_regimes)
+            >= (periode.duree_taux_plein_femmes_trimestres or 0))
+
+
+def taux_acquis_au_31_mars_1983(moteur, periode: PeriodeRegime,
+                                carriere: Carriere) -> float | None:
+    """Le taux que garde qui avait passé soixante-cinq ans au 1er avril 1983.
+
+    « Les dispositions de l'article L. 331 du code de la sécurité sociale,
+    telles qu'elles résultent de la présente ordonnance, ne sauraient avoir
+    pour effet de réduire le montant de la pension à un montant inférieur à
+    celui qu'elle aurait atteint si la liquidation en était intervenue avant
+    le 1er avril 1983, compte tenu de l'âge atteint à cette date »
+    (ordonnance n° 82-270, article 11 ; décret n° 82-628, article 16, chez
+    les salariés agricoles par l'article 8). La Cnav l'applique ainsi : « le
+    taux majoré pour ajournement doit obligatoirement être déterminé en
+    fonction de l'âge au 1er avril 1983 sans pouvoir être accru si l'assuré
+    fixe l'entrée en jouissance de sa pension au-delà de cette date » ; né en
+    mars 1917, « Coefficient acquis au 31-3-83 : 55 % » (circulaire n° 22/83,
+    point 313).
+
+    Le taux et le coefficient sont ceux de la période du régime en vigueur
+    en 1982, quand elle croissait avec l'âge (``majoration_d_ajournement``),
+    et les trimestres ceux que l'âge a accomplis le 31 mars 1983, l'âge
+    tombant le premier du mois de naissance. La Cnav compare deux pensions,
+    la nouvelle sur la durée « corrigée » après soixante-cinq ans : le
+    moteur, qui ne corrige pas la durée, liquide les deux sur la même, et
+    comparer les taux revient à les comparer (fiche ``decote_avant_1983``).
+    """
+    mois = ORDONNANCE_DU_26_MARS_1982.rang - carriere.date_naissance.rang - 1
+    if (carriere.date_liquidation.rang < ORDONNANCE_DU_26_MARS_1982.rang
+            or mois < 12 * 60):
+        return None
+    annee = ORDONNANCE_DU_26_MARS_1982.annee - 1
+    ancienne = moteur.catalogue[periode.regime].periode(annee)
+    if ancienne is None or not ancienne.majoration_d_ajournement:
+        return None
+    coefficient, age_annulation, _ = decote_opposable(moteur, ancienne, carriere, annee)
+    if not coefficient:
+        return None
+    ecoules = int((mois / 12.0 - age_annulation + 1e-9) * 4)
+    if ecoules <= 0:
+        return None
+    return (ancienne.taux_plein or 0.5) * (1.0 + coefficient * ecoules)
 
 
 def retranche_decote(moteur, periode: PeriodeRegime, carriere: Carriere) -> int:

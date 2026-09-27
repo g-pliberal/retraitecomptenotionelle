@@ -42,7 +42,7 @@ inventaire:
 periodes:
 
   - debut: 1945
-    fin: 1971
+    fin: 1950
     type_calcul: annuites
     age_ouverture: 60
     age_taux_plein: 65
@@ -54,6 +54,8 @@ periodes:
     part_salariale: 0.3488   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
+    ajournement_par_annee_d_assurance: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
@@ -77,6 +79,40 @@ periodes:
       loi Boulin reprendra en 1972 sur un taux de 50 %. Le plafond de vingt
       trimestres ramène exactement le taux à 20 % pour un départ à 60 ans,
       qui est bien ce que servait le droit d'alors.
+      AVANT 1951, L'AJOURNEMENT SE COMPTAIT EN ANNÉES D'ASSURANCE.
+      L'article 63 de l'ordonnance, dans ses rédactions de 1945 et de 1948,
+      majorait les 20 % « de 4 p. 100 du salaire annuel de base par année
+      d'assurance accomplie postérieurement à cet âge » ; la loi n° 51-374
+      du 27 mars 1951 (article 15) n'en fait des années d'âge que pour une
+      entrée en jouissance postérieure au 31 décembre 1950. D'où la période
+      de 1945 à 1950 (`ajournement_par_annee_d_assurance`). Et la majoration
+      ne s'arrêtait pas à soixante-cinq ans : le taux croissait encore
+      au-delà, sans autre borne que le maximum des pensions, jusqu'au 31 mars
+      1983 (`majoration_d_ajournement`, fiche `decote_avant_1983`).
+
+  - debut: 1951
+    fin: 1971
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 120
+    taux_plein: 0.40
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0860   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    part_salariale: 0.3488   # du taux plafonné
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+    notes: >-
+      Les règles de 1945, la majoration comptée « par année postérieure à
+      cet âge » depuis la loi n° 51-374 du 27 mars 1951 : « le pourcentage
+      de 20% étant augmenté en cas d'ajournement de 1 % par trimestre
+      postérieur au soixantième anniversaire » (circulaire n° 93 SS du 17
+      mai 1951), au-delà de soixante-cinq ans comme en deçà (fiche
+      `decote_avant_1983`).
 
   - debut: 1972
     fin: 1972
@@ -93,6 +129,7 @@ periodes:
     part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
       [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
@@ -134,6 +171,7 @@ periodes:
     part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
       [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
@@ -157,6 +195,7 @@ periodes:
     part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
       [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
@@ -166,6 +205,61 @@ periodes:
       article 72-1 ; circulaire Cnav n° 2/72, point I).
 
   - debut: 1975
+    fin: 1977
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    taux_plein: 0.50
+    decote_par_generation: decote_regime_general
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Les règles de 1972 (loi Boulin), la durée retenue atteignant les
+      150 trimestres du dénominateur « si la pension prend effet
+      postérieurement au 31 décembre 1974 » (circulaire Cnav n° 2/72,
+      point I ; l'article 72-1 du décret n° 45-0179 ne fixe de palier que
+      jusqu'en 1974) : une carrière de trente-sept ans et demi reçoit la
+      pension normale entière.
+
+  - debut: 1978
+    fin: 1978
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    taux_plein: 0.50
+    decote_par_generation: decote_regime_general
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
+    age_taux_plein_femmes: 63
+    duree_taux_plein_femmes_trimestres: 150
+    duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Les règles de 1975, et le taux de soixante-cinq ans dès soixante-trois
+      ans aux femmes qui réunissent trente-sept ans et demi d'assurance « dans
+      le régime général ou dans ce régime et celui des salariés agricoles »,
+      pour une pension qui prend effet en 1978 (décret n° 45-0179, article
+      70-2, c, LEGIARTI000006760658). Le modèle compte ces deux régimes et les
+      assurances sociales d'avant 1945, qu'il tient à part.
+
+  - debut: 1979
     fin: 1982
     type_calcul: annuites
     age_ouverture: 60
@@ -179,16 +273,20 @@ periodes:
     part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
+    majoration_d_ajournement: decote_avant_1983
+    age_taux_plein_femmes: 60
+    duree_taux_plein_femmes_trimestres: 150
+    duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
     surcote_par_trimestre: null
     avantages_non_contributifs:
       [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
-      Les règles de 1972 (loi Boulin), la durée retenue atteignant les
-      150 trimestres du dénominateur « si la pension prend effet
-      postérieurement au 31 décembre 1974 » (circulaire Cnav n° 2/72,
-      point I ; l'article 72-1 du décret n° 45-0179 ne fixe de palier que
-      jusqu'en 1974) : une carrière de trente-sept ans et demi reçoit la
-      pension normale entière.
+      Les règles de 1978, le taux de soixante-cinq ans servi dès soixante
+      ans aux femmes de trente-sept ans et demi d'assurance pour une pension
+      qui prend effet après le 31 décembre 1978 (même article). Jusqu'au 31
+      mars 1983, le taux croît encore après soixante-cinq ans ; le moteur, qui
+      choisit la période à l'année, applique à toute l'année 1983 la règle de
+      l'ordonnance du 26 mars 1982 (fiche `decote_avant_1983`).
 
   - debut: 1983
     fin: 1993

@@ -406,6 +406,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
       trimestresDecote = trimestresDeDecote(
         moteur, periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
       );
+      if (tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation)) {
+        trimestresDecote = 0.0;
+      }
       if (decote && trimestresDecote > 0) {
         // Les régimes sans décote (fonction publique avant 2004, régimes
         // spéciaux avant 2008) ne subissent que la proratisation.
@@ -413,6 +416,22 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
           fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteDecote);
         }
         taux *= Math.max(0.0, 1.0 - decote * trimestresDecote);
+      }
+      if (periode.majoration_d_ajournement && decote) {
+        // Avant le 1er avril 1983, le taux croît avec l'âge seul, au-delà de
+        // soixante-cinq ans comme en deçà.
+        const ajournement = ecartAuTauxPlein(
+          moteur, periode, carriere, ageLiquidation, ageAnnulation,
+        );
+        if (ajournement > 0) {
+          coefficientSurcote = 1.0 + decote * ajournement;
+          taux *= coefficientSurcote;
+        }
+      }
+      const acquis = tauxAcquisAu31Mars1983(moteur, periode, carriere);
+      if (acquis !== null && acquis > taux) {
+        coefficientSurcote = acquis / (periode.taux_plein || 0.5);
+        taux = acquis;
       }
       // La surcote ne récompense que les trimestres COTISÉS APRÈS l'âge
       // légal ET au-delà de la durée requise.
@@ -985,6 +1004,79 @@ export function decoteOpposable(moteur, periode, carriere, anneeLiquidation) {
 }
 
 /** Trimestres retranchés à la durée requise pour compter la décote. */
+/** L'ordonnance n° 82-270 du 26 mars 1982 entre en vigueur le 1er avril 1983
+ * (article 9) : jusqu'au 31 mars, le taux dépend de l'âge seul. */
+const ORDONNANCE_DU_26_MARS_1982 = new DateMois(1983, 4);
+
+/**
+ * Avant le 1er avril 1983, les trimestres qui séparent la liquidation du taux
+ * plein : négatifs en deçà, la décote ; positifs au-delà, la majoration
+ * d'ajournement, que le moteur arrêtait au taux plein. « Le taux de 50 %
+ * augmente, sans limitation, de 2,5 % par trimestre d'âge après 65 ans »
+ * (circulaire Cnav n° 22/83). Avant 1951, des années d'assurance accomplies
+ * après l'âge d'ouverture, et non d'âge (ordonnance du 19 octobre 1945,
+ * article 63).
+ */
+export function ecartAuTauxPlein(moteur, periode, carriere, ageLiquidation, ageAnnulation) {
+  if (periode.ajournement_par_annee_d_assurance) {
+    const ageOuverture = ouvrir.ageOuverture(moteur, periode, carriere);
+    const annees = Math.floor(
+      trimestresCotisesApres(carriere, ageOuverture, carriere.anneeLiquidation) / 4,
+    );
+    return 4 * annees - Math.round((ageAnnulation - ageOuverture) * 4);
+  }
+  if (ageLiquidation >= ageAnnulation) {
+    return Math.floor((ageLiquidation - ageAnnulation + 1e-9) * 4);
+  }
+  return -auTrimestreSuperieur((ageAnnulation - ageLiquidation) * 4);
+}
+
+/**
+ * Le taux de soixante-cinq ans, avant 1983, aux femmes de trente-sept ans et
+ * demi d'assurance « dans le régime général ou dans ce régime et celui des
+ * salariés agricoles » : dès soixante-trois ans en 1978, dès soixante ans
+ * ensuite (décret n° 45-0179, article 70-2 ; décret n° 51-727, article 1er
+ * bis). La durée est celle des régimes que la période nomme.
+ */
+export function tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation) {
+  if (periode.age_taux_plein_femmes == null || carriere.sexe !== "F"
+      || ageLiquidation < periode.age_taux_plein_femmes - 1e-9) {
+    return false;
+  }
+  return cumulPlafonne("assurance", periode.duree_taux_plein_femmes_regimes ?? [])
+    >= (periode.duree_taux_plein_femmes_trimestres ?? 0);
+}
+
+/**
+ * Le taux que garde qui avait passé soixante-cinq ans au 1er avril 1983 : la
+ * pension ne peut être inférieure à « celle qu'elle aurait atteint si la
+ * liquidation en était intervenue avant le 1er avril 1983, compte tenu de
+ * l'âge atteint à cette date » (ordonnance n° 82-270, article 11). Le taux et
+ * le coefficient de la période de 1982, quand elle croissait avec l'âge, et
+ * les trimestres que l'âge a accomplis le 31 mars 1983 ; né en mars 1917,
+ * « Coefficient acquis au 31-3-83 : 55 % » (circulaire Cnav n° 22/83).
+ */
+export function tauxAcquisAu31Mars1983(moteur, periode, carriere) {
+  const mois = ORDONNANCE_DU_26_MARS_1982.rang - carriere.dateNaissance.rang - 1;
+  if (carriere.dateLiquidation.rang < ORDONNANCE_DU_26_MARS_1982.rang || mois < 12 * 60) {
+    return null;
+  }
+  const annee = ORDONNANCE_DU_26_MARS_1982.annee - 1;
+  const ancienne = moteur.catalogue.obtenir(periode.regime).periode(annee);
+  if (!ancienne || !ancienne.majoration_d_ajournement) {
+    return null;
+  }
+  const [coefficient, ageAnnulation] = decoteOpposable(moteur, ancienne, carriere, annee);
+  if (!coefficient) {
+    return null;
+  }
+  const ecoules = Math.floor((mois / 12.0 - ageAnnulation + 1e-9) * 4);
+  if (ecoules <= 0) {
+    return null;
+  }
+  return (ancienne.taux_plein || 0.5) * (1.0 + coefficient * ecoules);
+}
+
 export function retrancheDecote(moteur, periode, carriere) {
   const propre = ouvrir.dureePropre(moteur, periode, carriere);
   return propre === null ? 0 : propre[1];
@@ -1028,6 +1120,13 @@ export function trimestresDeDecote(moteur, periode, carriere, trimestres, requis
     trimestresDecote = Math.min(parDuree, manquantsAge);
   } else {
     trimestresDecote = manquantsAge;
+    if (periode.ajournement_par_annee_d_assurance) {
+      // Avant 1951, les années d'assurance accomplies après soixante ans, et
+      // non l'âge (`ecartAuTauxPlein`).
+      trimestresDecote = Math.max(0, -ecartAuTauxPlein(
+        moteur, periode, carriere, ageLiquidation, ageAnnulation,
+      ));
+    }
   }
   if (trimestresDecote <= 0) {
     return 0.0;

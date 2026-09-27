@@ -4161,6 +4161,90 @@ def test_le_taux_d_avant_1983_ne_depend_que_de_l_age(simulateur):
     assert taux(1915, 65) == pytest.approx(0.50)
 
 
+def test_avant_avril_1983_le_taux_croissait_encore_apres_65_ans(simulateur):
+    """« En application de la législation en vigueur jusqu'au 31 mars 1983, le
+    taux de 50 % augmente, sans limitation, de 2,5 % par trimestre d'âge après
+    65 ans » (circulaire Cnav n° 22/83, point 313) ; jusqu'en 1971, les 20 %
+    croissaient d'un point par trimestre, au-delà de 40 % comme en deçà. Le
+    moteur arrêtait le taux au taux plein. Et qui avait passé soixante-cinq
+    ans au 1er avril 1983 garde le taux acquis au 31 mars : né en mars 1917,
+    « Coefficient acquis au 31-3-83 : 55 % », que sa pension prenne effet en
+    septembre 1983 ou plus tard ; né en juin 1918, rien.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def taux(naissance, age, mois=1, debut=20):
+        return scenario.calculer(simulateur.carriere_simple(
+            annee_naissance=naissance, mois_naissance=mois, sexe="H",
+            affiliation="salarie_prive_non_cadre", age_debut=debut,
+            age_liquidation=age,
+        )).taux_liquidation
+
+    # 1970 : 40 % à 65 ans, puis un point par trimestre.
+    assert taux(1903, 67) == pytest.approx(0.48)
+    # 1982 : 50 % à 65 ans, puis 1,25 point par trimestre.
+    assert taux(1915, 67) == pytest.approx(0.60)
+    assert taux(1915, 66.25) == pytest.approx(0.5625)
+    # Le taux acquis au 31 mars 1983 ne croît plus, et ne se perd pas.
+    assert taux(1917, 66.5, mois=3, debut=30) == pytest.approx(0.55)
+    assert taux(1917, 70, mois=3, debut=30) == pytest.approx(0.55)
+    assert taux(1918, 65.5, mois=6, debut=30) == pytest.approx(0.50)
+
+
+def test_avant_1983_les_femmes_de_150_trimestres_avaient_le_taux_de_65_ans(simulateur):
+    """« La pension est également calculée au taux normalement applicable à
+    soixante-cinq ans au profit : […] c) Des femmes assurées […] qui réunissent
+    trente-sept ans et demi d'assurance dans le régime général ou dans ce
+    régime et celui des salariés agricoles » : dès soixante-trois ans pour une
+    pension qui prend effet en 1978, dès soixante ans ensuite (décret
+    n° 45-0179, article 70-2 ; décret n° 51-727, article 1er bis, chez les
+    salariés agricoles). La durée compte les assurances sociales d'avant 1945,
+    que le modèle tient à part : née en 1919 et assurée dès seize ans, une
+    femme en a 176 en 1979, dont 136 au régime général.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def taux(naissance, age, sexe="F", debut=16, affiliation="salarie_prive_non_cadre"):
+        return scenario.calculer(simulateur.carriere_simple(
+            annee_naissance=naissance, sexe=sexe, affiliation=affiliation,
+            age_debut=debut, age_liquidation=age,
+        )).taux_liquidation
+
+    assert taux(1919, 60) == pytest.approx(0.50)
+    assert taux(1919, 60, affiliation="salarie_agricole") == pytest.approx(0.50)
+    assert taux(1919, 60, sexe="H") == pytest.approx(0.25)
+    # Trente années d'assurance ne suffisent pas.
+    assert taux(1919, 60, debut=30) == pytest.approx(0.25)
+    # 1978 : soixante-trois ans ; 1977 : rien.
+    assert taux(1915, 63) == pytest.approx(0.50)
+    assert taux(1916, 62) == pytest.approx(0.35)
+    assert taux(1915, 62) == pytest.approx(0.35)
+
+
+def test_avant_1951_l_ajournement_se_comptait_en_annees_d_assurance(simulateur):
+    """L'article 63 de l'ordonnance du 19 octobre 1945 majorait les 20 % « de
+    4 p. 100 du salaire annuel de base par année d'assurance accomplie
+    postérieurement à cet âge » ; la loi n° 51-374 n'en fait des années d'âge
+    que pour une entrée en jouissance postérieure au 31 décembre 1950. Né en
+    1883, un assuré qui cesse de cotiser en 1947 n'a à soixante-cinq ans que
+    quatre années d'assurance après soixante ans, 36 %, et 40 % à
+    soixante-sept ans s'il reprend en 1949 ; qui a cotisé jusqu'au bout a
+    40 %, puis 48 %.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def taux(age, interruptions=None):
+        return scenario.calculer(simulateur.carriere_simple(
+            annee_naissance=1883, sexe="H", affiliation="salarie_prive_non_cadre",
+            age_debut=16, age_liquidation=age, interruptions=interruptions,
+        )).taux_liquidation
+
+    arret = {1947: "sans_activite", 1948: "sans_activite"}
+    assert taux(65) == pytest.approx(0.40)
+    assert taux(67) == pytest.approx(0.48)
+    assert taux(65, arret) == pytest.approx(0.36)
+    assert taux(67, arret) == pytest.approx(0.40)
+
 def test_le_minimum_garanti_de_la_fonction_publique_est_servi(simulateur):
     """Le plancher de la fonction publique, déclaré mais jamais appliqué.
 
