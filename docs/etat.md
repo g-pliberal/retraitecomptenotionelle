@@ -75,6 +75,17 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `faire_vivre` | `revalorisation.py` | le coefficient de chaque pension, du départ à l'échéance | `revalorisation_des_pensions` |
 | `foyer_et_net` | `droit/foyer.py` | l'ASPA, au départ puis à chaque échéance | `minimum_vieillesse` |
 
+**La proposition, en univers de droit** (§ 4.8 et 8) : chaque scénario est une pile de couches posée sur le droit réel, que l'univers déclare (`data/reference/univers/`, `data/reference/couches/`) ; le simulateur en tire ses scénarios, et le paquet du site les porte résolus. 9 fiches de la proposition (`data/reference/regles/proposition/`) décrivent ce que les couches ajoutent, en citant son texte. Les fiches du droit réel qu'aucune couche d'un univers ne garde, ne remplace ni ne neutralise sont ses domaines sans décision (section 3).
+
+| Scénario | Univers | Couches posées sur le droit réel | Fiches ajoutées | Fiches du droit réel sans décision |
+|---|---|---|---|---|
+| 1 | `actuel` | aucune : c'est l'étalon | 0 | — |
+| 2 | `notionnel_retroactif` | `comptes_notionnels` | 5 | 66 sur 108 |
+| 3 | `notionnel_prospectif` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels` | 6 | 66 sur 108 |
+| 4 | `notionnel_retroactif_employeur` | `comptes_notionnels`, `part_patronale` | 5 | 66 sur 108 |
+| 5 | `notionnel_prospectif_employeur` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels`, `part_patronale` | 6 | 66 sur 108 |
+| 6 | `notionnel_liberal` | `comptes_notionnels`, `part_patronale`, `taux_unique`, `capitalisation_obligatoire`, `garantie_vieillesse`, `age_legal_de_la_proposition` | 8 | 66 sur 108 |
+
 **La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : la veille. Restent des registres : la frontière contributive, l'inventaire des régimes.
 
 **Ce qui est hors du modèle.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR), et le modèle n'en calcule aucune.
@@ -160,7 +171,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
   - 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
-  - 130. L'architecture du dépôt : décidée, les phases 0 à 6 faites, la phase 7 à lancer
+  - 130. L'architecture du dépôt : décidée, les phases 0 à 7 faites, la phase 8 à lancer
 - **Les sources à exploiter** : 114 à explorer sur 260 (58 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
@@ -171,6 +182,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Assurance vieillesse des non-salariés agricoles (MSA) : 1 source(s) (msa_reforme_25_meilleures_annees)
   - et 20 sources sans régime désigné.
 - **Les fiches sans exemple officiel** : 86.
+- **Les domaines sans décision** (§ 8) : 66 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 6 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `retablissement_fonction_publique`, `retraite_proportionnelle_msa`. Les 60 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
 - **Faire mûrir la carte** : 815 champs obligatoires manquent, à 108 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |

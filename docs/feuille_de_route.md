@@ -1614,7 +1614,7 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
 
-### 130. L'architecture du dépôt : décidée, les phases 0 à 6 faites, la phase 7 à lancer — `en cours`
+### 130. L'architecture du dépôt : décidée, les phases 0 à 7 faites, la phase 8 à lancer — `en cours`
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -2244,3 +2244,75 @@ fiche par fiche, chacune lue une fois par chargement.
 
 Le repère `phase-6` est posé sur 49a01da, le 27 septembre 2026, à la demande
 du propriétaire, par `repere-phase-6.yml`, lancé une fois puis supprimé.
+
+**La phase 7, faite le 27 septembre 2026** (§ 11) : la proposition réécrite
+en univers de droit. Trois commits, la suite complète avant chaque envoi sur
+main, et pas un résultat déplacé : les témoins Python sont identiques à
+l'octet, et sur les 535 témoins, les sorties du portage le sont au bit près,
+avant et après.
+
+1. **Les univers, en Python** : les six scénarios sont six univers
+   (`data/reference/univers/`), piles de huit couches
+   (`data/reference/couches/`) posées sur le droit réel. Le 4 est le 2 plus
+   la part patronale, le 5 est le 3 plus la même. Le prospectif est le
+   rétroactif posé sur la transition, et une couche d'un seul calcul, « au
+   contributif seul », sert la liquidation fictive de la bascule. Neuf fiches
+   de la proposition (`data/reference/regles/proposition/`) citent le README
+   mot pour mot et nomment leur code. `noyau/univers.py` tient le contrat C.4
+   et les règles de la pile. `scenarios/univers.py` dit ce que le moteur en
+   tire, et refuse ce qu'il ne sait pas faire. Le simulateur bâtit les
+   scénarios 2 à 6 depuis les univers ; la liste des scénarios, les
+   prospectifs de la page Coût et la pension d'aujourd'hui s'en tirent aussi.
+2. **Le portage** : le paquet porte les univers résolus, et
+   `moteur/js/simulateur.js` en tire ses scénarios comme le Python. Le taux
+   unique reste un renvoi à `taux_cotisation_liberal`, que le site lit sous
+   ses réglages. Deux tests confrontent les moteurs.
+3. **Les vues** : le tableau de bord montre les univers et, pour chacun, les
+   fiches du droit réel sans décision (§ 8). L'architecture passe en version
+   5.11, et l'annexe B dit où la proposition est allée.
+
+**Le budget**, dos à dos avant et après la phase, le meilleur de plusieurs
+tours, sur les 535 carrières des témoins : en Python, 3,11 puis 2,98 ms pour
+le scénario 1, 26,62 puis 26,81 ms pour les six scénarios ; en JavaScript,
+0,68 puis 0,66 ms et 4,24 puis 4,23 ms. C'est le bruit de la mesure, plus
+large d'un tour à l'autre que d'un arbre à l'autre : un premier tour
+montrait les six scénarios du portage plus lents de 6 %, que trois tours
+alternés ont démentis. Les univers ne coûtent qu'au démarrage. L'import du
+simulateur, qui les charge, passait de 145 à 470 ms tant que leur contrôle
+lisait toute la carte ; il ne lit plus que le nom des fiches, et l'import
+prend de 210 à 260 ms. La règle des décisions contraires, la seule qui lise
+les fiches, reste aux tests (`univers.controler`).
+
+**Ce qui reste ouvert.**
+
+- **66 fiches du droit réel sont sans décision** dans chaque univers de la
+  proposition. Soixante ne disent pas encore leur étape : une couche ne les
+  atteint que par leur nom, et leur étape les rangera. La plupart sont des
+  règles de la liquidation, que le compte notionnel remplace. Les six qui
+  disent leur étape sont des décisions qui manquent, et le tableau de bord
+  les nomme.
+- **Le compte ne porte pas la cotisation que prélève l'assiette minimale des
+  indépendants** (`assiette_minimale_independants`, que le scénario 1
+  applique) : il la calcule sur le revenu réel. C'est peut-être un écart au
+  « la cotisation retraite effectivement versée est inscrite au compte » du
+  README : à trancher, par une note de décision.
+- **Trois fiches mêlent la cotisation et le droit** (`carpimko_assiette_2026`,
+  `cavom_assiette_2016`, `cipav_seconde_tranche`). Le compte en applique la
+  cotisation, par les périodes des régimes. Quand elles diront leur face, ou
+  seront coupées en deux, une couche en gardera la cotisation par sélecteur.
+- **La variante prospective de la proposition**
+  (`scripts/proposition_prospective.py`) remplace encore une méthode le temps
+  d'un calcul. Le moteur ne sert ni le pilier ni la garantie sur un compte
+  ouvert à la bascule : servis là, elle deviendrait un univers de plus, que
+  la comparaison et la page Coût apprendraient à montrer.
+- **Le pilote et les pages lisent encore les univers par leur identifiant** :
+  la page Coût range la proposition, sa recette et sa garantie sous
+  `notionnel_liberal`, et le portage garde sa liste des univers prospectifs,
+  qu'un test tient égale à celle du Python. Le pilote par univers vient avec
+  les domaines (§ 13.5).
+- **`restitution.py`**, la moitié des impôts affectés rendue aux salaires,
+  n'a pas encore de fiche : il ne touche pas la pension, mais la fiche de
+  paie et la page Coût.
+- **Le repère `phase-7` n'est pas posé** : comme les précédents, il attend
+  l'accord du propriétaire. La phase 8 suit : le texte du site écrit une
+  fois.

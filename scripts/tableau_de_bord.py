@@ -50,6 +50,7 @@ import yaml
 
 from retraite_notionnelle.donnees.regimes import INTERRUPTEURS, fiches_de_regimes
 from retraite_notionnelle.noyau import carte, textes, vocabulaire
+from retraite_notionnelle.noyau import univers as univers_de_droit
 
 RACINE = Path(__file__).resolve().parents[1]
 PAGE = RACINE / "docs" / "etat.md"
@@ -456,6 +457,28 @@ def page() -> str:
         fiches = ", ".join(f"`{f}`" for f in par_etape.get(etape, [])) or "aucune encore"
         w(f"| `{etape}` | `{module}` | {ecrit} | {fiches} |")
     w("")
+    tous_les_univers = univers_de_droit.charger()
+    fiches_du_droit_reel = carte.fiches()
+    fiches_de_la_proposition = carte.fiches_de_la_proposition()
+    sans_decision = {u.id: univers_de_droit.sans_decision(u, fiches_du_droit_reel)
+                     for u in tous_les_univers.values() if not u.est_le_droit_reel}
+    w("**La proposition, en univers de droit** (§ 4.8 et 8) : chaque scénario est une "
+      "pile de couches posée sur le droit réel, que l'univers déclare "
+      "(`data/reference/univers/`, `data/reference/couches/`) ; le simulateur en tire ses "
+      "scénarios, et le paquet du site les porte résolus. "
+      f"{len(fiches_de_la_proposition)} fiches de la proposition "
+      "(`data/reference/regles/proposition/`) décrivent ce que les couches ajoutent, en "
+      "citant son texte. Les fiches du droit réel qu'aucune couche d'un univers ne garde, "
+      "ne remplace ni ne neutralise sont ses domaines sans décision (section 3).")
+    w("")
+    w("| Scénario | Univers | Couches posées sur le droit réel | Fiches ajoutées "
+      "| Fiches du droit réel sans décision |")
+    w("|---|---|---|---|---|")
+    for u in tous_les_univers.values():
+        couches = ", ".join(f"`{c}`" for c in u.couches[1:]) or "aucune : c'est l'étalon"
+        reste = "—" if u.est_le_droit_reel else f"{len(sans_decision[u.id])} sur {len(fiches_du_droit_reel)}"
+        w(f"| {u.numero} | `{u.id}` | {couches} | {len(u.ajoutees)} | {reste} |")
+    w("")
     vues = [nom for nom, vue in registres_en_vues if vue]
     restent = [nom for nom, vue in registres_en_vues if not vue]
     w("**La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : "
@@ -535,6 +558,20 @@ def page() -> str:
           f"({', '.join(ids[:3])}{'…' if len(ids) > 3 else ''})")
     w(f"  - et {sans_regime} sources sans régime désigné.")
     w(f"- **Les fiches sans exemple officiel** : {len(veille) - avec_exemple}.")
+    communes = sorted(set.intersection(*map(set, sans_decision.values())))
+    avec_etape = [f for f in communes if fiches_du_droit_reel[f].get("etape")]
+    w(f"- **Les domaines sans décision** (§ 8) : {len(communes)} fiches du droit réel "
+      f"qu'aucun des {len(sans_decision)} univers de la proposition ne décide. "
+      + (f"{len(avec_etape)} disent leur étape, et c'est une décision qui manque : "
+         + ", ".join(f"`{f}`" for f in avec_etape) + ". " if avec_etape else "")
+      + f"Les {len(communes) - len(avec_etape)} autres ne disent pas encore leur étape, "
+      "et une couche ne les atteint que par leur nom : la plupart sont des règles de la "
+      "liquidation, que le compte notionnel remplace, et leur étape les rangera.")
+    for cle, reste in sans_decision.items():
+        propres = sorted(set(reste) - set(communes))
+        if propres:
+            w(f"  - `{cle}` n'en décide pas non plus : "
+              + ", ".join(f"`{f}`" for f in propres) + ".")
     w(f"- **Faire mûrir la carte** : {sum(len(m) for m in manques.values())} champs "
       f"obligatoires manquent, à {len(manques)} fiches. Par champ :")
     w("")

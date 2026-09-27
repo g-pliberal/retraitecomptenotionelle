@@ -108,6 +108,12 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   coupe pas, `--carte` imprime le tableau des jeux de règles, et toute
   réforme qui touche un régime est coupée, absorbée ou déclarée
   `non_appliquee`.
+- **La proposition** : ses scénarios sont des univers de droit
+  (`data/reference/univers/`), piles de couches (`data/reference/couches/`)
+  posées sur le droit réel ; ce qu'elles ajoutent a sa fiche dans
+  `data/reference/regles/proposition/`, qui cite le README. Une variante
+  s'écrit en couche, jamais dans le code, et le moteur refuse ce qu'il ne
+  sait pas calculer (`scenarios/univers.py`).
 - **La prose** : chaque document a son régime, déclaré dans
   `data/reference/prose/zones.yaml` — `etat` (tout chiffre y est ancré sur
   une sonde), `recit` (vrai à sa date, gelé) ou `produit` —, et ce qui s'en

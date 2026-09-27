@@ -278,6 +278,13 @@ def constats(dossier: Path = UNIVERS, dossier_couches: Path = COUCHES) -> list[c
     return sortie
 
 
+def _chemins(dossier: Path) -> dict[str, Path]:
+    """Les fiches d'un dossier, par leur nom, sans les lire : savoir qu'une
+    fiche existe ne demande pas de la lire, et la carte entière coûte le
+    tiers d'une seconde à qui ne fait que charger les univers."""
+    return {chemin.stem: chemin for chemin in sorted(dossier.glob("*.yaml"))}
+
+
 def erreurs_de_structure(dossier: Path = UNIVERS, dossier_couches: Path = COUCHES,
                          regles: Path = carte.REGLES) -> list[str]:
     """Ce qui empêche de résoudre les piles : rien, si elles tiennent.
@@ -286,11 +293,12 @@ def erreurs_de_structure(dossier: Path = UNIVERS, dossier_couches: Path = COUCHE
     identifiant ; chaque couche d'une pile qui existe, le droit réel en bas ;
     chaque opération qui vise une fiche de la carte ou un sélecteur connu, et
     qui dit ce que son opération demande ; chaque ``depuis`` lisible ; les
-    règles de la pile (en tête du module).
+    règles de la pile (en tête du module), sauf celle des décisions
+    contraires, qui lit toute la carte : :func:`controler` la tient.
     """
     erreurs = [str(c) for c in constats(dossier, dossier_couches)]
-    droit_reel = carte.fiches(regles)
-    proposition = carte.fiches(regles / carte.PROPOSITION.name)
+    droit_reel = _chemins(regles)
+    proposition = _chemins(regles / carte.PROPOSITION.name)
     brutes = couches(dossier_couches)
     for nom, donnee in brutes.items():
         if donnee.get("id") != nom:
@@ -315,8 +323,7 @@ def erreurs_de_structure(dossier: Path = UNIVERS, dossier_couches: Path = COUCHE
             erreurs.append(f"univers {nom} : couches inconnues : {', '.join(inconnues)}")
             continue
         pile_lue = tuple(Couche.lue(brutes[c]) for c in pile if c != DROIT_REEL)
-        erreurs += [f"univers {nom} : {e}" for e in
-                    _erreurs_de_pile(pile_lue, droit_reel, proposition)]
+        erreurs += [f"univers {nom} : {e}" for e in _erreurs_de_pile(pile_lue, proposition)]
     return erreurs
 
 
@@ -365,10 +372,11 @@ def _erreurs_de_selecteur(sorte: str, valeur, valeurs: dict) -> list[str]:
     return []
 
 
-def _erreurs_de_changement(operation: Operation, fiches: dict) -> list[str]:
+def _erreurs_de_changement(operation: Operation, chemins: dict[str, Path]) -> list[str]:
     erreurs = []
     champs = {f.name for f in dataclasses.fields(Parametres)}
-    lus = ((fiches.get(operation.fiche) or {}).get("code") or {}).get("parametres") or []
+    fiche = charger_yaml(chemins[operation.fiche]) if operation.fiche in chemins else {}
+    lus = (fiche.get("code") or {}).get("parametres") or []
     if operation.parametre is None or operation.valeur is None:
         erreurs.append(f"{operation} : dit le paramètre qu'il change et sa valeur")
     elif operation.parametre not in lus:
@@ -399,11 +407,10 @@ def _erreurs_de_depuis(depuis) -> list[str]:
     return erreurs
 
 
-def _erreurs_de_pile(pile: tuple[Couche, ...], droit_reel: dict, proposition: dict) -> list[str]:
+def _erreurs_de_pile(pile: tuple[Couche, ...], proposition: dict) -> list[str]:
     """Les règles de la pile, couche après couche, de bas en haut."""
     erreurs = []
     ajoutees: dict[str, str] = {}
-    decidees: dict[str, tuple[str, str]] = {}
     changes: dict[tuple[str, str], str] = {}
     transitions = [c.id for c in pile if c.transition]
     if len(transitions) > 1:
@@ -430,12 +437,26 @@ def _erreurs_de_pile(pile: tuple[Couche, ...], droit_reel: dict, proposition: di
                     erreurs.append(f"{operation.fiche}.{operation.parametre} : changé par "
                                    f"{changes[cle]} et par {couche.id}")
                 changes[cle] = couche.id
+    return erreurs
+
+
+def _erreurs_de_decisions(pile: tuple[Couche, ...], fiches: dict[str, dict]) -> list[str]:
+    """Deux couches de l'univers qui décident autrement la même fiche, par
+    son nom ou par un sélecteur : la seule règle de la pile qui lise la carte
+    entière."""
+    erreurs = []
+    decidees: dict[str, tuple[str, str]] = {}
+    for couche in pile:
+        if couche.d_un_calcul:
+            continue
+        for operation in couche.operations:
+            if operation.operation not in DECISIONS:
                 continue
             if operation.selecteur and operation.selecteur[0] not in SELECTEURS_DE_FICHES:
                 continue                        # signalé avec la couche
             if not isinstance(operation.vise, (str, tuple)):
                 continue
-            for fiche in sorted(fiches_visees(operation.vise, {**droit_reel, **proposition})):
+            for fiche in sorted(fiches_visees(operation.vise, fiches)):
                 avant = decidees.get(fiche)
                 if avant and avant[0] != operation.operation:
                     erreurs.append(f"{fiche} : « {avant[0]} » par {avant[1]}, "
@@ -465,12 +486,20 @@ def controler(dossier: Path = UNIVERS, dossier_couches: Path = COUCHES,
               proposition: Path = TEXTE_DE_LA_PROPOSITION) -> list[str]:
     """Ce qui ne va pas dans les univers : rien, s'ils tiennent.
 
-    Ce qu':func:`erreurs_de_structure` exige, et que chaque passage cité entre
+    Ce qu':func:`erreurs_de_structure` exige ; deux couches d'un univers qui
+    ne décident pas autrement la même fiche ; et chaque passage cité entre
     guillemets par un motif de couche, ou par une fiche de la proposition qui
-    cite le README, se retrouve mot pour mot dans le texte de la proposition
+    cite le README, retrouvé mot pour mot dans le texte de la proposition
     (§ 3.1, § 3.2) : une déduction n'est pas une lecture.
     """
     erreurs = erreurs_de_structure(dossier, dossier_couches, regles)
+    fiches = {**carte.fiches(regles), **carte.fiches(regles / carte.PROPOSITION.name)}
+    brutes = couches(dossier_couches)
+    for nom, donnee in univers_declares(dossier).items():
+        pile = [c for c in donnee.get("couches") or [DROIT_REEL] if c != DROIT_REEL]
+        if all(c in brutes for c in pile):
+            erreurs += [f"univers {nom} : {e}" for e in _erreurs_de_decisions(
+                tuple(Couche.lue(brutes[c]) for c in pile), fiches)]
     texte = texte_de_la_proposition(proposition)
     for nom, donnee in couches(dossier_couches).items():
         for operation in donnee.get("operations") or ():

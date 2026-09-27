@@ -557,6 +557,10 @@ aussi : on peut toujours en changer l'hypothèse.
   déclaré sont refusées par un test.
 - Une couche dit **depuis quand** elle agit, et sur quelle date elle le lit :
   la date d'effet de la pension, la date d'un fait, ou l'échéance.
+- Une **transition** coupe le temps de l'univers : les couches posées
+  au-dessus d'elle n'agissent qu'à compter de sa date. La proposition
+  prospective est ainsi la rétroactive posée sur la valorisation des droits
+  acquis.
 - Une fiche **neutralisée** n'accorde rien, et les relations qui la visent
   passent à leur possibilité suivante (§ 6.4). Si toutes le sont, la relation
   n'accorde rien : c'est voulu, ce n'est pas une erreur.
@@ -2122,7 +2126,7 @@ Ce que les deux fiches montrent :
 | Aujourd'hui | Demain |
 |---|---|
 | `src/retraite_notionnelle/scenarios/actuel.py` | découpé en étapes dans `src/retraite_notionnelle/droit/` : l'acquisition depuis la phase 4 (`coordonner`, `compter`, `acquerir`, `releve`), la liquidation depuis la phase 5 (`ouvrir`, `liquider`, `completer`, `foyer`, et `liquidation`, qui les enchaîne) ; il ne garde que les tables du droit en vigueur ; ses commentaires suivent leur code |
-| `src/retraite_notionnelle/scenarios/notionnel.py`, `moteur/` (compte, conversion, capitalisation, fusion, indexation, âge de référence), `garantie.py`, `restitution.py` | les fiches et les couches des univers de la proposition (phase 7) |
+| `src/retraite_notionnelle/scenarios/notionnel.py`, `moteur/` (compte, conversion, capitalisation, fusion, indexation, âge de référence), `garantie.py`, `restitution.py` | les fiches et les couches des univers de la proposition, depuis la phase 7 : les univers dans `data/reference/univers/`, les couches dans `data/reference/couches/`, les fiches de la proposition dans `data/reference/regles/proposition/`, qui citent son texte et nomment leur code ; `noyau/univers.py` tient la pile, `scenarios/univers.py` dit ce que le moteur en tire, et le code reste où il est. `restitution.py` n'a pas encore sa fiche |
 | `src/retraite_notionnelle/carriere.py` | la chronologie datée et le réseau de personnes : `chronologie.py` depuis la phase 3, dont la carrière n'est plus que la vue — celle que les étapes de l'acquisition lisent encore (phase 4), jusqu'à ce qu'elles lisent la chronologie elle-même ; `web/releve_lu.py` continue de l'alimenter |
 | `src/retraite_notionnelle/calendrier.py` | inchangé : le mois et ses arrondis (§ 4.6) |
 | `src/retraite_notionnelle/revalorisation.py` | l'étape « faire vivre » (`faire_vivre`, depuis la phase 5) |
@@ -2131,7 +2135,7 @@ Ce que les deux fiches montrent :
 | `src/retraite_notionnelle/castypes.py` | son point fixe est passé au pilote (`pilote.py`, phase 5) |
 | `src/retraite_notionnelle/cout.py`, `donnees/` | le pilote de population et la page Coût |
 | `src/retraite_notionnelle/config.py` | ses décisions de modélisation deviennent des paramètres de couche ou des notes de décision |
-| `src/retraite_notionnelle/simulateur.py` | l'échéancier (`echeancier.py`, et son journal, `journal.py`, depuis la phase 5), et l'entrée des univers |
+| `src/retraite_notionnelle/simulateur.py` | l'échéancier (`echeancier.py`, et son journal, `journal.py`, depuis la phase 5), et l'entrée des univers, depuis la phase 7 : il bâtit les scénarios 2 à 6 depuis eux, et le paquet du site les porte résolus |
 | `src/retraite_notionnelle/web/pages.py`, `web/gabarit.py` | retirés à la phase 8 : leur rendu est déjà comparé à l'identique à celui de `pages.js` et `gabarit.js` (`tests/js/comparer-pages.mjs`) |
 | `moteur/js/` | le même découpage que le Python, fichier pour fichier ; `scenario-actuel.js` découpé dans `moteur/js/droit/` |
 | `moteur/donnees.json`, `moteur/style.css` | fabriqués, comme aujourd'hui ; le paquet se découpe par domaine |
@@ -2377,6 +2381,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.11**, 27 septembre 2026 : la phase 7 faite. Les six scénarios sont des univers de droit, et le § 4.8 dit qu'une transition coupe le temps de l'univers. Le contrat C.4 gagne, par la règle additive, le paramètre, la valeur et le motif d'une opération, le numéro et le libellé d'un univers ; le vocabulaire, la liste des sélecteurs. L'annexe B dit où la proposition est allée.
 
 - **5.10**, 27 septembre 2026 : la phase 6 faite, l'annexe B dit où sont allés les fichiers de régimes — un par régime, calculé ou non —, ce que le schéma a gardé des interrupteurs, devenus des renvois aux fiches, et d'où se fabrique l'inventaire.
 
