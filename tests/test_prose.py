@@ -29,7 +29,12 @@ from pathlib import Path
 
 import pytest
 
+from retraite_notionnelle.web.site import disponible
+
 RACINE = Path(__file__).resolve().parents[1]
+#: Ce que dit une sonde quand node manque : le pont vers le site
+#: (``web/site.py``), ou le système, pour une sonde qui lance node elle-même.
+SANS_NODE = ("node absent", "No such file or directory: 'node'")
 
 
 def _charger():
@@ -88,6 +93,11 @@ def test_chaque_sonde_nommee_existe_et_repond(zonage):
     """
     anomalies, _ = verifier_prose.controler(zonage, corriger=False)
     muettes = [a for a in anomalies if a.genre == "sonde"]
+    if not disponible():
+        # Une sonde qui lit le portage ou le texte du site ne répond que par
+        # node : sans lui, elle se tait, et les autres restent tenues.
+        muettes = [a for a in muettes
+                   if not any(cause in a.message for cause in SANS_NODE)]
     assert not muettes, "\n".join(f"{a.fichier}:{a.ligne}: {a.message}" for a in muettes)
 
 
@@ -223,8 +233,12 @@ def test_les_tableaux_produits_ne_sont_pas_perimes():
     elles donnaient le PIB nominal à 1 068,6 % quand le modèle en calcule
     1 068,3. `scripts/construire_tableaux_md.py` les écrit désormais entre
     deux repères, et ce test refuse une prose qui ne serait plus la sienne.
+    Les règles comparées se lisent dans le texte du site, par node.
     """
     import subprocess
+
+    if not disponible():
+        pytest.skip("node absent : le site ne se lit pas sans lui")
 
     rendu = subprocess.run(
         [sys.executable, "-X", "utf8", "scripts/construire_tableaux_md.py", "--verifier"],

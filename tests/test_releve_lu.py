@@ -23,7 +23,7 @@ import pytest
 
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.web.releve_lu import REGIMES, lire_releve
-from retraite_notionnelle.web.site import rendre
+from retraite_notionnelle.web.site import disponible, rendre
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -303,6 +303,8 @@ def test_la_saisie_produite_se_simule_sans_refus():
     """Le bout du chemin : ce que la lecture écrit doit être ce que le
     formulaire accepte. Une saisie que le simulateur refuse serait un import
     qui échoue chez le lecteur, après le dépôt de son relevé."""
+    if not disponible():
+        pytest.skip("node absent : le site ne se lit pas sans lui")
     parametres = _lire("regime_general").parametres()
     _, corps = rendre("/simuler", {
         "naissance": "1978-05-01", "depart": "2043-05-01",

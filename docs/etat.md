@@ -173,7 +173,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
   - 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
-  - 130. L'architecture du dépôt : décidée, les phases 0 à 7 faites, la phase 8 à lancer
+  - 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir
   - 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger
 - **Les sources à exploiter** : 114 à explorer sur 260 (58 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)

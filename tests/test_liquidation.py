@@ -15,6 +15,7 @@ déclare ses appels de ``liquider``, qu'aucun ne dépasse (§ 7.8).
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -451,6 +452,8 @@ def test_les_deux_moteurs_liquident_et_journalisent_a_l_identique():
     entrées — la liquidation au contrat C.6, ses composantes, l'ASPA, la
     revalorisation de l'échéance —, et les deux moteurs appellent
     ``liquider`` le même nombre de fois."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     requetes = _requetes()
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:

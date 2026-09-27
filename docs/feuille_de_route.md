@@ -1614,7 +1614,7 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
 
-### 130. L'architecture du dépôt : décidée, les phases 0 à 7 faites, la phase 8 à lancer — `en cours`
+### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -2328,6 +2328,90 @@ fini ne finit pas son tour : le hook publierait le commit.
 
 Le repère `phase-7` est posé sur 17b54f3, le 27 septembre 2026, à la demande
 du propriétaire, par `repere-phase-7.yml`, lancé une fois puis supprimé.
+
+**La phase 8, faite le 27 septembre 2026** (§ 11) : le texte du site écrit une
+fois. Cinq commits. Un seul résultat bouge, celui que la phase rendait faux :
+- les témoins de simulations et le paquet du site sont identiques à l'octet ;
+- ceux des pages le sont aussi, sauf un paragraphe de la page Méthode, qui
+  disait les deux rendus comparés.
+
+1. **La saisie et le contexte sortent du site** (d317c7f). `web/pages.py`
+   mêlait le texte du site et ce que le calcul lit. Le second passe dans deux
+   modules, et le code est déplacé à l'octet près :
+   - `saisie.py` : ce que l'adresse d'une simulation dit, lu en carrière et
+     en règles ;
+   - `contexte.py` : les données du site, et le jeu de règles sous lequel il
+     calcule.
+
+   Le portage prend le même découpage : `saisie.js` et `contexte.js`.
+2. **Le Python lit le site dans son portage** (483d1c1). `web/site.py` lance
+   node (`site.mjs`) et lui demande une page, une constante ou une fonction
+   d'un module du portage ; une instance revient par référence.
+   - Les témoins de pages en sortent, identiques à ceux que le Python avait
+     figés.
+   - Les tests des pages y lisent le site, et confrontent ce qu'il écrit à
+     ce que le modèle Python calcule.
+   - Les scripts y lisent ce que le texte du site décide : les règles
+     d'indexation comparées, les systèmes que le bilan couvre, les
+     décimales que la méthodologie cite.
+3. **Le site dit comment on le vérifie** (372b478). La page Méthode disait
+   « chaque page du site est rendue par les deux [moteurs], et comparée
+   caractère par caractère ». Elle dit maintenant que le texte n'est écrit
+   qu'une fois, et que chaque page est figée en témoin.
+   - Le § 12 veut les pages reproduites au bit près ; reproduite, celle-ci
+     aurait dit faux. Le changement a son commit, et son témoin ne bouge
+     que de ce paragraphe.
+   - Les deux tests qui comparaient les deux rendus confrontent maintenant
+     les deux moteurs. Le site refuse ce que le modèle refuse, du même mot,
+     et rend le reste sans trou.
+4. **Le rendu Python est retiré** (e483229). `web/pages.py` et
+   `web/gabarit.py` n'existent plus.
+   - La feuille de style est sa propre source, `moteur/style.css`.
+   - Les 129 commentaires du portage qui renvoyaient au Python portent ce
+     que ses docstrings disaient. Le code des deux fichiers, lu sans ses
+     commentaires, est inchangé.
+   - L'ancien rendu se relit au repère `phase-7`.
+   - L'architecture passe en version 5.12, et `CLAUDE.md` dit où le texte du
+     site s'écrit.
+5. **Les tests sans node, le tableau de bord, la veille** (ce commit). Sans
+   node, la suite comptait 25 échecs :
+   - 22 tests des pages et de la prose, qui lisent le site par node depuis
+     l'étape 2 ;
+   - 3 comparaisons des deux moteurs, nées aux phases 3 à 5, qui lançaient
+     node sans vérifier qu'il était là.
+
+   Ils sont sautés, comme le dépôt saute ce qu'il ne vérifie pas sans node,
+   et le contrôle des sondes garde celles qui répondent sans lui.
+
+**Le coût.**
+- Le site transfère 25 Ko de plus au premier chargement : 1 014 Ko
+  compressés au lieu de 989, et 5 627 Ko bruts au lieu de 5 563.
+  - 3 Ko tiennent aux deux modules nouveaux, compressés chacun à part, et à
+    leurs imports ;
+  - 22 Ko tiennent aux commentaires, qui voyagent avec le portage : il n'a pas
+    d'étape de construction.
+- La suite complète a raccourci, sur quatre cœurs : 11 min 26 à l'étape 1,
+  quand ses tests rendaient encore les pages par le Python ; 8 min 20 aux
+  deux commits suivants, et 9 min 47 au quatrième.
+
+**Ce qui reste ouvert.**
+
+- **Les listes de la saisie portent encore leurs libellés en Python**
+  (`PROFILS`, `INDEXATIONS`…, dans `saisie.py`). Le Python n'en lit que les
+  codes : les libellés sont du texte du site, que seul `saisie.js` affiche.
+  Ils pourraient n'être écrits que là, un test tenant les codes égaux des
+  deux côtés.
+- **La liste des systèmes montrés vit dans le texte du site**
+  (`SCENARIOS_MONTRES` de `pages.js`). Le paquet la lit par node pour
+  construire son bilan : le fabriquer demande désormais node.
+- **Le contrôle de conservation** « se retire après la phase 8, quand plus
+  rien ne se déplace » (§ 12). Les domaines déplaceront encore des fichiers :
+  le garder ou le retirer est une décision du propriétaire.
+- **Le repère `phase-8` n'est pas posé** : comme les précédents, il attend
+  l'accord du propriétaire. Il se posera sur ce commit, quoi qui le suive :
+  les corrections que l'action 131 gardait « après la phase 8 » peuvent se
+  faire, chacune dans son commit, avec le diff de ses témoins. Les phases de
+  réorganisation sont finies ; les domaines suivent, un à la fois (§ 11).
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 

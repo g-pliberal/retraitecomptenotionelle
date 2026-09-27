@@ -3153,10 +3153,10 @@ def test_la_carte_du_solde_garde_le_meme_axe_sous_tous_les_scenarios():
     """
     import re
 
-    from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.web.site import rendre
+    from retraite_notionnelle.web.site import disponible, rendre
 
-    contexte = Contexte(Parametres())
+    if not disponible():
+        pytest.skip("node absent : le site ne se lit pas sans lui")
     axes = {}
     for scenario in ("cor_reference", "cor_productivite_haute",
                      "cor_productivite_basse"):

@@ -276,9 +276,13 @@ def test_le_portage_construit_la_meme_chronologie():
     le JavaScript rend, au JSON près, la chronologie du Python — et refuse ce
     qu'il refuse, avec les mêmes mots."""
     import json
+    import shutil
     import subprocess
     import tempfile
     from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
 
     racine = Path(__file__).resolve().parents[1]
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",

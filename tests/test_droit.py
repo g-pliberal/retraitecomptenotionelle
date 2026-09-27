@@ -12,6 +12,7 @@ le contrat C.5, et que les deux moteurs écrivent la même chose.
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -331,6 +332,8 @@ def test_les_deux_moteurs_ecrivent_les_memes_etapes():
     """Pour une requête sur cinq des témoins, chaque étape écrit la même donnée
     en Python et en JavaScript — la coordination, les durées, les droits — et
     le relevé a les mêmes lignes : chaque étape se compare seule (§ 7.1)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     requetes = _requetes()
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:

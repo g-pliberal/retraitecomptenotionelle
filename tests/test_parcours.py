@@ -39,7 +39,7 @@ from urllib.parse import parse_qsl
 import pytest
 
 from retraite_notionnelle.saisie import Saisie
-from retraite_notionnelle.web.site import rendre
+from retraite_notionnelle.web.site import disponible, rendre
 
 RACINE = Path(__file__).resolve().parents[1]
 PARCOURS = RACINE / "docs" / "parcours_presentation.md"
@@ -204,6 +204,13 @@ def _sections(texte: str) -> dict[str, str]:
     return corps
 
 
+#: Les pages se lisent dans le portage, par node (``web/site.py``) : sans
+#: lui, les tests qui les rendent sont sautés, et ceux qui ne lisent que le
+#: parcours tournent.
+site_requis = pytest.mark.skipif(not disponible(),
+                                 reason="node absent : le site ne se lit pas sans lui")
+
+
 def test_les_sections_nommees_existent_toutes(parcours):
     """La table des sections est-elle encore à jour ?
 
@@ -217,6 +224,7 @@ def test_les_sections_nommees_existent_toutes(parcours):
         f"{manquants} — le titre a changé, ou la section a disparu")
 
 
+@site_requis
 def test_le_parcours_rejoue_ses_carrieres(parcours):
     """Chaque adresse du parcours est rejouée, et son tableau confronté.
 
@@ -259,6 +267,7 @@ def test_le_parcours_rejoue_ses_carrieres(parcours):
                 f"{ecart}, la page affiche {ecart_rendu}")
 
 
+@site_requis
 @pytest.mark.parametrize("titre,chemin", sorted(PAGES_DES_SECTIONS.items()))
 def test_chaque_chiffre_du_parcours_est_sur_sa_page(parcours, titre, chemin):
     """Tout montant et tout pourcentage d'une section se lit sur sa page.
@@ -287,6 +296,7 @@ def test_chaque_chiffre_du_parcours_est_sur_sa_page(parcours, titre, chemin):
         f"vient d'ailleurs et sa raison va dans HORS_PAGE[{chemin!r}]")
 
 
+@site_requis
 @pytest.mark.parametrize("titre,chemin", sorted(PAGES_DES_SECTIONS.items()))
 def test_chaque_compte_du_parcours_est_sur_sa_page(parcours, titre, chemin):
     """Les comptes sans unité, que l'œil ne signale pas.

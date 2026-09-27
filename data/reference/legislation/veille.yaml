@@ -3089,3 +3089,34 @@ journal:
       l'article 16 du règlement de la CAVP, les articles 9-7 et suivants du
       règlement des indépendants, les cinq fiches à relire, la rédaction
       nouvelle de R. 382-24, les rédactions sans statut.
+  - date: "2026-09-27"
+    session: >-
+      architecture, phase 8 : le texte du site écrit une fois, en JavaScript
+    consulte: >-
+      veille_droit.py, au début de la phase et à la fin : quatre fiches à
+      relire au début, cinq à la fin, avec trimestres_retenus_1972_1974, née
+      de la relecture qu'une autre session menait pendant la phase ; et la
+      dernière veille du jour même. Les index LEGI et JORF, mis à jour au
+      début et à la fin : aucun incrément paru depuis le 26 septembre 2026 à
+      21 h 07 pour LEGI et le 27 septembre à 0 h 22 pour le JORF. Pour la
+      fiche fin_de_la_suspension_2028, les versions de L. 161-17-2 et de
+      L. 161-17-3 dans l'index LEGI.
+    trouve: >-
+      Rien de nouveau au Journal officiel. L. 161-17-2 et L. 161-17-3 n'ont
+      pas de rédaction postérieure à celles du 31 décembre 2025
+      (LEGIARTI000053280889, LEGIARTI000053280903) : la suspension court
+      toujours. La phase 8 ne touche aucune règle du scénario 1 : le texte
+      du site ne s'écrit plus qu'en JavaScript, les témoins de simulations
+      et le paquet restent identiques à l'octet, et le seul résultat qu'elle
+      déplace est une phrase de la page Méthode, qui disait les deux rendus
+      comparés.
+    reste: >-
+      Les corrections des fiches relues, que leurs a_relire gardaient pour
+      « après la phase 8 » (action 131) : elles peuvent se faire, chacune en
+      commit à part avec le diff de ses témoins, puisque le repère phase-8 se
+      pose sur le dernier commit de la phase, quoi qui le suive. Et ce que
+      les entrées précédentes laissaient : l'assiette minimale des
+      indépendants dans le compte, l'article 16 du règlement de la CAVP, les
+      articles 9-7 et suivants du règlement des indépendants, les cinq fiches
+      à relire, la rédaction nouvelle de R. 382-24, les rédactions sans
+      statut.
