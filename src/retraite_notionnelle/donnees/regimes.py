@@ -231,6 +231,13 @@ class PeriodeRegime:
     #: demie de services » : l'âge, et la durée en trimestres.
     duree_maximum_levee_age: float | None
     duree_maximum_levee_trimestres: int | None
+    #: Trimestres au plus que la pension retient, quand le dénominateur de la
+    #: proratisation les dépasse : de 1972 à 1974, la pension du régime
+    #: général et celle des salariés agricoles sont « égale[s] à autant de
+    #: cent cinquantièmes de la pension calculée selon les taux prévus […]
+    #: dans la limite de 128 » en 1972, de 136 en 1973, de 144 en 1974
+    #: (décret n° 45-0179, article 72-1 ; décret n° 50-1225, article 59-1).
+    trimestres_retenus_maximum: int | None
     #: Âge d'ouverture ABAISSÉ pour qui réunit une durée de services dans le
     #: régime : « la double condition de cinquante ans d'âge et de vingt-cinq
     #: années de services » de l'article R. 2 du code des pensions de retraite
@@ -1347,6 +1354,10 @@ class CatalogueRegimes:
                 duree_maximum_levee_trimestres=(
                     None if p.get("duree_maximum_levee_trimestres") is None
                     else int(p["duree_maximum_levee_trimestres"])
+                ),
+                trimestres_retenus_maximum=(
+                    None if p.get("trimestres_retenus_maximum") is None
+                    else int(p["trimestres_retenus_maximum"])
                 ),
                 age_ouverture_services=(
                     None if p.get("age_ouverture_services") is None

@@ -379,6 +379,19 @@ champs_periode:
     description: "durée dans le régime qui lève le plafond à `duree_maximum_levee_age`"
     defaut: null
 
+  trimestres_retenus_maximum:
+    description: >-
+      Nombre de trimestres au plus que la pension retient, quand il est
+      inférieur au dénominateur de la proratisation. Le régime général et
+      celui des salariés agricoles le portent seuls, de 1972 à 1974 : la
+      pension y est « égale à autant de cent cinquantièmes de la pension
+      calculée selon les taux prévus », mais « dans la limite de 128 » pour
+      une pension qui prend effet en 1972, de 136 en 1973, de 144 en 1974
+      (décret n° 45-0179, article 72-1 ; décret n° 50-1225, article 59-1 ;
+      fiche `trimestres_retenus_1972_1974`).
+    unite: trimestres
+    defaut: null
+
   age_ouverture_services:
     description: >-
       Âge d'ouverture ABAISSÉ pour qui réunit `services_ouverture_annees` de

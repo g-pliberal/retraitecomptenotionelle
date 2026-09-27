@@ -657,10 +657,15 @@ def _regimes() -> list[dict]:
                     "cotisation_forfaitaire_annee": p.cotisation_forfaitaire_annee,
                     "avantages_non_contributifs": list(p.avantages_non_contributifs),
                     "notes": p.notes,
-                    # Une seule période le pose, celle de 2025 des IEG : absent,
-                    # le moteur JavaScript le lit faux.
+                    # Deux périodes le posent, celles de 2025 des IEG et de la
+                    # CRPCEN : absent, le moteur JavaScript le lit faux.
                     **({"age_taux_plein_a_l_ouverture": True}
                        if p.age_taux_plein_a_l_ouverture else {}),
+                    # Six périodes le posent, de 1972 à 1974 au régime
+                    # général et aux salariés agricoles : absent, le moteur
+                    # JavaScript le lit nul.
+                    **({"trimestres_retenus_maximum": p.trimestres_retenus_maximum}
+                       if p.trimestres_retenus_maximum is not None else {}),
                     **_regles_des_marins(p),
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),

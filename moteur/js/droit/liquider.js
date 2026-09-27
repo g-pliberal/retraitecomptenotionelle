@@ -378,6 +378,15 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
         );
       }
     }
+    if (periode.trimestres_retenus_maximum != null) {
+      // LA DURÉE RETENUE MONTE PLUS LENTEMENT QUE LE DÉNOMINATEUR. De 1972 à
+      // 1974, « la pension est égale à autant de cent cinquantièmes de la
+      // pension calculée selon les taux prévus […] que l'assuré justifie de
+      // trimestres d'assurance, dans la limite de 128 » en 1972, de 136 en
+      // 1973, de 144 en 1974 (décret n° 45-0179, article 72-1 ; décret
+      // n° 50-1225, article 59-1, aux salariés agricoles).
+      trimestresRegime = Math.min(trimestresRegime, periode.trimestres_retenus_maximum);
+    }
 
     let taux = periode.taux_plein || 0.5;
     // Part du taux qui vient de la surcote : le minimum contributif se

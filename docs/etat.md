@@ -21,15 +21,15 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | État | Fiches |
 |---|---|
 | conformes | 44 |
-| transcrites | 23 |
+| transcrites | 24 |
 | approchées | 33 |
 | pas encore modélisées | 5 |
-| manquantes | 4 |
+| manquantes | 3 |
 | à vérifier | 1 |
 
 - Confrontées à au moins un exemple officiel : **26 sur 110** (61 exemples : 61 reproduits, aucun en écart connu).
 - Citées dans le code par leur identifiant : **20 sur 110**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
-- Désignées par les interrupteurs des périodes de régime : **40 sur 110**, par 2 143 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
+- Désignées par les interrupteurs des périodes de régime : **40 sur 110**, par 2 155 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **0 sur 110**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **aucune sur 110** ; le partage des versions, qui se contrôle sur chaque fiche, n'a encore rien à contrôler.
 - Réformes du calendrier : 109, dont 11 déclarées non appliquées.
@@ -40,8 +40,8 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 |---|---|
 | rattachées à une version | 0 |
 | sans effet | 43 |
-| à rattacher | 328 |
-| à examiner | 699 |
+| à rattacher | 331 |
+| à examiner | 696 |
 | sans statut | 10 435 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré et ses enfants —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 7 présomptions au vocabulaire, dont 1 pose son fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
@@ -115,7 +115,6 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `majoration_enfants_plafond_fonction_publique` | manquante | Ne mord qu'à partir de sept enfants au taux de 80 %, ou de six avec une surcote que la caisse excepte : quelques familles, que le modèle ma… |
 | `rci_seuil_premiere_tranche` | manquante | Artisans et commerçants au-dessus du seuil, de 2014 à 2024 : la fiche coupe la première tranche au plafond de chaque année (46 368 € en 202… |
 | `temps_partiel_fonction_publique` | manquante | Tout fonctionnaire qui a travaillé à temps partiel sans surcotiser : le modèle compte chaque année à temps plein, aucune saisie ne portant… |
-| `trimestres_retenus_1972_1974` | manquante | Les pensions du régime général prenant effet de 1972 à 1974 : la période de 1972 à 1982 du fichier `regime_general` retient 150 trimestres… |
 | `cumul_emploi_retraite_et_retraite_progressive` | pas_encore_modelisee | Le modèle liquide une fois, à une date |
 | `inaptitude_invalidite_penibilite_amiante` | pas_encore_modelisee | Assurés concernés déclarés non ouverts ou décotés à tort. |
 | `rachats_et_versements` | pas_encore_modelisee | Non saisissables dans le simulateur. |
@@ -183,7 +182,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - et 20 sources sans régime désigné.
 - **Les fiches sans exemple officiel** : 84.
 - **Les domaines sans décision** (§ 8) : 67 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 6 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `retablissement_fonction_publique`, `retraite_proportionnelle_msa`. Les 61 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
-- **Faire mûrir la carte** : 836 champs obligatoires manquent, à 110 fiches. Par champ :
+- **Faire mûrir la carte** : 835 champs obligatoires manquent, à 110 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |
   |---|---|
@@ -194,11 +193,11 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `regimes` | 110 |
   | `versions` | 110 |
   | `etape` | 77 |
-  | `code` | 65 |
+  | `code` | 64 |
   | `approximations` | 33 |
   | `rang` | 1 |
 
-- **Les textes** : 328 rédactions à rattacher à une version de la fiche qui les cite, 699 à examiner, et 10 435 sans statut, que le cliquet tient à 10 435 au plus. Les textes qui en ont le plus : `css` 5 363, `rural` 975, `decret_46_2769` 946, `cpcmr` 694, `decret_90_1215` 335 (`python scripts/textes.py`).
+- **Les textes** : 331 rédactions à rattacher à une version de la fiche qui les cite, 696 à examiner, et 10 435 sans statut, que le cliquet tient à 10 435 au plus. Les textes qui en ont le plus : `css` 5 363, `rural` 975, `decret_46_2769` 946, `cpcmr` 694, `decret_90_1215` 335 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`) ; 2026-12-31 (`coefficients_anticipation_agirc_arrco`).
 - **Les régimes hors champ** : 15, chacun avec sa raison dans l'inventaire.
 

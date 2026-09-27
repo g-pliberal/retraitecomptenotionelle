@@ -628,6 +628,18 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     trimestres_regime,
                     periode.duree_maximum_avant_age_trimestres,
                 )
+        if periode.trimestres_retenus_maximum is not None:
+            # LA DURÉE RETENUE MONTE PLUS LENTEMENT QUE LE DÉNOMINATEUR. De
+            # 1972 à 1974, « la pension est égale à autant de cent
+            # cinquantièmes de la pension calculée selon les taux prévus […]
+            # que l'assuré justifie de trimestres d'assurance, dans la limite
+            # de 128 » en 1972, de 136 en 1973, de 144 en 1974 (décret
+            # n° 45-0179, article 72-1, au régime général ; décret
+            # n° 50-1225, article 59-1, aux salariés agricoles) : une
+            # carrière complète liquidée en 1972 reçoit 128/150 de la
+            # pension normale, non la pension entière.
+            trimestres_regime = min(trimestres_regime,
+                                    periode.trimestres_retenus_maximum)
 
         taux = periode.taux_plein or 0.5
         #: Part du taux qui vient de la surcote. Le minimum contributif se

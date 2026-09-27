@@ -3073,6 +3073,38 @@ def test_la_loi_boulin_ne_visait_que_les_meres_de_deux_enfants(simulateur):
     assert trimestres(1, 1920) == 8
 
 
+def test_la_loi_boulin_ne_retient_que_128_136_puis_144_trimestres(simulateur):
+    """« Pour les pensions dont l'entrée en jouissance se situe en 1972, la
+    durée maximum d'assurance prise en compte est fixée à trente-deux années
+    (soit 128 trimestres) et la pension est égale à autant de cent
+    cinquantièmes de la pension calculée selon les taux prévus […], dans la
+    limite de 128 » ; 136 en 1973, 144 en 1974 (décret n° 45-0179, article
+    72-1 ; décret n° 50-1225, article 59-1, aux salariés agricoles). Une mère
+    de huit enfants, dont la majoration de durée porte le compte au-delà, n'en
+    voit retenir que 128, 136 puis 144 ; en 1975, les 150 du dénominateur. Le
+    salaire de référence ne dépend pas des enfants : le rapport des deux
+    pensions est celui des trimestres retenus.
+    """
+    def pension(affiliation, regime, annee, enfants):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=annee - 65, sexe="F", affiliation=affiliation,
+            age_debut=20, age_liquidation=65.0, niveau_salaire=1.0,
+            nombre_enfants=enfants,
+        )
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        return next(p for p in resultat.pensions_par_regime if p.regime == regime)
+
+    for affiliation, regime in (("salarie_prive_non_cadre", "regime_general"),
+                                ("salarie_agricole", "msa_salaries")):
+        for annee, retenus in ((1972, 128), (1973, 136), (1974, 144), (1975, 150)):
+            # Le régime commence en 1945 dans le modèle : quatre trimestres
+            # par année, sans enfant.
+            sans = 4 * (annee - 1945)
+            mere = pension(affiliation, regime, annee, 8)
+            assert mere.detail.endswith(f"× {retenus}/150"), (regime, annee)
+            assert mere.montant / pension(affiliation, regime, annee, 0).montant == (
+                pytest.approx(retenus / sans)), (regime, annee)
+
 def test_la_surcote_parentale_recompense_l_annee_imposee_par_la_reforme_de_2023(
         simulateur):
     """L'avantage familial le plus récent, et le modèle l'ignorait.

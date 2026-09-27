@@ -79,16 +79,17 @@ periodes:
       qui est bien ce que servait le droit d'alors.
 
   - debut: 1972
-    fin: 1982
+    fin: 1972
     type_calcul: annuites
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
+    trimestres_retenus_maximum: 128
     taux_plein: 0.50
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
     assiette: plafonnee
-    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
     part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
@@ -107,6 +108,87 @@ periodes:
       60 ans pour 150 trimestres est une création de l'ordonnance du
       26 mars 1982. Jusque-là, une carrière de quarante ans liquidée à
       60 ans était servie au même taux réduit qu'une carrière de vingt.
+      LA DURÉE RETENUE MONTE PAR PALIERS. « Pour les pensions dont
+      l'entrée en jouissance se situe en 1972, la durée maximum
+      d'assurance prise en compte est fixée à trente-deux années (soit 128
+      trimestres) et la pension est égale à autant de cent cinquantièmes
+      de la pension calculée selon les taux prévus à l'article 70 », puis
+      136 en 1973 et 144 en 1974 (décret n° 45-0179, article 72-1,
+      LEGIARTI000006760613 ; circulaire Cnav n° 2/72, point I ; fiche
+      `trimestres_retenus_1972_1974`) : une carrière complète liquidée en
+      1972 reçoit 128/150 de la pension normale. D'où les périodes de
+      1972, 1973 et 1974, qui ne diffèrent que par ce plafond.
+
+  - debut: 1973
+    fin: 1973
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    trimestres_retenus_maximum: 136
+    taux_plein: 0.50
+    decote_par_generation: decote_regime_general
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Les règles de 1972 (loi Boulin), avec 136 trimestres retenus au
+      plus pour une pension qui prend effet en 1973 (décret n° 45-0179,
+      article 72-1 ; circulaire Cnav n° 2/72, point I).
+
+  - debut: 1974
+    fin: 1974
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    trimestres_retenus_maximum: 144
+    taux_plein: 0.50
+    decote_par_generation: decote_regime_general
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Les règles de 1972 (loi Boulin), avec 144 trimestres retenus au
+      plus pour une pension qui prend effet en 1974 (décret n° 45-0179,
+      article 72-1 ; circulaire Cnav n° 2/72, point I).
+
+  - debut: 1975
+    fin: 1982
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    taux_plein: 0.50
+    decote_par_generation: decote_regime_general
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Les règles de 1972 (loi Boulin), la durée retenue atteignant les
+      150 trimestres du dénominateur « si la pension prend effet
+      postérieurement au 31 décembre 1974 » (circulaire Cnav n° 2/72,
+      point I ; l'article 72-1 du décret n° 45-0179 ne fixe de palier que
+      jusqu'en 1974) : une carrière de trente-sept ans et demi reçoit la
+      pension normale entière.
 
   - debut: 1983
     fin: 1993

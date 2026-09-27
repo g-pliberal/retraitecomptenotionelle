@@ -60,6 +60,74 @@ periodes:
       comme son homologue de l'industrie : c'est l'affiliation qui l'y
       route désormais, et non plus cette fiche.
   - debut: 1972
+    fin: 1972
+    type_calcul: 'annuites'
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    trimestres_retenus_maximum: 128
+    taux_plein: 0.5
+    decote_par_generation: decote_regime_general
+    salaire_reference: '10_meilleures_annees'
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Mêmes règles que le régime général sur 1972-1982 : la MSA les applique à l'identique.
+      La durée retenue y monte par les mêmes paliers : « Pour les pensions
+      dont l'entrée en jouissance se situe en 1972, la durée maximum
+      d'assurance prise en compte est fixée à trente-deux années (soit 128
+      trimestres) et la pension est égale à autant de cent cinquantièmes
+      de la pension calculée selon les taux prévus à l'article 55 », puis
+      136 en 1973 et 144 en 1974 (décret n° 50-1225, article 59-1,
+      LEGIARTI000006774035 ; la loi n° 71-1132 « est applicable aux
+      pensions des travailleurs salariés agricoles », article 10). D'où les
+      périodes de 1972, 1973 et 1974, qui ne diffèrent que par ce plafond.
+  - debut: 1973
+    fin: 1973
+    type_calcul: 'annuites'
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    trimestres_retenus_maximum: 136
+    taux_plein: 0.5
+    decote_par_generation: decote_regime_general
+    salaire_reference: '10_meilleures_annees'
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Les règles de 1972, avec 136 trimestres retenus au plus pour une
+      pension qui prend effet en 1973 (décret n° 50-1225, article 59-1).
+  - debut: 1974
+    fin: 1974
+    type_calcul: 'annuites'
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    trimestres_retenus_maximum: 144
+    taux_plein: 0.5
+    decote_par_generation: decote_regime_general
+    salaire_reference: '10_meilleures_annees'
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+    decote_par_trimestre: 0.025
+    decote_annulee_par_la_duree: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    notes: >-
+      Les règles de 1972, avec 144 trimestres retenus au plus pour une
+      pension qui prend effet en 1974 (décret n° 50-1225, article 59-1).
+  - debut: 1975
     fin: 1982
     type_calcul: 'annuites'
     age_ouverture: 60
@@ -76,7 +144,9 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
-      Mêmes règles que le régime général sur 1972-1982 : la MSA les applique à l'identique.
+      Les règles de 1972, les 150 trimestres du dénominateur étant tous
+      retenus depuis 1975 : le décret n° 50-1225, article 59-1, ne fixe de
+      palier que pour les pensions qui prennent effet de 1972 à 1974.
   - debut: 1983
     fin: 1993
     type_calcul: 'annuites'
