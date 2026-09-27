@@ -2386,3 +2386,24 @@ Deux notes de fichiers de régimes sont à corriger avec elles (`msa_non_salarie
 la tranche C d'Agirc-Arrco, le guide de la CARMF, la page de la MSA sur la
 réforme de 2026. `python scripts/veille_droit.py` ne liste plus ces fiches,
 lues ce jour : c'est cette action qui les tient.
+
+**La suite, le 27 septembre 2026 au soir**, pendant la phase 8, et seulement ce
+qui ne déplace aucun résultat. Cinq exemples publiés entrent dans
+`tests/temoins/exemples_officiels.yaml` (CNIEG, Agirc-Arrco, CARMF), et le
+modèle les rend tous ; ceux qu'on laisse le sont avec leur raison, dans leur
+fiche. Les textes que les index ne portaient pas sont lus où ils sont : le droit
+de 1945 à 1972 au Journal officiel que Gallica numérise et dans la base des
+circulaires de la Cnav, les statuts des sections libérales sur les sites des
+caisses. Deux écarts que rien ne déclarait le sont désormais : aux IEG, la durée
+requise de l'agent qui peut partir avant soixante ans, de 2019 à 2024
+(`regimes_speciaux_par_generation`, qui passe de `conforme` à `approchee`) ; au
+régime général, les trimestres retenus en 1972, 1973 et 1974
+(`trimestres_retenus_1972_1974`, qui naît `manquante`). Le journal de veille dit
+le reste, lu, trouvé et introuvable.
+
+Les corrections attendent désormais la fin de la phase 8, qui court dans une
+autre session et doit garder ses témoins au bit près : les fiches disent
+« Après la phase 8 : ». Les notes des fichiers de régimes qu'elles citent
+(`carmf_complementaire`, `cavec_complementaire`, `ircec_racl`, `opera_de_paris`,
+`msa_non_salaries`) attendent avec elles, puisqu'elles passent dans le paquet du
+site.
