@@ -4,7 +4,9 @@ intitule: >-
   Depuis le 1er avril 1983, au régime général et chez les salariés agricoles, l'assuré
   qui liquide après soixante-cinq ans sans réunir 150 trimestres dans le régime voit sa
   durée d'assurance majorée de 2,5 % par trimestre postérieur à son soixante-cinquième
-  anniversaire, arrondie au trimestre supérieur, sans pouvoir dépasser 150 trimestres.
+  anniversaire, arrondie au trimestre supérieur, sans pouvoir dépasser 150 trimestres ;
+  la règle vaut encore, « pour chaque trimestre accompli postérieurement à l'âge fixé au
+  1° de l'article L. 351-8 ».
 etat: manquante
 effet: >-
   Les assurés du régime général et des salariés agricoles qui liquident après
@@ -16,21 +18,37 @@ effet: >-
   Cnav n° 22/83, point 313, premier cas, en écart connu). Depuis le 15 février 2004, la
   règle vaut pour les périodes antérieures à 2004 et s'étend aux autres régimes ;
   combien de pensions elle touche, et comment elle se combine à la surcote, restent à
-  lire. Trouvée le 27 septembre 2026 en relisant la fiche `decote_avant_1983`.
+  lire. Elle vaut encore en 2026 : une carrière courte liquidée deux ans après l'âge du
+  taux plein a huit trimestres de 2,5 %, 20 % de durée en plus dans le prorata, que le
+  moteur ne lui sert pas. Trouvée le 27 septembre 2026 en relisant la fiche
+  `decote_avant_1983`.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Lire L. 351-6 dans ses rédactions depuis 1985, et R. 351-7 depuis le 3 juin 2011
-    (LEGIARTI000024113035, LEGIARTI000047633307, LEGIARTI000053335592), qui ne la donnent
-    plus qu'« à l'âge de soixante-cinq ans s'il remplit les » conditions qu'elles
-    écrivent ; puis porter la majoration dans le moteur, avant la surcote, en disant
-    comment les deux se partagent les trimestres d'après 2003.
+    Lire L. 351-6 dans ses rédactions depuis 1985, R. 351-7 de 2011 et de 2023
+    (LEGIARTI000024113035, LEGIARTI000047633307), et la circulaire de la Cnav qui dit ce
+    qu'est un « trimestre accompli » après l'âge du taux plein — le temps écoulé, comme en
+    1983, ou la durée d'assurance ; puis porter la majoration dans le moteur, avant la
+    surcote, en disant comment les deux se partagent les trimestres d'après 2003.
   - >-
     Chercher un exemple publié de la rédaction de 2004 ou d'après, circulaire Cnav ou
     fiche de l'Assurance retraite.
   lectures:
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 351-7, rédaction en vigueur depuis le 1er janvier
+      2026 (LEGIARTI000053335592) : « L'assuré bénéficie, en application de l'article L.
+      351-6, d'une majoration de sa durée d'assurance dans le régime général de sécurité
+      sociale égale à 2,5 % pour chaque trimestre accompli postérieurement à l'âge fixé au
+      1° de l'article L. 351-8 ou à l'âge de soixante-cinq ans s'il remplit les conditions
+      prévues au 1° bis, 2° ou 6° de ce même article L. 351-8 : 1° Au titre des périodes
+      antérieures au 1er janvier 2004 ; 2° Au titre des périodes accomplies dans ce régime
+      et, le cas échéant, dans un ou plusieurs autres régimes obligatoires postérieurement
+      au 31 décembre 2003 », le total « arrondi, s'il y a lieu, au chiffre immédiatement
+      supérieur ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
   - type: legifrance
     reference: >-
       décret n° 45-0179 du 29 décembre 1945, article 70-6, rédaction du 23 juillet 1982 au
@@ -90,6 +108,10 @@ textes_a_rattacher:
   reference: >-
     code de la sécurité sociale, R. 351-7, rédaction du 15 février 2004 : les périodes
     d'avant 2004, et celles d'après dans tous les régimes
+- id: LEGIARTI000053335592
+  reference: >-
+    code de la sécurité sociale, R. 351-7, rédaction du 1er janvier 2026 : la majoration de
+    2,5 % par trimestre accompli après l'âge du 1° de L. 351-8
 - id: LEGIARTI000006774017
   reference: >-
     décret n° 50-1225 du 21 septembre 1950, article 55-6, rédaction du 15 décembre 1982 :
