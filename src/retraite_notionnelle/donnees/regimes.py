@@ -1136,13 +1136,17 @@ def interrupteurs_de_la_fiche(racine: Path, fiche: str) -> dict:
     return dict((charger_yaml(chemin).get("code") or {}).get("interrupteurs") or {})
 
 
-def resoudre_les_renvois(periode: dict, racine: Path, lieu: str) -> dict:
+def resoudre_les_renvois(periode: dict, racine: Path, lieu: str,
+                         lues: dict[str, dict] | None = None) -> dict:
     """La période, chaque interrupteur remplacé par la valeur que déclare sa fiche.
 
     Un interrupteur absent, ou nul, vaut son défaut. Une valeur écrite à la
     place d'un renvoi, une fiche qui n'existe pas, une fiche qui ne déclare pas
     le champ arrêtent le chargement : aucun ne vaut « le défaut » sans le dire.
+    ``lues`` garde, d'une période à l'autre, les fiches déjà lues : deux mille
+    renvois n'en visent qu'une quarantaine.
     """
+    lues = {} if lues is None else lues
     resolue = {cle: valeur for cle, valeur in periode.items() if cle not in INTERRUPTEURS}
     for champ in INTERRUPTEURS:
         renvoi = periode.get(champ)
@@ -1152,11 +1156,13 @@ def resoudre_les_renvois(periode: dict, racine: Path, lieu: str) -> dict:
             raise ValueError(
                 f"{lieu} : `{champ}` renvoie à une fiche de data/reference/regles/, "
                 f"et non à la valeur {renvoi!r}")
-        try:
-            declares = interrupteurs_de_la_fiche(racine, renvoi)
-        except KeyError:
-            raise ValueError(f"{lieu} : `{champ}` renvoie à la fiche {renvoi}, "
-                             "qui n'existe pas") from None
+        if renvoi not in lues:
+            try:
+                lues[renvoi] = interrupteurs_de_la_fiche(racine, renvoi)
+            except KeyError:
+                raise ValueError(f"{lieu} : `{champ}` renvoie à la fiche {renvoi}, "
+                                 "qui n'existe pas") from None
+        declares = lues[renvoi]
         if champ not in declares:
             raise ValueError(f"{lieu} : la fiche {renvoi} ne déclare pas `{champ}` "
                              "dans `code.interrupteurs`")
@@ -1252,8 +1258,9 @@ class CatalogueRegimes:
         self._regimes: dict[str, Regime] = {}
         self.taux_annuels = charger_taux_annuels(racine)
         dossier = racine / "reference" / "regimes"
+        renvois: dict[str, dict] = {}
         for chemin, fiche in fiches_de_regimes(racine):
-            regime = self._construire(fiche, chemin, racine)
+            regime = self._construire(fiche, chemin, racine, renvois)
             if regime.code in self.taux_annuels:
                 regime = replace(regime, periodes=dater_les_taux(
                     regime.periodes, self.taux_annuels[regime.code]))
@@ -1268,7 +1275,8 @@ class CatalogueRegimes:
             )
 
     @staticmethod
-    def _construire(fiche: dict, chemin: Path, racine: Path) -> Regime:
+    def _construire(fiche: dict, chemin: Path, racine: Path,
+                    renvois: dict[str, dict]) -> Regime:
         manquants = {"code", "nom", "famille", "fiabilite"} - set(fiche)
         if manquants:
             raise ValueError(f"{chemin.name} : champs manquants {sorted(manquants)}")
@@ -1533,7 +1541,8 @@ class CatalogueRegimes:
                 notes=(p.get("notes") or "").strip(),
             )
             for p in (
-                resoudre_les_renvois(p, racine, f"{chemin.name}, période {p.get('debut')}")
+                resoudre_les_renvois(p, racine, f"{chemin.name}, période {p.get('debut')}",
+                                     renvois)
                 for p in fiche.get("periodes", [])
             )
         )

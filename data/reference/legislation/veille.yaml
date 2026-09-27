@@ -2876,3 +2876,45 @@ journal:
       entrées précédentes laissaient : l'article 16 du règlement de la CAVP,
       les articles 9-7 et suivants du règlement des indépendants, les
       rédactions sans statut de la liste des textes.
+  - date: "2026-09-27"
+    session: >-
+      architecture, phase 6 : un fichier par régime, et les interrupteurs
+      deviennent des renvois aux fiches
+    consulte: >-
+      veille_droit.py, au début de la session et à la fin : quatre fiches à
+      relire au début, quatorze à la fin avec les dix fiches nées de la
+      phase, et la dernière veille du 26 septembre. Les index LEGI et JORF,
+      mis à jour au début et à la fin : aucun incrément LEGI paru depuis le
+      26 septembre 2026 à 21 h 07 ; pour le JORF, celui du 27 septembre à
+      0 h 22, dont quinze textes du champ social, puis plus rien ;
+      textes.py --inscrire : aucune rédaction nouvelle. Dans l'incrément, le
+      décret n° 2026-897 du 24 septembre 2026 (JORFTEXT000054902736), lu
+      dans l'index. Pour la fiche fin_de_la_suspension_2028, les rédactions
+      de L. 161-17-2 et de L. 161-17-3 dans l'index LEGI. Pour la fiche
+      née decote_avant_1983, l'ordonnance n° 82-270 du 26 mars 1982 dans
+      l'index JORF (JORFTEXT000000888522), dont l'index ne porte que le
+      titre.
+    trouve: >-
+      Le décret n° 2026-897 transfère à l'URSSAF du Limousin l'affiliation
+      et le contrôle des artistes-auteurs. Son article 1er, 18°, ramène de
+      600 à 150 SMIC horaires le revenu forfaitaire sur lequel se calculent
+      les cotisations PROVISIONNELLES des deux premières années d'activité
+      (R. 382-24), pour les périodes d'activité à compter du 1er janvier
+      2027 ; son 21° exclut de la prise en charge par l'action sociale les
+      cotisations d'assurance vieillesse de plus de trois ans. Ni l'un ni
+      l'autre ne touche le scénario 1, qui ne connaît que les cotisations
+      définitives, assises sur le revenu réel. L. 161-17-2 et L. 161-17-3
+      n'ont pas de rédaction postérieure à celles du 31 décembre 2025
+      (LEGIARTI000053280889, LEGIARTI000053280903) : la suspension court
+      toujours. La phase 6 ne touche aucune règle : les régimes changent de
+      fichier, et leurs interrupteurs renvoient aux fiches qui déclarent la
+      valeur, sans qu'un résultat bouge ; dix fiches naissent « à vérifier »
+      pour des règles que le moteur appliquait sans qu'aucune les décrive.
+    reste: >-
+      Les dix fiches nées de la phase, à relire à la source, chacune avec ce
+      que dit son `a_relire` ; la rédaction nouvelle de R. 382-24, qui entrera
+      « à examiner » à la prochaine mise à jour de l'index LEGI ; et ce que
+      les entrées précédentes laissaient : les quatre fiches à relire,
+      l'article 16 du règlement de la CAVP, les articles 9-7 et suivants du
+      règlement des indépendants, les rédactions sans statut de la liste des
+      textes.

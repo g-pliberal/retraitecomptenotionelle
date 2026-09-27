@@ -1614,7 +1614,7 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
 
-### 130. L'architecture du dépôt : décidée, les phases 0 à 5 faites, la phase 6 à lancer — `en cours`
+### 130. L'architecture du dépôt : décidée, les phases 0 à 6 faites, la phase 7 à lancer — `en cours`
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -2191,3 +2191,53 @@ complète tient en neuf minutes et demie. Le moteur pèse 16 Ko compressés de p
 
 Le repère `phase-5` est posé sur 4db363e, le 27 septembre 2026, à la demande
 du propriétaire, par `repere-phase-5.yml`, lancé une fois puis supprimé.
+
+**La phase 6, faite le 27 septembre 2026** (§ 11) : un fichier par régime, et
+les interrupteurs deviennent des renvois aux fiches. Quatre commits, la suite
+complète avant chaque envoi sur main, et pas un résultat déplacé : le
+catalogue chargé est identique période par période, le paquet du portage à
+l'octet, les témoins aussi.
+
+1. **Un fichier par régime** : les 74 régimes calculés quittent leurs cinq
+   fichiers de familles, au texte près, chacun dans
+   `data/reference/regimes/<code>.yaml`. L'ordre où le catalogue les lit
+   départage la fusion : il devient un champ, `rang`. Les ancres de la prose,
+   la sonde `fiche_regime`, les contrôles de `verifier_donnees.py` et les
+   cibles du manifeste des sources nomment le fichier du régime.
+2. **L'inventaire, vue fabriquée** : chaque régime porte sa ligne (le bloc
+   `inventaire`), et les dix-sept que le modèle ne calcule pas ont leur
+   fichier. `scripts/construire_inventaire.py` écrit `inventaire.yaml`, relu
+   identique ; la famille, les dates et la lignée ne s'écrivent plus qu'une
+   fois.
+3. **Les renvois** : 2 103 interrupteurs, dans 56 régimes, renvoient à 38
+   fiches, qui déclarent la valeur (`code.interrupteurs`) et disent ce que le
+   moteur en fait (`code.moteur`) ; dix fiches naissent « à vérifier » pour
+   les règles qu'aucune ne décrivait. Le schéma passe en version 3 et ne
+   garde de chaque interrupteur que sa définition ; le chargeur refuse une
+   valeur à la place d'un renvoi.
+4. **Les vues** : le tableau de bord compte les fiches que les interrupteurs
+   désignent ; l'architecture passe en version 5.10, et l'annexe B dit où
+   sont allés les fichiers de régimes, le schéma et l'inventaire.
+
+**Le budget** : charger le catalogue, dos à dos avant et après la phase, le
+meilleur de six fois, prend 1 544 puis 1 533 ms à froid, où l'analyse des
+YAML domine, et 38 puis 50 ms à chaud : les deux mille renvois se résolvent
+fiche par fiche, chacune lue une fois par chargement.
+
+**Ce qui reste ouvert.**
+
+- **Les dix fiches nouvelles sont à relire à la source** : chacune dit, dans
+  `sources.a_relire`, par où commencer ; `veille_droit.py` les liste.
+- **Les fiches ne disent pas encore leurs régimes**, que le contrat exige
+  (`regimes`, qui manque aux 108) : pour les 38 que les interrupteurs
+  désignent, les renvois le disent déjà, et la liste pourrait s'en fabriquer.
+- **Une fiche dit la valeur qu'elle pose, pas encore sa fonction** : le code
+  qui lit chaque interrupteur reste dans `droit/`, sans que la fiche le nomme.
+- **Les paramètres des périodes** — taux, âges, durées — restent dans les
+  fichiers de régimes ; ils attendent les versions des fiches (§ 4.1).
+- **Les récits datés gardent les valeurs d'alors** : l'effet d'une fiche ou
+  la note d'une période qui écrit `decote_par_generation: true` disent ce
+  que la période portait avant la phase.
+- **Le repère `phase-6` n'est pas posé** : comme les précédents, il attend
+  l'accord du propriétaire. La phase 7 suit : la proposition réécrite en
+  univers de droit.

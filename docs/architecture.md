@@ -2107,9 +2107,9 @@ Ce que les deux fiches montrent :
 | `data/reference/legislation/frontiere_contributive.yaml` | ses bascules dans les versions et les faces des fiches ; le fichier devient une vue |
 | `data/reference/legislation/*.csv` | les tables datées, inchangées, avec deux colonnes facultatives de plus : la date de publication, la dernière valeur connue valable ; les fiches y renvoient |
 | `data/reference/legislation/reformes.yaml`, `data/reference/regimes/pivots.yaml` | inchangés, reliés aux versions |
-| `data/reference/regimes/*.yaml` (les fichiers de régimes) | un fichier par régime ; les interrupteurs deviennent des renvois aux fiches |
-| `data/reference/regimes/_schema.yaml` | réduit : les champs de cas particuliers deviennent des fiches |
-| `data/reference/regimes/inventaire.yaml` | une vue de couverture, fabriquée |
+| `data/reference/regimes/*.yaml` (les fichiers de régimes) | un fichier par régime, calculé ou non, nommé de son code, depuis la phase 6 ; son `rang` garde l'ordre du catalogue, qui départage la fusion ; ses interrupteurs renvoient aux fiches, qui déclarent leur valeur (`code.interrupteurs`) et disent ce que le moteur en fait (`code.moteur`) |
+| `data/reference/regimes/_schema.yaml` | réduit à la phase 6 : chaque interrupteur n'y garde que sa définition ; ce qu'il disait de chaque cas est passé dans la fiche à laquelle la période renvoie, et dix fiches sont nées pour les règles qu'aucune ne décrivait |
+| `data/reference/regimes/inventaire.yaml` | une vue de couverture, fabriquée depuis la phase 6 par `scripts/construire_inventaire.py`, depuis la ligne que chaque fichier de régime porte (le bloc `inventaire`) |
 | `data/reference/macro/`, `data/reference/mortalite/`, `data/sources.yaml` | inchangés : les séries, en tables datées, et leurs sources |
 | `data/sources_a_explorer.yaml` | le registre des sources : toute source y entre, avec son statut et ce qu'elle a produit (§ 9.2) |
 | (nouveau) `data/reference/referents.yaml` | le registre des autres modèles publics : couverture, dépendances, conditions d'usage, écarts trouvés (§ 3.4) |
@@ -2377,6 +2377,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.10**, 27 septembre 2026 : la phase 6 faite, l'annexe B dit où sont allés les fichiers de régimes — un par régime, calculé ou non —, ce que le schéma a gardé des interrupteurs, devenus des renvois aux fiches, et d'où se fabrique l'inventaire.
 
 - **5.9**, 26 septembre 2026 : la phase 5 faite, l'annexe B dit où son code
   est allé — les étapes de la liquidation dans `droit/`, « faire vivre » dans
