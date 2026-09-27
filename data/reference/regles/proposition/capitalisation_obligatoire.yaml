@@ -1,0 +1,70 @@
+schema_version: 1
+id: capitalisation_obligatoire
+intitule: >-
+  Le pilier capitalisé de la proposition : 5 % obligatoires et 5 % volontaires,
+  prélevés à compter de la bascule sur l'assiette du compte, placés sans risque,
+  servis en rente viagère et transmissibles avant la liquidation.
+domaine: cotisations
+etape: acquerir_les_droits
+face: droit
+etat: transcrite
+effet: >-
+  Le scénario 6 : une rente à part, nommée à côté de la pension de répartition,
+  pour toute année cotisée à compter de la bascule.
+lit:
+- les assiettes du compte notionnel, années cotisées à compter de la bascule
+- la courbe des taux sans risque et ses taux à terme
+- les tables de mortalité, pour la rente
+ecrit:
+- le capital du pilier et sa rente, obligatoire et volontaire
+- ce qu'il transmet si l'assuré meurt avant d'avoir liquidé
+dates_qui_decident: [revenu.annee, liquidation.date_effet]
+versions:
+- id: capitalisation_obligatoire_proposition
+  textes:
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les six scénarios, scénario 6
+    citation: >-
+      Une cotisation capitalisée de 5 %, prélevée sur la même assiette en plus
+      de la répartition
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les six scénarios, scénario 6
+    citation: >-
+      servie en rente viagère selon la table du modèle, et transmissible aux
+      héritiers tant qu'elle n'est pas liquidée
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les six scénarios, scénario 6
+    citation: Puis 5 % de capitalisation volontaire
+    lu_le: 2026-09-27
+  bornes:
+    revenu.annee: [null, null]
+  contenu: >-
+    Deux cotisations, `taux_capitalisation_obligatoire` et
+    `taux_capitalisation_volontaire`, prélevées à compter de l'année de la
+    bascule sur l'assiette que le compte notionnel retient la même année, et
+    seulement sur ce que l'assuré gagne : une année de chômage n'y verse rien.
+    Chaque versement achète le titre sans risque qui arrive à échéance
+    l'année du départ ; le capital se convertit en rente viagère, au taux
+    technique `taux_technique_rente_capitalisation`, et se transmet tant qu'il
+    n'est pas liquidé. Qui a liquidé avant la bascule n'a pas de pilier. La
+    rente n'entre pas dans la pension de répartition : elle est toujours
+    affichée sur sa ligne.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: autre
+    reference: README.md, le texte de la proposition
+    date: 2026-09-27
+code:
+  python:
+    retraite_notionnelle.moteur.capitalisation: [ConstructeurCapitalisation.construire]
+    retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel._pilier_capitalise]
+  javascript:
+    moteur/js/capitalisation.js: [ConstructeurCapitalisation, construire]
+    moteur/js/scenario-notionnel.js: [_pilierCapitalise]
+  parametres: [taux_capitalisation_obligatoire, taux_capitalisation_volontaire, capitalisation_volontaire, taux_technique_rente_capitalisation, prime_terme_trente_ans]
+  tests: [tests/test_capitalisation.py]

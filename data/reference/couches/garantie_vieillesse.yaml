@@ -1,0 +1,9 @@
+# L'ASPA, que la garantie remplace, est déjà neutralisée par les comptes
+# notionnels.
+schema_version: 1
+id: garantie_vieillesse
+nom: La garantie vieillesse, qui remplace l'ASPA
+operations:
+- operation: ajouter
+  vise: garantie_vieillesse
+  motif: « Et une garantie vieillesse qui remplace l'ASPA »

@@ -669,10 +669,12 @@ def pension_aujourd_hui(simulateur, comparaison,
 
     notionnels: dict[str, float] = {}
     coefficients: dict[str, float] = {}
-    for cle in ("notionnel_retroactif", "notionnel_prospectif",
-                "notionnel_retroactif_employeur", "notionnel_prospectif_employeur"):
+    for cle, calcul in simulateur.calculs.items():
+        if calcul.garantie:
+            continue        # la garantie se calcule aujourd'hui : plus bas
         pension = getattr(comparaison, cle).pension_annuelle
-        prospectif = cle.startswith("notionnel_prospectif")
+        # Un univers qui porte une transition ne change rien avant elle.
+        prospectif = calcul.prospectif
         if prospectif and liquidation <= bascule:
             # Déjà liquidé à la bascule : la pension est celle du système 1,
             # et elle a reçu ce que le droit lui a donné jusqu'à la bascule.

@@ -1,0 +1,7 @@
+# Le scénario 2, part patronale comprise.
+schema_version: 1
+id: notionnel_retroactif_employeur
+nom: Notionnel rétroactif, salariale + patronale
+numero: 4
+libelle: Comptes notionnels rétroactifs, cotisation salariale et patronale
+couches: [droit_reel, comptes_notionnels, part_patronale]

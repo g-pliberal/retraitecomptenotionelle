@@ -161,6 +161,7 @@ from .garantie import (
     facteurs_par_sexe,
     pension_moyenne,
 )
+from .noyau import univers as univers_de_droit
 from .revalorisation import RevalorisationServie
 from .simulateur import Simulateur
 
@@ -1990,7 +1991,8 @@ CLES_REVALORISEES: frozenset[str] = frozenset(
 )
 
 #: Les scénarios 3 et 5, dont la règle d'indexation NE COMMENCE QU'À LA
-#: BASCULE. Ce qu'une réforme prospective fait du STOCK — les pensions déjà
+#: BASCULE : les univers de la proposition qui portent une transition
+#: (``data/reference/univers/``, docs/architecture.md, § 4.8). Ce qu'une réforme prospective fait du STOCK — les pensions déjà
 #: servies le jour où elle s'applique — est un choix, et il est réglé par
 #: ``Parametres.revalorisation_stock`` (voir
 #: :meth:`RevalorisationServie.coefficient_stock`). Par défaut, depuis le
@@ -2001,9 +2003,9 @@ CLES_REVALORISEES: frozenset[str] = frozenset(
 #: cas, elle n'agit jamais AVANT elle-même : une pension servie en 2010 a été
 #: revalorisée sur les prix de 2010 à 2025, quoi qu'il advienne en 2026, et un
 #: test tient l'égalité des courbes avant la bascule.
-CLES_PROSPECTIVES: frozenset[str] = frozenset({
-    "notionnel_prospectif", "notionnel_prospectif_employeur",
-})
+CLES_PROSPECTIVES: frozenset[str] = frozenset(
+    u.id for u in univers_de_droit.de_la_proposition() if u.transition is not None
+)
 
 #: Les trois règles qu'une pension SERVIE suit, selon le système : les prix,
 #: soit un coefficient de un en euros constants ; la règle du compte, celle du

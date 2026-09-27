@@ -1,0 +1,65 @@
+schema_version: 1
+id: indexation_du_compte
+intitule: >-
+  La revalorisation du compte notionnel, puis de la pension servie : chaque
+  année, au taux de la règle d'indexation retenue, la masse salariale par
+  défaut.
+domaine: revalorisation
+etape: acquerir_les_droits
+face: droit
+etat: transcrite
+effet: >-
+  Tout capital notionnel, et toute pension des scénarios 2 à 6 une fois servie :
+  une cotisation de 1975 vaut à la liquidation le produit des taux de 1976 à
+  l'année du départ.
+lit:
+- les séries des prix, du salaire moyen, de l'emploi et de la productivité
+- la règle d'indexation retenue et son lissage
+ecrit:
+- le taux de revalorisation de chaque année
+- le coefficient qui porte une cotisation de son année à la liquidation, et une pension de la liquidation à l'échéance
+dates_qui_decident: [revenu.annee, liquidation.date_effet, pension.echeance]
+versions:
+- id: indexation_du_compte_proposition
+  textes:
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les trois temps du compte
+    citation: >-
+      revalorisation — le solde est revalorisé chaque année selon une règle
+      collective
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les trois temps du compte
+    citation: >-
+      Les comptes sont revalorisés, par défaut, sur la croissance de la masse
+      salariale
+    lu_le: 2026-09-27
+  bornes:
+    revenu.annee: [null, null]
+  contenu: >-
+    Le solde du compte se revalorise chaque année au taux de la règle
+    d'indexation (`mode_indexation`) : la masse salariale par défaut, huit
+    autres règles en variante, dont le triple lock inversé du cahier des
+    charges. Le compte étant crédité au 1er janvier, la revalorisation de
+    l'année du départ lui est acquise. La pension servie suit la même règle
+    (`RevalorisationServie`), et c'est ce qui fait du diviseur l'espérance de
+    vie restante : un taux d'actualisation nul ne vaut que pour une rente
+    revalorisée au taux du compte. Le capital d'ouverture d'un compte
+    prospectif se revalorise comme le compte, de la bascule à la liquidation.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: autre
+    reference: README.md, le texte de la proposition
+    date: 2026-09-27
+code:
+  python:
+    retraite_notionnelle.moteur.indexation: [Indexation.taux, Indexation.coefficient]
+    retraite_notionnelle.revalorisation: [RevalorisationServie]
+  javascript:
+    moteur/js/indexation.js: [Indexation, taux, coefficient]
+    moteur/js/revalorisation.js: [RevalorisationServie]
+  parametres: [mode_indexation, lissage_indexation, plancher_indexation]
+  tests: [tests/test_moteur.py, tests/test_revalorisation.py]

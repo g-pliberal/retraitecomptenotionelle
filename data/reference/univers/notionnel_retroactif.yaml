@@ -1,0 +1,7 @@
+# La proposition rétroactive, sur la part salariale.
+schema_version: 1
+id: notionnel_retroactif
+nom: Notionnel rétroactif, part salariale
+numero: 2
+libelle: Comptes notionnels rétroactifs
+couches: [droit_reel, comptes_notionnels]

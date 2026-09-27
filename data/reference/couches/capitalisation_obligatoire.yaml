@@ -1,0 +1,10 @@
+schema_version: 1
+id: capitalisation_obligatoire
+nom: Le pilier capitalisé, cinq points obligatoires et cinq volontaires
+depuis:
+  date: revenu.annee
+  valeur: {parametre: annee_bascule}
+operations:
+- operation: ajouter
+  vise: capitalisation_obligatoire
+  motif: « Une cotisation capitalisée de 5 %, prélevée sur la même assiette en plus de la répartition »

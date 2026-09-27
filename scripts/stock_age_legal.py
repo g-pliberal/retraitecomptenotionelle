@@ -134,8 +134,8 @@ class StockALAgeLegal:
     def _droits_acquis(self, original):
         variante = self
 
-        def droits_acquis(scenario, carriere, bascule):
-            droits = original(scenario, carriere, bascule)
+        def droits_acquis(scenario, carriere, bascule, neutralisations):
+            droits = original(scenario, carriere, bascule, neutralisations)
             if variante.variante != "acquis" or droits is None:
                 return droits
             legal = variante.age_legal(carriere)

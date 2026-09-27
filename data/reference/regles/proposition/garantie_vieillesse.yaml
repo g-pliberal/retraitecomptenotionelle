@@ -1,0 +1,65 @@
+schema_version: 1
+id: garantie_vieillesse
+intitule: >-
+  La garantie vieillesse remplace l'ASPA : une allocation différentielle et
+  individualisée, qui porte les retraites obligatoires à 800 € par mois, plus
+  250 € pour qui vit seul, à partir de 65 ans, financée par l'impôt.
+domaine: minima
+etape: foyer_et_net
+face: droit
+etat: transcrite
+effet: >-
+  Le scénario 6 : toute retraite obligatoire sous le plancher, à partir de 65
+  ans ; la pension du conjoint n'y compte jamais.
+lit:
+- la pension du compte notionnel et la rente du pilier capitalisé
+- l'âge atteint et la situation du foyer, seul ou en couple
+- les prix, qui ramènent le plancher aux euros de la liquidation
+ecrit:
+- le complément différentiel et l'année où il s'ouvre
+dates_qui_decident: [age_atteint, liquidation.date_effet]
+versions:
+- id: garantie_vieillesse_proposition
+  textes:
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les six scénarios, scénario 6
+    citation: >-
+      Et une garantie vieillesse qui remplace l'ASPA : 800 € par mois par
+      personne, plus 250 € d'allocation d'isolement pour qui vit seul,
+      individualisée (la pension du conjoint ne compte pas) et financée par
+      l'impôt.
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: le scénario 6 se lit contre le scénario 4
+    citation: servi à partir de 65 ans comme l'ASPA, mais individualisé
+    lu_le: 2026-09-27
+  bornes:
+    age_atteint: [null, null]
+  contenu: >-
+    Le plancher est `garantie_vieillesse_mensuelle`, plus
+    `allocation_isolement_mensuelle` pour qui vit seul (`situation_foyer`),
+    en euros de `annee_euros_garantie_vieillesse` ramenés par les prix. Il se
+    compare à toutes les retraites obligatoires, le compte notionnel et la
+    rente du pilier capitalisé, jamais à la pension du conjoint. Le
+    complément s'ouvre à 65 ans, l'âge de l'ASPA : à la liquidation pour qui
+    part à cet âge ou après, à 65 ans sinon, et il se calcule pour l'année où
+    il s'ouvre, la pension suivant la règle d'indexation et le plancher les
+    prix. Il est servi en dernier, sur sa ligne, pour que l'on sache ce que
+    l'impôt paie ; la page Coût le chiffre sur la distribution des pensions.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: autre
+    reference: README.md, le texte de la proposition
+    date: 2026-09-27
+code:
+  python:
+    retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel.liberal, ScenarioNotionnel._garantie_vieillesse, GarantieVieillesse]
+    retraite_notionnelle.garantie: [cout_garantie]
+  javascript:
+    moteur/js/scenario-notionnel.js: [liberal, _garantieVieillesse]
+    moteur/js/garantie.js: [coutGarantie]
+  parametres: [garantie_vieillesse_mensuelle, allocation_isolement_mensuelle, annee_euros_garantie_vieillesse, situation_foyer]
+  tests: [tests/test_simulateur.py, tests/test_garantie_par_sexe.py]

@@ -1,0 +1,12 @@
+# Posée sur le scénario 2, elle fait le 4 ; sur le 3, elle fait le 5
+# (docs/architecture.md, § 4.8). Pour un non-salarié, qui n'a pas d'employeur,
+# elle ne change rien.
+schema_version: 1
+id: part_patronale
+nom: La part patronale, portée au compte avec la part salariale
+operations:
+- operation: changer_un_parametre
+  vise: compte_notionnel
+  parametre: part_cotisation
+  valeur: totale
+  motif: « Les scénarios 4 et 5 y ajoutent la part patronale. »

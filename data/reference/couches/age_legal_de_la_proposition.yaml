@@ -1,0 +1,10 @@
+schema_version: 1
+id: age_legal_de_la_proposition
+nom: L'âge légal de la proposition, pour les départs qui prennent effet à compter de la bascule
+depuis:
+  date: liquidation.date_effet
+  valeur: {parametre: annee_bascule}
+operations:
+- operation: ajouter
+  vise: age_legal_de_la_proposition
+  motif: « Et un âge légal de départ de 65 ans à compter de 2026 »

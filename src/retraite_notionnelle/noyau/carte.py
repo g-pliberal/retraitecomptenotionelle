@@ -14,6 +14,11 @@ les textes, les exemples, les réformes —, et pas encore le reste. Ce qui leur
 manque est un MANQUE, que ``manques()`` rend fiche par fiche et que le tableau
 de bord compte : une fiche mûrit à mesure qu'on la complète, sans que rien
 bloque (§ 9.2).
+
+Les fiches de la proposition, que les couches de ses univers ajoutent (§ 4.8),
+sont des fiches comme les autres, dans le sous-dossier ``proposition/`` : même
+contrat, même partage, et aucun nom qu'une fiche du droit réel porte déjà.
+:func:`fiches` ne rend que celles du droit réel, que la veille relit.
 """
 
 from __future__ import annotations
@@ -26,11 +31,19 @@ from ..donnees.chargement import charger_yaml
 from . import contrats, partage, vocabulaire
 
 REGLES = RACINE_DONNEES / "reference" / "regles"
+#: Les fiches de la proposition, que les couches de ses univers ajoutent.
+PROPOSITION = REGLES / "proposition"
 
 
 def fiches(dossier: Path = REGLES) -> dict[str, dict]:
-    """Chaque fiche sous le nom de son fichier, dans l'ordre alphabétique."""
+    """Chaque fiche sous le nom de son fichier, dans l'ordre alphabétique ;
+    celles du dossier seul, sans ses sous-dossiers."""
     return {chemin.stem: charger_yaml(chemin) for chemin in sorted(dossier.glob("*.yaml"))}
+
+
+def fiches_de_la_proposition(dossier: Path = PROPOSITION) -> dict[str, dict]:
+    """Les fiches que les couches de la proposition ajoutent (§ 4.8)."""
+    return fiches(dossier)
 
 
 def est_relation(fiche: dict) -> bool:
@@ -72,10 +85,25 @@ def controler(dossier: Path = REGLES) -> list[str]:
     ses versions forment un partage à chaque date d'observation ; une relation
     relie des fiches qui existent, autres qu'elle-même (§ 6.7) ; une fiche
     dépréciée renvoie à une fiche qui existe ; une fiche ne lit que des
-    présomptions que le vocabulaire nomme (§ 5.6).
+    présomptions que le vocabulaire nomme (§ 5.6). Les fiches de la
+    proposition suivent les mêmes règles, et ne reprennent aucun nom du droit
+    réel : une couche les vise par leur nom.
     """
+    droit_reel = fiches(dossier)
+    sous_dossier = dossier / PROPOSITION.name
+    proposition = fiches(sous_dossier)
+    erreurs = _controler(dossier, droit_reel, droit_reel)
+    erreurs += [f"{PROPOSITION.name}/{e}" for e in
+                _controler(sous_dossier, proposition, {**droit_reel, **proposition})]
+    erreurs += [f"{PROPOSITION.name}/{nom} : porte le nom d'une fiche du droit réel"
+                for nom in sorted(set(proposition) & set(droit_reel))]
+    return erreurs
+
+
+def _controler(dossier: Path, toutes: dict[str, dict], reliables: dict[str, dict]) -> list[str]:
+    """Les règles de :func:`controler`, sur les fiches d'un dossier ; une
+    relation peut relier les fiches de ``reliables``."""
     connues = set(vocabulaire.presomptions())
-    toutes = fiches(dossier)
     fautives = [c for c in constats(dossier) if c.genre == "erreur"]
     erreurs = [str(c) for c in fautives]
     # Le partage ne se joue que sur une fiche que son contrat accepte.
@@ -87,11 +115,11 @@ def controler(dossier: Path = REGLES) -> list[str]:
         if est_relation(fiche):
             for relie in fiche.get("fiches") or []:
                 cible = relie.get("fiche") if isinstance(relie, dict) else None
-                if cible == nom or cible not in toutes:
+                if cible == nom or cible not in reliables:
                     erreurs.append(f"{nom} : la relation relie « {cible} », "
                                    "qui n'est pas une autre fiche de la carte")
         remplacante = fiche.get("remplacee_par")
-        if remplacante is not None and remplacante not in toutes:
+        if remplacante is not None and remplacante not in reliables:
             erreurs.append(f"{nom} : remplacée par « {remplacante} », "
                            "qui n'est pas une fiche de la carte")
         presomptions = fiche.get("presomptions") or {}

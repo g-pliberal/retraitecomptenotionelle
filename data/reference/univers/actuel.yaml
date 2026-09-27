@@ -1,0 +1,6 @@
+# Le droit réel (docs/architecture.md, § 4.8) : le scénario 1, l'étalon.
+schema_version: 1
+id: actuel
+nom: Système actuel
+numero: 1
+couches: [droit_reel]

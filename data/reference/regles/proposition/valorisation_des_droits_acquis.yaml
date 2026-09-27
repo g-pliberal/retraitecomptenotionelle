@@ -1,0 +1,67 @@
+schema_version: 1
+id: valorisation_des_droits_acquis
+intitule: >-
+  À la bascule, les droits acquis sous le droit en vigueur sont figés par une
+  liquidation fictive au contributif seul, convertis en capital au diviseur de
+  l'âge de référence, puis revalorisés comme le compte.
+domaine: coordination
+etape: acquerir_les_droits
+face: droit
+etat: transcrite
+effet: >-
+  Les scénarios 3 et 5 : le capital d'ouverture de tout actif à la bascule ;
+  une pension qui a pris effet avant ne bouge pas.
+lit:
+- la carrière arrêtée à la bascule
+- la liquidation fictive que la transition demande au droit réel, au contributif seul
+- le diviseur de conversion à l'âge de référence, l'année de la bascule
+ecrit:
+- la pension figée à la bascule
+- le capital d'ouverture du compte, revalorisé jusqu'à la liquidation
+dates_qui_decident: [revenu.annee, liquidation.date_effet]
+versions:
+- id: valorisation_des_droits_acquis_proposition
+  textes:
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les six scénarios, scénario 3
+    citation: >-
+      Réforme prospective : les droits déjà acquis sont figés — au contributif
+      seul, avantages non contributifs retirés — puis convertis en capital, et
+      les règles notionnelles s'appliquent ensuite. Qui a liquidé avant la
+      bascule garde sa pension telle quelle
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: Ce que le modèle fait
+    citation: >-
+      Conversion à l'âge de référence par défaut — le seul endroit où l'âge de
+      départ pèse sur les droits d'avant la bascule
+    lu_le: 2026-09-27
+  bornes:
+    revenu.annee: [null, null]
+  contenu: >-
+    Les droits acquis sont ceux des années de la carrière antérieures au 1er
+    janvier de la bascule. Le droit réel les liquide, d'une liquidation
+    fictive (nature « fictive », § 7.3) prenant effet l'année de la bascule,
+    sans enfant, et avec ce que neutralise la couche d'un seul calcul posée
+    sous la transition : au contributif seul, les avantages non contributifs,
+    les points gratuits de la RCO, la décote et la surcote retirés. La pension
+    figée est convertie au diviseur de l'année de la bascule, pris à l'âge de
+    référence, ou à l'âge du départ si `age_conversion_droits_acquis` le
+    demande, puis ce capital se revalorise comme le compte jusqu'à la
+    liquidation. Une pension qui prend effet l'année de la bascule ou avant
+    reste celle du droit réel.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: autre
+    reference: README.md, le texte de la proposition
+    date: 2026-09-27
+code:
+  python:
+    retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel.prospectif, ScenarioNotionnel._droits_acquis, ScenarioNotionnel._deja_liquide, DroitsAcquis]
+  javascript:
+    moteur/js/scenario-notionnel.js: [prospectif, _droitsAcquis, _dejaLiquide]
+  parametres: [annee_bascule, age_conversion_droits_acquis]
+  tests: [tests/test_simulateur.py]

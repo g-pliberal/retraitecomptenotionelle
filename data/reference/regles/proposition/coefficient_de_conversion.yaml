@@ -1,0 +1,62 @@
+schema_version: 1
+id: coefficient_de_conversion
+intitule: >-
+  La liquidation du compte : la pension annuelle est le capital notionnel divisé
+  par l'espérance de vie restante à l'âge exact du départ, lue sur une table de
+  génération.
+domaine: decote_surcote
+etape: liquider_chaque_regime
+face: droit
+etat: transcrite
+effet: >-
+  Toute pension des scénarios 2 à 6 : partir cinq ans plus tôt accroît le
+  diviseur de quatre à cinq années, avant même les cotisations manquantes.
+lit:
+- le capital notionnel
+- l'âge et le mois du départ, la génération, le sexe si la table le distingue
+- les tables de mortalité par génération
+ecrit:
+- le diviseur et l'espérance de vie restante
+- la pension annuelle de répartition
+dates_qui_decident: [assure.naissance, liquidation.date_effet]
+versions:
+- id: coefficient_de_conversion_proposition
+  textes:
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les trois temps du compte
+    citation: >-
+      liquidation — pension = capital notionnel ÷ espérance de vie restante à
+      l'âge de départ
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les trois temps du compte
+    citation: >-
+      partir tôt coûte deux fois — moins de cotisations accumulées, et une rente
+      à servir plus longtemps
+    lu_le: 2026-09-27
+  bornes:
+    liquidation.date_effet: [null, null]
+  contenu: >-
+    Le diviseur est la somme, sur les années à venir, des probabilités de
+    survie à l'âge exact du départ, actualisées au taux
+    `taux_anticipe_conversion`, nul par défaut : il vaut alors l'espérance de
+    vie restante. La table est de génération, unisexe par défaut
+    (`table_conversion`). Le compte n'a ni décote ni surcote : c'est le
+    diviseur, avec les années non cotisées, qui fait peser l'âge du départ. Il
+    tient dans le compte la place que la décote et la surcote tiennent dans le
+    droit réel, d'où son domaine.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: autre
+    reference: README.md, le texte de la proposition
+    date: 2026-09-27
+code:
+  python:
+    retraite_notionnelle.moteur.conversion: [Convertisseur.resoudre, Convertisseur.coefficient]
+  javascript:
+    moteur/js/conversion.js: [Convertisseur, resoudre, coefficient]
+  parametres: [taux_anticipe_conversion, table_conversion]
+  tests: [tests/test_moteur.py]

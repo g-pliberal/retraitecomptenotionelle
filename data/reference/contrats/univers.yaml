@@ -22,6 +22,9 @@ objets:
     champs:
       operation: {porte: "ce qu'elle fait", type: valeur, valeurs: operations_de_couche, obligatoire: true}
       vise: {porte: "une fiche nommée, ou un sélecteur (étape, domaine, face, régime, contributivité)", type: libre, obligatoire: true}
+      parametre: {porte: "pour un changement de paramètre, le paramètre que la fiche visée lit", type: identifiant, defaut: null, additif: "la phase 7 change des paramètres, et le moteur doit savoir lequel"}
+      valeur: {porte: "la valeur que prend ce paramètre, ou le paramètre dont elle se lit", type: libre, defaut: null, additif: "la phase 7 change des paramètres, et le moteur doit savoir leur valeur"}
+      motif: {porte: "ce qui fonde la décision, cité du texte de la proposition", type: texte, defaut: null, additif: "une décision de la proposition dit d'où elle vient (§ 3.1)"}
 
   univers:
     champs:
@@ -31,3 +34,5 @@ objets:
       couches: {porte: "la pile, dans l'ordre, le droit réel en bas", type: liste, de: identifiant, defaut: [droit_reel]}
       observation: {porte: "la date d'observation par défaut", type: date, defaut: null}
       parametres_du_pilote: {porte: "les paramètres qui dépendent d'une population, déclarés comme tels", type: libre, defaut: {}}
+      numero: {porte: "le numéro sous lequel le tableau, la page et l'API citent le scénario", type: entier, defaut: null, additif: "les scénarios étaient numérotés avant d'être des univers"}
+      libelle: {porte: "l'intitulé que porte le résultat de son calcul", type: texte, defaut: null, additif: "le résultat d'un scénario portait son intitulé avant la phase 7"}

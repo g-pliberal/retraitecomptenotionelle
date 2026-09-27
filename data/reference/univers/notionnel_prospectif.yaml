@@ -1,0 +1,8 @@
+# La proposition prospective, sur la part salariale : le droit réel jusqu'à la
+# bascule, la valorisation des droits acquis, puis les comptes notionnels.
+schema_version: 1
+id: notionnel_prospectif
+nom: Notionnel dès {bascule}, part salariale
+numero: 3
+libelle: Comptes notionnels à compter de la bascule
+couches: [droit_reel, contributif_seul, valorisation_des_droits_acquis, comptes_notionnels]

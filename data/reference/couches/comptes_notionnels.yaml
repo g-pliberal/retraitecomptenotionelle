@@ -1,0 +1,110 @@
+# La proposition rétroactive (docs/architecture.md, § 4.8) : une autre loi,
+# appliquée depuis l'origine, « comme si la règle avait toujours existé ».
+# Posée au-dessus d'une transition, elle n'agit qu'à compter de sa date : c'est
+# la proposition prospective.
+#
+# Ce qu'elle neutralise, elle le neutralise par l'étape que la fiche dit
+# appliquer, ou par son nom quand le texte de la proposition la nomme. Une
+# fiche du droit réel qui ne dit pas encore son étape n'est atteinte que par
+# son nom : la carte la montre alors sans décision.
+schema_version: 1
+id: comptes_notionnels
+nom: Les comptes notionnels, depuis l'origine de la répartition
+operations:
+- operation: ajouter
+  vise: compte_notionnel
+- operation: ajouter
+  vise: indexation_du_compte
+- operation: ajouter
+  vise: coefficient_de_conversion
+- operation: ajouter
+  vise: age_de_reference
+- operation: ajouter
+  vise: fusion_des_regimes
+- operation: neutraliser
+  vise: {etape: compter_les_durees}
+  motif: >-
+    « pension = capital notionnel ÷ espérance de vie restante à l'âge de
+    départ » : aucune durée n'entre dans le calcul
+- operation: neutraliser
+  vise: {etape: ouvrir_le_droit}
+  motif: le compte se liquide à l'âge du départ, sans condition d'âge ni de durée
+- operation: neutraliser
+  vise: {etape: liquider_chaque_regime}
+  motif: >-
+    « pension = capital notionnel ÷ espérance de vie restante à l'âge de
+    départ » : ni salaire de référence, ni taux, ni décote, ni surcote
+- operation: neutraliser
+  vise: {etape: completer_tous_regimes}
+  motif: >-
+    « Ni minimum contributif, ni minimum garanti, ni ASPA : peu cotisé, peu de retraite »
+- operation: neutraliser
+  vise: minimum_vieillesse
+  motif: >-
+    « Ni minimum contributif, ni minimum garanti, ni ASPA : peu cotisé, peu de retraite »
+- operation: neutraliser
+  vise: sam_parents_24_23
+  motif: le compte n'a pas de salaire de référence
+- operation: neutraliser
+  vise: majoration_enfants_agirc_arrco
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: majoration_enfants_ircec
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: majoration_enfants_liberaux_avocats
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: majoration_enfants_plafond_fonction_publique
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: majoration_enfants_regimes_speciaux
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: sections_liberales_majoration_enfants
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: marins_bonification_enfants
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: avpf
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: reversion
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: chomage_non_indemnise
+  motif: « Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits »
+- operation: neutraliser
+  vise: rco_points_gratuits
+  motif: « ce qui n'a pas été cotisé n'existe pas »
+- operation: neutraliser
+  vise: revalorisation_des_pensions
+  motif: la pension servie suit la règle d'indexation du compte (indexation_du_compte)
+- operation: garder
+  vise: rafp_assiette_plafond
+  motif: >-
+    « Une réforme de la répartition ne les atteint pas — ils sont donc retirés
+    des six totaux et servis à l'identique, à leur propre barème, affichés à
+    côté »
+- operation: garder
+  vise: rafp_majoration_capital
+  motif: >-
+    « Une réforme de la répartition ne les atteint pas — ils sont donc retirés
+    des six totaux et servis à l'identique, à leur propre barème, affichés à
+    côté »
+- operation: garder
+  vise: assiette_minimale_agricole
+  motif: le compte reçoit la cotisation que le régime prélève, sur l'assiette que la règle fixe
+- operation: garder
+  vise: cotisation_par_classes_liberales
+  motif: le compte reçoit la cotisation que le régime prélève, par classe
+- operation: garder
+  vise: raap_classe_speciale
+  motif: le compte reçoit la cotisation que le régime prélève, par classe
+- operation: garder
+  vise: cultes_retraite_complementaire
+  motif: le compte reçoit la cotisation que le régime prélève, sur son assiette forfaitaire
+- operation: garder
+  vise: cultes_salaire_annuel_moyen
+  motif: le compte reçoit la cotisation que le régime prélève, sur son assiette forfaitaire

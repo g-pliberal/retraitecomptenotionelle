@@ -1,0 +1,8 @@
+# La proposition libérale : le compte rétroactif du scénario 4 jusqu'à la
+# bascule, puis ses propres règles.
+schema_version: 1
+id: notionnel_liberal
+nom: Notionnel rétroactif, 18 % dès {bascule}, garantie vieillesse
+numero: 6
+libelle: Comptes notionnels rétroactifs, taux unique dès la bascule et garantie vieillesse
+couches: [droit_reel, comptes_notionnels, part_patronale, taux_unique, capitalisation_obligatoire, garantie_vieillesse, age_legal_de_la_proposition]

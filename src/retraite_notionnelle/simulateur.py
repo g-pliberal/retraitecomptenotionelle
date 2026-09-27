@@ -16,7 +16,7 @@ et peut ensuite simuler autant de carrières que voulu :
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from functools import cached_property
 
 from .calendrier import formater_age
@@ -27,7 +27,7 @@ from .carriere import (
     Metier,
     salaire_moyen_annuel,
 )
-from .config import ContributionEtat, Parametres, PartCotisation, SourceCotisations
+from .config import ContributionEtat, Parametres, PartCotisation
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.cotisants import EffectifsCotisants
 from .donnees.caracteristiques import CaracteristiquesRetraites
@@ -55,32 +55,28 @@ from .revalorisation import (
     RevalorisationsPensions,
     pension_aujourd_hui,
 )
+from .noyau import univers as univers_de_droit
 from .scenarios.actuel import ResultatActuel, ScenarioActuel
 from .scenarios.notionnel import ResultatNotionnel, ScenarioNotionnel
+from .scenarios.univers import CalculNotionnel, calcul_notionnel
 
 
 #: Les cinq scénarios notionnels, dans l'ordre où ils s'affichent, avec le
-#: numéro et le titre sous lesquels le tableau, la page et l'API les citent.
+#: numéro et le titre sous lesquels le tableau, la page et l'API les citent :
+#: les univers de la proposition (``data/reference/univers/``, § 4.8), dont
+#: chacun est une pile de couches posée sur le droit réel.
 #:
 #: Deux paires, puis un sixième. 2 et 3 ne portent au compte que la part
-#: SALARIALE de la cotisation, 4 et 5 y ajoutent la part PATRONALE. À
-#: l'intérieur de chaque paire, l'un est rétroactif et l'autre prospectif. Rien
-#: d'autre ne les sépare, et c'est ce qui les rend comparables deux à deux : 4
-#: se lit contre 2, 5 contre 3, et l'écart mesure exactement ce que l'employeur
-#: verse. Le 6 se lit contre le 4 : même compte rétroactif, cotisation entière
-#: aux taux réels jusqu'à la bascule, puis un taux unique de 18 % pour tous à
-#: compter d'elle, et une garantie vieillesse individualisée, financée par
-#: l'impôt, par-dessus.
-SCENARIOS_NOTIONNELS = (
-    ("notionnel_retroactif", 2, "Notionnel rétroactif, part salariale"),
-    ("notionnel_prospectif", 3, "Notionnel dès {bascule}, part salariale"),
-    ("notionnel_retroactif_employeur", 4,
-     "Notionnel rétroactif, salariale + patronale"),
-    ("notionnel_prospectif_employeur", 5,
-     "Notionnel dès {bascule}, salariale + patronale"),
-    ("notionnel_liberal", 6,
-     "Notionnel rétroactif, 18 % dès {bascule}, garantie vieillesse"),
-)
+#: SALARIALE de la cotisation, 4 et 5 y ajoutent la couche de la part
+#: PATRONALE. À l'intérieur de chaque paire, l'un est rétroactif et l'autre
+#: prospectif, par la transition de la bascule. Rien d'autre ne les sépare, et
+#: c'est ce qui les rend comparables deux à deux : 4 se lit contre 2, 5 contre
+#: 3, et l'écart mesure exactement ce que l'employeur verse. Le 6 se lit contre
+#: le 4 : même compte rétroactif, cotisation entière aux taux réels jusqu'à la
+#: bascule, puis un taux unique de 18 % pour tous à compter d'elle, et une
+#: garantie vieillesse individualisée, financée par l'impôt, par-dessus.
+SCENARIOS_NOTIONNELS = tuple((u.id, u.numero, u.nom)
+                             for u in univers_de_droit.de_la_proposition())
 
 
 @dataclass(frozen=True)
@@ -598,6 +594,12 @@ class Comparaison:
         }
 
 
+#: Les résultats notionnels qu'une comparaison sait porter : un univers de la
+#: proposition de plus demande de savoir l'afficher.
+_CHAMPS_NOTIONNELS = frozenset(champ.name for champ in fields(Comparaison)
+                               if champ.type == "ResultatNotionnel")
+
+
 def _resume_notionnel(resultat: ResultatNotionnel, taux_remplacement: float,
                       variation: float, coefficient: float = 1.0) -> dict:
     return {
@@ -757,6 +759,11 @@ class Simulateur:
                 "Lancer le simulateur depuis la racine du dépôt, ou renseigner "
                 "Parametres(racine_donnees=...)."
             )
+        #: Les comptes et les scénarios de la proposition, un par jeu de
+        #: paramètres que les couches changent : deux univers qui changent les
+        #: mêmes partagent les mêmes, comme 2 et 3, ou 4 et 5.
+        self._constructeurs: dict[tuple, ConstructeurCompte] = {}
+        self._scenarios: dict[tuple, ScenarioNotionnel] = {}
 
     # -- données -------------------------------------------------------------
 
@@ -969,16 +976,79 @@ class Simulateur:
             self.indexation, self.parametres.avec(**modifications),
         )
 
+    # -- les univers de la proposition ---------------------------------------
+
+    @cached_property
+    def univers(self) -> dict[str, univers_de_droit.Univers]:
+        """Les six scénarios, chacun un univers de droit (docs/architecture.md,
+        § 4.8), lus sous la racine des données du simulateur."""
+        reference = self.parametres.racine_donnees / "reference"
+        return univers_de_droit.charger(reference / "univers", reference / "couches",
+                                        reference / "regles")
+
+    @cached_property
+    def calculs(self) -> dict[str, CalculNotionnel]:
+        """Ce que le moteur fait de chaque univers de la proposition, dans
+        l'ordre de leurs numéros : ce qu'il ne sait pas faire l'arrête ici."""
+        return {cle: calcul_notionnel(u, self.parametres)
+                for cle, u in self.univers.items() if not u.est_le_droit_reel}
+
+    def constructeur_de(self, calcul: CalculNotionnel) -> ConstructeurCompte:
+        """Le compte d'un univers : celui du simulateur, sous les paramètres
+        que ses couches changent. Ils ne diffèrent que par ce qui alimente le
+        compte, ce qui garantit qu'aucune autre différence ne peut s'y glisser à
+        l'insu du lecteur."""
+        if not calcul.modifications:
+            return self.constructeur
+        if calcul.modifications not in self._constructeurs:
+            self._constructeurs[calcul.modifications] = self._constructeur_variante(
+                **dict(calcul.modifications))
+        return self._constructeurs[calcul.modifications]
+
+    def scenario_de(self, calcul: CalculNotionnel) -> ScenarioNotionnel:
+        """Le scénario notionnel d'un univers. Le pilier capitalisé n'est
+        construit que pour l'univers qui l'ajoute : les autres ne le reçoivent
+        pas, et ne peuvent donc pas le servir par inadvertance."""
+        cle = (calcul.modifications, calcul.capitalisation)
+        if cle not in self._scenarios:
+            self._scenarios[cle] = ScenarioNotionnel(
+                self.constructeur_de(calcul), self.convertisseur, self.age_reference,
+                self.scenario_actuel, self.parametres,
+                capitalisation=(self.constructeur_capitalisation
+                                if calcul.capitalisation else None),
+            )
+        return self._scenarios[cle]
+
+    def calculer_univers(self, univers: str, carriere: Carriere) -> ResultatNotionnel:
+        """Un univers de la proposition sur cette carrière, telle quelle :
+        l'âge légal que l'univers ajoute, c'est à :meth:`carriere_proposition`
+        de l'appliquer.
+
+        Une transition ouvre le compte à la bascule, sur les droits acquis que
+        sa liquidation fictive valorise, et sur le régime unique toujours ; la
+        garantie vieillesse se sert après le compte rétroactif et son pilier ;
+        sinon, le compte rétroactif, sur le régime unique si le réglage le
+        garde (``fusion_au_plus_defavorable``).
+        """
+        calcul = self.calculs[univers]
+        scenario = self.scenario_de(calcul)
+        fusionne = self.regime_fusionne if self.parametres.fusion_au_plus_defavorable else None
+        if calcul.prospectif:
+            return scenario.prospectif(carriere, self.regime_fusionne, libelle=calcul.libelle,
+                                       neutralisations=calcul.neutralisations)
+        if calcul.garantie:
+            return scenario.liberal(carriere, fusionne, libelle=calcul.libelle)
+        return scenario.retroactif(carriere, fusionne, libelle=calcul.libelle)
+
     @cached_property
     def constructeur_employeur(self) -> ConstructeurCompte:
         """Le constructeur des scénarios 4 et 5 : un seul, pour les deux.
 
-        Il ne diffère de celui des scénarios 2 et 3 que par un paramètre : la
-        part de la cotisation portée au compte.
+        Il ne diffère de celui des scénarios 2 et 3 que par un paramètre, que
+        la couche ``part_patronale`` change : la part de la cotisation portée
+        au compte.
         """
-        return self._constructeur_variante(
-            part_cotisation=PartCotisation.TOTALE,
-        )
+        return self.constructeur_de(self.calculs["notionnel_retroactif_employeur"])
 
     @cached_property
     def constructeur_prelevement(self) -> ConstructeurCompte:
@@ -1008,18 +1078,14 @@ class Simulateur:
         le taux unique de la proposition ensuite.
 
         Il ne diffère de celui du scénario 4 que par ce qui alimente le compte
-        À COMPTER DE LA BASCULE : un taux d'acquisition commun, prélevé une
-        fois sur la rémunération, à la place des taux du régime unique. Avant
-        la bascule, ce qui a été cotisé sous le système actuel est porté tel
-        qu'il a été prélevé, aux taux réels de chaque régime, salariale et
-        patronale confondues — exactement le scénario 4. La part de cotisation
-        reste donc ``TOTALE``.
+        À COMPTER DE LA BASCULE, que la couche ``taux_unique`` change : un taux
+        d'acquisition commun, prélevé une fois sur la rémunération, à la place
+        des taux du régime unique. Avant la bascule, ce qui a été cotisé sous
+        le système actuel est porté tel qu'il a été prélevé, aux taux réels de
+        chaque régime, salariale et patronale confondues — exactement le
+        scénario 4. La part de cotisation reste donc ``TOTALE``.
         """
-        return self._constructeur_variante(
-            part_cotisation=PartCotisation.TOTALE,
-            source_cotisations=SourceCotisations.TAUX_HISTORIQUES_PUIS_UNIFORME,
-            taux_cotisation_uniforme=self.parametres.taux_cotisation_liberal,
-        )
+        return self.constructeur_de(self.calculs["notionnel_liberal"])
 
     @cached_property
     def scenario_actuel(self) -> ScenarioActuel:
@@ -1029,10 +1095,8 @@ class Simulateur:
 
     @cached_property
     def scenario_notionnel(self) -> ScenarioNotionnel:
-        return ScenarioNotionnel(
-            self.constructeur, self.convertisseur, self.age_reference,
-            self.scenario_actuel, self.parametres,
-        )
+        """Scénarios 2 et 3 : le même objet sert aux deux."""
+        return self.scenario_de(self.calculs["notionnel_retroactif"])
 
     @cached_property
     def scenario_employeur(self) -> ScenarioNotionnel:
@@ -1042,10 +1106,7 @@ class Simulateur:
         scénarios 2 et 3 : c'est le point de départ du compte — origine de la
         répartition ou année de bascule — qui les distingue, pas le calcul.
         """
-        return ScenarioNotionnel(
-            self.constructeur_employeur, self.convertisseur,
-            self.age_reference, self.scenario_actuel, self.parametres,
-        )
+        return self.scenario_de(self.calculs["notionnel_retroactif_employeur"])
 
     @cached_property
     def convertisseur_rente_capitalisee(self) -> Convertisseur:
@@ -1080,11 +1141,7 @@ class Simulateur:
     def scenario_liberal(self) -> ScenarioNotionnel:
         """Scénario 6 : le scénario 4 jusqu'à la bascule, 18 % pour tous ensuite,
         la garantie vieillesse et le pilier de capitalisation obligatoire."""
-        return ScenarioNotionnel(
-            self.constructeur_liberal, self.convertisseur,
-            self.age_reference, self.scenario_actuel, self.parametres,
-            capitalisation=self.constructeur_capitalisation,
-        )
+        return self.scenario_de(self.calculs["notionnel_liberal"])
 
     @cached_property
     def regime_fusionne(self) -> RegimeFusionne:
@@ -1182,8 +1239,7 @@ class Simulateur:
         âge la proposition fait partir. La page Coût s'en sert pour les
         cohortes que la bascule sépare de leur génération de la grille.
         """
-        fusionne = self.regime_fusionne if self.parametres.fusion_au_plus_defavorable else None
-        return self.scenario_liberal.liberal(carriere, fusionne)
+        return self.calculer_univers("notionnel_liberal", carriere)
 
     def simuler(self, carriere: Carriere) -> Comparaison:
         """Calcule les six scénarios pour une carrière."""
@@ -1195,37 +1251,30 @@ class Simulateur:
             # elles ont à tenir la même exigence que les autres.
             self._verifier_fiabilite(proposition)
 
-        fusionne = self.regime_fusionne if self.parametres.fusion_au_plus_defavorable else None
-
         # LE SCÉNARIO 1 PASSE PAR L'ÉCHÉANCIER (docs/architecture.md, § 7.4) :
         # le départ appelle la liquidation, puis l'ASPA du jour ; l'échéance,
         # pour qui a liquidé avant l'année courante, fait vivre les pensions
         # jusque-là. Tout s'inscrit à son journal.
         echeancier = self.echeancier(carriere)
         actuel = echeancier.au_depart
-        retroactif = self.scenario_notionnel.retroactif(carriere, fusionne)
-        prospectif = self.scenario_notionnel.prospectif(carriere, self.regime_fusionne)
-        retroactif_employeur = self.scenario_employeur.retroactif(
-            carriere, fusionne,
-            libelle="Comptes notionnels rétroactifs, cotisation salariale et patronale",
-        )
-        prospectif_employeur = self.scenario_employeur.prospectif(
-            carriere, self.regime_fusionne,
-            libelle="Comptes notionnels à compter de la bascule, "
-                    "cotisation salariale et patronale",
-        )
-        liberal = self.proposition(proposition)
+        # Les cinq autres sont les univers de la proposition, dans l'ordre de
+        # leurs numéros ; celui qui ajoute l'âge légal part à cet âge.
+        notionnels = {
+            cle: self.calculer_univers(cle, proposition if calcul.age_legal else carriere)
+            for cle, calcul in self.calculs.items()
+        }
+        inconnus = sorted(set(notionnels) - _CHAMPS_NOTIONNELS)
+        if inconnus:
+            raise ValueError(f"univers {', '.join(inconnus)} : la comparaison ne connaît que "
+                             f"{', '.join(sorted(_CHAMPS_NOTIONNELS))}, et ne sait pas "
+                             "encore en afficher un autre")
 
         # La mémoire des calibrations n'est plus écrite ici : c'est un fichier
         # versionné, dont `scripts/construire_donnees.py` est le seul écrivain.
         comparaison = Comparaison(
             carriere=carriere,
             actuel=actuel,
-            notionnel_retroactif=retroactif,
-            notionnel_prospectif=prospectif,
-            notionnel_retroactif_employeur=retroactif_employeur,
-            notionnel_prospectif_employeur=prospectif_employeur,
-            notionnel_liberal=liberal,
+            **notionnels,
             regime_fusionne=self.regime_fusionne,
             parametres=self.parametres,
             coefficient_euros_constants=self.macro.coefficient_prix(

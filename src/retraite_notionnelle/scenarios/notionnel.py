@@ -537,7 +537,8 @@ class ScenarioNotionnel:
 
     def prospectif(
         self, carriere: Carriere, regime_fusionne: RegimeFusionne,
-        libelle: str = "Comptes notionnels à compter de la bascule",
+        libelle: str = "Comptes notionnels à compter de la bascule", *,
+        neutralisations: frozenset[str],
     ) -> ResultatNotionnel:
         """Droits figés à la bascule, comptes notionnels au-delà.
 
@@ -546,6 +547,11 @@ class ScenarioNotionnel:
         La méthode renvoie alors sa pension actuelle, de sorte que le tableau
         comparatif reste lisible — un retraité de 2005 voit bien « aucun effet »
         sur la ligne 3, et non un chiffre recalculé qui n'aurait aucun sens.
+
+        ``neutralisations`` est ce que la couche d'un seul calcul de l'univers
+        retire à la liquidation fictive des droits acquis
+        (``data/reference/couches/contributif_seul.yaml``) : l'univers la
+        donne, par ``scenarios/univers.py``.
         """
         annee_liquidation = carriere.annee_liquidation
         age_liquidation = carriere.age_liquidation or 0.0
@@ -554,7 +560,7 @@ class ScenarioNotionnel:
         if annee_liquidation <= bascule:
             return self._deja_liquide(carriere)
 
-        droits_acquis = self._droits_acquis(carriere, bascule)
+        droits_acquis = self._droits_acquis(carriere, bascule, neutralisations)
         capital_acquis = droits_acquis.capital if droits_acquis else 0.0
 
         compte = self.constructeur.construire(
@@ -611,12 +617,15 @@ class ScenarioNotionnel:
             libelle="Retraite déjà liquidée à la bascule — droits inchangés",
         )
 
-    def _droits_acquis(self, carriere: Carriere, bascule: int) -> DroitsAcquis | None:
+    def _droits_acquis(self, carriere: Carriere, bascule: int,
+                       neutralisations: frozenset[str]) -> DroitsAcquis | None:
         """Convertit les droits figés à la bascule en capital notionnel.
 
         Les droits sont ceux qu'aurait produits la carrière si elle s'était
         arrêtée à la bascule, calculés selon les règles actuelles mais
-        DÉBARRASSÉS des avantages non contributifs — conformément au principe
+        DÉBARRASSÉS de ce que ``neutralisations`` retire — les avantages non
+        contributifs, les points gratuits, la décote et la surcote, que la
+        couche « au contributif seul » neutralise —, conformément au principe
         « seules les cotisations comptent », qui vaut aussi pour le passé.
 
         La valorisation se fait à l'année de bascule, sans décote ni surcote :
@@ -652,11 +661,14 @@ class ScenarioNotionnel:
             identifiant=f"{carriere.identifiant} (droits figés {bascule})",
         )
         # Une liquidation FICTIVE (docs/architecture.md, § 7.3) : calculée
-        # sans être servie, au contributif seul, décote et surcote neutralisées.
+        # sans être servie, avec ce que la couche d'un seul calcul neutralise.
         droits = self.scenario_actuel.calculer(
             carriere_tronquee,
-            ignorer_penalite_age=True,
-            avantages_non_contributifs=False,
+            ignorer_penalite_age="decote_surcote" in neutralisations,
+            avantages_non_contributifs="avantages_non_contributifs" not in neutralisations,
+            avpf="avpf" not in neutralisations,
+            points_gratuits="points_gratuits" not in neutralisations,
+            liquider_successions="successions" not in neutralisations,
             nature="fictive",
         )
 

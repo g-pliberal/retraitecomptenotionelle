@@ -1,0 +1,17 @@
+# Une couche d'un seul calcul (docs/architecture.md, § 4.8) : la liquidation
+# fictive que nomme la transition posée au-dessus d'elle, la valorisation des
+# droits acquis. Elle ne touche pas l'univers.
+schema_version: 1
+id: contributif_seul
+nom: Au contributif seul, pour la liquidation fictive de la bascule
+portee: calcul
+operations:
+- operation: neutraliser
+  vise: {contributivite: avantages_non_contributifs}
+  motif: « au contributif seul, avantages non contributifs retirés »
+- operation: neutraliser
+  vise: {contributivite: points_gratuits}
+  motif: « ce qui n'a pas été cotisé n'existe pas »
+- operation: neutraliser
+  vise: {domaine: decote_surcote}
+  motif: on mesure des droits déjà ouverts, pas une liquidation anticipée

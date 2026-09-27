@@ -56,10 +56,16 @@ from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
+from retraite_notionnelle.noyau import univers  # noqa: E402
 from retraite_notionnelle.scenarios.notionnel import ScenarioNotionnel  # noqa: E402
+from retraite_notionnelle.scenarios.univers import calcul_notionnel  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 LIBERAL = "notionnel_liberal"
+#: La variante est le scénario 5 à 18 % : sa liquidation fictive neutralise ce
+#: que celle de l'univers du scénario 5 neutralise, la couche « au contributif
+#: seul ».
+SCENARIO_5 = "notionnel_prospectif_employeur"
 ANNEES_AFFICHEES: tuple[int, ...] = (2026, 2030, 2040, 2050, 2060, 2070)
 CAS_AFFICHES: tuple[str, ...] = (
     "smic_carriere_complete", "salaire_moyen", "cadre", "fonctionnaire_sedentaire",
@@ -81,7 +87,10 @@ class PropositionProspective:
                             "et garantie vieillesse"):
             if regime_fusionne is None:
                 raise ValueError("la proposition prospective demande le régime unique")
-            resultat = scenario.prospectif(carriere, regime_fusionne, libelle=libelle)
+            neutralisations = calcul_notionnel(
+                univers.charger()[SCENARIO_5], scenario.parametres).neutralisations
+            resultat = scenario.prospectif(carriere, regime_fusionne, libelle=libelle,
+                                           neutralisations=neutralisations)
             # La suite est celle de ``liberal`` : le pilier d'abord, la
             # garantie ensuite, qui regarde les deux.
             resultat.capitalisation = scenario._pilier_capitalise(carriere, resultat)

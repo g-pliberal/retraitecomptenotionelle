@@ -332,6 +332,16 @@ listes:
       univers: l'univers entier
       calcul: le seul calcul que nomme la transition qui l'emploie
 
+  selecteurs:
+    # Ce qu'une opération de couche vise quand elle ne nomme pas une fiche
+    # (docs/architecture.md, § 4.8), et où se lit la valeur qu'elle cherche.
+    valeurs:
+      etape: les fiches qui disent l'appliquer, à la liste etapes
+      domaine: les fiches de ce domaine, à la liste domaines
+      face: les fiches de cette face, à la liste faces
+      regime: les fiches qui concernent ce régime du catalogue
+      contributivite: ce qu'une neutralisation du vocabulaire retire, à la liste neutralisations
+
   types_de_source:
     # Les sortes de lecture que la veille enregistre.
     valeurs:

@@ -1,0 +1,17 @@
+# Le taux de la proposition : les taux réels jusqu'à la bascule, un taux commun
+# ensuite, que le régime unique porte (fusion_des_regimes).
+schema_version: 1
+id: taux_unique
+nom: Un taux unique à compter de la bascule, salariale et patronale additionnées
+operations:
+- operation: changer_un_parametre
+  vise: compte_notionnel
+  parametre: source_cotisations
+  valeur: taux_historiques_puis_uniforme
+  motif: >-
+    « puis un taux unique de 18 % à compter de 2026 — salariale et patronale
+    additionnées, le même pour tous les statuts. »
+- operation: changer_un_parametre
+  vise: compte_notionnel
+  parametre: taux_cotisation_uniforme
+  valeur: {parametre: taux_cotisation_liberal}

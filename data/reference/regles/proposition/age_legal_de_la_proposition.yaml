@@ -1,0 +1,55 @@
+schema_version: 1
+id: age_legal_de_la_proposition
+intitule: >-
+  L'âge légal de la proposition : 65 ans pour les départs qui prennent effet à
+  compter de la bascule ; qui serait parti plus tôt part à cet âge, et travaille
+  jusque-là dans la situation de sa dernière année.
+domaine: age
+etape: ouvrir_le_droit
+face: droit
+etat: transcrite
+effet: >-
+  Le scénario 6 : tout départ que le droit en vigueur place avant 65 ans, à
+  compter de la bascule ; les scénarios 2 à 5 gardent les âges du droit réel.
+lit:
+- la date d'effet et l'âge du départ
+- la dernière année de la carrière, que la prolongation répète
+ecrit:
+- la carrière poursuivie jusqu'à l'âge légal, et son départ reporté
+dates_qui_decident: [liquidation.date_effet, age_atteint]
+versions:
+- id: age_legal_de_la_proposition_proposition
+  textes:
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les six scénarios, scénario 6
+    citation: >-
+      Et un âge légal de départ de 65 ans à compter de 2026 : qui serait parti
+      plus tôt sous le droit en vigueur part à cet âge, et travaille jusque-là.
+    lu_le: 2026-09-27
+  bornes:
+    liquidation.date_effet: [null, null]
+  contenu: >-
+    Un départ qui prend effet à compter du 1er janvier de la bascule, avant
+    `age_legal_liberal`, est reporté à cet âge : la carrière se poursuit
+    jusque-là dans la situation de sa dernière année (`Carriere.prolongee`).
+    Un départ antérieur à la bascule est resté sous le droit en vigueur, et ne
+    bouge pas. Dans un compte notionnel, le report relève la pension : des
+    cotisations en plus, un diviseur plus petit. La garantie vieillesse,
+    ouverte au même âge, est alors due dès la liquidation.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: autre
+    reference: README.md, le texte de la proposition
+    date: 2026-09-27
+code:
+  python:
+    retraite_notionnelle.simulateur: [Simulateur.carriere_proposition]
+    retraite_notionnelle.carriere: [Carriere.prolongee]
+  javascript:
+    moteur/js/simulateur.js: [carriereProposition]
+    moteur/js/carriere.js: [prolongee]
+  parametres: [age_legal_liberal, annee_bascule]
+  tests: [tests/test_simulateur.py]

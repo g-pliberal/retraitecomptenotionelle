@@ -1,0 +1,61 @@
+schema_version: 1
+id: fusion_des_regimes
+intitule: >-
+  À compter de la bascule, un régime unique remplace tous les régimes : son taux
+  est celui du statut pivot du privé, sur une assiette déplafonnée, et il en
+  hérite la répartition entre salarié et employeur.
+domaine: coordination
+etape: coordonner_les_affiliations
+face: cotisation
+etat: transcrite
+effet: >-
+  Les cotisations portées au compte après la bascule : elles montent pour les
+  indépendants et les libéraux, qui cotisaient moins et sous plafond.
+lit:
+- les périodes des régimes en vigueur l'année de la bascule
+- le statut pivot, dont les taux font celui du régime unique
+ecrit:
+- le régime unifié, son taux et sa part salariale
+- la trace de chaque paramètre retenu, et du régime d'où il vient
+dates_qui_decident: [revenu.annee]
+versions:
+- id: fusion_des_regimes_proposition
+  textes:
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: Ce que le modèle fait
+    citation: Fusion des régimes au cas le plus défavorable
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: Six résultats à connaître avant de lire les chiffres, 2
+    citation: La fusion augmente les cotisations des indépendants
+    lu_le: 2026-09-27
+  bornes:
+    revenu.annee: [null, null]
+  contenu: >-
+    Les régimes disparaissent à la bascule (`annee_bascule`). Chaque paramètre
+    du régime unique est pris, parmi les régimes en vigueur, au plus
+    défavorable à l'assuré, sauf le taux : la somme des taux du statut pivot
+    (`statut_pivot_cotisations`, régime général et Agirc-Arrco), sur une
+    assiette déplafonnée, dont il hérite la répartition entre salarié et
+    employeur ; qui cotisait seul cotise seul. Une année de chômage indemnisé
+    n'y passe pas : l'Unédic verse ce qu'elle versait avant. Dans un univers
+    rétroactif, le réglage `fusion_au_plus_defavorable` retire le régime
+    unique ; dans un univers prospectif, où le compte ne s'ouvre qu'à la
+    bascule, il vaut toujours.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: autre
+    reference: README.md, le texte de la proposition
+    date: 2026-09-27
+code:
+  python:
+    retraite_notionnelle.moteur.fusion: [fusionner, RegimeFusionne]
+    retraite_notionnelle.moteur.compte: [ConstructeurCompte.taux_unifie]
+  javascript:
+    moteur/js/fusion.js: [fusionner]
+    moteur/js/compte.js: [tauxUnifie]
+  parametres: [annee_bascule, fusion_au_plus_defavorable, statut_pivot_cotisations]
+  tests: [tests/test_moteur.py, tests/test_solde_fusion.py]

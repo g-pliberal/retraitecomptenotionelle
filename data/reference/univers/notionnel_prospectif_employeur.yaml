@@ -1,0 +1,7 @@
+# Le scénario 3, part patronale comprise.
+schema_version: 1
+id: notionnel_prospectif_employeur
+nom: Notionnel dès {bascule}, salariale + patronale
+numero: 5
+libelle: Comptes notionnels à compter de la bascule, cotisation salariale et patronale
+couches: [droit_reel, contributif_seul, valorisation_des_droits_acquis, comptes_notionnels, part_patronale]

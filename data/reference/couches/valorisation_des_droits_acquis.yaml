@@ -1,0 +1,18 @@
+# La transition de la proposition prospective (docs/architecture.md, § 4.8 et
+# 6.3) : le droit réel jusqu'à la bascule, puis les droits acquis convertis en
+# capital. Les couches posées au-dessus d'elle agissent à compter de sa date ;
+# la couche d'un seul calcul posée au-dessous est celle de la liquidation
+# fictive qu'elle demande.
+schema_version: 1
+id: valorisation_des_droits_acquis
+nom: La valorisation des droits acquis à la bascule
+depuis:
+  date: revenu.annee
+  valeur: {parametre: annee_bascule}
+operations:
+- operation: ajouter_une_transition
+  vise: valorisation_des_droits_acquis
+  motif: >-
+    « les droits déjà acquis sont figés — au contributif seul, avantages non
+    contributifs retirés — puis convertis en capital, et les règles
+    notionnelles s'appliquent ensuite »

@@ -1,0 +1,62 @@
+schema_version: 1
+id: age_de_reference
+intitule: >-
+  L'âge de référence du compte : 65 ans, l'âge légal de la proposition, à partir
+  de la bascule ; avant elle, un cliquet sur l'âge du taux plein que
+  l'abaissement de 1982 ne fait pas redescendre.
+domaine: age
+etape: liquider_chaque_regime
+face: droit
+etat: transcrite
+effet: >-
+  L'écart que chaque résultat notionnel affiche, et l'âge auquel les droits
+  acquis se convertissent à la bascule ; il ne retire rien lui-même à la
+  pension.
+lit:
+- l'année de la liquidation
+- l'âge du taux plein du régime général, année par année, pour le cliquet
+ecrit:
+- l'âge de référence
+- l'écart entre l'âge du départ et l'âge de référence
+dates_qui_decident: [liquidation.date_effet]
+versions:
+- id: age_de_reference_proposition
+  textes:
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: Ce que le modèle fait
+    citation: >-
+      Âge de référence à 65 ans — l'âge légal de départ de la proposition — à
+      partir de la bascule ; avant elle, un cliquet que l'abaissement de 1982 ne
+      fait pas redescendre
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: Ce que le modèle fait
+    citation: >-
+      Conversion à l'âge de référence par défaut — le seul endroit où l'âge de
+      départ pèse sur les droits d'avant la bascule
+    lu_le: 2026-09-27
+  bornes:
+    liquidation.date_effet: [null, null]
+  contenu: >-
+    L'âge de référence vaut `age_reference_fixe` à partir de la bascule, et
+    avant elle le cliquet que `mode_age_reference` choisit : l'âge du taux plein
+    du régime général, qui ne redescend jamais. Il mesure l'anticipation d'un
+    départ, que le résultat affiche ; il ne la sanctionne pas en plus du
+    diviseur, sauf dans le mode explicite, offert en variante. C'est aussi
+    l'âge auquel la valorisation des droits acquis prend le diviseur, sauf si
+    `age_conversion_droits_acquis` retient l'âge du départ.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: autre
+    reference: README.md, le texte de la proposition
+    date: 2026-09-27
+code:
+  python:
+    retraite_notionnelle.moteur.age_reference: [AgeReference.age, AgeReference.ecart]
+  javascript:
+    moteur/js/age-reference.js: [AgeReference, age, ecart]
+  parametres: [age_reference_fixe, mode_age_reference]
+  tests: [tests/test_moteur.py]

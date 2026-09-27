@@ -1,0 +1,73 @@
+schema_version: 1
+id: compte_notionnel
+intitule: >-
+  Le compte notionnel : chaque année, la cotisation retraite effectivement versée
+  est inscrite au compte, qui se revalorise jusqu'à la liquidation ; ni minimum,
+  ni majoration, ni trimestre gratuit.
+domaine: points
+etape: acquerir_les_droits
+face: droit
+etat: transcrite
+effet: >-
+  Toute pension des scénarios 2 à 6 : le capital qu'il accumule, divisé par le
+  coefficient de conversion, est la pension de répartition.
+lit:
+- les revenus de la chronologie, année par année, et le régime de chaque activité
+- les taux et les assiettes des fichiers de régimes, et la part des employeurs publics
+- les paramètres que les couches de l'univers lui donnent
+ecrit:
+- les cotisations portées au compte, année par année
+- le capital notionnel à la liquidation
+dates_qui_decident: [revenu.annee, liquidation.date_effet]
+versions:
+- id: compte_notionnel_proposition
+  textes:
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les trois temps du compte
+    citation: >-
+      accumulation — chaque année, la cotisation retraite effectivement versée
+      est inscrite au compte
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: les trois temps du compte
+    citation: >-
+      Il n'y a donc ni minimum, ni majoration, ni trimestre gratuit : ce qui n'a
+      pas été cotisé n'existe pas
+    lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: Ce que le modèle fait
+    citation: Le compte notionnel reçoit le taux de l'année
+    lu_le: 2026-09-27
+  bornes:
+    revenu.annee: [null, null]
+  contenu: >-
+    De l'ouverture du compte à la liquidation, l'année du départ comprise au
+    prorata de ses mois, le compte reçoit chaque année la cotisation que les
+    régimes de l'année prélèvent, sur leurs assiettes et à leurs taux. Une année
+    sans cotisation n'y ajoute rien, sauf ce qu'un tiers a versé pour elle : les
+    cotisations complémentaires de l'Unédic pendant un chômage indemnisé. Ce qui
+    est porté au compte tient à trois paramètres, que les couches changent : la
+    part de la cotisation (`part_cotisation` : salariale, ou salariale et
+    patronale), la source des taux (`source_cotisations`) et le taux commun
+    (`taux_cotisation_uniforme`). Le compte s'ouvre à l'entrée dans la vie
+    active, ou à l'origine de la répartition si elle est postérieure ; sous une
+    transition, à la bascule. Les régimes provisionnés, le RAFP, n'y entrent
+    pas : leur cotisation va au compartiment hors répartition, que les six
+    scénarios servent à l'identique.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: autre
+    reference: README.md, le texte de la proposition
+    date: 2026-09-27
+code:
+  python:
+    retraite_notionnelle.moteur.compte: [ConstructeurCompte.construire, ConstructeurCompte.cotisation_annuelle, ConstructeurCompte.taux_effectif, ConstructeurCompte.taux_unifie]
+    retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel.retroactif]
+  javascript:
+    moteur/js/compte.js: [ConstructeurCompte, construire, cotisationAnnuelle, tauxUnifie]
+    moteur/js/scenario-notionnel.js: [ScenarioNotionnel, retroactif]
+  parametres: [part_cotisation, source_cotisations, taux_cotisation_uniforme, contribution_etat, annee_debut_repartition, plafond_assiette_en_pass, statut_pivot_cotisations]
+  tests: [tests/test_moteur.py, tests/test_simulateur.py]
