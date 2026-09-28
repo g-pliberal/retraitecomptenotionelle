@@ -9,6 +9,8 @@ famille: special
 # portail commun des régimes (« La retraite des marins »), ni le rapport
 # d'information du Sénat n° 707 (2012-2013) sur le régime ne lui adjoignent
 # de complémentaire.
+# Le schéma de l'Union Retraite (PDF du 27 mars 2025) range l'Enim sous
+# « Retraite de base + complémentaire ».
 etage: integre
 source_id: rs_enim
 fiabilite: estimee

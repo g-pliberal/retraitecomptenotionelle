@@ -1,0 +1,53 @@
+schema_version: 1
+id: cese_affiliation_2023
+intitule: >-
+  Les membres du CESE entrant en fonction à compter du 1er septembre 2023 sont
+  affiliés au régime général et à l'Ircantec ; les membres désignés avant restent
+  à la caisse de retraites du Conseil.
+etat: conforme
+effet: >-
+  Les membres du CESE entrés en fonction depuis le 1er septembre 2023. Le
+  formulaire refuse leur statut, fermé, et les renvoie à celui qui le relève :
+  jusqu'au 28 septembre 2026 le salarié non cadre du privé, régime général et
+  Agirc-Arrco ; désormais l'agent non titulaire, régime général et Ircantec,
+  que L. 921-2-1 nomme avec eux. La période d'après la fermeture, que le
+  formulaire n'atteint pas, route la même chose. La fiche de l'Ircantec ne
+  porte que la tranche A : une indemnité au-delà du plafond y perd sa tranche B,
+  comme celle d'un élu local.
+reformes: [cese_2023]
+sources:
+  lu_le: 2026-09-28
+  prochaine_relecture: 2027-09-30
+  lectures:
+  - type: jorf
+    reference: >-
+      loi n° 2023-270 du 14 avril 2023, article 1er (JORFARTI000047445082), lu dans
+      l'index JORF du dépôt : le 4° du VI crée l'article L. 381-32 (« Les membres du
+      Conseil économique, social et environnemental sont affiliés à l'assurance
+      vieillesse du régime général de sécurité sociale ») ; le 14° insère à L.
+      921-2-1 « et les personnes mentionnées à l'article L. 381-32 » ; le IX : « Le
+      4° du VI s'applique aux membres du Conseil économique, social et
+      environnemental entrant en fonction à compter du 1er septembre 2023 »
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      L. 921-2-1 CSS, version du 1er janvier 2024 (LEGIARTI000048701019) : « Les
+      agents contractuels de droit public et les personnes mentionnées à l'article
+      L. 381-32 sont affiliés à un régime de retraite complémentaire obligatoire
+      relevant de l'article L. 921-2, dénommé " Institution de retraite
+      complémentaire des agents non titulaires de l'Etat et des collectivités
+      publiques " »
+    date: 2026-09-28
+  - type: autre
+    reference: >-
+      Ircantec, base de connaissance, « Membres du Conseil Economique, Social et
+      Environnemental (CESE) », 4 janvier 2024 : « Les membres du CESE entrant en
+      fonction à compter du 1er septembre 2023, sont affiliés au régime général de
+      sécurité sociale et à l'Ircantec »
+    url: >-
+      https://baseircantec.retraites.fr/qui-est-concerne-par-le-regime/agents/categories-dagents-relevant-du-regime/categories-particulieres-dagents-relevant-de-lircantec/membres-du-conseil-economique-social-et-environnemental-cese
+    date: 2026-09-28
+textes_a_rattacher:
+- reference: loi n° 2023-270, article 1er, VI, 4° et 14°, et IX (JORFARTI000047445082)
+- reference: L. 381-32 CSS
+- reference: L. 921-2-1 CSS (LEGIARTI000048701019)

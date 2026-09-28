@@ -16,22 +16,22 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 *Modélisé ne veut pas dire exact* : les 39 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
 
-**La carte des règles** (`data/reference/regles/`) : 115 fiches, dont 1 relation. La veille en est une vue (`python scripts/veille_droit.py`).
+**La carte des règles** (`data/reference/regles/`) : 117 fiches, dont 1 relation. La veille en est une vue (`python scripts/veille_droit.py`).
 
 | État | Fiches |
 |---|---|
-| conformes | 44 |
+| conformes | 46 |
 | transcrites | 24 |
 | approchées | 39 |
 | pas encore modélisées | 4 |
 | manquantes | 3 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **29 sur 115** (67 exemples : 66 reproduits, 1 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **24 sur 115**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
-- Désignées par les interrupteurs des périodes de régime : **42 sur 115**, par 2 273 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
-- Mûres, sans rien qui manque à leur contrat : **6 sur 115**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **6 sur 115**, soit 43 versions, dont 9 supposées ; le partage des versions se contrôle sur chacune.
+- Confrontées à au moins un exemple officiel : **29 sur 117** (67 exemples : 66 reproduits, 1 en écart connu, section 2).
+- Citées dans le code par leur identifiant : **24 sur 117**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Désignées par les interrupteurs des périodes de régime : **42 sur 117**, par 2 273 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
+- Mûres, sans rien qui manque à leur contrat : **6 sur 117**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
+- Découpées en versions : **6 sur 117**, soit 43 versions, dont 9 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 110, dont 10 déclarées non appliquées.
 
 **La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 11 505 rédactions d'articles, de 65 textes, lues le 2026-09-27 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20260926-210736). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
@@ -40,9 +40,9 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 |---|---|
 | rattachées à une version | 62 |
 | sans effet | 54 |
-| à rattacher | 351 |
+| à rattacher | 352 |
 | à examiner | 694 |
-| sans statut | 10 344 |
+| sans statut | 10 343 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 12 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -85,11 +85,11 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | Scénario | Univers | Couches posées sur le droit réel | Fiches ajoutées | Fiches du droit réel sans décision |
 |---|---|---|---|---|
 | 1 | `actuel` | aucune : c'est l'étalon | 0 | — |
-| 2 | `notionnel_retroactif` | `comptes_notionnels` | 5 | 67 sur 115 |
-| 3 | `notionnel_prospectif` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels` | 6 | 67 sur 115 |
-| 4 | `notionnel_retroactif_employeur` | `comptes_notionnels`, `part_patronale` | 5 | 67 sur 115 |
-| 5 | `notionnel_prospectif_employeur` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels`, `part_patronale` | 6 | 67 sur 115 |
-| 6 | `notionnel_liberal` | `comptes_notionnels`, `part_patronale`, `taux_unique`, `capitalisation_obligatoire`, `garantie_vieillesse`, `age_legal_de_la_proposition` | 8 | 67 sur 115 |
+| 2 | `notionnel_retroactif` | `comptes_notionnels` | 5 | 69 sur 117 |
+| 3 | `notionnel_prospectif` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels` | 6 | 69 sur 117 |
+| 4 | `notionnel_retroactif_employeur` | `comptes_notionnels`, `part_patronale` | 5 | 69 sur 117 |
+| 5 | `notionnel_prospectif_employeur` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels`, `part_patronale` | 6 | 69 sur 117 |
+| 6 | `notionnel_liberal` | `comptes_notionnels`, `part_patronale`, `taux_unique`, `capitalisation_obligatoire`, `garantie_vieillesse`, `age_legal_de_la_proposition` | 8 | 69 sur 117 |
 
 **La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : la veille. Restent des registres : la frontière contributive, l'inventaire des régimes.
 
@@ -197,23 +197,23 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Régime des auteurs et compositeurs lyriques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - Assurance vieillesse des non-salariés agricoles (MSA) : 1 source(s) (msa_reforme_25_meilleures_annees)
   - et 20 sources sans régime désigné.
-- **Les fiches sans exemple officiel** : 86.
-- **Les domaines sans décision** (§ 8) : 67 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 6 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `retablissement_fonction_publique`, `retraite_proportionnelle_msa`. Les 61 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
-- **Faire mûrir la carte** : 825 champs obligatoires manquent, à 109 fiches. Par champ :
+- **Les fiches sans exemple officiel** : 88.
+- **Les domaines sans décision** (§ 8) : 69 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 6 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `retablissement_fonction_publique`, `retraite_proportionnelle_msa`. Les 63 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
+- **Faire mûrir la carte** : 841 champs obligatoires manquent, à 111 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |
   |---|---|
-  | `dates_qui_decident` | 109 |
-  | `domaine` | 109 |
-  | `ecrit` | 109 |
-  | `lit` | 109 |
-  | `regimes` | 109 |
-  | `versions` | 109 |
-  | `etape` | 76 |
-  | `code` | 62 |
+  | `dates_qui_decident` | 111 |
+  | `domaine` | 111 |
+  | `ecrit` | 111 |
+  | `lit` | 111 |
+  | `regimes` | 111 |
+  | `versions` | 111 |
+  | `etape` | 78 |
+  | `code` | 64 |
   | `approximations` | 33 |
 
-- **Les textes** : 351 rédactions à rattacher à une version de la fiche qui les cite, 694 à examiner, et 10 344 sans statut, que le cliquet tient à 10 344 au plus. Les textes qui en ont le plus : `css` 5 304, `rural` 969, `decret_46_2769` 946, `cpcmr` 673, `decret_90_1215` 335 (`python scripts/textes.py`).
+- **Les textes** : 352 rédactions à rattacher à une version de la fiche qui les cite, 694 à examiner, et 10 343 sans statut, que le cliquet tient à 10 343 au plus. Les textes qui en ont le plus : `css` 5 303, `rural` 969, `decret_46_2769` 946, `cpcmr` 673, `decret_90_1215` 335 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`) ; 2026-12-31 (`coefficients_anticipation_agirc_arrco`).
 - **Les régimes hors champ** : 15, chacun avec sa raison dans l'inventaire.
 

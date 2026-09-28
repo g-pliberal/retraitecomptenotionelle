@@ -22,7 +22,7 @@ inventaire:
             fonctionnaire_territorial_hospitalier,
             fonctionnaire_territorial_hospitalier_actif,
             fonctionnaire_territorial_hospitalier_super_actif,
-            militaire, militaire_officier, ouvrier_etat, ouvrier_etat_actif]
+            militaire, militaire_officier]
   textes:
     - {reference: "loi n° 2003-775 du 21 août 2003, article 76", id: null}
     - {reference: "décret n° 2004-569 du 18 juin 2004 relatif à la retraite additionnelle de la fonction publique", id: null}

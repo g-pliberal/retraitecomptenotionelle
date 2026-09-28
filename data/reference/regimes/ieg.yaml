@@ -2,6 +2,10 @@ code: ieg
 rang: 590
 nom: Régime des industries électriques et gazières (CNIEG)
 famille: special
+# Intégré, lu le 28 septembre 2026 : le schéma de l'Union Retraite, « Les
+# régimes de retraite en France » (PDF du 27 mars 2025, info-retraite.fr),
+# range la CNIEG, pour les agents recrutés jusqu'au 31 août 2023, sous
+# « Retraite de base + complémentaire ».
 etage: integre
 source_id: rs_cnieg
 fiabilite: moyenne

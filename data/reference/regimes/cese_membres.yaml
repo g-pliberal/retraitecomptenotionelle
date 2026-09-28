@@ -3,6 +3,12 @@ rang: 740
 nom: >-
   Caisse de retraites des anciens membres du Conseil économique, social et environnemental
 famille: special
+# Intégré, lu le 28 septembre 2026, a contrario : c'est la loi n° 2023-270
+# qui affilie les membres au régime général (article L. 381-32, qu'elle
+# crée) et à l'Ircantec (L. 921-2-1, qu'elle complète) — article 1er, VI, 4°
+# et 14° (JORFARTI000047445082) —, et les seuls membres entrant en fonction
+# à compter du 1er septembre 2023 (IX). La caisse du Conseil sert seule
+# la pension du mandat des autres.
 etage: integre
 source_id: sites_institutionnels
 fiabilite: estimee

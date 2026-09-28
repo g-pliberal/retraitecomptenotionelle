@@ -3458,3 +3458,45 @@ journal:
       remariage, la réversion minorée de l'Agirc, le décès avant le départ.
       Du domaine : le formulaire et la page de résultat, les exemples
       officiels, la page Coût et la décision de la proposition.
+  - date: "2026-09-28"
+    session: >-
+      l'action 133, la suite : l'étage des six derniers régimes intégrés lu,
+      deux routages du scénario 1 corrigés, la complémentaire des mineurs et
+      celle des chemins de fer secondaires lues sans être routées
+    consulte: >-
+      veille_droit.py au début de la session ; les index LEGI et JORF mis à
+      jour au 27 septembre ; L. 161-17-2 et L. 161-17-3. Dans l'index LEGI :
+      la loi n° 2003-775, article 76 ; L. 921-2-1 ; le décret n° 2004-1056,
+      article 8 ; le décret n° 46-1433, article 26 ; le décret n° 2004-1466,
+      article 2. Dans l'index JORF : la loi n° 2023-270, article 1er ; le
+      décret n° 54-1061 et l'arrêté du 6 novembre 1967 (titres). Au Journal
+      officiel numérisé, les décrets n° 54-953, 54-1061 et 55-1297. Le schéma
+      de l'Union Retraite « Les régimes de retraite en France » (27 mars
+      2025) ; les pages de l'ERAFP, de la base de connaissance de l'Ircantec
+      (CESE), de la DRHFPNC (retraite), du Sénat (protection sociale) ; le
+      règlement de la caisse des députés (2018) et la page de l'Assemblée
+      sur son alignement ; la fiche de la CARCOM chez Malakoff Humanis ; la
+      circulaire Agirc-Arrco 2020-02-DRJ.
+    trouve: >-
+      L. 161-17-2 et L. 161-17-3 n'ont pas de rédaction postérieure au 31
+      décembre 2025. Le RAFP n'est ouvert qu'aux fonctionnaires civils, aux
+      magistrats et aux militaires : le routage le donnait depuis 2005 aux
+      ouvriers de l'État, il ne le donne plus (fiche rafp_beneficiaires). Les
+      membres du CESE entrés en fonction depuis le 1er septembre 2023 sont
+      affiliés au régime général et à l'Ircantec, non à l'Agirc-Arrco ; le
+      statut qui relève le leur est désormais l'agent non titulaire (fiche
+      cese_affiliation_2023). Les six régimes restent intégrés, chacun sur
+      sa source. La complémentaire des mineurs est l'Agirc-Arrco, que la
+      circulaire de 2020 ne sert au mineur de fond sans abattement qu'à
+      soixante ans ; celle des chemins de fer secondaires, créée par le
+      décret n° 54-1061 et non par le n° 54-953, ne vise que les embauchés
+      d'après le 1er octobre 1954, et ce dernier décret laisse les autres à
+      leur caisse, où le routage ne les garde pas après 1954.
+    reste: >-
+      Router la complémentaire des mineurs demande qu'une complémentaire
+      puisse être servie plus tard que la pension de base ; les taux de la
+      CARCOM, les allocations de l'ANGDM, les régimes des ETAM (CAREM) et des
+      ingénieurs restent à lire. Les chemins de fer secondaires : la valeur
+      du point et le salaire de référence de leur caisse complémentaire
+      (arrêtés de 1955 et 1956), son adhésion à l'Arrco, et la caisse
+      autonome mutuelle d'après 1954 pour les agents d'avant.

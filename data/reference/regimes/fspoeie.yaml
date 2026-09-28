@@ -2,6 +2,13 @@ code: fspoeie
 rang: 260
 nom: Fonds spécial des pensions des ouvriers des établissements industriels de l'État
 famille: fonction_publique
+# Intégré, lu le 28 septembre 2026 : le schéma de l'Union Retraite, « Les
+# régimes de retraite en France » (PDF du 27 mars 2025, info-retraite.fr),
+# range le FSPOEIE sous « Retraite de base + complémentaire », sans le RAFP
+# qu'il ajoute au SRE et à la CNRACL. Et le décret n° 2004-1056, article 8,
+# IV (LEGIARTI000006781477), annule au profit du fonds spécial les
+# cotisations d'assurance vieillesse ET celles de l'Ircantec des services
+# qu'il valide : sa pension tient lieu des deux.
 etage: integre
 source_id: cdc_cnracl
 fiabilite: moyenne

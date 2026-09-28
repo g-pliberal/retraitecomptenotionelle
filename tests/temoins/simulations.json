@@ -176744,16 +176744,11 @@
        "detail": "SR 63,646.30 € × taux 75.000% × 172/172",
        "montant": 47734.72369186003,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 47734.72369186003,
      "pension_annuelle_euros_constants": 38096.66687488912,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 3977.893640988336,
      "taux_remplacement": 0.7320644216691069,
      "total_contributif": 47734.72369186003
@@ -177763,18 +177758,10 @@
        "fiabilite": "haute",
        "regime": "fspoeie",
        "regle": "fonction_publique"
-      },
-      {
-       "au_depart": 0.0,
-       "aujourd_hui": 0.0,
-       "coefficient": 1.3309082375029335,
-       "fiabilite": "certifiee",
-       "regime": "rafp",
-       "regle": "point"
       }
      ],
      "pension_annuelle": 35711.62775793056,
-     "pension_hors_repartition": 0.0
+     "pension_hors_repartition": 0
     },
     "annee": 2026,
     "coefficients_notionnels": {
@@ -177903,16 +177890,11 @@
        "detail": "SR 33,910.11 € × taux 83.438% × 154/154",
        "montant": 28293.751042457545,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 28293.751042457545,
      "pension_annuelle_euros_constants": 37324.72015661772,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 2357.812586871462,
      "taux_remplacement": 0.8293371214462014,
      "total_contributif": 28293.751042457545
@@ -178151,18 +178133,10 @@
        "fiabilite": "haute",
        "regime": "fspoeie",
        "regle": "fonction_publique"
-      },
-      {
-       "au_depart": 0.0,
-       "aujourd_hui": 0.0,
-       "coefficient": 1.231487513572204,
-       "fiabilite": "certifiee",
-       "regime": "rafp",
-       "regle": "point"
       }
      ],
      "pension_annuelle": 37187.06263596218,
-     "pension_hors_repartition": 0.0
+     "pension_hors_repartition": 0
     },
     "annee": 2026,
     "coefficients_notionnels": {
@@ -178291,16 +178265,11 @@
        "detail": "SR 39,679.95 € × taux 80.625% × 166/166",
        "montant": 31991.959122813212,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 31991.959122813212,
      "pension_annuelle_euros_constants": 37773.86060826629,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 2665.996593567768,
      "taux_remplacement": 0.7888866058062053,
      "total_contributif": 31991.959122813212
@@ -178630,16 +178599,11 @@
        "detail": "SR 49,963.58 € × taux 76.875% × 170/170",
        "montant": 38409.49976376186,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 38409.49976376186,
      "pension_annuelle_euros_constants": 36461.57271504858,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 3200.791646980155,
      "taux_remplacement": 0.7503660322108345,
      "total_contributif": 38409.49976376186
@@ -178990,16 +178954,11 @@
        "detail": "SR 63,646.30 € × taux 75.000% × 172/172",
        "montant": 47734.72369186003,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 47734.72369186003,
      "pension_annuelle_euros_constants": 38096.66687488912,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 3977.893640988336,
      "taux_remplacement": 0.7320644216691069,
      "total_contributif": 47734.72369186003
@@ -180009,18 +179968,10 @@
        "fiabilite": "haute",
        "regime": "fspoeie",
        "regle": "fonction_publique"
-      },
-      {
-       "au_depart": 0.0,
-       "aujourd_hui": 0.0,
-       "coefficient": 1.3309082375029335,
-       "fiabilite": "certifiee",
-       "regime": "rafp",
-       "regle": "point"
       }
      ],
      "pension_annuelle": 35711.62775793056,
-     "pension_hors_repartition": 0.0
+     "pension_hors_repartition": 0
     },
     "annee": 2026,
     "coefficients_notionnels": {
@@ -180149,16 +180100,11 @@
        "detail": "SR 33,910.11 € × taux 83.438% × 150/150",
        "montant": 28293.751042457545,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 28293.751042457545,
      "pension_annuelle_euros_constants": 37324.72015661772,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 2357.812586871462,
      "taux_remplacement": 0.8293371214462014,
      "total_contributif": 28293.751042457545
@@ -180397,18 +180343,10 @@
        "fiabilite": "haute",
        "regime": "fspoeie",
        "regle": "fonction_publique"
-      },
-      {
-       "au_depart": 0.0,
-       "aujourd_hui": 0.0,
-       "coefficient": 1.231487513572204,
-       "fiabilite": "certifiee",
-       "regime": "rafp",
-       "regle": "point"
       }
      ],
      "pension_annuelle": 37619.47034103151,
-     "pension_hors_repartition": 0.0
+     "pension_hors_repartition": 0
     },
     "annee": 2026,
     "coefficients_notionnels": {
@@ -180537,16 +180475,11 @@
        "detail": "SR 39,679.95 € × taux 81.562% × 162/162",
        "montant": 32363.958647497086,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 32363.958647497086,
      "pension_annuelle_euros_constants": 38213.091545571704,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 2696.9965539580903,
      "taux_remplacement": 0.7980597058737193,
      "total_contributif": 32363.958647497086
@@ -180876,16 +180809,11 @@
        "detail": "SR 49,963.58 € × taux 78.750% × 168/168",
        "montant": 39346.31683117069,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 39346.31683117069,
      "pension_annuelle_euros_constants": 37350.87936663514,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 3278.859735930891,
      "taux_remplacement": 0.7686676427525623,
      "total_contributif": 39346.31683117069
@@ -181236,16 +181164,11 @@
        "detail": "SR 55,042.91 € × taux 75.937% × 170/170",
        "montant": 41798.208546566726,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 41798.208546566726,
      "pension_annuelle_euros_constants": 37666.14388795124,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 3483.184045547227,
      "taux_remplacement": 0.759375,
      "total_contributif": 41798.208546566726
@@ -181596,16 +181519,11 @@
        "detail": "SR 55,042.91 € × taux 74.063% × 171/172",
        "montant": 40529.141491212315,
        "regime": "fspoeie"
-      },
-      {
-       "detail": "aucun droit",
-       "montant": 0.0,
-       "regime": "rafp"
       }
      ],
      "pension_annuelle": 40529.141491212315,
      "pension_annuelle_euros_constants": 36522.533576107766,
-     "pension_hors_repartition": 0.0,
+     "pension_hors_repartition": 0,
      "pension_mensuelle": 3377.4284576010264,
      "taux_remplacement": 0.7363190406976745,
      "total_contributif": 40529.141491212315

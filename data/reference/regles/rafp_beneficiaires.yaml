@@ -1,0 +1,44 @@
+schema_version: 1
+id: rafp_beneficiaires
+intitule: >-
+  Le RAFP n'est ouvert qu'aux fonctionnaires civils, aux magistrats de l'ordre
+  judiciaire et aux militaires : les ouvriers de l'État, dont la pension est celle
+  du FSPOEIE, n'y cotisent pas.
+etat: conforme
+effet: >-
+  Les deux statuts d'ouvrier de l'État, que le routage affiliait au RAFP de 2005
+  au 28 septembre 2026 : ils n'y cotisent plus, et la rente servie à part
+  disparaît — 1 244,88 € par an, en euros du départ, pour un ouvrier né en 1970,
+  à 20 % de primes, parti en 2034. Aucun total des quatre systèmes ne bouge, le
+  RAFP en étant retiré ; les témoins, sans primes, n'y perdent qu'une ligne
+  nulle.
+sources:
+  lu_le: 2026-09-28
+  prochaine_relecture: 2027-09-30
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 2003-775, article 76, II, version en vigueur depuis le 1er septembre
+      2024 (LEGIARTI000048691415), lue dans l'index LEGI du dépôt : « Le bénéfice
+      du régime est ouvert : 1° Aux fonctionnaires civils auxquels s'appliquent les
+      lois n° 83-634 du 13 juillet 1983 […] ; 2° Aux magistrats de l'ordre
+      judiciaire ; 3° Aux militaires de tous grades […] ; 4° A leurs conjoints
+      survivants ainsi qu'à leurs orphelins »
+    date: 2026-09-28
+  - type: autre
+    reference: >-
+      ERAFP, « Actif » : « Vous cotisez au RAFP si vous êtes : fonctionnaire civil,
+      même en cas de détachement ; magistrat de l'ordre judiciaire ; militaire de
+      carrière ou servant en vertu d'un contrat ou réserviste »
+    url: https://www.rafp.fr/actif/actif
+    date: 2026-09-28
+  - type: autre
+    reference: >-
+      Union Retraite, « Les régimes de retraite en France » (PDF du 27 mars 2025) :
+      le RAFP s'ajoute au SRE et à la CNRACL ; le FSPOEIE est rangé parmi les
+      régimes spéciaux, sous « Retraite de base + complémentaire », sans lui
+    url: >-
+      https://www.info-retraite.fr/portail-info/files/live/sites/PortailInformationnel/files/images/PDF/Rapport/RA%20UR%202024_RegimesRetraite-1.pdf
+    date: 2026-09-28
+textes_a_rattacher:
+- reference: 'loi n° 2003-775, article 76, II (LEGIARTI000048691415) : bénéficiaires'

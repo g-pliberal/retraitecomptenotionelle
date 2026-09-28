@@ -24,7 +24,7 @@ inventaire:
             salarie_prive_non_cadre_entreprise_recente,
             maitre_enseignement_prive,
             salarie_saint_pierre_et_miquelon,
-            membre_cese, salarie_nouvelle_caledonie,
+            salarie_nouvelle_caledonie,
             salarie_regime_professionnel_integre]
   textes:
     - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}

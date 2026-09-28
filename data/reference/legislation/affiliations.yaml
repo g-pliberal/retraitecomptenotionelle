@@ -272,16 +272,26 @@ affiliations:
   membre_cese:
     libelle: Membre du Conseil économique, social et environnemental
     famille: elus
-    releve_par: salarie_prive_non_cadre
+    releve_par: contractuel_public
     periodes:
       - {debut: 1957, fin: null, regimes: [cese_membres], entres_avant: 2023-09}
-      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco], entres_depuis: 2023-09}
+      - {debut: 2019, fin: null, regimes: [regime_general, ircantec], entres_depuis: 2023-09}
     note: >-
       La caisse de retraites des anciens membres est fermée aux membres
-      désignés à compter du 1er septembre 2023, « affiliés au régime général
-      de sécurité sociale et à l'Ircantec » ; le catalogue les route au
-      régime général et à la complémentaire du non-cadre, l'Ircantec étant
-      une fiche de tranche 1 que le modèle réserve aux agents publics.
+      entrant en fonction à compter du 1er septembre 2023 : la loi n°
+      2023-270 les affilie au régime général (L. 381-32, qu'elle crée) et à
+      l'Ircantec (L. 921-2-1, qu'elle complète), article 1er, VI, 4° et 14°,
+      et IX (JORFARTI000047445082) ; « Les membres du CESE entrant en
+      fonction à compter du 1er septembre 2023, sont affiliés au régime
+      général de sécurité sociale et à l'Ircantec » (base de connaissance de
+      l'Ircantec, 4 janvier 2024). Le routage les portait jusqu'au 28
+      septembre 2026 à l'Agirc-Arrco, au motif que la fiche de l'Ircantec,
+      de tranche A seule, serait réservée aux agents publics : les élus
+      locaux la reçoivent aussi, et l'indemnité d'un membre au-delà du
+      plafond, s'il y en a, perd seulement sa tranche B, comme la leur. Le
+      statut qui le relève est donc l'agent non titulaire, que L. 921-2-1
+      nomme avec eux, et non plus le salarié non cadre du privé : c'est vers
+      lui que le formulaire renvoie un membre entré depuis la fermeture.
 
   salarie_polynesie:
     libelle: Salarié de Polynésie française
@@ -362,8 +372,17 @@ affiliations:
     libelle: Ouvrier des établissements industriels de l'État
     famille: public
     periodes:
-      - {debut: 1930, fin: 2004, regimes: [fspoeie]}
-      - {debut: 2005, fin: null, regimes: [fspoeie, rafp]}
+      - {debut: 1930, fin: null, regimes: [fspoeie]}
+    note: >-
+      Aucun RAFP : l'article 76 de la loi n° 2003-775 (II,
+      LEGIARTI000048691415) n'en ouvre le bénéfice qu'aux fonctionnaires
+      civils, aux magistrats de l'ordre judiciaire et aux militaires, et
+      l'ERAFP le redit — « Vous cotisez au RAFP si vous êtes : fonctionnaire
+      civil, même en cas de détachement ; magistrat de l'ordre judiciaire ;
+      militaire de carrière ou servant en vertu d'un contrat ou réserviste »
+      (rafp.fr, « Actif », lu le 28 septembre 2026). Le routage le donnait
+      aux ouvriers de l'État depuis 2005, jusqu'au 28 septembre 2026 ; la
+      fiche `rafp_beneficiaires` le dit.
 
   fonctionnaire_etat_actif:
     libelle: Fonctionnaire de l'État, emploi de catégorie active
@@ -433,9 +452,9 @@ affiliations:
     famille: public
     categorie_active: active
     periodes:
-      - {debut: 1930, fin: 2004, regimes: [fspoeie]}
-      - {debut: 2005, fin: null, regimes: [fspoeie, rafp]}
+      - {debut: 1930, fin: null, regimes: [fspoeie]}
     note: >-
+      Aucun RAFP, comme pour `ouvrier_etat`.
       Le 1° du I de l'article 24 du décret n° 2004-1056 ouvre le droit à
       cinquante-cinq ans — cinquante-sept depuis la loi du 9 novembre 2010 — à
       l'ouvrier qui a accompli quinze ans, puis dix-sept, de travaux

@@ -3196,3 +3196,76 @@ chaque colonne sur les montants affichés, et ses totaux, sur six profils ; le
 catalogue des affirmations, la ligne du total, par un contrôle sur le modèle.
 Aucun chiffre du modèle ne bouge : les témoins des simulations gagnent le seul
 `capital_par_regime`.
+
+**Le 28 septembre 2026, suite : l'étage des six derniers régimes, deux
+routages corrigés, deux complémentaires lues.**
+
+- **L'étage.** Le schéma de l'Union Retraite, « Les régimes de retraite en
+  France » (PDF du 27 mars 2025), lu sur son rendu, range sous « Retraite de
+  base + complémentaire » le SRE, la CNRACL et les régimes spéciaux qu'il
+  nomme : FSPOEIE, CRPCEN, CNIEG, RATP, Banque de France, CPR, Comédie-Française,
+  Opéra, port de Strasbourg, Enim. Les six fiches qui ne reposaient que sur le
+  routage restent `integre`, chacune sur sa source, dite en commentaire de son
+  étage : ce schéma pour l'Opéra et la Comédie-Française ; ce schéma et le
+  décret n° 2004-1056 (article 8, IV : les cotisations vieillesse et Ircantec
+  des services validés sont annulées au profit du fonds spécial) pour les
+  ouvriers de l'État ; la loi n° 2023-270, a contrario, pour le CESE ;
+  l'article 5 du règlement de la caisse des députés pour les assemblées ; la
+  page retraite de la DRHFPNC pour la caisse locale de Nouvelle-Calédonie. Les
+  douze autres fiches intégrées disent aussi ce qui a été lu — celle des
+  pensions civiles d'avant 1948, que son étage ne l'a pas été à part —, et le
+  schéma des régimes le dit. Le `manque` des assemblées nomme deux compléments internes
+  qu'il ne porte pas : le « système de retraite complémentaire facultatif »
+  des députés, supprimé au 1er janvier 2018, et le régime par points des
+  sénateurs, que seule une page de la-retraite-en-clair.fr décrit.
+- **Deux routages du scénario 1 corrigés, chacun avec sa fiche.** Le RAFP
+  n'est ouvert qu'aux fonctionnaires civils, aux magistrats et aux militaires
+  (loi n° 2003-775, article 76, II ; page « Actif » de l'ERAFP) : le routage le
+  donnait depuis 2005 aux ouvriers de l'État, ce que la fiche
+  `rafp_assiette_plafond` signalait déjà ; il ne le fait plus
+  (`rafp_beneficiaires`). Les membres du CESE entrés en fonction depuis le 1er
+  septembre 2023 relèvent du régime général et de l'Ircantec (loi n° 2023-270,
+  article 1er, VI, 4° et 14°, et IX ; L. 921-2-1 ; base de connaissance de
+  l'Ircantec), non de l'Agirc-Arrco : le statut qui relève le leur est
+  désormais l'agent non titulaire (`cese_affiliation_2023`), et c'est vers lui
+  que le formulaire renvoie. Aucun total ne bouge ; un ouvrier né en 1970, à
+  20 % de primes, perd les 1 244,88 € de RAFP que le site lui servait à part.
+- **Deux complémentaires lues, non routées.** Celle des mineurs est
+  l'Agirc-Arrco (le même schéma ; la CARCOM, « Régime : AGIRC-ARRCO », créée le
+  25 avril 1961 ; le protocole UNIRS–Charbonnages du 25 avril 1960, par le titre
+  de l'arrêté du 6 novembre 1967). Routée à l'essai comme celle des salariés
+  agricoles, elle était servie dès le départ du mineur, à cinquante ou
+  cinquante-cinq ans, sans abattement ; or la circulaire Agirc-Arrco
+  2020-02-DRJ (fiche 3, I.1.3.1) ne la sert au mineur de fond sans abattement
+  qu'à soixante ans, et l'ANGDM verse entre les deux des « allocations
+  anticipées de retraite complémentaire » (décret n° 2004-1466, article 2, 3°)
+  dont le montant n'est pas lu. L'essai est retiré, et le `manque` des mines
+  le dit. Celle des chemins de fer secondaires est créée à compter du 1er
+  janvier 1955 par le décret n° 54-1061 du 30 octobre 1954, qui complète
+  l'article 4 du décret n° 54-953 — et non par ce dernier, comme l'écrivaient
+  la fiche et la note du 27, qui suivaient le titre du décret n° 55-1297 ; elle
+  ne vise que les embauchés d'après le 1er octobre 1954. Ses règles sont lues
+  au Journal officiel du 4 octobre 1955, sa valeur du point et son salaire de
+  référence ne le sont pas : elle n'est pas routée. Chemin faisant : l'article
+  4 du décret n° 54-953 laisse à la caisse autonome mutuelle les agents
+  embauchés avant le 1er octobre 1954, que le routage passe au régime général
+  en 1955 ; le `manque` le dit.
+
+**Ce qu'il déplace.** Aucun total des quatre systèmes : la ligne de RAFP des
+ouvriers de l'État, nulle dans les témoins faute de primes ; le statut vers
+lequel le formulaire renvoie un membre du CESE entré depuis 2023 ; les listes
+de statuts et les `manque` de la page Méthode.
+
+**Ce qui reste, à cette date.**
+
+- Router la complémentaire des mineurs demande qu'une complémentaire puisse
+  être servie plus tard que la pension de base : une décision du moteur et de
+  la page — que vaut le système 1 entre cinquante-cinq et soixante ans ? —,
+  posée au propriétaire. Viendraient ensuite le routage, sur les taux de
+  l'Arrco comme pour les salariés agricoles, faute de ceux de la CARCOM, et ce
+  que servent les allocations de l'ANGDM ; les régimes des ETAM (CAREM, 1948 à
+  1970) et des ingénieurs restent à distinguer.
+- Chemins de fer secondaires : lire la valeur du point et le salaire de
+  référence de leur caisse complémentaire (arrêtés de 1955 et 1956) et son
+  adhésion à l'Arrco, puis la router ; lire la caisse autonome mutuelle
+  d'après 1954 et y garder les agents embauchés avant le 1er octobre 1954.

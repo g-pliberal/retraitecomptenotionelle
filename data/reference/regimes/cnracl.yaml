@@ -2,6 +2,10 @@ code: cnracl
 rang: 250
 nom: Caisse nationale de retraites des agents des collectivités locales
 famille: fonction_publique
+# Intégré, lu le 28 septembre 2026 : le schéma de l'Union Retraite, « Les
+# régimes de retraite en France » (PDF du 27 mars 2025, info-retraite.fr),
+# range la CNRACL sous « Retraite de base + complémentaire », le RAFP en
+# plus.
 etage: integre
 source_id: cdc_cnracl
 fiabilite: moyenne

@@ -2,6 +2,8 @@ code: pensions_civiles_1853
 rang: 230
 nom: Régime des pensions civiles et militaires (loi du 9 juin 1853)
 famille: fonction_publique
+# Intégré, comme le régime qui lui succède dans le routage à partir de
+# 1948 ; son étage n'a pas été lu à part.
 etage: integre
 source_id: legifrance_textes
 fiabilite: estimee

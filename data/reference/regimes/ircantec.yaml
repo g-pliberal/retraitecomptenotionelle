@@ -10,7 +10,9 @@ fermeture: null
 extinction: null
 succede_a: [ipacte, igrante]
 integre_dans: null
-population: Agents non titulaires des trois fonctions publiques, élus locaux.
+population: >-
+  Agents non titulaires des trois fonctions publiques, élus locaux, membres
+  du CESE entrés en fonction depuis le 1er septembre 2023.
 hors_repartition: false
 inventaire:
   section: prive_complementaires
@@ -18,12 +20,13 @@ inventaire:
   nom: Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités publiques
   population: >-
     Agents non titulaires des trois fonctions publiques, élus locaux,
+    membres du CESE entrés en fonction depuis le 1er septembre 2023,
     praticiens hospitaliers (le « régime des médecins » de l'échantillon
     interrégimes : une assiette aux deux tiers des émoluments, non un
     régime distinct)
   couverture: modelise
   statuts: [contractuel_public,
-            elu_local]
+            elu_local, membre_cese]
   textes:
     - {reference: "décret n° 70-1277 du 23 décembre 1970", id: null}
     - {reference: "arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime", id: LEGITEXT000024251295}

@@ -79,12 +79,18 @@ champs_regime:
         routage fait relever les recrutés d'après la fermeture du régime
         général ET de l'Agirc-Arrco. Pas tous : les mineurs avaient une
         complémentaire, et le régime des mines est `base`. Le routage ne
-        lui adjoint ni base ni complémentaire, et un test y veille. Les
-        fiches des marins, de la SEITA, des chemins de fer secondaires et
-        du port de Strasbourg disent en commentaire de leur étage ce qui a
-        été lu ; celles de l'Opéra, de la Comédie-Française, des
-        assemblées, du CESE, des fonctionnaires du Pacifique et des
-        ouvriers de l'État ne reposent encore que sur le routage.
+        lui adjoint ni base ni complémentaire, et un test y veille. Le
+        schéma de l'Union Retraite, « Les régimes de retraite en France »
+        (PDF du 27 mars 2025, lu le 28 septembre 2026), range sous
+        « Retraite de base + complémentaire » le SRE, la CNRACL et les
+        régimes spéciaux qu'il nomme : FSPOEIE, CRPCEN, CNIEG, RATP, Banque
+        de France, CPR, Comédie-Française, Opéra, port autonome de
+        Strasbourg, Enim. Chaque fiche `integre` dit en commentaire de son
+        étage ce qui a été lu : ce schéma, ou, pour ceux qu'il ne nomme pas
+        (la SEITA, les chemins de fer secondaires, les assemblées, le CESE,
+        la caisse locale de Nouvelle-Calédonie), leurs propres textes ;
+        celle des pensions civiles d'avant 1948 dit que le sien n'a pas été
+        lu à part.
       additionnel: >-
         un étage de plus, par-dessus la base et la complémentaire : le RAFP
         des fonctionnaires, l'ASV des médecins conventionnés, le RAFEP des

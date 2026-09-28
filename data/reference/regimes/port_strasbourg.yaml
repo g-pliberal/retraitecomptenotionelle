@@ -7,6 +7,8 @@ famille: special
 # « La retraite des salariés du port autonome de Strasbourg »). Aucune source
 # ne lui adjoint de complémentaire ; son règlement n'est ni dans LEGI ni au
 # JORF.
+# Le schéma de l'Union Retraite (PDF du 27 mars 2025) le range sous
+# « Retraite de base + complémentaire ».
 etage: integre
 source_id: cor_panorama_regimes
 fiabilite: estimee

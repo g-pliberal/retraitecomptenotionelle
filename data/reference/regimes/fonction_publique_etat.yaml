@@ -2,6 +2,9 @@ code: fonction_publique_etat
 rang: 240
 nom: Régime des pensions civiles et militaires de retraite (Service des retraites de l'État)
 famille: fonction_publique
+# Intégré, lu le 28 septembre 2026 : le schéma de l'Union Retraite, « Les
+# régimes de retraite en France » (PDF du 27 mars 2025, info-retraite.fr),
+# range le SRE sous « Retraite de base + complémentaire », le RAFP en plus.
 etage: integre
 source_id: sre_rapport_annuel
 fiabilite: moyenne

@@ -3,6 +3,12 @@ rang: 280
 nom: >-
   Caisse locale de retraites de Nouvelle-Calédonie (fonctionnaires territoriaux et communaux)
 famille: fonction_publique
+# Intégré, lu le 28 septembre 2026 : « Les fonctionnaires locaux percoivent
+# [sic] une pension de la Caisse locale de retraites. Les agents non
+# titulaires […] perçoivent une pension versée par la CAFAT […] et les
+# caisses de retraite complémentaires » (DRHFPNC, « Retraite »,
+# drhfpnc.gouv.nc/carriere-des-agents-publics/retraite) : une complémentaire
+# pour les seconds, aucune pour les premiers.
 etage: integre
 source_id: sites_institutionnels
 fiabilite: estimee

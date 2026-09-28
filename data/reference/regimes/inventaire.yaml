@@ -474,7 +474,7 @@ inventaire:
       agent_sncf, agent_ratp, agent_ieg, mineur, clerc_de_notaire, agent_banque_de_france,
       agent_seita, agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
       salarie_prive_non_cadre_entreprise_recente, maitre_enseignement_prive, salarie_saint_pierre_et_miquelon,
-      membre_cese, salarie_nouvelle_caledonie, salarie_regime_professionnel_integre]
+      salarie_nouvelle_caledonie, salarie_regime_professionnel_integre]
     textes:
     - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)",
       id: null}
@@ -541,16 +541,17 @@ inventaire:
       des collectivités publiques
     famille: complementaire_prive
     population: >-
-      Agents non titulaires des trois fonctions publiques, élus locaux, praticiens hospitaliers
-      (le « régime des médecins » de l'échantillon interrégimes : une assiette aux deux
-      tiers des émoluments, non un régime distinct)
+      Agents non titulaires des trois fonctions publiques, élus locaux, membres du CESE
+      entrés en fonction depuis le 1er septembre 2023, praticiens hospitaliers (le «
+      régime des médecins » de l'échantillon interrégimes : une assiette aux deux tiers
+      des émoluments, non un régime distinct)
     creation: 1971
     fermeture: null
     extinction: null
     succede_a: [ipacte, igrante]
     integre_dans: null
     couverture: modelise
-    statuts: [contractuel_public, elu_local]
+    statuts: [contractuel_public, elu_local, membre_cese]
     textes:
     - {reference: décret n° 70-1277 du 23 décembre 1970, id: null}
     - {reference: "arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement\
@@ -928,8 +929,7 @@ inventaire:
     couverture: modelise
     statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
       fonctionnaire_territorial_hospitalier, fonctionnaire_territorial_hospitalier_actif,
-      fonctionnaire_territorial_hospitalier_super_actif, militaire, militaire_officier,
-      ouvrier_etat, ouvrier_etat_actif]
+      fonctionnaire_territorial_hospitalier_super_actif, militaire, militaire_officier]
     textes:
     - {reference: 'loi n° 2003-775 du 21 août 2003, article 76', id: null}
     - {reference: "décret n° 2004-569 du 18 juin 2004 relatif à la retraite additionnelle\
@@ -962,7 +962,15 @@ inventaire:
       La fiche est celle des députés, lue dans le règlement de 2018 ; les sénateurs
       y sont assimilés faute d'un règlement publié, et les fonctionnaires des assemblées
       restent hors fiche. La part versée par l'Assemblée n'est pas écrite : seule la
-      retenue du député est portée. La retenue d'avant 2015 est estimée.
+      retenue du député est portée. La retenue d'avant 2015 est estimée. Deux compléments
+      internes ne sont pas portés. Les députés avaient, jusqu'au 1er janvier 2018, un
+      « système de retraite complémentaire facultatif », que l'alignement sur la fonction
+      publique a supprimé (Assemblée nationale, « Alignement sur le droit commun du
+      régime de retraite des députés », page archivée le 31 décembre 2019). Et une page
+      de la-retraite-en-clair.fr (« La retraite des parlementaires », publiée le 1er
+      janvier 2010) écrit que les sénateurs ont « un régime de retraite complémentaire
+      par points », dont « la cotisation est égale à celle du régime de base » : le
+      règlement du Sénat n'étant pas publié, rien ne le vérifie.
 
   - code: cese_membres
     nom: >-
@@ -1294,7 +1302,20 @@ inventaire:
       » (statuts approuvés en 1990, 1992 et 1995, JORFARTI000001551380). Le scénario
       1 sert donc à un mineur sa seule pension de base, et les comptes notionnels n'en
       portent pas les cotisations complémentaires. Lu le 27 septembre 2026 dans l'index
-      JORF ; les taux et les barèmes de ces régimes restent à lire.
+      JORF ; les taux et les barèmes de ces régimes restent à lire. Lu le 28 : cette
+      complémentaire est aujourd'hui l'Agirc-Arrco (schéma de l'Union Retraite, « Les
+      régimes de retraite en France », PDF du 27 mars 2025), et la CARCOM, « Régime
+      : AGIRC-ARRCO », a été créée le 25 avril 1961 (fiche de la caisse chez Malakoff
+      Humanis). Mais la router ne suffit pas. Le mineur de fond de trente ans de services,
+      dont quinze au fond, peut « bénéficier d'une retraite complémentaire liquidée
+      sans application de coefficients d'anticipation à partir de 60 ans » (circulaire
+      Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, fiche 3, I.1.3.1) ; entre la pension
+      des mines, servie dès cinquante ou cinquante-cinq ans, et cet âge, l'ANGDM verse
+      des « allocations anticipées de retraite complémentaire » (décret n° 2004-1466,
+      article 2, 3°, LEGIARTI000036405021), dont le montant n'est pas lu. Le moteur
+      liquide tous les régimes le même jour : routée, l'Arrco serait servie au départ,
+      sans abattement, ce qu'aucun de ces textes ne fait. Il faut d'abord une complémentaire
+      servie plus tard que la pension de base.
 
   - code: crpcen
     nom: >-
@@ -1434,11 +1455,22 @@ inventaire:
     - {reference: 'code de la sécurité sociale, R. 711-1 7°', id: LEGIARTI000048031379}
     manque: >-
       Une seule période, au niveau `estimee`, depuis le texte fondateur sans recontrôle.
-      Et, après la fermeture, le routage ne porte aucune complémentaire en 1955 et 1956,
-      puis celle de l'UNIRS : le régime complémentaire du personnel, institué par le
-      décret n° 54-953 du 14 septembre 1954, est celui de la caisse autonome de retraites
-      complémentaires et de prévoyance du transport (décret n° 55-1297, article 5),
-      dont les taux ne sont pas lus.
+      Le décret n° 54-953 du 14 septembre 1954 n'affilie au régime général que les agents
+      embauchés après le 1er octobre 1954 (article 4) ; ceux d'avant restent à la caisse
+      autonome mutuelle, dont il relève les cotisations (article 2 : 7 % pour l'agent)
+      — JO du 23 septembre 1954, lu le 28 septembre 2026. Le routage les passe pourtant
+      tous au régime général en 1955, la fiche n'ayant aucune période après 1954. Les
+      embauchés d'après ont la complémentaire que crée, à compter du 1er janvier 1955,
+      le décret n° 54-1061 du 30 octobre 1954 (JORFTEXT000000691311), celle de la caisse
+      autonome de retraites complémentaires et de prévoyance du transport (décret n°
+      55-1297, article 5) : 6 % de toute la rémunération, sans plafond, à parts égales
+      (article 10), rien sur le premier semestre 1955 (article 40), des points au quotient
+      de la rémunération par un salaire horaire de référence (article 17), l'âge normal
+      à soixante ou soixante-cinq ans selon le service (article 22) — JO du 4 octobre
+      1955. La valeur du point, fixée par arrêté pour 1955 et 1956 (article 39), et
+      le salaire horaire de référence, fixé par arrêté lui aussi, ne sont pas lus :
+      le routage lui substitue le droit commun du non-cadre, rien en 1955 et 1956, l'UNIRS
+      de 1957 à 1960, l'Arrco ensuite.
 
   - code: cavimac
     nom: Régime des cultes (CAVIMAC)

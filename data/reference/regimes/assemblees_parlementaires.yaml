@@ -3,6 +3,11 @@ rang: 730
 nom: >-
   Caisse de pensions des députés et des anciens députés (et, par assimilation, des sénateurs)
 famille: special
+# Intégré, lu le 28 septembre 2026, pour les députés : le règlement de leur
+# caisse (consolidé au 1er janvier 2018, article 5, 2) les engage à « ne pas
+# cotiser simultanément à un autre régime de retraite s'ils n'exercent pas
+# d'activité professionnelle relevant de ce régime ». Les sénateurs y sont
+# assimilés : voir `manque`.
 etage: integre
 source_id: sites_institutionnels
 fiabilite: estimee
@@ -34,7 +39,16 @@ inventaire:
     sénateurs y sont assimilés faute d'un règlement publié, et les
     fonctionnaires des assemblées restent hors fiche. La part versée par
     l'Assemblée n'est pas écrite : seule la retenue du député est portée.
-    La retenue d'avant 2015 est estimée.
+    La retenue d'avant 2015 est estimée. Deux compléments internes ne sont
+    pas portés. Les députés avaient, jusqu'au 1er janvier 2018, un « système
+    de retraite complémentaire facultatif », que l'alignement sur la
+    fonction publique a supprimé (Assemblée nationale, « Alignement sur le
+    droit commun du régime de retraite des députés », page archivée le 31
+    décembre 2019). Et une page de la-retraite-en-clair.fr (« La retraite
+    des parlementaires », publiée le 1er janvier 2010) écrit que les
+    sénateurs ont « un régime de retraite complémentaire par points »,
+    dont « la cotisation est égale à celle du régime de base » : le
+    règlement du Sénat n'étant pas publié, rien ne le vérifie.
 periodes:
   - debut: 1930
     fin: 2008
