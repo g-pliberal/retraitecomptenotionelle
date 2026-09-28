@@ -2886,6 +2886,21 @@ l'action 132. Restent, avec leur raison :
 - les « soixante et un ans » des salariés agricoles, que seule une lecture de
   la caisse trancherait.
 
+**Le même jour, la tranche C de l'Agirc d'avant 2016**, portée
+(`coefficients_anticipation_agirc_arrco`, qui reste `approchee` pour ses
+autres questions) : les points constitués sur la tranche C jusqu'en 2015
+gardent le coefficient pour âge avant soixante-sept ans, même au taux plein.
+L'acquisition les range à part, depuis les périodes de la tranche C de 1991 à
+2015 (`points_abattus_a_l_age`, la période 2015-2018 coupée au 1er janvier
+2016) ; la liquidation leur applique le coefficient de la table des âges quand
+il est plus sévère que celui des autres points. Aucun témoin ne bougeait,
+aucun cadre témoin n'étant payé au-delà de quatre plafonds : un témoin né pour
+la règle la montre, 40 % des points Agirc d'un cadre de 1955 parti à 62 ans à
+0,78. Restent : le report de ces points sans abattement à soixante-sept ans
+(article 102 de l'accord de 2017), que le moteur ne sert pas faute de liquider
+une pension en deux fois ; et les liquidations de 1991 à 2003, où le moteur
+applique la règle de 2003 sans avoir lu l'accord de l'ASF.
+
 ### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
 
 **Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
