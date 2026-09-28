@@ -27,7 +27,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 3 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **29 sur 117** (67 exemples : 66 reproduits, 1 en écart connu, section 2).
+- Confrontées à au moins un exemple officiel : **31 sur 117** (76 exemples : 71 reproduits, 5 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **24 sur 117**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **42 sur 117**, par 2 273 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **6 sur 117**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
@@ -176,6 +176,10 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 |---|---|---|---|---|
 | `cnav_22_83_taux_acquis_117_trimestres` | taux_liquidation | 0,55 | 0,5 | `decote_avant_1983` |
 | `cnav_22_83_taux_acquis_117_trimestres` | pension_base_sur_sam | 0,429 | 0,44 | `decote_avant_1983` |
+| `aa_reversion_francois` | dates_d_effet_de_la_reversion | arrco 2025-01-01 | arrco 2024-12-01 | `reversion_agirc_arrco` |
+| `aa_reversion_david` | dates_d_effet_de_la_reversion | arrco 2024-10-01 | arrco 2024-08-01 | `reversion_agirc_arrco` |
+| `aa_reversion_simone` | dates_d_effet_de_la_reversion | arrco 2025-01-01 | arrco 2024-03-01 | `reversion_agirc_arrco` |
+| `aa_reversion_claude` | dates_d_effet_de_la_reversion | arrco 2024-03-01 | arrco 2028-07-01 | `reversion_agirc_arrco` |
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
@@ -197,7 +201,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Régime des auteurs et compositeurs lyriques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - Assurance vieillesse des non-salariés agricoles (MSA) : 1 source(s) (msa_reforme_25_meilleures_annees)
   - et 20 sources sans régime désigné.
-- **Les fiches sans exemple officiel** : 88.
+- **Les fiches sans exemple officiel** : 86.
 - **Les domaines sans décision** (§ 8) : 69 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 6 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `retablissement_fonction_publique`, `retraite_proportionnelle_msa`. Les 63 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
 - **Faire mûrir la carte** : 841 champs obligatoires manquent, à 111 fiches. Par champ :
 

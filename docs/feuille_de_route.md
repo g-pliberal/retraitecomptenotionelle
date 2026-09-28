@@ -2774,6 +2774,28 @@ et ce que la page de résultat montre de la réversion, deux choix à soumettre
 au propriétaire ; les exemples publiés ; la page Coût ; la décision de la
 proposition, puis la référence de conservation à refiger.
 
+**Troisième étape : les exemples publiés**, le même jour. Neuf exemples
+entrent au témoin des exemples officiels, et `tests/test_oracle.py` les
+rejoue : la carrière d'un exemple y déclare le conjoint et le décès comme la
+saisie, et deux grandeurs s'ajoutent, la date d'effet de la réversion régime
+par régime, et la réversion écrêtée, en euros par mois. La page « La pension
+de réversion » de la fédération Agirc-Arrco date la réversion de dix
+survivants : Leïla, Kim, Annie et Eric concordent ; François, David et
+Simone, dont le défunt était payé par trimestre ou par an, et Claude, devenu
+invalide, entrent en écart connu, et la fiche de l'Agirc-Arrco déclare le
+paiement au mois parmi ses approximations ; Max, dont l'âge n'est pas dit,
+et Léo, qui demande sa réversion dix-huit mois après le décès, n'entrent pas.
+La circulaire Cnav n° 2005/17 (§ 31) réduit une réversion de 530 € à
+169,06 € pour un survivant qui gagne 1 150 € par mois : le modèle rend
+169,07 €, la circulaire tronquant le plafond au centime. Service-public
+(F13104, vérifiée le 1er janvier 2026) donne le plafond de 2026, 25 001,60 €
+pour une personne seule, que le modèle rend exactement ; ni ses fiches du
+régime général et de la fonction publique ni la foire aux questions de
+l'Assurance retraite ne publient d'autre exemple chiffré. Restent de ce
+domaine : le bloc du formulaire et ce que la page de résultat montre de la
+réversion, à soumettre au propriétaire ; la page Coût ; la décision de la
+proposition, puis la référence de conservation à refiger.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

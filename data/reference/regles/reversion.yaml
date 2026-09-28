@@ -188,7 +188,7 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       fiabilite: haute
-  exemples: aucun trouvé
+  exemples: [cnav_2005_17_reversion_ecretee]
 - id: age_51
   statut: lue
   textes:

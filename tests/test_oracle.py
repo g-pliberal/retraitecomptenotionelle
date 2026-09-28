@@ -65,7 +65,10 @@ from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import liquider, ouvrir
+from retraite_notionnelle.droit.reversion import reversion
+from retraite_notionnelle.echeancier import Echeancier
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 TEMOIN = TEMOINS / "openfisca_regime_general.json"
@@ -1521,6 +1524,16 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
             str(jour) for jour in c.get("naissances_enfants") or ()),
         interruptions={int(k): v for k, v in (c.get("interruptions") or {}).items()},
     )
+    if "conjoint" in c:
+        # Le conjoint et le décès, comme la saisie les déclare : le sexe du
+        # conjoint est l'autre que celui de l'assuré s'il n'est pas dit.
+        communs["conjoint"] = {
+            "naissance": str(c["conjoint"]),
+            "sexe": c.get("conjoint_sexe") or ("H" if communs["sexe"] == "F" else "F"),
+            "mariage": None if c.get("mariage") is None else str(c["mariage"]),
+            "ressources": c.get("ressources_conjoint"),
+        }
+        communs["deces"] = None if c.get("deces") is None else str(c["deces"])
     actuel = simulateur.scenario_actuel
     if "age_debut" in c:
         carriere = simulateur.carriere_simple(age_debut=float(c["age_debut"]), **communs)
@@ -1613,6 +1626,26 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # La pension annuelle brute d'un régime nommé : ce que publie un
         # régime dont la pension ne tient ni à un taux ni à un salaire.
         return {p.regime: p.montant for p in resultat.pensions_par_regime}
+    if cle == "dates_d_effet_de_la_reversion":
+        # La réversion telle que l'échéancier la liquide au décès de l'assuré :
+        # la date d'effet de chaque régime du défunt.
+        echeancier = Echeancier(simulateur)
+        echeancier.parcourir(carriere)
+        if echeancier.reversion is None:
+            return "aucune réversion liquidée"
+        return {r.regime: r.date_effet for r in echeancier.reversion.regimes}
+    if cle == "reversions_ecretees_mensuelles":
+        # L'exemple donne la réversion d'avant le plafond, pas la carrière du
+        # défunt : le test prête à chaque régime nommé la pension qui la rend,
+        # au taux de la version que le modèle choisit, et le modèle l'écrête.
+        avant = exemple["carriere"]["reversions_avant_plafond_mensuelles"]
+        annee = int(str(exemple["carriere"]["deces"])[:4])
+        sonde = reversion(actuel, [(regime, 1.0, Fiabilite.HAUTE) for regime in avant],
+                          carriere, annee)
+        taux = {r.regime: r.taux for r in sonde.regimes}
+        servie = reversion(actuel, [(regime, 12 * montant / taux[regime], Fiabilite.HAUTE)
+                                    for regime, montant in avant.items()], carriere, annee)
+        return {r.regime: r.montant / 12 for r in servie.regimes}
     raise AssertionError(f"grandeur inconnue dans le témoin : {cle}")
 
 
@@ -1626,6 +1659,7 @@ TOLERANCES = {
     "coefficients_des_regimes": {"abs": 1e-9},
     "pension_regime_general_mensuelle": {"abs": 0.05},
     "pensions_annuelles_des_regimes": {"abs": 0.5},
+    "reversions_ecretees_mensuelles": {"abs": 0.01},
 }
 
 
@@ -1644,6 +1678,13 @@ def _concorde(cle: str, mesure, valeur) -> bool:
     if cle == "pensions_annuelles_des_regimes":
         # Un régime nommé que le modèle ne sert pas lui verse zéro.
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.5)
+                   for regime, montant in valeur.items())
+    if cle == "dates_d_effet_de_la_reversion":
+        # Un régime nommé que la réversion ne liquide pas n'a pas de date.
+        return not isinstance(mesure, str) and all(
+            mesure.get(regime) == str(date) for regime, date in valeur.items())
+    if cle == "reversions_ecretees_mensuelles":
+        return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.01)
                    for regime, montant in valeur.items())
     if cle in TOLERANCES:
         return mesure == pytest.approx(valeur, **TOLERANCES[cle])

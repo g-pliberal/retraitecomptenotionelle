@@ -148,7 +148,9 @@ versions:
       age_minimum_minore: null
       perte_au_remariage: true
       fiabilite: haute
-  exemples: aucun trouvé
+  exemples: [aa_reversion_leila, aa_reversion_kim, aa_reversion_annie, aa_reversion_eric,
+             aa_reversion_francois, aa_reversion_david, aa_reversion_simone,
+             aa_reversion_claude]
 approximations:
 - ecart: >-
     les 60 % s'appliquent à la retraite servie, coefficient d'anticipation compris,
@@ -167,6 +169,12 @@ approximations:
     le veuf attend soixante-cinq ans à l'Agirc comme à l'Arrco, où chaque caisse le
     disait, et ses droits acquis depuis 1990 ne s'ouvrent pas à cinquante ans
   effet: non mesuré
+- ecart: >-
+    la retraite du défunt est servie au mois : versée par trimestre ou par an, elle
+    court jusqu'au terme de sa période, et la réversion ne commence qu'à la suivante
+  effet: >-
+    la réversion commence un à dix mois trop tôt pour le survivant d'une petite
+    retraite ; trois exemples de la fédération le montrent, en écart connu
 - ecart: >-
     la condition d'âge n'est levée ni par deux enfants à charge ni par l'invalidité ;
     le partage entre ex-conjoints et la perte au remariage ne sont pas portés ; les
@@ -193,9 +201,11 @@ sources:
     répond par une vérification du navigateur. Et les règlements de l'Arrco et de
     l'Agirc d'avant 2019 pour les versions antérieures.
   - >-
-    Les exemples chiffrés du site — la date d'effet de Leïla, de Kim, de Claude — sont
-    à porter aux exemples officiels, que le moteur sait rejouer depuis la deuxième
-    étape du domaine.
+    Les exemples datés du site sont aux exemples officiels depuis la troisième étape du
+    domaine : Leïla, Kim, Annie et Eric concordent ; François, David et Simone, dont
+    le défunt était payé par trimestre ou par an, et Claude, devenu invalide, sont en
+    écart connu. Max, qui a deux enfants à charge et dont l'âge n'est pas dit, et Léo,
+    qui demande sa réversion dix-huit mois après le décès, n'y sont pas.
   lectures:
   - type: autre
     reference: >-

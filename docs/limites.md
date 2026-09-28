@@ -746,7 +746,7 @@ Quatre bornes à connaître, et elles sont étroites :
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->67<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->76<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -767,6 +767,8 @@ d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
 | CARCDSF, CARMF et CAVAMAC, pages et document d'exemples des sections libérales | la mère de deux enfants au taux plein dès <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->65<!--/--> ans à la CARCDSF ; le coefficient de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->1,15<!--/--> à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->65<!--/--> ans de la CARMF ; à la CAVAMAC, la décote du régime de base au plus favorable de l'âge et de la durée (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5<!--/--> %), sa surcote de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->7,5<!--/--> % pour six trimestres, et la décote de la complémentaire par l'âge seul (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->6,25<!--/--> %) | **exact**, une fois les complémentaires minorées par l'âge seul |
 | Cour des comptes, « Les retraites des fonctionnaires de l'État », tableau n° 20 | durée requise des emplois classés, génération par génération : super-active <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->166<!--/--> trimestres pour 1965, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->168<!--/--> jusqu'en août 1971, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->169<!--/--> ensuite ; active <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->168<!--/--> pour 1965 et jusqu'en août 1966 | **exact**, une fois la durée lue à l'année d'ouverture du droit |
 | Service des retraites de l'État, pages « La décote » et « La surcote » | la même fonctionnaire née en mars 1962, à l'âge légal avec <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->163<!--/--> trimestres sur <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->169<!--/--> : décote de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->7,5<!--/--> % ; à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->64<!--/--> ans avec <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->175<!--/--> : surcote de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->7,5<!--/--> % | **exact**, une fois la pension datée au premier du mois qui suit la cessation, comme la caisse la date |
+| Agirc-Arrco, page « La pension de réversion » | la date d'effet de la réversion de huit survivants : le mois qui suit le décès, ou celui qui suit leurs cinquante-cinq ans | **exact** pour quatre ; en écart connu pour trois défunts payés par trimestre ou par an, dont la retraite court jusqu'au terme de sa période, et pour un survivant devenu invalide, que l'âge n'arrête pas |
+| circulaire Cnav 2005/17, § 31 | la réversion réduite au plafond de ressources : <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->530<!--/--> € avant, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->169,06<!--/--> € après, pour <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->1 150<!--/--> € de salaire mensuel | **exact** au centime, la circulaire tronquant le plafond que le modèle arrondit |
 
 **Ce que la confrontation a trouvé, dans l'ordre.** Le premier exemple lu
 contredisait les tables certifiées du dépôt : non que le récupérateur se soit
@@ -838,8 +840,9 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->67<!--/--> tombent justes ensemble, sur
-une douzaine de sources et autant de règles, c'est le droit que le modèle applique, et non une
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->76<!--/--> tombent justes ensemble, hors
+les écarts connus que chacun déclare, sur une douzaine de sources et autant de
+règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
 ### La pension d'aujourd'hui d'un retraité : ce qui est lu, et ce qui est reconstitué
