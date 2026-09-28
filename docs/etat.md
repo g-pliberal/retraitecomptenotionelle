@@ -152,7 +152,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `minoration_ircec` | approchee | Tout départ anticipé d'un artiste-auteur, d'un auteur dramatique ou d'un compositeur qui n'a pas sa durée : à soixante-deux ans, 20 % de mi… |
 | `minoration_racl_2014_2024` | approchee | Les auteurs et compositeurs lyriques partis avant l'âge du taux plein, de 2014 à mai 2025. |
 | `pension_mines` | approchee | Mineurs. |
-| `pension_non_salaries_agricoles_2026` | approchee | Les chefs d'exploitation dont la pension prend effet depuis le 1er janvier 2026. |
+| `pension_non_salaries_agricoles_2026` | approchee | Les chefs d'exploitation dont la pension prend effet depuis le 1er janvier 2026, et le salaire annuel moyen de leurs régimes alignés quand… |
 | `priorite_majorations_enfants` | approchee | Toute mère passée par un régime spécial et par un régime aligné. |
 | `raap_classe_speciale` | approchee | La fiche prélevait 8 % du revenu avant 2016 — un taux qu'aucun texte ne porte — et servait donc, à un revenu moyen, quatre à six fois les p… |
 | `rafp_majoration_capital` | approchee | Le modèle servait la valeur de service nue à tout âge : 22 % de moins à 67 ans. |

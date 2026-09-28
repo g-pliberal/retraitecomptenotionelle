@@ -3004,6 +3004,24 @@ Restent, avec leur raison :
 - les trimestres d'enfants des exploitantes, que le moteur ne leur attribue
   pas : R. 732-61 est porté pour le jour où il le fera.
 
+**Puis la part des régimes alignés**, en commit à part : depuis 2026, le
+salaire annuel moyen du régime général, des salariés agricoles et des
+indépendants d'un assuré qui a aussi été exploitant ne retient que la part des
+vingt-cinq années que la première répartition de R. 173-3-2 leur laisse
+(`liquider.annees_des_regimes_alignes`) — six sur dix années de salarié
+agricole dans l'exemple de la MSA, que le test rejoue désormais des deux
+côtés. Aucun témoin ne bouge : aucun ne mêle les deux régimes après 2025.
+Restent :
+- pour qui est né avant 1953, le partage de cette part entre régimes alignés
+  (R. 173-3-2, II, a), que le moteur leur donne à chacun entière ;
+- trouvé en chemin, R. 173-4-3, qui de 2004 à 2025 partageait déjà les années
+  entre régimes alignés que la liquidation unique ne réunit pas — assuré né
+  avant 1953, ou parti avant le 1er juillet 2017 —, « en multipliant le nombre
+  d'années fixé dans le régime considéré [...] par le rapport entre la durée
+  d'assurance accomplie au sein de ce régime et le total des durées » : le
+  moteur ne le porte pas et donne vingt-cinq années à chaque régime, ce qui
+  sous-estime leurs salaires moyens. Noté à la fiche `salaire_annuel_moyen`.
+
 ### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
 
 **Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
