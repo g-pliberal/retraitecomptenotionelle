@@ -73,7 +73,7 @@ CONTROLES = {
     # L'outillage du dépôt : l'index de la DILA, la publication sur main, ce
     # partage-ci, et le filet des déplacements (docs/architecture.md, § 12).
     "test_dila_index.py", "test_pousser.py", "test_niveaux.py",
-    "test_conservation.py",
+    "test_conservation.py", "test_outillage.py",
 }
 
 #: Les tests qui ne sont pas du niveau de leur fichier.

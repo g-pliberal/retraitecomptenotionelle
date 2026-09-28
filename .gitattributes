@@ -35,9 +35,8 @@
 # sessions en parallèle », qu'on ne recopie pas ici pour qu'elles ne
 # divergent plus — ce fichier en donnait une autre jusqu'au 23 septembre 2026,
 # sans le rebasage ni le chiffrage. En résumé : reprendre le rebasage, relancer
-# `construire_inventaire.py`, `construire_donnees.py`, `construire_temoins.py`,
-# `chiffrage_plf.py` et `tableau_de_bord.py`, `git add -A && git rebase
-# --continue`, puis tester et pousser.
+# `scripts/regenerer.py`, qui refait tous ces fichiers dans l'ordre, `git add -A
+# && git rebase --continue`, puis tester et pousser.
 #
 # On ne touche pas à l'attribut `diff` : le diff chiffre par chiffre des
 # témoins est ce qui rend le portage JavaScript vérifiable, il doit rester

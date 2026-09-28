@@ -67,11 +67,7 @@ et l'on réécrit depuis les sources rebasées.
 
 ```bash
 git rebase origin/main          # pousser.sh l'a refusé, on le reprend à la main
-python scripts/construire_inventaire.py  # l'inventaire, depuis les fichiers de régimes
-python scripts/construire_donnees.py
-python scripts/construire_temoins.py
-python scripts/chiffrage_plf.py     # ses tableaux, dans le .md, sont des chiffres ancrés
-python scripts/tableau_de_bord.py   # docs/etat.md, depuis les registres
+python scripts/regenerer.py     # tout ce qu'un script fabrique, dans l'ordre
 git add -A && git rebase --continue
 python -m pytest && bash scripts/pousser.sh
 ```
@@ -96,9 +92,12 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   `PYTEST_SANS_XDIST=1` force la série. `tests/conftest.py` range chaque
   fichier dans son niveau : un fichier lent qui naît s'y range.
 - **Le Python de `src/` fait foi.** Toute modification du modèle se porte
-  dans `moteur/js/`, puis `python scripts/construire_temoins.py` : le diff des
-  témoins montre, chiffre par chiffre, ce qu'elle déplace. Après toute
-  modification des données : `python scripts/construire_donnees.py`.
+  dans `moteur/js/`. Après elle, ou après toute modification des données,
+  `python scripts/regenerer.py` refait tout ce qu'un script fabrique — le
+  paquet, les témoins, le chiffrage, les tableaux, le tableau de bord, les
+  chiffres ancrés —, dans l'ordre (`--verifier` dit ce qui est périmé sans
+  rien écrire) ; `python scripts/resumer_temoins.py` dit ce qu'elle déplace,
+  scénario par scénario, et le diff des témoins, chiffre par chiffre.
 - **Le texte du site ne s'écrit qu'en JavaScript** : `moteur/js/pages.js`,
   `gabarit.js`, et `moteur/style.css`, sa propre source. Le Python le lit par
   `web/site.py`, qui le fait rendre par node ; les témoins de pages se refont

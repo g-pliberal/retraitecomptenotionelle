@@ -3301,3 +3301,70 @@ de statuts et les `manque` de la page Méthode.
   référence de leur caisse complémentaire (arrêtés de 1955 et 1956) et son
   adhésion à l'Arrco, puis la router ; lire la caisse autonome mutuelle
   d'après 1954 et y garder les agents embauchés avant le 1er octobre 1954.
+
+### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
+
+**Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
+interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
+vite sans dégrader la qualité ? », puis, le diagnostic lu : « Vas-y ».
+
+**Le diagnostic, sur l'action 132.** La règle elle-même a pris peu de temps ;
+tout le reste est allé à ce qui bouge avec elle. Environ 150 lectures de la
+naissance en Python et 130 dans le portage, triées deux fois. Près de
+90 tests en échec, parce qu'ils écrivent en dur un montant ou une date, et
+chacun demandait une décision. Des approximations anciennes révélées, dont
+une partie corrigée sur place. Environ cinq passages de la suite complète, de
+huit minutes chacun, et quatre régénérations de sept ou huit commandes, les
+corrections venant par vagues. Six commits d'autres sessions sur les mêmes
+fichiers, et douze conflits.
+
+**Les cinq leviers**, dans l'ordre où ils se prennent :
+
+1. Un script qui régénère tout, et un qui résume ce que les témoins ont
+   bougé. Fait, ci-dessous.
+2. Des tests qui ne dépendent pas des présomptions : un test qui raconte une
+   date déclare la date entière, et les chiffres exacts du modèle vivent dans
+   les témoins, relus en bloc, pendant que les tests tiennent les règles.
+3. Une régénération et une suite plus rapides, en commençant par les chiffres
+   ancrés (mesures ci-dessous) : ce que plusieurs fichiers de tests et les
+   sondes de la prose recalculent — le coût agrégé surtout — se garde d'un
+   calcul à l'autre, comme les lois de mortalité le sont déjà
+   (`data/derive/calibrations_mortalite.json`), ou se calcule en parallèle.
+4. Le parcours de présentation, que son test fait suivre les pages et que le
+   contrôle de conservation gèle comme un récit : à chaque changement des
+   pages, sa référence se refige avec `--accepter-les-pertes`, comme à
+   l'action 132. Le déclarer autrement.
+5. Un changement transversal passe seul, sans autre session sur les mêmes
+   fichiers. C'est une règle du partage entre sessions, que le propriétaire
+   décide.
+
+**Fait, le 28 septembre : les deux scripts.**
+
+- `scripts/regenerer.py` lance tout ce qu'un script fabrique, en trois
+  temps : l'inventaire et le document des régimes ; puis, ensemble, le paquet
+  suivi des témoins, le chiffrage et les tableaux du README, qui ne se lisent
+  pas ; enfin le tableau de bord, les chiffres ancrés et le contrôle de
+  conservation, qui ne fait que contrôler. `--verifier` passe chaque étape en
+  mode vérification et les dit toutes au lieu de s'arrêter à la première ;
+  `--prose` ne relance que le dernier temps, quand seuls les documents ou les
+  registres ont changé ; `--sequentiel` enchaîne les branches ; `--etapes`
+  les liste. La recette de `CLAUDE.md` et le commentaire de `.gitattributes`
+  y renvoient ; un test tient que chaque fichier que `.gitattributes` déclare
+  fabriqué a son étape.
+- `scripts/resumer_temoins.py` dit, depuis une révision (`--depuis`, HEAD par
+  défaut), combien de témoins bougent et, scénario par scénario, combien de
+  pensions, de combien en médiane, lesquelles le plus (`--extremes`), et
+  quels rendus de page changent, au format de la prose, prêt pour un message
+  de commit. Sur le commit de l'action 132, il redonne en une seconde le
+  tableau que la session avait calculé à la main.
+- `tests/test_outillage.py` les tient, sans lancer un calcul du modèle.
+
+**Mesuré le même jour**, chaque étape en mode vérification : l'inventaire,
+2 s ; le paquet, 44 s ; les témoins, 50 s ; le chiffrage, 41 s ; les tableaux
+du README, 3 s ; le tableau de bord, 5 s ; les chiffres ancrés, 178 s ; la
+conservation, 2 s. Le tout prend 4 min 41 s, contre 5 min 26 s enchaîné :
+le parallèle ne gagne que les 45 s du chiffrage, parce que les chiffres
+ancrés, qui viennent en dernier, font à eux seuls les deux tiers du temps. Le
+profilage dit pourquoi : 85 % de leur durée passe à recalculer le coût agrégé
+sept fois, sous sept jeux de réglages (`mesures_prose._cout`), une fois par
+processus. C'est le premier morceau du levier 3.
