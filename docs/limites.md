@@ -1329,8 +1329,10 @@ des meilleures années d'avant 2016, arrondie à l'entier, multipliée par le
 nombre de ces années ; les vingt-cinq années réparties entre régimes et entre
 les deux périodes par `R. 173-3-2` ; la pension bornée à la moitié du plafond ;
 et, pour les pensions de 2026 et 2027, la plus forte du calcul provisoire et du
-recalcul. Il rend l'exemple de la MSA : six, treize et six années, et une
-moyenne de trente et un points multipliée par vingt-deux années.
+recalcul. Le salaire annuel moyen des régimes alignés d'un ancien exploitant
+ne retient que la part des années que la répartition leur laisse. Le modèle
+rend l'exemple de la MSA : six, treize et six années, et une moyenne de trente et un
+points multipliée par vingt-deux années.
 
 Ce qui reste approché, et dans quel sens. Les années d'avant 1990, dont le
 barème de points n'est pas lu, entrent dans la moyenne par l'équivalent en
@@ -1339,10 +1341,10 @@ meilleures. Le revenu des années cotisées au minimum, que la loi déduit des
 cotisations acquittées, est porté au plancher de six cents SMIC horaires. Les
 durées que `R. 173-3-2` arrête au 31 décembre de l'année d'effet sont celles de
 la date d'effet. Les majorations de points de 1952 à 1972, les rachats et les
-conjoints collaborateurs manquent, comme avant la réforme. Et le salaire annuel
-moyen du régime général d'un ancien exploitant garde ses vingt-cinq années au
-lieu de la part que la répartition lui laisse : il est **sous-estimé**, la
-moyenne portant sur plus d'années.
+conjoints collaborateurs manquent, comme avant la réforme. Et, pour qui est né
+avant 1953, la part des années que la répartition laisse aux régimes alignés
+n'est pas partagée entre eux : chacun la reçoit entière, et son salaire moyen
+est **sous-estimé**, la moyenne portant sur plus d'années.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
 

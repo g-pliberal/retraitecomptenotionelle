@@ -349,14 +349,21 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
     const indicePension = pensions.length;
     const forfaitaire = periode.pension_forfaitaire_annuelle !== null
       && periode.pension_forfaitaire_annuelle !== undefined;
+    const enfantsMajores = majorationEnfants !== null ? carriere.nombre_enfants : 0;
+    // LES ANNÉES D'UN ANCIEN EXPLOITANT : depuis 2026, la part des vingt-cinq
+    // que R. 173-3-2 laisse aux régimes alignés.
+    const anneesAlignees = !forfaitaire && (periode.salaire_reference === "25_meilleures_annees"
+      || periode.salaire_reference === "10_meilleures_annees")
+      ? anneesDesRegimesAlignes(moteur, carriere, releve, membres, nombreDAnneesRetenues(
+        moteur, periode, carriere, carriere.annee_naissance, enfantsMajores))
+      : null;
     const salaireReference = forfaitaire
       ? periode.pension_forfaitaire_annuelle * moteur.macro.coefficientPrix(
         periode.pension_forfaitaire_annee ?? anneeLiquidation, anneeLiquidation,
       )
       : salaireDeReference(
         moteur, code, carriere, periode, anneeLiquidation, plafonner,
-        carriere.annee_naissance, avpf, membres,
-        majorationEnfants !== null ? carriere.nombre_enfants : 0,
+        carriere.annee_naissance, avpf, membres, enfantsMajores, null, anneesAlignees,
       );
     const [requis, fiabiliteDuree] = ouvrir.dureeRequise(moteur, periode, carriere);
     if (fiabiliteDuree !== null) {
@@ -589,6 +596,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
           : "")
         + (dureeNonMajoree === null ? ""
           : `, ${dureeNonMajoree} trimestres majorés après l'âge du taux plein`)
+        + (anneesAlignees === null ? ""
+          : `, salaire des ${anneesAlignees} meilleures années (R. 173-3-2)`)
         // La succession est DITE : sans elle, le lecteur cherche la ligne
         // de la CANCAVA et ne la trouve pas.
         + (membres.length === 1 ? "" : `, ${membres.length} caisses liquidées ensemble `
@@ -653,6 +662,77 @@ export function repartirLesAnnees(nombre, durees, minimums = new Map(), priorite
 }
 
 /**
+ * Les durées des trois parts de L. 732-24 : celle du 1°, depuis 2016, celle
+ * du a et celle du b, d'avant 2016 (R. 732-61 ; R. 732-66, III). Voir le
+ * Python.
+ */
+export function dureesDesNonSalaries(carriere, durees, code) {
+  const parAnnee = durees.parAnnee.assurance.get(code) ?? new Map();
+  let avant = 0;
+  let apres = 0;
+  for (const [annee, nombre] of parAnnee) {
+    const retenus = Math.min(nombre, carriere.plafondTrimestres(annee));
+    if (annee < ANNEE_DES_REVENUS_AGRICOLES) {
+      avant += retenus;
+    } else {
+      apres += retenus;
+    }
+  }
+  const enfants = durees.horsAnnee.assurance.get(code) ?? 0;
+  return [apres > 0 ? apres + enfants : 0, avant + (apres === 0 ? enfants : 0),
+    avant > 0 ? avant + enfants : 0];
+}
+
+/**
+ * La première répartition de R. 173-3-2 : `total` années entre les régimes
+ * alignés, ensemble (clé `alignes`), et celui des non-salariés agricoles (clé
+ * `code`), au prorata de leurs durées. Voir le Python.
+ */
+export function premiereRepartition(carriere, releve, code, total, dureeB, duree1) {
+  const durees = releve.durees;
+  const alignes = [...durees.trimestresParRegime.keys()].filter(
+    (autre) => coordonner.REGIMES_ALIGNES.has(autre));
+  const groupesAlignes = new Set(alignes.map(
+    (autre) => (releve.groupes.get(autre) ?? [autre])[0]));
+  return repartirLesAnnees(
+    total,
+    new Map([
+      ["alignes", alignes.length > 0 ? durees.cumulPlafonne("assurance", alignes) : 0],
+      [code, durees.trimestresParRegime.get(code) ?? 0],
+    ]),
+    new Map([
+      ["alignes", carriere.generation >= coordonner.LURA_PREMIERE_GENERATION
+        ? 1 : groupesAlignes.size],
+      [code, (dureeB > 0 ? 1 : 0) + (duree1 > 0 ? 1 : 0)],
+    ]),
+    [code, "alignes"],
+  );
+}
+
+/**
+ * Les années du salaire annuel moyen d'un régime aligné quand l'assuré a aussi
+ * été exploitant agricole, ou `null` si rien ne les partage : depuis 2026, la
+ * part des vingt-cinq années que la première répartition de R. 173-3-2 laisse
+ * aux régimes alignés. Voir le Python.
+ */
+export function anneesDesRegimesAlignes(moteur, carriere, releve, membres, total) {
+  const exploitants = coordonner.REGIME_DES_NON_SALARIES_AGRICOLES;
+  const durees = releve.durees;
+  if (!membres.some((membre) => coordonner.REGIMES_ALIGNES.has(membre))
+      || (durees.trimestresParRegime.get(exploitants) ?? 0) <= 0
+      || !moteur.catalogue.contient(exploitants)) {
+    return null;
+  }
+  const periode = moteur.catalogue.obtenir(exploitants).periode(carriere.anneeLiquidation);
+  if (periode === null || !periode.meilleures_annees_non_salaries) {
+    return null;
+  }
+  const [duree1, , dureeB] = dureesDesNonSalaries(carriere, durees, exploitants);
+  return premiereRepartition(carriere, releve, exploitants, total, dureeB, duree1)
+    .get("alignes") ?? null;
+}
+
+/**
  * La moyenne des `annees` meilleures valeurs, toutes s'il y en a moins,
  * arrondie à l'entier le plus proche, 0,5 compté pour un (R. 732-66, II).
  */
@@ -687,46 +767,13 @@ export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve
     }
   }
   const coupure = ANNEE_DES_REVENUS_AGRICOLES;
-
-  // LES DURÉES, de part et d'autre du 1er janvier 2016 (R. 732-61 ;
-  // R. 732-66, III).
-  const parAnnee = durees.parAnnee.assurance.get(code) ?? new Map();
-  let avant = 0;
-  let apres = 0;
-  for (const [annee, nombre] of parAnnee) {
-    const retenus = Math.min(nombre, carriere.plafondTrimestres(annee));
-    if (annee < coupure) {
-      avant += retenus;
-    } else {
-      apres += retenus;
-    }
-  }
-  const enfants = durees.horsAnnee.assurance.get(code) ?? 0;
-  const duree1 = apres > 0 ? apres + enfants : 0;
-  const dureeA = avant + (apres === 0 ? enfants : 0);
-  const dureeB = avant > 0 ? avant + enfants : 0;
+  const [duree1, dureeA, dureeB] = dureesDesNonSalaries(carriere, durees, code);
 
   // LE NOMBRE D'ANNÉES DE CHAQUE MOYENNE (R. 173-3-2).
   const enfantsMajores = durees.enfants !== null ? carriere.nombre_enfants : 0;
   const total = nombreDAnneesRetenues(
     moteur, periode, carriere, carriere.annee_naissance, enfantsMajores);
-  const alignes = [...durees.trimestresParRegime.keys()].filter(
-    (autre) => coordonner.REGIMES_ALIGNES.has(autre));
-  const groupesAlignes = new Set(alignes.map(
-    (autre) => (releve.groupes.get(autre) ?? [autre])[0]));
-  const premiere = repartirLesAnnees(
-    total,
-    new Map([
-      ["alignes", alignes.length > 0 ? durees.cumulPlafonne("assurance", alignes) : 0],
-      [code, durees.trimestresParRegime.get(code) ?? 0],
-    ]),
-    new Map([
-      ["alignes", carriere.generation >= coordonner.LURA_PREMIERE_GENERATION
-        ? 1 : groupesAlignes.size],
-      [code, (dureeB > 0 ? 1 : 0) + (duree1 > 0 ? 1 : 0)],
-    ]),
-    [code, "alignes"],
-  );
+  const premiere = premiereRepartition(carriere, releve, code, total, dureeB, duree1);
   const seconde = repartirLesAnnees(
     premiere.get(code) ?? 0, new Map([["avant", dureeB], ["apres", duree1]]),
     new Map(), ["avant", "apres"],

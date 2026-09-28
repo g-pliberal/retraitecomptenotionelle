@@ -36,6 +36,12 @@ export const REGIMES_ALIGNES = new Set([
 /** La clé sous laquelle ils se réunissent : ce n'est pas un régime. */
 export const REGIMES_ALIGNES_TETE = "regimes_alignes";
 /**
+ * Le régime des personnes non salariées des professions agricoles, que
+ * R. 173-3-2 range avec les régimes alignés pour partager les vingt-cinq années
+ * du revenu moyen, depuis 2026.
+ */
+export const REGIME_DES_NON_SALARIES_AGRICOLES = "msa_non_salaries";
+/**
  * LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS : chacun compte et
  * liquide les services des deux autres (L. 5 et L. 11 du code des pensions,
  * articles 8 et 13 du décret n° 2003-1306, articles 4 et 10 du décret

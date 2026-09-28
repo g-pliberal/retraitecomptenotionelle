@@ -4387,6 +4387,22 @@ def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
         in pension.detail
     assert "revenu des 6 meilleures années depuis 2016" in pension.detail
     assert "forfait 2,092.98 € (88/170)" in pension.detail
+    # Et le salarié agricole n'a plus que ses six meilleures années sur dix :
+    # la part que la première répartition laisse aux régimes alignés.
+    salarie = next(
+        p for p in simulateur.scenario_actuel.calculer(carriere).pensions_par_regime
+        if p.regime == "msa_salaries")
+    assert salarie.detail == (
+        "SR 27,311.21 € × taux 51.250% × 40/170, "
+        "salaire des 6 meilleures années (R. 173-3-2)")
+    # Avant 2026, rien ne se partage : ses dix années.
+    avant = simulateur.carriere_parcours(
+        annee_naissance=1960, sexe="H", age_liquidation=64,
+        metiers=[Metier("salarie_agricole", 21), Metier("exploitant_agricole", 31)],
+    )
+    assert "R. 173-3-2" not in next(
+        p for p in simulateur.scenario_actuel.calculer(avant).pensions_par_regime
+        if p.regime == "msa_salaries").detail
 
 
 def test_la_repartition_des_annees_suit_r_173_3_2():

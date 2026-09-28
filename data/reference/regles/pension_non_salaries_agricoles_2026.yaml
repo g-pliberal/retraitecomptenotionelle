@@ -13,8 +13,9 @@ intitule: >-
 etat: approchee
 etape: liquider_chaque_regime
 effet: >-
-  Les chefs d'exploitation dont la pension prend effet depuis le 1er janvier 2026. Le
-  moteur servait jusqu'au 28 septembre 2026 la formule d'avant la réforme — forfait sur
+  Les chefs d'exploitation dont la pension prend effet depuis le 1er janvier 2026, et
+  le salaire annuel moyen de leurs régimes alignés quand ils ont aussi été salariés ou
+  indépendants. Le moteur servait jusqu'au 28 septembre 2026 la formule d'avant la réforme — forfait sur
   toute la durée et somme des points de toutes les années —, que la fiche disait « non
   calculable » faute des décrets, parus le 31 décembre 2025. Il sert depuis
   L. 732-24 dans sa rédaction de 2026 (`liquider.pension_des_non_salaries_agricoles`) :
@@ -22,23 +23,24 @@ effet: >-
   de 2028. L'exemple de la MSA est rendu : un salarié agricole de 1984 à 1993 et un
   exploitant de 1994 à 2026 retiennent six, treize et six années, et les treize
   meilleures des vingt-deux années d'avant 2016 donnent « 403 pts / 13 ans = 31 pts » et
-  « 31 pts x 22 ans = 682 pts ». Restent approchés : les années d'avant 1990, dont le
+  « 31 pts x 22 ans = 682 pts » ; le salarié agricole n'a plus que ses six meilleures
+  années sur dix, depuis le 28 septembre 2026 aussi. Restent approchés : les années d'avant 1990, dont le
   barème de points n'est pas lu, qui entrent dans la moyenne par les points que vaut
   leur rendement ; le revenu des années cotisées au minimum, que L. 732-24 déduit des
   cotisations et que le moteur porte au plancher de six cents SMIC horaires ; les durées,
   que R. 173-3-2 arrête au 31 décembre de l'année d'effet et que le moteur compte à la
   date d'effet ; les majorations de points de 1952 à 1972 (R. 732-67), les rachats et
-  les conjoints collaborateurs, qu'il ne connaît pas ; et le régime général d'un
-  polypensionné, dont la moyenne garde ses vingt-cinq années au lieu de la part que
-  R. 173-3-2 lui laisse.
+  les conjoints collaborateurs, qu'il ne connaît pas ; et, pour qui est né avant 1953,
+  le partage entre régimes alignés de la part que la répartition leur laisse, que le
+  moteur leur donne à chacun entière.
 sources:
   lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Porter au régime général, aux salariés agricoles et aux indépendants la part des
-    vingt-cinq années que R. 173-3-2 leur laisse quand l'assuré a été exploitant : leur
-    salaire annuel moyen la retient au lieu des vingt-cinq années.
+    Pour qui est né avant 1953, partager entre chacun des régimes alignés la part des
+    années que la première répartition de R. 173-3-2 leur laisse (II, a) : le moteur la
+    leur donne à chacun entière.
   - >-
     Lire le barème de points d'avant 1990 (article 1123 de l'ancien code rural et ses
     décrets) : les années d'avant 1990 entrent dans la moyenne par l'équivalent en points
@@ -227,5 +229,10 @@ code:
     l'équivalent en points de leur rendement. Le coefficient de la décote multiplie les
     trois parts, puis la pension est bornée à la moitié du plafond, puis la surcote la
     majore. `calcul_provisoire_non_salaries`, en 2026 et 2027, calcule aussi l'ancienne
-    formule, la moyenne d'avant 2016 en plus, et sert la plus forte des deux. Le test
-    `test_la_reforme_agricole_rend_l_exemple_de_la_msa` rejoue l'exemple de la caisse.
+    formule, la moyenne d'avant 2016 en plus, et sert la plus forte des deux. Les régimes
+    alignés d'un ancien exploitant — régime général, salariés agricoles, indépendants —
+    ne retiennent plus au salaire annuel moyen que la part des années que la première
+    répartition leur laisse (`liquider.annees_des_regimes_alignes`,
+    `anneesDesRegimesAlignes`), là où vaut la réforme. Le test
+    `test_la_reforme_agricole_rend_l_exemple_de_la_msa` rejoue l'exemple de la caisse,
+    des deux côtés.
