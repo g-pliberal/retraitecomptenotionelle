@@ -247,3 +247,39 @@ def test_le_journal_inscrit_le_deces_puis_la_reversion(contexte):
     assert sortie["deces"] == "2023-05-01" and sortie["total"] > 0
     assert "reversion" not in contexte.simuler(Saisie.depuis_requete({
         "naissance": "1958", "liquidation": "62"})).dictionnaire()
+
+
+# -- l'hypothèse de décès et la page ------------------------------------------------
+
+@pytest.mark.parametrize("requete, deces, annee", [
+    ({"naissance": "1975", "liquidation": "64", "conjoint": "1977"}, "2039-01-01", 2039),
+    ({"naissance": "1955", "liquidation": "62", "conjoint": "1957"}, "2026-01-01", 2026),
+])
+def test_sans_deces_declare_le_deces_est_suppose_au_depart(contexte, requete, deces, annee):
+    """Personne ne déclare la date de sa mort : sans elle, le conjoint déclaré
+    reçoit la réversion d'un décès supposé juste après le départ, ou au 1er
+    janvier de l'année courante pour qui est déjà parti (présomption
+    ``deces_apres_le_depart``). Elle ne s'inscrit pas au journal, qui ne tient
+    que ce qui arrive."""
+    comparaison = contexte.simuler(Saisie.depuis_requete(requete))
+    sortie = comparaison.dictionnaire()["reversion"]
+    assert (sortie["deces"], sortie["deces_suppose"], sortie["annee"]) == (deces, True, annee)
+    assert sortie["total"] > 0
+    assert not any(e.sorte == "reversion" for e in comparaison.journal)
+
+
+def test_la_page_montre_la_reversion_du_conjoint_declare():
+    """Le bloc « Conjoint » rempli, la page dit ce que le conjoint recevrait du
+    système actuel, et qu'aucun des trois autres systèmes ne verse de
+    réversion ; sans conjoint, ni la section ni le montant."""
+    from retraite_notionnelle.web.site import rendre
+
+    _, page = rendre("/simuler", {"naissance": "1962-03-15", "liquidation": "2026-10",
+                                  "conjoint": "1964", "ressources_conjoint": "14000"})
+    assert 'id="resultats-reversion"' in page
+    assert "Si vous décédiez juste après votre départ, en octobre 2026" in page
+    assert "aucune réversion" in page
+    assert 'name="conjoint" value="1964"' in page
+    _, sans = rendre("/simuler", {"naissance": "1962-03-15", "liquidation": "2026-10"})
+    assert 'id="resultats-reversion"' not in sans
+    assert 'name="conjoint"' in sans

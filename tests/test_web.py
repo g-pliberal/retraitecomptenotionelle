@@ -3431,8 +3431,11 @@ def test_le_simulateur_tient_en_peu_de_mots():
     # l'apprendre. La barre descend donc SOUS ce qu'elle valait avant les deux
     # changements. C'est le seul sens dans lequel on la déplace sans se
     # justifier ; la monter demande, chaque fois, qu'un contrôle l'exige.
+    # Le 28 septembre 2026, elle monte de trois mots pour un contrôle : le
+    # dépliant « Conjoint et réversion », qui ouvre les champs du conjoint (le
+    # domaine de la réversion), et dont les champs restent repliés.
     vierge = rendre("/simuler", {})[1]
-    assert _mots_visibles(vierge) <= 162, "le formulaire reprend de la prose"
+    assert _mots_visibles(vierge) <= 165, "le formulaire reprend de la prose"
 
     resultats = rendre("/simuler", {
         "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",

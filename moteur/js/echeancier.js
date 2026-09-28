@@ -15,8 +15,9 @@
  * Une composante revalorisée remplace, dans sa lignée, celle que la
  * liquidation avait écrite. Aujourd'hui, le départ, tiré de la carrière, et,
  * quand la chronologie les dit, le décès de l'assuré et la réversion qu'il
- * ouvre à son conjoint (`droit/reversion.js`) ; l'échéance est l'année
- * courante : voir le Python.
+ * ouvre à son conjoint (`droit/reversion.js`), ou, sans décès déclaré, une
+ * réversion d'essai, hors du journal ; l'échéance est l'année courante : voir
+ * le Python.
  *
  * Chaque événement suit le contrat C.7 (`data/reference/contrats/evenement.yaml`).
  */
@@ -117,8 +118,12 @@ export class Echeancier {
     for (const evenement of evenements) {
       this._traiter(evenement, carriere);
     }
-    if (this.auDepart !== null && carriere.deces !== null && carriere.conjoint !== null) {
-      this._reverser(carriere);
+    if (this.auDepart !== null && carriere.conjoint !== null) {
+      if (carriere.deces !== null) {
+        this._reverser(carriere);
+      } else {
+        this._reverserALEssai(carriere);
+      }
     }
     if (echeance !== null && this.auDepart !== null) {
       this._echeance(carriere, echeance);
@@ -139,11 +144,7 @@ export class Echeancier {
       personnes: [carriere.personne], vise: {}, sorte: "deces",
     });
     this._inscrire(deces, deces.id, "evenement", deces, deces.date);
-    const annee = Math.max(carriere.anneeLiquidation, Math.min(
-      Number(carriere.deces.slice(0, 4)), this.simulateur.parametres.annee_courante));
-    const vivante = faireVivre(this.simulateur, carriere, this.auDepart, annee);
-    const pensions = vivante.regimes.map(
-      (r) => [r.regime, r.au_depart * r.coefficient, r.fiabilite]);
+    const [annee, pensions] = this._pensionsAuDeces(carriere, carriere.deces);
     this.reversion = reversion(this.moteur, pensions, carriere, annee);
     const survivant = carriere.conjoint.personne;
     const evenement = new Evenement({
@@ -153,6 +154,34 @@ export class Echeancier {
     this._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date);
     this._inscrire(evenement, `liquidation_${evenement.id}`, "reversion", this.reversion,
       evenement.date);
+  }
+
+  /**
+   * Sans décès déclaré, la réversion d'un décès supposé juste après le départ,
+   * ou au 1er janvier de l'année courante pour qui est déjà parti (présomption
+   * `deces_apres_le_depart`) : ce que le conjoint recevrait. Elle ne
+   * s'inscrit pas au journal, qui ne tient que ce qui arrive.
+   */
+  _reverserALEssai(carriere) {
+    const liquidation = carriere.dateLiquidation;
+    const depart = `${String(liquidation.annee).padStart(4, "0")}-`
+      + `${String(liquidation.mois).padStart(2, "0")}-01`;
+    const courante = `${String(this.simulateur.parametres.annee_courante).padStart(4, "0")}-01-01`;
+    const deces = depart > courante ? depart : courante;
+    const [annee, pensions] = this._pensionsAuDeces(carriere, deces);
+    this.reversion = reversion(this.moteur, pensions, carriere, annee, deces);
+  }
+
+  /**
+   * Les pensions du défunt menées à l'année du décès — l'année courante pour
+   * un décès à venir, jamais avant le départ —, et cette année.
+   */
+  _pensionsAuDeces(carriere, deces) {
+    const annee = Math.max(carriere.anneeLiquidation, Math.min(
+      Number(deces.slice(0, 4)), this.simulateur.parametres.annee_courante));
+    const vivante = faireVivre(this.simulateur, carriere, this.auDepart, annee);
+    return [annee, vivante.regimes.map(
+      (r) => [r.regime, r.au_depart * r.coefficient, r.fiabilite])];
   }
 
   _traiter(evenement, carriere) {

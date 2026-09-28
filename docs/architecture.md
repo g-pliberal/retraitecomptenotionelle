@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.17, du 28 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.18, du 28 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -118,7 +118,7 @@ couverture demande à l'architecture.
 | Temps partiel | quotité non saisie | quotité de chaque période ; surcotisation |
 | Départs anticipés | carrière longue, catégories actives, militaires : oui ; parents de trois enfants de la fonction publique : non ; handicap : hors modèle | tous, dont incapacité permanente, pénibilité, amiante |
 | Invalidité, inaptitude | hors modèle | périodes d'invalidité, pension d'invalidité et sa conversion, retraite pour invalidité des fonctionnaires, inaptitude |
-| Réversion | le conjoint et le décès de l'assuré, à qui veut les dire ; la réversion liquidée pour le survivant d'un décès postérieur au départ, au régime général et dans les régimes alignés, dans la fonction publique et à l'Agirc-Arrco, sans le minimum ni les majorations ; le mariage présumé aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.mariage_des_conjoints.valeur)-->27<!--/--> ans de l'assuré | conjoints successifs datés, décès avant le départ, ressources du ménage, partage entre ex-conjoints, remariage, règles des autres régimes, orphelins |
+| Réversion | le conjoint, qu'un bloc facultatif du formulaire demande, et le mariage, présumé aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.mariage_des_conjoints.valeur)-->27<!--/--> ans de l'assuré ; la réversion liquidée pour le survivant, au régime général et dans les régimes alignés, dans la fonction publique et à l'Agirc-Arrco, sans le minimum ni les majorations, pour un décès déclaré après le départ ou supposé juste après lui | conjoints successifs datés, décès avant le départ, ressources du ménage, partage entre ex-conjoints, remariage, règles des autres régimes, orphelins |
 | Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | hors modèle : une seule liquidation, à une date | un départ par régime ; activité après le départ ; fraction de pension ; pension définitive |
 | Rachats, versements, surcotisation | hors modèle | actes datés de l'assuré, avec leur coût |
 | Carrières hors de France | absentes | périodes par pays et par convention ; totalisation et prorata ; pensions étrangères |
@@ -755,7 +755,10 @@ Le relevé des droits et le résultat le signalent.
   - mariage aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.mariage_des_conjoints.valeur)-->27<!--/--> ans de l'assuré, avec le conjoint qu'il déclare ;
   - conjoint de l'autre sexe ;
   - survivant sans autres ressources que ses réversions ;
-  - réversion demandée dans l'année du décès.
+  - réversion demandée dans l'année du décès ;
+  - décès supposé juste après le départ, ou cette année pour qui est déjà
+    parti, quand un conjoint est déclaré sans décès : la page montre ce que
+    le conjoint recevrait.
 - **Un défaut légal** n'est pas une présomption : c'est la loi qui décide
   quand la personne n'a rien fait. Il s'écrit dans la version de la règle,
   parce qu'il change avec elle. Au régime général, les trimestres d'éducation
@@ -1575,8 +1578,8 @@ Un domaine se clôt en refigeant la référence de conservation (§ 12).
 L'ordre se fixe par le nombre de personnes concernées, mesuré sur les sources
 publiques au moment de choisir. Le premier l'a été le 27 septembre 2026, et
 s'est ouvert et clos ce jour-là (feuille de route, action 130) ; le deuxième,
-la réversion, le 28 septembre, et s'est ouvert ce jour-là ; les suivants le
-seront chacun à son tour. En première lecture :
+la réversion, le 28 septembre, et s'est ouvert et clos ce jour-là ; les
+suivants le seront chacun à son tour. En première lecture :
 
 1. les dates des enfants ;
 2. les périodes assimilées manquantes ;
@@ -2400,6 +2403,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.18**, 28 septembre 2026 : le deuxième domaine, la réversion, clos (§ 11). Neuf exemples publiés la rejouent, dont quatre en écart connu ; le formulaire demande le conjoint dans un bloc facultatif, et la page montre sa réversion pour un décès supposé juste après le départ, une présomption de plus (§ 5.6), que l'échéancier applique hors du journal ; la page Coût ne bouge pas, la proposition avait décidé (« ni réversion ») ; la référence de conservation est refigée (§ 12).
 
 - **5.17**, 28 septembre 2026 : la deuxième étape du domaine de la réversion. Le conjoint et le décès de l'assuré entrent dans la chronologie (C.1) : un lien d'union, de forme mariage, que le décès clôt, la naissance du conjoint et ses ressources ; quatre présomptions posent ou appliquent ce que la saisie ne dit pas (§ 5.6). L'échéancier inscrit le décès, puis la réversion qu'il ouvre au survivant, régime par régime, sous les versions des trois fiches (§ 7.3 et § 7.4).
 

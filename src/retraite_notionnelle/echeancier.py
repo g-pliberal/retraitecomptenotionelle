@@ -17,7 +17,9 @@ lignée, celle que la liquidation avait écrite.
 
 Aujourd'hui, le départ, tiré de la carrière, et, quand la chronologie les
 dit, le décès de l'assuré et la réversion qu'il ouvre à son conjoint
-(:mod:`.droit.reversion`) : les autres sortes sont réservées (§ 13.5).
+(:mod:`.droit.reversion`) : les autres sortes sont réservées (§ 13.5). Un
+conjoint sans décès déclaré reçoit une réversion d'essai, pour un décès
+supposé juste après le départ, qui ne s'inscrit pas au journal.
 L'échéance est l'année courante, et « faire vivre » y applique d'un coup les
 revalorisations publiées depuis le départ, dans l'ordre où
 :mod:`~retraite_notionnelle.revalorisation` les compose : une revalorisation
@@ -46,6 +48,7 @@ from .scenarios.actuel import MinimumVieillesse, resultat_actuel
 
 if TYPE_CHECKING:
     from .carriere import Carriere
+    from .donnees.chargement import Fiabilite
     from .revalorisation import ActuelAujourdhui
     from .scenarios.actuel import ResultatActuel
     from .simulateur import Simulateur
@@ -124,9 +127,11 @@ class Echeancier:
         evenements = [e for e in (depart_de(carriere),) if e is not None]
         for evenement in sorted(evenements, key=lambda e: (e.date, e.rang)):
             self._traiter(evenement, carriere)
-        if (self.au_depart is not None and carriere.deces is not None
-                and carriere.conjoint is not None):
-            self._reverser(carriere)
+        if self.au_depart is not None and carriere.conjoint is not None:
+            if carriere.deces is not None:
+                self._reverser(carriere)
+            else:
+                self._reverser_a_l_essai(carriere)
         if echeance is not None and self.au_depart is not None:
             self._echeance(carriere, echeance)
         return self.journal
@@ -140,11 +145,7 @@ class Echeancier:
         deces = Evenement(id=f"deces_{carriere.personne}", date=carriere.deces,
                           personnes=(carriere.personne,), vise={}, sorte="deces")
         self._inscrire(deces, deces.id, "evenement", deces, deces.date)
-        annee = max(carriere.annee_liquidation,
-                    min(int(carriere.deces[:4]), self.simulateur.parametres.annee_courante))
-        vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
-        pensions = [(r.regime, r.au_depart * r.coefficient, r.fiabilite)
-                    for r in vivante.regimes]
+        annee, pensions = self._pensions_au_deces(carriere, carriere.deces)
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee)
         survivant = carriere.conjoint.personne
         evenement = Evenement(id=f"reversion_{survivant}", date=_reversion.mois_suivant(
@@ -153,6 +154,31 @@ class Echeancier:
         self._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date)
         self._inscrire(evenement, f"liquidation_{evenement.id}", "reversion",
                        self.reversion, evenement.date)
+
+    def _reverser_a_l_essai(self, carriere: Carriere) -> None:
+        """Sans décès déclaré, la réversion d'un décès supposé juste après le
+        départ, ou au 1er janvier de l'année courante pour qui est déjà parti
+        (présomption ``deces_apres_le_depart``) : ce que le conjoint
+        recevrait. Elle ne s'inscrit pas au journal, qui ne tient que ce qui
+        arrive."""
+        depart = (f"{carriere.date_liquidation.annee:04d}"
+                  f"-{carriere.date_liquidation.mois:02d}-01")
+        deces = max(depart, f"{self.simulateur.parametres.annee_courante:04d}-01-01")
+        annee, pensions = self._pensions_au_deces(carriere, deces)
+        self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
+                                              deces_suppose=deces)
+
+    def _pensions_au_deces(self, carriere: Carriere,
+                           deces: str) -> tuple[int, list[tuple[str, float, Fiabilite]]]:
+        """Les pensions du défunt menées à l'année du décès — l'année courante
+        pour un décès à venir, où s'arrêtent les revalorisations publiées ;
+        jamais avant le départ, dont les montants sont les euros —, et cette
+        année."""
+        annee = max(carriere.annee_liquidation,
+                    min(int(deces[:4]), self.simulateur.parametres.annee_courante))
+        vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
+        return annee, [(r.regime, r.au_depart * r.coefficient, r.fiabilite)
+                       for r in vivante.regimes]
 
     def _traiter(self, evenement: Evenement, carriere: Carriere) -> None:
         sorte = SORTES[evenement.sorte]

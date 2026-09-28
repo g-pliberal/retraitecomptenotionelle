@@ -2796,6 +2796,48 @@ domaine : le bloc du formulaire et ce que la page de résultat montre de la
 réversion, à soumettre au propriétaire ; la page Coût ; la décision de la
 proposition, puis la référence de conservation à refiger.
 
+**Quatrième étape : le bloc du formulaire et la page**, le même jour, sur la
+décision du propriétaire : l'hypothèse de décès, écrite dans cette session. Le
+formulaire demande, dans un bloc replié « Conjoint et réversion », sa
+naissance, son sexe, la date du mariage et ses ressources ; personne n'y
+déclare la date de sa mort. Le budget de mots du formulaire vierge monte de
+trois, ceux du titre du dépliant, un contrôle, comme le test l'exige. Sans décès déclaré, l'échéancier
+liquide une réversion d'essai, hors du journal, pour un décès supposé juste
+après le départ, ou au 1er janvier de l'année courante pour qui est déjà parti
+(présomption `deces_apres_le_depart`) : la réversion porte alors sur la
+pension même que la page affiche, dans ses euros. La page de résultat montre,
+sous le salaire net, ce que le conjoint recevrait du système actuel, régime
+par régime, et qu'aucun des trois autres systèmes n'en verse. Deux témoins de
+simulation et un témoin de page la rejouent ; les autres ne bougent pas.
+
+**Le domaine se clôt le même jour**, le gabarit du § 11 rempli :
+- **les fiches** : trois, découpées en versions — le régime général et les
+  régimes alignés, la fonction publique et la CNRACL, l'Agirc-Arrco —,
+  `approchee` chacune, avec ses approximations ;
+- **les faits de la chronologie** : la naissance du conjoint, l'union de
+  forme mariage, le décès, les ressources ; cinq présomptions ;
+- **les fonctions dans l'étape** : `droit/reversion.py` et son jumeau, que
+  l'échéancier appelle au décès ;
+- **les exemples publiés** : neuf, dont quatre en écart connu ;
+- **le bloc du formulaire** : « Conjoint et réversion », et la section de la
+  page ;
+- **la page Coût** ne bouge pas : sa réversion est lue dans l'enquête de la
+  DREES, et aucun de ses chiffres n'a changé dans les commits du domaine ;
+- **la décision de la proposition** est déjà prise : « ni réversion »
+  (README) ; la couche `comptes_notionnels` neutralise l'étape
+  `liquider_chaque_regime`, où s'appliquent les trois fiches, et la page le
+  dit ;
+- **la référence de conservation** est refigée
+  (`python scripts/conservation.py --figer`).
+
+Restent, hors du domaine clos, et consignés dans ses fiches : le minimum de
+réversion et ses majorations ; le complément de la fonction publique ; le
+partage entre ex-conjoints et le remariage ; la réversion d'un assuré mort
+avant son départ ; la réversion minorée de l'Agirc et la périodicité du
+paiement ; l'accord Agirc-Arrco de 2017, à relire sur Légifrance ; les régimes
+spéciaux, les indépendants et les libéraux. Le domaine suivant se mesurera à
+son ouverture : l'invalidité et l'inaptitude paraissent devoir venir ensuite.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

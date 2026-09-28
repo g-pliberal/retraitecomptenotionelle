@@ -78,9 +78,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   et les majorations du régime général, le complément de la fonction publique,
   le partage entre ex-conjoints et le remariage, la réversion d'un assuré mort
   avant son départ et celle des autres régimes, dont la ligne le dit ; les
-  approximations de chaque fiche sont déclarées. Le formulaire ne demande pas
-  encore le conjoint, et la page ne montre pas la réversion : c'est l'étape
-  suivante du domaine. La dépense de tous les ménages, elle, se lit (page Coût).
+  approximations de chaque fiche sont déclarées. Le formulaire demande le
+  conjoint dans un bloc facultatif, et la page montre sa réversion pour un
+  décès supposé juste après le départ, ou cette année pour qui est déjà parti :
+  personne ne déclare la date du sien. La dépense de tous les ménages, elle, se
+  lit (page Coût).
 - **Les revalorisations servies APRÈS la liquidation.** Le moteur s'arrête au
   jour du départ : il calcule la pension du premier mois et ne suit aucune des
   revalorisations qu'un retraité a reçues depuis. La page l'exprime en euros

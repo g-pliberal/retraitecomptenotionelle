@@ -187,6 +187,9 @@ presomptions:
   reversion_demandee_dans_l_annee: >-
     la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge
     requis
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
 sources:
   lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31

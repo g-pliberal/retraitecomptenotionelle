@@ -872,6 +872,12 @@ def _cas() -> list[dict]:
         "mariage": "1994-06", "deces": "1995-03"}))
     cas.append(("reversion_deces_a_venir", {
         "naissance": "1970", "conjoint": "1972", "deces": "2040-05"}))
+    # Sans décès déclaré, la réversion d'essai d'un décès supposé juste après
+    # le départ — ou en janvier de l'année courante pour qui est déjà parti
+    # (présomption `deces_apres_le_depart`) : ce que la page montre.
+    cas.append(("reversion_hypothese_au_depart", {"conjoint": "1977"}))
+    cas.append(("reversion_hypothese_deja_parti", {
+        "naissance": "1955", "liquidation": "62", "conjoint": "1957"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())
@@ -957,6 +963,15 @@ def _pages() -> dict:
         }),
         ("simuler_regime_special", "/simuler", {
             **BASE, "statut": "agent_sncf", "naissance": "1960", "liquidation": "52",
+        }),
+        # La réversion (le domaine de la réversion, docs/architecture.md, § 11) :
+        # le bloc « Conjoint » rempli, et la section qui dit ce que le conjoint
+        # recevrait si l'assuré décédait juste après son départ — la réversion
+        # du régime général réduite au plafond, celles de l'Agirc-Arrco
+        # entières.
+        ("simuler_reversion", "/simuler", {
+            **BASE, "naissance": "1962-03-15", "liquidation": "2026-10",
+            "conjoint": "1964", "ressources_conjoint": "14000",
         }),
         # Le quatrième profil de fiche de paie — celui d'un agent public non
         # titulaire, qui relève du régime général et de l'Ircantec. Les trois

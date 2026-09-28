@@ -29,6 +29,11 @@ par « faire vivre », et le plafond du régime général s'y lit, au SMIC de ce
 année-là. Pour un décès à venir, l'année courante, où s'arrêtent les
 revalorisations publiées.
 
+SANS DÉCÈS DÉCLARÉ, l'échéancier liquide une réversion d'essai pour un décès
+supposé juste après le départ, ou au 1er janvier de l'année courante pour qui
+est déjà parti (présomption ``deces_apres_le_depart``) : ce que le conjoint
+recevrait. :attr:`Reversion.deces_suppose` le dit.
+
 Ce qu'elle écrit, :class:`Reversion`, se porte au journal. Son jumeau est
 ``moteur/js/droit/reversion.js``.
 """
@@ -99,6 +104,9 @@ class Reversion:
     ressources: float
     ressources_presumees: bool
     regimes: tuple[ReversionRegime, ...]
+    #: Le décès est-il supposé (présomption ``deces_apres_le_depart``) plutôt
+    #: que déclaré ?
+    deces_suppose: bool = False
 
     @property
     def total(self) -> float:
@@ -106,7 +114,8 @@ class Reversion:
 
     def donnees(self) -> dict:
         return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
-                "defunt": self.defunt, "deces": self.deces, "annee": self.annee,
+                "defunt": self.defunt, "deces": self.deces,
+                "deces_suppose": self.deces_suppose, "annee": self.annee,
                 "ressources": self.ressources,
                 "ressources_presumees": self.ressources_presumees,
                 "total": self.total,
@@ -169,18 +178,21 @@ def _mariage_suffit(parametres: dict, conjoint: Conjoint, deces: str, depart: st
 
 
 def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite]],
-              carriere: Carriere, annee: int) -> Reversion | None:
+              carriere: Carriere, annee: int,
+              deces_suppose: str | None = None) -> Reversion | None:
     """La réversion que le décès de la personne de ``carriere`` ouvre à son
     conjoint, régime par régime ; ``None`` sans décès ou sans conjoint.
 
     ``pensions`` sont les pensions du défunt à l'année ``annee``, où les
     montants se chiffrent : ``(régime, montant, fiabilité)``, dans l'ordre de
     sa liquidation. Un régime qui ne lui sert rien n'a rien à reverser.
+    ``deces_suppose`` date le décès que la présomption
+    ``deces_apres_le_depart`` suppose, quand la chronologie n'en dit pas.
     """
     conjoint = carriere.conjoint
-    if carriere.deces is None or conjoint is None:
+    deces = carriere.deces if deces_suppose is None else deces_suppose
+    if deces is None or conjoint is None:
         return None
-    deces = carriere.deces
     lendemain = mois_suivant(deces)
     depart = f"{carriere.date_liquidation.annee:04d}-{carriere.date_liquidation.mois:02d}-01"
     enfants = carriere.nombre_enfants
@@ -262,4 +274,5 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     return Reversion(
         personne=conjoint.personne, defunt=carriere.personne, deces=deces, annee=annee,
         ressources=ressources, ressources_presumees=presumees,
-        regimes=tuple(lignes[regime] for regime, _, _ in pensions))
+        regimes=tuple(lignes[regime] for regime, _, _ in pensions),
+        deces_suppose=deces_suppose is not None)

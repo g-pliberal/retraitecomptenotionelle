@@ -1016,6 +1016,7 @@ export function formulaire(saisie, contexte) {
   ${basculeMontants(saisie, echelle, tauxPension)}
   ${mentionConversion(saisie, echelle)}
   ${releveFormulaire(saisie)}
+  ${conjointFormulaire(saisie, contexte)}
   <details class="options">
     ${g.sommaire("Options de modélisation (sexe, profil, indexation, "
       + "projection)")}
@@ -1025,6 +1026,52 @@ export function formulaire(saisie, contexte) {
   <button type="button" class="second oublier" hidden>Effacer ma saisie</button></p>
 </form>
 `;
+}
+
+/**
+ * Le conjoint, pour la réversion (le domaine de la réversion,
+ * docs/architecture.md, § 11) : un bloc facultatif, replié tant qu'il est
+ * vide. Personne ne déclare la date de sa mort : la page montre ce que le
+ * conjoint recevrait si l'assuré décédait juste après son départ, ou cette
+ * année s'il est déjà parti (présomption `deces_apres_le_depart`). Un décès
+ * que l'adresse porte est gardé, en champ caché, comme tout ce dont le
+ * formulaire dépend.
+ */
+function conjointFormulaire(saisie, contexte) {
+  const presomptions = contexte.paquet.presomptions;
+  const champs = [
+    g.champ("conjoint", "Naissance de votre conjoint", saisie.conjoint,
+      "facultatif : « 1962 » ou « 1962-03 »", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      "Votre époux ou votre épouse : ni le pacs ni le concubinage n'ouvrent de "
+      + "réversion. Sa naissance dit l'âge auquel il peut la toucher : "
+      + "cinquante-cinq ans au régime général et à l'Agirc-Arrco, aucun dans "
+      + "la fonction publique."),
+    g.liste("conjoint_sexe", "Son sexe",
+      [["", "l'autre que le vôtre"], ["H", "Homme"], ["F", "Femme"]],
+      saisie.conjoint_sexe, "", {},
+      "Il ne compte que pour les règles d'avant 2004 dans la fonction publique, "
+      + "et d'avant 1994 à l'Agirc et à l'Arrco."),
+    g.champ("mariage", "Date du mariage", saisie.mariage,
+      `facultatif : présumé à vos ${presomptions.mariage_des_conjoints.valeur} ans`,
+      "text", { autocomplete: "off", spellcheck: "false" },
+      "Elle ne décide qu'aux marges : la durée du mariage qu'exigeait le régime "
+      + "général avant juillet 2004, et l'antériorité du mariage que la fonction "
+      + "publique demande quand aucun enfant n'en est né."),
+    g.champ("ressources_conjoint", "Ses ressources",
+      saisie.ressources_conjoint === null ? "" : nombreBrut(saisie.ressources_conjoint),
+      "facultatif : en euros bruts par an, sa propre retraite comprise", "number",
+      { min: "0", step: "100" },
+      "Le régime général réduit la réversion de ce qui dépasse, avec elle, "
+      + "2 080 fois le SMIC horaire. Sans ressources dites, le modèle n'en compte "
+      + "aucune, et la réversion n'est réduite que par celles des autres régimes."),
+  ].join("");
+  return `
+  <details class="options"${saisie.conjoint ? " open" : ""}>
+    ${g.sommaire("Conjoint et réversion")}
+    <div class="grille">${champs}</div>
+    ${saisie.deces ? g.cache("deces", saisie.deces) : ""}
+  </details>`;
 }
 
 /**
@@ -3117,6 +3164,7 @@ ${revenuDeduit(contexte, comparaison, saisie, montants)}
   ${resumeParcours(contexte, saisie)}
 </div>
 ${salaireNet(comparaison, saisie)}
+${reversionDuConjoint(contexte, comparaison, saisie, montants)}
 <h2>Pour aller plus loin</h2>
 <p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
 suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
@@ -3453,6 +3501,95 @@ ${tranche}
 ${notionnels}
 ${reserve}
 `, "resultats-aujourdhui");
+}
+
+/**
+ * Ce que motive une ligne de réversion qui n'est pas servie entière.
+ */
+const MOTIFS_DE_REVERSION = Object.freeze({
+  ecretee: "réduite : avec ses ressources, elle dépasserait le plafond",
+  ressources: "rien : ses ressources dépassent le plafond",
+  mariage: "rien : le mariage est trop court ou trop tardif",
+  non_portee: "non calculée : ce régime n'est pas encore porté",
+});
+
+/**
+ * La réversion que le conjoint déclaré recevrait (le domaine de la réversion,
+ * docs/architecture.md, § 11) : dans le système actuel, régime par régime ;
+ * dans les trois autres, rien — les comptes notionnels ne servent que les
+ * droits de qui a cotisé, et la proposition supprime la réversion avec les
+ * autres avantages. Sans décès déclaré, le décès est supposé juste après le
+ * départ, ou cette année pour qui est déjà parti : la réversion porte alors
+ * sur la pension même que la page affiche, et dans ses euros.
+ */
+function reversionDuConjoint(contexte, comparaison, saisie, montants) {
+  const reversion = comparaison.reversion;
+  if (reversion === null) return "";
+  const simulateur = contexte.simulateur(comparaison.parametres);
+  const catalogue = simulateur.catalogue;
+  const coefficient = simulateur.macro.coefficientPrix(
+    reversion.annee, comparaison.parametres.annee_euros_constants);
+  const mensuel = (annuel) => montants.pension(annuel * coefficient) / MOIS_PAR_AN;
+  const nomRegime = (code) => (catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
+  const mois = (date) => echapper(String(new DateMois(
+    Number(date.slice(0, 4)), Number(date.slice(5, 7)))));
+
+  let quand;
+  if (!reversion.deces_suppose) {
+    quand = `À votre décès, en ${mois(reversion.deces)},`;
+  } else if (comparaison.aujourd_hui !== null) {
+    quand = `Si vous décédiez cette année, en ${reversion.annee},`;
+  } else {
+    quand = "Si vous décédiez juste après votre départ, en "
+      + `${echapper(String(comparaison.carriere.dateLiquidation))},`;
+  }
+
+  const lignes = reversion.regimes.map((ligne) => [
+    echapper(nomRegime(ligne.regime)),
+    g.euros(mensuel(ligne.base)),
+    ligne.fiche === null ? "—" : g.pourcentage(ligne.taux, false, 0),
+    ligne.motif === "servie" ? g.euros(mensuel(ligne.montant))
+      : `${g.euros(mensuel(ligne.montant))} <span class="discret">`
+        + `(${MOTIFS_DE_REVERSION[ligne.motif]})</span>`,
+    ligne.date_effet === null ? "—" : mois(ligne.date_effet),
+  ]);
+  lignes.push(["Réversion du système actuel", "", "",
+    `<strong>${g.euros(mensuel(reversion.total))}</strong>`, ""]);
+  const tableau = g.tableau(
+    ["Régime", "Votre pension", "Taux", "Sa réversion", "À partir de"],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "texte"],
+    `Système 1 : la réversion, régime par régime, en euros ${montants.net ? "nets" : "bruts"} `
+      + "par mois",
+    true,
+  );
+
+  const reserves = [];
+  if (reversion.ressources_presumees) {
+    reserves.push("aucune ressource propre à votre conjoint, faute de l'avoir dite");
+  }
+  if (comparaison.carriere.conjoint.mariage_presume) {
+    reserves.push("un mariage à vos "
+      + `${contexte.paquet.presomptions.mariage_des_conjoints.valeur} ans`);
+  }
+  reserves.push("ni minimum de réversion ni majoration, que le modèle ne sert pas "
+    + "encore, si bien qu'une petite pension ouvre en réalité une réversion plus "
+    + "élevée");
+
+  return `
+<div class="carte" id="resultats-reversion">
+<h3>La réversion de votre conjoint</h3>
+<p>${quand} votre conjoint recevrait du système actuel
+<strong>${g.nombre(mensuel(reversion.total), 0)} ${montants.unitePension}</strong>
+de pension de réversion, en euros de ${saisie.euros} comme les montants
+ci-dessus.</p>
+${tableau}
+<p>Dans les systèmes 2, 3 et 4, <strong>aucune réversion</strong> : les comptes
+notionnels ne servent que les droits de qui a cotisé, et notre proposition
+supprime la réversion avec les autres avantages qui ne viennent pas d'une
+cotisation.</p>
+<p class="discret">Ce que ce montant suppose : ${reserves.join(" ; ")}.</p>
+</div>`;
 }
 
 /**

@@ -12,7 +12,8 @@
  * l'Agirc-Arrco (`reversion_agirc_arrco`). Les autres régimes n'ont pas encore
  * de fiche : leur ligne le dit, sans montant. Ce qui n'est pas encore porté,
  * et les montants — ceux de l'année du décès —, sont dits dans l'en-tête du
- * Python.
+ * Python. Sans décès déclaré, l'échéancier liquide une réversion d'essai pour
+ * un décès supposé juste après le départ (présomption `deces_apres_le_depart`).
  */
 
 import * as chrono from "../chronologie.js";
@@ -63,10 +64,13 @@ export class ReversionRegime {
 
 /** Ce que la liquidation d'une réversion écrit : régime par régime. */
 export class Reversion {
-  constructor({ personne, defunt, deces, annee, ressources, ressources_presumees, regimes }) {
+  constructor({ personne, defunt, deces, annee, ressources, ressources_presumees, regimes,
+    deces_suppose = false }) {
     this.personne = personne;
     this.defunt = defunt;
     this.deces = deces;
+    // Le décès est-il supposé (présomption `deces_apres_le_depart`) ?
+    this.deces_suppose = deces_suppose;
     this.annee = annee;
     this.ressources = ressources;
     this.ressources_presumees = ressources_presumees;
@@ -85,7 +89,8 @@ export class Reversion {
   donnees() {
     return {
       schema_version: SCHEMA_VERSION, personne: this.personne, defunt: this.defunt,
-      deces: this.deces, annee: this.annee, ressources: this.ressources,
+      deces: this.deces, deces_suppose: this.deces_suppose, annee: this.annee,
+      ressources: this.ressources,
       ressources_presumees: this.ressources_presumees, total: this.total,
       regimes: this.regimes.map((r) => r.donnees()),
     };
@@ -167,15 +172,16 @@ function mariageSuffit(parametres, conjoint, deces, depart, enfants) {
  * conjoint, régime par régime ; `null` sans décès ou sans conjoint.
  * `pensions` sont les pensions du défunt à l'année `annee`, où les montants se
  * chiffrent : `[régime, montant, fiabilité]`, dans l'ordre de sa liquidation.
- * Un régime qui ne lui sert rien n'a rien à reverser. Voir `reversion` du
- * Python.
+ * Un régime qui ne lui sert rien n'a rien à reverser. `decesSuppose` date le
+ * décès que la présomption `deces_apres_le_depart` suppose, quand la
+ * chronologie n'en dit pas. Voir `reversion` du Python.
  */
-export function reversion(moteur, pensions, carriere, annee) {
+export function reversion(moteur, pensions, carriere, annee, decesSuppose = null) {
   const conjoint = carriere.conjoint;
-  if (carriere.deces === null || conjoint === null) {
+  const deces = decesSuppose === null ? carriere.deces : decesSuppose;
+  if (deces === null || conjoint === null) {
     return null;
   }
-  const deces = carriere.deces;
   const lendemain = moisSuivant(deces);
   const liquidation = carriere.dateLiquidation;
   const depart = `${String(liquidation.annee).padStart(4, "0")}-`
@@ -274,5 +280,6 @@ export function reversion(moteur, pensions, carriere, annee) {
     personne: conjoint.personne, defunt: carriere.personne, deces, annee,
     ressources, ressources_presumees: presumees,
     regimes: servies.map(([regime]) => lignes.get(regime)),
+    deces_suppose: decesSuppose !== null,
   });
 }

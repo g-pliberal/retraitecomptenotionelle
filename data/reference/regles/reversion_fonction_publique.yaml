@@ -165,6 +165,9 @@ presomptions:
     la condition d'antériorité du mariage de L. 39, quand sa date n'est pas déclarée
   conjoint_de_l_autre_sexe: >-
     la veuve, seule bénéficiaire avant 2004, quand le sexe du conjoint n'est pas dit
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
 sources:
   lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31

@@ -341,6 +341,20 @@ listes:
           décès quand la demande vient dans l'année (R. 353-7), et le premier
           jour du mois qui suit la demande sinon ; le formulaire ne demande pas
           la date de la demande
+      deces_apres_le_depart:
+        dit: >-
+          sans décès déclaré, l'assuré qui déclare un conjoint est supposé décéder
+          juste après son départ, ou au 1er janvier de l'année courante s'il est
+          déjà parti
+        valeur: au départ
+        appliquee_par: l'échéancier (echeancier.py), qui liquide alors une réversion d'essai, hors du journal ; son jumeau JavaScript
+        entrera_a: echeancier
+        raison: >-
+          la réversion n'existe qu'au décès de l'assuré, et personne ne déclare
+          le sien : la page montre ce que le conjoint recevrait, sans demander la
+          date d'une mort (décision du propriétaire, le 28 septembre 2026). Juste
+          après le départ, la pension est celle que la page calcule, dans ses
+          euros ; pour qui est déjà parti, celle de l'année courante
       validation_ircantec_demandee:
         dit: l'agent rétabli au régime général a demandé que l'Ircantec valide ses services
         valeur: demandée
