@@ -375,6 +375,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             details = []
 
             points = points_acquis.get(code, 0.0)
+            #: Ce que vaut un point dans le montant, quand il a une valeur de
+            #: service : la part des points abattus s'y mesure.
+            service_des_points: float | None = None
             # BARÈME DU TRIMESTRE : la pension minière est la durée, majorée
             # du coefficient de l'article 131-1, multipliée par la valeur du
             # trimestre de la date d'effet — l'une et l'autre lues dans
@@ -430,6 +433,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                         if requis > 0:
                             coefficient_duree = 37.5 / (requis / 4.0)
                     montant += points * service * coefficient_duree
+                    service_des_points = service * coefficient_duree
                     fiabilite_regime = min(
                         fiabilite_regime, fiabilite_service, fiabilite_points[code]
                     )
@@ -497,6 +501,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             fiabilite_globale = min(fiabilite_globale, fiabilite_regime)
             montant_brut = montant
             abattement = 1.0
+            #: Les points qui gardent le coefficient pour âge, et ce
+            #: coefficient, quand il est plus sévère que celui des autres.
+            abattus_a_l_age: tuple[float, float] | None = None
             if not ignorer_penalite_age:
                 # Le coefficient d'anticipation multiplie le montant : sans
                 # lui, la formule affichée ne le retrouve pas — à dix ans
@@ -507,8 +514,32 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     age_liquidation, annee_liquidation,
                     trimestres_par_regime.get(code, 0),
                 )
+                # LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE.
+                # L'exonération au taux plein ne vaut que « sur les tranches
+                # A et B des rémunérations » (accords du 13 novembre 2003 et
+                # du 18 mars 2011), la table des trimestres manquants pas
+                # davantage pour ces droits (annexe V de la convention de
+                # 1947) : les points de l'Agirc constitués sur la tranche C
+                # jusqu'au 31 décembre 2015 prennent le coefficient de l'âge
+                # avant celui du 1° de l'article L. 351-8 (accord du 17
+                # novembre 2017, articles 84, 2 et 102). Le coefficient
+                # affiché est celui de la pension entière, moyenne des deux
+                # pondérée par leurs montants : la formule le refait.
+                abattus = droits.points_abattus.get(code, 0.0)
+                if abattus > 0 and service_des_points is not None and montant > 0:
+                    pour_age = coefficient_pour_age(
+                        moteur, periode, carriere, age_liquidation)
+                    if pour_age < abattement:
+                        part = min(1.0, abattus * service_des_points / montant)
+                        abattement = abattement * (1.0 - part) + pour_age * part
+                        abattus_a_l_age = (abattus, pour_age)
                 montant *= abattement
             detail = _formule_points(details, abattement)
+            if abattus_a_l_age is not None:
+                detail += (
+                    f", dont {abattus_a_l_age[0]:,.2f} points de la tranche C "
+                    f"d'avant 2016 au coefficient pour âge {abattus_a_l_age[1]:.4f}"
+                )
             # Les années qu'aucun prix d'achat ne couvre encore passent par
             # le rendement : le seuil se compare donc aux points que vaut
             # TOUT le montant, à la valeur de service de la liquidation.
@@ -1802,13 +1833,7 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
                 None if par_age_seul
                 else _coefficient_anticipation(requis - trimestres, 20)
             )
-            ecart_age = max(
-                0.0,
-                (ouvrir.age_taux_plein(moteur, periode, carriere) - age_liquidation) * 4,
-            )
-            par_age = _coefficient_anticipation(ecart_age, 40)
-            if par_age is None:
-                par_age = _COEFFICIENT_ANTICIPATION_PLANCHER
+            par_age = coefficient_pour_age(moteur, periode, carriere, age_liquidation)
             candidats = [c for c in (par_duree, par_age) if c is not None]
             abattement = max(candidats) if candidats else 1.0
     elif periode.abattement_points in _ABATTEMENTS_IRCEC:
@@ -1836,6 +1861,20 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         periode, carriere, trimestres, requis,
         age_liquidation, annee_liquidation, trimestres_regime,
     )
+
+
+def coefficient_pour_age(moteur, periode: PeriodeRegime, carriere: Carriere,
+                         age_liquidation: float) -> float:
+    """Le coefficient d'anticipation de la table des âges : les trimestres
+    qui séparent la liquidation de l'âge du taux plein de la période,
+    arrondis au supérieur, et le plancher au-delà de dix ans (accord du 17
+    novembre 2017, article 84, 2 ; table de septembre 2026, tableau 3)."""
+    ecart_age = max(
+        0.0,
+        (ouvrir.age_taux_plein(moteur, periode, carriere) - age_liquidation) * 4,
+    )
+    par_age = _coefficient_anticipation(ecart_age, 40)
+    return _COEFFICIENT_ANTICIPATION_PLANCHER if par_age is None else par_age
 
 
 def taux_plein_anticipe(moteur, periode: PeriodeRegime, carriere: Carriere,

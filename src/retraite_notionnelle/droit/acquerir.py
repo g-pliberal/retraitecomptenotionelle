@@ -204,6 +204,11 @@ class Droits:
     #: Les points gratuits : par régime, les points et l'année avant laquelle
     #: comptent les années qui les ouvrent.
     gratuits: dict[str, tuple[float, int]]
+    #: Les points qui gardent le coefficient d'anticipation pour âge au taux
+    #: plein, parmi ceux de ``points`` : régime, année, points. Ce sont ceux
+    #: de l'Agirc constitués sur la tranche C jusqu'en 2015
+    #: (``PeriodeRegime.points_abattus_a_l_age``).
+    abattus: tuple[tuple[str, int, float], ...]
     #: La dernière année qui verse à chaque régime.
     derniere_annee_par_regime: dict[str, int]
     #: La fiabilité des points de chaque régime qui en crédite.
@@ -213,6 +218,9 @@ class Droits:
     majoration_points: dict[str, float]
     points_majores: dict[str, float]
     cumul_cotisations: dict[str, float]
+    #: Par régime, la somme de ``abattus``, réduite comme ``points_acquis``
+    #: par le plafond de la durée.
+    points_abattus: dict[str, float]
 
     @property
     def codes(self) -> list[str]:
@@ -242,6 +250,9 @@ class Droits:
             "gratuits": [
                 {"regime": code, "points": points, "avant": avant}
                 for code, (points, avant) in self.gratuits.items()],
+            "abattus": [
+                {"regime": code, "annee": annee, "points": points}
+                for code, annee, points in self.abattus],
         }
 
 
@@ -264,10 +275,14 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
     # année d'ACQUISITION : chaque point y entre avec son taux, et la
     # pension du régime se majore au taux moyen de ses points.
     credits: list[tuple[str, int, float, float | None]] = []
+    # Ceux d'entre eux qui gardent le coefficient pour âge au taux plein.
+    abattus: list[tuple[str, int, float]] = []
 
-    def crediter(code: str, annee: int, points: float) -> None:
+    def crediter(code: str, annee: int, points: float, abattu: bool = False) -> None:
         credits.append((code, annee, points, moteur.majorations_enfants_points.taux(
             code, annee, carriere.nombre_enfants)))
+        if abattu:
+            abattus.append((code, annee, points))
     fiabilite_points: dict[str, Fiabilite] = {}
     # Trimestres qu'un régime à la durée crédite, et ceux d'entre eux
     # accomplis avant l'âge qui lève son plafond : voir
@@ -424,7 +439,7 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     crediter(code, ligne.annee, (
                         points_msa(moteur, periode, ligne.annee, assiette)
                         * part * echelle
-                    ))
+                    ), periode.points_abattus_a_l_age)
                     fiabilite_points[code] = min(
                         fiabilite_points.get(code, Fiabilite.CERTIFIEE),
                         regime.fiabilite, fiabilite_echelle,
@@ -473,7 +488,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                                 ajustement,
                                 periode.points_ajustement_maximum * part)
                         points += ajustement
-                    crediter(code, ligne.annee, points * echelle)
+                    crediter(code, ligne.annee, points * echelle,
+                             periode.points_abattus_a_l_age)
                     fiabilite_points[code] = min(
                         fiabilite_points.get(code, Fiabilite.CERTIFIEE),
                         regime.fiabilite, fiabilite_echelle,
@@ -492,7 +508,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         bareme, ligne.annee, annee_liquidation
                     )
                     crediter(code, ligne.annee,
-                             periode.points_maximum * assiette / repere * echelle)
+                             periode.points_maximum * assiette / repere * echelle,
+                             periode.points_abattus_a_l_age)
                     fiabilite_points[code] = min(
                         fiabilite_points.get(code, Fiabilite.CERTIFIEE),
                         regime.fiabilite, fiabilite_echelle,
@@ -525,7 +542,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     echelle, fiabilite_echelle = moteur.conversions_points.echelle(
                         bareme, ligne.annee, annee_liquidation
                     )
-                    crediter(code, ligne.annee, points_annee * echelle)
+                    crediter(code, ligne.annee, points_annee * echelle,
+                             periode.points_abattus_a_l_age)
                     fiabilite_points[code] = min(
                         fiabilite_points.get(code, Fiabilite.CERTIFIEE),
                         fiabilite_achat, fiabilite_echelle,
@@ -544,6 +562,9 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         if taux is not None:
             majoration_points[code] = majoration_points.get(code, 0.0) + points * taux
             points_majores[code] = points_majores.get(code, 0.0) + points
+    points_abattus: dict[str, float] = {}
+    for code, _, points in abattus:
+        points_abattus[code] = points_abattus.get(code, 0.0) + points
     cumul_cotisations: dict[str, float] = {}
     for code, _, montant in cotisations:
         cumul_cotisations[code] = cumul_cotisations.get(code, 0.0) + montant
@@ -566,6 +587,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         if retenus < total and code in points_acquis:
             rapport = retenus / total
             points_acquis[code] *= rapport
+            if code in points_abattus:
+                points_abattus[code] *= rapport
             if code in majoration_points:
                 majoration_points[code] *= rapport
                 points_majores[code] *= rapport
@@ -605,9 +628,9 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 )
     return Droits(
         carriere=carriere, points=tuple(credits), cotisations=tuple(cotisations),
-        plafonds=tuple(plafonds), gratuits=gratuits_attribues,
+        plafonds=tuple(plafonds), gratuits=gratuits_attribues, abattus=tuple(abattus),
         derniere_annee_par_regime=derniere_annee_par_regime,
         fiabilite_points=fiabilite_points, points_acquis=points_acquis,
         majoration_points=majoration_points, points_majores=points_majores,
-        cumul_cotisations=cumul_cotisations,
+        cumul_cotisations=cumul_cotisations, points_abattus=points_abattus,
     )

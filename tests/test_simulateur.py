@@ -4312,6 +4312,39 @@ def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):
     # La durée tous régimes atteint la limite : aucune majoration.
     assert majores(regime_general=100, sncf=50) == 100
 
+
+def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
+    """L'exonération au taux plein ne vaut que « sur les tranches A et B des
+    rémunérations » (accords du 13 novembre 2003 et du 18 mars 2011) : les
+    points de l'Agirc constitués sur la tranche C jusqu'au 31 décembre 2015
+    gardent le coefficient pour âge avant l'âge du 1° de l'article L. 351-8,
+    et « ne peuvent pas être attribués à taux plein avant l'âge de 67 ans »
+    (Agirc-Arrco). Un cadre né en 1955, payé huit fois le salaire moyen et
+    parti à soixante-deux ans avec la durée, a 40 % de ses points Agirc sur
+    la tranche C d'avant 2016 : ils prennent 0,78, cinq ans avant
+    soixante-sept ans, les autres rien.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def agirc(age, niveau=8.0):
+        resultat = scenario.calculer(simulateur.carriere_simple(
+            annee_naissance=1955, sexe="H", affiliation="salarie_prive_cadre",
+            age_debut=20, age_liquidation=age, niveau_salaire=niveau,
+            profil_carriere="plat",
+        ))
+        return next(p for p in resultat.pensions_par_regime if p.regime == "agirc")
+
+    pension = agirc(62)
+    assert pension.detail.endswith(
+        "× coefficient d'anticipation 0.9117, dont 73,498.42 points de la tranche C "
+        "d'avant 2016 au coefficient pour âge 0.7800")
+    part = 73_498.42 / 183_144.47
+    assert pension.montant == pytest.approx(
+        183_144.47 * 0.4352 * (1 - part + 0.78 * part), rel=1e-6)
+    # À soixante-sept ans, plus rien ; sous quatre plafonds, pas de tranche C.
+    assert "coefficient" not in agirc(67).detail
+    assert "coefficient" not in agirc(62, niveau=1.0).detail
+
 def test_le_minimum_garanti_de_la_fonction_publique_est_servi(simulateur):
     """Le plancher de la fonction publique, déclaré mais jamais appliqué.
 

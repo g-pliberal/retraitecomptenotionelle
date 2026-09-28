@@ -156,6 +156,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
       const details = [];
 
       const points = pointsAcquis.get(code) ?? 0.0;
+      // Ce que vaut un point dans le montant, quand il a une valeur de
+      // service : la part des points abattus s'y mesure.
+      let serviceDesPoints = null;
       // BARÈME DU TRIMESTRE : la pension minière est la durée, majorée du
       // coefficient de l'article 131-1, multipliée par la valeur du trimestre
       // de la date d'effet. Voir le Python.
@@ -198,6 +201,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
             }
           }
           montant += points * service * coefficientDuree;
+          serviceDesPoints = service * coefficientDuree;
           fiabiliteRegime = Math.min(
             fiabiliteRegime, fiabiliteService, fiabilitePoints.get(code),
           );
@@ -261,14 +265,33 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
       fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteRegime);
       const montantBrut = montant;
       let abattement = 1.0;
+      // Les points qui gardent le coefficient pour âge, et ce coefficient,
+      // quand il est plus sévère que celui des autres.
+      let abattusALAge = null;
       if (!ignorerPenaliteAge) {
         abattement = abattementPoints(
           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
           anneeLiquidation, trimestresParRegime.get(code) ?? 0,
         );
+        // LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE, même au
+        // taux plein : voir le Python. Le coefficient affiché est celui de la
+        // pension entière, moyenne des deux pondérée par leurs montants.
+        const abattus = droits.pointsAbattus.get(code) ?? 0.0;
+        if (abattus > 0 && serviceDesPoints !== null && montant > 0) {
+          const pourAge = coefficientPourAge(moteur, periode, carriere, ageLiquidation);
+          if (pourAge < abattement) {
+            const part = Math.min(1.0, (abattus * serviceDesPoints) / montant);
+            abattement = abattement * (1.0 - part) + pourAge * part;
+            abattusALAge = [abattus, pourAge];
+          }
+        }
         montant *= abattement;
       }
       let detail = formulePoints(details, abattement);
+      if (abattusALAge !== null) {
+        detail += `, dont ${formatFixe(abattusALAge[0], 2, true)} points de la tranche C `
+          + `d'avant 2016 au coefficient pour âge ${formatFixe(abattusALAge[1], 4)}`;
+      }
       // Les années qu'aucun prix d'achat ne couvre encore passent par le
       // rendement : le seuil se compare aux points que vaut TOUT le montant.
       let pointsTotaux = points;
@@ -1334,6 +1357,19 @@ export function abattementIrcec(moteur, periode, carriere, trimestres, requis, a
   ));
 }
 
+/**
+ * Le coefficient d'anticipation de la table des âges : les trimestres qui
+ * séparent la liquidation de l'âge du taux plein, arrondis au supérieur, et
+ * le plancher au-delà de dix ans. Voir `liquider.coefficient_pour_age`.
+ */
+export function coefficientPourAge(moteur, periode, carriere, ageLiquidation) {
+  const ecartAge = Math.max(
+    0.0, (ouvrir.ageTauxPlein(moteur, periode, carriere) - ageLiquidation) * 4,
+  );
+  const parAge = coefficientAnticipation(ecartAge, 40);
+  return parAge === null ? COEFFICIENT_ANTICIPATION_PLANCHER : parAge;
+}
+
 export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
   anneeLiquidation, trimestresRegime = 0) {
   // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
@@ -1354,13 +1390,7 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     } else {
       const parDuree = parAgeSeul
         ? null : coefficientAnticipation(requis - trimestres, 20);
-      const ecartAge = Math.max(
-        0.0, (ouvrir.ageTauxPlein(moteur, periode, carriere) - ageLiquidation) * 4,
-      );
-      let parAge = coefficientAnticipation(ecartAge, 40);
-      if (parAge === null) {
-        parAge = COEFFICIENT_ANTICIPATION_PLANCHER;
-      }
+      const parAge = coefficientPourAge(moteur, periode, carriere, ageLiquidation);
       const candidats = [parDuree, parAge].filter((c) => c !== null);
       abattement = candidats.length ? Math.max(...candidats) : 1.0;
     }

@@ -16,26 +16,30 @@ effet: >-
   par l'âge, vingt par les trimestres manquants — sont, à la décimale, celles de l'accord
   du 17 novembre 2017, de la convention de 1947, de l'accord de 1961 et des tables de la
   caisse de septembre 2026 ; son arrondi au trimestre supérieur rend la ligne de l'âge
-  atteint, comme l'exemple de la caisse (63 ans et 11 mois : 0,8675). UN ÉCART : les
-  points Agirc de la tranche C acquis avant 2016, sur la part du salaire entre quatre et
-  huit plafonds (au-delà de 152 160 € en 2015), gardent le coefficient pour âge avant
-  67 ans même au taux plein, sauf report sans abattement à cet âge ; le moteur ne les
-  distingue pas et les sert sans coefficient dès le taux plein. Effet non mesuré, borné
-  aux plus hauts salaires de cadre et à ces seuls points : 22 % de moins à 62 ans, 12 % à
-  64 ans. Deux questions restent ouvertes : l'âge de référence des liquidations de 2011
-  à 2018, et les assurés dont la base n'est ni le régime général ni le régime agricole.
+  atteint, comme l'exemple de la caisse (63 ans et 11 mois : 0,8675). Les points Agirc de
+  la tranche C acquis avant 2016, sur la part du salaire entre quatre et huit plafonds
+  (au-delà de 152 160 € en 2015), gardent le coefficient pour âge avant 67 ans même au
+  taux plein : le moteur les suit depuis le 28 septembre 2026, de l'acquisition
+  (`points_abattus_a_l_age`, sur les périodes de la tranche C de 1991 à 2015) à la
+  liquidation, où ils prennent ce coefficient quand les autres points n'en prennent
+  aucun ou un plus doux — 22 % de moins à 62 ans, 12 % à 64 ans, sur ces seuls points.
+  Aucun témoin cadre n'était payé si haut ; un témoin né pour la règle la montre (1955,
+  huit fois le salaire moyen, parti à 62 ans avec la durée : 40 % de ses points Agirc à
+  0,78). Deux approximations : le report de ces points, sans abattement, à l'âge du 1° de
+  L. 351-8 (article 102), que l'assuré peut demander et que le moteur ne sert pas, faute
+  de liquider une pension en deux fois ; et les liquidations de 1991 à 2003, où le moteur
+  applique la même règle sans avoir lu l'accord de l'ASF. Deux questions restent
+  ouvertes : l'âge de référence des liquidations de 2011 à 2018, et les assurés dont la
+  base n'est ni le régime général ni le régime agricole.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Après la phase 8 : appliquer aux points Agirc de la tranche C acquis avant 2016 le
-    coefficient pour âge de l'article 84, 2 de l'accord du 17 novembre 2017 quand la
-    liquidation précède l'âge du 1° de l'article L. 351-8, même au taux plein, ou servir
-    ces points sans abattement à cet âge (article 102) ; il faut pour cela les distinguer
-    à la liquidation. Avant 2019, l'annexe V de la convention de 1947 et les accords du
-    13 novembre 2003 et du 18 mars 2011 (« sur les tranches A et B ») disent la même
-    chose.
+    Tranche C d'avant 2016 : lire l'accord du 4 février 1983 (ASF) et ceux de l'AGFF
+    d'avant 2003, pour dater l'exonération « sur les tranches A et B » que le moteur
+    applique dès 1991 ; et le report sans abattement de l'article 102, que servir
+    demanderait de liquider ces points à part.
   - >-
     À trancher : de juillet 2011 à 2018, l'âge de référence de l'Agirc et de l'Arrco est
     celui du 1° de L. 351-8 « dans la rédaction au 18 mars 2011 » (accord du 18 mars
@@ -340,7 +344,13 @@ exemples:
 code:
   interrupteurs:
     abattement_points: agirc_arrco
+    points_abattus_a_l_age: true
   moteur: >-
     `abattement_points: agirc_arrco` applique les coefficients d'anticipation propres
     à ce régime — deux tables, l'une indexée sur les trimestres manquants, l'autre sur
-    l'âge, dont la plus avantageuse est retenue.
+    l'âge, dont la plus avantageuse est retenue. `points_abattus_a_l_age`, sur les
+    périodes de la tranche C de l'Agirc jusqu'en 2015, range leurs points à part dès
+    l'acquisition (`Droits.abattus`, `Droits.points_abattus`) ; la liquidation leur
+    applique le coefficient de la table des âges (`liquider.coefficient_pour_age`) quand
+    il est plus sévère que celui des autres points, et affiche le coefficient moyen de
+    la pension, pondéré par les montants.

@@ -265,6 +265,15 @@ def _cas() -> list[dict]:
         "naissance": "1925", "debut": "35", "liquidation": "68",
     }))
     cas.append(("duree_majoree_regle_de_2004", {"debut": "38", "liquidation": "69"}))
+    # LA TRANCHE C DE L'AGIRC D'AVANT 2016 : un cadre payé au-delà de quatre
+    # plafonds, parti à soixante-deux ans avec la durée. Ses autres points
+    # sont servis sans coefficient ; ceux de la tranche C constitués jusqu'en
+    # 2015 gardent le coefficient pour âge, cinq ans avant soixante-sept ans.
+    # Aucun témoin cadre n'était payé si haut.
+    cas.append(("tranche_c_d_avant_2016", {
+        "statut": "salarie_prive_cadre", "salaire": "8", "profil": "plat",
+        "naissance": "1955", "debut": "20", "liquidation": "62",
+    }))
     # LE PLAFOND D'ÂGE DES MARINS : vingt-cinq annuités au plus si la pension
     # est demandée avant cinquante-cinq ans (R. 13 de leur code). Aucun témoin
     # ne visitait cette branche — celui-ci part à cinquante ans après une

@@ -653,6 +653,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -684,6 +685,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -711,6 +713,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -736,6 +739,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -762,6 +766,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -790,6 +795,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -815,6 +821,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -841,6 +848,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -872,6 +880,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -900,6 +909,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
     plafond_majoration_enfants: 2367
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -918,6 +928,39 @@ periodes:
       Arrco, 6,10 % et 16,10 % (JORFARTI000027826484).
 
   - debut: 2015
+    fin: 2015
+    type_calcul: points
+    age_ouverture: 60
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 65
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    abattement_points: coefficients_anticipation_agirc_arrco
+    points_abattus_a_l_age: coefficients_anticipation_agirc_arrco
+    plafond_majoration_enfants: 2367
+    plafond_majoration_annee: 2025
+    salaire_reference: carriere_entiere
+    assiette: tranche_c
+    taux_cotisation_retraite: 0.2055
+    part_salariale: 0.3796   # OpenFisca, barème salarié / employeur
+    decote_par_trimestre: 0.01
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      Taux contractuel 16,44 % appelé à 125 % : 20,55 % prélevés sur
+      l'assiette, dont 37,956 % à la charge du salarié (OpenFisca-France,
+      valeurs au 1er janvier 2015, inchangées jusqu'en 2018). Accord du 13
+      mars 2013 : 16,44 % appelés à 125 %, soit 20,55 % — le dernier
+      barème de l'Agirc, jusqu'à la fusion du 1er janvier 2019 (accord
+      national interprofessionnel du 17 novembre 2017, étendu par l'arrêté
+      du 24 avril 2018, JORFTEXT000036847920). Les points de la tranche C
+      constitués jusqu'au 31 décembre 2015 gardent le coefficient pour âge
+      au taux plein (`points_abattus_a_l_age`, fiche
+      `coefficients_anticipation_agirc_arrco`).
+
+  - debut: 2016
     fin: 2018
     type_calcul: points
     age_ouverture: 60
@@ -944,4 +987,9 @@ periodes:
       mars 2013 : 16,44 % appelés à 125 %, soit 20,55 % — le dernier
       barème de l'Agirc, jusqu'à la fusion du 1er janvier 2019 (accord
       national interprofessionnel du 17 novembre 2017, étendu par l'arrêté
-      du 24 avril 2018, JORFTEXT000036847920).
+      du 24 avril 2018, JORFTEXT000036847920). Coupée au 1er janvier 2016 :
+      les points constitués depuis sur la tranche C n'ont plus le
+      coefficient pour âge au taux plein (accord du 30 octobre 2015,
+      article 3, « annulation des coefficients d'anticipation viagers au
+      titre de leurs seuls droits constitués à compter du 1er janvier
+      2016 »).

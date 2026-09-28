@@ -24,6 +24,7 @@ objets:
       cotisations: {porte: "les cotisations revalorisées aux prix de l'année de liquidation, pour les régimes dont on n'a pas le prix d'achat du point", type: liste, de: {objet: cotisation}, defaut: []}
       plafonds: {porte: "la durée qu'un régime plafonne, et la part de ses points qu'il retient", type: liste, de: {objet: plafond}, defaut: []}
       gratuits: {porte: "les points attribués sans cotisation à la liquidation", type: liste, de: {objet: gratuits}, defaut: []}
+      abattus: {porte: "ceux des points crédités qui gardent le coefficient d'anticipation pour âge au taux plein — l'Agirc, tranche C, jusqu'en 2015", type: liste, de: {objet: abattus}, defaut: []}
 
   regime:
     champs:
@@ -56,3 +57,9 @@ objets:
       regime: {porte: "le régime qui les attribue", type: identifiant, obligatoire: true}
       points: {porte: "les points attribués", type: nombre, obligatoire: true}
       avant: {porte: "l'année avant laquelle comptent les années qui les ouvrent", type: entier, obligatoire: true}
+
+  abattus:
+    champs:
+      regime: {porte: "le régime qui les crédite", type: identifiant, obligatoire: true}
+      annee: {porte: "l'année d'acquisition", type: entier, obligatoire: true}
+      points: {porte: "les points, dans l'unité où le régime les sert", type: nombre, obligatoire: true}

@@ -669,6 +669,7 @@ def _regimes() -> list[dict]:
                        if p.trimestres_retenus_maximum is not None else {}),
                     **_regles_d_avant_1983(p),
                     **_duree_majoree(p),
+                    **_points_abattus(p),
                     **_regles_des_marins(p),
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),
@@ -751,6 +752,14 @@ def _duree_majoree(p) -> dict:
         "duree_majoree_tous_regimes": p.duree_majoree_tous_regimes or None,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
+
+
+def _points_abattus(p) -> dict:
+    """Les points qui gardent le coefficient pour âge au taux plein, et
+    seulement là : les périodes de la tranche C de l'Agirc jusqu'en 2015.
+    Même raison que pour les marins.
+    """
+    return {"points_abattus_a_l_age": True} if p.points_abattus_a_l_age else {}
 
 
 def _plafond_des_primes(p) -> dict:

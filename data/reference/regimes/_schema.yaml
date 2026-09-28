@@ -632,6 +632,19 @@ champs_periode:
     valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec", "ircec", "ircec_age_seul", "cavom"]
     defaut: decote_du_regime_de_base
 
+  points_abattus_a_l_age:
+    description: >-
+      Les points acquis dans la période gardent-ils le coefficient
+      d'anticipation POUR ÂGE, même au taux plein du régime de base ? Les
+      points de l'Agirc constitués sur la tranche C jusqu'au 31 décembre 2015 :
+      liquidés avant l'âge du 1° de l'article L. 351-8, ils prennent le
+      coefficient de l'âge, et non celui des trimestres manquants, quand les
+      autres points de la même pension n'en prennent aucun. Une période dont
+      les points le gardent renvoie à la fiche qui le dit.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
   surcote_points:
     description: >-
       Barème de MAJORATION d'un régime en points liquidé après le taux plein,

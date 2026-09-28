@@ -124,8 +124,9 @@ export function pointsGratuits(moteur, periode, carriere, assurance, trimestres,
  * plafond de la durée, puis augmentées des points gratuits.
  */
 export class Droits {
-  constructor({ carriere, points, cotisations, plafonds, gratuits, derniereAnneeParRegime,
-    fiabilitePoints, pointsAcquis, majorationPoints, pointsMajores, cumulCotisations }) {
+  constructor({ carriere, points, cotisations, plafonds, gratuits, abattus = [],
+    derniereAnneeParRegime, fiabilitePoints, pointsAcquis, majorationPoints, pointsMajores,
+    cumulCotisations, pointsAbattus = new Map() }) {
     this.carriere = carriere;
     /** Les points crédités, dans l'ordre : [régime, année, points, taux]. */
     this.points = points;
@@ -135,6 +136,11 @@ export class Droits {
     this.plafonds = plafonds;
     /** Les points gratuits : régime -> [points, année avant laquelle]. */
     this.gratuits = gratuits;
+    /**
+     * Ceux des points crédités qui gardent le coefficient pour âge au taux
+     * plein, [régime, année, points] : l'Agirc, tranche C, jusqu'en 2015.
+     */
+    this.abattus = abattus;
     /** La dernière année qui verse à chaque régime. */
     this.derniereAnneeParRegime = derniereAnneeParRegime;
     /** La fiabilité des points de chaque régime qui en crédite. */
@@ -144,6 +150,8 @@ export class Droits {
     this.majorationPoints = majorationPoints;
     this.pointsMajores = pointsMajores;
     this.cumulCotisations = cumulCotisations;
+    /** Par régime, la somme des points abattus, plafond de la durée compris. */
+    this.pointsAbattus = pointsAbattus;
   }
 
   /** Les régimes où un droit est acquis, points ou cotisations. */
@@ -169,6 +177,7 @@ export class Droits {
         regime, trimestres: total, avant_age: avantAge, retenus,
       })),
       gratuits: [...this.gratuits].map(([regime, [points, avant]]) => ({ regime, points, avant })),
+      abattus: this.abattus.map(([regime, annee, points]) => ({ regime, annee, points })),
     };
   }
 }
@@ -189,9 +198,14 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
   // La majoration pour enfants des points de l'Agirc-Arrco dépend de leur
   // année d'ACQUISITION : chaque point y entre avec son taux.
   const credits = [];
-  const crediter = (code, annee, points) => {
+  // Ceux d'entre eux qui gardent le coefficient pour âge au taux plein.
+  const abattus = [];
+  const crediter = (code, annee, points, abattu = false) => {
     credits.push([code, annee, points,
       moteur.majorationsEnfantsPoints.taux(code, annee, carriere.nombre_enfants)]);
+    if (abattu) {
+      abattus.push([code, annee, points]);
+    }
   };
   const fiabilitePoints = new Map();
   // Trimestres qu'un régime à la durée crédite, et ceux d'entre eux
@@ -331,7 +345,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           const [echelleMsa, fiabiliteEchelleMsa] = moteur.conversionsPoints
             .echelle(bareme, ligne.annee, anneeLiquidation);
           crediter(code, ligne.annee,
-            pointsMsa(moteur, periode, ligne.annee, assiette) * part * echelleMsa);
+            pointsMsa(moteur, periode, ligne.annee, assiette) * part * echelleMsa,
+            Boolean(periode.points_abattus_a_l_age));
           fiabilitePoints.set(code, Math.min(
             fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
             fiabiliteEchelleMsa,
@@ -386,7 +401,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
             }
             points += ajustement;
           }
-          crediter(code, ligne.annee, points * echelleTrim);
+          crediter(code, ligne.annee, points * echelleTrim,
+            Boolean(periode.points_abattus_a_l_age));
           fiabilitePoints.set(code, Math.min(
             fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
             fiabiliteEchelleTrim,
@@ -402,7 +418,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           const [echelleBareme, fiabiliteEchelleBareme] = moteur.conversionsPoints
             .echelle(bareme, ligne.annee, anneeLiquidation);
           crediter(code, ligne.annee,
-            periode.points_maximum * assiette / repere * echelleBareme);
+            periode.points_maximum * assiette / repere * echelleBareme,
+            Boolean(periode.points_abattus_a_l_age));
           fiabilitePoints.set(code, Math.min(
             fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
             fiabiliteEchelleBareme,
@@ -429,7 +446,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           // de 1999 n'en produisaient que 11,15.
           const [echelle, fiabiliteEchelle] = moteur.conversionsPoints
             .echelle(bareme, ligne.annee, anneeLiquidation);
-          crediter(code, ligne.annee, pointsAnnee * echelle);
+          crediter(code, ligne.annee, pointsAnnee * echelle,
+            Boolean(periode.points_abattus_a_l_age));
           fiabilitePoints.set(code, Math.min(
             fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, fiabiliteAchat,
             fiabiliteEchelle,
@@ -452,6 +470,10 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       pointsMajores.set(code, (pointsMajores.get(code) ?? 0.0) + points);
     }
   }
+  const pointsAbattus = new Map();
+  for (const [code, , points] of abattus) {
+    pointsAbattus.set(code, (pointsAbattus.get(code) ?? 0.0) + points);
+  }
   const cumulCotisations = new Map();
   for (const [code, , montant] of cotisations) {
     cumulCotisations.set(code, (cumulCotisations.get(code) ?? 0.0) + montant);
@@ -473,6 +495,9 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
     if (retenus < total && pointsAcquis.has(code)) {
       const rapport = retenus / total;
       pointsAcquis.set(code, pointsAcquis.get(code) * rapport);
+      if (pointsAbattus.has(code)) {
+        pointsAbattus.set(code, pointsAbattus.get(code) * rapport);
+      }
       if (majorationPoints.has(code)) {
         majorationPoints.set(code, majorationPoints.get(code) * rapport);
         pointsMajores.set(code, pointsMajores.get(code) * rapport);
@@ -516,8 +541,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
     }
   }
   return new Droits({
-    carriere, points: credits, cotisations, plafonds, gratuits: gratuitsAttribues,
+    carriere, points: credits, cotisations, plafonds, gratuits: gratuitsAttribues, abattus,
     derniereAnneeParRegime, fiabilitePoints, pointsAcquis, majorationPoints, pointsMajores,
-    cumulCotisations,
+    cumulCotisations, pointsAbattus,
   });
 }

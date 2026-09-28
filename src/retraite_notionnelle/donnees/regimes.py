@@ -360,6 +360,15 @@ class PeriodeRegime:
     #: applique le coefficient de minoration ci-dessus ; ``agirc_arrco``
     #: applique les coefficients d'anticipation propres à ce régime.
     abattement_points: str
+    #: Les points acquis dans la période gardent-ils le coefficient
+    #: d'anticipation POUR ÂGE, même au taux plein ? Les points de l'Agirc
+    #: constitués sur la tranche C jusqu'au 31 décembre 2015 : l'exonération
+    #: au taux plein ne vaut que « sur les tranches A et B des
+    #: rémunérations » (accords du 13 novembre 2003 et du 18 mars 2011), et
+    #: l'annexe V de la convention de 1947 « n'est pas applicable aux droits
+    #: constitués jusqu'au 31 décembre 2015 sur la tranche C ». Voir
+    #: :func:`~retraite_notionnelle.droit.liquider.coefficient_des_points_abattus`.
+    points_abattus_a_l_age: bool
     #: Barème de MAJORATION des régimes en points liquidés APRÈS le taux
     #: plein. ``aucune`` quand la fiche n'en écrit pas ; ``regime_general``
     #: compte les trimestres COTISÉS après l'âge légal et au-delà de la durée
@@ -1188,6 +1197,7 @@ INTERRUPTEURS: dict[str, object] = {
     "bareme_decote": "regime_aligne",
     "surcote_bareme": None,
     "abattement_points": "decote_du_regime_de_base",
+    "points_abattus_a_l_age": False,
     "surcote_points": "aucune",
     "bareme_points": None,
 }
@@ -1507,6 +1517,7 @@ class CatalogueRegimes:
                 ),
                 surcote_bareme=p.get("surcote_bareme"),
                 abattement_points=p.get("abattement_points", "decote_du_regime_de_base"),
+                points_abattus_a_l_age=bool(p.get("points_abattus_a_l_age", False)),
                 surcote_points=p.get("surcote_points", "aucune"),
                 surcote_age_debut=(
                     None if p.get("surcote_age_debut") is None

@@ -29,7 +29,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 - Confrontées à au moins un exemple officiel : **29 sur 112** (67 exemples : 66 reproduits, 1 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **22 sur 112**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
-- Désignées par les interrupteurs des périodes de régime : **41 sur 112**, par 2 222 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
+- Désignées par les interrupteurs des périodes de régime : **41 sur 112**, par 2 237 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **3 sur 112**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **3 sur 112**, soit 20 versions, dont 2 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 110, dont 11 déclarées non appliquées.
@@ -65,7 +65,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `compter_les_durees` | `droit/compter.py` | les trimestres de chaque compte, par régime et par année ; ceux des enfants | `enfants_fonction_publique`, `majoration_duree_assurance_enfants`, `priorite_majorations_enfants`, `services_et_duree_fonction_publique` |
 | `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `assiette_minimale_agricole`, `assiette_minimale_independants`, `asv_medecins_ajustement`, `cotisation_par_classes_liberales`, `rco_points_gratuits`, `retraite_proportionnelle_msa` |
 
-**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types sans rien liquider. Les 544 témoins font chacun de 1 à 6 appels de `liquider`, liquidations d'essai comprises ; aucun ne dépasse les 6 que le nombre déclaré accorde (§ 7.8).
+**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types sans rien liquider. Les 545 témoins font chacun de 1 à 6 appels de `liquider`, liquidations d'essai comprises ; aucun ne dépasse les 6 que le nombre déclaré accorde (§ 7.8).
 
 | Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |
 |---|---|---|---|
