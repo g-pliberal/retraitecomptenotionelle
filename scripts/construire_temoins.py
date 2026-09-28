@@ -255,6 +255,16 @@ def _cas() -> list[dict]:
     for age in ("52", "57", "60", "62", "64", "67", "70"):
         cas.append((f"liquidation_{age}", {"liquidation": age}))
     cas.append(("liquidation_demi", {"liquidation": "64.5", "debut": "20.5"}))
+    # LA DURÉE MAJORÉE APRÈS L'ÂGE DU TAUX PLEIN : 2,5 % de la durée par
+    # trimestre écoulé au-delà de cet âge, pour qui n'a pas la durée (R. 351-7).
+    # Aucun témoin ne partait si tard sans la durée, et la règle passait donc
+    # inaperçue des deux moteurs. Ces deux-là commencent tard et partent après
+    # l'âge : l'un sous la règle de 1983, bornée aux 150 trimestres du seul
+    # régime général, l'autre sous celle de 2004, qui regarde tous les régimes.
+    cas.append(("duree_majoree_regle_de_1983", {
+        "naissance": "1925", "debut": "35", "liquidation": "68",
+    }))
+    cas.append(("duree_majoree_regle_de_2004", {"debut": "38", "liquidation": "69"}))
     # LE PLAFOND D'ÂGE DES MARINS : vingt-cinq annuités au plus si la pension
     # est demandée avant cinquante-cinq ans (R. 13 de leur code). Aucun témoin
     # ne visitait cette branche — celui-ci part à cinquante ans après une

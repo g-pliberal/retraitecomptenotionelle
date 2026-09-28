@@ -220,6 +220,7 @@ periodes:
     part_salariale_deplafonnee: 0.0
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Mêmes règles que le régime général sur 1983-1993 : la MSA les applique à l'identique.
@@ -244,6 +245,7 @@ periodes:
     part_salariale_deplafonnee: 0.0
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Mêmes règles que le régime général sur 1994-2003 : la MSA les applique à l'identique.
@@ -268,6 +270,8 @@ periodes:
     part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue]
     notes: >-
@@ -293,6 +297,8 @@ periodes:
     part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue]
     notes: >-
@@ -318,6 +324,8 @@ periodes:
     part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue, penibilite]
     notes: >-
@@ -343,6 +351,8 @@ periodes:
     part_salariale_deplafonnee: 0.166
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue, penibilite, surcote_parentale]
     notes: >-

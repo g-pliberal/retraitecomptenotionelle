@@ -398,6 +398,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
     // Âge d'annulation de la décote, que l'ouverture transitoire du minimum
     // garanti minore.
     let ageAnnulation = null;
+    // La durée du régime avant sa majoration après l'âge du taux plein, quand
+    // elle a été majorée : le détail la dit.
+    let dureeNonMajoree = null;
     if (!ignorerPenaliteAge) {
       const [decote, ageAnnulationPeriode, fiabiliteDecote] = decoteOpposable(
         moteur, periode, carriere, anneeLiquidation,
@@ -428,10 +431,21 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
           taux *= coefficientSurcote;
         }
       }
+      // La durée majorée après l'âge du taux plein, puis la garantie du taux
+      // acquis au 31 mars 1983 : la Cnav compare la pension à 50 % sur la
+      // durée corrigée et celle du taux acquis sur la durée non corrigée
+      // (circulaire n° 8/89, point 21), et sert la plus forte.
+      const majores = dureeMajoreeApresTauxPlein(
+        moteur, periode, carriere, durees, membres, trimestresRegime,
+        proratisation, ageAnnulation,
+      );
       const acquis = tauxAcquisAu31Mars1983(moteur, periode, carriere);
-      if (acquis !== null && acquis > taux) {
+      if (acquis !== null && acquis * trimestresRegime > taux * majores) {
         coefficientSurcote = acquis / (periode.taux_plein || 0.5);
         taux = acquis;
+      } else if (majores > trimestresRegime) {
+        dureeNonMajoree = trimestresRegime;
+        trimestresRegime = majores;
       }
       // La surcote ne récompense que les trimestres COTISÉS APRÈS l'âge
       // légal ET au-delà de la durée requise.
@@ -532,6 +546,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
         + (trimestresRegime / proratisation > rapportMaximum
           ? `, taux maximum ${formatPourcentage(periode.taux_maximum_bonifie, 0)} atteint`
           : "")
+        + (dureeNonMajoree === null ? ""
+          : `, ${dureeNonMajoree} trimestres majorés après l'âge du taux plein`)
         // La succession est DITE : sans elle, le lecteur cherche la ligne
         // de la CANCAVA et ne la trouve pas.
         + (membres.length === 1 ? "" : `, ${membres.length} caisses liquidées ensemble `
@@ -1075,6 +1091,72 @@ export function tauxAcquisAu31Mars1983(moteur, periode, carriere) {
     return null;
   }
   return (ancienne.taux_plein || 0.5) * (1.0 + coefficient * ecoules);
+}
+
+/**
+ * Les trimestres entiers écoulés entre l'âge du taux plein et la date d'effet :
+ * du mois qui suit celui où l'âge est atteint, comme pour la surcote
+ * (circulaires Cnav n° 8/89 et n° 2004/20, point 12). Voir
+ * `liquider.trimestres_d_ajournement`.
+ */
+export function trimestresDAjournement(carriere, ageTauxPlein) {
+  const debut = carriere.dateNaissance.plusMois(enMois(ageTauxPlein)).plusMois(1);
+  return Math.max(0, Math.floor((carriere.dateLiquidation.rang - debut.rang) / 3));
+}
+
+/**
+ * La durée du régime, majorée de 2,5 % par trimestre d'ajournement au-delà de
+ * l'âge du taux plein, pour qui n'a pas la durée (décret n° 45-0179, article
+ * 70-6, puis R. 351-7 ; décret n° 50-1225, article 55-6) ; depuis 2004, la
+ * durée de tous les régimes de base ouvre et borne la majoration, et un régime
+ * aligné liquidé à part ne reçoit que sa part (L. 351-6, R. 173-4-2). Voir
+ * `liquider.duree_majoree_apres_taux_plein`.
+ */
+export function dureeMajoreeApresTauxPlein(moteur, periode, carriere, durees, membres,
+                                           trimestresRegime, proratisation, ageAnnulation) {
+  if (!periode.duree_majoree_apres_taux_plein || ageAnnulation === null
+      || ageAnnulation === undefined) {
+    return trimestresRegime;
+  }
+  const ajournement = trimestresDAjournement(carriere, ageAnnulation);
+  const limite = proratisation;
+  if (ajournement <= 0 || trimestresRegime >= limite) {
+    return trimestresRegime;
+  }
+  const dureesDeBase = new Map();
+  for (const [code, nombre] of durees.trimestresParRegime) {
+    if (moteur.catalogue.contient(code) && nombre > 0
+        && ["base", "integre"].includes(moteur.catalogue.obtenir(code).etage)) {
+      dureesDeBase.set(code, nombre);
+    }
+  }
+  let horsRegime = 0;
+  for (const [code, nombre] of dureesDeBase) {
+    if (!membres.includes(code)) {
+      horsRegime += nombre;
+    }
+  }
+  if (periode.duree_majoree_tous_regimes && trimestresRegime + horsRegime >= limite) {
+    return trimestresRegime;
+  }
+  // 2,5 %, c'est un quarantième : le calcul en entiers évite que 140 × 1,05
+  // ne s'arrondisse à 148.
+  let majores = Math.min(Math.ceil((trimestresRegime * (40 + ajournement)) / 40), limite);
+  if (periode.duree_majoree_tous_regimes) {
+    const alignes = [...dureesDeBase].filter(([code]) => coordonner.REGIMES_ALIGNES.has(code));
+    if (alignes.some(([code]) => !membres.includes(code)) && majores + horsRegime > limite) {
+      let totalAlignes = trimestresRegime;
+      for (const [code, nombre] of alignes) {
+        if (!membres.includes(code)) {
+          totalAlignes += nombre;
+        }
+      }
+      const numerateur = (limite - totalAlignes) * trimestresRegime;
+      const part = Math.floor((2 * numerateur + totalAlignes) / (2 * totalAlignes));
+      majores = Math.min(majores, trimestresRegime + Math.max(0, part));
+    }
+  }
+  return majores;
 }
 
 export function retrancheDecote(moteur, periode, carriere) {

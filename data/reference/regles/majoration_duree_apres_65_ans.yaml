@@ -2,39 +2,49 @@ schema_version: 1
 id: majoration_duree_apres_65_ans
 intitule: >-
   Depuis le 1er avril 1983, au régime général et chez les salariés agricoles, l'assuré
-  qui liquide après soixante-cinq ans sans réunir 150 trimestres dans le régime voit sa
-  durée d'assurance majorée de 2,5 % par trimestre postérieur à son soixante-cinquième
-  anniversaire, arrondie au trimestre supérieur, sans pouvoir dépasser 150 trimestres ;
-  la règle vaut encore, « pour chaque trimestre accompli postérieurement à l'âge fixé au
-  1° de l'article L. 351-8 ».
-etat: manquante
+  qui liquide après l'âge du taux plein sans la durée voit la durée du régime majorée de
+  2,5 % par trimestre écoulé depuis cet âge, arrondie au trimestre supérieur, sans
+  dépasser la durée de proratisation : soixante-cinq ans jusqu'en 2011, l'âge du 1° de
+  L. 351-8 ensuite ; la durée du seul régime jusqu'en 2003, celle de tous les régimes
+  depuis 2004, la majoration se partageant alors entre régimes alignés.
+etat: approchee
+etape: liquider_chaque_regime
 effet: >-
-  Les assurés du régime général et des salariés agricoles qui liquident après
-  soixante-cinq ans sans la durée : le moteur ne majore pas leur durée. Parti à
-  soixante-six ans et trois mois avec 136 trimestres, un assuré en a 150 pour la Cnav
-  (« 136 + (136 x 12,5 %) = 153 ramené à 150 trimestres ») et 136 pour le moteur : 9,3 %
-  de pension en moins. Né en mars 1917, avec 60 trimestres, le taux acquis au 31 mars
-  1983 lui en rend l'essentiel, 55 % sur 60 trimestres au lieu de 50 % sur 68 (circulaire
-  Cnav n° 22/83, point 313, premier cas, en écart connu). Depuis le 15 février 2004, la
-  règle vaut pour les périodes antérieures à 2004 et s'étend aux autres régimes ;
-  combien de pensions elle touche, et comment elle se combine à la surcote, restent à
-  lire. Elle vaut encore en 2026 : une carrière courte liquidée deux ans après l'âge du
-  taux plein a huit trimestres de 2,5 %, 20 % de durée en plus dans le prorata, que le
-  moteur ne lui sert pas. Trouvée le 27 septembre 2026 en relisant la fiche
-  `decote_avant_1983`.
+  Les assurés du régime général et des salariés agricoles qui liquident après l'âge du
+  taux plein sans la durée : parti deux ans après soixante-sept ans, un assuré a sept
+  trimestres d'ajournement, 17,5 % de durée en plus, au prorata de sa pension comme à
+  celui du minimum contributif, qui retient « la durée d'assurance corrigée lorsqu'elle
+  entre en compte » (circulaire Cnav n° 8/89, point 3). Le moteur la porte depuis le 28
+  septembre 2026 (`liquider.duree_majoree_apres_taux_plein`) ; aucun témoin ne partait si
+  tard sans la durée, et deux témoins nés pour elle la montrent, sous la règle de 1983
+  (132 trimestres, 150) et sous celle de 2004 (124, 146). Les exemples de la Cnav sont
+  rendus : né en mars 1917 avec 60 trimestres, « arrondi à 68 », dont la pension passe
+  celle du taux acquis au 31 mars 1983 (circulaire n° 22/83) ; 80 trimestres, 21
+  d'ajournement, 122 (circulaire n° 8/89) ; les cinq partages de la circulaire n°
+  2004/20. Restent approchés : les artisans et commerçants liquidés à part des salariés,
+  que D. 634-5 majore depuis 1990 sur leurs seuls trimestres d'après 1972, et que le
+  moteur ne majore pas ; le décompte, qui part du mois suivant l'âge, exact pour qui
+  n'est pas né un premier ; le troisième exemple de la circulaire n° 22/83, que le
+  maximum des pensions décide sur un salaire moyen de 1,7 plafond, qu'aucune carrière
+  plafonnée n'atteint ; l'égalité des décimales entre régimes, que R. 173-4-2 tranche et
+  que le moteur arrondit au plus proche ; et les soixante-cinq ans que R. 351-7 garde aux
+  assurés du 1° bis, du 2° et du 6° de L. 351-8, pour qui le moteur compte depuis l'âge
+  d'annulation qu'il leur applique.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Lire L. 351-6 dans ses rédactions depuis 1985, R. 351-7 de 2011 et de 2023
-    (LEGIARTI000024113035, LEGIARTI000047633307), et la circulaire de la Cnav qui dit ce
-    qu'est un « trimestre accompli » après l'âge du taux plein — le temps écoulé, comme en
-    1983, ou la durée d'assurance ; puis porter la majoration dans le moteur, avant la
-    surcote, en disant comment les deux se partagent les trimestres d'après 2003.
+    Artisans et commerçants : porter D. 634-5 aux périodes de la CANCAVA, de l'ORGANIC et
+    du RSI liquidées à part du régime général — la majoration « applicable aux trimestres
+    d'assurance postérieurs au 31 décembre 1972 », dans la limite de 150 trimestres avec
+    ceux d'avant 1973 —, et lire le texte qui les majorait de 1984 à 1989, que l'index ne
+    porte pas : l'article 2 du décret n° 73-937, qui leur rend applicable « l'article
+    70-6 » du décret de 1945, le vise dans sa rédaction d'avant 1982, la date d'entrée en
+    jouissance.
   - >-
-    Chercher un exemple publié de la rédaction de 2004 ou d'après, circulaire Cnav ou
-    fiche de l'Assurance retraite.
+    Chercher un exemple publié d'une pension prise après soixante-sept ans, circulaire
+    Cnav ou fiche de l'Assurance retraite.
   lectures:
   - type: legifrance
     reference: >-
@@ -97,6 +107,87 @@ sources:
     url: >-
       https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2283_16021983.aspx
     date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 351-7, rédactions du 3 juin 2011 au 1er septembre
+      2023 (LEGIARTI000024113035) et du 1er septembre 2023 au 1er janvier 2026
+      (LEGIARTI000047633307) : la majoration « pour chaque trimestre accompli
+      postérieurement à l'âge fixé au 1° de l'article L. 351-8 ou à l'âge de
+      soixante-cinq ans » pour les assurés du 1° bis, du 1° ter (puis du 2°) de cet article
+      et du III ou IV de l'article 20 de la loi n° 2010-1330 ; celle de 2023 ne dit plus que
+      la majoration ne peut porter la durée totale au-delà de la limite, que L. 351-6 fixe
+      toujours. Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, L. 351-6, rédaction du 21 décembre 1985
+      (LEGIARTI000006742630) : « Les assurés, ayant dépassé l'âge fixé en application du 1°
+      de l'article L. 351-8 bénéficient d'une majoration de leur durée d'assurance qui est
+      fonction du nombre d'années supplémentaires par rapport à cet âge » ; rédaction du
+      22 août 2003 (LEGIARTI000006742631), « applicable[s] aux périodes accomplies à
+      compter du 1er janvier 2004 » : « tant qu'ils n'ont pas accompli dans le régime
+      général et, le cas échéant, dans un ou plusieurs autres régimes obligatoires, une
+      durée totale d'assurance au moins égale à la limite prévue au troisième alinéa de
+      l'article L. 351-1 ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 173-4-2, rédactions du 15 février 2004
+      (LEGIARTI000006747868) et du 6 mai 2017 (LEGIARTI000034595977), devenu R. 173-3-3 le
+      1er janvier 2026 (LEGIARTI000053327917), qui y ajoute les non-salariés agricoles :
+      pour l'assuré qui a relevé du régime général, des salariés agricoles et des
+      commerçants et artisans depuis 1973, ou de deux d'entre eux, la majoration de chacun
+      « ne peut excéder le produit » de « la différence entre la limite […] et la durée
+      totale d'assurance de l'assuré, avant majoration, dans ces régimes » et du
+      « rapport entre la durée d'assurance accomplie dans ce régime, avant majoration, et
+      la durée totale », arrondi à l'entier le plus proche. Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      salariés agricoles, après l'article 55-6 : décret n° 50-1225, article 36, rédaction du
+      21 février 1990 au 22 avril 2005 (LEGIARTI000006773956), puis code rural, R. 742-19
+      (LEGIARTI000006597798) : « Pour l'application des articles R. 351-6, R. 351-7 […] du
+      code de la sécurité sociale aux salariés agricoles ». Artisans et commerçants :
+      D. 634-5, rédaction du 1er janvier 1990 (LEGIARTI000006737998), la majoration de R.
+      351-7 « applicable aux trimestres d'assurance postérieurs au 31 décembre 1972 ».
+      Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 8/89 du 18 janvier 1989 : « Les trimestres d'ajournement se
+      décomptent : du 1er jour du mois qui suit le 65ème anniversaire (ou à partir du jour
+      anniversaire pour les assurés nés le 1er jour d'un mois), jusqu'à la date fixée pour
+      le point de départ de la retraite » (point 12) ; l'exemple du point 14, 80 trimestres,
+      21 trimestres d'ajournement, 122 ; la comparaison des deux pensions du point 21,
+      « une pension au taux de 50 % avec la durée d'assurance au régime général corrigée,
+      et une pension au taux supérieur à 50 % […] avec la durée d'assurance au régime
+      général non corrigée » ; et le minimum contributif du point 3, sur « la durée
+      d'assurance retenue par le régime général pour le calcul de la pension c'est-à-dire
+      y compris, la durée d'assurance corrigée »
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_889_18011989.aspx
+    date: 2026-09-28
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2004/20 du 13 avril 2004 : les deux conditions (point 11), le
+      décompte (point 12), l'arrondi (point 13), les pensions d'avant 2004 (point 31), la
+      limite tous régimes, « les trimestres d'assurance de chaque régime se totalisent même
+      s'ils se superposent » (point 3215), la répartition entre régimes alignés (point 4)
+      et ses cinq exemples (point 45), dont un régime spécial qui ne partage rien
+      (« 152 > 150 --> mais pas de répartition entre régime général et régime spécial »)
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2004020_13042004.aspx
+    date: 2026-09-28
+  - type: autre
+    reference: >-
+      base de législation de l'Assurance retraite, exposé « Majoration de durée d'assurance
+      pour âge » et son barème (« Ajournement après l'âge du taux plein », coefficients de
+      1,025 à 2,5) : « Cette majoration est de 2,50 % par trimestre écoulé entre : le 1er
+      jour du mois qui suit l'âge auquel l'assuré a droit au taux plein […] et le point de
+      départ de la retraite »
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=mda_mda_age_mda_age_ex.aspx
+    date: 2026-09-28
 textes_a_rattacher:
 - id: LEGIARTI000006760668
   reference: >-
@@ -116,5 +207,43 @@ textes_a_rattacher:
   reference: >-
     décret n° 50-1225 du 21 septembre 1950, article 55-6, rédaction du 15 décembre 1982 :
     la même règle chez les salariés agricoles
+- id: LEGIARTI000024113035
+  reference: >-
+    code de la sécurité sociale, R. 351-7, rédaction du 3 juin 2011 : l'âge du 1° de L.
+    351-8, ou soixante-cinq ans pour les assurés qu'elle nomme
+- id: LEGIARTI000047633307
+  reference: >-
+    code de la sécurité sociale, R. 351-7, rédaction du 1er septembre 2023
+- id: LEGIARTI000006742631
+  reference: >-
+    code de la sécurité sociale, L. 351-6, rédaction du 22 août 2003 : la durée de tous les
+    régimes, pour les périodes accomplies à compter du 1er janvier 2004
+- id: LEGIARTI000006747868
+  reference: >-
+    code de la sécurité sociale, R. 173-4-2, rédaction du 15 février 2004 : la répartition
+    de la majoration entre régimes alignés
+- id: LEGIARTI000053327917
+  reference: >-
+    code de la sécurité sociale, R. 173-3-3, rédaction du 1er janvier 2026 : la même
+    répartition, les non-salariés agricoles compris
 exemples:
 - cnav_22_83_taux_acquis_60_trimestres
+- cnav_8_89_duree_corrigee_80_trimestres
+code:
+  interrupteurs:
+    duree_majoree_apres_taux_plein: true
+    duree_majoree_tous_regimes: true
+  moteur: >-
+    `duree_majoree_apres_taux_plein`, sur les périodes du régime général et des salariés
+    agricoles depuis 1983, majore la durée du régime de 2,5 % par trimestre entier écoulé
+    du mois qui suit l'âge d'annulation de la décote à la date d'effet
+    (`liquider.trimestres_d_ajournement`), arrondie au trimestre supérieur et bornée à la
+    durée de proratisation, pour qui ne l'atteint pas (`liquider.duree_majoree_apres_taux_plein`,
+    `dureeMajoreeApresTauxPlein` dans le portage) ; `duree_majoree_tous_regimes`, depuis
+    2004, en ouvre le droit sur la durée de tous les régimes de base, trimestres superposés
+    compris, et borne la part d'un régime aligné liquidé à part (R. 173-4-2). La durée
+    majorée entre au prorata de la pension et à celui du minimum contributif ; qui avait
+    passé soixante-cinq ans au 1er avril 1983 a la plus forte des deux pensions, 50 % sur la
+    durée majorée ou le taux acquis sur la durée non majorée
+    (`liquider.taux_acquis_au_31_mars_1983`). Le contexte qui neutralise la décote et la
+    surcote neutralise aussi la majoration.

@@ -4246,6 +4246,72 @@ def test_avant_1951_l_ajournement_se_comptait_en_annees_d_assurance(simulateur):
     assert taux(65, arret) == pytest.approx(0.36)
     assert taux(67, arret) == pytest.approx(0.40)
 
+
+def test_apres_l_age_du_taux_plein_la_duree_est_majoree(simulateur):
+    """« Une majoration de sa durée d'assurance dans ce régime égale à 2,5 p.
+    100 par trimestre postérieur à son soixante-cinquième anniversaire »,
+    pour qui n'a pas la durée (décret n° 45-0179, article 70-6, puis R.
+    351-7 ; décret n° 50-1225, article 55-6), comptée du mois qui suit
+    l'anniversaire à la date d'effet et arrondie au trimestre supérieur. Depuis
+    2011, l'âge est celui du taux plein de la génération : né en mai 1960 et
+    parti à soixante-neuf ans avec 123 trimestres, un assuré en a sept
+    d'ajournement après soixante-sept ans, 123 × 1,175 = 144,5, soit 145. Né
+    en 1950, parti à soixante-dix ans avec 119 trimestres, il en aurait 176,
+    que la durée de proratisation borne à 162.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def detail(naissance, age, debut, affiliation="salarie_prive_non_cadre"):
+        resultat = scenario.calculer(simulateur.carriere_simple(
+            annee_naissance=naissance, mois_naissance=5, sexe="H",
+            affiliation=affiliation, age_debut=debut, age_liquidation=age,
+        ))
+        return next(p.detail for p in resultat.pensions_par_regime
+                    if p.type_calcul == "annuites")
+
+    majoree = "× 145/167, 123 trimestres majorés après l'âge du taux plein"
+    assert detail(1960, 69, 38).endswith(majoree)
+    assert detail(1960, 69, 38, "salarie_agricole").endswith(majoree)
+    assert "× 162/162, 119 trimestres majorés" in detail(1950, 70, 40)
+    # À l'âge du taux plein, rien encore.
+    assert "majorés" not in detail(1960, 67, 38)
+
+
+def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):
+    """Depuis 2004, la majoration n'est due que « tant qu'ils n'ont pas
+    accompli dans le régime général et, le cas échéant, dans un ou plusieurs
+    autres régimes obligatoires, une durée totale d'assurance au moins égale à
+    la limite » (L. 351-6), et un régime aligné liquidé à part ne reçoit que
+    sa part de ce qui manque aux régimes alignés (R. 173-4-2). Les cinq
+    exemples de la circulaire Cnav n° 2004/20 (point 45) : un assuré de
+    soixante-cinq ans et six mois, deux trimestres d'ajournement, 5 %.
+    """
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.calendrier import DateMois
+
+    scenario = simulateur.scenario_actuel
+    periode = simulateur.catalogue["regime_general"].periode(2004)
+    carriere = SimpleNamespace(date_naissance=DateMois(1938, 10),
+                               date_liquidation=DateMois(2004, 5))
+
+    def majores(**durees):
+        return liquider.duree_majoree_apres_taux_plein(
+            scenario, periode, carriere, SimpleNamespace(trimestres_par_regime=durees),
+            ("regime_general",), durees["regime_general"], 150, 65.0)
+
+    # 130 + 6,5 : 137, et 147 tous régimes, sous la limite.
+    assert majores(regime_general=130, msa_salaries=10) == 137
+    # Un régime spécial ne partage rien : 62 et 90, quand bien même 152.
+    assert majores(regime_general=59, sncf=90) == 62
+    # 147 et 5 dépassent 150 : (150 − 145) × 140/145 = 4,8, soit 5.
+    assert majores(regime_general=140, msa_salaries=5) == 145
+    # Les professions libérales comptent dans la limite, non dans le partage.
+    assert majores(regime_general=136, msa_salaries=10, cnavpl=2) == 140
+    assert majores(regime_general=136, msa_salaries=2, cnavpl=10) == 143
+    # La durée tous régimes atteint la limite : aucune majoration.
+    assert majores(regime_general=100, sncf=50) == 100
+
 def test_le_minimum_garanti_de_la_fonction_publique_est_servi(simulateur):
     """Le plancher de la fonction publique, déclaré mais jamais appliqué.
 

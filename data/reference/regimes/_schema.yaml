@@ -533,6 +533,32 @@ champs_periode:
     valeurs: [true]
     defaut: false
 
+  duree_majoree_apres_taux_plein:
+    description: >-
+      La durée du régime est-elle majorée de 2,5 % par trimestre écoulé entre
+      l'âge du taux plein et la liquidation, pour qui n'a pas la durée ? C'est
+      ce qui remplace l'ajournement au 1er avril 1983 (décret n° 45-0179,
+      article 70-6, puis R. 351-7 ; décret n° 50-1225, article 55-6) : le
+      nombre de trimestres majoré s'arrondit au trimestre supérieur, sans
+      dépasser la durée de proratisation, et entre au prorata de la pension
+      comme à celui du minimum contributif. Une période où elle vaut renvoie à
+      la fiche qui le dit.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
+  duree_majoree_tous_regimes:
+    description: >-
+      La durée qui ouvre et borne la majoration de `duree_majoree_apres_taux_plein`
+      est-elle celle de tous les régimes de base ? Depuis le 1er janvier 2004
+      (L. 351-6 de la loi du 21 août 2003, R. 351-7 et R. 173-4-2) : la
+      majoration n'est due que si la durée tous régimes, trimestres superposés
+      compris, n'atteint pas la limite, et se partage entre régimes alignés
+      liquidés séparément. Avant, la durée du seul régime qui liquide.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
   decote_par_la_duree_seule:
     description: >-
       La décote se compte-t-elle sur la SEULE durée manquante, l'âge

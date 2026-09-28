@@ -653,6 +653,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         #: Âge d'annulation de la décote, que l'ouverture transitoire du
         #: minimum garanti minore.
         age_annulation: float | None = None
+        #: La durée du régime avant sa majoration après l'âge du taux plein,
+        #: quand elle a été majorée : le détail la dit.
+        duree_non_majoree: int | None = None
         if not ignorer_penalite_age:
             decote, age_annulation, fiabilite_decote = decote_opposable(moteur, 
                 periode, carriere, annee_liquidation
@@ -678,10 +681,23 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 if ajournement > 0:
                     coefficient_surcote = 1.0 + decote * ajournement
                     taux *= coefficient_surcote
+            # La durée majorée après l'âge du taux plein, puis la garantie du
+            # taux acquis au 31 mars 1983 : la Cnav compare « une pension au
+            # taux de 50 % avec la durée d'assurance au régime général
+            # corrigée, et une pension au taux supérieur à 50 % déterminé en
+            # fonction de l'âge de l'assuré au 31 mars 1983 avec la durée
+            # d'assurance au régime général non corrigée » (circulaire
+            # n° 8/89, point 21), et sert la plus forte.
+            majores = duree_majoree_apres_taux_plein(
+                moteur, periode, carriere, durees, membres, trimestres_regime,
+                proratisation, age_annulation)
             acquis = taux_acquis_au_31_mars_1983(moteur, periode, carriere)
-            if acquis is not None and acquis > taux:
+            if acquis is not None and acquis * trimestres_regime > taux * majores:
                 coefficient_surcote = acquis / (periode.taux_plein or 0.5)
                 taux = acquis
+            elif majores > trimestres_regime:
+                duree_non_majoree = trimestres_regime
+                trimestres_regime = majores
             # La surcote ne récompense que les trimestres COTISÉS APRÈS
             # l'âge légal ET au-delà de la durée requise. Les compter tous
             # majorait la pension de qui a commencé tôt sans jamais
@@ -805,6 +821,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 f"× {trimestres_regime}/{proratisation}"
                 + (f", taux maximum {periode.taux_maximum_bonifie:.0%} atteint"
                    if trimestres_regime / proratisation > rapport_maximum else "")
+                + ("" if duree_non_majoree is None else
+                   f", {duree_non_majoree} trimestres majorés après l'âge du taux plein")
                 # La succession est DITE : sans elle, le lecteur cherche
                 # la ligne de la CANCAVA et ne la trouve pas.
                 + ("" if len(membres) == 1 else
@@ -1588,9 +1606,10 @@ def taux_acquis_au_31_mars_1983(moteur, periode: PeriodeRegime,
     en 1982, quand elle croissait avec l'âge (``majoration_d_ajournement``),
     et les trimestres ceux que l'âge a accomplis le 31 mars 1983, l'âge
     tombant le premier du mois de naissance. La Cnav compare deux pensions,
-    la nouvelle sur la durée « corrigée » après soixante-cinq ans : le
-    moteur, qui ne corrige pas la durée, liquide les deux sur la même, et
-    comparer les taux revient à les comparer (fiche ``decote_avant_1983``).
+    la nouvelle sur la durée « corrigée » après soixante-cinq ans
+    (:func:`duree_majoree_apres_taux_plein`), l'ancienne sur la durée non
+    corrigée : l'appelant compare les deux produits du taux et de la durée
+    (fiche ``decote_avant_1983``).
     """
     mois = ORDONNANCE_DU_26_MARS_1982.rang - carriere.date_naissance.rang - 1
     if (carriere.date_liquidation.rang < ORDONNANCE_DU_26_MARS_1982.rang
@@ -1607,6 +1626,98 @@ def taux_acquis_au_31_mars_1983(moteur, periode: PeriodeRegime,
     if ecoules <= 0:
         return None
     return (ancienne.taux_plein or 0.5) * (1.0 + coefficient * ecoules)
+
+
+def trimestres_d_ajournement(carriere: Carriere, age_taux_plein: float) -> int:
+    """Les trimestres entiers écoulés entre l'âge du taux plein et la date
+    d'effet de la pension.
+
+    « Les trimestres d'ajournement se décomptent : du 1er jour du mois qui
+    suit le 65ème anniversaire (ou à partir du jour anniversaire pour les
+    assurés nés le 1er jour d'un mois), jusqu'à la date fixée pour le point
+    de départ de la pension » (circulaire Cnav n° 8/89, point 12 ; n° 2004/20,
+    point 12) ; depuis 2011, de l'âge du taux plein de la génération. Le
+    modèle datant au mois, il compte depuis le mois qui suit celui où l'âge
+    est atteint, comme pour la surcote (:func:`coefficient_surcote_datee`) :
+    c'est exact pour qui est né après le premier du mois.
+    """
+    debut = carriere.date_naissance.plus_mois(en_mois(age_taux_plein)).plus_mois(1)
+    return max(0, (carriere.date_liquidation.rang - debut.rang) // 3)
+
+
+def duree_majoree_apres_taux_plein(moteur, periode: PeriodeRegime, carriere: Carriere,
+                                   durees, membres: tuple[str, ...],
+                                   trimestres_regime: int, proratisation: int,
+                                   age_annulation: float | None) -> int:
+    """La durée du régime, majorée de 2,5 % par trimestre d'ajournement au-delà
+    de l'âge du taux plein, pour qui n'a pas la durée.
+
+    **La règle remplace l'ajournement au 1er avril 1983.** « L'assuré âgé de
+    plus de soixante-cinq ans et qui ne justifie pas de 150 trimestres
+    d'assurance dans le régime général de la sécurité sociale bénéficie […]
+    d'une majoration de sa durée d'assurance dans ce régime égale à 2,5 p.
+    100 par trimestre postérieur à son soixante-cinquième anniversaire sans
+    que cette majoration puisse avoir pour effet de porter au-delà de 150
+    trimestres sa durée d'assurance », le total « arrondi au chiffre
+    immédiatement supérieur » (décret n° 45-0179, article 70-6, puis R.
+    351-7 ; décret n° 50-1225, article 55-6, aux salariés agricoles). Elle
+    est « indépendante du fait d'avoir exercé ou non une activité
+    professionnelle » après l'âge (circulaire Cnav n° 22/83, point 312) :
+    c'est le temps écoulé qui compte (:func:`trimestres_d_ajournement`), et
+    la circulaire n° 8/89 en donne l'exemple, 80 trimestres, 21 trimestres
+    d'ajournement, « 80 + (80 x 52,50 %) = 122 ». Depuis 2011, l'âge est
+    celui du taux plein de la génération, que la décote lit
+    (``age_annulation``).
+
+    **Depuis 2004, la durée de tous les régimes** (``duree_majoree_tous_regimes``) :
+    la majoration n'est due que « tant qu'ils n'ont pas accompli dans le
+    régime général et, le cas échéant, dans un ou plusieurs autres régimes
+    obligatoires, une durée totale d'assurance au moins égale à la limite »
+    (L. 351-6), et « les trimestres d'assurance de chaque régime se
+    totalisent même s'ils se superposent » (circulaire n° 2004/20, point
+    3215). La durée majorée du régime reste bornée à la limite, la durée de
+    proratisation ; et quand la durée tous régimes ainsi corrigée la dépasse,
+    un régime aligné liquidé à part des autres ne reçoit que sa part de ce
+    qui manque aux régimes alignés, « la différence entre la limite […] et
+    la durée totale d'assurance de l'assuré, avant majoration, dans ces
+    régimes » multipliée par « le rapport entre la durée d'assurance
+    accomplie dans ce régime […] et la durée totale d'assurance accomplie
+    par l'assuré dans l'ensemble de ces régimes », arrondie au plus proche
+    (R. 173-4-2). La circulaire n° 2004/20 (point 45) en donne cinq
+    exemples : 140 trimestres au régime général et 5 chez les salariés
+    agricoles, majorés de 5 %, font 147 au régime général, que le partage
+    ramène à 145. Un régime spécial ne partage rien : 59 trimestres au
+    régime général et 90 dans un régime spécial en font 62 et 90.
+    """
+    if not periode.duree_majoree_apres_taux_plein or age_annulation is None:
+        return trimestres_regime
+    ajournement = trimestres_d_ajournement(carriere, age_annulation)
+    limite = proratisation
+    if ajournement <= 0 or trimestres_regime >= limite:
+        return trimestres_regime
+    durees_de_base = {
+        code: nombre for code, nombre in durees.trimestres_par_regime.items()
+        if code in moteur.catalogue
+        and moteur.catalogue[code].etage in ("base", "integre") and nombre > 0
+    }
+    hors_regime = sum(nombre for code, nombre in durees_de_base.items()
+                      if code not in membres)
+    if periode.duree_majoree_tous_regimes and trimestres_regime + hors_regime >= limite:
+        return trimestres_regime
+    # 2,5 %, c'est un quarantième : le calcul en entiers évite que 140 × 1,05
+    # ne s'arrondisse à 148.
+    majores = min(-(-trimestres_regime * (40 + ajournement) // 40), limite)
+    if periode.duree_majoree_tous_regimes:
+        alignes = {code: nombre for code, nombre in durees_de_base.items()
+                   if code in coordonner.REGIMES_ALIGNES}
+        if (any(code not in membres for code in alignes)
+                and majores + hors_regime > limite):
+            total_alignes = sum(alignes.values()) + (
+                trimestres_regime - sum(alignes.get(code, 0) for code in membres))
+            numerateur = (limite - total_alignes) * trimestres_regime
+            part = (2 * numerateur + total_alignes) // (2 * total_alignes)
+            majores = min(majores, trimestres_regime + max(0, part))
+    return majores
 
 
 def retranche_decote(moteur, periode: PeriodeRegime, carriere: Carriere) -> int:

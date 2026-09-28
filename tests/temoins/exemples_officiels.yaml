@@ -375,16 +375,6 @@ exemples:
       Taux 50 %, pension de 50 % × 68/150 du salaire annuel moyen.
     carriere: {naissance: "1917-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 60}
     attendu: {taux_liquidation: 0.5, pension_base_sur_sam: 0.22666666666666666}
-    ecart_connu:
-      modele: {taux_liquidation: 0.55, pension_base_sur_sam: 0.22}
-      explication: >-
-        Le moteur ne majore pas la durée de qui liquide après soixante-cinq ans
-        sans 150 trimestres (décret n° 45-0179, article 70-6, puis R. 351-7) :
-        la pension nouvelle reste à 50 % × 60/150, sous celle du taux acquis,
-        55 % × 60/150, qu'il sert. Porter la majoration de durée rendrait la
-        valeur publiée.
-      fiche: majoration_duree_apres_65_ans
-      depuis: "2026-09-27"
 
   - id: cnav_22_83_taux_acquis_145_trimestres
     source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 2ème cas", verifie_le: "2026-09-27"}
@@ -407,10 +397,35 @@ exemples:
       000 × 50 × 132 / (100 × 150) = 66 880, ramenée au maximum, 44 460 : « on
       retiendra la pension qui résulte de cette dernière législation ». Taux
       55 %, pension de 55 % × 117/150 du salaire annuel moyen avant le
-      maximum. Le modèle, qui ne porte ni le maximum ni la durée corrigée,
-      retient la même législation, par l'autre comparaison.
+      maximum.
     carriere: {naissance: "1917-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 117}
     attendu: {taux_liquidation: 0.55, pension_base_sur_sam: 0.429}
+    ecart_connu:
+      modele: {taux_liquidation: 0.5, pension_base_sur_sam: 0.44}
+      explication: >-
+        La circulaire prend un salaire annuel moyen de 152 000 F, 1,7 fois le
+        plafond de 1983 (88 920 F) : ramenées au maximum, 55 % et 50 % du
+        plafond, les deux pensions font gagner la législation ancienne.
+        Aucune carrière plafonnée n'a un salaire moyen si haut, et le maximum
+        ne mord qu'au-delà de 150/117 plafond : pour celle du témoin, la
+        pension nouvelle sur la durée corrigée, 50 % × 132/150, passe
+        l'ancienne, 55 % × 117/150, et c'est elle que le moteur sert, comme
+        la Cnav la servirait. Le moteur ne porte pas non plus le maximum des
+        pensions.
+      fiche: decote_avant_1983
+      depuis: "2026-09-28"
+
+  - id: cnav_8_89_duree_corrigee_80_trimestres
+    source: {editeur: "Cnav", reference: "circulaire n° 8/89 du 18 janvier 1989, point 14, exemple", verifie_le: "2026-09-28"}
+    enonce: >-
+      « Un assuré qui a atteint l'âge de 65 ans le 15 juillet 1983 demande sa
+      retraite pour le 1er novembre 1988. Son compte retraite comporte 80
+      trimestres d'assurance » ; « Période de référence du 1er août 1983 au
+      1er novembre 1988 », « Nombre de trimestres d'ajournement : 21 »,
+      « 21 x 2,5 % = 52,50 % », durée corrigée « 80 + (80 x 52,50 %) = 122 ».
+      Taux 50 %, pension de 50 % × 122/150 du salaire annuel moyen.
+    carriere: {naissance: "1918-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1988-11", trimestres_valides: 80}
+    attendu: {taux_liquidation: 0.5, pension_base_sur_sam: 0.4066666666666667}
 
   # ---- Les trimestres accordés au titre des enfants ----------------------
   # Ni la caisse ni service-public ne publient une carrière entière dont ils

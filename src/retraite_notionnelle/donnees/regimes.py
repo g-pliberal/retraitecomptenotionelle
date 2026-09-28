@@ -306,6 +306,19 @@ class PeriodeRegime:
     #: « 4 p. 100 du salaire annuel de base par année d'assurance accomplie
     #: postérieurement à cet âge » (ordonnance du 19 octobre 1945, article 63).
     ajournement_par_annee_d_assurance: bool
+    #: LA DURÉE MAJORÉE APRÈS L'ÂGE DU TAUX PLEIN, qui remplace l'ajournement
+    #: au 1er avril 1983 : « une majoration de sa durée d'assurance dans ce
+    #: régime égale à 2,5 p. 100 par trimestre postérieur à son soixante-
+    #: cinquième anniversaire », arrondie au trimestre supérieur, pour qui
+    #: n'a pas la durée (décret n° 45-0179, article 70-6 ; R. 351-7 ; décret
+    #: n° 50-1225, article 55-6, aux salariés agricoles). Voir
+    #: :func:`~retraite_notionnelle.droit.liquider.duree_majoree_apres_taux_plein`.
+    duree_majoree_apres_taux_plein: bool
+    #: Depuis le 1er janvier 2004, la durée qui déclenche et borne la
+    #: majoration est celle de TOUS les régimes de base, et la majoration se
+    #: partage entre régimes alignés (L. 351-6 de la loi du 21 août 2003,
+    #: R. 173-4-2) ; avant, le seul régime qui liquide.
+    duree_majoree_tous_regimes: bool
     #: Âge dès lequel une femme qui réunit la durée écrite dans les régimes
     #: nommés reçoit le taux de l'âge du taux plein : soixante-trois ans en
     #: 1978, soixante ans de 1979 au 31 mars 1983, pour trente-sept ans et demi
@@ -1164,6 +1177,8 @@ INTERRUPTEURS: dict[str, object] = {
     "decote_annulee_par_la_duree": True,
     "majoration_d_ajournement": False,
     "ajournement_par_annee_d_assurance": False,
+    "duree_majoree_apres_taux_plein": False,
+    "duree_majoree_tous_regimes": False,
     "decote_par_la_duree_seule": False,
     "surcote_trimestres_cotises": False,
     "surcote_depuis_la_duree": False,
@@ -1444,6 +1459,12 @@ class CatalogueRegimes:
                 ),
                 ajournement_par_annee_d_assurance=bool(
                     p.get("ajournement_par_annee_d_assurance", False)
+                ),
+                duree_majoree_apres_taux_plein=bool(
+                    p.get("duree_majoree_apres_taux_plein", False)
+                ),
+                duree_majoree_tous_regimes=bool(
+                    p.get("duree_majoree_tous_regimes", False)
                 ),
                 age_taux_plein_femmes=(
                     None if p.get("age_taux_plein_femmes") is None

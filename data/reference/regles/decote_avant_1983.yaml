@@ -23,8 +23,11 @@ effet: >-
   et demi d'assurance au régime général, aux assurances sociales d'avant 1945 et chez les
   salariés agricoles ont le taux de soixante-cinq ans dès soixante-trois ans en 1978, dès
   soixante ans ensuite (`age_taux_plein_femmes`). Et qui avait passé soixante-cinq ans au
-  1er avril 1983 garde le taux acquis au 31 mars (`liquider.taux_acquis_au_31_mars_1983`),
-  comme dans les exemples de la circulaire Cnav n° 22/83. Cinq écarts restent, aucun
+  1er avril 1983 garde le taux acquis au 31 mars (`liquider.taux_acquis_au_31_mars_1983`)
+  sur la durée non majorée, si cette pension passe celle de 50 % sur la durée majorée
+  après soixante-cinq ans (fiche `majoration_duree_apres_65_ans`), comme dans les deux
+  premiers exemples de la circulaire Cnav n° 22/83 ; le troisième, qu'un salaire moyen de
+  1,7 plafond et le maximum décident, est un écart connu. Cinq écarts restent, aucun
   mesuré. Une pension de janvier à mars 1983 relève encore de l'âge seul : le moteur, qui
   choisit la période à l'année, lui applique la règle d'avril et sert le taux plein à
   soixante ans à qui a 150 trimestres. Le maximum des pensions n'est pas porté, qui ramène

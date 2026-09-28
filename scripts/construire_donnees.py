@@ -668,6 +668,7 @@ def _regimes() -> list[dict]:
                     **({"trimestres_retenus_maximum": p.trimestres_retenus_maximum}
                        if p.trimestres_retenus_maximum is not None else {}),
                     **_regles_d_avant_1983(p),
+                    **_duree_majoree(p),
                     **_regles_des_marins(p),
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),
@@ -735,6 +736,19 @@ def _regles_d_avant_1983(p) -> dict:
         "duree_taux_plein_femmes_trimestres": p.duree_taux_plein_femmes_trimestres,
         "duree_taux_plein_femmes_regimes":
             list(p.duree_taux_plein_femmes_regimes) or None,
+    }
+    return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
+
+
+def _duree_majoree(p) -> dict:
+    """La durée majorée après l'âge du taux plein, et seulement là : les
+    périodes du régime général et des salariés agricoles depuis 1983. Même
+    raison que pour les marins : le moteur JavaScript lit leur absence comme
+    leur fausseté.
+    """
+    champs = {
+        "duree_majoree_apres_taux_plein": p.duree_majoree_apres_taux_plein or None,
+        "duree_majoree_tous_regimes": p.duree_majoree_tous_regimes or None,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 

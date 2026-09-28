@@ -306,6 +306,7 @@ periodes:
     part_salariale: 0.4390   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        avpf, reversion, periodes_assimilees]
@@ -336,6 +337,7 @@ periodes:
     part_salariale: 0.4441   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        avpf, reversion, periodes_assimilees]
@@ -367,6 +369,8 @@ periodes:
     part_salariale: 0.4445   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
@@ -396,6 +400,8 @@ periodes:
     part_salariale: 0.4448   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
@@ -426,6 +432,8 @@ periodes:
     part_salariale: 0.4463   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
@@ -456,6 +464,8 @@ periodes:
     part_salariale: 0.4466   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
