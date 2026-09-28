@@ -4275,6 +4275,11 @@ def test_apres_l_age_du_taux_plein_la_duree_est_majoree(simulateur):
     assert "× 162/162, 119 trimestres majorés" in detail(1950, 70, 40)
     # À l'âge du taux plein, rien encore.
     assert "majorés" not in detail(1960, 67, 38)
+    # Les artisans et commerçants liquidés à part des salariés, depuis 1990
+    # (D. 634-5) : trois trimestres d'ajournement en 2004, 123 × 1,075.
+    assert detail(1938, 66, 35, "artisan").endswith(
+        "× 133/150, 123 trimestres majorés après l'âge du taux plein")
+    assert "× 150/150, 131 trimestres majorés" in detail(1940, 68, 35, "commercant")
 
 
 def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):

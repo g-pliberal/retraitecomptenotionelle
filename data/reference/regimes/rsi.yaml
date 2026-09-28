@@ -41,6 +41,8 @@ periodes:
     taux_cotisation_retraite: 0.1665
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
@@ -72,6 +74,8 @@ periodes:
     taux_cotisation_retraite: 0.1673
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
@@ -105,6 +109,8 @@ periodes:
     part_salariale_deplafonnee: 1.0
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,

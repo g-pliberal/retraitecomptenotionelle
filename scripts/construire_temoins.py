@@ -265,6 +265,10 @@ def _cas() -> list[dict]:
         "naissance": "1925", "debut": "35", "liquidation": "68",
     }))
     cas.append(("duree_majoree_regle_de_2004", {"debut": "38", "liquidation": "69"}))
+    # La même règle chez un artisan liquidé à part des salariés (D. 634-5).
+    cas.append(("duree_majoree_artisan", {
+        "statut": "artisan", "naissance": "1940", "debut": "35", "liquidation": "68",
+    }))
     # LA TRANCHE C DE L'AGIRC D'AVANT 2016 : un cadre payé au-delà de quatre
     # plafonds, parti à soixante-deux ans avec la durée. Ses autres points
     # sont servis sans coefficient ; ceux de la tranche C constitués jusqu'en

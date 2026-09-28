@@ -1,8 +1,9 @@
 schema_version: 1
 id: majoration_duree_apres_65_ans
 intitule: >-
-  Depuis le 1er avril 1983, au régime général et chez les salariés agricoles, l'assuré
-  qui liquide après l'âge du taux plein sans la durée voit la durée du régime majorée de
+  Depuis le 1er avril 1983, au régime général et chez les salariés agricoles, depuis 1990
+  au moins chez les artisans et commerçants, l'assuré qui liquide après l'âge du taux
+  plein sans la durée voit la durée du régime majorée de
   2,5 % par trimestre écoulé depuis cet âge, arrondie au trimestre supérieur, sans
   dépasser la durée de proratisation : soixante-cinq ans jusqu'en 2011, l'âge du 1° de
   L. 351-8 ensuite ; la durée du seul régime jusqu'en 2003, celle de tous les régimes
@@ -10,8 +11,9 @@ intitule: >-
 etat: approchee
 etape: liquider_chaque_regime
 effet: >-
-  Les assurés du régime général et des salariés agricoles qui liquident après l'âge du
-  taux plein sans la durée : parti deux ans après soixante-sept ans, un assuré a sept
+  Les assurés du régime général, des salariés agricoles et des artisans et commerçants qui
+  liquident après l'âge du taux plein sans la durée : parti deux ans après soixante-sept
+  ans, un assuré a sept
   trimestres d'ajournement, 17,5 % de durée en plus, au prorata de sa pension comme à
   celui du minimum contributif, qui retient « la durée d'assurance corrigée lorsqu'elle
   entre en compte » (circulaire Cnav n° 8/89, point 3). Le moteur la porte depuis le 28
@@ -21,9 +23,12 @@ effet: >-
   rendus : né en mars 1917 avec 60 trimestres, « arrondi à 68 », dont la pension passe
   celle du taux acquis au 31 mars 1983 (circulaire n° 22/83) ; 80 trimestres, 21
   d'ajournement, 122 (circulaire n° 8/89) ; les cinq partages de la circulaire n°
-  2004/20. Restent approchés : les artisans et commerçants liquidés à part des salariés,
-  que D. 634-5 majore depuis 1990 sur leurs seuls trimestres d'après 1972, et que le
-  moteur ne majore pas ; le décompte, qui part du mois suivant l'âge, exact pour qui
+  2004/20. Les artisans et commerçants liquidés à part des salariés, que D. 634-5 majore
+  depuis 1990, le sont depuis le même jour, sur les périodes de la CANCAVA, de l'ORGANIC
+  et du RSI. Restent approchés : leurs années d'avant 1973, que D. 634-5 exclut de la
+  base de la majoration et que le moteur, qui les liquide comme les suivantes, y laisse ;
+  de 1984 à 1989, leur majoration, dont le texte n'est pas lu ; le décompte, qui part du
+  mois suivant l'âge, exact pour qui
   n'est pas né un premier ; le troisième exemple de la circulaire n° 22/83, que le
   maximum des pensions décide sur un salaire moyen de 1,7 plafond, qu'aucune carrière
   plafonnée n'atteint ; l'égalité des décimales entre régimes, que R. 173-4-2 tranche et
@@ -35,13 +40,11 @@ sources:
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Artisans et commerçants : porter D. 634-5 aux périodes de la CANCAVA, de l'ORGANIC et
-    du RSI liquidées à part du régime général — la majoration « applicable aux trimestres
-    d'assurance postérieurs au 31 décembre 1972 », dans la limite de 150 trimestres avec
-    ceux d'avant 1973 —, et lire le texte qui les majorait de 1984 à 1989, que l'index ne
-    porte pas : l'article 2 du décret n° 73-937, qui leur rend applicable « l'article
+    Artisans et commerçants : lire le texte qui les majorait de 1984 à 1989, que l'index
+    ne porte pas — l'article 2 du décret n° 73-937, qui leur rend applicable « l'article
     70-6 » du décret de 1945, le vise dans sa rédaction d'avant 1982, la date d'entrée en
-    jouissance.
+    jouissance —, et retirer de la base de la majoration leurs années d'avant 1973, comme
+    D. 634-5 le dit.
   - >-
     Chercher un exemple publié d'une pension prise après soixante-sept ans, circulaire
     Cnav ou fiche de l'Assurance retraite.
@@ -149,8 +152,12 @@ sources:
       (LEGIARTI000006597798) : « Pour l'application des articles R. 351-6, R. 351-7 […] du
       code de la sécurité sociale aux salariés agricoles ». Artisans et commerçants :
       D. 634-5, rédaction du 1er janvier 1990 (LEGIARTI000006737998), la majoration de R.
-      351-7 « applicable aux trimestres d'assurance postérieurs au 31 décembre 1972 ».
-      Lu dans l'index LEGI du dépôt
+      351-7 « applicable aux trimestres d'assurance postérieurs au 31 décembre 1972 », sans
+      porter au-delà de 150 trimestres la durée d'avant et d'après 1973 ; rédactions de
+      2009 (LEGIARTI000020090079, la limite de L. 351-1), de 2011 (LEGIARTI000023397687,
+      l'âge du 1° de L. 351-8), de 2017 (LEGIARTI000034624541, le régime social des
+      indépendants), de 2020 (LEGIARTI000041966606, les travailleurs indépendants) et de
+      2023 (LEGIARTI000047634717). Lu dans l'index LEGI du dépôt
     date: 2026-09-28
   - type: circulaire_cnav
     reference: >-
@@ -226,6 +233,10 @@ textes_a_rattacher:
   reference: >-
     code de la sécurité sociale, R. 173-3-3, rédaction du 1er janvier 2026 : la même
     répartition, les non-salariés agricoles compris
+- id: LEGIARTI000006737998
+  reference: >-
+    code de la sécurité sociale, D. 634-5, rédaction du 1er janvier 1990 : la majoration
+    de R. 351-7 aux artisans et commerçants, sur leurs trimestres d'après 1972
 exemples:
 - cnav_22_83_taux_acquis_60_trimestres
 - cnav_8_89_duree_corrigee_80_trimestres
@@ -235,7 +246,8 @@ code:
     duree_majoree_tous_regimes: true
   moteur: >-
     `duree_majoree_apres_taux_plein`, sur les périodes du régime général et des salariés
-    agricoles depuis 1983, majore la durée du régime de 2,5 % par trimestre entier écoulé
+    agricoles depuis 1983, et sur celles de la CANCAVA, de l'ORGANIC et du RSI depuis
+    1990, majore la durée du régime de 2,5 % par trimestre entier écoulé
     du mois qui suit l'âge d'annulation de la décote à la date d'effet
     (`liquider.trimestres_d_ajournement`), arrondie au trimestre supérieur et bornée à la
     durée de proratisation, pour qui ne l'atteint pas (`liquider.duree_majoree_apres_taux_plein`,

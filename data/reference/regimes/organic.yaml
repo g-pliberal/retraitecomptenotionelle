@@ -79,6 +79,36 @@ periodes:
       `taux_cotisation_annuels.csv` : le chargeur découpe la période année
       par année, et la moyenne ne sert plus qu'au contrôle.
   - debut: 1983
+    fin: 1989
+    type_calcul: annuites
+    age_ouverture: 60
+    age_taux_plein: 65
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 150
+    taux_plein: 0.5
+    decote_par_generation: decote_regime_general
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1431
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+       reversion, periodes_assimilees]
+    notes: >-
+      1983 : le minimum contributif est créé, et la décote tombe à 1,25 % par
+      trimestre. La durée requise reste de 150 trimestres.
+      TAUX DE COTISATION : 14.31 % est la moyenne 1983-1989 des taux datés
+      que transcrit OpenFisca-France
+      (`cotisations_taxes_independants_artisans_commercants/ret_ac/industriels_et_commercants/sous_pss`,
+      décrets d'application de la loi du 3 juillet 1972) — 12,9 % en 1983,
+      13,9 % en 1984, 14,6 % en août 1986, 14,8 % en juillet 1987, 15,8 % en
+      1989, 16,35 % en février 1991. La fiche portait 16,55 % de 1973 à
+      2006, un chiffre de synthèse qui surcomptait de cinq points la
+      cotisation des années 1970 ; `verifier_donnees.py` confronte désormais
+      chaque période à la série.
+
+  - debut: 1990
     fin: 1993
     type_calcul: annuites
     age_ouverture: 60
@@ -89,16 +119,17 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
     assiette: plafonnee
-    taux_cotisation_retraite: 0.1505
+    taux_cotisation_retraite: 0.1620
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
     notes: >-
       1983 : le minimum contributif est créé, et la décote tombe à 1,25 % par
       trimestre. La durée requise reste de 150 trimestres.
-      TAUX DE COTISATION : 15.05 % est la moyenne 1983-1993 des taux datés
+      TAUX DE COTISATION : 16.20 % est la moyenne 1990-1993 des taux datés
       que transcrit OpenFisca-France
       (`cotisations_taxes_independants_artisans_commercants/ret_ac/industriels_et_commercants/sous_pss`,
       décrets d'application de la loi du 3 juillet 1972) — 12,9 % en 1983,
@@ -107,6 +138,13 @@ periodes:
       2006, un chiffre de synthèse qui surcomptait de cinq points la
       cotisation des années 1970 ; `verifier_donnees.py` confronte désormais
       chaque période à la série.
+      Coupée au 1er janvier 1990 : l'article D. 634-5 fait bénéficier
+      l'assuré de plus de soixante-cinq ans « de la majoration de durée
+      d'assurance prévue à l'article R. 351-7 », « applicable aux trimestres
+      d'assurance postérieurs au 31 décembre 1972 » (fiche
+      `majoration_duree_apres_65_ans`) ; le texte qui l'aurait portée de 1984
+      à 1989 n'est pas lu.
+
   - debut: 1994
     fin: 2003
     type_calcul: annuites
@@ -125,6 +163,7 @@ periodes:
     taux_cotisation_retraite: 0.1635
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
@@ -159,6 +198,8 @@ periodes:
     taux_cotisation_retraite: 0.1652
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
+    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
