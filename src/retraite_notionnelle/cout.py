@@ -385,7 +385,8 @@ class Pensionne:
     propre: "VoletLiberal"
     #: La même, de l'AUTRE CÔTÉ DE LA BASCULE : pour les cohortes voisines que
     #: la bascule sépare de la génération de la grille. ``None`` quand aucune
-    #: ne l'est, ou quand l'âge légal ne change rien à ce couple.
+    #: ne l'est, ou quand la grille part avant la bascule et que l'âge légal
+    #: ne change rien à ce couple.
     autre: "VoletLiberal | None" = None
     #: L'année de bascule, qui dit de quel côté tombe chaque cohorte.
     bascule: int = 0
@@ -401,11 +402,11 @@ class Pensionne:
         Chaque génération de la grille en représente cinq, qui liquident
         chacune à sa date — celle de la grille, décalée d'autant. Une cohorte
         dont le départ tombe avant la bascule est partie sous le droit en
-        vigueur, SANS report ; une cohorte qui la franchit part, elle, à l'âge
-        légal. Quand la bascule passe entre deux cohortes d'une même
-        génération, chacune reçoit le volet de son côté : faute de quoi le
-        report de la génération ferait disparaître, dès 2025, des pensions que
-        la réforme n'a pas pu toucher.
+        vigueur, SANS report, et sa proposition est le scénario 4 ; une
+        cohorte qui la franchit part, elle, à l'âge légal. Quand la bascule
+        passe entre deux cohortes d'une même génération, chacune reçoit le
+        volet de son côté : faute de quoi le report de la génération ferait
+        disparaître, dès 2025, des pensions que la réforme n'a pas pu toucher.
         """
         if self.autre is None:
             return self.propre
@@ -1828,8 +1829,17 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
         if comparaison.depart_reporte:
             propre = _reporte(simulateur, comparaison.carriere, propre, macro,
                               annee_euros)
-        autre = _autre_volet(simulateur, comparaison.carriere, macro,
-                             annee_euros, bascule)
+        # Ce que la proposition sert à une cohorte partie avant la bascule :
+        # la pension du scénario dont elle part, le 4, ou le 5 quand on la
+        # range parmi les réformes prospectives — ce que fait
+        # `scripts/proposition_prospective.py`. Lu à l'appel, comme la liste.
+        depart_avant = ("notionnel_prospectif_employeur"
+                        if "notionnel_liberal" in CLES_PROSPECTIVES
+                        else "notionnel_retroactif_employeur")
+        autre = _autre_volet(
+            simulateur, comparaison.carriere, propre, macro, annee_euros, bascule,
+            comparaison.en_euros_constants(
+                getattr(comparaison, depart_avant).pension_annuelle, depart_avant))
         pensionnes.append(Pensionne(
             code=code,
             generation=generation,
@@ -1907,33 +1917,66 @@ def _volet(carriere, liberal, coefficient: float) -> VoletLiberal:
     )
 
 
-def _autre_volet(simulateur: Simulateur, carriere, macro, annee_euros: int,
-                 bascule: int) -> VoletLiberal | None:
+def _autre_volet(simulateur: Simulateur, carriere, propre: VoletLiberal, macro,
+                 annee_euros: int, bascule: int,
+                 pension_d_avant: float) -> VoletLiberal | None:
     """La proposition de l'autre côté de la bascule, si une cohorte y tombe.
 
     Une génération de la grille en représente cinq, décalées de deux ans au
-    plus. Quand la bascule passe entre elles et que l'âge légal reporte ce
-    départ-là, les cohortes d'un côté partent sans report et celles de l'autre
-    à l'âge légal : il faut les deux volets. Le second se calcule sur la même
-    carrière, prolongée ou non — celle de la grille est l'un des deux.
+    plus. Quand la bascule passe entre elles, les cohortes d'un côté partent
+    sous le droit en vigueur et celles de l'autre sous la proposition : il faut
+    les deux volets. Celui d'APRÈS se calcule sur la même carrière, reportée à
+    l'âge légal ; il n'existe que si l'âge légal reporte ce départ-là.
+
+    Celui d'AVANT est ``pension_d_avant``, la pension du scénario dont la
+    proposition part — le 4, ou le 5 pour sa variante prospective
+    (:func:`_avant_la_bascule`) : qui a liquidé avant la bascule n'a aucun
+    mois au taux unique ni de pilier, et seule la garantie sépare sa
+    proposition de ce scénario-là. La génération de la grille, partie après,
+    en a. Jusqu'au 28 septembre 2026, la cohorte partie avant les héritait
+    d'elle, report excepté : la dépense du scénario 6 s'écartait de celle du
+    scénario 4 dès 2024, et la marche du taux unique ne valait plus rien
+    l'année observée qu'à l'arrondi près.
     """
-    age_legal = simulateur.parametres.age_legal_liberal
-    if age_legal is None or carriere.age_liquidation is None:
-        return None
-    reportee = carriere.prolongee(age_legal, macro)
-    if reportee is carriere:
+    if carriere.age_liquidation is None:
         return None
     annee = carriere.annee_liquidation
     if not annee - _DEMI_TRANCHE < bascule <= annee + _DEMI_TRANCHE:
         return None
-    # La grille est d'un côté ; l'autre volet est celui de l'autre.
-    depart = carriere if annee >= bascule else reportee
-    liberal = simulateur.proposition(depart)
-    coefficient = macro.coefficient_prix(depart.annee_liquidation, annee_euros)
-    volet = _volet(depart, liberal, coefficient)
-    if depart is reportee:
-        volet = _reporte(simulateur, carriere, volet, macro, annee_euros)
-    return volet
+    age_legal = simulateur.parametres.age_legal_liberal
+    reportee = (carriere if age_legal is None
+                else carriere.prolongee(age_legal, macro))
+    if annee >= bascule:
+        # La grille part après : l'autre côté est celui d'avant, sans report.
+        if reportee is carriere:
+            sans_report = propre
+        else:
+            sans_report = _volet(
+                carriere, simulateur.proposition(carriere),
+                macro.coefficient_prix(carriere.annee_liquidation, annee_euros))
+        return _avant_la_bascule(sans_report, pension_d_avant)
+    if reportee is carriere:
+        return None
+    # La grille part avant : l'autre côté est celui d'après, à l'âge légal.
+    liberal = simulateur.proposition(reportee)
+    coefficient = macro.coefficient_prix(reportee.annee_liquidation, annee_euros)
+    return _reporte(simulateur, carriere, _volet(reportee, liberal, coefficient),
+                    macro, annee_euros)
+
+
+def _avant_la_bascule(volet: VoletLiberal, pension: float) -> VoletLiberal:
+    """Le volet d'une cohorte partie avant la bascule, tiré de celui de la
+    génération de la grille, partie après.
+
+    Sa pension est ``pension``, celle du scénario dont la proposition part —
+    son compte est celui-là, au centime —, et ce que la garantie regarde est
+    cette pension seule : ni mois au taux unique, ni pilier, ni rente du
+    pilier. Le reste est celui de la grille : l'année de liquidation, que la
+    cohorte décale, l'ouverture de la garantie, et ce qu'elle cotise, que la
+    recette ne lit pas avant la bascule (:func:`_rapports_recettes`).
+    """
+    return replace(volet, pension=pension, ressources_garantie=pension, pilier={},
+                   rente_pilier=(0.0, 0.0), rente_garantie=0.0)
 
 
 def _reporte(simulateur: Simulateur, carriere, en_emploi: VoletLiberal, macro,

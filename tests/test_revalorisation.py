@@ -151,10 +151,10 @@ def test_la_revalorisation_du_jour_du_depart_n_est_pas_servie_au_regime_general(
     """Une pension du régime général prenant effet le 1er janvier 2019 est
     calculée sur des salaires déjà revalorisés ce jour-là : elle ne reçoit pas
     en plus les 0,3 % du 1er janvier 2019. Sa première revalorisation est celle
-    de 2020."""
+    de 2020. L'assuré est né le 1er janvier 1957 : il a 62 ans ce jour-là."""
     comparaison = _retraite(simulateur, annee_naissance=1957, sexe="H",
                             affiliation="salarie_prive_non_cadre",
-                            age_debut=20, age_liquidation=62)
+                            age_debut=20, age_liquidation=62, jour_naissance=1)
     assert str(comparaison.carriere.date_liquidation) == "janvier 2019"
     base = next(r for r in comparaison.aujourd_hui.actuel.regimes
                 if r.regime == "regime_general")
@@ -353,7 +353,7 @@ POINT_AGIRC_ARRCO_2026 = 1.4386
 
 
 def test_le_cas_type_d_un_retraite_se_refait_a_la_main(simulateur):
-    """Un salarié non cadre né en janvier 1950, au travail de 20 à 62 ans,
+    """Un salarié non cadre né le 1er janvier 1950, au travail de 20 à 62 ans,
     parti en janvier 2012 — et sa pension de 2026, refaite sans le moteur.
 
     La pension de DÉPART est celle du modèle, que d'autres tests confrontent
@@ -366,7 +366,8 @@ def test_le_cas_type_d_un_retraite_se_refait_a_la_main(simulateur):
     """
     comparaison = _retraite(simulateur, annee_naissance=1950, sexe="H",
                             affiliation="salarie_prive_non_cadre", age_debut=20,
-                            age_liquidation=62, niveau_salaire=0.8)
+                            age_liquidation=62, niveau_salaire=0.8,
+                            jour_naissance=1)
     depart = {p.regime: p.montant for p in comparaison.actuel.pensions_par_regime}
     assert str(comparaison.carriere.date_liquidation) == "janvier 2012"
     assert set(depart) == {"regime_general", "arrco", "arrco_tranche_2"}

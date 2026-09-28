@@ -16,18 +16,20 @@ effet: >-
   du régime général — trimestres civils à compter de celui qui suit l'âge —, quand
   la fonction publique compte des durées : une fonctionnaire à l'âge légal à la
   mi-octobre 2024, partie en février 2026, avait quatre trimestres au lieu de cinq
-  (tests/test_cnracl.py).
+  (tests/test_cnracl.py). La période s'ouvre au mois où l'âge est révolu : le 1er du
+  mois qui suit l'anniversaire, ou l'anniversaire même pour qui est né un 1er. Depuis
+  le 28 septembre 2026, le modèle lit le jour de naissance (fiche
+  `date_effet_mois_suivant`), et l'exemple 3 de la CNRACL, né le 1er janvier 1962, a
+  ses six trimestres.
 sources:
   lu_le: 2026-09-24
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     La version de 2009 de L. 14 III (plafond de vingt trimestres) n'a pas été lue
-    sur Légifrance, seulement rapportée : la lire. Le modèle date au mois : la période
-    s'ouvre au premier du mois qui suit l'âge, ce qui est exact pour qui n'est pas
-    né le premier du mois — l'exemple 3 de la CNRACL, dont l'agent est né un 1er
-    janvier, a un trimestre de plus. Les exemples de la CNRACL pour les générations
-    1963 à 1966 datent d'avant la suspension de 2026 et ne sont pas transcrits.
+    sur Légifrance, seulement rapportée : la lire. Les exemples de la CNRACL pour
+    les générations 1963 à 1966 datent d'avant la suspension de 2026 et ne sont pas
+    transcrits.
   lectures:
   - type: legifrance
     reference: L. 14 CPCMR, LEGIARTI000048844775
@@ -70,6 +72,7 @@ textes_a_rattacher:
 exemples:
 - sp_f16494_surcote_fonction_publique
 - sre_surcote_brigitte
+- cnracl_surcote_ne_un_1er
 reformes:
 - lfss_2009_surcote
 code:

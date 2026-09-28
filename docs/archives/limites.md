@@ -6355,7 +6355,7 @@ année.
 | Système actuel, convention du COR | **<!--chiffre:mesure(engagement)-->520<!--/--> %** |
 | — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->196<!--/--> % |
 | — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->324<!--/--> % |
-| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->363<!--/--> % |
+| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->362<!--/--> % |
 | Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->167<!--/--> % |
 | Publié par Eurostat, tableau 29 | <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % |
 

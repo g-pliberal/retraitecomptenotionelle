@@ -451,10 +451,12 @@ export class Carriere {
   }
 
   /**
-   * Le mois d'où les âges se comptent. DEUX LECTURES DE LA NAISSANCE : la
-   * génération se lit au vrai mois ({@link generation}) ; l'âge se compte
-   * d'ici — une date d'effet, un décompte de trimestres après un âge, l'âge à
-   * une date. Voir `carriere.py`.
+   * Le mois d'où les âges se comptent. TROIS LECTURES DE LA NAISSANCE : la
+   * génération se lit au vrai mois ({@link generation}) ; l'anniversaire tombe
+   * dans le mois de naissance ({@link moisDeLAnniversaire}) — une coupure au
+   * premier d'un mois, un début d'activité ; l'âge révolu se compte d'ici —
+   * une date d'effet, un décompte de trimestres après un âge, l'âge à une
+   * date. Voir `carriere.py`.
    */
   get origineDesAges() {
     if (this._origineDesAges === undefined) {
@@ -473,8 +475,8 @@ export class Carriere {
 
   /**
    * Le mois où tombe l'anniversaire de cet âge : celui qui se compare à une
-   * coupure tombant un premier du mois, et qui donne l'année où l'âge est
-   * atteint.
+   * coupure tombant un premier du mois, qui donne l'année où l'âge est atteint,
+   * et où tombe un début d'activité dit par un âge.
    */
   moisDeLAnniversaire(age) {
     return this.dateNaissance.plusMois(enMois(age));

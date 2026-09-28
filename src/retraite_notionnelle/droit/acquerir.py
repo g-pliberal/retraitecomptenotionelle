@@ -463,13 +463,17 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     if periode.trimestres_maximum is not None:
                         # Le plafond se lit sur toute la durée : on note ici
                         # les trimestres de la ligne, et ceux d'entre eux
-                        # qui précèdent l'âge qui le lève.
+                        # qui précèdent l'âge qui le lève. Ils courent
+                        # « jusqu'à ce que cet âge soit atteint » : jusqu'au
+                        # mois de l'anniversaire, celui où un métier commence
+                        # à l'âge dit : entré à la mine à dix-huit ans, on y
+                        # a cent quarante-huit trimestres à cinquante-cinq.
                         suivi = trimestres_plafonnables.setdefault(code, [0.0, 0.0])
                         suivi[0] += carriere.trimestres_retenus(ligne)
                         if periode.trimestres_maximum_leve_avant_age is not None:
                             suivi[1] += compter.trimestres_de_la_ligne_entre(
                                 carriere, ligne, DateMois(carriere.annee_naissance, 1),
-                                carriere.date_de_l_age(
+                                carriere.mois_de_l_anniversaire(
                                     periode.trimestres_maximum_leve_avant_age),
                             )
                     if (periode.points_ajustement_par_forfait is not None

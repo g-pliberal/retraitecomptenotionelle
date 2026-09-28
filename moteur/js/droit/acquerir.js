@@ -370,7 +370,10 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
               && periode.trimestres_maximum !== undefined) {
             // Le plafond se lit sur toute la durée : on note ici les
             // trimestres de la ligne, et ceux d'entre eux qui précèdent l'âge
-            // qui le lève.
+            // qui le lève. Ils courent « jusqu'à ce que cet âge soit
+            // atteint » : jusqu'au mois de l'anniversaire, celui où un métier
+            // commence à l'âge dit : entré à la mine à dix-huit ans, on y a
+            // cent quarante-huit trimestres à cinquante-cinq.
             if (!trimestresPlafonnables.has(code)) {
               trimestresPlafonnables.set(code, [0.0, 0.0]);
             }
@@ -380,7 +383,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
                 && periode.trimestres_maximum_leve_avant_age !== undefined) {
               suivi[1] += compter.trimestresDeLaLigneEntre(
                 carriere, ligne, new DateMois(carriere.annee_naissance, 1),
-                carriere.dateDeLAge(periode.trimestres_maximum_leve_avant_age),
+                carriere.moisDeLAnniversaire(periode.trimestres_maximum_leve_avant_age),
               );
             }
           }

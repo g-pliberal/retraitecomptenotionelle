@@ -2149,12 +2149,10 @@ def trimestres_d_ajournement(carriere: Carriere, age_taux_plein: float) -> int:
     suit le 65ème anniversaire (ou à partir du jour anniversaire pour les
     assurés nés le 1er jour d'un mois), jusqu'à la date fixée pour le point
     de départ de la pension » (circulaire Cnav n° 8/89, point 12 ; n° 2004/20,
-    point 12) ; depuis 2011, de l'âge du taux plein de la génération. Le
-    modèle datant au mois, il compte depuis le mois qui suit celui où l'âge
-    est atteint, comme pour la surcote (:func:`coefficient_surcote_datee`) :
-    c'est exact pour qui est né après le premier du mois.
+    point 12) ; depuis 2011, de l'âge du taux plein de la génération. C'est
+    le premier mois où l'âge est révolu (:meth:`Carriere.date_de_l_age`).
     """
-    debut = carriere.mois_de_l_anniversaire(age_taux_plein).plus_mois(1)
+    debut = carriere.date_de_l_age(age_taux_plein)
     return max(0, (carriere.date_liquidation.rang - debut.rang) // 3)
 
 
@@ -2553,18 +2551,18 @@ def coefficient_surcote_datee(moteur, periode: PeriodeRegime, carriere: Carriere
     a quinze mois de services au-delà, cinq trimestres entiers, et le
     modèle lui en comptait quatre.
 
-    Le modèle datant au mois, la période s'ouvre le premier du mois qui
-    suit celui où l'âge est atteint. C'est exact pour qui est né après le
-    premier du mois — service-public.gouv.fr l'écrit ainsi pour un
-    fonctionnaire né le 9 octobre 1964, « taux plein à 62 ans et 9 mois
-    (1er août 2027) » —, et l'agent de la CNRACL, né un 1er janvier, a un
-    trimestre de plus que le modèle ne lui en compte.
+    Le modèle datant au mois, la période s'ouvre au premier mois où l'âge
+    est révolu : celui qui suit l'anniversaire — service-public.gouv.fr
+    l'écrit pour un fonctionnaire né le 9 octobre 1964, « taux plein à 62 ans
+    et 9 mois (1er août 2027) » —, ou celui-ci pour qui est né un 1er,
+    comme l'agent de la CNRACL. Le trimestre civil du régime général, lui,
+    suit celui où tombe l'anniversaire.
     """
     annee_liquidation = carriere.annee_liquidation
     date_legal = carriere.mois_de_l_anniversaire(age_ouverture)
     en_duree = periode.regime in coordonner.REGIMES_CODE_DES_PENSIONS
     trimestre_legal = (date_legal.mois - 1) // 3
-    debut_age = (date_legal.plus_mois(1) if en_duree
+    debut_age = (carriere.date_de_l_age(age_ouverture) if en_duree
                  else DateMois(date_legal.annee, 1).plus_mois(3 * (trimestre_legal + 1)))
 
     par_annee = carriere.trimestres_par_annee(

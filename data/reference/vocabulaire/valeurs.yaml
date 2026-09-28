@@ -217,17 +217,22 @@ listes:
     # seule la coordination des affiliations saura faire (phase 4).
     valeurs:
       jour_de_naissance:
-        dit: l'assuré dont le jour de naissance n'est pas dit est né le premier de son mois
-        valeur: 1
+        dit: l'assuré dont le jour de naissance n'est pas dit est né le 15 de son mois
+        valeur: 15
         unite: du mois
         pose: {sorte: naissance, personne: assure}
         raison: >-
           le formulaire demande la date entière, mais une adresse d'avant le
           calendrier, un cas type, la page Coût et les témoins ne donnent que
-          l'année ou le mois. Le premier du mois est la convention que le
-          modèle a toujours suivie, et qui fait tomber l'âge entier sur le
-          premier mois de l'année civile ; la présomption la garde, et les
-          résultats ne bougent pas
+          l'année ou le mois. Le jour ne compte que d'une façon : la pension
+          prend effet le premier du mois qui suit l'anniversaire, sauf pour qui
+          est né un 1er (R. 351-37 ; circulaire Cnav n° 2026-07), et les âges se
+          comptent donc du mois qui suit la naissance. Douze jours sur 365
+          sont des premiers : présumer un autre jour est juste pour vingt-neuf
+          naissances sur trente environ, et le 15 est le milieu du mois. Le
+          propriétaire l'a choisi le 28 septembre 2026, comme le plus proche de
+          la réalité (action 132) ; il déplace les résultats de qui ne dit pas
+          son jour, là où la convention du 1er, suivie jusque-là, les gardait
       naissance_des_enfants:
         dit: chaque enfant est né aux trente ans de l'assuré
         valeur: 30

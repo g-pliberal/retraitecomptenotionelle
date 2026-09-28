@@ -320,9 +320,11 @@ export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation
 
 /**
  * La chronologie d'un parcours : un fait par métier, daté au mois, et un par
- * année d'interruption. Les âges se comptent depuis le mois que le jour de
- * naissance désigne. Les contrôles sont ceux du parcours : les métiers se
- * suivent, le premier n'est pas cumulé, rien ne dépasse le départ.
+ * année d'interruption. Un début ou une fin d'activité tombe dans le mois où
+ * l'âge est atteint, compté du mois de naissance ; le départ, au premier mois
+ * où l'âge est révolu, compté du mois que le jour de naissance désigne. Les
+ * contrôles sont ceux du parcours : les métiers se suivent, le premier n'est
+ * pas cumulé, rien ne dépasse le départ.
  */
 export function duParcours({
   annee_naissance,
@@ -355,14 +357,14 @@ export function duParcours({
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
     conjoint, deces);
-  const origine = origineDe(naissance[0]);
+  const moisDeNaissance = moisDe(naissance[0].debut);
   const bornes = principaux.map(
-    (metier) => origine.plusMois(enMois(metier.age_debut)),
+    (metier) => moisDeNaissance.plusMois(enMois(metier.age_debut)),
   );
   const debut = bornes[0];
   // La pension prend effet ce mois-là : il n'est plus travaillé, la borne est
   // donc EXCLUE.
-  const fin = origine.plusMois(enMois(age_liquidation));
+  const fin = origineDe(naissance[0]).plusMois(enMois(age_liquidation));
   if (fin.rang <= debut.rang) {
     throw new Error("âge de liquidation antérieur à l'âge de début d'activité");
   }
@@ -389,10 +391,10 @@ export function duParcours({
     },
   ));
   cumuls.forEach((metier, i) => {
-    const ouverture = origine.plusMois(enMois(metier.age_debut));
+    const ouverture = moisDeNaissance.plusMois(enMois(metier.age_debut));
     const cloture = metier.age_fin === null || metier.age_fin === undefined
       ? fin
-      : origine.plusMois(enMois(metier.age_fin));
+      : moisDeNaissance.plusMois(enMois(metier.age_fin));
     if (ouverture.rang < debut.rang) {
       throw new Error(
         "une activité cumulée commence après le début de la carrière : elle "

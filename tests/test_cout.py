@@ -3260,6 +3260,40 @@ def test_une_cohorte_prend_le_volet_de_son_cote_de_la_bascule():
     assert seul.volet(-2) is reporte
 
 
+def test_une_cohorte_partie_avant_la_bascule_recoit_le_scenario_4():
+    """La génération de la grille part au 1er février 2026, la cohorte née un
+    an plus tôt en février 2025 : sa proposition est le scénario 4 — ni mois
+    au taux unique, ni pilier —, et la garantie ne regarde que cette pension.
+    Jusqu'au 28 septembre 2026, elle héritait de la grille son mois de 2026
+    au taux unique et son pilier."""
+    from retraite_notionnelle.cout import VoletLiberal, _avant_la_bascule
+
+    grille = VoletLiberal(
+        annee_liquidation=2026, annee_ouverture_garantie=2026, pension=1.01,
+        ressources_garantie=1.02, cotisations={2025: 8.0, 2026: 0.7},
+        assiette={2025: 40.0, 2026: 3.3}, pilier={2026: (0.4, 0.0, 0.0, 0.4)},
+        rente_pilier=(0.02, 0.01), rente_garantie=0.01)
+    avant = _avant_la_bascule(grille, 1.0)
+    assert (avant.pension, avant.ressources_garantie, avant.rente_garantie) == (
+        1.0, 1.0, 0.0)
+    assert avant.pilier == {} and avant.rente_pilier == (0.0, 0.0)
+    assert (avant.annee_liquidation, avant.annee_ouverture_garantie) == (2026, 2026)
+    assert avant.cotisations == grille.cotisations
+
+
+def test_avant_la_bascule_la_proposition_depense_ce_que_depense_le_scenario_4(
+        cout_assiette):
+    """Aucun retraité d'avant la bascule n'a de droit au taux unique : la
+    dépense contributive des deux scénarios est la même, au centime, chaque
+    année qui la précède. La garantie, financée par l'impôt, est à part."""
+    bascule = Parametres().annee_bascule
+    avant = [ligne for ligne in cout_assiette.solde.annees if ligne.annee < bascule]
+    assert avant
+    for ligne in avant:
+        assert ligne.depense_meur("notionnel_liberal") == pytest.approx(
+            ligne.depense_meur("notionnel_retroactif_employeur"), rel=1e-12), ligne.annee
+
+
 # -- la part des reportés en emploi ------------------------------------------
 
 

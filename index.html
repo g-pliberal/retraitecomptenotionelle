@@ -546,6 +546,16 @@ function calculEnClair(rang, naissance) {
     : `en ${moisEnClair(rang)}, soit ${ageEnClair(mois)}`;
 }
 
+// Le mois d'où ce champ compte ses âges. Le départ se compte du premier mois
+// où l'âge est révolu — celui qui suit la naissance, sauf pour qui est né un
+// 1er (R. 351-37) — ; un début d'activité, du mois de naissance. C'est
+// `origineDesAges` du moteur, et `Saisie.dateDe`.
+function origineDuChamp(champ, naissance, valeurNaissance) {
+  if (champ.dataset.origine !== "depart") { return naissance; }
+  const jour = /^\d{4}-\d{2}-(\d{2})$/.exec(String(valeurNaissance || ""));
+  return jour && Number(jour[1]) !== 1 ? naissance + 1 : naissance;
+}
+
 function naissanceEnClair(champ) {
   const trouve = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(champ.value || ""));
   if (!trouve) { return ""; }
@@ -566,8 +576,9 @@ function suivreLesDates(contenu) {
     const dateDite = document.getElementById("naissance-calcul");
     if (dateDite) { dateDite.textContent = naissanceEnClair(acte); }
     for (const champ of champs) {
-      champ.min = dateDeRang(naissance + Number(champ.dataset.ageMin) * 12);
-      champ.max = dateDeRang(naissance + Number(champ.dataset.ageMax) * 12);
+      const origine = origineDuChamp(champ, naissance, acte.value);
+      champ.min = dateDeRang(origine + Number(champ.dataset.ageMin) * 12);
+      champ.max = dateDeRang(origine + Number(champ.dataset.ageMax) * 12);
       const rang = rangDeDate(champ.value);
       // La ligne de métier vide n'a pas d'âge à afficher tant qu'elle est
       // vide : sa ligne de calcul n'est donc pas rendue, et naît ici le jour
@@ -582,7 +593,7 @@ function suivreLesDates(contenu) {
         champ.setAttribute("aria-describedby", calcul.id);
       }
       if (calcul) {
-        calcul.textContent = rang === null ? "" : calculEnClair(rang, naissance);
+        calcul.textContent = rang === null ? "" : calculEnClair(rang, origine);
       }
     }
   };
@@ -1339,8 +1350,9 @@ function recadrerLesDates(formulaire) {
   for (const champ of formulaire.querySelectorAll("input[type=date][data-age-min]")) {
     const rang = rangDeDate(champ.value);
     if (rang === null) { continue; }
-    const plancher = naissance + Number(champ.dataset.ageMin) * 12;
-    const plafond = naissance + Number(champ.dataset.ageMax) * 12;
+    const origine = origineDuChamp(champ, naissance, formulaire.elements.naissance.value);
+    const plancher = origine + Number(champ.dataset.ageMin) * 12;
+    const plafond = origine + Number(champ.dataset.ageMax) * 12;
     const dedans = Math.min(Math.max(rang, plancher), plafond);
     if (dedans !== rang) {
       champ.value = dateDeRang(dedans);

@@ -296,10 +296,12 @@ def _notre_calcul_fonction_publique(simulateur: Simulateur, profil: dict
         )
         for annee in range(profil["debut"], profil["liquidation"])
     ]
+    # OpenFisca date la naissance et le départ au 1er janvier : le témoin naît
+    # un 1er, et part le jour même où il a l'âge, comme lui.
     carriere = Carriere(
         annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
         age_liquidation=float(profil["liquidation"] - profil["naissance"]),
-        identifiant=profil["code"],
+        identifiant=profil["code"], jour_naissance=1,
     )
     scenario = simulateur.scenario_actuel
     resultat = scenario.calculer(carriere)
@@ -385,13 +387,14 @@ def test_la_decote_de_la_pension_civile_se_lit_a_l_annee_d_ouverture_du_droit(
 #: Profils où OpenFisca sert la surcote au taux de l'année du départ à tous
 #: les trimestres, quand l'article L. 14 III donne à chacun le taux en vigueur
 #: quand il a été accompli — 0,75 % jusqu'en 2008, 1,25 % depuis (LFSS 2009).
-#: Né en janvier 1948, à l'âge légal en janvier 2008, parti en janvier 2011 :
-#: onze trimestres de durée depuis le premier du mois qui suit l'âge légal,
-#: trois accomplis en 2008 à 0,75 % et huit en 2009 et 2010 à 1,25 % ;
-#: OpenFisca en compte douze, tous à 1,25 %, en datant l'âge au premier
-#: janvier. Le test vérifie que chacun rend exactement ce que SA règle
-#: commande.
-SURCOTE_CIVILE_DATEE = {"surcote_1948": ((3, 0.0075), (8, 0.0125))}
+#: Né le 1er janvier 1948, à l'âge légal le 1er janvier 2008, parti le 1er
+#: janvier 2011 : douze trimestres de durée depuis l'âge légal, quatre
+#: accomplis en 2008 à 0,75 % et huit en 2009 et 2010 à 1,25 % ; OpenFisca en
+#: compte douze aussi, tous à 1,25 %. Jusqu'au 28 septembre 2026, le modèle,
+#: qui ne connaissait pas le jour, ouvrait la période au mois suivant et n'en
+#: comptait que onze. Le test vérifie que chacun rend exactement ce que SA
+#: règle commande.
+SURCOTE_CIVILE_DATEE = {"surcote_1948": ((4, 0.0075), (8, 0.0125))}
 
 
 def _coefficient_surcote_civile(code: str, eux: dict) -> tuple[float, float]:
@@ -1494,6 +1497,12 @@ def _mois(texte: str):
     return DateMois(int(annee), int(mois))
 
 
+def _naissance(texte: str):
+    """Le mois de naissance d'un témoin, et son jour s'il le dit : « 1964-05-16 »
+    le déclare, « 1964-05 » le laisse à la présomption ``jour_de_naissance``."""
+    return _mois(texte[:7]), (int(texte[8:10]) if len(texte) > 7 else None)
+
+
 def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int = 0,
                       sans_enfants: bool = False):
     """La carrière que l'exemple décrit, liquidée au mois voulu.
@@ -1509,14 +1518,22 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
     l'emploie fixe son ``age_debut`` — sans quoi les deux parcours ne
     partiraient pas du même point.
     """
+    from retraite_notionnelle import chronologie
+    from retraite_notionnelle.calendrier import origine_des_ages
+
     c = exemple["carriere"]
-    naissance = _mois(c["naissance"])
+    naissance, jour = _naissance(c["naissance"])
     liquidation = _mois(c["liquidation"]).plus_mois(decalage_mois)
-    age = (liquidation.rang - naissance.rang) / 12.0
+    # L'âge au départ se compte depuis le mois d'où les âges se comptent, que
+    # le jour déclaré ou présumé désigne : c'est la date d'effet qui est
+    # publiée, et la carrière doit y retomber.
+    origine = origine_des_ages(naissance, jour if jour is not None
+                               else chronologie.valeur("jour_de_naissance"))
+    age = (liquidation.rang - origine.rang) / 12.0
     communs = dict(
         annee_naissance=naissance.annee, sexe=c.get("sexe", "H"),
         affiliation=c["affiliation"], age_liquidation=age,
-        mois_naissance=naissance.mois,
+        mois_naissance=naissance.mois, jour_naissance=jour,
         niveau_salaire=float(c.get("niveau_salaire", 1.0)),
         profil_carriere=c.get("profil_carriere", "ascendant"),
         nombre_enfants=0 if sans_enfants else int(c.get("nombre_enfants", 0)),
@@ -1567,6 +1584,11 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         atteint = carriere.date_naissance.plus_mois(
             en_mois(ouvrir.age_ouverture_droit(actuel, carriere)))
         return f"{atteint.annee}-{atteint.mois:02d}"
+    if cle == "date_effet_au_plus_tot":
+        # Le premier jour d'un mois où l'âge légal est atteint : celui qui
+        # suit l'anniversaire, ou celui-ci pour qui est né un 1er (R. 351-37).
+        effet = carriere.date_de_l_age(ouvrir.age_ouverture_droit(actuel, carriere))
+        return f"{effet.annee}-{effet.mois:02d}"
     if cle == "trimestres_de_majoration_enfants":
         # La caisse publie le nombre de trimestres qu'elle ajoute par
         # enfant ; le test le mesure en rejouant la MÊME carrière sans
@@ -1667,7 +1689,7 @@ def _concorde(cle: str, mesure, valeur) -> bool:
     """La mesure du modèle vaut-elle la valeur écrite au témoin ?"""
     if cle in ("liquidation_ouverte", "non_ouverte_un_trimestre_plus_tot"):
         return mesure is bool(valeur)
-    if cle == "date_age_legal":
+    if cle in ("date_age_legal", "date_effet_au_plus_tot"):
         return mesure == f"{_mois(valeur).annee}-{_mois(valeur).mois:02d}"
     if isinstance(mesure, str) and cle in TOLERANCES:
         return False  # la mesure dit pourquoi elle n'en est pas une

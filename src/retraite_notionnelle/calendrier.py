@@ -99,14 +99,29 @@ def formater_age(age: float) -> str:
 
 def origine_des_ages(naissance: DateMois, jour: int) -> DateMois:
     """Le mois d'où les âges se comptent, pour qui est né ce mois-là, ce
-    jour-là.
+    jour-là : celui de la naissance pour qui est né un 1er, le suivant pour
+    les autres.
 
-    Les âges du modèle sont des âges au premier jour d'un mois : un départ à
-    soixante-quatre ans est le premier mois où l'assuré les a, et l'âge à une
-    date est le nombre de mois écoulés depuis ce mois-ci. Le jour de naissance
-    n'y entre pas encore : c'est le mois de naissance.
+    La pension prend effet le premier jour d'un mois, qui ne peut précéder
+    l'âge qui l'ouvre (R. 351-37 du code de la sécurité sociale, qui ne la
+    laissait pas « antérieure [...] au soixantième anniversaire » jusqu'en
+    2004 ; L. 90 du code des pensions la fait due au premier du mois qui suit
+    la cessation d'activité) : né le 16 mai 1964, l'assuré atteint l'âge
+    légal de 62 ans et 9 mois le 16 février 2027, et sa retraite prend effet
+    au 1er mars 2027 au plus tôt (circulaire Cnav n° 2026-07, point 1.1) ; né
+    un 1er, il l'a le jour même.
+
+    Les âges du modèle sont donc des âges au premier jour d'un mois, en mois
+    révolus : né le 15 mars, on a, à tout 1er du mois, l'âge de qui est né le
+    1er avril. Le mois que rend cette fonction est celui d'où un âge devient
+    une date de départ, ou d'ouverture d'un décompte, et d'où une date
+    redevient un âge. Un métier, lui, commence dans le mois où l'on a l'âge
+    dit, compté du mois de naissance : on commence à travailler le jour qu'on
+    veut. La génération ne se lit pas d'ici non plus : la loi coupe au
+    1er juillet 1951 et au 1er septembre 1961 des assurés nés avant ou après,
+    au vrai mois.
     """
-    return naissance
+    return naissance if jour == 1 else naissance.plus_mois(1)
 
 
 def mois_travailles(annee: int, debut: DateMois, fin: DateMois) -> int:

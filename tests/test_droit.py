@@ -112,7 +112,7 @@ def test_compter_donne_les_trimestres_des_enfants_au_regime_que_la_priorite_desi
     assert (enfants.regimes, enfants.dispositifs, enfants.trimestres) == (
         ["regime_general"], ["mda"], 24)
     assert [(e.enfant, e.naissance, e.version) for e in enfants.enfants] == [
-        (f"enfant_{rang}", "2000-01-01", "mda_2010_nes_avant") for rang in (1, 2, 3)]
+        (f"enfant_{rang}", "2000-01-15", "mda_2010_nes_avant") for rang in (1, 2, 3)]
     assert releve_.durees.hors_annee["assurance"] == {"regime_general": 24}
     lignes = [ligne for ligne in releve_.lignes() if ligne["id"].startswith("enfants_")]
     assert [ligne["fait"] for ligne in lignes] == [

@@ -43,11 +43,11 @@ def simulateur() -> Simulateur:
 
 def _calculer(simulateur: Simulateur, metiers: list[Metier], naissance: int,
               liquidation: float, mois: int = 1, sexe: str = "H",
-              part_primes: float = 0.15):
+              part_primes: float = 0.15, jour: int | None = None):
     carriere = Carriere.depuis_parcours(
         annee_naissance=naissance, sexe=sexe, metiers=metiers,
         age_liquidation=liquidation, macro=simulateur.macro,
-        mois_naissance=mois, part_primes=part_primes,
+        mois_naissance=mois, part_primes=part_primes, jour_naissance=jour,
     )
     resultat = simulateur.scenario_actuel.calculer(carriere)
     return carriere, resultat, {p.regime: p for p in resultat.pensions_par_regime}
@@ -88,16 +88,16 @@ def test_le_bareme_de_2026_est_celui_que_le_sre_publie(simulateur):
 def test_une_courte_carriere_publique_recoit_le_minimum_du_d(simulateur):
     """Treize ans de fonction publique après une carrière privée.
 
-    Née en 1959, elle a 167 trimestres à réunir et liquide à 67 ans en 2026,
-    au taux plein par l'âge. Son minimum est de 52/167 de la référence,
-    425,45 € par mois ; le modèle lui servait 680,90 €, le montant de
-    l'invalidité.
+    Née le 1er janvier 1959, elle a 167 trimestres à réunir et liquide à
+    67 ans, au 1er janvier 2026, au taux plein par l'âge. Son minimum est de
+    52/167 de la référence, 425,45 € par mois ; le modèle lui servait
+    680,90 €, le montant de l'invalidité.
     """
     _, resultat, pensions = _calculer(
         simulateur,
         [Metier("salarie_prive_non_cadre", 30.0, 0.3),
          Metier("fonctionnaire_etat", 54.0, 0.5)],
-        naissance=1959, liquidation=67.0, sexe="F",
+        naissance=1959, liquidation=67.0, sexe="F", jour=1,
     )
     etat = pensions["fonction_publique_etat"]
     assert "porté au minimum garanti" in etat.detail
@@ -220,9 +220,10 @@ def test_un_actif_ne_en_1969_surcote_des_62_ans_et_9_mois(simulateur):
         simulateur, [Metier("fonctionnaire_etat_actif", 21.0, 1.0)],
         naissance=1969, mois=6, liquidation=64.0, part_primes=0.2)
     assert resultat.trimestres_requis == 170
-    # 171 trimestres à 64 ans : un seul au-delà de la durée, accompli après
-    # 62 ans et 9 mois. Compté depuis 64 ans, il ne valait rien.
+    # Né en juin 1969 — le 15, faute de jour dit —, il part au 1er juillet
+    # 2033 avec 172 trimestres : deux au-delà de la durée, accomplis après
+    # 62 ans et 9 mois. Comptés depuis 64 ans, ils ne valaient rien.
     supplementaires = resultat.trimestres_valides - 170
-    assert supplementaires == 1
+    assert supplementaires == 2
     assert resultat.taux_liquidation == pytest.approx(
         0.75 * (1 + 0.0125 * supplementaires))

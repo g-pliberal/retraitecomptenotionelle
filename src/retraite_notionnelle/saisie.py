@@ -612,6 +612,7 @@ class Saisie:
                 "naissance_mois") not in (None, ""):
             jour_naissance = chronologie.valeur("jour_de_naissance", presomptions)
             jour_presume = True
+        mois_de_naissance = DateMois(annee_naissance, mois_naissance)
         saisie = cls(
             unite_revenu=unite,
             montants=_parmi(parametres, "montants", MODES_MONTANT,
@@ -631,13 +632,11 @@ class Saisie:
             naissance_jour_presume=jour_presume,
             sexe="F" if parametres.get("sexe") == "F" else "H",
             statut=statut,
-            debut=_age_saisi(parametres, "debut", defauts.debut,
-                             annee_naissance, mois_naissance, jour_naissance),
+            debut=_age_saisi(parametres, "debut", defauts.debut, mois_de_naissance),
             liquidation=_age_saisi(parametres, "liquidation", defauts.liquidation,
-                                   annee_naissance, mois_naissance, jour_naissance),
+                                   origine_des_ages(mois_de_naissance, jour_naissance)),
             salaire=salaire,
-            metiers=_metiers_saisis(parametres, salaire, annee_naissance,
-                                    mois_naissance, jour_naissance, tolerante),
+            metiers=_metiers_saisis(parametres, salaire, mois_de_naissance, tolerante),
             releve=(parametres.get("releve") or "").strip(),
             profil=_parmi(parametres, "profil", PROFILS, defauts.profil),
             primes=_reel(parametres, "primes", defauts.primes),
@@ -722,9 +721,10 @@ class Saisie:
             raise ErreurSaisie(
                 "Départ à la retraite : le modèle l'accepte de "
                 f"{AGE_LIQUIDATION_MINIMAL} à {AGE_LIQUIDATION_MAXIMAL} ans, soit "
-                f"{self.fenetre(AGE_LIQUIDATION_MINIMAL, AGE_LIQUIDATION_MAXIMAL)}."
+                f"{self.fenetre(AGE_LIQUIDATION_MINIMAL, AGE_LIQUIDATION_MAXIMAL, True)}."
             )
-        if self.liquidation <= self.debut:
+        depart = self.date_de(self.liquidation, depart=True)
+        if depart.rang <= self.date_de(self.debut).rang:
             raise ErreurSaisie(
                 "Le départ à la retraite doit suivre le début d'activité, "
                 f"fixé en {self.date_de(self.debut)}."
@@ -779,10 +779,10 @@ class Saisie:
                     f"Métier n° {rang} : il doit commencer après le précédent, "
                     f"qui commence en {self.date_de(precedent)}."
                 )
-            if metier.debut >= self.liquidation:
+            if self.date_de(metier.debut).rang >= depart.rang:
                 raise ErreurSaisie(
                     f"Métier n° {rang} : il doit commencer avant le départ à la "
-                    f"retraite, fixé en {self.date_de(self.liquidation)}."
+                    f"retraite, fixé en {depart}."
                 )
             # Une période sans emploi ne porte pas de revenu : elle hérite de
             # celui d'avant, qui n'est pas ce qu'elle paie — elle ne paie
@@ -813,15 +813,18 @@ class Saisie:
                 f"Métier n° {rang} : une activité qui s'ajoute commence pendant "
                 f"la carrière, qui commence en {self.date_de(self.debut)}."
             )
-        if metier.debut >= self.liquidation:
+        depart = self.date_de(self.liquidation, depart=True)
+        if self.date_de(metier.debut).rang >= depart.rang:
             raise ErreurSaisie(
                 f"Métier n° {rang} : il doit commencer avant le départ à la "
-                f"retraite, fixé en {self.date_de(self.liquidation)}."
+                f"retraite, fixé en {depart}."
             )
-        if metier.fin is not None and not metier.debut < metier.fin <= self.liquidation:
+        if metier.fin is not None and not (
+                metier.debut < metier.fin
+                and self.date_de(metier.fin).rang <= depart.rang):
             raise ErreurSaisie(
                 f"Métier n° {rang} : il doit s'arrêter après avoir commencé, et "
-                f"au plus tard au départ, fixé en {self.date_de(self.liquidation)}."
+                f"au plus tard au départ, fixé en {depart}."
             )
         self._verifier_revenu(metier.salaire, rang=rang)
 
@@ -960,7 +963,7 @@ class Saisie:
         une à une, et c'est l'outil le plus fin des deux.
         """
         annees: dict[int, str] = {}
-        debut, fin = self.date_de(self.debut), self.date_de(self.liquidation)
+        debut, fin = self.date_de(self.debut), self.date_de(self.liquidation, depart=True)
         lignes = self.lignes_carriere
         for rang, ligne in enumerate(lignes):
             if not ligne.sans_emploi:
@@ -1009,11 +1012,21 @@ class Saisie:
     # que le lecteur connaît sans la calculer. Le modèle, lui, continue de
     # recevoir des âges : la conversion tient dans les méthodes qui suivent, et
     # nulle part ailleurs.
+    #
+    # DEUX ORIGINES, comme dans le moteur. Un début ou une fin d'activité tombe
+    # dans le mois où l'âge est atteint, compté du mois de naissance. Le départ
+    # tombe au premier mois où l'âge est révolu (``depart=True``), compté du
+    # mois que le jour désigne : né le 15 mars 1962, on part à soixante-quatre
+    # ans au 1er avril 2026 (R. 351-37). Un âge de départ et un âge de début
+    # ne se comparent donc qu'en dates.
 
-    def date_de(self, age: float) -> DateMois:
-        """Le mois où la carrière atteint cet âge, compté comme le moteur le
-        compte (:attr:`origine_des_ages`)."""
-        return self.origine_des_ages.plus_mois(en_mois(age))
+    def date_de(self, age: float, depart: bool = False) -> DateMois:
+        """Le mois où la carrière atteint cet âge : celui d'un début
+        d'activité, ou, avec ``depart``, celui du départ, comptés comme le
+        moteur les compte."""
+        origine = (self.origine_des_ages if depart
+                   else DateMois(self.naissance, self.naissance_mois))
+        return origine.plus_mois(en_mois(age))
 
     @property
     def jour_declare(self) -> int | None:
@@ -1028,23 +1041,25 @@ class Saisie:
         return origine_des_ages(DateMois(self.naissance, self.naissance_mois),
                                 self.naissance_jour)
 
-    def mois_de(self, age: float) -> str:
+    def mois_de(self, age: float, depart: bool = False) -> str:
         """Le même mois, tel que l'adresse le porte : « 1996-09 »."""
-        date = self.date_de(age)
+        date = self.date_de(age, depart)
         return f"{date.annee:04d}-{date.mois:02d}"
 
-    def jour_de(self, age: float) -> str:
+    def jour_de(self, age: float, depart: bool = False) -> str:
         """Le même mois au premier jour : ce qu'un champ date, lui, exige."""
-        return f"{self.mois_de(age)}-01"
+        return f"{self.mois_de(age, depart)}-01"
 
-    def fenetre(self, age_minimal: float, age_maximal: float) -> str:
+    def fenetre(self, age_minimal: float, age_maximal: float,
+                depart: bool = False) -> str:
         """« de septembre 1989 à septembre 2015 » : deux bornes d'âge, en dates.
 
         Un refus qui ne parlerait que d'âges laisserait au lecteur la
         soustraction à faire, alors que le champ qu'il vient de remplir porte
         une date.
         """
-        return f"de {self.date_de(age_minimal)} à {self.date_de(age_maximal)}"
+        return (f"de {self.date_de(age_minimal, depart)} "
+                f"à {self.date_de(age_maximal, depart)}")
 
     @property
     def naissance_iso(self) -> str:
@@ -1063,15 +1078,18 @@ class Saisie:
 
     @property
     def naissance_en_clair(self) -> str:
-        """« le 15 mars 1962 » : la date de naissance, sans ordre à deviner."""
-        return f"le {_jour_en_clair(self.naissance_jour)} " \
-               f"{NOMS_DE_MOIS[self.naissance_mois - 1]} {self.naissance}"
+        """« le 15 mars 1962 » : la date de naissance, sans ordre à deviner ;
+        le jour présumé le dit, quand l'adresse ne le donnait pas."""
+        return (f"le {_jour_en_clair(self.naissance_jour)} "
+                f"{NOMS_DE_MOIS[self.naissance_mois - 1]} {self.naissance}"
+                + (" — jour présumé : l'adresse ne le disait pas"
+                   if self.naissance_jour_presume else ""))
 
-    def calcul_de(self, age: float) -> str:
+    def calcul_de(self, age: float, depart: bool = False) -> str:
         """« en septembre 1984, soit 22 ans et 6 mois » : une date de carrière."""
         if age < 0:
-            return f"en {self.date_de(age)}, avant la date de naissance"
-        return f"en {self.date_de(age)}, soit {_age(age)}"
+            return f"en {self.date_de(age, depart)}, avant la date de naissance"
+        return f"en {self.date_de(age, depart)}, soit {_age(age)}"
 
     def parametres(self, base: Parametres) -> Parametres:
         return base.avec(
@@ -1212,7 +1230,7 @@ class Saisie:
         sur la saisie, avec le vocabulaire du formulaire, et non remonter du
         moteur sous la forme d'une exception.
         """
-        return self.date_de(self.liquidation)
+        return self.date_de(self.liquidation, depart=True)
 
     def releve_analyse(
         self, motifs_connus: Iterable[str] | None = None,
@@ -1355,10 +1373,10 @@ class Saisie:
                 raise ErreurSaisie(
                     f"Naissance d'un enfant « {valeur} » : elle précède la vôtre."
                 )
-            if jour >= self.jour_de(self.liquidation):
+            if jour >= self.jour_de(self.liquidation, depart=True):
                 raise ErreurSaisie(
                     f"Naissance d'un enfant « {valeur} » : elle suit le départ à la "
-                    f"retraite, fixé en {self.date_de(self.liquidation)}."
+                    f"retraite, fixé en {self.date_de(self.liquidation, depart=True)}."
                 )
 
     def conjoint_declare(self) -> dict | None:
@@ -1427,7 +1445,7 @@ class Saisie:
             # refaire l'addition. Une adresse d'ancienne forme reste lue — les
             # âges y sont reconnus tels quels, voir ``_age_saisi``.
             "debut": self.mois_de(self.debut),
-            "liquidation": self.mois_de(self.liquidation),
+            "liquidation": self.mois_de(self.liquidation, depart=True),
             "salaire": _nombre(self.salaire), "profil": self.profil,
             "releve": self.releve,
             "primes": _nombre(self.primes), "enfants": self.enfants,
@@ -1483,7 +1501,7 @@ class Saisie:
 
 
 def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
-                    naissance: int, naissance_mois: int, naissance_jour: int,
+                    mois_de_naissance: DateMois,
                     tolerante: bool = False) -> list[MetierSaisi]:
     """Les métiers qui suivent le premier, lus dans « metier2_… », « metier3_… ».
 
@@ -1545,14 +1563,13 @@ def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
             if not cumul:
                 salaire_precedent = salaire
         metiers.append(MetierSaisi(
-            debut=_age_saisi(parametres, f"metier{rang}_debut", 0.0,
-                             naissance, naissance_mois, naissance_jour),
+            debut=_age_saisi(parametres, f"metier{rang}_debut", 0.0, mois_de_naissance),
             statut=statut,
             salaire=salaire,
             sans_emploi=sans_emploi,
             cumul=bool(cumul),
-            fin=(_age_saisi(parametres, f"metier{rang}_fin", 0.0,
-                            naissance, naissance_mois, naissance_jour) if fin else None),
+            fin=(_age_saisi(parametres, f"metier{rang}_fin", 0.0, mois_de_naissance)
+                 if fin else None),
         ))
     return metiers
 
@@ -1648,15 +1665,17 @@ def _date_saisie(parametres: dict[str, str],
 
 
 def _age_saisi(parametres: dict[str, str], nom: str, defaut: float,
-               naissance: int, naissance_mois: int, naissance_jour: int) -> float:
+               origine: DateMois) -> float:
     """L'âge qu'une date de carrière vaut, rapportée à la naissance.
 
     Le formulaire demande une date — celle du premier mois cotisé, celle du
     départ —, parce que c'est ce dont on se souvient ; le modèle, lui, ne
-    connaît que des âges. La soustraction se fait ici, en mois, depuis le mois
-    d'où les âges se comptent (:func:`origine_des_ages`), et le résultat est
-    l'âge en années décimales que le moteur attend : le moteur, qui compte de
-    même, retombe sur la date saisie.
+    connaît que des âges. La soustraction se fait ici, en mois, depuis
+    ``origine`` — le mois de naissance pour un début ou une fin d'activité,
+    celui d'où les âges de départ se comptent pour le départ
+    (:func:`origine_des_ages`) —, et le résultat est l'âge en années décimales
+    que le moteur attend : le moteur, qui compte de même, retombe sur la date
+    saisie.
 
     Les adresses d'avant le calendrier continuent d'être lues telles quelles :
     ``liquidation=64`` et ``liquidation_mois=7`` valent soixante-quatre ans et
@@ -1664,10 +1683,7 @@ def _age_saisi(parametres: dict[str, str], nom: str, defaut: float,
     """
     date = _date_saisie(parametres, nom)
     if date is not None:
-        rang = (DateMois(date[0], date[1]).rang
-                - origine_des_ages(DateMois(naissance, naissance_mois),
-                                   naissance_jour).rang)
-        return rang / MOIS_PAR_AN
+        return (DateMois(date[0], date[1]).rang - origine.rang) / MOIS_PAR_AN
     annees = _reel(parametres, nom, defaut)
     cle = f"{nom}_mois"
     if parametres.get(cle) in (None, ""):

@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.18, du 28 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.19, du 28 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -746,6 +746,10 @@ Le relevé des droits et le résultat le signalent.
   bien que les résultats ne bougent pas tant que rien de nouveau n'est
   saisi :
   - enfants nés aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.naissance_des_enfants.valeur)-->30<!--/--> ans de l'assuré ;
+  - assuré né le <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.jour_de_naissance.valeur)-->15<!--/--> de son mois, quand le jour n'est pas dit — la seule qui
+    n'a pas repris la valeur d'avant elle, le 1er : le propriétaire l'a
+    choisie, comme la plus proche de la réalité, et elle a déplacé les
+    résultats de qui ne dit pas son jour (version 5.19) ;
   - radiation au 1er janvier suivant ;
   - agent présumé en activité ;
   - pas d'accord des parents ;
@@ -2403,6 +2407,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.19**, 28 septembre 2026 : la présomption du jour de naissance entre au § 5.6. La pension prend effet au premier du mois qui suit l'anniversaire, sauf pour qui est né un 1er, et le jour qu'on ne dit pas est le 15, que le propriétaire a choisi comme le plus proche de la réalité : c'est la seule présomption qui ne reprend pas la valeur d'avant elle, et son changement de résultats a son commit et le diff de ses témoins (action 132).
 
 - **5.18**, 28 septembre 2026 : le deuxième domaine, la réversion, clos (§ 11). Neuf exemples publiés la rejouent, dont quatre en écart connu ; le formulaire demande le conjoint dans un bloc facultatif, et la page montre sa réversion pour un décès supposé juste après le départ, une présomption de plus (§ 5.6), que l'échéancier applique hors du journal ; la page Coût ne bouge pas, la proposition avait décidé (« ni réversion ») ; la référence de conservation est refigée (§ 12).
 

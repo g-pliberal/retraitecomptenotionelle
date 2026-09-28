@@ -148,87 +148,42 @@ test refuse une action close ici, ou ouverte là-bas.
 
 ## Les actions à faire
 
-### 132. La naissance au jour : l'âge se compte du 1er du mois qui suit l'anniversaire, sauf pour qui est né un 1er — `à faire`
+### 134. Les lignes d'un mois : ce que le pas annuel fait d'un départ au 1er février — `à faire`
 
-**Demande**, le 27 septembre 2026 : « On fait tout au mois pour l'instant.
-Est-ce qu'il serait logique de descendre au jour ? […] Est-ce que ce serait
-dur à réaliser ? », puis, la réponse lue : « Ouvre uniquement l'action. On
-traitera le sujet plus tard. » L'action attend donc que le propriétaire la
-lance. Rien n'est commencé : ni code, ni fiche, ni témoin.
+**D'où elle vient.** L'action 132 a fait partir la pension au premier du
+mois qui suit l'anniversaire, et présumé le 15 le jour qu'on ne dit pas. Un
+cas type né en janvier part donc au 1er février, et l'année de son départ
+compte un mois. Le moteur, dont le pas est l'année, traite parfois cette
+ligne d'un mois comme une année. Rien de ceci n'est né de l'action : tout
+départ hors de janvier le subissait déjà ; la convention du 1er le cachait
+aux cas types, qui naissent en janvier.
 
-**Ce qui descend au jour, et ce qui reste au mois.** Le pas du moteur est
-l'année, parce que les données le sont ; les dates sont au mois
-(`calendrier.py`) ; la chronologie est au jour depuis la phase 3 (contrat
-C.1), mais remplie au 1er du mois (`precision: mois`) et relue au mois
-(`chronologie.mois_de`). Le pas du moteur ne descend pas : le récit du
-passage de l'année au mois (`docs/archives/limites.md`) a établi qu'un pas
-plus fin « redonne exactement le total annuel ». Le jour qui compte pour
-tous les assurés est celui de leur naissance.
+**Ce qui est à regarder**, chacun à sa fiche :
 
-**L'écart.** La caisse fait partir la pension le 1er du mois qui suit celui
-où l'âge est atteint, sauf pour qui est né un 1er (R. 351-37 CSS ; fiche
-`date_effet_mois_suivant`, `approchee` ; `docs/limites.md`, « La date
-d'effet est le mois de l'anniversaire »). Le modèle compte les âges du 1er
-du mois de naissance : à date de départ égale, il donne un mois d'âge de
-trop à qui est né après le 1er. L'exemple 1 de la circulaire Cnav 2026-07
-le montre : né le 16/05/1964, départ au plus tôt le 01/03/2027 ; le modèle
-tient l'âge légal pour atteint en février 2027. Le site demande pourtant le
-jour, et l'adresse le porte (`naissance=1975-03-15`), mais il « n'entre dans
-aucun calcul » (`Saisie.naissance_jour`). La surcote de la fonction publique
-suppose, elle, une naissance après le 1er (`surcote_fonction_publique`) :
-deux conventions contraires, et l'exemple 3 de la CNRACL, dont l'agent est
-né un 1er janvier, n'est pas rejoué (`docs/exploration_sources.md`).
+1. Le traitement de référence de la fonction publique, lu sur la ligne de
+   l'année du départ dès qu'elle compte un mois : partir le 1er février
+   plutôt que le 1er janvier 2044 le relève d'une année de croissance, soit
+   quatre points de pension pour le militaire de la génération 2000, et
+   partir le 1er février 2020 l'abaisse de 2,65 %, le salaire moyen ayant
+   baissé cette année-là (témoin `reversion_fonctionnaire`). Le droit lit le
+   traitement des six derniers mois.
+2. Les points de la RCO : une ligne d'un mois reçoit le minimum annuel de
+   l'assiette. Lire la règle de l'année de la cessation (D. 732-155 et la
+   MSA).
+3. La contiguïté d'un relevé au départ (`Carriere.prolongee`) : un relevé qui
+   s'arrête à l'année d'avant n'est contigu que si le départ tombe en
+   janvier, et la proposition ne prolonge pas les autres — le témoin
+   `releve_deux_statuts` y a perdu 2,31 % au scénario 6.
+4. La fenêtre de la surcote parentale, datée au mois : elle chevauche l'année
+   du départ, qui ne valide que ses trimestres civils écoulés, et perd un
+   trimestre deux mois de naissance sur trois. Chercher la circulaire qui
+   l'applique ; aucun texte lu ne la découpe.
+5. Le plafond aux trimestres civils écoulés que le moteur oppose à l'année
+   d'entrée, que R. 351-9 n'écrit pas.
 
-**Ce que ce mois déplace**, mesuré le même jour sur les 535 témoins de main
-à 81192a3, sans rien modifier : un mois d'âge de moins à date de départ
-égale, la génération gardée au vrai mois — ce que le jour changerait à qui
-est né après le 1er.
-
-| Scénario | Témoins qui bougent | Effet |
-|---|---|---|
-| 1 | 70 sur 529 | −0,83 % en médiane, 32 au-delà de −1 %, jusqu'à −3,25 % pour des professions libérales parties à un âge rond ; 7 hausses, de +0,25 % au plus |
-| 2 et 4 | 531 sur 531 | −0,29 % en médiane, le diviseur ; de −0,39 à −0,15 % |
-| 3 et 5 | 275 sur 531 | −0,29 % en médiane, jusqu'à −2,53 % ; 30 hausses |
-| 6 | 527 sur 531 | −0,28 % en médiane, de −0,39 à +0,36 % ; 203 hausses |
-
-**Ce que le propriétaire tranche d'abord** : ce que le modèle présume quand
-le jour n'est pas connu — relevé déposé, cas types, page Coût, adresses
-d'avant. C'est une présomption du § 5.6, à écrire au vocabulaire avec sa
-valeur et sa raison. Garder le 1er ne déplace que les cinq témoins qui
-déclarent un 15 ; présumer une naissance après le 1er est juste pour
-vingt-neuf naissances sur trente environ, et déplace les témoins comme
-ci-dessus.
-
-**Ce qu'il y aura à faire**, une fois l'action lancée :
-
-1. La veille du scénario 1 (`python scripts/veille_droit.py`), et R. 351-37
-   lu sur Légifrance : la fiche le range encore dans `textes_a_rattacher`,
-   sans identifiant ; la circulaire 2026-07 est déjà lue.
-2. Lire la naissance de deux façons. La génération reste au vrai mois : les
-   coupures du 1er juillet 1951 et du 1er septembre 1961, le trimestre de
-   naissance de la carrière longue (`scenarios/actuel.py`). Les âges se
-   comptent du mois qui suit quand le jour n'est pas le 1er. Le moteur reste
-   au mois : né le 15 mars, on a, à tout 1er du mois, l'âge en mois révolus
-   de qui est né le 1er avril. Le travail est le tri, lecture par lecture :
-   de l'ordre de 150 lectures de la naissance en Python, dont 46 dans
-   `carriere.py`, et de 130 dans le portage.
-3. La chronologie pose le jour déclaré (`precision: jour`), et la saisie en
-   tire l'âge (`_age_saisi`, et `ageSaisi` dans le portage).
-4. Des témoins nés en milieu de mois, et en d'autres mois que janvier : 520
-   des 535 naissent en janvier et 529 ne disent pas leur jour, si bien
-   qu'une lecture mal triée ne ferait aucun bruit. Les trois exemples de la
-   circulaire 2026-07, nés le 16/05/1964, le 24/02/1965 et le 08/07/1965,
-   deviennent des tests de la date d'effet ; l'exemple 3 de la CNRACL entre
-   au témoin.
-5. Le changement de résultats dans un commit à part, avec le diff de ses
-   témoins (`docs/architecture.md`, § 12) ; la fiche passe `conforme`,
-   `docs/limites.md` suit, et le journal de veille dit ce qui a été lu.
-
-**Hors de l'action.** Le moteur au pas du jour : aucune source ne porte un
-salaire, un plafond ou un quotient de mortalité au jour. Les durées que
-quelques régimes comptent au jour — l'Ircantec en trimestres de 90 jours,
-la CRPN en jours divisés par 360, l'ENIM au semestre — restent à leurs
-fiches ; celle de l'Ircantec est à l'action 131.
+**Ce que le propriétaire tranche** : s'il faut les corriger une à une, ou
+faire naître les cas types un autre jour que le 15 de janvier. Rien n'est
+commencé.
 
 ---
 

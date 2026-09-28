@@ -477,8 +477,9 @@ class Carriere:
     #: Mois de naissance, 1 à 12. Le droit coupe deux générations en cours
     #: d'année — au 1er juillet 1951 et au 1er septembre 1961 — et l'âge à la
     #: liquidation ne se lit qu'à partir de lui. Janvier par défaut : c'est la
-    #: convention qui laisse l'âge entier tomber sur le 1er janvier, et donc
-    #: l'année civile coïncider avec l'année de carrière.
+    #: convention qui fait commencer l'année de carrière avec l'année civile.
+    #: L'âge entier ne tombe au 1er janvier que pour qui est né le 1er : sans
+    #: jour dit, présumé le 15, on part au 1er février (R. 351-37).
     mois_naissance: int = 1
     #: Âge de liquidation effectif (réel pour un retraité, souhaité pour un actif).
     age_liquidation: float | None = None
@@ -571,11 +572,15 @@ class Carriere:
     def origine_des_ages(self) -> DateMois:
         """Le mois d'où les âges se comptent (:func:`origine_des_ages`).
 
-        **Deux lectures de la naissance, et il ne faut pas les confondre.** La
-        GÉNÉRATION se lit au vrai mois (:attr:`generation`) : la loi coupe au
-        1er juillet 1951 et au 1er septembre 1961 des assurés nés avant ou
-        après. L'ÂGE se compte d'ici : une date d'effet, un décompte de
-        trimestres après un âge, l'âge à une date.
+        **Trois lectures de la naissance, et il ne faut pas les confondre.**
+        La GÉNÉRATION se lit au vrai mois (:attr:`generation`) : la loi coupe
+        au 1er juillet 1951 et au 1er septembre 1961 des assurés nés avant ou
+        après. L'ANNIVERSAIRE tombe dans le mois de naissance
+        (:meth:`mois_de_l_anniversaire`) : c'est lui qu'une coupure au premier
+        d'un mois départage, et c'est dans ce mois qu'un métier commence à
+        l'âge dit. L'ÂGE RÉVOLU se compte d'ici (:meth:`date_de_l_age`,
+        :meth:`age_au`) : une date d'effet, un décompte de trimestres après un
+        âge, l'âge à une date.
         """
         return origine_des_ages(self.date_naissance, self.jour_de_naissance)
 
@@ -590,7 +595,8 @@ class Carriere:
 
         C'est lui, et non :meth:`date_de_l_age`, qui se compare à une coupure
         tombant un premier du mois — l'assuré né le 15 juin 1957 a soixante ans
-        avant le 1er juillet 2017 — et qui donne l'année où l'âge est atteint.
+        avant le 1er juillet 2017 —, qui donne l'année où l'âge est atteint, et
+        où tombe un début d'activité dit par un âge.
         """
         return self.date_naissance.plus_mois(en_mois(age))
 

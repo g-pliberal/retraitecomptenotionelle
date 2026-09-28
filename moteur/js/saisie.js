@@ -509,6 +509,7 @@ export class Saisie {
       jourNaissance = valeurPresumee("jour_de_naissance", presomptions);
       jourPresume = true;
     }
+    const moisDeNaissance = new DateMois(anneeNaissance, moisNaissance);
     const saisie = new Saisie({
       unite_revenu: unite,
       montants: parmi(parametres, "montants", MODES_MONTANT, DEFAUTS.montants),
@@ -526,13 +527,11 @@ export class Saisie {
       naissance_jour_presume: jourPresume,
       sexe: parametres.sexe === "F" ? "F" : "H",
       statut,
-      debut: ageSaisi(parametres, "debut", DEFAUTS.debut,
-        anneeNaissance, moisNaissance, jourNaissance),
+      debut: ageSaisi(parametres, "debut", DEFAUTS.debut, moisDeNaissance),
       liquidation: ageSaisi(parametres, "liquidation", DEFAUTS.liquidation,
-        anneeNaissance, moisNaissance, jourNaissance),
+        origineDesAges(moisDeNaissance, jourNaissance)),
       salaire,
-      metiers: metiersSaisis(parametres, salaire, anneeNaissance, moisNaissance,
-        jourNaissance, tolerante),
+      metiers: metiersSaisis(parametres, salaire, moisDeNaissance, tolerante),
       releve: (parametres.releve || "").trim(),
       profil: parmi(parametres, "profil", PROFILS, DEFAUTS.profil),
       primes: reel(parametres, "primes", DEFAUTS.primes),
@@ -619,10 +618,11 @@ export class Saisie {
       throw new ErreurSaisie(
         "Départ à la retraite : le modèle l'accepte de "
         + `${AGE_LIQUIDATION_MINIMAL} à ${AGE_LIQUIDATION_MAXIMAL} ans, soit `
-        + `${this.fenetre(AGE_LIQUIDATION_MINIMAL, AGE_LIQUIDATION_MAXIMAL)}.`,
+        + `${this.fenetre(AGE_LIQUIDATION_MINIMAL, AGE_LIQUIDATION_MAXIMAL, true)}.`,
       );
     }
-    if (this.liquidation <= this.debut) {
+    const depart = this.dateDe(this.liquidation, true);
+    if (depart.rang <= this.dateDe(this.debut).rang) {
       throw new ErreurSaisie(
         "Le départ à la retraite doit suivre le début d'activité, "
         + `fixé en ${this.dateDe(this.debut)}.`,
@@ -686,10 +686,10 @@ export class Saisie {
           + `commence en ${this.dateDe(precedent)}.`,
         );
       }
-      if (metier.debut >= this.liquidation) {
+      if (this.dateDe(metier.debut).rang >= depart.rang) {
         throw new ErreurSaisie(
           `Métier n° ${rang} : il doit commencer avant le départ à la retraite, `
-          + `fixé en ${this.dateDe(this.liquidation)}.`,
+          + `fixé en ${depart}.`,
         );
       }
       this.verifierRevenu(metier.salaire, rang);
@@ -717,17 +717,18 @@ export class Saisie {
         + `carrière, qui commence en ${this.dateDe(this.debut)}.`,
       );
     }
-    if (metier.debut >= this.liquidation) {
+    const depart = this.dateDe(this.liquidation, true);
+    if (this.dateDe(metier.debut).rang >= depart.rang) {
       throw new ErreurSaisie(
         `Métier n° ${rang} : il doit commencer avant le départ à la retraite, `
-        + `fixé en ${this.dateDe(this.liquidation)}.`,
+        + `fixé en ${depart}.`,
       );
     }
     if (metier.fin !== null
-        && !(metier.debut < metier.fin && metier.fin <= this.liquidation)) {
+        && !(metier.debut < metier.fin && this.dateDe(metier.fin).rang <= depart.rang)) {
       throw new ErreurSaisie(
         `Métier n° ${rang} : il doit s'arrêter après avoir commencé, et au plus `
-        + `tard au départ, fixé en ${this.dateDe(this.liquidation)}.`,
+        + `tard au départ, fixé en ${depart}.`,
       );
     }
     this.verifierRevenu(metier.salaire, rang);
@@ -879,7 +880,7 @@ export class Saisie {
   interruptionsDeCarriere(motifsConnus = null) {
     const annees = new Map();
     const debut = this.dateDe(this.debut);
-    const fin = this.dateDe(this.liquidation);
+    const fin = this.dateDe(this.liquidation, true);
     const lignes = this.lignesCarriere;
     lignes.forEach((ligne, index) => {
       if (!ligne.sans_emploi) { return; }
@@ -1075,7 +1076,7 @@ export class Saisie {
    * d'une exception.
    */
   get dateLiquidation() {
-    return this.dateDe(this.liquidation);
+    return this.dateDe(this.liquidation, true);
   }
 
   /**
@@ -1205,11 +1206,16 @@ export class Saisie {
   // nulle part ailleurs.
 
   /**
-   * Le mois où la carrière atteint cet âge, compté comme le moteur le compte
-   * ({@link origineDesAges}).
+   * Le mois où la carrière atteint cet âge : celui d'un début d'activité,
+   * compté du mois de naissance, ou, avec `depart`, celui du départ, compté du
+   * mois où l'âge est révolu ({@link origineDesAges}). Un âge de départ et un
+   * âge de début ne se comparent donc qu'en dates. Voir `saisie.py`.
    */
-  dateDe(age_) {
-    return this.origineDesAges.plusMois(enMois(age_));
+  dateDe(age_, depart = false) {
+    const origine = depart
+      ? this.origineDesAges
+      : new DateMois(this.naissance, this.naissance_mois);
+    return origine.plusMois(enMois(age_));
   }
 
   /**
@@ -1227,14 +1233,14 @@ export class Saisie {
   }
 
   /** Le même mois, tel que l'adresse le porte : « 1996-09 ». */
-  moisDe(age_) {
-    const date = this.dateDe(age_);
+  moisDe(age_, depart = false) {
+    const date = this.dateDe(age_, depart);
     return `${cadrer(date.annee, 4)}-${cadrer(date.mois, 2)}`;
   }
 
   /** Le même mois au premier jour : ce qu'un champ date, lui, exige. */
-  jourDe(age_) {
-    return `${this.moisDe(age_)}-01`;
+  jourDe(age_, depart = false) {
+    return `${this.moisDe(age_, depart)}-01`;
   }
 
   /**
@@ -1243,8 +1249,8 @@ export class Saisie {
    * Un refus qui ne parlerait que d'âges laisserait au lecteur la soustraction
    * à faire, alors que le champ qu'il vient de remplir porte une date.
    */
-  fenetre(ageMinimal, ageMaximal) {
-    return `de ${this.dateDe(ageMinimal)} à ${this.dateDe(ageMaximal)}`;
+  fenetre(ageMinimal, ageMaximal, depart = false) {
+    return `de ${this.dateDe(ageMinimal, depart)} à ${this.dateDe(ageMaximal, depart)}`;
   }
 
   /** La naissance telle qu'un champ date la porte : « 1975-03-15 ». */
@@ -1265,15 +1271,16 @@ export class Saisie {
   /** « le 15 mars 1962 » : la date de naissance, sans ordre à deviner. */
   get naissanceEnClair() {
     return `le ${jourEnClair(this.naissance_jour)} `
-      + `${NOMS_DE_MOIS[this.naissance_mois - 1]} ${this.naissance}`;
+      + `${NOMS_DE_MOIS[this.naissance_mois - 1]} ${this.naissance}`
+      + (this.naissance_jour_presume ? " — jour présumé : l'adresse ne le disait pas" : "");
   }
 
   /** « en septembre 1984, soit 22 ans et 6 mois » : une date de carrière. */
-  calculDe(age_) {
+  calculDe(age_, depart = false) {
     if (age_ < 0) {
-      return `en ${this.dateDe(age_)}, avant la date de naissance`;
+      return `en ${this.dateDe(age_, depart)}, avant la date de naissance`;
     }
-    return `en ${this.dateDe(age_)}, soit ${age(age_)}`;
+    return `en ${this.dateDe(age_, depart)}, soit ${age(age_)}`;
   }
 
   /**
@@ -1314,10 +1321,10 @@ export class Saisie {
           `Naissance d'un enfant « ${valeur} » : elle précède la vôtre.`,
         );
       }
-      if (jour >= this.jourDe(this.liquidation)) {
+      if (jour >= this.jourDe(this.liquidation, true)) {
         throw new ErreurSaisie(
           `Naissance d'un enfant « ${valeur} » : elle suit le départ à la `
-          + `retraite, fixé en ${this.dateDe(this.liquidation)}.`,
+          + `retraite, fixé en ${this.dateDe(this.liquidation, true)}.`,
         );
       }
     }
@@ -1420,7 +1427,7 @@ export class Saisie {
       // adresse d'ancienne forme reste lue — les âges y sont reconnus tels
       // quels, voir `ageSaisi`.
       debut: this.moisDe(this.debut),
-      liquidation: this.moisDe(this.liquidation),
+      liquidation: this.moisDe(this.liquidation, true),
       salaire: nombreBrut(this.salaire), profil: this.profil,
       releve: this.releve,
       primes: nombreBrut(this.primes), enfants: this.enfants,
@@ -1490,8 +1497,7 @@ export class Saisie {
  * qu'elle reste vide, elle ne décrit rien. Une ligne partiellement remplie, en
  * revanche, est une intention manquée — elle est refusée, avec ce qui lui manque.
  */
-function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois,
-  naissanceJour, tolerante = false) {
+function metiersSaisis(parametres, salairePrecedent, moisDeNaissance, tolerante = false) {
   const metiers = [];
   let salaire = salairePrecedent;
   for (let rang = 2; rang <= METIERS_MAXIMUM; rang += 1) {
@@ -1553,16 +1559,14 @@ function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois,
       }
     }
     metiers.push({
-      debut: ageSaisi(parametres, `metier${rang}_debut`, 0.0,
-        naissance, naissanceMois, naissanceJour),
+      debut: ageSaisi(parametres, `metier${rang}_debut`, 0.0, moisDeNaissance),
       statut,
       salaire: salaireLigne,
       // Vrai si l'activité S'AJOUTE à celle en cours au lieu de la remplacer.
       cumul: Boolean(cumul),
       // Âge auquel une activité ajoutée s'arrête ; null la mène au départ.
       fin: finBrut
-        ? ageSaisi(parametres, `metier${rang}_fin`, 0.0, naissance, naissanceMois,
-          naissanceJour)
+        ? ageSaisi(parametres, `metier${rang}_fin`, 0.0, moisDeNaissance)
         : null,
       // Vrai si `statut` est un motif de `SANS_EMPLOI` et non une affiliation.
       // Décidé à la LECTURE, et non déduit plus tard du statut : la première
@@ -1696,20 +1700,20 @@ function dateSaisie(parametres, nom) {
  *
  * Le formulaire demande une date — celle du premier mois cotisé, celle du
  * départ —, parce que c'est ce dont on se souvient ; le modèle, lui, ne connaît
- * que des âges. La soustraction se fait ici, en mois, depuis le mois d'où les
- * âges se comptent, et le résultat est l'âge en années décimales que le moteur
- * attend : le moteur, qui compte de même, retombe sur la date saisie.
+ * que des âges. La soustraction se fait ici, en mois, depuis `origine` — le mois
+ * de naissance pour un début ou une fin d'activité, celui d'où les âges de
+ * départ se comptent pour le départ —, et le résultat est l'âge en années
+ * décimales que le moteur attend : le moteur, qui compte de même, retombe sur
+ * la date saisie.
  *
  * Les adresses d'avant le calendrier continuent d'être lues telles quelles :
  * `liquidation=64` et `liquidation_mois=7` valent soixante-quatre ans et sept
  * mois, `liquidation=64.5` vaut ce qu'il a toujours valu.
  */
-function ageSaisi(parametres, nom, defaut, naissance, naissanceMois, naissanceJour) {
+function ageSaisi(parametres, nom, defaut, origine) {
   const date = dateSaisie(parametres, nom);
   if (date !== null) {
-    const rang = new DateMois(date.annee, date.mois).rang
-      - origineDesAges(new DateMois(naissance, naissanceMois), naissanceJour).rang;
-    return rang / MOIS_PAR_AN;
+    return (new DateMois(date.annee, date.mois).rang - origine.rang) / MOIS_PAR_AN;
   }
   const annees = reel(parametres, nom, defaut);
   const cle = `${nom}_mois`;

@@ -923,27 +923,30 @@ export function formulaire(saisie, contexte) {
     // navigateur — et aux outils qui s'appuient sur lui, dont les aides à la
     // saisie — le moyen de reconnaître ce que le champ demande.
     g.champDate("naissance", "Date de naissance", saisie.naissanceIso,
-      "seul le mois compte", saisie.naissanceEnClair,
+      "le jour compte", saisie.naissanceEnClair,
       {
         min: `${NAISSANCE_MINIMALE}-01-01`, max: `${NAISSANCE_MAXIMALE}-12-31`,
         autocomplete: "bday",
       },
-      "Le calcul n'en retient que le mois : c'est la maille du droit, qui coupe "
-      + "deux générations en cours d'année — au 1<sup>er</sup> juillet 1951 et "
-      + "au 1<sup>er</sup> septembre 1961."),
+      "Le mois fait la génération, que le droit coupe en cours d'année — au "
+      + "1<sup>er</sup> juillet 1951 et au 1<sup>er</sup> septembre 1961. Le "
+      + "jour fait le départ : la pension prend effet le premier du mois qui "
+      + "suit l'anniversaire, ou le jour même pour qui est né un 1<sup>er</sup>."),
     g.champDate("liquidation", "Départ à la retraite",
-      saisie.jourDe(saisie.liquidation),
+      saisie.jourDe(saisie.liquidation, true),
       saisie.situation === "retraite" ? "effectif" : "souhaité",
-      saisie.calculDe(saisie.liquidation),
+      saisie.calculDe(saisie.liquidation, true),
       {
-        min: saisie.jourDe(AGE_LIQUIDATION_MINIMAL),
-        max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL),
+        min: saisie.jourDe(AGE_LIQUIDATION_MINIMAL, true),
+        max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL, true),
         data_age_min: String(AGE_LIQUIDATION_MINIMAL),
         data_age_max: String(AGE_LIQUIDATION_MAXIMAL),
+        data_origine: "depart",
       },
       "C'est la date à laquelle tout le calcul se place. La pension prend effet "
       + "le premier du mois, et c'est celle du premier mois que vous "
-      + "obtiendrez — jamais ce qu'elle devient ensuite."),
+      + "obtiendrez — jamais ce qu'elle devient ensuite. L'âge s'y compte en "
+      + "mois révolus : né le 15 mars, on a 64 ans au 1<sup>er</sup> avril."),
   ].join("");
 
   const avance = [
@@ -1296,7 +1299,7 @@ qu'il faut déposer.</p>
  * qui cloche vaut mieux que réécrire deux dates sous ses doigts.
  */
 function desaccordDeSituation(saisie, contexte) {
-  const annee = saisie.dateDe(saisie.liquidation).annee;
+  const annee = saisie.dateDe(saisie.liquidation, true).annee;
   const passe = annee < contexte.base.annee_courante;
   if (passe === (saisie.situation === "retraite")) return "";
   const phrase = passe
@@ -13016,11 +13019,11 @@ export const MESURES_BLOCAGES = {
   // −0,9, 59 % et 0,85, et 1,03 en 2070.
   solde_moyen_proposition: -0.5,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 32,
+  dette_2070_proposition: 31,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.9,
   decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.06,
+  coefficient_2070: 1.07,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.

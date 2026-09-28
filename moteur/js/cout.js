@@ -343,7 +343,13 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
     if (comparaison.departReporte) {
       propre = reporte(simulateur, comparaison.carriere, propre);
     }
-    const autre = autreVolet(simulateur, comparaison.carriere);
+    // Ce que la proposition sert à une cohorte partie avant la bascule : la
+    // pension du scénario dont elle part, le 4, ou le 5 quand on la range
+    // parmi les réformes prospectives. Voir `_pensionnes` dans cout.py.
+    const departAvant = CLES_PROSPECTIVES.has("notionnel_liberal")
+      ? "notionnel_prospectif_employeur" : "notionnel_retroactif_employeur";
+    const autre = autreVolet(simulateur, comparaison.carriere, propre,
+      pensions[departAvant]);
     // Le scénario 6 est ramené à sa part CONTRIBUTIVE : la garantie est
     // financée par l'impôt, elle ne pèse pas sur le compte des cotisants. Ce
     // que la garantie regarde est la pension contributive ET la rente du
@@ -402,26 +408,50 @@ function volet(carriere, liberal, coefficient) {
 /**
  * La proposition de l'autre côté de la bascule, si une cohorte y tombe : une
  * génération de la grille en représente cinq, décalées de deux ans au plus, et
- * quand la bascule passe entre elles alors que l'âge légal reporte ce départ,
- * les unes partent sans report et les autres à l'âge légal.
+ * quand la bascule passe entre elles, les unes partent sous le droit en
+ * vigueur et les autres sous la proposition. Le volet d'après est celui du
+ * report à l'âge légal, s'il y en a un ; celui d'avant, la pension du scénario
+ * dont la proposition part (`avantLaBascule`). Voir `_autre_volet` dans
+ * cout.py.
  */
-function autreVolet(simulateur, carriere) {
-  const ageLegal = simulateur.parametres.age_legal_liberal;
-  if (ageLegal === null || ageLegal === undefined || carriere.age_liquidation === null) {
-    return null;
-  }
-  const reportee = carriere.prolongee(ageLegal, simulateur.macro);
-  if (reportee === carriere) return null;
+function autreVolet(simulateur, carriere, propre, pensionDAvant) {
+  if (carriere.age_liquidation === null) return null;
   const bascule = simulateur.parametres.annee_bascule;
   const annee = carriere.anneeLiquidation;
   if (!(annee - DEMI_TRANCHE < bascule && bascule <= annee + DEMI_TRANCHE)) return null;
-  // La grille est d'un côté ; l'autre volet est celui de l'autre.
-  const depart = annee >= bascule ? carriere : reportee;
-  const liberal = simulateur.proposition(depart);
-  const coefficient = simulateur.macro.coefficientPrix(
-    depart.anneeLiquidation, simulateur.parametres.annee_euros_constants);
-  const voletAutre = volet(depart, liberal, coefficient);
-  return depart === reportee ? reporte(simulateur, carriere, voletAutre) : voletAutre;
+  const ageLegal = simulateur.parametres.age_legal_liberal;
+  const reportee = ageLegal === null || ageLegal === undefined
+    ? carriere : carriere.prolongee(ageLegal, simulateur.macro);
+  const euros = simulateur.parametres.annee_euros_constants;
+  if (annee >= bascule) {
+    // La grille part après : l'autre côté est celui d'avant, sans report.
+    const sansReport = reportee === carriere ? propre : volet(
+      carriere, simulateur.proposition(carriere),
+      simulateur.macro.coefficientPrix(carriere.anneeLiquidation, euros));
+    return avantLaBascule(sansReport, pensionDAvant);
+  }
+  if (reportee === carriere) return null;
+  // La grille part avant : l'autre côté est celui d'après, à l'âge légal.
+  const coefficient = simulateur.macro.coefficientPrix(reportee.anneeLiquidation, euros);
+  return reporte(simulateur, carriere,
+    volet(reportee, simulateur.proposition(reportee), coefficient));
+}
+
+/**
+ * Le volet d'une cohorte partie avant la bascule, tiré de celui de la
+ * génération de la grille, partie après : la pension du scénario dont la
+ * proposition part, et ce que la garantie regarde est cette pension seule — ni
+ * mois au taux unique, ni pilier. Voir `_avant_la_bascule` dans cout.py.
+ */
+function avantLaBascule(voletGrille, pension) {
+  return {
+    ...voletGrille,
+    pension,
+    ressourcesGarantie: pension,
+    pilier: {},
+    rentePilier: [0.0, 0.0],
+    renteGarantie: 0.0,
+  };
 }
 
 /**

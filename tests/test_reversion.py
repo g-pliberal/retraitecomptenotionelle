@@ -252,7 +252,8 @@ def test_le_journal_inscrit_le_deces_puis_la_reversion(contexte):
 # -- l'hypothèse de décès et la page ------------------------------------------------
 
 @pytest.mark.parametrize("requete, deces, annee", [
-    ({"naissance": "1975", "liquidation": "64", "conjoint": "1977"}, "2039-01-01", 2039),
+    # Né en janvier 1975, présumé le 15 : il part au 1er février 2039.
+    ({"naissance": "1975", "liquidation": "64", "conjoint": "1977"}, "2039-02-01", 2039),
     ({"naissance": "1955", "liquidation": "62", "conjoint": "1957"}, "2026-01-01", 2026),
 ])
 def test_sans_deces_declare_le_deces_est_suppose_au_depart(contexte, requete, deces, annee):

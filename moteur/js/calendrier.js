@@ -77,13 +77,17 @@ export function formaterAge(age) {
 }
 
 /**
- * Le mois d'où les âges se comptent, pour qui est né ce mois-là, ce jour-là.
- * Les âges du modèle sont des âges au premier jour d'un mois. Le jour de
- * naissance n'y entre pas encore : c'est le mois de naissance. Voir
+ * Le mois d'où les âges se comptent, pour qui est né ce mois-là, ce jour-là :
+ * celui de la naissance pour qui est né un 1er, le suivant pour les autres. La
+ * pension prend effet le premier jour d'un mois, qui ne peut précéder l'âge
+ * qui l'ouvre (R. 351-37) : né le 16 mai 1964, l'âge légal est atteint le
+ * 16 février 2027, et la retraite prend effet au 1er mars 2027 au plus tôt
+ * (circulaire Cnav n° 2026-07). Né le 15 mars, on a, à tout 1er du mois, l'âge
+ * de qui est né le 1er avril. La génération ne se lit pas d'ici. Voir
  * `origine_des_ages` du Python.
  */
 export function origineDesAges(naissance, jour) {
-  return naissance;
+  return jour === 1 ? naissance : naissance.plusMois(1);
 }
 
 /**

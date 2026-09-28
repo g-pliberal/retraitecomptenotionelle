@@ -186,13 +186,25 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   d'activité sur une « durée d'assurance » de cinq trimestres, quand le modèle
   n'y compte que les trimestres cotisés — plus dur que la lettre du décret, en
   attendant la circulaire qui l'applique.
-- **La date d'effet est le mois de l'anniversaire.** Le modèle liquide au mois
-  où l'âge demandé est atteint ; la caisse fait prendre effet la pension le
-  premier jour du mois SUIVANT, sauf pour qui est né un premier. Un mois
-  d'écart, qui se voit là où un texte coupe au mois : la borne de la carrière
-  longue des nés en décembre 1965, fixée à <!--chiffre:illustration()-->60<!--/--> ans et 8 mois pour que la
-  pension prenne effet le 1er septembre 2026, tombe ici en août 2026, sous le
-  décret précédent, qui demande <!--chiffre:illustration()-->60<!--/--> ans et 9 mois.
+- **La date d'effet suit l'anniversaire, et le jour se présume.** La pension
+  prend effet le premier jour du mois qui suit celui où l'âge est atteint, ou
+  le jour même pour qui est né un 1er (R. 351-37 ; L. 90 du code des
+  pensions), et le modèle la date ainsi depuis le 28 septembre 2026 (fiche
+  `date_effet_mois_suivant`) : la borne de la carrière longue des nés en
+  décembre 1965, fixée à <!--chiffre:illustration()-->60<!--/--> ans et 8 mois pour que la pension prenne effet
+  le 1er septembre 2026, y tombe désormais. Qui ne dit pas son jour — une
+  adresse d'avant le calendrier, les cas types, la page Coût — est présumé né
+  le <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.jour_de_naissance.valeur)-->15<!--/-->, ce qui est juste vingt-neuf fois sur trente environ, et la
+  population ne tire pas ce jour au sort (§ 5.6 de l'architecture). Un cas
+  type né en janvier part donc au 1er février, et l'année de son départ compte
+  un mois, que le pas annuel du moteur traite parfois comme une année : le
+  traitement de référence de la fonction publique se lit sur la ligne de
+  cette année-là, une ligne d'un mois reçoit le minimum annuel de points de la
+  RCO, un relevé qui s'arrête à l'année d'avant n'est contigu au départ que si
+  celui-ci tombe en janvier, et la fenêtre de la surcote parentale perd un
+  trimestre quand elle chevauche une année de départ qui ne compte pas un
+  nombre entier de trimestres civils. Ces effets valaient déjà pour tout
+  départ hors de janvier ; l'action 134 de la feuille de route les reprend.
 - **La durée requise d'un droit ouvert avant soixante ans : servie, sauf au
   civil non classé.** Le XXIV, B de l'article 10 de la loi du 14 avril 2023 pour
   l'État, et le II, B de l'article 13 du décret n° 2023-435 pour la CNRACL et le
@@ -748,7 +760,7 @@ Quatre bornes à connaître, et elles sont étroites :
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->76<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->77<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -842,7 +854,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->76<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->77<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
@@ -1423,10 +1435,10 @@ taux était de <!--chiffre:cellule(data/reference/legislation/contribution_emplo
 la Cour — qui impute cinq points de l'écart avec l'Institut des politiques
 publiques à la seule différence d'année (annexe n° 6) — environ <!--chiffre:illustration()-->39<!--/-->.
 Ce que ce choix déplace est considérable. Sous le taux entier, la fonctionnaire
-de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+45,0<!--/--> % d'écart au système
-actuel dans le scénario 4 ; sous la part de la Cour, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->−1,3<!--/--> %. Dans la
-proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+44,9<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−3,4<!--/--> %, et le solde moyen de la proposition
-passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,89<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,47<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−27<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−14<!--/--> milliards
+de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+41,6<!--/--> % d'écart au système
+actuel dans le scénario 4 ; sous la part de la Cour, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->−3,6<!--/--> %. Dans la
+proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+41,5<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−5,6<!--/--> %, et le solde moyen de la proposition
+passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,88<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,46<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−26<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−14<!--/--> milliards
 d'euros par an, parce que les droits qu'elle reprend à la bascule étaient
 gonflés de ce qui payait d'autres pensions. Le privé, la CNRACL, le scénario 1
 et la part salariale ne bougent pas, ni les années d'avant 1995, où le compte
@@ -1523,8 +1535,8 @@ moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
 Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,12<!--/--> en 2070. La garantie coûte
 <!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,47<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
 bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,30<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->12<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,3<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->575<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 437<!--/--> depuis 1959. Ces chiffres
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->576<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 441<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 
@@ -1590,15 +1602,15 @@ sont celles de ce mélange (`VoletLiberal.melange`). Il ne joue que sur la page
 Coût ; le simulateur prolonge la situation de chacun.
 
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
-solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,47<!--/--> point de PIB quand
-tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,64<!--/--> quand la moitié le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−0,81<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−0,98<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
+solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,46<!--/--> point de PIB quand
+tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,63<!--/--> quand la moitié le font, de
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−0,80<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−0,97<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
-et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->32<!--/--> % du
-PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->44<!--/--> % quand la moitié le font,
-de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->55<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->69<!--/--> % pour
+et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->31<!--/--> % du
+PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->43<!--/--> % quand la moitié le font,
+de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->55<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->68<!--/--> % pour
 la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
 tient donc à ce que les reportés travaillent ; qu'elle en ait un n'en dépend
 plus, depuis que le compte d'un fonctionnaire d'État ne reçoit que la part
@@ -1653,13 +1665,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
-  valent <!--chiffre:mesure(avantages?annee=2024)-->96,6<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,6<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
+  valent <!--chiffre:mesure(avantages?annee=2024)-->96,5<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,6<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
   et dix autres lignes dans les sous-postes des Comptes de la protection
   sociale, dont la majoration pour enfants à <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=majoration_enfants)-->7,8<!--/--> milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
-  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,5<!--/--> milliards qu'il calcule encore lui-même
+  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,4<!--/--> milliards qu'il calcule encore lui-même
   restent soumis à cette limite. Vingt-sept dispositifs sur quarante-cinq ne
   portent aucun chiffre, chacun avec sa raison écrite.
 
@@ -1742,7 +1754,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   contrôle d'isolement de `avantages.py` accepte pour ce seul avantage
   (`DUREE_REQUISE_EST_L_AVANTAGE`), le texte la donnant « au titre de la
   catégorie active ». Ce que l'avantage coûte, ce sont les annuités
-  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->10,9<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->6,6<!--/--> pour le
+  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->11,1<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->6,8<!--/--> pour le
   classement, <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=regime_special)-->2,3<!--/--> pour les régimes spéciaux et <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=carriere_longue)-->2,0<!--/--> pour la carrière longue
   (`scripts/cout_avantages.py --duree`). Ce sont des annuités anticipées et non
   un surcoût net — partir tôt, c'est aussi cotiser moins et mourir plus tôt en
@@ -2464,8 +2476,8 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,8<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,8<!--/--> % — et faux du
-   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,7<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,0<!--/--> % : la pondération donne aux
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−56,1<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,0<!--/--> % — et faux du
+   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,9<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,1<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
    l'autre.
@@ -2644,7 +2656,11 @@ d'un an à deux ans, chacune liquidant sa propre année. Une cohorte qui part
 juste avant la bascule est donc représentée par une génération qui part juste
 après, et hérite de son traitement : les courbes prospectives s'écartent de la
 courbe actuelle d'un à deux dixièmes de pour cent avant même la bascule. Le
-résidu est mesuré et un test le borne à un demi-point. Le pas commande le temps
+résidu est mesuré et un test le borne à un demi-point. La proposition, elle,
+n'en hérite plus depuis le 28 septembre 2026 : une cohorte partie avant la
+bascule y reçoit la pension du scénario dont elle part, sans mois au taux
+unique ni pilier, et sa dépense égale celle du scénario 4 au centime chaque
+année qui précède la bascule. Le pas commande le temps
 de calcul de la page ; il ne doit pas commander la forme du résultat, et c'est
 pourquoi les cinq cohortes ne basculent pas le même jour — sans quoi la
 trajectoire avancerait par marches de cinq ans.
@@ -2680,11 +2696,11 @@ scénario 4 :
 
 | | Salarié du privé non cadre | Fonctionnaire d'État |
 |---|---:|---:|
-| 2. Notionnel rétroactif, part salariale | **<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> %** | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=2)-->−77,3<!--/--> %** |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−24,1<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−25,5<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,5<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−6,1<!--/--> %** |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−10,2<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−14,1<!--/--> % |
-| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−30,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->−7,1<!--/--> % |
+| 2. Notionnel rétroactif, part salariale | **<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,6<!--/--> %** | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=2)-->−77,8<!--/--> %** |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−24,1<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−27,2<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,4<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−8,3<!--/--> %** |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−10,1<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−16,0<!--/--> % |
+| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−30,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->−9,3<!--/--> % |
 
 ### Ce n'est pas une contradiction : c'est la somme de quatre choix
 
@@ -2695,7 +2711,7 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    et l'un comme l'autre **conservent les droits déjà acquis**. Les scénarios 2
    et 4 recalculent la carrière ENTIÈRE depuis 1941. Le dépôt publie lui-même
    la mesure de ce choix : les scénarios 3 et 5, qui figent les droits acquis
-   comme le fait la littérature, ramènent l'écart de <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> % à <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−24,1<!--/--> % pour le
+   comme le fait la littérature, ramènent l'écart de <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,6<!--/--> % à <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−24,1<!--/--> % pour le
    salarié du privé. **L'essentiel de l'écart est de la rétroactivité, rien
    d'autre.**
 2. **Les droits non contributifs.** La CNAV les CONSERVE et les convertit en
@@ -2710,7 +2726,7 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    que la part SALARIALE, soit <!--chiffre:mesure(part_salariale_versee?exemple=litterature_prive)-->40<!--/--> % de ce que le scénario 4 y porte pour le salarié
    du privé et <!--chiffre:mesure(part_salariale_versee?exemple=litterature_etat)-->26<!--/--> % pour le fonctionnaire. La littérature raisonne toujours sur la
    cotisation entière. Le scénario 4 est la comparaison honnête, et il donne
-   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,5<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−6,1<!--/--> %** pour le fonctionnaire.
+   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,4<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−8,3<!--/--> %** pour le fonctionnaire.
 4. **L'âge de liquidation.** La CNAV suppose les âges de départ INCHANGÉS, et
    observe malgré tout que ses perdants partent à <!--chiffre:illustration()-->60<!--/--> ans et ses gagnants à 65.
    Ici, le diviseur est la seule sanction du départ précoce, et il n'est pas

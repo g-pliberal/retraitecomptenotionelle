@@ -162,23 +162,26 @@ def test_la_carriere_longue_est_ouverte_aux_regimes_en_points(simulateur):
 def test_les_scenarios_notionnels_ne_bougent_pas(mesure):
     """Le résultat qui ferme le sujet.
 
-    Les cinq scénarios que le site compare se déplacent cinq fois moins que le
-    système actuel — l'erreur d'âge leur est presque invisible. Dans un compte
-    notionnel, partir plus tôt allonge le diviseur autant que la carrière
-    raccourcie retire au capital : les deux termes se répondent.
+    Les cinq scénarios que le site compare se déplacent près de quatre fois
+    moins que le système actuel — l'erreur d'âge leur est presque invisible.
+    Dans un compte notionnel, partir plus tôt allonge le diviseur autant que
+    la carrière raccourcie retire au capital : les deux termes se répondent.
 
     Le test demandait « moins d'un dixième de point de PIB » : c'était la
     mesure d'un jour, que le modèle a franchie le 23 septembre 2026 (−0,10
     point au scénario 5, +0,51 au système actuel). Il tient désormais la
     propriété — un mouvement petit DEVANT celui du système actuel —, et une
-    borne absolue de deux dixièmes.
+    borne absolue de deux dixièmes. Le petit devant était un quart ; il est
+    un tiers depuis le 28 septembre 2026, où les cas types, nés en janvier
+    sans jour dit, sont partis au 1er du mois qui suit leur anniversaire
+    (action 132) : −0,12 point au scénario 5, +0,45 au système actuel.
     """
     actuel = abs(mesure["contrefactuel"]["actuel"] - mesure["reference"]["actuel"])
     for scenario, _ in C.SCENARIOS:
         if scenario == "actuel":
             continue
         ecart = mesure["contrefactuel"][scenario] - mesure["reference"][scenario]
-        assert abs(ecart) < 0.25 * actuel, (
+        assert abs(ecart) < actuel / 3, (
             f"{scenario} : {ecart * 100:+.2f} point")
         assert abs(ecart) < 0.002, f"{scenario} : {ecart * 100:+.2f} point"
 

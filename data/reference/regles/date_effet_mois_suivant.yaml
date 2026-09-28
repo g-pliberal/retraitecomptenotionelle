@@ -2,24 +2,85 @@ schema_version: 1
 id: date_effet_mois_suivant
 intitule: >-
   La pension prend effet le premier jour du mois suivant celui où l'âge est atteint,
-  sauf pour qui est né un premier.
-etat: approchee
+  sauf pour qui est né un premier, qui l'atteint ce jour-là : les âges se comptent,
+  en mois révolus, du mois qui suit la naissance, ou du mois même pour qui est né le 1er.
+etat: conforme
 effet: >-
-  Le modèle liquide au mois de l'anniversaire : un mois d'écart, visible là où un
-  texte coupe au mois (nés en décembre 1965, carrière longue).
+  Toute date d'effet, et tout décompte qui court depuis un âge : né le 16 mai 1964,
+  l'assuré atteint l'âge légal de 62 ans et 9 mois le 16 février 2027, et sa pension
+  prend effet au 1er mars 2027 au plus tôt. Jusqu'au 28 septembre 2026, le modèle
+  comptait les âges du mois de naissance et liquidait au mois de l'anniversaire : un
+  mois trop tôt pour qui n'est pas né un 1er. Le mois de naissance fait désormais la
+  génération, que la loi coupe au 1er juillet 1951 et au 1er septembre 1961, et le
+  début d'un métier dit par un âge ; le jour fait le départ. Sans jour dit, l'assuré
+  est présumé né le 15 (présomption `jour_de_naissance`) : 624 témoins sur 625 ont
+  bougé, de +0,24 % en médiane au système actuel et de +0,25 % à la proposition. Le décompte
+  de l'ajournement après l'âge du taux plein, qui retranchait un mois à qui est né
+  un 1er, est juste depuis le même jour (circulaire Cnav n° 8/89, point 12), et
+  l'exemple 3 de la surcote de droit commun de la CNRACL, dont l'agent est né un 1er
+  janvier, est rendu.
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31
-  a_relire:
-  - >-
-    Décider si date_liquidation devient le mois suivant ; mesurer sur les témoins.
   lectures:
+  - type: legifrance
+    reference: >-
+      R. 351-37 CSS, rédaction du 21 décembre 1985 au 15 février 2004
+      (LEGIARTI000006749382) : la date d'entrée en jouissance est « nécessairement le
+      premier jour d'un mois et ne pouvant être antérieure ni au dépôt de la demande ni
+      au soixantième anniversaire de l'intéressé ». Rédactions du 1er septembre 2023
+      (LEGIARTI000047633235) et du 1er novembre 2026 (LEGIARTI000054060160) : le premier
+      jour d'un mois, pas avant le dépôt de la demande ; l'âge est celui de L. 161-17-2.
+      Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      L. 90 CPCMR (LEGIARTI000023034140) : la pension « est due à compter du premier
+      jour du mois suivant la cessation de l'activité », sauf limite d'âge ou invalidité,
+      où elle l'est « du jour de la cessation de l'activité ». Lu dans l'index LEGI du
+      dépôt
+    date: 2026-09-28
   - type: circulaire_cnav
-    reference: 2026-07 du 5 mars 2026, exemples du point 1.1
+    reference: >-
+      2026-07 du 5 mars 2026, point 1.1, exemples 1 à 3 : nés le 16/05/1964, le
+      24/02/1965 et le 08/07/1965, âge atteint le 16/02/2027, le 24/11/2027 et le
+      08/07/2028, retraite à effet au plus tôt du 01/03/2027, du 01/12/2027 et du
+      01/08/2028
     date: 2026-03-05
+  - type: circulaire_cnav
+    reference: >-
+      8/89 du 18 janvier 1989, point 12 : les trimestres d'ajournement se décomptent
+      « du 1er jour du mois qui suit le 65ème anniversaire (ou à partir du jour
+      anniversaire pour les assurés nés le 1er jour d'un mois) »
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_889_18011989.aspx
+    date: 2026-09-28
+  - type: autre
+    reference: >-
+      CNRACL, juris-cnracl, « Calcul de la surcote », surcote de droit commun, exemple
+      3 : né le 01/01/1962, l'agent atteint son âge légal le 01/07/2024 et a « 6
+      trimestres supplémentaires de services effectifs à partir du 01/07/2024 »
+    date: 2026-09-28
+    url: >-
+      https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-surcote-0
 textes_a_rattacher:
-- reference: R. 351-37 CSS
+- reference: R. 351-37 CSS (LEGIARTI000054060160)
+- reference: L. 90 CPCMR (LEGIARTI000023034140)
+exemples:
+- cnav_2026_07_age_legal_1964
+- cnav_2026_07_age_legal_1965_premier_trimestre
+- cnav_2026_07_age_legal_1965_apres_avril
+- cnracl_surcote_ne_un_1er
 presomptions:
   jour_de_naissance: >-
     le jour de naissance que l'adresse, le cas type ou la page Coût ne disent pas,
     dont dépend le mois d'où les âges se comptent
+code:
+  moteur: >-
+    `calendrier.origine_des_ages` : le mois de naissance pour qui est né un 1er, le
+    suivant sinon. `Carriere.date_de_l_age` en fait une date d'effet et le premier mois
+    d'un décompte qui suit un âge, `Carriere.age_au` l'âge à une date ;
+    `Carriere.mois_de_l_anniversaire` reste au mois de naissance, pour ce qu'une
+    coupure au 1er d'un mois départage et pour le début d'un métier dit par un âge.
+    La chronologie pose le jour déclaré (`precision: jour`) ou présumé ; la saisie
+    compte le départ du même mois (`Saisie.date_de(age, depart=True)`).

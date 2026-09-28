@@ -240,14 +240,14 @@ moins. Vert : plus.
 Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (militaire non
-  officier, +75 % pour la génération 2000) et la moins bien traitée (carrière
-  interrompue, -37 %), et les 112 points qui les séparent. Dire aussitôt
+  officier, +69 % pour la génération 2000) et la moins bien traitée (carrière
+  interrompue, -36 %), et les 105 points qui les séparent. Dire aussitôt
   d'où vient le premier : le droit en vigueur laisse ce militaire partir à
   44 ans, après vingt-cinq ans de services, et la proposition le fait servir
   jusqu'à 65 ans —
   une pension mensuelle bien plus forte, servie vingt et un ans plus tard.
-- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -61 %
-  pour la génération 1940 à -5 % pour la génération 1970 : la même règle
+- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -62 %
+  pour la génération 1940 à -7 % pour la génération 1970 : la même règle
   donne des résultats très éloignés selon ce que l'État a versé à chaque
   époque, et le compte n'en reçoit que la part que la Cour des comptes
   rattache à la retraite de l'agent.
@@ -336,8 +336,8 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
 40 dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; 96,6 Md € en 2024 pour les 19 que le modèle sait chiffrer, dont
-38,3 Md € de réversion, qui est lue et non calculée ; 10,9 Md € de pensions
+cinquième ; 96,5 Md € en 2024 pour les 19 que le modèle sait chiffrer, dont
+38,3 Md € de réversion, qui est lue et non calculée ; 11,1 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.

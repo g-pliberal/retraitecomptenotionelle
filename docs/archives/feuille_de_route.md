@@ -15155,3 +15155,181 @@ recettes), `scripts/chiffrage_plf.py`, `scripts/mesures_prose.py`,
 `tests/test_tva.py`, `tests/test_cout.py`, `tests/test_web.py`,
 `tests/test_affirmations.py`, `README.md`, `docs/limites.md`,
 `docs/chiffrage_plf.md` ; le paquet, les témoins et le chiffrage, régénérés.
+
+### 132. La naissance au jour : l'âge se compte du 1er du mois qui suit l'anniversaire, sauf pour qui est né un 1er — `fait`
+
+**Demande**, le 27 septembre 2026 : « On fait tout au mois pour l'instant.
+Est-ce qu'il serait logique de descendre au jour ? […] Est-ce que ce serait
+dur à réaliser ? », puis, la réponse lue : « Ouvre uniquement l'action. On
+traitera le sujet plus tard. » L'action attend donc que le propriétaire la
+lance. Rien n'est commencé : ni code, ni fiche, ni témoin.
+
+**Ce qui descend au jour, et ce qui reste au mois.** Le pas du moteur est
+l'année, parce que les données le sont ; les dates sont au mois
+(`calendrier.py`) ; la chronologie est au jour depuis la phase 3 (contrat
+C.1), mais remplie au 1er du mois (`precision: mois`) et relue au mois
+(`chronologie.mois_de`). Le pas du moteur ne descend pas : le récit du
+passage de l'année au mois (`docs/archives/limites.md`) a établi qu'un pas
+plus fin « redonne exactement le total annuel ». Le jour qui compte pour
+tous les assurés est celui de leur naissance.
+
+**L'écart.** La caisse fait partir la pension le 1er du mois qui suit celui
+où l'âge est atteint, sauf pour qui est né un 1er (R. 351-37 CSS ; fiche
+`date_effet_mois_suivant`, `approchee` ; `docs/limites.md`, « La date
+d'effet est le mois de l'anniversaire »). Le modèle compte les âges du 1er
+du mois de naissance : à date de départ égale, il donne un mois d'âge de
+trop à qui est né après le 1er. L'exemple 1 de la circulaire Cnav 2026-07
+le montre : né le 16/05/1964, départ au plus tôt le 01/03/2027 ; le modèle
+tient l'âge légal pour atteint en février 2027. Le site demande pourtant le
+jour, et l'adresse le porte (`naissance=1975-03-15`), mais il « n'entre dans
+aucun calcul » (`Saisie.naissance_jour`). La surcote de la fonction publique
+suppose, elle, une naissance après le 1er (`surcote_fonction_publique`) :
+deux conventions contraires, et l'exemple 3 de la CNRACL, dont l'agent est
+né un 1er janvier, n'est pas rejoué (`docs/exploration_sources.md`).
+
+**Ce que ce mois déplace**, mesuré le même jour sur les 535 témoins de main
+à 81192a3, sans rien modifier : un mois d'âge de moins à date de départ
+égale, la génération gardée au vrai mois — ce que le jour changerait à qui
+est né après le 1er.
+
+| Scénario | Témoins qui bougent | Effet |
+|---|---|---|
+| 1 | 70 sur 529 | −0,83 % en médiane, 32 au-delà de −1 %, jusqu'à −3,25 % pour des professions libérales parties à un âge rond ; 7 hausses, de +0,25 % au plus |
+| 2 et 4 | 531 sur 531 | −0,29 % en médiane, le diviseur ; de −0,39 à −0,15 % |
+| 3 et 5 | 275 sur 531 | −0,29 % en médiane, jusqu'à −2,53 % ; 30 hausses |
+| 6 | 527 sur 531 | −0,28 % en médiane, de −0,39 à +0,36 % ; 203 hausses |
+
+**Ce que le propriétaire tranche d'abord** : ce que le modèle présume quand
+le jour n'est pas connu — relevé déposé, cas types, page Coût, adresses
+d'avant. C'est une présomption du § 5.6, à écrire au vocabulaire avec sa
+valeur et sa raison. Garder le 1er ne déplace que les cinq témoins qui
+déclarent un 15 ; présumer une naissance après le 1er est juste pour
+vingt-neuf naissances sur trente environ, et déplace les témoins comme
+ci-dessus.
+
+**Ce qu'il y aura à faire**, une fois l'action lancée :
+
+1. La veille du scénario 1 (`python scripts/veille_droit.py`), et R. 351-37
+   lu sur Légifrance : la fiche le range encore dans `textes_a_rattacher`,
+   sans identifiant ; la circulaire 2026-07 est déjà lue.
+2. Lire la naissance de deux façons. La génération reste au vrai mois : les
+   coupures du 1er juillet 1951 et du 1er septembre 1961, le trimestre de
+   naissance de la carrière longue (`scenarios/actuel.py`). Les âges se
+   comptent du mois qui suit quand le jour n'est pas le 1er. Le moteur reste
+   au mois : né le 15 mars, on a, à tout 1er du mois, l'âge en mois révolus
+   de qui est né le 1er avril. Le travail est le tri, lecture par lecture :
+   de l'ordre de 150 lectures de la naissance en Python, dont 46 dans
+   `carriere.py`, et de 130 dans le portage.
+3. La chronologie pose le jour déclaré (`precision: jour`), et la saisie en
+   tire l'âge (`_age_saisi`, et `ageSaisi` dans le portage).
+4. Des témoins nés en milieu de mois, et en d'autres mois que janvier : 520
+   des 535 naissent en janvier et 529 ne disent pas leur jour, si bien
+   qu'une lecture mal triée ne ferait aucun bruit. Les trois exemples de la
+   circulaire 2026-07, nés le 16/05/1964, le 24/02/1965 et le 08/07/1965,
+   deviennent des tests de la date d'effet ; l'exemple 3 de la CNRACL entre
+   au témoin.
+5. Le changement de résultats dans un commit à part, avec le diff de ses
+   témoins (`docs/architecture.md`, § 12) ; la fiche passe `conforme`,
+   `docs/limites.md` suit, et le journal de veille dit ce qui a été lu.
+
+**Hors de l'action.** Le moteur au pas du jour : aucune source ne porte un
+salaire, un plafond ou un quotient de mortalité au jour. Les durées que
+quelques régimes comptent au jour — l'Ircantec en trimestres de 90 jours,
+la CRPN en jours divisés par 360, l'ENIM au semestre — restent à leurs
+fiches ; celle de l'Ircantec est à l'action 131.
+
+**Ce qui a été fait**, le 28 septembre 2026, à la demande « Effectue
+l'action 132 ». La question du propriétaire tranche la présomption : « Qu'est-ce
+qui est le plus proche de la réalité ? » — une naissance après le 1er, vingt-neuf
+fois sur trente environ. Le jour qu'on ne dit pas est donc le 15, au milieu du
+mois (`jour_de_naissance`, § 5.6), et c'est la seule présomption qui ne reprend
+pas la valeur d'avant elle.
+
+1. La veille faite ; R. 351-37 lu dans ses trois rédactions, L. 90 du code des
+   pensions et R. 351-9, dans l'index LEGI ; la circulaire 8/89 (point 12) et la
+   page « Calcul de la surcote » de la CNRACL, relues.
+2. Un premier commit porte le jour sans rien déplacer : la chronologie pose le
+   jour déclaré (`precision: jour`) ou présumé, la carrière le lit, et les
+   lectures de la naissance sont triées en trois, dans les deux moteurs. La
+   GÉNÉRATION reste au vrai mois ; l'ANNIVERSAIRE tombe dans le mois de
+   naissance (`Carriere.mois_de_l_anniversaire`) — les coupures au 1er d'un
+   mois, le début d'un métier dit par un âge, la fin des services de mine
+   avant cinquante-cinq ans ; l'ÂGE RÉVOLU se compte d'une origine
+   (`calendrier.origine_des_ages`, `date_de_l_age`, `age_au`) — la date
+   d'effet, les décomptes qui suivent un âge, l'âge à une date. Soixante-douze
+   témoins naissent en milieu de mois, et en d'autres mois que janvier.
+3. Un second commit change les résultats : l'origine est le mois qui suit la
+   naissance, sauf pour qui est né un 1er, et la présomption vaut 15. La saisie
+   compte le départ du même mois (`Saisie.date_de(âge, depart=True)`), son
+   formulaire le dit, et l'adresse qui ne donne pas le jour écrit « jour
+   présumé ». Les trois exemples de la circulaire 2026-07 sont des tests de la
+   date d'effet au plus tôt ; l'exemple 3 de la surcote de la CNRACL, né le
+   01/01/1962, a ses six trimestres ; vingt exemples qui partent au mois même de
+   leur âge naissent au 1er, jour que leur date de départ suppose.
+4. Deux erreurs que la règle a levées sont corrigées dans le même commit :
+   l'ajournement après l'âge du taux plein retranchait un mois à qui est né un
+   1er (circulaire 8/89, point 12 : huit trimestres et non sept pour deux ans
+   après soixante-sept ans) ; et, page Coût, une cohorte partie avant la bascule
+   héritait de la génération de la grille partie après ses mois au taux unique
+   et son pilier. Elle reçoit le scénario 4, et la dépense de la proposition
+   égale la sienne au centime chaque année qui précède la bascule
+   (`cout._avant_la_bascule`) ; elle s'en écartait déjà de 50 M€ en 2025.
+5. La fiche `date_effet_mois_suivant` passe `conforme` ; `limites.md`, le § 5.6
+   de l'architecture et le journal de veille suivent.
+
+**Ce que ça a déplacé**, sur les 625 témoins de simulation, dont 624 bougent :
+
+| Scénario | Témoins qui bougent | Effet |
+|---|---|---|
+| 1 | 536 | +0,24 % en médiane, 525 hausses ; de −2,65 % (un fonctionnaire parti en 2020, dont le traitement de référence se lit désormais sur cette année-là, où le salaire moyen a baissé) à +9,35 % (membre d'une congrégation né le 20 septembre 1968, qui gagne un trimestre) |
+| 2 et 4 | 619 | +0,32 et +0,31 % en médiane, de −0,32 % à +4,86 et +4,46 % (un salarié de Mayotte né en 1925) |
+| 3 et 5 | 577 | +0,08 et +0,16 % en médiane, de −2,65 à +3,26 % |
+| 6 | 612 | +0,25 % en médiane ; de −2,31 % (un relevé de deux statuts, que la proposition ne prolonge plus) à +8,14 % (un cadre né le 15 décembre 1961, dont le départ à 64 ans passe de décembre 2025 à janvier 2026) |
+
+Sur la grille des cas types, le militaire de la génération 2000 passe de +75 à
++69 % sous la proposition, la carrière interrompue de −37 à −36 %. Page Coût, la
+dette de la proposition en 2070 passe de 32 à 31 % du PIB, son coefficient
+d'équilibre de 1,06 à 1,07. Le contrefactuel de l'âge de départ bouge à peine
+(−0,12 point au scénario 5, +0,45 au système actuel, contre −0,10 et +0,51) : la
+borne relative de son test passe du quart au tiers.
+
+**Ce que la règle fait voir, et qui reste.** Sans jour dit, un cas type né en
+janvier part désormais au 1er février : l'année du départ gagne une ligne d'un
+mois, et le pas annuel du moteur la traite parfois comme une année. Ces effets
+étaient là pour tout départ hors de janvier ; la convention du 1er les cachait
+aux cas types. Ils sont à l'action 134 :
+
+- le traitement de référence de la fonction publique est lu sur la ligne de
+  l'année du départ dès qu'elle compte un mois : partir le 1er février plutôt
+  que le 1er janvier 2044 le relève d'une année de croissance, +4,0 % de pension
+  pour le militaire de la génération 2000, l'essentiel de son mouvement ; et
+  partir le 1er février 2020 l'abaisse, le salaire moyen ayant baissé cette
+  année-là, −2,65 % pour le fonctionnaire d'un témoin de la réversion ;
+- une ligne d'un mois reçoit le minimum annuel de points de la RCO (133) ;
+- un relevé qui s'arrête à l'année d'avant n'est contigu au départ que si
+  celui-ci tombe en janvier (`Carriere.prolongee`) : la proposition ne le
+  prolonge plus pour qui part en février ;
+- la fenêtre de la surcote parentale, datée au mois, chevauche l'année du
+  départ, qui ne valide que ses trimestres civils écoulés : deux mois de
+  naissance sur trois y perdent un trimestre, au 1er comme au 15 ;
+- ce plafond aux trimestres civils vaut aussi l'année d'entrée, que R. 351-9
+  ne plafonne pas.
+
+Restent aussi, hors de ces effets : la pension due du jour même de la
+cessation, pour la limite d'âge et l'invalidité (L. 90), que le modèle ne
+distingue pas ; le tirage du jour en population (§ 5.6), où le 15 est pris pour
+tous ; et la surcote du régime général de qui est né le 1er jour d'un trimestre
+civil, que la règle du « trimestre civil qui suit » laisse ambiguë et que le
+modèle garde telle quelle.
+
+**Fichiers.** `calendrier.py`, `chronologie.py`, `carriere.py`, `saisie.py`,
+`contexte.py`, `droit/ouvrir.py`, `droit/liquider.py`, `droit/completer.py`,
+`droit/acquerir.py`, `scenarios/notionnel.py`, `cout.py`, et leurs portages ;
+`pages.js` (le formulaire), `index.html` (les dates du départ) ;
+`data/reference/vocabulaire/valeurs.yaml` (la présomption), les fiches
+`date_effet_mois_suivant`, `majoration_duree_apres_65_ans` et
+`surcote_fonction_publique` ; `scripts/construire_temoins.py` ;
+`tests/temoins/exemples_officiels.yaml`, `tests/test_oracle.py`, et les tests
+qui racontent des dates au mois, qui naissent au 1er ; `README.md`,
+`docs/limites.md`, `docs/architecture.md`, `docs/parcours_presentation.md` ;
+le paquet, les témoins, le bilan et le chiffrage, régénérés.

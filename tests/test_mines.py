@@ -130,9 +130,10 @@ def test_la_table_porte_les_valeurs_que_les_textes_et_la_caisse_publient():
 
 def test_trente_ans_de_mine_liquides_en_2026(simulateur):
     """120 × 1,473 × 97,15 € = 17 172,23 € par an. La fiche servait
-    120 × 102,49 €, soit 12 299 €."""
+    120 × 102,49 €, soit 12 299 €. Né en janvier 1971 — le 15, faute de jour
+    dit —, le mineur a cinquante-cinq ans au 1er février 2026."""
     carriere, _, pension = _mines(simulateur, 1971, 25, 55)
-    assert (carriere.date_liquidation.annee, carriere.date_liquidation.mois) == (2026, 1)
+    assert (carriere.date_liquidation.annee, carriere.date_liquidation.mois) == (2026, 2)
     assert pension.montant == pytest.approx(120 * 1.473 * 97.15, abs=1e-6)
     assert pension.detail == ("120.00 trimestres × coefficient de majoration de la "
                               "durée 1.473 × valeur du trimestre 97.15 €")

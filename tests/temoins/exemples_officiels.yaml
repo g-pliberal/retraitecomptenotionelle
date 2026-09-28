@@ -70,14 +70,21 @@
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
-# l'impose. Les dates s'écrivent année-mois : le modèle ne connaît pas le jour,
-# et la pension prend effet le premier du mois. `naissances_enfants` date les
-# premiers enfants, à l'année ou au mois, comme le formulaire ; ceux qu'elle ne
-# date pas sont présumés nés aux trente ans de leur mère. `conjoint`,
-# `conjoint_sexe`, `mariage`, `ressources_conjoint` et `deces` déclarent le
-# conjoint et le décès de l'assuré comme la saisie : la naissance du conjoint
-# et le décès à l'année, au mois ou au jour ; le sexe du conjoint, l'autre que
-# celui de l'assuré s'il n'est pas dit ; ses ressources annuelles.
+# l'impose. Les dates s'écrivent année-mois, et la pension prend effet le
+# premier du mois. La naissance dit son jour quand l'exemple le donne
+# (« 1964-05-16 ») : la pension prend effet au premier du mois qui suit
+# l'anniversaire, sauf pour qui est né un 1er (R. 351-37). Un exemple qui ne le
+# donne pas le laisse à la présomption, le 15 — sauf s'il part au mois même
+# où il atteint l'âge qui ouvre son droit, ce que seul un assuré né un 1er
+# peut faire : sa naissance s'écrit alors au 1er (« 1967-03-01 »), jour que la
+# source ne dit pas mais que sa date de départ suppose (action 132).
+# `naissances_enfants` date les premiers enfants, à l'année ou au mois, comme
+# le formulaire ; ceux qu'elle ne date pas sont présumés nés aux trente ans de
+# leur mère. `conjoint`, `conjoint_sexe`, `mariage`, `ressources_conjoint` et
+# `deces` déclarent le conjoint et le décès de l'assuré comme la saisie : la
+# naissance du conjoint et le décès à l'année, au mois ou au jour ; le sexe du
+# conjoint, l'autre que celui de l'assuré s'il n'est pas dit ; ses ressources
+# annuelles.
 #
 # UN EXEMPLE QUE LE MODÈLE NE REPRODUIT PAS ENTRE QUAND MÊME, à l'état
 # « écart connu » (docs/architecture.md, § 9.2) : ce qu'on apprend n'est
@@ -112,7 +119,7 @@ exemples:
       trimestres tous régimes, 170 exigés. Il manque 16 trimestres jusqu'à
       67 ans et 11 jusqu'à 170 : 11 retenus, 0,625 point par trimestre,
       taux 43,125 %.
-    carriere: {naissance: "1964-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2027-07", trimestres_valides: 159}
+    carriere: {naissance: "1964-07-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2027-07", trimestres_valides: 159}
     attendu: {trimestres_requis: 170, taux_liquidation: 0.43125, motif_ouverture: age_legal}
 
   - id: sp_f20349_decote_fonction_publique
@@ -121,7 +128,7 @@ exemples:
       Fonctionnaire sédentaire né le 1er juillet 1964, départ le 1er juillet
       2027 à 63 ans avec 159 trimestres au lieu de 170 : la pension est
       réduite de 13,75 % (11 trimestres × 1,25 %).
-    carriere: {naissance: "1964-07", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2027-07", trimestres_valides: 159}
+    carriere: {naissance: "1964-07-01", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2027-07", trimestres_valides: 159}
     attendu: {trimestres_requis: 170, taux_liquidation: 0.646875}
 
   - id: sp_f19643_surcote
@@ -130,7 +137,7 @@ exemples:
       Né le 15 avril 1965, il a à 63 ans les 171 trimestres requis. S'il
       travaille jusqu'au 30 juin 2029, il lui est compté 2 trimestres du
       1er juillet au 31 décembre 2028 et 2 en 2029 : pension majorée de 5 %.
-    carriere: {naissance: "1965-04", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-07", trimestres_valides: 176}
+    carriere: {naissance: "1965-04-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-07", trimestres_valides: 176}
     attendu: {trimestres_requis: 171, age_ouverture: 63.0, taux_liquidation: 0.525}
 
   - id: sp_f16494_surcote_fonction_publique
@@ -140,7 +147,7 @@ exemples:
       9 mois (1er août 2027) avec 170 trimestres ; s'il part au 1er octobre
       2028, soit 4 trimestres entiers après celui de ses 62 ans et 9 mois, la
       pension est majorée de 5 % (4 × 1,25 %).
-    carriere: {naissance: "1964-10", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2028-10", trimestres_valides: 175}
+    carriere: {naissance: "1964-10-09", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2028-10", trimestres_valides: 175}
     attendu: {trimestres_requis: 170, age_ouverture: 62.75, taux_liquidation: 0.7875}
 
   - id: sp_f21552_taux_plein_170
@@ -156,7 +163,7 @@ exemples:
     enonce: >-
       Né en 1964, départ à 67 ans avec 158 trimestres : taux plein sans
       décote, pension = revenu annuel moyen × 50 % × 158/170.
-    carriere: {naissance: "1964-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-01", trimestres_valides: 158, niveau_salaire: 1.5}
+    carriere: {naissance: "1964-01-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-01", trimestres_valides: 158, niveau_salaire: 1.5}
     attendu: {taux_liquidation: 0.5, pension_base_sur_sam: 0.4647058823529412}
 
   - id: sp_f21552_65_ans_158
@@ -165,7 +172,7 @@ exemples:
       Né en 1964, départ à 65 ans avec 158 trimestres : 12 trimestres
       manquent jusqu'à 170, 8 jusqu'à 67 ans ; taux réduit à 45 %, pension =
       revenu annuel moyen × 45 % × 158/170.
-    carriere: {naissance: "1964-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-01", trimestres_valides: 158, niveau_salaire: 1.5}
+    carriere: {naissance: "1964-01-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-01", trimestres_valides: 158, niveau_salaire: 1.5}
     attendu: {taux_liquidation: 0.45, pension_base_sur_sam: 0.41823529411764704}
 
   - id: sp_a15703_minimum_contributif_2026
@@ -194,24 +201,24 @@ exemples:
       Né le 16/05/1964 : condition d'âge de 62 ans et 9 mois remplie le
       16/02/2027, retraite à effet du 01/03/2027 au plus tôt ; 170 trimestres
       pour le taux plein, prorata en 170e.
-    carriere: {naissance: "1964-05", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-05", age_debut: 22}
-    attendu: {age_ouverture: 62.75, date_age_legal: "2027-02", trimestres_requis: 170}
+    carriere: {naissance: "1964-05-16", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-05", age_debut: 22}
+    attendu: {age_ouverture: 62.75, date_age_legal: "2027-02", date_effet_au_plus_tot: "2027-03", trimestres_requis: 170}
 
   - id: cnav_2026_07_age_legal_1965_premier_trimestre
     source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, point 1.1 exemple 2 et point 2.1 exemple 2", verifie_le: "2026-03-05"}
     enonce: >-
       Né le 24/02/1965 : 62 ans et 9 mois le 24/11/2027, retraite à effet du
       01/12/2027 au plus tôt ; 170 trimestres.
-    carriere: {naissance: "1965-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-02", age_debut: 22}
-    attendu: {age_ouverture: 62.75, date_age_legal: "2027-11", trimestres_requis: 170}
+    carriere: {naissance: "1965-02-24", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-02", age_debut: 22}
+    attendu: {age_ouverture: 62.75, date_age_legal: "2027-11", date_effet_au_plus_tot: "2027-12", trimestres_requis: 170}
 
   - id: cnav_2026_07_age_legal_1965_apres_avril
     source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, point 1.1 exemple 3 et point 2.1 exemple 3", verifie_le: "2026-03-05"}
     enonce: >-
       Né le 08/07/1965 : 63 ans le 08/07/2028, retraite à effet du
       01/08/2028 au plus tôt ; 171 trimestres, prorata en 171e.
-    carriere: {naissance: "1965-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-07", age_debut: 22}
-    attendu: {age_ouverture: 63.0, date_age_legal: "2028-07", trimestres_requis: 171}
+    carriere: {naissance: "1965-07-08", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-07", age_debut: 22}
+    attendu: {age_ouverture: 63.0, date_age_legal: "2028-07", date_effet_au_plus_tot: "2028-08", trimestres_requis: 171}
 
   - id: cnav_2026_07_decote_1961
     source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, point 4.1.1 exemple 1", verifie_le: "2026-03-05"}
@@ -221,7 +228,7 @@ exemples:
       trimestres (169 requis). Manquants : 19 par rapport à 67 ans (56 mois /
       3 = 18,66 arrondis à 19), 9 par rapport à 169 ; minoration 9 × 0,625 =
       5,625 ; taux minoré 44,375 %.
-    carriere: {naissance: "1961-11", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-04", trimestres_valides: 160}
+    carriere: {naissance: "1961-11-08", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-04", trimestres_valides: 160}
     attendu: {age_ouverture: 62.25, trimestres_requis: 169, taux_liquidation: 0.44375}
 
   # ---- Cnav, circulaire 2026-29 du 4 septembre 2026 (carrière longue) ----
@@ -277,7 +284,7 @@ exemples:
       prenant effet à compter du 1er septembre 2023. » Né en janvier 1962,
       carrière longue en janvier 2022 : 168 trimestres, ceux de la version de
       2014 de L. 161-17-3, et non les 169 de la loi de 2023.
-    carriere: {naissance: "1962-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-01", age_debut: 17}
+    carriere: {naissance: "1962-01-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-01", age_debut: 17}
     attendu: {trimestres_requis: 168, motif_ouverture: carriere_longue}
 
   - id: cnav_2023_19_duree_1963_avant_septembre
@@ -286,7 +293,7 @@ exemples:
       La même règle pour la génération 1963, que la loi de 2023 porte à 170
       trimestres : née en mars 1963, carrière longue en mars 2023, avant la
       date d'effet de la loi — 168 trimestres.
-    carriere: {naissance: "1963-03", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2023-03", age_debut: 17}
+    carriere: {naissance: "1963-03-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2023-03", age_debut: 17}
     attendu: {trimestres_requis: 168, motif_ouverture: carriere_longue}
 
   # ---- Cnav, circulaire 2026-07 du 5 mars 2026, point 2.1 ----------------
@@ -318,7 +325,7 @@ exemples:
     enonce: >-
       Nés de 1966 à 1969, début avant 20 ans : deux ans et six mois avant
       l'âge légal — 61 ans pour 1967 —, 172 trimestres cotisés.
-    carriere: {naissance: "1967-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-03", age_debut: 17.75}
+    carriere: {naissance: "1967-03-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-03", age_debut: 17.75}
     attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: cnav_2026_29_racl_1970
@@ -326,7 +333,7 @@ exemples:
     enonce: >-
       Nés en 1970, début avant 20 ans : 61 ans et 9 mois, 172 trimestres
       cotisés.
-    carriere: {naissance: "1970-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-12", age_debut: 17.75}
+    carriere: {naissance: "1970-03-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-12", age_debut: 17.75}
     attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: cnav_2026_29_racl_1971
@@ -334,7 +341,7 @@ exemples:
     enonce: >-
       Nés à compter de 1971, début avant 20 ans : 62 ans, durée du taux
       plein cotisée.
-    carriere: {naissance: "1971-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2033-03", age_debut: 17.75}
+    carriere: {naissance: "1971-03-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2033-03", age_debut: 17.75}
     attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
   # ---- Cnav, circulaire 2018-04 du 1er février 2018 (surcote) ------------
@@ -563,7 +570,7 @@ exemples:
       l'âge légal, 62 ans et 6 mois, avec 163 trimestres de durée d'assurance
       pour 169 requis : 18 trimestres jusqu'à 67 ans, 6 jusqu'à la durée ; 6
       trimestres de décote à 1,25 %, soit 7,5 % de la pension.
-    carriere: {naissance: "1962-03", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2024-10", trimestres_valides: 163}
+    carriere: {naissance: "1962-03-20", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2024-10", trimestres_valides: 163}
     attendu: {trimestres_requis: 169, taux_liquidation: 0.69375, motif_ouverture: age_legal}
 
   - id: sre_surcote_brigitte
@@ -573,16 +580,30 @@ exemples:
       activité jusqu'à ses 64 ans, le 20 mars 2026, et totalise alors 175
       trimestres : 175 − 169 = 6 trimestres de surcote à 1,25 %, soit 7,5 %.
       La pension prend effet le 1er avril 2026.
-    carriere: {naissance: "1962-03", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2026-04", trimestres_valides: 175}
+    carriere: {naissance: "1962-03-20", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2026-04", trimestres_valides: 175}
     attendu: {trimestres_requis: 169, taux_liquidation: 0.80625}
 
   # ---- CNRACL (documentation juridique de la Caisse des dépôts) ---------
   # juris-cnracl.retraites.fr, lue le 24 septembre 2026 (action 89, lot de la
   # CNRACL). Trois pages y donnent un exemple que le modèle rejoue ; le
-  # troisième exemple de surcote de droit commun ne l'est pas, son agent
-  # étant né un 1er janvier quand le modèle date au mois (voir
-  # `docs/limites.md`), et ceux des générations 1963 à 1966 datent d'avant la
-  # suspension de 2026.
+  # troisième exemple de surcote de droit commun, dont l'agent est né un 1er
+  # janvier, l'est depuis que le modèle lit le jour de naissance (action 132,
+  # page relue le 28 septembre 2026) ; ceux des générations 1963 à 1966
+  # datent d'avant la suspension de 2026.
+  - id: cnracl_surcote_ne_un_1er
+    source: {editeur: "CNRACL", reference: "juris-cnracl.retraites.fr, « Calcul de la surcote », surcote de droit commun, exemple 3", verifie_le: "2026-09-28"}
+    enonce: >-
+      « Un fonctionnaire né le 01/01/1962 atteint son âge légal (62 ans et 6
+      mois) le 01/07/2024. [...] Il poursuit son activité jusqu'au 31/12/2025
+      et totalise alors 176 trimestres. Pour la génération 1962, le nombre de
+      trimestres nécessaires pour avoir une pension à taux plein est de 169.
+      [...] Il a effectué 6 trimestres supplémentaires de services effectifs à
+      partir du 01/07/2024. Coefficient de majoration : 6 X 1.25% = 7.5% ».
+      Né un 1er, l'agent a l'âge légal le jour même, et sa surcote court de
+      ce jour ; né le 2, il n'en aurait eu que cinq, du 1er août 2024.
+    carriere: {naissance: "1962-01-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2026-01", trimestres_valides: 176}
+    attendu: {trimestres_requis: 169, age_ouverture: 62.5, taux_liquidation: 0.80625}
+
   - id: cnracl_carriere_longue_avant_soixante_ans
     source: {editeur: "CNRACL", reference: "juris-cnracl.retraites.fr, « Durée d'assurance requise - Fonctionnaire bénéficiant d'un départ anticipé avant 60 ans pour un autre motif », mise à jour du 1er septembre 2026, second exemple", verifie_le: "2026-09-24"}
     enonce: >-
@@ -592,7 +613,7 @@ exemples:
       le C du XXIV de l'article 10 de la loi du 14 avril 2023, par date
       d'ouverture du droit. Ici un agent entré à quinze ans, parti à
       cinquante-huit.
-    carriere: {naissance: "1967-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2025-01", age_debut: 15}
+    carriere: {naissance: "1967-01-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2025-01", age_debut: 15}
     attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue}
 
   - id: cnracl_decote_active_1967
@@ -605,7 +626,7 @@ exemples:
       modèle le fait actif toute sa carrière, quand l'exemple la finit sur un
       emploi sédentaire : l'âge d'annulation, lié au motif d'ouverture, est le
       même.
-    carriere: {naissance: "1967-06", sexe: H, affiliation: fonctionnaire_territorial_hospitalier_actif, liquidation: "2027-07", trimestres_valides: 165}
+    carriere: {naissance: "1967-06-30", sexe: H, affiliation: fonctionnaire_territorial_hospitalier_actif, liquidation: "2027-07", trimestres_valides: 165}
     attendu: {trimestres_requis: 169, taux_liquidation: 0.7125}
 
   - id: cnracl_decote_sedentaire_1957
@@ -615,7 +636,7 @@ exemples:
       1er octobre 2023 avec 164 trimestres ; durée requise l'année de ses 60
       ans, 166 trimestres ; âge d'annulation de la décote 66 ans et 9 mois :
       3 trimestres par l'âge, 2 par la durée, 2 retenus, 2,5 % de minoration.
-    carriere: {naissance: "1957-10", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2023-10", trimestres_valides: 164}
+    carriere: {naissance: "1957-10-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2023-10", trimestres_valides: 164}
     attendu: {trimestres_requis: 166, taux_liquidation: 0.73125}
 
   # ---- COR (régime des mines) -------------------------------------------
@@ -652,7 +673,7 @@ exemples:
       arrondis à 14,5 annuités, en 11e catégorie (36 032,62 €) : 14,5 × 2 %
       × 36 032,62 € = 870,79 € par mois, plus la bonification pour enfants
       de 5 %, 43,54 € — 914,33 € brut mensuels.
-    carriere: {naissance: "1964-04", sexe: H, affiliation: marin, liquidation: "2024-04", trimestres_valides: 58, nombre_enfants: 2}
+    carriere: {naissance: "1964-04-01", sexe: H, affiliation: marin, liquidation: "2024-04", trimestres_valides: 58, nombre_enfants: 2}
     attendu: {trimestres_valides: 58, liquidation_ouverte: true, majoration_enfants_sur_pensions: 0.05}
 
   - id: enim_anciennete_a_cinquante_ans
@@ -662,7 +683,7 @@ exemples:
       partir de 50 ans, 52 ans et demi ou 55 ans selon la situation. Gaspard,
       marin, a 50 ans et réunit 25 ans de services : il peut prétendre au
       versement d'une pension d'ancienneté.
-    carriere: {naissance: "1974-01", sexe: H, affiliation: marin, liquidation: "2024-01", age_debut: 25}
+    carriere: {naissance: "1974-01-01", sexe: H, affiliation: marin, liquidation: "2024-01", age_debut: 25}
     attendu: {liquidation_ouverte: true, age_ouverture: 50.0, non_ouverte_un_trimestre_plus_tot: true}
 
   # ---- Sections des professions libérales ---------------------------------
@@ -681,7 +702,7 @@ exemples:
       d'anticipation par enfant mis au monde (dans la limite de 5 au
       maximum). Exemple : si vous avez eu 2 enfants, vous pouvez bénéficier
       du taux plein pour ce régime dès 65 ans. »
-    carriere: {naissance: "1961-01", sexe: F, affiliation: chirurgien_dentiste_ou_sage_femme, liquidation: "2026-01", age_debut: 27, nombre_enfants: 2}
+    carriere: {naissance: "1961-01-01", sexe: F, affiliation: chirurgien_dentiste_ou_sage_femme, liquidation: "2026-01", age_debut: 27, nombre_enfants: 2}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carcdsf_complementaire: 1.0}}
 
   - id: carmf_report_62_65_ans
@@ -691,7 +712,7 @@ exemples:
       complémentaire comme pour l'ASV, « 3 ans de report soit 12 trimestres,
       12 x 1,25 % = 15 % - coefficient : 1,15 », les trimestres courant du
       premier jour du trimestre civil qui suit ses 62 ans à la date d'effet.
-    carriere: {naissance: "1960-11", sexe: H, affiliation: medecin_liberal, liquidation: "2026-01", age_debut: 30}
+    carriere: {naissance: "1960-11-10", sexe: H, affiliation: medecin_liberal, liquidation: "2026-01", age_debut: 30}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.15, asv_conventionnes: 1.15}}
 
   # Le document d'exemples de la CAVAMAC, « Mode de calcul de vos retraites
@@ -710,7 +731,7 @@ exemples:
       séparent de la date à laquelle sa retraite lui serait servie à taux
       plein (67 ans révolus au 1/01/2027). Au lieu de 6 trimestres, seuls 4
       trimestres ont donc été retenus » : minoration de 5 %.
-    carriere: {naissance: "1959-12", sexe: H, affiliation: agent_general_assurance, liquidation: "2026-01", trimestres_valides: 161}
+    carriere: {naissance: "1959-12-08", sexe: H, affiliation: agent_general_assurance, liquidation: "2026-01", trimestres_valides: 161}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {cnavpl: 0.95}}
 
   - id: cavamac_rbl_surcote_six_trimestres
@@ -733,7 +754,7 @@ exemples:
       67 ans : 6,25 %, calculée sur 5 trimestres manquants. Sa durée n'y
       entre pas — une carrière commencée à 22 ans la réunit, et la décote
       reste.
-    carriere: {naissance: "1960-08", sexe: H, affiliation: agent_general_assurance, liquidation: "2026-07", age_debut: 22}
+    carriere: {naissance: "1960-08-08", sexe: H, affiliation: agent_general_assurance, liquidation: "2026-07", age_debut: 22}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {cavamac_complementaire: 0.9375}}
 
   # ---- Cour des comptes ----------------------------------------------------
@@ -756,7 +777,7 @@ exemples:
       Durée d'assurance requise par génération selon le type de liquidation :
       catégories « super actives », génération 1965, 166 trimestres ; les
       sédentaires de la même génération en doivent 170 ou 171.
-    carriere: {naissance: "1965-03", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2017-03", age_debut: 22}
+    carriere: {naissance: "1965-03-01", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2017-03", age_debut: 22}
     attendu: {trimestres_requis: 166, liquidation_ouverte: true}
 
   - id: cdc_2026_tab20_super_active_1968
@@ -765,7 +786,7 @@ exemples:
       Catégories « super actives » : 167 trimestres pour les générations 1966,
       1967 et 1968, dont le droit s'ouvre à cinquante-deux ans, de 2018 à
       2020.
-    carriere: {naissance: "1968-06", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2020-06", age_debut: 22}
+    carriere: {naissance: "1968-06-01", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2020-06", age_debut: 22}
     attendu: {trimestres_requis: 167, liquidation_ouverte: true}
 
   - id: cdc_2026_tab20_super_active_1971_juin
@@ -774,7 +795,7 @@ exemples:
       Catégories « super actives », génération 1971 : 168 trimestres pour
       les nés avant septembre, 169 pour les nés à compter de septembre.
       Ici un agent né en juin 1971, parti à cinquante-deux ans en juin 2023.
-    carriere: {naissance: "1971-06", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2023-06", age_debut: 22}
+    carriere: {naissance: "1971-06-01", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2023-06", age_debut: 22}
     attendu: {trimestres_requis: 168, liquidation_ouverte: true}
 
   - id: cdc_2026_tab20_super_active_1971_octobre
@@ -783,7 +804,7 @@ exemples:
       Catégories « super actives », génération 1971, né à compter de
       septembre : 169 trimestres. L'âge minoré est alors de cinquante-deux ans
       et trois mois, atteint en janvier 2024.
-    carriere: {naissance: "1971-10", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2024-01", age_debut: 22}
+    carriere: {naissance: "1971-10-01", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2024-01", age_debut: 22}
     attendu: {trimestres_requis: 169, liquidation_ouverte: true}
 
   - id: cdc_2026_tab20_super_active_1975_juin
@@ -792,7 +813,7 @@ exemples:
       Catégories « super actives », génération 1975 : 170 trimestres pour
       les nés avant avril, 171 pour les nés à compter d'avril ; 172 pour la
       génération 1976 et les suivantes.
-    carriere: {naissance: "1975-06", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2028-06", age_debut: 22}
+    carriere: {naissance: "1975-06-01", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2028-06", age_debut: 22}
     attendu: {trimestres_requis: 171, liquidation_ouverte: true}
 
   - id: cdc_2026_tab20_active_1965
@@ -801,7 +822,7 @@ exemples:
       Catégories actives, génération 1965 : 168 trimestres, là où les
       sédentaires de la même génération en doivent 170 ou 171. Le droit
       s'ouvre à cinquante-sept ans, en 2022.
-    carriere: {naissance: "1965-06", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2022-06", age_debut: 22}
+    carriere: {naissance: "1965-06-01", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2022-06", age_debut: 22}
     attendu: {trimestres_requis: 168, liquidation_ouverte: true}
 
   - id: cdc_2026_tab20_active_1966_mars
@@ -810,7 +831,7 @@ exemples:
       Catégories actives, génération 1966 : 168 trimestres pour les nés avant
       septembre, 169 pour les nés à compter de septembre. Ici un agent né en
       mars 1966, parti à cinquante-sept ans en mars 2023.
-    carriere: {naissance: "1966-03", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2023-03", age_debut: 22}
+    carriere: {naissance: "1966-03-01", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2023-03", age_debut: 22}
     attendu: {trimestres_requis: 168, liquidation_ouverte: true}
 
   - id: cdc_2026_tab20_active_1966_octobre
@@ -819,7 +840,7 @@ exemples:
       Catégories actives, génération 1966, né à compter de septembre : 169
       trimestres. L'âge anticipé est alors de cinquante-sept ans et trois
       mois, atteint en janvier 2024.
-    carriere: {naissance: "1966-10", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2024-01", age_debut: 22}
+    carriere: {naissance: "1966-10-01", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2024-01", age_debut: 22}
     attendu: {trimestres_requis: 169, liquidation_ouverte: true}
 
   - id: cdc_2026_tab20_active_1968
@@ -828,7 +849,7 @@ exemples:
       Catégories actives : 170 trimestres pour les générations 1968 et 1969,
       et pour la génération 1970 née avant avril ; 171 à compter d'avril 1970,
       172 à partir de 1971.
-    carriere: {naissance: "1968-06", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2026-03", age_debut: 22}
+    carriere: {naissance: "1968-06-01", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2026-03", age_debut: 22}
     attendu: {trimestres_requis: 170, liquidation_ouverte: true}
 
   # ---- CNIEG (industries électriques et gazières) ------------------------
@@ -853,7 +874,7 @@ exemples:
       « 55 ans et 4 mois + 13 trimestres = 58 ans et 7 mois » : 9 trimestres
       par l'âge, 18 par la durée, que la borne de 150 ramène à 11 ; « 1,0% x
       9 trimestres = 9,0% ». Taux : 75 % × (1 − 9 %).
-    carriere: {naissance: "1962-09", sexe: F, affiliation: agent_ieg, liquidation: "2019-02", trimestres_valides: 147}
+    carriere: {naissance: "1962-09-14", sexe: F, affiliation: agent_ieg, liquidation: "2019-02", trimestres_valides: 147}
     attendu: {trimestres_requis: 165, date_age_legal: "2018-01", taux_liquidation: 0.6825}
   - id: cnieg_2024_15_monsieur_a
     source: {editeur: "CNIEG", reference: "circulaire CNIEG n° 2024/15 du 30 octobre 2024, « La décote », § 5, exemple 1, et § 6", verifie_le: "2026-09-27"}
@@ -868,7 +889,7 @@ exemples:
       retenir est donc égal à 8 trimestres ». Le § 6, « reprenant l'exemple
       de Monsieur A », écrit « N = 4 trimestres de décote » : le témoin
       retient le décompte du § 5. Taux : 75 % × (1 − 8 × 1,25 %).
-    carriere: {naissance: "1964-12", sexe: H, affiliation: agent_ieg, liquidation: "2021-12", trimestres_valides: 159}
+    carriere: {naissance: "1964-12-01", sexe: H, affiliation: agent_ieg, liquidation: "2021-12", trimestres_valides: 159}
     attendu: {trimestres_requis: 167, date_age_legal: "2020-12", taux_liquidation: 0.675}
 
   # ---- CRPCEN (clercs et employés de notaires) ---------------------------
@@ -888,7 +909,7 @@ exemples:
       de janvier à octobre 1961 ; le tableau de la même page en donne 66 ans
       et 5 mois aux nés de novembre, comme le modèle : le décompte par l'âge
       ne décide pas, et il n'est pas rejoué.
-    carriere: {naissance: "1961-11", sexe: F, affiliation: clerc_de_notaire, liquidation: "2024-01", trimestres_valides: 165}
+    carriere: {naissance: "1961-11-12", sexe: F, affiliation: clerc_de_notaire, liquidation: "2024-01", trimestres_valides: 165}
     attendu: {trimestres_requis: 168, date_age_legal: "2023-07", taux_liquidation: 0.721875}
 
   # ---- Agirc-Arrco -------------------------------------------------------
@@ -937,7 +958,7 @@ exemples:
       en mai 1965 qui prend sa retraite à 63 ans avec 167 trimestres : « Sa
       retraite de base subira donc une décote de : 1,25 % × 4 = 5 % », et
       « + 5 % de majoration » en complémentaire comme à l'ASV.
-    carriere: {naissance: "1965-05", sexe: H, affiliation: medecin_liberal, liquidation: "2028-07", trimestres_valides: 167}
+    carriere: {naissance: "1965-05-15", sexe: H, affiliation: medecin_liberal, liquidation: "2028-07", trimestres_valides: 167}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.05, asv_conventionnes: 1.05, cnavpl: 0.95}}
 
   - id: carmf_2026_temps_choisi_65_ans
@@ -948,7 +969,7 @@ exemples:
       15 % en cas de départ en retraite au 1er juillet 2030 » ; au régime de
       base, 175 trimestres, « soit 4 trimestres de plus que les 171 requis »,
       et « une surcote de 1,25 % × 4 = 5 % ».
-    carriere: {naissance: "1965-05", sexe: H, affiliation: medecin_liberal, liquidation: "2030-07", trimestres_valides: 175}
+    carriere: {naissance: "1965-05-15", sexe: H, affiliation: medecin_liberal, liquidation: "2030-07", trimestres_valides: 175}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.15, asv_conventionnes: 1.15, cnavpl: 1.05}}
 
   - id: carmf_2026_temps_choisi_70_ans
@@ -958,7 +979,7 @@ exemples:
       maximum à 30 % au 1er juillet 2035 » — « 1,25 % par trimestre séparant
       le 1er jour du trimestre civil suivant » ses 62 ans « de la date de
       votre retraite », majoration « réduite à 0,75 % entre 65 et 70 ans ».
-    carriere: {naissance: "1965-05", sexe: H, affiliation: medecin_liberal, liquidation: "2035-07", age_debut: 30}
+    carriere: {naissance: "1965-05-15", sexe: H, affiliation: medecin_liberal, liquidation: "2035-07", age_debut: 30}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.30, asv_conventionnes: 1.30}}
 
   # ---- Agirc-Arrco : la date d'effet de la réversion --------------------

@@ -354,10 +354,13 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
 
     Un métier principal court jusqu'au début du suivant, le dernier jusqu'au
     départ ; une activité cumulée, de son âge de début à son âge de fin, ou
-    au départ. Les âges se comptent depuis le mois que le jour de naissance
-    désigne (:func:`naissance_de_l_assure`). Les contrôles sont ceux du
-    parcours : les métiers se suivent, le premier n'est pas cumulé, rien ne
-    dépasse le départ.
+    au départ. Un début ou une fin d'activité tombe dans le mois où l'âge est
+    atteint, compté du mois de naissance : on commence un métier le jour
+    qu'on veut. Le départ tombe au premier mois où l'âge est révolu, compté
+    du mois que le jour de naissance désigne (:func:`naissance_de_l_assure`) :
+    la pension prend effet le premier du mois qui suit l'anniversaire. Les
+    contrôles sont ceux du parcours : les métiers se suivent, le premier n'est
+    pas cumulé, rien ne dépasse le départ.
     """
     if not metiers:
         raise ValueError("une carrière compte au moins un métier")
@@ -373,12 +376,12 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                                          age_liquidation, nombre_enfants,
                                          naissances_enfants, jour_naissance,
                                          presomptions, conjoint=conjoint, deces=deces)
-    origine = origine_de(naissance[0])
-    bornes = [origine.plus_mois(en_mois(metier.age_debut)) for metier in principaux]
+    mois_de_naissance = mois_de(naissance[0]["debut"])
+    bornes = [mois_de_naissance.plus_mois(en_mois(metier.age_debut)) for metier in principaux]
     debut = bornes[0]
     # La pension prend effet ce mois-là : il n'est plus travaillé, la borne
     # est donc EXCLUE.
-    fin = origine.plus_mois(en_mois(age_liquidation))
+    fin = origine_de(naissance[0]).plus_mois(en_mois(age_liquidation))
     if fin.rang <= debut.rang:
         raise ValueError("âge de liquidation antérieur à l'âge de début d'activité")
     # Chaque métier s'arrête où commence le suivant : les périodes se touchent
@@ -399,9 +402,9 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
             "affiliation": metier.affiliation, "niveau_salaire": metier.niveau_salaire,
             "profil": profil_carriere, "part_primes": part_primes}))
     for rang, metier in enumerate(cumuls, 1):
-        ouverture = origine.plus_mois(en_mois(metier.age_debut))
+        ouverture = mois_de_naissance.plus_mois(en_mois(metier.age_debut))
         cloture = (fin if metier.age_fin is None
-                   else origine.plus_mois(en_mois(metier.age_fin)))
+                   else mois_de_naissance.plus_mois(en_mois(metier.age_fin)))
         if ouverture.rang < debut.rang:
             raise ValueError(
                 "une activité cumulée commence après le début de la "

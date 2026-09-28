@@ -540,9 +540,11 @@ test("le chef d'exploitation reçoit ses points gratuits de RCO", () => {
   const contexte = new Contexte(paquet);
   const simulateur = contexte.simulateur();
   const scenario = simulateur.scenarioActuel;
+  // Des chefs nés le 1er janvier, qui partent au 1er janvier de l'année dite.
   const chef = (naissance, debut, depart) => simulateur.carriereSimple({
     annee_naissance: naissance, sexe: "H", affiliation: "exploitant_agricole",
     age_debut: debut, age_liquidation: depart, niveau_salaire: 0.5,
+    jour_naissance: 1,
   });
   const rco = (resultat) => [
     resultat.pensions_par_regime.find((p) => p.regime === "msa_rco") ?? null,
@@ -582,9 +584,10 @@ test("le ministre du culte rémunéré cotise à l'Arrco sur le forfait", () => 
   assert.deepEqual(simulateur.affiliations.regimes("ministre_du_culte", 2006),
     ["cavimac", "arrco_cultes"]);
   assert.deepEqual(simulateur.affiliations.regimes("membre_congregation", 2026), ["cavimac"]);
+  // Né le 1er janvier 1961, il part le 1er janvier 2026.
   const rco = (statut, niveau) => simulateur.scenarioActuel.calculer(simulateur.carriereSimple({
     annee_naissance: 1961, sexe: "H", affiliation: statut, age_debut: 25,
-    age_liquidation: 65, niveau_salaire: niveau,
+    age_liquidation: 65, niveau_salaire: niveau, jour_naissance: 1,
   })).pensions_par_regime.find((p) => p.regime === "arrco_cultes") ?? null;
   assert.equal(rco("membre_congregation", 1.0), null);
   const pension = rco("ministre_du_culte", 0.5);

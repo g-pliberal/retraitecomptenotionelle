@@ -103,6 +103,7 @@ def test_le_controle_refuse_ce_qui_sortirait_du_noyau(tmp_path):
 #: que par une décision, puisque les résultats d'aujourd'hui en dépendent.
 PRESOMPTIONS_DU_5_6 = {
     "enfants nés aux": "naissance_des_enfants",
+    "assuré né le": "jour_de_naissance",
     "radiation au 1er janvier suivant": "radiation_au_1er_janvier_suivant",
     "agent présumé en activité": "agent_en_activite",
     "pas d'accord des parents": "pas_d_accord_des_parents",

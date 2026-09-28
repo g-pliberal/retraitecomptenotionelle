@@ -82,9 +82,12 @@ def salarie_moyen(simulateur) -> Carriere:
 
 
 def test_carriere_couvre_les_bonnes_annees(salarie_moyen):
+    # Né en janvier 1960 — le 15, faute de jour dit —, il a 62 ans au
+    # 1er février 2022 : janvier 2022 est travaillé.
     assert salarie_moyen.premiere_annee == 1981
-    assert salarie_moyen.derniere_annee == 2021
+    assert salarie_moyen.derniere_annee == 2022
     assert salarie_moyen.annee_liquidation == 2022
+    assert salarie_moyen.ligne(2022).fraction_annee == pytest.approx(1 / 12)
 
 
 def test_interruptions_ne_produisent_aucune_cotisation(simulateur):
@@ -533,7 +536,7 @@ def test_une_carriere_sans_aucune_cotisation_ne_produit_pas_de_capital(simulateu
     carriere = simulateur.carriere_simple(
         annee_naissance=1975, sexe="H", affiliation="salarie_prive_non_cadre",
         age_debut=21, age_liquidation=64,
-        interruptions={annee: "sans_activite" for annee in range(1996, 2039)},
+        interruptions={annee: "sans_activite" for annee in range(1996, 2040)},
     )
     prospectif = simulateur.simuler(carriere).notionnel_prospectif
     assert prospectif.droits_acquis is not None
@@ -616,9 +619,11 @@ def test_le_chomage_non_indemnise_ne_valide_que_dans_les_limites_de_r_351_12(
     assert valides(1975, {2003: "chomage_non_indemnise", 2008: "chomage_indemnise",
                           **non_indemnise(2009, 2011)}) == {
         2003: 4, 2008: 4, 2009: 4, 2010: 0, 2011: 0}
-    # … et cinq pour l'assuré de 55 ans qui a vingt ans de cotisations.
+    # … et cinq pour l'assuré de 55 ans qui a vingt ans de cotisations — et
+    # ne retravaille pas : né en janvier 1955, le 15 faute de jour dit, il
+    # part au 1er février 2017, et reste au chômage jusque-là.
     senior = {1990: "chomage_non_indemnise", 2012: "chomage_indemnise",
-              **non_indemnise(2013, 2016)}
+              **non_indemnise(2013, 2017)}
     assert sum(valides(1955, senior, age_liquidation=62)[a]
                for a in range(2013, 2017)) == 16
     assert sum(valides(1965, senior, age_liquidation=62)[a]
@@ -1011,9 +1016,11 @@ def test_une_carriere_sncf_a_cheval_sur_1992_melange_les_deux(simulateur):
     )
     employeur = simulateur.simuler(carriere).contribution_employeur
     assert set(employeur.annees_par_origine) == {"repli", "appelee"}
-    # 1975-1991 estimées, 1992-2004 lues dans le décret.
+    # 1975-1991 estimées, 1992-2005 lues dans le décret : né en janvier 1955
+    # — le 15, faute de jour dit —, l'agent a cinquante ans au 1er février
+    # 2005, et janvier 2005 compte.
     assert employeur.annees_par_origine["repli"] == 17
-    assert employeur.annees_trouvees == 13
+    assert employeur.annees_trouvees == 14
 
 
 def test_la_part_employeur_est_decomposee(simulateur, entiere):
@@ -1276,11 +1283,13 @@ def test_le_scenario_6_preleve_18_pour_cent_pour_tous_a_compter_de_la_bascule(si
         quatre = {c.annee: c for c in
                   comparaison.notionnel_retroactif_employeur.compte.cotisations}
         # La proposition la fait partir à 65 ans et non à 64 : son compte a
-        # les années du scénario 4, et celle que l'âge légal ajoute.
+        # les années du scénario 4, et celle que l'âge légal ajoute. Née en
+        # janvier 1975 — le 15, faute de jour dit —, elle part au 1er février :
+        # l'année ajoutée est celle du départ, dont janvier est travaillé.
         assert comparaison.depart_reporte
         assert set(quatre) <= set(liberal)
         assert set(liberal) - set(quatre) == {
-            comparaison.carriere_de("notionnel_liberal").annee_liquidation - 1}
+            comparaison.carriere_de("notionnel_liberal").annee_liquidation}
         avant = [a for a in liberal if a < bascule and not liberal[a].nulle]
         apres = [a for a in liberal if a >= bascule and not liberal[a].nulle]
         assert avant and apres, affiliation
@@ -3115,10 +3124,15 @@ def test_la_surcote_parentale_recompense_l_annee_imposee_par_la_reforme_de_2023(
     L'article L. 351-1-2-1 la paie 1,25 % par trimestre, quatre au plus, à qui
     détient un trimestre de majoration de durée d'assurance pour enfants.
     """
+    # Nées le 1er du mois. Datée au mois, la fenêtre chevauche deux années
+    # civiles, et celle du départ ne valide que ses trimestres civils écoulés :
+    # deux mois de naissance sur trois y perdent un trimestre, le 1er comme le
+    # 15 (feuille de route, action 132).
     def surcote(**kw):
         reglages = dict(annee_naissance=1969, sexe="F",
                         affiliation="salarie_prive_non_cadre",
-                        age_debut=18, age_liquidation=64, nombre_enfants=2)
+                        age_debut=18, age_liquidation=64, nombre_enfants=2,
+                        jour_naissance=1)
         reglages.update(kw)
         resultat = simulateur.scenario_actuel.calculer(
             simulateur.carriere_simple(**reglages))
@@ -3163,14 +3177,15 @@ def test_la_surcote_parentale_ne_compte_que_les_trimestres_au_dela_de_la_duree(
     L. 351-1-2-1 ne demande pas la durée requise à l'ouverture de la fenêtre :
     il compte les trimestres cotisés de cette année-là qui la DÉPASSENT. Le
     module servait tout ou rien — quatre trimestres si la durée était atteinte
-    à 63 ans, aucun sinon. Une mère de deux enfants née en janvier 1969,
+    à 63 ans, aucun sinon. Une mère de deux enfants née le 1er janvier 1969,
     entrée à vingt-quatre ans et demi, a 170 trimestres à l'ouverture de la
     fenêtre pour 172 requis : les deux derniers de l'année sont au-delà.
     """
     def surcote(age_debut):
         resultat = simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
             annee_naissance=1969, sexe="F", affiliation="salarie_prive_non_cadre",
-            age_debut=age_debut, age_liquidation=64, nombre_enfants=2))
+            age_debut=age_debut, age_liquidation=64, nombre_enfants=2,
+            jour_naissance=1))
         return next((a.detail for a in resultat.avantages_appliques
                      if a.code == "surcote_parentale"), None)
 
@@ -3345,11 +3360,12 @@ def test_la_complementaire_agricole_ouvre_ses_points_a_l_assiette_minimale(simul
     Le nombre de points ne dépend pas du taux de cotisation : c'est le barème
     qui est publié, pas le prix d'achat — et c'est ce qui débloque le calcul,
     la valeur d'achat du point de RCO restant introuvable. Jusqu'au 27
-    septembre 2026, le modèle servait 100 points toutes les années.
+    septembre 2026, le modèle servait 100 points toutes les années. Le chef
+    est né le 1er janvier 1960, et part le 1er janvier 2024.
     """
     carriere = simulateur.carriere_simple(
         annee_naissance=1960, sexe="H", affiliation="exploitant_agricole",
-        age_debut=20, age_liquidation=64, niveau_salaire=0.2,
+        age_debut=20, age_liquidation=64, niveau_salaire=0.2, jour_naissance=1,
     )
     pension = next(p for p in simulateur.scenario_actuel.calculer(
         carriere).pensions_par_regime if p.regime == "msa_rco")
@@ -3410,10 +3426,12 @@ def test_le_chef_d_exploitation_recoit_ses_points_gratuits_de_rco(simulateur):
     """
     scenario = simulateur.scenario_actuel
 
+    # Des chefs nés le 1er janvier, qui partent au 1er janvier de l'année dite.
     def chef(naissance, debut, depart):
         return simulateur.carriere_simple(
             annee_naissance=naissance, sexe="H", affiliation="exploitant_agricole",
             age_debut=debut, age_liquidation=depart, niveau_salaire=0.5,
+            jour_naissance=1,
         )
 
     # Installé en 1975, parti en janvier 2019 : 28 années d'avant 2003, 16 de
@@ -3480,10 +3498,11 @@ def test_le_ministre_du_culte_remunere_cotise_a_l_arrco_sur_le_forfait(simulateu
 
     scenario = simulateur.scenario_actuel
 
+    # Né le 1er janvier 1961, il part le 1er janvier 2026.
     def rco(statut, niveau):
         carriere = simulateur.carriere_simple(
             annee_naissance=1961, sexe="H", affiliation=statut, age_debut=25,
-            age_liquidation=65, niveau_salaire=niveau,
+            age_liquidation=65, niveau_salaire=niveau, jour_naissance=1,
         )
         return next((p for p in scenario.calculer(carriere).pensions_par_regime
                      if p.regime == "arrco_cultes"), None)
@@ -3725,10 +3744,14 @@ def test_les_annees_posterieures_a_la_liquidation_n_ouvrent_rien(simulateur):
                            affiliation="salarie_prive_non_cadre")
              for a in range(2022, 2030)]
 
+    # Né le 1er janvier 1960, il part le 1er janvier 2022 : aucun mois de 2022
+    # n'est travaillé.
     borne = simulateur.scenario_actuel.calculer(Carriere(
-        annee_naissance=1960, sexe="H", lignes=list(avant), age_liquidation=62))
+        annee_naissance=1960, sexe="H", lignes=list(avant), age_liquidation=62,
+        jour_naissance=1))
     prolongee = simulateur.scenario_actuel.calculer(Carriere(
-        annee_naissance=1960, sexe="H", lignes=avant + apres, age_liquidation=62))
+        annee_naissance=1960, sexe="H", lignes=avant + apres, age_liquidation=62,
+        jour_naissance=1))
 
     assert borne.pension_annuelle == pytest.approx(prolongee.pension_annuelle)
     assert borne.trimestres_valides == prolongee.trimestres_valides
@@ -3820,7 +3843,7 @@ def test_le_marin_cotise_et_liquide_sur_le_forfait_de_sa_categorie(simulateur):
     carriere = simulateur.carriere_simple(
         annee_naissance=1965, sexe="H", affiliation="marin",
         age_debut=20, age_liquidation=60, niveau_salaire=1.0,
-        profil_carriere="plat",
+        profil_carriere="plat", jour_naissance=1,
     )
     ligne = carriere.ligne(2024)
     forfait = simulateur.scenario_actuel.grilles.forfait(
@@ -3835,7 +3858,8 @@ def test_le_marin_cotise_et_liquide_sur_le_forfait_de_sa_categorie(simulateur):
     actuel = simulateur.scenario_actuel.calculer(carriere)
     assert "150/150" in actuel.pensions_par_regime[0].detail
     # 2 % par annuité, 37,5 annuités : 75 % du forfait de la dernière année de
-    # mer, 2024 — le départ tombe en janvier 2025 —, ramené en euros de 2025.
+    # mer, 2024 — né le 1er janvier 1965, le marin part en janvier 2025 —,
+    # ramené en euros de 2025.
     forfait_depart = forfait[0] * simulateur.macro.coefficient_prix(2024, 2025)
     assert actuel.pension_annuelle == pytest.approx(0.75 * forfait_depart, rel=1e-6)
 
@@ -3928,10 +3952,12 @@ def test_la_decote_des_regimes_speciaux_se_lit_au_mois_et_borne_la_duree(simulat
     """
     scenario = simulateur.scenario_actuel
 
+    # Des agents nés le 1er du mois : leurs âges tombent au 1er du mois dit.
     def agent(affiliation: str, annee: int, mois: int, age_debut: float, age: float):
         return simulateur.carriere_simple(
             annee_naissance=annee, mois_naissance=mois, sexe="H", affiliation=affiliation,
             age_debut=age_debut, age_liquidation=age, niveau_salaire=1.0,
+            jour_naissance=1,
         )
 
     carriere = agent("agent_sncf", 1967, 4, 20, 52.0)
@@ -4251,34 +4277,41 @@ def test_apres_l_age_du_taux_plein_la_duree_est_majoree(simulateur):
     """« Une majoration de sa durée d'assurance dans ce régime égale à 2,5 p.
     100 par trimestre postérieur à son soixante-cinquième anniversaire »,
     pour qui n'a pas la durée (décret n° 45-0179, article 70-6, puis R.
-    351-7 ; décret n° 50-1225, article 55-6), comptée du mois qui suit
-    l'anniversaire à la date d'effet et arrondie au trimestre supérieur. Depuis
-    2011, l'âge est celui du taux plein de la génération : né en mai 1960 et
-    parti à soixante-neuf ans avec 123 trimestres, un assuré en a sept
-    d'ajournement après soixante-sept ans, 123 × 1,175 = 144,5, soit 145. Né
-    en 1950, parti à soixante-dix ans avec 119 trimestres, il en aurait 176,
+    351-7 ; décret n° 50-1225, article 55-6), en trimestres entiers, du
+    1er du mois qui suit l'anniversaire — de l'anniversaire même pour qui est
+    né un 1er — à la date d'effet (circulaire Cnav n° 8/89, point 12), la
+    durée majorée arrondie au trimestre supérieur. Depuis 2011, l'âge est
+    celui du taux plein de la génération : né en mai 1960 et parti à
+    soixante-neuf ans avec 123 trimestres, un assuré en a huit d'ajournement
+    après soixante-sept ans, 123 × 1,2 = 147,6, soit 148 — qu'il soit né le
+    1er ou le 15. Le modèle lui en comptait sept jusqu'au 28 septembre 2026 :
+    il retranchait le mois de l'anniversaire à qui est né un 1er. Né en
+    1950, parti à soixante-dix ans avec 119 trimestres, il en aurait 179,
     que la durée de proratisation borne à 162.
     """
     scenario = simulateur.scenario_actuel
 
-    def detail(naissance, age, debut, affiliation="salarie_prive_non_cadre"):
+    def detail(naissance, age, debut, affiliation="salarie_prive_non_cadre",
+               jour=None):
         resultat = scenario.calculer(simulateur.carriere_simple(
             annee_naissance=naissance, mois_naissance=5, sexe="H",
             affiliation=affiliation, age_debut=debut, age_liquidation=age,
+            jour_naissance=jour,
         ))
         return next(p.detail for p in resultat.pensions_par_regime
                     if p.type_calcul == "annuites")
 
-    majoree = "× 145/167, 123 trimestres majorés après l'âge du taux plein"
+    majoree = "× 148/167, 123 trimestres majorés après l'âge du taux plein"
     assert detail(1960, 69, 38).endswith(majoree)
+    assert detail(1960, 69, 38, jour=1).endswith(majoree)
     assert detail(1960, 69, 38, "salarie_agricole").endswith(majoree)
     assert "× 162/162, 119 trimestres majorés" in detail(1950, 70, 40)
     # À l'âge du taux plein, rien encore.
     assert "majorés" not in detail(1960, 67, 38)
     # Les artisans et commerçants liquidés à part des salariés, depuis 1990
-    # (D. 634-5) : trois trimestres d'ajournement en 2004, 123 × 1,075.
+    # (D. 634-5) : quatre trimestres d'ajournement en 2004, 123 × 1,1.
     assert detail(1938, 66, 35, "artisan").endswith(
-        "× 133/150, 123 trimestres majorés après l'âge du taux plein")
+        "× 136/150, 123 trimestres majorés après l'âge du taux plein")
     assert "× 150/150, 131 trimestres majorés" in detail(1940, 68, 35, "commercant")
 
 
@@ -4342,11 +4375,11 @@ def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
 
     pension = agirc(62)
     assert pension.detail.endswith(
-        "× coefficient d'anticipation 0.9117, dont 73,498.42 points de la tranche C "
+        "× coefficient d'anticipation 0.9120, dont 73,498.42 points de la tranche C "
         "d'avant 2016 au coefficient pour âge 0.7800")
-    part = 73_498.42 / 183_144.47
+    part = 73_498.42 / 183_700.78
     assert pension.montant == pytest.approx(
-        183_144.47 * 0.4352 * (1 - part + 0.78 * part), rel=1e-6)
+        183_700.78 * 0.4352 * (1 - part + 0.78 * part), rel=1e-6)
     # À soixante-sept ans, plus rien ; sous quatre plafonds, pas de tranche C.
     assert "coefficient" not in agirc(67).detail
     assert "coefficient" not in agirc(62, niveau=1.0).detail
@@ -4490,7 +4523,7 @@ def test_la_pension_agricole_de_2026_prend_le_plus_favorable_des_deux_calculs(si
     modeste = pension(1962, niveau=0.3)
     assert "calcul provisoire de 2026 et 2027, que le recalcul de 2028 ne dépasse pas" \
         in modeste.detail
-    assert modeste.detail.startswith("(1,290.00 points × valeur de service")
+    assert modeste.detail.startswith("(1,291.25 points × valeur de service")
     assert "calcul provisoire" not in pension(1975).detail
     assert pension(1975).detail.startswith("revenu annuel moyen")
     assert "revenu annuel moyen" not in pension(1955).detail
@@ -4761,11 +4794,15 @@ def test_la_pension_ne_fait_plus_de_marche_au_milieu_de_l_annee(simulateur):
     """
     from retraite_notionnelle.carriere import Carriere
 
+    # Né le 1er janvier 1962 : ses douze départs tombent en 2026. Le compte se
+    # revalorise au 1er janvier, et ce pas-là, d'une année à l'autre, n'est
+    # pas la marche que le test tient.
     pensions = []
     for mois in range(12):
         carriere = Carriere.depuis_profil(
             1962, "H", "salarie_prive_cadre", 22, 64 + mois / 12,
             simulateur.macro, niveau_salaire=1.5, profil_carriere="plat",
+            jour_naissance=1,
         )
         pensions.append(
             simulateur.scenario_notionnel.retroactif(carriere).pension_annuelle
@@ -4894,15 +4931,16 @@ def test_la_surcote_ircantec_ne_paie_pas_deux_fois_la_meme_periode(simulateur):
 def test_la_surcote_ircantec_compte_sa_fenetre_au_mois(simulateur):
     """Le 2° se compte d'anniversaire à anniversaire, comme le 1°, « un
     trimestre équiva[lant] à une période de 90 jours » (article 16, IV,
-    rédaction du 14 septembre 2023). Né en juillet 1955 et parti à soixante-six
-    ans et demi, en janvier 2022, un agent a cotisé dix-huit trimestres depuis
-    ses soixante-deux ans, en juillet 2017 : 11,25 %. Compté par année civile,
-    de 2017 à 2021, il en avait vingt.
+    rédaction du 14 septembre 2023). Né le 1er juillet 1955 et parti à
+    soixante-six ans et demi, en janvier 2022, un agent a cotisé dix-huit
+    trimestres depuis ses soixante-deux ans, en juillet 2017 : 11,25 %. Compté
+    par année civile, de 2017 à 2021, il en avait vingt.
     """
     scenario = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(
         annee_naissance=1955, mois_naissance=7, sexe="H",
         affiliation="contractuel_public", age_debut=20, age_liquidation=66.5,
+        jour_naissance=1,
     )
     resultat = scenario.calculer(carriere)
     assert resultat.trimestres_valides - resultat.trimestres_requis == 20
@@ -5340,11 +5378,11 @@ def test_toute_surcote_ecrite_par_une_fiche_en_points_est_servie(simulateur):
 # -- catégorie active et pension militaire -----------------------------------
 
 
-def _pension_actuelle(simulateur, statut, generation, age, age_debut=22):
+def _pension_actuelle(simulateur, statut, generation, age, age_debut=22, jour=None):
     carriere = simulateur.carriere_simple(
         annee_naissance=generation, sexe="H", affiliation=statut,
         age_debut=age_debut, age_liquidation=age, niveau_salaire=1.1,
-        part_primes=0.22,
+        part_primes=0.22, jour_naissance=jour,
     )
     return simulateur.scenario_actuel.calculer(carriere)
 
@@ -5569,11 +5607,12 @@ def test_la_duree_militaire_se_lit_a_l_annee_ou_l_ancienne_est_atteinte(simulate
     antérieurement applicables » (décret n° 2011-2103, article 4), non sur la
     génération. Un engagé à dix-huit ans en 1990 réunit ses quinze ans en 2004
     et les garde ; engagé en 2000, il les réunit fin 2014 et en doit seize ans
-    et sept mois ; engagé en 2003, fin 2017, et il en doit dix-sept.
+    et sept mois ; engagé en 2003, fin 2017, et il en doit dix-sept. Né un
+    1er janvier, ses âges se comptent de son mois de naissance.
     """
     def ouverture(generation):
         return _pension_actuelle(
-            simulateur, "militaire", generation, 45, age_debut=18,
+            simulateur, "militaire", generation, 45, age_debut=18, jour=1,
         ).age_ouverture_opposable
 
     assert ouverture(1972) == pytest.approx(32.92, abs=0.02)   # quinze ans
@@ -6361,12 +6400,12 @@ def test_le_salaire_de_reference_des_cultes_est_fait_du_forfait(simulateur):
 def test_la_carriere_prolongee_garde_le_passe_et_travaille_jusqu_a_l_age_legal(simulateur):
     """Rien de ce qui précède le départ initial ne bouge ; l'année du départ
     se complète, les suivantes s'ajoutent, et le salaire relatif se prolonge au
-    rythme du salaire moyen."""
+    rythme du salaire moyen. L'assuré est né le 1er janvier 1965."""
     from retraite_notionnelle.carriere import salaire_moyen_annuel
 
     carriere = simulateur.carriere_simple(
         annee_naissance=1965, sexe="H", affiliation="salarie_prive_non_cadre",
-        age_debut=21, age_liquidation=62.5)
+        age_debut=21, age_liquidation=62.5, jour_naissance=1)
     prolongee = carriere.prolongee(65.0, simulateur.macro)
 
     assert prolongee.age_liquidation == 65.0
@@ -6413,7 +6452,8 @@ def test_la_prolongation_poursuit_aussi_l_activite_cumulee(simulateur):
     """Le salarié qui exerce aussi en libéral garde SES DEUX revenus pendant
     les années du report, l'activité principale en tête. Jusqu'au 23
     septembre 2026, seule la dernière ligne de l'année se prolongeait — la
-    libérale — et le salaire disparaissait."""
+    libérale — et le salaire disparaissait. L'assuré est né le 1er janvier
+    1975."""
     from retraite_notionnelle.carriere import salaire_moyen_annuel
 
     carriere = simulateur.carriere_parcours(
@@ -6421,7 +6461,7 @@ def test_la_prolongation_poursuit_aussi_l_activite_cumulee(simulateur):
         metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=21.0),
                  Metier(affiliation="medecin_liberal", age_debut=35.0,
                         niveau_salaire=0.8, cumul=True)],
-        age_liquidation=64.0)
+        age_liquidation=64.0, jour_naissance=1)
     assert str(carriere.date_liquidation) == "janvier 2039"
     prolongee = carriere.prolongee(65.0, simulateur.macro)
     assert str(prolongee.date_liquidation) == "janvier 2040"
@@ -6453,14 +6493,16 @@ def test_une_activite_cumulee_arretee_avant_le_depart_ne_reprend_pas(simulateur)
 
 def test_la_prolongation_d_un_releve_ne_depend_pas_de_l_ordre_des_lignes(simulateur):
     """Deux activités la même dernière année : les deux se prolongent, dans
-    quelque ordre que le relevé les donne."""
+    quelque ordre que le relevé les donne. Né le 1er janvier 1965, l'assuré
+    part le 1er janvier 2027 : le relevé court jusqu'au départ."""
     def releve(ordre):
         lignes = []
         for annee in range(1987, 2027):
             for affiliation, revenu in ordre:
                 lignes.append(LigneRelevee(annee=annee, affiliation=affiliation,
                                            revenu=revenu))
-        return simulateur.carriere_releve(1965, "H", lignes, age_liquidation=62.0)
+        return simulateur.carriere_releve(1965, "H", lignes, age_liquidation=62.0,
+                                          jour_naissance=1)
 
     activites = [("fonctionnaire_etat", 40_000.0), ("salarie_prive_non_cadre", 2_000.0)]
     un = releve(activites).prolongee(65.0, simulateur.macro)

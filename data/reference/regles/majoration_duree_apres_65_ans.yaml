@@ -13,23 +13,24 @@ etape: liquider_chaque_regime
 effet: >-
   Les assurés du régime général, des salariés agricoles et des artisans et commerçants qui
   liquident après l'âge du taux plein sans la durée : parti deux ans après soixante-sept
-  ans, un assuré a sept
-  trimestres d'ajournement, 17,5 % de durée en plus, au prorata de sa pension comme à
+  ans, un assuré a huit
+  trimestres d'ajournement, 20 % de durée en plus, au prorata de sa pension comme à
   celui du minimum contributif, qui retient « la durée d'assurance corrigée lorsqu'elle
   entre en compte » (circulaire Cnav n° 8/89, point 3). Le moteur la porte depuis le 28
   septembre 2026 (`liquider.duree_majoree_apres_taux_plein`) ; aucun témoin ne partait si
   tard sans la durée, et deux témoins nés pour elle la montrent, sous la règle de 1983
-  (132 trimestres, 150) et sous celle de 2004 (124, 146). Les exemples de la Cnav sont
+  (132 trimestres, 150) et sous celle de 2004 (124, 149). Les exemples de la Cnav sont
   rendus : né en mars 1917 avec 60 trimestres, « arrondi à 68 », dont la pension passe
   celle du taux acquis au 31 mars 1983 (circulaire n° 22/83) ; 80 trimestres, 21
   d'ajournement, 122 (circulaire n° 8/89) ; les cinq partages de la circulaire n°
-  2004/20. Les artisans et commerçants liquidés à part des salariés, que D. 634-5 majore
+  2004/20. Le décompte part du 1er du mois qui suit l'anniversaire, ou de
+  l'anniversaire même pour qui est né un 1er (circulaire n° 8/89, point 12) : il
+  retranchait ce mois-là à qui est né un 1er jusqu'au 28 septembre 2026 (action 132).
+  Les artisans et commerçants liquidés à part des salariés, que D. 634-5 majore
   depuis 1990, le sont depuis le même jour, sur les périodes de la CANCAVA, de l'ORGANIC
   et du RSI. Restent approchés : leurs années d'avant 1973, que D. 634-5 exclut de la
   base de la majoration et que le moteur, qui les liquide comme les suivantes, y laisse ;
-  de 1984 à 1989, leur majoration, dont le texte n'est pas lu ; le décompte, qui part du
-  mois suivant l'âge, exact pour qui
-  n'est pas né un premier ; le troisième exemple de la circulaire n° 22/83, que le
+  de 1984 à 1989, leur majoration, dont le texte n'est pas lu ; le troisième exemple de la circulaire n° 22/83, que le
   maximum des pensions décide sur un salaire moyen de 1,7 plafond, qu'aucune carrière
   plafonnée n'atteint ; l'égalité des décimales entre régimes, que R. 173-4-2 tranche et
   que le moteur arrondit au plus proche ; et les soixante-cinq ans que R. 351-7 garde aux

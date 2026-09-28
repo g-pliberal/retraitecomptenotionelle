@@ -144,27 +144,33 @@ def test_la_saisie_est_reinjectee_dans_le_formulaire(page):
     """L'adresse porte les paramètres : la page doit être rechargeable telle quelle.
 
     Les âges d'une adresse ancienne reviennent en dates, puisque c'est ce que le
-    formulaire demande depuis qu'il porte des calendriers : né en 1955, entré à
-    dix-huit ans, parti à cinquante-cinq.
+    formulaire demande depuis qu'il porte des calendriers : né en 1955 —
+    présumé le 15 janvier, et la page le dit —, entré à dix-huit ans, en
+    janvier 1973, parti à cinquante-cinq, au 1er février 2010 (R. 351-37).
     """
     texte = page("/simuler", naissance=1955, statut="mineur",
                  debut=18, liquidation=55)
-    assert 'id="naissance" name="naissance" value="1955-01-01"' in texte
+    assert 'id="naissance" name="naissance" value="1955-01-15"' in texte
+    assert "jour présumé" in texte
     assert 'id="debut" name="debut" value="1973-01-01"' in texte
-    assert 'id="liquidation" name="liquidation" value="2010-01-01"' in texte
+    assert 'id="liquidation" name="liquidation" value="2010-02-01"' in texte
     assert '<option value="mineur" selected data-fermeture="2010-09">' in texte
 
 
 def test_le_calendrier_se_lit_et_se_rend(page):
     """Une carrière datée au mois : le formulaire la rend telle qu'elle a été
-    saisie, et l'âge qu'elle fait s'écrit sous le champ."""
+    saisie, et l'âge qu'elle fait s'écrit sous le champ. Né le 15 mars 1962,
+    on commence à travailler en septembre 1984 à 22 ans et 6 mois, et l'on a
+    64 ans et 3 mois révolus au 1er juillet 2026 : un départ se compte du
+    mois qui suit l'anniversaire (R. 351-37)."""
     texte = page("/simuler", naissance="1962-03-15", debut="1984-09",
                  liquidation="2026-07")
     assert 'id="naissance" name="naissance" value="1962-03-15"' in texte
     assert 'id="debut" name="debut" value="1984-09-01"' in texte
     assert 'id="liquidation" name="liquidation" value="2026-07-01"' in texte
     assert "soit 22 ans et 6 mois" in texte
-    assert "soit 64 ans et 4 mois" in texte
+    assert "soit 64 ans et 3 mois" in texte
+    assert "jour présumé" not in texte
 
 
 def test_saisie_invalide_affiche_un_message_et_pas_de_trace(page):
@@ -436,21 +442,36 @@ def test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur():
 def test_les_adresses_d_avant_le_calendrier_valent_toujours():
     """Le formulaire demande des dates ; les adresses déjà partagées portaient
     des âges, en deux champs. Les deux doivent décrire la même carrière, et se
-    réécrire de la même façon — sans quoi tout lien envoyé mentirait."""
+    réécrire de la même façon — sans quoi tout lien envoyé mentirait.
+    L'ancienne ne disait pas le jour : il est présumé le 15, et le départ à
+    64 ans et 7 mois tombe au 1er mai 2040, du mois qui suit l'anniversaire."""
     ancienne = Saisie.depuis_requete({
         "naissance": "1975", "naissance_mois": "9",
         "debut": "22", "debut_mois": "3",
         "liquidation": "64", "liquidation_mois": "7",
     })
     nouvelle = Saisie.depuis_requete({
-        "naissance": "1975-09-01", "debut": "1997-12", "liquidation": "2040-04",
+        "naissance": "1975-09-15", "debut": "1997-12", "liquidation": "2040-05",
     })
     assert ancienne.requete() == nouvelle.requete()
     assert nouvelle.mois_de(nouvelle.debut) == "1997-12"
-    assert nouvelle.mois_de(nouvelle.liquidation) == "2040-04"
+    assert nouvelle.mois_de(nouvelle.liquidation, depart=True) == "2040-05"
     # Et l'âge décimal d'avant les mois, que personne n'écrit plus mais que
     # certaines adresses portent encore.
     assert Saisie.depuis_requete({"liquidation": "64.5"}).liquidation == 64.5
+
+
+def test_un_metier_peut_commencer_le_mois_qui_precede_le_depart():
+    """Né le 15 mars 1962, on a 64 ans et 3 mois révolus au 1er juillet 2026,
+    et juin 2026 est encore travaillé : un métier qui y commence est accepté.
+    Celui qui commence en juillet, au mois du départ, ne l'est pas. Les deux
+    dates se comparent sur la même origine, celle du départ (R. 351-37)."""
+    commun = {"naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
+              "metier2_statut": "artisan"}
+    saisie = Saisie.depuis_requete({**commun, "metier2_debut": "2026-06"})
+    assert saisie.mois_de(saisie.liquidation, depart=True) == "2026-07"
+    with pytest.raises(ErreurSaisie):
+        Saisie.depuis_requete({**commun, "metier2_debut": "2026-07"})
 
 
 def test_valeur_non_numerique_est_refusee_proprement():
@@ -1172,9 +1193,11 @@ def test_l_annee_du_depart_est_tronquee_par_la_liquidation(contexte):
     })
     carriere = contexte.simuler(saisie).carriere
     assert carriere.ligne(2038).fraction_annee == 1.0
-    # Départ à 64 ans et 7 mois, donc au 1er août 2039 : sept mois travaillés.
-    assert carriere.ligne(2039).fraction_annee == 7 / 12
-    # Sept mois : deux trimestres civils au plus, quoi qu'en dise la ligne du
+    # Né en janvier 1975, présumé le 15 : départ à 64 ans et 7 mois, donc au
+    # 1er septembre 2039 — du mois qui suit l'anniversaire —, huit mois
+    # travaillés.
+    assert carriere.ligne(2039).fraction_annee == 8 / 12
+    # Huit mois : deux trimestres civils au plus, quoi qu'en dise la ligne du
     # relevé, qui en déclare quatre.
     assert carriere.ligne(2039).trimestres_valides == 2
 
@@ -1214,7 +1237,7 @@ def test_un_releve_vide_laisse_la_carriere_parametrique():
     f"{ANNEE_CARRIERE_MINIMALE - 1}:salarie_prive_non_cadre:1:4",
     f"{ANNEE_CARRIERE_MAXIMALE + 1}:salarie_prive_non_cadre:1:4",
     "1970:salarie_prive_non_cadre:1:4",      # avant les quatorze ans de l'assuré
-    "2039:salarie_prive_non_cadre:1:4",      # après le départ à la retraite
+    "2040:salarie_prive_non_cadre:1:4",      # après le départ, au 1er février 2039
 ])
 def test_une_ligne_de_releve_fautive_est_refusee(ligne):
     saisie = Saisie.depuis_requete({
@@ -1805,6 +1828,25 @@ def test_les_temoins_du_portage_sont_a_jour():
         assert fichier.read_bytes() == contenu, (
             f"{fichier.name} est périmé — lancer python scripts/construire_temoins.py"
         )
+
+
+def test_une_adresse_d_avant_le_calendrier_et_ses_dates_font_les_memes_chiffres():
+    """Les deux témoins de la carrière décalée : l'un écrit à l'ancienne — un
+    âge, un mois, et pas de jour, présumé le 15 —, l'autre en dates, née le 15
+    septembre 1975, entrée en décembre 1997 et partie au 1er mai 2040, au mois
+    qui suit son anniversaire (R. 351-37). Ils décrivent la même carrière et
+    portent les mêmes chiffres, au bit près : sans quoi tout lien partagé
+    avant le calendrier mentirait."""
+    import json
+
+    chemin = Path(__file__).resolve().parent / "temoins" / "simulations.json"
+    temoins = json.loads(chemin.read_text(encoding="utf-8"))
+    ancienne = temoins["mois_carriere_decalee"]
+    nouvelle = temoins["mois_carriere_decalee_au_calendrier"]
+    assert (ancienne["requete"]["naissance"], ancienne["requete"]["naissance_mois"]) == (
+        "1975", "9")
+    assert nouvelle["requete"]["naissance"] == "1975-09-15"
+    assert ancienne["resultat"] == nouvelle["resultat"]
 
 
 def test_le_balayage_des_temoins_couvre_tous_les_statuts():

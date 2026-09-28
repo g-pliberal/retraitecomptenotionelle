@@ -840,25 +840,58 @@ def test_la_liquidation_est_datee_au_mois_et_non_arrondie_a_l_annee():
     Le modèle arrondissait ``naissance + âge`` à l'année civile la plus proche,
     et Python arrondit les demis AU PAIR : deux assurés déclarant le même âge
     étaient traités différemment selon la parité de leur millésime. La date se
-    lit désormais en mois depuis la date de naissance.
+    lit désormais en mois depuis la date de naissance — depuis le mois qui la
+    suit, pour qui n'est pas né un 1er (R. 351-37).
     """
     from retraite_notionnelle.carriere import Carriere
 
-    def date(naissance, mois, age):
+    def date(naissance, mois, age, jour=1):
         carriere = Carriere(annee_naissance=naissance, sexe="H",
                             mois_naissance=mois, age_liquidation=age,
-                            lignes=[])
+                            lignes=[], jour_naissance=jour)
         return (carriere.date_liquidation.annee, carriere.date_liquidation.mois)
 
-    # Né en mars 1962, parti à 64 ans et 6 mois : septembre 2026, et rien d'autre.
+    # Né le 1er mars 1962, parti à 64 ans et 6 mois : septembre 2026, et rien
+    # d'autre.
     assert date(1962, 3, 64.5) == (2026, 9)
     assert date(1962, 1, 64.5) == (2026, 7)
     # La parité du millésime ne décide plus de rien : deux générations
     # consécutives, même âge, même mois de départ dans l'année.
     assert date(1961, 1, 64.5)[1] == date(1962, 1, 64.5)[1] == 7
-    # Un âge entier et une naissance en janvier tombent au 1er janvier, comme
-    # avant : c'est la convention qui laisse les cas types inchangés.
+    # Un âge entier et une naissance au 1er janvier tombent au 1er janvier.
     assert date(1975, 1, 64) == (2039, 1)
+    # Né en mars sans dire le jour, l'assuré est présumé né le 15 : il a
+    # 64 ans et 6 mois au 1er octobre.
+    assert date(1962, 3, 64.5, jour=None) == (2026, 10)
+
+
+def test_les_ages_se_comptent_du_mois_qui_suit_la_naissance():
+    """La pension prend effet le premier du mois qui suit l'anniversaire, sauf
+    pour qui est né un 1er, qui a l'âge le jour même (R. 351-37). Né le 16 mai
+    1964, l'assuré a 62 ans et 9 mois le 16 février 2027 et part au 1er mars au
+    plus tôt (circulaire Cnav n° 2026-07, point 1.1) ; né le 1er mai, au 1er
+    février. La génération reste au vrai mois, comme le mois où tombe
+    l'anniversaire, et le jour qu'on ne dit pas est présumé le 15."""
+    from retraite_notionnelle.calendrier import DateMois, origine_des_ages
+    from retraite_notionnelle.carriere import Carriere
+
+    assert origine_des_ages(DateMois(1964, 5), 1) == DateMois(1964, 5)
+    assert origine_des_ages(DateMois(1964, 5), 16) == DateMois(1964, 6)
+    assert origine_des_ages(DateMois(1964, 12), 31) == DateMois(1965, 1)
+
+    def ne_le(jour):
+        return Carriere(annee_naissance=1964, sexe="H", mois_naissance=5,
+                        age_liquidation=62.75, lignes=[], jour_naissance=jour)
+
+    seize, premier, presume = ne_le(16), ne_le(1), ne_le(None)
+    assert seize.date_liquidation == DateMois(2027, 3)
+    assert premier.date_liquidation == DateMois(2027, 2)
+    assert seize.mois_de_l_anniversaire(62.75) == DateMois(2027, 2)
+    assert seize.age_au(DateMois(2027, 3)) == pytest.approx(62.75)
+    assert premier.age_au(DateMois(2027, 3)) == pytest.approx(62 + 10 / 12)
+    assert seize.generation == premier.generation == presume.generation
+    assert presume.jour_de_naissance == 15
+    assert presume.date_liquidation == DateMois(2027, 3)
 
 
 def test_l_annee_de_liquidation_est_portee_au_compte_au_prorata(macro):
@@ -866,7 +899,8 @@ def test_l_annee_de_liquidation_est_portee_au_compte_au_prorata(macro):
 
     L'accumulation s'arrêtait à l'année PRÉCÉDANT la liquidation : les mois
     cotisés de l'année du départ n'allaient nulle part. Ils y vont, à
-    proportion, et le compte croît donc de mois en mois.
+    proportion, et le compte croît donc de mois en mois. L'assuré est né le
+    1er janvier : ses âges tombent au 1er de leur mois (R. 351-37).
     """
     from retraite_notionnelle.carriere import Carriere
 
@@ -874,6 +908,7 @@ def test_l_annee_de_liquidation_est_portee_au_compte_au_prorata(macro):
     for mois in range(12):
         carriere = Carriere.depuis_profil(
             1962, "H", "salarie_prive_non_cadre", 22, 64 + mois / 12, macro,
+            jour_naissance=1,
         )
         ligne = carriere.ligne(carriere.annee_liquidation)
         if mois == 0:
@@ -893,6 +928,7 @@ def test_les_trimestres_de_l_annee_du_depart_sont_bornes_aux_trimestres_civils(m
     Le montant cotisé commande le nombre de trimestres, les mois en commandent
     le plafond : c'est la règle de l'article R. 351-9 pour l'année du point de
     départ, et elle vaut aussi pour l'année d'entrée dans la vie active.
+    L'assuré est né le 1er janvier : il part au 1er du mois de son âge.
     """
     from retraite_notionnelle.carriere import Carriere
 
@@ -900,7 +936,7 @@ def test_les_trimestres_de_l_annee_du_depart_sont_bornes_aux_trimestres_civils(m
     for mois, attendu in enumerate(attendus):
         carriere = Carriere.depuis_profil(
             1962, "H", "salarie_prive_non_cadre", 22, 64 + mois / 12, macro,
-            niveau_salaire=3.0,
+            niveau_salaire=3.0, jour_naissance=1,
         )
         ligne = carriere.ligne(carriere.annee_liquidation)
         obtenu = 0 if ligne is None else carriere.trimestres_retenus(ligne)
@@ -913,7 +949,8 @@ def test_un_releve_declarant_douze_mois_est_tronque_au_point_de_depart(macro):
     Un relevé de carrière déclare des années pleines. Qui liquide au 1er juillet
     n'a pourtant travaillé que six mois de son année de départ, et c'est la plus
     courte des deux durées qui compte — sans quoi l'année du départ vaudrait
-    douze mois de cotisations à qui n'en a fait aucun.
+    douze mois de cotisations à qui n'en a fait aucun. L'assuré est né le
+    1er janvier 1962 : il a 64 ans et 6 mois le 1er juillet 2026.
     """
     from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 
@@ -921,7 +958,7 @@ def test_un_releve_declarant_douze_mois_est_tronque_au_point_de_depart(macro):
                             affiliation="salarie_prive_non_cadre")
               for a in range(1985, 2027)]
     carriere = Carriere(annee_naissance=1962, sexe="H", lignes=lignes,
-                        age_liquidation=64.5)
+                        age_liquidation=64.5, jour_naissance=1)
     assert carriere.annee_liquidation == 2026
     assert carriere.part_retenue(2026) == pytest.approx(0.5)
     assert carriere.trimestres_retenus(carriere.ligne(2026)) == 2
@@ -930,7 +967,7 @@ def test_un_releve_declarant_douze_mois_est_tronque_au_point_de_depart(macro):
 
     # Départ au 1er janvier : l'année du départ ne compte pour rien.
     janvier = Carriere(annee_naissance=1962, sexe="H", lignes=list(lignes),
-                       age_liquidation=64.0)
+                       age_liquidation=64.0, jour_naissance=1)
     assert janvier.part_retenue(2026) == 0.0
 
 

@@ -402,6 +402,7 @@
    "2026-09-28 | l'action 131, la part des vingt-cinq années que R. 173-3-2 laisse aux régimes alignés d'un ancien exploitant, portée",
    "2026-09-28 | l'action 131, la réforme agricole de 2026 (L. 732-24), portée",
    "2026-09-28 | l'action 131, la tranche C de l'Agirc d'avant 2016, portée",
+   "2026-09-28 | l'action 132, la naissance au jour : la pension prend effet le premier du mois qui suit l'anniversaire, sauf pour qui est né un 1er",
    "2026-09-28 | l'action 133, la suite : l'étage des six derniers régimes intégrés lu, deux routages du scénario 1 corrigés, la complémentaire des mineurs et celle des chemins de fer secondaires lues sans être routées"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
@@ -1379,6 +1380,7 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "6782ce8bdd030407",
     "aa8a62df3c137e43",
     "061e1519d36894fd",
     "fe1a9cbec5dd9739",
@@ -1815,6 +1817,27 @@
     "8d35e2c94c859f1e",
     "4b5373bd1c78c10d",
     "af8e7d0e0b07a7a1"
+   ],
+   "132. La naissance au jour : l'âge se compte du 1er du mois qui suit l'anniversaire, sauf pour qui est né un 1er — `fait`": [
+    "22d056efa5daa053",
+    "61b6a59173cf7c28",
+    "bdc198a381dd8bb7",
+    "52cb419531f0e348",
+    "db521a4b00344b1b",
+    "bf9b51d7deb55e1d",
+    "705e30a42dcb0316",
+    "203201b1a5ad654c",
+    "9a191ab76956eb28",
+    "4046a91141a7d05e",
+    "161cb3888482d44a",
+    "b17071d9ff495728",
+    "ab551ffb9eb5c059",
+    "08ef6e62d38350d0",
+    "609661d98674337a",
+    "de0b65e6fb7f8463",
+    "b7ab51169440c18a",
+    "1cfe6129f47adeab",
+    "b7c5c75ab8f0414d"
    ],
    "14. La mortalité différentielle par revenu, que le diviseur ignore — `fait`": [
     "edec51f69231424b",
@@ -5869,7 +5892,7 @@
     "97ff69c81eb19473",
     "773b3cc972166f9e",
     "967088dee9441d19",
-    "8107d8cb59ff6ffd",
+    "958eb0c6366c2ec7",
     "22ed574a0dc38854"
    ],
    "4 bis. Risque — deux minutes, si on a le temps": [
@@ -5891,7 +5914,7 @@
    ],
    "5. Avantages — deux minutes": [
     "e13190fb11225547",
-    "e4b16f026499e47d",
+    "31d97149957e2681",
     "669eb8f878073fdc"
    ],
    "6. Méthode et Données — deux minutes, pour finir": [

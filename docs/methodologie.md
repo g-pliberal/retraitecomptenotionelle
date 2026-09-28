@@ -171,7 +171,7 @@ carrière, où les deux règles coïncident. La ligne de référence du scénari
 rétroactif passe de <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=prix)-->-91,2<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=revalorisation_portee_au_compte)-->-86,2<!--/--> % pour la génération 1920, de
 <!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=prix)-->-89,3<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=revalorisation_portee_au_compte)-->-87,5<!--/--> % pour 1930, ne bouge pas pour 1945
 (<!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=prix)-->-84,8<!--/--> % contre <!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=revalorisation_portee_au_compte)-->-84,8<!--/--> %), et l'écart s'inverse pour
-les carrières entièrement postérieures à 1987 (<!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=prix)-->-80,5<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=revalorisation_portee_au_compte)-->-81,0<!--/--> % pour
+les carrières entièrement postérieures à 1987 (<!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=prix)-->-80,4<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=revalorisation_portee_au_compte)-->-80,9<!--/--> % pour
 1958) : depuis 1990, les arrêtés revalorisent un peu moins vite que les prix
 (×<!--chiffre:mesure(cumul_indexation?regle=revalorisation_portee_au_compte&de=1990&a=2025)-->1,69<!--/--> contre ×<!--chiffre:mesure(cumul_indexation?regle=prix&de=1990&a=2025)-->1,79<!--/-->), l'indexation légale étant assise sur l'inflation de l'année
 précédente. Le facteur cinq est celui de l'indice cumulé sur 1941-2025, pas
@@ -325,7 +325,7 @@ fiabilité la plus basse, qui se propage jusqu'au résultat.
 **Le site affiche une fourchette, pas un nombre seul.** Sous les cinq scénarios,
 un bloc rejoue la même carrière sous les trois hypothèses de productivité et
 donne l'amplitude — pour la génération 2000, entrée à <!--chiffre:illustration()-->21<!--/--> ans et partant à
-<!--chiffre:illustration()-->64<!--/--> ans, la pension du scénario 2 va de <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=basse)-->639<!--/--> € à <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=haute)-->803<!--/--> € par mois, soit
+<!--chiffre:illustration()-->64<!--/--> ans, la pension du scénario 2 va de <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=basse)-->640<!--/--> € à <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=haute)-->804<!--/--> € par mois, soit
 <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=amplitude)-->25,7<!--/--> % d'écart. Il dit aussi combien d'années du compte tombent après la
 dernière observation : <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=projetees)-->39<!--/--> sur <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=annees)-->44<!--/-->, soit <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=part)-->88,6<!--/--> % du calcul. Quand la liquidation précède cette année-là, le bloc le
 dit et ne montre aucune fourchette — **aucune hypothèse n'entre alors dans le
@@ -428,7 +428,7 @@ prend un diviseur plus élevé, donc un capital d'ouverture plus gros, et le
 cadeau va tout entier aux générations de transition. Le défaut suit l'âge légal
 de départ de la proposition, <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans : moins que les <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_reference)-->67<!--/--> ans du
 cliquet, et les deux scénarios prospectifs dépensent donc davantage qu'avec
-lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,81<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->+0,21<!--/--> % du
+lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,82<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->+0,22<!--/--> % du
 PIB, contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système actuel.
 
 ### Variantes
@@ -482,7 +482,7 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   faute d'observation ailleurs. `scripts/mortalite_population.py` en tire le
   transfert, cas type par cas type et sur les six scénarios : pour le
   fonctionnaire sédentaire né en 1975, <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=annees)-->1,3<!--/--> an de rente de plus, soit <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=ecart&abs=1)-->5,2<!--/--> % de
-  pension notionnelle à capital égal, et <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=transfert)-->47 573<!--/--> € sur la vie sous le système
+  pension notionnelle à capital égal, et <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=transfert)-->48 734<!--/--> € sur la vie sous le système
   actuel, qui ne connaît aucun diviseur et transfère donc autant.
 - **L'axe du revenu, par les tables de l'INSEE.** L'INSEE publie des tables
   de mortalité par VINGTILE de niveau de vie (Insee Résultats, mai 2025 ;
@@ -505,8 +505,8 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   en compte, l'exploitant agricole <!--chiffre:mesure(mortalite_population?population=vingtile&cas=exploitant_agricole&generation=1975&quoi=annees&abs=1)-->3,3<!--/--> de moins, le cadre <!--chiffre:mesure(mortalite_population?population=vingtile&cas=cadre&generation=1975&quoi=annees&abs=1)-->2,4<!--/--> de plus, le
   libéral <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=annees&abs=1)-->2,8<!--/--> de plus. Un diviseur commun transfère donc des modestes vers
   les aisés : <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=ecart&abs=1)-->11,2<!--/--> % de pension notionnelle à capital égal pour le SMIC,
-  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,1<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->43 177<!--/--> € retirés
-  au premier et <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=transfert&abs=1)-->165 486<!--/--> € ajoutés au second sous le système actuel — qui
+  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,1<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->43 198<!--/--> € retirés
+  au premier et <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=transfert&abs=1)-->166 920<!--/--> € ajoutés au second sous le système actuel — qui
   transfère autant que les autres, n'ayant aucun diviseur pour le savoir.
   Cette mesure est celle que le défaut applique désormais ; ses chiffres
   restent ceux de la table commune contre le vingtile, et
@@ -1102,10 +1102,10 @@ diviseurs diffèrent, la conversion n'est pas neutre.
 Pour un salarié né en 1975, entré à <!--chiffre:illustration()-->21<!--/--> ans et partant à <!--chiffre:illustration()-->62<!--/--> ans, l'âge de
 référence est de <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans : les droits acquis sont convertis au diviseur
 `G(64, 2026)`, <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_conversion)-->23,66<!--/--> années, puis servis à `G(62, 2037)`,
-<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_service)-->27,50<!--/--> années. L'écart entre les deux, environ <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=ecart_diviseurs)-->16<!--/--> %, est retiré de
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_service)-->27,51<!--/--> années. L'écart entre les deux, environ <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=ecart_diviseurs)-->16<!--/--> %, est retiré de
 droits que le système actuel aurait servis sans décote — l'anticipation est
 payée une seconde fois, sur le passé. La pension du scénario 3 passe de
-<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=pension)-->24 854<!--/--> € à <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&conversion=liquidation&quoi=pension)-->27 464<!--/--> € par an lorsqu'on retient l'autre convention. Un
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=pension)-->24 866<!--/--> € à <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&conversion=liquidation&quoi=pension)-->27 476<!--/--> € par an lorsqu'on retient l'autre convention. Un
 départ à l'âge de référence lui-même ne sépare pas les deux : le diviseur est
 alors le même.
 

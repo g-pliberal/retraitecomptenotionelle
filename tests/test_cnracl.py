@@ -50,10 +50,12 @@ def simulateur() -> Simulateur:
 
 
 def _calculer(simulateur: Simulateur, affiliation: str, naissance: int,
-              debut: float, liquidation: float, mois: int = 1, sexe: str = "H"):
+              debut: float, liquidation: float, mois: int = 1, sexe: str = "H",
+              jour: int | None = None):
     carriere = simulateur.carriere_simple(
         annee_naissance=naissance, mois_naissance=mois, sexe=sexe,
-        affiliation=affiliation, age_debut=debut, age_liquidation=liquidation)
+        affiliation=affiliation, age_debut=debut, age_liquidation=liquidation,
+        jour_naissance=jour)
     return carriere, simulateur.scenario_actuel.calculer(carriere)
 
 
@@ -102,30 +104,31 @@ def test_la_banque_de_france_garde_la_duree_de_sa_generation(simulateur):
 # -- la surcote en durée ------------------------------------------------------
 
 def test_la_surcote_de_la_fonction_publique_se_compte_en_duree(simulateur):
-    """Née en avril 1962, à l'âge légal de 62 ans et 6 mois en octobre 2024,
-    partie en février 2026 : quinze mois de services au-delà, cinq trimestres
-    entiers de surcote, 6,25 %. La règle du régime général en comptait quatre
-    — de janvier 2025, trimestre civil qui suit l'âge, à décembre 2025 —, et
-    c'est ce que la salariée du privé née le même mois reçoit encore."""
+    """Née le 15 avril 1962, à l'âge légal de 62 ans et 6 mois le 15 octobre
+    2024, partie le 1er février 2026, à 63 ans et 9 mois révolus : quinze mois
+    de services au-delà, du 1er novembre 2024, cinq trimestres entiers de
+    surcote, 6,25 %. La règle du régime général en comptait quatre — de
+    janvier 2025, trimestre civil qui suit l'âge, à décembre 2025 —, et c'est
+    ce que la salariée du privé née le même jour reçoit encore."""
     for affiliation in ("fonctionnaire_etat", "fonctionnaire_territorial_hospitalier",
                         "ouvrier_etat"):
         carriere, resultat = _calculer(simulateur, affiliation, 1962, 20,
-                                       63 + 10 / 12, mois=4, sexe="F")
+                                       63 + 9 / 12, mois=4, sexe="F", jour=15)
         assert (carriere.date_liquidation.annee, carriere.date_liquidation.mois) == (2026, 2)
         assert resultat.trimestres_requis == 169
         assert resultat.taux_liquidation == pytest.approx(0.75 * (1 + 5 * 0.0125)), affiliation
     _, prive = _calculer(simulateur, "salarie_prive_non_cadre", 1962, 20,
-                         63 + 10 / 12, mois=4, sexe="F")
+                         63 + 9 / 12, mois=4, sexe="F", jour=15)
     assert prive.taux_liquidation == pytest.approx(0.50 * (1 + 4 * 0.0125))
 
 
 def test_un_trimestre_de_duree_prend_le_taux_de_son_dernier_mois(simulateur):
-    """Né en janvier 1948, à soixante ans en janvier 2008, parti en janvier
-    2011 : onze trimestres depuis février 2008, dont trois achevés en 2008 à
-    0,75 % et huit à 1,25 % — celui de novembre 2008 à janvier 2009 compris,
-    accompli sous la LFSS pour 2009."""
+    """Né en janvier 1948 — le 15, jour présumé —, à soixante ans le 15
+    janvier 2008, parti le 1er février 2011 : douze trimestres depuis février
+    2008, dont trois achevés en 2008 à 0,75 % et neuf à 1,25 % — celui de
+    novembre 2008 à janvier 2009 compris, accompli sous la LFSS pour 2009."""
     _, resultat = _calculer(simulateur, "fonctionnaire_etat", 1948, 20, 63)
-    assert resultat.taux_liquidation == pytest.approx(0.75 * (1 + 3 * 0.0075 + 8 * 0.0125))
+    assert resultat.taux_liquidation == pytest.approx(0.75 * (1 + 3 * 0.0075 + 9 * 0.0125))
 
 
 # -- la pension différée ------------------------------------------------------
@@ -185,12 +188,15 @@ def test_la_pension_differee_est_celle_du_depart_revalorisee(simulateur):
     d'indice, 14,9 % plus bas."""
     actuel = simulateur.scenario_actuel
     code = "fonction_publique_etat"
+    # Né le 1er janvier : il liquide le jour de ses âges, en janvier.
     differee = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", age_liquidation=64, macro=simulateur.macro,
+        jour_naissance=1,
         metiers=[Metier(affiliation="fonctionnaire_etat", age_debut=22),
                  Metier(affiliation="salarie_prive_non_cadre", age_debut=50)])
     immediate = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", age_liquidation=50, macro=simulateur.macro,
+        jour_naissance=1,
         metiers=[Metier(affiliation="fonctionnaire_etat", age_debut=22)])
     en_2026 = liquider.salaire_de_reference(actuel,
         code, differee, simulateur.catalogue[code].periode(2026), 2026, False)
@@ -212,10 +218,12 @@ def test_la_cnracl_et_le_fspoeie_ont_la_meme_regle(simulateur, affiliation, code
     actuel = simulateur.scenario_actuel
     differee = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", age_liquidation=64, macro=simulateur.macro,
+        jour_naissance=1,
         metiers=[Metier(affiliation=affiliation, age_debut=22),
                  Metier(affiliation="salarie_prive_non_cadre", age_debut=50)])
     immediate = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", age_liquidation=50, macro=simulateur.macro,
+        jour_naissance=1,
         metiers=[Metier(affiliation=affiliation, age_debut=22)])
     en_2026 = liquider.salaire_de_reference(actuel,
         code, differee, simulateur.catalogue[code].periode(2026), 2026, False)
@@ -233,7 +241,7 @@ def test_ni_la_carriere_complete_ni_la_banque_de_france_ne_bougent(simulateur):
     actuel = simulateur.scenario_actuel
     complete = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", age_liquidation=64, macro=simulateur.macro,
-        metiers=[Metier(affiliation="fonctionnaire_etat", age_debut=22)])
+        jour_naissance=1, metiers=[Metier(affiliation="fonctionnaire_etat", age_debut=22)])
     periode = simulateur.catalogue["fonction_publique_etat"].periode(2026)
     ligne = next(l for l in complete.lignes if l.annee == 2025)
     assert liquider.salaire_de_reference(actuel,

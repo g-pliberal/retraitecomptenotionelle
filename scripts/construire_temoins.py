@@ -311,11 +311,13 @@ def _cas() -> list[dict]:
         "liquidation": "64", "liquidation_mois": "7",
     }))
     # La même carrière, écrite comme le formulaire l'écrit désormais : des
-    # dates. Née en septembre 1975, entrée en décembre 1997, partie en avril
-    # 2040 — soit vingt-deux ans et trois mois, puis soixante-quatre et sept.
-    # Les deux témoins doivent porter les mêmes chiffres.
+    # dates. Née le 15 septembre 1975 — le jour que l'adresse d'avant présume,
+    # faute de le dire —, entrée en décembre 1997, à vingt-deux ans et trois
+    # mois, partie en mai 2040, au premier mois où elle a soixante-quatre ans
+    # et sept mois révolus. Les deux témoins doivent porter les mêmes
+    # chiffres, et un test le tient.
     cas.append(("mois_carriere_decalee_au_calendrier", {
-        "naissance": "1975-09-01", "debut": "1997-12", "liquidation": "2040-04",
+        "naissance": "1975-09-15", "debut": "1997-12", "liquidation": "2040-05",
     }))
     # LA FIN D'ACTIVITÉ. Le formulaire supposait qu'on travaillait jusqu'au
     # mois du départ : une ligne sans emploi dit l'inverse, et c'est là que

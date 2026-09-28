@@ -1551,12 +1551,12 @@ export function tauxAcquisAu31Mars1983(moteur, periode, carriere) {
 
 /**
  * Les trimestres entiers écoulés entre l'âge du taux plein et la date d'effet :
- * du mois qui suit celui où l'âge est atteint, comme pour la surcote
- * (circulaires Cnav n° 8/89 et n° 2004/20, point 12). Voir
- * `liquider.trimestres_d_ajournement`.
+ * du premier mois où l'âge est révolu — celui qui suit l'anniversaire, ou
+ * celui-ci pour qui est né un 1er (circulaires Cnav n° 8/89 et n° 2004/20,
+ * point 12). Voir `liquider.trimestres_d_ajournement`.
  */
 export function trimestresDAjournement(carriere, ageTauxPlein) {
-  const debut = carriere.moisDeLAnniversaire(ageTauxPlein).plusMois(1);
+  const debut = carriere.dateDeLAge(ageTauxPlein);
   return Math.max(0, Math.floor((carriere.dateLiquidation.rang - debut.rang) / 3));
 }
 
@@ -1902,12 +1902,12 @@ export function coefficientSurcoteDatee(moteur, periode, carriere, trimestres, r
   ageOuverture) {
   const anneeLiquidation = carriere.anneeLiquidation;
   const dateLegal = carriere.moisDeLAnniversaire(ageOuverture);
-  // La fonction publique compte des durées, depuis le premier du mois qui
-  // suit l'âge, et non des trimestres civils : voir le Python.
+  // La fonction publique compte des durées, depuis le premier mois où l'âge
+  // est révolu, et non des trimestres civils : voir le Python.
   const enDuree = REGIMES_CODE_DES_PENSIONS.has(periode.regime);
   const trimestreLegal = Math.floor((dateLegal.mois - 1) / 3);
   const debutAge = enDuree
-    ? dateLegal.plusMois(1)
+    ? carriere.dateDeLAge(ageOuverture)
     : new DateMois(dateLegal.annee, 1).plusMois(3 * (trimestreLegal + 1));
 
   const parAnnee = carriere.trimestresParAnnee(carriere.lignes.filter(
