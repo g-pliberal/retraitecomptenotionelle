@@ -2855,6 +2855,37 @@ exemple de la circulaire n° 22/83 en écart connu.
 - `decote_avant_1983` : le maximum des pensions, l'ajournement des artisans et
   commerçants, et les « soixante et un ans » des salariés agricoles.
 
+**Le 28 septembre 2026, la durée majorée après l'âge du taux plein**, portée
+(`majoration_duree_apres_65_ans`, qui passe `approchee`) : 2,5 % de la durée
+du régime par trimestre écoulé depuis l'âge du taux plein, pour qui n'a pas la
+durée, au régime général et chez les salariés agricoles depuis 1983 ; depuis
+2004, la durée de tous les régimes de base ouvre et borne la majoration, et un
+régime aligné liquidé à part n'en reçoit que sa part (R. 173-4-2). La garantie
+du taux acquis au 31 mars 1983 compare désormais deux pensions, comme le fait
+la circulaire Cnav n° 8/89 : le premier exemple de la circulaire n° 22/83 est
+rendu, le troisième devient un écart connu, qu'un salaire moyen de 1,7 plafond
+et le maximum décident ; l'exemple de la circulaire n° 8/89 entre au témoin, les
+cinq partages de la circulaire n° 2004/20 sont des tests. Aucun témoin ne
+bougeait : deux témoins nés pour la règle la montrent aux deux moteurs. Le
+décompte part du mois qui suit l'âge, comme celui de la surcote : il suivra
+l'action 132. Restent, avec leur raison :
+- les artisans et commerçants liquidés à part des salariés : D. 634-5 les
+  majore depuis 1990 sur leurs seuls trimestres d'après 1972, à porter ; de
+  1984 à 1989, le texte n'est pas dans l'index (l'article 2 du décret
+  n° 73-937 ne renvoie qu'à l'article 70-6 d'avant 1982) ;
+- le maximum des pensions, 50 % du plafond à la date d'effet, surcote non
+  comprise, que la base de la Cnav écrit sur la loi n° 49-244 du 24 février
+  1949, article 2 : l'index du Journal officiel n'en porte que le titre, et
+  Légifrance refuse les requêtes de la session (403) ; la règle attend sa
+  lecture ;
+- l'ajournement des artisans et commerçants avant le 1er juillet 1984 :
+  l'article 70 du décret de 1945 majorait la pension « de 5 p. 100 du salaire
+  annuel moyen de base par année postérieure à [soixante ans] », sans borne,
+  mais l'index ne porte le renvoi du décret n° 73-937 que dans sa rédaction
+  de 1984, déjà à la règle nouvelle ;
+- les « soixante et un ans » des salariés agricoles, que seule une lecture de
+  la caisse trancherait.
+
 ### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
 
 **Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
