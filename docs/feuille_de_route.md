@@ -2969,6 +2969,41 @@ trimestres, en a 150. Restent : leurs années d'avant 1973, que D. 634-5 exclut
 de la base de la majoration et que le moteur liquide comme les suivantes ; et
 1984 à 1989, dont le texte n'est pas lu.
 
+**Enfin, la réforme agricole de 2026**, que la fiche
+`retraite_proportionnelle_msa` rangeait en chantier à part et que
+`docs/limites.md` disait incalculable faute de décrets — ils ont paru au
+Journal officiel du 31 décembre 2025. L. 732-24 dans sa rédaction de 2026 est
+porté (`pension_non_salaries_agricoles_2026`, `approchee`) : les périodes des
+non-salariés agricoles sont coupées au 1er janvier 2026 et au 1er janvier
+2028. Depuis 2028, la pension cumule le revenu annuel moyen des meilleures
+années depuis 2016, au taux et au prorata du régime général, la retraite
+forfaitaire de D. 732-62 au prorata de la seule durée d'avant 2016, et la
+moyenne arrondie des points des meilleures années d'avant 2016, multipliée par
+le nombre de ces années (R. 732-66) ; les vingt-cinq années se répartissent
+entre régimes et entre les deux périodes par R. 173-3-2
+(`liquider.repartir_les_annees`) ; la pension est bornée à la moitié du
+plafond, avant la surcote. En 2026 et 2027, la plus forte du calcul provisoire
+— l'ancienne formule, la moyenne d'avant 2016 en plus — et du recalcul de 2028.
+Les points ne s'acquièrent plus depuis 2028 : la période n'en porte pas le
+barème. Un test rejoue l'exemple de la MSA : six, treize et six années, 403
+points sur treize ans, 682 points. Deux témoins bougent, l'exploitant né en
+1975 (+6,8 % de pension totale) et celui né en 1965 (+11,4 %) ; le coût du
+système actuel en 2070 passe de 710 à 712 Md€, et l'équilibre des comptes
+notionnels suit. Le calendrier ne déclare plus la réforme `non_appliquee`.
+Restent, avec leur raison :
+- le régime général, les salariés agricoles et les indépendants d'un ancien
+  exploitant, dont le salaire annuel moyen garde ses vingt-cinq années au lieu
+  de la part que R. 173-3-2 leur laisse : à porter, en commit à part ;
+- les années d'avant 1990, dont le barème de points n'est pas lu, qui entrent
+  dans la moyenne par l'équivalent en points de leur rendement ;
+- le revenu des années cotisées au minimum, que L. 732-24 déduit des
+  cotisations acquittées, porté au plancher de six cents SMIC horaires ;
+- les durées que R. 173-3-2 arrête au 31 décembre de l'année d'effet, comptées
+  à la date d'effet ; les majorations de points de 1952 à 1972 (R. 732-67), les
+  rachats et les conjoints collaborateurs ;
+- les trimestres d'enfants des exploitantes, que le moteur ne leur attribue
+  pas : R. 732-61 est porté pour le jour où il le fera.
+
 ### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
 
 **Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
