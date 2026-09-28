@@ -18,7 +18,14 @@ Toute grandeur produite par le paquet est accompagnée du niveau de fiabilité
 des données qui l'ont produite : voir :class:`~retraite_notionnelle.donnees.chargement.Fiabilite`.
 """
 
-from .config import Parametres, ModeIndexation, SourceCotisations
+import time as _time
+
+#: Quand ce processus a chargé le modèle : un calcul fait après qu'un fichier
+#: Python des sources a changé ne se garde pas (``memoire.py``), car il s'est
+#: peut-être fait avec l'ancien code.
+CHARGE_A = _time.time()
+
+from .config import Parametres, ModeIndexation, SourceCotisations  # noqa: E402
 
 __all__ = ["Parametres", "ModeIndexation", "SourceCotisations", "__version__"]
 

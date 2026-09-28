@@ -3427,3 +3427,67 @@ sentiraient.
   chiffres ancrés garde déjà : la lire par `mesures_prose._cout()` en
   économiserait la moitié ;
 - les témoins et le paquet, 43 et 40 s, qui se vérifient en se refaisant.
+
+**Fait, le 28 septembre : une mémoire commune des calculs lourds, second
+morceau du levier 3.** Un greffon de mesure a relevé, pendant une suite
+complète, chaque calcul du coût agrégé et du coût des avantages : 55 calculs,
+dix-sept minutes de calcul en tout, dont près des deux tiers refaisaient un
+calcul déjà fait. Le coût de la page Coût y était calculé vingt fois, dans neuf
+fichiers et quatre processus ; celui des avantages huit fois, dont cinq dans le
+même processus. Chaque fichier gardait le sien dans une fixture, et aucun ne
+pouvait prendre celui d'un autre.
+
+- `src/retraite_notionnelle/memoire.py` garde ces calculs dans
+  `.cache/calculs/<empreinte>/`, sous leur clé — paramètres, options défaut
+  compris, grille de cas types — et sous l'empreinte des sources, comme la
+  mémoire des chiffres ancrés, qu'elle remplace (`CALCULS_SANS_MEMOIRE=1`
+  s'en passe). `memoire.cout(parametres, …)` et `memoire.avantages(parametres)`
+  construisent eux-mêmes le simulateur et les données de leur calcul ; chaque
+  lecture rend un objet neuf ; une copie des données ailleurs que dans le dépôt
+  se calcule sans mémoire ; un calcul fait après qu'un fichier Python des
+  sources a changé ne se garde pas, parce que le processus a peut-être calculé
+  avec l'ancien code.
+- La mémoire ne connaît que le modèle intact. Les trois contextes qui en
+  remplacent des fonctions — la proposition prospective, le stock à l'âge
+  légal, le régime unique — la font taire tant qu'ils sont ouverts
+  (`memoire.modele_modifie()`), et `tests/conftest.py` fait de même sous
+  `monkeypatch` ; `memoire_isolee` la rouvre, dans un dossier à lui, pour ses
+  propres tests.
+- Y passent : les fixtures et les calculs de `test_cout.py` (treize), de
+  `test_avantages.py` (cinq), de `test_solde_fusion.py`,
+  `test_stock_age_legal.py`, `test_garantie_par_sexe.py` ; le coût de
+  `chiffrage_plf.py`, de `postes_ecartes.py`, de `garantie_par_sexe.py`, de
+  `cout_age_depart.py` avec ses deux recherches d'âges ; le coût prospectif,
+  désormais un calcul gardé de `proposition_prospective.py`
+  (`proposition_prospective.cout`), que le chiffrage partage ; les chiffres
+  ancrés, dont le précalcul ne confie plus à ses processus que ce que la
+  mémoire n'a pas.
+
+**Mesuré.** La suite complète passe, quand la mémoire sert, de 6 min 53 s à
+3 min 57 s — elle en prenait 7 min 56 s avant l'action ; quand la mémoire est
+vide, de 7 min 25 s au mieux à 6 min 17 s, mesuré avant que les recherches
+d'âges y passent. Le contrôle du chiffrage passe de 40 s à 0,3 s, et le
+document qu'il produit est le même par les deux chemins ;
+`test_cout_age_depart.py`, de 153 s à 15 s.
+
+**Ce qui reste du levier 3**, par ordre de gain mesuré sur la suite chaude :
+
+- le `Contexte` du site (`contexte.py`), que les tests des pages, des
+  affirmations et du portage lisent, et qui calcule encore ses coûts lui-même :
+  près de trois minutes de calcul du coût, selon le relevé, et les plus longs
+  tests de la suite chaude. Le faire passer par la mémoire demande de
+  s'assurer d'abord qu'aucun test ne remplace une fonction du modèle, à la
+  main et sans `monkeypatch`, avant d'y lire un coût : `test_affirmations.py`,
+  `test_capitalisation.py`, `test_droit.py` et `test_liquidation.py` le font,
+  pour d'autres calculs ;
+- les résultats des scripts calculés sous leur contexte, le régime unique
+  (`test_solde_fusion.py`, 58 s de mise en place) et le stock à l'âge légal
+  (40 s), qui se gardent comme le coût prospectif, le contexte ouvert dans le
+  calcul ;
+- les contrôles du paquet et des témoins, 44 et 43 s, qui se refont en entier ;
+- la répartition des tests : xdist distribue un à un les tests d'un même
+  fichier, et deux processus calculent ensemble la même fixture de module,
+  ce que la mémoire ne rattrape pas quand elle est vide (`--dist loadgroup`,
+  pour les fichiers qui ont une fixture lourde) ;
+- sur GitHub, où chaque exécution part sans mémoire : la garder d'une
+  exécution à l'autre (`actions/cache`, sous l'empreinte des sources).

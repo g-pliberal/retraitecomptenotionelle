@@ -53,14 +53,11 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts"))
 
+import proposition_prospective  # noqa: E402
 from proposition_prospective import PropositionProspective  # noqa: E402
 from retraite_notionnelle import cout as C  # noqa: E402
+from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
-from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
-from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
-from retraite_notionnelle.donnees.population import Population  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 LIBERAL = "notionnel_liberal"
 
@@ -103,16 +100,15 @@ class Chiffrage:
 
     def __init__(self, prospective: bool) -> None:
         parametres = Parametres()
-        racine = parametres.racine_donnees
-        simulateur = Simulateur(parametres)
+        # Les deux coûts sont des calculs gardés (``retraite_notionnelle/memoire.py``) :
+        # celui de la page Coût, que les tests et les chiffres ancrés partagent,
+        # et celui de la proposition prospective, que son script partage.
+        cout = (proposition_prospective.cout(parametres) if prospective
+                else memoire.cout(parametres))
         contexte = PropositionProspective() if prospective else None
         if contexte is not None:
             contexte.__enter__()
         try:
-            cout = C.calculer_cout(
-                simulateur, DepensesRetraite(racine), Population(racine),
-                ComptesRetraite(racine), assiette=AssietteActivite(racine),
-            )
             self.parametres = parametres
             self.prospective = prospective
             self.solde = {l.annee: l for l in cout.solde.annees}

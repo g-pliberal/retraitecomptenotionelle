@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import cout as C
+from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.assiette import AssietteActivite
 from retraite_notionnelle.donnees.depenses import DepensesRetraite
@@ -41,10 +42,8 @@ def droit_commun(donnees):
     return stock_age_legal.calculer("droit_commun", PARAMETRES, *donnees)
 
 
-def test_la_variante_de_reference_est_la_page(reference, donnees):
-    depenses, population, comptes, assiette = donnees
-    page = C.calculer_cout(Simulateur(PARAMETRES), depenses, population, comptes,
-                           assiette=assiette)
+def test_la_variante_de_reference_est_la_page(reference):
+    page = memoire.cout(PARAMETRES)
     assert reference.touches == 0
     for ligne in page.solde.projetees():
         for scenario, _ in C.SCENARIOS:

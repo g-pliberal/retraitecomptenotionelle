@@ -99,16 +99,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.avantages import calculer_avantages  # noqa: E402
-from retraite_notionnelle.cout import calculer_cout  # noqa: E402
-from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
-from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
-from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
-from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.garantie import cout_garantie  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
@@ -163,9 +158,7 @@ def calculer(parametres: Parametres | None = None,
     # Les mêmes entrées que la page Coût : le facteur de déplacement doit être
     # celui qu'elle affiche, sans quoi la colonne « r = 1 » ne la redonnerait
     # pas et la sensibilité porterait à côté.
-    cout = calculer_cout(
-        simulateur, DepensesRetraite(racine), Population(racine),
-        ComptesRetraite(racine), assiette=AssietteActivite(racine))
+    cout = memoire.cout(parametres)
     millesime = simulateur.distribution.millesime
     # Les résidents en France, comme la page : la garantie ne sert qu'eux.
     colonnes = {
@@ -290,9 +283,7 @@ def minima(parametres: Parametres | None = None) -> list[Minima]:
     simulateur = Simulateur(parametres)
     caracteristiques = simulateur.caracteristiques
     millesime = caracteristiques.millesime
-    racine = parametres.racine_donnees
-    avantages = calculer_avantages(simulateur, DepensesRetraite(racine),
-                                   Population(racine))
+    avantages = memoire.avantages(parametres)
     ligne = next((a for a in avantages.annees if a.annee == millesime), None)
     if ligne is None:
         raise RuntimeError(f"le chiffrage des avantages ne couvre pas {millesime}")

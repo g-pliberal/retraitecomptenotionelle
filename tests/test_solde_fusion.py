@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import cout as C
+from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.assiette import AssietteActivite
 from retraite_notionnelle.donnees.depenses import DepensesRetraite
@@ -30,11 +31,9 @@ def donnees():
 
 
 @pytest.fixture(scope="module")
-def reference(donnees):
+def reference():
     """La page Coût telle qu'elle est : le point de comparaison."""
-    depenses, population, comptes, assiette = donnees
-    return C.calculer_cout(Simulateur(Parametres()), depenses, population, comptes,
-                           assiette=assiette)
+    return memoire.cout(Parametres())
 
 
 @pytest.fixture(scope="module")

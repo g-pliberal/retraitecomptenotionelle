@@ -19,6 +19,7 @@ import re
 import pytest
 import yaml
 
+from retraite_notionnelle import memoire
 from retraite_notionnelle.config import RACINE_DONNEES, Neutralisations
 
 CHEMIN = RACINE_DONNEES / "reference" / "legislation" / "avantages_non_contributifs.yaml"
@@ -447,17 +448,9 @@ def test_toute_ligne_sans_montant_dit_pourquoi(script_cout, inventaire):
     rien pour les expliquer.
     """
     from retraite_notionnelle import Parametres
-    from retraite_notionnelle.donnees.depenses import DepensesRetraite
-    from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.simulateur import Simulateur
 
     parametres = Parametres()
-    simulateur = Simulateur(parametres)
-    cout = script_cout.calculer_avantages(
-        simulateur,
-        DepensesRetraite(parametres.racine_donnees),
-        Population(parametres.racine_donnees),
-    )
+    cout = memoire.avantages(parametres)
     montants = cout.derniere.lignes
     muets = []
     for avantage in inventaire["avantages"]:
@@ -498,16 +491,9 @@ def test_toute_ligne_chiffree_appartient_a_une_famille(script_cout, par_code):
     """
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.avantages import charger_avantages
-    from retraite_notionnelle.donnees.depenses import DepensesRetraite
-    from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.simulateur import Simulateur
 
     parametres = Parametres()
-    cout = script_cout.calculer_avantages(
-        Simulateur(parametres),
-        DepensesRetraite(parametres.racine_donnees),
-        Population(parametres.racine_donnees),
-    )
+    cout = memoire.avantages(parametres)
     inventaire = charger_avantages(parametres.racine_donnees)
     orphelines = [ligne for ligne in cout.lignes
                   if inventaire.famille_de_ligne(ligne) is None]
@@ -530,16 +516,9 @@ def test_une_ligne_lue_ne_s_interrompt_jamais(script_cout):
     regarder quelle série a un trou, et pourquoi son producteur l'a laissé.
     """
     from retraite_notionnelle import Parametres
-    from retraite_notionnelle.donnees.depenses import DepensesRetraite
-    from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.simulateur import Simulateur
 
     parametres = Parametres()
-    cout = script_cout.calculer_avantages(
-        Simulateur(parametres),
-        DepensesRetraite(parametres.racine_donnees),
-        Population(parametres.racine_donnees),
-    )
+    cout = memoire.avantages(parametres)
     for lue in script_cout.LIGNES_LUES:
         servies = [ligne.annee for ligne in cout.annees if lue in ligne.lignes]
         if not servies:
@@ -569,13 +548,10 @@ def test_une_ligne_ne_melange_jamais_deux_perimetres(script_cout):
     """
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.donnees.depenses import DepensesRetraite
-    from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.simulateur import Simulateur
 
     parametres = Parametres()
     depenses = DepensesRetraite(parametres.racine_donnees)
-    cout = script_cout.calculer_avantages(
-        Simulateur(parametres), depenses, Population(parametres.racine_donnees))
+    cout = memoire.avantages(parametres)
 
     for ligne in script_cout.LIGNES_LUES:
         postes = script_cout.POSTES_PUBLIES.get(ligne)
@@ -604,16 +580,9 @@ def test_la_decomposition_du_modele_couvre_toute_la_fenetre(script_cout):
     qu'une simplification future confonde les deux.
     """
     from retraite_notionnelle import Parametres
-    from retraite_notionnelle.donnees.depenses import DepensesRetraite
-    from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.simulateur import Simulateur
 
     parametres = Parametres()
-    cout = script_cout.calculer_avantages(
-        Simulateur(parametres),
-        DepensesRetraite(parametres.racine_donnees),
-        Population(parametres.racine_donnees),
-    )
+    cout = memoire.avantages(parametres)
     assert cout.lignes_modele, "la décomposition du modèle est vide"
     portees = {ligne for annee in cout.annees for ligne in annee.modele}
     remplacees = portees & set(script_cout.LIGNES_LUES)

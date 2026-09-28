@@ -79,6 +79,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle import cout as C  # noqa: E402
+from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.config import (  # noqa: E402
     Parametres, PartCotisation, SourceCotisations,
 )
@@ -286,6 +287,10 @@ class RegimeUniqueVariante:
         return ressources_de
 
     def __enter__(self) -> "RegimeUniqueVariante":
+        # La mémoire des calculs ne connaît que le modèle intact : elle se
+        # tait tant que ce contexte en remplace une fonction.
+        self._memoire = memoire.modele_modifie()
+        self._memoire.__enter__()
         self._sauvegarde = {
             "taux_unifie": ConstructeurCompte.taux_unifie,
             "CLES_RECETTES": C.CLES_RECETTES,
@@ -315,6 +320,7 @@ class RegimeUniqueVariante:
         C._rapports_recettes = self._sauvegarde["_rapports_recettes"]
         C.SoldeAnnuel.ressources_de = self._sauvegarde["ressources_de"]
         C.SoldeAnnuel._tva_affectee = self._sauvegarde["_tva_affectee"]
+        self._memoire.__exit__(None, None, None)
 
 
 # -- le calcul ---------------------------------------------------------------

@@ -68,12 +68,10 @@ sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts"))
 
 from retraite_notionnelle import cout as C  # noqa: E402
+from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, CasType  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
-from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
-from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 import age_depart_csp as ACSP  # noqa: E402
@@ -203,6 +201,14 @@ def chercher_decalages(simulateur: Simulateur) -> list[Decalage]:
     return decalages
 
 
+def decalages_du_depot(parametres: Parametres) -> list[Decalage]:
+    """``chercher_decalages`` sur un simulateur neuf et les données du dépôt : une
+    minute de simulations, gardée par la mémoire des calculs
+    (``retraite_notionnelle/memoire.py``)."""
+    return memoire.memoriser_pour(parametres, ("decalages_csp", parametres),
+                                  lambda: chercher_decalages(Simulateur(parametres)))
+
+
 def grille_contrefactuelle(decalages: list[Decalage]) -> tuple[CasType, ...]:
     """La grille avec les âges d'entrée du contrefactuel, les autres intacts."""
     nouveaux = {d.code: d.entree_contrefactuelle for d in decalages}
@@ -212,18 +218,18 @@ def grille_contrefactuelle(decalages: list[Decalage]) -> tuple[CasType, ...]:
     )
 
 
-def trajectoire(simulateur: Simulateur, donnees, cas_types: tuple[CasType, ...],
+def trajectoire(parametres: Parametres, cas_types: tuple[CasType, ...],
                 ) -> dict[str, float]:
     """La part de PIB de chaque système à l'horizon, sous cette grille.
 
     `part_pib` et non `depense` : c'est le NIVEAU de dépense propre au modèle,
     celui que la page Coût oppose à la projection du COR (`cor_horizon`), et
-    donc la grandeur sur laquelle porte la question ouverte du § 5 ter.
+    donc la grandeur sur laquelle porte la question ouverte du § 5 ter. Le coût
+    est celui de la page, sur les données du dépôt, et un calcul gardé
+    (``retraite_notionnelle/memoire.py``) : sous la grille du dépôt, c'est
+    celui que les tests et les chiffres ancrés partagent.
     """
-    depenses, population, comptes, assiette = donnees
-    cout = C.calculer_cout(simulateur, depenses, population, comptes,
-                           cas_types=cas_types, assiette=assiette)
-    avenir = cout.avenir
+    avenir = memoire.cout(parametres, cas_types=cas_types).avenir
     horizon = avenir.annee(avenir.derniere_annee)
     return {scenario: horizon.part_pib(scenario) for scenario, _ in C.SCENARIOS}
 
@@ -238,6 +244,13 @@ def concordance(simulateur: Simulateur,
     """
     lignes = mesurer(simulateur, cas_types)
     return sum(ligne.ecart for ligne in lignes) / len(lignes)
+
+
+def concordance_du_depot(parametres: Parametres, cas_types: tuple[CasType, ...]) -> float:
+    """``concordance`` sur un simulateur neuf et les données du dépôt, gardée."""
+    return memoire.memoriser_pour(
+        parametres, ("concordance_csp", parametres, tuple(cas_types)),
+        lambda: concordance(Simulateur(parametres), cas_types))
 
 
 def imprimer(decalages: list[Decalage], reference: dict[str, float],
@@ -290,17 +303,13 @@ def main(argv: list[str] | None = None) -> int:
     arguments = analyseur.parse_args(argv)
 
     parametres = Parametres()
-    racine = parametres.racine_donnees
-    donnees = (DepensesRetraite(racine), Population(racine),
-               ComptesRetraite(racine), AssietteActivite(racine))
-    simulateur = Simulateur(parametres)
 
-    decalages = chercher_decalages(simulateur)
-    reference = trajectoire(simulateur, donnees, CAS_TYPES)
+    decalages = decalages_du_depot(parametres)
+    reference = trajectoire(parametres, CAS_TYPES)
     corrigee = grille_contrefactuelle(decalages)
-    contrefactuel = trajectoire(simulateur, donnees, corrigee)
-    concordances = (concordance(simulateur, CAS_TYPES),
-                    concordance(simulateur, corrigee))
+    contrefactuel = trajectoire(parametres, corrigee)
+    concordances = (concordance_du_depot(parametres, CAS_TYPES),
+                    concordance_du_depot(parametres, corrigee))
     imprimer(decalages, reference, contrefactuel, C.HORIZON, concordances)
 
     if arguments.json:

@@ -32,6 +32,8 @@ from __future__ import annotations
 
 import pytest
 
+from retraite_notionnelle import memoire
+
 NIVEAUX = {
     "rapide": "les règles et les étapes, chacune seule : la suite rapide",
     "complet": "les témoins, le site et les agrégats de la page Coût",
@@ -116,3 +118,34 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         nom = getattr(item, "originalname", None) or item.name
         item.add_marker(niveau(item.path.name, nom))
+
+
+# -- la mémoire des calculs, et ce qui la fait taire -----------------------------
+
+
+@pytest.fixture
+def monkeypatch(monkeypatch, request):
+    """``monkeypatch``, sous lequel la mémoire des calculs se tait.
+
+    Un test qui remplace une fonction du modèle ne doit ni recevoir un coût
+    gardé, calculé sans son remplacement, ni en garder un qui l'aurait subi
+    (``retraite_notionnelle/memoire.py``). Les tests de la mémoire elle-même
+    demandent ``memoire_isolee``, qui la rouvre dans un dossier à eux.
+    """
+    if "memoire_isolee" in request.fixturenames:
+        yield monkeypatch
+        return
+    with memoire.modele_modifie():
+        yield monkeypatch
+
+
+@pytest.fixture
+def memoire_isolee(monkeypatch, tmp_path):
+    """La mémoire des calculs, vide, dans un dossier propre à ce test, et qui
+    ne regarde pas le dépôt : qu'un fichier Python y change pendant la suite ne
+    l'empêche pas de garder."""
+    monkeypatch.setattr(memoire, "DOSSIER", tmp_path / "calculs")
+    monkeypatch.setattr(memoire, "_EN_MEMOIRE", {})
+    monkeypatch.setattr(memoire, "_code_retouche", lambda: False)
+    monkeypatch.delenv(memoire.SANS_MEMOIRE, raising=False)
+    return memoire

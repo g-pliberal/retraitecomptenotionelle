@@ -9,10 +9,6 @@ import pytest
 
 from retraite_notionnelle import cout as C
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.donnees.assiette import AssietteActivite
-from retraite_notionnelle.donnees.depenses import DepensesRetraite
-from retraite_notionnelle.donnees.equilibre import ComptesRetraite
-from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.scenarios.notionnel import ScenarioNotionnel
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -21,23 +17,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import proposition_prospective  # noqa: E402
 
 PARAMETRES = Parametres()
-RACINE = PARAMETRES.racine_donnees
 
 
 @pytest.fixture(scope="module")
-def donnees():
-    return (DepensesRetraite(RACINE), Population(RACINE), ComptesRetraite(RACINE),
-            AssietteActivite(RACINE))
+def reference():
+    return proposition_prospective.calculer(False, PARAMETRES)
 
 
 @pytest.fixture(scope="module")
-def reference(donnees):
-    return proposition_prospective.calculer(False, PARAMETRES, *donnees)
-
-
-@pytest.fixture(scope="module")
-def prospective(donnees):
-    return proposition_prospective.calculer(True, PARAMETRES, *donnees)
+def prospective():
+    return proposition_prospective.calculer(True, PARAMETRES)
 
 
 def test_les_cinq_autres_systemes_ne_bougent_pas(reference, prospective):

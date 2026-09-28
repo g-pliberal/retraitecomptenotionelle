@@ -15,7 +15,7 @@ from dataclasses import replace
 
 import pytest
 
-from retraite_notionnelle import Parametres
+from retraite_notionnelle import Parametres, memoire
 from retraite_notionnelle.castypes import (
     CAS_TYPES,
     GENERATIONS,
@@ -107,10 +107,8 @@ def comptes() -> ComptesRetraite:
 
 
 @pytest.fixture(scope="module")
-def cout(depenses: DepensesRetraite, population: Population,
-         comptes: ComptesRetraite):
-    return calculer_cout(Simulateur(Parametres()), depenses, population, comptes,
-                         convention_recette=CONVENTION_RAPPORT)
+def cout():
+    return memoire.cout(Parametres(), assiette=False, convention_recette=CONVENTION_RAPPORT)
 
 
 @pytest.fixture(scope="module")
@@ -525,8 +523,7 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
         assert lignes[-1].rapports[scenario] < 0.85, scenario
 
 
-def test_le_stock_sur_les_prix_efface_la_bosse_sans_toucher_l_horizon(
-        avenir, depenses, population, comptes):
+def test_le_stock_sur_les_prix_efface_la_bosse_sans_toucher_l_horizon(avenir):
     """Réindexer le stock à la bascule creuse une bosse jusque vers 2040 et rien
     d'autre.
 
@@ -537,9 +534,9 @@ def test_le_stock_sur_les_prix_efface_la_bosse_sans_toucher_l_horizon(
     tout ce qui reste vient des comptes, pas du stock. Avant la bascule, les
     prospectifs sont le système actuel dans les deux cas.
     """
-    reindexe = calculer_cout(
-        Simulateur(Parametres(revalorisation_stock=RevalorisationStock.REINDEXE)),
-        depenses, population, comptes, convention_recette=CONVENTION_RAPPORT,
+    reindexe = memoire.cout(
+        Parametres(revalorisation_stock=RevalorisationStock.REINDEXE),
+        assiette=False, convention_recette=CONVENTION_RAPPORT,
     ).avenir
     defaut = {l.annee: l for l in avenir.annees}
     bascule = avenir.annee_bascule
@@ -769,15 +766,14 @@ def test_un_cote_de_ponderation_inconnu_est_refuse():
         _ponderation(Simulateur(Parametres()), "effectifs", CAS_TYPES, "ni_l_un_ni_l_autre")
 
 
-def test_la_ponderation_egale_reproduit_l_ancienne_convention(depenses, population):
+def test_la_ponderation_egale_reproduit_l_ancienne_convention():
     """Un poids uniforme se simplifie dans le rapport des masses.
 
     C'est ce qui rend la variante utilisable comme TÉMOIN : si elle ne rendait
     pas exactement ce que rendait le dépôt avant la pondération, elle ne dirait
     rien de ce que celle-ci a déplacé.
     """
-    egale = calculer_cout(Simulateur(Parametres()), depenses, population,
-                          ponderation="egale")
+    egale = memoire.cout(Parametres(), comptes=False, assiette=False, ponderation="egale")
     assert egale.ponderation == "egale"
     assert all(poids == pytest.approx(1 / len(CAS_TYPES))
                for poids in egale.poids.values())
@@ -785,7 +781,7 @@ def test_la_ponderation_egale_reproduit_l_ancienne_convention(depenses, populati
     # Les deux pondérations ne donnent pas le même rapport — sans quoi l'action
     # n'aurait rien déplacé — et elles l'écartent dans des sens opposés selon
     # que la part patronale entre au compte ou non.
-    reference = calculer_cout(Simulateur(Parametres()), depenses, population)
+    reference = memoire.cout(Parametres(), comptes=False, assiette=False)
     assert (reference.cumul("notionnel_retroactif") / reference.cumul("actuel")
             < egale.cumul("notionnel_retroactif") / egale.cumul("actuel"))
     assert (reference.cumul("notionnel_retroactif_employeur")
@@ -957,7 +953,7 @@ def test_les_trimestres_pour_enfants_datent_le_taux_plein():
         assert not plus_tot.liquidation_ouverte
 
 
-def test_la_variante_absolue_reproduit_l_ancienne_grille(depenses, population):
+def test_la_variante_absolue_reproduit_l_ancienne_grille():
     """L'âge écrit reste disponible, non comme repli mais comme témoin.
 
     Sans lui, ce que la règle déplace ne se mesurerait pas : il faudrait le
@@ -969,8 +965,8 @@ def test_la_variante_absolue_reproduit_l_ancienne_grille(depenses, population):
         for generation in GENERATIONS:
             assert (cas.age_liquidation_pour(simulateur, generation, "absolu")
                     == cas.age_liquidation)
-    absolu = calculer_cout(simulateur, depenses, population, liquidation="absolu")
-    droit = calculer_cout(simulateur, depenses, population)
+    absolu = memoire.cout(Parametres(), comptes=False, assiette=False, liquidation="absolu")
+    droit = memoire.cout(Parametres(), comptes=False, assiette=False)
     assert absolu.liquidation == "absolu"
     assert droit.liquidation == "droit"
     # La dépense OBSERVÉE est la même des deux côtés — c'est la série de la
@@ -1542,10 +1538,9 @@ def test_le_solde_ne_se_donne_jamais_pour_certifie(solde):
     assert solde.fiabilite == Fiabilite.ESTIMEE
 
 
-def test_sans_comptes_le_cout_est_calcule_a_l_identique(depenses, population,
-                                                        comptes, cout):
+def test_sans_comptes_le_cout_est_calcule_a_l_identique(comptes, cout):
     """Les ressources sont un ajout, jamais une correction de ce qui précède."""
-    sans = calculer_cout(Simulateur(Parametres()), depenses, population)
+    sans = memoire.cout(Parametres(), comptes=False, assiette=False)
     assert sans.solde.annees == []
     assert sans.cumul("notionnel_retroactif") == pytest.approx(
         cout.cumul("notionnel_retroactif"))
@@ -1798,12 +1793,9 @@ def assiette() -> AssietteActivite:
 
 
 @pytest.fixture(scope="module")
-def cout_assiette(depenses: DepensesRetraite, population: Population,
-                  comptes: ComptesRetraite, assiette: AssietteActivite):
+def cout_assiette():
     """Le coût sous la convention du programme : le taux plein sur l'assiette."""
-    return calculer_cout(Simulateur(Parametres()), depenses, population, comptes,
-                         assiette=assiette,
-                         convention_recette=CONVENTION_ASSIETTE)
+    return memoire.cout(Parametres(), convention_recette=CONVENTION_ASSIETTE)
 
 
 def test_l_assiette_se_recoupe_avec_celle_que_le_cor_implique(
@@ -2514,9 +2506,7 @@ def test_la_garantie_vieillesse_ne_recoit_aucune_reversion(cout_assiette: Cout):
             assert point.depense(COMPOSANTE_GARANTIE) < point.depenses
 
 
-def test_les_deux_conventions_de_reversion_se_mesurent(
-        depenses: DepensesRetraite, population: Population,
-        comptes: ComptesRetraite, assiette: AssietteActivite):
+def test_les_deux_conventions_de_reversion_se_mesurent():
     """Ce que le choix suédois rend au regard du choix italien.
 
     Le dépôt NE sert PAS la réversion dans les scénarios notionnels : c'est un
@@ -2532,10 +2522,8 @@ def test_les_deux_conventions_de_reversion_se_mesurent(
     la bascule. Le solde moyen de la projection ne commence pas avant.
     """
     def fait(convention: str) -> Cout:
-        return calculer_cout(Simulateur(Parametres()), depenses, population,
-                             comptes, assiette=assiette,
-                             convention_recette=CONVENTION_ASSIETTE,
-                             convention_reversion=convention)
+        return memoire.cout(Parametres(), convention_recette=CONVENTION_ASSIETTE,
+                            convention_reversion=convention)
 
     servie = fait(CONVENTION_REVERSION_SERVIE).solde
     supprimee = fait(CONVENTION_REVERSION_SUPPRIMEE).solde
@@ -2825,9 +2813,9 @@ def test_un_point_de_taux_deplace_la_dette_dans_le_sens_attendu(cout):
             > plus.horizon("notionnel_retroactif"))
 
 
-def test_sans_solde_la_dette_est_vide(depenses, population):
+def test_sans_solde_la_dette_est_vide():
     """Sans comptes, pas de solde ; sans solde, pas de stock — et rien ne plante."""
-    sans = calculer_cout(Simulateur(Parametres()), depenses, population)
+    sans = memoire.cout(Parametres(), comptes=False, assiette=False)
     assert sans.solde.annees == []
     assert sans.dette.annees == []
     assert isinstance(sans.dette, Dette)
@@ -3105,8 +3093,7 @@ def test_le_solde_d_une_variante_est_celui_de_sa_variante(comptes):
     assert haute.solde(horizon) > comptes.solde(horizon)
 
 
-def test_la_proposition_ne_perd_plus_un_point_a_la_croissance(
-        depenses, population, assiette):
+def test_la_proposition_ne_perd_plus_un_point_a_la_croissance():
     """CE QUE LA CORRECTION VALAIT, ET POURQUOI IL EN RESTE.
 
     Sous l'ancien raccord, le solde de la proposition en 2070 allait de +0,42 à
@@ -3124,13 +3111,9 @@ def test_la_proposition_ne_perd_plus_un_point_a_la_croissance(
     soldes = {}
     for scenario in ("cor_productivite_basse", "cor_reference",
                      "cor_productivite_haute"):
-        comptes = ComptesRetraite(
-            RACINE_DONNEES,
-            variante=variante_du_scenario(
-                scenario, RACINE_DONNEES / "reference" / "macro"))
-        cout = calculer_cout(
-            Simulateur(Parametres().avec(scenario_projection=scenario)),
-            depenses, population, comptes, assiette=assiette)
+        # Les comptes du COR de chaque scénario, comme la page : la mémoire les
+        # prend dans la variante que le scénario réclame (variante_du_scenario).
+        cout = memoire.cout(Parametres().avec(scenario_projection=scenario))
         ligne = cout.solde.annees[-1]
         soldes[scenario] = ligne.solde("notionnel_liberal")
     amplitude = soldes["cor_productivite_basse"] - soldes["cor_productivite_haute"]
@@ -3189,13 +3172,11 @@ def test_le_plafond_de_l_axe_est_lu_sur_les_variantes():
 
 
 @pytest.fixture(scope="module")
-def cout_sans_age_legal(depenses: DepensesRetraite, population: Population,
-                        comptes: ComptesRetraite, assiette: AssietteActivite):
+def cout_sans_age_legal():
     """La page Coût sans l'âge légal de 65 ans : la proposition part aux âges
     du scénario 4."""
-    return calculer_cout(Simulateur(Parametres(age_legal_liberal=None)), depenses,
-                         population, comptes, assiette=assiette,
-                         convention_recette=CONVENTION_ASSIETTE)
+    return memoire.cout(Parametres(age_legal_liberal=None),
+                        convention_recette=CONVENTION_ASSIETTE)
 
 
 def test_l_age_legal_ne_touche_rien_avant_la_bascule(cout_assiette, cout_sans_age_legal):
@@ -3328,12 +3309,10 @@ def test_deux_volets_se_melent_par_tete():
 
 
 @pytest.fixture(scope="module")
-def cout_a_mi_emploi(depenses: DepensesRetraite, population: Population,
-                     comptes: ComptesRetraite, assiette: AssietteActivite):
+def cout_a_mi_emploi():
     """La page Coût quand la moitié seulement des reportés travaillent."""
-    return calculer_cout(Simulateur(Parametres(part_reportes_en_emploi=0.5)),
-                         depenses, population, comptes, assiette=assiette,
-                         convention_recette=CONVENTION_ASSIETTE)
+    return memoire.cout(Parametres(part_reportes_en_emploi=0.5),
+                        convention_recette=CONVENTION_ASSIETTE)
 
 
 def test_la_part_des_reportes_en_emploi_elargit_l_assiette_en_proportion(

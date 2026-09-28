@@ -74,12 +74,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle import cout as C  # noqa: E402
+from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
-from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
-from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
-from retraite_notionnelle.donnees.population import Population  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 LIBERAL = "notionnel_liberal"
 ANNEES_AFFICHEES: tuple[int, ...] = (2026, 2030, 2040, 2050, 2060, 2070)
@@ -210,11 +206,7 @@ def besoin_de(solde: C.Solde, poste: str, libelle: str,
 def calculer(parametres: Parametres) -> tuple[C.Cout, list[Chiffrage], list[Besoin]]:
     # La TVA à taux unique est ce que ces postes remplaceraient : voir l'en-tête.
     parametres = replace(parametres, taux_tva_liberal=0.0)
-    racine = parametres.racine_donnees
-    cout = C.calculer_cout(
-        Simulateur(parametres), DepensesRetraite(racine), Population(racine),
-        ComptesRetraite(racine), assiette=AssietteActivite(racine),
-    )
+    cout = memoire.cout(parametres)
     solde = cout.solde
     chiffrages = [chiffrer(solde, "reference", "Proposition, convention du programme", ())]
     for poste, libelle in POSTES:

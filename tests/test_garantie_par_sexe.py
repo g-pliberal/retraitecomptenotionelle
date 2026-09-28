@@ -15,12 +15,8 @@ import pytest
 
 from dataclasses import replace
 
+from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.cout import calculer_cout
-from retraite_notionnelle.donnees.assiette import AssietteActivite
-from retraite_notionnelle.donnees.depenses import DepensesRetraite
-from retraite_notionnelle.donnees.equilibre import ComptesRetraite
-from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.simulateur import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -36,11 +32,8 @@ def lectures():
 @pytest.fixture(scope="module")
 def garantie_de_l_enquete():
     parametres = Parametres()
-    racine = parametres.racine_donnees
     simulateur = Simulateur(parametres)
-    cout = calculer_cout(simulateur, DepensesRetraite(racine), Population(racine),
-                         ComptesRetraite(racine), assiette=AssietteActivite(racine))
-    ligne = cout.annee(simulateur.distribution.millesime)
+    ligne = memoire.cout(parametres).annee(simulateur.distribution.millesime)
     assert ligne is not None and ligne.garantie is not None
     return parametres, simulateur, ligne.garantie
 
@@ -94,11 +87,8 @@ def test_le_rapport_un_redonne_l_ancienne_convention(lectures):
     d'avant le 21 septembre 2026.
     """
     parametres = replace(Parametres(), rapport_deplacement_sexe=1.0)
-    racine = parametres.racine_donnees
     simulateur = Simulateur(parametres)
-    cout = calculer_cout(simulateur, DepensesRetraite(racine), Population(racine),
-                         ComptesRetraite(racine), assiette=AssietteActivite(racine))
-    ligne = cout.annee(simulateur.distribution.millesime)
+    ligne = memoire.cout(parametres).annee(simulateur.distribution.millesime)
     assert ligne is not None and ligne.garantie is not None
     attendu = (ligne.garantie.cout_constants / 1000.0
                * simulateur.effectifs.effectif(

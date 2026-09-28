@@ -19,10 +19,6 @@ import pytest
 from retraite_notionnelle import cout as C
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.donnees.assiette import AssietteActivite
-from retraite_notionnelle.donnees.depenses import DepensesRetraite
-from retraite_notionnelle.donnees.equilibre import ComptesRetraite
-from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.droit import ouvrir
 
@@ -47,16 +43,13 @@ def simulateur():
 
 @pytest.fixture(scope="module")
 def mesure(simulateur):
-    racine = simulateur.parametres.racine_donnees
-    donnees = (DepensesRetraite(racine), Population(racine),
-               ComptesRetraite(racine), AssietteActivite(racine))
-    decalages = CAD.chercher_decalages(simulateur)
+    decalages = CAD.decalages_du_depot(simulateur.parametres)
     corrigee = CAD.grille_contrefactuelle(decalages)
     return {
         "decalages": decalages,
         "corrigee": corrigee,
-        "reference": CAD.trajectoire(simulateur, donnees, CAS_TYPES),
-        "contrefactuel": CAD.trajectoire(simulateur, donnees, corrigee),
+        "reference": CAD.trajectoire(simulateur.parametres, CAS_TYPES),
+        "contrefactuel": CAD.trajectoire(simulateur.parametres, corrigee),
     }
 
 
@@ -212,8 +205,8 @@ def test_les_deux_criteres_d_age_tirent_en_sens_contraire(mesure, simulateur):
     des âges de quarante-quatre à cinquante-sept ans — sont le suspect. Ce test
     tient le constat, pas son explication.
     """
-    fiches = CAD.concordance(simulateur, CAS_TYPES)
-    contrefactuel = CAD.concordance(simulateur, mesure["corrigee"])
+    fiches = CAD.concordance_du_depot(simulateur.parametres, CAS_TYPES)
+    contrefactuel = CAD.concordance_du_depot(simulateur.parametres, mesure["corrigee"])
     assert abs(fiches) < 0.2
     assert contrefactuel < fiches
     assert abs(contrefactuel) > abs(fiches)

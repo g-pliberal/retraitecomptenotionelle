@@ -1,9 +1,10 @@
 """L'outillage qui accélère un changement de résultats (feuille de route, action
 135) : le script qui régénère tout, celui qui résume ce que les témoins ont
-bougé, et la mémoire des calculs lourds des chiffres ancrés. Aucun de ces tests
-ne lance un calcul du modèle : le premier script se lit dans sa table d'étapes
-et s'exerce sur des étapes simulées, le second sur des témoins écrits pour
-l'occasion, la mémoire sur des calculs factices qui se comptent."""
+bougé, la mémoire des calculs lourds et le précalcul des chiffres ancrés.
+Aucun de ces tests ne lance un calcul du modèle : le premier script se lit dans
+sa table d'étapes et s'exerce sur des étapes simulées, le second sur des
+témoins écrits pour l'occasion, la mémoire et le précalcul sur des calculs
+factices qui se comptent."""
 
 from __future__ import annotations
 
@@ -17,6 +18,8 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
+
+from retraite_notionnelle import memoire
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
@@ -163,22 +166,168 @@ def test_un_pourcentage_s_ecrit_comme_la_prose():
     assert resumer_temoins.pourcent(-0.0265) == "−2,65 %"
 
 
-# -- la mémoire des calculs lourds des chiffres ancrés ------------------------
+# -- la mémoire des calculs ----------------------------------------------------
 
 
-def _factices(monkeypatch, tmp_path) -> list[tuple]:
-    """Deux calculs « lourds » qui se comptent, et des mesures qui les lisent ;
-    une mémoire vide dans ``tmp_path``, sous l'empreinte « e1 ». Rend la liste
-    des calculs faits, dans l'ordre."""
+def _compteur(faits: list, genre: str, valeur: float):
+    """Un calcul factice qui se compte, et se garde comme les vrais."""
+    def calcul():
+        faits.append(genre)
+        return valeur
+    return calcul
+
+
+def test_un_calcul_se_garde_tant_que_l_empreinte_est_la_meme(monkeypatch, memoire_isolee):
+    faits = []
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    assert memoire_isolee.memoriser(("essai", 3), _compteur(faits, "a", 30.0)) == 30.0
+    monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})     # un autre processus
+    assert memoire_isolee.memoriser(("essai", 3), _compteur(faits, "a", 30.0)) == 30.0
+    assert faits == ["a"]
+    # Une source a bougé : tout se refait, sous la nouvelle empreinte.
+    monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e2")
+    memoire_isolee.memoriser(("essai", 3), _compteur(faits, "a", 30.0))
+    assert faits == ["a", "a"]
+    assert sorted(d.name for d in memoire_isolee.DOSSIER.iterdir()) == ["e1", "e2"]
+
+
+def test_chaque_lecture_rend_un_objet_neuf(monkeypatch, memoire_isolee):
+    """Comme ``charger_yaml`` rend une copie : ce qu'un appelant fait de son
+    objet ne touche pas le suivant."""
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    premier = memoire_isolee.memoriser(("liste",), lambda: [1, 2])
+    premier.append(3)
+    assert memoire_isolee.memoriser(("liste",), lambda: [9]) == [1, 2]
+
+
+def test_un_calcul_pendant_lequel_une_source_bouge_ne_se_garde_pas(monkeypatch,
+                                                                   memoire_isolee):
+    empreintes = iter(["avant", "après"])
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: next(empreintes))
+    memoire_isolee.memoriser(("essai",), lambda: 1.0)
+    assert not memoire_isolee.DOSSIER.exists()
+
+
+def test_un_calcul_fait_apres_une_retouche_du_code_ne_se_garde_pas(monkeypatch,
+                                                                   memoire_isolee):
+    """Le processus a peut-être calculé avec l'ancien code, que l'empreinte ne
+    lit plus."""
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    monkeypatch.setattr(memoire_isolee, "_code_retouche", lambda: True)
+    memoire_isolee.memoriser(("essai",), lambda: 1.0)
+    assert not memoire_isolee.DOSSIER.exists()
+
+
+def test_une_memoire_illisible_se_refait_et_l_on_peut_s_en_passer(monkeypatch,
+                                                                  memoire_isolee):
+    faits = []
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    dossier = memoire_isolee.DOSSIER / "e1"
+    dossier.mkdir(parents=True)
+    garde = dossier / f"{memoire_isolee.nom(('essai', 1))}.pickle"
+    garde.write_bytes(b"tronqu")
+    assert memoire_isolee.memoriser(("essai", 1), _compteur(faits, "a", 10.0)) == 10.0
+    assert pickle.loads(garde.read_bytes()) == 10.0          # refait, et gardé
+    monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})
+    monkeypatch.setenv(memoire_isolee.SANS_MEMOIRE, "1")
+    memoire_isolee.memoriser(("essai", 1), _compteur(faits, "a", 10.0))
+    memoire_isolee.memoriser(("essai", 2), _compteur(faits, "b", 20.0))
+    assert faits == ["a", "a", "b"]                         # rien de relu…
+    assert list(dossier.glob("*.pickle")) == [garde]         # …ni d'écrit
+
+
+def test_sous_un_modele_modifie_la_memoire_se_tait(monkeypatch, memoire_isolee):
+    """Un contexte qui remplace une fonction du modèle ne lit pas le coût du
+    modèle intact, et n'y écrit pas le sien."""
+    faits = []
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    memoire_isolee.memoriser(("essai",), _compteur(faits, "intact", 1.0))
+    with memoire_isolee.modele_modifie():
+        assert memoire_isolee.memoriser(("essai",), _compteur(faits, "remplacé", 2.0)) == 2.0
+        with pytest.raises(memoire_isolee.Absent), memoire_isolee.lecture_seule():
+            memoire_isolee.memoriser(("essai",), _compteur(faits, "remplacé", 2.0))
+    assert memoire_isolee.memoriser(("essai",), _compteur(faits, "intact", 1.0)) == 1.0
+    assert faits == ["intact", "remplacé"]
+
+
+def test_les_contextes_qui_remplacent_le_modele_font_taire_la_memoire():
+    import proposition_prospective
+
+    assert memoire._active()
+    with proposition_prospective.PropositionProspective():
+        assert not memoire._active()
+    assert memoire._active()
+
+
+def test_un_test_qui_remplace_quelque_chose_n_a_pas_de_memoire(monkeypatch):
+    """``tests/conftest.py`` fait taire la mémoire sous ``monkeypatch``."""
+    assert not memoire._active()
+
+
+def test_la_memoire_ne_garde_que_les_empreintes_recentes(monkeypatch, memoire_isolee):
+    for rang in range(memoire_isolee.EMPREINTES_GARDEES + 2):
+        monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})
+        monkeypatch.setattr(memoire_isolee, "empreinte", lambda rang=rang: f"e{rang}")
+        memoire_isolee.memoriser(("essai",), lambda: 1.0)
+        os.utime(memoire_isolee.DOSSIER / f"e{rang}", (1000 + rang, 1000 + rang))
+    restent = sorted(d.name for d in memoire_isolee.DOSSIER.iterdir())
+    assert restent == [f"e{rang}" for rang in range(2, memoire_isolee.EMPREINTES_GARDEES + 2)]
+
+
+def test_l_empreinte_suit_les_sources_que_git_voit(monkeypatch, memoire_isolee, tmp_path):
+    """Un fichier suivi, ou nouveau, change l'empreinte ; ce que git ignore
+    ne la change pas. Hors d'un dépôt, pas d'empreinte, et rien ne se garde."""
+    depot = tmp_path / "depot"
+    (depot / "src").mkdir(parents=True)
+    (depot / "data" / "brut").mkdir(parents=True)
+    subprocess.run(["git", "init", "-q", str(depot)], check=True)
+    (depot / ".gitignore").write_text("data/brut/*\n", encoding="utf-8")
+    (depot / "src" / "modele.py").write_text("TAUX = 1\n", encoding="utf-8")
+    monkeypatch.setattr(memoire_isolee, "RACINE_PROJET", depot)
+    premiere = memoire_isolee.empreinte()
+    assert premiere
+    (depot / "data" / "brut" / "gros.csv").write_text("ignoré", encoding="utf-8")
+    assert memoire_isolee.empreinte() == premiere
+    (depot / "src" / "modele.py").write_text("TAUX = 2\n", encoding="utf-8")
+    assert memoire_isolee.empreinte() != premiere
+    ailleurs = tmp_path / "ailleurs"
+    ailleurs.mkdir()
+    monkeypatch.setattr(memoire_isolee, "RACINE_PROJET", ailleurs)
+    assert memoire_isolee.empreinte() is None
+
+
+def test_une_option_par_defaut_ecrite_ou_non_est_le_meme_cout(monkeypatch, memoire_isolee):
+    """La clé du coût porte chaque option avec son défaut : « convention_recette »
+    écrite ou non, c'est le même calcul ; une option inconnue est refusée."""
+    from retraite_notionnelle.config import Parametres
+    from retraite_notionnelle.cout import CONVENTION_ASSIETTE
+
+    cles = []
+    monkeypatch.setattr(memoire_isolee, "memoriser",
+                        lambda cle, calcul: cles.append(memoire_isolee.nom(cle)))
+    memoire_isolee.cout(Parametres())
+    memoire_isolee.cout(Parametres(), convention_recette=CONVENTION_ASSIETTE)
+    memoire_isolee.cout(Parametres(), comptes=False)
+    assert cles[0] == cles[1] != cles[2]
+    with pytest.raises(TypeError, match="options inconnues"):
+        memoire_isolee.cout(Parametres(), assiete=False)
+
+
+# -- le précalcul des chiffres ancrés -------------------------------------------
+
+
+def _factices(monkeypatch) -> list[tuple]:
+    """Deux calculs « lourds » qui se comptent et se gardent comme les vrais,
+    et des mesures qui les lisent. Rend la liste des calculs faits."""
     faits = []
 
     def lourd_a(x):
-        faits.append(("a", x))
-        return float(x) * 10
+        return memoire.memoriser(("factice_a", x),
+                                 lambda: (faits.append(("a", x)), float(x) * 10)[1])
 
     def lourd_b():
-        faits.append(("b",))
-        return 10.0
+        return memoire.memoriser(("factice_b",), lambda: (faits.append(("b",)), 10.0)[1])
 
     def qui_rattrape(**_):
         # Une mesure qui rattrape ses erreurs ne prend pas l'attente du
@@ -198,17 +347,16 @@ def _factices(monkeypatch, tmp_path) -> list[tuple]:
         "qui_rattrape": qui_rattrape,
     })
     monkeypatch.setattr(mesures_prose, "_FAITS", {})
-    monkeypatch.setattr(mesures_prose, "MEMOIRE", tmp_path / "memoire")
-    monkeypatch.setattr(mesures_prose, "empreinte", lambda: "e1")
-    monkeypatch.delenv(mesures_prose.SANS_MEMOIRE, raising=False)
+    monkeypatch.setattr(memoire, "empreinte", lambda: "e1")
     return faits
 
 
-def test_une_campagne_fait_chaque_calcul_lourd_une_fois_et_d_avance(monkeypatch, tmp_path):
+def test_une_campagne_fait_chaque_calcul_lourd_une_fois_et_d_avance(monkeypatch,
+                                                                    memoire_isolee):
     """Les calculs lourds se découvrent et se font avant que le contrôle ne
     demande la première mesure ; une mesure qui en attend deux les a tous les
     deux, et aucune ne se calcule deux fois."""
-    faits = _factices(monkeypatch, tmp_path)
+    faits = _factices(monkeypatch)
     arguments = ["simple?n=4", "avec_a?x=1", "avec_a?x=2", "avec_deux", "qui_rattrape",
                  "avec_a?x=1"]
     with ThreadPoolExecutor(2) as pool, mesures_prose.campagne(arguments, pool):
@@ -216,96 +364,43 @@ def test_une_campagne_fait_chaque_calcul_lourd_une_fois_et_d_avance(monkeypatch,
         valeurs = [mesures_prose.mesurer(a) for a in arguments]
     assert valeurs == [4.0, 20.0, 40.0, 20.0, 10.0, 20.0]
     assert len(faits) == 3
-    assert mesures_prose._VALEURS is None and mesures_prose._EMPREINTE is None
-    assert len(list((tmp_path / "memoire" / "e1").glob("*.pickle"))) == 3
+    assert mesures_prose._VALEURS is None
+    assert len(list((memoire_isolee.DOSSIER / "e1").glob("*.pickle"))) == 3
 
 
-def test_la_memoire_du_disque_tient_tant_que_l_empreinte_est_la_meme(monkeypatch, tmp_path):
-    faits = _factices(monkeypatch, tmp_path)
-    assert mesures_prose.mesurer("avec_a?x=3") == 60.0
-    monkeypatch.setattr(mesures_prose, "_FAITS", {})       # un autre processus
-    assert mesures_prose.mesurer("avec_a?x=3") == 60.0
-    assert faits == [("a", "3")]
-    # Une source a bougé : tout se refait, sous la nouvelle empreinte.
-    monkeypatch.setattr(mesures_prose, "_FAITS", {})
-    monkeypatch.setattr(mesures_prose, "empreinte", lambda: "e2")
-    assert mesures_prose.mesurer("avec_a?x=3") == 60.0
-    assert faits == [("a", "3"), ("a", "3")]
-    assert sorted(d.name for d in (tmp_path / "memoire").iterdir()) == ["e1", "e2"]
+def test_ce_que_la_memoire_garde_ne_passe_pas_par_le_precalcul(monkeypatch, memoire_isolee):
+    """Un calcul gardé se relit ici : le précalcul ne lance un processus que
+    pour ce qui manque."""
+    faits = _factices(monkeypatch)
+    memoire.memoriser(("factice_b",), lambda: 10.0)
+    soumis = []
 
+    class Executeur(ThreadPoolExecutor):
+        def submit(self, fonction, *arguments):
+            soumis.append(arguments)
+            return super().submit(fonction, *arguments)
 
-def test_un_calcul_pendant_lequel_une_source_bouge_ne_se_garde_pas(monkeypatch, tmp_path):
-    _factices(monkeypatch, tmp_path)
-    empreintes = iter(["avant", "après"])
-    monkeypatch.setattr(mesures_prose, "empreinte", lambda: next(empreintes))
-    assert mesures_prose.mesurer("avec_a?x=1") == 20.0
-    assert not (tmp_path / "memoire").exists()
-
-
-def test_une_memoire_illisible_se_refait_et_l_on_peut_s_en_passer(monkeypatch, tmp_path):
-    faits = _factices(monkeypatch, tmp_path)
-    dossier = tmp_path / "memoire" / "e1"
-    dossier.mkdir(parents=True)
-    garde = dossier / f"{mesures_prose._cle('_lourd_a', ('1',))}.pickle"
-    garde.write_bytes(b"tronqu")
-    assert mesures_prose.mesurer("avec_a?x=1") == 20.0
+    with Executeur(2) as pool, mesures_prose.campagne(["avec_deux"], pool):
+        assert mesures_prose.mesurer("avec_deux") == 20.0
+    assert soumis == [("_lourd_a", ("1",))]
     assert faits == [("a", "1")]
-    assert pickle.loads(garde.read_bytes()) == 10.0         # refait, et gardé
-    monkeypatch.setattr(mesures_prose, "_FAITS", {})
-    monkeypatch.setenv(mesures_prose.SANS_MEMOIRE, "1")
-    assert mesures_prose.mesurer("avec_a?x=1") == 20.0
-    assert mesures_prose.mesurer("avec_a?x=2") == 40.0
-    assert faits == [("a", "1"), ("a", "1"), ("a", "2")]    # rien de relu…
-    assert list(dossier.glob("*.pickle")) == [garde]         # …ni d'écrit
 
 
-def test_un_calcul_qui_echoue_se_dit_a_la_demande(monkeypatch, tmp_path):
+def test_un_calcul_qui_echoue_se_dit_a_la_demande(monkeypatch, memoire_isolee):
     """Le précalcul n'échoue jamais : la mesure en faute le dit quand le
     contrôle la demande, avec l'erreur du modèle, et les autres répondent."""
-    _factices(monkeypatch, tmp_path)
+    _factices(monkeypatch)
 
     def casse():
         raise ValueError("modèle cassé")
 
-    monkeypatch.setattr(mesures_prose, "_lourd_b", casse)
+    monkeypatch.setattr(mesures_prose, "_lourd_b",
+                        lambda: memoire.memoriser(("factice_b",), casse))
     with ThreadPoolExecutor(2) as pool, \
             mesures_prose.campagne(["avec_deux", "simple?n=1"], pool):
         with pytest.raises(ValueError, match="modèle cassé"):
             mesures_prose.mesurer("avec_deux")
         assert mesures_prose.mesurer("simple?n=1") == 1.0
-
-
-def test_la_memoire_ne_garde_que_les_empreintes_recentes(monkeypatch, tmp_path):
-    _factices(monkeypatch, tmp_path)
-    for rang in range(mesures_prose.EMPREINTES_GARDEES + 2):
-        monkeypatch.setattr(mesures_prose, "_FAITS", {})
-        monkeypatch.setattr(mesures_prose, "empreinte", lambda rang=rang: f"e{rang}")
-        mesures_prose.mesurer("avec_a?x=1")
-        os.utime(tmp_path / "memoire" / f"e{rang}", (1000 + rang, 1000 + rang))
-    restent = sorted(d.name for d in (tmp_path / "memoire").iterdir())
-    assert restent == [f"e{rang}" for rang in range(2, mesures_prose.EMPREINTES_GARDEES + 2)]
-
-
-def test_l_empreinte_suit_les_sources_que_git_voit(monkeypatch, tmp_path):
-    """Un fichier suivi, ou nouveau, change l'empreinte ; ce que git ignore
-    ne la change pas. Hors d'un dépôt, pas d'empreinte, et rien ne se garde."""
-    depot = tmp_path / "depot"
-    (depot / "src").mkdir(parents=True)
-    (depot / "data" / "brut").mkdir(parents=True)
-    subprocess.run(["git", "init", "-q", str(depot)], check=True)
-    (depot / ".gitignore").write_text("data/brut/*\n", encoding="utf-8")
-    (depot / "src" / "modele.py").write_text("TAUX = 1\n", encoding="utf-8")
-    monkeypatch.setattr(mesures_prose, "RACINE", depot)
-    premiere = mesures_prose.empreinte()
-    assert premiere
-    (depot / "data" / "brut" / "gros.csv").write_text("ignoré", encoding="utf-8")
-    assert mesures_prose.empreinte() == premiere
-    (depot / "src" / "modele.py").write_text("TAUX = 2\n", encoding="utf-8")
-    assert mesures_prose.empreinte() != premiere
-    ailleurs = tmp_path / "ailleurs"
-    ailleurs.mkdir()
-    monkeypatch.setattr(mesures_prose, "RACINE", ailleurs)
-    assert mesures_prose.empreinte() is None
 
 
 def test_un_processus_du_precalcul_retrouve_les_mesures():

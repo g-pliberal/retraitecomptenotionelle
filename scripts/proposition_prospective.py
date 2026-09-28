@@ -50,6 +50,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle import cout as C  # noqa: E402
+from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, calculer_cas_types  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
@@ -104,6 +105,10 @@ class PropositionProspective:
         return liberal
 
     def __enter__(self) -> "PropositionProspective":
+        # La mémoire des calculs ne connaît que le modèle intact : elle se
+        # tait tant que ce contexte en remplace une fonction.
+        self._memoire = memoire.modele_modifie()
+        self._memoire.__enter__()
         self._sauvegarde = {
             "liberal": ScenarioNotionnel.liberal,
             "CLES_PROSPECTIVES": C.CLES_PROSPECTIVES,
@@ -115,6 +120,7 @@ class PropositionProspective:
     def __exit__(self, *exc) -> None:
         ScenarioNotionnel.liberal = self._sauvegarde["liberal"]
         C.CLES_PROSPECTIVES = self._sauvegarde["CLES_PROSPECTIVES"]
+        self._memoire.__exit__(None, None, None)
 
 
 @dataclass
@@ -139,15 +145,32 @@ class Resultat:
     cout: C.Cout | None = field(default=None, repr=False)
 
 
-def calculer(prospective: bool, parametres: Parametres, depenses: DepensesRetraite,
-             population: Population, comptes: ComptesRetraite,
-             assiette: AssietteActivite) -> Resultat:
+def cout(parametres: Parametres) -> C.Cout:
+    """Le coût agrégé sous la proposition prospective, gardé par la mémoire des
+    calculs (``retraite_notionnelle/memoire.py``).
+
+    La mémoire se tait sous le contexte : il s'ouvre donc DANS le calcul que la
+    clé nomme, et le chiffrage budgétaire le partage avec ce script. Le solde,
+    lui, se lit paresseusement : il se lit dans le contexte (``calculer``).
+    """
+    def calcul() -> C.Cout:
+        racine = parametres.racine_donnees
+        with PropositionProspective():
+            return C.calculer_cout(
+                Simulateur(parametres), DepensesRetraite(racine), Population(racine),
+                ComptesRetraite(racine), assiette=AssietteActivite(racine))
+
+    return memoire.memoriser_pour(parametres, ("cout_prospectif", parametres), calcul)
+
+
+def calculer(prospective: bool, parametres: Parametres) -> Resultat:
+    """Les lectures d'une variante, sur les données du dépôt."""
     simulateur = Simulateur(parametres)
+    agrege = cout(parametres) if prospective else memoire.cout(parametres)
     contexte = PropositionProspective() if prospective else None
     if contexte is not None:
         contexte.__enter__()
     try:
-        cout = C.calculer_cout(simulateur, depenses, population, comptes, assiette=assiette)
         grille = calculer_cas_types(
             simulateur, tuple(c for c in CAS_TYPES if c.code in CAS_AFFICHES),
             GENERATIONS_AFFICHEES,
@@ -156,7 +179,7 @@ def calculer(prospective: bool, parametres: Parametres, depenses: DepensesRetrai
         # ``CLES_PROSPECTIVES`` au moment de la lecture : on lit donc DANS le
         # contexte, sans quoi les années d'avant la bascule perdraient la
         # réversion que la réforme prospective y sert encore.
-        solde = cout.solde
+        solde = agrege.solde
         lectures = {
             scenario: Lecture(
                 soldes={l.annee: l.solde(scenario) for l in solde.projetees()},
@@ -165,12 +188,12 @@ def calculer(prospective: bool, parametres: Parametres, depenses: DepensesRetrai
                 coefficients={l.annee: l.coefficient(scenario) for l in solde.projetees()},
                 solde_moyen=solde.solde_moyen(scenario, 2026, C.HORIZON),
                 premiere_annee_equilibree=solde.premiere_annee_equilibree(scenario),
-                dette_horizon=cout.dette.horizon(scenario),
+                dette_horizon=agrege.dette.horizon(scenario),
             )
             for scenario, _ in C.SCENARIOS
         }
         garantie = {l.annee: l.part_pib(C.COMPOSANTE_GARANTIE)
-                    for l in cout.avenir.projetees() if l.pib > 0}
+                    for l in agrege.avenir.projetees() if l.pib > 0}
         ecarts = {
             f"{code}|{generation}": {scenario: comparaison.variation(scenario)
                                      for scenario, _ in C.SCENARIOS if scenario != "actuel"}
@@ -180,7 +203,7 @@ def calculer(prospective: bool, parametres: Parametres, depenses: DepensesRetrai
         if contexte is not None:
             contexte.__exit__(None, None, None)
     return Resultat("prospective" if prospective else "retroactive", lectures, garantie,
-                    ecarts, cout)
+                    ecarts, agrege)
 
 
 def tableau(reference: Resultat, prospective: Resultat,
@@ -222,11 +245,8 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--json", type=Path)
     arguments = analyseur.parse_args(argv)
     parametres = Parametres()
-    racine = parametres.racine_donnees
-    donnees = (DepensesRetraite(racine), Population(racine), ComptesRetraite(racine),
-               AssietteActivite(racine))
-    reference = calculer(False, parametres, *donnees)
-    prospective = calculer(True, parametres, *donnees)
+    reference = calculer(False, parametres)
+    prospective = calculer(True, parametres)
     print(tableau(reference, prospective))
     if arguments.json:
         arguments.json.write_text(json.dumps({
