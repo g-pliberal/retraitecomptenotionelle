@@ -296,6 +296,51 @@ listes:
           parent qui a interrompu ou réduit son activité, dans les conditions
           de R. 13 ; le formulaire ne demande ni les congés ni la quotité de
           chacun
+      mariage_des_conjoints:
+        dit: l'assuré s'est marié à vingt-sept ans avec le conjoint qu'il déclare
+        valeur: 27
+        unite: ans
+        pose: {sorte: union, personne: conjoint}
+        raison: >-
+          le mariage ouvre la réversion, et sa date n'en décide qu'aux marges :
+          la condition de durée de mariage du régime général d'avant juillet
+          2004, l'antériorité du mariage de la fonction publique (L. 39), le
+          partage entre ex-conjoints. Vingt-sept ans est l'âge moyen au premier
+          mariage des générations qui partent aujourd'hui (INSEE, état civil) ;
+          le formulaire ne demande la date qu'à qui veut la dire
+      ressources_du_survivant:
+        dit: le conjoint survivant n'a d'autres ressources que les réversions qu'il reçoit
+        valeur: 0
+        unite: euros par an
+        appliquee_par: reversion (droit/reversion.py), qui ne compte au plafond du régime général que les réversions des autres régimes de base ; son jumeau JavaScript
+        entrera_a: liquider_chaque_regime
+        raison: >-
+          le plafond du régime général compare la réversion aux ressources du
+          survivant — sa propre retraite, ses revenus d'activité, abattus de
+          30 % après cinquante-cinq ans (R. 353-1) ; le formulaire ne les
+          demande pas, et la réversion n'est alors écrêtée que si elle dépasse
+          le plafond avec celles des autres régimes de base. Une ressource
+          déclarée prend la place de la présomption
+      conjoint_de_l_autre_sexe:
+        dit: le conjoint déclaré est de l'autre sexe que l'assuré
+        valeur: l'autre sexe
+        appliquee_par: la saisie, qui donne au conjoint l'autre sexe quand elle ne le dit pas (saisie.py, saisie.js)
+        entrera_a: preparer_la_chronologie
+        raison: >-
+          le sexe du survivant ne décide que des règles d'avant 2004 dans la
+          fonction publique — la veuve, et le veuf sous conditions — et de
+          celles d'avant 1994 à l'Agirc et à l'Arrco ; le mariage est ouvert aux
+          personnes de même sexe depuis 2013
+      reversion_demandee_dans_l_annee:
+        dit: le survivant demande sa réversion dans l'année qui suit le décès
+        valeur: dans l'année
+        appliquee_par: la date d'effet de la réversion (droit/reversion.py), au premier jour du mois qui suit le décès, ou qui suit l'âge requis ; son jumeau JavaScript
+        entrera_a: liquider_chaque_regime
+        raison: >-
+          la date d'effet est au plus tôt le premier jour du mois qui suit le
+          décès quand la demande vient dans l'année (R. 353-7), et le premier
+          jour du mois qui suit la demande sinon ; le formulaire ne demande pas
+          la date de la demande
       validation_ircantec_demandee:
         dit: l'agent rétabli au régime général a demandé que l'Ircantec valide ses services
         valeur: demandée

@@ -6672,11 +6672,12 @@ function avantagesDetailEtats(contexte) {
       + `${inventaire.compte("integre") - NEUTRALISATIONS.length} derniers ne sont `
       + "pas des dispositifs, et se lisent ailleurs."],
     ["déclaré, non servi", String(inventaire.compte("declare")),
-      "Une fiche de régime les déclare, aucun code ne les sert. La "
-      + "réversion est de ceux-là : 756 périodes du catalogue l'annoncent, et "
-      + "le modèle ne la produira jamais, faute de décrire un ménage. Son coût "
-      + "est donc LU dans l'enquête de la DREES auprès des caisses, et c'est "
-      + "le chiffre le plus sûr de cette page."],
+      "Une fiche de régime les déclare, et le scénario 1 ne les sert pas à "
+      + "l'assuré. La réversion est de ceux-là : 756 périodes du catalogue "
+      + "l'annoncent, et le modèle ne la liquide que pour le conjoint qu'on lui "
+      + "déclare, pas pour tous les ménages. Son coût est donc LU dans "
+      + "l'enquête de la DREES auprès des caisses, et c'est le chiffre le plus "
+      + "sûr de cette page."],
     ["absent", String(inventaire.compte("absent")),
       "Ni déclarés ni servis : les bonifications de service, les départs "
       + "pour handicap ou inaptitude, l'allocation veuvage. C'est un écart au "

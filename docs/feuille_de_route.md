@@ -2736,6 +2736,44 @@ survivant, dans les deux moteurs ; le bloc du formulaire ; les exemples
 publiés ; la page Coût ; la décision de la proposition, puis la référence de
 conservation à refiger.
 
+**Deuxième étape : le conjoint dans la chronologie, la réversion liquidée
+pour le survivant**, le même jour. La saisie déclare, à qui veut les dire, la
+naissance du conjoint, son sexe, la date du mariage, ses ressources annuelles
+et le décès de l'assuré (`conjoint`, `conjoint_sexe`, `mariage`,
+`ressources_conjoint`, `deces`), et la chronologie les porte (C.1) : la
+naissance du conjoint, un lien d'union de forme mariage que le décès clôt, ses
+ressources. Quatre présomptions posent ou appliquent ce qu'elle ne dit pas :
+le mariage aux vingt-sept ans de l'assuré, un conjoint de l'autre sexe, un
+survivant sans autres ressources que ses réversions, une réversion demandée
+dans l'année du décès. L'échéancier inscrit le décès, mène la pension du
+défunt à l'année du décès par « faire vivre » — l'année courante pour un décès
+à venir, jamais avant le départ —, puis liquide la réversion, régime par
+régime (`droit/reversion.py` et son jumeau) : au régime général, le taux,
+l'âge qui reporte la date d'effet au mois qui suit l'anniversaire — sans
+l'exception de qui est né un 1er, que R. 353-7 ne fait pas —, la durée du
+mariage d'avant juillet 2004 et le plafond de ressources, où la réversion de
+la fonction publique compte et celle des complémentaires non (R. 353-1 et
+R. 353-7, relus au texte ce jour-là) ; dans la
+fonction publique, la moitié, sous la condition de L. 39 ; à l'Agirc-Arrco,
+60 %, à l'âge que la date du décès choisit. L'UNIRS, les régimes
+professionnels intégrés et les assurances sociales suivent la fiche du régime
+qui les a absorbés ; les autres régimes le disent, sans montant. La saisie
+refuse un décès antérieur au départ.
+
+Aucun témoin de simulation ne bouge : la sortie n'a de clé `reversion` que
+déclarée. Cinq témoins la rejouent dans les deux moteurs — des ressources
+déclarées qui écrêtent, un fonctionnaire, un âge différé, un mariage de neuf
+mois en 1995, un décès à venir —, `tests/test_reversion.py` tient les bornes
+et les conditions, et la parité des chronologies compte six saisies de plus.
+Les trois fiches passent « approchées », chacune avec ses approximations : ni
+le minimum ni les majorations, le survivant seul, sans partage ni remariage,
+les montants de l'année du décès, le coefficient d'anticipation compris dans
+les 60 % de l'Agirc-Arrco. La page Coût ne dit plus que le modèle ne
+produira jamais la réversion. Restent de ce domaine : le bloc du formulaire
+et ce que la page de résultat montre de la réversion, deux choix à soumettre
+au propriétaire ; les exemples publiés ; la page Coût ; la décision de la
+proposition, puis la référence de conservation à refiger.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

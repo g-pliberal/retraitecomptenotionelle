@@ -40,7 +40,8 @@ class Entree:
     debut: str | None
     fin: str | None
     #: Ce qu'elle contient : sa sorte (``evenement``, ``liquidation``,
-    #: ``composante``, ``revalorisation``, ``foyer``, ``decision``) et sa donnée.
+    #: ``composante``, ``revalorisation``, ``foyer``, ``reversion``,
+    #: ``decision``) et sa donnée.
     sorte: str
     contenu: object
     #: L'entrée qu'elle révise : sa lignée est celle de cette entrée.

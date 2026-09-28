@@ -310,6 +310,8 @@ export class Contexte {
       interruptions: saisie.interruptionsDeCarriere(motifs),
       nombre_enfants: saisie.enfants,
       naissances_enfants: saisie.naissancesEnfants(),
+      conjoint: saisie.conjointDeclare(),
+      deces: saisie.decesDeclare(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -401,6 +403,8 @@ export class Contexte {
       age_liquidation: saisie.liquidation,
       nombre_enfants: saisie.enfants,
       naissances_enfants: saisie.naissancesEnfants(),
+      conjoint: saisie.conjointDeclare(),
+      deces: saisie.decesDeclare(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });

@@ -26,9 +26,9 @@ export class Entree {
    * `evenement` et `inscriteLe` : l'événement qui l'a écrite, et sa date
    * (AAAA-MM-JJ). `debut` et `fin` : sa période d'effet, [début, fin) ; une
    * fin nulle ne borne rien. `sorte` : `evenement`, `liquidation`,
-   * `composante`, `revalorisation`, `foyer` ou `decision`. `remplace` :
-   * l'entrée qu'elle révise, dont elle prend la lignée ; `annule` :
-   * l'événement en attente qu'elle annule.
+   * `composante`, `revalorisation`, `foyer`, `reversion` ou `decision`.
+   * `remplace` : l'entrée qu'elle révise, dont elle prend la lignée ;
+   * `annule` : l'événement en attente qu'elle annule.
    */
   constructor({ id, evenement, inscriteLe, debut = null, fin = null, sorte, contenu,
     remplace = null, annule = null }) {

@@ -141,6 +141,10 @@ export class Comparaison {
     //: qui a déjà liquidé, ce que l'échéance en a fait. Il n'entre dans aucune
     //: sortie.
     this.journal = null;
+    //: La réversion que le décès déclaré de l'assuré ouvre à son conjoint,
+    //: sous le droit en vigueur (docs/architecture.md, § 7.3) : `null` sans
+    //: décès ni conjoint déclarés.
+    this.reversion = null;
   }
 
   /** L'âge légal de la proposition reporte-t-il le départ du scénario 6 ? */
@@ -392,6 +396,9 @@ export class Comparaison {
         origines: { ...this.regime_fusionne.origines },
       },
       aujourd_hui: resumeAujourdhui(this.aujourd_hui),
+      // La réversion n'a de clé que déclarée : les sorties d'avant ne
+      // changent pas.
+      ...(this.reversion !== null ? { reversion: this.reversion.donnees() } : {}),
       fiabilite: nomFiabilite(this.fiabilite),
     };
   }
@@ -892,6 +899,7 @@ export class Simulateur {
         : null,
     });
     comparaison.journal = echeancier.journal;
+    comparaison.reversion = echeancier.reversion;
     if (carriere.anneeLiquidation < this.parametres.annee_courante) {
       comparaison.aujourd_hui = pensionAujourdhui(this, comparaison, echeancier.aujourdhui);
       comparaison.coefficient_euros_aujourd_hui = this.macro.coefficientPrix(

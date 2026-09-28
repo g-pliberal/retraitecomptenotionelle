@@ -70,9 +70,17 @@ l'être.
 Ces lignes ne sont pas des oublis : chacune demande une information que le
 modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
 
-- **Pension de réversion.** Elle ne concerne pas l'assuré mais son conjoint
-  survivant, et suppose de connaître un ménage. Hors périmètre par
-  construction : le modèle décrit une carrière, pas une famille.
+- **La pension de réversion, en partie.** Elle ne concerne pas l'assuré mais
+  son conjoint survivant. Le scénario 1 la liquide pour le conjoint que la
+  saisie déclare, au décès de l'assuré après son départ : au régime général et
+  dans les régimes alignés, dans la fonction publique et à l'Agirc-Arrco
+  (`droit/reversion.py`, le domaine de la réversion). Restent dehors le minimum
+  et les majorations du régime général, le complément de la fonction publique,
+  le partage entre ex-conjoints et le remariage, la réversion d'un assuré mort
+  avant son départ et celle des autres régimes, dont la ligne le dit ; les
+  approximations de chaque fiche sont déclarées. Le formulaire ne demande pas
+  encore le conjoint, et la page ne montre pas la réversion : c'est l'étape
+  suivante du domaine. La dépense de tous les ménages, elle, se lit (page Coût).
 - **Les revalorisations servies APRÈS la liquidation.** Le moteur s'arrête au
   jour du départ : il calcule la pension du premier mois et ne suit aucune des
   revalorisations qu'un retraité a reçues depuis. La page l'exprime en euros

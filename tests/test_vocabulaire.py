@@ -109,6 +109,10 @@ PRESOMPTIONS_DU_5_6 = {
     "enfant élevé neuf ans": "enfant_eleve_neuf_ans",
     "interruption d'activité remplie par la mère seule": "interruption_d_activite_par_la_mere",
     "validation de l'Ircantec présumée demandée": "validation_ircantec_demandee",
+    "mariage aux": "mariage_des_conjoints",
+    "conjoint de l'autre sexe": "conjoint_de_l_autre_sexe",
+    "survivant sans autres ressources que ses réversions": "ressources_du_survivant",
+    "réversion demandée dans l'année du décès": "reversion_demandee_dans_l_annee",
 }
 
 

@@ -522,6 +522,18 @@ class Saisie:
     #: des règles qui lui accordent des trimestres. Voir
     #: :meth:`naissances_enfants`.
     naissances: str = ""
+    #: Le conjoint, pour la réversion (docs/architecture.md, § 5.1) : sa
+    #: naissance (AAAA ou AAAA-MM), son sexe — l'autre que celui de l'assuré
+    #: s'il n'est pas dit (présomption ``conjoint_de_l_autre_sexe``) —, la date
+    #: du mariage, présumée sinon, et ses ressources annuelles, s'il les dit.
+    #: Voir :meth:`conjoint_declare`.
+    conjoint: str = ""
+    conjoint_sexe: str = ""
+    mariage: str = ""
+    ressources_conjoint: float | None = None
+    #: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
+    #: conjoint : au départ ou après lui.
+    deces: str = ""
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
@@ -631,6 +643,12 @@ class Saisie:
             primes=_reel(parametres, "primes", defauts.primes),
             enfants=_entier(parametres, "enfants", defauts.enfants),
             naissances=(parametres.get("naissances") or "").strip(),
+            conjoint=(parametres.get("conjoint") or "").strip(),
+            conjoint_sexe=(parametres.get("conjoint_sexe") or "").strip().upper(),
+            mariage=(parametres.get("mariage") or "").strip(),
+            ressources_conjoint=(None if parametres.get("ressources_conjoint") in (None, "")
+                                 else _reel(parametres, "ressources_conjoint", 0.0)),
+            deces=(parametres.get("deces") or "").strip(),
             interruptions=(parametres.get("interruptions") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
@@ -719,6 +737,7 @@ class Saisie:
                 f"Nombre d'enfants attendu entre 0 et {ENFANTS_MAXIMUM}."
             )
         self._verifier_naissances()
+        self._verifier_conjoint()
         if not ANNEE_MINIMALE <= self.bascule <= ANNEE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de bascule attendue entre {ANNEE_MINIMALE} et "
@@ -1342,6 +1361,62 @@ class Saisie:
                     f"retraite, fixé en {self.date_de(self.liquidation)}."
                 )
 
+    def conjoint_declare(self) -> dict | None:
+        """Le conjoint que la saisie déclare, tel que la chronologie le reçoit
+        (:func:`chronologie._personne`) ; ``None`` sans conjoint."""
+        if not self.conjoint:
+            return None
+        return {"naissance": self.conjoint,
+                "sexe": self.conjoint_sexe or ("H" if self.sexe == "F" else "F"),
+                "mariage": self.mariage or None,
+                "ressources": self.ressources_conjoint}
+
+    def deces_declare(self) -> str | None:
+        """Le décès de l'assuré que la saisie déclare, ou ``None``."""
+        return self.deces or None
+
+    def _verifier_conjoint(self) -> None:
+        """Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie
+        — les naissances, le mariage, le décès —, et un décès qui ne précède
+        pas le départ : la réversion d'une pension que l'assuré n'a pas encore
+        liquidée n'est pas calculée."""
+        if not self.conjoint:
+            orphelins = [nom for nom, valeur in (
+                ("conjoint_sexe", self.conjoint_sexe), ("mariage", self.mariage),
+                ("ressources_conjoint", self.ressources_conjoint), ("deces", self.deces))
+                if valeur not in ("", None)]
+            if orphelins:
+                raise ErreurSaisie(
+                    f"« {orphelins[0]} » ne sert qu'à la réversion : dites aussi la "
+                    "naissance du conjoint (« conjoint »).")
+            return
+        dates = {}
+        for nom, valeur, quoi in (("conjoint", self.conjoint, "la naissance du conjoint"),
+                                  ("mariage", self.mariage, "le mariage"),
+                                  ("deces", self.deces, "le décès")):
+            if not valeur:
+                continue
+            try:
+                dates[nom], _ = chronologie.date_declaree(valeur, quoi)
+            except ValueError:
+                raise ErreurSaisie(
+                    f"{quoi[0].upper()}{quoi[1:]} « {valeur} » : attendu en AAAA ou "
+                    "AAAA-MM, par exemple 1962 ou 1962-03.") from None
+        if self.conjoint_sexe not in ("", "H", "F"):
+            raise ErreurSaisie("Sexe du conjoint : H ou F.")
+        if self.ressources_conjoint is not None and self.ressources_conjoint < 0:
+            raise ErreurSaisie("Ressources du conjoint : un montant annuel positif.")
+        if "mariage" in dates and dates["mariage"] <= max(dates["conjoint"], self.naissance_iso):
+            raise ErreurSaisie("Le mariage précède la naissance d'un des époux.")
+        if "deces" in dates:
+            if "mariage" in dates and dates["mariage"] >= dates["deces"]:
+                raise ErreurSaisie("Le mariage suit le décès.")
+            if dates["deces"] < self.jour_de(self.liquidation):
+                raise ErreurSaisie(
+                    f"Décès « {self.deces} » : il précède le départ à la retraite, fixé "
+                    f"en {self.date_de(self.liquidation)} ; la réversion d'une pension "
+                    "que l'assuré n'a pas encore liquidée n'est pas calculée.")
+
     def requete(self, **remplacements) -> str:
         champs = {
             "naissance": self.naissance_iso,
@@ -1358,6 +1433,12 @@ class Saisie:
             "primes": _nombre(self.primes), "enfants": self.enfants,
             **({"naissances": ",".join(self.naissances_enfants())}
                if self.naissances_enfants() else {}),
+            **{nom: valeur for nom, valeur in (
+                ("conjoint", self.conjoint), ("conjoint_sexe", self.conjoint_sexe),
+                ("mariage", self.mariage),
+                ("ressources_conjoint", "" if self.ressources_conjoint is None
+                 else _nombre(self.ressources_conjoint)),
+                ("deces", self.deces)) if valeur not in ("", None)},
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,

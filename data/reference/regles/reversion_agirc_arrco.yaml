@@ -10,10 +10,15 @@ domaine: reversion
 regimes:
 - agirc_arrco
 - arrco
+- arrco_tranche_2
+- arrco_tranche_2_entreprises_nouvelles
 - agirc
+- agirc_entreprises_nouvelles
+- unirs
+- regimes_professionnels_integres
 etape: liquider_chaque_regime
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - conjoint.deces
 - union.debut et union.fin, d'un mariage ; un remariage éteint le droit
@@ -144,15 +149,43 @@ versions:
       perte_au_remariage: true
       fiabilite: haute
   exemples: aucun trouvé
-approximations: []
-presomptions: {}
+approximations:
+- ecart: >-
+    les 60 % s'appliquent à la retraite servie, coefficient d'anticipation compris,
+    quand l'Agirc-Arrco les calcule sur les points de l'assuré, sans ce coefficient,
+    dans la limite de sa retraite
+  effet: >-
+    la réversion d'un assuré parti avec un coefficient de minoration est sous-estimée
+    d'autant ; non mesuré
+- version: [agirc_1994, arrco_1996]
+  ecart: >-
+    la réversion minorée de l'Agirc, dès cinquante-cinq ans, n'est pas servie : le
+    moteur attend soixante ans
+  effet: non mesuré
+- version: [avant_1990, veufs_1990]
+  ecart: >-
+    le veuf attend soixante-cinq ans à l'Agirc comme à l'Arrco, où chaque caisse le
+    disait, et ses droits acquis depuis 1990 ne s'ouvrent pas à cinquante ans
+  effet: non mesuré
+- ecart: >-
+    la condition d'âge n'est levée ni par deux enfants à charge ni par l'invalidité ;
+    le partage entre ex-conjoints et la perte au remariage ne sont pas portés ; les
+    régimes absorbés — l'UNIRS, les régimes professionnels intégrés — suivent les
+    âges de l'Arrco ; les montants sont ceux de l'année du décès
+  effet: non mesuré
+presomptions:
+  conjoint_de_l_autre_sexe: >-
+    l'âge du veuf ou de la veuve, avant 1994, quand le sexe du conjoint n'est pas dit
+  reversion_demandee_dans_l_annee: >-
+    la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge
+    requis
 sources:
   lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Ouverte le 28 septembre 2026 avec le domaine de la réversion (docs/architecture.md,
-    § 11). Le moteur ne la lit pas encore.
+    § 11). Le moteur la lit depuis la deuxième étape du domaine, le même jour.
   - >-
     À LIRE AU TEXTE : l'accord national interprofessionnel du 17 novembre 2017, ses
     articles sur les droits des conjoints survivants, sur Légifrance (base KALI, où ses
@@ -161,7 +194,8 @@ sources:
     l'Agirc d'avant 2019 pour les versions antérieures.
   - >-
     Les exemples chiffrés du site — la date d'effet de Leïla, de Kim, de Claude — sont
-    à porter aux exemples officiels quand le moteur calculera la réversion.
+    à porter aux exemples officiels, que le moteur sait rejouer depuis la deuxième
+    étape du domaine.
   lectures:
   - type: autre
     reference: >-
@@ -174,10 +208,23 @@ sources:
     date: 2026-09-28
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/
 code:
-  python: à venir, avec l'étape du domaine qui calcule la réversion du survivant
+  python: >-
+    droit/reversion.py : reversion, _age_agirc_arrco, _a_l_age ; scenarios/actuel.py :
+    Reversions
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, ageAgircArrco, aLAge ;
+    moteur/js/regimes.js : Reversions
+  parametres: >-
+    contenu.parametres de chaque version : taux, age_minimum, age_minimum_arrco,
+    age_minimum_agirc, age_minimum_veuve, age_minimum_veuf
+  tests: tests/test_reversion.py ; les témoins reversion_* des simulations
 historique:
 - >-
   2026-09-28 — née avec le domaine de la réversion.
+- >-
+  2026-09-28 — lue par le moteur, à la deuxième étape du domaine ; les régimes
+  absorbés par l'Arrco et l'Agirc-Arrco la suivent.
 effet: >-
   Tout conjoint, ou ex-conjoint marié, d'un salarié ou ancien salarié du privé qui
-  décède. La réversion est encore hors du modèle.
+  décède. Le modèle la calcule pour le conjoint que la saisie déclare, sur la
+  retraite servie.

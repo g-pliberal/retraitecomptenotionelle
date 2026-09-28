@@ -12,7 +12,7 @@ regimes:
 - cnracl
 etape: liquider_chaque_regime
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - conjoint.deces
 - union.debut, d'un mariage, et la cessation d'activité du fonctionnaire, pour la
@@ -140,20 +140,44 @@ versions:
       perte_au_remariage: true
       fiabilite: haute
   exemples: aucun trouvé
-approximations: []
-presomptions: {}
+approximations:
+- version: [avant_1980, veuves_1980]
+  ecart: >-
+    le veuf d'une fonctionnaire reçoit la moitié de sa pension comme la veuve : ni
+    le report à l'âge minimal de jouissance ni le plafond de L. 50 ne sont appliqués
+  effet: non mesuré
+- ecart: >-
+    le complément qui porte la réversion à l'allocation aux vieux travailleurs
+    salariés, puis à l'ASPA pour les réversions liquidées depuis 2025, n'est pas
+    appliqué, ni la moitié de la rente d'invalidité et de la majoration de L. 18
+  effet: >-
+    la réversion des petites pensions, et de qui a élevé trois enfants, est
+    sous-estimée ; non mesuré
+- ecart: >-
+    la condition de L. 39 tient le départ pour la cessation d'activité, et tout
+    enfant déclaré pour un enfant issu du mariage ; le partage entre conjoints
+    (L. 43), la perte au remariage (L. 46), la pension d'orphelin (L. 40) et la
+    réversion d'un fonctionnaire mort en activité ne sont pas portés ; les montants
+    sont ceux de l'année du décès
+  effet: non mesuré
+presomptions:
+  mariage_des_conjoints: >-
+    la condition d'antériorité du mariage de L. 39, quand sa date n'est pas déclarée
+  conjoint_de_l_autre_sexe: >-
+    la veuve, seule bénéficiaire avant 2004, quand le sexe du conjoint n'est pas dit
 sources:
   lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Ouverte le 28 septembre 2026 avec le domaine de la réversion (docs/architecture.md,
-    § 11), lue dans l'index LEGI. Le moteur ne la lit pas encore.
+    § 11), lue dans l'index LEGI. Le moteur la lit depuis la deuxième étape du
+    domaine, le même jour.
   - >-
     La pension qu'il « aurait pu obtenir au jour de son décès » : services acquis
     jusqu'au décès, sans décote (L. 14, « Le coefficient de minoration n'est pas
     applicable aux pensions de réversion » dans les cas qu'il nomme), à relire avant
-    que le moteur la calcule. La date d'effet de 2004 (loi n° 2003-775) et la
+    que le moteur calcule la réversion d'un fonctionnaire mort en activité. La date d'effet de 2004 (loi n° 2003-775) et la
     circulaire du service des retraites de l'État restent aussi à lire.
   - >-
     Les régimes spéciaux qui reprennent la règle — FSPOEIE, ouvriers de l'État, IEG,
@@ -174,11 +198,22 @@ sources:
 textes_a_rattacher:
 - {id: LEGIARTI000025076827, article: L. 40, en_vigueur: 2012-01-01, change: "la pension d'orphelin"}
 code:
-  python: à venir, avec l'étape du domaine qui calcule la réversion du survivant
+  python: >-
+    droit/reversion.py : reversion, _mariage_suffit ; scenarios/actuel.py : Reversions
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, mariageSuffit ; moteur/js/regimes.js :
+    Reversions
+  parametres: >-
+    contenu.parametres de chaque version : taux, mariage_minimum_annees,
+    mariage_services_minimum_annees
+  tests: tests/test_reversion.py ; le témoin reversion_fonctionnaire des simulations
 historique:
 - >-
   2026-09-28 — née avec le domaine de la réversion, de la fiche reversion qui ne portait
   que le régime général.
+- >-
+  2026-09-28 — lue par le moteur, à la deuxième étape du domaine.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un fonctionnaire de l'État ou d'un agent des
-  collectivités qui décède. La réversion est encore hors du modèle.
+  collectivités qui décède. Le modèle la calcule pour le conjoint que la saisie
+  déclare, sans le complément ni la part de la rente d'invalidité.

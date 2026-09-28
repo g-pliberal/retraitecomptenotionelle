@@ -14,9 +14,10 @@ regimes:
 - organic
 - cancava
 - rsi
+- assurances_sociales
 etape: liquider_chaque_regime
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - conjoint.deces
 - union.debut, d'un mariage ; ni le PACS ni le concubinage n'ouvrent la réversion
@@ -440,7 +441,44 @@ versions:
       majoration_enfants_taux: 0.10
       fiabilite: haute
   exemples: aucun trouvé
-presomptions: {}
+approximations:
+- ecart: >-
+    le minimum de réversion (D. 353-1), la majoration de 11,1 % du survivant aux
+    petites retraites (L. 353-6) et la majoration forfaitaire pour enfant à charge
+    (L. 353-5) ne sont pas appliqués
+  effet: >-
+    la réversion des petites pensions est sous-estimée : depuis 2026, le minimum la
+    porte à 3 983,29 euros par an (valeur de 2025) pour un défunt qui avait au moins
+    soixante trimestres ; non mesuré
+- version: [avant_1982, taux_52, taux_54]
+  ecart: >-
+    les limites de cumul de la réversion avec la retraite personnelle du survivant
+    (D. 355-1) ne sont pas appliquées ; l'enfant issu du mariage, qui lève la
+    condition de durée, est tout enfant déclaré
+  effet: non mesuré
+- ecart: >-
+    le survivant vit seul : le plafond du ménage (1,6 fois celui d'une personne
+    seule) n'est pas appliqué ; ses ressources sont celles qu'il déclare, sans
+    l'abattement de 30 % des revenus d'activité après cinquante-cinq ans, et la
+    réversion n'est pas révisée quand elles varient (R. 353-1-1)
+  effet: non mesuré
+- ecart: >-
+    les montants sont ceux de l'année du décès — l'année courante pour un décès à
+    venir, l'année du départ s'il la suit —, au SMIC horaire du 1er janvier de cette
+    année, même quand l'âge requis reporte la date d'effet ; la réversion d'un
+    assuré mort avant son départ, et le partage entre ex-conjoints (L. 353-3), ne
+    sont pas calculés
+  effet: non mesuré
+presomptions:
+  mariage_des_conjoints: >-
+    la condition de durée de mariage d'avant juillet 2004, quand la date du mariage
+    n'est pas déclarée
+  ressources_du_survivant: >-
+    le plafond de ressources, que le survivant qui ne déclare pas les siennes
+    n'atteint que par ses réversions
+  reversion_demandee_dans_l_annee: >-
+    la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge
+    requis
 sources:
   lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31
@@ -457,8 +495,9 @@ sources:
   - >-
     Ouverte le 28 septembre 2026 avec le domaine de la réversion (docs/architecture.md,
     § 11) : la fiche, qui ne portait que son intitulé, est découpée en versions, lues
-    dans l'index LEGI et dans les circulaires de la Cnav. Le moteur ne la lit pas
-    encore : l'étape suivante du domaine calcule la réversion du survivant.
+    dans l'index LEGI et dans les circulaires de la Cnav. Le moteur la lit depuis la
+    deuxième étape du domaine, le même jour : la réversion du survivant d'un assuré
+    décédé après son départ.
   - >-
     Ce que les versions ne portent pas encore : les limites de cumul d'avant juillet
     2004 (D. 355-1), le partage entre conjoints survivant et divorcés au prorata de
@@ -532,7 +571,19 @@ textes_a_rattacher:
 - {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la révision de la réversion quand les ressources varient"}
 - reference: D. 355-1 CSS, les limites de cumul d'avant juillet 2004
 code:
-  python: à venir, avec l'étape du domaine qui calcule la réversion du survivant
+  python: >-
+    droit/reversion.py : reversion, _a_l_age, _mariage_dure ; scenarios/actuel.py :
+    Reversions ; echeancier.py : Echeancier._reverser
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, aLAge, mariageDure ; moteur/js/regimes.js :
+    Reversions ; moteur/js/echeancier.js : Echeancier._reverser
+  parametres: >-
+    contenu.parametres de chaque version : taux, age_minimum, mariage_minimum_annees,
+    ressources, plafond_smic_heures ; le SMIC horaire du 1er janvier, dans les séries
+    macro
+  tests: >-
+    tests/test_reversion.py ; les témoins reversion_* des simulations, dans les deux
+    moteurs
 referents:
   destinie_2: à confronter (la réversion y est modélisée)
 historique:
@@ -544,8 +595,12 @@ historique:
 - >-
   2026-09-28 — ouverte avec le domaine de la réversion, découpée en quatorze versions
   lues dans l'index LEGI et dans cinq circulaires de la Cnav.
+- >-
+  2026-09-28 — lue par le moteur, à la deuxième étape du domaine : le scénario 1
+  liquide la réversion du conjoint que la saisie déclare, au décès de l'assuré après
+  son départ, régime par régime.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024
-  (DREES, EACR). La réversion est encore hors du modèle ; sa dépense, publiée, est
-  sur la page Coût.
+  (DREES, EACR). Le modèle la calcule pour le conjoint que la saisie déclare, sans le
+  minimum ni la majoration ; sa dépense, publiée, est sur la page Coût.

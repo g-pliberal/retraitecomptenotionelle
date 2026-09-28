@@ -849,6 +849,30 @@ def _cas() -> list[dict]:
         assert cas[-1][0] == nom, f"{nom} : aucun âge d'entrée admissible"
         cas[-1][1]["liquidation"] = liquidation
 
+    # LA RÉVERSION (le domaine de la réversion, docs/architecture.md, § 11) :
+    # l'assuré déclare son conjoint et son décès, après son départ, et le
+    # scénario 1 liquide pour le survivant dans chacun de ses régimes. Un
+    # salarié dont la veuve déclare ses ressources voit la réversion du régime
+    # général écrêtée au plafond, pas celle de l'Agirc-Arrco ; un fonctionnaire
+    # la sert à moitié, sans âge ni plafond ; un conjoint de quarante-cinq ans
+    # attend ses cinquante-cinq ; un mariage de neuf mois, en 1995, n'ouvre rien
+    # au régime général et tout à l'Arrco ; un décès à venir se chiffre en
+    # euros du départ.
+    reversion = {"naissance": "1958", "liquidation": "62", "conjoint": "1960",
+                 "deces": "2023-05"}
+    cas.append(("reversion_ressources_declarees", {
+        **reversion, "ressources_conjoint": "15000"}))
+    cas.append(("reversion_fonctionnaire", {
+        **reversion, "statut": "fonctionnaire_etat", "primes": "0.2",
+        "conjoint_sexe": "H"}))
+    cas.append(("reversion_age_differe", {
+        **reversion, "conjoint": "1975", "deces": "2021-06"}))
+    cas.append(("reversion_mariage_court_avant_2004", {
+        "naissance": "1930", "liquidation": "60", "conjoint": "1935",
+        "mariage": "1994-06", "deces": "1995-03"}))
+    cas.append(("reversion_deces_a_venir", {
+        "naissance": "1970", "conjoint": "1972", "deces": "2040-05"}))
+
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())
 

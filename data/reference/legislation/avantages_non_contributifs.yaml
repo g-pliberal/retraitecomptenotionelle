@@ -686,10 +686,12 @@ avantages:
     etat_modele: declare
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Le modèle décrit une CARRIÈRE, pas un ménage : il n'a ni conjoint, ni date
-      de décès, ni ressources du survivant. Les 756 déclarations des fiches sont
-      donc une intention — aucun code ne les lit. C'est l'écart le plus lourd
-      entre les trois listes du dépôt et le droit positif.
+      La réversion n'est pas dans la pension de l'assuré, que la cascade
+      décompose : c'est la pension d'un autre. Depuis le 28 septembre 2026, le
+      scénario 1 la liquide pour le conjoint que la saisie déclare, au décès de
+      l'assuré après son départ, dans les régimes dont une fiche la porte
+      (droit/reversion.py) ; il ne la sert qu'à ce ménage-là, et l'état reste
+      « déclaré » tant que la dépense de tous les ménages ne se calcule pas.
     cout:
       mesurable_par: serie_publiee
       serie: macro/droits_derives.csv
@@ -704,13 +706,12 @@ avantages:
         MONTANT MENSUEL MOYEN de ce droit-là (colonne `m2`), sur douze mois. La colonne
         compte : `mont` porterait la pension totale du bénéficiaire, droit direct
         compris, et doublerait la masse.
-        POURQUOI ELLE NE SE CALCULE PAS : le modèle décrit une CARRIÈRE et non un
-        ménage. Il n'a ni conjoint, ni date de décès, ni ressources du survivant, et les
-        756 périodes du catalogue qui déclarent `reversion` sont une intention que nul
-        code ne sert. Ce n'est pas une faiblesse de la mesure mais un changement de
-        nature — et la lecture est, de loin, la plus sûre des deux : elle dénombre 4,4
-        millions de personnes réelles là où les autres lignes reposent sur treize
-        carrières types.
+        POURQUOI ELLE NE SE CALCULE PAS : le modèle calcule la réversion du ménage qu'on
+        lui déclare — un conjoint, un décès, des ressources —, pas celle de tous les
+        ménages, dont il n'a ni les conjoints, ni les décès, ni les ressources. Ce n'est
+        pas une faiblesse de la mesure mais un changement de nature — et la lecture est,
+        de loin, la plus sûre des deux : elle dénombre 4,4 millions de personnes réelles
+        là où les autres lignes reposent sur treize carrières types.
         LE CONTRÔLE INTERNE : la somme des vingt-cinq caisses recoupe la ligne « tous
         régimes » à 2 % près. Les effectifs, eux, ne s'additionnent pas — un
         polypensionné touche une réversion à la Cnav ET à l'Agirc-Arrco, et la somme des

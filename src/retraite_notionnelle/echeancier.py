@@ -15,13 +15,15 @@ l'état : on y ajoute, on n'efface jamais, et chaque entrée porte son
 inscription et son effet. Une composante revalorisée remplace, dans sa
 lignée, celle que la liquidation avait écrite.
 
-Aujourd'hui, le seul événement est le départ, tiré de la carrière : les
-autres sortes sont réservées (§ 13.5). L'échéance est l'année courante, et
-« faire vivre » y applique d'un coup les revalorisations publiées depuis le
-départ, dans l'ordre où :mod:`~retraite_notionnelle.revalorisation` les
-compose : une revalorisation par date, que chaque fiche inscrirait à la
-sienne, changerait l'ordre des produits, donc les derniers chiffres des
-pensions. Elle viendra avec les fiches.
+Aujourd'hui, le départ, tiré de la carrière, et, quand la chronologie les
+dit, le décès de l'assuré et la réversion qu'il ouvre à son conjoint
+(:mod:`.droit.reversion`) : les autres sortes sont réservées (§ 13.5).
+L'échéance est l'année courante, et « faire vivre » y applique d'un coup les
+revalorisations publiées depuis le départ, dans l'ordre où
+:mod:`~retraite_notionnelle.revalorisation` les compose : une revalorisation
+par date, que chaque fiche inscrirait à la sienne, changerait l'ordre des
+produits, donc les derniers chiffres des pensions. Elle viendra avec les
+fiches.
 
 Chaque événement suit le contrat C.7 (``data/reference/contrats/evenement.yaml``).
 Son jumeau est ``moteur/js/echeancier.js``.
@@ -35,6 +37,7 @@ from typing import TYPE_CHECKING
 from . import chronologie as chrono
 from .droit import foyer as _foyer
 from .droit import liquidation as _liquidation
+from .droit import reversion as _reversion
 from .droit.commun import date_d_effet
 from .journal import Entree, Journal
 from .noyau import vocabulaire
@@ -110,6 +113,9 @@ class Echeancier:
         self.au_depart: ResultatActuel | None = None
         #: Le scénario 1 à l'échéance : ce que le droit sert l'année courante.
         self.aujourd_hui: ActuelAujourdhui | None = None
+        #: La réversion que le décès de l'assuré ouvre à son conjoint, quand la
+        #: chronologie les dit.
+        self.reversion: _reversion.Reversion | None = None
 
     def parcourir(self, carriere: Carriere, echeance: int | None = None) -> Journal:
         """Les événements de ``carriere``, dans l'ordre, puis, s'il y en a une,
@@ -118,9 +124,35 @@ class Echeancier:
         evenements = [e for e in (depart_de(carriere),) if e is not None]
         for evenement in sorted(evenements, key=lambda e: (e.date, e.rang)):
             self._traiter(evenement, carriere)
+        if (self.au_depart is not None and carriere.deces is not None
+                and carriere.conjoint is not None):
+            self._reverser(carriere)
         if echeance is not None and self.au_depart is not None:
             self._echeance(carriere, echeance)
         return self.journal
+
+    def _reverser(self, carriere: Carriere) -> None:
+        """Le décès de l'assuré, puis la réversion qu'il ouvre à son conjoint,
+        dans les régimes de sa liquidation (§ 7.3) : sa pension y est menée
+        jusqu'à l'année du décès — l'année courante pour un décès à venir, où
+        s'arrêtent les revalorisations publiées ; jamais avant le départ, dont
+        les montants sont les euros."""
+        deces = Evenement(id=f"deces_{carriere.personne}", date=carriere.deces,
+                          personnes=(carriere.personne,), vise={}, sorte="deces")
+        self._inscrire(deces, deces.id, "evenement", deces, deces.date)
+        annee = max(carriere.annee_liquidation,
+                    min(int(carriere.deces[:4]), self.simulateur.parametres.annee_courante))
+        vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
+        pensions = [(r.regime, r.au_depart * r.coefficient, r.fiabilite)
+                    for r in vivante.regimes]
+        self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee)
+        survivant = carriere.conjoint.personne
+        evenement = Evenement(id=f"reversion_{survivant}", date=_reversion.mois_suivant(
+            carriere.deces), personnes=(survivant,), vise={"regimes": "du défunt"},
+            sorte="reversion")
+        self._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date)
+        self._inscrire(evenement, f"liquidation_{evenement.id}", "reversion",
+                       self.reversion, evenement.date)
 
     def _traiter(self, evenement: Evenement, carriere: Carriere) -> None:
         sorte = SORTES[evenement.sorte]

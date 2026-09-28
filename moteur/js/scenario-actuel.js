@@ -34,7 +34,8 @@ import {
   DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
-  MajorationsEnfantsPoints, ServicesOuvrantPension, SurcoteBaremes, SurcoteParentale,
+  MajorationsEnfantsPoints, Reversions, ServicesOuvrantPension, SurcoteBaremes,
+  SurcoteParentale,
   ValeursPoint,
 } from "./regimes.js";
 import { RevalorisationsPensions } from "./revalorisation.js";
@@ -90,6 +91,7 @@ export class ScenarioActuel {
     this.parentsMeilleuresAnneesDepuis = PARENTS_MEILLEURES_ANNEES_DEPUIS;
     this.surcoteBaremes = new SurcoteBaremes(paquet);
     this.majorationsEnfants = new MajorationsPourEnfants(paquet);
+    this.reversions = new Reversions(paquet);
     this.servicesOuvrantPension = new ServicesOuvrantPension(paquet);
     this.surcoteParentale = new SurcoteParentale(paquet);
     this.majorationsEnfantsPoints = new MajorationsEnfantsPoints(paquet);

@@ -989,6 +989,57 @@ MajorationsPourEnfants.FICHES = Object.freeze({
 MajorationsPourEnfants.BENEFICIAIRES = Object.freeze(["mere"]);
 
 /**
+ * Les fiches de la réversion (domaine « reversion »), dont le moteur lit les
+ * versions : celle du régime général et des régimes alignés, celle de la
+ * fonction publique, celle de l'Agirc-Arrco (docs/architecture.md, § 4.1).
+ * Chaque fiche, que le paquet porte préparée (`versions_des_fiches`), dit ses
+ * régimes ; les autres n'en ont pas encore, et la réversion le dit. Voir
+ * `Reversions` du Python.
+ */
+export class Reversions {
+  constructor(paquet) {
+    const fiches = paquet.versions_des_fiches ?? {};
+    this._fiches = new Map();
+    this._parRegime = new Map();
+    for (const nom of Reversions.FICHES) {
+      if (!(nom in fiches)) {
+        continue;
+      }
+      this._fiches.set(nom, fiches[nom]);
+      for (const regime of fiches[nom].regimes ?? []) {
+        if (!this._parRegime.has(regime)) {
+          this._parRegime.set(regime, nom);
+        }
+      }
+    }
+  }
+
+  /** La fiche préparée de la réversion d'un régime, ou `null`. */
+  ficheDuRegime(regime) {
+    const nom = this._parRegime.get(regime);
+    return nom === undefined ? null : this._fiches.get(nom);
+  }
+
+  /**
+   * La version de `fiche` pour une réversion qui prend effet à `dateEffet`,
+   * ouverte par un décès du jour `deces` (AAAA-MM-JJ).
+   */
+  version(fiche, dateEffet, deces) {
+    const situation = { "liquidation.date_effet": dateEffet, "conjoint.deces": deces };
+    const dates = {};
+    for (const nom of fiche.dates_qui_decident) {
+      dates[nom] = situation[nom];
+    }
+    return applicable(fiche, dates);
+  }
+}
+
+/** Les fiches de la réversion que le moteur lit, dans cet ordre. */
+Reversions.FICHES = Object.freeze([
+  "reversion", "reversion_fonction_publique", "reversion_agirc_arrco",
+]);
+
+/**
  * La durée de services qui ouvre une pension dans chaque régime spécial.
  *
  * C'est la condition dont l'article R. 173-15 du code de la sécurité sociale

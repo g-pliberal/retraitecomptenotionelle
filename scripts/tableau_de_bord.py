@@ -400,12 +400,12 @@ def page() -> str:
     presomptions = vocabulaire.presomptions()
     posees = [nom for nom, p in presomptions.items() if p.get("pose")]
     w(f"**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de "
-      "personnes — aujourd'hui l'assuré et ses enfants —, que le relevé et le parcours "
-      "déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière "
-      "que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : "
-      f"{len(presomptions)} présomptions au vocabulaire, dont {len(posees)} "
-      f"pose{'nt leur' if len(posees) > 1 else ' son'} fait dans la chronologie ; les autres "
-      "s'appliquent dans le code, jusqu'à l'étape qui posera le leur.")
+      "personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et "
+      "le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). "
+      "La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est "
+      f"présumé : {len(presomptions)} présomptions au vocabulaire, dont {len(posees)} "
+      f"pose{'nt leur' if len(posees) > 1 else ' son'} fait dans la chronologie ; les "
+      "autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.")
     w("")
     lecteurs = carte.lecteurs_des_presomptions()
     w("| Présomption | Valeur | Fiches qui la lisent | Où elle s'applique |")

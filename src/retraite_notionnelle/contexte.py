@@ -327,6 +327,8 @@ class Contexte:
                 interruptions=saisie.interruptions_de_carriere(motifs),
                 nombre_enfants=saisie.enfants,
                 naissances_enfants=saisie.naissances_enfants(),
+                conjoint=saisie.conjoint_declare(),
+                deces=saisie.deces_declare(),
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -418,6 +420,8 @@ class Contexte:
             age_liquidation=saisie.liquidation,
             nombre_enfants=saisie.enfants,
             naissances_enfants=saisie.naissances_enfants(),
+            conjoint=saisie.conjoint_declare(),
+            deces=saisie.deces_declare(),
             part_primes=saisie.primes,
             identifiant="assuré",
         )

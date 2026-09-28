@@ -440,6 +440,23 @@ def _ligne_annuelle(
     )
 
 
+@dataclass(frozen=True)
+class Conjoint:
+    """Le conjoint d'une personne, tel que la chronologie le porte : ce que la
+    réversion lit du survivant (docs/architecture.md, § 5.1)."""
+
+    personne: str
+    #: Sa naissance (AAAA-MM-JJ).
+    naissance: str
+    sexe: str
+    #: La date du mariage (AAAA-MM-JJ), déclarée ou présumée.
+    mariage: str
+    mariage_presume: bool
+    #: Ses ressources annuelles, s'il les déclare ; ``None`` laisse la
+    #: présomption ``ressources_du_survivant`` s'appliquer.
+    ressources: float | None
+
+
 @dataclass
 class Carriere:
     """Carrière complète d'un assuré.
@@ -580,6 +597,34 @@ class Carriere:
     def age_au(self, date: DateMois) -> float:
         """L'âge, en mois révolus, au premier jour de ce mois."""
         return (date.rang - self.origine_des_ages.rang) / MOIS_PAR_AN
+
+    @cached_property
+    def deces(self) -> str | None:
+        """Le décès de la personne (AAAA-MM-JJ), s'il est dit : il ouvre la
+        réversion de son conjoint."""
+        fait = chrono.deces(self.chronologie, self.personne) if self.chronologie else None
+        return None if fait is None else fait["debut"]
+
+    @cached_property
+    def conjoint(self) -> "Conjoint | None":
+        """Le conjoint de la personne, que son mariage lui relie : sa naissance,
+        son sexe, la date du mariage et ses ressources, telles que la
+        chronologie les porte. ``None`` sans conjoint déclaré."""
+        if not self.chronologie:
+            return None
+        autre = chrono.conjoint(self.chronologie, self.personne)
+        if autre is None:
+            return None
+        naissance = chrono.naissance(self.chronologie, autre)
+        union = chrono.union(self.chronologie, self.personne)
+        return Conjoint(
+            personne=autre,
+            naissance=naissance["debut"],
+            sexe=naissance["attributs"]["sexe"],
+            mariage=union["debut"],
+            mariage_presume=union.get("origine") == "presume",
+            ressources=chrono.ressources(self.chronologie, autre),
+        )
 
     @cached_property
     def naissances_des_enfants(self) -> tuple[tuple[str, str], ...]:
@@ -1102,6 +1147,8 @@ class Carriere:
         identifiant: str = "assuré",
         naissances_enfants: tuple[str, ...] | list[str] = (),
         jour_naissance: int | None = None,
+        conjoint: dict | None = None,
+        deces: str | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -1132,7 +1179,7 @@ class Carriere:
             annee_naissance, sexe, releve, age_liquidation,
             mois_naissance=mois_naissance, nombre_enfants=nombre_enfants,
             part_primes=part_primes, naissances_enfants=naissances_enfants,
-            jour_naissance=jour_naissance))
+            jour_naissance=jour_naissance, conjoint=conjoint, deces=deces))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1153,6 +1200,8 @@ class Carriere:
         identifiant: str = "assuré",
         naissances_enfants: tuple[str, ...] | list[str] = (),
         jour_naissance: int | None = None,
+        conjoint: dict | None = None,
+        deces: str | None = None,
     ) -> "Carriere":
         """Carrière d'un seul métier, exercé du premier au dernier jour.
 
@@ -1174,6 +1223,8 @@ class Carriere:
             identifiant=identifiant,
             naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance,
+            conjoint=conjoint,
+            deces=deces,
         )
 
     @classmethod
@@ -1192,6 +1243,8 @@ class Carriere:
         identifiant: str = "assuré",
         naissances_enfants: tuple[str, ...] | list[str] = (),
         jour_naissance: int | None = None,
+        conjoint: dict | None = None,
+        deces: str | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -1237,7 +1290,7 @@ class Carriere:
             mois_naissance=mois_naissance, profil_carriere=profil_carriere,
             interruptions=interruptions, nombre_enfants=nombre_enfants,
             part_primes=part_primes, naissances_enfants=naissances_enfants,
-            jour_naissance=jour_naissance))
+            jour_naissance=jour_naissance, conjoint=conjoint, deces=deces))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod

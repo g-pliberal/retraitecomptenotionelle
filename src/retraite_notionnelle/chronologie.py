@@ -74,6 +74,8 @@ SCHEMA_VERSION = 1
 #: La personne dont on calcule les droits, quand l'appelant n'en nomme pas
 #: d'autre.
 ASSURE = "assure"
+#: Le conjoint de l'assuré, que le mariage lui relie (§ 5.1).
+CONJOINT = "conjoint"
 
 #: Les sortes de faits qui sont des périodes de la carrière.
 EMPLOI, INTERRUPTION = "periode_d_activite", "periode_d_interruption"
@@ -110,9 +112,11 @@ def annees_revolues(debut: str, fin: str) -> int:
 
 
 def fait(ident: str, personne: str, sorte: str, debut: str, fin: str | None = None,
-         attributs: dict | None = None, presomption: str | None = None) -> dict:
+         attributs: dict | None = None, presomption: str | None = None,
+         montant: dict | None = None) -> dict:
     """Un fait du contrat C.1 : déclaré, ou posé par la présomption qu'il
-    nomme."""
+    nomme. ``montant`` — un montant et sa monnaie — ne s'écrit que s'il est
+    donné : les ressources d'une personne en portent un."""
     resultat = {
         "schema_version": SCHEMA_VERSION,
         "id": ident,
@@ -126,6 +130,8 @@ def fait(ident: str, personne: str, sorte: str, debut: str, fin: str | None = No
     }
     if presomption:
         resultat["presomption"] = presomption
+    if montant is not None:
+        resultat["montant"] = dict(montant)
     return resultat
 
 
@@ -168,6 +174,28 @@ def naissance_declaree(valeur) -> tuple[str, str]:
         date = _date(annee, mois, jour)
     except ValueError:
         raise ValueError(f"naissance d'un enfant impossible : {valeur!r}") from None
+    return date, ("annee", "mois", "jour")[len(nombres) - 1]
+
+
+def date_declaree(valeur, quoi: str) -> tuple[str, str]:
+    """Une date déclarée — le décès de l'assuré, la naissance de son
+    conjoint, leur mariage — et sa précision, comme :func:`naissance_declaree`
+    lit celle d'un enfant : une année, un mois ou un jour ; ce qui n'est pas
+    dit tombe au premier du mois, ou au 1er janvier. ``quoi`` nomme la date
+    dans le message d'erreur."""
+    texte = str(valeur).strip()
+    morceaux = texte.split("-")
+    try:
+        nombres = [int(m) for m in morceaux]
+    except ValueError:
+        nombres = []
+    if not 1 <= len(nombres) <= 3 or any(len(m) != n for m, n in zip(morceaux, (4, 2, 2))):
+        raise ValueError(f"{quoi} attendu(e) en AAAA, AAAA-MM ou AAAA-MM-JJ, reçu {valeur!r}")
+    annee, mois, jour = (nombres + [1, 1])[:3]
+    try:
+        date = _date(annee, mois, jour)
+    except ValueError:
+        raise ValueError(f"{quoi} impossible : {valeur!r}") from None
     return date, ("annee", "mois", "jour")[len(nombres) - 1]
 
 
@@ -217,17 +245,25 @@ def origine_de(naissance: dict) -> DateMois:
 def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
               age_liquidation: float | None, nombre_enfants: int,
               naissances_enfants: list | tuple = (),
-              jour_naissance: int | None = None, presomptions: dict | None = None
+              jour_naissance: int | None = None, presomptions: dict | None = None,
+              conjoint: dict | None = None, deces: str | None = None,
               ) -> tuple[list[dict], list[dict], list[dict]]:
-    """Ce que toute saisie déclare de l'assuré : sa naissance, son départ et
-    ses enfants. Rend les naissances — celle de l'assuré, puis celles des
-    enfants qu'elle déclare —, le départ (vide sans âge de départ) et les
-    liens de filiation.
+    """Ce que toute saisie déclare de l'assuré : sa naissance, son départ,
+    ses enfants, et, s'il les dit, son conjoint et son décès. Rend les
+    naissances — celle de l'assuré, puis celles des enfants qu'elle déclare,
+    puis celle du conjoint —, les événements de sa vie — le départ (vide sans
+    âge de départ), le décès —, et les liens : de filiation, et le mariage.
 
     ``naissances_enfants`` déclare la naissance des premiers enfants, dans
     l'ordre (:func:`naissance_declaree`) ; :func:`completer` présume celles
     des autres, et date leur filiation. Le départ tombe à l'âge déclaré,
-    compté depuis le mois d'où les âges se comptent."""
+    compté depuis le mois d'où les âges se comptent.
+
+    ``conjoint`` déclare le conjoint (docs/architecture.md, § 5.1) : sa
+    ``naissance`` et son ``sexe``, la date du ``mariage`` — que
+    :func:`completer` présume sinon (``mariage_des_conjoints``) — et ses
+    ``ressources`` annuelles, s'il les dit. ``deces`` date le décès de
+    l'assuré, qui ouvre la réversion de son conjoint : il clôt le mariage."""
     assure = naissance_de_l_assure(annee_naissance, mois_naissance, sexe,
                                    jour_naissance, presomptions)
     faits_naissance = [assure]
@@ -252,20 +288,57 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
                   {ASSURE: role, f"enfant_{rang}": "enfant"},
                   debut=declarees[rang - 1][0] if rang <= len(declarees) else None)
              for rang in range(1, nombre_enfants + 1)]
+    jour_deces = None
+    if deces is not None:
+        jour_deces, precision = date_declaree(deces, "le décès de l'assuré")
+        if jour_deces <= assure["debut"]:
+            raise ValueError(f"un décès le {jour_deces}, avant la naissance")
+        depart.append(fait(f"deces_{ASSURE}", ASSURE, "deces", jour_deces,
+                           attributs={"precision": precision}))
+    if conjoint is not None:
+        faits_naissance.append(_naissance_du_conjoint(conjoint))
+        union = lien(f"union_{CONJOINT}", ASSURE, CONJOINT, "union",
+                     {ASSURE: "conjoint", CONJOINT: "conjoint"})
+        union["forme"] = "mariage"
+        if conjoint.get("mariage") is not None:
+            union["debut"] = date_declaree(conjoint["mariage"], "le mariage")[0]
+            if union["debut"] <= max(assure["debut"], faits_naissance[-1]["debut"]):
+                raise ValueError(f"un mariage le {union['debut']}, avant la naissance d'un époux")
+        if jour_deces is not None:
+            if union["debut"] is not None and union["debut"] >= jour_deces:
+                raise ValueError(f"un mariage le {union['debut']}, après le décès")
+            union["fin"] = {"date": jour_deces, "cause": "deces"}
+        liens.append(union)
+        if conjoint.get("ressources") is not None:
+            faits_naissance.append(fait(
+                f"ressources_{CONJOINT}", CONJOINT, "ressources",
+                jour_deces or faits_naissance[-1]["debut"],
+                attributs={"periode": "annuelle"},
+                montant={"annuel": float(conjoint["ressources"]), "monnaie": "EUR"}))
     return faits_naissance, depart, liens
+
+
+def _naissance_du_conjoint(conjoint: dict) -> dict:
+    """Le fait de naissance du conjoint déclaré : sa date et son sexe."""
+    jour, precision = date_declaree(conjoint["naissance"], "la naissance du conjoint")
+    if conjoint.get("sexe") not in ("H", "F"):
+        raise ValueError(f"le sexe du conjoint : H ou F, reçu {conjoint.get('sexe')!r}")
+    return fait(f"naissance_{CONJOINT}", CONJOINT, "naissance", jour,
+                attributs={"sexe": conjoint["sexe"], "precision": precision})
 
 
 def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
               age_liquidation: float | None = None, nombre_enfants: int = 0,
               naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
-              presomptions: dict | None = None) -> dict:
+              presomptions: dict | None = None, conjoint: dict | None = None,
+              deces: str | None = None) -> dict:
     """La chronologie d'une carrière construite ligne à ligne : la naissance,
     le départ et les enfants, sans ses périodes, que l'appelant a déjà
     traduites en années."""
     naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
                                          age_liquidation, nombre_enfants,
                                          naissances_enfants, jour_naissance,
-                                         presomptions)
+                                         presomptions, conjoint=conjoint, deces=deces)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + depart, "liens": liens}
 
 
@@ -274,7 +347,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 profil_carriere: str = "auto", interruptions: dict[int, str] | None = None,
                 nombre_enfants: int = 0, part_primes: float = 0.0,
                 naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
-                presomptions: dict | None = None) -> dict:
+                presomptions: dict | None = None, conjoint: dict | None = None,
+                deces: str | None = None) -> dict:
     """La chronologie d'un parcours : un fait par métier, daté au mois, et un
     par année d'interruption.
 
@@ -298,7 +372,7 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
     naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
                                          age_liquidation, nombre_enfants,
                                          naissances_enfants, jour_naissance,
-                                         presomptions)
+                                         presomptions, conjoint=conjoint, deces=deces)
     origine = origine_de(naissance[0])
     bornes = [origine.plus_mois(en_mois(metier.age_debut)) for metier in principaux]
     debut = bornes[0]
@@ -357,7 +431,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
               age_liquidation: float, mois_naissance: int = 1,
               nombre_enfants: int = 0, part_primes: float = 0.0,
               naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
-              presomptions: dict | None = None) -> dict:
+              presomptions: dict | None = None, conjoint: dict | None = None,
+              deces: str | None = None) -> dict:
     """La chronologie d'un relevé : un fait par ligne, une année civile
     chacun, dans l'ordre du relevé — la première ligne d'une année est
     l'activité principale."""
@@ -376,7 +451,7 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
     naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
                                          age_liquidation, nombre_enfants,
                                          naissances_enfants, jour_naissance,
-                                         presomptions)
+                                         presomptions, conjoint=conjoint, deces=deces)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
 
@@ -405,11 +480,12 @@ def completer(chronologie: dict, presomptions: dict | None = None) -> dict:
     ``presomptions`` est la table où lire leurs valeurs, le vocabulaire à
     défaut.
 
-    Aujourd'hui, une seule présomption pose ici un fait :
-    ``naissance_des_enfants`` date la naissance de chaque enfant dont la date
-    n'est pas déclarée aux trente ans de son parent. La filiation commence à
-    cette naissance. ``jour_de_naissance`` pose le sien à la construction,
-    parce que les dates de la carrière en dépendent
+    Deux présomptions posent ici un fait ou un lien : ``naissance_des_enfants``
+    date la naissance de chaque enfant dont la date n'est pas déclarée aux
+    trente ans de son parent, et la filiation commence à cette naissance ;
+    ``mariage_des_conjoints`` date le mariage que la saisie ne date pas aux
+    vingt-sept ans de l'assuré. ``jour_de_naissance`` pose le sien à la
+    construction, parce que les dates de la carrière en dépendent
     (:func:`naissance_de_l_assure`). Les autres présomptions du vocabulaire
     s'appliquent là où leur fait sera lu, et le disent (``appliquee_par``).
 
@@ -437,6 +513,16 @@ def completer(chronologie: dict, presomptions: dict | None = None) -> dict:
             naissances[enfant] = presume
         if filiation.get("debut") is None:
             filiation["debut"] = naissances[enfant]["debut"]
+    for union in liens:
+        if union["sorte"] != "union" or union.get("debut") is not None:
+            continue
+        epoux = naissances.get(union["de"])
+        if epoux is None:
+            continue
+        union["debut"] = _plus_ans(epoux["debut"],
+                                   valeur("mariage_des_conjoints", presomptions))
+        union["origine"] = "presume"
+        union["presomption"] = "mariage_des_conjoints"
     return {"schema_version": chronologie.get("schema_version", SCHEMA_VERSION),
             "faits": faits, "liens": liens}
 
@@ -455,6 +541,35 @@ def faits_de(chronologie: dict, personne: str, sorte: str | None = None) -> list
     """Les faits d'une personne, d'une sorte s'il le faut, dans leur ordre."""
     return [f for f in chronologie.get("faits") or []
             if f["personne"] == personne and (sorte is None or f["sorte"] == sorte)]
+
+
+def conjoint(chronologie: dict, personne: str) -> str | None:
+    """Le conjoint d'une personne : celui que son mariage lui relie, ou
+    ``None``. Le modèle n'en connaît qu'un, qui lui survit."""
+    for union in chronologie.get("liens") or []:
+        if union["sorte"] == "union" and personne in (union["de"], union["vers"]):
+            return union["vers"] if union["de"] == personne else union["de"]
+    return None
+
+
+def union(chronologie: dict, personne: str) -> dict | None:
+    """Le mariage d'une personne, s'il est dit."""
+    for lien_ in chronologie.get("liens") or []:
+        if lien_["sorte"] == "union" and personne in (lien_["de"], lien_["vers"]):
+            return lien_
+    return None
+
+
+def deces(chronologie: dict, personne: str) -> dict | None:
+    """Le décès d'une personne, s'il est dit."""
+    faits = faits_de(chronologie, personne, "deces")
+    return faits[0] if faits else None
+
+
+def ressources(chronologie: dict, personne: str) -> float | None:
+    """Les ressources annuelles qu'une personne déclare, ou ``None``."""
+    faits = faits_de(chronologie, personne, "ressources")
+    return float(faits[0]["montant"]["annuel"]) if faits else None
 
 
 def naissance(chronologie: dict, personne: str) -> dict | None:

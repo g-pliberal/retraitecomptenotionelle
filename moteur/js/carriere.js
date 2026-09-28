@@ -424,6 +424,7 @@ export class Carriere {
     this.personne = personne;
     this._naissancesDesEnfants = undefined;
     this._origineDesAges = undefined;
+    this._conjoint = undefined;
   }
 
   // -- dates -----------------------------------------------------------------
@@ -482,6 +483,42 @@ export class Carriere {
   /** L'âge, en mois révolus, au premier jour de ce mois. */
   ageAu(date) {
     return (date.rang - this.origineDesAges.rang) / MOIS_PAR_AN;
+  }
+
+  /**
+   * Le décès de la personne (AAAA-MM-JJ), s'il est dit : il ouvre la
+   * réversion de son conjoint.
+   */
+  get deces() {
+    const fait = chrono.deces(this.chronologie, this.personne);
+    return fait === null ? null : fait.debut;
+  }
+
+  /**
+   * Le conjoint de la personne, que son mariage lui relie : `{personne,
+   * naissance, sexe, mariage, mariage_presume, ressources}`, tel que la
+   * chronologie le porte ; `null` sans conjoint déclaré. Voir `Conjoint` du
+   * Python.
+   */
+  get conjoint() {
+    if (this._conjoint === undefined) {
+      const autre = chrono.conjoint(this.chronologie, this.personne);
+      if (autre === null) {
+        this._conjoint = null;
+      } else {
+        const naissance = chrono.naissance(this.chronologie, autre);
+        const union = chrono.union(this.chronologie, this.personne);
+        this._conjoint = Object.freeze({
+          personne: autre,
+          naissance: naissance.debut,
+          sexe: naissance.attributs.sexe,
+          mariage: union.debut,
+          mariage_presume: union.origine === "presume",
+          ressources: chrono.ressources(this.chronologie, autre),
+        });
+      }
+    }
+    return this._conjoint;
   }
 
   /**
@@ -996,11 +1033,13 @@ export class Carriere {
     identifiant = "assuré",
     naissances_enfants = [],
     jour_naissance = null,
+    conjoint = null,
+    deces = null,
   }) {
     const chronologie = preparer(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
       nombre_enfants, part_primes, naissances_enfants, jour_naissance,
-      presomptions: macro.paquet.presomptions,
+      presomptions: macro.paquet.presomptions, conjoint, deces,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -1058,11 +1097,13 @@ export class Carriere {
     identifiant = "assuré",
     naissances_enfants = [],
     jour_naissance = null,
+    conjoint = null,
+    deces = null,
   }) {
     const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
       profil_carriere, interruptions, nombre_enfants, part_primes, naissances_enfants,
-      jour_naissance, presomptions: macro.paquet.presomptions,
+      jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }

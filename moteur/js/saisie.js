@@ -16,7 +16,7 @@ import {
   PartCotisation, SituationFoyer, TableConversion, avec, sousRegimeFrais,
   sousRegimeTaux,
 } from "./config.js";
-import { naissanceDeclaree, valeur as valeurPresumee } from "./chronologie.js";
+import { dateDeclaree, naissanceDeclaree, valeur as valeurPresumee } from "./chronologie.js";
 import { formatG } from "./format.js";
 import * as g from "./gabarit.js";
 
@@ -420,6 +420,18 @@ export const DEFAUTS = Object.freeze({
   //: Les naissances des premiers enfants, dans l'ordre : « 1995, 1998-06 ».
   //: Celles qui ne sont pas dites sont présumées. Voir `naissancesEnfants`.
   naissances: "",
+  //: Le conjoint, pour la réversion (docs/architecture.md, § 5.1) : sa
+  //: naissance (AAAA ou AAAA-MM), son sexe — l'autre que celui de l'assuré
+  //: s'il n'est pas dit (présomption `conjoint_de_l_autre_sexe`) —, la date du
+  //: mariage, présumée sinon, et ses ressources annuelles, s'il les dit. Voir
+  //: `conjointDeclare`.
+  conjoint: "",
+  conjoint_sexe: "",
+  mariage: "",
+  ressources_conjoint: null,
+  //: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
+  //: conjoint : au départ ou après lui.
+  deces: "",
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -526,6 +538,12 @@ export class Saisie {
       primes: reel(parametres, "primes", DEFAUTS.primes),
       enfants: entier(parametres, "enfants", DEFAUTS.enfants),
       naissances: (parametres.naissances || "").trim(),
+      conjoint: (parametres.conjoint || "").trim(),
+      conjoint_sexe: (parametres.conjoint_sexe || "").trim().toUpperCase(),
+      mariage: (parametres.mariage || "").trim(),
+      ressources_conjoint: [undefined, null, ""].includes(parametres.ressources_conjoint)
+        ? null : reel(parametres, "ressources_conjoint", 0.0),
+      deces: (parametres.deces || "").trim(),
       interruptions: (parametres.interruptions || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
@@ -620,6 +638,7 @@ export class Saisie {
       );
     }
     this.verifierNaissances();
+    this.verifierConjoint();
     if (!(this.bascule >= ANNEE_MINIMALE && this.bascule <= ANNEE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de bascule attendue entre ${ANNEE_MINIMALE} et `
@@ -1304,6 +1323,92 @@ export class Saisie {
     }
   }
 
+  /**
+   * Le conjoint que la saisie déclare, tel que la chronologie le reçoit ;
+   * `null` sans conjoint. Voir `conjoint_declare` du Python.
+   */
+  conjointDeclare() {
+    if (!this.conjoint) {
+      return null;
+    }
+    return {
+      naissance: this.conjoint,
+      sexe: this.conjoint_sexe || (this.sexe === "F" ? "H" : "F"),
+      mariage: this.mariage || null,
+      ressources: this.ressources_conjoint,
+    };
+  }
+
+  /** Le décès de l'assuré que la saisie déclare, ou `null`. */
+  decesDeclare() {
+    return this.deces || null;
+  }
+
+  /**
+   * Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie — les
+   * naissances, le mariage, le décès —, et un décès qui ne précède pas le
+   * départ : la réversion d'une pension que l'assuré n'a pas encore liquidée
+   * n'est pas calculée. Voir `_verifier_conjoint` du Python.
+   */
+  verifierConjoint() {
+    if (!this.conjoint) {
+      const orphelins = [
+        ["conjoint_sexe", this.conjoint_sexe], ["mariage", this.mariage],
+        ["ressources_conjoint", this.ressources_conjoint], ["deces", this.deces],
+      ].filter(([, valeur]) => valeur !== "" && valeur !== null && valeur !== undefined)
+        .map(([nom]) => nom);
+      if (orphelins.length) {
+        throw new ErreurSaisie(
+          `« ${orphelins[0]} » ne sert qu'à la réversion : dites aussi la `
+          + "naissance du conjoint (« conjoint »).",
+        );
+      }
+      return;
+    }
+    const dates = {};
+    for (const [nom, valeur, quoi] of [
+      ["conjoint", this.conjoint, "la naissance du conjoint"],
+      ["mariage", this.mariage, "le mariage"],
+      ["deces", this.deces, "le décès"],
+    ]) {
+      if (!valeur) {
+        continue;
+      }
+      try {
+        [dates[nom]] = dateDeclaree(valeur, quoi);
+      } catch {
+        throw new ErreurSaisie(
+          `${quoi[0].toUpperCase()}${quoi.slice(1)} « ${valeur} » : attendu en AAAA ou `
+          + "AAAA-MM, par exemple 1962 ou 1962-03.",
+        );
+      }
+    }
+    if (!["", "H", "F"].includes(this.conjoint_sexe)) {
+      throw new ErreurSaisie("Sexe du conjoint : H ou F.");
+    }
+    if (this.ressources_conjoint !== null && this.ressources_conjoint < 0) {
+      throw new ErreurSaisie("Ressources du conjoint : un montant annuel positif.");
+    }
+    if ("mariage" in dates) {
+      const aine = dates.conjoint > this.naissanceIso ? dates.conjoint : this.naissanceIso;
+      if (dates.mariage <= aine) {
+        throw new ErreurSaisie("Le mariage précède la naissance d'un des époux.");
+      }
+    }
+    if ("deces" in dates) {
+      if ("mariage" in dates && dates.mariage >= dates.deces) {
+        throw new ErreurSaisie("Le mariage suit le décès.");
+      }
+      if (dates.deces < this.jourDe(this.liquidation)) {
+        throw new ErreurSaisie(
+          `Décès « ${this.deces} » : il précède le départ à la retraite, fixé `
+          + `en ${this.dateDe(this.liquidation)} ; la réversion d'une pension `
+          + "que l'assuré n'a pas encore liquidée n'est pas calculée.",
+        );
+      }
+    }
+  }
+
   requete(remplacements = {}) {
     const naissances = this.naissancesEnfants();
     const champs = {
@@ -1320,6 +1425,13 @@ export class Saisie {
       releve: this.releve,
       primes: nombreBrut(this.primes), enfants: this.enfants,
       ...(naissances.length ? { naissances: naissances.join(",") } : {}),
+      ...Object.fromEntries([
+        ["conjoint", this.conjoint], ["conjoint_sexe", this.conjoint_sexe],
+        ["mariage", this.mariage],
+        ["ressources_conjoint", this.ressources_conjoint === null
+          ? "" : nombreBrut(this.ressources_conjoint)],
+        ["deces", this.deces],
+      ].filter(([, valeur]) => valeur !== "" && valeur !== null)),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,

@@ -23,6 +23,8 @@ export const SCHEMA_VERSION = 1;
 
 /** La personne dont on calcule les droits, quand l'appelant n'en nomme pas d'autre. */
 export const ASSURE = "assure";
+/** Le conjoint de l'assuré, que le mariage lui relie (§ 5.1). */
+export const CONJOINT = "conjoint";
 
 /** Les sortes de faits qui sont des périodes de la carrière. */
 export const EMPLOI = "periode_d_activite";
@@ -43,7 +45,7 @@ function jour(date) {
 }
 
 /** La même date, `ans` années plus tard ; un 29 février tombe le 28. */
-function plusAns(date, ans) {
+export function plusAns(date, ans) {
   const annee = Number(date.slice(0, 4)) + ans;
   const mois = Number(date.slice(5, 7));
   let quantieme = Number(date.slice(8, 10));
@@ -67,9 +69,13 @@ export function anneesRevolues(debut, fin) {
   return Math.max(ans, 0);
 }
 
-/** Un fait du contrat C.1 : déclaré, ou posé par la présomption qu'il nomme. */
+/**
+ * Un fait du contrat C.1 : déclaré, ou posé par la présomption qu'il nomme.
+ * `montant` — un montant et sa monnaie — ne s'écrit que s'il est donné : les
+ * ressources d'une personne en portent un.
+ */
 export function fait(ident, personne, sorte, debut, fin = null, attributs = null,
-  presomption = null) {
+  presomption = null, montant = null) {
   const resultat = {
     schema_version: SCHEMA_VERSION,
     id: ident,
@@ -83,6 +89,9 @@ export function fait(ident, personne, sorte, debut, fin = null, attributs = null
   };
   if (presomption) {
     resultat.presomption = presomption;
+  }
+  if (montant !== null) {
+    resultat.montant = { ...montant };
   }
   return resultat;
 }
@@ -178,16 +187,47 @@ export function origineDe(naissance) {
 }
 
 /**
- * Ce que toute saisie déclare de l'assuré : sa naissance, son départ et ses
- * enfants. Rend les naissances — celle de l'assuré, puis celles des enfants
- * qu'elle déclare —, le départ (vide sans âge de départ) et les liens de
- * filiation. `naissancesEnfants` déclare la naissance des premiers enfants,
- * dans l'ordre ; {@link completer} présume celles des autres, et date leur
+ * Une date déclarée — le décès de l'assuré, la naissance de son conjoint,
+ * leur mariage — et sa précision, comme {@link naissanceDeclaree} lit celle
+ * d'un enfant : `[date, précision]`. `quoi` nomme la date dans le message
+ * d'erreur. Voir `date_declaree` du Python.
+ */
+export function dateDeclaree(valeur, quoi) {
+  const texte = String(valeur).trim();
+  const morceaux = texte.split("-");
+  const longueurs = [4, 2, 2];
+  const valide = morceaux.length >= 1 && morceaux.length <= 3
+    && morceaux.every((m, i) => /^[0-9]+$/.test(m) && m.length === longueurs[i]);
+  if (!valide) {
+    throw new Error(`${quoi} attendu(e) en AAAA, AAAA-MM ou AAAA-MM-JJ, reçu '${valeur}'`);
+  }
+  const [annee, mois, quantieme] = [...morceaux.map(Number), 1, 1].slice(0, 3);
+  const date = new Date(Date.UTC(annee, mois - 1, quantieme));
+  if (date.getUTCFullYear() !== annee || date.getUTCMonth() !== mois - 1
+      || date.getUTCDate() !== quantieme) {
+    throw new Error(`${quoi} impossible : '${valeur}'`);
+  }
+  return [`${quatre(annee)}-${deux(mois)}-${deux(quantieme)}`,
+    ["annee", "mois", "jour"][morceaux.length - 1]];
+}
+
+/**
+ * Ce que toute saisie déclare de l'assuré : sa naissance, son départ, ses
+ * enfants, et, s'il les dit, son conjoint et son décès. Rend les naissances —
+ * celle de l'assuré, puis celles des enfants qu'elle déclare, puis celle du
+ * conjoint —, les événements de sa vie — le départ (vide sans âge de départ),
+ * le décès — et les liens : de filiation, et le mariage.
+ * `naissancesEnfants` déclare la naissance des premiers enfants, dans
+ * l'ordre ; {@link completer} présume celles des autres, et date leur
  * filiation. Le départ tombe à l'âge déclaré, compté depuis le mois d'où les
- * âges se comptent.
+ * âges se comptent. `conjoint` déclare le conjoint (§ 5.1) : sa `naissance`
+ * et son `sexe`, la date du `mariage` — que {@link completer} présume sinon —
+ * et ses `ressources` annuelles, s'il les dit ; `deces` date le décès de
+ * l'assuré, qui clôt le mariage. Voir `_personne` du Python.
  */
 function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants,
-  naissancesEnfants = [], jourNaissance = null, presomptions = null) {
+  naissancesEnfants = [], jourNaissance = null, presomptions = null, conjoint = null,
+  deces = null) {
   const assure = naissanceDeLAssure(anneeNaissance, moisNaissance, sexe, jourNaissance,
     presomptions);
   const faitsNaissance = [assure];
@@ -216,7 +256,52 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
       { [ASSURE]: role, [`enfant_${rang}`]: "enfant" },
       rang <= declarees.length ? declarees[rang - 1][0] : null));
   }
+  let jourDeces = null;
+  if (deces !== null && deces !== undefined) {
+    let precision;
+    [jourDeces, precision] = dateDeclaree(deces, "le décès de l'assuré");
+    if (jourDeces <= assure.debut) {
+      throw new Error(`un décès le ${jourDeces}, avant la naissance`);
+    }
+    depart.push(fait(`deces_${ASSURE}`, ASSURE, "deces", jourDeces, null, { precision }));
+  }
+  if (conjoint !== null && conjoint !== undefined) {
+    faitsNaissance.push(naissanceDuConjoint(conjoint));
+    const union = lien(`union_${CONJOINT}`, ASSURE, CONJOINT, "union",
+      { [ASSURE]: "conjoint", [CONJOINT]: "conjoint" });
+    union.forme = "mariage";
+    if (conjoint.mariage !== null && conjoint.mariage !== undefined) {
+      [union.debut] = dateDeclaree(conjoint.mariage, "le mariage");
+      const epoux = faitsNaissance[faitsNaissance.length - 1].debut;
+      if (union.debut <= (assure.debut > epoux ? assure.debut : epoux)) {
+        throw new Error(`un mariage le ${union.debut}, avant la naissance d'un époux`);
+      }
+    }
+    if (jourDeces !== null) {
+      if (union.debut !== null && union.debut >= jourDeces) {
+        throw new Error(`un mariage le ${union.debut}, après le décès`);
+      }
+      union.fin = { date: jourDeces, cause: "deces" };
+    }
+    liens.push(union);
+    if (conjoint.ressources !== null && conjoint.ressources !== undefined) {
+      faitsNaissance.push(fait(`ressources_${CONJOINT}`, CONJOINT, "ressources",
+        jourDeces ?? faitsNaissance[faitsNaissance.length - 1].debut, null,
+        { periode: "annuelle" }, null,
+        { annuel: Number(conjoint.ressources), monnaie: "EUR" }));
+    }
+  }
   return [faitsNaissance, depart, liens];
+}
+
+/** Le fait de naissance du conjoint déclaré : sa date et son sexe. */
+function naissanceDuConjoint(conjoint) {
+  const [date, precision] = dateDeclaree(conjoint.naissance, "la naissance du conjoint");
+  if (conjoint.sexe !== "H" && conjoint.sexe !== "F") {
+    throw new Error(`le sexe du conjoint : H ou F, reçu '${conjoint.sexe}'`);
+  }
+  return fait(`naissance_${CONJOINT}`, CONJOINT, "naissance", date, null,
+    { sexe: conjoint.sexe, precision });
 }
 
 /**
@@ -225,9 +310,11 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
  * années.
  */
 export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation = null,
-  nombreEnfants = 0, naissancesEnfants = [], jourNaissance = null, presomptions = null) {
+  nombreEnfants = 0, naissancesEnfants = [], jourNaissance = null, presomptions = null,
+  conjoint = null, deces = null) {
   const [naissance, depart, liens] = personne(anneeNaissance, moisNaissance, sexe,
-    ageLiquidation, nombreEnfants, naissancesEnfants, jourNaissance, presomptions);
+    ageLiquidation, nombreEnfants, naissancesEnfants, jourNaissance, presomptions,
+    conjoint, deces);
   return { schema_version: SCHEMA_VERSION, faits: [...naissance, ...depart], liens };
 }
 
@@ -250,6 +337,8 @@ export function duParcours({
   naissances_enfants = [],
   jour_naissance = null,
   presomptions = null,
+  conjoint = null,
+  deces = null,
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -264,7 +353,8 @@ export function duParcours({
   const principaux = metiers.filter((metier) => !metier.cumul);
 
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
-    age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions);
+    age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
+    conjoint, deces);
   const origine = origineDe(naissance[0]);
   const bornes = principaux.map(
     (metier) => origine.plusMois(enMois(metier.age_debut)),
@@ -353,6 +443,8 @@ export function duReleve({
   naissances_enfants = [],
   jour_naissance = null,
   presomptions = null,
+  conjoint = null,
+  deces = null,
 }) {
   if (!releve || releve.length === 0) {
     throw new Error("un relevé compte au moins une ligne");
@@ -373,7 +465,8 @@ export function duReleve({
       `${quatre(ligne.annee)}-01-01`, `${quatre(ligne.annee + 1)}-01-01`, attributs);
   });
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
-    age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions);
+    age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
+    conjoint, deces);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],
@@ -398,9 +491,11 @@ export function valeur(presomption, presomptions) {
  * La chronologie complétée par les présomptions : une copie, où chaque fait
  * qui manque et qu'une présomption sait poser est posé, en son nom.
  * `presomptions` est la table où lire leurs valeurs, celle du paquet.
- * Aujourd'hui, `naissance_des_enfants` date la naissance de chaque enfant dont
- * la date n'est pas déclarée aux trente ans de son parent ; la filiation
- * commence à cette naissance. `jour_de_naissance` pose le sien à la
+ * Deux présomptions posent un fait ou un lien : `naissance_des_enfants` date
+ * la naissance de chaque enfant dont la date n'est pas déclarée aux trente ans
+ * de son parent, et la filiation commence à cette naissance ;
+ * `mariage_des_conjoints` date le mariage que la saisie ne date pas aux
+ * vingt-sept ans de l'assuré. `jour_de_naissance` pose le sien à la
  * construction ({@link naissanceDeLAssure}). Compléter deux fois ne change
  * rien.
  */
@@ -433,6 +528,18 @@ export function completer(chronologie, presomptions = null) {
       filiation.debut = naissances.get(enfant).debut;
     }
   }
+  for (const union of liens) {
+    if (union.sorte !== "union" || (union.debut !== null && union.debut !== undefined)) {
+      continue;
+    }
+    const epoux = naissances.get(union.de);
+    if (!epoux) {
+      continue;
+    }
+    union.debut = plusAns(epoux.debut, valeur("mariage_des_conjoints", presomptions));
+    union.origine = "presume";
+    union.presomption = "mariage_des_conjoints";
+  }
   return { schema_version: chronologie.schema_version ?? SCHEMA_VERSION, faits, liens };
 }
 
@@ -454,6 +561,36 @@ export function faitsDe(chronologie, personne, sorte = null) {
   return (chronologie.faits ?? []).filter(
     (f) => f.personne === personne && (sorte === null || f.sorte === sorte),
   );
+}
+
+/**
+ * Le conjoint d'une personne : celui que son mariage lui relie, ou `null`. Le
+ * modèle n'en connaît qu'un, qui lui survit.
+ */
+export function conjoint(chronologie, personne) {
+  const trouvee = union(chronologie, personne);
+  if (trouvee === null) {
+    return null;
+  }
+  return trouvee.de === personne ? trouvee.vers : trouvee.de;
+}
+
+/** Le mariage d'une personne, s'il est dit. */
+export function union(chronologie, personne) {
+  return (chronologie.liens ?? []).find(
+    (l) => l.sorte === "union" && (l.de === personne || l.vers === personne),
+  ) ?? null;
+}
+
+/** Le décès d'une personne, s'il est dit. */
+export function deces(chronologie, personne) {
+  return faitsDe(chronologie, personne, "deces")[0] ?? null;
+}
+
+/** Les ressources annuelles qu'une personne déclare, ou `null`. */
+export function ressources(chronologie, personne) {
+  const trouves = faitsDe(chronologie, personne, "ressources");
+  return trouves.length > 0 ? Number(trouves[0].montant.annuel) : null;
 }
 
 /** Le fait de naissance d'une personne, s'il est connu. */

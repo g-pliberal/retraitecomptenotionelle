@@ -40,6 +40,7 @@ from .donnees.macro import DonneesMacro
 from .donnees.mortalite import DonneesMortalite
 from .donnees.regimes import CatalogueRegimes
 from .donnees.taux import CourbeTauxSansRisque
+from .droit.reversion import Reversion
 from .echeancier import Echeancier
 from .journal import Journal
 from .moteur.age_reference import AgeReference
@@ -187,6 +188,10 @@ class Comparaison:
     #: qui a déjà liquidé, ce que l'échéance en a fait. Il n'entre dans aucune
     #: sortie.
     journal: Journal | None = None
+    #: La réversion que le décès déclaré de l'assuré ouvre à son conjoint,
+    #: sous le droit en vigueur (docs/architecture.md, § 7.3) : ``None`` sans
+    #: décès ni conjoint déclarés.
+    reversion: Reversion | None = None
 
     # -- indicateurs ---------------------------------------------------------
 
@@ -590,6 +595,10 @@ class Comparaison:
                 "origines": dict(self.regime_fusionne.origines),
             },
             "aujourd_hui": _resume_aujourd_hui(self.aujourd_hui),
+            # La réversion n'a de clé que déclarée : les sorties d'avant ne
+            # changent pas.
+            **({"reversion": self.reversion.donnees()}
+               if self.reversion is not None else {}),
             "fiabilite": str(self.fiabilite),
         }
 
@@ -1302,6 +1311,7 @@ class Simulateur:
             ),
         )
         comparaison.journal = echeancier.journal
+        comparaison.reversion = echeancier.reversion
         if carriere.annee_liquidation < self.parametres.annee_courante:
             comparaison.aujourd_hui = pension_aujourd_hui(self, comparaison,
                                                           echeancier.aujourd_hui)

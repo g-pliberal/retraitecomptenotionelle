@@ -13,8 +13,10 @@
  *
  * Tout ce qu'il calcule s'inscrit au JOURNAL (`journal.js`), qui est l'état.
  * Une composante revalorisée remplace, dans sa lignée, celle que la
- * liquidation avait écrite. Aujourd'hui, le seul événement est le départ, tiré
- * de la carrière, et l'échéance est l'année courante : voir le Python.
+ * liquidation avait écrite. Aujourd'hui, le départ, tiré de la carrière, et,
+ * quand la chronologie les dit, le décès de l'assuré et la réversion qu'il
+ * ouvre à son conjoint (`droit/reversion.js`) ; l'échéance est l'année
+ * courante : voir le Python.
  *
  * Chaque événement suit le contrat C.7 (`data/reference/contrats/evenement.yaml`).
  */
@@ -23,6 +25,7 @@ import * as chrono from "./chronologie.js";
 import { dateDEffet } from "./droit/commun.js";
 import { foyerEtNet } from "./droit/foyer.js";
 import * as liquidation from "./droit/liquidation.js";
+import { moisSuivant, reversion } from "./droit/reversion.js";
 import { Entree, Journal } from "./journal.js";
 import { MinimumVieillesse } from "./regimes.js";
 import { aujourdHui, faireVivre, foyerALEcheance } from "./revalorisation.js";
@@ -98,6 +101,9 @@ export class Echeancier {
     this.auDepart = null;
     // Le scénario 1 à l'échéance : ce que le droit sert l'année courante.
     this.aujourdhui = null;
+    // La réversion que le décès de l'assuré ouvre à son conjoint, quand la
+    // chronologie les dit.
+    this.reversion = null;
   }
 
   /**
@@ -111,10 +117,42 @@ export class Echeancier {
     for (const evenement of evenements) {
       this._traiter(evenement, carriere);
     }
+    if (this.auDepart !== null && carriere.deces !== null && carriere.conjoint !== null) {
+      this._reverser(carriere);
+    }
     if (echeance !== null && this.auDepart !== null) {
       this._echeance(carriere, echeance);
     }
     return this.journal;
+  }
+
+  /**
+   * Le décès de l'assuré, puis la réversion qu'il ouvre à son conjoint, dans
+   * les régimes de sa liquidation (§ 7.3) : sa pension y est menée jusqu'à
+   * l'année du décès — l'année courante pour un décès à venir, où s'arrêtent
+   * les revalorisations publiées ; jamais avant le départ, dont les montants
+   * sont les euros.
+   */
+  _reverser(carriere) {
+    const deces = new Evenement({
+      id: `deces_${carriere.personne}`, date: carriere.deces,
+      personnes: [carriere.personne], vise: {}, sorte: "deces",
+    });
+    this._inscrire(deces, deces.id, "evenement", deces, deces.date);
+    const annee = Math.max(carriere.anneeLiquidation, Math.min(
+      Number(carriere.deces.slice(0, 4)), this.simulateur.parametres.annee_courante));
+    const vivante = faireVivre(this.simulateur, carriere, this.auDepart, annee);
+    const pensions = vivante.regimes.map(
+      (r) => [r.regime, r.au_depart * r.coefficient, r.fiabilite]);
+    this.reversion = reversion(this.moteur, pensions, carriere, annee);
+    const survivant = carriere.conjoint.personne;
+    const evenement = new Evenement({
+      id: `reversion_${survivant}`, date: moisSuivant(carriere.deces),
+      personnes: [survivant], vise: { regimes: "du défunt" }, sorte: "reversion",
+    });
+    this._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date);
+    this._inscrire(evenement, `liquidation_${evenement.id}`, "reversion", this.reversion,
+      evenement.date);
   }
 
   _traiter(evenement, carriere) {

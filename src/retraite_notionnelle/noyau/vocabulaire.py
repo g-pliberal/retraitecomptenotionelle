@@ -106,7 +106,10 @@ def controler(dossier: Path = VOCABULAIRE) -> list[str]:
                 erreurs.append(f"liste {nom} : la valeur {valeur} dit ce qu'elle veut dire")
     listes = valeurs(dossier).get("listes") or {}
     etapes = set((listes.get("etapes") or {}).get("valeurs") or {})
-    sortes = set((listes.get("sortes_de_fait") or {}).get("valeurs") or {})
+    # Une présomption pose un fait, ou un lien : le mariage présumé est une
+    # union, qu'un lien porte (contrat C.1).
+    sortes = (set((listes.get("sortes_de_fait") or {}).get("valeurs") or {})
+              | set((listes.get("sortes_de_lien") or {}).get("valeurs") or {}))
     for nom, presomption in presomptions(dossier).items():
         erreurs += [f"présomption {nom} : {e}" for e in _presomption(presomption, etapes, sortes)]
     return erreurs
@@ -134,7 +137,8 @@ def _presomption(presomption, etapes: set[str], sortes: set[str]) -> list[str]:
     if bool(pose) == bool(appliquee):
         erreurs.append("elle pose un fait de la chronologie, ou dit le code qui l'applique : l'un des deux")
     if pose and not (isinstance(pose, dict) and pose.get("sorte") in sortes and pose.get("personne")):
-        erreurs.append("`pose` dit la sorte du fait, une sorte du vocabulaire, et la personne qui le porte")
+        erreurs.append("`pose` dit la sorte du fait ou du lien, une sorte du vocabulaire, "
+                       "et la personne qui le porte")
     if appliquee and presomption.get("entrera_a") not in etapes:
         erreurs.append("appliquée par le code, elle dit l'étape où son fait entrera (`entrera_a`)")
     return erreurs

@@ -121,6 +121,27 @@ def test_chaque_saisie_donne_une_chronologie_qui_suit_le_contrat(saisie):
     assert chronologie.controler(chronologie.completer(brute)) == []
 
 
+def test_le_conjoint_et_le_deces_suivent_le_contrat():
+    """Le conjoint est une personne, née, que le mariage relie à l'assuré ; le
+    décès de l'assuré clôt ce mariage. Sans date déclarée, le mariage est
+    présumé aux vingt-sept ans de l'assuré, au nom de sa présomption."""
+    brute = chronologie.du_resume(
+        1960, "H", 5, 64.0, 0, conjoint={"naissance": "1962-03", "sexe": "F",
+                                         "mariage": None, "ressources": 9000.0},
+        deces="2031-10")
+    complete = chronologie.completer(brute)
+    assert chronologie.controler(complete) == []
+    union = chronologie.union(complete, chronologie.ASSURE)
+    assert (union["forme"], union["debut"], union["fin"]) == (
+        "mariage", "1987-05-01", {"date": "2031-10-01", "cause": "deces"})
+    assert union["presomption"] == "mariage_des_conjoints"
+    assert chronologie.conjoint(complete, chronologie.ASSURE) == chronologie.CONJOINT
+    assert chronologie.deces(complete, chronologie.ASSURE)["debut"] == "2031-10-01"
+    assert chronologie.ressources(complete, chronologie.CONJOINT) == 9000.0
+    assert chronologie.presomptions_employees(complete) == [
+        "jour_de_naissance", "mariage_des_conjoints"]
+
+
 def test_le_releve_garde_ses_lignes_et_leur_ordre():
     """Une ligne, un fait d'une année civile ; une interruption garde son
     statut, son revenu de référence et son motif ; les trimestres portés
@@ -394,6 +415,41 @@ SAISIES = [
                   "jour_naissance": 29, "age_liquidation": 64.0,
                   "metiers": [{"affiliation": "salarie_prive", "age_debut": 22.0,
                                "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
+    # Le conjoint et le décès, qui ouvrent la réversion : un mariage présumé,
+    # puis un mariage déclaré et des ressources ; et ce qui ne tient pas.
+    {"parcours": {"annee_naissance": 1960, "sexe": "H", "age_liquidation": 64.0,
+                  "conjoint": {"naissance": "1962-03", "sexe": "F", "mariage": None,
+                               "ressources": None},
+                  "deces": "2031-10",
+                  "metiers": [{"affiliation": "salarie_prive", "age_debut": 21.0,
+                               "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "nombre_enfants": 1, "naissances_enfants": ["1986"],
+                "conjoint": {"naissance": "1955", "sexe": "H", "mariage": "1984-06-16",
+                             "ressources": 12000},
+                "deces": "2024-02-11",
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "conjoint": {"naissance": "1960", "sexe": "H", "mariage": "1959",
+                             "ressources": None},
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "conjoint": {"naissance": "1960", "sexe": "X", "mariage": None,
+                             "ressources": None},
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "conjoint": {"naissance": "1960", "sexe": "H", "mariage": "1990",
+                             "ressources": None},
+                "deces": "1989-05",
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "deces": "2024-13",
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
 ]
 
 
