@@ -3082,6 +3082,19 @@ Restent :
   moteur ne le porte pas et donne vingt-cinq années à chaque régime, ce qui
   sous-estime leurs salaires moyens. Noté à la fiche `salaire_annuel_moyen`.
 
+**Puis R. 173-4-3, porté**, avec la circulaire Cnav n° 2004/29 qui
+l'applique : depuis les pensions de 2004, le polypensionné des régimes alignés
+que la liquidation unique ne réunit pas retient dans chaque régime la part des
+années que sa durée lui donne, arrondie au plus proche sans descendre sous un,
+les artisans et commerçants comptés depuis 1973
+(`liquider.annees_au_prorata`) ; depuis 2026, pour qui est né avant 1953, la
+seconde répartition de R. 173-3-2 fait de même. Les deux exemples de la
+circulaire sont des tests — 15 années sur 21, 4 sur 20 —, et un assuré né en
+1944, salarié puis artisan, en retient 15 et 6. Aucun témoin ne bouge. Les
+deux restes du paragraphe précédent sont faits ; reste, de R. 173-4-3, que les
+durées sont celles de la date d'effet et non du dernier jour du trimestre
+civil qui la précède.
+
 ### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
 
 **Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
