@@ -30,17 +30,11 @@ effet: >-
   cotisations et que le moteur porte au plancher de six cents SMIC horaires ; les durées,
   que R. 173-3-2 arrête au 31 décembre de l'année d'effet et que le moteur compte à la
   date d'effet ; les majorations de points de 1952 à 1972 (R. 732-67), les rachats et
-  les conjoints collaborateurs, qu'il ne connaît pas ; et, pour qui est né avant 1953,
-  le partage entre régimes alignés de la part que la répartition leur laisse, que le
-  moteur leur donne à chacun entière.
+  les conjoints collaborateurs, qu'il ne connaît pas.
 sources:
   lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31
   a_relire:
-  - >-
-    Pour qui est né avant 1953, partager entre chacun des régimes alignés la part des
-    années que la première répartition de R. 173-3-2 leur laisse (II, a) : le moteur la
-    leur donne à chacun entière.
   - >-
     Lire le barème de points d'avant 1990 (article 1123 de l'ancien code rural et ses
     décrets) : les années d'avant 1990 entrent dans la moyenne par l'équivalent en points
@@ -233,6 +227,7 @@ code:
     alignés d'un ancien exploitant — régime général, salariés agricoles, indépendants —
     ne retiennent plus au salaire annuel moyen que la part des années que la première
     répartition leur laisse (`liquider.annees_des_regimes_alignes`,
-    `anneesDesRegimesAlignes`), là où vaut la réforme. Le test
+    `anneesDesRegimesAlignes`), là où vaut la réforme ; pour qui est né avant 1953, la
+    seconde répartition la partage entre eux (II, a). Le test
     `test_la_reforme_agricole_rend_l_exemple_de_la_msa` rejoue l'exemple de la caisse,
     des deux côtés.

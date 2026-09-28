@@ -42,6 +42,16 @@ export const REGIMES_ALIGNES_TETE = "regimes_alignes";
  */
 export const REGIME_DES_NON_SALARIES_AGRICOLES = "msa_non_salaries";
 /**
+ * Depuis les pensions prenant effet au 1er janvier 2004, le nombre d'années du
+ * salaire annuel moyen se partage entre les régimes alignés que la liquidation
+ * unique ne réunit pas (R. 173-4-3 ; circulaire Cnav n° 2004/29). Rang du
+ * mois, comme `LURA_DATE_EFFET`.
+ */
+export const REPARTITION_ENTRE_REGIMES_ALIGNES_DEPUIS = 2004 * 12 + 0;
+/** Les artisans et les commerçants n'y comptent que leurs années depuis 1973. */
+export const REGIMES_DES_ARTISANS_ET_COMMERCANTS = new Set(["cancava", "organic"]);
+export const ALIGNEMENT_DES_ARTISANS_ET_COMMERCANTS = 1973;
+/**
  * LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS : chacun compte et
  * liquide les services des deux autres (L. 5 et L. 11 du code des pensions,
  * articles 8 et 13 du décret n° 2003-1306, articles 4 et 10 du décret

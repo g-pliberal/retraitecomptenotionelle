@@ -6,21 +6,21 @@ intitule: >-
   départ exclue, plafond proratisé.
 etat: conforme
 etape: liquider_chaque_regime
-effet: Toute pension en annuités du privé.
+effet: >-
+  Toute pension en annuités du privé. Le polypensionné du régime général, des salariés
+  agricoles et des artisans et commerçants que la liquidation unique ne réunit pas — né
+  avant 1953, ou parti avant le 1er juillet 2017 — retient depuis 2004 dans chaque
+  régime la part des années que leurs durées lui donnent (R. 173-4-3), que le moteur
+  porte depuis le 28 septembre 2026 : il lui en donnait autant qu'un assuré d'un seul
+  régime, et sous-estimait son salaire moyen. Les deux exemples de la circulaire Cnav n°
+  2004/29 sont rendus. Les durées que le texte arrête au dernier jour du trimestre
+  civil précédant l'effet sont celles de la date d'effet.
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-09-28
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
     Relire la colonne de revalorisation à chaque 1er janvier (cnav_revalorisation_salaires.py).
-  - >-
-    R. 173-4-3, de 2004 à 2025 (LEGIARTI000022287439, LEGIARTI000038790394) : le
-    polypensionné du régime général, des salariés agricoles et des indépendants que la
-    liquidation unique ne réunit pas — né avant 1953, ou parti avant le 1er juillet
-    2017 — retient dans chaque régime le nombre d'années « multipli[é] par le rapport
-    entre la durée d'assurance accomplie au sein de ce régime et le total des durées »,
-    arrondi au plus proche sans descendre sous un ; le moteur lui en donne vingt-cinq
-    dans chacun. À porter.
   lectures:
   - type: circulaire_cnav
     reference: circulaire de revalorisation des salaires, colonne au 1er janvier
@@ -29,10 +29,45 @@ sources:
   - type: legifrance
     reference: R. 173-3-2 CSS, LEGIARTI000054059837
     date: 2026-09-01
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 173-4-3, rédactions du 15 février 2004
+      (LEGIARTI000006747869), du 28 janvier 2006 (LEGIARTI000006747870), du 8 mai 2010
+      (LEGIARTI000022287439) et du 8 juillet 2019 (LEGIARTI000038790394), jusqu'au 1er
+      janvier 2026 : « le nombre d'années retenu pour calculer ce salaire ou revenu est
+      déterminé, pour les pensions prenant effet postérieurement au 31 décembre 2003, en
+      multipliant le nombre d'années fixé dans le régime considéré [...] par le rapport
+      entre la durée d'assurance accomplie au sein de ce régime et le total des durées
+      d'assurance accomplies dans les régimes susvisés », « arrondi, pour chaque régime,
+      au nombre d'années le plus proche sans que ce nombre puisse être inférieur à 1 »,
+      et sans excéder le nombre de R. 351-29 et R. 351-29-1. Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2004/29 du 30 juin 2004, « Article R173-4-3 du code de la
+      sécurité sociale - Détermination du salaire annuel moyen des assurés ayant relevé
+      du régime général et des régimes d'assurance vieillesse des salariés agricoles et
+      des professions artisanales et commerciales » : les durées « se totalisent même
+      s'ils se superposent », celles des artisans et commerçants « à compter du 1er
+      janvier 1973 » ; « Années SAM maxi = 21 x 126 = 15,2 arrondi à 15 / 174 » pour un
+      assuré né en 1944 ; « 20 x 28 = 4,14 arrondi à 4 / 135 » pour une assurée née en
+      1943, qui n'a que trois années civiles au régime général et en retient trois
+    url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=CR_CN_2004029_30062004.aspx
+    date: 2026-09-28
 textes_a_rattacher:
 - reference: R. 351-29 CSS
 - reference: R. 173-3-2 CSS (nombre d'années, depuis le décret n° 2025-1409)
 - reference: R. 351-29-1 CSS (générations d'avant 1948)
+- id: LEGIARTI000006747869
+  reference: >-
+    code de la sécurité sociale, R. 173-4-3, rédaction du 15 février 2004 : le partage
+    des années entre régimes alignés
+- id: LEGIARTI000006747870
+  reference: code de la sécurité sociale, R. 173-4-3, rédaction du 28 janvier 2006
+- id: LEGIARTI000022287439
+  reference: code de la sécurité sociale, R. 173-4-3, rédaction du 8 mai 2010
+- id: LEGIARTI000038790394
+  reference: code de la sécurité sociale, R. 173-4-3, rédaction du 8 juillet 2019
 exemples:
 - sp_f21552_taux_plein_170
 code:
@@ -42,7 +77,11 @@ code:
     `salaire_reference_par_generation` : le nombre d'années retenues au salaire annuel
     moyen est lu dans `legislation/annees_salaire_reference.csv` à l'ANNÉE DE NAISSANCE
     : dix à vingt-cinq années, une par génération, de 1934 à 1948 (loi du 22 juillet 1993).
-    Ne vaut que pour un `salaire_reference` en meilleures années. Depuis 2026, l'assuré
-    qui a aussi été exploitant agricole n'en retient que la part que la première
-    répartition de R. 173-3-2 laisse aux régimes alignés
-    (`liquider.annees_des_regimes_alignes`, fiche pension_non_salaries_agricoles_2026).
+    Ne vaut que pour un `salaire_reference` en meilleures années.
+    `liquider.annees_des_regimes_alignes` (`anneesDesRegimesAlignes`) partage ce nombre
+    quand d'autres régimes le partagent : depuis 2004, entre régimes alignés que la
+    liquidation unique ne réunit pas, au prorata de leurs durées, celles des artisans et
+    commerçants depuis 1973 (R. 173-4-3, `liquider.annees_au_prorata`) ; depuis 2026,
+    avec les exploitants agricoles, puis, pour qui est né avant 1953, entre régimes
+    alignés (R. 173-3-2, fiche pension_non_salaries_agricoles_2026). Le détail de la
+    pension dit le nombre retenu et l'article.

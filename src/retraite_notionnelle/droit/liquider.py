@@ -595,7 +595,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         # Faute de ce montant, la fiche retombait sur la moyenne des
         # revenus, c'est-à-dire sur un taux de remplacement de 100 %.
         plafonner = periode.assiette in ("plafonnee", "tranche_1", "tranche_a")
-        annees_alignees: int | None = None
+        annees_alignees: tuple[int, str] | None = None
         if periode.pension_forfaitaire_annuelle is not None:
             salaire_reference = (
                 periode.pension_forfaitaire_annuelle
@@ -622,7 +622,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             salaire_reference = salaire_de_reference(moteur, 
                 code, carriere, periode, annee_liquidation, plafonner,
                 carriere.annee_naissance, avpf, membres,
-                enfants_majores=enfants_majores, annees=annees_alignees,
+                enfants_majores=enfants_majores,
+                annees=None if annees_alignees is None else annees_alignees[0],
             )
         requis, fiabilite_duree = ouvrir.duree_requise(moteur, periode, carriere)
         if fiabilite_duree is not None:
@@ -886,7 +887,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 + ("" if duree_non_majoree is None else
                    f", {duree_non_majoree} trimestres majorés après l'âge du taux plein")
                 + ("" if annees_alignees is None else
-                   f", salaire des {annees_alignees} meilleures années (R. 173-3-2)")
+                   f", {annees_alignees[0]} années au plus au salaire annuel moyen "
+                   f"({annees_alignees[1]})")
                 # La succession est DITE : sans elle, le lecteur cherche
                 # la ligne de la CANCAVA et ne la trouve pas.
                 + ("" if len(membres) == 1 else
@@ -968,8 +970,8 @@ def durees_des_non_salaries(carriere: Carriere, durees,
             avant + enfants if avant > 0 else 0)
 
 
-def premiere_repartition(carriere: Carriere, releve: Releve, code: str, total: int,
-                         duree_b: int, duree_1: int) -> dict[str, int]:
+def premiere_repartition(moteur, carriere: Carriere, releve: Releve, code: str,
+                         total: int, duree_b: int, duree_1: int) -> dict[str, int]:
     """La première répartition de R. 173-3-2 : ``total`` années entre les
     régimes alignés, ensemble (clé ``alignes``), et celui des non-salariés
     agricoles (clé ``code``), au prorata de leurs durées.
@@ -981,7 +983,8 @@ def premiere_repartition(carriere: Carriere, releve: Releve, code: str, total: i
     durees = releve.durees
     alignes = tuple(autre for autre in durees.trimestres_par_regime
                     if autre in coordonner.REGIMES_ALIGNES)
-    groupes_alignes = {releve.groupes.get(autre, (autre,))[0] for autre in alignes}
+    groupes_alignes = {coordonner.tete_de_succession(moteur, autre, carriere.annee_liquidation)
+                       for autre in alignes}
     return repartir_les_annees(
         total,
         {"alignes": durees.cumul_plafonne("assurance", alignes) if alignes else 0,
@@ -995,35 +998,108 @@ def premiere_repartition(carriere: Carriere, releve: Releve, code: str, total: i
     )
 
 
-def annees_des_regimes_alignes(moteur, carriere: Carriere, releve: Releve,
-                               membres: tuple[str, ...], total: int) -> int | None:
-    """Les années du salaire annuel moyen d'un régime aligné quand l'assuré a
-    aussi été exploitant agricole, ou ``None`` si rien ne les partage.
+def duree_du_regime_aligne(carriere: Carriere, durees,
+                           membres: tuple[str, ...]) -> int:
+    """La durée d'un régime aligné que les répartitions comparent : ses
+    trimestres année par année, bornés aux trimestres civils de l'année, plus
+    ceux des enfants ; pour les artisans et les commerçants, les seules années
+    alignées, depuis 1973 (circulaire Cnav n° 2004/29, point 2122)."""
+    sommes: dict[int, int] = {}
+    for membre in membres:
+        for annee, n in durees.par_annee["assurance"].get(membre, {}).items():
+            if (membre in coordonner.REGIMES_DES_ARTISANS_ET_COMMERCANTS
+                    and annee < coordonner.ALIGNEMENT_DES_ARTISANS_ET_COMMERCANTS):
+                continue
+            sommes[annee] = sommes.get(annee, 0) + n
+    return (sum(min(somme, carriere.plafond_trimestres(annee))
+                for annee, somme in sommes.items())
+            + sum(durees.hors_annee["assurance"].get(membre, 0) for membre in membres))
 
-    Depuis 2026, « le nombre d'années retenu dans les régimes mentionnés à
-    l'article L. 173-1-2 et le régime des personnes non salariées des
-    professions agricoles [...] fait l'objet d'une répartition au prorata des
-    durées d'assurance » (R. 173-3-2, II) : le régime général, les salariés
-    agricoles et les indépendants ne gardent que la part des vingt-cinq années
-    que la première répartition leur laisse — six sur vingt-cinq, dans
-    l'exemple de la MSA, pour dix années de salarié agricole contre trente-trois
-    d'exploitant. La répartition vaut où vaut la réforme agricole : la période
-    du régime des exploitants qui la porte le dit. Pour qui est né avant 1953,
-    le texte partage encore ces années entre régimes alignés : le moteur leur
-    laisse à chacun la part de l'ensemble.
+
+def annees_au_prorata(total: int, duree: int, somme: int) -> int:
+    """R. 173-4-3 : ``total`` années au prorata de ``duree`` sur ``somme``,
+    « arrondi, pour chaque régime, au nombre d'années le plus proche sans que ce
+    nombre puisse être inférieur à 1. La fraction d'année égale à 0,5 est
+    comptée pour une année », et sans dépasser ``total``. En entiers."""
+    if somme <= 0:
+        return total
+    return min(total, max(1, (2 * total * duree + somme) // (2 * somme)))
+
+
+def annees_des_regimes_alignes(moteur, carriere: Carriere, releve: Releve,
+                               membres: tuple[str, ...],
+                               total: int) -> tuple[int, str] | None:
+    """Le nombre d'années que retient le salaire annuel moyen d'un régime
+    aligné quand d'autres régimes les partagent, et l'article qui le dit ; ou
+    ``None`` si rien ne les partage.
+
+    **Entre régimes alignés, depuis 2004** : « le nombre d'années retenu pour
+    calculer ce salaire ou revenu est déterminé [...] en multipliant le nombre
+    d'années fixé dans le régime considéré [...] par le rapport entre la durée
+    d'assurance accomplie au sein de ce régime et le total des durées
+    d'assurance accomplies dans les régimes susvisés », arrondi au plus proche
+    sans descendre sous un ni dépasser le nombre de départ (R. 173-4-3). Le
+    régime général, les salariés agricoles et les artisans et commerçants — le
+    RSI depuis 2006 — que la liquidation unique ne réunit pas : l'assuré né
+    avant 1953, ou parti avant le 1er juillet 2017. Un assuré né en 1944, avec
+    126 trimestres au régime général et 48 chez les artisans, retient 15
+    années sur 21 (circulaire Cnav n° 2004/29).
+
+    **Avec les exploitants agricoles, depuis 2026** : le nombre d'années « fait
+    l'objet d'une répartition au prorata des durées d'assurance » entre
+    l'ensemble des régimes alignés et celui des non-salariés agricoles, puis,
+    pour qui est né avant 1953, entre chacun des régimes alignés, les
+    nombres « arrondis à chaque étape à l'entier non nul le plus proche », les
+    années surnuméraires retranchées à la plus longue durée (R. 173-3-2, II) :
+    six sur vingt-cinq, dans l'exemple de la MSA, pour dix années de salarié
+    agricole contre trente-trois d'exploitant. La répartition vaut où vaut la
+    réforme agricole : la période du régime des exploitants qui la porte le dit.
     """
-    exploitants = coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
+    if coordonner.REGIMES_ALIGNES.isdisjoint(membres):
+        return None
     durees = releve.durees
-    if (coordonner.REGIMES_ALIGNES.isdisjoint(membres)
-            or durees.trimestres_par_regime.get(exploitants, 0) <= 0
-            or exploitants not in moteur.catalogue):
-        return None
-    periode = moteur.catalogue[exploitants].periode(carriere.annee_liquidation)
-    if periode is None or not periode.meilleures_annees_non_salaries:
-        return None
-    duree_1, _, duree_b = durees_des_non_salaries(carriere, durees, exploitants)
-    return premiere_repartition(
-        carriere, releve, exploitants, total, duree_b, duree_1).get("alignes")
+    exploitants = coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
+    periode = (moteur.catalogue[exploitants].periode(carriere.annee_liquidation)
+               if exploitants in moteur.catalogue else None)
+    reforme = periode is not None and periode.meilleures_annees_non_salaries
+    part: int | None = total
+    article: str | None = None
+    if reforme and durees.trimestres_par_regime.get(exploitants, 0) > 0:
+        duree_1, _, duree_b = durees_des_non_salaries(carriere, durees, exploitants)
+        part = premiere_repartition(
+            moteur, carriere, releve, exploitants, total, duree_b, duree_1).get("alignes")
+        if part is None:
+            return None
+        article = "R. 173-3-2"
+    # Chaque régime aligné sa part, hors de la liquidation unique.
+    if (not coordonner.lura_applicable(carriere)
+            and carriere.date_liquidation.rang
+            >= coordonner.REPARTITION_ENTRE_REGIMES_ALIGNES_DEPUIS.rang):
+        # Un régime, et non un nom de caisse : la CANCAVA et le RSI qui lui
+        # succède sont un seul régime, par leur tête de succession, que la
+        # liquidation les réunisse ou non.
+        groupes: dict[str, list[str]] = {}
+        for autre in durees.trimestres_par_regime:
+            if autre in coordonner.REGIMES_ALIGNES:
+                groupes.setdefault(coordonner.tete_de_succession(
+                    moteur, autre, carriere.annee_liquidation), []).append(autre)
+        durees_des_groupes = {
+            tete: duree for tete, duree in (
+                (tete, duree_du_regime_aligne(carriere, durees, tuple(groupe)))
+                for tete, groupe in groupes.items())
+            if duree > 0}
+        propre = coordonner.tete_de_succession(
+            moteur, membres[0], carriere.annee_liquidation)
+        if len(durees_des_groupes) >= 2 and propre in durees_des_groupes:
+            if reforme:
+                return (repartir_les_annees(
+                    part, durees_des_groupes,
+                    priorite=("regime_general", "msa_salaries"),
+                )[propre], "R. 173-3-2")
+            return (annees_au_prorata(total, durees_des_groupes[propre],
+                                      sum(durees_des_groupes.values())),
+                    "R. 173-4-3")
+    return None if article is None else (part, article)
 
 
 def moyenne_des_meilleures_annees(valeurs: list[float], annees: int) -> int:
@@ -1100,7 +1176,7 @@ def pension_des_non_salaries_agricoles(
     enfants_majores = carriere.nombre_enfants if durees.enfants is not None else 0
     total = nombre_d_annees_retenues(
         moteur, periode, carriere, carriere.annee_naissance, enfants_majores)
-    premiere = premiere_repartition(carriere, releve, code, total, duree_b, duree_1)
+    premiere = premiere_repartition(moteur, carriere, releve, code, total, duree_b, duree_1)
     seconde = repartir_les_annees(
         premiere.get(code, 0), {"avant": duree_b, "apres": duree_1},
         priorite=("avant", "apres"),

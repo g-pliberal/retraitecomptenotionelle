@@ -1352,10 +1352,7 @@ meilleures. Le revenu des années cotisées au minimum, que la loi déduit des
 cotisations acquittées, est porté au plancher de six cents SMIC horaires. Les
 durées que `R. 173-3-2` arrête au 31 décembre de l'année d'effet sont celles de
 la date d'effet. Les majorations de points de 1952 à 1972, les rachats et les
-conjoints collaborateurs manquent, comme avant la réforme. Et, pour qui est né
-avant 1953, la part des années que la répartition laisse aux régimes alignés
-n'est pas partagée entre eux : chacun la reçoit entière, et son salaire moyen
-est **sous-estimé**, la moyenne portant sur plus d'années.
+conjoints collaborateurs manquent, comme avant la réforme.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
 

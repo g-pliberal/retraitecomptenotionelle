@@ -4395,7 +4395,7 @@ def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
         if p.regime == "msa_salaries")
     assert salarie.detail == (
         "SR 27,311.21 € × taux 51.250% × 40/170, "
-        "salaire des 6 meilleures années (R. 173-3-2)")
+        "6 années au plus au salaire annuel moyen (R. 173-3-2)")
     # Avant 2026, rien ne se partage : ses dix années.
     avant = simulateur.carriere_parcours(
         annee_naissance=1960, sexe="H", age_liquidation=64,
@@ -4404,6 +4404,41 @@ def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
     assert "R. 173-3-2" not in next(
         p for p in simulateur.scenario_actuel.calculer(avant).pensions_par_regime
         if p.regime == "msa_salaries").detail
+
+
+def test_les_regimes_alignes_hors_liquidation_unique_se_partagent_les_annees(simulateur):
+    """R. 173-4-3, depuis les pensions de 2004 : le polypensionné du régime
+    général, des salariés agricoles et des artisans et commerçants que la
+    liquidation unique ne réunit pas retient dans chaque régime le nombre
+    d'années « multipli[é] par le rapport entre la durée d'assurance accomplie
+    au sein de ce régime et le total des durées », arrondi au plus proche sans
+    descendre sous un. Les deux exemples de la circulaire Cnav n° 2004/29 : né
+    en 1944, 21 années, 126 trimestres au régime général et 48 chez les
+    artisans, « 21 x 126 / 174 = 15,2 arrondi à 15 » ; née en 1943, 20 années,
+    28 trimestres contre 107 à l'ORGANIC, « 4,14 arrondi à 4 ».
+    """
+    assert liquider.annees_au_prorata(21, 126, 174) == 15
+    assert liquider.annees_au_prorata(20, 28, 135) == 4
+    assert liquider.annees_au_prorata(25, 1, 400) == 1
+    assert liquider.annees_au_prorata(25, 400, 400) == 25
+
+    def details(naissance, second, age_second, age):
+        carriere = simulateur.carriere_parcours(
+            annee_naissance=naissance, sexe="H", age_liquidation=age,
+            metiers=[Metier("salarie_prive_non_cadre", 20), Metier(second, age_second)])
+        return {p.regime: p.detail for p in
+                simulateur.scenario_actuel.calculer(carriere).pensions_par_regime}
+
+    # Né en 1944, parti en 2008 : 128 trimestres au régime général et 48 chez
+    # les artisans, quinze années et six.
+    artisan = details(1944, "artisan", 52, 64)
+    assert artisan["regime_general"].endswith(
+        "15 années au plus au salaire annuel moyen (R. 173-4-3)")
+    assert "6 années au plus au salaire annuel moyen (R. 173-4-3)" in artisan["rsi"]
+    # Né en 1960, parti en 2022 : la liquidation unique ne fait qu'un régime.
+    assert "R. 173-4-3" not in " ".join(details(1960, "artisan", 45, 62).values())
+    # Parti en 2003 : la règle n'est pas encore née.
+    assert "R. 173-4-3" not in " ".join(details(1941, "artisan", 45, 62).values())
 
 
 def test_la_repartition_des_annees_suit_r_173_3_2():

@@ -60,6 +60,16 @@ REGIMES_ALIGNES_TETE = "regimes_alignes"
 #: R. 173-3-2 range avec les régimes alignés pour partager les vingt-cinq
 #: années du revenu moyen, depuis 2026.
 REGIME_DES_NON_SALARIES_AGRICOLES = "msa_non_salaries"
+#: Depuis les pensions prenant effet au 1er janvier 2004, le nombre d'années
+#: du salaire annuel moyen se partage entre les régimes alignés que la
+#: liquidation unique ne réunit pas, au prorata de leurs durées (R. 173-4-3,
+#: décret n° 2004-144 du 13 février 2004 ; circulaire Cnav n° 2004/29).
+REPARTITION_ENTRE_REGIMES_ALIGNES_DEPUIS = DateMois(2004, 1)
+#: Les artisans et les commerçants n'y comptent que leurs années alignées,
+#: celles « accomplies à compter du 1er janvier 1973 » (même circulaire,
+#: point 2122).
+REGIMES_DES_ARTISANS_ET_COMMERCANTS = frozenset({"cancava", "organic"})
+ALIGNEMENT_DES_ARTISANS_ET_COMMERCANTS = 1973
 #: LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS. Chacun compte
 #: et liquide les services des deux autres — L. 5 et L. 11 du code des
 #: pensions, articles 8 et 13 du décret n° 2003-1306, articles 4 et 10 du
