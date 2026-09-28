@@ -314,6 +314,24 @@ def test_une_option_par_defaut_ecrite_ou_non_est_le_meme_cout(monkeypatch, memoi
         memoire_isolee.cout(Parametres(), assiete=False)
 
 
+def test_le_contexte_du_site_lit_ses_couts_dans_la_memoire(monkeypatch, memoire_isolee):
+    """La page Coût, les affirmations et le paquet lisent le coût du contexte :
+    c'est celui que la mémoire garde, sous les règles du contexte, dérivé ou non."""
+    from retraite_notionnelle.config import Parametres
+    from retraite_notionnelle.contexte import Contexte
+
+    demandes = []
+    monkeypatch.setattr(memoire_isolee, "cout", lambda p: demandes.append(("cout", p)) or "c")
+    monkeypatch.setattr(memoire_isolee, "avantages",
+                        lambda p: demandes.append(("avantages", p)) or "a")
+    contexte = Contexte()
+    assert (contexte.cout(), contexte.avantages(), contexte.cout()) == ("c", "a", "c")
+    derive = Parametres(taux_cotisation_liberal=0.2)
+    assert contexte.pour(derive).cout() == "c"
+    assert demandes == [("cout", contexte.base), ("avantages", contexte.base),
+                        ("cout", derive)]
+
+
 # -- le précalcul des chiffres ancrés -------------------------------------------
 
 

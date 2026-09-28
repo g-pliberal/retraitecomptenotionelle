@@ -14,11 +14,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
 
-from .avantages import calculer_avantages, charger_avantages
+from . import memoire
+from .avantages import charger_avantages
 from .calendrier import MOIS_PAR_AN, DateMois
 from .carriere import Affiliations, Metier, formater_borne, salaire_moyen_annuel
 from .config import Parametres
-from .cout import calculer_cout
 from .donnees.assiette import AssietteActivite
 from .donnees.bilan import BilanFige, charger_bilan
 from .donnees.chargement import charger_periodes_non_travaillees
@@ -236,14 +236,16 @@ class Contexte:
             "bilan", lambda: charger_bilan(self.base.racine_donnees))
 
     def cout(self):
-        """Le coût agrégé de tous les systèmes — deux secondes de calcul, une fois.
+        """Le coût agrégé de tous les systèmes — vingt secondes de calcul, une fois.
 
         Sous les règles de ``base``, et non sous celles par défaut : c'est ce
-        qui fait que la page Coût chiffre ce que le simulateur calcule.
+        qui fait que la page Coût chiffre ce que le simulateur calcule. C'est un
+        calcul gardé (``memoire.py``), que les tests et les scripts partagent :
+        la mémoire le fait sur un simulateur et des données qu'elle bâtit des
+        mêmes paramètres, ceux que ce contexte chargerait, et les comptes du COR
+        du même scénario de projection.
         """
-        return self._agregat("cout", lambda: calculer_cout(
-            self.simulateur(), self.depenses(), self.population(),
-            self.comptes(), assiette=self.assiette()))
+        return self._agregat("cout", lambda: memoire.cout(self.base))
 
     def inventaire_avantages(self):
         """L'inventaire des avantages non contributifs — une donnée, pas un calcul."""
@@ -257,9 +259,9 @@ class Contexte:
             "frontiere", lambda: charger_frontiere(self.base.racine_donnees))
 
     def avantages(self):
-        """Ce que les avantages non contributifs coûtent — quatre secondes, une fois."""
-        return self._agregat("avantages", lambda: calculer_avantages(
-            self.simulateur(), self.depenses(), self.population()))
+        """Ce que les avantages non contributifs coûtent — un calcul gardé, lui
+        aussi, et une fois."""
+        return self._agregat("avantages", lambda: memoire.avantages(self.base))
 
     def echelle(self, saisie: Saisie) -> Echelle:
         """L'échelle des salaires de l'année courante, pour cette saisie.

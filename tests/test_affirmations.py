@@ -54,9 +54,9 @@ from retraite_notionnelle.config import (
     Parametres,
     RevalorisationStock,
 )
+from retraite_notionnelle import memoire
 from retraite_notionnelle.cout import (
     CONVENTION_RAPPORT,
-    calculer_cout,
     financer,
 )
 from retraite_notionnelle.donnees.bilan import charger_bilan
@@ -249,9 +249,7 @@ class Modele:
     @cached_property
     def cout_convention_rapport(self):
         """Le même coût sous l'autre convention de recette de la proposition."""
-        c = self.contexte
-        return calculer_cout(self.sim, c.depenses(), c.population(), c.comptes(),
-                             assiette=c.assiette(), convention_recette=CONVENTION_RAPPORT)
+        return memoire.cout(self.base, convention_recette=CONVENTION_RAPPORT)
 
     @cached_property
     def grille_cas_types(self):

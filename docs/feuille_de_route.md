@@ -3491,3 +3491,31 @@ document qu'il produit est le même par les deux chemins ;
   pour les fichiers qui ont une fixture lourde) ;
 - sur GitHub, où chaque exécution part sans mémoire : la garder d'une
   exécution à l'autre (`actions/cache`, sous l'empreinte des sources).
+
+**Fait, le 28 septembre : le contexte du site passe par la mémoire.**
+`Contexte.cout()` et `Contexte.avantages()` — ce que lisent, en Python, les
+tests des pages (`test_web.py`), les affirmations (`test_affirmations.py`), le
+portage du coût (`test_cout.py`) et le paquet (`construire_donnees.py`) —
+demandent leur calcul à `memoire.cout(self.base)` et
+`memoire.avantages(self.base)`, qui bâtissent le même simulateur et les mêmes
+données, avec les comptes du COR du scénario de projection des règles, comme
+le contexte ; les affirmations y lisent aussi leur coût sous la convention
+« rapport ». Avant cela, les quatre fichiers de tests qui remplacent une
+fonction du modèle à la main, sans `monkeypatch`, ont été relus :
+`test_affirmations.py` et `test_capitalisation.py` le font pour une carrière
+ou un pilier, `test_droit.py` et `test_liquidation.py` pour épier, sans les
+changer, les simulations d'une saisie — comme `scripts/budget_calcul.py` ;
+aucun ne lit un coût sous son remplacement. Le coût que le site calcule en
+JavaScript, dans node, ne passe pas par la mémoire.
+
+**Mesuré.** La suite complète passe de 3 min 57 s à 3 min 9 s quand la
+mémoire sert, et de 6 min 17 s à 5 min 20 s quand elle est vide ;
+`regenerer.py --verifier`, de 1 min 55 s à 1 min 33 s, le paquet s'y vérifiant
+en 24 s au lieu de 44 s. Depuis le début de l'action : la suite, de 7 min 56 s
+à 3 min 9 s ; la régénération vérifiée, de 4 min 41 s à 1 min 33 s.
+
+**Ce qui reste**, par ordre de gain sur la suite chaude : les résultats du
+régime unique et du stock à l'âge légal, calculés sous leur contexte (58 s et
+42 s de mise en place), à garder comme le coût prospectif ; les témoins,
+37 s, et le portage que node rejoue, 27 s ; puis la répartition des tests par
+xdist et la mémoire sur GitHub, comme dit plus haut.
