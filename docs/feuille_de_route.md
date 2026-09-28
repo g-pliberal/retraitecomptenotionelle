@@ -2901,6 +2901,16 @@ la règle la montre, 40 % des points Agirc d'un cadre de 1955 parti à 62 ans à
 une pension en deux fois ; et les liquidations de 1991 à 2003, où le moteur
 applique la règle de 2003 sans avoir lu l'accord de l'ASF.
 
+**Puis les artisans et commerçants**, que la durée majorée laissait de côté
+quand ils sont liquidés à part des salariés : D. 634-5 la leur donne depuis le
+1er janvier 1990, dans chacune de ses rédactions jusqu'à celle de 2023. Les
+périodes 1983-1993 de la CANCAVA et de l'ORGANIC sont coupées à cette date ;
+les suivantes, et celles du RSI, portent les deux interrupteurs. Aucun témoin
+ne bougeait ; un artisan né pour la règle, parti à 68 ans en 2008 avec 132
+trimestres, en a 150. Restent : leurs années d'avant 1973, que D. 634-5 exclut
+de la base de la majoration et que le moteur liquide comme les suivantes ; et
+1984 à 1989, dont le texte n'est pas lu.
+
 ### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
 
 **Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
