@@ -195,9 +195,20 @@ class Resultat:
     cout: C.Cout | None = field(default=None, repr=False)
 
 
-def calculer(variante: str, parametres: Parametres, depenses: DepensesRetraite,
-             population: Population, comptes: ComptesRetraite,
-             assiette: AssietteActivite) -> Resultat:
+def calculer(variante: str, parametres: Parametres) -> Resultat:
+    """Les lectures d'une variante, sur les données du dépôt.
+
+    Un calcul gardé (``retraite_notionnelle/memoire.py``) : la mémoire se tait
+    sous le contexte, qui s'ouvre donc DANS le calcul que la clé nomme.
+    """
+    return memoire.memoriser_pour(parametres, ("stock_age_legal", variante, parametres),
+                                  lambda: _calculer(variante, parametres))
+
+
+def _calculer(variante: str, parametres: Parametres) -> Resultat:
+    racine = parametres.racine_donnees
+    depenses, population = DepensesRetraite(racine), Population(racine)
+    comptes, assiette = ComptesRetraite(racine), AssietteActivite(racine)
     simulateur = Simulateur(parametres)
     with StockALAgeLegal(variante, simulateur) as stock:
         cout = C.calculer_cout(simulateur, depenses, population, comptes, assiette=assiette)
@@ -278,12 +289,9 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--json", type=Path)
     arguments = analyseur.parse_args(argv)
     parametres = Parametres()
-    racine = parametres.racine_donnees
-    donnees = (DepensesRetraite(racine), Population(racine), ComptesRetraite(racine),
-               AssietteActivite(racine))
     resultats = {}
     for variante in ["reference", *[v for v in arguments.variantes if v != "reference"]]:
-        resultats[variante] = calculer(variante, parametres, *donnees)
+        resultats[variante] = calculer(variante, parametres)
         print(f"{variante}: {resultats[variante].touches} couples touchés", file=sys.stderr)
     print(tableau(resultats))
     if arguments.json:

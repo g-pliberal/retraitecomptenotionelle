@@ -11,10 +11,6 @@ import pytest
 from retraite_notionnelle import cout as C
 from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.donnees.assiette import AssietteActivite
-from retraite_notionnelle.donnees.depenses import DepensesRetraite
-from retraite_notionnelle.donnees.equilibre import ComptesRetraite
-from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.scenarios.notionnel import ScenarioNotionnel
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -23,23 +19,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import stock_age_legal  # noqa: E402
 
 PARAMETRES = Parametres()
-RACINE = PARAMETRES.racine_donnees
 
 
 @pytest.fixture(scope="module")
-def donnees():
-    return (DepensesRetraite(RACINE), Population(RACINE), ComptesRetraite(RACINE),
-            AssietteActivite(RACINE))
+def reference():
+    return stock_age_legal.calculer("reference", PARAMETRES)
 
 
 @pytest.fixture(scope="module")
-def reference(donnees):
-    return stock_age_legal.calculer("reference", PARAMETRES, *donnees)
-
-
-@pytest.fixture(scope="module")
-def droit_commun(donnees):
-    return stock_age_legal.calculer("droit_commun", PARAMETRES, *donnees)
+def droit_commun():
+    return stock_age_legal.calculer("droit_commun", PARAMETRES)
 
 
 def test_la_variante_de_reference_est_la_page(reference):

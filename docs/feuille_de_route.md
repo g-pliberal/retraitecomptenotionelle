@@ -3519,3 +3519,30 @@ régime unique et du stock à l'âge légal, calculés sous leur contexte (58 s 
 42 s de mise en place), à garder comme le coût prospectif ; les témoins,
 37 s, et le portage que node rejoue, 27 s ; puis la répartition des tests par
 xdist et la mémoire sur GitHub, comme dit plus haut.
+
+**Fait, le 28 septembre : le régime unique et le stock à l'âge légal gardent
+leurs résultats.** `solde_fusion.calculer(hypothese, parametres, …)` et
+`stock_age_legal.calculer(variante, parametres)` ne prennent plus que leurs
+réglages et les paramètres, bâtissent eux-mêmes simulateur et données, et
+rendent un calcul gardé : le contexte qui remplace les fonctions du modèle
+s'ouvre DANS le calcul que la clé nomme — l'hypothèse ou la variante, les
+paramètres, les conventions —, comme pour le coût prospectif. Les résultats
+relus du disque sont égaux, au bit près, à leur calcul direct, lectures,
+pensions et couples touchés compris ; leurs tests passent de 95 s à 3 s quand
+la mémoire sert.
+
+**Mesuré.** Les deux mises en place disparaissent de la suite chaude, soit une
+centaine de secondes de calcul ; la suite, elle, prend 3 min 13 s, puis
+2 min 36 s au passage suivant, sans rien changer : son temps tient désormais à
+la répartition des tests entre les processus plus qu'à leur calcul. Sur ce
+dernier passage, les tests calculent 519 s en tout, dont 203 s pour
+`test_web.py` — les témoins (41 s), le portage que node rejoue (27 s), le
+paquet (24 s) —, 75 s pour `test_cout.py` et 44 s pour `test_prose.py`.
+
+**Ce qui reste**, par ordre de gain : `test_web.py` et ce que node y
+recalcule ; dans `test_cout.py`, le coût sous l'ancienne convention des
+cotisants (20 s, sur un simulateur retouché, que la mémoire ne sait pas
+décrire) et le refus d'une pondération inconnue, qui ne tombe qu'après 17 s
+de calcul ; les grilles de départs de `test_age_conjoncturel.py` et
+`test_age_depart_csp.py` (19 et 17 s de mise en place), à garder comme les
+recherches d'âges ; puis la répartition des tests et la mémoire sur GitHub.

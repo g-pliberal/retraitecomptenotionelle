@@ -354,12 +354,27 @@ class Resultat:
     cout: C.Cout | None = None
 
 
-def calculer(hypothese: Hypothese, simulateur: Simulateur,
-             depenses: DepensesRetraite, population: Population,
-             comptes: ComptesRetraite, assiette: AssietteActivite,
+def calculer(hypothese: Hypothese, parametres: Parametres,
              conventions: tuple[str, ...] = CONVENTIONS,
              annee_lecture: int = 2030) -> Resultat:
-    """Le solde de chaque système sous ``hypothese``, convention par convention."""
+    """Le solde de chaque système sous ``hypothese``, convention par convention,
+    sur les données du dépôt.
+
+    Un calcul gardé (``retraite_notionnelle/memoire.py``) : la mémoire se tait
+    sous le contexte, qui s'ouvre donc DANS le calcul que la clé nomme.
+    """
+    conventions = tuple(conventions)
+    return memoire.memoriser_pour(
+        parametres, ("solde_fusion", hypothese, parametres, conventions, annee_lecture),
+        lambda: _calculer(hypothese, parametres, conventions, annee_lecture))
+
+
+def _calculer(hypothese: Hypothese, parametres: Parametres,
+              conventions: tuple[str, ...], annee_lecture: int) -> Resultat:
+    racine = parametres.racine_donnees
+    depenses, population = DepensesRetraite(racine), Population(racine)
+    comptes, assiette = ComptesRetraite(racine), AssietteActivite(racine)
+    simulateur = Simulateur(parametres)
     with RegimeUniqueVariante(hypothese) as variante:
         cout = C.calculer_cout(simulateur, depenses, population, comptes,
                                assiette=assiette)
@@ -461,16 +476,11 @@ def main(argv: list[str] | None = None) -> int:
     conventions = CONVENTIONS if arguments.convention == "les-deux" else (arguments.convention,)
 
     parametres = Parametres()
-    racine = parametres.racine_donnees
-    simulateur = Simulateur(parametres)
-    depenses, population = DepensesRetraite(racine), Population(racine)
-    comptes, assiette = ComptesRetraite(racine), AssietteActivite(racine)
-    toutes = hypotheses(simulateur.catalogue, parametres.annee_bascule)
+    toutes = hypotheses(Simulateur(parametres).catalogue, parametres.annee_bascule)
 
     resultats = []
     for lettre in arguments.hypotheses:
-        resultat = calculer(toutes[lettre], Simulateur(parametres), depenses,
-                            population, comptes, assiette, conventions)
+        resultat = calculer(toutes[lettre], parametres, conventions)
         resultats.append(resultat)
         for convention in conventions:
             print(tableau(resultat, convention))

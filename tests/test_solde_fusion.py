@@ -10,24 +10,12 @@ import pytest
 from retraite_notionnelle import cout as C
 from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.donnees.assiette import AssietteActivite
-from retraite_notionnelle.donnees.depenses import DepensesRetraite
-from retraite_notionnelle.donnees.equilibre import ComptesRetraite
-from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.simulateur import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 import solde_fusion  # noqa: E402
-
-RACINE = Parametres().racine_donnees
-
-
-@pytest.fixture(scope="module")
-def donnees():
-    return (DepensesRetraite(RACINE), Population(RACINE), ComptesRetraite(RACINE),
-            AssietteActivite(RACINE))
 
 
 @pytest.fixture(scope="module")
@@ -43,11 +31,9 @@ def hypotheses():
 
 
 @pytest.fixture(scope="module")
-def resultat_a(donnees, hypotheses):
-    depenses, population, comptes, assiette = donnees
-    simulateur, toutes = hypotheses
-    return solde_fusion.calculer(toutes["A"], Simulateur(Parametres()), depenses,
-                                 population, comptes, assiette)
+def resultat_a(hypotheses):
+    _, toutes = hypotheses
+    return solde_fusion.calculer(toutes["A"], Parametres())
 
 
 def test_le_bareme_par_tranches_se_lit_tranche_par_tranche(hypotheses):
@@ -138,11 +124,9 @@ def test_le_contexte_rend_ses_attributs(hypotheses):
 
 
 @pytest.fixture(scope="module")
-def resultats_c_d(donnees, hypotheses):
-    depenses, population, comptes, assiette = donnees
+def resultats_c_d(hypotheses):
     _, toutes = hypotheses
-    return {nom: solde_fusion.calculer(toutes[nom], Simulateur(Parametres()), depenses,
-                                       population, comptes, assiette,
+    return {nom: solde_fusion.calculer(toutes[nom], Parametres(),
                                        conventions=(C.CONVENTION_ASSIETTE,))
             for nom in ("C", "D")}
 
