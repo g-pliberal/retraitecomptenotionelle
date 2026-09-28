@@ -21,3 +21,7 @@ data/brut/*
 # (le hook les inscrit aussi dans .git/info/exclude, qui ne se clone pas)
 .impeccable/hook.cache.json
 .impeccable/config.local.json
+
+# La mémoire des calculs lourds des chiffres ancrés (scripts/mesures_prose.py),
+# propre à la machine : un dossier par empreinte des sources.
+.cache/

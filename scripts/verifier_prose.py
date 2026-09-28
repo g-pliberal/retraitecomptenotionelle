@@ -80,6 +80,7 @@ import re
 import subprocess
 import sys
 import unicodedata
+from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -373,10 +374,31 @@ def _charge(argument: str):
         if not reuni:
             raise ValueError(f"« {cle} » ne rend rien dans {chemin}")
         return reuni
-    texte = (RACINE / chemin).read_text(encoding="utf-8")
-    donnees = json.loads(texte) if chemin.endswith(".json") \
-        else yaml.safe_load(texte)
+    donnees = _analyse(chemin)
     return _descendre(donnees, cle, chemin) if cle else donnees
+
+
+#: Le chargeur C de libyaml quand il est là, comme pour le modèle
+#: (``donnees/chargement.py``) : à contenu égal, rien d'autre ne change.
+_LECTEUR = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+#: Les fichiers analysés, par leur état sur le disque. Cent ancres en lisent une
+#: trentaine, et les analyser à chaque ancre prenait le cinquième du contrôle,
+#: une fois les mesures gardées sur le disque. L'arbre est partagé : les sondes
+#: le lisent, et aucune ne le modifie.
+_ANALYSES: dict[tuple[str, int, int], object] = {}
+
+
+def _analyse(chemin: str):
+    """Le contenu d'un YAML ou d'un JSON du dépôt, analysé une fois tant que le
+    fichier ne bouge pas."""
+    fichier = RACINE / chemin
+    etat = fichier.stat()
+    cle = (str(fichier), etat.st_mtime_ns, etat.st_size)
+    if cle not in _ANALYSES:
+        texte = fichier.read_text(encoding="utf-8")
+        _ANALYSES[cle] = json.loads(texte) if chemin.endswith(".json") \
+            else yaml.load(texte, Loader=_LECTEUR)
+    return _ANALYSES[cle]
 
 
 def sonde_entrees(argument: str) -> float:
@@ -513,10 +535,17 @@ def sonde_mesure(argument: str) -> float:
     résultats du README et du §5 de `limites.md`, qu'aucune table ne porte et
     que la prose recopiait d'une exécution.
     """
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from mesures_prose import mesurer
+    return _mesures().mesurer(argument)
 
-    return mesurer(argument)
+
+def _mesures():
+    """Le module des mesures, que ``scripts/`` porte."""
+    dossier = str(RACINE / "scripts")
+    if dossier not in sys.path:
+        sys.path.insert(0, dossier)
+    import mesures_prose
+
+    return mesures_prose
 
 
 SONDES = {
@@ -872,22 +901,42 @@ def inventorier(zonage: Zonage) -> dict[str, list[str]]:
     return reste
 
 
+def mesures_citees(texte: str) -> list[str]:
+    """Les arguments des ancres ``mesure`` du texte, hors des blocs de code."""
+    citations = _blocs_de_code(texte)
+    return [trouve.group(2) for trouve in ANCRE.finditer(texte)
+            if trouve.group(1) == "mesure"
+            and texte.count("\n", 0, trouve.start()) + 1 not in citations]
+
+
 def controler(zonage: Zonage, corriger: bool) -> tuple[list[Anomalie], list[str]]:
+    """Confronte chaque document déclaré ; rend les anomalies, et les documents
+    réécrits si ``corriger``.
+
+    Les mesures que les documents citent se calculent dans une même campagne
+    (``mesures_prose.campagne``) : leurs calculs lourds, le coût agrégé et ses
+    variantes, se font d'avance et ensemble, ou se relisent de la mémoire du
+    disque quand ni le modèle ni ses données n'ont bougé.
+    """
     anomalies: list[Anomalie] = []
     reecrits: list[str] = []
+    textes: dict[str, str] = {}
     for fichier in documents(zonage):
         chemin = RACINE / fichier
         if not chemin.exists():
             anomalies.append(Anomalie(fichier, 0, "section",
                                       "zones.yaml déclare un fichier absent"))
             continue
-        texte = chemin.read_text(encoding="utf-8")
-        corrige, ecarts = verifier_ancres(fichier, texte)
-        anomalies += ecarts
-        anomalies += verifier_zones(fichier, texte, zonage)
-        if corriger and corrige != texte:
-            chemin.write_text(corrige, encoding="utf-8", newline="\n")
-            reecrits.append(fichier)
+        textes[fichier] = chemin.read_text(encoding="utf-8")
+    mesures = [argument for texte in textes.values() for argument in mesures_citees(texte)]
+    with _mesures().campagne(mesures) if mesures else nullcontext():
+        for fichier, texte in textes.items():
+            corrige, ecarts = verifier_ancres(fichier, texte)
+            anomalies += ecarts
+            anomalies += verifier_zones(fichier, texte, zonage)
+            if corriger and corrige != texte:
+                (RACINE / fichier).write_text(corrige, encoding="utf-8", newline="\n")
+                reecrits.append(fichier)
     return anomalies, reecrits
 
 

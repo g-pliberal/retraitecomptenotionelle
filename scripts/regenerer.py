@@ -27,8 +27,9 @@ README. Enfin le tableau de bord, qui compte les témoins et les tests, et les
 chiffres ancrés, qui sondent tout. Les trois branches du milieu prennent
 ensemble le temps de la plus longue, le paquet et les témoins, une minute et
 demie, au lieu de deux et quart ; ``--sequentiel`` les enchaîne. Les chiffres
-ancrés restent le plus long, trois minutes sur les quatre et demie du tout
-(feuille de route, action 135).
+ancrés, qui prenaient trois minutes, en prennent moins d'une quand le modèle a
+bougé, et un quart sinon : leurs calculs lourds se font en parallèle et se
+gardent sur le disque (``mesures_prose.py`` ; feuille de route, action 135).
 
 Le contrôle de conservation (``conservation.py``) vient à la fin, et ne fait
 que contrôler : refiger sa référence est un geste délibéré, qui se dit dans le

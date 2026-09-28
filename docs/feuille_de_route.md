@@ -3368,3 +3368,62 @@ ancrés, qui viennent en dernier, font à eux seuls les deux tiers du temps. Le
 profilage dit pourquoi : 85 % de leur durée passe à recalculer le coût agrégé
 sept fois, sous sept jeux de réglages (`mesures_prose._cout`), une fois par
 processus. C'est le premier morceau du levier 3.
+
+**Fait, le 28 septembre : les chiffres ancrés, premier morceau du levier 3.**
+Leur contrôle passait 85 % de son temps à recalculer sept variantes du coût
+agrégé et le coût des avantages, une vingtaine de secondes chacun, à chaque
+passage, même quand rien n'avait bougé. Deux mécanismes, dans
+`scripts/mesures_prose.py`, dont aucun ne change un chiffre :
+
+- une mémoire sur le disque, `.cache/mesures_prose/<empreinte>/`, que git
+  ignore. L'empreinte est celle de tout ce que git voit sous `src/`, `data/`
+  et `scripts/`, octet par octet, et de la version de Python : qu'un de ces
+  fichiers bouge, et tout se refait ; un calcul pendant lequel l'un d'eux a
+  bougé ne se garde pas ; les quatre empreintes les plus récentes restent.
+  `MESURES_SANS_MEMOIRE=1` s'en passe ;
+- un précalcul, le temps d'un contrôle (`mesures_prose.campagne`, où
+  `verifier_prose.controler` se place) : les mesures se lancent une première
+  fois pour dire les calculs lourds qu'elles attendent, qui se font ensemble,
+  un processus neuf par cœur, pendant que les mesures légères se calculent ;
+  chaque mesure ne se calcule qu'une fois par contrôle. `MESURES_PROCESSUS=1`
+  fait tout à la demande, comme avant.
+
+`verifier_prose.py` garde en plus, d'une ancre à l'autre, les YAML qu'il
+analyse. Les 417 mesures que la prose cite rendent les mêmes 417 nombres, au
+bit près, par l'ancien chemin, à froid, à chaud et hors d'une campagne ;
+`tests/test_outillage.py` tient la mécanique sur des calculs factices, et
+qu'un processus neuf retrouve le module.
+
+**Mesuré.** Le contrôle des chiffres ancrés passe de 178 s à 53 s quand le
+modèle, ses données ou les scripts ont bougé, et à 16 s sinon. Son test, le
+plus long de la suite, passe de 175 s à 53 s et 16 s quand il tourne seul ;
+dans la suite complète, où les autres fichiers occupent les cœurs, il prend
+90 s à froid. La suite complète passe de 7 min 56 s à 6 min 53 s quand la
+mémoire sert, et entre 7 min 25 s et 7 min 45 s sinon ; `regenerer.py --verifier`, de 4 min 41 s à
+1 min 55 s quand la mémoire sert.
+
+**Mesuré et écarté : libyaml.** Le PyYAML de ce conteneur est celui de
+Debian, construit sans libyaml, et `donnees/chargement.py` s'y rabat sur le
+chargeur Python. Les 274 YAML du dépôt se lisent à l'identique par les deux,
+huit fois plus vite par le chargeur C ; mais la suite complète n'y gagne rien
+(7 min contre 6 min 53 s), parce que la mémoire de `charger_yaml` fait
+déjà qu'un fichier ne s'analyse qu'une fois par processus. Seuls le contrôle
+de la prose (16,5 s contre 13,4 s) et la suite rapide (18 s contre 16 s) le
+sentiraient.
+
+**Le reste du levier 3**, par ordre de gain :
+
+- les fichiers de tests de la page Coût recalculent chacun leurs coûts : la
+  mise en place de `test_cout_age_depart.py`, 112 s, est désormais le plus
+  long de la suite ; `test_cout.py` a dix tests de plus de 18 s ;
+  `test_solde_fusion.py`, `test_garantie_par_sexe.py`,
+  `test_proposition_prospective.py` et `test_stock_age_legal.py` mettent en
+  place les leurs en 20 à 41 s. Une mémoire commune des coûts, que chaque
+  test demande là où rien du modèle n'est remplacé — jamais sous
+  `PropositionProspective`, qui en remplace des fonctions —, les ramènerait à
+  la lecture d'un fichier ;
+- le chiffrage (39 s dans la suite, 41 s dans la régénération) calcule deux
+  fois le coût agrégé, dont la variante par défaut que la mémoire des
+  chiffres ancrés garde déjà : la lire par `mesures_prose._cout()` en
+  économiserait la moitié ;
+- les témoins et le paquet, 43 et 40 s, qui se vérifient en se refaisant.

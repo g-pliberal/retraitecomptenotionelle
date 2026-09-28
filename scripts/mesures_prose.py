@@ -14,10 +14,13 @@ par défaut ; aucune carrière du dépôt ne rendait plus ce chiffre.
 
 Chaque mesure est une fonction nommée, qui prend ses réglages en
 ``clé=valeur`` et rend UN nombre, dans l'unité où la prose l'écrit : un écart
-en pour-cent, un coût en milliards d'euros. Elle est mémorisée pour la durée
-du processus, et les objets coûteux — un simulateur par jeu de règles, le coût
-agrégé, dix-sept secondes — ne se calculent qu'une fois, quel que soit le
-nombre de chiffres qui les citent.
+en pour-cent, un coût en milliards d'euros. Les objets coûteux — un simulateur
+par jeu de règles, une carrière simulée — ne se calculent qu'une fois par
+processus, quel que soit le nombre de chiffres qui les citent. Les plus
+lourds, le coût agrégé et ses variantes, vingt secondes chacun, se gardent en
+plus sur le disque d'une exécution à l'autre, tant que ni le modèle ni ses
+données ne bougent, et se font d'avance, ensemble, quand la prose se contrôle
+(« Les calculs lourds », plus bas).
 
 Ajouter une mesure, c'est ajouter une fonction à ``MESURES`` : son nom est ce
 que la prose écrit, sa docstring ce que ``--sondes`` imprime.
@@ -25,7 +28,15 @@ que la prose écrit, sa docstring ce que ``--sondes`` imprime.
 
 from __future__ import annotations
 
+import hashlib
+import multiprocessing
+import os
+import pickle
+import shutil
+import subprocess
 import sys
+from concurrent.futures import Executor, Future, ProcessPoolExecutor
+from contextlib import contextmanager
 from dataclasses import replace
 from functools import lru_cache
 from pathlib import Path
@@ -272,7 +283,6 @@ def fois_prix(**reglages: str) -> float:
     return conserve(**reglages) / 100
 
 
-@lru_cache(maxsize=None)
 def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: str = "",
           contribution_etat: str = ""):
     """Le coût agrégé, sous les règles par défaut — celui de la page Coût.
@@ -282,9 +292,22 @@ def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: 
     ``emploi_reportes=0.5`` règle la part des reportés en emploi
     (``Parametres.part_reportes_en_emploi``), un par défaut.
     ``contribution_etat=entiere`` porte au compte le taux de l'État entier, et
-    non sa seule part « retraite » : vingt secondes de plus, et seulement pour
-    la prose qui le cite.
+    non sa seule part « retraite ».
+
+    Vingt secondes chacun : c'est un calcul lourd (``_lourd``), gardé sur le
+    disque et fait d'avance, en parallèle, quand la prose se contrôle. Les
+    réglages se vérifient ici, pour qu'une faute se dise sans attendre.
     """
+    if age_legal not in ("", "aucun"):
+        raise ValueError(f"age_legal attend « aucun », reçu « {age_legal} »")
+    if emploi_reportes and not 0.0 <= float(emploi_reportes) <= 1.0:
+        raise ValueError(f"emploi_reportes attend une part entre 0 et 1, reçu « {emploi_reportes} »")
+    _parametres(contribution_etat=contribution_etat)
+    return _lourd("_calculer_cout", ponderation, age_legal, emploi_reportes, contribution_etat)
+
+
+def _calculer_cout(ponderation: str, age_legal: str, emploi_reportes: str,
+                   contribution_etat: str):
     from retraite_notionnelle import cout as C
     from retraite_notionnelle.donnees.assiette import AssietteActivite
     from retraite_notionnelle.donnees.depenses import DepensesRetraite
@@ -294,13 +317,8 @@ def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: 
     parametres = _parametres(contribution_etat=contribution_etat)
     if age_legal == "aucun":
         parametres = replace(parametres, age_legal_liberal=None)
-    elif age_legal:
-        raise ValueError(f"age_legal attend « aucun », reçu « {age_legal} »")
     if emploi_reportes:
-        part = float(emploi_reportes)
-        if not 0.0 <= part <= 1.0:
-            raise ValueError(f"emploi_reportes attend une part entre 0 et 1, reçu « {emploi_reportes} »")
-        parametres = replace(parametres, part_reportes_en_emploi=part)
+        parametres = replace(parametres, part_reportes_en_emploi=float(emploi_reportes))
     racine = parametres.racine_donnees
     return C.calculer_cout(
         _simulateur(parametres), DepensesRetraite(racine), Population(racine),
@@ -1039,9 +1057,14 @@ def garantie(**reglages: str) -> float:
     raise ValueError(f"quoi inconnu « {quoi} »")
 
 
-@lru_cache(maxsize=None)
 def _avantages():
-    """Ce que les avantages non contributifs coûtent — celui de la page Avantages."""
+    """Ce que les avantages non contributifs coûtent — celui de la page Avantages.
+
+    Dix-sept secondes : un calcul lourd, comme le coût agrégé."""
+    return _lourd("_calculer_avantages")
+
+
+def _calculer_avantages():
     from retraite_notionnelle.avantages import calculer_avantages
     from retraite_notionnelle.donnees.population import Population
 
@@ -1632,8 +1655,259 @@ MESURES = {
 }
 
 
+# --------------------------------------------------------------------------
+# Les calculs lourds : gardés d'une exécution à l'autre, faits d'avance ensemble.
+# --------------------------------------------------------------------------
+#
+# Sept variantes du coût agrégé et le coût des avantages, vingt secondes chacun :
+# c'étaient les cinq sixièmes du contrôle de la prose, trois minutes, refaites à
+# chaque passage même quand rien n'avait bougé (feuille de route, action 135).
+# Deux mécanismes, dont aucun ne change un chiffre :
+#
+# - une MÉMOIRE sur le disque, ``.cache/mesures_prose/<empreinte>/``, où
+#   l'empreinte est celle de tout ce dont un calcul dépend : le modèle, ses
+#   données et ces scripts, octet par octet, et la version de Python. Qu'un de
+#   ces fichiers bouge, et tout se refait ; un calcul pendant lequel l'un d'eux
+#   a bougé ne se garde pas ;
+# - un PRÉCALCUL, le temps d'un contrôle (``campagne``) : les mesures se lancent
+#   une première fois pour dire les calculs lourds qu'elles attendent, qui se
+#   font ensemble, un processus par cœur, pendant que les mesures légères se
+#   calculent ici.
+
+#: Où les calculs lourds se gardent : un dossier par empreinte.
+MEMOIRE = RACINE / ".cache" / "mesures_prose"
+#: Posée, cette variable d'environnement fait tout recalculer, sans rien lire
+#: ni écrire sur le disque.
+SANS_MEMOIRE = "MESURES_SANS_MEMOIRE"
+#: Le nombre de processus du précalcul, un par cœur si elle n'est pas posée ;
+#: à 1, tout se calcule ici, à la demande, comme avant le précalcul.
+PROCESSUS = "MESURES_PROCESSUS"
+#: Les empreintes gardées, les plus récentes : de quoi aller et venir entre deux
+#: états du dépôt sans tout refaire.
+EMPREINTES_GARDEES = 4
+#: Ce dont un calcul lourd dépend, tel que git le voit. Ce qu'il ignore n'en est
+#: pas : ``data/brut``, les téléchargements, ne se lit que par les scripts de
+#: récupération.
+SOURCES = ("src", "data", "scripts")
+
+#: Les calculs lourds de ce processus, par leur clé.
+_FAITS: dict[str, object] = {}
+#: Pendant un précalcul : ce qui reçoit un calcul lourd qui manque.
+_DECOUVERTE = None
+#: Pendant une campagne : l'empreinte du dépôt, et la valeur de chaque mesure.
+_EMPREINTE: str | None = None
+_VALEURS: dict[str, float] | None = None
+_RIEN = object()
+
+
+class _ACalculer(BaseException):
+    """Un calcul lourd manque, et le précalcul s'en charge : la mesure attendra.
+
+    ``BaseException`` et non ``Exception`` : une mesure qui rattrape ses propres
+    erreurs ne doit pas la prendre pour une réponse.
+    """
+
+    def __init__(self, cle: str):
+        super().__init__(cle)
+        self.cle = cle
+
+
+def empreinte() -> str | None:
+    """L'empreinte de tout ce dont un calcul lourd dépend, en un vingtième de
+    seconde ; ``None`` hors d'un dépôt git, et rien ne se garde."""
+    try:
+        listes = subprocess.run(
+            ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard",
+             "--", *SOURCES], cwd=RACINE, capture_output=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    somme = hashlib.sha256(sys.version.encode())
+    for chemin in sorted(set(filter(None, listes.split(b"\0")))):
+        somme.update(chemin + b"\0")
+        try:
+            contenu = (RACINE / os.fsdecode(chemin)).read_bytes()
+        except OSError:          # au registre de git, mais effacé du répertoire
+            somme.update(b"-")
+            continue
+        somme.update(b"+" + len(contenu).to_bytes(8, "little") + contenu)
+    return somme.hexdigest()[:24]
+
+
+def _cle(fonction: str, arguments: tuple) -> str:
+    nom = fonction.lstrip("_")
+    if not arguments:
+        return nom
+    return f"{nom}-{hashlib.sha256(repr(arguments).encode()).hexdigest()[:12]}"
+
+
+def _relire(empreinte_: str | None, cle: str):
+    if empreinte_ is None:
+        return _RIEN
+    try:
+        with open(MEMOIRE / empreinte_ / f"{cle}.pickle", "rb") as flux:
+            return pickle.load(flux)
+    except Exception:            # noqa: BLE001 — absent, tronqué, illisible : à refaire
+        return _RIEN
+
+
+def _garder(empreinte_: str | None, faits: dict[str, object]) -> None:
+    """Garde ces calculs sous l'empreinte d'avant leur calcul, si c'est encore
+    celle du dépôt."""
+    if not faits or empreinte_ is None or empreinte() != empreinte_:
+        return
+    dossier = MEMOIRE / empreinte_
+    try:
+        dossier.mkdir(parents=True, exist_ok=True)
+        for cle, objet in faits.items():
+            provisoire = dossier / f".{cle}.{os.getpid()}"
+            provisoire.write_bytes(pickle.dumps(objet, protocol=pickle.HIGHEST_PROTOCOL))
+            os.replace(provisoire, dossier / f"{cle}.pickle")
+        anciens = sorted((d for d in MEMOIRE.iterdir() if d.is_dir() and d != dossier),
+                         key=lambda d: d.stat().st_mtime, reverse=True)
+        for ancien in anciens[EMPREINTES_GARDEES - 1:]:
+            shutil.rmtree(ancien, ignore_errors=True)
+    except Exception as souci:   # noqa: BLE001 — la mémoire n'est qu'un raccourci
+        print(f"mesures_prose : calcul non gardé ({souci})", file=sys.stderr)
+
+
+def _empreinte_du_moment() -> str | None:
+    if os.environ.get(SANS_MEMOIRE):
+        return None
+    return _EMPREINTE if _EMPREINTE is not None else empreinte()
+
+
+def _executer(fonction: str, arguments: tuple):
+    """Le calcul lui-même, ici ou dans un processus du précalcul."""
+    return globals()[fonction](*arguments)
+
+
+def _lourd(fonction: str, *arguments):
+    """``fonction(*arguments)``, un calcul lourd : fait une fois par processus,
+    relu du disque tant que l'empreinte est la même, et confié au précalcul
+    pendant qu'il découvre ce que les mesures attendent."""
+    cle = _cle(fonction, arguments)
+    if cle in _FAITS:
+        return _FAITS[cle]
+    empreinte_ = _empreinte_du_moment()
+    objet = _relire(empreinte_, cle)
+    if objet is not _RIEN:
+        _FAITS[cle] = objet
+        return objet
+    if _DECOUVERTE is not None:
+        _DECOUVERTE(cle, fonction, arguments)
+        raise _ACalculer(cle)
+    objet = _executer(fonction, arguments)
+    _FAITS[cle] = objet
+    _garder(empreinte_, {cle: objet})
+    return objet
+
+
+def _processus() -> int:
+    if os.environ.get(PROCESSUS):
+        return int(os.environ[PROCESSUS])
+    try:
+        return len(os.sched_getaffinity(0))
+    except AttributeError:       # hors de Linux
+        return os.cpu_count() or 1
+
+
+def _prechauffer(arguments: list[str], executeur: Executor | None = None) -> None:
+    """Fait d'avance, et ensemble, les calculs lourds que ces mesures attendent.
+
+    Chaque mesure se lance une première fois : celles qui n'attendent rien de
+    lourd rendent leur valeur, les autres disent le calcul qui leur manque, que
+    ``executeur`` fait — par défaut un processus par cœur, lancé à neuf
+    (``spawn``) — pendant que les suivantes se calculent ici. Une mesure qui
+    attendait se relance quand son calcul est là, et une deuxième fois si elle
+    en attend un deuxième. Rien n'échoue ici : une mesure en faute, ou un
+    calcul qui n'aboutit pas, se refait à la demande, là où le contrôle dit
+    son erreur.
+    """
+    global _DECOUVERTE
+    principal = getattr(sys.modules.get("__main__"), "__file__", None)
+    if executeur is None and (_processus() <= 1 or multiprocessing.parent_process()
+                              or (principal and not os.path.exists(principal))):
+        # À un processus, rien à faire ensemble ; un processus du précalcul — de
+        # n'importe quel pool — n'en lance pas un à son tour ; et un script lu
+        # sur l'entrée standard (``python -``) ne se relit pas dans un processus
+        # neuf : tout s'y calcule à la demande.
+        return
+    soumis: dict[str, Future] = {}
+    recus: set[str] = set()
+    pool = None
+
+    def decouvrir(cle: str, fonction: str, arguments_: tuple) -> None:
+        nonlocal pool
+        if cle in soumis:
+            return
+        if executeur is None and pool is None:
+            pool = ProcessPoolExecutor(max_workers=_processus(),
+                                       mp_context=multiprocessing.get_context("spawn"))
+        soumis[cle] = (executeur or pool).submit(_executer, fonction, arguments_)
+
+    a_lancer = list(dict.fromkeys(arguments))
+    try:
+        while a_lancer:
+            attente: dict[str, str] = {}
+            _DECOUVERTE = decouvrir
+            try:
+                for argument in a_lancer:
+                    try:
+                        mesurer(argument)
+                    except _ACalculer as manque:
+                        attente[argument] = manque.cle
+                    except Exception:    # noqa: BLE001 — le contrôle la dira
+                        pass
+            finally:
+                _DECOUVERTE = None
+            nouveaux = {}
+            for cle, futur in soumis.items():
+                if cle in recus:
+                    continue
+                recus.add(cle)
+                try:
+                    nouveaux[cle] = _FAITS[cle] = futur.result()
+                except Exception:        # noqa: BLE001 — refait, et dit, à la demande
+                    pass
+            _garder(_EMPREINTE, nouveaux)
+            a_lancer = [argument for argument, cle in attente.items() if cle in _FAITS]
+    finally:
+        if pool is not None:
+            pool.shutdown(wait=False, cancel_futures=True)
+
+
+@contextmanager
+def campagne(arguments: list[str], executeur: Executor | None = None):
+    """Le temps d'un contrôle de la prose : les calculs lourds que ces mesures
+    attendent, faits d'avance et ensemble, et chaque mesure calculée une fois.
+
+    ``verifier_prose.controler`` s'y place ; hors d'une campagne, une mesure se
+    calcule à la demande, et seuls ses calculs lourds sont mémorisés. Les
+    processus du précalcul se lancent à neuf et relisent le script principal :
+    celui qui ouvre une campagne garde son travail sous
+    ``if __name__ == "__main__":``, comme tout script qui lance des processus,
+    sans quoi chacun le referait en entier.
+    """
+    global _EMPREINTE, _VALEURS
+    if _VALEURS is not None:     # déjà dans une campagne
+        yield
+        return
+    _EMPREINTE = None if os.environ.get(SANS_MEMOIRE) else empreinte()
+    _VALEURS = {}
+    try:
+        try:
+            _prechauffer(arguments, executeur)
+        except Exception as souci:   # noqa: BLE001 — sans précalcul, tout se fait à la demande
+            print(f"mesures_prose : précalcul abandonné ({souci})", file=sys.stderr)
+        yield
+    finally:
+        _EMPREINTE, _VALEURS = None, None
+
+
 def mesurer(argument: str) -> float:
     """``nom?clé=valeur&clé=valeur`` : la mesure, sous ces réglages."""
+    if _VALEURS is not None and argument in _VALEURS:
+        return _VALEURS[argument]
     nom, _, condition = argument.partition("?")
     if nom not in MESURES:
         raise ValueError(f"mesure inconnue « {nom} » ; il y a {', '.join(sorted(MESURES))}")
@@ -1644,6 +1918,9 @@ def mesurer(argument: str) -> float:
             raise ValueError(f"« {critere} » n'est pas un réglage « clé=valeur »")
         reglages[cle] = valeur
     try:
-        return float(MESURES[nom](**reglages))
+        valeur = float(MESURES[nom](**reglages))
     except KeyError as manque:
         raise ValueError(f"la mesure « {nom} » demande le réglage {manque}") from None
+    if _VALEURS is not None:
+        _VALEURS[argument] = valeur
+    return valeur

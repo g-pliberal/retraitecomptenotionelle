@@ -142,7 +142,10 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   des quotients de mortalité, indexées sur la signature du fichier, partagées
   et jamais modifiées ; les lois de mortalité calibrées, gardées dans
   `data/derive/calibrations_mortalite.json` et reprises seulement si
-  l'empreinte de leurs entrées est celle du jour. `SerieAnnuelle` et
+  l'empreinte de leurs entrées est celle du jour ; le coût agrégé et ses
+  variantes, que les chiffres ancrés citent, gardés dans
+  `.cache/mesures_prose/` sous l'empreinte de `src/`, `data/` et `scripts/`
+  (`MESURES_SANS_MEMOIRE=1` s'en passe). `SerieAnnuelle` et
   `Carriere` sont immuables après leur constructeur : un champ réassigné
   après coup casserait leurs mémoires sans bruit.
 - **L'outillage d'audit d'interface** (Impeccable, Web Interface Guidelines,

@@ -1,19 +1,30 @@
 """L'outillage qui accélère un changement de résultats (feuille de route, action
-135) : le script qui régénère tout, et celui qui résume ce que les témoins ont
-bougé. Aucun de ces tests ne lance un calcul du modèle : le premier se lit dans
-sa table d'étapes et s'exerce sur des étapes simulées, le second sur des
-témoins écrits pour l'occasion."""
+135) : le script qui régénère tout, celui qui résume ce que les témoins ont
+bougé, et la mémoire des calculs lourds des chiffres ancrés. Aucun de ces tests
+ne lance un calcul du modèle : le premier script se lit dans sa table d'étapes
+et s'exerce sur des étapes simulées, le second sur des témoins écrits pour
+l'occasion, la mémoire sur des calculs factices qui se comptent."""
 
 from __future__ import annotations
 
+import multiprocessing
+import os
+import pickle
+import subprocess
 import sys
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from contextlib import contextmanager
 from pathlib import Path
+
+import pytest
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
 
+import mesures_prose  # noqa: E402
 import regenerer  # noqa: E402
 import resumer_temoins  # noqa: E402
+import verifier_prose  # noqa: E402
 
 # -- la régénération -----------------------------------------------------------
 
@@ -150,3 +161,186 @@ def test_les_pages_qui_changent_sont_nommees():
 def test_un_pourcentage_s_ecrit_comme_la_prose():
     assert resumer_temoins.pourcent(0.0024) == "+0,24 %"
     assert resumer_temoins.pourcent(-0.0265) == "−2,65 %"
+
+
+# -- la mémoire des calculs lourds des chiffres ancrés ------------------------
+
+
+def _factices(monkeypatch, tmp_path) -> list[tuple]:
+    """Deux calculs « lourds » qui se comptent, et des mesures qui les lisent ;
+    une mémoire vide dans ``tmp_path``, sous l'empreinte « e1 ». Rend la liste
+    des calculs faits, dans l'ordre."""
+    faits = []
+
+    def lourd_a(x):
+        faits.append(("a", x))
+        return float(x) * 10
+
+    def lourd_b():
+        faits.append(("b",))
+        return 10.0
+
+    def qui_rattrape(**_):
+        # Une mesure qui rattrape ses erreurs ne prend pas l'attente du
+        # précalcul pour une réponse.
+        try:
+            return mesures_prose._lourd("_lourd_b")
+        except Exception:        # noqa: BLE001
+            return -1.0
+
+    monkeypatch.setattr(mesures_prose, "_lourd_a", lourd_a, raising=False)
+    monkeypatch.setattr(mesures_prose, "_lourd_b", lourd_b, raising=False)
+    monkeypatch.setattr(mesures_prose, "MESURES", {
+        "simple": lambda **r: float(r["n"]),
+        "avec_a": lambda **r: mesures_prose._lourd("_lourd_a", r["x"]) * 2,
+        "avec_deux": lambda **_: (mesures_prose._lourd("_lourd_a", "1")
+                                  + mesures_prose._lourd("_lourd_b")),
+        "qui_rattrape": qui_rattrape,
+    })
+    monkeypatch.setattr(mesures_prose, "_FAITS", {})
+    monkeypatch.setattr(mesures_prose, "MEMOIRE", tmp_path / "memoire")
+    monkeypatch.setattr(mesures_prose, "empreinte", lambda: "e1")
+    monkeypatch.delenv(mesures_prose.SANS_MEMOIRE, raising=False)
+    return faits
+
+
+def test_une_campagne_fait_chaque_calcul_lourd_une_fois_et_d_avance(monkeypatch, tmp_path):
+    """Les calculs lourds se découvrent et se font avant que le contrôle ne
+    demande la première mesure ; une mesure qui en attend deux les a tous les
+    deux, et aucune ne se calcule deux fois."""
+    faits = _factices(monkeypatch, tmp_path)
+    arguments = ["simple?n=4", "avec_a?x=1", "avec_a?x=2", "avec_deux", "qui_rattrape",
+                 "avec_a?x=1"]
+    with ThreadPoolExecutor(2) as pool, mesures_prose.campagne(arguments, pool):
+        assert sorted(faits) == [("a", "1"), ("a", "2"), ("b",)]
+        valeurs = [mesures_prose.mesurer(a) for a in arguments]
+    assert valeurs == [4.0, 20.0, 40.0, 20.0, 10.0, 20.0]
+    assert len(faits) == 3
+    assert mesures_prose._VALEURS is None and mesures_prose._EMPREINTE is None
+    assert len(list((tmp_path / "memoire" / "e1").glob("*.pickle"))) == 3
+
+
+def test_la_memoire_du_disque_tient_tant_que_l_empreinte_est_la_meme(monkeypatch, tmp_path):
+    faits = _factices(monkeypatch, tmp_path)
+    assert mesures_prose.mesurer("avec_a?x=3") == 60.0
+    monkeypatch.setattr(mesures_prose, "_FAITS", {})       # un autre processus
+    assert mesures_prose.mesurer("avec_a?x=3") == 60.0
+    assert faits == [("a", "3")]
+    # Une source a bougé : tout se refait, sous la nouvelle empreinte.
+    monkeypatch.setattr(mesures_prose, "_FAITS", {})
+    monkeypatch.setattr(mesures_prose, "empreinte", lambda: "e2")
+    assert mesures_prose.mesurer("avec_a?x=3") == 60.0
+    assert faits == [("a", "3"), ("a", "3")]
+    assert sorted(d.name for d in (tmp_path / "memoire").iterdir()) == ["e1", "e2"]
+
+
+def test_un_calcul_pendant_lequel_une_source_bouge_ne_se_garde_pas(monkeypatch, tmp_path):
+    _factices(monkeypatch, tmp_path)
+    empreintes = iter(["avant", "après"])
+    monkeypatch.setattr(mesures_prose, "empreinte", lambda: next(empreintes))
+    assert mesures_prose.mesurer("avec_a?x=1") == 20.0
+    assert not (tmp_path / "memoire").exists()
+
+
+def test_une_memoire_illisible_se_refait_et_l_on_peut_s_en_passer(monkeypatch, tmp_path):
+    faits = _factices(monkeypatch, tmp_path)
+    dossier = tmp_path / "memoire" / "e1"
+    dossier.mkdir(parents=True)
+    garde = dossier / f"{mesures_prose._cle('_lourd_a', ('1',))}.pickle"
+    garde.write_bytes(b"tronqu")
+    assert mesures_prose.mesurer("avec_a?x=1") == 20.0
+    assert faits == [("a", "1")]
+    assert pickle.loads(garde.read_bytes()) == 10.0         # refait, et gardé
+    monkeypatch.setattr(mesures_prose, "_FAITS", {})
+    monkeypatch.setenv(mesures_prose.SANS_MEMOIRE, "1")
+    assert mesures_prose.mesurer("avec_a?x=1") == 20.0
+    assert mesures_prose.mesurer("avec_a?x=2") == 40.0
+    assert faits == [("a", "1"), ("a", "1"), ("a", "2")]    # rien de relu…
+    assert list(dossier.glob("*.pickle")) == [garde]         # …ni d'écrit
+
+
+def test_un_calcul_qui_echoue_se_dit_a_la_demande(monkeypatch, tmp_path):
+    """Le précalcul n'échoue jamais : la mesure en faute le dit quand le
+    contrôle la demande, avec l'erreur du modèle, et les autres répondent."""
+    _factices(monkeypatch, tmp_path)
+
+    def casse():
+        raise ValueError("modèle cassé")
+
+    monkeypatch.setattr(mesures_prose, "_lourd_b", casse)
+    with ThreadPoolExecutor(2) as pool, \
+            mesures_prose.campagne(["avec_deux", "simple?n=1"], pool):
+        with pytest.raises(ValueError, match="modèle cassé"):
+            mesures_prose.mesurer("avec_deux")
+        assert mesures_prose.mesurer("simple?n=1") == 1.0
+
+
+def test_la_memoire_ne_garde_que_les_empreintes_recentes(monkeypatch, tmp_path):
+    _factices(monkeypatch, tmp_path)
+    for rang in range(mesures_prose.EMPREINTES_GARDEES + 2):
+        monkeypatch.setattr(mesures_prose, "_FAITS", {})
+        monkeypatch.setattr(mesures_prose, "empreinte", lambda rang=rang: f"e{rang}")
+        mesures_prose.mesurer("avec_a?x=1")
+        os.utime(tmp_path / "memoire" / f"e{rang}", (1000 + rang, 1000 + rang))
+    restent = sorted(d.name for d in (tmp_path / "memoire").iterdir())
+    assert restent == [f"e{rang}" for rang in range(2, mesures_prose.EMPREINTES_GARDEES + 2)]
+
+
+def test_l_empreinte_suit_les_sources_que_git_voit(monkeypatch, tmp_path):
+    """Un fichier suivi, ou nouveau, change l'empreinte ; ce que git ignore
+    ne la change pas. Hors d'un dépôt, pas d'empreinte, et rien ne se garde."""
+    depot = tmp_path / "depot"
+    (depot / "src").mkdir(parents=True)
+    (depot / "data" / "brut").mkdir(parents=True)
+    subprocess.run(["git", "init", "-q", str(depot)], check=True)
+    (depot / ".gitignore").write_text("data/brut/*\n", encoding="utf-8")
+    (depot / "src" / "modele.py").write_text("TAUX = 1\n", encoding="utf-8")
+    monkeypatch.setattr(mesures_prose, "RACINE", depot)
+    premiere = mesures_prose.empreinte()
+    assert premiere
+    (depot / "data" / "brut" / "gros.csv").write_text("ignoré", encoding="utf-8")
+    assert mesures_prose.empreinte() == premiere
+    (depot / "src" / "modele.py").write_text("TAUX = 2\n", encoding="utf-8")
+    assert mesures_prose.empreinte() != premiere
+    ailleurs = tmp_path / "ailleurs"
+    ailleurs.mkdir()
+    monkeypatch.setattr(mesures_prose, "RACINE", ailleurs)
+    assert mesures_prose.empreinte() is None
+
+
+def test_un_processus_du_precalcul_retrouve_les_mesures():
+    """Le précalcul lance ses processus à neuf (``spawn``) : ils retrouvent ce
+    module, y calculent par son nom, et rendent ce qu'ils ont calculé."""
+    with ProcessPoolExecutor(1, mp_context=multiprocessing.get_context("spawn")) as pool:
+        rendu = pool.submit(mesures_prose._executer, "_parametres", ("", "", "")).result(
+            timeout=300)
+    assert rendu == mesures_prose._parametres("", "", "")
+
+
+def test_le_controle_de_la_prose_ouvre_une_campagne_de_ses_mesures(monkeypatch, tmp_path):
+    """Le contrôle passe à la campagne les mesures que les documents citent,
+    hors des blocs de code, puis corrige ce qui a dérivé."""
+
+    class Mesures:
+        campagnes: list[list[str]] = []
+
+        @contextmanager
+        def campagne(self, arguments):
+            self.campagnes.append(list(arguments))
+            yield
+
+        def mesurer(self, argument):
+            return 12.0
+
+    mesures = Mesures()
+    monkeypatch.setattr(verifier_prose, "_mesures", lambda: mesures)
+    monkeypatch.setattr(verifier_prose, "RACINE", tmp_path)
+    (tmp_path / "doc.md").write_text(
+        "# Doc\n\nIl en reste <!--chiffre:mesure(reste?n=1)-->11<!--/--> %.\n\n"
+        "```\n<!--chiffre:mesure(cite)-->3<!--/-->\n```\n", encoding="utf-8")
+    zonage = verifier_prose.Zonage({"fichiers": {"doc.md": {"defaut": "recit"}}})
+    anomalies, reecrits = verifier_prose.controler(zonage, corriger=True)
+    assert mesures.campagnes == [["reste?n=1"]]
+    assert reecrits == ["doc.md"]
+    assert "-->12<!--/--> %" in (tmp_path / "doc.md").read_text(encoding="utf-8")
+    assert [a.genre for a in anomalies] == ["derive"]
