@@ -62,7 +62,8 @@ def test_une_instance_part_par_reference_et_revient_telle_quelle():
 
 
 def test_une_methode_statique_et_une_methode_s_appellent():
-    saisie = module("saisie").Saisie.depuis_requete({"naissance": "1975"})
+    saisie = module("saisie").Saisie.depuis_requete(
+        {"naissance": "1975"}, False, site().contexte.paquet.presomptions)
     assert saisie.naissance == 1975
     assert "naissance=1975" in saisie.requete()
 

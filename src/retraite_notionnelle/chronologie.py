@@ -28,12 +28,18 @@ Les dates sont au jour (§ 4.6). Une date que la saisie ne connaît qu'au mois
 tombe le premier du mois, et le fait le dit (``precision: mois``). Une période
 vaut [début, fin), comme les bornes des versions.
 
+La naissance de l'assuré fait exception : son jour décide du mois d'où ses
+âges se comptent (:func:`~retraite_notionnelle.calendrier.origine_des_ages`),
+et donc des dates de sa carrière, que la saisie donne en âges. Quand la saisie
+ne le dit pas, la présomption ``jour_de_naissance`` le pose dès la
+construction, en son nom, avant que ces dates ne se calculent.
+
 Ce que les faits portent, par sorte :
 
-* ``naissance`` — ``sexe`` et ``precision`` pour l'assuré ; ``precision``
-  pour un enfant dont la naissance est déclarée — l'année, le mois ou le
-  jour, la date tombant au premier jour de ce qui n'est pas dit ; rien pour
-  un enfant dont la naissance est présumée ;
+* ``naissance`` — ``sexe`` et ``precision`` pour l'assuré, le jour s'il est
+  déclaré, le mois sinon ; ``precision`` pour un enfant dont la naissance est
+  déclarée — l'année, le mois ou le jour, la date tombant au premier jour de
+  ce qui n'est pas dit ; rien pour un enfant dont la naissance est présumée ;
 * ``periode_d_activite`` — ``affiliation`` ; d'un parcours, le
   ``niveau_salaire`` (en multiples du salaire moyen par tête de l'année) et le
   ``profil`` de progression, et ``cumul`` pour une activité qui s'ajoute à la
@@ -56,7 +62,7 @@ import datetime
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
-from .calendrier import DateMois, en_mois
+from .calendrier import DateMois, en_mois, origine_des_ages
 from .noyau import vocabulaire
 
 if TYPE_CHECKING:  # pragma: no cover - annotations seulement
@@ -170,9 +176,48 @@ def _date(annee: int, mois: int, jour: int) -> str:
     return datetime.date(annee, mois, jour).isoformat()
 
 
+def jour_de(date: str) -> int:
+    """Le quantième d'une date de la chronologie : 15 pour « 1962-03-15 »."""
+    return int(date[8:10])
+
+
+def naissance_de_l_assure(annee_naissance: int, mois_naissance: int, sexe: str,
+                          jour_naissance: int | None = None,
+                          presomptions: dict | None = None) -> dict:
+    """Le fait de naissance de l'assuré, au jour qu'il déclare, ou à celui
+    que la présomption ``jour_de_naissance`` pose quand il ne le dit pas.
+
+    Le jour se pose ici, et non dans :func:`completer`, parce que les dates
+    de la carrière se comptent depuis lui : la saisie les donne en âges, et
+    un âge ne devient une date que rapporté au mois d'où les âges se
+    comptent (:func:`~retraite_notionnelle.calendrier.origine_des_ages`).
+    Le fait présumé garde ``precision: mois`` : l'année et le mois sont
+    déclarés, le jour seul est présumé. ``presomptions`` est la table où lire
+    la valeur, le vocabulaire à défaut."""
+    if jour_naissance is None:
+        return fait(f"naissance_{ASSURE}", ASSURE, "naissance",
+                    _date(annee_naissance, mois_naissance,
+                          valeur("jour_de_naissance", presomptions)),
+                    attributs={"sexe": sexe, "precision": "mois"},
+                    presomption="jour_de_naissance")
+    try:
+        date = _date(annee_naissance, mois_naissance, jour_naissance)
+    except ValueError:
+        raise ValueError(f"naissance impossible : le {jour_naissance} du mois "
+                         f"{mois_naissance} de {annee_naissance}") from None
+    return fait(f"naissance_{ASSURE}", ASSURE, "naissance", date,
+                attributs={"sexe": sexe, "precision": "jour"})
+
+
+def origine_de(naissance: dict) -> DateMois:
+    """Le mois d'où comptent les âges de qui est né à ce fait de naissance."""
+    return origine_des_ages(mois_de(naissance["debut"]), jour_de(naissance["debut"]))
+
+
 def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
               age_liquidation: float | None, nombre_enfants: int,
-              naissances_enfants: list | tuple = ()
+              naissances_enfants: list | tuple = (),
+              jour_naissance: int | None = None, presomptions: dict | None = None
               ) -> tuple[list[dict], list[dict], list[dict]]:
     """Ce que toute saisie déclare de l'assuré : sa naissance, son départ et
     ses enfants. Rend les naissances — celle de l'assuré, puis celles des
@@ -181,17 +226,18 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
 
     ``naissances_enfants`` déclare la naissance des premiers enfants, dans
     l'ordre (:func:`naissance_declaree`) ; :func:`completer` présume celles
-    des autres, et date leur filiation."""
-    naissance = DateMois(annee_naissance, mois_naissance)
-    faits_naissance = [fait(f"naissance_{ASSURE}", ASSURE, "naissance", _jour(naissance),
-                            attributs={"sexe": sexe, "precision": "mois"})]
+    des autres, et date leur filiation. Le départ tombe à l'âge déclaré,
+    compté depuis le mois d'où les âges se comptent."""
+    assure = naissance_de_l_assure(annee_naissance, mois_naissance, sexe,
+                                   jour_naissance, presomptions)
+    faits_naissance = [assure]
     if len(naissances_enfants) > nombre_enfants:
         raise ValueError(
             f"{len(naissances_enfants)} naissances d'enfants déclarées pour "
             f"{nombre_enfants} enfant{'s' if nombre_enfants > 1 else ''}")
     declarees = [naissance_declaree(valeur) for valeur in naissances_enfants]
     for jour, _ in declarees:
-        if jour <= _jour(naissance):
+        if jour <= assure["debut"]:
             raise ValueError(f"un enfant né le {jour}, avant son parent")
     faits_naissance += [
         fait(f"naissance_enfant_{rang}", f"enfant_{rang}", "naissance", jour,
@@ -199,7 +245,7 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
         for rang, (jour, precision) in enumerate(declarees, 1)]
     depart = [] if age_liquidation is None else [
         fait(f"depart_{ASSURE}", ASSURE, "acte_de_la_personne",
-             _jour(naissance.plus_mois(en_mois(age_liquidation))),
+             _jour(origine_de(assure).plus_mois(en_mois(age_liquidation))),
              attributs={"acte": "depart", "motif": "vieillesse", "age": age_liquidation})]
     role = "mere" if sexe == "F" else "pere"
     liens = [lien(f"filiation_enfant_{rang}", ASSURE, f"enfant_{rang}", "filiation",
@@ -211,13 +257,15 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
 
 def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
               age_liquidation: float | None = None, nombre_enfants: int = 0,
-              naissances_enfants: list | tuple = ()) -> dict:
+              naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
+              presomptions: dict | None = None) -> dict:
     """La chronologie d'une carrière construite ligne à ligne : la naissance,
     le départ et les enfants, sans ses périodes, que l'appelant a déjà
     traduites en années."""
     naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
                                          age_liquidation, nombre_enfants,
-                                         naissances_enfants)
+                                         naissances_enfants, jour_naissance,
+                                         presomptions)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + depart, "liens": liens}
 
 
@@ -225,14 +273,17 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 age_liquidation: float, mois_naissance: int = 1,
                 profil_carriere: str = "auto", interruptions: dict[int, str] | None = None,
                 nombre_enfants: int = 0, part_primes: float = 0.0,
-                naissances_enfants: list | tuple = ()) -> dict:
+                naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
+                presomptions: dict | None = None) -> dict:
     """La chronologie d'un parcours : un fait par métier, daté au mois, et un
     par année d'interruption.
 
     Un métier principal court jusqu'au début du suivant, le dernier jusqu'au
     départ ; une activité cumulée, de son âge de début à son âge de fin, ou
-    au départ. Les contrôles sont ceux du parcours : les métiers se suivent,
-    le premier n'est pas cumulé, rien ne dépasse le départ.
+    au départ. Les âges se comptent depuis le mois que le jour de naissance
+    désigne (:func:`naissance_de_l_assure`). Les contrôles sont ceux du
+    parcours : les métiers se suivent, le premier n'est pas cumulé, rien ne
+    dépasse le départ.
     """
     if not metiers:
         raise ValueError("une carrière compte au moins un métier")
@@ -244,12 +295,16 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
     cumuls = [metier for metier in metiers if metier.cumul]
     principaux = [metier for metier in metiers if not metier.cumul]
 
-    date_naissance = DateMois(annee_naissance, mois_naissance)
-    bornes = [date_naissance.plus_mois(en_mois(metier.age_debut)) for metier in principaux]
+    naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
+                                         age_liquidation, nombre_enfants,
+                                         naissances_enfants, jour_naissance,
+                                         presomptions)
+    origine = origine_de(naissance[0])
+    bornes = [origine.plus_mois(en_mois(metier.age_debut)) for metier in principaux]
     debut = bornes[0]
     # La pension prend effet ce mois-là : il n'est plus travaillé, la borne
     # est donc EXCLUE.
-    fin = date_naissance.plus_mois(en_mois(age_liquidation))
+    fin = origine.plus_mois(en_mois(age_liquidation))
     if fin.rang <= debut.rang:
         raise ValueError("âge de liquidation antérieur à l'âge de début d'activité")
     # Chaque métier s'arrête où commence le suivant : les périodes se touchent
@@ -270,9 +325,9 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
             "affiliation": metier.affiliation, "niveau_salaire": metier.niveau_salaire,
             "profil": profil_carriere, "part_primes": part_primes}))
     for rang, metier in enumerate(cumuls, 1):
-        ouverture = date_naissance.plus_mois(en_mois(metier.age_debut))
+        ouverture = origine.plus_mois(en_mois(metier.age_debut))
         cloture = (fin if metier.age_fin is None
-                   else date_naissance.plus_mois(en_mois(metier.age_fin)))
+                   else origine.plus_mois(en_mois(metier.age_fin)))
         if ouverture.rang < debut.rang:
             raise ValueError(
                 "une activité cumulée commence après le début de la "
@@ -294,9 +349,6 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                              f"{annee:04d}-01-01", f"{annee + 1:04d}-01-01",
                              {"motif": interruptions[annee]}))
 
-    naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
-                                         age_liquidation, nombre_enfants,
-                                         naissances_enfants)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
 
@@ -304,7 +356,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
 def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
               age_liquidation: float, mois_naissance: int = 1,
               nombre_enfants: int = 0, part_primes: float = 0.0,
-              naissances_enfants: list | tuple = ()) -> dict:
+              naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
+              presomptions: dict | None = None) -> dict:
     """La chronologie d'un relevé : un fait par ligne, une année civile
     chacun, dans l'ordre du relevé — la première ligne d'une année est
     l'activité principale."""
@@ -322,7 +375,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
                              attributs))
     naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
                                          age_liquidation, nombre_enfants,
-                                         naissances_enfants)
+                                         naissances_enfants, jour_naissance,
+                                         presomptions)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
 
@@ -351,11 +405,13 @@ def completer(chronologie: dict, presomptions: dict | None = None) -> dict:
     ``presomptions`` est la table où lire leurs valeurs, le vocabulaire à
     défaut.
 
-    Aujourd'hui, une seule présomption pose un fait :
+    Aujourd'hui, une seule présomption pose ici un fait :
     ``naissance_des_enfants`` date la naissance de chaque enfant dont la date
     n'est pas déclarée aux trente ans de son parent. La filiation commence à
-    cette naissance. Les autres présomptions du vocabulaire s'appliquent là
-    où leur fait sera lu, et le disent (``appliquee_par``).
+    cette naissance. ``jour_de_naissance`` pose le sien à la construction,
+    parce que les dates de la carrière en dépendent
+    (:func:`naissance_de_l_assure`). Les autres présomptions du vocabulaire
+    s'appliquent là où leur fait sera lu, et le disent (``appliquee_par``).
 
     Compléter deux fois ne change rien.
     """

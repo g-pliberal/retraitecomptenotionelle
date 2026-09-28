@@ -10,7 +10,7 @@
  * schéma, `data/reference/etapes/acquerir_les_droits.yaml`.
  */
 
-import { DateMois, enMois } from "../calendrier.js";
+import { DateMois } from "../calendrier.js";
 import { assietteMinimale as assietteMinimaleDe, salaireMoyenAnnuel } from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { derniereAnnee } from "./commun.js";
@@ -380,8 +380,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
                 && periode.trimestres_maximum_leve_avant_age !== undefined) {
               suivi[1] += compter.trimestresDeLaLigneEntre(
                 carriere, ligne, new DateMois(carriere.annee_naissance, 1),
-                carriere.dateNaissance.plusMois(
-                  enMois(periode.trimestres_maximum_leve_avant_age)),
+                carriere.dateDeLAge(periode.trimestres_maximum_leve_avant_age),
               );
             }
           }

@@ -19,3 +19,7 @@ sources:
     date: 2026-03-05
 textes_a_rattacher:
 - reference: R. 351-37 CSS
+presomptions:
+  jour_de_naissance: >-
+    le jour de naissance que l'adresse, le cas type ou la page Coût ne disent pas,
+    dont dépend le mois d'où les âges se comptent

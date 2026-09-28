@@ -26,7 +26,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois, en_mois
+from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from . import liquider, ouvrir
 from .commun import AvantageApplique, PensionRegime, derniere_annee
@@ -312,7 +312,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             # Au MOIS près : l'âge légal tombe en cours d'année depuis la
             # suspension de 2026, et une fenêtre lue à l'année entière n'y
             # trouvait qu'un trimestre pour la génération 1966.
-            date_legale = carriere.date_naissance.plus_mois(en_mois(age_legal))
+            date_legale = carriere.date_de_l_age(age_legal)
             debut_fenetre = date_legale.plus_mois(-12)
             # Ne comptent que les trimestres cotisés de la fenêtre
             # accomplis « au delà de la limite » de durée (L. 351-1-2-1) :

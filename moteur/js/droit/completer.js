@@ -11,7 +11,7 @@
  * `Complements`, suit son schéma, `data/reference/etapes/completer_tous_regimes.yaml`.
  */
 
-import { DateMois, enMois } from "../calendrier.js";
+import { DateMois } from "../calendrier.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, nomFiabilite } from "../serie.js";
 import { derniereAnnee } from "./commun.js";
@@ -247,7 +247,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null)
         continue;
       }
       // Au MOIS près : l'âge légal tombe en cours d'année depuis 2026.
-      const dateLegale = carriere.dateNaissance.plusMois(enMois(ageLegal));
+      const dateLegale = carriere.dateDeLAge(ageLegal);
       const debutFenetre = dateLegale.plusMois(-12);
       // Seuls comptent les trimestres cotisés de la fenêtre accomplis « au
       // delà de la limite » de durée, trimestres pour enfants compris.

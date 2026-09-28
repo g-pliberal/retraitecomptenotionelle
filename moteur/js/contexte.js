@@ -299,6 +299,7 @@ export class Contexte {
     const batir = (niveaux) => simulateur.carriereParcours({
       annee_naissance: saisie.naissance,
       mois_naissance: saisie.naissance_mois,
+      jour_naissance: saisie.jourDeclare,
       sexe: saisie.sexe,
       metiers: parcours.map((metier, rang) => ({
         ...metier,
@@ -394,6 +395,7 @@ export class Contexte {
     const carriere = simulateur.carriereReleve({
       annee_naissance: saisie.naissance,
       mois_naissance: saisie.naissance_mois,
+      jour_naissance: saisie.jourDeclare,
       sexe: saisie.sexe,
       releve,
       age_liquidation: saisie.liquidation,

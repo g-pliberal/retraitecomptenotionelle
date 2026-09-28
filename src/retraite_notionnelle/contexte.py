@@ -321,6 +321,7 @@ class Contexte:
                     for metier, niveau in zip(parcours, niveaux)
                 ],
                 mois_naissance=saisie.naissance_mois,
+                jour_naissance=saisie.jour_declare,
                 age_liquidation=saisie.liquidation,
                 profil_carriere=saisie.profil,
                 interruptions=saisie.interruptions_de_carriere(motifs),
@@ -413,6 +414,7 @@ class Contexte:
             sexe=saisie.sexe,
             releve=releve,
             mois_naissance=saisie.naissance_mois,
+            jour_naissance=saisie.jour_declare,
             age_liquidation=saisie.liquidation,
             nombre_enfants=saisie.enfants,
             naissances_enfants=saisie.naissances_enfants(),

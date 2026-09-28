@@ -24,6 +24,7 @@ from urllib.parse import urlencode
 
 from .calendrier import (
     MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, en_mois, formater_age, mois_travailles,
+    origine_des_ages,
 )
 from . import chronologie
 from .carriere import LigneRelevee, Metier
@@ -460,11 +461,16 @@ class Saisie:
 
     naissance: int = 1975
     naissance_mois: int = 1
-    #: Jour de naissance. Il n'entre dans aucun calcul — le modèle compte en
-    #: mois, et le droit coupe ses générations au mois. Il est gardé parce que
-    #: le calendrier en demande un : sans lui, le formulaire répondrait « 1er
-    #: mars » à qui est né le 15, et ferait douter de ce qu'il a compris.
+    #: Jour de naissance. Il décide du mois d'où les âges se comptent
+    #: (:func:`~retraite_notionnelle.calendrier.origine_des_ages`), et donc de
+    #: l'âge que vaut une date de carrière ; la génération, elle, se coupe au
+    #: mois. Le calendrier du formulaire le demande toujours ; une adresse qui
+    #: ne le porte pas — « naissance=1975 », « naissance=1975-03 » — le laisse
+    #: à la présomption ``jour_de_naissance`` (§ 5.6), et le dit ci-dessous.
     naissance_jour: int = 1
+    #: Vrai quand l'adresse portait la naissance sans son jour, que la
+    #: présomption a posé : la carrière le présume alors à son tour, en son nom.
+    naissance_jour_presume: bool = False
     sexe: str = "H"
     statut: str = "salarie_prive_non_cadre"
     debut: float = 21
@@ -552,11 +558,13 @@ class Saisie:
 
     @classmethod
     def depuis_requete(cls, parametres: dict[str, str],
-                       tolerante: bool = False) -> "Saisie":
+                       tolerante: bool = False,
+                       presomptions: dict | None = None) -> "Saisie":
         """``tolerante`` ne sert qu'à REMONTRER une saisie refusée : rien n'y
         est vérifié, et une ligne de métier incomplète arrête la lecture des
         métiers au lieu de la refuser. Une saisie lue ainsi ne se calcule
-        jamais — voir :func:`_saisie_refusee`.
+        jamais — voir :func:`_saisie_refusee`. ``presomptions`` est la table où
+        lire le jour de naissance présumé, le vocabulaire à défaut.
         """
         defauts = cls()
         # Le premier métier se lit d'abord : les suivants héritent de son niveau
@@ -583,6 +591,15 @@ class Saisie:
         mois_naissance = (naissance[1] if naissance else _entier(
             parametres, "naissance_mois", defauts.naissance_mois
         ))
+        # Le jour, s'il est dit ; présumé si l'adresse porte la naissance sans
+        # lui ; celui du formulaire vierge si elle ne la porte pas du tout.
+        jour_naissance, jour_presume = defauts.naissance_jour, False
+        if naissance and naissance[2] is not None:
+            jour_naissance = naissance[2]
+        elif parametres.get("naissance") not in (None, "") or parametres.get(
+                "naissance_mois") not in (None, ""):
+            jour_naissance = chronologie.valeur("jour_de_naissance", presomptions)
+            jour_presume = True
         saisie = cls(
             unite_revenu=unite,
             montants=_parmi(parametres, "montants", MODES_MONTANT,
@@ -598,16 +615,17 @@ class Saisie:
             pension=_reel(parametres, "pension", defauts.pension),
             naissance=annee_naissance,
             naissance_mois=mois_naissance,
-            naissance_jour=naissance[2] if naissance else defauts.naissance_jour,
+            naissance_jour=jour_naissance,
+            naissance_jour_presume=jour_presume,
             sexe="F" if parametres.get("sexe") == "F" else "H",
             statut=statut,
             debut=_age_saisi(parametres, "debut", defauts.debut,
-                             annee_naissance, mois_naissance),
+                             annee_naissance, mois_naissance, jour_naissance),
             liquidation=_age_saisi(parametres, "liquidation", defauts.liquidation,
-                                   annee_naissance, mois_naissance),
+                                   annee_naissance, mois_naissance, jour_naissance),
             salaire=salaire,
-            metiers=_metiers_saisis(parametres, salaire,
-                                    annee_naissance, mois_naissance, tolerante),
+            metiers=_metiers_saisis(parametres, salaire, annee_naissance,
+                                    mois_naissance, jour_naissance, tolerante),
             releve=(parametres.get("releve") or "").strip(),
             profil=_parmi(parametres, "profil", PROFILS, defauts.profil),
             primes=_reel(parametres, "primes", defauts.primes),
@@ -667,6 +685,15 @@ class Saisie:
                 f"Année de naissance hors du champ du modèle : {self.naissance}. "
                 f"Attendu entre {NAISSANCE_MINIMALE} et {NAISSANCE_MAXIMALE}."
             )
+        # Le jour compte désormais : un 31 février, qu'aucun calendrier ne
+        # propose mais qu'une adresse peut porter, se refuse ici.
+        try:
+            date(self.naissance, self.naissance_mois, self.naissance_jour)
+        except ValueError:
+            raise ErreurSaisie(
+                f"Date de naissance impossible : le {self.naissance_jour} "
+                f"{NOMS_DE_MOIS[self.naissance_mois - 1]} {self.naissance} "
+                "n'existe pas.") from None
         if not AGE_DEBUT_MINIMAL <= self.debut <= AGE_DEBUT_MAXIMAL:
             raise ErreurSaisie(
                 "Début d'activité : le modèle l'accepte de "
@@ -965,8 +992,22 @@ class Saisie:
     # nulle part ailleurs.
 
     def date_de(self, age: float) -> DateMois:
-        """Le mois où la carrière atteint cet âge."""
-        return DateMois(self.naissance, self.naissance_mois).plus_mois(en_mois(age))
+        """Le mois où la carrière atteint cet âge, compté comme le moteur le
+        compte (:attr:`origine_des_ages`)."""
+        return self.origine_des_ages.plus_mois(en_mois(age))
+
+    @property
+    def jour_declare(self) -> int | None:
+        """Le jour de naissance tel que la carrière le reçoit : ``None`` quand
+        il est présumé, pour que la chronologie le présume en son nom."""
+        return None if self.naissance_jour_presume else self.naissance_jour
+
+    @property
+    def origine_des_ages(self) -> DateMois:
+        """Le mois d'où les âges se comptent : voir
+        :func:`~retraite_notionnelle.calendrier.origine_des_ages`."""
+        return origine_des_ages(DateMois(self.naissance, self.naissance_mois),
+                                self.naissance_jour)
 
     def mois_de(self, age: float) -> str:
         """Le même mois, tel que l'adresse le porte : « 1996-09 »."""
@@ -1361,7 +1402,7 @@ class Saisie:
 
 
 def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
-                    naissance: int, naissance_mois: int,
+                    naissance: int, naissance_mois: int, naissance_jour: int,
                     tolerante: bool = False) -> list[MetierSaisi]:
     """Les métiers qui suivent le premier, lus dans « metier2_… », « metier3_… ».
 
@@ -1424,13 +1465,13 @@ def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
                 salaire_precedent = salaire
         metiers.append(MetierSaisi(
             debut=_age_saisi(parametres, f"metier{rang}_debut", 0.0,
-                             naissance, naissance_mois),
+                             naissance, naissance_mois, naissance_jour),
             statut=statut,
             salaire=salaire,
             sans_emploi=sans_emploi,
             cumul=bool(cumul),
             fin=(_age_saisi(parametres, f"metier{rang}_fin", 0.0,
-                            naissance, naissance_mois) if fin else None),
+                            naissance, naissance_mois, naissance_jour) if fin else None),
         ))
     return metiers
 
@@ -1494,8 +1535,9 @@ def _reel(parametres: dict[str, str], nom: str, defaut: float) -> float:
 
 
 def _date_saisie(parametres: dict[str, str],
-                 nom: str) -> tuple[int, int, int] | None:
-    """La date écrite dans ce champ, ou ``None`` s'il n'en porte pas.
+                 nom: str) -> tuple[int, int, int | None] | None:
+    """La date écrite dans ce champ, ou ``None`` s'il n'en porte pas ; son
+    jour est ``None`` quand elle n'en dit pas.
 
     Le formulaire envoie « 1975-03-15 » : c'est la forme qu'un ``<input
     type="date">`` renvoie partout, quelle que soit celle — « 15/03/1975 » en
@@ -1514,25 +1556,26 @@ def _date_saisie(parametres: dict[str, str],
     if trouve is None:
         return None
     annee, mois = int(trouve.group(1)), int(trouve.group(2))
-    jour = int(trouve.group(3) or 1)
+    jour = None if trouve.group(3) is None else int(trouve.group(3))
     if not 1 <= mois <= 12:
         raise ErreurSaisie(f"« {nom} » : mois attendu entre 01 et 12 (reçu : {brut}).")
-    # Le jour n'est borné que grossièrement : il ne sert à aucun calcul, et le
-    # refuser au calendrier près — un 31 février — n'épargnerait rien à
-    # personne, puisque aucun champ date ne le propose.
-    if not 1 <= jour <= 31:
+    # Le jour n'est borné ici que grossièrement ; celui de la naissance, le
+    # seul qui compte, se contrôle au calendrier près avec elle (``verifier``).
+    if jour is not None and not 1 <= jour <= 31:
         raise ErreurSaisie(f"« {nom} » : jour attendu entre 01 et 31 (reçu : {brut}).")
     return annee, mois, jour
 
 
 def _age_saisi(parametres: dict[str, str], nom: str, defaut: float,
-               naissance: int, naissance_mois: int) -> float:
+               naissance: int, naissance_mois: int, naissance_jour: int) -> float:
     """L'âge qu'une date de carrière vaut, rapportée à la naissance.
 
     Le formulaire demande une date — celle du premier mois cotisé, celle du
     départ —, parce que c'est ce dont on se souvient ; le modèle, lui, ne
-    connaît que des âges. La soustraction se fait ici, en mois, et le résultat
-    est l'âge en années décimales que le moteur attend.
+    connaît que des âges. La soustraction se fait ici, en mois, depuis le mois
+    d'où les âges se comptent (:func:`origine_des_ages`), et le résultat est
+    l'âge en années décimales que le moteur attend : le moteur, qui compte de
+    même, retombe sur la date saisie.
 
     Les adresses d'avant le calendrier continuent d'être lues telles quelles :
     ``liquidation=64`` et ``liquidation_mois=7`` valent soixante-quatre ans et
@@ -1541,7 +1584,8 @@ def _age_saisi(parametres: dict[str, str], nom: str, defaut: float,
     date = _date_saisie(parametres, nom)
     if date is not None:
         rang = (DateMois(date[0], date[1]).rang
-                - DateMois(naissance, naissance_mois).rang)
+                - origine_des_ages(DateMois(naissance, naissance_mois),
+                                   naissance_jour).rang)
         return rang / MOIS_PAR_AN
     annees = _reel(parametres, nom, defaut)
     cle = f"{nom}_mois"

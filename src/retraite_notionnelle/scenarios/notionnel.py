@@ -655,8 +655,10 @@ class ScenarioNotionnel:
             lignes=list(lignes_avant),
             # L'année de liquidation de cette carrière fictive doit être
             # l'année de bascule : c'est en euros de cette année-là que les
-            # droits acquis sont valorisés.
+            # droits acquis sont valorisés. Née un 1er janvier, elle liquide
+            # au 1er janvier de cette année, quel que soit le jour de l'assuré.
             age_liquidation=float(bascule - carriere.annee_naissance),
+            jour_naissance=1,
             nombre_enfants=0,  # avantages familiaux neutralisés
             identifiant=f"{carriere.identifiant} (droits figés {bascule})",
         )

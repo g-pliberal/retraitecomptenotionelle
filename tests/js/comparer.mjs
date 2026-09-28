@@ -89,7 +89,8 @@ cas.forEach((temoin, i) => {
   let obtenu = null;
   let leve = null;
   try {
-    obtenu = contexte.simuler(Saisie.depuisRequete(temoin.requete)).dictionnaire();
+    obtenu = contexte.simuler(Saisie.depuisRequete(
+      temoin.requete, false, contexte.paquet.presomptions)).dictionnaire();
   } catch (erreur) {
     leve = erreur;
   }

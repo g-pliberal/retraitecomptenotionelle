@@ -22,6 +22,7 @@ import {
   enMois,
   fractionAnnee,
   moisTravailles,
+  origineDesAges,
   trimestresCivils,
 } from "./calendrier.js";
 
@@ -349,6 +350,10 @@ export class Carriere {
     mois_naissance = 1,
     //: Âge de liquidation effectif (réel pour un retraité, souhaité sinon).
     age_liquidation = null,
+    //: Jour de naissance déclaré, 1 à 31 ; nul quand la saisie ne le dit pas,
+    //: et la chronologie le présume (`jour_de_naissance`). Il décide du mois
+    //: d'où les âges se comptent, jamais de la génération. Voir `carriere.py`.
+    jour_naissance = null,
     //: Sans effet notionnel : utilisé par le seul scénario « système actuel ».
     nombre_enfants = 0,
     //: Les naissances déclarées des premiers enfants, dans l'ordre : celles
@@ -373,7 +378,13 @@ export class Carriere {
         `mois de naissance attendu entre 1 et 12, reçu ${mois_naissance}`,
       );
     }
+    if (jour_naissance !== null && !(jour_naissance >= 1 && jour_naissance <= 31)) {
+      throw new Error(
+        `jour de naissance attendu entre 1 et 31, reçu ${jour_naissance}`,
+      );
+    }
     this.mois_naissance = mois_naissance;
+    this.jour_naissance = jour_naissance;
     this.annee_naissance = annee_naissance;
     this.sexe = sexe;
     this.lignes = [...lignes].sort((a, b) => a.annee - b.annee);
@@ -409,9 +420,10 @@ export class Carriere {
     this._plafonds = null;
     this.chronologie = chronologie ?? preparer(chrono.duResume(
       annee_naissance, sexe, mois_naissance, age_liquidation, nombre_enfants,
-      naissances_enfants));
+      naissances_enfants, jour_naissance));
     this.personne = personne;
     this._naissancesDesEnfants = undefined;
+    this._origineDesAges = undefined;
   }
 
   // -- dates -----------------------------------------------------------------
@@ -424,8 +436,52 @@ export class Carriere {
     return Math.max(...this.lignes.map((ligne) => ligne.annee));
   }
 
+  /** Le mois de naissance, tel que l'état civil le porte. */
   get dateNaissance() {
     return new DateMois(this.annee_naissance, this.mois_naissance);
+  }
+
+  /**
+   * Le jour de naissance que la chronologie porte : déclaré, ou posé par la
+   * présomption `jour_de_naissance`.
+   */
+  get jourDeNaissance() {
+    return chrono.jourDe(chrono.naissance(this.chronologie, this.personne).debut);
+  }
+
+  /**
+   * Le mois d'où les âges se comptent. DEUX LECTURES DE LA NAISSANCE : la
+   * génération se lit au vrai mois ({@link generation}) ; l'âge se compte
+   * d'ici — une date d'effet, un décompte de trimestres après un âge, l'âge à
+   * une date. Voir `carriere.py`.
+   */
+  get origineDesAges() {
+    if (this._origineDesAges === undefined) {
+      this._origineDesAges = origineDesAges(this.dateNaissance, this.jourDeNaissance);
+    }
+    return this._origineDesAges;
+  }
+
+  /**
+   * Le premier mois au premier jour duquel l'assuré a cet âge : la date
+   * d'effet au plus tôt d'une pension ouverte à cet âge.
+   */
+  dateDeLAge(age) {
+    return this.origineDesAges.plusMois(enMois(age));
+  }
+
+  /**
+   * Le mois où tombe l'anniversaire de cet âge : celui qui se compare à une
+   * coupure tombant un premier du mois, et qui donne l'année où l'âge est
+   * atteint.
+   */
+  moisDeLAnniversaire(age) {
+    return this.dateNaissance.plusMois(enMois(age));
+  }
+
+  /** L'âge, en mois révolus, au premier jour de ce mois. */
+  ageAu(date) {
+    return (date.rang - this.origineDesAges.rang) / MOIS_PAR_AN;
   }
 
   /**
@@ -471,9 +527,9 @@ export class Carriere {
   /**
    * Mois où la pension prend effet.
    *
-   * L'âge de liquidation est compté en mois depuis la date de naissance : né
-   * en mars 1962, parti à soixante-quatre ans et six mois, l'assuré liquide en
-   * septembre 2026. Le modèle arrondissait auparavant à l'année la plus
+   * L'âge de liquidation est compté en mois depuis le mois d'où les âges se
+   * comptent : né en mars 1962, parti à soixante-quatre ans et six mois,
+   * l'assuré liquide en septembre 2026. Le modèle arrondissait auparavant à l'année la plus
    * proche, et l'arrondi au pair déplaçait la liquidation selon la parité du
    * millésime.
    */
@@ -481,7 +537,7 @@ export class Carriere {
     if (this.age_liquidation === null) {
       throw new Error(`${this.identifiant} : âge de liquidation non renseigné`);
     }
-    return this.dateNaissance.plusMois(enMois(this.age_liquidation));
+    return this.dateDeLAge(this.age_liquidation);
   }
 
   get anneeLiquidation() {
@@ -528,6 +584,7 @@ export class Carriere {
       lignes: [...lignes],
       mois_naissance: this.mois_naissance,
       age_liquidation: this.age_liquidation,
+      jour_naissance: this.jour_naissance,
       nombre_enfants: this.nombre_enfants,
       naissances_enfants: this.naissances_enfants,
       identifiant: this.identifiant,
@@ -549,6 +606,7 @@ export class Carriere {
         lignes: [...this.lignes],
         mois_naissance: this.mois_naissance,
         age_liquidation: ageLiquidation,
+        jour_naissance: this.jour_naissance,
         nombre_enfants: this.nombre_enfants,
         naissances_enfants: this.naissances_enfants,
         identifiant: this.identifiant,
@@ -558,7 +616,7 @@ export class Carriere {
       });
     }
     const initiale = this.dateLiquidation;
-    const fin = this.dateNaissance.plusMois(enMois(ageLiquidation));
+    const fin = this.dateDeLAge(ageLiquidation);
     const derniereAnnee = this.lignes[this.lignes.length - 1].annee;
     const finales = this.lignesDe(derniereAnnee);
     const principale = finales[0];
@@ -625,6 +683,7 @@ export class Carriere {
       lignes,
       mois_naissance: this.mois_naissance,
       age_liquidation: ageLiquidation,
+      jour_naissance: this.jour_naissance,
       nombre_enfants: this.nombre_enfants,
       naissances_enfants: this.naissances_enfants,
       identifiant: this.identifiant,
@@ -772,7 +831,7 @@ export class Carriere {
     const date = this.dateDeService(affiliations, annees);
     return date === null
       ? null
-      : (date.rang - this.dateNaissance.rang) / MOIS_PAR_AN;
+      : this.ageAu(date);
   }
 
   /**
@@ -936,10 +995,12 @@ export class Carriere {
     part_primes = 0.0,
     identifiant = "assuré",
     naissances_enfants = [],
+    jour_naissance = null,
   }) {
     const chronologie = preparer(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
-      nombre_enfants, part_primes, naissances_enfants,
+      nombre_enfants, part_primes, naissances_enfants, jour_naissance,
+      presomptions: macro.paquet.presomptions,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -996,18 +1057,20 @@ export class Carriere {
     part_primes = 0.0,
     identifiant = "assuré",
     naissances_enfants = [],
+    jour_naissance = null,
   }) {
     const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
       profil_carriere, interruptions, nombre_enfants, part_primes, naissances_enfants,
+      jour_naissance, presomptions: macro.paquet.presomptions,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
 
   /**
    * La carrière qu'une chronologie complétée décrit : ses années, telles que
-   * le moteur d'aujourd'hui les liquide. La naissance donne l'année, le mois et
-   * le sexe ; le départ, l'âge déclaré ; les filiations, le nombre des enfants ;
+   * le moteur d'aujourd'hui les liquide. La naissance donne l'année, le mois, le
+   * jour s'il est déclaré et le sexe ; le départ, l'âge déclaré ; les filiations, le nombre des enfants ;
    * les périodes, les années — d'un relevé ligne à ligne, d'un parcours métier
    * par métier. Voir `carriere.py`.
    */
@@ -1046,6 +1109,8 @@ export class Carriere {
       lignes,
       mois_naissance: dateNaissance.mois,
       age_liquidation: ageLiquidation,
+      jour_naissance: naissance.origine === "declare"
+        && naissance.attributs.precision === "jour" ? chrono.jourDe(naissance.debut) : null,
       nombre_enfants: chrono.enfants(chronologie, personne).length,
       naissances_enfants: naissancesDeclarees(chronologie, personne),
       identifiant,

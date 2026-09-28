@@ -28,9 +28,13 @@ const sortie = saisies.map((saisie) => {
         options.interruptions = new Map(
           Object.entries(options.interruptions).map(([annee, motif]) => [Number(annee), motif]));
       }
-      return { chronologie: chrono.completer(chrono.duParcours(options), paquet.presomptions) };
+      return { chronologie: chrono.completer(
+        chrono.duParcours({ ...options, presomptions: paquet.presomptions }),
+        paquet.presomptions) };
     }
-    return { chronologie: chrono.completer(chrono.duReleve(saisie.releve), paquet.presomptions) };
+    return { chronologie: chrono.completer(
+      chrono.duReleve({ ...saisie.releve, presomptions: paquet.presomptions }),
+      paquet.presomptions) };
   } catch (erreur) {
     return { erreur: String(erreur.message ?? erreur) };
   }

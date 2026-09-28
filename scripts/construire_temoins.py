@@ -208,11 +208,11 @@ def _cas() -> list[dict]:
     cas: list[tuple[str, dict]] = [("base", {})]
     affiliations = Affiliations(RACINE_DONNEES)
 
-    def cas_statut(nom: str, statut: str, naissance: int) -> None:
+    def cas_statut(nom: str, statut: str, naissance: int, date: str | None = None) -> None:
         debut = debut_admissible(statut, naissance, affiliations)
         if debut is None:
             return
-        modifications = {"statut": statut, "naissance": str(naissance)}
+        modifications = {"statut": statut, "naissance": date or str(naissance)}
         if debut != int(BASE["debut"]):
             modifications["debut"] = str(debut)
         cas.append((nom, modifications))
@@ -250,6 +250,14 @@ def _cas() -> list[dict]:
     for naissance in GENERATIONS_BALAYEES:
         for statut in STATUTS:
             cas_statut(f"statut_{statut}_{naissance}", statut, naissance)
+    # ET CHAQUE STATUT NÉ UN 20 SEPTEMBRE : un autre mois que janvier, un autre
+    # jour que le 1er. Le jour décide du mois d'où les âges se comptent, le mois
+    # des générations que la loi coupe en cours d'année ; les témoins naissaient
+    # presque tous le 1er janvier, où une lecture de la naissance mal triée ne
+    # fait aucun bruit (action 132).
+    for statut in STATUTS:
+        cas_statut(f"statut_{statut}_ne_le_20_septembre_1968", statut, 1968,
+                   "1968-09-20")
 
     # Âges de liquidation : départ très anticipé, à l'heure, très différé.
     for age in ("52", "57", "60", "62", "64", "67", "70"):
@@ -335,6 +343,57 @@ def _cas() -> list[dict]:
         "naissance": "1975-03-15", "debut": "1996-10", "liquidation": "2040-06",
         "metier2_debut": "2011-05", "metier2_statut": "artisan",
         "metier2_salaire": "1.4",
+    }))
+    # LE JOUR DE NAISSANCE. La pension prend effet le premier du mois qui suit
+    # l'anniversaire, sauf pour qui est né un 1er (R. 351-37 ; circulaire Cnav
+    # n° 2026-07) : le jour décide du mois d'où les âges se comptent, la
+    # génération reste au vrai mois (action 132). Ces témoins naissent en
+    # milieu de mois ou un 1er, en d'autres mois que janvier, et partent à une
+    # date ou à un âge.
+    # Les trois assurés de la circulaire n° 2026-07, à la date d'effet qu'elle
+    # leur donne au plus tôt : né le 16 mai 1964, l'âge légal est atteint le
+    # 16 février 2027 et la retraite prend effet au 1er mars.
+    for nom, naissance, liquidation in (("1964_mai", "1964-05-16", "2027-03"),
+                                        ("1965_fevrier", "1965-02-24", "2027-12"),
+                                        ("1965_juillet", "1965-07-08", "2028-08")):
+        cas.append((f"jour_cnav_2026_07_{nom}", {
+            "naissance": naissance, "debut": "1986-09", "liquidation": liquidation,
+        }))
+    # Né un 1er, l'agent de la CNRACL a l'âge légal le jour même, et sa surcote
+    # court du 1er juillet 2024 (juris-cnracl, « Calcul de la surcote »,
+    # exemple 3) ; né un 15 du même mois, du mois qui suit.
+    for jour in ("01", "15"):
+        cas.append((f"jour_cnracl_surcote_ne_le_{jour}", {
+            "statut": "fonctionnaire_territorial_hospitalier",
+            "naissance": f"1962-01-{jour}", "debut": "1982-01", "liquidation": "2026-01",
+        }))
+    # Le fonctionnaire de la fiche F16494, né le 9 octobre 1964 : le taux plein
+    # à 62 ans et 9 mois, le 1er août 2027, et quatre trimestres de surcote au
+    # 1er octobre 2028.
+    cas.append(("jour_fonction_publique_ne_le_9_octobre", {
+        "statut": "fonctionnaire_etat", "naissance": "1964-10-09",
+        "debut": "1985-01", "liquidation": "2028-10",
+    }))
+    # Un âge saisi, et non une date : le cadre né le 15 décembre qui part à
+    # soixante-quatre ans change d'année de départ.
+    cas.append(("jour_decembre_depart_a_un_age", {
+        "statut": "salarie_prive_cadre", "naissance": "1961-12-15", "liquidation": "64",
+    }))
+    # La durée majorée après l'âge du taux plein : ses trimestres d'ajournement
+    # partent du mois qui suit l'anniversaire, ou de celui-ci pour qui est né un
+    # 1er (circulaire Cnav n° 8/89, point 12).
+    for jour in ("01", "30"):
+        cas.append((f"jour_ajournement_ne_le_{jour}", {
+            "statut": "artisan", "naissance": f"1940-06-{jour}", "debut": "35",
+            "liquidation": "68",
+        }))
+    # Un relevé, qui part à une date ; un régime spécial, qui a ses âges.
+    cas.append(("jour_releve", {
+        "naissance": "1963-11-20", "liquidation": "2027-06",
+        "releve": lignes_releve(1985, 2027, "salarie_prive_non_cadre", 12000),
+    }))
+    cas.append(("jour_regime_special", {
+        "statut": "agent_ratp", "naissance": "1966-04-12", "liquidation": "62",
     }))
     # Les deux générations que les textes coupent en cours d'année, de part et
     # d'autre de la coupure : 1er juillet 1951, 1er septembre 1961.

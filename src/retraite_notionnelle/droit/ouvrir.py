@@ -24,7 +24,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois, en_mois
+from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from . import compter, coordonner
 from .commun import date_d_effet, derniere_annee
@@ -398,13 +398,13 @@ def duree_requise_avant_soixante_ans(
         return None
     if age >= moteur.AGE_DUREE_A_L_OUVERTURE:
         return None
-    ouverture = carriere.date_naissance.plus_mois(en_mois(age))
+    # Le mois où l'âge est atteint, que la loi compare à ses dates : la durée
+    # est celle de l'année où le droit s'ouvre (L. 13, III), ou celle d'après
+    # le 1er septembre 2023 (loi du 14 avril 2023, article 10, XXIV, C).
+    ouverture = carriere.mois_de_l_anniversaire(age)
     if carriere.age_liquidation is not None:
         ouverture = DateMois.depuis_rang(min(
-            ouverture.rang,
-            carriere.date_naissance.plus_mois(
-                en_mois(carriere.age_liquidation)).rang,
-        ))
+            ouverture.rang, carriere.date_liquidation.rang))
     if ((militaire is not None or carriere_longue)
             and ouverture.rang >= moteur.DUREE_XXIV_C_DEPUIS.rang):
         return moteur.durees_requises_avant_soixante_ans.depuis_2023(ouverture)
@@ -1049,9 +1049,8 @@ def annee_ouverture_des_droits(moteur, periode: PeriodeRegime,
     liquide avant — carrière longue, catégorie active —, il les réunit au
     plus tôt à la liquidation, et c'est cette année-là qui vaut.
     """
-    ouverture = carriere.date_naissance.plus_mois(
-        en_mois(age_ouverture(moteur, periode, carriere))
-    ).annee
+    ouverture = carriere.mois_de_l_anniversaire(
+        age_ouverture(moteur, periode, carriere)).annee
     return min(annee_liquidation, ouverture)
 
 
@@ -1063,9 +1062,8 @@ def mois_ouverture_des_droits(moteur, periode: PeriodeRegime,
     carrière longue, départ anticipé : c'est le mois que les décrets des
     régimes spéciaux visent, « les personnes remplissant les conditions ».
     """
-    rang = carriere.date_naissance.plus_mois(
-        en_mois(age_ouverture(moteur, periode, carriere))
-    ).rang
+    rang = carriere.mois_de_l_anniversaire(
+        age_ouverture(moteur, periode, carriere)).rang
     if carriere.age_liquidation is not None:
         rang = min(rang, carriere.date_liquidation.rang)
     return rang

@@ -404,7 +404,7 @@ def page() -> str:
       "déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière "
       "que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : "
       f"{len(presomptions)} présomptions au vocabulaire, dont {len(posees)} "
-      f"pose{'nt' if len(posees) > 1 else ''} son fait dans la chronologie ; les autres "
+      f"pose{'nt leur' if len(posees) > 1 else ' son'} fait dans la chronologie ; les autres "
       "s'appliquent dans le code, jusqu'à l'étape qui posera le leur.")
     w("")
     lecteurs = carte.lecteurs_des_presomptions()

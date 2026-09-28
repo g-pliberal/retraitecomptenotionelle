@@ -10,10 +10,13 @@
  * (`Carriere.depuisChronologie`).
  *
  * Les dates sont au jour, au format ISO ; une date connue au mois seulement
- * tombe le premier du mois. Une période vaut [début, fin).
+ * tombe le premier du mois. Une période vaut [début, fin). La naissance de
+ * l'assuré fait exception : son jour décide du mois d'où ses âges se comptent,
+ * et la présomption `jour_de_naissance` le pose dès la construction quand la
+ * saisie ne le dit pas ({@link naissanceDeLAssure}).
  */
 
-import { DateMois, enMois } from "./calendrier.js";
+import { DateMois, enMois, origineDesAges } from "./calendrier.js";
 
 /** La version du contrat C.1 que la chronologie suit. */
 export const SCHEMA_VERSION = 1;
@@ -130,26 +133,71 @@ export function naissanceDeclaree(valeur) {
     ["annee", "mois", "jour"][morceaux.length - 1]];
 }
 
+/** Le quantième d'une date de la chronologie : 15 pour « 1962-03-15 ». */
+export function jourDe(date) {
+  return Number(date.slice(8, 10));
+}
+
+/** Une date AAAA-MM-JJ, contrôlée ; nulle si elle n'existe pas. */
+function dateControlee(annee, mois, quantieme) {
+  const date = new Date(Date.UTC(annee, mois - 1, quantieme));
+  if (date.getUTCFullYear() !== annee || date.getUTCMonth() !== mois - 1
+      || date.getUTCDate() !== quantieme) {
+    return null;
+  }
+  return `${quatre(annee)}-${deux(mois)}-${deux(quantieme)}`;
+}
+
+/**
+ * Le fait de naissance de l'assuré, au jour qu'il déclare, ou à celui que la
+ * présomption `jour_de_naissance` pose quand il ne le dit pas. Le jour se pose
+ * ici, et non dans {@link completer}, parce que les dates de la carrière se
+ * comptent depuis lui. `presomptions` est la table du paquet. Voir
+ * `naissance_de_l_assure` du Python.
+ */
+export function naissanceDeLAssure(anneeNaissance, moisNaissance, sexe,
+  jourNaissance = null, presomptions = null) {
+  if (jourNaissance === null || jourNaissance === undefined) {
+    return fait(`naissance_${ASSURE}`, ASSURE, "naissance",
+      dateControlee(anneeNaissance, moisNaissance,
+        valeur("jour_de_naissance", presomptions)),
+      null, { sexe, precision: "mois" }, "jour_de_naissance");
+  }
+  const date = dateControlee(anneeNaissance, moisNaissance, jourNaissance);
+  if (date === null) {
+    throw new Error(`naissance impossible : le ${jourNaissance} du mois `
+      + `${moisNaissance} de ${anneeNaissance}`);
+  }
+  return fait(`naissance_${ASSURE}`, ASSURE, "naissance", date, null,
+    { sexe, precision: "jour" });
+}
+
+/** Le mois d'où comptent les âges de qui est né à ce fait de naissance. */
+export function origineDe(naissance) {
+  return origineDesAges(moisDe(naissance.debut), jourDe(naissance.debut));
+}
+
 /**
  * Ce que toute saisie déclare de l'assuré : sa naissance, son départ et ses
  * enfants. Rend les naissances — celle de l'assuré, puis celles des enfants
  * qu'elle déclare —, le départ (vide sans âge de départ) et les liens de
  * filiation. `naissancesEnfants` déclare la naissance des premiers enfants,
  * dans l'ordre ; {@link completer} présume celles des autres, et date leur
- * filiation.
+ * filiation. Le départ tombe à l'âge déclaré, compté depuis le mois d'où les
+ * âges se comptent.
  */
 function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants,
-  naissancesEnfants = []) {
-  const naissance = new DateMois(anneeNaissance, moisNaissance);
-  const faitsNaissance = [fait(`naissance_${ASSURE}`, ASSURE, "naissance", jour(naissance),
-    null, { sexe, precision: "mois" })];
+  naissancesEnfants = [], jourNaissance = null, presomptions = null) {
+  const assure = naissanceDeLAssure(anneeNaissance, moisNaissance, sexe, jourNaissance,
+    presomptions);
+  const faitsNaissance = [assure];
   if (naissancesEnfants.length > nombreEnfants) {
     throw new Error(`${naissancesEnfants.length} naissances d'enfants déclarées pour `
       + `${nombreEnfants} enfant${nombreEnfants > 1 ? "s" : ""}`);
   }
   const declarees = naissancesEnfants.map(naissanceDeclaree);
   for (const [date] of declarees) {
-    if (date <= jour(naissance)) {
+    if (date <= assure.debut) {
       throw new Error(`un enfant né le ${date}, avant son parent`);
     }
   }
@@ -159,7 +207,7 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
   });
   const depart = ageLiquidation === null || ageLiquidation === undefined ? [] : [
     fait(`depart_${ASSURE}`, ASSURE, "acte_de_la_personne",
-      jour(naissance.plusMois(enMois(ageLiquidation))), null,
+      jour(origineDe(assure).plusMois(enMois(ageLiquidation))), null,
       { acte: "depart", motif: "vieillesse", age: ageLiquidation })];
   const role = sexe === "F" ? "mere" : "pere";
   const liens = [];
@@ -177,15 +225,16 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
  * années.
  */
 export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation = null,
-  nombreEnfants = 0, naissancesEnfants = []) {
+  nombreEnfants = 0, naissancesEnfants = [], jourNaissance = null, presomptions = null) {
   const [naissance, depart, liens] = personne(anneeNaissance, moisNaissance, sexe,
-    ageLiquidation, nombreEnfants, naissancesEnfants);
+    ageLiquidation, nombreEnfants, naissancesEnfants, jourNaissance, presomptions);
   return { schema_version: SCHEMA_VERSION, faits: [...naissance, ...depart], liens };
 }
 
 /**
  * La chronologie d'un parcours : un fait par métier, daté au mois, et un par
- * année d'interruption. Les contrôles sont ceux du parcours : les métiers se
+ * année d'interruption. Les âges se comptent depuis le mois que le jour de
+ * naissance désigne. Les contrôles sont ceux du parcours : les métiers se
  * suivent, le premier n'est pas cumulé, rien ne dépasse le départ.
  */
 export function duParcours({
@@ -199,6 +248,8 @@ export function duParcours({
   nombre_enfants = 0,
   part_primes = 0.0,
   naissances_enfants = [],
+  jour_naissance = null,
+  presomptions = null,
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -212,14 +263,16 @@ export function duParcours({
   const cumuls = metiers.filter((metier) => metier.cumul);
   const principaux = metiers.filter((metier) => !metier.cumul);
 
-  const dateNaissance = new DateMois(annee_naissance, mois_naissance);
+  const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
+    age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions);
+  const origine = origineDe(naissance[0]);
   const bornes = principaux.map(
-    (metier) => dateNaissance.plusMois(enMois(metier.age_debut)),
+    (metier) => origine.plusMois(enMois(metier.age_debut)),
   );
   const debut = bornes[0];
   // La pension prend effet ce mois-là : il n'est plus travaillé, la borne est
   // donc EXCLUE.
-  const fin = dateNaissance.plusMois(enMois(age_liquidation));
+  const fin = origine.plusMois(enMois(age_liquidation));
   if (fin.rang <= debut.rang) {
     throw new Error("âge de liquidation antérieur à l'âge de début d'activité");
   }
@@ -246,10 +299,10 @@ export function duParcours({
     },
   ));
   cumuls.forEach((metier, i) => {
-    const ouverture = dateNaissance.plusMois(enMois(metier.age_debut));
+    const ouverture = origine.plusMois(enMois(metier.age_debut));
     const cloture = metier.age_fin === null || metier.age_fin === undefined
       ? fin
-      : dateNaissance.plusMois(enMois(metier.age_fin));
+      : origine.plusMois(enMois(metier.age_fin));
     if (ouverture.rang < debut.rang) {
       throw new Error(
         "une activité cumulée commence après le début de la carrière : elle "
@@ -277,8 +330,6 @@ export function duParcours({
       { motif: interruptions.get(annee) }));
   }
 
-  const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
-    age_liquidation, nombre_enfants, naissances_enfants);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],
@@ -300,6 +351,8 @@ export function duReleve({
   nombre_enfants = 0,
   part_primes = 0.0,
   naissances_enfants = [],
+  jour_naissance = null,
+  presomptions = null,
 }) {
   if (!releve || releve.length === 0) {
     throw new Error("un relevé compte au moins une ligne");
@@ -320,7 +373,7 @@ export function duReleve({
       `${quatre(ligne.annee)}-01-01`, `${quatre(ligne.annee + 1)}-01-01`, attributs);
   });
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
-    age_liquidation, nombre_enfants, naissances_enfants);
+    age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],
@@ -347,7 +400,9 @@ export function valeur(presomption, presomptions) {
  * `presomptions` est la table où lire leurs valeurs, celle du paquet.
  * Aujourd'hui, `naissance_des_enfants` date la naissance de chaque enfant dont
  * la date n'est pas déclarée aux trente ans de son parent ; la filiation
- * commence à cette naissance. Compléter deux fois ne change rien.
+ * commence à cette naissance. `jour_de_naissance` pose le sien à la
+ * construction ({@link naissanceDeLAssure}). Compléter deux fois ne change
+ * rien.
  */
 export function completer(chronologie, presomptions = null) {
   const faits = (chronologie.faits ?? []).map((f) => ({ ...f }));

@@ -50,6 +50,7 @@ from .calendrier import (
     en_mois,
     fraction_annee,
     mois_travailles,
+    origine_des_ages,
     trimestres_civils,
 )
 
@@ -464,6 +465,12 @@ class Carriere:
     mois_naissance: int = 1
     #: Âge de liquidation effectif (réel pour un retraité, souhaité pour un actif).
     age_liquidation: float | None = None
+    #: Jour de naissance déclaré, 1 à 31 ; ``None`` quand la saisie ne le dit
+    #: pas, et la chronologie le présume (``jour_de_naissance``, § 5.6). Il
+    #: décide du mois d'où les âges se comptent (:attr:`origine_des_ages`),
+    #: jamais de la génération. Le jour qui compte est celui de la chronologie :
+    #: :attr:`jour_de_naissance`.
+    jour_naissance: int | None = None
     #: Nombre d'enfants — sans effet dans les scénarios notionnels, utilisé par
     #: le seul scénario « système actuel » (majorations, MDA).
     nombre_enfants: int = 0
@@ -496,6 +503,10 @@ class Carriere:
             raise ValueError(
                 f"mois de naissance attendu entre 1 et 12, reçu {self.mois_naissance}"
             )
+        if self.jour_naissance is not None and not 1 <= self.jour_naissance <= 31:
+            raise ValueError(
+                f"jour de naissance attendu entre 1 et 31, reçu {self.jour_naissance}"
+            )
         # Tri STABLE : l'activité principale, donnée la première, le reste.
         self.lignes.sort(key=lambda ligne: ligne.annee)
         vues: set[tuple[int, str]] = set()
@@ -512,7 +523,7 @@ class Carriere:
             object.__setattr__(self, "chronologie", preparer(chrono.du_resume(
                 self.annee_naissance, self.sexe, self.mois_naissance,
                 self.age_liquidation, self.nombre_enfants,
-                self.naissances_enfants)))
+                self.naissances_enfants, self.jour_naissance)))
 
     # -- dates ---------------------------------------------------------------
 
@@ -530,7 +541,45 @@ class Carriere:
     # la classe s'appuie déjà sur ce contrat pour ses autres `cached_property`.
     @cached_property
     def date_naissance(self) -> DateMois:
+        """Le mois de naissance, tel que l'état civil le porte."""
         return DateMois(self.annee_naissance, self.mois_naissance)
+
+    @cached_property
+    def jour_de_naissance(self) -> int:
+        """Le jour de naissance que la chronologie porte : déclaré, ou posé par
+        la présomption ``jour_de_naissance``."""
+        return chrono.jour_de(chrono.naissance(self.chronologie, self.personne)["debut"])
+
+    @cached_property
+    def origine_des_ages(self) -> DateMois:
+        """Le mois d'où les âges se comptent (:func:`origine_des_ages`).
+
+        **Deux lectures de la naissance, et il ne faut pas les confondre.** La
+        GÉNÉRATION se lit au vrai mois (:attr:`generation`) : la loi coupe au
+        1er juillet 1951 et au 1er septembre 1961 des assurés nés avant ou
+        après. L'ÂGE se compte d'ici : une date d'effet, un décompte de
+        trimestres après un âge, l'âge à une date.
+        """
+        return origine_des_ages(self.date_naissance, self.jour_de_naissance)
+
+    def date_de_l_age(self, age: float) -> DateMois:
+        """Le premier mois au premier jour duquel l'assuré a cet âge : la date
+        d'effet au plus tôt d'une pension ouverte à cet âge, et le premier mois
+        entier vécu au-delà."""
+        return self.origine_des_ages.plus_mois(en_mois(age))
+
+    def mois_de_l_anniversaire(self, age: float) -> DateMois:
+        """Le mois où tombe l'anniversaire de cet âge.
+
+        C'est lui, et non :meth:`date_de_l_age`, qui se compare à une coupure
+        tombant un premier du mois — l'assuré né le 15 juin 1957 a soixante ans
+        avant le 1er juillet 2017 — et qui donne l'année où l'âge est atteint.
+        """
+        return self.date_naissance.plus_mois(en_mois(age))
+
+    def age_au(self, date: DateMois) -> float:
+        """L'âge, en mois révolus, au premier jour de ce mois."""
+        return (date.rang - self.origine_des_ages.rang) / MOIS_PAR_AN
 
     @cached_property
     def naissances_des_enfants(self) -> tuple[tuple[str, str], ...]:
@@ -578,18 +627,18 @@ class Carriere:
     def date_liquidation(self) -> DateMois:
         """Mois où la pension prend effet.
 
-        L'âge de liquidation est compté en mois depuis la date de naissance :
-        né en mars 1962, parti à soixante-quatre ans et six mois, l'assuré
-        liquide en septembre 2026. Le modèle arrondissait auparavant
-        ``naissance + âge`` à l'année la plus proche, ce qui déplaçait la
-        liquidation d'un semestre et, l'arrondi étant au pair, la déplaçait
-        différemment selon la parité du millésime.
+        L'âge de liquidation est compté en mois depuis le mois d'où les âges
+        se comptent (:attr:`origine_des_ages`) : né en mars 1962, parti à
+        soixante-quatre ans et six mois, l'assuré liquide en septembre 2026.
+        Le modèle arrondissait auparavant ``naissance + âge`` à l'année la plus
+        proche, ce qui déplaçait la liquidation d'un semestre et, l'arrondi
+        étant au pair, la déplaçait différemment selon la parité du millésime.
         """
         if self.age_liquidation is None:
             raise ValueError(
                 f"{self.identifiant} : âge de liquidation non renseigné"
             )
-        return self.date_naissance.plus_mois(en_mois(self.age_liquidation))
+        return self.date_de_l_age(self.age_liquidation)
 
     @property
     def annee_liquidation(self) -> int:
@@ -734,11 +783,13 @@ class Carriere:
 
     def age_de_service(self, affiliations: Iterable[str],
                        annees: float) -> float | None:
-        """Âge auquel la durée de service demandée est atteinte."""
+        """Âge auquel la durée de service demandée est atteinte : l'âge au
+        mois que :meth:`date_de_service` date, compté comme tout âge
+        (:meth:`age_au`), pour que l'âge redonne ce mois-là."""
         date = self.date_de_service(affiliations, annees)
         if date is None:
             return None
-        return (date.rang - self.date_naissance.rang) / MOIS_PAR_AN
+        return self.age_au(date)
 
     @cached_property
     def trimestres_actuels(self) -> int:
@@ -880,6 +931,7 @@ class Carriere:
             lignes=list(lignes),
             mois_naissance=self.mois_naissance,
             age_liquidation=self.age_liquidation,
+            jour_naissance=self.jour_naissance,
             nombre_enfants=self.nombre_enfants,
             naissances_enfants=self.naissances_enfants,
             identifiant=self.identifiant,
@@ -935,6 +987,7 @@ class Carriere:
                 lignes=list(self.lignes),
                 mois_naissance=self.mois_naissance,
                 age_liquidation=age_liquidation,
+                jour_naissance=self.jour_naissance,
                 nombre_enfants=self.nombre_enfants,
                 naissances_enfants=self.naissances_enfants,
                 identifiant=self.identifiant,
@@ -943,7 +996,7 @@ class Carriere:
                 personne=self.personne,
             )
         initiale = self.date_liquidation
-        fin = self.date_naissance.plus_mois(en_mois(age_liquidation))
+        fin = self.date_de_l_age(age_liquidation)
         motifs = charger_periodes_non_travaillees(macro.racine)
         derniere_annee = self.lignes[-1].annee
         finales = self.lignes_de(derniere_annee)
@@ -1019,6 +1072,7 @@ class Carriere:
             lignes=lignes,
             mois_naissance=self.mois_naissance,
             age_liquidation=age_liquidation,
+            jour_naissance=self.jour_naissance,
             nombre_enfants=self.nombre_enfants,
             naissances_enfants=self.naissances_enfants,
             identifiant=self.identifiant,
@@ -1047,6 +1101,7 @@ class Carriere:
         part_primes: float = 0.0,
         identifiant: str = "assuré",
         naissances_enfants: tuple[str, ...] | list[str] = (),
+        jour_naissance: int | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -1076,7 +1131,8 @@ class Carriere:
         chronologie = preparer(chrono.du_releve(
             annee_naissance, sexe, releve, age_liquidation,
             mois_naissance=mois_naissance, nombre_enfants=nombre_enfants,
-            part_primes=part_primes, naissances_enfants=naissances_enfants))
+            part_primes=part_primes, naissances_enfants=naissances_enfants,
+            jour_naissance=jour_naissance))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1096,6 +1152,7 @@ class Carriere:
         part_primes: float = 0.0,
         identifiant: str = "assuré",
         naissances_enfants: tuple[str, ...] | list[str] = (),
+        jour_naissance: int | None = None,
     ) -> "Carriere":
         """Carrière d'un seul métier, exercé du premier au dernier jour.
 
@@ -1116,6 +1173,7 @@ class Carriere:
             part_primes=part_primes,
             identifiant=identifiant,
             naissances_enfants=naissances_enfants,
+            jour_naissance=jour_naissance,
         )
 
     @classmethod
@@ -1133,6 +1191,7 @@ class Carriere:
         part_primes: float = 0.0,
         identifiant: str = "assuré",
         naissances_enfants: tuple[str, ...] | list[str] = (),
+        jour_naissance: int | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -1177,7 +1236,8 @@ class Carriere:
             annee_naissance, sexe, metiers, age_liquidation,
             mois_naissance=mois_naissance, profil_carriere=profil_carriere,
             interruptions=interruptions, nombre_enfants=nombre_enfants,
-            part_primes=part_primes, naissances_enfants=naissances_enfants))
+            part_primes=part_primes, naissances_enfants=naissances_enfants,
+            jour_naissance=jour_naissance))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1187,9 +1247,9 @@ class Carriere:
         """La carrière qu'une chronologie complétée décrit : ses années, telles
         que le moteur d'aujourd'hui les liquide.
 
-        La naissance donne l'année, le mois et le sexe ; le départ, l'âge de
-        liquidation que la personne a déclaré ; les filiations, le nombre des
-        enfants. Les périodes donnent les années : celles d'un relevé, ligne à
+        La naissance donne l'année, le mois, le jour s'il est déclaré et le
+        sexe ; le départ, l'âge de liquidation que la personne a déclaré ; les
+        filiations, le nombre des enfants. Les périodes donnent les années : celles d'un relevé, ligne à
         ligne, avec le revenu qu'il porte (:func:`_lignes_du_releve`) ; celles
         d'un parcours, métier par métier, avec le revenu que le profil déduit
         du niveau déclaré (:func:`_lignes_du_parcours`). Une chronologie qui
@@ -1225,6 +1285,10 @@ class Carriere:
             lignes=lignes,
             mois_naissance=date_naissance.mois,
             age_liquidation=age_liquidation,
+            jour_naissance=(chrono.jour_de(naissance["debut"])
+                            if naissance["origine"] == "declare"
+                            and naissance["attributs"].get("precision") == "jour"
+                            else None),
             nombre_enfants=len(chrono.enfants(chronologie, personne)),
             naissances_enfants=_naissances_declarees(chronologie, personne),
             identifiant=identifiant,

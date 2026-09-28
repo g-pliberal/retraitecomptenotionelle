@@ -97,6 +97,18 @@ def formater_age(age: float) -> str:
     return f"{annees} ans et {mois} mois"
 
 
+def origine_des_ages(naissance: DateMois, jour: int) -> DateMois:
+    """Le mois d'où les âges se comptent, pour qui est né ce mois-là, ce
+    jour-là.
+
+    Les âges du modèle sont des âges au premier jour d'un mois : un départ à
+    soixante-quatre ans est le premier mois où l'assuré les a, et l'âge à une
+    date est le nombre de mois écoulés depuis ce mois-ci. Le jour de naissance
+    n'y entre pas encore : c'est le mois de naissance.
+    """
+    return naissance
+
+
 def mois_travailles(annee: int, debut: DateMois, fin: DateMois) -> int:
     """Mois de l'année civile ``annee`` compris entre ``debut`` et ``fin``.
 

@@ -216,6 +216,18 @@ listes:
     # l'étape où son fait entrera : la radiation se date par régime, ce que
     # seule la coordination des affiliations saura faire (phase 4).
     valeurs:
+      jour_de_naissance:
+        dit: l'assuré dont le jour de naissance n'est pas dit est né le premier de son mois
+        valeur: 1
+        unite: du mois
+        pose: {sorte: naissance, personne: assure}
+        raison: >-
+          le formulaire demande la date entière, mais une adresse d'avant le
+          calendrier, un cas type, la page Coût et les témoins ne donnent que
+          l'année ou le mois. Le premier du mois est la convention que le
+          modèle a toujours suivie, et qui fait tomber l'âge entier sur le
+          premier mois de l'année civile ; la présomption la garde, et les
+          résultats ne bougent pas
       naissance_des_enfants:
         dit: chaque enfant est né aux trente ans de l'assuré
         valeur: 30

@@ -77,6 +77,16 @@ export function formaterAge(age) {
 }
 
 /**
+ * Le mois d'où les âges se comptent, pour qui est né ce mois-là, ce jour-là.
+ * Les âges du modèle sont des âges au premier jour d'un mois. Le jour de
+ * naissance n'y entre pas encore : c'est le mois de naissance. Voir
+ * `origine_des_ages` du Python.
+ */
+export function origineDesAges(naissance, jour) {
+  return naissance;
+}
+
+/**
  * Mois de l'année civile ``annee`` compris entre ``debut`` et ``fin``.
  *
  * ``debut`` est inclus, ``fin`` est EXCLUE : une pension prend effet le premier

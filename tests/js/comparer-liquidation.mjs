@@ -40,7 +40,7 @@ const sortie = requetes.map((requete) => {
   saisie = null;
   const avant = appels();
   try {
-    contexte.simuler(Saisie.depuisRequete(requete));
+    contexte.simuler(Saisie.depuisRequete(requete, false, contexte.paquet.presomptions));
   } catch (erreur) {
     return { erreur: String(erreur.message ?? erreur) };
   }

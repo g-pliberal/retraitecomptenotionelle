@@ -32,7 +32,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois, en_mois
+from ..calendrier import DateMois
 from ..carriere import salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
 from .. import revalorisation
@@ -850,7 +850,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # droits en 2011.
             fonction_publique = moteur.catalogue[code].famille == "fonction_publique"
             minoration = MINORATION_AGE_MINIMUM_GARANTI.get(
-                carriere.date_naissance.plus_mois(en_mois(age_ouverture)).annee, 0
+                carriere.mois_de_l_anniversaire(age_ouverture).annee, 0
             ) if fonction_publique else 0
             eligibles_garanti.append(EligibleMinimumGaranti(
                 indice=len(pensions),
@@ -1734,7 +1734,7 @@ def trimestres_de_surcote_regimes_speciaux(carriere: Carriere, trimestres: int,
     """
     if trimestres < 160:
         return 0
-    debut = carriere.date_naissance.plus_mois(en_mois(age_surcote))
+    debut = carriere.date_de_l_age(age_surcote)
     if debut.rang < SURCOTE_REGIMES_SPECIAUX_DEPUIS.rang:
         debut = SURCOTE_REGIMES_SPECIAUX_DEPUIS
     fin = carriere.date_liquidation
@@ -1765,8 +1765,7 @@ def borne_de_la_duree(moteur, periode: PeriodeRegime, carriere: Carriere,
     Les trimestres d'après l'ouverture se comptent au mois près, jusqu'à la
     date d'effet de la pension.
     """
-    ouverture = carriere.date_naissance.plus_mois(
-        en_mois(ouvrir.age_ouverture(moteur, periode, carriere)))
+    ouverture = carriere.date_de_l_age(ouvrir.age_ouverture(moteur, periode, carriere))
     fin = carriere.date_liquidation
     apres = 0.0
     if ouverture.rang < fin.rang:
@@ -2047,6 +2046,8 @@ def taux_acquis_au_31_mars_1983(moteur, periode: PeriodeRegime,
     corrigée : l'appelant compare les deux produits du taux et de la durée
     (fiche ``decote_avant_1983``).
     """
+    # L'âge en mois révolus au 31 mars 1983, dernier jour d'un mois : les mois
+    # écoulés depuis le mois de naissance, moins un, quel que soit le jour.
     mois = ORDONNANCE_DU_26_MARS_1982.rang - carriere.date_naissance.rang - 1
     if (carriere.date_liquidation.rang < ORDONNANCE_DU_26_MARS_1982.rang
             or mois < 12 * 60):
@@ -2077,7 +2078,7 @@ def trimestres_d_ajournement(carriere: Carriere, age_taux_plein: float) -> int:
     est atteint, comme pour la surcote (:func:`coefficient_surcote_datee`) :
     c'est exact pour qui est né après le premier du mois.
     """
-    debut = carriere.date_naissance.plus_mois(en_mois(age_taux_plein)).plus_mois(1)
+    debut = carriere.mois_de_l_anniversaire(age_taux_plein).plus_mois(1)
     return max(0, (carriere.date_liquidation.rang - debut.rang) // 3)
 
 
@@ -2484,7 +2485,7 @@ def coefficient_surcote_datee(moteur, periode: PeriodeRegime, carriere: Carriere
     trimestre de plus que le modèle ne lui en compte.
     """
     annee_liquidation = carriere.annee_liquidation
-    date_legal = carriere.date_naissance.plus_mois(en_mois(age_ouverture))
+    date_legal = carriere.mois_de_l_anniversaire(age_ouverture)
     en_duree = periode.regime in coordonner.REGIMES_CODE_DES_PENSIONS
     trimestre_legal = (date_legal.mois - 1) // 3
     debut_age = (date_legal.plus_mois(1) if en_duree
@@ -2522,7 +2523,7 @@ def coefficient_surcote_datee(moteur, periode: PeriodeRegime, carriere: Carriere
     if (debut.mois - 1) % 3 and not en_duree:
         debut = DateMois(debut.annee, 1).plus_mois(3 * ((debut.mois - 1) // 3 + 1))
     fin = carriere.date_liquidation
-    date_65 = carriere.date_naissance.plus_mois(12 * moteur.SURCOTE_AGE_MAJORE)
+    date_65 = carriere.mois_de_l_anniversaire(moteur.SURCOTE_AGE_MAJORE)
     trimestre_65 = (date_65.annee, (date_65.mois - 1) // 3)
 
     dates: list[tuple[DateMois, bool]] = []
@@ -2694,11 +2695,11 @@ def age_de_la_duree_atteinte(moteur, periode: PeriodeRegime, carriere: Carriere,
     la carrière ont validé depuis, au mois près.
     """
     legal = ouvrir.age_ouverture_commun(moteur, periode, carriere)
-    fin = carriere.date_naissance.plus_mois(en_mois(age_liquidation))
+    fin = carriere.date_de_l_age(age_liquidation)
     trimestre = 0
     while True:
         age = legal + trimestre / 4.0
-        debut = carriere.date_naissance.plus_mois(en_mois(age))
+        debut = carriere.date_de_l_age(age)
         if debut.rang >= fin.rang:
             return None
         depuis = sum(trimestres_de_la_ligne_entre(carriere, ligne, debut, fin)
@@ -2771,11 +2772,12 @@ def _fenetre_ircantec(carriere: Carriere, trimestres: int, age_bas: float,
     année civile, à l'âge atteint dans l'année : jusqu'à deux trimestres
     d'écart à chaque bout.
     """
-    naissance = carriere.date_naissance
-    debut = naissance.plus_mois(en_mois(age_bas))
-    borne = naissance.plus_mois(en_mois(age_haut))
-    fin = naissance.plus_mois(en_mois(age_liquidation))
-    fermee = borne.rang < fin.rang
+    debut = carriere.date_de_l_age(age_bas)
+    borne = carriere.date_de_l_age(age_haut)
+    fin = carriere.date_de_l_age(age_liquidation)
+    # L'âge du taux plein ferme la fenêtre quand son anniversaire précède la
+    # date d'effet, même si celle-ci tombe au premier mois qui le suit.
+    fermee = carriere.mois_de_l_anniversaire(age_haut).rang < fin.rang
     haut = borne if fermee else fin
 
     def compte(total: float) -> int:

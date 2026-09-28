@@ -91,7 +91,7 @@ test("les simulations retrouvent les chiffres du modèle Python", () => {
   const ecarts = [];
   let cas = 0;
   for (const [nom, temoin] of Object.entries(temoinsSimulations)) {
-    const saisie = Saisie.depuisRequete(temoin.requete);
+    const saisie = Saisie.depuisRequete(temoin.requete, false, paquet.presomptions);
     const avant = appels();
     const obtenu = contexte.simuler(saisie).dictionnaire();
     // Le témoin déclare ses appels de `liquider`, liquidations d'essai

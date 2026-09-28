@@ -9,13 +9,14 @@
 
 import {
   DateMois, MOIS_PAR_AN, NOMS_DE_MOIS, enMois, formaterAge, moisTravailles,
+  origineDesAges,
 } from "./calendrier.js";
 import {
   AgeConversionDroitsAcquis, ContributionEtat, ModeAgeReference, ModeIndexation,
   PartCotisation, SituationFoyer, TableConversion, avec, sousRegimeFrais,
   sousRegimeTaux,
 } from "./config.js";
-import { naissanceDeclaree } from "./chronologie.js";
+import { naissanceDeclaree, valeur as valeurPresumee } from "./chronologie.js";
 import { formatG } from "./format.js";
 import * as g from "./gabarit.js";
 
@@ -368,11 +369,14 @@ export const CLES_MODELISATION = Object.freeze([
 export const DEFAUTS = Object.freeze({
   naissance: 1975,
   naissance_mois: 1,
-  //: Jour de naissance. Il n'entre dans aucun calcul — le modèle compte en
-  //: mois, et le droit coupe ses générations au mois. Il est gardé parce que le
-  //: calendrier en demande un : sans lui, le formulaire répondrait « 1er mars »
-  //: à qui est né le 15, et ferait douter de ce qu'il a compris.
+  //: Jour de naissance. Il décide du mois d'où les âges se comptent, et donc
+  //: de l'âge que vaut une date de carrière ; la génération, elle, se coupe au
+  //: mois. Une adresse qui porte la naissance sans lui le laisse à la
+  //: présomption `jour_de_naissance`, et le dit ci-dessous. Voir `saisie.py`.
   naissance_jour: 1,
+  //: Vrai quand l'adresse portait la naissance sans son jour, que la
+  //: présomption a posé : la carrière le présume alors à son tour.
+  naissance_jour_presume: false,
   sexe: "H",
   statut: "salarie_prive_non_cadre",
   debut: 21,
@@ -457,7 +461,7 @@ export class Saisie {
    * au lieu de la refuser. Une saisie lue ainsi ne se calcule jamais — voir
    * `saisieRefusee`.
    */
-  static depuisRequete(parametres, tolerante = false) {
+  static depuisRequete(parametres, tolerante = false, presomptions = null) {
     // Le premier métier se lit d'abord : les suivants héritent de son niveau de
     // revenu quand ils n'en portent pas.
     const statut = parametres.statut || DEFAUTS.statut;
@@ -480,6 +484,19 @@ export class Saisie {
       ? naissance.annee : entier(parametres, "naissance", DEFAUTS.naissance);
     const moisNaissance = naissance
       ? naissance.mois : entier(parametres, "naissance_mois", DEFAUTS.naissance_mois);
+    // Le jour, s'il est dit ; présumé si l'adresse porte la naissance sans lui
+    // (`presomptions`, la table du paquet) ; celui du formulaire vierge si elle
+    // ne la porte pas du tout.
+    let jourNaissance = DEFAUTS.naissance_jour;
+    let jourPresume = false;
+    const porte = (cle) => parametres[cle] !== undefined && parametres[cle] !== null
+      && parametres[cle] !== "";
+    if (naissance && naissance.jour !== null) {
+      jourNaissance = naissance.jour;
+    } else if (porte("naissance") || porte("naissance_mois")) {
+      jourNaissance = valeurPresumee("jour_de_naissance", presomptions);
+      jourPresume = true;
+    }
     const saisie = new Saisie({
       unite_revenu: unite,
       montants: parmi(parametres, "montants", MODES_MONTANT, DEFAUTS.montants),
@@ -493,16 +510,17 @@ export class Saisie {
       pension: reel(parametres, "pension", DEFAUTS.pension),
       naissance: anneeNaissance,
       naissance_mois: moisNaissance,
-      naissance_jour: naissance ? naissance.jour : DEFAUTS.naissance_jour,
+      naissance_jour: jourNaissance,
+      naissance_jour_presume: jourPresume,
       sexe: parametres.sexe === "F" ? "F" : "H",
       statut,
       debut: ageSaisi(parametres, "debut", DEFAUTS.debut,
-        anneeNaissance, moisNaissance),
+        anneeNaissance, moisNaissance, jourNaissance),
       liquidation: ageSaisi(parametres, "liquidation", DEFAUTS.liquidation,
-        anneeNaissance, moisNaissance),
+        anneeNaissance, moisNaissance, jourNaissance),
       salaire,
       metiers: metiersSaisis(parametres, salaire, anneeNaissance, moisNaissance,
-        tolerante),
+        jourNaissance, tolerante),
       releve: (parametres.releve || "").trim(),
       profil: parmi(parametres, "profil", PROFILS, DEFAUTS.profil),
       primes: reel(parametres, "primes", DEFAUTS.primes),
@@ -559,6 +577,16 @@ export class Saisie {
       throw new ErreurSaisie(
         `Année de naissance hors du champ du modèle : ${this.naissance}. `
         + `Attendu entre ${NAISSANCE_MINIMALE} et ${NAISSANCE_MAXIMALE}.`,
+      );
+    }
+    // Le jour compte désormais : un 31 février, qu'aucun calendrier ne propose
+    // mais qu'une adresse peut porter, se refuse ici.
+    const date = new Date(Date.UTC(this.naissance, this.naissance_mois - 1,
+      this.naissance_jour));
+    if (date.getUTCMonth() !== this.naissance_mois - 1) {
+      throw new ErreurSaisie(
+        `Date de naissance impossible : le ${this.naissance_jour} `
+        + `${NOMS_DE_MOIS[this.naissance_mois - 1]} ${this.naissance} n'existe pas.`,
       );
     }
     if (!(this.debut >= AGE_DEBUT_MINIMAL && this.debut <= AGE_DEBUT_MAXIMAL)) {
@@ -1157,9 +1185,26 @@ export class Saisie {
   // recevoir des âges : la conversion tient dans les méthodes qui suivent, et
   // nulle part ailleurs.
 
-  /** Le mois où la carrière atteint cet âge. */
+  /**
+   * Le mois où la carrière atteint cet âge, compté comme le moteur le compte
+   * ({@link origineDesAges}).
+   */
   dateDe(age_) {
-    return new DateMois(this.naissance, this.naissance_mois).plusMois(enMois(age_));
+    return this.origineDesAges.plusMois(enMois(age_));
+  }
+
+  /**
+   * Le jour de naissance tel que la carrière le reçoit : nul quand il est
+   * présumé, pour que la chronologie le présume en son nom.
+   */
+  get jourDeclare() {
+    return this.naissance_jour_presume ? null : this.naissance_jour;
+  }
+
+  /** Le mois d'où les âges se comptent : voir `origineDesAges` du calendrier. */
+  get origineDesAges() {
+    return origineDesAges(new DateMois(this.naissance, this.naissance_mois),
+      this.naissance_jour);
   }
 
   /** Le même mois, tel que l'adresse le porte : « 1996-09 ». */
@@ -1334,7 +1379,7 @@ export class Saisie {
  * revanche, est une intention manquée — elle est refusée, avec ce qui lui manque.
  */
 function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois,
-  tolerante = false) {
+  naissanceJour, tolerante = false) {
   const metiers = [];
   let salaire = salairePrecedent;
   for (let rang = 2; rang <= METIERS_MAXIMUM; rang += 1) {
@@ -1397,14 +1442,15 @@ function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois,
     }
     metiers.push({
       debut: ageSaisi(parametres, `metier${rang}_debut`, 0.0,
-        naissance, naissanceMois),
+        naissance, naissanceMois, naissanceJour),
       statut,
       salaire: salaireLigne,
       // Vrai si l'activité S'AJOUTE à celle en cours au lieu de la remplacer.
       cumul: Boolean(cumul),
       // Âge auquel une activité ajoutée s'arrête ; null la mène au départ.
       fin: finBrut
-        ? ageSaisi(parametres, `metier${rang}_fin`, 0.0, naissance, naissanceMois)
+        ? ageSaisi(parametres, `metier${rang}_fin`, 0.0, naissance, naissanceMois,
+          naissanceJour)
         : null,
       // Vrai si `statut` est un motif de `SANS_EMPLOI` et non une affiliation.
       // Décidé à la LECTURE, et non déduit plus tard du statut : la première
@@ -1505,7 +1551,7 @@ export function jourEnClair(jour) {
  * type="date">` renvoie partout, quelle que soit celle — « 15/03/1975 » en
  * français — sous laquelle le navigateur l'a affichée. L'adresse, elle, s'en
  * tient au mois pour les dates de carrière : « debut=1996-09 », le jour n'y
- * ayant aucun rôle.
+ * ayant aucun rôle. Le jour est nul quand la date n'en dit pas.
  *
  * Une adresse d'avant le calendrier porte des âges et une année nus —
  * « naissance=1975 », « liquidation=64 » : rien ici ne les reconnaît, et `null`
@@ -1521,14 +1567,13 @@ function dateSaisie(parametres, nom) {
     return null;
   }
   const [annee, mois] = [Number(trouve[1]), Number(trouve[2])];
-  const jour = trouve[3] === undefined ? 1 : Number(trouve[3]);
+  const jour = trouve[3] === undefined ? null : Number(trouve[3]);
   if (!(mois >= 1 && mois <= 12)) {
     throw new ErreurSaisie(`« ${nom} » : mois attendu entre 01 et 12 (reçu : ${brut}).`);
   }
-  // Le jour n'est borné que grossièrement : il ne sert à aucun calcul, et le
-  // refuser au calendrier près — un 31 février — n'épargnerait rien à personne,
-  // puisque aucun champ date ne le propose.
-  if (!(jour >= 1 && jour <= 31)) {
+  // Le jour n'est borné ici que grossièrement ; celui de la naissance, le seul
+  // qui compte, se contrôle au calendrier près avec elle (`verifier`).
+  if (jour !== null && !(jour >= 1 && jour <= 31)) {
     throw new ErreurSaisie(`« ${nom} » : jour attendu entre 01 et 31 (reçu : ${brut}).`);
   }
   return { annee, mois, jour };
@@ -1539,18 +1584,19 @@ function dateSaisie(parametres, nom) {
  *
  * Le formulaire demande une date — celle du premier mois cotisé, celle du
  * départ —, parce que c'est ce dont on se souvient ; le modèle, lui, ne connaît
- * que des âges. La soustraction se fait ici, en mois, et le résultat est l'âge
- * en années décimales que le moteur attend.
+ * que des âges. La soustraction se fait ici, en mois, depuis le mois d'où les
+ * âges se comptent, et le résultat est l'âge en années décimales que le moteur
+ * attend : le moteur, qui compte de même, retombe sur la date saisie.
  *
  * Les adresses d'avant le calendrier continuent d'être lues telles quelles :
  * `liquidation=64` et `liquidation_mois=7` valent soixante-quatre ans et sept
  * mois, `liquidation=64.5` vaut ce qu'il a toujours valu.
  */
-function ageSaisi(parametres, nom, defaut, naissance, naissanceMois) {
+function ageSaisi(parametres, nom, defaut, naissance, naissanceMois, naissanceJour) {
   const date = dateSaisie(parametres, nom);
   if (date !== null) {
     const rang = new DateMois(date.annee, date.mois).rang
-      - new DateMois(naissance, naissanceMois).rang;
+      - origineDesAges(new DateMois(naissance, naissanceMois), naissanceJour).rang;
     return rang / MOIS_PAR_AN;
   }
   const annees = reel(parametres, nom, defaut);

@@ -32,7 +32,8 @@ def _complete(**modifications) -> dict:
 def test_un_parcours_devient_des_faits_dates():
     """Un fait par métier, daté au mois et borné [début, fin) ; les métiers
     principaux bout à bout jusqu'au départ, l'activité cumulée à côté ; une
-    année d'interruption par motif ; la naissance et le départ déclarés."""
+    année d'interruption par motif ; le départ déclaré, et la naissance
+    déclarée au mois, dont la présomption pose le jour."""
     brute = chronologie.du_parcours(**PARCOURS)
     faits = {f["id"]: f for f in brute["faits"]}
     assert faits["naissance_assure"]["debut"] == "1965-03-01"
@@ -45,7 +46,9 @@ def test_un_parcours_devient_des_faits_dates():
         "interruption_1992", "interruption_1996"]
     assert faits["depart_assure"]["debut"] == "2029-06-01"
     assert faits["depart_assure"]["attributs"]["age"] == 64.25
-    assert all(f["origine"] == "declare" for f in brute["faits"])
+    assert all(f["origine"] == "declare" for f in brute["faits"]
+               if f["id"] != "naissance_assure")
+    assert faits["naissance_assure"]["presomption"] == "jour_de_naissance"
 
 
 def test_les_enfants_sont_des_personnes_liees():
@@ -72,8 +75,12 @@ def test_la_presomption_pose_la_naissance_des_enfants_en_son_nom():
         assert (ne["origine"], ne["presomption"], ne["fiabilite"]) == (
             "presume", "naissance_des_enfants", "estimee")
     assert all(l["debut"] == "1995-03-01" for l in complete["liens"])
-    assert chronologie.presomptions_employees(complete) == ["naissance_des_enfants"]
-    assert chronologie.presomptions_employees(_complete(nombre_enfants=0)) == []
+    assert chronologie.presomptions_employees(complete) == [
+        "jour_de_naissance", "naissance_des_enfants"]
+    assert chronologie.presomptions_employees(_complete(nombre_enfants=0)) == [
+        "jour_de_naissance"]
+    assert chronologie.presomptions_employees(
+        _complete(nombre_enfants=0, jour_naissance=15)) == []
 
 
 def test_un_fait_declare_n_est_jamais_remplace():
@@ -201,7 +208,7 @@ def test_une_naissance_declaree_remplace_la_presomption(macro):
     carriere = Carriere.depuis_chronologie(chronologie.completer(brute), macro)
     assert carriere.naissances_des_enfants == (("enfant_1", "2002-05-01"),
                                                ("enfant_2", "2002-05-01"))
-    assert chronologie.presomptions_employees(carriere.chronologie) == []
+    assert chronologie.presomptions_employees(carriere.chronologie) == ["jour_de_naissance"]
 
 
 def test_chaque_enfant_garde_sa_date(macro):
@@ -214,7 +221,8 @@ def test_chaque_enfant_garde_sa_date(macro):
     carriere = Carriere.depuis_chronologie(chronologie.completer(brute), macro)
     assert carriere.naissances_des_enfants == (("enfant_1", "1993-07-14"),
                                                ("enfant_2", "1995-03-01"))
-    assert chronologie.presomptions_employees(carriere.chronologie) == ["naissance_des_enfants"]
+    assert chronologie.presomptions_employees(carriere.chronologie) == [
+        "jour_de_naissance", "naissance_des_enfants"]
 
 
 def test_la_saisie_declare_la_naissance_des_premiers_enfants(macro):
@@ -274,6 +282,56 @@ def test_un_releve_et_un_parcours_ne_se_melent_pas(macro):
         Carriere.depuis_chronologie(chronologie.completer(brute), macro)
 
 
+# -- le jour de naissance de l'assuré ----------------------------------------------
+
+def test_le_jour_declare_se_pose_au_jour():
+    """Déclaré, le jour de naissance de l'assuré est un fait au jour
+    (``precision: jour``), que rien ne présume."""
+    faits = {f["id"]: f for f in chronologie.du_parcours(**PARCOURS, jour_naissance=15)["faits"]}
+    naissance = faits["naissance_assure"]
+    assert naissance["debut"] == "1965-03-15"
+    assert naissance["attributs"] == {"sexe": "F", "precision": "jour"}
+    assert (naissance["origine"], naissance["fiabilite"]) == ("declare", "haute")
+    assert "presomption" not in naissance
+
+
+def test_le_jour_tu_est_presume_en_son_nom():
+    """Tu, il est posé dès la construction par la présomption
+    ``jour_de_naissance``, à la valeur du vocabulaire — ou de la table
+    qu'on lui donne, celle du paquet côté site ; le fait garde la précision
+    de ce qui est déclaré, le mois."""
+    valeur = vocabulaire.presomptions()["jour_de_naissance"]["valeur"]
+    naissance = chronologie.naissance(chronologie.du_parcours(**PARCOURS), "assure")
+    assert naissance["debut"] == f"1965-03-{valeur:02d}"
+    assert naissance["attributs"] == {"sexe": "F", "precision": "mois"}
+    assert (naissance["origine"], naissance["presomption"], naissance["fiabilite"]) == (
+        "presume", "jour_de_naissance", "estimee")
+    autre = chronologie.du_parcours(**PARCOURS, presomptions={"jour_de_naissance": {"valeur": 20}})
+    assert chronologie.naissance(autre, "assure")["debut"] == "1965-03-20"
+
+
+def test_un_jour_qui_n_existe_pas_est_refuse():
+    with pytest.raises(ValueError, match="naissance impossible : le 30 du mois 2 de 1965"):
+        chronologie.du_parcours(**{**PARCOURS, "mois_naissance": 2}, jour_naissance=30)
+
+
+def test_la_carriere_lit_le_jour_que_la_chronologie_porte(macro):
+    """Le jour déclaré revient à la carrière tiré de sa chronologie ; le jour
+    présumé n'y est pas déclaré, mais la carrière le lit quand même, et ses
+    copies de travail le gardent."""
+    declare = Carriere.depuis_parcours(macro=macro, **PARCOURS, jour_naissance=15)
+    assert (declare.jour_naissance, declare.jour_de_naissance) == (15, 15)
+    assert declare.avec_lignes(declare.lignes).jour_de_naissance == 15
+    presume = Carriere.depuis_parcours(macro=macro, **PARCOURS)
+    valeur = vocabulaire.presomptions()["jour_de_naissance"]["valeur"]
+    assert (presume.jour_naissance, presume.jour_de_naissance) == (None, valeur)
+    assert presume.prolongee(66.0, macro).jour_de_naissance == valeur
+    ligne_a_ligne = Carriere(annee_naissance=1980, sexe="F", jour_naissance=31)
+    assert ligne_a_ligne.jour_de_naissance == 31
+    with pytest.raises(ValueError, match="jour de naissance attendu entre 1 et 31"):
+        Carriere(annee_naissance=1980, sexe="F", jour_naissance=32)
+
+
 # -- le portage ------------------------------------------------------------------
 
 SAISIES = [
@@ -322,6 +380,20 @@ SAISIES = [
                 "nombre_enfants": 1, "naissances_enfants": ["1961"],
                 "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
                             "trimestres": 4, "type_periode": "emploi"}]}},
+    # Le jour de naissance de l'assuré, déclaré : un 15, un 1er, et un 29
+    # février qui n'existe pas.
+    {"parcours": {"annee_naissance": 1964, "sexe": "H", "mois_naissance": 5,
+                  "jour_naissance": 16, "age_liquidation": 62.75,
+                  "metiers": [{"affiliation": "salarie_prive", "age_debut": 22.0,
+                               "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
+    {"releve": {"annee_naissance": 1962, "sexe": "F", "mois_naissance": 1,
+                "jour_naissance": 1, "age_liquidation": 63.0,
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"parcours": {"annee_naissance": 1963, "sexe": "H", "mois_naissance": 2,
+                  "jour_naissance": 29, "age_liquidation": 64.0,
+                  "metiers": [{"affiliation": "salarie_prive", "age_debut": 22.0,
+                               "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
 ]
 
 

@@ -4297,8 +4297,9 @@ def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):
 
     scenario = simulateur.scenario_actuel
     periode = simulateur.catalogue["regime_general"].periode(2004)
-    carriere = SimpleNamespace(date_naissance=DateMois(1938, 10),
-                               date_liquidation=DateMois(2004, 5))
+    carriere = Carriere(annee_naissance=1938, sexe="H", mois_naissance=10,
+                        jour_naissance=1, age_liquidation=65 + 7 / 12)
+    assert carriere.date_liquidation == DateMois(2004, 5)
 
     def majores(**durees):
         return liquider.duree_majoree_apres_taux_plein(

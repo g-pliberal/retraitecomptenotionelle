@@ -357,7 +357,7 @@ export function rendre(contexte, cheminDemande, parametres = null) {
 
   let saisie;
   try {
-    saisie = Saisie.depuisRequete(requete);
+    saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
   } catch (erreur) {
     if (!(erreur instanceof ErreurSaisie)) {
       throw erreur;
@@ -367,7 +367,7 @@ export function rendre(contexte, cheminDemande, parametres = null) {
     // et c'était toute la carrière à retaper — trois métiers, un revenu, les
     // options — pour corriger un seul champ. Le refus dit quoi corriger ; le
     // formulaire garde le reste.
-    const telle = saisieRefusee(requete);
+    const telle = saisieRefusee(requete, contexte.paquet.presomptions);
     if (telle) {
       try {
         return [TITRES["/simuler"],
@@ -575,9 +575,9 @@ export function statuts(contexte) {
  * La saisie refusée, lue sans rien vérifier, pour être remontrée dans le
  * formulaire ; nulle si elle ne se lit même pas ainsi. Voir `rendre`.
  */
-function saisieRefusee(requete) {
+function saisieRefusee(requete, presomptions) {
   try {
-    return Saisie.depuisRequete(requete, true);
+    return Saisie.depuisRequete(requete, true, presomptions);
   } catch (erreur) {
     if (erreur instanceof ErreurSaisie) return null;
     throw erreur;
@@ -1393,7 +1393,7 @@ function remplacementsUnite(saisie, echelle) {
  * faut montrer.
  */
 export function requeteBasculee(contexte, formulaire, lien) {
-  const saisie = Saisie.depuisRequete(formulaire);
+  const saisie = Saisie.depuisRequete(formulaire, false, contexte.paquet.presomptions);
   const vers = (nom) => (nom in lien ? lien[nom] : saisie[nom]);
   if (vers("montants") !== saisie.montants) {
     const tauxPension = Montants.depuis(saisie, contexte.simulateur()).tauxPension;

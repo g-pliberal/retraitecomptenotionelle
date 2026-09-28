@@ -345,7 +345,9 @@ export class ScenarioNotionnel {
       lignes: lignesAvant,
       // L'année de liquidation de cette carrière fictive doit être l'année de
       // bascule : c'est en euros de cette année-là que les droits sont valorisés.
+      // Née un 1er janvier, elle liquide au 1er janvier de cette année.
       age_liquidation: bascule - carriere.annee_naissance,
+      jour_naissance: 1,
       nombre_enfants: 0, // avantages familiaux neutralisés
       identifiant: `${carriere.identifiant} (droits figés ${bascule})`,
     });

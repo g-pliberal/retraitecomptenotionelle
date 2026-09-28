@@ -37,7 +37,7 @@ Simulateur.prototype.simuler = function (carriere, ...reste) {
 const sortie = requetes.map((requete) => {
   saisie = null;
   try {
-    contexte.simuler(Saisie.depuisRequete(requete));
+    contexte.simuler(Saisie.depuisRequete(requete, false, contexte.paquet.presomptions));
   } catch (erreur) {
     return { erreur: String(erreur.message ?? erreur) };
   }

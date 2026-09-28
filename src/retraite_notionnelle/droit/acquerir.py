@@ -25,7 +25,7 @@ import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois, en_mois
+from ..calendrier import DateMois
 from ..carriere import salaire_moyen_annuel
 from ..donnees.chargement import (
     Fiabilite,
@@ -469,8 +469,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         if periode.trimestres_maximum_leve_avant_age is not None:
                             suivi[1] += compter.trimestres_de_la_ligne_entre(
                                 carriere, ligne, DateMois(carriere.annee_naissance, 1),
-                                carriere.date_naissance.plus_mois(en_mois(
-                                    periode.trimestres_maximum_leve_avant_age)),
+                                carriere.date_de_l_age(
+                                    periode.trimestres_maximum_leve_avant_age),
                             )
                     if (periode.points_ajustement_par_forfait is not None
                             and forfait > 0):

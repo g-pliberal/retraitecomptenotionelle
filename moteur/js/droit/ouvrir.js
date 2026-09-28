@@ -12,7 +12,7 @@
  * `ageTauxPleinDroit` sont ce que le pilote en lit, sans rien liquider.
  */
 
-import { DateMois, enMois } from "../calendrier.js";
+import { DateMois } from "../calendrier.js";
 import {
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   GENERATION_REFORME_2023, REFORME_2023_EFFET,
@@ -308,12 +308,12 @@ export function dureeRequiseAvantSoixanteAns(moteur, periode, carriere, derogati
   if (age >= AGE_DUREE_A_L_OUVERTURE) {
     return null;
   }
-  let ouverture = carriere.dateNaissance.plusMois(enMois(age));
+  // Le mois où l'âge est atteint, que la loi compare à ses dates (voir
+  // `ouvrir.py`).
+  let ouverture = carriere.moisDeLAnniversaire(age);
   if (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined) {
     ouverture = DateMois.depuisRang(Math.min(
-      ouverture.rang,
-      carriere.dateNaissance.plusMois(enMois(carriere.age_liquidation)).rang,
-    ));
+      ouverture.rang, carriere.dateLiquidation.rang));
   }
   if ((militaire !== null || carriereLongue) && ouverture.rang >= DUREE_XXIV_C_DEPUIS.rang) {
     return moteur.dureesRequisesAvantSoixanteAns.depuis2023(ouverture);
@@ -888,15 +888,13 @@ export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
  * plus tôt à la liquidation, et c'est cette année-là qui vaut.
  */
 export function anneeOuvertureDesDroits(moteur, periode, carriere, anneeLiquidation) {
-  const ouverture = carriere.dateNaissance
-    .plusMois(enMois(ageOuverture(moteur, periode, carriere))).annee;
+  const ouverture = carriere.moisDeLAnniversaire(
+    ageOuverture(moteur, periode, carriere)).annee;
   return Math.min(anneeLiquidation, ouverture);
 }
 
 export function moisOuvertureDesDroits(moteur, periode, carriere) {
-  let rang = carriere.dateNaissance.plusMois(
-    enMois(ageOuverture(moteur, periode, carriere)),
-  ).rang;
+  let rang = carriere.moisDeLAnniversaire(ageOuverture(moteur, periode, carriere)).rang;
   if (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined) {
     rang = Math.min(rang, carriere.dateLiquidation.rang);
   }

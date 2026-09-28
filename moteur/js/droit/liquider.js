@@ -13,7 +13,7 @@
  * `data/reference/etapes/liquider_chaque_regime.yaml`.
  */
 
-import { DateMois, enMois } from "../calendrier.js";
+import { DateMois } from "../calendrier.js";
 import { salaireMoyenAnnuel } from "../carriere.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../revalorisation.js";
@@ -567,7 +567,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
       const fonctionPublique = moteur.catalogue.obtenir(code).famille === "fonction_publique";
       const minoration = fonctionPublique
         ? (MINORATION_AGE_MINIMUM_GARANTI[
-          carriere.dateNaissance.plusMois(enMois(ageOuverturePeriode)).annee] ?? 0)
+          carriere.moisDeLAnniversaire(ageOuverturePeriode).annee] ?? 0)
         : 0;
       eligiblesGaranti.push({
         indice: indicePension,
@@ -1307,7 +1307,7 @@ export function trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis,
   if (trimestres < 160) {
     return 0;
   }
-  let debut = carriere.dateNaissance.plusMois(enMois(ageSurcote));
+  let debut = carriere.dateDeLAge(ageSurcote);
   if (debut.rang < SURCOTE_REGIMES_SPECIAUX_DEPUIS.rang) {
     debut = SURCOTE_REGIMES_SPECIAUX_DEPUIS;
   }
@@ -1329,9 +1329,7 @@ export function trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis,
  * les trimestres cotisés depuis l'ouverture du droit, au mois près.
  */
 export function borneDeLaDuree(moteur, periode, carriere, cible) {
-  const ouverture = carriere.dateNaissance.plusMois(
-    enMois(ouvrir.ageOuverture(moteur, periode, carriere)),
-  );
+  const ouverture = carriere.dateDeLAge(ouvrir.ageOuverture(moteur, periode, carriere));
   const fin = carriere.dateLiquidation;
   let apres = 0.0;
   if (ouverture.rang < fin.rang) {
@@ -1449,6 +1447,8 @@ export function tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidat
  * « Coefficient acquis au 31-3-83 : 55 % » (circulaire Cnav n° 22/83).
  */
 export function tauxAcquisAu31Mars1983(moteur, periode, carriere) {
+  // L'âge en mois révolus au 31 mars 1983, dernier jour d'un mois : les mois
+  // écoulés depuis le mois de naissance, moins un, quel que soit le jour.
   const mois = ORDONNANCE_DU_26_MARS_1982.rang - carriere.dateNaissance.rang - 1;
   if (carriere.dateLiquidation.rang < ORDONNANCE_DU_26_MARS_1982.rang || mois < 12 * 60) {
     return null;
@@ -1476,7 +1476,7 @@ export function tauxAcquisAu31Mars1983(moteur, periode, carriere) {
  * `liquider.trimestres_d_ajournement`.
  */
 export function trimestresDAjournement(carriere, ageTauxPlein) {
-  const debut = carriere.dateNaissance.plusMois(enMois(ageTauxPlein)).plusMois(1);
+  const debut = carriere.moisDeLAnniversaire(ageTauxPlein).plusMois(1);
   return Math.max(0, Math.floor((carriere.dateLiquidation.rang - debut.rang) / 3));
 }
 
@@ -1786,10 +1786,10 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
 export function ageDeLaDureeAtteinte(moteur, periode, carriere, trimestres, requis,
   ageLiquidation) {
   const legal = ouvrir.ageOuvertureCommun(moteur, periode, carriere);
-  const fin = carriere.dateNaissance.plusMois(enMois(ageLiquidation));
+  const fin = carriere.dateDeLAge(ageLiquidation);
   for (let trimestre = 0; ; trimestre += 1) {
     const age = legal + trimestre / 4.0;
-    const debut = carriere.dateNaissance.plusMois(enMois(age));
+    const debut = carriere.dateDeLAge(age);
     if (debut.rang >= fin.rang) {
       return null;
     }
@@ -1821,7 +1821,7 @@ export function ageDeLaDureeAtteinte(moteur, periode, carriere, trimestres, requ
 export function coefficientSurcoteDatee(moteur, periode, carriere, trimestres, requis, supplementaires,
   ageOuverture) {
   const anneeLiquidation = carriere.anneeLiquidation;
-  const dateLegal = carriere.dateNaissance.plusMois(enMois(ageOuverture));
+  const dateLegal = carriere.moisDeLAnniversaire(ageOuverture);
   // La fonction publique compte des durées, depuis le premier du mois qui
   // suit l'âge, et non des trimestres civils : voir le Python.
   const enDuree = REGIMES_CODE_DES_PENSIONS.has(periode.regime);
@@ -1863,7 +1863,7 @@ export function coefficientSurcoteDatee(moteur, periode, carriere, trimestres, r
     debut = new DateMois(debut.annee, 1).plusMois(3 * (Math.floor((debut.mois - 1) / 3) + 1));
   }
   const fin = carriere.dateLiquidation;
-  const date65 = carriere.dateNaissance.plusMois(12 * SURCOTE_AGE_MAJORE);
+  const date65 = carriere.moisDeLAnniversaire(SURCOTE_AGE_MAJORE);
   const trimestre65 = date65.annee * 4 + Math.floor((date65.mois - 1) / 3);
 
   const dates = [];
@@ -2157,11 +2157,12 @@ function _assietteDeReference(periode, ligne) {
  * 14 septembre 2023). Voir le modèle Python.
  */
 function fenetreIrcantec(carriere, trimestres, ageBas, ageHaut, ageLiquidation) {
-  const naissance = carriere.dateNaissance;
-  const debut = naissance.plusMois(enMois(ageBas));
-  const borne = naissance.plusMois(enMois(ageHaut));
-  const fin = naissance.plusMois(enMois(ageLiquidation));
-  const fermee = borne.rang < fin.rang;
+  const debut = carriere.dateDeLAge(ageBas);
+  const borne = carriere.dateDeLAge(ageHaut);
+  const fin = carriere.dateDeLAge(ageLiquidation);
+  // L'âge du taux plein ferme la fenêtre quand son anniversaire précède la
+  // date d'effet, même si celle-ci tombe au premier mois qui le suit.
+  const fermee = carriere.moisDeLAnniversaire(ageHaut).rang < fin.rang;
   const haut = fermee ? borne : fin;
   const compte = (total) => (fermee ? Math.ceil(total - 1e-9) : Math.floor(total + 1e-9));
   const origine = new DateMois(carriere.annee_naissance, 1);
