@@ -2678,6 +2678,64 @@ enfant de moins de quatre ans depuis 2010 ; l'exception de la CRPCEN. Le
 domaine suivant se mesurera à son ouverture : la réversion paraît devoir
 précéder l'invalidité.
 
+**Le deuxième domaine, la réversion, ouvert le 28 septembre 2026**, sur la
+demande de continuer. L'ordre s'est mesuré ce jour-là, sur ce que les
+sources publiques dénombrent :
+- la réversion : 4,41 millions de bénéficiaires d'un droit dérivé tous
+  régimes fin 2024, dont 3,86 millions résidant en France (DREES, enquête
+  annuelle auprès des caisses de retraite, classeur du 26 mai 2026, feuille
+  de cadrage, champ `ddert`) ;
+- l'invalidité et l'inaptitude : 2,26 millions de retraités partis au taux
+  plein à ce titre fin 2016, 0,90 pour invalidité et 1,36 pour inaptitude,
+  sur 16,0 millions (DREES, échantillon interrégimes de retraités 2016,
+  jeu `rec05`) ; en flux, 19 % des nouveaux retraités du régime général
+  en 2024 (COR, rapport annuel de juin 2026) ;
+- les carrières hors de France : 1,28 million de retraités résidant à
+  l'étranger fin 2024 (même enquête), un minimum ; 20,3 % des retraités
+  étaient nés à l'étranger fin 2016 (`rec08`) ;
+- les périodes assimilées manquantes — apprentissage, stages, TUC,
+  sportifs, congé de naissance — ne sont dénombrées par aucune source
+  trouvée : l'EIC et l'EIR de la DREES ne les isolent pas.
+
+La réversion passe donc la deuxième, devant l'invalidité, et la liste de
+première lecture du § 11 se réordonne à mesure. Le site de la DREES ne
+répond toujours pas d'une session ; son portail de données ouvertes, si.
+
+**Première étape : les fiches lues.** Aucun témoin ne bouge : le moteur ne
+calcule pas encore la réversion.
+1. **`reversion`**, qui ne portait que son intitulé, devient la fiche du
+   régime général et des régimes alignés, en quatorze versions, partage de
+   la date d'effet de la réversion et du décès : 50 %, 52 % au 1er décembre
+   1982, 54 % au 1er janvier 1995 ; la condition de ressources d'ouverture,
+   puis, en juillet 2004, l'écrêtement sous 2 080 heures de SMIC, 1,6 fois
+   pour le ménage, et la fin de la condition de durée de mariage ; l'âge,
+   55 ans, 52 en juillet 2005, 51 en juillet 2007, 55 de nouveau en 2009,
+   51 au survivant d'un décès d'avant 2009 ; la majoration de 11,1 % en
+   2010 ; le minimum, écarté en juillet 2012 pour la réversion d'une pension
+   sous le minimum contributif, et écrit en 2026. Lues dans l'index LEGI et
+   dans cinq circulaires de la Cnav (n° 120/82, 3/95, 2005/17, 2009/11,
+   2010/15), toutes dans sa base législative.
+2. **`reversion_fonction_publique`**, en quatre versions : 50 % de la
+   pension obtenue ou qu'il aurait pu obtenir au jour du décès, sans âge ni
+   ressources, sous la condition d'antériorité du mariage de L. 39, perdue
+   au remariage ; la veuve avant 2004, les conjoints depuis ; le plancher
+   porté au montant de l'ASPA pour les réversions liquidées depuis 2025
+   (loi de finances pour 2026, article 205). La CNRACL y est, son décret
+   reprenant L. 38 et L. 39 mot pour mot.
+3. **`reversion_agirc_arrco`**, en cinq versions par date du décès : 60 %
+   des points, à cinquante-cinq ans depuis 2019, et les âges de l'Arrco et
+   de l'Agirc avant. Ses versions sont supposées : l'accord de 2017 n'a pas
+   pu être relu sur Légifrance, qui répond par une vérification du
+   navigateur, et elles suivent la page que la fédération publie.
+
+Le vocabulaire des dates dit impossible une réversion prenant effet avant le
+décès qui l'ouvre ; l'inventaire des avantages rattache la réversion à ses
+trois fiches, la pension d'orphelin à celle de la fonction publique. Restent
+de ce domaine : le conjoint dans la chronologie et la liquidation du
+survivant, dans les deux moteurs ; le bloc du formulaire ; les exemples
+publiés ; la page Coût ; la décision de la proposition, puis la référence de
+conservation à refiger.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

@@ -1,16 +1,551 @@
 schema_version: 1
 id: reversion
 intitule: >-
-  Pension de réversion, 54 % de la pension du défunt sous conditions de ressources
-  ; réforme annoncée pour 2026-2027.
+  Pension de réversion du régime général et des régimes alignés (L. 353-1 du code de
+  la sécurité sociale) : au conjoint, ou à l'ex-conjoint, de l'assuré décédé, un
+  pourcentage de la pension dont celui-ci bénéficiait ou eût bénéficié — 50 %, puis
+  52 % en décembre 1982, 54 % depuis 1995 —, à partir d'un âge et sous plafond de
+  ressources ; réduite à due concurrence du dépassement depuis juillet 2004, majorée
+  de 11,1 % depuis 2010 pour le survivant aux petites retraites.
+domaine: reversion
+regimes:
+- regime_general
+- msa_salaries
+- organic
+- cancava
+- rsi
+etape: liquider_chaque_regime
+face: droit
 etat: pas_encore_modelisee
-effet: Le modèle décrit une carrière, pas un ménage.
+lit:
+- conjoint.deces
+- union.debut, d'un mariage ; ni le PACS ni le concubinage n'ouvrent la réversion
+- union.fin, pour l'ex-conjoint divorcé
+- la naissance du survivant, qui dit son âge à la date d'effet
+- les ressources du survivant, et celles du ménage s'il vit en couple
+- la pension principale du défunt, servie ou dont il eût bénéficié à son décès
+- les enfants issus du mariage, pour la condition de durée d'avant 2004
+ecrit:
+- la pension de réversion du survivant, dans le régime du défunt, et sa majoration
+dates_qui_decident:
+- liquidation.date_effet
+- conjoint.deces
+# Les versions forment un partage de ces deux dates (§ 4.1). La date d'effet
+# de la réversion choisit le taux (décret n° 82-1035, décret n° 94-1140), la
+# réforme de juillet 2004, l'âge requis de 2004 à 2008 et depuis 2009, la
+# majoration de 2010 et les règles du minimum ; le décès, à partir de 2009,
+# l'âge dérogatoire de cinquante et un ans qu'il garde au survivant d'un
+# assuré décédé avant le 1er janvier 2009 (décret n° 2008-1509, article 2, II).
+# `contenu.parametres` dit ce que le moteur lira : le taux, l'âge, la
+# condition de durée de mariage, le traitement des ressources — condition
+# d'ouverture avant juillet 2004, écrêtement depuis —, le plafond en heures de
+# SMIC et son facteur pour le ménage, le minimum et la majoration.
+versions:
+- id: avant_1982
+  statut: supposee
+  hypothese: >-
+    le taux de 50 % est celui que la circulaire Cnav n° 120/82 dit porté à 52 % au
+    1er décembre 1982 ; les conditions d'âge, de durée de mariage et de ressources
+    sont prêtées à ce texte d'avant la codification de 1985, que l'index ne porte
+    pas, telles que R. 353-1 les codifie en 1985
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1982-12-01]
+  contenu:
+    droit: 50 % de la pension principale dont bénéficiait ou eût bénéficié l'assuré
+    beneficiaire: le conjoint survivant, et le conjoint divorcé non remarié
+    conditions: >-
+      cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu
+      du mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
+      horaire
+    parametres:
+      taux: 0.50
+      age_minimum: 55
+      mariage_minimum_annees: 2
+      ressources: condition
+      plafond_smic_heures: 2080
+      facteur_menage: null
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: taux_52
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006736586, article: D. 353-1, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742648, article: L. 353-1, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749451, article: R. 353-1, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749452, article: R. 353-1, en_vigueur: 1990-11-30}
+  - {reference: "décret n° 82-1035 du 6 décembre 1982, article 5 (circulaire Cnav n° 120/82)", en_vigueur: 1982-12-01}
+  nee_de: LEGIARTI000006736586
+  bornes:
+    liquidation.date_effet: [1982-12-01, 1995-01-01]
+  contenu:
+    droit: 52 % de la pension principale dont bénéficiait ou eût bénéficié l'assuré
+    beneficiaire: le conjoint survivant, et le conjoint divorcé non remarié
+    conditions: >-
+      cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu
+      du mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
+      horaire, appréciées à la demande et, à défaut, au décès
+    parametres:
+      taux: 0.52
+      age_minimum: 55
+      mariage_minimum_annees: 2
+      ressources: condition
+      plafond_smic_heures: 2080
+      facteur_menage: null
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: taux_54
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006736587, article: D. 353-1, en_vigueur: 1995-01-01}
+  - {id: LEGIARTI000006749452, article: R. 353-1, en_vigueur: 1990-11-30}
+  - {reference: "décret n° 94-1140 du 27 décembre 1994 (circulaire Cnav n° 3/95)", en_vigueur: 1995-01-01}
+  nee_de: LEGIARTI000006736587
+  bornes:
+    liquidation.date_effet: [1995-01-01, 2004-07-01]
+  contenu:
+    droit: 54 % de la pension principale dont bénéficiait ou eût bénéficié l'assuré
+    beneficiaire: le conjoint survivant, et le conjoint divorcé non remarié
+    conditions: >-
+      cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu
+      du mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
+      horaire
+    parametres:
+      taux: 0.54
+      age_minimum: 55
+      mariage_minimum_annees: 2
+      ressources: condition
+      plafond_smic_heures: 2080
+      facteur_menage: null
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: reforme_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742649, article: L. 353-1, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006736588, article: D. 353-1, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006736552, article: D. 353-1-1, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006749453, article: R. 353-1, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006781419, article: "décret n° 2004-858, article 24", en_vigueur: 2004-08-25}
+  nee_de: LEGIARTI000006742649
+  bornes:
+    liquidation.date_effet: [2004-07-01, 2005-07-01]
+  contenu:
+    droit: 54 %, réduite à due concurrence du dépassement du plafond de ressources
+    beneficiaire: le conjoint survivant, et le conjoint divorcé, remarié ou non
+    conditions: >-
+      cinquante-cinq ans ; plus de condition de durée de mariage ; des ressources
+      personnelles, ou du ménage, sous 2 080 fois le SMIC horaire, 1,6 fois ce montant
+      pour le ménage
+    parametres:
+      taux: 0.54
+      age_minimum: 55
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: age_52
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006781420, article: "décret n° 2004-858, article 24", en_vigueur: 2004-12-30}
+  - {id: LEGIARTI000006749454, article: R. 353-1, en_vigueur: 2004-12-30}
+  nee_de: LEGIARTI000006781420
+  bornes:
+    liquidation.date_effet: [2005-07-01, 2007-07-01]
+  contenu:
+    droit: 54 %, réduite à due concurrence du dépassement du plafond de ressources
+    beneficiaire: le conjoint survivant, et le conjoint divorcé
+    conditions: cinquante-deux ans ; le plafond de ressources de 2004
+    parametres:
+      taux: 0.54
+      age_minimum: 52
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: age_51
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006781420, article: "décret n° 2004-858, article 24", en_vigueur: 2004-12-30}
+  - {id: LEGIARTI000006781421, article: "décret n° 2004-858, article 24", en_vigueur: 2005-08-24}
+  - {id: LEGIARTI000006749455, article: R. 353-1, en_vigueur: 2007-01-13}
+  nee_de: LEGIARTI000006781420
+  bornes:
+    liquidation.date_effet: [2007-07-01, 2009-01-01]
+  contenu:
+    droit: 54 %, réduite à due concurrence du dépassement du plafond de ressources
+    beneficiaire: le conjoint survivant, et le conjoint divorcé
+    conditions: cinquante et un ans ; le plafond de ressources de 2004
+    parametres:
+      taux: 0.54
+      age_minimum: 51
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: age_55_2009
+  statut: lue
+  textes:
+  - {id: LEGIARTI000020090020, article: D. 353-3, en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000020082979, article: R. 353-1, en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000020082988, article: R. 353-7, en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000020090020
+  bornes:
+    liquidation.date_effet: [2009-01-01, 2010-01-01]
+    conjoint.deces: [2009-01-01, null]
+  contenu:
+    droit: 54 %, réduite à due concurrence du dépassement du plafond de ressources
+    beneficiaire: le conjoint survivant, et le conjoint divorcé
+    conditions: cinquante-cinq ans à la date d'effet ; le plafond de ressources de 2004
+    parametres:
+      taux: 0.54
+      age_minimum: 55
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: age_51_2009
+  statut: lue
+  textes:
+  - {id: LEGIARTI000020057504, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000020090020, article: D. 353-3, en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000020057504
+  bornes:
+    liquidation.date_effet: [2009-01-01, 2010-01-01]
+    conjoint.deces: [null, 2009-01-01]
+  contenu:
+    droit: la version age_55_2009, à l'âge près
+    conditions: >-
+      cinquante et un ans, quand l'assuré est décédé avant le 1er janvier 2009 (circulaire
+      Cnav n° 2009/11, § 12)
+    parametres:
+      taux: 0.54
+      age_minimum: 51
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: majoration_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019959401, article: L. 353-6, en_vigueur: 2010-01-01}
+  - {id: LEGIARTI000020791861, article: D. 353-4, en_vigueur: 2009-06-26}
+  nee_de: LEGIARTI000019959401
+  bornes:
+    liquidation.date_effet: [2010-01-01, 2012-07-01]
+    conjoint.deces: [2009-01-01, null]
+  contenu:
+    droit: >-
+      54 %, écrêtée ; majorée de 11,1 % quand le survivant a l'âge du taux plein et que
+      ses retraites, réversion comprise, ne dépassent pas 2 400 euros par trimestre en
+      2010, revalorisés ; la majoration est réduite à due concurrence du dépassement
+    parametres:
+      taux: 0.54
+      age_minimum: 55
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: 0.111
+      majoration_plafond_trimestriel: 2400
+      majoration_plafond_annee: 2010
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: majoration_2010_age_51
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019959401, article: L. 353-6, en_vigueur: 2010-01-01}
+  - {id: LEGIARTI000020057504, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000019959401
+  bornes:
+    liquidation.date_effet: [2010-01-01, 2012-07-01]
+    conjoint.deces: [null, 2009-01-01]
+  contenu:
+    droit: la version majoration_2010, à cinquante et un ans
+    parametres:
+      taux: 0.54
+      age_minimum: 51
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: true
+      majoration_taux: 0.111
+      majoration_plafond_trimestriel: 2400
+      majoration_plafond_annee: 2010
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: minimum_2012
+  statut: lue
+  textes:
+  - {id: LEGIARTI000025018616, article: L. 353-1, en_vigueur: 2011-12-23}
+  - {id: LEGIARTI000041968528, article: D. 353-1, en_vigueur: 2020-05-25}
+  - {id: LEGIARTI000038790257, article: R. 353-1, en_vigueur: 2019-07-08}
+  - {id: LEGIARTI000047453693, article: L. 353-1, en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000025018616
+  bornes:
+    liquidation.date_effet: [2012-07-01, 2026-01-01]
+    conjoint.deces: [2009-01-01, null]
+  contenu:
+    droit: >-
+      la version majoration_2010 ; le minimum ne s'applique plus à la réversion d'une
+      pension inférieure au minimum contributif (loi n° 2011-1906, article 92, II, pour
+      les réversions prenant effet à compter du 1er juillet 2012)
+    parametres:
+      taux: 0.54
+      age_minimum: 55
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: false
+      majoration_taux: 0.111
+      majoration_plafond_trimestriel: 2400
+      majoration_plafond_annee: 2010
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: minimum_2012_age_51
+  statut: lue
+  textes:
+  - {id: LEGIARTI000025018616, article: L. 353-1, en_vigueur: 2011-12-23}
+  - {id: LEGIARTI000020057504, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000025018616
+  bornes:
+    liquidation.date_effet: [2012-07-01, 2026-01-01]
+    conjoint.deces: [null, 2009-01-01]
+  contenu:
+    droit: la version minimum_2012, à cinquante et un ans
+    parametres:
+      taux: 0.54
+      age_minimum: 51
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: false
+      majoration_taux: 0.111
+      majoration_plafond_trimestriel: 2400
+      majoration_plafond_annee: 2010
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: minimum_2026
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053356066, article: D. 353-1, en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000053335692, article: R. 353-1-1, en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000047453693, article: L. 353-1, en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000053356066
+  bornes:
+    liquidation.date_effet: [2026-01-01, null]
+    conjoint.deces: [2009-01-01, null]
+  contenu:
+    droit: >-
+      la version minimum_2012 ; D. 353-1 écrit désormais le minimum de base, 3 983,29
+      euros par an au 1er janvier 2025, revalorisé comme les pensions (décret
+      n° 2025-1410, pour les pensions prenant effet à compter du 1er janvier 2026)
+    parametres:
+      taux: 0.54
+      age_minimum: 55
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: false
+      minimum_annuel: 3983.29
+      minimum_annee: 2025
+      majoration_taux: 0.111
+      majoration_plafond_trimestriel: 2400
+      majoration_plafond_annee: 2010
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: minimum_2026_age_51
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053356066, article: D. 353-1, en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000053355011, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2026-01-01}
+  nee_de: LEGIARTI000053356066
+  bornes:
+    liquidation.date_effet: [2026-01-01, null]
+    conjoint.deces: [null, 2009-01-01]
+  contenu:
+    droit: la version minimum_2026, à cinquante et un ans
+    parametres:
+      taux: 0.54
+      age_minimum: 51
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      minimum_trimestres: 60
+      minimum_sous_minimum_contributif: false
+      minimum_annuel: 3983.29
+      minimum_annee: 2025
+      majoration_taux: 0.111
+      majoration_plafond_trimestriel: 2400
+      majoration_plafond_annee: 2010
+      majoration_enfants_taux: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+presomptions: {}
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31
+  lectures_divergentes:
+  - >-
+    L'article 24 du décret n° 2004-858, dans la rédaction que l'index LEGI date du 24
+    août 2005 (LEGIARTI000006781421), porte « 65 ans pour les pensions prenant effet
+    au plus tard le 30 juin 2005 et 60 ans pour les pensions prenant effet au plus tard
+    le 30 juin 2006 », quand la circulaire Cnav n° 2005/17 (§ 11) et la rédaction du
+    30 décembre 2004 disent cinquante-cinq ans jusqu'au 30 juin 2005, puis cinquante-deux.
+    Le modèle suit la circulaire ; la rédaction de 2005 reste à confronter au Journal
+    officiel.
   a_relire:
   - >-
-    Surveiller la réforme de la réversion : si elle touche le calcul du droit direct,
-    elle entre ici.
+    Ouverte le 28 septembre 2026 avec le domaine de la réversion (docs/architecture.md,
+    § 11) : la fiche, qui ne portait que son intitulé, est découpée en versions, lues
+    dans l'index LEGI et dans les circulaires de la Cnav. Le moteur ne la lit pas
+    encore : l'étape suivante du domaine calcule la réversion du survivant.
+  - >-
+    Ce que les versions ne portent pas encore : les limites de cumul d'avant juillet
+    2004 (D. 355-1), le partage entre conjoints survivant et divorcés au prorata de
+    la durée de chaque mariage (L. 353-3), la majoration forfaitaire pour enfant à
+    charge (L. 353-5), la réversion d'un assuré disparu (L. 353-2), la révision de la
+    pension quand les ressources varient (R. 353-1-1), et la pension de vieillesse de
+    veuve ou de veuf.
+  - >-
+    La pension dont l'assuré « eût bénéficié » : décédé avant l'âge du taux plein, elle
+    est celle qui lui aurait été allouée au titre de l'inaptitude au travail, donc au
+    taux plein (R. 353-6, LEGIARTI000006749413 puis LEGIARTI000024113077).
+  - >-
+    Le minimum de base : D. 353-1 n'écrit son montant que depuis le 1er janvier 2026
+    (3 983,29 euros au 1er janvier 2025) ; les montants des années antérieures sont
+    dans les instructions annuelles de revalorisation, à relire.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 353-1 CSS, ses cinq rédactions dans l'index LEGI, de LEGIARTI000006742648
+      (1985) à LEGIARTI000047453693 (2023) ; L. 353-2, L. 353-3, L. 353-5, L. 353-6
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      D. 353-1 (six rédactions, de 52 % en 1985 à la rédaction du 1er janvier 2026),
+      D. 353-1-1, D. 353-2, D. 353-3, D. 353-4, R. 353-1 (neuf rédactions), R. 353-1-1,
+      R. 353-2, R. 353-6, R. 353-7 (quatre rédactions) ; décret n° 2004-858, article
+      24 (trois rédactions) ; décret n° 2008-1509, article 2
+    date: 2026-09-28
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 120/82 du 28 décembre 1982, § 11 : « Lorsqu'elle prend effet
+      à compter du 1er décembre 1982, la pension de réversion est calculée au taux de
+      52 % » ; le taux de la pension d'invalidité de veuve ou de veuf « porté de 50 à
+      52 % »
+    date: 1982-12-28
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_12082_28121982.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 3/95 du 5 janvier 1995 : le décret n° 94-1140 « porte de 52
+      à 54 % le taux de la pension de réversion » à compter du 1er janvier 1995
+    date: 1995-01-05
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_395_05011995.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2005/17 du 11 avril 2005, réforme des pensions de réversion au
+      1er juillet 2004 : § 11, l'âge — 55 ans avant le 1er juillet 2005, 52 ans, 51 ans
+      au 1er juillet 2007 ; § 12, la condition de durée de mariage supprimée, « la
+      condition de mariage demeure »
+    date: 2005-04-11
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2005017_11042005.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2009/11 du 9 février 2009 : cinquante-cinq ans pour les
+      réversions prenant effet à compter du 1er janvier 2009, l'abaissement à cinquante
+      ans du 1er juillet 2009 n'ayant « donc pas lieu » ; cinquante et un ans quand
+      l'assuré est décédé avant le 1er janvier 2009, « quelle que soit la date de dépôt
+      de la demande »
+    date: 2009-02-09
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2009011_09022009.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2010/15 du 10 février 2010, la majoration de la pension de
+      réversion au 1er janvier 2010 (L. 353-6), servie par le régime général, les
+      régimes agricoles, les cultes, le régime social des indépendants et les
+      professions libérales hors avocats
+    date: 2010-02-10
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2010015_10022010.aspx
 textes_a_rattacher:
-- reference: L. 353-1 CSS
+- {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23, change: "la majoration forfaitaire pour enfant à charge du survivant sans retraite personnelle"}
+- {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22, change: "le partage entre conjoints au prorata de la durée de chaque mariage"}
+- {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la révision de la réversion quand les ressources varient"}
+- reference: D. 355-1 CSS, les limites de cumul d'avant juillet 2004
+code:
+  python: à venir, avec l'étape du domaine qui calcule la réversion du survivant
+referents:
+  destinie_2: à confronter (la réversion y est modélisée)
+historique:
+- >-
+  Jusqu'au 28 septembre 2026, la fiche ne portait que son intitulé : « le modèle décrit
+  une carrière, pas un ménage », et les 756 périodes de régime qui déclarent la
+  réversion étaient une intention que nul code ne servait
+  (legislation/avantages_non_contributifs.yaml).
+- >-
+  2026-09-28 — ouverte avec le domaine de la réversion, découpée en quatorze versions
+  lues dans l'index LEGI et dans cinq circulaires de la Cnav.
+effet: >-
+  Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
+  qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024
+  (DREES, EACR). La réversion est encore hors du modèle ; sa dépense, publiée, est
+  sur la page Coût.

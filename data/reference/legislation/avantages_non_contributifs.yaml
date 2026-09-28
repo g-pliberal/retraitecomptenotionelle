@@ -679,7 +679,7 @@ avantages:
       ressources — versée au conjoint survivant. C'est, de très loin, la
       première dépense non contributive du système.
     base_legale: [L. 353-1 CSS, L. 38 CPCMR]
-    fiches: [reversion]
+    fiches: [reversion, reversion_fonction_publique, reversion_agirc_arrco]
     creation: 1945
     fin: null
     regimes: tous — déclaré dans 756 périodes du catalogue, soit la quasi-totalité
@@ -790,7 +790,7 @@ avantages:
       de moins de vingt et un ans. Les régimes spéciaux ont la leur ; le régime
       général n'en a pas.
     base_legale: [L. 40 CPCMR]
-    fiches: [reversion]
+    fiches: [reversion_fonction_publique]
     creation: 1964
     fin: null
     regimes: fonction publique, régimes spéciaux

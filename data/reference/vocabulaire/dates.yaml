@@ -156,3 +156,9 @@ combinaisons_impossibles:
     dit: >-
       un enfant né après la date d'effet de la pension : la liquidation est
       faite, et aucune version n'a à dire ce qu'il en serait
+  - date: conjoint.deces
+    apres: liquidation.date_effet
+    dit: >-
+      une réversion qui prendrait effet avant le décès qui l'ouvre : la
+      pension du survivant naît du décès, et aucune version n'a à dire ce
+      qu'elle serait avant lui

@@ -1,0 +1,184 @@
+schema_version: 1
+id: reversion_fonction_publique
+intitule: >-
+  Pension de réversion de la fonction publique (L. 38 du code des pensions civiles et
+  militaires, article 40 du décret n° 2003-1306 pour la CNRACL) : 50 % de la pension
+  obtenue par le fonctionnaire ou qu'il aurait pu obtenir au jour de son décès, sans
+  condition d'âge ni de ressources, sous condition d'antériorité ou de durée du
+  mariage ; perdue au remariage ou au concubinage notoire.
+domaine: reversion
+regimes:
+- fonction_publique_etat
+- cnracl
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, et la cessation d'activité du fonctionnaire, pour la
+  condition d'antériorité de L. 39
+- union.fin, pour l'ex-conjoint divorcé, et une nouvelle union du survivant, qui
+  éteint le droit (L. 46)
+- les enfants issus du mariage
+- la pension du défunt, servie ou qu'il aurait pu obtenir au jour de son décès
+ecrit:
+- la pension de réversion du survivant, dans le régime du défunt
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la réversion (§ 4.1) :
+# la veuve seule avant 2004, les conjoints depuis, et le complément porté au
+# niveau de l'ASPA pour les réversions liquidées depuis le 1er janvier 2025.
+versions:
+- id: avant_1980
+  statut: supposee
+  hypothese: >-
+    L. 38 n'est lu dans l'index qu'à partir de sa rédaction du 19 janvier 1980 ; on
+    prête aux pensions d'avant la règle de 1980
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1980-01-19]
+  contenu:
+    droit: 50 % de la pension obtenue par le mari ou qu'il aurait pu obtenir
+    beneficiaire: la veuve
+    parametres:
+      taux: 0.50
+      beneficiaire: veuve
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      perte_au_remariage: true
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: veuves_1980
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362764, article: L. 38, en_vigueur: 1980-01-19}
+  - {id: LEGIARTI000006362765, article: L. 38, en_vigueur: 1993-07-23}
+  - {id: LEGIARTI000006362767, article: L. 39, en_vigueur: 1964-12-01}
+  - {id: LEGIARTI000006362786, article: L. 50, en_vigueur: 1982-07-14}
+  - {id: LEGIARTI000006362776, article: L. 45, en_vigueur: 1978-07-18}
+  nee_de: LEGIARTI000006362764
+  bornes:
+    liquidation.date_effet: [1980-01-19, 2004-01-01]
+  contenu:
+    droit: >-
+      50 % de la pension obtenue par le mari ou qu'il aurait pu obtenir au jour de son
+      décès, augmentée de la moitié de sa rente d'invalidité et, pour la veuve qui a
+      élevé les enfants, de la moitié de la majoration de L. 18 ; au veuf, depuis le 14
+      juillet 1982, 50 % de la pension de la femme fonctionnaire, différés jusqu'à l'âge
+      minimal de jouissance et plafonnés à 37,50 % du traitement de l'indice brut 550
+      (L. 50)
+    beneficiaire: la veuve ; le veuf sous les réserves de L. 50
+    conditions: >-
+      l'antériorité du mariage de L. 39 : deux ans de services depuis le mariage, sauf
+      enfant issu du mariage, ou quatre ans de mariage
+    parametres:
+      taux: 0.50
+      beneficiaire: veuve
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: conjoints_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362766, article: L. 38, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362768, article: L. 39, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000025076807, article: L. 46, en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000025076834, article: L. 43, en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000047453630, article: L. 38, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053278806, article: L. 38, en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000029135000, article: "décret n° 2003-1306, article 40", en_vigueur: 2014-06-26}
+  - {id: LEGIARTI000006400910, article: "décret n° 2003-1306, article 41", en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006362766
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2025-01-01]
+  contenu:
+    droit: >-
+      50 % de la pension obtenue par le fonctionnaire ou qu'il aurait pu obtenir au jour
+      de son décès, augmentée de la moitié de sa rente d'invalidité et, si le survivant
+      a élevé les enfants, de la moitié de la majoration de L. 18 ; le total de la
+      réversion et des autres ressources du survivant ne peut être inférieur à
+      l'allocation aux vieux travailleurs salariés augmentée de l'allocation
+      supplémentaire
+    beneficiaire: les conjoints, de l'un et l'autre sexe ; les conjoints divorcés
+    conditions: >-
+      l'antériorité du mariage de L. 39, inchangée ; la perte du droit au remariage ou
+      au concubinage notoire (L. 46) ; entre plusieurs conjoints, un partage au prorata
+      de la durée de chaque mariage, par lit depuis 2012 (L. 43)
+    parametres:
+      taux: 0.50
+      beneficiaire: conjoint
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: complement_aspa_2025
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053549564, article: L. 38, en_vigueur: 2026-02-21}
+  - {reference: "loi n° 2026-103 du 19 février 2026 de finances pour 2026, article 205, II", en_vigueur: 2026-02-21}
+  nee_de: LEGIARTI000053549564
+  bornes:
+    liquidation.date_effet: [2025-01-01, null]
+  contenu:
+    droit: >-
+      la version conjoints_2004 ; le plancher change : la réversion du conjoint qui
+      remplit les conditions d'âge et de résidence de l'ASPA est portée au montant
+      maximal de cette allocation, selon L. 815-9, pour les réversions liquidées depuis
+      le 1er janvier 2025
+    parametres:
+      taux: 0.50
+      beneficiaire: conjoint
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations: []
+presomptions: {}
+sources:
+  lu_le: 2026-09-28
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 28 septembre 2026 avec le domaine de la réversion (docs/architecture.md,
+    § 11), lue dans l'index LEGI. Le moteur ne la lit pas encore.
+  - >-
+    La pension qu'il « aurait pu obtenir au jour de son décès » : services acquis
+    jusqu'au décès, sans décote (L. 14, « Le coefficient de minoration n'est pas
+    applicable aux pensions de réversion » dans les cas qu'il nomme), à relire avant
+    que le moteur la calcule. La date d'effet de 2004 (loi n° 2003-775) et la
+    circulaire du service des retraites de l'État restent aussi à lire.
+  - >-
+    Les régimes spéciaux qui reprennent la règle — FSPOEIE, ouvriers de l'État, IEG,
+    SNCF, RATP, mines, marins — ont chacun leurs textes, à lire avant d'être ajoutés.
+    Les orphelins (L. 40, 10 %) et les pensions pour décès en service (L. 50) ne sont
+    pas portés.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 38 CPCMR, ses six rédactions dans l'index LEGI, de LEGIARTI000006362764 (1980)
+      à LEGIARTI000053549564 (2026) ; L. 39 (1964, 2004), L. 43, L. 45, L. 46, L. 50
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      décret n° 2003-1306, articles 40, 41 et 45 (CNRACL), dans l'index LEGI : la règle
+      de L. 38 et L. 39, mot pour mot
+    date: 2026-09-28
+textes_a_rattacher:
+- {id: LEGIARTI000025076827, article: L. 40, en_vigueur: 2012-01-01, change: "la pension d'orphelin"}
+code:
+  python: à venir, avec l'étape du domaine qui calcule la réversion du survivant
+historique:
+- >-
+  2026-09-28 — née avec le domaine de la réversion, de la fiche reversion qui ne portait
+  que le régime général.
+effet: >-
+  Tout conjoint, ou ex-conjoint, d'un fonctionnaire de l'État ou d'un agent des
+  collectivités qui décède. La réversion est encore hors du modèle.

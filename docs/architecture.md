@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.15, du 27 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.16, du 28 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -118,7 +118,7 @@ couverture demande à l'architecture.
 | Temps partiel | quotité non saisie | quotité de chaque période ; surcotisation |
 | Départs anticipés | carrière longue, catégories actives, militaires : oui ; parents de trois enfants de la fonction publique : non ; handicap : hors modèle | tous, dont incapacité permanente, pénibilité, amiante |
 | Invalidité, inaptitude | hors modèle | périodes d'invalidité, pension d'invalidité et sa conversion, retraite pour invalidité des fonctionnaires, inaptitude |
-| Réversion | hors modèle | conjoints successifs datés, décès, ressources, partage entre ex-conjoints, règles de chaque régime, orphelins |
+| Réversion | hors modèle ; ses fiches lues, en versions : régime général, fonction publique, Agirc-Arrco | conjoints successifs datés, décès, ressources, partage entre ex-conjoints, règles de chaque régime, orphelins |
 | Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | hors modèle : une seule liquidation, à une date | un départ par régime ; activité après le départ ; fraction de pension ; pension définitive |
 | Rachats, versements, surcotisation | hors modèle | actes datés de l'assuré, avec leur coût |
 | Carrières hors de France | absentes | périodes par pays et par convention ; totalisation et prorata ; pensions étrangères |
@@ -1570,8 +1570,9 @@ Un domaine se clôt en refigeant la référence de conservation (§ 12).
 
 L'ordre se fixe par le nombre de personnes concernées, mesuré sur les sources
 publiques au moment de choisir. Le premier l'a été le 27 septembre 2026, et
-s'est ouvert et clos ce jour-là (feuille de route, action 130) ; les suivants
-le seront chacun à son tour. En première lecture :
+s'est ouvert et clos ce jour-là (feuille de route, action 130) ; le deuxième,
+la réversion, le 28 septembre, et s'est ouvert ce jour-là ; les suivants le
+seront chacun à son tour. En première lecture :
 
 1. les dates des enfants ;
 2. les périodes assimilées manquantes ;
@@ -1582,6 +1583,10 @@ le seront chacun à son tour. En première lecture :
 7. les départs anticipés particuliers ;
 8. les rachats ;
 9. les régimes hors champ.
+
+La mesure du 28 septembre 2026 place la réversion devant l'invalidité et
+l'inaptitude, puis les carrières hors de France ; les périodes assimilées
+manquantes n'ont pas de mesure publique (feuille de route, action 130).
 
 ---
 
@@ -2391,6 +2396,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.16**, 28 septembre 2026 : le deuxième domaine, la réversion, mesuré et ouvert (§ 11) ; ses trois premières fiches sont lues et découpées en versions, que le moteur ne lit pas encore.
 
 - **5.14**, 27 septembre 2026 : le premier domaine, les dates des enfants, mesuré et ouvert (§ 11). Deux fiches sont découpées en versions, et le moteur les lit, enfant par enfant, à la place de la table qu'elles remplacent (annexe B) ; le schéma de l'étape « compter les durées » passe en version 2, qui compte les enfants un par un.
 - **5.15**, 27 septembre 2026 : le premier domaine, les dates des enfants, clos (§ 11). Le formulaire date les enfants ; trois bornes approchées sont corrigées au jour, chacune avec le diff de ses témoins ; deux exemples publiés rejouent des enfants datés ; la relation de priorité entre régimes relie les deux fiches, en six versions ; la référence de conservation est refigée (§ 12).

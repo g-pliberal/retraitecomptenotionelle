@@ -233,6 +233,9 @@ def test_une_fiche_ajoutee_au_droit_reel_apparait_sans_decision(tmp_path):
     regles = tmp_path / "regles"
     shutil.copytree(carte.REGLES, regles)
     fiche = yaml.safe_load((carte.REGLES / "reversion.yaml").read_text(encoding="utf-8"))
+    # Le modèle de fiche perd son étape : la réversion en dit une depuis
+    # l'ouverture de son domaine, et la règle de demain n'en dit aucune.
+    fiche.pop("etape", None)
     for nom, etape in (("regle_de_demain", None), ("decote_de_demain", "liquider_chaque_regime")):
         _ecrire(regles, {**fiche, "id": nom, **({"etape": etape} if etape else {})})
     tous = univers.charger(REFERENCE / "univers", REFERENCE / "couches", regles)

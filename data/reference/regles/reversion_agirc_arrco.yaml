@@ -1,0 +1,183 @@
+schema_version: 1
+id: reversion_agirc_arrco
+intitule: >-
+  Pension de réversion de la retraite complémentaire des salariés : 60 % des points
+  de l'assuré décédé, à partir de cinquante-cinq ans pour un décès depuis 2019, sans
+  condition de ressources ; ni au partenaire de PACS ni au concubin, et perdue au
+  remariage ; avant 2019, les âges de l'Arrco et de l'Agirc, que la date du décès
+  choisit.
+domaine: reversion
+regimes:
+- agirc_arrco
+- arrco
+- agirc
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- conjoint.deces
+- union.debut et union.fin, d'un mariage ; un remariage éteint le droit
+- la naissance du survivant, qui dit son âge
+- les enfants à charge du survivant, et son invalidité, qui lèvent la condition d'âge
+- les points de l'assuré décédé, par régime avant 2019
+ecrit:
+- la pension de réversion du survivant, en points de l'assuré décédé
+dates_qui_decident:
+- conjoint.deces
+# Les versions forment un partage de la date du décès (§ 4.1), qui choisit les
+# âges : l'accord de 2017 pour un décès depuis 2019, l'Arrco et l'Agirc avant.
+# `contenu.parametres` dit l'âge de chaque régime ; `age_minimum_minore` est
+# l'âge auquel l'Agirc sert une réversion minorée, avant soixante ans.
+versions:
+- id: avant_1990
+  statut: supposee
+  hypothese: >-
+    lue sur le site de la fédération Agirc-Arrco (« La pension de réversion »), faute
+    d'avoir pu relire depuis cette session le texte de l'accord et des règlements
+    antérieurs sur Légifrance, que protège une vérification du navigateur
+  fiabilite: haute
+  bornes:
+    conjoint.deces: [null, 1990-05-17]
+  contenu:
+    droit: 60 % des points de l'assuré
+    beneficiaire: la veuve à cinquante ans ; le veuf à soixante-cinq ans à l'Agirc, selon la caisse à l'Arrco
+    parametres:
+      taux: 0.60
+      age_minimum_veuve: 50
+      age_minimum_veuf: 65
+      age_minimum_minore: null
+      perte_au_remariage: true
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: veufs_1990
+  statut: supposee
+  hypothese: >-
+    lue sur le site de la fédération Agirc-Arrco (« La pension de réversion »), faute
+    d'avoir pu relire depuis cette session le texte de l'accord et des règlements
+    antérieurs sur Légifrance, que protège une vérification du navigateur
+  fiabilite: haute
+  bornes:
+    conjoint.deces: [1990-05-17, 1994-03-01]
+  contenu:
+    droit: 60 % des points de l'assuré
+    beneficiaire: >-
+      la veuve à cinquante ans ; le veuf à cinquante ans pour les droits acquis depuis
+      le 1er janvier 1990, soixante-cinq ans à l'Agirc pour les autres
+    parametres:
+      taux: 0.60
+      age_minimum_veuve: 50
+      age_minimum_veuf: 65
+      age_minimum_minore: null
+      perte_au_remariage: true
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: agirc_1994
+  statut: supposee
+  hypothese: >-
+    lue sur le site de la fédération Agirc-Arrco (« La pension de réversion »), faute
+    d'avoir pu relire depuis cette session le texte de l'accord et des règlements
+    antérieurs sur Légifrance, que protège une vérification du navigateur
+  fiabilite: haute
+  bornes:
+    conjoint.deces: [1994-03-01, 1996-07-01]
+  contenu:
+    droit: >-
+      60 % des points ; à l'Agirc, à soixante ans, ou dès cinquante-cinq ans avec une
+      minoration de 52 % à 58,4 %, sauf si le survivant obtient la réversion du régime
+      de base
+    parametres:
+      taux: 0.60
+      age_minimum_arrco: 50
+      age_minimum_agirc: 60
+      age_minimum_minore: 55
+      perte_au_remariage: true
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: arrco_1996
+  statut: supposee
+  hypothese: >-
+    lue sur le site de la fédération Agirc-Arrco (« La pension de réversion »), faute
+    d'avoir pu relire depuis cette session le texte de l'accord et des règlements
+    antérieurs sur Légifrance, que protège une vérification du navigateur
+  fiabilite: haute
+  bornes:
+    conjoint.deces: [1996-07-01, 2019-01-01]
+  contenu:
+    droit: >-
+      60 % des points ; à l'Arrco à cinquante-cinq ans, à l'Agirc à soixante ans ou
+      minorée dès cinquante-cinq
+    parametres:
+      taux: 0.60
+      age_minimum_arrco: 55
+      age_minimum_agirc: 60
+      age_minimum_minore: 55
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: accord_2017
+  statut: supposee
+  hypothese: >-
+    lue sur le site de la fédération Agirc-Arrco (« La pension de réversion »), faute
+    d'avoir pu relire depuis cette session le texte de l'accord et des règlements
+    antérieurs sur Légifrance, que protège une vérification du navigateur
+  fiabilite: haute
+  textes:
+  - {reference: "accord national interprofessionnel du 17 novembre 2017, étendu par l'arrêté du 24 avril 2018 (JORFTEXT000036847920)", en_vigueur: 2019-01-01}
+  bornes:
+    conjoint.deces: [2019-01-01, null]
+  contenu:
+    droit: >-
+      60 % des points de l'assuré décédé, à la valeur du point au paiement ; sans le
+      coefficient d'anticipation de l'assuré retraité, mais sans pouvoir dépasser sa
+      retraite
+    beneficiaire: le conjoint et l'ex-conjoint marié, non remarié
+    conditions: >-
+      cinquante-cinq ans, ou aucun âge avec deux enfants à charge ou en invalidité ;
+      entre conjoint et ex-conjoints, un partage au prorata de la durée des mariages ;
+      l'ex-conjoint seul reçoit la part de la durée de son mariage dans la durée
+      d'assurance du défunt, plafonnée à 169 trimestres depuis décembre 2023, 170 depuis
+      octobre 2025
+    parametres:
+      taux: 0.60
+      age_minimum: 55
+      age_minimum_minore: null
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations: []
+presomptions: {}
+sources:
+  lu_le: 2026-09-28
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 28 septembre 2026 avec le domaine de la réversion (docs/architecture.md,
+    § 11). Le moteur ne la lit pas encore.
+  - >-
+    À LIRE AU TEXTE : l'accord national interprofessionnel du 17 novembre 2017, ses
+    articles sur les droits des conjoints survivants, sur Légifrance (base KALI, où ses
+    articles portent des identifiants KALIARTI) ; depuis cette session, la page
+    répond par une vérification du navigateur. Et les règlements de l'Arrco et de
+    l'Agirc d'avant 2019 pour les versions antérieures.
+  - >-
+    Les exemples chiffrés du site — la date d'effet de Leïla, de Kim, de Claude — sont
+    à porter aux exemples officiels quand le moteur calculera la réversion.
+  lectures:
+  - type: autre
+    reference: >-
+      fédération Agirc-Arrco, « La pension de réversion » : les conditions d'âge par date
+      de décès (55 ans depuis 2019 ; Arrco 55 ans depuis le 1er juillet 1996, 50 avant ;
+      Agirc 60 ans depuis le 1er mars 1994, 55 minorée ; 50 ans pour les veufs sur les
+      droits acquis depuis 1990, pour un décès depuis le 17 mai 1990), « 60 % des droits
+      de la retraite complémentaire de l'assuré », le remariage, le partage, les dates
+      d'effet et leurs exemples
+    date: 2026-09-28
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/
+code:
+  python: à venir, avec l'étape du domaine qui calcule la réversion du survivant
+historique:
+- >-
+  2026-09-28 — née avec le domaine de la réversion.
+effet: >-
+  Tout conjoint, ou ex-conjoint marié, d'un salarié ou ancien salarié du privé qui
+  décède. La réversion est encore hors du modèle.
