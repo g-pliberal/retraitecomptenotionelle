@@ -469,6 +469,20 @@ class PeriodeRegime:
     #: minimum contributif, puis une pente jusqu'au maximum M de l'année —, et
     #: la pension multiplie les points par 37,5 / la durée requise en années.
     bareme_points: str | None
+    #: LA PENSION DES NON-SALARIÉS AGRICOLES DEPUIS 2026, que l'article
+    #: L. 732-24 réécrit (loi n° 2025-199, article 87) : le revenu annuel moyen
+    #: des meilleures années depuis 2016 (1°), la retraite forfaitaire sur la
+    #: seule durée d'avant 2016 (2°, a), et la moyenne des points des
+    #: meilleures années d'avant 2016, multipliée par le nombre de ces années
+    #: (2°, b), le nombre d'années étant réparti par R. 173-3-2. Voir
+    #: :func:`~retraite_notionnelle.droit.liquider.pension_des_non_salaries_agricoles`.
+    meilleures_annees_non_salaries: bool
+    #: Le calcul PROVISOIRE des pensions prenant effet en 2026 et en 2027 :
+    #: l'ancienne section, la moyenne des points d'avant 2016 en plus (décret
+    #: n° 2025-1409, article 6 ; loi n° 2025-199, article 87, VIII, B), puis
+    #: le nouveau calcul fait au plus tard le 31 mars 2028, retenu s'il est plus
+    #: favorable (décret n° 2025-1410, article 13).
+    calcul_provisoire_non_salaries: bool
     #: BARÈME D'UN AUTRE RÉGIME. Le prix d'achat et la valeur de service du
     #: point sont ceux du régime nommé ici, et non ceux du code de la fiche.
     #: Une seule situation l'exige : une TRANCHE que tous les affiliés d'un
@@ -1200,6 +1214,8 @@ INTERRUPTEURS: dict[str, object] = {
     "points_abattus_a_l_age": False,
     "surcote_points": "aucune",
     "bareme_points": None,
+    "meilleures_annees_non_salaries": False,
+    "calcul_provisoire_non_salaries": False,
 }
 
 
@@ -1599,6 +1615,12 @@ class CatalogueRegimes:
                     else float(p["points_par_trimestre_valide"])
                 ),
                 bareme_points=p.get("bareme_points"),
+                meilleures_annees_non_salaries=bool(
+                    p.get("meilleures_annees_non_salaries", False)
+                ),
+                calcul_provisoire_non_salaries=bool(
+                    p.get("calcul_provisoire_non_salaries", False)
+                ),
                 points_de=p.get("points_de"),
                 valeur_point_euros=(
                     None if p.get("valeur_point_euros") is None

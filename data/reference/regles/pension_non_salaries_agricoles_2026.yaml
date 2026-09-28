@@ -1,0 +1,231 @@
+schema_version: 1
+id: pension_non_salaries_agricoles_2026
+intitule: >-
+  Depuis le 1er janvier 2026, la pension des non-salariés agricoles affiliés avant 2016
+  cumule le revenu annuel moyen des meilleures années depuis 2016, au taux et au prorata
+  du régime général, la retraite forfaitaire proratisée sur la seule durée d'avant 2016,
+  et la moyenne des points des meilleures années d'avant 2016, arrondie à l'entier et
+  multipliée par le nombre de ces années ; vingt-cinq années en tout, réparties entre
+  régimes et entre les deux périodes au prorata des durées ; la pension bornée à la
+  moitié du plafond. Celles de 2026 et de 2027 sont d'abord liquidées par l'ancienne
+  section, la moyenne d'avant 2016 en plus, puis recalculées en 2028 si le nouveau calcul
+  leur est plus favorable.
+etat: approchee
+etape: liquider_chaque_regime
+effet: >-
+  Les chefs d'exploitation dont la pension prend effet depuis le 1er janvier 2026. Le
+  moteur servait jusqu'au 28 septembre 2026 la formule d'avant la réforme — forfait sur
+  toute la durée et somme des points de toutes les années —, que la fiche disait « non
+  calculable » faute des décrets, parus le 31 décembre 2025. Il sert depuis
+  L. 732-24 dans sa rédaction de 2026 (`liquider.pension_des_non_salaries_agricoles`) :
+  pour les pensions de 2026 et de 2027, la plus forte du calcul provisoire et du calcul
+  de 2028. L'exemple de la MSA est rendu : un salarié agricole de 1984 à 1993 et un
+  exploitant de 1994 à 2026 retiennent six, treize et six années, et les treize
+  meilleures des vingt-deux années d'avant 2016 donnent « 403 pts / 13 ans = 31 pts » et
+  « 31 pts x 22 ans = 682 pts ». Restent approchés : les années d'avant 1990, dont le
+  barème de points n'est pas lu, qui entrent dans la moyenne par les points que vaut
+  leur rendement ; le revenu des années cotisées au minimum, que L. 732-24 déduit des
+  cotisations et que le moteur porte au plancher de six cents SMIC horaires ; les durées,
+  que R. 173-3-2 arrête au 31 décembre de l'année d'effet et que le moteur compte à la
+  date d'effet ; les majorations de points de 1952 à 1972 (R. 732-67), les rachats et
+  les conjoints collaborateurs, qu'il ne connaît pas ; et le régime général d'un
+  polypensionné, dont la moyenne garde ses vingt-cinq années au lieu de la part que
+  R. 173-3-2 lui laisse.
+sources:
+  lu_le: 2026-09-28
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Porter au régime général, aux salariés agricoles et aux indépendants la part des
+    vingt-cinq années que R. 173-3-2 leur laisse quand l'assuré a été exploitant : leur
+    salaire annuel moyen la retient au lieu des vingt-cinq années.
+  - >-
+    Lire le barème de points d'avant 1990 (article 1123 de l'ancien code rural et ses
+    décrets) : les années d'avant 1990 entrent dans la moyenne par l'équivalent en points
+    de leur rendement.
+  - >-
+    Chercher un exemple publié d'une pension entière calculée par la réforme (MSA,
+    circulaire ou fiche) : l'exemple de la MSA ne donne que la répartition des années et
+    la moyenne des points.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code rural et de la pêche maritime, L. 732-24, rédaction du 1er janvier 2026
+      (LEGIARTI000053280317) : « Pour les personnes ayant été affiliées au régime institué
+      par le présent chapitre avant le 1er janvier 2016, le montant de la pension [...]
+      cumule : 1° Un montant calculé dans les conditions prévues à l'article L. 732-18 du
+      présent code sur les bases des seuls revenus des années à compter du 1er janvier
+      2016 » ; « 2° La somme : a) D'une part dont le montant maximal attribué pour une
+      durée minimale d'activité est prévu par décret », « calculé proportionnellement à
+      cette durée d'activité » sous la limite de L. 351-1 ; « b) D'une part calculée en
+      fonction des montants [...] des cotisations acquittées [...] au titre des périodes
+      d'assurance antérieures au 1er janvier 2016, en retenant un nombre d'années
+      sélectionnées dans des conditions fixées par voie réglementaire » ; « II. [...] un
+      coefficient de minoration est appliqué aux montants prévus au 2° du I » ; « III. -
+      Le montant prévu au premier alinéa du I du présent article ne peut excéder la
+      moitié du plafond prévu à l'article L. 241-3 ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      L. 732-18, rédaction du 1er janvier 2026 (LEGIARTI000051289367) : les prestations
+      sont « calculées, liquidées et servies dans les conditions définies aux chapitres
+      Ier à IV, VI et VIII du titre V du livre III du code de la sécurité sociale,
+      exception faite des articles L. 351-10 et L. 351-10-1 », « les mots : “ salaire
+      annuel de base ” sont remplacés par les mots : “ revenu annuel moyen ” ». Lu dans
+      l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      D. 732-62, rédaction du 1er janvier 2026 (LEGIARTI000053352584) : « Le montant
+      maximal attribué pour une durée minimale d'assurance prévu au a du 2° du I de
+      l'article L. 732-24 du présent code est fixé à 3 905,37 euros annuel au 1er
+      janvier 2025. Il est revalorisé dans les conditions prévues à l'article L. 161-23-1
+      du code de la sécurité sociale. » Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      R. 732-66, rédaction du décret n° 2026-346 du 7 mai 2026 (LEGIARTI000054059787) :
+      la part du b est « égale au produit de la moyenne [...] du nombre de points annuels
+      attribués à l'assuré en matière de retraite proportionnelle [...], du quart du
+      nombre de trimestres mentionné au III et de la valeur du point [...], auquel est
+      appliqué le rapport entre cent-cinquante et la durée d'assurance, exprimée en
+      trimestres, mentionnée à l'article L. 161-17-3 » ; « La valeur annuelle du point
+      est fixée à 4,589 euros au 1er janvier 2025 » ; « la moyenne des nombres de points
+      acquis au cours des années civiles, retenues en nombre fixé selon les modalités
+      mentionnées à l'article R. 173-3-2 [...], dont la prise en considération est la
+      plus avantageuse pour l'assuré. Le nombre de points annuel moyen ainsi obtenu est
+      arrondi à l'entier le plus proche. La fraction égale à 0,5 est comptée pour un
+      point. » Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      R. 732-61 (LEGIARTI000054059805) et R. 732-63 (LEGIARTI000054059797), rédaction du
+      décret n° 2026-346 : les majorations de durée d'assurance comptent pour le 1°, et
+      pour le a quand l'assuré n'a été affilié qu'avant 2016, les trimestres des enfants
+      « en outre » pour le b ; la durée du a est celle des périodes d'assurance de R.
+      732-48 et des périodes assimilées. R. 732-48 (LEGIARTI000053328383) : quatre
+      trimestres par année civile d'avant 2016 dont les cotisations ont été acquittées.
+      Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      R. 732-60 (LEGIARTI000053336726) : pas de minimum contributif (le 2° du C du I et le
+      III de R. 351-29 écartés), les droits « arrêtés au dernier jour de l'année civile de
+      l'entrée en jouissance » ; R. 732-68 (LEGIARTI000053336735) : le coefficient de
+      minoration « déterminé dans les mêmes conditions que celui mentionné au 2° du I de
+      l'article R. 351-27 », 1,25 % par trimestre depuis le 1er août 2026
+      (LEGIARTI000054589995). Lu dans l'index LEGI du dépôt
+    date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 173-3-2, rédactions du 1er janvier 2026
+      (LEGIARTI000053327958), du 9 mai 2026 (LEGIARTI000054059837) et du 1er août 2026
+      (LEGIARTI000054589934) : « Le nombre d'années retenu dans les régimes mentionnés à
+      l'article L. 173-1-2 et le régime des personnes non salariées des professions
+      agricoles [...] est égal à vingt-cinq », vingt-quatre ou vingt-trois pour les
+      parents depuis le 1er septembre 2026 ; il « fait l'objet d'une répartition au
+      prorata des durées d'assurance », d'abord entre les régimes alignés et les
+      non-salariés agricoles, puis entre les périodes d'avant 2016 et d'après ; « Les
+      nombres d'années obtenus sont arrondis à chaque étape à l'entier non nul le plus
+      proche, la fraction d'année égale à 0,5 étant comptée pour une année » ; les années
+      surnuméraires sont retranchées à la durée la plus longue, « par priorité au régime
+      des personnes non salariées des professions agricoles, en son sein au titre des
+      périodes antérieures au 1er janvier 2016, au régime général de sécurité sociale ou
+      au régime des personnes salariées des professions agricoles ». Lu dans l'index LEGI
+      du dépôt
+    date: 2026-09-28
+  - type: jorf
+    reference: >-
+      loi n° 2025-199 du 28 février 2025, article 87, VIII, B (JORFARTI000051269910) : la
+      section « dans [sa] rédaction antérieure » continue « de s'appliquer aux pensions
+      [...] prenant effet entre le 1er janvier 2026 et le 31 décembre 2027 », les pensions
+      de retraite proportionnelle « dues au titre des périodes d'assurance antérieures à
+      2016 [étant] liquidées dans les conditions prévues au b du 2° du I du même article
+      L. 732-24 » ; « au plus tard le 31 mars 2028, les pensions mentionnées au premier
+      alinéa du présent B font l'objet d'un nouveau calcul » ; « Si le montant issu de ce
+      nouveau calcul est supérieur à celui attribué dans les conditions prévues au même
+      premier alinéa, le niveau de la pension est révisé et les sommes versées
+      antérieurement font l'objet d'une régularisation. » Lu dans l'index JORF du dépôt
+    date: 2026-09-28
+  - type: jorf
+    reference: >-
+      décret n° 2025-1409 du 30 décembre 2025, article 6 (JORFARTI000053227599), et décret
+      n° 2025-1410 du 30 décembre 2025, article 13 (JORFARTI000053227751) : la section 3,
+      « dans leur rédaction antérieure », s'applique aux pensions prenant effet en 2026
+      et en 2027 ; les points de 2026 et de 2027 sont déterminés « dans les conditions
+      fixées à l'article R. 732-71 du même code dans sa rédaction antérieure » ; la date
+      du nouveau calcul « est fixée au 31 mars 2028 ». Lu dans l'index JORF du dépôt
+    date: 2026-09-28
+  - type: autre
+    reference: >-
+      MSA, « Réforme de la retraite des exploitants : 25 meilleures années », mis à jour
+      le 27 avril 2026, section 3 : un salarié agricole de 1984 à 1993 et un exploitant de
+      1994 à 2026 retiennent « 6 ans sur les 25 meilleures années », « 13 ans » avant 2016
+      et « 6 ans » depuis ; « prendre la moyenne des 13 meilleures années [...] soit 403
+      pts / 13 ans = 31 pts », « puis à multiplier cette moyenne par le nombre d'années
+      cotisées avant 2016, soit 31 pts x 22 ans = 682 pts » ; en 2026 et 2027, « la
+      retraite forfaitaire est calculée sur les 33 années d'activité de non-salarié
+      agricole » et la proportionnelle tient compte « des points acquis pour la période
+      cotisée à compter de 2016 » ; à partir de 2028, le forfait sur les « 22 années
+      d'activité de non-salarié agricoles avant 2016 » et, depuis 2016, « la moyenne des 6
+      meilleures années [...] en revenu », « le revenu annuel moyen » ; « si celle-ci
+      leur est plus favorable, elle est réhaussée »
+    url: https://www.msa.fr/lfp/retraite/reforme-exploitants-25-meilleures-annees
+    date: 2026-09-27
+textes_a_rattacher:
+- id: LEGIARTI000053280317
+  reference: >-
+    code rural et de la pêche maritime, L. 732-24, rédaction du 1er janvier 2026 : la
+    pension des exploitants affiliés avant 2016
+- id: LEGIARTI000051289367
+  reference: >-
+    code rural et de la pêche maritime, L. 732-18, rédaction du 1er janvier 2026 : les
+    règles du régime général, le revenu annuel moyen
+- id: LEGIARTI000053352584
+  reference: >-
+    code rural et de la pêche maritime, D. 732-62, rédaction du 1er janvier 2026 : la
+    retraite forfaitaire d'avant 2016
+- id: LEGIARTI000054059787
+  reference: >-
+    code rural et de la pêche maritime, R. 732-66, rédaction du 9 mai 2026 : la moyenne des
+    points des meilleures années d'avant 2016
+- id: LEGIARTI000054059805
+  reference: >-
+    code rural et de la pêche maritime, R. 732-61, rédaction du 9 mai 2026 : les
+    majorations de durée
+- id: LEGIARTI000054059797
+  reference: >-
+    code rural et de la pêche maritime, R. 732-63, rédaction du 9 mai 2026 : la durée de
+    la part forfaitaire
+- id: LEGIARTI000053336735
+  reference: >-
+    code rural et de la pêche maritime, R. 732-68, rédaction du 1er janvier 2026 : le
+    coefficient de minoration
+- id: LEGIARTI000054589934
+  reference: >-
+    code de la sécurité sociale, R. 173-3-2, rédaction du 1er août 2026 : la répartition
+    des vingt-cinq années
+- reference: >-
+    loi n° 2025-199 du 28 février 2025, article 87, VIII, B (JORFARTI000051269910) ;
+    décret n° 2025-1409 du 30 décembre 2025, article 6 ; décret n° 2025-1410 du 30
+    décembre 2025, article 13 : le calcul provisoire de 2026 et 2027, et son recalcul
+reformes:
+- agricole_2025
+code:
+  interrupteurs:
+    meilleures_annees_non_salaries: true
+    calcul_provisoire_non_salaries: true
+  moteur: >-
+    `meilleures_annees_non_salaries`, sur les périodes des non-salariés agricoles depuis
+    2026, liquide la pension par `liquider.pension_des_non_salaries_agricoles`
+    (`pensionDesNonSalariesAgricoles` dans le portage) : le nombre d'années de chaque
+    moyenne par `liquider.repartir_les_annees` (R. 173-3-2) ; le revenu annuel moyen des
+    meilleures années depuis 2016 par `liquider.salaire_de_reference`, au taux plein du
+    régime général et au prorata de la durée depuis 2016 ; le forfait au prorata de la
+    durée d'avant 2016 ; la moyenne des points d'avant 2016, arrondie, multipliée par le
+    quart des trimestres d'avant 2016. Les années sans barème de points y entrent par
+    l'équivalent en points de leur rendement. Le coefficient de la décote multiplie les
+    trois parts, puis la pension est bornée à la moitié du plafond, puis la surcote la
+    majore. `calcul_provisoire_non_salaries`, en 2026 et 2027, calcule aussi l'ancienne
+    formule, la moyenne d'avant 2016 en plus, et sert la plus forte des deux. Le test
+    `test_la_reforme_agricole_rend_l_exemple_de_la_msa` rejoue l'exemple de la caisse.

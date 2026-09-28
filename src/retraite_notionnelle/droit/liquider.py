@@ -101,6 +101,12 @@ _SURCOTE_IRCANTEC_AGE = 0.0075
 #: et à celle prévue au 2° ».
 _SURCOTE_IRCANTEC_DUREE = 0.00625
 
+#: LA RÉFORME AGRICOLE DE 2026 COUPE LA CARRIÈRE AU 1ER JANVIER 2016 : les
+#: années d'avant comptent par leurs points, celles d'après par leur revenu
+#: (L. 732-24, I) — « les revenus n'étant pas disponibles avant l'année
+#: 2016 », écrit la MSA.
+ANNEE_DES_REVENUS_AGRICOLES = 2016
+
 
 def _sans_zeros_inutiles(valeur: float, decimales: int) -> str:
     """Un nombre à ``decimales`` chiffres au plus, sans les zéros de fin.
@@ -370,6 +376,17 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             continue
 
         if periode.type_calcul in ("points", "mixte"):
+            if periode.meilleures_annees_non_salaries:
+                # LA PENSION AGRICOLE DEPUIS 2026 n'est plus une somme de
+                # points : voir `pension_des_non_salaries_agricoles`.
+                pension = pension_des_non_salaries_agricoles(
+                    moteur, periode, carriere, releve, code, trimestres,
+                    requis_reference, age_liquidation, annee_liquidation,
+                    ignorer_penalite_age,
+                )
+                fiabilite_globale = min(fiabilite_globale, pension.fiabilite)
+                pensions.append(pension)
+                continue
             montant = 0.0
             fiabilite_regime = regime.fiabilite
             details = []
@@ -874,6 +891,294 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     )
 
 
+def repartir_les_annees(nombre: int, durees: dict[str, int],
+                        minimums: dict[str, int] | None = None,
+                        priorite: tuple[str, ...] = ()) -> dict[str, int]:
+    """``nombre`` années réparties au prorata des ``durees`` (R. 173-3-2, II).
+
+    « Les nombres d'années obtenus sont arrondis à chaque étape à l'entier
+    non nul le plus proche, la fraction d'année égale à 0,5 étant comptée
+    pour une année » ; quand leur total dépasse le nombre à répartir, « la ou
+    les années surnuméraires sont retranchées au régime [...] pour lequel [...]
+    la durée d'assurance [...] est la plus longue », et, à égalité, dans
+    l'ordre de ``priorite``. Un total inférieur reste tel : le texte n'en dit
+    rien. Les ``minimums`` sont ceux d'une première répartition, qu'une
+    seconde partagera : autant d'années que de sous-périodes.
+
+    Les durées sont des trimestres, entiers : l'arrondi se fait en entiers,
+    sans flottant.
+    """
+    minimums = minimums or {}
+    presentes = {cle: duree for cle, duree in durees.items() if duree > 0}
+    total = sum(presentes.values())
+    if total <= 0 or nombre <= 0:
+        return {}
+    parts = {
+        cle: max(1, minimums.get(cle, 1),
+                 (2 * nombre * duree + total) // (2 * total))
+        for cle, duree in presentes.items()
+    }
+    rang = {cle: i for i, cle in enumerate(priorite)}
+    excedent = sum(parts.values()) - nombre
+    for cle in sorted(presentes,
+                      key=lambda c: (-presentes[c], rang.get(c, len(rang)))):
+        if excedent <= 0:
+            break
+        retire = min(excedent, parts[cle] - max(1, minimums.get(cle, 1)))
+        if retire > 0:
+            parts[cle] -= retire
+            excedent -= retire
+    return parts
+
+
+def moyenne_des_meilleures_annees(valeurs: list[float], annees: int) -> int:
+    """La moyenne des ``annees`` meilleures valeurs, toutes s'il y en a moins.
+
+    « Le nombre de points annuel moyen ainsi obtenu est arrondi à l'entier le
+    plus proche. La fraction égale à 0,5 est comptée pour un point » (R. 732-66,
+    II).
+    """
+    meilleures = sorted(valeurs, reverse=True)[:max(0, annees)]
+    if not meilleures:
+        return 0
+    return math.floor(sum(meilleures) / len(meilleures) + 0.5 + 1e-9)
+
+
+def pension_des_non_salaries_agricoles(
+        moteur, periode: PeriodeRegime, carriere: Carriere, releve: Releve,
+        code: str, trimestres: int, requis_reference: int,
+        age_liquidation: float, annee_liquidation: int,
+        ignorer_penalite_age: bool) -> PensionRegime:
+    """La pension des non-salariés agricoles depuis le 1er janvier 2026.
+
+    **L. 732-24 dans sa rédaction de 2026** (loi n° 2025-199, article 87) :
+    pour qui a été affilié avant 2016, la pension « cumule »
+
+    * 1° un montant calculé comme au régime général « sur les bases des seuls
+      revenus des années à compter du 1er janvier 2016 » — le revenu annuel
+      moyen de leurs meilleures années, au taux plein, au prorata de la
+      durée depuis 2016 (L. 732-18) ;
+    * 2° a) la retraite forfaitaire, 3 905,37 € au 1er janvier 2025
+      (D. 732-62), au prorata de la seule durée d'avant 2016 ;
+    * 2° b) la moyenne des points des années d'avant 2016 « dont la prise en
+      considération est la plus avantageuse », arrondie à l'entier,
+      multipliée par le quart des trimestres d'avant 2016, par la valeur du
+      point et par cent cinquante sur la durée de la génération (R. 732-66).
+
+    Les deux moyennes portent sur la part des vingt-cinq années que
+    R. 173-3-2 donne à leur période : une première répartition entre les
+    régimes alignés et celui-ci, au prorata de leurs durées, puis une
+    seconde entre les périodes d'avant et d'après 2016. La minoration de
+    R. 351-27 multiplie les trois parts (L. 732-24, II ; R. 732-68), la
+    pension ne dépasse pas la moitié du plafond (III), et la surcote du
+    régime général la majore. Pour qui n'a été affilié qu'à partir de 2016,
+    le 1° seul.
+
+    **Les années sans barème de points** — celles d'avant 1990, que le moteur
+    valorise au rendement faute d'en avoir lu le barème — entrent dans la
+    moyenne pour les points que vaut leur rendement.
+
+    **Les pensions de 2026 et de 2027** (``calcul_provisoire_non_salaries``)
+    sont d'abord liquidées par l'ancienne section : le forfait sur toute la
+    durée, et les points de 2016 à 2027 un à un, ceux d'avant 2016 par la même
+    moyenne (loi n° 2025-199, article 87, VIII, B). Le nouveau calcul, fait
+    au plus tard le 31 mars 2028, les révise s'il leur est plus favorable :
+    la plus forte des deux est servie.
+    """
+    durees, droits = releve.durees, releve.droits
+    regime = moteur.catalogue[code]
+    fiabilite = regime.fiabilite
+    requis, fiabilite_duree = ouvrir.duree_requise(moteur, periode, carriere)
+    proratisation, fiabilite_prorata = duree_proratisation(
+        moteur, periode, carriere, requis)
+    for lue in (fiabilite_duree, fiabilite_prorata,
+                droits.fiabilite_points.get(code)):
+        if lue is not None:
+            fiabilite = min(fiabilite, lue)
+    coupure = ANNEE_DES_REVENUS_AGRICOLES
+
+    # LES DURÉES, de part et d'autre du 1er janvier 2016. Les majorations de
+    # durée comptent pour le 1°, ou pour le a de qui n'a été affilié qu'avant
+    # 2016 ; les trimestres des enfants, « en outre », pour le b (R. 732-61 ;
+    # R. 732-66, III).
+    par_annee = durees.par_annee["assurance"].get(code, {})
+    avant = sum(min(n, carriere.plafond_trimestres(annee))
+                for annee, n in par_annee.items() if annee < coupure)
+    apres = sum(min(n, carriere.plafond_trimestres(annee))
+                for annee, n in par_annee.items() if annee >= coupure)
+    enfants = durees.hors_annee["assurance"].get(code, 0)
+    duree_1 = apres + enfants if apres > 0 else 0
+    duree_a = avant + (enfants if apres == 0 else 0)
+    duree_b = avant + enfants if avant > 0 else 0
+
+    # LE NOMBRE D'ANNÉES DE CHAQUE MOYENNE (R. 173-3-2). Les régimes alignés
+    # d'abord, contre celui-ci, chacun pour sa durée ; puis les deux périodes
+    # de celui-ci, pour les durées du b et du 1°.
+    enfants_majores = carriere.nombre_enfants if durees.enfants is not None else 0
+    total = nombre_d_annees_retenues(
+        moteur, periode, carriere, carriere.annee_naissance, enfants_majores)
+    alignes = tuple(autre for autre in durees.trimestres_par_regime
+                    if autre in coordonner.REGIMES_ALIGNES)
+    groupes_alignes = {releve.groupes.get(autre, (autre,))[0] for autre in alignes}
+    premiere = repartir_les_annees(
+        total,
+        {"alignes": durees.cumul_plafonne("assurance", alignes) if alignes else 0,
+         code: durees.trimestres_par_regime.get(code, 0)},
+        minimums={
+            "alignes": (1 if carriere.generation >= coordonner.LURA_PREMIERE_GENERATION
+                        else len(groupes_alignes)),
+            code: (1 if duree_b > 0 else 0) + (1 if duree_1 > 0 else 0),
+        },
+        priorite=(code, "alignes"),
+    )
+    seconde = repartir_les_annees(
+        premiere.get(code, 0), {"avant": duree_b, "apres": duree_1},
+        priorite=("avant", "apres"),
+    )
+    annees_avant, annees_apres = seconde.get("avant", 0), seconde.get("apres", 0)
+
+    # 2° b) LES POINTS D'AVANT 2016, par la moyenne de leurs meilleures
+    # années. Une année sans barème y entre pour les points que vaut son
+    # rendement, à la valeur de service de la liquidation.
+    valeur = valeur_point_fiche(moteur, periode, annee_liquidation)
+    coefficient_duree = 150.0 / requis if requis > 0 else 1.0
+    service = valeur * coefficient_duree
+    points_par_annee: dict[int, float] = {}
+    for regime_du_credit, annee, points, _ in droits.points:
+        if regime_du_credit == code:
+            points_par_annee[annee] = points_par_annee.get(annee, 0.0) + points
+    rendement: float | None = None
+    for regime_du_credit, annee, cotisation in droits.cotisations:
+        if regime_du_credit != code or annee >= coupure or service <= 0:
+            continue
+        if rendement is None:
+            rendement, fiabilite_rendement = moteur.rendements.rendement(
+                periode.points_de or code,
+                min(annee_liquidation, derniere_annee(regime)),
+            )
+            fiabilite = min(fiabilite, fiabilite_rendement)
+        points_par_annee[annee] = (points_par_annee.get(annee, 0.0)
+                                   + cotisation * rendement / service)
+    points_avant = [points for annee, points in points_par_annee.items()
+                    if annee < coupure]
+    retenues = min(annees_avant, len(points_avant))
+    moyenne = (moyenne_des_meilleures_annees(points_avant, annees_avant)
+               if duree_b > 0 else 0)
+    points_b = moyenne * duree_b / 4.0
+    part_b = points_b * service
+
+    # 2° a) LA RETRAITE FORFAITAIRE, au prorata de la durée d'avant 2016.
+    forfait = (
+        (periode.pension_forfaitaire_annuelle or 0.0)
+        * moteur.macro.coefficient_prix(
+            periode.pension_forfaitaire_annee or annee_liquidation,
+            annee_liquidation,
+        )
+    )
+    retenue_a = min(duree_a, proratisation)
+    part_a = forfait * retenue_a / proratisation if proratisation > 0 else 0.0
+
+    # 1° LE REVENU ANNUEL MOYEN DEPUIS 2016, au taux plein du régime général
+    # et au prorata de la durée depuis 2016 (L. 732-18, L. 351-1).
+    taux = (moteur.catalogue["regime_general"].periode(annee_liquidation).taux_plein
+            or 0.5)
+    retenue_1 = min(duree_1, proratisation)
+    revenu_moyen = (
+        salaire_de_reference(
+            moteur, code, carriere, periode, annee_liquidation, True,
+            carriere.annee_naissance, avpf=False, membres=(code,),
+            depuis=coupure, annees=annees_apres, plancher=True,
+        )
+        if retenue_1 > 0 and annees_apres > 0 else 0.0
+    )
+    part_1 = (revenu_moyen * taux * retenue_1 / proratisation
+              if proratisation > 0 else 0.0)
+
+    coefficient = 1.0
+    if not ignorer_penalite_age:
+        coefficient = abattement_points(
+            moteur, periode, carriere, trimestres, requis_reference,
+            age_liquidation, annee_liquidation,
+            durees.trimestres_par_regime.get(code, 0),
+        )
+    minoration, majoration = min(coefficient, 1.0), max(coefficient, 1.0)
+
+    termes = []
+    if part_1 > 0:
+        termes.append(
+            f"revenu annuel moyen {revenu_moyen:,.2f} € × taux {taux:.3%} "
+            f"× {retenue_1}/{proratisation}")
+    if part_a > 0:
+        termes.append(f"forfait {part_a:,.2f} € ({retenue_a}/{proratisation})")
+    if part_b > 0:
+        # Le rapport de cent cinquante à la durée, à six décimales comme la
+        # valeur du point : à quatre, 150/170 écrit 0,8824, et la formule
+        # manquait le montant de soixante-dix centimes.
+        termes.append(
+            f"{points_b:,.2f} points × valeur de service "
+            f"{_sans_zeros_inutiles(valeur, 6)} € × "
+            f"{_sans_zeros_inutiles(coefficient_duree, 6)}")
+    brut = (part_1 + part_a + part_b) * minoration
+    plafond = 0.5 * moteur.macro.plafond_securite_sociale(annee_liquidation)
+    if brut > plafond:
+        montant = plafond * majoration
+        detail = (
+            f"moitié du plafond {plafond:,.2f} €"
+            + ("" if majoration == 1.0
+               else f" × coefficient de majoration {majoration:.4f}")
+            + f" (L. 732-24, III), au lieu de {_formule_points(termes, minoration)}"
+        )
+    else:
+        montant = brut * majoration
+        detail = _formule_points(termes, coefficient)
+    explications = []
+    if part_b > 0:
+        explications.append(
+            f"{moyenne} points par an, moyenne arrondie des {retenues} "
+            f"meilleures années d'avant 2016, sur {duree_b} trimestres")
+    if part_1 > 0:
+        explications.append(
+            f"revenu des {annees_apres} meilleures années depuis 2016")
+
+    if periode.calcul_provisoire_non_salaries:
+        # LE CALCUL PROVISOIRE de 2026 et 2027 : le forfait sur toute la
+        # durée, et les points d'après 2016 un à un.
+        retenue = min(durees.trimestres_par_regime.get(code, 0), proratisation)
+        forfait_total = forfait * retenue / proratisation if proratisation > 0 else 0.0
+        points_provisoires = points_b + sum(
+            points for annee, points in points_par_annee.items() if annee >= coupure)
+        termes_provisoires = []
+        if points_provisoires > 0:
+            termes_provisoires.append(
+                f"{points_provisoires:,.2f} points × valeur de service "
+                f"{_sans_zeros_inutiles(valeur, 6)} € × "
+                f"{_sans_zeros_inutiles(coefficient_duree, 6)}")
+        if forfait_total > 0:
+            termes_provisoires.append(
+                f"forfait {forfait_total:,.2f} € ({retenue}/{proratisation})")
+        provisoire = (points_provisoires * service + forfait_total) * coefficient
+        if provisoire > montant:
+            explications = (
+                [f"dont {points_b:,.2f} points d'avant 2016, {moyenne} par an, "
+                 f"moyenne arrondie des {retenues} meilleures années"]
+                if part_b > 0 else [])
+            explications.append(
+                f"calcul provisoire de 2026 et 2027, que le recalcul de 2028 "
+                f"ne dépasse pas ({montant:,.2f} €)")
+            montant = provisoire
+            detail = _formule_points(termes_provisoires, coefficient)
+        else:
+            explications.append(
+                f"recalcul de 2028, plus fort que le calcul provisoire de 2026 "
+                f"et 2027 ({provisoire:,.2f} €)")
+    if explications:
+        detail += " ; " + " ; ".join(explications)
+    return PensionRegime(
+        regime=code, montant=montant, type_calcul=periode.type_calcul,
+        detail=detail, fiabilite=fiabilite,
+    )
+
+
 def valeur_du_point(moteur, code: str,
                     annee_liquidation: int) -> tuple[float, Fiabilite] | None:
     """Ce que vaut, à la liquidation, un point acquis dans ``code``.
@@ -994,8 +1299,17 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                          generation: int | None = None,
                          avpf: bool = True,
                          membres: tuple[str, ...] | None = None,
-                         enfants_majores: int = 0) -> float:
+                         enfants_majores: int = 0,
+                         depuis: int | None = None,
+                         annees: int | None = None,
+                         plancher: bool = False) -> float:
     """Salaire de référence, exprimé en euros de l'année de liquidation.
+
+    ``depuis``, ``annees`` et ``plancher`` servent au revenu annuel moyen des
+    non-salariés agricoles depuis 2016 (L. 732-24, I, 1°) : les seules années
+    à partir de ``depuis``, les ``annees`` meilleures d'entre elles, et chaque
+    revenu relevé au repère d'assiette de la période — le minimum sur lequel
+    la cotisation a été appelée.
 
     **Il porte sur les seules années passées DANS CE régime** — ou dans
     l'un des ``membres`` de sa chaîne de succession, quand ``code`` liquide
@@ -1095,6 +1409,8 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
     for ligne in carriere.lignes:
         if ligne.annee >= annee_liquidation:
             continue
+        if depuis is not None and ligne.annee < depuis:
+            continue
         if codes_admis.isdisjoint(coordonner.regimes_de(moteur, 
                 ligne, ligne.annee,
                 carriere.date_entree(ligne.affiliation),
@@ -1114,6 +1430,10 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         else:
             revenu = max(assiette_de_reference(moteur, periode, ligne),
                          acquerir.assiette_minimale(moteur, codes_admis, ligne))
+            if plancher and periode.assiette_repere_smic is not None:
+                revenu = max(revenu, periode.assiette_repere_smic
+                             * moteur.macro.smic_horaire(ligne.annee)
+                             * ligne.fraction_annee)
         # TRANCHE DE SALAIRE. Un régime qui liquide TRANCHE PAR TRANCHE —
         # le personnel navigant, dont l'article R. 426-16-1 attribue
         # 1,85 % par annuité à la première et 1,4 % à la seconde — a
@@ -1160,26 +1480,11 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         return 0.0
 
     reference = periode.salaire_reference
-    if reference in ("25_meilleures_annees", "10_meilleures_annees"):
-        annees = 25 if reference == "25_meilleures_annees" else 10
-        if periode.salaire_reference_par_generation and generation is not None:
-            par_generation = moteur.annees_salaire_reference.annees(generation)
-            if par_generation is not None:
-                annees = par_generation[0]
-            # LES PARENTS : vingt-quatre années pour qui bénéficie d'une
-            # majoration ou d'une bonification au titre d'un enfant,
-            # vingt-trois pour deux enfants et plus, pour les pensions
-            # prenant effet à compter du 1er septembre 2026 (article
-            # R. 173-3-2, décret n° 2026-699 du 29 juillet 2026, pris pour
-            # l'article 103 de la loi de financement pour 2026). La moyenne
-            # porte sur moins d'années, donc sur de meilleures : c'est la
-            # mesure « mères de famille » de cette loi, et elle vaut à qui
-            # détient les trimestres, la mère par défaut dans ce modèle.
-            if (enfants_majores > 0 and carriere.age_liquidation is not None
-                    and carriere.date_liquidation.rang
-                    >= moteur.PARENTS_MEILLEURES_ANNEES_DEPUIS.rang):
-                annees = max(1, annees - (1 if enfants_majores == 1 else 2))
+    if annees is not None:
         retenus = sorted(revenus, reverse=True)[:annees]
+    elif reference in ("25_meilleures_annees", "10_meilleures_annees"):
+        retenus = sorted(revenus, reverse=True)[:nombre_d_annees_retenues(
+            moteur, periode, carriere, generation, enfants_majores)]
     elif reference in ("derniers_6_mois", "dernier_salaire"):
         # Le traitement des six derniers mois est celui EN VIGUEUR au
         # départ. L'année de la liquidation est incomplète — l'assuré n'y a
@@ -1239,6 +1544,36 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
     else:
         retenus = revenus
     return sum(retenus) / len(retenus)
+
+
+def nombre_d_annees_retenues(moteur, periode: PeriodeRegime, carriere: Carriere,
+                             generation: int | None,
+                             enfants_majores: int = 0) -> int:
+    """Le nombre des meilleures années que retient le salaire annuel moyen.
+
+    Vingt-cinq, ou dix, selon la période ; lu à la génération quand la
+    période le dit — la loi du 22 juillet 1993 le fait passer de dix à
+    vingt-cinq à raison d'une année par génération.
+    """
+    annees = 10 if periode.salaire_reference == "10_meilleures_annees" else 25
+    if periode.salaire_reference_par_generation and generation is not None:
+        par_generation = moteur.annees_salaire_reference.annees(generation)
+        if par_generation is not None:
+            annees = par_generation[0]
+        # LES PARENTS : vingt-quatre années pour qui bénéficie d'une
+        # majoration ou d'une bonification au titre d'un enfant,
+        # vingt-trois pour deux enfants et plus, pour les pensions
+        # prenant effet à compter du 1er septembre 2026 (article
+        # R. 173-3-2, décret n° 2026-699 du 29 juillet 2026, pris pour
+        # l'article 103 de la loi de financement pour 2026). La moyenne
+        # porte sur moins d'années, donc sur de meilleures : c'est la
+        # mesure « mères de famille » de cette loi, et elle vaut à qui
+        # détient les trimestres, la mère par défaut dans ce modèle.
+        if (enfants_majores > 0 and carriere.age_liquidation is not None
+                and carriere.date_liquidation.rang
+                >= moteur.PARENTS_MEILLEURES_ANNEES_DEPUIS.rang):
+            annees = max(1, annees - (1 if enfants_majores == 1 else 2))
+    return annees
 
 
 def duree_proratisation(moteur, periode: PeriodeRegime, carriere: Carriere,

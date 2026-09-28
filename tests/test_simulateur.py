@@ -4350,6 +4350,108 @@ def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
     assert "coefficient" not in agirc(67).detail
     assert "coefficient" not in agirc(62, niveau=1.0).detail
 
+def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
+    """L'exemple de la MSA (« Réforme de la retraite des exploitants : 25
+    meilleures années », section 3). Un salarié agricole de 1984 à 1993,
+    exploitant de 1994 à 2026 : dix ans, vingt-deux avant 2016, onze depuis,
+    qui retiennent « 6 ans sur les 25 meilleures années », « 13 ans » et
+    « 6 ans » (R. 173-3-2). Ses points de 1994 à 2015 font « TOTAL 22 ans
+    633 pts » à l'ancien calcul ; « 403 pts / 13 ans = 31 pts », puis
+    « 31 pts x 22 ans = 682 pts » au nouveau (R. 732-66).
+    """
+    premiere = liquider.repartir_les_annees(
+        25, {"alignes": 40, "msa_non_salaries": 132},
+        minimums={"msa_non_salaries": 2}, priorite=("msa_non_salaries", "alignes"))
+    assert premiere == {"alignes": 6, "msa_non_salaries": 19}
+    assert liquider.repartir_les_annees(
+        19, {"avant": 88, "apres": 44}, priorite=("avant", "apres"),
+    ) == {"avant": 13, "apres": 6}
+    points = [30, 30, 30, 29, 30, 30, 24, 30, 30, 33, 40, 30, 30, 24, 30, 30, 23,
+              30, 16, 24, 30, 30]
+    assert len(points) == 22 and sum(points) == 633
+    assert sum(sorted(points, reverse=True)[:13]) == 403
+    moyenne = liquider.moyenne_des_meilleures_annees(points, 13)
+    assert moyenne == 31 and moyenne * 22 == 682
+
+    # La même carrière dans le moteur : ses propres points, mais les mêmes
+    # années retenues.
+    carriere = simulateur.carriere_parcours(
+        annee_naissance=1963, sexe="H", age_liquidation=64,
+        metiers=[Metier("salarie_agricole", 21), Metier("exploitant_agricole", 31)],
+    )
+    assert carriere.annee_liquidation == 2027
+    pension = next(
+        p for p in simulateur.scenario_actuel.calculer(carriere).pensions_par_regime
+        if p.regime == "msa_non_salaries")
+    assert "moyenne arrondie des 13 meilleures années d'avant 2016, sur 88 trimestres" \
+        in pension.detail
+    assert "revenu des 6 meilleures années depuis 2016" in pension.detail
+    assert "forfait 2,092.98 € (88/170)" in pension.detail
+
+
+def test_la_repartition_des_annees_suit_r_173_3_2():
+    """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction
+    d'année égale à 0,5 étant comptée pour une année » ; les années
+    surnuméraires retranchées à la durée la plus longue, et, à égalité, aux
+    non-salariés agricoles, en leur sein à la période d'avant 2016 ; une
+    première répartition jamais inférieure au nombre de sous-périodes que la
+    seconde partagera. Un total inférieur au nombre à répartir reste tel."""
+    # 12,5 et 12,5 : deux fois treize, une année de trop, retranchée à égalité
+    # à la période d'avant 2016.
+    assert liquider.repartir_les_annees(
+        25, {"avant": 2, "apres": 2}, priorite=("avant", "apres"),
+    ) == {"avant": 12, "apres": 13}
+    # 0,29 année, portée à l'entier non nul, puis aux deux sous-périodes ;
+    # les deux années de trop retranchées à la durée la plus longue.
+    assert liquider.repartir_les_annees(
+        25, {"alignes": 170, "msa_non_salaries": 2},
+        minimums={"msa_non_salaries": 2}, priorite=("msa_non_salaries", "alignes"),
+    ) == {"alignes": 23, "msa_non_salaries": 2}
+    # Trois tiers de vingt-cinq : huit chacun, vingt-quatre en tout.
+    assert liquider.repartir_les_annees(
+        25, {"a": 50, "b": 50, "c": 50}) == {"a": 8, "b": 8, "c": 8}
+    # Une durée nulle ne reçoit rien.
+    assert liquider.repartir_les_annees(
+        25, {"alignes": 0, "msa_non_salaries": 100}) == {"msa_non_salaries": 25}
+
+
+def test_la_pension_agricole_de_2026_prend_le_plus_favorable_des_deux_calculs(simulateur):
+    """Les pensions de 2026 et 2027 sont liquidées par l'ancienne section, la
+    moyenne des points d'avant 2016 en plus, puis recalculées au plus tard le
+    31 mars 2028 : « Si le montant issu de ce nouveau calcul est supérieur
+    [...], le niveau de la pension est révisé » (loi n° 2025-199, article 87,
+    VIII, B). Un exploitant payé au salaire moyen gagne au recalcul ; au tiers
+    du salaire moyen, ses années depuis 2016 valent plus en points qu'en
+    revenu, et il garde le calcul provisoire. Depuis 2028, le seul nouveau
+    calcul ; avant 2026, l'ancienne formule, intacte.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def pension(naissance, niveau=1.0, debut=21):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H", affiliation="exploitant_agricole",
+            age_debut=debut, age_liquidation=64, niveau_salaire=niveau)
+        return next(p for p in scenario.calculer(carriere).pensions_par_regime
+                    if p.regime == "msa_non_salaries")
+
+    assert "recalcul de 2028, plus fort que le calcul provisoire" in pension(1962).detail
+    modeste = pension(1962, niveau=0.3)
+    assert "calcul provisoire de 2026 et 2027, que le recalcul de 2028 ne dépasse pas" \
+        in modeste.detail
+    assert modeste.detail.startswith("(1,290.00 points × valeur de service")
+    assert "calcul provisoire" not in pension(1975).detail
+    assert pension(1975).detail.startswith("revenu annuel moyen")
+    assert "revenu annuel moyen" not in pension(1955).detail
+    # La moitié du plafond borne la pension avant la surcote : une longue
+    # carrière au triple du salaire moyen la dépasse, par ses points d'avant
+    # 2016, que la proratisation ne borne pas.
+    haut = pension(1962, niveau=3.0, debut=18)
+    assert haut.detail.startswith(
+        "moitié du plafond 24,030.00 € × coefficient de majoration 1.0500 "
+        "(L. 732-24, III), au lieu de ")
+    assert haut.montant == pytest.approx(24_030.0 * 1.05)
+
+
 def test_le_minimum_garanti_de_la_fonction_publique_est_servi(simulateur):
     """Le plancher de la fonction publique, déclaré mais jamais appliqué.
 

@@ -57,6 +57,13 @@ const BAREMES_REGIMES_SPECIAUX = new Set(["regimes_speciaux", "regimes_speciaux_
  */
 const MINORATION_AGE_MINIMUM_GARANTI = { 2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1 };
 
+/**
+ * LA RÉFORME AGRICOLE DE 2026 COUPE LA CARRIÈRE AU 1ER JANVIER 2016 : les
+ * années d'avant comptent par leurs points, celles d'après par leur revenu
+ * (L. 732-24, I).
+ */
+export const ANNEE_DES_REVENUS_AGRICOLES = 2016;
+
 /** Ce que l'étape « liquider chaque régime » écrit. */
 export class Pensions {
   constructor({ personne, regimes, minimum, garanti, requis, taux, fiabilite }) {
@@ -151,6 +158,17 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
     }
 
     if (periode.type_calcul === "points" || periode.type_calcul === "mixte") {
+      if (periode.meilleures_annees_non_salaries) {
+        // LA PENSION AGRICOLE DEPUIS 2026 n'est plus une somme de points :
+        // voir `pensionDesNonSalariesAgricoles`.
+        const pension = pensionDesNonSalariesAgricoles(
+          moteur, periode, carriere, releve, code, trimestres, requisReference,
+          ageLiquidation, anneeLiquidation, ignorerPenaliteAge,
+        );
+        fiabiliteGlobale = Math.min(fiabiliteGlobale, pension.fiabilite);
+        pensions.push(pension);
+        continue;
+      }
       let montant = 0.0;
       let fiabiliteRegime = regime.fiabilite;
       const details = [];
@@ -591,6 +609,272 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
 }
 
 /**
+ * `nombre` années réparties au prorata des `durees` (R. 173-3-2, II) :
+ * arrondies à l'entier non nul le plus proche, 0,5 compté pour un ; les
+ * années surnuméraires retranchées à la durée la plus longue, et, à égalité,
+ * dans l'ordre de `priorite`. Voir le Python.
+ *
+ * @param {Map<string, number>} durees trimestres, dans l'ordre des clés.
+ * @returns {Map<string, number>}
+ */
+export function repartirLesAnnees(nombre, durees, minimums = new Map(), priorite = []) {
+  const presentes = new Map([...durees].filter(([, duree]) => duree > 0));
+  let total = 0;
+  for (const duree of presentes.values()) {
+    total += duree;
+  }
+  const parts = new Map();
+  if (total <= 0 || nombre <= 0) {
+    return parts;
+  }
+  const minimum = (cle) => Math.max(1, minimums.get(cle) ?? 1);
+  for (const [cle, duree] of presentes) {
+    parts.set(cle, Math.max(minimum(cle),
+      Math.floor((2 * nombre * duree + total) / (2 * total))));
+  }
+  const rang = (cle) => {
+    const indice = priorite.indexOf(cle);
+    return indice < 0 ? priorite.length : indice;
+  };
+  let excedent = [...parts.values()].reduce((somme, n) => somme + n, 0) - nombre;
+  const ordre = [...presentes.keys()].sort(
+    (a, b) => (presentes.get(b) - presentes.get(a)) || (rang(a) - rang(b)));
+  for (const cle of ordre) {
+    if (excedent <= 0) {
+      break;
+    }
+    const retire = Math.min(excedent, parts.get(cle) - minimum(cle));
+    if (retire > 0) {
+      parts.set(cle, parts.get(cle) - retire);
+      excedent -= retire;
+    }
+  }
+  return parts;
+}
+
+/**
+ * La moyenne des `annees` meilleures valeurs, toutes s'il y en a moins,
+ * arrondie à l'entier le plus proche, 0,5 compté pour un (R. 732-66, II).
+ */
+export function moyenneDesMeilleuresAnnees(valeurs, annees) {
+  const meilleures = [...valeurs].sort((a, b) => b - a).slice(0, Math.max(0, annees));
+  if (meilleures.length === 0) {
+    return 0;
+  }
+  const somme = meilleures.reduce((total, valeur) => total + valeur, 0);
+  return Math.floor(somme / meilleures.length + 0.5 + 1e-9);
+}
+
+/**
+ * La pension des non-salariés agricoles depuis le 1er janvier 2026 :
+ * L. 732-24 dans sa rédaction de 2026 — le revenu annuel moyen des
+ * meilleures années depuis 2016 (1°), la retraite forfaitaire sur la durée
+ * d'avant 2016 (2°, a), la moyenne des points des meilleures années d'avant
+ * 2016 (2°, b) —, et, en 2026 et 2027, la plus forte de ce calcul et du
+ * calcul provisoire. Voir le Python.
+ */
+export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve, code,
+  trimestres, requisReference, ageLiquidation, anneeLiquidation, ignorerPenaliteAge) {
+  const { durees, droits } = releve;
+  const regime = moteur.catalogue.obtenir(code);
+  let fiabilite = regime.fiabilite;
+  const [requis, fiabiliteDuree] = ouvrir.dureeRequise(moteur, periode, carriere);
+  const [proratisation, fiabiliteProrata] = dureeProratisation(
+    moteur, periode, carriere, requis);
+  for (const lue of [fiabiliteDuree, fiabiliteProrata, droits.fiabilitePoints.get(code)]) {
+    if (lue !== null && lue !== undefined) {
+      fiabilite = Math.min(fiabilite, lue);
+    }
+  }
+  const coupure = ANNEE_DES_REVENUS_AGRICOLES;
+
+  // LES DURÉES, de part et d'autre du 1er janvier 2016 (R. 732-61 ;
+  // R. 732-66, III).
+  const parAnnee = durees.parAnnee.assurance.get(code) ?? new Map();
+  let avant = 0;
+  let apres = 0;
+  for (const [annee, nombre] of parAnnee) {
+    const retenus = Math.min(nombre, carriere.plafondTrimestres(annee));
+    if (annee < coupure) {
+      avant += retenus;
+    } else {
+      apres += retenus;
+    }
+  }
+  const enfants = durees.horsAnnee.assurance.get(code) ?? 0;
+  const duree1 = apres > 0 ? apres + enfants : 0;
+  const dureeA = avant + (apres === 0 ? enfants : 0);
+  const dureeB = avant > 0 ? avant + enfants : 0;
+
+  // LE NOMBRE D'ANNÉES DE CHAQUE MOYENNE (R. 173-3-2).
+  const enfantsMajores = durees.enfants !== null ? carriere.nombre_enfants : 0;
+  const total = nombreDAnneesRetenues(
+    moteur, periode, carriere, carriere.annee_naissance, enfantsMajores);
+  const alignes = [...durees.trimestresParRegime.keys()].filter(
+    (autre) => coordonner.REGIMES_ALIGNES.has(autre));
+  const groupesAlignes = new Set(alignes.map(
+    (autre) => (releve.groupes.get(autre) ?? [autre])[0]));
+  const premiere = repartirLesAnnees(
+    total,
+    new Map([
+      ["alignes", alignes.length > 0 ? durees.cumulPlafonne("assurance", alignes) : 0],
+      [code, durees.trimestresParRegime.get(code) ?? 0],
+    ]),
+    new Map([
+      ["alignes", carriere.generation >= coordonner.LURA_PREMIERE_GENERATION
+        ? 1 : groupesAlignes.size],
+      [code, (dureeB > 0 ? 1 : 0) + (duree1 > 0 ? 1 : 0)],
+    ]),
+    [code, "alignes"],
+  );
+  const seconde = repartirLesAnnees(
+    premiere.get(code) ?? 0, new Map([["avant", dureeB], ["apres", duree1]]),
+    new Map(), ["avant", "apres"],
+  );
+  const anneesAvant = seconde.get("avant") ?? 0;
+  const anneesApres = seconde.get("apres") ?? 0;
+
+  // 2° b) LES POINTS D'AVANT 2016, par la moyenne de leurs meilleures années.
+  const valeur = valeurPointFiche(moteur, periode, anneeLiquidation);
+  const coefficientDuree = requis > 0 ? 150.0 / requis : 1.0;
+  const service = valeur * coefficientDuree;
+  const pointsParAnnee = new Map();
+  for (const [regimeDuCredit, annee, points] of droits.points) {
+    if (regimeDuCredit === code) {
+      pointsParAnnee.set(annee, (pointsParAnnee.get(annee) ?? 0.0) + points);
+    }
+  }
+  let rendement = null;
+  for (const [regimeDuCredit, annee, cotisation] of droits.cotisations) {
+    if (regimeDuCredit !== code || annee >= coupure || service <= 0) {
+      continue;
+    }
+    if (rendement === null) {
+      const [lu, fiabiliteRendement] = moteur.rendements.rendement(
+        periode.points_de ?? code, Math.min(anneeLiquidation, derniereAnnee(regime)));
+      rendement = lu;
+      fiabilite = Math.min(fiabilite, fiabiliteRendement);
+    }
+    pointsParAnnee.set(annee,
+      (pointsParAnnee.get(annee) ?? 0.0) + cotisation * rendement / service);
+  }
+  const pointsAvant = [...pointsParAnnee].filter(([annee]) => annee < coupure)
+    .map(([, points]) => points);
+  const retenues = Math.min(anneesAvant, pointsAvant.length);
+  const moyenne = dureeB > 0 ? moyenneDesMeilleuresAnnees(pointsAvant, anneesAvant) : 0;
+  const pointsB = moyenne * dureeB / 4.0;
+  const partB = pointsB * service;
+
+  // 2° a) LA RETRAITE FORFAITAIRE, au prorata de la durée d'avant 2016.
+  const forfait = (periode.pension_forfaitaire_annuelle ?? 0.0)
+    * moteur.macro.coefficientPrix(
+      periode.pension_forfaitaire_annee ?? anneeLiquidation, anneeLiquidation);
+  const retenueA = Math.min(dureeA, proratisation);
+  const partA = proratisation > 0 ? forfait * retenueA / proratisation : 0.0;
+
+  // 1° LE REVENU ANNUEL MOYEN DEPUIS 2016, au taux plein du régime général.
+  const taux = moteur.catalogue.obtenir("regime_general").periode(anneeLiquidation).taux_plein
+    || 0.5;
+  const retenue1 = Math.min(duree1, proratisation);
+  const revenuMoyen = retenue1 > 0 && anneesApres > 0
+    ? salaireDeReference(
+      moteur, code, carriere, periode, anneeLiquidation, true,
+      carriere.annee_naissance, false, [code], 0, coupure, anneesApres, true)
+    : 0.0;
+  const part1 = proratisation > 0 ? revenuMoyen * taux * retenue1 / proratisation : 0.0;
+
+  let coefficient = 1.0;
+  if (!ignorerPenaliteAge) {
+    coefficient = abattementPoints(
+      moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
+      anneeLiquidation, durees.trimestresParRegime.get(code) ?? 0,
+    );
+  }
+  const minoration = Math.min(coefficient, 1.0);
+  const majoration = Math.max(coefficient, 1.0);
+
+  const termes = [];
+  if (part1 > 0) {
+    termes.push(`revenu annuel moyen ${formatFixe(revenuMoyen, 2, true)} € × taux `
+      + `${formatPourcentage(taux, 3)} × ${retenue1}/${proratisation}`);
+  }
+  if (partA > 0) {
+    termes.push(`forfait ${formatFixe(partA, 2, true)} € (${retenueA}/${proratisation})`);
+  }
+  if (partB > 0) {
+    // Le rapport de cent cinquante à la durée, à six décimales comme la
+    // valeur du point : voir le Python.
+    termes.push(`${formatFixe(pointsB, 2, true)} points × valeur de service `
+      + `${sansZerosInutiles(valeur, 6)} € × ${sansZerosInutiles(coefficientDuree, 6)}`);
+  }
+  const brut = (part1 + partA + partB) * minoration;
+  const plafond = 0.5 * moteur.macro.plafond_securite_sociale.valeur(anneeLiquidation);
+  let montant;
+  let detail;
+  if (brut > plafond) {
+    montant = plafond * majoration;
+    detail = `moitié du plafond ${formatFixe(plafond, 2, true)} €`
+      + (majoration === 1.0 ? "" : ` × coefficient de majoration ${formatFixe(majoration, 4)}`)
+      + ` (L. 732-24, III), au lieu de ${formulePoints(termes, minoration)}`;
+  } else {
+    montant = brut * majoration;
+    detail = formulePoints(termes, coefficient);
+  }
+  let explications = [];
+  if (partB > 0) {
+    explications.push(`${moyenne} points par an, moyenne arrondie des ${retenues} `
+      + `meilleures années d'avant 2016, sur ${dureeB} trimestres`);
+  }
+  if (part1 > 0) {
+    explications.push(`revenu des ${anneesApres} meilleures années depuis 2016`);
+  }
+
+  if (periode.calcul_provisoire_non_salaries) {
+    // LE CALCUL PROVISOIRE de 2026 et 2027 : le forfait sur toute la durée,
+    // et les points d'après 2016 un à un.
+    const retenue = Math.min(durees.trimestresParRegime.get(code) ?? 0, proratisation);
+    const forfaitTotal = proratisation > 0 ? forfait * retenue / proratisation : 0.0;
+    const pointsApres = [...pointsParAnnee].filter(([annee]) => annee >= coupure)
+      .reduce((somme, [, points]) => somme + points, 0);
+    const pointsProvisoires = pointsB + pointsApres;
+    const termesProvisoires = [];
+    if (pointsProvisoires > 0) {
+      termesProvisoires.push(`${formatFixe(pointsProvisoires, 2, true)} points × valeur `
+        + `de service ${sansZerosInutiles(valeur, 6)} € × `
+        + `${sansZerosInutiles(coefficientDuree, 6)}`);
+    }
+    if (forfaitTotal > 0) {
+      termesProvisoires.push(
+        `forfait ${formatFixe(forfaitTotal, 2, true)} € (${retenue}/${proratisation})`);
+    }
+    const provisoire = (pointsProvisoires * service + forfaitTotal) * coefficient;
+    if (provisoire > montant) {
+      explications = partB > 0
+        ? [`dont ${formatFixe(pointsB, 2, true)} points d'avant 2016, ${moyenne} par an, `
+          + `moyenne arrondie des ${retenues} meilleures années`]
+        : [];
+      explications.push(`calcul provisoire de 2026 et 2027, que le recalcul de 2028 `
+        + `ne dépasse pas (${formatFixe(montant, 2, true)} €)`);
+      montant = provisoire;
+      detail = formulePoints(termesProvisoires, coefficient);
+    } else {
+      explications.push(`recalcul de 2028, plus fort que le calcul provisoire de 2026 `
+        + `et 2027 (${formatFixe(provisoire, 2, true)} €)`);
+    }
+  }
+  if (explications.length > 0) {
+    detail += ` ; ${explications.join(" ; ")}`;
+  }
+  return {
+    regime: code,
+    montant,
+    type_calcul: periode.type_calcul,
+    detail,
+    fiabilite,
+  };
+}
+
+/**
  * Ce que vaut, à la liquidation, un point acquis dans ``code``.
  *
  * Un régime fermé ne sert plus ses points : ils ont été convertis dans son
@@ -703,7 +987,8 @@ export function assietteDeReference(moteur, periode, ligne) {
  * moyen. Voir `groupesDeSuccession`.
  */
 export function salaireDeReference(moteur, code, carriere, periode, anneeLiquidation, plafonner,
-  generation = null, avpf = true, membres = null, enfantsMajores = 0) {
+  generation = null, avpf = true, membres = null, enfantsMajores = 0,
+  depuis = null, anneesRetenues = null, plancher = false) {
   const codesAdmis = new Set(membres && membres.length > 0 ? membres : [code]);
   const avpfOuvert = avpf
     && periode.avantages_non_contributifs.includes("avpf");
@@ -749,6 +1034,9 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     if (ligne.annee >= anneeLiquidation) {
       continue;
     }
+    if (depuis !== null && ligne.annee < depuis) {
+      continue;
+    }
     if (!coordonner.regimesDe(moteur, 
       ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
       ligne.cotise ? ligne.revenu : ligne.revenu_reference,
@@ -769,6 +1057,11 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     } else {
       revenu = Math.max(assietteDeReference(moteur, periode, ligne),
         acquerir.assietteMinimale(moteur, [...codesAdmis], ligne));
+      if (plancher && periode.assiette_repere_smic !== null
+          && periode.assiette_repere_smic !== undefined) {
+        revenu = Math.max(revenu, periode.assiette_repere_smic
+          * moteur.macro.smic_horaire.valeur(ligne.annee) * ligne.fraction_annee);
+      }
     }
     // TRANCHE DE SALAIRE. Un régime qui liquide tranche par tranche — le
     // personnel navigant, 1,85 % par annuité sur la première et 1,4 % sur la
@@ -811,23 +1104,11 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
 
   const reference = periode.salaire_reference;
   let retenus;
-  if (reference === "25_meilleures_annees" || reference === "10_meilleures_annees") {
-    let annees = reference === "25_meilleures_annees" ? 25 : 10;
-    if (periode.salaire_reference_par_generation && generation !== null) {
-      const parGeneration = moteur.anneesSalaireReference.annees(generation);
-      if (parGeneration !== null) {
-        annees = parGeneration[0];
-      }
-      // LES PARENTS : vingt-quatre années pour qui bénéficie d'une
-      // majoration ou d'une bonification au titre d'un enfant, vingt-trois
-      // pour deux enfants et plus, pensions prenant effet à compter du
-      // 1er septembre 2026 (R. 173-3-2, décret n° 2026-699).
-      if (enfantsMajores > 0 && carriere.age_liquidation !== null
-          && carriere.dateLiquidation.rang >= moteur.parentsMeilleuresAnneesDepuis) {
-        annees = Math.max(1, annees - (enfantsMajores === 1 ? 1 : 2));
-      }
-    }
-    retenus = [...revenus].sort((a, b) => b - a).slice(0, annees);
+  if (anneesRetenues !== null) {
+    retenus = [...revenus].sort((a, b) => b - a).slice(0, anneesRetenues);
+  } else if (reference === "25_meilleures_annees" || reference === "10_meilleures_annees") {
+    retenus = [...revenus].sort((a, b) => b - a).slice(0, nombreDAnneesRetenues(
+      moteur, periode, carriere, generation, enfantsMajores));
   } else if (reference === "derniers_6_mois" || reference === "dernier_salaire") {
     // Le traitement des six derniers mois est celui EN VIGUEUR au départ.
     // L'année de la liquidation est incomplète — l'assuré n'y a travaillé que
@@ -876,6 +1157,31 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     retenus = revenus;
   }
   return retenus.reduce((total, valeur) => total + valeur, 0.0) / retenus.length;
+}
+
+/**
+ * Le nombre des meilleures années que retient le salaire annuel moyen :
+ * vingt-cinq, ou dix, selon la période, lu à la génération quand la période
+ * le dit. Voir le Python.
+ */
+export function nombreDAnneesRetenues(moteur, periode, carriere, generation,
+  enfantsMajores = 0) {
+  let annees = periode.salaire_reference === "10_meilleures_annees" ? 10 : 25;
+  if (periode.salaire_reference_par_generation && generation !== null) {
+    const parGeneration = moteur.anneesSalaireReference.annees(generation);
+    if (parGeneration !== null) {
+      annees = parGeneration[0];
+    }
+    // LES PARENTS : vingt-quatre années pour qui bénéficie d'une majoration
+    // ou d'une bonification au titre d'un enfant, vingt-trois pour deux
+    // enfants et plus, pensions prenant effet à compter du 1er septembre 2026
+    // (R. 173-3-2, décret n° 2026-699).
+    if (enfantsMajores > 0 && carriere.age_liquidation !== null
+        && carriere.dateLiquidation.rang >= moteur.parentsMeilleuresAnneesDepuis) {
+      annees = Math.max(1, annees - (enfantsMajores === 1 ? 1 : 2));
+    }
+  }
+  return annees;
 }
 
 /**

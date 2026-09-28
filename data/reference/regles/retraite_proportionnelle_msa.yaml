@@ -16,14 +16,12 @@ effet: >-
   les pensions d'avant 2026. Il calcule le maximum M avec la retraite forfaitaire de la
   fiche, ramenée sur les prix, au lieu de l'allocation aux vieux travailleurs salariés :
   115,1 points au plafond en 2025, quand la MSA publie une échelle « comprise entre 23 et
-  113 points ». Pour les pensions prenant effet depuis le 1er janvier 2026, l'écart est
-  plus large, et non mesuré : la part d'avant 2016 se liquide par la moyenne des points
-  des meilleures années, multipliée par le nombre d'années, ce que le moteur ne fait pas ;
-  dans l'exemple de la MSA, 682 points au lieu des 633 de la somme, 7,7 % de plus. Les
-  pensions de 2026 et 2027 sont recalculées au plus tard le 31 mars 2028, et celles de
-  2028 et après calculées d'emblée, sur le revenu annuel moyen des meilleures années
-  depuis 2016, qui remplace leurs points ; le moteur somme encore les points de toutes
-  les années.
+  113 points ». Pour les pensions prenant effet depuis le 1er janvier 2026, ces points ne
+  comptent plus que par la réforme de L. 732-24 : ceux d'avant 2016 par la moyenne des
+  meilleures années, multipliée par le nombre d'années — dans l'exemple de la MSA, 682
+  points au lieu des 633 de la somme —, ceux de 2016 à 2027 dans le seul calcul
+  provisoire des pensions de 2026 et 2027 ; le moteur le fait depuis le 28 septembre
+  2026, voir la fiche pension_non_salaries_agricoles_2026.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
@@ -32,21 +30,6 @@ sources:
     Calculer le maximum M avec l'allocation aux vieux travailleurs salariés de l'année, au
     lieu de la retraite forfaitaire, quand sa série, lue dans ses décrets de
     revalorisation, sera entrée au dépôt (zone des données).
-  - >-
-    La réforme des vingt-cinq meilleures années, chantier à part : pour les pensions
-    prenant effet depuis le 1er janvier 2026, servir
-    la part d'avant 2016 par la moyenne des points des meilleures années, en nombre fixé
-    par R. 173-3-2 du code de la sécurité sociale, arrondie à l'entier, multipliée par le
-    quart des trimestres validés avant 2016 et par cent cinquante sur la durée requise
-    (R. 732-66, I à III) ; pour celles de 2026 et 2027, compter par le barème les points
-    de 2016 à 2027 (décret n° 2025-1410, article 13), puis retenir le plus favorable avec
-    le calcul de 2028 ; pour celles de 2028 et après, remplacer les points des années
-    depuis 2016 par le revenu annuel moyen (L. 732-24, I, 1°, et L. 732-18).
-  - >-
-    Porter la répartition du nombre d'années entre les périodes d'avant et d'après 2016,
-    et entre régimes, que le II de R. 173-3-2 écrit (rédaction du décret n° 2026-699,
-    LEGIARTI000054589934, lue le 27 septembre 2026 : vingt-cinq années, réparties « au
-    prorata des durées d'assurance », arrondies « à l'entier non nul le plus proche »).
   lectures:
   - type: legifrance
     reference: >-

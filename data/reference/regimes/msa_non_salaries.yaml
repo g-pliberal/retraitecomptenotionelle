@@ -23,10 +23,9 @@ inventaire:
     - {reference: "loi n° 52-799 du 10 juillet 1952 assurant la mise en œuvre du régime de l'allocation de vieillesse des personnes non salariées", id: null}
     - {reference: "code rural et de la pêche maritime, L. 732-18 et suivants, R. 732-70 et R. 732-71", id: null}
   manque: >-
-    Le barème en points d'avant 1990 n'est pas lu ; la réforme du 28 février
-    2025, en vigueur depuis 2026, renvoie deux de ses trois paramètres à un
-    décret absent de la base ; conjoints et aides familiaux sont
-    sous-estimés.
+    Le barème en points d'avant 1990 n'est pas lu, et ses années entrent dans
+    la moyenne de la réforme de 2026 par les points que vaut leur rendement ;
+    conjoints et aides familiaux sont sous-estimés.
 periodes:
   - debut: 1952
     fin: 1985
@@ -176,31 +175,11 @@ periodes:
       prix, comme la loi le prescrit (L. 161-23-1).
       La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
       (communiqué de la MSA du 14 février 2023) pour une carrière complète.
-      LA RÉFORME DE 2026 EST EN VIGUEUR, ET ELLE N'EST PAS CALCULABLE.
-      L'article L. 732-24 a été entièrement réécrit au 1er janvier 2026 par
-      la loi n° 2025-199 du 28 février 2025 : la pension « cumule 1° un
-      montant calculé dans les conditions prévues à l'article L. 732-18
-      […] sur les bases des seuls revenus des années à compter du
-      1er janvier 2016 » et « 2° la somme : a) d'une part dont le montant
-      maximal attribué pour une durée minimale d'assurance EST PRÉVU PAR
-      DÉCRET […] b) d'une part calculée en fonction des montants […] des
-      cotisations acquittées […] au titre des périodes d'assurance
-      antérieures au 1er janvier 2016, EN RETENANT UN NOMBRE D'ANNÉES
-      SÉLECTIONNÉES DANS DES CONDITIONS FIXÉES PAR VOIE RÉGLEMENTAIRE ».
-      Son IV ajoute : « les modalités d'application du présent article sont
-      définies par décret en Conseil d'État ».
-      LES DÉCRETS SONT PARUS : n° 2025-1409 et n° 2025-1410 du 30 décembre
-      2025, au Journal officiel du lendemain, lus le 27 septembre 2026 dans
-      l'index JORF du dépôt. Les pensions qui prennent effet en 2026 et en
-      2027 restent liquidées par l'ancienne section (décret n° 2025-1409,
-      article 6), à deux choses près : la part proportionnelle d'avant 2016 se
-      calcule sur la moyenne des points des années les plus avantageuses (R.
-      732-66, rédaction de 2026), et un nouveau calcul intervient au plus tard
-      le 31 mars 2028, retenu s'il est plus favorable (loi n° 2025-199,
-      article 87, VIII, B ; décret n° 2025-1410, article 13). La fiche sert
-      encore la somme de tous les points, sans moyenne ni nouveau calcul :
-      voir la fiche retraite_proportionnelle_msa.
-      Voir docs/limites.md.
+      LA RÉFORME DE 2026 NE TOUCHE PAS CETTE PÉRIODE, qui liquide des
+      pensions d'avant 2026 : celles qui prennent effet depuis le 1er janvier
+      2026 relèvent des périodes de 2026 et de 2028 (fiche
+      pension_non_salaries_agricoles_2026), où les points qu'elle attribue ne
+      comptent plus que selon L. 732-24 dans sa rédaction de 2026.
       LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
       naît de la loi du 21 août 2003, pour les liquidations de 2004, à
       0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
@@ -256,31 +235,11 @@ periodes:
       prix, comme la loi le prescrit (L. 161-23-1).
       La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
       (communiqué de la MSA du 14 février 2023) pour une carrière complète.
-      LA RÉFORME DE 2026 EST EN VIGUEUR, ET ELLE N'EST PAS CALCULABLE.
-      L'article L. 732-24 a été entièrement réécrit au 1er janvier 2026 par
-      la loi n° 2025-199 du 28 février 2025 : la pension « cumule 1° un
-      montant calculé dans les conditions prévues à l'article L. 732-18
-      […] sur les bases des seuls revenus des années à compter du
-      1er janvier 2016 » et « 2° la somme : a) d'une part dont le montant
-      maximal attribué pour une durée minimale d'assurance EST PRÉVU PAR
-      DÉCRET […] b) d'une part calculée en fonction des montants […] des
-      cotisations acquittées […] au titre des périodes d'assurance
-      antérieures au 1er janvier 2016, EN RETENANT UN NOMBRE D'ANNÉES
-      SÉLECTIONNÉES DANS DES CONDITIONS FIXÉES PAR VOIE RÉGLEMENTAIRE ».
-      Son IV ajoute : « les modalités d'application du présent article sont
-      définies par décret en Conseil d'État ».
-      LES DÉCRETS SONT PARUS : n° 2025-1409 et n° 2025-1410 du 30 décembre
-      2025, au Journal officiel du lendemain, lus le 27 septembre 2026 dans
-      l'index JORF du dépôt. Les pensions qui prennent effet en 2026 et en
-      2027 restent liquidées par l'ancienne section (décret n° 2025-1409,
-      article 6), à deux choses près : la part proportionnelle d'avant 2016 se
-      calcule sur la moyenne des points des années les plus avantageuses (R.
-      732-66, rédaction de 2026), et un nouveau calcul intervient au plus tard
-      le 31 mars 2028, retenu s'il est plus favorable (loi n° 2025-199,
-      article 87, VIII, B ; décret n° 2025-1410, article 13). La fiche sert
-      encore la somme de tous les points, sans moyenne ni nouveau calcul :
-      voir la fiche retraite_proportionnelle_msa.
-      Voir docs/limites.md.
+      LA RÉFORME DE 2026 NE TOUCHE PAS CETTE PÉRIODE, qui liquide des
+      pensions d'avant 2026 : celles qui prennent effet depuis le 1er janvier
+      2026 relèvent des périodes de 2026 et de 2028 (fiche
+      pension_non_salaries_agricoles_2026), où les points qu'elle attribue ne
+      comptent plus que selon L. 732-24 dans sa rédaction de 2026.
       LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
       naît de la loi du 21 août 2003, pour les liquidations de 2004, à
       0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
@@ -350,31 +309,11 @@ periodes:
       prix, comme la loi le prescrit (L. 161-23-1).
       La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
       (communiqué de la MSA du 14 février 2023) pour une carrière complète.
-      LA RÉFORME DE 2026 EST EN VIGUEUR, ET ELLE N'EST PAS CALCULABLE.
-      L'article L. 732-24 a été entièrement réécrit au 1er janvier 2026 par
-      la loi n° 2025-199 du 28 février 2025 : la pension « cumule 1° un
-      montant calculé dans les conditions prévues à l'article L. 732-18
-      […] sur les bases des seuls revenus des années à compter du
-      1er janvier 2016 » et « 2° la somme : a) d'une part dont le montant
-      maximal attribué pour une durée minimale d'assurance EST PRÉVU PAR
-      DÉCRET […] b) d'une part calculée en fonction des montants […] des
-      cotisations acquittées […] au titre des périodes d'assurance
-      antérieures au 1er janvier 2016, EN RETENANT UN NOMBRE D'ANNÉES
-      SÉLECTIONNÉES DANS DES CONDITIONS FIXÉES PAR VOIE RÉGLEMENTAIRE ».
-      Son IV ajoute : « les modalités d'application du présent article sont
-      définies par décret en Conseil d'État ».
-      LES DÉCRETS SONT PARUS : n° 2025-1409 et n° 2025-1410 du 30 décembre
-      2025, au Journal officiel du lendemain, lus le 27 septembre 2026 dans
-      l'index JORF du dépôt. Les pensions qui prennent effet en 2026 et en
-      2027 restent liquidées par l'ancienne section (décret n° 2025-1409,
-      article 6), à deux choses près : la part proportionnelle d'avant 2016 se
-      calcule sur la moyenne des points des années les plus avantageuses (R.
-      732-66, rédaction de 2026), et un nouveau calcul intervient au plus tard
-      le 31 mars 2028, retenu s'il est plus favorable (loi n° 2025-199,
-      article 87, VIII, B ; décret n° 2025-1410, article 13). La fiche sert
-      encore la somme de tous les points, sans moyenne ni nouveau calcul :
-      voir la fiche retraite_proportionnelle_msa.
-      Voir docs/limites.md.
+      LA RÉFORME DE 2026 NE TOUCHE PAS CETTE PÉRIODE, qui liquide des
+      pensions d'avant 2026 : celles qui prennent effet depuis le 1er janvier
+      2026 relèvent des périodes de 2026 et de 2028 (fiche
+      pension_non_salaries_agricoles_2026), où les points qu'elle attribue ne
+      comptent plus que selon L. 732-24 dans sa rédaction de 2026.
       LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
       naît de la loi du 21 août 2003, pour les liquidations de 2004, à
       0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
@@ -393,7 +332,7 @@ periodes:
       par trimestre, comme la fiche du régime général le fait pour la
       même période.
   - debut: 2011
-    fin: null
+    fin: 2025
     type_calcul: mixte
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
@@ -440,31 +379,11 @@ periodes:
       prix, comme la loi le prescrit (L. 161-23-1).
       La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
       (communiqué de la MSA du 14 février 2023) pour une carrière complète.
-      LA RÉFORME DE 2026 EST EN VIGUEUR, ET ELLE N'EST PAS CALCULABLE.
-      L'article L. 732-24 a été entièrement réécrit au 1er janvier 2026 par
-      la loi n° 2025-199 du 28 février 2025 : la pension « cumule 1° un
-      montant calculé dans les conditions prévues à l'article L. 732-18
-      […] sur les bases des seuls revenus des années à compter du
-      1er janvier 2016 » et « 2° la somme : a) d'une part dont le montant
-      maximal attribué pour une durée minimale d'assurance EST PRÉVU PAR
-      DÉCRET […] b) d'une part calculée en fonction des montants […] des
-      cotisations acquittées […] au titre des périodes d'assurance
-      antérieures au 1er janvier 2016, EN RETENANT UN NOMBRE D'ANNÉES
-      SÉLECTIONNÉES DANS DES CONDITIONS FIXÉES PAR VOIE RÉGLEMENTAIRE ».
-      Son IV ajoute : « les modalités d'application du présent article sont
-      définies par décret en Conseil d'État ».
-      LES DÉCRETS SONT PARUS : n° 2025-1409 et n° 2025-1410 du 30 décembre
-      2025, au Journal officiel du lendemain, lus le 27 septembre 2026 dans
-      l'index JORF du dépôt. Les pensions qui prennent effet en 2026 et en
-      2027 restent liquidées par l'ancienne section (décret n° 2025-1409,
-      article 6), à deux choses près : la part proportionnelle d'avant 2016 se
-      calcule sur la moyenne des points des années les plus avantageuses (R.
-      732-66, rédaction de 2026), et un nouveau calcul intervient au plus tard
-      le 31 mars 2028, retenu s'il est plus favorable (loi n° 2025-199,
-      article 87, VIII, B ; décret n° 2025-1410, article 13). La fiche sert
-      encore la somme de tous les points, sans moyenne ni nouveau calcul :
-      voir la fiche retraite_proportionnelle_msa.
-      Voir docs/limites.md.
+      LA RÉFORME DE 2026 NE TOUCHE PAS CETTE PÉRIODE, qui liquide des
+      pensions d'avant 2026 : celles qui prennent effet depuis le 1er janvier
+      2026 relèvent des périodes de 2026 et de 2028 (fiche
+      pension_non_salaries_agricoles_2026), où les points qu'elle attribue ne
+      comptent plus que selon L. 732-24 dans sa rédaction de 2026.
       LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
       naît de la loi du 21 août 2003, pour les liquidations de 2004, à
       0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
@@ -488,3 +407,104 @@ periodes:
       qu'il écrit pour les trimestres d'avant 2009 est ramené à 0,75 %
       par trimestre, comme la fiche du régime général le fait pour la
       même période.
+  - debut: 2026
+    fin: 2027
+    type_calcul: mixte
+    age_ouverture: 64
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: 25_meilleures_annees
+    salaire_reference_par_generation: salaire_annuel_moyen
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1737
+    bareme_points: retraite_proportionnelle_msa
+    assiette_repere_smic: 600
+    assiette_plancher: assiette_minimale_agricole
+    valeur_point_euros: 4.589
+    valeur_point_annee: 2025
+    pension_forfaitaire_annuelle: 3905.37
+    pension_forfaitaire_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_par_generation: bareme_minoration_regimes_en_points
+    surcote_par_trimestre: 0.0125
+    surcote_points: surcote_regime_general
+    meilleures_annees_non_salaries: pension_non_salaries_agricoles_2026
+    calcul_provisoire_non_salaries: pension_non_salaries_agricoles_2026
+    avantages_non_contributifs:
+      [minimum_vieillesse, pension_majoree_reference, reversion]
+    notes: >-
+      LES PENSIONS DE 2026 ET DE 2027 SONT LIQUIDÉES DEUX FOIS. D'abord par
+      les dispositions de l'ancienne section du code rural, « dans leur
+      rédaction antérieure » (loi n° 2025-199 du 28 février 2025, article 87,
+      VIII, B ; décret n° 2025-1409, article 6) : la retraite forfaitaire sur
+      toute la durée
+      agricole, et la retraite proportionnelle, dont les points d'avant 2016
+      sont « liquidées dans les conditions prévues au b du 2° du I du même
+      article L. 732-24 » — la moyenne des meilleures années, multipliée par
+      le nombre de ces années — et ceux de 2016 à 2027 comptés un à un, le
+      barème de R. 732-71 attribuant encore ceux de 2026 et de 2027 (décret
+      n° 2025-1410, article 13). Puis, au plus tard le 31 mars 2028, par le
+      calcul de la période suivante : « Si le montant issu de ce nouveau
+      calcul est supérieur à celui attribué [...], le niveau de la pension
+      est révisé et les sommes versées antérieurement font l'objet d'une
+      régularisation. » Le moteur sert la plus forte des deux, depuis la
+      date d'effet.
+      La retraite forfaitaire est celle de D. 732-62, 3 905,37 € au 1er
+      janvier 2025, revalorisée comme les pensions (L. 161-23-1) ; la valeur
+      du point, 4,589 € à la même date (R. 732-66). Âges, durée et
+      coefficients sont ceux de la période précédente, lus à la génération ;
+      le salaire de référence ne sert qu'au calcul de 2028.
+  - debut: 2028
+    fin: null
+    type_calcul: mixte
+    age_ouverture: 64
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: 25_meilleures_annees
+    salaire_reference_par_generation: salaire_annuel_moyen
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1737
+    assiette_repere_smic: 600
+    assiette_plancher: assiette_minimale_agricole
+    valeur_point_euros: 4.589
+    valeur_point_annee: 2025
+    pension_forfaitaire_annuelle: 3905.37
+    pension_forfaitaire_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_par_generation: bareme_minoration_regimes_en_points
+    surcote_par_trimestre: 0.0125
+    surcote_points: surcote_regime_general
+    meilleures_annees_non_salaries: pension_non_salaries_agricoles_2026
+    avantages_non_contributifs:
+      [minimum_vieillesse, pension_majoree_reference, reversion]
+    notes: >-
+      L. 732-24 DANS SA RÉDACTION DE 2026 (loi n° 2025-199, article 87), pour
+      les pensions prenant effet depuis le 1er janvier 2028 — et, par le
+      recalcul de 2028, pour celles de 2026 et de 2027. Pour qui a été affilié
+      avant 2016, la pension « cumule » : 1° un montant calculé comme au
+      régime général « sur les bases des seuls revenus des années à compter
+      du 1er janvier 2016 », le revenu annuel moyen tenant lieu de salaire
+      annuel de base (L. 732-18) ; 2° a) la retraite forfaitaire, 3 905,37 €
+      au 1er janvier 2025 (D. 732-62), proratisée sur la seule durée d'avant
+      2016 ; 2° b) la moyenne des points des années d'avant 2016 « dont la
+      prise en considération est la plus avantageuse », arrondie à l'entier,
+      multipliée par le quart des trimestres d'avant 2016, par la valeur du
+      point et par cent cinquante sur la durée de la génération (R. 732-66).
+      Chaque moyenne porte sur la part des vingt-cinq années que R. 173-3-2
+      donne à sa période, au prorata des durées. La minoration de R. 351-27
+      et la surcote du régime général s'appliquent, et la pension ne dépasse
+      pas la moitié du plafond (L. 732-24, III). Pour qui n'a été affilié
+      qu'à partir de 2016, le 1° seul, sur toutes ses années.
+      LES POINTS NE S'ACQUIÈRENT PLUS : R. 732-69 à D. 732-77 sont abrogés
+      pour les pensions prenant effet depuis 2026 (décret n° 2025-1409,
+      article 1er), et leur barème ne vaut plus que pour les points d'avant
+      2016 et, à titre provisoire, pour ceux de 2016 à 2027. La période ne le
+      porte donc pas : ses années comptent par leur revenu.

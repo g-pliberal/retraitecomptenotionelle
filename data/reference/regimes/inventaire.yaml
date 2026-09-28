@@ -2169,9 +2169,9 @@ inventaire:
     - {reference: "code rural et de la pêche maritime, L. 732-18 et suivants, R. 732-70\
         \ et R. 732-71", id: null}
     manque: >-
-      Le barème en points d'avant 1990 n'est pas lu ; la réforme du 28 février 2025,
-      en vigueur depuis 2026, renvoie deux de ses trois paramètres à un décret absent
-      de la base ; conjoints et aides familiaux sont sous-estimés.
+      Le barème en points d'avant 1990 n'est pas lu, et ses années entrent dans la moyenne
+      de la réforme de 2026 par les points que vaut leur rendement ; conjoints et aides
+      familiaux sont sous-estimés.
 
   - code: msa_rco
     nom: Retraite complémentaire obligatoire des non-salariés agricoles

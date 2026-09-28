@@ -670,6 +670,7 @@ def _regimes() -> list[dict]:
                     **_regles_d_avant_1983(p),
                     **_duree_majoree(p),
                     **_points_abattus(p),
+                    **_non_salaries_2026(p),
                     **_regles_des_marins(p),
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),
@@ -760,6 +761,18 @@ def _points_abattus(p) -> dict:
     Même raison que pour les marins.
     """
     return {"points_abattus_a_l_age": True} if p.points_abattus_a_l_age else {}
+
+
+def _non_salaries_2026(p) -> dict:
+    """La pension des non-salariés agricoles de L. 732-24 dans sa rédaction de
+    2026, et son calcul provisoire de 2026 et 2027, et seulement là. Même
+    raison que pour les marins.
+    """
+    champs = {
+        "meilleures_annees_non_salaries": p.meilleures_annees_non_salaries or None,
+        "calcul_provisoire_non_salaries": p.calcul_provisoire_non_salaries or None,
+    }
+    return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 
 
 def _plafond_des_primes(p) -> dict:

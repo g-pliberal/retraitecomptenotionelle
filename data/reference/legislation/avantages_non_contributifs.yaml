@@ -472,11 +472,11 @@ avantages:
     etat_modele: declare
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Déclarée dans cinq périodes, quatre de msa_non_salaries.yaml et une de
+      Déclarée dans treize périodes, six de msa_non_salaries.yaml et sept de
       msa_rco.yaml ; aucun code du moteur ne la lit. `Neutralisations` la range d'ailleurs dans « ce que le scénario 1
       ne sert pas ».
     sans_chiffre: >-
-      déclarée par cinq fiches du catalogue et servie par aucun code : la
+      déclarée par treize périodes du catalogue et servie par aucun code : la
       déclaration est une intention
     cout:
       mesurable_par: aucune

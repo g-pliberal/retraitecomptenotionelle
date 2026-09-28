@@ -815,6 +815,33 @@ champs_periode:
     valeurs: ["msa_proportionnelle"]
     defaut: null
 
+  meilleures_annees_non_salaries:
+    description: >-
+      La pension des non-salariés agricoles se calcule-t-elle par l'article
+      L. 732-24 dans sa rédaction de 2026 (loi n° 2025-199, article 87) ? Le
+      revenu annuel moyen des meilleures années depuis 2016, au taux et au
+      prorata du régime général (1°) ; la retraite forfaitaire sur la seule
+      durée d'avant 2016 (2°, a) ; la moyenne des points des meilleures années
+      d'avant 2016, arrondie à l'entier, multipliée par le nombre de ces années
+      (2°, b ; R. 732-66) ; le nombre d'années réparti entre régimes et entre
+      les deux périodes par R. 173-3-2 ; la pension bornée à la moitié du
+      plafond (III). Une période où elle vaut renvoie à la fiche qui le dit.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
+  calcul_provisoire_non_salaries:
+    description: >-
+      La pension des non-salariés agricoles est-elle d'abord liquidée par
+      l'ancienne section, la moyenne des points d'avant 2016 en plus, puis
+      recalculée au plus tard le 31 mars 2028 et révisée si le nouveau calcul
+      lui est plus favorable ? Les pensions prenant effet en 2026 et en 2027
+      (décret n° 2025-1409, article 6 ; loi n° 2025-199, article 87, VIII, B ;
+      décret n° 2025-1410, article 13) : le moteur sert la plus forte des deux.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
   points_de:
     description: >-
       Code du régime dont cette période emprunte le BARÈME DU POINT — prix

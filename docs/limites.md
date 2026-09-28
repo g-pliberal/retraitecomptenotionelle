@@ -924,7 +924,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 | Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:periodes.debut=2025.points_maximum)-->557<!--/-->, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
 | Marins (ENIM) | les salaires forfaitaires d'avant 2008, que les textes de l'index ne chiffrent pas ; la CATÉGORIE du marin, que le décret définit par le métier et qu'une carrière saisie ne porte pas, et la catégorie MOYENNE des trente-six derniers mois qui fait le salaire de référence (R. 11) ; le décompte des services au semestre (R. 12) ; la pension d'invalidité, seule exception au plafond de vingt-cinq annuités qui ne soit pas servie | la grille des vingt forfaits lue au Journal officiel depuis 2008, la catégorie la plus proche du revenu — convention nommée —, et la grille de 2008 ramenée par le salaire moyen avant ; le plafond de vingt-cinq annuités avant cinquante-cinq ans est porté | **estimé** avant 2008, la grille de 2008 étant ramenée par le salaire moyen ; l'écart de catégorie et de décompte tient à une catégorie et à un trimestre au plus ; la levée du plafond à cinquante-deux ans et demi pour trente-sept annuités et demie est servie depuis le 22 septembre 2026 |
 | Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (au barème 2026, <!--chiffre:illustration()-->363<!--/--> € la première, <!--chiffre:valeur(data/reference/regimes/cnbf.yaml:periodes.debut=2004.cotisation_forfaitaire_euros)-->1 510<!--/--> € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de <!--chiffre:valeur(data/reference/regimes/cnbf.yaml:periodes.debut=2004.taux_cotisation_retraite*100)-->3,00<!--/--> % ET le forfait à sa valeur de croisière, <!--chiffre:valeur(data/reference/regimes/cnbf.yaml:periodes.debut=2004.cotisation_forfaitaire_euros)-->1 510<!--/--> € ; les années d'avant 2019 restent au rendement instantané | **surestime de <!--chiffre:illustration()-->4 586<!--/--> € sur une carrière**, au barème 2026, le flux des cinq premières années, contre près de <!--chiffre:illustration()-->70 000<!--/--> € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
-| Non-salariés agricoles | les points gratuits de la RCO des conjoints, aides familiaux et collaborateurs — <!--chiffre:illustration()-->66<!--/--> par an pour leurs années d'avant 2011, dans la limite de <!--chiffre:illustration()-->17<!--/--> ans —, le modèle ne connaissant que le statut de chef ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, EN VIGUEUR depuis le 1er janvier 2026 et non calculable : deux de ses trois paramètres sont renvoyés à un décret que la base ne porte pas | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural, avec les points gratuits des chefs d'exploitation pour leurs années d'avant 2003 ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà, seule dont les paramètres existent | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
+| Non-salariés agricoles | les points gratuits de la RCO des conjoints, aides familiaux et collaborateurs — <!--chiffre:illustration()-->66<!--/--> par an pour leurs années d'avant 2011, dans la limite de <!--chiffre:illustration()-->17<!--/--> ans —, le modèle ne connaissant que le statut de chef ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date — ses années entrent aussi dans la moyenne de la réforme de 2026 —, et, dans cette réforme, le revenu des années cotisées au minimum, que la loi déduit des cotisations | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural, avec les points gratuits des chefs d'exploitation pour leurs années d'avant 2003 ; le rendement instantané pour les années d'avant 1990, et l'équivalent en points de ce rendement dans la moyenne de 2026 ; le plancher de six cents SMIC horaires pour le revenu des années depuis 2016 | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
 | Régimes spéciaux résiduels | des paramètres certifiés — mais plus des textes : l'Opéra, la Comédie-Française, la SEITA, les clercs de notaires, la Banque de France, le fonds spécial des ouvriers de l'État et le personnel navigant ont leurs décrets lus VERSION PAR VERSION dans la base LEGI, et passent au niveau `moyenne`. Restent au niveau `estimee` les mines — dont dix-huit millésimes sont interpolés entre deux valeurs sourcées —, les marins, le port autonome de Strasbourg et les chemins de fer secondaires | pour les quatre derniers, les textes fondateurs sans recontrôle ; le port de Strasbourg n'a rien dans LEGI que des décrets de compensation, son règlement de retraite étant un acte de l'établissement | **indéterminé** pour ces quatre-là, et c'est le seul cas où le dépôt ne sait pas dire le sens. Ces régimes portent peu d'assurés ; leur poids dans les agrégats est faible |
 
 **Ce qui a été refermé depuis la version précédente de ce tableau.** Le régime
@@ -1309,7 +1309,7 @@ la portent, et le dépôt en a conclu que les taux servis pour ces deux années
 même aucun risque, et le décret lui-même a disparu de LEGI avec sa date
 d'expiration.
 
-### La réforme agricole de 2026 n'est pas modélisée, et il faut le dire
+### La réforme agricole de 2026 est calculée, et ce qui en reste approché
 
 L'article 87 de la loi n° 2025-199 du 28 février 2025 de financement de la
 sécurité sociale réécrit `L. 732-24` : pour les pensions prenant effet à compter
@@ -1318,14 +1318,31 @@ plus la somme d'un forfait et de points de carrière entière, mais un calcul su
 les **vingt-cinq meilleures années** — de revenus à partir de 2016, de points
 avant, les revenus n'étant pas connus plus tôt. Un dispositif transitoire
 recalcule en 2028 les pensions liquidées en 2026 et 2027, au bénéfice de
-l'assuré.
+l'assuré. Ses décrets ont paru au Journal officiel du 31 décembre 2025
+(n° 2025-1409 et n° 2025-1410).
 
-Le modèle sert encore la formule d'avant. C'est une limite DATÉE, et la seule de
-ce document qui se périme d'elle-même : elle porte sur les liquidations
-postérieures à 2025, c'est-à-dire sur la moitié des simulations que le site
-propose. La modéliser demande une mécanique que le régime agricole n'a jamais
-eue — un salaire annuel moyen sur vingt-cinq années, greffé sur un compte en
-points — et c'est pourquoi elle n'est pas faite ici plutôt que faite à moitié.
+Le modèle la calcule (`liquider.pension_des_non_salaries_agricoles`, fiche
+`pension_non_salaries_agricoles_2026`) : le revenu annuel moyen des meilleures
+années depuis 2016, au taux et au prorata du régime général ; la retraite
+forfaitaire au prorata de la seule durée d'avant 2016 ; la moyenne des points
+des meilleures années d'avant 2016, arrondie à l'entier, multipliée par le
+nombre de ces années ; les vingt-cinq années réparties entre régimes et entre
+les deux périodes par `R. 173-3-2` ; la pension bornée à la moitié du plafond ;
+et, pour les pensions de 2026 et 2027, la plus forte du calcul provisoire et du
+recalcul. Il rend l'exemple de la MSA : six, treize et six années, et une
+moyenne de trente et un points multipliée par vingt-deux années.
+
+Ce qui reste approché, et dans quel sens. Les années d'avant 1990, dont le
+barème de points n'est pas lu, entrent dans la moyenne par l'équivalent en
+points de leur rendement, qui les laisse sous les années du barème et hors des
+meilleures. Le revenu des années cotisées au minimum, que la loi déduit des
+cotisations acquittées, est porté au plancher de six cents SMIC horaires. Les
+durées que `R. 173-3-2` arrête au 31 décembre de l'année d'effet sont celles de
+la date d'effet. Les majorations de points de 1952 à 1972, les rachats et les
+conjoints collaborateurs manquent, comme avant la réforme. Et le salaire annuel
+moyen du régime général d'un ancien exploitant garde ses vingt-cinq années au
+lieu de la part que la répartition lui laisse : il est **sous-estimé**, la
+moyenne portant sur plus d'années.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
 
@@ -1397,7 +1414,7 @@ Ce que ce choix déplace est considérable. Sous le taux entier, la fonctionnair
 de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+45,0<!--/--> % d'écart au système
 actuel dans le scénario 4 ; sous la part de la Cour, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->−1,3<!--/--> %. Dans la
 proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+44,9<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−3,4<!--/--> %, et le solde moyen de la proposition
-passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,90<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,48<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−27<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−14<!--/--> milliards
+passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,89<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,47<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−27<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−14<!--/--> milliards
 d'euros par an, parce que les droits qu'elle reprend à la bascule étaient
 gonflés de ce qui payait d'autres pensions. Le privé, la CNRACL, le scénario 1
 et la part salariale ne bougent pas, ni les années d'avant 1995, où le compte
@@ -1561,20 +1578,20 @@ sont celles de ce mélange (`VoletLiberal.melange`). Il ne joue que sur la page
 Coût ; le simulateur prolonge la situation de chacun.
 
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
-solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,48<!--/--> point de PIB quand
-tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,65<!--/--> quand la moitié le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−0,82<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−0,99<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
+solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,47<!--/--> point de PIB quand
+tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,64<!--/--> quand la moitié le font, de
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−0,81<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−0,98<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
 et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->32<!--/--> % du
 PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->44<!--/--> % quand la moitié le font,
-de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->56<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->70<!--/--> % pour
+de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->55<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->69<!--/--> % pour
 la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
 tient donc à ce que les reportés travaillent ; qu'elle en ait un n'en dépend
 plus, depuis que le compte d'un fonctionnaire d'État ne reçoit que la part
 « retraite » du taux de l'État — sous le taux entier, la dette atteindrait
-<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->84<!--/--> % si aucun ne travaillait. La part reste à lire dans
+<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->83<!--/--> % si aucun ne travaillait. La part reste à lire dans
 les évaluations de la réforme de 2010, qui a reculé l'âge légal de deux ans :
 elles ont suivi ce que sont devenus ceux qu'elle a fait attendre.
 
@@ -1602,42 +1619,6 @@ change le compte, à carrière égale, et un âge différent y mêlerait deux ef
 L'âge de référence des scénarios prospectifs suit l'âge légal
 (`age_reference_fixe`, <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans) ; il
 ne pèse que sur la conversion des droits acquis.
-
-### La réforme agricole de 2026 est en vigueur, et elle n'est pas calculable
-
-Le tableau des manques disait « la réforme du 28 février 2025 n'est pas
-modélisée ». La lecture du code rural dans la base LEGI dit quelque chose de plus
-précis, et de plus gênant.
-
-**La loi est bien en vigueur.** L'article L. 732-24 a été entièrement réécrit au
-1<sup>er</sup> janvier 2026 par la loi n° 2025-199 du 28 février 2025, et
-l'article L. 732-24-1 — celui qui fixait l'objectif à la Nation depuis 2023 — a
-été abrogé le même jour, son objet étant atteint. La pension « cumule » désormais
-une part calculée sur les seuls revenus postérieurs à 2016 et une part reprenant
-les droits d'avant 2016.
-
-**Mais deux de ses trois paramètres n'existent pas.** Le texte les renvoie
-ailleurs, mot pour mot : la part forfaitaire d'avant 2016 est « d'une part dont
-le montant maximal attribué pour une durée minimale d'assurance **est prévu par
-décret** » ; la part proportionnelle d'avant 2016 se calcule « en retenant un
-nombre d'années sélectionnées **dans des conditions fixées par voie
-réglementaire** » ; et son IV ajoute « les modalités d'application du présent
-article sont définies par **décret en Conseil d'État** ».
-
-Ce décret n'est pas dans la base. Un dépouillement de toute la législation
-consolidée ne rend, pour le 1<sup>er</sup> janvier 2026, que des articles
-LÉGISLATIFS — L. 732-21, L. 732-24, L. 732-35, L. 732-60 du code rural, et trois
-articles du code de la sécurité sociale — et aucun article réglementaire nouveau.
-Les articles R. 732-60, R. 732-63 et R. 732-66, qui décrivent le calcul en
-points, courent toujours jusqu'à 2999.
-
-**Ce que le modèle fait, et pourquoi c'est le moins faux.** Il sert la formule
-d'avant — retraite forfaitaire plus retraite proportionnelle en points —, qui est
-la seule dont les paramètres soient publiés, et dont la partie réglementaire est
-toujours en vigueur. Inventer les deux paramètres manquants reviendrait à écrire
-le décret à la place du Conseil d'État. C'est écrit dans les trois périodes
-concernées de la fiche, et c'est la seule limite du dépôt qui tienne à un texte
-que le Gouvernement n'a pas encore pris.
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
 
@@ -1768,7 +1749,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,74<!--/--> en 2070 pour le scénario 3 ne se lit donc
+  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,75<!--/--> en 2070 pour le scénario 3 ne se lit donc
   pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->43<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
@@ -2660,7 +2641,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,24<!--/--> %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,28<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **trois
 points à l'arrivée**.

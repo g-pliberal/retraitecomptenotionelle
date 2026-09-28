@@ -2443,17 +2443,33 @@ def _refaire_la_formule(detail: str) -> float | None:
             r"porté au minimum (?:contributif|garanti) par \+ ([\d,]+\.\d+) €", detail)
         return montant + (sans_virgules(plancher.group(1)) if plancher else 0.0)
 
+    # La pension agricole que borne la moitié du plafond (L. 732-24, III) :
+    # le plafond, et la surcote qui le majore.
+    plafond = re.match(r"moitié du plafond ([\d,]+\.\d+) €"
+                       r"(?: × coefficient de majoration ([\d.]+))?", detail)
+    if plafond:
+        return sans_virgules(plafond.group(1)) * float(plafond.group(2) or 1.0)
+
     points = re.search(r"([\d,]+\.\d+) points × valeur de service ([\d.]+)", detail)
-    if not points:
+    # La part des non-salariés agricoles depuis 2026 qui se calcule sur le
+    # revenu annuel moyen des années depuis 2016 : revenu × taux × durée.
+    revenu = re.search(
+        r"revenu annuel moyen ([\d,]+\.\d+) € × taux ([\d.]+)% × (\d+)/(\d+)", detail)
+    if not points and not revenu:
         return None
-    montant = sans_virgules(points.group(1)) * float(points.group(2))
-    # Coefficient de durée de la proportionnelle agricole : « 37,5 / durée
-    # requise », affiché à la suite de la valeur de service parce qu'il ne
-    # multiplie que les points, ni le forfait ni les cotisations.
-    duree = re.search(
-        r"points × valeur de service [\d.]+ € × ([\d.]+)", detail)
-    if duree:
-        montant *= float(duree.group(1))
+    montant = 0.0
+    if points:
+        montant = sans_virgules(points.group(1)) * float(points.group(2))
+        # Coefficient de durée de la proportionnelle agricole : « 37,5 /
+        # durée requise », affiché à la suite de la valeur de service parce
+        # qu'il ne multiplie que les points, ni le forfait ni les cotisations.
+        duree = re.search(
+            r"points × valeur de service [\d.]+ € × ([\d.]+)", detail)
+        if duree:
+            montant *= float(duree.group(1))
+    if revenu:
+        montant += (sans_virgules(revenu.group(1)) * float(revenu.group(2)) / 100
+                    * int(revenu.group(3)) / int(revenu.group(4)))
     # Part forfaitaire d'un régime MIXTE : la retraite forfaitaire agricole,
     # proratisée sur la durée, s'ajoute aux points.
     forfait = re.search(r"forfait ([\d,]+\.\d+) € \(\d+/\d+\)", detail)
