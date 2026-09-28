@@ -4717,6 +4717,187 @@ toutes ces lignes à la fois.${g.bulle(
 `);
 }
 
+/**
+ * Les trois comptes du tableau « régime par régime », dans l'ordre de ses
+ * colonnes, après celle du système 1.
+ */
+const COMPTES_PAR_ORIGINE = [
+  "notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal",
+];
+
+/**
+ * Les quatre systèmes, régime par régime, en euros de l'année du départ.
+ *
+ * Au système 1, la ligne d'un régime est la pension qu'il sert — un minimum,
+ * une surcote parentale, des trimestres d'enfants y sont déjà, que le tableau
+ * du système 1 isole ; la majoration pour enfants et le minimum vieillesse,
+ * que le moteur compte à côté des lignes, ont chacun la leur. Dans un compte,
+ * la ligne d'un régime est ce que valent les cotisations qu'il a encaissées :
+ * leur part du capital (`capital_par_regime`), divisée par le coefficient de
+ * conversion du compte. Ce qu'aucun régime n'encaisse — le régime unique
+ * depuis la bascule — a sa ligne, et la garantie vieillesse la sienne.
+ *
+ * Chaque case est arrondie au centime, comme dans le tableau du système 1, et
+ * l'étage de plusieurs régimes additionne les lignes affichées. Rend `""`
+ * quand une colonne ne fait pas son total : la page n'écrit pas une somme
+ * fausse.
+ */
+function parOrigine(comparaison, catalogue) {
+  const actuel = comparaison.actuel;
+  const parametres = comparaison.parametres;
+  const colonnes = 1 + COMPTES_PAR_ORIGINE.length;
+  const vide = () => new Array(colonnes).fill(null);
+  const valeurs = new Map();
+  const porter = (cle, colonne, montant) => {
+    if (!valeurs.has(cle)) valeurs.set(cle, vide());
+    valeurs.get(cle)[colonne] = (valeurs.get(cle)[colonne] ?? 0.0) + montant;
+  };
+  const provisionne = (code) => parametres.isoler_capitalisation
+    && catalogue.obtenir(code).hors_repartition;
+
+  for (const pension of actuel.pensions_par_regime) {
+    if (!provisionne(pension.regime)) porter(pension.regime, 0, pension.montant);
+  }
+  const avantages = [];
+  for (const avantage of actuel.avantages_appliques) {
+    if (avantage.code === "majoration_enfants" || avantage.code === "minimum_vieillesse") {
+      porter(avantage.code, 0, avantage.montant);
+      avantages.push([avantage.code, echapper(avantage.libelle)]);
+    }
+  }
+  // Le système 4, quand son départ est reporté, est en euros de SON départ :
+  // ses montants sont ramenés à ceux des trois autres par les prix, comme le
+  // haut de la page les ramène tous à l'année de référence.
+  const ramener = (scenario) => comparaison.coefficientDe(scenario)
+    / comparaison.coefficientDe(null);
+  const totaux = [actuel.pension_annuelle];
+  COMPTES_PAR_ORIGINE.forEach((scenario, rang) => {
+    const resultat = comparaison[scenario];
+    const facteur = ramener(scenario) / resultat.conversion.diviseur;
+    for (const [code, capital] of Object.entries(resultat.compte.capital_par_regime)) {
+      porter(code, rang + 1, capital * facteur);
+    }
+    totaux.push(resultat.pension_annuelle * ramener(scenario));
+  });
+  const liberal = comparaison.notionnel_liberal;
+  const garantie = liberal.garantie_vieillesse;
+  if (garantie && garantie.servie_a_la_liquidation) {
+    porter("garantie_vieillesse", colonnes - 1,
+      garantie.complement * ramener("notionnel_liberal"));
+  }
+
+  for (let colonne = 0; colonne < colonnes; colonne += 1) {
+    let somme = 0.0;
+    for (const ligne of valeurs.values()) somme += ligne[colonne] ?? 0.0;
+    if (Math.abs(somme - totaux[colonne]) > 0.01) return "";
+  }
+  // Une ligne qui ne vaut rien nulle part — une tranche que le salaire n'a
+  // jamais atteinte — ne dit rien ici.
+  for (const [cle, ligne] of valeurs) {
+    if (ligne.every((montant) => montant === null || Math.abs(montant) < 0.005)) {
+      valeurs.delete(cle);
+    }
+  }
+
+  const cases = (ligne) => ligne.map((montant) => (
+    montant === null ? '<span class="discret">—</span>' : g.eurosCentimes(montant)));
+  const rangs = new Map([...catalogue].map((regime, rang) => [regime.code, rang]));
+  const lignes = [];
+  for (const [etage, titre] of ETAGES_ACTUEL) {
+    const groupe = [...valeurs.keys()]
+      .filter((cle) => catalogue.contient(cle) && catalogue.obtenir(cle).etage === etage)
+      .sort((a, b) => rangs.get(a) - rangs.get(b));
+    const nom = (code) => echapper(catalogue.obtenir(code).nom);
+    if (groupe.length === 1) {
+      lignes.push([`${titre}<br><span class="dont">${nom(groupe[0])}</span>`,
+        ...cases(valeurs.get(groupe[0]))]);
+    } else if (groupe.length > 1) {
+      // La somme des lignes AFFICHÉES, comme dans le tableau du système 1.
+      const sousTotal = vide().map((_, colonne) => {
+        const presents = groupe.map((code) => valeurs.get(code)[colonne])
+          .filter((montant) => montant !== null);
+        return presents.length === 0 ? null
+          : presents.reduce((total, montant) => total + Number(formatFixe(montant, 2)), 0.0);
+      });
+      lignes.push([titre, ...cases(sousTotal)]);
+      for (const code of groupe) {
+        lignes.push([`<span class="dont">${nom(code)}</span>`, ...cases(valeurs.get(code))]);
+      }
+    }
+  }
+  const autres = [
+    ["taux_commun", "Taux d'acquisition commun"],
+    ["regime_unifie", `Régime unique, depuis ${parametres.annee_bascule}`],
+    ...avantages,
+    ["garantie_vieillesse", "Garantie vieillesse"],
+  ];
+  for (const [cle, libelle] of autres) {
+    if (valeurs.has(cle)) lignes.push([libelle, ...cases(valeurs.get(cle))]);
+  }
+  lignes.push(["<strong>Pension de répartition</strong>",
+    ...totaux.map((total) => `<strong>${g.eurosCentimes(total)}</strong>`)]);
+
+  const annee = comparaison.carriere.anneeLiquidation;
+  const tableau = g.tableau(
+    // Une espace insécable : « Système » et son numéro ne se séparent pas
+    // sur un écran étroit.
+    ["Origine", "Système\u00a01", "Système\u00a02", "Système\u00a03", "Système\u00a04"],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "nombre"],
+    `Les quatre systèmes, régime par régime, en euros de ${annee}`,
+    true,
+  );
+
+  const notes = [];
+  const provisionnes = actuel.pensions_par_regime
+    .filter((pension) => provisionne(pension.regime) && pension.montant > 0)
+    .map((pension) => echapper(catalogue.obtenir(pension.regime).nom));
+  if (provisionnes.length > 0) {
+    notes.push(`Hors tableau : ${provisionnes.join(", ")} — `
+      + (provisionnes.length > 1
+        ? "régimes provisionnés, servis à part, à l'identique"
+        : "régime provisionné, servi à part, à l'identique")
+      + " dans les quatre systèmes.");
+  }
+  if (valeurs.has("regime_unifie")) {
+    notes.push(`Depuis ${parametres.annee_bascule}, les comptes n'ont plus qu'un `
+      + "régime, le régime unique : ce qui lui est versé a sa ligne, et chaque "
+      + "régime d'avant ne porte que ce qu'il a encaissé jusque-là. Au système 1, "
+      + "la carrière cotise jusqu'au bout aux mêmes régimes.");
+  }
+  const depart = comparaison.carriereDe("notionnel_liberal").anneeLiquidation;
+  if (depart !== annee) {
+    notes.push(`Le système 4 part plus tard, en ${depart} : ses montants sont `
+      + `ramenés aux euros de ${annee} par l'évolution des prix.`);
+  }
+  const rente = liberal.rente_capitalisation_obligatoire * ramener("notionnel_liberal");
+  if (rente > 0) {
+    notes.push("Le système 4 sert en outre la rente de son pilier capitalisé, "
+      + `${g.eurosCentimes(rente)} par an en euros de ${annee} : elle ne vient `
+      + "pas de la répartition, et ce tableau ne la compte pas.");
+  }
+
+  return `
+<h4>Les quatre systèmes, régime par régime${g.bulle(
+    "Comment lire ce tableau",
+    "Au système 1, la ligne d'un régime est la pension qu'il sert, avec ce "
+    + "que le droit y a déjà porté — un minimum, des trimestres d'enfants, une "
+    + "surcote parentale… —, que le tableau du système 1 isole plus haut ; la "
+    + "majoration pour enfants et le minimum vieillesse, qui s'ajoutent aux "
+    + "pensions des régimes, ont leur ligne. Dans un compte, la pension ne "
+    + "vient que des cotisations — et, au système 4, de la garantie "
+    + "vieillesse. Chaque case est arrondie au centime ; un étage de plusieurs "
+    + "régimes additionne les lignes qui le suivent.",
+  )}</h4>
+<p>Au système 1, chaque régime calcule sa pension selon ses propres règles. Dans
+les trois comptes, la ligne d'un régime est ce que valent les cotisations qu'il
+a encaissées : le capital qu'elles y ont formé, divisé par le coefficient de
+conversion. Un compte ne distingue pas les régimes : l'euro cotisé une année
+donnée y vaut autant, quel que soit le régime qui l'a encaissé.</p>
+${tableau}
+${notes.map((note) => `<p class="discret">${note}</p>`).join("\n")}`;
+}
+
 function detail(contexte, comparaison) {
   const retro = comparaison.notionnel_retroactif;
   const catalogue = contexte.simulateur().catalogue;
@@ -4892,6 +5073,7 @@ ${part}
 <h4>Système 2 — construction du compte notionnel rétroactif</h4>
 <div class="fiches">${reperes}</div>
 ${compte}
+${parOrigine(comparaison, catalogue)}
 <details>
   ${g.sommaire("Les résultats complets en JSON")}
   <pre class="json">${echapper(JSON.stringify(comparaison.dictionnaire(), null, 2))}</pre>

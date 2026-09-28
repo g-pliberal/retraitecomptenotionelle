@@ -2139,6 +2139,82 @@ def test_la_ligne_de_la_proposition_fait_ses_montants(nom, champs):
     assert _euros(resume)[:2] == [plancher, montant], f"{nom} : {resume}"
 
 
+def _centimes(cellule: str) -> float | None:
+    """Le montant d'une case, au centime ; ``None`` pour un tiret."""
+    montant = re.search(r"([\d ]+,\d{2}) €", cellule)
+    if montant is None:
+        assert "—" in cellule, cellule
+        return None
+    return float(montant.group(1).replace(" ", "").replace(",", "."))
+
+
+@pytest.mark.parametrize("nom,champs", [
+    # Le système 4 y part un an plus tard, et le régime unique a sa ligne.
+    ("carrière ordinaire", {"naissance": "1975"}),
+    ("cadre", {"naissance": "1962", "statut": "salarie_prive_cadre", "debut": "22",
+               "liquidation": "64", "unite_revenu": "moyen", "salaire": "1.6"}),
+    ("fonctionnaire, rente RAFP",
+     {"naissance": "1960", "statut": "fonctionnaire_etat", "primes": "0.2"}),
+    ("mère de trois enfants", {"naissance": "1968", "sexe": "F", "enfants": "3"}),
+    ("médecin, trois étages", {"naissance": "1965", "statut": "medecin_liberal",
+                               "debut": "28", "liquidation": "66",
+                               "unite_revenu": "moyen", "salaire": "2"}),
+    ("petite pension, minimum vieillesse et garantie",
+     {"naissance": "1950", "sexe": "F", "debut": "30", "liquidation": "65",
+      "unite_revenu": "moyen", "salaire": "0.15"}),
+])
+def test_le_tableau_par_origine_s_additionne_colonne_par_colonne(nom, champs):
+    """Les quatre systèmes, régime par régime : chaque colonne fait son total
+    sur les montants AFFICHÉS, à un demi-centime près par ligne, comme le
+    tableau du système 1 ; l'étage de plusieurs régimes fait, lui, au centime,
+    la somme des lignes qui le suivent. Les totaux sont ceux que la page écrit
+    ailleurs — la pension du système 1, celle de la chaîne du système 2 — et,
+    pour le système 4, celle du modèle ramenée aux euros du même départ."""
+    corps = rendre("/simuler", champs)[1]
+    debut = corps.index("Les quatre systèmes, régime par régime, en euros de")
+    tableau = corps[debut:corps.index("</table>", debut)]
+    lignes = []
+    for ligne in re.findall(r"<tr>(.*?)</tr>", tableau, re.S)[1:]:
+        cellules = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", ligne, re.S)
+        lignes.append((cellules[0], [_centimes(c) for c in cellules[1:]]))
+    *detail, (libelle_total, totaux) = lignes
+    assert "Pension de répartition" in libelle_total, nom
+
+    retrait = '<span class="dont">'
+    feuilles = []
+    for rang, (libelle, montants) in enumerate(detail):
+        suivantes = []
+        for autre, autres in detail[rang + 1:]:
+            if not autre.startswith(retrait):
+                break
+            suivantes.append(autres)
+        if suivantes and not libelle.startswith(retrait):
+            for colonne, montant in enumerate(montants):
+                presents = [s[colonne] for s in suivantes if s[colonne] is not None]
+                assert montant == (round(sum(presents), 2) if presents else None), (
+                    f"{nom} : {libelle}, colonne {colonne + 1}")
+        else:
+            feuilles.append(montants)
+    for colonne, total in enumerate(totaux):
+        presents = [f[colonne] for f in feuilles if f[colonne] is not None]
+        assert sum(presents) == pytest.approx(
+            total, abs=0.005 * len(presents) + 0.005), f"{nom} : système {colonne + 1}"
+
+    systeme1 = _bloc(corps, "de quoi votre pension actuelle est faite", "</table>")
+    assert totaux[0] == _centimes(_bloc(systeme1, "<strong>Pension du système actuel",
+                                        "</tr>")), nom
+    chaine = _bloc(corps, "Construction du compte notionnel rétroactif", "</table>")
+    assert totaux[1] == _nombres(_bloc(chaine, "Pension annuelle, en euros de",
+                                       "</tr>"))[-1], nom
+    resultat = Contexte().simuler(Saisie.depuis_requete(champs)).dictionnaire()
+    liberal = resultat["scenarios"]["notionnel_liberal"]["pension_annuelle"]
+    ramene = (liberal * resultat["liquidation_liberal"]["coefficient_euros_constants"]
+              / resultat["unite"]["coefficient"])
+    assert totaux[3] == round(ramene, 2), nom
+    if champs.get("statut") == "fonctionnaire_etat":
+        assert "Hors tableau : Retraite additionnelle de la fonction publique" in corps
+
+
 def _nombres(bloc: str) -> list[float]:
     """Les montants d'un fragment de HTML, dans l'ordre où ils s'y lisent."""
     return [float(m.replace("\u202f", "").replace(",", "."))

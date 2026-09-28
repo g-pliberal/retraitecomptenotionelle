@@ -398,6 +398,12 @@ export class ConstructeurCompte {
     const revenu = somme("revenu");
     const cotisation = somme("cotisation");
     const origines = details.map((d) => d.origine_part_employeur).filter(Boolean);
+    const parRegime = new Map();
+    for (const d of details) {
+      for (const [code, montant] of d.par_regime) {
+        parRegime.set(code, (parRegime.get(code) ?? 0.0) + montant);
+      }
+    }
     return {
       annee,
       revenu,
@@ -411,6 +417,7 @@ export class ConstructeurCompte {
       origine_part_employeur: origines.includes("repli")
         ? "repli" : (origines[0] ?? ""),
       part_employeur: somme("part_employeur"),
+      par_regime: [...parRegime],
     };
   }
 
@@ -425,7 +432,7 @@ export class ConstructeurCompte {
         annee, revenu: 0.0, assiette_retenue: 0.0, cotisation: 0.0,
         regimes: [], taux_effectif: 0.0, hors_repartition: 0.0,
         fiabilite: Fiabilite.CERTIFIEE, nulle: true, origine_part_employeur: "",
-        part_employeur: 0.0,
+        part_employeur: 0.0, par_regime: [],
       };
     }
 
@@ -439,7 +446,7 @@ export class ConstructeurCompte {
         annee, revenu: 0.0, assiette_retenue: 0.0, cotisation: 0.0,
         regimes: [], taux_effectif: 0.0, hors_repartition: 0.0,
         fiabilite: Fiabilite.CERTIFIEE, nulle: true, origine_part_employeur: "",
-        part_employeur: 0.0,
+        part_employeur: 0.0, par_regime: [],
       };
     }
 
@@ -472,6 +479,7 @@ export class ConstructeurCompte {
         nulle: cotisation <= 0,
         origine_part_employeur: origine,
         part_employeur: assiette * tauxEmployeur,
+        par_regime: cotisation > 0 ? [["regime_unifie", cotisation]] : [],
       };
     }
 
@@ -494,6 +502,7 @@ export class ConstructeurCompte {
     const retenus = [];
     const origines = [];
     let partEmployeur = 0.0;
+    const parRegime = new Map();
 
     // Taux d'acquisition commun (``source_cotisations = taux_uniforme``) : un
     // seul taux, prélevé une fois sur la rémunération. Les régimes en
@@ -648,6 +657,7 @@ export class ConstructeurCompte {
           horsRepartition += montant;
         } else {
           cotisation += montant;
+          parRegime.set(code, (parRegime.get(code) ?? 0.0) + montant);
           assietteTotale += assiette;
           partEmployeur += assiette * tauxEmployeur;
           if (deplafonnee > 0 && !sansEmployeur && !partSalarialeSeule
@@ -673,6 +683,8 @@ export class ConstructeurCompte {
           }
           assietteTotale += assiette;
           cotisation += assiette * tauxCommun;
+          parRegime.set("taux_commun",
+            (parRegime.get("taux_commun") ?? 0.0) + assiette * tauxCommun);
         }
       }
     }
@@ -692,6 +704,10 @@ export class ConstructeurCompte {
       origine_part_employeur: origines.includes("repli")
         ? "repli" : (origines[0] ?? ""),
       part_employeur: partEmployeur,
+      // ``cotisation``, régime par régime, dans l'ordre où l'année les
+      // rencontre ; ``regime_unifie`` et ``taux_commun`` ne sont pas des
+      // régimes : voir compte.py.
+      par_regime: [...parRegime].filter(([, montant]) => montant > 0),
     };
   }
 
@@ -719,6 +735,7 @@ export class ConstructeurCompte {
 
     let capital = 0.0;
     let capitalHors = 0.0;
+    const capitalParRegime = new Map();
     const cotisations = [];
     let fiabilite = Fiabilite.CERTIFIEE;
 
@@ -732,6 +749,9 @@ export class ConstructeurCompte {
       const coefficient = this.indexation.coefficient(annee, anneeLiquidation);
       capital += detail.cotisation * coefficient;
       capitalHors += detail.hors_repartition * coefficient;
+      for (const [code, montant] of detail.par_regime) {
+        capitalParRegime.set(code, (capitalParRegime.get(code) ?? 0.0) + montant * coefficient);
+      }
     }
 
     if (cotisations.length > 0) {
@@ -765,6 +785,12 @@ export class ConstructeurCompte {
         (total, c) => total + (c.part_employeur ?? 0.0), 0.0,
       ),
       annees_part_employeur: anneesPartEmployeur,
+      /**
+       * ``capital`` par origine des cotisations, chaque versement revalorisé
+       * comme dans ``capital`` : la pension qu'une origine achète est sa part
+       * du capital, divisée par le même coefficient de conversion.
+       */
+      capital_par_regime: Object.fromEntries(capitalParRegime),
     };
   }
 }

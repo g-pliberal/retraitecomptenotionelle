@@ -456,6 +456,12 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
         (a, b) => (a[0] < b[0] ? -1 : 1),
       ),
     ),
+    // Le capital du COMPTE par origine des cotisations : voir simulateur.py.
+    capital_par_regime: Object.fromEntries(
+      Object.entries(resultat.compte.capital_par_regime).sort(
+        (a, b) => (a[0] < b[0] ? -1 : 1),
+      ),
+    ),
     rente_capitalisation: resultat.rente_capitalisation_annuelle,
     capitalisation: resultat.capitalisation === undefined
       || resultat.capitalisation === null ? null : {

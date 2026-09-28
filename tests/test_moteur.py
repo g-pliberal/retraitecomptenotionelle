@@ -9,6 +9,7 @@ from retraite_notionnelle.config import (
     ModeIndexation,
     Parametres,
     RACINE_DONNEES,
+    SourceCotisations,
     TableConversion,
 )
 from retraite_notionnelle.donnees.macro import DonneesMacro
@@ -19,11 +20,13 @@ from retraite_notionnelle.moteur.conversion import Convertisseur
 from retraite_notionnelle.moteur.fusion import CritereTaux, RegleFusion, fusionner
 from retraite_notionnelle.carriere import (
     ANNEE_FORME_CATEGORIE,
+    Metier,
     _facteur_secteur,
     TRANCHES_CATEGORIE,
     TRANCHES_SERIE,
     profil_salaire,
 )
+from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.moteur.indexation import Indexation
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -1090,4 +1093,53 @@ def test_le_compte_notionnel_se_recompose_a_la_main():
                   None, carriere.mois_liquidation)
     assert sans_actualisation.diviseur == pytest.approx(
         sans_actualisation.esperance_residuelle)
+
+
+@pytest.mark.parametrize("nom,source,cumul", [
+    ("un cadre, aux taux historiques", SourceCotisations.TAUX_HISTORIQUES, False),
+    ("deux activités cumulées", SourceCotisations.TAUX_HISTORIQUES, True),
+    ("un taux d'acquisition commun", SourceCotisations.TAUX_UNIFORME, False),
+])
+def test_le_capital_se_partage_entre_ceux_qui_ont_encaisse(nom, source, cumul):
+    """Chaque cotisation garde le régime qui l'a encaissée, et le capital se
+    partage entre eux sans reste : c'est ce que « Le détail du calcul »
+    affiche, régime par régime.
+
+    Avant la bascule, les régimes en répartition du routage — ou le taux
+    commun, qui réunit leurs assiettes et n'appartient à aucun ; depuis, le
+    seul régime unique. Un régime provisionné n'y est jamais : ce qu'il
+    encaisse ne rejoint pas le compte.
+    """
+    simulateur = Simulateur(Parametres())
+    metiers = [Metier(affiliation="salarie_prive_cadre", age_debut=22.0,
+                      niveau_salaire=1.4)]
+    if cumul:
+        metiers.append(Metier(affiliation="medecin_liberal", age_debut=35.0,
+                              niveau_salaire=0.8, cumul=True))
+    carriere = simulateur.carriere_parcours(
+        annee_naissance=1972, sexe="F", metiers=metiers, age_liquidation=65.0)
+    constructeur = ConstructeurCompte(
+        simulateur.macro, simulateur.catalogue, simulateur.affiliations,
+        simulateur.indexation, simulateur.parametres.avec(source_cotisations=source))
+    fusionne = simulateur.regime_fusionne
+    compte = constructeur.construire(carriere, carriere.annee_liquidation,
+                                     carriere.premiere_annee, fusionne)
+
+    for ligne in compte.cotisations:
+        assert sum(montant for _, montant in ligne.par_regime) == pytest.approx(
+            ligne.cotisation, rel=1e-12, abs=1e-9), (nom, ligne.annee)
+        codes = {code for code, _ in ligne.par_regime}
+        if ligne.annee >= fusionne.annee_bascule:
+            assert codes <= {"regime_unifie"}, (nom, ligne.annee, codes)
+        elif source is SourceCotisations.TAUX_UNIFORME:
+            assert codes <= {"taux_commun"}, (nom, ligne.annee, codes)
+        else:
+            assert codes <= set(ligne.regimes), (nom, ligne.annee, codes)
+            assert not any(simulateur.catalogue[code].hors_repartition
+                           for code in codes), (nom, ligne.annee, codes)
+    assert sum(compte.capital_par_regime.values()) == pytest.approx(
+        compte.capital, rel=1e-12)
+    assert compte.capital_par_regime["regime_unifie"] > 0.0
+    if cumul:
+        assert {"regime_general", "cnavpl"} <= compte.capital_par_regime.keys()
 

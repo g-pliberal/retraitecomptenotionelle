@@ -62,6 +62,14 @@ class CotisationAnnuelle:
     #: ``SALARIALE``, qui ne porte rien de lui au compte, et pour un
     #: non-salarié, qui n'en a pas.
     part_employeur: float = 0.0
+    #: ``cotisation``, régime par régime : ce que chacun a encaissé, dans
+    #: l'ordre où l'année les rencontre. Deux origines ne sont pas des
+    #: régimes : ``regime_unifie``, ce que l'on verse au régime unique après
+    #: la bascule, et ``taux_commun``, ce que prélève un taux d'acquisition
+    #: commun, qui réunit les assiettes avant de prélever et n'appartient à
+    #: aucun. Les régimes provisionnés n'y sont pas : ce qu'ils encaissent
+    #: est à ``hors_repartition``.
+    par_regime: tuple[tuple[str, float], ...] = ()
 
     @property
     def nulle(self) -> bool:
@@ -77,6 +85,11 @@ class CompteNotionnel:
     annee_liquidation: int
     cotisations: list[CotisationAnnuelle] = field(default_factory=list)
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
+    #: ``capital``, par origine des cotisations — les régimes et les deux
+    #: origines de :attr:`CotisationAnnuelle.par_regime` —, chaque versement
+    #: revalorisé comme dans ``capital``. La pension qu'une origine achète est
+    #: sa part du capital, divisée par le même coefficient de conversion.
+    capital_par_regime: dict[str, float] = field(default_factory=dict)
 
     @property
     def cotisations_versees(self) -> float:
@@ -509,6 +522,10 @@ class ConstructeurCompte:
         cotisation = sum(d.cotisation for d in details)
         origines = [d.origine_part_employeur for d in details
                     if d.origine_part_employeur]
+        par_regime: dict[str, float] = {}
+        for d in details:
+            for code, montant in d.par_regime:
+                par_regime[code] = par_regime.get(code, 0.0) + montant
         return CotisationAnnuelle(
             annee=annee,
             revenu=revenu,
@@ -523,6 +540,7 @@ class ConstructeurCompte:
                 "repli" if "repli" in origines else (origines[0] if origines else "")
             ),
             part_employeur=sum(d.part_employeur for d in details),
+            par_regime=tuple(par_regime.items()),
         )
 
     def _cotisation_ligne(self, carriere: Carriere, ligne, annee: int,
@@ -576,13 +594,15 @@ class ConstructeurCompte:
             fiabilite = regime_fusionne.fiabilite
             if origine:
                 fiabilite = min(fiabilite, fiabilite_taux)
+            versee = assiette * taux
             return CotisationAnnuelle(
                 annee=annee, revenu=base_ligne, assiette_retenue=assiette,
-                cotisation=assiette * taux, regimes=("regime_unifie",),
+                cotisation=versee, regimes=("regime_unifie",),
                 taux_effectif=taux, hors_repartition=0.0,
                 fiabilite=fiabilite,
                 origine_part_employeur=origine,
                 part_employeur=assiette * taux_employeur,
+                par_regime=(("regime_unifie", versee),) if versee > 0 else (),
             )
 
         # Pendant une période indemnisée, seuls les régimes complémentaires
@@ -606,6 +626,7 @@ class ConstructeurCompte:
         retenus: list[str] = []
         origines: list[str] = []
         part_employeur = 0.0
+        par_regime: dict[str, float] = {}
 
         # Taux d'acquisition commun (``source_cotisations = taux_uniforme``) :
         # un seul taux, prélevé une fois sur la rémunération. Les régimes en
@@ -770,6 +791,7 @@ class ConstructeurCompte:
                     hors_repartition += montant
                 else:
                     cotisation += montant
+                    par_regime[code] = par_regime.get(code, 0.0) + montant
                     assiette_totale += assiette
                     part_employeur += assiette * taux_employeur
                     if (deplafonnee > 0 and not sans_employeur
@@ -796,6 +818,8 @@ class ConstructeurCompte:
                         continue
                     assiette_totale += assiette
                     cotisation += assiette * taux_commun
+                    par_regime["taux_commun"] = (par_regime.get("taux_commun", 0.0)
+                                                 + assiette * taux_commun)
 
         taux_effectif = cotisation / base_ligne if base_ligne else 0.0
         return CotisationAnnuelle(
@@ -814,6 +838,8 @@ class ConstructeurCompte:
                 "repli" if "repli" in origines else (origines[0] if origines else "")
             ),
             part_employeur=part_employeur,
+            par_regime=tuple((code, montant) for code, montant in par_regime.items()
+                             if montant > 0),
         )
 
     # -- accumulation --------------------------------------------------------
@@ -846,6 +872,7 @@ class ConstructeurCompte:
 
         capital = 0.0
         capital_hors = 0.0
+        capital_par_regime: dict[str, float] = {}
         cotisations: list[CotisationAnnuelle] = []
         fiabilite = Fiabilite.CERTIFIEE
 
@@ -858,6 +885,9 @@ class ConstructeurCompte:
             coefficient = self.indexation.coefficient(annee, annee_liquidation)
             capital += detail.cotisation * coefficient
             capital_hors += detail.hors_repartition * coefficient
+            for code, montant in detail.par_regime:
+                capital_par_regime[code] = (capital_par_regime.get(code, 0.0)
+                                            + montant * coefficient)
 
         if cotisations:
             fiabilite = min(
@@ -871,4 +901,5 @@ class ConstructeurCompte:
             annee_liquidation=annee_liquidation,
             cotisations=cotisations,
             fiabilite=fiabilite,
+            capital_par_regime=capital_par_regime,
         )

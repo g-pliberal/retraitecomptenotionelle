@@ -3083,3 +3083,25 @@ ligne de la proposition à l'euro près.
   C'est un changement du scénario 1, qui relève de la session des données.
 - Découper la pension notionnelle selon l'origine des cotisations : la
   question est posée au propriétaire.
+
+**Le 28 septembre 2026 : la pension notionnelle, par origine des
+cotisations.** Le propriétaire a demandé tout ce qui restait. Chaque
+cotisation du compte garde désormais le régime qui l'a encaissée
+(`CotisationAnnuelle.par_regime`), et le capital se partage entre eux, chaque
+versement revalorisé comme le reste (`CompteNotionnel.capital_par_regime`,
+porté au dictionnaire des résultats, en Python comme en JavaScript). Deux
+origines ne sont pas des régimes : le régime unique, depuis la bascule, et le
+taux d'acquisition commun, qui réunit les assiettes avant de prélever.
+« Le détail du calcul » y gagne un tableau, « Les quatre systèmes, régime par
+régime » : ce que chaque régime sert au système 1, et ce que valent ses
+cotisations dans chacun des trois comptes — leur part du capital, sur le
+diviseur ; puis le régime unique, la majoration pour enfants, le minimum
+vieillesse et la garantie vieillesse, chacun sur sa ligne. Le système 4, quand
+son départ est reporté, y est ramené aux euros du même départ par les prix ;
+la rente du pilier capitalisé reste hors du tableau, qui le dit, comme un
+régime provisionné. Un test du moteur tient le partage sans reste (un cadre,
+deux activités cumulées, un taux commun) ; un test de la page, l'addition de
+chaque colonne sur les montants affichés, et ses totaux, sur six profils ; le
+catalogue des affirmations, la ligne du total, par un contrôle sur le modèle.
+Aucun chiffre du modèle ne bouge : les témoins des simulations gagnent le seul
+`capital_par_regime`.

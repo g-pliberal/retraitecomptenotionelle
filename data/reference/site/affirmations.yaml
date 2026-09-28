@@ -716,6 +716,16 @@ affirmations:
     etat: verifiee
     controle: sous_total_contributif
 
+  - id: simuler.pension_de_repartition_par_origine
+    page: /simuler
+    extrait: "Pension de répartition"
+    porte: >-
+      dans le tableau « régime par régime », chaque colonne fait la pension de
+      répartition de son système : les régimes et ce qui s'y ajoute au système
+      1, les origines des cotisations et la garantie vieillesse dans les comptes
+    etat: verifiee
+    controle: pension_par_origine
+
   - id: simuler.sous_total_contributif
     page: /simuler
     extrait: "Sous-total contributif"

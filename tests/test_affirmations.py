@@ -379,6 +379,39 @@ def _(m: Modele):
                    liberal.capital_notionnel / liberal.conversion.diviseur + complement)
 
 
+@controle("pension_par_origine")
+def _(m: Modele):
+    """Chaque colonne du tableau « régime par régime » fait sa pension.
+
+    Dans un compte, ce que chaque origine des cotisations y achète — sa part
+    du capital sur le diviseur —, plus la garantie vieillesse quand elle est
+    servie au départ ; au système 1, la pension de chaque régime en
+    répartition, plus la majoration pour enfants et le minimum vieillesse que
+    le moteur compte à côté des lignes. Le fonctionnaire y vérifie qu'un
+    régime provisionné reste hors du compte comme hors du total.
+    """
+    for comparaison in (m.defaut, m.smic, m.fonctionnaire):
+        for cle in ("notionnel_retroactif", "notionnel_retroactif_employeur",
+                    "notionnel_liberal"):
+            resultat = getattr(comparaison, cle)
+            assert _proche(sum(resultat.compte.capital_par_regime.values()),
+                           resultat.compte.capital)
+            garantie = resultat.garantie_vieillesse
+            complement = (garantie.complement if garantie is not None
+                          and garantie.servie_a_la_liquidation else 0.0)
+            assert _proche(resultat.compte.capital / resultat.conversion.diviseur
+                           + complement, resultat.pension_annuelle)
+            assert not any(m.sim.catalogue[code].hors_repartition
+                           for code in resultat.compte.capital_par_regime
+                           if code in m.sim.catalogue)
+        actuel = comparaison.actuel
+        lignes = sum(p.montant for p in actuel.pensions_par_regime
+                     if not m.sim.catalogue[p.regime].hors_repartition)
+        a_cote = sum(a.montant for a in actuel.avantages_appliques
+                     if a.code in ("majoration_enfants", "minimum_vieillesse"))
+        assert _proche(lignes + a_cote, actuel.pension_annuelle)
+
+
 @controle("diviseur_est_l_esperance_de_vie")
 def _(m: Modele):
     conversion = m.defaut.notionnel_retroactif.conversion

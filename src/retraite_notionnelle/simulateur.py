@@ -624,6 +624,10 @@ def _resume_notionnel(resultat: ResultatNotionnel, taux_remplacement: float,
         "annees_part_employeur": dict(
             sorted(resultat.compte.annees_part_employeur.items())
         ),
+        # Le capital du COMPTE par origine des cotisations : celui des
+        # scénarios rétroactifs tout entier ; en prospectif, sa part cotisée
+        # depuis la bascule, les droits acquis étant à part.
+        "capital_par_regime": dict(sorted(resultat.compte.capital_par_regime.items())),
         "rente_capitalisation": resultat.rente_capitalisation_annuelle,
         "capitalisation": None if resultat.capitalisation is None else {
             "annee_ouverture": resultat.capitalisation.annee_ouverture,
