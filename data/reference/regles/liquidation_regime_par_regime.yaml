@@ -1,0 +1,162 @@
+schema_version: 1
+id: liquidation_regime_par_regime
+intitule: >-
+  Chaque régime sert sa pension à sa propre date : le droit ne connaît pas de départ
+  « tous régimes ». Une pension prend effet quand l'assuré la demande et remplit les
+  conditions de SON régime — l'âge, les services, la radiation des cadres —, si bien
+  qu'un polypensionné touche les siennes à des dates différentes, hors les régimes que
+  la loi fait liquider ensemble : les régimes alignés depuis le 1er juillet 2017, les
+  trois régimes du code des pensions. Les complémentaires des salariés suivent le
+  régime de base au taux plein et peuvent le devancer de dix ans au plus, avec un
+  abattement ; le RAFP attend l'âge légal (fiche rafp_age_d_ouverture).
+domaine: coordination
+regimes: [regime_general, msa_salaries, msa_non_salaries, cancava, organic, rsi, cnavpl, cnbf,
+  cavimac, mines, assurances_sociales, avts, cafat_nouvelle_caledonie, cps_polynesie,
+  cps_polynesie_tranche_b, cps_saint_pierre_et_miquelon, cssm_mayotte, wallis_et_futuna,
+  fonction_publique_etat, pensions_civiles_1853, cnracl, fspoeie, fonctionnaires_pacifique,
+  assemblees_parlementaires, banque_de_france, cese_membres, chemins_fer_secondaires,
+  comedie_francaise, crpcen, ieg, marins, opera_de_paris, port_strasbourg, ratp, seita,
+  sncf, agirc_arrco, agirc, agirc_entreprises_nouvelles, arrco, arrco_cultes,
+  arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, unirs,
+  regimes_professionnels_integres, ircantec, igrante, ipacte, crpnpac, crpnpac_tranche_2,
+  rci, rco_artisans, organic_conjoints_batiment, nric, msa_rco, carcdsf_complementaire,
+  carmf_complementaire, carpimko_complementaire, carpv_complementaire,
+  cavamac_complementaire, cavec_complementaire, cavom_complementaire, cavp_complementaire,
+  cipav_complementaire, cnbf_complementaire, cprn_complementaire, ircec_raap,
+  ircec_raap_taux_amenage, ircec_racd, ircec_racl, rafp, asv_conventionnes,
+  enseignants_prive_additionnel, gerants_debits_tabac]
+etape: echeancier
+face: droit
+etat: manquante
+lit:
+- les périodes d'activité de chaque régime, et leur fin — la radiation des cadres, la
+  cessation de l'activité
+- l'âge auquel chaque régime ouvre sa pension à cet assuré, que l'étape « ouvrir le
+  droit » dit régime par régime, carrière longue comprise
+- le départ déclaré, et les départs que l'assuré déclare dans un régime
+- les régimes que la loi fait liquider ensemble (coordonner les affiliations)
+ecrit:
+- un départ par régime, ou par groupe de régimes liquidés ensemble, chacun à sa date
+  d'effet, que l'échéancier liquide l'un après l'autre
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: chaque_regime_a_sa_date
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053280889, article: "L. 161-17-2 CSS", en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000047452804, article: "L. 24 CPCMR", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047452796, article: "L. 25 CPCMR", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000024266924, article: "arrêté du 30 décembre 1970 (Ircantec), article 16",
+     en_vigueur: 2011-07-01}
+  - {reference: "accord national interprofessionnel du 17 novembre 2017 (Agirc-Arrco), article 84, version applicable au 1er janvier 2019",
+     en_vigueur: 2019-01-01}
+  bornes:
+    liquidation.date_effet: [null, null]
+  contenu:
+    droit: >-
+      la pension de chaque régime prend effet à la date que l'assuré demande, au plus
+      tôt quand il remplit les conditions de ce régime : l'âge de L. 161-17-2 au régime
+      général et dans les régimes alignés ; à la fonction publique, la radiation des
+      cadres et l'âge, légal ou anticipé, de L. 24 et L. 25 — « la liquidation de la
+      pension ne peut intervenir [...] avant l'âge mentionné à l'article L. 161-17-2 du
+      code de la sécurité sociale, ou avant l'âge minoré ou anticipé » (L. 25, 1°) —,
+      le militaire liquidant dès qu'il a ses services ; dans chaque régime spécial,
+      l'âge de son décret. Une pension différée d'un fonctionnaire radié avant l'âge
+      est liquidée « conformément [aux] règles [...] en vigueur au moment de sa mise
+      en paiement », son traitement revalorisé de la radiation à la mise en paiement
+      (L. 25, dernier alinéa ; fiche pension_differee_fonction_publique)
+    complementaires: >-
+      l'Agirc-Arrco et l'Ircantec servent sans abattement « à l'âge auquel [l'assuré]
+      a obtenu la pension d'assurance vieillesse du régime général [...] à taux plein »
+      (ANI du 17 novembre 2017, article 84, 3) ou « normalement [...] à l'âge prévu au
+      1° de l'article L. 351-8 » (arrêté du 30 décembre 1970, article 16) ; elles
+      peuvent être demandées « au plus tôt dix ans » avant cet âge, sous un coefficient
+      de 0,43 à dix ans (fiches coefficients_anticipation_agirc_arrco et
+      coefficient_anticipation_ircantec). Les complémentaires des indépendants et des
+      libéraux suivent leur régime de base
+    ensemble: >-
+      liquident ensemble, à une seule date, les régimes que la loi réunit : les régimes
+      alignés (fiche liquidation_unique_regimes_alignes), les trois régimes du code des
+      pensions (fiche interpenetration_fonction_publique), un régime et celui qui lui a
+      succédé
+    parametres:
+      depart_tous_regimes: false
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    la date à laquelle l'assuré demande chaque pension n'est pas saisie : elle est
+    présumée (depart_de_chaque_regime) — au départ déclaré, à l'ouverture du régime
+    qui n'ouvre pas encore, et plus tôt pour la seule pension dont la demande ne ferme
+    aucun droit. Qui demande sa pension plus tard que l'ouverture, pour éviter une
+    décote ou toucher une surcote, n'est pas représenté
+  effet: non mesuré
+- ecart: >-
+    une complémentaire des salariés est présumée demandée avec son régime de base :
+    l'anticipation de dix ans au plus que ses textes permettent, sous un abattement
+    qui peut atteindre 57 %, n'est prise que si le régime de base lui-même est pris
+    à cette date
+  effet: non mesuré
+presomptions:
+  depart_de_chaque_regime: >-
+    la date d'effet de chaque pension, que le formulaire ne demande pas
+sources:
+  lu_le: 2026-09-29
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 29 septembre 2026, avec le domaine des départs multiples et de la vie
+    après le départ (docs/architecture.md, § 11), à la demande du propriétaire. Aucun
+    exemple chiffré publié d'un polypensionné liquidant à deux dates n'a été trouvé ;
+    en chercher un (Cnav, SRE, CNRACL, info-retraite) avant de la dire conforme.
+  - >-
+    Les régimes spéciaux dont le modèle calcule la pension ont chacun leur pension à
+    jouissance différée, que leurs décrets écrivent : le modèle leur donne l'âge que
+    leur fiche porte, et leurs textes restent à relire sur ce point.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 161-17-2 CSS, ses versions dans l'index LEGI du dépôt, dont la dernière
+      (LEGIARTI000053280889, du 31 décembre 2025) : aucune rédaction postérieure
+    date: 2026-09-29
+  - type: legifrance
+    reference: >-
+      L. 25 CPCMR, rédaction du 1er septembre 2023 (LEGIARTI000047452796) : les âges
+      avant lesquels la liquidation « ne peut intervenir », du civil, de l'officier et
+      du non-officier ; « les règles de liquidation de la pension sont celles en vigueur
+      au moment de sa mise en paiement » ; la revalorisation du traitement de la
+      radiation à la mise en paiement
+    date: 2026-09-29
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970 relatif à l'Ircantec, article 16, rédaction du 1er
+      juillet 2011 (LEGIARTI000024266924) : liquidation normale à l'âge de L. 351-8,
+      1°, anticipation « au plus tôt dix ans avant », coefficient 0,43 puis marches de
+      0,0175, 0,0125 et 0,01 par trimestre, non appliqué au taux plein du régime
+      général
+    date: 2026-09-29
+  - type: autre
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017, article 84, lu par la
+      fiche coefficients_anticipation_agirc_arrco le 27 septembre 2026 : « au plus tôt
+      10 ans avant cet âge », sans coefficient « à l'âge auquel il a obtenu la pension
+      d'assurance vieillesse du régime général ou du régime des assurances sociales
+      agricoles à taux plein »
+    url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
+    date: 2026-09-29
+historique:
+- >-
+  2026-09-29 — née avec le troisième domaine, les départs multiples et la vie après le
+  départ, ouvert à la demande du propriétaire (« je souhaite qu'on puisse traiter tous
+  les cas où cela peut se produire ; il faut que l'on colle le plus possible à la
+  réalité »).
+effet: >-
+  Tout polypensionné dont les régimes n'ouvrent pas au même âge : le fonctionnaire de
+  catégorie active ou le militaire qui a aussi travaillé dans le privé, l'agent d'un
+  régime spécial, le marin. Jusqu'au 29 septembre 2026, le modèle liquidait tout à la
+  date du départ, à l'âge du régime le plus précoce : une aide-soignante née en 1965,
+  dix ans dans le privé puis vingt-sept à l'hôpital, partie à cinquante-sept ans,
+  recevait dès cet âge 2 001 € par an de régime général, taux de 37,5 %, que le droit
+  ne lui ouvre qu'à soixante-deux ans et neuf mois ; un militaire de dix-sept ans de
+  services passé au privé jusqu'à soixante-quatre ans voyait sa pension militaire
+  commencer à soixante-quatre ans au lieu de trente-cinq.

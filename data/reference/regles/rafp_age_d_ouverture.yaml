@@ -1,0 +1,87 @@
+schema_version: 1
+id: rafp_age_d_ouverture
+intitule: >-
+  Le RAFP ne s'ouvre qu'à l'âge légal — soixante ans jusqu'au 3 juin 2011, l'âge de
+  L. 161-17-2 depuis — et au fonctionnaire admis à la retraite : qui part avant, en
+  catégorie active, par une carrière longue ou comme militaire, attend l'âge légal
+  pour sa retraite additionnelle.
+domaine: age
+regimes: [rafp]
+etape: echeancier
+face: droit
+etat: manquante
+lit:
+- la date de naissance de l'assuré, et l'âge légal de sa génération
+- la date d'effet de sa pension de la fonction publique ou de la CNRACL
+ecrit:
+- la date d'effet de la retraite additionnelle
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: soixante_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006453304, article: "décret n° 2004-569, article 6", en_vigueur: 2004-06-19}
+  nee_de: LEGIARTI000006453304
+  bornes:
+    liquidation.date_effet: [null, 2011-06-03]
+  contenu:
+    droit: >-
+      « l'ouverture des droits est subordonnée à la condition qu'ils aient atteint
+      l'âge de soixante ans et aient été admis à la retraite au titre du régime des
+      pensions civiles et militaires de retraite ou du régime de la Caisse nationale
+      de retraites des agents des collectivités locales »
+    parametres:
+      age_ouverture: 60
+      admis_a_la_retraite: true
+  exemples: aucun trouvé
+- id: age_legal
+  statut: lue
+  textes:
+  - {id: LEGIARTI000024113145, article: "décret n° 2004-569, article 6", en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000036070843, article: "décret n° 2004-569, article 6", en_vigueur: 2017-11-23}
+  nee_de: LEGIARTI000024113145
+  bornes:
+    liquidation.date_effet: [2011-06-03, null]
+  contenu:
+    droit: >-
+      « l'ouverture des droits est subordonnée à la condition qu'ils aient atteint
+      l'âge mentionné à l'article L. 161-17-2 du code de la sécurité sociale et aient
+      été admis à la retraite » dans l'un des deux régimes, ou, depuis le 23 novembre
+      2017, « au titre d'un régime de retraite étranger »
+    parametres:
+      age_ouverture: age_legal_de_la_generation
+      admis_a_la_retraite: true
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-29
+  prochaine_relecture: 2027-09-30
+  a_relire:
+  - >-
+    Lue le 29 septembre 2026 avec le domaine des départs multiples. Le modèle servait
+    le RAFP à la date d'effet de la pension de la fonction publique, et bornait à
+    soixante-deux ans l'âge de son barème de majoration : un actif parti à
+    cinquante-sept ans touchait sa retraite additionnelle cinq ans trop tôt, au
+    coefficient de soixante-deux ans. Chercher un exemple de l'ERAFP.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2004-569 du 18 juin 2004, article 6, ses trois rédactions dans l'index
+      LEGI : LEGIARTI000006453304 (2004-2011, soixante ans), LEGIARTI000024113145 (3 juin
+      2011, l'âge de L. 161-17-2), LEGIARTI000036070843 (23 novembre 2017, un régime de
+      retraite étranger ajouté)
+    date: 2026-09-29
+  - type: legifrance
+    reference: >-
+      décret n° 2004-569, article 8 (LEGIARTI000037483754, 11 octobre 2018) : « un
+      barème actuariel modulant cette valeur en fonction de l'âge de liquidation de la
+      retraite additionnelle »
+    date: 2026-09-29
+historique:
+- >-
+  2026-09-29 — née avec le domaine des départs multiples.
+effet: >-
+  Tout fonctionnaire ou militaire qui liquide sa pension avant l'âge légal — catégories
+  active et super-active, carrière longue, militaires — et qui a des points au RAFP :
+  sa retraite additionnelle, servie à part (hors répartition), commence à l'âge légal
+  et non à son départ.

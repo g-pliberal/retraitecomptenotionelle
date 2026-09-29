@@ -1,0 +1,187 @@
+schema_version: 1
+id: droits_apres_la_premiere_pension
+intitule: >-
+  Après une première pension de base, l'activité n'ouvre plus aucun droit à retraite,
+  de base ni complémentaire : pour qui prend sa première pension depuis le 1er janvier
+  2015 (L. 161-22-1 A), puis pour tous sur les périodes accomplies depuis le 1er
+  janvier 2023 (L. 161-22-1). Échappent à la règle la retraite progressive, la pension
+  militaire et, depuis 2023, le cumul intégral, qui ouvre une seconde pension ; pour
+  les premières pensions prises depuis 2027, le cumul entier, à partir de l'âge du
+  taux plein automatique, et les exceptions de L. 161-22-1-2.
+domaine: cumul
+regimes: [regime_general, msa_salaries, msa_non_salaries, cancava, organic, rsi, cnavpl, cnbf,
+  cavimac, mines, fonction_publique_etat, cnracl, fspoeie, banque_de_france,
+  chemins_fer_secondaires, comedie_francaise, crpcen, ieg, marins, opera_de_paris,
+  port_strasbourg, ratp, seita, sncf, agirc_arrco, ircantec, rci, msa_rco,
+  carcdsf_complementaire, carmf_complementaire, carpimko_complementaire,
+  carpv_complementaire, cavamac_complementaire, cavec_complementaire,
+  cavom_complementaire, cavp_complementaire, cipav_complementaire, cnbf_complementaire,
+  cprn_complementaire, ircec_raap, ircec_racd, ircec_racl, rafp]
+etape: acquerir_les_droits
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la date d'effet de la première pension de vieillesse de base
+- les périodes d'activité qui suivent, et leur date
+- la nature de la première pension (militaire, progressive) et les conditions du cumul
+  intégral
+ecrit:
+- les lignes du relevé qu'une activité après la première pension n'ouvre pas, ou
+  qu'elle ouvre au titre d'une seconde pension
+dates_qui_decident:
+- liquidation.premiere_pension_de_base
+- droit_acquis
+versions:
+- id: sans_regle_generale
+  statut: supposee
+  hypothese: >-
+    avant la loi du 20 janvier 2014, aucun texte général n'éteint l'acquisition de
+    droits après une première pension : chaque régime garde ses règles, et une pension
+    prise dans un régime n'empêche pas d'en acquérir dans un autre. Le VIII de
+    l'article 19 de cette loi ne l'applique qu'aux premières pensions prises à compter
+    du 1er janvier 2015, et l'article L. 161-22-1 de 2023 ne vise que les périodes
+    accomplies depuis le 1er janvier 2023
+  fiabilite: moyenne
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2015-01-01]
+    droit_acquis: [null, 2023-01-01]
+  contenu:
+    droit: >-
+      l'activité après une première pension ouvre des droits dans les régimes qui ne
+      l'ont pas liquidée, selon leurs propres règles
+    parametres:
+      droits_nouveaux: selon_le_regime
+  exemples: aucun trouvé
+- id: loi_2014
+  statut: lue
+  textes:
+  - {id: JORFARTI000028493657, article: "loi n° 2014-40 du 20 janvier 2014, article 19",
+     publie_le: 2014-01-21}
+  - {id: LEGIARTI000028496884, article: "L. 161-22-1 A CSS", en_vigueur: 2014-01-22}
+  nee_de: JORFARTI000028493657
+  bornes:
+    liquidation.premiere_pension_de_base: [2015-01-01, 2027-01-01]
+    droit_acquis: [null, 2023-01-01]
+  contenu:
+    droit: >-
+      « La reprise d'activité par le bénéficiaire d'une pension de vieillesse
+      personnelle servie par un régime de retraite de base légalement obligatoire
+      n'ouvre droit à aucun avantage de vieillesse, de droit direct ou dérivé, auprès
+      d'aucun régime légal ou rendu légalement obligatoire d'assurance vieillesse, de
+      base ou complémentaire » (L. 161-22-1 A)
+    exceptions: >-
+      la retraite progressive (« n'est pas opposable à l'assuré qui demande le bénéfice
+      d'une pension au titre d'une retraite progressive ») ; la pension militaire :
+      « les articles L. 161-22 et L. 161-22-1 A du même code ne sont pas applicables
+      aux bénéficiaires d'une pension militaire » (L. 84 CPCMR, par le V du même
+      article 19) ; les marins, pour qui le II n'entre en vigueur que le 1er janvier
+      2018 (IX)
+    parametres:
+      droits_nouveaux: aucun
+      exceptions: [retraite_progressive, pension_militaire, marins_avant_2018]
+  exemples: aucun trouvé
+- id: loi_2023
+  statut: lue
+  textes:
+  - {id: JORFARTI000047445113, article: "loi n° 2023-270 du 14 avril 2023, article 26",
+     publie_le: 2023-04-15}
+  - {id: LEGIARTI000047453688, article: "L. 161-22-1 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047450790, article: "L. 161-22-1-1 CSS", en_vigueur: 2023-09-01}
+  nee_de: JORFARTI000047445113
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+    droit_acquis: [2023-01-01, null]
+  contenu:
+    droit: >-
+      « La reprise ou la poursuite d'une activité professionnelle par le bénéficiaire
+      d'une pension de vieillesse personnelle servie par un régime de retraite de base
+      légalement obligatoire n'ouvre droit à aucun avantage de vieillesse » (L. 161-22-1,
+      premier alinéa), quelle que soit la date de la première pension
+    exceptions: >-
+      la retraite progressive (1°) ; le cumul intégral des conditions de L. 161-22 et
+      de L. 84 CPCMR, la reprise chez le dernier employeur six mois au plus tôt après
+      la liquidation (2°), dont les droits ouvrent une seconde pension (fiche
+      seconde_pension) : « La liquidation des pensions [...] intervenant à compter du
+      1er septembre 2023 prend en compte [...] les droits en vue d'une nouvelle pension
+      de vieillesse constitués à partir du 1er janvier 2023 » (article 26, XII, 3°) ;
+      la pension militaire, à qui L. 84 CPCMR retire L. 161-22, L. 161-22-1,
+      L. 161-22-1-1 et L. 161-22-1-2
+    parametres:
+      droits_nouveaux: aucun
+      exceptions: [retraite_progressive, cumul_integral, pension_militaire]
+  exemples: aucun trouvé
+- id: lfss_2026
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053279754, article: "L. 161-22-1 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000053279758, article: "L. 161-22-1-2 CSS", en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000053279730, article: "L. 161-22 CSS", en_vigueur: 2025-12-31}
+  nee_de: LEGIARTI000053279758
+  bornes:
+    liquidation.premiere_pension_de_base: [2027-01-01, null]
+    droit_acquis: [null, null]
+  contenu:
+    droit: >-
+      la règle de 2023, pour qui « entre en jouissance de [sa] première pension de
+      vieillesse de base à compter du 1er janvier 2027 » (loi n° 2025-1403, article
+      102, XI)
+    exceptions: >-
+      la retraite progressive ; le cumul ENTIER, que le 3° du A du III de L. 161-22
+      n'ouvre qu'« à l'âge [...] prévu au 1° de l'article L. 351-8 » ; et, par
+      L. 161-22-1-2, « la constitution de droits supplémentaires » des marins, des
+      artistes du ballet de l'Opéra, d'anciens mineurs, des « titulaires d'une pension
+      militaire prévue à l'article L. 6 » et des titulaires de pensions d'invalidité
+    parametres:
+      droits_nouveaux: aucun
+      exceptions: [retraite_progressive, cumul_entier, marins, ballet_de_l_opera,
+                   mineurs, pension_militaire, pension_d_invalidite]
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-29
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 29 septembre 2026 avec le domaine des départs multiples. Le modèle ne
+    connaît pas encore d'activité après une première pension : la présomption
+    depart_de_chaque_regime ne fait demander une pension avant le départ que lorsque
+    cette demande ne ferme aucun droit. La règle mordra dès que l'assuré pourra
+    déclarer la date de chaque pension, ou une activité après son départ.
+  - >-
+    Lire la circulaire Cnav qui a appliqué L. 161-22-1 A (2014-2015) : la « reprise »
+    d'activité y couvre-t-elle l'activité poursuivie dans un autre régime après la
+    première pension, que la rédaction de 2023 vise en toutes lettres (« la reprise
+    ou la poursuite ») ? Et la version supposée d'avant 2015 : un régime qui a
+    liquidé acquiert-il sur une reprise d'activité ?
+  lectures:
+  - type: jorf
+    reference: >-
+      loi n° 2014-40 du 20 janvier 2014, article 19 (JORFARTI000028493657), lu en
+      entier dans l'index JORF : II (L. 161-22-1 A), V (L. 84 CPCMR, la pension
+      militaire), VIII (premières pensions prises à compter du 1er janvier 2015), IX
+      (les marins, au 1er janvier 2018)
+    date: 2026-09-29
+  - type: jorf
+    reference: >-
+      loi n° 2023-270 du 14 avril 2023, article 26 (JORFARTI000047445113), lu en
+      entier : L. 161-22-1 A abrogé, L. 161-22-1 réécrit, L. 161-22-1-1 à L. 161-22-1-9
+      créés, L. 84 CPCMR modifié ; XII, entrée en vigueur au 1er septembre 2023, droits
+      constitués depuis le 1er janvier 2023
+    date: 2026-09-29
+  - type: legifrance
+    reference: >-
+      L. 161-22, L. 161-22-1, L. 161-22-1-1 et L. 161-22-1-2 CSS, rédactions de la loi
+      n° 2025-1403 du 30 décembre 2025 (LEGIARTI000053279730, LEGIARTI000053279754,
+      LEGIARTI000053279747, LEGIARTI000053279758) : applicables aux premières pensions
+      prises à compter du 1er janvier 2027
+    date: 2026-09-29
+textes_a_relire:
+- {id: LEGIARTI000047960984, article: "R. 161-19-4 CSS", en_vigueur: 2023-09-01,
+   question: "les droits supplémentaires des marins, du ballet et des mineurs, qui s'arrêtent après la seconde pension"}
+historique:
+- >-
+  2026-09-29 — née avec le domaine des départs multiples.
+effet: >-
+  Toute personne qui travaille après sa première pension, dans le même régime ou dans
+  un autre : le fonctionnaire de catégorie active parti à cinquante-sept ans et passé
+  au privé, le retraité qui reprend un emploi. Depuis 2015, ses cotisations ne lui
+  ouvrent plus rien, hors la pension militaire et, depuis 2023, le cumul intégral.

@@ -18,7 +18,7 @@ effet: >-
   la distance au plancher. Les deux exemples de la circulaire sont rejoués par `test_la_surcote_s_ajoute_au_minimum_comme_la_circulaire_le_calcule`
   et par son double JavaScript.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-09-29
   prochaine_relecture: 2027-01-31
   a_relire:
   - Relire les montants à chaque revalorisation de janvier.
@@ -45,6 +45,23 @@ sources:
       × 1,015 = 630,31 € portés au minimum de 633,61 € ; depuis, 621 + (645,07 −
       621) + 15,52 = 660,59 €
     date: 2018-02-01
+  - type: legifrance
+    reference: >-
+      Lus le 29 septembre 2026 pour le domaine des départs multiples, dans l'index
+      LEGI : L. 351-10-1 (LEGIARTI000019959488, pour les pensions prenant effet
+      depuis le 1er janvier 2012) : « L'assuré ne peut bénéficier des dispositions de
+      l'article L. 351-10 que s'il a fait valoir les droits aux pensions personnelles
+      de retraite auxquels il peut prétendre » ; L. 173-2 (LEGIARTI000036391874) :
+      l'écrêtement sur « ses pensions personnelles de retraite attribuées au titre
+      d'un ou plusieurs régimes [...], de base et complémentaires » ; R. 173-7
+      (LEGIARTI000023719554) : les pensions comptées « sont ceux afférents au mois
+      civil de la date d'effet de celle-ci » ; R. 173-8 (LEGIARTI000023719547) : la
+      majoration « est révisée lorsque le montant des avantages personnels de retraite
+      a varié », la révision prenant effet au premier jour du mois de la modification.
+      Un polypensionné qui liquide ses régimes à des dates différentes voit donc son
+      minimum écrêté sur les pensions déjà servies, puis révisé quand une autre
+      commence
+    date: 2026-09-29
 textes_a_rattacher:
 - reference: L. 351-10 CSS
 - reference: D. 351-2-1 CSS, dernier alinéa (décret n° 2008-1509, articles 6 et

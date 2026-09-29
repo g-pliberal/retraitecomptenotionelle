@@ -1,14 +1,25 @@
 schema_version: 1
 id: cumul_emploi_retraite_et_retraite_progressive
 intitule: >-
-  Cumul emploi-retraite (trois régimes selon l'âge, seconde pension depuis 2023)
-  et retraite progressive (dès 60 ans depuis septembre 2025).
+  Cumul emploi-retraite : le retraité qui reprend ou poursuit une activité garde sa
+  pension, entière en cumul intégral, réduite de ce qui dépasse un plafond en cumul
+  plafonné ; depuis les pensions de 2027, trois régimes selon l'âge. La retraite
+  progressive, qui n'y est pas soumise, et la seconde pension ont leurs fiches
+  (retraite_progressive, seconde_pension).
 etat: pas_encore_modelisee
 effet: >-
-  Le modèle liquide une fois, à une date ; il n'a pas de seconde pension ni de fraction.
+  Le modèle liquide une fois, à une date ; il ne suit pas le retraité qui travaille, et
+  ne réduit ni ne suspend sa pension.
 sources:
-  lu_le: 2026-09-24
+  lu_le: 2026-09-29
   prochaine_relecture: 2027-09-30
+  a_relire:
+  - >-
+    Le 29 septembre 2026, avec le domaine des départs multiples, L. 161-22 a été lu
+    dans ses rédactions de 2025 et de 2027, et la fiche ne porte plus la retraite
+    progressive ni la seconde pension. Restent à lire avant de la porter : les
+    rédactions de L. 161-22 depuis 1983, L. 84 à L. 86 CPCMR dans leurs rédactions,
+    L. 634-6 et L. 643-6, et les décrets qui fixent le seuil de 2027.
   lectures:
   - type: autre
     reference: L'Assurance retraite, mesures de la LFSS 2026
@@ -19,8 +30,38 @@ sources:
       et de la retraite progressive ; FAQ de la DGAFP de 2025 ; calculette PECARI
       de l'ENSAP (plafond de 8 198,04 € au 1er janvier 2026)
     date: 2026-09-24
+  - type: legifrance
+    reference: >-
+      L. 161-22 CSS, rédaction issue de la loi n° 2025-199 (LEGIARTI000051289735) :
+      le cumul plafonné — reprise « procurant des revenus qui, ajoutés aux pensions
+      [...], sont inférieurs à 160 % du salaire minimum de croissance ou au dernier
+      salaire d'activité », la pension « réduite à due concurrence du dépassement »,
+      six mois au plus tôt chez le dernier employeur — et le cumul intégral, sous
+      réserve d'avoir liquidé toutes ses pensions, à l'âge du taux plein automatique
+      ou à l'âge légal avec la durée
+    date: 2026-09-29
+  - type: legifrance
+    reference: >-
+      L. 161-22 CSS, rédaction de la loi n° 2025-1403 (LEGIARTI000053279730), pour les
+      premières pensions prises à compter du 1er janvier 2027 : avant l'âge légal, la
+      pension « réduite à due concurrence des revenus professionnels et de
+      remplacement » ; de l'âge légal à l'âge du taux plein automatique, « à due
+      concurrence de la moitié du dépassement » d'un seuil ; au-delà, « entièrement
+      cumulée » ; les exceptions de L. 161-22-1-2
+    date: 2026-09-29
 textes_a_rattacher:
 - reference: L. 161-22 CSS et suivants
-- reference: L. 351-15 CSS
 - reference: L. 84 à L. 86 CPCMR
-- reference: L. 89 bis et D. 37-1 CPCMR
+- {id: LEGIARTI000051289735, article: "L. 161-22 CSS", en_vigueur: 2025-02-28,
+   change: "le cumul plafonné et le cumul intégral, lus le 29 septembre 2026"}
+- {id: LEGIARTI000053279730, article: "L. 161-22 CSS", en_vigueur: 2025-12-31,
+   change: "les trois régimes selon l'âge, pour les premières pensions de 2027"}
+- {id: LEGIARTI000053279635, article: "L. 84 CPCMR", en_vigueur: 2025-12-31, change: "à lire"}
+- {id: LEGIARTI000053279638, article: "L. 86 CPCMR", en_vigueur: 2025-12-31, change: "à lire"}
+historique:
+- >-
+  2026-09-29 — scindée avec l'ouverture du domaine des départs multiples : la
+  retraite progressive passe à la fiche retraite_progressive, la nouvelle pension de
+  2023 à la fiche seconde_pension, et l'extinction des droits après une première
+  pension à la fiche droits_apres_la_premiere_pension. Cette fiche garde son nom,
+  qui ne se renomme pas, et le seul cumul.

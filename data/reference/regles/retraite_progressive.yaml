@@ -1,0 +1,156 @@
+schema_version: 1
+id: retraite_progressive
+intitule: >-
+  Retraite progressive : l'assuré qui travaille à temps partiel touche une fraction de
+  sa pension, liquidée à titre provisoire, puis une pension complète qui tient compte
+  de la durée accomplie depuis. Ouverte aux salariés et aux non-salariés depuis 1988,
+  à tous les régimes de base et aux fonctionnaires (L. 89 bis) depuis le 1er septembre
+  2023 ; à deux ans de l'âge légal, puis à soixante ans pour les pensions prenant effet
+  depuis le 1er septembre 2025 ; une quotité de 40 à 80 %, une fraction égale à ce qui
+  manque de la quotité pour faire 100 %.
+domaine: cumul
+regimes: [regime_general, msa_salaries, msa_non_salaries, cancava, organic, rsi, cnavpl,
+  fonction_publique_etat, cnracl, fspoeie, agirc_arrco, ircantec]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la quotité de l'activité à temps partiel gardée, et ses changements
+- l'âge, et la durée d'assurance tous régimes
+- la date de la demande de la pension complète
+ecrit:
+- la pension provisoire de chaque régime de base, et la fraction qui en est servie
+- la pension complète, liquidée à la cessation d'activité
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: sans_droit_avant_1988
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000509071, article: "loi n° 88-16 du 5 janvier 1988, qui crée la retraite progressive",
+     publie_le: 1988-01-06}
+  bornes:
+    liquidation.date_effet: [null, 1988-01-06]
+  contenu:
+    droit: aucun
+    raison: la retraite progressive naît de la loi n° 88-16
+  exemples: aucun trouvé
+- id: salaries_1988
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000509071, article: "loi n° 88-16 du 5 janvier 1988", publie_le: 1988-01-06}
+  - {id: LEGIARTI000006742644, article: "L. 351-15 CSS", en_vigueur: 1988-01-06}
+  - {id: LEGIARTI000044629917, article: "L. 351-15 CSS", en_vigueur: 2022-01-01}
+  nee_de: JORFTEXT000000509071
+  bornes:
+    liquidation.date_effet: [1988-01-06, 2023-09-01]
+  contenu:
+    droit: >-
+      « la liquidation de sa pension de vieillesse et le service d'une fraction de
+      celle-ci » à l'assuré qui exerce « à titre exclusif une activité à temps
+      partiel », dans le régime général, celui des salariés agricoles, et ceux des
+      non-salariés que l'article nomme ; la fraction « varie [...] en fonction de la
+      durée du travail à temps partiel »
+    conditions: >-
+      l'âge de L. 351-1 en 1988 ; en 2022, « l'âge prévu au premier alinéa de l'article
+      L. 351-1 diminué de deux années, sans pouvoir être inférieur à soixante ans » ;
+      une durée d'assurance et une quotité fixées par décret
+  exemples: aucun trouvé
+- id: tous_regimes_2023
+  statut: lue
+  textes:
+  - {id: JORFARTI000047445113, article: "loi n° 2023-270 du 14 avril 2023, article 26", publie_le: 2023-04-15}
+  - {id: LEGIARTI000047961574, article: "D. 161-2-24 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047961034, article: "R. 161-19-6 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047959203, article: "D. 161-2-24-3 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047451909, article: "L. 89 bis CPCMR", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047957966, article: "D. 37-1 CPCMR", en_vigueur: 2023-08-12}
+  nee_de: JORFARTI000047445113
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2025-09-01]
+  contenu:
+    droit: >-
+      « la liquidation provisoire et le service d'une même fraction de pension dans
+      tous les régimes de retraite de base légalement obligatoires » (L. 161-22-1-5) ;
+      au fonctionnaire, « une pension partielle » (L. 89 bis) ; puis « la pension
+      complète est liquidée en tenant compte du montant de la pension initiale et de
+      la durée d'assurance accomplie depuis la liquidation de celle-ci »
+      (L. 161-22-1-7), et le bénéfice « ne peut pas être à nouveau demandé »
+    conditions: >-
+      l'âge de L. 161-17-2 « abaissé de deux ans » (D. 161-2-24) ; une quotité « ne
+      [pouvant] être inférieure à 40 % ou supérieure à 80 % de la durée de travail à
+      temps complet », arrondie à l'unité (R. 161-19-6) ; cent cinquante trimestres au
+      fonctionnaire (D. 37-1)
+    fraction: >-
+      « la différence entre 100 % et la quotité de travail à temps partiel »
+      (D. 161-2-24-3) ; supprimée à la reprise d'un temps plein ou d'un revenu au moins
+      égal à celui d'avant (L. 161-22-1-8)
+    parametres:
+      age: age_legal_moins_deux_ans
+      quotite_minimum: 0.40
+      quotite_maximum: 0.80
+  exemples: aucun trouvé
+- id: soixante_ans_2025
+  statut: lue
+  textes:
+  - {id: LEGIARTI000051944356, article: "D. 161-2-24 CSS", en_vigueur: 2025-07-24}
+  - {id: LEGIARTI000052437156, article: "L. 161-22-1-5 CSS", en_vigueur: 2025-10-26}
+  - {id: LEGIARTI000053355891, article: "D. 161-2-24-3 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000048834938, article: "L. 89 bis CPCMR", en_vigueur: 2023-12-31}
+  - {id: LEGIARTI000051944347, article: "D. 37-1 CPCMR", en_vigueur: 2025-07-24}
+  nee_de: LEGIARTI000051944356
+  bornes:
+    liquidation.date_effet: [2025-09-01, null]
+  contenu:
+    droit: la version tous_regimes_2023
+    conditions: >-
+      « L'âge d'ouverture du droit à la retraite progressive [...] est égal à soixante
+      ans », pour les pensions prenant effet à compter du 1er septembre 2025 (décret
+      n° 2025-681, article 2)
+    parametres:
+      age: 60
+      quotite_minimum: 0.40
+      quotite_maximum: 0.80
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-29
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 29 septembre 2026 avec le domaine des départs multiples ; le moteur ne
+    la calcule pas encore (étape 3 du domaine). Il lui manque la quotité de chaque
+    période, que la saisie ne demande pas.
+  - >-
+    À lire avant de la porter : la durée d'assurance du régime général (cent cinquante
+    trimestres à la fonction publique, D. 37-1 ; le texte du régime général n'a pas
+    été trouvé dans l'index), les rédactions de L. 351-15 de 2003, 2010, 2014 et 2018,
+    R. 351-39 à R. 351-44 (1988) et le calcul de la pension complète (D. 161-2-24-4,
+    L. 89 ter CPCMR) ; la retraite progressive de l'Agirc-Arrco et de l'Ircantec ;
+    les assurés en retraite progressive au 1er septembre 2023, qui gardent les
+    anciennes règles (loi n° 2023-270, article 26, XII, 4°).
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 351-15 CSS, rédactions du 6 janvier 1988 (LEGIARTI000006742644) et du
+      1er janvier 2022 (LEGIARTI000044629917) ; L. 161-22-1-5, rédaction du 26 octobre
+      2025 (LEGIARTI000052437156) ; D. 161-2-24 (2023 et 2025) ; R. 161-19-6 ;
+      D. 161-2-24-3 (2023 et 2026) ; R. 161-19-7 (2023 et 2026), dans l'index LEGI
+    date: 2026-09-29
+  - type: jorf
+    reference: >-
+      loi n° 2023-270, article 26, lu en entier : L. 161-22-1-5 à L. 161-22-1-9,
+      L. 89 bis et L. 89 ter CPCMR
+    date: 2026-09-29
+textes_a_rattacher:
+- {id: LEGIARTI000006742645, article: "L. 351-15 CSS", en_vigueur: 2003-08-22, change: "à lire"}
+- {id: LEGIARTI000023034598, article: "L. 351-15 CSS", en_vigueur: 2010-11-11, change: "à lire"}
+- {id: LEGIARTI000028498553, article: "L. 351-15 CSS", en_vigueur: 2014-01-22, change: "à lire"}
+- {id: LEGIARTI000036391731, article: "L. 351-15 CSS", en_vigueur: 2018-01-01, change: "à lire"}
+historique:
+- >-
+  2026-09-29 — née avec le domaine des départs multiples, de la fiche
+  cumul_emploi_retraite_et_retraite_progressive, qui ne porte plus que le cumul.
+effet: >-
+  Les salariés, les indépendants et, depuis 2023, les fonctionnaires qui passent à
+  temps partiel en fin de carrière : une fraction de pension pendant ce temps partiel,
+  puis une pension complète recalculée. Le modèle n'en calcule aucune.

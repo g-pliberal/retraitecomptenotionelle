@@ -2793,6 +2793,66 @@ paiement ; l'accord Agirc-Arrco de 2017, à relire sur Légifrance ; les régime
 spéciaux, les indépendants et les libéraux. Le domaine suivant se mesurera à
 son ouverture : l'invalidité et l'inaptitude paraissent devoir venir ensuite.
 
+**Le troisième domaine, les départs multiples et la vie après le départ,
+ouvert le 29 septembre 2026** (§ 11), à la demande du propriétaire, qui le
+fait passer devant l'invalidité : « Je souhaite qu'on puisse traiter tous les
+cas où cela peut se produire. Il faut que l'on colle le plus possible à la
+réalité. » Le modèle liquidait tout à une date, à l'âge du régime le plus
+précoce. Mesuré sur deux carrières avant tout changement :
+- une aide-soignante née en 1965, dix ans dans le privé puis vingt-sept à
+  l'hôpital, partie à cinquante-sept ans, recevait dès cet âge sa pension de
+  la CNRACL (14 254 € par an), mais aussi 2 001 € de régime général au taux
+  de 37,5 %, que le droit ne lui sert qu'à soixante-deux ans et neuf mois, et
+  460 € d'Arrco au coefficient de 0,43 ;
+- un militaire né en 1965, dix-sept ans de services puis le privé jusqu'à
+  soixante-quatre ans, voyait sa pension militaire (10 795 € par an) commencer
+  avec les autres, à soixante-quatre ans, quand le droit la lui sert dès sa
+  sortie de l'armée, à trente-cinq ans.
+
+Le domaine couvre tout ce qui fait qu'on ne touche pas toutes ses pensions au
+départ, ou qu'on en touche après lui. Son gabarit (§ 11), en cinq étapes :
+1. les fiches, lues ce jour (ci-dessous) ;
+2. **un départ par régime** : chaque régime liquide à sa date, présumée
+   quand la saisie ne la dit pas ; le RAFP à l'âge légal ; le minimum
+   contributif écrêté sur les pensions déjà servies, puis révisé ; les deux
+   moteurs, les témoins, et la page, qui dit quand chaque pension commence ;
+3. **la retraite progressive** : la quotité, la fraction provisoire, la
+   pension complète ;
+4. **la vie après le départ** : le cumul emploi-retraite, l'extinction des
+   droits après une première pension, la seconde pension ;
+5. le bloc du formulaire, les exemples publiés, la page Coût, la décision de
+   la proposition, la référence de conservation refigée.
+
+Les carrières hors de France, où chaque pays paie à son âge, restent un
+domaine à part : le modèle n'a pas encore de période à l'étranger.
+
+**Première étape, le 29 septembre : les textes lus, cinq fiches nouvelles,
+deux complétées.** Lus dans
+les index LEGI et JORF du jour (journal de veille) : les articles 19 de la loi
+n° 2014-40 et 26 de la loi n° 2023-270, en entier ; L. 161-22 à L. 161-22-1-9
+dans leurs rédactions de 2014, 2023, 2025 et 2027 ; la retraite progressive
+depuis 1988 ; l'âge du RAFP ; l'anticipation de l'Ircantec ; la condition et
+l'écrêtement du minimum contributif. Ce qu'ils disent est rangé en fiches :
+- `liquidation_regime_par_regime`, `manquante` : chaque régime sert sa
+  pension à sa date, hors les régimes que la loi réunit ; elle lit une
+  présomption nouvelle, `depart_de_chaque_regime` — chaque pension au départ
+  déclaré, celle d'un régime qui n'ouvre pas encore à son ouverture, celle
+  d'un régime quitté plus tôt dès qu'il s'ouvre quand la demander ne ferme
+  aucun droit (la pension militaire, toute première pension d'avant 2015) ;
+- `rafp_age_d_ouverture`, `manquante` : soixante ans jusqu'au 3 juin 2011,
+  l'âge légal depuis, et l'admission à la retraite ;
+- `droits_apres_la_premiere_pension`, `pas_encore_modelisee` : aucune règle
+  générale avant 2015, L. 161-22-1 A pour les premières pensions de 2015,
+  L. 161-22-1 pour tous depuis le 1er janvier 2023, les règles de 2027 ; la
+  pension militaire, la retraite progressive et le cumul intégral exceptés ;
+- `retraite_progressive` et `seconde_pension`, `pas_encore_modelisee`, nées
+  de `cumul_emploi_retraite_et_retraite_progressive`, qui ne garde que le
+  cumul et ses deux rédactions lues ;
+- `minimum_contributif`, complétée de L. 351-10-1, R. 173-7 et R. 173-8.
+
+Le cliquet des rédactions sans statut descend de 10 335 à 10 302 : les
+fiches en citent trente-trois de plus. Aucun résultat ne bouge à cette étape.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

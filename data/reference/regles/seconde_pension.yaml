@@ -1,0 +1,117 @@
+schema_version: 1
+id: seconde_pension
+intitule: >-
+  Seconde pension, depuis le 1er septembre 2023 : le retraité en cumul intégral se
+  constitue de nouveaux droits dans les régimes de base, sur les périodes accomplies
+  depuis le 1er janvier 2023. La nouvelle pension est liquidée au taux plein, sur les
+  seules périodes cotisées, sans majoration ni minimum, et plafonnée à 5 % du plafond
+  annuel de la sécurité sociale ; aucun droit ne s'acquiert plus après elle.
+domaine: cumul
+regimes: [regime_general, msa_salaries, msa_non_salaries, rsi, cnavpl, cnbf,
+  fonction_publique_etat, cnracl, fspoeie]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les périodes d'activité en cumul intégral, depuis le 1er janvier 2023, et leurs
+  cotisations
+- la date d'effet de la première pension de base
+ecrit:
+- la nouvelle pension de chaque régime de base, de nature « seconde »
+dates_qui_decident:
+- liquidation.date_effet
+- liquidation.premiere_pension_de_base
+versions:
+- id: sans_droit_avant_2023
+  statut: lue
+  textes:
+  - {id: JORFARTI000047445113, article: "loi n° 2023-270 du 14 avril 2023, article 26, qui crée la nouvelle pension",
+     publie_le: 2023-04-15}
+  bornes:
+    liquidation.date_effet: [null, 2023-09-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      la nouvelle pension naît de l'article 26 de la loi n° 2023-270, qui entre en
+      vigueur le 1er septembre 2023 (XII)
+  exemples: aucun trouvé
+- id: loi_2023
+  statut: lue
+  textes:
+  - {id: JORFARTI000047445113, article: "loi n° 2023-270 du 14 avril 2023, article 26", publie_le: 2023-04-15}
+  - {id: LEGIARTI000047450790, article: "L. 161-22-1-1 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000051289731, article: "L. 161-22-1-1 CSS", en_vigueur: 2025-02-28}
+  - {id: LEGIARTI000047958952, article: "D. 161-2-22-1 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047960982, article: "R. 161-19-2 CSS", en_vigueur: 2023-09-01}
+  nee_de: JORFARTI000047445113
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+  contenu:
+    droit: >-
+      « La nouvelle pension de vieillesse, résultant de l'exercice d'une activité
+      professionnelle faisant suite à la liquidation d'une première pension, bénéficie
+      du taux plein » ; « Seules sont retenues les périodes d'assurance ayant donné
+      lieu à cotisations à la charge de l'assuré », rachats exclus ; « Aucune
+      majoration, aucun supplément ni aucun accessoire » ; « ne peut dépasser un
+      plafond annuel déterminé par décret » (L. 161-22-1-1), soit « 5 % du montant
+      annuel du plafond » de la sécurité sociale (D. 161-2-22-1) ; elle est « calculée,
+      liquidée et servie dans les conditions applicables à la pension de vieillesse
+      dans le régime dont relève l'assuré au titre de cette nouvelle pension »
+      (R. 161-19-2)
+    conditions: >-
+      le cumul intégral (fiche droits_apres_la_premiere_pension) ; les droits
+      constitués depuis le 1er janvier 2023, pris en compte par les liquidations
+      intervenant depuis le 1er septembre 2023 (article 26, XII, 3°)
+    parametres:
+      taux_plein: true
+      plafond_en_pass: 0.05
+  exemples: aucun trouvé
+- id: lfss_2026
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053279747, article: "L. 161-22-1-1 CSS", en_vigueur: 2026-01-01}
+  nee_de: LEGIARTI000053279747
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+    liquidation.premiere_pension_de_base: [2027-01-01, null]
+  contenu:
+    droit: >-
+      la version loi_2023, ouverte au seul cumul entier — à partir de l'âge du taux
+      plein automatique, sauf les exceptions de L. 161-22-1-2 —, pour qui « entre[ ] en
+      jouissance de [sa] première pension de vieillesse de base à compter du 1er
+      janvier 2027 » ; la rédaction ne porte plus la phrase du plafond annuel
+    parametres:
+      taux_plein: true
+      plafond_en_pass: null
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-09-29
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 29 septembre 2026 avec le domaine des départs multiples ; le moteur ne
+    la calcule pas encore (étape 4 du domaine). Lire R. 351-29 (le salaire de la
+    nouvelle pension au régime général), ses équivalents des autres régimes, la
+    circulaire Cnav qui l'applique, et vérifier que la rédaction de 2026 a bien retiré
+    le plafond de 5 % : le décret D. 161-2-22-1 renvoie toujours au « dernier alinéa »
+    de L. 161-22-1-1.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 161-22-1-1 CSS, rédactions du 1er septembre 2023 (LEGIARTI000047450790), du
+      28 février 2025 (LEGIARTI000051289731) et du 1er janvier 2026
+      (LEGIARTI000053279747) ; D. 161-2-22-1 (LEGIARTI000047958952) ; R. 161-19-2 et
+      R. 161-19-4, dans l'index LEGI
+    date: 2026-09-29
+textes_a_relire:
+- {id: LEGIARTI000053335651, article: "R. 351-29 CSS", en_vigueur: 2026-01-01,
+   question: "le salaire annuel moyen de la nouvelle pension au régime général"}
+historique:
+- >-
+  2026-09-29 — née avec le domaine des départs multiples, de la fiche
+  cumul_emploi_retraite_et_retraite_progressive, qui ne porte plus que le cumul.
+effet: >-
+  Les retraités en cumul intégral depuis 2023 : leurs cotisations, jusque-là à fonds
+  perdus, leur ouvrent une seconde pension, au plus 5 % du plafond de la sécurité
+  sociale, soit 2 403 € par an en 2026. Le modèle ne la calcule pas.

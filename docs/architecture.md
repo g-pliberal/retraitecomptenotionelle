@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.19, du 28 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.20, du 29 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -1597,7 +1597,10 @@ suivants le seront chacun à son tour. En première lecture :
 
 La mesure du 28 septembre 2026 place la réversion devant l'invalidité et
 l'inaptitude, puis les carrières hors de France ; les périodes assimilées
-manquantes n'ont pas de mesure publique (feuille de route, action 130).
+manquantes n'ont pas de mesure publique (feuille de route, action 130). Le
+troisième domaine, les départs multiples et la vie après le départ, a été
+ouvert le 29 septembre 2026 à la demande du propriétaire, devant
+l'invalidité.
 
 ---
 
@@ -2407,6 +2410,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.20**, 29 septembre 2026 : le troisième domaine, les départs multiples et la vie après le départ, ouvert à la demande du propriétaire (§ 11) ; ses fiches sont lues et découpées en versions, que le moteur ne lit pas encore, et une présomption nouvelle, la date de départ de chaque régime, entre au vocabulaire (§ 5.6).
 
 - **5.19**, 28 septembre 2026 : la présomption du jour de naissance entre au § 5.6. La pension prend effet au premier du mois qui suit l'anniversaire, sauf pour qui est né un 1er, et le jour qu'on ne dit pas est le 15, que le propriétaire a choisi comme le plus proche de la réalité : c'est la seule présomption qui ne reprend pas la valeur d'avant elle, et son changement de résultats a son commit et le diff de ses témoins (action 132).
 
