@@ -194,6 +194,21 @@ def test_la_pension_servie_avant_le_depart_y_est_revalorisee(simulateur):
     assert "servie depuis le 1er janvier 2000" in militaire.detail
 
 
+def test_la_pension_militaire_d_avant_2004_a_son_minimum_garanti(simulateur):
+    """Liquidée à sa sortie de l'armée en 2000, la pension de dix-sept ans de
+    services est portée au minimum garanti de L. 17 d'avant 2004 : 4 % de la
+    référence par année de services (LEGIARTI000006362711)."""
+    moteur = simulateur.scenario_actuel
+    resultat = moteur.calculer(_militaire_puis_prive(simulateur))
+    [militaire] = [p for p in resultat.pensions_par_regime
+                   if p.regime == "fonction_publique_etat"]
+    plancher, _ = moteur.minimum_garanti.montant(2000, 68)
+    assert militaire.montant_a_l_effet == pytest.approx(plancher)
+    assert plancher == pytest.approx(0.68 * moteur.minimum_garanti.reference(2000)[0])
+    assert "porté au minimum garanti" in militaire.detail
+    assert any(a.code == "minimum_garanti" for a in resultat.avantages_appliques)
+
+
 def test_la_liquidation_fictive_valorise_tout_a_une_date(simulateur):
     """La valorisation des droits acquis liquide tout à la date qu'elle
     demande : elle ne suit pas les départs."""

@@ -2897,6 +2897,24 @@ déclarée (cinquième étape) ; la révision du minimum contributif quand une
 pension commence après lui (R. 173-8) ; l'anticipation d'une complémentaire
 seule ; la demande tardive pour une surcote.
 
+**Le minimum garanti d'avant 2004, le même jour.** Les régimes de l'État, de
+la CNRACL et des ouvriers de l'État ne le déclaraient qu'à partir de 2004 ;
+L. 17 du code des pensions dans sa rédaction de 1975 (LEGIARTI000006362711),
+l'article 17 du décret n° 65-773 et l'article 10 du décret n° 65-836, lus
+dans l'index LEGI, le servaient avant : 4 % de la référence par année de
+services, la totalité à vingt-cinq ans, le barème que le dépôt date de 1976.
+Leurs périodes le déclarent désormais depuis le code de 1964 et les décrets de
+1965. Le militaire mesuré ci-dessus retrouve son plancher : 7 483,08 € au
+1er janvier 2000, 10 714,69 € au départ déclaré (l'ancien calcul, fait aux
+règles de 2029, en donnait 10 795,09 €). Aucun témoin de simulation ne bouge ;
+la page Coût, si : le minimum garanti chiffré en 2024 passe de 0,29 à
+1,39 Md €, les avantages de 96,5 à 97,6 Md €, et les autres systèmes, dont le
+coût est la dépense observée au prorata de leurs pensions sur celles du
+scénario 1, perdent un milliard certaines années. La référence d'avant 2004
+reste celle de l'indice majoré 216, que la loi de 2003 donne au droit
+antérieur ; la correspondance de l'indice brut 100 des années plus anciennes
+n'est pas lue.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

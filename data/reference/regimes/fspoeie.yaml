@@ -93,7 +93,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion]
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
       Code des pensions civiles et militaires de retraite du 26 décembre
       1964, que les ouvriers de l'État suivent par renvoi. SIX POUR CENT
@@ -123,7 +123,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion]
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
       Loi de finances pour 1984 (loi n° 83-1179 du 29 décembre 1983, article
       33) : retenue portée de 6 % à 7 %. Taux lu chez OpenFisca-France ;
@@ -145,7 +145,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion]
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
       7,7 % à compter du 1er août 1986 (loi n° 86-966 du 18 août 1986,
       article 9), lu chez OpenFisca-France, donc en vigueur au 1er janvier
@@ -171,7 +171,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion]
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
       7,9 % à compter du 1er juillet 1987 (loi n° 87-516 du 10 juillet 1987,
       article 4), lu chez OpenFisca-France, donc en vigueur au 1er janvier
@@ -198,7 +198,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion]
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
       Code des pensions civiles et militaires de retraite du 26 décembre 1964.
       Retenue pour pension portée à 7 %, puis 7,85 %.
@@ -227,7 +227,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion]
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
       Code des pensions civiles et militaires de retraite du 26 décembre 1964.
       Retenue pour pension portée à 7 %, puis 7,85 %.

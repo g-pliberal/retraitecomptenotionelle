@@ -15,9 +15,14 @@ effet: >-
   à toute pension de moins de quinze ans le quinzième de 57,5 % de l'invalidité
   : 680,90 € par mois pour treize ans en 2026, au lieu de 417,94 € (170 trimestres).
   Les exemples publiés sont rejoués par tests/test_fonction_publique_etat.py, le
-  harnais des témoins officiels ne construisant qu'une affiliation.
+  harnais des témoins officiels ne construisant qu'une affiliation. Jusqu'au 29
+  septembre 2026, les trois régimes ne le déclaraient qu'à partir de 2004 : une
+  pension liquidée avant restait sans plancher, alors que le barème de 1976 et
+  le texte étaient dans le dépôt ; le militaire liquidé à sa sortie de l'armée
+  en 2000, qu'un départ par régime fait paraître, perdait 2 378,39 € par an en
+  euros de son départ déclaré.
 sources:
-  lu_le: 2026-09-24
+  lu_le: 2026-09-29
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -60,10 +65,38 @@ sources:
       pas appliquée en l'absence de décret d'application »
     date: 2026-09-24
     url: https://www.juris-cnracl.retraites.fr/pension-normale/minimum-garanti
+  - type: legifrance
+    reference: >-
+      L. 17 CPCMR, rédaction du 28 décembre 1975 au 1er janvier 2004
+      (LEGIARTI000006362711), lue dans l'index LEGI du dépôt : « a) Lorsque la
+      pension rémunère vingt-cinq années au moins de services effectifs, au
+      traitement brut afférent à l'indice 100 [...] ; b) Lorsque la pension
+      rémunère moins de vingt-cinq années de services effectifs, à 4 p. 100 [...]
+      par année de services effectifs et de bonifications » : le barème de 1976 du
+      dépôt, 60 % à quinze ans et la totalité à vingt-cinq
+    date: 2026-09-29
+  - type: legifrance
+    reference: >-
+      décret n° 65-773 du 9 septembre 1965 (CNRACL), article 17, rédactions du 12
+      septembre 1965 (LEGIARTI000006368220) et du 19 novembre 1985
+      (LEGIARTI000006368221), et décret n° 65-836 du 24 septembre 1965 (ouvriers
+      de l'État), article 10, rédaction du 9 octobre 1976 (LEGIARTI000006766756) :
+      le même minimum, jusqu'au 1er janvier 2004
+    date: 2026-09-29
 textes_a_rattacher:
 - reference: >-
-    L. 17 CPCMR (versions LEGIARTI000006362712, LEGIARTI000023033916, LEGIARTI000048697797)
+    L. 17 CPCMR (versions LEGIARTI000006362711, LEGIARTI000006362712,
+    LEGIARTI000023033916, LEGIARTI000048697797)
+- reference: >-
+    décret n° 65-773, article 17 (LEGIARTI000006368220, LEGIARTI000006368221) ;
+    décret n° 65-836, article 10 (LEGIARTI000006766756)
 - reference: loi n° 2003-775, article 66 V
 - reference: loi n° 2010-1330, articles 45 (IV et V) et 53 (V)
 - reference: >-
     décret n° 2010-1744 du 30 décembre 2010, article 3 (JORFARTI000023334941)
+historique:
+- >-
+  2026-09-29 — servi aux pensions liquidées avant 2004, dans les trois régimes : leurs
+  périodes le déclarent depuis le code de 1964 et les décrets de 1965, le barème du
+  dépôt commençant en 1976 (domaine des départs multiples, la pension militaire
+  servie dès la sortie de l'armée).

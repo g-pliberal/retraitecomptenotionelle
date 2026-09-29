@@ -230,6 +230,7 @@
    "decote_regime_general",
    "decote_regimes_speciaux",
    "decret_2026_418_liberaux",
+   "droits_apres_la_premiere_pension",
    "duree_opposee_aux_regimes_en_points",
    "duree_requise_carriere_longue_fonction_publique",
    "duree_requise_ieg",
@@ -240,6 +241,7 @@
    "inaptitude_invalidite_penibilite_amiante",
    "interpenetration_fonction_publique",
    "ircantec_valeurs_point",
+   "liquidation_regime_par_regime",
    "liquidation_unique_regimes_alignes",
    "majoration_dix_pour_cent",
    "majoration_duree_apres_65_ans",
@@ -267,6 +269,7 @@
    "raap_classe_speciale",
    "raap_taux_amenage_racd_racl",
    "rachats_et_versements",
+   "rafp_age_d_ouverture",
    "rafp_assiette_plafond",
    "rafp_beneficiaires",
    "rafp_majoration_capital",
@@ -277,6 +280,7 @@
    "regimes_speciaux_par_generation",
    "retablissement_fonction_publique",
    "retraite_anticipee_handicap",
+   "retraite_progressive",
    "retraite_proportionnelle_msa",
    "revalorisation_des_pensions",
    "reversion",
@@ -284,6 +288,7 @@
    "reversion_fonction_publique",
    "salaire_annuel_moyen",
    "sam_parents_24_23",
+   "seconde_pension",
    "sections_liberales_majoration_enfants",
    "services_et_duree_fonction_publique",
    "surcote_fonction_publique",
@@ -403,7 +408,9 @@
    "2026-09-28 | l'action 131, la réforme agricole de 2026 (L. 732-24), portée",
    "2026-09-28 | l'action 131, la tranche C de l'Agirc d'avant 2016, portée",
    "2026-09-28 | l'action 132, la naissance au jour : la pension prend effet le premier du mois qui suit l'anniversaire, sauf pour qui est né un 1er",
-   "2026-09-28 | l'action 133, la suite : l'étage des six derniers régimes intégrés lu, deux routages du scénario 1 corrigés, la complémentaire des mineurs et celle des chemins de fer secondaires lues sans être routées"
+   "2026-09-28 | l'action 133, la suite : l'étage des six derniers régimes intégrés lu, deux routages du scénario 1 corrigés, la complémentaire des mineurs et celle des chemins de fer secondaires lues sans être routées",
+   "2026-09-29 | l'action 130, la première étape du troisième domaine, les départs multiples et la vie après le départ, ouvert à la demande du propriétaire",
+   "2026-09-29 | la deuxième étape du troisième domaine, un départ par régime, et le minimum garanti d'avant 2004"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -864,6 +871,7 @@
    "simuler.pension_de_repartition_par_origine",
    "simuler.pension_du_systeme_actuel",
    "simuler.pension_niveau_unique",
+   "simuler.pensions_a_leur_date",
    "simuler.pilier_sans_annee",
    "simuler.premiere_ligne_indexation",
    "simuler.quatre_calculs",
@@ -1380,6 +1388,8 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "237fe9c76e2c589f",
+    "4e24fa821de838b2",
     "6782ce8bdd030407",
     "aa8a62df3c137e43",
     "061e1519d36894fd",
@@ -5914,7 +5924,7 @@
    ],
    "5. Avantages — deux minutes": [
     "e13190fb11225547",
-    "31d97149957e2681",
+    "56aa2a7d7f4cc059",
     "669eb8f878073fdc"
    ],
    "6. Méthode et Données — deux minutes, pour finir": [
