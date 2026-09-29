@@ -2520,6 +2520,79 @@ function secondRevenu(comparaison, montants, deduit) {
 }
 
 /**
+ * Le mois où le système 1 sert toutes ses pensions, quand ses régimes ne
+ * liquident pas tous à la même date (`droit/departs.js`) : celui du dernier
+ * départ ; `null` pour un départ unique.
+ */
+function dernierDepart(comparaison) {
+  const departs = comparaison.actuel.departs ?? [];
+  if (departs.length === 0) return null;
+  const [annee, mois] = departs[departs.length - 1].date_effet.split("-").map(Number);
+  return new DateMois(annee, mois);
+}
+
+/** Ce qui date un départ, dit au lecteur. */
+const POURQUOI_CE_DEPART = {
+  depart: "à votre départ",
+  ouverture: "à l'âge où ce régime vous ouvre sa pension",
+  sortie: "dès votre sortie de l'armée",
+};
+
+/**
+ * Quand les régimes du système 1 ne liquident pas tous à la même date
+ * (`droit/departs.js`) : ce qui commence, quand, à quel âge, et pourquoi à
+ * cette date. Le droit ne connaît pas de départ « tous régimes » : chaque
+ * régime sert sa pension quand l'assuré en remplit les conditions. Le montant
+ * du système 1 les compte toutes, sauf, pour qui est déjà parti, celles qui
+ * ne sont pas encore servies aujourd'hui. Rend `""` pour un départ unique.
+ */
+function departsEchelonnes(contexte, comparaison) {
+  const departs = comparaison.actuel.departs ?? [];
+  if (departs.length === 0) return "";
+  const catalogue = contexte.simulateur().catalogue;
+  const carriere = comparaison.carriere;
+  const nom = (code) => echapper(catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
+  const joindre = (noms) => (noms.length < 2 ? noms.join("")
+    : `${noms.slice(0, -1).join(", ")} et ${noms[noms.length - 1]}`);
+  const dates = departs.map((depart) => {
+    const [annee, mois] = depart.date_effet.split("-").map(Number);
+    return new DateMois(annee, mois);
+  });
+  const lignes = departs.map((depart, rang) => {
+    const date = dates[rang];
+    // Le régime de base d'abord ; ses complémentaires le suivent.
+    const bases = depart.regimes.filter((code) => catalogue.contient(code)
+      && ["base", "integre"].includes(catalogue.obtenir(code).etage));
+    const autres = depart.regimes.filter((code) => !bases.includes(code));
+    let quoi = joindre((bases.length > 0 ? bases : autres).map(nom));
+    if (bases.length > 0 && autres.length > 0) {
+      quoi += autres.length > 1
+        ? `, avec ${bases.length > 1 ? "leurs" : "ses"} complémentaires`
+        : `, avec ${nom(autres[0])}`;
+    }
+    const fin = rang === departs.length - 1 ? "." : " ;";
+    return `<li>le 1<sup>er</sup> ${echapper(String(date))}, à `
+      + `${age(carriere.ageAu(date))}, ${POURQUOI_CE_DEPART[depart.motif]} : `
+      + `${quoi}${fin}</li>`;
+  });
+  const annee = comparaison.parametres.annee_courante;
+  const aVenir = comparaison.aujourd_hui !== null
+    ? departs.filter((depart, rang) => dates[rang].annee > annee) : [];
+  const montant = aVenir.length > 0
+    ? "Le montant d'aujourd'hui, plus haut, ne compte que les pensions déjà "
+      + "servies : les autres s'y ajouteront à leur date."
+    : "Le montant du système 1, plus haut, les compte toutes : c'est la "
+      + "retraite que vous touchez une fois toutes servies.";
+  return `<div class="note"><strong>Vos pensions ne commencent pas toutes à la
+même date.</strong> Le droit ne connaît pas de départ « tous régimes » : chaque
+régime sert sa pension quand vous en remplissez les conditions.
+<ul>
+${lignes.join("\n")}
+</ul>
+${montant} Le détail du calcul, plus bas, dit ce que chacune vaut à sa date.</div>`;
+}
+
+/**
  * Ce que l'électeur est venu chercher, en trois phrases, avant les barres.
  *
  * Les quatre barres répondent à tout, et c'est leur défaut pour qui n'a pas lu
@@ -2569,15 +2642,23 @@ function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
     + "n'est pas entièrement financée : il manque "
     + `${g.euros(montants.pension(montant) / 12)} par mois.`;
 
-  // Le système actuel : la promesse, puis ce qui lui manque.
+  // Le système actuel : la promesse, puis ce qui lui manque. Quand une
+  // pension ne commence qu'après le départ (droit/departs.js), la retraite
+  // n'est complète qu'à ce moment-là, et la phrase le dit.
   const actuel = constants.actuel;
+  const complete = dernierDepart(comparaison);
   let phraseActuel = carriere.anneeLiquidation < parametres.annee_courante
     ? "Avec le système actuel, votre retraite est aujourd'hui de "
       + `${somme(actuel)} ${accord} par mois : celle de votre départ, en `
       + `${date}, revalorisée depuis comme le droit l'a fait.`
-    : `Avec le système actuel, votre retraite serait de ${somme(actuel)} `
-      + `${accord} par mois, à partir de ${date}, à `
-      + `${age(carriere.age_liquidation)}.`;
+    : complete !== null && complete.rang > carriere.dateLiquidation.rang
+      ? `Avec le système actuel, votre retraite serait de ${somme(actuel)} `
+        + `${accord} par mois une fois toutes vos pensions servies, en `
+        + `${echapper(String(complete))}, à ${age(carriere.ageAu(complete))} ; `
+        + `elle commence en ${date}, à ${age(carriere.age_liquidation)}.`
+      : `Avec le système actuel, votre retraite serait de ${somme(actuel)} `
+        + `${accord} par mois, à partir de ${date}, à `
+        + `${age(carriere.age_liquidation)}.`;
   if (!comparaison.actuel.liquidation_ouverte) {
     phraseActuel += " À cet âge, pourtant, le droit actuel ne vous "
       + "laisserait pas partir.";
@@ -3112,6 +3193,7 @@ function resultats(contexte, saisie) {
   }
 
   const report = reportProposition(comparaison);
+  const echelonnes = departsEchelonnes(contexte, comparaison);
 
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
     + 'résultat : <span class="etiquette-fiabilite">'
@@ -3159,7 +3241,7 @@ ${revenuDeduit(contexte, comparaison, saisie, montants)}
   ${fiabilite}
   ${capitalisation}
   ${minimum}
-  ${ouverture}
+  ${ouverture}${echelonnes}
   ${report}
 </div>
 <div class="carte">

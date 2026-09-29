@@ -2853,6 +2853,50 @@ l'écrêtement du minimum contributif. Ce qu'ils disent est rangé en fiches :
 Le cliquet des rédactions sans statut descend de 10 335 à 10 302 : les
 fiches en citent trente-trois de plus. Aucun résultat ne bouge à cette étape.
 
+**Deuxième étape, le 29 septembre : un départ par régime.** Les deux moteurs
+datent chaque départ (`droit/departs.py`, et son jumeau) : une unité par
+régime de base ou intégré, ou par groupe que la loi fait liquider ensemble ;
+chaque complémentaire suit l'unité dont elle partage les années ; le RAFP
+attend l'âge légal, et ne fait pas de départ de plus pour qui n'a pas de
+primes. Chaque départ est liquidé sur la carrière arrêtée à sa date, pour ses
+seuls régimes, en voyant servies les pensions des précédents, menées au mois
+de sa date d'effet : le minimum contributif s'écrête sur elles (R. 173-7).
+L'échéancier inscrit un départ par date, le déclaré comme un acte, les autres
+comme induits ; « faire vivre » part de la date de chaque pension, et ne sert
+pas celle qui n'a pas commencé. Les montants du scénario 1 restent ceux du
+départ déclaré, la pension déjà servie y étant menée par sa revalorisation,
+celle qui commence après ramenée par les prix ; la page dit quand chaque
+pension commence, et le résumé, quand la retraite est complète.
+
+La présomption est plus étroite que celle que la première étape écrivait :
+seule la pension militaire est demandée avant le départ. Demander une autre
+pension plus tôt figerait son taux sur la durée acquise, perdrait la surcote
+de l'activité poursuivie, et L. 161-22 exigeait jusqu'en 2003 de cesser toute
+activité non salariée ; le premier essai, qui faisait demander à soixante ans
+le régime général d'un salarié devenu artisan, a fait tomber le test des
+régimes alignés.
+
+Sur les deux carrières mesurées à l'ouverture : l'aide-soignante garde sa
+pension de la CNRACL à cinquante-sept ans (14 253,51 €), et son régime général
+et son Arrco ne commencent plus qu'au 1er novembre 2027, à soixante-deux ans
+et neuf mois : 3 365,26 € de 2027, soit 3 010,21 € de 2022, au lieu de
+2 461,72 € décotés dès son départ. Le militaire touche sa pension dès le
+1er janvier 2000, 5 878,18 € à cette date, 8 416,70 € au départ déclaré ;
+l'ancien calcul lui en donnait 10 795,09 €, dont 2 378,39 € de minimum garanti,
+que le modèle ne sert pas aux pensions liquidées avant 2004 : le régime de
+l'État ne le déclare qu'à partir de cette année-là, quand son barème et le
+texte de 1975 sont dans le dépôt. C'est l'objet du commit suivant.
+
+Le nombre déclaré d'appels de `liquider` vaut désormais par départ (§ 7.8) :
+un témoin nouveau, la même aide-soignante mère de trois enfants, en fait
+douze, six par départ. Cinq témoins ont plusieurs départs, et le test des
+deux moteurs compare leurs journaux, liquidation par liquidation. Les fiches
+`liquidation_regime_par_regime` et `rafp_age_d_ouverture` passent à
+`approchee` et `transcrite`. Restent ouverts : la date de chaque pension,
+déclarée (cinquième étape) ; la révision du minimum contributif quand une
+pension commence après lui (R. 173-8) ; l'anticipation d'une complémentaire
+seule ; la demande tardive pour une surcote.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

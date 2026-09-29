@@ -633,6 +633,32 @@ export class Carriere {
     });
   }
 
+  /**
+   * La même carrière, liquidée au premier jour de `date` : la vue qu'une
+   * liquidation lit quand un régime ne liquide pas au départ déclaré
+   * (`droit/departs.js`). Rendue telle quelle quand la date est déjà celle de
+   * la liquidation. Voir `carriere.py`.
+   */
+  liquideeAu(date) {
+    if (this.age_liquidation !== null && this.dateLiquidation.rang === date.rang) {
+      return this;
+    }
+    return new Carriere({
+      annee_naissance: this.annee_naissance,
+      sexe: this.sexe,
+      lignes: [...this.lignes],
+      mois_naissance: this.mois_naissance,
+      age_liquidation: this.ageAu(date),
+      jour_naissance: this.jour_naissance,
+      nombre_enfants: this.nombre_enfants,
+      naissances_enfants: this.naissances_enfants,
+      identifiant: this.identifiant,
+      dates_entree: { ...this.dates_entree },
+      chronologie: this.chronologie,
+      personne: this.personne,
+    });
+  }
+
   prolongee(ageLiquidation, macro, attenteTravaillee = true) {
     if (this.age_liquidation === null
         || enMois(ageLiquidation) <= enMois(this.age_liquidation)) {

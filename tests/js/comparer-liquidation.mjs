@@ -3,7 +3,7 @@
  *
  * Reçoit en argument un fichier JSON — une liste de requêtes du formulaire,
  * celles des témoins — et écrit sur la sortie standard, pour chacune, ce que
- * les étapes de la liquidation écrivent (`donnees()` de l'ouverture, des
+ * les étapes de chaque liquidation écrivent (`donnees()` de l'ouverture, des
  * pensions et des compléments), le journal de l'échéancier du scénario 1 et
  * le nombre d'appels de `liquider` que la simulation a faits, ou l'erreur
  * levée. `tests/test_liquidation.py` compare le tout au Python.
@@ -48,11 +48,15 @@ const sortie = requetes.map((requete) => {
     return { erreur: "aucune carrière simulée" };
   }
   const { journal } = saisie;
-  const [liquidee] = [...journal].filter((e) => e.sorte === "liquidation").map((e) => e.contenu);
+  // Une liquidation par départ : une seule, sauf quand les régimes liquident à
+  // des dates différentes.
+  const liquidees = [...journal].filter((e) => e.sorte === "liquidation").map((e) => e.contenu);
   return {
-    ouverture: liquidee.ouverture.donnees(),
-    pensions: liquidee.pensions.donnees(),
-    complements: liquidee.complements.donnees(),
+    liquidations: liquidees.map((liquidee) => ({
+      ouverture: liquidee.ouverture.donnees(),
+      pensions: liquidee.pensions.donnees(),
+      complements: liquidee.complements.donnees(),
+    })),
     journal: journal.donnees(),
     appels: appels() - avant,
   };

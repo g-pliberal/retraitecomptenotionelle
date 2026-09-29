@@ -105,8 +105,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   ses deux premières conditions sont opposées : la génération, la date d'effet
   au mois près. La troisième ne l'est pas : la loi écarte la LURA de qui avait
   DÉJÀ obtenu, avant le 1er juillet 2017, une retraite de même nature dans
-  l'un des trois régimes. Une carrière du dépôt liquide tout à la fois, et ne
-  peut donc pas porter ce cas. De même, le revenu annuel moyen de la LURA
+  l'un des trois régimes. Les régimes alignés d'une carrière du dépôt ouvrent
+  au même âge et liquident à la même date, si bien qu'elle ne peut pas porter
+  ce cas. De même, le revenu annuel moyen de la LURA
   additionne les salaires et revenus d'une MÊME année civile avant de les
   écrêter au plafond : une carrière du dépôt n'exerce qu'un métier à la fois,
   et la somme n'a jamais lieu.
@@ -123,14 +124,31 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   lignes de carrière n'est lu nulle part : un fonctionnaire qui a travaillé à
   temps partiel sans surcotiser reçoit ici la pension d'un temps plein.
 - **Rachats, surcotisation, retraite progressive, cumul emploi-retraite.**
-  Le modèle liquide une fois, à une date, sur la carrière saisie : il ne
-  rachète pas d'années d'études, ne surcotise pas, ne sert pas de pension
-  partielle et ne suit pas le retraité qui reprend un emploi. Les barèmes
+  Le modèle liquide chaque régime une fois, à sa date (« Les départs
+  échelonnés », ci-dessous), sur la carrière saisie : il ne rachète pas
+  d'années d'études, ne surcotise pas, ne sert pas de pension partielle et ne
+  suit pas le retraité qui reprend un emploi. Les barèmes
   sont lus et rangés au registre de veille (`rachats_et_versements`,
   `cumul_emploi_retraite_et_retraite_progressive`) — dont celui du rachat
   d'études de la fonction publique, refait au premier janvier 2026, que la
   calculette de l'ENSAP n'applique pas encore — et les règles du cumul
   changent pour les pensions prenant effet en 2027.
+- **Les départs échelonnés : servis, sur une date présumée.** Depuis le 29
+  septembre 2026, chaque régime liquide à sa date, comme le droit le veut :
+  le régime qui n'ouvre pas encore sa pension au départ attend son âge — le
+  régime général de l'aide-soignante partie de l'hôpital à cinquante-sept
+  ans —, la pension militaire est servie dès la sortie de l'armée, le RAFP
+  attend l'âge légal. Chaque départ voit servies les pensions des précédents,
+  sur lesquelles son minimum contributif s'écrête. La date à laquelle
+  l'assuré demande chaque pension n'est pas saisie : elle est présumée
+  (`depart_de_chaque_regime`), et qui demande une pension avant son départ —
+  l'agent d'un régime spécial parti tôt —, ou après l'ouverture pour une
+  surcote, n'est pas représenté ; une complémentaire des salariés n'est pas
+  anticipée seule, sous son abattement ; le minimum contributif n'est pas
+  révisé quand une pension commence après lui (R. 173-8). Les montants du
+  système 1 sont ceux du départ déclaré, la pension déjà servie y étant menée
+  par sa revalorisation, celle qui ne commence qu'après ramenée par les prix
+  (fiche `liquidation_regime_par_regime`).
 - **Catégorie active : servie, mais sur un classement déclaré.** L'âge anticipé
   de l'article L. 24 — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1965)-->52<!--/--> pour la super-active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> après la
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote
@@ -561,10 +579,10 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   droit ouvre la liquidation demandée. La pénibilité, l'invalidité, l'inaptitude
   et le handicap ne le sont pas : ils demandent des informations médicales ou
   professionnelles que le modèle ne collecte pas ;
-- **polypensionnés** — chaque régime liquide sur ses seules années, et la
-  durée acquise dans chacun est comptée séparément ; mais un régime et celui
-  qui lui succède ne sont pas deux régimes, et liquident ensemble (voir « Les
-  régimes alignés » ci-dessous). La liquidation unique des régimes alignés
+- **polypensionnés** — chaque régime liquide sur ses seules années, à sa
+  date, et la durée acquise dans chacun est comptée séparément ; mais un
+  régime et celui qui lui succède ne sont pas deux régimes, et liquident
+  ensemble (voir « Les régimes alignés » ci-dessous). La liquidation unique des régimes alignés
   DISTINCTS (LURA) et sa proratisation croisée du salaire annuel moyen sont
   servies depuis le 22 septembre 2026 ; seule en reste dehors sa troisième
   condition, la retraite de même nature déjà obtenue avant le 1er juillet
@@ -1950,7 +1968,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   est servie depuis le 22 septembre 2026, avec la **proratisation croisée** de
   son salaire annuel moyen. En reste dehors sa troisième condition — la
   retraite de même nature déjà obtenue avant le 1er juillet 2017 —, qu'une
-  carrière du dépôt, liquidée tout d'un coup, ne peut pas porter.
+  carrière du dépôt, dont les régimes alignés liquident à la même date, ne
+  peut pas porter.
 
 ---
 

@@ -89,11 +89,27 @@ export function demandeDeDepart(carriere, nature = "definitive") {
     nature });
 }
 
-/** L'état que la liquidation lit : la carrière, et le journal de l'échéancier. */
+/**
+ * L'état que la liquidation lit : la carrière, le journal de l'échéancier, et
+ * les pensions que les départs précédents servent déjà, menées jusqu'à la date
+ * d'effet (`{regime, montant}`, `droit/departs.js`) : le minimum contributif
+ * s'écrête sur elles aussi (L. 173-2, R. 173-7).
+ */
 export class Etat {
-  constructor(carriere, journal = null) {
+  constructor(carriere, journal = null, servies = []) {
     this.carriere = carriere;
     this.journal = journal;
+    this.servies = servies;
+  }
+
+  /** Ce que les pensions déjà servies valent, par an, à la date d'effet. */
+  get totalServi() {
+    return this.servies.reduce((somme, servie) => somme + servie.montant, 0.0);
+  }
+
+  /** Le même état, sur une autre carrière. */
+  avecCarriere(carriere) {
+    return new Etat(carriere, this.journal, this.servies);
   }
 }
 
@@ -160,11 +176,17 @@ export class Liquidation {
     return this.complements.regimes;
   }
 
-  /** Ses composantes : la pension de chaque régime, puis la majoration pour enfants. */
+  /**
+   * Ses composantes : la pension de chaque régime, puis la majoration pour
+   * enfants, dont l'identifiant porte la date d'un départ qui ne liquide
+   * qu'une part des régimes.
+   */
   composantes() {
     const moteur = this.contexte.univers;
     const isoler = moteur.parametres.isoler_capitalisation;
     const debut = this.demande.dateEffet;
+    const majoration = this.demande.regimes.length === 0
+      ? "majoration_enfants" : `majoration_enfants_${debut}`;
     const composantes = this.regimes.map((p) => ({
       id: `pension_${p.regime}`, beneficiaire: this.demande.personne,
       montant: { annuel: p.montant, monnaie: "EUR" }, debut, regime: p.regime,
@@ -174,7 +196,7 @@ export class Liquidation {
     for (const avantage of this.complements.avantages) {
       if (avantage.code === "majoration_enfants") {
         composantes.push({
-          id: "majoration_enfants", fiche: FICHES[avantage.code],
+          id: majoration, fiche: FICHES[avantage.code],
           beneficiaire: this.demande.personne,
           montant: { annuel: avantage.montant, monnaie: "EUR" }, debut,
           detail: avantage.detail,
@@ -219,6 +241,9 @@ export function liquider(demande, etat, contexte) {
     liquiderSuccessions: !contexte.neutralise("successions"),
   });
   const carriere = releve.carriere;
+  // Les régimes que la demande vise, quand ils ne liquident pas tous au même
+  // départ : les autres attendent le leur (`droit/departs.js`).
+  const cible = demande.regimes.length > 0 ? new Set(demande.regimes) : null;
   const majorationEnfants = releve.durees.enfants;
   const gratuitsAttribues = releve.droits.gratuits;
   let fiabilite = Fiabilite.CERTIFIEE;
@@ -226,8 +251,8 @@ export function liquider(demande, etat, contexte) {
     fiabilite = Math.min(fiabilite, majorationEnfants.fiabilite);
   }
 
-  const ouverture = ouvrir(moteur, releve);
-  const liquidees = liquiderChaqueRegime(moteur, releve, ouverture, contexte);
+  const ouverture = ouvrir(moteur, releve, cible);
+  const liquidees = liquiderChaqueRegime(moteur, releve, ouverture, contexte, cible);
   const pensions = liquidees.regimes;
 
   const total = pensions.reduce((somme, p) => somme + p.montant, 0.0);
@@ -264,7 +289,7 @@ export function liquider(demande, etat, contexte) {
   if (avantagesNonContributifs && majorationEnfants !== null) {
     // Effet des trimestres accordés au titre des enfants : la même carrière
     // sans eux, tout le reste égal.
-    const sansMda = liquider(demande, new Etat(carriere),
+    const sansMda = liquider(demande, etat.avecCarriere(carriere),
       contexte.neutralisant("avantages_non_contributifs"));
     // Les deux termes doivent porter sur le même périmètre : celui d'en
     // face est déjà net de la capitalisation.
@@ -292,7 +317,7 @@ export function liquider(demande, etat, contexte) {
     // reste, et peut jouer dans les deux sens — il relève une carrière longue
     // à bas salaire, il abaisse la moyenne d'une carrière courte et bien
     // payée, où les années au SMIC s'ajoutent aux années retenues.
-    const sansAvpf = liquider(demande, new Etat(carriere),
+    const sansAvpf = liquider(demande, etat.avecCarriere(carriere),
       contexte.neutralisant("avantages_non_contributifs", "avpf"));
     const effetAvpf = totalContributif - sansAvpf.totalContributif;
     totalContributif = sansAvpf.totalContributif;
@@ -311,7 +336,7 @@ export function liquider(demande, etat, contexte) {
     // l'AVPF : la même carrière sans eux, la MDA et l'AVPF déjà retirées. Si
     // retirer la MDA les a fait tomber, leur effet est dans celui de la MDA,
     // qui les a ouverts, et ce recalcul n'en trouve plus rien.
-    const sansGratuits = liquider(demande, new Etat(carriere), contexte.neutralisant(
+    const sansGratuits = liquider(demande, etat.avecCarriere(carriere), contexte.neutralisant(
       "avantages_non_contributifs", "avpf", "points_gratuits"));
     const effetGratuits = totalContributif - sansGratuits.totalContributif;
     totalContributif = sansGratuits.totalContributif;
@@ -332,7 +357,8 @@ export function liquider(demande, etat, contexte) {
     }
   }
 
-  const complements = completer(moteur, releve, ouverture, liquidees, contexte);
+  const complements = completer(moteur, releve, ouverture, liquidees, contexte,
+    etat.totalServi);
   const mesures = [];
   for (const code of Object.keys(NEUTRALISATION_MESUREE)) {
     for (const avantage of avantages) {

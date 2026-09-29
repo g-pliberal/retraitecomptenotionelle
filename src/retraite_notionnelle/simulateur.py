@@ -535,9 +535,16 @@ class Comparaison:
                     "pension_mensuelle": self.actuel.pension_mensuelle,
                     "taux_remplacement": self.taux_remplacement_actuel,
                     "par_regime": [
-                        {"regime": p.regime, "montant": p.montant, "detail": p.detail}
+                        {"regime": p.regime, "montant": p.montant, "detail": p.detail,
+                         # La date d'une pension n'est dite que quand les
+                         # régimes liquident à des dates différentes.
+                         **({"date_effet": p.date_effet,
+                             "montant_a_l_effet": p.montant_a_l_effet}
+                            if p.date_effet is not None else {})}
                         for p in self.actuel.pensions_par_regime
                     ],
+                    **({"departs": [d.donnees() for d in self.actuel.departs]}
+                       if self.actuel.departs else {}),
                     "minimum_applique": self.actuel.minimum_applique,
                     "liquidation_ouverte": self.actuel.liquidation_ouverte,
                     "motif_ouverture": self.actuel.motif_ouverture,

@@ -38,7 +38,10 @@ import {
   SurcoteParentale,
   ValeursPoint,
 } from "./regimes.js";
-import { RevalorisationsPensions } from "./revalorisation.js";
+import { formatFixe } from "./format.js";
+import { RevalorisationsPensions, menerAuMois } from "./revalorisation.js";
+import { Fiabilite } from "./serie.js";
+import * as lesDeparts from "./droit/departs.js";
 import { foyerEtNet } from "./droit/foyer.js";
 import * as liquidation from "./droit/liquidation.js";
 
@@ -227,6 +230,14 @@ export class ScenarioActuel {
       ["successions", !liquiderSuccessions],
     ].filter(([, neutre]) => neutre).map(([nom]) => nom);
     const contexte = new liquidation.Contexte(this, neutralisations);
+    // CHAQUE RÉGIME LIQUIDE À SA DATE (`droit/departs.js`), sauf la
+    // liquidation fictive, qui valorise des droits à une date.
+    const departs = nature !== "fictive" ? lesDeparts.departs(this, carriereSaisie) : [];
+    if (departs.length > 1) {
+      const liquidations = lesDeparts.liquiderLesDeparts(
+        this, carriereSaisie, contexte, nature, departs);
+      return resultatDesDeparts(this, carriereSaisie, departs, liquidations, contexte);
+    }
     const resultat = liquidation.liquider(
       liquidation.demandeDeDepart(carriereSaisie, nature),
       new liquidation.Etat(carriereSaisie), contexte);
@@ -268,5 +279,152 @@ export function resultatActuel(resultat, foyer) {
     fiabilite,
     // Comme la pension annuelle : hors capitalisation.
     pension_mensuelle: Math.max(0.0, total - resultat.horsRepartition) / 12.0,
+    // Un seul départ : tous les régimes liquident à la même date.
+    departs: [],
+  };
+}
+
+/**
+ * Ce qui mène chaque pension d'un départ aux euros du départ déclaré : la
+ * revalorisation de son régime pour une pension déjà servie, les prix pour
+ * une pension qui ne commence qu'après.
+ */
+function ramener(moteur, depart, declare, pensions) {
+  if (depart.date.rang === declare.rang) {
+    return pensions.map(() => 1.0);
+  }
+  if (depart.date.rang > declare.rang) {
+    const prix = moteur.macro.coefficientPrix(depart.date.annee, declare.annee);
+    return pensions.map(() => prix);
+  }
+  const menes = menerAuMois(moteur, pensions, depart.date, declare);
+  return pensions.map((pension, i) => (pension.montant ? menes[i] / pension.montant : 1.0));
+}
+
+/** La formule d'une pension datée, et ce qu'elle vaut au départ déclaré. */
+function detailDate(detail, depart, declare, montant, ramene) {
+  if (depart.date.rang === declare.rang) {
+    return detail;
+  }
+  if (depart.date.rang < declare.rang) {
+    return `${detail} ; servie depuis le 1er ${depart.date}, ${formatFixe(montant, 2, true)} € `
+      + `à cette date, ${formatFixe(ramene, 2, true)} € au départ`;
+  }
+  return `${detail} ; servie à partir du 1er ${depart.date}, `
+    + `${formatFixe(montant, 2, true)} € de ${depart.date.annee}, `
+    + `soit ${formatFixe(ramene, 2, true)} € de ${declare.annee}`;
+}
+
+/** Ce qu'un départ ajoute à la pension, dans les deux euros. */
+function departServi(depart, resultat, servi) {
+  const aLEffet = resultat.regimes.reduce((somme, p) => somme + p.montant, 0.0)
+    + resultat.complements.avantages
+      .filter((a) => a.code === "majoration_enfants")
+      .reduce((somme, a) => somme + a.montant, 0.0);
+  const regimes = resultat.regimes.map((p) => p.regime);
+  return {
+    date_effet: depart.dateEffet, motif: depart.motif, regimes,
+    montant: servi, montant_a_l_effet: aLEffet,
+    donnees() {
+      return { date_effet: this.date_effet, motif: this.motif, regimes: [...this.regimes],
+        montant: this.montant, montant_a_l_effet: this.montant_a_l_effet };
+    },
+  };
+}
+
+/**
+ * Le scénario 1 d'une carrière dont les régimes liquident à des dates
+ * différentes (`droit/departs.js`). LES MONTANTS SONT CEUX DU DÉPART DÉCLARÉ :
+ * la pension déjà servie y est menée par la revalorisation de son régime,
+ * celle qui ne commence qu'après y est ramenée par les prix ; `departs` dit ce
+ * que chaque départ y ajoute, et quand. Voir `resultat_des_departs` dans le
+ * Python.
+ */
+export function resultatDesDeparts(moteur, carriere, departs, liquidations, contexte) {
+  const declare = carriere.dateLiquidation;
+  const rangPrincipal = departs.findIndex((depart) => depart.date.rang === declare.rang);
+  const principale = liquidations[rangPrincipal >= 0 ? rangPrincipal : liquidations.length - 1];
+  const isoler = moteur.parametres.isoler_capitalisation;
+  const pensions = [];
+  const avantages = new Map();
+  const servis = [];
+  let total = 0.0;
+  let horsRepartition = 0.0;
+  let totalContributif = 0.0;
+  let fiabilite = Fiabilite.CERTIFIEE;
+  departs.forEach((depart, rang) => {
+    const resultat = liquidations[rang];
+    const regimes = [...resultat.regimes];
+    const facteurs = ramener(moteur, depart, declare, regimes);
+    const parRegime = new Map(regimes.map((p, i) => [p.regime, facteurs[i]]));
+    const nues = regimes.reduce((somme, p) => somme + p.montant, 0.0);
+    const moyen = nues
+      ? regimes.reduce((somme, p, i) => somme + p.montant * facteurs[i], 0.0) / nues
+      : (facteurs.length > 0 ? facteurs[0] : 1.0);
+    let servi = 0.0;
+    regimes.forEach((pension, i) => {
+      const ramene = pension.montant * facteurs[i];
+      servi += ramene;
+      pensions.push({
+        ...pension, montant: ramene, date_effet: depart.dateEffet,
+        montant_a_l_effet: pension.montant,
+        detail: detailDate(pension.detail, depart, declare, pension.montant, ramene),
+      });
+      if (isoler && moteur.catalogue.obtenir(pension.regime).hors_repartition) {
+        horsRepartition += ramene;
+      }
+    });
+    let majoration = 0.0;
+    for (const avantage of resultat.avantages) {
+      const parts = (avantage.par_regime ?? []).map(
+        ([code, part]) => [code, part * (parRegime.has(code) ? parRegime.get(code) : moyen)]);
+      const montant = parts.length > 0
+        ? parts.reduce((somme, [, part]) => somme + part, 0.0)
+        : avantage.montant * moyen;
+      if (avantage.code === "majoration_enfants") {
+        majoration += montant;
+      }
+      const deja = avantages.get(avantage.code);
+      if (deja === undefined) {
+        avantages.set(avantage.code, { ...avantage, montant, par_regime: parts });
+      } else {
+        const details = [...new Set([deja.detail, avantage.detail].filter((d) => d))];
+        avantages.set(avantage.code, {
+          ...deja, montant: deja.montant + montant, detail: details.join(" ; "),
+          par_regime: [...deja.par_regime, ...parts],
+        });
+      }
+    }
+    servi += majoration;
+    total += servi;
+    totalContributif += resultat.totalContributif * moyen;
+    fiabilite = Math.min(fiabilite, resultat.fiabilite);
+    servis.push(departServi(depart, resultat, servi));
+  });
+  const foyer = foyerEtNet(
+    moteur, carriere.personne, new lesDeparts.Depart(declare).dateEffet, declare.annee,
+    total, (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE, contexte);
+  const liste = [...avantages.values()];
+  if (foyer.minimumVieillesse > 0) {
+    total = foyer.plafond;
+    fiabilite = Math.min(fiabilite, foyer.fiabilite);
+    liste.push(foyer.avantage());
+  }
+  return {
+    pension_annuelle: Math.max(0.0, total - horsRepartition),
+    pension_hors_repartition: horsRepartition,
+    pensions_par_regime: pensions,
+    trimestres_valides: principale.releve.durees.trimestres,
+    trimestres_requis: principale.pensions.requis,
+    taux_liquidation: principale.pensions.taux,
+    minimum_applique: liquidations.some((l) => l.complements.minimumApplique),
+    age_ouverture_opposable: principale.ouverture.age,
+    liquidation_ouverte: liquidations.every((l) => l.ouverture.ouverte),
+    motif_ouverture: principale.ouverture.motif,
+    avantages_appliques: liste,
+    total_contributif: totalContributif,
+    fiabilite,
+    pension_mensuelle: Math.max(0.0, total - horsRepartition) / 12.0,
+    departs: servis,
   };
 }

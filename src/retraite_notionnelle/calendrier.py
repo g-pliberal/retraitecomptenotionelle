@@ -61,7 +61,9 @@ class DateMois:
     def plus_mois(self, mois: int) -> "DateMois":
         return DateMois.depuis_rang(self.rang + mois)
 
-    def __str__(self) -> str:  # pragma: no cover - affichage
+    def __str__(self) -> str:
+        """« janvier 2000 » : la page, et le détail d'une pension datée
+        (:mod:`~retraite_notionnelle.droit.departs`), l'écrivent ainsi."""
         return f"{NOMS_DE_MOIS[self.mois - 1]} {self.annee}"
 
 

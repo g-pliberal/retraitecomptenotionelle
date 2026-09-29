@@ -441,6 +441,11 @@ def page() -> str:
     temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
                          .read_text(encoding="utf-8"))
     appels = [t["appels_liquider"] for t in temoins.values()]
+    # Le nombre déclaré vaut par départ, quand les régimes liquident à des
+    # dates différentes (droit/departs.py).
+    par_depart = [t["appels_liquider"] / (len(t["resultat"]["scenarios"]["actuel"]
+                                              .get("departs", ())) or 1)
+                  for t in temoins.values()]
     w("**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une "
       "fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), "
       "enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai "
@@ -448,8 +453,9 @@ def page() -> str:
       "applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son "
       "journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types "
       f"sans rien liquider. Les {len(appels)} témoins font chacun de {min(appels)} à "
-      f"{max(appels)} appels de `liquider`, liquidations d'essai comprises ; aucun ne "
-      f"dépasse les {liquidation.APPELS_DECLARES} que le nombre déclaré accorde (§ 7.8).")
+      f"{max(appels)} appels de `liquider`, liquidations d'essai comprises, et au plus "
+      f"{max(par_depart):g} par départ ; aucun ne dépasse les "
+      f"{liquidation.APPELS_DECLARES} par départ que le nombre déclaré accorde (§ 7.8).")
     w("")
     w("| Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |")
     w("|---|---|---|---|")

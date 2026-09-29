@@ -15,9 +15,11 @@ l'état : on y ajoute, on n'efface jamais, et chaque entrée porte son
 inscription et son effet. Une composante revalorisée remplace, dans sa
 lignée, celle que la liquidation avait écrite.
 
-Aujourd'hui, le départ, tiré de la carrière, et, quand la chronologie les
-dit, le décès de l'assuré et la réversion qu'il ouvre à son conjoint
-(:mod:`.droit.reversion`) : les autres sortes sont réservées (§ 13.5). Un
+Aujourd'hui, le départ, tiré de la carrière — un par date quand les régimes
+ne liquident pas tous ensemble (:mod:`.droit.departs`) —, et, quand la
+chronologie les dit, le décès de l'assuré et la réversion qu'il ouvre à son
+conjoint (:mod:`.droit.reversion`) : les autres sortes sont réservées
+(§ 13.5). Un
 conjoint sans décès déclaré reçoit une réversion d'essai, pour un décès
 supposé juste après le départ, qui ne s'inscrit pas au journal.
 L'échéance est l'année courante, et « faire vivre » y applique d'un coup les
@@ -37,6 +39,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from . import chronologie as chrono
+from .droit import departs as _departs
 from .droit import foyer as _foyer
 from .droit import liquidation as _liquidation
 from .droit import reversion as _reversion
@@ -44,7 +47,7 @@ from .droit.commun import date_d_effet
 from .journal import Entree, Journal
 from .noyau import vocabulaire
 from .revalorisation import aujourd_hui, faire_vivre, foyer_a_l_echeance
-from .scenarios.actuel import MinimumVieillesse, resultat_actuel
+from .scenarios.actuel import MinimumVieillesse, resultat_actuel, resultat_des_departs
 
 if TYPE_CHECKING:
     from .carriere import Carriere
@@ -124,9 +127,13 @@ class Echeancier:
         """Les événements de ``carriere``, dans l'ordre, puis, s'il y en a une,
         l'échéance ``echeance`` (une année), à laquelle les pensions liquidées
         sont menées."""
-        evenements = [e for e in (depart_de(carriere),) if e is not None]
-        for evenement in sorted(evenements, key=lambda e: (e.date, e.rang)):
-            self._traiter(evenement, carriere)
+        departs = _departs.departs(self.moteur, carriere)
+        if len(departs) > 1:
+            self._partir(carriere, departs)
+        else:
+            evenements = [e for e in (depart_de(carriere),) if e is not None]
+            for evenement in sorted(evenements, key=lambda e: (e.date, e.rang)):
+                self._traiter(evenement, carriere)
         if self.au_depart is not None and carriere.conjoint is not None:
             if carriere.deces is not None:
                 self._reverser(carriere)
@@ -177,8 +184,15 @@ class Echeancier:
         annee = max(carriere.annee_liquidation,
                     min(int(deces[:4]), self.simulateur.parametres.annee_courante))
         vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
-        return annee, [(r.regime, r.au_depart * r.coefficient, r.fiabilite)
-                       for r in vivante.regimes]
+        servies = [(r.regime, r.au_depart * r.coefficient, r.fiabilite)
+                   for r in vivante.regimes]
+        # Une pension qu'un régime ne sert pas encore au décès est celle que le
+        # défunt « eût obtenue » : la réversion la lit, au montant du départ
+        # déclaré (:mod:`.droit.departs`).
+        vues = {regime for regime, _, _ in servies}
+        return annee, servies + [(p.regime, p.montant, p.fiabilite)
+                                 for p in self.au_depart.pensions_par_regime
+                                 if p.regime not in vues]
 
     def _traiter(self, evenement: Evenement, carriere: Carriere) -> None:
         sorte = SORTES[evenement.sorte]
@@ -204,6 +218,39 @@ class Echeancier:
             self._inscrire(evenement, composante["id"], "composante", composante,
                            evenement.date)
         self._inscrire(evenement, f"foyer_{evenement.id}", "foyer", foyer, evenement.date)
+
+    def _partir(self, carriere: Carriere, departs: tuple[_departs.Depart, ...]) -> None:
+        """Un départ par date, quand les régimes ne liquident pas tous
+        ensemble : chacun liquide ses régimes, en voyant servies les pensions
+        des précédents, et s'inscrit au journal ; le scénario 1 du départ
+        déclaré les réunit (:func:`~.scenarios.actuel.resultat_des_departs`),
+        l'ASPA de ce jour-là comprise."""
+        declare = depart_de(carriere)
+        contexte = _liquidation.Contexte(self.moteur)
+        liquidations = _departs.liquider_les_departs(
+            self.moteur, carriere, contexte, liste=departs, journal=self.journal)
+        for depart, liquidation in zip(departs, liquidations):
+            evenement = Evenement(
+                id=f"depart_{carriere.personne}_{depart.date_effet}", date=depart.date_effet,
+                personnes=(carriere.personne,), vise={"regimes": sorted(depart.regimes)},
+                # Le départ déclaré est un acte ; les autres dates, la
+                # présomption depart_de_chaque_regime les induit.
+                origine=declare.origine if depart.date_effet == declare.date else "induit")
+            self._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date)
+            self._inscrire(evenement, f"liquidation_{evenement.id}", "liquidation",
+                           liquidation, evenement.date)
+            for composante in liquidation.composantes():
+                self._inscrire(evenement, composante["id"], "composante", composante,
+                               evenement.date)
+        self.au_depart = resultat_des_departs(
+            self.moteur, carriere, departs, liquidations, contexte)
+        foyer = _foyer.foyer_et_net(
+            self.moteur, carriere.personne, declare.date, carriere.annee_liquidation,
+            sum(p.montant for p in self.au_depart.pensions_par_regime) + sum(
+                a.montant for a in self.au_depart.avantages_appliques
+                if a.code == "majoration_enfants"),
+            (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE, contexte)
+        self._inscrire(declare, f"foyer_{declare.id}", "foyer", foyer, declare.date)
 
     def _echeance(self, carriere: Carriere, annee: int) -> None:
         """Faire vivre, puis foyer et net, à l'échéance : les composantes

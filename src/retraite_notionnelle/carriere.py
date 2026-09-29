@@ -991,6 +991,21 @@ class Carriere:
             personne=self.personne,
         )
 
+    def liquidee_au(self, date: DateMois) -> "Carriere":
+        """La même carrière, liquidée au premier jour de ``date``.
+
+        C'est la vue qu'une liquidation lit quand un régime ne liquide pas au
+        départ déclaré (:mod:`~retraite_notionnelle.droit.departs`) : les mêmes
+        lignes, que la date d'effet borne comme toujours (:meth:`part_retenue`),
+        la même chronologie — le départ déclaré reste un fait de la personne,
+        la date d'un régime est celle de sa demande. Rendue telle quelle
+        quand la date est déjà celle de la liquidation.
+        """
+        if self.age_liquidation is not None and self.date_liquidation == date:
+            return self
+        return replace(self, lignes=list(self.lignes), age_liquidation=self.age_au(date),
+                       dates_entree=dict(self.dates_entree))
+
     def prolongee(self, age_liquidation: float, macro: DonneesMacro,
                   attente_travaillee: bool = True) -> "Carriere":
         """La même carrière, poursuivie jusqu'à un départ à ``age_liquidation``.

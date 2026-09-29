@@ -92,14 +92,18 @@ export class Ouverture {
   }
 }
 
-/** Ce que le droit ouvre à la demande dont `releve` est le relevé. Voir le Python. */
-export function ouvrir(moteur, releve) {
+/**
+ * Ce que le droit ouvre à la demande dont `releve` est le relevé. `regimes`
+ * sont ceux que la demande vise quand ils ne liquident pas tous au même départ
+ * (`departs.js`) : chacun s'ouvre à SON âge ; `null` : tous. Voir le Python.
+ */
+export function ouvrir(moteur, releve, regimes = null) {
   const carriere = releve.carriere;
   const { durees, droits } = releve;
   const anneeLiquidation = carriere.anneeLiquidation;
   const ageLiquidation = carriere.age_liquidation || 0.0;
   const majorationEnfants = durees.enfants;
-  const codes = droits.codes;
+  const codes = droits.codes.filter((code) => regimes === null || regimes.has(code));
   let fiabilite = Fiabilite.CERTIFIEE;
 
   // Durée requise de référence : celle du régime de base. C'est elle qui
@@ -107,10 +111,10 @@ export function ouvrir(moteur, releve) {
   // un assuré au taux plein liquide sa complémentaire sans abattement, quel
   // que soit son âge.
   let requisReference = 0;
-  // Âge d'ouverture des droits le plus précoce parmi les régimes de base de
-  // la carrière. Un polypensionné liquide en réalité chaque pension à l'âge
-  // de son régime ; le modèle liquide tout à la fois, et retient donc l'âge
-  // du régime le plus précoce.
+  // Âge d'ouverture des droits le plus précoce parmi les régimes de base que
+  // la demande liquide. Un polypensionné liquide chaque pension à l'âge de son
+  // régime (`departs.js`) ; quand tous liquident au même départ, c'est l'âge
+  // du plus précoce qui ouvre ce départ.
   let ageOuvertureReference = null;
   // Un régime et celui qui lui succède liquident ensemble, sous les règles
   // de la caisse qui aurait le dossier : les autres membres du groupe sont

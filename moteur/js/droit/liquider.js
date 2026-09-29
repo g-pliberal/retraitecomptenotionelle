@@ -107,9 +107,12 @@ export class Pensions {
 /**
  * La pension de chaque régime où le relevé porte un droit. Le contexte dit ce
  * que le calcul neutralise : la décote et la surcote pour valoriser des droits
- * acquis, l'AVPF pour en mesurer l'apport. Voir le Python.
+ * acquis, l'AVPF pour en mesurer l'apport. `regimes` sont ceux que la demande
+ * vise, quand ils ne liquident pas tous au même départ (`departs.js`) ;
+ * `null` : tous. Voir le Python.
  */
-export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null) {
+export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
+  regimes = null) {
   const carriere = releve.carriere;
   const { durees, droits } = releve;
   const anneeLiquidation = carriere.anneeLiquidation;
@@ -118,7 +121,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null)
   const requisReference = ouverture.requis;
   const ignorerPenaliteAge = contexte !== null && contexte.neutralise("decote_surcote");
   const avpf = contexte === null || !contexte.neutralise("avpf");
-  const codes = droits.codes;
+  const codes = droits.codes.filter((code) => regimes === null || regimes.has(code));
   const groupes = releve.groupes;
 
   const pensions = [];

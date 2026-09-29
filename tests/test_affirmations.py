@@ -1353,6 +1353,26 @@ def _(m: Modele):
     assert m.defaut.aujourd_hui is None
 
 
+@controle("pensions_a_leur_date")
+def _(m: Modele):
+    """L'aide-soignante partie de l'hôpital à cinquante-sept ans touche sa
+    pension de la CNRACL à son départ ; son régime général attend l'âge légal
+    (droit/departs.py). Le montant du système 1 les compte toutes, en euros du
+    départ ; celui d'aujourd'hui, seulement celles qui sont déjà servies."""
+    comparaison = m.simuler_requete(
+        sexe="F", naissance="1965", debut="20", liquidation="57", metier2_debut="30",
+        metier2_statut="fonctionnaire_territorial_hospitalier_actif")
+    actuel = comparaison.actuel
+    premier, second = actuel.departs
+    assert premier.regimes == ("cnracl",) and premier.date_effet < second.date_effet
+    assert "regime_general" in second.regimes
+    assert _proche(sum(d.montant for d in actuel.departs),
+                   actuel.pension_annuelle + actuel.pension_hors_repartition)
+    servis = {r.regime for r in comparaison.aujourd_hui.actuel.regimes}
+    assert int(second.date_effet[:4]) > m.base.annee_courante
+    assert servis == {"cnracl"}
+
+
 @controle("sous_total_contributif")
 def _(m: Modele):
     actuel = m.smic.actuel

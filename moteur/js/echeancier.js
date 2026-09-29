@@ -13,24 +13,26 @@
  *
  * Tout ce qu'il calcule s'inscrit au JOURNAL (`journal.js`), qui est l'état.
  * Une composante revalorisée remplace, dans sa lignée, celle que la
- * liquidation avait écrite. Aujourd'hui, le départ, tiré de la carrière, et,
- * quand la chronologie les dit, le décès de l'assuré et la réversion qu'il
- * ouvre à son conjoint (`droit/reversion.js`), ou, sans décès déclaré, une
- * réversion d'essai, hors du journal ; l'échéance est l'année courante : voir
- * le Python.
+ * liquidation avait écrite. Aujourd'hui, le départ, tiré de la carrière — un
+ * par date quand les régimes ne liquident pas tous ensemble
+ * (`droit/departs.js`) —, et, quand la chronologie les dit, le décès de
+ * l'assuré et la réversion qu'il ouvre à son conjoint (`droit/reversion.js`),
+ * ou, sans décès déclaré, une réversion d'essai, hors du journal ; l'échéance
+ * est l'année courante : voir le Python.
  *
  * Chaque événement suit le contrat C.7 (`data/reference/contrats/evenement.yaml`).
  */
 
 import * as chrono from "./chronologie.js";
 import { dateDEffet } from "./droit/commun.js";
+import * as lesDeparts from "./droit/departs.js";
 import { foyerEtNet } from "./droit/foyer.js";
 import * as liquidation from "./droit/liquidation.js";
 import { moisSuivant, reversion } from "./droit/reversion.js";
 import { Entree, Journal } from "./journal.js";
 import { MinimumVieillesse } from "./regimes.js";
 import { aujourdHui, faireVivre, foyerALEcheance } from "./revalorisation.js";
-import { resultatActuel } from "./scenario-actuel.js";
+import { resultatActuel, resultatDesDeparts } from "./scenario-actuel.js";
 
 /** La version du contrat C.7 que `Evenement.donnees` suit. */
 export const SCHEMA_VERSION = 1;
@@ -113,10 +115,15 @@ export class Echeancier {
    * menées.
    */
   parcourir(carriere, echeance = null) {
-    const evenements = [departDe(carriere)].filter((e) => e !== null);
-    evenements.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : a.rang - b.rang));
-    for (const evenement of evenements) {
-      this._traiter(evenement, carriere);
+    const departs = lesDeparts.departs(this.moteur, carriere);
+    if (departs.length > 1) {
+      this._partir(carriere, departs);
+    } else {
+      const evenements = [departDe(carriere)].filter((e) => e !== null);
+      evenements.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : a.rang - b.rang));
+      for (const evenement of evenements) {
+        this._traiter(evenement, carriere);
+      }
     }
     if (this.auDepart !== null && carriere.conjoint !== null) {
       if (carriere.deces !== null) {
@@ -180,8 +187,15 @@ export class Echeancier {
     const annee = Math.max(carriere.anneeLiquidation, Math.min(
       Number(deces.slice(0, 4)), this.simulateur.parametres.annee_courante));
     const vivante = faireVivre(this.simulateur, carriere, this.auDepart, annee);
-    return [annee, vivante.regimes.map(
-      (r) => [r.regime, r.au_depart * r.coefficient, r.fiabilite])];
+    const servies = vivante.regimes.map(
+      (r) => [r.regime, r.au_depart * r.coefficient, r.fiabilite]);
+    // Une pension qu'un régime ne sert pas encore au décès est celle que le
+    // défunt « eût obtenue » : la réversion la lit, au montant du départ
+    // déclaré (`droit/departs.js`).
+    const vues = new Set(servies.map(([regime]) => regime));
+    return [annee, [...servies, ...this.auDepart.pensions_par_regime
+      .filter((p) => !vues.has(p.regime))
+      .map((p) => [p.regime, p.montant, p.fiabilite])]];
   }
 
   _traiter(evenement, carriere) {
@@ -210,6 +224,46 @@ export class Echeancier {
       this._inscrire(evenement, composante.id, "composante", composante, evenement.date);
     }
     this._inscrire(evenement, `foyer_${evenement.id}`, "foyer", foyer, evenement.date);
+  }
+
+  /**
+   * Un départ par date, quand les régimes ne liquident pas tous ensemble :
+   * chacun liquide ses régimes, en voyant servies les pensions des précédents,
+   * et s'inscrit au journal ; le scénario 1 du départ déclaré les réunit
+   * (`resultatDesDeparts`), l'ASPA de ce jour-là comprise.
+   */
+  _partir(carriere, departs) {
+    const declare = departDe(carriere);
+    const contexte = new liquidation.Contexte(this.moteur);
+    const liquidations = lesDeparts.liquiderLesDeparts(
+      this.moteur, carriere, contexte, "definitive", departs, this.journal);
+    departs.forEach((depart, rang) => {
+      const resultat = liquidations[rang];
+      const evenement = new Evenement({
+        id: `depart_${carriere.personne}_${depart.dateEffet}`, date: depart.dateEffet,
+        personnes: [carriere.personne], vise: { regimes: [...depart.regimes].sort() },
+        // Le départ déclaré est un acte ; les autres dates, la présomption
+        // depart_de_chaque_regime les induit.
+        origine: depart.dateEffet === declare.date ? declare.origine : "induit",
+      });
+      this._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date);
+      this._inscrire(evenement, `liquidation_${evenement.id}`, "liquidation", resultat,
+        evenement.date);
+      for (const composante of resultat.composantes()) {
+        this._inscrire(evenement, composante.id, "composante", composante, evenement.date);
+      }
+    });
+    this.auDepart = resultatDesDeparts(this.moteur, carriere, departs, liquidations, contexte);
+    const pensions = this.auDepart.pensions_par_regime
+      .reduce((somme, p) => somme + p.montant, 0.0);
+    const majoration = this.auDepart.avantages_appliques
+      .filter((a) => a.code === "majoration_enfants")
+      .reduce((somme, a) => somme + a.montant, 0.0);
+    const foyer = foyerEtNet(
+      this.moteur, carriere.personne, declare.date, carriere.anneeLiquidation,
+      pensions + majoration,
+      (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE, contexte);
+    this._inscrire(declare, `foyer_${declare.id}`, "foyer", foyer, declare.date);
   }
 
   /**

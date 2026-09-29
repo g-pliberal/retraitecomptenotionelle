@@ -193,6 +193,17 @@ export class PensionServie {
     this.revalorisations = simulateur.revalorisations;
   }
 
+  /**
+   * La même règle, tirée du moteur du scénario 1 seul : ce qu'une liquidation
+   * lit quand elle doit voir une pension déjà servie.
+   */
+  static duMoteur(moteur) {
+    return new PensionServie({
+      scenarioActuel: moteur, catalogue: moteur.catalogue,
+      revalorisations: moteur.revalorisationsPensions,
+    });
+  }
+
   /** Coefficient nominal d'une pension de régime, de `depart` à `jusqua`. */
   coefficient(pension, anneeLiquidation, depart, jusqua, mensuel2019) {
     const code = pension.regime;
@@ -260,6 +271,33 @@ export class PensionServie {
   }
 }
 
+/**
+ * Ce que valent, au premier jour du mois `jusqua`, des pensions liquidées au
+ * premier jour du mois `depart` (deux `DateMois`) : chacune menée par la règle
+ * de son régime. C'est ce qu'un départ suivant voit servi (`droit/departs.js`) :
+ * le minimum contributif s'écrête sur les pensions du mois de sa date d'effet
+ * (R. 173-7). Voir `mener_au_mois` dans le Python.
+ */
+export function menerAuMois(moteur, pensions, depart, jusqua) {
+  const servie = PensionServie.duMoteur(moteur);
+  const debut = dateIso(depart.annee, depart.mois, 1);
+  const fin = dateIso(jusqua.annee, jusqua.mois, 1);
+  if (fin <= debut) {
+    return pensions.map((pension) => pension.montant);
+  }
+  let mensuel2019 = null;
+  if (debut <= "2020-01-01" && "2020-01-01" <= fin) {
+    let somme = 0;
+    for (const p of pensions) {
+      somme += p.montant * (debut <= MOIS_DES_TRANCHES
+        ? servie.coefficient(p, depart.annee, debut, MOIS_DES_TRANCHES, null)[0] : 0.0);
+    }
+    mensuel2019 = somme / 12.0;
+  }
+  return pensions.map((p) => p.montant
+    * servie.coefficient(p, depart.annee, debut, fin, mensuel2019)[0]);
+}
+
 /** Le système 1 aujourd'hui : ce que le droit sert, régime par régime. */
 export class ActuelAujourdhui {
   constructor(champs) {
@@ -316,7 +354,10 @@ export class Revalorisee {
  * système 1 menées jusqu'en `annee` — l'année courante par défaut. Rien n'est
  * recalculé de la carrière : seuls les montants de chaque régime sont
  * revalorisés, selon la règle de leur texte. Une revalorisation ne relance
- * jamais la liquidation.
+ * jamais la liquidation. Quand les régimes liquident à des dates différentes
+ * (`droit/departs.js`), chaque pension part de SA date d'effet et de son
+ * montant à cette date ; celle qui n'est pas encore servie à l'échéance n'y
+ * est pas.
  */
 export function faireVivre(simulateur, carriere, resultat, annee = null) {
   const parametres = simulateur.parametres;
@@ -326,7 +367,21 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
   const depart = dateIso(liquidation, carriere.dateLiquidation.mois, 1);
   const fin = dateIso(an, 12, 31);
   const isoler = parametres.isoler_capitalisation;
-  const pensions = [...resultat.pensions_par_regime];
+  // Chaque pension, son année de liquidation, sa date d'effet et son montant
+  // à cette date : ceux du départ, sauf pour une pension datée.
+  const datee = (p) => (p.date_effet == null
+    ? [p, liquidation, depart, p.montant]
+    : [p, Number(p.date_effet.slice(0, 4)), p.date_effet, p.montant_a_l_effet]);
+  const toutes = resultat.pensions_par_regime.map(datee);
+  const aVenir = new Set(toutes.filter(([p, , debut]) => p.date_effet != null && debut > fin)
+    .map(([p]) => p.regime));
+  const datees = toutes.filter(([p]) => !aVenir.has(p.regime));
+  const pensions = datees.map(([p]) => p);
+  // Ce qui ramène le montant d'une pension datée, en euros du départ, à son
+  // montant à sa date d'effet : la part de la majoration qu'elle porte se
+  // ramène de même.
+  const aLEffet = new Map(resultat.pensions_par_regime.map((p) => [p.regime,
+    p.date_effet != null && p.montant ? p.montant_a_l_effet / p.montant : 1.0]));
   const horsRepartition = (p) => isoler
     && Boolean(simulateur.catalogue.obtenir(p.regime).hors_repartition);
   let majoration = 0;
@@ -361,9 +416,11 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     if (masse <= 0) return coefficientMoyen(coefficients);
     const parRegime = new Map();
     pensions.forEach((p, rang) => { parRegime.set(p.regime, coefficients[rang]); });
+    for (const code of aVenir) parRegime.set(code, 0.0);
     let pondere = 0;
     for (const [code, part] of partsMajoration) {
-      pondere += part * (parRegime.has(code) ? parRegime.get(code) : 1.0);
+      pondere += part * (aLEffet.get(code) ?? 1.0)
+        * (parRegime.has(code) ? parRegime.get(code) : 1.0);
     }
     return pondere / masse;
   };
@@ -371,32 +428,34 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
   // Une pension qui prend effet en janvier 2020 n'était pas servie en
   // décembre : le montant du mois précédent était nul.
   let mensuel2019 = null;
-  if (depart <= "2020-01-01" && "2020-01-01" <= fin) {
-    const jusqu2019 = pensions.map((p) => (depart <= MOIS_DES_TRANCHES
-      ? servie.coefficient(p, liquidation, depart, MOIS_DES_TRANCHES, null)[0]
+  const premier = datees.reduce((plusTot, [, , debut]) => (debut < plusTot ? debut : plusTot),
+    datees.length > 0 ? datees[0][2] : depart);
+  if (premier <= "2020-01-01" && "2020-01-01" <= fin) {
+    const jusqu2019 = datees.map(([p, a, debut]) => (debut <= MOIS_DES_TRANCHES
+      ? servie.coefficient(p, a, debut, MOIS_DES_TRANCHES, null)[0]
       : 0.0));
     let somme = 0;
-    pensions.forEach((p, rang) => { somme += p.montant * jusqu2019[rang]; });
+    datees.forEach(([, , , montant], rang) => { somme += montant * jusqu2019[rang]; });
     mensuel2019 = (somme + majoration * coefficientDeLaMajoration(jusqu2019)) / 12.0;
   }
 
   const regimes = [];
   const coefficients = [];
   let fiabilite = Fiabilite.CERTIFIEE;
-  for (const pension of pensions) {
+  for (const [pension, a, debut, montant] of datees) {
     const [coefficient, regle, fiabiliteRegime] = servie.coefficient(
-      pension, liquidation, depart, fin, mensuel2019,
+      pension, a, debut, fin, mensuel2019,
     );
     coefficients.push(coefficient);
     fiabilite = Math.min(fiabilite, fiabiliteRegime);
     regimes.push({
       regime: pension.regime,
-      au_depart: pension.montant,
+      au_depart: montant,
       coefficient,
       regle,
       fiabilite: fiabiliteRegime,
       hors_repartition: horsRepartition(pension),
-      aujourd_hui: pension.montant * coefficient,
+      aujourd_hui: montant * coefficient,
     });
   }
   const coefficientMajoration = coefficientDeLaMajoration(coefficients);

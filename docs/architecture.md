@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.20, du 29 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.21, du 29 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -119,7 +119,7 @@ couverture demande à l'architecture.
 | Départs anticipés | carrière longue, catégories actives, militaires : oui ; parents de trois enfants de la fonction publique : non ; handicap : hors modèle | tous, dont incapacité permanente, pénibilité, amiante |
 | Invalidité, inaptitude | hors modèle | périodes d'invalidité, pension d'invalidité et sa conversion, retraite pour invalidité des fonctionnaires, inaptitude |
 | Réversion | le conjoint, qu'un bloc facultatif du formulaire demande, et le mariage, présumé aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.mariage_des_conjoints.valeur)-->27<!--/--> ans de l'assuré ; la réversion liquidée pour le survivant, au régime général et dans les régimes alignés, dans la fonction publique et à l'Agirc-Arrco, sans le minimum ni les majorations, pour un décès déclaré après le départ ou supposé juste après lui | conjoints successifs datés, décès avant le départ, ressources du ménage, partage entre ex-conjoints, remariage, règles des autres régimes, orphelins |
-| Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | hors modèle : une seule liquidation, à une date | un départ par régime ; activité après le départ ; fraction de pension ; pension définitive |
+| Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | un départ par régime, chacun à sa date, sur une demande présumée ; le cumul, la seconde pension et la retraite progressive : hors modèle | la date de demande de chaque pension, déclarée ; activité après le départ ; fraction de pension ; pension définitive |
 | Rachats, versements, surcotisation | hors modèle | actes datés de l'assuré, avec leur coût |
 | Carrières hors de France | absentes | périodes par pays et par convention ; totalisation et prorata ; pensions étrangères |
 | Minimum vieillesse (ASPA) | barème d'une personne seule, sans condition de ressources | ressources, résidence et composition du foyer ; récupération sur la succession |
@@ -762,7 +762,12 @@ Le relevé des droits et le résultat le signalent.
   - réversion demandée dans l'année du décès ;
   - décès supposé juste après le départ, ou cette année pour qui est déjà
     parti, quand un conjoint est déclaré sans décès : la page montre ce que
-    le conjoint recevrait.
+    le conjoint recevrait ;
+  - chaque pension demandée au départ déclaré, à l'ouverture du régime qui ne
+    l'ouvre pas encore, et dès la sortie de l'armée pour la pension militaire.
+    Elle non plus ne reprend pas la valeur d'avant elle — tout liquider au
+    départ, à l'âge du régime le plus précoce —, qui servait des pensions que
+    le droit n'ouvrait pas encore (version 5.21).
 - **Un défaut légal** n'est pas une présomption : c'est la loi qui décide
   quand la personne n'a rien fait. Il s'écrit dans la version de la règle,
   parce qu'il change avec elle. Au régime général, les trimestres d'éducation
@@ -1214,7 +1219,12 @@ Quatre règles complètent l'échéancier :
 Un second départ, la pension définitive après une retraite progressive, la
 révision d'un minimum ou d'une réversion, l'accroissement d'une réversion
 partagée au décès d'un ex-conjoint ne sont donc pas des cas particuliers : ce
-sont des événements de plus.
+sont des événements de plus. Le départ de chaque régime en est le premier :
+quand les régimes n'ouvrent pas tous leur pension au départ déclaré,
+l'échéancier inscrit un départ par date, que la présomption du § 5.6 induit,
+et chacun liquide ses seuls régimes, sur la carrière arrêtée à sa date, en
+voyant servies les pensions des précédents, menées au mois de sa date d'effet
+(`droit/departs.py`).
 
 Le résultat n'est pas un nombre mais une **pension en composantes datées** :
 base, majorations, minima, malus temporaire, capital versé une fois. Chaque
@@ -1326,7 +1336,10 @@ Chaque témoin compte donc ses appels de `liquider`, liquidations d'essai
 comprises, et un test refuse qu'il dépasse le nombre déclaré : les témoins
 écrivent les leurs (`tests/temoins/simulations.json`), le portage les refait,
 et le nombre déclaré est `APPELS_DECLARES`, dans
-`src/retraite_notionnelle/droit/liquidation.py`. Chaque phase
+`src/retraite_notionnelle/droit/liquidation.py`. Il vaut par départ : quand
+les régimes liquident à des dates différentes (§ 7.4), chaque départ ouvre ses
+pensions et mesure les siennes, ce qui n'est pas reliquider à un événement
+qui n'ouvre aucun droit. Chaque phase
 refait la mesure dans les deux moteurs (`scripts/budget_calcul.py`), et celle
 de la suite de tests ; une phase qui les dégrade s'arrête le temps de les
 ramener. Le paquet du site se
@@ -2410,6 +2423,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.21**, 29 septembre 2026 : la deuxième étape du troisième domaine. Chaque régime liquide à sa date (§ 7.4), sous une présomption nouvelle, la date de demande de chaque pension (§ 5.6), qui change les résultats de qui a des régimes ouvrant à des âges différents : l'aide-soignante partie de l'hôpital à cinquante-sept ans n'a plus son régime général avant l'âge légal, le militaire passé au privé touche sa pension dès sa sortie de l'armée ; les montants restent ceux du départ déclaré. Le nombre déclaré d'appels de `liquider` vaut par départ (§ 7.8).
 
 - **5.20**, 29 septembre 2026 : le troisième domaine, les départs multiples et la vie après le départ, ouvert à la demande du propriétaire (§ 11) ; ses fiches sont lues et découpées en versions, que le moteur ne lit pas encore, et une présomption nouvelle, la date de départ de chaque régime, entre au vocabulaire (§ 5.6).
 

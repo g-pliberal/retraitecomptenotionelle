@@ -72,9 +72,13 @@ export class Complements {
 /**
  * Les pensions de `liquidees`, complétées de ce que le droit y ajoute. Le
  * contexte dit ce que le calcul neutralise : les avantages non contributifs,
- * la décote et la surcote. Voir le Python.
+ * la décote et la surcote. `servies` est ce que valent, par an, à la date
+ * d'effet, les pensions que des départs précédents servent déjà
+ * (`departs.js`) : l'écrêtement du minimum contributif les compte. Voir le
+ * Python.
  */
-export function completer(moteur, releve, ouverture, liquidees, contexte = null) {
+export function completer(moteur, releve, ouverture, liquidees, contexte = null,
+  servies = 0.0) {
   const carriere = releve.carriere;
   const { durees, droits } = releve;
   const anneeLiquidation = carriere.anneeLiquidation;
@@ -131,8 +135,11 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null)
       // Écrêtement de l'article L. 173-2 : le complément est rogné de ce qui
       // dépasse le plafond, tous régimes confondus, et jamais au-delà. La
       // comparaison porte sur les pensions PERSONNELLES, majorations pour
-      // enfants exclues — raison de plus pour les calculer après.
-      const admissible = Math.max(0.0, Math.min(releveMinimum, plafond - total));
+      // enfants exclues — raison de plus pour les calculer après —, celles que
+      // d'autres départs servent déjà comprises, au montant du mois de la date
+      // d'effet (R. 173-7).
+      const admissible = Math.max(0.0,
+        Math.min(releveMinimum, plafond - total - servies));
       if (admissible < releveMinimum) {
         const facteur = admissible / releveMinimum;
         for (const [indice, complement] of complements) {

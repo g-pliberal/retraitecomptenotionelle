@@ -571,6 +571,32 @@ def _cas() -> list[dict]:
         "naissance": "1962", "statut": "militaire", "debut": "18",
         "metier2_debut": "38", "metier2_statut": "fonctionnaire_territorial_hospitalier",
     }))
+    # UN DÉPART PAR RÉGIME (droit/departs.py) : l'aide-soignante passée du privé
+    # à l'hôpital part à cinquante-sept ans, son régime général et son Arrco
+    # attendent l'âge légal ; le militaire passé au privé touche sa pension dès
+    # sa sortie de l'armée ; le policier qui a des primes attend l'âge légal
+    # pour son RAFP.
+    cas.append(("departs_prive_puis_categorie_active", {
+        "naissance": "1965", "sexe": "F", "statut": "salarie_prive_non_cadre",
+        "debut": "20", "liquidation": "57",
+        "metier2_debut": "30", "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
+    }))
+    # La même, mère de trois enfants : chaque départ mesure par sa cascade ce
+    # que les trimestres des enfants lui apportent, et le nombre d'appels de
+    # liquider déclaré vaut par départ (docs/architecture.md, § 7.8).
+    cas.append(("departs_prive_puis_categorie_active_trois_enfants", {
+        "naissance": "1965", "sexe": "F", "statut": "salarie_prive_non_cadre",
+        "debut": "20", "liquidation": "57", "enfants": "3",
+        "metier2_debut": "30", "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
+    }))
+    cas.append(("departs_militaire_puis_prive", {
+        "naissance": "1965", "statut": "militaire", "debut": "18",
+        "metier2_debut": "35", "metier2_statut": "salarie_prive_non_cadre",
+    }))
+    cas.append(("departs_super_actif_rafp_a_l_age_legal", {
+        "naissance": "1970", "statut": "fonctionnaire_etat_super_actif",
+        "debut": "22", "liquidation": "54", "primes": "0.25",
+    }))
     # LE RÉTABLISSEMENT : qui part sans la durée qui ouvre une pension — quinze
     # ans avant 2011, deux depuis — passe au régime général et à l'Ircantec,
     # le premier portant le dernier traitement dans la limite du plafond de
@@ -974,6 +1000,20 @@ def _pages() -> dict:
         ("simuler_reversion", "/simuler", {
             **BASE, "naissance": "1962-03-15", "liquidation": "2026-10",
             "conjoint": "1964", "ressources_conjoint": "14000",
+        }),
+        # UN DÉPART PAR RÉGIME (droit/departs.py) : l'aide-soignante partie de
+        # l'hôpital, dont le régime général et l'Arrco attendent l'âge légal.
+        # Partie en 2022, sa pension d'aujourd'hui ne les compte pas encore ;
+        # partant en 2034, elle lit quand sa retraite sera complète.
+        ("simuler_departs_echelonnes", "/simuler", {
+            **BASE, "sexe": "F", "naissance": "1965", "debut": "20", "liquidation": "57",
+            "metier2_debut": "30",
+            "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
+        }),
+        ("simuler_departs_echelonnes_a_venir", "/simuler", {
+            **BASE, "sexe": "F", "naissance": "1975", "debut": "20", "liquidation": "59",
+            "metier2_debut": "30",
+            "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
         }),
         # Le quatrième profil de fiche de paie — celui d'un agent public non
         # titulaire, qui relève du régime général et de l'Ircantec. Les trois

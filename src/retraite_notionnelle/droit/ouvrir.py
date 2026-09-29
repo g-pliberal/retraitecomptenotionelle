@@ -134,7 +134,8 @@ class Ouverture:
         }
 
 
-def ouvrir(moteur: ScenarioActuel, releve: Releve) -> Ouverture:
+def ouvrir(moteur: ScenarioActuel, releve: Releve,
+           regimes: frozenset[str] | None = None) -> Ouverture:
     """Ce que le droit ouvre à la demande dont ``releve`` est le relevé.
 
     La durée requise de référence est la plus longue de celles des régimes de
@@ -143,6 +144,11 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve) -> Ouverture:
     une seconde passe. Quand l'âge demandé précède cet âge, la carrière
     longue peut encore ouvrir le droit ; sinon, la liquidation n'est pas
     ouverte, et le dit.
+
+    ``regimes`` sont ceux que la demande vise quand ils ne liquident pas tous
+    au même départ (:mod:`.departs`) : chacun s'ouvre à SON âge, et le
+    régime général de l'agent parti à cinquante-sept ans ne s'ouvre pas à
+    l'âge de sa catégorie active. ``None`` : tous.
     """
     carriere = releve.carriere
     durees, droits = releve.durees, releve.droits
@@ -157,12 +163,11 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve) -> Ouverture:
     # quel que soit son âge.
     requis_reference = 0
     #: Âge d'ouverture des droits le plus précoce parmi les régimes de base
-    #: de la carrière. Un polypensionné liquide en réalité chaque pension à
-    #: l'âge de son régime ; le modèle liquide tout à la fois, et retient
-    #: donc l'âge du régime le plus précoce — celui d'un régime spécial,
-    #: quand il y en a un.
+    #: que la demande liquide. Un polypensionné liquide chaque pension à
+    #: l'âge de son régime (:mod:`.departs`) ; quand tous liquident au même
+    #: départ, c'est l'âge du plus précoce qui ouvre ce départ.
     age_ouverture_reference: float | None = None
-    codes = droits.codes
+    codes = [code for code in droits.codes if regimes is None or code in regimes]
     # Un régime et celui qui lui succède liquident ensemble, sous les règles
     # de la caisse qui aurait le dossier : les autres membres du groupe
     # sont sautés partout où un régime liquide.

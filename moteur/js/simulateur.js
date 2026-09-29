@@ -340,7 +340,13 @@ export class Comparaison {
           taux_remplacement: this.tauxRemplacementActuel,
           par_regime: this.actuel.pensions_par_regime.map((p) => ({
             regime: p.regime, montant: p.montant, detail: p.detail,
+            // La date d'une pension n'est dite que quand les régimes
+            // liquident à des dates différentes.
+            ...(p.date_effet != null
+              ? { date_effet: p.date_effet, montant_a_l_effet: p.montant_a_l_effet } : {}),
           })),
+          ...((this.actuel.departs ?? []).length > 0
+            ? { departs: this.actuel.departs.map((d) => d.donnees()) } : {}),
           minimum_applique: this.actuel.minimum_applique,
           liquidation_ouverte: this.actuel.liquidation_ouverte,
           motif_ouverture: this.actuel.motif_ouverture,

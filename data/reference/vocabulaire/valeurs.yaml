@@ -372,25 +372,28 @@ listes:
       depart_de_chaque_regime:
         dit: >-
           chaque pension est demandée au départ déclaré ; celle d'un régime qui
-          n'ouvre pas encore à cette date l'est au jour où il s'ouvre ; celle
-          d'un régime quitté plus tôt l'est dès qu'il s'ouvre, quand la demander
-          alors ne ferme aucun droit
-        valeur: au départ déclaré, ou à l'ouverture du régime
+          n'ouvre pas encore à cette date l'est au jour où il s'ouvre, et la
+          pension militaire dès la sortie de l'armée
+        valeur: au départ déclaré, à l'ouverture du régime, ou à la sortie de l'armée
         appliquee_par: departs (droit/departs.py), que l'échéancier et le scénario 1 lisent ; son jumeau JavaScript
         entrera_a: echeancier
         raison: >-
           le formulaire demande une date de départ, pas une par régime ; or
           chaque régime sert sa pension à sa propre date (fiche
           liquidation_regime_par_regime), et le modèle liquidait tout au
-          départ, à l'âge du régime le plus précoce. La présomption garde tous
-          les droits : elle ne fait demander plus tôt qu'une pension dont la
-          demande n'éteint aucun droit — la pension militaire, que L. 84 du
-          code des pensions soustrait à L. 161-22-1 A et à ses suites, et toute
-          première pension prise avant 2015, que L. 161-22-1 A ne visait pas
-          (fiche droits_apres_la_premiere_pension). Qui ne dit rien et part
-          quand aucun de ses régimes n'ouvre garde un départ unique, que la
-          page dit non ouvert. Décision du propriétaire, le 29 septembre 2026 :
-          « il faut que l'on colle le plus possible à la réalité »
+          départ, à l'âge du régime le plus précoce. La présomption ne fait
+          demander avant le départ que la pension militaire : L. 84 du code
+          des pensions la soustrait à l'extinction des droits et au cumul, et
+          son montant ne dépend pas de ce que l'assuré fait ensuite. Toute
+          autre pension demandée plus tôt figerait son taux sur la durée
+          acquise à cette date, perdrait la surcote que l'activité poursuivie
+          ouvre, et, depuis 2015, éteindrait les droits de cette activité
+          (fiche droits_apres_la_premiere_pension) ; avant 2004, le régime
+          général exigeait même la cessation de toute activité non salariée
+          (L. 161-22). Qui ne dit rien et part quand aucun de ses régimes
+          n'ouvre garde un départ unique, que la page dit non ouvert.
+          Décision du propriétaire, le 29 septembre 2026 : « il faut que l'on
+          colle le plus possible à la réalité »
 
   origines_de_ligne:
     valeurs:

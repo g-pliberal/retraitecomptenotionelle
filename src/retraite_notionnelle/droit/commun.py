@@ -41,6 +41,14 @@ class PensionRegime:
     type_calcul: str
     detail: str
     fiabilite: Fiabilite
+    #: Quand les régimes liquident à des dates différentes
+    #: (:mod:`~retraite_notionnelle.droit.departs`) : la date d'effet de cette
+    #: pension (AAAA-MM-JJ), et son montant à cette date, dans ses euros. Le
+    #: champ ``montant`` est alors celui du départ déclaré — la pension servie
+    #: avant lui y est menée, celle qui commence après y est ramenée par les
+    #: prix. ``None`` pour un départ unique, où tout liquide à la même date.
+    date_effet: str | None = None
+    montant_a_l_effet: float | None = None
 
 
 @dataclass(frozen=True)

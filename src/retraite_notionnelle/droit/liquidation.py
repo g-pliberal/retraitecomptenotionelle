@@ -3,9 +3,11 @@
 Une FONCTION PURE, qui ne lit rien d'autre que ses trois entrées :
 
 * LA DEMANDE (:class:`Demande`) dit la personne, la date d'effet,
-  l'événement qui l'appelle, le motif et la nature ;
+  l'événement qui l'appelle, le motif et la nature, et les régimes qu'elle
+  vise quand ils ne liquident pas tous ensemble (:mod:`.departs`) ;
 * L'ÉTAT (:class:`Etat`) est la chronologie du réseau, lue par sa vue, la
-  carrière, et le journal de l'échéancier ;
+  carrière, le journal de l'échéancier, et les pensions que les départs
+  précédents servent déjà ;
 * LE CONTEXTE (:class:`Contexte`) dit l'univers — aujourd'hui le droit réel,
   dont le moteur du scénario 1 tient les tables — et ce que le calcul
   neutralise : une couche d'un seul calcul (§ 4.8).
@@ -99,7 +101,7 @@ class Demande:
     motif: str = "vieillesse"
     nature: str = "definitive"
     #: Les régimes que la demande vise ; aucun : tous ceux où un droit est
-    #: acquis, comme le modèle liquide tout à la fois.
+    #: acquis, quand ils liquident tous au même départ (:mod:`.departs`).
     regimes: tuple[str, ...] = ()
 
     def donnees(self) -> dict:
@@ -125,10 +127,19 @@ def demande_de_depart(carriere: Carriere, nature: str = "definitive") -> Demande
 @dataclass(frozen=True)
 class Etat:
     """L'état que la liquidation lit : la chronologie du réseau, par sa vue,
-    la carrière, et le journal de l'échéancier (§ 7.4)."""
+    la carrière, et le journal de l'échéancier (§ 7.4) ; et les pensions que
+    les départs précédents servent déjà, menées jusqu'à la date d'effet
+    (:class:`~.departs.PensionServie`) : le minimum contributif s'écrête sur
+    elles aussi (L. 173-2, R. 173-7)."""
 
     carriere: Carriere
     journal: object | None = None
+    servies: tuple = ()
+
+    @property
+    def total_servi(self) -> float:
+        """Ce que les pensions déjà servies valent, par an, à la date d'effet."""
+        return sum(servie.montant for servie in self.servies)
 
 
 @dataclass(frozen=True)
@@ -208,10 +219,14 @@ class Liquidation:
     def composantes(self) -> list[dict]:
         """Ses composantes (contrat C.6) : la pension de chaque régime, puis
         la majoration pour enfants. Chacune a un identifiant stable, que la
-        revalorisation reprend dans sa lignée au journal."""
+        revalorisation reprend dans sa lignée au journal ; celui de la
+        majoration porte la date d'un départ qui ne liquide qu'une part des
+        régimes, pour que deux départs n'en écrivent pas deux sous le même."""
         catalogue = self.contexte.univers.catalogue
         isoler = self.contexte.univers.parametres.isoler_capitalisation
         debut = self.demande.date_effet
+        majoration = ("majoration_enfants" if not self.demande.regimes
+                      else f"majoration_enfants_{debut}")
         composantes = [{
             "id": f"pension_{p.regime}", "beneficiaire": self.demande.personne,
             "montant": {"annuel": p.montant, "monnaie": "EUR"}, "debut": debut,
@@ -221,7 +236,7 @@ class Liquidation:
         for avantage in self.complements.avantages:
             if avantage.code == "majoration_enfants":
                 composantes.append({
-                    "id": "majoration_enfants", "fiche": _completer.FICHES[avantage.code],
+                    "id": majoration, "fiche": _completer.FICHES[avantage.code],
                     "beneficiaire": self.demande.personne,
                     "montant": {"annuel": avantage.montant, "monnaie": "EUR"},
                     "debut": debut, "detail": avantage.detail})
@@ -246,13 +261,16 @@ class Liquidation:
 _appels = 0
 
 #: Le nombre déclaré (docs/architecture.md, § 7.8) : les appels de
-#: :func:`liquider` qu'une simulation des six scénarios s'accorde, liquidations
-#: d'essai comprises. Le départ en fait un, et un par avantage que la cascade
-#: mesure — les trimestres des enfants, l'AVPF, les points gratuits ; la
-#: valorisation des droits acquis, un par scénario prospectif ; et, pour qui
-#: est déjà parti à la bascule, les scénarios notionnels refont la liquidation
-#: du départ. Chaque témoin écrit les siens (``tests/temoins/simulations.json``),
-#: le portage les refait, et un test refuse qu'un seul dépasse ce nombre.
+#: :func:`liquider` qu'une simulation des six scénarios s'accorde PAR DÉPART,
+#: liquidations d'essai comprises. Le départ en fait un, et un par avantage que
+#: la cascade mesure — les trimestres des enfants, l'AVPF, les points
+#: gratuits ; la valorisation des droits acquis, un par scénario prospectif ;
+#: et, pour qui est déjà parti à la bascule, les scénarios notionnels refont la
+#: liquidation du départ. Quand les régimes liquident à des dates différentes
+#: (:mod:`.departs`), chaque départ ouvre ses pensions et fait les siens : le
+#: nombre vaut pour chacun. Chaque témoin écrit les siens
+#: (``tests/temoins/simulations.json``), le portage les refait, et un test
+#: refuse qu'un seul dépasse ce nombre, par départ.
 APPELS_DECLARES = 6
 
 
@@ -275,14 +293,17 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
         points_gratuits=points_gratuits,
         liquider_successions=not contexte.neutralise("successions"))
     carriere = releve.carriere
+    # Les régimes que la demande vise, quand ils ne liquident pas tous au même
+    # départ : les autres attendent le leur (:mod:`.departs`).
+    cible = frozenset(demande.regimes) or None
     majoration_enfants = releve.durees.enfants
     gratuits_attribues = releve.droits.gratuits
     fiabilite = Fiabilite.CERTIFIEE
     if majoration_enfants is not None:
         fiabilite = min(fiabilite, majoration_enfants.fiabilite)
 
-    ouverture = _ouvrir.ouvrir(moteur, releve)
-    liquidees = _liquider.liquider_chaque_regime(moteur, releve, ouverture, contexte)
+    ouverture = _ouvrir.ouvrir(moteur, releve, cible)
+    liquidees = _liquider.liquider_chaque_regime(moteur, releve, ouverture, contexte, cible)
     pensions = list(liquidees.regimes)
 
     total = sum(p.montant for p in pensions)
@@ -327,7 +348,7 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
         # carrière sans eux, tout le reste égal. C'est la seule façon
         # d'isoler un avantage qui agit sur la décote et sur la
         # proratisation.
-        sans_mda = liquider(demande, Etat(carriere),
+        sans_mda = liquider(demande, replace(etat, carriere=carriere),
                             contexte.neutralisant("avantages_non_contributifs"))
         # Les deux termes doivent porter sur le même périmètre : celui
         # d'en face est déjà net de la capitalisation.
@@ -356,7 +377,7 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
         # bas salaire, il abaisse la moyenne d'une carrière courte et bien
         # payée, où les années au SMIC viennent s'ajouter aux années
         # retenues au lieu de les remplacer.
-        sans_avpf = liquider(demande, Etat(carriere),
+        sans_avpf = liquider(demande, replace(etat, carriere=carriere),
                              contexte.neutralisant("avantages_non_contributifs", "avpf"))
         effet_avpf = total_contributif - sans_avpf.total_contributif
         total_contributif = sans_avpf.total_contributif
@@ -375,7 +396,7 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
         # l'AVPF ne les touche pas, retirer la MDA peut les faire tomber —
         # leur effet est alors compté dans celui de la MDA, qui les a
         # ouverts, et le recalcul ci-dessous n'en trouve plus rien.
-        sans_gratuits = liquider(demande, Etat(carriere), contexte.neutralisant(
+        sans_gratuits = liquider(demande, replace(etat, carriere=carriere), contexte.neutralisant(
             "avantages_non_contributifs", "avpf", "points_gratuits"))
         effet_gratuits = total_contributif - sans_gratuits.total_contributif
         total_contributif = sans_gratuits.total_contributif
@@ -390,7 +411,8 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
                         f"d'exploitation d'avant {avant}"),
             ))
 
-    complements = _completer.completer(moteur, releve, ouverture, liquidees, contexte)
+    complements = _completer.completer(moteur, releve, ouverture, liquidees, contexte,
+                                       servies=etat.total_servi)
     return Liquidation(
         demande=demande,
         contexte=contexte,

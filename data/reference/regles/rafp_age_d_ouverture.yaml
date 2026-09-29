@@ -9,7 +9,7 @@ domaine: age
 regimes: [rafp]
 etape: echeancier
 face: droit
-etat: manquante
+etat: transcrite
 lit:
 - la date de naissance de l'assuré, et l'âge légal de sa génération
 - la date d'effet de sa pension de la fonction publique ou de la CNRACL
@@ -77,9 +77,23 @@ sources:
       barème actuariel modulant cette valeur en fonction de l'âge de liquidation de la
       retraite additionnelle »
     date: 2026-09-29
+code:
+  python: >-
+    droit/departs.py : departs (RAFP, age_legal), qui date le départ du RAFP au plus
+    tôt à l'âge légal de la génération et jamais avant celui des régimes dont il suit
+    les années
+  javascript: "moteur/js/droit/departs.js : departs (RAFP, ageLegal)"
+  parametres: >-
+    l'âge de L. 161-17-2 par génération (legislation/age_ouverture_requis.csv) : il vaut
+    soixante ans pour toute génération qui atteint soixante ans avant le 3 juin 2011,
+    si bien que les deux versions se lisent dans la même table
+  tests: tests/test_departs.py ; le témoin departs_super_actif_rafp_a_l_age_legal
 historique:
 - >-
   2026-09-29 — née avec le domaine des départs multiples.
+- >-
+  2026-09-29 — transcrite : le RAFP liquide à l'âge légal, avec ou après les régimes
+  dont il suit les années ; sans primes, aucun départ de plus.
 effet: >-
   Tout fonctionnaire ou militaire qui liquide sa pension avant l'âge légal — catégories
   active et super-active, carrière longue, militaires — et qui a des points au RAFP :

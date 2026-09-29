@@ -437,6 +437,16 @@ class PensionServie:
         self.catalogue = simulateur.catalogue
         self.revalorisations = simulateur.revalorisations
 
+    @classmethod
+    def du_moteur(cls, moteur) -> "PensionServie":
+        """La même règle, tirée du moteur du scénario 1 seul : ce qu'une
+        liquidation lit quand elle doit voir une pension déjà servie."""
+        servie = cls.__new__(cls)
+        servie.actuel = moteur
+        servie.catalogue = moteur.catalogue
+        servie.revalorisations = moteur.revalorisations_pensions
+        return servie
+
     def coefficient(self, pension, annee_liquidation: int, depart: date,
                     jusqu_a: date, mensuel_2019: float | None
                     ) -> tuple[float, str, Fiabilite]:
@@ -511,6 +521,34 @@ class PensionServie:
                 min(fiabilite, fiabilite_decrets, fiabilite_generale))
 
 
+def mener_au_mois(moteur, pensions, depart, jusqu_a) -> list[float]:
+    """Ce que valent, au premier jour du mois ``jusqu_a``, des pensions
+    liquidées au premier jour du mois ``depart`` (deux ``DateMois``) : chacune
+    menée par la règle de son régime (:class:`PensionServie`).
+
+    C'est ce qu'un départ suivant voit servi (:mod:`.droit.departs`) : le
+    minimum contributif s'écrête sur les pensions « afférents au mois civil de
+    la date d'effet de celle-ci » (R. 173-7), et le montant de ce mois compte
+    la revalorisation qui tombe le jour même. La tranche de 2020 se choisit sur
+    ces seules pensions, les seules servies en décembre 2019.
+    """
+    servie = PensionServie.du_moteur(moteur)
+    debut = date(depart.annee, depart.mois, 1)
+    fin = date(jusqu_a.annee, jusqu_a.mois, 1)
+    if fin <= debut:
+        return [pension.montant for pension in pensions]
+    mensuel_2019 = None
+    if debut <= date(2020, 1, 1) <= fin:
+        jusqu_2019 = [
+            servie.coefficient(p, depart.annee, debut, MOIS_DES_TRANCHES, None)[0]
+            if debut <= MOIS_DES_TRANCHES else 0.0
+            for p in pensions
+        ]
+        mensuel_2019 = sum(p.montant * c for p, c in zip(pensions, jusqu_2019)) / 12.0
+    return [p.montant * servie.coefficient(p, depart.annee, debut, fin, mensuel_2019)[0]
+            for p in pensions]
+
+
 def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Revalorisee:
     """L'étape « faire vivre » (docs/architecture.md, § 7.4) : les pensions
     du système 1 menées jusqu'en ``annee`` — l'année courante par défaut.
@@ -519,6 +557,11 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
     recalculé de la carrière : seuls les montants de chaque régime sont
     revalorisés, selon la règle de leur texte. Une revalorisation ne relance
     jamais la liquidation.
+
+    Quand les régimes liquident à des dates différentes
+    (:mod:`.droit.departs`), chaque pension part de SA date d'effet et de son
+    montant à cette date ; celle qui n'est pas encore servie à l'échéance n'y
+    est pas.
     """
     parametres = simulateur.parametres
     annee = parametres.annee_courante if annee is None else annee
@@ -527,7 +570,24 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
     depart = date(liquidation, carriere.date_liquidation.mois, 1)
     fin = date(annee, 12, 31)
     isoler = parametres.isoler_capitalisation
-    pensions = list(resultat.pensions_par_regime)
+    #: Chaque pension, son année de liquidation, sa date d'effet et son
+    #: montant à cette date : ceux du départ, sauf pour une pension datée.
+    datees = [
+        (p, liquidation, depart, p.montant) if p.date_effet is None
+        else (p, int(p.date_effet[:4]), date.fromisoformat(p.date_effet),
+              p.montant_a_l_effet)
+        for p in resultat.pensions_par_regime
+    ]
+    a_venir = {p.regime for p, _, debut, _ in datees
+               if p.date_effet is not None and debut > fin}
+    datees = [(p, a, d, m) for p, a, d, m in datees if p.regime not in a_venir]
+    pensions = [p for p, _, _, _ in datees]
+    #: Ce qui ramène le montant d'une pension datée, en euros du départ, à
+    #: son montant à sa date d'effet : la part de la majoration qu'elle porte
+    #: se ramène de même.
+    a_l_effet = {p.regime: (p.montant_a_l_effet / p.montant
+                            if p.date_effet is not None and p.montant else 1.0)
+                 for p in resultat.pensions_par_regime}
     majoration = sum(a.montant for a in resultat.avantages_appliques
                      if a.code == "majoration_enfants")
 
@@ -552,7 +612,8 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
         if masse <= 0:
             return coefficient_moyen(coefficients)
         par_regime = {p.regime: c for p, c in zip(pensions, coefficients)}
-        return sum(part * par_regime.get(code, 1.0)
+        par_regime |= {code: 0.0 for code in a_venir}
+        return sum(part * a_l_effet.get(code, 1.0) * par_regime.get(code, 1.0)
                    for code, part in parts_majoration) / masse
 
     # LA TRANCHE DE 2020 se choisit sur le montant total de décembre 2019 :
@@ -563,28 +624,29 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
     # décembre : l'article 81 regarde le montant « reçu […] le mois précédent
     # celui auquel intervient la revalorisation », et il était nul.
     mensuel_2019 = None
-    if depart <= date(2020, 1, 1) <= fin:
+    premier = min((debut for _, _, debut, _ in datees), default=depart)
+    if premier <= date(2020, 1, 1) <= fin:
         jusqu_2019 = [
-            servie.coefficient(p, liquidation, depart, MOIS_DES_TRANCHES, None)[0]
-            if depart <= MOIS_DES_TRANCHES else 0.0
-            for p in pensions
+            servie.coefficient(p, a, debut, MOIS_DES_TRANCHES, None)[0]
+            if debut <= MOIS_DES_TRANCHES else 0.0
+            for p, a, debut, _ in datees
         ]
         mensuel_2019 = (
-            sum(p.montant * c for p, c in zip(pensions, jusqu_2019))
+            sum(montant * c for (_, _, _, montant), c in zip(datees, jusqu_2019))
             + majoration * coefficient_de_la_majoration(jusqu_2019)
         ) / 12.0
 
     regimes = []
     coefficients = []
     fiabilite = Fiabilite.CERTIFIEE
-    for pension in pensions:
+    for pension, a, debut, montant in datees:
         coefficient, regle, fiabilite_regime = servie.coefficient(
-            pension, liquidation, depart, fin, mensuel_2019)
+            pension, a, debut, fin, mensuel_2019)
         coefficients.append(coefficient)
         fiabilite = min(fiabilite, fiabilite_regime)
         regimes.append(RegimeServi(
             regime=pension.regime,
-            au_depart=pension.montant,
+            au_depart=montant,
             coefficient=coefficient,
             regle=regle,
             fiabilite=fiabilite_regime,

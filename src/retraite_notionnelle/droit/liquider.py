@@ -322,13 +322,16 @@ class Pensions:
 
 
 def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
-                           contexte: Contexte | None = None) -> Pensions:
+                           contexte: Contexte | None = None,
+                           regimes: frozenset[str] | None = None) -> Pensions:
     """La pension de chaque régime où le relevé porte un droit.
 
     La durée requise de référence, que l'étape « ouvrir le droit » a lue, est
     celle que l'abattement des complémentaires oppose. Le contexte dit ce que
     le calcul neutralise : la décote, la surcote et l'abattement liés à l'âge
     pour valoriser des droits acquis ; l'AVPF pour en mesurer l'apport.
+    ``regimes`` sont ceux que la demande vise, quand ils ne liquident pas tous
+    au même départ (:mod:`.departs`) ; ``None`` : tous.
     """
     carriere = releve.carriere
     durees, droits = releve.durees, releve.droits
@@ -338,7 +341,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     requis_reference = ouverture.requis
     ignorer_penalite_age = contexte is not None and contexte.neutralise("decote_surcote")
     avpf = contexte is None or not contexte.neutralise("avpf")
-    codes = droits.codes
+    codes = [code for code in droits.codes if regimes is None or code in regimes]
     groupes = releve.groupes
 
     pensions: list[PensionRegime] = []

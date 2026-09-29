@@ -583,6 +583,17 @@ affirmations:
     etat: verifiee
     controle: pension_d_aujourd_hui_revalorisee
 
+  - id: simuler.pensions_a_leur_date
+    page: /simuler
+    extrait: "Vos pensions ne commencent pas toutes à la même date."
+    porte: >-
+      quand les régimes n'ouvrent pas tous au départ déclaré, chacun liquide à
+      sa date : la page dit quand chaque pension commence, et le montant du
+      système 1 les compte toutes, sauf celles qui ne sont pas encore servies
+      aujourd'hui
+    etat: verifiee
+    controle: pensions_a_leur_date
+
   - id: simuler.ecart_fiche_de_paie
     page: /simuler
     extrait: "sur votre fiche de paie"

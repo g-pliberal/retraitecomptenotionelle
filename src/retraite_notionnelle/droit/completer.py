@@ -123,13 +123,16 @@ class Complements:
 
 
 def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
-              liquidees: Pensions, contexte: Contexte | None = None) -> Complements:
+              liquidees: Pensions, contexte: Contexte | None = None,
+              servies: float = 0.0) -> Complements:
     """Les pensions de ``liquidees``, complétées de ce que le droit y ajoute.
 
     Le contexte dit ce que le calcul neutralise : les avantages non
     contributifs, que la cascade retire pour en mesurer l'apport ; la décote
     et la surcote, pour valoriser des droits acquis — la surcote parentale
-    part avec elles.
+    part avec elles. ``servies`` est ce que valent, par an, à la date d'effet,
+    les pensions que des départs précédents servent déjà
+    (:mod:`.departs`) : l'écrêtement du minimum contributif les compte.
     """
     carriere = releve.carriere
     durees, droits = releve.durees, releve.droits
@@ -193,8 +196,10 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             # ce qui dépasse le plafond, tous régimes confondus, et jamais
             # au-delà. La comparaison porte sur les pensions PERSONNELLES,
             # majorations pour enfants exclues — raison de plus pour que
-            # celles-ci se calculent après, sur le montant relevé.
-            admissible = max(0.0, min(releve_minimum, plafond - total))
+            # celles-ci se calculent après, sur le montant relevé —, celles
+            # que d'autres départs servent déjà comprises, au montant du mois
+            # de la date d'effet (R. 173-7).
+            admissible = max(0.0, min(releve_minimum, plafond - total - servies))
             if admissible < releve_minimum:
                 facteur = admissible / releve_minimum
                 complements = {

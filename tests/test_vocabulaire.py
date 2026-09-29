@@ -115,6 +115,7 @@ PRESOMPTIONS_DU_5_6 = {
     "survivant sans autres ressources que ses réversions": "ressources_du_survivant",
     "réversion demandée dans l'année du décès": "reversion_demandee_dans_l_annee",
     "décès supposé juste après le départ": "deces_apres_le_depart",
+    "chaque pension demandée au départ déclaré": "depart_de_chaque_regime",
 }
 
 

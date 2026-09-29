@@ -359,14 +359,18 @@ def test_chaque_temoin_declare_ses_appels_de_liquider_sous_le_nombre_declare():
     """Chaque témoin compte ses appels de ``liquider``, liquidations d'essai
     comprises : ``scripts/construire_temoins.py`` les écrit, le portage
     JavaScript les refait (``tests/js/moteur.test.js``), et aucun ne dépasse
-    le nombre déclaré (docs/architecture.md, § 7.8)."""
+    le nombre déclaré (docs/architecture.md, § 7.8), qui vaut par départ
+    quand les régimes liquident à des dates différentes."""
     temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
                          .read_text(encoding="utf-8"))
     appels = {nom: temoin.get("appels_liquider") for nom, temoin in temoins.items()}
     sans = sorted(nom for nom, n in appels.items() if not isinstance(n, int))
     assert not sans, f"témoins sans appels déclarés : {sans[:5]}"
-    trop = {nom: n for nom, n in appels.items() if n > liquidation.APPELS_DECLARES}
-    assert not trop, f"au-delà de {liquidation.APPELS_DECLARES} appels : {trop}"
+    departs = {nom: len(temoin["resultat"]["scenarios"]["actuel"].get("departs", ())) or 1
+               for nom, temoin in temoins.items()}
+    trop = {nom: n for nom, n in appels.items()
+            if n > liquidation.APPELS_DECLARES * departs[nom]}
+    assert not trop, f"au-delà de {liquidation.APPELS_DECLARES} appels par départ : {trop}"
     assert min(appels.values()) >= 1
 
 
@@ -377,9 +381,13 @@ PAS = 5
 
 
 def _requetes() -> list[dict]:
+    """Une requête sur cinq des témoins, et toutes celles dont les régimes
+    liquident à des dates différentes (:mod:`~retraite_notionnelle.droit.departs`) :
+    ce sont les seules qui passent par ce chemin."""
     temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
                          .read_text(encoding="utf-8"))
-    return [temoin["requete"] for temoin in list(temoins.values())[::PAS]]
+    return [temoin["requete"] for rang, temoin in enumerate(temoins.values())
+            if rang % PAS == 0 or "departs" in temoin["resultat"]["scenarios"]["actuel"]]
 
 
 def _python(requetes: list[dict]) -> list[dict]:
@@ -414,10 +422,13 @@ def _python(requetes: list[dict]) -> list[dict]:
                 sortie.append({"erreur": "aucune carrière simulée"})
                 continue
             journal = saisies[0].journal
-            [liquidee] = [e.contenu for e in journal if e.sorte == "liquidation"]
-            sortie.append({"ouverture": liquidee.ouverture.donnees(),
-                           "pensions": liquidee.pensions.donnees(),
-                           "complements": liquidee.complements.donnees(),
+            # Une liquidation par départ : une seule, sauf quand les régimes
+            # liquident à des dates différentes.
+            sortie.append({"liquidations": [
+                {"ouverture": liquidee.ouverture.donnees(),
+                 "pensions": liquidee.pensions.donnees(),
+                 "complements": liquidee.complements.donnees()}
+                for liquidee in (e.contenu for e in journal if e.sorte == "liquidation")],
                            "journal": journal.donnees(),
                            "appels": liquidation.appels() - avant})
     finally:
@@ -472,6 +483,8 @@ def test_les_deux_moteurs_liquident_et_journalisent_a_l_identique():
     assert sum("journal" in a for a in attendus) > 0.9 * len(requetes)
     assert any(any(e["contenu"]["sorte"] == "revalorisation" for e in a["journal"])
                for a in attendus if "journal" in a), "au moins une échéance"
+    assert any(len(a["liquidations"]) > 1 for a in attendus if "liquidations" in a), \
+        "au moins une carrière dont les régimes liquident à des dates différentes"
     ecarts: list[str] = []
     for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
         _ecarts(obtenu, attendu, f"requête {rang}", ecarts)

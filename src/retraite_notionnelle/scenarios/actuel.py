@@ -59,7 +59,7 @@ from __future__ import annotations
 
 import csv
 from bisect import bisect_right
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -76,16 +76,38 @@ from ..donnees.chargement import (
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import CatalogueRegimes, ClassesCotisation, SalairesForfaitaires
 from ..droit import coordonner
+from ..droit import departs as _departs
 from ..droit import foyer as _foyer
 from ..droit import liquidation as _liquidation
 # Ce que les étapes créent, que les appelants du scénario 1 lisent ici.
 from ..droit.commun import AvantageApplique, PensionRegime  # noqa: F401
 from ..noyau import versions
-from ..revalorisation import RevalorisationsPensions
+from ..revalorisation import RevalorisationsPensions, mener_au_mois
 
 if TYPE_CHECKING:
     from ..droit.foyer import Foyer
     from ..droit.liquidation import Liquidation
+
+
+@dataclass(frozen=True)
+class DepartServi:
+    """Ce qu'un départ fait servir, quand les régimes liquident à des dates
+    différentes (:mod:`~retraite_notionnelle.droit.departs`)."""
+
+    #: La date d'effet (AAAA-MM-JJ), et ce qui la date : ``depart``,
+    #: ``ouverture`` ou ``sortie``.
+    date_effet: str
+    motif: str
+    regimes: tuple[str, ...]
+    #: Ce que ses pensions servent par an, majoration pour enfants comprise :
+    #: en euros du départ déclaré, puis à sa date d'effet, dans ses euros.
+    montant: float
+    montant_a_l_effet: float
+
+    def donnees(self) -> dict:
+        return {"date_effet": self.date_effet, "motif": self.motif,
+                "regimes": list(self.regimes), "montant": self.montant,
+                "montant_a_l_effet": self.montant_a_l_effet}
 
 
 @dataclass
@@ -119,6 +141,11 @@ class ResultatActuel:
     #: ``non_ouverte``.
     motif_ouverture: str = "age_legal"
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
+    #: Les départs, quand les régimes liquident à des dates différentes
+    #: (:func:`resultat_des_departs`) ; vide pour un départ unique. Les
+    #: montants du résultat sont alors ceux du départ déclaré : la pension
+    #: complète, chaque pension y étant menée ou ramenée.
+    departs: tuple[DepartServi, ...] = ()
 
     @property
     def pension_mensuelle(self) -> float:
@@ -151,6 +178,131 @@ def resultat_actuel(liquidation: Liquidation, foyer: Foyer) -> ResultatActuel:
         motif_ouverture=liquidation.ouverture.motif,
         fiabilite=fiabilite,
     )
+
+
+def _ramener(moteur, depart: _departs.Depart, declare: DateMois,
+             pensions) -> list[float]:
+    """Ce qui mène chaque pension d'un départ aux euros du départ déclaré :
+    la revalorisation de son régime pour une pension déjà servie, les prix
+    pour une pension qui ne commence qu'après."""
+    if depart.date == declare:
+        return [1.0] * len(pensions)
+    if depart.date > declare:
+        return [moteur.macro.coefficient_prix(depart.date.annee, declare.annee)] * len(pensions)
+    menes = mener_au_mois(moteur, pensions, depart.date, declare)
+    return [mene / pension.montant if pension.montant else 1.0
+            for pension, mene in zip(pensions, menes)]
+
+
+def _detail_date(detail: str, depart: _departs.Depart, declare: DateMois,
+                 montant: float, ramene: float) -> str:
+    """La formule d'une pension datée, et ce qu'elle vaut au départ déclaré."""
+    if depart.date == declare:
+        return detail
+    if depart.date < declare:
+        return (f"{detail} ; servie depuis le 1er {depart.date}, {montant:,.2f} € à "
+                f"cette date, {ramene:,.2f} € au départ")
+    return (f"{detail} ; servie à partir du 1er {depart.date}, {montant:,.2f} € de "
+            f"{depart.date.annee}, soit {ramene:,.2f} € de {declare.annee}")
+
+
+def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
+                         contexte) -> ResultatActuel:
+    """Le scénario 1 d'une carrière dont les régimes liquident à des dates
+    différentes (:mod:`~retraite_notionnelle.droit.departs`).
+
+    LES MONTANTS SONT CEUX DU DÉPART DÉCLARÉ, pour que la page compare les six
+    systèmes à la même date : la pension déjà servie y est menée par la
+    revalorisation de son régime, celle qui ne commence qu'après y est
+    ramenée par les prix. ``pension_annuelle`` est donc la pension COMPLÈTE,
+    celle qu'on touche une fois tous les régimes liquidés, en euros du départ ;
+    :attr:`ResultatActuel.departs` dit ce que chaque départ y ajoute, et
+    quand. Chaque pension garde sa date d'effet et son montant à cette date,
+    que « faire vivre » reprend. Les durées, le taux et l'ouverture sont ceux
+    de la liquidation du départ déclaré ; l'ASPA se lit à ce départ, sur la
+    pension complète.
+    """
+    declare = carriere.date_liquidation
+    principale = next((liquidation for depart, liquidation in zip(departs, liquidations)
+                       if depart.date == declare), liquidations[-1])
+    isoler = moteur.parametres.isoler_capitalisation
+    pensions = []
+    avantages: dict[str, AvantageApplique] = {}
+    servis = []
+    total = hors_repartition = total_contributif = 0.0
+    fiabilite = Fiabilite.CERTIFIEE
+    for depart, liquidation in zip(departs, liquidations):
+        regimes = list(liquidation.regimes)
+        facteurs = _ramener(moteur, depart, declare, regimes)
+        par_regime = {p.regime: f for p, f in zip(regimes, facteurs)}
+        nues = sum(p.montant for p in regimes)
+        moyen = (sum(p.montant * f for p, f in zip(regimes, facteurs)) / nues
+                 if nues else (facteurs[0] if facteurs else 1.0))
+        for pension, facteur in zip(regimes, facteurs):
+            ramene = pension.montant * facteur
+            pensions.append(replace(
+                pension, montant=ramene, date_effet=depart.date_effet,
+                montant_a_l_effet=pension.montant,
+                detail=_detail_date(pension.detail, depart, declare, pension.montant, ramene)))
+            if isoler and moteur.catalogue[pension.regime].hors_repartition:
+                hors_repartition += ramene
+        majoration = 0.0
+        for avantage in liquidation.avantages:
+            parts = tuple((code, part * par_regime.get(code, moyen))
+                          for code, part in avantage.par_regime)
+            montant = (sum(part for _, part in parts) if parts
+                       else avantage.montant * moyen)
+            if avantage.code == "majoration_enfants":
+                majoration += montant
+            deja = avantages.get(avantage.code)
+            if deja is None:
+                avantages[avantage.code] = replace(avantage, montant=montant, par_regime=parts)
+            else:
+                details = [d for d in (deja.detail, avantage.detail) if d]
+                avantages[avantage.code] = replace(
+                    deja, montant=deja.montant + montant,
+                    detail=" ; ".join(dict.fromkeys(details)),
+                    par_regime=deja.par_regime + parts)
+        servi = sum(p.montant * f for p, f in zip(regimes, facteurs)) + majoration
+        total += servi
+        total_contributif += liquidation.total_contributif * moyen
+        fiabilite = min(fiabilite, liquidation.fiabilite)
+        servis.append(_departs_servi(depart, liquidation, servi))
+    foyer = _foyer.foyer_et_net(
+        moteur, carriere.personne, _departs.Depart(declare).date_effet, declare.annee,
+        total, (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE,
+        contexte)
+    liste = list(avantages.values())
+    if foyer.minimum_vieillesse > 0:
+        total = foyer.plafond
+        fiabilite = min(fiabilite, foyer.fiabilite)
+        liste.append(foyer.avantage())
+    return ResultatActuel(
+        pension_annuelle=max(0.0, total - hors_repartition),
+        pension_hors_repartition=hors_repartition,
+        pensions_par_regime=pensions,
+        avantages_appliques=liste,
+        total_contributif=total_contributif,
+        trimestres_valides=principale.releve.durees.trimestres,
+        trimestres_requis=principale.pensions.requis,
+        taux_liquidation=principale.pensions.taux,
+        minimum_applique=any(l.complements.minimum_applique for l in liquidations),
+        age_ouverture_opposable=principale.ouverture.age,
+        liquidation_ouverte=all(l.ouverture.ouverte for l in liquidations),
+        motif_ouverture=principale.ouverture.motif,
+        fiabilite=fiabilite,
+        departs=tuple(servis),
+    )
+
+
+def _departs_servi(depart, liquidation, servi: float) -> DepartServi:
+    """Ce qu'un départ ajoute à la pension, dans les deux euros."""
+    a_l_effet = sum(p.montant for p in liquidation.regimes) + sum(
+        a.montant for a in liquidation.complements.avantages if a.code == "majoration_enfants")
+    return DepartServi(
+        date_effet=depart.date_effet, motif=depart.motif,
+        regimes=tuple(p.regime for p in liquidation.regimes),
+        montant=servi, montant_a_l_effet=a_l_effet)
 
 
 class Rendements:
@@ -2152,6 +2304,13 @@ class ScenarioActuel:
             ("successions", not liquider_successions),
         ) if neutre)
         contexte = _liquidation.Contexte(self, neutralisations)
+        # CHAQUE RÉGIME LIQUIDE À SA DATE (:mod:`~retraite_notionnelle.droit.departs`),
+        # sauf la liquidation fictive, qui valorise des droits à une date.
+        departs = _departs.departs(self, carriere) if nature != "fictive" else ()
+        if len(departs) > 1:
+            liquidations = _departs.liquider_les_departs(
+                self, carriere, contexte, nature, departs)
+            return resultat_des_departs(self, carriere, departs, liquidations, contexte)
         liquidation = _liquidation.liquider(
             _liquidation.demande_de_depart(carriere, nature),
             _liquidation.Etat(carriere), contexte)
