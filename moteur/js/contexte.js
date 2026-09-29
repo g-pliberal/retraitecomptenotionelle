@@ -312,6 +312,7 @@ export class Contexte {
       naissances_enfants: saisie.naissancesEnfants(),
       conjoint: saisie.conjointDeclare(),
       deces: saisie.decesDeclare(),
+      retraite_progressive: saisie.retraiteProgressiveDeclaree(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -405,6 +406,7 @@ export class Contexte {
       naissances_enfants: saisie.naissancesEnfants(),
       conjoint: saisie.conjointDeclare(),
       deces: saisie.decesDeclare(),
+      retraite_progressive: saisie.retraiteProgressiveDeclaree(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });

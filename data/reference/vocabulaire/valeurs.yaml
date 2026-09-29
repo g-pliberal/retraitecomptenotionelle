@@ -138,6 +138,7 @@ listes:
     # quelle nature (§ 7.4).
     valeurs:
       depart: {dit: un départ en retraite, liquider: true, motif: vieillesse, nature: definitive}
+      retraite_progressive: {dit: la demande d'une retraite progressive, qui liquide à titre provisoire et sert une fraction, liquider: true, motif: vieillesse, nature: provisoire}
       pension_definitive: {dit: la pension définitive qui suit une retraite progressive, liquider: true, motif: vieillesse, nature: definitive}
       seconde_pension: {dit: la seconde pension de qui retravaille, liquider: true, motif: vieillesse, nature: seconde}
       reversion: {dit: l'ouverture d'une réversion, liquider: true, motif: reversion, nature: definitive}

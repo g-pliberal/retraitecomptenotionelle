@@ -35,19 +35,21 @@ Son jumeau est ``moteur/js/echeancier.js``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
 from . import chronologie as chrono
 from .droit import departs as _departs
 from .droit import foyer as _foyer
 from .droit import liquidation as _liquidation
+from .droit import progressive as _progressive
 from .droit import reversion as _reversion
 from .droit.commun import date_d_effet
 from .journal import Entree, Journal
 from .noyau import vocabulaire
 from .revalorisation import aujourd_hui, faire_vivre, foyer_a_l_echeance
-from .scenarios.actuel import MinimumVieillesse, resultat_actuel, resultat_des_departs
+from .scenarios.actuel import (MinimumVieillesse, etat_du_depart, progressive_servie,
+                               resultat_actuel, resultat_des_departs)
 
 if TYPE_CHECKING:
     from .carriere import Carriere
@@ -122,18 +124,33 @@ class Echeancier:
         #: La réversion que le décès de l'assuré ouvre à son conjoint, quand la
         #: chronologie les dit.
         self.reversion: _reversion.Reversion | None = None
+        #: La retraite progressive que la carrière demande, sa liquidation
+        #: provisoire, et, ouverte, le plancher que les départs gardent.
+        self.progressive: _progressive.Progressive | None = None
+        self.provisoire = None
+        self.plancher: tuple | None = None
+        #: Les composantes servies par la retraite progressive, que celles de
+        #: la pension complète remplacent dans leur lignée.
+        self._progressives: dict[str, str] = {}
 
     def parcourir(self, carriere: Carriere, echeance: int | None = None) -> Journal:
         """Les événements de ``carriere``, dans l'ordre, puis, s'il y en a une,
         l'échéance ``echeance`` (une année), à laquelle les pensions liquidées
-        sont menées."""
+        sont menées. Une retraite progressive vient d'abord ; le départ qui
+        la suit est celui de la pension définitive."""
+        self._progresser(carriere)
         departs = _departs.departs(self.moteur, carriere)
         if len(departs) > 1:
             self._partir(carriere, departs)
         else:
             evenements = [e for e in (depart_de(carriere),) if e is not None]
+            if self.plancher is not None:
+                evenements = [replace(e, sorte="pension_definitive") for e in evenements]
             for evenement in sorted(evenements, key=lambda e: (e.date, e.rang)):
                 self._traiter(evenement, carriere)
+        if self.au_depart is not None and self.progressive is not None:
+            self.au_depart = replace(self.au_depart, retraite_progressive=progressive_servie(
+                self.progressive, self.provisoire, carriere.date_liquidation))
         if self.au_depart is not None and carriere.conjoint is not None:
             if carriere.deces is not None:
                 self._reverser(carriere)
@@ -194,6 +211,51 @@ class Echeancier:
                                  for p in self.au_depart.pensions_par_regime
                                  if p.regime not in vues]
 
+    def _progresser(self, carriere: Carriere) -> None:
+        """La retraite progressive que la carrière demande : examinée, et,
+        ouverte, liquidée à titre provisoire et inscrite, chaque composante
+        pour la fraction qu'elle sert (:mod:`.droit.progressive`)."""
+        progressive = _progressive.examiner(self.moteur, carriere)
+        self.progressive = progressive
+        if progressive is None or not progressive.ouverte:
+            return
+        contexte = _liquidation.Contexte(self.moteur)
+        provisoire = _progressive.liquider(self.moteur, carriere, contexte, progressive,
+                                           self.journal)
+        progressive = _progressive.avec_la_duree(progressive, provisoire)
+        self.progressive, self.provisoire = progressive, provisoire
+        if not progressive.ouverte:
+            return
+        self.plancher = (progressive, provisoire)
+        evenement = Evenement(
+            id=f"retraite_progressive_{carriere.personne}", date=progressive.date_effet,
+            personnes=(carriere.personne,), vise={"regimes": sorted(progressive.regimes)},
+            sorte="retraite_progressive")
+        self._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date)
+        self._inscrire(evenement, f"liquidation_{evenement.id}", "liquidation", provisoire,
+                       evenement.date)
+        pourcent = f"{progressive.fraction * 100:.0f}"
+        for composante in provisoire.composantes():
+            entiere = composante["montant"]["annuel"]
+            servie = dict(composante, id=f"progressive_{composante['id']}",
+                          montant={"annuel": entiere * progressive.fraction, "monnaie": "EUR"},
+                          detail=(f"{composante['detail']} ; retraite progressive : "
+                                  f"{pourcent} % de {entiere:,.2f} €"))
+            self._inscrire(evenement, servie["id"], "composante", servie, evenement.date)
+            cle = ("majoration_enfants" if composante["id"].startswith("majoration_enfants")
+                   else composante["id"])
+            self._progressives[cle] = servie["id"]
+
+    def _composantes(self, evenement: Evenement, liquidation) -> None:
+        """Les composantes d'une liquidation définitive, inscrites : celles
+        qu'une retraite progressive servait déjà sont remplacées dans leur
+        lignée."""
+        for composante in liquidation.composantes():
+            cle = ("majoration_enfants" if composante["id"].startswith("majoration_enfants")
+                   else composante["id"])
+            self._inscrire(evenement, composante["id"], "composante", composante,
+                           evenement.date, remplace=self._progressives.pop(cle, None))
+
     def _traiter(self, evenement: Evenement, carriere: Carriere) -> None:
         sorte = SORTES[evenement.sorte]
         self._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date)
@@ -205,7 +267,8 @@ class Echeancier:
             motif=sorte.get("motif", "vieillesse"), nature=sorte.get("nature", "definitive"))
         contexte = _liquidation.Contexte(self.moteur)
         liquidation = _liquidation.liquider(
-            demande, _liquidation.Etat(carriere, self.journal), contexte)
+            demande, etat_du_depart(self.moteur, carriere, self.plancher, self.journal),
+            contexte)
         liquidee = liquidation.carriere
         foyer = _foyer.foyer_et_net(
             self.moteur, liquidee.personne, evenement.date, liquidee.annee_liquidation,
@@ -214,9 +277,7 @@ class Echeancier:
         self.au_depart = resultat_actuel(liquidation, foyer)
         self._inscrire(evenement, f"liquidation_{evenement.id}", "liquidation", liquidation,
                        evenement.date)
-        for composante in liquidation.composantes():
-            self._inscrire(evenement, composante["id"], "composante", composante,
-                           evenement.date)
+        self._composantes(evenement, liquidation)
         self._inscrire(evenement, f"foyer_{evenement.id}", "foyer", foyer, evenement.date)
 
     def _partir(self, carriere: Carriere, departs: tuple[_departs.Depart, ...]) -> None:
@@ -228,7 +289,8 @@ class Echeancier:
         declare = depart_de(carriere)
         contexte = _liquidation.Contexte(self.moteur)
         liquidations = _departs.liquider_les_departs(
-            self.moteur, carriere, contexte, liste=departs, journal=self.journal)
+            self.moteur, carriere, contexte, liste=departs, journal=self.journal,
+            progressive=self.plancher)
         for depart, liquidation in zip(departs, liquidations):
             evenement = Evenement(
                 id=f"depart_{carriere.personne}_{depart.date_effet}", date=depart.date_effet,
@@ -239,9 +301,7 @@ class Echeancier:
             self._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date)
             self._inscrire(evenement, f"liquidation_{evenement.id}", "liquidation",
                            liquidation, evenement.date)
-            for composante in liquidation.composantes():
-                self._inscrire(evenement, composante["id"], "composante", composante,
-                               evenement.date)
+            self._composantes(evenement, liquidation)
         self.au_depart = resultat_des_departs(
             self.moteur, carriere, departs, liquidations, contexte)
         foyer = _foyer.foyer_et_net(
@@ -275,6 +335,6 @@ class Echeancier:
                                      foyer, remplace=depart.id))
 
     def _inscrire(self, evenement: Evenement, ident: str, sorte: str, contenu,
-                  debut: str) -> None:
+                  debut: str, remplace: str | None = None) -> None:
         self.journal.inscrire(Entree(ident, evenement.id, evenement.date, debut, None,
-                                     sorte, contenu))
+                                     sorte, contenu, remplace=remplace))

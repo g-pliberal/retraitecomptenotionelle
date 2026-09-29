@@ -44,6 +44,7 @@ import { Fiabilite } from "./serie.js";
 import * as lesDeparts from "./droit/departs.js";
 import { foyerEtNet } from "./droit/foyer.js";
 import * as liquidation from "./droit/liquidation.js";
+import * as lesProgressives from "./droit/progressive.js";
 
 /** Rang du mois de septembre 2026 : premières pensions des parents à 24/23 ans. */
 const PARENTS_MEILLEURES_ANNEES_DEPUIS = 2026 * 12 + 8;
@@ -230,23 +231,44 @@ export class ScenarioActuel {
       ["successions", !liquiderSuccessions],
     ].filter(([, neutre]) => neutre).map(([nom]) => nom);
     const contexte = new liquidation.Contexte(this, neutralisations);
+    // LA RETRAITE PROGRESSIVE (`droit/progressive.js`) se liquide d'abord, à
+    // titre provisoire, et laisse aux départs le plancher de la pension
+    // complète. La liquidation fictive ne la voit pas.
+    let progressive = null;
+    let provisoire = null;
+    if (nature !== "fictive") {
+      progressive = lesProgressives.examiner(this, carriereSaisie);
+      if (progressive !== null && progressive.ouverte) {
+        provisoire = lesProgressives.liquider(this, carriereSaisie, contexte, progressive);
+        progressive = lesProgressives.avecLaDuree(progressive, provisoire);
+      }
+    }
+    const plancher = progressive !== null && progressive.ouverte
+      ? [progressive, provisoire] : null;
     // CHAQUE RÉGIME LIQUIDE À SA DATE (`droit/departs.js`), sauf la
     // liquidation fictive, qui valorise des droits à une date.
     const departs = nature !== "fictive" ? lesDeparts.departs(this, carriereSaisie) : [];
+    let sortie;
     if (departs.length > 1) {
       const liquidations = lesDeparts.liquiderLesDeparts(
-        this, carriereSaisie, contexte, nature, departs);
-      return resultatDesDeparts(this, carriereSaisie, departs, liquidations, contexte);
+        this, carriereSaisie, contexte, nature, departs, null, plancher);
+      sortie = resultatDesDeparts(this, carriereSaisie, departs, liquidations, contexte);
+    } else {
+      const resultat = liquidation.liquider(
+        liquidation.demandeDeDepart(carriereSaisie, nature),
+        etatDuDepart(this, carriereSaisie, plancher), contexte);
+      const carriere = resultat.carriere;
+      const foyer = foyerEtNet(
+        this, carriere.personne, resultat.demande.dateEffet, carriere.anneeLiquidation,
+        resultat.total, (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE,
+        contexte);
+      sortie = resultatActuel(resultat, foyer);
     }
-    const resultat = liquidation.liquider(
-      liquidation.demandeDeDepart(carriereSaisie, nature),
-      new liquidation.Etat(carriereSaisie), contexte);
-    const carriere = resultat.carriere;
-    const foyer = foyerEtNet(
-      this, carriere.personne, resultat.demande.dateEffet, carriere.anneeLiquidation,
-      resultat.total, (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE,
-      contexte);
-    return resultatActuel(resultat, foyer);
+    if (progressive !== null) {
+      sortie.retraite_progressive = progressiveServie(progressive, provisoire,
+        carriereSaisie.dateLiquidation);
+    }
+    return sortie;
   }
 }
 
@@ -281,6 +303,55 @@ export function resultatActuel(resultat, foyer) {
     pension_mensuelle: Math.max(0.0, total - resultat.horsRepartition) / 12.0,
     // Un seul départ : tous les régimes liquident à la même date.
     departs: [],
+    retraite_progressive: null,
+  };
+}
+
+/**
+ * L'état du départ unique : la carrière, et, après une retraite progressive,
+ * la pension provisoire de ses régimes de base, menée au départ, que la
+ * pension complète garde (`droit/progressive.js`).
+ */
+export function etatDuDepart(moteur, carriere, plancher, journal = null) {
+  if (plancher === null) {
+    return new liquidation.Etat(carriere, journal);
+  }
+  const [progressive, provisoire] = plancher;
+  return new liquidation.Etat(carriere, journal, [],
+    lesProgressives.initiales(moteur, progressive, provisoire, carriere.dateLiquidation),
+    lesProgressives.recalculee(carriere.dateLiquidation));
+}
+
+/**
+ * La retraite progressive, telle que le résultat la dit, pour un départ à
+ * `depart`. Voir le Python.
+ */
+export function progressiveServie(progressive, provisoire, depart) {
+  const provisoireTotal = provisoire !== null ? provisoire.total : 0.0;
+  return {
+    date_effet: progressive.dateEffet,
+    quotite: progressive.quotite,
+    motif: progressive.motif,
+    fraction: progressive.fraction,
+    regimes: [...progressive.regimes].sort(),
+    montant_provisoire: provisoireTotal,
+    montant_servi: progressive.fraction * provisoireTotal,
+    age_minimum: progressive.ageMinimum,
+    duree_requise: progressive.dureeRequise,
+    trimestres: progressive.trimestres,
+    recalculee: lesProgressives.recalculee(depart),
+    get ouverte() {
+      return this.motif === lesProgressives.OUVERTE;
+    },
+    donnees() {
+      return {
+        date_effet: this.date_effet, quotite: this.quotite, motif: this.motif,
+        fraction: this.fraction, regimes: [...this.regimes],
+        montant_provisoire: this.montant_provisoire, montant_servi: this.montant_servi,
+        age_minimum: this.age_minimum, duree_requise: this.duree_requise,
+        trimestres: this.trimestres, recalculee: this.recalculee,
+      };
+    },
   };
 }
 
@@ -426,5 +497,6 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     fiabilite,
     pension_mensuelle: Math.max(0.0, total - horsRepartition) / 12.0,
     departs: servis,
+    retraite_progressive: null,
   };
 }

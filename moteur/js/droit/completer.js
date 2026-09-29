@@ -46,13 +46,18 @@ const SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS = [2009, 4];
 
 /** Ce que l'étape « compléter tous régimes » écrit. */
 export class Complements {
-  constructor({ personne, regimes, avantages, total, minimumApplique, fiabilite }) {
+  constructor({ personne, regimes, avantages, total, minimumApplique, fiabilite,
+    plancher = 0.0 }) {
     this.personne = personne;
     this.regimes = regimes;
     this.avantages = avantages;
     this.total = total;
     this.minimumApplique = minimumApplique;
     this.fiabilite = fiabilite;
+    // Ce que la pension provisoire d'une retraite progressive ajoute à la
+    // pension complète qui descendrait sous elle : un droit acquis, qui entre
+    // au total contributif.
+    this.plancher = plancher;
   }
 
   /** Les compléments, tels que le schéma de l'étape les décrit. */
@@ -74,11 +79,14 @@ export class Complements {
  * contexte dit ce que le calcul neutralise : les avantages non contributifs,
  * la décote et la surcote. `servies` est ce que valent, par an, à la date
  * d'effet, les pensions que des départs précédents servent déjà
- * (`departs.js`) : l'écrêtement du minimum contributif les compte. Voir le
- * Python.
+ * (`departs.js`) : l'écrêtement du minimum contributif les compte.
+ * `initiales` sont, après une retraite progressive, les pensions provisoires
+ * de ses régimes de base menées à la date d'effet (`progressive.js`) : la
+ * pension complète ne descend pas sous elles, et les vaut quand `recalcul` est
+ * faux. Voir le Python.
  */
 export function completer(moteur, releve, ouverture, liquidees, contexte = null,
-  servies = 0.0) {
+  servies = 0.0, initiales = [], recalcul = true) {
   const carriere = releve.carriere;
   const { durees, droits } = releve;
   const anneeLiquidation = carriere.anneeLiquidation;
@@ -224,6 +232,31 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         detail: "barème de l'article L. 17, sur la durée de services",
       });
     }
+  }
+
+  // LA PENSION COMPLÈTE D'UNE RETRAITE PROGRESSIVE (droit/progressive.js) :
+  // elle ne peut être inférieure à la pension provisoire, revalorisée ; avant
+  // le décret du 8 juin 2006, elle l'était. Voir le Python.
+  let plancherProgressive = 0.0;
+  for (const [regime, initiale] of initiales) {
+    pensions.forEach((pension, indice) => {
+      if (pension.regime !== regime || (recalcul && pension.montant >= initiale)) {
+        return;
+      }
+      const ecart = initiale - pension.montant;
+      plancherProgressive += ecart;
+      total += ecart;
+      pensions[indice] = {
+        ...pension,
+        montant: initiale,
+        detail: recalcul
+          ? `${pension.detail} = ${formatFixe(pension.montant, 2, true)} €, porté à la `
+            + `pension provisoire revalorisée par + ${formatFixe(ecart, 2, true)} €`
+          : "la pension provisoire de la retraite progressive, revalorisée : "
+            + `${formatFixe(initiale, 2, true)} €, qui ne se recalcule pas avant le `
+            + "8 juin 2006",
+      };
+    });
   }
 
   // Surcote parentale (L. 351-1-2-1) : après les minima, avant la majoration
@@ -379,6 +412,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     total,
     minimumApplique,
     fiabilite: fiabiliteGlobale,
+    plancher: plancherProgressive,
   });
 }
 

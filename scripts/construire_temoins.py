@@ -589,6 +589,38 @@ def _cas() -> list[dict]:
         "debut": "20", "liquidation": "57", "enfants": "3",
         "metier2_debut": "30", "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
     }))
+    # LA RETRAITE PROGRESSIVE (droit/progressive.py) : une salariée à 60 %
+    # depuis novembre 2025, qui touche 40 % de sa pension provisoire ; un
+    # fonctionnaire à 70 %, dont les services comptent à leur durée réelle ;
+    # la tranche de 1990, dont la pension complète ne se recalcule pas ; la
+    # durée de 160 trimestres de 2005 ; l'ancienne libérale salariée en 2016,
+    # dont L. 351-15 liquide la pension de libérale, non la complémentaire ;
+    # et une demande trop tôt, refusée.
+    cas.append(("progressive_salariee_2025", {
+        "naissance": "1965", "sexe": "F", "debut": "20", "liquidation": "64",
+        "progressive": "2025-11", "quotite": "60",
+    }))
+    cas.append(("progressive_fonctionnaire_2024", {
+        "naissance": "1963", "statut": "fonctionnaire_etat", "debut": "23",
+        "liquidation": "64", "primes": "0.2", "progressive": "2024-03", "quotite": "70",
+    }))
+    cas.append(("progressive_tranches_1990", {
+        "naissance": "1930", "debut": "20", "liquidation": "63",
+        "progressive": "1990-06", "quotite": "50",
+    }))
+    cas.append(("progressive_160_trimestres_2005", {
+        "naissance": "1945", "debut": "20", "liquidation": "62",
+        "progressive": "2005-06", "quotite": "70",
+    }))
+    cas.append(("progressive_liberale_puis_salariee_2016", {
+        "naissance": "1956", "sexe": "F", "statut": "profession_liberale", "debut": "22",
+        "liquidation": "63", "metier2_debut": "35",
+        "metier2_statut": "salarie_prive_non_cadre", "progressive": "2016-04", "quotite": "50",
+    }))
+    cas.append(("progressive_refusee_age", {
+        "naissance": "1965", "sexe": "F", "debut": "20", "liquidation": "64",
+        "progressive": "2023-05", "quotite": "60",
+    }))
     cas.append(("departs_militaire_puis_prive", {
         "naissance": "1965", "statut": "militaire", "debut": "18",
         "metier2_debut": "35", "metier2_statut": "salarie_prive_non_cadre",
@@ -1009,6 +1041,15 @@ def _pages() -> dict:
             **BASE, "sexe": "F", "naissance": "1965", "debut": "20", "liquidation": "57",
             "metier2_debut": "30",
             "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
+        }),
+        # La retraite progressive, ouverte puis refusée faute d'âge.
+        ("simuler_retraite_progressive", "/simuler", {
+            **BASE, "sexe": "F", "naissance": "1965", "debut": "20", "liquidation": "64",
+            "progressive": "2025-11", "quotite": "60",
+        }),
+        ("simuler_retraite_progressive_fermee", "/simuler", {
+            **BASE, "sexe": "F", "naissance": "1965", "debut": "20", "liquidation": "64",
+            "progressive": "2023-05", "quotite": "60",
         }),
         ("simuler_departs_echelonnes_a_venir", "/simuler", {
             **BASE, "sexe": "F", "naissance": "1975", "debut": "20", "liquidation": "59",

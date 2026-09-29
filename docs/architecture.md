@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.21, du 29 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.22, du 29 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -115,11 +115,11 @@ couverture demande à l'architecture.
 | Régimes, droits propres | <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->91<!--/--> lignes d'inventaire : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise)-->34<!--/--> modélisées, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->40<!--/--> partielles, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=hors_champ)-->15<!--/--> hors champ, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=routage)-->2<!--/--> routages | compléter les partielles ; ouvrir les hors champ (Alsace-Moselle, fonctionnaires de Mayotte, anciens régimes coloniaux, ORTF, Crédit foncier…) |
 | Enfants | un nombre, et la naissance de chacun à qui veut la dire ; les autres présumées aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.naissance_des_enfants.valeur)-->30<!--/--> ans de l'assuré | adoptions datées, et la date prévue d'une naissance ; qui élève l'enfant ; interruptions d'activité ; accord des parents, parents de même sexe, retrait de l'autorité parentale |
 | Périodes assimilées | en partie (chômage, maladie, maternité, AVPF…) ; apprentissage, stages, sportifs de haut niveau, TUC, congé de naissance non appliqués | chaque période datée, avec son motif ; validations rétroactives |
-| Temps partiel | quotité non saisie | quotité de chaque période ; surcotisation |
+| Temps partiel | la quotité d'une retraite progressive, du jour de sa demande au départ | quotité de chaque période ; surcotisation |
 | Départs anticipés | carrière longue, catégories actives, militaires : oui ; parents de trois enfants de la fonction publique : non ; handicap : hors modèle | tous, dont incapacité permanente, pénibilité, amiante |
 | Invalidité, inaptitude | hors modèle | périodes d'invalidité, pension d'invalidité et sa conversion, retraite pour invalidité des fonctionnaires, inaptitude |
 | Réversion | le conjoint, qu'un bloc facultatif du formulaire demande, et le mariage, présumé aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.mariage_des_conjoints.valeur)-->27<!--/--> ans de l'assuré ; la réversion liquidée pour le survivant, au régime général et dans les régimes alignés, dans la fonction publique et à l'Agirc-Arrco, sans le minimum ni les majorations, pour un décès déclaré après le départ ou supposé juste après lui | conjoints successifs datés, décès avant le départ, ressources du ménage, partage entre ex-conjoints, remariage, règles des autres régimes, orphelins |
-| Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | un départ par régime, chacun à sa date, sur une demande présumée ; le cumul, la seconde pension et la retraite progressive : hors modèle | la date de demande de chaque pension, déclarée ; activité après le départ ; fraction de pension ; pension définitive |
+| Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | un départ par régime, chacun à sa date, sur une demande présumée ; la retraite progressive, sa date et sa quotité déclarées : la pension provisoire, sa fraction servie, la pension complète au départ ; le cumul et la seconde pension : hors modèle | la date de demande de chaque pension, déclarée ; activité après le départ ; les changements de quotité |
 | Rachats, versements, surcotisation | hors modèle | actes datés de l'assuré, avec leur coût |
 | Carrières hors de France | absentes | périodes par pays et par convention ; totalisation et prorata ; pensions étrangères |
 | Minimum vieillesse (ASPA) | barème d'une personne seule, sans condition de ressources | ressources, résidence et composition du foyer ; récupération sur la succession |
@@ -2423,6 +2423,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.22**, 29 septembre 2026 : la troisième étape du troisième domaine, la retraite progressive (§ 7.4). Un acte de la personne, sa date et sa quotité, entre à la chronologie ; l'échéancier inscrit la demande, la liquidation provisoire et la fraction servie, puis la pension complète, qui remplace chacune de ses composantes et ne descend pas, hors de la fonction publique, sous la provisoire revalorisée. Les lignes de carrière portent désormais leur quotité.
 
 - **5.21**, 29 septembre 2026 : la deuxième étape du troisième domaine. Chaque régime liquide à sa date (§ 7.4), sous une présomption nouvelle, la date de demande de chaque pension (§ 5.6), qui change les résultats de qui a des régimes ouvrant à des âges différents : l'aide-soignante partie de l'hôpital à cinquante-sept ans n'a plus son régime général avant l'âge légal, le militaire passé au privé touche sa pension dès sa sortie de l'armée ; les montants restent ceux du départ déclaré. Le nombre déclaré d'appels de `liquider` vaut par départ (§ 7.8).
 

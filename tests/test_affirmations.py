@@ -1373,6 +1373,38 @@ def _(m: Modele):
     assert servis == {"cnracl"}
 
 
+@controle("retraite_progressive_servie")
+def _(m: Modele):
+    """À 60 % depuis novembre 2025, la salariée touche 40 % de sa pension
+    provisoire, et ses années à temps partiel portent leur quotité ; le
+    plancher de la pension complète a son test (tests/test_retraite_progressive.py)."""
+    comparaison = m.simuler_requete(
+        sexe="F", naissance="1965", debut="20", liquidation="64",
+        progressive="2025-11", quotite="60")
+    progressive = comparaison.actuel.retraite_progressive
+    assert progressive.ouverte and progressive.recalculee
+    assert _proche(progressive.fraction, 0.4)
+    assert _proche(progressive.montant_servi, 0.4 * progressive.montant_provisoire)
+    assert all(_proche(l.quotite, 0.6) for l in comparaison.carriere.lignes
+               if 2026 <= l.annee <= 2028)
+    sans = m.simuler_requete(sexe="F", naissance="1965", debut="20", liquidation="64")
+    assert sans.actuel.retraite_progressive is None
+
+
+@controle("retraite_progressive_fermee")
+def _(m: Modele):
+    """Demandée à cinquante-huit ans en 2023, la retraite progressive n'est pas
+    ouverte : elle s'ouvrait alors deux ans avant l'âge légal."""
+    comparaison = m.simuler_requete(
+        sexe="F", naissance="1965", debut="20", liquidation="64",
+        progressive="2023-05", quotite="60")
+    progressive = comparaison.actuel.retraite_progressive
+    assert progressive.motif == "age" and progressive.fraction == 0.0
+    assert progressive.montant_servi == 0.0
+    assert progressive.age_minimum > comparaison.carriere.age_au(
+        comparaison.carriere.retraite_progressive[0])
+
+
 @controle("sous_total_contributif")
 def _(m: Modele):
     actuel = m.smic.actuel

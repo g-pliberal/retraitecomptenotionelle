@@ -93,13 +93,19 @@ export function demandeDeDepart(carriere, nature = "definitive") {
  * L'état que la liquidation lit : la carrière, le journal de l'échéancier, et
  * les pensions que les départs précédents servent déjà, menées jusqu'à la date
  * d'effet (`{regime, montant}`, `droit/departs.js`) : le minimum contributif
- * s'écrête sur elles aussi (L. 173-2, R. 173-7).
+ * s'écrête sur elles aussi (L. 173-2, R. 173-7). Après une retraite
+ * progressive (`droit/progressive.js`), `initiales` porte la pension
+ * provisoire de chacun de ses régimes de base, menée jusqu'à la date d'effet
+ * (`[[régime, montant], …]`) : la pension complète ne descend pas sous elle,
+ * et la vaut quand `recalcul` est faux.
  */
 export class Etat {
-  constructor(carriere, journal = null, servies = []) {
+  constructor(carriere, journal = null, servies = [], initiales = [], recalcul = true) {
     this.carriere = carriere;
     this.journal = journal;
     this.servies = servies;
+    this.initiales = initiales;
+    this.recalcul = recalcul;
   }
 
   /** Ce que les pensions déjà servies valent, par an, à la date d'effet. */
@@ -109,7 +115,7 @@ export class Etat {
 
   /** Le même état, sur une autre carrière. */
   avecCarriere(carriere) {
-    return new Etat(carriere, this.journal, this.servies);
+    return new Etat(carriere, this.journal, this.servies, this.initiales, this.recalcul);
   }
 }
 
@@ -358,7 +364,10 @@ export function liquider(demande, etat, contexte) {
   }
 
   const complements = completer(moteur, releve, ouverture, liquidees, contexte,
-    etat.totalServi);
+    etat.totalServi, etat.initiales, etat.recalcul);
+  // La pension provisoire que la pension complète garde est un droit acquis
+  // par cotisation : elle entre au total contributif, comme la pension.
+  totalContributif += complements.plancher;
   const mesures = [];
   for (const code of Object.keys(NEUTRALISATION_MESUREE)) {
     for (const avantage of avantages) {

@@ -120,19 +120,38 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   seulement à sa quotité dans les services qui liquident une pension de la
   fonction publique — sauf le temps partiel thérapeutique, le temps partiel de
   droit pour un enfant né depuis 2004 et la surcotisation, bornée à quatre
-  trimestres. La saisie ne demande pas la quotité, et le champ `quotite` des
-  lignes de carrière n'est lu nulle part : un fonctionnaire qui a travaillé à
-  temps partiel sans surcotiser reçoit ici la pension d'un temps plein.
-- **Rachats, surcotisation, retraite progressive, cumul emploi-retraite.**
+  trimestres. La saisie ne demande la quotité que d'une retraite progressive
+  (ci-dessous), dont les années la portent ; un temps partiel plus ancien
+  compte ici à temps plein, et un fonctionnaire qui a travaillé à temps partiel
+  sans surcotiser reçoit la pension d'un temps plein.
+- **Rachats, surcotisation, cumul emploi-retraite.**
   Le modèle liquide chaque régime une fois, à sa date (« Les départs
-  échelonnés », ci-dessous), sur la carrière saisie : il ne rachète pas
-  d'années d'études, ne surcotise pas, ne sert pas de pension partielle et ne
+  échelonnés », ci-dessous), sur la carrière saisie, la retraite progressive
+  mise à part : il ne rachète pas d'années d'études, ne surcotise pas et ne
   suit pas le retraité qui reprend un emploi. Les barèmes
   sont lus et rangés au registre de veille (`rachats_et_versements`,
   `cumul_emploi_retraite_et_retraite_progressive`) — dont celui du rachat
   d'études de la fonction publique, refait au premier janvier 2026, que la
   calculette de l'ENSAP n'applique pas encore — et les règles du cumul
   changent pour les pensions prenant effet en 2027.
+- **La retraite progressive : servie, sur une quotité déclarée.** Depuis le
+  29 septembre 2026, qui la demande — une date, et la quotité du temps
+  partiel gardé jusqu'au départ — la voit examinée à sa date comme le droit
+  l'examine : l'âge, la durée d'assurance, la quotité, et le régime où il
+  travaille, les fonctionnaires, les libéraux et les avocats ne l'ayant que
+  depuis le 1er septembre 2023. Sa pension provisoire se liquide dans les
+  régimes que nomme L. 351-15, puis, depuis 2023, dans tous les régimes de
+  base, et les complémentaires qui les suivent ; la page dit la fraction
+  servie jusqu'au départ. Au départ, la pension complète se recalcule, les
+  années à temps partiel comprises — réduites de la quotité, et comptées à leur
+  durée réelle dans les services de la fonction publique, dont le traitement
+  se lit à temps plein —, sans descendre sous la pension provisoire
+  revalorisée, sauf au fonctionnaire ; avant le décret du 8 juin 2006, elle
+  était la pension provisoire. Restent dehors : les changements de quotité et
+  la suspension, la baisse de revenus qui fait la fraction d'un non-salarié,
+  les décrets propres des régimes spéciaux et les règles propres des
+  complémentaires. Le formulaire ne la demande pas encore : elle se déclare
+  par l'adresse de la simulation (fiche `retraite_progressive`).
 - **Les départs échelonnés : servis, sur une date présumée.** Depuis le 29
   septembre 2026, chaque régime liquide à sa date, comme le droit le veut :
   le régime qui n'ouvre pas encore sa pension au départ attend son âge — le

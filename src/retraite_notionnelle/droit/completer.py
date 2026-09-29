@@ -108,6 +108,10 @@ class Complements:
     #: Un des deux minima a-t-il relevé une pension ?
     minimum_applique: bool
     fiabilite: Fiabilite
+    #: Ce que la pension provisoire d'une retraite progressive ajoute à la
+    #: pension complète qui descendrait sous elle (:mod:`.progressive`) :
+    #: un droit acquis, qui entre au total contributif.
+    plancher: float = 0.0
 
     def donnees(self) -> dict:
         """Les compléments, tels que le schéma de l'étape les décrit."""
@@ -124,7 +128,8 @@ class Complements:
 
 def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
               liquidees: Pensions, contexte: Contexte | None = None,
-              servies: float = 0.0) -> Complements:
+              servies: float = 0.0, initiales: tuple = (),
+              recalcul: bool = True) -> Complements:
     """Les pensions de ``liquidees``, complétées de ce que le droit y ajoute.
 
     Le contexte dit ce que le calcul neutralise : les avantages non
@@ -133,6 +138,10 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     part avec elles. ``servies`` est ce que valent, par an, à la date d'effet,
     les pensions que des départs précédents servent déjà
     (:mod:`.departs`) : l'écrêtement du minimum contributif les compte.
+    ``initiales`` sont, après une retraite progressive, les pensions
+    provisoires de ses régimes de base, menées à la date d'effet
+    (:mod:`.progressive`) : la pension complète ne descend pas sous elles,
+    et les vaut quand ``recalcul`` est faux.
     """
     carriere = releve.carriere
     durees, droits = releve.durees, releve.droits
@@ -274,6 +283,29 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 montant=releve_garanti,
                 detail="barème de l'article L. 17, sur la durée de services",
             ))
+
+    # LA PENSION COMPLÈTE D'UNE RETRAITE PROGRESSIVE (droit/progressive.py) :
+    # liquidée dans les conditions de droit commun, elle ne peut être
+    # inférieure au montant entier qui a servi de base à la fraction,
+    # revalorisé (D. 351-15, D. 161-2-24-7, D. 37-3) ; avant le décret du
+    # 8 juin 2006, elle était ce montant. La comparaison se fait régime par
+    # régime, minima compris, avant la surcote parentale et la majoration.
+    plancher = 0.0
+    for regime, initiale in initiales:
+        for indice, pension in enumerate(pensions):
+            if pension.regime != regime or (recalcul and pension.montant >= initiale):
+                continue
+            ecart = initiale - pension.montant
+            plancher += ecart
+            total += ecart
+            pensions[indice] = replace(
+                pension, montant=initiale,
+                detail=(f"{pension.detail} = {pension.montant:,.2f} €, porté à la "
+                        f"pension provisoire revalorisée par + {ecart:,.2f} €"
+                        if recalcul else
+                        f"la pension provisoire de la retraite progressive, "
+                        f"revalorisée : {initiale:,.2f} €, qui ne se recalcule "
+                        f"pas avant le 8 juin 2006"))
 
     # Surcote parentale (L. 351-1-2-1) : elle vient APRÈS les minima,
     # comme la surcote ordinaire, et AVANT la majoration pour enfants, qui
@@ -444,6 +476,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         total=total,
         minimum_applique=minimum_applique,
         fiabilite=fiabilite_globale,
+        plancher=plancher,
     )
 
 

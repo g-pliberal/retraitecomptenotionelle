@@ -130,11 +130,18 @@ class Etat:
     la carrière, et le journal de l'échéancier (§ 7.4) ; et les pensions que
     les départs précédents servent déjà, menées jusqu'à la date d'effet
     (:class:`~.departs.PensionServie`) : le minimum contributif s'écrête sur
-    elles aussi (L. 173-2, R. 173-7)."""
+    elles aussi (L. 173-2, R. 173-7).
+
+    Après une retraite progressive (:mod:`.progressive`), ``initiales`` porte
+    la pension provisoire de chacun de ses régimes de base, menée jusqu'à la
+    date d'effet : la pension complète ne peut descendre sous elle ; elle
+    l'est, quand ``recalcul`` est faux, avant le décret du 8 juin 2006."""
 
     carriere: Carriere
     journal: object | None = None
     servies: tuple = ()
+    initiales: tuple = ()
+    recalcul: bool = True
 
     @property
     def total_servi(self) -> float:
@@ -412,7 +419,11 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
             ))
 
     complements = _completer.completer(moteur, releve, ouverture, liquidees, contexte,
-                                       servies=etat.total_servi)
+                                       servies=etat.total_servi,
+                                       initiales=etat.initiales, recalcul=etat.recalcul)
+    # La pension provisoire que la pension complète garde est un droit acquis
+    # par cotisation : elle entre au total contributif, comme la pension.
+    total_contributif += complements.plancher
     return Liquidation(
         demande=demande,
         contexte=contexte,

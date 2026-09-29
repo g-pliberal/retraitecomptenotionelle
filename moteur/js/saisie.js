@@ -432,6 +432,11 @@ export const DEFAUTS = Object.freeze({
   //: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
   //: conjoint : au départ ou après lui.
   deces: "",
+  //: La retraite progressive : l'âge où elle prend effet, que l'adresse porte
+  //: en date comme le départ, et la quotité du temps partiel gardé jusqu'au
+  //: départ, en pour cent. Nul sans retraite progressive.
+  progressive: null,
+  quotite_progressive: 0,
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -543,6 +548,10 @@ export class Saisie {
       ressources_conjoint: [undefined, null, ""].includes(parametres.ressources_conjoint)
         ? null : reel(parametres, "ressources_conjoint", 0.0),
       deces: (parametres.deces || "").trim(),
+      progressive: [undefined, null, ""].includes(parametres.progressive) ? null
+        : ageSaisi(parametres, "progressive", 0.0,
+          origineDesAges(moisDeNaissance, jourNaissance)),
+      quotite_progressive: entier(parametres, "quotite", 0),
       interruptions: (parametres.interruptions || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
@@ -639,6 +648,7 @@ export class Saisie {
     }
     this.verifierNaissances();
     this.verifierConjoint();
+    this.verifierProgressive();
     if (!(this.bascule >= ANNEE_MINIMALE && this.bascule <= ANNEE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de bascule attendue entre ${ANNEE_MINIMALE} et `
@@ -1352,6 +1362,52 @@ export class Saisie {
   }
 
   /**
+   * La retraite progressive que la saisie déclare, telle que la chronologie la
+   * reçoit : son âge et sa quotité, entre zéro et un ; `null` sans elle.
+   */
+  retraiteProgressiveDeclaree() {
+    if (this.progressive === null) {
+      return null;
+    }
+    return { age: this.progressive, quotite: this.quotite_progressive / 100.0 };
+  }
+
+  /**
+   * La retraite progressive : une quotité de temps partiel, et une date entre
+   * le début de la carrière et le départ. Que le droit l'ouvre, c'est au
+   * calcul de le dire. Voir `_verifier_progressive` du Python.
+   */
+  verifierProgressive() {
+    if (this.progressive === null) {
+      if (this.quotite_progressive) {
+        throw new ErreurSaisie(
+          "« quotite » ne sert qu'à la retraite progressive : dites aussi sa date "
+          + "(« progressive »).",
+        );
+      }
+      return;
+    }
+    if (!(this.quotite_progressive >= 1 && this.quotite_progressive <= 99)) {
+      throw new ErreurSaisie(
+        "Quotité de la retraite progressive : le temps partiel gardé, en pour cent "
+        + "d'un temps plein, entre 1 et 99.",
+      );
+    }
+    if (enMois(this.progressive) >= enMois(this.liquidation)) {
+      throw new ErreurSaisie(
+        `Retraite progressive en ${this.dateDe(this.progressive, true)} : elle précède `
+        + `le départ, fixé en ${this.dateDe(this.liquidation, true)}.`,
+      );
+    }
+    if (this.dateDe(this.progressive, true).rang <= this.dateDe(this.debut).rang) {
+      throw new ErreurSaisie(
+        `Retraite progressive en ${this.dateDe(this.progressive, true)} : elle suit le `
+        + "début de la carrière.",
+      );
+    }
+  }
+
+  /**
    * Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie — les
    * naissances, le mariage, le décès —, et un décès qui ne précède pas le
    * départ : la réversion d'une pension que l'assuré n'a pas encore liquidée
@@ -1439,6 +1495,10 @@ export class Saisie {
           ? "" : nombreBrut(this.ressources_conjoint)],
         ["deces", this.deces],
       ].filter(([, valeur]) => valeur !== "" && valeur !== null)),
+      ...(this.progressive !== null
+        ? { progressive: this.moisDe(this.progressive, true),
+          quotite: this.quotite_progressive }
+        : {}),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,

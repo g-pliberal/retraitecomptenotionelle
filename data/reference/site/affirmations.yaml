@@ -594,6 +594,25 @@ affirmations:
     etat: verifiee
     controle: pensions_a_leur_date
 
+  - id: simuler.retraite_progressive_servie
+    page: /simuler
+    extrait: "Une retraite progressive, du"
+    porte: >-
+      ouverte, la retraite progressive sert, jusqu'au départ, la fraction de la
+      pension provisoire que la quotité laisse, et la pension complète ne descend
+      pas sous la pension provisoire revalorisée
+    etat: verifiee
+    controle: retraite_progressive_servie
+
+  - id: simuler.retraite_progressive_fermee
+    page: /simuler
+    extrait: "La retraite progressive que vous demandez ne vous est pas ouverte"
+    porte: >-
+      une retraite progressive demandée avant son âge n'est pas ouverte : aucune
+      fraction n'est servie, et la page dit pourquoi
+    etat: verifiee
+    controle: retraite_progressive_fermee
+
   - id: simuler.ecart_fiche_de_paie
     page: /simuler
     extrait: "sur votre fiche de paie"

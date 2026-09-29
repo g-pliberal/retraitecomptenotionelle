@@ -79,6 +79,7 @@ from ..droit import coordonner
 from ..droit import departs as _departs
 from ..droit import foyer as _foyer
 from ..droit import liquidation as _liquidation
+from ..droit import progressive as _progressive
 # Ce que les étapes créent, que les appelants du scénario 1 lisent ici.
 from ..droit.commun import AvantageApplique, PensionRegime  # noqa: F401
 from ..noyau import versions
@@ -108,6 +109,62 @@ class DepartServi:
         return {"date_effet": self.date_effet, "motif": self.motif,
                 "regimes": list(self.regimes), "montant": self.montant,
                 "montant_a_l_effet": self.montant_a_l_effet}
+
+
+@dataclass(frozen=True)
+class ProgressiveServie:
+    """Ce qu'une retraite progressive sert avant le départ
+    (:mod:`~retraite_notionnelle.droit.progressive`), ou ce qui la ferme."""
+
+    #: La date d'effet (AAAA-MM-JJ) et la quotité du temps partiel.
+    date_effet: str
+    quotite: float
+    #: ``ouverte``, ou ce qui la ferme : ``avant_1988``, ``activite``,
+    #: ``regimes``, ``quotite``, ``age``, ``duree``.
+    motif: str
+    #: La fraction servie, nulle quand la demande n'est pas ouverte.
+    fraction: float
+    regimes: tuple[str, ...]
+    #: La pension provisoire entière, et la fraction servie, par an, à sa
+    #: date d'effet et dans ses euros.
+    montant_provisoire: float
+    montant_servi: float
+    age_minimum: float | None
+    duree_requise: int | None
+    #: La durée d'assurance à sa date d'effet, tous régimes.
+    trimestres: int | None
+    #: La pension complète se recalcule-t-elle au départ ? Non avant le décret
+    #: du 8 juin 2006 : elle était la pension provisoire.
+    recalculee: bool = True
+
+    @property
+    def ouverte(self) -> bool:
+        return self.motif == _progressive.OUVERTE
+
+    def donnees(self) -> dict:
+        return {"date_effet": self.date_effet, "quotite": self.quotite,
+                "motif": self.motif, "fraction": self.fraction,
+                "regimes": list(self.regimes),
+                "montant_provisoire": self.montant_provisoire,
+                "montant_servi": self.montant_servi,
+                "age_minimum": self.age_minimum, "duree_requise": self.duree_requise,
+                "trimestres": self.trimestres, "recalculee": self.recalculee}
+
+
+def progressive_servie(progressive: _progressive.Progressive,
+                       provisoire: Liquidation | None, depart: DateMois) -> ProgressiveServie:
+    """La retraite progressive, telle que le résultat la dit, pour un départ
+    à ``depart``."""
+    provisoire_total = provisoire.total if provisoire is not None else 0.0
+    return ProgressiveServie(
+        date_effet=progressive.date_effet, quotite=progressive.quotite,
+        motif=progressive.motif, fraction=progressive.fraction,
+        regimes=tuple(sorted(progressive.regimes)),
+        montant_provisoire=provisoire_total,
+        montant_servi=progressive.fraction * provisoire_total,
+        age_minimum=progressive.age_minimum, duree_requise=progressive.duree_requise,
+        trimestres=progressive.trimestres,
+        recalculee=_progressive.recalculee(depart))
 
 
 @dataclass
@@ -146,6 +203,10 @@ class ResultatActuel:
     #: montants du résultat sont alors ceux du départ déclaré : la pension
     #: complète, chaque pension y étant menée ou ramenée.
     departs: tuple[DepartServi, ...] = ()
+    #: La retraite progressive que la carrière demande, ouverte ou non
+    #: (:class:`ProgressiveServie`) ; ``None`` sans demande. La pension du
+    #: résultat reste la pension complète, au départ.
+    retraite_progressive: ProgressiveServie | None = None
 
     @property
     def pension_mensuelle(self) -> float:
@@ -293,6 +354,21 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
         fiabilite=fiabilite,
         departs=tuple(servis),
     )
+
+
+def etat_du_depart(moteur, carriere: Carriere, plancher: tuple | None,
+                   journal: object | None = None) -> _liquidation.Etat:
+    """L'état du départ unique : la carrière, et, après une retraite
+    progressive, la pension provisoire de ses régimes de base, menée au
+    départ, que la pension complète garde (:mod:`~retraite_notionnelle.droit.progressive`)."""
+    if plancher is None:
+        return _liquidation.Etat(carriere, journal)
+    progressive, provisoire = plancher
+    return _liquidation.Etat(
+        carriere, journal,
+        initiales=_progressive.initiales(moteur, progressive, provisoire,
+                                         carriere.date_liquidation),
+        recalcul=_progressive.recalculee(carriere.date_liquidation))
 
 
 def _departs_servi(depart, liquidation, servi: float) -> DepartServi:
@@ -2304,23 +2380,40 @@ class ScenarioActuel:
             ("successions", not liquider_successions),
         ) if neutre)
         contexte = _liquidation.Contexte(self, neutralisations)
+        # LA RETRAITE PROGRESSIVE (:mod:`~retraite_notionnelle.droit.progressive`)
+        # se liquide d'abord, à titre provisoire, et laisse aux départs le
+        # plancher de la pension complète. La liquidation fictive, qui
+        # valorise des droits à une date, ne la voit pas.
+        progressive = provisoire = None
+        if nature != "fictive":
+            progressive = _progressive.examiner(self, carriere)
+            if progressive is not None and progressive.ouverte:
+                provisoire = _progressive.liquider(self, carriere, contexte, progressive)
+                progressive = _progressive.avec_la_duree(progressive, provisoire)
+        plancher = ((progressive, provisoire)
+                    if progressive is not None and progressive.ouverte else None)
         # CHAQUE RÉGIME LIQUIDE À SA DATE (:mod:`~retraite_notionnelle.droit.departs`),
         # sauf la liquidation fictive, qui valorise des droits à une date.
         departs = _departs.departs(self, carriere) if nature != "fictive" else ()
         if len(departs) > 1:
             liquidations = _departs.liquider_les_departs(
-                self, carriere, contexte, nature, departs)
-            return resultat_des_departs(self, carriere, departs, liquidations, contexte)
-        liquidation = _liquidation.liquider(
-            _liquidation.demande_de_depart(carriere, nature),
-            _liquidation.Etat(carriere), contexte)
-        carriere = liquidation.carriere
-        foyer = _foyer.foyer_et_net(
-            self, carriere.personne, liquidation.demande.date_effet,
-            carriere.annee_liquidation, liquidation.total,
-            (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE,
-            contexte)
-        return resultat_actuel(liquidation, foyer)
+                self, carriere, contexte, nature, departs, progressive=plancher)
+            resultat = resultat_des_departs(self, carriere, departs, liquidations, contexte)
+        else:
+            liquidation = _liquidation.liquider(
+                _liquidation.demande_de_depart(carriere, nature),
+                etat_du_depart(self, carriere, plancher), contexte)
+            liquidee = liquidation.carriere
+            foyer = _foyer.foyer_et_net(
+                self, liquidee.personne, liquidation.demande.date_effet,
+                liquidee.annee_liquidation, liquidation.total,
+                (liquidee.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE,
+                contexte)
+            resultat = resultat_actuel(liquidation, foyer)
+        if progressive is not None:
+            resultat = replace(resultat, retraite_progressive=progressive_servie(
+                progressive, provisoire, carriere.date_liquidation))
+        return resultat
 
 
 #: Année à partir de laquelle chaque montant suit le SMIC et non plus les prix.

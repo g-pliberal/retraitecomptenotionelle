@@ -1657,8 +1657,10 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                     carriere.date_entree(derniere.affiliation),
                     revenu=derniere.revenu,
                     plafond=moteur.macro.plafond_securite_sociale(annee_liquidation)))):
+            # À temps plein : le traitement indiciaire du grade, que le temps
+            # partiel d'une retraite progressive réduit sans le changer.
             traitement = (assiette_de_reference(moteur, periode, derniere)
-                          / derniere.fraction_annee)
+                          / (derniere.fraction_annee * derniere.quotite))
             if plafonner:
                 traitement = min(
                     traitement,

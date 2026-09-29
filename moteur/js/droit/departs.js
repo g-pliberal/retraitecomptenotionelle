@@ -26,6 +26,7 @@ import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import * as liquidation from "./liquidation.js";
 import * as ouvrirLeDroit from "./ouvrir.js";
+import * as lesProgressives from "./progressive.js";
 
 /** L'étage des régimes qui forment une unité. */
 export const ETAGES_DES_UNITES = new Set(["base", "integre"]);
@@ -209,6 +210,64 @@ function pensionMilitaire(moteur, carriere, unite) {
     && !coordonner.regimesInterpenetres(moteur, carriere).has("fonction_publique_etat");
 }
 
+/**
+ * Les régimes de base et intégrés où `carriere` acquiert un droit jusqu'à sa
+ * liquidation, dans l'ordre de leurs codes, et, pour chaque complémentaire,
+ * ceux de ces régimes avec lesquels ses années sont routées : ce qu'une
+ * retraite progressive liquide à sa date (`progressive.js`).
+ *
+ * @returns {[string[], Map<string, Set<string>>]}
+ */
+export function regimesDeLaCarriere(moteur, carriereSaisie) {
+  const carriere = coordonner.retablir(moteur, carriereSaisie);
+  const routes = routage(moteur, carriere);
+  const routesVers = new Set(routes.flatMap(([, regimes]) => regimes));
+  const codes = [...routesVers].sort().filter((code) =>
+    periodeDe(moteur, code, carriere.anneeLiquidation) !== null
+    && acquiert(moteur, code, routes));
+  const bases = codes.filter(
+    (code) => ETAGES_DES_UNITES.has(moteur.catalogue.obtenir(code).etage));
+  const deBase = new Set(bases);
+  const retenus = new Set(codes);
+  const suivies = new Map();
+  for (const [, regimes] of routes) {
+    const routees = regimes.filter((code) => deBase.has(code));
+    for (const code of regimes) {
+      if (retenus.has(code) && !deBase.has(code)) {
+        if (!suivies.has(code)) {
+          suivies.set(code, new Set());
+        }
+        for (const base of routees) {
+          suivies.get(code).add(base);
+        }
+      }
+    }
+  }
+  return [bases, suivies];
+}
+
+/**
+ * Les régimes de base et intégrés où `carriere` exerce une activité l'année de
+ * sa liquidation : ceux du temps partiel qu'une retraite progressive garde
+ * (`droit/progressive.js`). Aucun quand elle ne travaille pas cette année-là.
+ */
+export function regimesActifs(moteur, carriereSaisie) {
+  const carriere = coordonner.retablir(moteur, carriereSaisie);
+  const actifs = new Set();
+  for (const [ligne, regimes] of routage(moteur, carriere)) {
+    if (ligne.annee !== carriere.anneeLiquidation || ligne.type_periode !== "emploi"
+        || !(ligne.revenu > 0)) {
+      continue;
+    }
+    for (const code of regimes) {
+      if (ETAGES_DES_UNITES.has(moteur.catalogue.obtenir(code).etage)) {
+        actifs.add(code);
+      }
+    }
+  }
+  return actifs;
+}
+
 /** L'âge de L. 161-17-2 pour la génération de l'assuré : celui du RAFP. */
 export function ageLegal(moteur, carriere) {
   const lu = moteur.agesOuverture.age(carriere.generation);
@@ -326,7 +385,7 @@ export function departs(moteur, carriereSaisie) {
  * s'écrête sur les pensions du mois de sa date d'effet).
  */
 export function liquiderLesDeparts(moteur, carriere, contexte, nature = "definitive",
-  liste = null, journal = null) {
+  liste = null, journal = null, progressive = null) {
   const lesDeparts = liste ?? departs(moteur, carriere);
   const liquidations = [];
   for (const depart of lesDeparts) {
@@ -343,7 +402,16 @@ export function liquiderLesDeparts(moteur, carriere, contexte, nature = "definit
         servies.push({ regime: pension.regime, montant: menes[i] });
       });
     }
-    const etat = new liquidation.Etat(carriere.liquideeAu(depart.date), journal, servies);
+    let initiales = [];
+    let recalcul = true;
+    if (progressive !== null) {
+      const [ouverte, provisoire] = progressive;
+      initiales = lesProgressives.initiales(moteur, ouverte, provisoire, depart.date,
+        depart.unique ? null : depart.regimes);
+      recalcul = lesProgressives.recalculee(depart.date);
+    }
+    const etat = new liquidation.Etat(carriere.liquideeAu(depart.date), journal, servies,
+      initiales, recalcul);
     liquidations.push(liquidation.liquider(demande, etat, contexte));
   }
   return liquidations;

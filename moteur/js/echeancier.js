@@ -24,15 +24,19 @@
  */
 
 import * as chrono from "./chronologie.js";
+import { formatFixe } from "./format.js";
 import { dateDEffet } from "./droit/commun.js";
 import * as lesDeparts from "./droit/departs.js";
 import { foyerEtNet } from "./droit/foyer.js";
 import * as liquidation from "./droit/liquidation.js";
+import * as lesProgressives from "./droit/progressive.js";
 import { moisSuivant, reversion } from "./droit/reversion.js";
 import { Entree, Journal } from "./journal.js";
 import { MinimumVieillesse } from "./regimes.js";
 import { aujourdHui, faireVivre, foyerALEcheance } from "./revalorisation.js";
-import { resultatActuel, resultatDesDeparts } from "./scenario-actuel.js";
+import {
+  etatDuDepart, progressiveServie, resultatActuel, resultatDesDeparts,
+} from "./scenario-actuel.js";
 
 /** La version du contrat C.7 que `Evenement.donnees` suit. */
 export const SCHEMA_VERSION = 1;
@@ -107,6 +111,14 @@ export class Echeancier {
     // La réversion que le décès de l'assuré ouvre à son conjoint, quand la
     // chronologie les dit.
     this.reversion = null;
+    // La retraite progressive que la carrière demande, sa liquidation
+    // provisoire, et, ouverte, le plancher que les départs gardent.
+    this.progressive = null;
+    this.provisoire = null;
+    this.plancher = null;
+    // Les composantes servies par la retraite progressive, que celles de la
+    // pension complète remplacent dans leur lignée.
+    this.progressives = new Map();
   }
 
   /**
@@ -115,15 +127,27 @@ export class Echeancier {
    * menées.
    */
   parcourir(carriere, echeance = null) {
+    this._progresser(carriere);
     const departs = lesDeparts.departs(this.moteur, carriere);
     if (departs.length > 1) {
       this._partir(carriere, departs);
     } else {
-      const evenements = [departDe(carriere)].filter((e) => e !== null);
+      let evenements = [departDe(carriere)].filter((e) => e !== null);
+      if (this.plancher !== null) {
+        evenements = evenements.map((e) => new Evenement({
+          id: e.id, date: e.date, personnes: e.personnes, vise: e.vise,
+          sorte: "pension_definitive", origine: e.origine, condition: e.condition,
+          rang: e.rang,
+        }));
+      }
       evenements.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : a.rang - b.rang));
       for (const evenement of evenements) {
         this._traiter(evenement, carriere);
       }
+    }
+    if (this.auDepart !== null && this.progressive !== null) {
+      this.auDepart.retraite_progressive = progressiveServie(this.progressive,
+        this.provisoire, carriere.dateLiquidation);
     }
     if (this.auDepart !== null && carriere.conjoint !== null) {
       if (carriere.deces !== null) {
@@ -198,6 +222,67 @@ export class Echeancier {
       .map((p) => [p.regime, p.montant, p.fiabilite])]];
   }
 
+  /**
+   * La retraite progressive que la carrière demande : examinée, et, ouverte,
+   * liquidée à titre provisoire et inscrite, chaque composante pour la
+   * fraction qu'elle sert (`droit/progressive.js`).
+   */
+  _progresser(carriere) {
+    let progressive = lesProgressives.examiner(this.moteur, carriere);
+    this.progressive = progressive;
+    if (progressive === null || !progressive.ouverte) {
+      return;
+    }
+    const contexte = new liquidation.Contexte(this.moteur);
+    const provisoire = lesProgressives.liquider(this.moteur, carriere, contexte, progressive,
+      this.journal);
+    progressive = lesProgressives.avecLaDuree(progressive, provisoire);
+    this.progressive = progressive;
+    this.provisoire = provisoire;
+    if (!progressive.ouverte) {
+      return;
+    }
+    this.plancher = [progressive, provisoire];
+    const evenement = new Evenement({
+      id: `retraite_progressive_${carriere.personne}`, date: progressive.dateEffet,
+      personnes: [carriere.personne], vise: { regimes: [...progressive.regimes].sort() },
+      sorte: "retraite_progressive",
+    });
+    this._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date);
+    this._inscrire(evenement, `liquidation_${evenement.id}`, "liquidation", provisoire,
+      evenement.date);
+    const pourcent = formatFixe(progressive.fraction * 100, 0);
+    for (const composante of provisoire.composantes()) {
+      const entiere = composante.montant.annuel;
+      const servie = {
+        ...composante,
+        id: `progressive_${composante.id}`,
+        montant: { annuel: entiere * progressive.fraction, monnaie: "EUR" },
+        detail: `${composante.detail} ; retraite progressive : ${pourcent} % de `
+          + `${formatFixe(entiere, 2, true)} €`,
+      };
+      this._inscrire(evenement, servie.id, "composante", servie, evenement.date);
+      const cle = composante.id.startsWith("majoration_enfants")
+        ? "majoration_enfants" : composante.id;
+      this.progressives.set(cle, servie.id);
+    }
+  }
+
+  /**
+   * Les composantes d'une liquidation définitive, inscrites : celles qu'une
+   * retraite progressive servait déjà sont remplacées dans leur lignée.
+   */
+  _composantes(evenement, resultat) {
+    for (const composante of resultat.composantes()) {
+      const cle = composante.id.startsWith("majoration_enfants")
+        ? "majoration_enfants" : composante.id;
+      const remplace = this.progressives.get(cle) ?? null;
+      this.progressives.delete(cle);
+      this._inscrire(evenement, composante.id, "composante", composante, evenement.date,
+        remplace);
+    }
+  }
+
   _traiter(evenement, carriere) {
     const sorte = this.sortes[evenement.sorte];
     this._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date);
@@ -211,7 +296,7 @@ export class Echeancier {
     });
     const contexte = new liquidation.Contexte(this.moteur);
     const resultat = liquidation.liquider(
-      demande, new liquidation.Etat(carriere, this.journal), contexte);
+      demande, etatDuDepart(this.moteur, carriere, this.plancher, this.journal), contexte);
     const liquidee = resultat.carriere;
     const foyer = foyerEtNet(
       this.moteur, liquidee.personne, evenement.date, liquidee.anneeLiquidation,
@@ -220,9 +305,7 @@ export class Echeancier {
     this.auDepart = resultatActuel(resultat, foyer);
     this._inscrire(evenement, `liquidation_${evenement.id}`, "liquidation", resultat,
       evenement.date);
-    for (const composante of resultat.composantes()) {
-      this._inscrire(evenement, composante.id, "composante", composante, evenement.date);
-    }
+    this._composantes(evenement, resultat);
     this._inscrire(evenement, `foyer_${evenement.id}`, "foyer", foyer, evenement.date);
   }
 
@@ -236,7 +319,7 @@ export class Echeancier {
     const declare = departDe(carriere);
     const contexte = new liquidation.Contexte(this.moteur);
     const liquidations = lesDeparts.liquiderLesDeparts(
-      this.moteur, carriere, contexte, "definitive", departs, this.journal);
+      this.moteur, carriere, contexte, "definitive", departs, this.journal, this.plancher);
     departs.forEach((depart, rang) => {
       const resultat = liquidations[rang];
       const evenement = new Evenement({
@@ -249,9 +332,7 @@ export class Echeancier {
       this._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date);
       this._inscrire(evenement, `liquidation_${evenement.id}`, "liquidation", resultat,
         evenement.date);
-      for (const composante of resultat.composantes()) {
-        this._inscrire(evenement, composante.id, "composante", composante, evenement.date);
-      }
+      this._composantes(evenement, resultat);
     });
     this.auDepart = resultatDesDeparts(this.moteur, carriere, departs, liquidations, contexte);
     const pensions = this.auDepart.pensions_par_regime
@@ -300,10 +381,10 @@ export class Echeancier {
     }));
   }
 
-  _inscrire(evenement, ident, sorte, contenu, debut) {
+  _inscrire(evenement, ident, sorte, contenu, debut, remplace = null) {
     this.journal.inscrire(new Entree({
       id: ident, evenement: evenement.id, inscriteLe: evenement.date, debut, sorte,
-      contenu,
+      contenu, remplace,
     }));
   }
 }

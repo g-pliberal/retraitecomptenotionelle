@@ -228,6 +228,42 @@ def _pension_militaire(moteur: ScenarioActuel, carriere: Carriere,
                 moteur, carriere))
 
 
+def regimes_de_la_carriere(moteur: ScenarioActuel, carriere: Carriere
+                           ) -> tuple[list[str], dict[str, frozenset[str]]]:
+    """Les régimes de base et intégrés où ``carriere`` acquiert un droit
+    jusqu'à sa liquidation, dans l'ordre de leurs codes, et, pour chaque
+    complémentaire, ceux de ces régimes avec lesquels ses années sont
+    routées : ce qu'une retraite progressive liquide à sa date
+    (:mod:`.progressive`)."""
+    carriere = coordonner.retablir(moteur, carriere)
+    routage = _routage(moteur, carriere)
+    codes = sorted(code for code in {code for _, regimes in routage for code in regimes}
+                   if _periode(moteur, code, carriere.annee_liquidation) is not None
+                   and _acquiert(moteur, code, routage))
+    bases = [code for code in codes
+             if moteur.catalogue[code].etage in ETAGES_DES_UNITES]
+    suivies: dict[str, set[str]] = {}
+    for _, regimes in routage:
+        routees = {code for code in regimes if code in bases}
+        for code in regimes:
+            if code in codes and code not in bases:
+                suivies.setdefault(code, set()).update(routees)
+    return bases, {code: frozenset(avec) for code, avec in suivies.items()}
+
+
+def regimes_actifs(moteur: ScenarioActuel, carriere: Carriere) -> frozenset[str]:
+    """Les régimes de base et intégrés où ``carriere`` exerce une activité
+    l'année de sa liquidation : ceux du temps partiel qu'une retraite
+    progressive garde (:mod:`.progressive`). Aucun quand elle ne travaille pas
+    cette année-là."""
+    carriere = coordonner.retablir(moteur, carriere)
+    return frozenset(
+        code for ligne, regimes in _routage(moteur, carriere)
+        if ligne.annee == carriere.annee_liquidation
+        and ligne.type_periode == "emploi" and ligne.revenu > 0
+        for code in regimes if moteur.catalogue[code].etage in ETAGES_DES_UNITES)
+
+
 def age_legal(moteur: ScenarioActuel, carriere: Carriere) -> float:
     """L'âge de L. 161-17-2 pour la génération de l'assuré : celui du RAFP."""
     lu = moteur.ages_ouverture.age(carriere.generation)
@@ -311,12 +347,16 @@ class PensionServie:
 def liquider_les_departs(moteur: ScenarioActuel, carriere: Carriere,
                          contexte: Contexte, nature: str = "definitive",
                          liste: tuple[Depart, ...] | None = None,
-                         journal: object | None = None) -> list[Liquidation]:
+                         journal: object | None = None,
+                         progressive: tuple | None = None) -> list[Liquidation]:
     """Chaque départ liquidé, dans l'ordre des dates : sur la carrière arrêtée
     à sa date, pour ses seuls régimes, en voyant servies les pensions des
     départs qui le précèdent, menées jusqu'à lui (R. 173-7 : le minimum
-    contributif s'écrête sur les pensions du mois de sa date d'effet)."""
+    contributif s'écrête sur les pensions du mois de sa date d'effet).
+    ``progressive`` est la retraite progressive ouverte et sa liquidation
+    provisoire (:mod:`.progressive`) : chaque départ en garde le plancher."""
     from . import liquidation as _liquidation
+    from . import progressive as _progressive
     from ..revalorisation import mener_au_mois
 
     liste = departs(moteur, carriere) if liste is None else liste
@@ -332,6 +372,14 @@ def liquider_les_departs(moteur: ScenarioActuel, carriere: Carriere,
             for pension, montant in zip(anterieure.regimes, mener_au_mois(
                 moteur, anterieure.regimes, anterieure.carriere.date_liquidation,
                 depart.date)))
-        etat = _liquidation.Etat(carriere.liquidee_au(depart.date), journal, servies)
+        initiales, recalcul = (), True
+        if progressive is not None:
+            ouverte, provisoire = progressive
+            initiales = _progressive.initiales(
+                moteur, ouverte, provisoire, depart.date,
+                None if depart.unique else depart.regimes)
+            recalcul = _progressive.recalculee(depart.date)
+        etat = _liquidation.Etat(carriere.liquidee_au(depart.date), journal, servies,
+                                 initiales, recalcul)
         liquidations.append(_liquidation.liquider(demande, etat, contexte))
     return liquidations

@@ -258,6 +258,7 @@ function ligneAnnuelle({
   part_primes: partPrimes,
   trimestresMaximum,
   trimestresDeclares = null,
+  quotite = 1.0,
 }) {
   const cotise = typePeriode === "emploi";
   const motifs = macro.paquet.periodes_non_travaillees ?? {};
@@ -315,6 +316,7 @@ function ligneAnnuelle({
     cotisations_versees: cotise,
     fraction_annee: part,
     part_primes: partPrimes,
+    quotite: cotise ? quotite : 1.0,
     // Assurance vieillesse des parents au foyer : la CNAF cotise au régime
     // général sur une assiette forfaitaire égale au SMIC — 1 820 heures, soit
     // le SMIC mensuel multiplié par douze.
@@ -494,6 +496,19 @@ export class Carriere {
   get deces() {
     const fait = chrono.deces(this.chronologie, this.personne);
     return fait === null ? null : fait.debut;
+  }
+
+  /**
+   * La retraite progressive que la personne demande, si elle la dit : `[mois,
+   * quotité]`, le mois où elle prend effet et la quotité du temps partiel
+   * gardé jusqu'au départ (`droit/progressive.js`) ; `null` sinon.
+   */
+  get retraiteProgressive() {
+    if (!this.chronologie) {
+      return null;
+    }
+    const fait = chrono.retraiteProgressive(this.chronologie, this.personne);
+    return fait === null ? null : [chrono.moisDe(fait.debut), fait.attributs.quotite];
   }
 
   /**
@@ -1063,11 +1078,12 @@ export class Carriere {
     jour_naissance = null,
     conjoint = null,
     deces = null,
+    retraite_progressive = null,
   }) {
     const chronologie = preparer(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
       nombre_enfants, part_primes, naissances_enfants, jour_naissance,
-      presomptions: macro.paquet.presomptions, conjoint, deces,
+      presomptions: macro.paquet.presomptions, conjoint, deces, retraite_progressive,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -1127,11 +1143,13 @@ export class Carriere {
     jour_naissance = null,
     conjoint = null,
     deces = null,
+    retraite_progressive = null,
   }) {
     const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
       profil_carriere, interruptions, nombre_enfants, part_primes, naissances_enfants,
       jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
+      retraite_progressive,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -1153,6 +1171,9 @@ export class Carriere {
     const dateNaissance = chrono.moisDe(naissance.debut);
     const acte = chrono.depart(chronologie, personne);
     const ageLiquidation = acte === null ? null : acte.attributs.age;
+    const demande = chrono.retraiteProgressive(chronologie, personne);
+    const progressive = demande === null ? null
+      : [chrono.moisDe(demande.debut), demande.attributs.quotite];
     const periodes = chrono.periodes(chronologie, personne);
     const relevees = periodes.filter((p) => "revenu" in p.attributs);
     let datesEntree = {};
@@ -1167,10 +1188,10 @@ export class Carriere {
     }
     if (relevees.length > 0) {
       lignes = lignesDuReleve(dateNaissance, relevees, chrono.moisDe(acte.debut),
-        macro, identifiant);
+        macro, identifiant, progressive);
     } else if (periodes.length > 0) {
       [lignes, datesEntree] = lignesDuParcours(dateNaissance, periodes,
-        chrono.moisDe(acte.debut), macro);
+        chrono.moisDe(acte.debut), macro, progressive);
     }
     return new Carriere({
       annee_naissance: dateNaissance.annee,
@@ -1212,7 +1233,8 @@ function naissancesDeclarees(chronologie, personne) {
  * sauf celle de la liquidation, que le mois du départ (`fin`, qui n'est plus
  * travaillé) coupe. Voir `carriere.py`.
  */
-function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant) {
+function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant,
+  progressive = null) {
   const lues = periodes.map((periode) => {
     const { attributs } = periode;
     const annee = chrono.anneeDe(periode.debut);
@@ -1233,6 +1255,8 @@ function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant) {
       part_primes: attributs.part_primes,
       trimestresMaximum: trimestresCivils(mois),
       trimestresDeclares: attributs.trimestres,
+      quotite: periode.sorte === chrono.EMPLOI
+        ? quotiteDeLAnnee(annee, new DateMois(annee, 1), fin, progressive) : 1.0,
     });
   });
   return limiterChomageNonIndemnise(
@@ -1243,12 +1267,34 @@ function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant) {
 }
 
 /**
+ * La quotité moyenne des mois travaillés d'une année : un, sauf pour les mois
+ * de retraite progressive, travaillés à leur quotité. Voir `carriere.py`.
+ */
+function quotiteDeLAnnee(annee, debut, fin, progressive) {
+  if (progressive === null) {
+    return 1.0;
+  }
+  const [depuis, quotite] = progressive;
+  const travailles = moisTravailles(annee, debut, fin);
+  if (travailles <= 0) {
+    return 1.0;
+  }
+  const partiels = moisTravailles(annee, depuis.rang > debut.rang ? depuis : debut, fin);
+  if (partiels <= 0) {
+    return 1.0;
+  }
+  return (travailles - partiels + partiels * quotite) / travailles;
+}
+
+/**
  * Les années d'un parcours, et le mois d'entrée dans chaque statut. Les
  * métiers principaux couvrent la carrière bout à bout ; les activités
  * cumulées s'y ajoutent, chacune sur ses mois ; une année d'interruption
- * déclarée arrête l'activité principale, pas les cumulées. Voir `carriere.py`.
+ * déclarée arrête l'activité principale, pas les cumulées. Une retraite
+ * progressive fait travailler l'activité principale à sa quotité, de son mois
+ * au départ. Voir `carriere.py`.
  */
-function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro) {
+function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progressive = null) {
   const anneeNaissance = dateNaissance.annee;
   const lire = (p) => ({
     metier: p.attributs,
@@ -1291,6 +1337,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro) {
     const moisParMetier = periodes.map(
       ({ ouverture, cloture }) => moisTravailles(annee, ouverture, cloture),
     );
+    const quotite = quotiteDeLAnnee(annee, debut, fin, progressive);
     let revenu = 0;
     periodes.forEach(({ metier }, i) => {
       if (moisParMetier[i] > 0) {
@@ -1301,6 +1348,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro) {
           * (moisParMetier[i] / MOIS_PAR_AN);
       }
     });
+    revenu *= quotite;
     // Le moteur ne connaît qu'une ligne, donc qu'un statut, par année civile :
     // les régimes liquident à l'année. L'année d'un changement de métier est
     // donc rattachée à celui qui en occupe le plus de mois — et, à égalité, à
@@ -1323,6 +1371,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro) {
       part,
       part_primes: principal.part_primes,
       trimestresMaximum,
+      quotite,
     }));
   }
   const limitees = limiterChomageNonIndemnise(lignes, anneeNaissance);

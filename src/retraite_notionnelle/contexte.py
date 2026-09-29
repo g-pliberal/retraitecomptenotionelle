@@ -331,6 +331,7 @@ class Contexte:
                 naissances_enfants=saisie.naissances_enfants(),
                 conjoint=saisie.conjoint_declare(),
                 deces=saisie.deces_declare(),
+                retraite_progressive=saisie.retraite_progressive_declaree(),
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -424,6 +425,7 @@ class Contexte:
             naissances_enfants=saisie.naissances_enfants(),
             conjoint=saisie.conjoint_declare(),
             deces=saisie.deces_declare(),
+            retraite_progressive=saisie.retraite_progressive_declaree(),
             part_primes=saisie.primes,
             identifiant="assuré",
         )

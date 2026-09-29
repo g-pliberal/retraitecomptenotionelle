@@ -2592,6 +2592,66 @@ ${lignes.join("\n")}
 ${montant} Le détail du calcul, plus bas, dit ce que chacune vaut à sa date.</div>`;
 }
 
+/** Ce qui ferme une retraite progressive, dit au lecteur. */
+function pourquoiPasDeProgressive(progressive, carriere, date) {
+  switch (progressive.motif) {
+    case "avant_1988":
+      return "elle n'existe que depuis mai 1988 (loi n° 88-16)";
+    case "activite":
+      return `elle se demande en gardant une activité à temps partiel, et votre carrière `
+        + `n'en porte pas en ${date.annee}`;
+    case "regimes":
+      return date.annee * 12 + date.mois < 2023 * 12 + 9
+        ? "le régime où vous travaillez ne la sert pas encore : les fonctionnaires, les "
+          + "libéraux et les avocats n'y ont droit que depuis le 1<sup>er</sup> septembre 2023"
+        : "le régime où vous travaillez n'est pas de ceux que les décrets d'août 2023 "
+          + "y ouvrent";
+    case "quotite":
+      return `votre quotité, ${formatFixe(progressive.quotite * 100, 0)} %, n'est pas `
+        + "dans ses bornes : de 40 à 80 % d'un temps plein depuis décembre 2014 — de "
+        + "50 à 90 % pour un fonctionnaire —, 80 % au plus avant";
+    case "age":
+      return `elle s'ouvre à ${age(progressive.age_minimum)}, et vous avez `
+        + `${age(carriere.ageAu(date))}`;
+    case "duree":
+      return `elle demande ${progressive.duree_requise} trimestres d'assurance, et vous `
+        + `en avez ${progressive.trimestres}`;
+    default:
+      return "";
+  }
+}
+
+/**
+ * La retraite progressive que la carrière demande (`droit/progressive.js`) :
+ * ouverte, ce qu'elle sert avant le départ et ce que devient la pension
+ * complète ; fermée, pourquoi. Rend `""` sans demande.
+ */
+function retraiteProgressive(comparaison) {
+  const progressive = comparaison.actuel.retraite_progressive;
+  if (!progressive) return "";
+  const carriere = comparaison.carriere;
+  const [annee, mois] = progressive.date_effet.split("-").map(Number);
+  const date = new DateMois(annee, mois);
+  if (progressive.motif !== "ouverte") {
+    return `<div class="note"><strong>La retraite progressive que vous demandez ne vous
+est pas ouverte</strong> au 1<sup>er</sup> ${echapper(String(date))} :
+${pourquoiPasDeProgressive(progressive, carriere, date)}. La carrière garde le temps
+partiel que vous dites, sans fraction de pension.</div>`;
+  }
+  const pourcent = (valeur) => `${formatFixe(valeur * 100, 0)} %`;
+  const complete = progressive.recalculee
+    ? "Au départ, votre pension complète est recalculée, avec ce que le temps partiel "
+      + "a ajouté ; elle ne peut pas être inférieure à la pension provisoire, "
+      + "revalorisée."
+    : "Au départ, votre pension complète est la pension provisoire, servie entière : "
+      + "avant le décret du 8 juin 2006, elle ne se recalculait pas.";
+  return `<div class="note"><strong>Une retraite progressive, du 1<sup>er</sup>
+${echapper(String(date))} à votre départ.</strong> Vous travaillez à
+${pourcent(progressive.quotite)} et touchez ${pourcent(progressive.fraction)} de votre
+pension provisoire, soit ${g.euros(progressive.montant_servi / 12)} bruts par mois en euros
+de ${annee}, en plus de votre salaire à temps partiel. ${complete}</div>`;
+}
+
 /**
  * Ce que l'électeur est venu chercher, en trois phrases, avant les barres.
  *
@@ -3194,6 +3254,7 @@ function resultats(contexte, saisie) {
 
   const report = reportProposition(comparaison);
   const echelonnes = departsEchelonnes(contexte, comparaison);
+  const progressive = retraiteProgressive(comparaison);
 
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
     + 'résultat : <span class="etiquette-fiabilite">'
@@ -3241,7 +3302,7 @@ ${revenuDeduit(contexte, comparaison, saisie, montants)}
   ${fiabilite}
   ${capitalisation}
   ${minimum}
-  ${ouverture}${echelonnes}
+  ${ouverture}${echelonnes}${progressive}
   ${report}
 </div>
 <div class="carte">

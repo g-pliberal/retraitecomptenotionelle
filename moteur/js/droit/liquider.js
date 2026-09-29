@@ -1254,8 +1254,10 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
         .some((c) => codesAdmis.has(c)),
     ) ?? null;
     if (derniere !== null && derniere.cotise && derniere.fraction_annee > 0) {
+      // À temps plein : le traitement indiciaire du grade, que le temps
+      // partiel d'une retraite progressive réduit sans le changer.
       let traitement = assietteDeReference(moteur, periode, derniere)
-        / derniere.fraction_annee;
+        / (derniere.fraction_annee * derniere.quotite);
       if (plafonner) {
         traitement = Math.min(
           traitement,

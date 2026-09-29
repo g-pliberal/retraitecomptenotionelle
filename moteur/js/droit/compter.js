@@ -202,7 +202,8 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
     if (retenusLigne <= 0) {
       return;
     }
-    let servicesLigne = ligne.services_fonction_publique ? retenusLigne : 0;
+    let servicesLigne = ligne.services_fonction_publique
+      ? servicesATempsPartiel(retenusLigne, ligne.quotite) : 0;
     const plafond = ligne.services_plafond_trimestres_par_enfant;
     if (servicesLigne > 0 && plafond > 0) {
       const restant = budgetServicesPlafonnes.get(plafond)
@@ -283,6 +284,18 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
  *
  * @returns {MajorationEnfants|null}
  */
+/**
+ * Les trimestres de services d'une année travaillée à `quotite` : sa durée
+ * réelle, arrondie au trimestre, un demi-trimestre et plus comptant pour un
+ * (L. 13), année par année. Voir `services_a_temps_partiel` du Python.
+ */
+export function servicesATempsPartiel(trimestres, quotite) {
+  if (quotite >= 1.0) {
+    return trimestres;
+  }
+  return Math.floor(trimestres * quotite + 0.5);
+}
+
 export function majorationPourEnfants(moteur, carriere, trimestresParRegime, anneeLiquidation) {
   // La date d'effet de la pension, au mois de la liquidation : l'année est
   // celle que l'appelant demande, comme pour le droit à pension.

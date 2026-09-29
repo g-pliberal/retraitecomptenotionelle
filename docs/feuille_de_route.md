@@ -2915,6 +2915,49 @@ reste celle de l'indice majoré 216, que la loi de 2003 donne au droit
 antérieur ; la correspondance de l'indice brut 100 des années plus anciennes
 n'est pas lue.
 
+**Troisième étape, le 29 septembre : la retraite progressive.** Une demande —
+sa date, la quotité du temps partiel gardé jusqu'au départ — entre à la
+chronologie comme un acte de la personne ; la saisie la lit dans l'adresse
+(`progressive`, `quotite`), le formulaire ne la demandant qu'à la cinquième
+étape. Les deux moteurs l'examinent à sa date (`droit/progressive.py`, et son
+jumeau) : l'âge, la durée d'assurance, la quotité, et le régime où l'assuré
+travaille cette année-là. Ouverte, elle liquide à titre provisoire les régimes
+que nomme L. 351-15, puis, depuis 2023, tous les régimes de base, avec les
+complémentaires qui les suivent, et sert sa fraction jusqu'au départ ; au
+départ, la pension complète se liquide sur la carrière entière, bornée par la
+provisoire revalorisée hors de la fonction publique, et elle était la
+provisoire avant le 8 juin 2006. Les lignes de carrière portent désormais
+leur quotité : le revenu en est réduit, les services de la fonction publique
+la comptent, et le traitement de référence se lit à temps plein.
+L'échéancier inscrit la demande, la liquidation provisoire et une composante
+par pension servie en fraction, que la pension complète remplace ; la page
+dit la fraction servie, ou pourquoi la demande est fermée.
+
+Relire les textes, avant d'écrire la fiche, a corrigé le moteur de l'étape
+même sur trois points : les libéraux et les avocats ne demandent la
+retraite progressive que depuis le 1er septembre 2023, avec les clercs de
+notaire, l'Opéra et les mines (décrets n° 2023-751 et 2023-753), le décret de
+L. 643-8-1 n'ayant jamais paru — le moteur les ouvrait en 2014 ; la pension de
+libéral d'un salarié se liquide pourtant avec la sienne depuis 1988, L. 351-15
+nommant les professions libérales ; et la pension complète du fonctionnaire
+n'a pas de plancher (D. 37-3, et les décrets de la CNRACL et des ouvriers de
+l'État). La quotité s'arrondit à l'unité, la moitié comptée pour un. La
+décote de la pension provisoire, bornée à 25 % de 2014 à 2023 (R. 351-41), n'a
+pas de code : les vingt trimestres de chaque régime la tiennent déjà, et un
+test le vérifie.
+
+Une salariée née en 1965, entrée à vingt ans au salaire moyen, à 60 % depuis
+novembre 2025, touche 40 % de sa pension provisoire, 9 522,70 € par an en
+euros de 2025 ; à son départ à soixante-quatre ans, sa pension complète est de
+31 114,77 €, contre 32 221,46 € à temps plein. Six témoins de simulation (`progressive_*`)
+et deux de pages, deux affirmations ; les cas de retraite progressive font de
+trois à six appels de `liquider`, sous le nombre déclaré. La fiche
+`retraite_progressive` passe à `approchee`, en sept versions datées, et le
+cliquet des rédactions sans statut descend de 10 298 à 10 276. Restent ouverts : les changements
+de quotité et la suspension, la baisse de revenus d'un non-salarié, les règles
+propres de l'Agirc-Arrco et de l'Ircantec, les décrets des régimes spéciaux,
+un exemple publié ; le formulaire, à la cinquième étape.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

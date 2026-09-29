@@ -247,7 +247,8 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
         if retenus_ligne <= 0:
             continue
         services_ligne = (
-            retenus_ligne if ligne.services_fonction_publique else 0
+            services_a_temps_partiel(retenus_ligne, ligne.quotite)
+            if ligne.services_fonction_publique else 0
         )
         plafond = ligne.services_plafond_trimestres_par_enfant
         if services_ligne and plafond:
@@ -304,6 +305,17 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
             hors_annee["services"][regime] = services
     return Durees(carriere, par_annee, hors_annee, majoration_enfants, trimestres,
                   trimestres_par_regime, bonifications_par_regime)
+
+
+def services_a_temps_partiel(trimestres: int, quotite: float) -> int:
+    """Les trimestres de services d'une année travaillée à ``quotite`` : sa
+    durée réelle, quand la durée d'assurance la compte entière (L. 11 et L. 14
+    du code des pensions ; D. 37-3 pour la retraite progressive). Arrondie
+    au trimestre, un demi-trimestre et plus comptant pour un — les
+    quarante-cinq jours de L. 13 —, année par année."""
+    if quotite >= 1.0:
+        return trimestres
+    return int(trimestres * quotite + 0.5)
 
 
 def majoration_pour_enfants(moteur: ScenarioActuel, carriere: Carriere,

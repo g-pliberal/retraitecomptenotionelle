@@ -81,7 +81,10 @@ class AnneeCarriere:
     affiliation: str
     #: Nature de la période.
     type_periode: str = "emploi"
-    #: Quotité travaillée (1.0 = temps plein).
+    #: Quotité travaillée (1.0 = temps plein) : celle des mois de retraite
+    #: progressive, en moyenne sur l'année. Les services de la fonction
+    #: publique la comptent pour leur durée réelle, et le traitement de
+    #: référence se lit à temps plein (``droit/progressive.py``).
     quotite: float = 1.0
     #: Trimestres validés au sens du système ACTUEL (utilisé par le seul
     #: scénario « système actuel »).
@@ -339,6 +342,7 @@ def _ligne_annuelle(
     part_primes: float,
     trimestres_maximum: int,
     trimestres_declares: int | None = None,
+    quotite: float = 1.0,
 ) -> AnneeCarriere:
     """Une année de carrière, une fois connus son revenu et sa nature.
 
@@ -410,6 +414,7 @@ def _ligne_annuelle(
         ),
         fraction_annee=part,
         part_primes=part_primes,
+        quotite=quotite if cotise else 1.0,
         # Assurance vieillesse des parents au foyer : la CNAF cotise au régime
         # général sur une assiette forfaitaire égale au SMIC — 1 820 heures,
         # soit le SMIC mensuel multiplié par douze.
@@ -603,6 +608,16 @@ class Carriere:
     def age_au(self, date: DateMois) -> float:
         """L'âge, en mois révolus, au premier jour de ce mois."""
         return (date.rang - self.origine_des_ages.rang) / MOIS_PAR_AN
+
+    @cached_property
+    def retraite_progressive(self) -> "tuple[DateMois, float] | None":
+        """La retraite progressive que la personne demande, si elle la dit :
+        le mois où elle prend effet, et la quotité du temps partiel qu'elle
+        garde jusqu'au départ (:mod:`~retraite_notionnelle.droit.progressive`)."""
+        fait = (chrono.retraite_progressive(self.chronologie, self.personne)
+                if self.chronologie else None)
+        return (None if fait is None
+                else (chrono.mois_de(fait["debut"]), fait["attributs"]["quotite"]))
 
     @cached_property
     def deces(self) -> str | None:
@@ -1170,6 +1185,7 @@ class Carriere:
         jour_naissance: int | None = None,
         conjoint: dict | None = None,
         deces: str | None = None,
+        retraite_progressive: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -1200,7 +1216,8 @@ class Carriere:
             annee_naissance, sexe, releve, age_liquidation,
             mois_naissance=mois_naissance, nombre_enfants=nombre_enfants,
             part_primes=part_primes, naissances_enfants=naissances_enfants,
-            jour_naissance=jour_naissance, conjoint=conjoint, deces=deces))
+            jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
+            retraite_progressive=retraite_progressive))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1266,6 +1283,7 @@ class Carriere:
         jour_naissance: int | None = None,
         conjoint: dict | None = None,
         deces: str | None = None,
+        retraite_progressive: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -1299,6 +1317,10 @@ class Carriere:
 
         ``interruptions`` associe une année à un type de période non cotisée.
 
+        ``retraite_progressive`` déclare une retraite progressive : son
+        ``age`` et la ``quotite`` du temps partiel que l'assuré garde jusqu'au
+        départ, qui réduit d'autant le revenu de ces mois-là.
+
         Les deux bords sont des années INCOMPLÈTES et sont construites comme
         telles : celui qui entre en septembre ne travaille que quatre mois de
         son année d'entrée, celui qui part en août n'en travaille que sept de
@@ -1311,7 +1333,8 @@ class Carriere:
             mois_naissance=mois_naissance, profil_carriere=profil_carriere,
             interruptions=interruptions, nombre_enfants=nombre_enfants,
             part_primes=part_primes, naissances_enfants=naissances_enfants,
-            jour_naissance=jour_naissance, conjoint=conjoint, deces=deces))
+            jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
+            retraite_progressive=retraite_progressive))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1336,6 +1359,9 @@ class Carriere:
         date_naissance = chrono.mois_de(naissance["debut"])
         acte = chrono.depart(chronologie, personne)
         age_liquidation = None if acte is None else acte["attributs"]["age"]
+        demande = chrono.retraite_progressive(chronologie, personne)
+        progressive = (None if demande is None else
+                       (chrono.mois_de(demande["debut"]), demande["attributs"]["quotite"]))
         periodes = chrono.periodes(chronologie, personne)
         relevees = [p for p in periodes if "revenu" in p["attributs"]]
         dates_entree: dict[str, DateMois] = {}
@@ -1347,10 +1373,12 @@ class Carriere:
                              "parcours, que rien ne sait joindre")
         if relevees:
             lignes = _lignes_du_releve(date_naissance, relevees,
-                                       chrono.mois_de(acte["debut"]), macro, identifiant)
+                                       chrono.mois_de(acte["debut"]), macro, identifiant,
+                                       progressive)
         elif periodes:
             lignes, dates_entree = _lignes_du_parcours(
-                date_naissance, periodes, chrono.mois_de(acte["debut"]), macro)
+                date_naissance, periodes, chrono.mois_de(acte["debut"]), macro,
+                progressive)
         else:
             lignes = []
         return cls(
@@ -1385,9 +1413,13 @@ def _naissances_declarees(chronologie: dict, personne: str) -> tuple[str, ...]:
 
 
 def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateMois,
-                      macro: DonneesMacro, identifiant: str) -> list[AnneeCarriere]:
+                      macro: DonneesMacro, identifiant: str,
+                      progressive: tuple[DateMois, float] | None = None
+                      ) -> list[AnneeCarriere]:
     """Les années d'un relevé, une par ligne : le revenu et les trimestres
-    qu'il porte, sous le statut qu'il dit.
+    qu'il porte, sous le statut qu'il dit. Une année de retraite progressive
+    garde le revenu que le relevé porte, déjà celui du temps partiel ; elle
+    prend la quotité de ses mois (:func:`_quotite_de_l_annee`).
 
     **Ce qui est lu, et ce qui ne l'est pas.** Le relevé donne l'année ; il
     ne donne pas le mois. Chaque ligne vaut donc une année civile PLEINE,
@@ -1418,6 +1450,8 @@ def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateM
             part_primes=attributs["part_primes"],
             trimestres_maximum=trimestres_civils(mois),
             trimestres_declares=attributs["trimestres"],
+            quotite=(_quotite_de_l_annee(annee, DateMois(annee, 1), fin, progressive)
+                     if periode["sorte"] == chrono.EMPLOI else 1.0),
         ))
     return limiter_chomage_non_indemnise(
         lignes, date_naissance.annee,
@@ -1426,8 +1460,30 @@ def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateM
     )
 
 
+def _quotite_de_l_annee(annee: int, debut: DateMois, fin: DateMois,
+                        progressive: tuple[DateMois, float] | None) -> float:
+    """La quotité moyenne des mois travaillés d'une année : un, sauf pour
+    les mois de retraite progressive, travaillés à leur quotité.
+
+    L'année où elle commence mêle des mois à temps plein et des mois à
+    temps partiel : la moyenne des deux, pondérée par les mois, est ce qui
+    rend au revenu de l'année son équivalent à temps plein, et aux services
+    de la fonction publique leur durée réelle."""
+    if progressive is None:
+        return 1.0
+    depuis, quotite = progressive
+    travailles = mois_travailles(annee, debut, fin)
+    if travailles <= 0:
+        return 1.0
+    partiels = mois_travailles(annee, max(debut, depuis, key=lambda d: d.rang), fin)
+    if partiels <= 0:
+        return 1.0
+    return (travailles - partiels + partiels * quotite) / travailles
+
+
 def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: DateMois,
-                        macro: DonneesMacro
+                        macro: DonneesMacro,
+                        progressive: tuple[DateMois, float] | None = None
                         ) -> tuple[list[AnneeCarriere], dict[str, DateMois]]:
     """Les années d'un parcours, et le mois d'entrée dans chaque statut.
 
@@ -1442,6 +1498,11 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
     son année de départ. Le modèle comptait ces deux années pour zéro ou
     pour une, selon un arrondi — d'où une marche de plusieurs pour cent au
     milieu de l'année.
+
+    UNE RETRAITE PROGRESSIVE (``progressive``, son mois et sa quotité) fait
+    travailler l'activité principale à temps partiel de son mois au départ :
+    le revenu de ces mois-là est celui du temps plein, réduit à la quotité,
+    et la ligne de l'année porte la quotité moyenne de ses mois.
     """
     annee_naissance = date_naissance.annee
     principaux = [(p["attributs"], chrono.mois_de(p["debut"]), chrono.mois_de(p["fin"]))
@@ -1498,6 +1559,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
         # travaillés de l'année : les périodes la découpent sans reste.
         mois_par_metier = [mois_travailles(annee, ouverture, cloture)
                            for _, ouverture, cloture in principaux]
+        quotite = _quotite_de_l_annee(annee, debut, fin, progressive)
         revenu = sum(
             metier["niveau_salaire"]
             * profil_salaire(macro.racine, metier["profil"], age_annee,
@@ -1505,7 +1567,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
             * salaire_moyen_reference[annee] * (mois / MOIS_PAR_AN)
             for (metier, _, _), mois in zip(principaux, mois_par_metier)
             if mois > 0
-        )
+        ) * quotite
         # Le moteur ne connaît qu'une ligne, donc qu'un statut, par année
         # civile : les régimes liquident à l'année. L'année d'un changement
         # de métier est donc rattachée à celui qui en occupe le plus de
@@ -1525,6 +1587,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
             part=part,
             part_primes=dominant["part_primes"],
             trimestres_maximum=trimestres_maximum,
+            quotite=quotite,
         ))
     lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
 

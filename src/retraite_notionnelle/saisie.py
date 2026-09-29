@@ -534,6 +534,12 @@ class Saisie:
     #: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
     #: conjoint : au départ ou après lui.
     deces: str = ""
+    #: La retraite progressive (fiche ``retraite_progressive``) : l'âge où
+    #: elle prend effet, que l'adresse porte en date comme le départ, et la
+    #: quotité du temps partiel gardé jusqu'au départ, en pour cent. ``None``
+    #: sans retraite progressive.
+    progressive: float | None = None
+    quotite_progressive: int = 0
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
@@ -648,6 +654,10 @@ class Saisie:
             ressources_conjoint=(None if parametres.get("ressources_conjoint") in (None, "")
                                  else _reel(parametres, "ressources_conjoint", 0.0)),
             deces=(parametres.get("deces") or "").strip(),
+            progressive=(None if parametres.get("progressive") in (None, "")
+                         else _age_saisi(parametres, "progressive", 0.0,
+                                         origine_des_ages(mois_de_naissance, jour_naissance))),
+            quotite_progressive=_entier(parametres, "quotite", 0),
             interruptions=(parametres.get("interruptions") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
@@ -738,6 +748,7 @@ class Saisie:
             )
         self._verifier_naissances()
         self._verifier_conjoint()
+        self._verifier_progressive()
         if not ANNEE_MINIMALE <= self.bascule <= ANNEE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de bascule attendue entre {ANNEE_MINIMALE} et "
@@ -1393,6 +1404,36 @@ class Saisie:
         """Le décès de l'assuré que la saisie déclare, ou ``None``."""
         return self.deces or None
 
+    def retraite_progressive_declaree(self) -> dict | None:
+        """La retraite progressive que la saisie déclare, telle que la
+        chronologie la reçoit : son âge et sa quotité, entre zéro et un."""
+        if self.progressive is None:
+            return None
+        return {"age": self.progressive, "quotite": self.quotite_progressive / 100.0}
+
+    def _verifier_progressive(self) -> None:
+        """La retraite progressive : une quotité de temps partiel, et une date
+        entre le début de la carrière et le départ. Que le droit l'ouvre — son
+        âge, sa durée, sa quotité —, c'est au calcul de le dire."""
+        if self.progressive is None:
+            if self.quotite_progressive:
+                raise ErreurSaisie(
+                    "« quotite » ne sert qu'à la retraite progressive : dites aussi "
+                    "sa date (« progressive »).")
+            return
+        if not 1 <= self.quotite_progressive <= 99:
+            raise ErreurSaisie(
+                "Quotité de la retraite progressive : le temps partiel gardé, en "
+                "pour cent d'un temps plein, entre 1 et 99.")
+        if en_mois(self.progressive) >= en_mois(self.liquidation):
+            raise ErreurSaisie(
+                f"Retraite progressive en {self.date_de(self.progressive, depart=True)} : "
+                f"elle précède le départ, fixé en {self.date_de(self.liquidation, depart=True)}.")
+        if self.date_de(self.progressive, depart=True).rang <= self.date_de(self.debut).rang:
+            raise ErreurSaisie(
+                f"Retraite progressive en {self.date_de(self.progressive, depart=True)} : "
+                "elle suit le début de la carrière.")
+
     def _verifier_conjoint(self) -> None:
         """Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie
         — les naissances, le mariage, le décès —, et un décès qui ne précède
@@ -1457,6 +1498,9 @@ class Saisie:
                 ("ressources_conjoint", "" if self.ressources_conjoint is None
                  else _nombre(self.ressources_conjoint)),
                 ("deces", self.deces)) if valeur not in ("", None)},
+            **({"progressive": self.mois_de(self.progressive, depart=True),
+                "quotite": self.quotite_progressive}
+               if self.progressive is not None else {}),
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,
