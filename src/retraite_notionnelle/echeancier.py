@@ -39,6 +39,7 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
 from . import chronologie as chrono
+from .droit import cumul as _cumul
 from .droit import departs as _departs
 from .droit import foyer as _foyer
 from .droit import liquidation as _liquidation
@@ -158,7 +159,54 @@ class Echeancier:
                 self._reverser_a_l_essai(carriere)
         if echeance is not None and self.au_depart is not None:
             self._echeance(carriere, echeance)
+        if self.au_depart is not None and carriere.emploi_retraite is not None:
+            self._cumuler(carriere)
         return self.journal
+
+    def _cumuler(self, carriere: Carriere) -> None:
+        """L'activité exercée après le départ (:mod:`.droit.cumul`) : ce que
+        chaque pension en garde, mois par mois, que le résultat du départ porte.
+        Une pension réduite, suspendue ou non due s'inscrit pour les mois où
+        elle l'est, dans sa lignée : ce qui est servi pendant ces mois-là, et
+        seulement eux. Les pensions y sont celles que « faire vivre » mène à
+        chaque année de l'activité."""
+        def pensions_de(annee: int) -> tuple[dict, float]:
+            vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
+            return ({r.regime: r.aujourd_hui for r in vivante.regimes},
+                    vivante.majoration_enfants * vivante.coefficient_majoration)
+
+        cumul = _cumul.cumuler(self.moteur, carriere, self.au_depart, pensions_de,
+                               self.simulateur.parametres.annee_courante)
+        self.au_depart = replace(self.au_depart, cumul=cumul)
+        emploi = carriere.emploi_retraite
+        debut = Evenement(
+            id=f"emploi_retraite_{carriere.personne}", date=_cumul.jour(cumul.debut),
+            personnes=(carriere.personne,),
+            vise={"periode": "emploi_retraite", "affiliation": emploi["affiliation"],
+                  "employeur": emploi["employeur"]},
+            sorte="debut_de_periode")
+        self._inscrire(debut, debut.id, "evenement", debut, debut.date)
+        for tranche in cumul.tranches:
+            depuis, jusqu_a = _cumul.jour(tranche.debut), _cumul.jour(tranche.fin)
+            for pension in tranche.par_regime:
+                if pension.reduction <= 0:
+                    continue
+                ident = f"cumul_{pension.regime}_{depuis}"
+                self.journal.inscrire(Entree(
+                    ident, debut.id, debut.date, depuis, jusqu_a, "composante",
+                    {"id": ident, "regime": pension.regime,
+                     "montant": {"annuel": (pension.montant - pension.reduction) * 12.0,
+                                 "monnaie": "EUR"},
+                     "debut": depuis, "fin": jusqu_a,
+                     "detail": (f"cumul emploi-retraite, {pension.statut} "
+                                f"({pension.regle}) : {pension.reduction:,.2f} € par mois "
+                                "non servis")},
+                    remplace=f"pension_{pension.regime}"))
+        fin = Evenement(
+            id=f"fin_emploi_retraite_{carriere.personne}", date=_cumul.jour(cumul.fin),
+            personnes=(carriere.personne,), vise={"periode": "emploi_retraite"},
+            sorte="fin_de_periode")
+        self._inscrire(fin, fin.id, "evenement", fin, fin.date)
 
     def _reverser(self, carriere: Carriere) -> None:
         """Le décès de l'assuré, puis la réversion qu'il ouvre à son conjoint,

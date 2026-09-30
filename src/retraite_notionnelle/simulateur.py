@@ -547,6 +547,8 @@ class Comparaison:
                        if self.actuel.departs else {}),
                     **({"retraite_progressive": self.actuel.retraite_progressive.donnees()}
                        if self.actuel.retraite_progressive is not None else {}),
+                    **({"cumul": self.actuel.cumul.donnees()}
+                       if self.actuel.cumul is not None else {}),
                     "minimum_applique": self.actuel.minimum_applique,
                     "liquidation_ouverte": self.actuel.liquidation_ouverte,
                     "motif_ouverture": self.actuel.motif_ouverture,

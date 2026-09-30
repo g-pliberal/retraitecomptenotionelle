@@ -613,6 +613,16 @@ affirmations:
     etat: verifiee
     controle: retraite_progressive_fermee
 
+  - id: simuler.cumul_emploi_retraite
+    page: /simuler
+    extrait: "Vous travaillez après votre départ"
+    porte: >-
+      l'activité exercée après le départ se compte mois par mois : chaque pension y
+      est entière, réduite, suspendue ou non due selon le droit du mois, et la page
+      dit ce que l'activité fait perdre en tout ; au taux plein, rien
+    etat: verifiee
+    controle: cumul_emploi_retraite
+
   - id: simuler.ecart_fiche_de_paie
     page: /simuler
     extrait: "sur votre fiche de paie"

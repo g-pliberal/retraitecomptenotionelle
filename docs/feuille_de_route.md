@@ -2976,6 +2976,29 @@ l'ordre : la pension servie pendant l'activité — suspendue, réduite du
 dépassement, entière au taux plein —, puis les droits que l'activité ouvre ou
 non et la seconde pension.
 
+**Quatrième étape, deuxième partie, le même jour : la pension servie pendant
+l'activité.** `droit/cumul.py` et son jumeau disent, mois par mois de
+l'activité après le départ, ce que chaque pension en garde, selon le droit du
+mois, la date de la pension et celle de la première pension de base : le
+salarié (L. 161-22 et ses décrets), l'artisan, le commerçant et le libéral
+(L. 634-6, L. 643-6), le fonctionnaire (L. 84 à L. 86 du code des pensions),
+l'Agirc-Arrco, et la première pension de 2027. Les décrets, relus dans leurs
+rédactions de 2004 à 2017, recoupent la fiche : la première pension de 2015
+reste suspendue jusqu'au décret de la réduction, qui ne vaut que pour les
+activités exercées depuis le 1er avril 2017 (version nouvelle
+`premieres_pensions_de_2015`), et celle d'avant 2015 garde la suspension. Chaque
+régime ne réduit que ses pensions, pour l'activité qui relève de lui ; la
+pension des régimes alignés, que le modèle liquide au régime général, suit
+aussi la règle des artisans pour l'ancien artisan qui le redevient. Au-delà de
+l'année courante, les pensions et le dernier salaire suivent les prix.
+L'échéancier inscrit la pension réduite, suspendue ou non due pour les seuls
+mois où elle l'est ; le résultat du départ porte le cumul, et la page dit,
+période par période, ce que la pension devient et ce que l'activité fait
+perdre en tout. Huit témoins de simulation et deux de page ; quatre exemples
+publiés, des fiches F12402 et F13243, reproduits ; les deux fiches du cumul
+passent à `approchee`. Restent : les droits que l'activité ouvre ou non et la
+seconde pension, puis la cinquième étape.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

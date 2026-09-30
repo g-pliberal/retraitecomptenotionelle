@@ -26,6 +26,7 @@
 import * as chrono from "./chronologie.js";
 import { formatFixe } from "./format.js";
 import { dateDEffet } from "./droit/commun.js";
+import * as leCumul from "./droit/cumul.js";
 import * as lesDeparts from "./droit/departs.js";
 import { foyerEtNet } from "./droit/foyer.js";
 import * as liquidation from "./droit/liquidation.js";
@@ -159,7 +160,63 @@ export class Echeancier {
     if (echeance !== null && this.auDepart !== null) {
       this._echeance(carriere, echeance);
     }
+    if (this.auDepart !== null && carriere.emploiRetraite !== null) {
+      this._cumuler(carriere);
+    }
     return this.journal;
+  }
+
+  /**
+   * L'activité exercée après le départ (`droit/cumul.js`) : ce que chaque
+   * pension en garde, mois par mois, que le résultat du départ porte. Une
+   * pension réduite, suspendue ou non due s'inscrit pour les mois où elle
+   * l'est, dans sa lignée : voir le Python.
+   */
+  _cumuler(carriere) {
+    const pensionsDe = (annee) => {
+      const vivante = faireVivre(this.simulateur, carriere, this.auDepart, annee);
+      const pensions = {};
+      for (const regime of vivante.regimes) pensions[regime.regime] = regime.aujourd_hui;
+      return [pensions, vivante.majoration_enfants * vivante.coefficient_majoration];
+    };
+    const cumul = leCumul.cumuler(this.moteur, carriere, this.auDepart, pensionsDe,
+      this.simulateur.parametres.annee_courante);
+    this.auDepart.cumul = cumul;
+    const emploi = carriere.emploiRetraite;
+    const debut = new Evenement({
+      id: `emploi_retraite_${carriere.personne}`, date: leCumul.jour(cumul.debut),
+      personnes: [carriere.personne],
+      vise: { periode: "emploi_retraite", affiliation: emploi.affiliation,
+        employeur: emploi.employeur },
+      sorte: "debut_de_periode",
+    });
+    this._inscrire(debut, debut.id, "evenement", debut, debut.date);
+    for (const tranche of cumul.tranches) {
+      const depuis = leCumul.jour(tranche.debut);
+      const jusqua = leCumul.jour(tranche.fin);
+      for (const pension of tranche.par_regime) {
+        if (pension.reduction <= 0) continue;
+        const ident = `cumul_${pension.regime}_${depuis}`;
+        this.journal.inscrire(new Entree({
+          id: ident, evenement: debut.id, inscriteLe: debut.date, debut: depuis, fin: jusqua,
+          sorte: "composante",
+          contenu: {
+            id: ident, regime: pension.regime,
+            montant: { annuel: (pension.montant - pension.reduction) * 12.0, monnaie: "EUR" },
+            debut: depuis, fin: jusqua,
+            detail: `cumul emploi-retraite, ${pension.statut} (${pension.regle}) : `
+              + `${formatFixe(pension.reduction, 2, true)} € par mois non servis`,
+          },
+          remplace: `pension_${pension.regime}`,
+        }));
+      }
+    }
+    const fin = new Evenement({
+      id: `fin_emploi_retraite_${carriere.personne}`, date: leCumul.jour(cumul.fin),
+      personnes: [carriere.personne], vise: { periode: "emploi_retraite" },
+      sorte: "fin_de_periode",
+    });
+    this._inscrire(fin, fin.id, "evenement", fin, fin.date);
   }
 
   /**

@@ -1551,6 +1551,18 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
             "ressources": c.get("ressources_conjoint"),
         }
         communs["deces"] = None if c.get("deces") is None else str(c["deces"])
+    if "emploi_retraite" in c:
+        # L'activité après le départ, dite par ses mois comme la liquidation :
+        # ses âges se comptent du même mois d'origine.
+        emploi = c["emploi_retraite"]
+        communs["emploi_retraite"] = {
+            "age": (_mois(emploi["debut"]).rang - origine.rang) / 12.0,
+            "fin": (_mois(emploi["fin"]).rang - origine.rang) / 12.0,
+            "affiliation": emploi.get("affiliation", c["affiliation"]),
+            "niveau_salaire": float(emploi.get("niveau_salaire",
+                                               c.get("niveau_salaire", 1.0))),
+            "employeur": emploi.get("employeur", "autre"),
+        }
     actuel = simulateur.scenario_actuel
     if "age_debut" in c:
         carriere = simulateur.carriere_simple(age_debut=float(c["age_debut"]), **communs)
@@ -1668,7 +1680,54 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         servie = reversion(actuel, [(regime, 12 * montant / taux[regime], Fiabilite.HAUTE)
                                     for regime, montant in avant.items()], carriere, annee)
         return {r.regime: r.montant / 12 for r in servie.regimes}
+    if cle in ("deductions_annuelles_du_cumul", "mois_sans_pension_du_cumul",
+               "plafond_mensuel_du_cumul"):
+        resultat_cumul = _cumul_exemple(simulateur, exemple, carriere, resultat)
+        if resultat_cumul is None:
+            return "aucune activité après le départ"
+        if cle == "deductions_annuelles_du_cumul":
+            annee = min(int(a) for a in exemple["carriere"]["revenus_apres_depart"])
+            return {regime: sum(p.reduction * t.mois for t in resultat_cumul.tranches
+                                if t.debut.annee == annee
+                                for p in t.par_regime if p.regime == regime)
+                    for regime in exemple["attendu"][cle]}
+        if cle == "mois_sans_pension_du_cumul":
+            bases = {"base", "integre"}
+            return [f"{mois.annee}-{mois.mois:02d}"
+                    for t in resultat_cumul.tranches
+                    if all(p.statut == "non_due" for p in t.par_regime
+                           if simulateur.catalogue[p.regime].etage in bases)
+                    for mois in (t.debut.plus_mois(k) for k in range(t.mois))]
+        premiere = resultat_cumul.tranches[0]
+        base = next((p for p in premiere.par_regime if p.regime == "regime_general"), None)
+        return base.plafond if base is not None and base.plafond is not None else (
+            "aucun plafond au premier mois")
     raise AssertionError(f"grandeur inconnue dans le témoin : {cle}")
+
+
+def _cumul_exemple(simulateur: Simulateur, exemple: dict, carriere, resultat):
+    """Le cumul emploi-retraite de l'exemple. Quand il donne la pension et le
+    revenu, non la carrière, le test prête à chaque régime nommé sa pension, et à
+    chaque année son revenu brut ; sinon, l'échéancier le calcule."""
+    from dataclasses import replace
+
+    from retraite_notionnelle.droit import cumul
+
+    c = exemple["carriere"]
+    revenus = {int(a): float(m) for a, m in (c.get("revenus_apres_depart") or {}).items()}
+    if revenus:
+        carriere = replace(carriere, lignes_apres_depart=tuple(
+            replace(ligne, revenu=revenus.get(ligne.annee, ligne.revenu))
+            for ligne in carriere.lignes_apres_depart))
+    pensions = c.get("pensions_annuelles_en_cumul")
+    if pensions is None:
+        echeancier = Echeancier(simulateur)
+        echeancier.parcourir(carriere)
+        return echeancier.au_depart.cumul
+    pretees = {regime: float(montant) for regime, montant in pensions.items()}
+    return cumul.cumuler(simulateur.scenario_actuel, carriere, resultat,
+                         lambda annee: (dict(pretees), 0.0),
+                         simulateur.parametres.annee_courante)
 
 
 #: Les grandeurs qui se comparent à une tolérance près ; les autres, à
@@ -1682,6 +1741,8 @@ TOLERANCES = {
     "pension_regime_general_mensuelle": {"abs": 0.05},
     "pensions_annuelles_des_regimes": {"abs": 0.5},
     "reversions_ecretees_mensuelles": {"abs": 0.01},
+    "deductions_annuelles_du_cumul": {"abs": 0.01},
+    "plafond_mensuel_du_cumul": {"abs": 0.01},
 }
 
 
@@ -1705,9 +1766,11 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         # Un régime nommé que la réversion ne liquide pas n'a pas de date.
         return not isinstance(mesure, str) and all(
             mesure.get(regime) == str(date) for regime, date in valeur.items())
-    if cle == "reversions_ecretees_mensuelles":
+    if cle in ("reversions_ecretees_mensuelles", "deductions_annuelles_du_cumul"):
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.01)
                    for regime, montant in valeur.items())
+    if cle == "mois_sans_pension_du_cumul":
+        return mesure == [str(mois) for mois in valeur]
     if cle in TOLERANCES:
         return mesure == pytest.approx(valeur, **TOLERANCES[cle])
     return mesure == valeur

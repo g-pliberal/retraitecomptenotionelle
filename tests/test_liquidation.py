@@ -382,12 +382,14 @@ PAS = 5
 
 def _requetes() -> list[dict]:
     """Une requête sur cinq des témoins, et toutes celles dont les régimes
-    liquident à des dates différentes (:mod:`~retraite_notionnelle.droit.departs`) :
-    ce sont les seules qui passent par ce chemin."""
+    liquident à des dates différentes (:mod:`~retraite_notionnelle.droit.departs`),
+    ou qui travaillent après leur départ (:mod:`~retraite_notionnelle.droit.cumul`) :
+    ce sont les seules qui passent par ces chemins."""
     temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
                          .read_text(encoding="utf-8"))
     return [temoin["requete"] for rang, temoin in enumerate(temoins.values())
-            if rang % PAS == 0 or "departs" in temoin["resultat"]["scenarios"]["actuel"]]
+            if rang % PAS == 0 or "departs" in temoin["resultat"]["scenarios"]["actuel"]
+            or "cumul" in temoin["resultat"]["scenarios"]["actuel"]]
 
 
 def _python(requetes: list[dict]) -> list[dict]:

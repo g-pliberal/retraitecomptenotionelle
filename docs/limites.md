@@ -124,20 +124,37 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   (ci-dessous), dont les années la portent ; un temps partiel plus ancien
   compte ici à temps plein, et un fonctionnaire qui a travaillé à temps partiel
   sans surcotiser reçoit la pension d'un temps plein.
-- **Rachats, surcotisation, cumul emploi-retraite.**
+- **Rachats, surcotisation.**
   Le modèle liquide chaque régime une fois, à sa date (« Les départs
   échelonnés », ci-dessous), sur la carrière saisie, la retraite progressive
-  mise à part : il ne rachète pas d'années d'études, ne surcotise pas et ne
-  suit pas le retraité qui reprend un emploi. L'activité exercée après le
-  départ se déclare par l'adresse de la simulation (`emploi_retraite`, sa fin,
-  son statut, son revenu, l'employeur), et la carrière en garde les années à
-  part ; le modèle n'en calcule encore rien, ni la pension réduite ou
-  suspendue pendant qu'elle dure, ni les droits qu'elle ouvre ou non. Les barèmes
-  sont lus et rangés au registre de veille (`rachats_et_versements`,
-  `cumul_emploi_retraite_et_retraite_progressive`) — dont celui du rachat
-  d'études de la fonction publique, refait au premier janvier 2026, que la
-  calculette de l'ENSAP n'applique pas encore — et les règles du cumul
-  changent pour les pensions prenant effet en 2027.
+  mise à part : il ne rachète pas d'années d'études et ne surcotise pas. Les
+  barèmes sont lus et rangés au registre de veille (`rachats_et_versements`) —
+  dont celui du rachat d'études de la fonction publique, refait au premier
+  janvier 2026, que la calculette de l'ENSAP n'applique pas encore.
+- **Le cumul emploi-retraite : calculé, sur une activité déclarée.** Depuis le
+  30 septembre 2026, l'activité exercée après le départ — sa date, sa fin, son
+  statut, son revenu, l'employeur, le dernier ou un autre — se déclare par
+  l'adresse de la simulation (`emploi_retraite`), et le modèle dit, mois par
+  mois, ce que chaque pension en garde, selon le droit du mois, la date de la
+  pension et celle de la première pension de base : le cumul libre avant 1983,
+  la rupture avec le dernier employeur jusqu'en 2003, le plafond du dernier
+  salaire de 2004, le cumul intégral au taux plein depuis 2009, la suspension
+  au-delà du plafond, puis, pour la première pension de 2015 et les activités
+  d'après mars 2017, la réduction du dépassement ; le délai de six mois chez le
+  dernier employeur ; le seuil des artisans, des commerçants et des libéraux ;
+  le tiers de la pension du fonctionnaire ; le plafond de l'Agirc-Arrco. Pour
+  la première pension de 2027, la pension est réduite de tout le revenu avant
+  l'âge légal ; de l'âge légal au taux plein automatique, le seuil qu'un décret
+  doit fixer n'a pas paru, et la pension est servie entière. La page le dit, et
+  le montant du système 1 reste celui de la pension entière. Chaque régime ne
+  réduit que ses pensions, pour l'activité qui relève de lui : le salarié
+  devenu artisan garde sa pension du régime général entière. Restent dehors :
+  les règles des avocats, des exploitants agricoles, de l'outre-mer et des
+  élus, et celles des complémentaires autres que l'Agirc-Arrco, dont la pension
+  est servie entière ; les droits que l'activité ouvre ou non, et la seconde
+  pension ; le formulaire, qui ne la demande pas encore (fiches
+  `cumul_emploi_retraite_et_retraite_progressive` et
+  `cumul_emploi_retraite_fonction_publique`).
 - **La retraite progressive : servie, sur une quotité déclarée.** Depuis le
   29 septembre 2026, qui la demande — une date, et la quotité du temps
   partiel gardé jusqu'au départ — la voit examinée à sa date comme le droit
@@ -801,7 +818,7 @@ Quatre bornes à connaître, et elles sont étroites :
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->77<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->81<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -895,7 +912,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->77<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->81<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.

@@ -43,6 +43,9 @@ import {
 } from "./avantages.js";
 import { chargerFrontiere } from "./frontiere.js";
 import {
+  AGIRC_ARRCO as AGIRC_ARRCO_DU_CUMUL, PRIORITE as PRIORITE_DU_CUMUL,
+} from "./droit/cumul.js";
+import {
   COMPOSANTE_GARANTIE,
   SCENARIOS,
   calculerCout,
@@ -2652,6 +2655,202 @@ pension provisoire, soit ${g.euros(progressive.montant_servi / 12)} bruts par mo
 de ${annee}, en plus de votre salaire à temps partiel. ${complete}</div>`;
 }
 
+/** La plus touchée de ces pensions, dans l'ordre du cumul ; `null` sans pension. */
+function laPlusToucheeDuCumul(pensions) {
+  let principale = null;
+  for (const pension of pensions) {
+    if (principale === null || PRIORITE_DU_CUMUL.indexOf(pension.statut)
+        < PRIORITE_DU_CUMUL.indexOf(principale.statut)) {
+      principale = pension;
+    }
+  }
+  return principale;
+}
+
+/**
+ * Des mois, dits au lecteur : « en mai 2023 », « de mai 2023 à juin 2024 »,
+ * « d'août 2022 à avril 2023 ».
+ */
+function moisDuCumul(debut, fin) {
+  const dernier = fin.plusMois(-1);
+  const premier = echapper(String(debut));
+  if (dernier.rang === debut.rang) return `en ${premier}`;
+  const de = /^[aeiou]/.test(premier) ? `d'${premier}` : `de ${premier}`;
+  return `${de} à ${echapper(String(dernier))}`;
+}
+
+/**
+ * Ce que le droit fait de la pension de base pendant une période du cumul
+ * (`droit/cumul.js`), dit au lecteur : une proposition, sans majuscule ni
+ * point.
+ */
+function sortDeLaBase(base, periode, groupe) {
+  const plafond = base.plafond === null ? "" : `${g.euros(base.plafond)} par mois en `
+    + `${periode.debut.annee}`;
+  const perte = periode.mois > 0 ? g.euros(periode.perteBase / periode.mois) : "";
+  switch (`${base.statut}/${base.motif}`) {
+    case "integral/taux_plein":
+      return "vous avez liquidé toutes vos pensions et atteint le taux plein : le cumul "
+        + "est intégral, votre pension est servie entière";
+    case "integral/age_du_taux_plein":
+      return "passé l'âge du taux plein automatique, votre pension se cumule entièrement";
+    case "libre/avant_1983":
+      return "une pension prise avant le 1<sup>er</sup> avril 1983 se cumule librement";
+    case "libre/avant_1984":
+      return "la pension d'un artisan ou d'un commerçant prise avant juillet 1984 se "
+        + "cumule librement";
+    case "libre/autre_employeur":
+      return "avant 2004, seul le retour chez le dernier employeur privait de la pension : "
+        + "elle vous est servie entière";
+    case "libre/autre_entreprise":
+      return "avant 2004, seule la reprise de l'entreprise exploitée privait de la "
+        + "pension : elle vous est servie entière";
+    case "libre/autre_regime":
+      return "votre activité ne relève pas du régime qui vous sert votre pension de "
+        + "base : chaque régime ne réduit que ses pensions, et la vôtre est servie entière";
+    case "libre/employeur_prive":
+      return "votre pension de fonctionnaire ne se réduit que des revenus d'un employeur "
+        + "public : elle vous est servie entière";
+    case "libre/limite_d_age":
+      return "passé la limite d'âge de votre emploi, votre pension de fonctionnaire se "
+        + "cumule librement";
+    case "plafonnee/sous_le_plafond":
+      if (base.regle.startsWith("tiers") || base.regle.startsWith("cumul_integral")
+          || base.regle.startsWith("tout_employeur")) {
+        return `vos revenus restent sous le tiers de votre pension et la moitié du minimum `
+          + `garanti, ${plafond} : votre pension est servie entière`;
+      }
+      return groupe === "salaries"
+        ? `vos revenus et vos pensions restent sous le plafond, ${plafond} : votre pension `
+          + "est servie entière"
+        : `vos revenus restent sous le seuil de votre régime, ${plafond} : votre pension `
+          + "est servie entière";
+    case "plafonnee/quart_de_la_pension":
+      return "votre rémunération publique ne dépasse pas le quart de votre pension : elle "
+        + "vous est servie entière";
+    case "plafonnee/sans_revenu":
+      return "sans revenu d'activité, votre pension est servie entière";
+    case "non_due/six_mois":
+      return "vous avez repris chez votre dernier employeur dans les six mois de votre "
+        + "pension : elle n'est pas due jusqu'au sixième mois";
+    case "non_due/dernier_employeur":
+      return "avant 2004, le service de la pension supposait la rupture avec le dernier "
+        + "employeur : tant que vous y travaillez, elle ne vous est pas servie";
+    case "non_due/meme_entreprise":
+      return "avant 2004, la pension de l'artisan ou du commerçant était suspendue quand "
+        + "il reprenait l'entreprise qu'il exploitait";
+    case "suspendue/depassement":
+      return groupe === "salaries"
+        ? `vos revenus et vos pensions dépassent le plafond, ${plafond} : votre pension est `
+          + "suspendue"
+        : `vos revenus dépassent le seuil de votre régime, ${plafond} : votre pension est `
+          + "suspendue";
+    case "reduite/depassement":
+      if (base.regle.startsWith("tiers") || base.regle.startsWith("cumul_integral")
+          || base.regle.startsWith("tout_employeur")) {
+        return `vos revenus dépassent le tiers de votre pension et la moitié du minimum `
+          + `garanti, ${plafond} : l'excédent est déduit de votre pension, ${perte} par `
+          + "mois en moyenne";
+      }
+      return groupe === "salaries"
+        ? `vos revenus et vos pensions dépassent le plafond, ${plafond} : chaque pension de `
+          + `base est réduite du dépassement, ${perte} par mois en moyenne`
+        : `vos revenus dépassent le seuil de votre régime, ${plafond} : votre pension est `
+          + `réduite du dépassement, ${perte} par mois en moyenne`;
+    case "reduite/remuneration":
+      return "avant votre limite d'âge, un employeur public ne vous laisse que ce que votre "
+        + `pension dépasse de votre rémunération : ${perte} par mois en moins`;
+    case "reduite/avant_l_age_legal":
+      return "avant l'âge légal, votre pension est réduite de tout votre revenu d'activité, "
+        + `${perte} par mois en moyenne`;
+    case "seuil_non_publie/seuil_non_publie":
+      return "de l'âge légal à l'âge du taux plein automatique, votre pension serait "
+        + "réduite de la moitié de ce qui dépasse un seuil qu'aucun décret n'a encore fixé : "
+        + "le modèle la sert entière";
+    case "non_calcule/militaire":
+      return "le modèle ne calcule pas encore le cumul d'une pension militaire d'avant "
+        + "2004 avec un emploi public : votre pension est servie entière";
+    default:
+      return "le modèle n'a pas encore lu la règle de cumul de votre régime pour cette "
+        + "activité : votre pension est servie entière";
+  }
+}
+
+/** Ce que le droit fait de la retraite complémentaire Agirc-Arrco, s'il en fait
+ * quelque chose : une proposition qui suit celle de la base, ou `""`. */
+function sortDeLaComplementaire(complementaire) {
+  if (complementaire === null) return "";
+  switch (complementaire.statut) {
+    case "suspendue":
+      return " ; votre retraite complémentaire Agirc-Arrco est suspendue : vos revenus et "
+        + `vos pensions dépassent son propre plafond, ${g.euros(complementaire.plafond)} `
+        + "par mois";
+    case "non_due":
+      return " ; votre retraite complémentaire ne l'est pas non plus";
+    default:
+      return "";
+  }
+}
+
+/**
+ * L'activité exercée après le départ (`droit/cumul.js`) : ce que la pension
+ * en garde, période par période, et ce qu'elle fait perdre en tout. Rend `""`
+ * sans activité déclarée. Les montants sont bruts, en euros de chaque année :
+ * ce sont ceux que le droit compare.
+ */
+function cumulEmploiRetraite(contexte, comparaison) {
+  const cumul = comparaison.actuel.cumul;
+  if (!cumul) return "";
+  const affiliations = contexte.simulateur().affiliations;
+  const periodes = [];
+  for (const tranche of cumul.tranches) {
+    const base = laPlusToucheeDuCumul(
+      tranche.par_regime.filter((p) => !AGIRC_ARRCO_DU_CUMUL.has(p.regime)));
+    const complementaire = laPlusToucheeDuCumul(
+      tranche.par_regime.filter((p) => AGIRC_ARRCO_DU_CUMUL.has(p.regime)));
+    const perteBase = tranche.par_regime.filter((p) => !AGIRC_ARRCO_DU_CUMUL.has(p.regime))
+      .reduce((somme, p) => somme + p.reduction, 0.0) * tranche.mois;
+    const cle = [base?.statut, base?.motif, complementaire?.statut].join("/");
+    const derniere = periodes[periodes.length - 1];
+    if (derniere !== undefined && derniere.cle === cle) {
+      derniere.fin = tranche.fin;
+      derniere.mois += tranche.mois;
+      derniere.perteBase += perteBase;
+      continue;
+    }
+    periodes.push({ cle, debut: tranche.debut, fin: tranche.fin, mois: tranche.mois,
+      perteBase, base, complementaire });
+  }
+  const retenues = periodes.filter((periode) => periode.base !== null);
+  const sorts = retenues.map((periode) => sortDeLaBase(periode.base, periode, cumul.groupe)
+    + sortDeLaComplementaire(periode.complementaire));
+  // Une seule période : une phrase ; plusieurs : une par période, datée.
+  const droit = sorts.length === 1
+    ? `Le droit en vigueur : ${sorts[0]}.`
+    : `Le droit en vigueur le compte mois par mois :
+<ul>
+${retenues.map((periode, rang) => `<li>${moisDuCumul(periode.debut, periode.fin)}, `
+    + `${sorts[rang]}${rang === retenues.length - 1 ? "." : " ;"}</li>`).join("\n")}
+</ul>`;
+  const salariee = cumul.groupe === "salaries" || cumul.groupe === "fonctionnaires";
+  let chez = "";
+  if (salariee) {
+    chez = cumul.employeur === "dernier" ? ", chez votre dernier employeur"
+      : ", chez un autre employeur que le dernier";
+  } else if (cumul.employeur === "dernier") {
+    chez = ", dans l'entreprise que vous exploitiez";
+  }
+  const bilan = cumul.non_servi > 0
+    ? `En tout, votre activité vous fait perdre ${g.euros(cumul.non_servi)} de pension `
+      + "brute, en euros de chaque année."
+    : "Votre pension vous reste entière pendant toute votre activité.";
+  return `<div class="note"><strong>Vous travaillez après votre départ,
+${moisDuCumul(cumul.debut, cumul.fin)}</strong>, comme
+${echapper(affiliations.libelle(cumul.affiliation).toLowerCase())}${chez}. ${droit}
+${bilan} Le montant du système 1, plus haut, reste celui de votre pension entière,
+celle que vous touchez une fois l'activité finie.</div>`;
+}
+
 /**
  * Ce que l'électeur est venu chercher, en trois phrases, avant les barres.
  *
@@ -3255,6 +3454,7 @@ function resultats(contexte, saisie) {
   const report = reportProposition(comparaison);
   const echelonnes = departsEchelonnes(contexte, comparaison);
   const progressive = retraiteProgressive(comparaison);
+  const cumulApresDepart = cumulEmploiRetraite(contexte, comparaison);
 
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
     + 'résultat : <span class="etiquette-fiabilite">'
@@ -3302,7 +3502,7 @@ ${revenuDeduit(contexte, comparaison, saisie, montants)}
   ${fiabilite}
   ${capitalisation}
   ${minimum}
-  ${ouverture}${echelonnes}${progressive}
+  ${ouverture}${echelonnes}${progressive}${cumulApresDepart}
   ${report}
 </div>
 <div class="carte">

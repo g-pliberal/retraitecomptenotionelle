@@ -349,6 +349,7 @@ export class Comparaison {
             ? { departs: this.actuel.departs.map((d) => d.donnees()) } : {}),
           ...(this.actuel.retraite_progressive
             ? { retraite_progressive: this.actuel.retraite_progressive.donnees() } : {}),
+          ...(this.actuel.cumul ? { cumul: this.actuel.cumul.donnees() } : {}),
           minimum_applique: this.actuel.minimum_applique,
           liquidation_ouverte: this.actuel.liquidation_ouverte,
           motif_ouverture: this.actuel.motif_ouverture,

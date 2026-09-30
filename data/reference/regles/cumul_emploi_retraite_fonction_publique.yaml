@@ -12,7 +12,7 @@ domaine: cumul
 regimes: [fonction_publique_etat, cnracl, fspoeie]
 etape: echeancier
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - l'activité exercée après le départ, ses dates, son revenu, et son employeur (public
   ou non)
@@ -108,7 +108,7 @@ versions:
     parametres:
       employeur: tout_employeur_pour_les_civils
       cumul_integral: true
-  exemples: aucun trouvé
+  exemples: [sp_f12402_cumul_sous_le_plafond, sp_f12402_cumul_plafond_depasse]
 - id: regles_communes_2027
   statut: lue
   textes:
@@ -129,12 +129,22 @@ versions:
 approximations:
 - ecart: >-
     avant 2004, la franchise du traitement de l'indice 100 n'est pas lue : seule celle
-    du quart de la pension s'applique ; la limite d'âge est celle que le modèle donne
-    à la catégorie de l'emploi quitté
+    du quart de la pension s'applique, mois par mois ; la limite d'âge est de
+    soixante-cinq ans, soixante en catégorie active, cinquante-cinq en catégorie
+    super-active ; la pension militaire d'avant 2004 payée par un employeur public
+    n'est pas calculée, et la page le dit
+  effet: non mesuré
+- ecart: >-
+    l'excédent de l'année se répartit également entre ses mois d'activité, hors ceux
+    du cumul intégral ; l'employeur public est celui du contractuel de la fonction
+    publique, et la pension militaire ne compte, depuis 2015, que les revenus d'un
+    employeur public
   effet: non mesuré
 - ecart: >-
     les activités que L. 86 laisse libres (artistiques, invalidité, sous-officiers de
-    moins de vingt-cinq ans de services) ne se déclarent pas
+    moins de vingt-cinq ans de services) ne se déclarent pas ; la CNRACL et les
+    ouvriers de l'État suivent la règle du code des pensions, que leurs décrets
+    reprennent sans que le modèle les ait relus
   effet: non mesuré
 sources:
   lu_le: 2026-09-30
@@ -146,8 +156,6 @@ sources:
     dans l'index : R. 91 et R. 92 disent la déclaration et les revenus retenus.
     Vérifier que les décrets de la CNRACL et des ouvriers de l'État (décret
     n° 2003-1306, article 64 ; décret n° 2004-1056) suivent la même règle.
-    L'exemple de la fiche F12402 entrera au registre des exemples publiés avec le
-    calcul.
   lectures:
   - type: legifrance
     reference: >-
@@ -163,12 +171,29 @@ sources:
       (pension de 18 000 € ; revenu de 21 623 € ; 7 424,90 € déduits)
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12402
     date: 2026-09-30
+code:
+  python: >-
+    droit/cumul.py : _Calcul._fonctionnaire, _deduction_fonction_publique,
+    _fonction_publique_quittee ; echeancier.py : Echeancier._cumuler
+  javascript: >-
+    moteur/js/droit/cumul.js : fonctionnaire, deductionFonctionPublique,
+    fonctionPubliqueQuittee ; moteur/js/pages.js : cumulEmploiRetraite
+  parametres: >-
+    constantes de droit/cumul.py : PART_DE_LA_PENSION, ABATTEMENT_MINIMUM_GARANTI,
+    FRANCHISE_1970, LIMITES_D_AGE_1970 ; le minimum garanti de l'année
+  tests: >-
+    tests/test_emploi_retraite.py ; les exemples sp_f12402_* du registre ; les
+    témoins cumul_fonctionnaire_contractuel et simuler_cumul_fonctionnaire
 historique:
 - >-
   2026-09-30 — née avec le domaine des départs multiples, de la fiche
   cumul_emploi_retraite_et_retraite_progressive, qui ne portait pas le fonctionnaire.
+- >-
+  2026-09-30 — calculée, mois par mois de l'activité après le départ, avec le cumul
+  du salarié ; l'exemple de la fiche F12402 entre au registre des exemples publiés.
 effet: >-
   Le fonctionnaire retraité qui travaille avant le taux plein : payé par un employeur
   public, ou par tout employeur s'il est civil et parti depuis 2015, il perd l'excédent
-  de ses revenus sur le tiers de sa pension et 8 198,10 € en 2026. Le modèle ne le
-  calcule pas encore.
+  de ses revenus sur le tiers de sa pension et 8 198,10 € en 2026 — 7 424,90 € pour
+  une pension de 18 000 € et un revenu de 21 623 €, l'exemple de la fiche F12402, que
+  le modèle reproduit.

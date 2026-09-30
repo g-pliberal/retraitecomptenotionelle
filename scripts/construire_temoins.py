@@ -621,6 +621,51 @@ def _cas() -> list[dict]:
         "naissance": "1965", "sexe": "F", "debut": "20", "liquidation": "64",
         "progressive": "2023-05", "quotite": "60",
     }))
+    # LE CUMUL EMPLOI-RETRAITE : l'activité exercée après le départ, et ce que
+    # chaque pension en garde (droit/cumul.py). Le cumul plafonné de la
+    # première pension de 2022, réduite du dépassement, l'Agirc-Arrco
+    # suspendue ; le retour chez le dernier employeur dans les six mois ; le
+    # cumul intégral au taux plein ; la suspension d'une première pension de
+    # 2011 ; la rupture avec le dernier employeur, en 1995 ; le fonctionnaire
+    # contractuel, dont L. 85 déduit l'excédent sur le tiers de la pension ;
+    # l'artisan redevenu artisan (L. 634-6) ; la carrière longue de 2028,
+    # réduite de tout son revenu avant l'âge légal, puis servie entière faute
+    # du seuil de 2027.
+    cas.append(("cumul_plafonne_2022", {
+        "naissance": "1960", "sexe": "F", "debut": "26", "liquidation": "62",
+        "emploi_retraite": "2022-08", "emploi_retraite_fin": "2024-02",
+    }))
+    cas.append(("cumul_dernier_employeur_six_mois", {
+        "naissance": "1960", "sexe": "F", "debut": "26", "liquidation": "62.25",
+        "emploi_retraite": "2022-08", "emploi_retraite_fin": "2023-08",
+        "emploi_retraite_employeur": "dernier",
+    }))
+    cas.append(("cumul_integral_2023", {
+        "naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62",
+        "emploi_retraite": "2023-02", "emploi_retraite_fin": "2025-02",
+    }))
+    cas.append(("cumul_suspendu_2012", {
+        "naissance": "1951", "debut": "26", "liquidation": "60",
+        "emploi_retraite": "2012-02", "emploi_retraite_fin": "2013-02",
+    }))
+    cas.append(("cumul_rupture_1995", {
+        "naissance": "1934", "debut": "20", "liquidation": "61",
+        "emploi_retraite": "1995-08", "emploi_retraite_fin": "1997-02",
+        "emploi_retraite_employeur": "dernier",
+    }))
+    cas.append(("cumul_fonctionnaire_contractuel", {
+        "naissance": "1962", "statut": "fonctionnaire_etat", "debut": "24",
+        "liquidation": "62.5", "emploi_retraite": "2025-02", "emploi_retraite_fin": "2026-08",
+        "emploi_retraite_statut": "contractuel_public",
+    }))
+    cas.append(("cumul_artisan", {
+        "naissance": "1960", "statut": "artisan", "debut": "26", "liquidation": "62",
+        "emploi_retraite": "2022-08", "emploi_retraite_fin": "2024-02",
+    }))
+    cas.append(("cumul_carriere_longue_2028", {
+        "naissance": "1968", "debut": "17", "liquidation": "60",
+        "emploi_retraite": "2029-02", "emploi_retraite_fin": "2032-02",
+    }))
     cas.append(("departs_militaire_puis_prive", {
         "naissance": "1965", "statut": "militaire", "debut": "18",
         "metier2_debut": "35", "metier2_statut": "salarie_prive_non_cadre",
@@ -1050,6 +1095,19 @@ def _pages() -> dict:
         ("simuler_retraite_progressive_fermee", "/simuler", {
             **BASE, "sexe": "F", "naissance": "1965", "debut": "20", "liquidation": "64",
             "progressive": "2023-05", "quotite": "60",
+        }),
+        # Le cumul emploi-retraite : le retour chez le dernier employeur, dont la
+        # pension n'est pas due six mois puis réduite du dépassement ; le
+        # fonctionnaire contractuel, dont L. 85 déduit l'excédent.
+        ("simuler_cumul_emploi_retraite", "/simuler", {
+            **BASE, "sexe": "F", "naissance": "1960", "debut": "26", "liquidation": "62.25",
+            "emploi_retraite": "2022-08", "emploi_retraite_fin": "2023-08",
+            "emploi_retraite_employeur": "dernier",
+        }),
+        ("simuler_cumul_fonctionnaire", "/simuler", {
+            **BASE, "naissance": "1962", "statut": "fonctionnaire_etat", "debut": "24",
+            "liquidation": "62.5", "emploi_retraite": "2025-02",
+            "emploi_retraite_fin": "2026-08", "emploi_retraite_statut": "contractuel_public",
         }),
         ("simuler_departs_echelonnes_a_venir", "/simuler", {
             **BASE, "sexe": "F", "naissance": "1975", "debut": "20", "liquidation": "59",

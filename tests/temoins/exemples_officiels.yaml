@@ -61,6 +61,13 @@
 #   dates_d_effet_de_la_reversion — pour chaque régime nommé, la date d'effet
 #     (AAAA-MM-JJ) de la réversion que le décès de l'assuré ouvre à son
 #     conjoint, telle que l'échéancier la liquide ;
+#   deductions_annuelles_du_cumul — pour chaque régime nommé, ce que le cumul
+#     emploi-retraite déduit de sa pension dans l'année de `revenus_apres_depart`,
+#     à un centime près ;
+#   mois_sans_pension_du_cumul — les mois (année-mois) où aucune pension de base
+#     n'est due, l'activité après le départ reprise chez le dernier employeur ;
+#   plafond_mensuel_du_cumul — le plafond mensuel de L. 161-22 du premier mois de
+#     l'activité, à un centime près ;
 #   reversions_ecretees_mensuelles — pour chaque régime nommé, la réversion
 #     servie après le plafond de ressources, en euros par mois, à un
 #     centime près. L'exemple donne la réversion d'avant le plafond
@@ -193,6 +200,79 @@ exemples:
       profil_carriere: plat
       interruptions: {2000: chomage_indemnise, 2001: chomage_indemnise, 2002: chomage_indemnise, 2003: chomage_indemnise, 2004: chomage_indemnise, 2005: chomage_indemnise, 2006: chomage_indemnise, 2007: chomage_indemnise, 2026: chomage_indemnise}
     attendu: {trimestres_valides: 170, trimestres_requis: 170, taux_liquidation: 0.5, pension_regime_general_mensuelle: 873.53}
+
+  # Le cumul emploi-retraite (fiches cumul_emploi_retraite_et_retraite_progressive
+  # et cumul_emploi_retraite_fonction_publique) : l'activité exercée après le
+  # départ, `emploi_retraite`, ses mois comme la liquidation, son employeur
+  # (`dernier` ou `autre`) et son statut, celui de la carrière s'il n'est pas dit.
+  # Quand l'exemple donne la pension et le revenu, non la carrière, le test prête
+  # à chaque régime nommé la pension de `pensions_annuelles_en_cumul`, et à
+  # chaque année de `revenus_apres_depart` son revenu brut ; le modèle déduit.
+  - id: sp_f12402_cumul_sous_le_plafond
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F12402, Cumul emploi-retraite du fonctionnaire", verifie_le: "2026-01-01"}
+    enonce: >-
+      En cumul plafonné, le fonctionnaire retraité peut percevoir chaque année
+      8 198,10 € plus le tiers de sa pension annuelle brute : pour une pension de
+      18 000 €, 14 198,10 €. Avec un revenu de 10 925 €, sa pension n'est pas
+      réduite.
+    carriere:
+      naissance: "1962-01-01"
+      sexe: H
+      affiliation: fonctionnaire_etat
+      liquidation: "2024-07"
+      trimestres_valides: 150
+      emploi_retraite: {debut: "2026-01", fin: "2027-01", affiliation: contractuel_public}
+      pensions_annuelles_en_cumul: {fonction_publique_etat: 18000}
+      revenus_apres_depart: {2026: 10925}
+    attendu: {deductions_annuelles_du_cumul: {fonction_publique_etat: 0.0}}
+
+  - id: sp_f12402_cumul_plafond_depasse
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F12402, Cumul emploi-retraite du fonctionnaire", verifie_le: "2026-01-01"}
+    enonce: >-
+      La même pension de 18 000 €, avec un revenu de 21 623 € : 7 424,90 € sont
+      déduits de la pension (21 623 − 14 198,10).
+    carriere:
+      naissance: "1962-01-01"
+      sexe: H
+      affiliation: fonctionnaire_etat
+      liquidation: "2024-07"
+      trimestres_valides: 150
+      emploi_retraite: {debut: "2026-01", fin: "2027-01", affiliation: contractuel_public}
+      pensions_annuelles_en_cumul: {fonction_publique_etat: 18000}
+      revenus_apres_depart: {2026: 21623}
+    attendu: {deductions_annuelles_du_cumul: {fonction_publique_etat: 7424.90}}
+
+  - id: sp_f13243_cumul_dernier_employeur
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F13243, Cumul emploi-retraite du salarié", verifie_le: "2026-01-01"}
+    enonce: >-
+      Admis à la retraite le 1er mars, il reprend chez son dernier employeur du
+      15 mai au 15 juin : sa retraite ne lui est pas versée du 1er mai au 30 juin.
+      La fiche ne dit ni l'année ni la carrière : l'exemple les pose en 2026, sans
+      la durée requise, pour que le cumul ne soit pas intégral.
+    carriere:
+      naissance: "1961-01-01"
+      sexe: H
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2026-03"
+      trimestres_valides: 150
+      emploi_retraite: {debut: "2026-05", fin: "2026-07", employeur: dernier}
+    attendu: {mois_sans_pension_du_cumul: ["2026-05", "2026-06"]}
+
+  - id: sp_f13243_cumul_plafond_du_smic
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F13243, Cumul emploi-retraite du salarié", verifie_le: "2026-01-01"}
+    enonce: >-
+      En cumul plafonné, les pensions et le revenu d'activité ne doivent pas dépasser
+      le plus avantageux de 160 % du SMIC, « soit 2 916,85 € brut par mois », et du
+      dernier salaire. Pour qui gagnait la moitié du salaire moyen, c'est le SMIC.
+    carriere:
+      naissance: "1961-01-01"
+      sexe: H
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2025-01"
+      trimestres_valides: 150
+      niveau_salaire: 0.5
+      emploi_retraite: {debut: "2026-01", fin: "2026-07"}
+    attendu: {plafond_mensuel_du_cumul: 2916.85}
 
   # ---- Cnav, circulaire 2026-07 du 5 mars 2026 --------------------------
   - id: cnav_2026_07_age_legal_1964

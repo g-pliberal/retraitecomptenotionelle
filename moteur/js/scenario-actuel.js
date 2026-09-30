@@ -304,6 +304,7 @@ export function resultatActuel(resultat, foyer) {
     // Un seul départ : tous les régimes liquident à la même date.
     departs: [],
     retraite_progressive: null,
+    cumul: null,
   };
 }
 
@@ -498,5 +499,6 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     pension_mensuelle: Math.max(0.0, total - horsRepartition) / 12.0,
     departs: servis,
     retraite_progressive: null,
+    cumul: null,
   };
 }

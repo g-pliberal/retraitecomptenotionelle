@@ -1264,6 +1264,7 @@ class Carriere:
         jour_naissance: int | None = None,
         conjoint: dict | None = None,
         deces: str | None = None,
+        emploi_retraite: dict | None = None,
     ) -> "Carriere":
         """Carrière d'un seul métier, exercé du premier au dernier jour.
 
@@ -1287,6 +1288,7 @@ class Carriere:
             jour_naissance=jour_naissance,
             conjoint=conjoint,
             deces=deces,
+            emploi_retraite=emploi_retraite,
         )
 
     @classmethod

@@ -76,6 +76,7 @@ from ..donnees.chargement import (
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import CatalogueRegimes, ClassesCotisation, SalairesForfaitaires
 from ..droit import coordonner
+from ..droit import cumul as _cumul
 from ..droit import departs as _departs
 from ..droit import foyer as _foyer
 from ..droit import liquidation as _liquidation
@@ -207,6 +208,11 @@ class ResultatActuel:
     #: (:class:`ProgressiveServie`) ; ``None`` sans demande. La pension du
     #: résultat reste la pension complète, au départ.
     retraite_progressive: ProgressiveServie | None = None
+    #: L'activité exercée après le départ, et ce que chaque pension en garde
+    #: pendant qu'elle dure (:mod:`~retraite_notionnelle.droit.cumul`) ;
+    #: ``None`` sans elle. La pension du résultat reste celle du départ,
+    #: entière : le cumul dit ce qui n'en est pas servi, et quand.
+    cumul: _cumul.Cumul | None = None
 
     @property
     def pension_mensuelle(self) -> float:

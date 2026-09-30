@@ -104,3 +104,207 @@ def test_la_carriere_garde_ses_annees_a_part(simulateur):
     moteur = simulateur.scenario_actuel
     assert (moteur.calculer(avec).pension_annuelle
             == pytest.approx(moteur.calculer(sans).pension_annuelle))
+
+
+# -- le cumul (droit/cumul.py) ------------------------------------------------------
+
+from retraite_notionnelle.droit import cumul  # noqa: E402
+
+
+def _cumul(simulateur: Simulateur, naissance: int, depart: float, emploi: dict,
+           metiers: list[Metier] | None = None):
+    """Le cumul que l'échéancier calcule pour cette carrière, et l'échéancier."""
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=naissance, sexe="F",
+        metiers=metiers or [Metier("salarie_prive_non_cadre", 26.0)],
+        age_liquidation=depart, macro=simulateur.macro, emploi_retraite=emploi)
+    echeancier = simulateur.echeancier(carriere)
+    return echeancier.au_depart.cumul, echeancier
+
+
+def _emploi(age: float, fin: float, employeur: str = "autre",
+            affiliation: str = "salarie_prive_non_cadre", niveau: float = 1.0) -> dict:
+    return {"age": age, "fin": fin, "affiliation": affiliation, "niveau_salaire": niveau,
+            "employeur": employeur}
+
+
+def _pension(tranche, regime):
+    return next(p for p in tranche.par_regime if p.regime == regime)
+
+
+def test_le_cumul_integral_sert_la_pension_entiere(simulateur):
+    """Toutes les pensions liquidées, à l'âge légal avec la durée : rien ne se
+    réduit, ni la base ni l'Agirc-Arrco, et le délai de six mois ne joue pas."""
+    resultat, _ = _cumul(simulateur, 1960, 62.25, _emploi(62.5, 64, "dernier"),
+                         [Metier("salarie_prive_non_cadre", 20.0)])
+    assert resultat.integral_depuis == resultat.debut
+    assert {p.statut for t in resultat.tranches for p in t.par_regime} == {cumul.INTEGRAL}
+    assert resultat.non_servi == 0
+
+
+def test_le_cumul_plafonne_reduit_chaque_pension_de_base_du_depassement(simulateur):
+    """Première pension de 2022 sans la durée : les pensions et le revenu, à son
+    assiette de CSG, passent le plafond ; la pension du régime général perd le
+    dépassement, l'Agirc-Arrco est suspendue (D. 161-2-16, II)."""
+    resultat, _ = _cumul(simulateur, 1960, 62.25, _emploi(62.5, 64))
+    assert resultat.integral_depuis is None
+    for tranche in resultat.tranches:
+        base = _pension(tranche, "regime_general")
+        assert base.statut == cumul.REDUITE
+        assert base.regle == cumul.REDUCTION_2015
+        depassement = (tranche.pensions + tranche.revenu * cumul.assiette_csg(tranche.debut.annee)
+                       - base.plafond)
+        assert base.reduction == pytest.approx(min(base.montant, depassement))
+        assert base.plafond >= 1.6 * simulateur.macro.smic_horaire(tranche.debut.annee) * 1820 / 12
+        assert _pension(tranche, "agirc_arrco").statut == cumul.SUSPENDUE
+
+
+def test_le_dernier_employeur_attend_six_mois(simulateur):
+    """Retour chez le dernier employeur trois mois après la pension de mai 2022 :
+    rien n'est dû jusqu'à fin octobre, le sixième mois ; le plafond joue ensuite
+    (D. 161-2-15)."""
+    resultat, _ = _cumul(simulateur, 1960, 62.25, _emploi(62.5, 63.5, "dernier"))
+    premiere = resultat.tranches[0]
+    assert (premiere.debut, premiere.fin) == (DateMois(2022, 8), DateMois(2022, 11))
+    assert {p.statut for p in premiere.par_regime} == {cumul.NON_DUE}
+    assert premiere.reduction == pytest.approx(premiere.pensions)
+    assert resultat.tranches[1].statut != cumul.NON_DUE
+
+
+def test_la_premiere_pension_d_avant_2015_est_suspendue(simulateur):
+    """La première pension de 2011 garde la rédaction de L. 161-22 qui suspend :
+    au-delà du plafond, rien n'est servi."""
+    resultat, _ = _cumul(simulateur, 1951, 60.5, _emploi(61, 62))
+    for tranche in resultat.tranches:
+        base = _pension(tranche, "regime_general")
+        assert (base.statut, base.regle) == (cumul.SUSPENDUE, cumul.LIBERALISE_2009)
+        assert base.reduction == pytest.approx(base.montant)
+
+
+def test_la_reduction_du_depassement_attend_avril_2017(simulateur):
+    """La première pension de 2016 est suspendue jusqu'en mars 2017, puis
+    réduite du dépassement : le décret de la réduction (n° 2017-416) ne vaut que
+    pour les activités exercées depuis le 1er avril 2017."""
+    resultat, _ = _cumul(simulateur, 1954, 62.0, _emploi(62.5, 64))
+    statuts = {(t.debut, _pension(t, "regime_general").statut,
+                _pension(t, "regime_general").regle) for t in resultat.tranches}
+    avant = {s for s in statuts if s[0] < DateMois(2017, 4)}
+    apres = {s for s in statuts if s[0] >= DateMois(2017, 4)}
+    assert avant and {(s[1], s[2]) for s in avant} == {(cumul.SUSPENDUE, cumul.PREMIERES_2015)}
+    assert apres and {(s[1], s[2]) for s in apres} == {(cumul.REDUITE, cumul.REDUCTION_2015)}
+
+
+@pytest.mark.parametrize("employeur, statut", [("dernier", cumul.NON_DUE),
+                                               ("autre", cumul.LIBRE)])
+def test_avant_2004_seul_le_dernier_employeur_prive_de_la_pension(simulateur, employeur,
+                                                                   statut):
+    """La pension de 1995 suppose la rupture avec l'employeur : chez lui, elle
+    n'est pas servie ; chez un autre, elle l'est entière."""
+    resultat, _ = _cumul(simulateur, 1934, 61.0, _emploi(61.5, 63, employeur),
+                         [Metier("salarie_prive_non_cadre", 20.0)])
+    assert {_pension(t, "regime_general").statut for t in resultat.tranches} == {statut}
+    assert {_pension(t, "regime_general").regle for t in resultat.tranches} == {
+        cumul.RUPTURE_1983}
+
+
+def test_le_fonctionnaire_perd_l_excedent_sur_le_tiers_de_sa_pension(simulateur):
+    """L. 85 : l'excédent des revenus de l'année sur le tiers de la pension et la
+    moitié du minimum garanti est déduit de la pension, réparti sur les mois
+    d'activité de l'année."""
+    resultat, _ = _cumul(simulateur, 1962, 62.5,
+                         _emploi(63, 64.5, affiliation="contractuel_public"),
+                         [Metier("fonctionnaire_etat", 24.0)])
+    moteur = simulateur.scenario_actuel
+    for tranche in resultat.tranches:
+        pension = _pension(tranche, "fonction_publique_etat")
+        assert pension.regle == cumul.FP_2015
+        annee = tranche.debut.annee
+        plafond = (pension.montant * 12 / 3
+                   + moteur.minimum_garanti.reference(annee)[0] / 2)
+        mois = sum(t.mois for t in resultat.tranches if t.debut.annee == annee)
+        attendue = min(pension.montant, max(0.0, tranche.revenu * mois - plafond) / mois)
+        assert pension.reduction == pytest.approx(attendue)
+        assert pension.plafond == pytest.approx(plafond / 12)
+
+
+@pytest.mark.parametrize("naissance, depart, regles", [
+    (1952, 60.0, {(cumul.LIBRE, cumul.FP_2009, "employeur_prive")}),
+    (1962, 62.5, {(cumul.REDUITE, cumul.FP_2015, "depassement"),
+                  (cumul.PLAFONNEE, cumul.FP_2015, "sous_le_plafond")}),
+])
+def test_le_civil_parti_depuis_2015_est_plafonne_chez_tout_employeur(simulateur, naissance,
+                                                                     depart, regles):
+    """Le fonctionnaire civil parti en 2012 travaille librement dans le privé ;
+    pour une première pension de 2015 ou après, tout employeur compte (L. 84 de
+    2014) : l'excédent se déduit, et la dernière année, d'un mois, reste sous le
+    plafond."""
+    resultat, _ = _cumul(simulateur, naissance, depart, _emploi(depart + 0.5, depart + 1.5),
+                         [Metier("fonctionnaire_etat", 24.0)])
+    pensions = [_pension(t, "fonction_publique_etat") for t in resultat.tranches]
+    assert {(p.statut, p.regle, p.motif) for p in pensions} == regles
+
+
+def test_chaque_regime_ne_reduit_que_ses_pensions(simulateur):
+    """Le salarié devenu artisan garde sa pension entière ; l'artisan redevenu
+    artisan perd ce qui dépasse la moitié du plafond de la sécurité sociale
+    (L. 634-6), sur la pension des régimes alignés que le régime général sert."""
+    salarie, _ = _cumul(simulateur, 1960, 62.25, _emploi(62.5, 64, affiliation="artisan"))
+    assert {(p.statut, p.motif) for t in salarie.tranches for p in t.par_regime} == {
+        (cumul.LIBRE, "autre_regime")}
+    artisan, _ = _cumul(simulateur, 1960, 62.25, _emploi(62.5, 64, affiliation="artisan"),
+                        [Metier("artisan", 26.0)])
+    for tranche in artisan.tranches:
+        base = _pension(tranche, "regime_general")
+        seuil = simulateur.macro.plafond_securite_sociale(tranche.debut.annee) / 2 / 12
+        assert base.plafond == pytest.approx(seuil)
+        assert base.reduction == pytest.approx(min(base.montant, tranche.revenu - seuil))
+
+
+def test_la_premiere_pension_de_2027_est_reduite_de_tout_le_revenu_avant_l_age_legal(
+        simulateur):
+    """Carrière longue partie en 2028 : avant l'âge légal, la pension est réduite de
+    tout le revenu ; ensuite, le seuil de 2027 n'étant pas publié, elle est
+    servie entière, et le cumul le dit."""
+    resultat, _ = _cumul(simulateur, 1968, 60.0, _emploi(61, 64),
+                         [Metier("salarie_prive_non_cadre", 17.0)])
+    statuts = [_pension(t, "regime_general").statut for t in resultat.tranches]
+    assert statuts[0] == cumul.REDUITE
+    assert statuts[-1] == cumul.SEUIL_NON_PUBLIE
+    assert {_pension(t, "regime_general").regle for t in resultat.tranches} == {
+        cumul.AGES_2027}
+
+
+def test_le_journal_sert_la_pension_reduite_pendant_l_activite(simulateur):
+    """La pension réduite s'inscrit dans sa lignée pour les mois où elle l'est :
+    le journal sert la réduite pendant l'activité, l'entière ensuite."""
+    resultat, echeancier = _cumul(simulateur, 1960, 62.25, _emploi(62.5, 64))
+    tranche = resultat.tranches[1]
+    base = _pension(tranche, "regime_general")
+    servies = {e.contenu["regime"]: e for e in echeancier.journal.servi(
+        cumul.jour(tranche.debut), cumul.jour(tranche.debut.plus_mois(1)), "composante")
+        if isinstance(e.contenu, dict) and "regime" in e.contenu}
+    assert servies["regime_general"].id.startswith("cumul_regime_general_")
+    assert servies["regime_general"].contenu["montant"]["annuel"] == pytest.approx(
+        (base.montant - base.reduction) * 12)
+    apres = {e.contenu["regime"]: e for e in echeancier.journal.servi(
+        cumul.jour(resultat.fin), None, "composante")
+        if isinstance(e.contenu, dict) and "regime" in e.contenu}
+    assert not apres["regime_general"].id.startswith("cumul_")
+
+
+def test_les_regles_du_cumul_sont_des_versions_des_fiches(simulateur):
+    """Chaque règle que le cumul cite est une version d'une des deux fiches."""
+    from retraite_notionnelle.noyau import carte
+
+    toutes = carte.fiches()
+    versions = set()
+    for fiche in ("cumul_emploi_retraite_et_retraite_progressive",
+                  "cumul_emploi_retraite_fonction_publique"):
+        versions |= {v["id"] for v in toutes[fiche]["versions"]}
+    citees = {valeur for nom, valeur in vars(cumul).items()
+              if nom.isupper() and isinstance(valeur, str) and "_" in valeur
+              and nom in ("AVANT_1983", "RUPTURE_1983", "PLAFOND_2004", "LIBERALISE_2009",
+                          "PREMIERES_2015", "REDUCTION_2015", "AGES_2027", "FP_1970",
+                          "FP_2004", "FP_2009", "FP_2015", "FP_2027")}
+    assert len(citees) == 12
+    assert citees <= versions, citees - versions

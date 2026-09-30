@@ -1405,6 +1405,28 @@ def _(m: Modele):
         comparaison.carriere.retraite_progressive[0])
 
 
+@controle("cumul_emploi_retraite")
+def _(m: Modele):
+    """Revenue chez son dernier employeur trois mois après sa pension de mai
+    2022, sans la durée requise, la salariée n'a rien jusqu'au sixième mois
+    (D. 161-2-15), puis perd ce qui dépasse le plafond ; avec la durée, elle
+    cumule entièrement (droit/cumul.py)."""
+    comparaison = m.simuler_requete(
+        sexe="F", naissance="1960", debut="26", liquidation="62.25",
+        emploi_retraite="2022-08", emploi_retraite_fin="2023-08",
+        emploi_retraite_employeur="dernier")
+    cumul = comparaison.actuel.cumul
+    assert cumul.tranches[0].statut == "non_due"
+    assert any(t.statut in ("reduite", "suspendue") for t in cumul.tranches[1:])
+    assert cumul.non_servi > 0
+    assert _proche(cumul.non_servi, sum(t.reduction * t.mois for t in cumul.tranches))
+    integral = m.simuler_requete(
+        sexe="F", naissance="1960", debut="20", liquidation="62.25",
+        emploi_retraite="2022-08", emploi_retraite_fin="2023-08")
+    assert integral.actuel.cumul.integral_depuis is not None
+    assert integral.actuel.cumul.non_servi == 0
+
+
 @controle("sous_total_contributif")
 def _(m: Modele):
     actuel = m.smic.actuel
