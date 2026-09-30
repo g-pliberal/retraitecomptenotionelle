@@ -297,6 +297,7 @@ export class Contexte {
       }
     }
     const emploiRetraite = this.emploiRetraite(simulateur, saisie);
+    const demandes = demandesDePension(simulateur, saisie);
     const batir = (niveaux) => simulateur.carriereParcours({
       annee_naissance: saisie.naissance,
       mois_naissance: saisie.naissance_mois,
@@ -315,6 +316,7 @@ export class Contexte {
       deces: saisie.decesDeclare(),
       retraite_progressive: saisie.retraiteProgressiveDeclaree(),
       emploi_retraite: emploiRetraite,
+      demandes_de_pension: demandes,
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -410,6 +412,7 @@ export class Contexte {
       deces: saisie.decesDeclare(),
       retraite_progressive: saisie.retraiteProgressiveDeclaree(),
       emploi_retraite: this.emploiRetraite(simulateur, saisie),
+      demandes_de_pension: demandesDePension(simulateur, saisie),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -431,6 +434,24 @@ export class Contexte {
     }
     return emploi;
   }
+}
+
+/**
+ * Les dates de demande que la saisie dit, chacune pour un régime que le
+ * catalogue connaît : c'est ici qu'un code inconnu se refuse, la saisie n'ayant
+ * pas le catalogue. Voir `_demandes_de_pension` du Python.
+ */
+function demandesDePension(simulateur, saisie) {
+  const demandes = saisie.demandesDePensionDeclarees();
+  for (const code of Object.keys(demandes ?? {})) {
+    if (!simulateur.catalogue.contient(code)) {
+      throw new ErreurSaisie(
+        `Pension demandée à une date : aucun régime « ${code} » dans le catalogue `
+        + "du modèle.",
+      );
+    }
+  }
+  return demandes;
 }
 
 /**

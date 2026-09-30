@@ -11,8 +11,11 @@
  * RAFP n'ouvre qu'à l'âge légal (fiche `rafp_age_d_ouverture`). La présomption
  * `depart_de_chaque_regime` date la demande : au départ déclaré ; à
  * l'ouverture, pour l'unité qui n'ouvre pas encore ; à la sortie de l'armée,
- * pour la pension militaire. Le départ reste UNIQUE quand toutes les unités
- * liquident au départ déclaré, et quand aucune n'y est ouverte.
+ * pour la pension militaire. La personne peut DIRE la date où elle demande une
+ * pension : une date plus tardive remplace la présumée, une plus précoce ne
+ * l'avance pas, et `DemandeExaminee` dit pourquoi. Le départ reste UNIQUE
+ * quand toutes les unités liquident au départ déclaré, et quand aucune n'y est
+ * ouverte sans que rien soit demandé plus tard.
  *
  * `liquiderLesDeparts` liquide ensuite chaque départ, dans l'ordre des dates,
  * chacun sur la carrière arrêtée à sa date et voyant les pensions déjà
@@ -38,6 +41,15 @@ export const RAFP = "rafp";
 export const MOTIF_DEPART = "depart";
 export const MOTIF_OUVERTURE = "ouverture";
 export const MOTIF_SORTIE = "sortie";
+/** Une date que la personne demande, plus tardive que la présumée. */
+export const MOTIF_DEMANDE = "demande";
+
+/**
+ * Ce qu'une demande devient quand elle ne date pas sa pension : servie avec la
+ * pension que la loi lui attache, ou sans pension de ce régime.
+ */
+export const ENSEMBLE = "ensemble";
+export const SANS_PENSION = "sans_pension";
 
 /** Un départ : le mois où il prend effet, et les régimes qui y liquident. */
 export class Depart {
@@ -57,6 +69,30 @@ export class Depart {
   /** Le départ unique, où tous les régimes liquident ensemble. */
   get unique() {
     return this.regimes.size === 0;
+  }
+}
+
+/**
+ * Une pension dont la personne dit la date de demande, et la date où le modèle
+ * la sert : la demandée quand elle vient après la présumée, la présumée sinon,
+ * avec sa raison. Voir `DemandeExaminee` du Python.
+ */
+export class DemandeExaminee {
+  constructor(regime, demandee, retenue, motif) {
+    this.regime = regime;
+    this.demandee = demandee;
+    // Le mois où la pension commence ; `null` sans pension de ce régime.
+    this.retenue = retenue;
+    // `demande`, `depart`, `ouverture`, `sortie`, `ensemble` ou `sans_pension`.
+    this.motif = motif;
+  }
+
+  donnees() {
+    return {
+      regime: this.regime, demandee: new Depart(this.demandee).dateEffet,
+      retenue: this.retenue === null ? null : new Depart(this.retenue).dateEffet,
+      motif: this.motif,
+    };
   }
 }
 
@@ -275,18 +311,34 @@ export function ageLegal(moteur, carriere) {
 }
 
 /**
- * Les départs de `carriereSaisie`, dans l'ordre des dates : un seul, le
- * départ déclaré, quand tous les régimes y liquident ou qu'aucune unité n'y
- * est ouverte ; sinon, un par date. Aucun pour une carrière sans départ.
+ * Les départs de `carriere`, dans l'ordre des dates : un seul, le départ
+ * déclaré, quand tous les régimes y liquident ou qu'aucune unité n'y est
+ * ouverte ; sinon, un par date. Aucun pour une carrière sans départ.
  *
  * @returns {Depart[]}
  */
 export function departs(moteur, carriereSaisie) {
+  return departsEtDemandes(moteur, carriereSaisie)[0];
+}
+
+/** Les pensions dont `carriere` dit la date de demande, examinées. */
+export function demandes(moteur, carriereSaisie) {
+  return departsEtDemandes(moteur, carriereSaisie)[1];
+}
+
+/**
+ * Les départs de `carriere`, et ce que devient chaque date de demande qu'elle
+ * dit, en un calcul. Voir `departs_et_demandes` du Python.
+ *
+ * @returns {[Depart[], DemandeExaminee[]]}
+ */
+export function departsEtDemandes(moteur, carriereSaisie) {
   if (carriereSaisie.age_liquidation === null) {
-    return [];
+    return [[], []];
   }
   const declare = carriereSaisie.dateLiquidation;
   const unique = [new Depart(declare)];
+  const demandees = carriereSaisie.demandesDePension;
   const carriere = coordonner.retablir(moteur, carriereSaisie);
   const routes = routage(moteur, carriere);
   const routesVers = new Set(routes.flatMap(([, regimes]) => regimes));
@@ -296,7 +348,7 @@ export function departs(moteur, carriereSaisie) {
   const bases = codes.filter(
     (code) => ETAGES_DES_UNITES.has(moteur.catalogue.obtenir(code).etage));
   if (bases.length === 0) {
-    return unique;
+    return [unique, examiner(demandees, new Map(), new Set(), null)];
   }
   const unites = unitesDe(moteur, carriere, bases, routes);
   const uniteDe = new Map();
@@ -323,22 +375,33 @@ export function departs(moteur, carriereSaisie) {
     }
   }
 
+  // La date présumée de chaque unité, et ce qui la date ; puis la demande,
+  // quand elle vient après : la plus tardive des régimes de l'unité.
   const ouvertures = unites.map((unite) => ouvertureDe(moteur, carriere, unite));
-  if (ouvertures.every((ouverture) => ouverture.rang > declare.rang)) {
-    return unique;
-  }
-
   const dates = unites.map((unite, i) => {
+    let presumee;
     if (ouvertures[i].rang > declare.rang) {
-      return ouvertures[i];
+      presumee = [ouvertures[i], MOTIF_OUVERTURE];
+    } else {
+      const sortie = sortieDe(carriere, unite, routes);
+      const plusTot = sortie.rang > ouvertures[i].rang ? sortie : ouvertures[i];
+      presumee = plusTot.rang < declare.rang && pensionMilitaire(moteur, carriere, unite)
+        ? [plusTot, MOTIF_SORTIE] : [declare, MOTIF_DEPART];
     }
-    const sortie = sortieDe(carriere, unite, routes);
-    const plusTot = sortie.rang > ouvertures[i].rang ? sortie : ouvertures[i];
-    if (plusTot.rang < declare.rang && pensionMilitaire(moteur, carriere, unite)) {
-      return plusTot;
+    let voulue = null;
+    for (const code of unite) {
+      const demandee = demandees.get(code);
+      if (demandee !== undefined && (voulue === null || demandee.rang > voulue.rang)) {
+        voulue = demandee;
+      }
     }
-    return declare;
+    return voulue !== null && voulue.rang > presumee[0].rang
+      ? [voulue, MOTIF_DEMANDE] : presumee;
   });
+  if (ouvertures.every((ouverture) => ouverture.rang > declare.rang)
+      && dates.every(([, motif]) => motif !== MOTIF_DEMANDE)) {
+    return [unique, []];
+  }
 
   const parRegime = new Map();
   for (const [code, i] of uniteDe) {
@@ -346,35 +409,79 @@ export function departs(moteur, carriereSaisie) {
   }
   for (const [code, indices] of suivies) {
     let quand = null;
-    for (const i of indices) {
-      if (quand === null || dates[i].rang > quand.rang) {
+    for (const i of [...indices].sort((a, b) => a - b)) {
+      if (quand === null || dates[i][0].rang > quand[0].rang) {
         quand = dates[i];
       }
     }
-    parRegime.set(code, quand ?? declare);
+    parRegime.set(code, quand ?? [declare, MOTIF_DEPART]);
   }
+  let legal = null;
   if (parRegime.has(RAFP)) {
-    const legal = carriere.dateDeLAge(ageLegal(moteur, carriere));
-    if (legal.rang > parRegime.get(RAFP).rang) {
-      parRegime.set(RAFP, legal);
+    legal = carriere.dateDeLAge(ageLegal(moteur, carriere));
+    if (legal.rang > parRegime.get(RAFP)[0].rang) {
+      parRegime.set(RAFP, [legal, MOTIF_OUVERTURE]);
+    }
+  }
+  for (const [code, [quand]] of [...parRegime]) {
+    const demandee = demandees.get(code);
+    if (!uniteDe.has(code) && demandee !== undefined && demandee.rang > quand.rang) {
+      parRegime.set(code, [demandee, MOTIF_DEMANDE]);
     }
   }
 
+  const examens = examiner(demandees, parRegime, new Set(uniteDe.keys()), legal);
   const parDate = new Map();
-  for (const [code, quand] of parRegime) {
+  for (const [code, [quand]] of parRegime) {
     if (!parDate.has(quand.rang)) {
       parDate.set(quand.rang, [quand, new Set()]);
     }
     parDate.get(quand.rang)[1].add(code);
   }
   if (parDate.size === 1 && parDate.has(declare.rang)) {
-    return unique;
+    return [unique, examens];
   }
-  return [...parDate.keys()].sort((a, b) => a - b).map((rang) => {
+  // Ce qui date un départ : l'acte de la personne d'abord, puis la sortie de
+  // l'armée ; l'ouverture d'un régime sinon, le RAFP à l'âge légal compris.
+  const motifDe = (rang, regimes) => {
+    if (rang === declare.rang) {
+      return MOTIF_DEPART;
+    }
+    const motifs = new Set([...regimes].map((code) => parRegime.get(code)[1]));
+    for (const retenu of [MOTIF_DEMANDE, MOTIF_SORTIE]) {
+      if (motifs.has(retenu)) {
+        return retenu;
+      }
+    }
+    return MOTIF_OUVERTURE;
+  };
+  const liste = [...parDate.keys()].sort((a, b) => a - b).map((rang) => {
     const [quand, regimes] = parDate.get(rang);
-    const motif = rang === declare.rang ? MOTIF_DEPART
-      : rang > declare.rang ? MOTIF_OUVERTURE : MOTIF_SORTIE;
-    return new Depart(quand, regimes, motif);
+    return new Depart(quand, regimes, motifDe(rang, regimes));
+  });
+  return [liste, examens];
+}
+
+/**
+ * Ce que devient chaque date demandée : celle de sa pension, ou la date
+ * retenue et sa raison. Voir `_examiner` du Python.
+ */
+function examiner(demandees, parRegime, unites, legal) {
+  return [...demandees.keys()].sort().map((code) => {
+    const demandee = demandees.get(code);
+    if (!parRegime.has(code)) {
+      return new DemandeExaminee(code, demandee, null, SANS_PENSION);
+    }
+    const [retenue, presume] = parRegime.get(code);
+    let motif = presume;
+    if (retenue.rang === demandee.rang) {
+      motif = MOTIF_DEMANDE;
+    } else if (code === RAFP && legal !== null && retenue.rang === legal.rang) {
+      motif = MOTIF_OUVERTURE;
+    } else if (presume === MOTIF_DEMANDE || !unites.has(code)) {
+      motif = ENSEMBLE;
+    }
+    return new DemandeExaminee(code, demandee, retenue, motif);
   });
 }
 

@@ -613,6 +613,16 @@ affirmations:
     etat: verifiee
     controle: retraite_progressive_fermee
 
+  - id: simuler.demande_de_pension_non_retenue
+    page: /simuler
+    extrait: "que vous demandez"
+    porte: >-
+      une date de pension que l'assuré dit ne fait que la retarder : plus tardive que
+      la présumée, elle date la pension ; demandée avant le départ, la pension est
+      servie au départ ; avant l'âge qui ouvre le régime, à cet âge
+    etat: verifiee
+    controle: demande_de_pension_non_retenue
+
   - id: simuler.cumul_emploi_retraite
     page: /simuler
     extrait: "Vous travaillez après votre départ"

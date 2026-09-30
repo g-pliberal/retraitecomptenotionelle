@@ -545,6 +545,8 @@ class Comparaison:
                     ],
                     **({"departs": [d.donnees() for d in self.actuel.departs]}
                        if self.actuel.departs else {}),
+                    **({"demandes": [d.donnees() for d in self.actuel.demandes]}
+                       if self.actuel.demandes else {}),
                     **({"retraite_progressive": self.actuel.retraite_progressive.donnees()}
                        if self.actuel.retraite_progressive is not None else {}),
                     **({"cumul": self.actuel.cumul.donnees()}

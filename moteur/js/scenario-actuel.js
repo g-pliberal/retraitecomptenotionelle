@@ -246,10 +246,12 @@ export class ScenarioActuel {
     const plancher = progressive !== null && progressive.ouverte
       ? [progressive, provisoire] : null;
     // CHAQUE RÉGIME LIQUIDE À SA DATE (`droit/departs.js`), sauf la
-    // liquidation fictive, qui valorise des droits à une date.
-    const departs = nature !== "fictive" ? lesDeparts.departs(this, carriereSaisie) : [];
+    // liquidation fictive, qui valorise des droits à une date. Un seul départ
+    // qui n'est pas le départ déclaré se liquide à sa date, comme plusieurs.
+    const [departs, demandes] = nature !== "fictive"
+      ? lesDeparts.departsEtDemandes(this, carriereSaisie) : [[], []];
     let sortie;
-    if (departs.length > 1) {
+    if (departs.length > 1 || (departs.length === 1 && !departs[0].unique)) {
       const liquidations = lesDeparts.liquiderLesDeparts(
         this, carriereSaisie, contexte, nature, departs, null, plancher);
       sortie = resultatDesDeparts(this, carriereSaisie, departs, liquidations, contexte);
@@ -267,6 +269,9 @@ export class ScenarioActuel {
     if (progressive !== null) {
       sortie.retraite_progressive = progressiveServie(progressive, provisoire,
         carriereSaisie.dateLiquidation);
+    }
+    if (demandes.length > 0) {
+      sortie.demandes = demandes;
     }
     return sortie;
   }
@@ -303,6 +308,8 @@ export function resultatActuel(resultat, foyer) {
     pension_mensuelle: Math.max(0.0, total - resultat.horsRepartition) / 12.0,
     // Un seul départ : tous les régimes liquident à la même date.
     departs: [],
+    // Les pensions dont la carrière dit la date de demande, examinées.
+    demandes: [],
     retraite_progressive: null,
     cumul: null,
     droits_apres_depart: null,
@@ -499,6 +506,7 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     fiabilite,
     pension_mensuelle: Math.max(0.0, total - horsRepartition) / 12.0,
     departs: servis,
+    demandes: [],
     retraite_progressive: null,
     cumul: null,
     droits_apres_depart: null,

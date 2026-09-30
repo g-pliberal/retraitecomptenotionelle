@@ -379,10 +379,12 @@ listes:
         appliquee_par: departs (droit/departs.py), que l'échéancier et le scénario 1 lisent ; son jumeau JavaScript
         entrera_a: echeancier
         raison: >-
-          le formulaire demande une date de départ, pas une par régime ; or
-          chaque régime sert sa pension à sa propre date (fiche
-          liquidation_regime_par_regime), et le modèle liquidait tout au
-          départ, à l'âge du régime le plus précoce. La présomption ne fait
+          le formulaire demande une date de départ, et la date d'une pension
+          seulement à qui veut la dire ; or chaque régime sert sa pension à sa
+          propre date (fiche liquidation_regime_par_regime), et le modèle
+          liquidait tout au départ, à l'âge du régime le plus précoce. Une
+          date dite plus tardive remplace la présumée ; une plus précoce ne
+          l'avance pas (droit/departs.py). La présomption ne fait
           demander avant le départ que la pension militaire : L. 84 du code
           des pensions la soustrait à l'extinction des droits et au cumul, et
           son montant ne dépend pas de ce que l'assuré fait ensuite. Toute

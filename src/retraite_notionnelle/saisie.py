@@ -351,6 +351,13 @@ EMPLOYEURS_APRES_DEPART = [
     ("dernier", "le dernier employeur"),
 ]
 
+#: Le préfixe des champs qui disent la date où l'assuré demande la pension
+#: d'un régime : « demande_regime_general=2031-05 ». Le code du régime suit,
+#: en minuscules, chiffres et soulignés ; qu'il existe, c'est au calcul de le
+#: dire, sur le catalogue.
+PREFIXE_DEMANDE = "demande_"
+_CODE_DE_REGIME = re.compile(r"[a-z][a-z0-9_]*")
+
 
 #: Ce qu'une ligne de carrière peut décrire à la place d'un métier.
 #:
@@ -560,6 +567,12 @@ class Saisie:
     emploi_retraite_statut: str = ""
     emploi_retraite_salaire: float | None = None
     emploi_retraite_employeur: str = "autre"
+    #: Les pensions dont l'assuré dit la date de demande : pour chaque régime,
+    #: l'âge où il la demande, que l'adresse porte en date comme le départ
+    #: (:data:`PREFIXE_DEMANDE`). Vide, la présomption
+    #: ``depart_de_chaque_regime`` date chaque pension (fiche
+    #: ``liquidation_regime_par_regime``).
+    demandes: tuple[tuple[str, float], ...] = ()
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
@@ -693,6 +706,8 @@ class Saisie:
                 else _reel(parametres, "emploi_retraite_salaire", 0.0)),
             emploi_retraite_employeur=_parmi(parametres, "emploi_retraite_employeur",
                                              EMPLOYEURS_APRES_DEPART, "autre"),
+            demandes=_demandes_saisies(parametres,
+                                       origine_des_ages(mois_de_naissance, jour_naissance)),
             interruptions=(parametres.get("interruptions") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
@@ -785,6 +800,7 @@ class Saisie:
         self._verifier_conjoint()
         self._verifier_progressive()
         self._verifier_emploi_retraite()
+        self._verifier_demandes()
         if not ANNEE_MINIMALE <= self.bascule <= ANNEE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de bascule attendue entre {ANNEE_MINIMALE} et "
@@ -1548,6 +1564,27 @@ class Saisie:
                     f"Activité après le départ, en {debut} : niveau de revenu attendu "
                     "entre 0,1 et 10 fois le salaire moyen.")
 
+    def demandes_de_pension_declarees(self) -> dict[str, float] | None:
+        """Les pensions dont la saisie dit la date, telles que la chronologie
+        les reçoit : l'âge de chaque demande, par régime ; ``None`` sans elles."""
+        return dict(self.demandes) or None
+
+    def _verifier_demandes(self) -> None:
+        """La date où l'assuré demande une pension : après le début de la
+        carrière, et pas au-delà de l'âge de départ le plus tardif que le
+        modèle accepte. Que le régime existe, que la carrière y ouvre une
+        pension, et que la date la retarde ou non, c'est au calcul de le dire."""
+        for code, age in self.demandes:
+            date_demandee = self.date_de(age, depart=True)
+            if date_demandee.rang <= self.date_de(self.debut).rang:
+                raise ErreurSaisie(
+                    f"Pension « {code} » demandée en {date_demandee} : la demande "
+                    "suit le début de la carrière.")
+            if age > AGE_LIQUIDATION_MAXIMAL:
+                raise ErreurSaisie(
+                    f"Pension « {code} » demandée en {date_demandee} : le modèle ne "
+                    f"liquide pas au-delà de {AGE_LIQUIDATION_MAXIMAL} ans.")
+
     def _verifier_conjoint(self) -> None:
         """Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie
         — les naissances, le mariage, le décès —, et un décès qui ne précède
@@ -1625,6 +1662,8 @@ class Saisie:
                 ("emploi_retraite_employeur", None if self.emploi_retraite_employeur == "autre"
                  else self.emploi_retraite_employeur)) if valeur is not None}
                if self.emploi_retraite is not None else {}),
+            **{f"{PREFIXE_DEMANDE}{code}": self.mois_de(age, depart=True)
+               for code, age in self.demandes},
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,
@@ -1830,6 +1869,24 @@ def _date_saisie(parametres: dict[str, str],
     if jour is not None and not 1 <= jour <= 31:
         raise ErreurSaisie(f"« {nom} » : jour attendu entre 01 et 31 (reçu : {brut}).")
     return annee, mois, jour
+
+
+def _demandes_saisies(parametres: dict[str, str],
+                      origine: DateMois) -> tuple[tuple[str, float], ...]:
+    """Les pensions dont l'adresse dit la date de demande, une par régime, dans
+    l'ordre de leurs codes : « demande_<régime> », en date comme le départ.
+    Un champ vide ne dit rien."""
+    demandes = []
+    for cle in sorted(parametres):
+        if not cle.startswith(PREFIXE_DEMANDE) or parametres[cle] in (None, ""):
+            continue
+        code = cle[len(PREFIXE_DEMANDE):]
+        if not _CODE_DE_REGIME.fullmatch(code):
+            raise ErreurSaisie(
+                f"« {cle} » : le code d'un régime s'écrit en minuscules, chiffres "
+                "et soulignés, comme « demande_regime_general ».")
+        demandes.append((code, _age_saisi(parametres, cle, 0.0, origine)))
+    return tuple(demandes)
 
 
 def _age_saisi(parametres: dict[str, str], nom: str, defaut: float,

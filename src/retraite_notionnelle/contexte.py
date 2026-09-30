@@ -314,6 +314,7 @@ class Contexte:
                     f"Statut d'affiliation inconnu : « {metier.affiliation} »."
                 )
         emploi_retraite = self._emploi_retraite(simulateur, saisie)
+        demandes = _demandes_de_pension(simulateur, saisie)
 
         def batir(niveaux: list[float]) -> "Carriere":
             return simulateur.carriere_parcours(
@@ -334,6 +335,7 @@ class Contexte:
                 deces=saisie.deces_declare(),
                 retraite_progressive=saisie.retraite_progressive_declaree(),
                 emploi_retraite=emploi_retraite,
+                demandes_de_pension=demandes,
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -429,6 +431,7 @@ class Contexte:
             deces=saisie.deces_declare(),
             retraite_progressive=saisie.retraite_progressive_declaree(),
             emploi_retraite=self._emploi_retraite(simulateur, saisie),
+            demandes_de_pension=_demandes_de_pension(simulateur, saisie),
             part_primes=saisie.primes,
             identifiant="assuré",
         )
@@ -445,6 +448,19 @@ class Contexte:
                 f"Activité après le départ : statut d'affiliation inconnu "
                 f"« {emploi['affiliation']} ».")
         return emploi
+
+
+def _demandes_de_pension(simulateur: Simulateur, saisie: Saisie) -> dict[str, float] | None:
+    """Les dates de demande que la saisie dit, chacune pour un régime que le
+    catalogue connaît : c'est ici qu'un code inconnu se refuse, la saisie
+    n'ayant pas le catalogue."""
+    demandes = saisie.demandes_de_pension_declarees()
+    for code in demandes or ():
+        if code not in simulateur.catalogue:
+            raise ErreurSaisie(
+                f"Pension demandée à une date : aucun régime « {code} » dans le "
+                "catalogue du modèle.")
+    return demandes
 
 
 def _verifier_statuts_ouverts(affiliations: Affiliations, carriere,

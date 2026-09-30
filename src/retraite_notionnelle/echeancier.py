@@ -141,8 +141,8 @@ class Echeancier:
         sont menées. Une retraite progressive vient d'abord ; le départ qui
         la suit est celui de la pension définitive."""
         self._progresser(carriere)
-        departs = _departs.departs(self.moteur, carriere)
-        if len(departs) > 1:
+        departs, demandes = _departs.departs_et_demandes(self.moteur, carriere)
+        if len(departs) > 1 or (departs and not departs[0].unique):
             self._partir(carriere, departs)
         else:
             evenements = [e for e in (depart_de(carriere),) if e is not None]
@@ -153,6 +153,8 @@ class Echeancier:
         if self.au_depart is not None and self.progressive is not None:
             self.au_depart = replace(self.au_depart, retraite_progressive=progressive_servie(
                 self.progressive, self.provisoire, carriere.date_liquidation))
+        if self.au_depart is not None and demandes:
+            self.au_depart = replace(self.au_depart, demandes=demandes)
         if self.au_depart is not None and carriere.conjoint is not None:
             if carriere.deces is not None:
                 self._reverser(carriere)
@@ -398,9 +400,12 @@ class Echeancier:
             evenement = Evenement(
                 id=f"depart_{carriere.personne}_{depart.date_effet}", date=depart.date_effet,
                 personnes=(carriere.personne,), vise={"regimes": sorted(depart.regimes)},
-                # Le départ déclaré est un acte ; les autres dates, la
-                # présomption depart_de_chaque_regime les induit.
-                origine=declare.origine if depart.date_effet == declare.date else "induit")
+                # Le départ déclaré est un acte, comme la date qu'une personne
+                # demande ; les autres dates, la présomption
+                # depart_de_chaque_regime les induit.
+                origine=(declare.origine if depart.date_effet == declare.date
+                         else "acte" if depart.motif == _departs.MOTIF_DEMANDE
+                         else "induit"))
             self._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date)
             self._inscrire(evenement, f"liquidation_{evenement.id}", "liquidation",
                            liquidation, evenement.date)

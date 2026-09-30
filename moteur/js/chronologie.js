@@ -223,11 +223,13 @@ export function dateDeclaree(valeur, quoi) {
  * âges se comptent. `conjoint` déclare le conjoint (§ 5.1) : sa `naissance`
  * et son `sexe`, la date du `mariage` — que {@link completer} présume sinon —
  * et ses `ressources` annuelles, s'il les dit ; `deces` date le décès de
- * l'assuré, qui clôt le mariage. Voir `_personne` du Python.
+ * l'assuré, qui clôt le mariage ; `demandesDePension` dit, régime par régime,
+ * l'âge auquel il demande sa pension. Voir `_personne` du Python.
  */
 function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants,
   naissancesEnfants = [], jourNaissance = null, presomptions = null, conjoint = null,
-  deces = null, retraiteProgressive = null, emploiRetraite = null) {
+  deces = null, retraiteProgressive = null, emploiRetraite = null,
+  demandesDePension = null) {
   const assure = naissanceDeLAssure(anneeNaissance, moisNaissance, sexe, jourNaissance,
     presomptions);
   const faitsNaissance = [assure];
@@ -261,6 +263,20 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
     depart.unshift(fait(`retraite_progressive_${ASSURE}`, ASSURE, "acte_de_la_personne",
       jour(origineDe(assure).plusMois(enMois(age))), null,
       { acte: "retraite_progressive", age, quotite }));
+  }
+  if (demandesDePension && Object.keys(demandesDePension).length > 0) {
+    if (ageLiquidation === null || ageLiquidation === undefined) {
+      throw new Error("une pension demandée à une date suppose un départ");
+    }
+    for (const code of Object.keys(demandesDePension).sort()) {
+      const age = demandesDePension[code];
+      if (age < 0) {
+        throw new Error(`la pension de ${code} demandée avant la naissance`);
+      }
+      depart.push(fait(`demande_de_pension_${code}_${ASSURE}`, ASSURE, "acte_de_la_personne",
+        jour(origineDe(assure).plusMois(enMois(age))), null,
+        { acte: "demande_de_pension", regime: code, age }));
+    }
   }
   if (emploiRetraite !== null && emploiRetraite !== undefined) {
     const { age, fin } = emploiRetraite;
@@ -345,10 +361,11 @@ function naissanceDuConjoint(conjoint) {
  */
 export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation = null,
   nombreEnfants = 0, naissancesEnfants = [], jourNaissance = null, presomptions = null,
-  conjoint = null, deces = null, retraiteProgressive = null, emploiRetraite = null) {
+  conjoint = null, deces = null, retraiteProgressive = null, emploiRetraite = null,
+  demandesDePension = null) {
   const [naissance, depart, liens] = personne(anneeNaissance, moisNaissance, sexe,
     ageLiquidation, nombreEnfants, naissancesEnfants, jourNaissance, presomptions,
-    conjoint, deces, retraiteProgressive, emploiRetraite);
+    conjoint, deces, retraiteProgressive, emploiRetraite, demandesDePension);
   return { schema_version: SCHEMA_VERSION, faits: [...naissance, ...depart], liens };
 }
 
@@ -377,6 +394,7 @@ export function duParcours({
   deces = null,
   retraite_progressive = null,
   emploi_retraite = null,
+  demandes_de_pension = null,
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -392,7 +410,7 @@ export function duParcours({
 
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
-    conjoint, deces, retraite_progressive, emploi_retraite);
+    conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension);
   const moisDeNaissance = moisDe(naissance[0].debut);
   const bornes = principaux.map(
     (metier) => moisDeNaissance.plusMois(enMois(metier.age_debut)),
@@ -485,6 +503,7 @@ export function duReleve({
   deces = null,
   retraite_progressive = null,
   emploi_retraite = null,
+  demandes_de_pension = null,
 }) {
   if (!releve || releve.length === 0) {
     throw new Error("un relevé compte au moins une ligne");
@@ -506,7 +525,7 @@ export function duReleve({
   });
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
-    conjoint, deces, retraite_progressive, emploi_retraite);
+    conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],
@@ -648,6 +667,15 @@ export function depart(chronologie, personne) {
 export function retraiteProgressive(chronologie, personne) {
   return faitsDe(chronologie, personne, "acte_de_la_personne")
     .find((acte) => acte.attributs.acte === "retraite_progressive") ?? null;
+}
+
+/**
+ * Les pensions dont une personne déclare la date de demande : un acte par
+ * régime, dans l'ordre de leurs codes.
+ */
+export function demandesDePension(chronologie, personne) {
+  return faitsDe(chronologie, personne, "acte_de_la_personne")
+    .filter((acte) => acte.attributs.acte === "demande_de_pension");
 }
 
 /**

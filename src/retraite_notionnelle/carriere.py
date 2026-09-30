@@ -627,6 +627,17 @@ class Carriere:
                 else (chrono.mois_de(fait["debut"]), fait["attributs"]["quotite"]))
 
     @cached_property
+    def demandes_de_pension(self) -> dict[str, DateMois]:
+        """Les pensions dont la personne dit la date de demande : pour chaque
+        régime, le mois où elle la demande. La présomption
+        ``depart_de_chaque_regime`` date les autres, et une demande ne fait
+        que retarder la pension (:mod:`~retraite_notionnelle.droit.departs`)."""
+        if not self.chronologie:
+            return {}
+        return {fait["attributs"]["regime"]: chrono.mois_de(fait["debut"])
+                for fait in chrono.demandes_de_pension(self.chronologie, self.personne)}
+
+    @cached_property
     def emploi_retraite(self) -> "dict | None":
         """L'activité que la personne exerce après son départ, si elle la dit :
         ``debut`` et ``fin`` (:class:`DateMois`, la fin exclue),
@@ -1210,6 +1221,7 @@ class Carriere:
         deces: str | None = None,
         retraite_progressive: dict | None = None,
         emploi_retraite: dict | None = None,
+        demandes_de_pension: dict[str, float] | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -1241,7 +1253,8 @@ class Carriere:
             mois_naissance=mois_naissance, nombre_enfants=nombre_enfants,
             part_primes=part_primes, naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
-            retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite))
+            retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
+            demandes_de_pension=demandes_de_pension))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1265,6 +1278,7 @@ class Carriere:
         conjoint: dict | None = None,
         deces: str | None = None,
         emploi_retraite: dict | None = None,
+        demandes_de_pension: dict[str, float] | None = None,
     ) -> "Carriere":
         """Carrière d'un seul métier, exercé du premier au dernier jour.
 
@@ -1289,6 +1303,7 @@ class Carriere:
             conjoint=conjoint,
             deces=deces,
             emploi_retraite=emploi_retraite,
+            demandes_de_pension=demandes_de_pension,
         )
 
     @classmethod
@@ -1311,6 +1326,7 @@ class Carriere:
         deces: str | None = None,
         retraite_progressive: dict | None = None,
         emploi_retraite: dict | None = None,
+        demandes_de_pension: dict[str, float] | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -1353,6 +1369,10 @@ class Carriere:
         l'``employeur``. Ses années ne sont pas des lignes de la carrière,
         que le départ arrête : elles vont à :attr:`lignes_apres_depart`.
 
+        ``demandes_de_pension`` dit, régime par régime, l'âge auquel l'assuré
+        demande sa pension, quand ce n'est pas la date que la présomption
+        ``depart_de_chaque_regime`` retient (:attr:`demandes_de_pension`).
+
         Les deux bords sont des années INCOMPLÈTES et sont construites comme
         telles : celui qui entre en septembre ne travaille que quatre mois de
         son année d'entrée, celui qui part en août n'en travaille que sept de
@@ -1366,7 +1386,8 @@ class Carriere:
             interruptions=interruptions, nombre_enfants=nombre_enfants,
             part_primes=part_primes, naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
-            retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite))
+            retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
+            demandes_de_pension=demandes_de_pension))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod

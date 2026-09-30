@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.25, du 30 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.26, du 30 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -119,7 +119,7 @@ couverture demande à l'architecture.
 | Départs anticipés | carrière longue, catégories actives, militaires : oui ; parents de trois enfants de la fonction publique : non ; handicap : hors modèle | tous, dont incapacité permanente, pénibilité, amiante |
 | Invalidité, inaptitude | hors modèle | périodes d'invalidité, pension d'invalidité et sa conversion, retraite pour invalidité des fonctionnaires, inaptitude |
 | Réversion | le conjoint, qu'un bloc facultatif du formulaire demande, et le mariage, présumé aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.mariage_des_conjoints.valeur)-->27<!--/--> ans de l'assuré ; la réversion liquidée pour le survivant, au régime général et dans les régimes alignés, dans la fonction publique et à l'Agirc-Arrco, sans le minimum ni les majorations, pour un décès déclaré après le départ ou supposé juste après lui | conjoints successifs datés, décès avant le départ, ressources du ménage, partage entre ex-conjoints, remariage, règles des autres régimes, orphelins |
-| Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | un départ par régime, chacun à sa date, sur une demande présumée ; la retraite progressive, sa date et sa quotité déclarées : la pension provisoire, sa fraction servie, la pension complète au départ ; le cumul emploi-retraite, mois par mois, sur une activité déclarée après le départ ; les droits qu'elle ouvre ou non, la nouvelle pension du cumul intégral au régime général, aux salariés agricoles et à l'Agirc-Arrco, et les pensions des régimes qu'elle ouvre | la date de demande de chaque pension, déclarée ; la nouvelle pension des autres régimes ; les changements de quotité |
+| Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | un départ par régime, chacun à sa date, présumée ou dite par l'assuré, qu'une date dite ne fait que retarder ; la retraite progressive, sa date et sa quotité déclarées : la pension provisoire, sa fraction servie, la pension complète au départ ; le cumul emploi-retraite, mois par mois, sur une activité déclarée après le départ ; les droits qu'elle ouvre ou non, la nouvelle pension du cumul intégral au régime général, aux salariés agricoles et à l'Agirc-Arrco, et les pensions des régimes qu'elle ouvre ; un bloc facultatif du formulaire pour tout cela | une pension demandée avant le départ, sans redéclarer le départ ; l'anticipation d'une complémentaire seule ; plusieurs activités après le départ ; la nouvelle pension des autres régimes ; les changements de quotité |
 | Rachats, versements, surcotisation | hors modèle | actes datés de l'assuré, avec leur coût |
 | Carrières hors de France | absentes | périodes par pays et par convention ; totalisation et prorata ; pensions étrangères |
 | Minimum vieillesse (ASPA) | barème d'une personne seule, sans condition de ressources | ressources, résidence et composition du foyer ; récupération sur la succession |
@@ -764,10 +764,11 @@ Le relevé des droits et le résultat le signalent.
     parti, quand un conjoint est déclaré sans décès : la page montre ce que
     le conjoint recevrait ;
   - chaque pension demandée au départ déclaré, à l'ouverture du régime qui ne
-    l'ouvre pas encore, et dès la sortie de l'armée pour la pension militaire.
-    Elle non plus ne reprend pas la valeur d'avant elle — tout liquider au
-    départ, à l'âge du régime le plus précoce —, qui servait des pensions que
-    le droit n'ouvrait pas encore (version 5.21).
+    l'ouvre pas encore, et dès la sortie de l'armée pour la pension militaire,
+    quand l'assuré n'en dit pas la date ; une date dite plus tardive la
+    remplace (version 5.26). Elle non plus ne reprend pas la valeur d'avant
+    elle — tout liquider au départ, à l'âge du régime le plus précoce —, qui
+    servait des pensions que le droit n'ouvrait pas encore (version 5.21).
 - **Un défaut légal** n'est pas une présomption : c'est la loi qui décide
   quand la personne n'a rien fait. Il s'écrit dans la version de la règle,
   parce qu'il change avec elle. Au régime général, les trimestres d'éducation
@@ -1221,8 +1222,9 @@ révision d'un minimum ou d'une réversion, l'accroissement d'une réversion
 partagée au décès d'un ex-conjoint ne sont donc pas des cas particuliers : ce
 sont des événements de plus. Le départ de chaque régime en est le premier :
 quand les régimes n'ouvrent pas tous leur pension au départ déclaré,
-l'échéancier inscrit un départ par date, que la présomption du § 5.6 induit,
-et chacun liquide ses seuls régimes, sur la carrière arrêtée à sa date, en
+l'échéancier inscrit un départ par date, que la présomption du § 5.6 induit
+ou que la personne demande — un acte, alors —, et chacun liquide ses seuls
+régimes, sur la carrière arrêtée à sa date, en
 voyant servies les pensions des précédents, menées au mois de sa date d'effet
 (`droit/departs.py`). L'activité exercée après le départ en est un autre :
 l'échéancier dit, mois par mois, ce que chaque pension en garde
@@ -2427,6 +2429,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.26**, 30 septembre 2026 : la cinquième étape du troisième domaine. Le formulaire demande, dans un bloc facultatif, la retraite progressive, la date de chaque pension et l'activité exercée après le départ. La date d'une pension, que l'assuré dit régime par régime, remplace la présumée quand elle vient après elle, et ne l'avance jamais ; le départ qu'elle date est un acte de la personne (§ 5.6, § 7.4).
 
 - **5.25**, 30 septembre 2026 : la quatrième étape du troisième domaine, sa fin. Les droits que l'activité après le départ ouvre dans un régime qui ne servait pas de pension se liquident comme un départ induit, à la fin de l'activité ou à l'âge d'ouverture du régime, sur la carrière prolongée des années qui les ouvrent (§ 7.4).
 

@@ -190,22 +190,28 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   le cumul, ou par l'adresse (fiche `retraite_progressive`). Les systèmes 2
   à 6 n'en servent pas de fraction : le temps partiel y réduit seulement la
   cotisation, et la proposition n'a pas encore dit si elle l'ouvre.
-- **Les départs échelonnés : servis, sur une date présumée.** Depuis le 29
+- **Les départs échelonnés : servis, sur une date présumée ou dite.** Depuis le 29
   septembre 2026, chaque régime liquide à sa date, comme le droit le veut :
   le régime qui n'ouvre pas encore sa pension au départ attend son âge — le
   régime général de l'aide-soignante partie de l'hôpital à cinquante-sept
   ans —, la pension militaire est servie dès la sortie de l'armée, le RAFP
   attend l'âge légal. Chaque départ voit servies les pensions des précédents,
   sur lesquelles son minimum contributif s'écrête. La date à laquelle
-  l'assuré demande chaque pension n'est pas saisie : elle est présumée
-  (`depart_de_chaque_regime`), et qui demande une pension avant son départ —
-  l'agent d'un régime spécial parti tôt —, ou après l'ouverture pour une
-  surcote, n'est pas représenté ; une complémentaire des salariés n'est pas
-  anticipée seule, sous son abattement ; le minimum contributif n'est pas
-  révisé quand une pension commence après lui (R. 173-8). Les montants du
+  l'assuré demande chaque pension est présumée quand il ne la dit pas
+  (`depart_de_chaque_regime`) ; depuis le 30 septembre 2026, il la dit, régime
+  par régime, au formulaire ou par l'adresse (`demande_<régime>`) : une date
+  plus tardive remplace la présumée — pour éviter une décote qui tient à
+  l'âge, toucher une surcote accordée à l'âge seul —, une plus précoce ne
+  l'avance pas, et la page dit pourquoi. Qui demande une pension avant son
+  départ — l'agent d'un régime spécial parti tôt — se représente en déclarant
+  son départ à cette date, et l'activité qui suit comme une activité après le
+  départ. Une complémentaire des salariés n'est pas anticipée seule, sous son
+  abattement ; le minimum contributif n'est pas révisé quand une pension
+  commence après lui (R. 173-8). Les montants du
   système 1 sont ceux du départ déclaré, la pension déjà servie y étant menée
   par sa revalorisation, celle qui ne commence qu'après ramenée par les prix
-  (fiche `liquidation_regime_par_regime`).
+  (fiche `liquidation_regime_par_regime`). Les systèmes 2 à 6 liquident leur
+  compte au départ déclaré, quelle que soit la date dite de chaque pension.
 - **Catégorie active : servie, mais sur un classement déclaré.** L'âge anticipé
   de l'article L. 24 — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1965)-->52<!--/--> pour la super-active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> après la
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote

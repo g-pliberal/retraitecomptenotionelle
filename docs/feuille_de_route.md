@@ -3051,6 +3051,34 @@ date de chaque pension, déclarée, que la deuxième étape et la fiche
 `liquidation_regime_par_regime` renvoyaient ici ; la décision de la
 proposition ; la clôture.
 
+**Cinquième étape, deuxième partie, le même jour : la date de chaque pension,
+dite.** L'assuré dit désormais, régime par régime, la date où il demande sa
+pension : au formulaire, un champ par régime de base quand la carrière en
+compte plusieurs, dans le dépliant, devenu « Retraite progressive, dates des
+pensions, cumul emploi-retraite » ; ou par l'adresse
+(`demande_regime_general=2027-06`). La chronologie la porte en acte de la
+personne, un par régime, et les deux moteurs la lisent (`departs_et_demandes`,
+et son jumeau) : une date plus tardive que la présumée la remplace, une unité
+prenant la plus tardive des dates de ses régimes, et une complémentaire
+demandée après son régime de base se liquide à sa date. Une date plus précoce
+n'avance rien : demander une pension avant son départ ferait de la fin de la
+carrière une activité exercée après une première pension, que le modèle
+représente déjà en déclarant le départ à cette date et l'activité qui suit. La
+page dit, pour chaque date qu'elle ne retient pas, pourquoi : le départ,
+l'ouverture du régime, la sortie de l'armée, la pension que la loi lui
+attache, ou l'absence de droit dans ce régime. Un seul départ qui n'est pas le
+déclaré — toutes les pensions demandées plus tard, ou la seule pension
+militaire — se liquide maintenant à sa date, et le RAFP servi à l'âge légal
+avant le départ déclaré n'est plus daté « dès la sortie de l'armée ». La
+fonctionnaire née en 1960, treize ans dans le privé avant l'État, partie en
+juin 2022 sans la durée du taux plein, qui demande son régime général à
+soixante-sept ans, le touche sans décote : 4 662,60 € en 2027, soit 4 170,68 €
+de 2022, au lieu de 3 023,61 € décotés dès son départ. Aucun témoin de
+simulation ne bouge ; cinq naissent (`demande_*`), et une page ; le budget de
+mots du formulaire vierge monte de deux, le titre du dépliant. Les systèmes 2
+à 6 liquident leur compte au départ déclaré : la proposition n'a pas dit
+davantage. Restent : sa décision, et la clôture du domaine.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

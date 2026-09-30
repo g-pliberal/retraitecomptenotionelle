@@ -83,7 +83,7 @@ import {
   AGES_REFERENCE, AGE_DEBUT_MAXIMAL, AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL,
   AGE_LIQUIDATION_MINIMAL, ANNEE_MAXIMALE, ANNEE_MINIMALE, CLES_MODELISATION,
   CODES_SANS_EMPLOI, CONTRIBUTIONS_ETAT, CONVERSIONS_ACQUIS, CUMUL, DEFAUTS,
-  EMPLOYEURS_APRES_DEPART,
+  EMPLOYEURS_APRES_DEPART, PREFIXE_DEMANDE,
   ENFANTS_MAXIMUM, ErreurSaisie, INDEXATIONS, LISSAGE_MAXIMUM, METIERS_MAXIMUM,
   MODES_MONTANT, NAISSANCE_MAXIMALE, NAISSANCE_MINIMALE, PARTS_COTISATION,
   POPULATIONS, PROFILS, PROJECTIONS, RATTACHEMENTS, REGIMES_FRAIS, REGIMES_TAUX,
@@ -1024,7 +1024,7 @@ export function formulaire(saisie, contexte) {
   ${mentionConversion(saisie, echelle)}
   ${releveFormulaire(saisie)}
   ${conjointFormulaire(saisie, contexte)}
-  ${apresLeDepartFormulaire(saisie, affiliations, echelle)}
+  ${apresLeDepartFormulaire(saisie, contexte, affiliations, echelle)}
   <details class="options">
     ${g.sommaire("Options de modélisation (sexe, profil, indexation, "
       + "projection)")}
@@ -1083,14 +1083,70 @@ function conjointFormulaire(saisie, contexte) {
 }
 
 /**
- * La retraite progressive et l'activité exercée après le départ (le domaine
- * des départs multiples, docs/architecture.md, § 11) : un bloc facultatif,
- * replié tant qu'il est vide. La retraite progressive se demande avant le
- * départ, en gardant un temps partiel ; l'activité après le départ, avec sa
- * fin, son statut, son revenu et son employeur, fait le cumul emploi-retraite
- * et ses droits. Les dates s'écrivent comme celle du départ.
+ * Les régimes de base de la carrière saisie, dans l'ordre des métiers — ou des
+ * lignes du relevé — : celui de chaque statut à sa dernière année, sous sa
+ * date d'entrée. Ce sont les pensions dont le formulaire propose la date ;
+ * vide quand la carrière ne se lit pas encore.
  */
-function apresLeDepartFormulaire(saisie, affiliations, echelle) {
+function regimesDeBaseSaisis(saisie, affiliations, catalogue) {
+  const statuts = [];
+  try {
+    if (saisie.releveActif) {
+      const bornes = new Map();
+      for (const ligne of saisie.releveAnalyse()) {
+        if ((ligne.type_periode ?? "emploi") !== "emploi") continue;
+        const [premiere, derniere] = bornes.get(ligne.affiliation) ?? [ligne.annee, ligne.annee];
+        bornes.set(ligne.affiliation,
+          [Math.min(premiere, ligne.annee), Math.max(derniere, ligne.annee)]);
+      }
+      for (const [statut, [premiere, derniere]] of bornes) {
+        statuts.push([statut, new DateMois(premiere, 1), derniere]);
+      }
+    } else {
+      const lignes = saisie.lignesCarriere;
+      const depart = saisie.dateDe(saisie.liquidation, true);
+      lignes.forEach((ligne, index) => {
+        if (ligne.sans_emploi) return;
+        const suivante = ligne.cumul ? undefined
+          : lignes.slice(index + 1).find((autre) => !autre.cumul);
+        let fin = depart;
+        if (ligne.cumul && ligne.fin !== null) {
+          fin = saisie.dateDe(ligne.fin);
+        } else if (suivante !== undefined) {
+          fin = saisie.dateDe(suivante.debut);
+        }
+        statuts.push([ligne.statut, saisie.dateDe(ligne.debut), fin.plusMois(-1).annee]);
+      });
+    }
+  } catch (erreur) {
+    if (!(erreur instanceof ErreurSaisie)) throw erreur;
+    return [];
+  }
+  const codes = [];
+  for (const [statut, entree, annee] of statuts) {
+    if (!affiliations.contient(statut)) continue;
+    for (const code of affiliations.regimes(statut, annee, entree)) {
+      if (catalogue.contient(code)
+          && ["base", "integre"].includes(catalogue.obtenir(code).etage)
+          && !codes.includes(code)) {
+        codes.push(code);
+      }
+    }
+  }
+  return codes;
+}
+
+/**
+ * La retraite progressive, la date de chaque pension et l'activité exercée
+ * après le départ (le domaine des départs multiples, docs/architecture.md,
+ * § 11) : un bloc facultatif, replié tant qu'il est vide. La retraite
+ * progressive se demande avant le départ, en gardant un temps partiel ; la
+ * date de chaque pension se dit, régime par régime, quand la carrière en
+ * compte plusieurs ; l'activité après le départ, avec sa fin, son statut, son
+ * revenu et son employeur, fait le cumul emploi-retraite et ses droits. Les
+ * dates s'écrivent comme celle du départ.
+ */
+function apresLeDepartFormulaire(saisie, contexte, affiliations, echelle) {
   const date = (age) => (age === null ? "" : saisie.jourDe(age, true));
   const bornes = {
     min: saisie.jourDe(AGE_DEBUT_MINIMAL, true),
@@ -1112,6 +1168,7 @@ function apresLeDepartFormulaire(saisie, affiliations, echelle) {
       "en % d'un temps plein", "number", { min: "1", max: "99", step: "1" },
       "De 40 à 80 % depuis décembre 2014, de 50 à 90 % pour un fonctionnaire ; "
       + "80 % au plus avant."),
+    ...datesDesPensions(saisie, contexte, affiliations),
     g.champDate("emploi_retraite", "Activité après le départ, depuis",
       date(saisie.emploi_retraite), "facultatif", "", bornes,
       "Le cumul emploi-retraite : pendant qu'elle dure, votre pension est servie "
@@ -1129,12 +1186,45 @@ function apresLeDepartFormulaire(saisie, affiliations, echelle) {
       {}, "Chez le dernier employeur dans les six mois de la pension, elle n'est pas "
       + "due jusqu'au sixième mois, et l'activité n'ouvre jamais de droit nouveau."),
   ].join("");
-  const ouvert = saisie.progressive !== null || saisie.emploi_retraite !== null;
+  const ouvert = saisie.progressive !== null || saisie.emploi_retraite !== null
+    || saisie.demandes.length > 0;
   return `
   <details class="options"${ouvert ? " open" : ""}>
-    ${g.sommaire("Retraite progressive et cumul emploi-retraite")}
+    ${g.sommaire("Retraite progressive, dates des pensions, cumul emploi-retraite")}
     <div class="grille">${champs}</div>
   </details>`;
+}
+
+/**
+ * Un champ par pension à dater : chaque régime de base de la carrière quand
+ * elle en compte plusieurs, et chaque régime dont l'adresse dit déjà la date.
+ * Vide, la date est présumée (`depart_de_chaque_regime`) ; une date plus
+ * tardive la remplace, une plus précoce ne l'avance pas (`droit/departs.js`).
+ */
+function datesDesPensions(saisie, contexte, affiliations) {
+  const catalogue = contexte.simulateur().catalogue;
+  const declarees = new Map(saisie.demandes);
+  const codes = regimesDeBaseSaisis(saisie, affiliations, catalogue);
+  const aDater = codes.length > 1 ? [...codes] : [];
+  for (const code of declarees.keys()) {
+    if (!aDater.includes(code)) aDater.push(code);
+  }
+  const premier = saisie.dateDe(saisie.debut).plusMois(1);
+  const bornes = {
+    min: `${String(premier.annee).padStart(4, "0")}-${String(premier.mois).padStart(2, "0")}-01`,
+    max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL, true),
+  };
+  return aDater.map((code) => g.champDate(`${PREFIXE_DEMANDE}${code}`,
+    `Pension : ${catalogue.contient(code) ? catalogue.obtenir(code).nom : code}`,
+    declarees.has(code) ? saisie.jourDe(declarees.get(code), true) : "",
+    "demandée le ; vide, à la date présumée", "", bornes,
+    "Chaque régime sert sa pension à la date où vous la demandez, au plus tôt quand "
+    + "vous en remplissez les conditions. Laissée vide, elle est présumée : à votre "
+    + "départ, à l'âge où le régime l'ouvre, ou dès la sortie de l'armée pour une "
+    + "pension militaire. Une date plus tardive se dit ici, pour éviter une décote "
+    + "qui tient à l'âge ou toucher une surcote. Une date plus précoce ferait de la "
+    + "fin de votre carrière une activité après une première pension : avancez alors "
+    + "votre départ, et dites l'activité qui suit."));
 }
 
 /**
@@ -2600,7 +2690,64 @@ const POURQUOI_CE_DEPART = {
   depart: "à votre départ",
   ouverture: "à l'âge où ce régime vous ouvre sa pension",
   sortie: "dès votre sortie de l'armée",
+  demande: "à la date où vous la demandez",
 };
+
+/**
+ * Pourquoi une pension ne commence pas à la date demandée (`droit/departs.js`),
+ * dit au lecteur : une demande ne fait que retarder une pension, jamais ne
+ * l'avance avant la date que le modèle sait servir.
+ */
+const POURQUOI_PAS_A_CETTE_DATE = {
+  depart: (retenue) => `elle commence à votre départ, le 1<sup>er</sup> ${retenue}. `
+    + "Demandée plus tôt, elle ferait de la fin de votre carrière une activité "
+    + "exercée après une première pension : déclarez alors votre départ à cette "
+    + "date, et ce qui suit comme une activité après le départ",
+  ouverture: (retenue) => `ce régime ne vous l'ouvre que le 1<sup>er</sup> ${retenue}`,
+  sortie: (retenue) => "une pension militaire ne se sert qu'une fois l'armée quittée, "
+    + `le 1<sup>er</sup> ${retenue}`,
+  ensemble: (retenue, complementaire) => (complementaire
+    ? "elle suit la pension de base dont elle partage les années, servie le "
+      + `1<sup>er</sup> ${retenue}`
+    : "la loi la liquide avec celle d'un autre de vos régimes, que vous demandez pour "
+      + `le 1<sup>er</sup> ${retenue}`),
+};
+
+/**
+ * Les pensions dont vous dites la date sans qu'elle soit retenue
+ * (`droit/departs.js`) : une ligne chacune, le régime puis la raison. Muet
+ * quand chaque date demandée est celle de sa pension, et pour le régime que
+ * l'activité après le départ ouvre, qui se liquide à la date demandée hors de
+ * la carrière du départ.
+ */
+function demandesNonSuivies(contexte, comparaison) {
+  const catalogue = contexte.simulateur().catalogue;
+  const nom = (code) => echapper(catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
+  // Les demandes examinées portent des mois (`DemandeExaminee`).
+  const mois = (date) => echapper(String(date));
+  const nouveaux = new Set((comparaison.actuel.droits_apres_depart?.regimes_nouveaux ?? [])
+    .map((pension) => pension.regime));
+  const lignes = (comparaison.actuel.demandes ?? [])
+    .filter((demande) => demande.motif !== "demande"
+      && !(demande.motif === "sans_pension" && nouveaux.has(demande.regime)))
+    .map((demande) => {
+      const complementaire = catalogue.contient(demande.regime)
+        && !["base", "integre"].includes(catalogue.obtenir(demande.regime).etage);
+      const raison = demande.motif === "sans_pension"
+        ? "votre carrière n'y ouvre pas de droit"
+        : POURQUOI_PAS_A_CETTE_DATE[demande.motif](mois(demande.retenue), complementaire);
+      return `<li>${nom(demande.regime)} : vous demandez sa pension pour le `
+        + `1<sup>er</sup> ${mois(demande.demandee)} ; ${raison}.</li>`;
+    });
+  if (lignes.length === 0) return "";
+  const titre = lignes.length > 1
+    ? "Des dates que vous demandez ne sont pas retenues."
+    : "La date que vous demandez n'est pas retenue.";
+  return `<div class="note"><strong>${titre}</strong>
+<ul>
+${lignes.join("\n")}
+</ul></div>`;
+}
 
 /**
  * Quand les régimes du système 1 ne liquident pas tous à la même date
@@ -2642,18 +2789,37 @@ function departsEchelonnes(contexte, comparaison) {
   const annee = comparaison.parametres.annee_courante;
   const aVenir = comparaison.aujourd_hui !== null
     ? departs.filter((depart, rang) => dates[rang].annee > annee) : [];
-  const montant = aVenir.length > 0
-    ? "Le montant d'aujourd'hui, plus haut, ne compte que les pensions déjà "
-      + "servies : les autres s'y ajouteront à leur date."
-    : "Le montant du système 1, plus haut, les compte toutes : c'est la "
-      + "retraite que vous touchez une fois toutes servies.";
-  return `<div class="note"><strong>Vos pensions ne commencent pas toutes à la
+  let montant;
+  if (departs.length === 1) {
+    montant = aVenir.length > 0
+      ? "Le montant d'aujourd'hui, plus haut, ne la compte pas encore : elle s'y "
+        + "ajoutera à sa date. Le détail du calcul, plus bas, dit ce qu'elle vaut à "
+        + "cette date."
+      : "Le montant du système 1, plus haut, est le sien, dans les euros de "
+        + "l'année de votre départ. Le détail du calcul, plus bas, dit ce qu'elle "
+        + "vaut à sa date.";
+  } else {
+    montant = (aVenir.length > 0
+      ? "Le montant d'aujourd'hui, plus haut, ne compte que les pensions déjà "
+        + "servies : les autres s'y ajouteront à leur date."
+      : "Le montant du système 1, plus haut, les compte toutes : c'est la "
+        + "retraite que vous touchez une fois toutes servies.")
+      + " Le détail du calcul, plus bas, dit ce que chacune vaut à sa date.";
+  }
+  // Un seul départ, qui n'est pas le déclaré : les pensions demandées plus tard,
+  // ou la seule pension militaire.
+  const titre = departs.length > 1
+    ? `<strong>Vos pensions ne commencent pas toutes à la
 même date.</strong> Le droit ne connaît pas de départ « tous régimes » : chaque
-régime sert sa pension quand vous en remplissez les conditions.
+régime sert sa pension quand vous en remplissez les conditions.`
+    : `<strong>Votre pension ne commence pas à votre départ.</strong> Chaque régime
+sert sa pension à la date où vous la demandez, au plus tôt quand vous en
+remplissez les conditions.`;
+  return `<div class="note">${titre}
 <ul>
 ${lignes.join("\n")}
 </ul>
-${montant} Le détail du calcul, plus bas, dit ce que chacune vaut à sa date.</div>`;
+${montant}</div>`;
 }
 
 /** Ce qui ferme une retraite progressive, dit au lecteur. */
@@ -3639,7 +3805,8 @@ function resultats(contexte, saisie) {
   }
 
   const report = reportProposition(comparaison);
-  const echelonnes = departsEchelonnes(contexte, comparaison);
+  const echelonnes = departsEchelonnes(contexte, comparaison)
+    + demandesNonSuivies(contexte, comparaison);
   const progressive = retraiteProgressive(comparaison);
   const cumulApresDepart = cumulEmploiRetraite(contexte, comparaison);
 

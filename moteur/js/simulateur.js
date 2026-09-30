@@ -347,6 +347,8 @@ export class Comparaison {
           })),
           ...((this.actuel.departs ?? []).length > 0
             ? { departs: this.actuel.departs.map((d) => d.donnees()) } : {}),
+          ...((this.actuel.demandes ?? []).length > 0
+            ? { demandes: this.actuel.demandes.map((d) => d.donnees()) } : {}),
           ...(this.actuel.retraite_progressive
             ? { retraite_progressive: this.actuel.retraite_progressive.donnees() } : {}),
           ...(this.actuel.cumul ? { cumul: this.actuel.cumul.donnees() } : {}),

@@ -98,7 +98,7 @@ class DepartServi:
     différentes (:mod:`~retraite_notionnelle.droit.departs`)."""
 
     #: La date d'effet (AAAA-MM-JJ), et ce qui la date : ``depart``,
-    #: ``ouverture`` ou ``sortie``.
+    #: ``ouverture``, ``sortie`` ou ``demande``.
     date_effet: str
     motif: str
     regimes: tuple[str, ...]
@@ -205,6 +205,10 @@ class ResultatActuel:
     #: montants du résultat sont alors ceux du départ déclaré : la pension
     #: complète, chaque pension y étant menée ou ramenée.
     departs: tuple[DepartServi, ...] = ()
+    #: Les pensions dont la carrière dit la date de demande, et la date où
+    #: chacune est servie (:class:`~retraite_notionnelle.droit.departs.DemandeExaminee`) ;
+    #: vide quand elle n'en dit aucune.
+    demandes: tuple[_departs.DemandeExaminee, ...] = ()
     #: La retraite progressive que la carrière demande, ouverte ou non
     #: (:class:`ProgressiveServie`) ; ``None`` sans demande. La pension du
     #: résultat reste la pension complète, au départ.
@@ -2404,9 +2408,13 @@ class ScenarioActuel:
         plancher = ((progressive, provisoire)
                     if progressive is not None and progressive.ouverte else None)
         # CHAQUE RÉGIME LIQUIDE À SA DATE (:mod:`~retraite_notionnelle.droit.departs`),
-        # sauf la liquidation fictive, qui valorise des droits à une date.
-        departs = _departs.departs(self, carriere) if nature != "fictive" else ()
-        if len(departs) > 1:
+        # sauf la liquidation fictive, qui valorise des droits à une date. Un
+        # seul départ qui n'est pas celui du départ déclaré — toutes les
+        # pensions demandées plus tard, ou la seule pension militaire — se
+        # liquide à sa date, comme plusieurs.
+        departs, demandes = (_departs.departs_et_demandes(self, carriere)
+                             if nature != "fictive" else ((), ()))
+        if len(departs) > 1 or (departs and not departs[0].unique):
             liquidations = _departs.liquider_les_departs(
                 self, carriere, contexte, nature, departs, progressive=plancher)
             resultat = resultat_des_departs(self, carriere, departs, liquidations, contexte)
@@ -2424,6 +2432,8 @@ class ScenarioActuel:
         if progressive is not None:
             resultat = replace(resultat, retraite_progressive=progressive_servie(
                 progressive, provisoire, carriere.date_liquidation))
+        if demandes:
+            resultat = replace(resultat, demandes=demandes)
         return resultat
 
 

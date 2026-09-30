@@ -704,6 +704,40 @@ def _cas() -> list[dict]:
         "naissance": "1970", "statut": "fonctionnaire_etat_super_actif",
         "debut": "22", "liquidation": "54", "primes": "0.25",
     }))
+    # LA DATE DE CHAQUE PENSION, DITE (droit/departs.py) : la fonctionnaire
+    # venue du privé demande son régime général à soixante-sept ans, qui n'a
+    # plus de décote ; la même le demande avant son départ, et le modèle le
+    # sert au départ ; l'aide-soignante le demande avant l'âge légal, qui
+    # seul le lui ouvre ; le militaire demande sa pension neuf ans après sa
+    # sortie de l'armée ; la salariée d'un seul régime diffère toute sa
+    # pension de deux ans.
+    cas.append(("demande_regime_general_a_67_ans", {
+        "naissance": "1960-05-10", "sexe": "F", "statut": "salarie_prive_non_cadre",
+        "debut": "1985-09", "liquidation": "2022-06",
+        "metier2_debut": "1998-09", "metier2_statut": "fonctionnaire_etat",
+        "demande_regime_general": "2027-06",
+    }))
+    cas.append(("demande_avant_le_depart", {
+        "naissance": "1960-05-10", "sexe": "F", "statut": "salarie_prive_non_cadre",
+        "debut": "1985-09", "liquidation": "2022-06",
+        "metier2_debut": "1998-09", "metier2_statut": "fonctionnaire_etat",
+        "demande_regime_general": "2020-06",
+    }))
+    cas.append(("demande_avant_l_ouverture", {
+        "naissance": "1965", "sexe": "F", "statut": "salarie_prive_non_cadre",
+        "debut": "20", "liquidation": "57",
+        "metier2_debut": "30", "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
+        "demande_regime_general": "2025-01",
+    }))
+    cas.append(("demande_pension_militaire", {
+        "naissance": "1965", "statut": "militaire", "debut": "18",
+        "metier2_debut": "35", "metier2_statut": "salarie_prive_non_cadre",
+        "demande_fonction_publique_etat": "2009-01",
+    }))
+    cas.append(("demande_seul_regime", {
+        "naissance": "1960-05-10", "sexe": "F", "debut": "1985-09", "liquidation": "2022-06",
+        "demande_regime_general": "2024-06",
+    }))
     # LE RÉTABLISSEMENT : qui part sans la durée qui ouvre une pension — quinze
     # ans avant 2011, deux depuis — passe au régime général et à l'Ircantec,
     # le premier portant le dernier traitement dans la limite du plafond de
@@ -1152,6 +1186,15 @@ def _pages() -> dict:
             **BASE, "sexe": "F", "naissance": "1951", "statut": "fonctionnaire_etat",
             "debut": "26", "liquidation": "60.5", "emploi_retraite": "2012-02",
             "emploi_retraite_fin": "2016-08", "emploi_retraite_statut": "salarie_prive_non_cadre",
+        }),
+        # La date de chaque pension, dite : la fonctionnaire venue du privé
+        # demande son régime général à soixante-sept ans, et sa pension de
+        # fonctionnaire avant son départ, que le modèle sert au départ.
+        ("simuler_demande_de_pension", "/simuler", {
+            **BASE, "sexe": "F", "naissance": "1960-05-10", "debut": "1985-09",
+            "liquidation": "2022-06", "metier2_debut": "1998-09",
+            "metier2_statut": "fonctionnaire_etat",
+            "demande_regime_general": "2027-06", "demande_fonction_publique_etat": "2020-06",
         }),
         ("simuler_departs_echelonnes_a_venir", "/simuler", {
             **BASE, "sexe": "F", "naissance": "1975", "debut": "20", "liquidation": "59",

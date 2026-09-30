@@ -432,6 +432,7 @@ export class Carriere {
     this._naissancesDesEnfants = undefined;
     this._origineDesAges = undefined;
     this._conjoint = undefined;
+    this._demandesDePension = undefined;
   }
 
   // -- dates -----------------------------------------------------------------
@@ -501,6 +502,21 @@ export class Carriere {
   get deces() {
     const fait = chrono.deces(this.chronologie, this.personne);
     return fait === null ? null : fait.debut;
+  }
+
+  /**
+   * Les pensions dont la personne dit la date de demande : une `Map` du code du
+   * régime au mois où elle la demande. La présomption `depart_de_chaque_regime`
+   * date les autres, et une demande ne fait que retarder la pension
+   * (`droit/departs.js`). Voir `demandes_de_pension` du Python.
+   */
+  get demandesDePension() {
+    if (this._demandesDePension === undefined) {
+      this._demandesDePension = new Map(!this.chronologie ? []
+        : chrono.demandesDePension(this.chronologie, this.personne)
+          .map((fait) => [fait.attributs.regime, chrono.moisDe(fait.debut)]));
+    }
+    return this._demandesDePension;
   }
 
   /**
@@ -1105,12 +1121,13 @@ export class Carriere {
     deces = null,
     retraite_progressive = null,
     emploi_retraite = null,
+    demandes_de_pension = null,
   }) {
     const chronologie = preparer(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
       nombre_enfants, part_primes, naissances_enfants, jour_naissance,
       presomptions: macro.paquet.presomptions, conjoint, deces, retraite_progressive,
-      emploi_retraite,
+      emploi_retraite, demandes_de_pension,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -1172,12 +1189,13 @@ export class Carriere {
     deces = null,
     retraite_progressive = null,
     emploi_retraite = null,
+    demandes_de_pension = null,
   }) {
     const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
       profil_carriere, interruptions, nombre_enfants, part_primes, naissances_enfants,
       jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
-      retraite_progressive, emploi_retraite,
+      retraite_progressive, emploi_retraite, demandes_de_pension,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }

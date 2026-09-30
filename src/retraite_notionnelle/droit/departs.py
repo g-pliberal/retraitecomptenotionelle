@@ -26,10 +26,21 @@ liquide :
   avant le départ figerait son taux sur la durée acquise à cette date,
   perdrait la surcote que l'activité poursuivie ouvre, et, depuis 2015,
   éteindrait les droits de cette activité (fiche
-  ``droits_apres_la_premiere_pension``) : le modèle ne la présume pas.
+  ``droits_apres_la_premiere_pension``) : le modèle ne la présume pas ;
+* la personne peut DIRE la date où elle demande une pension
+  (:attr:`~retraite_notionnelle.carriere.Carriere.demandes_de_pension`) : une
+  date plus tardive que la présumée la remplace — pour éviter une décote qui
+  tient à l'âge, toucher la surcote qu'un régime accorde à l'âge seul —, et
+  une unité prend la plus tardive des demandes de ses régimes ; une date plus
+  précoce ne l'avance pas, et :class:`DemandeExaminee` dit pourquoi. Une
+  pension demandée avant le départ ferait de la fin de la carrière une
+  activité exercée après une première pension : c'est le départ qui se
+  déclare alors à cette date, et l'activité qui suit comme une activité après
+  le départ (:mod:`.cumul`, :mod:`.seconde`).
 
 Le départ reste UNIQUE quand toutes les unités liquident au départ déclaré, et
-quand aucune n'y est ouverte : la page le dit alors non ouvert, comme avant.
+quand aucune n'y est ouverte sans que rien soit demandé plus tard : la page le
+dit alors non ouvert, comme avant.
 
 :func:`liquider_les_departs` liquide ensuite chaque départ, dans l'ordre des
 dates, chacun sur la carrière arrêtée à sa date et voyant les pensions déjà
@@ -62,6 +73,14 @@ RAFP = "rafp"
 MOTIF_DEPART = "depart"
 MOTIF_OUVERTURE = "ouverture"
 MOTIF_SORTIE = "sortie"
+#: Une date que la personne demande, plus tardive que la présumée.
+MOTIF_DEMANDE = "demande"
+
+#: Ce qu'une demande devient quand elle ne date pas sa pension : servie avec
+#: la pension que la loi lui attache — le régime liquidé avec elle, ou le
+#: régime de base d'une complémentaire —, ou sans pension de ce régime.
+ENSEMBLE = "ensemble"
+SANS_PENSION = "sans_pension"
 
 
 @dataclass(frozen=True)
@@ -74,7 +93,7 @@ class Depart:
     regimes: frozenset[str] = field(default_factory=frozenset)
     #: ``depart``, au départ déclaré ; ``ouverture``, un régime qui n'ouvrait
     #: pas encore ; ``sortie``, la pension militaire, demandée à la sortie de
-    #: l'armée.
+    #: l'armée ; ``demande``, la date que la personne demande.
     motif: str = MOTIF_DEPART
 
     @property
@@ -86,6 +105,28 @@ class Depart:
     def unique(self) -> bool:
         """Le départ unique, où tous les régimes liquident ensemble."""
         return not self.regimes
+
+
+@dataclass(frozen=True)
+class DemandeExaminee:
+    """Une pension dont la personne dit la date de demande, et la date où le
+    modèle la sert : la demandée quand elle vient après la présumée, la
+    présumée sinon, avec sa raison."""
+
+    regime: str
+    demandee: DateMois
+    #: Le mois où la pension commence ; ``None`` sans pension de ce régime.
+    retenue: DateMois | None
+    #: ``demande`` : la date demandée ; ``depart``, ``ouverture`` ou
+    #: ``sortie`` : la date présumée, que la demande n'avance pas ;
+    #: ``ensemble`` : celle de la pension que la loi lui attache ;
+    #: ``sans_pension`` : la carrière n'a pas de pension dans ce régime.
+    motif: str
+
+    def donnees(self) -> dict:
+        return {"regime": self.regime, "demandee": Depart(self.demandee).date_effet,
+                "retenue": None if self.retenue is None else Depart(self.retenue).date_effet,
+                "motif": self.motif}
 
 
 def _periode(moteur: ScenarioActuel, code: str, annee: int) -> PeriodeRegime | None:
@@ -277,10 +318,23 @@ def departs(moteur: ScenarioActuel, carriere: Carriere) -> tuple[Depart, ...]:
     qu'aucune unité n'y est ouverte ; sinon, un par date, chacun avec les
     régimes qu'il liquide. Aucun pour une carrière sans départ.
     """
+    return departs_et_demandes(moteur, carriere)[0]
+
+
+def demandes(moteur: ScenarioActuel, carriere: Carriere) -> tuple[DemandeExaminee, ...]:
+    """Les pensions dont ``carriere`` dit la date de demande, examinées."""
+    return departs_et_demandes(moteur, carriere)[1]
+
+
+def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
+                        ) -> tuple[tuple[Depart, ...], tuple[DemandeExaminee, ...]]:
+    """Les départs de ``carriere`` (:func:`departs`), et ce que devient chaque
+    date de demande qu'elle dit (:class:`DemandeExaminee`), en un calcul."""
     if carriere.age_liquidation is None:
-        return ()
+        return (), ()
     declare = carriere.date_liquidation
     unique = (Depart(declare),)
+    demandees = carriere.demandes_de_pension
     carriere = coordonner.retablir(moteur, carriere)
     routage = _routage(moteur, carriere)
     codes = sorted(code for code in {code for _, regimes in routage for code in regimes}
@@ -289,7 +343,7 @@ def departs(moteur: ScenarioActuel, carriere: Carriere) -> tuple[Depart, ...]:
     bases = [code for code in codes
              if moteur.catalogue[code].etage in ETAGES_DES_UNITES]
     if not bases:
-        return unique
+        return unique, _examiner(demandees, {}, set(), None)
     unites = _unites(moteur, carriere, bases, routage)
     unite_de = {code: i for i, unite in enumerate(unites) for code in unite}
 
@@ -301,38 +355,81 @@ def departs(moteur: ScenarioActuel, carriere: Carriere) -> tuple[Depart, ...]:
             if code in codes and code not in unite_de:
                 suivies.setdefault(code, set()).update(indices)
 
+    # La date présumée de chaque unité, et ce qui la date ; puis la demande,
+    # quand elle vient après : la plus tardive des régimes de l'unité.
     ouvertures = [_ouverture(moteur, carriere, unite) for unite in unites]
-    if all(ouverture > declare for ouverture in ouvertures):
-        return unique
-
-    dates: dict[int, DateMois] = {}
+    dates: list[tuple[DateMois, str]] = []
     for i, unite in enumerate(unites):
         if ouvertures[i] > declare:
-            dates[i] = ouvertures[i]
-            continue
-        plus_tot = max(ouvertures[i], _sortie(carriere, unite, routage))
-        if plus_tot < declare and _pension_militaire(moteur, carriere, unite):
-            dates[i] = plus_tot
+            presumee = (ouvertures[i], MOTIF_OUVERTURE)
         else:
-            dates[i] = declare
+            plus_tot = max(ouvertures[i], _sortie(carriere, unite, routage))
+            presumee = ((plus_tot, MOTIF_SORTIE)
+                        if plus_tot < declare and _pension_militaire(moteur, carriere, unite)
+                        else (declare, MOTIF_DEPART))
+        voulue = max((demandees[code] for code in unite if code in demandees), default=None)
+        dates.append((voulue, MOTIF_DEMANDE) if voulue is not None and voulue > presumee[0]
+                     else presumee)
+    if (all(ouverture > declare for ouverture in ouvertures)
+            and all(motif != MOTIF_DEMANDE for _, motif in dates)):
+        return unique, ()
 
-    par_regime: dict[str, DateMois] = {code: dates[i] for code, i in unite_de.items()}
+    par_regime: dict[str, tuple[DateMois, str]] = {
+        code: dates[i] for code, i in unite_de.items()}
     for code, indices in suivies.items():
-        par_regime[code] = max((dates[i] for i in indices), default=declare)
+        par_regime[code] = max((dates[i] for i in sorted(indices)), key=lambda d: d[0],
+                               default=(declare, MOTIF_DEPART))
+    legal = None
     if RAFP in par_regime:
         legal = carriere.date_de_l_age(age_legal(moteur, carriere))
-        par_regime[RAFP] = max(par_regime[RAFP], legal)
+        if legal > par_regime[RAFP][0]:
+            par_regime[RAFP] = (legal, MOTIF_OUVERTURE)
+    for code, (quand, _) in list(par_regime.items()):
+        if code not in unite_de and code in demandees and demandees[code] > quand:
+            par_regime[code] = (demandees[code], MOTIF_DEMANDE)
 
+    examens = _examiner(demandees, par_regime, set(unite_de), legal)
     par_date: dict[DateMois, set[str]] = {}
-    for code, quand in par_regime.items():
+    for code, (quand, _) in par_regime.items():
         par_date.setdefault(quand, set()).add(code)
     if set(par_date) == {declare}:
-        return unique
-    return tuple(
-        Depart(quand, frozenset(par_date[quand]),
-               MOTIF_DEPART if quand == declare
-               else MOTIF_OUVERTURE if quand > declare else MOTIF_SORTIE)
-        for quand in sorted(par_date))
+        return unique, examens
+
+    def motif(quand: DateMois) -> str:
+        """Ce qui date un départ : l'acte de la personne d'abord, puis la
+        sortie de l'armée ; l'ouverture d'un régime sinon — le RAFP à l'âge
+        légal compris, qui peut précéder le départ déclaré."""
+        if quand == declare:
+            return MOTIF_DEPART
+        motifs = {par_regime[code][1] for code in par_date[quand]}
+        for retenu in (MOTIF_DEMANDE, MOTIF_SORTIE):
+            if retenu in motifs:
+                return retenu
+        return MOTIF_OUVERTURE
+
+    return tuple(Depart(quand, frozenset(par_date[quand]), motif(quand))
+                 for quand in sorted(par_date)), examens
+
+
+def _examiner(demandees: dict[str, DateMois], par_regime: dict[str, tuple[DateMois, str]],
+              unites: set[str], legal: DateMois | None) -> tuple[DemandeExaminee, ...]:
+    """Ce que devient chaque date demandée : celle de sa pension, ou la date
+    retenue et sa raison (:class:`DemandeExaminee`)."""
+    examens = []
+    for code in sorted(demandees):
+        demandee = demandees[code]
+        if code not in par_regime:
+            examens.append(DemandeExaminee(code, demandee, None, SANS_PENSION))
+            continue
+        retenue, motif = par_regime[code]
+        if retenue == demandee:
+            motif = MOTIF_DEMANDE
+        elif code == RAFP and retenue == legal:
+            motif = MOTIF_OUVERTURE
+        elif motif == MOTIF_DEMANDE or code not in unites:
+            motif = ENSEMBLE
+        examens.append(DemandeExaminee(code, demandee, retenue, motif))
+    return tuple(examens)
 
 
 @dataclass(frozen=True)

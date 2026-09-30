@@ -130,8 +130,8 @@ export class Echeancier {
    */
   parcourir(carriere, echeance = null) {
     this._progresser(carriere);
-    const departs = lesDeparts.departs(this.moteur, carriere);
-    if (departs.length > 1) {
+    const [departs, demandes] = lesDeparts.departsEtDemandes(this.moteur, carriere);
+    if (departs.length > 1 || (departs.length === 1 && !departs[0].unique)) {
       this._partir(carriere, departs);
     } else {
       let evenements = [departDe(carriere)].filter((e) => e !== null);
@@ -150,6 +150,9 @@ export class Echeancier {
     if (this.auDepart !== null && this.progressive !== null) {
       this.auDepart.retraite_progressive = progressiveServie(this.progressive,
         this.provisoire, carriere.dateLiquidation);
+    }
+    if (this.auDepart !== null && demandes.length > 0) {
+      this.auDepart.demandes = demandes;
     }
     if (this.auDepart !== null && carriere.conjoint !== null) {
       if (carriere.deces !== null) {
@@ -445,9 +448,11 @@ export class Echeancier {
       const evenement = new Evenement({
         id: `depart_${carriere.personne}_${depart.dateEffet}`, date: depart.dateEffet,
         personnes: [carriere.personne], vise: { regimes: [...depart.regimes].sort() },
-        // Le départ déclaré est un acte ; les autres dates, la présomption
-        // depart_de_chaque_regime les induit.
-        origine: depart.dateEffet === declare.date ? declare.origine : "induit",
+        // Le départ déclaré est un acte, comme la date qu'une personne
+        // demande ; les autres dates, la présomption depart_de_chaque_regime
+        // les induit.
+        origine: depart.dateEffet === declare.date ? declare.origine
+          : depart.motif === lesDeparts.MOTIF_DEMANDE ? "acte" : "induit",
       });
       this._inscrire(evenement, evenement.id, "evenement", evenement, evenement.date);
       this._inscrire(evenement, `liquidation_${evenement.id}`, "liquidation", resultat,

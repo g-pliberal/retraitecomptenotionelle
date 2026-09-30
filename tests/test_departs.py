@@ -15,6 +15,8 @@ reprend.
 
 from __future__ import annotations
 
+from urllib.parse import parse_qsl
+
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
@@ -253,3 +255,141 @@ def test_faire_vivre_ne_sert_une_pension_qu_a_partir_de_sa_date(simulateur):
     general = {r.regime: r for r in en_2028.regimes}["regime_general"]
     [pension] = [p for p in resultat.pensions_par_regime if p.regime == "regime_general"]
     assert general.au_depart == pension.montant_a_l_effet
+
+
+# -- la date que la personne dit ----------------------------------------------------
+
+def _venue_du_prive(simulateur: Simulateur, **demandes: float) -> Carriere:
+    """Treize ans dans le privé puis la fonction publique de l'État, partie à
+    soixante-deux ans en 2022, sans la durée du taux plein."""
+    return _carriere(simulateur, [Metier("salarie_prive_non_cadre", 25.25),
+                                  Metier("fonctionnaire_etat", 38.25)],
+                     naissance=1960, liquidation=62, sexe="F",
+                     demandes_de_pension=demandes or None)
+
+
+def test_une_pension_demandee_plus_tard_se_liquide_a_sa_date(simulateur):
+    """Son régime général, demandé à soixante-sept ans, n'a plus de décote : il
+    se liquide ce jour-là, avec ses complémentaires, et le départ est un acte
+    de la personne, non une présomption."""
+    moteur = simulateur.scenario_actuel
+    presumee = _venue_du_prive(simulateur)
+    carriere = _venue_du_prive(simulateur, regime_general=67)
+    liste, demandes = departs.departs_et_demandes(moteur, carriere)
+    assert _resume(liste) == [
+        (carriere.date_liquidation, ["fonction_publique_etat"], departs.MOTIF_DEPART),
+        (carriere.date_de_l_age(67), ["arrco", "arrco_tranche_2", "regime_general"],
+         departs.MOTIF_DEMANDE),
+    ]
+    assert demandes == (departs.DemandeExaminee(
+        "regime_general", carriere.date_de_l_age(67), carriere.date_de_l_age(67),
+        departs.MOTIF_DEMANDE),)
+    general = {p.regime: p for p in moteur.calculer(carriere).pensions_par_regime}
+    decote = {p.regime: p for p in moteur.calculer(presumee).pensions_par_regime}
+    assert general["regime_general"].montant_a_l_effet > 1.4 * decote["regime_general"].montant
+    journal = simulateur.echeancier(carriere).journal
+    evenements = {e.contenu.id: e.contenu for e in journal if e.sorte == "evenement"}
+    demandee = departs.Depart(carriere.date_de_l_age(67)).date_effet
+    assert evenements[f"depart_assure_{demandee}"].origine == "acte"
+
+
+def test_une_demande_n_avance_jamais_une_pension(simulateur):
+    """Demandé avant le départ, le régime général est servi au départ ;
+    demandé avant l'âge légal par l'aide-soignante partie à cinquante-sept
+    ans, il l'est à l'âge qui le lui ouvre. Chaque demande dit pourquoi."""
+    moteur = simulateur.scenario_actuel
+    carriere = _venue_du_prive(simulateur, regime_general=60)
+    liste, [demande] = departs.departs_et_demandes(moteur, carriere)
+    assert liste == (departs.Depart(carriere.date_liquidation),)
+    assert (demande.retenue, demande.motif) == (carriere.date_liquidation,
+                                                departs.MOTIF_DEPART)
+    soignante = _aide_soignante(simulateur)
+    tot = _carriere(simulateur, [Metier("salarie_prive_non_cadre", 20.0),
+                                 Metier("fonctionnaire_territorial_hospitalier_actif", 30.0)],
+                    naissance=1965, liquidation=57, sexe="F",
+                    demandes_de_pension={"regime_general": 60})
+    legal = soignante.date_de_l_age(departs.age_legal(moteur, soignante))
+    liste, [demande] = departs.departs_et_demandes(moteur, tot)
+    assert _resume(liste) == _resume(departs.departs(moteur, soignante))
+    assert (demande.retenue, demande.motif) == (legal, departs.MOTIF_OUVERTURE)
+
+
+def test_une_complementaire_suit_son_regime_de_base_sauf_plus_tard(simulateur):
+    """L'Arrco demandée avant son régime de base le suit ; demandée après
+    lui, elle se liquide à sa date, seule."""
+    moteur = simulateur.scenario_actuel
+    avant = _venue_du_prive(simulateur, arrco=59)
+    [demande] = departs.demandes(moteur, avant)
+    assert (demande.retenue, demande.motif) == (avant.date_liquidation, departs.ENSEMBLE)
+    apres = _venue_du_prive(simulateur, arrco=65)
+    liste, [demande] = departs.departs_et_demandes(moteur, apres)
+    assert _resume(liste)[-1] == (apres.date_de_l_age(65), ["arrco"], departs.MOTIF_DEMANDE)
+    assert demande.motif == departs.MOTIF_DEMANDE
+
+
+def test_un_regime_sans_pension_le_dit(simulateur):
+    """Demander la pension d'un régime où la carrière n'a rien acquis ne
+    change rien, et la demande le dit."""
+    moteur = simulateur.scenario_actuel
+    carriere = _venue_du_prive(simulateur, mines=64)
+    liste, [demande] = departs.departs_et_demandes(moteur, carriere)
+    assert liste == (departs.Depart(carriere.date_liquidation),)
+    assert (demande.retenue, demande.motif) == (None, departs.SANS_PENSION)
+
+
+def test_un_seul_regime_differe_se_liquide_a_la_date_demandee(simulateur):
+    """La salariée d'un seul régime qui demande sa pension deux ans après son
+    départ la touche à cette date : un seul départ, qui n'est pas le déclaré,
+    et un montant du système 1 ramené aux prix de l'année du départ."""
+    moteur = simulateur.scenario_actuel
+    carriere = _carriere(simulateur, [Metier("salarie_prive_non_cadre", 25.25)],
+                         naissance=1960, liquidation=62, sexe="F",
+                         demandes_de_pension={"regime_general": 64})
+    [depart] = departs.departs(moteur, carriere)
+    assert (depart.date, depart.motif) == (carriere.date_de_l_age(64), departs.MOTIF_DEMANDE)
+    resultat = moteur.calculer(carriere)
+    assert [d.motif for d in resultat.departs] == [departs.MOTIF_DEMANDE]
+    prix = simulateur.macro.coefficient_prix(2024, 2022)
+    assert resultat.pension_annuelle == pytest.approx(
+        sum(p.montant_a_l_effet for p in resultat.pensions_par_regime) * prix)
+
+
+@pytest.mark.parametrize("requete, refus", [
+    ({"demande_Regime": "2027-06"}, "minuscules"),
+    ({"demande_regime_general": "1980-01"}, "début de la carrière"),
+    ({"demande_regime_general": "2036-01"}, "au-delà de 75 ans"),
+])
+def test_la_saisie_refuse_une_date_de_pension_illisible(requete, refus):
+    from retraite_notionnelle.saisie import ErreurSaisie, Saisie
+    base = {"naissance": "1960-05-10", "debut": "1985-09", "liquidation": "2022-06"}
+    with pytest.raises(ErreurSaisie, match=refus):
+        Saisie.depuis_requete({**base, **requete})
+
+
+def test_la_date_de_chaque_pension_voyage_dans_l_adresse():
+    """Un champ par régime, en date comme le départ, relu tel quel ; le
+    contexte refuse un régime que le catalogue ne connaît pas."""
+    from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.saisie import ErreurSaisie, Saisie
+    base = {"naissance": "1960-05-10", "debut": "1985-09", "liquidation": "2022-06"}
+    saisie = Saisie.depuis_requete({**base, "demande_regime_general": "2027-06",
+                                    "demande_arrco": ""})
+    assert saisie.demandes_de_pension_declarees() == {"regime_general": 67.0}
+    relue = Saisie.depuis_requete(dict(parse_qsl(saisie.requete())))
+    assert relue.demandes == saisie.demandes
+    with pytest.raises(ErreurSaisie, match="aucun régime « inconnu »"):
+        Contexte().simuler(Saisie.depuis_requete({**base, "demande_inconnu": "2027-06"}))
+
+
+def test_la_page_dit_la_pension_differee_et_la_demande_non_suivie():
+    """Un seul départ, décalé : la page dit que la pension ne commence pas au
+    départ ; une demande sans pension : la page dit pourquoi elle ne vaut rien."""
+    from retraite_notionnelle.web.site import rendre
+    base = {"unite_revenu": "moyen", "naissance": "1960-05-10", "debut": "1985-09",
+            "liquidation": "2022-06"}
+    page = rendre("/simuler", {**base, "demande_regime_general": "2024-06"})[1]
+    assert "Votre pension ne commence pas à votre départ." in page
+    assert "à la date où vous la demandez" in page
+    page = rendre("/simuler", {**base, "demande_mines": "2025-01"})[1]
+    assert "La date que vous demandez n'est pas retenue." in page
+    assert "votre carrière n'y ouvre pas de droit" in page

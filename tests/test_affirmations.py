@@ -1405,6 +1405,30 @@ def _(m: Modele):
         comparaison.carriere.retraite_progressive[0])
 
 
+@controle("demande_de_pension_non_retenue")
+def _(m: Modele):
+    """La fonctionnaire venue du privé qui demande son régime général à
+    soixante-sept ans le touche ce jour-là ; demandé avant son départ, il est
+    servi au départ ; l'aide-soignante qui le demande avant l'âge légal le
+    touche à l'âge qui le lui ouvre (droit/departs.py)."""
+    base = dict(sexe="F", naissance="1960-05-10", debut="1985-09", liquidation="2022-06",
+                metier2_debut="1998-09", metier2_statut="fonctionnaire_etat")
+    tard = m.simuler_requete(**base, demande_regime_general="2027-06")
+    [demande] = tard.actuel.demandes
+    assert demande.motif == "demande" and demande.retenue == demande.demandee
+    assert [d.motif for d in tard.actuel.departs] == ["depart", "demande"]
+    tot = m.simuler_requete(**base, demande_regime_general="2020-06")
+    [demande] = tot.actuel.demandes
+    assert demande.motif == "depart" and demande.retenue == tot.carriere.date_liquidation
+    assert not tot.actuel.departs
+    soignante = m.simuler_requete(
+        sexe="F", naissance="1965", debut="20", liquidation="57", metier2_debut="30",
+        metier2_statut="fonctionnaire_territorial_hospitalier_actif",
+        demande_regime_general="2025-01")
+    [demande] = soignante.actuel.demandes
+    assert demande.motif == "ouverture" and demande.retenue > demande.demandee
+
+
 @controle("cumul_emploi_retraite")
 def _(m: Modele):
     """Revenue chez son dernier employeur trois mois après sa pension de mai

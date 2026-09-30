@@ -253,6 +253,15 @@ export const EMPLOYEURS_APRES_DEPART = [
 ];
 
 /**
+ * Le préfixe des champs qui disent la date où l'assuré demande la pension d'un
+ * régime : « demande_regime_general=2031-05 ». Le code du régime suit, en
+ * minuscules, chiffres et soulignés ; qu'il existe, c'est au calcul de le dire,
+ * sur le catalogue.
+ */
+export const PREFIXE_DEMANDE = "demande_";
+const CODE_DE_REGIME = /^[a-z][a-z0-9_]*$/;
+
+/**
  * Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
  * entre quatorze ans — l'âge de début minimal — et soixante-quinze, soit
  * soixante et une années civiles au plus ; la borne laisse deux lignes de marge
@@ -459,6 +468,11 @@ export const DEFAUTS = Object.freeze({
   emploi_retraite_statut: "",
   emploi_retraite_salaire: null,
   emploi_retraite_employeur: "autre",
+  //: Les pensions dont l'assuré dit la date de demande : pour chaque régime,
+  //: `[code, âge]`, l'âge où il la demande, que l'adresse porte en date comme
+  //: le départ (`PREFIXE_DEMANDE`). Vide, la présomption
+  //: `depart_de_chaque_regime` date chaque pension.
+  demandes: [],
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -588,6 +602,7 @@ export class Saisie {
         ? null : reel(parametres, "emploi_retraite_salaire", 0.0),
       emploi_retraite_employeur: parmi(parametres, "emploi_retraite_employeur",
         EMPLOYEURS_APRES_DEPART, "autre"),
+      demandes: demandesSaisies(parametres, origineDesAges(moisDeNaissance, jourNaissance)),
       interruptions: (parametres.interruptions || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
@@ -686,6 +701,7 @@ export class Saisie {
     this.verifierConjoint();
     this.verifierProgressive();
     this.verifierEmploiRetraite();
+    this.verifierDemandes();
     if (!(this.bascule >= ANNEE_MINIMALE && this.bascule <= ANNEE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de bascule attendue entre ${ANNEE_MINIMALE} et `
@@ -1554,6 +1570,40 @@ export class Saisie {
   }
 
   /**
+   * Les pensions dont la saisie dit la date, telles que la chronologie les
+   * reçoit : l'âge de chaque demande, par régime, dans l'ordre de leurs codes ;
+   * `null` sans elles.
+   */
+  demandesDePensionDeclarees() {
+    return this.demandes.length > 0 ? Object.fromEntries(this.demandes) : null;
+  }
+
+  /**
+   * La date où l'assuré demande une pension : après le début de la carrière,
+   * et pas au-delà de l'âge de départ le plus tardif que le modèle accepte. Que
+   * le régime existe, que la carrière y ouvre une pension, et que la date la
+   * retarde ou non, c'est au calcul de le dire. Voir `_verifier_demandes` du
+   * Python.
+   */
+  verifierDemandes() {
+    for (const [code, age_] of this.demandes) {
+      const date = this.dateDe(age_, true);
+      if (date.rang <= this.dateDe(this.debut).rang) {
+        throw new ErreurSaisie(
+          `Pension « ${code} » demandée en ${date} : la demande suit le début de la `
+          + "carrière.",
+        );
+      }
+      if (age_ > AGE_LIQUIDATION_MAXIMAL) {
+        throw new ErreurSaisie(
+          `Pension « ${code} » demandée en ${date} : le modèle ne liquide pas au-delà `
+          + `de ${AGE_LIQUIDATION_MAXIMAL} ans.`,
+        );
+      }
+    }
+  }
+
+  /**
    * Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie — les
    * naissances, le mariage, le décès —, et un décès qui ne précède pas le
    * départ : la réversion d'une pension que l'assuré n'a pas encore liquidée
@@ -1657,6 +1707,8 @@ export class Saisie {
             ? null : this.emploi_retraite_employeur],
         ].filter(([, valeur]) => valeur !== null))
         : {}),
+      ...Object.fromEntries(this.demandes.map(
+        ([code, age_]) => [`${PREFIXE_DEMANDE}${code}`, this.moisDe(age_, true)])),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,
@@ -1911,6 +1963,29 @@ function dateSaisie(parametres, nom) {
     throw new ErreurSaisie(`« ${nom} » : jour attendu entre 01 et 31 (reçu : ${brut}).`);
   }
   return { annee, mois, jour };
+}
+
+/**
+ * Les pensions dont l'adresse dit la date de demande, une par régime, dans
+ * l'ordre de leurs codes : « demande_<régime> », en date comme le départ. Un
+ * champ vide ne dit rien. Voir `_demandes_saisies` du Python.
+ */
+function demandesSaisies(parametres, origine) {
+  const demandes = [];
+  for (const cle of Object.keys(parametres).sort()) {
+    if (!cle.startsWith(PREFIXE_DEMANDE) || [undefined, null, ""].includes(parametres[cle])) {
+      continue;
+    }
+    const code = cle.slice(PREFIXE_DEMANDE.length);
+    if (!CODE_DE_REGIME.test(code)) {
+      throw new ErreurSaisie(
+        `« ${cle} » : le code d'un régime s'écrit en minuscules, chiffres et `
+        + "soulignés, comme « demande_regime_general ».",
+      );
+    }
+    demandes.push([code, ageSaisi(parametres, cle, 0.0, origine)]);
+  }
+  return demandes;
 }
 
 /**

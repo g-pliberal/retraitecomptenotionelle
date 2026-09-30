@@ -85,19 +85,24 @@ versions:
   exemples: aucun trouvé
 approximations:
 - ecart: >-
-    la date à laquelle l'assuré demande chaque pension n'est pas saisie : elle est
-    présumée (depart_de_chaque_regime) — au départ déclaré, à l'ouverture du régime
-    qui n'ouvre pas encore, à la sortie de l'armée pour la pension militaire. Qui
-    demande une autre pension avant son départ — l'agent d'un régime spécial parti
-    tôt, le fonctionnaire de catégorie active passé au privé —, ou qui la demande
-    après l'ouverture pour éviter une décote ou toucher une surcote, n'est pas
-    représenté : la date de chaque pension se déclarera
+    la date à laquelle l'assuré demande chaque pension est présumée quand il ne la
+    dit pas (depart_de_chaque_regime) — au départ déclaré, à l'ouverture du régime
+    qui n'ouvre pas encore, à la sortie de l'armée pour la pension militaire. Il
+    peut la dire, régime par régime (demande_<régime>) : une date plus tardive
+    remplace la présumée — pour éviter une décote qui tient à l'âge, toucher une
+    surcote accordée à l'âge seul —, et une unité prend la plus tardive des dates
+    de ses régimes ; une date plus précoce ne l'avance pas. Qui demande une pension
+    avant son départ — l'agent d'un régime spécial parti tôt, le fonctionnaire de
+    catégorie active passé au privé — se représente en déclarant son départ à cette
+    date, et l'activité qui suit comme une activité après le départ (fiches
+    cumul_emploi_retraite_et_retraite_progressive et droits_apres_la_premiere_pension)
   effet: non mesuré
 - ecart: >-
     une complémentaire des salariés est présumée demandée avec son régime de base :
     l'anticipation de dix ans au plus que ses textes permettent, sous un abattement
     qui peut atteindre 57 %, n'est prise que si le régime de base lui-même est pris
-    à cette date
+    à cette date. Demandée plus tard que lui, elle se liquide à sa date ; plus tôt,
+    elle le suit
   effet: non mesuré
 - ecart: >-
     le minimum contributif d'un départ s'écrête sur les pensions que les départs
@@ -113,7 +118,7 @@ approximations:
   effet: non mesuré
 presomptions:
   depart_de_chaque_regime: >-
-    la date d'effet de chaque pension, que le formulaire ne demande pas
+    la date d'effet de chaque pension que l'assuré ne dit pas
 sources:
   lu_le: 2026-09-29
   prochaine_relecture: 2027-03-31
@@ -160,18 +165,24 @@ sources:
     date: 2026-09-29
 code:
   python: >-
-    droit/departs.py : departs, liquider_les_departs ; droit/liquidation.py : Demande.regimes,
+    droit/departs.py : departs, departs_et_demandes, DemandeExaminee, liquider_les_departs ;
+    carriere.py : Carriere.demandes_de_pension ; saisie.py : PREFIXE_DEMANDE ;
+    droit/liquidation.py : Demande.regimes,
     Etat.servies ; droit/ouvrir.py : ouvrir ; droit/liquider.py : liquider_chaque_regime ;
     droit/completer.py : completer (servies) ; scenarios/actuel.py : resultat_des_departs ;
     echeancier.py : Echeancier._partir ; revalorisation.py : mener_au_mois, faire_vivre
   javascript: >-
-    moteur/js/droit/departs.js : departs, liquiderLesDeparts ; moteur/js/droit/liquidation.js
+    moteur/js/droit/departs.js : departs, departsEtDemandes, DemandeExaminee,
+    liquiderLesDeparts ; moteur/js/carriere.js : Carriere.demandesDePension ;
+    moteur/js/saisie.js : PREFIXE_DEMANDE ; moteur/js/droit/liquidation.js
     : Demande.regimes, Etat.servies ; moteur/js/scenario-actuel.js : resultatDesDeparts ;
     moteur/js/echeancier.js : Echeancier._partir ; moteur/js/revalorisation.js :
-    menerAuMois, faireVivre ; moteur/js/pages.js : departsEchelonnes
+    menerAuMois, faireVivre ; moteur/js/pages.js : departsEchelonnes, demandesNonSuivies,
+    datesDesPensions
   parametres: "contenu.parametres de la version : depart_tous_regimes"
   tests: >-
-    tests/test_departs.py ; les témoins departs_* et metiers_militaire_* des simulations ;
+    tests/test_departs.py ; les témoins departs_*, demande_* et metiers_militaire_* des
+    simulations, et simuler_demande_de_pension des pages ;
     tests/test_liquidation.py, qui compare les journaux des deux moteurs
 historique:
 - >-
@@ -183,6 +194,11 @@ historique:
   2026-09-29 — appliquée, approchée : un départ par unité de régimes, chacun liquidé à
   sa date sur la carrière arrêtée à cette date et voyant servies les pensions des
   précédents, dans les deux moteurs ; la page dit quand chaque pension commence.
+- >-
+  2026-09-30 — la date de chaque pension se dit, régime par régime, au formulaire ou
+  par l'adresse : une date plus tardive que la présumée la remplace, une plus précoce
+  ne l'avance pas, et la page dit pourquoi ; le départ qu'elle date est un acte de la
+  personne, non une présomption.
 effet: >-
   Tout polypensionné dont les régimes n'ouvrent pas au même âge : le fonctionnaire de
   catégorie active ou le militaire qui a aussi travaillé dans le privé, l'agent d'un
