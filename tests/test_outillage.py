@@ -102,9 +102,15 @@ def test_une_verification_passe_tout_en_revue(monkeypatch, capsys):
 
 
 def test_tout_va_bien(monkeypatch, capsys):
+    """Et une étape simulée ne se retient pas : la mémoire des fabrications
+    (``fabrique.py``) dispenserait sinon la suite de vérifier ce que personne
+    n'a fabriqué."""
     _simuler(monkeypatch, set())
+    retenues = []
+    monkeypatch.setattr(regenerer.fabrique, "retenir", retenues.append)
     assert regenerer.regenerer() == 0
     assert "tout est régénéré" in capsys.readouterr().out
+    assert retenues == []
 
 
 # -- le résumé des témoins -----------------------------------------------------

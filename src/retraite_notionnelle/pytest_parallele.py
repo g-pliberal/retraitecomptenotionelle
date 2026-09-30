@@ -5,7 +5,12 @@ Chargé par ``-p retraite_notionnelle.pytest_parallele`` (voir ``addopts`` dans
 conftest sont chargés *par* ``pytest_load_initial_conftests``, donc trop tard
 pour s'y inscrire, alors qu'un greffon ``-p`` est enregistré avant.
 
-La suite tient sept minutes en série, moins d'une répartie sur quatre cœurs.
+La suite tient sept minutes en série. Répartie sur quatre cœurs par paquets
+fixés d'avance, elle en tenait encore près de quatre, un processus finissant
+seul les tests longs ; avec le vol de tâches (``--dist worksteal``), deux,
+quand la mémoire des calculs lourds est chaude — la première suite après une
+retouche de ``src/``, ``data/`` ou ``scripts/`` en tient cinq, le temps de les
+refaire (mesuré le 30 septembre 2026).
 """
 
 from __future__ import annotations
@@ -21,7 +26,8 @@ POIDS_REPARTI = 60_000
 
 
 def pytest_load_initial_conftests(early_config, parser, args):
-    """Ajoute ``-n auto`` quand on lance toute la suite, et seulement alors.
+    """Ajoute ``-n auto --dist worksteal`` quand on lance toute la suite, ou des
+    fichiers lourds.
 
     Quatre garde-fous, parce que le parallélisme n'est pas toujours un gain :
 
@@ -54,7 +60,7 @@ def pytest_load_initial_conftests(early_config, parser, args):
         return
     if (os.cpu_count() or 1) < 2:
         return
-    args[:] = ["-n", "auto", *args]
+    args[:] = ["-n", "auto", "--dist", "worksteal", *args]
 
 
 def _lourdes(cibles: list[str]) -> bool:

@@ -103,7 +103,10 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   paquet, les témoins, le chiffrage, les tableaux, le tableau de bord, les
   chiffres ancrés —, dans l'ordre (`--verifier` dit ce qui est périmé sans
   rien écrire) ; `python scripts/resumer_temoins.py` dit ce qu'elle déplace,
-  scénario par scénario, et le diff des témoins, chiffre par chiffre.
+  scénario par scénario, et le diff des témoins, chiffre par chiffre. Une
+  étape dont rien n'a bougé ne se relance pas, et la suite ne revérifie pas
+  ce qu'elle vient de fabriquer (`.cache/fabrique.json`, que
+  `FABRIQUE_SANS_MEMOIRE=1` ignore) ; GitHub, sans mémoire, refait tout.
 - **Le texte du site ne s'écrit qu'en JavaScript** : `moteur/js/pages.js`,
   `gabarit.js`, et `moteur/style.css`, sa propre source. Le Python le lit par
   `web/site.py`, qui le fait rendre par node ; les témoins de pages se refont

@@ -29,6 +29,7 @@ from pathlib import Path
 
 import pytest
 
+from retraite_notionnelle import fabrique
 from retraite_notionnelle.web.site import disponible
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -62,8 +63,11 @@ def test_aucun_chiffre_ancre_n_a_derive(zonage):
 
     C'est le contrôle qui remplace les tests écrits un par un : là où un test
     tenait un chiffre et un seul, celui-ci tient tous ceux qu'on a ancrés, et
-    le suivant sans rien écrire de plus que l'ancre.
+    le suivant sans rien écrire de plus que l'ancre. Juste après une
+    régénération réussie, rien à refaire (``fabrique.py``).
     """
+    if fabrique.a_jour("prose"):
+        pytest.skip("chiffres ancrés inchangés depuis la dernière fabrication")
     anomalies, _ = verifier_prose.controler(zonage, corriger=False)
     derives = [a for a in anomalies if a.genre == "derive"]
     assert not derives, "\n".join(

@@ -3994,3 +3994,13 @@ saisie et d'un changement du modèle.
 une note de feuille de route par étape, une version de l'architecture par
 domaine clos ou par décision, les fiches et `limites.md` une fois par étape,
 des messages de commit de cinq lignes au plus (`CLAUDE.md`).
+
+**Le même jour, le cycle d'un commit raccourci.** La régénération garde
+l'empreinte de ses étapes lourdes (`fabrique.py`) : refaite sans changement, elle
+passe de 149 à 11 s, et de 150 à 75 s après une retouche du site ; la suite ne
+revérifie plus ce qu'elle vient de fabriquer, et le vol de tâches
+(`--dist worksteal`) la fait passer de près de quatre minutes à deux, mémoire
+des calculs chaude. La première suite après une retouche de `src/`, `data/` ou
+`scripts/` en tient encore cinq : la mémoire des calculs lourds s'indexe sur
+tout le code, et se refait entière. L'indexer sur le seul code du modèle est le
+levier suivant.

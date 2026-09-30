@@ -23,6 +23,7 @@ from urllib.parse import parse_qsl
 
 import pytest
 
+from retraite_notionnelle import fabrique
 from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
 from retraite_notionnelle.donnees.bilan import EcartsFiges
 from retraite_notionnelle.donnees.chargement import (
@@ -420,7 +421,13 @@ def test_le_paquet_est_a_jour(contexte):
     suppose le coût agrégé, soit dix-huit secondes. Les autres tests de ce
     module l'ont déjà calculé sous les mêmes réglages, et la mémoire du
     contexte est partagée.
+
+    Juste après une régénération réussie, rien à refaire : l'empreinte de ce
+    que le paquet lit et écrit n'a pas bougé (``fabrique.py`` ; GitHub, qui
+    n'a pas de mémoire, refait tout).
     """
+    if fabrique.a_jour("paquet"):
+        pytest.skip("paquet inchangé depuis la dernière fabrication")
     construction = _construction()
     for chemin, contenu in construction.sorties(contexte).items():
         assert chemin.exists(), f"{chemin.name} est absent"
@@ -469,8 +476,11 @@ def test_les_temoins_du_portage_sont_a_jour():
     """Les chiffres que doit retrouver le portage JavaScript.
 
     S'il échoue : ``python scripts/construire_temoins.py`` — et relire le diff,
-    qui montre exactement quels montants le changement déplace.
+    qui montre exactement quels montants le changement déplace. Juste après
+    une régénération réussie, rien à refaire (``fabrique.py``).
     """
+    if fabrique.a_jour("témoins"):
+        pytest.skip("témoins inchangés depuis la dernière fabrication")
     import importlib.util
     from pathlib import Path
 

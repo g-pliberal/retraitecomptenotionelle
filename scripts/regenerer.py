@@ -31,6 +31,13 @@ ancrés, qui prenaient trois minutes, en prennent moins d'une quand le modèle a
 bougé, et un quart sinon : leurs calculs lourds se font en parallèle et se
 gardent sur le disque (``mesures_prose.py`` ; feuille de route, action 135).
 
+UNE ÉTAPE INCHANGÉE NE SE RELANCE PAS. Le paquet, les témoins, le chiffrage
+et les chiffres ancrés gardent, à la fin d'une régénération, l'empreinte de ce
+qu'ils lisent et écrivent (``retraite_notionnelle/fabrique.py``) : une
+retouche du site ne refait ni le paquet ni le chiffrage, et ``--verifier``,
+juste après une régénération, ne refait rien. ``FABRIQUE_SANS_MEMOIRE=1``
+relance tout.
+
 Le contrôle de conservation (``conservation.py``) vient à la fin, et ne fait
 que contrôler : refiger sa référence est un geste délibéré, qui se dit dans le
 commit (``--figer``, et ``--accepter-les-pertes`` pour un récit réécrit exprès).
@@ -46,6 +53,8 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
+
+from retraite_notionnelle import fabrique
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -106,15 +115,20 @@ class Issue:
     code: int
     duree: float
     sortie: str
+    #: Vraie quand le script a réellement tourné, ou que la mémoire l'a
+    #: dispensé : seule une telle issue se retient (``fabrique.py``).
+    reelle: bool = False
 
 
 def lancer(etape: Etape, verifier: bool) -> Issue:
+    if etape.nom in fabrique.ETAPES and fabrique.a_jour(etape.nom):
+        return Issue(etape, 0, 0.0, "inchangé depuis la dernière fabrication", True)
     arguments = etape.verifier if verifier else etape.ecrire
     debut = time.perf_counter()
     fini = subprocess.run([sys.executable, str(RACINE / "scripts" / etape.script),
                            *arguments], cwd=RACINE, capture_output=True, text=True)
     return Issue(etape, fini.returncode, time.perf_counter() - debut,
-                 (fini.stdout + fini.stderr).strip())
+                 (fini.stdout + fini.stderr).strip(), True)
 
 
 def branche(suite: tuple[Etape, ...], verifier: bool) -> list[Issue]:
@@ -145,6 +159,7 @@ def dire(issue: Issue, verifier: bool) -> str:
 def regenerer(temps=TEMPS, verifier: bool = False, sequentiel: bool = False) -> int:
     debut = time.perf_counter()
     echecs = []
+    reussies = []
     for branches in temps:
         if sequentiel or len(branches) == 1:
             resultats = [branche(b, verifier) for b in branches]
@@ -156,8 +171,15 @@ def regenerer(temps=TEMPS, verifier: bool = False, sequentiel: bool = False) -> 
                 print(dire(issue, verifier), flush=True)
                 if issue.code:
                     echecs.append(issue.etape.nom)
+                elif issue.reelle:
+                    reussies.append(issue.etape.nom)
         if echecs and not verifier:
             break
+    # À la fin seulement : une étape suivante peut encore écrire ce qu'une
+    # étape réussie lit, et l'empreinte doit être celle de l'état final.
+    for nom in reussies:
+        if nom in fabrique.ETAPES:
+            fabrique.retenir(nom)
     total = time.perf_counter() - debut
     if echecs:
         quoi = "périmé" if verifier else "en échec"
