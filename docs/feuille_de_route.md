@@ -3983,3 +3983,8 @@ que là où il est le sujet (`FORMULAIRE_ENTIER`, onze pages) ; les cinquante
 autres n'en figent que la balise, et le témoin passe de 11,9 à 8,8 Mo.
 CLAUDE.md porte les listes de contrôle d'une retouche des pages, d'un champ de
 saisie et d'un changement du modèle.
+
+**Le même jour, la documentation allégée**, sur la décision du propriétaire :
+une note de feuille de route par étape, une version de l'architecture par
+domaine clos ou par décision, les fiches et `limites.md` une fois par étape,
+des messages de commit de cinq lignes au plus (`CLAUDE.md`).

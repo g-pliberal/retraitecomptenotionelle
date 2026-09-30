@@ -55,10 +55,10 @@ divergé, et il faut comprendre pourquoi avant d'insister.
 **Plusieurs sessions en parallèle**, chacune dans son conteneur, se partagent
 le dépôt par zones : une sur le modèle et son portage, une sur les données et
 la certification, une sur le site — jamais deux sur les pages en même temps.
-Commiter petit, pousser souvent. Écrire dans la feuille de route, et dans le
-`journal` de `veille.yaml`, au dernier commit, juste avant de pousser ; une
-action qui se clôt passe, telle quelle, à la fin de
-`docs/archives/feuille_de_route.md`.
+Commiter petit, pousser souvent. Écrire dans la feuille de route — une note
+par étape, voir « La documentation, au plus court » —, et dans le `journal` de
+`veille.yaml`, au dernier commit, juste avant de pousser ; une action qui se
+clôt passe, telle quelle, à la fin de `docs/archives/feuille_de_route.md`.
 
 **Un conflit sur un fichier fabriqué ne s'arbitre pas, il se relance.**
 `.gitattributes` marque `-merge` les fichiers qu'un script écrit : git y
@@ -133,6 +133,13 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   toute modification de la prose : `python scripts/verifier_prose.py
   --corriger`. Les tableaux de `docs/chiffrage_plf.md` s'écrivent par
   `python scripts/chiffrage_plf.py`, jamais à la main.
+- **La documentation, au plus court** : une note de feuille de route par
+  étape, au commit qui la clôt, et non une par sous-partie ; une session qui
+  s'arrête en cours d'étape dit seulement où. Une version de l'architecture
+  par domaine, à sa clôture, ou par décision hors domaine. Les fiches et
+  `limites.md` une fois, à la fin de l'étape, sauf ce qu'un test exige plus
+  tôt. Un message de commit de cinq lignes au plus sous son titre, le détail
+  allant à la feuille de route. Le journal de veille garde sa règle.
 - **Rien ne se perd** (`docs/architecture.md`, § 12) : un récit ne se réécrit
   pas, et un déplacement de fichiers se vérifie avant d'être commité, par
   `python scripts/conservation.py --depuis HEAD`. Une seule session déplace

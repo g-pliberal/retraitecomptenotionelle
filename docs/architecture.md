@@ -1,9 +1,9 @@
 # Architecture du dépôt
 
-*Version 5.29, du 30 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.30, du 30 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
-vrai tant qu'aucune décision ne le change, et la liste de ses changements
-est en bas (« Les versions »). Il est
+vrai tant qu'aucune décision ne le change, et la liste de ses changements,
+un par domaine clos ou par décision, est en bas (« Les versions »). Il est
 tiré de la note de décision
 [`docs/decisions/0001-architecture.md`](decisions/0001-architecture.md), la
 « note 0001 », gelée, qui garde en plus ses récits : pourquoi cette
@@ -2434,6 +2434,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.30**, 30 septembre 2026 : une version par domaine clos, ou par décision hors domaine, et non plus par étape (décision du propriétaire, `CLAUDE.md`).
 
 - **5.29**, 30 septembre 2026 : la deuxième étape du quatrième domaine. La saisie lit la pension d'invalidité, l'inaptitude et la radiation pour invalidité d'un fonctionnaire civil, son imputabilité et son taux ; la chronologie les garde en deux décisions médicales et une radiation, dans les deux moteurs ; la carrière présume la pension d'invalidité de qui finit sa carrière en invalidité (§ 5.6). Le moteur ne les lit pas encore.
 
