@@ -26,6 +26,7 @@ from .donnees.depenses import DepensesRetraite
 from .donnees.distribution import DistributionPensions
 from .donnees.equilibre import ComptesRetraite, variante_du_scenario
 from .donnees.population import Population
+from .droit.coordonner import REGIMES_CODE_DES_PENSIONS
 from .frontiere import charger_frontiere
 from .remuneration import (
     charger_prelevements,
@@ -336,6 +337,7 @@ class Contexte:
                 retraite_progressive=saisie.retraite_progressive_declaree(),
                 emploi_retraite=emploi_retraite,
                 demandes_de_pension=demandes,
+                invalidite=saisie.invalidite_declaree(),
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -345,6 +347,7 @@ class Contexte:
                                              len(parcours), parcours)
         carriere = batir([metier.niveau_salaire for metier in parcours])
         _verifier_statuts_ouverts(simulateur.affiliations, carriere, parcours)
+        _verifier_radiation_pour_invalidite(simulateur.affiliations, carriere)
         return simulateur.simuler(carriere)
 
     def _simuler_par_pension(self, simulateur: Simulateur, saisie: Saisie,
@@ -398,6 +401,7 @@ class Contexte:
                                                  constants))
         carriere = batir([trouve.niveau] * combien)
         _verifier_statuts_ouverts(simulateur.affiliations, carriere, parcours)
+        _verifier_radiation_pour_invalidite(simulateur.affiliations, carriere)
         comparaison = simulateur.simuler(carriere)
         return replace(comparaison, niveau_inverse=trouve)
 
@@ -432,10 +436,12 @@ class Contexte:
             retraite_progressive=saisie.retraite_progressive_declaree(),
             emploi_retraite=self._emploi_retraite(simulateur, saisie),
             demandes_de_pension=_demandes_de_pension(simulateur, saisie),
+            invalidite=saisie.invalidite_declaree(),
             part_primes=saisie.primes,
             identifiant="assuré",
         )
         _verifier_statuts_releve(simulateur.affiliations, carriere)
+        _verifier_radiation_pour_invalidite(simulateur.affiliations, carriere)
         return carriere
 
     def _emploi_retraite(self, simulateur: Simulateur, saisie: Saisie) -> dict | None:
@@ -461,6 +467,39 @@ def _demandes_de_pension(simulateur: Simulateur, saisie: Saisie) -> dict[str, fl
                 f"Pension demandée à une date : aucun régime « {code} » dans le "
                 "catalogue du modèle.")
     return demandes
+
+
+def _verifier_radiation_pour_invalidite(affiliations: Affiliations, carriere) -> None:
+    """La radiation pour invalidité clôt un emploi de fonctionnaire civil —
+    de l'État, territorial, hospitalier, ouvrier de l'État —, et la carrière
+    ne reste pas dans la fonction publique après elle : c'est ici qu'elle se
+    contrôle, la saisie n'ayant pas les affiliations. Le militaire radié par
+    suite d'infirmités relève d'autres règles, que le modèle ne sert pas
+    (fiche ``retraite_pour_invalidite_fonction_publique``)."""
+    radiation = carriere.radiation_pour_invalidite
+    if radiation is None:
+        return
+
+    def civile(affiliation: str, annee: int) -> bool:
+        return (affiliations.pension_militaire(affiliation) is None
+                and bool(REGIMES_CODE_DES_PENSIONS
+                         & set(affiliations.regimes(affiliation, annee))))
+
+    # La dernière année que l'emploi clos touche : celle d'avant, quand la
+    # radiation tombe en janvier.
+    annee = radiation.date.annee if radiation.date.mois > 1 else radiation.date.annee - 1
+    if not any(civile(affiliation, annee) for affiliation in radiation.affiliations):
+        raise ErreurSaisie(
+            f"Radiation pour invalidité en {radiation.date} : elle clôt un emploi de "
+            "fonctionnaire civil — de l'État, territorial, hospitalier, ouvrier de "
+            "l'État —, et la carrière n'en exerce pas à cette date.")
+    for ligne in carriere.lignes:
+        if (ligne.annee > annee and ligne.type_periode == "emploi"
+                and civile(ligne.affiliation, ligne.annee)):
+            raise ErreurSaisie(
+                f"Radiation pour invalidité en {radiation.date} : la carrière reste "
+                f"dans la fonction publique en {ligne.annee}. Déclarez à la date de la "
+                "radiation la période qui la suit.")
 
 
 def _verifier_statuts_ouverts(affiliations: Affiliations, carriere,

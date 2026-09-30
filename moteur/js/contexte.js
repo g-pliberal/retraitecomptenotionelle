@@ -20,6 +20,7 @@ import { Restitution } from "./restitution.js";
 import { Population } from "./population.js";
 import { salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur, niveauPourPension } from "./simulateur.js";
+import { REGIMES_CODE_DES_PENSIONS } from "./droit/coordonner.js";
 import * as g from "./gabarit.js";
 import {
   Echelle, ErreurSaisie, HEURES_SMIC_PAR_MOIS, NIVEAU_MAXIMAL, NIVEAU_MINIMAL, refus,
@@ -317,6 +318,7 @@ export class Contexte {
       retraite_progressive: saisie.retraiteProgressiveDeclaree(),
       emploi_retraite: emploiRetraite,
       demandes_de_pension: demandes,
+      invalidite: saisie.invaliditeDeclaree(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -326,6 +328,7 @@ export class Contexte {
     }
     const carriere = batir(parcours.map((metier) => metier.niveau_salaire));
     verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
+    verifierRadiationPourInvalidite(simulateur.affiliations, carriere);
     return simulateur.simuler(carriere);
   }
 
@@ -375,6 +378,7 @@ export class Contexte {
     }
     const carriere = batir(new Array(combien).fill(trouve.niveau));
     verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
+    verifierRadiationPourInvalidite(simulateur.affiliations, carriere);
     const comparaison = simulateur.simuler(carriere);
     comparaison.niveau_inverse = trouve;
     return comparaison;
@@ -413,10 +417,12 @@ export class Contexte {
       retraite_progressive: saisie.retraiteProgressiveDeclaree(),
       emploi_retraite: this.emploiRetraite(simulateur, saisie),
       demandes_de_pension: demandesDePension(simulateur, saisie),
+      invalidite: saisie.invaliditeDeclaree(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
     verifierStatutsReleve(simulateur.affiliations, carriere);
+    verifierRadiationPourInvalidite(simulateur.affiliations, carriere);
     return carriere;
   }
 
@@ -468,6 +474,41 @@ function demandesDePension(simulateur, saisie) {
  * sa première ligne qu'en 2023, et n'est pas recruté après la fermeture pour
  * autant.
  */
+/**
+ * La radiation pour invalidité clôt un emploi de fonctionnaire civil — de
+ * l'État, territorial, hospitalier, ouvrier de l'État —, et la carrière ne
+ * reste pas dans la fonction publique après elle. Voir
+ * `_verifier_radiation_pour_invalidite` du Python.
+ */
+function verifierRadiationPourInvalidite(affiliations, carriere) {
+  const radiation = carriere.radiationPourInvalidite;
+  if (radiation === null) {
+    return;
+  }
+  const civile = (affiliation, annee) => affiliations.pensionMilitaire(affiliation) === null
+    && affiliations.regimes(affiliation, annee).some((r) => REGIMES_CODE_DES_PENSIONS.has(r));
+  // La dernière année que l'emploi clos touche : celle d'avant, quand la
+  // radiation tombe en janvier.
+  const annee = radiation.date.mois > 1 ? radiation.date.annee : radiation.date.annee - 1;
+  if (!radiation.affiliations.some((affiliation) => civile(affiliation, annee))) {
+    throw new ErreurSaisie(
+      `Radiation pour invalidité en ${radiation.date} : elle clôt un emploi de `
+      + "fonctionnaire civil — de l'État, territorial, hospitalier, ouvrier de "
+      + "l'État —, et la carrière n'en exerce pas à cette date.",
+    );
+  }
+  for (const ligne of carriere.lignes) {
+    if (ligne.annee > annee && ligne.type_periode === "emploi"
+        && civile(ligne.affiliation, ligne.annee)) {
+      throw new ErreurSaisie(
+        `Radiation pour invalidité en ${radiation.date} : la carrière reste dans la `
+        + `fonction publique en ${ligne.annee}. Déclarez à la date de la radiation la `
+        + "période qui la suit.",
+      );
+    }
+  }
+}
+
 function verifierStatutsOuverts(affiliations, carriere, parcours) {
   parcours.forEach((metier, index) => {
     const ferme = statutFerme(affiliations, carriere, metier.affiliation);

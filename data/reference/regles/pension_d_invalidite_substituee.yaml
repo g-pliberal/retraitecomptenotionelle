@@ -198,6 +198,10 @@ versions:
       maintien_du_demandeur_d_emploi_mois: 6
   exemples: aucun trouvé
 approximations: []
+presomptions:
+  pension_d_invalidite_de_la_periode: >-
+    la pension d'invalidité de l'assuré que la carrière finit en invalidité, quand il ne
+    la date pas
 sources:
   lu_le: 2026-09-30
   prochaine_relecture: 2027-03-31

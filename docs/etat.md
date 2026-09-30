@@ -28,7 +28,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à vérifier | 1 |
 
 - Confrontées à au moins un exemple officiel : **34 sur 126** (82 exemples : 77 reproduits, 5 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **31 sur 126**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Citées dans le code par leur identifiant : **34 sur 126**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **42 sur 126**, par 2 273 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **16 sur 126**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **16 sur 126**, soit 88 versions, dont 11 supposées ; le partage des versions se contrôle sur chacune.
@@ -44,7 +44,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à examiner | 695 |
 | sans statut | 10 173 |
 
-**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 14 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
+**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 15 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
 | Présomption | Valeur | Fiches qui la lisent | Où elle s'applique |
 |---|---|---|---|
@@ -62,6 +62,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `deces_apres_le_depart` | au départ | `reversion`, `reversion_agirc_arrco`, `reversion_fonction_publique` | l'échéancier (echeancier.py), qui liquide alors une réversion d'essai, hors du journal ; son jumeau JavaScript ; son fait entrera à l'étape `echeancier` |
 | `validation_ircantec_demandee` | demandée | `retablissement_fonction_publique` | retablir (droit/coordonner.py), et l'assiette de l'Ircantec des années rétablies (droit/acquerir.py) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `coordonner_les_affiliations` |
 | `depart_de_chaque_regime` | au départ déclaré, à l'ouverture du régime, ou à la sortie de l'armée | `liquidation_regime_par_regime` | departs (droit/departs.py), que l'échéancier et le scénario 1 lisent ; son jumeau JavaScript ; son fait entrera à l'étape `echeancier` |
+| `pension_d_invalidite_de_la_periode` | depuis le 1er janvier de la première année de la période d'invalidité finale | `pension_d_invalidite_substituee` | Carriere.pension_d_invalidite (carriere.py), et son jumeau JavaScript ; son fait entrera à l'étape `ouvrir_le_droit` |
 
 **Le relevé des droits** (§ 7.2 et 7.6) : pour chaque demande, quatre étapes le construisent, une par module dans `src/retraite_notionnelle/droit/` et son jumeau `moteur/js/droit/`, chacune écrivant la donnée que son schéma décrit (`data/reference/etapes/`) ; la liquidation du scénario 1 ne lit que lui. Les relevés des 13 cas types, à chacune de leurs générations — 91 relevés —, comptent 22 789 lignes, dont 733 citent la fiche qui les écrit (3 %) et 14 sa version.
 

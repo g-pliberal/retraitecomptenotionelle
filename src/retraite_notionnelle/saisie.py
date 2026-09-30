@@ -342,6 +342,9 @@ ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL
 #: La réponse qui dit qu'une activité S'AJOUTE à celle en cours. Toute autre
 #: réponse que celle-ci ou le vide est refusée.
 CUMUL = "oui"
+#: La réponse d'une case cochée : l'inaptitude reconnue, la radiation
+#: imputable au service. La case vide n'envoie rien.
+OUI = "oui"
 
 #: Chez qui l'activité exercée après le départ s'exerce : le droit du cumul
 #: emploi-retraite distingue le dernier employeur, auprès duquel la reprise
@@ -573,6 +576,19 @@ class Saisie:
     #: ``depart_de_chaque_regime`` date chaque pension (fiche
     #: ``liquidation_regime_par_regime``).
     demandes: tuple[tuple[str, float], ...] = ()
+    #: L'invalidité et l'inaptitude (fiches ``pension_d_invalidite_substituee``,
+    #: ``inaptitude_au_travail`` et ``retraite_pour_invalidite_fonction_publique``) :
+    #: l'âge où la pension d'invalidité de la Sécurité sociale a commencé, que
+    #: l'adresse porte en date comme un début d'activité, ``None`` sans elle ;
+    #: l'inaptitude au travail, reconnue ou que la loi présume ; l'âge de la
+    #: radiation des cadres pour invalidité d'un fonctionnaire, en date lui
+    #: aussi, son imputabilité au service et le taux d'invalidité reconnu, en
+    #: pour cent. Voir :meth:`invalidite_declaree`.
+    invalidite: float | None = None
+    inaptitude: bool = False
+    radiation_invalidite: float | None = None
+    invalidite_imputable: bool = False
+    taux_invalidite: int | None = None
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
@@ -708,6 +724,15 @@ class Saisie:
                                              EMPLOYEURS_APRES_DEPART, "autre"),
             demandes=_demandes_saisies(parametres,
                                        origine_des_ages(mois_de_naissance, jour_naissance)),
+            invalidite=(None if parametres.get("invalidite") in (None, "")
+                        else _age_saisi(parametres, "invalidite", 0.0, mois_de_naissance)),
+            inaptitude=_oui(parametres, "inaptitude"),
+            radiation_invalidite=(
+                None if parametres.get("radiation_invalidite") in (None, "")
+                else _age_saisi(parametres, "radiation_invalidite", 0.0, mois_de_naissance)),
+            invalidite_imputable=_oui(parametres, "invalidite_imputable"),
+            taux_invalidite=(None if parametres.get("taux_invalidite") in (None, "")
+                             else _entier(parametres, "taux_invalidite", 0)),
             interruptions=(parametres.get("interruptions") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
@@ -801,6 +826,7 @@ class Saisie:
         self._verifier_progressive()
         self._verifier_emploi_retraite()
         self._verifier_demandes()
+        self._verifier_invalidite()
         if not ANNEE_MINIMALE <= self.bascule <= ANNEE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de bascule attendue entre {ANNEE_MINIMALE} et "
@@ -1564,6 +1590,63 @@ class Saisie:
                     f"Activité après le départ, en {debut} : niveau de revenu attendu "
                     "entre 0,1 et 10 fois le salaire moyen.")
 
+    def invalidite_declaree(self) -> dict | None:
+        """L'invalidité et l'inaptitude que la saisie déclare, telles que la
+        chronologie les reçoit (:func:`chronologie._personne`) : l'âge où la
+        ``pension`` d'invalidité a commencé, l'``inaptitude``, et la
+        ``radiation`` pour invalidité d'un fonctionnaire — son âge, son
+        imputabilité, son taux en pour cent. ``None`` quand rien n'est dit."""
+        if self.invalidite is None and not self.inaptitude and self.radiation_invalidite is None:
+            return None
+        radiation = None
+        if self.radiation_invalidite is not None:
+            radiation = {"age": self.radiation_invalidite,
+                         "imputable": self.invalidite_imputable,
+                         "taux": self.taux_invalidite}
+        return {"pension": self.invalidite, "inaptitude": self.inaptitude,
+                "radiation": radiation}
+
+    def _verifier_invalidite(self) -> None:
+        """La pension d'invalidité commence dans la carrière, avant le départ ;
+        la radiation pour invalidité d'un fonctionnaire tombe dans la carrière,
+        au plus tard au départ ; son imputabilité et son taux ne servent qu'à
+        elle. Que la radiation tombe dans un emploi de fonctionnaire, c'est au
+        contexte de le dire, qui a les affiliations ; ce que le droit fait de
+        tout cela — l'âge de la substitution, le taux plein, la pension du
+        fonctionnaire —, au calcul."""
+        precisions = [nom for nom, valeur in (
+            ("invalidite_imputable", self.invalidite_imputable or None),
+            ("taux_invalidite", self.taux_invalidite)) if valeur is not None]
+        if self.radiation_invalidite is None and precisions:
+            raise ErreurSaisie(
+                f"« {precisions[0]} » ne sert qu'à la retraite pour invalidité d'un "
+                "fonctionnaire : dites aussi la date de sa radiation des cadres "
+                "(« radiation_invalidite »).")
+        if self.taux_invalidite is not None and not 1 <= self.taux_invalidite <= 100:
+            raise ErreurSaisie("Taux d'invalidité : en pour cent, entre 1 et 100.")
+        debut = self.date_de(self.debut)
+        depart = self.date_de(self.liquidation, depart=True)
+        if self.invalidite is not None:
+            date = self.date_de(self.invalidite)
+            if date.rang <= debut.rang:
+                raise ErreurSaisie(
+                    f"Pension d'invalidité en {date} : elle suit le début de la "
+                    f"carrière, fixé en {debut}.")
+            if date.rang >= depart.rang:
+                raise ErreurSaisie(
+                    f"Pension d'invalidité en {date} : elle précède le départ à la "
+                    f"retraite, fixé en {depart}.")
+        if self.radiation_invalidite is not None:
+            date = self.date_de(self.radiation_invalidite)
+            if date.rang <= debut.rang:
+                raise ErreurSaisie(
+                    f"Radiation pour invalidité en {date} : elle suit le début de la "
+                    f"carrière, fixé en {debut}.")
+            if date.rang > depart.rang:
+                raise ErreurSaisie(
+                    f"Radiation pour invalidité en {date} : elle ne suit pas le départ "
+                    f"à la retraite, fixé en {depart}.")
+
     def demandes_de_pension_declarees(self) -> dict[str, float] | None:
         """Les pensions dont la saisie dit la date, telles que la chronologie
         les reçoit : l'âge de chaque demande, par régime ; ``None`` sans elles."""
@@ -1664,6 +1747,14 @@ class Saisie:
                if self.emploi_retraite is not None else {}),
             **{f"{PREFIXE_DEMANDE}{code}": self.mois_de(age, depart=True)
                for code, age in self.demandes},
+            **{nom: valeur for nom, valeur in (
+                ("invalidite", None if self.invalidite is None
+                 else self.mois_de(self.invalidite)),
+                ("inaptitude", OUI if self.inaptitude else None),
+                ("radiation_invalidite", None if self.radiation_invalidite is None
+                 else self.mois_de(self.radiation_invalidite)),
+                ("invalidite_imputable", OUI if self.invalidite_imputable else None),
+                ("taux_invalidite", self.taux_invalidite)) if valeur is not None},
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,
@@ -1817,6 +1908,18 @@ def _vers_flottant(texte: str) -> float | None:
         return None
     valeur = float(propre)
     return valeur if math.isfinite(valeur) else None
+
+
+def _oui(parametres: dict[str, str], nom: str) -> bool:
+    """Une case cochée : « oui », ou rien. Toute autre réponse se refuse, au
+    lieu de valoir non en silence."""
+    valeur = parametres.get(nom)
+    if valeur in (None, ""):
+        return False
+    if valeur != OUI:
+        raise ErreurSaisie(f"« {nom} » : « {valeur} » n'est pas une réponse possible "
+                           f"— « {OUI} », ou rien.")
+    return True
 
 
 def _entier(parametres: dict[str, str], nom: str, defaut: int) -> int:

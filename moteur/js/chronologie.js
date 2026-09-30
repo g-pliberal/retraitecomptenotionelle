@@ -229,7 +229,7 @@ export function dateDeclaree(valeur, quoi) {
 function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants,
   naissancesEnfants = [], jourNaissance = null, presomptions = null, conjoint = null,
   deces = null, retraiteProgressive = null, emploiRetraite = null,
-  demandesDePension = null) {
+  demandesDePension = null, invalidite = null) {
   const assure = naissanceDeLAssure(anneeNaissance, moisNaissance, sexe, jourNaissance,
     presomptions);
   const faitsNaissance = [assure];
@@ -299,6 +299,9 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
         part_primes: 0.0, apres_depart: true, employeur: emploiRetraite.employeur,
       }));
   }
+  if (invalidite !== null && invalidite !== undefined) {
+    depart.push(...invaliditeDeclaree(assure, ageLiquidation, invalidite));
+  }
   const role = sexe === "F" ? "mere" : "pere";
   const liens = [];
   for (let rang = 1; rang <= nombreEnfants; rang += 1) {
@@ -344,6 +347,50 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
   return [faitsNaissance, depart, liens];
 }
 
+/**
+ * Les faits de l'invalidité et de l'inaptitude que la saisie déclare : la
+ * pension d'invalidité et l'inaptitude, deux décisions médicales, la radiation
+ * pour invalidité d'un fonctionnaire. Voir `_invalidite` du Python.
+ */
+function invaliditeDeclaree(assure, ageLiquidation, invalidite) {
+  if (ageLiquidation === null || ageLiquidation === undefined) {
+    throw new Error("l'invalidité ou l'inaptitude déclarée suppose un départ");
+  }
+  const naissance = moisDe(assure.debut);
+  const depart = origineDe(assure).plusMois(enMois(ageLiquidation));
+  const faits = [];
+  if (invalidite.pension !== null && invalidite.pension !== undefined) {
+    const age = invalidite.pension;
+    const debut = naissance.plusMois(enMois(age));
+    if (debut.rang <= naissance.rang || debut.rang >= depart.rang) {
+      throw new Error("une pension d'invalidité commence après la naissance et avant le "
+        + "départ");
+    }
+    faits.push(fait(`pension_d_invalidite_${ASSURE}`, ASSURE, "decision_medicale",
+      jour(debut), null, { decision: "pension_d_invalidite", age }));
+  }
+  if (invalidite.inaptitude) {
+    faits.push(fait(`inaptitude_${ASSURE}`, ASSURE, "decision_medicale", jour(depart), null,
+      { decision: "inaptitude" }));
+  }
+  const radiation = invalidite.radiation;
+  if (radiation !== null && radiation !== undefined) {
+    const { age } = radiation;
+    const taux = radiation.taux ?? null;
+    const debut = naissance.plusMois(enMois(age));
+    if (debut.rang <= naissance.rang || debut.rang > depart.rang) {
+      throw new Error("une radiation pour invalidité tombe après la naissance et au plus "
+        + "tard au départ");
+    }
+    if (taux !== null && !(taux > 0 && taux <= 100)) {
+      throw new Error(`le taux d'invalidité : entre 0 et 100 %, reçu ${taux}`);
+    }
+    faits.push(fait(`radiation_pour_invalidite_${ASSURE}`, ASSURE, "radiation", jour(debut),
+      null, { motif: "invalidite", age, imputable: Boolean(radiation.imputable), taux }));
+  }
+  return faits;
+}
+
 /** Le fait de naissance du conjoint déclaré : sa date et son sexe. */
 function naissanceDuConjoint(conjoint) {
   const [date, precision] = dateDeclaree(conjoint.naissance, "la naissance du conjoint");
@@ -362,10 +409,10 @@ function naissanceDuConjoint(conjoint) {
 export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation = null,
   nombreEnfants = 0, naissancesEnfants = [], jourNaissance = null, presomptions = null,
   conjoint = null, deces = null, retraiteProgressive = null, emploiRetraite = null,
-  demandesDePension = null) {
+  demandesDePension = null, invalidite = null) {
   const [naissance, depart, liens] = personne(anneeNaissance, moisNaissance, sexe,
     ageLiquidation, nombreEnfants, naissancesEnfants, jourNaissance, presomptions,
-    conjoint, deces, retraiteProgressive, emploiRetraite, demandesDePension);
+    conjoint, deces, retraiteProgressive, emploiRetraite, demandesDePension, invalidite);
   return { schema_version: SCHEMA_VERSION, faits: [...naissance, ...depart], liens };
 }
 
@@ -395,6 +442,7 @@ export function duParcours({
   retraite_progressive = null,
   emploi_retraite = null,
   demandes_de_pension = null,
+  invalidite = null,
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -410,7 +458,8 @@ export function duParcours({
 
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
-    conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension);
+    conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension,
+    invalidite);
   const moisDeNaissance = moisDe(naissance[0].debut);
   const bornes = principaux.map(
     (metier) => moisDeNaissance.plusMois(enMois(metier.age_debut)),
@@ -504,6 +553,7 @@ export function duReleve({
   retraite_progressive = null,
   emploi_retraite = null,
   demandes_de_pension = null,
+  invalidite = null,
 }) {
   if (!releve || releve.length === 0) {
     throw new Error("un relevé compte au moins une ligne");
@@ -525,7 +575,8 @@ export function duReleve({
   });
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
-    conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension);
+    conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension,
+    invalidite);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],
@@ -673,6 +724,21 @@ export function retraiteProgressive(chronologie, personne) {
  * Les pensions dont une personne déclare la date de demande : un acte par
  * régime, dans l'ordre de leurs codes.
  */
+/**
+ * La décision médicale d'une personne, de cette nature — `pension_d_invalidite`
+ * ou `inaptitude` —, si elle est dite.
+ */
+export function decisionMedicale(chronologie, personne, decision) {
+  return faitsDe(chronologie, personne, "decision_medicale")
+    .find((f) => f.attributs.decision === decision) ?? null;
+}
+
+/** La radiation des cadres pour invalidité d'une personne, si elle est dite. */
+export function radiationPourInvalidite(chronologie, personne) {
+  return faitsDe(chronologie, personne, "radiation")
+    .find((f) => f.attributs.motif === "invalidite") ?? null;
+}
+
 export function demandesDePension(chronologie, personne) {
   return faitsDe(chronologie, personne, "acte_de_la_personne")
     .filter((acte) => acte.attributs.acte === "demande_de_pension");

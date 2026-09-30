@@ -116,6 +116,8 @@ PRESOMPTIONS_DU_5_6 = {
     "réversion demandée dans l'année du décès": "reversion_demandee_dans_l_annee",
     "décès supposé juste après le départ": "deces_apres_le_depart",
     "chaque pension demandée au départ déclaré": "depart_de_chaque_regime",
+    "une pension d'invalidité depuis le début de la période d'invalidité":
+        "pension_d_invalidite_de_la_periode",
 }
 
 

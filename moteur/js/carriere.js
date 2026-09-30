@@ -433,6 +433,8 @@ export class Carriere {
     this._origineDesAges = undefined;
     this._conjoint = undefined;
     this._demandesDePension = undefined;
+    this._pensionDInvalidite = undefined;
+    this._radiationPourInvalidite = undefined;
   }
 
   // -- dates -----------------------------------------------------------------
@@ -517,6 +519,98 @@ export class Carriere {
           .map((fait) => [fait.attributs.regime, chrono.moisDe(fait.debut)]));
     }
     return this._demandesDePension;
+  }
+
+  /**
+   * La pension d'invalidité de la Sécurité sociale que la personne touche, quand
+   * l'âge légal la trouve invalide : `{debut, presomption, affiliations}`, le
+   * mois où elle a commencé, la présomption qui la pose, les affiliations de
+   * son année puis de l'année d'avant. Déclarée, ou présumée depuis le
+   * début de l'invalidité par laquelle sa carrière finit (présomption
+   * `pension_d_invalidite_de_la_periode`) ; `null` sinon. Voir
+   * `pension_d_invalidite` du Python.
+   */
+  get pensionDInvalidite() {
+    if (this._pensionDInvalidite === undefined) {
+      const fait = this.chronologie
+        ? chrono.decisionMedicale(this.chronologie, this.personne, "pension_d_invalidite")
+        : null;
+      if (fait !== null) {
+        const debut = chrono.moisDe(fait.debut);
+        this._pensionDInvalidite = Object.freeze({
+          debut, presomption: null, affiliations: this._affiliationsAutour(debut) });
+      } else {
+        const annees = this._lignesPrincipalesFinales("invalidite").map((l) => l.annee);
+        const debut = annees.length === 0 ? null : new DateMois(Math.min(...annees), 1);
+        this._pensionDInvalidite = debut === null ? null : Object.freeze({
+          debut,
+          presomption: "pension_d_invalidite_de_la_periode",
+          affiliations: this._affiliationsAutour(debut),
+        });
+      }
+    }
+    return this._pensionDInvalidite;
+  }
+
+  /**
+   * Les affiliations de l'année de ce mois puis de l'année d'avant,
+   * l'activité principale de chacune en tête, sans doublon. Voir
+   * `_affiliations_autour` du Python.
+   */
+  _affiliationsAutour(date) {
+    const lignes = [...this.lignesDe(date.annee), ...this.lignesDe(date.annee - 1)];
+    return Object.freeze([...new Set(lignes.map((ligne) => ligne.affiliation))]);
+  }
+
+  /**
+   * Les dernières lignes principales de la carrière, une par année, tant
+   * qu'elles sont de cette nature : vide si la dernière n'en est pas.
+   */
+  _lignesPrincipalesFinales(typePeriode) {
+    const finales = [];
+    for (const annee of [...this._parAnnee.keys()].sort((a, b) => b - a)) {
+      const principale = this._parAnnee.get(annee)[0];
+      if (principale.type_periode !== typePeriode) {
+        break;
+      }
+      finales.push(principale);
+    }
+    return finales.reverse();
+  }
+
+  /**
+   * L'inaptitude au travail que la personne déclare, reconnue à la demande de
+   * sa pension ou présumée par la loi. Voir `inaptitude` du Python.
+   */
+  get inaptitude() {
+    return Boolean(this.chronologie) && chrono.decisionMedicale(
+      this.chronologie, this.personne, "inaptitude") !== null;
+  }
+
+  /**
+   * La radiation des cadres pour invalidité que la personne déclare : `{date,
+   * affiliations, imputable, taux}` — son mois, les affiliations de son année
+   * puis de l'année d'avant, dont l'emploi qu'elle clôt, son imputabilité au
+   * service, le taux d'invalidité en pour cent ; `null` sinon. Voir
+   * `radiation_pour_invalidite` du Python.
+   */
+  get radiationPourInvalidite() {
+    if (this._radiationPourInvalidite === undefined) {
+      const fait = this.chronologie
+        ? chrono.radiationPourInvalidite(this.chronologie, this.personne) : null;
+      if (fait === null) {
+        this._radiationPourInvalidite = null;
+      } else {
+        const date = chrono.moisDe(fait.debut);
+        this._radiationPourInvalidite = Object.freeze({
+          date,
+          affiliations: this._affiliationsAutour(date),
+          imputable: Boolean(fait.attributs.imputable),
+          taux: fait.attributs.taux ?? null,
+        });
+      }
+    }
+    return this._radiationPourInvalidite;
   }
 
   /**
@@ -1122,12 +1216,13 @@ export class Carriere {
     retraite_progressive = null,
     emploi_retraite = null,
     demandes_de_pension = null,
+    invalidite = null,
   }) {
     const chronologie = preparer(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
       nombre_enfants, part_primes, naissances_enfants, jour_naissance,
       presomptions: macro.paquet.presomptions, conjoint, deces, retraite_progressive,
-      emploi_retraite, demandes_de_pension,
+      emploi_retraite, demandes_de_pension, invalidite,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -1190,12 +1285,13 @@ export class Carriere {
     retraite_progressive = null,
     emploi_retraite = null,
     demandes_de_pension = null,
+    invalidite = null,
   }) {
     const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
       profil_carriere, interruptions, nombre_enfants, part_primes, naissances_enfants,
       jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
-      retraite_progressive, emploi_retraite, demandes_de_pension,
+      retraite_progressive, emploi_retraite, demandes_de_pension, invalidite,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }

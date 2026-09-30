@@ -1530,6 +1530,16 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
         {"euros": "9999"},
         {"statut": "astronaute"},
         {"metier2_debut": "18", "metier2_statut": "salarie_prive_cadre"},
+        # L'invalidité et l'inaptitude (docs/architecture.md, § 11) : un champ
+        # orphelin, une réponse qui n'en est pas une, une date hors de la
+        # carrière, un taux hors de ses bornes, une radiation qui ne clôt
+        # aucun emploi de fonctionnaire civil, ou que la carrière ne suit pas.
+        {"taux_invalidite": "50"},
+        {"inaptitude": "peut-etre"},
+        {"invalidite": "1980-01"},
+        {"radiation_invalidite": "2010-01", "taux_invalidite": "150"},
+        {"radiation_invalidite": "2010-01"},
+        {"statut": "fonctionnaire_etat", "radiation_invalidite": "2010-01"},
     ]
     # Les voisines immédiates de ces refus, qui doivent au contraire calculer :
     # une borne posée d'un cran trop loin se verrait ici, et nulle part ailleurs.
@@ -1538,6 +1548,13 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
         {"interruptions": f"{ANNEE_CARRIERE_MINIMALE}:1990:sans_activite"},
         {"unite_revenu": "euros_mois", "salaire": "1e3"},
         {"enfants": str(ENFANTS_MAXIMUM)},
+        {"inaptitude": "oui"},
+        {"invalidite": "2020-03"},
+        {"statut": "fonctionnaire_etat", "radiation_invalidite": "2010-01",
+         "metier2_debut": "2010-01", "metier2_statut": "sans_activite"},
+        {"statut": "fonctionnaire_etat", "radiation_invalidite": "2010-06",
+         "invalidite_imputable": "oui", "taux_invalidite": "60",
+         "metier2_debut": "2010-06", "metier2_statut": "salarie_prive_non_cadre"},
     ]
 
     for champs_, refuse in ((refuses, True), (acceptees, False)):

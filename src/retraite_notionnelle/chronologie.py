@@ -259,6 +259,7 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
               retraite_progressive: dict | None = None,
               emploi_retraite: dict | None = None,
               demandes_de_pension: dict[str, float] | None = None,
+              invalidite: dict | None = None,
               ) -> tuple[list[dict], list[dict], list[dict]]:
     """Ce que toute saisie déclare de l'assuré : sa naissance, son départ,
     ses enfants, et, s'il les dit, son conjoint et son décès. Rend les
@@ -284,7 +285,15 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     son ``affiliation``, son ``niveau_salaire`` et l'``employeur``.
     ``demandes_de_pension`` déclare, régime par régime, l'âge auquel la
     personne demande sa pension, compté comme le départ : la présomption
-    ``depart_de_chaque_regime`` la date sinon (:mod:`.droit.departs`)."""
+    ``depart_de_chaque_regime`` la date sinon (:mod:`.droit.departs`).
+    ``invalidite`` déclare l'invalidité et l'inaptitude : la ``pension``
+    d'invalidité, l'âge où elle a commencé, compté comme un début d'activité,
+    avant le départ ; l'``inaptitude``, reconnue à la demande de la pension,
+    donc au départ ; la ``radiation`` pour invalidité d'un fonctionnaire, son
+    ``age``, compté de même, au plus tard au départ, son ``imputable`` au
+    service et son ``taux`` d'invalidité en pour cent. Deux décisions
+    médicales et une radiation, que :func:`decision_medicale` et
+    :func:`radiation_pour_invalidite` relisent."""
     assure = naissance_de_l_assure(annee_naissance, mois_naissance, sexe,
                                    jour_naissance, presomptions)
     faits_naissance = [assure]
@@ -343,6 +352,8 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
              "niveau_salaire": emploi_retraite["niveau_salaire"], "profil": "plat",
              "part_primes": 0.0, "apres_depart": True,
              "employeur": emploi_retraite["employeur"]}))
+    if invalidite is not None:
+        depart += _invalidite(assure, age_liquidation, invalidite)
     role = "mere" if sexe == "F" else "pere"
     liens = [lien(f"filiation_enfant_{rang}", ASSURE, f"enfant_{rang}", "filiation",
                   {ASSURE: role, f"enfant_{rang}": "enfant"},
@@ -378,6 +389,44 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     return faits_naissance, depart, liens
 
 
+def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -> list[dict]:
+    """Les faits de l'invalidité et de l'inaptitude que la saisie déclare (voir
+    :func:`_personne`) : la pension d'invalidité et l'inaptitude, deux
+    décisions médicales, la radiation pour invalidité d'un fonctionnaire."""
+    if age_liquidation is None:
+        raise ValueError("l'invalidité ou l'inaptitude déclarée suppose un départ")
+    naissance = mois_de(assure["debut"])
+    depart = origine_de(assure).plus_mois(en_mois(age_liquidation))
+    faits = []
+    if invalidite.get("pension") is not None:
+        age = invalidite["pension"]
+        debut = naissance.plus_mois(en_mois(age))
+        if debut.rang <= naissance.rang or debut.rang >= depart.rang:
+            raise ValueError("une pension d'invalidité commence après la naissance et "
+                             "avant le départ")
+        faits.append(fait(f"pension_d_invalidite_{ASSURE}", ASSURE, "decision_medicale",
+                          _jour(debut),
+                          attributs={"decision": "pension_d_invalidite", "age": age}))
+    if invalidite.get("inaptitude"):
+        faits.append(fait(f"inaptitude_{ASSURE}", ASSURE, "decision_medicale", _jour(depart),
+                          attributs={"decision": "inaptitude"}))
+    radiation = invalidite.get("radiation")
+    if radiation is not None:
+        age, taux = radiation["age"], radiation.get("taux")
+        debut = naissance.plus_mois(en_mois(age))
+        if debut.rang <= naissance.rang or debut.rang > depart.rang:
+            raise ValueError("une radiation pour invalidité tombe après la naissance et au "
+                             "plus tard au départ")
+        if taux is not None and not 0 < taux <= 100:
+            raise ValueError(f"le taux d'invalidité : entre 0 et 100 %, reçu {taux}")
+        faits.append(fait(f"radiation_pour_invalidite_{ASSURE}", ASSURE, "radiation",
+                          _jour(debut),
+                          attributs={"motif": "invalidite", "age": age,
+                                     "imputable": bool(radiation.get("imputable")),
+                                     "taux": taux}))
+    return faits
+
+
 def _naissance_du_conjoint(conjoint: dict) -> dict:
     """Le fait de naissance du conjoint déclaré : sa date et son sexe."""
     jour, precision = date_declaree(conjoint["naissance"], "la naissance du conjoint")
@@ -393,7 +442,8 @@ def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
               presomptions: dict | None = None, conjoint: dict | None = None,
               deces: str | None = None, retraite_progressive: dict | None = None,
               emploi_retraite: dict | None = None,
-              demandes_de_pension: dict[str, float] | None = None) -> dict:
+              demandes_de_pension: dict[str, float] | None = None,
+              invalidite: dict | None = None) -> dict:
     """La chronologie d'une carrière construite ligne à ligne : la naissance,
     le départ et les enfants, sans ses périodes, que l'appelant a déjà
     traduites en années."""
@@ -403,7 +453,8 @@ def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
                                          presomptions, conjoint=conjoint, deces=deces,
                                          retraite_progressive=retraite_progressive,
                                          emploi_retraite=emploi_retraite,
-                                         demandes_de_pension=demandes_de_pension)
+                                         demandes_de_pension=demandes_de_pension,
+                                         invalidite=invalidite)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + depart, "liens": liens}
 
 
@@ -415,7 +466,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 presomptions: dict | None = None, conjoint: dict | None = None,
                 deces: str | None = None, retraite_progressive: dict | None = None,
                 emploi_retraite: dict | None = None,
-                demandes_de_pension: dict[str, float] | None = None) -> dict:
+                demandes_de_pension: dict[str, float] | None = None,
+                invalidite: dict | None = None) -> dict:
     """La chronologie d'un parcours : un fait par métier, daté au mois, et un
     par année d'interruption.
 
@@ -445,7 +497,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                                          presomptions, conjoint=conjoint, deces=deces,
                                          retraite_progressive=retraite_progressive,
                                          emploi_retraite=emploi_retraite,
-                                         demandes_de_pension=demandes_de_pension)
+                                         demandes_de_pension=demandes_de_pension,
+                                         invalidite=invalidite)
     mois_de_naissance = mois_de(naissance[0]["debut"])
     bornes = [mois_de_naissance.plus_mois(en_mois(metier.age_debut)) for metier in principaux]
     debut = bornes[0]
@@ -507,7 +560,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
               presomptions: dict | None = None, conjoint: dict | None = None,
               deces: str | None = None, retraite_progressive: dict | None = None,
               emploi_retraite: dict | None = None,
-              demandes_de_pension: dict[str, float] | None = None) -> dict:
+              demandes_de_pension: dict[str, float] | None = None,
+              invalidite: dict | None = None) -> dict:
     """La chronologie d'un relevé : un fait par ligne, une année civile
     chacun, dans l'ordre du relevé — la première ligne d'une année est
     l'activité principale."""
@@ -529,7 +583,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
                                          presomptions, conjoint=conjoint, deces=deces,
                                          retraite_progressive=retraite_progressive,
                                          emploi_retraite=emploi_retraite,
-                                         demandes_de_pension=demandes_de_pension)
+                                         demandes_de_pension=demandes_de_pension,
+                                         invalidite=invalidite)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
 
@@ -677,6 +732,23 @@ def demandes_de_pension(chronologie: dict, personne: str) -> list[dict]:
     régime, dans l'ordre de leurs codes."""
     return [acte for acte in faits_de(chronologie, personne, "acte_de_la_personne")
             if acte["attributs"].get("acte") == "demande_de_pension"]
+
+
+def decision_medicale(chronologie: dict, personne: str, decision: str) -> dict | None:
+    """La décision médicale d'une personne, de cette nature — ``pension_d_invalidite``
+    ou ``inaptitude`` —, si elle est dite."""
+    for f in faits_de(chronologie, personne, "decision_medicale"):
+        if f["attributs"].get("decision") == decision:
+            return f
+    return None
+
+
+def radiation_pour_invalidite(chronologie: dict, personne: str) -> dict | None:
+    """La radiation des cadres pour invalidité d'une personne, si elle est dite."""
+    for f in faits_de(chronologie, personne, "radiation"):
+        if f["attributs"].get("motif") == "invalidite":
+            return f
+    return None
 
 
 def periodes(chronologie: dict, personne: str) -> list[dict]:

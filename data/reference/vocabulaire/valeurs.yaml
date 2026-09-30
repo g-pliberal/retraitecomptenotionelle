@@ -397,6 +397,25 @@ listes:
           n'ouvre garde un départ unique, que la page dit non ouvert.
           Décision du propriétaire, le 29 septembre 2026 : « il faut que l'on
           colle le plus possible à la réalité »
+      pension_d_invalidite_de_la_periode:
+        dit: >-
+          l'assuré dont la carrière finit par une période d'invalidité touche
+          une pension d'invalidité depuis le début de cette période, qui court
+          jusqu'à l'âge où la pension de vieillesse la remplace
+        valeur: depuis le 1er janvier de la première année de la période d'invalidité finale
+        appliquee_par: Carriere.pension_d_invalidite (carriere.py), et son jumeau JavaScript
+        entrera_a: ouvrir_le_droit
+        raison: >-
+          une période « invalidité » de la carrière est une période où l'assuré
+          touche une pension d'invalidité (R. 351-12, 3°, fiche
+          periodes_non_travaillees) ; quand elle mène au départ, l'âge légal le
+          trouve invalide, et la pension de vieillesse remplace d'office sa
+          pension d'invalidité (L. 341-15, fiche pension_d_invalidite_substituee).
+          Le formulaire demande la date de la pension à qui veut la dire ; la
+          carrière, qui ne connaît que des années, en date le début au 1er
+          janvier. Une invalidité suivie d'une reprise d'activité est présumée
+          avoir pris fin : une pension supprimée pour raison médicale ne se
+          substitue pas (circulaire Cnav n° 2023-25, 1.3)
 
   origines_de_ligne:
     valeurs:

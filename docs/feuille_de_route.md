@@ -3192,6 +3192,27 @@ articles homonymes du code de la construction. L'inventaire des avantages
 cite désormais L. 351-7, L. 351-8, 2°, L. 341-15 et L. 29 du code des
 pensions, et renvoie aux trois fiches. Aucun résultat ne bouge.
 
+**Deuxième étape, le 30 septembre : les faits, et la saisie qui les lit.**
+L'adresse du simulateur porte cinq champs nouveaux : `invalidite`, le mois où
+la pension d'invalidité a commencé ; `inaptitude=oui`, l'inaptitude reconnue
+au départ ; `radiation_invalidite`, le mois de la radiation des cadres d'un
+fonctionnaire civil, et `invalidite_imputable=oui` et `taux_invalidite`, qui ne
+servent qu'à elle. La chronologie les garde en trois faits, dans les deux
+moteurs : deux décisions médicales et une radiation de motif `invalidite`. La
+carrière les lit, avec les affiliations de leur année et de l'année d'avant,
+où se trouvent le régime qui sert la pension et l'emploi que la radiation
+clôt : le modèle rattache l'année d'un changement d'emploi à l'activité qui en
+occupe le plus de mois, et le fonctionnaire radié en juin, salarié ensuite, ne
+l'est plus que l'année d'avant. Faute de date déclarée, une carrière qui finit
+en période d'invalidité présume la pension depuis le 1er janvier de sa
+première année (présomption `pension_d_invalidite_de_la_periode`, § 5.6) ;
+une invalidité que l'activité suit a pris fin, et ne présume rien. Se
+refusent, avec les mêmes mots dans les deux moteurs : une date hors de la
+carrière, un taux hors de 1 à 100, l'imputabilité ou le taux sans radiation,
+une radiation qui ne clôt aucun emploi de fonctionnaire civil, ou que la
+carrière suit dans la fonction publique. Le moteur ne lit pas encore ces
+faits : aucun résultat ne bouge. `tests/test_invalidite.py` les tient.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

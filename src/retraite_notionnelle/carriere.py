@@ -176,6 +176,39 @@ class AnneeCarriere:
 
 
 @dataclass(frozen=True)
+class PensionDInvalidite:
+    """La pension d'invalidité de la Sécurité sociale qu'une personne touche
+    (fiche ``pension_d_invalidite_substituee``)."""
+
+    #: Le mois où elle a commencé.
+    debut: DateMois
+    #: La présomption qui la pose, quand elle n'est pas déclarée.
+    presomption: str | None = None
+    #: Les affiliations de l'année où elle commence puis de l'année d'avant,
+    #: l'activité principale de chacune en tête : le régime qui la sert est
+    #: celui dont la personne relevait quand l'invalidité est survenue.
+    affiliations: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class RadiationPourInvalidite:
+    """La radiation des cadres pour invalidité d'un fonctionnaire (fiche
+    ``retraite_pour_invalidite_fonction_publique``)."""
+
+    #: Le mois où elle tombe : celui où la pension prend effet.
+    date: DateMois
+    #: Les affiliations de l'année où elle tombe puis de l'année d'avant,
+    #: l'activité principale de chacune en tête : l'emploi qu'elle clôt est
+    #: le premier de fonctionnaire civil qu'elles portent. Radié en juin, et
+    #: salarié ensuite, l'emploi clos ne porte plus que l'année d'avant.
+    affiliations: tuple[str, ...] = ()
+    #: L'invalidité est-elle imputable au service (L. 27, L. 28) ?
+    imputable: bool = False
+    #: Le taux d'invalidité reconnu, en pour cent, s'il est dit.
+    taux: float | None = None
+
+
+@dataclass(frozen=True)
 class Metier:
     """Un métier de la carrière : un statut, un niveau de revenu, une date.
 
@@ -636,6 +669,77 @@ class Carriere:
             return {}
         return {fait["attributs"]["regime"]: chrono.mois_de(fait["debut"])
                 for fait in chrono.demandes_de_pension(self.chronologie, self.personne)}
+
+    @cached_property
+    def pension_d_invalidite(self) -> "PensionDInvalidite | None":
+        """La pension d'invalidité de la Sécurité sociale que la personne
+        touche, quand l'âge légal la trouve invalide (fiche
+        ``pension_d_invalidite_substituee``) : déclarée, ou présumée depuis le
+        début de l'invalidité par laquelle sa carrière finit — la dernière
+        année de la carrière, et celles qui la précèdent sans interruption, en
+        période d'invalidité (présomption
+        ``pension_d_invalidite_de_la_periode``). ``None`` sinon : une
+        invalidité suivie d'une reprise d'activité a pris fin."""
+        fait = (chrono.decision_medicale(self.chronologie, self.personne,
+                                         "pension_d_invalidite")
+                if self.chronologie else None)
+        if fait is not None:
+            debut = chrono.mois_de(fait["debut"])
+            return PensionDInvalidite(debut=debut,
+                                      affiliations=self._affiliations_autour(debut))
+        annees = [ligne.annee for ligne in self._lignes_principales_finales("invalidite")]
+        if not annees:
+            return None
+        debut = DateMois(min(annees), 1)
+        return PensionDInvalidite(debut=debut,
+                                  presomption="pension_d_invalidite_de_la_periode",
+                                  affiliations=self._affiliations_autour(debut))
+
+    def _affiliations_autour(self, date: DateMois) -> tuple[str, ...]:
+        """Les affiliations de l'année de ce mois puis de l'année d'avant,
+        l'activité principale de chacune en tête, sans doublon : celles
+        dont la personne a pu relever juste avant lui, le modèle rattachant
+        l'année d'un changement d'emploi à l'activité qui en occupe le plus
+        de mois (``_lignes_du_parcours``)."""
+        lignes = self.lignes_de(date.annee) + self.lignes_de(date.annee - 1)
+        return tuple(dict.fromkeys(ligne.affiliation for ligne in lignes))
+
+    def _lignes_principales_finales(self, type_periode: str) -> list[AnneeCarriere]:
+        """Les dernières lignes principales de la carrière, une par année,
+        tant qu'elles sont de cette nature : vide si la dernière n'en est pas
+        (:meth:`lignes_de` met l'activité principale en tête)."""
+        finales = []
+        for annee in sorted(self._lignes_par_annee, reverse=True):
+            principale = self._lignes_par_annee[annee][0]
+            if principale.type_periode != type_periode:
+                break
+            finales.append(principale)
+        return finales[::-1]
+
+    @cached_property
+    def inaptitude(self) -> bool:
+        """L'inaptitude au travail que la personne déclare, reconnue à la
+        demande de sa pension ou présumée par la loi (fiche
+        ``inaptitude_au_travail``)."""
+        return bool(self.chronologie) and chrono.decision_medicale(
+            self.chronologie, self.personne, "inaptitude") is not None
+
+    @cached_property
+    def radiation_pour_invalidite(self) -> "RadiationPourInvalidite | None":
+        """La radiation des cadres pour invalidité que la personne déclare
+        (fiche ``retraite_pour_invalidite_fonction_publique``) : son mois,
+        les affiliations de son année et de l'année d'avant — l'emploi qu'elle
+        clôt en est une —, son imputabilité au service et le taux d'invalidité, en pour cent."""
+        fait = (chrono.radiation_pour_invalidite(self.chronologie, self.personne)
+                if self.chronologie else None)
+        if fait is None:
+            return None
+        date = chrono.mois_de(fait["debut"])
+        attributs = fait["attributs"]
+        return RadiationPourInvalidite(date=date,
+                                       affiliations=self._affiliations_autour(date),
+                                       imputable=bool(attributs.get("imputable")),
+                                       taux=attributs.get("taux"))
 
     @cached_property
     def emploi_retraite(self) -> "dict | None":
@@ -1222,6 +1326,7 @@ class Carriere:
         retraite_progressive: dict | None = None,
         emploi_retraite: dict | None = None,
         demandes_de_pension: dict[str, float] | None = None,
+        invalidite: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -1254,7 +1359,7 @@ class Carriere:
             part_primes=part_primes, naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
             retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
-            demandes_de_pension=demandes_de_pension))
+            demandes_de_pension=demandes_de_pension, invalidite=invalidite))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1279,6 +1384,7 @@ class Carriere:
         deces: str | None = None,
         emploi_retraite: dict | None = None,
         demandes_de_pension: dict[str, float] | None = None,
+        invalidite: dict | None = None,
     ) -> "Carriere":
         """Carrière d'un seul métier, exercé du premier au dernier jour.
 
@@ -1304,6 +1410,7 @@ class Carriere:
             deces=deces,
             emploi_retraite=emploi_retraite,
             demandes_de_pension=demandes_de_pension,
+            invalidite=invalidite,
         )
 
     @classmethod
@@ -1327,6 +1434,7 @@ class Carriere:
         retraite_progressive: dict | None = None,
         emploi_retraite: dict | None = None,
         demandes_de_pension: dict[str, float] | None = None,
+        invalidite: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -1373,6 +1481,11 @@ class Carriere:
         demande sa pension, quand ce n'est pas la date que la présomption
         ``depart_de_chaque_regime`` retient (:attr:`demandes_de_pension`).
 
+        ``invalidite`` déclare la pension d'invalidité, l'inaptitude au travail
+        et la radiation pour invalidité d'un fonctionnaire
+        (:attr:`pension_d_invalidite`, :attr:`inaptitude`,
+        :attr:`radiation_pour_invalidite`).
+
         Les deux bords sont des années INCOMPLÈTES et sont construites comme
         telles : celui qui entre en septembre ne travaille que quatre mois de
         son année d'entrée, celui qui part en août n'en travaille que sept de
@@ -1387,7 +1500,7 @@ class Carriere:
             part_primes=part_primes, naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
             retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
-            demandes_de_pension=demandes_de_pension))
+            demandes_de_pension=demandes_de_pension, invalidite=invalidite))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod

@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.28, du 30 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.29, du 30 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -769,6 +769,9 @@ Le relevé des droits et le résultat le signalent.
     remplace (version 5.26). Elle non plus ne reprend pas la valeur d'avant
     elle — tout liquider au départ, à l'âge du régime le plus précoce —, qui
     servait des pensions que le droit n'ouvrait pas encore (version 5.21).
+  - une pension d'invalidité depuis le début de la période d'invalidité par
+    laquelle la carrière finit, quand l'assuré ne la date pas : l'âge légal le
+    trouve invalide, et la pension de vieillesse la remplace (version 5.29).
 - **Un défaut légal** n'est pas une présomption : c'est la loi qui décide
   quand la personne n'a rien fait. Il s'écrit dans la version de la règle,
   parce qu'il change avec elle. Au régime général, les trimestres d'éducation
@@ -2431,6 +2434,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.29**, 30 septembre 2026 : la deuxième étape du quatrième domaine. La saisie lit la pension d'invalidité, l'inaptitude et la radiation pour invalidité d'un fonctionnaire civil, son imputabilité et son taux ; la chronologie les garde en deux décisions médicales et une radiation, dans les deux moteurs ; la carrière présume la pension d'invalidité de qui finit sa carrière en invalidité (§ 5.6). Le moteur ne les lit pas encore.
 
 - **5.28**, 30 septembre 2026 : le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la demande du propriétaire (§ 11) ; ses trois fiches sont lues et découpées en versions, que le moteur ne lit pas encore.
 

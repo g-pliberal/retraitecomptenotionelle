@@ -241,6 +241,9 @@ export const METIERS_MAXIMUM = 6;
  * réponse que celle-ci ou le vide est refusée.
  */
 export const CUMUL = "oui";
+/** La réponse d'une case cochée : l'inaptitude reconnue, la radiation imputable
+ * au service. La case vide n'envoie rien. */
+export const OUI = "oui";
 
 /**
  * Chez qui l'activité exercée après le départ s'exerce : le droit du cumul
@@ -473,6 +476,17 @@ export const DEFAUTS = Object.freeze({
   //: le départ (`PREFIXE_DEMANDE`). Vide, la présomption
   //: `depart_de_chaque_regime` date chaque pension.
   demandes: [],
+  //: L'invalidité et l'inaptitude : l'âge où la pension d'invalidité de la
+  //: Sécurité sociale a commencé, que l'adresse porte en date comme un début
+  //: d'activité, nul sans elle ; l'inaptitude au travail, reconnue ou que la
+  //: loi présume ; l'âge de la radiation des cadres pour invalidité d'un
+  //: fonctionnaire, en date lui aussi, son imputabilité au service et le taux
+  //: d'invalidité reconnu, en pour cent. Voir `invaliditeDeclaree`.
+  invalidite: null,
+  inaptitude: false,
+  radiation_invalidite: null,
+  invalidite_imputable: false,
+  taux_invalidite: null,
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -603,6 +617,14 @@ export class Saisie {
       emploi_retraite_employeur: parmi(parametres, "emploi_retraite_employeur",
         EMPLOYEURS_APRES_DEPART, "autre"),
       demandes: demandesSaisies(parametres, origineDesAges(moisDeNaissance, jourNaissance)),
+      invalidite: [undefined, null, ""].includes(parametres.invalidite) ? null
+        : ageSaisi(parametres, "invalidite", 0.0, moisDeNaissance),
+      inaptitude: oui(parametres, "inaptitude"),
+      radiation_invalidite: [undefined, null, ""].includes(parametres.radiation_invalidite)
+        ? null : ageSaisi(parametres, "radiation_invalidite", 0.0, moisDeNaissance),
+      invalidite_imputable: oui(parametres, "invalidite_imputable"),
+      taux_invalidite: [undefined, null, ""].includes(parametres.taux_invalidite)
+        ? null : entier(parametres, "taux_invalidite", 0),
       interruptions: (parametres.interruptions || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
@@ -702,6 +724,7 @@ export class Saisie {
     this.verifierProgressive();
     this.verifierEmploiRetraite();
     this.verifierDemandes();
+    this.verifierInvalidite();
     if (!(this.bascule >= ANNEE_MINIMALE && this.bascule <= ANNEE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de bascule attendue entre ${ANNEE_MINIMALE} et `
@@ -1570,6 +1593,80 @@ export class Saisie {
   }
 
   /**
+   * L'invalidité et l'inaptitude que la saisie déclare, telles que la
+   * chronologie les reçoit : l'âge où la `pension` d'invalidité a commencé,
+   * l'`inaptitude`, et la `radiation` pour invalidité d'un fonctionnaire — son
+   * âge, son imputabilité, son taux en pour cent. `null` quand rien n'est dit.
+   */
+  invaliditeDeclaree() {
+    if (this.invalidite === null && !this.inaptitude && this.radiation_invalidite === null) {
+      return null;
+    }
+    const radiation = this.radiation_invalidite === null ? null : {
+      age: this.radiation_invalidite,
+      imputable: this.invalidite_imputable,
+      taux: this.taux_invalidite,
+    };
+    return { pension: this.invalidite, inaptitude: this.inaptitude, radiation };
+  }
+
+  /**
+   * La pension d'invalidité commence dans la carrière, avant le départ ; la
+   * radiation pour invalidité d'un fonctionnaire tombe dans la carrière, au
+   * plus tard au départ ; son imputabilité et son taux ne servent qu'à elle.
+   * Voir `_verifier_invalidite` du Python.
+   */
+  verifierInvalidite() {
+    const precisions = [
+      ["invalidite_imputable", this.invalidite_imputable || null],
+      ["taux_invalidite", this.taux_invalidite],
+    ].filter(([, valeur]) => valeur !== null).map(([nom]) => nom);
+    if (this.radiation_invalidite === null && precisions.length > 0) {
+      throw new ErreurSaisie(
+        `« ${precisions[0]} » ne sert qu'à la retraite pour invalidité d'un `
+        + "fonctionnaire : dites aussi la date de sa radiation des cadres "
+        + "(« radiation_invalidite »).",
+      );
+    }
+    if (this.taux_invalidite !== null
+        && !(this.taux_invalidite >= 1 && this.taux_invalidite <= 100)) {
+      throw new ErreurSaisie("Taux d'invalidité : en pour cent, entre 1 et 100.");
+    }
+    const debut = this.dateDe(this.debut);
+    const depart = this.dateDe(this.liquidation, true);
+    if (this.invalidite !== null) {
+      const date = this.dateDe(this.invalidite);
+      if (date.rang <= debut.rang) {
+        throw new ErreurSaisie(
+          `Pension d'invalidité en ${date} : elle suit le début de la carrière, `
+          + `fixé en ${debut}.`,
+        );
+      }
+      if (date.rang >= depart.rang) {
+        throw new ErreurSaisie(
+          `Pension d'invalidité en ${date} : elle précède le départ à la retraite, `
+          + `fixé en ${depart}.`,
+        );
+      }
+    }
+    if (this.radiation_invalidite !== null) {
+      const date = this.dateDe(this.radiation_invalidite);
+      if (date.rang <= debut.rang) {
+        throw new ErreurSaisie(
+          `Radiation pour invalidité en ${date} : elle suit le début de la carrière, `
+          + `fixé en ${debut}.`,
+        );
+      }
+      if (date.rang > depart.rang) {
+        throw new ErreurSaisie(
+          `Radiation pour invalidité en ${date} : elle ne suit pas le départ à la `
+          + `retraite, fixé en ${depart}.`,
+        );
+      }
+    }
+  }
+
+  /**
    * Les pensions dont la saisie dit la date, telles que la chronologie les
    * reçoit : l'âge de chaque demande, par régime, dans l'ordre de leurs codes ;
    * `null` sans elles.
@@ -1709,6 +1806,14 @@ export class Saisie {
         : {}),
       ...Object.fromEntries(this.demandes.map(
         ([code, age_]) => [`${PREFIXE_DEMANDE}${code}`, this.moisDe(age_, true)])),
+      ...Object.fromEntries([
+        ["invalidite", this.invalidite === null ? null : this.moisDe(this.invalidite)],
+        ["inaptitude", this.inaptitude ? OUI : null],
+        ["radiation_invalidite", this.radiation_invalidite === null
+          ? null : this.moisDe(this.radiation_invalidite)],
+        ["invalidite_imputable", this.invalidite_imputable ? OUI : null],
+        ["taux_invalidite", this.taux_invalidite],
+      ].filter(([, valeur]) => valeur !== null)),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,
@@ -1890,6 +1995,22 @@ function versFlottant(texte) {
 
 export function estEntier(texte) {
   return /^\s*[+-]?\d+\s*$/.test(String(texte ?? ""));
+}
+
+/**
+ * Une case cochée : « oui », ou rien. Toute autre réponse se refuse, au lieu de
+ * valoir non en silence. Voir `_oui` du Python.
+ */
+export function oui(parametres, nom) {
+  const valeur = parametres[nom];
+  if (valeur === undefined || valeur === null || valeur === "") {
+    return false;
+  }
+  if (valeur !== OUI) {
+    throw new ErreurSaisie(`« ${nom} » : « ${valeur} » n'est pas une réponse possible `
+      + `— « ${OUI} », ou rien.`);
+  }
+  return true;
 }
 
 export function entier(parametres, nom, defaut) {
