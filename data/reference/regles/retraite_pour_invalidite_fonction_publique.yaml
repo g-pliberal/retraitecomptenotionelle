@@ -1,0 +1,247 @@
+schema_version: 1
+id: retraite_pour_invalidite_fonction_publique
+intitule: >-
+  Le fonctionnaire dans l'incapacité permanente de continuer ses fonctions, qui n'a pu
+  être reclassé, est radié des cadres pour invalidité et liquide sa pension à cette
+  date, à tout âge et sans condition de durée de services (L. 4, L. 24, L. 29 du code
+  des pensions ; articles 7, 30 et 39 du décret n° 2003-1306 pour la CNRACL) : sans
+  décote depuis qu'elle existe, au minimum garanti sans condition de taux plein,
+  portée à 50 % du traitement quand l'invalidité atteint 60 %, et augmentée d'une
+  rente viagère d'invalidité quand elle est imputable au service (L. 27, L. 28).
+domaine: age
+regimes: [fonction_publique_etat, cnracl, fspoeie]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la radiation des cadres pour invalidité, sa date, son imputabilité au service et le
+  taux d'invalidité
+- les services et bonifications, et le traitement des six derniers mois
+ecrit:
+- un départ de la fonction publique à la date de la radiation, de motif « invalidite »
+- la pension sans décote, le minimum garanti de l'invalidité, le plancher de L. 30 et la
+  rente viagère d'invalidité
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le droit
+# de l'invalide — jouissance immédiate, sans durée de services — ne change pas depuis
+# le code de 1964 ; changent la décote dont il est exempté, le minimum garanti qu'on
+# lui sert et la revalorisation.
+versions:
+- id: avant_1964
+  statut: supposee
+  hypothese: >-
+    le code des pensions civiles et militaires d'avant la loi n° 64-1339 n'est pas dans
+    l'index ; on lui prête les règles du code de 1964, dont la retraite pour invalidité
+    reprend l'économie
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1964-12-01]
+  contenu:
+    droit: la version code_1964
+    parametres:
+      jouissance: immediate
+      duree_de_services_minimale: 0
+      decote: sans_objet
+      minimum_garanti: tous_motifs
+      plancher_taux_invalidite: 0.60
+      plancher_part_du_traitement: 0.50
+  exemples: aucun trouvé
+- id: code_1964
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362667, article: "L. 4 CPCMR", en_vigueur: 1964-12-01}
+  - {id: LEGIARTI000006362725, article: "L. 24 CPCMR", en_vigueur: 1982-04-02}
+  - {id: LEGIARTI000006362741, article: "L. 27 CPCMR", en_vigueur: 1964-12-01}
+  - {id: LEGIARTI000006362742, article: "L. 27 CPCMR", en_vigueur: 1991-07-27}
+  - {id: LEGIARTI000006362743, article: "L. 28 CPCMR", en_vigueur: 1964-12-01}
+  - {id: LEGIARTI000006362744, article: "L. 28 CPCMR", en_vigueur: 2000-04-13}
+  - {id: LEGIARTI000006362746, article: "L. 29 CPCMR", en_vigueur: 1964-12-01}
+  - {id: LEGIARTI000006362747, article: "L. 29 CPCMR", en_vigueur: 1991-07-27}
+  - {id: LEGIARTI000006362748, article: "L. 30 CPCMR", en_vigueur: 1964-12-01}
+  - {id: LEGIARTI000006362749, article: "L. 30 CPCMR", en_vigueur: 2000-04-13}
+  - {id: LEGIARTI000006362711, article: "L. 17 CPCMR", en_vigueur: 1975-12-28}
+  nee_de: LEGIARTI000006362746
+  bornes:
+    liquidation.date_effet: [1964-12-01, 2004-01-01]
+  contenu:
+    droit: >-
+      « Le droit à la pension est acquis : [...] 2° Sans condition de durée de services
+      aux fonctionnaires radiés des cadres pour invalidité résultant ou non de
+      l'exercice des fonctions » (L. 4) ; « La jouissance de la pension civile est
+      immédiate : [...] 2° Pour les fonctionnaires civils mis à la retraite pour
+      invalidité » (L. 24) ; « Le fonctionnaire civil qui se trouve dans l'incapacité
+      permanente de continuer ses fonctions en raison d'une invalidité ne résultant pas
+      du service peut être radié des cadres par anticipation [...]. L'intéressé a droit
+      à la pension rémunérant les services » (L. 29)
+    plancher: >-
+      « Lorsque le fonctionnaire est atteint d'une invalidité d'un taux au moins égal à
+      60 %, le montant de la pension prévue aux articles L. 28 et L. 29 ne peut être
+      inférieur à 50 % des émoluments de base » (L. 30) ; le minimum garanti de L. 17,
+      servi à toute pension
+    rente: >-
+      au fonctionnaire dont l'invalidité résulte du service, « une rente viagère
+      d'invalidité cumulable avec la pension rémunérant les services » (L. 28), égale à
+      la fraction des émoluments de base « égale au pourcentage d'invalidité », la part
+      au-delà d'un seuil ne comptant que pour le tiers ; pension et rente ne peuvent
+      dépasser les émoluments de base
+    parametres:
+      jouissance: immediate
+      duree_de_services_minimale: 0
+      decote: sans_objet
+      minimum_garanti: tous_motifs
+      plancher_taux_invalidite: 0.60
+      plancher_part_du_traitement: 0.50
+      plafond_total: emoluments_de_base
+  exemples: aucun trouvé
+- id: reforme_2003
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362704, article: "L. 14 CPCMR", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362712, article: "L. 17 CPCMR", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362726, article: "L. 24 CPCMR", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362745, article: "L. 28 CPCMR", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400865, article: "décret n° 2003-1306, article 7", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400898, article: "décret n° 2003-1306, article 30", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400883, article: "décret n° 2003-1306, article 20", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400885, article: "décret n° 2003-1306, article 22", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400902, article: "décret n° 2003-1306, article 34", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400904, article: "décret n° 2003-1306, article 36", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400908, article: "décret n° 2003-1306, article 39", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006781471, article: "décret n° 2004-1056, article 3", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006781489, article: "décret n° 2004-1056, article 19", en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006362704
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2011-01-01]
+  contenu:
+    droit: >-
+      la version code_1964 ; la liquidation intervient « lorsque le fonctionnaire est
+      mis à la retraite pour invalidité et qu'il n'a pas pu être reclassé dans un emploi
+      compatible avec son état de santé » (L. 24, I, 2°)
+    decote: >-
+      « Le coefficient de minoration n'est pas applicable aux fonctionnaires handicapés
+      dont l'incapacité permanente est au moins égale à 80 % ou mis à la retraite pour
+      invalidité » (L. 14, I ; article 20 du décret de la CNRACL, « après avis de la
+      commission de réforme »)
+    minimum_garanti: >-
+      servi à toute pension, et « Lorsque la pension rémunère moins de quinze années de
+      services effectifs, à un quinzième du montant défini à l'alinéa précédent pour
+      cette durée de quinze ans, par année de services effectifs » (L. 17, c)
+    ouvriers_de_l_etat: >-
+      le droit « sans condition de durée de services aux agents se trouvant dans
+      l'impossibilité définitive et absolue d'assurer leur emploi » (article 3 du décret
+      n° 2004-1056) ; la pension au moins égale à la pension d'invalidité du régime
+      général quand l'invalidité n'est pas un accident du travail (article 19)
+    parametres:
+      jouissance: immediate
+      duree_de_services_minimale: 0
+      decote: exemptee
+      minimum_garanti: tous_motifs
+      minimum_garanti_sous_quinze_ans: quinzieme
+      plancher_taux_invalidite: 0.60
+      plancher_part_du_traitement: 0.50
+      plafond_total: emoluments_de_base
+  exemples: aucun trouvé
+- id: reforme_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023096809, article: "L. 4 CPCMR", en_vigueur: 2010-11-11}
+  - {id: LEGIARTI000023033916, article: "L. 17 CPCMR", en_vigueur: 2010-11-11}
+  - {id: LEGIARTI000048697797, article: "L. 17 CPCMR", en_vigueur: 2023-12-28}
+  - {id: LEGIARTI000048844775, article: "L. 14 CPCMR", en_vigueur: 2023-12-31}
+  - {id: LEGIARTI000047452804, article: "L. 24 CPCMR", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000038923379, article: "L. 27 CPCMR", en_vigueur: 2019-08-08}
+  - {id: LEGIARTI000042567436, article: "L. 28 CPCMR", en_vigueur: 2022-02-01}
+  - {id: LEGIARTI000028498334, article: "L. 29 CPCMR", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000038923366, article: "L. 29 CPCMR", en_vigueur: 2019-08-08}
+  - {id: LEGIARTI000028498350, article: "L. 30 CPCMR", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000028498346, article: "L. 30 bis CPCMR", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000028498340, article: "L. 30 ter CPCMR", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000023414028, article: "décret n° 2003-1306, article 7", en_vigueur: 2011-01-01}
+  - {id: LEGIARTI000049428950, article: "décret n° 2003-1306, article 30", en_vigueur: 2024-04-18}
+  - {id: LEGIARTI000050941662, article: "décret n° 2003-1306, article 22", en_vigueur: 2025-01-02}
+  - {id: LEGIARTI000030188623, article: "décret n° 2003-1306, article 34", en_vigueur: 2015-02-04}
+  - {id: LEGIARTI000029134970, article: "décret n° 2003-1306, article 36", en_vigueur: 2014-06-26}
+  - {id: LEGIARTI000045350834, article: "décret n° 2003-1306, article 37", en_vigueur: 2022-03-14}
+  - {id: LEGIARTI000029134983, article: "décret n° 2003-1306, article 39", en_vigueur: 2014-06-26}
+  - {id: LEGIARTI000051969283, article: "décret n° 2004-1056, article 3", en_vigueur: 2025-10-01}
+  nee_de: LEGIARTI000023096809
+  bornes:
+    liquidation.date_effet: [2011-01-01, null]
+  contenu:
+    droit: >-
+      la version reforme_2003 ; le droit à pension, acquis aux autres après deux ans de
+      services, l'est toujours « sans condition de durée de services aux fonctionnaires
+      radiés des cadres pour invalidité » (L. 4)
+    minimum_garanti: >-
+      dû au taux plein, ou « si la liquidation intervient soit pour les motifs prévus
+      aux 2° à 5° du I de l'article L. 24 », l'invalidité comprise ; sous quinze ans,
+      « Lorsque la pension liquidée au motif d'invalidité rémunère moins de quinze
+      années de services effectifs, à un quinzième du montant défini à l'alinéa
+      précédent [...] par année de services effectifs » (L. 17, c), quand toute autre
+      pension a le d, rapporté à la durée requise
+    revalorisation: >-
+      depuis le 22 janvier 2014, la pension de L. 27 et de L. 29 « est revalorisée dans
+      les conditions fixées à l'article L. 341-6 du code de la sécurité sociale », comme
+      une pension d'invalidité, et non comme les autres pensions (L. 16)
+    plafond: >-
+      « le montant total des prestations accordées au fonctionnaire invalide, à
+      l'exclusion des majorations prévues aux articles L. 18 et L. 30 bis, ne peut
+      excéder le montant du traitement mentionné à l'article L. 15 » (L. 30 ter) ; la
+      majoration pour tierce personne s'y ajoute (L. 30 bis)
+    parametres:
+      jouissance: immediate
+      duree_de_services_minimale: 0
+      decote: exemptee
+      minimum_garanti: invalidite_sans_taux_plein
+      minimum_garanti_sous_quinze_ans: quinzieme
+      plancher_taux_invalidite: 0.60
+      plancher_part_du_traitement: 0.50
+      plafond_total: traitement
+      revalorisation: pensions_d_invalidite_depuis_2014
+  exemples: aucun trouvé
+approximations: []
+sources:
+  lu_le: 2026-09-30
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
+    (docs/architecture.md, § 11), à la demande du propriétaire. Le moteur ne la calcule
+    pas encore : il lui faut la radiation pour invalidité dans la chronologie, son taux
+    et son imputabilité (étape 2 du domaine), puis le départ à cette date et les règles
+    de montant dans les deux moteurs (étape 3). Le c de L. 17 est déjà écrit
+    (`MinimumGaranti.montant` sans durée maximale), sans être servi à personne.
+  - >-
+    Non couverts : le militaire radié des cadres par suite d'infirmités (L. 24, II ;
+    L. 14, II ; L. 35), qui a aussi sa pension militaire d'invalidité, d'un autre code ;
+    le fonctionnaire qui ou dont le conjoint est atteint d'une infirmité incurable
+    (L. 24, I, 4°), départ anticipé particulier ; l'allocation temporaire d'invalidité
+    de l'agent maintenu en fonctions ; les régimes spéciaux, qui ont chacun leur pension
+    de réforme. À lire : le barème indicatif des taux d'invalidité, le seuil de l'indice
+    majoré 681 de la rente, et la rédaction de L. 30 ter de 2012 à 2014.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 4 (1964, 2010), L. 14 (2004 à 2023), L. 17 (1975, 2004, 2010, 2023), L. 24
+      (1982 à 2023), L. 27 (1964, 1991, 2014, 2019), L. 28 (1964 à 2022), L. 29 (1964,
+      1991, 2014, 2019), L. 30 (1964, 2000, 2012, 2014), L. 30 bis et L. 30 ter (2012,
+      2014), L. 31 (1964, 1980, 2022) CPCMR ; décret n° 2003-1306, articles 7, 20, 22,
+      30, 31, 34, 36, 37 et 39 ; décret n° 2004-1056, articles 3 et 19 ; dans l'index
+      LEGI du dépôt mis à jour au 30 septembre 2026
+    date: 2026-09-30
+textes_sans_effet:
+- {id: LEGIARTI000006362752, article: "L. 31 CPCMR", en_vigueur: 1964-12-01,
+   motif: "la procédure : la commission de réforme apprécie l'invalidité, le ministre décide"}
+- {id: LEGIARTI000006362753, article: "L. 31 CPCMR", en_vigueur: 1980-07-09,
+   motif: "la même procédure"}
+- {id: LEGIARTI000042567433, article: "L. 31 CPCMR", en_vigueur: 2022-02-01,
+   motif: "le conseil médical remplace la commission de réforme"}
+historique:
+- >-
+  2026-09-30 — née avec le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la
+  demande du propriétaire.
+effet: >-
+  Les fonctionnaires radiés des cadres pour invalidité, à tout âge. Le modèle ne les
+  connaît pas : il les fait partir à l'âge légal, décotés, et leur refuse le minimum
+  garanti de l'invalidité sous quinze ans de services.

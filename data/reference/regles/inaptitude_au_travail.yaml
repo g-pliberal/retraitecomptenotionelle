@@ -1,0 +1,234 @@
+schema_version: 1
+id: inaptitude_au_travail
+intitule: >-
+  L'assuré reconnu inapte au travail — qui ne peut poursuivre son emploi sans nuire
+  gravement à sa santé et dont l'incapacité de travail, définitive, atteint 50 % — a
+  le taux plein quelle que soit sa durée d'assurance, au régime général et dans les
+  régimes alignés : le taux de soixante-cinq ans dès soixante ans jusqu'au 31 mars
+  1983, le taux plein à l'âge légal ensuite, à soixante-deux ans depuis le
+  1er septembre 2023 quand l'âge légal monte ; l'allocation de solidarité aux personnes
+  âgées, au même âge au lieu de soixante-cinq ans. Les bénéficiaires de l'allocation
+  aux adultes handicapés, les ex-invalides et d'autres encore sont réputés inaptes.
+domaine: age
+regimes: [regime_general, msa_salaries, cancava, organic, rsi, assurances_sociales]
+etape: ouvrir_le_droit
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la reconnaissance de l'inaptitude au travail, ou ce qui la fait présumer (pension
+  d'invalidité substituée, allocation aux adultes handicapés, carte d'invalidité)
+- l'âge à la date d'effet de la pension, et la génération
+ecrit:
+- l'âge auquel le droit s'ouvre à l'inapte, et le motif de l'ouverture
+- le taux plein, sans condition de durée, que « liquider chaque régime » applique
+- l'âge d'ouverture de l'allocation de solidarité aux personnes âgées
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1).
+versions:
+- id: ordonnance_1945
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000333985, article: "ordonnance n° 45-2454 du 19 octobre 1945, articles 63 à 65",
+     publie_le: 1945-10-20}
+  nee_de: JORFTEXT000000333985
+  bornes:
+    liquidation.date_effet: [null, 1972-01-01]
+  contenu:
+    droit: >-
+      « Pour les assurés qui justifient d'au moins trente années d'assurance et qui
+      [...] sont reconnus inaptes au travail par la caisse d'assurance vieillesse, la
+      pension liquidée à un âge compris entre 60 et 65 ans est égale à 40 p. 100 du
+      salaire annuel de base » (article 64), quand elle vaut 20 % à soixante ans pour
+      les autres, majorés de 4 points par année d'ajournement (article 63) ; en deçà de
+      trente ans, « autant de trentièmes » (article 65)
+    parametres:
+      age: 60
+      taux: taux_de_soixante_cinq_ans
+  exemples: aucun trouvé
+- id: loi_boulin_1972
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006760672, article: "décret n° 45-0179, article 70-1", en_vigueur: 1973-01-01}
+  - {id: JORFTEXT000000508794, article: "loi n° 71-1132 du 31 décembre 1971 (loi Boulin)",
+     publie_le: 1972-01-05}
+  - {reference: "circulaire Cnav n° 2/72 du 31 janvier 1972, qui applique la loi au 1er janvier 1972",
+     en_vigueur: 1972-01-01}
+  nee_de: JORFTEXT000000508794
+  bornes:
+    liquidation.date_effet: [1972-01-01, 1983-04-01]
+  contenu:
+    droit: >-
+      « Pour les assurés justifiant d'au moins trente-sept années et demie d'assurance
+      (soit 150 trimestres) qui sont reconnus inaptes au travail par la caisse chargée
+      de la gestion du risque vieillesse [...], la pension liquidée à un âge compris
+      entre soixante ans et soixante-cinq ans est égale à 50 p. 100 du salaire de
+      base » (article 70-1) : le taux de soixante-cinq ans, quand les autres ont 25 %
+      à soixante ans, majorés de 5 points par année d'ajournement ; la pension se
+      réduit, comme toute autre, à la durée (fiche decote_avant_1983)
+    parametres:
+      age: 60
+      taux: taux_de_soixante_cinq_ans
+  exemples: aucun trouvé
+- id: taux_plein_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742675, article: "L. 351-7 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742632, article: "L. 351-8 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742633, article: "L. 351-8 CSS", en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749360, article: "R. 351-21 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006753508, article: "R. 815-1 CSS", en_vigueur: 2007-01-13}
+  - {id: JORFTEXT000000888522, article: "ordonnance n° 82-270 du 26 mars 1982", publie_le: 1982-03-28}
+  nee_de: JORFTEXT000000888522
+  bornes:
+    liquidation.date_effet: [1983-04-01, 2011-07-01]
+  contenu:
+    droit: >-
+      « Bénéficient du taux plein même s'ils ne justifient pas de la durée requise
+      d'assurance [...] : [...] 2°) les assurés reconnus inaptes au travail dans les
+      conditions prévues à l'article L. 351-7 » (L. 351-8) ; « Peut être reconnu inapte
+      au travail, l'assuré qui n'est pas en mesure de poursuivre l'exercice de son
+      emploi sans nuire gravement à sa santé et qui se trouve définitivement atteint
+      d'une incapacité de travail médicalement constatée » (L. 351-7), dont le taux
+      « est fixé à 50 % » (R. 351-21). La pension se proratise à la durée, comme toute
+      autre (L. 351-1), et le minimum contributif la relève (L. 351-10)
+    reputes_inaptes: >-
+      les bénéficiaires de l'allocation aux adultes handicapés, « réputés inaptes au
+      travail à l'âge minimum auquel s'ouvre le droit à pension de vieillesse »
+      (L. 821-1) ; les ex-invalides (fiche pension_d_invalidite_substituee)
+    aspa: >-
+      l'âge de l'allocation « est fixé à soixante-cinq ans. Il est abaissé à soixante
+      ans pour les personnes mentionnées aux 2° à 5° de l'article L. 351-8 » (R. 815-1)
+    parametres:
+      age: 60
+      taux: taux_plein
+      age_aspa: 60
+  exemples: aucun trouvé
+- id: age_legal_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023030950, article: "L. 351-8 CSS", en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000028498855, article: "L. 351-8 CSS", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000024113113, article: "R. 815-1 CSS", en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000030058891, article: "R. 815-1 CSS", en_vigueur: 2015-01-01}
+  nee_de: LEGIARTI000023030950
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2023-09-01]
+  contenu:
+    droit: >-
+      la version taux_plein_1983, à l'âge de L. 161-17-2 que la loi du 9 novembre 2010
+      fait monter de soixante à soixante-deux ans (1951 à 1955) : l'inapte n'a le taux
+      plein qu'à l'âge légal de sa génération ; l'allocation, au même âge (R. 815-1)
+    parametres:
+      age: age_legal_par_generation
+      taux: taux_plein
+      age_aspa: age_legal_par_generation
+  exemples: aucun trouvé
+- id: soixante_deux_ans_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047449233, article: "L. 351-1-5 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047634688, article: "D. 351-1-14 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053355951, article: "D. 351-1-14 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000047452736, article: "L. 351-8 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000051289852, article: "L. 351-8 CSS", en_vigueur: 2025-02-28}
+  - {id: LEGIARTI000047633276, article: "R. 815-1 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047453128, article: "L. 351-7-1 A CSS", en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000047449233
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      « La condition d'âge prévue au premier alinéa de l'article L. 351-1 est abaissée
+      [...] pour les assurés reconnus inaptes au travail dans les conditions prévues à
+      l'article L. 351-7 » (L. 351-1-5), « à soixante-deux ans » (D. 351-1-14), quand
+      l'âge légal monte à soixante-quatre ans ; le taux plein reste acquis « quelle que
+      soit la durée d'assurance » (L. 351-8, 2°). La date d'effet se choisit comme
+      toute autre, sans limite d'âge : « il n'y a pas d'âge limite [pour] l'obtention
+      d'une retraite à titre inapte » (circulaire Cnav n° 2024-26, 2.2)
+    reputes_inaptes: >-
+      la même liste, et les assurés justifiant d'une incapacité permanente d'au moins
+      50 % (D. 351-1-14) ; la pension du bénéficiaire de l'allocation aux adultes
+      handicapés « est liquidée à la date à laquelle celui-ci atteint l'âge prévu à
+      l'article L. 351-1-5, sauf s'il s'y oppose » (L. 351-7-1 A)
+    parametres:
+      age: 62
+      taux: taux_plein
+      age_aspa: 62
+  exemples: aucun trouvé
+approximations: []
+sources:
+  lu_le: 2026-09-30
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
+    (docs/architecture.md, § 11), à la demande du propriétaire. Le moteur ne la calcule
+    pas encore : il lui faut l'inaptitude dans la chronologie (étape 2 du domaine), puis
+    l'âge, le taux plein et l'allocation aux personnes âgées dans les deux moteurs
+    (étape 3).
+  - >-
+    À lire : l'article L. 332 du code de 1956, que la loi n° 71-1132 réécrit, et la
+    rédaction de l'article 70-1 du décret de 1945 applicable en 1972, que l'index ne
+    porte qu'à compter du 1er janvier 1973 ; l'article de la loi n° 2010-1330 qui fait
+    suivre l'âge légal aux inaptes ; les règles propres aux exploitants agricoles
+    (L. 732-23 du code rural), aux professions libérales, aux avocats et aux régimes
+    spéciaux, que la fiche ne couvre pas ; l'inaptitude des régimes des assurances
+    sociales d'avant 1945.
+  - >-
+    Un contrôle négatif du 20 septembre 2026 (journal de veille) disait qu'« L. 351-7
+    CSS [...] N'EXISTE PAS dans le code de la sécurité sociale — la référence exacte
+    est L. 351-8 1° bis ». C'était faux : l'index LEGI porte L. 351-7 au code de la
+    sécurité sociale depuis 1985 (LEGIARTI000006742675), et l'inaptitude est au 2° de
+    L. 351-8, le 1° bis étant l'aidant familial à soixante-cinq ans. La requête
+    `--num L351-7` rendait d'abord les articles homonymes du code de la construction ;
+    la fiche et l'inventaire des avantages citent désormais les bons articles.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 351-7 (1985), L. 351-8 (1985, 2003, 2011, 2014, 2023, 2025), R. 351-21 (1985),
+      R. 351-22 (1985, 2001), L. 351-1-5 (2023), D. 351-1-14 (2023, 2026), R. 815-1
+      (2007, 2011, 2015, 2023), L. 821-1 (1998 à 2026), L. 351-7-1 A (2020, 2023) CSS ;
+      décret n° 45-0179, article 70-1 (1973), dans l'index LEGI du dépôt mis à jour au
+      30 septembre 2026
+    date: 2026-09-30
+  - type: autre
+    reference: >-
+      ordonnance n° 45-2454 du 19 octobre 1945, articles 63 à 65, lue dans la base
+      législative de la Cnav (ORD_452454_19101945)
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=ORD_452454_19101945.aspx
+    date: 2026-09-30
+  - type: autre
+    reference: >-
+      circulaire Cnav n° 2024-26 du 2 août 2024, « La retraite anticipée au titre de
+      l'inaptitude au travail à compter du 1er septembre 2023 », qui remplace pour
+      partie la n° 2023-22 : la reconnaissance médicale et la présomption d'inaptitude
+      (ex-invalides, bénéficiaires de l'AAH, de l'ASI, de la carte d'invalidité,
+      incapacité permanente d'au moins 50 %...) ; la retraite « au taux maximum de 50 %,
+      quelle que soit la durée d'assurance », portée au minimum contributif ; la date
+      d'effet de droit commun, sans âge limite ; l'Aspa « à compter de 62 ans » ; la
+      retraite complémentaire des indépendants sans abattement à la même date
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_26_02082024.pdf
+    date: 2026-09-30
+  - type: service_public
+    reference: >-
+      fiche F14044, « Pension de retraite à taux plein », vérifiée le 14 août 2026 :
+      « Vous avez droit à une retraite à taux plein à partir de 62 ans si vous êtes
+      reconnu inapte au travail »
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F14044
+    date: 2026-09-30
+textes_sans_effet:
+- {id: LEGIARTI000006749361, article: "R. 351-22 CSS", en_vigueur: 1985-12-21,
+   motif: "la procédure de la reconnaissance : rapport médical, fiche du médecin du travail"}
+- {id: LEGIARTI000006749362, article: "R. 351-22 CSS", en_vigueur: 2001-06-22,
+   motif: "la même procédure, et le silence de quatre mois qui vaut rejet"}
+historique:
+- >-
+  2026-09-30 — née avec le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la
+  demande du propriétaire ; de la fiche inaptitude_invalidite_penibilite_amiante, qui
+  la portait sans versions et sous un article qui n'était pas le sien.
+effet: >-
+  Les retraités partis au taux plein pour inaptitude : 1,36 million fin 2016 (DREES,
+  EIR), et avec les ex-invalides 19 % des nouveaux retraités du régime général en 2024
+  (COR). Le modèle ne connaît pas l'inaptitude : il les décote s'ils n'ont pas la
+  durée, et leur refuse le départ à soixante-deux ans quand l'âge légal est plus haut.

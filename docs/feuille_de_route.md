@@ -3132,6 +3132,66 @@ publiés à chercher. Le domaine suivant se mesurera à son ouverture :
 l'invalidité et l'inaptitude, que le propriétaire avait fait passer après
 celui-ci, viennent en tête.
 
+**Le quatrième domaine, l'invalidité et l'inaptitude, ouvert le 30 septembre
+2026** (§ 11), à la demande du propriétaire : « Je veux qu'on traite
+l'invalidité et l'inaptitude. » Il n'a pas été remesuré : la mesure du
+28 septembre le plaçait déjà en tête des domaines restants — 2,26 millions de
+retraités partis au taux plein à ce titre fin 2016, 0,90 pour invalidité et
+1,36 pour inaptitude (DREES, EIR 2016), 19 % des nouveaux retraités du
+régime général en 2024 (COR). Le modèle compte les années d'invalidité en
+trimestres assimilés et en points gratuits, et rien d'autre : l'invalide et
+l'inapte y sont décotés faute de durée, l'inapte de la génération 1968 ne
+peut partir à soixante-deux ans, et le fonctionnaire radié pour invalidité
+part à l'âge légal. Son gabarit (§ 11), en cinq étapes :
+1. les fiches, lues ce jour (ci-dessous) ;
+2. les faits de la chronologie : la pension d'invalidité et le régime qui la
+   sert, l'inaptitude reconnue ou présumée, la radiation pour invalidité du
+   fonctionnaire, son taux et son imputabilité ; la saisie qui les lit ;
+3. les fonctions dans l'étape, dans les deux moteurs : le départ induit à
+   l'âge de la substitution, le taux plein de l'inapte et de l'ex-invalide, le
+   départ du fonctionnaire à sa radiation, sans décote, au minimum garanti de
+   l'invalidité, au plancher de L. 30 et avec sa rente ; le plancher de
+   l'AVTS ; l'ASPA à soixante-deux ans ; les témoins, et la page ;
+4. les exemples publiés ;
+5. le bloc du formulaire, la page Coût, la décision de la proposition, la
+   référence de conservation refigée.
+
+**Première étape, le 30 septembre : les textes lus, trois fiches nouvelles.**
+Lus dans les index LEGI et JORF du jour et dans la base de la Cnav (journal
+de veille) : la pension d'invalidité et sa substitution (L. 341-15 à
+L. 341-17, R. 341-22, D. 341-1, l'article 62 de l'ordonnance de 1945, les
+circulaires n° 2018-18 et 2023-25), l'inaptitude (L. 351-7, L. 351-8,
+R. 351-21, L. 351-1-5, D. 351-1-14, R. 815-1, L. 821-1, les articles 63 à 65
+de l'ordonnance de 1945, l'article 70-1 du décret de 1945, les circulaires
+n° 2023-22 et 2024-26), la retraite pour invalidité des fonctionnaires
+(L. 4, L. 14, L. 17, L. 24, L. 27 à L. 30 ter du code des pensions, le décret
+de la CNRACL et celui des ouvriers de l'État). Ce qu'ils disent est rangé en
+fiches, `pas_encore_modelisee` toutes trois :
+- `pension_d_invalidite_substituee`, en six versions : la substitution à
+  soixante ans et le plancher de la pension d'invalidité depuis 1945 ; le
+  plancher de l'AVTS pour les invalidités nées depuis le 31 mai 1983 ;
+  l'invalide qui travaille, qui garde sa pension d'invalidité jusqu'à sa
+  demande depuis mars 2010 ; l'âge légal en 2011 ; le demandeur d'emploi, six
+  mois de plus, en 2017 ; soixante-deux ans en 2023 ;
+- `inaptitude_au_travail`, en cinq : le taux de soixante-cinq ans dès
+  soixante ans en 1945, puis sous la loi Boulin ; le taux plein sans durée en
+  1983 ; l'âge légal en 2011 ; soixante-deux ans en 2023, et l'ASPA au même
+  âge ; les réputés inaptes, dont les bénéficiaires de l'AAH ;
+- `retraite_pour_invalidite_fonction_publique`, en quatre : la jouissance
+  immédiate sans durée de services, le plancher de L. 30 et la rente de
+  L. 28, puis l'exemption de décote en 2004 et le minimum garanti de
+  l'invalidité en 2011.
+
+La fiche `inaptitude_invalidite_penibilite_amiante`, qui les portait sans
+versions, garde son identifiant et les départs anticipés particuliers :
+l'incapacité permanente, le compte professionnel de prévention, l'amiante.
+Elle citait « L. 351-8 1° bis » pour l'inaptitude, et un contrôle de la veille
+du 20 septembre disait qu'« L. 351-7 [...] N'EXISTE PAS » au code de la
+sécurité sociale : les deux étaient faux, la requête rendant d'abord les
+articles homonymes du code de la construction. L'inventaire des avantages
+cite désormais L. 351-7, L. 351-8, 2°, L. 341-15 et L. 29 du code des
+pensions, et renvoie aux trois fiches. Aucun résultat ne bouge.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

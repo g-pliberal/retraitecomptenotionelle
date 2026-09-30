@@ -1,0 +1,274 @@
+schema_version: 1
+id: pension_d_invalidite_substituee
+intitule: >-
+  La pension d'invalidité du régime général et des régimes alignés prend fin à l'âge
+  légal — soixante ans jusqu'en 2011, l'âge de L. 161-17-2 ensuite, soixante-deux ans
+  depuis le 1er septembre 2023 — et la pension de vieillesse allouée en cas
+  d'inaptitude au travail la remplace d'office, au premier jour du mois qui suit :
+  taux plein quelle que soit la durée, et un plancher, la pension d'invalidité d'avant
+  le 31 mai 1983 ou l'allocation aux vieux travailleurs salariés. L'invalide qui
+  travaille garde depuis 2010 sa pension d'invalidité jusqu'à sa demande, au plus tard
+  à l'âge du taux plein automatique, et sa retraite ne peut être inférieure à celle
+  de la substitution.
+domaine: age
+regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+etape: echeancier
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la pension d'invalidité de l'assuré, sa date d'effet et le régime qui la sert
+- l'activité exercée à l'âge légal, et la demande de retraite de l'invalide qui travaille
+- l'indemnisation du chômage à l'âge légal, et l'activité des six mois qui le précèdent
+ecrit:
+- un départ induit du régime général et des régimes alignés, au premier jour du mois qui
+  suit l'âge, de motif « invalidite », liquidé au taux plein
+- le plancher de la pension substituée, que l'étape « compléter tous régimes » applique
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension substituée
+# (§ 4.1). La substitution elle-même ne change pas depuis 1945 ; changent l'âge
+# où elle se fait, son plancher, et ce que peut l'invalide qui travaille.
+versions:
+- id: ordonnance_1945
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000333985, article: "ordonnance n° 45-2454 du 19 octobre 1945, article 62",
+     publie_le: 1945-10-20}
+  nee_de: JORFTEXT000000333985
+  bornes:
+    liquidation.date_effet: [null, 1983-06-01]
+  contenu:
+    droit: >-
+      « La pension d'invalidité prend fin à l'âge de 60 ans. Elle est remplacée, à
+      partir de cet âge, par la pension de vieillesse allouée en cas d'inaptitude au
+      travail. Toutefois, la pension de vieillesse ne peut en aucun cas, être inférieure
+      à la pension d'invalidité dont bénéficie l'invalide à l'âge de soixante ans »
+      (article 62) ; la pension de vieillesse de l'inapte, c'est le taux de soixante-cinq
+      ans dès soixante ans (fiche inaptitude_au_travail)
+    plancher: la pension d'invalidité servie à soixante ans
+    parametres:
+      age: 60
+      plancher: pension_d_invalidite
+      invalide_qui_travaille: aucune_derogation
+  exemples: aucun trouvé
+- id: plancher_avts_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742610, article: "L. 341-15 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742611, article: "L. 341-15 CSS", en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000019959677, article: "L. 341-15 CSS", en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000006742612, article: "L. 341-16 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742613, article: "L. 341-16 CSS", en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749330, article: "R. 341-22 CSS", en_vigueur: 1985-12-21}
+  - {id: JORFTEXT000000504456, article: "loi n° 83-430 du 31 mai 1983", publie_le: 1983-06-01}
+  nee_de: JORFTEXT000000504456
+  bornes:
+    liquidation.date_effet: [1983-06-01, 2010-03-01]
+  contenu:
+    droit: >-
+      « La pension d'invalidité prend fin à l'âge minimum auquel s'ouvre le droit à
+      pension de vieillesse. Elle est remplacée à partir de cet âge par la pension de
+      vieillesse allouée en cas d'inaptitude au travail. La pension de vieillesse
+      substituée à une pension d'invalidité ne peut être inférieure au montant de
+      l'allocation aux vieux travailleurs salariés » (L. 341-15) ; l'entrée en
+      jouissance est « fixée au premier jour du mois suivant le soixantième anniversaire
+      du pensionné » (R. 341-22)
+    plancher: >-
+      l'allocation aux vieux travailleurs salariés ; « les titulaires d'une pension
+      d'invalidité liquidée avant le 31 mai 1983 peuvent prétendre à une pension de
+      vieillesse qui ne peut être inférieure à la pension d'invalidité dont bénéficiait
+      l'invalide à cet âge »
+    invalide_qui_travaille: >-
+      la pension substituée « n'est concédée que si l'assuré n'y fait pas opposition » ;
+      qui s'y oppose voit ses droits « ultérieurement liquidés, lorsqu'il en fait la
+      demande, dans les conditions prévues aux articles L. 351-1 et L. 351-8 », sans
+      pouvoir recevoir moins que la pension substituée (L. 341-16)
+    parametres:
+      age: 60
+      plancher: avts
+      plancher_invalidite_avant: 1983-05-31
+      invalide_qui_travaille: opposition
+  exemples: aucun trouvé
+- id: invalide_qui_travaille_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000021537943, article: "L. 341-16 CSS", en_vigueur: 2010-03-01}
+  nee_de: LEGIARTI000021537943
+  bornes:
+    liquidation.date_effet: [2010-03-01, 2011-07-01]
+  contenu:
+    droit: la version plancher_avts_1983, hors l'invalide qui travaille
+    invalide_qui_travaille: >-
+      « la pension de vieillesse allouée au titre de l'inaptitude au travail n'est
+      concédée que si l'assuré en fait expressément la demande. L'assuré qui exerce une
+      activité professionnelle et qui, à l'âge prévu au premier alinéa de l'article
+      L. 351-1, ne demande pas l'attribution de la pension de vieillesse substituée
+      continue de bénéficier de sa pension d'invalidité jusqu'à la date pour laquelle il
+      demande le bénéfice de sa pension de retraite et au plus tard jusqu'à l'âge
+      mentionné au 1° de l'article L. 351-8 » ; sa retraite, au titre de l'inaptitude
+      (lettre ministérielle du 4 octobre 2010, point 61), « ne peut pas être inférieure
+      à celle dont il serait bénéficiaire si la liquidation de ses droits avait été
+      effectuée dans les conditions fixées à l'article L. 341-15 »
+    parametres:
+      age: 60
+      plancher: avts
+      plancher_invalidite_avant: 1983-05-31
+      invalide_qui_travaille: maintien_jusqu_a_la_demande
+      maintien_au_plus_tard: age_annulation_decote
+  exemples: aucun trouvé
+- id: age_legal_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000024112993, article: "R. 341-22 CSS", en_vigueur: 2011-06-03}
+  nee_de: LEGIARTI000024112993
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2017-09-01]
+  contenu:
+    droit: >-
+      la version invalide_qui_travaille_2010, à l'âge de L. 161-17-2 : l'entrée en
+      jouissance « au premier jour du mois suivant la date à laquelle le pensionné
+      atteint l'âge prévu à l'article L. 161-17-2 » (R. 341-22), soixante ans et
+      quatre mois pour les nés du second semestre 1951, jusqu'à soixante-deux ans pour
+      les nés depuis 1955
+    parametres:
+      age: age_legal_par_generation
+      plancher: avts
+      plancher_invalidite_avant: 1983-05-31
+      invalide_qui_travaille: maintien_jusqu_a_la_demande
+      maintien_au_plus_tard: age_annulation_decote
+  exemples: aucun trouvé
+- id: demandeurs_d_emploi_2017
+  statut: lue
+  textes:
+  - {id: LEGIARTI000033689553, article: "L. 341-17 CSS", en_vigueur: 2016-12-25}
+  - {id: LEGIARTI000034736797, article: "D. 341-1 CSS", en_vigueur: 2017-09-01}
+  - {id: LEGIARTI000041398892, article: "L. 341-16 CSS", en_vigueur: 2020-01-01}
+  nee_de: LEGIARTI000034736797
+  bornes:
+    liquidation.date_effet: [2017-09-01, 2023-09-01]
+  contenu:
+    droit: la version age_legal_2011
+    demandeur_d_emploi: >-
+      l'invalide qui travaillait six mois avant l'âge légal et « bénéficie du revenu de
+      remplacement mentionné à l'article L. 5421-2 du code du travail » garde sa pension
+      d'invalidité « au plus tard jusqu'à l'âge prévu au premier alinéa de l'article
+      L. 351-1 augmenté de six mois » (D. 341-1), puis la pension de vieillesse la
+      remplace au premier jour du mois suivant (circulaire Cnav n° 2018-18, 2.2.2.1)
+    parametres:
+      age: age_legal_par_generation
+      plancher: avts
+      plancher_invalidite_avant: 1983-05-31
+      invalide_qui_travaille: maintien_jusqu_a_la_demande
+      maintien_au_plus_tard: age_annulation_decote
+      maintien_du_demandeur_d_emploi_mois: 6
+  exemples: aucun trouvé
+- id: soixante_deux_ans_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047453137, article: "L. 341-15 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047453121, article: "L. 341-16 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047453130, article: "L. 341-17 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047633241, article: "R. 341-22 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047634682, article: "D. 341-1 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047449233, article: "L. 351-1-5 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047634707, article: "D. 634-10 CSS", en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000047453137
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      « La pension d'invalidité prend fin à l'âge prévu à l'article L. 351-1-5 », soit
+      soixante-deux ans (D. 351-1-14), quand l'âge légal monte à soixante-quatre ;
+      l'entrée en jouissance « au premier jour du mois suivant la date à laquelle le
+      pensionné atteint l'âge prévu à l'article L. 351-1-5 » (R. 341-22), « quelle que
+      soit la date de dépôt effective de la demande » (circulaire Cnav n° 2023-25, 1.5).
+      La pension d'invalidité des travailleurs indépendants, d'incapacité partielle au
+      métier ou d'invalidité totale et définitive, est remplacée au même âge (D. 634-10)
+    invalide_qui_travaille: >-
+      la version invalide_qui_travaille_2010, au même âge ; ses droits sont liquidés
+      « dans les conditions prévues aux articles L. 351-1, à l'exclusion de son premier
+      alinéa, et L. 351-8 » ; en cas de seconde pension, la demande est celle de la
+      première liquidation (L. 341-16)
+    parametres:
+      age: 62
+      plancher: avts
+      plancher_invalidite_avant: 1983-05-31
+      invalide_qui_travaille: maintien_jusqu_a_la_demande
+      maintien_au_plus_tard: age_annulation_decote
+      maintien_du_demandeur_d_emploi_mois: 6
+  exemples: aucun trouvé
+approximations: []
+sources:
+  lu_le: 2026-09-30
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
+    (docs/architecture.md, § 11), à la demande du propriétaire. Le moteur ne la calcule
+    pas encore : il lui faut la pension d'invalidité dans la chronologie (étape 2 du
+    domaine), puis le départ induit à l'âge et son plancher (étape 3).
+  - >-
+    À lire : l'article du code de 1956 qui reprend l'article 62 de l'ordonnance de 1945
+    jusqu'à la recodification de 1985, et la loi n° 83-430 du 31 mai 1983 elle-même,
+    dont l'index ne porte que les titres ; les règles des salariés agricoles (code
+    rural), qui suivent le régime général par renvoi ; le règlement d'invalidité des
+    travailleurs indépendants de 2023 (article 29), qui sert un complément différentiel
+    jusqu'à leur pension d'invalidité.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 341-15 (1985, 2003, 2008, 2023), L. 341-16 (1985, 2003, 2010, 2020, 2023),
+      L. 341-17 (2016, 2023), R. 341-22 (1985, 2011, 2023), D. 341-1 (1986, 2017, 2023),
+      L. 351-1-5 (2023) et D. 634-10 (1990, 2011, 2020, 2023) CSS, dans l'index LEGI du
+      dépôt mis à jour au 30 septembre 2026
+    date: 2026-09-30
+  - type: autre
+    reference: >-
+      ordonnance n° 45-2454 du 19 octobre 1945, articles 62 à 65, lue dans la base
+      législative de la Cnav (ORD_452454_19101945), l'index JORF n'en portant que le titre
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=ORD_452454_19101945.aspx
+    date: 2026-09-30
+  - type: autre
+    reference: >-
+      circulaire Cnav n° 2018-18 du 1er août 2018, « Passage à la retraite des assurés
+      titulaires d'une pension d'invalidité » : substitution au premier jour du mois qui
+      suit l'âge légal, « quelle que soit la date de dépôt de la demande » ; retraite «
+      calculée au taux maximum de 50 %, quelle que soit la durée d'assurance », portée
+      au minimum contributif, puis comparée à l'AVTS ou à la pension d'invalidité
+      d'avant le 31 mai 1983 ; l'invalide qui travaille, sa retraite au titre de
+      l'inaptitude à sa demande, comparée à celle de l'âge légal revalorisée ; le
+      demandeur d'emploi, six mois de plus
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2018_18_01082018.pdf
+    date: 2026-09-30
+  - type: autre
+    reference: >-
+      circulaire Cnav n° 2023-25 du 28 novembre 2023, « Passage à la retraite des
+      assurés bénéficiaires d'une pension d'invalidité à compter du 1er septembre
+      2023 » : la substitution à soixante-deux ans ; « si la pension d'invalidité avait
+      été supprimée pour raisons médicales, l'assuré n'est plus considéré comme
+      ex-invalide » ; au-delà de l'âge du taux plein automatique, la demande n'est plus
+      celle d'un ex-invalide
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2023_25_28112023.pdf
+    date: 2026-09-30
+  - type: service_public
+    reference: >-
+      fiche F672, « Pension d'invalidité de la Sécurité sociale », vérifiée le 1er avril
+      2026 : « L'âge légal de départ à la retraite pour inaptitude est de 62 ans. Vous
+      percevez alors une pension de retraite à partir du 1er jour du mois qui suit celui
+      au cours duquel vous avez atteint l'âge légal » ; qui travaille garde sa pension
+      d'invalidité « après 62 ans et jusqu'à 67 ans »
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F672
+    date: 2026-09-30
+textes_sans_effet:
+- {id: LEGIARTI000006736513, article: "D. 341-1 CSS", en_vigueur: 1986-01-29,
+   motif: "le contrôle trimestriel des droits des invalides, sans effet sur la pension substituée"}
+historique:
+- >-
+  2026-09-30 — née avec le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la
+  demande du propriétaire ; de la fiche inaptitude_invalidite_penibilite_amiante, qui
+  la portait sans versions.
+effet: >-
+  Les titulaires d'une pension d'invalidité à l'âge légal : 0,90 million de retraités
+  partis au taux plein à ce titre fin 2016 (DREES, EIR). Le modèle compte leurs années
+  d'invalidité en trimestres assimilés, mais ne les fait pas partir à l'âge de la
+  substitution, et les décote s'ils n'ont pas la durée.

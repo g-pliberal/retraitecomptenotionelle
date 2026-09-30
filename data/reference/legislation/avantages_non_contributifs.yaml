@@ -1226,8 +1226,9 @@ avantages:
       Le taux plein est acquis à l'âge légal, sans condition de durée, à
       l'assuré reconnu inapte au travail ou titulaire d'une pension
       d'invalidité. C'est la suppression pure et simple de la décote.
-    base_legale: [L. 351-8 1° bis CSS]
-    fiches: [inaptitude_invalidite_penibilite_amiante]
+    base_legale: [L. 351-7 CSS, L. 351-8 2° CSS, L. 341-15 CSS, L. 29 CPCMR]
+    fiches: [inaptitude_au_travail, pension_d_invalidite_substituee,
+      retraite_pour_invalidite_fonction_publique]
     creation: 1945
     fin: null
     regimes: régime général, régimes alignés

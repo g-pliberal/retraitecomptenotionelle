@@ -1,8 +1,10 @@
 schema_version: 1
 id: inaptitude_invalidite_penibilite_amiante
 intitule: >-
-  Taux plein à l'âge légal pour inaptitude ou invalidité, départ anticipé pour incapacité
-  permanente, compte professionnel de prévention, amiante.
+  Départ anticipé pour incapacité permanente d'origine professionnelle, compte
+  professionnel de prévention, cessation anticipée des travailleurs de l'amiante :
+  l'inaptitude et l'invalidité, que la fiche portait aussi, ont leurs fiches depuis le
+  30 septembre 2026.
 etat: pas_encore_modelisee
 effet: Assurés concernés déclarés non ouverts ou décotés à tort.
 sources:
@@ -10,5 +12,13 @@ sources:
   prochaine_relecture: 2027-09-30
 textes_a_rattacher:
 - reference: L. 351-1-4 CSS
-- reference: L. 351-8 1° bis et 6° CSS
 - reference: L. 4163-1 code du travail
+historique:
+- >-
+  2026-09-30 — l'inaptitude et l'invalidité la quittent pour trois fiches, nées avec le
+  quatrième domaine : inaptitude_au_travail, pension_d_invalidite_substituee et
+  retraite_pour_invalidite_fonction_publique. Elle ne garde que les départs anticipés
+  particuliers qu'elle nommait aussi, et garde son identifiant. Son texte à rattacher
+  « L. 351-8 1° bis et 6° CSS » est retiré : le 1° bis est l'aidant familial à
+  soixante-cinq ans, le 6° l'enfant handicapé ; l'inaptitude est au 2°, et L. 351-7 la
+  définit (fiche inaptitude_au_travail).

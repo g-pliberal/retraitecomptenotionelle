@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.27, du 30 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.28, du 30 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -1620,7 +1620,8 @@ manquantes n'ont pas de mesure publique (feuille de route, action 130). Le
 troisième domaine, les départs multiples et la vie après le départ, a été
 ouvert le 29 septembre 2026 à la demande du propriétaire, devant
 l'invalidité, et clos le 30 septembre, la décision de la proposition restant
-au propriétaire.
+au propriétaire. Le quatrième, l'invalidité et l'inaptitude, a été ouvert le
+30 septembre 2026, à la demande du propriétaire.
 
 ---
 
@@ -2430,6 +2431,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.28**, 30 septembre 2026 : le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la demande du propriétaire (§ 11) ; ses trois fiches sont lues et découpées en versions, que le moteur ne lit pas encore.
 
 - **5.27**, 30 septembre 2026 : le troisième domaine, les départs multiples et la vie après le départ, clos (§ 11). Sept fiches le portent, découpées en versions ; cinq exemples publiés le rejouent ; le formulaire le demande dans un bloc facultatif ; la page Coût ne bouge pas de son fait ; la décision de la proposition reste au propriétaire, les systèmes 2 à 6 liquidant en attendant leur compte au départ déclaré ; la référence de conservation est refigée (§ 12).
 

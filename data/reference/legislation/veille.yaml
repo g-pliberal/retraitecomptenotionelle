@@ -3799,3 +3799,44 @@ journal:
       nouvelle pension, le décret du seuil de 2027, le cumul des avocats et des
       exploitants agricoles, un exemple publié de retraite progressive et de départs
       échelonnés.
+
+  - date: "2026-09-30"
+    session: >-
+      l'ouverture du quatrième domaine, l'invalidité et l'inaptitude, à la demande du
+      propriétaire : les textes lus, trois fiches nouvelles
+    consulte: >-
+      `python scripts/veille_droit.py` ; les index JORF et LEGI du dépôt, mis à jour de
+      leurs incréments jusqu'au 30 septembre 2026 au soir : aucun texte de retraite paru
+      depuis la veille précédente. Lus dans l'index LEGI : L. 341-15, L. 341-16, L. 341-17,
+      R. 341-22 et D. 341-1 dans toutes leurs rédactions depuis 1985 ; L. 351-7, L. 351-8
+      (1985 à 2025), R. 351-21, R. 351-22, L. 351-1-5, D. 351-1-14 (2023 et 2026),
+      L. 351-7-1 A, R. 815-1 (2007 à 2023), L. 821-1, D. 634-10 CSS ; l'article 70-1 du
+      décret n° 45-0179 ; L. 4, L. 14, L. 17, L. 24, L. 27 à L. 31, L. 30 bis et L. 30 ter
+      du code des pensions ; les articles 7, 20, 22, 30, 31, 34, 36, 37 et 39 du décret
+      n° 2003-1306 (CNRACL) ; les articles 3 et 19 du décret n° 2004-1056 (ouvriers de
+      l'État). Dans la base de la Cnav : l'ordonnance n° 45-2454 (articles 62 à 65), les
+      circulaires n° 2018-18, 2023-22, 2023-25 et 2024-26 ; le barème des montants de
+      l'allocation aux vieux travailleurs salariés, de 1941 à 2026. Les fiches F672 et
+      F14044 de service-public.
+    trouve: >-
+      La pension d'invalidité prend fin à soixante ans depuis 1945, à l'âge légal
+      depuis 2011, à soixante-deux ans depuis le 1er septembre 2023 (L. 351-1-5) ; la
+      pension de vieillesse de l'inapte la remplace au premier du mois suivant, au taux
+      plein quelle que soit la durée, portée au minimum contributif, puis au moins à
+      l'AVTS — à la pension d'invalidité elle-même, pour une invalidité d'avant le 31 mai
+      1983. L'invalide qui travaille garde depuis mars 2010 sa pension d'invalidité
+      jusqu'à sa demande, au plus tard à l'âge du taux plein automatique, et sa retraite
+      ne descend pas sous celle de la substitution. L'inapte a eu le taux de soixante-
+      cinq ans dès soixante ans (40 % en 1945, 50 % en 1972), puis le taux plein à l'âge
+      légal (L. 351-8, 2°), à soixante-deux ans depuis 2023 (D. 351-1-14), et l'ASPA au
+      même âge (R. 815-1). Le fonctionnaire radié des cadres pour invalidité liquide à
+      cette date, sans durée de services (L. 4), sans décote (L. 14), au minimum garanti
+      de l'invalidité (L. 17, c), à 50 % du traitement au moins si l'invalidité atteint
+      60 % (L. 30), avec une rente viagère si elle est imputable au service (L. 28). Un
+      contrôle du 20 septembre 2026 se trompait : L. 351-7 existe au code de la sécurité
+      sociale, et l'inaptitude est au 2° de L. 351-8, non au 1° bis.
+    reste: >-
+      Le code de 1956 et la loi n° 83-430, que les index ne portent pas ; les règles des
+      exploitants agricoles, des professions libérales, des avocats, des régimes
+      spéciaux et des militaires ; le barème indicatif des taux d'invalidité ; les
+      exemples chiffrés, à chercher (Cnav, SRE, CNRACL, service-public).
