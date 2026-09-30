@@ -1146,6 +1146,13 @@ def _pages() -> dict:
             "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2023-02",
             "emploi_retraite_fin": "2025-02", "emploi_retraite_salaire": "0.5",
         }),
+        # La fonctionnaire partie en 2011, salariée ensuite : son activité ouvre
+        # le régime général et l'Arrco, qui la servent à sa fin.
+        ("simuler_regimes_nouveaux", "/simuler", {
+            **BASE, "sexe": "F", "naissance": "1951", "statut": "fonctionnaire_etat",
+            "debut": "26", "liquidation": "60.5", "emploi_retraite": "2012-02",
+            "emploi_retraite_fin": "2016-08", "emploi_retraite_statut": "salarie_prive_non_cadre",
+        }),
         ("simuler_departs_echelonnes_a_venir", "/simuler", {
             **BASE, "sexe": "F", "naissance": "1975", "debut": "20", "liquidation": "59",
             "metier2_debut": "30",

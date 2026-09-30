@@ -3021,6 +3021,21 @@ fiches `droits_apres_la_premiere_pension` et `seconde_pension` passent à
 `approchee`. Restent : les droits ouverts dans les régimes qui n'ont pas liquidé
 (première pension d'avant 2015, pension militaire), puis la cinquième étape.
 
+**Quatrième étape, fin, le même jour : les régimes que l'activité ouvre.** Les
+droits que l'activité après le départ ouvre dans un régime qui ne servait pas
+de pension — avant 2023 pour une première pension d'avant 2015, toujours pour
+une pension militaire — se liquident comme un départ induit : à la fin de
+l'activité, ou à l'âge d'ouverture du régime, sur la carrière prolongée des
+seules années qui les ouvrent, dont la durée tous régimes fait le taux. La
+fonctionnaire partie en 2011, salariée jusqu'en 2016, reçoit alors une pension
+du régime général et une retraite de l'Arrco ; le militaire parti à quarante-cinq
+ans, salarié ensuite, les siennes à l'âge légal. Le nombre d'appels de
+`liquider` d'un témoin vaut désormais par départ, ceux-ci compris. Reste dehors
+l'activité exercée avant qu'un régime du départ ne liquide, à son âge
+d'ouverture, qu'il ne compte pas. L'étape est close ; reste la cinquième : le
+formulaire, la page Coût, la décision de la proposition, et la clôture du
+domaine.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

@@ -366,7 +366,11 @@ def test_chaque_temoin_declare_ses_appels_de_liquider_sous_le_nombre_declare():
     appels = {nom: temoin.get("appels_liquider") for nom, temoin in temoins.items()}
     sans = sorted(nom for nom, n in appels.items() if not isinstance(n, int))
     assert not sans, f"témoins sans appels déclarés : {sans[:5]}"
-    departs = {nom: len(temoin["resultat"]["scenarios"]["actuel"].get("departs", ())) or 1
+    # Les régimes que l'activité après le départ ouvre liquident à leurs dates :
+    # autant de départs de plus (droit/seconde.py).
+    departs = {nom: (len(temoin["resultat"]["scenarios"]["actuel"].get("departs", ())) or 1)
+               + len({p["date_effet"] for p in temoin["resultat"]["scenarios"]["actuel"]
+                      .get("droits_apres_depart", {}).get("regimes_nouveaux", [])})
                for nom, temoin in temoins.items()}
     trop = {nom: n for nom, n in appels.items()
             if n > liquidation.APPELS_DECLARES * departs[nom]}

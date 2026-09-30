@@ -154,13 +154,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   plein, que le modèle calcule au régime général et aux salariés agricoles,
   plafonnée à <!--chiffre:valeur(data/reference/regles/seconde_pension.yaml:versions.id=loi_2023.contenu.parametres.plafond_en_pass*100)-->5<!--/--> % du plafond de la sécurité sociale avant les premières
   pensions de 2027, et une seconde retraite de l'Agirc-Arrco sur les points de
-  la tranche 1. Restent dehors : les règles des avocats, des exploitants
-  agricoles, de l'outre-mer et des élus, et celles des complémentaires autres
-  que l'Agirc-Arrco, dont la pension est servie entière ; les droits que
-  l'activité ouvre avant 2023 dans les régimes qui n'ont pas liquidé, pour une
-  première pension d'avant 2015 ou une pension militaire, et la nouvelle
-  pension des autres régimes, que la page nomme ; le formulaire, qui ne demande
-  pas encore l'activité (fiches `cumul_emploi_retraite_et_retraite_progressive`,
+  la tranche 1. Pour une première pension d'avant 2015, avant 2023, et toujours
+  pour une pension militaire, l'activité ouvre des droits dans les régimes qui
+  ne servaient pas de pension : ils se liquident à la fin de l'activité, ou à
+  l'âge d'ouverture du régime. Restent dehors : les règles des avocats, des
+  exploitants agricoles, de l'outre-mer et des élus, et celles des
+  complémentaires autres que l'Agirc-Arrco, dont la pension est servie
+  entière ; la nouvelle pension des autres régimes, que la page nomme ;
+  l'activité exercée avant qu'un régime du départ ne liquide, à son âge
+  d'ouverture, qu'il ne compte pas ; le formulaire, qui ne demande pas encore
+  l'activité (fiches `cumul_emploi_retraite_et_retraite_progressive`,
   `cumul_emploi_retraite_fonction_publique`, `droits_apres_la_premiere_pension`
   et `seconde_pension`).
 - **La retraite progressive : servie, sur une quotité déclarée.** Depuis le

@@ -7385,7 +7385,8 @@
         "motif": "eteints",
         "regle": "loi_2023"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -7972,7 +7973,8 @@
         "motif": "eteints",
         "regle": "lfss_2026"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -8563,7 +8565,8 @@
         "motif": "dernier_employeur",
         "regle": "loi_2023"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -9043,7 +9046,8 @@
         "motif": "eteints",
         "regle": "loi_2023"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -9623,7 +9627,8 @@
         "motif": "nouvelle_pension",
         "regle": "loi_2023"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -10198,7 +10203,8 @@
         "motif": "eteints",
         "regle": "loi_2023"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -10795,7 +10801,8 @@
         "motif": "regime_liquide",
         "regle": "sans_regle_generale"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -12124,7 +12131,8 @@
         "motif": "regime_liquide",
         "regle": "sans_regle_generale"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -14479,7 +14487,7 @@
   }
  },
  "droits_fonctionnaire_avant_2015": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -14740,6 +14748,20 @@
         "motif": "regimes_non_liquides",
         "regle": "sans_regle_generale"
        }
+      ],
+      "regimes_nouveaux": [
+       {
+        "date_effet": "2013-02-01",
+        "detail": "124.70 points × valeur de service 1.2513 € × coefficient d'anticipation 0.8800",
+        "montant": 137.3165346184133,
+        "regime": "arrco"
+       },
+       {
+        "date_effet": "2013-02-01",
+        "detail": "SR 29,258.14 € × taux 41.000% × 3/163",
+        "montant": 220.78229646650254,
+        "regime": "regime_general"
+       }
       ]
      },
      "liquidation_ouverte": true,
@@ -14949,7 +14971,7 @@
   }
  },
  "droits_pension_militaire": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -15306,6 +15328,20 @@
         "fin": "2025-02-01",
         "motif": "pension_militaire",
         "regle": "loi_2023"
+       }
+      ],
+      "regimes_nouveaux": [
+       {
+        "date_effet": "2039-02-01",
+        "detail": "573.07 points × valeur de service 1.802551 € × coefficient d'anticipation 0.8800",
+        "montant": 909.0228776117984,
+        "regime": "agirc_arrco"
+       },
+       {
+        "date_effet": "2039-02-01",
+        "detail": "SR 38,822.28 € × taux 42.500% × 17/172",
+        "montant": 1630.7614418556377,
+        "regime": "regime_general"
        }
       ]
      },
@@ -78964,7 +79000,8 @@
         "motif": "nouvelle_pension",
         "regle": "loi_2023"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -79782,7 +79819,8 @@
         "motif": "nouvelle_pension",
         "regle": "lfss_2026"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -80471,7 +80509,8 @@
         "motif": "nouvelle_pension",
         "regle": "loi_2023"
        }
-      ]
+      ],
+      "regimes_nouveaux": []
      },
      "liquidation_ouverte": true,
      "minimum_applique": false,

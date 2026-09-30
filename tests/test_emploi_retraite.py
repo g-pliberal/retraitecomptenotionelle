@@ -442,3 +442,42 @@ def test_les_regles_des_droits_sont_des_versions_des_fiches():
     versions = {v["id"] for v in carte.fiches()["droits_apres_la_premiere_pension"]["versions"]}
     assert {seconde.SANS_REGLE_GENERALE, seconde.LOI_2014, seconde.LOI_2023,
             seconde.LFSS_2026} <= versions
+
+
+def test_l_activite_ouvre_une_pension_dans_le_regime_qui_n_en_servait_pas(simulateur):
+    """La fonctionnaire partie en 2011, salariée de 2012 à 2016 : sa pension de
+    l'État ne bouge pas, et son activité lui ouvre, à sa fin, une pension du
+    régime général et une retraite Arrco, liquidées comme les autres, sur la
+    durée tous régimes."""
+    droits, echeancier = _droits(simulateur, 1951, 60.5, _emploi(61, 65.5),
+                                 [Metier("fonctionnaire_etat", 26.0)])
+    assert {p.motif for p in droits.periodes} == {seconde.REGIMES_NON_LIQUIDES}
+    nouveaux = {p.regime: p for p in droits.regimes_nouveaux}
+    assert {"regime_general", "arrco"} <= set(nouveaux)
+    assert {p.date_effet for p in droits.regimes_nouveaux} == {echeancier.au_depart.cumul.fin}
+    liquidations = [e for e in echeancier.journal
+                    if e.sorte == "liquidation" and "regimes_nouveaux" in e.id]
+    assert len(liquidations) == 1
+    assert {p.regime for p in liquidations[0].contenu.regimes} >= {"regime_general", "arrco"}
+    assert all(p.regime not in nouveaux for p in echeancier.au_depart.pensions_par_regime)
+
+
+def test_la_pension_militaire_ouvre_le_regime_general_a_son_age(simulateur):
+    """Le militaire parti à quarante-cinq ans, salarié jusqu'à cinquante ans :
+    son régime général n'ouvre qu'à l'âge légal, où ses droits se liquident."""
+    droits, echeancier = _droits(simulateur, 1975, 45.0, _emploi(45.5, 50),
+                                 [Metier("militaire", 20.0)])
+    base = next(p for p in droits.regimes_nouveaux if p.regime == "regime_general")
+    carriere = echeancier.au_depart
+    assert base.date_effet > echeancier.au_depart.cumul.fin
+    assert base.date_effet.annee >= 1975 + 62
+    assert carriere.pensions_par_regime[0].regime == "fonction_publique_etat"
+
+
+def test_apres_2015_l_activite_n_ouvre_aucun_regime_nouveau(simulateur):
+    """Partie en 2016 de la fonction publique, salariée ensuite : rien ne
+    s'ouvre au régime général (L. 161-22-1 A)."""
+    droits, _ = _droits(simulateur, 1954, 62.0, _emploi(62.5, 64),
+                        [Metier("fonctionnaire_etat", 26.0)])
+    assert {p.motif for p in droits.periodes} == {seconde.ETEINTS}
+    assert droits.regimes_nouveaux == ()

@@ -143,9 +143,9 @@ sources:
   - >-
     Ouverte le 29 septembre 2026 avec le domaine des départs multiples, calculée le 30,
     avec l'activité après le départ que l'adresse déclare : le modèle dit, mois par
-    mois, ce que l'activité ouvre ou non. Les droits qu'elle ouvre dans les régimes
-    qui n'ont pas liquidé — avant 2023 pour une première pension d'avant 2015,
-    toujours pour une pension militaire — restent à calculer.
+    mois, ce que l'activité ouvre ou non, et liquide les droits qu'elle ouvre dans
+    les régimes qui n'ont pas liquidé. Reste à lire la circulaire qui dirait si ces
+    trimestres ouvrent la surcote du régime qui les liquide.
   - >-
     Lire la circulaire Cnav qui a appliqué L. 161-22-1 A (2014-2015) : la « reprise »
     d'activité y couvre-t-elle l'activité poursuivie dans un autre régime après la
@@ -187,8 +187,11 @@ approximations:
 - ecart: >-
     avant 2023, pour une première pension d'avant 2015, et toujours pour une pension
     militaire, l'activité ouvre des droits dans les régimes qui n'ont pas liquidé : le
-    modèle le dit, et ne les calcule pas encore ; il tient pour définitive la pension
-    du régime qui l'a déjà servie
+    modèle les liquide à la fin de l'activité, ou à l'âge d'ouverture du régime s'il
+    vient après, sur la carrière prolongée des années qui les ouvrent, dont la durée
+    tous régimes fait le taux, surcote comprise ; il tient pour définitive la pension
+    du régime qui l'a déjà servie, et la pension d'un régime que le départ liquide
+    plus tard, à son âge d'ouverture, ne compte pas l'activité
   effet: non mesuré
 - ecart: >-
     les points de l'Agirc-Arrco acquis en cumul avant 2015 ne sont pas calculés ; les
@@ -202,10 +205,13 @@ approximations:
   effet: non mesuré
 code:
   python: >-
-    droit/seconde.py : droits, _motif ; droit/cumul.py : fonction_publique_quittee ;
-    echeancier.py : Echeancier._constituer
+    droit/seconde.py : droits, _motif, liquider_les_regimes_nouveaux ; droit/cumul.py :
+    fonction_publique_quittee ; echeancier.py : Echeancier._constituer,
+    Echeancier._liquider_les_regimes_nouveaux
   javascript: >-
-    moteur/js/droit/seconde.js ; moteur/js/pages.js : sansNouveauxDroits, droitsDuCumul
+    moteur/js/droit/seconde.js ; moteur/js/echeancier.js :
+    Echeancier._liquiderLesRegimesNouveaux ; moteur/js/pages.js : sansNouveauxDroits,
+    droitsDuCumul
   parametres: "constantes de droit/seconde.py : les dates de 2015, 2023 et 2027"
   tests: >-
     tests/test_emploi_retraite.py ; les témoins seconde_pension_* et droits_* des
@@ -220,10 +226,16 @@ historique:
   2026-09-30 — calculée : le modèle dit, mois par mois de l'activité après le
   départ, ce qu'elle ouvre ou non, et en tire la nouvelle pension (fiche
   seconde_pension).
+- >-
+  2026-09-30 — les droits que l'activité ouvre dans les régimes qui n'ont pas
+  liquidé — première pension d'avant 2015, pension militaire — se liquident, comme
+  un départ induit.
 effet: >-
   Toute personne qui travaille après sa première pension, dans le même régime ou dans
   un autre : le fonctionnaire de catégorie active parti à cinquante-sept ans et passé
   au privé, le retraité qui reprend un emploi. Depuis 2015, ses cotisations ne lui
   ouvrent plus rien, hors la pension militaire et, depuis 2023, le cumul intégral.
   La salariée partie en 2022 sans la durée requise, qui retravaille dix-huit mois,
-  n'acquiert rien ; partie au taux plein, elle se constitue une nouvelle pension.
+  n'acquiert rien ; partie au taux plein, elle se constitue une nouvelle pension. Le
+  militaire parti à quarante-cinq ans en 2020, salarié ensuite, acquiert au régime
+  général et à l'Agirc-Arrco, qui le servent à l'âge légal.

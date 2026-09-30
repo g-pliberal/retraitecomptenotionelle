@@ -163,7 +163,34 @@ class Echeancier:
         if self.au_depart is not None and carriere.emploi_retraite is not None:
             self._cumuler(carriere)
             self._constituer(carriere)
+            self._liquider_les_regimes_nouveaux(carriere)
         return self.journal
+
+    def _liquider_les_regimes_nouveaux(self, carriere: Carriere) -> None:
+        """Les pensions des régimes que l'activité après le départ ouvre, et
+        qui n'en servaient pas (:func:`.droit.seconde.liquider_les_regimes_nouveaux`) :
+        chacune un départ induit, à sa date, inscrit comme les autres."""
+        droits = self.au_depart.droits_apres_depart
+        contexte = _liquidation.Contexte(self.moteur)
+        liquidations = _seconde.liquider_les_regimes_nouveaux(
+            self.moteur, carriere, self.au_depart, droits, self.au_depart.cumul, contexte,
+            self.journal)
+        pensions = []
+        for date, liquidation in liquidations:
+            quand = _cumul.jour(date)
+            evenement = Evenement(
+                id=f"depart_{carriere.personne}_{quand}_regimes_nouveaux", date=quand,
+                personnes=(carriere.personne,),
+                vise={"regimes": [p.regime for p in liquidation.regimes]}, origine="induit")
+            self._inscrire(evenement, evenement.id, "evenement", evenement, quand)
+            self._inscrire(evenement, f"liquidation_{evenement.id}", "liquidation",
+                           liquidation, quand)
+            self._composantes(evenement, liquidation)
+            pensions += [_seconde.PensionDeRegimeNouveau(p.regime, date, p.montant, p.detail)
+                         for p in liquidation.regimes if p.montant > 0]
+        if pensions:
+            self.au_depart = replace(self.au_depart, droits_apres_depart=replace(
+                droits, regimes_nouveaux=tuple(pensions)))
 
     def _constituer(self, carriere: Carriere) -> None:
         """Les droits de l'activité exercée après le départ

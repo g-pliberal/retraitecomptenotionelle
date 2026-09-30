@@ -164,8 +164,40 @@ export class Echeancier {
     if (this.auDepart !== null && carriere.emploiRetraite !== null) {
       this._cumuler(carriere);
       this._constituer(carriere);
+      this._liquiderLesRegimesNouveaux(carriere);
     }
     return this.journal;
+  }
+
+  /**
+   * Les pensions des régimes que l'activité après le départ ouvre, et qui n'en
+   * servaient pas (`droit/seconde.js`) : chacune un départ induit, à sa date,
+   * inscrit comme les autres.
+   */
+  _liquiderLesRegimesNouveaux(carriere) {
+    const droits = this.auDepart.droits_apres_depart;
+    const contexte = new liquidation.Contexte(this.moteur);
+    const liquidations = laSeconde.liquiderLesRegimesNouveaux(this.moteur, carriere,
+      this.auDepart, droits, this.auDepart.cumul, contexte, this.journal);
+    const pensions = [];
+    for (const [date, liquidee] of liquidations) {
+      const quand = leCumul.jour(date);
+      const evenement = new Evenement({
+        id: `depart_${carriere.personne}_${quand}_regimes_nouveaux`, date: quand,
+        personnes: [carriere.personne],
+        vise: { regimes: liquidee.regimes.map((p) => p.regime) }, origine: "induit",
+      });
+      this._inscrire(evenement, evenement.id, "evenement", evenement, quand);
+      this._inscrire(evenement, `liquidation_${evenement.id}`, "liquidation", liquidee, quand);
+      this._composantes(evenement, liquidee);
+      for (const p of liquidee.regimes) {
+        if (p.montant > 0) {
+          pensions.push(new laSeconde.PensionDeRegimeNouveau(p.regime, date, p.montant,
+            p.detail));
+        }
+      }
+    }
+    if (pensions.length > 0) droits.regimes_nouveaux = pensions;
   }
 
   /**

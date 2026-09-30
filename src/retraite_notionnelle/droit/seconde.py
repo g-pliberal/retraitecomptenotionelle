@@ -30,6 +30,15 @@ l'activité, et au 1er septembre 2023 au plus tôt. Les autres régimes de base 
 libéraux, avocats, exploitants agricoles, fonctionnaires, régimes spéciaux —
 ne la calculent pas encore, et le résultat les nomme.
 
+Les droits qu'ouvrent les années d'activité dans un régime qui ne sert pas de
+pension — avant 2023 pour une première pension d'avant 2015, toujours pour
+une pension militaire — se liquident comme toute pension, à la demande
+présumée à la fin de l'activité, ou à l'âge d'ouverture du régime s'il vient
+après (présomption ``depart_de_chaque_regime``) : sur la carrière prolongée de
+ces années, dont la durée tous régimes fait le taux
+(:func:`liquider_les_regimes_nouveaux`). Le régime qui sert déjà une pension ne
+la révise pas : elle est définitive.
+
 Le jumeau de ce module est ``moteur/js/droit/seconde.js``.
 """
 
@@ -47,6 +56,7 @@ from .cumul import FONCTION_PUBLIQUE, Cumul, fonction_publique_quittee, jour
 if TYPE_CHECKING:
     from ..carriere import Carriere
     from ..scenarios.actuel import ResultatActuel, ScenarioActuel
+    from .liquidation import Contexte, Liquidation
 
 #: Ce que le droit fait d'un mois d'activité après le départ : il ouvre la
 #: nouvelle pension ; il n'ouvre rien ; il n'ouvre rien parce que la reprise
@@ -126,6 +136,21 @@ class NouvellePension:
 
 
 @dataclass(frozen=True)
+class PensionDeRegimeNouveau:
+    """La pension d'un régime que l'activité après le départ ouvre, liquidée à
+    sa date : par an, en euros de cette date."""
+
+    regime: str
+    date_effet: DateMois
+    montant: float
+    detail: str
+
+    def donnees(self) -> dict:
+        return {"regime": self.regime, "date_effet": jour(self.date_effet),
+                "montant": self.montant, "detail": self.detail}
+
+
+@dataclass(frozen=True)
 class DroitsApresDepart:
     """Ce que l'activité après le départ ouvre de droits, mois par mois, et
     les pensions nouvelles qu'elle constitue."""
@@ -135,6 +160,9 @@ class DroitsApresDepart:
     #: Les régimes de base de l'activité dont le modèle ne calcule pas la
     #: nouvelle pension.
     non_calcules: tuple[str, ...]
+    #: Les pensions des régimes qui n'en servaient pas, que l'activité ouvre
+    #: (:func:`liquider_les_regimes_nouveaux`).
+    regimes_nouveaux: tuple[PensionDeRegimeNouveau, ...] = ()
 
     @property
     def montant(self) -> float:
@@ -143,7 +171,8 @@ class DroitsApresDepart:
     def donnees(self) -> dict:
         return {"periodes": [p.donnees() for p in self.periodes],
                 "pensions": [p.donnees() for p in self.pensions],
-                "non_calcules": list(self.non_calcules), "montant": self.montant}
+                "non_calcules": list(self.non_calcules), "montant": self.montant,
+                "regimes_nouveaux": [p.donnees() for p in self.regimes_nouveaux]}
 
 
 def _motif(mois: DateMois, premiere: DateMois, integral: DateMois | None,
@@ -316,3 +345,60 @@ def _seconde_retraite_complementaire(moteur: ScenarioActuel, salaires: dict[int,
     return NouvellePension(regime=AGIRC_ARRCO, date_effet=date_effet, trimestres=0,
                            salaire_mensuel=0.0, points=points, brute=montant,
                            plafond=None, montant=montant)
+
+
+#: Ce qui ouvre des droits dans les régimes qui ne servent pas de pension.
+OUVRANTS = frozenset({REGIMES_NON_LIQUIDES, PENSION_MILITAIRE})
+
+
+def liquider_les_regimes_nouveaux(moteur: ScenarioActuel, carriere: Carriere,
+                                  resultat: ResultatActuel, droits: DroitsApresDepart | None,
+                                  cumul: Cumul | None, contexte: Contexte,
+                                  journal: object | None = None
+                                  ) -> tuple[tuple[DateMois, Liquidation], ...]:
+    """Les pensions que les années d'activité ouvrent dans les régimes qui n'en
+    servent pas encore, liquidées à leur date : chaque départ, et sa
+    liquidation.
+
+    La carrière se prolonge des seules années dont les mois ouvrent des droits
+    (:data:`OUVRANTS`) ; elle se liquide à la fin de l'activité, et chaque
+    régime nouveau à cette date, ou à son âge d'ouverture s'il vient après
+    (:func:`~.departs.departs`). La liquidation voit servies les pensions du
+    départ, menées au mois de sa date d'effet.
+    """
+    from ..revalorisation import mener_au_mois
+    from . import liquidation as _liquidation
+
+    if droits is None or cumul is None:
+        return ()
+    annees = {DateMois.depuis_rang(rang).annee
+              for periode in droits.periodes if periode.motif in OUVRANTS
+              for rang in range(periode.debut.rang, periode.fin.rang)}
+    lignes = [ligne for ligne in carriere.lignes_apres_depart if ligne.annee in annees]
+    if not lignes:
+        return ()
+    etendue = carriere.avec_lignes(
+        sorted([*carriere.lignes, *lignes], key=lambda ligne: ligne.annee)
+    ).liquidee_au(cumul.fin)
+    liquides = {p.regime for p in resultat.pensions_par_regime}
+    bases, suivies = _departs.regimes_de_la_carriere(moteur, etendue)
+    nouveaux = (set(bases) | set(suivies)) - liquides
+    if not nouveaux:
+        return ()
+    par_date: dict[DateMois, set[str]] = {}
+    for depart in _departs.departs(moteur, etendue):
+        ici = nouveaux if depart.unique else set(depart.regimes) & nouveaux
+        if ici:
+            par_date.setdefault(depart.date, set()).update(ici)
+    liquidations = []
+    for date in sorted(par_date):
+        servies = tuple(
+            _departs.PensionServie(pension.regime, montant)
+            for pension, montant in zip(resultat.pensions_par_regime, mener_au_mois(
+                moteur, resultat.pensions_par_regime, carriere.date_liquidation, date)))
+        demande = _liquidation.Demande(
+            personne=carriere.personne, date_effet=jour(date), date_evenement=jour(date),
+            regimes=tuple(sorted(par_date[date])))
+        etat = _liquidation.Etat(etendue.liquidee_au(date), journal, servies)
+        liquidations.append((date, _liquidation.liquider(demande, etat, contexte)))
+    return tuple(liquidations)

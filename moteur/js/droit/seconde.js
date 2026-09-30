@@ -12,7 +12,9 @@
  */
 
 import { DateMois } from "../calendrier.js";
+import { menerAuMois } from "../revalorisation.js";
 import * as lesDeparts from "./departs.js";
+import * as liquidation from "./liquidation.js";
 import { valeurDuPoint } from "./liquider.js";
 import { FONCTION_PUBLIQUE, fonctionPubliqueQuittee, jour } from "./cumul.js";
 
@@ -81,14 +83,33 @@ export class NouvellePension {
 }
 
 /**
+ * La pension d'un régime que l'activité après le départ ouvre, liquidée à sa
+ * date : par an, en euros de cette date.
+ */
+export class PensionDeRegimeNouveau {
+  constructor(regime, dateEffet, montant, detail) {
+    this.regime = regime;
+    this.date_effet = dateEffet;
+    this.montant = montant;
+    this.detail = detail;
+  }
+
+  donnees() {
+    return { regime: this.regime, date_effet: jour(this.date_effet), montant: this.montant,
+      detail: this.detail };
+  }
+}
+
+/**
  * Ce que l'activité après le départ ouvre de droits, mois par mois, et les
  * pensions nouvelles qu'elle constitue.
  */
 export class DroitsApresDepart {
-  constructor({ periodes, pensions, nonCalcules }) {
+  constructor({ periodes, pensions, nonCalcules, regimesNouveaux = [] }) {
     this.periodes = periodes;
     this.pensions = pensions;
     this.non_calcules = nonCalcules;
+    this.regimes_nouveaux = regimesNouveaux;
   }
 
   get montant() {
@@ -98,7 +119,8 @@ export class DroitsApresDepart {
   donnees() {
     return { periodes: this.periodes.map((p) => p.donnees()),
       pensions: this.pensions.map((p) => p.donnees()),
-      non_calcules: [...this.non_calcules], montant: this.montant };
+      non_calcules: [...this.non_calcules], montant: this.montant,
+      regimes_nouveaux: this.regimes_nouveaux.map((p) => p.donnees()) };
   }
 }
 
@@ -262,4 +284,56 @@ function secondeRetraiteComplementaire(moteur, salaires, periode, dateEffet) {
   const montant = points * valeur[0];
   return new NouvellePension({ regime: AGIRC_ARRCO, dateEffet, trimestres: 0,
     salaireMensuel: 0.0, points, brute: montant, plafond: null, montant });
+}
+
+/** Ce qui ouvre des droits dans les régimes qui ne servent pas de pension. */
+export const OUVRANTS = new Set([REGIMES_NON_LIQUIDES, PENSION_MILITAIRE]);
+
+/**
+ * Les pensions que les années d'activité ouvrent dans les régimes qui n'en
+ * servent pas encore, liquidées à leur date : `[date, liquidation]` pour
+ * chaque départ. Voir le Python.
+ */
+export function liquiderLesRegimesNouveaux(moteur, carriere, resultat, droits, cumul,
+  contexte, journal = null) {
+  if (droits === null || droits === undefined || cumul === null) return [];
+  const annees = new Set();
+  for (const periode of droits.periodes) {
+    if (!OUVRANTS.has(periode.motif)) continue;
+    for (let r = periode.debut.rang; r < periode.fin.rang; r += 1) {
+      annees.add(DateMois.depuisRang(r).annee);
+    }
+  }
+  const lignes = carriere.lignes_apres_depart.filter((ligne) => annees.has(ligne.annee));
+  if (lignes.length === 0) return [];
+  const etendue = carriere.avecLignes(
+    [...carriere.lignes, ...lignes].sort((a, b) => a.annee - b.annee),
+  ).liquideeAu(cumul.fin);
+  const liquides = new Set(resultat.pensions_par_regime.map((p) => p.regime));
+  const [bases, suivies] = lesDeparts.regimesDeLaCarriere(moteur, etendue);
+  const nouveaux = new Set([...bases, ...suivies.keys()].filter((code) => !liquides.has(code)));
+  if (nouveaux.size === 0) return [];
+  const parDate = new Map();
+  for (const depart of lesDeparts.departs(moteur, etendue)) {
+    const ici = depart.unique ? [...nouveaux]
+      : [...depart.regimes].filter((code) => nouveaux.has(code));
+    if (ici.length === 0) continue;
+    if (!parDate.has(depart.date.rang)) parDate.set(depart.date.rang, new Set());
+    for (const code of ici) parDate.get(depart.date.rang).add(code);
+  }
+  const liquidations = [];
+  for (const rangDate of [...parDate.keys()].sort((a, b) => a - b)) {
+    const date = DateMois.depuisRang(rangDate);
+    const menes = menerAuMois(moteur, resultat.pensions_par_regime,
+      carriere.dateLiquidation, date);
+    const servies = resultat.pensions_par_regime.map((pension, i) => ({
+      regime: pension.regime, montant: menes[i] }));
+    const demande = new liquidation.Demande({
+      personne: carriere.personne, dateEffet: jour(date), dateEvenement: jour(date),
+      regimes: [...parDate.get(rangDate)].sort(),
+    });
+    const etat = new liquidation.Etat(etendue.liquideeAu(date), journal, servies);
+    liquidations.push([date, liquidation.liquider(demande, etat, contexte)]);
+  }
+  return liquidations;
 }

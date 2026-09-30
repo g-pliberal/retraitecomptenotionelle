@@ -2792,11 +2792,23 @@ function sortDeLaComplementaire(complementaire) {
   }
 }
 
-/** Où se sert la nouvelle pension d'un régime, dit au lecteur. */
-const REGIMES_DE_LA_NOUVELLE_PENSION = {
+/** Où se sert une pension que l'activité après le départ ouvre, dit au lecteur. */
+const REGIMES_DU_CUMUL = {
   regime_general: "au régime général",
   msa_salaries: "à la MSA des salariés agricoles",
+  agirc_arrco: "à l'Agirc-Arrco",
+  arrco: "à l'Arrco",
+  arrco_tranche_2: "à l'Arrco, sur sa tranche 2",
+  agirc: "à l'Agirc",
+  ircantec: "à l'Ircantec",
+  rci: "à la retraite complémentaire des indépendants",
 };
+
+/** « au régime général », ou le nom du régime au catalogue. */
+function aupresDe(catalogue, code) {
+  return REGIMES_DU_CUMUL[code]
+    ?? `au régime ${echapper(catalogue.contient(code) ? catalogue.obtenir(code).nom : code)}`;
+}
 
 /**
  * Ce que le droit fait des mois qui n'ouvrent pas de nouvelle pension : une
@@ -2822,12 +2834,10 @@ function sansNouveauxDroits(periode) {
         + "ouvre rien";
     case "pension_militaire/loi_2014":
     case "pension_militaire/loi_2023":
-      return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension, "
-        + "votre pension militaire n'éteignant pas vos droits ; le modèle ne les calcule "
-        + "pas encore";
+      return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension : "
+        + "votre pension militaire n'éteint pas vos droits";
     default:
-      return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension ; "
-        + "le modèle ne les calcule pas encore";
+      return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension";
   }
 }
 
@@ -2866,8 +2876,7 @@ function droitsDuCumul(contexte, droits) {
   if (bases.length > 0 || complementaire !== undefined) {
     const premiere = bases[0] ?? complementaire;
     const morceaux = bases.map((p) => {
-      const ou = REGIMES_DE_LA_NOUVELLE_PENSION[p.regime]
-        ?? `au ${echapper(catalogue.contient(p.regime) ? catalogue.obtenir(p.regime).nom : p.regime)}`;
+      const ou = aupresDe(catalogue, p.regime);
       const ecrete = p.plafond !== null && p.brute > p.plafond
         ? `, écrêtée à 5 % du plafond de la sécurité sociale, ${g.euros(p.plafond)}` : "";
       return `une nouvelle pension de ${g.euros(p.montant)} par an ${ou} — `
@@ -2886,6 +2895,19 @@ function droitsDuCumul(contexte, droits) {
       : "En cumul intégral depuis 2023";
     phrases.push(`${cumulEntier}, votre activité vous ouvre, à partir du 1<sup>er</sup> `
       + `${echapper(String(premiere.date_effet))}, ${liste}, en euros de cette année-là.`);
+  }
+  // La base d'abord, ses complémentaires ensuite.
+  const deBase = (p) => catalogue.contient(p.regime)
+    && ["base", "integre"].includes(catalogue.obtenir(p.regime).etage);
+  const nouveaux = [...(droits.regimes_nouveaux ?? [])]
+    .sort((a, b) => Number(deBase(b)) - Number(deBase(a)));
+  if (nouveaux.length > 0) {
+    const parts = nouveaux.map((p) => `${g.euros(p.montant)} ${aupresDe(catalogue, p.regime)}`);
+    const liste = parts.length < 2 ? parts.join("")
+      : `${parts.slice(0, -1).join(", ")} et ${parts[parts.length - 1]}`;
+    phrases.push(`Ces droits vous servent, à partir du 1<sup>er</sup> `
+      + `${echapper(String(nouveaux[0].date_effet))}, ${liste} par an, en euros de cette `
+      + "année-là.");
   }
   if (droits.non_calcules.length > 0) {
     const noms = droits.non_calcules.map((code) => echapper(
