@@ -1040,6 +1040,60 @@ Reversions.FICHES = Object.freeze([
 ]);
 
 /**
+ * Les fiches de l'invalidité et de l'inaptitude (docs/architecture.md, § 11),
+ * dont le moteur lit les versions : la substitution de la pension
+ * d'invalidité (`substitution`), l'inaptitude au travail (`inaptitude`), la
+ * retraite pour invalidité des fonctionnaires (`fonction_publique`). Le paquet
+ * les porte préparées (`versions_des_fiches`), avec leurs régimes. Voir
+ * `Invalidites` du Python.
+ */
+export class Invalidites {
+  constructor(paquet) {
+    const fiches = paquet.versions_des_fiches ?? {};
+    this._fiches = {};
+    for (const nom of Object.values(Invalidites.FICHES)) {
+      if (nom in fiches) {
+        this._fiches[nom] = fiches[nom];
+      }
+    }
+    this._regimes = new Map();
+  }
+
+  /** Les fiches préparées, sous leur nom. */
+  fiches() {
+    return this._fiches;
+  }
+
+  /** Les régimes qui appliquent les règles de cette fiche. */
+  regimes(fiche) {
+    if (!this._regimes.has(fiche)) {
+      const preparee = this._fiches[Invalidites.FICHES[fiche]];
+      this._regimes.set(fiche, new Set(preparee === undefined ? [] : preparee.regimes ?? []));
+    }
+    return this._regimes.get(fiche);
+  }
+
+  /**
+   * La version de cette fiche pour une pension qui prend effet à `dateEffet`
+   * (AAAA-MM-JJ), ou `null`.
+   */
+  version(fiche, dateEffet) {
+    const preparee = this._fiches[Invalidites.FICHES[fiche]];
+    if (preparee === undefined) {
+      return null;
+    }
+    return applicable(preparee, { "liquidation.date_effet": dateEffet });
+  }
+}
+
+/** Les fiches, sous le nom que le moteur leur donne. */
+Invalidites.FICHES = Object.freeze({
+  substitution: "pension_d_invalidite_substituee",
+  inaptitude: "inaptitude_au_travail",
+  fonction_publique: "retraite_pour_invalidite_fonction_publique",
+});
+
+/**
  * La durée de services qui ouvre une pension dans chaque régime spécial.
  *
  * C'est la condition dont l'article R. 173-15 du code de la sécurité sociale

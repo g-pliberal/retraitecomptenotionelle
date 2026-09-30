@@ -27,6 +27,12 @@ liquide :
   perdrait la surcote que l'activité poursuivie ouvre, et, depuis 2015,
   éteindrait les droits de cette activité (fiche
   ``droits_apres_la_premiere_pension``) : le modèle ne la présume pas ;
+* la pension de vieillesse de l'ex-invalide remplace sa pension d'invalidité
+  d'office, au premier jour du mois qui suit l'âge de la substitution, dans
+  le régime général et les régimes alignés, avant son départ déclaré s'il le
+  faut ; l'invalide qui travaille la demande à son départ, au plus tard à
+  l'âge du taux plein automatique ; le demandeur d'emploi indemnisé, six
+  mois après l'âge au plus tard (:func:`~.invalidite.substitution`) ;
 * la personne peut DIRE la date où elle demande une pension
   (:attr:`~retraite_notionnelle.carriere.Carriere.demandes_de_pension`) : une
   date plus tardive que la présumée la remplace — pour éviter une décote qui
@@ -53,7 +59,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
-from . import compter, coordonner, ouvrir
+from . import compter, coordonner, invalidite, ouvrir
 from .commun import derniere_annee
 
 if TYPE_CHECKING:
@@ -75,6 +81,9 @@ MOTIF_OUVERTURE = "ouverture"
 MOTIF_SORTIE = "sortie"
 #: Une date que la personne demande, plus tardive que la présumée.
 MOTIF_DEMANDE = "demande"
+#: La pension de vieillesse qui remplace la pension d'invalidité
+#: (:func:`~.invalidite.substitution`).
+MOTIF_INVALIDITE = "invalidite"
 
 #: Ce qu'une demande devient quand elle ne date pas sa pension : servie avec
 #: la pension que la loi lui attache — le régime liquidé avec elle, ou le
@@ -93,7 +102,9 @@ class Depart:
     regimes: frozenset[str] = field(default_factory=frozenset)
     #: ``depart``, au départ déclaré ; ``ouverture``, un régime qui n'ouvrait
     #: pas encore ; ``sortie``, la pension militaire, demandée à la sortie de
-    #: l'armée ; ``demande``, la date que la personne demande.
+    #: l'armée ; ``demande``, la date que la personne demande ;
+    #: ``invalidite``, la pension de vieillesse qui remplace la pension
+    #: d'invalidité.
     motif: str = MOTIF_DEPART
 
     @property
@@ -117,8 +128,8 @@ class DemandeExaminee:
     demandee: DateMois
     #: Le mois où la pension commence ; ``None`` sans pension de ce régime.
     retenue: DateMois | None
-    #: ``demande`` : la date demandée ; ``depart``, ``ouverture`` ou
-    #: ``sortie`` : la date présumée, que la demande n'avance pas ;
+    #: ``demande`` : la date demandée ; ``depart``, ``ouverture``, ``sortie``
+    #: ou ``invalidite`` : la date présumée, que la demande n'avance pas ;
     #: ``ensemble`` : celle de la pension que la loi lui attache ;
     #: ``sans_pension`` : la carrière n'a pas de pension dans ce régime.
     motif: str
@@ -358,8 +369,24 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
     # La date présumée de chaque unité, et ce qui la date ; puis la demande,
     # quand elle vient après : la plus tardive des régimes de l'unité.
     ouvertures = [_ouverture(moteur, carriere, unite) for unite in unites]
+    # La pension de vieillesse de l'ex-invalide, quand elle commence au plus
+    # tard au départ déclaré : d'office, elle ne s'avance ni ne se reporte ;
+    # l'invalide qui travaille la demande, et sa demande la date.
+    substituee = invalidite.substitution(moteur, carriere)
+    if substituee is not None and substituee.date > declare:
+        substituee = None
+    substitues = moteur.invalidites.regimes("substitution")
     dates: list[tuple[DateMois, str]] = []
     for i, unite in enumerate(unites):
+        if substituee is not None and not unite.isdisjoint(substitues):
+            presumee = (substituee.date, MOTIF_INVALIDITE)
+            voulue = max((demandees[code] for code in unite if code in demandees),
+                         default=None)
+            dates.append((voulue, MOTIF_DEMANDE)
+                         if (substituee.maintien == invalidite.ACTIVITE
+                             and voulue is not None and voulue > presumee[0])
+                         else presumee)
+            continue
         if ouvertures[i] > declare:
             presumee = (ouvertures[i], MOTIF_OUVERTURE)
         else:
@@ -397,12 +424,13 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
 
     def motif(quand: DateMois) -> str:
         """Ce qui date un départ : l'acte de la personne d'abord, puis la
-        sortie de l'armée ; l'ouverture d'un régime sinon — le RAFP à l'âge
-        légal compris, qui peut précéder le départ déclaré."""
+        sortie de l'armée, puis la substitution de la pension d'invalidité ;
+        l'ouverture d'un régime sinon — le RAFP à l'âge légal compris, qui
+        peut précéder le départ déclaré."""
         if quand == declare:
             return MOTIF_DEPART
         motifs = {par_regime[code][1] for code in par_date[quand]}
-        for retenu in (MOTIF_DEMANDE, MOTIF_SORTIE):
+        for retenu in (MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_INVALIDITE):
             if retenu in motifs:
                 return retenu
         return MOTIF_OUVERTURE

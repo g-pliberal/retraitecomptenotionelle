@@ -3213,6 +3213,12 @@ une radiation qui ne clôt aucun emploi de fonctionnaire civil, ou que la
 carrière suit dans la fonction publique. Le moteur ne lit pas encore ces
 faits : aucun résultat ne bouge. `tests/test_invalidite.py` les tient.
 
+**Troisième étape, en cours.** Publiés le 30 septembre : le taux plein de
+l'inapte et de l'ex-invalide, et la pension de vieillesse qui remplace d'office
+la pension d'invalidité (`droit/invalidite.py`). Restent l'âge de l'ASPA de
+l'inapte, le plancher de l'allocation aux vieux travailleurs salariés et la
+retraite pour invalidité des fonctionnaires.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

@@ -118,6 +118,8 @@ PRESOMPTIONS_DU_5_6 = {
     "chaque pension demandée au départ déclaré": "depart_de_chaque_regime",
     "une pension d'invalidité depuis le début de la période d'invalidité":
         "pension_d_invalidite_de_la_periode",
+    "l'opposition de l'invalide qui travaille à la substitution":
+        "opposition_a_la_substitution",
 }
 
 

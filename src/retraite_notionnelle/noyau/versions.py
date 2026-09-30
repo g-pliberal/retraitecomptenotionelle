@@ -8,7 +8,8 @@ d'elle que ce qu'il calcule : ses bornes, son texte et les paramètres de son
 contenu (``contenu.parametres``).
 
 Une fiche que le moteur lit passe par :func:`preparer`, qui en garde ces
-seules données, les dates écrites en texte (AAAA-MM-JJ) : c'est la forme que le
+seules données, les dates écrites en texte (AAAA-MM-JJ), celles des bornes
+comme celles des paramètres : c'est la forme que le
 paquet du site porte, et que son jumeau, ``moteur/js/versions.js``, lit de la
 même façon. Deux dates écrites ainsi se comparent comme deux textes.
 
@@ -47,7 +48,10 @@ def preparer(fiche: dict) -> dict:
                        for nom, (debut, fin) in (version.get("bornes") or {}).items()},
             "exception_de": version.get("exception_de"),
             "texte": texte,
-            "parametres": dict((version.get("contenu") or {}).get("parametres") or {}),
+            "parametres": {
+                nom: _jour(valeur) if isinstance(valeur, date) else valeur
+                for nom, valeur in ((version.get("contenu") or {}).get("parametres")
+                                    or {}).items()},
         })
     return {"id": fiche["id"], "dates_qui_decident": list(fiche.get("dates_qui_decident") or []),
             "versions": versions}

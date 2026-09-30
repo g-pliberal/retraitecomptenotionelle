@@ -14,7 +14,7 @@ domaine: age
 regimes: [regime_general, msa_salaries, cancava, organic, rsi]
 etape: echeancier
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - la pension d'invalidité de l'assuré, sa date d'effet et le régime qui la sert
 - l'activité exercée à l'âge légal, et la demande de retraite de l'invalide qui travaille
@@ -197,20 +197,49 @@ versions:
       maintien_au_plus_tard: age_annulation_decote
       maintien_du_demandeur_d_emploi_mois: 6
   exemples: aucun trouvé
-approximations: []
+approximations:
+- ecart: >-
+    le plancher de la pension substituée n'est pas appliqué : l'allocation aux vieux
+    travailleurs salariés depuis le 31 mai 1983, la pension d'invalidité elle-même
+    avant ; la troisième étape du domaine le porte ensuite
+  effet: >-
+    la pension de vieillesse des ex-invalides aux carrières courtes, que le minimum
+    contributif ne porte pas à l'allocation ; non mesuré
+- ecart: >-
+    l'activité et l'indemnisation du chômage se lisent sur la ligne principale de
+    l'année où l'âge est atteint, et non au mois ; la condition d'activité des six mois
+    qui précèdent l'âge (D. 341-1) n'est pas contrôlée
+  effet: non mesuré
+- version: [invalide_qui_travaille_2010, age_legal_2011, demandeurs_d_emploi_2017,
+    soixante_deux_ans_2023]
+  ecart: >-
+    la retraite de l'invalide qui travaille n'est pas comparée à celle qu'il aurait eue
+    à l'âge de la substitution, revalorisée (L. 341-16 ; circulaire Cnav n° 2018-18)
+  effet: >-
+    nul tant que l'activité poursuivie ne fait pas baisser le salaire annuel moyen ;
+    non mesuré sinon
+- ecart: >-
+    le régime qui sert la pension d'invalidité n'est pas lu : la substitution se fait
+    dans le régime général et les régimes alignés de la carrière, quel qu'il soit ; les
+    salariés agricoles la font par renvoi au code de la sécurité sociale, non lu
+  effet: non mesuré
 presomptions:
   pension_d_invalidite_de_la_periode: >-
     la pension d'invalidité de l'assuré que la carrière finit en invalidité, quand il ne
     la date pas
+  opposition_a_la_substitution: >-
+    avant le 1er mars 2010, l'invalide qui travaille encore à l'âge de la substitution
+    s'y oppose, et demande sa pension à son départ
 sources:
   lu_le: 2026-09-30
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
-    (docs/architecture.md, § 11), à la demande du propriétaire. Le moteur ne la calcule
-    pas encore : il lui faut la pension d'invalidité dans la chronologie (étape 2 du
-    domaine), puis le départ induit à l'âge et son plancher (étape 3).
+    (docs/architecture.md, § 11), à la demande du propriétaire, et lue par le moteur à
+    sa troisième étape : le départ du régime général et des régimes alignés à l'âge de
+    la substitution, au taux plein. Reste le plancher de l'allocation aux vieux
+    travailleurs salariés, et les exemples publiés (quatrième étape).
   - >-
     À lire : l'article du code de 1956 qui reprend l'article 62 de l'ordonnance de 1945
     jusqu'à la recodification de 1985, et la loi n° 83-430 du 31 mai 1983 elle-même,
@@ -266,13 +295,33 @@ sources:
 textes_sans_effet:
 - {id: LEGIARTI000006736513, article: "D. 341-1 CSS", en_vigueur: 1986-01-29,
    motif: "le contrôle trimestriel des droits des invalides, sans effet sur la pension substituée"}
+code:
+  python: >-
+    droit/invalidite.py : substitution ; droit/departs.py : departs_et_demandes, la
+    date de l'unité du régime général ; scenarios/actuel.py : Invalidites
+  javascript: >-
+    moteur/js/droit/invalidite.js : substitution ; moteur/js/droit/departs.js :
+    departsEtDemandes ; moteur/js/regimes.js : Invalidites
+  parametres: >-
+    contenu.parametres de chaque version : age, invalide_qui_travaille,
+    maintien_au_plus_tard, maintien_du_demandeur_d_emploi_mois ; plancher et
+    plancher_invalidite_avant, pas encore lus
+  tests: >-
+    tests/test_invalidite.py ; les témoins invalidite_* des simulations, et la page
+    simuler_invalidite_substituee, dans les deux moteurs
 historique:
 - >-
   2026-09-30 — née avec le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la
   demande du propriétaire ; de la fiche inaptitude_invalidite_penibilite_amiante, qui
   la portait sans versions.
+- >-
+  2026-09-30 — lue par le moteur, à la troisième étape du domaine : la pension de
+  vieillesse de l'ex-invalide commence d'office à l'âge de la substitution, avant son
+  départ déclaré s'il le faut, au taux plein de l'inapte (fiche inaptitude_au_travail) ;
+  l'invalide qui travaille part à sa demande, au plus tard à l'âge du taux plein
+  automatique ; le demandeur d'emploi indemnisé, six mois après l'âge au plus tard.
 effet: >-
   Les titulaires d'une pension d'invalidité à l'âge légal : 0,90 million de retraités
-  partis au taux plein à ce titre fin 2016 (DREES, EIR). Le modèle compte leurs années
-  d'invalidité en trimestres assimilés, mais ne les fait pas partir à l'âge de la
-  substitution, et les décote s'ils n'ont pas la durée.
+  partis au taux plein à ce titre fin 2016 (DREES, EIR). Le modèle les fait partir à
+  l'âge de la substitution, au taux plein, et leurs complémentaires sans coefficient ;
+  le plancher de l'allocation aux vieux travailleurs salariés reste à porter.

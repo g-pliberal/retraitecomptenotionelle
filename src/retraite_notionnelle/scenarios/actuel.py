@@ -1204,6 +1204,48 @@ class Reversions:
             fiche, {nom: situation[nom] for nom in fiche["dates_qui_decident"]})
 
 
+class Invalidites:
+    """Les fiches de l'invalidité et de l'inaptitude (docs/architecture.md,
+    § 11), dont le moteur lit les versions : la pension d'invalidité que la
+    pension de vieillesse remplace à l'âge légal (``substitution``),
+    l'inaptitude au travail (``inaptitude``), la retraite pour invalidité des
+    fonctionnaires (``fonction_publique``). Chaque fiche dit ses régimes : les
+    autres n'appliquent pas ses règles, et la fiche le dit en approximation.
+    """
+
+    #: Les fiches, sous le nom que le moteur leur donne.
+    FICHES = {"substitution": "pension_d_invalidite_substituee",
+              "inaptitude": "inaptitude_au_travail",
+              "fonction_publique": "retraite_pour_invalidite_fonction_publique"}
+
+    def __init__(self, racine: Path) -> None:
+        self._fiches: dict[str, dict] = {}
+        for nom in self.FICHES.values():
+            chemin = racine / "reference" / "regles" / f"{nom}.yaml"
+            if not chemin.exists():
+                continue
+            brute = charger_yaml(chemin)
+            self._fiches[nom] = versions.preparer(brute) | {
+                "regimes": list(brute.get("regimes") or ())}
+
+    def fiches(self) -> dict[str, dict]:
+        """Les fiches préparées, sous leur nom : ce que le paquet du site porte."""
+        return dict(self._fiches)
+
+    def regimes(self, fiche: str) -> frozenset[str]:
+        """Les régimes qui appliquent les règles de cette fiche."""
+        preparee = self._fiches.get(self.FICHES[fiche])
+        return frozenset(preparee["regimes"]) if preparee is not None else frozenset()
+
+    def version(self, fiche: str, date_effet: str) -> dict | None:
+        """La version de cette fiche pour une pension qui prend effet à
+        ``date_effet`` (AAAA-MM-JJ), ou ``None``."""
+        preparee = self._fiches.get(self.FICHES[fiche])
+        if preparee is None:
+            return None
+        return versions.applicable(preparee, {"liquidation.date_effet": date_effet})
+
+
 class ServicesOuvrantPension:
     """La durée de services qui ouvre une pension dans chaque régime spécial.
 
@@ -2248,6 +2290,7 @@ class ScenarioActuel:
         self.annees_salaire_reference = AnneesSalaireReference(parametres.racine_donnees)
         self.majorations_enfants = MajorationsPourEnfants(parametres.racine_donnees)
         self.reversions = Reversions(parametres.racine_donnees)
+        self.invalidites = Invalidites(parametres.racine_donnees)
         self.services_ouvrant_pension = ServicesOuvrantPension(parametres.racine_donnees)
         self.surcote_parentale = SurcoteParentale(parametres.racine_donnees)
         self.majorations_enfants_points = MajorationsEnfantsPoints(

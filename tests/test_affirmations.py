@@ -1373,6 +1373,22 @@ def _(m: Modele):
     assert servis == {"cnracl"}
 
 
+@controle("pension_substituee")
+def _(m: Modele):
+    """L'ex-invalide né en juin 1965, dont la carrière finit en invalidité et
+    qui déclare partir à soixante-quatre ans : sa pension de vieillesse
+    remplace d'office sa pension d'invalidité en juillet 2027, à soixante-deux
+    ans, au taux plein, avec ses complémentaires (droit/invalidite.py)."""
+    comparaison = m.simuler_requete(
+        naissance="1965-06-15", debut="1986-09", liquidation="2029-07",
+        interruptions="2019:2029:invalidite")
+    [depart] = comparaison.actuel.departs
+    assert (depart.date_effet, depart.motif) == ("2027-07-01", "invalidite")
+    assert {"regime_general", "arrco"} <= set(depart.regimes)
+    assert _proche(depart.montant, comparaison.actuel.pension_annuelle
+                   + comparaison.actuel.pension_hors_repartition)
+
+
 @controle("retraite_progressive_servie")
 def _(m: Modele):
     """À 60 % depuis novembre 2025, la salariée touche 40 % de sa pension

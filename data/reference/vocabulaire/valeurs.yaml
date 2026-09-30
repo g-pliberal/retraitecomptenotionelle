@@ -181,6 +181,7 @@ listes:
     # (data/reference/etapes/ouvrir_le_droit.yaml).
     valeurs:
       age_legal: l'âge légal de la génération, ou celui qu'un régime ouvre en propre
+      inaptitude: l'inaptitude au travail, reconnue ou celle de l'ex-invalide, quand l'âge demandé précède l'âge légal de la génération (L. 351-1-5)
       carriere_longue: le départ anticipé pour carrière longue, quand l'âge demandé précède tous les autres
       non_ouverte: le droit n'ouvre pas la liquidation à cet âge ; le montant reste calculé, en contrefactuel
 
@@ -416,6 +417,22 @@ listes:
           janvier. Une invalidité suivie d'une reprise d'activité est présumée
           avoir pris fin : une pension supprimée pour raison médicale ne se
           substitue pas (circulaire Cnav n° 2023-25, 1.3)
+      opposition_a_la_substitution:
+        dit: >-
+          avant le 1er mars 2010, l'invalide qui travaille encore à l'âge de la
+          substitution s'y oppose, et demande sa pension de vieillesse à son
+          départ
+        valeur: opposée, la pension demandée au départ déclaré
+        appliquee_par: substitution (droit/invalidite.py), et son jumeau JavaScript
+        entrera_a: echeancier
+        raison: >-
+          de 1983 à février 2010, la pension substituée « n'est concédée que si
+          l'assuré n'y fait pas opposition », et qui s'y oppose voit ses droits
+          liquidés « lorsqu'il en fait la demande » (L. 341-16) ; depuis mars
+          2010, l'invalide qui travaille garde sa pension d'invalidité jusqu'à
+          sa demande sans rien faire (fiche pension_d_invalidite_substituee).
+          Le formulaire ne demande pas cet acte : qui déclare travailler
+          jusqu'à son départ l'a fait, et demande sa pension à cette date
 
   origines_de_ligne:
     valeurs:

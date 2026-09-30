@@ -13,7 +13,7 @@ domaine: age
 regimes: [regime_general, msa_salaries, cancava, organic, rsi, assurances_sociales]
 etape: ouvrir_le_droit
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - la reconnaissance de l'inaptitude au travail, ou ce qui la fait présumer (pension
   d'invalidité substituée, allocation aux adultes handicapés, carte d'invalidité)
@@ -156,17 +156,50 @@ versions:
       taux: taux_plein
       age_aspa: 62
   exemples: aucun trouvé
-approximations: []
+approximations:
+- ecart: >-
+    l'allocation de solidarité aux personnes âgées s'ouvre toujours à soixante-cinq ans,
+    et non à l'âge de l'inapte ; la troisième étape du domaine le porte ensuite
+  effet: non mesuré
+- ecart: >-
+    les régimes que la fiche ne nomme pas gardent leur décote ou leur coefficient pour
+    l'inapte : les exploitants agricoles, les professions libérales, les avocats, les
+    régimes spéciaux, et les complémentaires des indépendants, dont les textes ne sont
+    pas lus ; l'Agirc et l'Arrco d'avant 1983 aussi, dont les règlements d'alors ne le
+    sont pas
+  effet: >-
+    la pension des inaptes de ces régimes, sous-estimée ; non mesuré
+- ecart: >-
+    seuls l'inaptitude déclarée et l'ex-invalide la font reconnaître ; les autres
+    réputés inaptes (allocation aux adultes handicapés, incapacité permanente d'au moins
+    50 %, carte d'invalidité) ne se déclarent pas, et la condition de trente, puis de
+    trente-sept ans et demi d'assurance d'avant 1983 n'est pas contrôlée : la pension
+    s'y proratise à la durée, comme le texte le dit en deçà
+  effet: non mesuré
+code:
+  python: >-
+    droit/invalidite.py : age_d_inaptitude, taux_plein_de_l_inapte ; droit/ouvrir.py :
+    age_ouverture, ouvrir, age_taux_plein_droit ; droit/liquider.py : la décote, le
+    minimum contributif, abattement_points, abattement_regime_de_base ;
+    scenarios/actuel.py : Invalidites
+  javascript: >-
+    moteur/js/droit/invalidite.js : ageDInaptitude, tauxPleinDeLInapte ;
+    moteur/js/droit/ouvrir.js ; moteur/js/droit/liquider.js ; moteur/js/regimes.js :
+    Invalidites
+  parametres: >-
+    contenu.parametres de chaque version : age, taux ; age_aspa, pas encore lu
+  tests: >-
+    tests/test_invalidite.py ; les témoins inaptitude_* et invalidite_* des
+    simulations, dans les deux moteurs
 sources:
   lu_le: 2026-09-30
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
-    (docs/architecture.md, § 11), à la demande du propriétaire. Le moteur ne la calcule
-    pas encore : il lui faut l'inaptitude dans la chronologie (étape 2 du domaine), puis
-    l'âge, le taux plein et l'allocation aux personnes âgées dans les deux moteurs
-    (étape 3).
+    (docs/architecture.md, § 11), à la demande du propriétaire, et lue par le moteur à
+    sa troisième étape : l'âge et le taux plein. Restent l'âge de l'allocation aux
+    personnes âgées, et les exemples publiés (quatrième étape).
   - >-
     À lire : l'article L. 332 du code de 1956, que la loi n° 71-1132 réécrit, et la
     rédaction de l'article 70-1 du décret de 1945 applicable en 1972, que l'index ne
@@ -184,6 +217,18 @@ sources:
     `--num L351-7` rendait d'abord les articles homonymes du code de la construction ;
     la fiche et l'inventaire des avantages citent désormais les bons articles.
   lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970 (Ircantec), article 16, dans ses rédactions de 1971
+      (LEGIARTI000006381606), 1978, 1983, 2011, 2018 et 2023 (LEGIARTI000048065521) :
+      « Toutefois, ce coefficient de réduction n'est pas applicable : 1° Dans le cas
+      d'une inaptitude au travail reconnue entre soixante et soixante-cinq ans par la
+      sécurité sociale », puis « Les agents et anciens agents atteints d'une inaptitude
+      au travail reconnue par la sécurité sociale dans les conditions prévues à
+      l'article L. 351-7 […] et liquidant à taux plein leur pension de vieillesse du
+      régime général » ; l'accord Agirc-Arrco du 17 novembre 2017, article 84, 3, lu le
+      27 septembre 2026 (fiche coefficients_anticipation_agirc_arrco)
+    date: 2026-09-30
   - type: legifrance
     reference: >-
       L. 351-7 (1985), L. 351-8 (1985, 2003, 2011, 2014, 2023, 2025), R. 351-21 (1985),
@@ -227,8 +272,15 @@ historique:
   2026-09-30 — née avec le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la
   demande du propriétaire ; de la fiche inaptitude_invalidite_penibilite_amiante, qui
   la portait sans versions et sous un article qui n'était pas le sien.
+- >-
+  2026-09-30 — lue par le moteur, à la troisième étape du domaine : l'inapte et
+  l'ex-invalide ont le taux plein à l'âge de la version, que l'âge légal de leur
+  génération n'ouvre pas encore depuis 2023 ; l'Agirc-Arrco (accord de 2017, article
+  84, 3, et les accords de l'ASF depuis 1983) et l'Ircantec (arrêté du 30 décembre
+  1970, article 16, dès 1971) les servent sans coefficient d'anticipation.
 effet: >-
   Les retraités partis au taux plein pour inaptitude : 1,36 million fin 2016 (DREES,
   EIR), et avec les ex-invalides 19 % des nouveaux retraités du régime général en 2024
-  (COR). Le modèle ne connaît pas l'inaptitude : il les décote s'ils n'ont pas la
-  durée, et leur refuse le départ à soixante-deux ans quand l'âge légal est plus haut.
+  (COR). Le modèle les sert au taux plein à leur âge, au régime général et dans les
+  régimes alignés, et leurs complémentaires de salariés sans coefficient ; l'âge de
+  l'allocation aux personnes âgées reste à porter.

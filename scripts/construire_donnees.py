@@ -90,6 +90,7 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     DureesProratisation,
     DureesRequises,
     DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
+    Invalidites,
     MajorationsPourEnfants,
     Rendements,
     Reversions,
@@ -1239,8 +1240,10 @@ def _versions_des_fiches() -> dict:
     """Les fiches de la carte que le moteur lit, réduites à ce qu'il en lit :
     leurs dates qui décident, et chaque version avec ses bornes, son texte et
     ses paramètres (``noyau/versions.py``). Aujourd'hui, les trimestres des
-    enfants, et la réversion, dont chaque fiche dit aussi ses régimes."""
-    return MajorationsPourEnfants(DONNEES).fiches() | Reversions(DONNEES).fiches()
+    enfants, la réversion, l'invalidité et l'inaptitude, dont chaque fiche dit
+    aussi ses régimes."""
+    return (MajorationsPourEnfants(DONNEES).fiches() | Reversions(DONNEES).fiches()
+            | Invalidites(DONNEES).fiches())
 
 
 def _presomptions() -> dict:

@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
-from . import compter, coordonner
+from . import compter, coordonner, invalidite
 from .commun import date_d_effet, derniere_annee
 
 if TYPE_CHECKING:
@@ -105,8 +105,8 @@ class Ouverture:
     #: dispositifs compris, carrière longue comprise ; ``None`` quand aucun
     #: régime n'en fixe.
     age: float | None
-    #: ``age_legal``, ``carriere_longue`` ou ``non_ouverte`` (vocabulaire,
-    #: liste ``ouvertures``).
+    #: ``age_legal``, ``inaptitude``, ``carriere_longue`` ou ``non_ouverte``
+    #: (vocabulaire, liste ``ouvertures``).
     motif: str
     #: Les trimestres cotisés tous régimes, qui commandent la carrière longue
     #: et la majoration du minimum contributif.
@@ -167,6 +167,8 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
     #: l'âge de son régime (:mod:`.departs`) ; quand tous liquident au même
     #: départ, c'est l'âge du plus précoce qui ouvre ce départ.
     age_ouverture_reference: float | None = None
+    #: Le même, sans l'inaptitude : l'âge qu'elle devance.
+    age_sans_inaptitude: float | None = None
     codes = [code for code in droits.codes if regimes is None or code in regimes]
     # Un régime et celui qui lui succède liquident ensemble, sous les règles
     # de la caisse qui aurait le dossier : les autres membres du groupe
@@ -213,6 +215,11 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
                 age_regime if age_ouverture_reference is None
                 else min(age_ouverture_reference, age_regime)
             )
+            sans_inaptitude = age_ouverture(moteur, periode, carriere, inaptitude=False)
+            age_sans_inaptitude = (
+                sans_inaptitude if age_sans_inaptitude is None
+                else min(age_sans_inaptitude, sans_inaptitude)
+            )
         if age_ouverture_reference is not None:
             break
     requis_reference = requis_reference or 160
@@ -229,6 +236,10 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
     # pas encore liquider, ce qui n'est ni le droit ni un contrefactuel
     # utile. Elle l'est maintenant, et la réponse accompagne le montant.
     motif_ouverture = "age_legal"
+    if (age_sans_inaptitude is not None and age_ouverture_reference is not None
+            and age_ouverture_reference <= age_liquidation < age_sans_inaptitude):
+        # L'inapte part avant l'âge légal de sa génération (L. 351-1-5).
+        motif_ouverture = "inaptitude"
     if age_ouverture_reference is not None and age_liquidation < age_ouverture_reference:
         anticipe = moteur.carriere_longue.age_de_depart(
             carriere, annee_liquidation,
@@ -571,13 +582,21 @@ def droit_militaire(moteur, periode: PeriodeRegime,
     )
 
 
-def age_ouverture(moteur, periode: PeriodeRegime, carriere: Carriere) -> float:
+def age_ouverture(moteur, periode: PeriodeRegime, carriere: Carriere,
+                  inaptitude: bool = True) -> float:
     """Âge légal opposable à cet assuré dans ce régime.
 
     Trois droits se superposent, du plus particulier au plus général : la
     pension militaire, qui s'ouvre à une durée de services ; la catégorie
     active, qui avance l'âge de cinq ou de dix années ; le droit commun,
     lu à la génération ou dans la fiche.
+
+    Et l'inaptitude l'abaisse, dans les régimes qui la connaissent : depuis
+    le 1er septembre 2023, l'inapte et l'ex-invalide partent à soixante-deux
+    ans quand l'âge légal monte à soixante-quatre (L. 351-1-5, fiche
+    ``inaptitude_au_travail``). ``inaptitude`` faux la laisse de côté : c'est
+    l'âge que l'inaptitude devance, que :func:`ouvrir` compare pour dire ce
+    qui ouvre la liquidation.
     """
     militaire = droit_militaire(moteur, periode, carriere)
     if militaire is not None:
@@ -591,7 +610,11 @@ def age_ouverture(moteur, periode: PeriodeRegime, carriere: Carriere) -> float:
         return speciale
     par_services = ouverture_par_services(moteur, periode, carriere)
     if par_services is not None and par_services < commun:
-        return par_services
+        commun = par_services
+    inapte = (invalidite.age_d_inaptitude(moteur, periode.regime, carriere)
+              if inaptitude else None)
+    if inapte is not None and inapte < commun:
+        return inapte
     return commun
 
 
@@ -958,6 +981,13 @@ def age_taux_plein_droit(moteur, carriere: Carriere) -> float | None:
         acquis += majoration.trimestres
     duree = carriere.age_liquidation + (requis - acquis) / 4.0
     taux_plein = min(annulation, max(ouverture, duree))
+    # L'inapte a le taux plein dès son âge, quelle que soit sa durée
+    # (L. 351-8, 2°).
+    inapte = min((age for age in (invalidite.age_d_inaptitude(moteur, code, carriere)
+                                  for code, _ in retenues) if age is not None),
+                 default=None)
+    if inapte is not None:
+        taux_plein = min(taux_plein, max(ouverture, inapte))
     anticipe = age_carriere_longue(moteur, carriere, opposent)
     if anticipe is not None and anticipe < taux_plein:
         return anticipe

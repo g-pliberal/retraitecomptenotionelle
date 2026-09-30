@@ -23,6 +23,7 @@ import { derniereAnnee } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
+import * as invalidite from "./invalidite.js";
 import * as ouvrir from "./ouvrir.js";
 import { TRIMESTRES_DECOTE_MILITAIRE } from "./ouvrir.js";
 
@@ -461,7 +462,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       trimestresDecote = trimestresDeDecote(
         moteur, periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
       );
-      if (tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation)) {
+      if (tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation)
+          || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)) {
+        // Le taux de soixante-cinq ans des femmes d'avant 1983 ; le taux plein
+        // de l'inapte, quelle que soit sa durée (L. 351-8, 2°).
         trimestresDecote = 0.0;
       }
       if (decote && trimestresDecote > 0) {
@@ -554,7 +558,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         prorataAssurance: prorata,
         prorataCotise: cotisesRegime / proratisation,
         tauxPlein: trimestres >= requis
-          || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere),
+          || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
+          || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation),
         surcote: coefficientSurcote,
       });
     }
@@ -1702,6 +1707,11 @@ export function valeurPointFiche(moteur, periode, annee) {
  */
 export function abattementRegimeDeBase(moteur, periode, carriere, trimestres, requis, ageLiquidation,
   anneeLiquidation) {
+  // Le régime en points que la fiche `inaptitude_au_travail` nomme sert
+  // l'inapte sans abattement.
+  if (invalidite.tauxPleinDeLInapte(moteur, periode.regime, carriere, ageLiquidation)) {
+    return 1.0;
+  }
   const [decote, ageAnnulation] = decoteOpposable(moteur, periode, carriere, anneeLiquidation);
   if (decote === null) {
     return 1.0;
@@ -1823,7 +1833,13 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     const parAgeSeul = (periode.duree_requise_trimestres === null
       || periode.duree_requise_trimestres === undefined)
       && !periode.duree_requise_par_generation;
-    if (!parAgeSeul && trimestres >= requis) {
+    // L'inapte a le taux plein au régime général, et la complémentaire le
+    // suit : l'Agirc-Arrco depuis l'ASF (article 84, 3, de l'accord de 2017),
+    // l'Ircantec dès 1971 (article 16 de l'arrêté du 30 décembre 1970).
+    const inapte = (!parAgeSeul || periode.abattement_points === "ircantec")
+      && invalidite.tauxPleinDeLInapte(
+        moteur, invalidite.REGIME_DES_SALARIES, carriere, ageLiquidation);
+    if (inapte || (!parAgeSeul && trimestres >= requis)) {
       abattement = 1.0;
     } else {
       const parDuree = parAgeSeul

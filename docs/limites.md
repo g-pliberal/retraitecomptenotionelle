@@ -250,11 +250,19 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   TEMPORAIRE, quand le modèle ne calcule qu'une pension annuelle unique.
   L'appliquer à titre permanent créerait une erreur nouvelle, plus grande que
   celle qu'il corrigerait.
-- **Pénibilité, invalidité, inaptitude, handicap.** Quatre autres portes du
-  départ anticipé, qui demandent des informations médicales ou
-  professionnelles que le modèle ne collecte pas. Un assuré qui en relèverait
-  est ici déclaré « non ouvert » alors que le droit l'ouvrirait, et subit une
-  décote dont le droit le dispenserait.
+- **Pénibilité, handicap ; l'invalidité et l'inaptitude en partie.** La
+  pénibilité et le handicap sont deux autres portes du départ anticipé, qui
+  demandent des informations médicales ou professionnelles que le modèle ne
+  collecte pas : un assuré qui en relèverait est ici déclaré « non ouvert »
+  alors que le droit l'ouvrirait, et subit une décote dont le droit le
+  dispenserait. L'inaptitude et la pension d'invalidité se déclarent : l'inapte
+  et l'ex-invalide ont le taux plein au régime général et dans les régimes
+  alignés, à l'âge que la loi leur ouvre, et la pension de vieillesse remplace
+  d'office la pension d'invalidité. Restent dehors le plancher de l'allocation
+  aux vieux travailleurs salariés, l'âge de l'ASPA de l'inapte, la retraite
+  pour invalidité des fonctionnaires, l'inaptitude des régimes que la fiche
+  `inaptitude_au_travail` ne nomme pas, et les réputés inaptes qui ne se
+  déclarent pas (allocation aux adultes handicapés, incapacité permanente).
 - **Trimestres « réputés cotisés » de la carrière longue : deux cas sur sept.**
   Les six enveloppes de l'article D. 351-1-2 sont servies depuis le
   22 septembre 2026 — service national, incapacité temporaire, chômage
@@ -639,7 +647,8 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   ancré sur la plus proche, et l'approximation ne reprend toute la main
   qu'avant 1930, où elle joue À LA HAUSSE ;
 - **départs anticipés** — la carrière longue est modélisée, et sert à dire si le
-  droit ouvre la liquidation demandée. La pénibilité, l'invalidité, l'inaptitude
+  droit ouvre la liquidation demandée ; l'inaptitude et l'invalidité aussi, au
+  régime général et dans les régimes alignés, à qui les déclare. La pénibilité
   et le handicap ne le sont pas : ils demandent des informations médicales ou
   professionnelles que le modèle ne collecte pas ;
 - **polypensionnés** — chaque régime liquide sur ses seules années, à sa

@@ -22,6 +22,7 @@ import { dateDEffet, derniereAnnee } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { borneCarriere, REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
+import * as invalidite from "./invalidite.js";
 
 /** La version du schéma de l'étape. */
 export const SCHEMA_VERSION = 1;
@@ -116,6 +117,8 @@ export function ouvrir(moteur, releve, regimes = null) {
   // régime (`departs.js`) ; quand tous liquident au même départ, c'est l'âge
   // du plus précoce qui ouvre ce départ.
   let ageOuvertureReference = null;
+  // Le même, sans l'inaptitude : l'âge qu'elle devance.
+  let ageSansInaptitude = null;
   // Un régime et celui qui lui succède liquident ensemble, sous les règles
   // de la caisse qui aurait le dossier : les autres membres du groupe sont
   // sautés partout où un régime liquide. À FAUX, chaque nom de caisse est
@@ -153,6 +156,10 @@ export function ouvrir(moteur, releve, regimes = null) {
       ageOuvertureReference = ageOuvertureReference === null
         ? ageRegime
         : Math.min(ageOuvertureReference, ageRegime);
+      const sansInaptitude = ageOuverture(moteur, periode, carriere, false);
+      ageSansInaptitude = ageSansInaptitude === null
+        ? sansInaptitude
+        : Math.min(ageSansInaptitude, sansInaptitude);
     }
     if (ageOuvertureReference !== null) {
       break;
@@ -170,6 +177,11 @@ export function ouvrir(moteur, releve, regimes = null) {
   // posée : le modèle servait une pension décotée à qui ne pouvait pas encore
   // liquider, ce qui n'est ni le droit ni un contrefactuel utile.
   let motifOuverture = "age_legal";
+  if (ageSansInaptitude !== null && ageOuvertureReference !== null
+      && ageOuvertureReference <= ageLiquidation && ageLiquidation < ageSansInaptitude) {
+    // L'inapte part avant l'âge légal de sa génération (L. 351-1-5).
+    motifOuverture = "inaptitude";
+  }
   if (ageOuvertureReference !== null && ageLiquidation < ageOuvertureReference) {
     const anticipe = moteur.carriereLongue.ageDeDepart(
       carriere, anneeLiquidation,
@@ -507,7 +519,7 @@ export function droitMilitaire(moteur, periode, carriere) {
  * pension militaire, qui s'ouvre à une durée de services ; la catégorie
  * active, qui avance l'âge de cinq ou de dix années ; le droit commun.
  */
-export function ageOuverture(moteur, periode, carriere) {
+export function ageOuverture(moteur, periode, carriere, inaptitude = true) {
   const militaire = droitMilitaire(moteur, periode, carriere);
   if (militaire !== null) {
     return militaire.ageOuverture;
@@ -516,14 +528,20 @@ export function ageOuverture(moteur, periode, carriere) {
   if (derogation !== null) {
     return derogation.ageOuverture;
   }
-  const commun = ageOuvertureCommun(moteur, periode, carriere);
+  let commun = ageOuvertureCommun(moteur, periode, carriere);
   const speciale = ouverturePensionSpeciale(moteur, periode, carriere);
   if (speciale !== null) {
     return speciale;
   }
   const parServices = ouvertureParServices(moteur, periode, carriere);
   if (parServices !== null && parServices < commun) {
-    return parServices;
+    commun = parServices;
+  }
+  // L'inaptitude l'abaisse, dans les régimes qui la connaissent (L. 351-1-5) ;
+  // `inaptitude` faux la laisse de côté : c'est l'âge qu'elle devance.
+  const inapte = inaptitude ? invalidite.ageDInaptitude(moteur, periode.regime, carriere) : null;
+  if (inapte !== null && inapte < commun) {
+    return inapte;
   }
   return commun;
 }
@@ -832,7 +850,15 @@ export function ageTauxPleinDroit(moteur, carriereSaisie) {
     acquis += majoration.trimestres;
   }
   const duree = carriere.age_liquidation + (requis - acquis) / 4.0;
-  const tauxPlein = Math.min(annulation, Math.max(ouverture, duree));
+  let tauxPlein = Math.min(annulation, Math.max(ouverture, duree));
+  // L'inapte a le taux plein dès son âge, quelle que soit sa durée
+  // (L. 351-8, 2°).
+  const inaptes = retenues
+    .map(([code]) => invalidite.ageDInaptitude(moteur, code, carriere))
+    .filter((age) => age !== null);
+  if (inaptes.length > 0) {
+    tauxPlein = Math.min(tauxPlein, Math.max(ouverture, Math.min(...inaptes)));
+  }
   // Le départ anticipé pour carrière longue passe avant les trois termes :
   // il n'ouvre qu'à qui a sa durée COTISÉE, donc au taux plein.
   const anticipe = ageCarriereLongue(moteur, carriere, opposent);

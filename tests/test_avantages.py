@@ -384,21 +384,28 @@ def test_chaque_neutralisation_dit_ce_qu_elle_retire(script_cout, par_code):
 
 
 def test_toute_ligne_integree_est_mesuree_ou_dit_pourquoi_elle_ne_l_est_pas(inventaire):
-    """Onze lignes `integre`, et aucune ne doit rester sans réponse.
+    """Douze lignes `integre`, et aucune ne doit rester sans réponse.
 
     Une ligne que le scénario 1 sert sans que la cascade l'isole est soit
-    mesurée par retrait — elle porte alors `chiffre_par` —, soit d'une autre
-    nature, et sa note doit dire par quoi elle se chiffre. Ce test interdit
-    qu'une douzième apparaisse en silence.
+    mesurée par retrait — elle porte alors `chiffre_par` —, soit lue dans un
+    poste publié qui remplace toute ligne calculée — le taux plein par
+    inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les
+    déclare —, soit d'une autre nature, et sa note doit dire par quoi elle se
+    chiffre. Ce test interdit qu'une treizième apparaisse en silence.
     """
-    codes = {n.code for n in __import__(
-        "retraite_notionnelle.avantages", fromlist=["x"]).NEUTRALISATIONS}
+    avantages = __import__("retraite_notionnelle.avantages", fromlist=["x"])
+    codes = {n.code for n in avantages.NEUTRALISATIONS}
     for avantage in inventaire["avantages"]:
         if avantage["etat_modele"] != "integre":
             continue
         if avantage["code"] in codes:
             assert avantage.get("chiffre_par"), (
                 f"{avantage['code']} : mesuré par retrait, mais sans `chiffre_par`"
+            )
+            continue
+        if avantage["code"] in avantages.POSTES_PUBLIES:
+            assert avantage["cout"]["mesurable_par"] == "serie_publiee", (
+                f"{avantage['code']} : lu dans un poste publié, mais sans sa série"
             )
             continue
         # Les autres ne sont pas des dispositifs : elles se chiffrent ailleurs,

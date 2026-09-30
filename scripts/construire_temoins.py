@@ -738,6 +738,47 @@ def _cas() -> list[dict]:
         "naissance": "1960-05-10", "sexe": "F", "debut": "1985-09", "liquidation": "2022-06",
         "demande_regime_general": "2024-06",
     }))
+    # L'INVALIDITÉ ET L'INAPTITUDE (droit/invalidite.py). L'ex-invalide dont la
+    # carrière finit en invalidité : sa pension de vieillesse remplace d'office
+    # sa pension d'invalidité à soixante-deux ans, avant son départ déclaré, au
+    # taux plein ; la même, qui dit la date de sa pension d'invalidité ;
+    # l'invalide qui travaille, qui la garde jusqu'à son départ ; le demandeur
+    # d'emploi indemnisé, six mois de plus ; l'inapte reconnu à soixante-deux
+    # ans, que l'âge légal de sa génération n'ouvrirait pas ; le contractuel
+    # inapte, que l'Ircantec sert sans coefficient ; l'inapte de 2010, à
+    # soixante ans ; l'ex-invalide de 1980, au taux de soixante-cinq ans.
+    cas.append(("invalidite_substituee_a_62_ans", {
+        "naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2029-07",
+        "interruptions": "2019:2029:invalidite",
+    }))
+    cas.append(("invalidite_datee_substituee_a_62_ans", {
+        "naissance": "1965-06-15", "sexe": "F", "debut": "1990-09", "liquidation": "2027-07",
+        "interruptions": "2012:2027:invalidite", "invalidite": "2012-04",
+    }))
+    cas.append(("invalidite_invalide_qui_travaille", {
+        "naissance": "1965-06-15", "debut": "1990-09", "liquidation": "2029-07",
+        "invalidite": "2015-03",
+    }))
+    cas.append(("invalidite_demandeur_d_emploi", {
+        "naissance": "1960-03-15", "debut": "1980-09", "liquidation": "2024-07",
+        "interruptions": "2012:2024:chomage_indemnise", "invalidite": "2014-01",
+    }))
+    cas.append(("inaptitude_a_62_ans", {
+        "naissance": "1965-06-15", "sexe": "F", "debut": "1995-09", "liquidation": "2027-07",
+        "inaptitude": "oui",
+    }))
+    cas.append(("inaptitude_contractuel_ircantec", {
+        "naissance": "1964-02-10", "statut": "contractuel_public", "debut": "1992-09",
+        "liquidation": "2026-03", "inaptitude": "oui",
+    }))
+    cas.append(("inaptitude_a_60_ans_en_2010", {
+        "naissance": "1950-03-15", "debut": "1975-09", "liquidation": "2010-04",
+        "inaptitude": "oui",
+    }))
+    cas.append(("invalidite_substituee_en_1980", {
+        "naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
+        "interruptions": "1975:1982:invalidite",
+    }))
     # LE RÉTABLISSEMENT : qui part sans la durée qui ouvre une pension — quinze
     # ans avant 2011, deux depuis — passe au régime général et à l'Ircantec,
     # le premier portant le dernier traitement dans la limite du plafond de
@@ -1171,6 +1212,13 @@ def _pages() -> dict:
             **BASE, "sexe": "F", "naissance": "1965", "debut": "20", "liquidation": "57",
             "metier2_debut": "30",
             "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
+        }),
+        # L'ex-invalide (droit/invalidite.py) : sa pension de vieillesse remplace
+        # sa pension d'invalidité à soixante-deux ans, avant son départ déclaré,
+        # et la page dit pourquoi elle commence à cette date.
+        ("simuler_invalidite_substituee", "/simuler", {
+            **BASE, "naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2029-07",
+            "interruptions": "2019:2029:invalidite",
         }),
         # La retraite progressive, ouverte puis refusée faute d'âge.
         ("simuler_retraite_progressive", "/simuler", {

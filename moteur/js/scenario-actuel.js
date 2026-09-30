@@ -34,7 +34,7 @@ import {
   DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
-  MajorationsEnfantsPoints, Reversions, ServicesOuvrantPension, SurcoteBaremes,
+  Invalidites, MajorationsEnfantsPoints, Reversions, ServicesOuvrantPension, SurcoteBaremes,
   SurcoteParentale,
   ValeursPoint,
 } from "./regimes.js";
@@ -96,6 +96,7 @@ export class ScenarioActuel {
     this.surcoteBaremes = new SurcoteBaremes(paquet);
     this.majorationsEnfants = new MajorationsPourEnfants(paquet);
     this.reversions = new Reversions(paquet);
+    this.invalidites = new Invalidites(paquet);
     this.servicesOuvrantPension = new ServicesOuvrantPension(paquet);
     this.surcoteParentale = new SurcoteParentale(paquet);
     this.majorationsEnfantsPoints = new MajorationsEnfantsPoints(paquet);

@@ -257,3 +257,112 @@ def test_le_portage_lit_les_memes_faits(monkeypatch):
     assert attendus[1]["pension"]["presomption"] == "pension_d_invalidite_de_la_periode"
     assert attendus[2]["radiation"]["taux"] == 60
     assert attendus[3]["radiation"]["affiliations"] == ["fonctionnaire_territorial_hospitalier"]
+
+
+# -- le moteur : le taux plein de l'inapte, la substitution ----------------------
+
+@pytest.fixture(scope="module")
+def contexte():
+    from retraite_notionnelle.contexte import Contexte
+
+    return Contexte()
+
+
+def _actuel(contexte, **champs):
+    """Le scénario 1 d'une saisie : ce que la page lit du système actuel."""
+    return contexte.simuler(Saisie.depuis_requete(champs)).actuel
+
+
+def _pension(actuel, regime):
+    return next(p for p in actuel.pensions_par_regime if p.regime == regime)
+
+
+def test_l_inapte_part_a_soixante_deux_ans_au_taux_plein(contexte):
+    """Né en 1965, l'âge légal de sa génération ne lui ouvre pas sa pension
+    à soixante-deux ans ; reconnu inapte, il part à cet âge au taux plein,
+    huit trimestres manquants et sans coefficient d'anticipation à
+    l'Agirc-Arrco (L. 351-1-5, L. 351-8, 2° ; accord de 2017, article 84, 3)."""
+    champs = {"naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2027-07"}
+    inapte = _actuel(contexte, **champs, inaptitude="oui")
+    assert inapte.liquidation_ouverte and inapte.motif_ouverture == "inaptitude"
+    assert inapte.age_ouverture_opposable == 62.0
+    assert inapte.trimestres_valides < inapte.trimestres_requis
+    assert "taux 50.000%" in _pension(inapte, "regime_general").detail
+    assert "coefficient" not in _pension(inapte, "arrco").detail
+    autre = _actuel(contexte, **champs)
+    assert not autre.liquidation_ouverte
+    assert "taux 45.000%" in _pension(autre, "regime_general").detail
+    assert "coefficient d'anticipation" in _pension(autre, "arrco").detail
+
+
+def test_l_ircantec_sert_l_inapte_sans_coefficient(contexte):
+    """« Toutefois, ce coefficient de réduction n'est pas applicable : […]
+    aux agents atteints d'une inaptitude au travail » (arrêté du 30 décembre
+    1970, article 16)."""
+    champs = {"naissance": "1964-02-10", "statut": "contractuel_public",
+              "debut": "1992-09", "liquidation": "2026-03"}
+    assert "coefficient" not in _pension(
+        _actuel(contexte, **champs, inaptitude="oui"), "ircantec").detail
+    assert "coefficient d'anticipation 0.7800" in _pension(
+        _actuel(contexte, **champs), "ircantec").detail
+
+
+def test_l_inapte_de_2010_a_le_taux_plein_a_soixante_ans(contexte):
+    champs = {"naissance": "1950-03-15", "debut": "1975-09", "liquidation": "2010-04"}
+    assert "taux 50.000%" in _pension(
+        _actuel(contexte, **champs, inaptitude="oui"), "regime_general").detail
+    assert "taux 33.750%" in _pension(_actuel(contexte, **champs), "regime_general").detail
+
+
+def test_l_ex_invalide_est_substitue_a_soixante_deux_ans(contexte):
+    """La pension de vieillesse remplace d'office la pension d'invalidité au
+    premier jour du mois qui suit soixante-deux ans, avant le départ déclaré
+    à soixante-quatre : le régime général et ses complémentaires y
+    liquident, au taux plein (L. 341-15, R. 341-22)."""
+    actuel = _actuel(contexte, naissance="1965-06-15", debut="1986-09",
+                     liquidation="2029-07", interruptions="2019:2029:invalidite")
+    [depart] = actuel.departs
+    assert (depart.date_effet, depart.motif) == ("2027-07-01", "invalidite")
+    assert set(depart.regimes) == {"regime_general", "agirc_arrco", "arrco",
+                                   "arrco_tranche_2"}
+    assert actuel.motif_ouverture == "inaptitude"
+    assert "taux 50.000%" in _pension(actuel, "regime_general").detail
+
+
+def test_l_invalide_qui_travaille_part_a_sa_demande(contexte):
+    """L'invalide qui travaille à l'âge légal garde sa pension d'invalidité
+    jusqu'à sa demande (L. 341-16) : sa pension de vieillesse commence à son
+    départ, un seul, au taux plein de l'inapte."""
+    actuel = _actuel(contexte, naissance="1965-06-15", debut="1990-09",
+                     liquidation="2029-07", invalidite="2015-03")
+    assert not actuel.departs
+    assert "taux 50.000%" in _pension(actuel, "regime_general").detail
+
+
+def test_le_demandeur_d_emploi_garde_six_mois_sa_pension_d_invalidite(contexte):
+    """Indemnisé à l'âge légal, il la garde six mois de plus (D. 341-1,
+    depuis le 1er septembre 2017) : né en mars 1960, soixante-deux ans en
+    avril 2022, sa pension de vieillesse commence en octobre."""
+    actuel = _actuel(contexte, naissance="1960-03-15", debut="1980-09",
+                     liquidation="2024-07", interruptions="2012:2024:chomage_indemnise",
+                     invalidite="2014-01")
+    [depart] = actuel.departs
+    assert (depart.date_effet, depart.motif) == ("2022-10-01", "invalidite")
+
+
+def test_une_invalidite_nee_apres_l_age_ne_se_substitue_pas(contexte):
+    """Une pension d'invalidité qui commencerait après l'âge de la
+    substitution n'en a pas : la pension de vieillesse commence au départ."""
+    actuel = _actuel(contexte, naissance="1965-06-15", debut="1986-09",
+                     liquidation="2029-07", invalidite="2027-12")
+    assert not actuel.departs
+
+
+def test_avant_1983_l_ex_invalide_a_le_taux_de_soixante_cinq_ans(contexte):
+    """En 1980, la pension de vieillesse qui remplace la pension d'invalidité
+    à soixante ans est calculée au taux de soixante-cinq ans : 50 %, et non
+    les 25 % de soixante ans (loi Boulin)."""
+    actuel = _actuel(contexte, naissance="1920-03-15", debut="1936-09",
+                     liquidation="1982-07", interruptions="1975:1982:invalidite")
+    assert actuel.departs[0].date_effet == "1980-04-01"
+    assert "taux 50.000%" in _pension(actuel, "regime_general").detail

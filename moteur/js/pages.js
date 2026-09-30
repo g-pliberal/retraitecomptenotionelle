@@ -2691,6 +2691,7 @@ const POURQUOI_CE_DEPART = {
   ouverture: "à l'âge où ce régime vous ouvre sa pension",
   sortie: "dès votre sortie de l'armée",
   demande: "à la date où vous la demandez",
+  invalidite: "en remplacement de votre pension d'invalidité",
 };
 
 /**
@@ -2706,6 +2707,8 @@ const POURQUOI_PAS_A_CETTE_DATE = {
   ouverture: (retenue) => `ce régime ne vous l'ouvre que le 1<sup>er</sup> ${retenue}`,
   sortie: (retenue) => "une pension militaire ne se sert qu'une fois l'armée quittée, "
     + `le 1<sup>er</sup> ${retenue}`,
+  invalidite: (retenue) => "elle remplace d'office votre pension d'invalidité le "
+    + `1<sup>er</sup> ${retenue}, quelle que soit la date de votre demande`,
   ensemble: (retenue, complementaire) => (complementaire
     ? "elle suit la pension de base dont elle partage les années, servie le "
       + `1<sup>er</sup> ${retenue}`
@@ -2807,12 +2810,18 @@ function departsEchelonnes(contexte, comparaison) {
       + " Le détail du calcul, plus bas, dit ce que chacune vaut à sa date.";
   }
   // Un seul départ, qui n'est pas le déclaré : les pensions demandées plus tard,
-  // ou la seule pension militaire.
+  // la seule pension militaire, ou la pension de vieillesse qui remplace
+  // d'office la pension d'invalidité.
   const titre = departs.length > 1
     ? `<strong>Vos pensions ne commencent pas toutes à la
 même date.</strong> Le droit ne connaît pas de départ « tous régimes » : chaque
 régime sert sa pension quand vous en remplissez les conditions.`
-    : `<strong>Votre pension ne commence pas à votre départ.</strong> Chaque régime
+    : departs[0].motif === "invalidite"
+      ? `<strong>Votre pension ne commence pas à votre départ.</strong> Votre
+pension de vieillesse remplace d'office votre pension d'invalidité, au premier
+jour du mois qui suit l'âge de la substitution, au taux plein quelle que soit
+votre durée d'assurance.`
+      : `<strong>Votre pension ne commence pas à votre départ.</strong> Chaque régime
 sert sa pension à la date où vous la demandez, au plus tôt quand vous en
 remplissez les conditions.`;
   return `<div class="note">${titre}

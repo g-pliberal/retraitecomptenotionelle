@@ -48,9 +48,9 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 | État | Combien | Ce que ça veut dire |
 |---|---|---|
 | **chiffré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=chiffre)-->9<!--/--> | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
-| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->11<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Huit le sont désormais**, par retrait : voir les §4 bis et 4 ter. Les trois derniers ne sont pas des dispositifs. |
+| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->12<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Huit le sont désormais**, par retrait : voir les §4 bis et 4 ter. Trois autres ne sont pas des dispositifs ; le dernier, le taux plein par inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les déclare, a sa dépense lue dans les comptes de la protection sociale. |
 | **déclaré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=declare)-->3<!--/--> | Une fiche de régime le déclare, et le scénario 1 ne le sert pas à l'assuré. La réversion, qui est de ceux-là, est la pension d'un autre : le modèle la liquide, depuis le 28 septembre 2026, pour le conjoint qu'on lui déclare, mais pas pour tous les ménages, et son coût est LU dans les séries de la DREES : voir le §4 quater. |
-| **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->23<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
+| **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->22<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
 
 Et trois façons d'en mesurer le coût : par le **modèle** (la cascade, ou un
 recalcul de même nature), par une **série publiée**, ou par **rien** — ce
@@ -106,7 +106,7 @@ non comme une source. Une déduction n'est pas une lecture.
 | Bénéfices de campagne | L. 12 c CPCMR | absent | — |
 | Bonification pour service aérien ou sous-marin commandé | L. 12 d CPCMR | absent | — |
 | Retraite anticipée des travailleurs handicapés | L. 351-1-3 CSS; D. 351-1-5 CSS; décret n° 2026-344 article 3 C et G | absent | — |
-| Taux plein par inaptitude ou invalidité | L. 351-8 1° bis CSS | absent | — |
+| Taux plein par inaptitude ou invalidité | L. 351-7 CSS; L. 351-8 2° CSS; L. 341-15 CSS; L. 29 CPCMR | intégré | série publiée |
 | Départ anticipé pour incapacité permanente et compte pénibilité | L. 351-1-4 CSS; L. 4163-1 code du travail | absent | — |
 | Cessation anticipée d'activité des travailleurs de l'amiante | loi n° 98-1194 article 41 — à certifier | absent | série publiée |
 

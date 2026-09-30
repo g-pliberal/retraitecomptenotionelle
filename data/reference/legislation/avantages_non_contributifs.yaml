@@ -1232,17 +1232,26 @@ avantages:
     creation: 1945
     fin: null
     regimes: régime général, régimes alignés
-    etat_modele: absent
+    etat_modele: integre
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Demande une information médicale que le modèle ne collecte pas. Effet
-      constaté dans `docs/limites.md` : les assurés concernés sont déclarés non
-      ouverts, ou décotés à tort.
+      L'avantage porte sur l'ÂGE et le TAUX : le scénario 1 le sert depuis le
+      30 septembre 2026 à qui déclare son inaptitude ou sa pension d'invalidité,
+      ou finit sa carrière en invalidité — départ à soixante-deux ans quand
+      l'âge légal est plus haut, décote nulle, complémentaires sans
+      coefficient. L'isoler supposerait de recalculer la pension sans
+      l'inaptitude, sur une population qui la déclare, que la grille des cas
+      types n'est pas : la dépense est LUE dans les comptes de la protection
+      sociale, dont les postes remplacent toute ligne calculée
+      (`avantages.POSTES_PUBLIES`).
     cout:
-      mesurable_par: aucune
+      mesurable_par: serie_publiee
+      source_id: drees_comptes_protection_sociale
       note: >-
-        Une part importante des liquidations au taux plein passe par là, et le
-        modèle n'en sert aucune. C'est le plus gros angle mort de la famille.
+        Une part importante des liquidations au taux plein passe par là : 19 %
+        des nouveaux retraités du régime général en 2024 (COR). CHIFFRÉ par les
+        postes « pensions d'inaptitude » et « pensions d'invalidité » des
+        comptes de la protection sociale, que la page Coût lit.
 
   - code: incapacite_permanente_penibilite
     libelle: Départ anticipé pour incapacité permanente et compte pénibilité

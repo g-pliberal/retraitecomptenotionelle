@@ -594,6 +594,17 @@ affirmations:
     etat: verifiee
     controle: pensions_a_leur_date
 
+  - id: simuler.pension_substituee
+    page: /simuler
+    extrait: "Votre pension ne commence pas à votre départ."
+    porte: >-
+      quand un seul départ n'est pas le départ déclaré — la pension de vieillesse
+      qui remplace d'office la pension d'invalidité, comme une pension demandée
+      plus tard ou la seule pension militaire —, la page dit quand elle commence,
+      et pourquoi
+    etat: verifiee
+    controle: pension_substituee
+
   - id: simuler.retraite_progressive_servie
     page: /simuler
     extrait: "Une retraite progressive, du"

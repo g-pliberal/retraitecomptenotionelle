@@ -27,6 +27,7 @@ import { menerAuMois } from "../revalorisation.js";
 import { derniereAnnee } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
+import * as invalidite from "./invalidite.js";
 import * as liquidation from "./liquidation.js";
 import * as ouvrirLeDroit from "./ouvrir.js";
 import * as lesProgressives from "./progressive.js";
@@ -43,6 +44,8 @@ export const MOTIF_OUVERTURE = "ouverture";
 export const MOTIF_SORTIE = "sortie";
 /** Une date que la personne demande, plus tardive que la présumée. */
 export const MOTIF_DEMANDE = "demande";
+/** La pension de vieillesse qui remplace la pension d'invalidité. */
+export const MOTIF_INVALIDITE = "invalidite";
 
 /**
  * Ce qu'une demande devient quand elle ne date pas sa pension : servie avec la
@@ -378,7 +381,32 @@ export function departsEtDemandes(moteur, carriereSaisie) {
   // La date présumée de chaque unité, et ce qui la date ; puis la demande,
   // quand elle vient après : la plus tardive des régimes de l'unité.
   const ouvertures = unites.map((unite) => ouvertureDe(moteur, carriere, unite));
+  // La pension de vieillesse de l'ex-invalide, quand elle commence au plus tard
+  // au départ déclaré : d'office, elle ne s'avance ni ne se reporte ;
+  // l'invalide qui travaille la demande, et sa demande la date.
+  let substituee = invalidite.substitution(moteur, carriere);
+  if (substituee !== null && substituee.date.rang > declare.rang) {
+    substituee = null;
+  }
+  const substitues = moteur.invalidites.regimes("substitution");
   const dates = unites.map((unite, i) => {
+    const voulueDe = () => {
+      let voulue = null;
+      for (const code of unite) {
+        const demandee = demandees.get(code);
+        if (demandee !== undefined && (voulue === null || demandee.rang > voulue.rang)) {
+          voulue = demandee;
+        }
+      }
+      return voulue;
+    };
+    if (substituee !== null && [...unite].some((code) => substitues.has(code))) {
+      const presumee = [substituee.date, MOTIF_INVALIDITE];
+      const voulue = voulueDe();
+      return substituee.maintien === invalidite.ACTIVITE
+        && voulue !== null && voulue.rang > presumee[0].rang
+        ? [voulue, MOTIF_DEMANDE] : presumee;
+    }
     let presumee;
     if (ouvertures[i].rang > declare.rang) {
       presumee = [ouvertures[i], MOTIF_OUVERTURE];
@@ -388,13 +416,7 @@ export function departsEtDemandes(moteur, carriereSaisie) {
       presumee = plusTot.rang < declare.rang && pensionMilitaire(moteur, carriere, unite)
         ? [plusTot, MOTIF_SORTIE] : [declare, MOTIF_DEPART];
     }
-    let voulue = null;
-    for (const code of unite) {
-      const demandee = demandees.get(code);
-      if (demandee !== undefined && (voulue === null || demandee.rang > voulue.rang)) {
-        voulue = demandee;
-      }
-    }
+    const voulue = voulueDe();
     return voulue !== null && voulue.rang > presumee[0].rang
       ? [voulue, MOTIF_DEMANDE] : presumee;
   });
@@ -448,7 +470,7 @@ export function departsEtDemandes(moteur, carriereSaisie) {
       return MOTIF_DEPART;
     }
     const motifs = new Set([...regimes].map((code) => parRegime.get(code)[1]));
-    for (const retenu of [MOTIF_DEMANDE, MOTIF_SORTIE]) {
+    for (const retenu of [MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_INVALIDITE]) {
       if (motifs.has(retenu)) {
         return retenu;
       }

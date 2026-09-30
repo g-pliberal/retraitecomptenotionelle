@@ -117,7 +117,7 @@ couverture demande à l'architecture.
 | Périodes assimilées | en partie (chômage, maladie, maternité, AVPF…) ; apprentissage, stages, sportifs de haut niveau, TUC, congé de naissance non appliqués | chaque période datée, avec son motif ; validations rétroactives |
 | Temps partiel | la quotité d'une retraite progressive, du jour de sa demande au départ | quotité de chaque période ; surcotisation |
 | Départs anticipés | carrière longue, catégories actives, militaires : oui ; parents de trois enfants de la fonction publique : non ; handicap : hors modèle | tous, dont incapacité permanente, pénibilité, amiante |
-| Invalidité, inaptitude | hors modèle | périodes d'invalidité, pension d'invalidité et sa conversion, retraite pour invalidité des fonctionnaires, inaptitude |
+| Invalidité, inaptitude | la pension d'invalidité, l'inaptitude et la radiation pour invalidité que la saisie déclare ; au régime général et dans les régimes alignés, le taux plein de l'inapte et de l'ex-invalide, à soixante-deux ans quand l'âge légal est plus haut, et la pension de vieillesse qui remplace d'office la pension d'invalidité ; leurs complémentaires de salariés sans coefficient | le plancher de l'allocation aux vieux travailleurs salariés, l'âge de l'ASPA de l'inapte, la retraite pour invalidité des fonctionnaires, l'inaptitude des autres régimes, les réputés inaptes |
 | Réversion | le conjoint, qu'un bloc facultatif du formulaire demande, et le mariage, présumé aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.mariage_des_conjoints.valeur)-->27<!--/--> ans de l'assuré ; la réversion liquidée pour le survivant, au régime général et dans les régimes alignés, dans la fonction publique et à l'Agirc-Arrco, sans le minimum ni les majorations, pour un décès déclaré après le départ ou supposé juste après lui | conjoints successifs datés, décès avant le départ, ressources du ménage, partage entre ex-conjoints, remariage, règles des autres régimes, orphelins |
 | Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | un départ par régime, chacun à sa date, présumée ou dite par l'assuré, qu'une date dite ne fait que retarder ; la retraite progressive, sa date et sa quotité déclarées : la pension provisoire, sa fraction servie, la pension complète au départ ; le cumul emploi-retraite, mois par mois, sur une activité déclarée après le départ ; les droits qu'elle ouvre ou non, la nouvelle pension du cumul intégral au régime général, aux salariés agricoles et à l'Agirc-Arrco, et les pensions des régimes qu'elle ouvre ; un bloc facultatif du formulaire pour tout cela | une pension demandée avant le départ, sans redéclarer le départ ; l'anticipation d'une complémentaire seule ; plusieurs activités après le départ ; la nouvelle pension des autres régimes ; les changements de quotité |
 | Rachats, versements, surcotisation | hors modèle | actes datés de l'assuré, avec leur coût |
@@ -771,7 +771,10 @@ Le relevé des droits et le résultat le signalent.
     servait des pensions que le droit n'ouvrait pas encore (version 5.21).
   - une pension d'invalidité depuis le début de la période d'invalidité par
     laquelle la carrière finit, quand l'assuré ne la date pas : l'âge légal le
-    trouve invalide, et la pension de vieillesse la remplace (version 5.29).
+    trouve invalide, et la pension de vieillesse la remplace (version 5.29) ;
+  - l'opposition de l'invalide qui travaille à la substitution, avant mars
+    2010 : qui déclare travailler jusqu'à son départ y demande sa pension de
+    vieillesse, comme la loi le lui permettait (quatrième domaine, § 11).
 - **Un défaut légal** n'est pas une présomption : c'est la loi qui décide
   quand la personne n'a rien fait. Il s'écrit dans la version de la règle,
   parce qu'il change avec elle. Au régime général, les trimestres d'éducation
@@ -1225,8 +1228,10 @@ révision d'un minimum ou d'une réversion, l'accroissement d'une réversion
 partagée au décès d'un ex-conjoint ne sont donc pas des cas particuliers : ce
 sont des événements de plus. Le départ de chaque régime en est le premier :
 quand les régimes n'ouvrent pas tous leur pension au départ déclaré,
-l'échéancier inscrit un départ par date, que la présomption du § 5.6 induit
-ou que la personne demande — un acte, alors —, et chacun liquide ses seuls
+l'échéancier inscrit un départ par date, que la présomption du § 5.6 induit,
+que la loi impose — la pension de vieillesse qui remplace d'office la pension
+d'invalidité (`droit/invalidite.py`) — ou que la personne demande — un acte,
+alors —, et chacun liquide ses seuls
 régimes, sur la carrière arrêtée à sa date, en
 voyant servies les pensions des précédents, menées au mois de sa date d'effet
 (`droit/departs.py`). L'activité exercée après le départ en est un autre :

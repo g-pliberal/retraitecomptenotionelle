@@ -36,7 +36,7 @@ from ..calendrier import DateMois
 from ..carriere import salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
 from .. import revalorisation
-from . import acquerir, coordonner, ouvrir
+from . import acquerir, coordonner, invalidite, ouvrir
 from .compter import trimestres_de_la_ligne_entre
 from .commun import PensionRegime, derniere_annee
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
@@ -730,7 +730,12 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 periode, carriere, trimestres, requis, age_liquidation,
                 age_annulation
             )
-            if taux_plein_des_femmes(periode, carriere, durees, age_liquidation):
+            if (taux_plein_des_femmes(periode, carriere, durees, age_liquidation)
+                    or invalidite.taux_plein_de_l_inapte(
+                        moteur, code, carriere, age_liquidation)):
+                # Le taux de soixante-cinq ans des femmes d'avant 1983 ; le
+                # taux plein de l'inapte, quelle que soit sa durée (L. 351-8,
+                # 2°), le taux de soixante-cinq ans avant 1983.
                 trimestres_decote = 0.0
             if decote and trimestres_decote > 0:
                 # Les régimes sans décote (fonction publique avant 2004,
@@ -834,6 +839,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 taux_plein=(
                     trimestres >= requis
                     or age_liquidation >= ouvrir.age_taux_plein(moteur, periode, carriere)
+                    or invalidite.taux_plein_de_l_inapte(
+                        moteur, code, carriere, age_liquidation)
                 ),
                 surcote=coefficient_surcote,
             ))
@@ -2311,7 +2318,19 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
             periode.duree_requise_trimestres is None
             and not periode.duree_requise_par_generation
         )
-        if not par_age_seul and trimestres >= requis:
+        # L'INAPTE A LE TAUX PLEIN AU RÉGIME GÉNÉRAL, et la complémentaire le
+        # suit : « sans coefficient » pour qui a obtenu la pension du régime
+        # général ou agricole « à taux plein » (accord du 17 novembre 2017,
+        # article 84, 3 ; avant lui, depuis 1983, les accords de l'ASF) ;
+        # « Toutefois, ce coefficient de réduction n'est pas applicable : 1°
+        # Dans le cas d'une inaptitude au travail reconnue entre soixante et
+        # soixante-cinq ans par la sécurité sociale », dès 1971 à l'Ircantec
+        # (arrêté du 30 décembre 1970, article 16), l'âge suivant ensuite
+        # celui de l'inapte.
+        inapte = ((not par_age_seul or periode.abattement_points == "ircantec")
+                  and invalidite.taux_plein_de_l_inapte(
+                      moteur, invalidite.REGIME_DES_SALARIES, carriere, age_liquidation))
+        if inapte or (not par_age_seul and trimestres >= requis):
             abattement = 1.0
         else:
             par_duree = (
@@ -2408,7 +2427,13 @@ def abattement_regime_de_base(moteur, periode: PeriodeRegime,
     2011). Les trimestres d'avant le palier se comptent au premier taux,
     les autres au second : un pharmacien parti à soixante-quatre ans en
     perd quatre à 1,25 % et huit à 0,5 %, soit 9 %.
+
+    Le régime en points que la fiche ``inaptitude_au_travail`` nomme — les
+    assurances sociales d'avant 1945 — sert l'inapte sans abattement, comme
+    les régimes en annuités qu'elle nomme.
     """
+    if invalidite.taux_plein_de_l_inapte(moteur, periode.regime, carriere, age_liquidation):
+        return 1.0
     decote, age_annulation, _ = decote_opposable(moteur, 
         periode, carriere, annee_liquidation
     )
