@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.26, du 30 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.27, du 30 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -1619,7 +1619,8 @@ l'inaptitude, puis les carrières hors de France ; les périodes assimilées
 manquantes n'ont pas de mesure publique (feuille de route, action 130). Le
 troisième domaine, les départs multiples et la vie après le départ, a été
 ouvert le 29 septembre 2026 à la demande du propriétaire, devant
-l'invalidité.
+l'invalidité, et clos le 30 septembre, la décision de la proposition restant
+au propriétaire.
 
 ---
 
@@ -2429,6 +2430,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.27**, 30 septembre 2026 : le troisième domaine, les départs multiples et la vie après le départ, clos (§ 11). Sept fiches le portent, découpées en versions ; cinq exemples publiés le rejouent ; le formulaire le demande dans un bloc facultatif ; la page Coût ne bouge pas de son fait ; la décision de la proposition reste au propriétaire, les systèmes 2 à 6 liquidant en attendant leur compte au départ déclaré ; la référence de conservation est refigée (§ 12).
 
 - **5.26**, 30 septembre 2026 : la cinquième étape du troisième domaine. Le formulaire demande, dans un bloc facultatif, la retraite progressive, la date de chaque pension et l'activité exercée après le départ. La date d'une pension, que l'assuré dit régime par régime, remplace la présumée quand elle vient après elle, et ne l'avance jamais ; le départ qu'elle date est un acte de la personne (§ 5.6, § 7.4).
 

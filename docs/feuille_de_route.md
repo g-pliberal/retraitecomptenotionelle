@@ -3079,6 +3079,59 @@ mots du formulaire vierge monte de deux, le titre du dépliant. Les systèmes 2
 à 6 liquident leur compte au départ déclaré : la proposition n'a pas dit
 davantage. Restent : sa décision, et la clôture du domaine.
 
+**Le domaine se clôt le même jour**, pour tout ce que le dépôt peut faire
+seul, le gabarit du § 11 rempli :
+- **les fiches** : sept, découpées en versions —
+  `liquidation_regime_par_regime`, `retraite_progressive`, les deux du cumul
+  emploi-retraite, `droits_apres_la_premiere_pension` et `seconde_pension`,
+  `approchee` chacune avec ses approximations ; `rafp_age_d_ouverture`,
+  `transcrite` —, et `minimum_contributif`, complétée ;
+- **les faits de la chronologie** : la demande de retraite progressive et sa
+  quotité, la date demandée de chaque pension, deux actes de la personne ;
+  l'activité exercée après le départ, une période d'activité qui porte
+  `apres_depart` et l'employeur ; une présomption,
+  `depart_de_chaque_regime` ;
+- **les fonctions dans l'étape** : `droit/departs.py`, `droit/progressive.py`,
+  `droit/cumul.py` et `droit/seconde.py`, et leurs jumeaux, que l'échéancier
+  appelle à la retraite progressive, à chaque départ et après le départ ;
+- **les exemples publiés** : cinq, des fiches F12402 et F13243 de
+  service-public, tous reproduits ; aucun encore pour la retraite progressive
+  ni pour un polypensionné qui liquide à deux dates, que les fiches disent à
+  chercher ;
+- **le bloc du formulaire** : « Retraite progressive, dates des pensions,
+  cumul emploi-retraite », replié tant qu'il est vide, et les notes de la page
+  — quand chaque pension commence, la fraction servie, le cumul période par
+  période, les droits de l'activité, les dates non retenues ;
+- **la page Coût** : aucun commit du domaine ne l'a déplacée, hors le minimum
+  garanti d'avant 2004, corrigé en chemin (en 2024, de 0,29 à 1,39 Md €) ; la
+  retraite progressive, le cumul et la seconde pension n'y ont pas de ligne :
+  la dépense du système 1 est celle qu'on observe, où ce qu'ils servent est
+  déjà compté, et les autres systèmes s'en déduisent au prorata des pensions
+  entières ;
+- **la décision de la proposition** reste à prendre, par le propriétaire : le
+  README ne dit rien de la retraite progressive, du cumul emploi-retraite, de
+  la seconde pension ni de la date de chaque pension. En attendant, les
+  systèmes 2 à 6 liquident leur compte au départ déclaré, entier, sans
+  fraction ni cumul, le temps partiel d'une retraite progressive n'y réduisant
+  que la cotisation ; `docs/limites.md` et le README le disent ;
+- **la référence de conservation** est refigée
+  (`python scripts/conservation.py --figer`).
+
+Restent, hors du domaine clos, et consignés dans ses fiches : la révision du
+minimum contributif quand une pension commence après lui (R. 173-8) ;
+l'anticipation d'une complémentaire seule ; une pension demandée avant le
+départ sans redéclarer le départ ; plusieurs activités après le départ, et
+celle qu'exerce l'assuré avant qu'un régime du départ ne liquide ; la nouvelle
+pension des régimes autres que le régime général, les salariés agricoles et
+l'Agirc-Arrco ; le cumul des avocats, des exploitants agricoles, de
+l'outre-mer, des élus et des complémentaires autres que l'Agirc-Arrco ; les
+changements de quotité et la suspension de la retraite progressive, la baisse
+de revenus qui fait la fraction d'un non-salarié, les décrets des régimes
+spéciaux ; le seuil de 2027, que son décret n'a pas fixé ; les exemples
+publiés à chercher. Le domaine suivant se mesurera à son ouverture :
+l'invalidité et l'inaptitude, que le propriétaire avait fait passer après
+celui-ci, viennent en tête.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
