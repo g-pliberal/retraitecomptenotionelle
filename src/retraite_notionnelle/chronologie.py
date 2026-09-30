@@ -53,6 +53,11 @@ Ce que les faits portent, par sorte :
   retraite progressive : ``acte: retraite_progressive``, son ``age`` et la
   ``quotite`` du temps partiel qu'elle garde, jusqu'au départ.
 
+L'activité exercée APRÈS le départ, le cumul emploi-retraite, est une
+``periode_d_activite`` comme les autres, qui porte ``apres_depart`` et
+l'``employeur`` — ``dernier`` ou ``autre`` — ; :func:`periodes` l'écarte des
+périodes de la carrière, et :func:`emploi_retraite` la rend.
+
 Les trimestres qu'un relevé déposé porte font foi : ce sont des résultats
 observés, que la phase 4 fera entrer au relevé des droits, là où ils auraient
 été calculés (§ 5.5). En attendant, la période les garde.
@@ -250,6 +255,7 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
               jour_naissance: int | None = None, presomptions: dict | None = None,
               conjoint: dict | None = None, deces: str | None = None,
               retraite_progressive: dict | None = None,
+              emploi_retraite: dict | None = None,
               ) -> tuple[list[dict], list[dict], list[dict]]:
     """Ce que toute saisie déclare de l'assuré : sa naissance, son départ,
     ses enfants, et, s'il les dit, son conjoint et son décès. Rend les
@@ -269,7 +275,10 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     l'assuré, qui ouvre la réversion de son conjoint : il clôt le mariage.
     ``retraite_progressive`` déclare la demande d'une retraite progressive :
     son ``age``, compté comme celui du départ, qu'elle précède, et la
-    ``quotite`` du temps partiel gardé jusqu'au départ, entre zéro et un."""
+    ``quotite`` du temps partiel gardé jusqu'au départ, entre zéro et un.
+    ``emploi_retraite`` déclare l'activité exercée après le départ : son
+    ``age`` et sa ``fin``, comptés comme le départ, qu'elle ne précède pas,
+    son ``affiliation``, son ``niveau_salaire`` et l'``employeur``."""
     assure = naissance_de_l_assure(annee_naissance, mois_naissance, sexe,
                                    jour_naissance, presomptions)
     faits_naissance = [assure]
@@ -300,6 +309,23 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
             f"retraite_progressive_{ASSURE}", ASSURE, "acte_de_la_personne",
             _jour(origine_de(assure).plus_mois(en_mois(age))),
             attributs={"acte": "retraite_progressive", "age": age, "quotite": quotite}))
+    if emploi_retraite is not None:
+        age, fin = emploi_retraite["age"], emploi_retraite["fin"]
+        if age_liquidation is None or en_mois(age) < en_mois(age_liquidation):
+            raise ValueError("une activité après le départ ne précède pas le départ")
+        if en_mois(fin) <= en_mois(age):
+            raise ValueError("une activité après le départ finit après avoir commencé")
+        if emploi_retraite["employeur"] not in ("dernier", "autre"):
+            raise ValueError(f"l'employeur d'une activité après le départ : le dernier ou "
+                             f"un autre, reçu {emploi_retraite['employeur']!r}")
+        depart.append(fait(
+            f"emploi_retraite_{ASSURE}", ASSURE, EMPLOI,
+            _jour(origine_de(assure).plus_mois(en_mois(age))),
+            _jour(origine_de(assure).plus_mois(en_mois(fin))),
+            {"affiliation": emploi_retraite["affiliation"],
+             "niveau_salaire": emploi_retraite["niveau_salaire"], "profil": "plat",
+             "part_primes": 0.0, "apres_depart": True,
+             "employeur": emploi_retraite["employeur"]}))
     role = "mere" if sexe == "F" else "pere"
     liens = [lien(f"filiation_enfant_{rang}", ASSURE, f"enfant_{rang}", "filiation",
                   {ASSURE: role, f"enfant_{rang}": "enfant"},
@@ -348,7 +374,8 @@ def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
               age_liquidation: float | None = None, nombre_enfants: int = 0,
               naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
               presomptions: dict | None = None, conjoint: dict | None = None,
-              deces: str | None = None, retraite_progressive: dict | None = None) -> dict:
+              deces: str | None = None, retraite_progressive: dict | None = None,
+              emploi_retraite: dict | None = None) -> dict:
     """La chronologie d'une carrière construite ligne à ligne : la naissance,
     le départ et les enfants, sans ses périodes, que l'appelant a déjà
     traduites en années."""
@@ -356,7 +383,8 @@ def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
                                          age_liquidation, nombre_enfants,
                                          naissances_enfants, jour_naissance,
                                          presomptions, conjoint=conjoint, deces=deces,
-                                         retraite_progressive=retraite_progressive)
+                                         retraite_progressive=retraite_progressive,
+                                         emploi_retraite=emploi_retraite)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + depart, "liens": liens}
 
 
@@ -366,7 +394,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 nombre_enfants: int = 0, part_primes: float = 0.0,
                 naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
                 presomptions: dict | None = None, conjoint: dict | None = None,
-                deces: str | None = None, retraite_progressive: dict | None = None) -> dict:
+                deces: str | None = None, retraite_progressive: dict | None = None,
+                emploi_retraite: dict | None = None) -> dict:
     """La chronologie d'un parcours : un fait par métier, daté au mois, et un
     par année d'interruption.
 
@@ -394,7 +423,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                                          age_liquidation, nombre_enfants,
                                          naissances_enfants, jour_naissance,
                                          presomptions, conjoint=conjoint, deces=deces,
-                                         retraite_progressive=retraite_progressive)
+                                         retraite_progressive=retraite_progressive,
+                                         emploi_retraite=emploi_retraite)
     mois_de_naissance = mois_de(naissance[0]["debut"])
     bornes = [mois_de_naissance.plus_mois(en_mois(metier.age_debut)) for metier in principaux]
     debut = bornes[0]
@@ -454,7 +484,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
               nombre_enfants: int = 0, part_primes: float = 0.0,
               naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
               presomptions: dict | None = None, conjoint: dict | None = None,
-              deces: str | None = None, retraite_progressive: dict | None = None) -> dict:
+              deces: str | None = None, retraite_progressive: dict | None = None,
+              emploi_retraite: dict | None = None) -> dict:
     """La chronologie d'un relevé : un fait par ligne, une année civile
     chacun, dans l'ordre du relevé — la première ligne d'une année est
     l'activité principale."""
@@ -474,7 +505,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
                                          age_liquidation, nombre_enfants,
                                          naissances_enfants, jour_naissance,
                                          presomptions, conjoint=conjoint, deces=deces,
-                                         retraite_progressive=retraite_progressive)
+                                         retraite_progressive=retraite_progressive,
+                                         emploi_retraite=emploi_retraite)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
 
@@ -619,8 +651,19 @@ def retraite_progressive(chronologie: dict, personne: str) -> dict | None:
 
 def periodes(chronologie: dict, personne: str) -> list[dict]:
     """Les périodes d'emploi et d'interruption d'une personne, dans leur
-    ordre."""
-    return [f for f in faits_de(chronologie, personne) if f["sorte"] in (EMPLOI, INTERRUPTION)]
+    ordre, jusqu'à son départ : l'activité d'après le départ n'en est pas
+    (:func:`emploi_retraite`)."""
+    return [f for f in faits_de(chronologie, personne) if f["sorte"] in (EMPLOI, INTERRUPTION)
+            and not f["attributs"].get("apres_depart")]
+
+
+def emploi_retraite(chronologie: dict, personne: str) -> dict | None:
+    """L'activité qu'une personne exerce après son départ, si elle la
+    déclare : le cumul emploi-retraite."""
+    for periode in faits_de(chronologie, personne, EMPLOI):
+        if periode["attributs"].get("apres_depart"):
+            return periode
+    return None
 
 
 def enfants(chronologie: dict, personne: str) -> list[str]:

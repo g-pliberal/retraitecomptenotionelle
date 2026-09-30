@@ -63,6 +63,18 @@ versions:
       le cumul intégral (fiche droits_apres_la_premiere_pension) ; les droits
       constitués depuis le 1er janvier 2023, pris en compte par les liquidations
       intervenant depuis le 1er septembre 2023 (article 26, XII, 3°)
+    complementaire: >-
+      l'Agirc-Arrco attribue des points sur la tranche 1 des salaires perçus en cumul
+      sans limite « à compter du 1er janvier 2023 », qui ouvrent « une seconde retraite
+      complémentaire », sans minoration ni majoration, servie à la cessation de
+      l'activité salariée ; aucun point en cumul plafonné (page de l'Agirc-Arrco, lue le
+      30 septembre 2026)
+    salaire_de_base: >-
+      « le salaire mensuel moyen correspondant aux cotisations versées au cours de
+      chaque année civile ayant donné lieu, au titre de la nouvelle pension, à la
+      validation d'au moins un trimestre », sur « les mois d'assurance entre la date à
+      laquelle l'assuré remplit les conditions prévues au 2° de l'article L. 161-22-1
+      et la date d'entrée en jouissance de la nouvelle pension » (R. 351-29, III)
     parametres:
       taux_plein: true
       plafond_en_pass: 0.05
@@ -86,7 +98,7 @@ versions:
       plafond_en_pass: null
   exemples: aucun trouvé
 sources:
-  lu_le: 2026-09-29
+  lu_le: 2026-09-30
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -97,6 +109,25 @@ sources:
     le plafond de 5 % : le décret D. 161-2-22-1 renvoie toujours au « dernier alinéa »
     de L. 161-22-1-1.
   lectures:
+  - type: legifrance
+    reference: >-
+      R. 351-29 CSS, rédaction du 1er janvier 2026 (LEGIARTI000053335651), III : le
+      salaire de la nouvelle pension, dans l'index LEGI
+    date: 2026-09-30
+  - type: service_public
+    reference: >-
+      fiche F13243, « Cumul emploi-retraite du salarié », vérifiée le 1er janvier 2026 :
+      la nouvelle pension au taux plein, sans décote ni majoration, « ne peut pas
+      dépasser 2 403 € brut par an », une seule par caisse de base, jamais après une
+      reprise chez le dernier employeur dans les six mois
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F13243
+    date: 2026-09-30
+  - type: autre
+    reference: >-
+      Agirc-Arrco, page « Cumul emploi-retraite » : les points de la tranche 1 depuis le
+      1er janvier 2023 en cumul sans limite, la seconde retraite complémentaire
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/vivre-ma-retraite/cumul-emploi-retraite/
+    date: 2026-09-30
   - type: legifrance
     reference: >-
       L. 161-22-1-1 CSS, rédactions du 1er septembre 2023 (LEGIARTI000047450790), du

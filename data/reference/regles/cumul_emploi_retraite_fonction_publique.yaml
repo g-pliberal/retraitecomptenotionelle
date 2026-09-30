@@ -1,0 +1,174 @@
+schema_version: 1
+id: cumul_emploi_retraite_fonction_publique
+intitule: >-
+  Cumul emploi-retraite du fonctionnaire : sa pension se cumule librement avec un emploi
+  privé jusqu'en 2014 ; payé par un employeur public — puis, pour le civil dont la
+  première pension date de 2015, par tout employeur —, il ne peut toucher dans l'année
+  plus du tiers de sa pension, majoré de la moitié du minimum garanti, sans que
+  l'excédent soit déduit de sa pension, hors cumul intégral au taux plein. Avant 2004,
+  le fonctionnaire parti avant sa limite d'âge ne touchait, d'un employeur public, que
+  l'excédent de sa pension sur sa rémunération.
+domaine: cumul
+regimes: [fonction_publique_etat, cnracl, fspoeie]
+etape: echeancier
+face: droit
+etat: pas_encore_modelisee
+lit:
+- l'activité exercée après le départ, ses dates, son revenu, et son employeur (public
+  ou non)
+- la pension de base du fonctionnaire, et le minimum garanti de l'année
+- le taux plein, et la liquidation de toutes les pensions
+- la limite d'âge de l'emploi quitté, avant 2004
+ecrit:
+- la pension servie pendant l'activité, réduite de l'excédent des revenus
+dates_qui_decident:
+- liquidation.date_effet
+- liquidation.premiere_pension_de_base
+- periode.debut
+versions:
+- id: limite_d_age_1970
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362847, article: "L. 86 CPCMR", en_vigueur: 1970-12-31}
+  bornes:
+    liquidation.date_effet: [null, 2004-01-01]
+  contenu:
+    droit: >-
+      les pensionnés « rayés des cadres [...] avant d'avoir atteint la limite d'âge qui
+      leur était applicable dans leur ancien emploi, et qui perçoivent une rémunération
+      d'activité servie par l'une des collectivités énumérées à l'article L. 84, ne
+      peuvent bénéficier de leur pension avant d'avoir atteint l'âge correspondant à
+      cette limite d'âge, sauf à percevoir [...] l'excédent de la pension sur le montant
+      de cette rémunération » ; cumulent intégralement les pensions d'invalidité, les
+      sous-officiers de moins de vingt-cinq ans de services, et qui gagne au plus « le
+      quart du montant de la pension » ou le traitement de l'indice 100
+    parametres:
+      employeur: public
+      franchise_en_part_de_pension: 0.25
+  exemples: aucun trouvé
+- id: tiers_de_la_pension_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362844, article: "L. 84 CPCMR", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362846, article: "L. 85 CPCMR", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362848, article: "L. 86 CPCMR", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362850, article: "L. 86-1 CPCMR", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006363055, article: "R. 92 CPCMR", en_vigueur: 2004-01-01}
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+    periode.debut: [null, 2009-01-01]
+  contenu:
+    droit: >-
+      « L'article L. 161-22 du code de la sécurité sociale n'est pas applicable » au
+      fonctionnaire (L. 84) ; payé par un employeur de L. 86-1, « Le montant brut des
+      revenus d'activité [...] ne peut, par année civile, excéder le tiers du montant
+      brut de la pension pour l'année considérée. Lorsqu'un excédent est constaté, il
+      est déduit de la pension après application d'un abattement égal à la moitié du
+      minimum fixé au a de l'article L. 17 » (L. 85) ; cumul entier pour les activités
+      artistiques, l'invalidité, les militaires non officiers de moins de vingt-cinq
+      ans de services, la limite d'âge atteinte avant 2004 (L. 86)
+    parametres:
+      employeur: public
+      part_de_la_pension: 0.333333
+      abattement_en_minimum_garanti: 0.5
+  exemples: aucun trouvé
+- id: cumul_integral_2009
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019959634, article: "L. 84 CPCMR", en_vigueur: 2008-12-19}
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+    liquidation.premiere_pension_de_base: [null, 2015-01-01]
+    periode.debut: [2009-01-01, null]
+  contenu:
+    droit: >-
+      la version tiers_de_la_pension_2004, et la pension « peut être entièrement
+      cumulée » par qui a liquidé toutes ses pensions, à l'âge du taux plein
+      automatique, ou à l'âge légal avec la durée requise
+    parametres:
+      employeur: public
+      cumul_integral: true
+  exemples: aucun trouvé
+- id: tout_employeur_2015
+  statut: lue
+  textes:
+  - {id: LEGIARTI000028498621, article: "L. 84 CPCMR", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000047453522, article: "L. 84 CPCMR", en_vigueur: 2023-09-01}
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+    liquidation.premiere_pension_de_base: [2015-01-01, 2027-01-01]
+    periode.debut: [2009-01-01, null]
+  contenu:
+    droit: >-
+      pour la première pension prise depuis le 1er janvier 2015, le plafond du tiers
+      vaut pour les revenus « de l'un des employeurs mentionnés à l'article L. 86-1,
+      ou de tout autre employeur pour les fonctionnaires civils » ; « les articles
+      L. 161-22 et L. 161-22-1 A du même code ne sont pas applicables aux bénéficiaires
+      d'une pension militaire »
+    parametres:
+      employeur: tout_employeur_pour_les_civils
+      cumul_integral: true
+  exemples: aucun trouvé
+- id: regles_communes_2027
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053279635, article: "L. 84 CPCMR", en_vigueur: 2025-12-31}
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+    liquidation.premiere_pension_de_base: [2027-01-01, null]
+    periode.debut: [2009-01-01, null]
+  contenu:
+    droit: >-
+      pour la première pension prise depuis le 1er janvier 2027, « les articles
+      L. 161-22 à L. 161-22-1-4 du code de la sécurité sociale s'appliquent à
+      l'ensemble des personnes régies par le présent code » : les trois régimes selon
+      l'âge de la fiche cumul_emploi_retraite_et_retraite_progressive
+    parametres:
+      regle: celle_du_code_de_la_securite_sociale
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    avant 2004, la franchise du traitement de l'indice 100 n'est pas lue : seule celle
+    du quart de la pension s'applique ; la limite d'âge est celle que le modèle donne
+    à la catégorie de l'emploi quitté
+  effet: non mesuré
+- ecart: >-
+    les activités que L. 86 laisse libres (artistiques, invalidité, sous-officiers de
+    moins de vingt-cinq ans de services) ne se déclarent pas
+  effet: non mesuré
+sources:
+  lu_le: 2026-09-30
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 30 septembre 2026, avec le domaine des départs multiples ; le moteur ne
+    la calcule pas encore. Le décret en Conseil d'État de L. 85 n'a pas été trouvé
+    dans l'index : R. 91 et R. 92 disent la déclaration et les revenus retenus.
+    Vérifier que les décrets de la CNRACL et des ouvriers de l'État (décret
+    n° 2003-1306, article 64 ; décret n° 2004-1056) suivent la même règle.
+    L'exemple de la fiche F12402 entrera au registre des exemples publiés avec le
+    calcul.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 84 CPCMR, rédactions de 2004 (LEGIARTI000006362844), 2008
+      (LEGIARTI000019959634), 2014 (LEGIARTI000028498621) et 2025
+      (LEGIARTI000053279635) ; L. 85 (1964 et 2004) ; L. 86 (1970 et 2004) ; L. 86-1 ;
+      R. 91 et R. 92, dans l'index LEGI
+    date: 2026-09-30
+  - type: service_public
+    reference: >-
+      fiche F12402, « Cumul emploi-retraite du fonctionnaire », vérifiée le 1er janvier
+      2026 : le plafond de 8 198,10 € augmenté du tiers de la pension, et son exemple
+      (pension de 18 000 € ; revenu de 21 623 € ; 7 424,90 € déduits)
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12402
+    date: 2026-09-30
+historique:
+- >-
+  2026-09-30 — née avec le domaine des départs multiples, de la fiche
+  cumul_emploi_retraite_et_retraite_progressive, qui ne portait pas le fonctionnaire.
+effet: >-
+  Le fonctionnaire retraité qui travaille avant le taux plein : payé par un employeur
+  public, ou par tout employeur s'il est civil et parti depuis 2015, il perd l'excédent
+  de ses revenus sur le tiers de sa pension et 8 198,10 € en 2026. Le modèle ne le
+  calcule pas encore.

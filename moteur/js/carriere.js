@@ -371,6 +371,10 @@ export class Carriere {
     //: construit aucune, seul un test pourrait le faire.
     chronologie = null,
     personne = chrono.ASSURE,
+    //: Les années de l'activité exercée APRÈS le départ, le cumul
+    //: emploi-retraite : hors des lignes, que le départ arrête. Voir
+    //: `carriere.py`.
+    lignes_apres_depart = [],
   }) {
     if (sexe !== "H" && sexe !== "F") {
       throw new Error(`sexe attendu 'H' ou 'F', reçu ${sexe}`);
@@ -424,6 +428,7 @@ export class Carriere {
       annee_naissance, sexe, mois_naissance, age_liquidation, nombre_enfants,
       naissances_enfants, jour_naissance));
     this.personne = personne;
+    this.lignes_apres_depart = [...lignes_apres_depart];
     this._naissancesDesEnfants = undefined;
     this._origineDesAges = undefined;
     this._conjoint = undefined;
@@ -496,6 +501,22 @@ export class Carriere {
   get deces() {
     const fait = chrono.deces(this.chronologie, this.personne);
     return fait === null ? null : fait.debut;
+  }
+
+  /**
+   * L'activité que la personne exerce après son départ, si elle la dit :
+   * `{debut, fin, affiliation, employeur}`, les deux mois en `DateMois`, la fin
+   * exclue ; `null` sinon.
+   */
+  get emploiRetraite() {
+    if (!this.chronologie) {
+      return null;
+    }
+    const fait = chrono.emploiRetraite(this.chronologie, this.personne);
+    return fait === null ? null : {
+      debut: chrono.moisDe(fait.debut), fin: chrono.moisDe(fait.fin),
+      affiliation: fait.attributs.affiliation, employeur: fait.attributs.employeur,
+    };
   }
 
   /**
@@ -645,6 +666,7 @@ export class Carriere {
       dates_entree: { ...this.dates_entree },
       chronologie: this.chronologie,
       personne: this.personne,
+      lignes_apres_depart: this.lignes_apres_depart,
     });
   }
 
@@ -671,6 +693,7 @@ export class Carriere {
       dates_entree: { ...this.dates_entree },
       chronologie: this.chronologie,
       personne: this.personne,
+      lignes_apres_depart: this.lignes_apres_depart,
     });
   }
 
@@ -693,6 +716,7 @@ export class Carriere {
         dates_entree: { ...this.dates_entree },
         chronologie: this.chronologie,
         personne: this.personne,
+        lignes_apres_depart: this.lignes_apres_depart,
       });
     }
     const initiale = this.dateLiquidation;
@@ -770,6 +794,7 @@ export class Carriere {
       dates_entree: { ...this.dates_entree },
       chronologie: this.chronologie,
       personne: this.personne,
+      lignes_apres_depart: this.lignes_apres_depart,
     });
   }
 
@@ -1079,11 +1104,13 @@ export class Carriere {
     conjoint = null,
     deces = null,
     retraite_progressive = null,
+    emploi_retraite = null,
   }) {
     const chronologie = preparer(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
       nombre_enfants, part_primes, naissances_enfants, jour_naissance,
       presomptions: macro.paquet.presomptions, conjoint, deces, retraite_progressive,
+      emploi_retraite,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -1144,12 +1171,13 @@ export class Carriere {
     conjoint = null,
     deces = null,
     retraite_progressive = null,
+    emploi_retraite = null,
   }) {
     const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
       profil_carriere, interruptions, nombre_enfants, part_primes, naissances_enfants,
       jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
-      retraite_progressive,
+      retraite_progressive, emploi_retraite,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -1175,6 +1203,8 @@ export class Carriere {
     const progressive = demande === null ? null
       : [chrono.moisDe(demande.debut), demande.attributs.quotite];
     const periodes = chrono.periodes(chronologie, personne);
+    const apres = chrono.emploiRetraite(chronologie, personne);
+    const lignesApres = apres === null ? [] : lignesApresDepart(dateNaissance, apres, macro);
     const relevees = periodes.filter((p) => "revenu" in p.attributs);
     let datesEntree = {};
     let lignes = [];
@@ -1207,8 +1237,45 @@ export class Carriere {
       dates_entree: datesEntree,
       chronologie,
       personne,
+      lignes_apres_depart: lignesApres,
     });
   }
+}
+
+/**
+ * Les années de l'activité exercée après le départ, chacune sur ses mois,
+ * comme une activité cumulée : le niveau déclaré au salaire moyen de chaque
+ * année, sans profil, les trimestres que ses mois valident au plus. Voir
+ * `_lignes_apres_depart` du Python.
+ */
+function lignesApresDepart(dateNaissance, periode, macro) {
+  const attributs = periode.attributs;
+  const ouverture = chrono.moisDe(periode.debut);
+  const cloture = chrono.moisDe(periode.fin);
+  const salaireMoyen = indiceSalaireMoyen(macro, ouverture.annee, cloture.annee);
+  const lignes = [];
+  for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
+    const mois = moisTravailles(annee, ouverture, cloture);
+    if (mois <= 0) {
+      continue;
+    }
+    const revenu = attributs.niveau_salaire
+      * profilSalaire(macro.paquet, attributs.profil, annee - dateNaissance.annee, annee,
+        attributs.affiliation)
+      * salaireMoyen.get(annee)
+      * (mois / MOIS_PAR_AN);
+    lignes.push(ligneAnnuelle({
+      annee,
+      revenu,
+      affiliation: attributs.affiliation,
+      type_periode: "emploi",
+      macro,
+      part: fractionAnnee(annee, ouverture, cloture),
+      part_primes: attributs.part_primes ?? 0.0,
+      trimestresMaximum: trimestresCivils(mois),
+    }));
+  }
+  return lignes;
 }
 
 /**

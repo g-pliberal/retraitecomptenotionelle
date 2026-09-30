@@ -128,7 +128,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   Le modèle liquide chaque régime une fois, à sa date (« Les départs
   échelonnés », ci-dessous), sur la carrière saisie, la retraite progressive
   mise à part : il ne rachète pas d'années d'études, ne surcotise pas et ne
-  suit pas le retraité qui reprend un emploi. Les barèmes
+  suit pas le retraité qui reprend un emploi. L'activité exercée après le
+  départ se déclare par l'adresse de la simulation (`emploi_retraite`, sa fin,
+  son statut, son revenu, l'employeur), et la carrière en garde les années à
+  part ; le modèle n'en calcule encore rien, ni la pension réduite ou
+  suspendue pendant qu'elle dure, ni les droits qu'elle ouvre ou non. Les barèmes
   sont lus et rangés au registre de veille (`rachats_et_versements`,
   `cumul_emploi_retraite_et_retraite_progressive`) — dont celui du rachat
   d'études de la fonction publique, refait au premier janvier 2026, que la

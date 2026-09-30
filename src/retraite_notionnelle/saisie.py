@@ -343,6 +343,14 @@ ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL
 #: réponse que celle-ci ou le vide est refusée.
 CUMUL = "oui"
 
+#: Chez qui l'activité exercée après le départ s'exerce : le droit du cumul
+#: emploi-retraite distingue le dernier employeur, auprès duquel la reprise
+#: n'est libre qu'après six mois (L. 161-22), de tous les autres.
+EMPLOYEURS_APRES_DEPART = [
+    ("autre", "un autre employeur que le dernier"),
+    ("dernier", "le dernier employeur"),
+]
+
 
 #: Ce qu'une ligne de carrière peut décrire à la place d'un métier.
 #:
@@ -540,6 +548,17 @@ class Saisie:
     #: sans retraite progressive.
     progressive: float | None = None
     quotite_progressive: int = 0
+    #: L'activité exercée après le départ, le cumul emploi-retraite (fiche
+    #: ``cumul_emploi_retraite_et_retraite_progressive``) : l'âge où elle
+    #: commence et celui où elle finit, que l'adresse porte en dates comme le
+    #: départ ; son statut et son revenu, dans l'unité de la saisie — ceux du
+    #: dernier métier quand ils ne sont pas dits — ; et l'employeur, le dernier
+    #: ou un autre. ``None`` sans activité après le départ.
+    emploi_retraite: float | None = None
+    emploi_retraite_fin: float | None = None
+    emploi_retraite_statut: str = ""
+    emploi_retraite_salaire: float | None = None
+    emploi_retraite_employeur: str = "autre"
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
@@ -658,6 +677,20 @@ class Saisie:
                          else _age_saisi(parametres, "progressive", 0.0,
                                          origine_des_ages(mois_de_naissance, jour_naissance))),
             quotite_progressive=_entier(parametres, "quotite", 0),
+            emploi_retraite=(
+                None if parametres.get("emploi_retraite") in (None, "")
+                else _age_saisi(parametres, "emploi_retraite", 0.0,
+                                origine_des_ages(mois_de_naissance, jour_naissance))),
+            emploi_retraite_fin=(
+                None if parametres.get("emploi_retraite_fin") in (None, "")
+                else _age_saisi(parametres, "emploi_retraite_fin", 0.0,
+                                origine_des_ages(mois_de_naissance, jour_naissance))),
+            emploi_retraite_statut=(parametres.get("emploi_retraite_statut") or "").strip(),
+            emploi_retraite_salaire=(
+                None if parametres.get("emploi_retraite_salaire") in (None, "")
+                else _reel(parametres, "emploi_retraite_salaire", 0.0)),
+            emploi_retraite_employeur=_parmi(parametres, "emploi_retraite_employeur",
+                                             EMPLOYEURS_APRES_DEPART, "autre"),
             interruptions=(parametres.get("interruptions") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
@@ -749,6 +782,7 @@ class Saisie:
         self._verifier_naissances()
         self._verifier_conjoint()
         self._verifier_progressive()
+        self._verifier_emploi_retraite()
         if not ANNEE_MINIMALE <= self.bascule <= ANNEE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de bascule attendue entre {ANNEE_MINIMALE} et "
@@ -1434,6 +1468,84 @@ class Saisie:
                 f"Retraite progressive en {self.date_de(self.progressive, depart=True)} : "
                 "elle suit le début de la carrière.")
 
+    @property
+    def _dernier_metier(self) -> MetierSaisi:
+        """Le dernier métier de la carrière, hors activité ajoutée et hors
+        période sans emploi : celui que l'activité d'après le départ continue
+        quand elle ne dit pas son statut ou son revenu."""
+        principaux = [ligne for ligne in self.lignes_carriere
+                      if not ligne.cumul and not ligne.sans_emploi]
+        return principaux[-1] if principaux else self.lignes_carriere[0]
+
+    def emploi_retraite_declare(self, echelle: "Echelle | None" = None) -> dict | None:
+        """L'activité exercée après le départ que la saisie déclare, telle que
+        la chronologie la reçoit : ses deux âges, son statut, son revenu en
+        multiples du salaire moyen, et l'employeur. Le revenu se convertit
+        comme ceux des métiers (:meth:`niveaux`) : en euros, il demande
+        ``echelle``."""
+        if self.emploi_retraite is None:
+            return None
+        dernier = self._dernier_metier
+        statut = self.emploi_retraite_statut or dernier.statut
+        salaire = (self.emploi_retraite_salaire if self.emploi_retraite_salaire is not None
+                   else dernier.salaire)
+        niveau = salaire
+        if self.revenu_en_euros:
+            if echelle is None:
+                raise ValueError("un revenu en euros se convertit sur une échelle")
+            if self.saisie_en_net:
+                salaire = echelle.brut_mensuel(salaire, statut)
+            niveau = echelle.niveau(salaire)
+        return {"age": self.emploi_retraite, "fin": self.emploi_retraite_fin,
+                "affiliation": statut, "niveau_salaire": niveau,
+                "employeur": self.emploi_retraite_employeur}
+
+    def _verifier_emploi_retraite(self) -> None:
+        """L'activité exercée après le départ : une date qui ne précède pas le
+        départ, une fin qui la suit, un statut qui n'est pas une période sans
+        emploi, un revenu. Ce que le droit en fait — la pension servie pendant
+        qu'elle dure, les droits qu'elle ouvre —, c'est au calcul de le dire."""
+        precisions = [nom for nom, valeur in (
+            ("emploi_retraite_fin", self.emploi_retraite_fin),
+            ("emploi_retraite_statut", self.emploi_retraite_statut or None),
+            ("emploi_retraite_salaire", self.emploi_retraite_salaire)) if valeur is not None]
+        if self.emploi_retraite_employeur != "autre":
+            precisions.append("emploi_retraite_employeur")
+        if self.emploi_retraite is None:
+            if precisions:
+                raise ErreurSaisie(
+                    f"« {precisions[0]} » ne sert qu'à une activité exercée après le "
+                    "départ : dites aussi quand elle commence (« emploi_retraite »).")
+            return
+        depart = self.date_de(self.liquidation, depart=True)
+        debut = self.date_de(self.emploi_retraite, depart=True)
+        if en_mois(self.emploi_retraite) < en_mois(self.liquidation):
+            raise ErreurSaisie(
+                f"Activité après le départ, en {debut} : elle suit le départ, fixé en "
+                f"{depart} ; l'activité d'avant le départ se dit dans la carrière.")
+        if self.emploi_retraite_fin is None:
+            raise ErreurSaisie(
+                f"Activité après le départ, en {debut} : dites quand elle finit "
+                "(« emploi_retraite_fin »).")
+        if en_mois(self.emploi_retraite_fin) <= en_mois(self.emploi_retraite):
+            raise ErreurSaisie(
+                f"Activité après le départ, en {debut} : elle finit après avoir commencé, "
+                f"pas en {self.date_de(self.emploi_retraite_fin, depart=True)}.")
+        if self.emploi_retraite_statut in CODES_SANS_EMPLOI:
+            raise ErreurSaisie(
+                f"Activité après le départ, en {debut} : « {self.emploi_retraite_statut} » "
+                "n'est pas une activité, mais une période sans emploi.")
+        if self.emploi_retraite_salaire is not None:
+            if self.revenu_en_euros:
+                if self.emploi_retraite_salaire <= 0:
+                    raise ErreurSaisie(
+                        f"Activité après le départ, en {debut} : son revenu doit être "
+                        "strictement positif.")
+            elif not NIVEAU_MINIMAL <= self.emploi_retraite_salaire <= NIVEAU_MAXIMAL:
+                raise ErreurSaisie(
+                    f"Activité après le départ, en {debut} : niveau de revenu attendu "
+                    "entre 0,1 et 10 fois le salaire moyen.")
+
     def _verifier_conjoint(self) -> None:
         """Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie
         — les naissances, le mariage, le décès —, et un décès qui ne précède
@@ -1501,6 +1613,16 @@ class Saisie:
             **({"progressive": self.mois_de(self.progressive, depart=True),
                 "quotite": self.quotite_progressive}
                if self.progressive is not None else {}),
+            **({nom: valeur for nom, valeur in (
+                ("emploi_retraite", self.mois_de(self.emploi_retraite, depart=True)),
+                ("emploi_retraite_fin", None if self.emploi_retraite_fin is None
+                 else self.mois_de(self.emploi_retraite_fin, depart=True)),
+                ("emploi_retraite_statut", self.emploi_retraite_statut or None),
+                ("emploi_retraite_salaire", None if self.emploi_retraite_salaire is None
+                 else _nombre(self.emploi_retraite_salaire)),
+                ("emploi_retraite_employeur", None if self.emploi_retraite_employeur == "autre"
+                 else self.emploi_retraite_employeur)) if valeur is not None}
+               if self.emploi_retraite is not None else {}),
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,

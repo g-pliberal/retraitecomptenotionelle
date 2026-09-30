@@ -313,6 +313,7 @@ class Contexte:
                 raise ErreurSaisie(
                     f"Statut d'affiliation inconnu : « {metier.affiliation} »."
                 )
+        emploi_retraite = self._emploi_retraite(simulateur, saisie)
 
         def batir(niveaux: list[float]) -> "Carriere":
             return simulateur.carriere_parcours(
@@ -332,6 +333,7 @@ class Contexte:
                 conjoint=saisie.conjoint_declare(),
                 deces=saisie.deces_declare(),
                 retraite_progressive=saisie.retraite_progressive_declaree(),
+                emploi_retraite=emploi_retraite,
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -426,11 +428,23 @@ class Contexte:
             conjoint=saisie.conjoint_declare(),
             deces=saisie.deces_declare(),
             retraite_progressive=saisie.retraite_progressive_declaree(),
+            emploi_retraite=self._emploi_retraite(simulateur, saisie),
             part_primes=saisie.primes,
             identifiant="assuré",
         )
         _verifier_statuts_releve(simulateur.affiliations, carriere)
         return carriere
+
+    def _emploi_retraite(self, simulateur: Simulateur, saisie: Saisie) -> dict | None:
+        """L'activité exercée après le départ que la saisie déclare, son revenu
+        ramené à l'unité du modèle, et son statut contrôlé comme ceux des
+        métiers."""
+        emploi = saisie.emploi_retraite_declare(self.echelle(saisie))
+        if emploi is not None and emploi["affiliation"] not in simulateur.affiliations:
+            raise ErreurSaisie(
+                f"Activité après le départ : statut d'affiliation inconnu "
+                f"« {emploi['affiliation']} ».")
+        return emploi
 
 
 def _verifier_statuts_ouverts(affiliations: Affiliations, carriere,

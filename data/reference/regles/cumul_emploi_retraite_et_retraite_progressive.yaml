@@ -5,21 +5,208 @@ intitule: >-
   pension, entière en cumul intégral, réduite de ce qui dépasse un plafond en cumul
   plafonné ; depuis les pensions de 2027, trois régimes selon l'âge. La retraite
   progressive, qui n'y est pas soumise, et la seconde pension ont leurs fiches
-  (retraite_progressive, seconde_pension).
+  (retraite_progressive, seconde_pension) ; le fonctionnaire, la sienne
+  (cumul_emploi_retraite_fonction_publique).
+domaine: cumul
+regimes: [regime_general, msa_salaries, msa_non_salaries, cancava, organic, rsi, cnavpl,
+  crpcen, ieg, mines, marins, opera_de_paris, comedie_francaise, banque_de_france, ratp,
+  sncf, agirc_arrco, arrco, agirc]
+etape: echeancier
+face: droit
 etat: pas_encore_modelisee
-effet: >-
-  Le modèle liquide une fois, à une date ; il ne suit pas le retraité qui travaille, et
-  ne réduit ni ne suspend sa pension.
+lit:
+- l'activité exercée après le départ, ses dates, son statut, son revenu, et l'employeur
+  (le dernier, ou un autre)
+- la date d'effet de la pension, et celle de la première pension de base
+- le dernier salaire avant le départ, et le SMIC de l'année
+- le taux plein de la pension de base, et la liquidation de toutes les pensions
+ecrit:
+- >-
+  la pension servie pendant l'activité, régime par régime : entière, réduite du
+  dépassement du plafond, ou suspendue
+dates_qui_decident:
+- liquidation.date_effet
+- liquidation.premiere_pension_de_base
+- periode.debut
+versions:
+- id: sans_condition_avant_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006741547, article: "L. 161-22 CSS", en_vigueur: 1985-12-21}
+  bornes:
+    liquidation.date_effet: [null, 1983-04-01]
+  contenu:
+    droit: >-
+      L. 161-22 ne vise que « une pension de vieillesse prenant effet postérieurement
+      au 31 mars 1983 » : la pension d'avant se cumule librement avec une activité
+    parametres:
+      cumul: libre
+  exemples: aucun trouvé
+- id: rupture_avec_l_employeur_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006741547, article: "L. 161-22 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006741548, article: "L. 161-22 CSS", en_vigueur: 1987-01-28}
+  - {id: LEGIARTI000006741554, article: "L. 161-22 CSS", en_vigueur: 1995-02-05}
+  - {id: LEGIARTI000006741559, article: "L. 161-22 CSS", en_vigueur: 2002-12-24}
+  bornes:
+    liquidation.date_effet: [1983-04-01, 2004-01-01]
+    periode.debut: [null, 2009-01-01]
+  contenu:
+    droit: >-
+      le service de la pension du régime général, des salariés agricoles ou d'un régime
+      spécial « est subordonné à la rupture définitive de tout lien professionnel avec
+      l'employeur ou, pour les assurés exerçant une activité non-salariée, à la
+      cessation définitive de cette activité » ; les activités que l'article énumère
+      (artistiques, juridictionnelles, jurys…) restent libres
+    parametres:
+      cumul: rupture_avec_le_dernier_employeur
+  exemples: aucun trouvé
+- id: plafond_du_dernier_salaire_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006741560, article: "L. 161-22 CSS", en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006735313, article: "D. 161-2-7 CSS", en_vigueur: 2004-10-22}
+  - {id: LEGIARTI000006735315, article: "D. 161-2-9 CSS", en_vigueur: 2004-10-22}
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+    periode.debut: [null, 2009-01-01]
+  contenu:
+    droit: >-
+      pour les pensions prenant effet depuis le 1er janvier 2004, la reprise est
+      permise si les revenus, « ajoutés aux pensions servies [...] ainsi que par les
+      régimes complémentaires », restent « inférieurs au dernier salaire d'activité
+      perçu avant la liquidation », chez le dernier employeur « au plus tôt six mois
+      après la date d'entrée en jouissance de la pension » ; au-delà, « le service de
+      ces pensions est suspendu »
+    parametres:
+      plafond: dernier_salaire
+      depassement: suspension
+  exemples: aucun trouvé
+- id: cumul_liberalise_2009
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019959680, article: "L. 161-22 CSS", en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000022267321, article: "L. 161-22 CSS", en_vigueur: 2010-05-08}
+  - {id: LEGIARTI000021640145, article: "D. 161-2-8 CSS", en_vigueur: 2010-01-01}
+  - {id: LEGIARTI000021640140, article: "D. 161-2-9 CSS", en_vigueur: 2010-01-01}
+  bornes:
+    liquidation.date_effet: [1983-04-01, null]
+    liquidation.premiere_pension_de_base: [null, 2015-01-01]
+    periode.debut: [2009-01-01, null]
+  contenu:
+    droit: >-
+      le plafond devient « 160 % du salaire minimum de croissance ou [...] le dernier
+      salaire d'activité », revalorisé comme les pensions (D. 161-2-8), au moins 160 %
+      du SMIC mensuel sur 1 820 heures par an (D. 161-2-9) ; au-delà, le service des
+      pensions « est suspendu ». La pension « peut être entièrement cumulée » à qui a
+      liquidé toutes ses pensions, « a) A partir de l'âge prévu au 1° de l'article
+      L. 351-8 ; b) A partir de l'âge prévu au premier alinéa de l'article L. 351-1 »
+      avec la durée requise
+    parametres:
+      plafond: dernier_salaire_ou_160_smic
+      depassement: suspension
+      cumul_integral: true
+  exemples: aucun trouvé
+- id: reduction_du_depassement_2015
+  statut: lue
+  textes:
+  - {id: JORFARTI000028493684, article: "loi n° 2014-40 du 20 janvier 2014, article 20",
+     publie_le: 2014-01-21}
+  - {id: LEGIARTI000028498569, article: "L. 161-22 CSS", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000033713940, article: "L. 161-22 CSS", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000047453712, article: "L. 161-22 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000051289735, article: "L. 161-22 CSS", en_vigueur: 2025-02-28}
+  - {id: LEGIARTI000047961745, article: "D. 161-2-7 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047961712, article: "D. 161-2-10 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047961681, article: "D. 161-2-15 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047961674, article: "D. 161-2-16 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047961809, article: "D. 634-11-2 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000030060076, article: "D. 643-10 CSS", en_vigueur: 2015-01-01}
+  nee_de: JORFARTI000028493684
+  bornes:
+    liquidation.date_effet: [1983-04-01, null]
+    liquidation.premiere_pension_de_base: [2015-01-01, 2027-01-01]
+    periode.debut: [2009-01-01, null]
+  contenu:
+    droit: >-
+      au-delà du plafond, « chacune des pensions servies par ces régimes est réduite à
+      due concurrence du dépassement » ; « Le montant de la réduction de chacune des
+      pensions [...] est égal au montant du dépassement », mois par mois, et la pension
+      n'est pas servie quand la réduction la dépasse (D. 161-2-16) ; le dernier salaire
+      est la moyenne mensuelle des revenus soumis à la CSG du mois de la cessation et
+      des deux précédents (D. 161-2-7), le revenu de l'activité, son assiette de CSG
+      (D. 161-2-10) ; chez le dernier employeur, la pension « n'est pas due » du mois de
+      la reprise au mois de sa cessation, au plus six mois après la pension
+      (D. 161-2-15), le plafond ne s'appliquant qu'à partir du septième mois
+    non_salaries: >-
+      l'artisan et le commerçant cumulent des revenus qui « ne doivent pas excéder la
+      moitié du plafond » de la sécurité sociale, le plafond entier en zone de
+      revitalisation rurale (L. 634-6, D. 634-11-2) ; le libéral, « le plafond prévu à
+      l'article L. 241-3 » (L. 643-6, D. 643-10) ; au-delà, la pension de ce régime est
+      réduite du dépassement
+    parametres:
+      plafond: dernier_salaire_ou_160_smic
+      depassement: reduction
+      cumul_integral: true
+      seuil_independants_en_pass: 0.5
+      seuil_liberaux_en_pass: 1.0
+  exemples: aucun trouvé
+- id: trois_regimes_selon_l_age_2027
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053279730, article: "L. 161-22 CSS", en_vigueur: 2025-12-31}
+  nee_de: LEGIARTI000053279730
+  bornes:
+    liquidation.date_effet: [1983-04-01, null]
+    liquidation.premiere_pension_de_base: [2027-01-01, null]
+    periode.debut: [2009-01-01, null]
+  contenu:
+    droit: >-
+      pour qui entre en jouissance de sa première pension de base à compter du 1er
+      janvier 2027 : « 1° Lorsque l'âge de l'assuré est inférieur à l'âge mentionné à
+      l'article L. 161-17-2, la pension servie est réduite à due concurrence des revenus
+      professionnels et de remplacement ; 2° [de cet âge à celui du 1° de L. 351-8] [...]
+      réduite à due concurrence de la moitié du dépassement de ce seuil ; 3° [au-delà]
+      entièrement cumulée »
+    parametres:
+      avant_l_age_legal: reduction_des_revenus
+      seuil: non_publie
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    le seuil du 2° de L. 161-22 pour les premières pensions de 2027, qu'un décret fixe,
+    n'a pas paru au 30 septembre 2026 : de l'âge légal à l'âge du taux plein
+    automatique, la pension de 2027 est servie entière, et la page le dit
+  effet: non mesuré
+- ecart: >-
+    le plafond se compare année par année, le revenu et les pensions de l'année
+    ramenés au mois, quand le droit compare mois par mois ; le dernier salaire est le
+    revenu annualisé de la dernière année d'activité, non celui des trois derniers
+    mois ; le revenu d'activité est compté entier, non à son assiette de CSG
+  effet: non mesuré
+- ecart: >-
+    la suspension de la pension d'avant 2015 et la réduction du dépassement suivent la
+    date de la première pension, quand le décret de la réduction (D. 161-2-16) vise
+    aussi les activités exercées depuis le 1er avril 2017 ; les activités que
+    L. 161-22 laisse libres (artistiques, juridictionnelles…) ne se déclarent pas
+  effet: non mesuré
 sources:
-  lu_le: 2026-09-29
-  prochaine_relecture: 2027-09-30
+  lu_le: 2026-09-30
+  prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Le 29 septembre 2026, avec le domaine des départs multiples, L. 161-22 a été lu
-    dans ses rédactions de 2025 et de 2027, et la fiche ne porte plus la retraite
-    progressive ni la seconde pension. Restent à lire avant de la porter : les
-    rédactions de L. 161-22 depuis 1983, L. 84 à L. 86 CPCMR dans leurs rédactions,
-    L. 634-6 et L. 643-6, et les décrets qui fixent le seuil de 2027.
+    dans ses rédactions de 2025 et de 2027 ; le 30, dans celles de 1985 à 2023, avec
+    ses décrets (D. 161-2-5 à D. 161-2-18) et les règles des indépendants et des
+    libéraux. Restent à lire : les rédactions de L. 161-22 de 1988 à 1993, la portée
+    de l'article 20 de la loi n° 2014-40 pour les premières pensions d'avant 2015, les
+    règles des non-salariés d'avant 2015 et des exploitants agricoles (L. 732-39), et
+    le décret qui fixera le seuil de 2027.
+  - >-
+    Avant 2004, la rupture ne vise que « l'employeur » : la reprise chez un autre
+    employeur est-elle libre de tout plafond ? Aucune circulaire lue ne le dit ; le
+    texte le laisse entendre.
   lectures:
   - type: autre
     reference: L'Assurance retraite, mesures de la LFSS 2026
@@ -49,15 +236,37 @@ sources:
       concurrence de la moitié du dépassement » d'un seuil ; au-delà, « entièrement
       cumulée » ; les exceptions de L. 161-22-1-2
     date: 2026-09-29
+  - type: legifrance
+    reference: >-
+      L. 161-22 CSS, rédactions de 1985, 1987, 1995, 2002, 2003, 2008, 2010, 2015, 2017,
+      2022 et 2023, dans l'index LEGI ; les articles 19 et 20 de la loi n° 2014-40, dans
+      l'index JORF ; D. 161-2-5 à D. 161-2-18, L. 634-6 et D. 634-11-2, L. 643-6 et
+      D. 643-10 : la rupture de 1983, le plafond de 2004, le cumul libéralisé de 2009,
+      la réduction du dépassement de 2015, et ses modalités
+    date: 2026-09-30
+  - type: service_public
+    reference: >-
+      fiche F13243, « Cumul emploi-retraite du salarié », vérifiée le 1er janvier 2026 :
+      le plafond de 2 916,85 € brut par mois (160 % du SMIC), le dernier salaire des
+      trois derniers mois, chaque pension de base réduite du dépassement, la reprise
+      chez le dernier employeur, la nouvelle pension de 2 403 € au plus
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F13243
+    date: 2026-09-30
+  - type: autre
+    reference: >-
+      Agirc-Arrco, page « Cumul emploi-retraite » : le plafond le plus haut de 160 % du
+      SMIC, du dernier salaire revalorisé et du salaire moyen revalorisé des dix
+      dernières années ; au-delà, la retraite complémentaire suspendue ; des points
+      sur la tranche 1 depuis le 1er janvier 2023 en cumul intégral
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/vivre-ma-retraite/cumul-emploi-retraite/
+    date: 2026-09-30
 textes_a_rattacher:
-- reference: L. 161-22 CSS et suivants
-- reference: L. 84 à L. 86 CPCMR
-- {id: LEGIARTI000051289735, article: "L. 161-22 CSS", en_vigueur: 2025-02-28,
-   change: "le cumul plafonné et le cumul intégral, lus le 29 septembre 2026"}
-- {id: LEGIARTI000053279730, article: "L. 161-22 CSS", en_vigueur: 2025-12-31,
-   change: "les trois régimes selon l'âge, pour les premières pensions de 2027"}
-- {id: LEGIARTI000053279635, article: "L. 84 CPCMR", en_vigueur: 2025-12-31, change: "à lire"}
-- {id: LEGIARTI000053279638, article: "L. 86 CPCMR", en_vigueur: 2025-12-31, change: "à lire"}
+- {id: LEGIARTI000047961599, article: "D. 161-2-5 CSS", en_vigueur: 2023-09-01,
+   change: "la pension servie le mois qui suit la rupture"}
+- {id: LEGIARTI000047961695, article: "D. 161-2-12 CSS", en_vigueur: 2023-09-01,
+   change: "la reprise chez le même employeur"}
+- {id: LEGIARTI000047961660, article: "D. 161-2-17 CSS", en_vigueur: 2023-09-01,
+   change: "le contrôle a posteriori"}
 historique:
 - >-
   2026-09-29 — scindée avec l'ouverture du domaine des départs multiples : la
@@ -65,3 +274,12 @@ historique:
   2023 à la fiche seconde_pension, et l'extinction des droits après une première
   pension à la fiche droits_apres_la_premiere_pension. Cette fiche garde son nom,
   qui ne se renomme pas, et le seul cumul.
+- >-
+  2026-09-30 — lue dans ses rédactions depuis 1985 et découpée en six versions, avec
+  ses décrets et les règles des non-salariés ; le cumul du fonctionnaire passe à la
+  fiche cumul_emploi_retraite_fonction_publique.
+effet: >-
+  Le retraité qui travaille : avant le taux plein, sa pension de base est réduite de ce
+  que ses revenus et ses pensions dépassent le plafond, ou suspendue avant 2015. Le
+  modèle liquide une fois, à une date ; il ne suit pas encore le retraité qui
+  travaille, et ne réduit ni ne suspend sa pension.

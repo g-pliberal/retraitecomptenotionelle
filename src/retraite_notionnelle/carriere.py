@@ -518,6 +518,13 @@ class Carriere:
     chronologie: dict | None = field(default=None, compare=False, repr=False)
     #: La personne de la chronologie dont la carrière est la vue.
     personne: str = field(default=chrono.ASSURE, compare=False, repr=False)
+    #: Les années de l'activité exercée APRÈS le départ, le cumul
+    #: emploi-retraite (:attr:`emploi_retraite`) : hors des lignes, que le
+    #: départ arrête et que la première liquidation lit toutes. Ce que le
+    #: droit en fait — la pension servie pendant qu'elle dure, les droits
+    #: qu'elle ouvre ou non —, c'est :mod:`~retraite_notionnelle.droit.cumul`
+    #: qui le dit.
+    lignes_apres_depart: tuple = ()
 
     def __post_init__(self) -> None:
         if self.sexe not in ("H", "F"):
@@ -618,6 +625,19 @@ class Carriere:
                 if self.chronologie else None)
         return (None if fait is None
                 else (chrono.mois_de(fait["debut"]), fait["attributs"]["quotite"]))
+
+    @cached_property
+    def emploi_retraite(self) -> "dict | None":
+        """L'activité que la personne exerce après son départ, si elle la dit :
+        ``debut`` et ``fin`` (:class:`DateMois`, la fin exclue),
+        ``affiliation`` et ``employeur`` (``dernier`` ou ``autre``)."""
+        fait = (chrono.emploi_retraite(self.chronologie, self.personne)
+                if self.chronologie else None)
+        if fait is None:
+            return None
+        return {"debut": chrono.mois_de(fait["debut"]), "fin": chrono.mois_de(fait["fin"]),
+                "affiliation": fait["attributs"]["affiliation"],
+                "employeur": fait["attributs"]["employeur"]}
 
     @cached_property
     def deces(self) -> str | None:
@@ -1004,6 +1024,7 @@ class Carriere:
             dates_entree=dict(self.dates_entree),
             chronologie=self.chronologie,
             personne=self.personne,
+            lignes_apres_depart=self.lignes_apres_depart,
         )
 
     def liquidee_au(self, date: DateMois) -> "Carriere":
@@ -1075,6 +1096,7 @@ class Carriere:
                 dates_entree=dict(self.dates_entree),
                 chronologie=self.chronologie,
                 personne=self.personne,
+                lignes_apres_depart=self.lignes_apres_depart,
             )
         initiale = self.date_liquidation
         fin = self.date_de_l_age(age_liquidation)
@@ -1160,6 +1182,7 @@ class Carriere:
             dates_entree=dict(self.dates_entree),
             chronologie=self.chronologie,
             personne=self.personne,
+            lignes_apres_depart=self.lignes_apres_depart,
         )
 
     # -- constructeurs -------------------------------------------------------
@@ -1186,6 +1209,7 @@ class Carriere:
         conjoint: dict | None = None,
         deces: str | None = None,
         retraite_progressive: dict | None = None,
+        emploi_retraite: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -1217,7 +1241,7 @@ class Carriere:
             mois_naissance=mois_naissance, nombre_enfants=nombre_enfants,
             part_primes=part_primes, naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
-            retraite_progressive=retraite_progressive))
+            retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1284,6 +1308,7 @@ class Carriere:
         conjoint: dict | None = None,
         deces: str | None = None,
         retraite_progressive: dict | None = None,
+        emploi_retraite: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -1321,6 +1346,11 @@ class Carriere:
         ``age`` et la ``quotite`` du temps partiel que l'assuré garde jusqu'au
         départ, qui réduit d'autant le revenu de ces mois-là.
 
+        ``emploi_retraite`` déclare l'activité exercée après le départ : son
+        ``age`` et sa ``fin``, son ``affiliation``, son ``niveau_salaire`` et
+        l'``employeur``. Ses années ne sont pas des lignes de la carrière,
+        que le départ arrête : elles vont à :attr:`lignes_apres_depart`.
+
         Les deux bords sont des années INCOMPLÈTES et sont construites comme
         telles : celui qui entre en septembre ne travaille que quatre mois de
         son année d'entrée, celui qui part en août n'en travaille que sept de
@@ -1334,7 +1364,7 @@ class Carriere:
             interruptions=interruptions, nombre_enfants=nombre_enfants,
             part_primes=part_primes, naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
-            retraite_progressive=retraite_progressive))
+            retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1371,6 +1401,9 @@ class Carriere:
         if relevees and len(relevees) != len(periodes):
             raise ValueError(f"{identifiant} : la chronologie mêle un relevé et un "
                              "parcours, que rien ne sait joindre")
+        apres = chrono.emploi_retraite(chronologie, personne)
+        lignes_apres_depart = (() if apres is None
+                               else tuple(_lignes_apres_depart(date_naissance, apres, macro)))
         if relevees:
             lignes = _lignes_du_releve(date_naissance, relevees,
                                        chrono.mois_de(acte["debut"]), macro, identifiant,
@@ -1397,6 +1430,7 @@ class Carriere:
             dates_entree=dates_entree,
             chronologie=chronologie,
             personne=personne,
+            lignes_apres_depart=lignes_apres_depart,
         )
 
 
@@ -1622,6 +1656,35 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
     for metier, ouverture, _ in sorted(principaux + cumuls, key=lambda p: p[1].rang):
         dates_entree.setdefault(metier["affiliation"], ouverture)
     return lignes, dates_entree
+
+
+def _lignes_apres_depart(date_naissance: DateMois, periode: dict,
+                         macro: DonneesMacro) -> list[AnneeCarriere]:
+    """Les années de l'activité exercée après le départ, chacune sur ses
+    mois, comme une activité cumulée (:func:`_lignes_du_parcours`) : le niveau
+    déclaré au salaire moyen de chaque année, sans profil — il se dit pour
+    cette activité-là —, les trimestres que ses mois valident au plus."""
+    attributs = periode["attributs"]
+    ouverture, cloture = chrono.mois_de(periode["debut"]), chrono.mois_de(periode["fin"])
+    motifs = charger_periodes_non_travaillees(macro.racine)
+    salaire_moyen = indice_salaire_moyen(macro, ouverture.annee, cloture.annee)
+    lignes = []
+    for annee in range(ouverture.annee, cloture.annee + 1):
+        mois = mois_travailles(annee, ouverture, cloture)
+        if mois <= 0:
+            continue
+        revenu = (attributs["niveau_salaire"]
+                  * profil_salaire(macro.racine, attributs["profil"],
+                                   annee - date_naissance.annee, annee,
+                                   attributs["affiliation"])
+                  * salaire_moyen[annee] * (mois / MOIS_PAR_AN))
+        lignes.append(_ligne_annuelle(
+            annee=annee, revenu=revenu, affiliation=attributs["affiliation"],
+            type_periode="emploi", macro=macro, motifs=motifs,
+            part=fraction_annee(annee, ouverture, cloture),
+            part_primes=attributs.get("part_primes", 0.0),
+            trimestres_maximum=trimestres_civils(mois)))
+    return lignes
 
 
 #: La catégorie socioprofessionnelle dont chaque profil emprunte sa FORME, dans

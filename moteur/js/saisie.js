@@ -243,6 +243,16 @@ export const METIERS_MAXIMUM = 6;
 export const CUMUL = "oui";
 
 /**
+ * Chez qui l'activité exercée après le départ s'exerce : le droit du cumul
+ * emploi-retraite distingue le dernier employeur, auprès duquel la reprise
+ * n'est libre qu'après six mois (L. 161-22), de tous les autres.
+ */
+export const EMPLOYEURS_APRES_DEPART = [
+  ["autre", "un autre employeur que le dernier"],
+  ["dernier", "le dernier employeur"],
+];
+
+/**
  * Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
  * entre quatorze ans — l'âge de début minimal — et soixante-quinze, soit
  * soixante et une années civiles au plus ; la borne laisse deux lignes de marge
@@ -437,6 +447,16 @@ export const DEFAUTS = Object.freeze({
   //: départ, en pour cent. Nul sans retraite progressive.
   progressive: null,
   quotite_progressive: 0,
+  //: L'activité exercée après le départ, le cumul emploi-retraite : l'âge où
+  //: elle commence et celui où elle finit, que l'adresse porte en dates comme
+  //: le départ ; son statut et son revenu, dans l'unité de la saisie — ceux du
+  //: dernier métier quand ils ne sont pas dits — ; et l'employeur, le dernier
+  //: ou un autre. Nul sans activité après le départ.
+  emploi_retraite: null,
+  emploi_retraite_fin: null,
+  emploi_retraite_statut: "",
+  emploi_retraite_salaire: null,
+  emploi_retraite_employeur: "autre",
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -552,6 +572,19 @@ export class Saisie {
         : ageSaisi(parametres, "progressive", 0.0,
           origineDesAges(moisDeNaissance, jourNaissance)),
       quotite_progressive: entier(parametres, "quotite", 0),
+      emploi_retraite: [undefined, null, ""].includes(parametres.emploi_retraite) ? null
+        : ageSaisi(parametres, "emploi_retraite", 0.0,
+          origineDesAges(moisDeNaissance, jourNaissance)),
+      emploi_retraite_fin: [undefined, null, ""].includes(parametres.emploi_retraite_fin)
+        ? null
+        : ageSaisi(parametres, "emploi_retraite_fin", 0.0,
+          origineDesAges(moisDeNaissance, jourNaissance)),
+      emploi_retraite_statut: (parametres.emploi_retraite_statut || "").trim(),
+      emploi_retraite_salaire: [undefined, null, ""].includes(
+        parametres.emploi_retraite_salaire)
+        ? null : reel(parametres, "emploi_retraite_salaire", 0.0),
+      emploi_retraite_employeur: parmi(parametres, "emploi_retraite_employeur",
+        EMPLOYEURS_APRES_DEPART, "autre"),
       interruptions: (parametres.interruptions || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
@@ -649,6 +682,7 @@ export class Saisie {
     this.verifierNaissances();
     this.verifierConjoint();
     this.verifierProgressive();
+    this.verifierEmploiRetraite();
     if (!(this.bascule >= ANNEE_MINIMALE && this.bascule <= ANNEE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de bascule attendue entre ${ANNEE_MINIMALE} et `
@@ -1408,6 +1442,114 @@ export class Saisie {
   }
 
   /**
+   * Le dernier métier de la carrière, hors activité ajoutée et hors période
+   * sans emploi : celui que l'activité d'après le départ continue quand elle ne
+   * dit pas son statut ou son revenu.
+   */
+  get dernierMetier() {
+    const principaux = this.lignesCarriere.filter((ligne) => !ligne.cumul
+      && !ligne.sans_emploi);
+    return principaux.length ? principaux[principaux.length - 1] : this.lignesCarriere[0];
+  }
+
+  /**
+   * L'activité exercée après le départ que la saisie déclare, telle que la
+   * chronologie la reçoit : ses deux âges, son statut, son revenu en multiples
+   * du salaire moyen, et l'employeur ; `null` sans elle. En euros, le revenu
+   * se convertit sur `echelle`, comme ceux des métiers (`niveaux`).
+   */
+  emploiRetraiteDeclare(echelle = null) {
+    if (this.emploi_retraite === null) {
+      return null;
+    }
+    const dernier = this.dernierMetier;
+    const statut = this.emploi_retraite_statut || dernier.statut;
+    let salaire = this.emploi_retraite_salaire !== null
+      ? this.emploi_retraite_salaire : dernier.salaire;
+    let niveau = salaire;
+    if (this.revenu_en_euros) {
+      if (echelle === null) {
+        throw new Error("un revenu en euros se convertit sur une échelle");
+      }
+      if (this.saisieEnNet) {
+        salaire = echelle.brutMensuel(salaire, statut);
+      }
+      niveau = echelle.niveau(salaire);
+    }
+    return {
+      age: this.emploi_retraite, fin: this.emploi_retraite_fin, affiliation: statut,
+      niveau_salaire: niveau, employeur: this.emploi_retraite_employeur,
+    };
+  }
+
+  /**
+   * L'activité exercée après le départ : une date qui ne précède pas le départ,
+   * une fin qui la suit, un statut qui n'est pas une période sans emploi, un
+   * revenu. Voir `_verifier_emploi_retraite` du Python.
+   */
+  verifierEmploiRetraite() {
+    const precisions = [
+      ["emploi_retraite_fin", this.emploi_retraite_fin],
+      ["emploi_retraite_statut", this.emploi_retraite_statut || null],
+      ["emploi_retraite_salaire", this.emploi_retraite_salaire],
+    ].filter(([, valeur]) => valeur !== null).map(([nom]) => nom);
+    if (this.emploi_retraite_employeur !== "autre") {
+      precisions.push("emploi_retraite_employeur");
+    }
+    if (this.emploi_retraite === null) {
+      if (precisions.length) {
+        throw new ErreurSaisie(
+          `« ${precisions[0]} » ne sert qu'à une activité exercée après le départ : `
+          + "dites aussi quand elle commence (« emploi_retraite »).",
+        );
+      }
+      return;
+    }
+    const depart = this.dateDe(this.liquidation, true);
+    const debut = this.dateDe(this.emploi_retraite, true);
+    if (enMois(this.emploi_retraite) < enMois(this.liquidation)) {
+      throw new ErreurSaisie(
+        `Activité après le départ, en ${debut} : elle suit le départ, fixé en `
+        + `${depart} ; l'activité d'avant le départ se dit dans la carrière.`,
+      );
+    }
+    if (this.emploi_retraite_fin === null) {
+      throw new ErreurSaisie(
+        `Activité après le départ, en ${debut} : dites quand elle finit `
+        + "(« emploi_retraite_fin »).",
+      );
+    }
+    if (enMois(this.emploi_retraite_fin) <= enMois(this.emploi_retraite)) {
+      throw new ErreurSaisie(
+        `Activité après le départ, en ${debut} : elle finit après avoir commencé, `
+        + `pas en ${this.dateDe(this.emploi_retraite_fin, true)}.`,
+      );
+    }
+    if (CODES_SANS_EMPLOI.has(this.emploi_retraite_statut)) {
+      throw new ErreurSaisie(
+        `Activité après le départ, en ${debut} : « ${this.emploi_retraite_statut} » `
+        + "n'est pas une activité, mais une période sans emploi.",
+      );
+    }
+    if (this.emploi_retraite_salaire !== null) {
+      if (this.revenu_en_euros) {
+        if (this.emploi_retraite_salaire <= 0) {
+          throw new ErreurSaisie(
+            `Activité après le départ, en ${debut} : son revenu doit être strictement `
+            + "positif.",
+          );
+        }
+      } else if (!(this.emploi_retraite_salaire >= NIVEAU_MINIMAL
+          && this.emploi_retraite_salaire <= NIVEAU_MAXIMAL)) {
+        throw new ErreurSaisie(
+          `Activité après le départ, en ${debut} : niveau de revenu attendu entre 0,1 `
+          + "et 10 fois le salaire moyen.",
+        );
+      }
+    }
+  }
+
+  /**
    * Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie — les
    * naissances, le mariage, le décès —, et un décès qui ne précède pas le
    * départ : la réversion d'une pension que l'assuré n'a pas encore liquidée
@@ -1498,6 +1640,18 @@ export class Saisie {
       ...(this.progressive !== null
         ? { progressive: this.moisDe(this.progressive, true),
           quotite: this.quotite_progressive }
+        : {}),
+      ...(this.emploi_retraite !== null
+        ? Object.fromEntries([
+          ["emploi_retraite", this.moisDe(this.emploi_retraite, true)],
+          ["emploi_retraite_fin", this.emploi_retraite_fin === null
+            ? null : this.moisDe(this.emploi_retraite_fin, true)],
+          ["emploi_retraite_statut", this.emploi_retraite_statut || null],
+          ["emploi_retraite_salaire", this.emploi_retraite_salaire === null
+            ? null : nombreBrut(this.emploi_retraite_salaire)],
+          ["emploi_retraite_employeur", this.emploi_retraite_employeur === "autre"
+            ? null : this.emploi_retraite_employeur],
+        ].filter(([, valeur]) => valeur !== null))
         : {}),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,

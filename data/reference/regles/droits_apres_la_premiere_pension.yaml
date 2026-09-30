@@ -137,7 +137,7 @@ versions:
                    mineurs, pension_militaire, pension_d_invalidite]
   exemples: aucun trouvé
 sources:
-  lu_le: 2026-09-29
+  lu_le: 2026-09-30
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -153,6 +153,15 @@ sources:
     ou la poursuite ») ? Et la version supposée d'avant 2015 : un régime qui a
     liquidé acquiert-il sur une reprise d'activité ?
   lectures:
+  - type: service_public
+    reference: >-
+      fiche F13243, « Cumul emploi-retraite du salarié », vérifiée le 1er janvier 2026 :
+      depuis le 1er janvier 2023, le cumul intégral ouvre de nouveaux droits « auprès de
+      la caisse de retraite de base dont relève votre activité » ; reprise chez le
+      dernier employeur dans les six mois, « votre nouvelle activité ne vous génèrera
+      jamais de nouveau droit »
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F13243
+    date: 2026-09-30
   - type: jorf
     reference: >-
       loi n° 2014-40 du 20 janvier 2014, article 19 (JORFARTI000028493657), lu en

@@ -296,6 +296,7 @@ export class Contexte {
         );
       }
     }
+    const emploiRetraite = this.emploiRetraite(simulateur, saisie);
     const batir = (niveaux) => simulateur.carriereParcours({
       annee_naissance: saisie.naissance,
       mois_naissance: saisie.naissance_mois,
@@ -313,6 +314,7 @@ export class Contexte {
       conjoint: saisie.conjointDeclare(),
       deces: saisie.decesDeclare(),
       retraite_progressive: saisie.retraiteProgressiveDeclaree(),
+      emploi_retraite: emploiRetraite,
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -407,11 +409,27 @@ export class Contexte {
       conjoint: saisie.conjointDeclare(),
       deces: saisie.decesDeclare(),
       retraite_progressive: saisie.retraiteProgressiveDeclaree(),
+      emploi_retraite: this.emploiRetraite(simulateur, saisie),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
     verifierStatutsReleve(simulateur.affiliations, carriere);
     return carriere;
+  }
+
+  /**
+   * L'activité exercée après le départ que la saisie déclare, son revenu ramené
+   * à l'unité du modèle, et son statut contrôlé comme ceux des métiers.
+   */
+  emploiRetraite(simulateur, saisie) {
+    const emploi = saisie.emploiRetraiteDeclare(this.echelle(saisie));
+    if (emploi !== null && !simulateur.affiliations.contient(emploi.affiliation)) {
+      throw new ErreurSaisie(
+        "Activité après le départ : statut d'affiliation inconnu "
+        + `« ${emploi.affiliation} ».`,
+      );
+    }
+    return emploi;
   }
 }
 

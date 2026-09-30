@@ -227,7 +227,7 @@ export function dateDeclaree(valeur, quoi) {
  */
 function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants,
   naissancesEnfants = [], jourNaissance = null, presomptions = null, conjoint = null,
-  deces = null, retraiteProgressive = null) {
+  deces = null, retraiteProgressive = null, emploiRetraite = null) {
   const assure = naissanceDeLAssure(anneeNaissance, moisNaissance, sexe, jourNaissance,
     presomptions);
   const faitsNaissance = [assure];
@@ -261,6 +261,27 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
     depart.unshift(fait(`retraite_progressive_${ASSURE}`, ASSURE, "acte_de_la_personne",
       jour(origineDe(assure).plusMois(enMois(age))), null,
       { acte: "retraite_progressive", age, quotite }));
+  }
+  if (emploiRetraite !== null && emploiRetraite !== undefined) {
+    const { age, fin } = emploiRetraite;
+    if (ageLiquidation === null || ageLiquidation === undefined
+        || enMois(age) < enMois(ageLiquidation)) {
+      throw new Error("une activité après le départ ne précède pas le départ");
+    }
+    if (enMois(fin) <= enMois(age)) {
+      throw new Error("une activité après le départ finit après avoir commencé");
+    }
+    if (!["dernier", "autre"].includes(emploiRetraite.employeur)) {
+      throw new Error("l'employeur d'une activité après le départ : le dernier ou un "
+        + `autre, reçu « ${emploiRetraite.employeur} »`);
+    }
+    depart.push(fait(`emploi_retraite_${ASSURE}`, ASSURE, EMPLOI,
+      jour(origineDe(assure).plusMois(enMois(age))),
+      jour(origineDe(assure).plusMois(enMois(fin))), {
+        affiliation: emploiRetraite.affiliation,
+        niveau_salaire: emploiRetraite.niveau_salaire, profil: "plat",
+        part_primes: 0.0, apres_depart: true, employeur: emploiRetraite.employeur,
+      }));
   }
   const role = sexe === "F" ? "mere" : "pere";
   const liens = [];
@@ -324,10 +345,10 @@ function naissanceDuConjoint(conjoint) {
  */
 export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation = null,
   nombreEnfants = 0, naissancesEnfants = [], jourNaissance = null, presomptions = null,
-  conjoint = null, deces = null, retraiteProgressive = null) {
+  conjoint = null, deces = null, retraiteProgressive = null, emploiRetraite = null) {
   const [naissance, depart, liens] = personne(anneeNaissance, moisNaissance, sexe,
     ageLiquidation, nombreEnfants, naissancesEnfants, jourNaissance, presomptions,
-    conjoint, deces, retraiteProgressive);
+    conjoint, deces, retraiteProgressive, emploiRetraite);
   return { schema_version: SCHEMA_VERSION, faits: [...naissance, ...depart], liens };
 }
 
@@ -355,6 +376,7 @@ export function duParcours({
   conjoint = null,
   deces = null,
   retraite_progressive = null,
+  emploi_retraite = null,
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -370,7 +392,7 @@ export function duParcours({
 
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
-    conjoint, deces, retraite_progressive);
+    conjoint, deces, retraite_progressive, emploi_retraite);
   const moisDeNaissance = moisDe(naissance[0].debut);
   const bornes = principaux.map(
     (metier) => moisDeNaissance.plusMois(enMois(metier.age_debut)),
@@ -462,6 +484,7 @@ export function duReleve({
   conjoint = null,
   deces = null,
   retraite_progressive = null,
+  emploi_retraite = null,
 }) {
   if (!releve || releve.length === 0) {
     throw new Error("un relevé compte au moins une ligne");
@@ -483,7 +506,7 @@ export function duReleve({
   });
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
-    conjoint, deces, retraite_progressive);
+    conjoint, deces, retraite_progressive, emploi_retraite);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],
@@ -627,10 +650,23 @@ export function retraiteProgressive(chronologie, personne) {
     .find((acte) => acte.attributs.acte === "retraite_progressive") ?? null;
 }
 
-/** Les périodes d'emploi et d'interruption d'une personne, dans leur ordre. */
+/**
+ * Les périodes d'emploi et d'interruption d'une personne, dans leur ordre,
+ * jusqu'à son départ : l'activité d'après le départ n'en est pas.
+ */
 export function periodes(chronologie, personne) {
   return faitsDe(chronologie, personne)
-    .filter((f) => f.sorte === EMPLOI || f.sorte === INTERRUPTION);
+    .filter((f) => (f.sorte === EMPLOI || f.sorte === INTERRUPTION)
+      && !f.attributs.apres_depart);
+}
+
+/**
+ * L'activité qu'une personne exerce après son départ, si elle la déclare : le
+ * cumul emploi-retraite.
+ */
+export function emploiRetraite(chronologie, personne) {
+  return faitsDe(chronologie, personne, EMPLOI)
+    .find((f) => f.attributs.apres_depart) ?? null;
 }
 
 /** Les enfants d'une personne, dans l'ordre de leurs filiations. */

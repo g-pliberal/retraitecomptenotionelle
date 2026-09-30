@@ -2958,6 +2958,24 @@ de quotité et la suspension, la baisse de revenus d'un non-salarié, les règle
 propres de l'Agirc-Arrco et de l'Ircantec, les décrets des régimes spéciaux,
 un exemple publié ; le formulaire, à la cinquième étape.
 
+**Quatrième étape, le 30 septembre : la vie après le départ, première partie.**
+Les textes du cumul emploi-retraite sont lus (journal de veille) : L. 161-22
+depuis 1985, ses décrets, les règles des indépendants, des libéraux et des
+fonctionnaires, la page de l'Agirc-Arrco et deux fiches de service-public. La
+fiche `cumul_emploi_retraite_et_retraite_progressive` est découpée en six
+versions — la rupture avec l'employeur de 1983, le plafond du dernier salaire
+de 2004, le cumul libéralisé de 2009, la réduction du dépassement de 2015, les
+trois régimes selon l'âge de 2027, dont le seuil n'a pas paru —, et une fiche
+nouvelle, `cumul_emploi_retraite_fonction_publique`, porte le tiers de la
+pension du fonctionnaire. L'activité exercée après le départ se déclare par
+l'adresse (`emploi_retraite`, `emploi_retraite_fin`, son statut, son revenu,
+l'employeur), dans les deux moteurs : la chronologie la date comme une période
+d'activité postérieure au départ, et la carrière en garde les années à part,
+que la première liquidation ne voit pas. Aucun résultat ne bouge. Restent, dans
+l'ordre : la pension servie pendant l'activité — suspendue, réduite du
+dépassement, entière au taux plein —, puis les droits que l'activité ouvre ou
+non et la seconde pension.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
