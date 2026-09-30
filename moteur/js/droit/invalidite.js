@@ -19,6 +19,13 @@ import { dateDEffet } from "./commun.js";
 /** L'âge d'une version qui le lit à la génération : celui de L. 161-17-2. */
 export const AGE_LEGAL_PAR_GENERATION = "age_legal_par_generation";
 
+/**
+ * L'âge de l'allocation de solidarité aux personnes âgées de droit commun :
+ * celui de `MinimumVieillesse.AGE_OUVERTURE`, recopié pour que ce module
+ * n'importe pas les tables du scénario 1.
+ */
+export const AGE_DE_L_ASPA = 65.0;
+
 /** Le régime dont l'Agirc-Arrco et l'Ircantec suivent le taux plein. */
 export const REGIME_DES_SALARIES = "regime_general";
 
@@ -66,6 +73,26 @@ export function ageDInaptitude(moteur, regime, carriere) {
 export function tauxPleinDeLInapte(moteur, regime, carriere, ageLiquidation) {
   const age = ageDInaptitude(moteur, regime, carriere);
   return age !== null && ageLiquidation + 1e-9 >= age;
+}
+
+/**
+ * L'âge où l'allocation de solidarité aux personnes âgées s'ouvre à cet
+ * assuré : soixante-cinq ans, abaissé pour l'inapte et l'ex-invalide à l'âge
+ * de la version (R. 815-1 ; paramètre `age_aspa` de la fiche
+ * `inaptitude_au_travail`, à la date de liquidation). Voir `age_de_l_aspa`
+ * du Python.
+ */
+export function ageDeLAspa(moteur, carriere) {
+  if (!reconnuInapte(carriere)) {
+    return AGE_DE_L_ASPA;
+  }
+  const date = dateDEffet(carriere);
+  const version = date === null ? null : moteur.invalidites.version("inaptitude", date);
+  const valeur = version === null ? undefined : version.parametres.age_aspa;
+  if (valeur === undefined || valeur === null) {
+    return AGE_DE_L_ASPA;
+  }
+  return Math.min(AGE_DE_L_ASPA, ageDeLaFiche(moteur, carriere, valeur));
 }
 
 /**

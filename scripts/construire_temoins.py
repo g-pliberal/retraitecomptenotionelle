@@ -775,6 +775,17 @@ def _cas() -> list[dict]:
         "naissance": "1950-03-15", "debut": "1975-09", "liquidation": "2010-04",
         "inaptitude": "oui",
     }))
+    # L'ASPA de l'inapte, à l'âge de la version et non à soixante-cinq ans
+    # (R. 815-1) : au départ en 2022, et aujourd'hui pour l'inapte parti en
+    # 2024 qui n'a pas soixante-cinq ans.
+    cas.append(("inaptitude_aspa_au_depart", {
+        "naissance": "1960-03-15", "debut": "1999-09", "liquidation": "2022-04",
+        "salaire": "0.5", "inaptitude": "oui",
+    }))
+    cas.append(("inaptitude_aspa_aujourd_hui", {
+        "naissance": "1962-03-15", "debut": "2000-09", "liquidation": "2024-04",
+        "salaire": "0.5", "inaptitude": "oui",
+    }))
     cas.append(("invalidite_substituee_en_1980", {
         "naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
         "interruptions": "1975:1982:invalidite",

@@ -366,3 +366,38 @@ def test_avant_1983_l_ex_invalide_a_le_taux_de_soixante_cinq_ans(contexte):
                      liquidation="1982-07", interruptions="1975:1982:invalidite")
     assert actuel.departs[0].date_effet == "1980-04-01"
     assert "taux 50.000%" in _pension(actuel, "regime_general").detail
+
+
+def test_l_inapte_a_l_aspa_des_son_age(contexte):
+    """« L'âge mentionné à l'article L. 815-1 est fixé à soixante-cinq ans. Il
+    est abaissé à l'âge prévu à l'article L. 161-17-2 pour les personnes
+    mentionnées aux 2° à 5° de l'article L. 351-8 » (R. 815-1, de 2011 à
+    2023) : né en 1960, l'inapte parti à soixante-deux ans en 2022 a l'ASPA,
+    que l'autre n'aura qu'à soixante-cinq."""
+    champs = {"naissance": "1960-03-15", "debut": "1999-09", "liquidation": "2022-04",
+              "salaire": "0.5"}
+    inapte = _actuel(contexte, **champs, inaptitude="oui")
+    assert any(a.code == "minimum_vieillesse" for a in inapte.avantages_appliques)
+    autre = _actuel(contexte, **champs)
+    assert not any(a.code == "minimum_vieillesse" for a in autre.avantages_appliques)
+
+
+def test_l_age_de_l_aspa_suit_la_version(simulateur):
+    """Soixante ans avant 2011, l'âge légal de 2011 à 2023, soixante-deux ans
+    depuis ; soixante-cinq ans pour qui n'est pas inapte."""
+    from retraite_notionnelle.droit.invalidite import age_de_l_aspa
+
+    moteur = simulateur.scenario_actuel
+    for naissance, liquidation, attendu in ((1945, 60.0, 60.0), (1952, 62.0, 60.75),
+                                            (1965, 62.0, 62.0)):
+        carriere = Carriere.depuis_parcours(
+            annee_naissance=naissance, sexe="H", mois_naissance=6,
+            metiers=[Metier("salarie_prive_non_cadre", 21.0)],
+            age_liquidation=liquidation, macro=simulateur.macro,
+            invalidite={"pension": None, "inaptitude": True, "radiation": None})
+        assert age_de_l_aspa(moteur, carriere) == attendu, naissance
+        valide = Carriere.depuis_parcours(
+            annee_naissance=naissance, sexe="H", mois_naissance=6,
+            metiers=[Metier("salarie_prive_non_cadre", 21.0)],
+            age_liquidation=liquidation, macro=simulateur.macro)
+        assert age_de_l_aspa(moteur, valide) == 65.0

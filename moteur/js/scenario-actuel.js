@@ -43,6 +43,7 @@ import { RevalorisationsPensions, menerAuMois } from "./revalorisation.js";
 import { Fiabilite } from "./serie.js";
 import * as lesDeparts from "./droit/departs.js";
 import { foyerEtNet } from "./droit/foyer.js";
+import { ageDeLAspa } from "./droit/invalidite.js";
 import * as liquidation from "./droit/liquidation.js";
 import * as lesProgressives from "./droit/progressive.js";
 
@@ -263,7 +264,7 @@ export class ScenarioActuel {
       const carriere = resultat.carriere;
       const foyer = foyerEtNet(
         this, carriere.personne, resultat.demande.dateEffet, carriere.anneeLiquidation,
-        resultat.total, (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE,
+        resultat.total, (carriere.age_liquidation || 0.0) >= ageDeLAspa(this, carriere),
         contexte);
       sortie = resultatActuel(resultat, foyer);
     }
@@ -484,7 +485,7 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
   });
   const foyer = foyerEtNet(
     moteur, carriere.personne, new lesDeparts.Depart(declare).dateEffet, declare.annee,
-    total, (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE, contexte);
+    total, (carriere.age_liquidation || 0.0) >= ageDeLAspa(moteur, carriere), contexte);
   const liste = [...avantages.values()];
   if (foyer.minimumVieillesse > 0) {
     total = foyer.plafond;

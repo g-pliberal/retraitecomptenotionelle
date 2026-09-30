@@ -62,7 +62,7 @@ from pathlib import Path
 
 from .config import RevalorisationStock, SituationFoyer
 from .donnees.chargement import Fiabilite
-from .droit import liquider
+from .droit import invalidite, liquider
 from .droit.foyer import Foyer, foyer_et_net
 
 
@@ -667,14 +667,16 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
 def foyer_a_l_echeance(simulateur, carriere, vivante: Revalorisee) -> Foyer:
     """L'étape « foyer et net » à l'échéance de ``vivante`` : l'ASPA
     d'aujourd'hui, comme à la liquidation, différentielle, sur TOUTES les
-    pensions — le RAFP compris —, et à 65 ans révolus dans l'année. Qui est
+    pensions — le RAFP compris —, et à 65 ans révolus dans l'année, à l'âge
+    de l'inapte pour lui (:func:`~.droit.invalidite.age_de_l_aspa`). Qui est
     parti à 62 ans l'a peut-être gagnée depuis."""
     ressources = (sum(r.aujourd_hui for r in vivante.regimes)
                   + vivante.majoration_enfants * vivante.coefficient_majoration)
     return foyer_et_net(
         simulateur.scenario_actuel, carriere.personne, f"{vivante.annee:04d}-12-31",
         vivante.annee, ressources,
-        vivante.annee >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE)
+        vivante.annee >= carriere.annee_naissance + invalidite.age_de_l_aspa(
+            simulateur.scenario_actuel, carriere))
 
 
 def aujourd_hui(vivante: Revalorisee, foyer: Foyer, resultat) -> ActuelAujourdhui:

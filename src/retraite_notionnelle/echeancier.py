@@ -42,6 +42,7 @@ from . import chronologie as chrono
 from .droit import cumul as _cumul
 from .droit import departs as _departs
 from .droit import foyer as _foyer
+from .droit import invalidite as _invalidite
 from .droit import liquidation as _liquidation
 from .droit import progressive as _progressive
 from .droit import reversion as _reversion
@@ -50,8 +51,8 @@ from .droit.commun import date_d_effet
 from .journal import Entree, Journal
 from .noyau import vocabulaire
 from .revalorisation import aujourd_hui, faire_vivre, foyer_a_l_echeance
-from .scenarios.actuel import (MinimumVieillesse, etat_du_depart, progressive_servie,
-                               resultat_actuel, resultat_des_departs)
+from .scenarios.actuel import (etat_du_depart, progressive_servie, resultat_actuel,
+                               resultat_des_departs)
 
 if TYPE_CHECKING:
     from .carriere import Carriere
@@ -378,7 +379,8 @@ class Echeancier:
         foyer = _foyer.foyer_et_net(
             self.moteur, liquidee.personne, evenement.date, liquidee.annee_liquidation,
             liquidation.total,
-            (liquidee.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE, contexte)
+            (liquidee.age_liquidation or 0.0)
+            >= _invalidite.age_de_l_aspa(self.moteur, liquidee), contexte)
         self.au_depart = resultat_actuel(liquidation, foyer)
         self._inscrire(evenement, f"liquidation_{evenement.id}", "liquidation", liquidation,
                        evenement.date)
@@ -417,7 +419,8 @@ class Echeancier:
             sum(p.montant for p in self.au_depart.pensions_par_regime) + sum(
                 a.montant for a in self.au_depart.avantages_appliques
                 if a.code == "majoration_enfants"),
-            (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE, contexte)
+            (carriere.age_liquidation or 0.0)
+            >= _invalidite.age_de_l_aspa(self.moteur, carriere), contexte)
         self._inscrire(declare, f"foyer_{declare.id}", "foyer", foyer, declare.date)
 
     def _echeance(self, carriere: Carriere, annee: int) -> None:

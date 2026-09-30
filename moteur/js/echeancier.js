@@ -29,12 +29,12 @@ import { dateDEffet } from "./droit/commun.js";
 import * as leCumul from "./droit/cumul.js";
 import * as lesDeparts from "./droit/departs.js";
 import { foyerEtNet } from "./droit/foyer.js";
+import { ageDeLAspa } from "./droit/invalidite.js";
 import * as liquidation from "./droit/liquidation.js";
 import * as lesProgressives from "./droit/progressive.js";
 import { moisSuivant, reversion } from "./droit/reversion.js";
 import * as laSeconde from "./droit/seconde.js";
 import { Entree, Journal } from "./journal.js";
-import { MinimumVieillesse } from "./regimes.js";
 import { aujourdHui, faireVivre, foyerALEcheance } from "./revalorisation.js";
 import {
   etatDuDepart, progressiveServie, resultatActuel, resultatDesDeparts,
@@ -423,7 +423,7 @@ export class Echeancier {
     const liquidee = resultat.carriere;
     const foyer = foyerEtNet(
       this.moteur, liquidee.personne, evenement.date, liquidee.anneeLiquidation,
-      resultat.total, (liquidee.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE,
+      resultat.total, (liquidee.age_liquidation || 0.0) >= ageDeLAspa(this.moteur, liquidee),
       contexte);
     this.auDepart = resultatActuel(resultat, foyer);
     this._inscrire(evenement, `liquidation_${evenement.id}`, "liquidation", resultat,
@@ -468,7 +468,7 @@ export class Echeancier {
     const foyer = foyerEtNet(
       this.moteur, carriere.personne, declare.date, carriere.anneeLiquidation,
       pensions + majoration,
-      (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE, contexte);
+      (carriere.age_liquidation || 0.0) >= ageDeLAspa(this.moteur, carriere), contexte);
     this._inscrire(declare, `foyer_${declare.id}`, "foyer", foyer, declare.date);
   }
 

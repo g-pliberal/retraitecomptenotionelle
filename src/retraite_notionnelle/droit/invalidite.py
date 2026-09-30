@@ -22,7 +22,9 @@
 
 :mod:`.ouvrir` en tire l'âge d'ouverture de l'inapte, :mod:`.liquider` son
 taux plein et celui des complémentaires qui le suivent, :mod:`.departs` la
-date où la pension de vieillesse de l'ex-invalide commence.
+date où la pension de vieillesse de l'ex-invalide commence, le scénario 1 et
+l'échéancier l'âge où l'allocation de solidarité aux personnes âgées s'ouvre
+à l'inapte (:func:`age_de_l_aspa`).
 
 Son jumeau est ``moteur/js/droit/invalidite.js``.
 """
@@ -41,6 +43,11 @@ if TYPE_CHECKING:
 
 #: L'âge d'une version qui le lit à la génération : celui de L. 161-17-2.
 AGE_LEGAL_PAR_GENERATION = "age_legal_par_generation"
+
+#: L'âge de l'allocation de solidarité aux personnes âgées de droit commun :
+#: celui de :attr:`~retraite_notionnelle.scenarios.actuel.MinimumVieillesse.AGE_OUVERTURE`,
+#: recopié pour que ce module n'importe pas le scénario 1, qui l'importe.
+AGE_DE_L_ASPA = 65.0
 
 #: Le régime dont l'Agirc-Arrco et l'Ircantec suivent le taux plein : « le
 #: régime général ou le régime des assurances sociales agricoles », dont
@@ -97,6 +104,23 @@ def taux_plein_de_l_inapte(moteur: ScenarioActuel, regime: str, carriere: Carrie
     avant — ce que la décote nulle rend dans les deux cas."""
     age = age_d_inaptitude(moteur, regime, carriere)
     return age is not None and age_liquidation + 1e-9 >= age
+
+
+def age_de_l_aspa(moteur: ScenarioActuel, carriere: Carriere) -> float:
+    """L'âge où l'allocation de solidarité aux personnes âgées s'ouvre à cet
+    assuré : soixante-cinq ans, « abaissé à l'âge prévu à l'article L. 351-1-5
+    pour les personnes mentionnées aux 2° à 5° de l'article L. 351-8 »
+    (R. 815-1) — l'inapte et l'ex-invalide en sont —, à l'âge légal de 2011 à
+    2023, à soixante ans avant : le paramètre ``age_aspa`` de la version de la
+    fiche ``inaptitude_au_travail`` à la date de liquidation."""
+    if not reconnu_inapte(carriere):
+        return AGE_DE_L_ASPA
+    date = date_d_effet(carriere)
+    version = None if date is None else moteur.invalidites.version("inaptitude", date)
+    valeur = None if version is None else version["parametres"].get("age_aspa")
+    if valeur is None:
+        return AGE_DE_L_ASPA
+    return min(AGE_DE_L_ASPA, age_de_la_fiche(moteur, carriere, valeur))
 
 
 @dataclass(frozen=True)

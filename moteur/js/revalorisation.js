@@ -19,6 +19,7 @@
 import { RevalorisationStock, SituationFoyer } from "./config.js";
 import * as liquider from "./droit/liquider.js";
 import { foyerEtNet } from "./droit/foyer.js";
+import { ageDeLAspa } from "./droit/invalidite.js";
 import { Fiabilite, nomFiabilite } from "./serie.js";
 
 /** Fin de la péréquation des pensions civiles et militaires. */
@@ -474,8 +475,8 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
 /**
  * L'étape « foyer et net » à l'échéance de `vivante` : l'ASPA d'aujourd'hui,
  * comme à la liquidation, différentielle, sur TOUTES les pensions — le RAFP
- * compris —, et à 65 ans révolus dans l'année. Qui est parti à 62 ans l'a
- * peut-être gagnée depuis.
+ * compris —, et à 65 ans révolus dans l'année, à l'âge de l'inapte pour lui
+ * (`ageDeLAspa`). Qui est parti à 62 ans l'a peut-être gagnée depuis.
  */
 export function foyerALEcheance(simulateur, carriere, vivante) {
   let ressources = 0;
@@ -484,7 +485,7 @@ export function foyerALEcheance(simulateur, carriere, vivante) {
   return foyerEtNet(
     simulateur.scenarioActuel, carriere.personne, dateIso(vivante.annee, 12, 31),
     vivante.annee, ressources,
-    vivante.annee >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE,
+    vivante.annee >= carriere.annee_naissance + ageDeLAspa(simulateur.scenarioActuel, carriere),
   );
 }
 

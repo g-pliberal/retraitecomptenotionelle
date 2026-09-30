@@ -79,6 +79,7 @@ from ..droit import coordonner
 from ..droit import cumul as _cumul
 from ..droit import departs as _departs
 from ..droit import foyer as _foyer
+from ..droit import invalidite as _invalidite
 from ..droit import liquidation as _liquidation
 from ..droit import progressive as _progressive
 from ..droit import seconde as _seconde
@@ -346,7 +347,7 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
         servis.append(_departs_servi(depart, liquidation, servi))
     foyer = _foyer.foyer_et_net(
         moteur, carriere.personne, _departs.Depart(declare).date_effet, declare.annee,
-        total, (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE,
+        total, (carriere.age_liquidation or 0.0) >= _invalidite.age_de_l_aspa(moteur, carriere),
         contexte)
     liste = list(avantages.values())
     if foyer.minimum_vieillesse > 0:
@@ -1468,8 +1469,8 @@ class MinimumVieillesse:
     permet de la retirer.
     """
 
-    #: Âge d'ouverture de droit commun. L'âge légal suffit en cas d'inaptitude,
-    #: que le modèle ne connaît pas.
+    #: Âge d'ouverture de droit commun. L'inapte l'a plus tôt : voir
+    #: :func:`~retraite_notionnelle.droit.invalidite.age_de_l_aspa`.
     AGE_OUVERTURE = 65
 
     def __init__(self, racine: Path, macro: DonneesMacro) -> None:
@@ -2469,7 +2470,8 @@ class ScenarioActuel:
             foyer = _foyer.foyer_et_net(
                 self, liquidee.personne, liquidation.demande.date_effet,
                 liquidee.annee_liquidation, liquidation.total,
-                (liquidee.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE,
+                (liquidee.age_liquidation or 0.0)
+                >= _invalidite.age_de_l_aspa(self, liquidee),
                 contexte)
             resultat = resultat_actuel(liquidation, foyer)
         if progressive is not None:
