@@ -444,9 +444,11 @@ export const DEFAUTS = Object.freeze({
   deces: "",
   //: La retraite progressive : l'âge où elle prend effet, que l'adresse porte
   //: en date comme le départ, et la quotité du temps partiel gardé jusqu'au
-  //: départ, en pour cent. Nul sans retraite progressive.
+  //: départ, en pour cent. Nul sans retraite progressive, et la quotité nulle
+  //: quand l'adresse ne la porte pas : une quotité de zéro se refuse, elle ne
+  //: vaut pas absence.
   progressive: null,
-  quotite_progressive: 0,
+  quotite_progressive: null,
   //: L'activité exercée après le départ, le cumul emploi-retraite : l'âge où
   //: elle commence et celui où elle finit, que l'adresse porte en dates comme
   //: le départ ; son statut et son revenu, dans l'unité de la saisie — ceux du
@@ -571,7 +573,8 @@ export class Saisie {
       progressive: [undefined, null, ""].includes(parametres.progressive) ? null
         : ageSaisi(parametres, "progressive", 0.0,
           origineDesAges(moisDeNaissance, jourNaissance)),
-      quotite_progressive: entier(parametres, "quotite", 0),
+      quotite_progressive: [undefined, null, ""].includes(parametres.quotite)
+        ? null : entier(parametres, "quotite", 0),
       emploi_retraite: [undefined, null, ""].includes(parametres.emploi_retraite) ? null
         : ageSaisi(parametres, "emploi_retraite", 0.0,
           origineDesAges(moisDeNaissance, jourNaissance)),
@@ -1413,7 +1416,7 @@ export class Saisie {
    */
   verifierProgressive() {
     if (this.progressive === null) {
-      if (this.quotite_progressive) {
+      if (this.quotite_progressive !== null) {
         throw new ErreurSaisie(
           "« quotite » ne sert qu'à la retraite progressive : dites aussi sa date "
           + "(« progressive »).",
@@ -1421,7 +1424,8 @@ export class Saisie {
       }
       return;
     }
-    if (!(this.quotite_progressive >= 1 && this.quotite_progressive <= 99)) {
+    if (this.quotite_progressive === null
+        || !(this.quotite_progressive >= 1 && this.quotite_progressive <= 99)) {
       throw new ErreurSaisie(
         "Quotité de la retraite progressive : le temps partiel gardé, en pour cent "
         + "d'un temps plein, entre 1 et 99.",

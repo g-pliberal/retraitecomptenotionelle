@@ -3036,6 +3036,21 @@ d'ouverture, qu'il ne compte pas. L'étape est close ; reste la cinquième : le
 formulaire, la page Coût, la décision de la proposition, et la clôture du
 domaine.
 
+**Cinquième étape, première partie, le même jour : le formulaire.** Un
+dépliant replié, « Retraite progressive et cumul emploi-retraite », demande ce
+que seule l'adresse portait : la date et la quotité d'une retraite progressive,
+et l'activité exercée après le départ — sa date, sa fin, son statut, son
+revenu, l'employeur. Il s'ouvre quand l'une ou l'autre est dite. Son statut ne
+propose pas les périodes sans emploi, que la saisie refuse, et le revenu
+laissé vide y est celui du dernier métier. Le budget de mots du formulaire
+vierge monte de quatre, pour le titre du dépliant. Une quotité nulle se refuse
+désormais, au lieu de valoir absence : le formulaire en fait sa borne, et la
+saisie l'oppose hors du navigateur, comme toute borne. Aucun témoin de
+simulation ne bouge ; les pages du simulateur gagnent le dépliant. Restent : la
+date de chaque pension, déclarée, que la deuxième étape et la fiche
+`liquidation_regime_par_regime` renvoyaient ici ; la décision de la
+proposition ; la clôture.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

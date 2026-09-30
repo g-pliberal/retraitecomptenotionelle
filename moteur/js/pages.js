@@ -83,6 +83,7 @@ import {
   AGES_REFERENCE, AGE_DEBUT_MAXIMAL, AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL,
   AGE_LIQUIDATION_MINIMAL, ANNEE_MAXIMALE, ANNEE_MINIMALE, CLES_MODELISATION,
   CODES_SANS_EMPLOI, CONTRIBUTIONS_ETAT, CONVERSIONS_ACQUIS, CUMUL, DEFAUTS,
+  EMPLOYEURS_APRES_DEPART,
   ENFANTS_MAXIMUM, ErreurSaisie, INDEXATIONS, LISSAGE_MAXIMUM, METIERS_MAXIMUM,
   MODES_MONTANT, NAISSANCE_MAXIMALE, NAISSANCE_MINIMALE, PARTS_COTISATION,
   POPULATIONS, PROFILS, PROJECTIONS, RATTACHEMENTS, REGIMES_FRAIS, REGIMES_TAUX,
@@ -1023,6 +1024,7 @@ export function formulaire(saisie, contexte) {
   ${mentionConversion(saisie, echelle)}
   ${releveFormulaire(saisie)}
   ${conjointFormulaire(saisie, contexte)}
+  ${apresLeDepartFormulaire(saisie, affiliations, echelle)}
   <details class="options">
     ${g.sommaire("Options de modélisation (sexe, profil, indexation, "
       + "projection)")}
@@ -1077,6 +1079,61 @@ function conjointFormulaire(saisie, contexte) {
     ${g.sommaire("Conjoint et réversion")}
     <div class="grille">${champs}</div>
     ${saisie.deces ? g.cache("deces", saisie.deces) : ""}
+  </details>`;
+}
+
+/**
+ * La retraite progressive et l'activité exercée après le départ (le domaine
+ * des départs multiples, docs/architecture.md, § 11) : un bloc facultatif,
+ * replié tant qu'il est vide. La retraite progressive se demande avant le
+ * départ, en gardant un temps partiel ; l'activité après le départ, avec sa
+ * fin, son statut, son revenu et son employeur, fait le cumul emploi-retraite
+ * et ses droits. Les dates s'écrivent comme celle du départ.
+ */
+function apresLeDepartFormulaire(saisie, affiliations, echelle) {
+  const date = (age) => (age === null ? "" : saisie.jourDe(age, true));
+  const bornes = {
+    min: saisie.jourDe(AGE_DEBUT_MINIMAL, true),
+    max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL + 10, true),
+  };
+  // Une activité, non une période sans emploi, que la saisie refuse.
+  const activites = optionsStatuts(affiliations, null)
+    .map(([famille, options]) => [famille,
+      options.filter(([code]) => !CODES_SANS_EMPLOI.has(code))])
+    .filter(([, options]) => options.length);
+  const champs = [
+    g.champDate("progressive", "Retraite progressive, depuis", date(saisie.progressive),
+      "facultatif : avant le départ", "", bornes,
+      "Vous gardez un temps partiel et touchez une fraction de votre pension, "
+      + "liquidée à titre provisoire : 100 % moins votre quotité depuis décembre 2014. "
+      + "Elle s'ouvre selon l'âge, la durée d'assurance et votre régime."),
+    g.champ("quotite", "Quotité du temps partiel",
+      saisie.quotite_progressive === null ? "" : String(saisie.quotite_progressive),
+      "en % d'un temps plein", "number", { min: "1", max: "99", step: "1" },
+      "De 40 à 80 % depuis décembre 2014, de 50 à 90 % pour un fonctionnaire ; "
+      + "80 % au plus avant."),
+    g.champDate("emploi_retraite", "Activité après le départ, depuis",
+      date(saisie.emploi_retraite), "facultatif", "", bornes,
+      "Le cumul emploi-retraite : pendant qu'elle dure, votre pension est servie "
+      + "entière, réduite, suspendue ou non due, selon le droit du mois, et "
+      + "l'activité ouvre des droits ou non."),
+    g.champDate("emploi_retraite_fin", "Jusqu'au", date(saisie.emploi_retraite_fin),
+      "le mois où elle finit", "", bornes),
+    g.liste("emploi_retraite_statut", "Son statut",
+      [["", "celui de votre dernier métier"], ...activites], saisie.emploi_retraite_statut),
+    champRevenu("emploi_retraite_salaire", saisie, echelle,
+      saisie.emploi_retraite_salaire === null ? "" : nombreBrut(saisie.emploi_retraite_salaire),
+      true, "vide : celui de votre dernier métier"),
+    g.liste("emploi_retraite_employeur", "Chez", EMPLOYEURS_APRES_DEPART,
+      saisie.emploi_retraite_employeur, "",
+      {}, "Chez le dernier employeur dans les six mois de la pension, elle n'est pas "
+      + "due jusqu'au sixième mois, et l'activité n'ouvre jamais de droit nouveau."),
+  ].join("");
+  const ouvert = saisie.progressive !== null || saisie.emploi_retraite !== null;
+  return `
+  <details class="options"${ouvert ? " open" : ""}>
+    ${g.sommaire("Retraite progressive et cumul emploi-retraite")}
+    <div class="grille">${champs}</div>
   </details>`;
 }
 
@@ -1173,11 +1230,15 @@ const APPEL_REVENU_RETRAITE = " Jamais une pension : la pension est ce que le "
  * comme sur un salaire, et rendrait une pension bien plus petite que celle
  * qu'il touche — un résultat faux, mais vraisemblable, qui ne se détecte pas à
  * l'œil. D'où la mise en garde sur le champ, et non ailleurs.
+ *
+ * `siVide` s'ajoute à l'aide brève d'un champ facultatif : ce que vaut le champ
+ * laissé vide.
  */
-function champRevenu(nom, saisie, echelle, valeur, bref = false) {
+function champRevenu(nom, saisie, echelle, valeur, bref = false, siVide = "") {
+  const vide = siVide ? ` ; ${siVide}` : "";
   if (!saisie.revenu_en_euros) {
     const aideMultiple = bref
-      ? "en multiples du salaire moyen brut"
+      ? `en multiples du salaire moyen brut${vide}`
       : `1 = salaire moyen, soit ${g.euros(echelle.mensuel(1))} bruts par mois`;
     return g.champ(nom, "Niveau de revenu d'activité", valeur, aideMultiple,
       "number",
@@ -1208,7 +1269,7 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
     ? ((montant) => echelle.netMensuel(montant, saisie.statut))
     : ((montant) => montant);
   const aide = bref
-    ? `en euros ${mot}s par mois`
+    ? `en euros ${mot}s par mois${vide}`
     : `Repères : SMIC ${g.euros(repere(echelle.smic))}, salaire moyen `
       + `${g.euros(repere(echelle.mensuel(1)))}`;
   let complement;

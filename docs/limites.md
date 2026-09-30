@@ -133,8 +133,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   janvier 2026, que la calculette de l'ENSAP n'applique pas encore.
 - **Le cumul emploi-retraite : calculé, sur une activité déclarée.** Depuis le
   30 septembre 2026, l'activité exercée après le départ — sa date, sa fin, son
-  statut, son revenu, l'employeur, le dernier ou un autre — se déclare par
-  l'adresse de la simulation (`emploi_retraite`), et le modèle dit, mois par
+  statut, son revenu, l'employeur, le dernier ou un autre — se déclare au
+  formulaire, dans le dépliant « Retraite progressive et cumul
+  emploi-retraite », ou par l'adresse (`emploi_retraite`), et le modèle dit, mois par
   mois, ce que chaque pension en garde, selon le droit du mois, la date de la
   pension et celle de la première pension de base : le cumul libre avant 1983,
   la rupture avec le dernier employeur jusqu'en 2003, le plafond du dernier
@@ -162,10 +163,13 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   complémentaires autres que l'Agirc-Arrco, dont la pension est servie
   entière ; la nouvelle pension des autres régimes, que la page nomme ;
   l'activité exercée avant qu'un régime du départ ne liquide, à son âge
-  d'ouverture, qu'il ne compte pas ; le formulaire, qui ne demande pas encore
-  l'activité (fiches `cumul_emploi_retraite_et_retraite_progressive`,
+  d'ouverture, qu'il ne compte pas ; plusieurs activités après le départ, la
+  saisie n'en déclarant qu'une (fiches
+  `cumul_emploi_retraite_et_retraite_progressive`,
   `cumul_emploi_retraite_fonction_publique`, `droits_apres_la_premiere_pension`
-  et `seconde_pension`).
+  et `seconde_pension`). Les systèmes 2 à 6 n'ont ni cumul ni seconde pension :
+  leur pension est celle du départ, entière, et la proposition n'a pas encore
+  dit ce qu'elle fait de l'activité après lui.
 - **La retraite progressive : servie, sur une quotité déclarée.** Depuis le
   29 septembre 2026, qui la demande — une date, et la quotité du temps
   partiel gardé jusqu'au départ — la voit examinée à sa date comme le droit
@@ -182,8 +186,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   était la pension provisoire. Restent dehors : les changements de quotité et
   la suspension, la baisse de revenus qui fait la fraction d'un non-salarié,
   les décrets propres des régimes spéciaux et les règles propres des
-  complémentaires. Le formulaire ne la demande pas encore : elle se déclare
-  par l'adresse de la simulation (fiche `retraite_progressive`).
+  complémentaires. Elle se déclare au formulaire, dans le même dépliant que
+  le cumul, ou par l'adresse (fiche `retraite_progressive`). Les systèmes 2
+  à 6 n'en servent pas de fraction : le temps partiel y réduit seulement la
+  cotisation, et la proposition n'a pas encore dit si elle l'ouvre.
 - **Les départs échelonnés : servis, sur une date présumée.** Depuis le 29
   septembre 2026, chaque régime liquide à sa date, comme le droit le veut :
   le régime qui n'ouvre pas encore sa pension au départ attend son âge — le

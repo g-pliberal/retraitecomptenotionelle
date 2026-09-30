@@ -545,9 +545,10 @@ class Saisie:
     #: La retraite progressive (fiche ``retraite_progressive``) : l'âge où
     #: elle prend effet, que l'adresse porte en date comme le départ, et la
     #: quotité du temps partiel gardé jusqu'au départ, en pour cent. ``None``
-    #: sans retraite progressive.
+    #: sans retraite progressive, et la quotité ``None`` quand l'adresse ne la
+    #: porte pas : une quotité nulle se refuse, elle ne vaut pas absence.
     progressive: float | None = None
-    quotite_progressive: int = 0
+    quotite_progressive: int | None = None
     #: L'activité exercée après le départ, le cumul emploi-retraite (fiche
     #: ``cumul_emploi_retraite_et_retraite_progressive``) : l'âge où elle
     #: commence et celui où elle finit, que l'adresse porte en dates comme le
@@ -676,7 +677,8 @@ class Saisie:
             progressive=(None if parametres.get("progressive") in (None, "")
                          else _age_saisi(parametres, "progressive", 0.0,
                                          origine_des_ages(mois_de_naissance, jour_naissance))),
-            quotite_progressive=_entier(parametres, "quotite", 0),
+            quotite_progressive=(None if parametres.get("quotite") in (None, "")
+                                 else _entier(parametres, "quotite", 0)),
             emploi_retraite=(
                 None if parametres.get("emploi_retraite") in (None, "")
                 else _age_saisi(parametres, "emploi_retraite", 0.0,
@@ -1450,12 +1452,12 @@ class Saisie:
         entre le début de la carrière et le départ. Que le droit l'ouvre — son
         âge, sa durée, sa quotité —, c'est au calcul de le dire."""
         if self.progressive is None:
-            if self.quotite_progressive:
+            if self.quotite_progressive is not None:
                 raise ErreurSaisie(
                     "« quotite » ne sert qu'à la retraite progressive : dites aussi "
                     "sa date (« progressive »).")
             return
-        if not 1 <= self.quotite_progressive <= 99:
+        if self.quotite_progressive is None or not 1 <= self.quotite_progressive <= 99:
             raise ErreurSaisie(
                 "Quotité de la retraite progressive : le temps partiel gardé, en "
                 "pour cent d'un temps plein, entre 1 et 99.")
