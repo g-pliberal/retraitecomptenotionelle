@@ -232,6 +232,11 @@ def droit_a_pension(moteur: ScenarioActuel, code: str, carriere: Carriere,
     lue_le = f"{lignes[0].annee:04d}-01-01" if cle == "militaires" else radiation
     regle = moteur.services_ouvrant_pension.annees(cle, lue_le, en_fonctions)
     exigees, fiabilite = regle if regle is not None else (0.0, Fiabilite.ESTIMEE)
+    if (cle != "militaires" and carriere.radiation_pour_invalidite is not None
+            and not regimes.isdisjoint(moteur.invalidites.regimes("fonction_publique"))):
+        # Le droit est acquis « sans condition de durée de services aux
+        # fonctionnaires radiés des cadres pour invalidité » (L. 4, 2°).
+        exigees = 0.0
     return DroitPension(
         regimes=frozenset(regimes), lignes=lignes,
         servies=sum(ligne.fraction_annee for ligne in lignes),

@@ -2692,6 +2692,7 @@ const POURQUOI_CE_DEPART = {
   sortie: "dès votre sortie de l'armée",
   demande: "à la date où vous la demandez",
   invalidite: "en remplacement de votre pension d'invalidité",
+  radiation: "à votre radiation des cadres pour invalidité",
 };
 
 /**
@@ -2709,6 +2710,8 @@ const POURQUOI_PAS_A_CETTE_DATE = {
     + `le 1<sup>er</sup> ${retenue}`,
   invalidite: (retenue) => "elle remplace d'office votre pension d'invalidité le "
     + `1<sup>er</sup> ${retenue}, quelle que soit la date de votre demande`,
+  radiation: (retenue) => "la pension du fonctionnaire radié des cadres pour invalidité "
+    + `se liquide à sa radiation, le 1<sup>er</sup> ${retenue}`,
   ensemble: (retenue, complementaire) => (complementaire
     ? "elle suit la pension de base dont elle partage les années, servie le "
       + `1<sup>er</sup> ${retenue}`
@@ -2821,7 +2824,11 @@ régime sert sa pension quand vous en remplissez les conditions.`
 pension de vieillesse remplace d'office votre pension d'invalidité, au premier
 jour du mois qui suit l'âge de la substitution, au taux plein quelle que soit
 votre durée d'assurance.`
-      : `<strong>Votre pension ne commence pas à votre départ.</strong> Chaque régime
+      : departs[0].motif === "radiation"
+        ? `<strong>Votre pension ne commence pas à votre départ.</strong> Votre
+radiation des cadres pour invalidité vous l'ouvre à cette date, à tout âge, sans
+condition de durée de services ni décote.`
+        : `<strong>Votre pension ne commence pas à votre départ.</strong> Chaque régime
 sert sa pension à la date où vous la demandez, au plus tôt quand vous en
 remplissez les conditions.`;
   return `<div class="note">${titre}

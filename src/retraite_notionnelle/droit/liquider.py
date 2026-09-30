@@ -709,6 +709,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                                     periode.trimestres_retenus_maximum)
 
         taux = periode.taux_plein or 0.5
+        #: La version de la retraite pour invalidité, quand ce régime du code
+        #: des pensions liquide à la radiation des cadres pour invalidité.
+        pour_invalidite = invalidite.retraite_pour_invalidite(moteur, code, carriere)
         #: Part du taux qui vient de la surcote. Le minimum contributif se
         #: compare à la pension AVANT surcote : il faut donc pouvoir la
         #: retirer, puis la rendre.
@@ -732,10 +735,13 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             )
             if (taux_plein_des_femmes(periode, carriere, durees, age_liquidation)
                     or invalidite.taux_plein_de_l_inapte(
-                        moteur, code, carriere, age_liquidation)):
+                        moteur, code, carriere, age_liquidation)
+                    or pour_invalidite is not None):
                 # Le taux de soixante-cinq ans des femmes d'avant 1983 ; le
                 # taux plein de l'inapte, quelle que soit sa durée (L. 351-8,
-                # 2°), le taux de soixante-cinq ans avant 1983.
+                # 2°), le taux de soixante-cinq ans avant 1983 ; la pension du
+                # fonctionnaire mis à la retraite pour invalidité, que « le
+                # coefficient de minoration » n'atteint pas (L. 14, I).
                 trimestres_decote = 0.0
             if decote and trimestres_decote > 0:
                 # Les régimes sans décote (fonction publique avant 2004,
@@ -813,6 +819,14 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         taux_retenu = max(taux_retenu, taux)
         prorata = min(trimestres_regime / proratisation, rapport_maximum)
         montant = salaire_reference * taux * prorata
+        #: Ce que la retraite pour invalidité ajoute à la pension : le
+        #: plancher de L. 30, la rente viagère de L. 28, le plafond de
+        #: L. 30 ter (:func:`~.invalidite.pension_du_fonctionnaire_invalide`).
+        detail_invalidite = ""
+        if pour_invalidite is not None:
+            montant, detail_invalidite = invalidite.pension_du_fonctionnaire_invalide(
+                moteur, carriere, pour_invalidite, montant, salaire_reference,
+                annee_liquidation)
         if "minimum_contributif" in periode.avantages_non_contributifs:
             # Le minimum ne relève que les régimes de base qui le portent,
             # et au prorata de la durée acquise DANS CE régime — durée
@@ -866,8 +880,13 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             eligibles_garanti.append(EligibleMinimumGaranti(
                 indice=len(pensions),
                 trimestres_services=cumul_plafonne("services", membres),
+                # La pension liquidée pour invalidité a le minimum garanti
+                # sans condition de taux plein (« pour les motifs prévus aux
+                # 2° à 5° du I de l'article L. 24 »), et le c de L. 17 sous
+                # quinze ans, en quinzièmes.
                 ouvert=(
-                    ancien_droit
+                    pour_invalidite is not None
+                    or ancien_droit
                     or trimestres_decote <= 0
                     or trimestres >= requis
                     or (minoration > 0 and age_annulation is not None
@@ -878,7 +897,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 # publique : la Banque de France a les siens depuis son
                 # décret de 2012, que sa fiche ne date pas.
                 duree_maximum=(
-                    proratisation if fonction_publique and not ancien_droit
+                    proratisation
+                    if fonction_publique and not ancien_droit and pour_invalidite is None
                     else None
                 ),
             ))
@@ -896,6 +916,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                    if trimestres_regime / proratisation > rapport_maximum else "")
                 + ("" if duree_non_majoree is None else
                    f", {duree_non_majoree} trimestres majorés après l'âge du taux plein")
+                + ("" if pour_invalidite is None else
+                   ", retraite pour invalidité"
+                   + (f" : {detail_invalidite}" if detail_invalidite else ""))
                 + ("" if annees_alignees is None else
                    f", {annees_alignees[0]} années au plus au salaire annuel moyen "
                    f"({annees_alignees[1]})")

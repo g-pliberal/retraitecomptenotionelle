@@ -14,6 +14,7 @@
  * demandeur d'emploi indemnisé six mois de plus. Voir le Python.
  */
 
+import { formatFixe } from "../format.js";
 import { dateDEffet } from "./commun.js";
 
 /** L'âge d'une version qui le lit à la génération : celui de L. 161-17-2. */
@@ -93,6 +94,85 @@ export function ageDeLAspa(moteur, carriere) {
     return AGE_DE_L_ASPA;
   }
   return Math.min(AGE_DE_L_ASPA, ageDeLaFiche(moteur, carriere, valeur));
+}
+
+/**
+ * La radiation des cadres pour invalidité qui liquide la pension de ce régime :
+ * celle de la carrière, quand le régime est l'un des trois du code des
+ * pensions que la fiche `retraite_pour_invalidite_fonction_publique` nomme ;
+ * `null` sinon.
+ */
+export function radiationDuRegime(moteur, regime, carriere) {
+  const radiation = carriere.radiationPourInvalidite;
+  if (radiation === null || !moteur.invalidites.regimes("fonction_publique").has(regime)) {
+    return null;
+  }
+  return radiation;
+}
+
+/**
+ * La version de la fiche `retraite_pour_invalidite_fonction_publique` qui
+ * s'applique à la pension de ce régime liquidée à la date de `carriere`, quand
+ * elle l'est pour invalidité ; `null` sinon.
+ */
+export function retraitePourInvalidite(moteur, regime, carriere) {
+  if (radiationDuRegime(moteur, regime, carriere) === null) {
+    return null;
+  }
+  const date = dateDEffet(carriere);
+  return date === null ? null : moteur.invalidites.version("fonction_publique", date);
+}
+
+/** L'indice majoré qui borne la part du traitement que la rente compte entière. */
+export const INDICE_DE_LA_RENTE = 681;
+
+/** La rente viagère d'invalidité de L. 28. Voir le Python. */
+export function renteViagereDInvalidite(traitement, taux, seuil) {
+  const compte = Math.min(traitement, seuil)
+    + Math.max(0.0, Math.min(traitement, 10.0 * seuil) - seuil) / 3.0;
+  return taux * compte;
+}
+
+/**
+ * La pension du fonctionnaire radié pour invalidité, rente comprise, et ce que
+ * le détail en dit : `[montant, detail]`. Voir `pension_du_fonctionnaire_invalide`
+ * du Python.
+ */
+export function pensionDuFonctionnaireInvalide(moteur, carriere, version, pension, traitement,
+  annee) {
+  const parametres = version.parametres;
+  const radiation = carriere.radiationPourInvalidite;
+  const taux = (radiation.taux ?? 0.0) / 100.0;
+  const details = [];
+  let servie = pension;
+  const plancher = Number(parametres.plancher_part_du_traitement ?? 0.0) * traitement;
+  if (taux + 1e-9 >= Number(parametres.plancher_taux_invalidite ?? 1.0) && servie < plancher) {
+    servie = plancher;
+    details.push(`portée à ${formatFixe(plancher, 2, true)} €, la moitié du traitement (L. 30)`);
+  }
+  let rente = 0.0;
+  if (radiation.imputable && taux > 0) {
+    const valeur = moteur.minimumGaranti.valeurDUnIndice(INDICE_DE_LA_RENTE, annee);
+    const seuil = valeur !== null ? valeur[0] : traitement;
+    rente = renteViagereDInvalidite(traitement, taux, seuil);
+  }
+  const total = servie + rente;
+  if (parametres.plafond_total && traitement > 0 && total > traitement) {
+    const reduction = traitement / total;
+    servie *= reduction;
+    rente *= reduction;
+    details.push("réduite au traitement (L. 30 ter)");
+  }
+  if (rente > 0) {
+    details.push(`rente viagère d'invalidité de ${formatFixe(rente, 2, true)} € à `
+      + `${formatTaux(radiation.taux)} % (L. 28)`);
+  }
+  return [servie + rente, details.join(" ; ")];
+}
+
+/** Un taux d'invalidité comme Python l'écrit avec `:g` : 70, 62.5. */
+function formatTaux(taux) {
+  return String(Number(taux));
 }
 
 /**

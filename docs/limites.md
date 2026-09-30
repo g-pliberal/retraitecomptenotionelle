@@ -255,14 +255,17 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   demandent des informations médicales ou professionnelles que le modèle ne
   collecte pas : un assuré qui en relèverait est ici déclaré « non ouvert »
   alors que le droit l'ouvrirait, et subit une décote dont le droit le
-  dispenserait. L'inaptitude et la pension d'invalidité se déclarent : l'inapte
-  et l'ex-invalide ont le taux plein au régime général et dans les régimes
-  alignés, à l'âge que la loi leur ouvre, et la pension de vieillesse remplace
-  d'office la pension d'invalidité. Restent dehors le plancher de l'allocation
-  aux vieux travailleurs salariés, l'âge de l'ASPA de l'inapte, la retraite
-  pour invalidité des fonctionnaires, l'inaptitude des régimes que la fiche
-  `inaptitude_au_travail` ne nomme pas, et les réputés inaptes qui ne se
-  déclarent pas (allocation aux adultes handicapés, incapacité permanente).
+  dispenserait. L'inaptitude, la pension d'invalidité et la radiation pour
+  invalidité d'un fonctionnaire se déclarent : l'inapte et l'ex-invalide ont le
+  taux plein au régime général et dans les régimes alignés, à l'âge que la loi
+  leur ouvre, et l'ASPA au même âge ; la pension de vieillesse remplace d'office
+  la pension d'invalidité ; le fonctionnaire radié liquide à sa radiation, sans
+  décote, à ses planchers et avec sa rente viagère. Restent dehors le plancher
+  de l'allocation aux vieux travailleurs salariés, sans effet sur le montant tant
+  que l'ASPA est servie ; l'inaptitude des régimes que la fiche
+  `inaptitude_au_travail` ne nomme pas ; les réputés inaptes qui ne se déclarent
+  pas (allocation aux adultes handicapés, incapacité permanente) ; le militaire
+  réformé ; la majoration pour tierce personne.
 - **Trimestres « réputés cotisés » de la carrière longue : deux cas sur sept.**
   Les six enveloppes de l'article D. 351-1-2 sont servies depuis le
   22 septembre 2026 — service national, incapacité temporaire, chômage
@@ -648,7 +651,8 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   qu'avant 1930, où elle joue À LA HAUSSE ;
 - **départs anticipés** — la carrière longue est modélisée, et sert à dire si le
   droit ouvre la liquidation demandée ; l'inaptitude et l'invalidité aussi, au
-  régime général et dans les régimes alignés, à qui les déclare. La pénibilité
+  régime général, dans les régimes alignés et dans la fonction publique, à qui
+  les déclare. La pénibilité
   et le handicap ne le sont pas : ils demandent des informations médicales ou
   professionnelles que le modèle ne collecte pas ;
 - **polypensionnés** — chaque régime liquide sur ses seules années, à sa

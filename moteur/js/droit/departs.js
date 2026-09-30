@@ -46,6 +46,8 @@ export const MOTIF_SORTIE = "sortie";
 export const MOTIF_DEMANDE = "demande";
 /** La pension de vieillesse qui remplace la pension d'invalidité. */
 export const MOTIF_INVALIDITE = "invalidite";
+/** La pension du fonctionnaire radié des cadres pour invalidité, à la radiation. */
+export const MOTIF_RADIATION = "radiation";
 
 /**
  * Ce qu'une demande devient quand elle ne date pas sa pension : servie avec la
@@ -133,7 +135,12 @@ function acquiert(moteur, code, routes) {
       continue;
     }
     if (!ligne.cotise) {
-      return true;
+      // Une période qui ne valide rien — celle « sans activité » qui suit une
+      // radiation — n'ouvre pas de droit.
+      if (ligne.trimestres_valides > 0) {
+        return true;
+      }
+      continue;
     }
     const periode = periodeDe(moteur, code, ligne.annee);
     if (periode === null || periode.partDuRevenu(ligne.revenu, ligne.part_primes) > 0) {
@@ -400,6 +407,11 @@ export function departsEtDemandes(moteur, carriereSaisie) {
       }
       return voulue;
     };
+    // Le fonctionnaire radié des cadres pour invalidité liquide sa pension à la
+    // radiation, à tout âge (L. 24, I, 2°).
+    if ([...unite].some((code) => invalidite.radiationDuRegime(moteur, code, carriere) !== null)) {
+      return [carriere.radiationPourInvalidite.date, MOTIF_RADIATION];
+    }
     if (substituee !== null && [...unite].some((code) => substitues.has(code))) {
       const presumee = [substituee.date, MOTIF_INVALIDITE];
       const voulue = voulueDe();
@@ -470,7 +482,7 @@ export function departsEtDemandes(moteur, carriereSaisie) {
       return MOTIF_DEPART;
     }
     const motifs = new Set([...regimes].map((code) => parRegime.get(code)[1]));
-    for (const retenu of [MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_INVALIDITE]) {
+    for (const retenu of [MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_RADIATION, MOTIF_INVALIDITE]) {
       if (motifs.has(retenu)) {
         return retenu;
       }

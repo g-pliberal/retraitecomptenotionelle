@@ -201,10 +201,13 @@ approximations:
 - ecart: >-
     le plancher de la pension substituée n'est pas appliqué : l'allocation aux vieux
     travailleurs salariés depuis le 31 mai 1983, la pension d'invalidité elle-même
-    avant ; la troisième étape du domaine le porte ensuite
+    avant
   effet: >-
-    la pension de vieillesse des ex-invalides aux carrières courtes, que le minimum
-    contributif ne porte pas à l'allocation ; non mesuré
+    nul sur le montant du scénario 1 : l'allocation de solidarité aux personnes âgées,
+    que le modèle sert à l'ex-invalide dès l'âge de la substitution (R. 815-1), porte ses
+    ressources plus haut — 12 523 euros par an en 2026 contre 4 059,72 pour
+    l'allocation aux vieux travailleurs (barème de la Cnav) ; seule change la part que
+    l'allocation, récupérable sur la succession, prend à la pension
 - ecart: >-
     l'activité et l'indemnisation du chômage se lisent sur la ligne principale de
     l'année où l'âge est atteint, et non au mois ; la condition d'activité des six mois
@@ -238,8 +241,7 @@ sources:
     Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
     (docs/architecture.md, § 11), à la demande du propriétaire, et lue par le moteur à
     sa troisième étape : le départ du régime général et des régimes alignés à l'âge de
-    la substitution, au taux plein. Reste le plancher de l'allocation aux vieux
-    travailleurs salariés, et les exemples publiés (quatrième étape).
+    la substitution, au taux plein. Restent les exemples publiés (quatrième étape).
   - >-
     À lire : l'article du code de 1956 qui reprend l'article 62 de l'ordonnance de 1945
     jusqu'à la recodification de 1985, et la loi n° 83-430 du 31 mai 1983 elle-même,
@@ -305,7 +307,7 @@ code:
   parametres: >-
     contenu.parametres de chaque version : age, invalide_qui_travaille,
     maintien_au_plus_tard, maintien_du_demandeur_d_emploi_mois ; plancher et
-    plancher_invalidite_avant, pas encore lus
+    plancher_invalidite_avant, non lus (voir les approximations)
   tests: >-
     tests/test_invalidite.py ; les témoins invalidite_* des simulations, et la page
     simuler_invalidite_substituee, dans les deux moteurs
@@ -324,4 +326,4 @@ effet: >-
   Les titulaires d'une pension d'invalidité à l'âge légal : 0,90 million de retraités
   partis au taux plein à ce titre fin 2016 (DREES, EIR). Le modèle les fait partir à
   l'âge de la substitution, au taux plein, et leurs complémentaires sans coefficient ;
-  le plancher de l'allocation aux vieux travailleurs salariés reste à porter.
+  l'allocation de solidarité aux personnes âgées au même âge.

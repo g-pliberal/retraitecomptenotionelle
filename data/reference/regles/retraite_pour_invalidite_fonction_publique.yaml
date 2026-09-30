@@ -12,7 +12,7 @@ domaine: age
 regimes: [fonction_publique_etat, cnracl, fspoeie]
 etape: liquider_chaque_regime
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - la radiation des cadres pour invalidité, sa date, son imputabilité au service et le
   taux d'invalidité
@@ -200,18 +200,44 @@ versions:
       plafond_total: traitement
       revalorisation: pensions_d_invalidite_depuis_2014
   exemples: aucun trouvé
-approximations: []
+approximations:
+- ecart: >-
+    le seuil de la rente viagère, l'indice majoré 681 au 1er janvier 2004 revalorisé
+    comme les pensions d'invalidité (L. 341-6 CSS), est pris à trois fois la référence
+    du minimum garanti, revalorisée comme les pensions de retraite ; avant 2004, au
+    traitement de l'indice 681 au point de l'année, quand le texte d'alors n'est pas lu
+  effet: >-
+    la part du traitement au-delà du seuil, que la rente ne compte que pour le tiers :
+    les seuls traitements au-dessus de quarante-huit mille euros par an environ ; non
+    mesuré
+- ecart: >-
+    le minimum garanti se compare à la pension et à la rente ensemble, quand il ne vise
+    que la pension ; la majoration pour tierce personne (L. 30 bis), la rente portée à
+    75 % du traitement après un attentat ou un acte de dévouement (L. 28), et la
+    revalorisation des pensions d'invalidité depuis 2014 (L. 341-6 CSS) ne sont pas
+    servies
+  effet: non mesuré
+- ecart: >-
+    la radiation se déclare sans la limite d'âge qu'elle ne peut dépasser ; la
+    liquidation « selon la réglementation la plus favorable » de qui remplit par
+    ailleurs les conditions de droit commun (article 30 du décret de la CNRACL) n'est
+    pas comparée, la retraite pour invalidité, sans décote et à ses planchers, l'étant
+    presque toujours ; l'ouvrier de l'État n'a pas le plancher de la pension
+    d'invalidité du régime général (article 19 du décret n° 2004-1056)
+  effet: non mesuré
+- ecart: >-
+    le militaire radié par suite d'infirmités, et les régimes spéciaux, qui ont chacun
+    leur pension de réforme, ne sont pas couverts ; la saisie refuse leur radiation
+  effet: non mesuré
 sources:
   lu_le: 2026-09-30
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
-    (docs/architecture.md, § 11), à la demande du propriétaire. Le moteur ne la calcule
-    pas encore : il lui faut la radiation pour invalidité dans la chronologie, son taux
-    et son imputabilité (étape 2 du domaine), puis le départ à cette date et les règles
-    de montant dans les deux moteurs (étape 3). Le c de L. 17 est déjà écrit
-    (`MinimumGaranti.montant` sans durée maximale), sans être servi à personne.
+    (docs/architecture.md, § 11), à la demande du propriétaire, et lue par le moteur à
+    sa troisième étape. Reste l'exemple publié (quatrième étape) : le Service des
+    retraites de l'État et la CNRACL en publient-ils un, chiffré ?
   - >-
     Non couverts : le militaire radié des cadres par suite d'infirmités (L. 24, II ;
     L. 14, II ; L. 35), qui a aussi sa pension militaire d'invalidité, d'un autre code ;
@@ -230,6 +256,13 @@ sources:
       30, 31, 34, 36, 37 et 39 ; décret n° 2004-1056, articles 3 et 19 ; dans l'index
       LEGI du dépôt mis à jour au 30 septembre 2026
     date: 2026-09-30
+  - type: legifrance
+    reference: >-
+      L. 28 (2022), L. 30 (2014), L. 30 bis et L. 30 ter (2014) CPCMR ; décret
+      n° 2003-1306, articles 22 (2025), 30 (2024), 34 (2015), 36 et 39 (2014), 37
+      (2022) ; décret n° 2004-569, article 6, dans ses trois rédactions (2004, 2011,
+      2017) : le RAFP ne s'ouvre qu'à l'âge légal, sans exception pour l'invalidité
+    date: 2026-09-30
 textes_sans_effet:
 - {id: LEGIARTI000006362752, article: "L. 31 CPCMR", en_vigueur: 1964-12-01,
    motif: "la procédure : la commission de réforme apprécie l'invalidité, le ministre décide"}
@@ -237,11 +270,32 @@ textes_sans_effet:
    motif: "la même procédure"}
 - {id: LEGIARTI000042567433, article: "L. 31 CPCMR", en_vigueur: 2022-02-01,
    motif: "le conseil médical remplace la commission de réforme"}
+code:
+  python: >-
+    droit/invalidite.py : radiation_du_regime, retraite_pour_invalidite,
+    pension_du_fonctionnaire_invalide, rente_viagere_d_invalidite ; droit/departs.py :
+    le départ à la radiation ; droit/ouvrir.py : age_ouverture ; droit/liquider.py : la
+    décote, le minimum garanti ; droit/coordonner.py : droit_a_pension ;
+    scenarios/actuel.py : MinimumGaranti.valeur_d_un_indice
+  javascript: >-
+    moteur/js/droit/invalidite.js, et les jumeaux de chacun de ces modules
+  parametres: >-
+    contenu.parametres de chaque version : decote, minimum_garanti,
+    plancher_taux_invalidite, plancher_part_du_traitement, plafond_total ;
+    revalorisation, pas encore lu
+  tests: >-
+    tests/test_invalidite.py ; les témoins invalidite_radiation_* des simulations, et la
+    page simuler_radiation_invalidite, dans les deux moteurs
 historique:
 - >-
   2026-09-30 — née avec le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la
   demande du propriétaire.
+- >-
+  2026-09-30 — lue par le moteur, à la troisième étape du domaine : la pension à la
+  radiation, à tout âge, sans condition de durée ni décote, au minimum garanti de
+  l'invalidité, au plancher de L. 30, avec la rente viagère de L. 28 sous le plafond
+  de L. 30 ter.
 effet: >-
-  Les fonctionnaires radiés des cadres pour invalidité, à tout âge. Le modèle ne les
-  connaît pas : il les fait partir à l'âge légal, décotés, et leur refuse le minimum
-  garanti de l'invalidité sous quinze ans de services.
+  Les fonctionnaires radiés des cadres pour invalidité, à tout âge. Le modèle les fait
+  partir à leur radiation, sans décote, à leurs planchers et avec leur rente ; il les
+  faisait partir à l'âge légal, décotés, sans le minimum garanti de l'invalidité.

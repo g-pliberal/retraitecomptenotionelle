@@ -182,6 +182,7 @@ listes:
     valeurs:
       age_legal: l'âge légal de la génération, ou celui qu'un régime ouvre en propre
       inaptitude: l'inaptitude au travail, reconnue ou celle de l'ex-invalide, quand l'âge demandé précède l'âge légal de la génération (L. 351-1-5)
+      invalidite: la radiation des cadres pour invalidité d'un fonctionnaire, qui ouvre sa pension à tout âge (L. 24, I, 2°, du code des pensions)
       carriere_longue: le départ anticipé pour carrière longue, quand l'âge demandé précède tous les autres
       non_ouverte: le droit n'ouvre pas la liquidation à cet âge ; le montant reste calculé, en contrefactuel
 

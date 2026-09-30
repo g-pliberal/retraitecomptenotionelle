@@ -786,6 +786,39 @@ def _cas() -> list[dict]:
         "naissance": "1962-03-15", "debut": "2000-09", "liquidation": "2024-04",
         "salaire": "0.5", "inaptitude": "oui",
     }))
+    # LA RETRAITE POUR INVALIDITÉ DES FONCTIONNAIRES : à la radiation des
+    # cadres, à tout âge, sans décote. L'agent de l'État radié à quarante-cinq
+    # ans, invalide à 70 % du fait du service, sa rente viagère et le plafond
+    # du traitement ; l'hospitalière radiée à trente-quatre ans, invalide à
+    # 80 %, portée à la moitié du traitement ; la territoriale aux dix ans de
+    # services, au minimum garanti en quinzièmes ; l'agent de l'État radié qui
+    # passe au privé, sa pension de fonctionnaire servie dès sa radiation ;
+    # l'agent radié en 2000, avant la décote, sa rente à 45 %.
+    cas.append(("invalidite_radiation_etat_imputable", {
+        "naissance": "1975", "statut": "fonctionnaire_etat", "radiation_invalidite": "2020-06",
+        "invalidite_imputable": "oui", "taux_invalidite": "70",
+        "metier2_debut": "2020-06", "metier2_statut": "sans_activite",
+    }))
+    cas.append(("invalidite_radiation_hospitaliere_moitie_du_traitement", {
+        "naissance": "1985", "statut": "fonctionnaire_territorial_hospitalier",
+        "debut": "2012-09", "radiation_invalidite": "2019-09", "taux_invalidite": "80",
+        "metier2_debut": "2019-09", "metier2_statut": "sans_activite",
+    }))
+    cas.append(("invalidite_radiation_minimum_garanti_quinziemes", {
+        "naissance": "1980", "statut": "fonctionnaire_territorial_hospitalier",
+        "debut": "2005-09", "salaire": "0.5", "radiation_invalidite": "2015-09",
+        "taux_invalidite": "30", "metier2_debut": "2015-09", "metier2_statut": "sans_activite",
+    }))
+    cas.append(("invalidite_radiation_puis_prive", {
+        "naissance": "1975", "statut": "fonctionnaire_etat", "primes": "0.2",
+        "radiation_invalidite": "2020-06",
+        "metier2_debut": "2020-06", "metier2_statut": "salarie_prive_non_cadre",
+    }))
+    cas.append(("invalidite_radiation_en_2000", {
+        "naissance": "1960", "statut": "fonctionnaire_etat", "radiation_invalidite": "2000-03",
+        "invalidite_imputable": "oui", "taux_invalidite": "45",
+        "metier2_debut": "2000-03", "metier2_statut": "sans_activite",
+    }))
     cas.append(("invalidite_substituee_en_1980", {
         "naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
         "interruptions": "1975:1982:invalidite",
@@ -1230,6 +1263,13 @@ def _pages() -> dict:
         ("simuler_invalidite_substituee", "/simuler", {
             **BASE, "naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2029-07",
             "interruptions": "2019:2029:invalidite",
+        }),
+        # Le fonctionnaire radié des cadres pour invalidité : sa pension à la
+        # radiation, à tout âge, et la page dit pourquoi à cette date.
+        ("simuler_radiation_invalidite", "/simuler", {
+            **BASE, "statut": "fonctionnaire_territorial_hospitalier", "naissance": "1985",
+            "debut": "2012-09", "radiation_invalidite": "2019-09", "taux_invalidite": "80",
+            "metier2_debut": "2019-09", "metier2_statut": "sans_activite",
         }),
         # La retraite progressive, ouverte puis refusée faute d'âge.
         ("simuler_retraite_progressive", "/simuler", {

@@ -117,8 +117,8 @@ export function ouvrir(moteur, releve, regimes = null) {
   // régime (`departs.js`) ; quand tous liquident au même départ, c'est l'âge
   // du plus précoce qui ouvre ce départ.
   let ageOuvertureReference = null;
-  // Le même, sans l'inaptitude : l'âge qu'elle devance.
-  let ageSansInaptitude = null;
+  // Le même, sans l'invalidité ni l'inaptitude : l'âge qu'elles devancent.
+  let ageSansInvalidite = null;
   // Un régime et celui qui lui succède liquident ensemble, sous les règles
   // de la caisse qui aurait le dossier : les autres membres du groupe sont
   // sautés partout où un régime liquide. À FAUX, chaque nom de caisse est
@@ -156,10 +156,10 @@ export function ouvrir(moteur, releve, regimes = null) {
       ageOuvertureReference = ageOuvertureReference === null
         ? ageRegime
         : Math.min(ageOuvertureReference, ageRegime);
-      const sansInaptitude = ageOuverture(moteur, periode, carriere, false);
-      ageSansInaptitude = ageSansInaptitude === null
-        ? sansInaptitude
-        : Math.min(ageSansInaptitude, sansInaptitude);
+      const sansInvalidite = ageOuverture(moteur, periode, carriere, false);
+      ageSansInvalidite = ageSansInvalidite === null
+        ? sansInvalidite
+        : Math.min(ageSansInvalidite, sansInvalidite);
     }
     if (ageOuvertureReference !== null) {
       break;
@@ -177,10 +177,13 @@ export function ouvrir(moteur, releve, regimes = null) {
   // posée : le modèle servait une pension décotée à qui ne pouvait pas encore
   // liquider, ce qui n'est ni le droit ni un contrefactuel utile.
   let motifOuverture = "age_legal";
-  if (ageSansInaptitude !== null && ageOuvertureReference !== null
-      && ageOuvertureReference <= ageLiquidation && ageLiquidation < ageSansInaptitude) {
-    // L'inapte part avant l'âge légal de sa génération (L. 351-1-5).
-    motifOuverture = "inaptitude";
+  if (ageSansInvalidite !== null && ageOuvertureReference !== null
+      && ageOuvertureReference <= ageLiquidation && ageLiquidation < ageSansInvalidite) {
+    // Le fonctionnaire radié pour invalidité liquide à sa radiation
+    // (L. 24, I, 2°) ; l'inapte part avant l'âge légal de sa génération
+    // (L. 351-1-5).
+    motifOuverture = codes.some((code) => invalidite.radiationDuRegime(moteur, code, carriere)
+      !== null) ? "invalidite" : "inaptitude";
   }
   if (ageOuvertureReference !== null && ageLiquidation < ageOuvertureReference) {
     const anticipe = moteur.carriereLongue.ageDeDepart(
@@ -519,7 +522,27 @@ export function droitMilitaire(moteur, periode, carriere) {
  * pension militaire, qui s'ouvre à une durée de services ; la catégorie
  * active, qui avance l'âge de cinq ou de dix années ; le droit commun.
  */
-export function ageOuverture(moteur, periode, carriere, inaptitude = true) {
+export function ageOuverture(moteur, periode, carriere, invaliditeComprise = true) {
+  let age = ageOuvertureDeDroitCommun(moteur, periode, carriere);
+  if (!invaliditeComprise) {
+    return age;
+  }
+  // L'invalidité l'abaisse, dans les régimes qui la connaissent : le
+  // fonctionnaire radié pour invalidité liquide à sa radiation (L. 24, I, 2°) ;
+  // l'inapte part à soixante-deux ans depuis 2023 (L. 351-1-5).
+  const radiation = invalidite.radiationDuRegime(moteur, periode.regime, carriere);
+  if (radiation !== null) {
+    age = Math.min(age, carriere.ageAu(radiation.date));
+  }
+  const inapte = invalidite.ageDInaptitude(moteur, periode.regime, carriere);
+  if (inapte !== null) {
+    age = Math.min(age, inapte);
+  }
+  return age;
+}
+
+/** `ageOuverture`, sans l'invalidité ni l'inaptitude. */
+function ageOuvertureDeDroitCommun(moteur, periode, carriere) {
   const militaire = droitMilitaire(moteur, periode, carriere);
   if (militaire !== null) {
     return militaire.ageOuverture;
@@ -528,20 +551,14 @@ export function ageOuverture(moteur, periode, carriere, inaptitude = true) {
   if (derogation !== null) {
     return derogation.ageOuverture;
   }
-  let commun = ageOuvertureCommun(moteur, periode, carriere);
+  const commun = ageOuvertureCommun(moteur, periode, carriere);
   const speciale = ouverturePensionSpeciale(moteur, periode, carriere);
   if (speciale !== null) {
     return speciale;
   }
   const parServices = ouvertureParServices(moteur, periode, carriere);
   if (parServices !== null && parServices < commun) {
-    commun = parServices;
-  }
-  // L'inaptitude l'abaisse, dans les régimes qui la connaissent (L. 351-1-5) ;
-  // `inaptitude` faux la laisse de côté : c'est l'âge qu'elle devance.
-  const inapte = inaptitude ? invalidite.ageDInaptitude(moteur, periode.regime, carriere) : null;
-  if (inapte !== null && inapte < commun) {
-    return inapte;
+    return parServices;
   }
   return commun;
 }

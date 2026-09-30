@@ -442,6 +442,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     }
 
     let taux = periode.taux_plein || 0.5;
+    // La version de la retraite pour invalidité, quand ce régime du code des
+    // pensions liquide à la radiation des cadres pour invalidité.
+    const pourInvalidite = invalidite.retraitePourInvalidite(moteur, code, carriere);
     // Part du taux qui vient de la surcote : le minimum contributif se
     // compare à la pension AVANT surcote, il faut donc pouvoir la retirer.
     let coefficientSurcote = 1.0;
@@ -463,9 +466,11 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         moteur, periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
       );
       if (tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation)
-          || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)) {
+          || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
+          || pourInvalidite !== null) {
         // Le taux de soixante-cinq ans des femmes d'avant 1983 ; le taux plein
-        // de l'inapte, quelle que soit sa durée (L. 351-8, 2°).
+        // de l'inapte, quelle que soit sa durée (L. 351-8, 2°) ; la pension du
+        // fonctionnaire mis à la retraite pour invalidité, sans décote (L. 14, I).
         trimestresDecote = 0.0;
       }
       if (decote && trimestresDecote > 0) {
@@ -543,6 +548,14 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
 
     tauxRetenu = Math.max(tauxRetenu, taux);
     const prorata = Math.min(trimestresRegime / proratisation, rapportMaximum);
+    let montant = salaireReference * taux * prorata;
+    // Ce que la retraite pour invalidité ajoute à la pension : le plancher de
+    // L. 30, la rente viagère de L. 28, le plafond de L. 30 ter.
+    let detailInvalidite = "";
+    if (pourInvalidite !== null) {
+      [montant, detailInvalidite] = invalidite.pensionDuFonctionnaireInvalide(
+        moteur, carriere, pourInvalidite, montant, salaireReference, anneeLiquidation);
+    }
     if (periode.avantages_non_contributifs.includes("minimum_contributif")) {
       // Le minimum ne relève que les régimes de base qui le portent, au
       // prorata de la durée acquise DANS CE régime — durée d'assurance pour
@@ -581,18 +594,22 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       eligiblesGaranti.push({
         indice: indicePension,
         trimestresServices: cumulPlafonne("services", membres),
-        ouvert: ancienDroit
+        // La pension liquidée pour invalidité a le minimum garanti sans
+        // condition de taux plein, et le c de L. 17 sous quinze ans.
+        ouvert: pourInvalidite !== null
+          || ancienDroit
           || trimestresDecote <= 0
           || trimestres >= requis
           || (minoration > 0 && ageAnnulation !== null
             && ageLiquidation + 1e-9 >= ageAnnulation - minoration / 4),
         // Le d et la minoration ne valent que pour la fonction publique.
-        dureeMaximum: fonctionPublique && !ancienDroit ? proratisation : null,
+        dureeMaximum: fonctionPublique && !ancienDroit && pourInvalidite === null
+          ? proratisation : null,
       });
     }
     pensions.push({
       regime: code,
-      montant: salaireReference * taux * prorata,
+      montant,
       type_calcul: "annuites",
       // Salaire de référence au centime et taux au millième : à l'euro et au
       // centième, refaire « SR × taux × durée » ratait le montant de 1,20 €
@@ -610,7 +627,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         // La succession est DITE : sans elle, le lecteur cherche la ligne
         // de la CANCAVA et ne la trouve pas.
         + (membres.length === 1 ? "" : `, ${membres.length} caisses liquidées ensemble `
-          + `(${membres.slice(1).join(", ")} puis ${membres[0]})`),
+          + `(${membres.slice(1).join(", ")} puis ${membres[0]})`)
+        + (pourInvalidite === null ? ""
+          : ", retraite pour invalidité"
+            + (detailInvalidite ? ` : ${detailInvalidite}` : "")),
       fiabilite: Math.min(...membres.map((m) => moteur.catalogue.obtenir(m).fiabilite)),
     });
   }

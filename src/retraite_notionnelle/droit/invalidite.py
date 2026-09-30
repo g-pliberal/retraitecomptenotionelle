@@ -10,6 +10,14 @@
   1er avril 1983, le taux de soixante-cinq ans dès soixante ans. L'ex-invalide
   en est : la pension qui remplace la sienne est « la pension de vieillesse
   allouée en cas d'inaptitude au travail » (L. 341-15).
+* ``retraite_pour_invalidite_fonction_publique`` : le fonctionnaire radié des
+  cadres pour invalidité liquide sa pension à cette date, à tout âge et sans
+  condition de durée de services (L. 4, L. 24), sans décote (L. 14), au
+  minimum garanti sans condition de taux plein, en quinzièmes sous quinze ans
+  (L. 17, c), à 50 % du traitement au moins quand l'invalidité atteint 60 %
+  (L. 30), avec une rente viagère d'invalidité quand elle est imputable au
+  service (L. 28), le tout sous le traitement (L. 30 ter) ; la CNRACL de même
+  (décret n° 2003-1306, articles 22, 30, 34, 36, 37 et 39).
 * ``pension_d_invalidite_substituee`` : la pension d'invalidité prend fin à
   cet âge, et la pension de vieillesse la remplace d'office, au premier jour
   du mois qui suit (R. 341-22), « quelle que soit la date de dépôt effective
@@ -121,6 +129,78 @@ def age_de_l_aspa(moteur: ScenarioActuel, carriere: Carriere) -> float:
     if valeur is None:
         return AGE_DE_L_ASPA
     return min(AGE_DE_L_ASPA, age_de_la_fiche(moteur, carriere, valeur))
+
+
+def radiation_du_regime(moteur: ScenarioActuel, regime: str, carriere: Carriere):
+    """La radiation des cadres pour invalidité qui liquide la pension de ce
+    régime : celle de la carrière, quand le régime est l'un des trois du code
+    des pensions que la fiche ``retraite_pour_invalidite_fonction_publique``
+    nomme ; ``None`` sinon."""
+    radiation = carriere.radiation_pour_invalidite
+    if radiation is None or regime not in moteur.invalidites.regimes("fonction_publique"):
+        return None
+    return radiation
+
+
+def retraite_pour_invalidite(moteur: ScenarioActuel, regime: str,
+                             carriere: Carriere) -> dict | None:
+    """La version de la fiche ``retraite_pour_invalidite_fonction_publique``
+    qui s'applique à la pension de ce régime liquidée à la date de
+    ``carriere``, quand elle l'est pour invalidité ; ``None`` sinon."""
+    if radiation_du_regime(moteur, regime, carriere) is None:
+        return None
+    date = date_d_effet(carriere)
+    return None if date is None else moteur.invalidites.version("fonction_publique", date)
+
+
+#: L'indice majoré dont la valeur au 1er janvier 2004, revalorisée, borne la
+#: part du traitement que la rente viagère d'invalidité compte entière (L. 28).
+INDICE_DE_LA_RENTE = 681
+
+
+def rente_viagere_d_invalidite(traitement: float, taux: float, seuil: float) -> float:
+    """La rente viagère d'invalidité de L. 28 (article 37 du décret de la
+    CNRACL) : « la fraction du traitement [...] égale au pourcentage
+    d'invalidité » ; au-delà du seuil, « la fraction dépassant cette limite
+    n'est comptée que pour le tiers », et « il n'est pas tenu compte de la
+    fraction excédant dix fois ce montant »."""
+    compte = min(traitement, seuil) + max(0.0, min(traitement, 10.0 * seuil) - seuil) / 3.0
+    return taux * compte
+
+
+def pension_du_fonctionnaire_invalide(moteur: ScenarioActuel, carriere: Carriere,
+                                      version: dict, pension: float, traitement: float,
+                                      annee: int) -> tuple[float, str]:
+    """La pension du fonctionnaire radié pour invalidité, rente comprise, et ce
+    que le détail en dit : la pension rémunérant les services, portée à la
+    part du traitement que la version dit quand le taux d'invalidité atteint
+    son seuil (L. 30) ; la rente viagère d'invalidité en sus, quand
+    l'invalidité est imputable au service (L. 28) ; le total sous le
+    traitement, chaque prestation réduite à due proportion (L. 30 ter), ou
+    sous les émoluments de base avant 2014."""
+    parametres = version["parametres"]
+    radiation = carriere.radiation_pour_invalidite
+    taux = (radiation.taux or 0.0) / 100.0
+    details = []
+    plancher = float(parametres.get("plancher_part_du_traitement") or 0.0) * traitement
+    if (taux + 1e-9 >= float(parametres.get("plancher_taux_invalidite") or 1.0)
+            and pension < plancher):
+        pension = plancher
+        details.append(f"portée à {plancher:,.2f} €, la moitié du traitement (L. 30)")
+    rente = 0.0
+    if radiation.imputable and taux > 0:
+        valeur = moteur.minimum_garanti.valeur_d_un_indice(INDICE_DE_LA_RENTE, annee)
+        seuil = valeur[0] if valeur is not None else traitement
+        rente = rente_viagere_d_invalidite(traitement, taux, seuil)
+    total = pension + rente
+    if parametres.get("plafond_total") and traitement > 0 and total > traitement:
+        reduction = traitement / total
+        pension, rente = pension * reduction, rente * reduction
+        details.append("réduite au traitement (L. 30 ter)")
+    if rente > 0:
+        details.append(f"rente viagère d'invalidité de {rente:,.2f} € à "
+                       f"{radiation.taux:g} % (L. 28)")
+    return pension + rente, " ; ".join(details)
 
 
 @dataclass(frozen=True)

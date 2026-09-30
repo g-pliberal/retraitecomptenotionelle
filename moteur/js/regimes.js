@@ -742,6 +742,21 @@ export class MinimumGaranti {
   }
 
   /**
+   * Ce que vaut un indice majoré l'année demandée, revalorisé comme la
+   * référence du minimum garanti depuis le 1er janvier 2004 : la rente viagère
+   * d'invalidité lit l'indice 681 (L. 28). Voir `valeur_d_un_indice` du Python.
+   */
+  valeurDUnIndice(indice, annee) {
+    const reference = this.reference(annee);
+    const bareme = this.bareme(annee);
+    if (reference === null || reference === undefined || bareme === null
+        || bareme === undefined) {
+      return null;
+    }
+    return [reference[0] * indice / bareme[0], reference[1]];
+  }
+
+  /**
    * Plancher opposable pour une durée de services donnée.
    *
    * Sous quinze ans, deux règles : le c de L. 17 — un quinzième de 57,5 % par

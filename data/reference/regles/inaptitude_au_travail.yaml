@@ -157,9 +157,12 @@ versions:
       age_aspa: 62
   exemples: aucun trouvé
 approximations:
-- ecart: >-
-    l'allocation de solidarité aux personnes âgées s'ouvre toujours à soixante-cinq ans,
-    et non à l'âge de l'inapte ; la troisième étape du domaine le porte ensuite
+- version: [taux_plein_1983]
+  ecart: >-
+    avant 2007, l'âge de l'allocation supplémentaire du fonds national de solidarité
+    (L. 815-2), qui précède l'allocation de solidarité aux personnes âgées, n'est pas
+    lu : la version le tient pour le même, soixante ans pour l'inapte ; l'âge de
+    l'allocation se lit à la date de la pension, et non à celle de sa demande
   effet: non mesuré
 - ecart: >-
     les régimes que la fiche ne nomme pas gardent leur décote ou leur coefficient pour
@@ -178,7 +181,9 @@ approximations:
   effet: non mesuré
 code:
   python: >-
-    droit/invalidite.py : age_d_inaptitude, taux_plein_de_l_inapte ; droit/ouvrir.py :
+    droit/invalidite.py : age_d_inaptitude, taux_plein_de_l_inapte, age_de_l_aspa ;
+    scenarios/actuel.py, echeancier.py et revalorisation.py, où l'ASPA s'ouvre ;
+    droit/ouvrir.py :
     age_ouverture, ouvrir, age_taux_plein_droit ; droit/liquider.py : la décote, le
     minimum contributif, abattement_points, abattement_regime_de_base ;
     scenarios/actuel.py : Invalidites
@@ -187,7 +192,7 @@ code:
     moteur/js/droit/ouvrir.js ; moteur/js/droit/liquider.js ; moteur/js/regimes.js :
     Invalidites
   parametres: >-
-    contenu.parametres de chaque version : age, taux ; age_aspa, pas encore lu
+    contenu.parametres de chaque version : age, taux, age_aspa
   tests: >-
     tests/test_invalidite.py ; les témoins inaptitude_* et invalidite_* des
     simulations, dans les deux moteurs
@@ -198,8 +203,8 @@ sources:
   - >-
     Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
     (docs/architecture.md, § 11), à la demande du propriétaire, et lue par le moteur à
-    sa troisième étape : l'âge et le taux plein. Restent l'âge de l'allocation aux
-    personnes âgées, et les exemples publiés (quatrième étape).
+    sa troisième étape : l'âge, le taux plein et l'âge de l'allocation aux personnes
+    âgées. Restent les exemples publiés (quatrième étape).
   - >-
     À lire : l'article L. 332 du code de 1956, que la loi n° 71-1132 réécrit, et la
     rédaction de l'article 70-1 du décret de 1945 applicable en 1972, que l'index ne
@@ -257,6 +262,15 @@ sources:
     date: 2026-09-30
   - type: service_public
     reference: >-
+      fiche F16871, « Allocation de solidarité aux personnes âgées (Aspa) » :
+      « Cas général : Vous pouvez obtenir l'Aspa dès 65 ans », plus tôt pour une
+      retraite anticipée ; R. 815-1 relu dans ses rédactions de 2007 à 2023 : l'âge
+      « est abaissé à l'âge prévu à l'article L. 351-1-5 pour les personnes mentionnées
+      aux 2° à 5° de l'article L. 351-8 »
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F16871
+    date: 2026-09-30
+  - type: service_public
+    reference: >-
       fiche F14044, « Pension de retraite à taux plein », vérifiée le 14 août 2026 :
       « Vous avez droit à une retraite à taux plein à partir de 62 ans si vous êtes
       reconnu inapte au travail »
@@ -277,10 +291,11 @@ historique:
   l'ex-invalide ont le taux plein à l'âge de la version, que l'âge légal de leur
   génération n'ouvre pas encore depuis 2023 ; l'Agirc-Arrco (accord de 2017, article
   84, 3, et les accords de l'ASF depuis 1983) et l'Ircantec (arrêté du 30 décembre
-  1970, article 16, dès 1971) les servent sans coefficient d'anticipation.
+  1970, article 16, dès 1971) les servent sans coefficient d'anticipation ; l'ASPA
+  s'ouvre à leur âge, au départ et aux échéances (R. 815-1).
 effet: >-
   Les retraités partis au taux plein pour inaptitude : 1,36 million fin 2016 (DREES,
   EIR), et avec les ex-invalides 19 % des nouveaux retraités du régime général en 2024
   (COR). Le modèle les sert au taux plein à leur âge, au régime général et dans les
-  régimes alignés, et leurs complémentaires de salariés sans coefficient ; l'âge de
-  l'allocation aux personnes âgées reste à porter.
+  régimes alignés, leurs complémentaires de salariés sans coefficient, et l'allocation
+  de solidarité aux personnes âgées à leur âge.

@@ -198,7 +198,13 @@ export function droitAPension(moteur, code, carriere, anneeLiquidation) {
   const lueLe = cle === "militaires"
     ? `${String(lignes[0].annee).padStart(4, "0")}-01-01` : radiation;
   const regle = moteur.servicesOuvrantPension.annees(cle, lueLe, enFonctions);
-  const [exigees, fiabilite] = regle ?? [0, Fiabilite.ESTIMEE];
+  let [exigees, fiabilite] = regle ?? [0, Fiabilite.ESTIMEE];
+  if (cle !== "militaires" && carriere.radiationPourInvalidite !== null
+      && [...regimes].some((code) => moteur.invalidites.regimes("fonction_publique").has(code))) {
+    // Le droit est acquis « sans condition de durée de services aux
+    // fonctionnaires radiés des cadres pour invalidité » (L. 4, 2°).
+    exigees = 0.0;
+  }
   const servies = lignes.reduce((total, ligne) => total + ligne.fraction_annee, 0);
   return {
     regimes,

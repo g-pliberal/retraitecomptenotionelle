@@ -3213,11 +3213,43 @@ une radiation qui ne clôt aucun emploi de fonctionnaire civil, ou que la
 carrière suit dans la fonction publique. Le moteur ne lit pas encore ces
 faits : aucun résultat ne bouge. `tests/test_invalidite.py` les tient.
 
-**Troisième étape, en cours.** Publiés le 30 septembre : le taux plein de
-l'inapte et de l'ex-invalide, et la pension de vieillesse qui remplace d'office
-la pension d'invalidité (`droit/invalidite.py`). Restent l'âge de l'ASPA de
-l'inapte, le plancher de l'allocation aux vieux travailleurs salariés et la
-retraite pour invalidité des fonctionnaires.
+**Troisième étape, le 30 septembre : les fonctions, dans les deux moteurs.**
+Les trois fiches du domaine sont lues par le moteur (`droit/invalidite.py` et
+son jumeau, table `Invalidites`, portée par le paquet), `approchee` toutes
+trois, leurs écarts déclarés.
+- L'inapte déclaré et l'ex-invalide — pension d'invalidité déclarée, ou
+  présumée d'une carrière qui finit en invalidité — ont le taux plein quelle
+  que soit leur durée, au régime général et dans les régimes alignés, à l'âge
+  de la version, soixante-deux ans depuis 2023 quand l'âge légal est plus haut
+  (motif d'ouverture `inaptitude`) ; le minimum contributif les sert,
+  l'Agirc-Arrco et l'Ircantec ne leur appliquent aucun coefficient (l'article
+  16 de l'arrêté Ircantec le dit dès 1971) ; l'ASPA s'ouvre au même âge, au
+  départ et aux échéances (R. 815-1, relu).
+- La pension de vieillesse de l'ex-invalide commence d'office au premier du
+  mois qui suit l'âge de la substitution, avant son départ déclaré s'il le
+  faut (départ de motif `invalidite`) ; l'invalide qui travaille part à sa
+  demande, au plus tard à l'âge du taux plein automatique ; le demandeur
+  d'emploi indemnisé, six mois après l'âge au plus tard ; avant mars 2010, la
+  présomption `opposition_a_la_substitution` fait s'opposer qui travaille.
+- Le fonctionnaire radié des cadres pour invalidité liquide à sa radiation, à
+  tout âge et sans condition de durée de services (départ de motif
+  `radiation`, ouverture `invalidite`), sans décote, au minimum garanti sans
+  condition de taux plein et en quinzièmes sous quinze ans, porté à la moitié
+  du traitement à 60 % d'invalidité, avec la rente viagère de L. 28 quand
+  l'invalidité est imputable, le tout sous le traitement (L. 30 ter). Le RAFP
+  attend l'âge légal, sans exception (décret n° 2004-569, article 6, relu).
+- Le plancher de l'allocation aux vieux travailleurs salariés n'est pas écrit :
+  l'ASPA de l'ex-invalide, servie au même âge, porte toujours ses ressources
+  plus haut, et le montant du scénario 1 n'en changerait pas.
+- Chemin faisant, une période « sans activité », qui ne valide rien, ne fait
+  plus acquérir le RAFP au fonctionnaire parti avant 2005 : elle lui ajoutait
+  un départ vide.
+
+Aucun des 653 témoins d'avant le domaine ne bouge ; quinze témoins de
+simulation et deux pages naissent pour lui, rendus à l'identique par les deux
+moteurs. L'inventaire des avantages range le taux plein par inaptitude ou
+invalidité en « intégré », sa dépense lue dans les comptes de la protection
+sociale.
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 

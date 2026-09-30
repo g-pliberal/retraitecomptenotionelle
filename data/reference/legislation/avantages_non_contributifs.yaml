@@ -1231,7 +1231,7 @@ avantages:
       retraite_pour_invalidite_fonction_publique]
     creation: 1945
     fin: null
-    regimes: régime général, régimes alignés
+    regimes: régime général, régimes alignés, fonction publique
     etat_modele: integre
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
@@ -1239,7 +1239,7 @@ avantages:
       30 septembre 2026 à qui déclare son inaptitude ou sa pension d'invalidité,
       ou finit sa carrière en invalidité — départ à soixante-deux ans quand
       l'âge légal est plus haut, décote nulle, complémentaires sans
-      coefficient. L'isoler supposerait de recalculer la pension sans
+      coefficient — et au fonctionnaire radié pour invalidité, à sa radiation. L'isoler supposerait de recalculer la pension sans
       l'inaptitude, sur une population qui la déclare, que la grille des cas
       types n'est pas : la dépense est LUE dans les comptes de la protection
       sociale, dont les postes remplacent toute ligne calculée

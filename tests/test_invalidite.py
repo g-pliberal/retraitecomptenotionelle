@@ -401,3 +401,75 @@ def test_l_age_de_l_aspa_suit_la_version(simulateur):
             metiers=[Metier("salarie_prive_non_cadre", 21.0)],
             age_liquidation=liquidation, macro=simulateur.macro)
         assert age_de_l_aspa(moteur, valide) == 65.0
+
+
+# -- la retraite pour invalidité des fonctionnaires ------------------------------
+
+def test_le_fonctionnaire_radie_pour_invalidite_liquide_a_sa_radiation(contexte):
+    """À trente-quatre ans, sept ans de services, invalide à 80 % : la pension
+    de la CNRACL à la radiation, sans condition de durée ni décote, portée à
+    la moitié du traitement (L. 4, L. 24, L. 30 ; décret n° 2003-1306,
+    articles 7, 30, 34 et 39)."""
+    actuel = _actuel(contexte, naissance="1985", statut="fonctionnaire_territorial_hospitalier",
+                     debut="2012-09", radiation_invalidite="2019-09", taux_invalidite="80",
+                     metier2_debut="2019-09", metier2_statut="sans_activite")
+    assert actuel.motif_ouverture == "invalidite"
+    [depart] = actuel.departs
+    assert (depart.date_effet, depart.motif, depart.regimes) == (
+        "2019-09-01", "radiation", ("cnracl",))
+    detail = _pension(actuel, "cnracl").detail
+    assert "taux 75.000%" in detail and "la moitié du traitement (L. 30)" in detail
+
+
+def test_la_rente_viagere_d_invalidite_et_le_plafond_du_traitement(contexte):
+    """Invalide à 70 % du fait du service : la rente viagère s'ajoute à la
+    pension portée à la moitié du traitement, et le total, qui le dépasse,
+    est ramené au traitement (L. 28, L. 30 ter)."""
+    actuel = _actuel(contexte, naissance="1975", statut="fonctionnaire_etat",
+                     radiation_invalidite="2020-06", invalidite_imputable="oui",
+                     taux_invalidite="70", metier2_debut="2020-06",
+                     metier2_statut="sans_activite")
+    pension = _pension(actuel, "fonction_publique_etat")
+    assert "rente viagère d'invalidité" in pension.detail
+    assert "réduite au traitement (L. 30 ter)" in pension.detail
+    traitement = float(pension.detail.split("SR ")[1].split(" €")[0].replace(",", ""))
+    assert pension.montant_a_l_effet == pytest.approx(traitement)
+
+
+def test_la_rente_compte_pour_le_tiers_au_dela_du_seuil():
+    from retraite_notionnelle.droit.invalidite import rente_viagere_d_invalidite
+
+    assert rente_viagere_d_invalidite(30_000.0, 0.5, 40_000.0) == pytest.approx(15_000.0)
+    assert rente_viagere_d_invalidite(70_000.0, 0.5, 40_000.0) == pytest.approx(
+        0.5 * (40_000.0 + 30_000.0 / 3.0))
+    # Au-delà de dix fois le seuil, rien ne compte plus.
+    assert rente_viagere_d_invalidite(900_000.0, 1.0, 40_000.0) == pytest.approx(
+        40_000.0 + 360_000.0 / 3.0)
+
+
+def test_le_minimum_garanti_de_l_invalidite_en_quinziemes(contexte):
+    """Dix ans de services, radiée pour invalidité : le minimum garanti est
+    dû sans condition de taux plein, en quinzièmes (L. 17, c ; article 22 du
+    décret de la CNRACL) ; la même, partie sans invalidité, est décotée et ne
+    l'a pas."""
+    champs = {"naissance": "1980", "statut": "fonctionnaire_territorial_hospitalier",
+              "debut": "2005-09", "salaire": "0.5", "metier2_debut": "2015-09",
+              "metier2_statut": "sans_activite"}
+    radiee = _pension(_actuel(contexte, **champs, radiation_invalidite="2015-09",
+                              taux_invalidite="30"), "cnracl")
+    assert "porté au minimum garanti" in radiee.detail
+    partie = _pension(_actuel(contexte, **champs), "cnracl")
+    assert "minimum garanti" not in partie.detail and "taux 63.750%" in partie.detail
+
+
+def test_le_fonctionnaire_radie_puis_salarie_a_deux_departs(contexte):
+    """Sa pension de fonctionnaire dès la radiation ; le régime général et
+    l'Agirc-Arrco à son départ, avec le RAFP, qui n'ouvre qu'à l'âge légal
+    (décret n° 2004-569, article 6)."""
+    actuel = _actuel(contexte, naissance="1975", statut="fonctionnaire_etat", primes="0.2",
+                     radiation_invalidite="2020-06", metier2_debut="2020-06",
+                     metier2_statut="salarie_prive_non_cadre")
+    premier, second = actuel.departs
+    assert (premier.date_effet, premier.motif, premier.regimes) == (
+        "2020-06-01", "radiation", ("fonction_publique_etat",))
+    assert {"regime_general", "rafp"} <= set(second.regimes)

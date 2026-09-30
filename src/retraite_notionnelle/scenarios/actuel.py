@@ -1958,6 +1958,17 @@ class MinimumGaranti:
         return (valeur * indice / self.INDICE_REFERENCE,
                 min(fiabilite_bareme, fiabilite))
 
+    def valeur_d_un_indice(self, indice: int, annee: int) -> tuple[float, Fiabilite] | None:
+        """Ce que vaut un indice majoré l'année demandée, revalorisé comme la
+        référence du minimum garanti depuis le 1er janvier 2004 : la rente
+        viagère d'invalidité lit l'indice 681 (L. 28), trois fois le 227.
+        Avant 2004, le traitement de l'indice au point de l'année."""
+        reference = self.reference(annee)
+        bareme = self.bareme(annee)
+        if reference is None or bareme is None:
+            return None
+        return reference[0] * indice / bareme[0], reference[1]
+
     def bareme(self, annee_liquidation: int):
         """Paramètres en vigueur l'année de liquidation, ou ``None`` avant 1976."""
         if not self._bareme or annee_liquidation < self._annees_bareme[0]:
