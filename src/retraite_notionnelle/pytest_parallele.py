@@ -11,6 +11,13 @@ La suite tient sept minutes en série, moins d'une répartie sur quatre cœurs.
 from __future__ import annotations
 
 import os
+from pathlib import Path
+
+#: Le poids, en octets, au-delà duquel des fichiers visés se répartissent eux
+#: aussi : ``test_web.py`` visé seul tenait près de quatre minutes en série, le
+#: 30 septembre 2026, quand démarrer quatre processus coûte quelques secondes.
+#: En deçà, un fichier de règle se lance plus vite en série.
+POIDS_REPARTI = 60_000
 
 
 def pytest_load_initial_conftests(early_config, parser, args):
@@ -22,9 +29,11 @@ def pytest_load_initial_conftests(early_config, parser, args):
       série comme avant : le dépôt ne gagne pas de dépendance dure ;
     - si l'appelant a déjà dit ce qu'il voulait (``-n``, ``PYTEST_SANS_XDIST``),
       il commande ;
-    - si l'appelant vise un fichier ou un cas précis, on reste en série :
-      démarrer quatre processus pour un test coûte plus cher que de l'exécuter,
-      et la sortie d'un run parallèle se lit moins bien ;
+    - si l'appelant vise un cas précis (``fichier::test``, ``-k``), ou des
+      fichiers légers, on reste en série : démarrer quatre processus pour un
+      test coûte plus cher que de l'exécuter, et la sortie d'un run parallèle
+      se lit moins bien ; des fichiers entiers qui pèsent plus de
+      :data:`POIDS_REPARTI` se répartissent, comme la suite ;
     - sur une machine à un cœur, il n'y a rien à répartir.
     """
     if any(a == "-n" or a.startswith(("-n", "--numprocesses")) for a in args):
@@ -39,9 +48,25 @@ def pytest_load_initial_conftests(early_config, parser, args):
     # l'analyse que pytest a déjà faite, et non en relisant `args` à la main :
     # la valeur d'une option (le nom de greffon derrière `-p`, par exemple) y
     # ressemble à s'y méprendre.
-    cibles = getattr(early_config.known_args_namespace, "file_or_dir", [])
-    if cibles:
+    options = early_config.known_args_namespace
+    cibles = getattr(options, "file_or_dir", [])
+    if cibles and (getattr(options, "keyword", "") or not _lourdes(cibles)):
         return
     if (os.cpu_count() or 1) < 2:
         return
     args[:] = ["-n", "auto", *args]
+
+
+def _lourdes(cibles: list[str]) -> bool:
+    """Des fichiers entiers, aucun cas précis, qui pèsent assez pour valoir
+    le démarrage de quatre processus ; un dossier visé vaut une suite."""
+    poids = 0
+    for cible in cibles:
+        if "::" in cible:
+            return False
+        chemin = Path(cible)
+        if chemin.is_dir():
+            return True
+        if chemin.is_file():
+            poids += chemin.stat().st_size
+    return poids > POIDS_REPARTI

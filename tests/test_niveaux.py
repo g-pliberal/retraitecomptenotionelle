@@ -38,6 +38,13 @@ def test_chaque_exception_vise_un_test_qui_existe():
     assert not perdues, f"{perdues} : ces exceptions ne visent plus aucun test"
 
 
+def test_le_filet_du_site_vise_des_tests_qui_existent():
+    """Un test du filet renommé ou déplacé n'y serait plus, sans bruit."""
+    perdus = [(f, t) for (f, t) in conftest.SITE
+              if not (TESTS / f).is_file() or t not in _fonctions(f)]
+    assert not perdus, f"{perdus} : le filet du site ne vise plus ces tests"
+
+
 def test_chaque_niveau_est_un_niveau_connu():
     assert set(conftest.EXCEPTIONS.values()) <= set(conftest.NIVEAUX)
 

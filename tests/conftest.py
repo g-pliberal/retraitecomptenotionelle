@@ -26,6 +26,10 @@ rapide. Un fichier lent qui naît se range donc ici, dans ``COMPLETS`` ou dans
 ``python -m pytest``, sans ``-m``, ne choisit rien : il lance les trois
 niveaux, comme avant. C'est la suite complète, que ``CLAUDE.md`` demande avant
 tout envoi sur ``main``, et que GitHub rejoue à chaque envoi.
+
+Une marque de plus ne dit pas un niveau mais un moment : ``site``, le filet
+qu'on rejoue en une minute après une retouche des pages, du formulaire ou d'un
+champ de saisie, avant la suite complète (``python -m pytest -m site``).
 """
 
 from __future__ import annotations
@@ -45,7 +49,8 @@ COMPLETS = {
     # Le site : ses pages, figées en témoins et rejouées par le portage
     # JavaScript (``node --test`` compris), son formulaire, le parcours de
     # présentation.
-    "test_web.py", "test_formulaire.py", "test_parcours.py",
+    "test_web.py", "test_web_saisie.py", "test_web_revues.py", "test_formulaire.py",
+    "test_parcours.py",
     # Le pont par lequel le Python lit le site : il lance node.
     "test_site.py",
     # La page Coût et les scripts qui la déplacent : chacun recalcule le coût
@@ -96,6 +101,22 @@ EXCEPTIONS = {
 }
 
 
+#: Le filet du site : le budget de mots du formulaire vierge, ses bornes
+#: opposées hors du navigateur, les pages figées et leur portage, et le
+#: catalogue des affirmations. Ce sont eux qu'une retouche de
+#: ``moteur/js/pages.js`` fait tomber, et la suite complète ne les montrait
+#: qu'au bout de cinq minutes.
+SITE = {
+    ("test_web.py", "test_le_simulateur_tient_en_peu_de_mots"),
+    ("test_web.py", "test_les_temoins_du_portage_sont_a_jour"),
+    ("test_web.py", "test_le_portage_javascript_retrouve_les_chiffres_du_modele"),
+    ("test_web.py", "test_chaque_page_du_site_est_comparee_au_portage"),
+    ("test_web_saisie.py", "test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur"),
+    ("test_web_saisie.py", "test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur"),
+    ("test_affirmations.py", "test_rien_n_echappe_au_catalogue"),
+}
+
+
 def niveau(fichier: str, test: str) -> str:
     """Le niveau d'un test, par son fichier et, au besoin, par son nom."""
     if (fichier, test) in EXCEPTIONS:
@@ -110,6 +131,8 @@ def niveau(fichier: str, test: str) -> str:
 def pytest_configure(config):
     for nom, sens in NIVEAUX.items():
         config.addinivalue_line("markers", f"{nom}: {sens}")
+    config.addinivalue_line(
+        "markers", "site: le filet du site, après une retouche des pages ou de la saisie")
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -118,6 +141,8 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         nom = getattr(item, "originalname", None) or item.name
         item.add_marker(niveau(item.path.name, nom))
+        if (item.path.name, nom) in SITE:
+            item.add_marker("site")
 
 
 # -- la mémoire des calculs, et ce qui la fait taire -----------------------------

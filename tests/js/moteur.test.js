@@ -137,7 +137,9 @@ test("les pages rendent le HTML que leurs témoins ont figé", () => {
   for (const [nom, temoin] of Object.entries(temoinsPages)) {
     const [titre, corps] = rendre(contexte, temoin.chemin, temoin.parametres);
     assert.equal(titre, temoin.titre, `titre de la page « ${nom} »`);
-    assert.equal(sansBlocJson(corps), temoin.corps, `corps de la page « ${nom} »`);
+    const rendu = sansBlocJson(corps);
+    assert.equal(temoin.formulaire_retire ? sansFormulaire(rendu) : rendu, temoin.corps,
+      `corps de la page « ${nom} »`);
   }
 });
 
@@ -167,6 +169,15 @@ test("un paquet d'avant les écarts médians ne fait pas tomber l'accueil", () =
  */
 function sansBlocJson(html) {
   return html.replace(/(<pre class="json">)[\s\S]*?(<\/pre>)/g, "$1$2");
+}
+
+/**
+ * Le formulaire d'une page dont il n'est pas le sujet : son témoin n'en fige
+ * que la balise (`FORMULAIRE_ENTIER`, dans `scripts/construire_temoins.py`), et
+ * la comparaison retire le même bloc.
+ */
+function sansFormulaire(html) {
+  return html.replace(/(<form class="carte"[^>]*>)[\s\S]*?(<\/form>)/g, "$1$2");
 }
 
 /**

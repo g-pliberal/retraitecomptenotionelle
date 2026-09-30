@@ -86,11 +86,17 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   à poser à la main (action 33 de la feuille de route, archivée) : une
   session n'a pas le droit d'écrire sous `.claude/`.
 - **Les tests** : `python -m pytest -m rapide` en travaillant, les règles et
-  les étapes, sous deux minutes ; `python -m pytest`, la suite complète,
-  avant tout envoi sur `main`, que GitHub rejoue ensuite (onglet Actions).
-  La suite se répartit sur les cœurs ; viser un fichier la garde en série,
-  `PYTEST_SANS_XDIST=1` force la série. `tests/conftest.py` range chaque
-  fichier dans son niveau : un fichier lent qui naît s'y range.
+  les étapes, sous deux minutes ; `python -m pytest -m site` après une
+  retouche du site ou de la saisie, en une minute ; `python -m pytest`, la
+  suite complète, une fois par commit, avant tout envoi sur `main`, lancée au
+  premier plan et non en tâche de fond qu'on surveille ; GitHub la rejoue
+  ensuite (onglet Actions). La suite se répartit sur les cœurs, et un fichier
+  visé aussi quand il est lourd (`POIDS_REPARTI`, dans `pytest_parallele.py`) ;
+  un cas précis ou un fichier léger reste en série, `PYTEST_SANS_XDIST=1`
+  force la série. `tests/conftest.py` range chaque fichier dans son niveau :
+  un fichier lent qui naît s'y range. Les tests du site tiennent en trois
+  fichiers, `test_web.py`, `test_web_saisie.py` et `test_web_revues.py`, qui
+  se partagent `tests/outils_web.py`.
 - **Le Python de `src/` fait foi.** Toute modification du modèle se porte
   dans `moteur/js/`. Après elle, ou après toute modification des données,
   `python scripts/regenerer.py` refait tout ce qu'un script fabrique — le
@@ -102,7 +108,8 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   `gabarit.js`, et `moteur/style.css`, sa propre source. Le Python le lit par
   `web/site.py`, qui le fait rendre par node ; les témoins de pages se refont
   par `construire_temoins.py`, après le paquet, et leur diff montre ce qu'une
-  page a changé.
+  page a changé. Seules les pages dont le formulaire est le sujet le figent
+  entier (`FORMULAIRE_ENTIER`) ; les autres n'en gardent que la balise.
 - **Les données** sont dans `data/`. Tous les régimes, calculés ou non : un
   fichier par régime dans `data/reference/regimes/`, qui porte sa ligne
   d'inventaire ; `inventaire.yaml`, qui les énumère, s'en fabrique par
@@ -153,6 +160,24 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
 - **L'outillage d'audit d'interface** (Impeccable, Web Interface Guidelines,
   Playwright CLI) : `.claude/skills/`, mis en place par
   `scripts/setup_ui_tools.sh` ; voir `docs/outillage_interface.md`.
+
+## Listes de contrôle
+
+- **Au début d'une étape** : relever dans la feuille de route et dans les
+  fiches tout ce qui lui est renvoyé, avant d'écrire la moindre ligne.
+- **Une retouche de `moteur/js/pages.js`** : le budget de mots du formulaire
+  vierge (`test_le_simulateur_tient_en_peu_de_mots`) ; toute phrase en gras
+  d'une page figée au catalogue `data/reference/site/affirmations.yaml`, avec
+  son contrôle ; `python scripts/construire_temoins.py`, puis
+  `python scripts/resumer_temoins.py` ; `python -m pytest -m site`.
+- **Un champ de saisie de plus** : les deux saisies, `saisie.py` et
+  `saisie.js` — la lecture, la vérification, la réécriture de l'adresse — ;
+  toute borne `min` ou `max` du formulaire opposée aussi par la saisie ; les
+  deux contextes ; la chronologie s'il porte un fait ; un témoin de
+  simulation, et de page si la page change ; `python -m pytest -m site`.
+- **Un changement du modèle** : le Python d'abord, puis son jumeau ;
+  `python scripts/regenerer.py`, puis `python scripts/resumer_temoins.py` ; la
+  suite complète une fois, au premier plan, puis le commit.
 
 ## Le scénario 1 est le droit applicable, et rien d'autre
 

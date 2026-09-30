@@ -3945,3 +3945,20 @@ décrire) et le refus d'une pondération inconnue, qui ne tombe qu'après 17 s
 de calcul ; les grilles de départs de `test_age_conjoncturel.py` et
 `test_age_depart_csp.py` (19 et 17 s de mise en place), à garder comme les
 recherches d'âges ; puis la répartition des tests et la mémoire sur GitHub.
+
+**Le 30 septembre 2026, à la demande du propriétaire, qui trouvait le travail
+plus lent et plus coûteux qu'avant.** Trois retouches, sans aucun résultat
+déplacé. Un fichier visé seul se répartit sur les cœurs quand il est lourd
+(`POIDS_REPARTI`, dans `pytest_parallele.py`) : `test_web.py`, visé seul,
+tenait près de quatre minutes en série. La marque `site` rassemble le filet
+d'une retouche des pages ou de la saisie — le budget de mots, les bornes
+opposables, les pages figées et leur portage, le catalogue des affirmations —,
+sept tests en une minute, là où la suite complète les montrait au bout de
+cinq. `test_web.py` est découpé en trois, avec `test_web_saisie.py` et
+`test_web_revues.py`, qui partagent `outils_web.py` et, par processus, le
+contexte et les pages rendues : la suite complète passe de quatre minutes et
+demie à trois trois quarts. Les pages figées ne gardent le formulaire entier
+que là où il est le sujet (`FORMULAIRE_ENTIER`, onze pages) ; les cinquante
+autres n'en figent que la balise, et le témoin passe de 11,9 à 8,8 Mo.
+CLAUDE.md porte les listes de contrôle d'une retouche des pages, d'un champ de
+saisie et d'un changement du modèle.

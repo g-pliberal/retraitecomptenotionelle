@@ -1105,6 +1105,27 @@ def sans_bloc_json(html: str) -> str:
     return _BLOC_JSON.sub(r"\1\2", html)
 
 
+#: Les pages dont le formulaire est le sujet, qui le gardent entier dans leur
+#: témoin : le simulateur vierge, la saisie refusée, chaque état du formulaire
+#: — plusieurs métiers, un relevé, une pension saisie, les multiples du salaire
+#: moyen, le conjoint, l'après-départ —, et une page par bloc de réglages. Les
+#: autres n'en figent que la balise : un changement du formulaire réécrivait
+#: les cinquante et une pages du simulateur, il ne réécrit plus que celles-ci
+#: (30 septembre 2026). Le portage retire le même bloc avant de comparer
+#: (``tests/js/moteur.test.js``).
+FORMULAIRE_ENTIER = frozenset({
+    "simuler", "simuler_saisie_refusee", "simuler_plusieurs_metiers",
+    "simuler_releve", "simuler_par_pension", "simuler_revenu_en_multiples",
+    "simuler_reversion", "simuler_demande_de_pension",
+    "cout", "avantages", "cas_types",
+})
+_FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
+
+
+def sans_formulaire(html: str) -> str:
+    return _FORMULAIRE.sub(r"\1\2", html)
+
+
 #: Un jeu de règles qui n'est pas celui par défaut, pour les trois pages qui
 #: agrègent : l'indexation sur les prix au lieu de la masse salariale, la
 #: bascule décalée de quatre ans, et la part patronale portée au compte.
@@ -1443,15 +1464,17 @@ def _pages() -> dict:
         ("risque", "/risque", {}),
         ("partager", "/partager", {}),
     ]
+    inconnues = FORMULAIRE_ENTIER - {nom for nom, _, _ in demandes}
+    assert not inconnues, f"FORMULAIRE_ENTIER nomme des pages sans témoin : {inconnues}"
     pages = {}
     for nom, chemin, parametres in demandes:
         titre, corps = rendre(chemin, parametres)
-        pages[nom] = {
-            "chemin": chemin,
-            "parametres": parametres,
-            "titre": titre,
-            "corps": sans_bloc_json(corps),
-        }
+        corps = sans_bloc_json(corps)
+        pages[nom] = {"chemin": chemin, "parametres": parametres, "titre": titre,
+                      "corps": corps}
+        retire = corps if nom in FORMULAIRE_ENTIER else sans_formulaire(corps)
+        if retire != corps:
+            pages[nom].update(corps=retire, formulaire_retire=True)
     return pages
 
 
