@@ -2999,6 +2999,28 @@ publiés, des fiches F12402 et F13243, reproduits ; les deux fiches du cumul
 passent à `approchee`. Restent : les droits que l'activité ouvre ou non et la
 seconde pension, puis la cinquième étape.
 
+**Quatrième étape, troisième partie, le même jour : les droits de l'activité
+après le départ.** `droit/seconde.py` et son jumeau disent, mois par mois, ce
+que l'activité ouvre : rien depuis la première pension de 2015 (L. 161-22-1 A),
+ni, pour tous, depuis 2023 (L. 161-22-1), hors du cumul intégral ; jamais après
+un retour chez le dernier employeur dans les six mois ; des droits dans les
+régimes qui n'ont pas liquidé avant 2023 pour une première pension d'avant 2015,
+et toujours pour une pension militaire — que le modèle nomme sans les calculer.
+En cumul intégral depuis 2023, la nouvelle pension se calcule au régime général
+et aux salariés agricoles — le salaire mensuel moyen des années qui valident un
+trimestre (R. 351-29, III), au taux plein, proratisé par la durée requise,
+plafonné à 5 % du plafond de la sécurité sociale —, et la seconde retraite de
+l'Agirc-Arrco sur les points de la tranche 1 ; pour une première pension de 2027,
+en cumul entier seulement, à l'âge du taux plein automatique, et sans plafond,
+la rédaction de 2026 n'en portant plus. Elle s'inscrit à sa date d'effet dans
+une lignée à elle ; la page la dit sous le cumul. Le cumul de la première
+pension de 2027 n'est plus entier qu'à cet âge, l'Agirc-Arrco compris : le
+témoin de la carrière longue de 2028 le montre. Cinq témoins de simulation et un
+de page ; l'exemple du plafond de 2 403 € de la fiche F13243, reproduit ; les
+fiches `droits_apres_la_premiere_pension` et `seconde_pension` passent à
+`approchee`. Restent : les droits ouverts dans les régimes qui n'ont pas liquidé
+(première pension d'avant 2015, pension militaire), puis la cinquième étape.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

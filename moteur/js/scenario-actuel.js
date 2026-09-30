@@ -305,6 +305,7 @@ export function resultatActuel(resultat, foyer) {
     departs: [],
     retraite_progressive: null,
     cumul: null,
+    droits_apres_depart: null,
   };
 }
 
@@ -500,5 +501,6 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     departs: servis,
     retraite_progressive: null,
     cumul: null,
+    droits_apres_depart: null,
   };
 }

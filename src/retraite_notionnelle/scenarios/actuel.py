@@ -81,6 +81,7 @@ from ..droit import departs as _departs
 from ..droit import foyer as _foyer
 from ..droit import liquidation as _liquidation
 from ..droit import progressive as _progressive
+from ..droit import seconde as _seconde
 # Ce que les étapes créent, que les appelants du scénario 1 lisent ici.
 from ..droit.commun import AvantageApplique, PensionRegime  # noqa: F401
 from ..noyau import versions
@@ -213,6 +214,10 @@ class ResultatActuel:
     #: ``None`` sans elle. La pension du résultat reste celle du départ,
     #: entière : le cumul dit ce qui n'en est pas servi, et quand.
     cumul: _cumul.Cumul | None = None
+    #: Les droits que cette activité ouvre, ou non, et la nouvelle pension
+    #: qu'elle constitue (:mod:`~retraite_notionnelle.droit.seconde`) ; hors
+    #: de la pension du résultat, qui reste celle du départ.
+    droits_apres_depart: _seconde.DroitsApresDepart | None = None
 
     @property
     def pension_mensuelle(self) -> float:

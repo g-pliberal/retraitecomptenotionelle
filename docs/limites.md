@@ -148,13 +148,21 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   doit fixer n'a pas paru, et la pension est servie entière. La page le dit, et
   le montant du système 1 reste celui de la pension entière. Chaque régime ne
   réduit que ses pensions, pour l'activité qui relève de lui : le salarié
-  devenu artisan garde sa pension du régime général entière. Restent dehors :
-  les règles des avocats, des exploitants agricoles, de l'outre-mer et des
-  élus, et celles des complémentaires autres que l'Agirc-Arrco, dont la pension
-  est servie entière ; les droits que l'activité ouvre ou non, et la seconde
-  pension ; le formulaire, qui ne la demande pas encore (fiches
-  `cumul_emploi_retraite_et_retraite_progressive` et
-  `cumul_emploi_retraite_fonction_publique`).
+  devenu artisan garde sa pension du régime général entière. Ce que l'activité
+  ouvre de droits se dit aussi mois par mois : rien depuis la première pension
+  de 2015, ni depuis 2023, sauf, en cumul intégral, une nouvelle pension au taux
+  plein, que le modèle calcule au régime général et aux salariés agricoles,
+  plafonnée à <!--chiffre:valeur(data/reference/regles/seconde_pension.yaml:versions.id=loi_2023.contenu.parametres.plafond_en_pass*100)-->5<!--/--> % du plafond de la sécurité sociale avant les premières
+  pensions de 2027, et une seconde retraite de l'Agirc-Arrco sur les points de
+  la tranche 1. Restent dehors : les règles des avocats, des exploitants
+  agricoles, de l'outre-mer et des élus, et celles des complémentaires autres
+  que l'Agirc-Arrco, dont la pension est servie entière ; les droits que
+  l'activité ouvre avant 2023 dans les régimes qui n'ont pas liquidé, pour une
+  première pension d'avant 2015 ou une pension militaire, et la nouvelle
+  pension des autres régimes, que la page nomme ; le formulaire, qui ne demande
+  pas encore l'activité (fiches `cumul_emploi_retraite_et_retraite_progressive`,
+  `cumul_emploi_retraite_fonction_publique`, `droits_apres_la_premiere_pension`
+  et `seconde_pension`).
 - **La retraite progressive : servie, sur une quotité déclarée.** Depuis le
   29 septembre 2026, qui la demande — une date, et la quotité du temps
   partiel gardé jusqu'au départ — la voit examinée à sa date comme le droit
@@ -818,7 +826,7 @@ Quatre bornes à connaître, et elles sont étroites :
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->81<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->82<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -912,7 +920,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->81<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->82<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.

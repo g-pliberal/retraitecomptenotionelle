@@ -308,3 +308,137 @@ def test_les_regles_du_cumul_sont_des_versions_des_fiches(simulateur):
                           "FP_2004", "FP_2009", "FP_2015", "FP_2027")}
     assert len(citees) == 12
     assert citees <= versions, citees - versions
+
+
+# -- les droits de l'activité et la nouvelle pension (droit/seconde.py) -------------
+
+from retraite_notionnelle.droit import liquider as _liquider  # noqa: E402
+from retraite_notionnelle.droit import seconde  # noqa: E402
+
+
+def _droits(simulateur: Simulateur, naissance: int, depart: float, emploi: dict,
+            metiers: list[Metier] | None = None):
+    resultat, echeancier = _cumul(simulateur, naissance, depart, emploi, metiers)
+    return echeancier.au_depart.droits_apres_depart, echeancier
+
+
+def test_le_cumul_integral_ouvre_une_nouvelle_pension(simulateur):
+    """Au taux plein depuis 2022, la salariée qui travaille de février 2023 à
+    janvier 2025 se constitue une nouvelle pension au régime général — le
+    salaire mensuel moyen des années qui valident un trimestre, au taux plein,
+    proratisé par la durée requise — et des points de l'Agirc-Arrco sur la
+    tranche 1, servis sans coefficient (L. 161-22-1-1, R. 351-29, III)."""
+    droits, echeancier = _droits(simulateur, 1960, 62.25, _emploi(63, 65, niveau=0.5),
+                                 [Metier("salarie_prive_non_cadre", 20.0)])
+    assert [(p.motif, p.regle) for p in droits.periodes] == [
+        (seconde.NOUVELLE_PENSION, seconde.LOI_2023)]
+    base = next(p for p in droits.pensions if p.regime == "regime_general")
+    requis = echeancier.au_depart.trimestres_requis
+    assert base.date_effet == DateMois(2025, 2)
+    assert 0 < base.trimestres <= 8
+    assert base.brute == pytest.approx(
+        base.salaire_mensuel * 12 * 0.5 * min(1.0, base.trimestres / requis))
+    assert base.plafond == pytest.approx(0.05 * simulateur.macro.plafond_securite_sociale(2025))
+    assert base.montant == pytest.approx(min(base.brute, base.plafond))
+    complementaire = next(p for p in droits.pensions if p.regime == "agirc_arrco")
+    valeur = _liquider.valeur_du_point(simulateur.scenario_actuel, "agirc_arrco", 2025)[0]
+    assert complementaire.points > 0
+    assert complementaire.montant == pytest.approx(complementaire.points * valeur)
+
+
+def test_la_nouvelle_pension_ne_depasse_pas_cinq_pour_cent_du_plafond(simulateur):
+    """Trois fois le salaire moyen quatre ans durant : la nouvelle pension est
+    écrêtée à 5 % du plafond de la sécurité sociale (D. 161-2-22-1)."""
+    droits, _ = _droits(simulateur, 1960, 62.25, _emploi(63, 67, niveau=3.0),
+                        [Metier("salarie_prive_non_cadre", 20.0)])
+    base = next(p for p in droits.pensions if p.regime == "regime_general")
+    assert base.brute > base.plafond
+    assert base.montant == pytest.approx(
+        0.05 * simulateur.macro.plafond_securite_sociale(base.date_effet.annee))
+
+
+def test_la_premiere_pension_de_2027_attend_le_cumul_entier_sans_plafond(simulateur):
+    """Carrière longue partie en 2028 : rien ne s'ouvre avant l'âge du taux plein
+    automatique ; ensuite, la nouvelle pension n'a plus de plafond (rédaction
+    de 2026)."""
+    droits, echeancier = _droits(simulateur, 1968, 60.0, _emploi(61, 68),
+                                 [Metier("salarie_prive_non_cadre", 17.0)])
+    assert [(p.motif, p.regle) for p in droits.periodes] == [
+        (seconde.ETEINTS, seconde.LFSS_2026), (seconde.NOUVELLE_PENSION, seconde.LFSS_2026)]
+    carriere = echeancier.au_depart
+    base = next(p for p in droits.pensions if p.regime == "regime_general")
+    assert base.plafond is None and base.montant == pytest.approx(base.brute)
+    assert droits.periodes[1].debut == echeancier.au_depart.cumul.integral_depuis
+    assert carriere.cumul.integral_depuis > DateMois(2034, 12)
+
+
+@pytest.mark.parametrize("naissance, debut, regles", [
+    (1960, 26.0, [seconde.LOI_2014, seconde.LOI_2023]),
+    (1954, 20.0, [seconde.LOI_2014]),
+])
+def test_hors_du_cumul_integral_l_activite_n_ouvre_rien(simulateur, naissance, debut,
+                                                      regles):
+    """Première pension de 2022 sans la durée : l'activité n'ouvre rien, ni avant
+    2023 (L. 161-22-1 A) ni après (L. 161-22-1) ; première pension de 2016, au
+    taux plein : rien non plus avant 2023, cumul intégral ou non."""
+    depart = 62.25 if naissance == 1960 else 62.0
+    droits, _ = _droits(simulateur, naissance, depart, _emploi(depart + 0.25, depart + 1.75),
+                        [Metier("salarie_prive_non_cadre", debut)])
+    assert [(p.motif, p.regle) for p in droits.periodes] == [
+        (seconde.ETEINTS, regle) for regle in regles]
+    assert droits.pensions == ()
+
+
+def test_le_retour_chez_le_dernier_employeur_n_ouvre_jamais_de_droit(simulateur):
+    """Au taux plein, mais revenue chez son dernier employeur trois mois après sa
+    pension : aucun droit nouveau, même en cumul intégral (L. 161-22-1, 2°)."""
+    droits, _ = _droits(simulateur, 1960, 62.25, _emploi(62.5, 64, "dernier", niveau=0.5),
+                        [Metier("salarie_prive_non_cadre", 20.0)])
+    assert droits.periodes[-1].motif == seconde.DERNIER_EMPLOYEUR
+    assert droits.pensions == ()
+
+
+def test_la_pension_militaire_n_eteint_pas_les_droits(simulateur):
+    """Le militaire parti à quarante-cinq ans qui travaille dans le privé continue
+    d'acquérir des droits dans les régimes qui ne lui servent pas de pension :
+    L. 84 du code des pensions lui retire l'extinction."""
+    droits, _ = _droits(simulateur, 1975, 45.0, _emploi(45.5, 50),
+                        [Metier("militaire", 20.0)])
+    assert {p.motif for p in droits.periodes} == {seconde.PENSION_MILITAIRE}
+
+
+@pytest.mark.parametrize("metier, motif", [
+    ("salarie_prive_non_cadre", seconde.REGIME_LIQUIDE),
+    ("fonctionnaire_etat", seconde.REGIMES_NON_LIQUIDES),
+])
+def test_avant_2015_seuls_les_regimes_qui_n_ont_pas_liquide_ouvrent_des_droits(
+        simulateur, metier, motif):
+    """Première pension de 2011 : le salarié revenu au régime général n'y ouvre
+    rien, sa pension étant définitive ; le fonctionnaire devenu salarié ouvre des
+    droits au régime général, qui ne lui sert pas de pension."""
+    droits, _ = _droits(simulateur, 1951, 60.5, _emploi(61, 62), [Metier(metier, 26.0)])
+    assert {p.motif for p in droits.periodes} == {motif}
+    assert {p.regle for p in droits.periodes} == {seconde.SANS_REGLE_GENERALE}
+
+
+def test_la_nouvelle_pension_s_inscrit_au_journal(simulateur):
+    """La nouvelle pension s'inscrit à sa date d'effet, dans une lignée à elle, et
+    le journal la sert à partir de cette date."""
+    droits, echeancier = _droits(simulateur, 1960, 62.25, _emploi(63, 65, niveau=0.5),
+                                 [Metier("salarie_prive_non_cadre", 20.0)])
+    date = cumul.jour(droits.pensions[0].date_effet)
+    servies = {e.id: e for e in echeancier.journal.servi(date, None, "composante")}
+    for pension in droits.pensions:
+        entree = servies[f"seconde_{pension.regime}"]
+        assert entree.contenu["montant"]["annuel"] == pytest.approx(pension.montant)
+    avant = {e.id for e in echeancier.journal.servi("2024-06-01", "2024-07-01", "composante")}
+    assert not any(ident.startswith("seconde_") for ident in avant)
+
+
+def test_les_regles_des_droits_sont_des_versions_des_fiches():
+    """Chaque règle que les droits citent est une version de leur fiche."""
+    from retraite_notionnelle.noyau import carte
+
+    versions = {v["id"] for v in carte.fiches()["droits_apres_la_premiere_pension"]["versions"]}
+    assert {seconde.SANS_REGLE_GENERALE, seconde.LOI_2014, seconde.LOI_2023,
+            seconde.LFSS_2026} <= versions

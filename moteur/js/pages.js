@@ -2792,6 +2792,109 @@ function sortDeLaComplementaire(complementaire) {
   }
 }
 
+/** Où se sert la nouvelle pension d'un régime, dit au lecteur. */
+const REGIMES_DE_LA_NOUVELLE_PENSION = {
+  regime_general: "au régime général",
+  msa_salaries: "à la MSA des salariés agricoles",
+};
+
+/**
+ * Ce que le droit fait des mois qui n'ouvrent pas de nouvelle pension : une
+ * proposition qui suit « votre activité ».
+ */
+function sansNouveauxDroits(periode) {
+  switch (`${periode.motif}/${periode.regle}`) {
+    case "eteints/loi_2014":
+      return "n'ouvre aucun droit à retraite : depuis 2015, la reprise d'activité après "
+        + "une première pension n'en ouvre plus (L. 161-22-1 A)";
+    case "eteints/loi_2023":
+      return "n'ouvre aucun droit à retraite : depuis 2023, seul le cumul intégral en "
+        + "ouvre (L. 161-22-1)";
+    case "eteints/lfss_2026":
+      return "n'ouvre aucun droit à retraite : pour une première pension de 2027, seul le "
+        + "cumul entier, à l'âge du taux plein automatique, en ouvre (L. 161-22-1)";
+    case "dernier_employeur/loi_2023":
+    case "dernier_employeur/lfss_2026":
+      return "n'ouvre aucun droit : reprise chez votre dernier employeur moins de six mois "
+        + "après votre pension, elle n'en ouvre jamais";
+    case "regime_liquide/sans_regle_generale":
+      return "relève du régime qui vous sert déjà votre pension, définitive : elle n'y "
+        + "ouvre rien";
+    case "pension_militaire/loi_2014":
+    case "pension_militaire/loi_2023":
+      return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension, "
+        + "votre pension militaire n'éteignant pas vos droits ; le modèle ne les calcule "
+        + "pas encore";
+    default:
+      return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension ; "
+        + "le modèle ne les calcule pas encore";
+  }
+}
+
+/**
+ * Les droits que l'activité exercée après le départ ouvre, ou non
+ * (`droit/seconde.js`) : la nouvelle pension et la seconde retraite de
+ * l'Agirc-Arrco, en euros de leur année ; les mois qui n'en ouvrent pas, et
+ * pourquoi.
+ */
+function droitsDuCumul(contexte, droits) {
+  if (!droits) return "";
+  const catalogue = contexte.simulateur().catalogue;
+  const phrases = [];
+  // Les mois qui n'ouvrent rien, réunis quand le droit les dit de même.
+  const sans = [];
+  for (const periode of droits.periodes.filter((p) => p.motif !== "nouvelle_pension")) {
+    const texte = sansNouveauxDroits(periode);
+    const derniere = sans[sans.length - 1];
+    if (derniere !== undefined && derniere.texte === texte
+        && derniere.fin.rang === periode.debut.rang) {
+      derniere.fin = periode.fin;
+    } else {
+      sans.push({ debut: periode.debut, fin: periode.fin, texte });
+    }
+  }
+  const touteLActivite = sans.length === 1 && droits.periodes.length > 0
+    && sans[0].debut.rang === droits.periodes[0].debut.rang
+    && sans[0].fin.rang === droits.periodes[droits.periodes.length - 1].fin.rang;
+  for (const periode of sans) {
+    phrases.push(touteLActivite ? `Votre activité ${periode.texte}.`
+      : `${moisDuCumul(periode.debut, periode.fin).replace(/^./, (c) => c.toUpperCase())}, `
+        + `votre activité ${periode.texte}.`);
+  }
+  const bases = droits.pensions.filter((p) => p.regime !== "agirc_arrco");
+  const complementaire = droits.pensions.find((p) => p.regime === "agirc_arrco");
+  if (bases.length > 0 || complementaire !== undefined) {
+    const premiere = bases[0] ?? complementaire;
+    const morceaux = bases.map((p) => {
+      const ou = REGIMES_DE_LA_NOUVELLE_PENSION[p.regime]
+        ?? `au ${echapper(catalogue.contient(p.regime) ? catalogue.obtenir(p.regime).nom : p.regime)}`;
+      const ecrete = p.plafond !== null && p.brute > p.plafond
+        ? `, écrêtée à 5 % du plafond de la sécurité sociale, ${g.euros(p.plafond)}` : "";
+      return `une nouvelle pension de ${g.euros(p.montant)} par an ${ou} — `
+        + `${p.trimestres} trimestres, au taux plein${ecrete} —`;
+    });
+    if (complementaire !== undefined) {
+      morceaux.push(`une seconde retraite complémentaire Agirc-Arrco de `
+        + `${g.euros(complementaire.montant)} par an, sur `
+        + `${formatFixe(complementaire.points, 0, true)} points`);
+    }
+    const liste = morceaux.length < 2 ? morceaux.join("")
+      : `${morceaux.slice(0, -1).join(", ")} et ${morceaux[morceaux.length - 1]}`;
+    const ouverte = droits.periodes.find((p) => p.motif === "nouvelle_pension");
+    const cumulEntier = ouverte !== undefined && ouverte.regle === "lfss_2026"
+      ? "En cumul entier, passé l'âge du taux plein automatique"
+      : "En cumul intégral depuis 2023";
+    phrases.push(`${cumulEntier}, votre activité vous ouvre, à partir du 1<sup>er</sup> `
+      + `${echapper(String(premiere.date_effet))}, ${liste}, en euros de cette année-là.`);
+  }
+  if (droits.non_calcules.length > 0) {
+    const noms = droits.non_calcules.map((code) => echapper(
+      catalogue.contient(code) ? catalogue.obtenir(code).nom : code));
+    phrases.push(`La nouvelle pension de ${noms.join(", ")} n'est pas encore calculée.`);
+  }
+  return phrases.join(" ");
+}
+
 /**
  * L'activité exercée après le départ (`droit/cumul.js`) : ce que la pension
  * en garde, période par période, et ce qu'elle fait perdre en tout. Rend `""`
@@ -2848,7 +2951,8 @@ ${retenues.map((periode, rang) => `<li>${moisDuCumul(periode.debut, periode.fin)
 ${moisDuCumul(cumul.debut, cumul.fin)}</strong>, comme
 ${echapper(affiliations.libelle(cumul.affiliation).toLowerCase())}${chez}. ${droit}
 ${bilan} Le montant du système 1, plus haut, reste celui de votre pension entière,
-celle que vous touchez une fois l'activité finie.</div>`;
+celle que vous touchez une fois l'activité finie. ${droitsDuCumul(contexte,
+    comparaison.actuel.droits_apres_depart)}</div>`;
 }
 
 /**

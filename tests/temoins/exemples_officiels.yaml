@@ -68,6 +68,9 @@
 #     n'est due, l'activité après le départ reprise chez le dernier employeur ;
 #   plafond_mensuel_du_cumul — le plafond mensuel de L. 161-22 du premier mois de
 #     l'activité, à un centime près ;
+#   plafonds_des_nouvelles_pensions — pour chaque régime nommé, le plafond
+#     annuel de la nouvelle pension que l'activité en cumul intégral ouvre, à
+#     un centime près ;
 #   reversions_ecretees_mensuelles — pour chaque régime nommé, la réversion
 #     servie après le plafond de ressources, en euros par mois, à un
 #     centime près. L'exemple donne la réversion d'avant le plafond
@@ -273,6 +276,23 @@ exemples:
       niveau_salaire: 0.5
       emploi_retraite: {debut: "2026-01", fin: "2026-07"}
     attendu: {plafond_mensuel_du_cumul: 2916.85}
+
+  - id: sp_f13243_nouvelle_pension_plafond
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F13243, Cumul emploi-retraite du salarié", verifie_le: "2026-01-01"}
+    enonce: >-
+      En cumul intégral, le retraité se constitue de nouveaux droits depuis le
+      1er janvier 2023 : une nouvelle pension, au taux plein, qui « ne peut pas
+      dépasser 2 403 € brut par an ». La fiche ne dit pas de carrière : l'exemple
+      pose une salariée au taux plein depuis 2022, qui travaille de janvier 2023 à
+      juin 2026.
+    carriere:
+      naissance: "1960-01-01"
+      sexe: F
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2022-01"
+      age_debut: 20
+      emploi_retraite: {debut: "2023-01", fin: "2026-07"}
+    attendu: {plafonds_des_nouvelles_pensions: {regime_general: 2403.0}}
 
   # ---- Cnav, circulaire 2026-07 du 5 mars 2026 --------------------------
   - id: cnav_2026_07_age_legal_1964

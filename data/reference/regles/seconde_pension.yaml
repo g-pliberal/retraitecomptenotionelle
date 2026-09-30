@@ -11,7 +11,7 @@ regimes: [regime_general, msa_salaries, msa_non_salaries, rsi, cnavpl, cnbf,
   fonction_publique_etat, cnracl, fspoeie]
 etape: liquider_chaque_regime
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - les périodes d'activité en cumul intégral, depuis le 1er janvier 2023, et leurs
   cotisations
@@ -78,7 +78,7 @@ versions:
     parametres:
       taux_plein: true
       plafond_en_pass: 0.05
-  exemples: aucun trouvé
+  exemples: [sp_f13243_nouvelle_pension_plafond]
 - id: lfss_2026
   statut: lue
   textes:
@@ -97,17 +97,39 @@ versions:
       taux_plein: true
       plafond_en_pass: null
   exemples: aucun trouvé
+approximations:
+- ecart: >-
+    le modèle calcule la nouvelle pension du régime général et des salariés agricoles,
+    et la seconde retraite de l'Agirc-Arrco, au mois qui suit la fin de l'activité, au
+    1er septembre 2023 au plus tôt ; celle des libéraux, des avocats, des exploitants
+    agricoles, des fonctionnaires et des régimes spéciaux n'est pas calculée, et le
+    résultat nomme leur régime
+  effet: non mesuré
+- ecart: >-
+    le salaire de la période est la part de ses mois dans le revenu de l'année, et ses
+    trimestres se valident à cent cinquante heures de SMIC chacun, quatre par an au
+    plus ; les années de la période se revalorisent par les coefficients des salaires
+    portés au compte
+  effet: non mesuré
+- ecart: >-
+    au-delà du dernier prix d'achat publié, le salaire de référence de l'Agirc-Arrco
+    suit le plafond de la sécurité sociale ; le versement en capital sous cent points,
+    et annuel sous deux cents, ne se distinguent pas
+  effet: non mesuré
+- ecart: >-
+    la nouvelle pension n'entre ni dans la pension du résultat, qui reste celle du
+    départ, ni dans celle d'aujourd'hui, et « faire vivre » ne la revalorise pas
+  effet: non mesuré
 sources:
   lu_le: 2026-09-30
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Ouverte le 29 septembre 2026 avec le domaine des départs multiples ; le moteur ne
-    la calcule pas encore (étape 4 du domaine). Lire R. 351-29 (le salaire de la
-    nouvelle pension au régime général), ses équivalents des autres régimes, la
-    circulaire Cnav qui l'applique, et vérifier que la rédaction de 2026 a bien retiré
-    le plafond de 5 % : le décret D. 161-2-22-1 renvoie toujours au « dernier alinéa »
-    de L. 161-22-1-1.
+    Ouverte le 29 septembre 2026 avec le domaine des départs multiples, calculée le 30.
+    R. 351-29 (III) est lu ; restent ses équivalents dans les autres régimes et la
+    circulaire Cnav qui l'applique. La rédaction de 2026 de L. 161-22-1-1 ne porte plus
+    la phrase du plafond, et D. 161-2-22-1 ne vise que la rédaction issue de la loi
+    n° 2023-270 : les premières pensions de 2027 n'ont pas de plafond.
   lectures:
   - type: legifrance
     reference: >-
@@ -135,14 +157,31 @@ sources:
       (LEGIARTI000053279747) ; D. 161-2-22-1 (LEGIARTI000047958952) ; R. 161-19-2 et
       R. 161-19-4, dans l'index LEGI
     date: 2026-09-29
-textes_a_relire:
-- {id: LEGIARTI000053335651, article: "R. 351-29 CSS", en_vigueur: 2026-01-01,
-   question: "le salaire annuel moyen de la nouvelle pension au régime général"}
+code:
+  python: >-
+    droit/seconde.py : droits, _nouvelle_pension, _seconde_retraite_complementaire,
+    _prix_du_point ; echeancier.py : Echeancier._constituer ; scenarios/actuel.py :
+    ResultatActuel.droits_apres_depart
+  javascript: >-
+    moteur/js/droit/seconde.js ; moteur/js/echeancier.js : Echeancier._constituer ;
+    moteur/js/pages.js : droitsDuCumul
+  parametres: >-
+    constantes de droit/seconde.py : TAUX_PLEIN, PLAFOND_EN_PASS, HEURES_PAR_TRIMESTRE,
+    les dates de 2023 et de 2027
+  tests: >-
+    tests/test_emploi_retraite.py ; les témoins seconde_pension_* des simulations et
+    simuler_seconde_pension des pages ; l'exemple sp_f13243_nouvelle_pension_plafond
 historique:
 - >-
   2026-09-29 — née avec le domaine des départs multiples, de la fiche
   cumul_emploi_retraite_et_retraite_progressive, qui ne porte plus que le cumul.
+- >-
+  2026-09-30 — calculée au régime général, aux salariés agricoles et à
+  l'Agirc-Arrco, sur les mois de cumul intégral que le cumul emploi-retraite dit ;
+  R. 351-29 (III) lu, et le plafond des premières pensions de 2027 vérifié absent.
 effet: >-
   Les retraités en cumul intégral depuis 2023 : leurs cotisations, jusque-là à fonds
   perdus, leur ouvrent une seconde pension, au plus 5 % du plafond de la sécurité
-  sociale, soit 2 403 € par an en 2026. Le modèle ne la calcule pas.
+  sociale, soit 2 403 € par an en 2026. La salariée partie au taux plein en 2022, qui
+  travaille à la moitié du salaire moyen de février 2023 à janvier 2025, se constitue
+  496 € par an au régime général et 183 € à l'Agirc-Arrco.

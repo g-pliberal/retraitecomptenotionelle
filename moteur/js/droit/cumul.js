@@ -141,6 +141,24 @@ function moisDe(texte) {
 
 const indexDuStatut = (statut) => PRIORITE.indexOf(statut);
 
+/**
+ * La pension de l'État est-elle militaire, et la limite d'âge de l'emploi
+ * quitté, avant 2004 : celles de la dernière ligne de fonctionnaire avant le
+ * départ.
+ */
+export function fonctionPubliqueQuittee(moteur, carriere) {
+  const affiliations = moteur.affiliations;
+  for (const ligne of [...carriere.lignes].reverse()) {
+    if (ligne.annee > carriere.anneeLiquidation) continue;
+    const regimes = affiliations.regimes(ligne.affiliation, ligne.annee);
+    if (!regimes.some((code) => FONCTION_PUBLIQUE.has(code))) continue;
+    const categorie = affiliations.categorieActive(ligne.affiliation);
+    const limite = LIMITES_D_AGE_1970[categorie ?? "aucune"] ?? LIMITES_D_AGE_1970.aucune;
+    return [affiliations.pensionMilitaire(ligne.affiliation) !== null, limite];
+  }
+  return [false, LIMITES_D_AGE_1970.aucune];
+}
+
 /** La pension la plus touchée : la première de la priorité la plus haute. */
 function laPlusTouchee(pensions) {
   let principale = null;
@@ -265,7 +283,7 @@ class Calcul {
     const automatique = moteur.agesAnnulationDecote.age(carriere.generation);
     this.ageAutomatique = automatique !== null ? automatique[0] : 65.0;
     this.duree = resultat.trimestres_valides >= resultat.trimestres_requis;
-    [this.militaire, this.limiteDAge] = this.fonctionPubliqueQuittee();
+    [this.militaire, this.limiteDAge] = fonctionPubliqueQuittee(moteur, carriere);
     this.independant = carriere.lignes.some((ligne) => ligne.annee <= this.declare.annee
       && INDEPENDANTS.has(ligne.affiliation));
     this.dernier = this.dernierSalaire();
@@ -280,19 +298,6 @@ class Calcul {
   }
 
   // -- la carrière d'avant le départ --------------------------------------------------
-
-  fonctionPubliqueQuittee() {
-    const affiliations = this.moteur.affiliations;
-    for (const ligne of [...this.carriere.lignes].reverse()) {
-      if (ligne.annee > this.declare.annee) continue;
-      const regimes = affiliations.regimes(ligne.affiliation, ligne.annee);
-      if (!regimes.some((code) => FONCTION_PUBLIQUE.has(code))) continue;
-      const categorie = affiliations.categorieActive(ligne.affiliation);
-      const limite = LIMITES_D_AGE_1970[categorie ?? "aucune"] ?? LIMITES_D_AGE_1970.aucune;
-      return [affiliations.pensionMilitaire(ligne.affiliation) !== null, limite];
-    }
-    return [false, LIMITES_D_AGE_1970.aucune];
-  }
 
   emplois() {
     return this.carriere.lignes.filter((l) => l.type_periode === "emploi" && l.revenu > 0
@@ -370,6 +375,9 @@ class Calcul {
       return false;
     }
     const age = this.age(mois);
+    // La première pension de 2027 ne se cumule entièrement qu'à l'âge du taux
+    // plein automatique (L. 161-22, III, A, 3°).
+    if (this.premiere >= PREMIERE_2027) return age >= this.ageAutomatique - 1e-9;
     return age >= this.ageAutomatique - 1e-9 || (age >= this.ageLegal - 1e-9 && this.duree);
   }
 

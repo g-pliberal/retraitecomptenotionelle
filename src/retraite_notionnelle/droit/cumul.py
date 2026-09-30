@@ -232,6 +232,24 @@ def groupe_de_la_pension(moteur: ScenarioActuel, regime: str) -> str:
     return "autres"
 
 
+def fonction_publique_quittee(moteur: ScenarioActuel, carriere: Carriere) -> tuple[bool, float]:
+    """La pension de l'État est-elle militaire, et la limite d'âge de l'emploi
+    quitté, avant 2004 : celles de la dernière ligne de fonctionnaire avant le
+    départ — soixante-cinq ans, soixante en catégorie active, cinquante-cinq en
+    catégorie super-active."""
+    affiliations = moteur.affiliations
+    for ligne in reversed(carriere.lignes):
+        if ligne.annee > carriere.annee_liquidation:
+            continue
+        regimes = affiliations.regimes(ligne.affiliation, ligne.annee)
+        if not FONCTION_PUBLIQUE & set(regimes):
+            continue
+        categorie = affiliations.categorie_active(ligne.affiliation)
+        limite = LIMITES_D_AGE_1970.get(categorie, LIMITES_D_AGE_1970[None])
+        return affiliations.pension_militaire(ligne.affiliation) is not None, limite
+    return False, LIMITES_D_AGE_1970[None]
+
+
 @dataclass(frozen=True)
 class PensionEnCumul:
     """Ce que le droit fait d'une pension, des mois d'une tranche."""
@@ -390,7 +408,7 @@ class _Calcul:
         automatique = moteur.ages_annulation_decote.age(carriere.generation)
         self.age_automatique = automatique[0] if automatique is not None else 65.0
         self.duree = resultat.trimestres_valides >= resultat.trimestres_requis
-        self.militaire, self.limite_d_age = self._fonction_publique_quittee()
+        self.militaire, self.limite_d_age = fonction_publique_quittee(moteur, carriere)
         #: L'assuré a-t-il été artisan ou commerçant avant son départ ?
         self.independant = any(ligne.affiliation in INDEPENDANTS
                                for ligne in carriere.lignes
@@ -405,23 +423,6 @@ class _Calcul:
         self._deductions: dict[tuple[str, int], float] = {}
 
     # -- la carrière d'avant le départ ------------------------------------------------
-
-    def _fonction_publique_quittee(self) -> tuple[bool, float]:
-        """La pension de l'État est-elle militaire, et la limite d'âge de
-        l'emploi quitté, avant 2004 : celles de la dernière ligne de
-        fonctionnaire — soixante-cinq ans, soixante en catégorie active,
-        cinquante-cinq en catégorie super-active."""
-        affiliations = self.moteur.affiliations
-        for ligne in reversed(self.carriere.lignes):
-            if ligne.annee > self.declare.annee:
-                continue
-            regimes = affiliations.regimes(ligne.affiliation, ligne.annee)
-            if not FONCTION_PUBLIQUE & set(regimes):
-                continue
-            categorie = affiliations.categorie_active(ligne.affiliation)
-            limite = LIMITES_D_AGE_1970.get(categorie, LIMITES_D_AGE_1970[None])
-            return affiliations.pension_militaire(ligne.affiliation) is not None, limite
-        return False, LIMITES_D_AGE_1970[None]
 
     def _dernier_salaire(self) -> tuple[float, int] | None:
         """Le dernier salaire mensuel brut avant le départ, en temps plein
@@ -482,7 +483,8 @@ class _Calcul:
 
     def integral(self, mois: DateMois) -> bool:
         """Le cumul intégral : toutes les pensions liquidées, à l'âge du taux
-        plein automatique, ou à l'âge légal avec la durée requise."""
+        plein automatique, ou à l'âge légal avec la durée requise ; pour la
+        première pension de 2027, à l'âge du taux plein automatique seul."""
         if mois < LOI_2009:
             return False
         for regime, date_effet, _ in self.pensions:
@@ -495,6 +497,10 @@ class _Calcul:
                 continue
             return False
         age = self.age(mois)
+        if self.premiere >= PREMIERE_2027:
+            # La première pension de 2027 ne se cumule entièrement qu'à l'âge
+            # du taux plein automatique (L. 161-22, III, A, 3°).
+            return age >= self.age_automatique - 1e-9
         return (age >= self.age_automatique - 1e-9
                 or (age >= self.age_legal - 1e-9 and self.duree))
 

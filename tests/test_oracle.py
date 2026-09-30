@@ -1680,6 +1680,13 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         servie = reversion(actuel, [(regime, 12 * montant / taux[regime], Fiabilite.HAUTE)
                                     for regime, montant in avant.items()], carriere, annee)
         return {r.regime: r.montant / 12 for r in servie.regimes}
+    if cle == "plafonds_des_nouvelles_pensions":
+        echeancier = Echeancier(simulateur)
+        echeancier.parcourir(carriere)
+        droits = echeancier.au_depart.droits_apres_depart
+        if droits is None:
+            return "aucune activité après le départ"
+        return {p.regime: p.plafond for p in droits.pensions if p.plafond is not None}
     if cle in ("deductions_annuelles_du_cumul", "mois_sans_pension_du_cumul",
                "plafond_mensuel_du_cumul"):
         resultat_cumul = _cumul_exemple(simulateur, exemple, carriere, resultat)
@@ -1743,6 +1750,7 @@ TOLERANCES = {
     "reversions_ecretees_mensuelles": {"abs": 0.01},
     "deductions_annuelles_du_cumul": {"abs": 0.01},
     "plafond_mensuel_du_cumul": {"abs": 0.01},
+    "plafonds_des_nouvelles_pensions": {"abs": 0.01},
 }
 
 
@@ -1766,7 +1774,8 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         # Un régime nommé que la réversion ne liquide pas n'a pas de date.
         return not isinstance(mesure, str) and all(
             mesure.get(regime) == str(date) for regime, date in valeur.items())
-    if cle in ("reversions_ecretees_mensuelles", "deductions_annuelles_du_cumul"):
+    if cle in ("reversions_ecretees_mensuelles", "deductions_annuelles_du_cumul",
+               "plafonds_des_nouvelles_pensions"):
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.01)
                    for regime, montant in valeur.items())
     if cle == "mois_sans_pension_du_cumul":

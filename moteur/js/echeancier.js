@@ -32,6 +32,7 @@ import { foyerEtNet } from "./droit/foyer.js";
 import * as liquidation from "./droit/liquidation.js";
 import * as lesProgressives from "./droit/progressive.js";
 import { moisSuivant, reversion } from "./droit/reversion.js";
+import * as laSeconde from "./droit/seconde.js";
 import { Entree, Journal } from "./journal.js";
 import { MinimumVieillesse } from "./regimes.js";
 import { aujourdHui, faireVivre, foyerALEcheance } from "./revalorisation.js";
@@ -162,8 +163,38 @@ export class Echeancier {
     }
     if (this.auDepart !== null && carriere.emploiRetraite !== null) {
       this._cumuler(carriere);
+      this._constituer(carriere);
     }
     return this.journal;
+  }
+
+  /**
+   * Les droits de l'activité exercée après le départ (`droit/seconde.js`) :
+   * éteints, ou constitués en une nouvelle pension, inscrite à sa date d'effet
+   * dans une lignée à elle.
+   */
+  _constituer(carriere) {
+    const droits = laSeconde.droits(this.moteur, carriere, this.auDepart, this.auDepart.cumul);
+    this.auDepart.droits_apres_depart = droits;
+    const pensions = droits.pensions.filter((p) => p.montant > 0);
+    if (pensions.length === 0) return;
+    const date = leCumul.jour(pensions[0].date_effet);
+    const evenement = new Evenement({
+      id: `seconde_pension_${carriere.personne}`, date, personnes: [carriere.personne],
+      vise: { regimes: pensions.map((p) => p.regime) }, sorte: "seconde_pension",
+    });
+    this._inscrire(evenement, evenement.id, "evenement", evenement, date);
+    for (const pension of pensions) {
+      const ident = `seconde_${pension.regime}`;
+      const detail = pension.points === 0
+        ? `nouvelle pension, ${pension.trimestres} trimestres sur `
+          + `${formatFixe(pension.salaire_mensuel, 2, true)} € par mois`
+        : `seconde retraite complémentaire, ${formatFixe(pension.points, 2, true)} points`;
+      this._inscrire(evenement, ident, "composante", {
+        id: ident, beneficiaire: carriere.personne, regime: pension.regime,
+        montant: { annuel: pension.montant, monnaie: "EUR" }, debut: date, detail,
+      }, date);
+    }
   }
 
   /**

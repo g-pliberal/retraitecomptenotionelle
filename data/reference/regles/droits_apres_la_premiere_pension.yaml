@@ -19,7 +19,7 @@ regimes: [regime_general, msa_salaries, msa_non_salaries, cancava, organic, rsi,
   cprn_complementaire, ircec_raap, ircec_racd, ircec_racl, rafp]
 etape: acquerir_les_droits
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - la date d'effet de la première pension de vieillesse de base
 - les périodes d'activité qui suivent, et leur date
@@ -141,11 +141,11 @@ sources:
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Ouverte le 29 septembre 2026 avec le domaine des départs multiples. Le modèle ne
-    connaît pas encore d'activité après une première pension : la présomption
-    depart_de_chaque_regime ne fait demander une pension avant le départ que lorsque
-    cette demande ne ferme aucun droit. La règle mordra dès que l'assuré pourra
-    déclarer la date de chaque pension, ou une activité après son départ.
+    Ouverte le 29 septembre 2026 avec le domaine des départs multiples, calculée le 30,
+    avec l'activité après le départ que l'adresse déclare : le modèle dit, mois par
+    mois, ce que l'activité ouvre ou non. Les droits qu'elle ouvre dans les régimes
+    qui n'ont pas liquidé — avant 2023 pour une première pension d'avant 2015,
+    toujours pour une pension militaire — restent à calculer.
   - >-
     Lire la circulaire Cnav qui a appliqué L. 161-22-1 A (2014-2015) : la « reprise »
     d'activité y couvre-t-elle l'activité poursuivie dans un autre régime après la
@@ -183,14 +183,47 @@ sources:
       LEGIARTI000053279747, LEGIARTI000053279758) : applicables aux premières pensions
       prises à compter du 1er janvier 2027
     date: 2026-09-29
+approximations:
+- ecart: >-
+    avant 2023, pour une première pension d'avant 2015, et toujours pour une pension
+    militaire, l'activité ouvre des droits dans les régimes qui n'ont pas liquidé : le
+    modèle le dit, et ne les calcule pas encore ; il tient pour définitive la pension
+    du régime qui l'a déjà servie
+  effet: non mesuré
+- ecart: >-
+    les points de l'Agirc-Arrco acquis en cumul avant 2015 ne sont pas calculés ; les
+    marins, pour qui la règle de 2014 n'entre en vigueur qu'en 2018, et les exceptions
+    de L. 161-22-1-2 pour les premières pensions de 2027 (marins, ballet, mineurs,
+    invalidité) ne se distinguent pas
+  effet: non mesuré
+- ecart: >-
+    la reprise chez le dernier employeur dans les six mois de la pension ferme aux
+    droits nouveaux toute l'activité déclarée, qui est une seule période
+  effet: non mesuré
+code:
+  python: >-
+    droit/seconde.py : droits, _motif ; droit/cumul.py : fonction_publique_quittee ;
+    echeancier.py : Echeancier._constituer
+  javascript: >-
+    moteur/js/droit/seconde.js ; moteur/js/pages.js : sansNouveauxDroits, droitsDuCumul
+  parametres: "constantes de droit/seconde.py : les dates de 2015, 2023 et 2027"
+  tests: >-
+    tests/test_emploi_retraite.py ; les témoins seconde_pension_* et droits_* des
+    simulations
 textes_a_relire:
 - {id: LEGIARTI000047960984, article: "R. 161-19-4 CSS", en_vigueur: 2023-09-01,
    question: "les droits supplémentaires des marins, du ballet et des mineurs, qui s'arrêtent après la seconde pension"}
 historique:
 - >-
   2026-09-29 — née avec le domaine des départs multiples.
+- >-
+  2026-09-30 — calculée : le modèle dit, mois par mois de l'activité après le
+  départ, ce qu'elle ouvre ou non, et en tire la nouvelle pension (fiche
+  seconde_pension).
 effet: >-
   Toute personne qui travaille après sa première pension, dans le même régime ou dans
   un autre : le fonctionnaire de catégorie active parti à cinquante-sept ans et passé
   au privé, le retraité qui reprend un emploi. Depuis 2015, ses cotisations ne lui
   ouvrent plus rien, hors la pension militaire et, depuis 2023, le cumul intégral.
+  La salariée partie en 2022 sans la durée requise, qui retravaille dix-huit mois,
+  n'acquiert rien ; partie au taux plein, elle se constitue une nouvelle pension.

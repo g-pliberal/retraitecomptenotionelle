@@ -666,6 +666,36 @@ def _cas() -> list[dict]:
         "naissance": "1968", "debut": "17", "liquidation": "60",
         "emploi_retraite": "2029-02", "emploi_retraite_fin": "2032-02",
     }))
+    # LES DROITS DE L'ACTIVITÉ APRÈS LE DÉPART (droit/seconde.py) : la nouvelle
+    # pension et la seconde retraite de l'Agirc-Arrco en cumul intégral depuis
+    # 2023, écrêtée à 5 % du plafond au-delà ; celle d'une première pension de
+    # 2027, sans plafond, à l'âge du taux plein automatique ; les droits que
+    # la pension militaire n'éteint pas ; ceux du fonctionnaire parti en 2011,
+    # que le régime général, qui ne lui sert rien, ouvre encore.
+    cas.append(("seconde_pension_2025", {
+        "naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62.25",
+        "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2023-02",
+        "emploi_retraite_fin": "2025-02", "emploi_retraite_salaire": "0.5",
+    }))
+    cas.append(("seconde_pension_plafonnee_2027", {
+        "naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62.25",
+        "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2023-02",
+        "emploi_retraite_fin": "2027-02", "emploi_retraite_salaire": "3",
+    }))
+    cas.append(("seconde_pension_carriere_longue_2036", {
+        "naissance": "1968", "debut": "17", "liquidation": "60",
+        "emploi_retraite": "2029-02", "emploi_retraite_fin": "2036-02",
+    }))
+    cas.append(("droits_pension_militaire", {
+        "naissance": "1975", "statut": "militaire", "debut": "20", "liquidation": "45",
+        "emploi_retraite": "2020-08", "emploi_retraite_fin": "2025-02",
+        "emploi_retraite_statut": "salarie_prive_non_cadre",
+    }))
+    cas.append(("droits_fonctionnaire_avant_2015", {
+        "naissance": "1951", "statut": "fonctionnaire_etat", "debut": "26",
+        "liquidation": "60.5", "emploi_retraite": "2012-02", "emploi_retraite_fin": "2013-02",
+        "emploi_retraite_statut": "salarie_prive_non_cadre",
+    }))
     cas.append(("departs_militaire_puis_prive", {
         "naissance": "1965", "statut": "militaire", "debut": "18",
         "metier2_debut": "35", "metier2_statut": "salarie_prive_non_cadre",
@@ -1108,6 +1138,13 @@ def _pages() -> dict:
             **BASE, "naissance": "1962", "statut": "fonctionnaire_etat", "debut": "24",
             "liquidation": "62.5", "emploi_retraite": "2025-02",
             "emploi_retraite_fin": "2026-08", "emploi_retraite_statut": "contractuel_public",
+        }),
+        # La nouvelle pension et la seconde retraite de l'Agirc-Arrco, en cumul
+        # intégral depuis 2023.
+        ("simuler_seconde_pension", "/simuler", {
+            **BASE, "sexe": "F", "naissance": "1960", "debut": "20", "liquidation": "62.25",
+            "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2023-02",
+            "emploi_retraite_fin": "2025-02", "emploi_retraite_salaire": "0.5",
         }),
         ("simuler_departs_echelonnes_a_venir", "/simuler", {
             **BASE, "sexe": "F", "naissance": "1975", "debut": "20", "liquidation": "59",

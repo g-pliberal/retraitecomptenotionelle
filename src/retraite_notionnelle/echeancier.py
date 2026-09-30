@@ -45,6 +45,7 @@ from .droit import foyer as _foyer
 from .droit import liquidation as _liquidation
 from .droit import progressive as _progressive
 from .droit import reversion as _reversion
+from .droit import seconde as _seconde
 from .droit.commun import date_d_effet
 from .journal import Entree, Journal
 from .noyau import vocabulaire
@@ -161,7 +162,34 @@ class Echeancier:
             self._echeance(carriere, echeance)
         if self.au_depart is not None and carriere.emploi_retraite is not None:
             self._cumuler(carriere)
+            self._constituer(carriere)
         return self.journal
+
+    def _constituer(self, carriere: Carriere) -> None:
+        """Les droits de l'activité exercée après le départ
+        (:mod:`.droit.seconde`) : éteints, ou constitués en une nouvelle
+        pension, inscrite à sa date d'effet dans une lignée à elle."""
+        droits = _seconde.droits(self.moteur, carriere, self.au_depart, self.au_depart.cumul)
+        self.au_depart = replace(self.au_depart, droits_apres_depart=droits)
+        pensions = [p for p in droits.pensions if p.montant > 0]
+        if not pensions:
+            return
+        date = _cumul.jour(pensions[0].date_effet)
+        evenement = Evenement(
+            id=f"seconde_pension_{carriere.personne}", date=date,
+            personnes=(carriere.personne,),
+            vise={"regimes": [p.regime for p in pensions]}, sorte="seconde_pension")
+        self._inscrire(evenement, evenement.id, "evenement", evenement, date)
+        for pension in pensions:
+            ident = f"seconde_{pension.regime}"
+            detail = (f"nouvelle pension, {pension.trimestres} trimestres sur "
+                      f"{pension.salaire_mensuel:,.2f} € par mois"
+                      if pension.points == 0 else
+                      f"seconde retraite complémentaire, {pension.points:,.2f} points")
+            self._inscrire(evenement, ident, "composante", {
+                "id": ident, "beneficiaire": carriere.personne, "regime": pension.regime,
+                "montant": {"annuel": pension.montant, "monnaie": "EUR"}, "debut": date,
+                "detail": detail}, date)
 
     def _cumuler(self, carriere: Carriere) -> None:
         """L'activité exercée après le départ (:mod:`.droit.cumul`) : ce que

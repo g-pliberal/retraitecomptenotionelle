@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.23, du 30 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.24, du 30 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -119,7 +119,7 @@ couverture demande à l'architecture.
 | Départs anticipés | carrière longue, catégories actives, militaires : oui ; parents de trois enfants de la fonction publique : non ; handicap : hors modèle | tous, dont incapacité permanente, pénibilité, amiante |
 | Invalidité, inaptitude | hors modèle | périodes d'invalidité, pension d'invalidité et sa conversion, retraite pour invalidité des fonctionnaires, inaptitude |
 | Réversion | le conjoint, qu'un bloc facultatif du formulaire demande, et le mariage, présumé aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.mariage_des_conjoints.valeur)-->27<!--/--> ans de l'assuré ; la réversion liquidée pour le survivant, au régime général et dans les régimes alignés, dans la fonction publique et à l'Agirc-Arrco, sans le minimum ni les majorations, pour un décès déclaré après le départ ou supposé juste après lui | conjoints successifs datés, décès avant le départ, ressources du ménage, partage entre ex-conjoints, remariage, règles des autres régimes, orphelins |
-| Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | un départ par régime, chacun à sa date, sur une demande présumée ; la retraite progressive, sa date et sa quotité déclarées : la pension provisoire, sa fraction servie, la pension complète au départ ; le cumul emploi-retraite, mois par mois, sur une activité déclarée après le départ ; la seconde pension : hors modèle | la date de demande de chaque pension, déclarée ; les droits de l'activité après le départ ; les changements de quotité |
+| Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | un départ par régime, chacun à sa date, sur une demande présumée ; la retraite progressive, sa date et sa quotité déclarées : la pension provisoire, sa fraction servie, la pension complète au départ ; le cumul emploi-retraite, mois par mois, sur une activité déclarée après le départ ; les droits qu'elle ouvre ou non, et la nouvelle pension du cumul intégral au régime général, aux salariés agricoles et à l'Agirc-Arrco | la date de demande de chaque pension, déclarée ; les droits de l'activité après le départ dans les régimes qui n'ont pas liquidé ; la nouvelle pension des autres régimes ; les changements de quotité |
 | Rachats, versements, surcotisation | hors modèle | actes datés de l'assuré, avec leur coût |
 | Carrières hors de France | absentes | périodes par pays et par convention ; totalisation et prorata ; pensions étrangères |
 | Minimum vieillesse (ASPA) | barème d'une personne seule, sans condition de ressources | ressources, résidence et composition du foyer ; récupération sur la succession |
@@ -2427,6 +2427,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.24**, 30 septembre 2026 : la quatrième étape du troisième domaine, suite : les droits de l'activité après le départ (§ 7.4). Chaque mois de l'activité dit ce que le droit en fait — rien, ou une nouvelle pension —, et la nouvelle pension du cumul intégral s'inscrit à sa date d'effet, dans une lignée à elle, hors de la pension du résultat (`droit/seconde.py`).
 
 - **5.23**, 30 septembre 2026 : la quatrième étape du troisième domaine, sa première partie, le cumul emploi-retraite (§ 7.4). L'activité exercée après le départ entre à la chronologie comme une période datée après lui, que la carrière garde à part de ses lignes ; l'échéancier dit, mois par mois, ce que chaque pension en garde, et inscrit la pension réduite, suspendue ou non due pour les seuls mois où elle l'est. Le résultat du départ porte ce cumul, et son montant reste celui de la pension entière.
 
