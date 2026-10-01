@@ -2958,6 +2958,50 @@ pension provisoire, soit ${g.euros(progressive.montant_servi / 12)} bruts par mo
 de ${annee}, en plus de votre salaire à temps partiel. ${complete}</div>`;
 }
 
+/**
+ * Ce que le système 1 fait d'une carrière passée aussi hors de France
+ * (`droit/etranger.js`) : les trimestres que les accords font compter pour le
+ * taux, jamais pour la durée qui proratise ; la pension nationale qu'un accord
+ * compare à la pension proratisée, dont le détail du calcul dit les deux
+ * montants ; l'ASPA, qui ne se sert qu'en France (`droit/foyer.js`). Rend
+ * `""` à qui ne déclare ni période ni résidence hors de France.
+ */
+function carriereHorsDeFrance(comparaison) {
+  const carriere = comparaison.carriere;
+  const actuel = comparaison.actuel;
+  const notes = [];
+  if (carriere.periodesALEtranger.length > 0) {
+    const trimestres = actuel.trimestres_etrangers;
+    // La pension servie d'un régime qu'un accord compare dit, en tête de son
+    // calcul, laquelle des deux l'emporte (`droit/completer.js`).
+    const comparee = actuel.pensions_par_regime.find(
+      (pension) => /^pension (nationale|proratisée), /.test(pension.detail));
+    const comparaisonDite = comparee === undefined ? ""
+      : ` L'accord compare deux pensions : la pension proratisée, au taux de toute
+votre carrière, et la pension nationale, sur vos seules années en France, chacune
+portée à son minimum. La plus élevée est servie, ici la
+${comparee.detail.startsWith("pension nationale") ? "pension nationale" : "pension proratisée"} ;
+le détail du calcul, plus bas, dit les deux montants.`;
+    notes.push(trimestres > 0
+      ? `<strong>Vos périodes hors de France comptent pour votre taux.</strong> Elles
+vous valent ${trimestres} trimestre${trimestres > 1 ? "s" : ""}, qui s'ajoutent aux
+vôtres dans la durée qui fixe votre taux et ouvre vos droits —
+${actuel.trimestres_valides} trimestres en tout, pour ${actuel.trimestres_requis}
+requis —, et jamais dans celle qui proratise : chaque régime français ne vous sert
+que la part de votre carrière passée en France, chaque État ou organisation la
+sienne.${comparaisonDite}`
+      : `<strong>Vos périodes hors de France ne comptent pas.</strong> Aucun accord ne
+les fait compter pour vos régimes à la date de votre départ : votre pension
+française ne connaît que votre carrière en France.`);
+  }
+  if (carriere.residence !== null) {
+    notes.push(`<strong>Le minimum vieillesse ne se sert qu'en France.</strong> Vous
+déclarez résider hors de France après votre départ : l'ASPA ne s'ajoute à votre
+pension à aucun âge.`);
+  }
+  return notes.map((note) => `<div class="note">${note}</div>`).join("\n");
+}
+
 /** La plus touchée de ces pensions, dans l'ordre du cumul ; `null` sans pension. */
 function laPlusToucheeDuCumul(pensions) {
   let principale = null;
@@ -3885,6 +3929,7 @@ function resultats(contexte, saisie) {
     + demandesNonSuivies(contexte, comparaison);
   const progressive = retraiteProgressive(comparaison);
   const cumulApresDepart = cumulEmploiRetraite(contexte, comparaison);
+  const horsDeFrance = carriereHorsDeFrance(comparaison);
 
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
     + 'résultat : <span class="etiquette-fiabilite">'
@@ -3932,7 +3977,7 @@ ${revenuDeduit(contexte, comparaison, saisie, montants)}
   ${fiabilite}
   ${capitalisation}
   ${minimum}
-  ${ouverture}${echelonnes}${progressive}${cumulApresDepart}
+  ${ouverture}${echelonnes}${progressive}${cumulApresDepart}${horsDeFrance}
   ${report}
 </div>
 <div class="carte">

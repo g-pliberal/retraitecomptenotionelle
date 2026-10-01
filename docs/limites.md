@@ -214,6 +214,26 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   par sa revalorisation, celle qui ne commence qu'après ramenée par les prix
   (fiche `liquidation_regime_par_regime`). Les systèmes 2 à 6 liquident leur
   compte au départ déclaré, quelle que soit la date dite de chaque pension.
+- **Les carrières hors de France : servies, sur des périodes déclarées.** Depuis
+  le 1er octobre 2026, les périodes passées dans un État que lie à la France un
+  accord — les règlements européens, l'accord avec le Royaume-Uni, une
+  convention bilatérale —, dans une organisation internationale, ou à
+  l'étranger avant le 1er avril 1983, comptent pour le taux, l'ouverture des
+  droits, la surcote et la carrière longue de chaque régime que l'accord
+  coordonne, jamais pour la durée qui proratise (`droit/etranger.py`). Quand
+  l'accord compare, chaque régime qui porte le minimum contributif sert la plus
+  élevée de la pension nationale et de la pension proratisée, chacune portée à
+  son minimum ; l'écrêtement de ce minimum compte les pensions étrangères
+  déclarées ; l'ASPA n'est servie qu'à qui ne déclare pas résider hors de
+  France. La pension que sert l'autre État n'est pas calculée : seul son montant
+  déclaré entre dans l'écrêtement. Restent dehors les années du salaire annuel
+  moyen de la pension théorique, réduites au prorata de 2004 à juin 2022 ; la
+  comparaison des pensions des fonctionnaires ; la révision de l'écrêtement
+  quand une pension étrangère commence après le départ ; les mois de séjour de
+  chaque année, que la saisie ne demande pas ; le calcul des conventions d'avant
+  l'entrée des États dans l'Union, dont seules les dates sont lues. L'adresse du
+  simulateur porte la carrière hors de France ; le formulaire la demandera à la
+  cinquième étape du domaine.
 - **Catégorie active : servie, mais sur un classement déclaré.** L'âge anticipé
   de l'article L. 24 — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1965)-->52<!--/--> pour la super-active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> après la
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote

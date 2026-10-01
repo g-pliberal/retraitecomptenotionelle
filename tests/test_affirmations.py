@@ -1389,6 +1389,53 @@ def _(m: Modele):
                    + comparaison.actuel.pension_hors_repartition)
 
 
+@controle("periodes_etrangeres_pour_le_taux")
+def _(m: Modele):
+    """Vingt-cinq ans en Espagne, puis 85 trimestres en France : les cent
+    trimestres espagnols portent la durée du taux à 185, au-delà des 167
+    requis, et la pension reste proratisée sur les 85 français
+    (droit/etranger.py)."""
+    comparaison = m.simuler_requete(
+        naissance="1960-03-15", debut="2003-01", liquidation="2024-04",
+        unite_revenu="moyen", salaire="0.45", etranger1_pays="ES",
+        etranger1_debut="1978-01", etranger1_fin="2003-01")
+    actuel = comparaison.actuel
+    assert (actuel.trimestres_etrangers, actuel.trimestres_valides) == (100, 185)
+    assert actuel.trimestres_valides >= actuel.trimestres_requis
+    general = next(p for p in actuel.pensions_par_regime if p.regime == "regime_general")
+    assert "× 85/167" in general.detail
+
+
+@controle("periodes_etrangeres_sans_accord")
+def _(m: Modele):
+    """Aucune convention bilatérale ne vise les régimes du code des pensions :
+    les années marocaines de l'agent de l'État ne lui valent aucun trimestre."""
+    comparaison = m.simuler_requete(
+        naissance="1962-03-15", statut="fonctionnaire_etat", debut="1990-09",
+        liquidation="2026-04", etranger1_pays="MA", etranger1_debut="1980-01",
+        etranger1_fin="1990-09")
+    assert comparaison.actuel.trimestres_etrangers == 0
+    sans = m.simuler_requete(naissance="1962-03-15", statut="fonctionnaire_etat",
+                             debut="1990-09", liquidation="2026-04")
+    assert comparaison.actuel.trimestres_valides == sans.actuel.trimestres_valides
+
+
+@controle("aspa_hors_de_france")
+def _(m: Modele):
+    """La petite carrière qui reçoit l'ASPA en France n'en reçoit rien au
+    Maroc, ni au départ ni aujourd'hui (droit/foyer.py)."""
+    carriere = dict(naissance="1955-03-15", debut="1994-01", liquidation="2020-04",
+                    unite_revenu="moyen", salaire="0.2")
+    en_france = m.simuler_requete(**carriere)
+    au_maroc = m.simuler_requete(**carriere, residence="MA")
+    assert any(a.code == "minimum_vieillesse" and a.montant > 0
+               for a in en_france.actuel.avantages_appliques)
+    assert not any(a.code == "minimum_vieillesse"
+                   for a in au_maroc.actuel.avantages_appliques)
+    assert en_france.aujourd_hui.actuel.minimum_vieillesse > 0
+    assert au_maroc.aujourd_hui.actuel.minimum_vieillesse == 0
+
+
 @controle("retraite_progressive_servie")
 def _(m: Modele):
     """À 60 % depuis novembre 2025, la salariée touche 40 % de sa pension

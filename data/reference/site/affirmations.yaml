@@ -605,6 +605,33 @@ affirmations:
     etat: verifiee
     controle: pension_substituee
 
+  - id: simuler.periodes_etrangeres_pour_le_taux
+    page: /simuler
+    extrait: "Vos périodes hors de France comptent pour votre taux."
+    porte: >-
+      les trimestres qu'un accord fait compter hors de France s'ajoutent à la durée
+      qui fixe le taux et ouvre les droits, jamais à celle qui proratise
+    etat: verifiee
+    controle: periodes_etrangeres_pour_le_taux
+
+  - id: simuler.periodes_etrangeres_sans_accord
+    page: /simuler
+    extrait: "Vos périodes hors de France ne comptent pas."
+    porte: >-
+      une période qu'aucun accord ne fait compter pour les régimes de la carrière
+      n'ajoute rien à sa durée
+    etat: verifiee
+    controle: periodes_etrangeres_sans_accord
+
+  - id: simuler.aspa_hors_de_france
+    page: /simuler
+    extrait: "Le minimum vieillesse ne se sert qu'en France."
+    porte: >-
+      l'ASPA n'est servie, au départ ni à aucune échéance, à qui déclare résider hors
+      de France
+    etat: verifiee
+    controle: aspa_hors_de_france
+
   - id: simuler.retraite_progressive_servie
     page: /simuler
     extrait: "Une retraite progressive, du"

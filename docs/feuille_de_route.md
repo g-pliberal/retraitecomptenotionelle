@@ -3429,29 +3429,40 @@ nouvelle : celles qui diront la résidence en France et l'absence de pension
 étrangère de qui n'en déclare pas entreront avec le calcul qui les lit, à la
 troisième étape. Le moteur ne lit pas encore ces faits : aucun témoin ne bouge.
 
-**Troisième étape, en cours.** Publiée le 1er octobre : la totalisation
-(`droit/etranger.py`, et son jumeau). « Coordonner les affiliations » dit à quel
-titre chaque période compte — l'accord en vigueur avec son État à la date
-d'effet, s'il vise son activité, l'organisation internationale depuis 2010,
-l'activité d'avant 1983 reconnue équivalente — et pour quelle famille de
-régimes : le régime général et ceux que la fiche coordonne avec lui ; les trois
-du code des pensions, que seuls les règlements européens coordonnent, depuis le
-25 octobre 1998. « Compter les durées » en fait des trimestres, quatre au plus
-par année avec ceux de la France, que le taux, la décote, la surcote et la
-carrière longue lisent, jamais la proratisation. La fiche passe à `approchee`,
-avec cinq écarts déclarés ; huit témoins naissent, aucun ne bouge. Puis, le
-même jour, la pension proratisée contre la pension nationale : quand un accord
-compare, la liquidation se refait sans les trimestres de ses périodes, et
-« compléter tous régimes » sert, dans chaque régime qui porte le minimum
-contributif, la plus élevée des deux, chacune à son minimum — celui de la
-proratisée, depuis 2004, réduit à la part du régime dans la durée totale non
-limitée ; depuis 2012, l'écrêtement compte les pensions étrangères déclarées,
-et la présomption `pas_de_pension_etrangere` naît (§ 5.6). Les deux fiches
-passent à `approchee` ; trois témoins naissent, aucune pension ne bouge.
-Puis l'ASPA, que « foyer et net » ne sert plus, à la liquidation ni à aucune
-échéance, à qui déclare résider hors de France ; la présomption
-`residence_en_france` naît pour qui ne le déclare pas, la fiche passe à
-`approchee`, un témoin naît. Reste la page.
+**Troisième étape, le 1er octobre : les fonctions, dans les deux moteurs.**
+Les quatre fiches du domaine sont lues par le moteur (`droit/etranger.py` et
+son jumeau ; la table `CarrieresHorsDeFrance` et le tableau des accords, portés
+par le paquet), `approchee` toutes quatre, leurs écarts déclarés.
+- « Coordonner les affiliations » dit à quel titre chaque période compte —
+  l'accord en vigueur avec son État à la date d'effet, s'il vise son activité,
+  l'organisation internationale depuis 2010, l'activité d'avant 1983 reconnue
+  équivalente — et pour quelle famille de régimes : le régime général et ceux
+  que la fiche coordonne avec lui ; les trois du code des pensions, que seuls
+  les règlements européens coordonnent, depuis le 25 octobre 1998. « Compter
+  les durées » en fait des trimestres, quatre au plus par année avec ceux de la
+  France, que le taux, la décote, la surcote et la carrière longue lisent,
+  jamais la proratisation.
+- Quand un accord compare — les règlements depuis juin 1992, les conventions à
+  comparaison ou à option —, la liquidation se refait sans les trimestres de
+  ses périodes, et « compléter tous régimes » sert, dans chaque régime qui
+  porte le minimum contributif, la plus élevée de la pension nationale et de la
+  pension proratisée, chacune portée à son minimum : celui de la proratisée,
+  depuis 2004, théorique puis réduit à la part du régime dans la durée totale
+  non limitée, sa majoration selon les trois cas de l'exposé de la Cnav, les
+  périodes étrangères comptées comme cotisées.
+- Depuis 2012, l'écrêtement du minimum compte les pensions étrangères
+  déclarées, hors celles des règlements européens et de six conventions ; « foyer
+  et net » ne sert l'ASPA, à la liquidation ni à aucune échéance, à qui déclare
+  résider hors de France.
+- Deux présomptions naissent (§ 5.6), `pas_de_pension_etrangere` et
+  `residence_en_france` ; la saisie accepte un premier emploi en France après
+  l'âge de début le plus tardif quand la carrière a commencé à l'étranger.
+
+Aucun des 669 témoins d'avant le domaine ne bouge ; douze témoins de simulation
+et deux pages naissent pour lui, rendus à l'identique par les deux moteurs. La
+page de simulation dit les trimestres que valent les périodes hors de France,
+laquelle des deux pensions l'accord sert, et que l'ASPA ne se sert qu'en
+France ; `docs/limites.md` dit ce qui est servi, et ce qui reste dehors.
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 

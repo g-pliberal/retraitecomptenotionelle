@@ -1334,6 +1334,21 @@ def _pages() -> dict:
             "debut": "2012-09", "radiation_invalidite": "2019-09", "taux_invalidite": "80",
             "metier2_debut": "2019-09", "metier2_statut": "sans_activite",
         }),
+        # LES CARRIÈRES HORS DE FRANCE (droit/etranger.py) : vingt-cinq ans en
+        # Espagne comptent pour le taux, jamais pour la durée qui proratise, et
+        # la page dit laquelle des deux pensions l'accord sert, et que l'ASPA
+        # ne se sert pas à qui réside en Espagne ; l'agent de l'État, dont
+        # aucun accord ne fait compter les années marocaines.
+        ("simuler_carriere_hors_de_france", "/simuler", {
+            **BASE, "naissance": "1960-03-15", "debut": "2003-01", "liquidation": "2024-04",
+            "unite_revenu": "moyen", "salaire": "0.45", "etranger1_pays": "ES",
+            "etranger1_debut": "1978-01", "etranger1_fin": "2003-01", "residence": "ES",
+        }),
+        ("simuler_hors_de_france_sans_accord", "/simuler", {
+            **BASE, "naissance": "1962-03-15", "statut": "fonctionnaire_etat",
+            "debut": "1990-09", "liquidation": "2026-04", "etranger1_pays": "MA",
+            "etranger1_debut": "1980-01", "etranger1_fin": "1990-09",
+        }),
         # La retraite progressive, ouverte puis refusée faute d'âge.
         ("simuler_retraite_progressive", "/simuler", {
             **BASE, "sexe": "F", "naissance": "1965", "debut": "20", "liquidation": "64",
