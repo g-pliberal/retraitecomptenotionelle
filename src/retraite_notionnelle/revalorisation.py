@@ -65,7 +65,7 @@ from .config import RevalorisationStock, SituationFoyer
 from .donnees.chargement import Fiabilite
 from .droit import invalidite, liquider
 from .droit.etranger import pensions_etrangeres_servies
-from .droit.foyer import Foyer, foyer_et_net
+from .droit.foyer import Foyer, condition_de_residence, foyer_et_net
 
 
 # -- ce que le droit a servi depuis la liquidation ---------------------------
@@ -390,10 +390,12 @@ class PensionAujourdhui:
     rente_capitalisee_volontaire: float
     #: Les deux termes de la garantie d'aujourd'hui : le plancher de l'année,
     #: et ce qu'il regarde — la pension obligatoire, répartition et rente
-    #: capitalisée. ``garantie_ouverte`` dit si les 65 ans sont atteints.
+    #: capitalisée. ``garantie_ouverte`` dit si les 65 ans sont atteints,
+    #: ``garantie_residence`` si la condition de résidence de l'ASPA l'est.
     garantie_ouverte: bool = False
     plancher_garantie: float = 0.0
     ressources_garantie: float = 0.0
+    garantie_residence: bool = True
 
     def pension(self, scenario: str) -> float:
         """La pension annuelle d'aujourd'hui d'un des six scénarios."""
@@ -786,8 +788,10 @@ def pension_aujourd_hui(simulateur, comparaison,
     # Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France,
     # et compte ce qu'un autre État sert.
     etrangeres = pensions_etrangeres_servies(macro, carriere, DateMois(annee, 12))
+    resident = condition_de_residence(simulateur.scenario_actuel, carriere.residence,
+                                      f"{annee:04d}-12-31", carriere.mois_en_france)
     complement = (max(0.0, plancher - contributive_aujourd_hui - rente - etrangeres)
-                  if ouverte and carriere.residence is None else 0.0)
+                  if ouverte and resident else 0.0)
     notionnels["notionnel_liberal"] = contributive_aujourd_hui + complement
     coefficients["notionnel_liberal"] = reel
 
@@ -802,6 +806,7 @@ def pension_aujourd_hui(simulateur, comparaison,
         garantie_ouverte=ouverte,
         plancher_garantie=plancher,
         ressources_garantie=contributive_aujourd_hui + rente + etrangeres,
+        garantie_residence=resident,
     )
 
 

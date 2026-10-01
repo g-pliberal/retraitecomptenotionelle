@@ -78,7 +78,7 @@ import datetime
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
-from .calendrier import DateMois, en_mois, origine_des_ages
+from .calendrier import MOIS_PAR_AN, DateMois, en_mois, origine_des_ages
 from .noyau import vocabulaire
 
 if TYPE_CHECKING:  # pragma: no cover - annotations seulement
@@ -311,10 +311,11 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     l'État (``pays``), le ``debut`` et la ``fin``, comptés comme un début
     d'activité, au plus tard au départ, et l'``activite`` —, ses ``pensions``
     étrangères — l'État, l'``age`` où elle commence, compté de même, et son
-    montant ``mensuel`` en euros de cette date —, et l'État de ``residence``
-    après le départ. Des périodes à l'étranger, des actes de la caisse de
-    chaque État, une résidence, que :func:`periodes_a_l_etranger`,
-    :func:`pensions_etrangeres` et :func:`residence` relisent."""
+    montant ``mensuel`` en euros de cette date —, l'État de ``residence``
+    après le départ, et les ``mois_en_france`` de chaque année. Des périodes à
+    l'étranger, des actes de la caisse de chaque État, une résidence, que
+    :func:`periodes_a_l_etranger`, :func:`pensions_etrangeres` et
+    :func:`residence` relisent."""
     assure = naissance_de_l_assure(annee_naissance, mois_naissance, sexe,
                                    jour_naissance, presomptions)
     faits_naissance = [assure]
@@ -510,9 +511,15 @@ def _etranger(assure: dict, age_liquidation: float | None, etranger: dict) -> li
                           _jour(debut), attributs={"acte": "liquidation", "age": age},
                           montant={"mensuel": pension["mensuel"], "monnaie": "EUR"},
                           territoire=_etat_etranger(pension.get("pays"))))
-    if etranger.get("residence") is not None:
+    mois = etranger.get("mois_en_france")
+    if mois is not None and not 0 <= mois <= MOIS_PAR_AN:
+        raise ValueError(f"les mois en France chaque année : de 0 à 12, reçu {mois}")
+    if etranger.get("residence") is not None or mois is not None:
+        # Hors de France, son État ; en France, les mois qu'elle y passe.
         faits.append(fait(f"residence_{ASSURE}", ASSURE, "residence", _jour(depart),
-                          territoire=_etat_etranger(etranger["residence"])))
+                          attributs=None if mois is None else {"mois_en_france": mois},
+                          territoire=(None if etranger.get("residence") is None
+                                      else _etat_etranger(etranger["residence"]))))
     return faits
 
 
@@ -857,8 +864,9 @@ def pensions_etrangeres(chronologie: dict, personne: str) -> list[dict]:
 
 
 def residence(chronologie: dict, personne: str) -> dict | None:
-    """La résidence qu'une personne déclare hors de France, si elle la dit :
-    son État pour territoire."""
+    """La résidence qu'une personne déclare après son départ, si elle la dit :
+    hors de France, son État pour territoire ; en France, la métropole, et
+    les ``mois_en_france`` qu'elle y passe chaque année."""
     faits = faits_de(chronologie, personne, "residence")
     return faits[0] if faits else None
 

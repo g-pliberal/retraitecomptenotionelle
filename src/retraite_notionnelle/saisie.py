@@ -650,10 +650,13 @@ class Saisie:
     #: ``residence_et_minimum_vieillesse``) : les périodes passées hors de
     #: France, que l'adresse porte en dates comme un début d'activité ; les
     #: pensions étrangères ; l'État où la personne réside après son départ,
-    #: vide quand c'est la France. Voir :meth:`etranger_declare`.
+    #: vide quand c'est la France ; et, pour qui y réside, les mois qu'elle y
+    #: passe chaque année, ``None`` quand elle ne le dit pas. Voir
+    #: :meth:`etranger_declare`.
     etranger: list[PeriodeEtrangereSaisie] = field(default_factory=list)
     pensions_etrangeres: list[PensionEtrangereSaisie] = field(default_factory=list)
     residence: str = ""
+    mois_en_france: int | None = None
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
@@ -803,6 +806,8 @@ class Saisie:
             pensions_etrangeres=_pensions_etrangeres_saisies(parametres, mois_de_naissance,
                                                              tolerante),
             residence=(parametres.get("residence") or "").strip(),
+            mois_en_france=(None if parametres.get("mois_en_france") in (None, "")
+                            else _entier(parametres, "mois_en_france", MOIS_PAR_AN)),
             interruptions=(parametres.get("interruptions") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
@@ -1745,12 +1750,14 @@ class Saisie:
         """La carrière hors de France que la saisie déclare : les ``periodes``
         — l'État, les âges du début et de la fin, l'``activite`` —, les
         ``pensions`` étrangères — l'État, l'``age`` où elle commence, son
-        ``montant`` mensuel en euros d'aujourd'hui —, et l'État de
-        ``residence`` après le départ, ``None`` en France. Le contexte ramène
+        ``montant`` mensuel en euros d'aujourd'hui —, l'État de ``residence``
+        après le départ, ``None`` en France, et les ``mois_en_france`` de
+        chaque année, ``None`` quand ils ne sont pas dits. Le contexte ramène
         chaque montant à la date de sa pension avant que la chronologie le
         reçoive (:func:`chronologie._personne`). ``None`` quand rien n'est
         dit."""
-        if not (self.etranger or self.pensions_etrangeres or self.residence):
+        if not (self.etranger or self.pensions_etrangeres or self.residence
+                or self.mois_en_france is not None):
             return None
         return {
             "periodes": [{"pays": periode.pays, "debut": periode.debut, "fin": periode.fin,
@@ -1758,6 +1765,7 @@ class Saisie:
             "pensions": [{"pays": pension.pays, "age": pension.debut,
                           "montant": pension.montant} for pension in self.pensions_etrangeres],
             "residence": self.residence or None,
+            "mois_en_france": self.mois_en_france,
         }
 
     def _verifier_etranger(self) -> None:
@@ -1767,7 +1775,8 @@ class Saisie:
         compte qu'une fois. Elle peut précéder le premier emploi en France.
         Une pension étrangère : un État, un montant, et un début entre quatorze
         et soixante-quinze ans, avant ou après le départ en France. La
-        résidence : un État étranger. Que le tableau des accords connaisse
+        résidence : un État étranger ; les mois en France, de zéro à douze.
+        Que le tableau des accords connaisse
         l'État, c'est au contexte de le dire, qui a les données ; ce que
         chaque accord fait des périodes, au calcul."""
         depart = self.date_de(self.liquidation, depart=True)
@@ -1808,6 +1817,10 @@ class Saisie:
                     f"{AGE_DEBUT_MINIMAL} à {AGE_LIQUIDATION_MAXIMAL} ans.")
         if self.residence:
             _verifier_etat(self.residence, "Résidence après le départ")
+        if self.mois_en_france is not None and not 0 <= self.mois_en_france <= MOIS_PAR_AN:
+            raise ErreurSaisie(
+                f"Mois en France chaque année : de 0 à {MOIS_PAR_AN}, reçu "
+                f"{self.mois_en_france}.")
 
     def demandes_de_pension_declarees(self) -> dict[str, float] | None:
         """Les pensions dont la saisie dit la date, telles que la chronologie
@@ -1925,6 +1938,8 @@ class Saisie:
                 ("invalidite_imputable", OUI if self.invalidite_imputable else None),
                 ("taux_invalidite", self.taux_invalidite)) if valeur is not None},
             **({"residence": self.residence} if self.residence else {}),
+            **({"mois_en_france": self.mois_en_france}
+               if self.mois_en_france is not None else {}),
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,

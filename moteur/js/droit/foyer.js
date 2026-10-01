@@ -54,17 +54,28 @@ export class Foyer {
 
 /**
  * La condition de résidence de l'allocation à cette date (fiche
- * `residence_et_minimum_vieillesse`) : elle n'est servie qu'en France.
- * `residence` est l'État où le bénéficiaire réside hors de France, `null` pour
- * qui n'en déclare pas (présomption `residence_en_france`).
+ * `residence_et_minimum_vieillesse`) : elle n'est servie qu'en France, à qui y
+ * séjourne plus de six mois de l'année civile, plus de neuf depuis le
+ * 1er septembre 2023. `residence` est l'État où le bénéficiaire réside hors de
+ * France, `null` pour qui n'en déclare pas (présomption `residence_en_france`) ;
+ * `moisEnFrance`, les mois qu'il y passe chaque année, `null` pour toute
+ * l'année. Voir `condition_de_residence` du Python.
  */
-export function conditionDeResidence(moteur, residence, date) {
-  if (residence === null || residence === undefined) {
+export function conditionDeResidence(moteur, residence, date, moisEnFrance = null) {
+  const ailleurs = residence !== null && residence !== undefined;
+  if (!ailleurs && (moisEnFrance === null || moisEnFrance === undefined)) {
     return true;
   }
   const version = moteur.carrieresHorsDeFrance.version(
     "residence", { "liquidation.date_effet": date });
-  return version === null || !version.parametres.residence_requise;
+  if (version === null || !version.parametres.residence_requise) {
+    return true;
+  }
+  if (ailleurs) {
+    return false;
+  }
+  const seuil = version.parametres.mois_de_residence_plus_de ?? null;
+  return seuil === null || moisEnFrance > seuil;
 }
 
 /**
@@ -79,6 +90,7 @@ export function foyerEtNet(moteur, personne, date, annee, ressources, ageAtteint
   contexte = null, carriere = null) {
   const jour = date ?? `${annee}-12-31`;
   const residence = carriere === null ? null : carriere.residence;
+  const moisEnFrance = carriere === null ? null : carriere.moisEnFrance;
   const etrangeres = carriere === null ? 0.0 : pensionsEtrangeresServies(
     moteur.macro, carriere, new DateMois(Number(jour.slice(0, 4)), Number(jour.slice(5, 7))),
     annee);
@@ -87,7 +99,7 @@ export function foyerEtNet(moteur, personne, date, annee, ressources, ageAtteint
   let plafond = null;
   let fiabilite = Fiabilite.CERTIFIEE;
   if (ageAtteint && moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
-      && conditionDeResidence(moteur, residence, jour)
+      && conditionDeResidence(moteur, residence, jour, moisEnFrance)
       && !(contexte !== null && contexte.neutralise("avantages_non_contributifs"))) {
     const bareme = moteur.minimumVieillesse.plafond(annee);
     if (bareme !== null) {

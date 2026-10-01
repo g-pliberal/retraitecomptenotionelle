@@ -30,6 +30,7 @@
 import { Carriere } from "./carriere.js";
 import { AgeConversionDroitsAcquis, SituationFoyer, TableConversion } from "./config.js";
 import { pensionsEtrangeresServies } from "./droit/etranger.js";
+import { conditionDeResidence } from "./droit/foyer.js";
 import { MinimumVieillesse } from "./regimes.js";
 
 /** Produit les deux variantes de comptes notionnels. */
@@ -196,12 +197,18 @@ export class ScenarioNotionnel {
       : 0.0;
     const plancher = base + isolement;
     const ageAtteint = (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE;
-    // Les pensions étrangères servies le mois où la garantie s'ouvre — au
-    // départ, ou aux 65 ans —, leur valeur réelle constante.
+    // Le mois où la garantie s'ouvre — au départ, ou aux 65 ans —, ses
+    // pensions étrangères, leur valeur réelle constante, et sa condition de
+    // résidence.
+    const moisOuverture = ageAtteint ? carriere.dateLiquidation
+      : carriere.dateDeLAge(MinimumVieillesse.AGE_OUVERTURE);
     const etrangeres = pensionsEtrangeresServies(
-      this.constructeur.macro, carriere,
-      ageAtteint ? carriere.dateLiquidation
-        : carriere.dateDeLAge(MinimumVieillesse.AGE_OUVERTURE), annee);
+      this.constructeur.macro, carriere, moisOuverture, annee);
+    const resident = conditionDeResidence(
+      this.scenarioActuel, carriere.residence,
+      `${String(moisOuverture.annee).padStart(4, "0")}-`
+        + `${String(moisOuverture.mois).padStart(2, "0")}-01`,
+      carriere.moisEnFrance);
     const ressources = pensionContributive + renteCapitalisee + etrangeres;
     const ouverture = ageAtteint
       ? annee
@@ -220,8 +227,7 @@ export class ScenarioNotionnel {
     const aLOuverture = pensionContributive * revalorisation
       + renteCapitalisee * erosion + etrangeres;
     // Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France.
-    const complement = carriere.residence !== null ? 0.0
-      : Math.max(0.0, plancher - aLOuverture);
+    const complement = resident ? Math.max(0.0, plancher - aLOuverture) : 0.0;
     return {
       situation: parametres.situation_foyer,
       age_atteint: ageAtteint,
@@ -239,6 +245,7 @@ export class ScenarioNotionnel {
       complement,
       residence: carriere.residence,
       pensions_etrangeres: etrangeres,
+      condition_de_residence: resident,
       servie: complement > 0,
       servie_a_la_liquidation: ageAtteint && complement > 0,
       differee: complement > 0 && !ageAtteint,

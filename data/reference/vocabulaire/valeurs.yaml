@@ -453,7 +453,8 @@ listes:
       residence_en_france:
         dit: >-
           l'assuré qui ne déclare pas de résidence hors de France réside en
-          France après son départ, plus de neuf mois par an
+          France après son départ, toute l'année quand il ne dit pas les mois
+          qu'il y passe
         valeur: en France
         appliquee_par: foyer_et_net (droit/foyer.py), qui ne sert l'allocation de solidarité aux personnes âgées qu'à qui réside en France ; son jumeau JavaScript
         entrera_a: preparer_la_chronologie
@@ -462,9 +463,10 @@ listes:
           réside en France de façon stable et régulière — plus de six mois de
           l'année civile de son versement, plus de neuf depuis le 1er septembre
           2023 — et elle est supprimée au départ hors de France (L. 815-1,
-          R. 111-2, fiche residence_et_minimum_vieillesse) ; la saisie ne
-          connaît que la résidence déclarée hors de France, à compter du
-          départ. Une résidence déclarée prend la place de la présomption
+          R. 111-2, fiche residence_et_minimum_vieillesse) ; la saisie connaît
+          la résidence déclarée hors de France, à compter du départ, et les
+          mois passés en France chaque année. Une résidence ou des mois
+          déclarés prennent la place de la présomption
 
   origines_de_ligne:
     valeurs:

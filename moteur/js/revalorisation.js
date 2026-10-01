@@ -20,7 +20,7 @@ import { DateMois } from "./calendrier.js";
 import { RevalorisationStock, SituationFoyer } from "./config.js";
 import * as liquider from "./droit/liquider.js";
 import { pensionsEtrangeresServies } from "./droit/etranger.js";
-import { foyerEtNet } from "./droit/foyer.js";
+import { conditionDeResidence, foyerEtNet } from "./droit/foyer.js";
 import { ageDeLAspa } from "./droit/invalidite.js";
 import { Fiabilite, nomFiabilite } from "./serie.js";
 
@@ -611,7 +611,9 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
   // Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France,
   // et compte ce qu'un autre État sert.
   const etrangeres = pensionsEtrangeresServies(macro, carriere, new DateMois(annee, 12));
-  const complement = ouverte && carriere.residence === null
+  const resident = conditionDeResidence(simulateur.scenarioActuel, carriere.residence,
+    dateIso(annee, 12, 31), carriere.moisEnFrance);
+  const complement = ouverte && resident
     ? Math.max(0.0, plancher - contributiveAujourdhui - rente - etrangeres)
     : 0.0;
   notionnels.notionnel_liberal = contributiveAujourdhui + complement;
@@ -628,6 +630,7 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
     garantie_ouverte: ouverte,
     plancher_garantie: plancher,
     ressources_garantie: contributiveAujourdhui + rente + etrangeres,
+    garantie_residence: resident,
   });
 }
 

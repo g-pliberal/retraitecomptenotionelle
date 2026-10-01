@@ -637,7 +637,8 @@ affirmations:
     extrait: "Le minimum vieillesse ne se sert qu'en France."
     porte: >-
       l'ASPA n'est servie, au départ ni à aucune échéance, à qui déclare résider hors
-      de France, ni la garantie vieillesse qui la remplace dans la proposition
+      de France, ou n'y passer pas plus de mois par an que la loi n'en demande, ni la
+      garantie vieillesse qui la remplace dans la proposition
     etat: verifiee
     controle: aspa_hors_de_france
 

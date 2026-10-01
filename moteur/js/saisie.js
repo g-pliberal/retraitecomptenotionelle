@@ -517,12 +517,14 @@ export const DEFAUTS = Object.freeze({
   taux_invalidite: null,
   //: Les carrières hors de France : les périodes passées hors de France
   //: — `{pays, debut, fin, activite}`, les âges comptés comme un début
-  //: d'activité —, les pensions étrangères — `{pays, montant, debut}` — et
+  //: d'activité —, les pensions étrangères — `{pays, montant, debut}` —,
   //: l'État où la personne réside après son départ, vide quand c'est la
-  //: France. Voir `etrangerDeclare`.
+  //: France, et, pour qui y réside, les mois qu'elle y passe chaque année,
+  //: `null` quand elle ne le dit pas. Voir `etrangerDeclare`.
   etranger: Object.freeze([]),
   pensions_etrangeres: Object.freeze([]),
   residence: "",
+  mois_en_france: null,
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -665,6 +667,8 @@ export class Saisie {
       etranger: periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       pensions_etrangeres: pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       residence: (parametres.residence || "").trim(),
+      mois_en_france: [undefined, null, ""].includes(parametres.mois_en_france)
+        ? null : entier(parametres, "mois_en_france", MOIS_PAR_AN),
       interruptions: (parametres.interruptions || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
@@ -1733,14 +1737,15 @@ export class Saisie {
    * La carrière hors de France que la saisie déclare : les `periodes` — l'État,
    * les âges du début et de la fin, l'`activite` —, les `pensions` étrangères —
    * l'État, l'`age` où elle commence, son `montant` mensuel en euros
-   * d'aujourd'hui —, et l'État de `residence` après le départ, `null` en
-   * France. Le contexte ramène chaque montant à la date de sa pension avant que
-   * la chronologie le reçoive. `null` quand rien n'est dit. Voir
+   * d'aujourd'hui —, l'État de `residence` après le départ, `null` en France,
+   * et les `mois_en_france` de chaque année, `null` quand ils ne sont pas dits.
+   * Le contexte ramène chaque montant à la date de sa pension avant que la
+   * chronologie le reçoive. `null` quand rien n'est dit. Voir
    * `etranger_declare` du Python.
    */
   etrangerDeclare() {
     if (this.etranger.length === 0 && this.pensions_etrangeres.length === 0
-        && !this.residence) {
+        && !this.residence && this.mois_en_france === null) {
       return null;
     }
     return {
@@ -1750,6 +1755,7 @@ export class Saisie {
       pensions: this.pensions_etrangeres.map((pension) => ({
         pays: pension.pays, age: pension.debut, montant: pension.montant })),
       residence: this.residence || null,
+      mois_en_france: this.mois_en_france,
     };
   }
 
@@ -1815,6 +1821,11 @@ export class Saisie {
     });
     if (this.residence) {
       verifierEtat(this.residence, "Résidence après le départ");
+    }
+    if (this.mois_en_france !== null
+        && !(this.mois_en_france >= 0 && this.mois_en_france <= MOIS_PAR_AN)) {
+      throw new ErreurSaisie(
+        `Mois en France chaque année : de 0 à ${MOIS_PAR_AN}, reçu ${this.mois_en_france}.`);
     }
   }
 
@@ -1974,6 +1985,7 @@ export class Saisie {
         ["taux_invalidite", this.taux_invalidite],
       ].filter(([, valeur]) => valeur !== null)),
       ...(this.residence ? { residence: this.residence } : {}),
+      ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,

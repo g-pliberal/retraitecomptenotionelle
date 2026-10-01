@@ -473,9 +473,16 @@ function etrangerDeclare(assure, ageLiquidation, etranger) {
       null, { acte: "liquidation", age }, null,
       { mensuel: pension.mensuel, monnaie: "EUR" }, etatEtranger(pension.pays)));
   });
-  if (etranger.residence !== null && etranger.residence !== undefined) {
-    faits.push(fait(`residence_${ASSURE}`, ASSURE, "residence", jour(depart), null, null,
-      null, null, etatEtranger(etranger.residence)));
+  const mois = etranger.mois_en_france ?? null;
+  if (mois !== null && !(mois >= 0 && mois <= 12)) {
+    throw new Error(`les mois en France chaque année : de 0 à 12, reçu ${mois}`);
+  }
+  const ailleurs = etranger.residence !== null && etranger.residence !== undefined;
+  if (ailleurs || mois !== null) {
+    // Hors de France, son État ; en France, les mois qu'elle y passe.
+    faits.push(fait(`residence_${ASSURE}`, ASSURE, "residence", jour(depart), null,
+      mois === null ? null : { mois_en_france: mois }, null, null,
+      ailleurs ? etatEtranger(etranger.residence) : null));
   }
   return faits;
 }
@@ -851,8 +858,9 @@ export function pensionsEtrangeres(chronologie, personne) {
 }
 
 /**
- * La résidence qu'une personne déclare hors de France, si elle la dit : son État
- * pour territoire.
+ * La résidence qu'une personne déclare après son départ, si elle la dit : hors
+ * de France, son État pour territoire ; en France, la métropole, et les
+ * `mois_en_france` qu'elle y passe chaque année.
  */
 export function residence(chronologie, personne) {
   const faits = faitsDe(chronologie, personne, "residence");

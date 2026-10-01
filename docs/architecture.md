@@ -776,10 +776,11 @@ Le relevé des droits et le résultat le signalent.
     2010 : qui déclare travailler jusqu'à son départ y demande sa pension de
     vieillesse, comme la loi le lui permettait (quatrième domaine, § 11) ;
   - pas de pension étrangère, quand l'assuré n'en déclare pas : le minimum
-    contributif n'est écrêté que de ses pensions françaises (cinquième
-    domaine, § 11) ;
+    contributif n'est écrêté que de ses pensions françaises, et l'ASPA ne
+    complète qu'elles (cinquième domaine, § 11) ;
   - résidence en France après le départ, quand l'assuré n'en déclare pas
-    d'autre : l'ASPA lui est servie (cinquième domaine, § 11).
+    d'autre, toute l'année quand il n'en dit pas les mois : l'ASPA lui est
+    servie (cinquième domaine, § 11).
 - **Un défaut légal** n'est pas une présomption : c'est la loi qui décide
   quand la personne n'a rien fait. Il s'écrit dans la version de la règle,
   parce qu'il change avec elle. Au régime général, les trimestres d'éducation

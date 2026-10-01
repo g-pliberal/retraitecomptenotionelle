@@ -656,7 +656,17 @@ export class Carriere {
    */
   get residence() {
     const fait = this.chronologie ? chrono.residence(this.chronologie, this.personne) : null;
-    return fait === null ? null : fait.territoire;
+    return fait === null ? null : fait.territoire ?? null;
+  }
+
+  /**
+   * Les mois que la personne passe en France chaque année après son départ,
+   * quand elle les dit ; `null` sinon : toute l'année, pour qui y réside. Voir
+   * `mois_en_france` du Python.
+   */
+  get moisEnFrance() {
+    const fait = this.chronologie ? chrono.residence(this.chronologie, this.personne) : null;
+    return fait === null ? null : fait.attributs.mois_en_france ?? null;
   }
 
   /**

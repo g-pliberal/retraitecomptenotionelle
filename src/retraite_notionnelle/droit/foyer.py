@@ -76,17 +76,25 @@ class Foyer:
                 "fiabilite": self.fiabilite.name.lower()}
 
 
-def condition_de_residence(moteur: ScenarioActuel, residence: str | None, date: str) -> bool:
+def condition_de_residence(moteur: ScenarioActuel, residence: str | None, date: str,
+                           mois_en_france: int | None = None) -> bool:
     """La condition de résidence de l'allocation à cette date (fiche
-    ``residence_et_minimum_vieillesse``) : elle n'est servie qu'en France, et
-    supprimée au départ hors de France. ``residence`` est l'État où le
-    bénéficiaire réside hors de France, ``None`` pour qui n'en déclare pas
-    (présomption ``residence_en_france``)."""
-    if residence is None:
+    ``residence_et_minimum_vieillesse``) : elle n'est servie qu'en France, à
+    qui y séjourne plus de six mois de l'année civile, plus de neuf depuis le
+    1er septembre 2023, et supprimée au départ hors de France. ``residence``
+    est l'État où le bénéficiaire réside hors de France, ``None`` pour qui
+    n'en déclare pas (présomption ``residence_en_france``) ; ``mois_en_france``
+    les mois qu'il y passe chaque année, ``None`` pour toute l'année."""
+    if residence is None and mois_en_france is None:
         return True
     version = moteur.carrieres_hors_de_france.version(
         "residence", {"liquidation.date_effet": date})
-    return version is None or not version["parametres"].get("residence_requise")
+    if version is None or not version["parametres"].get("residence_requise"):
+        return True
+    if residence is not None:
+        return False
+    seuil = version["parametres"].get("mois_de_residence_plus_de")
+    return seuil is None or mois_en_france > seuil
 
 
 def foyer_et_net(moteur: ScenarioActuel, personne: str, date: str | None, annee: int,
@@ -99,18 +107,19 @@ def foyer_et_net(moteur: ScenarioActuel, personne: str, date: str | None, annee:
     deux faits que l'allocation lit : les pensions qu'un autre État sert à
     cette date, qui s'ajoutent aux ressources (R. 815-22), et l'État où le
     bénéficiaire réside hors de France, s'il le déclare : elle n'y est pas
-    servie. Le contexte peut neutraliser les avantages non contributifs, et
+    servie ; ni à qui ne passe pas assez de mois en France. Le contexte peut neutraliser les avantages non contributifs, et
     l'allocation avec eux ; le paramètre
     ``minimum_vieillesse_dans_le_scenario_actuel`` la retire aussi.
     """
     jour = date or f"{annee:04d}-12-31"
     residence = None if carriere is None else carriere.residence
+    mois_en_france = None if carriere is None else carriere.mois_en_france
     etrangeres = (0.0 if carriere is None else pensions_etrangeres_servies(
         moteur.macro, carriere, DateMois(int(jour[:4]), int(jour[5:7])), annee))
     ressources += etrangeres
     montant, plafond, fiabilite = 0.0, None, Fiabilite.CERTIFIEE
     if (age_atteint and moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
-            and condition_de_residence(moteur, residence, jour)
+            and condition_de_residence(moteur, residence, jour, mois_en_france)
             and not (contexte is not None
                      and contexte.neutralise("avantages_non_contributifs"))):
         bareme = moteur.minimum_vieillesse.plafond(annee)

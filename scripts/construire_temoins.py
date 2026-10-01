@@ -891,6 +891,23 @@ def _cas() -> list[dict]:
         "naissance": "1955-03-15", "debut": "1994-01", "liquidation": "2020-04",
         "unite_revenu": "moyen", "salaire": "0.2", "etranger1_pays": "MA",
         "etranger1_debut": "1990-01", "etranger1_fin": "1994-01", "residence": "MA"}))
+    # Les limites du domaine, levées : la même petite carrière en France huit
+    # mois par an, qui garde l'ASPA de son départ en 2020 mais plus celle
+    # d'aujourd'hui, et une pension marocaine qui la réduit d'autant ; les
+    # années du salaire annuel moyen de la pension proratisée, réduites au
+    # prorata des régimes étrangers équivalents (circulaire de 2008).
+    petite_au_maroc = {"naissance": "1955-03-15", "debut": "1994-01",
+                       "liquidation": "2020-04", "unite_revenu": "moyen", "salaire": "0.2",
+                       "etranger1_pays": "MA", "etranger1_debut": "1990-01",
+                       "etranger1_fin": "1994-01"}
+    cas.append(("etranger_huit_mois_en_france", {**petite_au_maroc, "mois_en_france": "8"}))
+    cas.append(("etranger_pension_marocaine_dans_l_aspa", {
+        **petite_au_maroc, "pension_etrangere1_pays": "MA", "pension_etrangere1": "150",
+        "pension_etrangere1_debut": "2019-01"}))
+    cas.append(("etranger_salaire_moyen_reduit_2009", {
+        "naissance": "1949-01-15", "debut": "1993-01", "liquidation": "2009-07",
+        "etranger1_pays": "DE", "etranger1_debut": "1969-07", "etranger1_fin": "1988-01",
+        "etranger2_pays": "BE", "etranger2_debut": "1988-01", "etranger2_fin": "1993-01"}))
     # LE RÉTABLISSEMENT : qui part sans la durée qui ouvre une pension — quinze
     # ans avant 2011, deux depuis — passe au régime général et à l'Ircantec,
     # le premier portant le dernier traitement dans la limite du plafond de

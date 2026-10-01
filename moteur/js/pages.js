@@ -1331,9 +1331,14 @@ function etrangerFormulaire(saisie, contexte) {
   const residence = g.liste("residence", "Résidence après le départ",
     [["", "en France"], ...etats, autre], saisie.residence, "", {},
     "L'allocation de solidarité aux personnes âgées ne se sert qu'à qui réside en "
-    + "France ; votre pension française, partout dans le monde.");
+    + "France ; votre pension française, partout dans le monde.")
+    + g.champ("mois_en_france", "Mois en France par an",
+      saisie.mois_en_france === null ? "" : String(saisie.mois_en_france),
+      "si vous y résidez", "number", { min: "0", max: "12", step: "1" },
+      "L'allocation ne se sert qu'à qui séjourne en France plus de neuf mois par "
+      + "année civile, plus de six avant septembre 2023.");
   const ouvert = saisie.etranger.length > 0 || saisie.pensions_etrangeres.length > 0
-    || Boolean(saisie.residence);
+    || Boolean(saisie.residence) || saisie.mois_en_france !== null;
   return `
   <details class="options"${ouvert ? " open" : ""}>
     ${g.sommaire("Carrière hors de France")}
@@ -3103,6 +3108,13 @@ conventions.`);
 déclarez résider hors de France après votre départ : l'ASPA ne s'ajoute à votre
 pension à aucun âge, ni, dans la proposition, la garantie vieillesse qui la
 remplace.`);
+  } else if (carriere.moisEnFrance !== null) {
+    const mois = carriere.moisEnFrance;
+    notes.push(`<strong>Le minimum vieillesse ne se sert qu'en France.</strong> Vous
+déclarez y passer ${mois} mois par an : l'ASPA, et dans la proposition la garantie
+vieillesse qui la remplace, ne se servent qu'à qui y séjourne plus de neuf mois par
+année civile, plus de six avant septembre 2023, la caisse totalisant les séjours de
+l'année.`);
   }
   return notes.map((note) => `<div class="note">${note}</div>`).join("\n");
 }
@@ -4574,6 +4586,10 @@ function garantieDAujourdhui(comparaison) {
   if (comparaison.carriere.residence !== null) {
     return debut + "Vous résidez hors de France : elle ne vous est pas servie.</p>";
   }
+  if (!aujourdhui.garantie_residence) {
+    return debut + `Vous ne passez que ${comparaison.carriere.moisEnFrance} mois par `
+      + "an en France : elle ne vous est pas servie.</p>";
+  }
   if (!aujourdhui.garantie_ouverte) {
     const ouverture = comparaison.carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE;
     return debut + `Elle ne s'ouvre qu'à 65 ans, en ${ouverture} : rien `
@@ -5586,7 +5602,10 @@ function garantieVieillesse(comparaison, saisie) {
       garantie.residence
         ? "nulle hors de France : comme l'ASPA qu'elle remplace, elle ne se sert "
           + "qu'à qui réside en France"
-        : `max(0, c − ${reference}), financée par l'impôt, servie à partir de 65 ans`
+        : !garantie.condition_de_residence
+          ? "nulle : comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui "
+            + "séjourne en France assez de mois par an"
+          : `max(0, c − ${reference}), financée par l'impôt, servie à partir de 65 ans`
           + (garantie.age_atteint
             ? "" : ` — soit ici à compter de ${garantie.annee_ouverture}`),
       `${g.eurosCentimes(garantie.complement)} par an`],
@@ -5603,6 +5622,11 @@ function garantieVieillesse(comparaison, saisie) {
       + "garantie, comme l'ASPA qu'elle remplace, ne s'y sert pas, et le système 4 "
       + "ne verse que votre compte notionnel, fait de vos seules cotisations "
       + "françaises.</p>";
+  } else if (!garantie.condition_de_residence) {
+    lecture = "<p>Ici, vous déclarez ne passer en France que "
+      + `${comparaison.carriere.moisEnFrance} mois par an : la garantie, comme `
+      + "l'ASPA qu'elle remplace, ne se sert qu'à qui y séjourne plus longtemps, "
+      + "et le système 4 ne verse que votre compte notionnel.</p>";
   } else if (garantie.servie_a_la_liquidation) {
     lecture = "<p>Ici, la pension obligatoire de "
       + `${g.eurosCentimes(garantie.ressources / 12)} par mois `

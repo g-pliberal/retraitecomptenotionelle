@@ -121,7 +121,11 @@ def test_la_saisie_lit_la_carriere_hors_de_france_et_la_rend_a_l_adresse():
     assert relue.etranger_declare() == declare
     assert _saisie().etranger_declare() is None
     assert _saisie(residence="autre").etranger_declare() == {
-        "periodes": [], "pensions": [], "residence": "autre"}
+        "periodes": [], "pensions": [], "residence": "autre", "mois_en_france": None}
+    # Les mois passés en France chaque année, pour qui y réside.
+    en_france = _saisie(mois_en_france="8")
+    assert en_france.etranger_declare()["mois_en_france"] == 8
+    assert "mois_en_france=8" in en_france.requete()
 
 
 def test_une_annee_passee_hors_de_france_n_est_pas_travaillee_en_france():
@@ -175,6 +179,8 @@ def test_une_annee_passee_hors_de_france_n_est_pas_travaillee_en_france():
     ({"pension_etrangere1_pays": "DE", "pension_etrangere1": "250",
       "pension_etrangere1_debut": "2045-07"}, "soit de 14 à 75 ans"),
     ({"residence": "FR"}, "Résidence après le départ : la France n'est pas un État étranger"),
+    ({"mois_en_france": "13"}, "Mois en France chaque année : de 0 à 12"),
+    ({"mois_en_france": "-1"}, "Mois en France chaque année : de 0 à 12"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(champs, refus):
     with pytest.raises(ErreurSaisie, match=refus):
@@ -310,6 +316,8 @@ REQUETES = [
      "etranger1_pays": "MA", "etranger1_debut": "1980-01", "etranger1_fin": "1988-01",
      "pension_etrangere1_pays": "MA", "pension_etrangere1": "310",
      "pension_etrangere1_debut": "2020-12"},
+    {"naissance": "1957-04-15", "debut": "1982-01", "liquidation": "2022-01",
+     "mois_en_france": "7"},
 ]
 
 #: Ce que le portage lit de la carrière que la saisie bâtit.
@@ -340,6 +348,7 @@ const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
       p.activite]),
     pensions: vue.pensionsEtrangeres.map((p) => [p.pays, mois(p.debut), p.mensuel]),
     residence: vue.residence,
+    mois_en_france: vue.moisEnFrance,
   };
 });
 process.stdout.write(JSON.stringify(sortie));
@@ -371,6 +380,7 @@ def _lu_par_python(monkeypatch, requete: dict) -> dict:
                      for p in vue.periodes_a_l_etranger],
         "pensions": [[p.pays, mois(p.debut), p.mensuel] for p in vue.pensions_etrangeres],
         "residence": vue.residence,
+        "mois_en_france": vue.mois_en_france,
     }
 
 
@@ -378,7 +388,7 @@ def test_le_portage_lit_les_memes_faits(monkeypatch):
     """La saisie et la carrière des deux moteurs lisent les mêmes faits de la
     même adresse : l'adresse qu'elles réécrivent, les années que l'étranger
     interrompt, les périodes, les pensions ramenées à leur date sur les mêmes
-    prix, la résidence."""
+    prix, la résidence et les mois passés en France."""
     import json
     import shutil
     import subprocess
@@ -760,6 +770,27 @@ def test_l_aspa_compte_les_pensions_etrangeres(contexte, simulateur):
         marocaine.aujourd_hui.actuel.minimum_vieillesse)
 
 
+@pytest.mark.parametrize("mois, au_depart, aujourd_hui", [
+    # Parti en 2020 : plus de six mois suffisent au départ ; aujourd'hui, il
+    # en faut plus de neuf (L. 815-1, R. 111-2, depuis le 1er septembre 2023).
+    ("12", True, True), ("10", True, True), ("8", True, False), ("6", False, False),
+])
+def test_l_aspa_demande_assez_de_mois_en_france(contexte, mois, au_depart, aujourd_hui):
+    """Qui réside en France n'a l'allocation que s'il y séjourne « plus de six
+    mois au cours de l'année civile de versement », plus de neuf depuis le
+    1er septembre 2023 : la caisse totalise ses séjours de l'année (exposé de
+    la Cnav « Condition de résidence - Aspa »). La garantie de la proposition
+    garde la condition de l'ASPA qu'elle remplace."""
+    simulation = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
+                                                         "mois_en_france": mois}))
+    assert (_aspa(simulation.actuel) > 0) is au_depart
+    assert (simulation.aujourd_hui.actuel.minimum_vieillesse > 0) is aujourd_hui
+    garantie = simulation.notionnel_liberal.garantie_vieillesse
+    assert (garantie.complement > 0) is au_depart
+    assert garantie.condition_de_residence is au_depart
+    assert (simulation.aujourd_hui.garantie_vieillesse > 0) is aujourd_hui
+
+
 def test_la_garantie_compte_les_pensions_etrangeres(contexte, simulateur):
     """La garantie de la proposition « remplace l'ASPA » (README) et porte au
     plancher toutes les retraites obligatoires : celle qu'un autre État sert
@@ -924,6 +955,9 @@ CARRIERES_HORS_DE_FRANCE = [
     {**PETITE_CARRIERE, **AU_MAROC_AVANT, **PENSION_MAROCAINE},
     {**PETITE_CARRIERE, **AU_MAROC_AVANT, **PENSION_MAROCAINE,
      "pension_etrangere1_debut": "2024-01"},
+    # Les mois passés en France chaque année.
+    {**PETITE_CARRIERE, **AU_MAROC_AVANT, "mois_en_france": "8"},
+    {**PETITE_CARRIERE, **AU_MAROC_AVANT, "mois_en_france": "6"},
     # Un seul accord à la fois, et les États tiers qu'une convention fait
     # compter.
     {"naissance": "1963-03-15", "debut": "2001-01", "liquidation": "2026-01",

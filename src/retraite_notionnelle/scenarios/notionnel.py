@@ -107,6 +107,7 @@ from ..carriere import Carriere
 from ..config import AgeConversionDroitsAcquis, Parametres, SituationFoyer
 from ..donnees.chargement import Fiabilite
 from ..droit.etranger import pensions_etrangeres_servies
+from ..droit.foyer import condition_de_residence
 from ..moteur.age_reference import AgeReference, EcartAge
 from ..moteur.capitalisation import Capitalisation, ConstructeurCapitalisation
 from ..moteur.compte import CompteNotionnel, ConstructeurCompte
@@ -190,6 +191,10 @@ class GarantieVieillesse:
     #: liquidation : des retraites obligatoires elles aussi, que la garantie
     #: compte comme l'ASPA qu'elle remplace (fiche ``garantie_vieillesse``).
     pensions_etrangeres: float = 0.0
+    #: La condition de résidence de l'ASPA, que la garantie garde, à
+    #: l'ouverture : fausse pour qui réside hors de France, ou n'y passe pas
+    #: assez de mois par an.
+    condition_de_residence: bool = True
 
     @property
     def servie(self) -> bool:
@@ -486,7 +491,8 @@ class ScenarioNotionnel:
 
         LA RÉSIDENCE aussi : la garantie, comme l'ASPA qu'elle remplace, ne se
         sert qu'à qui réside en France (README, page Coût) ; nulle pour qui
-        déclare résider ailleurs. Et les pensions qu'un autre État sert à
+        déclare résider ailleurs, ou n'y passer pas plus de mois par an que
+        l'ASPA n'en demande à l'ouverture. Et les pensions qu'un autre État sert à
         l'ouverture : la garantie « remplace l'ASPA » (README), qui les compte
         (R. 815-22), et porte au plancher toutes les retraites obligatoires
         (fiche ``garantie_vieillesse``), dont celles-là.
@@ -513,12 +519,17 @@ class ScenarioNotionnel:
         )
         plancher = base + isolement
         age_atteint = (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE
-        # Les pensions étrangères servies le mois où la garantie s'ouvre —
-        # au départ, ou aux 65 ans —, leur valeur réelle constante.
+        # Le mois où la garantie s'ouvre — au départ, ou aux 65 ans —, ses
+        # pensions étrangères, leur valeur réelle constante, et sa condition
+        # de résidence.
+        mois_ouverture = (carriere.date_liquidation if age_atteint
+                          else carriere.date_de_l_age(MinimumVieillesse.AGE_OUVERTURE))
         etrangeres = pensions_etrangeres_servies(
-            self.constructeur.macro, carriere,
-            carriere.date_liquidation if age_atteint
-            else carriere.date_de_l_age(MinimumVieillesse.AGE_OUVERTURE), annee)
+            self.constructeur.macro, carriere, mois_ouverture, annee)
+        resident = condition_de_residence(
+            self.scenario_actuel, carriere.residence,
+            f"{mois_ouverture.annee:04d}-{mois_ouverture.mois:02d}-01",
+            carriere.mois_en_france)
         ressources = pension_contributive + rente_capitalisee + etrangeres
         ouverture = (
             annee if age_atteint
@@ -554,10 +565,10 @@ class ScenarioNotionnel:
             revalorisation_differee=revalorisation,
             ressources_a_l_ouverture=a_l_ouverture,
             erosion_rente=erosion,
-            complement=(0.0 if carriere.residence is not None
-                        else max(0.0, plancher - a_l_ouverture)),
+            complement=max(0.0, plancher - a_l_ouverture) if resident else 0.0,
             residence=carriere.residence,
             pensions_etrangeres=etrangeres,
+            condition_de_residence=resident,
         )
 
     # -- scénario 3 ----------------------------------------------------------

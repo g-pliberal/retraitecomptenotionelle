@@ -808,7 +808,15 @@ class Carriere:
         déclare hors de France ; ``None`` sinon (fiche
         ``residence_et_minimum_vieillesse``)."""
         fait = chrono.residence(self.chronologie, self.personne) if self.chronologie else None
-        return None if fait is None else fait["territoire"]
+        return None if fait is None else fait.get("territoire")
+
+    @cached_property
+    def mois_en_france(self) -> int | None:
+        """Les mois que la personne passe en France chaque année après son
+        départ, quand elle les dit ; ``None`` sinon : toute l'année, pour qui
+        y réside (présomption ``residence_en_france``)."""
+        fait = chrono.residence(self.chronologie, self.personne) if self.chronologie else None
+        return None if fait is None else fait["attributs"].get("mois_en_france")
 
     @cached_property
     def emploi_retraite(self) -> "dict | None":

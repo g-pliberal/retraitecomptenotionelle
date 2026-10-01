@@ -1448,7 +1448,7 @@ def _(m: Modele):
 def _(m: Modele):
     """La petite carrière qui reçoit l'ASPA en France n'en reçoit rien au
     Maroc, ni au départ ni aujourd'hui (droit/foyer.py), ni la garantie
-    vieillesse de la proposition."""
+    vieillesse de la proposition ; ni en France, à six mois par an."""
     carriere = dict(naissance="1955-03-15", debut="1994-01", liquidation="2020-04",
                     unite_revenu="moyen", salaire="0.2")
     en_france = m.simuler_requete(**carriere)
@@ -1463,6 +1463,13 @@ def _(m: Modele):
     assert en_france.notionnel_liberal.garantie_vieillesse.complement > 0
     assert au_maroc.notionnel_liberal.garantie_vieillesse.complement == 0
     assert au_maroc.aujourd_hui.garantie_vieillesse == 0
+    # Et qui réside en France sans y passer assez de mois : six ne suffisent
+    # pas, ni au départ, ni aujourd'hui.
+    six_mois = m.simuler_requete(**carriere, mois_en_france="6")
+    assert not any(a.code == "minimum_vieillesse"
+                   for a in six_mois.actuel.avantages_appliques)
+    assert six_mois.aujourd_hui.actuel.minimum_vieillesse == 0
+    assert six_mois.notionnel_liberal.garantie_vieillesse.complement == 0
 
 
 @controle("retraite_progressive_servie")
