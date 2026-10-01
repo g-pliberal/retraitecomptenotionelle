@@ -4477,3 +4477,75 @@ des calculs chaude. La première suite après une retouche de `src/`, `data/` ou
 `scripts/` en tient encore cinq : la mémoire des calculs lourds s'indexe sur
 tout le code, et se refait entière. L'indexer sur le seul code du modèle est le
 levier suivant.
+
+### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
+
+**Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
+autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore
+pris dans le dépôt. Je veux qu'on fasse une liste exhaustive. »
+
+**Fait, le 1er octobre 2026 : le registre.** Celui que la note 0001
+prévoyait (§ 3.4, annexe B) est né : `data/reference/referents.yaml`. Il
+recense 69 modèles, 47 en France et 22 à l'étranger ou dans les
+organisations internationales : 32 au code ouvert, un sur demande, 13
+documentés sans leur code, 23 non publics. Chacun dit ce qu'il couvre, ce
+dont il dépend, sa licence et ce qu'elle permet au dépôt, comment le
+confronter, les écarts trouvés, et ce qu'il confronte : le droit réel, la
+page Coût ou l'arithmétique de la proposition. Quatre recherches menées en
+parallèle l'ont établi — la statistique publique, les caisses et les
+ministères, le code ouvert et la recherche, les pays à comptes notionnels —,
+chaque fait lu sur sa page le jour même ; le recensement des modèles de
+microsimulation du COR (séance du 5 mars 2020) a servi de contrôle : il
+n'en nomme aucun, en France, qui n'y soit pas. Le registre des sources reçoit 41 adresses à explorer,
+leur accès mesuré par `sonder_sources.py`. Un test tient la forme du
+registre, la règle des licences du § 3.4, et ses renvois aux fiches, au
+manifeste et au registre des sources ; le tableau de bord le résume.
+L'architecture passe en version 5.33. L'action 136, sur
+OpenFisca-France-Pension, en est un cas particulier, mené à part.
+
+**Ce que la liste apprend.**
+
+- *Les familles.* Un accord à l'intérieur d'une famille ne vaut qu'une
+  confirmation. Les barèmes de l'IPP nourrissent OpenFisca-France-Pension,
+  TIL, PENSIPP, TRAJECTOiRE et la moitié des paramètres de retraite
+  d'OpenFisca-France. La DREES ne tient qu'une lignée, de CALIPER (2013) à
+  TRAJECTOiRE, par calcul_pension, et c'est elle qui calcule les cas types du
+  COR. Restent hors de toute famille : Destinie 2, Ines, EDIFIS, EUROMOD,
+  Catala, et les lectures de la société civile.
+- *Aucune caisse ne publie son moteur.* La Cnav décrit le sien en onze
+  fiches, sans formule ; PRISME, Pablo, Canopée, MisrAA, Aphrodite et Osiris
+  ne se connaissent que par leurs documents et leurs résultats.
+- *Un écart nouveau, au texte.* `legiretraite`, le paquet de paramètres que la
+  DREES a ouvert le 7 septembre 2026, garde pour la durée requise des
+  générations 1964 et 1965 les valeurs de la loi de 2023, quand ses âges
+  suivent la loi du 30 décembre 2025. Celui de Catala, sur l'âge de 1967,
+  tient toujours. Ni OpenFisca-France-Pension, ni Destinie 2, ni la version
+  publique de TRAJECTOiRE n'ont cette loi ; les barèmes de l'IPP l'ont.
+- *PENSIPP a codé une conversion en comptes notionnels pour la France dès
+  2013* : la seule autre qui se lise, sans licence, donc sans se copier.
+- *À l'étranger*, la Suède publie ses deux outils, pour un usage non
+  commercial, et a voté un accélérateur qui rend son frein symétrique (loi
+  2026:1301, appliqué pour la première fois à 2027). OG-Core est le seul code
+  ouvert établi qui calcule une pension notionnelle.
+
+**Ce qui reste.**
+
+1. Confronter, dans l'ordre que le tableau de bord donne : d'abord ce qui est
+   ouvert, jamais confronté et indépendant — Destinie 2 (la réversion, l'ASPA
+   et les enfants, que trois fiches attendent), Ines (l'ASPA et les
+   prélèvements), `legiretraite` (les âges et les durées), EDIFIS (les taux
+   de cotisation) ; puis le diviseur de la proposition contre ceux de la
+   Suède, de la Norvège et de l'Italie, refaits depuis leur méthode publiée.
+2. Relire la page de la DREES sur CALIPER, et son communiqué de 2021, quand
+   le serveur répondra : il ferme la connexion depuis le 22 septembre 2026. Un
+   moteur de recherche y lit que calcul_pension en serait la réécriture en R ;
+   ce n'est pas retenu, faute de lecture.
+3. Les pistes que les recherches n'ont pas vérifiées : le moteur réel de
+   M@rel ; l'usage actuel d'Aphrodite, d'Oscar et d'Osiris ; des modèles pour
+   les sections libérales, l'IRCEC et la CAVIMAC ; le calcul du Pension
+   Adequacy Report ; la Russie, la Mongolie, l'Azerbaïdjan et l'Égypte. Les
+   inventaires des « algorithmes publics » d'Etalab et de l'ODAP ne recensent
+   rien sur les retraites.
+4. Les fiches nomment leurs référents par l'identifiant du registre (le champ
+   `referents` du contrat de la fiche) : trois le font ; les autres le feront
+   à leur relecture.

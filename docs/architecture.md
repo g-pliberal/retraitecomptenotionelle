@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.32, du 1er octobre 2026 ; l'architecture a été décidée par le
+*Version 5.33, du 1er octobre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements,
 un par domaine clos ou par décision, est en bas (« Les versions »). Il est
@@ -223,6 +223,9 @@ ce qu'il couvre, et un écart se tranche par la preuve (§ 3.3). Un registre,
   pour une confirmation ;
 - comment on le confronte : des paramètres à comparer, un calcul à rejouer,
   des résultats publiés à retrouver ;
+- ce qu'il confronte : le droit réel du scénario 1, les masses de la page
+  Coût, ou l'arithmétique des comptes notionnels de la proposition — jamais
+  ses choix, que son texte décide (§ 3.1) ;
 - ses conditions d'usage. Un code sous GPL, EUPL ou AGPL s'exécute à part, et
   seules ses sorties entrent au dépôt, qui est sous licence Apache. Un
   simulateur officiel ne se balaie pas sans l'accord de la caisse ;
@@ -233,9 +236,13 @@ et confirmée par au moins une source indépendante : un exemple officiel, un
 modèle indépendant, un résultat publié. Le tableau de bord compte ces
 confirmations (§ 9.1).
 
-Les sources recensées, par usage. Leur version et leur étendue au jour du
-recensement, le 25 septembre 2026, sont dans la note 0001 (§ 3.4 et 14.9) ;
-le registre des autres modèles les tiendra à jour.
+Les principales sources, par usage. Leur version et leur étendue au jour du
+premier recensement, le 25 septembre 2026, sont dans la note 0001 (§ 3.4 et
+14.9). Le registre les tient à jour, et se veut exhaustif : il recense aussi
+les modèles dont seuls la méthode ou des résultats sont publiés, pour qu'on
+sache ce qui existe et ce qui ne se lit pas, et, à l'étranger, ceux des
+comptes notionnels. Les simulateurs officiels n'y sont pas : ils sont au
+registre des sources (§ 3.5).
 
 | Usage | Source | Ce qu'elle apporte | Ce dont elle dépend |
 |---|---|---|---|
@@ -2449,6 +2456,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.33**, 1er octobre 2026 : le registre des autres modèles, que la note 0001 prévoyait, ouvert à la demande du propriétaire, qui veut une liste exhaustive (§ 3.4). `data/reference/referents.yaml` recense soixante-neuf modèles, publics ou non, en France et, pour l'arithmétique des comptes notionnels, à l'étranger : ce que chacun couvre, ce dont il dépend, sa licence et ce qu'elle permet, comment le confronter, les écarts trouvés, et ce qu'il confronte, rubrique nouvelle — le droit réel, la page Coût ou la proposition, jamais les choix de celle-ci. Un test tient sa forme, la règle des licences et ses renvois ; le registre des sources reçoit les adresses à explorer ; le tableau de bord le résume.
 
 - **5.32**, 1er octobre 2026 : le cinquième domaine, les carrières hors de France, clos (§ 11). Quatre fiches le portent, découpées en versions et lues par le moteur dans les deux langages, avec le tableau des accords, qui dit l'accord en vigueur avec chaque État, son calcul et les États tiers qu'une convention fait compter ; « coordonner les affiliations » et « compter les durées » disent ce que chaque accord fait des périodes étrangères, un seul à la fois (leurs schémas en versions 2 et 3) ; neuf exemples publiés le rejouent, du CLEISS et de la Cnav ; deux présomptions entrent au § 5.6 ; le formulaire le demande dans un bloc facultatif ; la page Coût ne bouge pas de son fait, qui retirait déjà de la garantie les retraités résidant à l'étranger ; la proposition n'en fait pas exception, son compte ne connaissant que les cotisations versées en France et sa garantie que les retraités qui y résident, comme son texte le disait déjà ; la référence de conservation est refigée (§ 12).
 

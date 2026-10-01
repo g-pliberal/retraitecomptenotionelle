@@ -4053,3 +4053,34 @@ journal:
     reste: >-
       Les deux règles, à lire sur Légifrance et dans la circulaire qui les applique avant
       d'en écrire la fiche (action 136, étape 3) ; rien n'en est commencé.
+  - date: "2026-10-01"
+    session: >-
+      les autres modèles publics, demandés en liste exhaustive par le propriétaire : le
+      registre data/reference/referents.yaml (action 137)
+    consulte: >-
+      Les dépôts et les pages des 69 modèles du registre, lus le 1er octobre 2026 : la
+      DREES (git.drees.fr et gitlab.com, dont legiretraite, TRAJECTOiRE, calcul_pension,
+      EDIFIS ; le Dossier solidarité et santé n° 37 sur CALIPER, par un miroir, son site
+      ne répondant pas), l'INSEE (Destinie 2, Ines), le COR (séances du 5 mars 2020 et du
+      19 décembre 2024, rapport annuel de juin 2026, simulateur), la Cnav (PRISME, ses
+      fiches de traitements algorithmiques), le SRE, la Caisse des dépôts, l'Agirc-Arrco,
+      la DG Trésor (Saphir, Aphrodite), l'Urssaf (paquets npm modele-ti, modele-social,
+      modele-as), OpenFisca, LexImpact, Catala, l'IPP, EUROMOD, code.gouv.fr et les
+      inventaires des algorithmes publics ; à l'étranger, Pensionsmyndigheten et la loi
+      suédoise, NAV et Lovdata, la RGS et le décret italien du 20 novembre 2024, la ZUS et
+      le GUS, la VSAA, l'ETK, la Banque mondiale, l'OCDE, la Commission européenne, l'OIT.
+    trouve: >-
+      legiretraite (DREES, version 0.1.6 du 18 septembre 2026) garde dans dureeRequise.csv
+      171 trimestres pour la génération 1964 et 172 pour 1965, quand L. 161-17-3, dans sa
+      rédaction de la loi du 30 décembre 2025, en donne 170, puis 170 et 171 ; ses âges
+      d'ouverture, eux, suivent cette loi. Catala garde 62 ans et 9 mois pour 1967.
+      OpenFisca-France-Pension, Destinie 2 et la version publique de TRAJECTOiRE n'ont pas
+      la loi du 30 décembre 2025 ; les barèmes de l'IPP l'ont, à effet du 1er septembre
+      2026, et rejoignent les durées que le dépôt certifie. En Suède, la loi 2026:1301
+      ajoute à l'indice d'équilibre un accélérateur au-dessus de 1,15, appliqué pour la
+      première fois à 2027.
+    reste: >-
+      Aucun modèle nouveau n'est encore confronté au scénario 1 ni à la proposition : Destinie
+      2, Ines, legiretraite et EDIFIS d'abord, puis les diviseurs suédois, norvégien et
+      italien (action 137). La page CALIPER de la DREES et son communiqué de 2021 restent à
+      lire quand le serveur répondra.

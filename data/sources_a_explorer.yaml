@@ -4357,3 +4357,501 @@ sources:
       Le rachat d'années d'études chez les clercs de notaires : sixième barème
       de rachat du chantier, et fiche `partiel`.
     statut: a_explorer
+
+  # ---- Les autres modèles, recensés le 1er octobre 2026 ---------------------
+  # Ces lignes ne viennent pas des 260 adresses du 22 septembre : elles sont
+  # nées de la liste exhaustive que le propriétaire a demandée ce jour-là. Le
+  # registre des autres modèles (data/reference/referents.yaml) dit ce que
+  # chacun vaut comme confirmation ; ces lignes disent ce qu'on va y chercher,
+  # et où l'on en est. Les modèles sans adresse à explorer n'ont que leur ligne
+  # au registre.
+
+  - id: ipp_baremes_yaml
+    url: https://gitlab.com/ipp/partage-public-ipp/baremes-ipp/baremes-ipp-yaml
+    nature: bareme
+    acces: navigateur
+    regimes: []
+    a_en_tirer: >-
+      Les 155 fichiers de `retraites/`, à jour de la loi du 30 décembre 2025 :
+      un recoupement de chaque table du dépôt qui n'en a pas, et la référence
+      de chaque marche quand ils la portent (un tiers des dates).
+    statut: a_explorer
+    note: >-
+      Mesuré le 1er octobre 2026 par `scripts/fetch/sonder_sources.py` : la
+      page est une coquille que le JavaScript remplit. Le code, lui, se
+      clone (`git clone`, le même jour).
+
+  - id: leximpact_reformes
+    url: https://git.leximpact.dev/leximpact/simulateur-socio-fiscal/openfisca/openfisca-france-reforms
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les seize cas types de retraités, rangés par décile, et leurs
+      prélèvements : de quoi confronter le taux uniforme de 9,1 % que le
+      modèle applique aux pensions.
+    statut: a_explorer
+
+  - id: ipp_taxipp
+    url: https://gitlab.com/ipp/partage-public-ipp/taxipp
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le chiffrage de la note IPP n° 129 (abattement de 10 %, désindexation
+      des pensions de base, alignement de la CSG), à opposer à
+      docs/chiffrage_plf.md.
+    statut: a_explorer
+
+  - id: ipp_til_pension
+    url: https://github.com/TaxIPP-Life/Til-Pension
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Les règles de 2014 de cinq régimes, d'où vient l'architecture
+      d'OpenFisca-France-Pension : à lire pour savoir ce que celui-ci en a
+      hérité.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: ipp_pensipp
+    url: https://github.com/abozio/PENSIPP
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      La conversion en comptes notionnels que l'IPP a codée pour la France en
+      2013 (`OutilsCN.R`, `Simulations/CN`) : la seule autre mécanique
+      notionnelle française qui se lise. Sans licence : se lit, ne se copie
+      pas.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: insee_destinie_2
+    url: https://github.com/InseeFr/Destinie-2
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      La réversion, l'ASPA et les majorations pour enfants, calculées par un
+      modèle dont les paramètres ne viennent pas de l'IPP : la confirmation
+      indépendante que trois fiches attendent.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git ls-remote` et `git
+      clone` acceptés (1er octobre 2026).
+
+  - id: insee_ines
+    url: https://gitlab.com/insee_drees_cnaf/ines-public
+    nature: code
+    acces: navigateur
+    regimes: []
+    a_en_tirer: >-
+      L'ASPA et les prélèvements des pensions selon le revenu fiscal
+      (`R/14_minima_pa.R`, `R/12_cotisations.R`) : une seconde source, hors
+      d'OpenFisca, pour le foyer et le net.
+    statut: a_explorer
+    note: >-
+      Mesuré le 1er octobre 2026 par `scripts/fetch/sonder_sources.py` : la
+      page est une coquille que le JavaScript remplit. Le code, lui, se
+      clone (`git clone`, le même jour).
+
+  - id: drees_legiretraite
+    url: https://git.drees.fr/drees_code_public/outils/legiretraite
+    nature: code
+    acces: navigateur
+    regimes: []
+    a_en_tirer: >-
+      Les âges et les durées par génération, caisse et catégorie, et les
+      revalorisations par caisse : une table à opposer aux nôtres, écart par
+      écart ; sa durée requise de 1964 et 1965 est déjà en écart.
+    statut: a_explorer
+    note: >-
+      Mesuré le 1er octobre 2026 par `scripts/fetch/sonder_sources.py` : la
+      page est une coquille que le JavaScript remplit. Le code, lui, se
+      clone (`git clone`, le même jour).
+
+  - id: drees_edifis
+    url: https://git.drees.fr/drees_code_public/outils/edifis
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les taux de cotisation vieillesse et Agirc-Arrco de 2015 à 2025, d'une
+      source indépendante des barèmes de l'IPP.
+    statut: a_explorer
+
+  - id: dgtresor_saphir
+    url: https://github.com/DGTresor/Saphir
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      La CSG, la CRDS, la CASA et le minimum vieillesse de 2017, codés par la
+      DG Trésor : un recoupement daté du foyer et du net.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: catala_examples
+    url: https://github.com/CatalaLang/catala-examples
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Les articles de l'âge, du taux plein, de l'inaptitude et de l'ASPA,
+      transcrits mot à mot : l'écart de la génération 1967 y reste, d'autres
+      sont à chercher.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: dgfip_ir_catala
+    url: https://gitlab.adullact.net/dgfip/ir-catala
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      L'abattement de 10 % des pensions (article 158, 5 a, du code général des
+      impôts) en Catala, pour le jour où le dépôt calculera l'impôt du
+      retraité.
+    statut: a_explorer
+
+  - id: jrc_euromod
+    url: https://github.com/ec-jrc/JRC-EUROMOD-software-source-code
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Les règles françaises de la CSG, de la CRDS, de la CASA et de l'ASPA,
+      sous CC BY 4.0 et donc recopiables en citant : un recoupement du foyer
+      et du net.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: scherrer_retraites
+    url: https://github.com/brunoscherrer/retraites
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Le simulateur du COR reproduit en Python, et ses projections de 2019 :
+      une confrontation agrégée possible tant que le simulateur officiel est
+      fermé.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: corral_retraites_cor2026
+    url: https://github.com/AxelCorral/retraites-cor2026
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Un modèle comptable sur les séries du COR de 2026, celles que le dépôt
+      lit aussi : à comparer à la page Coût, convention par convention.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: tilloy_retraites_2027
+    url: https://github.com/AntoineTilloy/retraites-2027
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      La pension nette de trois cas types et ses seuils de CSG de 2026, lus
+      dans l'instruction de la DSS du 11 décembre 2025 : un recoupement des
+      prélèvements.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: aurain_retraites_simulateur
+    url: https://github.com/ManZanau/retraites-simulateur
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Les âges et les durées par génération sous trois états du droit,
+      vérifiés au texte le 9 septembre 2026 : un recoupement de la suspension
+      de la loi du 30 décembre 2025.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: lfi_outil_retraite
+    url: https://github.com/ataieb3342/lfi-site
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      L'âge d'ouverture et la durée requise par génération sous trois états
+      du droit (`src/lib/boite-a-outils/retraite/outil.js`) : une lecture de
+      plus de la suspension.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: sud_education_simulateur
+    url: https://github.com/Brndan/simulateur-retraites
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      La pension des enseignants au droit de 2020 : un cas type de la fonction
+      publique, rejouable au scénario 1 à cette date.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: devcrafting_retraites
+    url: https://github.com/devcrafting/retraites
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Le régime général, les indépendants et la Cipav au droit de 2020, en F#
+      : un calcul de plus à relire.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: calcul_verification_pension
+    url: https://gitlab.com/jean-ricky-fr/calcul-verification-pension-retraite
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Un tableur de la pension du régime général et de la MSA : une lecture
+      de plus de la formule, à relire.
+    statut: a_explorer
+
+  - id: nosretraites_simulateur_cas_types
+    url: https://github.com/nosretraites/simulateur_cas_types
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Les paramètres par génération du projet de réforme de janvier 2023 : la
+      trace d'un état du droit qui n'a pas été voté, à ne pas confondre avec
+      la loi.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).
+
+  - id: cor_simulateur
+    url: https://www.cor-retraites.fr/simulateur/
+    nature: simulateur
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les trois leviers du COR et leurs projections, quand il rouvrira : il
+      est « temporairement fermé pour révision des scénarios économiques ».
+    statut: a_explorer
+
+  - id: cor_modeles_microsimulation_2020
+    url: https://www.cor-retraites.fr/node/530
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les documents de la séance du 5 mars 2020 : Destinie, Aphrodite,
+      PENSIPP, TRAJECTOiRE, PRISME, Pablo, Canopée et le modèle de
+      l'Agirc-Arrco décrits par leurs auteurs, et le recensement des modèles
+      français et étrangers.
+    statut: a_explorer
+
+  - id: cor_suivi_statistique_2024
+    url: https://www.cor-retraites.fr/reunions-du-cor/suivi-statistique-systeme-retraite
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les systèmes d'information et les modèles de la DREES, de la Cnav, de
+      l'Agirc-Arrco, du SRE, de la Caisse des dépôts et du RGCU, décrits par
+      eux-mêmes en décembre 2024.
+    statut: a_explorer
+
+  - id: suede_pensionsmodellen
+    url: https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/pensionsmodellen
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le modèle de projection suédois, téléchargeable : l'indice d'équilibre
+      et le temps de rotation à refaire, pour éprouver le mécanisme
+      d'équilibre de la proposition.
+    statut: a_explorer
+
+  - id: suede_typfallsmodellen
+    url: https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/typfallsmodellen
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le calcul des diviseurs projetés par génération (`Calculate_Deltal`) et
+      des pensions de cas types : le diviseur de la proposition, confronté à
+      celui que la Suède calcule.
+    statut: a_explorer
+
+  - id: suede_lagar_och_regler
+    url: https://www.pensionsmyndigheten.se/om-pensionsmyndigheten/allmanna-handlingar/lagar-och-regler
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les règlements de Pensionsmyndigheten, dont la table des diviseurs de
+      2026 (PFS 2026:2) : la grille à refaire depuis les tables de mortalité.
+    statut: a_explorer
+
+  - id: suede_orange_rapport_2025
+    url: https://www.pensionsmyndigheten.se/statistik/publikationer/orange-rapport-2025/orange-rapport-2025.pdf
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      La formule de l'indice d'équilibre (annexe B) et sa valeur de 2025,
+      1,1472, à retrouver.
+    statut: a_explorer
+
+  - id: norvege_mosart
+    url: https://www.ssb.no/befolkning/metoder-og-dokumentasjon/mosart-7.5.teknisk-dokumentasjon/_/attachment/inline/4d238e34-04c3-4dc3-a324-544e5a3a572e:e14fd155e59697117b6a359d5861dbab1e74a17e/NOT2025-04.pdf
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      La documentation technique de MOSART 7.5 : le capital, le diviseur et
+      l'indexation norvégiens, tels que le modèle de projection les calcule.
+    statut: a_explorer
+
+  - id: norvege_delingstall
+    url: https://www.nav.no/redirects/delingstal
+    nature: bareme
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les diviseurs fixés des générations 1954 à 1965 et projetés jusqu'à
+      2040 : celui de 1965 à refaire depuis les tables de mortalité.
+    statut: a_explorer
+
+  - id: italie_rgs_rapporto_27
+    url: https://www.rgs.mef.gov.it/_Documenti/VERSIONE-I/Attivit--i/Spesa-soci/Attivita_di_previsione_RGS/2026/Ltdmlpdspess-2026.pdf
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le rapport n° 27 de la RGS : la méthode des coefficients de
+      transformation (annexe 1, B.1) et les projections de dépense, régime
+      contributif compris.
+    statut: a_explorer
+
+  - id: italie_coefficienti_2024
+    url: https://www.lavoro.gov.it/documenti-e-norme/normativa/decreto-direttoriale-20112024-coefficienti-trasformazione.pdf
+    nature: bareme
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les coefficients de 2025-2026, âge par âge, 5,250 % à 65 ans : la table
+      à refaire au millième.
+    statut: a_explorer
+
+  - id: pologne_gus_esperance
+    url: https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-tablicy-sredniego-dalszego-trwania-zycia-kobiet-i-mezczyzn,285,14.html
+    nature: bareme
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      La table de l'espérance de vie unisexe en mois, d'avril 2026 à mars
+      2027 : le diviseur polonais, à lire à la source.
+    statut: a_explorer
+
+  - id: lettonie_table_g
+    url: https://www.vsaa.gov.lv/lv/media/5322/download?attachment=
+    nature: bareme
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      La table G du 1er janvier 2026 : le diviseur letton, 17,76 à 65 ans.
+    statut: a_explorer
+
+  - id: bresil_lei_9876
+    url: https://www.planalto.gov.br/ccivil_03/leis/l9876.htm
+    nature: regle
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      La formule du fator previdenciário : un diviseur d'espérance de vie
+      sans rendement notionnel.
+    statut: a_explorer
+
+  - id: finlande_elinaikakerroin
+    url: https://www.etk.fi/suomen-elakejarjestelma/elaketurva/elinaikakerroin/elinaikakertoimen-laskentakaavat/
+    nature: regle
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les formules du coefficient d'espérance de vie : un ajustement voisin du
+      diviseur, 0,94643 pour la génération 1964.
+    statut: a_explorer
+
+  - id: banque_mondiale_prost
+    url: https://documents1.worldbank.org/curated/en/099061024110535659/pdf/P1777231d8367c0111800816452e83c58d7.pdf
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le « Calculus for PROST 15 » : le capital initial d'une transition en
+      comptes notionnels et la dette implicite, une méthode à refaire.
+    statut: a_explorer
+
+  - id: ageing_report_2024
+    url: https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le rapport de 2024 et ses fiches pays : la dépense de pensions de la
+      France, projetée avec Destinie, et le modèle de chaque pays notionnel.
+    statut: a_explorer
+
+  - id: oit_ilo_pensions
+    url: https://qpss.ilo.org/APT
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      L'outil actuariel de l'OIT, sur compte : ses conditions sont à lire
+      avant tout usage.
+    statut: a_explorer
+
+  - id: og_core
+    url: https://github.com/PSLmodels/OG-Core
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Le module de comptes notionnels à l'italienne d'un modèle à générations
+      imbriquées : les effets d'équilibre général d'une bascule, que le dépôt
+      ne modélise pas.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
+      le 1er octobre 2026).

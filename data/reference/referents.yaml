@@ -9,10 +9,18 @@
 # La note 0001 l'avait prévu ; il est né le 1er octobre 2026, à la demande du
 # propriétaire : « une liste exhaustive ». Il recense donc aussi les modèles
 # dont seuls la méthode ou des résultats sont publiés, pour qu'on sache ce qui
-# existe et ce qui ne se lit pas, et, à l'étranger, ceux des comptes
-# notionnels, qui confrontent l'arithmétique de la proposition. Les
-# simulateurs officiels des caisses n'y sont pas : ce sont des sources
-# d'APPLICATION, au registre des sources, que le § 3.5 dit comment interroger.
+# existe et ce qui ne se lit pas ; et, à l'étranger, ceux des pays à comptes
+# notionnels et des organisations internationales, qui confrontent
+# l'arithmétique de la proposition. Les modèles des autres administrations
+# étrangères sont recensés par le COR (séance du 5 mars 2020, document n° 4).
+#
+# Ce qui n'y est pas, et pourquoi. Les simulateurs officiels des caisses : ce
+# sont des sources d'APPLICATION, au registre des sources, que le § 3.5 dit
+# comment interroger. Les modèles qui ne confrontent rien du dépôt : la
+# macroéconomie (Mésange, e-mod.fr de l'OFCE), la politique familiale (Myriade
+# de la Cnaf), les systèmes à points de 2020 (le fork de Destinie 2 de Nos
+# Retraites, `salaires_pensions` de B. Scherrer). Les copies du simulateur du
+# COR, que sa ligne nomme. Et les dépôts personnels que personne n'a lus.
 #
 # OÙ VA LE RESTE
 #   l'adresse à explorer, ce qu'elle a donné .. data/sources_a_explorer.yaml,
@@ -29,15 +37,16 @@
 #   nature ......... voir ci-dessous
 #   publication .... ouvert (le code se lit) | sur_demande (après inscription
 #                    ou convention) | documente (méthode et résultats publiés,
-#                    pas le code) | non_public (seuls des résultats le sont)
+#                    pas le code) | non_public (seuls son existence et des
+#                    résultats le sont)
 #   code ........... l'adresse du code, quand il est ouvert ou sur demande
 #   documentation .. ses autres adresses : méthode, notice, résultats
 #   licence ........ telle que LUE dans le fichier ou sur la page ; « aucune »
 #                    quand le code n'en porte pas, « non lue » quand on n'a
 #                    pas pu la lire, « sans objet » quand rien n'est publié
 #   usage .......... ce que la licence permet au dépôt (§ 3.4) : copier ;
-#                    executer_a_part (GPL, EUPL, AGPL : seules ses sorties
-#                    entrent) ; lire_et_citer (sans licence) ;
+#                    executer_a_part (GPL, EUPL, AGPL, CeCILL : seules ses
+#                    sorties entrent) ; lire_et_citer (sans licence) ;
 #                    selon_conditions (une licence propre, à relire avant
 #                    tout usage) ; resultats_publies (le code n'est pas
 #                    publié : on cite sa méthode et ses résultats)
@@ -45,7 +54,8 @@
 #                    Coût), proposition (l'arithmétique des comptes
 #                    notionnels — jamais leurs choix, que le README décide)
 #   couvre ......... régimes, règles, années de droit
-#   version ........ la version confrontée, quand elle l'a été
+#   version ........ la version confrontée, quand elle l'a été ; celle qu'on
+#                    a seulement lue est dans la note
 #   depend_de ...... les lignes d'ici dont il tire règles ou paramètres : deux
 #                    modèles qui partagent une source ne comptent que pour
 #                    une confirmation
@@ -67,34 +77,46 @@
 #   microsimulation_statique ... applique le droit d'une année à un
 #                                échantillon de ménages
 #   projection ................. des masses et des effectifs, sans individus
+#                                ou par groupes
 #   parametres ................. des barèmes, sans calcul
 #   methode .................... une méthode publiée, sans code
+#
+# LES FAMILLES. Un accord à l'intérieur d'une famille ne vaut qu'une
+# confirmation : l'IPP (ses barèmes, OpenFisca-France-Pension, TIL, PENSIPP,
+# TRAJECTOiRE, et la moitié des paramètres de retraite d'OpenFisca-France) ;
+# OpenFisca-France (LexImpact, TAXIPP, Mes Droits Sociaux) ; la DREES
+# (CALIPER, calcul_pension, TRAJECTOiRE, legiretraite, les cas types du COR) ;
+# l'Urssaf (modele-social, modele-ti, modele-as) ; le simulateur du COR et ses
+# reprises. Restent hors de toute famille, au 1er octobre 2026 : Destinie 2,
+# Ines, EDIFIS, EUROMOD, Catala, et les lectures de la société civile.
 
 referents:
 
-  # ---- Les paramètres, et ce qui s'y alimente ----------------------------
-  # Les barèmes de l'IPP nourrissent OpenFisca-France-Pension, TRAJECTOiRE et
-  # calcul_pension : un accord entre ces trois-là ne vaut qu'une confirmation.
+  # ---- L'IPP, OpenFisca, et ce qui s'y alimente --------------------------
 
   - id: baremes_ipp
     nom: Barèmes IPP
     auteur: Institut des politiques publiques (IPP)
     nature: parametres
     publication: ouvert
-    code: https://framagit.org/french-tax-and-benefit-tables/baremes-ipp-yaml
-    documentation: [https://baremes.ipp.eu/]
+    code: https://gitlab.com/ipp/partage-public-ipp/baremes-ipp/baremes-ipp-yaml
+    documentation:
+      - https://baremes.ipp.eu/parameters/regimes-de-retraites/
+      - https://baremes-ipp-doc.tax-benefit.org/
     licence: Licence Ouverte
     usage: copier
     confronte: [scenario_1]
     couvre: >-
-      Les paramètres de la législation sociale et fiscale, retraites
-      comprises : taux de cotisation, valeurs de point des complémentaires,
-      âges, durées, minima, chacun daté, une partie avec son texte. À jour de
-      la loi du 30 décembre 2025 au premier recensement.
+      Les paramètres de la législation sociale et fiscale datés depuis 1945
+      (1930 pour le régime général) : 155 fichiers sous `retraites/`, privé,
+      public et indépendants. La loi du 30 décembre 2025 y est, à effet du
+      1er septembre 2026.
     confrontation: >-
       Des paramètres à comparer, valeur par valeur et date par date, à ceux
       que le dépôt lit au Journal officiel ou chez la caisse ; un écart se
-      tranche au texte.
+      tranche au texte. La durée requise par génération y rejoint déjà celle
+      que le dépôt certifie à la base LEGI : 170 trimestres pour 1964, 170
+      puis 171 pour 1965, 172 pour 1966.
     ecarts:
       - constat: >-
           Le taux de cotisation des chirurgiens-dentistes s'y arrête en 2019,
@@ -102,47 +124,66 @@ referents:
         tranche: la caisse ; les barèmes sont en retard
         preuve: docs/decisions/0001-architecture.md (§ 14.9)
     manifeste: [ipp_taux_cotisation, ipp_points_independants, ipp_retraite_complementaire_liberaux]
+    sas: [ipp_baremes_yaml]
     lu_le: 2026-10-01
     lu_dans:
+      - https://gitlab.com/ipp/partage-public-ipp/baremes-ipp/baremes-ipp-yaml
       - docs/decisions/0001-architecture.md
-      - https://gitlab.com/DREES_code/public/outils/calcul_pension
     note: >-
-      calcul_pension télécharge le dépôt `baremes-ipp-yaml` de Framagit
-      (`R/gestionParametres.R`, lu le 1er octobre 2026) : c'est par là que
-      les modèles de la DREES s'alimentent.
+      Dernier commit le 21 septembre 2026. Son `COVERAGE.md` dit qu'un tiers
+      seulement des dates de valeur des retraites portent leur référence
+      (« retraites | 116 | 2492 | 797 (32%) »). Le miroir de Framagit est
+      figé depuis le 19 avril 2023 (« THIS PROJECT HAS MIGRATED ») : c'est
+      pourtant lui que calcul_pension télécharge. Un dépôt voisin,
+      `baremes-ipp-sources`, archive les sources hors Légifrance.
 
   - id: openfisca_france
     nom: OpenFisca-France
-    auteur: la communauté OpenFisca
+    auteur: la communauté OpenFisca (LexImpact, beta.gouv, IPP…)
     nature: calculateur
     publication: ouvert
     code: https://github.com/openfisca/openfisca-france
+    documentation:
+      - https://openfisca.org/doc/
     licence: AGPL-3.0
     usage: executer_a_part
     confronte: [scenario_1]
     couvre: >-
-      Le droit socio-fiscal français, paramètres datés texte par texte :
-      plafond de la Sécurité sociale depuis 1930, taux de cotisation
-      vieillesse depuis 1967, point d'indice, SMIC, prélèvements sur les
-      pensions. Les pensions elles-mêmes sont dans OpenFisca-France-Pension.
+      Le droit socio-fiscal, paramètres datés texte par texte. Les
+      cotisations vieillesse du régime général, de l'Agirc-Arrco, de
+      l'Ircantec, de la fonction publique, du RAFP et des indépendants ; la
+      CSG des pensions à 3,8, 6,6 ou 8,3 % selon le revenu fiscal de
+      référence, la CRDS et la CASA ; l'ASPA et l'ASI. Il ne calcule pas la
+      pension, qu'il reçoit en entrée.
+    depend_de: [baremes_ipp]
     confrontation: >-
-      Des paramètres à comparer : le dépôt en reprend six séries, au niveau
-      `haute`, jamais `certifiee`, et les recoupe contre l'INSEE, l'Urssaf
-      ou la base LEGI (`scripts/verifier_donnees.py`).
+      Des paramètres à comparer : le dépôt en reprend cinq séries, au niveau
+      `haute`, jamais `certifiee`, et les recoupe contre l'INSEE, l'Urssaf ou
+      la base LEGI (`scripts/verifier_donnees.py`). À venir : la CSG de la
+      pension nette, par foyer.
     manifeste:
       - openfisca_plafond
       - openfisca_point_indice
       - openfisca_contribution_employeur_public
       - openfisca_cotisations
       - openfisca_part_salariale
-    lu_le: 2026-09-25
+    lu_le: 2026-10-01
     lu_dans:
+      - https://github.com/openfisca/openfisca-france
       - data/sources.yaml
-      - docs/decisions/0001-architecture.md
+    note: >-
+      Version 176.1.2 du 1er octobre 2026. Environ la moitié de ses fichiers
+      de paramètres de retraite portent un `ipp_csv_id` : ils viennent des
+      barèmes de l'IPP (CSG 25 sur 55, cotisations du régime général 86 sur
+      179, Agirc-Arrco 26 sur 103, minimum vieillesse 24 sur 45). Ses seuils
+      de CSG de 2026 sont ceux de l'instruction de la DSS du 11 décembre
+      2025. Mes Droits Sociaux, le simulateur de la DSS, appelle un service
+      OpenFisca (`/openfisca/calculate`) : c'est un simulateur officiel, pas
+      une confirmation de plus.
 
   - id: openfisca_france_pension
     nom: OpenFisca-France-Pension
-    auteur: la communauté OpenFisca, d'après TiL-Pension de l'IPP
+    auteur: la communauté OpenFisca et l'IPP, d'après Til-Pension
     nature: calculateur
     publication: ouvert
     code: https://github.com/openfisca/openfisca-france-pension
@@ -150,17 +191,19 @@ referents:
     usage: executer_a_part
     confronte: [scenario_1]
     couvre: >-
-      Cinq familles : le régime général, la pension civile de l'État et de la
-      CNRACL, l'Arrco d'avant 2019, l'Agirc, l'Ircantec. Paramètres figés au
-      2 janvier 2025 ; le régime unifié Agirc-Arrco, les régimes spéciaux,
-      les libéraux et les exploitants agricoles n'y sont pas.
+      Six régimes codés : le régime général, la fonction publique de l'État
+      (hors services actifs), la CNRACL, l'Arrco, l'Agirc, l'Ircantec ; les
+      paramètres des indépendants sans leur régime. L'âge d'ouverture de la
+      loi de 2023 seule, sans celle du 30 décembre 2025 ; les derniers
+      paramètres datent du 1er janvier 2024.
     version: "0.1.3"
-    depend_de: [baremes_ipp]
+    depend_de: [baremes_ipp, til_pension]
     confrontation: >-
       Un calcul rejoué : des carrières simples, à salaire nominal constant,
       calculées chez lui et figées en témoins (`tests/temoins/openfisca_*.json`),
       que `tests/test_oracle.py` rejoue contre le scénario 1. C'est la seule
-      confrontation de moteur que le dépôt mène aujourd'hui.
+      confrontation de moteur que le dépôt mène aujourd'hui ; ce qu'il reste à
+      en tirer est l'action 136 de la feuille de route.
     ecarts:
       - constat: >-
           Sa durée requise ignore la réforme du 14 avril 2023 : 169 trimestres
@@ -216,8 +259,9 @@ referents:
       - openfisca_minimum_contributif
       - openfisca_parametres_generation
     sas: [openfisca_france_pension]
-    lu_le: 2026-09-15
+    lu_le: 2026-10-01
     lu_dans:
+      - https://github.com/openfisca/openfisca-france-pension
       - tests/temoins/openfisca_regime_general.json
       - tests/temoins/openfisca_fonction_publique.json
       - tests/temoins/openfisca_arrco.json
@@ -225,11 +269,136 @@ referents:
       - tests/temoins/openfisca_ircantec.json
       - data/sources.yaml
     note: >-
-      Les témoins de l'Agirc et de l'Ircantec n'ont pas de ligne au
-      manifeste : ils sont sortis de `scripts/fetch/openfisca_agirc.py` et
-      `openfisca_ircantec.py`.
+      Dernier commit le 13 mai 2026. « Les paramètres de la législation sont
+      consommées directement depuis les barèmes IPP », dit sa documentation ;
+      son prédécesseur est sur Framagit (`benjello/OpenFisca-France-Pension`,
+      dernière activité en décembre 2024). Les témoins de l'Agirc et de
+      l'Ircantec n'ont pas de ligne au manifeste : ils sortent de
+      `scripts/fetch/openfisca_agirc.py` et `openfisca_ircantec.py`.
 
-  # ---- Les administrations : la statistique publique ---------------------
+  - id: leximpact
+    nom: LexImpact (simulateur socio-fiscal)
+    auteur: LexImpact, Assemblée nationale
+    nature: cas_types
+    publication: ouvert
+    code: https://git.leximpact.dev/leximpact/simulateur-socio-fiscal/openfisca/openfisca-france-reforms
+    documentation:
+      - https://socio-fiscal.leximpact.an.fr/accueil
+      - https://leximpact.an.fr
+    licence: AGPL-3.0 ou ultérieure
+    usage: executer_a_part
+    confronte: [scenario_1, cout]
+    couvre: >-
+      La CSG, la CRDS, la CASA et l'impôt des retraités sur seize cas types
+      rangés par décile ; les mesures des PLF et PLFSS de 2022 à 2026, dont
+      le forfait de 2 000 € de l'abattement de 10 % ; la revalorisation
+      différenciée des pensions de base et complémentaires.
+    depend_de: [openfisca_france]
+    confrontation: >-
+      Des résultats à retrouver, cas type par cas type : la pension nette de
+      prélèvements, là où le modèle applique 9,1 % à tous.
+    sas: [leximpact_reformes]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://git.leximpact.dev/leximpact/simulateur-socio-fiscal/openfisca/openfisca-france-reforms
+      - https://socio-fiscal.leximpact.an.fr/accueil
+    note: >-
+      Le miroir GitHub est archivé depuis 2023 : tout vit sur git.leximpact.dev
+      (l'interface, la chaîne budgétaire, l'explorateur de paramètres commun
+      avec OpenFisca et l'IPP). Son baromètre de l'application des lois suit
+      la parution des décrets d'application, ce qui sert la veille.
+
+  - id: taxipp
+    nom: TAXIPP
+    auteur: Institut des politiques publiques (IPP)
+    nature: microsimulation_statique
+    publication: ouvert
+    code: https://gitlab.com/ipp/partage-public-ipp/taxipp
+    documentation:
+      - https://ipp.gitlab.io/partage-public-ipp/taxipp/
+    licence: AGPL-3.0, avec des termes additionnels (attribution, nom TAXIPP)
+    usage: executer_a_part
+    confronte: [cout]
+    couvre: >-
+      Les prélèvements et prestations sur données administratives (Fidéli,
+      Félin, DADS, au CASD) ; les pensions y sont des entrées, la CSG, l'impôt
+      et l'ASPA viennent d'OpenFisca-France.
+    depend_de: [openfisca_france]
+    confrontation: >-
+      Des résultats publiés à retrouver : la note IPP n° 129 (septembre
+      2026) chiffre l'abattement de 10 % à 5,4 Md€, la désindexation des
+      pensions de base à 5,2 Md€, l'alignement de la CSG à 4,2 Md€, à
+      opposer au chiffrage du dépôt (`docs/chiffrage_plf.md`).
+    sas: [ipp_taxipp]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://gitlab.com/ipp/partage-public-ipp/taxipp
+    note: >-
+      Version 2.4.2 du 24 février 2026, sur openfisca-france 174.2.6. Le PDF
+      de licence reproduit le texte de la GPL v3, quand le fichier dit l'AGPL :
+      à relire avant tout usage. Sa version historique, TAXIPP 0.3, est en
+      Stata, sans licence (`abozio/TAXIPP0-3`, 2013).
+
+  - id: til_pension
+    nom: TIL (TaxIPP-Life) et Til-Pension
+    auteur: Institut des politiques publiques (IPP)
+    nature: microsimulation_dynamique
+    publication: ouvert
+    code: https://github.com/TaxIPP-Life/Til-Pension
+    licence: GPL-3.0
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      Le régime général, les indépendants, la fonction publique, l'Agirc et
+      l'Arrco, paramètres jusqu'en 2014 environ ; la microsimulation sur
+      LIAM2 et OpenFisca, avec les données Patrimoine et de Destinie.
+    depend_de: [baremes_ipp, openfisca_france]
+    confrontation: >-
+      À lire plutôt qu'à exécuter : abandonné en 2014-2018, il est l'ancêtre
+      de l'architecture d'OpenFisca-France-Pension.
+    sas: [ipp_til_pension]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/TaxIPP-Life/Til-Pension
+    note: >-
+      Dernier commit de Til-Pension le 14 septembre 2014 ; `til-france`
+      (2 octobre 2018), `Til`, `til-core` et `Til-BaseModel` sont dans la même
+      organisation, sous GPL v3. L'IPP donne le projet pour terminé. LIAM2,
+      sa plateforme, du Bureau fédéral du Plan belge, n'est plus maintenue.
+
+  - id: pensipp
+    nom: PENSIPP
+    auteur: IPP (A. Bozio, S. Rabaté, M. Tô, D. Blanchet), avec l'INSEE
+    nature: microsimulation_dynamique
+    publication: ouvert
+    code: https://github.com/abozio/PENSIPP
+    documentation:
+      - https://www.ipp.eu/projet/pensipp-micro-simulation-dynamique-du-systeme-de-retraite-francais/
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%207_PENSIPP_IPP.pdf
+    licence: aucune
+    usage: lire_et_citer
+    confronte: [scenario_1, proposition]
+    couvre: >-
+      Le régime général, la fonction publique et les complémentaires, droit
+      de 1946 à 2011, millésime par millésime ; et des simulations de COMPTES
+      NOTIONNELS (`Simulations/CN`, `OutilsCN.R`) et de points, pour la
+      France.
+    depend_de: [baremes_ipp, destinie_2]
+    confrontation: >-
+      Lire sa conversion en comptes notionnels de 2013 — revalorisation des
+      cotisations, actualisation, traitement de l'AVPF — et la confronter à la
+      proposition ; l'exécuter demande l'accord de l'IPP.
+    sas: [ipp_pensipp]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/abozio/PENSIPP
+    note: >-
+      Dernier commit le 22 mai 2013, aucun fichier de licence ; l'IPP donne
+      le projet pour terminé. Ses paramètres viennent des barèmes de l'IPP et
+      de Destinie. Un fork « allégé » qu'une recherche cite
+      (`philippechataignon/pensipp`) ne répond plus.
+
+  # ---- La statistique publique : l'INSEE ----------------------------------
 
   - id: destinie_2
     nom: Destinie 2
@@ -237,55 +406,133 @@ referents:
     nature: microsimulation_dynamique
     publication: ouvert
     code: https://github.com/InseeFr/Destinie-2
-    licence: GPL
+    documentation:
+      - https://www.insee.fr/fr/information/3606338
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%205_Destinie_INSEE.pdf
+    licence: GPL-3.0 ou ultérieure ; paramètres sous ODbL et DbCL
     usage: executer_a_part
     confronte: [scenario_1, cout]
     couvre: >-
-      Des pensions entières, sur un échantillon qu'il fait vivre : régime
-      général, fonctionnaires de l'État et des collectivités, indépendants,
-      Agirc-Arrco, réversion, minimum vieillesse ; le droit jusqu'à sa
-      dernière mise à jour, 2023 au premier recensement.
+      Des pensions entières, ménage compris : régime général, service des
+      retraites de l'État, CNRACL, indépendants, Agirc-Arrco ; droits
+      directs, réversion, ASPA. La législation se choisit par année ; ses
+      derniers seuils sont de 2023, sans la loi du 30 décembre 2025.
     confrontation: >-
       Un calcul rejoué : l'exécuter à part sur des carrières que le dépôt
       décrit aussi, et confronter ses pensions, sa réversion et ses
-      majorations pour enfants, que trois fiches attendent
-      (`reversion`, `majoration_duree_assurance_enfants`,
-      `enfants_fonction_publique`).
+      majorations pour enfants, que trois fiches attendent (`reversion`,
+      `majoration_duree_assurance_enfants`, `enfants_fonction_publique`). Le
+      seul modèle public avec la réversion et l'ASPA, et des législations
+      passées qu'on choisit.
+    sas: [insee_destinie_2]
     lu_le: 2026-10-01
     lu_dans:
-      - docs/decisions/0001-architecture.md
       - https://github.com/InseeFr/Destinie-2
+      - https://www.insee.fr/fr/information/3606338
     note: >-
-      La confirmation la plus indépendante du registre : ses règles et ses
-      paramètres ne viennent pas, pour l'essentiel, des barèmes de l'IPP. Son
-      dépôt répond à `git ls-remote` depuis une session (1er octobre 2026).
+      La confirmation la plus indépendante du registre : ses paramètres sont
+      les siens (sa feuille de documentation cite la Cnav, le COR,
+      l'Agirc-Arrco, TAXIPP et l'IPP). Actualisé le 15 octobre 2025, en C++ et
+      R. L'échantillon fourni n'est qu'un test, « sans aucune
+      représentativité ». C'est lui qui projette la France pour l'Ageing
+      Report de 2024, et les engagements de retraite des comptes nationaux
+      hors fonction publique de l'État.
 
-  - id: trajectoire
-    nom: TRAJECTOiRE
-    auteur: DREES
+  - id: destinie_1
+    nom: Destinie 1
+    auteur: INSEE
     nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://www.insee.fr/fr/information/4497060
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      Les projections de retraite de l'INSEE des années 1990 à 2010
+      (Blanchet et Chanut, 1998), que Destinie 2 a remplacé.
+    confrontation: >-
+      Aucune utile : ses résultats sont ceux d'un droit et d'hypothèses
+      anciens ; il est là pour que la liste soit complète.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.insee.fr/fr/information/4497060
+
+  - id: ines
+    nom: Ines
+    auteur: INSEE, DREES et Cnaf
+    nature: microsimulation_statique
     publication: ouvert
-    code: https://git.drees.fr/drees_code_public/modeles/trajectoire
-    licence: EUPL
+    code: https://gitlab.com/insee_drees_cnaf/ines-public
+    documentation:
+      - https://ines-public-e766af.gitlab.io/
+      - https://www.insee.fr/fr/information/2021951
+    licence: CeCILL 2.1 (programmes) ; ODbL et DbCL (paramètres)
     usage: executer_a_part
     confronte: [scenario_1, cout]
     couvre: >-
-      Les pensions de tous les régimes, sur l'échantillon interrégimes de
-      cotisants, et en mode cas types, régimes spéciaux et libéraux compris.
-    depend_de: [baremes_ipp, calcul_pension]
+      L'ASPA et l'ASI (`R/14_minima_pa.R`), la CSG, la CRDS et la CASA des
+      pensions selon le revenu fiscal (`R/12_cotisations.R`), l'impôt ; les
+      pensions viennent des données de l'ERFS, qu'il ne simule pas.
+      Législations 2016 à 2022 en SAS, 2023 et 2024 en R.
     confrontation: >-
-      Un calcul rejoué, à part : ses cas types, et ses hypothèses de
-      carrière, à confronter à la trajectoire d'emploi du COR que le dépôt a
-      adoptée.
+      Des paramètres et des calculs du foyer à comparer : l'ASPA et les
+      prélèvements des pensions, une seconde source indépendante de
+      LexImpact.
+    sas: [insee_ines]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://gitlab.com/insee_drees_cnaf/ines-public
+    note: >-
+      Dernier commit le 16 juin 2026 (Ines 2024.1). Ses paramètres sont ceux
+      de l'équipe, qui cite Légifrance, le BOFiP et les barèmes de l'IPP parmi
+      ses sources. L'ERFS demande une habilitation ; les versions SAS sont
+      sur Adullact (`ines-libre`).
+
+  # ---- La statistique publique : la DREES ---------------------------------
+  # Une seule lignée : CALIPER (2013, en SAS) est devenu le module de calcul
+  # de TRAJECTOiRE, publié en R sous le nom de calcul_pension, puis fondu
+  # dans le paquet trajectoire ; legiretraite lui fournit ses âges. Elle calcule
+  # les cas types du COR. Un accord entre eux ne compte qu'une fois.
+
+  - id: trajectoire
+    nom: TRAJECTOiRE
+    auteur: DREES, bureau des retraites
+    nature: microsimulation_dynamique
+    publication: ouvert
+    code: https://git.drees.fr/drees_code_public/modeles/trajectoire
+    documentation:
+      - https://drees_code_public.pages.drees.fr/modeles/trajectoire/
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%208_TRAJECTOIRE_DREES.pdf
+    licence: EUPL-1.2
+    usage: executer_a_part
+    confronte: [scenario_1, cout]
+    couvre: >-
+      Tous les régimes, ramenés à huit grands — fonction publique de l'État,
+      territoriale et hospitalière, salariés agricoles, régime général,
+      régimes spéciaux « modélisés comme la SNCF », indépendants, libéraux
+      « modélisés comme la médecine », exploitants —, avec l'Agirc-Arrco,
+      l'Ircantec, le RAFP et les complémentaires des indépendants et de la
+      MSA. Droits directs seulement, ni réversion ni ASPA ; générations 1942
+      et suivantes ; la réforme de 2023, sans la loi du 30 décembre 2025.
+    depend_de: [baremes_ipp, calcul_pension, caliper]
+    confrontation: >-
+      Un calcul rejoué, à part, sans les données du CASD : le mode cas types
+      s'en passe, et `lancerCasTypesCor()` refait les treize cas types du COR,
+      dont le dépôt lit déjà des résultats.
+    manifeste: [cor_pouvoir_achat_retraite]
     sas: [drees_trajectoire]
     lu_le: 2026-10-01
     lu_dans:
-      - docs/decisions/0001-architecture.md
-      - https://gitlab.com/DREES_code/public/outils/calcul_pension
+      - https://git.drees.fr/drees_code_public/modeles/trajectoire
+      - https://www.cor-retraites.fr/sites/default/files/2026-07/RA_2026_def.pdf
     note: >-
-      Ses fonctions de calcul sont celles de calcul_pension, « utilisées
-      telles quelles », dit le README de ce dernier : un accord des deux ne
-      compte qu'une fois.
+      Version 1.1.2 du 4 avril 2025, ouverte en 2024. Le rapport du COR de
+      juin 2026 calcule ses cas types « à l'aide d'un module du modèle
+      Trajectoire de la Drees, disponible en open source » ; il chiffre aussi
+      la suspension de 2025, que la version publique ne contient pas : la
+      version interne est en avance. Une copie personnelle est sur GitHub
+      (`awarnery/trajectoire`).
 
   - id: calcul_pension
     nom: calcul_pension (paquet R calculPension)
@@ -303,19 +550,20 @@ referents:
       cas types du COR.
     depend_de: [baremes_ipp]
     confrontation: >-
-      Un calcul rejoué, en R, à part : les cas types du COR, qu'il porte, et
-      des carrières simples décrites des deux côtés.
+      Une version figée et légère du moteur de TRAJECTOiRE : ses cas types du
+      COR, et des carrières simples décrites des deux côtés.
     sas: [drees_calcul_pension]
     lu_le: 2026-10-01
     lu_dans:
       - https://gitlab.com/DREES_code/public/outils/calcul_pension
-      - https://gitlab.com/api/v4/groups/DREES_code%2Fpublic/projects
+      - https://git.drees.fr/drees_code_public/outils/calcul_pension
     note: >-
       Cloné le 1er octobre 2026 : version 0.1, dernier commit de sa branche
       principale du 20 janvier 2023, licence EUPL 1.2 dans `LICENSE`,
-      paramètres téléchargés des barèmes de l'IPP.
-      Son README : « Les fonctions du paquet sont utilisées telles quelles
-      dans le modèle de microsimulation Trajectoire. »
+      paramètres téléchargés des barèmes de l'IPP. Son README : « Les
+      fonctions du paquet sont utilisées telles quelles dans le modèle de
+      microsimulation Trajectoire », et le groupe de gitlab.com ajoute que le
+      dépôt n'est plus mis à jour.
 
   - id: caliper
     nom: CALIPER (CALcul Interrégimes des PEnsions de Retraite)
@@ -331,75 +579,164 @@ referents:
     couvre: >-
       Les droits directs de dix régimes, six de base et quatre
       complémentaires — Cnav, MSA salariés, artisans, commerçants, fonction
-      publique de l'État, CNRACL, Arrco, Agirc, Ircantec —, majorations pour
-      enfants comprises, sur des carrières réelles de l'EIC et de l'EIR ou
-      sur des cas types ; ni la réversion ni le minimum vieillesse, qui
-      demandent le ménage. Écrit en SAS.
+      publique de l'État, CNRACL, Arrco, Agirc, Ircantec, RAFP —, la SNCF
+      ensuite, majorations pour enfants comprises, sur des carrières réelles
+      de l'EIC et de l'EIR ou sur des cas types ; ni la réversion ni le
+      minimum vieillesse, qui demandent le ménage. Écrit en SAS.
     confrontation: >-
       Des résultats publiés à retrouver : la réforme de 1993, de 2003 et de
       2008 sur les pensions de base de la génération 1938 ; et sa validation
-      sur l'EIR 2004, 95,5 % des pensions de la Cnav retrouvées à un euro par
-      mois près, une précision à viser.
+      sur l'EIR 2004, une précision à viser — la pension retrouvée à un euro
+      par mois près pour 95,5 % des retraités de la Cnav, 98,5 % de l'État,
+      98,3 % de la CNRACL, 93,6 % de l'Arrco, 87,15 % de l'Agirc, 41,1 % des
+      indépendants.
     sas: [drees_caliper]
     lu_le: 2026-10-01
-    lu_dans: [http://gesd.free.fr/caliper.pdf]
+    lu_dans:
+      - http://gesd.free.fr/caliper.pdf
     note: >-
       Lu dans le Dossier solidarité et santé n° 37 de mars 2013 (Duc et
       Lermechin), servi par un miroir : le 1er octobre 2026, le site de la
-      DREES ferme la connexion sans répondre, comme le 22 septembre. Un
-      moteur de recherche résume sa page en disant l'outil réécrit en R et
-      publié comme calcul_pension ; non lu à la source, donc non retenu.
+      DREES ferme la connexion sans répondre, comme le 22 septembre. Selon
+      l'INSEE, TRAJECTOiRE est né de CALIPER, de PROMESS et d'un module de
+      carrières ; depuis 2014, la DREES calcule par lui les cas types du COR.
 
-  # ---- Les ministères ----------------------------------------------------
-
-  - id: osiris
-    nom: OSIRIS
-    auteur: Direction de la sécurité sociale (DSS)
-    nature: cas_types
-    publication: non_public
-    documentation: [http://gesd.free.fr/caliper.pdf]
-    licence: sans objet
-    usage: resultats_publies
-    confronte: [scenario_1]
-    couvre: >-
-      Une maquette de calcul des pensions « conçue pour s'appliquer
-      exclusivement à des analyses sur cas-types », que la DREES compare à
-      CALIPER en 2013.
-    confrontation: >-
-      Aucune : seul son nom est publié, par la DREES en 2013. Des cas types
-      qu'elle aurait chiffrés, aucun n'est encore relevé.
-    lu_le: 2026-10-01
-    lu_dans: [http://gesd.free.fr/caliper.pdf]
-
-  # ---- Les caisses -------------------------------------------------------
-
-  - id: prisme
-    nom: PRISME
-    auteur: Cnav
-    nature: microsimulation_dynamique
+  - id: promess
+    nom: PROMESS
+    auteur: DREES
+    nature: projection
     publication: non_public
     documentation:
-      - https://www.statistiques-recherche.lassuranceretraite.fr/app/uploads/2009/11/simulations-effets-passage-calcul-pensions-rg-a-systeme-en-comptes-notionnels_evolution.pdf
+      - https://www.insee.fr/fr/information/4497060
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%208_TRAJECTOIRE_DREES.pdf
     licence: sans objet
     usage: resultats_publies
-    confronte: [proposition, cout]
+    confronte: [cout]
     couvre: >-
-      Le régime général, projeté ; en 2009, sa bascule en comptes
-      notionnels, la seule étude française qui fasse la même opération que le
-      dépôt, paramètres publiés.
+      Les fins de carrière, après 54 ans, et les âges de départ, par groupes
+      (2010) ; refondu dans TRAJECTOiRE.
     confrontation: >-
-      Des résultats publiés à retrouver : masses de prestations inférieures
-      de 7 % en 2050, l'effet d'une table de mortalité par génération, la
-      part des droits non contributifs dans les comptes.
-    manifeste: [cnav_comptes_notionnels_2009, cor_septieme_rapport]
+      Aucune à part : ses comportements de départ vivent dans TRAJECTOiRE.
     lu_le: 2026-10-01
-    lu_dans: [data/sources.yaml]
+    lu_dans:
+      - https://www.insee.fr/fr/information/4497060
 
-  # ---- Le COR ------------------------------------------------------------
+  - id: ancetre
+    nom: ANCETRE
+    auteur: DREES
+    nature: microsimulation_statique
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_03_SI_Drees.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      Un pseudo-EIR de chaque année, calé sur l'EACR : effectifs, pensions
+      moyennes et âges de départ tous régimes ; la version 2022 part de l'EIR
+      2020 et de l'EACR 2022.
+    confrontation: >-
+      Des résultats publiés, déjà au dépôt : l'âge conjoncturel de départ tous
+      régimes, qui contrôle les âges du pilote.
+    manifeste: [drees_age_conjoncturel]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_03_SI_Drees.pdf
+      - scripts/fetch/drees_age_depart_csp.py
+
+  - id: legiretraite
+    nom: legiretraite (paquet R)
+    auteur: DREES, bureau des retraites
+    nature: parametres
+    publication: ouvert
+    code: https://git.drees.fr/drees_code_public/outils/legiretraite
+    licence: EUPL-1.2, déclarée dans DESCRIPTION et le README, sans fichier de licence
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      Par génération, caisse et catégorie : l'âge d'ouverture (droit commun,
+      État et CNRACL sédentaires, actifs et super-actifs, exploitants,
+      CNAVPL, Ircantec, Agirc-Arrco, régimes spéciaux), l'âge d'annulation de
+      la décote, l'âge maximum, les durées requise et de proratisation ; les
+      revalorisations par caisse ; les tables de l'EACR 2026.
+    confrontation: >-
+      Des paramètres à comparer : ses âges d'ouverture suivent déjà la loi du
+      30 décembre 2025 (62 ans et 9 mois pour 1964, 63 ans à partir d'avril
+      1965).
+    ecarts:
+      - constat: >-
+          Son fichier `dureeRequise.csv`, sans date d'effet, donne 171
+          trimestres à la génération 1964 et 172 à 1965, les valeurs de la loi
+          de 2023, quand ses âges suivent la loi du 30 décembre 2025.
+        tranche: >-
+          L. 161-17-3 dans sa rédaction de 2025, que le dépôt certifie à la
+          base LEGI : 170 pour 1964, 170 puis 171 pour 1965 ; l'écart est le
+          sien
+        preuve: data/reference/legislation/duree_assurance_requise.csv
+    sas: [drees_legiretraite]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://git.drees.fr/drees_code_public/outils/legiretraite
+    note: >-
+      Créé le 7 septembre 2026, version 0.1.6 du 18 septembre, pas encore sur
+      le CRAN. Il sert l'âge d'ouverture de TRAJECTOiRE ; ses tests citent un
+      commit de TRAJECTOiRE de janvier 2026 absent du dépôt public, et une
+      page syndicale comme source des valeurs de 2026.
+
+  - id: edifis
+    nom: EDIFIS
+    auteur: DREES
+    nature: cas_types
+    publication: ouvert
+    code: https://git.drees.fr/drees_code_public/outils/edifis
+    licence: GPL-3.0
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      Le revenu disponible de ménages types d'actifs, sans pension : les
+      barèmes 2015 à 2025, dont les cotisations vieillesse salariales et
+      patronales, plafonnée et déplafonnée, et l'Agirc-Arrco des tranches 1
+      et 2 et de la CET.
+    confrontation: >-
+      Des paramètres à comparer : les taux de cotisation vieillesse, d'une
+      source indépendante des barèmes de l'IPP.
+    sas: [drees_edifis]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://git.drees.fr/drees_code_public/outils/edifis
+    note: >-
+      Dernier commit le 11 février 2026, en R et Shiny ; une copie plus
+      ancienne est sur gitlab.com (`DREES_code/public/outils/edifis`, 2022).
+
+  # ---- Le COR -------------------------------------------------------------
+
+  - id: maquette_globale_cor
+    nom: Maquette globale de projection du COR
+    auteur: secrétariat général du COR
+    nature: projection
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2026-07/RA_2026_def.pdf
+      - https://www.cor-retraites.fr/sites/default/files/2023-04/Doc_07_Organisation_Projections.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      L'agrégation des projections d'une trentaine de régimes, chacun par son
+      propre modèle, avec leurs liens financiers ; le nombre de retraités
+      vient de TRAJECTOiRE, la part de la réversion de Destinie.
+    depend_de: [prisme, pablo, canopee, misraa, trajectoire, destinie_2]
+    confrontation: >-
+      Des résultats publiés, déjà au dépôt : les dépenses, les ressources et
+      le solde du système en part de PIB, que la page Coût confronte.
+    manifeste: [cor_comptes_systeme_retraite]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2026-07/RA_2026_def.pdf
 
   - id: maquette_sg_cor
     nom: Maquette simplifiée du secrétariat général du COR
-    auteur: COR
+    auteur: secrétariat général du COR
     nature: projection
     publication: documente
     licence: sans objet
@@ -416,7 +753,326 @@ referents:
       choc démographique.
     manifeste: [cor_retour_septieme_rapport]
     lu_le: 2026-10-01
-    lu_dans: [data/sources.yaml]
+    lu_dans:
+      - data/sources.yaml
+
+  - id: simulateur_cor
+    nom: Simulateur du COR
+    auteur: secrétariat général du COR
+    nature: projection
+    publication: documente
+    documentation:
+      - https://www.cor-retraites.fr/simulateur/
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      Un simulateur pédagogique à trois leviers — âge, cotisations, niveau
+      des pensions — sur les projections agrégées du COR.
+    depend_de: [maquette_globale_cor]
+    confrontation: >-
+      Aucune tant qu'il est fermé : « Le simulateur est temporairement fermé
+      pour révision des scénarios économiques », et sa documentation
+      technique répond 404.
+    sas: [cor_simulateur]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/simulateur/
+    note: >-
+      Ses reprises, toutes sur ses projections : `brunoscherrer/retraites`
+      (ci-dessous), et, sans licence, `nosretraites/roc-retraites`,
+      `ChallengesRedac/simulateurRetraite`, `Brohuld/Simulateur-Retraites`,
+      `V0latix/retraite_simu`, `GuillaumeAB/simulateur-retraites-france`.
+
+  # ---- Les caisses ------------------------------------------------------------
+
+  - id: prisme
+    nom: PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations)
+    auteur: Cnav, direction statistiques, prospective et recherche
+    nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://www.statistiques-recherche.lassuranceretraite.fr/la-microsimulation-avec-prisme/
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%209_%20DSPR_CNAV.pdf
+      - https://www.statistiques-recherche.lassuranceretraite.fr/app/uploads/2009/11/simulations-effets-passage-calcul-pensions-rg-a-systeme-en-comptes-notionnels_evolution.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout, proposition]
+    couvre: >-
+      Le régime général au pas trimestriel jusqu'en 2070, sur un vingtième
+      des assurés tiré des fichiers de gestion ; étendu aux régimes alignés
+      en 2017, puis en 2019 à l'Agirc-Arrco, l'Ircantec, la MSA, l'État, la
+      CNRACL, les IEG, la SNCF, la RATP et les libéraux. Écrit en SAS. En
+      2009, sa bascule en comptes notionnels : la seule étude française qui
+      fasse la même opération que le dépôt, paramètres publiés.
+    confrontation: >-
+      Des résultats publiés à retrouver : en 2009, des masses de prestations
+      inférieures de 7 % en 2050, l'effet d'une table par génération, la part
+      des droits non contributifs dans les comptes ; aujourd'hui, les
+      chiffrages des PLFSS (2026, annexe 9) et du COR.
+    manifeste: [cnav_comptes_notionnels_2009, cor_septieme_rapport]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.statistiques-recherche.lassuranceretraite.fr/la-microsimulation-avec-prisme/
+      - data/sources.yaml
+
+  - id: moteur_cnav
+    nom: Moteur de calcul des retraites de l'Assurance retraite
+    auteur: Cnav
+    nature: calculateur
+    publication: non_public
+    documentation:
+      - https://www.lassuranceretraite.fr/portail-info/hors-menu/footer/traitements-algorithmiques.html
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [scenario_1]
+    couvre: >-
+      Le moteur qui liquide les retraites du régime général. Onze fiches de
+      « traitements algorithmiques » (mars 2026), dont huit sur la retraite :
+      le montant de la retraite personnelle, la majoration de durée
+      d'assurance, le minimum contributif et sa majoration, le cumul
+      emploi-retraite ; leurs étapes, sans formules.
+    confrontation: >-
+      Comparer ses étapes, fiche par fiche, à celles du moteur du dépôt ; ses
+      résultats sont les exemples officiels de la Cnav, déjà au banc.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.lassuranceretraite.fr/portail-info/hors-menu/footer/traitements-algorithmiques.html
+    note: >-
+      La circulaire Cnav 2022-23 dit la décision fondée sur le code de la
+      sécurité sociale, et non sur un traitement algorithmique.
+
+  - id: rgcu_mvc
+    nom: RGCU et moteur de valorisation des carrières
+    auteur: DSS, avec la Cnav et l'Agirc-Arrco
+    nature: calculateur
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_08_RGCU%20-DSS.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [scenario_1]
+    couvre: >-
+      Les durées d'assurance de tous les régimes — par trimestre, par an, par
+      régime, au total — et le salaire annuel moyen, calculés à la demande
+      sur le répertoire de gestion des carrières uniques.
+    confrontation: >-
+      Aucune directe : « les droits ne sont pas stockés suite à un calcul ».
+      Ses règles de comptage sont celles que le dépôt applique à la
+      liquidation unique.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_08_RGCU%20-DSS.pdf
+    note: >-
+      Le manifeste porte déjà la documentation du répertoire
+      (`info_retraite_referentiel`), pas les sorties de son moteur.
+
+  - id: pablo
+    nom: Pablo
+    auteur: Service des retraites de l'État (DGFiP)
+    nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_06_SI_SRE.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      Les fonctionnaires civils et militaires de l'État, droits directs et
+      réversion, sur le compte individuel de retraite ; en SAS, opérationnel
+      depuis 2017.
+    confrontation: >-
+      Des résultats publiés à retrouver : les projections du COR pour l'État,
+      les engagements du compte général de l'État, les effets de la réforme
+      de 2023 que le jaune « pensions » du PLF 2026 en tire, et les
+      engagements de l'État des comptes nationaux.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
+
+  - id: oscar
+    nom: Oscar
+    auteur: Service des retraites de l'État
+    nature: cas_types
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [scenario_1]
+    couvre: >-
+      Des cas types sur les grilles indiciaires de l'État et sur les
+      carrières de Pablo, construit en R pour le système universel de 2020
+      (points, primes).
+    confrontation: >-
+      Aucune : son usage actuel n'est pas connu.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
+
+  - id: ariane
+    nom: Ariane
+    auteur: Direction du Budget
+    nature: projection
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      Une méso-simulation de la fonction publique de l'État par agrégats de
+      générations, auditée par la Cour des comptes en 2009, que Pablo a
+      remplacée.
+    confrontation: >-
+      Aucune : il est là pour que la liste soit complète.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
+
+  - id: canopee
+    nom: Canopée
+    auteur: Caisse des dépôts, pour la CNRACL
+    nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2011_CANOPEE_CNRACL.pdf
+      - https://politiques-sociales.caissedesdepots.fr/cahiers/qps-les-cahiers-ndeg9
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_07_SI_CNRACL.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      Les fonctionnaires territoriaux et hospitaliers, sur leurs grilles :
+      droits directs, réversion, invalidité, jusqu'en 2090 ; créé en 2019.
+    confrontation: >-
+      Des résultats publiés à retrouver : les projections de la CNRACL pour
+      le COR.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_07_SI_CNRACL.pdf
+    note: >-
+      La Caisse des dépôts tient aussi une prévision de la CNRACL à cinq ans,
+      refondue en 2023-2024, et une maquette pour le FSPOEIE, que le jaune
+      « pensions » du PLF 2026 cite.
+
+  - id: mistral
+    nom: Mistral
+    auteur: Caisse des dépôts, pour l'Ircantec
+    nature: projection
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_07_SI_CNRACL.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      La solvabilité et la trajectoire de l'Ircantec à long terme (2016), avec
+      Prévir, qui projette l'emploi des contractuels.
+    confrontation: >-
+      Des résultats publiés à retrouver : les projections de l'Ircantec.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_07_SI_CNRACL.pdf
+
+  - id: misraa
+    nom: MisrAA
+    auteur: Agirc-Arrco, direction technique
+    nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2012_Mod%C3%A8le%20Agirc-Arrco.pdf
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_05_SI_Agirc-Arrco.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      Les points, durées et trimestres des affiliés de l'Agirc-Arrco, et ceux
+      qu'ils obtiennent dans les autres régimes, sur un vingt-cinquième
+      d'entre eux ; il remplace les modèles de l'Agirc et de l'Arrco.
+    confrontation: >-
+      Des résultats publiés à retrouver : les projections de l'Agirc-Arrco
+      pour le COR.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_05_SI_Agirc-Arrco.pdf
+
+  # ---- Les ministères -------------------------------------------------------
+
+  - id: osiris
+    nom: Osiris
+    auteur: Direction de la sécurité sociale (DSS)
+    nature: cas_types
+    publication: non_public
+    documentation:
+      - http://gesd.free.fr/caliper.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [scenario_1]
+    couvre: >-
+      Une maquette de cas types — « COR 1 », « COR 2 », le SMIC… — des
+      générations 1975 à 2003, « conçue pour s'appliquer exclusivement à des
+      analyses sur cas-types ».
+    confrontation: >-
+      Des résultats publiés à retrouver : les cas types de l'étude d'impact
+      de 2020 (« Source : DSS/SDEPF/6C – maquette Osiris »).
+    lu_le: 2026-10-01
+    lu_dans:
+      - http://gesd.free.fr/caliper.pdf
+    note: >-
+      Son usage actuel n'est pas connu. La DSS tient aussi une maquette
+      comptable, qui agrège les comptes des régimes.
+
+  - id: aphrodite
+    nom: Aphrodite
+    auteur: Direction générale du Trésor
+    nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%206_Aphrodite_DG-Tr%C3%A9sor.pdf
+      - https://www.tresor.economie.gouv.fr/Articles/482ec69f-5251-4129-98b2-f4dfaccfb81e/files/5ad8638a-a272-4e14-8823-54a245de9606
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      Les pensions de la Cnav, de l'Agirc, de l'Arrco, de l'État, auquel tous
+      les fonctionnaires sont assimilés, et des non-salariés, sur les
+      biographies de Destinie jusqu'à 55 ans ; en R. Il succède à Margaret
+      (1989), Mars (2003) et Vénus (2007).
+    confrontation: >-
+      Des résultats publiés à retrouver, ceux de ses documents de travail ;
+      son usage après 2020 n'est pas connu.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%206_Aphrodite_DG-Tr%C3%A9sor.pdf
+    note: >-
+      Il partage les biographies de Destinie, pas ses règles. Pour l'Ageing
+      Report de 2024, la France a projeté avec Destinie, non avec lui.
+
+  - id: saphir
+    nom: Saphir
+    auteur: Direction générale du Trésor
+    nature: microsimulation_statique
+    publication: ouvert
+    code: https://github.com/DGTresor/Saphir
+    licence: CeCILL 2.1
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      Le droit socio-fiscal de 2017 sur l'ERFS : la CSG, la CRDS et la CASA
+      des pensions, le minimum vieillesse ; les pensions y sont des
+      entrées. En SAS.
+    confrontation: >-
+      Des paramètres de 2017 à comparer, pour le foyer et le net ; il ne vaut
+      que pour cette année-là.
+    sas: [dgtresor_saphir]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/DGTresor/Saphir
+    note: >-
+      Un seul commit, le 5 septembre 2018 ; le README prévient qu'il n'engage
+      pas « la position de l'administration ».
 
   # ---- L'Urssaf : les règles publicodes ----------------------------------
 
@@ -426,15 +1082,16 @@ referents:
     nature: calculateur
     publication: ouvert
     code: https://github.com/betagouv/mon-entreprise
-    documentation: [https://www.npmjs.com/package/modele-ti]
+    documentation:
+      - https://www.npmjs.com/package/modele-ti
     licence: MIT
     usage: copier
     confronte: [scenario_1]
     couvre: >-
-      Les règles publicodes des travailleurs indépendants : cotisations,
-      trimestres et points de la CNAVPL, de la Cipav et du RCI, la réforme
-      de l'assiette de 2025 comprise ; environ une règle sur deux cite sa
-      source.
+      Les règles publicodes des travailleurs indépendants : trimestres
+      validés, cotisations, points de la CNAVPL, du RCI et de la Cipav et
+      valeurs du point de 2023 à 2026, la réforme de l'assiette de 2025
+      comprise ; 140 blocs de références pour quelque 218 règles.
     version: "0.1.0"
     confrontation: >-
       Un calcul rejoué : le simulateur en ligne de l'Urssaf le charge, et une
@@ -456,10 +1113,15 @@ referents:
     lu_le: 2026-10-01
     lu_dans:
       - https://registry.npmjs.org/modele-ti
+      - https://github.com/betagouv/mon-entreprise
       - data/sources_a_explorer.yaml
     note: >-
-      Paquet npm `modele-ti` 0.1.0 du 16 juillet 2026, licence MIT, dans le
-      répertoire `modele-ti` du dépôt de mon-entreprise.
+      Paquet npm 0.1.0 du 16 juillet 2026, sous MIT, dans le répertoire
+      `modele-ti` du dépôt de mon-entreprise ; il n'a pas de dépôt à lui. Le
+      dépôt est en avance sur le paquet : le 2 septembre 2026, un commit
+      corrige les points acquis, inversés entre le RCI et la Cipav. L'API de
+      mon-entreprise l'expose (`/api/v1/modeles/ti/evaluate`), sans
+      authentification, cinq requêtes par seconde.
 
   - id: modele_social
     nom: modele-social
@@ -467,28 +1129,908 @@ referents:
     nature: calculateur
     publication: ouvert
     code: https://github.com/betagouv/mon-entreprise
-    documentation: [https://www.npmjs.com/package/modele-social]
+    documentation:
+      - https://www.npmjs.com/package/modele-social
     licence: MIT
     usage: copier
     confronte: [scenario_1]
     couvre: >-
-      Les règles publicodes du système social français : les cotisations de
-      tous les statuts, vieillesse comprise, datées.
+      Les règles publicodes du système social : les cotisations de tous les
+      statuts, vieillesse comprise ; les trimestres des salariés, des
+      indépendants et des auto-entrepreneurs ; les points Agirc-Arrco, du
+      RCI, de la CNAVPL et de la Cipav.
     version: "11.1.0"
     confrontation: >-
-      Des paramètres à comparer : ses taux de cotisation vieillesse, datés,
-      lisibles par machine, aux taux que le dépôt lit au texte.
+      Des paramètres à comparer : ses taux de cotisation vieillesse et ses
+      valeurs de point, datés, lisibles par machine, à ceux que le dépôt lit
+      au texte.
     ecarts:
       - constat: >-
           Le paquet porte encore les paramètres d'avant 2025 : 8,23 % et
-          525 points pour la CNAVPL, 9 et 22 % pour la Cipav.
+          525 points pour la CNAVPL, 9 et 22 % pour la Cipav ; modele-ti, dans
+          le même dépôt, compte 557 points.
         tranche: la réforme de l'assiette de 2025, que modele-ti suit ; le paquet est en retard
         preuve: data/sources_a_explorer.yaml (mon_entreprise_cipav)
     sas: [mon_entreprise_bibliotheque, mon_entreprise_depot]
     lu_le: 2026-10-01
     lu_dans:
       - https://registry.npmjs.org/modele-social
+      - https://github.com/betagouv/mon-entreprise
       - data/sources_a_explorer.yaml
     note: >-
-      Paquet npm `modele-social` 11.1.0 du 16 juillet 2026, licence MIT, dans
-      le répertoire `modele-social` du même dépôt que modele-ti.
+      Paquet npm 11.1.0 du 16 juillet 2026, sous MIT, dans le répertoire
+      `modele-social` ; l'API de mon-entreprise l'expose
+      (`/api/v1/evaluate`).
+
+  - id: modele_as
+    nom: modele-as
+    auteur: Urssaf (mon-entreprise)
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/betagouv/mon-entreprise
+    documentation:
+      - https://www.npmjs.com/package/modele-as
+    licence: MIT
+    usage: copier
+    confronte: [scenario_1]
+    couvre: >-
+      Les dirigeants assimilés salariés : trimestres à 150 heures de SMIC,
+      points Agirc-Arrco, cotisations vieillesse.
+    confrontation: >-
+      Un calcul à rejouer, sur des revenus de dirigeant, pour les trimestres
+      et les points.
+    sas: [mon_entreprise_depot]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/betagouv/mon-entreprise
+    note: >-
+      Paquet npm 0.1.0 ; dernier commit sur son répertoire le 10 septembre
+      2026. Avec modele-social et modele-ti, une seule source.
+
+  # ---- Les transcriptions du droit en code ---------------------------------
+
+  - id: catala
+    nom: Catala (catala-examples)
+    auteur: équipe Catala (Inria)
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/CatalaLang/catala-examples
+    licence: Apache-2.0
+    usage: copier
+    confronte: [scenario_1]
+    couvre: >-
+      La transcription littérale des articles, pour les aides au logement :
+      l'âge d'ouverture (L. 161-17-2, D. 161-2-1-9), l'âge du taux plein
+      (L. 351-8), l'inaptitude (L. 351-1-5, D. 351-1-14), l'ASPA (L. 815-9,
+      D. 815-1 et D. 815-2, montants jusqu'au 1er janvier 2020).
+    confrontation: >-
+      Des règles à comparer, article par article, avec leur texte recopié à
+      côté.
+    ecarts:
+      - constat: >-
+          Pour la génération 1967, le code dit 62 ans et 9 mois, quand le
+          texte qu'il recopie juste au-dessus dit 63 ans et 9 mois ; et ce
+          texte n'est plus le droit, sans la loi du 30 décembre 2025.
+        tranche: >-
+          L. 161-17-2 dans sa rédaction de 2025 : 63 ans et 6 mois, que le
+          modèle applique ; l'écart est le sien, toujours présent le
+          1er octobre 2026
+        preuve: docs/architecture.md (§ 3.4)
+    sas: [catala_examples]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/CatalaLang/catala-examples
+    note: >-
+      Dernier commit le 18 septembre 2026. `CatalaLang/french-law` (Apache
+      2.0) en tire des bibliothèques. Le répertoire `impot_revenu` du même
+      dépôt est sous une autre licence : voir ir_catala.
+
+  - id: ir_catala
+    nom: ir-catala
+    auteur: DGFiP
+    nature: calculateur
+    publication: ouvert
+    code: https://gitlab.adullact.net/dgfip/ir-catala
+    licence: CeCILL 2.1
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      L'impôt sur le revenu en Catala, dont l'abattement des pensions
+      (article 158, 5 a, du code général des impôts) ; une « preuve de
+      concept ».
+    confrontation: >-
+      Une règle à comparer, le jour où le dépôt calculera l'impôt du
+      retraité.
+    sas: [dgfip_ir_catala]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://gitlab.adullact.net/dgfip/ir-catala
+    note: >-
+      Dernier commit le 2 octobre 2024 ; le même contenu est dans
+      `catala-examples/impot_revenu`, sous CeCILL 2.1 aussi : une seule
+      source pour les deux.
+
+  # ---- La recherche ------------------------------------------------------------
+
+  - id: euromod
+    nom: EUROMOD (France)
+    auteur: Centre commun de recherche de la Commission européenne
+    nature: microsimulation_statique
+    publication: ouvert
+    code: https://github.com/ec-jrc/JRC-EUROMOD-software-source-code
+    documentation:
+      - https://euromod-web.jrc.ec.europa.eu/download-euromod
+      - https://euromod-web.jrc.ec.europa.eu/sites/default/files/2026-02/Y16_CR_FR.pdf
+    licence: EUPL-1.2 (logiciel) ; CC BY 4.0 (règles)
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      Pour la France, la CSG, la CRDS et la CASA des pensions, l'ASPA en
+      partie ; les pensions contributives ne sont pas simulées, faute
+      d'historique de carrière.
+    confrontation: >-
+      Des règles du foyer et du net à comparer ; ses règles, sous CC BY 4.0,
+      se recopient en citant.
+    sas: [jrc_euromod]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/ec-jrc/JRC-EUROMOD-software-source-code
+      - https://euromod-web.jrc.ec.europa.eu/sites/default/files/2026-02/Y16_CR_FR.pdf
+    note: >-
+      Logiciel 3.8.9 ; les données EU-SILC demandent un projet approuvé par
+      Eurostat.
+
+  - id: retraites_scherrer
+    nom: retraites (simulateur du COR réécrit)
+    auteur: B. Scherrer et M. Baudin
+    nature: projection
+    publication: ouvert
+    code: https://github.com/brunoscherrer/retraites
+    licence: GPL-3.0
+    usage: executer_a_part
+    confronte: [cout]
+    couvre: >-
+      Le simulateur du COR reproduit en Python, avec un solveur des leviers
+      qui ramènent l'équilibre ; projections du COR de 2019.
+    depend_de: [simulateur_cor]
+    confrontation: >-
+      Des projections à comparer, à hypothèses du COR égales ; elles datent
+      de 2019.
+    sas: [scherrer_retraites]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/brunoscherrer/retraites
+    note: >-
+      Paquet PyPI `retraites` 0.1.1 ; dernier commit le 30 septembre 2020.
+
+  - id: retraites_cor2026
+    nom: retraites-cor2026
+    auteur: A. Corral (mémoire)
+    nature: projection
+    publication: ouvert
+    code: https://github.com/AxelCorral/retraites-cor2026
+    licence: MIT
+    usage: copier
+    confronte: [cout]
+    couvre: >-
+      Un modèle comptable agrégé sur les séries du COR de 2026.
+    depend_de: [maquette_globale_cor]
+    confrontation: >-
+      Des projections à comparer, à séries du COR égales.
+    sas: [corral_retraites_cor2026]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/AxelCorral/retraites-cor2026
+
+  # ---- La société civile et la presse --------------------------------------
+  # Des lectures du droit faites par d'autres, chacune indépendante : elles
+  # confirment ou contredisent un paramètre, jamais plus qu'elles ne couvrent.
+
+  - id: retraites_2027
+    nom: Retraites 2027
+    auteur: A. Tilloy
+    nature: cas_types
+    publication: ouvert
+    code: https://github.com/AntoineTilloy/retraites-2027
+    documentation:
+      - https://antoinetilloy.github.io/retraites-2027/
+    licence: MIT
+    usage: copier
+    confronte: [scenario_1, cout]
+    couvre: >-
+      La pension nette de la CSG, de la CRDS, de la CASA, de la cotisation
+      maladie et de l'impôt, sur trois cas types, et le chiffrage de trois
+      leviers budgétaires.
+    confrontation: >-
+      Des prélèvements à comparer : ses seuils de CSG citent l'instruction de
+      la DSS du 11 décembre 2025, et rejoignent ceux d'OpenFisca-France.
+    sas: [tilloy_retraites_2027]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/AntoineTilloy/retraites-2027
+    note: Dernier commit le 20 septembre 2026, en JavaScript.
+
+  - id: simulateur_aurain
+    nom: Simulateur de dépense publique, volet retraites
+    auteur: S. Aurain
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/ManZanau/retraites-simulateur
+    licence: MIT
+    usage: copier
+    confronte: [scenario_1, cout]
+    couvre: >-
+      L'âge d'ouverture et la durée requise par génération sous trois états
+      du droit — 2023, la suspension de 2025, après 2028 — ; la CSG, l'impôt
+      et l'ASPA ; les distributions de l'EIR et de l'EACR.
+    confrontation: >-
+      Des paramètres à comparer : il dit avoir vérifié ses durées « contre le
+      texte consolidé sur Legifrance » le 9 septembre 2026, et elles
+      rejoignent celles du dépôt (170, puis 171 à partir d'avril 1965, 172).
+    sas: [aurain_retraites_simulateur]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/ManZanau/retraites-simulateur
+    note: Dernier commit le 16 septembre 2026, en Python et JavaScript.
+
+  - id: outil_quand_partir
+    nom: « Quand pourrai-je partir à la retraite ? »
+    auteur: auteur du dépôt `ataieb3342/lfi-site`
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/ataieb3342/lfi-site
+    licence: aucune
+    usage: lire_et_citer
+    confronte: [scenario_1]
+    couvre: >-
+      L'âge d'ouverture et la durée requise selon trois états du droit, la
+      loi du 30 décembre 2025 comprise
+      (`src/lib/boite-a-outils/retraite/outil.js`).
+    confrontation: >-
+      Des paramètres à comparer, génération par génération.
+    sas: [lfi_outil_retraite]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/ataieb3342/lfi-site
+    note: >-
+      Dernier commit le 29 septembre 2026 ; son rattachement à un parti n'est
+      pas vérifié.
+
+  - id: simulateur_sud_education
+    nom: Simulateur de SUD éducation
+    auteur: SUD éducation
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/Brndan/simulateur-retraites
+    licence: MIT
+    usage: copier
+    confronte: [scenario_1]
+    couvre: >-
+      La pension des enseignants au droit de 2020, comparée au système
+      universel du rapport Delevoye.
+    confrontation: >-
+      Un calcul à rejouer au droit de 2020, que le scénario 1 sait appliquer.
+    sas: [sud_education_simulateur]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/Brndan/simulateur-retraites
+    note: Dernier commit le 5 septembre 2020.
+
+  - id: devcrafting_retraites
+    nom: devcrafting/retraites
+    auteur: devcrafting
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/devcrafting/retraites
+    licence: aucune
+    usage: lire_et_citer
+    confronte: [scenario_1]
+    couvre: >-
+      Le régime général, les indépendants et la Cipav au droit de 2020,
+      comparés au système universel ; en F#.
+    confrontation: >-
+      Un calcul à relire au droit de 2020.
+    sas: [devcrafting_retraites]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/devcrafting/retraites
+    note: Dernier commit le 21 janvier 2020.
+
+  - id: calcul_verification_pension
+    nom: calcul-verification-pension-retraite
+    auteur: jean-ricky-fr
+    nature: calculateur
+    publication: ouvert
+    code: https://gitlab.com/jean-ricky-fr/calcul-verification-pension-retraite
+    licence: aucune
+    usage: lire_et_citer
+    confronte: [scenario_1]
+    couvre: >-
+      Un tableur de calcul des pensions de l'Assurance retraite et de la MSA
+      (« uniquement »).
+    confrontation: >-
+      Un calcul à relire, pour le régime général.
+    sas: [calcul_verification_pension]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://gitlab.com/jean-ricky-fr/calcul-verification-pension-retraite
+    note: Dernier commit le 28 février 2026.
+
+  - id: nosretraites_cas_types
+    nom: Simulateur de cas types de Nos Retraites
+    auteur: collectif Nos Retraites
+    nature: cas_types
+    publication: ouvert
+    code: https://github.com/nosretraites/simulateur_cas_types
+    licence: aucune
+    usage: lire_et_citer
+    confronte: [scenario_1]
+    couvre: >-
+      L'âge d'ouverture, l'âge et la durée du taux plein, la décote et la
+      surcote par génération, au projet de réforme annoncé le 10 janvier
+      2023, pas à la loi votée.
+    confrontation: >-
+      Peu : son droit est un projet ; il garde la lecture d'un moment.
+    sas: [nosretraites_simulateur_cas_types]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/nosretraites/simulateur_cas_types
+    note: >-
+      Dernier commit le 22 janvier 2023 ; ses données sont dans
+      `simulateur_cas_types_data`.
+
+  # ---- À l'étranger : les comptes notionnels --------------------------------
+  # Ils confrontent l'arithmétique de la proposition : le diviseur, le
+  # rendement, l'équilibre. Le droit de leur pays n'est pas le nôtre.
+
+  - id: pensionsmodellen
+    nom: Pensionsmodellen
+    auteur: Pensionsmyndigheten
+    pays: Suède
+    nature: projection
+    publication: ouvert
+    code: https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/pensionsmodellen
+    documentation:
+      - https://www.pensionsmyndigheten.se/content/dam/pensionsmyndigheten/blanketter---broschyrer---faktablad/statistik/pensionsmodellen/anv%C3%A4ndarmanual_pensionsmodellen_eng.pdf
+    licence: >-
+      « Du får sprida och modifiera verktyget, men inte använda det i
+      kommersiellt syfte utan Pensionsmyndighetens tillstånd »
+    usage: selon_conditions
+    confronte: [proposition]
+    couvre: >-
+      Tout le système suédois, en classeurs Excel et VBA, sur 25 à 90 ans :
+      les cotisations, le temps de rotation, la dette de pension, l'indice
+      d'équilibre (balanstal) et le diviseur.
+    confrontation: >-
+      Un calcul à rejouer : l'indice d'équilibre et le temps de rotation sur
+      75 ans, les trajectoires du frein contre le mécanisme d'équilibre de la
+      proposition.
+    sas: [suede_pensionsmodellen]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/pensionsmodellen
+    note: Version 2.2 du 10 octobre 2024, une archive de 2,87 Go.
+
+  - id: typfallsmodellen
+    nom: Typfallsmodellen
+    auteur: Pensionsmyndigheten
+    pays: Suède
+    nature: cas_types
+    publication: ouvert
+    code: https://static.pensionsmyndigheten.se/statistik/typfallsmodellen/typfallsmodellen.xlsb
+    documentation:
+      - https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/typfallsmodellen
+      - https://static.pensionsmyndigheten.se/statistik/typfallsmodellen/anvandarmanual-typfallsmodellen.pdf
+    licence: >-
+      « Verktyget får spridas och modifieras men inte användas i kommersiellt
+      syfte utan Pensionsmyndighetens tillstånd »
+    usage: selon_conditions
+    confronte: [proposition]
+    couvre: >-
+      La pension d'une carrière entière — pension de revenu, garantie,
+      pension professionnelle, impôt —, avec les diviseurs projetés par
+      génération (procédure VBA `Calculate_Deltal`).
+    confrontation: >-
+      Un calcul à rejouer : le diviseur projeté d'une génération, et la
+      pension d'un cas type à carrière identique.
+    sas: [suede_typfallsmodellen]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/typfallsmodellen
+    note: >-
+      Version 4.8 du 27 avril 2026. Un portage non officiel en TypeScript,
+      sans licence, en recopie le VBA (`mathiasboos/Typfallsmodellen`,
+      septembre 2026).
+
+  - id: delningstal_suede
+    nom: Le diviseur suédois (delningstal)
+    auteur: Riksdag, gouvernement et Pensionsmyndigheten
+    pays: Suède
+    nature: methode
+    publication: documente
+    documentation:
+      - https://data.riksdagen.se/dokument/sfs-2010-110.text
+      - https://lagen.nu/1998:1340
+      - https://www.pensionsmyndigheten.se/om-pensionsmyndigheten/allmanna-handlingar/lagar-och-regler
+    licence: textes officiels
+    usage: copier
+    confronte: [proposition]
+    couvre: >-
+      Un diviseur unisexe : la valeur actuelle des mensualités sur
+      l'espérance de vie moyenne égale le capital, au facteur annuel de 1,016
+      (code de la sécurité sociale, chapitre 62, § 34 à 37) ; la mortalité
+      officielle des cinq dernières années ; un douzième par mois de report.
+      Les tables de 2026 (PFS 2026:2) donnent 17,34 à 65 ans pour la
+      génération 1960.
+    confrontation: >-
+      Un calcul à refaire : la grille de 62 à 110 ans de PFS 2026:2 depuis
+      les tables de mortalité, puis le diviseur du dépôt sous les mêmes
+      conventions — taux, unisexe, mois.
+    sas: [suede_lagar_och_regler]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://data.riksdagen.se/dokument/sfs-2010-110.text
+      - https://www.pensionsmyndigheten.se/om-pensionsmyndigheten/allmanna-handlingar/lagar-och-regler
+
+  - id: balanstal_suede
+    nom: L'indice d'équilibre suédois (balanstal)
+    auteur: Riksdag et Pensionsmyndigheten
+    pays: Suède
+    nature: methode
+    publication: documente
+    documentation:
+      - https://www.pensionsmyndigheten.se/statistik/publikationer/orange-rapport-2025/orange-rapport-2025.pdf
+      - https://data.riksdagen.se/dokument/sfs-2002-780.text
+    licence: textes officiels
+    usage: copier
+    confronte: [proposition]
+    couvre: >-
+      L'indice d'équilibre — cotisations fois temps de rotation, plus les
+      fonds AP2 à AP4, sur la dette de pension —, le frein sous 1, son
+      lissage par un tiers, et depuis la loi 2026:1301 un accélérateur
+      au-dessus de 1,15, appliqué pour la première fois à 2027. L'indice
+      valait 1,1472 au rapport orange de 2025.
+    confrontation: >-
+      Un calcul à refaire : retrouver 1,1472 et le temps de rotation, puis
+      opposer le mécanisme d'équilibre de la proposition à la règle suédoise,
+      désormais symétrique.
+    sas: [suede_orange_rapport_2025]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.pensionsmyndigheten.se/statistik/publikationer/orange-rapport-2025/orange-rapport-2025.pdf
+    note: >-
+      Ses simulations stochastiques de l'accélérateur ne sont pas publiées ;
+      l'avis du 15 décembre 2025 en donne l'ordre de grandeur (sept
+      simulations sur cent entrent dans le frein au seuil de 1,10).
+
+  - id: sesim
+    nom: SESIM
+    auteur: ministère des Affaires sociales (Folkhälsomyndigheten)
+    pays: Suède
+    nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout]
+    couvre: >-
+      Les projections suédoises de l'Ageing Report de 2024 (SESIM18, réécrit
+      en R) ; né au ministère des Finances vers 1997.
+    confrontation: >-
+      Des résultats publiés à retrouver, ceux de la fiche suédoise.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
+
+  - id: mosart
+    nom: MOSART
+    auteur: Statistics Norway (SSB)
+    pays: Norvège
+    nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://www.ssb.no/befolkning/metoder-og-dokumentasjon/mosart-7.5.teknisk-dokumentasjon/_/attachment/inline/4d238e34-04c3-4dc3-a324-544e5a3a572e:e14fd155e59697117b6a359d5861dbab1e74a17e/NOT2025-04.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition, cout]
+    couvre: >-
+      La pension notionnelle norvégienne de 2011 — capital, diviseur,
+      indexation —, et les projections du gouvernement et de l'Ageing
+      Report ; version 7.5, en C#.
+    confrontation: >-
+      Des résultats publiés à retrouver, sa documentation technique de 2025
+      à l'appui.
+    sas: [norvege_mosart]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.ssb.no/befolkning/metoder-og-dokumentasjon/mosart-7.5.teknisk-dokumentasjon/_/attachment/inline/4d238e34-04c3-4dc3-a324-544e5a3a572e:e14fd155e59697117b6a359d5861dbab1e74a17e/NOT2025-04.pdf
+
+  - id: delingstall_norvege
+    nom: Le diviseur norvégien (delingstall)
+    auteur: ministère du Travail et NAV
+    pays: Norvège
+    nature: methode
+    publication: documente
+    documentation:
+      - https://lovdata.no/dokument/SF/forskrift/2009-12-22-1810/KAPITTEL_4
+      - https://lovdata.no/nav/folketrygdloven/kap20
+      - https://www.nav.no/redirects/delingstal
+    licence: non lue
+    usage: selon_conditions
+    confronte: [proposition]
+    couvre: >-
+      Le gain de survie normalisé et une actualisation de 0,9925 par an
+      (salaires moins 0,75 %), sur la mortalité des dix années avant 61 ans ;
+      fixé avant le 1er juillet de l'année des 61 ans ; le capital indexé sur
+      les salaires, les pensions servies sur la moyenne des salaires et des
+      prix. Tables de NAV du 26 juin 2026 : 20,41 à 62 ans pour la génération
+      1965.
+    confrontation: >-
+      Un calcul à refaire : le diviseur de 1965 depuis les tables de
+      mortalité de SSB ; et une variante du diviseur du dépôt qui inclut le
+      gain de survie.
+    sas: [norvege_delingstall]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://lovdata.no/dokument/SF/forskrift/2009-12-22-1810/KAPITTEL_4
+      - https://www.nav.no/redirects/delingstal
+    note: >-
+      Le code ouvert de NAV (`navikt/pensjonssimulator`, MIT) n'orchestre que
+      des appels : le moteur de règles, `pensjon-regler`, n'est pas public.
+
+  - id: modello_rgs
+    nom: Modèle de prévision de la Ragioneria Generale dello Stato
+    auteur: Ragioneria Generale dello Stato (ministère de l'Économie)
+    pays: Italie
+    nature: projection
+    publication: non_public
+    documentation:
+      - https://www.rgs.mef.gov.it/_Documenti/VERSIONE-I/Attivit--i/Spesa-soci/Attivita_di_previsione_RGS/2026/Ltdmlpdspess-2026.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition, cout]
+    couvre: >-
+      La dépense de pensions à long terme et les taux de remplacement, le
+      régime contributif compris ; tenu depuis 1999.
+    confrontation: >-
+      Des résultats publiés à retrouver, ceux du rapport n° 27 de juillet
+      2026.
+    sas: [italie_rgs_rapporto_27]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.rgs.mef.gov.it/_Documenti/VERSIONE-I/Attivit--i/Spesa-soci/Attivita_di_previsione_RGS/2026/Ltdmlpdspess-2026.pdf
+
+  - id: coefficienti_italie
+    nom: Les coefficients de transformation italiens
+    auteur: loi n° 335 de 1995, ministère du Travail et ministère de l'Économie
+    pays: Italie
+    nature: methode
+    publication: documente
+    documentation:
+      - https://www.lavoro.gov.it/documenti-e-norme/normativa/decreto-direttoriale-20112024-coefficienti-trasformazione.pdf
+      - https://www.rgs.mef.gov.it/_Documenti/VERSIONE-I/Attivit--i/Spesa-soci/Attivita_di_previsione_RGS/2026/Ltdmlpdspess-2026.pdf
+    licence: textes officiels
+    usage: copier
+    confronte: [proposition]
+    couvre: >-
+      Le coefficient, inverse d'un diviseur qui moyenne les deux sexes et
+      intègre la réversion, au taux d'actualisation de 1,5 %, révisé tous les
+      deux ans sur la mortalité de l'Istat ; le décret du 20 novembre 2024
+      donne 19,049 à 65 ans, soit 5,250 %.
+    confrontation: >-
+      Un calcul à refaire : la table de 2025-2026 au millième, puis une
+      variante du diviseur du dépôt qui intègre la réversion.
+    sas: [italie_coefficienti_2024]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.lavoro.gov.it/documenti-e-norme/normativa/decreto-direttoriale-20112024-coefficienti-trasformazione.pdf
+
+  - id: t_dymm
+    nom: T-DYMM
+    auteur: ministère de l'Économie, département du Trésor
+    pays: Italie
+    nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://microsimulation.pub/articles/00303
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition]
+    couvre: >-
+      Les pensions italiennes, régime contributif compris, sur des données
+      administratives appariées à l'enquête SILC ; sur LIAM2.
+    confrontation: >-
+      Des résultats publiés à retrouver.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://microsimulation.pub/articles/00303
+
+  - id: fus23
+    nom: Modèle FUS23
+    auteur: ZUS, département des statistiques et prévisions actuarielles
+    pays: Pologne
+    nature: projection
+    publication: non_public
+    documentation:
+      - https://bip.zus.pl/documents/493361/494125/Publikacja_Fundusz_Emerytalny_2026_2080.pdf/eb15d7cf-ebff-e6ea-dec9-f81654a28011
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition, cout]
+    couvre: >-
+      Le fonds de retraite polonais jusqu'en 2080, par cohortes ; en Excel et
+      VBA.
+    confrontation: >-
+      Des résultats publiés à retrouver, ceux de la prévision d'octobre 2025.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://bip.zus.pl/documents/493361/494125/Publikacja_Fundusz_Emerytalny_2026_2080.pdf/eb15d7cf-ebff-e6ea-dec9-f81654a28011
+
+  - id: diviseur_pologne
+    nom: Le diviseur polonais
+    auteur: loi sur les pensions du FUS (article 26) et GUS
+    pays: Pologne
+    nature: methode
+    publication: documente
+    documentation:
+      - https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-tablicy-sredniego-dalszego-trwania-zycia-kobiet-i-mezczyzn,285,14.html
+      - https://arslege.pl/wysokosc-emerytury/k63/a22756/
+    licence: textes officiels
+    usage: copier
+    confronte: [proposition]
+    couvre: >-
+      Le capital divisé par l'espérance de vie restante unisexe, en mois,
+      sans actualisation ; la table du GUS, publiée avant le 31 mars, vaut
+      du 1er avril au 31 mars suivant.
+    confrontation: >-
+      Une variante à opposer au diviseur du dépôt : l'espérance de vie pure,
+      sans taux technique.
+    sas: [pologne_gus_esperance]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://arslege.pl/wysokosc-emerytury/k63/a22756/
+    note: >-
+      Les valeurs de 2026 (268,9 mois à 60 ans, 222,7 à 65 ans) n'ont été lues
+      que sur un site secondaire.
+
+  - id: modele_lettonie
+    nom: Modèle de projection des pensions lettonnes
+    auteur: ministère du Bien-être, avec des consultants de la Banque mondiale
+    pays: Lettonie
+    nature: projection
+    publication: non_public
+    documentation:
+      - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition, cout]
+    couvre: >-
+      Le système notionnel letton, en projection agrégée, construit il y a
+      plus de vingt ans.
+    confrontation: >-
+      Des résultats publiés à retrouver, ceux de la fiche lettonne de
+      l'Ageing Report.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
+
+  - id: diviseur_lettonie
+    nom: Le diviseur letton (P = K / G)
+    auteur: loi sur les pensions d'État (article 12), VSAA
+    pays: Lettonie
+    nature: methode
+    publication: documente
+    documentation:
+      - https://likumi.lv/ta/id/38048-par-valsts-pensijam
+      - https://www.vsaa.gov.lv/lv/media/5322/download?attachment=
+    licence: textes officiels
+    usage: copier
+    confronte: [proposition]
+    couvre: >-
+      La pension, capital divisé par l'espérance de vie unisexe du bureau
+      statistique ; le capital indexé sur la masse salariale cotisée. La
+      table G du 1er janvier 2026 donne 17,76 à 65 ans.
+    confrontation: >-
+      Une variante à opposer au diviseur du dépôt, sans actualisation.
+    sas: [lettonie_table_g]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.vsaa.gov.lv/lv/media/5322/download?attachment=
+
+  - id: projections_grece
+    nom: Projections de l'Autorité actuarielle nationale
+    auteur: Autorité actuarielle nationale, sur le modèle de l'OIT
+    pays: Grèce
+    nature: projection
+    publication: non_public
+    documentation:
+      - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition]
+    couvre: >-
+      Les complémentaires grecques en comptes notionnels : rendement égal à
+      la croissance des salaires cotisés, rentes actualisées à 1,3 %, aucune
+      indexation en cas de déficit.
+    confrontation: >-
+      Une règle d'équilibre à opposer à celle de la proposition : la
+      suspension de l'indexation.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
+
+  - id: fator_previdenciario
+    nom: Le fator previdenciário
+    auteur: loi n° 9.876 de 1999, IBGE
+    pays: Brésil
+    nature: methode
+    publication: documente
+    documentation:
+      - https://www.planalto.gov.br/ccivil_03/leis/l9876.htm
+      - https://ftp.ibge.gov.br/Tabuas_Completas_de_Mortalidade/
+    licence: textes officiels
+    usage: copier
+    confronte: [proposition]
+    couvre: >-
+      Un facteur proche d'un diviseur : durée de cotisation fois 0,31 sur
+      l'espérance de vie de l'IBGE, « média nacional única para ambos os
+      sexos », avec un bonus.
+    confrontation: >-
+      Une variante à opposer au diviseur du dépôt : l'espérance de vie pure,
+      sans rendement notionnel.
+    sas: [bresil_lei_9876]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.planalto.gov.br/ccivil_03/leis/l9876.htm
+
+  - id: elinaikakerroin
+    nom: Le coefficient d'espérance de vie finlandais (elinaikakerroin)
+    auteur: Centre finlandais des pensions (ETK)
+    pays: Finlande
+    nature: methode
+    publication: documente
+    documentation:
+      - https://www.etk.fi/suomen-elakejarjestelma/elaketurva/elinaikakerroin/elinaikakertoimen-laskentakaavat/
+    licence: non lue
+    usage: selon_conditions
+    confronte: [proposition]
+    couvre: >-
+      Un mécanisme voisin : le rapport de la valeur en capital d'une pension à
+      62 ans, 65 ans dès 2027, à celle de 2009, au taux de 2 % et sur la
+      mortalité des cinq années précédentes ; 0,94643 pour la génération
+      1964.
+    confrontation: >-
+      Un calcul à refaire : le coefficient de 1964, et l'effet d'un
+      coefficient de cette forme sur la pension du dépôt.
+    sas: [finlande_elinaikakerroin]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://www.etk.fi/suomen-elakejarjestelma/elaketurva/elinaikakerroin/elinaikakertoimen-laskentakaavat/
+    note: >-
+      Les modèles de l'ETK (LTP, ELSI) ne sont pas publiés.
+
+  # ---- Les organisations internationales -------------------------------------
+
+  - id: prost
+    nom: PROST (Pension Reform Options Simulation Toolkit)
+    auteur: Banque mondiale
+    pays: international
+    nature: projection
+    publication: non_public
+    documentation:
+      - https://documents1.worldbank.org/curated/en/099061024110535659/pdf/P1777231d8367c0111800816452e83c58d7.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition, cout]
+    couvre: >-
+      Un pilier notionnel par répartition au choix du taux (PIB, PIB par
+      tête, salaire, masse salariale), les facteurs de rente, la transition
+      par capital initial, la dette implicite ; en Excel et VBA.
+    confrontation: >-
+      Une méthode à refaire, celle du « Calculus for PROST 15 » : le capital
+      initial de la transition et la dette implicite, à opposer à ceux du
+      dépôt.
+    sas: [banque_mondiale_prost]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://documents1.worldbank.org/curated/en/099061024110535659/pdf/P1777231d8367c0111800816452e83c58d7.pdf
+    note: >-
+      L'outil n'est pas téléchargeable : la Banque mondiale le remet sur clé
+      USB en formation (« World Bank property »).
+
+  - id: modeles_ocde
+    nom: Les modèles de pension de l'OCDE
+    auteur: OCDE (à l'origine APEX, d'Axia Economics)
+    pays: international
+    nature: cas_types
+    publication: documente
+    documentation:
+      - https://doi.org/10.1787/e40274c1-en
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition]
+    couvre: >-
+      Les taux de remplacement et le patrimoine retraite par pays, pays
+      notionnels compris, sous des hypothèses publiées : inflation 2 %,
+      salaires réels +1,25 %, actualisation 1,5 %, mortalité de l'ONU par
+      génération.
+    confrontation: >-
+      Des résultats publiés à retrouver : le taux de remplacement d'une
+      carrière complète, sous ses hypothèses.
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://doi.org/10.1787/e40274c1-en
+
+  - id: ageing_report
+    nom: Ageing Report et ses fiches pays
+    auteur: Commission européenne et Comité de politique économique (AWG)
+    pays: international
+    nature: projection
+    publication: documente
+    documentation:
+      - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [cout, proposition]
+    couvre: >-
+      Les projections de chaque État par son propre modèle, revues par les
+      pairs ; la fiche de chaque pays décrit son modèle. La France y est
+      projetée avec Destinie.
+    depend_de: [destinie_2]
+    confrontation: >-
+      Des résultats publiés à retrouver : la dépense de pensions de la
+      France jusqu'en 2070, et celle des pays notionnels.
+    sas: [ageing_report_2024]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
+    note: L'Ageing Report de 2027 n'est pas encore publié.
+
+  - id: ilo_pensions
+    nom: ILO/PENSIONS
+    auteur: Organisation internationale du travail
+    pays: international
+    nature: projection
+    publication: sur_demande
+    code: https://qpss.ilo.org/APT
+    licence: non lue
+    usage: selon_conditions
+    confronte: [cout]
+    couvre: >-
+      Un outil actuariel de projection par cohortes, en ligne, sur compte.
+    confrontation: >-
+      Aucune tant que ses conditions ne sont pas lues.
+    sas: [oit_ilo_pensions]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://qpss.ilo.org/APT
+    note: >-
+      Le FMI n'a pas de modèle public : il évalue ceux des États (le
+      Luxembourg, en décembre 2025, sur le modèle de l'OIT écrit en LIAM2).
+
+  - id: og_core
+    nom: OG-Core
+    auteur: PSLmodels
+    pays: international
+    nature: projection
+    publication: ouvert
+    code: https://github.com/PSLmodels/OG-Core
+    licence: CC0 1.0
+    usage: copier
+    confronte: [proposition, cout]
+    couvre: >-
+      Un modèle à générations imbriquées, en Python, avec un module de
+      comptes notionnels à l'italienne : rendement au choix (taux d'intérêt,
+      PIB courant, PIB de long terme), coefficient de conversion de forme
+      italienne.
+    confrontation: >-
+      Un calcul à rejouer : les effets d'équilibre général d'une bascule en
+      comptes notionnels, que le dépôt ne modélise pas.
+    sas: [og_core]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://github.com/PSLmodels/OG-Core
+    note: >-
+      Version 0.20.3 sur PyPI au 1er octobre 2026. Le seul code ouvert
+      établi qui calcule une pension notionnelle ; GitHub, GitLab, le CRAN et
+      PyPI n'en portent pas d'autre, hors deux dépôts personnels.

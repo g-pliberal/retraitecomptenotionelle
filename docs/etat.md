@@ -101,7 +101,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors du modèle.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR), et le modèle n'en calcule aucune.
 
-**La feuille de route** compte 137 actions : 124 fait, 9 en cours, 2 à faire, 1 archivée, 1 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 138 actions : 124 fait, 10 en cours, 2 à faire, 1 archivée, 1 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -199,7 +199,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 9 actions en cours** de la feuille de route :
+- **Les 10 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
@@ -209,7 +209,8 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger
   - 133. La retraite de base et ses complémentaires, sous le montant du système 1
   - 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats
-- **Les sources à exploiter** : 109 à explorer sur 260 (63 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
+  - 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation
+- **Les sources à exploiter** : 150 à explorer sur 301 (63 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
   - Régime des artistes-auteurs professionnels (IRCEC) : 2 source(s) (cnav_arrierees_artiste_auteur, mon_entreprise_artiste_auteur)
@@ -217,8 +218,8 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Régime des auteurs et compositeurs dramatiques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - Régime des auteurs et compositeurs lyriques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - Assurance vieillesse des non-salariés agricoles (MSA) : 1 source(s) (msa_reforme_25_meilleures_annees)
-  - et 15 sources sans régime désigné.
-- **Les autres modèles** (§ 3.4) : 12 au registre (`data/reference/referents.yaml`) : 8 au code ouvert, 0 sur demande, 2 documenté(s) sans leur code, 2 non public(s). 7 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, PRISME, Maquette simplifiée du secrétariat général du COR, modele-ti, modele-social), et 12 écarts y ont été trouvés. À confronter d'abord au scénario 1, parce que leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du registre : `destinie_2`.
+  - et 56 sources sans régime désigné.
+- **Les autres modèles** (§ 3.4) : 69 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 23 non public(s). 10 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, TRAJECTOiRE, ANCETRE, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), modele-ti, modele-social), et 14 écarts y ont été trouvés. 16 sont à confronter au scénario 1 en premier, parce que leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du registre ; dans l'ordre du registre, qui range les administrations d'abord : `destinie_2`, `ines`, `legiretraite`, `edifis`, `saphir`, `modele_as`, et 10 autres.
 - **Les fiches sans exemple officiel** : 91.
 - **Les domaines sans décision** (§ 8) : 77 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 15 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `cumul_emploi_retraite_et_retraite_progressive`, `cumul_emploi_retraite_fonction_publique`, `droits_apres_la_premiere_pension`, `interpenetration_fonction_publique`, `liquidation_regime_par_regime`, `liquidation_unique_regimes_alignes`, `pension_d_invalidite_substituee`, `rafp_age_d_ouverture`, `residence_et_minimum_vieillesse`, `retablissement_fonction_publique`, `retraite_progressive`, `retraite_proportionnelle_msa`, `totalisation_des_periodes_etrangeres`. Les 62 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
 - **Faire mûrir la carte** : 832 champs obligatoires manquent, à 110 fiches. Par champ :

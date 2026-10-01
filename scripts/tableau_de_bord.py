@@ -581,9 +581,11 @@ def page() -> str:
       f"documenté(s) sans leur code, {publications['non_public']} non public(s). "
       f"{len(tires)} ont déjà été confrontés au dépôt ou lui donnent des valeurs ("
       + ", ".join(r["nom"] for r in tires) + f"), et {n_ecarts} écarts y ont été "
-      "trouvés. À confronter d'abord au scénario 1, parce que leur code est ouvert, "
-      "qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du "
-      "registre : " + ", ".join(f"`{r['id']}`" for r in premiers) + ".")
+      f"trouvés. {len(premiers)} sont à confronter au scénario 1 en premier, parce que "
+      "leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune "
+      "autre source du registre ; dans l'ordre du registre, qui range les "
+      "administrations d'abord : " + ", ".join(f"`{r['id']}`" for r in premiers[:6])
+      + (f", et {len(premiers) - 6} autres." if len(premiers) > 6 else "."))
     w(f"- **Les fiches sans exemple officiel** : {len(veille) - avec_exemple}.")
     communes = sorted(set.intersection(*map(set, sans_decision.values())))
     avec_etape = [f for f in communes if fiches_du_droit_reel[f].get("etape")]
