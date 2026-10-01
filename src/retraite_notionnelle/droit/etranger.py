@@ -87,6 +87,11 @@ class PeriodeCoordonnee:
     #: Les États tiers dont la convention qui la fait compter totalise aussi
     #: les périodes (tableau des accords) ; aucun pour un autre instrument.
     etats_tiers: tuple[str, ...] = field(default=(), compare=False, repr=False)
+    #: L'année d'où ses trimestres réduisent, avec la durée des régimes
+    #: alignés, les années du salaire annuel moyen de la pension proratisée :
+    #: ceux d'un régime que la Cnav tient pour « équivalant au régime
+    #: général » (:func:`_salaire_moyen_depuis`) ; ``None`` pour une autre.
+    salaire_moyen_depuis: int | None = None
 
     def donnees(self) -> dict:
         periode = self.periode
@@ -94,7 +99,8 @@ class PeriodeCoordonnee:
                 "fin": _jour(periode.fin), "activite": periode.activite,
                 "titre": self.titre, "instrument": self.instrument,
                 "familles": list(self.familles), "version": self.version,
-                "comparee": self.comparee}
+                "comparee": self.comparee,
+                "salaire_moyen_depuis": self.salaire_moyen_depuis}
 
 
 def _jour(mois: DateMois) -> str:
@@ -149,8 +155,34 @@ def coordonner_les_periodes(moteur: ScenarioActuel,
             periode=periode, titre=titre, instrument=instrument, familles=familles,
             version=None if version is None else version["id"], parametres=parametres,
             comparee=comparee,
-            etats_tiers=tuple(accord.get("etats_tiers") or ()) if titre == ACCORD else ()))
+            etats_tiers=tuple(accord.get("etats_tiers") or ()) if titre == ACCORD else (),
+            salaire_moyen_depuis=(_salaire_moyen_depuis(domaine, periode, effet)
+                                  if comparee and instrument == REGLEMENTS_EUROPEENS
+                                  else None)))
     return tuple(coordonnees)
+
+
+def _salaire_moyen_depuis(domaine, periode: PeriodeALEtranger, effet: str) -> int | None:
+    """L'année d'où les trimestres d'une période que les règlements européens
+    totalisent comptent, avec la durée des régimes alignés, pour réduire les
+    années du salaire annuel moyen de la pension proratisée : celle de son
+    début, ou celle d'où le régime de son État est « équivalent » ; ``None``
+    quand il ne l'est pas pour son activité, ou pas encore à la date d'effet
+    de la pension. Le régime « équivalant au régime général et aux régimes
+    alignés » calcule sa pension sur les salaires, les revenus ou les
+    cotisations d'au moins quinze ans (circulaire ministérielle du 3 juillet
+    2008) ; le tableau des accords dit, État par État, les activités dont la
+    Cnav l'a reconnu (``salaire_moyen`` ; circulaires Cnav n° 2012/26 et
+    2013/56). Le modèle présume la période accomplie au régime des salariés ou
+    des non-salariés de l'État, jamais à celui de ses fonctionnaires, que le
+    tableau exclut presque partout."""
+    equivalence = (domaine.accords.get(periode.pays) or {}).get("salaire_moyen")
+    if (equivalence is None or periode.activite not in equivalence["activites"]
+            or effet < (equivalence.get("pensions_depuis") or "")):
+        return None
+    depuis = equivalence.get("periodes_depuis")
+    return periode.debut.annee if depuis is None else max(periode.debut.annee,
+                                                           int(depuis[:4]))
 
 
 @dataclass(frozen=True)
@@ -173,6 +205,12 @@ class TrimestresEtrangers:
     #: pension NATIONALE retient, sans ceux des périodes qu'un accord compare
     #: (:attr:`PeriodeCoordonnee.comparee`).
     nationaux: dict[str, dict[int, int]] = field(default_factory=dict)
+    #: Par famille, par année : ceux que la durée du taux retient des régimes
+    #: étrangers « équivalant au régime général »
+    #: (:attr:`PeriodeCoordonnee.salaire_moyen_depuis`), qui réduisent avec la
+    #: durée des régimes alignés les années du salaire annuel moyen de la
+    #: pension proratisée (fiche ``pension_proratisee``).
+    au_salaire_moyen: dict[str, dict[int, int]] = field(default_factory=dict)
 
     def trimestres(self, famille: str | None, nationale: bool = False) -> int:
         """Les trimestres que la durée du taux de cette famille retient — de
@@ -189,6 +227,11 @@ class TrimestresEtrangers:
         """Ceux d'entre eux qui comptent comme cotisés."""
         return sum((self.cotises.get(famille) or {}).values())
 
+    def trimestres_au_salaire_moyen(self, famille: str | None) -> int:
+        """Ceux d'entre eux qui réduisent les années du salaire annuel moyen
+        de la pension proratisée."""
+        return sum((self.au_salaire_moyen.get(famille) or {}).values())
+
     def donnees(self) -> dict:
         return {
             "famille": self.famille,
@@ -196,7 +239,8 @@ class TrimestresEtrangers:
             "trimestres": [
                 {"famille": famille, "annee": annee, "trimestres": trimestres,
                  "cotises": self.cotises.get(famille, {}).get(annee, 0),
-                 "nationaux": self.nationaux.get(famille, {}).get(annee, 0)}
+                 "nationaux": self.nationaux.get(famille, {}).get(annee, 0),
+                 "au_salaire_moyen": self.au_salaire_moyen.get(famille, {}).get(annee, 0)}
                 for famille in FAMILLES
                 for annee, trimestres in sorted(self.pour_le_taux.get(famille, {}).items())],
         }
@@ -266,18 +310,19 @@ def compter_les_periodes(carriere: Carriere, periodes: tuple[PeriodeCoordonnee, 
             candidats.append((coordonnee, annee, trimestres))
     calculs = []
     for groupe, compare in _groupes(candidats):
-        pour_le_taux, cotises = _retenir(groupe, francais, depart)
-        nationaux, _ = _retenir([c for c in groupe if not compare or _accord_de(c[0]) is None],
-                                francais, depart)
-        calculs.append((pour_le_taux, cotises, nationaux))
-    retenus: tuple[dict[str, dict[int, int]], ...] = ({}, {}, {})
+        pour_le_taux, cotises, au_salaire_moyen = _retenir(groupe, francais, depart)
+        nationaux, _, _ = _retenir(
+            [c for c in groupe if not compare or _accord_de(c[0]) is None], francais, depart)
+        calculs.append((pour_le_taux, cotises, nationaux, au_salaire_moyen))
+    retenus: tuple[dict[str, dict[int, int]], ...] = ({}, {}, {}, {})
     for retenante in FAMILLES:
         # Le premier des accords qui en apportent le plus, dans l'ordre des
         # périodes.
         meilleur = max(calculs, key=lambda calcul: sum(calcul[0][retenante].values()))
         for table, retenue in zip(retenus, meilleur):
             table[retenante] = retenue[retenante]
-    return TrimestresEtrangers(retenus[0], retenus[1], periodes, famille, retenus[2])
+    return TrimestresEtrangers(retenus[0], retenus[1], periodes, famille, retenus[2],
+                               retenus[3])
 
 
 def _accord_de(coordonnee: PeriodeCoordonnee) -> str | None:
@@ -309,31 +354,39 @@ def _groupes(candidats: list[tuple[PeriodeCoordonnee, int, int]]
 
 
 def _retenir(candidats: list[tuple[PeriodeCoordonnee, int, int]], francais: dict[int, int],
-             depart: DateMois) -> tuple[dict[str, dict[int, int]], dict[str, dict[int, int]]]:
+             depart: DateMois) -> tuple[dict[str, dict[int, int]], ...]:
     """Ce que chaque famille retient de ces trimestres, année par année, sous
-    le plafond de l'année : ceux d'un accord d'abord, les seuls cotisés."""
-    offres: dict[str, dict[int, list[tuple[int, int]]]] = {f: {} for f in FAMILLES}
+    le plafond de l'année : ceux d'un accord d'abord, les seuls cotisés ; et
+    ceux des régimes étrangers équivalents, à égalité les derniers."""
+    offres: dict[str, dict[int, list[tuple[int, int, int]]]] = {f: {} for f in FAMILLES}
     for coordonnee, annee, trimestres in candidats:
+        depuis = coordonnee.salaire_moyen_depuis
+        equivalent = int(depuis is not None and annee >= depuis)
         for retenante in coordonnee.familles:
             offres[retenante].setdefault(annee, []).append(
-                (TITRES.index(coordonnee.titre), trimestres))
+                (TITRES.index(coordonnee.titre), trimestres, equivalent))
     pour_le_taux: dict[str, dict[int, int]] = {f: {} for f in FAMILLES}
     cotises: dict[str, dict[int, int]] = {f: {} for f in FAMILLES}
+    au_salaire_moyen: dict[str, dict[int, int]] = {f: {} for f in FAMILLES}
     for retenante, annees in offres.items():
         for annee in sorted(annees):
             plafond = 4 if annee < depart.annee else trimestres_civils(depart.mois - 1)
             libres = max(0, plafond - francais.get(annee, 0))
-            retenus = cotises_annee = 0
-            for rang, trimestres in sorted(annees[annee]):
+            retenus = cotises_annee = equivalents = 0
+            for rang, trimestres, equivalent in sorted(annees[annee]):
                 pris = min(trimestres, libres - retenus)
                 retenus += pris
                 if TITRES[rang] == ACCORD:
                     cotises_annee += pris
+                if equivalent:
+                    equivalents += pris
             if retenus:
                 pour_le_taux[retenante][annee] = retenus
             if cotises_annee:
                 cotises[retenante][annee] = cotises_annee
-    return pour_le_taux, cotises
+            if equivalents:
+                au_salaire_moyen[retenante][annee] = equivalents
+    return pour_le_taux, cotises, au_salaire_moyen
 
 
 def _trimestres_de(coordonnee: PeriodeCoordonnee, parametres: dict,
@@ -369,6 +422,7 @@ def _trimestres_de(coordonnee: PeriodeCoordonnee, parametres: dict,
 #: Ce que des périodes hors de France n'apportent pas, faute d'en avoir.
 RIEN = TrimestresEtrangers({famille: {} for famille in FAMILLES},
                            {famille: {} for famille in FAMILLES}, (), GENERALE,
+                           {famille: {} for famille in FAMILLES},
                            {famille: {} for famille in FAMILLES})
 
 

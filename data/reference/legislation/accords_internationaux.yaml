@@ -78,6 +78,32 @@
 #                (https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=…) ;
 #                cleiss — la page du CLEISS (https://www.cleiss.fr/docs/textes/…).
 #
+# Hors de ses accords, un État peut dire :
+#
+#   salaire_moyen  les activités dont le régime calcule sa pension sur les
+#                salaires, les revenus ou les cotisations d'au moins quinze
+#                ans, que la Cnav tient pour « équivalant au régime général et
+#                aux régimes alignés » : sous les règlements européens, leurs
+#                périodes réduisent avec celles des régimes alignés les années
+#                du salaire annuel moyen de la pension proratisée, quand la
+#                fiche `pension_proratisee` les réduit (R. 173-4-3 ;
+#                circulaire ministérielle DSS/3A/DACI/2008/219 du 3 juillet
+#                2008). Les activités sont celles du tableau de la circulaire
+#                Cnav n° 2012/26 du 14 mars 2012, qui « se substitue » à ceux
+#                des circulaires n° 2008/58 et 2010/30 — colonnes « Equivalence
+#                régime de base général » et « Equivalence régimes de non
+#                salariés » — ; la Croatie, celles de la circulaire n° 2013/56
+#                du 19 décembre 2013, sa pension « déterminé[e] sur l'ensemble
+#                de la carrière ». `periodes_depuis` : le premier jour des
+#                périodes qui comptent — l'Italie, son « nouveau système »,
+#                les périodes « accomplies après le 1er janvier 1996 »
+#                (circulaire de 2008) ; `pensions_depuis` : la première date
+#                d'effet des pensions qui les comptent — l'Italie, « à compter
+#                du 1er janvier 2011 » (circulaire n° 2012/26). Absent : un
+#                régime que le tableau ne tient pas pour équivalent — celui
+#                d'un État qui sert sa pension sur la résidence, ou la calcule
+#                sur moins de quinze ans —, ou un État hors des règlements.
+#
 # Les règlements européens coordonnent tous les régimes légaux français, de
 # base et complémentaires (annexe XI, France, point 3), et, depuis le
 # 25 octobre 1998 seulement, les régimes spéciaux des fonctionnaires
@@ -94,6 +120,7 @@ etats:
 
   AT:
     nom: Autriche
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1972-11-01, a: 1994-01-01, calcul: non_lu,
        texte: "convention générale du 28 mai 1971 (décret n° 72-1108 du 5 décembre 1972)",
@@ -101,6 +128,7 @@ etats:
     - {instrument: reglements_europeens, de: 1994-01-01, texte: "accord sur l'Espace économique européen"}
   BE:
     nom: Belgique
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1949-07-01, a: 1959-01-01, calcul: non_lu,
        texte: "convention générale du 17 janvier 1948 (décret n° 49-947 du 6 juillet 1949)",
@@ -112,10 +140,12 @@ etats:
     - {instrument: reglements_europeens, de: 2007-01-01, texte: "traité d'adhésion du 25 avril 2005"}
   CY:
     nom: Chypre
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
   CZ:
     nom: République tchèque
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1949-07-01, a: 2004-05-01, calcul: non_lu,
        texte: "convention générale franco-tchécoslovaque du 12 octobre 1948 (décret n° 49-1000 du 23 juillet 1949), maintenue le 19 juin 1995",
@@ -123,6 +153,7 @@ etats:
     - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
   DE:
     nom: Allemagne
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1952-01-01, a: 1959-01-01, calcul: non_lu,
        texte: "convention générale du 10 juillet 1950 (décret n° 52-74 du 15 janvier 1952)",
@@ -137,10 +168,12 @@ etats:
     - {instrument: reglements_europeens, de: 1973-04-01, texte: "traité d'adhésion du 22 janvier 1972"}
   EE:
     nom: Estonie
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
   ES:
     nom: Espagne
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1976-04-01, a: 1986-01-01, calcul: non_lu,
        texte: "convention générale du 31 octobre 1974 (décret n° 76-458 du 25 mai 1976), qui remplace celle du 27 juin 1957",
@@ -159,6 +192,7 @@ etats:
     - {instrument: reglements_europeens, de: 1981-01-01, texte: "traité d'adhésion du 28 mai 1979"}
   HR:
     nom: Croatie
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1951-04-01, a: 2013-07-01, calcul: option, prorata: limite,
        texte: "convention générale franco-yougoslave du 5 janvier 1950, maintenue par échange de lettres (décret n° 96-711 du 7 août 1996)",
@@ -166,6 +200,7 @@ etats:
     - {instrument: reglements_europeens, de: 2013-07-01, texte: "traité d'adhésion du 9 décembre 2011"}
   HU:
     nom: Hongrie
+    salaire_moyen: {activites: [salariee]}
     accords:
     - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
   IE:
@@ -178,6 +213,7 @@ etats:
     - {instrument: reglements_europeens, de: 1994-01-01, texte: "accord sur l'Espace économique européen"}
   IT:
     nom: Italie
+    salaire_moyen: {activites: [salariee, non_salariee], periodes_depuis: 1996-01-01, pensions_depuis: 2011-01-01}
     accords:
     - {instrument: convention, de: 1949-08-01, a: 1959-01-01, calcul: non_lu,
        texte: "convention générale du 31 mars 1948",
@@ -185,6 +221,7 @@ etats:
     - {instrument: reglements_europeens, de: 1959-01-01, texte: "règlements n° 3 et 4 de la Communauté économique européenne"}
   LI:
     nom: Liechtenstein
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: reglements_europeens, de: 1995-05-01, texte: "accord sur l'Espace économique européen"}
   LT:
@@ -193,6 +230,7 @@ etats:
     - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
   LU:
     nom: Luxembourg
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1950-07-01, a: 1959-01-01, calcul: non_lu,
        texte: "convention générale du 12 novembre 1949",
@@ -222,6 +260,7 @@ etats:
     - {instrument: reglements_europeens, de: 1994-01-01, texte: "accord sur l'Espace économique européen"}
   PL:
     nom: Pologne
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1949-03-01, a: 2004-05-01, calcul: non_lu,
        texte: "convention générale du 9 juin 1948 (décret n° 49-274 du 28 février 1949)",
@@ -229,6 +268,7 @@ etats:
     - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
   PT:
     nom: Portugal
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1973-04-01, a: 1986-01-01, calcul: non_lu,
        texte: "convention du 29 juillet 1971 (décret n° 73-857 du 31 août 1973), qui abroge celle du 16 novembre 1957",
@@ -236,6 +276,7 @@ etats:
     - {instrument: reglements_europeens, de: 1986-01-01, texte: "traité d'adhésion du 12 juin 1985"}
   RO:
     nom: Roumanie
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1978-02-01, a: 2007-01-01, calcul: non_lu,
        texte: "convention du 16 décembre 1976 (décret n° 78-299 du 24 février 1978)",
@@ -243,6 +284,7 @@ etats:
     - {instrument: reglements_europeens, de: 2007-01-01, texte: "traité d'adhésion du 25 avril 2005"}
   SE:
     nom: Suède
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1981-08-01, a: 1994-01-01, calcul: non_lu,
        texte: "convention du 12 décembre 1979 (décret n° 81-777 du 4 août 1981)",
@@ -250,6 +292,7 @@ etats:
     - {instrument: reglements_europeens, de: 1994-01-01, texte: "accord sur l'Espace économique européen"}
   SI:
     nom: Slovénie
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1951-04-01, a: 2004-05-01, calcul: option, prorata: limite,
        texte: "convention générale franco-yougoslave du 5 janvier 1950",
@@ -257,6 +300,7 @@ etats:
     - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
   SK:
     nom: Slovaquie
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1949-07-01, a: 2004-05-01, calcul: non_lu,
        texte: "convention générale franco-tchécoslovaque du 12 octobre 1948, maintenue le 7 août 1996 (décret n° 98-845 du 16 septembre 1998)",
@@ -264,6 +308,7 @@ etats:
     - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
   CH:
     nom: Suisse
+    salaire_moyen: {activites: [salariee, non_salariee]}
     accords:
     - {instrument: convention, de: 1976-11-01, a: 2002-06-01, calcul: non_lu,
        texte: "convention du 3 juillet 1975 (décret n° 76-1098 du 24 novembre 1976)",

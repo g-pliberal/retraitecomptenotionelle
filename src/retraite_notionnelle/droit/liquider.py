@@ -38,7 +38,7 @@ from ..donnees.chargement import Fiabilite
 from .. import revalorisation
 from . import acquerir, coordonner, invalidite, ouvrir
 from .compter import trimestres_de_la_ligne_entre
-from .commun import PensionRegime, derniere_annee
+from .commun import PensionRegime, date_d_effet, derniere_annee
 from .etranger import famille_du_regime
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
 
@@ -382,7 +382,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         # La durée tous régimes que le taux de ce régime lit : les périodes
         # hors de France y entrent, celles que sa famille retient
         # (:mod:`.etranger`) ; jamais dans sa durée, qui proratise.
-        trimestres = durees.pour_le_taux(famille_du_regime(moteur, code), nationale)
+        famille = famille_du_regime(moteur, code)
+        trimestres = durees.pour_le_taux(famille, nationale)
         cumul = cumul_cotisations.get(code, 0.0)
         regime = moteur.catalogue[code]
         periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
@@ -627,13 +628,17 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             enfants_majores = (carriere.nombre_enfants
                                if majoration_enfants is not None else 0)
             # LES ANNÉES D'UN ANCIEN EXPLOITANT : depuis 2026, la part des
-            # vingt-cinq que R. 173-3-2 laisse aux régimes alignés.
+            # vingt-cinq que R. 173-3-2 laisse aux régimes alignés. Celles
+            # d'un travailleur migrant : la pension proratisée les réduit
+            # aussi au prorata des périodes étrangères équivalentes.
             annees_alignees = (
                 annees_des_regimes_alignes(
                     moteur, carriere, releve, membres,
                     nombre_d_annees_retenues(
                         moteur, periode, carriere, carriere.annee_naissance,
-                        enfants_majores))
+                        enfants_majores),
+                    etrangers=0 if nationale else trimestres_etrangers_au_salaire_moyen(
+                        moteur, carriere, durees, famille))
                 if periode.salaire_reference in (
                     "25_meilleures_annees", "10_meilleures_annees")
                 else None
@@ -1079,9 +1084,33 @@ def annees_au_prorata(total: int, duree: int, somme: int) -> int:
     return min(total, max(1, (2 * total * duree + somme) // (2 * somme)))
 
 
+def trimestres_etrangers_au_salaire_moyen(moteur, carriere: Carriere, durees,
+                                          famille: str | None) -> int:
+    """Les trimestres des régimes étrangers « équivalant au régime général »
+    qui réduisent, avec la durée des régimes alignés, les années du salaire
+    annuel moyen de la pension proratisée (fiche ``pension_proratisee``) : de
+    2004 à juin 2022, « réduites au prorata » ; depuis, hors de la liquidation
+    unique seulement (circulaire Cnav n° 2021/33, points 3 et 4). Aucun
+    ailleurs, ni pour la pension nationale, qui ne compte pas l'étranger."""
+    etranger = durees.etranger
+    effet = date_d_effet(carriere)
+    if etranger is None or effet is None or famille is None:
+        return 0
+    version = moteur.carrieres_hors_de_france.version("proratisation", {
+        "liquidation.date_effet": effet,
+        "assure.generation": f"{carriere.annee_naissance:04d}-01-01"})
+    regle = None if version is None else version["parametres"].get(
+        "annees_du_salaire_annuel_moyen")
+    if regle == "reduites_au_prorata" or (
+            regle == "entieres_sous_la_liquidation_unique"
+            and not coordonner.lura_applicable(carriere)):
+        return etranger.trimestres_au_salaire_moyen(famille)
+    return 0
+
+
 def annees_des_regimes_alignes(moteur, carriere: Carriere, releve: Releve,
                                membres: tuple[str, ...],
-                               total: int) -> tuple[int, str] | None:
+                               total: int, etrangers: int = 0) -> tuple[int, str] | None:
     """Le nombre d'années que retient le salaire annuel moyen d'un régime
     aligné quand d'autres régimes les partagent, et l'article qui le dit ; ou
     ``None`` si rien ne les partage.
@@ -1107,6 +1136,17 @@ def annees_des_regimes_alignes(moteur, carriere: Carriere, releve: Releve,
     six sur vingt-cinq, dans l'exemple de la MSA, pour dix années de salarié
     agricole contre trente-trois d'exploitant. La répartition vaut où vaut la
     réforme agricole : la période du régime des exploitants qui la porte le dit.
+
+    **Avec les régimes étrangers équivalents, pour la pension proratisée** :
+    « Prorata = durée d'assurance au régime général ÷ durée totale des régimes
+    retenus », les régimes alignés et les ``etrangers`` trimestres des régimes
+    étrangers « équivalant au régime général »
+    (:func:`trimestres_etrangers_au_salaire_moyen`) : 66 trimestres au régime
+    général, 20 en Belgique et 74 en Allemagne retiennent « 25 meilleures
+    années x 66/160ème = 10 » (circulaire ministérielle DSS/3A/DACI/2008/219
+    du 3 juillet 2008, exemple 2). La liquidation unique réunit les régimes
+    alignés en un seul, face aux périodes étrangères. Avec les exploitants, la
+    part des régimes alignés s'y répartit de même.
     """
     if coordonner.REGIMES_ALIGNES.isdisjoint(membres):
         return None
@@ -1124,34 +1164,39 @@ def annees_des_regimes_alignes(moteur, carriere: Carriere, releve: Releve,
         if part is None:
             return None
         article = "R. 173-3-2"
-    # Chaque régime aligné sa part, hors de la liquidation unique.
-    if (not coordonner.lura_applicable(carriere)
-            and carriere.date_liquidation.rang
-            >= coordonner.REPARTITION_ENTRE_REGIMES_ALIGNES_DEPUIS.rang):
-        # Un régime, et non un nom de caisse : la CANCAVA et le RSI qui lui
-        # succède sont un seul régime, par leur tête de succession, que la
-        # liquidation les réunisse ou non.
-        groupes: dict[str, list[str]] = {}
-        for autre in durees.trimestres_par_regime:
-            if autre in coordonner.REGIMES_ALIGNES:
-                groupes.setdefault(coordonner.tete_de_succession(
-                    moteur, autre, carriere.annee_liquidation), []).append(autre)
-        durees_des_groupes = {
-            tete: duree for tete, duree in (
-                (tete, duree_du_regime_aligne(carriere, durees, tuple(groupe)))
-                for tete, groupe in groupes.items())
-            if duree > 0}
+    # Chaque régime aligné sa part, hors de la liquidation unique ; et face
+    # aux régimes étrangers équivalents.
+    lura = coordonner.lura_applicable(carriere)
+    if etrangers or (not lura and carriere.date_liquidation.rang
+                     >= coordonner.REPARTITION_ENTRE_REGIMES_ALIGNES_DEPUIS.rang):
         propre = coordonner.tete_de_succession(
             moteur, membres[0], carriere.annee_liquidation)
-        if len(durees_des_groupes) >= 2 and propre in durees_des_groupes:
-            if reforme:
+        if lura:
+            durees_des_groupes = {propre: duree_du_regime_aligne(carriere, durees, membres)}
+        else:
+            # Un régime, et non un nom de caisse : la CANCAVA et le RSI qui
+            # lui succède sont un seul régime, par leur tête de succession,
+            # que la liquidation les réunisse ou non.
+            groupes: dict[str, list[str]] = {}
+            for autre in durees.trimestres_par_regime:
+                if autre in coordonner.REGIMES_ALIGNES:
+                    groupes.setdefault(coordonner.tete_de_succession(
+                        moteur, autre, carriere.annee_liquidation), []).append(autre)
+            durees_des_groupes = {
+                tete: duree for tete, duree in (
+                    (tete, duree_du_regime_aligne(carriere, durees, tuple(groupe)))
+                    for tete, groupe in groupes.items())
+                if duree > 0}
+        if propre in durees_des_groupes and (len(durees_des_groupes) >= 2 or etrangers):
+            if reforme and not etrangers:
                 return (repartir_les_annees(
                     part, durees_des_groupes,
                     priorite=("regime_general", "msa_salaries"),
                 )[propre], "R. 173-3-2")
-            return (annees_au_prorata(total, durees_des_groupes[propre],
-                                      sum(durees_des_groupes.values())),
-                    "R. 173-4-3")
+            return (annees_au_prorata(part, durees_des_groupes[propre],
+                                      sum(durees_des_groupes.values()) + etrangers),
+                    "R. 173-4-3, périodes étrangères comprises" if etrangers
+                    else "R. 173-4-3")
     return None if article is None else (part, article)
 
 

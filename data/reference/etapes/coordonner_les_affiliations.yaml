@@ -57,3 +57,4 @@ objets:
       familles: {porte: "les familles de régimes qui la retiennent", type: liste, de: identifiant, defaut: []}
       version: {porte: "la version de la fiche totalisation_des_periodes_etrangeres", type: identifiant, defaut: null}
       comparee: {porte: "vrai quand l'accord compare la pension nationale, qui ignore la période, à la pension proratisée, qui la compte", type: booleen, defaut: false}
+      salaire_moyen_depuis: {porte: "l'année d'où ses trimestres réduisent, avec la durée des régimes alignés, les années du salaire annuel moyen de la pension proratisée : ceux d'un régime étranger équivalant au régime général ; vide pour une autre", type: entier, defaut: null}

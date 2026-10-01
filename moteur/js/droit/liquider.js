@@ -19,7 +19,7 @@ import { formatFixe, formatPourcentage } from "../format.js";
 import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../revalorisation.js";
 import { Fiabilite, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
-import { derniereAnnee } from "./commun.js";
+import { dateDEffet, derniereAnnee } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
@@ -151,7 +151,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // La durée tous régimes que le taux de ce régime lit : les périodes hors
     // de France y entrent, celles que sa famille retient (`etranger.js`) ;
     // jamais dans sa durée, qui proratise.
-    const trimestres = durees.pourLeTaux(familleDuRegime(moteur, code), nationale);
+    const famille = familleDuRegime(moteur, code);
+    const trimestres = durees.pourLeTaux(famille, nationale);
     const cumul = cumulCotisations.get(code) ?? 0.0;
     const regime = moteur.catalogue.obtenir(code);
     const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
@@ -359,11 +360,14 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       && periode.pension_forfaitaire_annuelle !== undefined;
     const enfantsMajores = majorationEnfants !== null ? carriere.nombre_enfants : 0;
     // LES ANNÉES D'UN ANCIEN EXPLOITANT : depuis 2026, la part des vingt-cinq
-    // que R. 173-3-2 laisse aux régimes alignés.
+    // que R. 173-3-2 laisse aux régimes alignés. Celles d'un travailleur
+    // migrant : la pension proratisée les réduit aussi au prorata des périodes
+    // étrangères équivalentes.
     const anneesAlignees = !forfaitaire && (periode.salaire_reference === "25_meilleures_annees"
       || periode.salaire_reference === "10_meilleures_annees")
       ? anneesDesRegimesAlignes(moteur, carriere, releve, membres, nombreDAnneesRetenues(
-        moteur, periode, carriere, carriere.annee_naissance, enfantsMajores))
+        moteur, periode, carriere, carriere.annee_naissance, enfantsMajores),
+      nationale ? 0 : trimestresEtrangersAuSalaireMoyen(moteur, carriere, durees, famille))
       : null;
     const salaireReference = forfaitaire
       ? periode.pension_forfaitaire_annuelle * moteur.macro.coefficientPrix(
@@ -791,7 +795,32 @@ export function anneesAuProrata(total, duree, somme) {
  * entre régimes alignés hors liquidation unique depuis 2004 (R. 173-4-3), avec
  * les exploitants agricoles depuis 2026 (R. 173-3-2). Voir le Python.
  */
-export function anneesDesRegimesAlignes(moteur, carriere, releve, membres, total) {
+/**
+ * Les trimestres des régimes étrangers « équivalant au régime général » qui
+ * réduisent, avec la durée des régimes alignés, les années du salaire annuel
+ * moyen de la pension proratisée : de 2004 à juin 2022, « réduites au
+ * prorata » ; depuis, hors de la liquidation unique seulement. Voir
+ * `trimestres_etrangers_au_salaire_moyen` du Python.
+ */
+export function trimestresEtrangersAuSalaireMoyen(moteur, carriere, durees, famille) {
+  const etranger = durees.etranger ?? null;
+  const effet = dateDEffet(carriere);
+  if (etranger === null || effet === null || famille === null) {
+    return 0;
+  }
+  const version = moteur.carrieresHorsDeFrance.version("proratisation", {
+    "liquidation.date_effet": effet,
+    "assure.generation": `${String(carriere.annee_naissance).padStart(4, "0")}-01-01`,
+  });
+  const regle = version === null ? null : version.parametres.annees_du_salaire_annuel_moyen;
+  if (regle === "reduites_au_prorata" || (regle === "entieres_sous_la_liquidation_unique"
+      && !coordonner.luraApplicable(carriere))) {
+    return etranger.trimestresAuSalaireMoyen(famille);
+  }
+  return 0;
+}
+
+export function anneesDesRegimesAlignes(moteur, carriere, releve, membres, total, etrangers = 0) {
   if (!membres.some((membre) => coordonner.REGIMES_ALIGNES.has(membre))) {
     return null;
   }
@@ -813,38 +842,45 @@ export function anneesDesRegimesAlignes(moteur, carriere, releve, membres, total
     part = lue;
     article = "R. 173-3-2";
   }
-  // Chaque régime aligné sa part, hors de la liquidation unique.
-  if (!coordonner.luraApplicable(carriere)
-      && carriere.dateLiquidation.rang >= coordonner.REPARTITION_ENTRE_REGIMES_ALIGNES_DEPUIS) {
-    // Un régime, et non un nom de caisse : par leur tête de succession.
-    const groupes = new Map();
-    for (const autre of durees.trimestresParRegime.keys()) {
-      if (coordonner.REGIMES_ALIGNES.has(autre)) {
-        const tete = coordonner.teteDeSuccession(moteur, autre, carriere.anneeLiquidation);
-        if (!groupes.has(tete)) {
-          groupes.set(tete, []);
-        }
-        groupes.get(tete).push(autre);
-      }
-    }
-    const dureesDesGroupes = new Map();
-    for (const [tete, groupe] of groupes) {
-      const duree = dureeDuRegimeAligne(carriere, durees, groupe);
-      if (duree > 0) {
-        dureesDesGroupes.set(tete, duree);
-      }
-    }
+  // Chaque régime aligné sa part, hors de la liquidation unique ; et face aux
+  // régimes étrangers équivalents.
+  const lura = coordonner.luraApplicable(carriere);
+  if (etrangers || (!lura
+      && carriere.dateLiquidation.rang >= coordonner.REPARTITION_ENTRE_REGIMES_ALIGNES_DEPUIS)) {
     const propre = coordonner.teteDeSuccession(moteur, membres[0], carriere.anneeLiquidation);
-    if (dureesDesGroupes.size >= 2 && dureesDesGroupes.has(propre)) {
-      if (reforme) {
+    const dureesDesGroupes = new Map();
+    if (lura) {
+      dureesDesGroupes.set(propre, dureeDuRegimeAligne(carriere, durees, membres));
+    } else {
+      // Un régime, et non un nom de caisse : par leur tête de succession.
+      const groupes = new Map();
+      for (const autre of durees.trimestresParRegime.keys()) {
+        if (coordonner.REGIMES_ALIGNES.has(autre)) {
+          const tete = coordonner.teteDeSuccession(moteur, autre, carriere.anneeLiquidation);
+          if (!groupes.has(tete)) {
+            groupes.set(tete, []);
+          }
+          groupes.get(tete).push(autre);
+        }
+      }
+      for (const [tete, groupe] of groupes) {
+        const duree = dureeDuRegimeAligne(carriere, durees, groupe);
+        if (duree > 0) {
+          dureesDesGroupes.set(tete, duree);
+        }
+      }
+    }
+    if (dureesDesGroupes.has(propre) && (dureesDesGroupes.size >= 2 || etrangers)) {
+      if (reforme && !etrangers) {
         return [repartirLesAnnees(part, dureesDesGroupes, new Map(),
           ["regime_general", "msa_salaries"]).get(propre), "R. 173-3-2"];
       }
-      let somme = 0;
+      let somme = etrangers;
       for (const duree of dureesDesGroupes.values()) {
         somme += duree;
       }
-      return [anneesAuProrata(total, dureesDesGroupes.get(propre), somme), "R. 173-4-3"];
+      return [anneesAuProrata(part, dureesDesGroupes.get(propre), somme),
+        etrangers ? "R. 173-4-3, périodes étrangères comprises" : "R. 173-4-3"];
     }
   }
   return article === null ? null : [part, article];

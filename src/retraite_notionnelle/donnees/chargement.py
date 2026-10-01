@@ -585,16 +585,23 @@ def assiette_minimale(table: tuple[AssietteMinimale, ...], statut: str,
 
 def charger_accords_internationaux(racine: Path) -> dict[str, dict]:
     """Le tableau des accords qui coordonnent les retraites françaises avec
-    celles d'un autre État : pour chaque code d'État, son ``nom`` et ses
-    ``accords``, dans l'ordre, leurs dates en AAAA-MM-JJ, telles que le
-    paquet du site les porte
+    celles d'un autre État : pour chaque code d'État, son ``nom``, ses
+    ``accords``, dans l'ordre, et son ``salaire_moyen`` s'il en a un, leurs
+    dates en AAAA-MM-JJ, telles que le paquet du site les porte
     (``data/reference/legislation/accords_internationaux.yaml``)."""
     etats = charger_yaml(racine / "reference" / "legislation"
                          / "accords_internationaux.yaml")["etats"]
+
+    def jours(table: dict) -> dict:
+        return {cle: valeur.isoformat() if hasattr(valeur, "isoformat") else valeur
+                for cle, valeur in table.items()}
+
     return {code: {"nom": etat["nom"],
-                   "accords": [{cle: valeur.isoformat() if hasattr(valeur, "isoformat")
-                                else valeur for cle, valeur in accord.items()}
-                               for accord in etat["accords"]]}
+                   "accords": [jours(accord) for accord in etat["accords"]]}
+            # Les activités dont le régime de l'État est « équivalent » pour
+            # le salaire annuel moyen de la pension proratisée.
+            | ({"salaire_moyen": jours(etat["salaire_moyen"])}
+               if etat.get("salaire_moyen") else {})
             for code, etat in etats.items()}
 
 

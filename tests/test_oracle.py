@@ -1668,7 +1668,13 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         return plus_tot.motif_ouverture == "non_ouverte"
     if cle == "annees_du_salaire_annuel_moyen":
         # Le nombre des meilleures années que le salaire annuel moyen du
-        # régime général retient, celui de la pension proratisée compris.
+        # régime général retient, celui de la pension proratisée compris :
+        # celui que son détail écrit quand une répartition l'a réduit.
+        detail = next(p.detail for p in resultat.pensions_par_regime
+                      if p.regime == "regime_general")
+        reduit = re.search(r"(\d+) années au plus au salaire annuel moyen", detail)
+        if reduit:
+            return int(reduit.group(1))
         periode = simulateur.catalogue["regime_general"].periode(carriere.annee_liquidation)
         return liquider.nombre_d_annees_retenues(actuel, periode, carriere,
                                                  carriere.annee_naissance)
@@ -1946,7 +1952,7 @@ def test_le_temoin_des_exemples_officiels_est_source():
         assert source["editeur"] in (
             "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
             "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL", "CNIEG",
-            "Agirc-Arrco", "CRPCEN", "CLEISS",
+            "Agirc-Arrco", "CRPCEN", "CLEISS", "Direction de la sécurité sociale",
         ), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]

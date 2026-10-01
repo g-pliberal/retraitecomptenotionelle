@@ -60,7 +60,7 @@ const jourDe = (mois) =>
 /**
  * Une période passée hors de France, et ce que la coordination en fait :
  * `{periode, titre, instrument, familles, version, parametres, comparee,
- * etatsTiers}`. Voir `PeriodeCoordonnee` du Python.
+ * etatsTiers, salaireMoyenDepuis}`. Voir `PeriodeCoordonnee` du Python.
  */
 export function donneesDeLaPeriode(coordonnee) {
   const { periode } = coordonnee;
@@ -68,7 +68,7 @@ export function donneesDeLaPeriode(coordonnee) {
     pays: periode.pays, debut: jourDe(periode.debut), fin: jourDe(periode.fin),
     activite: periode.activite, titre: coordonnee.titre, instrument: coordonnee.instrument,
     familles: [...coordonnee.familles], version: coordonnee.version,
-    comparee: coordonnee.comparee,
+    comparee: coordonnee.comparee, salaire_moyen_depuis: coordonnee.salaireMoyenDepuis,
   };
 }
 
@@ -127,8 +127,31 @@ export function coordonnerLesPeriodes(moteur, carriere) {
       periode, titre, instrument, familles,
       version: version === null ? null : version.id, parametres, comparee,
       etatsTiers: titre === ACCORD ? [...(accord.etats_tiers ?? [])] : [],
+      salaireMoyenDepuis: comparee && instrument === REGLEMENTS_EUROPEENS
+        ? salaireMoyenDepuis(domaine, periode, effet) : null,
     };
   });
+}
+
+/**
+ * L'année d'où les trimestres d'une période que les règlements européens
+ * totalisent comptent, avec la durée des régimes alignés, pour réduire les
+ * années du salaire annuel moyen de la pension proratisée : celle de son début,
+ * ou celle d'où le régime de son État est « équivalent » (tableau des accords,
+ * `salaire_moyen`) ; `null` quand il ne l'est pas pour son activité, ou pas
+ * encore à la date d'effet de la pension. Voir `_salaire_moyen_depuis` du
+ * Python.
+ */
+function salaireMoyenDepuis(domaine, periode, effet) {
+  const etat = Object.hasOwn(domaine.accords, periode.pays) ? domaine.accords[periode.pays] : null;
+  const equivalence = etat?.salaire_moyen ?? null;
+  if (equivalence === null || !equivalence.activites.includes(periode.activite)
+      || effet < (equivalence.pensions_depuis ?? "")) {
+    return null;
+  }
+  const depuis = equivalence.periodes_depuis ?? null;
+  return depuis === null ? periode.debut.annee
+    : Math.max(periode.debut.annee, Number(depuis.slice(0, 4)));
 }
 
 /**
@@ -137,7 +160,8 @@ export function coordonnerLesPeriodes(moteur, carriere) {
  * `TrimestresEtrangers` du Python.
  */
 export class TrimestresEtrangers {
-  constructor(pourLeTaux, cotises, periodes, famille = GENERALE, nationaux = {}) {
+  constructor(pourLeTaux, cotises, periodes, famille = GENERALE, nationaux = {},
+    auSalaireMoyen = {}) {
     /** Par famille, une `Map` de l'année aux trimestres que le taux retient. */
     this.pourLeTaux = pourLeTaux;
     /** Par famille, ceux d'entre eux qui comptent comme cotisés. */
@@ -151,6 +175,12 @@ export class TrimestresEtrangers {
      * sans les périodes qu'un accord compare.
      */
     this.nationaux = nationaux;
+    /**
+     * Par famille, ceux des régimes étrangers « équivalant au régime général »,
+     * qui réduisent les années du salaire annuel moyen de la pension
+     * proratisée.
+     */
+    this.auSalaireMoyen = auSalaireMoyen;
   }
 
   /**
@@ -180,6 +210,15 @@ export class TrimestresEtrangers {
     return total;
   }
 
+  /** Ceux d'entre eux qui réduisent les années du salaire annuel moyen de la pension proratisée. */
+  trimestresAuSalaireMoyen(famille) {
+    let total = 0;
+    for (const nombre of (this.auSalaireMoyen[famille] ?? new Map()).values()) {
+      total += nombre;
+    }
+    return total;
+  }
+
   donnees() {
     const trimestres = [];
     for (const famille of FAMILLES) {
@@ -190,6 +229,7 @@ export class TrimestresEtrangers {
           famille, annee, trimestres: nombre,
           cotises: (this.cotises[famille] ?? new Map()).get(annee) ?? 0,
           nationaux: (this.nationaux[famille] ?? new Map()).get(annee) ?? 0,
+          au_salaire_moyen: (this.auSalaireMoyen[famille] ?? new Map()).get(annee) ?? 0,
         });
       }
     }
@@ -266,12 +306,12 @@ export function compterLesPeriodes(carriere, periodes, trimestresFrancais,
     }
   }
   const calculs = groupes(candidats).map(([groupe, compare]) => {
-    const [pourLeTaux, cotises] = retenir(groupe, francais, depart);
+    const [pourLeTaux, cotises, auSalaireMoyen] = retenir(groupe, francais, depart);
     const [nationaux] = retenir(groupe.filter(
       ([coordonnee]) => !compare || accordDe(coordonnee) === null), francais, depart);
-    return [pourLeTaux, cotises, nationaux];
+    return [pourLeTaux, cotises, nationaux, auSalaireMoyen];
   });
-  const retenus = [{}, {}, {}];
+  const retenus = [{}, {}, {}, {}];
   for (const retenante of FAMILLES) {
     // Le premier des accords qui en apportent le plus, dans l'ordre des
     // périodes.
@@ -286,7 +326,8 @@ export function compterLesPeriodes(carriere, periodes, trimestresFrancais,
       table[retenante] = meilleur[rang][retenante];
     });
   }
-  return new TrimestresEtrangers(retenus[0], retenus[1], periodes, famille, retenus[2]);
+  return new TrimestresEtrangers(retenus[0], retenus[1], periodes, famille, retenus[2],
+    retenus[3]);
 }
 
 /**
@@ -332,21 +373,26 @@ function groupes(candidats) {
 
 /**
  * Ce que chaque famille retient de ces trimestres, année par année, sous le
- * plafond de l'année : ceux d'un accord d'abord, les seuls cotisés. Voir
- * `_retenir` du Python.
+ * plafond de l'année : ceux d'un accord d'abord, les seuls cotisés ; et ceux
+ * des régimes étrangers équivalents, à égalité les derniers. Voir `_retenir`
+ * du Python.
  */
 function retenir(candidats, francais, depart) {
   const offres = Object.fromEntries(FAMILLES.map((f) => [f, new Map()]));
   for (const [coordonnee, annee, trimestres] of candidats) {
+    const depuis = coordonnee.salaireMoyenDepuis ?? null;
+    const equivalent = depuis !== null && annee >= depuis ? 1 : 0;
     for (const retenante of coordonnee.familles) {
       if (!offres[retenante].has(annee)) {
         offres[retenante].set(annee, []);
       }
-      offres[retenante].get(annee).push([TITRES.indexOf(coordonnee.titre), trimestres]);
+      offres[retenante].get(annee).push(
+        [TITRES.indexOf(coordonnee.titre), trimestres, equivalent]);
     }
   }
   const pourLeTaux = Object.fromEntries(FAMILLES.map((f) => [f, new Map()]));
   const cotises = Object.fromEntries(FAMILLES.map((f) => [f, new Map()]));
+  const auSalaireMoyen = Object.fromEntries(FAMILLES.map((f) => [f, new Map()]));
   for (const retenante of FAMILLES) {
     const annees = [...offres[retenante].keys()].sort((a, b) => a - b);
     for (const annee of annees) {
@@ -354,13 +400,17 @@ function retenir(candidats, francais, depart) {
       const libres = Math.max(0, plafond - (francais.get(annee) ?? 0));
       let retenus = 0;
       let cotisesAnnee = 0;
+      let equivalents = 0;
       const offresAnnee = [...offres[retenante].get(annee)]
-        .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-      for (const [rang, trimestres] of offresAnnee) {
+        .sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
+      for (const [rang, trimestres, equivalent] of offresAnnee) {
         const pris = Math.min(trimestres, libres - retenus);
         retenus += pris;
         if (TITRES[rang] === ACCORD) {
           cotisesAnnee += pris;
+        }
+        if (equivalent) {
+          equivalents += pris;
         }
       }
       if (retenus) {
@@ -369,9 +419,12 @@ function retenir(candidats, francais, depart) {
       if (cotisesAnnee) {
         cotises[retenante].set(annee, cotisesAnnee);
       }
+      if (equivalents) {
+        auSalaireMoyen[retenante].set(annee, equivalents);
+      }
     }
   }
-  return [pourLeTaux, cotises];
+  return [pourLeTaux, cotises, auSalaireMoyen];
 }
 
 /**
@@ -417,6 +470,7 @@ function trimestresDe(coordonnee, parametres, depart) {
 export const RIEN = new TrimestresEtrangers(
   Object.fromEntries(FAMILLES.map((f) => [f, new Map()])),
   Object.fromEntries(FAMILLES.map((f) => [f, new Map()])), [], GENERALE,
+  Object.fromEntries(FAMILLES.map((f) => [f, new Map()])),
   Object.fromEntries(FAMILLES.map((f) => [f, new Map()])));
 
 /**

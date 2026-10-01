@@ -1467,3 +1467,16 @@ exemples:
       pension prenant effet depuis le 1er juillet 2022.
     carriere: {naissance: "1955-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-07", debut: "2005-01", niveau_salaire: 1.5, etranger: [{pays: "BE", debut: "1979-01", fin: "1986-07"}, {pays: "DE", debut: "1986-07", fin: "2005-01"}]}
     attendu: {trimestres_valides: 174, annees_du_salaire_annuel_moyen: 25}
+
+  - id: dss_2008_219_dix_meilleures_annees
+    source: {editeur: "Direction de la sécurité sociale", reference: "circulaire ministérielle DSS/3A/DACI/2008/219 du 3 juillet 2008, point 122, exemple 2, reprise dans la base législative de la Cnav", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Une personne a cotisé 66 trimestres au régime général, 20 trimestres en
+      Belgique à un régime de salariés et 74 trimestres en Allemagne à un régime
+      de salariés. Il est né après 1948 et le calcul du SAM se fera donc sur les
+      25 meilleures années. 25 meilleures années x 66/160ème = 10 meilleures
+      années prises en compte pour la détermination du SAM au titre du régime
+      général », pour une pension prenant effet en 2009 — la date que la
+      circulaire ne dit pas.
+    carriere: {naissance: "1949-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2009-07", debut: "1993-01", etranger: [{pays: "DE", debut: "1969-07", fin: "1988-01"}, {pays: "BE", debut: "1988-01", fin: "1993-01"}]}
+    attendu: {trimestres_valides: 160, annees_du_salaire_annuel_moyen: 10}

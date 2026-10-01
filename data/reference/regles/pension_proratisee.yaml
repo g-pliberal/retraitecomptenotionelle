@@ -104,8 +104,10 @@ versions:
   textes:
   - {id: LEGIARTI000006747869, article: "R. 173-4-3 CSS", en_vigueur: 2004-02-15}
   - {id: LEGIARTI000006747870, article: "R. 173-4-3 CSS", en_vigueur: 2006-01-28}
-  - {reference: "circulaire Cnav n° 2004/29 du 30 juin 2004, point 2 ; circulaire ministérielle DSS/3A/DACI/2008/219 du 3 juillet 2008 ; circulaire Cnav n° 2008/58 du 20 octobre 2008, point 2",
+  - {reference: "circulaire Cnav n° 2004/29 du 30 juin 2004, point 2 ; circulaire ministérielle DSS/3A/DACI/2008/219 du 3 juillet 2008 ; circulaire Cnav n° 2008/58 du 20 octobre 2008, points 1 à 8",
      publie_le: 2008-10-20}
+  - {reference: "circulaire Cnav n° 2012/26 du 14 mars 2012, annexe, qui se substitue au tableau des circulaires n° 2008/58 et 2010/30 ; circulaire Cnav n° 2013/56 du 19 décembre 2013 (la Croatie)",
+     publie_le: 2012-03-14}
   nee_de: LEGIARTI000006747869
   bornes:
     liquidation.date_effet: [2004-01-01, 2010-05-01]
@@ -122,12 +124,28 @@ versions:
       « dont le mode de calcul est basé sur des salaires, revenus et cotisations et une
       durée d'assurance d'au moins 15 ans » (exposé « Montant de la retraite
       communautaire », circulaires n° 2012/26 et 2013/56)
+    regimes_equivalents: >-
+      « Prorata = durée d'assurance au régime général ÷ durée totale des régimes
+      retenus » : les régimes alignés, et les régimes étrangers que le tableau de la
+      circulaire n° 2012/26 tient pour équivalents, activité par activité — salariés et
+      non-salariés en Allemagne, en Autriche, en Belgique, à Chypre, en Espagne, en
+      Estonie, au Liechtenstein, au Luxembourg, en Pologne, au Portugal, en République
+      tchèque, en Roumanie, en Slovaquie, en Slovénie, en Suède, en Suisse et en
+      Italie, son « nouveau système » pour les pensions « prenant effet à compter du
+      1er janvier 2011 », ses périodes « accomplies après le 1er janvier 1996 »
+      (circulaire de 2008) ; les seuls salariés en Hongrie ; la Croatie pour les
+      pensions « prenant effet à compter du 1er juillet 2013 » (circulaire n° 2013/56).
+      Les périodes des régimes de fonctionnaires sont « à exclure » ; « la
+      totalisation des périodes accomplies dans les régimes d'assurance vieillesse
+      retenus s'effectue en application des dispositions prévues par les règlements
+      communautaires (totalisation sans superposition [...]) » (circulaire n° 2008/58,
+      point 7). Le tableau des accords porte la liste (``salaire_moyen``)
     parametres:
       reglements_europeens: comparaison
       prorata_reglements_europeens: limite
       annees_du_salaire_annuel_moyen: reduites_au_prorata
       fonctionnaires_depuis: 1998-10-25
-  exemples: aucun trouvé
+  exemples: [dss_2008_219_dix_meilleures_annees]
 - id: reglement_883_2004
   statut: lue
   textes:
@@ -187,28 +205,42 @@ versions:
       moyen de la pension nationale, sans avoir recours à une réduction au prorata » ;
       « les instructions énoncées dans la présente circulaire s'appliqueront aux
       dossiers relevant des règlements communautaires dont la liquidation initiale
-      prend effet au 1er juillet 2022 » (circulaire n° 2021/33, points 3 et 6). Les
-      générations d'avant 1953 gardent la réduction
+      prend effet au 1er juillet 2022 » (circulaire n° 2021/33, points 3 et 6). « Par
+      dérogation, s'agissant des situations pour lesquelles la liquidation unique ne
+      peut pas être mise en œuvre, la détermination du revenu annuel moyen de la
+      pension globale théorique [...] continue à être effectuée selon les modalités
+      énoncées par la circulaire 2008-58 » (point 4) : les générations d'avant 1953
+      gardent la réduction
     parametres:
       reglements_europeens: comparaison
       prorata_reglements_europeens: limite
-      annees_du_salaire_annuel_moyen: entieres_depuis_la_generation_1953
+      annees_du_salaire_annuel_moyen: entieres_sous_la_liquidation_unique
       fonctionnaires_depuis: 1998-10-25
       regimes_en_points: pension_nationale
   exemples: [cleiss_lena_reglements_europeens, cleiss_jahan_inde, cleiss_lena_canada_uruguay,
     cleiss_lena_espagne_tunisie, cnav_2021_33_vingt_cinq_meilleures_annees]
 approximations:
 - ecart: >-
-    la pension proratisée est celle que la totalisation calcule : le salaire annuel moyen
-    des seules années françaises, le taux sur la durée de toute la carrière, et le prorata
-    de la durée française sur la durée maximum, ce que vaut la pension théorique réduite
-    au prorata limité ; les années du salaire annuel moyen ne se réduisent pas au prorata
-    de la durée française, de 2004 à juin 2022, ni depuis pour les générations d'avant
-    1953 (R. 173-4-3)
+    les années du salaire annuel moyen se réduisent au prorata des régimes étrangers
+    équivalents selon le tableau de la circulaire n° 2012/26 pour toute pension prenant
+    effet depuis 2004, quand celui de la circulaire n° 2008/58 a servi d'octobre 2008 à
+    mars 2012 — il comptait l'Irlande, la Norvège et la pension additionnelle
+    britannique de 1978 à 2002, et ni la Hongrie ni l'Italie — et que la caisse ne
+    réduisait les pensions d'avant octobre 2008 que sur une demande de révision
   effet: >-
-    la pension proratisée de ces années, son salaire moyen pris sur plus d'années que le
-    droit n'en retient quand la carrière française en compte plus que la durée réduite :
-    plus faible ; non mesuré
+    la pension proratisée d'avant mars 2012 d'un assuré passé par l'Irlande, la Norvège
+    ou le Royaume-Uni : plus faible, son salaire moyen pris sur plus d'années ; par la
+    Hongrie : plus élevée ; non mesuré
+- ecart: >-
+    une période étrangère est présumée accomplie au régime des salariés ou des
+    non-salariés de son État, jamais à celui de ses fonctionnaires, que le tableau de la
+    circulaire n° 2012/26 exclut presque partout ; l'Italie compte toutes ses périodes
+    depuis 1996, comme la circulaire de 2008 l'écrit, sans distinguer l'assuré que son «
+    nouveau système » ne couvrait pas encore
+  effet: >-
+    le salaire annuel moyen de la pension proratisée d'un ancien fonctionnaire d'un autre
+    État, ou d'un assuré italien de longue date : pris sur moins d'années que le droit
+    n'en retient, plus élevé ; non mesuré
 - ecart: >-
     seuls les régimes qui portent le minimum contributif comparent leurs deux pensions :
     la pension nationale d'un autre régime, son taux lu sur moins de trimestres, ne
@@ -240,10 +272,11 @@ sources:
     demande du propriétaire. Le moteur compare les deux pensions depuis la troisième
     étape du domaine, dans les régimes qui portent le minimum contributif.
   - >-
-    À lire : la circulaire Cnav n° 2008/58, que la base de la Cnav n'a pas rendue, pour
-    la date d'où la pension théorique des travailleurs migrants réduit les années de son
-    salaire annuel moyen, et la liste des régimes étrangers « équivalents » ; les
-    conventions dont le tableau des accords ne lit pas le prorata ; la règle de la
+    La réduction des années du salaire annuel moyen de la pension théorique des
+    travailleurs migrants est lue et modélisée : circulaires n° 2008/58 et son annexe,
+    2012/26 et 2013/56, que la base de la Cnav rend par sa recherche. À lire : la
+    circulaire n° 2010/30, qui modifiait le tableau de 2008, pour dater ce qui a changé
+    avant 2012 ; les conventions dont le tableau des accords ne lit pas le prorata ; la règle de la
     pension proratisée des fonctionnaires, chez le Service des retraites de l'État et à
     la CNRACL ; la surcote de la pension proratisée, calculée « éventuellement à la date
     d'attribution définitive » quand les pensions des États se succèdent (exposé «
@@ -269,9 +302,22 @@ sources:
       circulaire Cnav n° 2021/33 du 24 novembre 2021, « Revenu annuel moyen de base –
       pension communautaire », exemples 1 et 2 : une personne née en 1955, 70 trimestres
       en France, 30 en Belgique et 74 en Allemagne, « Le calcul du revenu annuel moyen de
-      la pension globale théorique se fera sur les vingt-cinq meilleures années »
+      la pension globale théorique se fera sur les vingt-cinq meilleures années » ; et
+      ses dérogations (point 4), hors de la liquidation unique
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2021_33_24112021.pdf
     date: 2021-11-24
+  - type: circulaire_cnav
+    reference: >-
+      circulaire ministérielle DSS/3A/DACI/2008/219 du 3 juillet 2008, « Principes guidant
+      la mise en œuvre de l'article R.173-4-3 du code de la sécurité sociale aux assurés
+      ayant relevé du régime général ou d'un régime aligné et d'un régime d'assurance
+      vieillesse d'un Etat de l'Union européenne », ses deux exemples ; circulaires Cnav
+      n° 2008/58 du 20 octobre 2008, « Salaire annuel moyen de base - Proratisation -
+      Pension communautaire », et ses annexes ; n° 2012/26 du 14 mars 2012, son tableau
+      des régimes étrangers ; n° 2013/56 du 19 décembre 2013, la Croatie — lues dans la
+      base législative de la Cnav
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=circulaire_cnav_2012_26_14032012.aspx
+    date: 2026-10-01
   - type: autre
     reference: >-
       règlements (CEE) n° 1408/71 (texte d'origine, CELEX 31971R1408) et n° 1248/92, (CE)
@@ -290,16 +336,19 @@ sources:
     date: 2026-10-01
 code:
   python: >-
-    droit/etranger.py : coordonner_les_periodes (PeriodeCoordonnee.comparee),
-    compter_les_periodes (TrimestresEtrangers.nationaux, compare) ; droit/compter.py :
-    Durees.pour_le_taux ; droit/liquider.py : liquider_chaque_regime (nationale) ;
+    droit/etranger.py : coordonner_les_periodes (PeriodeCoordonnee.comparee,
+    salaire_moyen_depuis), compter_les_periodes (TrimestresEtrangers.nationaux,
+    au_salaire_moyen, compare) ; droit/compter.py : Durees.pour_le_taux ;
+    droit/liquider.py : liquider_chaque_regime (nationale),
+    trimestres_etrangers_au_salaire_moyen, annees_des_regimes_alignes ;
     droit/liquidation.py : liquider ; droit/completer.py : completer
   javascript: >-
     les jumeaux de chacune : moteur/js/droit/etranger.js, compter.js, liquider.js,
     liquidation.js, completer.js
   parametres: >-
-    contenu.parametres de chaque version : reglements_europeens ;
-    data/reference/legislation/accords_internationaux.yaml (calcul)
+    contenu.parametres de chaque version : reglements_europeens,
+    annees_du_salaire_annuel_moyen ; data/reference/legislation/accords_internationaux.yaml
+    (calcul, salaire_moyen)
   tests: >-
     tests/test_etranger.py, dans les deux moteurs
 historique:
@@ -310,6 +359,11 @@ historique:
   2026-10-01 — modélisée, approchée, à la troisième étape du domaine : la pension
   nationale, liquidée sans les trimestres des périodes qu'un accord compare, se compare à
   la pension proratisée, chacune portée à son minimum, et la plus élevée est servie.
+- >-
+  2026-10-01 — après la clôture du domaine, à la demande du propriétaire : les années du
+  salaire annuel moyen de la pension proratisée se réduisent au prorata des régimes
+  étrangers équivalents, de 2004 à juin 2022 et depuis hors de la liquidation unique ;
+  l'exemple 2 de la circulaire ministérielle de 2008 est rejoué.
 effet: >-
   Toute pension française d'une carrière passée aussi par un État lié à la France par un
   accord qui compare : la pension proratisée, au taux que toute la carrière ouvre, est le

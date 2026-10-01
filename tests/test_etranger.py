@@ -73,6 +73,21 @@ def test_le_tableau_des_accords_dit_un_accord_par_date():
             tiers = accord.get("etats_tiers")
             assert tiers is None or (accord["instrument"] == "convention" and tiers
                                      and set(tiers) <= set(etats) - {code, "OI"}), code
+        # Un régime équivalent pour le salaire annuel moyen est celui d'un
+        # État des règlements européens, pour des activités que la saisie
+        # connaît, ses dates au jour.
+        equivalence = etat.get("salaire_moyen")
+        if equivalence is not None:
+            assert accords[-1]["instrument"] == "reglements_europeens", code
+            assert equivalence["activites"] and set(equivalence["activites"]) <= {
+                "salariee", "non_salariee"}, code
+            assert set(equivalence) <= {"activites", "periodes_depuis", "pensions_depuis"}, code
+            for cle in ("periodes_depuis", "pensions_depuis"):
+                assert equivalence.get(cle) is None or re.fullmatch(
+                    r"\d{4}-01-01", equivalence[cle]), code
+    # Le tableau de la circulaire Cnav n° 2012/26 et la Croatie (n° 2013/56).
+    assert sorted(code for code, etat in etats.items() if etat.get("salaire_moyen")) == sorted(
+        "AT BE CH CY CZ DE EE ES HR HU IT LI LU PL PT RO SE SI SK".split())
 
 
 # -- la saisie ---------------------------------------------------------------------
@@ -769,6 +784,65 @@ def test_la_caisse_ne_totalise_qu_un_accord_a_la_fois(contexte):
     assert espagne_tunisie.trimestres_etrangers == 33 + 13 - 1
 
 
+#: Né en janvier 1949, parti en juillet 2009 : dix-huit ans et demi en Allemagne,
+#: cinq en Belgique, puis 66 trimestres en France — l'exemple 2 de la circulaire
+#: ministérielle du 3 juillet 2008.
+MIGRANT_DE_2009 = {"naissance": "1949-01-15", "debut": "1993-01", "liquidation": "2009-07",
+                   "etranger1_pays": "DE", "etranger1_debut": "1969-07",
+                   "etranger1_fin": "1988-01", "etranger2_pays": "BE",
+                   "etranger2_debut": "1988-01", "etranger2_fin": "1993-01"}
+#: Vingt ans dans un autre État, puis la France.
+VINGT_ANS_AILLEURS = {"debut": "2000-01", "etranger1_debut": "1980-01",
+                      "etranger1_fin": "2000-01"}
+
+
+def _annees_du_salaire_moyen(actuel) -> tuple[int, str] | None:
+    """Les années que le salaire annuel moyen du régime général retient, et
+    l'article qui les réduit, quand son détail le dit."""
+    lu = re.search(r"(\d+) années au plus au salaire annuel moyen \(([^)]*)\)",
+                   _pension(actuel, "regime_general").detail)
+    return None if lu is None else (int(lu.group(1)), lu.group(2))
+
+
+def test_les_regimes_etrangers_equivalents_reduisent_les_annees_du_salaire_moyen(contexte):
+    """De 2004 à juin 2022, la pension proratisée prend son salaire annuel
+    moyen sur « 25 meilleures années x 66/160ème = 10 » : la durée du régime
+    général rapportée à celle des régimes retenus, les régimes étrangers
+    équivalents compris (circulaire ministérielle du 3 juillet 2008, exemple
+    2). Le salaire moyen des dix meilleures années française l'emporte sur la
+    pension nationale, qui ne compte pas l'étranger."""
+    actuel = _actuel(contexte, **MIGRANT_DE_2009)
+    assert (actuel.trimestres_valides, actuel.trimestres_etrangers) == (160, 94)
+    assert _annees_du_salaire_moyen(actuel) == (10, "R. 173-4-3, périodes étrangères comprises")
+    assert _pension(actuel, "regime_general").detail.startswith(
+        "pension proratisée, au moins égale à la pension nationale")
+
+
+@pytest.mark.parametrize("champs, annees", [
+    # L'Italie, son « nouveau système » : les périodes depuis 1996, pour les
+    # pensions depuis 2011 — seize trimestres face à soixante, 19,7 années.
+    ({"naissance": "1950-02-15", "liquidation": "2015-03", "etranger1_pays": "IT"}, 20),
+    ({"naissance": "1950-02-15", "liquidation": "2010-03", "etranger1_pays": "IT"}, None),
+    # La Hongrie, ses seuls salariés : 25 × 76/156.
+    ({"naissance": "1955-02-15", "liquidation": "2019-03", "etranger1_pays": "HU"}, 12),
+    ({"naissance": "1955-02-15", "liquidation": "2019-03", "etranger1_pays": "HU",
+      "etranger1_activite": "non_salariee"}, None),
+    # Les Pays-Bas servent leur pension sur la résidence.
+    ({"naissance": "1955-02-15", "liquidation": "2019-03", "etranger1_pays": "NL"}, None),
+    # Depuis juillet 2022, la réduction ne vaut plus que hors de la
+    # liquidation unique : pour qui est né avant 1953, 25 × 92/172.
+    ({"naissance": "1955-02-15", "liquidation": "2023-03", "etranger1_pays": "ES"}, None),
+    ({"naissance": "1952-02-15", "liquidation": "2023-03", "etranger1_pays": "ES"}, 13),
+])
+def test_la_reduction_suit_le_tableau_des_regimes_equivalents(contexte, champs, annees):
+    """Le régime de l'État est-il équivalent pour l'activité de la période, à
+    la date d'effet de la pension, et la fiche réduit-elle encore les années
+    (circulaires Cnav n° 2012/26 et 2021/33) ?"""
+    lu = _annees_du_salaire_moyen(_actuel(contexte, **VINGT_ANS_AILLEURS, **champs))
+    assert lu == (None if annees is None
+                  else (annees, "R. 173-4-3, périodes étrangères comprises"))
+
+
 #: Des carrières hors de France que les deux moteurs liquident.
 CARRIERES_HORS_DE_FRANCE = [
     {**NE_EN_1962, **AU_MAROC},
@@ -800,6 +874,14 @@ CARRIERES_HORS_DE_FRANCE = [
     {"naissance": "1964-03-15", "debut": "2002-01", "liquidation": "2027-01",
      "etranger1_pays": "ES", "etranger1_debut": "1984-01", "etranger1_fin": "1996-01",
      "etranger2_pays": "TN", "etranger2_debut": "1996-01", "etranger2_fin": "2002-01"},
+    # Les années du salaire annuel moyen que les régimes équivalents réduisent.
+    MIGRANT_DE_2009,
+    {**VINGT_ANS_AILLEURS, "naissance": "1950-02-15", "liquidation": "2015-03",
+     "etranger1_pays": "IT"},
+    {**VINGT_ANS_AILLEURS, "naissance": "1955-02-15", "liquidation": "2019-03",
+     "etranger1_pays": "PL", "statut": "artisan"},
+    {**VINGT_ANS_AILLEURS, "naissance": "1952-02-15", "liquidation": "2023-03",
+     "etranger1_pays": "ES"},
 ]
 
 #: Ce que le portage liquide de ces carrières.

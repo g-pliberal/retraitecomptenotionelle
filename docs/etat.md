@@ -27,8 +27,8 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 3 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **39 sur 130** (98 exemples : 94 reproduits, 4 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **39 sur 130**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Confrontées à au moins un exemple officiel : **39 sur 130** (99 exemples : 95 reproduits, 4 en écart connu, section 2).
+- Citées dans le code par leur identifiant : **40 sur 130**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **42 sur 130**, par 2 273 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **20 sur 130**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **20 sur 130**, soit 103 versions, dont 11 supposées ; le partage des versions se contrôle sur chacune.
