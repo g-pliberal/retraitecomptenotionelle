@@ -82,9 +82,10 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
 ## Travailler
 
 - **Mise en route** : `pip install -e '.[dev]'`. Sans lui, `python -m pytest`
-  ne trouve ni pytest ni le paquet. Le hook `SessionStart` qui le ferait est
-  à poser à la main (action 33 de la feuille de route, archivée) : une
-  session n'a pas le droit d'écrire sous `.claude/`.
+  ne trouve ni pytest ni le paquet. Une session web n'a pas à le lancer : le
+  hook `SessionStart` (`.claude/hooks/session-start.sh`, action 33 de la
+  feuille de route, archivée) l'installe à son ouverture, avec un PyYAML qui
+  embarque libyaml ; sur un poste, la commande reste à lancer une fois.
 - **Les tests** : `python -m pytest -m rapide` en travaillant, les règles et
   les étapes, sous deux minutes ; `python -m pytest -m site` après une
   retouche du site ou de la saisie, en une minute ; `python -m pytest`, la

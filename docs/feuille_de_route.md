@@ -4517,6 +4517,19 @@ des calculs chaude. La première suite après une retouche de `src/`, `data/` ou
 tout le code, et se refait entière. L'indexer sur le seul code du modèle est le
 levier suivant.
 
+**Le 1er octobre 2026, le hook de démarrage posé, à la demande du
+propriétaire, pour ne plus payer l'installation à chaque session.** Le hook
+`SessionStart` de l'action 33, dont le texte attendait dans les archives
+faute d'une session qui ait pu écrire sous `.claude/`, est dans le dépôt :
+`.claude/hooks/session-start.sh`, inscrit dans `.claude/settings.json`.
+L'écriture, cette fois demandée expressément, est passée. Une session web
+s'ouvre avec pytest, pytest-xdist, le paquet et un PyYAML qui embarque
+libyaml, et ne commence plus par « No module named pytest ». Essayé depuis un
+état neuf, ces paquets désinstallés : 6 s, sans erreur, et rien sur la sortie
+standard, qui entrerait sinon dans le contexte de la session ; hors d'une
+session web, il ne fait rien. Un écart avec le texte archivé : la commande
+passe par `bash`, comme celle de `pousser.sh`.
+
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
