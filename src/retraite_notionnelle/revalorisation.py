@@ -60,9 +60,11 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
+from .calendrier import DateMois
 from .config import RevalorisationStock, SituationFoyer
 from .donnees.chargement import Fiabilite
 from .droit import invalidite, liquider
+from .droit.etranger import pensions_etrangeres_servies
 from .droit.foyer import Foyer, foyer_et_net
 
 
@@ -676,7 +678,7 @@ def foyer_a_l_echeance(simulateur, carriere, vivante: Revalorisee) -> Foyer:
         simulateur.scenario_actuel, carriere.personne, f"{vivante.annee:04d}-12-31",
         vivante.annee, ressources,
         vivante.annee >= carriere.annee_naissance + invalidite.age_de_l_aspa(
-            simulateur.scenario_actuel, carriere), residence=carriere.residence)
+            simulateur.scenario_actuel, carriere), carriere=carriere)
 
 
 def aujourd_hui(vivante: Revalorisee, foyer: Foyer, resultat) -> ActuelAujourdhui:
@@ -781,8 +783,10 @@ def pension_aujourd_hui(simulateur, comparaison,
     plancher *= 12.0 * macro.coefficient_prix(
         parametres.annee_euros_garantie_vieillesse, annee)
     ouverte = annee >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE
-    # Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France.
-    complement = (max(0.0, plancher - contributive_aujourd_hui - rente)
+    # Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France,
+    # et compte ce qu'un autre État sert.
+    etrangeres = pensions_etrangeres_servies(macro, carriere, DateMois(annee, 12))
+    complement = (max(0.0, plancher - contributive_aujourd_hui - rente - etrangeres)
                   if ouverte and carriere.residence is None else 0.0)
     notionnels["notionnel_liberal"] = contributive_aujourd_hui + complement
     coefficients["notionnel_liberal"] = reel
@@ -797,7 +801,7 @@ def pension_aujourd_hui(simulateur, comparaison,
         rente_capitalisee_volontaire=volontaire,
         garantie_ouverte=ouverte,
         plancher_garantie=plancher,
-        ressources_garantie=contributive_aujourd_hui + rente,
+        ressources_garantie=contributive_aujourd_hui + rente + etrangeres,
     )
 
 

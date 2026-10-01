@@ -725,6 +725,60 @@ def test_la_garantie_de_la_proposition_ne_se_sert_qu_en_france(contexte):
     assert au_maroc.aujourd_hui.garantie_vieillesse == 0
 
 
+#: Une pension marocaine de 150 € par mois, en euros d'aujourd'hui, servie
+#: depuis janvier 2019 : avant le départ.
+PENSION_MAROCAINE = {"pension_etrangere1_pays": "MA", "pension_etrangere1": "150",
+                     "pension_etrangere1_debut": "2019-01"}
+
+
+def _aspa(actuel) -> float:
+    return sum(a.montant for a in actuel.avantages_appliques if a.code == "minimum_vieillesse")
+
+
+def test_l_aspa_compte_les_pensions_etrangeres(contexte, simulateur):
+    """L'allocation compte « tous les avantages d'invalidité et de vieillesse
+    dont bénéficie l'intéressé » (R. 815-22), ceux qu'un autre État sert
+    compris : la petite carrière qui touche une pension marocaine reçoit
+    d'autant moins d'ASPA, au départ, et sa pension française, ASPA comprise,
+    s'arrête au barème moins ce que le Maroc lui sert à part. Une pension qui
+    commence après le départ ne compte qu'à partir d'elle : aujourd'hui."""
+    en_france = contexte.simuler(Saisie.depuis_requete(PETITE_CARRIERE))
+    marocaine = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
+                                                        **PENSION_MAROCAINE}))
+    # Les 150 € d'aujourd'hui, ramenés aux euros de 2020 et suivis sur les prix.
+    annuelle = 150 * 12 * simulateur.macro.coefficient_prix(2026, 2020)
+    assert _aspa(en_france.actuel) - _aspa(marocaine.actuel) == pytest.approx(annuelle)
+    plafond = simulateur.scenario_actuel.minimum_vieillesse.plafond(2020)[0]
+    assert marocaine.actuel.pension_annuelle == pytest.approx(plafond - annuelle)
+    # Aujourd'hui, en euros de l'année : 1 800 €.
+    assert (en_france.aujourd_hui.actuel.minimum_vieillesse
+            - marocaine.aujourd_hui.actuel.minimum_vieillesse) == pytest.approx(1800.0)
+    plus_tard = contexte.simuler(Saisie.depuis_requete({
+        **PETITE_CARRIERE, **PENSION_MAROCAINE, "pension_etrangere1_debut": "2024-01"}))
+    assert _aspa(plus_tard.actuel) == pytest.approx(_aspa(en_france.actuel))
+    assert plus_tard.aujourd_hui.actuel.minimum_vieillesse == pytest.approx(
+        marocaine.aujourd_hui.actuel.minimum_vieillesse)
+
+
+def test_la_garantie_compte_les_pensions_etrangeres(contexte, simulateur):
+    """La garantie de la proposition « remplace l'ASPA » (README) et porte au
+    plancher toutes les retraites obligatoires : celle qu'un autre État sert
+    en est une, que l'ASPA compte aussi. Le complément baisse d'autant, au
+    départ comme aujourd'hui ; le compte notionnel ne bouge pas."""
+    en_france = contexte.simuler(Saisie.depuis_requete(PETITE_CARRIERE))
+    marocaine = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
+                                                        **PENSION_MAROCAINE}))
+    garantie = en_france.notionnel_liberal.garantie_vieillesse
+    avec = marocaine.notionnel_liberal.garantie_vieillesse
+    annuelle = 150 * 12 * simulateur.macro.coefficient_prix(2026, 2020)
+    assert avec.pensions_etrangeres == pytest.approx(annuelle)
+    assert garantie.pensions_etrangeres == 0
+    assert avec.pension_contributive == pytest.approx(garantie.pension_contributive)
+    assert garantie.complement - avec.complement == pytest.approx(annuelle)
+    assert (en_france.aujourd_hui.garantie_vieillesse
+            - marocaine.aujourd_hui.garantie_vieillesse) == pytest.approx(1800.0)
+
+
 def test_le_minimum_international_suit_les_trois_cas_de_sa_majoration():
     """L'exposé de la Cnav, à la lettre : le minimum théorique, réduit à la
     durée totale quand elle n'atteint pas la durée maximum (160 ici), puis à
@@ -866,6 +920,10 @@ CARRIERES_HORS_DE_FRANCE = [
     {**PETITE_CARRIERE, **AU_MAROC_AVANT, "residence": "MA"},
     {**PETITE_CARRIERE, **AU_MAROC_AVANT, "residence": "autre",
      "metier2_debut": "2005-01", "metier2_statut": "fonctionnaire_etat"},
+    # Une pension étrangère dans les ressources de l'ASPA et de la garantie.
+    {**PETITE_CARRIERE, **AU_MAROC_AVANT, **PENSION_MAROCAINE},
+    {**PETITE_CARRIERE, **AU_MAROC_AVANT, **PENSION_MAROCAINE,
+     "pension_etrangere1_debut": "2024-01"},
     # Un seul accord à la fois, et les États tiers qu'une convention fait
     # compter.
     {"naissance": "1963-03-15", "debut": "2001-01", "liquidation": "2026-01",

@@ -106,6 +106,7 @@ from dataclasses import dataclass, field
 from ..carriere import Carriere
 from ..config import AgeConversionDroitsAcquis, Parametres, SituationFoyer
 from ..donnees.chargement import Fiabilite
+from ..droit.etranger import pensions_etrangeres_servies
 from ..moteur.age_reference import AgeReference, EcartAge
 from ..moteur.capitalisation import Capitalisation, ConstructeurCapitalisation
 from ..moteur.compte import CompteNotionnel, ConstructeurCompte
@@ -148,10 +149,11 @@ class GarantieVieillesse:
     #: La rente du pilier capitalisé obligatoire, nulle avant la bascule ou si
     #: le pilier est désactivé.
     rente_capitalisee: float
-    #: ``pension_contributive + rente_capitalisee`` : l'ENSEMBLE de la pension
-    #: obligatoire, les 18 % de répartition et les 5 % capitalisés. C'est cela
-    #: que le plancher regarde, et non la seule répartition : les deux sont
-    #: obligatoires, et une allocation différentielle compte les ressources.
+    #: ``pension_contributive + rente_capitalisee + pensions_etrangeres`` :
+    #: l'ENSEMBLE des retraites obligatoires, les 18 % de répartition, les 5 %
+    #: capitalisés, et ce qu'un autre État sert. C'est cela que le plancher
+    #: regarde, et non la seule répartition : toutes sont obligatoires, et une
+    #: allocation différentielle compte les ressources.
     ressources: float
     #: Ce que la PENSION CONTRIBUTIVE gagne, EN TERMES RÉELS, entre la
     #: liquidation et l'ouverture de la garantie. Vaut 1 quand les deux
@@ -169,8 +171,8 @@ class GarantieVieillesse:
     #: euros constants, et faux de la proposition.
     revalorisation_differee: float
     #: ``pension_contributive × revalorisation_differee + rente_capitalisee ×
-    #: erosion_rente`` : ce dont la personne dispose l'année où la garantie
-    #: s'ouvre, dans les euros de la liquidation.
+    #: erosion_rente + pensions_etrangeres`` : ce dont la personne dispose
+    #: l'année où la garantie s'ouvre, dans les euros de la liquidation.
     ressources_a_l_ouverture: float
     #: Ce que la garantie ajoute à compter de ``annee_ouverture`` :
     #: ``max(0, plancher - ressources_a_l_ouverture)``. C'est la part financée
@@ -184,6 +186,10 @@ class GarantieVieillesse:
     #: garantie ne s'y sert pas, comme l'ASPA qu'elle remplace (fiche
     #: ``garantie_vieillesse``).
     residence: str | None = None
+    #: Les pensions qu'un autre État sert à l'ouverture, en euros de la
+    #: liquidation : des retraites obligatoires elles aussi, que la garantie
+    #: compte comme l'ASPA qu'elle remplace (fiche ``garantie_vieillesse``).
+    pensions_etrangeres: float = 0.0
 
     @property
     def servie(self) -> bool:
@@ -480,7 +486,10 @@ class ScenarioNotionnel:
 
         LA RÉSIDENCE aussi : la garantie, comme l'ASPA qu'elle remplace, ne se
         sert qu'à qui réside en France (README, page Coût) ; nulle pour qui
-        déclare résider ailleurs.
+        déclare résider ailleurs. Et les pensions qu'un autre État sert à
+        l'ouverture : la garantie « remplace l'ASPA » (README), qui les compte
+        (R. 815-22), et porte au plancher toutes les retraites obligatoires
+        (fiche ``garantie_vieillesse``), dont celles-là.
 
         L'ÂGE est celui de l'ASPA, 65 ans, et il ne fait plus disparaître le
         complément : il en retarde le service. Le montant calculé ici vaut donc
@@ -504,7 +513,13 @@ class ScenarioNotionnel:
         )
         plancher = base + isolement
         age_atteint = (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE
-        ressources = pension_contributive + rente_capitalisee
+        # Les pensions étrangères servies le mois où la garantie s'ouvre —
+        # au départ, ou aux 65 ans —, leur valeur réelle constante.
+        etrangeres = pensions_etrangeres_servies(
+            self.constructeur.macro, carriere,
+            carriere.date_liquidation if age_atteint
+            else carriere.date_de_l_age(MinimumVieillesse.AGE_OUVERTURE), annee)
+        ressources = pension_contributive + rente_capitalisee + etrangeres
         ouverture = (
             annee if age_atteint
             else carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE
@@ -523,7 +538,8 @@ class ScenarioNotionnel:
         # La rente du pilier, elle, ne gagne rien : elle est nominale et
         # constante, et les prix seuls la déprécient d'ici l'ouverture. Elle
         # suivait la pension jusqu'au 23 septembre 2026.
-        a_l_ouverture = pension_contributive * revalorisation + rente_capitalisee * erosion
+        a_l_ouverture = (pension_contributive * revalorisation + rente_capitalisee * erosion
+                         + etrangeres)
         return GarantieVieillesse(
             situation=parametres.situation_foyer.value,
             age_atteint=age_atteint,
@@ -541,6 +557,7 @@ class ScenarioNotionnel:
             complement=(0.0 if carriere.residence is not None
                         else max(0.0, plancher - a_l_ouverture)),
             residence=carriere.residence,
+            pensions_etrangeres=etrangeres,
         )
 
     # -- scénario 3 ----------------------------------------------------------

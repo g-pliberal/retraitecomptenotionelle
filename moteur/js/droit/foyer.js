@@ -10,20 +10,25 @@
  * `data/reference/etapes/foyer_et_net.yaml`.
  */
 
+import { DateMois } from "../calendrier.js";
 import { Fiabilite, nomFiabilite } from "../serie.js";
+import { pensionsEtrangeresServies } from "./etranger.js";
 
 /** La version du schéma de l'étape. */
 export const SCHEMA_VERSION = 1;
 
 /** Ce que l'étape « foyer et net » écrit, à une date. */
 export class Foyer {
-  constructor({ personne, date, ressources, minimumVieillesse, plafond, fiabilite }) {
+  constructor({ personne, date, ressources, minimumVieillesse, plafond, fiabilite,
+    etrangeres = 0.0 }) {
     this.personne = personne;
     this.date = date;
     this.ressources = ressources;
     this.minimumVieillesse = minimumVieillesse;
     this.plafond = plafond;
     this.fiabilite = fiabilite;
+    /** Celles des ressources qu'un autre État sert, à part des pensions françaises. */
+    this.etrangeres = etrangeres;
   }
 
   /** L'ASPA, sous la forme où la cascade des avantages la dit. */
@@ -40,7 +45,8 @@ export class Foyer {
   donnees() {
     return {
       schema_version: SCHEMA_VERSION, personne: this.personne, date: this.date,
-      ressources: this.ressources, minimum_vieillesse: this.minimumVieillesse,
+      ressources: this.ressources, etrangeres: this.etrangeres,
+      minimum_vieillesse: this.minimumVieillesse,
       fiabilite: nomFiabilite(this.fiabilite),
     };
   }
@@ -62,27 +68,38 @@ export function conditionDeResidence(moteur, residence, date) {
 }
 
 /**
- * L'ASPA qu'appellent `ressources` en `annee`. `ageAtteint` dit si l'âge de
- * l'allocation l'est : à la date d'effet pour une liquidation, dans l'année
- * pour une échéance ; `residence`, l'État où le bénéficiaire réside hors de
- * France, s'il le déclare : elle n'y est pas servie. Voir le Python.
+ * L'ASPA qu'appellent `ressources`, les pensions françaises, en `annee`.
+ * `ageAtteint` dit si l'âge de l'allocation l'est : à la date d'effet pour une
+ * liquidation, dans l'année pour une échéance ; la `carriere`, les pensions
+ * qu'un autre État sert à cette date, qui s'ajoutent aux ressources, et l'État
+ * où le bénéficiaire réside hors de France, s'il le déclare : elle n'y est pas
+ * servie. Voir le Python.
  */
 export function foyerEtNet(moteur, personne, date, annee, ressources, ageAtteint,
-  contexte = null, residence = null) {
+  contexte = null, carriere = null) {
+  const jour = date ?? `${annee}-12-31`;
+  const residence = carriere === null ? null : carriere.residence;
+  const etrangeres = carriere === null ? 0.0 : pensionsEtrangeresServies(
+    moteur.macro, carriere, new DateMois(Number(jour.slice(0, 4)), Number(jour.slice(5, 7))),
+    annee);
+  const total = ressources + etrangeres;
   let montant = 0.0;
   let plafond = null;
   let fiabilite = Fiabilite.CERTIFIEE;
   if (ageAtteint && moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
-      && conditionDeResidence(moteur, residence, date ?? `${annee}-12-31`)
+      && conditionDeResidence(moteur, residence, jour)
       && !(contexte !== null && contexte.neutralise("avantages_non_contributifs"))) {
     const bareme = moteur.minimumVieillesse.plafond(annee);
     if (bareme !== null) {
       plafond = bareme[0];
-      montant = Math.max(0.0, bareme[0] - ressources);
+      montant = Math.max(0.0, bareme[0] - total);
       if (montant > 0) {
         fiabilite = bareme[1];
       }
     }
   }
-  return new Foyer({ personne, date, ressources, minimumVieillesse: montant, plafond, fiabilite });
+  return new Foyer({
+    personne, date, ressources: total, minimumVieillesse: montant, plafond, fiabilite,
+    etrangeres,
+  });
 }

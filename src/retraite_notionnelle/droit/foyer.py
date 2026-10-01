@@ -7,7 +7,8 @@ montant du barème d'une personne seule — c'est la seule prestation du systèm
 actuel qui ne suppose aucune cotisation, et donc celle qui creuse le plus
 l'écart avec un compte notionnel. Elle s'ouvre à 65 ans, à qui réside en
 France, et se revoit à chaque échéance : l'échéancier l'applique après les
-liquidations du jour, et après « faire vivre ».
+liquidations du jour, et après « faire vivre ». Les pensions qu'un autre État
+sert comptent dans ses ressources, servies à part.
 
 Les prélèvements selon le revenu du foyer n'y sont pas encore : le modèle
 compare des pensions brutes.
@@ -22,10 +23,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from .commun import AvantageApplique
+from .etranger import pensions_etrangeres_servies
 
 if TYPE_CHECKING:
+    from ..carriere import Carriere
     from ..scenarios.actuel import ScenarioActuel
     from .liquidation import Contexte
 
@@ -41,8 +45,8 @@ class Foyer:
     #: La date à laquelle les ressources sont lues : l'effet de la
     #: liquidation, ou l'échéance (AAAA-MM-JJ).
     date: str | None
-    #: Toutes les pensions que le bénéficiaire reçoit, régimes provisionnés
-    #: et majorations compris.
+    #: Toutes les pensions que le bénéficiaire reçoit, régimes provisionnés,
+    #: majorations et pensions étrangères compris.
     ressources: float
     #: L'ASPA : le complément jusqu'au barème, nul quand les ressources
     #: l'atteignent.
@@ -50,6 +54,9 @@ class Foyer:
     #: Le barème lu, quand l'allocation est ouverte.
     plafond: float | None
     fiabilite: Fiabilite
+    #: Celles des ressources qu'un autre État sert, à part des pensions
+    #: françaises : l'allocation ne complète que ce qu'elles laissent.
+    etrangeres: float = 0.0
 
     def avantage(self) -> AvantageApplique:
         """L'ASPA, sous la forme où la cascade des avantages la dit."""
@@ -64,6 +71,7 @@ class Foyer:
         """Le foyer, tel que le schéma de l'étape le décrit."""
         return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
                 "date": self.date, "ressources": self.ressources,
+                "etrangeres": self.etrangeres,
                 "minimum_vieillesse": self.minimum_vieillesse,
                 "fiabilite": self.fiabilite.name.lower()}
 
@@ -83,19 +91,26 @@ def condition_de_residence(moteur: ScenarioActuel, residence: str | None, date: 
 
 def foyer_et_net(moteur: ScenarioActuel, personne: str, date: str | None, annee: int,
                  ressources: float, age_atteint: bool,
-                 contexte: Contexte | None = None, residence: str | None = None) -> Foyer:
-    """L'ASPA qu'appellent ``ressources`` en ``annee``.
+                 contexte: Contexte | None = None, carriere: Carriere | None = None) -> Foyer:
+    """L'ASPA qu'appellent ``ressources``, les pensions françaises, en ``annee``.
 
     ``age_atteint`` dit si l'âge de l'allocation l'est : à la date d'effet
-    pour une liquidation, dans l'année pour une échéance. ``residence`` est
-    l'État où le bénéficiaire réside hors de France, s'il le déclare : elle
-    n'y est pas servie. Le contexte peut neutraliser les avantages non
-    contributifs, et l'allocation avec eux ; le paramètre
+    pour une liquidation, dans l'année pour une échéance. La ``carriere`` dit
+    deux faits que l'allocation lit : les pensions qu'un autre État sert à
+    cette date, qui s'ajoutent aux ressources (R. 815-22), et l'État où le
+    bénéficiaire réside hors de France, s'il le déclare : elle n'y est pas
+    servie. Le contexte peut neutraliser les avantages non contributifs, et
+    l'allocation avec eux ; le paramètre
     ``minimum_vieillesse_dans_le_scenario_actuel`` la retire aussi.
     """
+    jour = date or f"{annee:04d}-12-31"
+    residence = None if carriere is None else carriere.residence
+    etrangeres = (0.0 if carriere is None else pensions_etrangeres_servies(
+        moteur.macro, carriere, DateMois(int(jour[:4]), int(jour[5:7])), annee))
+    ressources += etrangeres
     montant, plafond, fiabilite = 0.0, None, Fiabilite.CERTIFIEE
     if (age_atteint and moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
-            and condition_de_residence(moteur, residence, date or f"{annee:04d}-12-31")
+            and condition_de_residence(moteur, residence, jour)
             and not (contexte is not None
                      and contexte.neutralise("avantages_non_contributifs"))):
         bareme = moteur.minimum_vieillesse.plafond(annee)
@@ -105,4 +120,5 @@ def foyer_et_net(moteur: ScenarioActuel, personne: str, date: str | None, annee:
             if montant > 0:
                 fiabilite = bareme[1]
     return Foyer(personne=personne, date=date, ressources=ressources,
-                 minimum_vieillesse=montant, plafond=plafond, fiabilite=fiabilite)
+                 minimum_vieillesse=montant, plafond=plafond, fiabilite=fiabilite,
+                 etrangeres=etrangeres)

@@ -16,8 +16,10 @@
  * l'ordre du calendrier, et c'est tout ce que le module leur demande.
  */
 
+import { DateMois } from "./calendrier.js";
 import { RevalorisationStock, SituationFoyer } from "./config.js";
 import * as liquider from "./droit/liquider.js";
+import { pensionsEtrangeresServies } from "./droit/etranger.js";
 import { foyerEtNet } from "./droit/foyer.js";
 import { ageDeLAspa } from "./droit/invalidite.js";
 import { Fiabilite, nomFiabilite } from "./serie.js";
@@ -486,7 +488,7 @@ export function foyerALEcheance(simulateur, carriere, vivante) {
     simulateur.scenarioActuel, carriere.personne, dateIso(vivante.annee, 12, 31),
     vivante.annee, ressources,
     vivante.annee >= carriere.annee_naissance + ageDeLAspa(simulateur.scenarioActuel, carriere),
-    null, carriere.residence,
+    null, carriere,
   );
 }
 
@@ -606,9 +608,11 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
   }
   plancher *= 12.0 * macro.coefficientPrix(parametres.annee_euros_garantie_vieillesse, annee);
   const ouverte = annee >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE;
-  // Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France.
+  // Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France,
+  // et compte ce qu'un autre État sert.
+  const etrangeres = pensionsEtrangeresServies(macro, carriere, new DateMois(annee, 12));
   const complement = ouverte && carriere.residence === null
-    ? Math.max(0.0, plancher - contributiveAujourdhui - rente)
+    ? Math.max(0.0, plancher - contributiveAujourdhui - rente - etrangeres)
     : 0.0;
   notionnels.notionnel_liberal = contributiveAujourdhui + complement;
   coefficients.notionnel_liberal = reel;
@@ -623,7 +627,7 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
     rente_capitalisee_volontaire: volontaire,
     garantie_ouverte: ouverte,
     plancher_garantie: plancher,
-    ressources_garantie: contributiveAujourdhui + rente,
+    ressources_garantie: contributiveAujourdhui + rente + etrangeres,
   });
 }
 

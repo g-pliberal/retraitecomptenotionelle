@@ -33573,7 +33573,7 @@
      "fiabilite": "haute",
      "majoration_enfants": 0,
      "mensuel_decembre_2019": null,
-     "minimum_vieillesse": 4697.689116801344,
+     "minimum_vieillesse": 0.0,
      "par_regime": [
       {
        "au_depart": 492.0391425689116,
@@ -33608,30 +33608,30 @@
        "regle": "regime_general"
       }
      ],
-     "pension_annuelle": 12523.08,
+     "pension_annuelle": 7825.3908831986555,
      "pension_hors_repartition": 0
     },
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.9872785237179003,
-     "notionnel_prospectif": 1.5943315619413978,
-     "notionnel_prospectif_employeur": 1.5943315619413978,
+     "notionnel_prospectif": 0.996261915568062,
+     "notionnel_prospectif_employeur": 0.996261915568062,
      "notionnel_retroactif": 0.9872785237179003,
      "notionnel_retroactif_employeur": 0.9872785237179003
     },
     "garantie_ouverte": true,
-    "garantie_vieillesse": 8332.867625059342,
+    "garantie_vieillesse": 0.0,
     "notionnels": {
-     "notionnel_liberal": 12600.0,
-     "notionnel_prospectif": 12523.08,
-     "notionnel_prospectif_employeur": 12523.08,
+     "notionnel_liberal": 4267.132374940657,
+     "notionnel_prospectif": 7825.3908831986555,
+     "notionnel_prospectif_employeur": 7825.3908831986555,
      "notionnel_retroactif": 1730.4401079240647,
      "notionnel_retroactif_employeur": 4267.132374940657
     },
     "plancher_garantie": 12600.0,
     "rente_capitalisee": 0.0,
     "rente_capitalisee_volontaire": 0.0,
-    "ressources_garantie": 4267.132374940657
+    "ressources_garantie": 13267.132374940658
    },
    "contribution_employeur": {
     "agent": 34084.64654320259,
@@ -33810,13 +33810,13 @@
       "annee_ouverture": 2025,
       "base_annuelle": 9346.749586290713,
       "coefficient_prix": 0.9736197485719492,
-      "complement": 8069.724794133498,
-      "differee": true,
+      "complement": 0.0,
+      "differee": false,
       "isolement_annuel": 2920.8592457158475,
       "pension_contributive": 4208.097563357967,
       "plancher_annuel": 12267.608832006561,
       "rente_capitalisee": 0.0,
-      "ressources": 4208.097563357967,
+      "ressources": 12970.67530050551,
       "situation": "seul"
      },
      "pension_annuelle": 4208.097563357967,

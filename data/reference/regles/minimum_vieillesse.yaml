@@ -1,16 +1,20 @@
 schema_version: 1
 id: minimum_vieillesse
 intitule: >-
-  ASPA servie au barème d'une personne seule sans autre ressource, à tous, en ligne
-  séparée. Revalorisée sur les prix : L. 816-2 renvoie au coefficient de L. 161-25,
-  moyenne annuelle des prix hors tabac, plancher à 1.
+  ASPA servie au barème d'une personne seule, différentielle sur les pensions — les
+  françaises, et celles qu'un autre État sert, déclarées —, sans autre ressource, à
+  tous, en ligne séparée. Revalorisée sur les prix : L. 816-2 renvoie au coefficient de
+  L. 161-25, moyenne annuelle des prix hors tabac, plancher à 1.
 etat: approchee
 etape: foyer_et_net
 effet: >-
-  Les plus petites pensions ; la condition de ressources et le ménage sont ignorés,
-  ce que limites.md dit.
+  Les plus petites pensions ; la condition de ressources hors des pensions et le
+  ménage sont ignorés, ce que limites.md dit. Une pension étrangère déclarée compte :
+  « il est tenu compte, pour l'appréciation des ressources, de tous les avantages
+  d'invalidité et de vieillesse dont bénéficie l'intéressé » (R. 815-22), à son montant
+  brut, revalorisé « dans les mêmes conditions que ceux du régime général ».
 sources:
-  lu_le: 2026-09-19
+  lu_le: 2026-10-01
   prochaine_relecture: 2027-01-31
   lectures:
   - type: service_public
@@ -22,7 +26,25 @@ sources:
   - type: legifrance
     reference: L. 161-25 CSS, LEGIARTI000031781092, en vigueur depuis le 2016-01-01
     date: 2026-09-19
+  - type: legifrance
+    reference: >-
+      L. 815-9 CSS, LEGIARTI000006744880, en vigueur depuis le 2006-01-01 ; R. 815-22
+      CSS, LEGIARTI000047770487, en vigueur depuis le 2023-07-01, et ses versions
+      depuis le 2007-01-13 : « tous les avantages d'invalidité et de vieillesse dont
+      bénéficie l'intéressé »
+    date: 2026-10-01
+  - type: circulaire_cnav
+    reference: >-
+      base législative de la Cnav, exposé « Evaluation des ressources - Aspa » : les
+      avantages viagers « sont retenus », « Le montant retenu est le montant brut avant
+      cotisations », « revalorisés dans les mêmes conditions que ceux du régime
+      général », « Les monnaies étrangères sont converties au taux de change en vigueur
+      le 1er jour du trimestre civil qui comprend le point de départ » ; l'allocation «
+      est révisée le 1er jour du mois qui suit la date de modification d'un avantage
+      viager »
+    date: 2026-10-01
 textes_a_rattacher:
 - reference: L. 815-1 CSS et suivants
+- reference: R. 815-22 CSS
 - reference: L. 816-2 CSS
 - reference: L. 161-25 CSS

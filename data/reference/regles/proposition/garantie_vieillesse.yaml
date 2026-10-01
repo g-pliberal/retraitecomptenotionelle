@@ -15,6 +15,7 @@ lit:
 - la pension du compte notionnel et la rente du pilier capitalisé
 - l'âge atteint et la situation du foyer, seul ou en couple
 - la résidence après le départ, en France ou hors de France
+- les pensions qu'un autre État sert, déclarées
 - les prix, qui ramènent le plancher aux euros de la liquidation
 ecrit:
 - le complément différentiel et l'année où il s'ouvre
@@ -47,11 +48,14 @@ versions:
     `allocation_isolement_mensuelle` pour qui vit seul (`situation_foyer`),
     en euros de `annee_euros_garantie_vieillesse` ramenés par les prix. Il se
     compare à toutes les retraites obligatoires, le compte notionnel et la
-    rente du pilier capitalisé, jamais à la pension du conjoint. Le
-    complément s'ouvre à 65 ans, l'âge de l'ASPA : à la liquidation pour qui
-    part à cet âge ou après, à 65 ans sinon, et il se calcule pour l'année où
-    il s'ouvre, la pension suivant la règle d'indexation et le plancher les
-    prix. Il est servi en dernier, sur sa ligne, pour que l'on sache ce que
+    rente du pilier capitalisé, et les pensions qu'un autre État sert à
+    l'ouverture — des retraites obligatoires elles aussi, que l'ASPA qu'elle
+    remplace compte parmi « tous les avantages d'invalidité et de vieillesse
+    dont bénéficie l'intéressé » (R. 815-22) —, jamais à la pension du
+    conjoint. Le complément s'ouvre à 65 ans, l'âge de l'ASPA : à la
+    liquidation pour qui part à cet âge ou après, à 65 ans sinon, et il se
+    calcule pour l'année où il s'ouvre, la pension suivant la règle
+    d'indexation et le plancher les prix. Il est servi en dernier, sur sa ligne, pour que l'on sache ce que
     l'impôt paie ; la page Coût le chiffre sur la distribution des pensions.
     Comme l'ASPA, il ne se sert qu'à qui réside en France : nul, au départ et
     aujourd'hui, pour qui déclare résider ailleurs (`residence`), la page Coût

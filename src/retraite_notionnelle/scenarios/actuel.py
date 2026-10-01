@@ -241,7 +241,9 @@ def resultat_actuel(liquidation: Liquidation, foyer: Foyer) -> ResultatActuel:
     avantages = list(liquidation.avantages)
     fiabilite = liquidation.fiabilite
     if foyer.minimum_vieillesse > 0:
-        total = foyer.plafond
+        # Le barème, moins ce que les pensions étrangères, servies à part, en
+        # remplissent.
+        total = foyer.plafond - foyer.etrangeres
         fiabilite = min(fiabilite, foyer.fiabilite)
         avantages.append(foyer.avantage())
     return ResultatActuel(
@@ -354,10 +356,10 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
     foyer = _foyer.foyer_et_net(
         moteur, carriere.personne, _departs.Depart(declare).date_effet, declare.annee,
         total, (carriere.age_liquidation or 0.0) >= _invalidite.age_de_l_aspa(moteur, carriere),
-        contexte, residence=carriere.residence)
+        contexte, carriere=carriere)
     liste = list(avantages.values())
     if foyer.minimum_vieillesse > 0:
-        total = foyer.plafond
+        total = foyer.plafond - foyer.etrangeres
         fiabilite = min(fiabilite, foyer.fiabilite)
         liste.append(foyer.avantage())
     return ResultatActuel(
@@ -2556,7 +2558,7 @@ class ScenarioActuel:
                 liquidee.annee_liquidation, liquidation.total,
                 (liquidee.age_liquidation or 0.0)
                 >= _invalidite.age_de_l_aspa(self, liquidee),
-                contexte, residence=liquidee.residence)
+                contexte, carriere=liquidee)
             resultat = resultat_actuel(liquidation, foyer)
         if progressive is not None:
             resultat = replace(resultat, retraite_progressive=progressive_servie(

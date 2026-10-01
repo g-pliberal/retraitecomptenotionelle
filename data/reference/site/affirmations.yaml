@@ -623,6 +623,15 @@ affirmations:
     etat: verifiee
     controle: periodes_etrangeres_sans_accord
 
+  - id: simuler.pension_etrangere_a_part
+    page: /simuler
+    extrait: "Une pension étrangère se sert à part."
+    porte: >-
+      la pension qu'un autre État sert n'entre pas dans les montants de la page, mais
+      dans les ressources que l'ASPA et la garantie vieillesse complètent
+    etat: verifiee
+    controle: pension_etrangere_a_part
+
   - id: simuler.aspa_hors_de_france
     page: /simuler
     extrait: "Le minimum vieillesse ne se sert qu'en France."

@@ -513,8 +513,33 @@ export function pensionsALEcretement(moteur, carriere) {
     if (accord !== null && exclues.has(accord.instrument)) {
       continue;
     }
-    total += pension.mensuel * MOIS_PAR_AN * moteur.macro.coefficientPrix(
-      pension.debut.annee, carriere.anneeLiquidation);
+    total += pensionEtrangereAnnuelle(moteur.macro, pension, carriere.anneeLiquidation);
+  }
+  return total;
+}
+
+/**
+ * Ce qu'une pension étrangère sert par an, en euros de `annee` : son montant de
+ * départ, déclaré, suivi sur les prix. Voir `pension_etrangere_annuelle` du
+ * Python.
+ */
+export function pensionEtrangereAnnuelle(macro, pension, annee) {
+  return pension.mensuel * MOIS_PAR_AN * macro.coefficientPrix(pension.debut.annee, annee);
+}
+
+/**
+ * Ce que les pensions étrangères déclarées servent par an au mois `mois` —
+ * celles qui ont commencé au plus tard ce mois —, en euros de `annee`, celle du
+ * mois par défaut : des ressources de l'ASPA (R. 815-22) et de la garantie de
+ * la proposition. Voir `pensions_etrangeres_servies` du Python.
+ */
+export function pensionsEtrangeresServies(macro, carriere, mois, annee = null) {
+  const euros = annee ?? mois.annee;
+  let total = 0.0;
+  for (const pension of carriere.pensionsEtrangeres) {
+    if (pension.debut.rang <= mois.rang) {
+      total += pensionEtrangereAnnuelle(macro, pension, euros);
+    }
   }
   return total;
 }

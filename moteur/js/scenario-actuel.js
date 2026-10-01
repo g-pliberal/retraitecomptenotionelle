@@ -267,7 +267,7 @@ export class ScenarioActuel {
       const foyer = foyerEtNet(
         this, carriere.personne, resultat.demande.dateEffet, carriere.anneeLiquidation,
         resultat.total, (carriere.age_liquidation || 0.0) >= ageDeLAspa(this, carriere),
-        contexte, carriere.residence);
+        contexte, carriere);
       sortie = resultatActuel(resultat, foyer);
     }
     if (progressive !== null) {
@@ -290,7 +290,9 @@ export function resultatActuel(resultat, foyer) {
   const avantages = [...resultat.avantages];
   let fiabilite = resultat.fiabilite;
   if (foyer.minimumVieillesse > 0) {
-    total = foyer.plafond;
+    // Le barème, moins ce que les pensions étrangères, servies à part, en
+    // remplissent.
+    total = foyer.plafond - foyer.etrangeres;
     fiabilite = Math.min(fiabilite, foyer.fiabilite);
     avantages.push(foyer.avantage());
   }
@@ -491,10 +493,10 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
   const foyer = foyerEtNet(
     moteur, carriere.personne, new lesDeparts.Depart(declare).dateEffet, declare.annee,
     total, (carriere.age_liquidation || 0.0) >= ageDeLAspa(moteur, carriere), contexte,
-    carriere.residence);
+    carriere);
   const liste = [...avantages.values()];
   if (foyer.minimumVieillesse > 0) {
-    total = foyer.plafond;
+    total = foyer.plafond - foyer.etrangeres;
     fiabilite = Math.min(fiabilite, foyer.fiabilite);
     liste.push(foyer.avantage());
   }

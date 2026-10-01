@@ -1420,6 +1420,30 @@ def _(m: Modele):
     assert comparaison.actuel.trimestres_valides == sans.actuel.trimestres_valides
 
 
+@controle("pension_etrangere_a_part")
+def _(m: Modele):
+    """Une pension espagnole, servie à part : l'ASPA de la petite carrière, et
+    la garantie de la proposition, baissent d'autant (droit/foyer.py) ; la
+    pension française d'une carrière sans ASPA, que l'écrêtement du minimum
+    ne touche pas pour une pension des règlements européens, ne bouge pas."""
+    pension = dict(pension_etrangere1_pays="ES", pension_etrangere1="150",
+                   pension_etrangere1_debut="2019-01")
+    petite = dict(naissance="1955-03-15", debut="1994-01", liquidation="2020-04",
+                  unite_revenu="moyen", salaire="0.2")
+
+    def aspa(comparaison):
+        return sum(a.montant for a in comparaison.actuel.avantages_appliques
+                   if a.code == "minimum_vieillesse")
+
+    sans, avec = m.simuler_requete(**petite), m.simuler_requete(**petite, **pension)
+    assert 0 < aspa(avec) < aspa(sans)
+    assert (avec.notionnel_liberal.garantie_vieillesse.complement
+            < sans.notionnel_liberal.garantie_vieillesse.complement)
+    normale = dict(naissance="1960-03-15", debut="1982-01", liquidation="2024-04")
+    assert (m.simuler_requete(**normale, **pension).actuel.pension_annuelle
+            == m.simuler_requete(**normale).actuel.pension_annuelle)
+
+
 @controle("aspa_hors_de_france")
 def _(m: Modele):
     """La petite carrière qui reçoit l'ASPA en France n'en reçoit rien au

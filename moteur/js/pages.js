@@ -3087,6 +3087,17 @@ sienne.${comparaisonDite}`
 les fait compter pour vos régimes à la date de votre départ : votre pension
 française ne connaît que votre carrière en France.`);
   }
+  if (carriere.pensionsEtrangeres.length > 0) {
+    // Servie à part, elle compte dans les ressources que l'ASPA et la garantie
+    // complètent (`droit/foyer.js`), et dans l'écrêtement du minimum.
+    notes.push(`<strong>Une pension étrangère se sert à part.</strong> L'État qui la
+doit la verse lui-même : les montants de cette page ne comprennent pas celle que
+vous déclarez. Elle compte pourtant dans vos ressources : l'ASPA, et dans la
+proposition la garantie vieillesse, ne complètent que ce qu'elle laisse sous leur
+barème ; depuis 2012, le minimum contributif ne porte vos pensions qu'au plafond de
+toutes vos retraites, elle comprise, hors celles des règlements européens et de six
+conventions.`);
+  }
   if (carriere.residence !== null) {
     notes.push(`<strong>Le minimum vieillesse ne se sert qu'en France.</strong> Vous
 déclarez résider hors de France après votre départ : l'ASPA ne s'ajoute à votre
@@ -5548,7 +5559,11 @@ function garantieVieillesse(comparaison, saisie) {
       + "capitalisés, volontaires compris : une allocation différentielle "
       + "compte les ressources et non leur origine",
       `${g.eurosCentimes(garantie.rente_capitalisee)} par an`],
-    ["f) = ressources examinées", "d + e",
+    ...(garantie.pensions_etrangeres > 0 ? [["e′) + pensions étrangères",
+      "celles qu'un autre État vous sert à l'ouverture, servies à part : des "
+      + "retraites obligatoires elles aussi, que l'ASPA compte de même",
+      `${g.eurosCentimes(garantie.pensions_etrangeres)} par an`]] : []),
+    ["f) = ressources examinées", garantie.pensions_etrangeres > 0 ? "d + e + e′" : "d + e",
       `${g.eurosCentimes(garantie.ressources)} par an`],
   ];
   if (!garantie.age_atteint) {

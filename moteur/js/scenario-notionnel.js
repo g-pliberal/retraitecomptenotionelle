@@ -29,6 +29,7 @@
 
 import { Carriere } from "./carriere.js";
 import { AgeConversionDroitsAcquis, SituationFoyer, TableConversion } from "./config.js";
+import { pensionsEtrangeresServies } from "./droit/etranger.js";
 import { MinimumVieillesse } from "./regimes.js";
 
 /** Produit les deux variantes de comptes notionnels. */
@@ -195,7 +196,13 @@ export class ScenarioNotionnel {
       : 0.0;
     const plancher = base + isolement;
     const ageAtteint = (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE;
-    const ressources = pensionContributive + renteCapitalisee;
+    // Les pensions étrangères servies le mois où la garantie s'ouvre — au
+    // départ, ou aux 65 ans —, leur valeur réelle constante.
+    const etrangeres = pensionsEtrangeresServies(
+      this.constructeur.macro, carriere,
+      ageAtteint ? carriere.dateLiquidation
+        : carriere.dateDeLAge(MinimumVieillesse.AGE_OUVERTURE), annee);
+    const ressources = pensionContributive + renteCapitalisee + etrangeres;
     const ouverture = ageAtteint
       ? annee
       : carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE;
@@ -211,7 +218,7 @@ export class ScenarioNotionnel {
     // La rente du pilier, nominale et constante, ne gagne rien : les prix
     // seuls la déprécient d'ici l'ouverture.
     const aLOuverture = pensionContributive * revalorisation
-      + renteCapitalisee * erosion;
+      + renteCapitalisee * erosion + etrangeres;
     // Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France.
     const complement = carriere.residence !== null ? 0.0
       : Math.max(0.0, plancher - aLOuverture);
@@ -231,6 +238,7 @@ export class ScenarioNotionnel {
       erosion_rente: erosion,
       complement,
       residence: carriere.residence,
+      pensions_etrangeres: etrangeres,
       servie: complement > 0,
       servie_a_la_liquidation: ageAtteint && complement > 0,
       differee: complement > 0 && !ageAtteint,

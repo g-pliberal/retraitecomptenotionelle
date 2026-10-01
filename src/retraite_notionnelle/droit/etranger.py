@@ -30,7 +30,7 @@ from ..calendrier import MOIS_PAR_AN, DateMois, mois_travailles, trimestres_civi
 from .commun import date_d_effet
 
 if TYPE_CHECKING:
-    from ..carriere import Carriere, PeriodeALEtranger
+    from ..carriere import Carriere, PensionEtrangere, PeriodeALEtranger
     from ..scenarios.actuel import ScenarioActuel
 
 #: Les deux familles de régimes qui lisent les trimestres étrangers : le
@@ -461,6 +461,28 @@ def pensions_a_l_ecretement(moteur: ScenarioActuel, carriere: Carriere) -> float
         accord = domaine.accord(pension.pays, _jour(pension.debut))
         if accord is not None and accord["instrument"] in exclues:
             continue
-        total += pension.mensuel * MOIS_PAR_AN * moteur.macro.coefficient_prix(
-            pension.debut.annee, carriere.annee_liquidation)
+        total += pension_etrangere_annuelle(moteur.macro, pension, carriere.annee_liquidation)
     return total
+
+
+def pension_etrangere_annuelle(macro, pension: PensionEtrangere, annee: int) -> float:
+    """Ce qu'une pension étrangère sert par an, en euros de ``annee`` : son
+    montant de départ, déclaré, suivi sur les prix — la caisse revalorise
+    « tous les avantages viagers [...] dans les mêmes conditions que ceux du
+    régime général » (exposé de la Cnav « Evaluation des ressources - Aspa »),
+    sur les prix depuis 2004 (L. 161-23-1)."""
+    return pension.mensuel * MOIS_PAR_AN * macro.coefficient_prix(pension.debut.annee, annee)
+
+
+def pensions_etrangeres_servies(macro, carriere: Carriere, mois: DateMois,
+                                annee: int | None = None) -> float:
+    """Ce que les pensions étrangères déclarées servent par an au mois
+    ``mois`` — celles qui ont commencé au plus tard ce mois —, en euros de
+    ``annee``, celle du mois par défaut. Des ressources : l'ASPA compte « tous
+    les avantages d'invalidité et de vieillesse dont bénéficie l'intéressé »
+    (R. 815-22), et la garantie de la proposition, qui la remplace, toutes
+    les retraites obligatoires. Rien pour qui n'en déclare pas (présomption
+    ``pas_de_pension_etrangere``)."""
+    annee = mois.annee if annee is None else annee
+    return sum(pension_etrangere_annuelle(macro, pension, annee)
+               for pension in carriere.pensions_etrangeres if pension.debut.rang <= mois.rang)
