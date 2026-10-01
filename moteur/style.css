@@ -762,25 +762,26 @@ form .memoire {
   border-left: 3px solid var(--or); background: var(--fond-appui);
 }
 /* Les métiers de la carrière : une boîte par métier, la dernière en pointillé
-   parce qu'elle n'en décrit encore aucun — c'est celle qui sert à en ajouter. */
+   parce qu'elle n'en décrit encore aucun — c'est celle qui sert à en ajouter.
+   Les périodes et les pensions hors de France ont les mêmes boîtes. */
 .metiers { display: grid; gap: 0.9rem; margin: 0.9rem 0 0; }
-.metier {
+.metier, .ligne-etrangere {
   border: 1px solid var(--creme-trait); border-radius: 4px; padding: 0.9rem 1rem;
   /* `<fieldset>` porte des marges et un padding propres à chaque navigateur. */
   margin: 0; min-width: 0;
 }
-.metier.facultatif { border-style: dashed; }
+.metier.facultatif, .ligne-etrangere.facultatif { border-style: dashed; }
 /* Le rang du métier est la LÉGENDE du groupe : « Revenu brut mensuel » est le
    même libellé dans les deux blocs, et seule cette légende dit lequel on
    remplit — à l'œil comme à l'oreille (WCAG 3.3.2). */
-.metier > .rang {
+.metier > .rang, .ligne-etrangere > .rang {
   margin: 0; padding: 0 0.35rem; font-size: 0.78rem; letter-spacing: 0.05em;
   text-transform: uppercase; color: var(--texte-doux); font-weight: 700;
 }
 /* La légende écrivait la couleur du texte doux SUR CRÈME, alors que le
    formulaire long est sur carte sombre : « PREMIER MÉTIER » y était du vert
    foncé sur vert foncé, et ne se lisait qu'à l'impression. */
-.creme .metier > .rang { color: var(--sur-creme-doux); }
+.creme .metier > .rang, .creme .ligne-etrangere > .rang { color: var(--sur-creme-doux); }
 /* Les pictogrammes. Un seul jeu — Lucide, grille de 24, trait de 2 —, une
    seule règle : ils prennent la taille et la couleur du texte qui les porte. */
 .icone {

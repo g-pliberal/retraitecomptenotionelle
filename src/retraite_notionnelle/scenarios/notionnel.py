@@ -174,12 +174,16 @@ class GarantieVieillesse:
     ressources_a_l_ouverture: float
     #: Ce que la garantie ajoute à compter de ``annee_ouverture`` :
     #: ``max(0, plancher - ressources_a_l_ouverture)``. C'est la part financée
-    #: par l'impôt.
+    #: par l'impôt. Nulle pour qui réside hors de France.
     complement: float
     #: Ce que la rente du pilier, NOMINALE et constante, perd en termes réels
     #: entre la liquidation et l'ouverture : le seul rapport des prix. Vaut 1
     #: quand les deux coïncident.
     erosion_rente: float = 1.0
+    #: L'État où la personne réside hors de France, si elle le déclare : la
+    #: garantie ne s'y sert pas, comme l'ASPA qu'elle remplace (fiche
+    #: ``garantie_vieillesse``).
+    residence: str | None = None
 
     @property
     def servie(self) -> bool:
@@ -474,6 +478,10 @@ class ScenarioNotionnel:
         allocation différentielle compte ce dont on dispose, non d'où cela
         vient.
 
+        LA RÉSIDENCE aussi : la garantie, comme l'ASPA qu'elle remplace, ne se
+        sert qu'à qui réside en France (README, page Coût) ; nulle pour qui
+        déclare résider ailleurs.
+
         L'ÂGE est celui de l'ASPA, 65 ans, et il ne fait plus disparaître le
         complément : il en retarde le service. Le montant calculé ici vaut donc
         à compter de ``annee_ouverture``, et il est calculé POUR cette année-là
@@ -530,7 +538,9 @@ class ScenarioNotionnel:
             revalorisation_differee=revalorisation,
             ressources_a_l_ouverture=a_l_ouverture,
             erosion_rente=erosion,
-            complement=max(0.0, plancher - a_l_ouverture),
+            complement=(0.0 if carriere.residence is not None
+                        else max(0.0, plancher - a_l_ouverture)),
+            residence=carriere.residence,
         )
 
     # -- scénario 3 ----------------------------------------------------------

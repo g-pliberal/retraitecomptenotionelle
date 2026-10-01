@@ -258,6 +258,7 @@
    "marins_salaire_de_reference",
    "militaires_duree_requise",
    "minimum_contributif",
+   "minimum_contributif_international",
    "minimum_garanti",
    "minimum_vieillesse",
    "minoration_ircec",
@@ -267,6 +268,7 @@
    "pension_differee_fonction_publique",
    "pension_mines",
    "pension_non_salaries_agricoles_2026",
+   "pension_proratisee",
    "plafond_des_trimestres_de_decote",
    "priorite_majorations_enfants",
    "raap_classe_speciale",
@@ -281,6 +283,7 @@
    "rco_points_gratuits",
    "regimes_speciaux_et_non_salaries",
    "regimes_speciaux_par_generation",
+   "residence_et_minimum_vieillesse",
    "retablissement_fonction_publique",
    "retraite_anticipee_handicap",
    "retraite_pour_invalidite_fonction_publique",
@@ -304,6 +307,7 @@
    "taux_maximum_fonction_publique",
    "taux_plein_et_proratisation",
    "temps_partiel_fonction_publique",
+   "totalisation_des_periodes_etrangeres",
    "trimestres_retenus_1972_1974",
    "un_statut_par_annee"
   ],
@@ -423,7 +427,11 @@
    "2026-09-30 | la quatrième étape du troisième domaine, sa troisième partie : les droits de l'activité après le départ, et la nouvelle pension",
    "2026-09-30 | la troisième étape du quatrième domaine, sa fin : l'ASPA de l'inapte et la retraite pour invalidité des fonctionnaires, dans les deux moteurs",
    "2026-09-30 | la troisième étape du quatrième domaine, sa première partie : le taux plein de l'inapte et de l'ex-invalide, et la pension de vieillesse qui remplace d'office la pension d'invalidité, dans les deux moteurs",
-   "2026-10-01 | la quatrième étape du quatrième domaine : les exemples publiés, et l'invalidité du survivant à l'Agirc-Arrco, dans les deux moteurs"
+   "2026-10-01 | l'ouverture du cinquième domaine, les carrières hors de France, à la demande du propriétaire : les textes lus, quatre fiches nouvelles et le tableau des accords",
+   "2026-10-01 | la cinquième étape du cinquième domaine, et sa clôture : le formulaire, la page Coût, la proposition",
+   "2026-10-01 | la fin de la troisième étape du cinquième domaine — l'ASPA hors de France, la page —, et sa quatrième : les exemples publiés, et la règle d'un seul accord à la fois",
+   "2026-10-01 | la quatrième étape du quatrième domaine : les exemples publiés, et l'invalidité du survivant à l'Agirc-Arrco, dans les deux moteurs",
+   "2026-10-01 | la troisième étape du cinquième domaine, en cours : la pension proratisée contre la pension nationale, leur minimum, et l'écrêtement sur les pensions étrangères, dans les deux moteurs"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -857,6 +865,7 @@
    "simuler.allegement_absent",
    "simuler.allegement_au_smic",
    "simuler.allegement_calcule",
+   "simuler.aspa_hors_de_france",
    "simuler.aucune_annee_projetee",
    "simuler.baisse_de_csg",
    "simuler.baisse_immediate",
@@ -888,6 +897,8 @@
    "simuler.pension_niveau_unique",
    "simuler.pension_substituee",
    "simuler.pensions_a_leur_date",
+   "simuler.periodes_etrangeres_pour_le_taux",
+   "simuler.periodes_etrangeres_sans_accord",
    "simuler.pilier_sans_annee",
    "simuler.premiere_ligne_indexation",
    "simuler.quatre_calculs",
@@ -1406,6 +1417,7 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "6b576a97dda0289d",
     "013ff654ad628555",
     "48795b00134b372a",
     "6a3807dcf2db29e6",

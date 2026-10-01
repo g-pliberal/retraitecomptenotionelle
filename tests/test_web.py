@@ -2195,9 +2195,11 @@ def test_le_simulateur_tient_en_peu_de_mots():
     # champs où l'assuré date chaque pension, repliés avec les autres.
     # Le 1er octobre 2026, elle monte de trois mots pour un contrôle : le
     # dépliant « Invalidité et inaptitude » (le domaine de l'invalidité et de
-    # l'inaptitude), dont les champs restent repliés.
+    # l'inaptitude), dont les champs restent repliés. Le même jour, de quatre :
+    # le dépliant « Carrière hors de France » (le domaine des carrières hors de
+    # France), replié lui aussi.
     vierge = rendre("/simuler", {})[1]
-    assert _mots_visibles(vierge) <= 174, "le formulaire reprend de la prose"
+    assert _mots_visibles(vierge) <= 178, "le formulaire reprend de la prose"
 
     resultats = rendre("/simuler", {
         "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",

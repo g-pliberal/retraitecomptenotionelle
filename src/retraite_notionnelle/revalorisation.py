@@ -781,8 +781,9 @@ def pension_aujourd_hui(simulateur, comparaison,
     plancher *= 12.0 * macro.coefficient_prix(
         parametres.annee_euros_garantie_vieillesse, annee)
     ouverte = annee >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE
+    # Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France.
     complement = (max(0.0, plancher - contributive_aujourd_hui - rente)
-                  if ouverte else 0.0)
+                  if ouverte and carriere.residence is None else 0.0)
     notionnels["notionnel_liberal"] = contributive_aujourd_hui + complement
     coefficients["notionnel_liberal"] = reel
 

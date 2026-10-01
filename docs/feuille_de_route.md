@@ -3489,6 +3489,61 @@ que le CLEISS rapporte à la durée des trois États quand l'accord n'en totalis
 que deux, ne se compare pas, et la fiche `pension_proratisee` le dit. Aucun
 des 681 témoins ne bouge ; deux naissent.
 
+**Cinquième étape, le 1er octobre : le formulaire, la page Coût, la
+décision.** Le formulaire demande le domaine dans un dépliant « Carrière hors
+de France », replié tant qu'il est vide : jusqu'à quatre périodes — l'État, au
+tableau des accords ou « un autre État », le mois où elle commence et celui où
+elle finit, l'activité —, jusqu'à quatre pensions étrangères — l'État qui la
+sert, son montant brut mensuel en euros d'aujourd'hui, le mois où elle
+commence —, et la résidence après le départ ; chaque ligne déclarée en appelle
+une vide. Le calendrier du début d'activité s'ouvre désormais jusqu'à
+soixante-quinze ans, puisqu'une carrière commencée hors de France entre en
+France à tout âge, et la saisie, qui refuse le début tardif d'une carrière
+toute française, le dit. Le budget de mots du formulaire vierge monte de
+quatre, le titre du dépliant ; la page de l'Espagnole qui réside en Espagne le
+fige rempli. La page Coût ne bouge pas : aucun de ses chiffres n'a changé dans
+les commits du domaine, et elle retirait déjà de la garantie les retraités qui
+résident à l'étranger. La proposition n'en fait pas exception, comme son texte
+le disait déjà : son compte ne connaît que les cotisations versées en France —
+il n'a ni durée ni taux à totaliser —, et sa garantie vieillesse que les
+retraités qui résident en France, comme l'ASPA qu'elle remplace (README,
+`docs/limites.md`). Le simulateur l'applique désormais à qui déclare résider
+ailleurs : la garantie du scénario 6 lui est refusée, au départ et aujourd'hui,
+dans les deux moteurs, et la fiche `garantie_vieillesse` cite la phrase du
+README ; le seul témoin qui réside hors de France perd la sienne.
+
+**Le domaine se clôt le même jour**, le gabarit du § 11 rempli :
+- **les fiches** : quatre, découpées en versions et `approchee` chacune avec
+  ses approximations — `totalisation_des_periodes_etrangeres`,
+  `pension_proratisee`, `minimum_contributif_international`,
+  `residence_et_minimum_vieillesse` —, et le tableau des accords, qui dit pour
+  68 États et les organisations internationales l'accord en vigueur à chaque
+  date, son calcul, et les États tiers que sept conventions font compter ;
+- **les faits de la chronologie** : les périodes à l'étranger, les pensions
+  étrangères, liquidations observées, et la résidence après le départ ; deux
+  présomptions, `pas_de_pension_etrangere` et `residence_en_france` ;
+- **les fonctions dans l'étape** : `droit/etranger.py` et son jumeau, que la
+  coordination, les durées, l'ouverture, la liquidation, « compléter tous
+  régimes » et « foyer et net » appellent ;
+- **les exemples publiés** : neuf, tous reproduits ;
+- **le bloc du formulaire** : « Carrière hors de France » ;
+- **la page Coût** ne bouge pas ;
+- **la décision de la proposition** : elle n'en fait pas exception, comme son
+  texte le disait ;
+- **la référence de conservation** est refigée
+  (`python scripts/conservation.py --figer`).
+
+Restent, hors du domaine clos, et consignés dans ses fiches : la pension que
+sert l'autre État, que le modèle ne calcule pas ; les années du salaire annuel
+moyen de la pension théorique, réduites au prorata de 2004 à juin 2022 ; la
+comparaison des pensions des fonctionnaires, que le minimum garanti peut
+relever ; la révision de l'écrêtement quand une pension étrangère commence
+après le départ (R. 173-8) ; la subsidiarité du minimum, présumée remplie ; les
+mois de séjour de chaque année et la condition de L. 816-1 ; les listes d'États
+tiers à leurs dates d'avant 2026 ; le calcul des conventions d'avant l'entrée
+des États dans l'Union ; la règle de la caisse des fonctionnaires. Le domaine
+suivant se mesurera à son ouverture.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

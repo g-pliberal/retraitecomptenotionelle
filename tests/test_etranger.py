@@ -11,6 +11,7 @@ lit, et ce qui se refuse.
 
 from __future__ import annotations
 
+import math
 import re
 from pathlib import Path
 
@@ -691,6 +692,24 @@ def test_l_aspa_n_est_servie_qu_a_qui_reside_en_france(contexte, residence):
     assert ailleurs.aujourd_hui.actuel.minimum_vieillesse == 0
 
 
+def test_la_garantie_de_la_proposition_ne_se_sert_qu_en_france(contexte):
+    """La garantie vieillesse du scénario 6 remplace l'ASPA et en garde la
+    condition de résidence, comme le texte de la proposition le dit : la même
+    petite carrière, au Maroc, n'en reçoit rien, ni au départ ni aujourd'hui ;
+    son compte notionnel, fait de ses seules cotisations françaises, ne bouge
+    pas."""
+    en_france = contexte.simuler(Saisie.depuis_requete(PETITE_CARRIERE))
+    au_maroc = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
+                                                       "residence": "MA"}))
+    garantie = en_france.notionnel_liberal.garantie_vieillesse
+    hors = au_maroc.notionnel_liberal.garantie_vieillesse
+    assert garantie.complement > 0 and garantie.residence is None
+    assert hors.complement == 0 and hors.residence == "MA"
+    assert hors.pension_contributive == pytest.approx(garantie.pension_contributive)
+    assert en_france.aujourd_hui.garantie_vieillesse > 0
+    assert au_maroc.aujourd_hui.garantie_vieillesse == 0
+
+
 def test_le_minimum_international_suit_les_trois_cas_de_sa_majoration():
     """L'exposé de la Cnav, à la lettre : le minimum théorique, réduit à la
     durée totale quand elle n'atteint pas la durée maximum (160 ici), puis à
@@ -790,6 +809,8 @@ import { Contexte } from "./moteur/js/contexte.js";
 import { Saisie } from "./moteur/js/saisie.js";
 
 const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const arrondi = (montant) => (montant === undefined || montant === null ? null
+  : Math.round(montant * 1e6) / 1e6);
 const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
   const simulation = contexte.simuler(
     Saisie.depuisRequete(requete, false, contexte.paquet.presomptions));
@@ -802,10 +823,19 @@ const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
     total: actuel.pension_annuelle,
     avantages: actuel.avantages_appliques.map((a) => [a.code, a.montant]),
     aspa_aujourd_hui: simulation.aujourd_hui?.actuel.minimum_vieillesse ?? null,
+    // Le compte notionnel ne s'additionne pas dans le même ordre d'un moteur à
+    // l'autre : la garantie se compare au millionième d'euro.
+    garantie: arrondi(simulation.notionnel_liberal.garantie_vieillesse?.complement),
+    garantie_aujourd_hui: arrondi(simulation.aujourd_hui?.garantie_vieillesse),
   };
 });
 process.stdout.write(JSON.stringify(sortie));
 """
+
+
+def _arrondi(montant: float) -> float:
+    """Au millionième d'euro, comme le portage l'écrit (``Math.round``)."""
+    return math.floor(montant * 1e6 + 0.5) / 1e6
 
 
 def test_le_portage_liquide_les_memes_carrieres_hors_de_france(contexte):
@@ -836,6 +866,11 @@ def test_le_portage_liquide_les_memes_carrieres_hors_de_france(contexte):
             "avantages": [[a.code, a.montant] for a in actuel.avantages_appliques],
             "aspa_aujourd_hui": (None if simulation.aujourd_hui is None
                                  else simulation.aujourd_hui.actuel.minimum_vieillesse),
+            "garantie": (None if simulation.notionnel_liberal.garantie_vieillesse is None
+                         else _arrondi(
+                             simulation.notionnel_liberal.garantie_vieillesse.complement)),
+            "garantie_aujourd_hui": (None if simulation.aujourd_hui is None
+                                     else _arrondi(simulation.aujourd_hui.garantie_vieillesse)),
         })
     assert json.loads(execution.stdout) == json.loads(json.dumps(attendus))
     assert all(attendu["trimestres"][1] > 0 for attendu in attendus)

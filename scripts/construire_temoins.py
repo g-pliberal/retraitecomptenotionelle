@@ -1276,7 +1276,7 @@ FORMULAIRE_ENTIER = frozenset({
     "simuler", "simuler_saisie_refusee", "simuler_plusieurs_metiers",
     "simuler_releve", "simuler_par_pension", "simuler_revenu_en_multiples",
     "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
-    "cout", "avantages", "cas_types",
+    "simuler_carriere_hors_de_france", "cout", "avantages", "cas_types",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -1348,12 +1348,15 @@ def _pages() -> dict:
         # LES CARRIÈRES HORS DE FRANCE (droit/etranger.py) : vingt-cinq ans en
         # Espagne comptent pour le taux, jamais pour la durée qui proratise, et
         # la page dit laquelle des deux pensions l'accord sert, et que l'ASPA
-        # ne se sert pas à qui réside en Espagne ; l'agent de l'État, dont
-        # aucun accord ne fait compter les années marocaines.
+        # ne se sert pas à qui réside en Espagne ; son formulaire, figé entier,
+        # montre le bloc rempli, une pension espagnole comprise. L'agent de
+        # l'État, dont aucun accord ne fait compter les années marocaines.
         ("simuler_carriere_hors_de_france", "/simuler", {
             **BASE, "naissance": "1960-03-15", "debut": "2003-01", "liquidation": "2024-04",
             "unite_revenu": "moyen", "salaire": "0.45", "etranger1_pays": "ES",
             "etranger1_debut": "1978-01", "etranger1_fin": "2003-01", "residence": "ES",
+            "pension_etrangere1_pays": "ES", "pension_etrangere1": "600",
+            "pension_etrangere1_debut": "2027-04",
         }),
         ("simuler_hors_de_france_sans_accord", "/simuler", {
             **BASE, "naissance": "1962-03-15", "statut": "fonctionnaire_etat",

@@ -10,10 +10,11 @@ face: droit
 etat: transcrite
 effet: >-
   Le scénario 6 : toute retraite obligatoire sous le plancher, à partir de 65
-  ans ; la pension du conjoint n'y compte jamais.
+  ans, de qui réside en France ; la pension du conjoint n'y compte jamais.
 lit:
 - la pension du compte notionnel et la rente du pilier capitalisé
 - l'âge atteint et la situation du foyer, seul ou en couple
+- la résidence après le départ, en France ou hors de France
 - les prix, qui ramènent le plancher aux euros de la liquidation
 ecrit:
 - le complément différentiel et l'année où il s'ouvre
@@ -33,6 +34,12 @@ versions:
     article: le scénario 6 se lit contre le scénario 4
     citation: servi à partir de 65 ans comme l'ASPA, mais individualisé
     lu_le: 2026-09-27
+  - reference: README.md, le coût de la garantie vieillesse du scénario 6
+    article: la distribution des pensions à laquelle le barème s'applique
+    citation: >-
+      celle des retraités qui résident en France, les seuls que la garantie
+      sert, comme l'ASPA qu'elle remplace
+    lu_le: 2026-10-01
   bornes:
     age_atteint: [null, null]
   contenu: >-
@@ -46,6 +53,9 @@ versions:
     il s'ouvre, la pension suivant la règle d'indexation et le plancher les
     prix. Il est servi en dernier, sur sa ligne, pour que l'on sache ce que
     l'impôt paie ; la page Coût le chiffre sur la distribution des pensions.
+    Comme l'ASPA, il ne se sert qu'à qui réside en France : nul, au départ et
+    aujourd'hui, pour qui déclare résider ailleurs (`residence`), la page Coût
+    retirant de même les retraités qui résident à l'étranger.
   exemples: aucun trouvé
 sources:
   lu_le: 2026-09-27
@@ -58,8 +68,10 @@ code:
   python:
     retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel.liberal, ScenarioNotionnel._garantie_vieillesse, GarantieVieillesse]
     retraite_notionnelle.garantie: [cout_garantie]
+    retraite_notionnelle.revalorisation: [pension_aujourd_hui]
   javascript:
     moteur/js/scenario-notionnel.js: [liberal, _garantieVieillesse]
     moteur/js/garantie.js: [coutGarantie]
+    moteur/js/revalorisation.js: [pensionAujourdhui]
   parametres: [garantie_vieillesse_mensuelle, allocation_isolement_mensuelle, annee_euros_garantie_vieillesse, situation_foyer]
   tests: [tests/test_simulateur.py, tests/test_garantie_par_sexe.py]

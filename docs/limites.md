@@ -236,9 +236,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   comparaison des pensions des fonctionnaires ; la révision de l'écrêtement
   quand une pension étrangère commence après le départ ; les mois de séjour de
   chaque année, que la saisie ne demande pas ; le calcul des conventions d'avant
-  l'entrée des États dans l'Union, dont seules les dates sont lues. L'adresse du
-  simulateur porte la carrière hors de France ; le formulaire la demandera à la
-  cinquième étape du domaine.
+  l'entrée des États dans l'Union, dont seules les dates sont lues. Le
+  formulaire demande la carrière hors de France dans un bloc facultatif, et la
+  garantie vieillesse de la proposition, comme l'ASPA qu'elle remplace, n'est
+  pas servie à qui déclare résider hors de France.
 - **Catégorie active : servie, mais sur un classement déclaré.** L'âge anticipé
   de l'article L. 24 — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1965)-->52<!--/--> pour la super-active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> après la
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote
@@ -1647,7 +1648,9 @@ s'en trouvait gonflé d'un cinquième environ. Il les retire de la distribution
 par la seule information que l'enquête publie sur eux — leur effectif et leurs
 quantiles —, et vérifie que les déciles des résidents en France qui en
 sortent sont ceux qu'elle publie. Ce qui reste d'approché : entre deux
-quantiles, leur répartition est supposée uniforme.
+quantiles, leur répartition est supposée uniforme. La simulation individuelle
+applique la même condition depuis le 1er octobre 2026 : qui déclare résider
+hors de France ne reçoit pas la garantie, au départ ni aujourd'hui.
 
 **Les montants sont des euros de 2026, déflatés par les prix.** <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € et <!--chiffre:mesure(parametre?nom=allocation_isolement_mensuelle)-->250<!--/--> €
 sont ceux de la proposition ; une liquidation de 1995 les reçoit ramenés par

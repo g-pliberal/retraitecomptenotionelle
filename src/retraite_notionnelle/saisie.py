@@ -875,7 +875,8 @@ class Saisie:
             raise ErreurSaisie(
                 "Début d'activité : le modèle l'accepte de "
                 f"{AGE_DEBUT_MINIMAL} à {AGE_DEBUT_MAXIMAL} ans, soit "
-                f"{self.fenetre(AGE_DEBUT_MINIMAL, AGE_DEBUT_MAXIMAL)}."
+                f"{self.fenetre(AGE_DEBUT_MINIMAL, AGE_DEBUT_MAXIMAL)}, et plus tard "
+                "quand la carrière a commencé hors de France dans ces âges."
             )
         if not AGE_LIQUIDATION_MINIMAL <= self.liquidation <= AGE_LIQUIDATION_MAXIMAL:
             raise ErreurSaisie(

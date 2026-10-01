@@ -32408,9 +32408,9 @@
      "notionnel_retroactif_employeur": 0.9031237889414131
     },
     "garantie_ouverte": true,
-    "garantie_vieillesse": 10331.616716920473,
+    "garantie_vieillesse": 0.0,
     "notionnels": {
-     "notionnel_liberal": 12600.0,
+     "notionnel_liberal": 2268.3832830795272,
      "notionnel_prospectif": 3008.1518344306523,
      "notionnel_prospectif_employeur": 3008.1518344306523,
      "notionnel_retroactif": 915.6631153234879,
@@ -32591,7 +32591,7 @@
       "annee_ouverture": 2020,
       "base_annuelle": 8169.591142819377,
       "coefficient_prix": 0.8509990773770184,
-      "complement": 8585.12714906376,
+      "complement": 0.0,
       "differee": false,
       "isolement_annuel": 2552.997232131055,
       "pension_contributive": 2137.4612258866728,
@@ -32600,18 +32600,18 @@
       "ressources": 2137.4612258866728,
       "situation": "seul"
      },
-     "pension_annuelle": 10722.588374950432,
-     "pension_annuelle_euros_constants": 12600.0,
-     "pension_mensuelle": 893.5490312458693,
-     "pension_totale": 10722.588374950432,
-     "pension_totale_euros_constants": 12600.0,
-     "pension_totale_mensuelle": 893.5490312458693,
+     "pension_annuelle": 2137.4612258866728,
+     "pension_annuelle_euros_constants": 2511.7080414174325,
+     "pension_mensuelle": 178.1217688238894,
+     "pension_totale": 2137.4612258866728,
+     "pension_totale_euros_constants": 2511.7080414174325,
+     "pension_totale_mensuelle": 178.1217688238894,
      "rendement_cumule": 0.995344332801044,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 1.37609599404674,
-     "variation_vs_actuel": 3.0914959350710927
+     "taux_remplacement": 0.27431360111186603,
+     "variation_vs_actuel": -0.18439339352819062
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},

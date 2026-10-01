@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.31, du 1er octobre 2026 ; l'architecture a été décidée par le
+*Version 5.32, du 1er octobre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements,
 un par domaine clos ou par décision, est en bas (« Les versions »). Il est
@@ -1637,7 +1637,8 @@ l'invalidité, et clos le 30 septembre, la décision de la proposition restant
 au propriétaire. Le quatrième, l'invalidité et l'inaptitude, a été ouvert le
 30 septembre 2026, à la demande du propriétaire, et clos le 1er octobre, la
 proposition n'en faisant pas exception. Le cinquième, les carrières hors de
-France, a été ouvert le 1er octobre 2026, à la demande du propriétaire.
+France, a été ouvert le 1er octobre 2026, à la demande du propriétaire, et
+clos le même jour, la proposition n'en faisant pas exception non plus.
 
 ---
 
@@ -2447,6 +2448,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.32**, 1er octobre 2026 : le cinquième domaine, les carrières hors de France, clos (§ 11). Quatre fiches le portent, découpées en versions et lues par le moteur dans les deux langages, avec le tableau des accords, qui dit l'accord en vigueur avec chaque État, son calcul et les États tiers qu'une convention fait compter ; « coordonner les affiliations » et « compter les durées » disent ce que chaque accord fait des périodes étrangères, un seul à la fois (leurs schémas en versions 2 et 3) ; neuf exemples publiés le rejouent, du CLEISS et de la Cnav ; deux présomptions entrent au § 5.6 ; le formulaire le demande dans un bloc facultatif ; la page Coût ne bouge pas de son fait, qui retirait déjà de la garantie les retraités résidant à l'étranger ; la proposition n'en fait pas exception, son compte ne connaissant que les cotisations versées en France et sa garantie que les retraités qui y résident, comme son texte le disait déjà ; la référence de conservation est refigée (§ 12).
 
 - **5.31**, 1er octobre 2026 : le quatrième domaine, l'invalidité et l'inaptitude, clos (§ 11). Trois fiches le portent, découpées en versions et lues par le moteur dans les deux langages ; huit exemples publiés le rejouent, dont celui de la réversion de Claude, devenu invalide, que le domaine de la réversion lui avait laissé en écart connu ; le formulaire le demande dans un bloc facultatif, et l'invalidité du conjoint dans le sien ; la page Coût ne bouge pas de son fait, la dépense du taux plein par inaptitude ou invalidité y étant lue dans les comptes de la protection sociale ; la proposition n'en fait pas exception, son compte se liquidant à l'âge de tous (décision du propriétaire) ; la référence de conservation est refigée (§ 12).
 

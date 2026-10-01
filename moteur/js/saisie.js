@@ -737,7 +737,8 @@ export class Saisie {
       throw new ErreurSaisie(
         "Début d'activité : le modèle l'accepte de "
         + `${AGE_DEBUT_MINIMAL} à ${AGE_DEBUT_MAXIMAL} ans, soit `
-        + `${this.fenetre(AGE_DEBUT_MINIMAL, AGE_DEBUT_MAXIMAL)}.`,
+        + `${this.fenetre(AGE_DEBUT_MINIMAL, AGE_DEBUT_MAXIMAL)}, et plus tard `
+        + "quand la carrière a commencé hors de France dans ces âges.",
       );
     }
     if (!(this.liquidation >= AGE_LIQUIDATION_MINIMAL

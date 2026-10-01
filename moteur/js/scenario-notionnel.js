@@ -212,7 +212,9 @@ export class ScenarioNotionnel {
     // seuls la déprécient d'ici l'ouverture.
     const aLOuverture = pensionContributive * revalorisation
       + renteCapitalisee * erosion;
-    const complement = Math.max(0.0, plancher - aLOuverture);
+    // Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France.
+    const complement = carriere.residence !== null ? 0.0
+      : Math.max(0.0, plancher - aLOuverture);
     return {
       situation: parametres.situation_foyer,
       age_atteint: ageAtteint,
@@ -228,6 +230,7 @@ export class ScenarioNotionnel {
       ressources_a_l_ouverture: aLOuverture,
       erosion_rente: erosion,
       complement,
+      residence: carriere.residence,
       servie: complement > 0,
       servie_a_la_liquidation: ageAtteint && complement > 0,
       differee: complement > 0 && !ageAtteint,

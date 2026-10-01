@@ -84,7 +84,8 @@ import {
   AGE_LIQUIDATION_MINIMAL, ANNEE_MAXIMALE, ANNEE_MINIMALE, CLES_MODELISATION,
   CODES_SANS_EMPLOI, CONTRIBUTIONS_ETAT, CONVERSIONS_ACQUIS, CUMUL, DEFAUTS,
   EMPLOYEURS_APRES_DEPART, PREFIXE_DEMANDE,
-  ENFANTS_MAXIMUM, ErreurSaisie, INDEXATIONS, LISSAGE_MAXIMUM, METIERS_MAXIMUM,
+  ACTIVITES_A_L_ETRANGER, AUTRE_ETAT, ENFANTS_MAXIMUM, ETRANGER_MAXIMUM, ErreurSaisie,
+  INDEXATIONS, LISSAGE_MAXIMUM, METIERS_MAXIMUM,
   MODES_MONTANT, NAISSANCE_MAXIMALE, NAISSANCE_MINIMALE, OUI, PARTS_COTISATION,
   POPULATIONS, PROFILS, PROJECTIONS, RATTACHEMENTS, REGIMES_FRAIS, REGIMES_TAUX,
   RELEVE_MAXIMUM, REVALORISATIONS_STOCK, SAISIES, SAISIE_DE_LA_SITUATION,
@@ -1026,6 +1027,7 @@ export function formulaire(saisie, contexte) {
   ${conjointFormulaire(saisie, contexte)}
   ${apresLeDepartFormulaire(saisie, contexte, affiliations, echelle)}
   ${invaliditeFormulaire(saisie)}
+  ${etrangerFormulaire(saisie, contexte)}
   <details class="options">
     ${g.sommaire("Options de modélisation (sexe, profil, indexation, "
       + "projection)")}
@@ -1252,6 +1254,91 @@ function invaliditeFormulaire(saisie) {
   <details class="options"${ouvert ? " open" : ""}>
     ${g.sommaire("Invalidité et inaptitude")}
     <div class="grille">${champs}</div>
+  </details>`;
+}
+
+/**
+ * La carrière hors de France (le cinquième domaine, docs/architecture.md,
+ * § 11) : un bloc facultatif, replié tant qu'il est vide. Une ligne par
+ * période — l'État, son début et sa fin, l'activité —, une par pension
+ * étrangère — l'État qui la sert, son montant brut mensuel en euros
+ * d'aujourd'hui, le mois où elle commence —, chacune suivie d'une ligne vide
+ * tant qu'il reste de la place ; et l'État où l'on réside après son départ.
+ * Les États sont ceux du tableau des accords, et « autre » pour un État
+ * qu'aucun accord ne lie à la France. La saisie refuse ce qui ne tient pas : une
+ * ligne incomplète, une période avant quatorze ans ou après le départ, deux
+ * périodes qui se chevauchent, une pension sans montant.
+ */
+function etrangerFormulaire(saisie, contexte) {
+  const accords = contexte.paquet.accords_internationaux ?? {};
+  const etats = Object.entries(accords)
+    .filter(([code]) => code !== "OI")
+    .map(([code, etat]) => [code, etat.nom])
+    .sort((a, b) => a[1].localeCompare(b[1], "fr"));
+  const autre = [AUTRE_ETAT, "un autre État"];
+  const organisation = ["OI", "une organisation internationale"];
+  const date = (age_) => (age_ === null ? "" : saisie.jourDe(age_));
+  const bornes = {
+    min: saisie.jourDe(AGE_DEBUT_MINIMAL), max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL),
+    data_age_min: String(AGE_DEBUT_MINIMAL), data_age_max: String(AGE_LIQUIDATION_MAXIMAL),
+  };
+  // Une ligne par période ou pension déclarée, et une vide tant qu'il reste de
+  // la place, en pointillé comme celle des métiers : rien n'y est
+  // présélectionné, une ligne vide ne dit rien. Le bloc entier se replie.
+  const ligne = (titre, champs, vide) => (
+    `<fieldset class="ligne-etrangere${vide ? " facultatif" : ""}">`
+    + `<legend class="rang etranger">${echapper(titre)}</legend>`
+    + `<div class="grille">${champs}</div></fieldset>`);
+  const periodes = [...saisie.etranger, null].slice(0, ETRANGER_MAXIMUM);
+  const lignesPeriodes = periodes.map((periode, index) => {
+    const rang = index + 1;
+    const champs = g.liste(`etranger${rang}_pays`, "État",
+      [["", "—"], ...etats, organisation, autre], periode === null ? "" : periode.pays,
+      "", {},
+      // L'explication, une fois : sur la première ligne.
+      rang > 1 ? "" : "Les accords de sécurité sociale font compter vos périodes à "
+        + "l'étranger pour le taux de votre pension française et vos droits à partir, "
+        + "jamais pour sa durée : chaque régime ne vous sert que la part de votre "
+        + "carrière passée en France. Sans accord, seule l'activité d'avant avril 1983 "
+        + "compte, pour le taux.")
+      + g.champDate(`etranger${rang}_debut`, "Du", date(periode === null ? null : periode.debut),
+        "le mois où elle commence", "", bornes)
+      + g.champDate(`etranger${rang}_fin`, "Au", date(periode === null ? null : periode.fin),
+        "le mois où elle finit", "", bornes)
+      + g.liste(`etranger${rang}_activite`, "Activité",
+        [["", ACTIVITES_A_L_ETRANGER[0][1]], ...ACTIVITES_A_L_ETRANGER.slice(1)],
+        periode === null || periode.activite === ACTIVITES_A_L_ETRANGER[0][0]
+          ? "" : periode.activite);
+    return ligne(`Période hors de France n° ${rang}`, champs, periode === null);
+  });
+  const pensions = [...saisie.pensions_etrangeres, null].slice(0, ETRANGER_MAXIMUM);
+  const lignesPensions = pensions.map((pension, index) => {
+    const rang = index + 1;
+    const champs = g.liste(`pension_etrangere${rang}_pays`, "Servie par",
+      [["", "—"], ...etats, organisation, autre], pension === null ? "" : pension.pays,
+      "", {},
+      rang > 1 ? "" : "Depuis 2012, le minimum contributif ne porte vos pensions qu'au "
+        + "plafond de toutes vos retraites, étrangères comprises, hors celles des "
+        + "règlements européens et de six conventions.")
+      + g.champ(`pension_etrangere${rang}`, "Montant",
+        pension === null ? "" : nombreBrut(pension.montant),
+        "brut mensuel, en euros d'aujourd'hui", "number", { min: "1", step: "1" })
+      + g.champDate(`pension_etrangere${rang}_debut`, "Depuis",
+        date(pension === null ? null : pension.debut), "le mois où elle commence", "",
+        bornes);
+    return ligne(`Pension étrangère n° ${rang}`, champs, pension === null);
+  });
+  const residence = g.liste("residence", "Résidence après le départ",
+    [["", "en France"], ...etats, autre], saisie.residence, "", {},
+    "L'allocation de solidarité aux personnes âgées ne se sert qu'à qui réside en "
+    + "France ; votre pension française, partout dans le monde.");
+  const ouvert = saisie.etranger.length > 0 || saisie.pensions_etrangeres.length > 0
+    || Boolean(saisie.residence);
+  return `
+  <details class="options"${ouvert ? " open" : ""}>
+    ${g.sommaire("Carrière hors de France")}
+    <div class="metiers">${lignesPeriodes.join("")}${lignesPensions.join("")}</div>
+    <div class="grille">${residence}</div>
   </details>`;
 }
 
@@ -1695,14 +1782,20 @@ function metiersFormulaire(saisie, affiliations, echelle) {
     g.champDate("debut", "Début d'activité", saisie.jourDe(saisie.debut),
       "le premier mois cotisé",
       saisie.calculDe(saisie.debut),
+      // Le calendrier s'ouvre jusqu'au départ le plus tardif : qui a commencé
+      // hors de France entre en France à tout âge, et la saisie refuse le
+      // début tardif d'une carrière toute française.
       {
         min: saisie.jourDe(AGE_DEBUT_MINIMAL),
-        max: saisie.jourDe(AGE_DEBUT_MAXIMAL),
+        max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL),
         data_age_min: String(AGE_DEBUT_MINIMAL),
-        data_age_max: String(AGE_DEBUT_MAXIMAL),
+        data_age_max: String(AGE_LIQUIDATION_MAXIMAL),
       },
       "L'année d'entrée n'est complète que si l'on entre en janvier : elle est "
-      + "portée au compte au prorata de ses mois, comme celle du départ.")
+      + "portée au compte au prorata de ses mois, comme celle du départ. Une "
+      + "carrière commencée hors de France se déclare plus bas, dans « Carrière "
+      + "hors de France » : votre premier emploi en France peut alors venir après "
+      + "quarante ans.")
     + g.liste("statut", "Statut d'affiliation",
       optionsStatuts(affiliations, saisie.dateDe(saisie.debut)),
       saisie.statut,
@@ -2997,7 +3090,8 @@ française ne connaît que votre carrière en France.`);
   if (carriere.residence !== null) {
     notes.push(`<strong>Le minimum vieillesse ne se sert qu'en France.</strong> Vous
 déclarez résider hors de France après votre départ : l'ASPA ne s'ajoute à votre
-pension à aucun âge.`);
+pension à aucun âge, ni, dans la proposition, la garantie vieillesse qui la
+remplace.`);
   }
   return notes.map((note) => `<div class="note">${note}</div>`).join("\n");
 }
@@ -4466,6 +4560,9 @@ function garantieDAujourdhui(comparaison) {
   const debut = "<p>Vous êtes déjà à la retraite : le montant affiché plus haut "
     + `est celui de ${annee}, et la garantie s'y calcule sur la pension `
     + "de cette année. ";
+  if (comparaison.carriere.residence !== null) {
+    return debut + "Vous résidez hors de France : elle ne vous est pas servie.</p>";
+  }
   if (!aujourdhui.garantie_ouverte) {
     const ouverture = comparaison.carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE;
     return debut + `Elle ne s'ouvre qu'à 65 ans, en ${ouverture} : rien `
@@ -5471,9 +5568,12 @@ function garantieVieillesse(comparaison, saisie) {
   const reference = garantie.age_atteint ? "f" : "f′";
   lignes.push(
     ["g) Garantie vieillesse",
-      `max(0, c − ${reference}), financée par l'impôt, servie à partir de 65 ans`
-      + (garantie.age_atteint
-        ? "" : ` — soit ici à compter de ${garantie.annee_ouverture}`),
+      garantie.residence
+        ? "nulle hors de France : comme l'ASPA qu'elle remplace, elle ne se sert "
+          + "qu'à qui réside en France"
+        : `max(0, c − ${reference}), financée par l'impôt, servie à partir de 65 ans`
+          + (garantie.age_atteint
+            ? "" : ` — soit ici à compter de ${garantie.annee_ouverture}`),
       `${g.eurosCentimes(garantie.complement)} par an`],
     ["h) = pension du système 4",
       garantie.age_atteint
@@ -5483,7 +5583,12 @@ function garantieVieillesse(comparaison, saisie) {
   );
 
   let lecture;
-  if (garantie.servie_a_la_liquidation) {
+  if (garantie.residence) {
+    lecture = "<p>Ici, vous déclarez résider hors de France après votre départ : la "
+      + "garantie, comme l'ASPA qu'elle remplace, ne s'y sert pas, et le système 4 "
+      + "ne verse que votre compte notionnel, fait de vos seules cotisations "
+      + "françaises.</p>";
+  } else if (garantie.servie_a_la_liquidation) {
     lecture = "<p>Ici, la pension obligatoire de "
       + `${g.eurosCentimes(garantie.ressources / 12)} par mois `
       + `reste sous le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `

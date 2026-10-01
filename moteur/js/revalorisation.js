@@ -606,7 +606,8 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
   }
   plancher *= 12.0 * macro.coefficientPrix(parametres.annee_euros_garantie_vieillesse, annee);
   const ouverte = annee >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE;
-  const complement = ouverte
+  // Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France.
+  const complement = ouverte && carriere.residence === null
     ? Math.max(0.0, plancher - contributiveAujourdhui - rente)
     : 0.0;
   notionnels.notionnel_liberal = contributiveAujourdhui + complement;
