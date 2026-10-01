@@ -209,7 +209,8 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   son départ à cette date, et l'activité qui suit comme une activité après le
   départ. Une complémentaire des salariés n'est pas anticipée seule, sous son
   abattement ; le minimum contributif n'est pas révisé quand une pension
-  commence après lui (R. 173-8). Les montants du
+  française commence après lui (R. 173-8), seulement quand c'est une pension
+  étrangère. Les montants du
   système 1 sont ceux du départ déclaré, la pension déjà servie y étant menée
   par sa revalorisation, celle qui ne commence qu'après ramenée par les prix
   (fiche `liquidation_regime_par_regime`). Les systèmes 2 à 6 liquident leur
@@ -222,24 +223,27 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   droits, la surcote et la carrière longue de chaque régime que l'accord
   coordonne, jamais pour la durée qui proratise (`droit/etranger.py`) ; celles
   d'un seul accord à la fois, avec les États tiers qu'une convention fait
-  compter, comme la caisse les totalise. Les calculs de Léna et de Jahan que
-  le CLEISS publie se rejouent (`tests/temoins/exemples_officiels.yaml`), hors
-  le prorata de son exemple franco-japonais, rapporté à la durée de trois États
-  quand l'accord n'en totalise que deux. Quand
-  l'accord compare, chaque régime qui porte le minimum contributif sert la plus
-  élevée de la pension nationale et de la pension proratisée, chacune portée à
-  son minimum ; l'écrêtement de ce minimum compte les pensions étrangères
-  déclarées ; l'ASPA n'est servie qu'à qui ne déclare pas résider hors de
-  France. La pension que sert l'autre État n'est pas calculée : seul son montant
-  déclaré entre dans l'écrêtement. Restent dehors les années du salaire annuel
-  moyen de la pension théorique, réduites au prorata de 2004 à juin 2022 ; la
-  comparaison des pensions des fonctionnaires ; la révision de l'écrêtement
-  quand une pension étrangère commence après le départ ; les mois de séjour de
-  chaque année, que la saisie ne demande pas ; le calcul des conventions d'avant
-  l'entrée des États dans l'Union, dont seules les dates sont lues. Le
-  formulaire demande la carrière hors de France dans un bloc facultatif, et la
-  garantie vieillesse de la proposition, comme l'ASPA qu'elle remplace, n'est
-  pas servie à qui déclare résider hors de France.
+  compter, comme la caisse les totalise, selon la dernière liste lue à la date
+  d'effet. Les calculs de Léna et de Jahan que le CLEISS publie se rejouent
+  (`tests/temoins/exemples_officiels.yaml`), hors le prorata de son exemple
+  franco-japonais, rapporté à la durée de trois États quand l'accord n'en
+  totalise que deux. Quand l'accord compare, chaque régime qui porte le minimum
+  contributif sert la plus élevée de la pension nationale et de la pension
+  proratisée, chacune portée à son minimum, le salaire annuel moyen de la
+  seconde pris, de 2004 à juin 2022 et depuis hors de la liquidation unique, sur
+  des années réduites au prorata des régimes étrangers équivalents ;
+  l'écrêtement de ce minimum compte les pensions étrangères déclarées, et se
+  révise quand l'une commence après le départ. L'ASPA, comme la garantie
+  vieillesse de la proposition qui la remplace, compte ces pensions dans ses
+  ressources, et n'est servie qu'à qui réside en France plus de six mois par an,
+  plus de neuf depuis septembre 2023. La pension que sert l'autre État n'est pas
+  calculée : seul son montant déclaré entre dans les ressources et
+  l'écrêtement. Restent dehors le minimum garanti des fonctionnaires, que le
+  modèle ne proratise pas quand leurs périodes européennes l'ouvrent ; la
+  subsidiarité du minimum, présumée remplie ; la tolérance de cent soixante
+  jours de la caisse ; le calcul des conventions d'avant l'entrée des États dans
+  l'Union, dont seules les dates sont lues. Le formulaire demande la carrière
+  hors de France dans un bloc facultatif.
 - **Catégorie active : servie, mais sur un classement déclaré.** L'âge anticipé
   de l'article L. 24 — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1965)-->52<!--/--> pour la super-active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> après la
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote

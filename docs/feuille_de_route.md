@@ -3692,6 +3692,45 @@ tiers à leurs dates d'avant 2026 ; le calcul des conventions d'avant l'entrée
 des États dans l'Union ; la règle de la caisse des fonctionnaires. Le domaine
 suivant se mesurera à son ouverture.
 
+**Ses limites, reprises le même jour**, à la demande du propriétaire : « Fait
+de ton mieux pour gérer ces limites. » Cinq sont levées, dans les deux moteurs,
+chacune avec ses tests, ses témoins et sa fiche, dans un commit à part :
+- **le salaire annuel moyen de la pension proratisée** se prend sur des années
+  réduites au prorata des régimes alignés et des régimes étrangers « équivalant
+  au régime général » (R. 173-4-3 ; circulaires ministérielle 2008/219 et Cnav
+  2008/58, 2012/26, 2013/56), de 2004 à juin 2022, et depuis hors de la
+  liquidation unique (circulaire n° 2021/33, point 4) ; le tableau des accords
+  porte la liste de 2012 (`salaire_moyen`) ; l'exemple 2 de la circulaire de
+  2008 est rejoué, et le seul témoin qui bouge, une carrière portugaise
+  liquidée en 2018, gagne 2,77 % ;
+- **la pension étrangère déclarée** compte dans les ressources de l'ASPA
+  (R. 815-22 ; exposé de la Cnav « Evaluation des ressources - Aspa ») et dans
+  celles de la garantie de la proposition, qui « remplace l'ASPA », au départ
+  et à chaque échéance ; la page dit qu'elle se sert à part, et une
+  affirmation de plus le contrôle ;
+- **les mois passés en France** se déclarent (`mois_en_france`, dans les deux
+  saisies, le formulaire et le fait de résidence) : l'ASPA et la garantie ne se
+  servent qu'à qui y séjourne plus de six mois de l'année civile, plus de neuf
+  depuis le 1er septembre 2023 (L. 815-1, R. 111-2) ;
+- **le minimum contributif se révise** quand une pension étrangère commence
+  après le départ (R. 173-8) : « faire vivre » rogne, à chaque échéance, ce
+  qu'elle passe de la marge sous le plafond, que le départ garde ;
+- **les listes d'États tiers se datent** : une pension prend la dernière lue au
+  plus tard à sa date d'effet — Maroc 2011, Uruguay 2017, Brésil 2019, puis le
+  CLEISS en 2026 ; l'annexe de la circulaire n° 2020/30 date les liens du
+  Canada, tous antérieurs à son accord.
+
+La sixième, la comparaison des pensions des fonctionnaires, reste : la France
+n'est pas à l'annexe VIII, partie 1, du règlement 883/2004, et ses périodes
+européennes entrent dans la durée de L. 14-I (bulletin officiel du Service des
+pensions n° 473), mais la règle du minimum garanti d'une pension au prorata
+n'a été trouvée ni chez le Service des retraites de l'État ni à la CNRACL ;
+l'approximation de `pension_proratisee` dit ce qui est lu. Restent aussi, dans
+les fiches : la pension que sert l'autre État, prise déclarée ; la subsidiarité
+du minimum ; la tolérance de cent soixante jours ; le foyer permanent de
+R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
+équivalents, avant 2012 ; les conventions d'avant l'Union.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
