@@ -4530,6 +4530,15 @@ standard, qui entrerait sinon dans le contexte de la session ; hors d'une
 session web, il ne fait rien. Un écart avec le texte archivé : la commande
 passe par `bash`, comme celle de `pousser.sh`.
 
+**Le même jour, le hook passe en asynchrone**, à la demande du propriétaire :
+la session s'ouvre sans attendre l'installation, qui se fait en arrière-plan.
+Le script l'annonce par sa première ligne de sortie,
+`{"async": true, "asyncTimeout": 300000}`, et n'écrit plus rien d'autre, pip
+compris (`--root-user-action=ignore`). Le prix : un test lancé dans les
+premières secondes peut ne pas trouver pytest, et `CLAUDE.md` dit alors de
+relancer plutôt que de réinstaller. Essayé depuis un état neuf : 6 s, une
+seule ligne sur la sortie standard, rien sur la sortie d'erreur.
+
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
