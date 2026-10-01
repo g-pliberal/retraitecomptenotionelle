@@ -26,6 +26,14 @@ versions:
       Et un âge légal de départ de 65 ans à compter de 2026 : qui serait parti
       plus tôt sous le droit en vigueur part à cet âge, et travaille jusque-là.
     lu_le: 2026-09-27
+  - reference: README.md, le texte de la proposition (docs/architecture.md, § 3.1)
+    article: l'âge légal de départ de la proposition
+    citation: >-
+      L'inapte, l'ex-invalide et le fonctionnaire radié pour invalidité, que le
+      droit en vigueur pensionne à soixante-deux ans ou dès sa radiation, n'y font
+      pas exception : leur compte se liquide à 65 ans, comme celui de tous, et
+      l'assurance invalidité, hors du système de retraite, les couvre jusque-là.
+    lu_le: 2026-10-01
   bornes:
     liquidation.date_effet: [null, null]
   contenu: >-
@@ -35,15 +43,26 @@ versions:
     Un départ antérieur à la bascule est resté sous le droit en vigueur, et ne
     bouge pas. Dans un compte notionnel, le report relève la pension : des
     cotisations en plus, un diviseur plus petit. La garantie vieillesse,
-    ouverte au même âge, est alors due dès la liquidation.
+    ouverte au même âge, est alors due dès la liquidation. L'invalidité n'y fait
+    pas exception, le propriétaire l'a décidé le 1er octobre 2026 (domaine de
+    l'invalidité et de l'inaptitude) : l'inapte, l'ex-invalide et le
+    fonctionnaire radié pour invalidité, que le scénario 1 fait partir à
+    soixante-deux ans ou à la radiation, liquident leur compte à 65 ans, leur
+    dernière année prolongée comme celle des autres — l'invalidité, qui ne
+    cotise pas, ou l'emploi de l'inapte qui travaillait encore.
   exemples: aucun trouvé
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-10-01
   prochaine_relecture: 2027-03-31
   lectures:
   - type: autre
     reference: README.md, le texte de la proposition
     date: 2026-09-27
+  - type: autre
+    reference: >-
+      README.md, le texte de la proposition, relu à la clôture du domaine de
+      l'invalidité et de l'inaptitude, qui y ajoute l'invalidité
+    date: 2026-10-01
 code:
   python:
     retraite_notionnelle.simulateur: [Simulateur.carriere_proposition]

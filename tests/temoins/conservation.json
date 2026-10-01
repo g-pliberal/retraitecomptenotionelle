@@ -239,6 +239,7 @@
    "duree_requise_sncf_ratp",
    "enfants_fonction_publique",
    "fin_de_la_suspension_2028",
+   "inaptitude_au_travail",
    "inaptitude_invalidite_penibilite_amiante",
    "interpenetration_fonction_publique",
    "ircantec_valeurs_point",
@@ -262,6 +263,7 @@
    "minoration_ircec",
    "minoration_racl_2014_2024",
    "parametres_annuels_2026",
+   "pension_d_invalidite_substituee",
    "pension_differee_fonction_publique",
    "pension_mines",
    "pension_non_salaries_agricoles_2026",
@@ -281,6 +283,7 @@
    "regimes_speciaux_par_generation",
    "retablissement_fonction_publique",
    "retraite_anticipee_handicap",
+   "retraite_pour_invalidite_fonction_publique",
    "retraite_progressive",
    "retraite_proportionnelle_msa",
    "revalorisation_des_pensions",
@@ -413,10 +416,14 @@
    "2026-09-29 | l'action 130, la première étape du troisième domaine, les départs multiples et la vie après le départ, ouvert à la demande du propriétaire",
    "2026-09-29 | la deuxième étape du troisième domaine, un départ par régime, et le minimum garanti d'avant 2004",
    "2026-09-29 | la troisième étape du troisième domaine, la retraite progressive",
+   "2026-09-30 | l'ouverture du quatrième domaine, l'invalidité et l'inaptitude, à la demande du propriétaire : les textes lus, trois fiches nouvelles",
    "2026-09-30 | la cinquième étape du troisième domaine : le formulaire, la date que l'assuré demande pour chaque pension, puis la clôture du domaine",
    "2026-09-30 | la quatrième étape du troisième domaine, la vie après le départ : les textes du cumul emploi-retraite",
    "2026-09-30 | la quatrième étape du troisième domaine, sa deuxième partie : la pension servie pendant l'activité après le départ, calculée",
-   "2026-09-30 | la quatrième étape du troisième domaine, sa troisième partie : les droits de l'activité après le départ, et la nouvelle pension"
+   "2026-09-30 | la quatrième étape du troisième domaine, sa troisième partie : les droits de l'activité après le départ, et la nouvelle pension",
+   "2026-09-30 | la troisième étape du quatrième domaine, sa fin : l'ASPA de l'inapte et la retraite pour invalidité des fonctionnaires, dans les deux moteurs",
+   "2026-09-30 | la troisième étape du quatrième domaine, sa première partie : le taux plein de l'inapte et de l'ex-invalide, et la pension de vieillesse qui remplace d'office la pension d'invalidité, dans les deux moteurs",
+   "2026-10-01 | la quatrième étape du quatrième domaine : les exemples publiés, et l'invalidité du survivant à l'Agirc-Arrco, dans les deux moteurs"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -879,6 +886,7 @@
    "simuler.pension_de_repartition_par_origine",
    "simuler.pension_du_systeme_actuel",
    "simuler.pension_niveau_unique",
+   "simuler.pension_substituee",
    "simuler.pensions_a_leur_date",
    "simuler.pilier_sans_annee",
    "simuler.premiere_ligne_indexation",
@@ -1398,6 +1406,10 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "013ff654ad628555",
+    "48795b00134b372a",
+    "6a3807dcf2db29e6",
+    "89bdc3203496c80c",
     "72322adb4580b0cd",
     "eeed29c2bbf04eb0",
     "9025f2077ff29cb3",

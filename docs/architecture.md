@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.30, du 30 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.31, du 1er octobre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements,
 un par domaine clos ou par décision, est en bas (« Les versions »). Il est
@@ -117,7 +117,7 @@ couverture demande à l'architecture.
 | Périodes assimilées | en partie (chômage, maladie, maternité, AVPF…) ; apprentissage, stages, sportifs de haut niveau, TUC, congé de naissance non appliqués | chaque période datée, avec son motif ; validations rétroactives |
 | Temps partiel | la quotité d'une retraite progressive, du jour de sa demande au départ | quotité de chaque période ; surcotisation |
 | Départs anticipés | carrière longue, catégories actives, militaires : oui ; parents de trois enfants de la fonction publique : non ; handicap : hors modèle | tous, dont incapacité permanente, pénibilité, amiante |
-| Invalidité, inaptitude | la pension d'invalidité, l'inaptitude et la radiation pour invalidité que la saisie déclare ; au régime général et dans les régimes alignés, le taux plein de l'inapte et de l'ex-invalide, à soixante-deux ans quand l'âge légal est plus haut, leurs complémentaires de salariés sans coefficient, l'ASPA au même âge, et la pension de vieillesse qui remplace d'office la pension d'invalidité ; dans la fonction publique, la retraite pour invalidité à la radiation, sans décote, au minimum garanti de l'invalidité, au plancher de L. 30, avec la rente viagère | le plancher de l'allocation aux vieux travailleurs salariés, l'inaptitude des autres régimes, les réputés inaptes, le militaire réformé, la tierce personne |
+| Invalidité, inaptitude | la pension d'invalidité, l'inaptitude et la radiation pour invalidité que la saisie déclare ; au régime général et dans les régimes alignés, le taux plein de l'inapte et de l'ex-invalide, à soixante-deux ans quand l'âge légal est plus haut, leurs complémentaires de salariés sans coefficient, l'ASPA au même âge, et la pension de vieillesse qui remplace d'office la pension d'invalidité ; dans la fonction publique, la retraite pour invalidité à la radiation, sans décote, au minimum garanti de l'invalidité, au plancher de L. 30, avec la rente viagère ; l'invalidité du conjoint survivant, qui lève l'âge de sa réversion à l'Agirc-Arrco | le plancher de l'allocation aux vieux travailleurs salariés, l'inaptitude des autres régimes, les réputés inaptes, le militaire réformé, la tierce personne |
 | Réversion | le conjoint, qu'un bloc facultatif du formulaire demande, et le mariage, présumé aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.mariage_des_conjoints.valeur)-->27<!--/--> ans de l'assuré ; la réversion liquidée pour le survivant, au régime général et dans les régimes alignés, dans la fonction publique et à l'Agirc-Arrco, sans le minimum ni les majorations, pour un décès déclaré après le départ ou supposé juste après lui | conjoints successifs datés, décès avant le départ, ressources du ménage, partage entre ex-conjoints, remariage, règles des autres régimes, orphelins |
 | Plusieurs départs, cumul emploi-retraite, seconde pension, retraite progressive | un départ par régime, chacun à sa date, présumée ou dite par l'assuré, qu'une date dite ne fait que retarder ; la retraite progressive, sa date et sa quotité déclarées : la pension provisoire, sa fraction servie, la pension complète au départ ; le cumul emploi-retraite, mois par mois, sur une activité déclarée après le départ ; les droits qu'elle ouvre ou non, la nouvelle pension du cumul intégral au régime général, aux salariés agricoles et à l'Agirc-Arrco, et les pensions des régimes qu'elle ouvre ; un bloc facultatif du formulaire pour tout cela | une pension demandée avant le départ, sans redéclarer le départ ; l'anticipation d'une complémentaire seule ; plusieurs activités après le départ ; la nouvelle pension des autres régimes ; les changements de quotité |
 | Rachats, versements, surcotisation | hors modèle | actes datés de l'assuré, avec leur coût |
@@ -1630,7 +1630,8 @@ troisième domaine, les départs multiples et la vie après le départ, a été
 ouvert le 29 septembre 2026 à la demande du propriétaire, devant
 l'invalidité, et clos le 30 septembre, la décision de la proposition restant
 au propriétaire. Le quatrième, l'invalidité et l'inaptitude, a été ouvert le
-30 septembre 2026, à la demande du propriétaire.
+30 septembre 2026, à la demande du propriétaire, et clos le 1er octobre, la
+proposition n'en faisant pas exception.
 
 ---
 
@@ -2440,6 +2441,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.31**, 1er octobre 2026 : le quatrième domaine, l'invalidité et l'inaptitude, clos (§ 11). Trois fiches le portent, découpées en versions et lues par le moteur dans les deux langages ; huit exemples publiés le rejouent, dont celui de la réversion de Claude, devenu invalide, que le domaine de la réversion lui avait laissé en écart connu ; le formulaire le demande dans un bloc facultatif, et l'invalidité du conjoint dans le sien ; la page Coût ne bouge pas de son fait, la dépense du taux plein par inaptitude ou invalidité y étant lue dans les comptes de la protection sociale ; la proposition n'en fait pas exception, son compte se liquidant à l'âge de tous (décision du propriétaire) ; la référence de conservation est refigée (§ 12).
 
 - **5.30**, 30 septembre 2026 : une version par domaine clos, ou par décision hors domaine, et non plus par étape (décision du propriétaire, `CLAUDE.md`).
 

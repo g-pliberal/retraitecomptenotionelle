@@ -153,7 +153,13 @@ Scénario                                                          Courants   Co
 > petit la relèvent. Ce qui se perd, ce sont les années de pension d'avant
 > l'âge légal, et c'est le solde qui y gagne des deux côtés — moins de
 > pensions servies, plus de cotisations encaissées. Qui partait à cet âge ou
-> après n'y gagne rien : le compte n'a ni décote ni surcote à relever. Les
+> après n'y gagne rien : le compte n'a ni décote ni surcote à relever.
+> L'inapte, l'ex-invalide et le fonctionnaire radié pour invalidité, que le
+> droit en vigueur pensionne à soixante-deux ans ou dès sa radiation, n'y font
+> pas exception : leur compte se liquide à <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans, comme celui de tous, et
+> l'assurance invalidité, hors du système de retraite, les couvre jusque-là.
+> Le modèle prolonge leur dernière année comme celle des autres : l'invalidité,
+> qui ne cotise pas, ou l'emploi de l'inapte qui travaillait encore. Les
 > scénarios 2 à 5 gardent les âges du droit en vigueur, parce qu'ils mesurent
 > ce que change le compte à carrière égale ; `age_legal_liberal=None` retire
 > la mesure.

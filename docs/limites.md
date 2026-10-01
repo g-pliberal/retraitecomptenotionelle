@@ -267,7 +267,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   que l'ASPA est servie ; l'inaptitude des régimes que la fiche
   `inaptitude_au_travail` ne nomme pas ; les réputés inaptes qui ne se déclarent
   pas (allocation aux adultes handicapés, incapacité permanente) ; le militaire
-  réformé ; la majoration pour tierce personne.
+  réformé ; la majoration pour tierce personne. La proposition n'en fait pas
+  exception, le propriétaire l'a décidé : le compte de l'inapte, de
+  l'ex-invalide et du fonctionnaire radié se liquide à l'âge de tous, leur
+  dernière année prolongée jusque-là — l'invalidité, qui ne cotise pas, ou
+  l'emploi de l'inapte qui travaillait encore (README).
 - **Trimestres « réputés cotisés » de la carrière longue : deux cas sur sept.**
   Les six enveloppes de l'article D. 351-1-2 sont servies depuis le
   22 septembre 2026 — service national, incapacité temporaire, chômage

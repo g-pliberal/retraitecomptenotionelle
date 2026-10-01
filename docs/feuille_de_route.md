@@ -3277,6 +3277,52 @@ Claude, devenu invalide en février 2024, a la sienne au 1er mars, comme la
 fédération l'écrit. Aucun des 668 témoins ne bouge ; un naît,
 `reversion_conjoint_invalide`.
 
+**Cinquième étape, le 1er octobre : le formulaire, la page Coût, la
+décision.** Le formulaire demande le domaine dans un dépliant « Invalidité et
+inaptitude », replié tant qu'il est vide — la pension d'invalidité,
+l'inaptitude, la radiation pour invalidité, son imputabilité et son taux —, et
+l'invalidité du conjoint dans le bloc du conjoint ; le budget de mots du
+formulaire vierge monte de trois, le titre du dépliant. La page Avantages
+compte à part le taux plein par inaptitude ou invalidité, que les comptes de la
+protection sociale chiffrent ; la page Coût ne bouge pas. Le propriétaire a
+décidé que la proposition n'en fait pas exception : le compte de l'inapte, de
+l'ex-invalide et du fonctionnaire radié se liquide à soixante-cinq ans dans le
+scénario 6, au départ déclaré dans les scénarios 2 à 5, l'assurance
+invalidité, hors du système de retraite, les couvrant jusque-là ; le README,
+`docs/limites.md` et la fiche `age_legal_de_la_proposition` le disent, et
+aucun chiffre n'en bouge : c'est ce que le modèle faisait.
+
+**Le domaine se clôt le même jour**, le gabarit du § 11 rempli :
+- **les fiches** : trois, découpées en versions et `approchee` chacune avec ses
+  approximations — `pension_d_invalidite_substituee`, `inaptitude_au_travail`,
+  `retraite_pour_invalidite_fonction_publique` —, et `reversion_agirc_arrco`,
+  complétée de l'invalidité du survivant ;
+- **les faits de la chronologie** : deux décisions médicales et une radiation
+  de l'assuré, une décision médicale de son conjoint ; deux présomptions,
+  `pension_d_invalidite_de_la_periode` et `opposition_a_la_substitution` ;
+- **les fonctions dans l'étape** : `droit/invalidite.py` et son jumeau, que
+  l'ouverture, la liquidation, les départs, la coordination et la réversion
+  appellent ;
+- **les exemples publiés** : huit, tous reproduits ;
+- **le bloc du formulaire** : « Invalidité et inaptitude », et le champ du
+  conjoint ;
+- **la page Coût** ne bouge pas : aucun de ses chiffres n'a changé dans les
+  commits du domaine, la dépense de l'avantage étant lue dans les comptes ;
+- **la décision de la proposition** : « comme tout le monde » ;
+- **la référence de conservation** est refigée
+  (`python scripts/conservation.py --figer`).
+
+Restent, hors du domaine clos, et consignés dans ses fiches : le plancher de
+l'allocation aux vieux travailleurs salariés, sans effet tant que l'ASPA est
+servie ; l'inaptitude des régimes que les fiches ne nomment pas (exploitants
+agricoles, professions libérales, avocats, régimes spéciaux) ; les réputés
+inaptes qui ne se déclarent pas ; le militaire réformé et les pensions de
+réforme des régimes spéciaux ; la majoration pour tierce personne et la
+revalorisation des pensions d'invalidité de L. 341-6 ; le seuil de la rente de
+L. 28, que trois sources écrivent chacune autrement ; les exemples de la CNRACL
+et de l'Ircantec ; la pension de veuf ou de veuve invalide de l'assurance
+invalidité. Le domaine suivant se mesurera à son ouverture.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
