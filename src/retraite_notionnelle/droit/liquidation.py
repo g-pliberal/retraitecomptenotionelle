@@ -39,6 +39,7 @@ from typing import TYPE_CHECKING
 from ..donnees.chargement import Fiabilite
 from ..noyau import vocabulaire
 from . import completer as _completer
+from . import etranger as _etranger
 from . import liquider as _liquider
 from . import ouvrir as _ouvrir
 from . import releve as _releve
@@ -311,6 +312,14 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
 
     ouverture = _ouvrir.ouvrir(moteur, releve, cible)
     liquidees = _liquider.liquider_chaque_regime(moteur, releve, ouverture, contexte, cible)
+    # LA PENSION NATIONALE, quand un accord la compare à la pension
+    # proratisée : la même liquidation, sans les trimestres des périodes qu'il
+    # compare (fiche pension_proratisee). « Compléter tous régimes » sert la
+    # plus élevée des deux, chacune portée à son minimum.
+    etranger = releve.durees.etranger
+    nationales = (_liquider.liquider_chaque_regime(moteur, releve, ouverture, contexte, cible,
+                                                   nationale=True)
+                  if etranger is not None and etranger.compare(_etranger.GENERALE) else None)
     pensions = list(liquidees.regimes)
 
     total = sum(p.montant for p in pensions)
@@ -420,7 +429,8 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
 
     complements = _completer.completer(moteur, releve, ouverture, liquidees, contexte,
                                        servies=etat.total_servi,
-                                       initiales=etat.initiales, recalcul=etat.recalcul)
+                                       initiales=etat.initiales, recalcul=etat.recalcul,
+                                       nationales=nationales)
     # La pension provisoire que la pension complète garde est un droit acquis
     # par cotisation : elle entre au total contributif, comme la pension.
     total_contributif += complements.plancher

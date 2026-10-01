@@ -12,7 +12,7 @@ domaine: minima
 regimes: [regime_general, msa_salaries, cancava, organic, rsi]
 etape: completer_tous_regimes
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - la pension proratisée et la pension nationale de chaque régime aligné, la durée
   d'assurance du régime, la durée d'assurance de toute la carrière, française et étrangère,
@@ -136,17 +136,48 @@ versions:
       pensions_hors_ecretement: [reglements_europeens, accord_de_commerce_et_de_cooperation,
         MC, GB, IN, AR, BR, UY]
   exemples: aucun trouvé
-approximations: []
+approximations:
+- ecart: >-
+    la durée totale d'assurance et la durée totale cotisée sont celles du taux : les
+    trimestres de toute la carrière française, majorations comprises, et ceux que chaque
+    accord fait compter, les périodes d'une organisation internationale et l'activité
+    reconnue équivalente d'avant 1983 comprises ; les durées du régime restent limitées à
+    la durée maximum, l'exposé ne levant la limite que pour la durée totale
+  effet: non mesuré
+- ecart: >-
+    la pension nationale et la pension proratisée se comparent, chacune à son minimum,
+    avant l'écrêtement, qui ne rogne que le complément de celle qui est servie
+  effet: >-
+    la pension nationale servie quand son minimum, écrêté, ne l'aurait pas portée
+    au-dessus de la proratisée ; non mesuré
+- ecart: >-
+    la condition de subsidiarité (L. 351-10-1) se présume remplie : l'assuré a demandé
+    toutes les pensions, françaises et étrangères, auxquelles il peut prétendre
+  effet: >-
+    un minimum servi à qui ne l'aurait pas, faute d'avoir demandé une pension étrangère
+    ouverte ; non mesuré
+- ecart: >-
+    une pension étrangère compte à l'écrêtement si elle commence au plus tard le mois de
+    la date d'effet, à son montant de départ suivi sur les prix ; celle qui commence
+    après ne révise pas l'écrêtement (R. 173-8) ; celle de l'accord avec le Royaume-Uni
+    en est écartée, comme celles des règlements européens et de la convention
+    franco-britannique qu'il remplace, ce que la Cnav n'a pas écrit
+  effet: >-
+    le minimum de qui touche une pension étrangère après son départ : trop élevé ; non
+    mesuré
+presomptions:
+  pas_de_pension_etrangere: >-
+    l'écrêtement, qui ne compte que les pensions étrangères que l'assuré déclare
 sources:
   lu_le: 2026-10-01
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
     Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France, à la
-    demande du propriétaire. Le moteur ne la calcule pas encore (étape 3 du domaine) ; la
-    pension étrangère, que la saisie déclare depuis la deuxième étape — son État, son
-    montant brut mensuel en euros d'aujourd'hui, ramené sur les prix au mois où elle
-    commence —, y entrera comme une liquidation observée (§ 5.5).
+    demande du propriétaire, et calculée depuis sa troisième étape. La pension étrangère,
+    que la saisie déclare depuis la deuxième — son État, son montant brut mensuel en
+    euros d'aujourd'hui, ramené sur les prix au mois où elle commence —, entre dans la
+    chronologie comme une liquidation observée (§ 5.5).
   - >-
     À lire : la circulaire Cnav n° 2004/8, point 42, qui garde en 2004 le calcul
     d'avant quand la durée de la retraite théorique ne dépasse pas 160 trimestres ; la
@@ -171,11 +202,33 @@ sources:
       (2008, pour les pensions prenant effet depuis le 1er janvier 2012), dans l'index
       LEGI du dépôt mis à jour au 1er octobre 2026
     date: 2026-10-01
+code:
+  python: >-
+    droit/completer.py : completer, plancher_international, _minimum_international ;
+    droit/liquider.py : EligibleMinimum (duree_regime, cotisee_regime, proratisation,
+    requis) ; droit/etranger.py : pensions_a_l_ecretement
+  javascript: >-
+    moteur/js/droit/completer.js : completer, plancherInternational,
+    minimumInternational ; moteur/js/droit/liquider.js ; moteur/js/droit/etranger.js :
+    pensionsALEcretement
+  parametres: >-
+    contenu.parametres de chaque version : prorata_du_minimum,
+    ecretement_pensions_etrangeres, pensions_hors_ecretement ;
+    data/reference/legislation/accords_internationaux.yaml
+  tests: >-
+    tests/test_etranger.py, dans les deux moteurs
 historique:
 - >-
   2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la
   demande du propriétaire.
+- >-
+  2026-10-01 — modélisée, approchée, à la troisième étape du domaine : le minimum
+  théorique puis proratisé de la pension que compare un accord, et l'écrêtement sur les
+  pensions étrangères déclarées.
 effet: >-
   Les petites pensions françaises des carrières internationales, au taux plein par la
-  totalisation : le modèle ne les porte pas au minimum faute de taux plein, et ne compte
-  aucune pension étrangère dans l'écrêtement.
+  totalisation : le minimum de la pension proratisée se réduit à la part française de
+  toute la carrière, non limitée — 85/185 du minimum majoré pour vingt-cinq ans en
+  Espagne et 85 trimestres en France —, quand celui d'une pension à calcul séparé, au
+  Sénégal, l'est sur la durée maximum ; depuis 2012, une pension étrangère déclarée le
+  rogne jusqu'au plafond de toutes les pensions.

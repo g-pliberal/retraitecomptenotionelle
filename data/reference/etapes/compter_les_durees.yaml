@@ -73,3 +73,4 @@ objets:
       annee: {porte: "l'année civile où ils comptent", type: entier, obligatoire: true}
       trimestres: {porte: "les trimestres que la durée du taux retient, le plafond de l'année fait", type: entier, obligatoire: true}
       cotises: {porte: "ceux d'entre eux qui comptent comme cotisés", type: entier, obligatoire: true}
+      nationaux: {porte: "ceux que retient la durée du taux de la pension nationale, sans les périodes qu'un accord compare", type: entier, obligatoire: true}

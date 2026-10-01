@@ -866,7 +866,12 @@ class Saisie:
                 f"Date de naissance impossible : le {self.naissance_jour} "
                 f"{NOMS_DE_MOIS[self.naissance_mois - 1]} {self.naissance} "
                 "n'existe pas.") from None
-        if not AGE_DEBUT_MINIMAL <= self.debut <= AGE_DEBUT_MAXIMAL:
+        # Une carrière commencée hors de France commence à sa première période
+        # à l'étranger : le premier emploi en France peut alors venir après
+        # l'âge de début le plus tardif.
+        commencee = min([self.debut, *(periode.debut for periode in self.etranger
+                                       if periode.debut >= AGE_DEBUT_MINIMAL)])
+        if not (AGE_DEBUT_MINIMAL <= self.debut and commencee <= AGE_DEBUT_MAXIMAL):
             raise ErreurSaisie(
                 "Début d'activité : le modèle l'accepte de "
                 f"{AGE_DEBUT_MINIMAL} à {AGE_DEBUT_MAXIMAL} ans, soit "

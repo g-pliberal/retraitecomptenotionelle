@@ -728,7 +728,12 @@ export class Saisie {
         + `${NOMS_DE_MOIS[this.naissance_mois - 1]} ${this.naissance} n'existe pas.`,
       );
     }
-    if (!(this.debut >= AGE_DEBUT_MINIMAL && this.debut <= AGE_DEBUT_MAXIMAL)) {
+    // Une carrière commencée hors de France commence à sa première période à
+    // l'étranger : le premier emploi en France peut alors venir après l'âge de
+    // début le plus tardif.
+    const commencee = Math.min(this.debut, ...this.etranger
+      .filter((periode) => periode.debut >= AGE_DEBUT_MINIMAL).map((periode) => periode.debut));
+    if (!(this.debut >= AGE_DEBUT_MINIMAL && commencee <= AGE_DEBUT_MAXIMAL)) {
       throw new ErreurSaisie(
         "Début d'activité : le modèle l'accepte de "
         + `${AGE_DEBUT_MINIMAL} à ${AGE_DEBUT_MAXIMAL} ans, soit `

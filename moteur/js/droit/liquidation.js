@@ -16,6 +16,7 @@ import { formatFixe } from "../format.js";
 import { Fiabilite } from "../serie.js";
 import { dateDEffet } from "./commun.js";
 import { FICHES, completer } from "./completer.js";
+import { GENERALE } from "./etranger.js";
 import { liquiderChaqueRegime } from "./liquider.js";
 import { ouvrir } from "./ouvrir.js";
 import { construire } from "./releve.js";
@@ -259,6 +260,13 @@ export function liquider(demande, etat, contexte) {
 
   const ouverture = ouvrir(moteur, releve, cible);
   const liquidees = liquiderChaqueRegime(moteur, releve, ouverture, contexte, cible);
+  // LA PENSION NATIONALE, quand un accord la compare à la pension proratisée :
+  // la même liquidation, sans les trimestres des périodes qu'il compare.
+  // « Compléter tous régimes » sert la plus élevée des deux, chacune portée à
+  // son minimum. Voir le Python.
+  const etranger = releve.durees.etranger;
+  const nationales = etranger !== null && etranger.compare(GENERALE)
+    ? liquiderChaqueRegime(moteur, releve, ouverture, contexte, cible, true) : null;
   const pensions = liquidees.regimes;
 
   const total = pensions.reduce((somme, p) => somme + p.montant, 0.0);
@@ -364,7 +372,7 @@ export function liquider(demande, etat, contexte) {
   }
 
   const complements = completer(moteur, releve, ouverture, liquidees, contexte,
-    etat.totalServi, etat.initiales, etat.recalcul);
+    etat.totalServi, etat.initiales, etat.recalcul, nationales);
   // La pension provisoire que la pension complète garde est un droit acquis
   // par cotisation : elle entre au total contributif, comme la pension.
   totalContributif += complements.plancher;

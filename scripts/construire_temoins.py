@@ -857,6 +857,23 @@ def _cas() -> list[dict]:
         "naissance": "1950-02-15", "debut": "1978-01", "liquidation": "2012-03",
         "etranger1_pays": "autre", "etranger1_debut": "1968-01",
         "etranger1_fin": "1978-01"}))
+    # La pension nationale contre la pension proratisée, chacune à son
+    # minimum : au petit salaire, cinq ans en Allemagne puis une carrière
+    # française complète, la nationale l'emporte ; vingt-cinq ans en Espagne,
+    # la proratisée, au minimum réduit à la part française de toute la
+    # carrière ; les mêmes au Sénégal, sans comparaison, et une pension
+    # sénégalaise qui écrête le minimum.
+    petit_salaire = {"naissance": "1960-03-15", "liquidation": "2024-04",
+                     "unite_revenu": "moyen", "salaire": "0.45"}
+    en_espagne = {**petit_salaire, "debut": "2003-01", "etranger1_pays": "ES",
+                  "etranger1_debut": "1978-01", "etranger1_fin": "2003-01"}
+    cas.append(("etranger_allemagne_pension_nationale", {
+        **petit_salaire, "debut": "1982-01", "etranger1_pays": "DE",
+        "etranger1_debut": "1977-01", "etranger1_fin": "1982-01"}))
+    cas.append(("etranger_espagne_minimum_proratise", en_espagne))
+    cas.append(("etranger_senegal_minimum_ecrete", {
+        **en_espagne, "etranger1_pays": "SN", "pension_etrangere1_pays": "SN",
+        "pension_etrangere1": "750", "pension_etrangere1_debut": "2020-04"}))
     # LE RÉTABLISSEMENT : qui part sans la durée qui ouvre une pension — quinze
     # ans avant 2011, deux depuis — passe au régime général et à l'Ircantec,
     # le premier portant le dernier traitement dans la limite du plafond de

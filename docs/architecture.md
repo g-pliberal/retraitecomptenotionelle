@@ -774,7 +774,10 @@ Le relevé des droits et le résultat le signalent.
     trouve invalide, et la pension de vieillesse la remplace (version 5.29) ;
   - l'opposition de l'invalide qui travaille à la substitution, avant mars
     2010 : qui déclare travailler jusqu'à son départ y demande sa pension de
-    vieillesse, comme la loi le lui permettait (quatrième domaine, § 11).
+    vieillesse, comme la loi le lui permettait (quatrième domaine, § 11) ;
+  - pas de pension étrangère, quand l'assuré n'en déclare pas : le minimum
+    contributif n'est écrêté que de ses pensions françaises (cinquième
+    domaine, § 11).
 - **Un défaut légal** n'est pas une présomption : c'est la loi qui décide
   quand la personne n'a rien fait. Il s'écrit dans la version de la règle,
   parce qu'il change avec elle. Au régime général, les trimestres d'éducation

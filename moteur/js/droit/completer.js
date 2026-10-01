@@ -14,8 +14,9 @@
 import { DateMois } from "../calendrier.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, nomFiabilite } from "../serie.js";
-import { derniereAnnee } from "./commun.js";
+import { dateDEffet, derniereAnnee } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
+import * as etranger from "./etranger.js";
 import * as liquider from "./liquider.js";
 import * as ouvrir from "./ouvrir.js";
 
@@ -43,6 +44,43 @@ const TRIMESTRES_COTISES_MINIMUM_MAJORE = 120;
  * n° 2008-1509, dernier alinéa de D. 351-2-1.
  */
 const SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS = [2009, 4];
+
+/**
+ * Le minimum d'une pension proratisée se proratise-t-il sur la durée totale non
+ * limitée (fiche `minimum_contributif_international`, depuis 2004) ? Voir
+ * `_minimum_international` du Python.
+ */
+function minimumInternational(moteur, carriere) {
+  const version = moteur.carrieresHorsDeFrance.version(
+    "minimum", { "liquidation.date_effet": dateDEffet(carriere) });
+  return version !== null
+    && version.parametres.prorata_du_minimum === "duree_totale_non_limitee";
+}
+
+/**
+ * Le minimum d'une pension proratisée et sa majoration, théoriques puis
+ * proratisés. Voir `plancher_international` du Python.
+ */
+export function plancherInternational(eligible, montantBase, montantMajore, dureeTotale,
+  cotiseeTotale, majorationOuverte) {
+  const maximum = eligible.proratisation;
+  const dureeRegime = Math.min(eligible.dureeRegime, maximum);
+  const theorique = montantBase * Math.min(1.0, dureeTotale / maximum);
+  let plancher = theorique * dureeRegime / dureeTotale;
+  if (majorationOuverte) {
+    const majoration = montantMajore - montantBase;
+    if (dureeTotale > eligible.requis) {
+      plancher += majoration * Math.min(1.0, cotiseeTotale / maximum)
+        * dureeRegime / dureeTotale;
+    } else if (cotiseeTotale < maximum) {
+      plancher += majoration * cotiseeTotale / maximum
+        * dureeRegime / Math.min(dureeTotale, maximum);
+    } else {
+      plancher += majoration * Math.min(eligible.cotiseeRegime, maximum) / maximum;
+    }
+  }
+  return plancher;
+}
 
 /** Ce que l'étape « compléter tous régimes » écrit. */
 export class Complements {
@@ -83,10 +121,13 @@ export class Complements {
  * `initiales` sont, après une retraite progressive, les pensions provisoires
  * de ses régimes de base menées à la date d'effet (`progressive.js`) : la
  * pension complète ne descend pas sous elles, et les vaut quand `recalcul` est
- * faux. Voir le Python.
+ * faux. `nationales` sont les pensions nationales de qui a des périodes qu'un
+ * accord compare : la pension proratisée de chaque régime porté au minimum
+ * contributif se compare à elle, chacune à son minimum, et la plus élevée est
+ * servie. Voir le Python.
  */
 export function completer(moteur, releve, ouverture, liquidees, contexte = null,
-  servies = 0.0, initiales = [], recalcul = true) {
+  servies = 0.0, initiales = [], recalcul = true, nationales = null) {
   const carriere = releve.carriere;
   const { durees, droits } = releve;
   const anneeLiquidation = carriere.anneeLiquidation;
@@ -115,29 +156,84 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     const [montantBase, montantMajore, plafond, fiabiliteMinimum] = moteur
       .minimumContributif.valeurs(anneeLiquidation);
     const majorationOuverte = trimestresCotises >= TRIMESTRES_COTISES_MINIMUM_MAJORE;
-    const complements = new Map();
-    for (const eligible of eligiblesMinimum) {
-      if (!eligible.tauxPlein) {
-        continue;
-      }
-      const pension = pensions[eligible.indice];
-      // Le minimum se compare à la pension AVANT surcote, et la surcote,
-      // calculée sur cette pension nue, s'ajoute au minimum (D. 351-2-1) :
-      // voir `complementMinimum`, qui porte aussi la règle d'avant 2009.
-      const nue = pension.montant / eligible.surcote;
+    const dateEffet = [anneeLiquidation, carriere.moisLiquidation];
+    // Le minimum se compare à la pension AVANT surcote, et la surcote,
+    // calculée sur cette pension nue, s'ajoute au minimum (D. 351-2-1) : voir
+    // `complementMinimum`, qui porte aussi la règle d'avant 2009.
+    const complementDu = (pension, eligible, plancher) => (!eligible.tauxPlein ? 0.0
+      : complementMinimum(pension.montant / eligible.surcote, plancher, eligible.surcote,
+        dateEffet));
+    const plancherNational = (eligible, majoration) => {
       let plancher = montantBase * Math.min(1.0, eligible.prorataAssurance);
-      if (majorationOuverte) {
+      if (majoration) {
         plancher += (montantMajore - montantBase)
           * Math.min(1.0, eligible.prorataCotise);
       }
-      const complement = complementMinimum(
-        nue, plancher, eligible.surcote,
-        [anneeLiquidation, carriere.moisLiquidation],
-      );
+      return plancher;
+    };
+    // LA PENSION PRORATISÉE ET LA PENSION NATIONALE : quand un accord les
+    // compare, chacune est portée à SON minimum, puis la plus élevée est
+    // servie — la proratisée à égalité.
+    const alternatives = new Map();
+    for (const eligible of nationales === null ? [] : nationales.minimum) {
+      const nationale = nationales.regimes[eligible.indice];
+      alternatives.set(nationale.regime, [nationale, eligible]);
+    }
+    const international = nationales === null ? null : minimumInternational(moteur, carriere);
+    let cotisesFrancais = 0;
+    let dureeTotale = 0;
+    if (nationales !== null) {
+      // La pension nationale ne compte que les trimestres cotisés en France
+      // pour la majoration.
+      cotisesFrancais = carriere.trimestresCumules(carriere.lignes.filter(
+        (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation));
+      dureeTotale = durees.pourLeTaux(etranger.GENERALE);
+    }
+    const complements = new Map();
+    // Le minimum servi compte-t-il la majoration des périodes cotisées ?
+    let majore = false;
+    for (const eligible of eligiblesMinimum) {
+      const pension = pensions[eligible.indice];
+      const alternative = alternatives.get(pension.regime);
+      let complement;
+      let avecMajoration = majorationOuverte;
+      if (alternative === undefined) {
+        complement = complementDu(pension, eligible,
+          plancherNational(eligible, majorationOuverte));
+      } else {
+        const plancher = international
+          ? plancherInternational(eligible, montantBase, montantMajore, dureeTotale,
+            trimestresCotises, majorationOuverte)
+          : plancherNational(eligible, majorationOuverte);
+        complement = complementDu(pension, eligible, plancher);
+        const [nationale, eligibleNational] = alternative;
+        const majoreeNationale = cotisesFrancais >= TRIMESTRES_COTISES_MINIMUM_MAJORE;
+        const complementNational = complementDu(nationale, eligibleNational,
+          plancherNational(eligibleNational, majoreeNationale));
+        const proratisee = pension.montant + complement;
+        if (nationale.montant + complementNational > proratisee) {
+          pensions[eligible.indice] = {
+            ...nationale,
+            detail: "pension nationale, plus élevée que la pension proratisée "
+              + `(${formatFixe(proratisee, 2, true)} €) : ${nationale.detail}`,
+          };
+          complement = complementNational;
+          avecMajoration = majoreeNationale;
+        } else {
+          pensions[eligible.indice] = {
+            ...pension,
+            detail: "pension proratisée, au moins égale à la pension nationale "
+              + `(${formatFixe(nationale.montant + complementNational, 2, true)} €) : `
+              + pension.detail,
+          };
+        }
+      }
       if (complement > 0) {
         complements.set(eligible.indice, complement);
+        majore = majore || avecMajoration;
       }
     }
+    total = pensions.reduce((somme, p) => somme + p.montant, 0.0);
     let releveMinimum = [...complements.values()].reduce((a, b) => a + b, 0.0);
     if (releveMinimum > 0) {
       // Écrêtement de l'article L. 173-2 : le complément est rogné de ce qui
@@ -146,8 +242,11 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       // enfants exclues — raison de plus pour les calculer après —, celles que
       // d'autres départs servent déjà comprises, au montant du mois de la date
       // d'effet (R. 173-7).
+      // Depuis 2012, les pensions étrangères aussi, hors celles des règlements
+      // européens et de six conventions.
+      const etrangeres = etranger.pensionsALEcretement(moteur, carriere);
       const admissible = Math.max(0.0,
-        Math.min(releveMinimum, plafond - total - servies));
+        Math.min(releveMinimum, plafond - total - servies - etrangeres));
       if (admissible < releveMinimum) {
         const facteur = admissible / releveMinimum;
         for (const [indice, complement] of complements) {
@@ -178,7 +277,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         libelle: "Minimum contributif",
         montant: releveMinimum,
         detail: "porté au plancher, au prorata de la durée acquise"
-          + (majorationOuverte ? ", majoration des périodes cotisées comprise" : ""),
+          + (majore ? ", majoration des périodes cotisées comprise" : ""),
       });
     }
   }

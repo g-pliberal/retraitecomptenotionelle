@@ -129,13 +129,14 @@ export class Durees {
   /**
    * La durée d'assurance tous régimes que le taux d'un régime de cette famille
    * lit : celle de la carrière, enfants compris, et les trimestres étrangers que
-   * la famille retient. Voir `pour_le_taux` du Python.
+   * la famille retient — sans ceux qu'un accord compare, pour la pension
+   * nationale. Voir `pour_le_taux` du Python.
    */
-  pourLeTaux(famille) {
+  pourLeTaux(famille, nationale = false) {
     if (this.etranger === null || famille === null) {
       return this.trimestres;
     }
-    return this.trimestres + this.etranger.trimestres(famille);
+    return this.trimestres + this.etranger.trimestres(famille, nationale);
   }
 
   /**

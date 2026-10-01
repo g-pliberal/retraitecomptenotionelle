@@ -120,6 +120,7 @@ PRESOMPTIONS_DU_5_6 = {
         "pension_d_invalidite_de_la_periode",
     "l'opposition de l'invalide qui travaille à la substitution":
         "opposition_a_la_substitution",
+    "pas de pension étrangère": "pas_de_pension_etrangere",
 }
 
 

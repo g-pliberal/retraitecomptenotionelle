@@ -28,8 +28,9 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
+from . import etranger as _etranger
 from . import liquider, ouvrir
-from .commun import AvantageApplique, PensionRegime, derniere_annee
+from .commun import AvantageApplique, PensionRegime, date_d_effet, derniere_annee
 from .compter import trimestres_de_la_ligne_entre as _trimestres_de_la_ligne_entre
 
 if TYPE_CHECKING:
@@ -91,6 +92,47 @@ def complement_minimum(nue: float, plancher: float, coefficient_surcote: float,
     return max(0.0, plancher - nue * coefficient_surcote)
 
 
+def _minimum_international(moteur: ScenarioActuel, carriere: Carriere) -> bool:
+    """Le minimum d'une pension proratisée se proratise-t-il sur la durée
+    totale non limitée (fiche ``minimum_contributif_international``, depuis
+    2004) ? Avant, il l'était comme la pension, ce que fait le minimum de
+    toute pension."""
+    version = moteur.carrieres_hors_de_france.version(
+        "minimum", {"liquidation.date_effet": date_d_effet(carriere)})
+    return (version is not None and version["parametres"].get("prorata_du_minimum")
+            == "duree_totale_non_limitee")
+
+
+def plancher_international(eligible, montant_base: float, montant_majore: float,
+                           duree_totale: int, cotisee_totale: int,
+                           majoration_ouverte: bool) -> float:
+    """Le minimum d'une pension proratisée et sa majoration, théoriques puis
+    proratisés (exposé de la Cnav « Minimum de la retraite communautaire ») :
+    le minimum entier, ou réduit à la durée totale de toute la carrière,
+    française et étrangère, quand elle n'atteint pas la durée maximum, puis
+    réduit à la part du régime dans cette durée, NON limitée ; la majoration
+    théorique, entière ou réduite à la durée totale cotisée, proratisée de
+    trois façons selon que la durée totale dépasse la durée requise, ou que
+    la durée cotisée atteint la durée maximum. Les durées du régime restent
+    limitées à la durée maximum, comme dans le prorata de la pension :
+    l'exposé ne lève la limite que pour la durée totale."""
+    maximum = eligible.proratisation
+    duree_regime = min(eligible.duree_regime, maximum)
+    theorique = montant_base * min(1.0, duree_totale / maximum)
+    plancher = theorique * duree_regime / duree_totale
+    if majoration_ouverte:
+        majoration = montant_majore - montant_base
+        if duree_totale > eligible.requis:
+            plancher += (majoration * min(1.0, cotisee_totale / maximum)
+                         * duree_regime / duree_totale)
+        elif cotisee_totale < maximum:
+            plancher += (majoration * cotisee_totale / maximum
+                         * duree_regime / min(duree_totale, maximum))
+        else:
+            plancher += majoration * min(eligible.cotisee_regime, maximum) / maximum
+    return plancher
+
+
 @dataclass(frozen=True)
 class Complements:
     """Ce que l'étape « compléter tous régimes » écrit."""
@@ -129,7 +171,7 @@ class Complements:
 def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
               liquidees: Pensions, contexte: Contexte | None = None,
               servies: float = 0.0, initiales: tuple = (),
-              recalcul: bool = True) -> Complements:
+              recalcul: bool = True, nationales: Pensions | None = None) -> Complements:
     """Les pensions de ``liquidees``, complétées de ce que le droit y ajoute.
 
     Le contexte dit ce que le calcul neutralise : les avantages non
@@ -141,7 +183,12 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     ``initiales`` sont, après une retraite progressive, les pensions
     provisoires de ses régimes de base, menées à la date d'effet
     (:mod:`.progressive`) : la pension complète ne descend pas sous elles,
-    et les vaut quand ``recalcul`` est faux.
+    et les vaut quand ``recalcul`` est faux. ``nationales`` sont les
+    pensions nationales de qui a des périodes qu'un accord compare
+    (:mod:`.etranger`) : la pension proratisée de chaque régime porté au
+    minimum contributif se compare à elle, chacune à son minimum, et la plus
+    élevée est servie (fiches ``pension_proratisee`` et
+    ``minimum_contributif_international``).
     """
     carriere = releve.carriere
     durees, droits = releve.durees, releve.droits
@@ -177,28 +224,82 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         majoration_ouverte = (
             trimestres_cotises >= TRIMESTRES_COTISES_MINIMUM_MAJORE
         )
-        #: Complément dû à chaque régime, avant écrêtement.
-        complements: dict[int, float] = {}
-        for eligible in eligibles_minimum:
-            if not eligible.taux_plein:
-                continue
-            pension = pensions[eligible.indice]
+        date_effet = (annee_liquidation, carriere.mois_liquidation)
+
+        def complement_du(pension: PensionRegime, eligible, plancher: float) -> float:
             # Le minimum se compare à la pension AVANT surcote, et la
             # surcote, calculée sur cette pension nue, s'ajoute au minimum
             # (D. 351-2-1) : voir :func:`complement_minimum`, qui porte
             # aussi la règle d'avant avril 2009.
-            nue = pension.montant / eligible.surcote
+            if not eligible.taux_plein:
+                return 0.0
+            return complement_minimum(pension.montant / eligible.surcote, plancher,
+                                      eligible.surcote, date_effet)
+
+        def plancher_national(eligible, majoration: bool) -> float:
             plancher = montant_base * min(1.0, eligible.prorata_assurance)
-            if majoration_ouverte:
+            if majoration:
                 plancher += (montant_majore - montant_base) * min(
                     1.0, eligible.prorata_cotise
                 )
-            complement = complement_minimum(
-                nue, plancher, eligible.surcote,
-                (annee_liquidation, carriere.mois_liquidation),
-            )
+            return plancher
+
+        # LA PENSION PRORATISÉE ET LA PENSION NATIONALE : quand un accord les
+        # compare, chacune est portée à SON minimum, puis la plus élevée est
+        # servie — la proratisée à égalité.
+        alternatives = {} if nationales is None else {
+            nationales.regimes[eligible.indice].regime:
+                (nationales.regimes[eligible.indice], eligible)
+            for eligible in nationales.minimum}
+        international = (None if nationales is None
+                         else _minimum_international(moteur, carriere))
+        if nationales is not None:
+            # La pension nationale ne compte que les trimestres cotisés en
+            # France pour la majoration.
+            cotises_francais = carriere.trimestres_cumules(
+                ligne for ligne in carriere.lignes
+                if ligne.cotise and ligne.annee <= annee_liquidation)
+            duree_totale = durees.pour_le_taux(_etranger.GENERALE)
+        #: Complément dû à chaque régime, avant écrêtement.
+        complements: dict[int, float] = {}
+        #: Le minimum servi compte-t-il la majoration des périodes cotisées ?
+        majore = False
+        for eligible in eligibles_minimum:
+            pension = pensions[eligible.indice]
+            alternative = alternatives.get(pension.regime)
+            avec_majoration = majoration_ouverte
+            if alternative is None:
+                complement = complement_du(
+                    pension, eligible, plancher_national(eligible, majoration_ouverte))
+            else:
+                plancher = (
+                    plancher_international(
+                        eligible, montant_base, montant_majore, duree_totale,
+                        trimestres_cotises, majoration_ouverte)
+                    if international else plancher_national(eligible, majoration_ouverte))
+                complement = complement_du(pension, eligible, plancher)
+                nationale, eligible_national = alternative
+                majoree_nationale = cotises_francais >= TRIMESTRES_COTISES_MINIMUM_MAJORE
+                complement_national = complement_du(
+                    nationale, eligible_national,
+                    plancher_national(eligible_national, majoree_nationale))
+                proratisee = pension.montant + complement
+                if nationale.montant + complement_national > proratisee:
+                    pensions[eligible.indice] = replace(
+                        nationale,
+                        detail=(f"pension nationale, plus élevée que la pension "
+                                f"proratisée ({proratisee:,.2f} €) : {nationale.detail}"))
+                    complement, avec_majoration = complement_national, majoree_nationale
+                else:
+                    pensions[eligible.indice] = replace(
+                        pension,
+                        detail=(f"pension proratisée, au moins égale à la pension "
+                                f"nationale ({nationale.montant + complement_national:,.2f} €)"
+                                f" : {pension.detail}"))
             if complement > 0:
                 complements[eligible.indice] = complement
+                majore = majore or avec_majoration
+        total = sum(p.montant for p in pensions)
         releve_minimum = sum(complements.values())
         if releve_minimum > 0:
             # Écrêtement de l'article L. 173-2 : le complément est rogné de
@@ -208,7 +309,12 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             # celles-ci se calculent après, sur le montant relevé —, celles
             # que d'autres départs servent déjà comprises, au montant du mois
             # de la date d'effet (R. 173-7).
-            admissible = max(0.0, min(releve_minimum, plafond - total - servies))
+            # Depuis 2012, les pensions étrangères aussi, hors celles des
+            # règlements européens et de six conventions (fiche
+            # minimum_contributif_international).
+            etrangeres = _etranger.pensions_a_l_ecretement(moteur, carriere)
+            admissible = max(0.0, min(releve_minimum,
+                                      plafond - total - servies - etrangeres))
             if admissible < releve_minimum:
                 facteur = admissible / releve_minimum
                 complements = {
@@ -241,7 +347,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 detail=(
                     "porté au plancher, au prorata de la durée acquise"
                     + (", majoration des périodes cotisées comprise"
-                       if majoration_ouverte else "")
+                       if majore else "")
                 ),
             ))
 

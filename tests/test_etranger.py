@@ -542,6 +542,161 @@ def test_les_etapes_disent_ce_que_la_coordination_fait_des_periodes(simulateur):
     assert durees.pour_le_taux(None) == durees.trimestres
 
 
+# -- le moteur : la pension proratisée, la pension nationale, et leur minimum ------
+
+#: Née en mars 1960, au salaire de 45 % du salaire moyen, partie en avril 2024 :
+#: 167 trimestres requis, et le minimum contributif de l'année.
+PETIT_SALAIRE = {"naissance": "1960-03-15", "liquidation": "2024-04",
+                 "unite_revenu": "moyen", "salaire": "0.45"}
+#: Cinq ans en Allemagne, puis toute une carrière en France : 169 trimestres.
+APRES_L_ALLEMAGNE = {**PETIT_SALAIRE, "debut": "1982-01", "etranger1_pays": "DE",
+                     "etranger1_debut": "1977-01", "etranger1_fin": "1982-01"}
+#: Vingt-cinq ans en Espagne, puis 85 trimestres en France, commencés à
+#: quarante-deux ans : la carrière a commencé hors de France.
+APRES_L_ESPAGNE = {**PETIT_SALAIRE, "debut": "2003-01", "etranger1_pays": "ES",
+                   "etranger1_debut": "1978-01", "etranger1_fin": "2003-01"}
+#: Les mêmes années au Sénégal, dont la convention sert la pension nationale,
+#: les périodes sénégalaises comptées pour le taux (calcul séparé).
+APRES_LE_SENEGAL = {**APRES_L_ESPAGNE, "etranger1_pays": "SN"}
+
+
+def test_une_carriere_commencee_hors_de_france_peut_venir_tard_en_france():
+    """Le premier emploi en France peut venir après l'âge de début le plus
+    tardif quand la carrière a commencé à l'étranger."""
+    with pytest.raises(ErreurSaisie, match="Début d'activité"):
+        Saisie.depuis_requete({**PETIT_SALAIRE, "debut": "2003-01"})
+    assert Saisie.depuis_requete(APRES_L_ESPAGNE).debut > 42
+
+
+def test_la_pension_nationale_est_servie_quand_son_minimum_l_emporte(contexte, simulateur):
+    """Une carrière française complète, et cinq ans en Allemagne : la pension
+    proratisée gagne la surcote des vingt trimestres allemands, mais son
+    minimum se proratise sur la durée totale non limitée — 167/189 du minimum
+    majoré —, quand celui de la pension nationale est entier. La pension
+    nationale, plus élevée, est servie (règlement 883/2004, article 52)."""
+    _, majore, _, _ = simulateur.scenario_actuel.minimum_contributif.valeurs(2024)
+    actuel = _actuel(contexte, **APRES_L_ALLEMAGNE)
+    pension = _pension(actuel, "regime_general")
+    assert (actuel.trimestres_valides, actuel.trimestres_etrangers) == (189, 20)
+    assert pension.detail.startswith(
+        "pension nationale, plus élevée que la pension proratisée (10,208.58 €) : "
+        "SR 18,376.48 € × taux 51.250% × 167/167 = 9,417.95 €, porté au minimum "
+        "contributif par + 1,325.32 €")
+    # Le minimum se compare à la pension avant surcote, qui s'y ajoute : la
+    # nationale a celle de ses deux trimestres français au-delà des 167, la
+    # proratisée celle des huit trimestres d'après l'âge légal.
+    nue = 18376.48 * 0.5
+    assert pension.montant == pytest.approx(majore + nue * 0.025, abs=0.02)
+    assert majore * 167 / 189 + nue * 0.1 == pytest.approx(10208.58, abs=0.02)
+
+
+def test_la_pension_proratisee_est_portee_au_minimum_international(contexte, simulateur):
+    """Vingt-cinq ans en Espagne : le minimum de la pension proratisée est le
+    minimum entier — la durée totale dépasse la durée maximum —, réduit à la
+    part française de la durée totale, 85/185 ; la majoration de même. La
+    pension nationale, décotée faute de durée française, est plus faible."""
+    _, majore, _, _ = simulateur.scenario_actuel.minimum_contributif.valeurs(2024)
+    pension = _pension(_actuel(contexte, **APRES_L_ESPAGNE), "regime_general")
+    assert pension.detail.startswith(
+        "pension proratisée, au moins égale à la pension nationale (4,073.68 €) : "
+        "SR 18,831.96 € × taux 55.000% × 85/167 = 5,271.82 €, porté au minimum "
+        "contributif par + ")
+    nue = 18831.96 * 0.5 * 85 / 167
+    assert pension.montant == pytest.approx(majore * 85 / 185 + nue * 0.1, abs=0.01)
+
+
+def test_une_convention_a_calcul_separe_garde_le_minimum_de_toute_pension(contexte):
+    """La convention franco-sénégalaise ne compare rien : sa pension, au taux
+    que les périodes sénégalaises ouvrent, est portée au minimum de toute
+    pension, proratisé sur la durée française — plus haut que le minimum
+    international de l'Espagne."""
+    senegal = _pension(_actuel(contexte, **APRES_LE_SENEGAL), "regime_general")
+    espagne = _pension(_actuel(contexte, **APRES_L_ESPAGNE), "regime_general")
+    assert senegal.detail == ("SR 18,831.96 € × taux 55.000% × 85/167 = 5,271.82 €, "
+                              "porté au minimum contributif par + 558.65 €")
+    assert senegal.montant > espagne.montant
+
+
+#: Une pension sénégalaise de 750 € par mois, en euros d'aujourd'hui, depuis
+#: avril 2020.
+AU_SENEGAL = {"pension_etrangere1_pays": "SN", "pension_etrangere1": "750",
+              "pension_etrangere1_debut": "2020-04"}
+
+
+@pytest.mark.parametrize("ce_qui_change, ecretee", [
+    (AU_SENEGAL, True),
+    ({**AU_SENEGAL, "pension_etrangere1_debut": "2025-04"}, False),
+    ({**AU_SENEGAL, "etranger1_pays": "ES", "pension_etrangere1_pays": "ES"}, False),
+    ({**AU_SENEGAL, "naissance": "1946-03-15", "liquidation": "2011-04",
+      "pension_etrangere1": "3000", "pension_etrangere1_debut": "2008-04"}, False),
+])
+def test_l_ecretement_du_minimum_compte_les_pensions_etrangeres(contexte, simulateur,
+                                                                 ce_qui_change, ecretee):
+    """Depuis 2012, le minimum n'est servi que jusqu'au plafond de toutes les
+    pensions personnelles, étrangères comprises (L. 173-2) : la pension
+    sénégalaise le rogne jusqu'au plafond. Une pension qui commence après la
+    date d'effet, celle que calculent les règlements européens, ou toute
+    pension d'avant 2012, n'y comptent pas."""
+    def minimum(actuel):
+        return next(a.montant for a in actuel.avantages_appliques
+                    if a.code == "minimum_contributif")
+
+    requete = {**APRES_LE_SENEGAL, **ce_qui_change}
+    sans = {cle: valeur for cle, valeur in requete.items()
+            if not cle.startswith("pension_etrangere")}
+    avec, declaree = _actuel(contexte, **sans), _actuel(contexte, **requete)
+    if not ecretee:
+        assert minimum(declaree) == minimum(avec) > 0
+        return
+    # Le total des pensions françaises et de la pension sénégalaise, en euros
+    # de la date d'effet, atteint le plafond, et ne le dépasse pas.
+    _, _, plafond, _ = simulateur.scenario_actuel.minimum_contributif.valeurs(2024)
+    etrangere = 750 * 12 * simulateur.macro.coefficient_prix(
+        simulateur.parametres.annee_courante, 2024)
+    assert declaree.pension_annuelle + etrangere == pytest.approx(plafond, abs=0.01)
+    assert 0 < minimum(declaree) < minimum(avec)
+
+
+def test_le_minimum_international_suit_les_trois_cas_de_sa_majoration():
+    """L'exposé de la Cnav, à la lettre : le minimum théorique, réduit à la
+    durée totale quand elle n'atteint pas la durée maximum (160 ici), puis à
+    la part du régime ; la majoration proratisée sur la durée totale non
+    limitée quand elle dépasse la durée requise, sur la durée totale limitée
+    quand la durée cotisée n'atteint pas la durée maximum, sur la durée
+    cotisée du régime sinon. Le portage calcule de même."""
+    import json
+    import shutil
+    import subprocess
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.droit.completer import plancher_international
+
+    eligible = SimpleNamespace(proratisation=160, requis=160, duree_regime=80,
+                               cotisee_regime=70)
+    cas = [(200, 180, True, 9000 * 80 / 200 + 2000 * 80 / 200),
+           (150, 130, True, 9000 * 150 / 160 * 80 / 150 + 2000 * 130 / 160 * 80 / 150),
+           (160, 160, True, 9000 * 80 / 160 + 2000 * 70 / 160),
+           (200, 180, False, 9000 * 80 / 200)]
+    for duree, cotisee, ouverte, attendu in cas:
+        assert plancher_international(eligible, 9000, 11000, duree, cotisee,
+                                      ouverte) == pytest.approx(attendu)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { plancherInternational } from "./moteur/js/droit/completer.js";
+const eligible = { proratisation: 160, requis: 160, dureeRegime: 80, cotiseeRegime: 70 };
+const cas = JSON.parse(process.argv[1]);
+process.stdout.write(JSON.stringify(cas.map(([duree, cotisee, ouverte]) =>
+  plancherInternational(eligible, 9000, 11000, duree, cotisee, ouverte))));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(cas)],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    assert json.loads(execution.stdout) == pytest.approx([c[3] for c in cas])
+
+
 #: Des carrières hors de France que les deux moteurs liquident.
 CARRIERES_HORS_DE_FRANCE = [
     {**NE_EN_1962, **AU_MAROC},
@@ -557,6 +712,11 @@ CARRIERES_HORS_DE_FRANCE = [
      "etranger1_pays": "PT", "etranger1_debut": "1974-03", "etranger1_fin": "1985-01"},
     {"naissance": "1950-02-15", "debut": "1978-01", "liquidation": "2012-03",
      "etranger1_pays": "autre", "etranger1_debut": "1968-01", "etranger1_fin": "1978-01"},
+    APRES_L_ALLEMAGNE,
+    APRES_L_ESPAGNE,
+    {**APRES_LE_SENEGAL, **AU_SENEGAL},
+    {**APRES_L_ESPAGNE, "naissance": "1945-02-15", "liquidation": "2005-03",
+     "etranger1_debut": "1966-01"},
 ]
 
 #: Ce que le portage liquide de ces carrières.

@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois, mois_travailles, trimestres_civils
+from ..calendrier import MOIS_PAR_AN, DateMois, mois_travailles, trimestres_civils
 from .commun import date_d_effet
 
 if TYPE_CHECKING:
@@ -55,6 +55,12 @@ SALARIES = "salaries"
 SALARIEE = "salariee"
 #: Le code d'une organisation internationale au tableau des accords.
 ORGANISATION_INTERNATIONALE = "OI"
+#: Le calcul des règlements européens qui compare la pension nationale à la
+#: pension proratisée (paramètre ``reglements_europeens`` de la fiche
+#: ``pension_proratisee``), et ceux d'un accord bilatéral qui la comparent ou
+#: laissent l'assuré choisir la plus élevée (``calcul`` au tableau des accords).
+COMPARAISON = "comparaison"
+CALCULS_COMPARES = frozenset({COMPARAISON, "option"})
 
 
 @dataclass(frozen=True)
@@ -73,13 +79,17 @@ class PeriodeCoordonnee:
     #: ses paramètres.
     version: str | None
     parametres: dict = field(default_factory=dict, compare=False, repr=False)
+    #: L'accord compare-t-il la pension nationale, qui ignore la période, à
+    #: la pension proratisée, qui la compte (fiche ``pension_proratisee``) ?
+    comparee: bool = False
 
     def donnees(self) -> dict:
         periode = self.periode
         return {"pays": periode.pays, "debut": _jour(periode.debut),
                 "fin": _jour(periode.fin), "activite": periode.activite,
                 "titre": self.titre, "instrument": self.instrument,
-                "familles": list(self.familles), "version": self.version}
+                "familles": list(self.familles), "version": self.version,
+                "comparee": self.comparee}
 
 
 def _jour(mois: DateMois) -> str:
@@ -99,6 +109,11 @@ def coordonner_les_periodes(moteur: ScenarioActuel,
     if effet is None or not carriere.periodes_a_l_etranger:
         return ()
     domaine = moteur.carrieres_hors_de_france
+    proratisation = domaine.version("proratisation", {
+        "liquidation.date_effet": effet,
+        "assure.generation": f"{carriere.annee_naissance:04d}-01-01"})
+    reglements_compares = (proratisation is not None and proratisation["parametres"].get(
+        "reglements_europeens") == COMPARAISON)
     coordonnees = []
     for periode in carriere.periodes_a_l_etranger:
         version = domaine.version("totalisation", {
@@ -122,9 +137,13 @@ def coordonner_les_periodes(moteur: ScenarioActuel,
         elif (parametres.get("equivalentes_avant") is not None
               and _jour(periode.debut) < parametres["equivalentes_avant"]):
             titre, familles = EQUIVALENCE, (GENERALE,)
+        comparee = titre == ACCORD and (
+            reglements_compares if instrument == REGLEMENTS_EUROPEENS
+            else accord.get("calcul") in CALCULS_COMPARES)
         coordonnees.append(PeriodeCoordonnee(
             periode=periode, titre=titre, instrument=instrument, familles=familles,
-            version=None if version is None else version["id"], parametres=parametres))
+            version=None if version is None else version["id"], parametres=parametres,
+            comparee=comparee))
     return tuple(coordonnees)
 
 
@@ -144,10 +163,21 @@ class TrimestresEtrangers:
     #: La famille des régimes de la carrière (:func:`famille_des_regimes`) :
     #: celle dont la durée tous régimes du résultat se lit.
     famille: str = GENERALE
+    #: Par famille, par année : les trimestres que la durée du taux de la
+    #: pension NATIONALE retient, sans ceux des périodes qu'un accord compare
+    #: (:attr:`PeriodeCoordonnee.comparee`).
+    nationaux: dict[str, dict[int, int]] = field(default_factory=dict)
 
-    def trimestres(self, famille: str | None) -> int:
-        """Les trimestres que la durée du taux de cette famille retient."""
-        return sum((self.pour_le_taux.get(famille) or {}).values())
+    def trimestres(self, famille: str | None, nationale: bool = False) -> int:
+        """Les trimestres que la durée du taux de cette famille retient — de
+        sa pension nationale, avec ``nationale``."""
+        table = self.nationaux if nationale else self.pour_le_taux
+        return sum((table.get(famille) or {}).values())
+
+    def compare(self, famille: str | None) -> bool:
+        """Un accord compare-t-il, pour cette famille, une pension nationale
+        à la pension proratisée ?"""
+        return self.trimestres(famille) != self.trimestres(famille, nationale=True)
 
     def trimestres_cotises(self, famille: str | None) -> int:
         """Ceux d'entre eux qui comptent comme cotisés."""
@@ -159,7 +189,8 @@ class TrimestresEtrangers:
             "periodes": [periode.donnees() for periode in self.periodes],
             "trimestres": [
                 {"famille": famille, "annee": annee, "trimestres": trimestres,
-                 "cotises": self.cotises.get(famille, {}).get(annee, 0)}
+                 "cotises": self.cotises.get(famille, {}).get(annee, 0),
+                 "nationaux": self.nationaux.get(famille, {}).get(annee, 0)}
                 for famille in FAMILLES
                 for annee, trimestres in sorted(self.pour_le_taux.get(famille, {}).items())],
         }
@@ -204,10 +235,11 @@ def compter_les_periodes(carriere: Carriere, periodes: tuple[PeriodeCoordonnee, 
     dépasse quatre trimestres avec ceux que la carrière valide en France
     (R. 351-5), ni, l'année du départ, les trimestres civils écoulés avant
     lui ; ceux d'un accord d'abord. L'équivalence ne vaut depuis 2011 qu'à
-    qui a assez de trimestres en France (L. 742-2)."""
+    qui a assez de trimestres en France (L. 742-2). La pension nationale
+    retient de même tout ce qu'un accord ne compare pas."""
     francais = carriere.trimestres_par_annee(carriere.lignes)
     depart = carriere.date_liquidation
-    candidats: dict[str, dict[int, list[tuple[int, int]]]] = {f: {} for f in FAMILLES}
+    candidats: list[tuple[PeriodeCoordonnee, int, int]] = []
     for coordonnee in periodes:
         if coordonnee.titre is None:
             continue
@@ -217,12 +249,24 @@ def compter_les_periodes(carriere: Carriere, periodes: tuple[PeriodeCoordonnee, 
                 and trimestres_francais < seuil):
             continue
         for annee, trimestres in _trimestres_de(coordonnee, parametres, depart).items():
-            for retenante in coordonnee.familles:
-                candidats[retenante].setdefault(annee, []).append(
-                    (TITRES.index(coordonnee.titre), trimestres))
+            candidats.append((coordonnee, annee, trimestres))
+    pour_le_taux, cotises = _retenir(candidats, francais, depart)
+    nationaux, _ = _retenir([c for c in candidats if not c[0].comparee], francais, depart)
+    return TrimestresEtrangers(pour_le_taux, cotises, periodes, famille, nationaux)
+
+
+def _retenir(candidats: list[tuple[PeriodeCoordonnee, int, int]], francais: dict[int, int],
+             depart: DateMois) -> tuple[dict[str, dict[int, int]], dict[str, dict[int, int]]]:
+    """Ce que chaque famille retient de ces trimestres, année par année, sous
+    le plafond de l'année : ceux d'un accord d'abord, les seuls cotisés."""
+    offres: dict[str, dict[int, list[tuple[int, int]]]] = {f: {} for f in FAMILLES}
+    for coordonnee, annee, trimestres in candidats:
+        for retenante in coordonnee.familles:
+            offres[retenante].setdefault(annee, []).append(
+                (TITRES.index(coordonnee.titre), trimestres))
     pour_le_taux: dict[str, dict[int, int]] = {f: {} for f in FAMILLES}
     cotises: dict[str, dict[int, int]] = {f: {} for f in FAMILLES}
-    for retenante, annees in candidats.items():
+    for retenante, annees in offres.items():
         for annee in sorted(annees):
             plafond = 4 if annee < depart.annee else trimestres_civils(depart.mois - 1)
             libres = max(0, plafond - francais.get(annee, 0))
@@ -236,7 +280,7 @@ def compter_les_periodes(carriere: Carriere, periodes: tuple[PeriodeCoordonnee, 
                 pour_le_taux[retenante][annee] = retenus
             if cotises_annee:
                 cotises[retenante][annee] = cotises_annee
-    return TrimestresEtrangers(pour_le_taux, cotises, periodes, famille)
+    return pour_le_taux, cotises
 
 
 def _trimestres_de(coordonnee: PeriodeCoordonnee, parametres: dict,
@@ -271,7 +315,8 @@ def _trimestres_de(coordonnee: PeriodeCoordonnee, parametres: dict,
 
 #: Ce que des périodes hors de France n'apportent pas, faute d'en avoir.
 RIEN = TrimestresEtrangers({famille: {} for famille in FAMILLES},
-                           {famille: {} for famille in FAMILLES}, ())
+                           {famille: {} for famille in FAMILLES}, (), GENERALE,
+                           {famille: {} for famille in FAMILLES})
 
 
 def trimestres_etrangers(moteur: ScenarioActuel, carriere: Carriere) -> TrimestresEtrangers:
@@ -283,3 +328,32 @@ def trimestres_etrangers(moteur: ScenarioActuel, carriere: Carriere) -> Trimestr
         return RIEN
     return compter_les_periodes(carriere, coordonner_les_periodes(moteur, carriere),
                                 carriere.trimestres_actuels)
+
+
+def pensions_a_l_ecretement(moteur: ScenarioActuel, carriere: Carriere) -> float:
+    """Ce que les pensions étrangères ajoutent, par an, aux pensions que
+    l'écrêtement du minimum contributif compte depuis 2012 (L. 173-2, fiche
+    ``minimum_contributif_international``) : celles qui ont commencé au plus
+    tard le mois de la date d'effet, au montant de ce mois (R. 173-7) — leur
+    montant de départ, suivi sur les prix —, hors celles que calculent les
+    règlements européens, l'accord avec le Royaume-Uni et six conventions.
+    Rien avant 2012, et rien pour qui n'en déclare pas (présomption
+    ``pas_de_pension_etrangere``)."""
+    effet = date_d_effet(carriere)
+    if effet is None or not carriere.pensions_etrangeres:
+        return 0.0
+    domaine = moteur.carrieres_hors_de_france
+    version = domaine.version("minimum", {"liquidation.date_effet": effet})
+    if version is None or not version["parametres"].get("ecretement_pensions_etrangeres"):
+        return 0.0
+    exclues = set(version["parametres"].get("pensions_hors_ecretement") or ())
+    total = 0.0
+    for pension in carriere.pensions_etrangeres:
+        if pension.debut.rang > carriere.date_liquidation.rang or pension.pays in exclues:
+            continue
+        accord = domaine.accord(pension.pays, _jour(pension.debut))
+        if accord is not None and accord["instrument"] in exclues:
+            continue
+        total += pension.mensuel * MOIS_PAR_AN * moteur.macro.coefficient_prix(
+            pension.debut.annee, carriere.annee_liquidation)
+    return total

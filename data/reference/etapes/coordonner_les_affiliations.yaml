@@ -56,3 +56,4 @@ objets:
       instrument: {porte: "l'instrument de l'accord qui la fait compter", type: identifiant, defaut: null}
       familles: {porte: "les familles de régimes qui la retiennent", type: liste, de: identifiant, defaut: []}
       version: {porte: "la version de la fiche totalisation_des_periodes_etrangeres", type: identifiant, defaut: null}
+      comparee: {porte: "vrai quand l'accord compare la pension nationale, qui ignore la période, à la pension proratisée, qui la compte", type: booleen, defaut: false}

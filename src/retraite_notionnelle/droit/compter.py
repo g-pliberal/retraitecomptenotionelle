@@ -177,14 +177,14 @@ class Durees:
     #: régime, qui proratise ; :meth:`pour_le_taux` les y ajoute.
     etranger: TrimestresEtrangers | None = None
 
-    def pour_le_taux(self, famille: str | None) -> int:
+    def pour_le_taux(self, famille: str | None, nationale: bool = False) -> int:
         """La durée d'assurance tous régimes que le taux d'un régime de cette
         famille lit (:func:`~.etranger.famille_du_regime`) : celle de la
         carrière, enfants compris, et les trimestres étrangers que la famille
-        retient."""
+        retient — sans ceux qu'un accord compare, pour la pension nationale."""
         if self.etranger is None or famille is None:
             return self.trimestres
-        return self.trimestres + self.etranger.trimestres(famille)
+        return self.trimestres + self.etranger.trimestres(famille, nationale)
 
     @property
     def trimestres_etrangers(self) -> int:

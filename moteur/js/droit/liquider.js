@@ -114,7 +114,7 @@ export class Pensions {
  * `null` : tous. Voir le Python.
  */
 export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
-  regimes = null) {
+  regimes = null, nationale = false) {
   const carriere = releve.carriere;
   const { durees, droits } = releve;
   const anneeLiquidation = carriere.anneeLiquidation;
@@ -151,7 +151,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // La durée tous régimes que le taux de ce régime lit : les périodes hors
     // de France y entrent, celles que sa famille retient (`etranger.js`) ;
     // jamais dans sa durée, qui proratise.
-    const trimestres = durees.pourLeTaux(familleDuRegime(moteur, code));
+    const trimestres = durees.pourLeTaux(familleDuRegime(moteur, code), nationale);
     const cumul = cumulCotisations.get(code) ?? 0.0;
     const regime = moteur.catalogue.obtenir(code);
     const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
@@ -578,6 +578,12 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
           || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation),
         surcote: coefficientSurcote,
+        // Ce que le minimum d'une pension proratisée lit en plus : voir
+        // `EligibleMinimum` du Python.
+        dureeRegime: cumulPlafonne("assurance", membres),
+        cotiseeRegime: cumulPlafonne("cotises", membres),
+        proratisation,
+        requis,
       });
     }
     if (periode.avantages_non_contributifs.includes("minimum_garanti")) {

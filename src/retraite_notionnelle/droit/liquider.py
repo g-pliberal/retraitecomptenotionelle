@@ -262,6 +262,14 @@ class EligibleMinimum:
     taux_plein: bool
     #: Coefficient de surcote déjà incorporé au montant de la pension.
     surcote: float = 1.0
+    #: Ce que le minimum d'une pension proratisée lit en plus (fiche
+    #: ``minimum_contributif_international``) : les durées d'assurance et
+    #: cotisée du régime, non bornées, sa durée maximum, qui proratise, et
+    #: la durée requise pour le taux plein.
+    duree_regime: int = 0
+    cotisee_regime: int = 0
+    proratisation: int = 0
+    requis: int = 0
 
 
 @dataclass(frozen=True)
@@ -324,7 +332,8 @@ class Pensions:
 
 def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                            contexte: Contexte | None = None,
-                           regimes: frozenset[str] | None = None) -> Pensions:
+                           regimes: frozenset[str] | None = None,
+                           nationale: bool = False) -> Pensions:
     """La pension de chaque régime où le relevé porte un droit.
 
     La durée requise de référence, que l'étape « ouvrir le droit » a lue, est
@@ -332,7 +341,10 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     le calcul neutralise : la décote, la surcote et l'abattement liés à l'âge
     pour valoriser des droits acquis ; l'AVPF pour en mesurer l'apport.
     ``regimes`` sont ceux que la demande vise, quand ils ne liquident pas tous
-    au même départ (:mod:`.departs`) ; ``None`` : tous.
+    au même départ (:mod:`.departs`) ; ``None`` : tous. ``nationale`` liquide
+    la pension NATIONALE de qui a des périodes qu'un accord compare : leurs
+    trimestres n'entrent pas dans la durée du taux (fiche
+    ``pension_proratisee``).
     """
     carriere = releve.carriere
     durees, droits = releve.durees, releve.droits
@@ -370,7 +382,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         # La durée tous régimes que le taux de ce régime lit : les périodes
         # hors de France y entrent, celles que sa famille retient
         # (:mod:`.etranger`) ; jamais dans sa durée, qui proratise.
-        trimestres = durees.pour_le_taux(famille_du_regime(moteur, code))
+        trimestres = durees.pour_le_taux(famille_du_regime(moteur, code), nationale)
         cumul = cumul_cotisations.get(code, 0.0)
         regime = moteur.catalogue[code]
         periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
@@ -861,6 +873,10 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                         moteur, code, carriere, age_liquidation)
                 ),
                 surcote=coefficient_surcote,
+                duree_regime=cumul_plafonne("assurance", membres),
+                cotisee_regime=cumul_plafonne("cotises", membres),
+                proratisation=proratisation,
+                requis=requis,
             ))
         if "minimum_garanti" in periode.avantages_non_contributifs:
             # Depuis la loi du 9 novembre 2010, le minimum garanti n'est dû

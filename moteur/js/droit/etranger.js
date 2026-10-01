@@ -11,7 +11,7 @@
  * (`compterLesPeriodes`).
  */
 
-import { DateMois, moisTravailles, trimestresCivils } from "../calendrier.js";
+import { DateMois, MOIS_PAR_AN, moisTravailles, trimestresCivils } from "../calendrier.js";
 import { dateDEffet } from "./commun.js";
 
 /**
@@ -44,6 +44,13 @@ const SALARIES = "salaries";
 const SALARIEE = "salariee";
 /** Le code d'une organisation internationale au tableau des accords. */
 const ORGANISATION_INTERNATIONALE = "OI";
+/**
+ * Le calcul des règlements européens qui compare la pension nationale à la
+ * pension proratisée, et ceux d'un accord bilatéral qui la comparent ou
+ * laissent l'assuré choisir la plus élevée. Voir `CALCULS_COMPARES` du Python.
+ */
+const COMPARAISON = "comparaison";
+const CALCULS_COMPARES = new Set([COMPARAISON, "option"]);
 
 const jourDe = (mois) =>
   `${String(mois.annee).padStart(4, "0")}-${String(mois.mois).padStart(2, "0")}-01`;
@@ -59,6 +66,7 @@ export function donneesDeLaPeriode(coordonnee) {
     pays: periode.pays, debut: jourDe(periode.debut), fin: jourDe(periode.fin),
     activite: periode.activite, titre: coordonnee.titre, instrument: coordonnee.instrument,
     familles: [...coordonnee.familles], version: coordonnee.version,
+    comparee: coordonnee.comparee,
   };
 }
 
@@ -75,6 +83,12 @@ export function coordonnerLesPeriodes(moteur, carriere) {
     return [];
   }
   const domaine = moteur.carrieresHorsDeFrance;
+  const proratisation = domaine.version("proratisation", {
+    "liquidation.date_effet": effet,
+    "assure.generation": `${String(carriere.annee_naissance).padStart(4, "0")}-01-01`,
+  });
+  const reglementsCompares = proratisation !== null
+    && proratisation.parametres.reglements_europeens === COMPARAISON;
   return carriere.periodesALEtranger.map((periode) => {
     const version = domaine.version("totalisation", {
       "liquidation.date_effet": effet, "periode.debut": jourDe(periode.debut),
@@ -105,9 +119,11 @@ export function coordonnerLesPeriodes(moteur, carriere) {
       titre = EQUIVALENCE;
       familles = [GENERALE];
     }
+    const comparee = titre === ACCORD && (instrument === REGLEMENTS_EUROPEENS
+      ? reglementsCompares : CALCULS_COMPARES.has(accord.calcul));
     return {
       periode, titre, instrument, familles,
-      version: version === null ? null : version.id, parametres,
+      version: version === null ? null : version.id, parametres, comparee,
     };
   });
 }
@@ -118,7 +134,7 @@ export function coordonnerLesPeriodes(moteur, carriere) {
  * `TrimestresEtrangers` du Python.
  */
 export class TrimestresEtrangers {
-  constructor(pourLeTaux, cotises, periodes, famille = GENERALE) {
+  constructor(pourLeTaux, cotises, periodes, famille = GENERALE, nationaux = {}) {
     /** Par famille, une `Map` de l'année aux trimestres que le taux retient. */
     this.pourLeTaux = pourLeTaux;
     /** Par famille, ceux d'entre eux qui comptent comme cotisés. */
@@ -127,15 +143,29 @@ export class TrimestresEtrangers {
     this.periodes = periodes;
     /** La famille des régimes de la carrière. */
     this.famille = famille;
+    /**
+     * Par famille, ceux que la durée du taux de la pension NATIONALE retient,
+     * sans les périodes qu'un accord compare.
+     */
+    this.nationaux = nationaux;
   }
 
-  /** Les trimestres que la durée du taux de cette famille retient. */
-  trimestres(famille) {
+  /**
+   * Les trimestres que la durée du taux de cette famille retient — de sa
+   * pension nationale, avec `nationale`.
+   */
+  trimestres(famille, nationale = false) {
+    const table = nationale ? this.nationaux : this.pourLeTaux;
     let total = 0;
-    for (const nombre of (this.pourLeTaux[famille] ?? new Map()).values()) {
+    for (const nombre of (table[famille] ?? new Map()).values()) {
       total += nombre;
     }
     return total;
+  }
+
+  /** Un accord compare-t-il, pour cette famille, une pension nationale à la proratisée ? */
+  compare(famille) {
+    return this.trimestres(famille) !== this.trimestres(famille, true);
   }
 
   /** Ceux d'entre eux qui comptent comme cotisés. */
@@ -156,6 +186,7 @@ export class TrimestresEtrangers {
         trimestres.push({
           famille, annee, trimestres: nombre,
           cotises: (this.cotises[famille] ?? new Map()).get(annee) ?? 0,
+          nationaux: (this.nationaux[famille] ?? new Map()).get(annee) ?? 0,
         });
       }
     }
@@ -207,14 +238,15 @@ export function familleDesRegimes(moteur, codes) {
  * Les trimestres que chaque période coordonnée apporte, année par année, puis
  * ceux que chaque famille retient sous le plafond de l'année — quatre, avec
  * ceux de la carrière française ; l'année du départ, les trimestres civils
- * écoulés avant lui —, ceux d'un accord d'abord. Voir `compter_les_periodes`
- * du Python.
+ * écoulés avant lui —, ceux d'un accord d'abord ; et, de même, ceux que la
+ * pension nationale retient, sans les périodes qu'un accord compare. Voir
+ * `compter_les_periodes` du Python.
  */
 export function compterLesPeriodes(carriere, periodes, trimestresFrancais,
   famille = GENERALE) {
   const francais = carriere.trimestresParAnnee(carriere.lignes);
   const depart = carriere.dateLiquidation;
-  const candidats = Object.fromEntries(FAMILLES.map((f) => [f, new Map()]));
+  const candidats = [];
   for (const coordonnee of periodes) {
     if (coordonnee.titre === null) {
       continue;
@@ -225,26 +257,42 @@ export function compterLesPeriodes(carriere, periodes, trimestresFrancais,
       continue;
     }
     for (const [annee, trimestres] of trimestresDe(coordonnee, parametres, depart)) {
-      for (const retenante of coordonnee.familles) {
-        if (!candidats[retenante].has(annee)) {
-          candidats[retenante].set(annee, []);
-        }
-        candidats[retenante].get(annee).push([TITRES.indexOf(coordonnee.titre), trimestres]);
+      candidats.push([coordonnee, annee, trimestres]);
+    }
+  }
+  const [pourLeTaux, cotises] = retenir(candidats, francais, depart);
+  const [nationaux] = retenir(candidats.filter(([coordonnee]) => !coordonnee.comparee),
+    francais, depart);
+  return new TrimestresEtrangers(pourLeTaux, cotises, periodes, famille, nationaux);
+}
+
+/**
+ * Ce que chaque famille retient de ces trimestres, année par année, sous le
+ * plafond de l'année : ceux d'un accord d'abord, les seuls cotisés. Voir
+ * `_retenir` du Python.
+ */
+function retenir(candidats, francais, depart) {
+  const offres = Object.fromEntries(FAMILLES.map((f) => [f, new Map()]));
+  for (const [coordonnee, annee, trimestres] of candidats) {
+    for (const retenante of coordonnee.familles) {
+      if (!offres[retenante].has(annee)) {
+        offres[retenante].set(annee, []);
       }
+      offres[retenante].get(annee).push([TITRES.indexOf(coordonnee.titre), trimestres]);
     }
   }
   const pourLeTaux = Object.fromEntries(FAMILLES.map((f) => [f, new Map()]));
   const cotises = Object.fromEntries(FAMILLES.map((f) => [f, new Map()]));
   for (const retenante of FAMILLES) {
-    const annees = [...candidats[retenante].keys()].sort((a, b) => a - b);
+    const annees = [...offres[retenante].keys()].sort((a, b) => a - b);
     for (const annee of annees) {
       const plafond = annee < depart.annee ? 4 : trimestresCivils(depart.mois - 1);
       const libres = Math.max(0, plafond - (francais.get(annee) ?? 0));
       let retenus = 0;
       let cotisesAnnee = 0;
-      const offres = [...candidats[retenante].get(annee)]
+      const offresAnnee = [...offres[retenante].get(annee)]
         .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-      for (const [rang, trimestres] of offres) {
+      for (const [rang, trimestres] of offresAnnee) {
         const pris = Math.min(trimestres, libres - retenus);
         retenus += pris;
         if (TITRES[rang] === ACCORD) {
@@ -259,7 +307,7 @@ export function compterLesPeriodes(carriere, periodes, trimestresFrancais,
       }
     }
   }
-  return new TrimestresEtrangers(pourLeTaux, cotises, periodes, famille);
+  return [pourLeTaux, cotises];
 }
 
 /**
@@ -304,7 +352,8 @@ function trimestresDe(coordonnee, parametres, depart) {
 /** Ce que des périodes hors de France n'apportent pas, faute d'en avoir. */
 export const RIEN = new TrimestresEtrangers(
   Object.fromEntries(FAMILLES.map((f) => [f, new Map()])),
-  Object.fromEntries(FAMILLES.map((f) => [f, new Map()])), []);
+  Object.fromEntries(FAMILLES.map((f) => [f, new Map()])), [], GENERALE,
+  Object.fromEntries(FAMILLES.map((f) => [f, new Map()])));
 
 /**
  * Les deux temps à la suite, pour qui lit les trimestres étrangers hors du
@@ -317,4 +366,37 @@ export function trimestresEtrangers(moteur, carriere) {
   }
   return compterLesPeriodes(carriere, coordonnerLesPeriodes(moteur, carriere),
     carriere.trimestresActuels);
+}
+
+/**
+ * Ce que les pensions étrangères ajoutent, par an, aux pensions que
+ * l'écrêtement du minimum contributif compte depuis 2012 : celles qui ont
+ * commencé au plus tard le mois de la date d'effet, au montant de ce mois, hors
+ * celles que calculent les règlements européens, l'accord avec le Royaume-Uni et
+ * six conventions. Voir `pensions_a_l_ecretement` du Python.
+ */
+export function pensionsALEcretement(moteur, carriere) {
+  const effet = dateDEffet(carriere);
+  if (effet === null || carriere.pensionsEtrangeres.length === 0) {
+    return 0.0;
+  }
+  const domaine = moteur.carrieresHorsDeFrance;
+  const version = domaine.version("minimum", { "liquidation.date_effet": effet });
+  if (version === null || !version.parametres.ecretement_pensions_etrangeres) {
+    return 0.0;
+  }
+  const exclues = new Set(version.parametres.pensions_hors_ecretement ?? []);
+  let total = 0.0;
+  for (const pension of carriere.pensionsEtrangeres) {
+    if (pension.debut.rang > carriere.dateLiquidation.rang || exclues.has(pension.pays)) {
+      continue;
+    }
+    const accord = domaine.accord(pension.pays, jourDe(pension.debut));
+    if (accord !== null && exclues.has(accord.instrument)) {
+      continue;
+    }
+    total += pension.mensuel * MOIS_PAR_AN * moteur.macro.coefficientPrix(
+      pension.debut.annee, carriere.anneeLiquidation);
+  }
+  return total;
 }

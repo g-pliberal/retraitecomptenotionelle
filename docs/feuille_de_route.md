@@ -3439,9 +3439,16 @@ du code des pensions, que seuls les règlements européens coordonnent, depuis l
 25 octobre 1998. « Compter les durées » en fait des trimestres, quatre au plus
 par année avec ceux de la France, que le taux, la décote, la surcote et la
 carrière longue lisent, jamais la proratisation. La fiche passe à `approchee`,
-avec cinq écarts déclarés ; huit témoins naissent, aucun ne bouge. Restent la
-pension proratisée contre la pension nationale, le minimum contributif
-international et son écrêtement, l'ASPA hors de France, et la page.
+avec cinq écarts déclarés ; huit témoins naissent, aucun ne bouge. Puis, le
+même jour, la pension proratisée contre la pension nationale : quand un accord
+compare, la liquidation se refait sans les trimestres de ses périodes, et
+« compléter tous régimes » sert, dans chaque régime qui porte le minimum
+contributif, la plus élevée des deux, chacune à son minimum — celui de la
+proratisée, depuis 2004, réduit à la part du régime dans la durée totale non
+limitée ; depuis 2012, l'écrêtement compte les pensions étrangères déclarées,
+et la présomption `pas_de_pension_etrangere` naît (§ 5.6). Les deux fiches
+passent à `approchee` ; trois témoins naissent, aucune pension ne bouge.
+Restent l'ASPA hors de France, et la page.
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 

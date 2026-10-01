@@ -13,7 +13,7 @@ regimes: [regime_general, msa_salaries, cancava, organic, rsi, fonction_publique
   cnracl, fspoeie]
 etape: liquider_chaque_regime
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - les trimestres étrangers que chaque accord fait compter (fiche
   totalisation_des_periodes_etrangeres), et l'accord lui-même — son calcul et son prorata
@@ -196,14 +196,48 @@ versions:
       fonctionnaires_depuis: 1998-10-25
       regimes_en_points: pension_nationale
   exemples: aucun trouvé
-approximations: []
+approximations:
+- ecart: >-
+    la pension proratisée est celle que la totalisation calcule : le salaire annuel moyen
+    des seules années françaises, le taux sur la durée de toute la carrière, et le prorata
+    de la durée française sur la durée maximum, ce que vaut la pension théorique réduite
+    au prorata limité ; les années du salaire annuel moyen ne se réduisent pas au prorata
+    de la durée française, de 2004 à juin 2022, ni depuis pour les générations d'avant
+    1953 (R. 173-4-3)
+  effet: >-
+    la pension proratisée de ces années, son salaire moyen pris sur plus d'années que le
+    droit n'en retient quand la carrière française en compte plus que la durée réduite :
+    plus faible ; non mesuré
+- ecart: >-
+    seuls les régimes qui portent le minimum contributif comparent leurs deux pensions :
+    la pension nationale d'un autre régime, son taux lu sur moins de trimestres, ne
+    l'emporterait que par son minimum ; celle des fonctionnaires, que le minimum garanti
+    relève, ne se compare pas
+  effet: >-
+    le fonctionnaire dont la pension nationale, portée au minimum garanti, dépasserait la
+    proratisée ; non mesuré
+- ecart: >-
+    la pension nationale se liquide au même départ que la proratisée, l'âge d'ouverture
+    et la carrière longue lus avec les périodes étrangères, quand le règlement ne la
+    calcule que si le droit national seul l'ouvre
+  effet: >-
+    une pension nationale servie à qui ne l'aurait pas, s'il part tôt par ses périodes
+    étrangères et que son minimum la porte au-dessus de la proratisée ; non mesuré
+- ecart: >-
+    le prorata se limite à la durée maximum pour toute convention qui compare, celle dont
+    l'exposé ne dit pas le prorata comprise ; une convention à option sert la plus élevée
+    des deux pensions, comme si l'assuré choisissait toujours au mieux
+  effet: >-
+    la pension proratisée d'une convention qui retient la durée totale, à qui la dépasse :
+    plus élevée ; non mesuré
 sources:
   lu_le: 2026-10-01
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
     Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France, à la
-    demande du propriétaire. Le moteur ne la calcule pas encore (étape 3 du domaine).
+    demande du propriétaire. Le moteur compare les deux pensions depuis la troisième
+    étape du domaine, dans les régimes qui portent le minimum contributif.
   - >-
     À lire : la circulaire Cnav n° 2008/58, que la base de la Cnav n'a pas rendue, pour
     la date d'où la pension théorique des travailleurs migrants réduit les années de son
@@ -248,12 +282,33 @@ sources:
       France rapporté à la période d'assurance requise pour la génération concernée »
     url: https://www.cleiss.fr/particuliers/retraite/reglements.html
     date: 2026-10-01
+code:
+  python: >-
+    droit/etranger.py : coordonner_les_periodes (PeriodeCoordonnee.comparee),
+    compter_les_periodes (TrimestresEtrangers.nationaux, compare) ; droit/compter.py :
+    Durees.pour_le_taux ; droit/liquider.py : liquider_chaque_regime (nationale) ;
+    droit/liquidation.py : liquider ; droit/completer.py : completer
+  javascript: >-
+    les jumeaux de chacune : moteur/js/droit/etranger.js, compter.js, liquider.js,
+    liquidation.js, completer.js
+  parametres: >-
+    contenu.parametres de chaque version : reglements_europeens ;
+    data/reference/legislation/accords_internationaux.yaml (calcul)
+  tests: >-
+    tests/test_etranger.py, dans les deux moteurs
 historique:
 - >-
   2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la
   demande du propriétaire.
+- >-
+  2026-10-01 — modélisée, approchée, à la troisième étape du domaine : la pension
+  nationale, liquidée sans les trimestres des périodes qu'un accord compare, se compare à
+  la pension proratisée, chacune portée à son minimum, et la plus élevée est servie.
 effet: >-
   Toute pension française d'une carrière passée aussi par un État lié à la France par un
-  accord. Le modèle ne sert que la pension nationale, sur les seules périodes françaises,
-  et son taux décoté faute de durée : la pension proratisée, servie au taux que toute la
-  carrière ouvre, lui est le plus souvent supérieure.
+  accord qui compare : la pension proratisée, au taux que toute la carrière ouvre, est le
+  plus souvent la plus élevée ; la pension nationale l'emporte quand son minimum, entier
+  sur une carrière française complète, dépasse celui de la proratisée, réduit à la part
+  française de toute la carrière. Née en 1960, au petit salaire, cinq ans en Allemagne
+  puis 169 trimestres en France, une assurée partie en 2024 reçoit 10 743 € par an du
+  régime général, et non 10 209 €.
