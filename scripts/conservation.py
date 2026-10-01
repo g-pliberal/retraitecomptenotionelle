@@ -75,6 +75,7 @@ REGISTRES = {
         "pivots": ("article",), "bascules": ("code",), "bascules_hors_legi": ("code",)},
     "data/reference/site/affirmations.yaml": {"affirmations": ("id",)},
     "data/sources.yaml": {"institutions": None, "institutions/*/jeux": ("id",)},
+    "data/reference/referents.yaml": {"referents": ("id",)},
 }
 
 #: Où une entrée peut aller quand elle se déplace : les archives d'un

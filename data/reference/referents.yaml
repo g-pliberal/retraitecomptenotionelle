@@ -1,0 +1,494 @@
+# Le registre des autres modèles — docs/architecture.md, § 3.4
+# ==============================================================
+# Aucun modèle ne fait autorité sur la loi. Chacun confirme ou contredit, sur
+# ce qu'il couvre, et un écart se tranche par la preuve (§ 3.3) : le texte tel
+# que la caisse l'applique l'emporte sur l'exemple officiel, l'exemple sur les
+# autres modèles, et tous sur le nôtre. Ce registre dit, pour chaque modèle,
+# ce qu'il vaut comme confirmation et ce qu'il reste à en tirer.
+#
+# La note 0001 l'avait prévu ; il est né le 1er octobre 2026, à la demande du
+# propriétaire : « une liste exhaustive ». Il recense donc aussi les modèles
+# dont seuls la méthode ou des résultats sont publiés, pour qu'on sache ce qui
+# existe et ce qui ne se lit pas, et, à l'étranger, ceux des comptes
+# notionnels, qui confrontent l'arithmétique de la proposition. Les
+# simulateurs officiels des caisses n'y sont pas : ce sont des sources
+# d'APPLICATION, au registre des sources, que le § 3.5 dit comment interroger.
+#
+# OÙ VA LE RESTE
+#   l'adresse à explorer, ce qu'elle a donné .. data/sources_a_explorer.yaml,
+#                                               nommée par le champ `sas`
+#   une valeur ou une sortie entrée au dépôt .. data/sources.yaml, nommée par
+#                                               le champ `manifeste`
+#   la correspondance avec une règle .......... le champ `referents` de sa
+#                                               fiche, qui cite l'`id` d'ici
+#   un écart au droit ......................... la fiche, puis `ecarts` ici
+#
+# CHAMPS
+#   id ............. identifiant court, celui que les fiches citent
+#   nom, auteur .... le modèle, et qui le tient ; `pays` hors de France
+#   nature ......... voir ci-dessous
+#   publication .... ouvert (le code se lit) | sur_demande (après inscription
+#                    ou convention) | documente (méthode et résultats publiés,
+#                    pas le code) | non_public (seuls des résultats le sont)
+#   code ........... l'adresse du code, quand il est ouvert ou sur demande
+#   documentation .. ses autres adresses : méthode, notice, résultats
+#   licence ........ telle que LUE dans le fichier ou sur la page ; « aucune »
+#                    quand le code n'en porte pas, « non lue » quand on n'a
+#                    pas pu la lire, « sans objet » quand rien n'est publié
+#   usage .......... ce que la licence permet au dépôt (§ 3.4) : copier ;
+#                    executer_a_part (GPL, EUPL, AGPL : seules ses sorties
+#                    entrent) ; lire_et_citer (sans licence) ;
+#                    selon_conditions (une licence propre, à relire avant
+#                    tout usage) ; resultats_publies (le code n'est pas
+#                    publié : on cite sa méthode et ses résultats)
+#   confronte ...... scenario_1 (le droit réel), cout (les masses de la page
+#                    Coût), proposition (l'arithmétique des comptes
+#                    notionnels — jamais leurs choix, que le README décide)
+#   couvre ......... régimes, règles, années de droit
+#   version ........ la version confrontée, quand elle l'a été
+#   depend_de ...... les lignes d'ici dont il tire règles ou paramètres : deux
+#                    modèles qui partagent une source ne comptent que pour
+#                    une confirmation
+#   confrontation .. comment on le confronte : des paramètres à comparer, un
+#                    calcul à rejouer, des résultats publiés à retrouver
+#   ecarts ......... chacun avec son constat, ce qui l'a tranché, sa preuve
+#   manifeste, sas . ses lignes dans data/sources.yaml et dans
+#                    data/sources_a_explorer.yaml
+#   lu_le, lu_dans . la dernière lecture, et où ces faits ont été lus ; une
+#                    mémoire n'est pas une source
+#   note ........... ce qui ne rentre dans aucun champ
+#
+# NATURE
+#   calculateur ................ la pension, ou la cotisation, d'une carrière
+#                                donnée
+#   cas_types .................. les pensions de carrières types
+#   microsimulation_dynamique .. fait vivre un échantillon, carrières et
+#                                pensions, année après année
+#   microsimulation_statique ... applique le droit d'une année à un
+#                                échantillon de ménages
+#   projection ................. des masses et des effectifs, sans individus
+#   parametres ................. des barèmes, sans calcul
+#   methode .................... une méthode publiée, sans code
+
+referents:
+
+  # ---- Les paramètres, et ce qui s'y alimente ----------------------------
+  # Les barèmes de l'IPP nourrissent OpenFisca-France-Pension, TRAJECTOiRE et
+  # calcul_pension : un accord entre ces trois-là ne vaut qu'une confirmation.
+
+  - id: baremes_ipp
+    nom: Barèmes IPP
+    auteur: Institut des politiques publiques (IPP)
+    nature: parametres
+    publication: ouvert
+    code: https://framagit.org/french-tax-and-benefit-tables/baremes-ipp-yaml
+    documentation: [https://baremes.ipp.eu/]
+    licence: Licence Ouverte
+    usage: copier
+    confronte: [scenario_1]
+    couvre: >-
+      Les paramètres de la législation sociale et fiscale, retraites
+      comprises : taux de cotisation, valeurs de point des complémentaires,
+      âges, durées, minima, chacun daté, une partie avec son texte. À jour de
+      la loi du 30 décembre 2025 au premier recensement.
+    confrontation: >-
+      Des paramètres à comparer, valeur par valeur et date par date, à ceux
+      que le dépôt lit au Journal officiel ou chez la caisse ; un écart se
+      tranche au texte.
+    ecarts:
+      - constat: >-
+          Le taux de cotisation des chirurgiens-dentistes s'y arrête en 2019,
+          quand la caisse l'a changé en 2023.
+        tranche: la caisse ; les barèmes sont en retard
+        preuve: docs/decisions/0001-architecture.md (§ 14.9)
+    manifeste: [ipp_taux_cotisation, ipp_points_independants, ipp_retraite_complementaire_liberaux]
+    lu_le: 2026-10-01
+    lu_dans:
+      - docs/decisions/0001-architecture.md
+      - https://gitlab.com/DREES_code/public/outils/calcul_pension
+    note: >-
+      calcul_pension télécharge le dépôt `baremes-ipp-yaml` de Framagit
+      (`R/gestionParametres.R`, lu le 1er octobre 2026) : c'est par là que
+      les modèles de la DREES s'alimentent.
+
+  - id: openfisca_france
+    nom: OpenFisca-France
+    auteur: la communauté OpenFisca
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/openfisca/openfisca-france
+    licence: AGPL-3.0
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      Le droit socio-fiscal français, paramètres datés texte par texte :
+      plafond de la Sécurité sociale depuis 1930, taux de cotisation
+      vieillesse depuis 1967, point d'indice, SMIC, prélèvements sur les
+      pensions. Les pensions elles-mêmes sont dans OpenFisca-France-Pension.
+    confrontation: >-
+      Des paramètres à comparer : le dépôt en reprend six séries, au niveau
+      `haute`, jamais `certifiee`, et les recoupe contre l'INSEE, l'Urssaf
+      ou la base LEGI (`scripts/verifier_donnees.py`).
+    manifeste:
+      - openfisca_plafond
+      - openfisca_point_indice
+      - openfisca_contribution_employeur_public
+      - openfisca_cotisations
+      - openfisca_part_salariale
+    lu_le: 2026-09-25
+    lu_dans:
+      - data/sources.yaml
+      - docs/decisions/0001-architecture.md
+
+  - id: openfisca_france_pension
+    nom: OpenFisca-France-Pension
+    auteur: la communauté OpenFisca, d'après TiL-Pension de l'IPP
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/openfisca/openfisca-france-pension
+    licence: AGPL-3.0
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      Cinq familles : le régime général, la pension civile de l'État et de la
+      CNRACL, l'Arrco d'avant 2019, l'Agirc, l'Ircantec. Paramètres figés au
+      2 janvier 2025 ; le régime unifié Agirc-Arrco, les régimes spéciaux,
+      les libéraux et les exploitants agricoles n'y sont pas.
+    version: "0.1.3"
+    depend_de: [baremes_ipp]
+    confrontation: >-
+      Un calcul rejoué : des carrières simples, à salaire nominal constant,
+      calculées chez lui et figées en témoins (`tests/temoins/openfisca_*.json`),
+      que `tests/test_oracle.py` rejoue contre le scénario 1. C'est la seule
+      confrontation de moteur que le dépôt mène aujourd'hui.
+    ecarts:
+      - constat: >-
+          Sa durée requise ignore la réforme du 14 avril 2023 : 169 trimestres
+          à la génération 1965, là où L. 161-17-3 en donne 172.
+        tranche: le texte, lu dans la base LEGI ; l'écart est le sien
+        preuve: data/sources.yaml (openfisca_regime_general_oracle)
+      - constat: >-
+          Ses coefficients de revalorisation des salaires portés au compte
+          s'écartent de la table de la Cnav : de −3 à −5,5 % après 1990, faute
+          de la revalorisation de 4 % du 1er juillet 2022, de −17 à +10 % sur
+          1949-1962. Son salaire annuel moyen en reste en deçà.
+        tranche: la circulaire de la Cnav, que le modèle lit
+        preuve: docs/limites.md (« Ce que dit la confrontation à une seconde implémentation »)
+      - constat: >-
+          Sa décote de la pension civile porte 0,65 % pour l'année d'ouverture
+          2010, là où la loi écrit 0,625 % ; son minimum garanti suit le point
+          d'indice de l'année de liquidation, quand L. 17 fige la référence
+          au 1er janvier 2004.
+        tranche: la loi ; les deux écarts sont les siens
+        preuve: tests/temoins/openfisca_fonction_publique.json
+      - constat: >-
+          Son Agirc ne suit ni le taux d'appel de 1989 ni le contractuel de
+          1994, fait cotiser la tranche C par le salarié dès l'origine, et lit
+          le prix d'achat au 1er janvier, un millésime en retard dès 2004.
+        tranche: les accords de l'Agirc ; les écarts sont les siens, déclarés au témoin
+        preuve: tests/temoins/openfisca_agirc.json
+      - constat: >-
+          Son Ircantec porte l'assiette de la tranche B à huit plafonds dès
+          1992, quand le décret n° 2008-996 le fait au 25 septembre 2008.
+        tranche: le décret ; l'écart est le sien
+        preuve: tests/temoins/openfisca_ircantec.json
+      - constat: >-
+          Son régime unifié Agirc-Arrco ne s'exécute pas : le code demande un
+          paramètre que les barèmes livrés ne définissent pas.
+        tranche: un défaut du paquet publié, sans texte à lire
+        preuve: data/sources.yaml (openfisca_regime_general_oracle)
+      - constat: >-
+          Chez nous, la durée de proratisation était confondue avec la durée
+          requise, que R. 351-6 fixe plus bas avant la génération 1949.
+        tranche: R. 351-6 ; l'erreur était la nôtre, corrigée
+        preuve: data/sources.yaml (openfisca_regime_general_oracle)
+      - constat: >-
+          Chez nous, la décote de L. 14 se lisait à l'année de liquidation et
+          non d'ouverture du droit, et la montée en charge 2004-2008 de la
+          durée de services était ignorée.
+        tranche: L. 14 et la loi de 2003 ; les erreurs étaient les nôtres, corrigées
+        preuve: data/sources.yaml (openfisca_fonction_publique_oracle)
+    manifeste:
+      - openfisca_points
+      - openfisca_regime_general_oracle
+      - openfisca_fonction_publique_oracle
+      - openfisca_arrco_oracle
+      - openfisca_minimum_contributif
+      - openfisca_parametres_generation
+    sas: [openfisca_france_pension]
+    lu_le: 2026-09-15
+    lu_dans:
+      - tests/temoins/openfisca_regime_general.json
+      - tests/temoins/openfisca_fonction_publique.json
+      - tests/temoins/openfisca_arrco.json
+      - tests/temoins/openfisca_agirc.json
+      - tests/temoins/openfisca_ircantec.json
+      - data/sources.yaml
+    note: >-
+      Les témoins de l'Agirc et de l'Ircantec n'ont pas de ligne au
+      manifeste : ils sont sortis de `scripts/fetch/openfisca_agirc.py` et
+      `openfisca_ircantec.py`.
+
+  # ---- Les administrations : la statistique publique ---------------------
+
+  - id: destinie_2
+    nom: Destinie 2
+    auteur: INSEE
+    nature: microsimulation_dynamique
+    publication: ouvert
+    code: https://github.com/InseeFr/Destinie-2
+    licence: GPL
+    usage: executer_a_part
+    confronte: [scenario_1, cout]
+    couvre: >-
+      Des pensions entières, sur un échantillon qu'il fait vivre : régime
+      général, fonctionnaires de l'État et des collectivités, indépendants,
+      Agirc-Arrco, réversion, minimum vieillesse ; le droit jusqu'à sa
+      dernière mise à jour, 2023 au premier recensement.
+    confrontation: >-
+      Un calcul rejoué : l'exécuter à part sur des carrières que le dépôt
+      décrit aussi, et confronter ses pensions, sa réversion et ses
+      majorations pour enfants, que trois fiches attendent
+      (`reversion`, `majoration_duree_assurance_enfants`,
+      `enfants_fonction_publique`).
+    lu_le: 2026-10-01
+    lu_dans:
+      - docs/decisions/0001-architecture.md
+      - https://github.com/InseeFr/Destinie-2
+    note: >-
+      La confirmation la plus indépendante du registre : ses règles et ses
+      paramètres ne viennent pas, pour l'essentiel, des barèmes de l'IPP. Son
+      dépôt répond à `git ls-remote` depuis une session (1er octobre 2026).
+
+  - id: trajectoire
+    nom: TRAJECTOiRE
+    auteur: DREES
+    nature: microsimulation_dynamique
+    publication: ouvert
+    code: https://git.drees.fr/drees_code_public/modeles/trajectoire
+    licence: EUPL
+    usage: executer_a_part
+    confronte: [scenario_1, cout]
+    couvre: >-
+      Les pensions de tous les régimes, sur l'échantillon interrégimes de
+      cotisants, et en mode cas types, régimes spéciaux et libéraux compris.
+    depend_de: [baremes_ipp, calcul_pension]
+    confrontation: >-
+      Un calcul rejoué, à part : ses cas types, et ses hypothèses de
+      carrière, à confronter à la trajectoire d'emploi du COR que le dépôt a
+      adoptée.
+    sas: [drees_trajectoire]
+    lu_le: 2026-10-01
+    lu_dans:
+      - docs/decisions/0001-architecture.md
+      - https://gitlab.com/DREES_code/public/outils/calcul_pension
+    note: >-
+      Ses fonctions de calcul sont celles de calcul_pension, « utilisées
+      telles quelles », dit le README de ce dernier : un accord des deux ne
+      compte qu'une fois.
+
+  - id: calcul_pension
+    nom: calcul_pension (paquet R calculPension)
+    auteur: DREES
+    nature: cas_types
+    publication: ouvert
+    code: https://gitlab.com/DREES_code/public/outils/calcul_pension
+    licence: EUPL-1.2
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      Les droits directs de cas types, sur plusieurs régimes obligatoires
+      mais pas tous, avec des simplifications que son README assume ; pas
+      annuel pour la carrière, mensuel pour les dates. Un dossier refait les
+      cas types du COR.
+    depend_de: [baremes_ipp]
+    confrontation: >-
+      Un calcul rejoué, en R, à part : les cas types du COR, qu'il porte, et
+      des carrières simples décrites des deux côtés.
+    sas: [drees_calcul_pension]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://gitlab.com/DREES_code/public/outils/calcul_pension
+      - https://gitlab.com/api/v4/groups/DREES_code%2Fpublic/projects
+    note: >-
+      Cloné le 1er octobre 2026 : version 0.1, dernier commit de sa branche
+      principale du 20 janvier 2023, licence EUPL 1.2 dans `LICENSE`,
+      paramètres téléchargés des barèmes de l'IPP.
+      Son README : « Les fonctions du paquet sont utilisées telles quelles
+      dans le modèle de microsimulation Trajectoire. »
+
+  - id: caliper
+    nom: CALIPER (CALcul Interrégimes des PEnsions de Retraite)
+    auteur: DREES
+    nature: calculateur
+    publication: documente
+    documentation:
+      - https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/loutil-caliper-calcul-interregimes-des-pensions-de-retraite
+      - https://drees.solidarites-sante.gouv.fr/etudes-et-statistiques/publications/les-dossiers-de-la-drees/dossiers-solidarite-et-sante/article/caliper-un-outil-de-simulation-pour-le-calcul-interregimes-des-pensions-de
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [scenario_1]
+    couvre: >-
+      Les droits directs de dix régimes, six de base et quatre
+      complémentaires — Cnav, MSA salariés, artisans, commerçants, fonction
+      publique de l'État, CNRACL, Arrco, Agirc, Ircantec —, majorations pour
+      enfants comprises, sur des carrières réelles de l'EIC et de l'EIR ou
+      sur des cas types ; ni la réversion ni le minimum vieillesse, qui
+      demandent le ménage. Écrit en SAS.
+    confrontation: >-
+      Des résultats publiés à retrouver : la réforme de 1993, de 2003 et de
+      2008 sur les pensions de base de la génération 1938 ; et sa validation
+      sur l'EIR 2004, 95,5 % des pensions de la Cnav retrouvées à un euro par
+      mois près, une précision à viser.
+    sas: [drees_caliper]
+    lu_le: 2026-10-01
+    lu_dans: [http://gesd.free.fr/caliper.pdf]
+    note: >-
+      Lu dans le Dossier solidarité et santé n° 37 de mars 2013 (Duc et
+      Lermechin), servi par un miroir : le 1er octobre 2026, le site de la
+      DREES ferme la connexion sans répondre, comme le 22 septembre. Un
+      moteur de recherche résume sa page en disant l'outil réécrit en R et
+      publié comme calcul_pension ; non lu à la source, donc non retenu.
+
+  # ---- Les ministères ----------------------------------------------------
+
+  - id: osiris
+    nom: OSIRIS
+    auteur: Direction de la sécurité sociale (DSS)
+    nature: cas_types
+    publication: non_public
+    documentation: [http://gesd.free.fr/caliper.pdf]
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [scenario_1]
+    couvre: >-
+      Une maquette de calcul des pensions « conçue pour s'appliquer
+      exclusivement à des analyses sur cas-types », que la DREES compare à
+      CALIPER en 2013.
+    confrontation: >-
+      Aucune : seul son nom est publié, par la DREES en 2013. Des cas types
+      qu'elle aurait chiffrés, aucun n'est encore relevé.
+    lu_le: 2026-10-01
+    lu_dans: [http://gesd.free.fr/caliper.pdf]
+
+  # ---- Les caisses -------------------------------------------------------
+
+  - id: prisme
+    nom: PRISME
+    auteur: Cnav
+    nature: microsimulation_dynamique
+    publication: non_public
+    documentation:
+      - https://www.statistiques-recherche.lassuranceretraite.fr/app/uploads/2009/11/simulations-effets-passage-calcul-pensions-rg-a-systeme-en-comptes-notionnels_evolution.pdf
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition, cout]
+    couvre: >-
+      Le régime général, projeté ; en 2009, sa bascule en comptes
+      notionnels, la seule étude française qui fasse la même opération que le
+      dépôt, paramètres publiés.
+    confrontation: >-
+      Des résultats publiés à retrouver : masses de prestations inférieures
+      de 7 % en 2050, l'effet d'une table de mortalité par génération, la
+      part des droits non contributifs dans les comptes.
+    manifeste: [cnav_comptes_notionnels_2009, cor_septieme_rapport]
+    lu_le: 2026-10-01
+    lu_dans: [data/sources.yaml]
+
+  # ---- Le COR ------------------------------------------------------------
+
+  - id: maquette_sg_cor
+    nom: Maquette simplifiée du secrétariat général du COR
+    auteur: COR
+    nature: projection
+    publication: documente
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [proposition]
+    couvre: >-
+      Un système en répartition stylisé, soumis à des chocs, calculé en
+      annuités, en points et en comptes notionnels (séance du 5 juillet 2017).
+    confrontation: >-
+      Des résultats publiés à retrouver : l'équilibre d'un régime notionnel
+      revalorisé sur la masse salariale, la cohérence du coefficient de
+      conversion avec la revalorisation des pensions, des déficits
+      transitoires « de l'ordre de 10 % de la masse des cotisations » sur un
+      choc démographique.
+    manifeste: [cor_retour_septieme_rapport]
+    lu_le: 2026-10-01
+    lu_dans: [data/sources.yaml]
+
+  # ---- L'Urssaf : les règles publicodes ----------------------------------
+
+  - id: modele_ti
+    nom: modele-ti
+    auteur: Urssaf (mon-entreprise)
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/betagouv/mon-entreprise
+    documentation: [https://www.npmjs.com/package/modele-ti]
+    licence: MIT
+    usage: copier
+    confronte: [scenario_1]
+    couvre: >-
+      Les règles publicodes des travailleurs indépendants : cotisations,
+      trimestres et points de la CNAVPL, de la Cipav et du RCI, la réforme
+      de l'assiette de 2025 comprise ; environ une règle sur deux cite sa
+      source.
+    version: "0.1.0"
+    confrontation: >-
+      Un calcul rejoué : le simulateur en ligne de l'Urssaf le charge, et une
+      grille de revenus de 2024 à 2026 y rend les points de la CNAVPL et les
+      cotisations de la Cipav du dépôt au dixième près.
+    ecarts:
+      - constat: >-
+          Chez nous, l'assiette minimale de 2025 (450 SMIC horaires) ne
+          validait que deux trimestres : une division en virgule flottante
+          rendait 2,999….
+        tranche: l'erreur était la nôtre, corrigée, et tenue par tests/test_sections_liberales.py
+        preuve: data/sources_a_explorer.yaml (mon_entreprise_cipav)
+      - constat: >-
+          Il appelle la cotisation minimale à revenu nul, dont les
+          bénéficiaires du RSA sont dispensés.
+        tranche: le droit dispense, et ni lui ni le dépôt ne savent qui touche le RSA ; écart déclaré
+        preuve: docs/archives/limites.md (« Les dernières sections libérales »)
+    sas: [mon_entreprise_cipav]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://registry.npmjs.org/modele-ti
+      - data/sources_a_explorer.yaml
+    note: >-
+      Paquet npm `modele-ti` 0.1.0 du 16 juillet 2026, licence MIT, dans le
+      répertoire `modele-ti` du dépôt de mon-entreprise.
+
+  - id: modele_social
+    nom: modele-social
+    auteur: Urssaf (mon-entreprise)
+    nature: calculateur
+    publication: ouvert
+    code: https://github.com/betagouv/mon-entreprise
+    documentation: [https://www.npmjs.com/package/modele-social]
+    licence: MIT
+    usage: copier
+    confronte: [scenario_1]
+    couvre: >-
+      Les règles publicodes du système social français : les cotisations de
+      tous les statuts, vieillesse comprise, datées.
+    version: "11.1.0"
+    confrontation: >-
+      Des paramètres à comparer : ses taux de cotisation vieillesse, datés,
+      lisibles par machine, aux taux que le dépôt lit au texte.
+    ecarts:
+      - constat: >-
+          Le paquet porte encore les paramètres d'avant 2025 : 8,23 % et
+          525 points pour la CNAVPL, 9 et 22 % pour la Cipav.
+        tranche: la réforme de l'assiette de 2025, que modele-ti suit ; le paquet est en retard
+        preuve: data/sources_a_explorer.yaml (mon_entreprise_cipav)
+    sas: [mon_entreprise_bibliotheque, mon_entreprise_depot]
+    lu_le: 2026-10-01
+    lu_dans:
+      - https://registry.npmjs.org/modele-social
+      - data/sources_a_explorer.yaml
+    note: >-
+      Paquet npm `modele-social` 11.1.0 du 16 juillet 2026, licence MIT, dans
+      le répertoire `modele-social` du même dépôt que modele-ti.

@@ -76,7 +76,7 @@ CONTROLES = {
     "test_pap_plf_2026.py", "test_opef_frais_per.py",
     # Les registres.
     "test_frontiere_contributive.py", "test_sources_a_explorer.py",
-    "test_source_locale.py",
+    "test_source_locale.py", "test_referents.py",
     # L'outillage du dépôt : l'index de la DILA, la publication sur main, ce
     # partage-ci, et le filet des déplacements (docs/architecture.md, § 12).
     "test_dila_index.py", "test_pousser.py", "test_niveaux.py",

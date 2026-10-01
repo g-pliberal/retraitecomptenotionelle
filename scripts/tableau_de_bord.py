@@ -15,9 +15,10 @@ page est calculé ici. Depuis la phase 2, il lit la carte des règles
 (``data/reference/regles/``) et la liste de contrôle des textes
 (``data/reference/textes/``) ; les registres qui ne sont pas encore des vues le
 complètent — l'inventaire des régimes et leurs effectifs, les exemples
-officiels, les réformes, les sources à explorer, la feuille de route. Une
-correction ne demande donc qu'un geste : corriger la fiche ou le registre, puis
-relancer le script. ``tests/test_prose.py`` refuse une copie périmée.
+officiels, les réformes, les sources à explorer, les autres modèles, la
+feuille de route. Une correction ne demande donc qu'un geste : corriger la
+fiche ou le registre, puis relancer le script. ``tests/test_prose.py`` refuse
+une copie périmée.
 
 Il part de la maquette qui a éprouvé l'architecture
 (``docs/decisions/0001/tableau_de_bord.py``, § 14.7 de la note 0001), et n'a
@@ -216,6 +217,7 @@ def page() -> str:
     exemples = lire_yaml("tests/temoins/exemples_officiels.yaml")["exemples"]
     reformes = lire_yaml("data/reference/legislation/reformes.yaml")["reformes"]
     sources = lire_yaml("data/sources_a_explorer.yaml")["sources"]
+    referents = lire_yaml("data/reference/referents.yaml")["referents"]
     effectifs = lire_csv("data/reference/regimes/effectifs_retraites.csv")
     parts_derives = lire_csv("data/reference/macro/part_droits_derives.csv")
     feuille = (RACINE / "docs" / "feuille_de_route.md").read_text(encoding="utf-8")
@@ -313,6 +315,16 @@ def page() -> str:
                 utiles[reg].append(s["id"])
     sans_regime = sum(1 for s in a_explorer if not s.get("regimes"))
     n_utiles = len({i for ids in utiles.values() for i in ids})
+    # Les autres modèles (§ 3.4) : ceux que le dépôt a déjà confrontés ou dont
+    # il tire des valeurs, et par quoi commencer — un code ouvert, jamais
+    # confronté, qui ne dépend d'aucune autre source du registre et compte
+    # donc pour une confirmation à lui seul.
+    publications = collections.Counter(r["publication"] for r in referents)
+    tires = [r for r in referents if r.get("manifeste") or r.get("version")]
+    premiers = [r for r in referents
+                if r["publication"] == "ouvert" and not r.get("depend_de")
+                and r not in tires and "scenario_1" in r["confronte"]]
+    n_ecarts = sum(len(r.get("ecarts", [])) for r in referents)
     en_cours = [(n, t) for n, t, s in actions if s == "en cours"]
     hors_champ = [r for r in inventaire if r["couverture"] == "hors_champ"]
 
@@ -563,6 +575,15 @@ def page() -> str:
         w(f"  - {par_code[reg]['nom']} : {len(ids)} source(s) "
           f"({', '.join(ids[:3])}{'…' if len(ids) > 3 else ''})")
     w(f"  - et {sans_regime} sources sans régime désigné.")
+    w(f"- **Les autres modèles** (§ 3.4) : {len(referents)} au registre "
+      f"(`data/reference/referents.yaml`) : {publications['ouvert']} au code ouvert, "
+      f"{publications['sur_demande']} sur demande, {publications['documente']} "
+      f"documenté(s) sans leur code, {publications['non_public']} non public(s). "
+      f"{len(tires)} ont déjà été confrontés au dépôt ou lui donnent des valeurs ("
+      + ", ".join(r["nom"] for r in tires) + f"), et {n_ecarts} écarts y ont été "
+      "trouvés. À confronter d'abord au scénario 1, parce que leur code est ouvert, "
+      "qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du "
+      "registre : " + ", ".join(f"`{r['id']}`" for r in premiers) + ".")
     w(f"- **Les fiches sans exemple officiel** : {len(veille) - avec_exemple}.")
     communes = sorted(set.intersection(*map(set, sans_decision.values())))
     avec_etape = [f for f in communes if fiches_du_droit_reel[f].get("etape")]
