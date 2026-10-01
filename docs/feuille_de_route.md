@@ -339,6 +339,17 @@ ressource » — ou une présomption déclarée.
 
 ### 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage — `en cours`
 
+**Reprise, au 1er octobre 2026.** La garantie, avance de l'État reprise sur la
+succession dès le premier euro, est écrite au programme et chiffrée sur la
+page Coût en brut, reprises et net, d'après des patrimoines publiés (INSEE,
+COR) et des hypothèses. Restent le fichier individuel de l'enquête Histoire de
+vie et Patrimoine, qui remplacerait ces estimations par des données, et une
+phrase du programme disant pourquoi il reprend là où le Parlement renonce
+(aucune note ne la dit écrite). L'action attend une personne : le fichier
+standard se commande sur inscription à Progedo-ADISP ; à vérifier au
+dictionnaire que la pension individuelle y est ; seule la table agrégée
+entrerait au dépôt, avec son script. Détail : « Ce qui reste du point 1 ».
+
 **Demande.** « Dans notre cas, la reprise sur succession est dès le premier
 euro + on prend des intérêts pour ne pas y perdre au niveau des finances
 publiques. » Puis, sur la règle proposée : « Tout me va là-dedans. Il faut
@@ -767,6 +778,17 @@ comptable, et la page dit déjà, sous le tableau, que le total remplacé est un
 borne basse et l'écart une borne haute.
 
 ### 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026 — `en cours`
+
+**Reprise, au 1er octobre 2026.** Les 260 adresses, inventoriées et sondées,
+se dépouillent par lots. Sont faits l'IRCEC, les libérales, la CRPN,
+l'Ircantec, l'ENIM, la fonction publique de l'État, la CNRACL et la Caisse des
+dépôts ; leurs restes sont sous « laisse ouvert » et « Puis le
+rétablissement » (temps partiel de la fonction publique, récupérateur de
+l'annexe 8-1 de l'Ircantec). Restent les adresses `a_explorer` de
+`data/sources_a_explorer.yaml`, que compte le tableau de bord, dont le RAFP,
+voisin du dernier lot, puis le CLEISS, les quatre modèles publics et
+mon-entreprise (« Marche »). Commencer par le RAFP : réserver ses lignes par
+un commit `en_cours` poussé seul ; méthode : `docs/exploration_sources.md`.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
@@ -1349,6 +1371,17 @@ les complémentaires libérales, contre les dix fiches.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 
+**Reprise, au 1er octobre 2026.** Fait : le plafond du RAFP, les points
+gratuits de la RCO, l'Arrco des cultes et le salaire annuel moyen de la
+CAVIMAC. Reste, dans cet ordre : les fractions de pension de la CAVIMAC (avant
+1979, puis 1979 à 1997) ; les ouvriers de l'État hors du RAFP ; le barème de
+l'Ircantec pour enfants ; le routage calédonien et sa ligne d'inventaire ; les
+deux exceptions au plafond du RAFP (GIPA, compte épargne-temps) et la
+cotisation volontaire outre-mer ; les 66 points gratuits des conjoints, aides
+familiaux et collaborateurs ; les huit taux de l'Arrco des cultes. Commencer
+par les fractions de la CAVIMAC (note « Puis le salaire annuel moyen de la
+CAVIMAC », `limites.md`, registre de veille).
+
 **Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
 régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
 faite : « vas-y, commence par le plafond RAFP », et « vas-y » pour la suite
@@ -1499,6 +1532,17 @@ les cultes, `data/reference/legislation/affiliations.yaml`,
 
 ### 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes — `en cours`
 
+**Reprise, au 1er octobre 2026.** Fait : la SNCF, la RATP et les IEG (âges par
+génération dans `ages_regimes.csv`, durée au mois des conditions réunies).
+Restent dix fiches, à commencer par `cps_saint_pierre_et_miquelon`, puis
+`cssm_mayotte`, `cps_polynesie`, `cafat_nouvelle_caledonie`,
+`fonctionnaires_pacifique`, `crpnpac`, `crpnpac_tranche_2`, `crpcen`,
+`comedie_francaise`, `assemblees_parlementaires`. Pour chacune, texte en main
+: l'âge suit-il la génération ou l'année ? si la génération, sa table ; la
+durée suit-elle la date des conditions réunies ou la génération ? Enfin le
+test : une règle datée valable pour toute génération de 1920 à ce jour. Détail
+: « Fait le 23 septembre 2026 », « Ce qui reste, fiche par fiche ».
+
 **Demande.** « Il faut prendre en compte la loi applicable pour tout le monde
 et pas seulement pour les derniers entrants ou sortants » ; « il faut aussi
 prendre le cas des personnes déjà à la retraite » ; « mon site doit
@@ -1549,6 +1593,17 @@ réponde, pour toute génération de 1920 à aujourd'hui, par une règle datée 
 vaut pour elle. C'est le test à écrire à la fin de ce chantier.
 
 ### 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut — `en cours`
+
+**Reprise, au 1er octobre 2026.** Le réglage `contribution_etat` est fait, et
+`retraite_seule` en est le défaut depuis le 24 septembre, sur décision du
+propriétaire. Reste le point 1 : une vraie série année par année de la part
+« retraite seule », au lieu de la proportion de 2025 prêtée aux autres années
+(fiabilité `estimee`). Il attend le projet de loi de finances pour 2027, à
+déposer au plus tard le 6 octobre, où la Cour demande que la décomposition
+soit publiée. Commencer par voir s'il est déposé, en tirer le jaune pensions
+du miroir de l'Assemblée nationale, comme celui de 2026, puis faire accepter
+plusieurs années à `PartRetraiteSeuleEtat` (`donnees/regimes.py`,
+`moteur/js/regimes.js`). Détail : « Le point 1 reste ouvert ».
 
 **Demande.** « Dis-moi en plus sur le taux seulement dédié à la retraite, ça
 m'intéresse — ça peut changer beaucoup de choses », puis : « intègre-le comme
@@ -1807,6 +1862,17 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
+
+**Reprise, au 1er octobre 2026.** Fait : architecture décidée, phases 0 à 8
+faites, cinq domaines ouverts sur demande puis clos (enfants, réversion,
+départs multiples, invalidité, carrières hors de France). Reste : les points
+ouverts des phases 2 à 8 ; la décision de la proposition, à prendre par le
+propriétaire, pour la retraite progressive, le cumul et la seconde pension
+(README muet) ; les restes consignés dans les fiches de chaque domaine, dont,
+hors de France, la comparaison des pensions des fonctionnaires ; le domaine
+suivant, à mesurer à son ouverture sur les sources publiques. Commencer par
+lui : liste et gabarit du § 11 de `docs/architecture.md`. Détail : de « Le
+cinquième domaine » à la fin ; la mesure, « Le deuxième domaine ».
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -3733,6 +3799,17 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
+**Reprise, au 1er octobre 2026.** Les écarts des dix fiches sont presque tous
+corrigés, un commit chacun avec le diff de ses témoins. Restent : les coupures
+au mois (1er avril 1983, CAVEC, RACL) ; `retraite_proportionnelle_msa`, le
+maximum M, série de l'AVTS à faire entrer (zone des données) ;
+`cotisation_par_classes_liberales`, les grilles ; puis les restes de
+`coefficients_anticipation_agirc_arrco`, `decote_avant_1983`, des artisans et
+commerçants, de `pension_non_salaries_agricoles_2026` et de R. 173-4-3.
+Commencer par les coupures : voir si les versions datées
+(`docs/architecture.md`, § 4.6), ouvertes par le domaine des enfants, les
+permettent. Détail et raisons : à partir de « Ce qui reste de l'action ».
+
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui
 prenait rien : ni fichier commun, ni fichier déplacé, ni résultat. Les dix
@@ -4032,6 +4109,17 @@ civil qui la précède.
 
 ### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
 
+**Reprise, au 1er octobre 2026.** L'étage de chaque régime, la ligne sous le
+système 1 et le détail sont faits. Restent deux routages du scénario 1
+(session des données). La complémentaire des mineurs, l'Agirc-Arrco, attend
+une décision du propriétaire : la servir plus tard que la base, et ce que vaut
+le système 1 entre cinquante-cinq et soixante ans ; viendraient ensuite son
+routage (taux de l'Arrco), les allocations de l'ANGDM, les ETAM et les
+ingénieurs. Celle des chemins de fer secondaires commence par des lectures :
+valeur du point et salaire de référence (arrêtés de 1955 et 1956), adhésion à
+l'Arrco, caisse autonome mutuelle d'après 1954. Commencer par ces lectures.
+Détail : « Le 28 septembre 2026, suite ».
+
 **Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
 du montant des retraites dans les différents scénarios, c'est normal ? On ne
 devrait pas avoir la retraite de base et ensuite toutes les complémentaires
@@ -4241,6 +4329,17 @@ de statuts et les `manque` de la page Méthode.
   d'après 1954 et y garder les agents embauchés avant le 1er octobre 1954.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
+
+**Reprise, au 1er octobre 2026.** Fait : le levier 1 (scripts) ; une bonne
+part du levier 3, la suite complète tenant en deux minutes à chaud ;
+l'installation au démarrage, par un hook asynchrone ; contre le coût en
+jetons, « Économiser le contexte » dans `CLAUDE.md` et ces blocs « Reprise ».
+Reste : le levier 2, des tests sans présomptions ; le 3, indexer la mémoire
+des calculs sur le seul code du modèle (`memoire.py`), puis `test_cout.py`,
+les grilles des tests d'âge et `actions/cache` sur GitHub ; le 4, le parcours
+de présentation, à déclarer autrement qu'en récit ; le 5, que le propriétaire
+décide. Commencer par l'indexation. Détail : « Les cinq leviers », et la note
+du 1er octobre sur les jetons.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
@@ -4539,7 +4638,35 @@ premières secondes peut ne pas trouver pytest, et `CLAUDE.md` dit alors de
 relancer plutôt que de réinstaller. Essayé depuis un état neuf : 6 s, une
 seule ligne sur la sortie standard, rien sur la sortie d'erreur.
 
+**Le même jour, le coût en jetons mesuré, et deux retouches pour le
+contenir**, à la demande du propriétaire, qui trouvait qu'on consommait
+énormément pour avancer, malgré les tentatives précédentes. Les douze sessions
+du 27 septembre au 1er octobre ont coûté environ 1 000 $ en équivalent API,
+dont 880 $ pour les six qui ont duré de sept heures à deux jours. Deux tiers
+du coût sont la relecture du contexte : chaque appel d'outil relit toute la
+conversation, qui montait à 500 000 ou 770 000 jetons dans ces sessions, la
+compaction ne venant qu'à 80 % d'un million. Les retouches précédentes
+raccourcissaient les tests et l'installation, du temps et non des jetons ; le
+dépôt ne pèse qu'environ 6 000 des 70 000 jetons qu'une session porte au
+départ. Les leviers sont la durée des sessions, l'effort et le modèle, que le
+propriétaire règle, et ce que chaque session lit. D'où, dans `CLAUDE.md`, la
+section « Économiser le contexte » — une session par étape, chercher avant de
+lire, les sorties longues par `tail`, l'enquête à la mesure de la question —,
+et, sous le titre de chaque action en cours, un bloc « Reprise » de dix lignes
+au plus, seul à lire au démarrage, que la session qui avance l'action récrit.
+
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
+
+**Reprise, au 1er octobre 2026.** Fait : `data/reference/referents.yaml`, le
+registre (69 modèles, 47 en France) ; l'action 136 est à part. Reste :
+confronter d'abord, dans l'ordre du tableau de bord, ce qui est ouvert, jamais
+confronté et indépendant, Destinie 2 (réversion, ASPA, enfants), Ines (ASPA,
+prélèvements), `legiretraite` (âges, durées), EDIFIS (taux de cotisation),
+puis le diviseur de la proposition contre ceux de la Suède, de la Norvège et
+de l'Italie ; relire la page de la DREES sur CALIPER et son communiqué de
+2021, quand son serveur répondra ; reprendre les pistes non vérifiées (M@rel,
+Aphrodite, Oscar, Osiris, etc.). Commencer par Destinie 2 : son entrée du
+registre dit comment la confronter. Détail : « Ce que la liste apprend ».
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore

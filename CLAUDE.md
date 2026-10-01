@@ -5,11 +5,10 @@ le livrable est le site statique (`README.md`). L'architecture est dans
 `docs/architecture.md` ; où en est le dépôt, et ce qui reste à faire, dans le
 tableau de bord `docs/etat.md`, que `python scripts/tableau_de_bord.py`
 fabrique ; les chantiers ouverts, dans `docs/feuille_de_route.md` : une
-session qui cherche quoi faire commence par ses actions `en cours` et ce que
-leurs dernières notes laissent ouvert, et y note ce qu'elle a fait. Ce
-fichier ne garde que les
-règles : l'histoire de chacune, et l'incident qui l'a fait naître, sont dans
-`docs/archives/conventions.md`.
+session qui cherche quoi faire n'y lit que le bloc « Reprise » qui ouvre
+chacune de ses actions `en cours`, et y note ce qu'elle a fait. Ce fichier ne
+garde que les règles : l'histoire de chacune, et l'incident qui l'a fait
+naître, sont dans `docs/archives/conventions.md`.
 
 ## Git : tout va sur `main`
 
@@ -79,6 +78,35 @@ rebasage. Un conflit de prose qui ne porte que sur des chiffres ancrés
 `git checkout --theirs` sur un fichier de prose : il reprend le fichier
 entier d'un côté, et efface ce que l'autre session y a écrit.
 
+## Économiser le contexte
+
+Chaque appel d'outil relit toute la conversation : ce qu'une session a lu,
+elle le repaie à chaque geste suivant, et elle coûte d'autant plus cher
+qu'elle dure. D'où cinq règles.
+
+- **Une session, une étape.** L'étape poussée sur `main`, la session s'arrête
+  et le dit au propriétaire ; l'étape suivante s'ouvre dans une session neuve.
+- **Au démarrage, le bloc « Reprise » seul.** Chaque action `en cours` de la
+  feuille de route s'ouvre, sous son titre, sur un paragraphe
+  `**Reprise, au <date>.**` de dix lignes au plus : où elle en est, ce qui
+  reste, par quoi commencer, et la note à lire pour le détail. La session qui
+  avance l'action le récrit, daté du jour, au commit de sa note ; c'est le
+  seul paragraphe d'une action qui se récrit.
+- **Chercher avant de lire.** `grep -n` d'abord, puis la seule fenêtre utile
+  (`Read` avec `offset` et `limit`, ou `sed -n`). Ne se lisent jamais en
+  entier : `moteur/js/pages.js`, `docs/feuille_de_route.md` et les archives,
+  `docs/architecture.md`, `README.md`, `tests/test_simulateur.py`,
+  `scripts/verifier_donnees.py`, `data/sources.yaml`, ni `moteur/donnees.json`
+  et les témoins de `tests/temoins/`, qui se lisent par `resumer_temoins.py`
+  ou par une requête ciblée.
+- **Les sorties longues passent par `tail` ou `grep`** :
+  `python -m pytest 2>&1 | tail -n 30`, de même pour `regenerer.py` et
+  `resumer_temoins.py` ; jamais de `git diff` ni de `git show` entier sur un
+  témoin ou sur `pages.js`.
+- **L'enquête à la mesure de la question.** Une question appelle la
+  vérification qui y répond, pas davantage ; une recherche en éventail,
+  plusieurs agents en parallèle, ne se lance qu'à la demande du propriétaire.
+
 ## Travailler
 
 - **Mise en route** : `pip install -e '.[dev]'`. Sans lui, `python -m pytest`
@@ -141,8 +169,9 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   `python scripts/chiffrage_plf.py`, jamais à la main.
 - **La documentation, au plus court** : une note de feuille de route par
   étape, au commit qui la clôt, et non une par sous-partie ; une session qui
-  s'arrête en cours d'étape dit seulement où. Une version de l'architecture
-  par domaine, à sa clôture, ou par décision hors domaine. Les fiches et
+  s'arrête en cours d'étape dit seulement où, dans le bloc « Reprise ». Une
+  version de l'architecture par domaine, à sa clôture, ou par décision hors
+  domaine. Les fiches et
   `limites.md` une fois, à la fin de l'étape, sauf ce qu'un test exige plus
   tôt. Un message de commit de cinq lignes au plus sous son titre, le détail
   allant à la feuille de route. Le journal de veille garde sa règle.
@@ -176,8 +205,9 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
 
 ## Listes de contrôle
 
-- **Au début d'une étape** : relever dans la feuille de route et dans les
-  fiches tout ce qui lui est renvoyé, avant d'écrire la moindre ligne.
+- **Au début d'une étape** : lire le bloc « Reprise » de son action, puis
+  relever, par `grep -n` de son numéro ou de son domaine, ce que la feuille de
+  route et les fiches lui renvoient, avant d'écrire la moindre ligne.
 - **Une retouche de `moteur/js/pages.js`** : le budget de mots du formulaire
   vierge (`test_le_simulateur_tient_en_peu_de_mots`) ; toute phrase en gras
   d'une page figée au catalogue `data/reference/site/affirmations.yaml`, avec
