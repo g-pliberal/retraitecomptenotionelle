@@ -892,6 +892,18 @@ class RevalorisationServie:
     lock inversé, qui passe sous les prix la plupart des années, son
     coefficient descend en dessous de 1 et la correction joue à la baisse.
     C'est la conséquence logique de la règle, et non un défaut.
+
+    LE PRÉFINANCEMENT SE REND CHAQUE ANNÉE. Un diviseur actualisé à ν > 0
+    (``taux_anticipe_conversion``) sert d'avance un rendement de ν par an : la
+    pension servie se revalorise alors au taux du compte DIVISÉ par 1 + ν,
+    sans quoi elle dépasserait ce que le compte a financé. C'est la règle
+    suédoise — « l'indice de revenu nouveau sur l'ancien, divisé par 1,016 »,
+    le même nombre que dans le diviseur (Pensionssystemets årsredovisning
+    2025, note 6 ; socialförsäkringsbalken, 62 kap.) —, et celle de la
+    Grèce ; elle vaut pour tout ce que cette classe revalorise, le stock que
+    ``REINDEXE`` reprend compris, comme la Suède l'a donnée à ses anciennes
+    pensions. Le dépôt ne l'appliquait pas jusqu'au 1er octobre 2026 : au
+    défaut, ν = 0, le diviseur est l'espérance de vie et rien ne change.
     """
 
     def __init__(self, simulateur: Simulateur,
@@ -910,6 +922,8 @@ class RevalorisationServie:
         )
         self.premiere_annee = premiere_annee
         self.derniere_annee = max(derniere_annee, premiere_annee)
+        #: Le rendement que le diviseur a servi d'avance : voir la docstring.
+        prefinancement = 1.0 + simulateur.parametres.taux_anticipe_conversion
         index = 1.0
         self._index: dict[int, float] = {self.premiere_annee: index}
         for annee in range(self.premiere_annee + 1, self.derniere_annee + 1):
@@ -918,9 +932,8 @@ class RevalorisationServie:
             # produit de taux nominaux divisé par une inflation cumulée serait
             # la même chose ici, mais cesserait de l'être dès qu'un plancher ou
             # un lissage s'appliquerait à l'un des deux — et il y en a un.
-            index *= (1.0 + indexation.taux(annee).taux) * macro.coefficient_prix(
-                annee, annee - 1
-            )
+            index *= (1.0 + indexation.taux(annee).taux) / prefinancement * (
+                macro.coefficient_prix(annee, annee - 1))
             self._index[annee] = index
 
     def _valeur(self, annee: int) -> float:

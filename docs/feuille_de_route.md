@@ -4657,16 +4657,16 @@ au plus, seul à lire au démarrage, que la session qui avance l'action récrit.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
-**Reprise, au 1er octobre 2026.** Fait : `data/reference/referents.yaml`, le
-registre (69 modèles, 47 en France) ; l'action 136 est à part. Reste :
-confronter d'abord, dans l'ordre du tableau de bord, ce qui est ouvert, jamais
-confronté et indépendant, Destinie 2 (réversion, ASPA, enfants), Ines (ASPA,
-prélèvements), `legiretraite` (âges, durées), EDIFIS (taux de cotisation),
-puis le diviseur de la proposition contre ceux de la Suède, de la Norvège et
-de l'Italie ; relire la page de la DREES sur CALIPER et son communiqué de
-2021, quand son serveur répondra ; reprendre les pistes non vérifiées (M@rel,
-Aphrodite, Oscar, Osiris, etc.). Commencer par Destinie 2 : son entrée du
-registre dit comment la confronter. Détail : « Ce que la liste apprend ».
+**Reprise, au 1er octobre 2026.** Fait : le registre (69 modèles, 47 en
+France) ; sa relecture, pour ce que chaque modèle fait mieux que le dépôt, à
+l'action 138, qui a lu le code de Destinie 2, d'Ines, de `legiretraite` et
+d'EDIFIS, et refait les diviseurs suédois, norvégien, finlandais, italien et
+polonais : ce qu'elle en tire est au registre, en `fait_mieux` et en
+`ecarts`. Reste ici : exécuter à part, R installé, les modèles ouverts comme
+témoins — Destinie 2 d'abord (l'étape 4 de l'action 138), puis les cas types
+du COR par TRAJECTOiRE, et Ines ; relire la page de la DREES sur CALIPER,
+quand son serveur répondra ; les pistes non vérifiées (le moteur réel de
+M@rel, l'usage d'Oscar) ; les `referents` des fiches, à leur relecture.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore
@@ -4737,3 +4737,188 @@ OpenFisca-France-Pension, en est un cas particulier, mené à part.
 4. Les fiches nomment leurs référents par l'identifiant du registre (le champ
    `referents` du contrat de la fiche) : trois le font ; les autres le feront
    à leur relecture.
+
+### 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris — `en cours`
+
+**Reprise, au 1er octobre 2026.** Fait : l'étape 1. Les modèles du registre
+ont été relus pour ce qu'ils font mieux que le dépôt ; 94 points, lus chez
+eux, sont au registre (`fait_mieux`), avec le chantier qui les reprend, ou la
+raison qui les laisse au propriétaire ; le préfinancement du diviseur est
+rendu sur la pension servie ; des descriptions fausses des systèmes étrangers
+sont corrigées. Reste : les étapes
+2 à 12, une par session, dans l'ordre ci-dessous, et les choix de l'étape 13,
+que le propriétaire tranche. Commencer par l'étape 2, le net du foyer et
+l'ASPA du couple : le registre dit, au chantier « 138.2 », ce que chaque
+modèle en fait et où le lire. Le tableau de bord compte ce qui reste.
+
+**Demande**, le 1er octobre 2026 : « J'aimerais qu'on regarde les modèles de
+simulation qui existent et qu'on les compare à notre projet. Il faut que l'on
+regarde quels points les modèles font mieux que nous. Lorsque les modèles font
+mieux que nous, il faut vérifier (des erreurs peuvent toujours exister) et
+ensuite implémenter avec ce qui se rapproche le plus de la réalité. […] Je
+souhaite que mon modèle soit meilleur en tous points aux modèles existants. »
+
+**Fait, le 1er octobre 2026 : l'étape 1, le relevé.** Sept recherches menées
+en parallèle, une par famille du registre — les microsimulations dynamiques au
+code ouvert, les projections du COR et des caisses, les calculateurs des
+administrations, les simulateurs de la société civile, la microsimulation
+statique et les barèmes, les comptes notionnels nordiques, les autres comptes
+notionnels et les organisations internationales —, chacune lisant le code au
+commit ou le document le jour même ; R manquant au conteneur, aucun modèle n'a
+été exécuté. OpenFisca-France-Pension, que l'action 136 avait relevé, y entre
+par ses points. Le registre reçoit un champ, `fait_mieux` : 94 points chez
+52 modèles — 82 à reprendre, 9 à trancher, 2 repris, 1
+écartés —, et 28 écarts nouveaux, les erreurs trouvées chez les autres. Un
+test exige de chaque point sa preuve et son chantier, ou sa raison ; le
+tableau de bord les compte. L'architecture passe en version 5.34.
+
+Deux corrections sont faites dans la même étape, parce qu'elles sont petites
+et sûres :
+
+- *Le préfinancement rendu.* Un diviseur actualisé à ν sert d'avance un
+  rendement de ν par an ; la pension servie le rend, revalorisée au taux du
+  compte divisé par 1 + ν. C'est la règle suédoise, « l'indice de revenu
+  nouveau sur l'ancien, divisé par 1,016 » (Pensionssystemets årsredovisning
+  2025, note 6), et la grecque. Le dépôt la revalorisait au taux plein, contre
+  la promesse de son diviseur, « à espérance de coût inchangée ». Au défaut,
+  ν = 0 : aucun témoin ne bouge. Deux tests, l'un Python, l'autre JavaScript.
+- *Des descriptions fausses.* La masse salariale n'est le taux d'indexation
+  que des comptes polonais et lettons — la loi polonaise prend les prix
+  majorés de la croissance réelle de la somme des cotisations (art. 25) ; la
+  Suède indexe sur le revenu moyen, l'Italie sur le PIB nominal lissé (README,
+  page Méthode). L'Italie ne « partage » pas le capital du défunt : elle
+  tarife la réversion dans son coefficient, 1,460 des 19,049 années de rente
+  de son diviseur à 65 ans (`cout.py`, `limites.md`). Un système notionnel
+  réel laisse parfois dormir un excédent : la Suède l'a fait jusqu'à son
+  accélérateur de 2026 (`limites.md`). Le lissage sur cinq ans n'est pas la
+  règle italienne, qui prend les cinq années qui précèdent et interdit un
+  coefficient sous un, sauf rattrapage (loi n° 335 du 8 août 1995, art. 1er,
+  al. 9 ; `config.py`, `methodologie.md`). Le tableau de bord ne dit plus que
+  le modèle ne calcule aucune réversion : il en calcule une pour une
+  personne, et c'est la page Coût qui n'en lit que la part publiée. La page
+  Méthode perd aussi une coquille, « alors que les le système 2 ».
+
+**Ce que le relevé apprend.**
+
+- *Sur l'essentiel, aucun modèle ne fait mieux.* Aucun ne couvre autant de
+  régimes ni d'époques ; parmi les modèles français, seuls les barèmes de
+  l'IPP ont la loi du 30 décembre 2025 ; Destinie 2, TRAJECTOiRE,
+  legiretraite, Catala et les simulateurs militants portent des erreurs que le
+  dépôt n'a pas, désormais au registre. Le diviseur du dépôt est plus exact
+  que ceux de la Suède, de la Norvège, de l'Italie et de la Pologne — une
+  table de génération contre une table du moment : à la suédoise, 6 % de
+  pension en trop à 65 ans en 2025 —, et sa formule redonne au millionième le
+  coefficient d'espérance de vie finlandais de 2024.
+- *Le dépôt a tort sur quatre points du scénario 1*, qu'une recherche a
+  trouvés et que la session a relus :
+  1. la validation des trimestres de 1949 à 1971 : R. 351-9
+     (LEGIARTI000053335598) les compte au « montant trimestriel de
+     l'allocation aux vieux travailleurs salariés au 1er janvier de l'année
+     considérée » ; le dépôt valide quatre trimestres à toute année travaillée
+     avant 1972 (`donnees/macro.py`, `trimestres_valides`). Le tableur de
+     vérification Cnav-MSA le fait juste ;
+  2. le minimum vieillesse d'avant 2007, que le dépôt déflate sur les prix
+     depuis le montant de 2006 : 1 195 € au lieu de 457 € en 1970, selon les
+     barèmes de l'IPP, l'écart passant sous 3 % en 1985 ;
+  3. le net : 9,1 % retirés à tous, ASPA comprise, quand la DREES compte
+     22,1 % de retraités de droit direct exonérés de CSG, 13,4 % au taux
+     réduit et 21,6 % au taux médian (la table des prélèvements sociaux de
+     l'EACR, source Ancetre 2024, lue dans le paquet `legiretraite`) ; l'ASPA
+     n'est pas prélevée, et exonère la pension de qui la reçoit
+     (L. 136-1-2) ;
+  4. l'ASPA d'un couple, servie au barème d'une personne seule sans les
+     ressources du conjoint, que la saisie demande pourtant (L. 815-9).
+- *Ce que d'autres savent faire et que le dépôt ne fait pas* : la réversion du
+  régime général entière (Destinie 2) ; la PMR des exploitants et le
+  complément de la RCO (calcul_pension, barèmes de l'IPP) ; la dépense
+  décomposée comme le COR, avec les retraités projetés par régime, ce qui
+  localiserait les trois points de PIB qui séparent en 2070 la page Coût du
+  COR ; les variantes démographiques de l'INSEE ; l'effet retour d'une baisse
+  des pensions sur l'ASPA et la CSG (l'IPP l'estime à 20 à 25 % de
+  l'économie) ; les indicateurs de cycle de vie (TRAJECTOiRE, OCDE) ;
+  plusieurs âges de départ côte à côte (M@rel) ; la trace d'un calcul
+  (Publicodes, Catala, et OpenFisca à l'action 136).
+- *Ce que la proposition doit trancher*, parce que l'arithmétique étrangère le
+  fait et que le programme n'en dit rien : l'étape 13.
+
+**Les étapes**, dans l'ordre, chacune valant seule ; le registre cite chacune
+par son chantier (« 138.2 »…) :
+
+1. Le relevé, et ses corrections immédiates. *Fait, le 1er octobre 2026.*
+2. Le net du foyer et l'ASPA du couple, au scénario 1 et sur le site : la CSG,
+   la CRDS, la CASA et le 1 % des complémentaires selon le revenu fiscal de
+   référence — celui de N−2, le lissage par N−3, les parts selon le conjoint,
+   l'abattement de 10 % —, l'exonération des allocataires de l'ASPA, les
+   non-résidents ; l'ASPA du couple, son plafond et les ressources du
+   conjoint. Sources : L. 136-8, L. 136-1-2, L. 137-41, D. 242-8 et D. 242-9,
+   L. 815-9, D. 815-2, R. 815-29, fiches F2971 et F16871. Confrontations :
+   OpenFisca-France, Ines, `retraites_2027`, et la répartition des taux de
+   l'EACR.
+3. La page Coût décomposée comme le COR : les retraités projetés par régime
+   (le classeur du COR), la décomposition dépendance × couverture × pension
+   relative confrontée au COR de juin 2026 et à l'Ageing Report de 2024, la
+   part des reportés en emploi lue à l'INSEE au lieu du plafond de un, la CSG
+   effective (CCSS), le « tax gap », le « pension gap » et le levier de l'âge,
+   les contrôles d'Ancetre.
+4. La réversion du régime général entière : minimum et maximum, majoration de
+   11,1 %, plafond de ressources du ménage, partage entre ex-conjoints, décès
+   avant le départ, enfants (D. 353-1, L. 353-3, L. 353-6, D. 353-4,
+   R. 353-1-1, et la circulaire de la Cnav) ; puis Destinie 2, et les cas
+   types du COR par TRAJECTOiRE, exécutés à part comme témoins, R installé.
+5. L'effet retour sur les finances publiques : l'ASPA que déclenchent les
+   petites pensions des scénarios 2 à 5, la CSG proportionnelle aux masses,
+   l'impôt borné par l'IPP.
+6. L'AVTS et le minimum vieillesse d'avant 2007, au Journal officiel : la
+   validation de 1949 à 1971, la série du minimum de 1956 à 2006, le
+   trimestre des DOM.
+7. La démographie en variantes : les quotients projetés âge par âge au lieu de
+   la loi de Gompertz-Makeham, les variantes de l'INSEE de 2026 — fécondité,
+   espérance de vie, migrations —, dans la population du Coût et dans le
+   diviseur.
+8. Les minima des exploitants : la PMR et le complément différentiel de la RCO
+   (code rural, L. 732-54-1 à L. 732-54-4 et L. 732-63).
+9. Les indicateurs de cycle de vie, par cas type et génération, sous les six
+   systèmes : rendement interne, durée de retraite, taux de récupération,
+   patrimoine retraite ; confrontés à l'OCDE de 2025 et aux cas types du COR.
+10. Le site : plusieurs âges de départ côte à côte, les droits contrefactuels
+    (au 31 août 2023, la loi de 2023 sans suspension), le contrôle d'un
+    relevé, l'indice majoré, le solveur inverse.
+11. L'arithmétique notionnelle éprouvée : les exemples officiels du diviseur
+    (Suède, Finlande, Italie, Pologne), le lissage italien exact, le lissage
+    du seul réel, le prorata des mois de l'année du départ, les années sans
+    montant (points convertis), les chocs stylisés du secrétariat général du
+    COR.
+12. Le scénario 1, compléments : la seconde pension revalorisée et
+    replafonnée, les micro-entrepreneurs par leur chiffre d'affaires et le
+    chemin de la Cipav, les artistes-auteurs sous le seuil, la dispense des
+    cotisations minimales, le rachat de trimestres, le coût du travail
+    complet, la veille des projets de loi.
+13. Les choix du programme, que le propriétaire tranche (ci-dessous).
+14. Ce qui demande une population ou des microdonnées, avec l'action 136
+    (étape 6) : une population simulée, des départs choisis, la validation
+    sur des pensions réelles (l'EIR, au CASD).
+
+**Ce que le propriétaire tranche** (étape 13), chaque choix chiffré au
+registre, au point `a_trancher` du modèle qui le fait :
+
+- les gains d'héritage : le compte d'un assuré mort avant sa retraite rendu à
+  sa génération, comme en Suède et en Norvège, soit 4 à 10 % de plus sur
+  toutes les pensions notionnelles ; le programme ne dit pas ce que devient
+  ce compte ;
+- le diviseur des droits acquis à la bascule : celui de l'année de la bascule,
+  le choix actuel, que la Pologne a fait, ou celui de la génération de
+  l'assuré, que retient le modèle de la Banque mondiale (PROST) ; sous le
+  premier, la part figée de l'actif de quarante ans en 2026 perd 9,0 %, celle
+  de l'actif de trente ans 11,8 % ;
+- la réversion tarifée dans le diviseur, comme en Italie, sous
+  `convention_reversion="servie"` ;
+- l'équilibrage appliqué, à la suédoise : un indice d'équilibre de stocks, un
+  frein et un accélérateur ;
+- la convention de l'Agirc-Arrco en projection : celle du COR (le salaire
+  moins 1,16 point jusqu'en 2037, puis moins 0,86) ou celle du dépôt
+  (rendement gelé, prix) ;
+- l'indexation suspendue en déficit, à la grecque ; les frais de gestion
+  déduits du compte, à la suédoise ;
+- pour le net de l'étape 2, une présomption déclarée — « aucun autre revenu
+  que ses pensions » — ou un champ de plus, la question que l'action 136
+  posait déjà.

@@ -291,10 +291,14 @@ la première année publiée, `SerieAnnuelle` répète sa première valeur, et u
 moyenne glissante qui l'avalerait ferait passer une extrapolation pour une
 observation.
 
-**La règle italienne s'écrit donc `indexation=pib_nominal&lissage=5`** —
-c'est exactement ce que l'Italie applique à ses comptes notionnels. Le modèle
-n'en reprend que le taux : ni le décalage de publication de deux ans, ni les
-coefficients de transformation, ni les planchers.
+**La règle italienne s'approche donc par `indexation=pib_nominal&lissage=5`**
+— le taux que l'Italie applique à ses comptes notionnels, à deux différences
+près : sa loi prend les cinq années qui PRÉCÈDENT l'année revalorisée, quand
+le lissage du dépôt prend l'année et les quatre précédentes, et elle interdit
+un coefficient inférieur à un, « sauf à le rattraper sur les revalorisations
+suivantes » (loi n° 335 du 8 août 1995, art. 1er, al. 9). Le modèle n'en
+reprend que le taux : ni ce décalage, ni ce plancher, ni les coefficients de
+transformation.
 
 Une réserve, à connaître avant de lire un cumul lissé : sur quatre-vingts ans,
 une moyenne glissante n'est pas neutre. Le produit des moyennes glissantes

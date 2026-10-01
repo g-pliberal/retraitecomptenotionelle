@@ -44,8 +44,11 @@ versions:
     l'année du départ lui est acquise. La pension servie suit la même règle
     (`RevalorisationServie`), et c'est ce qui fait du diviseur l'espérance de
     vie restante : un taux d'actualisation nul ne vaut que pour une rente
-    revalorisée au taux du compte. Le capital d'ouverture d'un compte
-    prospectif se revalorise comme le compte, de la bascule à la liquidation.
+    revalorisée au taux du compte. Un diviseur actualisé à ν > 0 la
+    revalorise au taux du compte divisé par 1 + ν, comme la Suède à 1,6 %
+    (Pensionssystemets årsredovisning 2025, note 6). Le capital d'ouverture
+    d'un compte prospectif se revalorise comme le compte, de la bascule à la
+    liquidation.
   exemples: aucun trouvé
 sources:
   lu_le: 2026-09-27

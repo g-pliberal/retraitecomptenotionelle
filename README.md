@@ -531,9 +531,10 @@ Les six règles précédentes sont des choix. Il en existe une septième qui n'e
 est pas un : en répartition, le rendement qu'un système peut servir sans changer
 son taux de cotisation est **la croissance de son assiette** — la masse
 salariale, soit le salaire moyen multiplié par l'emploi salarié (Samuelson 1958,
-Aaron 1966). C'est le taux d'indexation des comptes notionnels suédois,
-italiens, polonais et lettons, à des variantes près, et c'est le seul candidat
-qui découle d'un argument plutôt que d'une intention.
+Aaron 1966). C'est le taux d'indexation des comptes notionnels polonais et
+lettons ; la Suède et l'Italie s'en approchent, par le revenu moyen et par le
+PIB nominal lissé sur cinq ans ; et c'est le seul candidat qui découle d'un
+argument plutôt que d'une intention.
 
 `indexation=masse_salariale` la sert, depuis les salaires et traitements bruts
 des comptes nationaux (D11, INSEE, idbank 011785411, certifiés depuis 1950).
@@ -576,9 +577,11 @@ calendrier qui tranche. Avec `lissage=5`, le recul disparaît (×<!--chiffre:mes
 moins ; lissé sur trois ou cinq ans, aucune.
 
 C'est le mécanisme des comptes notionnels italiens —
-`indexation=pib_nominal&lissage=5` **est** la règle italienne, dont le modèle
-ne reprend que le taux, pas le reste du système (décalage de publication de
-deux ans, coefficients de transformation, planchers). Mais rien n'oblige à le
+`indexation=pib_nominal&lissage=5` **approche** la règle italienne, dont le
+modèle ne reprend que le taux, pas le reste du système (les cinq années qui
+précèdent l'année revalorisée, au lieu de l'année et des quatre précédentes ;
+le plancher, qui interdit un coefficient sous un sauf à le rattraper ; les
+coefficients de transformation). Mais rien n'oblige à le
 réserver au PIB : le lissage s'applique aussi bien au triple lock inversé qu'à
 la masse salariale.
 

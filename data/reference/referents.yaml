@@ -62,6 +62,14 @@
 #   confrontation .. comment on le confronte : des paramètres à comparer, un
 #                    calcul à rejouer, des résultats publiés à retrouver
 #   ecarts ......... chacun avec son constat, ce qui l'a tranché, sa preuve
+#   fait_mieux ..... ce qu'il fait mieux que le dépôt, lu chez lui (action
+#                    138) : `quoi` (l'avantage, et où en est le dépôt),
+#                    `preuve` (son fichier et sa ligne, ou sa page), `etat` —
+#                    a_reprendre | repris, avec le `chantier` qui le reprend
+#                    (« action.étape » de la feuille de route) ; a_trancher
+#                    (un choix du programme, que le propriétaire tranche) |
+#                    ecarte, avec sa `raison`. Un avantage qui ne tient pas à
+#                    la vérification n'y entre pas : il va à `ecarts`
 #   manifeste, sas . ses lignes dans data/sources.yaml et dans
 #                    data/sources_a_explorer.yaml
 #   lu_le, lu_dans . la dernière lecture, et où ces faits ont été lus ; une
@@ -123,6 +131,61 @@ referents:
           quand la caisse l'a changé en 2023.
         tranche: la caisse ; les barèmes sont en retard
         preuve: docs/decisions/0001-architecture.md (§ 14.9)
+      - constat: >-
+          Ses seuils de CSG des pensions s'arrêtent au 1er janvier 2025 :
+          aucun pour 2026.
+        tranche: >-
+          les seuils de 2026 que donne service-public.fr (F2971) : 13 048,
+          17 057 et 26 472 €, plus 3 484, 4 555 et 7 066 € par demi-part ; les
+          barèmes sont en retard
+        preuve: >-
+          le répertoire `csg/remplacement/seuils/` des prélèvements sociaux,
+          au commit `fe2cdff`
+      - constat: >-
+          Sa cotisation maladie d'Alsace-Moselle y reste à 1,5 %.
+        tranche: >-
+          l'Urssaf : 1,30 % depuis avril 2022, sur les pensions comme sur les
+          salaires ; les barèmes sont en retard
+        preuve: >-
+          `mmid_am/maladie_alsace_moselle.yaml`, au commit `fe2cdff`
+    fait_mieux:
+      - quoi: >-
+          Il porte les séries de l'AVTS (1962-2026, 4 023,51 € en 2025) et de
+          l'allocation supplémentaire d'une personne seule (1956-2022). Le
+          dépôt déflate sur les prix le montant de 2006
+          (`scenarios/actuel.py:1570-1580`), projection qu'il dit
+          « indicative » (`minimum_vieillesse.csv:40`), et met le forfait à la
+          place de l'AVTS pour R. 732-70 (`droit/acquerir.py:100-109`) : fin
+          1970, l'AVTS et l'allocation supplémentaire valent 457 € chez lui,
+          environ 1 195 € au dépôt, et l'écart ne passe sous 3 % qu'en 1985.
+          Chaque valeur reste à certifier au Journal officiel.
+        preuve: >-
+          `avts/montants_annuels.yaml` et
+          `as/allocation_supplementaire/as_personne_seule.yaml`, sous
+          `…/solidarite_insertion/minimum_vieillesse/`, au commit `fe2cdff`
+        etat: a_reprendre
+        chantier: "138.6"
+      - quoi: >-
+          Il porte la pension majorée de référence des exploitants agricoles
+          de 2009 à 2026 ; le dépôt la décrit sans qu'aucun code la serve
+          (`avantages_non_contributifs.yaml:460-486`). Ses valeurs de 2024 à
+          2026 sont des « Calculs IPP », à relire dans L. 732-54-1 du code
+          rural.
+        preuve: >-
+          `parameters/retraites/independants/pmr_msa.yaml`, au commit
+          `fe2cdff`
+        etat: a_reprendre
+        chantier: "138.8"
+      - quoi: >-
+          Il porte le salaire qui valide un trimestre à La Réunion, plus bas
+          de 1971 à 1995 : 1 897,5 F contre 2 586 F en 1980. Le dépôt n'a
+          qu'un barème (`validation_trimestres.csv`).
+        preuve: >-
+          `salval/salaire_validant_trimestre/reunion.yaml`, sous
+          `parameters/retraites/secteur_prive/regime_general_cnav/`, au commit
+          `fe2cdff`
+        etat: a_reprendre
+        chantier: "138.6"
     manifeste: [ipp_taux_cotisation, ipp_points_independants, ipp_retraite_complementaire_liberaux]
     sas: [ipp_baremes_yaml]
     lu_le: 2026-10-01
@@ -136,6 +199,8 @@ referents:
       figé depuis le 19 avril 2023 (« THIS PROJECT HAS MIGRATED ») : c'est
       pourtant lui que calcul_pension télécharge. Un dépôt voisin,
       `baremes-ipp-sources`, archive les sources hors Légifrance.
+      Comparé au dépôt le 1er octobre 2026 au commit `fe2cdff`, du 21
+      septembre.
 
   - id: openfisca_france
     nom: OpenFisca-France
@@ -161,6 +226,60 @@ referents:
       `haute`, jamais `certifiee`, et les recoupe contre l'INSEE, l'Urssaf ou
       la base LEGI (`scripts/verifier_donnees.py`). À venir : la CSG de la
       pension nette, par foyer.
+    ecarts:
+      - constat: >-
+          Sa CSG des pensions ignore le lissage — le taux de 3,8 % reste dû si
+          le revenu fiscal de référence de N−2 ou de N−3 ne dépasse pas le
+          second seuil —, les seuils des DOM, qu'il ne porte qu'en note, et
+          l'exonération des pensions des allocataires de l'ASPA.
+        tranche: >-
+          L. 136-8, III et III 2°, en vigueur depuis le 27 juin 2026
+          (LEGIARTI000054336623), et L. 136-1-2, II 1°, lus dans l'index LEGI
+          du dépôt ; l'écart est le sien
+        preuve: >-
+          `contributions_sociales/remplacement.py:285-308`, au commit
+          `16b2e69`
+      - constat: >-
+          La cotisation maladie de 1 % des pensions complémentaires est
+          paramétrée (`regimes_comp.yaml`, sous `mmid_ret/`), mais aucune
+          variable ne la lit.
+        tranche: D. 242-8 du code de la sécurité sociale ; l'écart est le sien
+        preuve: >-
+          `mmid_ret/…/regimes_comp.yaml`, au commit `16b2e69`
+      - constat: >-
+          La cotisation maladie d'Alsace-Moselle des salariés y reste à 1,5 %
+          (`maladie_alsace_moselle.yaml:35-36`, appliquée par
+          `travail_prive.py:831-841`).
+        tranche: >-
+          l'Urssaf : 1,30 % depuis avril 2022 ; l'écart est le sien
+        preuve: >-
+          `maladie_alsace_moselle.yaml:35-36`, au commit `16b2e69`
+    fait_mieux:
+      - quoi: >-
+          Il calcule la CSG, la CRDS et la CASA des pensions selon le revenu
+          fiscal de référence de N−2 et le nombre de parts. Le dépôt retire
+          9,1 % à tous (`remuneration.py:564`, `contexte.py:670`), l'ASPA
+          comprise (`pages.js:3678-3684`) : une ASPA de 1 043,59 € s'y affiche
+          à 948,62 € nets, quand le droit exonère les pensions de ses
+          allocataires.
+        preuve: >-
+          `contributions_sociales/remplacement.py:285-308` (CSG), `:417-438`
+          (CRDS) et `:477-496` (CASA), au commit `16b2e69`
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: >-
+          Il sert l'ASPA d'un couple sous le plafond du couple (19 442,21 €),
+          sur les ressources des trois derniers mois, salaires abattus de 0,9
+          ou 1,5 SMIC, comme le veulent L. 815-9 et D. 815-2 ; seule l'option
+          des douze mois de R. 815-29 lui manque. Le dépôt applique le barème
+          d'une personne seule (`droit/foyer.py:125-128`), bien que la saisie
+          porte `ressources_conjoint` et que `minimum_vieillesse_couple.csv`
+          existe.
+        preuve: >-
+          `minima_sociaux/asi_aspa.py:330-385` (plafond) et `:16-104`
+          (ressources), au commit `16b2e69`
+        etat: a_reprendre
+        chantier: "138.2"
     manifeste:
       - openfisca_plafond
       - openfisca_point_indice
@@ -180,6 +299,7 @@ referents:
       2025. Mes Droits Sociaux, le simulateur de la DSS, appelle un service
       OpenFisca (`/openfisca/calculate`) : c'est un simulateur officiel, pas
       une confirmation de plus.
+      Comparé au dépôt le 1er octobre 2026 au commit `16b2e69`.
 
   - id: openfisca_france_pension
     nom: OpenFisca-France-Pension
@@ -251,6 +371,89 @@ referents:
           durée de services était ignorée.
         tranche: L. 14 et la loi de 2003 ; les erreurs étaient les nôtres, corrigées
         preuve: data/sources.yaml (openfisca_fonction_publique_oracle)
+    fait_mieux:
+      - quoi: >-
+          Il code le départ anticipé des fonctionnaires parents de trois
+          enfants — trois enfants et quinze ans de services réunis avant 2012
+          — et, selon les dates, la décote de l'année où les conditions l'ont
+          été plutôt que celle de la génération. Le dépôt ne sert ces départs
+          à personne (`docs/limites.md`), et aucune fiche ne porte la règle.
+        preuve: >-
+          `regimes/fonction_publique.py:309`
+          (`decote_a_date_depart_anticipe_parent_trois_enfants`) et `:422`
+          (`depart_anticipe_trois_enfants`), et
+          `tests/formulas/fonction_publique/parent_trois_enfants.yml`, au
+          commit `1c45423`
+        etat: a_reprendre
+        chantier: "136.3"
+      - quoi: >-
+          Sa quotité de travail réduit les services sans réduire la durée
+          d'assurance. Au dépôt, `temps_partiel_fonction_publique` est
+          `manquante`, et toute année compte à temps plein.
+        preuve: >-
+          `variables/fonction_publique.py:332-335` (CNRACL) et `:1193-1195`
+          (État), au commit `1c45423`
+        etat: a_reprendre
+        chantier: "136.3"
+      - quoi: >-
+          Il calcule, et le plus souvent teste, la majoration de durée et la
+          bonification pour enfants, la majoration de 10 %, les points enfants
+          de l'Arrco, la catégorie active, la carrière longue de la fonction
+          publique, les minima garanti et contributif, la minoration de
+          l'Arrco, les périodes assimilées année par année et le salaire
+          annuel moyen sur des salaires qui varient. L'oracle du dépôt ne lui
+          confronte que 48 carrières continues à salaire nominal constant
+          (`tests/test_oracle.py`).
+        preuve: >-
+          ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
+        etat: a_reprendre
+        chantier: "136.2"
+      - quoi: >-
+          Il rend, pour toute simulation, chaque variable calculée, sa valeur,
+          et les variables et paramètres qu'elle a lus ; toute variable peut
+          s'y donner en entrée, si bien que ses tests isolent chacun une
+          formule. Le relevé du dépôt ne cite sa fiche que sur 733 de ses
+          22 789 lignes (3 %).
+        preuve: >-
+          `openfisca test -v`, et `/trace` sur l'interface web
+          d'openfisca-core
+        etat: a_reprendre
+        chantier: "136.4"
+      - quoi: >-
+          Il calcule une population d'un coup, en vecteurs, et sa
+          documentation dit l'avoir essayé sur les données de Destinie et sur
+          l'EIR 2012, au régime général et à l'Arrco ; ce code-là n'est pas
+          publié. La page Coût du dépôt repose sur 13 cas types à 7
+          générations, pondérés par les effectifs de leur caisse (`cout.py`).
+        preuve: >-
+          `doc/Proposition.md:36, 141` (« Sont testés avec EIR 2012 Régime
+          général et Arrco »), au commit `1c45423`
+        etat: a_reprendre
+        chantier: "136.6"
+      - quoi: >-
+          `openfisca serve` expose `/calculate`, `/trace`, `/variables`,
+          `/parameters` et une description OpenAPI (`/spec`) ; le paquet se
+          publie sur PyPI en versions numérotées, et son intégration continue
+          refuse un changement fonctionnel sans numéro nouveau ni ligne au
+          journal des changements. Aucun résultat du dépôt ne porte la version
+          du modèle qui l'a calculé (`docs/architecture.md`, annexe C.9).
+        preuve: >-
+          l'interface web d'openfisca-core (`openfisca serve`) ; son
+          intégration continue et son journal des changements, au commit
+          `1c45423`
+        etat: a_reprendre
+        chantier: "136.5"
+      - quoi: >-
+          Il écrit chaque règle une fois, dans un moteur Python que d'autres
+          appellent ; le dépôt l'écrit deux fois, en Python (`src/`) et en
+          JavaScript (`moteur/js/`).
+        preuve: >-
+          ses formules (`openfisca_france_pension/`), servies par
+          openfisca-core
+        etat: ecarte
+        raison: >-
+          C'est le prix, décidé, d'un site qui calcule sans serveur, jusque
+          sur un téléphone (`docs/architecture.md`, § 7.1).
     manifeste:
       - openfisca_points
       - openfisca_regime_general_oracle
@@ -275,6 +478,7 @@ referents:
       dernière activité en décembre 2024). Les témoins de l'Agirc et de
       l'Ircantec n'ont pas de ligne au manifeste : ils sortent de
       `scripts/fetch/openfisca_agirc.py` et `openfisca_ircantec.py`.
+      Ce dernier commit est `1c45423`.
 
   - id: leximpact
     nom: LexImpact (simulateur socio-fiscal)
@@ -297,6 +501,19 @@ referents:
     confrontation: >-
       Des résultats à retrouver, cas type par cas type : la pension nette de
       prélèvements, là où le modèle applique 9,1 % à tous.
+    fait_mieux:
+      - quoi: >-
+          Il suit les projets de loi de finances et de financement de la
+          sécurité sociale : le PLF 2027 (art. 3) plafonne l'abattement des
+          pensions à 3 000 €, le PLFSS 2027 (art. 35) différencie la
+          revalorisation. Le journal de veille du dépôt
+          (`data/reference/legislation/veille.yaml`) n'en dit rien ; ce sont
+          des projets, au taux de 2027 marqué « temp ».
+        preuve: >-
+          `plf_plfss_2027/…/abatpen/max_retraites.yaml`, dans
+          openfisca-france-reforms au commit `6e2fabf`
+        etat: a_reprendre
+        chantier: "138.12"
     sas: [leximpact_reformes]
     lu_le: 2026-10-01
     lu_dans:
@@ -307,6 +524,8 @@ referents:
       (l'interface, la chaîne budgétaire, l'explorateur de paramètres commun
       avec OpenFisca et l'IPP). Son baromètre de l'application des lois suit
       la parution des décrets d'application, ce qui sert la veille.
+      Comparé au dépôt le 1er octobre 2026 au commit `6e2fabf`
+      d'openfisca-france-reforms.
 
   - id: taxipp
     nom: TAXIPP
@@ -329,6 +548,34 @@ referents:
       2026) chiffre l'abattement de 10 % à 5,4 Md€, la désindexation des
       pensions de base à 5,2 Md€, l'alignement de la CSG à 4,2 Md€, à
       opposer au chiffrage du dépôt (`docs/chiffrage_plf.md`).
+    ecarts:
+      - constat: >-
+          Son taux de CSG des pensions vient d'un seul revenu fiscal de
+          référence, sans le lissage sur N−3.
+        tranche: >-
+          L. 136-8, III 2°, en vigueur depuis le 27 juin 2026
+          (LEGIARTI000054336623) ; l'écart est le sien
+        preuve: >-
+          `create_variables_individuelles.py:10-56`, au commit `28e2f0a`
+      - constat: >-
+          Le passage de la pension imposable à la pension brute oublie la
+          cotisation maladie de 1 % des complémentaires.
+        tranche: D. 242-8 du code de la sécurité sociale ; l'écart est le sien
+        preuve: >-
+          `openfisca_france_data/common.py:464-485`, dans
+          openfisca-france-data au commit `1a96eeb`
+    fait_mieux:
+      - quoi: >-
+          Il calcule un prélèvement effectif sur les pensions, tiré du revenu
+          fiscal de référence réel de Félin. Sur la page Coût, le dépôt
+          applique 9,1 % à la masse et ne donne la CSG « circulaire » qu'« au
+          plus » (`pages.js:10775-10776, 10836`), quand la CSG sur les
+          retraites rapporte 23,7 Md€ en 2023 (CCSS de mai 2024, tableau 3),
+          soit 6,3 % des masses de la DREES que lit le dépôt, et non 8,3 %.
+        preuve: >-
+          `create_variables_individuelles.py:10-56`, au commit `28e2f0a`
+        etat: a_reprendre
+        chantier: "138.3"
     sas: [ipp_taxipp]
     lu_le: 2026-10-01
     lu_dans:
@@ -338,6 +585,8 @@ referents:
       de licence reproduit le texte de la GPL v3, quand le fichier dit l'AGPL :
       à relire avant tout usage. Sa version historique, TAXIPP 0.3, est en
       Stata, sans licence (`abozio/TAXIPP0-3`, 2013).
+      Comparé au dépôt le 1er octobre 2026 au commit `28e2f0a`, avec
+      openfisca-france-data au commit `1a96eeb`.
 
   - id: til_pension
     nom: TIL (TaxIPP-Life) et Til-Pension
@@ -365,6 +614,8 @@ referents:
       (2 octobre 2018), `Til`, `til-core` et `Til-BaseModel` sont dans la même
       organisation, sous GPL v3. L'IPP donne le projet pour terminé. LIAM2,
       sa plateforme, du Bureau fédéral du Plan belge, n'est plus maintenue.
+      Comparé au dépôt le 1er octobre 2026 : Til-Pension au commit `c4e0d50`,
+      til-france au commit `9b1260e`.
 
   - id: pensipp
     nom: PENSIPP
@@ -397,6 +648,11 @@ referents:
       le projet pour terminé. Ses paramètres viennent des barèmes de l'IPP et
       de Destinie. Un fork « allégé » qu'une recherche cite
       (`philippechataignon/pensipp`) ne répond plus.
+      Comparé au dépôt le 1er octobre 2026 au commit `fbaf3fa`, du 22 mai
+      2013. Son diviseur se rapporte à la survie à 39 ans
+      (`OutilsPensIPP.R:244`) et part de l'âge a−1 (`OutilsCN.R:69-75`) : ni
+      espérance conditionnelle à l'âge de départ, ni gain d'héritage
+      explicite, une variante que le README du dépôt ne tranche pas.
 
   # ---- La statistique publique : l'INSEE ----------------------------------
 
@@ -424,6 +680,114 @@ referents:
       `majoration_duree_assurance_enfants`, `enfants_fonction_publique`). Le
       seul modèle public avec la réversion et l'ASPA, et des législations
       passées qu'on choisit.
+    ecarts:
+      - constat: >-
+          Il lève au régime général la condition d'âge de 55 ans de la
+          réversion pour le survivant qui a deux enfants à charge
+          (`src/Retraite.cpp:224-229`).
+        tranche: >-
+          R. 353-1, que la fiche du dépôt lit sans cette exception ; l'écart
+          est le sien
+        preuve: data/reference/regles/reversion.yaml
+      - constat: >-
+          Tout couple simulé y est marié (`src/Separations.cpp:189-190` ;
+          `CONCUBINAGE`, `src/Constantes.h:30`, n'est jamais affecté), ce qui
+          ouvre la réversion aux concubins.
+        tranche: >-
+          la réversion ne s'ouvre qu'au conjoint marié, comme le lit la fiche
+          du dépôt ; l'écart est le sien
+        preuve: >-
+          data/reference/regles/reversion.yaml (« ni le PACS ni le concubinage
+          n'ouvrent la réversion »)
+      - constat: >-
+          La majoration de la réversion pour enfant à charge lui manque ; il
+          ne majore que le survivant de trois enfants
+          (`src/Reversion.cpp:98-106`).
+        tranche: >-
+          L. 353-5 du code de la sécurité sociale ; l'omission est la sienne
+        preuve: >-
+          `src/Reversion.cpp`, au commit `4c1d34b`
+      - constat: >-
+          Quand un seul membre du couple a 65 ans, il sert l'ASPA jusqu'au
+          barème du couple (`src/Retraite.cpp:12-30`).
+        tranche: >-
+          service-public.fr (F16871, lu le 1er octobre 2026) : « Lorsqu'un
+          seul membre de votre couple reçoit l'Aspa, le montant maximum versé
+          est de 1 043,59 € par mois », sous un plafond du couple de
+          1 620,18 € ; l'écart est le sien
+        preuve: https://www.service-public.fr/particuliers/vosdroits/F16871
+      - constat: >-
+          Sans la loi du 30 décembre 2025, il ouvre les droits de la
+          génération 1964 à 63 ans et lui demande 171 trimestres
+          (`src/Legislation.cpp:57-59`).
+        tranche: >-
+          la loi du 30 décembre 2025, que le dépôt certifie : 62 ans et 9
+          mois, 170 trimestres ; l'écart est le sien
+        preuve: >-
+          data/reference/legislation/age_ouverture_requis.csv (l. 139) et
+          duree_assurance_requise.csv (l. 129)
+      - constat: >-
+          Il projette l'ASPA de 2025 à 12 493,58 € par an.
+        tranche: >-
+          le montant servi en 2025, 12 411,36 €, que le dépôt porte ; l'écart
+          est le sien
+        preuve: data/reference/legislation/minimum_vieillesse.csv (l. 79)
+    fait_mieux:
+      - quoi: >-
+          Il calcule la réversion du régime général entière : minimum
+          proratisé sous quinze ans et maximum, majoration de 10 % du
+          survivant de trois enfants, réversion d'un assuré mort avant son
+          départ, plafond de ressources du ménage, majoration de 11,1 % sous
+          plafond, partage entre ex-conjoints au prorata des mariages,
+          remariage ; son minimum de 2024, revalorisé de 2,2 %, donne celui de
+          2025 que lit le dépôt. Le dépôt la déclare absente
+          (`data/reference/regles/reversion.yaml:444-470`,
+          `droit/reversion.py:19-24`, `docs/limites.md:73-86`) ; Destinie,
+          exécuté à part, en serait le témoin, sorties seules.
+        preuve: >-
+          `src/Reversion.cpp:23-49, 76-106`, `src/Retraite.cpp:235-268,
+          300-334, 347-357, 365-380` et `src/Retraite.h:274`, au commit
+          `4c1d34b`
+        etat: a_reprendre
+        chantier: "138.4"
+      - quoi: >-
+          Il sert l'ASPA au ménage, sur ses ressources, celles du conjoint
+          comprises. Le dépôt applique le barème d'une personne seule
+          (`droit/foyer.py:5-6`, `docs/limites.md:395-399`) ; le barème du
+          couple n'y sert qu'à l'accueil
+          (`minimum_vieillesse_couple.csv:5-8`).
+        preuve: >-
+          `src/Retraite.cpp:12-30` (« MinVieil2[t]-revenu_men »), au commit
+          `4c1d34b`
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: >-
+          Il importe les variantes démographiques de l'INSEE — fécondité,
+          espérance de vie, migrations, « central, bas, haut » —, en 64 jeux.
+          Le dépôt ne reprend que le scénario central
+          (`data/sources.yaml:431-432, 464-465`), sur des projections de 2026,
+          plus récentes que les siennes (2021).
+        preuve: >-
+          `R/Outils.R:399` (`import_scenario_demo_insee`) et
+          `data/fec_*_vie_*_mig_*.rda`, au commit `4c1d34b`
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: >-
+          Il lit les quotients de mortalité projetés de l'INSEE par sexe, âge
+          et année, et s'en sert tels quels. Le dépôt les réduit à e60 et e65
+          pour caler un Gompertz-Makeham (`donnees/mortalite.py:8-14`) ;
+          l'écart, à la queue au-delà de 85 ans, n'est pas mesuré.
+        preuve: >-
+          `src/Mortalite.cpp:27`, au commit `4c1d34b`
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: >-
+          Il calcule un taux de rendement interne des cotisations ; le dépôt
+          n'en a aucun (« rendement interne », cherché en vain dans `src/`).
+        preuve: >-
+          `src/CotisationsTRI.h`, au commit `4c1d34b`
+        etat: a_reprendre
+        chantier: "138.9"
     sas: [insee_destinie_2]
     lu_le: 2026-10-01
     lu_dans:
@@ -437,6 +801,10 @@ referents:
       représentativité ». C'est lui qui projette la France pour l'Ageing
       Report de 2024, et les engagements de retraite des comptes nationaux
       hors fonction publique de l'État.
+      Comparé au dépôt le 1er octobre 2026 au commit `4c1d34b`. Il plafonne la
+      majoration pour enfants de la fonction publique même avec surcote, ce
+      que le SRE excepte (`src/DroitsRetr.cpp:879`) : à trancher, la fiche du
+      dépôt cherchant encore le texte.
 
   - id: destinie_1
     nom: Destinie 1
@@ -479,6 +847,51 @@ referents:
       Des paramètres et des calculs du foyer à comparer : l'ASPA et les
       prélèvements des pensions, une seconde source indépendante de
       LexImpact.
+    ecarts:
+      - constat: >-
+          Il fait payer la cotisation maladie de 1 % aux pensions exonérées de
+          CSG : `case_when(exo_csg == 1 ~ coprmal, reduc_csg == 1 ~ 0, …)`
+          (`R/12_cotisations.R:2016-2017`).
+        tranche: >-
+          D. 242-9, 1°, du code de la sécurité sociale ; l'écart est le sien
+        preuve: >-
+          `R/12_cotisations.R:2016-2017`, au commit `a55816c`
+      - constat: >-
+          L'exonération de CSG des pensions des allocataires de l'ASPA lui
+          manque, « écart à la législation » qu'il déclare
+          (`R/12_cotisations.R:2006-2010`).
+        tranche: >-
+          L. 136-1-2, II 1°, lu dans l'index LEGI du dépôt ; l'écart est le
+          sien, et déclaré
+        preuve: >-
+          `R/12_cotisations.R:2006-2010`, au commit `a55816c`
+    fait_mieux:
+      - quoi: >-
+          Il fixe le taux de CSG des pensions selon le revenu fiscal de
+          référence et le nombre de parts ; le dépôt retire 9,1 % à tous
+          (`prelevements_remuneration.yaml:705`).
+        preuve: >-
+          `R/12_cotisations.R:361-376`, au commit `a55816c`
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: >-
+          Il impute la part complémentaire de chaque pension, par catégorie et
+          quantile, et lui applique la cotisation maladie de 1 %. Le dépôt
+          l'omet par convention (`prelevements_remuneration.yaml:718`).
+        preuve: >-
+          `R/12_cotisations.R:1956-1998`, au commit `a55816c`
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: >-
+          Il sert l'ASPA d'un couple sous le plafond du couple, sur des
+          ressources qui comptent les revenus d'activité abattus et le
+          patrimoine, et ne sert au membre seul éligible que le montant d'une
+          personne seule. Le dépôt applique le barème d'une personne seule et
+          ne compte que les pensions (`droit/foyer.py:125-128`).
+        preuve: >-
+          `R/14_minima_pa.R:165-177, 254-266`, au commit `a55816c`
+        etat: a_reprendre
+        chantier: "138.2"
     sas: [insee_ines]
     lu_le: 2026-10-01
     lu_dans:
@@ -488,6 +901,7 @@ referents:
       de l'équipe, qui cite Légifrance, le BOFiP et les barèmes de l'IPP parmi
       ses sources. L'ERFS demande une habilitation ; les versions SAS sont
       sur Adullact (`ines-libre`).
+      Comparé au dépôt le 1er octobre 2026 au commit `a55816c`, du 16 juin.
 
   # ---- La statistique publique : la DREES ---------------------------------
   # Une seule lignée : CALIPER (2013, en SAS) est devenu le module de calcul
@@ -520,6 +934,63 @@ referents:
       Un calcul rejoué, à part, sans les données du CASD : le mode cas types
       s'en passe, et `lancerCasTypesCor()` refait les treize cas types du COR,
       dont le dépôt lit déjà des résultats.
+    ecarts:
+      - constat: >-
+          Sans la loi du 30 décembre 2025, il ouvre les droits de la
+          génération 1964 à 63 ans et lui demande 171 trimestres
+          (`inst/extdata/trajectoire/ageDuree.csv:144-148, 515-516`).
+        tranche: >-
+          la loi du 30 décembre 2025, que le dépôt certifie : 62 ans et 9
+          mois, 170 trimestres ; l'écart est celui de la version publique
+        preuve: >-
+          data/reference/legislation/age_ouverture_requis.csv (l. 139) et
+          duree_assurance_requise.csv (l. 129)
+    fait_mieux:
+      - quoi: >-
+          Il calcule, par cas type et génération, les taux de récupération, de
+          remplacement sur le cycle de vie et d'annuité, la durée de retraite
+          rapportée à la carrière, le TRI, la pension nette rapportée à
+          l'ASPA, et le remplacement net en euros courants, constants et en
+          SMPT, de l'âge d'ouverture à l'annulation de la décote, sous quatre
+          productivités. Le dépôt n'a que le taux de remplacement
+          (`simulateur.py:277-298`) ; lui fait mourir chacun à round(e60+60),
+          moyenne des sexes (`casTypesCOR.R:87-94`), là où le dépôt a ses
+          courbes de survie.
+        preuve: >-
+          `R/fonctionsCalculsPensions.R:4783-4791`,
+          `R/fonctionsAgregation.R:124-143`,
+          `inst/templates/rapport_casTypesCOR.Rmd:28-35` et
+          `inst/scripts/casTypesCOR.R:56, 84, 430-433`, au commit `0963b57`
+        etat: a_reprendre
+        chantier: "138.9"
+      - quoi: >-
+          Il refait les treize cas types du COR sans les données du CASD. Le
+          dépôt n'en lit que des résultats publiés ; exécuté à part (EUPL),
+          sorties seules, il en donnerait des témoins, pour les générations
+          nées avant 1964 ou après 1968.
+        preuve: >-
+          `R/lancerCasTypesCor.R`, au commit `0963b57`
+        etat: a_reprendre
+        chantier: "138.4"
+      - quoi: >-
+          Il lit les variantes de fécondité et d'espérance de vie de l'INSEE ;
+          le dépôt ne reprend que le scénario central
+          (`data/sources.yaml:464-465`).
+        preuve: >-
+          `R/fonctionsImport.R:116-127, 205-212`, au commit `0963b57`
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: >-
+          Il impute aux cas types du COR le taux de CSG de la convention du
+          COR : réduit pour le 2 bis, médian pour les 2 à 5 et 8 à 10, normal
+          pour les 1, 6, 7 et 11. C'est une convention, non le calcul du
+          foyer, mais elle servirait à la page Carrières types, où le dépôt
+          retire 9,1 % à tous (`prelevements_remuneration.yaml:705`).
+        preuve: >-
+          `R/fonctionsCalculsPensions.R:3421-3445` et
+          `inst/scripts/casTypesCOR.R:107-114`, au commit `0963b57`
+        etat: a_reprendre
+        chantier: "138.2"
     manifeste: [cor_pouvoir_achat_retraite]
     sas: [drees_trajectoire]
     lu_le: 2026-10-01
@@ -533,6 +1004,15 @@ referents:
       la suspension de 2025, que la version publique ne contient pas : la
       version interne est en avance. Une copie personnelle est sur GitHub
       (`awarnery/trajectoire`).
+      Comparé au dépôt le 1er octobre 2026 au commit `0963b57`. La comparaison
+      y trouve aussi, sans texte qui les tranche, le versement forfaitaire
+      unique de la Cnav gardé après 2016 (« Il a temporairement été décidé de
+      conserver le dispositif de VFU pour l'ensemble des assurés »,
+      § 6.25.3.1.1), un `txRemplacementBrutSmpt` qui divise une pension brute
+      par une rémunération nette (`casTypesCOR.R:433`), et un `txPrestation`
+      divisé par la durée relative à l'individu
+      (`fonctionsCalculsPensions.R:4795`), puis multiplié par elle dans
+      l'agrégat (`fonctionsAgregation.R:187-193`).
 
   - id: calcul_pension
     nom: calcul_pension (paquet R calculPension)
@@ -552,6 +1032,42 @@ referents:
     confrontation: >-
       Une version figée et légère du moteur de TRAJECTOiRE : ses cas types du
       COR, et des carrières simples décrites des deux côtés.
+    ecarts:
+      - constat: >-
+          Sa pension nette (`calculePensionNette`,
+          `R/fonctionsCalculsDivers.R:1745-1764`) prélève sur la pension la
+          CSG et la CRDS des salaires, abattement de 1,75 % compris.
+        tranche: >-
+          L. 136-8 (LEGIARTI000054336623) : la CSG des pensions est de 0, 3,8,
+          6,6 ou 8,3 % selon le revenu fiscal de référence ; l'écart est le
+          sien
+        preuve: >-
+          `R/fonctionsCalculsDivers.R:1745-1764`, au commit `ec5a871`
+      - constat: >-
+          Sa revalorisation de 2020 (`revaloSpeciale2020`,
+          `R/fonctionsCalculsDivers.R:3094-3109`) ignore la zone de lissage de
+          2 000 à 2 014 €.
+        tranche: >-
+          la loi n° 2019-1446 du 24 décembre 2019, art. 81, et la circulaire
+          Cnav 2020/9, que le dépôt porte : 1 % jusqu'à 2 000 €, puis 0,8, 0,6
+          et 0,4 % jusqu'à 2 014 €, 0,3 % au-delà ; l'écart est le sien
+        preuve: >-
+          data/reference/legislation/revalorisation_pensions.csv (l. 120-124)
+    fait_mieux:
+      - quoi: >-
+          Il sert aux exploitants agricoles la pension majorée de référence,
+          proratisée et écrêtée au niveau de l'ASPA, et le complément
+          différentiel de la RCO, qui relève au seuil le total tous régimes
+          (`dureeValidee>=70 & aTauxPlein`). Le dépôt les décrit sans qu'aucun
+          code les serve (`avantages_non_contributifs.yaml:460-480`) ; ses
+          paramètres s'arrêtant en janvier 2023, la règle se relit dans
+          L. 732-54-1 à -4 et L. 732-63 du code rural et dans la circulaire de
+          la MSA.
+        preuve: >-
+          `R/fonctionsCalculsPensions.R:2483-2488, 2541-2546` et
+          `complementDiffRCO` (`:3117-3146`), au commit `ec5a871`
+        etat: a_reprendre
+        chantier: "138.8"
     sas: [drees_calcul_pension]
     lu_le: 2026-10-01
     lu_dans:
@@ -564,6 +1080,7 @@ referents:
       fonctions du paquet sont utilisées telles quelles dans le modèle de
       microsimulation Trajectoire », et le groupe de gitlab.com ajoute que le
       dépôt n'est plus mis à jour.
+      Ce dernier commit est `ec5a871`.
 
   - id: caliper
     nom: CALIPER (CALcul Interrégimes des PEnsions de Retraite)
@@ -590,6 +1107,18 @@ referents:
       par mois près pour 95,5 % des retraités de la Cnav, 98,5 % de l'État,
       98,3 % de la CNRACL, 93,6 % de l'Arrco, 87,15 % de l'Agirc, 41,1 % des
       indépendants.
+    fait_mieux:
+      - quoi: >-
+          Il a été validé sur des pensions réelles, celles de l'EIR 2004 :
+          « 95,5 % des pensions de la CNAV sont estimées correctement […]
+          l'écart […] n'excède pas un euro mensuel en 2004 ». Le dépôt se
+          confronte à des exemples officiels et à un oracle, à aucune pension
+          réelle ; l'EIR ne se lit qu'au CASD.
+        preuve: >-
+          Dossier solidarité et santé n° 37 (mars 2013),
+          http://gesd.free.fr/caliper.pdf
+        etat: a_reprendre
+        chantier: "138.14"
     sas: [drees_caliper]
     lu_le: 2026-10-01
     lu_dans:
@@ -638,6 +1167,25 @@ referents:
     confrontation: >-
       Des résultats publiés, déjà au dépôt : l'âge conjoncturel de départ tous
       régimes, qui contrôle les âges du pilote.
+    fait_mieux:
+      - quoi: >-
+          Il décrit des personnes, non des caisses : un pseudo-EIR calé « par
+          la méthode du calage sur marges » sur l'EACR, qui donne la pension
+          par régime principal, 1 610 € par mois au régime général, 2 570 €
+          aux civils de l'État. La page Coût pondère des effectifs de caisse
+          (limite n° 1 de `cout.py`) ; ce tableau contrôlerait le niveau de
+          2024 de ses cas types.
+        preuve: COR, document n° 3 du 19 décembre 2024, tableau 3.2
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: >-
+          Il projette l'âge de départ : 63,5 ans pour la génération 1965, 64,5
+          ans de 1980 à 2000, et un âge conjoncturel qui passe de 63,1 à 64,6
+          ans. Le dépôt n'a que l'âge observé (`age_conjoncturel_depart.csv`),
+          qui ne borne pas ceux du pilote en projection.
+        preuve: COR, document n° 3 du 19 décembre 2024, figures 2.5 et 4.5
+        etat: a_reprendre
+        chantier: "138.3"
     manifeste: [drees_age_conjoncturel]
     lu_le: 2026-10-01
     lu_dans:
@@ -673,6 +1221,41 @@ referents:
           base LEGI : 170 pour 1964, 170 puis 171 pour 1965 ; l'écart est le
           sien
         preuve: data/reference/legislation/duree_assurance_requise.csv
+      - constat: >-
+          Le retard de `dureeRequise.csv` sur la loi du 30 décembre 2025 ne
+          touche pas que le droit commun : l'actif de la fonction publique y a
+          171 trimestres pour 1969 et 172 pour 1970, et de même le
+          super-actif, l'exploitant, l'invalide et l'Agirc-Arrco ;
+          `dureeProratisation.csv` aussi.
+        tranche: >-
+          la loi du 30 décembre 2025, comme pour le droit commun ; l'écart est
+          le sien
+        preuve: >-
+          `inst/extdata/dureeRequise.csv:136-143` et
+          `inst/extdata/dureeProratisation.csv`, au commit `98d2cbb`
+      - constat: >-
+          Son `aod.csv` ouvre les droits de l'actif à 58 ans dès la génération
+          de janvier 1970, et ceux du super-actif à 53 ans dès janvier 1975
+          (`inst/extdata/aod.csv:31, 33, 85, 87`).
+        tranche: >-
+          le décret n° 2023-435, art. 13 (LEGIARTI000054059137), lu dans
+          l'index LEGI du dépôt : « cinquante-sept ans et neuf mois pour ceux
+          nés entre le 1er janvier 1968 et le 31 mars 1970 ; […]
+          cinquante-huit ans pour ceux nés entre le 1er avril 1970 et le 31
+          décembre 1970 » ; le dépôt a raison, l'écart est le sien
+        preuve: data/reference/legislation/categorie_active.csv
+    fait_mieux:
+      - quoi: >-
+          Il embarque les tables de l'EACR, dont la répartition des retraités
+          de droit direct par taux de CSG, fin 2023 (source « Ancetre
+          2024 ») : 22,1 % d'exonérés, 13,4 % au taux réduit, 21,6 % au taux
+          médian, 42,9 % au taux plein. Le dépôt n'utilise pas cette table
+          (`pages.js:10839`) et retire 9,1 % à tous.
+        preuve: >-
+          `inst/extdata/drees/eacr/a-prelevements-sociaux.parquet`, au commit
+          `98d2cbb`
+        etat: a_reprendre
+        chantier: "138.3"
     sas: [drees_legiretraite]
     lu_le: 2026-10-01
     lu_dans:
@@ -682,6 +1265,8 @@ referents:
       le CRAN. Il sert l'âge d'ouverture de TRAJECTOiRE ; ses tests citent un
       commit de TRAJECTOiRE de janvier 2026 absent du dépôt public, et une
       page syndicale comme source des valeurs de 2026.
+      Comparé au dépôt le 1er octobre 2026 au commit `98d2cbb`, du 18
+      septembre.
 
   - id: edifis
     nom: EDIFIS
@@ -700,6 +1285,16 @@ referents:
     confrontation: >-
       Des paramètres à comparer : les taux de cotisation vieillesse, d'une
       source indépendante des barèmes de l'IPP.
+    fait_mieux:
+      - quoi: >-
+          Son coût du travail compte la formation, l'apprentissage, la
+          construction et le versement mobilité, 4,13 % de plus. Le dépôt les
+          exclut (`docs/limites.md`, § 5 ante bis, réserve 6) ; or, à coût
+          fixe, ces taxes sur le brut absorbent environ 3 % de l'écart de brut
+          entre systèmes, et le « aucune ne bouge » du dépôt est inexact.
+        preuve: la feuille « Barème » de 2025, ligne 264, au commit `95ef983`
+        etat: a_reprendre
+        chantier: "138.12"
     sas: [drees_edifis]
     lu_le: 2026-10-01
     lu_dans:
@@ -707,6 +1302,10 @@ referents:
     note: >-
       Dernier commit le 11 février 2026, en R et Shiny ; une copie plus
       ancienne est sur gitlab.com (`DREES_code/public/outils/edifis`, 2022).
+      Comparé au dépôt le 1er octobre 2026 au commit `95ef983`. Le quart de
+      part du plafond du taux réduit (feuille « Barème », ligne 285) y reprend
+      celui de l'exonération, au lieu de 2 237 € par an : la source qui le
+      tranche reste à citer.
 
   # ---- Le COR -------------------------------------------------------------
 
@@ -729,6 +1328,51 @@ referents:
     confrontation: >-
       Des résultats publiés, déjà au dépôt : les dépenses, les ressources et
       le solde du système en part de PIB, que la page Coût confronte.
+    fait_mieux:
+      - quoi: >-
+          Il décompose la dépense en effectifs et pension relative, par groupe
+          de régimes : de 2025 à 2070, les retraités de droit direct passent
+          de 17,4 à 22,1 millions, les cotisants de 30,6 à 28,9 millions, la
+          pension relative de 54,6 à 45,3 %, stable à la Cnav (24,2 %), de
+          18,5 à 10,7 % à l'Agirc-Arrco, de 74,7 à 47,0 % à la fonction
+          publique de l'État. La page Coût n'a rien de tel (`cout.py` ;
+          `cor_comptes_retraite.py:153-157` ne lit pas ces figures), et c'est
+          la pension relative qui localiserait l'écart qu'elle déclare en
+          2070, 18,24 % du PIB contre 15,3 % : 18,24 × 45,3 / 54,6 = 15,1 %.
+        preuve: >-
+          rapport annuel du COR de juin 2026, figures 2.3, 2.6 et 2.7, tableau
+          2.1
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: >-
+          Il chiffre ce qui équilibrerait le système d'ici 2030 ou 2070 :
+          abaisser les pensions de 1,4 à 8,6 % (« pension gap »), relever le
+          prélèvement de 0,4 à 2,8 points (« tax gap »), ou, par l'âge seul,
+          partir à 67,6 ans en 2070. Le dépôt a le solde moyen, le coefficient
+          pondéré par la survie et le manque en points d'assiette
+          (`cout.py:1303-1420`), sous EPR et EEC (`equilibre.py:629-662`),
+          mais écarte le levier de l'âge (`cout.py:1357`).
+        preuve: >-
+          rapport annuel du COR de juin 2026, tableau 2.11 et figure 2.24
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: >-
+          Il publie, par cas type et génération, les taux de remplacement, la
+          durée de retraite et le TRI : 2,0 % pour le non-cadre de la
+          génération 1940, 0,8 % dès 1970. Le dépôt n'en lit que la figure
+          3.14 (`data/sources.yaml:507-529`), et le TRI y est une affirmation
+          `hors_modele` (`affirmations.yaml:2224-2229`).
+        preuve: rapport annuel du COR de juin 2026, figures 3.3 à 3.7 et 3.21
+        etat: a_reprendre
+        chantier: "138.9"
+      - quoi: >-
+          Il projette l'ASPA du FSV, 0,15 % du PIB en 2023 et 0,11 % en 2070,
+          et une dépense du FSV qui passerait en 2070 de 0,50 à 0,70 % si
+          l'ASPA suivait le SMIC. Le dépôt ne projette pas l'ASPA du scénario
+          1, à laquelle comparer la garantie.
+        preuve: rapport annuel du COR de 2024
+        etat: a_reprendre
+        chantier: "138.5"
     manifeste: [cor_comptes_systeme_retraite]
     lu_le: 2026-10-01
     lu_dans:
@@ -751,6 +1395,18 @@ referents:
       conversion avec la revalorisation des pensions, des déficits
       transitoires « de l'ordre de 10 % de la masse des cotisations » sur un
       choc démographique.
+    fait_mieux:
+      - quoi: >-
+          Il soumet un système stylisé à quatre chocs, en annuités, en points
+          et en comptes notionnels : sur un choc démographique, les comptes
+          notionnels laissent des déficits « de l'ordre de 10% de la masse des
+          cotisations, contre près de 90% » en annuités, pendant « environ 40
+          ans ». Le dépôt ne le cite qu'en prose (`data/sources.yaml:691-720`)
+          et ne rejoue aucun de ces chocs sur son moteur notionnel.
+        preuve: >-
+          `doc-4018.pdf`, séance du COR du 5 juillet 2017
+        etat: a_reprendre
+        chantier: "138.11"
     manifeste: [cor_retour_septieme_rapport]
     lu_le: 2026-10-01
     lu_dans:
@@ -774,6 +1430,18 @@ referents:
       Aucune tant qu'il est fermé : « Le simulateur est temporairement fermé
       pour révision des scénarios économiques », et sa documentation
       technique répond 404.
+    fait_mieux:
+      - quoi: >-
+          Il boucle la projection par une équation, « S = B x
+          [ T – ( NR / NC ) x ( P + dP ) ] » : un an d'âge retire G retraités
+          et ajoute 0,5 G cotisants, facteur « conventionnel », pour 0,6 à 0,9
+          point de PIB. Le dépôt a B et T ; NR, NC et P viendront de la
+          décomposition de la dépense (voir maquette_globale_cor).
+        preuve: >-
+          sa documentation de 2016, copiée dans `brunoscherrer/retraites` au
+          commit `f3c2d92`
+        etat: a_reprendre
+        chantier: "138.3"
     sas: [cor_simulateur]
     lu_le: 2026-10-01
     lu_dans:
@@ -783,6 +1451,8 @@ referents:
       (ci-dessous), et, sans licence, `nosretraites/roc-retraites`,
       `ChallengesRedac/simulateurRetraite`, `Brohuld/Simulateur-Retraites`,
       `V0latix/retraite_simu`, `GuillaumeAB/simulateur-retraites-france`.
+      Sa documentation de 2016 se lit encore dans la copie qu'en garde
+      `brunoscherrer/retraites` (commit `f3c2d92`), relue le 1er octobre 2026.
 
   # ---- Les caisses ------------------------------------------------------------
 
@@ -810,6 +1480,26 @@ referents:
       inférieures de 7 % en 2050, l'effet d'une table par génération, la part
       des droits non contributifs dans les comptes ; aujourd'hui, les
       chiffrages des PLFSS (2026, annexe 9) et du COR.
+    fait_mieux:
+      - quoi: >-
+          Il a chiffré la mesure d'âge du PLFRSS 2023 : 3,3, 5,3 et 7,5 Md€ en
+          2024, 2025 et 2026. Le dépôt n'a aucun témoin du droit sans la
+          réforme de 2023 qui permette de retrouver ces montants (« PLFRSS
+          2023 », cherché en vain).
+        preuve: >-
+          étude d'impact du PLFRSS 2023 : « Source : Cnav - Modèle PRISME
+          2022 »
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: >-
+          Il différencie le non-recours à l'ASPA « selon la situation
+          conjugale, le sexe, le montant de l'allocation ainsi que l'âge ». Le
+          dépôt suppose un recours uniforme de 50 %, mesuré sur les personnes
+          seules (`config.py:866`) ; celui des couples se lit dans le dossier
+          de la DREES n° 97.
+        preuve: COR, document n° 9 de mars 2020 (Prisme, Cnav)
+        etat: a_reprendre
+        chantier: "138.3"
     manifeste: [cnav_comptes_notionnels_2009, cor_septieme_rapport]
     lu_le: 2026-10-01
     lu_dans:
@@ -835,6 +1525,19 @@ referents:
     confrontation: >-
       Comparer ses étapes, fiche par fiche, à celles du moteur du dépôt ; ses
       résultats sont les exemples officiels de la Cnav, déjà au banc.
+    fait_mieux:
+      - quoi: >-
+          À chaque date de revalorisation, il applique le coefficient au
+          « montant mensuel théorique » de la seconde pension, le compare au
+          « plafond réglementaire » de la date, et retient le plus petit,
+          comme le veulent L. 161-23-1 et D. 161-2-22-1. Le dépôt ne la
+          revalorise pas (`data/reference/regles/seconde_pension.yaml:121` :
+          « “faire vivre” ne la revalorise pas »).
+        preuve: >-
+          fiche « CER Revalorisation du montant » de ses traitements
+          algorithmiques (mars 2026)
+        etat: a_reprendre
+        chantier: "138.12"
     lu_le: 2026-10-01
     lu_dans:
       - https://www.lassuranceretraite.fr/portail-info/hors-menu/footer/traitements-algorithmiques.html
@@ -887,6 +1590,18 @@ referents:
       les engagements du compte général de l'État, les effets de la réforme
       de 2023 que le jaune « pensions » du PLF 2026 en tire, et les
       engagements de l'État des comptes nationaux.
+    fait_mieux:
+      - quoi: >-
+          Microsimulé sur le compte individuel de retraite, il chiffre le
+          biais de l'individu moyen : 1 845 Md€ d'engagements, contre
+          1 535 Md€ selon le modèle agrégé Ariane, un écart qui tient pour
+          140 Md€ aux pensions moyennes, pour 79 à la structure et pour 45 à
+          la mortalité du régime. Le dépôt calcule sur 13 cas types, des
+          individus moyens, sans mesurer ce biais, que le tableau 3.2
+          d'Ancetre permettrait d'approcher.
+        preuve: COR, document n° 10 de mars 2020 (Pablo, SRE)
+        etat: a_reprendre
+        chantier: "138.3"
     lu_le: 2026-10-01
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
@@ -949,6 +1664,17 @@ referents:
     confrontation: >-
       Des résultats publiés à retrouver : les projections de la CNRACL pour
       le COR.
+    fait_mieux:
+      - quoi: >-
+          Il projette les retraités de droit direct de la CNRACL, de
+          1,34 million en 2023 à 2,13 millions en 2070. La dépense de la page
+          Coût garde les poids de 2024 (`donnees/effectifs.py:39-41`), alors
+          que sa recette lit déjà les cotisants projetés du même classeur.
+        preuve: >-
+          classeur par régime du COR (2024), bloc « Effectifs de retraités de
+          droit direct » ; COR, document n° 7 de décembre 2024
+        etat: a_reprendre
+        chantier: "138.3"
     lu_le: 2026-10-01
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_07_SI_CNRACL.pdf
@@ -972,6 +1698,16 @@ referents:
       Prévir, qui projette l'emploi des contractuels.
     confrontation: >-
       Des résultats publiés à retrouver : les projections de l'Ircantec.
+    fait_mieux:
+      - quoi: >-
+          Il projette les retraités de droit direct de l'Ircantec, de
+          2,04 millions en 2023 à 5,47 millions en 2070. La dépense de la page
+          Coût garde les poids de 2024 (`donnees/effectifs.py:39-41`).
+        preuve: >-
+          classeur par régime du COR (2024), bloc « Effectifs de retraités de
+          droit direct » ; COR, document n° 7 de décembre 2024
+        etat: a_reprendre
+        chantier: "138.3"
     lu_le: 2026-10-01
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_07_SI_CNRACL.pdf
@@ -994,6 +1730,27 @@ referents:
     confrontation: >-
       Des résultats publiés à retrouver : les projections de l'Agirc-Arrco
       pour le COR.
+    fait_mieux:
+      - quoi: >-
+          Il projette l'Agirc-Arrco sous la convention du COR : « Sur la
+          période 2027-2037, la valeur de service évoluerait comme le salaire
+          moyen, minoré de 1,16 % », puis « de 0,86 % » dès 2038 ; le
+          rendement y baisse d'environ 12 % d'ici 2037, et la part
+          complémentaire de la pension du non-cadre tombe de 24,6 %
+          (génération 1940) à 16,4 % (génération 2000). Le dépôt gèle le
+          rendement après 2026 (`rendements_points.csv`,
+          `scenarios/actuel.py:2314`) et fait suivre les prix à la valeur de
+          service (`droit/liquider.py:1448-1452`).
+        preuve: >-
+          rapport annuel du COR de juin 2026, page 64 du PDF et figure 3.3 ;
+          fiche Agirc-Arrco du COR (2024)
+        etat: a_trancher
+        raison: >-
+          La trajectoire « n'engage donc aucunement les partenaires sociaux »,
+          dit la fiche, mais c'est la seule publiée, et elle porte sur un
+          quart de la dépense : en faire une variante « convention COR » de la
+          page Coût, déclarée dans `limites.md`, est un choix que le
+          propriétaire tranche.
     lu_le: 2026-10-01
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_05_SI_Agirc-Arrco.pdf
@@ -1066,6 +1823,17 @@ referents:
     confrontation: >-
       Des paramètres de 2017 à comparer, pour le foyer et le net ; il ne vaut
       que pour cette année-là.
+    fait_mieux:
+      - quoi: >-
+          Il fixe le régime de CSG des pensions — exonération, taux réduit,
+          taux plein — selon le revenu fiscal de référence et les parts, au
+          barème de 2017. Le dépôt retire 9,1 % à tous
+          (`prelevements_remuneration.yaml:705`).
+        preuve: >-
+          `Programmes/6-Definition_revenus_bruts.sas:223-229`, au commit
+          `7bc72c9`
+        etat: a_reprendre
+        chantier: "138.2"
     sas: [dgtresor_saphir]
     lu_le: 2026-10-01
     lu_dans:
@@ -1073,6 +1841,7 @@ referents:
     note: >-
       Un seul commit, le 5 septembre 2018 ; le README prévient qu'il n'engage
       pas « la position de l'administration ».
+      Ce commit est `7bc72c9`.
 
   # ---- L'Urssaf : les règles publicodes ----------------------------------
 
@@ -1109,6 +1878,20 @@ referents:
           bénéficiaires du RSA sont dispensés.
         tranche: le droit dispense, et ni lui ni le dépôt ne savent qui touche le RSA ; écart déclaré
         preuve: docs/archives/limites.md (« Les dernières sections libérales »)
+    fait_mieux:
+      - quoi: >-
+          Chaque règle porte ses `références`, et l'application en tire une
+          page par valeur, qui explique le calcul. Le site du dépôt ne donne,
+          sous « Le détail du calcul » (`pages.js:6155`), que des lignes et un
+          JSON, sans fiche ni article, et 3 % des lignes du relevé citent leur
+          fiche.
+        preuve: >-
+          ses blocs `références` (140 pour quelque 218 règles) ; publi.codes :
+          « L'explications auto-générée des résultats de calculs permet de
+          vous conformer à l'obligation de transparence des algorithmes
+          publics »
+        etat: a_reprendre
+        chantier: "136.4"
     sas: [mon_entreprise_cipav]
     lu_le: 2026-10-01
     lu_dans:
@@ -1122,6 +1905,12 @@ referents:
       corrige les points acquis, inversés entre le RCI et la Cipav. L'API de
       mon-entreprise l'expose (`/api/v1/modeles/ti/evaluate`), sans
       authentification, cinq requêtes par seconde.
+      Comparé au dépôt le 1er octobre 2026 au commit `6bb0f26` de
+      mon-entreprise. L'ACRE y abat la cotisation de base
+      (`cotisations.publicodes:400-409`), donc le revenu cotisé qui valide les
+      trimestres (`retraite-base.publicodes:74-79`), quand service-public
+      (F11677) dit que le créateur « acquiert des trimestres […] en fonction
+      de son revenu » : à trancher par L. 131-6-4.
 
   - id: modele_social
     nom: modele-social
@@ -1151,6 +1940,72 @@ referents:
           le même dépôt, compte 557 points.
         tranche: la réforme de l'assiette de 2025, que modele-ti suit ; le paquet est en retard
         preuve: data/sources_a_explorer.yaml (mon_entreprise_cipav)
+      - constat: >-
+          Il valide les trimestres du micro-entrepreneur sur son revenu
+          abattu, aux coefficients 0,29, 0,50 et 0,66, quand le revenu cotisé,
+          CA × 12,3 % × 43,45 % / 17,87 %, donne 0,299, 0,515 et 0,665 :
+          12 100 € de ventes « valide 2 trimestres », le revenu abattu
+          (3 509 €) un seul.
+        tranche: >-
+          service-public.fr (F23369, vérifié le 1er avril 2026) ; l'erreur est
+          la sienne, et aussi celle du dépôt
+          (`regimes/micro_entrepreneurs.yaml`)
+        preuve: >-
+          `règles/protection-sociale.publicodes:77-105` et
+          `règles/entreprise/imposition.publicodes:327-353`, au commit
+          `6bb0f26`
+      - constat: >-
+          Il fixe à 2 860 € le seuil de la Cipav pour 2026
+          (`protection-sociale.publicodes:88`).
+        tranche: >-
+          la Cipav, qui écrit « 2 792 € en 2026 » (fiche pratique « AE
+          2026 ») ; l'écart est le sien
+        preuve: >-
+          `règles/protection-sociale.publicodes:88`, au commit `6bb0f26`
+    fait_mieux:
+      - quoi: >-
+          Il saisit le micro-entrepreneur par son chiffre d'affaires et son
+          activité, abattus de 71, 50 ou 34 %, et suit celui de la Cipav par
+          tranches. Le dépôt demande à l'utilisateur de reconstituer son
+          revenu, sans les variantes de l'abattement
+          (`regimes/micro_entrepreneurs.yaml:20-28`), n'a aucun chemin Cipav,
+          et « chiffre d'affaires » est absent de `pages.js` et de
+          `saisie.js` ; le revenu qui valide les trimestres se prend au taux
+          du versement et à sa part de base, comme le fait service-public, non
+          au revenu abattu (voir les écarts).
+        preuve: >-
+          `règles/entreprise/imposition.publicodes:327-353` et
+          `règles/protection-sociale.publicodes:77-105`, au commit `6bb0f26`
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: >-
+          Il porte le seuil d'affiliation des artistes-auteurs au RAAP (900
+          SMIC horaires de N−1), le taux réduit sur option et la conversion
+          des BNC (× 1,15). Le dépôt prélève la cotisation sous le seuil
+          (`ircec_raap.yaml:283-288`) et ignore les BNC ; le 1,15 reste à lire
+          dans L. 382-3.
+        preuve: >-
+          `artiste-auteur.publicodes:67-75, 198-231`, au commit `6bb0f26`
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: >-
+          Il dispense des cotisations minimales le bénéficiaire du RSA ou de
+          la prime d'activité ; le dépôt sert à tous les trois trimestres de
+          l'assiette minimale (écart déclaré, voir modele_ti).
+        preuve: >-
+          `situation-personnelle.publicodes:4-8`, au commit `6bb0f26`
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: >-
+          Chaque règle porte ses `références`, et l'application en tire une
+          page par valeur ; le site du dépôt ne cite ni fiche ni article sous
+          « Le détail du calcul » (`pages.js:6155`).
+        preuve: >-
+          ses blocs `références` ; publi.codes : « L'explications auto-générée
+          des résultats de calculs permet de vous conformer à l'obligation de
+          transparence des algorithmes publics »
+        etat: a_reprendre
+        chantier: "136.4"
     sas: [mon_entreprise_bibliotheque, mon_entreprise_depot]
     lu_le: 2026-10-01
     lu_dans:
@@ -1161,6 +2016,9 @@ referents:
       Paquet npm 11.1.0 du 16 juillet 2026, sous MIT, dans le répertoire
       `modele-social` ; l'API de mon-entreprise l'expose
       (`/api/v1/evaluate`).
+      Au commit `6bb0f26` de mon-entreprise, comparé au dépôt le 1er octobre
+      2026, `CNAVPL.publicodes:48` et `protection-sociale.publicodes:458`
+      portent toujours 8,23 % et 525 points.
 
   - id: modele_as
     nom: modele-as
@@ -1179,6 +2037,17 @@ referents:
     confrontation: >-
       Un calcul à rejouer, sur des revenus de dirigeant, pour les trimestres
       et les points.
+    fait_mieux:
+      - quoi: >-
+          Ses règles portent leurs `références`, comme celles de modele-social
+          et de modele-ti, et l'application en tire une page par valeur ; le
+          site du dépôt ne cite ni fiche ni article (`pages.js:6155`).
+        preuve: >-
+          ses blocs `références` ; publi.codes : « L'explications auto-générée
+          des résultats de calculs permet de vous conformer à l'obligation de
+          transparence des algorithmes publics »
+        etat: a_reprendre
+        chantier: "136.4"
     sas: [mon_entreprise_depot]
     lu_le: 2026-10-01
     lu_dans:
@@ -1216,6 +2085,17 @@ referents:
           modèle applique ; l'écart est le sien, toujours présent le
           1er octobre 2026
         preuve: docs/architecture.md (§ 3.4)
+    fait_mieux:
+      - quoi: >-
+          Chaque règle y est écrite sous l'alinéa qu'elle transcrit, recopié à
+          côté : le code se relit contre son texte. Le site du dépôt ne cite
+          ni fiche ni article sous « Le détail du calcul » (`pages.js:6155`),
+          et 3 % des lignes du relevé citent leur fiche.
+        preuve: >-
+          `aides_logement/code_sécurité_sociale.catala_fr:460-468`, au commit
+          `2694b17` : l'alinéa, puis sa transcription
+        etat: a_reprendre
+        chantier: "136.4"
     sas: [catala_examples]
     lu_le: 2026-10-01
     lu_dans:
@@ -1224,13 +2104,14 @@ referents:
       Dernier commit le 18 septembre 2026. `CatalaLang/french-law` (Apache
       2.0) en tire des bibliothèques. Le répertoire `impot_revenu` du même
       dépôt est sous une autre licence : voir ir_catala.
+      Comparé au dépôt le 1er octobre 2026 au commit `2694b17`.
 
   - id: ir_catala
     nom: ir-catala
     auteur: DGFiP
     nature: calculateur
     publication: ouvert
-    code: https://gitlab.adullact.net/dgfip/ir-catala
+    code: https://gitlab.adullact.net/dgfip/impots-nationaux-revenu-patrimoine-particuliers/ir-catala
     licence: CeCILL 2.1
     usage: executer_a_part
     confronte: [scenario_1]
@@ -1241,14 +2122,30 @@ referents:
     confrontation: >-
       Une règle à comparer, le jour où le dépôt calculera l'impôt du
       retraité.
+    fait_mieux:
+      - quoi: >-
+          Il calcule l'abattement de 10 % des pensions (CGI, art. 158, 5 a),
+          une brique du revenu fiscal de référence qui fixe le taux de CSG. Le
+          dépôt en a le barème (`prelevements_remuneration.yaml:755-759`), pas
+          le revenu fiscal, et retire 9,1 % à tous (`docs/limites.md`, § 5
+          ante ter) ; ses montants, de 2022 (4 123 € et 422 €), sont à relire
+          au CGI.
+        preuve: >-
+          `sources/archives_cgi.catala_fr:341-370`, au commit `7f5fe83`
+        etat: a_reprendre
+        chantier: "138.2"
     sas: [dgfip_ir_catala]
     lu_le: 2026-10-01
     lu_dans:
-      - https://gitlab.adullact.net/dgfip/ir-catala
+      - https://gitlab.adullact.net/dgfip/impots-nationaux-revenu-patrimoine-particuliers/ir-catala
     note: >-
       Dernier commit le 2 octobre 2024 ; le même contenu est dans
       `catala-examples/impot_revenu`, sous CeCILL 2.1 aussi : une seule
       source pour les deux.
+      Le projet a déménagé sous
+      `dgfip/impots-nationaux-revenu-patrimoine-particuliers/ir-catala` :
+      l'ancienne adresse y renvoie (HTTP 301), et `git ls-remote` y lit, le
+      1er octobre 2026, le commit `7f5fe83`.
 
   # ---- La recherche ------------------------------------------------------------
 
@@ -1271,6 +2168,19 @@ referents:
     confrontation: >-
       Des règles du foyer et du net à comparer ; ses règles, sous CC BY 4.0,
       se recopient en citant.
+    ecarts:
+      - constat: >-
+          Il décrit pour 2022 à 2025 le critère d'un « impôt inférieur à
+          61 € », abrogé en 2015.
+        tranche: >-
+          L. 136-8, dont le taux ne dépend plus que du revenu fiscal de
+          référence et des parts ; l'écart est le sien
+        preuve: rapport pays Y16_CR_FR, p. 94
+      - constat: >-
+          Il prend les ressources de l'ASPA nettes imposables.
+        tranche: >-
+          R. 815-22 du code de la sécurité sociale ; l'écart est le sien
+        preuve: rapport pays Y16_CR_FR
     sas: [jrc_euromod]
     lu_le: 2026-10-01
     lu_dans:
@@ -1296,12 +2206,27 @@ referents:
     confrontation: >-
       Des projections à comparer, à hypothèses du COR égales ; elles datent
       de 2019.
+    fait_mieux:
+      - quoi: >-
+          Il pilote le système par n'importe quel levier, l'âge compris, avec
+          le niveau de vie relatif des retraités et la part de la vie passée
+          en retraite. La page Coût chiffre le coefficient, les points
+          d'assiette et la dette à l'année du départ (`cout.py:1329-1469`),
+          pas l'âge (`cout.py:1357`) ; ses projections étant celles de 2019,
+          c'est à la figure 2.24 du rapport du COR de 2026 qu'il faudrait
+          confronter ces leviers (67,6 ans, −7,4 points de pension relative,
+          +5,6 points de prélèvement en 2070).
+        preuve: >-
+          `SimulateurRetraites.py:290-900, 1309`, au commit `f3c2d92`
+        etat: a_reprendre
+        chantier: "138.3"
     sas: [scherrer_retraites]
     lu_le: 2026-10-01
     lu_dans:
       - https://github.com/brunoscherrer/retraites
     note: >-
       Paquet PyPI `retraites` 0.1.1 ; dernier commit le 30 septembre 2020.
+      Ce dernier commit est `f3c2d92`.
 
   - id: retraites_cor2026
     nom: retraites-cor2026
@@ -1317,10 +2242,36 @@ referents:
     depend_de: [maquette_globale_cor]
     confrontation: >-
       Des projections à comparer, à séries du COR égales.
+    ecarts:
+      - constat: >-
+          Sa pension relative ignore l'effet de noria
+          (`maquette.py:146-149`) : 40,4 % en 2070, contre 45,3 % au COR, un
+          écart qu'il attribue à tort à l'Agirc-Arrco
+          (`config/hypotheses.yaml:53-55`) ; et son « Tableau 2.10 » est la
+          figure 2.24 du rapport.
+        tranche: >-
+          le rapport du COR de juin 2026, 45,3 % en 2070 ; l'écart est le sien
+        preuve: >-
+          `maquette.py:146-149`, au commit `b75b211`
+    fait_mieux:
+      - quoi: >-
+          Il porte les variantes démographiques de l'INSEE de 2026 : fécondité
+          de 1,20 ou 1,70, solde migratoire de +70 000 ou +230 000. Le dépôt
+          n'a que le scénario central (`population_par_age.csv`) ; le COR
+          chiffre la fécondité et l'espérance de vie à ±1 point de PIB de
+          dépenses en 2070, et c'est l'épreuve d'un diviseur indexé sur la
+          longévité.
+        preuve: >-
+          `config/hypotheses.yaml:26-31, 86-95`, au commit `b75b211`
+        etat: a_reprendre
+        chantier: "138.7"
     sas: [corral_retraites_cor2026]
     lu_le: 2026-10-01
     lu_dans:
       - https://github.com/AxelCorral/retraites-cor2026
+    note: >-
+      Comparé au dépôt le 1er octobre 2026 au commit `b75b211`, du 16 juin
+      2026.
 
   # ---- La société civile et la presse --------------------------------------
   # Des lectures du droit faites par d'autres, chacune indépendante : elles
@@ -1344,11 +2295,39 @@ referents:
     confrontation: >-
       Des prélèvements à comparer : ses seuils de CSG citent l'instruction de
       la DSS du 11 décembre 2025, et rejoignent ceux d'OpenFisca-France.
+    ecarts:
+      - constat: >-
+          Il dit 29 % des retraités au taux plein de CSG, d'après la CFDT
+          (`app.js:200`).
+        tranche: >-
+          la DREES : 42,9 % au taux plein fin 2023, tous régimes, et 22,1 %
+          d'exonérés (EACR, table A-Prelev_sociaux) ; l'écart est le sien
+        preuve: >-
+          la table de l'EACR que legiretraite embarque
+          (`inst/extdata/drees/eacr/a-prelevements-sociaux.parquet`)
+    fait_mieux:
+      - quoi: >-
+          Il calcule la pension nette par foyer : la CSG selon le revenu
+          fiscal de référence, les exonérations de CRDS et de CASA, le 1 %
+          maladie de la complémentaire, l'impôt avec ses abattements ; ses
+          seuils de CSG sont ceux du dépôt, son abattement des plus de 65 ans
+          conforme au BOFiP. Le dépôt retire 9,1 % à tous
+          (`prelevements_remuneration.yaml:705`) ; c'est un second code, sous
+          MIT, à confronter au net par foyer, non une action de plus.
+        preuve: >-
+          `app.js:21-77`, au commit `431dd9f`
+        etat: a_reprendre
+        chantier: "138.2"
     sas: [tilloy_retraites_2027]
     lu_le: 2026-10-01
     lu_dans:
       - https://github.com/AntoineTilloy/retraites-2027
-    note: Dernier commit le 20 septembre 2026, en JavaScript.
+    note: >-
+      Dernier commit le 20 septembre 2026, en JavaScript.
+      Comparé au dépôt le 1er octobre 2026 à ce commit, `431dd9f`. Son
+      deuxième seuil d'impôt, 30 091 € (`params.js:62`), s'écarte des 30 171 €
+      que donnent 29 579 € revalorisés de 2 % : un calcul, qu'aucun texte lu
+      ne tranche encore.
 
   - id: simulateur_aurain
     nom: Simulateur de dépense publique, volet retraites
@@ -1367,11 +2346,44 @@ referents:
       Des paramètres à comparer : il dit avoir vérifié ses durées « contre le
       texte consolidé sur Legifrance » le 9 septembre 2026, et elles
       rejoignent celles du dépôt (170, puis 171 à partir d'avril 1965, 172).
+    fait_mieux:
+      - quoi: >-
+          Il source la part des reportés restés en emploi : « 62 à 75 % […]
+          Défaut retenu : 65 % ». Le dépôt la met à 1,0, un plafond, en
+          écrivant qu'« une valeur retenue devra y avoir été lue »
+          (`config.py:833-852`) ; l'INSEE (Analyses n° 30, 2017) donne 0,63
+          chez les hommes et 0,73 chez les femmes.
+        preuve: >-
+          `docs/hypotheses.md:191-212`, au commit `59b7985`
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: >-
+          Il chiffre l'effet retour d'une baisse des pensions : moins de CSG
+          et d'impôt, plus d'ASPA. Le coût des scénarios 2 à 5 ignore l'ASPA
+          que déclencheraient leurs petites pensions (`cout.py:603`), et les
+          impôts affectés y restent fixes (`cout.py:97`) ; l'IPP (Perspectives
+          budgétaires 2027, juin 2026) confirme l'ordre de grandeur, un gain
+          public « inférieur d'environ 20 % à 25 % » à l'économie des régimes,
+          mais son calage de l'ASPA est grossier.
+        preuve: >-
+          `modeles/fiscal.py:357-391`, au commit `59b7985`
+        etat: a_reprendre
+        chantier: "138.5"
+      - quoi: >-
+          Son interface résout à l'envers, compare deux jeux d'hypothèses
+          (A/B) et imprime un rapport ; le site du dépôt n'a ni solveur ni
+          rapport imprimable (cherchés en vain dans `pages.js`).
+        preuve: >-
+          `app/retraites.html:1523, 2025-2028`, au commit `59b7985`
+        etat: a_reprendre
+        chantier: "138.10"
     sas: [aurain_retraites_simulateur]
     lu_le: 2026-10-01
     lu_dans:
       - https://github.com/ManZanau/retraites-simulateur
-    note: Dernier commit le 16 septembre 2026, en Python et JavaScript.
+    note: >-
+      Dernier commit le 16 septembre 2026, en Python et JavaScript.
+      Comparé au dépôt le 1er octobre 2026 à ce commit, `59b7985`.
 
   - id: outil_quand_partir
     nom: « Quand pourrai-je partir à la retraite ? »
@@ -1388,6 +2400,27 @@ referents:
       (`src/lib/boite-a-outils/retraite/outil.js`).
     confrontation: >-
       Des paramètres à comparer, génération par génération.
+    ecarts:
+      - constat: >-
+          Il ouvre les droits de toute la génération 1961 à 62 ans et 3 mois,
+          avec 169 trimestres (`outil.js`, l. 48 et 86-90), contre sa propre
+          règle de la majorité des mois.
+        tranche: >-
+          le droit que le dépôt certifie : nés de janvier à août 1961, 62 ans
+          et 168 trimestres ; l'écart est le sien
+        preuve: data/reference/legislation/age_ouverture_requis.csv (l. 135)
+    fait_mieux:
+      - quoi: >-
+          Il donne, pour une génération, son âge et sa durée sous trois états
+          du droit, la loi du 30 décembre 2025 comprise, et l'écart en mois.
+          Le dépôt n'a aucun univers contrefactuel ; deux univers en couches,
+          le droit au 31 août 2023 et la loi de 2023 sans suspension, y
+          suffiraient.
+        preuve: >-
+          `src/lib/boite-a-outils/retraite/outil.js:41-102`, au commit
+          `94616bc`
+        etat: a_reprendre
+        chantier: "138.10"
     sas: [lfi_outil_retraite]
     lu_le: 2026-10-01
     lu_dans:
@@ -1395,6 +2428,7 @@ referents:
     note: >-
       Dernier commit le 29 septembre 2026 ; son rattachement à un parti n'est
       pas vérifié.
+      Comparé au dépôt le 1er octobre 2026 au commit `94616bc`.
 
   - id: simulateur_sud_education
     nom: Simulateur de SUD éducation
@@ -1410,11 +2444,26 @@ referents:
       universel du rapport Delevoye.
     confrontation: >-
       Un calcul à rejouer au droit de 2020, que le scénario 1 sait appliquer.
+    fait_mieux:
+      - quoi: >-
+          Il saisit l'enseignant par son corps et son échelon. Le dépôt n'a
+          aucun champ d'indice ; ses grilles et son point (4,686 €) étant de
+          2020, ce qui se reprend est un champ « indice majoré », multiplié
+          par la valeur du point.
+        preuve: >-
+          `static/js/retraites.js:12-67`, au commit `eec62c9`
+        etat: a_reprendre
+        chantier: "138.10"
     sas: [sud_education_simulateur]
     lu_le: 2026-10-01
     lu_dans:
       - https://github.com/Brndan/simulateur-retraites
-    note: Dernier commit le 5 septembre 2020.
+    note: >-
+      Dernier commit le 5 septembre 2020.
+      Comparé au dépôt le 1er octobre 2026 à ce commit, `eec62c9`. La
+      comparaison y trouve, sans citer le texte qui tranche, un prorata non
+      plafonné à 1 et une décote sans borne (l. 177-181), et le minimum
+      contributif appliqué aux fonctionnaires (l. 205-214).
 
   - id: devcrafting_retraites
     nom: devcrafting/retraites
@@ -1434,7 +2483,12 @@ referents:
     lu_le: 2026-10-01
     lu_dans:
       - https://github.com/devcrafting/retraites
-    note: Dernier commit le 21 janvier 2020.
+    note: >-
+      Dernier commit le 21 janvier 2020.
+      Comparé au dépôt le 1er octobre 2026 à ce commit, `2312ebd`. La
+      comparaison y trouve, sans citer le texte qui tranche, un salaire annuel
+      moyen non revalorisé, un prorata non plafonné et une décote négative
+      changée en surcote (`CurrentRegimeGeneralDeBase.fs:7-14`).
 
   - id: calcul_verification_pension
     nom: calcul-verification-pension-retraite
@@ -1450,11 +2504,40 @@ referents:
       (« uniquement »).
     confrontation: >-
       Un calcul à relire, pour le régime général.
+    ecarts:
+      - constat: >-
+          Il réserve aux mères la majoration de pension de 10 %.
+        tranche: >-
+          L. 351-12, qui vise « tout assuré de l'un ou l'autre sexe » ;
+          l'écart est le sien
+        preuve: la cellule `Pension!F33` du classeur, au commit `5344b10`
+    fait_mieux:
+      - quoi: >-
+          Il valide les trimestres d'avant 1972 par un seuil trimestriel en
+          montant : 362,5 F en 1968, 437,5 F en 1971. Le dépôt écrit
+          qu'« Avant 1972, aucun seuil de montant n'existait »
+          (`donnees/macro.py:287-294`), à tort : R. 351-9
+          (LEGIARTI000053335598) compte de 1949 à 1971 « autant de trimestres
+          […] que le salaire annuel […] représente de fois le montant
+          trimestriel de l'allocation aux vieux travailleurs salariés », dont
+          la série reste à certifier au Journal officiel.
+        preuve: la feuille Carriere du classeur, au commit `5344b10`
+        etat: a_reprendre
+        chantier: "138.6"
+      - quoi: >-
+          Il recalcule les trimestres d'un relevé réel depuis ses montants, et
+          le contrôle ainsi. Dans le dépôt, le relevé « fait foi »
+          (`carriere.py:418-442`) : rien ne signale une année sous-validée.
+        preuve: la feuille Carriere du classeur, au commit `5344b10`
+        etat: a_reprendre
+        chantier: "138.10"
     sas: [calcul_verification_pension]
     lu_le: 2026-10-01
     lu_dans:
       - https://gitlab.com/jean-ricky-fr/calcul-verification-pension-retraite
-    note: Dernier commit le 28 février 2026.
+    note: >-
+      Dernier commit le 28 février 2026.
+      Comparé au dépôt le 1er octobre 2026 à ce commit, `5344b10`.
 
   - id: nosretraites_cas_types
     nom: Simulateur de cas types de Nos Retraites
@@ -1471,6 +2554,18 @@ referents:
       2023, pas à la loi votée.
     confrontation: >-
       Peu : son droit est un projet ; il garde la lecture d'un moment.
+    fait_mieux:
+      - quoi: >-
+          Il donne, de 58 à 67 ans et sous deux états du droit, ce que vaut
+          chaque âge — départ possible, taux plein, décote, surcote —, résumé
+          en phrases. Le dépôt ne calcule qu'un âge à la fois
+          (`pages.js:4029-4033`) ; une table des six pensions aux âges
+          d'ouverture et du taux plein, à 65 et à 67 ans, se mettrait sous le
+          résultat.
+        preuve: >-
+          `utils/calculationUtils.js:20`, au commit `5e4abf1`
+        etat: a_reprendre
+        chantier: "138.10"
     sas: [nosretraites_simulateur_cas_types]
     lu_le: 2026-10-01
     lu_dans:
@@ -1478,6 +2573,11 @@ referents:
     note: >-
       Dernier commit le 22 janvier 2023 ; ses données sont dans
       `simulateur_cas_types_data`.
+      Comparé au dépôt le 1er octobre 2026 au commit `5e4abf1`, ses données au
+      commit `942e9f6`. La comparaison y trouve, sans citer le texte qui
+      tranche, toute la génération 1961 à 62,25 ans dans le droit « mac », et
+      la bonification des fonctionnaires pour enfants nés avant 2004 sans
+      condition d'interruption.
 
   # ---- À l'étranger : les comptes notionnels --------------------------------
   # Ils confrontent l'arithmétique de la proposition : le diviseur, le
@@ -1505,11 +2605,35 @@ referents:
       Un calcul à rejouer : l'indice d'équilibre et le temps de rotation sur
       75 ans, les trajectoires du frein contre le mécanisme d'équilibre de la
       proposition.
+    fait_mieux:
+      - quoi: >-
+          Il projette le bilan du système suédois, durée de rotation
+          (`x_Y_turnover_duration`) et indice d'équilibre
+          (`x_Y_balance_ratio`). Le dépôt calcule un rapport de flux,
+          ressources sur dépenses de l'année (`cout.py:114-121`), jamais
+          appliqué.
+        preuve: son manuel, version 1.5.4 (2015)
+        etat: a_trancher
+        raison: >-
+          Le bilan ne sert qu'à un équilibrage appliqué, un choix du programme
+          que le propriétaire tranche (voir balanstal_suede).
+      - quoi: >-
+          Il projette sur « 498 status groups », croisés par âge, sexe et
+          origine, quand la page Coût du dépôt pondère 13 cas types
+          (`castypes.py:127`). Une population par états demanderait, en
+          France, l'EIC, qui ne se lit qu'au CASD.
+        preuve: >-
+          son manuel, version 1.5.4 (2015) : « 498 status groups »
+        etat: a_reprendre
+        chantier: "138.14"
     sas: [suede_pensionsmodellen]
     lu_le: 2026-10-01
     lu_dans:
       - https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/pensionsmodellen
-    note: Version 2.2 du 10 octobre 2024, une archive de 2,87 Go.
+    note: >-
+      Version 2.2 du 10 octobre 2024, une archive de 2,87 Go.
+      Le manuel lu le 1er octobre 2026 est la version 1.5.4, de 2015,
+      antérieure à la loi SFS 2015:676.
 
   - id: typfallsmodellen
     nom: Typfallsmodellen
@@ -1533,6 +2657,43 @@ referents:
     confrontation: >-
       Un calcul à rejouer : le diviseur projeté d'une génération, et la
       pension d'un cas type à carrière identique.
+    fait_mieux:
+      - quoi: >-
+          Il impute chaque année au compte les gains d'héritage, les comptes
+          des morts redistribués aux survivants de la génération, sur des
+          facteurs « desamma för kvinnor och män » (SFB 62:9-17). Le compte
+          d'un mort « revient à la collectivité » au dépôt
+          (`capitalisation.py:5-6`), rien n'en revient au compte
+          (`compte.py:847-905`), et le README est muet ; sur la mortalité du
+          dépôt, la pension de la génération 1960 gagnerait 9,6 %, celle de
+          1980 6,3 %.
+        preuve: >-
+          `Pensionssystemet.bas:1027`, « arv = (arvsf1 - 1) * pbh_ing », dans
+          le portage `mathiasboos/Typfallsmodellen` au commit `bb46d93`
+        etat: a_trancher
+        raison: >-
+          Redistribuer aux survivants le compte des morts est un choix du
+          programme, que le README ne fait pas et que le propriétaire tranche,
+          entre la forme suédoise (le compte multiplié chaque année par 1/p_x
+          unisexe de la génération) et la forme norvégienne (un facteur dans
+          le diviseur, voir delingstall_norvege).
+      - quoi: >-
+          Il déduit du compte les frais de gestion, 0,0319 % en 2025
+          (SFB 62:22-25). Le dépôt n'en déduit aucun (`compte.py:847-905`).
+        preuve: >-
+          `Pensionssystemet.bas:1031`, « kost = … * (kostf - 1) », au commit
+          `bb46d93` du portage
+        etat: a_trancher
+        raison: >-
+          Déduire des frais du compte, environ × (1 − 0,0003) par an, est un
+          choix du programme, que le propriétaire tranche.
+      - quoi: >-
+          Il rend la pension par étage, avant et après impôt, en part du
+          dernier salaire, et le revenu autour du départ. Le dépôt n'a que le
+          taux de remplacement (`simulateur.py:277-298`).
+        preuve: son manuel PID289138, version 2.2
+        etat: a_reprendre
+        chantier: "138.9"
     sas: [suede_typfallsmodellen]
     lu_le: 2026-10-01
     lu_dans:
@@ -1541,6 +2702,8 @@ referents:
       Version 4.8 du 27 avril 2026. Un portage non officiel en TypeScript,
       sans licence, en recopie le VBA (`mathiasboos/Typfallsmodellen`,
       septembre 2026).
+      Comparé au dépôt le 1er octobre 2026 sur le manuel PID289138 v2.2 et sur
+      le portage `mathiasboos/Typfallsmodellen` au commit `bb46d93`.
 
   - id: delningstal_suede
     nom: Le diviseur suédois (delningstal)
@@ -1566,6 +2729,32 @@ referents:
       Un calcul à refaire : la grille de 62 à 110 ans de PFS 2026:2 depuis
       les tables de mortalité, puis le diviseur du dépôt sous les mêmes
       conventions — taux, unisexe, mois.
+    fait_mieux:
+      - quoi: >-
+          La pension servie y est revalorisée moins la norme du diviseur,
+          1,016, la même qui actualise le diviseur (62:36). Le dépôt faisait
+          entrer ν (`taux_anticipe_conversion`, `config.py:637`) dans le
+          diviseur (`moteur/conversion.py:228-234`) mais revalorisait la
+          pension servie au taux plein (`revalorisation.py:921`,
+          `moteur/js/revalorisation.js:715`), contre la promesse « à espérance
+          de coût inchangée » de `conversion.py:19-21` ; l'étape 138.1 retire
+          ν de la revalorisation servie, sans effet au défaut, où ν est nul.
+        preuve: >-
+          SFB 62:43 : « kvoten … dividerats med talet 1,016 » ; et
+          Pensionssystemets årsredovisning 2025, note 6 : « Omräkningen av
+          inkomstpension sker med kvoten mellan det nya och gamla
+          inkomstindexet dividerat med 1,016 »
+        etat: repris
+        chantier: "138.1"
+      - quoi: >-
+          Sa grille de 2026 (PFS 2026:2 : 19,13 à 62 ans, 17,34 à 65, 1,93 à
+          100) se recalcule au centième sur la table unisexe de SCB 2020-2024,
+          en mensualités à échoir, survie linéaire dans l'année et facteur
+          1,016. La fiche du diviseur du dépôt n'a aucun exemple officiel
+          (`coefficient_de_conversion.yaml:48`) ; celui-ci en ferait un test.
+        preuve: PFS 2026:2, recalculée sur la table `LivslangdFemarigA` de SCB
+        etat: a_reprendre
+        chantier: "138.11"
     sas: [suede_lagar_och_regler]
     lu_le: 2026-10-01
     lu_dans:
@@ -1594,6 +2783,38 @@ referents:
       Un calcul à refaire : retrouver 1,1472 et le temps de rotation, puis
       opposer le mécanisme d'équilibre de la proposition à la règle suédoise,
       désormais symétrique.
+    fait_mieux:
+      - quoi: >-
+          L'indice d'équilibre se calcule sur un stock — cotisations fois
+          durée de rotation, plus les fonds, sur la dette de pension — et
+          s'applique : sous 1, il freine l'indexation des comptes et des
+          pensions jusqu'au rattrapage ; au-delà de 1,15, il distribue. Le
+          dépôt calcule un rapport de flux, ressources sur dépenses de l'année
+          (`cout.py:114-121`), jamais appliqué (`limites.md:1898-1913`) ; il a
+          le passif (`EngagementAcquis`, `cout.py:3455`), pas l'actif de
+          cotisation, la durée de rotation ni les réserves.
+        preuve: >-
+          SFB 58:10-25 c (dont la loi 2026:1301), 62:19 et 62:43 ; rapport
+          orange de 2025, tableau 1.1 et annexe B (BT = 1,1472 pour 2027)
+        etat: a_trancher
+        raison: >-
+          Moduler l'indexation des comptes et des pensions par un équilibrage
+          automatique est un choix du programme, que le propriétaire tranche ;
+          le calcul seul — durée de rotation, stock des droits, réserves du
+          COR, une couche qui module l'indexation avec deux ans de retard —
+          serait de taille L.
+      - quoi: >-
+          De 1999 à 2016, l'indice de revenu suédois lissait sur trois ans la
+          seule croissance réelle, multipliée par l'inflation de l'année. Le
+          lissage du dépôt porte sur le nominal (`indexation.py:104-111`), et
+          il en avoue la dérive (`config.py:506-511`) : sur la masse salariale
+          lissée sur cinq ans, de 1940 à 2025, le lissage du seul réel la
+          ramènerait de +21,3 % à −2,5 %.
+        preuve: >-
+          rapport orange de 2014, annexe A.1.1 : « to permit more rapid
+          adjustment … to changes in the inflation rate »
+        etat: a_reprendre
+        chantier: "138.11"
     sas: [suede_orange_rapport_2025]
     lu_le: 2026-10-01
     lu_dans:
@@ -1619,6 +2840,20 @@ referents:
       en R) ; né au ministère des Finances vers 1997.
     confrontation: >-
       Des résultats publiés à retrouver, ceux de la fiche suédoise.
+    fait_mieux:
+      - quoi: >-
+          Il simule environ 320 000 personnes, dont le départ dépend de
+          l'éducation, de l'âge, du sexe et du revenu, et dont les conjoints
+          coordonnent leur départ. Le dépôt fixe l'âge par une règle
+          (`castypes.py:58-88`), limite qu'il déclare ; le modèle est
+          statistique, calé sur l'AWG, et sa transposition demanderait des
+          microdonnées françaises.
+        preuve: >-
+          fiche suédoise de l'Ageing Report 2024, § 4 : « approximately
+          320 000 individuals », « spouses tend to coordinate their
+          retirement »
+        etat: a_reprendre
+        chantier: "138.14"
     lu_le: 2026-10-01
     lu_dans:
       - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
@@ -1670,6 +2905,24 @@ referents:
       Un calcul à refaire : le diviseur de 1965 depuis les tables de
       mortalité de SSB ; et une variante du diviseur du dépôt qui inclut le
       gain de survie.
+    fait_mieux:
+      - quoi: >-
+          Son diviseur rapporte la survie à l'âge de départ à la survie
+          moyenne de 27 à 66 ans, si bien que la mortalité d'avant 62 ans y
+          entre comme un gain d'héritage, « uavhengig av opptjeningsprofil ».
+          Le diviseur du dépôt n'en a pas (`moteur/conversion.py:229-234`) ;
+          sur sa mortalité, la pension serait multipliée par 1,089 pour la
+          génération 1960 partie à 65 ans, par 1,058 pour 1980, par 1,044 pour
+          2000.
+        preuve: >-
+          forskrift 2009-12-22-1810, chapitre 4 ; Innst. O. nr. 67
+          (2008–2009), § 5 : « effekten av endringer i dødelighet før 62 år
+          inkluderes i delingstallene »
+        etat: a_trancher
+        raison: >-
+          Le gain d'héritage est un choix du programme, que le README ne fait
+          pas et que le propriétaire tranche ; pris dans le diviseur, il se
+          calculerait sur la table de génération du dépôt (taille S).
     sas: [norvege_delingstall]
     lu_le: 2026-10-01
     lu_dans:
@@ -1678,6 +2931,10 @@ referents:
     note: >-
       Le code ouvert de NAV (`navikt/pensjonssimulator`, MIT) n'orchestre que
       des appels : le moteur de règles, `pensjon-regler`, n'est pas public.
+      La comparaison du 1er octobre 2026 y relève une incohérence assumée : un
+      préfinancement de 0,75 % (§ 20-13), des pensions servies à la moyenne
+      des salaires et des prix (§ 20-18), qui ne s'accordent que si les
+      salaires réels croissent de 1,5 % par an.
 
   - id: modello_rgs
     nom: Modèle de prévision de la Ragioneria Generale dello Stato
@@ -1696,6 +2953,14 @@ referents:
     confrontation: >-
       Des résultats publiés à retrouver, ceux du rapport n° 27 de juillet
       2026.
+    fait_mieux:
+      - quoi: >-
+          Ses taux de remplacement nets comptent l'impôt ; le dépôt retire un
+          forfait de 9,1 % (`prelevements_remuneration.yaml:705`). Le reste du
+          modèle n'est pas public.
+        preuve: rapport n° 27 de la RGS, juillet 2026, § 6.5
+        etat: a_reprendre
+        chantier: "138.2"
     sas: [italie_rgs_rapporto_27]
     lu_le: 2026-10-01
     lu_dans:
@@ -1721,10 +2986,50 @@ referents:
     confrontation: >-
       Un calcul à refaire : la table de 2025-2026 au millième, puis une
       variante du diviseur du dépôt qui intègre la réversion.
+    fait_mieux:
+      - quoi: >-
+          Son diviseur tarife la réversion : Δx = [Σs (a_x,s + A_x,s)]/2 − k,
+          avec η = 0,6 et δ = 0,9 pour les hommes, 0,7 pour les femmes ; à 65
+          ans, 17,590 pour l'assuré et 1,460 pour le survivant donnent 19,049,
+          une réversion qui coûte 7,7 % de la pension directe (13,3 % pour un
+          homme). Le diviseur du dépôt n'a pas de terme A_x
+          (`moteur/conversion.py:228-234`), et la convention `"servie"` du
+          coût (`cout.py:669-670`) ajoute la réversion actuelle sans la
+          charger : elle la sert gratuitement.
+        preuve: >-
+          Nota tecnica du décret du 20 novembre 2024, tableau C.2 ; RGS,
+          rapport n° 27, appendice 1, B.1
+        etat: a_trancher
+        raison: >-
+          Tarifer la réversion dans le diviseur, par un terme A_x sous la
+          convention `"servie"`, nourri de données de l'INSEE et de la DREES,
+          est un choix du programme que le propriétaire tranche.
+      - quoi: >-
+          Le tableau C.2 de la Nota tecnica publie le diviseur à 65 ans,
+          19,049, et ses deux termes, 17,590 et 1,460 : un exemple officiel,
+          que la fiche du diviseur du dépôt n'a pas
+          (`coefficient_de_conversion.yaml:48`).
+        preuve: lavoro.gov.it, « nota-tecnica-decreto-ct-2025 », tableau C.2
+        etat: a_reprendre
+        chantier: "138.11"
+      - quoi: >-
+          La loi revalorise les comptes sur la moyenne du PIB nominal des cinq
+          années qui précèdent, avec un plancher « salvo recupero ». Le
+          `--lissage 5` du dépôt prend les années t−4 à t et omet le plancher
+          (`moteur/indexation.py:102-111`, `config.py:31-35, 86-89`).
+        preuve: >-
+          L. 335/1995, art. 1, c. 6-11 ; ministère du Travail, 28 octobre
+          2025 : « nei cinque anni precedenti il 2025 »
+        etat: a_reprendre
+        chantier: "138.11"
     sas: [italie_coefficienti_2024]
     lu_le: 2026-10-01
     lu_dans:
       - https://www.lavoro.gov.it/documenti-e-norme/normativa/decreto-direttoriale-20112024-coefficienti-trasformazione.pdf
+    note: >-
+      La comparaison du 1er octobre 2026 relève que son taux de 1,5 % se
+      justifie hors récessions, « escludendo i bienni 2008-2009 e 2012-2013
+      […] e il biennio 2020-2021 » (Nota tecnica, p. 2).
 
   - id: t_dymm
     nom: T-DYMM
@@ -1785,6 +3090,36 @@ referents:
     confrontation: >-
       Une variante à opposer au diviseur du dépôt : l'espérance de vie pure,
       sans taux technique.
+    fait_mieux:
+      - quoi: >-
+          Son capital initial comble les trous : la pension hypothétique au
+          1er janvier 1999 est multipliée par l'espérance de vie à 62 ans,
+          avec un prorata sur les 24 % de base ; un salaire introuvable vaut
+          le salaire minimum, au prorata ; le capital se revalorise comme le
+          compte, jamais en baisse. Le dépôt a la même structure
+          (`scenarios/notionnel.py:658-735`), mais une année sans montant y
+          vaut zéro, et les points du relevé sont « lus, et jetés »
+          (`web/releve_lu.py:634, 648-654`).
+        preuve: >-
+          Dz.U. 2025 poz. 1749, art. 173, art. 174 ust. 8 et art. 15 ust. 2a
+        etat: a_reprendre
+        chantier: "138.11"
+      - quoi: >-
+          L'année du départ, la revalorisation y est trimestrielle. Le dépôt
+          compte l'année entière quel que soit le mois
+          (`moteur/indexation.py:213-235`), soit de +½ an à −0,4 an de
+          croissance ; un prorata de (m−1)/12 suffirait.
+        preuve: Dz.U. 2025 poz. 1749, art. 25a
+        etat: a_reprendre
+        chantier: "138.11"
+      - quoi: >-
+          Le GUS publie chaque année la table qui fait le diviseur, 222,7 mois
+          à 65 ans en 2026 : un exemple officiel, sans actualisation, que la
+          fiche du diviseur du dépôt n'a pas
+          (`coefficient_de_conversion.yaml:48`).
+        preuve: communiqué du GUS du 25 mars 2026
+        etat: a_reprendre
+        chantier: "138.11"
     sas: [pologne_gus_esperance]
     lu_le: 2026-10-01
     lu_dans:
@@ -1792,6 +3127,8 @@ referents:
     note: >-
       Les valeurs de 2026 (268,9 mois à 60 ans, 222,7 à 65 ans) n'ont été lues
       que sur un site secondaire.
+      Le 1er octobre 2026, ces 222,7 mois à 65 ans ont été lus à la source, au
+      communiqué du GUS du 25 mars 2026.
 
   - id: modele_lettonie
     nom: Modèle de projection des pensions lettonnes
@@ -1832,6 +3169,19 @@ referents:
       table G du 1er janvier 2026 donne 17,76 à 65 ans.
     confrontation: >-
       Une variante à opposer au diviseur du dépôt, sans actualisation.
+    fait_mieux:
+      - quoi: >-
+          Son capital initial se passe d'archives : Ks = Vi × As × 0,2, où Vi
+          est le salaire cotisé de 1996 à 2000, au moins 40 % de la moyenne
+          nationale ; une carrière de trente ans sous la moyenne prend la
+          moyenne, et l'indice a un plancher à 1, avec rattrapage. Le dépôt
+          n'a aucune imputation de repli pour les années sans montant
+          (`scenarios/notionnel.py:658-735`).
+        preuve: >-
+          « Par valsts pensijām », art. 12(4) et dispositions transitoires 13
+          et 33
+        etat: a_reprendre
+        chantier: "138.11"
     sas: [lettonie_table_g]
     lu_le: 2026-10-01
     lu_dans:
@@ -1855,6 +3205,24 @@ referents:
     confrontation: >-
       Une règle d'équilibre à opposer à celle de la proposition : la
       suspension de l'indexation.
+    fait_mieux:
+      - quoi: >-
+          Taux technique et revalorisation y sont couplés :
+          Δt = min[(1+g_{t−2})/(1+r) − 1, CPI], avec r = 1,3 %, la formule de
+          la RGS. Le dépôt n'ôtait pas ν (`config.py:633-637`) de la
+          revalorisation servie (`revalorisation.py:921`) : à ν = 1,5 %, la
+          pension gagnait 21 % sans contrepartie ; l'étape 138.1 l'en retire.
+        preuve: fiche grecque de l'Ageing Report 2024, p. 16-17 et 52
+        etat: repris
+        chantier: "138.1"
+      - quoi: >-
+          L'indexation y est suspendue en cas de déficit. Le dépôt calcule le
+          coefficient d'équilibre sans règle qui l'applique.
+        preuve: fiche grecque de l'Ageing Report 2024, p. 16-17 et 52
+        etat: a_trancher
+        raison: >-
+          Suspendre l'indexation en déficit est une règle d'équilibre, un
+          choix du programme que le propriétaire tranche.
     lu_le: 2026-10-01
     lu_dans:
       - https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
@@ -1902,6 +3270,17 @@ referents:
     confrontation: >-
       Un calcul à refaire : le coefficient de 1964, et l'effet d'un
       coefficient de cette forme sur la pension du dépôt.
+    fait_mieux:
+      - quoi: >-
+          Le mémo de l'ETK publie un exemple complet, EAL2024 = 17,718722 et
+          EAK = 0,94692, avec ses quotients ; la formule du dépôt
+          (`moteur/conversion.py:229-234`) les redonne au millionième, au taux
+          de 2 %. La fiche du diviseur n'a aucun exemple officiel
+          (`coefficient_de_conversion.yaml:48`) : celui-ci en ferait un test.
+        preuve: >-
+          `eak2024.pdf`, mémo de l'ETK
+        etat: a_reprendre
+        chantier: "138.11"
     sas: [finlande_elinaikakerroin]
     lu_le: 2026-10-01
     lu_dans:
@@ -1930,6 +3309,30 @@ referents:
       Une méthode à refaire, celle du « Calculus for PROST 15 » : le capital
       initial de la transition et la dette implicite, à opposer à ceux du
       dépôt.
+    fait_mieux:
+      - quoi: >-
+          Il valorise les droits acquis au diviseur de la génération de
+          l'assuré, AF(P_AGE, P_YEAR) avec P_YEAR = T + P_AGE − a (éq. 112).
+          Le dépôt prend celui de l'âge de référence l'année de la bascule
+          (`scenarios/notionnel.py:719-724`, jumeau
+          `scenario-notionnel.js:383-388`), exact pour qui a 65 ans à la
+          bascule seulement : −9,0 % sur la part figée de qui a 40 ans en
+          2026, −11,8 % à 30 ans.
+        preuve: « Calculus for PROST 15 » (Banque mondiale, 2019), éq. 112
+        etat: a_trancher
+        raison: >-
+          Convertir les droits acquis au diviseur de la génération de
+          l'assuré, plutôt qu'à celui de l'année de bascule, change la part
+          figée de tous les actifs (scénarios 3 et 5, page Coût) : le
+          propriétaire tranche, le choix actuel du dépôt étant celui de la
+          Pologne (voir diviseur_pologne).
+      - quoi: >-
+          Il impute les salaires manquants par leur moyenne revalorisée. Dans
+          le dépôt, une année sans montant vaut zéro (`web/releve_lu.py:634,
+          648-654`).
+        preuve: « Calculus for PROST 15 », éq. 116
+        etat: a_reprendre
+        chantier: "138.11"
     sas: [banque_mondiale_prost]
     lu_le: 2026-10-01
     lu_dans:
@@ -1957,6 +3360,24 @@ referents:
     confrontation: >-
       Des résultats publiés à retrouver : le taux de remplacement d'une
       carrière complète, sous ses hypothèses.
+    fait_mieux:
+      - quoi: >-
+          Il calcule le patrimoine retraite, valeur actuelle des pensions à
+          1,5 % sur une mortalité de cohorte ; le dépôt n'en a pas (absent,
+          cherché en vain).
+        preuve: Pensions at a Glance 2025, p. 160-161
+        etat: a_reprendre
+        chantier: "138.9"
+      - quoi: >-
+          Il publie, pour la France et une carrière de 22 à 65 ans, des taux
+          de remplacement bruts de 56,6, 56,6 et 47,4 % à 0,5, 1 et 2 salaires
+          moyens, un taux net de 70,0 %, un patrimoine retraite de 11,5 années
+          de salaire pour les hommes et de 13,1 pour les femmes. Le dépôt n'a
+          ni jeu macroéconomique « OCDE » (prix +2 %, salaires réels +1,25 %)
+          ni témoin qui s'y confronte.
+        preuve: Pensions at a Glance 2025, tableaux 4.1, 4.4, 4.6 et 5.4
+        etat: a_reprendre
+        chantier: "138.9"
     lu_le: 2026-10-01
     lu_dans:
       - https://doi.org/10.1787/e40274c1-en
@@ -1980,6 +3401,23 @@ referents:
     confrontation: >-
       Des résultats publiés à retrouver : la dépense de pensions de la
       France jusqu'en 2070, et celle des pays notionnels.
+    fait_mieux:
+      - quoi: >-
+          Il décompose la dépense en dépendance, couverture, prestation et
+          marché du travail ; le dépôt n'a rien de tel, et suppose la
+          couverture constante (`cout.py:58`).
+        preuve: Ageing Report 2024, encadré I.1.1 et tableau I.1.10
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: >-
+          Pour la France, il projette 14,4 % du PIB en 2022 et 13,6 % en
+          2070 : dépendance +6,0 points, couverture −2,2, prestation −3,4, un
+          ratio de prestation qui passe de 47 à 37 %. Le dépôt ne s'y
+          confronte pas ; il y faudrait la décomposition par scénario, puis
+          l'Ageing Report sous les hypothèses macroéconomiques de l'AWG.
+        preuve: fiche France de l'Ageing Report 2024, tableaux 7, 9 et 10
+        etat: a_reprendre
+        chantier: "138.3"
     sas: [ageing_report_2024]
     lu_le: 2026-10-01
     lu_dans:
@@ -2000,6 +3438,14 @@ referents:
       Un outil actuariel de projection par cohortes, en ligne, sur compte.
     confrontation: >-
       Aucune tant que ses conditions ne sont pas lues.
+    fait_mieux:
+      - quoi: >-
+          Il projette des flux par cohorte, avec des probabilités de
+          transition entre états ; la page Coût du dépôt pondère des cas types
+          (`cout.py:53-62`). Ses conditions d'usage ne sont toujours pas lues.
+        preuve: ILO FACTS (1998) ; le manuel de l'outil répond 403
+        etat: a_reprendre
+        chantier: "138.14"
     sas: [oit_ilo_pensions]
     lu_le: 2026-10-01
     lu_dans:
@@ -2034,3 +3480,7 @@ referents:
       Version 0.20.3 sur PyPI au 1er octobre 2026. Le seul code ouvert
       établi qui calcule une pension notionnelle ; GitHub, GitLab, le CRAN et
       PyPI n'en portent pas d'autre, hors deux dépôts personnels.
+      Comparé au dépôt le 1er octobre 2026 au commit `b690537`. La comparaison
+      y trouve la dérivée notionnelle (`pensions.py:603`) absente de la
+      condition du travail (`household.py:760-780`), et `tax.py:303` qui porte
+      encore « TODO: replace "1" with Y ».

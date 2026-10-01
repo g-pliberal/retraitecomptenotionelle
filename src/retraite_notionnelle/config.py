@@ -31,7 +31,12 @@ RACINE_DONNEES = RACINE_PROJET / "data"
 
 #: Fenêtre de lissage de la règle italienne, en années. Ce n'est pas un défaut
 #: du modèle : c'est la valeur qu'il faut donner à ``lissage_indexation``, avec
-#: ``ModeIndexation.PIB_NOMINAL``, pour reproduire la règle italienne.
+#: ``ModeIndexation.PIB_NOMINAL``, pour APPROCHER la règle italienne. La loi
+#: prend « le quinquennat qui précède l'année à revaloriser », et interdit un
+#: coefficient inférieur à un, « sauf à le rattraper sur les revalorisations
+#: suivantes » (loi n° 335 du 8 août 1995, art. 1er, al. 9) ; le lissage du
+#: dépôt prend l'année et les quatre précédentes, sans ce plancher. La règle
+#: exacte est un chantier de l'action 138.
 LISSAGE_ITALIEN = 5
 
 
@@ -85,8 +90,9 @@ class ModeIndexation(str, Enum):
     #: retient l'Italie pour ses comptes notionnels — mais l'Italie la LISSE sur
     #: cinq ans, et le lissage n'est pas un mode : c'est le paramètre
     #: ``lissage_indexation``, qui s'applique à n'importe laquelle de ces
-    #: règles. La règle italienne s'écrit donc
-    #: ``--indexation pib_nominal --lissage 5``.
+    #: règles. La règle italienne s'approche donc par
+    #: ``--indexation pib_nominal --lissage 5``, à un an de décalage et au
+    #: plancher près (voir ``LISSAGE_ITALIEN``).
     PIB_NOMINAL = "pib_nominal"
 
     #: Revalorisation RÉELLEMENT PRATIQUÉE par le régime général : les
@@ -633,7 +639,10 @@ class Parametres:
     #: Taux de préfinancement (« front-loading ») incorporé au diviseur.
     #: 0 signifie : le diviseur est l'espérance de vie résiduelle actualisée au
     #: même taux que l'indexation, les deux se compensant exactement. C'est le
-    #: choix par défaut, le plus lisible.
+    #: choix par défaut, le plus lisible. Un taux positif sert ce rendement
+    #: d'avance, et la pension servie le rend chaque année : elle se revalorise
+    #: au taux du compte divisé par 1 + ν (``RevalorisationServie``), comme
+    #: la pension suédoise, à 1,6 %.
     taux_anticipe_conversion: float = 0.0
 
     #: Âge auquel les droits figés à la bascule sont convertis en capital

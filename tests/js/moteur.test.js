@@ -26,6 +26,7 @@ import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import { AnneeCarriere, limiterChomageNonIndemnise } from "../../moteur/js/carriere.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
 import { Fiabilite, SerieAnnuelle } from "../../moteur/js/serie.js";
+import { PARAMETRES_DEFAUT } from "../../moteur/js/config.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -626,4 +627,20 @@ test("le salaire de référence des cultes est fait du forfait", () => {
     ["membre_congregation", 2.0]]) {
     assert.ok(Math.abs(cavimac(statut, niveau).montant - reference.montant) < 1e-9);
   }
+});
+
+test("le préfinancement du diviseur se rend sur la pension servie", () => {
+  // Le portage de `test_le_prefinancement_du_diviseur_se_rend_sur_la_pension_servie`
+  // (tests/test_moteur.py) : sous ν, la pension servie se revalorise au taux du
+  // compte divisé par 1 + ν, comme la pension suédoise à 1,6 %.
+  const contexte = new Contexte(paquet);
+  const sans = contexte.simulateur({ ...PARAMETRES_DEFAUT }).revalorisationServie;
+  const avec = contexte.simulateur(
+    { ...PARAMETRES_DEFAUT, taux_anticipe_conversion: 0.016 }).revalorisationServie;
+  for (const [liquidation, annee] of [[2000, 2001], [2010, 2025], [1990, 2026]]) {
+    const attendu = sans.coefficient(liquidation, annee) / 1.016 ** (annee - liquidation);
+    assert.ok(Math.abs(avec.coefficient(liquidation, annee) / attendu - 1) < 1e-12,
+      `${liquidation} → ${annee} : ${avec.coefficient(liquidation, annee)} contre ${attendu}`);
+  }
+  assert.equal(avec.coefficient(2010, 2010), 1);
 });

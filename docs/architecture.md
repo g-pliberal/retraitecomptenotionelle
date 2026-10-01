@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.33, du 1er octobre 2026 ; l'architecture a été décidée par le
+*Version 5.34, du 1er octobre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements,
 un par domaine clos ou par décision, est en bas (« Les versions »). Il est
@@ -229,7 +229,11 @@ ce qu'il couvre, et un écart se tranche par la preuve (§ 3.3). Un registre,
 - ses conditions d'usage. Un code sous GPL, EUPL ou AGPL s'exécute à part, et
   seules ses sorties entrent au dépôt, qui est sous licence Apache. Un
   simulateur officiel ne se balaie pas sans l'accord de la caisse ;
-- les écarts trouvés, et qui avait raison, preuve à l'appui.
+- les écarts trouvés, et qui avait raison, preuve à l'appui ;
+- ce qu'il fait mieux que le dépôt, lu chez lui, et ce qu'on en fait : le
+  chantier de la feuille de route qui le reprend, la raison qui l'écarte, ou
+  le choix du programme que le propriétaire tranche. Le tableau de bord compte
+  ce qui reste pour que le dépôt soit meilleur en tous points (action 138).
 
 Une version de fiche est **établie** quand elle est lue dans son texte (§ 3.2)
 et confirmée par au moins une source indépendante : un exemple officiel, un
@@ -2456,6 +2460,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.34**, 1er octobre 2026 : le registre des autres modèles dit aussi ce que chacun fait mieux que le dépôt (§ 3.4), à la demande du propriétaire, qui veut le dépôt « meilleur en tous points » : chaque point, lu chez lui, porte le chantier qui le reprend, ou la raison qui l'écarte, ou le choix que le propriétaire tranche ; un test tient la forme, et le tableau de bord compte ce qui reste.
 
 - **5.33**, 1er octobre 2026 : le registre des autres modèles, que la note 0001 prévoyait, ouvert à la demande du propriétaire, qui veut une liste exhaustive (§ 3.4). `data/reference/referents.yaml` recense soixante-neuf modèles, publics ou non, en France et, pour l'arithmétique des comptes notionnels, à l'étranger : ce que chacun couvre, ce dont il dépend, sa licence et ce qu'elle permet, comment le confronter, les écarts trouvés, et ce qu'il confronte, rubrique nouvelle — le droit réel, la page Coût ou la proposition, jamais les choix de celle-ci. Un test tient sa forme, la règle des licences et ses renvois ; le registre des sources reçoit les adresses à explorer ; le tableau de bord le résume.
 

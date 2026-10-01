@@ -654,6 +654,20 @@ def test_taux_anticipe_positif_reduit_le_diviseur(mortalite):
     assert avec.diviseur < sans.diviseur
 
 
+def test_le_prefinancement_du_diviseur_se_rend_sur_la_pension_servie():
+    """Un diviseur actualisé à ν sert d'avance un rendement de ν par an : la
+    pension servie le rend, revalorisée au taux du compte divisé par 1 + ν,
+    comme la pension suédoise l'est à 1,6 %. Sans quoi elle dépassait ce que le
+    compte a financé, contre la promesse du diviseur (« à espérance de coût
+    inchangée ») ; au défaut, ν = 0, rien ne change."""
+    sans = Simulateur(Parametres()).revalorisation_servie
+    avec = Simulateur(Parametres(taux_anticipe_conversion=0.016)).revalorisation_servie
+    for liquidation, annee in ((2000, 2001), (2010, 2025), (1990, 2026)):
+        attendu = sans.coefficient(liquidation, annee) / 1.016 ** (annee - liquidation)
+        assert avec.coefficient(liquidation, annee) == pytest.approx(attendu, rel=1e-12)
+    assert avec.coefficient(2010, 2010) == 1.0
+
+
 def test_table_par_sexe_penalise_les_femmes(mortalite):
     """Justification du choix unisexe par défaut : l'écart est loin d'être marginal."""
     convertisseur = Convertisseur(

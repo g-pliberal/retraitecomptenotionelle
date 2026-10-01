@@ -18,7 +18,8 @@ se réduit alors à l'espérance de vie résiduelle, ce qui rend le résultat
 directement lisible : « votre capital notionnel divisé par le nombre d'années
 que vous êtes statistiquement appelé à vivre ». Donner à :math:`\\nu` une valeur
 positive revient à verser davantage au début et moins ensuite, à espérance de
-coût inchangée.
+coût inchangée — pourvu que la pension servie se revalorise au taux du compte
+divisé par :math:`1 + \\nu`, ce que fait ``RevalorisationServie``.
 
 **Ce que le diviseur sanctionne tout seul.** Partir cinq ans plus tôt augmente
 le diviseur d'environ 4 à 5 années d'espérance de vie, soit une pension annuelle

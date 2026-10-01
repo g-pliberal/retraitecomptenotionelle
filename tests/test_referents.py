@@ -50,9 +50,15 @@ CHAMPS_EXIGES = (
 )
 CHAMPS_CONNUS = set(CHAMPS_EXIGES) | {
     "pays", "code", "documentation", "version", "depend_de", "ecarts",
-    "manifeste", "sas", "note",
+    "fait_mieux", "manifeste", "sas", "note",
 }
 CHAMPS_ECART = ("constat", "tranche", "preuve")
+
+#: Ce qu'un autre modèle fait mieux que le dépôt, et ce qu'on en a fait. Le
+#: propriétaire veut le dépôt « meilleur en tous points » (action 138) : chaque
+#: point vérifié reste au registre jusqu'à être repris, tranché ou écarté.
+CHAMPS_FAIT_MIEUX = ("quoi", "preuve", "etat")
+ETATS_FAIT_MIEUX = {"a_reprendre", "a_trancher", "repris", "ecarte"}
 
 #: Les licences à réciprocité : un code qui les porte s'exécute à part, et
 #: seules ses sorties entrent au dépôt (§ 3.4).
@@ -159,6 +165,31 @@ def test_un_ecart_dit_qui_avait_raison_et_sa_preuve(referents):
         for ecart in modele.get("ecarts", []):
             manquants = [c for c in CHAMPS_ECART if not ecart.get(c)]
             assert not manquants, f"{modele['id']} : écart sans {manquants}"
+
+
+def test_ce_qu_un_modele_fait_mieux_dit_sa_preuve_et_son_chantier(referents):
+    """Un avantage n'en est un que lu chez lui : sa preuve. Il dit l'étape de la
+    feuille de route qui le reprend (« action.étape »), ou, tranché par le
+    propriétaire ou écarté, sa raison ; sans quoi la liste ne dirait pas ce
+    qui reste pour que le dépôt soit meilleur en tous points."""
+    feuille = "".join((RACINE / "docs" / chemin).read_text(encoding="utf-8")
+                      for chemin in ("feuille_de_route.md",
+                                     "archives/feuille_de_route.md"))
+    actions = set(re.findall(r"^### (\d+)\.", feuille, re.M))
+    for modele in referents:
+        for point in modele.get("fait_mieux", []):
+            manquants = [c for c in CHAMPS_FAIT_MIEUX if not point.get(c)]
+            assert not manquants, f"{modele['id']} : point sans {manquants}"
+            assert point["etat"] in ETATS_FAIT_MIEUX, (
+                f"{modele['id']} : état « {point['etat']} » hors de {sorted(ETATS_FAIT_MIEUX)}")
+            if point["etat"] in {"a_reprendre", "repris"}:
+                chantier = re.fullmatch(r"(\d+)\.\d+", str(point.get("chantier", "")))
+                assert chantier, f"{modele['id']} : « {point['quoi'][:40]}… » sans chantier"
+                assert chantier.group(1) in actions, (
+                    f"{modele['id']} : l'action {chantier.group(1)} n'est pas à la feuille de route")
+            else:
+                assert point.get("raison"), (
+                    f"{modele['id']} : « {point['quoi'][:40]}… » {point['etat']} sans raison")
 
 
 def test_les_renvois_au_manifeste_et_au_registre_des_sources_existent(referents):

@@ -40,7 +40,9 @@ versions:
     Le diviseur est la somme, sur les années à venir, des probabilités de
     survie à l'âge exact du départ, actualisées au taux
     `taux_anticipe_conversion`, nul par défaut : il vaut alors l'espérance de
-    vie restante. La table est de génération, unisexe par défaut
+    vie restante ; positif, il sert ce rendement d'avance, que la pension
+    servie rend chaque année (`indexation_du_compte`). La table est de
+    génération, unisexe par défaut
     (`table_conversion`). Le compte n'a ni décote ni surcote : c'est le
     diviseur, avec les années non cotisées, qui fait peser l'âge du départ. Il
     tient dans le compte la place que la décote et la surcote tiennent dans le

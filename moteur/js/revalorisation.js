@@ -707,12 +707,17 @@ export class RevalorisationServie {
     this.stockSurLesPrix = simulateur.parametres.revalorisation_stock === "prix";
     this.premiereAnnee = premiereAnnee;
     this.derniereAnnee = Math.max(derniereAnnee, premiereAnnee);
+    // Le rendement que le diviseur a servi d'avance : la pension servie se
+    // revalorise au taux du compte divisé par 1 + ν, comme en Suède. Voir le
+    // Python ; au défaut, ν = 0, rien ne change.
+    const prefinancement = 1 + simulateur.parametres.taux_anticipe_conversion;
     let index = 1;
     this._index = new Map([[this.premiereAnnee, index]]);
     for (let annee = this.premiereAnnee + 1; annee <= this.derniereAnnee; annee += 1) {
       // Le taux d'indexation est NOMINAL, les masses sont en euros constants :
       // on le déflate année par année, et non en bloc.
-      index *= (1 + indexation.taux(annee).taux) * macro.coefficientPrix(annee, annee - 1);
+      index *= (1 + indexation.taux(annee).taux) / prefinancement
+        * macro.coefficientPrix(annee, annee - 1);
       this._index.set(annee, index);
     }
   }

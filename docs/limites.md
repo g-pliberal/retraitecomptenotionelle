@@ -1900,9 +1900,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   système COÛTERAIT ; il porte depuis peu les RESSOURCES, et donc le solde et le
   **coefficient d'équilibre** de chaque système, année par année, de 2002 à
   2070. Ce qui lui manque encore est le cran suivant : APPLIQUER ce
-  coefficient. Un système notionnel réel ne laisse pas dormir un excédent — il
-  relève les pensions jusqu'à l'équilibre, ou les abaisse, par un fonds de
-  réserve et un facteur commun à toutes les pensions de l'année. Le modèle
+  coefficient. Un système notionnel réel l'applique, et d'abord à la baisse :
+  la Suède freine les comptes et les pensions dès que son indice d'équilibre,
+  un rapport de stocks et non de flux, passe sous un ; l'excédent, lui, a
+  longtemps dormi — <!--chiffre:illustration()-->15<!--/--> % encore pour 2027 (indice de 1,1472,
+  Pensionssystemets årsredovisning 2025) —, jusqu'à l'« accélérateur » que
+  son groupe des pensions a décidé le 26 août 2025 et que la loi 2026:1301
+  déclenche au-delà de 1,15. Le modèle
   calcule ce facteur et ne l'applique jamais : toutes les courbes de coût de la
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
@@ -2664,9 +2668,13 @@ le 19 septembre 2026 :
    notionnel était l'exception non écrite, pas la règle ; ces cinq scénarios
    mesurent ce qu'une retraite composée uniquement de part contributive
    représente, et une réversion n'en est pas. C'est le chemin de la Suède, où
-   un compte notionnel ne verse qu'à son titulaire. Celui de l'Italie, qui
-   partage le capital du défunt, reste calculable sous
-   `convention_reversion="servie"`.
+   un compte notionnel ne verse qu'à son titulaire.
+   `convention_reversion="servie"` reste calculable, mais ce n'est pas celui
+   de l'Italie : l'Italie sert la réversion en la tarifant dans son
+   coefficient de transformation —
+   1,460 des 19,049 années de rente du diviseur à <!--chiffre:illustration()-->65<!--/--> ans (note technique du
+   décret du 20 novembre 2024, tableau C.2) —, quand `servie` l'ajoute sans
+   rien retirer à la pension directe.
 
    **Les cinq la retirent à tout le monde, et du même jour.** Les scénarios
    RÉTROACTIFS (2, 4, 6) recalculent toutes les pensions depuis 1941 : ils n'en

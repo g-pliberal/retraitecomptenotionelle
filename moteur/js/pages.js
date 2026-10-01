@@ -12248,10 +12248,11 @@ les deux règles coïncident.</p>
 répartition, le rendement qu'un système peut servir sans changer son taux est la
 croissance de son assiette, le salaire moyen multiplié par l'emploi salarié
 (Samuelson 1958, Aaron 1966). C'est le taux d'indexation des comptes notionnels
-suédois, italiens, polonais et lettons, à des variantes près. Sur 1941-2025 il
+polonais et lettons ; la Suède et l'Italie s'en approchent, par le revenu moyen
+et par le PIB nominal lissé sur cinq ans. Sur 1941-2025 il
 vaut ×${g.nombre(masseSalariale, 0)}, onze fois les prix : l'emploi salarié a
 doublé depuis 1950, et cette croissance-là s'ajoute chaque année à celle des
-salaires. Une réserve : ce rendement est celui du système ENTIER, alors que les
+salaires. Une réserve : ce rendement est celui du système ENTIER, alors que
 le système 2 ne porte au compte que la part salariale de la cotisation.
 C'est au système 3 qu'il faut le comparer.</p>
 

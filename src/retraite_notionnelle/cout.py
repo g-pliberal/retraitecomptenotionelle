@@ -277,11 +277,16 @@ CONVENTIONS_RECETTE: tuple[str, ...] = (CONVENTION_ASSIETTE, CONVENTION_RAPPORT)
 #: retraite composée UNIQUEMENT de part contributive représente. Une pension de
 #: réversion n'en est pas.
 #:
-#: ``servie`` reste calculable, et c'est le chemin de l'Italie, où le capital
-#: notionnel du défunt se partage. Elle a été la convention du dépôt pendant
-#: quelques heures, le temps que le volet C sépare les deux masses et que le
-#: programme tranche ; on la garde pour lire ce qu'elle vaut, comme on garde
-#: ``convention_recette="rapport"``.
+#: ``servie`` reste calculable. Ce n'est pas le chemin de l'Italie, qui sert
+#: la réversion mais la TARIFE : son coefficient de transformation compte la
+#: pension du survivant, 1,460 des 19,049 années de rente de son diviseur à
+#: 65 ans (note technique du décret du 20 novembre 2024, tableau C.2), et la
+#: pension directe en est d'autant plus basse. ``servie`` ajoute la réversion
+#: d'aujourd'hui sans charger le diviseur : elle la donne. Elle a été la
+#: convention du dépôt pendant quelques heures, le temps que le volet C sépare
+#: les deux masses et que le programme tranche ; on la garde pour lire ce
+#: qu'elle vaut, comme on garde ``convention_recette="rapport"``. La tarifer
+#: comme l'Italie est un choix du programme (action 138).
 #:
 #: LE SCÉNARIO 1 SERT LA RÉVERSION DANS TOUS LES CAS, et aucune convention ne
 #: le touche : il est le droit en vigueur, et le droit en vigueur la sert.

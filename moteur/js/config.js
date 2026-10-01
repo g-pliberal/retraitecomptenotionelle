@@ -37,7 +37,8 @@ export const ModeIndexation = Object.freeze({
   //: Croissance du PIB nominal. Assiette plus large que la masse salariale.
   //: L'Italie la LISSE sur cinq ans, et le lissage n'est pas un mode mais le
   //: paramètre `lissage_indexation`, applicable à n'importe quelle règle : la
-  //: règle italienne s'écrit `pib_nominal` + lissage 5.
+  //: règle italienne s'approche par `pib_nominal` + lissage 5, à un an de
+  //: décalage et au plancher près (voir `LISSAGE_ITALIEN` dans le Python).
   PIB_NOMINAL: "pib_nominal",
   //: Revalorisation RÉELLEMENT PRATIQUÉE par le régime général : les
   //: coefficients des arrêtés annuels, ceux-là mêmes que le scénario 1

@@ -325,6 +325,13 @@ def page() -> str:
                 if r["publication"] == "ouvert" and not r.get("depend_de")
                 and r not in tires and "scenario_1" in r["confronte"]]
     n_ecarts = sum(len(r.get("ecarts", [])) for r in referents)
+    # Ce que les autres modèles font mieux (action 138) : le propriétaire veut
+    # le dépôt « meilleur en tous points », et ces points sont ce qui reste.
+    mieux = [p for r in referents for p in r.get("fait_mieux", [])]
+    etats_mieux = collections.Counter(p["etat"] for p in mieux)
+    modeles_mieux = sum(1 for r in referents if r.get("fait_mieux"))
+    chantiers = collections.Counter(p["chantier"] for p in mieux
+                                    if p["etat"] == "a_reprendre")
     en_cours = [(n, t) for n, t, s in actions if s == "en cours"]
     hors_champ = [r for r in inventaire if r["couverture"] == "hors_champ"]
 
@@ -503,9 +510,11 @@ def page() -> str:
       + (", ".join(vues) if vues else "aucun") + ". Restent des registres : "
       + (", ".join(restent) if restent else "aucun") + ".")
     w("")
-    w("**Ce qui est hors du modèle.** La réversion, par exemple, pèse "
+    w("**Ce qui est hors de la page Coût.** La réversion, par exemple, pèse "
       f"{virgule(100 * float(derniere_part['part']))} % de la masse des prestations en "
-      f"{derniere_part['annee']} (COR), et le modèle n'en calcule aucune.")
+      f"{derniere_part['annee']} (COR) : le modèle en calcule une pour une personne "
+      "(scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle "
+      "ne calcule pas.")
     w("")
     w(f"**La feuille de route** compte {len(actions)} actions : "
       + ", ".join(f"{n} {s}" for s, n in statuts_actions.most_common()) + ". "
@@ -586,6 +595,15 @@ def page() -> str:
       "autre source du registre ; dans l'ordre du registre, qui range les "
       "administrations d'abord : " + ", ".join(f"`{r['id']}`" for r in premiers[:6])
       + (f", et {len(premiers) - 6} autres." if len(premiers) > 6 else "."))
+    if mieux:
+        ordre = sorted(chantiers, key=lambda c: tuple(int(n) for n in c.split(".")))
+        w(f"- **Ce que les autres modèles font mieux** (action 138) : {len(mieux)} points, "
+          f"lus chez {modeles_mieux} modèles : {etats_mieux['a_reprendre']} à reprendre, "
+          f"{etats_mieux['a_trancher']} à trancher par le propriétaire (des choix du "
+          f"programme), {etats_mieux['repris']} repris, {etats_mieux['ecarte']} "
+          f"écarté{'s' if etats_mieux['ecarte'] > 1 else ''}. "
+          "Les points à reprendre, par chantier de la feuille de route : "
+          + ", ".join(f"{c} ({chantiers[c]})" for c in ordre) + ".")
     w(f"- **Les fiches sans exemple officiel** : {len(veille) - avec_exemple}.")
     communes = sorted(set.intersection(*map(set, sans_decision.values())))
     avec_etape = [f for f in communes if fiches_du_droit_reel[f].get("etape")]
