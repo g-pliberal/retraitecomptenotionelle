@@ -12,7 +12,7 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
   moitié de la pension, sans âge ni ressources, sous la condition
   d'antériorité ou de durée du mariage de L. 39 ;
 * l'Agirc-Arrco (``reversion_agirc_arrco``) : 60 % de la retraite, à l'âge que
-  la date du décès choisit.
+  la date du décès choisit, ou dès l'invalidité du survivant.
 
 Les autres régimes n'ont pas encore de fiche : leur ligne le dit, sans montant.
 
@@ -233,6 +233,10 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         parametres = version["parametres"]
         date_effet = _a_l_age(conjoint.naissance, lendemain,
                               _age_agirc_arrco(parametres, regime, conjoint.sexe))
+        if conjoint.invalidite is not None and parametres.get("invalidite_sans_age"):
+            # L'invalidité du survivant, au décès ou plus tard, lève l'âge :
+            # la réversion part au premier jour du mois qui la suit.
+            date_effet = min(date_effet, max(lendemain, mois_suivant(conjoint.invalidite)))
         taux = float(parametres["taux"])
         lignes[regime] = ligne(regime, base, taux * base, "servie", fiche, version, taux,
                                date_effet, fiabilite)

@@ -445,12 +445,13 @@ export const DEFAUTS = Object.freeze({
   //: Le conjoint, pour la réversion (docs/architecture.md, § 5.1) : sa
   //: naissance (AAAA ou AAAA-MM), son sexe — l'autre que celui de l'assuré
   //: s'il n'est pas dit (présomption `conjoint_de_l_autre_sexe`) —, la date du
-  //: mariage, présumée sinon, et ses ressources annuelles, s'il les dit. Voir
-  //: `conjointDeclare`.
+  //: mariage, présumée sinon, ses ressources annuelles et le mois où son
+  //: invalidité est reconnue, s'il les dit. Voir `conjointDeclare`.
   conjoint: "",
   conjoint_sexe: "",
   mariage: "",
   ressources_conjoint: null,
+  conjoint_invalidite: "",
   //: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
   //: conjoint : au départ ou après lui.
   deces: "",
@@ -597,6 +598,7 @@ export class Saisie {
       mariage: (parametres.mariage || "").trim(),
       ressources_conjoint: [undefined, null, ""].includes(parametres.ressources_conjoint)
         ? null : reel(parametres, "ressources_conjoint", 0.0),
+      conjoint_invalidite: (parametres.conjoint_invalidite || "").trim(),
       deces: (parametres.deces || "").trim(),
       progressive: [undefined, null, ""].includes(parametres.progressive) ? null
         : ageSaisi(parametres, "progressive", 0.0,
@@ -1429,6 +1431,7 @@ export class Saisie {
       sexe: this.conjoint_sexe || (this.sexe === "F" ? "H" : "F"),
       mariage: this.mariage || null,
       ressources: this.ressources_conjoint,
+      invalidite: this.conjoint_invalidite || null,
     };
   }
 
@@ -1702,15 +1705,17 @@ export class Saisie {
 
   /**
    * Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie — les
-   * naissances, le mariage, le décès —, et un décès qui ne précède pas le
-   * départ : la réversion d'une pension que l'assuré n'a pas encore liquidée
-   * n'est pas calculée. Voir `_verifier_conjoint` du Python.
+   * naissances, le mariage, le décès, l'invalidité du conjoint après sa
+   * naissance —, et un décès qui ne précède pas le départ : la réversion d'une
+   * pension que l'assuré n'a pas encore liquidée n'est pas calculée. Voir
+   * `_verifier_conjoint` du Python.
    */
   verifierConjoint() {
     if (!this.conjoint) {
       const orphelins = [
         ["conjoint_sexe", this.conjoint_sexe], ["mariage", this.mariage],
-        ["ressources_conjoint", this.ressources_conjoint], ["deces", this.deces],
+        ["ressources_conjoint", this.ressources_conjoint],
+        ["conjoint_invalidite", this.conjoint_invalidite], ["deces", this.deces],
       ].filter(([, valeur]) => valeur !== "" && valeur !== null && valeur !== undefined)
         .map(([nom]) => nom);
       if (orphelins.length) {
@@ -1725,6 +1730,7 @@ export class Saisie {
     for (const [nom, valeur, quoi] of [
       ["conjoint", this.conjoint, "la naissance du conjoint"],
       ["mariage", this.mariage, "le mariage"],
+      ["conjoint_invalidite", this.conjoint_invalidite, "l'invalidité du conjoint"],
       ["deces", this.deces, "le décès"],
     ]) {
       if (!valeur) {
@@ -1750,6 +1756,9 @@ export class Saisie {
       if (dates.mariage <= aine) {
         throw new ErreurSaisie("Le mariage précède la naissance d'un des époux.");
       }
+    }
+    if ("conjoint_invalidite" in dates && dates.conjoint_invalidite <= dates.conjoint) {
+      throw new ErreurSaisie("L'invalidité du conjoint précède sa naissance.");
     }
     if ("deces" in dates) {
       if ("mariage" in dates && dates.mariage >= dates.deces) {
@@ -1786,6 +1795,7 @@ export class Saisie {
         ["mariage", this.mariage],
         ["ressources_conjoint", this.ressources_conjoint === null
           ? "" : nombreBrut(this.ressources_conjoint)],
+        ["conjoint_invalidite", this.conjoint_invalidite],
         ["deces", this.deces],
       ].filter(([, valeur]) => valeur !== "" && valeur !== null)),
       ...(this.progressive !== null

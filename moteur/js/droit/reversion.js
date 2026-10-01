@@ -226,8 +226,18 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         fiche, version, taux, lendemain, fiabilite));
       continue;
     }
-    const dateEffet = aLAge(conjoint.naissance, lendemain,
+    let dateEffet = aLAge(conjoint.naissance, lendemain,
       ageAgircArrco(parametres, regime, conjoint.sexe));
+    if (conjoint.invalidite !== null && conjoint.invalidite !== undefined
+        && parametres.invalidite_sans_age) {
+      // L'invalidité du survivant, au décès ou plus tard, lève l'âge : la
+      // réversion part au premier jour du mois qui la suit.
+      const levee = moisSuivant(conjoint.invalidite);
+      const plusTot = levee > lendemain ? levee : lendemain;
+      if (plusTot < dateEffet) {
+        dateEffet = plusTot;
+      }
+    }
     lignes.set(regime, ligne(regime, base, taux * base, "servie", fiche, version, taux,
       dateEffet, fiabilite));
   }

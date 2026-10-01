@@ -1121,6 +1121,12 @@ def _cas() -> list[dict]:
         "conjoint_sexe": "H"}))
     cas.append(("reversion_age_differe", {
         **reversion, "conjoint": "1975", "deces": "2021-06"}))
+    # Le même conjoint, reconnu invalide en 2024 : l'Agirc-Arrco n'attend plus
+    # ses cinquante-cinq ans, le régime général si (le quatrième domaine,
+    # l'invalidité et l'inaptitude).
+    cas.append(("reversion_conjoint_invalide", {
+        **reversion, "conjoint": "1975", "deces": "2021-06",
+        "conjoint_invalidite": "2024-02"}))
     cas.append(("reversion_mariage_court_avant_2004", {
         "naissance": "1930", "liquidation": "60", "conjoint": "1935",
         "mariage": "1994-06", "deces": "1995-03"}))

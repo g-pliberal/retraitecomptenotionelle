@@ -123,7 +123,7 @@ versions:
       age: age_legal_par_generation
       taux: taux_plein
       age_aspa: age_legal_par_generation
-  exemples: aucun trouvé
+  exemples: [cnav_2012_27_inapte]
 - id: soixante_deux_ans_2023
   statut: lue
   textes:
@@ -204,7 +204,12 @@ sources:
     Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
     (docs/architecture.md, § 11), à la demande du propriétaire, et lue par le moteur à
     sa troisième étape : l'âge, le taux plein et l'âge de l'allocation aux personnes
-    âgées. Restent les exemples publiés (quatrième étape).
+    âgées. L'exemple de la circulaire Cnav n° 2012/27 la rejoue depuis la quatrième
+    étape, le taux plein et le cumul intégral à l'âge du taux plein automatique ; ne se
+    rejouent pas ceux de la circulaire RSI n° 2011/017, d'avant le relèvement de 2011,
+    ni l'ASPA de l'ex-invalide de la circulaire Cnav n° 2012/63 (§ 8282), parti pour
+    pénibilité avec l'allocation supplémentaire d'invalidité, que le modèle ne porte
+    pas.
   - >-
     À lire : l'article L. 332 du code de 1956, que la loi n° 71-1132 réécrit, et la
     rédaction de l'article 70-1 du décret de 1945 applicable en 1972, que l'index ne
@@ -276,6 +281,15 @@ sources:
       reconnu inapte au travail »
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F14044
     date: 2026-09-30
+  - type: autre
+    reference: >-
+      circulaire Cnav n° 2012/27 du 16 mars 2012, point 4 : les inaptes « peuvent
+      obtenir le taux plein, dès l'âge légal, quelle que soit leur durée d'assurance » ;
+      l'assurée née le 15 novembre 1951, reconnue inapte, partie le 1er avril 2012 avec
+      158 trimestres, cumule entièrement « à partir du 1er avril 2017, soit à 65 ans et
+      4 mois », dans la limite de L. 161-22 avant
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=circulaire_cnav_2012_27_16032012.aspx
+    date: 2026-10-01
 textes_sans_effet:
 - {id: LEGIARTI000006749361, article: "R. 351-22 CSS", en_vigueur: 1985-12-21,
    motif: "la procédure de la reconnaissance : rapport médical, fiche du médecin du travail"}
@@ -293,6 +307,9 @@ historique:
   84, 3, et les accords de l'ASF depuis 1983) et l'Ircantec (arrêté du 30 décembre
   1970, article 16, dès 1971) les servent sans coefficient d'anticipation ; l'ASPA
   s'ouvre à leur âge, au départ et aux échéances (R. 815-1).
+- >-
+  2026-10-01 — rejouée par l'exemple de la circulaire Cnav n° 2012/27, à la quatrième
+  étape du domaine.
 effet: >-
   Les retraités partis au taux plein pour inaptitude : 1,36 million fin 2016 (DREES,
   EIR), et avec les ex-invalides 19 % des nouveaux retraités du régime général en 2024

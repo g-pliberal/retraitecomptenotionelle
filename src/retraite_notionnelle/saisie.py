@@ -543,12 +543,13 @@ class Saisie:
     #: Le conjoint, pour la réversion (docs/architecture.md, § 5.1) : sa
     #: naissance (AAAA ou AAAA-MM), son sexe — l'autre que celui de l'assuré
     #: s'il n'est pas dit (présomption ``conjoint_de_l_autre_sexe``) —, la date
-    #: du mariage, présumée sinon, et ses ressources annuelles, s'il les dit.
-    #: Voir :meth:`conjoint_declare`.
+    #: du mariage, présumée sinon, ses ressources annuelles et le mois où son
+    #: invalidité est reconnue, s'il les dit. Voir :meth:`conjoint_declare`.
     conjoint: str = ""
     conjoint_sexe: str = ""
     mariage: str = ""
     ressources_conjoint: float | None = None
+    conjoint_invalidite: str = ""
     #: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
     #: conjoint : au départ ou après lui.
     deces: str = ""
@@ -702,6 +703,7 @@ class Saisie:
             mariage=(parametres.get("mariage") or "").strip(),
             ressources_conjoint=(None if parametres.get("ressources_conjoint") in (None, "")
                                  else _reel(parametres, "ressources_conjoint", 0.0)),
+            conjoint_invalidite=(parametres.get("conjoint_invalidite") or "").strip(),
             deces=(parametres.get("deces") or "").strip(),
             progressive=(None if parametres.get("progressive") in (None, "")
                          else _age_saisi(parametres, "progressive", 0.0,
@@ -1476,7 +1478,8 @@ class Saisie:
         return {"naissance": self.conjoint,
                 "sexe": self.conjoint_sexe or ("H" if self.sexe == "F" else "F"),
                 "mariage": self.mariage or None,
-                "ressources": self.ressources_conjoint}
+                "ressources": self.ressources_conjoint,
+                "invalidite": self.conjoint_invalidite or None}
 
     def deces_declare(self) -> str | None:
         """Le décès de l'assuré que la saisie déclare, ou ``None``."""
@@ -1670,13 +1673,14 @@ class Saisie:
 
     def _verifier_conjoint(self) -> None:
         """Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie
-        — les naissances, le mariage, le décès —, et un décès qui ne précède
-        pas le départ : la réversion d'une pension que l'assuré n'a pas encore
-        liquidée n'est pas calculée."""
+        — les naissances, le mariage, le décès, l'invalidité du conjoint après
+        sa naissance —, et un décès qui ne précède pas le départ : la réversion
+        d'une pension que l'assuré n'a pas encore liquidée n'est pas calculée."""
         if not self.conjoint:
             orphelins = [nom for nom, valeur in (
                 ("conjoint_sexe", self.conjoint_sexe), ("mariage", self.mariage),
-                ("ressources_conjoint", self.ressources_conjoint), ("deces", self.deces))
+                ("ressources_conjoint", self.ressources_conjoint),
+                ("conjoint_invalidite", self.conjoint_invalidite), ("deces", self.deces))
                 if valeur not in ("", None)]
             if orphelins:
                 raise ErreurSaisie(
@@ -1686,6 +1690,8 @@ class Saisie:
         dates = {}
         for nom, valeur, quoi in (("conjoint", self.conjoint, "la naissance du conjoint"),
                                   ("mariage", self.mariage, "le mariage"),
+                                  ("conjoint_invalidite", self.conjoint_invalidite,
+                                   "l'invalidité du conjoint"),
                                   ("deces", self.deces, "le décès")):
             if not valeur:
                 continue
@@ -1701,6 +1707,9 @@ class Saisie:
             raise ErreurSaisie("Ressources du conjoint : un montant annuel positif.")
         if "mariage" in dates and dates["mariage"] <= max(dates["conjoint"], self.naissance_iso):
             raise ErreurSaisie("Le mariage précède la naissance d'un des époux.")
+        if ("conjoint_invalidite" in dates
+                and dates["conjoint_invalidite"] <= dates["conjoint"]):
+            raise ErreurSaisie("L'invalidité du conjoint précède sa naissance.")
         if "deces" in dates:
             if "mariage" in dates and dates["mariage"] >= dates["deces"]:
                 raise ErreurSaisie("Le mariage suit le décès.")
@@ -1731,6 +1740,7 @@ class Saisie:
                 ("mariage", self.mariage),
                 ("ressources_conjoint", "" if self.ressources_conjoint is None
                  else _nombre(self.ressources_conjoint)),
+                ("conjoint_invalidite", self.conjoint_invalidite),
                 ("deces", self.deces)) if valeur not in ("", None)},
             **({"progressive": self.mois_de(self.progressive, depart=True),
                 "quotite": self.quotite_progressive}

@@ -196,7 +196,7 @@ versions:
       invalide_qui_travaille: maintien_jusqu_a_la_demande
       maintien_au_plus_tard: age_annulation_decote
       maintien_du_demandeur_d_emploi_mois: 6
-  exemples: aucun trouvé
+  exemples: [cnav_2024_25_substitution_d_office, cnav_2024_25_cumul_de_l_ex_invalide]
 approximations:
 - ecart: >-
     le plancher de la pension substituée n'est pas appliqué : l'allocation aux vieux
@@ -241,7 +241,10 @@ sources:
     Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
     (docs/architecture.md, § 11), à la demande du propriétaire, et lue par le moteur à
     sa troisième étape : le départ du régime général et des régimes alignés à l'âge de
-    la substitution, au taux plein. Restent les exemples publiés (quatrième étape).
+    la substitution, au taux plein. L'exemple de la circulaire Cnav n° 2024/25 la
+    rejoue depuis la quatrième étape, la substitution d'office et le cumul intégral à
+    l'âge légal de la génération ; celui de la circulaire RSI n° 2011/017, d'avant le
+    relèvement de 2011 et à diffusion restreinte, ne se rejoue pas.
   - >-
     À lire : l'article du code de 1956 qui reprend l'article 62 de l'ordonnance de 1945
     jusqu'à la recodification de 1985, et la loi n° 83-430 du 31 mai 1983 elle-même,
@@ -294,6 +297,14 @@ sources:
       d'invalidité « après 62 ans et jusqu'à 67 ans »
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F672
     date: 2026-09-30
+  - type: autre
+    reference: >-
+      circulaire Cnav n° 2024/25 du 1er août 2024, point 6.4, exemple 1 : l'assuré né le
+      10 novembre 1962, dont l'âge légal est de 62 ans et 6 mois, obtient « sa retraite à
+      62 ans le 1er décembre 2024 du fait de la substitution de sa retraite à sa PI », et
+      le cumul intégral « à partir de 62 ans et 6 mois s'il réunit [...] 169 trimestres »
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_25_01082024.pdf
+    date: 2026-10-01
 textes_sans_effet:
 - {id: LEGIARTI000006736513, article: "D. 341-1 CSS", en_vigueur: 1986-01-29,
    motif: "le contrôle trimestriel des droits des invalides, sans effet sur la pension substituée"}
@@ -322,6 +333,9 @@ historique:
   départ déclaré s'il le faut, au taux plein de l'inapte (fiche inaptitude_au_travail) ;
   l'invalide qui travaille part à sa demande, au plus tard à l'âge du taux plein
   automatique ; le demandeur d'emploi indemnisé, six mois après l'âge au plus tard.
+- >-
+  2026-10-01 — rejouée par deux exemples de la circulaire Cnav n° 2024/25, à la
+  quatrième étape du domaine.
 effet: >-
   Les titulaires d'une pension d'invalidité à l'âge légal : 0,90 million de retraités
   partis au taux plein à ce titre fin 2016 (DREES, EIR). Le modèle les fait partir à

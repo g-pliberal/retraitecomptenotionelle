@@ -1074,6 +1074,12 @@ function conjointFormulaire(saisie, contexte) {
       "Le régime général réduit la réversion de ce qui dépasse, avec elle, "
       + "2 080 fois le SMIC horaire. Sans ressources dites, le modèle n'en compte "
       + "aucune, et la réversion n'est réduite que par celles des autres régimes."),
+    g.champ("conjoint_invalidite", "Son invalidité", saisie.conjoint_invalidite,
+      "facultatif : le mois où elle est reconnue, « 2024-02 »", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      "Invalide, votre conjoint n'attend pas cinquante-cinq ans pour la réversion "
+      + "de l'Agirc-Arrco : elle part au mois qui suit votre décès, ou son "
+      + "invalidité si elle vient après. Le régime général attend cet âge."),
   ].join("");
   return `
   <details class="options"${saisie.conjoint ? " open" : ""}>

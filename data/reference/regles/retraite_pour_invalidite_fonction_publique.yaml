@@ -199,7 +199,8 @@ versions:
       plancher_part_du_traitement: 0.50
       plafond_total: traitement
       revalorisation: pensions_d_invalidite_depuis_2014
-  exemples: aucun trouvé
+  exemples: [sre_minimum_garanti_de_l_invalidite, sre_plancher_monsieur_g_65,
+             sre_plancher_monsieur_g_55, sre_rente_viagere_monsieur_h]
 approximations:
 - ecart: >-
     le seuil de la rente viagère, l'indice majoré 681 au 1er janvier 2004 revalorisé
@@ -236,8 +237,12 @@ sources:
   - >-
     Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
     (docs/architecture.md, § 11), à la demande du propriétaire, et lue par le moteur à
-    sa troisième étape. Reste l'exemple publié (quatrième étape) : le Service des
-    retraites de l'État et la CNRACL en publient-ils un, chiffré ?
+    sa troisième étape. Quatre exemples du Service des retraites de l'État la rejouent
+    depuis la quatrième étape : le minimum garanti de l'invalidité en quinzièmes, le
+    plancher de L. 30 de Monsieur G., et le total de Monsieur H., ramené au traitement
+    par L. 30 ter. La page partage ce total en comptant le seuil de L. 28 sur la rente,
+    et le taux d'invalidité deux fois, quand le texte le compte sur le traitement : ce
+    partage ne se compare pas. La documentation de la CNRACL n'a pas répondu.
   - >-
     Non couverts : le militaire radié des cadres par suite d'infirmités (L. 24, II ;
     L. 14, II ; L. 35), qui a aussi sa pension militaire d'invalidité, d'un autre code ;
@@ -245,7 +250,10 @@ sources:
     (L. 24, I, 4°), départ anticipé particulier ; l'allocation temporaire d'invalidité
     de l'agent maintenu en fonctions ; les régimes spéciaux, qui ont chacun leur pension
     de réforme. À lire : le barème indicatif des taux d'invalidité, le seuil de l'indice
-    majoré 681 de la rente, et la rédaction de L. 30 ter de 2012 à 2014.
+    majoré 681 de la rente, et la rédaction de L. 30 ter de 2012 à 2014. Le seuil, le
+    Service des retraites de l'État l'écrit à 4 109,91 € par mois « pour 2026 », la
+    fiche F550 de service-public, vérifiée le 1er avril 2026, à 4 242,61 €, et le
+    modèle le prend à 4 099,05 € : aucun des trois ne se retrouve depuis l'autre.
   lectures:
   - type: legifrance
     reference: >-
@@ -263,6 +271,28 @@ sources:
       (2022) ; décret n° 2004-569, article 6, dans ses trois rédactions (2004, 2011,
       2017) : le RAFP ne s'ouvre qu'à l'âge légal, sans exception pour l'invalidité
     date: 2026-09-30
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, « Le minimum garanti » : « Moins de 15 ans en cas
+      de retraite pour invalidité : Par année de services : 1/15ème de 57,5 % du
+      traitement indiciaire brut au 1er janvier 2004 de l'indice majoré 227 », et
+      l'exemple de douze ans, 7 542,25 € par an au 1er janvier 2026 ; « Le calcul de la
+      pension » des invalides : la rente viagère, son seuil de 4 109,91 € « pour 2026 »,
+      la réduction à due proportion sous le traitement (Monsieur H.), et la pension au
+      moins égale à 50 % du traitement à 60 % d'invalidité (Monsieur G.) ; L. 28 relu :
+      « Si le montant de ce traitement [...] dépasse [...] la fraction dépassant cette
+      limite n'est comptée que pour le tiers »
+    url: https://retraitesdeletat.gouv.fr/invalidite/la-pension-de-retraite/le-calcul-de-la-pension
+    date: 2026-10-01
+  - type: service_public
+    reference: >-
+      fiche F550, « Retraite pour invalidité du fonctionnaire », vérifiée le 1er avril
+      2026 : la rente compte pour un tiers la fraction du dernier traitement indiciaire
+      brut qui dépasse 4 242,61 €, et le total de la pension et de la rente ne dépasse
+      pas le dernier traitement, « le montant de chaque prestation est
+      proportionnellement réduit »
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F550
+    date: 2026-10-01
 textes_sans_effet:
 - {id: LEGIARTI000006362752, article: "L. 31 CPCMR", en_vigueur: 1964-12-01,
    motif: "la procédure : la commission de réforme apprécie l'invalidité, le ministre décide"}
@@ -295,6 +325,9 @@ historique:
   radiation, à tout âge, sans condition de durée ni décote, au minimum garanti de
   l'invalidité, au plancher de L. 30, avec la rente viagère de L. 28 sous le plafond
   de L. 30 ter.
+- >-
+  2026-10-01 — rejouée par quatre exemples du Service des retraites de l'État, à la
+  quatrième étape du domaine.
 effet: >-
   Les fonctionnaires radiés des cadres pour invalidité, à tout âge. Le modèle les fait
   partir à leur radiation, sans décote, à leurs planchers et avec leur rente ; il les

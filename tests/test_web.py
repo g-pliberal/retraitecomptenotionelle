@@ -1550,6 +1550,10 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
         {"radiation_invalidite": "2010-01", "taux_invalidite": "150"},
         {"radiation_invalidite": "2010-01"},
         {"statut": "fonctionnaire_etat", "radiation_invalidite": "2010-01"},
+        # L'invalidité du conjoint : sans conjoint, illisible, avant sa naissance.
+        {"conjoint_invalidite": "2024-02"},
+        {"conjoint": "1962", "conjoint_invalidite": "2024-13"},
+        {"conjoint": "1962", "conjoint_invalidite": "1961-12"},
     ]
     # Les voisines immédiates de ces refus, qui doivent au contraire calculer :
     # une borne posée d'un cran trop loin se verrait ici, et nulle part ailleurs.
@@ -1565,6 +1569,7 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
         {"statut": "fonctionnaire_etat", "radiation_invalidite": "2010-06",
          "invalidite_imputable": "oui", "taux_invalidite": "60",
          "metier2_debut": "2010-06", "metier2_statut": "salarie_prive_non_cadre"},
+        {"conjoint": "1962", "conjoint_invalidite": "1962-02"},
     ]
 
     for champs_, refuse in ((refuses, True), (acceptees, False)):

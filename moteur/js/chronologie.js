@@ -221,9 +221,10 @@ export function dateDeclaree(valeur, quoi) {
  * l'ordre ; {@link completer} présume celles des autres, et date leur
  * filiation. Le départ tombe à l'âge déclaré, compté depuis le mois d'où les
  * âges se comptent. `conjoint` déclare le conjoint (§ 5.1) : sa `naissance`
- * et son `sexe`, la date du `mariage` — que {@link completer} présume sinon —
- * et ses `ressources` annuelles, s'il les dit ; `deces` date le décès de
- * l'assuré, qui clôt le mariage ; `demandesDePension` dit, régime par régime,
+ * et son `sexe`, la date du `mariage` — que {@link completer} présume sinon —,
+ * ses `ressources` annuelles et son `invalidite`, une décision médicale
+ * datée, s'il les dit ; `deces` date le décès de l'assuré, qui clôt le
+ * mariage ; `demandesDePension` dit, régime par régime,
  * l'âge auquel il demande sa pension. Voir `_personne` du Python.
  */
 function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants,
@@ -319,14 +320,14 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
     depart.push(fait(`deces_${ASSURE}`, ASSURE, "deces", jourDeces, null, { precision }));
   }
   if (conjoint !== null && conjoint !== undefined) {
-    faitsNaissance.push(naissanceDuConjoint(conjoint));
+    const epoux = naissanceDuConjoint(conjoint);
+    faitsNaissance.push(epoux);
     const union = lien(`union_${CONJOINT}`, ASSURE, CONJOINT, "union",
       { [ASSURE]: "conjoint", [CONJOINT]: "conjoint" });
     union.forme = "mariage";
     if (conjoint.mariage !== null && conjoint.mariage !== undefined) {
       [union.debut] = dateDeclaree(conjoint.mariage, "le mariage");
-      const epoux = faitsNaissance[faitsNaissance.length - 1].debut;
-      if (union.debut <= (assure.debut > epoux ? assure.debut : epoux)) {
+      if (union.debut <= (assure.debut > epoux.debut ? assure.debut : epoux.debut)) {
         throw new Error(`un mariage le ${union.debut}, avant la naissance d'un époux`);
       }
     }
@@ -339,9 +340,18 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
     liens.push(union);
     if (conjoint.ressources !== null && conjoint.ressources !== undefined) {
       faitsNaissance.push(fait(`ressources_${CONJOINT}`, CONJOINT, "ressources",
-        jourDeces ?? faitsNaissance[faitsNaissance.length - 1].debut, null,
+        jourDeces ?? epoux.debut, null,
         { periode: "annuelle" }, null,
         { annuel: Number(conjoint.ressources), monnaie: "EUR" }));
+    }
+    if (conjoint.invalidite !== null && conjoint.invalidite !== undefined) {
+      const [jourInvalidite, precision] = dateDeclaree(conjoint.invalidite,
+        "l'invalidité du conjoint");
+      if (jourInvalidite <= epoux.debut) {
+        throw new Error(`une invalidité du conjoint le ${jourInvalidite}, avant sa naissance`);
+      }
+      faitsNaissance.push(fait(`invalidite_${CONJOINT}`, CONJOINT, "decision_medicale",
+        jourInvalidite, null, { decision: "invalidite", precision }));
     }
   }
   return [faitsNaissance, depart, liens];
@@ -726,7 +736,8 @@ export function retraiteProgressive(chronologie, personne) {
  */
 /**
  * La décision médicale d'une personne, de cette nature — `pension_d_invalidite`
- * ou `inaptitude` —, si elle est dite.
+ * ou `inaptitude` de l'assuré, `invalidite` de son conjoint —, si elle est
+ * dite.
  */
 export function decisionMedicale(chronologie, personne, decision) {
   return faitsDe(chronologie, personne, "decision_medicale")

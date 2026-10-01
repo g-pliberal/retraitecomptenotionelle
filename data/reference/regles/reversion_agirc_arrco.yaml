@@ -32,7 +32,9 @@ dates_qui_decident:
 # Les versions forment un partage de la date du décès (§ 4.1), qui choisit les
 # âges : l'accord de 2017 pour un décès depuis 2019, l'Arrco et l'Agirc avant.
 # `contenu.parametres` dit l'âge de chaque régime ; `age_minimum_minore` est
-# l'âge auquel l'Agirc sert une réversion minorée, avant soixante ans.
+# l'âge auquel l'Agirc sert une réversion minorée, avant soixante ans ;
+# `invalidite_sans_age`, que l'invalidité du survivant lève la condition d'âge,
+# « quel que soit la date du décès », dit la fédération.
 versions:
 - id: avant_1990
   statut: supposee
@@ -52,6 +54,7 @@ versions:
       age_minimum_veuf: 65
       age_minimum_minore: null
       perte_au_remariage: true
+      invalidite_sans_age: true
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: veufs_1990
@@ -74,6 +77,7 @@ versions:
       age_minimum_veuf: 65
       age_minimum_minore: null
       perte_au_remariage: true
+      invalidite_sans_age: true
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: agirc_1994
@@ -96,6 +100,7 @@ versions:
       age_minimum_agirc: 60
       age_minimum_minore: 55
       perte_au_remariage: true
+      invalidite_sans_age: true
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: arrco_1996
@@ -117,6 +122,7 @@ versions:
       age_minimum_agirc: 60
       age_minimum_minore: 55
       perte_au_remariage: true
+      invalidite_sans_age: true
       fiabilite: haute
   exemples: aucun trouvé
 - id: accord_2017
@@ -147,6 +153,7 @@ versions:
       age_minimum: 55
       age_minimum_minore: null
       perte_au_remariage: true
+      invalidite_sans_age: true
       fiabilite: haute
   exemples: [aa_reversion_leila, aa_reversion_kim, aa_reversion_annie, aa_reversion_eric,
              aa_reversion_francois, aa_reversion_david, aa_reversion_simone,
@@ -176,10 +183,17 @@ approximations:
     la réversion commence un à dix mois trop tôt pour le survivant d'une petite
     retraite ; trois exemples de la fédération le montrent, en écart connu
 - ecart: >-
-    la condition d'âge n'est levée ni par deux enfants à charge ni par l'invalidité ;
-    le partage entre ex-conjoints et la perte au remariage ne sont pas portés ; les
-    régimes absorbés — l'UNIRS, les régimes professionnels intégrés — suivent les
-    âges de l'Arrco ; les montants sont ceux de l'année du décès
+    la condition d'âge n'est pas levée par deux enfants à charge ; le partage entre
+    ex-conjoints et la perte au remariage ne sont pas portés ; les régimes absorbés —
+    l'UNIRS, les régimes professionnels intégrés — suivent les âges de l'Arrco ; les
+    montants sont ceux de l'année du décès
+  effet: non mesuré
+- ecart: >-
+    l'invalidité du survivant lève l'âge depuis le mois qui suit sa reconnaissance, et
+    pour toujours : la fédération interrompt la réversion quand l'invalidité cesse,
+    jusqu'à l'âge requis, et le modèle ne sait pas quand elle cesse ; elle se déclare
+    sans dire qui la constate — la Sécurité sociale, un médecin expert, la CDAPH, le
+    juge des tutelles —, que la fédération admet tous
   effet: non mesuré
 presomptions:
   conjoint_de_l_autre_sexe: >-
@@ -191,7 +205,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-09-28
+  lu_le: 2026-10-01
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -206,9 +220,11 @@ sources:
   - >-
     Les exemples datés du site sont aux exemples officiels depuis la troisième étape du
     domaine : Leïla, Kim, Annie et Eric concordent ; François, David et Simone, dont
-    le défunt était payé par trimestre ou par an, et Claude, devenu invalide, sont en
-    écart connu. Max, qui a deux enfants à charge et dont l'âge n'est pas dit, et Léo,
-    qui demande sa réversion dix-huit mois après le décès, n'y sont pas.
+    le défunt était payé par trimestre ou par an, sont en écart connu ; Claude, devenu
+    invalide, l'était aussi, et concorde depuis le 1er octobre 2026 (domaine de
+    l'invalidité et de l'inaptitude). Max, qui a deux enfants à charge et dont l'âge
+    n'est pas dit, et Léo, qui demande sa réversion dix-huit mois après le décès, n'y
+    sont pas.
   lectures:
   - type: autre
     reference: >-
@@ -220,6 +236,16 @@ sources:
       d'effet et leurs exemples
     date: 2026-09-28
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/
+  - type: autre
+    reference: >-
+      la même page, relue : « La pension de réversion peut être versée sans condition
+      d'âge quel que soit la date du décès : [...] ou s'il est en situation d'invalidité
+      au moment du décès ou plus tard » ; l'invalidité constatée par la Sécurité sociale
+      (pension d'invalidité, rente d'accident du travail des deux tiers), un médecin
+      expert, la CDAPH ou une décision de justice ; « Lorsque l'état d'invalidité cesse,
+      le versement de la pension est interrompu »
+    date: 2026-10-01
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/
 code:
   python: >-
     droit/reversion.py : reversion, _age_agirc_arrco, _a_l_age ; scenarios/actuel.py :
@@ -229,7 +255,7 @@ code:
     moteur/js/regimes.js : Reversions
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, age_minimum_arrco,
-    age_minimum_agirc, age_minimum_veuve, age_minimum_veuf
+    age_minimum_agirc, age_minimum_veuve, age_minimum_veuf, invalidite_sans_age
   tests: tests/test_reversion.py ; les témoins reversion_* des simulations
 historique:
 - >-
@@ -237,6 +263,10 @@ historique:
 - >-
   2026-09-28 — lue par le moteur, à la deuxième étape du domaine ; les régimes
   absorbés par l'Arrco et l'Agirc-Arrco la suivent.
+- >-
+  2026-10-01 — l'invalidité du survivant lève la condition d'âge, au mois qui suit sa
+  reconnaissance, à la quatrième étape du domaine de l'invalidité et de l'inaptitude :
+  l'exemple de Claude concorde.
 effet: >-
   Tout conjoint, ou ex-conjoint marié, d'un salarié ou ancien salarié du privé qui
   décède. Le modèle la calcule pour le conjoint que la saisie déclare, sur la

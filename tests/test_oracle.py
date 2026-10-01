@@ -1549,6 +1549,8 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
             "sexe": c.get("conjoint_sexe") or ("H" if communs["sexe"] == "F" else "F"),
             "mariage": None if c.get("mariage") is None else str(c["mariage"]),
             "ressources": c.get("ressources_conjoint"),
+            "invalidite": (None if c.get("conjoint_invalidite") is None
+                           else str(c["conjoint_invalidite"])),
         }
         communs["deces"] = None if c.get("deces") is None else str(c["deces"])
     if "emploi_retraite" in c:

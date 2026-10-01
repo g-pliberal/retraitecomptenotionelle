@@ -493,6 +493,10 @@ class Conjoint:
     #: Ses ressources annuelles, s'il les déclare ; ``None`` laisse la
     #: présomption ``ressources_du_survivant`` s'appliquer.
     ressources: float | None
+    #: La date (AAAA-MM-JJ) où son invalidité est reconnue, s'il la déclare :
+    #: elle lève l'âge de la réversion de l'Agirc-Arrco (fiche
+    #: ``reversion_agirc_arrco``).
+    invalidite: str | None = None
 
 
 @dataclass
@@ -764,8 +768,8 @@ class Carriere:
     @cached_property
     def conjoint(self) -> "Conjoint | None":
         """Le conjoint de la personne, que son mariage lui relie : sa naissance,
-        son sexe, la date du mariage et ses ressources, telles que la
-        chronologie les porte. ``None`` sans conjoint déclaré."""
+        son sexe, la date du mariage, ses ressources et son invalidité, telles
+        que la chronologie les porte. ``None`` sans conjoint déclaré."""
         if not self.chronologie:
             return None
         autre = chrono.conjoint(self.chronologie, self.personne)
@@ -773,6 +777,7 @@ class Carriere:
             return None
         naissance = chrono.naissance(self.chronologie, autre)
         union = chrono.union(self.chronologie, self.personne)
+        invalidite = chrono.decision_medicale(self.chronologie, autre, "invalidite")
         return Conjoint(
             personne=autre,
             naissance=naissance["debut"],
@@ -780,6 +785,7 @@ class Carriere:
             mariage=union["debut"],
             mariage_presume=union.get("origine") == "presume",
             ressources=chrono.ressources(self.chronologie, autre),
+            invalidite=invalidite["debut"] if invalidite is not None else None,
         )
 
     @cached_property

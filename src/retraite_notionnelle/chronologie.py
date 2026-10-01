@@ -274,9 +274,10 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
 
     ``conjoint`` déclare le conjoint (docs/architecture.md, § 5.1) : sa
     ``naissance`` et son ``sexe``, la date du ``mariage`` — que
-    :func:`completer` présume sinon (``mariage_des_conjoints``) — et ses
-    ``ressources`` annuelles, s'il les dit. ``deces`` date le décès de
-    l'assuré, qui ouvre la réversion de son conjoint : il clôt le mariage.
+    :func:`completer` présume sinon (``mariage_des_conjoints``) —, ses
+    ``ressources`` annuelles et son ``invalidite``, une décision médicale
+    datée, s'il les dit. ``deces`` date le décès de l'assuré, qui ouvre la
+    réversion de son conjoint : il clôt le mariage.
     ``retraite_progressive`` déclare la demande d'une retraite progressive :
     son ``age``, compté comme celui du départ, qu'elle précède, et la
     ``quotite`` du temps partiel gardé jusqu'au départ, entre zéro et un.
@@ -367,13 +368,14 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
         depart.append(fait(f"deces_{ASSURE}", ASSURE, "deces", jour_deces,
                            attributs={"precision": precision}))
     if conjoint is not None:
-        faits_naissance.append(_naissance_du_conjoint(conjoint))
+        epoux = _naissance_du_conjoint(conjoint)
+        faits_naissance.append(epoux)
         union = lien(f"union_{CONJOINT}", ASSURE, CONJOINT, "union",
                      {ASSURE: "conjoint", CONJOINT: "conjoint"})
         union["forme"] = "mariage"
         if conjoint.get("mariage") is not None:
             union["debut"] = date_declaree(conjoint["mariage"], "le mariage")[0]
-            if union["debut"] <= max(assure["debut"], faits_naissance[-1]["debut"]):
+            if union["debut"] <= max(assure["debut"], epoux["debut"]):
                 raise ValueError(f"un mariage le {union['debut']}, avant la naissance d'un époux")
         if jour_deces is not None:
             if union["debut"] is not None and union["debut"] >= jour_deces:
@@ -383,9 +385,16 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
         if conjoint.get("ressources") is not None:
             faits_naissance.append(fait(
                 f"ressources_{CONJOINT}", CONJOINT, "ressources",
-                jour_deces or faits_naissance[-1]["debut"],
+                jour_deces or epoux["debut"],
                 attributs={"periode": "annuelle"},
                 montant={"annuel": float(conjoint["ressources"]), "monnaie": "EUR"}))
+        if conjoint.get("invalidite") is not None:
+            jour, precision = date_declaree(conjoint["invalidite"], "l'invalidité du conjoint")
+            if jour <= epoux["debut"]:
+                raise ValueError(f"une invalidité du conjoint le {jour}, avant sa naissance")
+            faits_naissance.append(fait(
+                f"invalidite_{CONJOINT}", CONJOINT, "decision_medicale", jour,
+                attributs={"decision": "invalidite", "precision": precision}))
     return faits_naissance, depart, liens
 
 
@@ -736,7 +745,8 @@ def demandes_de_pension(chronologie: dict, personne: str) -> list[dict]:
 
 def decision_medicale(chronologie: dict, personne: str, decision: str) -> dict | None:
     """La décision médicale d'une personne, de cette nature — ``pension_d_invalidite``
-    ou ``inaptitude`` —, si elle est dite."""
+    ou ``inaptitude`` de l'assuré, ``invalidite`` de son conjoint —, si elle est
+    dite."""
     for f in faits_de(chronologie, personne, "decision_medicale"):
         if f["attributs"].get("decision") == decision:
             return f

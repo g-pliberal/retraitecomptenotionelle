@@ -30,15 +30,17 @@ def simulateur() -> Simulateur:
 
 def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: str,
               mariage: str | None = None, ressources: float | None = None,
-              enfants: int = 0, sexe_conjoint: str = "F") -> Carriere:
+              enfants: int = 0, sexe_conjoint: str = "F",
+              invalidite: str | None = None) -> Carriere:
     """Un salarié né en janvier ``naissance``, parti à ``depart`` ans, et son
-    conjoint ; le décès ouvre la réversion. Les pensions, elles, sont données
-    à :func:`reversion` : seule la règle est en cause ici."""
+    conjoint, invalide depuis ``invalidite`` s'il est dit ; le décès ouvre la
+    réversion. Les pensions, elles, sont données à :func:`reversion` : seule
+    la règle est en cause ici."""
     return Carriere.depuis_profil(
         naissance, "H", "salarie_prive", 21.0, depart, simulateur.macro,
         nombre_enfants=enfants,
         conjoint={"naissance": conjoint, "sexe": sexe_conjoint, "mariage": mariage,
-                  "ressources": ressources},
+                  "ressources": ressources, "invalidite": invalidite},
         deces=deces)
 
 
@@ -186,6 +188,27 @@ def test_l_agirc_attend_soixante_ans_avant_2019(simulateur):
     assert [(l[4], l[5]) for l in lignes] == [("accord_2017", "2021-02-01")]
 
 
+def test_l_invalidite_du_survivant_leve_l_age_de_l_agirc_arrco(simulateur):
+    """« La pension de réversion peut être versée sans condition d'âge quel que
+    soit la date du décès : [...] s'il est en situation d'invalidité au moment
+    du décès ou plus tard » (fédération Agirc-Arrco) : elle part au mois qui
+    suit le décès, ou l'invalidité quand elle vient après ; le régime général
+    attend toujours cinquante-cinq ans."""
+    pensions = [("arrco", 5000.0), ("regime_general", 10000.0)]
+    apres = _carriere(simulateur, 1955, 62.0, "1975-03-10", "2020-06-15",
+                      invalidite="2022-09")
+    assert [(l[0], l[5]) for l in _lignes(simulateur, apres, pensions, 2020)] == [
+        ("arrco", "2022-10-01"), ("regime_general", "2030-04-01")]
+    avant = _carriere(simulateur, 1955, 62.0, "1975-03-10", "2020-06-15",
+                      invalidite="2018")
+    assert [l[5] for l in _lignes(simulateur, avant, pensions[:1], 2020)] == ["2020-07-01"]
+    # Avant 2019 aussi, à l'Agirc qui attendait soixante ans.
+    agirc = _carriere(simulateur, 1945, 62.0, "1966-01-15", "2010-05-10",
+                      invalidite="2012-03")
+    assert [l[5] for l in _lignes(simulateur, agirc, [("agirc", 5000.0)], 2010)] == [
+        "2012-04-01"]
+
+
 # -- ce qui n'est pas porté ----------------------------------------------------------
 
 def test_un_regime_sans_fiche_le_dit_et_un_regime_vide_ne_reverse_rien(simulateur):
@@ -210,6 +233,11 @@ def test_sans_conjoint_pas_de_reversion(simulateur):
     ({"conjoint": "1962", "mariage": "1961"}, "précède la naissance"),
     ({"conjoint": "1962", "conjoint_sexe": "X"}, "Sexe du conjoint"),
     ({"conjoint": "1962-13"}, "La naissance du conjoint « 1962-13 »"),
+    ({"conjoint_invalidite": "2024-02"}, "« conjoint_invalidite » ne sert qu'à la réversion"),
+    ({"conjoint": "1962", "conjoint_invalidite": "1961"},
+     "L'invalidité du conjoint précède sa naissance"),
+    ({"conjoint": "1962", "conjoint_invalidite": "2024-13"},
+     "L'invalidité du conjoint « 2024-13 »"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(requete, message):
     with pytest.raises(ErreurSaisie, match=message):
@@ -221,10 +249,12 @@ def test_l_adresse_garde_le_conjoint_et_le_deces():
 
     saisie = Saisie.depuis_requete({
         "naissance": "1960", "liquidation": "2024-01", "conjoint": "1962-03",
-        "mariage": "1985-06", "ressources_conjoint": "12000", "deces": "2031-10"})
+        "mariage": "1985-06", "ressources_conjoint": "12000",
+        "conjoint_invalidite": "2028-04", "deces": "2031-10"})
     relue = Saisie.depuis_requete(dict(parse_qsl(saisie.requete())))
-    assert (relue.conjoint, relue.mariage, relue.ressources_conjoint, relue.deces) == (
-        "1962-03", "1985-06", 12000.0, "2031-10")
+    assert (relue.conjoint, relue.mariage, relue.ressources_conjoint,
+            relue.conjoint_invalidite, relue.deces) == (
+        "1962-03", "1985-06", 12000.0, "2028-04", "2031-10")
     assert "conjoint" not in Saisie.depuis_requete({"naissance": "1960"}).requete()
 
 

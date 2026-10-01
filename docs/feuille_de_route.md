@@ -3251,6 +3251,32 @@ moteurs. L'inventaire des avantages range le taux plein par inaptitude ou
 invalidité en « intégré », sa dépense lue dans les comptes de la protection
 sociale.
 
+**Quatrième étape, le 1er octobre : les exemples publiés.** Sept exemples
+entrent dans `tests/temoins/exemples_officiels.yaml`, et le modèle les rend
+tous : l'ex-invalide de la circulaire Cnav n° 2024/25, dont la pension de
+vieillesse commence d'office le 1er décembre 2024, à soixante-deux ans, avant
+l'âge légal de sa génération, et qui ne cumule entièrement qu'à celui-ci ;
+l'inapte de la circulaire n° 2012/27, au taux plein avec 158 trimestres, qui ne
+cumule entièrement qu'à soixante-cinq ans et quatre mois ; trois pages du
+Service des retraites de l'État, le minimum garanti de l'invalidité en
+quinzièmes, le plancher de L. 30 de Monsieur G. et le total de Monsieur H.,
+ramené au traitement par L. 30 ter. Deux grandeurs naissent pour eux,
+`cumul_integral_depuis` et `pension_et_rente_d_invalidite_sur_traitement`, qui
+prête le traitement et le taux que la page donne ; `pensions_annuelles_a_leur_date`,
+qu'aucun exemple n'emploie, se retire. La page de Monsieur H. compte le seuil
+de la rente sur la rente, et le taux d'invalidité deux fois, quand L. 28 le
+compte sur le traitement : seul le total se compare. Ne se rejouent pas ceux de
+la circulaire RSI n° 2011/017, d'avant le relèvement de 2011, ni l'ASPA de
+l'ex-invalide de la circulaire n° 2012/63, parti pour pénibilité.
+
+L'écart connu que le domaine de la réversion avait laissé à celui-ci est levé :
+l'invalidité du conjoint survivant, que la saisie déclare désormais
+(`conjoint_invalidite`, dans le bloc du conjoint, dans les deux moteurs), lève
+l'âge de la réversion de l'Agirc-Arrco au mois qui suit sa reconnaissance, et
+Claude, devenu invalide en février 2024, a la sienne au 1er mars, comme la
+fédération l'écrit. Aucun des 668 témoins ne bouge ; un naît,
+`reversion_conjoint_invalide`.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

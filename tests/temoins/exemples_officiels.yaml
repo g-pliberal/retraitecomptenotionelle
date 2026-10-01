@@ -101,11 +101,11 @@
 # source ne dit pas mais que sa date de départ suppose (action 132).
 # `naissances_enfants` date les premiers enfants, à l'année ou au mois, comme
 # le formulaire ; ceux qu'elle ne date pas sont présumés nés aux trente ans de
-# leur mère. `conjoint`, `conjoint_sexe`, `mariage`, `ressources_conjoint` et
-# `deces` déclarent le conjoint et le décès de l'assuré comme la saisie : la
-# naissance du conjoint et le décès à l'année, au mois ou au jour ; le sexe du
-# conjoint, l'autre que celui de l'assuré s'il n'est pas dit ; ses ressources
-# annuelles. `pension_d_invalidite` et `radiation_invalidite` datent au mois
+# leur mère. `conjoint`, `conjoint_sexe`, `mariage`, `ressources_conjoint`,
+# `conjoint_invalidite` et `deces` déclarent le conjoint et le décès de
+# l'assuré comme la saisie : la naissance du conjoint, son invalidité et le
+# décès à l'année, au mois ou au jour ; le sexe du conjoint, l'autre que celui
+# de l'assuré s'il n'est pas dit ; ses ressources annuelles. `pension_d_invalidite` et `radiation_invalidite` datent au mois
 # la pension d'invalidité et la radiation des cadres pour invalidité,
 # `inaptitude` déclare l'inaptitude reconnue au départ, `invalidite_imputable`
 # et `taux_invalidite` qualifient la radiation, comme la saisie ;
@@ -1211,16 +1211,8 @@ exemples:
       Dominique est décédé le 3 décembre 2019. À cette date, Claude son
       conjoint a 46 ans. Il est devenu invalide en février 2024. Sa pension de
       réversion Agirc-Arrco a pris effet à compter du 1er mars 2024.
-    carriere: {naissance: "1955-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2017-02", age_debut: 20, conjoint: "1973-06", conjoint_sexe: H, deces: "2019-12-03"}
+    carriere: {naissance: "1955-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2017-02", age_debut: 20, conjoint: "1973-06", conjoint_sexe: H, conjoint_invalidite: "2024-02", deces: "2019-12-03"}
     attendu: {dates_d_effet_de_la_reversion: {arrco: "2024-03-01"}}
-    ecart_connu:
-      modele: {dates_d_effet_de_la_reversion: {arrco: "2028-07-01"}}
-      explication: >-
-        L'invalidité du survivant lève la condition d'âge ; le modèle ne la
-        connaît pas, et attend les cinquante-cinq ans de Claude. Il faudrait
-        l'invalidité, domaine que le § 11 ouvre après la réversion.
-      fiche: reversion_agirc_arrco
-      depuis: "2026-09-28"
 
   # ---- Cnav : la réversion écrêtée au plafond de ressources --------------
   - id: cnav_2005_17_reversion_ecretee
