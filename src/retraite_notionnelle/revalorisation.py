@@ -56,7 +56,7 @@ l'affaire de l'appelant.
 from __future__ import annotations
 
 import csv
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 from pathlib import Path
 
@@ -64,7 +64,7 @@ from .calendrier import DateMois
 from .config import RevalorisationStock, SituationFoyer
 from .donnees.chargement import Fiabilite
 from .droit import invalidite, liquider
-from .droit.etranger import pensions_etrangeres_servies
+from .droit.etranger import pensions_a_l_ecretement, pensions_etrangeres_servies
 from .droit.foyer import Foyer, condition_de_residence, foyer_et_net
 
 
@@ -292,10 +292,14 @@ class RegimeServi:
     #: Régime provisionné (RAFP) : servi à part, hors des totaux de la
     #: répartition, comme à la liquidation.
     hors_repartition: bool = False
+    #: Ce que la révision du minimum contributif retire, en euros de
+    #: l'échéance, quand une pension étrangère commence après le départ
+    #: (R. 173-8, :func:`reviser_le_minimum`).
+    revision: float = 0.0
 
     @property
     def aujourd_hui(self) -> float:
-        return self.au_depart * self.coefficient
+        return self.au_depart * self.coefficient - self.revision
 
 
 @dataclass(frozen=True)
@@ -323,7 +327,8 @@ class Revalorisee:
             "personne": self.personne,
             "date": f"{self.annee:04d}-12-31",
             "regimes": [{"regime": r.regime, "coefficient": r.coefficient,
-                         "regle": r.regle, "fiabilite": r.fiabilite.name.lower()}
+                         "regle": r.regle, "fiabilite": r.fiabilite.name.lower(),
+                         "revision": r.revision}
                         for r in self.regimes],
             "majoration": self.coefficient_majoration,
             "mensuel_decembre_2019": self.mensuel_decembre_2019,
@@ -657,6 +662,8 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
             hors_repartition=isoler and simulateur.catalogue[pension.regime].hors_repartition,
         ))
     coefficient_majoration = coefficient_de_la_majoration(coefficients)
+    regimes = reviser_le_minimum(simulateur.scenario_actuel, carriere, resultat,
+                                 regimes, annee)
     return Revalorisee(
         personne=carriere.personne,
         annee=annee,
@@ -666,6 +673,43 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
         mensuel_decembre_2019=mensuel_2019,
         fiabilite=fiabilite,
     )
+
+
+def reviser_le_minimum(moteur, carriere, resultat,
+                       regimes: list[RegimeServi], annee: int) -> list[RegimeServi]:
+    """La révision du minimum contributif quand une pension étrangère commence
+    après le départ : la majoration « est révisée lorsque le montant des
+    avantages personnels de retraite a varié », et le plafond auquel leur
+    total se compare est celui du départ, « revalorisé [...] dans les
+    conditions prévues à l'article L. 161-23-1 » (R. 173-8). Les pensions
+    étrangères que l'écrêtement compte, commencées après le mois du départ et
+    au plus tard en décembre de ``annee``, s'ajoutent à la marge qui séparait
+    les pensions du plafond, menée comme le minimum lui-même ; ce qu'elles en
+    passent retire au minimum, jamais plus que lui, chaque régime à
+    proportion du sien. Un départ, et non plusieurs : le résultat de départs
+    échelonnés ne porte pas le minimum écrêté."""
+    ecrete = getattr(resultat, "minimum_ecrete", None)
+    if ecrete is None or not carriere.pensions_etrangeres:
+        return regimes
+    nouvelles = pensions_a_l_ecretement(moteur, carriere, depuis=carriere.date_liquidation,
+                                        jusqu_au=DateMois(annee, 12), annee=annee)
+    coefficients = {r.regime: r.coefficient for r in regimes}
+    parts = [(code, part, coefficients[code]) for code, part in ecrete.par_regime
+             if code in coefficients]
+    servi = sum(part * coefficient for _, part, coefficient in parts)
+    if nouvelles <= 0 or servi <= 0:
+        return regimes
+    # Le coefficient du minimum, celui de ses régimes à proportion de leur
+    # part : le plafond et la marge le suivent.
+    mene = servi / sum(part for _, part, _ in parts)
+    revise = max(0.0, min(ecrete.avant_ecretement * mene,
+                          ecrete.marge * mene - nouvelles))
+    baisse = max(0.0, servi - revise)
+    if baisse <= 0:
+        return regimes
+    retraits = {code: part * coefficient / servi * baisse
+                for code, part, coefficient in parts}
+    return [replace(r, revision=retraits.get(r.regime, 0.0)) for r in regimes]
 
 
 def foyer_a_l_echeance(simulateur, carriere, vivante: Revalorisee) -> Foyer:

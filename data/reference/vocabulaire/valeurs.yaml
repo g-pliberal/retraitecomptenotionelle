@@ -449,7 +449,8 @@ listes:
           pension étrangère que déclarée, avec son montant et sa date. Une
           pension déclarée prend la place de la présomption ; une pension qui
           commence après la date d'effet n'entre qu'à la révision qu'elle
-          ouvre (R. 173-8), que le modèle ne fait pas
+          ouvre (R. 173-8), que le modèle fait à chaque échéance qui la suit.
+          L'ASPA, et la garantie de la proposition, la comptent de même
       residence_en_france:
         dit: >-
           l'assuré qui ne déclare pas de résidence hors de France réside en

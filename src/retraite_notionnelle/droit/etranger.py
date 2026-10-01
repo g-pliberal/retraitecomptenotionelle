@@ -437,7 +437,10 @@ def trimestres_etrangers(moteur: ScenarioActuel, carriere: Carriere) -> Trimestr
                                 carriere.trimestres_actuels)
 
 
-def pensions_a_l_ecretement(moteur: ScenarioActuel, carriere: Carriere) -> float:
+def pensions_a_l_ecretement(moteur: ScenarioActuel, carriere: Carriere,
+                            depuis: DateMois | None = None,
+                            jusqu_au: DateMois | None = None,
+                            annee: int | None = None) -> float:
     """Ce que les pensions étrangères ajoutent, par an, aux pensions que
     l'écrêtement du minimum contributif compte depuis 2012 (L. 173-2, fiche
     ``minimum_contributif_international``) : celles qui ont commencé au plus
@@ -445,10 +448,15 @@ def pensions_a_l_ecretement(moteur: ScenarioActuel, carriere: Carriere) -> float
     montant de départ, suivi sur les prix —, hors celles que calculent les
     règlements européens, l'accord avec le Royaume-Uni et six conventions.
     Rien avant 2012, et rien pour qui n'en déclare pas (présomption
-    ``pas_de_pension_etrangere``)."""
+    ``pas_de_pension_etrangere``). Avec ``depuis``, ``jusqu_au`` et ``annee`` :
+    celles qui ont commencé après le premier mois et au plus tard le second,
+    en euros de l'année — ce qui révise le minimum après le départ
+    (R. 173-8)."""
     effet = date_d_effet(carriere)
     if effet is None or not carriere.pensions_etrangeres:
         return 0.0
+    jusqu_au = carriere.date_liquidation if jusqu_au is None else jusqu_au
+    annee = carriere.annee_liquidation if annee is None else annee
     domaine = moteur.carrieres_hors_de_france
     version = domaine.version("minimum", {"liquidation.date_effet": effet})
     if version is None or not version["parametres"].get("ecretement_pensions_etrangeres"):
@@ -456,12 +464,13 @@ def pensions_a_l_ecretement(moteur: ScenarioActuel, carriere: Carriere) -> float
     exclues = set(version["parametres"].get("pensions_hors_ecretement") or ())
     total = 0.0
     for pension in carriere.pensions_etrangeres:
-        if pension.debut.rang > carriere.date_liquidation.rang or pension.pays in exclues:
+        if (pension.debut.rang > jusqu_au.rang or pension.pays in exclues
+                or (depuis is not None and pension.debut.rang <= depuis.rang)):
             continue
         accord = domaine.accord(pension.pays, _jour(pension.debut))
         if accord is not None and accord["instrument"] in exclues:
             continue
-        total += pension_etrangere_annuelle(moteur.macro, pension, carriere.annee_liquidation)
+        total += pension_etrangere_annuelle(moteur.macro, pension, annee)
     return total
 
 

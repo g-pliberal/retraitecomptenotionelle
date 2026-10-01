@@ -77,6 +77,7 @@ from ..donnees.chargement import (
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import CatalogueRegimes, ClassesCotisation, SalairesForfaitaires
 from ..droit import coordonner
+from ..droit import completer as _completer
 from ..droit import cumul as _cumul
 from ..droit import departs as _departs
 from ..droit import foyer as _foyer
@@ -227,6 +228,11 @@ class ResultatActuel:
     #: qu'elle constitue (:mod:`~retraite_notionnelle.droit.seconde`) ; hors
     #: de la pension du résultat, qui reste celle du départ.
     droits_apres_depart: _seconde.DroitsApresDepart | None = None
+    #: Le minimum contributif servi au départ, et ce que sa révision relit
+    #: quand une pension étrangère commence après lui (R. 173-8,
+    #: :func:`~retraite_notionnelle.revalorisation.faire_vivre`) ; ``None``
+    #: sans lui, ou quand les régimes liquident à des dates différentes.
+    minimum_ecrete: _completer.MinimumEcrete | None = None
 
     @property
     def pension_mensuelle(self) -> float:
@@ -262,6 +268,7 @@ def resultat_actuel(liquidation: Liquidation, foyer: Foyer) -> ResultatActuel:
         liquidation_ouverte=liquidation.ouverture.ouverte,
         motif_ouverture=liquidation.ouverture.motif,
         fiabilite=fiabilite,
+        minimum_ecrete=liquidation.complements.minimum_ecrete,
     )
 
 

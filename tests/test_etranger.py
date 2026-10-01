@@ -688,6 +688,35 @@ def test_l_ecretement_du_minimum_compte_les_pensions_etrangeres(contexte, simula
     assert 0 < minimum(declaree) < minimum(avec)
 
 
+def test_le_minimum_se_revise_quand_une_pension_etrangere_commence_apres_le_depart(
+        contexte):
+    """La majoration du minimum « est révisée lorsque le montant des avantages
+    personnels de retraite a varié », le plafond revalorisé comme les pensions
+    (R. 173-8) : la pension sénégalaise qui commence en 2025, un an après le
+    départ, ne change rien au départ, et rogne aujourd'hui le minimum de ce
+    qu'elle passe de la marge sous le plafond. Une pension des règlements
+    européens n'y compte pas ; une petite pension tient dans la marge."""
+    sans = contexte.simuler(Saisie.depuis_requete(APRES_LE_SENEGAL))
+    apres = {**AU_SENEGAL, "pension_etrangere1_debut": "2025-01"}
+    avec = contexte.simuler(Saisie.depuis_requete({**APRES_LE_SENEGAL, **apres}))
+    assert avec.actuel.pension_annuelle == pytest.approx(sans.actuel.pension_annuelle)
+    ecrete = avec.actuel.minimum_ecrete
+    assert ecrete is not None and ecrete.marge > ecrete.avant_ecretement > 0
+    servi = next(r for r in avec.aujourd_hui.actuel.regimes if r.regime == "regime_general")
+    garde = next(r for r in sans.aujourd_hui.actuel.regimes if r.regime == "regime_general")
+    assert garde.revision == 0 and servi.coefficient == pytest.approx(garde.coefficient)
+    # Les 750 € d'aujourd'hui, en euros de l'année : 9 000 € par an.
+    mene = servi.coefficient
+    attendue = (ecrete.avant_ecretement * mene
+                - max(0.0, min(ecrete.avant_ecretement * mene, ecrete.marge * mene - 9000.0)))
+    assert servi.revision == pytest.approx(attendue) and servi.revision > 0
+    assert servi.aujourd_hui == pytest.approx(garde.aujourd_hui - attendue)
+    for autre in ({**apres, "pension_etrangere1_pays": "ES"},
+                  {**apres, "pension_etrangere1": "300"}):
+        tenue = contexte.simuler(Saisie.depuis_requete({**APRES_LE_SENEGAL, **autre}))
+        assert all(r.revision == 0 for r in tenue.aujourd_hui.actuel.regimes)
+
+
 #: Né en mars 1955, vingt-six ans en France au cinquième du salaire moyen,
 #: parti à soixante-cinq ans en avril 2020 : l'ASPA complète sa pension.
 PETITE_CARRIERE = {"naissance": "1955-03-15", "debut": "1994-01", "liquidation": "2020-04",
@@ -958,6 +987,9 @@ CARRIERES_HORS_DE_FRANCE = [
     # Les mois passés en France chaque année.
     {**PETITE_CARRIERE, **AU_MAROC_AVANT, "mois_en_france": "8"},
     {**PETITE_CARRIERE, **AU_MAROC_AVANT, "mois_en_france": "6"},
+    # La révision du minimum, quand une pension étrangère commence après le
+    # départ.
+    {**APRES_LE_SENEGAL, **AU_SENEGAL, "pension_etrangere1_debut": "2025-01"},
     # Un seul accord à la fois, et les États tiers qu'une convention fait
     # compter.
     {"naissance": "1963-03-15", "debut": "2001-01", "liquidation": "2026-01",
@@ -1001,6 +1033,8 @@ const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
     // l'autre : la garantie se compare au millionième d'euro.
     garantie: arrondi(simulation.notionnel_liberal.garantie_vieillesse?.complement),
     garantie_aujourd_hui: arrondi(simulation.aujourd_hui?.garantie_vieillesse),
+    regimes_aujourd_hui: simulation.aujourd_hui === null ? null
+      : simulation.aujourd_hui.actuel.regimes.map((r) => [r.regime, arrondi(r.aujourd_hui)]),
   };
 });
 process.stdout.write(JSON.stringify(sortie));
@@ -1045,6 +1079,9 @@ def test_le_portage_liquide_les_memes_carrieres_hors_de_france(contexte):
                              simulation.notionnel_liberal.garantie_vieillesse.complement)),
             "garantie_aujourd_hui": (None if simulation.aujourd_hui is None
                                      else _arrondi(simulation.aujourd_hui.garantie_vieillesse)),
+            "regimes_aujourd_hui": (None if simulation.aujourd_hui is None
+                                    else [[r.regime, _arrondi(r.aujourd_hui)]
+                                          for r in simulation.aujourd_hui.actuel.regimes]),
         })
     assert json.loads(execution.stdout) == json.loads(json.dumps(attendus))
     assert all(attendu["trimestres"][1] > 0 for attendu in attendus)

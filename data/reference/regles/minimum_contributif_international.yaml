@@ -122,8 +122,13 @@ versions:
       application : des règlements européens ; de la convention franco-monégasque ; de
       la convention franco-britannique ; de la convention franco-indienne ; de la
       convention franco-argentine ; de la convention franco-brésilienne ; de la
-      convention franco-uruguayenne » (même exposé). Une pension étrangère qui commence
-      après révise l'écrêtement au premier jour du mois (R. 173-8)
+      convention franco-uruguayenne » (même exposé). La majoration « est révisée lorsque
+      le montant des avantages personnels de retraite a varié [...]. Cette révision
+      prend effet au premier jour du mois au cours duquel la modification de ce montant
+      a pris effet. Le montant du plafond auquel le total des pensions mentionné à
+      l'article L. 173-2 est comparé est celui en vigueur lors de l'entrée en jouissance
+      de cette majoration, revalorisé, le cas échéant, dans les conditions prévues à
+      l'article L. 161-23-1 » (R. 173-8)
     surcote: >-
       « La surcote n'est pas incluse dans le montant de la retraite avant comparaison au
       minimum. Elle s'ajoute au montant de la retraite porté au minimum » (circulaire
@@ -159,12 +164,14 @@ approximations:
 - ecart: >-
     une pension étrangère compte à l'écrêtement si elle commence au plus tard le mois de
     la date d'effet, à son montant de départ suivi sur les prix ; celle qui commence
-    après ne révise pas l'écrêtement (R. 173-8) ; celle de l'accord avec le Royaume-Uni
-    en est écartée, comme celles des règlements européens et de la convention
-    franco-britannique qu'il remplace, ce que la Cnav n'a pas écrit
+    après révise le minimum à chaque échéance qui la suit (R. 173-8), sur l'année
+    entière et non du premier jour de son mois, la marge sous le plafond menée comme le
+    minimum ; un départ seulement, et non des départs échelonnés ; celle de l'accord
+    avec le Royaume-Uni en est écartée, comme celles des règlements européens et de la
+    convention franco-britannique qu'il remplace, ce que la Cnav n'a pas écrit
   effet: >-
-    le minimum de qui touche une pension étrangère après son départ : trop élevé ; non
-    mesuré
+    le minimum de l'année où une pension étrangère commence, et celui des départs
+    échelonnés qu'elle suit : trop élevé ; non mesuré
 presomptions:
   pas_de_pension_etrangere: >-
     l'écrêtement, qui ne compte que les pensions étrangères que l'assuré déclare
@@ -198,19 +205,21 @@ sources:
   - type: legifrance
     reference: >-
       L. 173-2 CSS dans ses rédactions de 2010 (loi n° 2010-1594, article 110 : pensions
-      prenant effet depuis le 1er janvier 2012) et 2018, R. 173-7 (2011), L. 351-10-1
-      (2008, pour les pensions prenant effet depuis le 1er janvier 2012), dans l'index
-      LEGI du dépôt mis à jour au 1er octobre 2026
+      prenant effet depuis le 1er janvier 2012) et 2018, R. 173-7 (2011,
+      LEGIARTI000023719554), R. 173-8 (2011, LEGIARTI000023719547), L. 351-10-1 (2008,
+      pour les pensions prenant effet depuis le 1er janvier 2012), dans l'index LEGI du
+      dépôt mis à jour au 1er octobre 2026
     date: 2026-10-01
 code:
   python: >-
-    droit/completer.py : completer, plancher_international, _minimum_international ;
-    droit/liquider.py : EligibleMinimum (duree_regime, cotisee_regime, proratisation,
-    requis) ; droit/etranger.py : pensions_a_l_ecretement
+    droit/completer.py : completer, plancher_international, _minimum_international,
+    MinimumEcrete ; droit/liquider.py : EligibleMinimum (duree_regime, cotisee_regime,
+    proratisation, requis) ; droit/etranger.py : pensions_a_l_ecretement ;
+    revalorisation.py : reviser_le_minimum, que faire_vivre applique
   javascript: >-
     moteur/js/droit/completer.js : completer, plancherInternational,
     minimumInternational ; moteur/js/droit/liquider.js ; moteur/js/droit/etranger.js :
-    pensionsALEcretement
+    pensionsALEcretement ; moteur/js/revalorisation.js : reviserLeMinimum
   parametres: >-
     contenu.parametres de chaque version : prorata_du_minimum,
     ecretement_pensions_etrangeres, pensions_hors_ecretement ;
@@ -225,6 +234,9 @@ historique:
   2026-10-01 — modélisée, approchée, à la troisième étape du domaine : le minimum
   théorique puis proratisé de la pension que compare un accord, et l'écrêtement sur les
   pensions étrangères déclarées.
+- >-
+  2026-10-01 — après la clôture du domaine, à la demande du propriétaire : une pension
+  étrangère qui commence après le départ révise le minimum à chaque échéance (R. 173-8).
 effet: >-
   Les petites pensions françaises des carrières internationales, au taux plein par la
   totalisation : le minimum de la pension proratisée se réduit à la part française de

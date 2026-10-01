@@ -491,13 +491,18 @@ export function trimestresEtrangers(moteur, carriere) {
  * l'écrêtement du minimum contributif compte depuis 2012 : celles qui ont
  * commencé au plus tard le mois de la date d'effet, au montant de ce mois, hors
  * celles que calculent les règlements européens, l'accord avec le Royaume-Uni et
- * six conventions. Voir `pensions_a_l_ecretement` du Python.
+ * six conventions ; avec `depuis`, `jusquAu` et `annee`, celles qui ont commencé
+ * entre les deux mois, en euros de l'année — ce qui révise le minimum après le
+ * départ (R. 173-8). Voir `pensions_a_l_ecretement` du Python.
  */
-export function pensionsALEcretement(moteur, carriere) {
+export function pensionsALEcretement(moteur, carriere, depuis = null, jusquAu = null,
+  annee = null) {
   const effet = dateDEffet(carriere);
   if (effet === null || carriere.pensionsEtrangeres.length === 0) {
     return 0.0;
   }
+  const jusqua = jusquAu ?? carriere.dateLiquidation;
+  const euros = annee ?? carriere.anneeLiquidation;
   const domaine = moteur.carrieresHorsDeFrance;
   const version = domaine.version("minimum", { "liquidation.date_effet": effet });
   if (version === null || !version.parametres.ecretement_pensions_etrangeres) {
@@ -506,14 +511,15 @@ export function pensionsALEcretement(moteur, carriere) {
   const exclues = new Set(version.parametres.pensions_hors_ecretement ?? []);
   let total = 0.0;
   for (const pension of carriere.pensionsEtrangeres) {
-    if (pension.debut.rang > carriere.dateLiquidation.rang || exclues.has(pension.pays)) {
+    if (pension.debut.rang > jusqua.rang || exclues.has(pension.pays)
+        || (depuis !== null && pension.debut.rang <= depuis.rang)) {
       continue;
     }
     const accord = domaine.accord(pension.pays, jourDe(pension.debut));
     if (accord !== null && exclues.has(accord.instrument)) {
       continue;
     }
-    total += pensionEtrangereAnnuelle(moteur.macro, pension, carriere.anneeLiquidation);
+    total += pensionEtrangereAnnuelle(moteur.macro, pension, euros);
   }
   return total;
 }

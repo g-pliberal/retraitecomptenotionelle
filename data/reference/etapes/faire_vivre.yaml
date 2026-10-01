@@ -34,4 +34,5 @@ objets:
       regime: {porte: "le régime", type: identifiant, obligatoire: true}
       coefficient: {porte: "le coefficient nominal qui mène sa pension du départ à l'échéance", type: nombre, obligatoire: true}
       regle: {porte: "la règle suivie, sous le nom que la page lui donne (point, regime_general, fonction_publique, regime_special, par_defaut)", type: texte, obligatoire: true}
+      revision: {porte: "ce que la révision du minimum contributif retire, en euros de l'échéance, quand une pension étrangère commence après le départ (R. 173-8)", type: nombre, defaut: 0}
       fiabilite: {porte: "le niveau de ce coefficient", type: texte, obligatoire: true}

@@ -322,6 +322,8 @@ export function resultatActuel(resultat, foyer) {
     retraite_progressive: null,
     cumul: null,
     droits_apres_depart: null,
+    // Le minimum contributif servi, et ce que sa révision relit (R. 173-8).
+    minimum_ecrete: resultat.complements.minimumEcrete,
   };
 }
 

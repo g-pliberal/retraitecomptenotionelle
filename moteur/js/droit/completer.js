@@ -85,7 +85,7 @@ export function plancherInternational(eligible, montantBase, montantMajore, dure
 /** Ce que l'étape « compléter tous régimes » écrit. */
 export class Complements {
   constructor({ personne, regimes, avantages, total, minimumApplique, fiabilite,
-    plancher = 0.0 }) {
+    plancher = 0.0, minimumEcrete = null }) {
     this.personne = personne;
     this.regimes = regimes;
     this.avantages = avantages;
@@ -96,6 +96,10 @@ export class Complements {
     // pension complète qui descendrait sous elle : un droit acquis, qui entre
     // au total contributif.
     this.plancher = plancher;
+    // Le minimum contributif servi, et ce que sa révision relit après le
+    // départ (R. 173-8) : `{avant_ecretement, marge, par_regime}`, en euros de
+    // la liquidation ; `null` sans lui. Voir `MinimumEcrete` du Python.
+    this.minimumEcrete = minimumEcrete;
   }
 
   /** Les compléments, tels que le schéma de l'étape les décrit. */
@@ -146,6 +150,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   const avantages = [];
   let fiabiliteGlobale = Fiabilite.CERTIFIEE;
   let minimumApplique = false;
+  let minimumEcrete = null;
 
   if (avantagesNonContributifs && eligiblesMinimum.length > 0) {
     // Le minimum contributif ne relève que les pensions liquidées AU TAUX
@@ -245,14 +250,20 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       // Depuis 2012, les pensions étrangères aussi, hors celles des règlements
       // européens et de six conventions.
       const etrangeres = etranger.pensionsALEcretement(moteur, carriere);
-      const admissible = Math.max(0.0,
-        Math.min(releveMinimum, plafond - total - servies - etrangeres));
+      const marge = plafond - total - servies - etrangeres;
+      const admissible = Math.max(0.0, Math.min(releveMinimum, marge));
       if (admissible < releveMinimum) {
         const facteur = admissible / releveMinimum;
         for (const [indice, complement] of complements) {
           complements.set(indice, complement * facteur);
         }
       }
+      minimumEcrete = {
+        avant_ecretement: releveMinimum,
+        marge,
+        par_regime: [...complements].map(([indice, complement]) => [
+          pensions[indice].regime, complement]),
+      };
       releveMinimum = admissible;
     }
     if (releveMinimum > 0) {
@@ -512,6 +523,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     minimumApplique,
     fiabilite: fiabiliteGlobale,
     plancher: plancherProgressive,
+    minimumEcrete,
   });
 }
 

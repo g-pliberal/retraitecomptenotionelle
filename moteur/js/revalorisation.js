@@ -19,7 +19,7 @@
 import { DateMois } from "./calendrier.js";
 import { RevalorisationStock, SituationFoyer } from "./config.js";
 import * as liquider from "./droit/liquider.js";
-import { pensionsEtrangeresServies } from "./droit/etranger.js";
+import { pensionsALEcretement, pensionsEtrangeresServies } from "./droit/etranger.js";
 import { conditionDeResidence, foyerEtNet } from "./droit/foyer.js";
 import { ageDeLAspa } from "./droit/invalidite.js";
 import { Fiabilite, nomFiabilite } from "./serie.js";
@@ -343,7 +343,7 @@ export class Revalorisee {
       date: dateIso(this.annee, 12, 31),
       regimes: this.regimes.map((r) => ({
         regime: r.regime, coefficient: r.coefficient, regle: r.regle,
-        fiabilite: nomFiabilite(r.fiabilite),
+        fiabilite: nomFiabilite(r.fiabilite), revision: r.revision ?? 0.0,
       })),
       majoration: this.coefficient_majoration,
       mensuel_decembre_2019: this.mensuel_decembre_2019,
@@ -459,9 +459,11 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       fiabilite: fiabiliteRegime,
       hors_repartition: horsRepartition(pension),
       aujourd_hui: montant * coefficient,
+      revision: 0.0,
     });
   }
   const coefficientMajoration = coefficientDeLaMajoration(coefficients);
+  reviserLeMinimum(simulateur.scenarioActuel, carriere, resultat, regimes, an);
 
   return new Revalorisee({
     personne: carriere.personne,
@@ -472,6 +474,51 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     mensuel_decembre_2019: mensuel2019,
     fiabilite,
   });
+}
+
+/**
+ * La révision du minimum contributif quand une pension étrangère commence après
+ * le départ (R. 173-8) : les pensions que l'écrêtement compte, commencées après
+ * le mois du départ et au plus tard en décembre de `annee`, s'ajoutent à la
+ * marge qui séparait les pensions du plafond, menée comme le minimum ; ce
+ * qu'elles en passent retire au minimum, jamais plus que lui, chaque régime à
+ * proportion du sien. Modifie `regimes` en place. Voir `reviser_le_minimum` du
+ * Python.
+ */
+export function reviserLeMinimum(moteur, carriere, resultat, regimes, annee) {
+  const ecrete = resultat.minimum_ecrete ?? null;
+  if (ecrete === null || carriere.pensionsEtrangeres.length === 0) {
+    return;
+  }
+  const nouvelles = pensionsALEcretement(moteur, carriere, carriere.dateLiquidation,
+    new DateMois(annee, 12), annee);
+  const coefficients = new Map(regimes.map((r) => [r.regime, r.coefficient]));
+  const parts = ecrete.par_regime.filter(([code]) => coefficients.has(code))
+    .map(([code, part]) => [code, part, coefficients.get(code)]);
+  let servi = 0;
+  let somme = 0;
+  for (const [, part, coefficient] of parts) {
+    servi += part * coefficient;
+    somme += part;
+  }
+  if (nouvelles <= 0 || servi <= 0) {
+    return;
+  }
+  // Le coefficient du minimum, celui de ses régimes à proportion de leur part :
+  // le plafond et la marge le suivent.
+  const mene = servi / somme;
+  const revise = Math.max(0.0, Math.min(ecrete.avant_ecretement * mene,
+    ecrete.marge * mene - nouvelles));
+  const baisse = Math.max(0.0, servi - revise);
+  if (baisse <= 0) {
+    return;
+  }
+  const retraits = new Map(parts.map(([code, part, coefficient]) => [
+    code, part * coefficient / servi * baisse]));
+  for (const r of regimes) {
+    r.revision = retraits.get(r.regime) ?? 0.0;
+    r.aujourd_hui = r.au_depart * r.coefficient - r.revision;
+  }
 }
 
 /**

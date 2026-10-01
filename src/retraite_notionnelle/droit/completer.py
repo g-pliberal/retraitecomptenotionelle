@@ -134,6 +134,25 @@ def plancher_international(eligible, montant_base: float, montant_majore: float,
 
 
 @dataclass(frozen=True)
+class MinimumEcrete:
+    """Ce que la révision du minimum contributif relit après le départ : sa
+    majoration « est révisée lorsque le montant des avantages personnels de
+    retraite a varié », et le plafond auquel le total des pensions se compare
+    est celui de l'entrée en jouissance, « revalorisé [...] dans les
+    conditions prévues à l'article L. 161-23-1 » (R. 173-8). En euros de la
+    liquidation."""
+
+    #: Le complément de tous les régimes, avant l'écrêtement.
+    avant_ecretement: float
+    #: Ce qui sépare les pensions du plafond de l'article L. 173-2 : le
+    #: plafond, moins les pensions, celles d'autres départs et les pensions
+    #: étrangères qu'il compte ; négatif quand elles le dépassent.
+    marge: float
+    #: Le complément de chaque régime, après l'écrêtement.
+    par_regime: tuple[tuple[str, float], ...]
+
+
+@dataclass(frozen=True)
 class Complements:
     """Ce que l'étape « compléter tous régimes » écrit."""
 
@@ -154,6 +173,9 @@ class Complements:
     #: pension complète qui descendrait sous elle (:mod:`.progressive`) :
     #: un droit acquis, qui entre au total contributif.
     plancher: float = 0.0
+    #: Le minimum contributif servi, et ce que sa révision relit
+    #: (:class:`MinimumEcrete`) ; ``None`` sans lui.
+    minimum_ecrete: MinimumEcrete | None = None
 
     def donnees(self) -> dict:
         """Les compléments, tels que le schéma de l'étape les décrit."""
@@ -208,6 +230,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     avantages: list[AvantageApplique] = []
     fiabilite_globale = Fiabilite.CERTIFIEE
     minimum_applique = False
+    minimum_ecrete: MinimumEcrete | None = None
 
     if avantages_non_contributifs and eligibles_minimum:
         # Le minimum contributif ne relève que les pensions liquidées AU
@@ -313,14 +336,18 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             # règlements européens et de six conventions (fiche
             # minimum_contributif_international).
             etrangeres = _etranger.pensions_a_l_ecretement(moteur, carriere)
-            admissible = max(0.0, min(releve_minimum,
-                                      plafond - total - servies - etrangeres))
+            marge = plafond - total - servies - etrangeres
+            admissible = max(0.0, min(releve_minimum, marge))
             if admissible < releve_minimum:
                 facteur = admissible / releve_minimum
                 complements = {
                     indice: complement * facteur
                     for indice, complement in complements.items()
                 }
+            minimum_ecrete = MinimumEcrete(
+                avant_ecretement=releve_minimum, marge=marge,
+                par_regime=tuple((pensions[indice].regime, complement)
+                                 for indice, complement in complements.items()))
             releve_minimum = admissible
         if releve_minimum > 0:
             for indice, complement in complements.items():
@@ -583,6 +610,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         minimum_applique=minimum_applique,
         fiabilite=fiabilite_globale,
         plancher=plancher,
+        minimum_ecrete=minimum_ecrete,
     )
 
 

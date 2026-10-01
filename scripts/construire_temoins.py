@@ -874,6 +874,11 @@ def _cas() -> list[dict]:
     cas.append(("etranger_senegal_minimum_ecrete", {
         **en_espagne, "etranger1_pays": "SN", "pension_etrangere1_pays": "SN",
         "pension_etrangere1": "750", "pension_etrangere1_debut": "2020-04"}))
+    # La même pension sénégalaise, commencée un an après le départ : le
+    # minimum, entier au départ, se révise aujourd'hui (R. 173-8).
+    cas.append(("etranger_senegal_minimum_revise", {
+        **en_espagne, "etranger1_pays": "SN", "pension_etrangere1_pays": "SN",
+        "pension_etrangere1": "750", "pension_etrangere1_debut": "2025-01"}))
     # Un seul accord à la fois : le Japon, qui ne fait compter aucun État
     # tiers, plutôt que le Maroc, qui n'est pas lié au Japon ; la Tunisie, qui
     # fait compter l'Espagne, liée aux deux États (exemples du CLEISS).
