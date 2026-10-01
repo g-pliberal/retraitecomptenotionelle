@@ -380,3 +380,229 @@ def test_le_portage_lit_les_memes_faits(monkeypatch):
     assert attendus[0]["sans_activite"] == [1998, 1999, 2000]
     assert attendus[1]["periodes"][1][0] == "OI" and attendus[1]["residence"] == "autre"
     assert attendus[2]["sans_activite"] == [] and attendus[2]["residence"] == "MA"
+
+
+# -- le moteur : la totalisation des périodes étrangères ---------------------------
+
+@pytest.fixture(scope="module")
+def contexte():
+    from retraite_notionnelle.contexte import Contexte
+
+    return Contexte()
+
+
+def _actuel(contexte, **champs):
+    """Le scénario 1 d'une saisie : ce que la page lit du système actuel."""
+    return contexte.simuler(Saisie.depuis_requete(champs)).actuel
+
+
+def _pension(actuel, regime):
+    return next(p for p in actuel.pensions_par_regime if p.regime == regime)
+
+
+#: Né en mars 1962, entré dans la vie active en France en septembre 1990,
+#: parti à soixante-quatre ans : 142 trimestres en France, 169 requis.
+NE_EN_1962 = {"naissance": "1962-03-15", "debut": "1990-09", "liquidation": "2026-04"}
+#: Dix ans et demi au Maroc avant d'arriver en France.
+AU_MAROC = {"etranger1_pays": "MA", "etranger1_debut": "1980-01", "etranger1_fin": "1990-09"}
+
+
+def test_les_periodes_d_un_accord_comptent_pour_le_taux_et_non_pour_la_duree(contexte):
+    """La convention franco-marocaine de 2007 fait compter les dix ans et
+    demi du Maroc : 43 trimestres, qui portent la durée tous régimes de 142 à
+    185, au-delà des 169 requis — le taux plein, la surcote des six trimestres
+    travaillés en France après l'âge légal, et l'Agirc-Arrco sans coefficient.
+    La pension reste proratisée sur les 142 trimestres français."""
+    francais = _actuel(contexte, **NE_EN_1962)
+    totalisee = _actuel(contexte, **NE_EN_1962, **AU_MAROC)
+    assert (francais.trimestres_valides, francais.trimestres_etrangers) == (142, 0)
+    assert (totalisee.trimestres_valides, totalisee.trimestres_etrangers) == (185, 43)
+    assert "taux 42.500% × 142/169" in _pension(francais, "regime_general").detail
+    assert "taux 53.750% × 142/169" in _pension(totalisee, "regime_general").detail
+    assert "coefficient d'anticipation" in _pension(francais, "agirc_arrco").detail
+    assert "coefficient" not in _pension(totalisee, "agirc_arrco").detail
+
+
+def test_une_convention_qui_ne_vise_que_les_salaries(contexte):
+    """La convention franco-algérienne ne vise que les salariés : l'activité
+    non salariée en Algérie n'y compte pas, sauf comme activité à l'étranger
+    d'avant le 1er avril 1983, reconnue équivalente pour le taux — treize
+    trimestres de 1980 à mars 1983 (R. 351-4, 1°). Un État qu'aucun accord ne
+    lie à la France en fait autant."""
+    algerie = {"etranger1_pays": "DZ", "etranger1_debut": "1980-01", "etranger1_fin": "1990-09"}
+    salariee = _actuel(contexte, **NE_EN_1962, **algerie)
+    non_salariee = _actuel(contexte, **NE_EN_1962, **algerie, etranger1_activite="non_salariee")
+    autre = _actuel(contexte, **NE_EN_1962, **{**algerie, "etranger1_pays": "autre"})
+    assert salariee.trimestres_etrangers == 43
+    assert non_salariee.trimestres_etrangers == autre.trimestres_etrangers == 13
+
+
+def test_les_fonctionnaires_ne_comptent_que_les_reglements_europeens(contexte):
+    """Les régimes du code des pensions n'entrent dans la coordination
+    européenne que le 25 octobre 1998 (règlement 1606/98), et aucune
+    convention bilatérale ne les vise : dix ans en Allemagne portent la
+    décote de l'agent de l'État au taux plein, dix ans au Maroc ne lui
+    apportent rien."""
+    etat = {**NE_EN_1962, "statut": "fonctionnaire_etat"}
+    allemagne = _actuel(contexte, **etat, **{**AU_MAROC, "etranger1_pays": "DE"})
+    maroc = _actuel(contexte, **etat, **AU_MAROC)
+    assert allemagne.trimestres_etrangers == 43 and maroc.trimestres_etrangers == 0
+    assert "taux 80.625%" in _pension(allemagne, "fonction_publique_etat").detail
+    assert "taux 63.750%" in _pension(maroc, "fonction_publique_etat").detail
+
+
+def test_l_annee_ne_depasse_pas_quatre_trimestres(contexte, simulateur):
+    """Les périodes étrangères complètent celles de la carrière française sans
+    s'y superposer (R. 351-5) : huit mois au Maroc en 1990, l'année où la
+    carrière française commence en septembre, n'en apportent que trois ; le
+    trimestre de l'année du départ, au plus les trimestres civils écoulés."""
+    from retraite_notionnelle.droit import etranger
+
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1962, sexe="H", mois_naissance=3,
+        metiers=[Metier("salarie_prive_non_cadre", 28.5)], age_liquidation=64.0,
+        macro=simulateur.macro,
+        etranger={"periodes": [{"pays": "MA", "debut": 18.0, "fin": 28.5,
+                                "activite": "salariee"}],
+                  "pensions": [], "residence": None})
+    trimestres = etranger.trimestres_etrangers(simulateur.scenario_actuel, carriere)
+    assert trimestres.pour_le_taux[etranger.GENERALE][1980] == 4
+    assert trimestres.pour_le_taux[etranger.GENERALE][1990] == 3
+    assert trimestres.cotises[etranger.GENERALE] == trimestres.pour_le_taux[etranger.GENERALE]
+    assert trimestres.trimestres(etranger.FONCTIONNAIRES) == 0
+
+
+def test_une_organisation_internationale_compte_pour_le_taux_seul(contexte, simulateur):
+    """Depuis 2010, l'affiliation au régime d'une organisation internationale
+    compte pour le taux, un trimestre par quatre-vingt-dix jours (R. 161-16-1),
+    jamais comme durée cotisée ; avant 2010, rien."""
+    from retraite_notionnelle.droit import etranger
+
+    def compte(liquidation: float):
+        carriere = Carriere.depuis_parcours(
+            annee_naissance=1955, sexe="F", mois_naissance=6,
+            metiers=[Metier("salarie_prive_non_cadre", 22.0)], age_liquidation=liquidation,
+            macro=simulateur.macro, interruptions={a: "sans_activite" for a in range(2000, 2006)},
+            etranger={"periodes": [{"pays": "OI", "debut": 44.5, "fin": 51.0,
+                                    "activite": "salariee"}],
+                      "pensions": [], "residence": None})
+        return etranger.trimestres_etrangers(simulateur.scenario_actuel, carriere)
+
+    apres = compte(62.0)
+    assert apres.trimestres(etranger.GENERALE) == apres.trimestres(etranger.FONCTIONNAIRES) == 24
+    assert apres.trimestres_cotises(etranger.GENERALE) == 0
+    # Liquidée en 2009 : avant que L. 161-19-1 ne s'applique.
+    avant = compte(54.0)
+    assert avant.trimestres(etranger.GENERALE) == 0
+
+
+def test_la_carriere_longue_compte_les_periodes_etrangeres(contexte):
+    """Un salarié né en 1958, entré au Portugal à quinze ans, en France à
+    vingt-six : la convention de 1973, puis les règlements européens
+    depuis 1986, font compter ses années portugaises « dans les mêmes
+    conditions que les périodes accomplies en France » — l'entrée précoce et
+    la durée cotisée de la carrière longue. Il part à soixante ans."""
+    champs = {"naissance": "1958-05-15", "debut": "1985-01", "liquidation": "2018-06"}
+    francais = _actuel(contexte, **champs)
+    portugais = _actuel(contexte, **champs, etranger1_pays="PT", etranger1_debut="1974-03",
+                        etranger1_fin="1985-01")
+    assert francais.motif_ouverture == "non_ouverte"
+    assert portugais.motif_ouverture == "carriere_longue"
+    assert portugais.trimestres_etrangers == 44
+
+
+def test_les_etapes_disent_ce_que_la_coordination_fait_des_periodes(simulateur):
+    """La coordination dit le titre de chaque période, les durées ce que
+    chaque famille en retient : chacune suit le schéma de son étape."""
+    from retraite_notionnelle.droit import compter, coordonner
+    from retraite_notionnelle.noyau import contrats
+
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1962, sexe="H", mois_naissance=3,
+        metiers=[Metier("salarie_prive_non_cadre", 28.5)], age_liquidation=64.0,
+        macro=simulateur.macro,
+        etranger={"periodes": [
+            {"pays": "MA", "debut": 18.0, "fin": 24.0, "activite": "non_salariee"},
+            {"pays": "DE", "debut": 24.0, "fin": 28.5, "activite": "salariee"}],
+            "pensions": [], "residence": None})
+    actuel = simulateur.scenario_actuel
+    coordination = coordonner.coordonner(actuel, carriere)
+    donnees = coordination.donnees()
+    assert [(p["pays"], p["titre"], p["instrument"], p["familles"])
+            for p in donnees["etranger"]] == [
+        ("MA", "accord", "convention", ["regime_general"]),
+        ("DE", "accord", "reglements_europeens", ["regime_general", "fonction_publique"])]
+    durees = compter.compter(actuel, coordination)
+    for etape, objet, valeur in (("coordonner_les_affiliations", "coordination", donnees),
+                                 ("compter_les_durees", "durees", durees.donnees())):
+        erreurs = [c for c in contrats.Validateur(etape, contrats.ETAPES).valider(valeur, objet)
+                   if c.genre == "erreur"]
+        assert erreurs == [], erreurs
+    assert durees.pour_le_taux("regime_general") == durees.trimestres + 43
+    assert durees.pour_le_taux(None) == durees.trimestres
+
+
+#: Des carrières hors de France que les deux moteurs liquident.
+CARRIERES_HORS_DE_FRANCE = [
+    {**NE_EN_1962, **AU_MAROC},
+    {**NE_EN_1962, "etranger1_pays": "DZ", "etranger1_debut": "1980-01",
+     "etranger1_fin": "1990-09", "etranger1_activite": "non_salariee"},
+    {**NE_EN_1962, "statut": "fonctionnaire_etat", "etranger1_pays": "DE",
+     "etranger1_debut": "1980-01", "etranger1_fin": "1990-09"},
+    {**NE_EN_1962, "statut": "fonctionnaire_territorial_hospitalier", "etranger1_pays": "OI",
+     "etranger1_debut": "2011-01", "etranger1_fin": "2014-07"},
+    {**NE_EN_1962, "etranger1_pays": "GB", "etranger1_debut": "1985-01",
+     "etranger1_fin": "1990-09", "metier2_debut": "2000-01", "metier2_statut": "fonctionnaire_etat"},
+    {"naissance": "1958-05-15", "debut": "1985-01", "liquidation": "2018-06",
+     "etranger1_pays": "PT", "etranger1_debut": "1974-03", "etranger1_fin": "1985-01"},
+    {"naissance": "1950-02-15", "debut": "1978-01", "liquidation": "2012-03",
+     "etranger1_pays": "autre", "etranger1_debut": "1968-01", "etranger1_fin": "1978-01"},
+]
+
+#: Ce que le portage liquide de ces carrières.
+LIQUIDATION_JS = """
+import { readFileSync } from "node:fs";
+import { Contexte } from "./moteur/js/contexte.js";
+import { Saisie } from "./moteur/js/saisie.js";
+
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
+  const actuel = contexte.simuler(
+    Saisie.depuisRequete(requete, false, contexte.paquet.presomptions)).actuel;
+  return {
+    trimestres: [actuel.trimestres_valides, actuel.trimestres_etrangers,
+      actuel.trimestres_requis],
+    motif: actuel.motif_ouverture,
+    pensions: actuel.pensions_par_regime.map((p) => [p.regime, p.montant, p.detail]),
+  };
+});
+process.stdout.write(JSON.stringify(sortie));
+"""
+
+
+def test_le_portage_liquide_les_memes_carrieres_hors_de_france(contexte):
+    """Les deux moteurs comptent les mêmes trimestres étrangers et liquident
+    les mêmes pensions, régime par régime, au centime et au mot près."""
+    import json
+    import shutil
+    import subprocess
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", LIQUIDATION_JS], cwd=racine,
+        input=json.dumps(CARRIERES_HORS_DE_FRANCE), capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    attendus = []
+    for requete in CARRIERES_HORS_DE_FRANCE:
+        actuel = _actuel(contexte, **requete)
+        attendus.append({
+            "trimestres": [actuel.trimestres_valides, actuel.trimestres_etrangers,
+                           actuel.trimestres_requis],
+            "motif": actuel.motif_ouverture,
+            "pensions": [[p.regime, p.montant, p.detail] for p in actuel.pensions_par_regime],
+        })
+    assert json.loads(execution.stdout) == json.loads(json.dumps(attendus))
+    assert all(attendu["trimestres"][1] > 0 for attendu in attendus)

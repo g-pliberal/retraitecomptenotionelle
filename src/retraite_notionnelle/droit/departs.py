@@ -61,7 +61,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
-from . import compter, coordonner, invalidite, ouvrir
+from . import compter, coordonner, etranger, invalidite, ouvrir
 from .commun import derniere_annee
 
 if TYPE_CHECKING:
@@ -251,12 +251,15 @@ def _carriere_longue_acquise(moteur: ScenarioActuel, carriere: Carriere,
     cotises = carriere.trimestres_cumules(
         ligne for ligne in carriere.lignes
         if ligne.cotise and ligne.annee <= annee_liquidation)
+    famille = etranger.famille_des_regimes(moteur, [code for code, _ in periodes])
+    etrangers = etranger.trimestres_etrangers(moteur, carriere)
     majoration = compter.majoration_pour_enfants(
         moteur, carriere, {code: cotises for code, _ in periodes}, annee_liquidation)
     cotises = moteur.carriere_longue.cotises_reputes(
-        carriere, cotises, majoration.trimestres if majoration is not None else 0)
+        carriere, cotises + etrangers.trimestres_cotises(famille),
+        majoration.trimestres if majoration is not None else 0)
     anticipe = moteur.carriere_longue.age_de_depart(
-        carriere, annee_liquidation, cotises, requis)
+        carriere, annee_liquidation, cotises, requis, etrangers.cotises[famille])
     return None if anticipe is None else anticipe[0]
 
 

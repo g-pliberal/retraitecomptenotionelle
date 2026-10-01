@@ -26,13 +26,15 @@ from typing import TYPE_CHECKING
 from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from .commun import derniere_annee
+from .etranger import coordonner_les_periodes
 
 if TYPE_CHECKING:
     from ..carriere import AnneeCarriere, Carriere
     from ..scenarios.actuel import ScenarioActuel
 
-#: La version du schéma de l'étape.
-SCHEMA_VERSION = 1
+#: La version du schéma de l'étape : la deuxième dit ce que la coordination
+#: fait des périodes passées hors de France.
+SCHEMA_VERSION = 2
 
 #: Les régimes que L. 13 du code des pensions et le XXIV visent : l'État,
 #: et par renvoi la CNRACL et le FSPOEIE. La Banque de France, qui emprunte
@@ -348,6 +350,9 @@ class Coordination:
     #: Les rétablissements faits : le droit que l'agent n'a pas, et le
     #: traitement que le régime général porte au compte.
     retablissements: tuple[tuple[DroitPension, float], ...] = ()
+    #: Les périodes passées hors de France, et le titre auquel chacune compte
+    #: (:func:`~.etranger.coordonner_les_periodes`).
+    etranger: tuple = ()
 
     def donnees(self) -> dict:
         """La coordination, telle que son schéma la décrit."""
@@ -362,11 +367,13 @@ class Coordination:
                 {"annee": ligne.annee, "affiliation": ligne.affiliation,
                  "regimes": list(regimes), "revenu_retabli": ligne.revenu_retabli}
                 for ligne, regimes in zip(self.carriere.lignes, self.regimes)],
+            "etranger": [periode.donnees() for periode in self.etranger],
         }
 
 
 def coordonner(moteur: ScenarioActuel, carriere: Carriere) -> Coordination:
-    """L'étape : rétablir, puis router chaque ligne vers ses régimes.
+    """L'étape : rétablir, router chaque ligne vers ses régimes, et dire à
+    quel titre chaque période passée hors de France compte.
 
     Le routage est celui que toute l'acquisition lit : les régimes du statut
     de la ligne, l'année de la ligne, à la date d'entrée dans le statut, pour
@@ -381,7 +388,8 @@ def coordonner(moteur: ScenarioActuel, carriere: Carriere) -> Coordination:
                    revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                    plafond=plafond(ligne.annee))
         for ligne in carriere.lignes)
-    return Coordination(carriere, regimes, retablissements)
+    return Coordination(carriere, regimes, retablissements,
+                        coordonner_les_periodes(moteur, carriere))
 
 
 def lura_applicable(carriere: Carriere) -> bool:

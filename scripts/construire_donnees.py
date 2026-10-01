@@ -87,6 +87,7 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     AgesOuverture,
     AgesSurcoteRegimesSpeciaux,
     AnneesSalaireReference,
+    CarrieresHorsDeFrance,
     CoefficientsMinoration,
     DureesProratisation,
     DureesRequises,
@@ -1241,10 +1242,10 @@ def _versions_des_fiches() -> dict:
     """Les fiches de la carte que le moteur lit, réduites à ce qu'il en lit :
     leurs dates qui décident, et chaque version avec ses bornes, son texte et
     ses paramètres (``noyau/versions.py``). Aujourd'hui, les trimestres des
-    enfants, la réversion, l'invalidité et l'inaptitude, dont chaque fiche dit
-    aussi ses régimes."""
+    enfants, la réversion, l'invalidité et l'inaptitude, les carrières hors de
+    France, dont chaque fiche dit aussi ses régimes."""
     return (MajorationsPourEnfants(DONNEES).fiches() | Reversions(DONNEES).fiches()
-            | Invalidites(DONNEES).fiches())
+            | Invalidites(DONNEES).fiches() | CarrieresHorsDeFrance(DONNEES).fiches())
 
 
 def _accords_internationaux() -> dict:

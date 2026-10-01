@@ -23,6 +23,7 @@ import { derniereAnnee } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
+import { familleDuRegime } from "./etranger.js";
 import * as invalidite from "./invalidite.js";
 import * as ouvrir from "./ouvrir.js";
 import { TRIMESTRES_DECOTE_MILITAIRE } from "./ouvrir.js";
@@ -118,7 +119,6 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const { durees, droits } = releve;
   const anneeLiquidation = carriere.anneeLiquidation;
   const ageLiquidation = carriere.age_liquidation || 0.0;
-  const trimestres = durees.trimestres;
   const requisReference = ouverture.requis;
   const ignorerPenaliteAge = contexte !== null && contexte.neutralise("decote_surcote");
   const avpf = contexte === null || !contexte.neutralise("avpf");
@@ -148,6 +148,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const majorationEnfants = durees.enfants;
 
   for (const code of codes) {
+    // La durée tous régimes que le taux de ce régime lit : les périodes hors
+    // de France y entrent, celles que sa famille retient (`etranger.js`) ;
+    // jamais dans sa durée, qui proratise.
+    const trimestres = durees.pourLeTaux(familleDuRegime(moteur, code));
     const cumul = cumulCotisations.get(code) ?? 0.0;
     const regime = moteur.catalogue.obtenir(code);
     const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));

@@ -9,11 +9,17 @@
 #
 # Jusqu'à ce que l'étape lise la chronologie elle-même, elle la lit par sa
 # vue, la carrière, dont elle suit les lignes dans leur ordre.
+#
+# La version 2 (1er octobre 2026) dit ce que la coordination fait des
+# périodes passées hors de France : le titre auquel chacune compte — un
+# accord, une organisation internationale, l'équivalence de l'activité
+# d'avant 1983 —, et les familles de régimes qui la retiennent
+# (src/retraite_notionnelle/droit/etranger.py).
 # src/retraite_notionnelle/droit/coordonner.py, et son jumeau
 # moteur/js/droit/coordonner.js.
 
 etape: coordonner_les_affiliations
-schema_version: 1
+schema_version: 2
 lit: [chronologie]
 ecrit: coordination
 
@@ -25,6 +31,7 @@ objets:
       personne: {porte: "la personne dont les affiliations sont coordonnées", type: identifiant, obligatoire: true}
       retablissements: {porte: "les rétablissements faits : l'agent parti sans droit à pension, rétabli au régime général et à l'Ircantec", type: liste, de: {objet: retablissement}, defaut: []}
       lignes: {porte: "chaque ligne de la carrière, dans son ordre, et les régimes qui la reçoivent", type: liste, de: {objet: ligne}, obligatoire: true}
+      etranger: {porte: "chaque période passée hors de France, et le titre auquel elle compte", type: liste, de: {objet: periode_etrangere}, defaut: []}
 
   retablissement:
     champs:
@@ -38,3 +45,14 @@ objets:
       affiliation: {porte: "le statut sous lequel l'activité est exercée", type: identifiant, obligatoire: true}
       regimes: {porte: "les régimes qui la reçoivent, rétablissement fait", type: liste, de: identifiant, obligatoire: true}
       revenu_retabli: {porte: "pour une année rétablie, le traitement que le régime général porte à son compte", type: nombre, defaut: 0}
+
+  periode_etrangere:
+    champs:
+      pays: {porte: "le code de l'État, celui du tableau des accords, ou autre", type: texte, obligatoire: true}
+      debut: {porte: "le premier jour de la période", type: date, obligatoire: true}
+      fin: {porte: "le premier jour qui la suit", type: date, obligatoire: true}
+      activite: {porte: "salariée ou non", type: identifiant, obligatoire: true}
+      titre: {porte: "le titre auquel elle compte : accord, organisation internationale, équivalence ; vide si elle ne compte pas", type: identifiant, defaut: null}
+      instrument: {porte: "l'instrument de l'accord qui la fait compter", type: identifiant, defaut: null}
+      familles: {porte: "les familles de régimes qui la retiennent", type: liste, de: identifiant, defaut: []}
+      version: {porte: "la version de la fiche totalisation_des_periodes_etrangeres", type: identifiant, defaut: null}

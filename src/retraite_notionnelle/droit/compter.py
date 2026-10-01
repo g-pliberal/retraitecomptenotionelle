@@ -29,6 +29,7 @@ from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from . import coordonner
 from .commun import derniere_annee
+from .etranger import TrimestresEtrangers, compter_les_periodes, famille_des_regimes
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -37,8 +38,9 @@ if TYPE_CHECKING:
     from .coordonner import Coordination
 
 #: La version du schéma de l'étape : la deuxième compte les trimestres des
-#: enfants enfant par enfant, chacun dans son régime.
-SCHEMA_VERSION = 2
+#: enfants enfant par enfant, chacun dans son régime ; la troisième, les
+#: trimestres que les périodes hors de France apportent.
+SCHEMA_VERSION = 3
 
 #: Les trois comptes, dans l'ordre où l'étape les écrit.
 COMPTES = ("assurance", "services", "cotises")
@@ -170,6 +172,26 @@ class Durees:
     #: Les BONIFICATIONS, à part des services : seules elles peuvent porter le
     #: taux au-delà du maximum (`taux_maximum_bonifie`).
     bonifications_par_regime: dict[str, int]
+    #: Les trimestres que les périodes hors de France apportent, par famille
+    #: de régimes : hors de :attr:`trimestres` et de la durée de chaque
+    #: régime, qui proratise ; :meth:`pour_le_taux` les y ajoute.
+    etranger: TrimestresEtrangers | None = None
+
+    def pour_le_taux(self, famille: str | None) -> int:
+        """La durée d'assurance tous régimes que le taux d'un régime de cette
+        famille lit (:func:`~.etranger.famille_du_regime`) : celle de la
+        carrière, enfants compris, et les trimestres étrangers que la famille
+        retient."""
+        if self.etranger is None or famille is None:
+            return self.trimestres
+        return self.trimestres + self.etranger.trimestres(famille)
+
+    @property
+    def trimestres_etrangers(self) -> int:
+        """Les trimestres étrangers que retient la famille des régimes de la
+        carrière : ceux que le résultat ajoute à sa durée tous régimes."""
+        return 0 if self.etranger is None else self.etranger.trimestres(
+            self.etranger.famille)
 
     def cumul_plafonne(self, table: str, membres: tuple[str, ...]) -> int:
         """Les trimestres d'un compte, pour un régime ou un groupe de régimes
@@ -205,6 +227,7 @@ class Durees:
                      "fiabilite": e.fiabilite.name.lower()}
                     for e in enfants.enfants]},
             "trimestres": self.trimestres,
+            "etranger": None if self.etranger is None else self.etranger.donnees(),
         }
 
 
@@ -303,8 +326,15 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
             trimestres_par_regime[regime] += accordes
             hors_annee["assurance"][regime] = accordes
             hors_annee["services"][regime] = services
+    # Les périodes hors de France comptent pour le taux, chacune au titre que
+    # la coordination lui a donné, sans dépasser quatre trimestres par année
+    # avec ceux de la carrière : jamais dans la durée d'un régime.
+    etranger = (compter_les_periodes(carriere, coordination.etranger,
+                                     carriere.trimestres_actuels,
+                                     famille_des_regimes(moteur, par_annee["assurance"]))
+                if coordination.etranger else None)
     return Durees(carriere, par_annee, hors_annee, majoration_enfants, trimestres,
-                  trimestres_par_regime, bonifications_par_regime)
+                  trimestres_par_regime, bonifications_par_regime, etranger)
 
 
 def services_a_temps_partiel(trimestres: int, quotite: float) -> int:

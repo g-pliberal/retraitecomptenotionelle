@@ -823,6 +823,40 @@ def _cas() -> list[dict]:
         "naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
         "interruptions": "1975:1982:invalidite",
     }))
+    # LES CARRIÈRES HORS DE FRANCE (droit/etranger.py). Dix ans et demi au
+    # Maroc avant la France : la convention de 2007 les fait compter pour le
+    # taux, jamais pour la durée ; les mêmes en Algérie, en non-salarié, que
+    # la convention ne vise pas, et dont seule l'activité d'avant 1983 compte ;
+    # l'agent de l'État, dont l'Allemagne fait le taux plein et que le Maroc
+    # laisse décoté ; la hospitalière passée par une organisation
+    # internationale ; l'entré au Portugal à quinze ans, qui part en carrière
+    # longue ; le Britannique d'avant 2021, sous l'accord de commerce et de
+    # coopération ; l'activité d'avant 1983 dans un État sans accord.
+    au_maroc = {"etranger1_pays": "MA", "etranger1_debut": "1980-01",
+                "etranger1_fin": "1990-09"}
+    ne_en_1962 = {"naissance": "1962-03-15", "debut": "1990-09", "liquidation": "2026-04"}
+    cas.append(("etranger_maroc_taux_plein", {**ne_en_1962, **au_maroc}))
+    cas.append(("etranger_algerie_non_salarie", {
+        **ne_en_1962, **au_maroc, "etranger1_pays": "DZ",
+        "etranger1_activite": "non_salariee"}))
+    cas.append(("etranger_fonctionnaire_allemagne", {
+        **ne_en_1962, **au_maroc, "statut": "fonctionnaire_etat", "etranger1_pays": "DE"}))
+    cas.append(("etranger_fonctionnaire_maroc", {
+        **ne_en_1962, **au_maroc, "statut": "fonctionnaire_etat"}))
+    cas.append(("etranger_organisation_internationale", {
+        **ne_en_1962, "statut": "fonctionnaire_territorial_hospitalier",
+        "etranger1_pays": "OI", "etranger1_debut": "2011-01", "etranger1_fin": "2014-07"}))
+    cas.append(("etranger_portugal_carriere_longue", {
+        "naissance": "1958-05-15", "debut": "1985-01", "liquidation": "2018-06",
+        "etranger1_pays": "PT", "etranger1_debut": "1974-03", "etranger1_fin": "1985-01"}))
+    cas.append(("etranger_royaume_uni_puis_fonction_publique", {
+        **ne_en_1962, "etranger1_pays": "GB", "etranger1_debut": "1985-01",
+        "etranger1_fin": "1990-09", "metier2_debut": "2000-01",
+        "metier2_statut": "fonctionnaire_etat"}))
+    cas.append(("etranger_sans_accord_avant_1983", {
+        "naissance": "1950-02-15", "debut": "1978-01", "liquidation": "2012-03",
+        "etranger1_pays": "autre", "etranger1_debut": "1968-01",
+        "etranger1_fin": "1978-01"}))
     # LE RÉTABLISSEMENT : qui part sans la durée qui ouvre une pension — quinze
     # ans avant 2011, deux depuis — passe au régime général et à l'Ircantec,
     # le premier portant le dernier traitement dans la limite du plafond de

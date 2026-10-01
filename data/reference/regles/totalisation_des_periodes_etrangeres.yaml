@@ -15,7 +15,7 @@ regimes: [regime_general, msa_salaries, cancava, organic, rsi, fonction_publique
   cnracl, fspoeie, cnavpl, cnbf, msa_non_salaries]
 etape: coordonner_les_affiliations
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - les périodes à l'étranger de la personne, l'État où chacune a été accomplie, son début et
   sa fin, et la nature de son activité, salariée ou non
@@ -76,6 +76,8 @@ versions:
   - {reference: "circulaire Cnav n° 117/83 du 28 octobre 1983", publie_le: 1983-10-28}
   - {id: "http://data.europa.eu/eli/reg/1971/1408/oj", article: "règlement (CEE) n° 1408/71, articles 45 et 46 ; règlement (CEE) n° 574/72, article 15",
      en_vigueur: 1972-10-01}
+  - {id: "http://data.europa.eu/eli/reg/1998/1606/oj", article: "règlement (CE) n° 1606/98 du 29 juin 1998 : les régimes spéciaux des fonctionnaires coordonnés (JO CE L 209 du 25 juillet 1998)",
+     en_vigueur: 1998-10-25}
   nee_de: JORFTEXT000000888522
   bornes:
     liquidation.date_effet: [1983-04-01, 2010-01-01]
@@ -126,6 +128,7 @@ versions:
       trimestres_par_annee_au_plus: 4
       mois_par_trimestre: 3
       equivalentes_avant: 1983-04-01
+      fonctionnaires_depuis: 1998-10-25
   exemples: aucun trouvé
 - id: organisations_internationales_2010
   statut: lue
@@ -158,6 +161,7 @@ versions:
       trimestres_par_annee_au_plus: 4
       mois_par_trimestre: 3
       equivalentes_avant: 1983-04-01
+      fonctionnaires_depuis: 1998-10-25
       organisations_internationales: taux_seul
       jours_par_trimestre_organisations_internationales: 90
   exemples: aucun trouvé
@@ -193,21 +197,56 @@ versions:
       mois_par_trimestre: 3
       equivalentes_avant: 1983-04-01
       equivalentes_trimestres_francais_au_moins: 20
+      fonctionnaires_depuis: 1998-10-25
       organisations_internationales: taux_seul
       jours_par_trimestre_organisations_internationales: 90
   exemples: aucun trouvé
-approximations: []
+approximations:
+- ecart: >-
+    les trimestres d'une période se comptent année civile par année civile, trois mois
+    en faisant un, la fraction arrondie au trimestre supérieur dans l'année, et non sur
+    le relevé que l'institution de l'autre État transmet ; l'activité à l'étranger
+    d'avant 1983, reconnue équivalente, se compte de même, sa règle n'étant pas lue ;
+    les quatre-vingt-dix jours d'une organisation internationale se comptent aussi
+    dans l'année, et non de date à date sur toute la période
+  effet: un trimestre au plus par période, à ses deux bords ; non mesuré
+- ecart: >-
+    l'année civile que la période occupe pour plus de la moitié des mois de la
+    carrière est une année sans activité en France, et l'autre une année française
+    entière : les mois de l'année partagée comptent d'un seul côté
+  effet: un trimestre au plus à chaque bord d'une période ; non mesuré
+- ecart: >-
+    une convention bilatérale coordonne avec le régime général tous les régimes que la
+    fiche nomme hors de la fonction publique — les indépendants, les exploitants
+    agricoles, les professions libérales, les avocats —, alors qu'elle ne vise que les
+    régimes qu'elle nomme ; l'accord avec le Royaume-Uni ne coordonne pas les régimes
+    des fonctionnaires, son texte n'étant pas lu sur ce point ; les régimes spéciaux
+    ne retiennent aucune période étrangère, que les règlements européens leur font
+    pourtant compter ; l'équivalence d'avant 1983 ne vaut pas pour la fonction
+    publique
+  effet: non mesuré
+- ecart: >-
+    depuis 2011, l'équivalence d'avant 1983 ne se lit que sur les vingt trimestres
+    d'assurance en France ; les cinq années civiles à la charge de l'assurance maladie
+    française, l'autre branche de la condition, ne sont pas connues
+  effet: >-
+    l'activité d'avant 1983 de qui a moins de vingt trimestres en France, mais cinq
+    ans d'assurance maladie française, ne compte pas ; non mesuré
+- ecart: >-
+    les trimestres étrangers ne comptent ni pour la surcote — seuls ceux accomplis en
+    France après l'âge légal la font —, ni pour la retraite progressive, ni pour les
+    points gratuits de la retraite complémentaire des exploitants agricoles
+  effet: non mesuré
 sources:
   lu_le: 2026-10-01
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
     Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France
-    (docs/architecture.md, § 11), à la demande du propriétaire. Le moteur ne la calcule
-    pas encore : la chronologie porte les périodes à l'étranger depuis la deuxième étape
-    du domaine, leur État pour territoire et leur activité, et la carrière ne travaille
-    pas en France les années qu'elles occupent ; il reste les trimestres que chaque
-    accord fait compter (étape 3).
+    (docs/architecture.md, § 11), à la demande du propriétaire. La chronologie porte
+    les périodes à l'étranger depuis la deuxième étape du domaine ; le moteur en compte
+    les trimestres depuis la troisième, pour le taux, la décote, la surcote, la carrière
+    longue et la durée cotisée, jamais pour la proratisation.
   - >-
     À lire : le texte réglementaire qui fixe la durée d'affiliation à l'assurance maladie
     exigée par L. 742-2 depuis 2011, que seul l'exposé de la Cnav donne (cinq années
@@ -271,6 +310,26 @@ sources:
       institution européenne ou d'une organisation internationale »
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-duree-dassurance
     date: 2026-10-01
+code:
+  python: >-
+    droit/etranger.py : coordonner_les_periodes, compter_les_periodes, famille_du_regime,
+    famille_des_regimes, trimestres_etrangers ; droit/coordonner.py : coordonner
+    (Coordination.etranger) ; droit/compter.py : compter (Durees.etranger,
+    Durees.pour_le_taux) ; droit/liquider.py : liquider_chaque_regime ; droit/ouvrir.py :
+    ouvrir, age_carriere_longue ; droit/departs.py : _carriere_longue_acquise ;
+    scenarios/actuel.py : CarrieresHorsDeFrance, CarriereLongue, ResultatActuel
+  javascript: >-
+    moteur/js/droit/etranger.js, et les jumeaux de chacune : moteur/js/droit/coordonner.js,
+    compter.js, liquider.js, ouvrir.js, departs.js ; moteur/js/regimes.js :
+    CarrieresHorsDeFrance, CarriereLongue ; moteur/js/scenario-actuel.js
+  parametres: >-
+    contenu.parametres de chaque version : compte_pour_le_taux,
+    trimestres_par_annee_au_plus, mois_par_trimestre, equivalentes_avant,
+    equivalentes_trimestres_francais_au_moins, fonctionnaires_depuis,
+    organisations_internationales, jours_par_trimestre_organisations_internationales ;
+    data/reference/legislation/accords_internationaux.yaml
+  tests: >-
+    tests/test_etranger.py, dans les deux moteurs
 textes_a_rattacher:
 - {id: LEGIARTI000006744128, article: "L. 742-2 CSS", en_vigueur: 2000-01-01,
    change: "la rédaction d'avant 2011, sans condition d'affiliation à l'assurance maladie"}
@@ -278,9 +337,14 @@ historique:
 - >-
   2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la
   demande du propriétaire.
+- >-
+  2026-10-01 — modélisée, approchée, à la troisième étape du domaine : les périodes que
+  la saisie déclare comptent pour le taux de chaque régime, selon l'accord en vigueur
+  avec leur État à la date d'effet.
 effet: >-
   Toute personne qui a travaillé hors de France : 1,28 million de retraités résidaient à
   l'étranger fin 2024 (DREES, enquête annuelle auprès des caisses), et 20,3 % des retraités
-  étaient nés à l'étranger fin 2016 (DREES, EIR). Le modèle ne connaît aucune période à
-  l'étranger : une carrière commencée ailleurs part décotée faute de durée, et ne
-  liquide qu'à l'âge du taux plein automatique ce que la totalisation lui ouvrait plus tôt.
+  étaient nés à l'étranger fin 2016 (DREES, EIR). Sans ses périodes étrangères, une
+  carrière commencée ailleurs partait décotée faute de durée : né en 1962, entré en France
+  à vingt-huit ans après dix ans et demi au Maroc, un salarié parti à soixante-quatre ans
+  passe de 142 à 185 trimestres, du taux de 42,5 % à celui de 53,75 %, surcote comprise.

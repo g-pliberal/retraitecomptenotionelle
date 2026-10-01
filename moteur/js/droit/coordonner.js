@@ -13,9 +13,13 @@
 import { AnneeCarriere } from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { derniereAnnee } from "./commun.js";
+import { coordonnerLesPeriodes, donneesDeLaPeriode } from "./etranger.js";
 
-/** La version du schéma de l'étape. */
-export const SCHEMA_VERSION = 1;
+/**
+ * La version du schéma de l'étape : la deuxième dit ce que la coordination fait
+ * des périodes passées hors de France.
+ */
+export const SCHEMA_VERSION = 2;
 
 /**
  * Les régimes que L. 13 du code des pensions et le XXIV visent : l'État, et
@@ -305,13 +309,18 @@ export function regimesDe(moteur, ligne, annee, anneeEntree = null, revenu = nul
  * `data/reference/etapes/coordonner_les_affiliations.yaml`.
  */
 export class Coordination {
-  constructor(carriere, regimes, retablissements = []) {
+  constructor(carriere, regimes, retablissements = [], etranger = []) {
     /** La vue de la chronologie que les étapes suivantes lisent. */
     this.carriere = carriere;
     /** Pour chaque ligne de `carriere`, dans son ordre, ses régimes. */
     this.regimes = regimes;
     /** Les rétablissements faits : [droit, traitement]. */
     this.retablissements = retablissements;
+    /**
+     * Les périodes passées hors de France, et le titre auquel chacune compte
+     * (`coordonnerLesPeriodes`).
+     */
+    this.etranger = etranger;
   }
 
   /** La coordination, telle que son schéma la décrit. */
@@ -326,14 +335,16 @@ export class Coordination {
         annee: ligne.annee, affiliation: ligne.affiliation,
         regimes: [...this.regimes[i]], revenu_retabli: ligne.revenu_retabli,
       })),
+      etranger: this.etranger.map(donneesDeLaPeriode),
     };
   }
 }
 
 /**
- * L'étape : rétablir, puis router chaque ligne vers ses régimes, pour le
- * revenu de l'année — le salaire de référence d'une année indemnisée. Voir
- * `coordonner` dans le Python.
+ * L'étape : rétablir, router chaque ligne vers ses régimes, pour le revenu de
+ * l'année — le salaire de référence d'une année indemnisée —, et dire à quel
+ * titre chaque période passée hors de France compte. Voir `coordonner` dans le
+ * Python.
  */
 export function coordonner(moteur, carriereSaisie) {
   const { carriere, retablissements } = retablirEnDetail(moteur, carriereSaisie);
@@ -342,7 +353,8 @@ export function coordonner(moteur, carriereSaisie) {
     ligne.cotise ? ligne.revenu : ligne.revenu_reference,
     moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
   ));
-  return new Coordination(carriere, regimes, retablissements);
+  return new Coordination(carriere, regimes, retablissements,
+    coordonnerLesPeriodes(moteur, carriere));
 }
 
 /**

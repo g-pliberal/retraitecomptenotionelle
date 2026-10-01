@@ -69,6 +69,7 @@ from ..carriere import Affiliations, Carriere
 from ..config import Parametres
 from ..donnees.chargement import (
     Fiabilite,
+    charger_accords_internationaux,
     charger_table_par_generation,
     charger_yaml,
     valeur_par_generation,
@@ -185,6 +186,9 @@ class ResultatActuel:
     #: scénarios les servent donc à l'identique, hors comparaison.
     pension_hors_repartition: float = 0.0
     trimestres_valides: int = 0
+    #: Ceux d'entre eux que des périodes hors de France apportent, pour le
+    #: taux seulement (fiche ``totalisation_des_periodes_etrangeres``).
+    trimestres_etrangers: int = 0
     trimestres_requis: int = 0
     taux_liquidation: float = 0.0
     minimum_applique: bool = False
@@ -246,7 +250,9 @@ def resultat_actuel(liquidation: Liquidation, foyer: Foyer) -> ResultatActuel:
         pensions_par_regime=list(liquidation.regimes),
         avantages_appliques=avantages,
         total_contributif=liquidation.total_contributif,
-        trimestres_valides=liquidation.releve.durees.trimestres,
+        trimestres_valides=(liquidation.releve.durees.trimestres
+                            + liquidation.releve.durees.trimestres_etrangers),
+        trimestres_etrangers=liquidation.releve.durees.trimestres_etrangers,
         trimestres_requis=liquidation.pensions.requis,
         taux_liquidation=liquidation.pensions.taux,
         minimum_applique=liquidation.complements.minimum_applique,
@@ -360,7 +366,9 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
         pensions_par_regime=pensions,
         avantages_appliques=liste,
         total_contributif=total_contributif,
-        trimestres_valides=principale.releve.durees.trimestres,
+        trimestres_valides=(principale.releve.durees.trimestres
+                            + principale.releve.durees.trimestres_etrangers),
+        trimestres_etrangers=principale.releve.durees.trimestres_etrangers,
         trimestres_requis=principale.pensions.requis,
         taux_liquidation=principale.pensions.taux,
         minimum_applique=any(l.complements.minimum_applique for l in liquidations),
@@ -1247,6 +1255,59 @@ class Invalidites:
         return versions.applicable(preparee, {"liquidation.date_effet": date_effet})
 
 
+class CarrieresHorsDeFrance:
+    """Les fiches des carrières hors de France (docs/architecture.md, § 11),
+    dont le moteur lit les versions — la totalisation des périodes étrangères
+    (``totalisation``), la pension proratisée (``proratisation``), le minimum
+    contributif d'une pension proratisée (``minimum``), la résidence de
+    l'allocation de solidarité aux personnes âgées (``residence``) —, et le
+    tableau des accords, qui dit l'accord en vigueur avec chaque État
+    (``data/reference/legislation/accords_internationaux.yaml``)."""
+
+    #: Les fiches, sous le nom que le moteur leur donne.
+    FICHES = {"totalisation": "totalisation_des_periodes_etrangeres",
+              "proratisation": "pension_proratisee",
+              "minimum": "minimum_contributif_international",
+              "residence": "residence_et_minimum_vieillesse"}
+
+    def __init__(self, racine: Path) -> None:
+        self._fiches: dict[str, dict] = {}
+        for nom in self.FICHES.values():
+            chemin = racine / "reference" / "regles" / f"{nom}.yaml"
+            if not chemin.exists():
+                continue
+            brute = charger_yaml(chemin)
+            self._fiches[nom] = versions.preparer(brute) | {
+                "regimes": list(brute.get("regimes") or ())}
+        self.accords = charger_accords_internationaux(racine)
+
+    def fiches(self) -> dict[str, dict]:
+        """Les fiches préparées, sous leur nom : ce que le paquet du site porte."""
+        return dict(self._fiches)
+
+    def regimes(self, fiche: str) -> frozenset[str]:
+        """Les régimes qui appliquent les règles de cette fiche."""
+        preparee = self._fiches.get(self.FICHES[fiche])
+        return frozenset(preparee["regimes"]) if preparee is not None else frozenset()
+
+    def version(self, fiche: str, dates: dict[str, str]) -> dict | None:
+        """La version de cette fiche à ces dates qui décident (AAAA-MM-JJ),
+        ou ``None``."""
+        preparee = self._fiches.get(self.FICHES[fiche])
+        return None if preparee is None else versions.applicable(preparee, dates)
+
+    def accord(self, pays: str, date_effet: str) -> dict | None:
+        """L'accord que le tableau donne à cet État pour une pension qui prend
+        effet à ``date_effet`` (AAAA-MM-JJ) : celui qui est alors en vigueur,
+        et qui prend en compte les périodes accomplies avant lui. ``None``
+        quand aucun ne l'est, ou que l'État n'est pas au tableau."""
+        for accord in (self.accords.get(pays) or {}).get("accords", ()):
+            if accord["de"] <= date_effet and (accord.get("a") is None
+                                               or date_effet < accord["a"]):
+                return accord
+        return None
+
+
 class ServicesOuvrantPension:
     """La durée de services qui ouvre une pension dans chaque régime spécial.
 
@@ -1619,7 +1680,8 @@ class CarriereLongue:
         return [porte for _, porte in sorted(retenues.values())]
 
     def _entree_precoce(self, carriere: Carriere, annee_liquidation: int,
-                        age_max: int, trimestres_debut: int) -> bool:
+                        age_max: int, trimestres_debut: int,
+                        etrangers: dict[int, int] | None = None) -> bool:
         """La condition d'entrée précoce est-elle remplie pour cette porte ?
 
         Elle se lit sur les trimestres COTISÉS validés avant la fin de l'année
@@ -1629,6 +1691,10 @@ class CarriereLongue:
         travailler que deux mois de l'année de ses seize ans, et le texte en
         tient compte. Le modèle retenait cinq pour tout le monde tant qu'il ne
         connaissait que l'année de naissance ; il lit le mois depuis.
+
+        ``etrangers`` sont les trimestres qu'un accord fait compter hors de
+        France, année par année : ils comptent ici comme en France (fiche
+        ``totalisation_des_periodes_etrangeres``).
         """
         if carriere.mois_naissance >= self.MOIS_DERNIER_TRIMESTRE:
             trimestres_debut -= 1
@@ -1639,6 +1705,9 @@ class CarriereLongue:
                     and ligne.annee < annee_liquidation):
                 par_annee[ligne.annee] = (par_annee.get(ligne.annee, 0)
                                           + ligne.trimestres_valides)
+        for annee, trimestres in (etrangers or {}).items():
+            if annee <= carriere.annee_naissance + age_max and annee < annee_liquidation:
+                par_annee[annee] = par_annee.get(annee, 0) + trimestres
         acquis = sum(min(4, trimestres) for trimestres in par_annee.values())
         return acquis >= trimestres_debut
 
@@ -1706,8 +1775,9 @@ class CarriereLongue:
         return reputes
 
     def age_de_depart(self, carriere: Carriere, annee_liquidation: int,
-                      trimestres_cotises: int,
-                      requis: int) -> tuple[float, Fiabilite] | None:
+                      trimestres_cotises: int, requis: int,
+                      etrangers: dict[int, int] | None = None
+                      ) -> tuple[float, Fiabilite] | None:
         """Âge le plus précoce ouvert par le dispositif, ou ``None``.
 
         La condition d'entrée précoce se lit sur les trimestres COTISÉS validés
@@ -1715,7 +1785,8 @@ class CarriereLongue:
         ans. La condition de durée porte, elle aussi, sur les seuls trimestres
         cotisés — c'est ce qui distingue ce dispositif de la durée d'assurance
         qui commande la décote. ``trimestres_cotises`` est la durée que
-        :meth:`cotises_reputes` a déjà complétée.
+        :meth:`cotises_reputes` a déjà complétée, ``etrangers`` les trimestres
+        cotisés hors de France, année par année (:meth:`_entree_precoce`).
         """
         portes = self._portes(carriere)
         if portes is None:
@@ -1723,7 +1794,7 @@ class CarriereLongue:
         ouvertures = []
         for age_max, trimestres_debut, age_depart, supplement, fiabilite in portes:
             if not self._entree_precoce(
-                    carriere, annee_liquidation, age_max, trimestres_debut):
+                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers):
                 continue
             if trimestres_cotises < requis + supplement:
                 continue
@@ -1732,7 +1803,8 @@ class CarriereLongue:
 
     def age_propose(self, carriere: Carriere, annee_liquidation: int,
                     trimestres_cotises: int, requis: int,
-                    age_liquidation: float) -> float | None:
+                    age_liquidation: float,
+                    etrangers: dict[int, int] | None = None) -> float | None:
         """Âge le plus précoce que le dispositif ouvrirait à qui continue de
         cotiser jusqu'à son départ, ou ``None``.
 
@@ -1752,7 +1824,7 @@ class CarriereLongue:
         candidats = []
         for age_max, trimestres_debut, age_depart, supplement, _ in portes:
             if not self._entree_precoce(
-                    carriere, annee_liquidation, age_max, trimestres_debut):
+                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers):
                 continue
             atteint = age_liquidation + (requis + supplement - trimestres_cotises) / 4.0
             candidats.append(max(age_depart, atteint))
@@ -2303,6 +2375,7 @@ class ScenarioActuel:
         self.majorations_enfants = MajorationsPourEnfants(parametres.racine_donnees)
         self.reversions = Reversions(parametres.racine_donnees)
         self.invalidites = Invalidites(parametres.racine_donnees)
+        self.carrieres_hors_de_france = CarrieresHorsDeFrance(parametres.racine_donnees)
         self.services_ouvrant_pension = ServicesOuvrantPension(parametres.racine_donnees)
         self.surcote_parentale = SurcoteParentale(parametres.racine_donnees)
         self.majorations_enfants_points = MajorationsEnfantsPoints(

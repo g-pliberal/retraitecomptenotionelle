@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
-from . import compter, coordonner, invalidite
+from . import compter, coordonner, etranger, invalidite
 from .commun import date_d_effet, derniere_annee
 
 if TYPE_CHECKING:
@@ -226,11 +226,19 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
     requis_reference = requis_reference or 160
 
     # Trimestres réellement COTISÉS, tous régimes : ils commandent la
-    # carrière longue et la majoration du minimum contributif.
+    # carrière longue et la majoration du minimum contributif. Ceux qu'un
+    # accord fait compter hors de France le sont aussi, « dans les mêmes
+    # conditions que les périodes accomplies en France » (fiche
+    # totalisation_des_periodes_etrangeres).
     trimestres_cotises = carriere.trimestres_cumules(
         ligne for ligne in carriere.lignes
         if ligne.cotise and ligne.annee <= annee_liquidation
     )
+    etrangers = None
+    if durees.etranger is not None:
+        famille = etranger.famille_des_regimes(moteur, codes)
+        etrangers = durees.etranger.cotises[famille]
+        trimestres_cotises += durees.etranger.trimestres_cotises(famille)
 
     # Le droit ouvre-t-il cette liquidation à cet âge ? La question n'était
     # pas posée : le modèle servait une pension décotée à qui ne pouvait
@@ -253,7 +261,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
                 carriere, trimestres_cotises,
                 majoration_enfants.trimestres if majoration_enfants is not None else 0,
             ),
-            requis_reference,
+            requis_reference, etrangers,
         )
         if anticipe is not None and age_liquidation >= anticipe[0]:
             motif_ouverture = "carriere_longue"
@@ -922,14 +930,18 @@ def age_carriere_longue(moteur, carriere: Carriere,
         ligne for ligne in carriere.lignes
         if ligne.cotise and ligne.annee <= annee_liquidation
     )
+    famille = etranger.famille_des_regimes(moteur, [code for code, _ in periodes])
+    etrangers = etranger.trimestres_etrangers(moteur, carriere)
     majoration = compter.majoration_pour_enfants(moteur, 
         carriere, {code: cotises for code, _ in periodes}, annee_liquidation
     )
     cotises = moteur.carriere_longue.cotises_reputes(
-        carriere, cotises, majoration.trimestres if majoration is not None else 0
+        carriere, cotises + etrangers.trimestres_cotises(famille),
+        majoration.trimestres if majoration is not None else 0
     )
     return moteur.carriere_longue.age_propose(
-        carriere, annee_liquidation, cotises, requis, carriere.age_liquidation
+        carriere, annee_liquidation, cotises, requis, carriere.age_liquidation,
+        etrangers.cotises[famille]
     )
 
 

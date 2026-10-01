@@ -22,6 +22,7 @@ import { dateDEffet, derniereAnnee } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { borneCarriere, REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
+import * as etranger from "./etranger.js";
 import * as invalidite from "./invalidite.js";
 
 /** La version du schéma de l'étape. */
@@ -168,10 +169,17 @@ export function ouvrir(moteur, releve, regimes = null) {
   requisReference = requisReference || 160;
 
   // Trimestres réellement COTISÉS, tous régimes : ils commandent la carrière
-  // longue et la majoration du minimum contributif.
-  const trimestresCotises = carriere.trimestresCumules(carriere.lignes.filter(
+  // longue et la majoration du minimum contributif. Ceux qu'un accord fait
+  // compter hors de France le sont aussi.
+  let trimestresCotises = carriere.trimestresCumules(carriere.lignes.filter(
     (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation,
   ));
+  let etrangers = null;
+  if (durees.etranger !== null) {
+    const famille = etranger.familleDesRegimes(moteur, codes);
+    etrangers = durees.etranger.cotises[famille];
+    trimestresCotises += durees.etranger.trimestresCotises(famille);
+  }
 
   // Le droit ouvre-t-il cette liquidation à cet âge ? La question n'était pas
   // posée : le modèle servait une pension décotée à qui ne pouvait pas encore
@@ -192,7 +200,7 @@ export function ouvrir(moteur, releve, regimes = null) {
         carriere, trimestresCotises,
         majorationEnfants !== null ? majorationEnfants.trimestres : 0,
       ),
-      requisReference,
+      requisReference, etrangers,
     );
     if (anticipe !== null && ageLiquidation >= anticipe[0]) {
       motifOuverture = "carriere_longue";
@@ -783,14 +791,18 @@ export function ageCarriereLongue(moteur, carriere, annuites) {
   let cotises = carriere.trimestresCumules(carriere.lignes.filter(
     (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation,
   ));
+  const famille = etranger.familleDesRegimes(moteur, annuites.map(([code]) => code));
+  const etrangers = etranger.trimestresEtrangers(moteur, carriere);
   const majoration = compter.majorationPourEnfants(moteur, 
     carriere, new Map(annuites.map(([code]) => [code, cotises])), anneeLiquidation,
   );
   cotises = moteur.carriereLongue.cotisesReputes(
-    carriere, cotises, majoration !== null ? majoration.trimestres : 0,
+    carriere, cotises + etrangers.trimestresCotises(famille),
+    majoration !== null ? majoration.trimestres : 0,
   );
   return moteur.carriereLongue.agePropose(
     carriere, anneeLiquidation, cotises, requis, carriere.age_liquidation,
+    etrangers.cotises[famille],
   );
 }
 

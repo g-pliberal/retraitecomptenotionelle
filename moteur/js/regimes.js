@@ -1109,6 +1109,75 @@ Invalidites.FICHES = Object.freeze({
 });
 
 /**
+ * Les fiches des carrières hors de France (docs/architecture.md, § 11), dont le
+ * moteur lit les versions — la totalisation des périodes étrangères
+ * (`totalisation`), la pension proratisée (`proratisation`), le minimum
+ * contributif d'une pension proratisée (`minimum`), la résidence de
+ * l'allocation de solidarité aux personnes âgées (`residence`) —, et le tableau
+ * des accords, qui dit l'accord en vigueur avec chaque État. Le paquet les
+ * porte (`versions_des_fiches`, `accords_internationaux`). Voir
+ * `CarrieresHorsDeFrance` du Python.
+ */
+export class CarrieresHorsDeFrance {
+  constructor(paquet) {
+    const fiches = paquet.versions_des_fiches ?? {};
+    this._fiches = {};
+    for (const nom of Object.values(CarrieresHorsDeFrance.FICHES)) {
+      if (nom in fiches) {
+        this._fiches[nom] = fiches[nom];
+      }
+    }
+    this._regimes = new Map();
+    this.accords = paquet.accords_internationaux ?? {};
+  }
+
+  /** Les fiches préparées, sous leur nom. */
+  fiches() {
+    return this._fiches;
+  }
+
+  /** Les régimes qui appliquent les règles de cette fiche. */
+  regimes(fiche) {
+    if (!this._regimes.has(fiche)) {
+      const preparee = this._fiches[CarrieresHorsDeFrance.FICHES[fiche]];
+      this._regimes.set(fiche, new Set(preparee === undefined ? [] : preparee.regimes ?? []));
+    }
+    return this._regimes.get(fiche);
+  }
+
+  /** La version de cette fiche à ces dates qui décident (AAAA-MM-JJ), ou `null`. */
+  version(fiche, dates) {
+    const preparee = this._fiches[CarrieresHorsDeFrance.FICHES[fiche]];
+    return preparee === undefined ? null : applicable(preparee, dates);
+  }
+
+  /**
+   * L'accord que le tableau donne à cet État pour une pension qui prend effet à
+   * `dateEffet` (AAAA-MM-JJ) : celui qui est alors en vigueur, et qui prend en
+   * compte les périodes accomplies avant lui. `null` quand aucun ne l'est, ou
+   * que l'État n'est pas au tableau.
+   */
+  accord(pays, dateEffet) {
+    const etat = Object.hasOwn(this.accords, pays) ? this.accords[pays] : null;
+    for (const accord of etat?.accords ?? []) {
+      if (accord.de <= dateEffet && (accord.a === undefined || accord.a === null
+          || dateEffet < accord.a)) {
+        return accord;
+      }
+    }
+    return null;
+  }
+}
+
+/** Les fiches, sous le nom que le moteur leur donne. */
+CarrieresHorsDeFrance.FICHES = Object.freeze({
+  totalisation: "totalisation_des_periodes_etrangeres",
+  proratisation: "pension_proratisee",
+  minimum: "minimum_contributif_international",
+  residence: "residence_et_minimum_vieillesse",
+});
+
+/**
  * La durée de services qui ouvre une pension dans chaque régime spécial.
  *
  * C'est la condition dont l'article R. 173-15 du code de la sécurité sociale
@@ -1317,7 +1386,7 @@ export class CarriereLongue {
    *
    * @returns {[number, number]|null} âge de départ et fiabilité.
    */
-  ageDeDepart(carriere, anneeLiquidation, trimestresCotises, requis) {
+  ageDeDepart(carriere, anneeLiquidation, trimestresCotises, requis, etrangers = null) {
     const portes = this.portes(carriere);
     if (portes === null) {
       return null;
@@ -1325,7 +1394,7 @@ export class CarriereLongue {
 
     let meilleur = null;
     for (const [ageMax, trimestresDebut, ageDepart, supplement, fiabilite] of portes) {
-      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut)
+      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers)
           || trimestresCotises < requis + supplement) {
         continue;
       }
@@ -1350,14 +1419,15 @@ export class CarriereLongue {
    * soustraction étant signée. Chaque porte ouvre au plus tardif de son âge et
    * de l'âge où la durée cotisée est réunie, et la plus précoce l'emporte.
    */
-  agePropose(carriere, anneeLiquidation, trimestresCotises, requis, ageLiquidation) {
+  agePropose(carriere, anneeLiquidation, trimestresCotises, requis, ageLiquidation,
+    etrangers = null) {
     const portes = this.portes(carriere);
     if (portes === null) {
       return null;
     }
     let meilleur = null;
     for (const [ageMax, trimestresDebut, ageDepart, supplement] of portes) {
-      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut)) {
+      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers)) {
         continue;
       }
       const atteint = ageLiquidation + (requis + supplement - trimestresCotises) / 4.0;
@@ -1374,9 +1444,11 @@ export class CarriereLongue {
    *
    * Cinq trimestres cotisés avant la fin de l'année civile des `ageMax` ans,
    * ou quatre à qui est né au cours du dernier trimestre de l'année civile
-   * (D. 351-1-1) : le modèle lit le mois de naissance.
+   * (D. 351-1-1) : le modèle lit le mois de naissance. `etrangers`, une `Map`
+   * de l'année aux trimestres qu'un accord fait compter hors de France,
+   * comptent ici comme en France.
    */
-  entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut) {
+  entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers = null) {
     const requis = carriere.mois_naissance >= CarriereLongue.MOIS_DERNIER_TRIMESTRE
       ? trimestresDebut - 1 : trimestresDebut;
     // Quatre trimestres au plus par année civile, activités cumulées comprises.
@@ -1386,6 +1458,11 @@ export class CarriereLongue {
           && ligne.annee < anneeLiquidation) {
         parAnnee.set(ligne.annee,
           (parAnnee.get(ligne.annee) ?? 0) + ligne.trimestres_valides);
+      }
+    }
+    for (const [annee, trimestres] of etrangers ?? []) {
+      if (annee <= carriere.annee_naissance + ageMax && annee < anneeLiquidation) {
+        parAnnee.set(annee, (parAnnee.get(annee) ?? 0) + trimestres);
       }
     }
     let acquis = 0;

@@ -34,7 +34,8 @@ import {
   DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
-  Invalidites, MajorationsEnfantsPoints, Reversions, ServicesOuvrantPension, SurcoteBaremes,
+  CarrieresHorsDeFrance, Invalidites, MajorationsEnfantsPoints, Reversions,
+  ServicesOuvrantPension, SurcoteBaremes,
   SurcoteParentale,
   ValeursPoint,
 } from "./regimes.js";
@@ -98,6 +99,7 @@ export class ScenarioActuel {
     this.majorationsEnfants = new MajorationsPourEnfants(paquet);
     this.reversions = new Reversions(paquet);
     this.invalidites = new Invalidites(paquet);
+    this.carrieresHorsDeFrance = new CarrieresHorsDeFrance(paquet);
     this.servicesOuvrantPension = new ServicesOuvrantPension(paquet);
     this.surcoteParentale = new SurcoteParentale(paquet);
     this.majorationsEnfantsPoints = new MajorationsEnfantsPoints(paquet);
@@ -296,7 +298,10 @@ export function resultatActuel(resultat, foyer) {
     pension_annuelle: Math.max(0.0, total - resultat.horsRepartition),
     pension_hors_repartition: resultat.horsRepartition,
     pensions_par_regime: [...resultat.regimes],
-    trimestres_valides: resultat.releve.durees.trimestres,
+    trimestres_valides: resultat.releve.durees.trimestres
+      + resultat.releve.durees.trimestresEtrangers,
+    // Ceux d'entre eux que des périodes hors de France apportent, pour le taux.
+    trimestres_etrangers: resultat.releve.durees.trimestresEtrangers,
     trimestres_requis: resultat.pensions.requis,
     taux_liquidation: resultat.pensions.taux,
     minimum_applique: resultat.complements.minimumApplique,
@@ -496,7 +501,9 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     pension_annuelle: Math.max(0.0, total - horsRepartition),
     pension_hors_repartition: horsRepartition,
     pensions_par_regime: pensions,
-    trimestres_valides: principale.releve.durees.trimestres,
+    trimestres_valides: principale.releve.durees.trimestres
+      + principale.releve.durees.trimestresEtrangers,
+    trimestres_etrangers: principale.releve.durees.trimestresEtrangers,
     trimestres_requis: principale.pensions.requis,
     taux_liquidation: principale.pensions.taux,
     minimum_applique: liquidations.some((l) => l.complements.minimumApplique),

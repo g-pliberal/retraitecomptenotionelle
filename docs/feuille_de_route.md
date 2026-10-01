@@ -3429,6 +3429,20 @@ nouvelle : celles qui diront la résidence en France et l'absence de pension
 étrangère de qui n'en déclare pas entreront avec le calcul qui les lit, à la
 troisième étape. Le moteur ne lit pas encore ces faits : aucun témoin ne bouge.
 
+**Troisième étape, en cours.** Publiée le 1er octobre : la totalisation
+(`droit/etranger.py`, et son jumeau). « Coordonner les affiliations » dit à quel
+titre chaque période compte — l'accord en vigueur avec son État à la date
+d'effet, s'il vise son activité, l'organisation internationale depuis 2010,
+l'activité d'avant 1983 reconnue équivalente — et pour quelle famille de
+régimes : le régime général et ceux que la fiche coordonne avec lui ; les trois
+du code des pensions, que seuls les règlements européens coordonnent, depuis le
+25 octobre 1998. « Compter les durées » en fait des trimestres, quatre au plus
+par année avec ceux de la France, que le taux, la décote, la surcote et la
+carrière longue lisent, jamais la proratisation. La fiche passe à `approchee`,
+avec cinq écarts déclarés ; huit témoins naissent, aucun ne bouge. Restent la
+pension proratisée contre la pension nationale, le minimum contributif
+international et son écrêtement, l'ASPA hors de France, et la page.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

@@ -27,6 +27,7 @@ import { menerAuMois } from "../revalorisation.js";
 import { derniereAnnee } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
+import * as etranger from "./etranger.js";
 import * as invalidite from "./invalidite.js";
 import * as liquidation from "./liquidation.js";
 import * as ouvrirLeDroit from "./ouvrir.js";
@@ -222,12 +223,15 @@ function carriereLongueAcquise(moteur, carriere, periodes) {
   const anneeLiquidation = carriere.anneeLiquidation;
   let cotises = carriere.trimestresCumules(carriere.lignes.filter(
     (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation));
+  const famille = etranger.familleDesRegimes(moteur, periodes.map(([code]) => code));
+  const etrangers = etranger.trimestresEtrangers(moteur, carriere);
   const majoration = compter.majorationPourEnfants(
     moteur, carriere, new Map(periodes.map(([code]) => [code, cotises])), anneeLiquidation);
   cotises = moteur.carriereLongue.cotisesReputes(
-    carriere, cotises, majoration !== null ? majoration.trimestres : 0);
+    carriere, cotises + etrangers.trimestresCotises(famille),
+    majoration !== null ? majoration.trimestres : 0);
   const anticipe = moteur.carriereLongue.ageDeDepart(
-    carriere, anneeLiquidation, cotises, requis);
+    carriere, anneeLiquidation, cotises, requis, etrangers.cotises[famille]);
   return anticipe === null ? null : anticipe[0];
 }
 

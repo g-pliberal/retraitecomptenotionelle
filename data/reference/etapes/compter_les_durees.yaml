@@ -11,11 +11,16 @@
 # porte sa naissance, son régime, la fiche et la version qui lui accordent
 # ses trimestres ; le régime et le dispositif ne sont plus ceux de tous.
 #
+# La version 3 (1er octobre 2026) compte les trimestres que les périodes hors
+# de France apportent, par famille de régimes et par année : hors de la
+# durée tous régimes et de celle de chaque régime, que le taux d'un régime
+# leur ajoute.
+#
 # src/retraite_notionnelle/droit/compter.py, et son jumeau
 # moteur/js/droit/compter.js.
 
 etape: compter_les_durees
-schema_version: 2
+schema_version: 3
 lit: [coordination]
 ecrit: durees
 
@@ -28,6 +33,7 @@ objets:
       comptes: {porte: "les trimestres crédités à chaque compte, par régime et par année, avant le plafond de l'année", type: liste, de: {objet: credit}, obligatoire: true}
       enfants: {porte: "les trimestres dus au titre des enfants, enfant par enfant", type: objet, objet: enfants, defaut: null}
       trimestres: {porte: "la durée d'assurance tous régimes, plafonnée année par année, enfants compris", type: entier, obligatoire: true}
+      etranger: {porte: "les trimestres que les périodes hors de France apportent à la durée du taux", type: objet, objet: etranger, defaut: null}
 
   credit:
     champs:
@@ -54,3 +60,16 @@ objets:
       trimestres: {porte: "les trimestres d'assurance qu'il ouvre", type: entier, obligatoire: true}
       services: {porte: "ceux d'entre eux qui entrent aux services", type: entier, obligatoire: true}
       fiabilite: {porte: "le niveau de la donnée", type: texte, obligatoire: true}
+
+  etranger:
+    champs:
+      famille: {porte: "la famille des régimes de la carrière, dont la durée tous régimes du résultat se lit", type: identifiant, obligatoire: true}
+      periodes: {porte: "les périodes hors de France, telles que la coordination les a dites", type: liste, de: libre, obligatoire: true}
+      trimestres: {porte: "par famille de régimes et par année, les trimestres retenus pour le taux, et ceux d'entre eux qui comptent comme cotisés", type: liste, de: {objet: trimestres_etrangers}, obligatoire: true}
+
+  trimestres_etrangers:
+    champs:
+      famille: {porte: "la famille de régimes : le régime général et ceux que la fiche coordonne avec lui, ou les régimes du code des pensions", type: identifiant, obligatoire: true}
+      annee: {porte: "l'année civile où ils comptent", type: entier, obligatoire: true}
+      trimestres: {porte: "les trimestres que la durée du taux retient, le plafond de l'année fait", type: entier, obligatoire: true}
+      cotises: {porte: "ceux d'entre eux qui comptent comme cotisés", type: entier, obligatoire: true}

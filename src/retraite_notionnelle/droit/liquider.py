@@ -39,6 +39,7 @@ from .. import revalorisation
 from . import acquerir, coordonner, invalidite, ouvrir
 from .compter import trimestres_de_la_ligne_entre
 from .commun import PensionRegime, derniere_annee
+from .etranger import famille_du_regime
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
 
 if TYPE_CHECKING:
@@ -337,7 +338,6 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     durees, droits = releve.durees, releve.droits
     annee_liquidation = carriere.annee_liquidation
     age_liquidation = carriere.age_liquidation or 0.0
-    trimestres = durees.trimestres
     requis_reference = ouverture.requis
     ignorer_penalite_age = contexte is not None and contexte.neutralise("decote_surcote")
     avpf = contexte is None or not contexte.neutralise("avpf")
@@ -367,6 +367,10 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     majoration_enfants = durees.enfants
 
     for code in codes:
+        # La durée tous régimes que le taux de ce régime lit : les périodes
+        # hors de France y entrent, celles que sa famille retient
+        # (:mod:`.etranger`) ; jamais dans sa durée, qui proratise.
+        trimestres = durees.pour_le_taux(famille_du_regime(moteur, code))
         cumul = cumul_cotisations.get(code, 0.0)
         regime = moteur.catalogue[code]
         periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
