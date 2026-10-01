@@ -66,7 +66,7 @@ from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.droit import liquider, ouvrir
+from retraite_notionnelle.droit import invalidite, liquider, ouvrir
 from retraite_notionnelle.droit.reversion import reversion
 from retraite_notionnelle.echeancier import Echeancier
 
@@ -1676,13 +1676,6 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # La pension annuelle brute d'un régime nommé : ce que publie un
         # régime dont la pension ne tient ni à un taux ni à un salaire.
         return {p.regime: p.montant for p in resultat.pensions_par_regime}
-    if cle == "pensions_annuelles_a_leur_date":
-        # La même, à la date où elle commence quand elle ne commence pas au
-        # départ déclaré : la pension du fonctionnaire radié pour invalidité,
-        # celle que la substitution sert avant le départ.
-        return {p.regime: (p.montant if p.montant_a_l_effet is None
-                           else p.montant_a_l_effet)
-                for p in resultat.pensions_par_regime}
     if cle == "departs":
         # Les départs que l'échéancier inscrit quand les régimes ne liquident
         # pas tous au départ déclaré, chacun « AAAA-MM-JJ motif » ; aucun
@@ -1715,11 +1708,33 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         if droits is None:
             return "aucune activité après le départ"
         return {p.regime: p.plafond for p in droits.pensions if p.plafond is not None}
+    if cle == "pension_et_rente_d_invalidite_sur_traitement":
+        # L'exemple donne le traitement et le taux de la pension, non la
+        # carrière : le test les prête au calcul de la retraite pour
+        # invalidité de la fonction publique de l'État, sous la version que
+        # la radiation choisit, et lit la rente dans ce que le détail en dit.
+        c = exemple["carriere"]
+        traitement = 12.0 * float(c["traitement_mensuel"])
+        version = invalidite.retraite_pour_invalidite(actuel, "fonction_publique_etat",
+                                                      carriere)
+        if version is None:
+            return "aucune retraite pour invalidité"
+        total, detail = invalidite.pension_du_fonctionnaire_invalide(
+            actuel, carriere, version, float(c["taux_de_la_pension"]) * traitement,
+            traitement, carriere.radiation_pour_invalidite.date.annee)
+        lu = re.search(r"rente viagère d'invalidité de ([0-9,.]+) €", detail)
+        rente = float(lu.group(1).replace(",", "")) if lu else 0.0
+        return {"pension": (total - rente) / traitement, "rente": rente / traitement,
+                "total": total / traitement}
     if cle in ("deductions_annuelles_du_cumul", "mois_sans_pension_du_cumul",
-               "plafond_mensuel_du_cumul"):
+               "plafond_mensuel_du_cumul", "cumul_integral_depuis"):
         resultat_cumul = _cumul_exemple(simulateur, exemple, carriere, resultat)
         if resultat_cumul is None:
             return "aucune activité après le départ"
+        if cle == "cumul_integral_depuis":
+            depuis = resultat_cumul.integral_depuis
+            return ("jamais pendant l'activité" if depuis is None
+                    else f"{depuis.annee}-{depuis.mois:02d}")
         if cle == "deductions_annuelles_du_cumul":
             annee = min(int(a) for a in exemple["carriere"]["revenus_apres_depart"])
             return {regime: sum(p.reduction * t.mois for t in resultat_cumul.tranches
@@ -1779,6 +1794,7 @@ TOLERANCES = {
     "deductions_annuelles_du_cumul": {"abs": 0.01},
     "plafond_mensuel_du_cumul": {"abs": 0.01},
     "plafonds_des_nouvelles_pensions": {"abs": 0.01},
+    "pension_et_rente_d_invalidite_sur_traitement": {"abs": 1e-6},
 }
 
 
@@ -1786,7 +1802,7 @@ def _concorde(cle: str, mesure, valeur) -> bool:
     """La mesure du modèle vaut-elle la valeur écrite au témoin ?"""
     if cle in ("liquidation_ouverte", "non_ouverte_un_trimestre_plus_tot"):
         return mesure is bool(valeur)
-    if cle in ("date_age_legal", "date_effet_au_plus_tot"):
+    if cle in ("date_age_legal", "date_effet_au_plus_tot", "cumul_integral_depuis"):
         return mesure == f"{_mois(valeur).annee}-{_mois(valeur).mois:02d}"
     if isinstance(mesure, str) and cle in TOLERANCES:
         return False  # la mesure dit pourquoi elle n'en est pas une
@@ -1794,7 +1810,7 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         # Un régime nommé que le modèle ne sert pas n'a pas de coefficient.
         return all(regime in mesure and mesure[regime] == pytest.approx(c, abs=1e-9)
                    for regime, c in valeur.items())
-    if cle in ("pensions_annuelles_des_regimes", "pensions_annuelles_a_leur_date"):
+    if cle == "pensions_annuelles_des_regimes":
         # Un régime nommé que le modèle ne sert pas lui verse zéro.
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.5)
                    for regime, montant in valeur.items())
@@ -1808,6 +1824,9 @@ def _concorde(cle: str, mesure, valeur) -> bool:
                "plafonds_des_nouvelles_pensions"):
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.01)
                    for regime, montant in valeur.items())
+    if cle == "pension_et_rente_d_invalidite_sur_traitement":
+        # Seules se comparent les parts que l'exemple publie.
+        return all(mesure[part] == pytest.approx(valeur[part], abs=1e-6) for part in valeur)
     if cle == "mois_sans_pension_du_cumul":
         return mesure == [str(mois) for mois in valeur]
     if cle in TOLERANCES:

@@ -58,9 +58,6 @@
 #     annuelle brute que le scénario 1 lui fait servir, à cinquante centimes
 #     près. C'est ce que publie un régime dont la pension ne tient ni à un
 #     taux ni à un salaire — les mines : trimestres × coefficient × valeur ;
-#   pensions_annuelles_a_leur_date — la même, à la date où elle commence
-#     quand elle ne commence pas au départ déclaré : celle du fonctionnaire
-#     radié pour invalidité, celle que la substitution sert à l'ex-invalide ;
 #   departs — les départs que l'échéancier inscrit quand les régimes ne
 #     liquident pas tous au départ déclaré, chacun « AAAA-MM-JJ motif »
 #     (`droit/departs.py`) ; une liste vide pour un départ unique ;
@@ -77,6 +74,14 @@
 #   plafonds_des_nouvelles_pensions — pour chaque régime nommé, le plafond
 #     annuel de la nouvelle pension que l'activité en cumul intégral ouvre, à
 #     un centime près ;
+#   cumul_integral_depuis — le mois (année-mois) où le cumul emploi-retraite
+#     devient intégral pendant l'activité exercée après le départ ;
+#   pension_et_rente_d_invalidite_sur_traitement — la pension du
+#     fonctionnaire radié pour invalidité, sa rente viagère d'invalidité et
+#     leur total, en parts du traitement. L'exemple donne le traitement et le
+#     taux de la pension, non la carrière : le test les prête au calcul de la
+#     fonction publique de l'État, sous la version que la radiation choisit,
+#     et ne compare que les parts que l'exemple nomme ;
 #   reversions_ecretees_mensuelles — pour chaque régime nommé, la réversion
 #     servie après le plafond de ressources, en euros par mois, à un
 #     centime près. L'exemple donne la réversion d'avant le plafond
@@ -100,7 +105,12 @@
 # `deces` déclarent le conjoint et le décès de l'assuré comme la saisie : la
 # naissance du conjoint et le décès à l'année, au mois ou au jour ; le sexe du
 # conjoint, l'autre que celui de l'assuré s'il n'est pas dit ; ses ressources
-# annuelles.
+# annuelles. `pension_d_invalidite` et `radiation_invalidite` datent au mois
+# la pension d'invalidité et la radiation des cadres pour invalidité,
+# `inaptitude` déclare l'inaptitude reconnue au départ, `invalidite_imputable`
+# et `taux_invalidite` qualifient la radiation, comme la saisie ;
+# `traitement_mensuel` et `taux_de_la_pension` ne servent qu'à la grandeur
+# qui les prête.
 #
 # UN EXEMPLE QUE LE MODÈLE NE REPRODUIT PAS ENTRE QUAND MÊME, à l'état
 # « écart connu » (docs/architecture.md, § 9.2) : ce qu'on apprend n'est
@@ -1225,3 +1235,124 @@ exemples:
       survivant n'a pas cinquante-cinq ans.
     carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1952-01", ressources_conjoint: 13800, deces: "2005-08", reversions_avant_plafond_mensuelles: {regime_general: 530}}
     attendu: {reversions_ecretees_mensuelles: {regime_general: 169.06}}
+
+  # ---- L'invalidité et l'inaptitude ---------------------------------------
+  # Le quatrième domaine (docs/architecture.md, § 11). L'ex-invalide de la
+  # circulaire Cnav n° 2024/25 et l'inapte de la n° 2012/27 ne disent ni leur
+  # carrière ni, pour le premier, le début de son invalidité : le témoin les
+  # pose. Les pages du Service des retraites de l'État donnent le traitement
+  # et le taux de la pension, non la carrière : le témoin les prête au calcul
+  # (`pension_et_rente_d_invalidite_sur_traitement`). Ne sont pas rejoués :
+  # l'inapte et l'ex-invalide de la circulaire RSI n° 2011/017, d'avant le
+  # relèvement de 2011, à diffusion restreinte ; l'ASPA de l'ex-invalide de
+  # la circulaire Cnav n° 2012/63 (§ 8282), parti pour pénibilité avec
+  # l'allocation supplémentaire d'invalidité, que le modèle ne porte pas ; la
+  # majoration exceptionnelle de la circulaire n° 2023/21, hors du domaine.
+  - id: cnav_2024_25_substitution_d_office
+    source: {editeur: "Cnav", reference: "circulaire n° 2024/25 du 1er août 2024, point 6.4, exemple 1", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Assuré né le 10 novembre 1962 » : « Le nouvel âge légal pour un assuré
+      né en 1962 est de 62 ans et 6 mois », et il obtient pourtant « sa
+      retraite à 62 ans le 1er décembre 2024 du fait de la substitution de sa
+      retraite à sa PI » (L. 351-1-5, L. 341-15). Le témoin pose son
+      invalidité en 2019, sans activité depuis, et le déclare parti à l'âge
+      légal de sa génération : sa pension de vieillesse commence d'office au
+      1er décembre 2024, avant le départ qu'il déclare.
+    carriere:
+      naissance: "1962-11-10"
+      sexe: H
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2025-06"
+      age_debut: 22
+      pension_d_invalidite: "2019-01"
+      interruptions: {2019: invalidite, 2020: invalidite, 2021: invalidite, 2022: invalidite, 2023: invalidite, 2024: invalidite, 2025: inactivite}
+    attendu: {departs: ["2024-12-01 invalidite"]}
+
+  - id: cnav_2024_25_cumul_de_l_ex_invalide
+    source: {editeur: "Cnav", reference: "circulaire n° 2024/25 du 1er août 2024, point 6.4, exemple 1", verifie_le: "2026-10-01"}
+    enonce: >-
+      Le même, parti le 1er décembre 2024, « pourra faire du CER intégral à
+      partir de 62 ans et 6 mois s'il réunit une durée d'assurance et de PE au
+      moins égale à 169 trimestres » : le cumul emploi-retraite est intégral à
+      l'âge légal de sa génération, non à l'âge abaissé de l'ex-invalide. Le
+      témoin lui donne ces 169 trimestres et une activité reprise en janvier
+      2025 ; ses 62 ans et 6 mois tombent le 10 mai, et le cumul est intégral
+      au mois qui suit, comme la circulaire n° 2012/27 le date.
+    carriere:
+      naissance: "1962-11-10"
+      sexe: H
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2024-12"
+      trimestres_valides: 169
+      pension_d_invalidite: "2019-01"
+      interruptions: {2019: invalidite, 2020: invalidite, 2021: invalidite, 2022: invalidite, 2023: invalidite, 2024: invalidite}
+      emploi_retraite: {debut: "2025-01", fin: "2026-01"}
+    attendu: {trimestres_requis: 169, date_effet_au_plus_tot: "2024-12", cumul_integral_depuis: "2025-06"}
+
+  - id: cnav_2012_27_inapte
+    source: {editeur: "Cnav", reference: "circulaire n° 2012/27 du 16 mars 2012, point 4, exemple", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Assurée née le 15 novembre 1951 / Age légal de départ : 60 ans et 4
+      mois / Age du taux plein : 65 ans et 4 mois / Reconnue médicalement
+      inapte au travail / Date d'effet de la retraite : 1er avril 2012 / Durée
+      d'assurance : 158 trimestres » : l'inapte a le taux plein dès l'âge
+      légal, « quelle que soit leur durée d'assurance » (L. 351-8, 2°), et le
+      cumul total « à partir du 1er avril 2017, soit à 65 ans et 4 mois », la
+      limite de L. 161-22 avant. Le témoin la fait travailler de 2015 à 2017.
+    carriere: {naissance: "1951-11-15", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2012-04", trimestres_valides: 158, inaptitude: true, emploi_retraite: {debut: "2015-01", fin: "2018-01"}}
+    attendu: {date_age_legal: "2012-03", date_effet_au_plus_tot: "2012-04", taux_liquidation: 0.5, cumul_integral_depuis: "2017-04"}
+
+  - id: sre_minimum_garanti_de_l_invalidite
+    source: {editeur: "SRE", reference: "retraitesdeletat.gouv.fr, Actif, Le calcul de ma retraite, « Le minimum garanti », moins de 15 ans en cas de retraite pour invalidité", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Moins de 15 ans en cas de retraite pour invalidité : Par année de
+      services : 1/15ème de 57,5 % du traitement indiciaire brut au 1er
+      janvier 2004 de l'indice majoré 227 » ; « Exemple pour 12 années de
+      services (au 01/01/2026) : 57,5 x 12/15 = 46 % soit 16 396,19 € […] x
+      46 % = 7 542,25€ » par an (L. 17, c). La carrière construite : douze ans
+      de services jusqu'à la radiation, au 1er janvier 2026, à un traitement
+      assez bas pour que le minimum s'applique ; le taux d'invalidité n'est
+      pas dit, et le plancher de L. 30 ne joue pas.
+    carriere: {naissance: "1980-01-01", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2026-01", age_debut: 34, niveau_salaire: 0.5, radiation_invalidite: "2026-01"}
+    attendu: {trimestres_valides: 48, pensions_annuelles_des_regimes: {fonction_publique_etat: 7542.25}}
+
+  - id: sre_plancher_monsieur_g_65
+    source: {editeur: "SRE", reference: "retraitesdeletat.gouv.fr, Invalidité, La pension de retraite, « Le calcul de la pension », le montant minimum garanti spécifique, exemple de Monsieur G.", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Monsieur G., admis à la retraite au titre de l'invalidité après 11 ans
+      de services, bénéficie : si son taux d'invalidité est égal à 65 %, d'une
+      pension dont le taux est au moins égal à 50 % ; si son taux d'invalidité
+      est égal à 55 %, d'une pension dont le montant est égal à 20 % du
+      traitement retenu pour le calcul de la pension (1,818 x 11) » (L. 30).
+      La page ne date pas l'exemple et ne dit pas le traitement : le témoin
+      prête 20 % et 2 000 € par mois à une radiation de 2026, et compare la
+      part du traitement servie, sans rente, l'invalidité n'étant pas dite
+      imputable au service.
+    carriere: {naissance: "1980-01-01", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2026-01", age_debut: 35, radiation_invalidite: "2026-01", taux_invalidite: 65, traitement_mensuel: 2000, taux_de_la_pension: 0.20}
+    attendu: {pension_et_rente_d_invalidite_sur_traitement: {pension: 0.5, rente: 0.0}}
+
+  - id: sre_plancher_monsieur_g_55
+    source: {editeur: "SRE", reference: "retraitesdeletat.gouv.fr, Invalidité, La pension de retraite, « Le calcul de la pension », le montant minimum garanti spécifique, exemple de Monsieur G.", verifie_le: "2026-10-01"}
+    enonce: >-
+      Le même, invalide à 55 % : sous les 60 % de L. 30, sa pension reste
+      « égal[e] à 20 % du traitement retenu pour le calcul de la pension ».
+    carriere: {naissance: "1980-01-01", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2026-01", age_debut: 35, radiation_invalidite: "2026-01", taux_invalidite: 55, traitement_mensuel: 2000, taux_de_la_pension: 0.20}
+    attendu: {pension_et_rente_d_invalidite_sur_traitement: {pension: 0.2, rente: 0.0}}
+
+  - id: sre_rente_viagere_monsieur_h
+    source: {editeur: "SRE", reference: "retraitesdeletat.gouv.fr, Invalidité, La pension de retraite, « Le calcul de la pension », la rente viagère d'invalidité, exemple de Monsieur H.", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Monsieur H. s'est vu reconnaître un taux d'invalidité de 75 %. Le taux
+      de sa pension est de 60 %. Le montant du traitement de base […] est égal
+      à 6 000 € » ; sa pension, 3 600 €, et sa rente dépassent ensemble le
+      traitement, et l'une et l'autre sont réduites à due proportion
+      (L. 30 ter) : « Pension totale : […] = 6 000 € ». Le témoin prête le
+      traitement et le taux, et compare ce total, le traitement entier. Le
+      partage publié, 3 185,86 € et 2 814,14 €, ne se compare pas : la page
+      compte le seuil de 4 109,91 € sur la rente, 4 500 €, puis le taux une
+      seconde fois, quand L. 28 le compte sur le traitement ; par le texte,
+      (4 109,91 + 1 890,09 / 3) × 75 % = 3 554,96 € de rente, puis 3 018,89 €
+      et 2 981,11 € après la réduction. Le modèle suit le texte, à son seuil
+      près (4 099,05 €, approximation de la fiche) : 3 021,18 € et 2 978,82 €.
+    carriere: {naissance: "1980-01-01", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2026-01", age_debut: 25, radiation_invalidite: "2026-01", invalidite_imputable: true, taux_invalidite: 75, traitement_mensuel: 6000, taux_de_la_pension: 0.60}
+    attendu: {pension_et_rente_d_invalidite_sur_traitement: {total: 1.0}}
