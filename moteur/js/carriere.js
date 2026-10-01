@@ -435,6 +435,8 @@ export class Carriere {
     this._demandesDePension = undefined;
     this._pensionDInvalidite = undefined;
     this._radiationPourInvalidite = undefined;
+    this._periodesALEtranger = undefined;
+    this._pensionsEtrangeres = undefined;
   }
 
   // -- dates -----------------------------------------------------------------
@@ -611,6 +613,50 @@ export class Carriere {
       }
     }
     return this._radiationPourInvalidite;
+  }
+
+  /**
+   * Les périodes que la personne a passées hors de France, dans l'ordre où elle
+   * les déclare : `{pays, debut, fin, activite}`, leur État, leurs deux mois en
+   * `DateMois`, la fin exclue, leur activité. Les années de la carrière qu'elles
+   * occupent y sont des années sans activité. Voir `periodes_a_l_etranger` du
+   * Python.
+   */
+  get periodesALEtranger() {
+    if (this._periodesALEtranger === undefined) {
+      this._periodesALEtranger = Object.freeze(!this.chronologie ? []
+        : chrono.periodesALEtranger(this.chronologie, this.personne).map(
+          (fait) => Object.freeze({
+            pays: fait.territoire, debut: chrono.moisDe(fait.debut),
+            fin: chrono.moisDe(fait.fin), activite: fait.attributs.activite })));
+    }
+    return this._periodesALEtranger;
+  }
+
+  /**
+   * Les pensions que des régimes étrangers servent à la personne, dans l'ordre
+   * où elle les déclare : `{pays, debut, mensuel}`, leur État, leur mois en
+   * `DateMois`, leur montant mensuel en euros de ce mois. Voir
+   * `pensions_etrangeres` du Python.
+   */
+  get pensionsEtrangeres() {
+    if (this._pensionsEtrangeres === undefined) {
+      this._pensionsEtrangeres = Object.freeze(!this.chronologie ? []
+        : chrono.pensionsEtrangeres(this.chronologie, this.personne).map(
+          (fait) => Object.freeze({
+            pays: fait.territoire, debut: chrono.moisDe(fait.debut),
+            mensuel: fait.montant.mensuel })));
+    }
+    return this._pensionsEtrangeres;
+  }
+
+  /**
+   * L'État où la personne réside après son départ, quand elle le déclare hors
+   * de France ; `null` sinon. Voir `residence` du Python.
+   */
+  get residence() {
+    const fait = this.chronologie ? chrono.residence(this.chronologie, this.personne) : null;
+    return fait === null ? null : fait.territoire;
   }
 
   /**
@@ -1219,12 +1265,13 @@ export class Carriere {
     emploi_retraite = null,
     demandes_de_pension = null,
     invalidite = null,
+    etranger = null,
   }) {
     const chronologie = preparer(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
       nombre_enfants, part_primes, naissances_enfants, jour_naissance,
       presomptions: macro.paquet.presomptions, conjoint, deces, retraite_progressive,
-      emploi_retraite, demandes_de_pension, invalidite,
+      emploi_retraite, demandes_de_pension, invalidite, etranger,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -1288,12 +1335,13 @@ export class Carriere {
     emploi_retraite = null,
     demandes_de_pension = null,
     invalidite = null,
+    etranger = null,
   }) {
     const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
       profil_carriere, interruptions, nombre_enfants, part_primes, naissances_enfants,
       jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
-      retraite_progressive, emploi_retraite, demandes_de_pension, invalidite,
+      retraite_progressive, emploi_retraite, demandes_de_pension, invalidite, etranger,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }

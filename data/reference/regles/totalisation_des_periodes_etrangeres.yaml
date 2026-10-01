@@ -18,7 +18,7 @@ face: droit
 etat: pas_encore_modelisee
 lit:
 - les périodes à l'étranger de la personne, l'État où chacune a été accomplie, son début et
-  sa fin
+  sa fin, et la nature de son activité, salariée ou non
 - l'accord que data/reference/legislation/accords_internationaux.yaml donne à cet État à la
   date d'effet de la pension
 - les trimestres que la carrière valide en France chaque année, que les périodes étrangères
@@ -204,8 +204,10 @@ sources:
   - >-
     Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France
     (docs/architecture.md, § 11), à la demande du propriétaire. Le moteur ne la calcule
-    pas encore : il lui faut les périodes à l'étranger dans la chronologie (étape 2 du
-    domaine), puis les trimestres que chaque accord fait compter (étape 3).
+    pas encore : la chronologie porte les périodes à l'étranger depuis la deuxième étape
+    du domaine, leur État pour territoire et leur activité, et la carrière ne travaille
+    pas en France les années qu'elles occupent ; il reste les trimestres que chaque
+    accord fait compter (étape 3).
   - >-
     À lire : le texte réglementaire qui fixe la durée d'affiliation à l'assurance maladie
     exigée par L. 742-2 depuis 2011, que seul l'exposé de la Cnav donne (cinq années

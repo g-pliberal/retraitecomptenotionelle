@@ -1,0 +1,382 @@
+"""Les carrières hors de France : le cinquième domaine (docs/architecture.md, § 11).
+
+Quatre fiches le portent, ouvertes le 1er octobre 2026 :
+``totalisation_des_periodes_etrangeres``, ``pension_proratisee``,
+``minimum_contributif_international`` et ``residence_et_minimum_vieillesse`` ;
+le tableau des accords (``data/reference/legislation/accords_internationaux.yaml``)
+dit l'accord en vigueur avec chaque État. Ce fichier tient d'abord les faits :
+ce que la saisie lit, ce que la chronologie en garde, ce que la carrière en
+lit, et ce qui se refuse.
+"""
+
+from __future__ import annotations
+
+import re
+from pathlib import Path
+
+import pytest
+
+from retraite_notionnelle import chronologie as chrono
+from retraite_notionnelle.calendrier import DateMois
+from retraite_notionnelle.carriere import (
+    Carriere, LigneRelevee, Metier, PensionEtrangere, PeriodeALEtranger,
+)
+from retraite_notionnelle.donnees.chargement import charger_accords_internationaux
+from retraite_notionnelle.saisie import ErreurSaisie, Saisie
+from retraite_notionnelle.simulateur import Simulateur
+
+DONNEES = Path(__file__).resolve().parents[1] / "data"
+
+
+@pytest.fixture(scope="module")
+def simulateur() -> Simulateur:
+    return Simulateur()
+
+
+def _saisie(**champs) -> Saisie:
+    return Saisie.depuis_requete({"naissance": "1965-06-15", "debut": "1986-09",
+                                  "liquidation": "2029-01", **champs})
+
+
+# -- le tableau des accords --------------------------------------------------------
+
+def test_le_tableau_des_accords_dit_un_accord_par_date():
+    """Chaque État a son nom et ses accords, qui se suivent bout à bout : un
+    seul est en vigueur à une date d'effet, et le dernier l'est encore. Chaque
+    accord dit son instrument, et ses valeurs sont celles que l'en-tête du
+    tableau définit ; ses dates sont au jour, comme celles des faits."""
+    etats = charger_accords_internationaux(DONNEES)
+    assert etats["MA"]["nom"] == "Maroc" and "FR" not in etats
+    valeurs = {
+        "instrument": {"reglements_europeens", "accord_de_commerce_et_de_cooperation",
+                       "convention", "organisation_internationale"},
+        "calcul": {"comparaison", "calcul_separe", "option", "taux_seul", "non_lu"},
+        "prorata": {"limite", "non_lu"},
+        "personnes": {"salaries", "salaries_et_non_salaries"},
+    }
+    for code, etat in etats.items():
+        assert code == "OI" or re.fullmatch(r"[A-Z]{2}", code), code
+        accords = etat["accords"]
+        assert accords and accords[-1].get("a") is None, code
+        for avant, apres in zip(accords, accords[1:]):
+            assert avant["a"] == apres["de"], code
+        for accord in accords:
+            assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", accord["de"]), code
+            assert accord.get("a") is None or accord["de"] < accord["a"], code
+            for cle, permises in valeurs.items():
+                assert accord.get(cle) is None or accord[cle] in permises, (code, cle)
+            if accord["instrument"] == "convention":
+                assert accord["calcul"] in valeurs["calcul"], code
+
+
+# -- la saisie ---------------------------------------------------------------------
+
+#: Une carrière commencée au Maroc, interrompue par trois ans en Allemagne, une
+#: pension allemande à venir, une retraite au Portugal.
+CHAMPS = {"etranger1_pays": "MA", "etranger1_debut": "1980-01", "etranger1_fin": "1986-09",
+          "etranger2_pays": "DE", "etranger2_debut": "1998-01", "etranger2_fin": "2001-07",
+          "etranger2_activite": "non_salariee",
+          "pension_etrangere1_pays": "DE", "pension_etrangere1": "250",
+          "pension_etrangere1_debut": "2032-07", "residence": "PT"}
+
+
+def test_la_saisie_lit_la_carriere_hors_de_france_et_la_rend_a_l_adresse():
+    """Les périodes, les pensions et la résidence se disent par l'adresse, les
+    dates comme un début d'activité, et l'adresse les rend telles qu'elle les
+    a reçues ; l'activité salariée, celle qu'une ligne ne dit pas, ne
+    s'écrit pas."""
+    saisie = _saisie(**CHAMPS)
+    declare = saisie.etranger_declare()
+    assert [(p["pays"], saisie.date_de(p["debut"]), saisie.date_de(p["fin"]), p["activite"])
+            for p in declare["periodes"]] == [
+        ("MA", DateMois(1980, 1), DateMois(1986, 9), "salariee"),
+        ("DE", DateMois(1998, 1), DateMois(2001, 7), "non_salariee")]
+    assert [(p["pays"], saisie.date_de(p["age"]), p["montant"]) for p in declare["pensions"]] \
+        == [("DE", DateMois(2032, 7), 250.0)]
+    assert declare["residence"] == "PT"
+    requete = saisie.requete()
+    assert "etranger1_activite" not in requete and "etranger2_activite=non_salariee" in requete
+    relue = Saisie.depuis_requete(dict(pair.split("=", 1) for pair in requete.split("&")))
+    assert relue.etranger_declare() == declare
+    assert _saisie().etranger_declare() is None
+    assert _saisie(residence="autre").etranger_declare() == {
+        "periodes": [], "pensions": [], "residence": "autre"}
+
+
+def test_une_annee_passee_hors_de_france_n_est_pas_travaillee_en_france():
+    """L'année que la période à l'étranger occupe pour plus de la moitié de
+    ses mois de carrière est une année sans activité ; celle qui précède le
+    premier emploi en France n'en interrompt aucune, et le champ
+    « Interruptions » garde le dernier mot."""
+    saisie = _saisie(**CHAMPS)
+    assert saisie.interruptions_de_carriere() == {1998: "sans_activite",
+                                                  1999: "sans_activite",
+                                                  2000: "sans_activite"}
+    # Six mois sur douze en 2001 : à égalité, l'année reste travaillée. La
+    # période marocaine finit au premier emploi en France : elle n'en touche
+    # aucun mois. Prolongée jusqu'en mars 1987, elle prend les quatre mois de
+    # 1986, et deux mois sur douze de 1987 ; jusqu'en août, sept.
+    debordante = _saisie(etranger1_pays="MA", etranger1_debut="1980-01",
+                         etranger1_fin="1987-03")
+    assert debordante.interruptions_de_carriere() == {1986: "sans_activite"}
+    assert _saisie(etranger1_pays="MA", etranger1_debut="1980-01", etranger1_fin="1987-08",
+                   ).interruptions_de_carriere() == {1986: "sans_activite",
+                                                     1987: "sans_activite"}
+    assert _saisie(**CHAMPS, interruptions="1999:1999:chomage_indemnise",
+                   ).interruptions_de_carriere()[1999] == "chomage_indemnise"
+
+
+@pytest.mark.parametrize("champs, refus", [
+    ({"etranger1_pays": "DE"}, "indiquer le mois où elle commence et celui où elle finit"),
+    ({"etranger2_debut": "1990-01", "etranger2_fin": "1992-01"},
+     "Période à l'étranger n° 2 : indiquer l'État"),
+    ({"etranger1_pays": "DE", "etranger1_debut": "1990-01", "etranger1_fin": "1992-01",
+      "etranger1_activite": "independante"}, "n'est pas une activité possible"),
+    ({"etranger1_pays": "FR", "etranger1_debut": "1990-01", "etranger1_fin": "1992-01"},
+     "la France n'est pas un État étranger"),
+    ({"etranger1_pays": "de", "etranger1_debut": "1990-01", "etranger1_fin": "1992-01"},
+     "« de » n'est pas un État"),
+    ({"etranger1_pays": "DE", "etranger1_debut": "1979-01", "etranger1_fin": "1982-01"},
+     "elle commence au plus tôt à 14 ans"),
+    ({"etranger1_pays": "DE", "etranger1_debut": "1992-01", "etranger1_fin": "1992-01"},
+     "après avoir commencé"),
+    ({"etranger1_pays": "DE", "etranger1_debut": "2020-01", "etranger1_fin": "2029-02"},
+     "elle finit au plus tard au départ"),
+    ({"etranger1_pays": "DE", "etranger1_debut": "1995-01", "etranger1_fin": "1999-01",
+      "etranger2_pays": "AT", "etranger2_debut": "1990-01", "etranger2_fin": "1995-02"},
+     "Périodes à l'étranger n° 2 et n° 1 : elles se chevauchent"),
+    ({"pension_etrangere1_pays": "DE", "pension_etrangere1_debut": "2032-07"},
+     "indiquer son montant brut mensuel"),
+    ({"pension_etrangere1_pays": "DE", "pension_etrangere1": "250"},
+     "indiquer le mois où elle commence"),
+    ({"pension_etrangere1_pays": "DE", "pension_etrangere1": "0",
+      "pension_etrangere1_debut": "2032-07"}, "strictement positif"),
+    ({"pension_etrangere1_pays": "DE", "pension_etrangere1": "250",
+      "pension_etrangere1_debut": "2045-07"}, "soit de 14 à 75 ans"),
+    ({"residence": "FR"}, "Résidence après le départ : la France n'est pas un État étranger"),
+])
+def test_la_saisie_refuse_ce_qui_ne_tient_pas(champs, refus):
+    with pytest.raises(ErreurSaisie, match=refus):
+        _saisie(**champs)
+
+
+def test_une_periode_peut_finir_au_depart_et_toucher_la_suivante():
+    """Une période qui finit le mois du départ, et deux périodes bout à bout :
+    rien ne se chevauche."""
+    saisie = _saisie(etranger1_pays="DE", etranger1_debut="2020-01", etranger1_fin="2024-01",
+                     etranger2_pays="CH", etranger2_debut="2024-01", etranger2_fin="2029-01")
+    assert len(saisie.etranger) == 2
+
+
+# -- le contexte : les États du tableau ---------------------------------------------
+
+def test_le_contexte_refuse_un_etat_que_le_tableau_ne_connait_pas():
+    from retraite_notionnelle.contexte import Contexte
+
+    contexte = Contexte()
+    with pytest.raises(ErreurSaisie, match="aucun État « ZZ » au tableau des accords"):
+        contexte.simuler(_saisie(etranger1_pays="ZZ", etranger1_debut="1990-01",
+                                 etranger1_fin="1992-01"))
+    with pytest.raises(ErreurSaisie, match="Pension étrangère n° 1 : aucun État « NC »"):
+        contexte.simuler(_saisie(pension_etrangere1_pays="NC", pension_etrangere1="100",
+                                 pension_etrangere1_debut="2030-07"))
+    with pytest.raises(ErreurSaisie, match="on réside dans un État"):
+        contexte.simuler(_saisie(residence="OI"))
+    # Un État sans accord, une organisation internationale : la carrière tient.
+    contexte.simuler(_saisie(etranger1_pays="autre", etranger1_debut="1980-01",
+                             etranger1_fin="1983-01", etranger2_pays="OI",
+                             etranger2_debut="2010-01", etranger2_fin="2012-01",
+                             residence="autre"))
+
+
+# -- la chronologie et la carrière ---------------------------------------------------
+
+ETRANGER = {
+    "periodes": [{"pays": "MA", "debut": 15.0, "fin": 21.0, "activite": "salariee"},
+                 {"pays": "DE", "debut": 33.5, "fin": 36.5, "activite": "non_salariee"}],
+    "pensions": [{"pays": "DE", "age": 67.0, "mensuel": 250.0}],
+    "residence": "PT",
+}
+
+
+def test_la_chronologie_porte_les_periodes_les_pensions_et_la_residence(simulateur):
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1965, sexe="H", mois_naissance=6,
+        metiers=[Metier("salarie_prive_non_cadre", 21.0)], age_liquidation=64.0,
+        macro=simulateur.macro, interruptions={1999: "sans_activite", 2000: "sans_activite",
+                                               2001: "sans_activite"},
+        etranger=ETRANGER)
+    periodes = chrono.periodes_a_l_etranger(carriere.chronologie, carriere.personne)
+    assert [(f["id"], f["debut"], f["fin"], f["territoire"], f["attributs"])
+            for f in periodes] == [
+        ("etranger_1", "1980-06-01", "1986-06-01", "MA", {"activite": "salariee"}),
+        ("etranger_2", "1998-12-01", "2001-12-01", "DE", {"activite": "non_salariee"})]
+    pension, = chrono.pensions_etrangeres(carriere.chronologie, carriere.personne)
+    assert (pension["sorte"], pension["debut"], pension["territoire"]) == (
+        "acte_de_la_caisse", "2032-06-01", "DE")
+    assert pension["attributs"] == {"acte": "liquidation", "age": 67.0}
+    assert pension["montant"] == {"mensuel": 250.0, "monnaie": "EUR"}
+    residence = chrono.residence(carriere.chronologie, carriere.personne)
+    # Né le 15 juin 1965 (jour présumé), il part à soixante-quatre ans en
+    # juillet 2029 : la résidence court de ce mois-là.
+    assert (residence["debut"], residence["territoire"]) == ("2029-07-01", "PT")
+    assert chrono.controler(carriere.chronologie) == []
+    # Aucun autre fait ne dit son territoire : la métropole, le défaut du contrat.
+    assert {f.get("territoire") for f in carriere.chronologie["faits"]} == {
+        None, "MA", "DE", "PT"}
+    assert carriere.periodes_a_l_etranger == (
+        PeriodeALEtranger("MA", DateMois(1980, 6), DateMois(1986, 6), "salariee"),
+        PeriodeALEtranger("DE", DateMois(1998, 12), DateMois(2001, 12), "non_salariee"))
+    assert carriere.pensions_etrangeres == (PensionEtrangere("DE", DateMois(2032, 6), 250.0),)
+    assert carriere.residence == "PT"
+    # Une copie de travail garde la chronologie dont elle vient.
+    prolongee = carriere.prolongee(66.0, simulateur.macro)
+    assert prolongee.periodes_a_l_etranger == carriere.periodes_a_l_etranger
+    assert prolongee.residence == "PT"
+
+
+def test_un_releve_porte_aussi_la_carriere_hors_de_france(simulateur):
+    carriere = Carriere.depuis_releve(
+        annee_naissance=1962, sexe="F", age_liquidation=63.0, macro=simulateur.macro,
+        releve=[LigneRelevee(annee, "salarie_prive_non_cadre", 25000.0, 4)
+                for annee in range(1990, 2025)],
+        etranger={"periodes": [{"pays": "TN", "debut": 18.0, "fin": 27.0,
+                                "activite": "salariee"}],
+                  "pensions": [], "residence": None})
+    assert carriere.periodes_a_l_etranger == (
+        PeriodeALEtranger("TN", DateMois(1980, 1), DateMois(1989, 1), "salariee"),)
+    assert carriere.pensions_etrangeres == () and carriere.residence is None
+
+
+def test_sans_carriere_hors_de_france_la_carriere_n_en_dit_rien(simulateur):
+    carriere = Carriere.depuis_profil(1965, "H", "salarie_prive_non_cadre", 21.0, 64.0,
+                                      simulateur.macro)
+    assert carriere.periodes_a_l_etranger == () and carriere.pensions_etrangeres == ()
+    assert carriere.residence is None
+
+
+@pytest.mark.parametrize("etranger, erreur", [
+    ({"periodes": [{"pays": "DE", "debut": 30.0, "fin": 35.0, "activite": "salariee"},
+                   {"pays": "AT", "debut": 34.0, "fin": 36.0, "activite": "salariee"}]},
+     "deux périodes à l'étranger se chevauchent"),
+    ({"periodes": [{"pays": "DE", "debut": 30.0, "fin": 70.0, "activite": "salariee"}]},
+     "au plus tard au départ"),
+    ({"periodes": [{"pays": "FR", "debut": 30.0, "fin": 35.0, "activite": "salariee"}]},
+     "un État étranger : son code, reçu « FR »"),
+    ({"periodes": [{"pays": "DE", "debut": 30.0, "fin": 35.0, "activite": "artiste"}]},
+     "salariée ou non, reçu « artiste »"),
+    ({"pensions": [{"pays": "DE", "age": 67.0, "mensuel": 0}]},
+     "le montant d'une pension étrangère : positif"),
+])
+def test_la_chronologie_refuse_ce_qui_ne_tient_pas(simulateur, etranger, erreur):
+    with pytest.raises(ValueError, match=erreur):
+        chrono.du_resume(1965, "H", 6, 64.0, etranger=etranger)
+
+
+# -- le portage ----------------------------------------------------------------------
+
+#: Des saisies du formulaire qui portent une carrière hors de France, sur les
+#: deux chemins : le parcours et le relevé.
+REQUETES = [
+    {"naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2029-01", **CHAMPS},
+    {"naissance": "1958-02", "debut": "1984-03", "liquidation": "2020-03",
+     "etranger1_pays": "autre", "etranger1_debut": "1976-01", "etranger1_fin": "1983-04",
+     "etranger2_pays": "OI", "etranger2_debut": "2005-01", "etranger2_fin": "2012-01",
+     "pension_etrangere1_pays": "OI", "pension_etrangere1": "1200,5",
+     "pension_etrangere1_debut": "2018-03", "residence": "autre"},
+    {"naissance": "1960-11-15", "liquidation": "2024-01", "residence": "MA",
+     "releve": "1988:salarie_prive_non_cadre:21000:4, 1989:salarie_prive_non_cadre:22000:4",
+     "etranger1_pays": "MA", "etranger1_debut": "1980-01", "etranger1_fin": "1988-01",
+     "pension_etrangere1_pays": "MA", "pension_etrangere1": "310",
+     "pension_etrangere1_debut": "2020-12"},
+]
+
+#: Ce que le portage lit de la carrière que la saisie bâtit.
+LECTURE_JS = """
+import { readFileSync } from "node:fs";
+import { Contexte } from "./moteur/js/contexte.js";
+import { Saisie } from "./moteur/js/saisie.js";
+import { Simulateur } from "./moteur/js/simulateur.js";
+
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+let vue = null;
+const simuler = Simulateur.prototype.simuler;
+Simulateur.prototype.simuler = function (carriere, ...reste) {
+  vue ??= carriere;
+  return simuler.call(this, carriere, ...reste);
+};
+const mois = (date) => `${date.annee}-${String(date.mois).padStart(2, "0")}`;
+const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
+  vue = null;
+  const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
+  contexte.simuler(saisie);
+  return {
+    requete: saisie.requete(),
+    interruptions: Object.fromEntries(saisie.interruptionsDeCarriere()),
+    sans_activite: vue.lignes.filter((l) => l.type_periode === "sans_activite")
+      .map((l) => l.annee),
+    periodes: vue.periodesALEtranger.map((p) => [p.pays, mois(p.debut), mois(p.fin),
+      p.activite]),
+    pensions: vue.pensionsEtrangeres.map((p) => [p.pays, mois(p.debut), p.mensuel]),
+    residence: vue.residence,
+  };
+});
+process.stdout.write(JSON.stringify(sortie));
+"""
+
+
+def _lu_par_python(monkeypatch, requete: dict) -> dict:
+    from retraite_notionnelle.contexte import Contexte
+
+    vues = []
+    simuler = Simulateur.simuler
+
+    def espion(self, carriere, *reste, **options):
+        vues.append(carriere)
+        return simuler(self, carriere, *reste, **options)
+
+    monkeypatch.setattr(Simulateur, "simuler", espion)
+    saisie = Saisie.depuis_requete(requete)
+    Contexte().simuler(saisie)
+    vue = vues[0]
+    mois = "{0.annee}-{0.mois:02d}".format
+    return {
+        "requete": saisie.requete(),
+        "interruptions": {str(annee): motif
+                          for annee, motif in saisie.interruptions_de_carriere().items()},
+        "sans_activite": [ligne.annee for ligne in vue.lignes
+                          if ligne.type_periode == "sans_activite"],
+        "periodes": [[p.pays, mois(p.debut), mois(p.fin), p.activite]
+                     for p in vue.periodes_a_l_etranger],
+        "pensions": [[p.pays, mois(p.debut), p.mensuel] for p in vue.pensions_etrangeres],
+        "residence": vue.residence,
+    }
+
+
+def test_le_portage_lit_les_memes_faits(monkeypatch):
+    """La saisie et la carrière des deux moteurs lisent les mêmes faits de la
+    même adresse : l'adresse qu'elles réécrivent, les années que l'étranger
+    interrompt, les périodes, les pensions ramenées à leur date sur les mêmes
+    prix, la résidence."""
+    import json
+    import shutil
+    import subprocess
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", LECTURE_JS], cwd=racine,
+        input=json.dumps(REQUETES), capture_output=True, text=True, encoding="utf-8",
+        check=False)
+    assert execution.returncode == 0, execution.stderr
+    attendus = [_lu_par_python(monkeypatch, requete) for requete in REQUETES]
+    assert json.loads(execution.stdout) == attendus
+    # Chaque fait y est au moins une fois : une pension future, saisie en
+    # euros d'aujourd'hui, grandit avec les prix d'ici sa date ; une pension
+    # passée diminue. Les années passées en Allemagne ne sont pas travaillées
+    # en France ; celles d'un relevé sont celles qu'il porte.
+    assert attendus[0]["pensions"][0][2] > 250.0 and attendus[1]["pensions"][0][2] < 1200.5
+    assert attendus[0]["sans_activite"] == [1998, 1999, 2000]
+    assert attendus[1]["periodes"][1][0] == "OI" and attendus[1]["residence"] == "autre"
+    assert attendus[2]["sans_activite"] == [] and attendus[2]["residence"] == "MA"

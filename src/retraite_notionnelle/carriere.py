@@ -209,6 +209,35 @@ class RadiationPourInvalidite:
 
 
 @dataclass(frozen=True)
+class PeriodeALEtranger:
+    """Une période passée hors de France (fiche
+    ``totalisation_des_periodes_etrangeres``)."""
+
+    #: Le code de l'État, celui du tableau des accords, ou ``autre``.
+    pays: str
+    #: Le mois où elle commence, et celui où elle finit, exclu.
+    debut: DateMois
+    fin: DateMois
+    #: ``salariee`` ou ``non_salariee`` : une convention ne coordonne souvent
+    #: que les salariés.
+    activite: str = "salariee"
+
+
+@dataclass(frozen=True)
+class PensionEtrangere:
+    """Une pension que le régime d'un autre État sert : une liquidation
+    observée (docs/architecture.md, § 5.5 ; fiche
+    ``minimum_contributif_international``)."""
+
+    #: Le code de l'État qui la sert, ou ``autre``.
+    pays: str
+    #: Le mois où elle commence.
+    debut: DateMois
+    #: Son montant brut mensuel, en euros de ce mois.
+    mensuel: float
+
+
+@dataclass(frozen=True)
 class Metier:
     """Un métier de la carrière : un statut, un niveau de revenu, une date.
 
@@ -744,6 +773,42 @@ class Carriere:
                                        affiliations=self._affiliations_autour(date),
                                        imputable=bool(attributs.get("imputable")),
                                        taux=attributs.get("taux"))
+
+    @cached_property
+    def periodes_a_l_etranger(self) -> "tuple[PeriodeALEtranger, ...]":
+        """Les périodes que la personne a passées hors de France, dans l'ordre
+        où elle les déclare : leur État, leurs deux mois, leur activité (fiche
+        ``totalisation_des_periodes_etrangeres``). Les années de la carrière
+        qu'elles occupent y sont des années sans activité."""
+        if not self.chronologie:
+            return ()
+        return tuple(PeriodeALEtranger(pays=fait["territoire"],
+                                       debut=chrono.mois_de(fait["debut"]),
+                                       fin=chrono.mois_de(fait["fin"]),
+                                       activite=fait["attributs"]["activite"])
+                     for fait in chrono.periodes_a_l_etranger(self.chronologie,
+                                                              self.personne))
+
+    @cached_property
+    def pensions_etrangeres(self) -> "tuple[PensionEtrangere, ...]":
+        """Les pensions que des régimes étrangers servent à la personne, dans
+        l'ordre où elle les déclare : leur État, leur mois, leur montant
+        mensuel en euros de ce mois (fiche ``minimum_contributif_international``)."""
+        if not self.chronologie:
+            return ()
+        return tuple(PensionEtrangere(pays=fait["territoire"],
+                                      debut=chrono.mois_de(fait["debut"]),
+                                      mensuel=fait["montant"]["mensuel"])
+                     for fait in chrono.pensions_etrangeres(self.chronologie,
+                                                            self.personne))
+
+    @cached_property
+    def residence(self) -> str | None:
+        """L'État où la personne réside après son départ, quand elle le
+        déclare hors de France ; ``None`` sinon (fiche
+        ``residence_et_minimum_vieillesse``)."""
+        fait = chrono.residence(self.chronologie, self.personne) if self.chronologie else None
+        return None if fait is None else fait["territoire"]
 
     @cached_property
     def emploi_retraite(self) -> "dict | None":
@@ -1333,6 +1398,7 @@ class Carriere:
         emploi_retraite: dict | None = None,
         demandes_de_pension: dict[str, float] | None = None,
         invalidite: dict | None = None,
+        etranger: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -1365,7 +1431,8 @@ class Carriere:
             part_primes=part_primes, naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
             retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
-            demandes_de_pension=demandes_de_pension, invalidite=invalidite))
+            demandes_de_pension=demandes_de_pension, invalidite=invalidite,
+            etranger=etranger))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1391,6 +1458,7 @@ class Carriere:
         emploi_retraite: dict | None = None,
         demandes_de_pension: dict[str, float] | None = None,
         invalidite: dict | None = None,
+        etranger: dict | None = None,
     ) -> "Carriere":
         """Carrière d'un seul métier, exercé du premier au dernier jour.
 
@@ -1417,6 +1485,7 @@ class Carriere:
             emploi_retraite=emploi_retraite,
             demandes_de_pension=demandes_de_pension,
             invalidite=invalidite,
+            etranger=etranger,
         )
 
     @classmethod
@@ -1441,6 +1510,7 @@ class Carriere:
         emploi_retraite: dict | None = None,
         demandes_de_pension: dict[str, float] | None = None,
         invalidite: dict | None = None,
+        etranger: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -1492,6 +1562,13 @@ class Carriere:
         (:attr:`pension_d_invalidite`, :attr:`inaptitude`,
         :attr:`radiation_pour_invalidite`).
 
+        ``etranger`` déclare la carrière hors de France : les périodes passées
+        hors de France, les pensions étrangères et l'État de résidence après le
+        départ (:attr:`periodes_a_l_etranger`, :attr:`pensions_etrangeres`,
+        :attr:`residence`). Les années que les périodes occupent sont à dire
+        aussi dans ``interruptions`` : la carrière française n'y voit aucune
+        activité.
+
         Les deux bords sont des années INCOMPLÈTES et sont construites comme
         telles : celui qui entre en septembre ne travaille que quatre mois de
         son année d'entrée, celui qui part en août n'en travaille que sept de
@@ -1506,7 +1583,8 @@ class Carriere:
             part_primes=part_primes, naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
             retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
-            demandes_de_pension=demandes_de_pension, invalidite=invalidite))
+            demandes_de_pension=demandes_de_pension, invalidite=invalidite,
+            etranger=etranger))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod

@@ -583,6 +583,21 @@ def assiette_minimale(table: tuple[AssietteMinimale, ...], statut: str,
     return None
 
 
+def charger_accords_internationaux(racine: Path) -> dict[str, dict]:
+    """Le tableau des accords qui coordonnent les retraites françaises avec
+    celles d'un autre État : pour chaque code d'État, son ``nom`` et ses
+    ``accords``, dans l'ordre, leurs dates en AAAA-MM-JJ, telles que le
+    paquet du site les porte
+    (``data/reference/legislation/accords_internationaux.yaml``)."""
+    etats = charger_yaml(racine / "reference" / "legislation"
+                         / "accords_internationaux.yaml")["etats"]
+    return {code: {"nom": etat["nom"],
+                   "accords": [{cle: valeur.isoformat() if hasattr(valeur, "isoformat")
+                                else valeur for cle, valeur in accord.items()}
+                               for accord in etat["accords"]]}
+            for code, etat in etats.items()}
+
+
 def charger_periodes_non_travaillees(racine: Path) -> dict[str, PeriodeNonTravaillee]:
     """Table des motifs d'interruption et de ce que chacun ouvre."""
     chemin = racine / "reference" / "legislation" / "periodes_non_travaillees.csv"

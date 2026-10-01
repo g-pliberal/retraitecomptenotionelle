@@ -265,6 +265,33 @@ export const PREFIXE_DEMANDE = "demande_";
 const CODE_DE_REGIME = /^[a-z][a-z0-9_]*$/;
 
 /**
+ * Combien de périodes hors de France, et combien de pensions étrangères,
+ * l'adresse peut porter : « etranger1_pays » à « etranger4_… », et
+ * « pension_etrangere1 » à « pension_etrangere4… ». Comme celle des métiers, la
+ * borne est celle du formulaire, pas du moteur.
+ */
+export const ETRANGER_MAXIMUM = 4;
+
+/**
+ * L'État que la personne ne nomme pas, parce que le tableau des accords ne le
+ * nomme pas : aucun accord ne le lie à la France. Tout autre État s'écrit par
+ * son code à deux majuscules, celui du tableau ; qu'il y soit, c'est au
+ * contexte de le dire, qui a les données.
+ */
+export const AUTRE_ETAT = "autre";
+const CODE_D_ETAT = /^[A-Z]{2}$/;
+
+/**
+ * La nature de l'activité exercée hors de France : une convention bilatérale ne
+ * coordonne souvent que les salariés (`personnes` au tableau des accords). La
+ * première est celle d'une ligne qui ne la dit pas.
+ */
+export const ACTIVITES_A_L_ETRANGER = [
+  ["salariee", "salariée"],
+  ["non_salariee", "non salariée"],
+];
+
+/**
  * Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
  * entre quatorze ans — l'âge de début minimal — et soixante-quinze, soit
  * soixante et une années civiles au plus ; la borne laisse deux lignes de marge
@@ -488,6 +515,14 @@ export const DEFAUTS = Object.freeze({
   radiation_invalidite: null,
   invalidite_imputable: false,
   taux_invalidite: null,
+  //: Les carrières hors de France : les périodes passées hors de France
+  //: — `{pays, debut, fin, activite}`, les âges comptés comme un début
+  //: d'activité —, les pensions étrangères — `{pays, montant, debut}` — et
+  //: l'État où la personne réside après son départ, vide quand c'est la
+  //: France. Voir `etrangerDeclare`.
+  etranger: Object.freeze([]),
+  pensions_etrangeres: Object.freeze([]),
+  residence: "",
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -627,6 +662,9 @@ export class Saisie {
       invalidite_imputable: oui(parametres, "invalidite_imputable"),
       taux_invalidite: [undefined, null, ""].includes(parametres.taux_invalidite)
         ? null : entier(parametres, "taux_invalidite", 0),
+      etranger: periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
+      pensions_etrangeres: pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
+      residence: (parametres.residence || "").trim(),
       interruptions: (parametres.interruptions || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
@@ -727,6 +765,7 @@ export class Saisie {
     this.verifierEmploiRetraite();
     this.verifierDemandes();
     this.verifierInvalidite();
+    this.verifierEtranger();
     if (!(this.bascule >= ANNEE_MINIMALE && this.bascule <= ANNEE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de bascule attendue entre ${ANNEE_MINIMALE} et `
@@ -970,21 +1009,36 @@ export class Saisie {
     const debut = this.dateDe(this.debut);
     const fin = this.dateDe(this.liquidation, true);
     const lignes = this.lignesCarriere;
+    const creuxDeCarriere = [];
     lignes.forEach((ligne, index) => {
       if (!ligne.sans_emploi) { return; }
-      const ouverture = this.dateDe(ligne.debut);
       // Une activité ajoutée ne clôt pas l'interruption : elle se tient à
       // côté. C'est la période principale suivante qui la clôt.
       const suivante = lignes.slice(index + 1).find((autre) => !autre.cumul);
-      const cloture = suivante ? this.dateDe(suivante.debut) : fin;
+      creuxDeCarriere.push([ligne.statut, this.dateDe(ligne.debut),
+        suivante ? this.dateDe(suivante.debut) : fin]);
+    });
+    // Une période à l'étranger ne compte que pour les mois de la carrière
+    // qu'elle couvre : celle qui précède le premier emploi en France n'en
+    // interrompt aucun. Voir `interruptions_de_carriere` du Python.
+    for (const periode of this.etranger) {
+      const debutPeriode = this.dateDe(periode.debut);
+      const finPeriode = this.dateDe(periode.fin);
+      const ouverture = debutPeriode.rang > debut.rang ? debutPeriode : debut;
+      const cloture = finPeriode.rang < fin.rang ? finPeriode : fin;
+      if (cloture.rang > ouverture.rang) {
+        creuxDeCarriere.push(["sans_activite", ouverture, cloture]);
+      }
+    }
+    for (const [motif, ouverture, cloture] of creuxDeCarriere) {
       for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
         const creux = moisTravailles(annee, ouverture, cloture);
         const portee = moisTravailles(annee, debut, fin);
         if (portee && creux * 2 > portee) {
-          annees.set(annee, ligne.statut);
+          annees.set(annee, motif);
         }
       }
-    });
+    }
     this.interruptionsAnalysees(motifsConnus).forEach((motif, annee) => {
       annees.set(annee, motif);
     });
@@ -1670,6 +1724,95 @@ export class Saisie {
   }
 
   /**
+   * La carrière hors de France que la saisie déclare : les `periodes` — l'État,
+   * les âges du début et de la fin, l'`activite` —, les `pensions` étrangères —
+   * l'État, l'`age` où elle commence, son `montant` mensuel en euros
+   * d'aujourd'hui —, et l'État de `residence` après le départ, `null` en
+   * France. Le contexte ramène chaque montant à la date de sa pension avant que
+   * la chronologie le reçoive. `null` quand rien n'est dit. Voir
+   * `etranger_declare` du Python.
+   */
+  etrangerDeclare() {
+    if (this.etranger.length === 0 && this.pensions_etrangeres.length === 0
+        && !this.residence) {
+      return null;
+    }
+    return {
+      periodes: this.etranger.map((periode) => ({
+        pays: periode.pays, debut: periode.debut, fin: periode.fin,
+        activite: periode.activite })),
+      pensions: this.pensions_etrangeres.map((pension) => ({
+        pays: pension.pays, age: pension.debut, montant: pension.montant })),
+      residence: this.residence || null,
+    };
+  }
+
+  /**
+   * Une période hors de France : un État qui n'est pas la France, un début
+   * après quatorze ans, une fin qui le suit sans dépasser le départ, et aucune
+   * autre période hors de France qui la chevauche. Une pension étrangère : un
+   * État, un montant, un début entre quatorze et soixante-quinze ans. La
+   * résidence : un État étranger. Voir `_verifier_etranger` du Python.
+   */
+  verifierEtranger() {
+    const depart = this.dateDe(this.liquidation, true);
+    const bornes = [];
+    this.etranger.forEach((periode, index) => {
+      const rang = index + 1;
+      const quoi = `Période à l'étranger n° ${rang}`;
+      verifierEtat(periode.pays, quoi);
+      const debut = this.dateDe(periode.debut);
+      const fin = this.dateDe(periode.fin);
+      if (periode.debut < AGE_DEBUT_MINIMAL) {
+        throw new ErreurSaisie(
+          `${quoi} : elle commence au plus tôt à ${AGE_DEBUT_MINIMAL} ans, en `
+          + `${this.dateDe(AGE_DEBUT_MINIMAL)}.`,
+        );
+      }
+      if (fin.rang <= debut.rang) {
+        throw new ErreurSaisie(
+          `${quoi} : elle finit (${fin}) après avoir commencé (${debut}).`,
+        );
+      }
+      if (fin.rang > depart.rang) {
+        throw new ErreurSaisie(
+          `${quoi} : elle finit au plus tard au départ à la retraite, fixé en `
+          + `${depart}.`,
+        );
+      }
+      bornes.push([debut.rang, fin.rang, rang]);
+    });
+    bornes.sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
+    for (let i = 1; i < bornes.length; i += 1) {
+      const [, finPremiere, premiere] = bornes[i - 1];
+      const [debutSeconde, , seconde] = bornes[i];
+      if (debutSeconde < finPremiere) {
+        throw new ErreurSaisie(
+          `Périodes à l'étranger n° ${premiere} et n° ${seconde} : elles se `
+          + "chevauchent, et un mois passé hors de France ne se compte qu'une fois.",
+        );
+      }
+    }
+    this.pensions_etrangeres.forEach((pension, index) => {
+      const quoi = `Pension étrangère n° ${index + 1}`;
+      verifierEtat(pension.pays, quoi);
+      if (!(pension.montant > 0)) {
+        throw new ErreurSaisie(`${quoi} : son montant mensuel est strictement positif.`);
+      }
+      if (!(pension.debut >= AGE_DEBUT_MINIMAL && pension.debut <= AGE_LIQUIDATION_MAXIMAL)) {
+        throw new ErreurSaisie(
+          `${quoi} : elle commence `
+          + `${this.fenetre(AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL)}, soit de `
+          + `${AGE_DEBUT_MINIMAL} à ${AGE_LIQUIDATION_MAXIMAL} ans.`,
+        );
+      }
+    });
+    if (this.residence) {
+      verifierEtat(this.residence, "Résidence après le départ");
+    }
+  }
+
+  /**
    * Les pensions dont la saisie dit la date, telles que la chronologie les
    * reçoit : l'âge de chaque demande, par régime, dans l'ordre de leurs codes ;
    * `null` sans elles.
@@ -1824,6 +1967,7 @@ export class Saisie {
         ["invalidite_imputable", this.invalidite_imputable ? OUI : null],
         ["taux_invalidite", this.taux_invalidite],
       ].filter(([, valeur]) => valeur !== null)),
+      ...(this.residence ? { residence: this.residence } : {}),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,
@@ -1866,6 +2010,24 @@ export class Saisie {
           champs[`metier${rang}_fin`] = this.moisDe(metier.fin);
         }
       }
+    });
+    // Les périodes hors de France et les pensions étrangères, de même : une
+    // ligne par période, une par pension, et l'activité salariée, celle d'une
+    // ligne qui ne la dit pas, ne s'écrit pas.
+    this.etranger.forEach((periode, index) => {
+      const rang = index + 1;
+      champs[`etranger${rang}_pays`] = periode.pays;
+      champs[`etranger${rang}_debut`] = this.moisDe(periode.debut);
+      champs[`etranger${rang}_fin`] = this.moisDe(periode.fin);
+      if (periode.activite !== ACTIVITES_A_L_ETRANGER[0][0]) {
+        champs[`etranger${rang}_activite`] = periode.activite;
+      }
+    });
+    this.pensions_etrangeres.forEach((pension, index) => {
+      const rang = index + 1;
+      champs[`pension_etrangere${rang}_pays`] = pension.pays;
+      champs[`pension_etrangere${rang}`] = nombreBrut(pension.montant);
+      champs[`pension_etrangere${rang}_debut`] = this.moisDe(pension.debut);
     });
     Object.assign(champs, remplacements);
     return Object.entries(champs)
@@ -1961,6 +2123,116 @@ function metiersSaisis(parametres, salairePrecedent, moisDeNaissance, tolerante 
     });
   }
   return metiers;
+}
+
+/**
+ * Les périodes passées hors de France, lues dans « etranger1_… » à
+ * « etranger4_… » : l'État, le mois où elle commence, celui où elle finit, et
+ * l'activité. Une ligne vide ne dit rien ; une ligne commencée sans son État ou
+ * ses deux dates se refuse, et une activité inconnue aussi. Voir
+ * `_periodes_etrangeres_saisies` du Python.
+ */
+function periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante = false) {
+  const activites = ACTIVITES_A_L_ETRANGER.map(([code]) => code);
+  const periodes = [];
+  for (let rang = 1; rang <= ETRANGER_MAXIMUM; rang += 1) {
+    const pays = String(parametres[`etranger${rang}_pays`] ?? "").trim();
+    const debut = String(parametres[`etranger${rang}_debut`] ?? "").trim();
+    const fin = String(parametres[`etranger${rang}_fin`] ?? "").trim();
+    const activite = String(parametres[`etranger${rang}_activite`] ?? "").trim();
+    if (!pays && !debut && !fin && !activite) {
+      continue;
+    }
+    // Remontrée, la ligne incomplète n'est pas une période : la lecture s'y
+    // arrête, et c'est la ligne vide du formulaire qui la reçoit.
+    if (tolerante && (!pays || !debut || !fin)) {
+      break;
+    }
+    if (!pays) {
+      throw new ErreurSaisie(
+        `Période à l'étranger n° ${rang} : indiquer l'État, ou laisser sa ligne `
+        + "entièrement vide.",
+      );
+    }
+    if (!debut || !fin) {
+      throw new ErreurSaisie(
+        `Période à l'étranger n° ${rang} : indiquer le mois où elle commence et celui `
+        + "où elle finit.",
+      );
+    }
+    if (activite !== "" && !activites.includes(activite)) {
+      throw new ErreurSaisie(
+        `Période à l'étranger n° ${rang} : « ${activite} » n'est pas une activité `
+        + `possible — ${activites.join(" ou ")}.`,
+      );
+    }
+    periodes.push({
+      pays,
+      debut: ageSaisi(parametres, `etranger${rang}_debut`, 0.0, moisDeNaissance),
+      fin: ageSaisi(parametres, `etranger${rang}_fin`, 0.0, moisDeNaissance),
+      activite: activite || activites[0],
+    });
+  }
+  return periodes;
+}
+
+/**
+ * Les pensions étrangères, lues dans « pension_etrangere1… » à
+ * « pension_etrangere4… » : l'État qui la sert (« _pays »), son montant brut
+ * mensuel, et le mois où elle commence (« _debut »). Une ligne commencée se
+ * refuse sans l'un des trois. Voir `_pensions_etrangeres_saisies` du Python.
+ */
+function pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante = false) {
+  const pensions = [];
+  for (let rang = 1; rang <= ETRANGER_MAXIMUM; rang += 1) {
+    const pays = String(parametres[`pension_etrangere${rang}_pays`] ?? "").trim();
+    const montant = String(parametres[`pension_etrangere${rang}`] ?? "").trim();
+    const debut = String(parametres[`pension_etrangere${rang}_debut`] ?? "").trim();
+    if (!pays && !montant && !debut) {
+      continue;
+    }
+    if (tolerante && (!pays || !montant || !debut)) {
+      break;
+    }
+    if (!pays) {
+      throw new ErreurSaisie(
+        `Pension étrangère n° ${rang} : indiquer l'État qui la sert, ou laisser sa `
+        + "ligne entièrement vide.",
+      );
+    }
+    if (!montant) {
+      throw new ErreurSaisie(
+        `Pension étrangère n° ${rang} : indiquer son montant brut mensuel, en euros.`,
+      );
+    }
+    if (!debut) {
+      throw new ErreurSaisie(
+        `Pension étrangère n° ${rang} : indiquer le mois où elle commence.`,
+      );
+    }
+    pensions.push({
+      pays,
+      montant: reel(parametres, `pension_etrangere${rang}`, 0.0),
+      debut: ageSaisi(parametres, `pension_etrangere${rang}_debut`, 0.0, moisDeNaissance),
+    });
+  }
+  return pensions;
+}
+
+/**
+ * Un État étranger, tel que la saisie l'écrit : son code à deux majuscules, ou
+ * `AUTRE_ETAT` ; jamais la France. Voir `_verifier_etat` du Python.
+ */
+function verifierEtat(code, quoi) {
+  if (code === "FR") {
+    throw new ErreurSaisie(`${quoi} : la France n'est pas un État étranger.`);
+  }
+  if (code !== AUTRE_ETAT && !CODE_D_ETAT.test(code)) {
+    throw new ErreurSaisie(
+      `${quoi} : « ${code} » n'est pas un État — son code à deux majuscules, comme `
+      + `DE ou MA, ou « ${AUTRE_ETAT} ».`,
+    );
+  }
 }
 
 function cleEnum(enumeration, valeur) {

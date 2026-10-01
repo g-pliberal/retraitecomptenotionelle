@@ -361,6 +361,28 @@ EMPLOYEURS_APRES_DEPART = [
 PREFIXE_DEMANDE = "demande_"
 _CODE_DE_REGIME = re.compile(r"[a-z][a-z0-9_]*")
 
+#: Combien de périodes hors de France, et combien de pensions étrangères,
+#: l'adresse peut porter : « etranger1_pays » à « etranger4_… », et
+#: « pension_etrangere1 » à « pension_etrangere4… ». Comme celle des métiers,
+#: la borne est celle du formulaire, pas du moteur.
+ETRANGER_MAXIMUM = 4
+
+#: L'État que la personne ne nomme pas, parce que le tableau des accords
+#: (``data/reference/legislation/accords_internationaux.yaml``) ne le nomme
+#: pas : aucun accord ne le lie à la France. Tout autre État s'écrit par son
+#: code à deux majuscules, celui du tableau ; qu'il y soit, c'est au contexte
+#: de le dire, qui a les données.
+AUTRE_ETAT = "autre"
+_CODE_D_ETAT = re.compile(r"[A-Z]{2}")
+
+#: La nature de l'activité exercée hors de France : une convention bilatérale
+#: ne coordonne souvent que les salariés (``personnes`` au tableau des
+#: accords). La première est celle d'une ligne qui ne la dit pas.
+ACTIVITES_A_L_ETRANGER = [
+    ("salariee", "salariée"),
+    ("non_salariee", "non salariée"),
+]
+
 
 #: Ce qu'une ligne de carrière peut décrire à la place d'un métier.
 #:
@@ -451,6 +473,38 @@ class MetierSaisi:
     cumul: bool = False
     #: Âge auquel une activité ajoutée s'arrête ; ``None`` la mène au départ.
     fin: float | None = None
+
+
+@dataclass
+class PeriodeEtrangereSaisie:
+    """Une période passée hors de France : l'État, deux âges, l'activité.
+
+    Les âges se comptent comme ceux d'un métier, du mois de naissance ; la
+    fin est exclue, comme celle d'une activité ajoutée : la période court du
+    mois où elle commence au mois qui précède celui où elle finit.
+    """
+
+    #: Le code de l'État, ou :data:`AUTRE_ETAT`.
+    pays: str
+    debut: float
+    fin: float
+    #: L'un des codes de :data:`ACTIVITES_A_L_ETRANGER`.
+    activite: str = ACTIVITES_A_L_ETRANGER[0][0]
+
+
+@dataclass
+class PensionEtrangereSaisie:
+    """Une pension que le régime d'un autre État sert, ou celui d'une
+    organisation internationale : une liquidation observée
+    (docs/architecture.md, § 5.4 et 5.5)."""
+
+    #: Le code de l'État, ou :data:`AUTRE_ETAT`.
+    pays: str
+    #: Son montant brut mensuel, en euros d'aujourd'hui — de l'année courante
+    #: du modèle, comme les revenus saisis ; le contexte le ramène à sa date.
+    montant: float
+    #: L'âge où elle commence, compté du mois de naissance.
+    debut: float
 
 
 #: Les clés de requête qui décrivent les RÈGLES, et non la carrière.
@@ -590,6 +644,16 @@ class Saisie:
     radiation_invalidite: float | None = None
     invalidite_imputable: bool = False
     taux_invalidite: int | None = None
+    #: Les carrières hors de France (fiches
+    #: ``totalisation_des_periodes_etrangeres``, ``pension_proratisee``,
+    #: ``minimum_contributif_international`` et
+    #: ``residence_et_minimum_vieillesse``) : les périodes passées hors de
+    #: France, que l'adresse porte en dates comme un début d'activité ; les
+    #: pensions étrangères ; l'État où la personne réside après son départ,
+    #: vide quand c'est la France. Voir :meth:`etranger_declare`.
+    etranger: list[PeriodeEtrangereSaisie] = field(default_factory=list)
+    pensions_etrangeres: list[PensionEtrangereSaisie] = field(default_factory=list)
+    residence: str = ""
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
@@ -735,6 +799,10 @@ class Saisie:
             invalidite_imputable=_oui(parametres, "invalidite_imputable"),
             taux_invalidite=(None if parametres.get("taux_invalidite") in (None, "")
                              else _entier(parametres, "taux_invalidite", 0)),
+            etranger=_periodes_etrangeres_saisies(parametres, mois_de_naissance, tolerante),
+            pensions_etrangeres=_pensions_etrangeres_saisies(parametres, mois_de_naissance,
+                                                             tolerante),
+            residence=(parametres.get("residence") or "").strip(),
             interruptions=(parametres.get("interruptions") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
@@ -829,6 +897,7 @@ class Saisie:
         self._verifier_emploi_retraite()
         self._verifier_demandes()
         self._verifier_invalidite()
+        self._verifier_etranger()
         if not ANNEE_MINIMALE <= self.bascule <= ANNEE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de bascule attendue entre {ANNEE_MINIMALE} et "
@@ -1050,25 +1119,41 @@ class Saisie:
         de métier revient au métier qui en occupe le plus ; à égalité, elle
         reste travaillée.
 
+        Une période passée hors de France en est une aussi, de motif
+        ``sans_activite`` : la carrière française n'y voit aucune activité,
+        et ce que la période vaut ailleurs, c'est son fait daté qui le porte,
+        avec son État (:meth:`etranger_declare`). Elle prend le pas sur une
+        période sans emploi de la même année, qu'elle précise.
+
         Le champ « Interruptions » garde le dernier mot : il désigne des années
         une à une, et c'est l'outil le plus fin des deux.
         """
         annees: dict[int, str] = {}
         debut, fin = self.date_de(self.debut), self.date_de(self.liquidation, depart=True)
         lignes = self.lignes_carriere
+        creux_de_carriere = []
         for rang, ligne in enumerate(lignes):
             if not ligne.sans_emploi:
                 continue
-            ouverture = self.date_de(ligne.debut)
             # Une activité ajoutée ne clôt pas l'interruption : elle se tient
             # à côté. C'est la période principale suivante qui la clôt.
             suivantes = [autre for autre in lignes[rang + 1:] if not autre.cumul]
-            cloture = self.date_de(suivantes[0].debut) if suivantes else fin
+            creux_de_carriere.append((ligne.statut, self.date_de(ligne.debut),
+                                      self.date_de(suivantes[0].debut) if suivantes else fin))
+        # Une période à l'étranger ne compte que pour les mois de la carrière
+        # qu'elle couvre : celle qui précède le premier emploi en France n'en
+        # interrompt aucun.
+        for periode in self.etranger:
+            ouverture = max(self.date_de(periode.debut), debut, key=lambda d: d.rang)
+            cloture = min(self.date_de(periode.fin), fin, key=lambda d: d.rang)
+            if cloture.rang > ouverture.rang:
+                creux_de_carriere.append(("sans_activite", ouverture, cloture))
+        for motif, ouverture, cloture in creux_de_carriere:
             for annee in range(ouverture.annee, cloture.annee + 1):
                 creux = mois_travailles(annee, ouverture, cloture)
                 portee = mois_travailles(annee, debut, fin)
                 if portee and creux * 2 > portee:
-                    annees[annee] = ligne.statut
+                    annees[annee] = motif
         annees.update(self.interruptions_analysees(motifs_connus))
         return annees
 
@@ -1650,6 +1735,74 @@ class Saisie:
                     f"Radiation pour invalidité en {date} : elle ne suit pas le départ "
                     f"à la retraite, fixé en {depart}.")
 
+    def etranger_declare(self) -> dict | None:
+        """La carrière hors de France que la saisie déclare : les ``periodes``
+        — l'État, les âges du début et de la fin, l'``activite`` —, les
+        ``pensions`` étrangères — l'État, l'``age`` où elle commence, son
+        ``montant`` mensuel en euros d'aujourd'hui —, et l'État de
+        ``residence`` après le départ, ``None`` en France. Le contexte ramène
+        chaque montant à la date de sa pension avant que la chronologie le
+        reçoive (:func:`chronologie._personne`). ``None`` quand rien n'est
+        dit."""
+        if not (self.etranger or self.pensions_etrangeres or self.residence):
+            return None
+        return {
+            "periodes": [{"pays": periode.pays, "debut": periode.debut, "fin": periode.fin,
+                          "activite": periode.activite} for periode in self.etranger],
+            "pensions": [{"pays": pension.pays, "age": pension.debut,
+                          "montant": pension.montant} for pension in self.pensions_etrangeres],
+            "residence": self.residence or None,
+        }
+
+    def _verifier_etranger(self) -> None:
+        """Une période hors de France : un État qui n'est pas la France, un
+        début après quatorze ans, une fin qui le suit sans dépasser le départ,
+        et aucune autre période hors de France qui la chevauche — elle ne se
+        compte qu'une fois. Elle peut précéder le premier emploi en France.
+        Une pension étrangère : un État, un montant, et un début entre quatorze
+        et soixante-quinze ans, avant ou après le départ en France. La
+        résidence : un État étranger. Que le tableau des accords connaisse
+        l'État, c'est au contexte de le dire, qui a les données ; ce que
+        chaque accord fait des périodes, au calcul."""
+        depart = self.date_de(self.liquidation, depart=True)
+        bornes = []
+        for rang, periode in enumerate(self.etranger, start=1):
+            quoi = f"Période à l'étranger n° {rang}"
+            _verifier_etat(periode.pays, quoi)
+            debut, fin = self.date_de(periode.debut), self.date_de(periode.fin)
+            if periode.debut < AGE_DEBUT_MINIMAL:
+                raise ErreurSaisie(
+                    f"{quoi} : elle commence au plus tôt à {AGE_DEBUT_MINIMAL} ans, en "
+                    f"{self.date_de(AGE_DEBUT_MINIMAL)}.")
+            if fin.rang <= debut.rang:
+                raise ErreurSaisie(
+                    f"{quoi} : elle finit ({fin}) après avoir commencé ({debut}).")
+            if fin.rang > depart.rang:
+                raise ErreurSaisie(
+                    f"{quoi} : elle finit au plus tard au départ à la retraite, fixé en "
+                    f"{depart}.")
+            bornes.append((debut.rang, fin.rang, rang))
+        bornes.sort()
+        for (_, fin_premiere, premiere), (debut_seconde, _, seconde) in zip(bornes,
+                                                                             bornes[1:]):
+            if debut_seconde < fin_premiere:
+                raise ErreurSaisie(
+                    f"Périodes à l'étranger n° {premiere} et n° {seconde} : elles se "
+                    "chevauchent, et un mois passé hors de France ne se compte qu'une "
+                    "fois.")
+        for rang, pension in enumerate(self.pensions_etrangeres, start=1):
+            quoi = f"Pension étrangère n° {rang}"
+            _verifier_etat(pension.pays, quoi)
+            if pension.montant <= 0:
+                raise ErreurSaisie(f"{quoi} : son montant mensuel est strictement positif.")
+            if not AGE_DEBUT_MINIMAL <= pension.debut <= AGE_LIQUIDATION_MAXIMAL:
+                raise ErreurSaisie(
+                    f"{quoi} : elle commence "
+                    f"{self.fenetre(AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL)}, soit de "
+                    f"{AGE_DEBUT_MINIMAL} à {AGE_LIQUIDATION_MAXIMAL} ans.")
+        if self.residence:
+            _verifier_etat(self.residence, "Résidence après le départ")
+
     def demandes_de_pension_declarees(self) -> dict[str, float] | None:
         """Les pensions dont la saisie dit la date, telles que la chronologie
         les reçoit : l'âge de chaque demande, par régime ; ``None`` sans elles."""
@@ -1765,6 +1918,7 @@ class Saisie:
                  else self.mois_de(self.radiation_invalidite)),
                 ("invalidite_imputable", OUI if self.invalidite_imputable else None),
                 ("taux_invalidite", self.taux_invalidite)) if valeur is not None},
+            **({"residence": self.residence} if self.residence else {}),
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,
@@ -1804,6 +1958,19 @@ class Saisie:
                 champs[f"metier{rang}_cumul"] = CUMUL
                 if metier.fin is not None:
                     champs[f"metier{rang}_fin"] = self.mois_de(metier.fin)
+        # Les périodes hors de France et les pensions étrangères, de même :
+        # une ligne par période, une par pension, et l'activité salariée,
+        # celle d'une ligne qui ne la dit pas, ne s'écrit pas.
+        for rang, periode in enumerate(self.etranger, start=1):
+            champs[f"etranger{rang}_pays"] = periode.pays
+            champs[f"etranger{rang}_debut"] = self.mois_de(periode.debut)
+            champs[f"etranger{rang}_fin"] = self.mois_de(periode.fin)
+            if periode.activite != ACTIVITES_A_L_ETRANGER[0][0]:
+                champs[f"etranger{rang}_activite"] = periode.activite
+        for rang, pension in enumerate(self.pensions_etrangeres, start=1):
+            champs[f"pension_etrangere{rang}_pays"] = pension.pays
+            champs[f"pension_etrangere{rang}"] = _nombre(pension.montant)
+            champs[f"pension_etrangere{rang}_debut"] = self.mois_de(pension.debut)
         champs.update(remplacements)
         return urlencode(champs)
 
@@ -1880,6 +2047,94 @@ def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
                  if fin else None),
         ))
     return metiers
+
+
+def _periodes_etrangeres_saisies(parametres: dict[str, str], mois_de_naissance: DateMois,
+                                 tolerante: bool = False) -> list[PeriodeEtrangereSaisie]:
+    """Les périodes passées hors de France, lues dans « etranger1_… » à
+    « etranger4_… » : l'État, le mois où elle commence, celui où elle finit,
+    et l'activité. Une ligne vide ne dit rien ; une ligne commencée sans son
+    État ou ses deux dates se refuse, comme une ligne de métier, et une
+    activité que la saisie ne connaît pas aussi, au lieu de valoir salariée
+    en silence."""
+    activites = [code for code, _ in ACTIVITES_A_L_ETRANGER]
+    periodes: list[PeriodeEtrangereSaisie] = []
+    for rang in range(1, ETRANGER_MAXIMUM + 1):
+        pays = (parametres.get(f"etranger{rang}_pays") or "").strip()
+        debut = (parametres.get(f"etranger{rang}_debut") or "").strip()
+        fin = (parametres.get(f"etranger{rang}_fin") or "").strip()
+        activite = (parametres.get(f"etranger{rang}_activite") or "").strip()
+        if not (pays or debut or fin or activite):
+            continue
+        # Remontrée, la ligne incomplète n'est pas une période : la lecture
+        # s'y arrête, et c'est la ligne vide du formulaire qui la reçoit.
+        if tolerante and not (pays and debut and fin):
+            break
+        if not pays:
+            raise ErreurSaisie(
+                f"Période à l'étranger n° {rang} : indiquer l'État, ou laisser sa "
+                "ligne entièrement vide.")
+        if not (debut and fin):
+            raise ErreurSaisie(
+                f"Période à l'étranger n° {rang} : indiquer le mois où elle commence "
+                "et celui où elle finit.")
+        if activite not in ("", *activites):
+            raise ErreurSaisie(
+                f"Période à l'étranger n° {rang} : « {activite} » n'est pas une "
+                "activité possible — " + " ou ".join(activites) + ".")
+        periodes.append(PeriodeEtrangereSaisie(
+            pays=pays,
+            debut=_age_saisi(parametres, f"etranger{rang}_debut", 0.0, mois_de_naissance),
+            fin=_age_saisi(parametres, f"etranger{rang}_fin", 0.0, mois_de_naissance),
+            activite=activite or activites[0],
+        ))
+    return periodes
+
+
+def _pensions_etrangeres_saisies(parametres: dict[str, str], mois_de_naissance: DateMois,
+                                 tolerante: bool = False) -> list[PensionEtrangereSaisie]:
+    """Les pensions étrangères, lues dans « pension_etrangere1… » à
+    « pension_etrangere4… » : l'État qui la sert (« _pays »), son montant
+    brut mensuel, et le mois où elle commence (« _debut »). Une ligne
+    commencée se refuse sans l'un des trois."""
+    pensions: list[PensionEtrangereSaisie] = []
+    for rang in range(1, ETRANGER_MAXIMUM + 1):
+        pays = (parametres.get(f"pension_etrangere{rang}_pays") or "").strip()
+        montant = (parametres.get(f"pension_etrangere{rang}") or "").strip()
+        debut = (parametres.get(f"pension_etrangere{rang}_debut") or "").strip()
+        if not (pays or montant or debut):
+            continue
+        if tolerante and not (pays and montant and debut):
+            break
+        if not pays:
+            raise ErreurSaisie(
+                f"Pension étrangère n° {rang} : indiquer l'État qui la sert, ou laisser "
+                "sa ligne entièrement vide.")
+        if not montant:
+            raise ErreurSaisie(
+                f"Pension étrangère n° {rang} : indiquer son montant brut mensuel, en "
+                "euros.")
+        if not debut:
+            raise ErreurSaisie(
+                f"Pension étrangère n° {rang} : indiquer le mois où elle commence.")
+        pensions.append(PensionEtrangereSaisie(
+            pays=pays,
+            montant=_reel(parametres, f"pension_etrangere{rang}", 0.0),
+            debut=_age_saisi(parametres, f"pension_etrangere{rang}_debut", 0.0,
+                             mois_de_naissance),
+        ))
+    return pensions
+
+
+def _verifier_etat(code: str, quoi: str) -> None:
+    """Un État étranger, tel que la saisie l'écrit : son code à deux
+    majuscules, ou :data:`AUTRE_ETAT` ; jamais la France."""
+    if code == "FR":
+        raise ErreurSaisie(f"{quoi} : la France n'est pas un État étranger.")
+    if code != AUTRE_ETAT and not _CODE_D_ETAT.fullmatch(code):
+        raise ErreurSaisie(
+            f"{quoi} : « {code} » n'est pas un État — son code à deux majuscules, comme "
+            f"DE ou MA, ou « {AUTRE_ETAT} ».")
 
 
 #: Ce qu'un nombre saisi a le droit de s'écrire — et rien d'autre. L'expression

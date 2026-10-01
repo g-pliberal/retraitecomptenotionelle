@@ -44,6 +44,7 @@ from retraite_notionnelle.donnees.caracteristiques import CaracteristiquesRetrai
 from retraite_notionnelle.donnees.assiette import POSTES_ASSIETTE  # noqa: E402
 from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     SerieAnnuelle,
+    charger_accords_internationaux,
     charger_serie_annuelle,
     charger_yaml,
     compter_institutions,
@@ -1246,6 +1247,14 @@ def _versions_des_fiches() -> dict:
             | Invalidites(DONNEES).fiches())
 
 
+def _accords_internationaux() -> dict:
+    """Le tableau des accords qui coordonnent les retraites françaises avec
+    celles d'un autre État (domaine des carrières hors de France) : le
+    contexte du site y contrôle l'État d'une période ou d'une pension
+    étrangère, comme celui du Python."""
+    return charger_accords_internationaux(DONNEES)
+
+
 def _presomptions() -> dict:
     """Les présomptions du vocabulaire (docs/architecture.md, § 5.6) : ce que
     chacune dit et sa valeur. La chronologie du site en lit la valeur quand
@@ -1690,6 +1699,7 @@ def construire(bilan: bytes) -> bytes:
         "carriere_longue": _carriere_longue(),
         "versions_des_fiches": _versions_des_fiches(),
         "presomptions": _presomptions(),
+        "accords_internationaux": _accords_internationaux(),
         "sortes_d_evenement": _sortes_d_evenement(),
         "neutralisations": _neutralisations(),
         "univers": _univers(),

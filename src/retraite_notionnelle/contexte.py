@@ -21,7 +21,10 @@ from .carriere import Affiliations, Metier, formater_borne, salaire_moyen_annuel
 from .config import Parametres
 from .donnees.assiette import AssietteActivite
 from .donnees.bilan import BilanFige, charger_bilan
-from .donnees.chargement import charger_periodes_non_travaillees
+from .donnees.chargement import (
+    charger_accords_internationaux,
+    charger_periodes_non_travaillees,
+)
 from .donnees.depenses import DepensesRetraite
 from .donnees.distribution import DistributionPensions
 from .donnees.equilibre import ComptesRetraite, variante_du_scenario
@@ -35,6 +38,7 @@ from .remuneration import (
 )
 from .restitution import Restitution
 from .saisie import (
+    AUTRE_ETAT,
     HEURES_SMIC_PAR_MOIS,
     NIVEAU_MAXIMAL,
     NIVEAU_MINIMAL,
@@ -316,6 +320,7 @@ class Contexte:
                 )
         emploi_retraite = self._emploi_retraite(simulateur, saisie)
         demandes = _demandes_de_pension(simulateur, saisie)
+        etranger = _etranger(simulateur, saisie)
 
         def batir(niveaux: list[float]) -> "Carriere":
             return simulateur.carriere_parcours(
@@ -338,6 +343,7 @@ class Contexte:
                 emploi_retraite=emploi_retraite,
                 demandes_de_pension=demandes,
                 invalidite=saisie.invalidite_declaree(),
+                etranger=etranger,
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -437,6 +443,7 @@ class Contexte:
             emploi_retraite=self._emploi_retraite(simulateur, saisie),
             demandes_de_pension=_demandes_de_pension(simulateur, saisie),
             invalidite=saisie.invalidite_declaree(),
+            etranger=_etranger(simulateur, saisie),
             part_primes=saisie.primes,
             identifiant="assuré",
         )
@@ -467,6 +474,49 @@ def _demandes_de_pension(simulateur: Simulateur, saisie: Saisie) -> dict[str, fl
                 f"Pension demandée à une date : aucun régime « {code} » dans le "
                 "catalogue du modèle.")
     return demandes
+
+
+def _etranger(simulateur: Simulateur, saisie: Saisie) -> dict | None:
+    """La carrière hors de France que la saisie déclare, telle que la
+    chronologie la reçoit. Chaque État s'y contrôle sur le tableau des
+    accords : c'est ici qu'un code inconnu se refuse, la saisie n'ayant pas
+    les données. Le montant de chaque pension étrangère, saisi en euros
+    d'aujourd'hui, y devient son montant ``mensuel`` en euros de l'année où
+    elle commence : il suit les prix, faute de connaître la revalorisation de
+    l'autre État."""
+    etranger = saisie.etranger_declare()
+    if etranger is None:
+        return None
+    etats = charger_accords_internationaux(simulateur.macro.racine)
+
+    def controler(code: str, quoi: str) -> None:
+        if code != AUTRE_ETAT and code not in etats:
+            raise ErreurSaisie(
+                f"{quoi} : aucun État « {code} » au tableau des accords. Un État "
+                f"qu'aucun accord ne lie à la France s'écrit « {AUTRE_ETAT} » ; une "
+                "collectivité d'outre-mer qui a son régime se déclare par ce régime, "
+                "dans la carrière.")
+
+    for rang, periode in enumerate(etranger["periodes"], start=1):
+        controler(periode["pays"], f"Période à l'étranger n° {rang}")
+    courante = simulateur.parametres.annee_courante
+    pensions = []
+    for rang, pension in enumerate(etranger["pensions"], start=1):
+        controler(pension["pays"], f"Pension étrangère n° {rang}")
+        annee = saisie.date_de(pension["age"]).annee
+        pensions.append({"pays": pension["pays"], "age": pension["age"],
+                         "mensuel": pension["montant"]
+                         * simulateur.macro.coefficient_prix(courante, annee)})
+    residence = etranger["residence"]
+    if residence is not None:
+        controler(residence, "Résidence après le départ")
+        if residence != AUTRE_ETAT and all(
+                accord["instrument"] == "organisation_internationale"
+                for accord in etats[residence]["accords"]):
+            raise ErreurSaisie(
+                "Résidence après le départ : on réside dans un État, non dans une "
+                "organisation internationale.")
+    return {**etranger, "pensions": pensions}
 
 
 def _verifier_radiation_pour_invalidite(affiliations: Affiliations, carriere) -> None:

@@ -3398,6 +3398,37 @@ n° 2008/58, que la base n'a pas rendue ; les conventions d'avant l'entrée des
 États dans l'Union, dont seules les dates sont lues ; le prorata des
 conventions à option, que la Cnav n'écrit pas. Aucun résultat ne bouge.
 
+**Deuxième étape, le 1er octobre : les faits, et la saisie qui les lit.**
+L'adresse du simulateur porte trois groupes de champs, qui ne servent qu'à
+eux : jusqu'à quatre périodes hors de France — `etrangerN_pays`, le code de
+l'État au tableau des accords, ou `autre` pour un État qu'aucun accord ne lie
+à la France, `etrangerN_debut`, `etrangerN_fin`, et `etrangerN_activite`,
+salariée quand la ligne ne la dit pas, puisque 23 des 37 conventions en
+vigueur ne coordonnent que les salariés — ; jusqu'à quatre pensions
+étrangères — `pension_etrangereN_pays`, `pension_etrangereN`, son montant
+brut mensuel en euros d'aujourd'hui, et `pension_etrangereN_debut` — ; et
+`residence`, l'État où la personne réside après son départ. Une pension
+étrangère est une ligne à part, et non un champ de la période : un État sert
+souvent plusieurs pensions, de base et complémentaires, et une pension compte
+à l'écrêtement du minimum sans que ses périodes comptent pour le taux. La
+chronologie les garde dans les deux moteurs : une période à l'étranger par
+période, son État pour `territoire` — le champ du contrat C.1 que rien
+n'écrivait encore —, un acte de la caisse de l'État par pension, la
+liquidation qu'elle notifie, son montant ramené sur les prix au mois où elle
+commence, et une résidence à compter du départ ; la carrière les lit. Une
+année que l'étranger occupe pour plus de la moitié de ses mois de carrière y
+est une année sans activité, comme celle d'une période sans emploi ; une
+période qui précède le premier emploi en France n'en interrompt aucune. Le
+paquet du site porte le tableau des accords, sur lequel les deux contextes
+contrôlent chaque État. Se refusent, avec les mêmes mots dans les deux
+moteurs : une ligne incomplète, une activité ou un État inconnus, la France,
+une période avant quatorze ans ou après le départ, deux qui se chevauchent,
+une pension sans montant ou qui commence hors de quatorze à soixante-quinze
+ans, une résidence dans une organisation internationale. Aucune présomption
+nouvelle : celles qui diront la résidence en France et l'absence de pension
+étrangère de qui n'en déclare pas entreront avec le calcul qui les lit, à la
+troisième étape. Le moteur ne lit pas encore ces faits : aucun témoin ne bouge.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

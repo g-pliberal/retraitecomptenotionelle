@@ -53,7 +53,14 @@ Ce que les faits portent, par sorte :
   retraite progressive : ``acte: retraite_progressive``, son ``age`` et la
   ``quotite`` du temps partiel qu'elle garde, jusqu'au départ ; pour la
   pension d'un régime qu'elle demande à une date dite :
-  ``acte: demande_de_pension``, le ``regime`` et l'``age``, un acte par régime.
+  ``acte: demande_de_pension``, le ``regime`` et l'``age``, un acte par régime ;
+* ``periode_a_l_etranger`` — l'``activite``, salariée ou non ; son État est
+  son ``territoire``, le code du tableau des accords, ou ``autre`` ;
+* ``acte_de_la_caisse`` — pour une pension étrangère : ``acte: liquidation``
+  et l'``age`` où elle commence ; son ``montant`` mensuel, en euros de cette
+  date ; l'État qui la sert pour ``territoire`` ;
+* ``residence`` — l'État où la personne réside après son départ, pour
+  ``territoire``, quand ce n'est pas la France.
 
 L'activité exercée APRÈS le départ, le cumul emploi-retraite, est une
 ``periode_d_activite`` comme les autres, qui porte ``apres_depart`` et
@@ -122,10 +129,12 @@ def annees_revolues(debut: str, fin: str) -> int:
 
 def fait(ident: str, personne: str, sorte: str, debut: str, fin: str | None = None,
          attributs: dict | None = None, presomption: str | None = None,
-         montant: dict | None = None) -> dict:
+         montant: dict | None = None, territoire: str | None = None) -> dict:
     """Un fait du contrat C.1 : déclaré, ou posé par la présomption qu'il
     nomme. ``montant`` — un montant et sa monnaie — ne s'écrit que s'il est
-    donné : les ressources d'une personne en portent un."""
+    donné : les ressources d'une personne en portent un. ``territoire`` de
+    même : un fait qui ne le dit pas a lieu en métropole, le défaut du
+    contrat, et seuls ceux d'une carrière hors de France le disent."""
     resultat = {
         "schema_version": SCHEMA_VERSION,
         "id": ident,
@@ -141,6 +150,8 @@ def fait(ident: str, personne: str, sorte: str, debut: str, fin: str | None = No
         resultat["presomption"] = presomption
     if montant is not None:
         resultat["montant"] = dict(montant)
+    if territoire is not None:
+        resultat["territoire"] = territoire
     return resultat
 
 
@@ -260,6 +271,7 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
               emploi_retraite: dict | None = None,
               demandes_de_pension: dict[str, float] | None = None,
               invalidite: dict | None = None,
+              etranger: dict | None = None,
               ) -> tuple[list[dict], list[dict], list[dict]]:
     """Ce que toute saisie déclare de l'assuré : sa naissance, son départ,
     ses enfants, et, s'il les dit, son conjoint et son décès. Rend les
@@ -294,7 +306,15 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     ``age``, compté de même, au plus tard au départ, son ``imputable`` au
     service et son ``taux`` d'invalidité en pour cent. Deux décisions
     médicales et une radiation, que :func:`decision_medicale` et
-    :func:`radiation_pour_invalidite` relisent."""
+    :func:`radiation_pour_invalidite` relisent.
+    ``etranger`` déclare la carrière hors de France : ses ``periodes`` —
+    l'État (``pays``), le ``debut`` et la ``fin``, comptés comme un début
+    d'activité, au plus tard au départ, et l'``activite`` —, ses ``pensions``
+    étrangères — l'État, l'``age`` où elle commence, compté de même, et son
+    montant ``mensuel`` en euros de cette date —, et l'État de ``residence``
+    après le départ. Des périodes à l'étranger, des actes de la caisse de
+    chaque État, une résidence, que :func:`periodes_a_l_etranger`,
+    :func:`pensions_etrangeres` et :func:`residence` relisent."""
     assure = naissance_de_l_assure(annee_naissance, mois_naissance, sexe,
                                    jour_naissance, presomptions)
     faits_naissance = [assure]
@@ -355,6 +375,8 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
              "employeur": emploi_retraite["employeur"]}))
     if invalidite is not None:
         depart += _invalidite(assure, age_liquidation, invalidite)
+    if etranger is not None:
+        depart += _etranger(assure, age_liquidation, etranger)
     role = "mere" if sexe == "F" else "pere"
     liens = [lien(f"filiation_enfant_{rang}", ASSURE, f"enfant_{rang}", "filiation",
                   {ASSURE: role, f"enfant_{rang}": "enfant"},
@@ -436,6 +458,64 @@ def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -
     return faits
 
 
+#: La nature d'une activité exercée hors de France : salariée, ou non.
+ACTIVITES_A_L_ETRANGER = ("salariee", "non_salariee")
+
+
+def _etat_etranger(code) -> str:
+    """Le code d'un État étranger, tel qu'un fait le porte pour territoire ;
+    jamais la France, ni la métropole."""
+    if not isinstance(code, str) or not code or code in ("FR", "metropole"):
+        raise ValueError(f"un État étranger : son code, reçu « {code} »")
+    return code
+
+
+def _etranger(assure: dict, age_liquidation: float | None, etranger: dict) -> list[dict]:
+    """Les faits de la carrière hors de France que la saisie déclare (voir
+    :func:`_personne`) : une période à l'étranger par période, son État pour
+    territoire ; un acte de la caisse de l'État par pension étrangère, la
+    liquidation qu'elle notifie, avec son montant ; la résidence, à compter
+    du départ."""
+    if age_liquidation is None:
+        raise ValueError("une carrière hors de France déclarée suppose un départ")
+    naissance = mois_de(assure["debut"])
+    depart = origine_de(assure).plus_mois(en_mois(age_liquidation))
+    faits = []
+    bornes = []
+    for rang, periode in enumerate(etranger.get("periodes") or [], 1):
+        debut = naissance.plus_mois(en_mois(periode["debut"]))
+        fin = naissance.plus_mois(en_mois(periode["fin"]))
+        if debut.rang <= naissance.rang or fin.rang <= debut.rang or fin.rang > depart.rang:
+            raise ValueError("une période à l'étranger commence après la naissance, finit "
+                             "après avoir commencé, et au plus tard au départ")
+        if periode.get("activite") not in ACTIVITES_A_L_ETRANGER:
+            raise ValueError(f"l'activité d'une période à l'étranger : salariée ou non, reçu "
+                             f"« {periode.get('activite')} »")
+        bornes.append((debut.rang, fin.rang))
+        faits.append(fait(f"etranger_{rang}", ASSURE, "periode_a_l_etranger", _jour(debut),
+                          _jour(fin), {"activite": periode["activite"]},
+                          territoire=_etat_etranger(periode.get("pays"))))
+    bornes.sort()
+    if any(suivante[0] < precedente[1] for precedente, suivante in zip(bornes, bornes[1:])):
+        raise ValueError("deux périodes à l'étranger se chevauchent")
+    for rang, pension in enumerate(etranger.get("pensions") or [], 1):
+        age = pension["age"]
+        debut = naissance.plus_mois(en_mois(age))
+        if debut.rang <= naissance.rang:
+            raise ValueError("une pension étrangère commence après la naissance")
+        if not pension["mensuel"] > 0:
+            raise ValueError(f"le montant d'une pension étrangère : positif, reçu "
+                             f"{pension['mensuel']}")
+        faits.append(fait(f"pension_etrangere_{rang}", ASSURE, "acte_de_la_caisse",
+                          _jour(debut), attributs={"acte": "liquidation", "age": age},
+                          montant={"mensuel": pension["mensuel"], "monnaie": "EUR"},
+                          territoire=_etat_etranger(pension.get("pays"))))
+    if etranger.get("residence") is not None:
+        faits.append(fait(f"residence_{ASSURE}", ASSURE, "residence", _jour(depart),
+                          territoire=_etat_etranger(etranger["residence"])))
+    return faits
+
+
 def _naissance_du_conjoint(conjoint: dict) -> dict:
     """Le fait de naissance du conjoint déclaré : sa date et son sexe."""
     jour, precision = date_declaree(conjoint["naissance"], "la naissance du conjoint")
@@ -452,7 +532,7 @@ def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
               deces: str | None = None, retraite_progressive: dict | None = None,
               emploi_retraite: dict | None = None,
               demandes_de_pension: dict[str, float] | None = None,
-              invalidite: dict | None = None) -> dict:
+              invalidite: dict | None = None, etranger: dict | None = None) -> dict:
     """La chronologie d'une carrière construite ligne à ligne : la naissance,
     le départ et les enfants, sans ses périodes, que l'appelant a déjà
     traduites en années."""
@@ -463,7 +543,7 @@ def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
                                          retraite_progressive=retraite_progressive,
                                          emploi_retraite=emploi_retraite,
                                          demandes_de_pension=demandes_de_pension,
-                                         invalidite=invalidite)
+                                         invalidite=invalidite, etranger=etranger)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + depart, "liens": liens}
 
 
@@ -476,7 +556,7 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 deces: str | None = None, retraite_progressive: dict | None = None,
                 emploi_retraite: dict | None = None,
                 demandes_de_pension: dict[str, float] | None = None,
-                invalidite: dict | None = None) -> dict:
+                invalidite: dict | None = None, etranger: dict | None = None) -> dict:
     """La chronologie d'un parcours : un fait par métier, daté au mois, et un
     par année d'interruption.
 
@@ -507,7 +587,7 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                                          retraite_progressive=retraite_progressive,
                                          emploi_retraite=emploi_retraite,
                                          demandes_de_pension=demandes_de_pension,
-                                         invalidite=invalidite)
+                                         invalidite=invalidite, etranger=etranger)
     mois_de_naissance = mois_de(naissance[0]["debut"])
     bornes = [mois_de_naissance.plus_mois(en_mois(metier.age_debut)) for metier in principaux]
     debut = bornes[0]
@@ -570,7 +650,7 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
               deces: str | None = None, retraite_progressive: dict | None = None,
               emploi_retraite: dict | None = None,
               demandes_de_pension: dict[str, float] | None = None,
-              invalidite: dict | None = None) -> dict:
+              invalidite: dict | None = None, etranger: dict | None = None) -> dict:
     """La chronologie d'un relevé : un fait par ligne, une année civile
     chacun, dans l'ordre du relevé — la première ligne d'une année est
     l'activité principale."""
@@ -593,7 +673,7 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
                                          retraite_progressive=retraite_progressive,
                                          emploi_retraite=emploi_retraite,
                                          demandes_de_pension=demandes_de_pension,
-                                         invalidite=invalidite)
+                                         invalidite=invalidite, etranger=etranger)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
 
@@ -759,6 +839,28 @@ def radiation_pour_invalidite(chronologie: dict, personne: str) -> dict | None:
         if f["attributs"].get("motif") == "invalidite":
             return f
     return None
+
+
+def periodes_a_l_etranger(chronologie: dict, personne: str) -> list[dict]:
+    """Les périodes qu'une personne a passées hors de France, dans leur ordre :
+    leur État est leur territoire."""
+    return faits_de(chronologie, personne, "periode_a_l_etranger")
+
+
+def pensions_etrangeres(chronologie: dict, personne: str) -> list[dict]:
+    """Les pensions étrangères d'une personne, dans leur ordre : les
+    liquidations que la caisse d'un autre État lui notifie, celui-ci pour
+    territoire."""
+    return [acte for acte in faits_de(chronologie, personne, "acte_de_la_caisse")
+            if acte["attributs"].get("acte") == "liquidation"
+            and acte.get("territoire", "metropole") != "metropole"]
+
+
+def residence(chronologie: dict, personne: str) -> dict | None:
+    """La résidence qu'une personne déclare hors de France, si elle la dit :
+    son État pour territoire."""
+    faits = faits_de(chronologie, personne, "residence")
+    return faits[0] if faits else None
 
 
 def periodes(chronologie: dict, personne: str) -> list[dict]:

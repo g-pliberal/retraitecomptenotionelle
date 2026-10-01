@@ -1554,6 +1554,24 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
         {"conjoint_invalidite": "2024-02"},
         {"conjoint": "1962", "conjoint_invalidite": "2024-13"},
         {"conjoint": "1962", "conjoint_invalidite": "1961-12"},
+        # Les carrières hors de France (docs/architecture.md, § 11) : une ligne
+        # incomplète, une activité ou un État que la saisie ne connaît pas, la
+        # France, des dates hors de la carrière ou qui se chevauchent, une
+        # pension sans montant, un État absent du tableau des accords.
+        {"etranger1_pays": "DE"},
+        {"etranger1_pays": "DE", "etranger1_debut": "1990-01", "etranger1_fin": "1992-01",
+         "etranger1_activite": "independante"},
+        {"etranger1_pays": "FR", "etranger1_debut": "1990-01", "etranger1_fin": "1992-01"},
+        {"etranger1_pays": "Maroc", "etranger1_debut": "1990-01", "etranger1_fin": "1992-01"},
+        {"etranger1_pays": "DE", "etranger1_debut": "1988-01", "etranger1_fin": "1992-01"},
+        {"etranger1_pays": "DE", "etranger1_debut": "2035-01", "etranger1_fin": "2042-01"},
+        {"etranger1_pays": "DE", "etranger1_debut": "1995-01", "etranger1_fin": "1999-01",
+         "etranger2_pays": "AT", "etranger2_debut": "1998-12", "etranger2_fin": "2001-01"},
+        {"pension_etrangere1_pays": "DE", "pension_etrangere1_debut": "2040-01"},
+        {"pension_etrangere1_pays": "DE", "pension_etrangere1": "300",
+         "pension_etrangere1_debut": "2051-01"},
+        {"etranger1_pays": "ZZ", "etranger1_debut": "1995-01", "etranger1_fin": "1999-01"},
+        {"residence": "OI"},
     ]
     # Les voisines immédiates de ces refus, qui doivent au contraire calculer :
     # une borne posée d'un cran trop loin se verrait ici, et nulle part ailleurs.
@@ -1570,6 +1588,12 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
          "invalidite_imputable": "oui", "taux_invalidite": "60",
          "metier2_debut": "2010-06", "metier2_statut": "salarie_prive_non_cadre"},
         {"conjoint": "1962", "conjoint_invalidite": "1962-02"},
+        {"etranger1_pays": "DE", "etranger1_debut": "1989-01", "etranger1_fin": "1992-01",
+         "etranger1_activite": "non_salariee", "pension_etrangere1_pays": "DE",
+         "pension_etrangere1": "300", "pension_etrangere1_debut": "2050-01",
+         "residence": "PT"},
+        {"etranger1_pays": "autre", "etranger1_debut": "1995-01", "etranger1_fin": "1999-01",
+         "etranger2_pays": "OI", "etranger2_debut": "1999-01", "etranger2_fin": "2001-01"},
     ]
 
     for champs_, refuse in ((refuses, True), (acceptees, False)):

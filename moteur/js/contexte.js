@@ -23,7 +23,8 @@ import { Simulateur, niveauPourPension } from "./simulateur.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./droit/coordonner.js";
 import * as g from "./gabarit.js";
 import {
-  Echelle, ErreurSaisie, HEURES_SMIC_PAR_MOIS, NIVEAU_MAXIMAL, NIVEAU_MINIMAL, refus,
+  AUTRE_ETAT, Echelle, ErreurSaisie, HEURES_SMIC_PAR_MOIS, NIVEAU_MAXIMAL, NIVEAU_MINIMAL,
+  refus,
 } from "./saisie.js";
 
 /**
@@ -299,6 +300,7 @@ export class Contexte {
     }
     const emploiRetraite = this.emploiRetraite(simulateur, saisie);
     const demandes = demandesDePension(simulateur, saisie);
+    const etranger = etrangerDeclare(simulateur, saisie);
     const batir = (niveaux) => simulateur.carriereParcours({
       annee_naissance: saisie.naissance,
       mois_naissance: saisie.naissance_mois,
@@ -319,6 +321,7 @@ export class Contexte {
       emploi_retraite: emploiRetraite,
       demandes_de_pension: demandes,
       invalidite: saisie.invaliditeDeclaree(),
+      etranger,
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -418,6 +421,7 @@ export class Contexte {
       emploi_retraite: this.emploiRetraite(simulateur, saisie),
       demandes_de_pension: demandesDePension(simulateur, saisie),
       invalidite: saisie.invaliditeDeclaree(),
+      etranger: etrangerDeclare(simulateur, saisie),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -440,6 +444,52 @@ export class Contexte {
     }
     return emploi;
   }
+}
+
+/**
+ * La carrière hors de France que la saisie déclare, telle que la chronologie la
+ * reçoit. Chaque État s'y contrôle sur le tableau des accords, la saisie
+ * n'ayant pas les données ; le montant de chaque pension étrangère, saisi en
+ * euros d'aujourd'hui, y devient son montant `mensuel` en euros de l'année où
+ * elle commence, sur les prix. Voir `_etranger` du Python.
+ */
+function etrangerDeclare(simulateur, saisie) {
+  const etranger = saisie.etrangerDeclare();
+  if (etranger === null) {
+    return null;
+  }
+  const etats = simulateur.macro.paquet.accords_internationaux;
+  const controler = (code, quoi) => {
+    if (code !== AUTRE_ETAT && !Object.hasOwn(etats, code)) {
+      throw new ErreurSaisie(
+        `${quoi} : aucun État « ${code} » au tableau des accords. Un État qu'aucun `
+        + `accord ne lie à la France s'écrit « ${AUTRE_ETAT} » ; une collectivité `
+        + "d'outre-mer qui a son régime se déclare par ce régime, dans la carrière.",
+      );
+    }
+  };
+  etranger.periodes.forEach((periode, index) => {
+    controler(periode.pays, `Période à l'étranger n° ${index + 1}`);
+  });
+  const courante = simulateur.parametres.annee_courante;
+  const pensions = etranger.pensions.map((pension, index) => {
+    controler(pension.pays, `Pension étrangère n° ${index + 1}`);
+    const annee = saisie.dateDe(pension.age).annee;
+    return { pays: pension.pays, age: pension.age,
+      mensuel: pension.montant * simulateur.macro.coefficientPrix(courante, annee) };
+  });
+  const { residence } = etranger;
+  if (residence !== null) {
+    controler(residence, "Résidence après le départ");
+    if (residence !== AUTRE_ETAT && etats[residence].accords.every(
+      (accord) => accord.instrument === "organisation_internationale")) {
+      throw new ErreurSaisie(
+        "Résidence après le départ : on réside dans un État, non dans une "
+        + "organisation internationale.",
+      );
+    }
+  }
+  return { ...etranger, pensions };
 }
 
 /**

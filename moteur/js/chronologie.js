@@ -72,10 +72,12 @@ export function anneesRevolues(debut, fin) {
 /**
  * Un fait du contrat C.1 : déclaré, ou posé par la présomption qu'il nomme.
  * `montant` — un montant et sa monnaie — ne s'écrit que s'il est donné : les
- * ressources d'une personne en portent un.
+ * ressources d'une personne en portent un. `territoire` de même : un fait qui
+ * ne le dit pas a lieu en métropole, le défaut du contrat, et seuls ceux d'une
+ * carrière hors de France le disent.
  */
 export function fait(ident, personne, sorte, debut, fin = null, attributs = null,
-  presomption = null, montant = null) {
+  presomption = null, montant = null, territoire = null) {
   const resultat = {
     schema_version: SCHEMA_VERSION,
     id: ident,
@@ -92,6 +94,9 @@ export function fait(ident, personne, sorte, debut, fin = null, attributs = null
   }
   if (montant !== null) {
     resultat.montant = { ...montant };
+  }
+  if (territoire !== null) {
+    resultat.territoire = territoire;
   }
   return resultat;
 }
@@ -225,12 +230,14 @@ export function dateDeclaree(valeur, quoi) {
  * ses `ressources` annuelles et son `invalidite`, une décision médicale
  * datée, s'il les dit ; `deces` date le décès de l'assuré, qui clôt le
  * mariage ; `demandesDePension` dit, régime par régime,
- * l'âge auquel il demande sa pension. Voir `_personne` du Python.
+ * l'âge auquel il demande sa pension ; `etranger`, la carrière hors de France :
+ * ses périodes, ses pensions étrangères et l'État de sa résidence après le
+ * départ. Voir `_personne` du Python.
  */
 function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants,
   naissancesEnfants = [], jourNaissance = null, presomptions = null, conjoint = null,
   deces = null, retraiteProgressive = null, emploiRetraite = null,
-  demandesDePension = null, invalidite = null) {
+  demandesDePension = null, invalidite = null, etranger = null) {
   const assure = naissanceDeLAssure(anneeNaissance, moisNaissance, sexe, jourNaissance,
     presomptions);
   const faitsNaissance = [assure];
@@ -302,6 +309,9 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
   }
   if (invalidite !== null && invalidite !== undefined) {
     depart.push(...invaliditeDeclaree(assure, ageLiquidation, invalidite));
+  }
+  if (etranger !== null && etranger !== undefined) {
+    depart.push(...etrangerDeclare(assure, ageLiquidation, etranger));
   }
   const role = sexe === "F" ? "mere" : "pere";
   const liens = [];
@@ -401,6 +411,75 @@ function invaliditeDeclaree(assure, ageLiquidation, invalidite) {
   return faits;
 }
 
+/** La nature d'une activité exercée hors de France : salariée, ou non. */
+export const ACTIVITES_A_L_ETRANGER = Object.freeze(["salariee", "non_salariee"]);
+
+/**
+ * Le code d'un État étranger, tel qu'un fait le porte pour territoire ; jamais
+ * la France, ni la métropole. Voir `_etat_etranger` du Python.
+ */
+function etatEtranger(code) {
+  if (typeof code !== "string" || !code || code === "FR" || code === "metropole") {
+    throw new Error(`un État étranger : son code, reçu « ${code ?? "None"} »`);
+  }
+  return code;
+}
+
+/**
+ * Les faits de la carrière hors de France que la saisie déclare : une période à
+ * l'étranger par période, son État pour territoire ; un acte de la caisse de
+ * l'État par pension étrangère, la liquidation qu'elle notifie, avec son
+ * montant ; la résidence, à compter du départ. Voir `_etranger` du Python.
+ */
+function etrangerDeclare(assure, ageLiquidation, etranger) {
+  if (ageLiquidation === null || ageLiquidation === undefined) {
+    throw new Error("une carrière hors de France déclarée suppose un départ");
+  }
+  const naissance = moisDe(assure.debut);
+  const depart = origineDe(assure).plusMois(enMois(ageLiquidation));
+  const faits = [];
+  const bornes = [];
+  (etranger.periodes ?? []).forEach((periode, i) => {
+    const debut = naissance.plusMois(enMois(periode.debut));
+    const fin = naissance.plusMois(enMois(periode.fin));
+    if (debut.rang <= naissance.rang || fin.rang <= debut.rang || fin.rang > depart.rang) {
+      throw new Error("une période à l'étranger commence après la naissance, finit "
+        + "après avoir commencé, et au plus tard au départ");
+    }
+    if (!ACTIVITES_A_L_ETRANGER.includes(periode.activite)) {
+      throw new Error("l'activité d'une période à l'étranger : salariée ou non, reçu "
+        + `« ${periode.activite ?? "None"} »`);
+    }
+    bornes.push([debut.rang, fin.rang]);
+    faits.push(fait(`etranger_${i + 1}`, ASSURE, "periode_a_l_etranger", jour(debut),
+      jour(fin), { activite: periode.activite }, null, null, etatEtranger(periode.pays)));
+  });
+  bornes.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  for (let i = 1; i < bornes.length; i += 1) {
+    if (bornes[i][0] < bornes[i - 1][1]) {
+      throw new Error("deux périodes à l'étranger se chevauchent");
+    }
+  }
+  (etranger.pensions ?? []).forEach((pension, i) => {
+    const { age } = pension;
+    const debut = naissance.plusMois(enMois(age));
+    if (debut.rang <= naissance.rang) {
+      throw new Error("une pension étrangère commence après la naissance");
+    }
+    if (!(pension.mensuel > 0)) {
+      throw new Error(`le montant d'une pension étrangère : positif, reçu ${pension.mensuel}`);
+    }
+    faits.push(fait(`pension_etrangere_${i + 1}`, ASSURE, "acte_de_la_caisse", jour(debut),
+      null, { acte: "liquidation", age }, null,
+      { mensuel: pension.mensuel, monnaie: "EUR" }, etatEtranger(pension.pays)));
+  });
+  if (etranger.residence !== null && etranger.residence !== undefined) {
+    faits.push(fait(`residence_${ASSURE}`, ASSURE, "residence", jour(depart), null, null,
+      null, null, etatEtranger(etranger.residence)));
+  }
+  return faits;
+}
+
 /** Le fait de naissance du conjoint déclaré : sa date et son sexe. */
 function naissanceDuConjoint(conjoint) {
   const [date, precision] = dateDeclaree(conjoint.naissance, "la naissance du conjoint");
@@ -419,10 +498,11 @@ function naissanceDuConjoint(conjoint) {
 export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation = null,
   nombreEnfants = 0, naissancesEnfants = [], jourNaissance = null, presomptions = null,
   conjoint = null, deces = null, retraiteProgressive = null, emploiRetraite = null,
-  demandesDePension = null, invalidite = null) {
+  demandesDePension = null, invalidite = null, etranger = null) {
   const [naissance, depart, liens] = personne(anneeNaissance, moisNaissance, sexe,
     ageLiquidation, nombreEnfants, naissancesEnfants, jourNaissance, presomptions,
-    conjoint, deces, retraiteProgressive, emploiRetraite, demandesDePension, invalidite);
+    conjoint, deces, retraiteProgressive, emploiRetraite, demandesDePension, invalidite,
+    etranger);
   return { schema_version: SCHEMA_VERSION, faits: [...naissance, ...depart], liens };
 }
 
@@ -453,6 +533,7 @@ export function duParcours({
   emploi_retraite = null,
   demandes_de_pension = null,
   invalidite = null,
+  etranger = null,
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -469,7 +550,7 @@ export function duParcours({
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
     conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension,
-    invalidite);
+    invalidite, etranger);
   const moisDeNaissance = moisDe(naissance[0].debut);
   const bornes = principaux.map(
     (metier) => moisDeNaissance.plusMois(enMois(metier.age_debut)),
@@ -564,6 +645,7 @@ export function duReleve({
   emploi_retraite = null,
   demandes_de_pension = null,
   invalidite = null,
+  etranger = null,
 }) {
   if (!releve || releve.length === 0) {
     throw new Error("un relevé compte au moins une ligne");
@@ -586,7 +668,7 @@ export function duReleve({
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
     conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension,
-    invalidite);
+    invalidite, etranger);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],
@@ -748,6 +830,33 @@ export function decisionMedicale(chronologie, personne, decision) {
 export function radiationPourInvalidite(chronologie, personne) {
   return faitsDe(chronologie, personne, "radiation")
     .find((f) => f.attributs.motif === "invalidite") ?? null;
+}
+
+/**
+ * Les périodes qu'une personne a passées hors de France, dans leur ordre : leur
+ * État est leur territoire.
+ */
+export function periodesALEtranger(chronologie, personne) {
+  return faitsDe(chronologie, personne, "periode_a_l_etranger");
+}
+
+/**
+ * Les pensions étrangères d'une personne, dans leur ordre : les liquidations que
+ * la caisse d'un autre État lui notifie, celui-ci pour territoire.
+ */
+export function pensionsEtrangeres(chronologie, personne) {
+  return faitsDe(chronologie, personne, "acte_de_la_caisse").filter(
+    (acte) => acte.attributs.acte === "liquidation"
+      && (acte.territoire ?? "metropole") !== "metropole");
+}
+
+/**
+ * La résidence qu'une personne déclare hors de France, si elle la dit : son État
+ * pour territoire.
+ */
+export function residence(chronologie, personne) {
+  const faits = faitsDe(chronologie, personne, "residence");
+  return faits.length > 0 ? faits[0] : null;
 }
 
 export function demandesDePension(chronologie, personne) {

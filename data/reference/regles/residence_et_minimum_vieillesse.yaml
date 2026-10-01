@@ -98,8 +98,9 @@ sources:
   a_relire:
   - >-
     Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France, à la
-    demande du propriétaire. Le moteur ne la calcule pas encore : il lui faut la
-    résidence de la personne (étape 2 du domaine).
+    demande du propriétaire. Le moteur ne la calcule pas encore : la chronologie porte
+    depuis la deuxième étape du domaine l'État où la personne réside après son départ,
+    quand ce n'est pas la France, que l'allocation ne lit pas encore (étape 3).
   - >-
     À lire : les articles du code d'avant 2006 sur l'allocation supplémentaire (L. 815-2
     et suivants) et leur condition de résidence ; la condition de séjour régulier depuis

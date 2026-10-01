@@ -144,8 +144,9 @@ sources:
   - >-
     Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France, à la
     demande du propriétaire. Le moteur ne la calcule pas encore (étape 3 du domaine) ; la
-    pension étrangère y entre comme une liquidation observée (§ 5.5), que la saisie
-    déclarera.
+    pension étrangère, que la saisie déclare depuis la deuxième étape — son État, son
+    montant brut mensuel en euros d'aujourd'hui, ramené sur les prix au mois où elle
+    commence —, y entrera comme une liquidation observée (§ 5.5).
   - >-
     À lire : la circulaire Cnav n° 2004/8, point 42, qui garde en 2004 le calcul
     d'avant quand la durée de la retraite théorique ne dépasse pas 160 trimestres ; la
