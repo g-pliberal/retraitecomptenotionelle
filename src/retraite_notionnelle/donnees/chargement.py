@@ -592,9 +592,13 @@ def charger_accords_internationaux(racine: Path) -> dict[str, dict]:
     etats = charger_yaml(racine / "reference" / "legislation"
                          / "accords_internationaux.yaml")["etats"]
 
-    def jours(table: dict) -> dict:
-        return {cle: valeur.isoformat() if hasattr(valeur, "isoformat") else valeur
-                for cle, valeur in table.items()}
+    def jours(valeur):
+        """Les dates en AAAA-MM-JJ, jusque dans les listes lues."""
+        if isinstance(valeur, dict):
+            return {cle: jours(element) for cle, element in valeur.items()}
+        if isinstance(valeur, list):
+            return [jours(element) for element in valeur]
+        return valeur.isoformat() if hasattr(valeur, "isoformat") else valeur
 
     return {code: {"nom": etat["nom"],
                    "accords": [jours(accord) for accord in etat["accords"]]}

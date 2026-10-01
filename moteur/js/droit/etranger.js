@@ -126,11 +126,29 @@ export function coordonnerLesPeriodes(moteur, carriere) {
     return {
       periode, titre, instrument, familles,
       version: version === null ? null : version.id, parametres, comparee,
-      etatsTiers: titre === ACCORD ? [...(accord.etats_tiers ?? [])] : [],
+      etatsTiers: titre === ACCORD ? etatsTiers(accord, effet) : [],
       salaireMoyenDepuis: comparee && instrument === REGLEMENTS_EUROPEENS
         ? salaireMoyenDepuis(domaine, periode, effet) : null,
     };
   });
+}
+
+/**
+ * Les États tiers que la convention fait compter pour une pension qui prend
+ * effet à `effet` : la dernière liste lue au plus tard à cette date, la plus
+ * ancienne avant toutes. Voir `_etats_tiers` du Python.
+ */
+function etatsTiers(accord, effet) {
+  const listes = (accord.etats_tiers_lus ?? []).map((lue) => [lue.le, lue.etats]);
+  if (accord.etats_tiers) {
+    listes.push([accord.etats_tiers_le ?? "", accord.etats_tiers]);
+  }
+  if (listes.length === 0) {
+    return [];
+  }
+  listes.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+  const valables = listes.filter(([le]) => le <= effet);
+  return [...(valables.length > 0 ? valables[valables.length - 1][1] : listes[0][1])];
 }
 
 /**

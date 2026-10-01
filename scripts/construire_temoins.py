@@ -890,6 +890,12 @@ def _cas() -> list[dict]:
         "naissance": "1964-03-15", "debut": "2002-01", "liquidation": "2027-01",
         "etranger1_pays": "ES", "etranger1_debut": "1984-01", "etranger1_fin": "1996-01",
         "etranger2_pays": "TN", "etranger2_debut": "1996-01", "etranger2_fin": "2002-01"}))
+    # La liste d'États tiers datée : en 2016, celle de la circulaire Cnav
+    # n° 2011/78, où la Roumanie compte avec le Maroc.
+    cas.append(("etranger_maroc_roumanie_liste_de_2011", {
+        "naissance": "1951-03-15", "debut": "2000-01", "liquidation": "2016-04",
+        "etranger1_pays": "MA", "etranger1_debut": "1975-01", "etranger1_fin": "1990-01",
+        "etranger2_pays": "RO", "etranger2_debut": "1990-01", "etranger2_fin": "2000-01"}))
     # L'ASPA n'est servie qu'à qui réside en France : une petite carrière,
     # quatre ans au Maroc puis vingt-six en France, repartie vivre au Maroc.
     cas.append(("etranger_residence_au_maroc_sans_aspa", {

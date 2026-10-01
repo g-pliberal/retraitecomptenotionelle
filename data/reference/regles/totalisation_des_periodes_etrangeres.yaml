@@ -254,12 +254,16 @@ approximations:
 - ecart: >-
     de plusieurs accords, chaque famille de régimes retient celui qui lui apporte le
     plus de trimestres, et non celui qui sert la pension la plus élevée ; la liste des
-    États tiers d'une convention est celle que le CLEISS donne en 2026, appliquée à
-    toute date d'effet depuis l'entrée en vigueur de la convention, et sans lire le
-    champ matériel commun aux accords qu'elle suppose
+    États tiers d'une convention est la dernière lue au plus tard à la date d'effet, la
+    plus ancienne avant toutes — celle du CLEISS en 2026, et pour le Maroc, l'Uruguay et
+    le Brésil celle d'une circulaire de la Cnav de 2011, 2017 et 2019 —, ce qui s'est
+    passé entre deux listes n'étant pas connu ; l'Inde, dont la liste n'était « pas
+    connue » en novembre 2011, a celle de 2026 depuis l'entrée en vigueur de son accord ;
+    le champ matériel commun aux accords, qu'elle suppose, ne se lit pas
   effet: >-
     le minimum proratisé sur la durée totale, ou une convention qui ne compare pas,
-    pourraient faire préférer un autre accord ; non mesuré
+    pourraient faire préférer un autre accord ; un État tiers lié entre deux listes
+    compte trop tard, ou trop tôt ; non mesuré
 sources:
   lu_le: 2026-10-01
   prochaine_relecture: 2027-04-30
@@ -329,6 +333,17 @@ sources:
       périodes)
     url: https://www.cleiss.fr/particuliers/retraite/index.html
     date: 2026-10-01
+  - type: circulaire_cnav
+    reference: >-
+      les listes d'États tiers datées : circulaires Cnav n° 2011/78 du 7 novembre 2011
+      (Maroc, « Listes des Etats tiers liés à la France et au Maroc par un instrument de
+      coordination », en annexe), n° 2011/80 du 9 novembre 2011 (Inde, « à ce jour, la
+      liste de ces pays n'est pas connue »), n° 2017/21 du 24 mai 2017 (Uruguay), n°
+      2019/24 du 3 octobre 2019 (Brésil), n° 2020/30 du 11 septembre 2020 (Canada, annexe
+      1 : la date d'entrée en vigueur de chaque instrument avec le Canada et avec la
+      France), lues dans la base législative de la Cnav
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2020_30_11092020.pdf
+    date: 2026-10-01
   - type: autre
     reference: >-
       Service des retraites de l'État, « La durée d'assurance » : elle comprend les
@@ -371,6 +386,10 @@ historique:
   2026-10-01 — à la quatrième étape du domaine, les exemples du CLEISS rejoués : la caisse
   ne totalise que les périodes d'un seul accord, et celles des États tiers qu'une
   convention fait compter, dont le tableau des accords porte désormais la liste.
+- >-
+  2026-10-01 — après la clôture du domaine, à la demande du propriétaire : les listes
+  d'États tiers se datent ; une pension prend la dernière lue au plus tard à sa date
+  d'effet.
 effet: >-
   Toute personne qui a travaillé hors de France : 1,28 million de retraités résidaient à
   l'étranger fin 2024 (DREES, enquête annuelle auprès des caisses), et 20,3 % des retraités

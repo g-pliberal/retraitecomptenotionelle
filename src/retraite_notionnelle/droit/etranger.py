@@ -155,11 +155,26 @@ def coordonner_les_periodes(moteur: ScenarioActuel,
             periode=periode, titre=titre, instrument=instrument, familles=familles,
             version=None if version is None else version["id"], parametres=parametres,
             comparee=comparee,
-            etats_tiers=tuple(accord.get("etats_tiers") or ()) if titre == ACCORD else (),
+            etats_tiers=_etats_tiers(accord, effet) if titre == ACCORD else (),
             salaire_moyen_depuis=(_salaire_moyen_depuis(domaine, periode, effet)
                                   if comparee and instrument == REGLEMENTS_EUROPEENS
                                   else None)))
     return tuple(coordonnees)
+
+
+def _etats_tiers(accord: dict, effet: str) -> tuple[str, ...]:
+    """Les États tiers que la convention fait compter pour une pension qui
+    prend effet à ``effet`` (AAAA-MM-JJ) : la dernière liste lue au plus tard
+    à cette date, la plus ancienne avant toutes — celles d'une source datée
+    (``etats_tiers_lus``), et celle du CLEISS (``etats_tiers``, à la date
+    ``etats_tiers_le``, sans date pour qui n'en dit pas)."""
+    listes = sorted([(lue["le"], lue["etats"]) for lue in accord.get("etats_tiers_lus") or ()]
+                    + ([(accord.get("etats_tiers_le") or "", accord["etats_tiers"])]
+                       if accord.get("etats_tiers") else []))
+    if not listes:
+        return ()
+    valables = [etats for le, etats in listes if le <= effet]
+    return tuple(valables[-1] if valables else listes[0][1])
 
 
 def _salaire_moyen_depuis(domaine, periode: PeriodeALEtranger, effet: str) -> int | None:

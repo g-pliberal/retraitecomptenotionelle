@@ -65,13 +65,25 @@
 #   etats_tiers  les États tiers dont la convention totalise aussi les
 #                périodes : ceux qu'un accord qui coordonne les retraites lie
 #                aux deux parties, tels que la page du CLEISS les énumère en
-#                2026 (au 1er janvier pour l'Uruguay, au 1er février pour le
-#                Canada et le Maroc, au 1er mars pour la Serbie et la Tunisie,
-#                au 1er août pour le Brésil, sans date pour l'Inde) ; absent
-#                quand elle n'en totalise aucun. Hors de ces États, la caisse
-#                ne totalise que les périodes d'un accord à la fois, celui qui
-#                lui est le plus favorable (fiche
+#                2026, à la date que dit `etats_tiers_le` (sans date pour
+#                l'Inde) ; absent quand elle n'en totalise aucun. Hors de ces
+#                États, la caisse ne totalise que les périodes d'un accord à
+#                la fois, celui qui lui est le plus favorable (fiche
 #                `totalisation_des_periodes_etrangeres`).
+#   etats_tiers_lus  les listes plus anciennes qu'une source date : `le`, sa
+#                date, `etats`, la liste, `source`. Une pension prend la
+#                dernière liste lue au plus tard à sa date d'effet, la plus
+#                ancienne avant toutes : un État tiers que la liste d'une date
+#                ne nomme pas n'y compte pas, et ce qui s'est passé entre
+#                deux listes n'est pas connu. Le Maroc, l'Uruguay et le Brésil
+#                en ont une. L'annexe 1 de la circulaire Cnav n° 2020/30 du
+#                11 septembre 2020 date chaque instrument qui lie au Canada et
+#                à la France les États de sa liste — la même qu'en 2026 — :
+#                tous en vigueur avant l'accord de 2013. La circulaire
+#                n° 2011/80 du 9 novembre 2011 écrit, de l'Inde, « à ce jour,
+#                la liste de ces pays n'est pas connue ». Une période dans un
+#                État tiers ne compte, de plus, que si son propre accord avec
+#                la France est alors en vigueur.
 #   date_lue     faux quand la date n'est pas celle de l'entrée en vigueur lue
 #                dans une source, mais une borne déduite (la publication).
 #   sources      cnav — le nom de l'exposé dans la base législative de la Cnav
@@ -358,7 +370,10 @@ etats:
     accords:
     - {instrument: convention, de: 2014-09-01, calcul: comparaison, prorata: limite,
        etats_tiers: [DE, AR, AT, BE, BG, CA, CV, CL, KR, ES, US, GR, IN, IT, JP, LU, PT,
-                     QC, CZ, CH, UY],
+                     QC, CZ, CH, UY], etats_tiers_le: 2026-08-01,
+       etats_tiers_lus: [{le: 2019-10-03, etats: [DE, AR, BE, CA, CV, CL, KR, ES, US, GR, IT,
+                                                   JP, LU, PT, QC, UY],
+                          source: "circulaire Cnav n° 2019/24 du 3 octobre 2019, point 2 et annexe 1"}],
        texte: "accord du 15 décembre 2011", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_bresil_calcul_retraite_personnelle_ex, cleiss: conv_bresil}}
   CA:
@@ -370,7 +385,7 @@ etats:
     - {instrument: convention, de: 2017-08-01, calcul: comparaison, prorata: limite,
        etats_tiers: [DE, AT, BE, BR, BG, CL, CY, KR, HR, DK, ES, EE, US, FI, GR, GG, HU,
                      IN, IE, IS, IT, JP, JE, LV, LT, LU, MK, MT, MA, "NO", NL, PH, PL, PT,
-                     CZ, RO, RS, SK, SI, SE, CH, TR, UY],
+                     CZ, RO, RS, SK, SI, SE, CH, TR, UY], etats_tiers_le: 2026-02-01,
        texte: "accord du 14 mars 2013", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_canada_calcul_retraite_personnelle_ex, cleiss: conv_canada}}
   CG:
@@ -462,7 +477,9 @@ etats:
        texte: "convention du 9 juillet 1965, son assurance vieillesse remplacée par l'avenant du 21 mai 1979 au 1er avril 1981",
        personnes: salaries, sources: {cnav: accord_international_maroc_convention_09071965_ex}}
     - {instrument: convention, de: 2011-06-01, calcul: comparaison, prorata: limite,
-       etats_tiers: [DZ, DE, BE, CA, DK, ES, LU, NL, PT, QC, SE, TN],
+       etats_tiers: [DZ, DE, BE, CA, DK, ES, LU, NL, PT, QC, SE, TN], etats_tiers_le: 2026-02-01,
+       etats_tiers_lus: [{le: 2011-11-07, etats: [DE, BE, DK, ES, NL, PT, RO, SE, CA, TN],
+                          source: "circulaire Cnav n° 2011/78 du 7 novembre 2011, annexe"}],
        texte: "convention générale du 22 octobre 2007", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_maroc_calcul_retraite_personnelle_ex, cleiss: conv_maroc}}
   MC:
@@ -526,7 +543,7 @@ etats:
        sources: {cnav: accord_international_yougoslavie_calcul_retraite_personnelle_ex}}
     - {instrument: convention, de: 2023-12-01, calcul: comparaison, prorata: limite,
        etats_tiers: [DE, AT, BE, BA, BG, CA, CY, HR, DK, GR, HU, IT, LU, MK, ME, "NO", NL,
-                     PL, QC, CZ, RO, GB, SK, SI, SE, CH, TR],
+                     PL, QC, CZ, RO, GB, SK, SI, SE, CH, TR], etats_tiers_le: 2026-03-01,
        texte: "accord du 6 novembre 2014", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_serbie_retraite_personnelle_ex, cleiss: conv_serbie}}
   SM:
@@ -555,6 +572,7 @@ etats:
        sources: {cnav: accord_international_tunisie_accord_12091975_ex}}
     - {instrument: convention, de: 2007-04-01, calcul: comparaison, prorata: limite,
        etats_tiers: [DZ, DE, AT, BE, BG, ES, IT, LU, MA, NL, PT, CZ, CH, TR],
+       etats_tiers_le: 2026-03-01,
        texte: "convention générale du 26 juin 2003", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_tunisie_calcul_retraite_personnelle_ex, cleiss: conv_tunisie}}
   TR:
@@ -574,7 +592,10 @@ etats:
     accords:
     - {instrument: convention, de: 2014-07-01, calcul: comparaison, prorata: limite,
        etats_tiers: [DE, AR, AT, BE, BR, CA, CL, KR, ES, US, GR, IL, IT, LU, NL, PT, QC,
-                     RO, CH],
+                     RO, CH], etats_tiers_le: 2026-01-01,
+       etats_tiers_lus: [{le: 2017-05-24, etats: [DE, AR, AT, BE, BR, CA, CL, ES, US, GR, IL,
+                                                   IT, LU, NL, PT, QC, CH],
+                          source: "circulaire Cnav n° 2017/21 du 24 mai 2017, point 2"}],
        texte: "accord du 6 décembre 2010", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_uruguay_retraite_personnelle_ex, cleiss: conv_uruguay}}
   XK:

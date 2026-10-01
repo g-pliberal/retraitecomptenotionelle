@@ -244,11 +244,19 @@ approximations:
 - ecart: >-
     seuls les régimes qui portent le minimum contributif comparent leurs deux pensions :
     la pension nationale d'un autre régime, son taux lu sur moins de trimestres, ne
-    l'emporterait que par son minimum ; celle des fonctionnaires, que le minimum garanti
-    relève, ne se compare pas
+    l'emporterait que par son minimum. Celle des fonctionnaires ne se compare pas : le
+    règlement vaut pour leurs régimes — la France n'est pas à l'annexe VIII, partie 1, qui
+    renonce au calcul au prorata —, les périodes européennes entrent dans la durée
+    d'assurance de L. 14-I (bulletin officiel du Service des pensions n° 473), et le
+    modèle porte la pension qu'elles ouvrent au minimum garanti de ses seuls services,
+    sans le proratiser, ses conditions lues avec elles ; la pension nationale, portée au
+    même minimum sans elles, ne la dépasse jamais. La règle du Service des retraites de
+    l'État et de la CNRACL pour le minimum garanti d'une pension au prorata n'a pas été
+    trouvée
   effet: >-
-    le fonctionnaire dont la pension nationale, portée au minimum garanti, dépasserait la
-    proratisée ; non mesuré
+    le fonctionnaire qui n'ouvre le minimum garanti que par ses périodes européennes : un
+    minimum entier, là où la caisse le proratiserait peut-être comme la Cnav le sien ;
+    non mesuré
 - ecart: >-
     la pension nationale se liquide au même départ que la proratisée, l'âge d'ouverture
     et la carrière longue lus avec les périodes étrangères, quand le règlement ne la
@@ -276,11 +284,12 @@ sources:
     travailleurs migrants est lue et modélisée : circulaires n° 2008/58 et son annexe,
     2012/26 et 2013/56, que la base de la Cnav rend par sa recherche. À lire : la
     circulaire n° 2010/30, qui modifiait le tableau de 2008, pour dater ce qui a changé
-    avant 2012 ; les conventions dont le tableau des accords ne lit pas le prorata ; la règle de la
-    pension proratisée des fonctionnaires, chez le Service des retraites de l'État et à
-    la CNRACL ; la surcote de la pension proratisée, calculée « éventuellement à la date
-    d'attribution définitive » quand les pensions des États se succèdent (exposé «
-    Attributions successives »). Et l'exemple franco-japonais du CLEISS, qui rapporte la
+    avant 2012 ; les conventions dont le tableau des accords ne lit pas le prorata ; le
+    minimum garanti d'une pension au prorata, chez le Service des retraites de l'État et
+    à la CNRACL, que ni leurs bulletins ni leurs pages publiques ne disent — l'annexe
+    VIII du règlement et le bulletin n° 473 sont lus ; la surcote de la pension
+    proratisée, calculée « éventuellement à la date d'attribution définitive » quand les
+    pensions des États se succèdent (exposé « Attributions successives »). Et l'exemple franco-japonais du CLEISS, qui rapporte la
     part française à la durée des trois États (« prorata temporis de 100/170 »), quand
     l'accord avec le Japon n'en totalise que deux : le modèle proratise la pension
     théorique sur la durée des États que l'accord totalise, comme la convention et les
@@ -321,9 +330,18 @@ sources:
   - type: autre
     reference: >-
       règlements (CEE) n° 1408/71 (texte d'origine, CELEX 31971R1408) et n° 1248/92, (CE)
-      n° 1606/98, 883/2004 et 987/2009, lus au dépôt de l'Office des publications de
-      l'Union ; accord de commerce et de coopération avec le Royaume-Uni, article SSC.47
+      n° 1606/98, 883/2004 — son annexe VIII, partie 1, où la France ne figure pas — et
+      987/2009, lus au dépôt de l'Office des publications de l'Union ; accord de commerce
+      et de coopération avec le Royaume-Uni, article SSC.47
     url: http://publications.europa.eu/resource/celex/31992R1248
+    date: 2026-10-01
+  - type: autre
+    reference: >-
+      bulletin officiel du Service des pensions n° 473, circulaire C-D11-06-4 : les
+      périodes d'assurance d'une activité « exercée[s] dans un État membre de l'Union
+      européenne, de l'Espace économique européen ou de la Suisse peuvent être prises en
+      compte dans la durée d'assurance visée à l'article L 14-I »
+    url: https://retraitesdeletat.gouv.fr/files/files/Publications/Bulletins%20d'information/BO473.pdf
     date: 2026-10-01
   - type: autre
     reference: >-

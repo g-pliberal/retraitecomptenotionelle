@@ -73,6 +73,14 @@ def test_le_tableau_des_accords_dit_un_accord_par_date():
             tiers = accord.get("etats_tiers")
             assert tiers is None or (accord["instrument"] == "convention" and tiers
                                      and set(tiers) <= set(etats) - {code, "OI"}), code
+            # Les listes plus anciennes sont datées, après l'entrée en vigueur
+            # de la convention et avant la liste du CLEISS.
+            le = accord.get("etats_tiers_le")
+            assert le is None or (tiers and re.fullmatch(r"\d{4}-\d{2}-\d{2}", le)), code
+            for lue in accord.get("etats_tiers_lus") or ():
+                assert set(lue) == {"le", "etats", "source"}, code
+                assert accord["de"] <= lue["le"] < (le or "9999"), code
+                assert set(lue["etats"]) <= set(etats) - {code, "OI"}, code
         # Un régime équivalent pour le salaire annuel moyen est celui d'un
         # État des règlements européens, pour des activités que la saisie
         # connaît, ses dates au jour.
@@ -957,6 +965,28 @@ def test_la_reduction_suit_le_tableau_des_regimes_equivalents(contexte, champs, 
                   else (annees, "R. 173-4-3, périodes étrangères comprises"))
 
 
+@pytest.mark.parametrize("tiers, liquidation, trimestres", [
+    # La Roumanie, dans la liste de 2011 et non dans celle de 2026 : en 2016,
+    # ses dix ans s'ajoutent aux quinze du Maroc ; en 2027, la caisse ne
+    # retient qu'un accord, celui qui en apporte le plus.
+    ("RO", "2016-04", 60 + 40), ("RO", "2027-04", 40),
+    # Le Luxembourg, dans celle de 2026 seulement.
+    ("LU", "2016-04", 60), ("LU", "2027-04", 20 + 40),
+])
+def test_les_etats_tiers_suivent_la_liste_lue_a_la_date_d_effet(contexte, tiers, liquidation,
+                                                                trimestres):
+    """Le Maroc fait compter les États tiers de la liste de la circulaire Cnav
+    n° 2011/78 jusqu'à celle que le CLEISS donne en 2026 : une pension prend
+    la dernière liste lue au plus tard à sa date d'effet."""
+    naissance = "1951-03-15" if liquidation < "2020" else "1962-03-15"
+    maroc_debut = "1975-01" if liquidation < "2020" else "1985-01"
+    actuel = _actuel(contexte, naissance=naissance, debut="2000-01", liquidation=liquidation,
+                     etranger1_pays="MA", etranger1_debut=maroc_debut,
+                     etranger1_fin="1990-01", etranger2_pays=tiers,
+                     etranger2_debut="1990-01", etranger2_fin="2000-01")
+    assert actuel.trimestres_etrangers == trimestres
+
+
 #: Des carrières hors de France que les deux moteurs liquident.
 CARRIERES_HORS_DE_FRANCE = [
     {**NE_EN_1962, **AU_MAROC},
@@ -990,6 +1020,10 @@ CARRIERES_HORS_DE_FRANCE = [
     # La révision du minimum, quand une pension étrangère commence après le
     # départ.
     {**APRES_LE_SENEGAL, **AU_SENEGAL, "pension_etrangere1_debut": "2025-01"},
+    # Les listes d'États tiers datées.
+    {"naissance": "1951-03-15", "debut": "2000-01", "liquidation": "2016-04",
+     "etranger1_pays": "MA", "etranger1_debut": "1975-01", "etranger1_fin": "1990-01",
+     "etranger2_pays": "RO", "etranger2_debut": "1990-01", "etranger2_fin": "2000-01"},
     # Un seul accord à la fois, et les États tiers qu'une convention fait
     # compter.
     {"naissance": "1963-03-15", "debut": "2001-01", "liquidation": "2026-01",
