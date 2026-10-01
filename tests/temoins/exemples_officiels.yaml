@@ -16,6 +16,10 @@
 # personne n'a publié. Ce fichier-ci ne porte encore aucun résultat de ce
 # genre parce qu'aucune calculette n'a encore rendu une PENSION complète ;
 # le jour où l'une le fera, ses réponses viendront ici comme les autres.
+# Depuis le 1er octobre 2026, deux simulateurs anonymes d'info-retraite y
+# ont leurs réponses (préfixe `ur_`) : des conditions de départ et des
+# réversions, pas encore une pension, saisies à la main selon la règle du
+# § 3.5 de docs/architecture.md.
 #
 # Ce qui est officiel ET reproductible aujourd'hui, ce sont les EXEMPLES que
 # ces organismes publient : une carrière minuscule dont la réponse est
@@ -90,7 +94,12 @@
 #     centime près. L'exemple donne la réversion d'avant le plafond
 #     (`carriere.reversions_avant_plafond_mensuelles`) et non la carrière du
 #     défunt : le test prête à chaque régime la pension qui la rend, au taux
-#     de la version que le modèle choisit, et le modèle l'écrête.
+#     de la version que le modèle choisit, et le modèle l'écrête ;
+#   reversions_mensuelles — pour chaque régime nommé, la réversion servie, en
+#     euros par mois, à l'euro près comme les simulateurs l'arrondissent.
+#     L'exemple donne les pensions du défunt, comme le simulateur les demande
+#     (`carriere.pensions_du_defunt_mensuelles`) : le test les prête au
+#     défunt, et le modèle y applique ses taux, ses conditions et son plafond.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -1480,3 +1489,143 @@ exemples:
       circulaire ne dit pas.
     carriere: {naissance: "1949-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2009-07", debut: "1993-01", etranger: [{pays: "DE", debut: "1969-07", fin: "1988-01"}, {pays: "BE", debut: "1988-01", fin: "1993-01"}]}
     attendu: {trimestres_valides: 160, annees_du_salaire_annuel_moyen: 10}
+
+  # ---- Union Retraite : deux simulateurs d'info-retraite, saisis à la main ----
+  # Interrogés le 1er octobre 2026 par le propriétaire, une saisie par borne
+  # (docs/architecture.md, § 3.5), chaque prédiction du modèle écrite avant la
+  # saisie. Le simulateur de carrière longue ne demande que l'année de
+  # naissance et une tranche d'âge ; celui de réversion, les pensions NETTES du
+  # défunt et une tranche de ressources. La carrière de chaque exemple est
+  # celle qui met le modèle devant la même règle. Leurs imperfections, pour qui
+  # les relira : pour 1965, le bloc d'avril à novembre omet les quatre
+  # trimestres des nés d'octobre et de novembre ; la réversion du régime
+  # général n'y est jamais écrêtée, sous un seuil de ressources de 2024
+  # (6 058 € par trimestre, 2 080 fois le SMIC de 11,65 €) ; la réversion de la
+  # fonction publique ignore le mariage contracté deux ans avant la cessation
+  # d'activité (L. 39, a).
+
+  - id: ur_racl_1966_avant_20
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1966 » et « 20 ans »", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Vous pouvez prétendre à un départ anticipé à la retraite à partir de
+      60 ans et 9 mois. Vous devrez avoir cotisé : au moins 172 trimestres et
+      au moins 5 trimestres avant la fin de l'année civile de votre 20e
+      anniversaire (ou 4 trimestres si vous êtes né entre le 1er octobre et le
+      31 décembre). » Commencée en janvier 1984, la carrière n'a que quatre
+      trimestres à la fin de ses 18 ans : seule la borne des 20 ans lui ouvre
+      le départ, et ses 172 trimestres sont acquis avant l'âge.
+    carriere: {naissance: "1966-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2027-03", debut: "1984-01"}
+    attendu: {age_ouverture: 60.75, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_racl_1966_avant_21
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1966 » et « 21 ans »", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Vous pouvez prétendre à un départ anticipé à la retraite à partir de
+      63 ans. Vous devrez avoir cotisé : au moins 172 trimestres et au moins 5
+      trimestres avant la fin de l'année civile de votre 21e anniversaire (ou 4
+      trimestres si vous êtes né entre le 1er octobre et le 31 décembre). »
+      Commencée en janvier 1986, la carrière n'a que quatre trimestres à la fin
+      de ses 20 ans : seule la borne des 21 ans joue, trois mois avant l'âge
+      légal de la génération 1966, 63 ans et 3 mois.
+    carriere: {naissance: "1966-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-06", debut: "1986-01"}
+    attendu: {age_ouverture: 63.0, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_racl_1968_avant_18
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1968 » et « 18 ans »", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Vous pouvez prétendre à un départ anticipé à la retraite à partir de
+      60 ans. Vous devrez avoir cotisé : au moins 172 trimestres et au moins 5
+      trimestres avant la fin de l'année civile de votre 18e anniversaire (ou 4
+      trimestres si vous êtes né entre le 1er octobre et le 31 décembre). » Un
+      seul mois de travail en 1984, l'année de ses 16 ans, ne suffit pas à la
+      borne des 16 ans : la carrière part par celle des 18 ans.
+    carriere: {naissance: "1968-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-06", debut: "1984-12"}
+    attendu: {age_ouverture: 60.0, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_racl_1969_avant_16
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1969 » et « 16 ans »", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Vous pouvez prétendre à un départ anticipé à la retraite à partir de
+      58 ans. Vous devrez avoir cotisé : au moins 172 trimestres et au moins 5
+      trimestres avant la fin de l'année civile de votre 16e anniversaire (ou 4
+      trimestres si vous êtes né entre le 1er octobre et le 31 décembre). »
+      Commencée en janvier 1984, à quatorze ans et demi, la carrière a ses cinq
+      trimestres à la fin de 1985 et ses 172 trimestres avant 58 ans.
+    carriere: {naissance: "1969-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2027-06", debut: "1984-01"}
+    attendu: {age_ouverture: 58.0, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_racl_1965_decembre
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1965 » et « 20 ans »", verifie_le: "2026-10-01"}
+    enonce: >-
+      Pour 1965, le simulateur coupe l'année en trois : 60 ans et 9 mois avec
+      170 trimestres pour les nés de janvier à mars, avec 171 d'avril à
+      novembre — comme les exemples de la circulaire 2026-29 —, et « Si vous
+      êtes né(e) entre le 1er décembre et le 31 décembre 1965, vous pouvez
+      prétendre à un départ anticipé à la retraite à 60 ans et 8 mois. Vous
+      devrez avoir cotisé : au moins 171 trimestres et au moins 5 trimestres
+      avant la fin de l'année civile de votre 20e anniversaire (ou 4 trimestres
+      si vous êtes né entre le 1er octobre et le 31 décembre). » Né le 15
+      décembre, l'assuré part au 1er septembre 2026, premier mois du décret du
+      7 mai 2026. Le modèle le renvoyait au 1er octobre : il lisait la date
+      d'effet sans l'arrondi de la table, et comparait 60,666… à 60,67.
+    carriere: {naissance: "1965-12-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-09", debut: "1983-10"}
+    attendu: {date_effet_au_plus_tot: "2026-09", trimestres_requis: 171, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_reversion_prive_63_ans
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié du secteur privé", verifie_le: "2026-10-01"}
+    enonce: >-
+      Le défunt, salarié du secteur privé retraité, touchait 1 400 € nets par
+      mois du régime général et 700 € de l'Agirc-Arrco ; sa veuve, née le 15
+      mars 1963, vit seule, ses ressources de trois mois sous 6 058 €. « Vous
+      êtes éligible » : 756 € de la retraite de base, 420 € de l'Agirc-Arrco,
+      « Montant estimatif de votre réversion (net mensuel) : 1176 € ». Le
+      simulateur n'écrête pas : l'exemple se rejoue sans ressources, là où sa
+      réponse est celle du droit.
+    carriere: {naissance: "1960-06-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-07", age_debut: 20, conjoint: "1963-03-15", conjoint_sexe: F, mariage: "1990-06-16", deces: "2026-08-15", pensions_du_defunt_mensuelles: {regime_general: 1400, agirc_arrco: 700}}
+    attendu: {reversions_mensuelles: {regime_general: 756, agirc_arrco: 420}}
+
+  - id: ur_reversion_prive_50_ans_deux_enfants
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié du secteur privé", verifie_le: "2026-10-01"}
+    enonce: >-
+      Le même défunt ; sa veuve, née le 15 mars 1976, a deux enfants à charge
+      au décès et n'est pas invalide. « Vous êtes éligible — Salarié du secteur
+      privé - retraite complémentaire (AGIRC-ARRCO) […] 420 € » ; « Vous
+      n'êtes pas éligible actuellement — retraite de base (L'Assurance
+      Retraite) : […] vous n'avez pas encore atteint l'âge requis (55 ans) ».
+      Les dates d'effet s'en déduisent : le mois qui suit le décès pour
+      l'Agirc-Arrco, le mois qui suit les 55 ans pour le régime général.
+    carriere: {naissance: "1960-06-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-07", age_debut: 20, nombre_enfants: 2, naissances_enfants: ["2012-05", "2015-09"], conjoint: "1976-03-15", conjoint_sexe: F, mariage: "2008-06-14", deces: "2026-08-15", pensions_du_defunt_mensuelles: {agirc_arrco: 700}}
+    attendu: {dates_d_effet_de_la_reversion: {agirc_arrco: "2026-09-01", arrco: "2026-09-01", regime_general: "2031-04-01"}, reversions_mensuelles: {agirc_arrco: 420}}
+    ecart_connu:
+      modele: {dates_d_effet_de_la_reversion: {agirc_arrco: "2031-04-01", arrco: "2031-04-01", regime_general: "2031-04-01"}}
+      explication: >-
+        Deux enfants à charge au décès lèvent, à l'Agirc-Arrco, la condition
+        d'âge de 55 ans. Le modèle ne porte pas cette exception et sert la
+        réversion complémentaire à 55 ans, comme celle du régime général. Il
+        faudrait lire le texte de l'accord, et ce que devient la réversion
+        quand les enfants cessent d'être à charge, que le simulateur ne dit pas.
+      fiche: reversion_agirc_arrco
+      depuis: "2026-10-01"
+
+  - id: ur_reversion_etat_mariage_3_ans_et_demi
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt fonctionnaire de l'État", verifie_le: "2026-10-01"}
+    enonce: >-
+      Le défunt, fonctionnaire de l'État retraité depuis le 1er octobre 2022,
+      touchait 2 000 € nets par mois ; sa veuve l'avait épousé le 15 septembre
+      2022, sans enfant de ce mariage. Le simulateur demande la durée du
+      mariage par demi-années, « arrondir au chiffre inférieur » : 3 ans et
+      demi. « Vous n'êtes pas éligible actuellement — Fonctionnaire de l'État -
+      retraite de base (SRE) ; retraite additionnelle (RAFP) ».
+    carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2022-10", age_debut: 22, conjoint: "1963-03-15", conjoint_sexe: F, mariage: "2022-09-15", deces: "2026-08-15", pensions_du_defunt_mensuelles: {fonction_publique_etat: 2000}}
+    attendu: {reversions_mensuelles: {fonction_publique_etat: 0}}
+
+  - id: ur_reversion_etat_mariage_4_ans
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt fonctionnaire de l'État", verifie_le: "2026-10-01"}
+    enonce: >-
+      Le même fonctionnaire, épousé le 14 août 2022 : quatre ans de mariage au
+      décès, sans enfant commun ; 2 000 € nets de pension civile et 100 € de
+      RAFP. « Vous êtes éligible […] Montant estimatif de votre réversion (net
+      mensuel) : 1050 € », la moitié de chacune. La RAFP, que le modèle ne
+      sert pas encore en réversion, n'est pas comparée.
+    carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2022-10", age_debut: 22, conjoint: "1963-03-15", conjoint_sexe: F, mariage: "2022-08-14", deces: "2026-08-15", pensions_du_defunt_mensuelles: {fonction_publique_etat: 2000}}
+    attendu: {reversions_mensuelles: {fonction_publique_etat: 1000}}

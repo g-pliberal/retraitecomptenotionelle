@@ -1648,7 +1648,16 @@ class CarriereLongue:
 
     @staticmethod
     def _annee_decimale(date: DateMois) -> float:
-        return date.annee + (date.mois - 1) / 12.0
+        """L'année décimale d'une date d'effet, à la précision de la table.
+
+        La table écrit le 1er septembre 2026 `2026.667`, quand huit douzièmes
+        valent 2026,666 666… : sans l'arrondi, le premier mois d'un décret de
+        septembre lisait encore le décret d'avant, et l'assuré né en décembre
+        1965 partait au 1er octobre 2026 et non au 1er septembre (exemple
+        `ur_racl_1965_decembre`). C'est le trou que ``Carriere.generation``
+        referme déjà pour les générations.
+        """
+        return round(date.annee + (date.mois - 1) / 12.0, 3)
 
     def _portes(self, carriere: Carriere
                 ) -> list[tuple[int, int, float, int, Fiabilite]] | None:

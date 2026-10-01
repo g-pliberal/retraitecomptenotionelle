@@ -139,7 +139,7 @@ versions:
       age_minimum: null
       perte_au_remariage: true
       fiabilite: haute
-  exemples: aucun trouvé
+  exemples: [ur_reversion_etat_mariage_3_ans_et_demi, ur_reversion_etat_mariage_4_ans]
 approximations:
 - version: [avant_1980, veuves_1980]
   ecart: >-

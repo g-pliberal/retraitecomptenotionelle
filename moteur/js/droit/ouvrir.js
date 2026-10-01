@@ -12,7 +12,7 @@
  * `ageTauxPleinDroit` sont ce que le pilote en lit, sans rien liquider.
  */
 
-import { DateMois } from "../calendrier.js";
+import { DateMois, enMois } from "../calendrier.js";
 import {
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   GENERATION_REFORME_2023, REFORME_2023_EFFET,
@@ -202,7 +202,9 @@ export function ouvrir(moteur, releve, regimes = null) {
       ),
       requisReference, etrangers,
     );
-    if (anticipe !== null && ageLiquidation >= anticipe[0]) {
+    // Au mois près : la table écrit soixante ans et huit mois 60,67, que
+    // l'âge exact, 60,666…, n'atteindrait jamais.
+    if (anticipe !== null && enMois(ageLiquidation) >= enMois(anticipe[0])) {
       motifOuverture = "carriere_longue";
       ageOuvertureReference = anticipe[0];
       fiabilite = Math.min(fiabilite, anticipe[1]);

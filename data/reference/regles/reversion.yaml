@@ -412,7 +412,7 @@ versions:
       majoration_plafond_annee: 2010
       majoration_enfants_taux: 0.10
       fiabilite: haute
-  exemples: aucun trouvé
+  exemples: [ur_reversion_prive_63_ans, ur_reversion_prive_50_ans_deux_enfants]
 - id: minimum_2026_age_51
   statut: lue
   textes:

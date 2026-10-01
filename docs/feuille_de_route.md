@@ -779,16 +779,16 @@ borne basse et l'écart une borne haute.
 
 ### 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026 — `en cours`
 
-**Reprise, au 1er octobre 2026.** Les 260 adresses, inventoriées et sondées,
-se dépouillent par lots. Sont faits l'IRCEC, les libérales, la CRPN,
-l'Ircantec, l'ENIM, la fonction publique de l'État, la CNRACL et la Caisse des
-dépôts ; leurs restes sont sous « laisse ouvert » et « Puis le
-rétablissement » (temps partiel de la fonction publique, récupérateur de
-l'annexe 8-1 de l'Ircantec). Restent les adresses `a_explorer` de
-`data/sources_a_explorer.yaml`, que compte le tableau de bord, dont le RAFP,
-voisin du dernier lot, puis le CLEISS, les quatre modèles publics et
-mon-entreprise (« Marche »). Commencer par le RAFP : réserver ses lignes par
-un commit `en_cours` poussé seul ; méthode : `docs/exploration_sources.md`.
+**Reprise, au 1er octobre 2026.** Les 260 adresses se dépouillent par lots.
+Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
+publique de l'État, la CNRACL et la Caisse des dépôts ; leurs restes sont sous
+« laisse ouvert » et « Puis le rétablissement ». Deux simulateurs
+d'info-retraite ont été saisis à la main (note du 1er octobre, à la fin) : la
+réversion Agirc-Arrco avant 55 ans y attend sa lecture. Restent les adresses
+`a_explorer` de `data/sources_a_explorer.yaml`, dont le RAFP, puis le CLEISS,
+les quatre modèles publics et mon-entreprise (« Marche »). Commencer par le
+RAFP : réserver ses lignes par un commit `en_cours` poussé seul ; méthode :
+`docs/exploration_sources.md`.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
@@ -1368,6 +1368,37 @@ commerçant et le libéral cotisent au régime de base sur une assiette minimale
 200 SMIC horaires puis 450 depuis 2023 (`legislation/assiette_minimale_independants.csv`),
 qui valide leurs trimestres. Reste à lire le décret n° 2026-418, qui réécrit
 les complémentaires libérales, contre les dix fiches.
+
+**Les simulateurs d'info-retraite, saisis à la main le 1er octobre 2026.** Le
+propriétaire a saisi neuf cas dans deux simulateurs anonymes de l'Union
+Retraite, selon la règle du § 3.5 de l'architecture : une saisie par borne,
+chaque prédiction du modèle écrite avant la réponse. Ils sont aux exemples
+officiels sous le préfixe `ur_`. Celui de la carrière longue confirme les
+quatre portes (16, 18, 20 et 21 ans), les 172 trimestres de 1966, 1968 et
+1969, et l'année 1965 coupée en trois, décembre compris. Ce dernier cas a levé
+deux arrondis, corrigés dans les deux moteurs : la date d'effet lue sans
+l'arrondi de la table (`2026.667`) rendait au premier mois d'un décret de
+septembre les portes du décret d'avant, et 60 ans et 8 mois n'atteignaient
+jamais les 60,67 de la table ; l'assuré né mi-décembre 1965 partait au
+1er octobre 2026 au lieu du 1er septembre. Aucun témoin de simulation n'en
+bouge. Celui de la réversion confirme les 54 % du régime général, les 60 % de
+l'Agirc-Arrco sans condition de ressources — une fiche jusqu'ici supposée —,
+l'âge de 55 ans, et la condition de quatre ans de mariage de la fonction
+publique, des deux côtés de la borne, à 50 %. Il mesure un écart que la fiche
+déclarait : deux enfants à charge au décès lèvent la condition d'âge de
+l'Agirc-Arrco (`ur_reversion_prive_50_ans_deux_enfants`, en écart connu). Les
+imperfections des simulateurs sont notées en tête du lot : les quatre
+trimestres omis pour les nés d'octobre et de novembre 1965, la réversion du
+régime général jamais écrêtée, sous un seuil de ressources de 2024, et la
+branche « deux ans avant la cessation » de L. 39 ignorée. Une grandeur naît
+pour les comparer, `reversions_mensuelles`, qui prête au défunt les pensions
+saisies. *Laisse ouvert* : l'exception des enfants à charge, à lire dans
+l'accord Agirc-Arrco avant de la porter (jusqu'à quand est-elle servie ?) ;
+une fiche de réversion pour la RAFP, que le simulateur sert à 50 % ; le
+remariage (perte de l'Agirc-Arrco, plafond du ménage à 1,6) et l'Ircantec, à
+saisir une autre fois ; le budget par simulateur du § 3.5, qu'aucun registre
+ne tient encore — cinq saisies pour la carrière longue, quatre pour la
+réversion.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 

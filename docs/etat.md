@@ -27,7 +27,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 3 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **39 sur 130** (99 exemples : 95 reproduits, 4 en écart connu, section 2).
+- Confrontées à au moins un exemple officiel : **40 sur 130** (108 exemples : 103 reproduits, 5 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **40 sur 130**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **42 sur 130**, par 2 273 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **20 sur 130**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
@@ -196,6 +196,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `aa_reversion_francois` | dates_d_effet_de_la_reversion | arrco 2025-01-01 | arrco 2024-12-01 | `reversion_agirc_arrco` |
 | `aa_reversion_david` | dates_d_effet_de_la_reversion | arrco 2024-10-01 | arrco 2024-08-01 | `reversion_agirc_arrco` |
 | `aa_reversion_simone` | dates_d_effet_de_la_reversion | arrco 2025-01-01 | arrco 2024-03-01 | `reversion_agirc_arrco` |
+| `ur_reversion_prive_50_ans_deux_enfants` | dates_d_effet_de_la_reversion | agirc_arrco 2026-09-01, arrco 2026-09-01, regime_general 2031-04-01 | agirc_arrco 2031-04-01, arrco 2031-04-01, regime_general 2031-04-01 | `reversion_agirc_arrco` |
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
@@ -222,7 +223,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - et 56 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 69 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 23 non public(s). 10 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, TRAJECTOiRE, ANCETRE, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), modele-ti, modele-social), et 42 écarts y ont été trouvés. 16 sont à confronter au scénario 1 en premier, parce que leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du registre ; dans l'ordre du registre, qui range les administrations d'abord : `destinie_2`, `ines`, `legiretraite`, `edifis`, `saphir`, `modele_as`, et 10 autres.
 - **Ce que les autres modèles font mieux** (action 138) : 94 points, lus chez 52 modèles : 82 à reprendre, 9 à trancher par le propriétaire (des choix du programme), 2 repris, 1 écarté. Les points à reprendre, par chantier de la feuille de route : 136.2 (1), 136.3 (2), 136.4 (5), 136.5 (1), 136.6 (1), 138.2 (11), 138.3 (16), 138.4 (2), 138.5 (2), 138.6 (3), 138.7 (4), 138.8 (2), 138.9 (6), 138.10 (5), 138.11 (11), 138.12 (6), 138.14 (4).
-- **Les fiches sans exemple officiel** : 91.
+- **Les fiches sans exemple officiel** : 90.
 - **Les domaines sans décision** (§ 8) : 77 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 15 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `cumul_emploi_retraite_et_retraite_progressive`, `cumul_emploi_retraite_fonction_publique`, `droits_apres_la_premiere_pension`, `interpenetration_fonction_publique`, `liquidation_regime_par_regime`, `liquidation_unique_regimes_alignes`, `pension_d_invalidite_substituee`, `rafp_age_d_ouverture`, `residence_et_minimum_vieillesse`, `retablissement_fonction_publique`, `retraite_progressive`, `retraite_proportionnelle_msa`, `totalisation_des_periodes_etrangeres`. Les 62 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
 - **Faire mûrir la carte** : 832 champs obligatoires manquent, à 110 fiches. Par champ :
 

@@ -24,7 +24,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois
+from ..calendrier import DateMois, en_mois
 from ..donnees.chargement import Fiabilite
 from . import compter, coordonner, etranger, invalidite
 from .commun import date_d_effet, derniere_annee
@@ -263,7 +263,9 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
             ),
             requis_reference, etrangers,
         )
-        if anticipe is not None and age_liquidation >= anticipe[0]:
+        # Au mois près : la table écrit soixante ans et huit mois 60,67, que
+        # l'âge exact, 60,666…, n'atteindrait jamais.
+        if anticipe is not None and en_mois(age_liquidation) >= en_mois(anticipe[0]):
             motif_ouverture = "carriere_longue"
             age_ouverture_reference = anticipe[0]
             fiabilite = min(fiabilite, anticipe[1])

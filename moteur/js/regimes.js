@@ -1295,7 +1295,9 @@ export class CarriereLongue {
       return null;
     }
     const date = carriere.dateLiquidation;
-    const effet = date.annee + (date.mois - 1) / 12.0;
+    // À la précision de la table : sans l'arrondi, le premier mois d'un
+    // décret de septembre lisait encore le décret d'avant.
+    const effet = Math.round((date.annee + (date.mois - 1) / 12.0) * 1000) / 1000;
     if (effet < this._dates[0]) {
       return null;
     }

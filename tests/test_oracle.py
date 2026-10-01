@@ -1730,6 +1730,15 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         servie = reversion(actuel, [(regime, 12 * montant / taux[regime], Fiabilite.HAUTE)
                                     for regime, montant in avant.items()], carriere, annee)
         return {r.regime: r.montant / 12 for r in servie.regimes}
+    if cle == "reversions_mensuelles":
+        # L'exemple donne les pensions du défunt, comme le simulateur les
+        # demande, et la réversion qu'il en tire : le test les prête au défunt,
+        # et le modèle y applique ses taux, ses conditions et son plafond.
+        pensions = exemple["carriere"]["pensions_du_defunt_mensuelles"]
+        annee = int(str(exemple["carriere"]["deces"])[:4])
+        servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
+                                    for regime, montant in pensions.items()], carriere, annee)
+        return {r.regime: r.montant / 12 for r in servie.regimes}
     if cle == "plafonds_des_nouvelles_pensions":
         echeancier = Echeancier(simulateur)
         echeancier.parcourir(carriere)
@@ -1820,6 +1829,7 @@ TOLERANCES = {
     "pension_regime_general_mensuelle": {"abs": 0.05},
     "pensions_annuelles_des_regimes": {"abs": 0.5},
     "reversions_ecretees_mensuelles": {"abs": 0.01},
+    "reversions_mensuelles": {"abs": 0.5},
     "deductions_annuelles_du_cumul": {"abs": 0.01},
     "plafond_mensuel_du_cumul": {"abs": 0.01},
     "plafonds_des_nouvelles_pensions": {"abs": 0.01},
@@ -1852,6 +1862,10 @@ def _concorde(cle: str, mesure, valeur) -> bool:
     if cle in ("reversions_ecretees_mensuelles", "deductions_annuelles_du_cumul",
                "plafonds_des_nouvelles_pensions"):
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.01)
+                   for regime, montant in valeur.items())
+    if cle == "reversions_mensuelles":
+        # Les simulateurs arrondissent à l'euro.
+        return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.5)
                    for regime, montant in valeur.items())
     if cle == "pension_et_rente_d_invalidite_sur_traitement":
         # Seules se comparent les parts que l'exemple publie.
@@ -1953,6 +1967,7 @@ def test_le_temoin_des_exemples_officiels_est_source():
             "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
             "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL", "CNIEG",
             "Agirc-Arrco", "CRPCEN", "CLEISS", "Direction de la sécurité sociale",
+            "Union Retraite",
         ), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]
