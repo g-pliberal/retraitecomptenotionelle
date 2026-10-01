@@ -37,6 +37,8 @@ export const TITRES = Object.freeze([ACCORD, ORGANISATION, EQUIVALENCE]);
 const INSTRUMENTS_QUI_TOTALISENT = new Set([
   "reglements_europeens", "accord_de_commerce_et_de_cooperation", "convention",
 ]);
+/** L'instrument propre à un État : une convention bilatérale. */
+const CONVENTION = "convention";
 /** Celui qui, seul, coordonne aussi les régimes des fonctionnaires. */
 const REGLEMENTS_EUROPEENS = "reglements_europeens";
 /** Les personnes qu'une convention ne vise qu'à moitié : les seuls salariés. */
@@ -57,8 +59,8 @@ const jourDe = (mois) =>
 
 /**
  * Une période passée hors de France, et ce que la coordination en fait :
- * `{periode, titre, instrument, familles, version, parametres}`. Voir
- * `PeriodeCoordonnee` du Python.
+ * `{periode, titre, instrument, familles, version, parametres, comparee,
+ * etatsTiers}`. Voir `PeriodeCoordonnee` du Python.
  */
 export function donneesDeLaPeriode(coordonnee) {
   const { periode } = coordonnee;
@@ -124,6 +126,7 @@ export function coordonnerLesPeriodes(moteur, carriere) {
     return {
       periode, titre, instrument, familles,
       version: version === null ? null : version.id, parametres, comparee,
+      etatsTiers: titre === ACCORD ? [...(accord.etats_tiers ?? [])] : [],
     };
   });
 }
@@ -239,7 +242,9 @@ export function familleDesRegimes(moteur, codes) {
  * ceux que chaque famille retient sous le plafond de l'année — quatre, avec
  * ceux de la carrière française ; l'année du départ, les trimestres civils
  * écoulés avant lui —, ceux d'un accord d'abord ; et, de même, ceux que la
- * pension nationale retient, sans les périodes qu'un accord compare. Voir
+ * pension nationale retient, sans les périodes qu'un accord compare. Un seul
+ * accord à la fois : chaque famille retient celui qui lui apporte le plus de
+ * trimestres, avec les États tiers que sa convention fait compter. Voir
  * `compter_les_periodes` du Python.
  */
 export function compterLesPeriodes(carriere, periodes, trimestresFrancais,
@@ -260,10 +265,69 @@ export function compterLesPeriodes(carriere, periodes, trimestresFrancais,
       candidats.push([coordonnee, annee, trimestres]);
     }
   }
-  const [pourLeTaux, cotises] = retenir(candidats, francais, depart);
-  const [nationaux] = retenir(candidats.filter(([coordonnee]) => !coordonnee.comparee),
-    francais, depart);
-  return new TrimestresEtrangers(pourLeTaux, cotises, periodes, famille, nationaux);
+  const calculs = groupes(candidats).map(([groupe, compare]) => {
+    const [pourLeTaux, cotises] = retenir(groupe, francais, depart);
+    const [nationaux] = retenir(groupe.filter(
+      ([coordonnee]) => !compare || accordDe(coordonnee) === null), francais, depart);
+    return [pourLeTaux, cotises, nationaux];
+  });
+  const retenus = [{}, {}, {}];
+  for (const retenante of FAMILLES) {
+    // Le premier des accords qui en apportent le plus, dans l'ordre des
+    // périodes.
+    const somme = (calcul) => [...calcul[0][retenante].values()].reduce((a, b) => a + b, 0);
+    let meilleur = calculs[0];
+    for (const calcul of calculs.slice(1)) {
+      if (somme(calcul) > somme(meilleur)) {
+        meilleur = calcul;
+      }
+    }
+    retenus.forEach((table, rang) => {
+      table[retenante] = meilleur[rang][retenante];
+    });
+  }
+  return new TrimestresEtrangers(retenus[0], retenus[1], periodes, famille, retenus[2]);
+}
+
+/**
+ * L'accord qui fait compter la période : son instrument, ou l'État de sa
+ * convention ; `null` pour une période que le droit français fait compter. Voir
+ * `_accord_de` du Python.
+ */
+function accordDe(coordonnee) {
+  if (coordonnee.titre !== ACCORD) {
+    return null;
+  }
+  return coordonnee.instrument === CONVENTION ? coordonnee.periode.pays : coordonnee.instrument;
+}
+
+/**
+ * Les trimestres que chaque accord ferait totaliser, dans l'ordre des périodes,
+ * et s'il compare la pension nationale à la pension proratisée. Voir `_groupes`
+ * du Python.
+ */
+function groupes(candidats) {
+  const accords = new Map();
+  for (const [coordonnee] of candidats) {
+    const cle = accordDe(coordonnee);
+    if (cle !== null) {
+      const [tiers, compare] = accords.get(cle) ?? [new Set(), false];
+      for (const etat of coordonnee.etatsTiers) {
+        tiers.add(etat);
+      }
+      accords.set(cle, [tiers, compare || coordonnee.comparee]);
+    }
+  }
+  if (accords.size === 0) {
+    return [[candidats, false]];
+  }
+  return [...accords].map(([cle, [tiers, compare]]) => [
+    candidats.filter(([coordonnee]) => {
+      const accord = accordDe(coordonnee);
+      return accord === null || accord === cle || tiers.has(coordonnee.periode.pays);
+    }),
+    compare,
+  ]);
 }
 
 /**

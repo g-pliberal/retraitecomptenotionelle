@@ -98,6 +98,17 @@ versions:
       compte les périodes accomplies avant lui. Une convention dont le calcul n'a pas
       été lu suit la règle générale de la circulaire n° 117/83 : ses périodes comptent
       pour le taux
+    plusieurs_accords: >-
+      un seul accord à la fois : « si vous avez travaillé en France, en Algérie et à
+      Monaco, votre caisse de retraite française ne pourra pas prendre en compte toutes
+      vos périodes d'assurance à l'étranger. En fonction de ce qui est le plus
+      avantageux pour vous, elle retiendra uniquement les périodes algériennes ou
+      uniquement les périodes monégasques » (CLEISS) ; les règlements européens
+      totalisent les périodes de tous les États qu'ils lient. Quelques conventions
+      totalisent aussi les périodes d'« un État tiers lié à chacun des deux États par
+      un accord de sécurité sociale » (CLEISS ; exposés de la Cnav « Retraite
+      personnelle » du Canada, de l'Uruguay, de la Serbie) : le tableau des accords en
+      donne la liste, telle que le CLEISS l'énumère
     superposition: >-
       « Il n'est pas retenu plus de 4 trimestres par année civile » (R. 351-5, exposés
       de la Cnav) : les périodes étrangères complètent celles que la carrière valide en
@@ -200,7 +211,10 @@ versions:
       fonctionnaires_depuis: 1998-10-25
       organisations_internationales: taux_seul
       jours_par_trimestre_organisations_internationales: 90
-  exemples: aucun trouvé
+  exemples: [cleiss_lena_reglements_europeens, cleiss_lena_etats_unis_taux_atteint,
+    cleiss_lena_etats_unis_taux_par_l_accord, cleiss_jahan_inde, cleiss_lena_canada_uruguay,
+    cleiss_jahan_japon_maroc, cleiss_lena_espagne_tunisie, cleiss_lena_burkina_faso,
+    cnav_2021_33_vingt_cinq_meilleures_annees]
 approximations:
 - ecart: >-
     les trimestres d'une période se comptent année civile par année civile, trois mois
@@ -237,6 +251,15 @@ approximations:
     France après l'âge légal la font —, ni pour la retraite progressive, ni pour les
     points gratuits de la retraite complémentaire des exploitants agricoles
   effet: non mesuré
+- ecart: >-
+    de plusieurs accords, chaque famille de régimes retient celui qui lui apporte le
+    plus de trimestres, et non celui qui sert la pension la plus élevée ; la liste des
+    États tiers d'une convention est celle que le CLEISS donne en 2026, appliquée à
+    toute date d'effet depuis l'entrée en vigueur de la convention, et sans lire le
+    champ matériel commun aux accords qu'elle suppose
+  effet: >-
+    le minimum proratisé sur la durée totale, ou une convention qui ne compare pas,
+    pourraient faire préférer un autre accord ; non mesuré
 sources:
   lu_le: 2026-10-01
   prochaine_relecture: 2027-04-30
@@ -246,7 +269,8 @@ sources:
     (docs/architecture.md, § 11), à la demande du propriétaire. La chronologie porte
     les périodes à l'étranger depuis la deuxième étape du domaine ; le moteur en compte
     les trimestres depuis la troisième, pour le taux, la décote, la surcote, la carrière
-    longue et la durée cotisée, jamais pour la proratisation.
+    longue et la durée cotisée, jamais pour la proratisation ; depuis la quatrième, ceux
+    d'un seul accord à la fois, et des États tiers qu'il fait compter.
   - >-
     À lire : le texte réglementaire qui fixe la durée d'affiliation à l'assurance maladie
     exigée par L. 742-2 depuis 2011, que seul l'exposé de la Cnav donne (cinq années
@@ -299,8 +323,10 @@ sources:
     reference: >-
       CLEISS, « Quelle retraite après avoir travaillé à l'étranger ? » et ses quatre
       pages (règlements européens, un accord, plusieurs accords, un État sans accord) :
-      les trois types d'accords bilatéraux et les exemples de Léna ; la page de chaque
-      accord (textes, entrée en vigueur, personnes visées)
+      les trois types d'accords bilatéraux, la règle d'un seul accord à la fois, et les
+      exemples de Léna et de Jahan ; la page de chaque accord (textes, entrée en vigueur,
+      personnes visées, et les États tiers dont sept conventions totalisent les
+      périodes)
     url: https://www.cleiss.fr/particuliers/retraite/index.html
     date: 2026-10-01
   - type: autre
@@ -341,6 +367,10 @@ historique:
   2026-10-01 — modélisée, approchée, à la troisième étape du domaine : les périodes que
   la saisie déclare comptent pour le taux de chaque régime, selon l'accord en vigueur
   avec leur État à la date d'effet.
+- >-
+  2026-10-01 — à la quatrième étape du domaine, les exemples du CLEISS rejoués : la caisse
+  ne totalise que les périodes d'un seul accord, et celles des États tiers qu'une
+  convention fait compter, dont le tableau des accords porte désormais la liste.
 effet: >-
   Toute personne qui a travaillé hors de France : 1,28 million de retraités résidaient à
   l'étranger fin 2024 (DREES, enquête annuelle auprès des caisses), et 20,3 % des retraités

@@ -195,7 +195,8 @@ versions:
       annees_du_salaire_annuel_moyen: entieres_depuis_la_generation_1953
       fonctionnaires_depuis: 1998-10-25
       regimes_en_points: pension_nationale
-  exemples: aucun trouvé
+  exemples: [cleiss_lena_reglements_europeens, cleiss_jahan_inde, cleiss_lena_canada_uruguay,
+    cleiss_lena_espagne_tunisie, cnav_2021_33_vingt_cinq_meilleures_annees]
 approximations:
 - ecart: >-
     la pension proratisée est celle que la totalisation calcule : le salaire annuel moyen
@@ -246,7 +247,12 @@ sources:
     pension proratisée des fonctionnaires, chez le Service des retraites de l'État et à
     la CNRACL ; la surcote de la pension proratisée, calculée « éventuellement à la date
     d'attribution définitive » quand les pensions des États se succèdent (exposé «
-    Attributions successives »).
+    Attributions successives »). Et l'exemple franco-japonais du CLEISS, qui rapporte la
+    part française à la durée des trois États (« prorata temporis de 100/170 »), quand
+    l'accord avec le Japon n'en totalise que deux : le modèle proratise la pension
+    théorique sur la durée des États que l'accord totalise, comme la convention et les
+    exposés de la Cnav l'écrivent, et le témoin de cet exemple ne compare que ses
+    trimestres.
   lectures:
   - type: circulaire_cnav
     reference: >-

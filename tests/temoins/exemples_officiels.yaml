@@ -33,6 +33,9 @@
 #     plus tôt doit être refusée (`motif_ouverture: non_ouverte`) ;
 #   pension_base_sur_sam — pension du régime général rapportée au salaire
 #     annuel moyen (taux × prorata) ;
+#   annees_du_salaire_annuel_moyen — le nombre des meilleures années que le
+#     salaire annuel moyen du régime général retient, celui de la pension
+#     proratisée d'une carrière hors de France compris ;
 #   pension_regime_general_mensuelle — pension du régime général après
 #     minimum, en euros par mois ;
 #   trimestres_de_majoration_enfants — ÉCART de durée d'assurance entre cette
@@ -91,7 +94,11 @@
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
-# l'impose. Les dates s'écrivent année-mois, et la pension prend effet le
+# l'impose, et `debut` le date au mois, celui d'une carrière qui commence hors
+# de France. `etranger` liste les périodes hors de France comme la saisie les
+# déclare — `pays`, le code de l'État au tableau des accords, `debut` et `fin`
+# au mois, `activite` salariée quand elle n'est pas dite —, `residence` l'État
+# où l'assuré réside hors de France. Les dates s'écrivent année-mois, et la pension prend effet le
 # premier du mois. La naissance dit son jour quand l'exemple le donne
 # (« 1964-05-16 ») : la pension prend effet au premier du mois qui suit
 # l'anniversaire, sauf pour qui est né un 1er (R. 351-37). Un exemple qui ne le
@@ -1348,3 +1355,115 @@ exemples:
       près (4 099,05 €, approximation de la fiche) : 3 021,18 € et 2 978,82 €.
     carriere: {naissance: "1980-01-01", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2026-01", age_debut: 25, radiation_invalidite: "2026-01", invalidite_imputable: true, taux_invalidite: 75, traitement_mensuel: 6000, taux_de_la_pension: 0.60}
     attendu: {pension_et_rente_d_invalidite_sur_traitement: {total: 1.0}}
+
+  # ---- CLEISS, et la Cnav : les carrières hors de France ----------------
+  # Les exemples du CLEISS ne donnent ni les dates ni le salaire : le témoin
+  # date les périodes au mois, la carrière française finissant la veille du
+  # départ, à l'âge légal quand l'exemple le dit ou le suppose, et ne compare
+  # que ce que la page écrit — les trimestres, le taux, le prorata.
+  - id: cleiss_lena_reglements_europeens
+    source: {editeur: "CLEISS", reference: "cleiss.fr, « Votre retraite après avoir travaillé en France et dans un ou plusieurs autres Etats de l'UE/EEE ou en Suisse », exemple de Léna", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Léna est née en 1964. Elle doit justifier de 170 trimestres pour
+      obtenir le taux plein. Elle a cotisé 15 ans (60 trimestres) en France, 7
+      ans (28 trimestres) en Italie et 21 ans (84 trimestres) en Norvège » :
+      « Retraite française = retraite globale théorique (retraite européenne)
+      x nombre de trimestres d'assurance en France rapporté à la période
+      d'assurance requise pour la génération concernée = Revenu annuel moyen
+      × 50 % × 170/170 × 60/170 », plus élevée que la retraite nationale, au
+      taux minoré.
+    carriere: {naissance: "1964-03", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2027-01", debut: "2012-01", niveau_salaire: 1.5, etranger: [{pays: "NO", debut: "1984-01", fin: "2005-01"}, {pays: "IT", debut: "2005-01", fin: "2012-01"}]}
+    attendu: {trimestres_requis: 170, trimestres_valides: 172, taux_liquidation: 0.5, pension_base_sur_sam: 0.17647058823529413}
+
+  - id: cleiss_lena_etats_unis_taux_atteint
+    source: {editeur: "CLEISS", reference: "cleiss.fr, « Votre retraite après avoir travaillé en France et dans un seul Etat ou territoire signataire d'un accord de sécurité sociale avec la France », exemple pour accord de type 2 : France/États-Unis", verifie_le: "2026-10-01"}
+    enonce: >-
+      Léna, née en 1964, 170 trimestres requis, a cotisé 42 ans et 6 mois (170
+      trimestres) en France et 6 mois (2 trimestres) aux États-Unis : « Dès
+      l'âge de 62 ans et 9 mois », « Retraite = Revenu annuel moyen × 50 % ×
+      170/170 », le taux maximum étant acquis avec ses seuls trimestres
+      français.
+    carriere: {naissance: "1964-03", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2027-01", debut: "1984-07", niveau_salaire: 1.5, etranger: [{pays: "US", debut: "1984-01", fin: "1984-07"}]}
+    attendu: {trimestres_requis: 170, taux_liquidation: 0.5, pension_base_sur_sam: 0.5}
+
+  - id: cleiss_lena_etats_unis_taux_par_l_accord
+    source: {editeur: "CLEISS", reference: "cleiss.fr, « Votre retraite après avoir travaillé en France et dans un seul Etat ou territoire signataire d'un accord de sécurité sociale avec la France », exemple pour accord de type 2 : France/États-Unis", verifie_le: "2026-10-01"}
+    enonce: >-
+      La même avec 168 trimestres en France : « Retraite = Revenu annuel moyen
+      × 50 % × 168/170 » ; « les 2 trimestres cotisés aux États-Unis
+      permettent d'atteindre la durée d'assurance exigée », « retenues pour
+      calculer le taux mais […] pas prises en compte pour la durée
+      d'assurance ».
+    carriere: {naissance: "1964-03", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2027-01", debut: "1985-01", niveau_salaire: 1.5, etranger: [{pays: "US", debut: "1984-07", fin: "1985-01"}]}
+    attendu: {trimestres_requis: 170, trimestres_valides: 170, taux_liquidation: 0.5, pension_base_sur_sam: 0.49411764705882355}
+
+  - id: cleiss_jahan_inde
+    source: {editeur: "CLEISS", reference: "cleiss.fr, « Votre retraite après avoir travaillé en France et dans un seul Etat ou territoire signataire d'un accord de sécurité sociale avec la France », exemple pour un accord de type 3 : France/Inde", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Jahan est né en 1963. Il doit justifier de 170 trimestres pour obtenir
+      le taux plein. Il a cotisé 35 ans (140 trimestres) en France et 7 ans ½
+      (30 trimestres) en Inde » : la retraite nationale, au taux minoré × 140/170,
+      contre « Revenu annuel moyen × 50 % × 170/170 × 140/170 » dans le cadre de
+      l'accord franco-indien ; la plus élevée est versée.
+    carriere: {naissance: "1963-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-01", debut: "1991-01", niveau_salaire: 1.5, etranger: [{pays: "IN", debut: "1983-07", fin: "1991-01"}]}
+    attendu: {trimestres_requis: 170, trimestres_valides: 170, taux_liquidation: 0.5, pension_base_sur_sam: 0.4117647058823529}
+
+  - id: cleiss_lena_canada_uruguay
+    source: {editeur: "CLEISS", reference: "cleiss.fr, « Votre retraite après avoir travaillé en France et dans plusieurs Etats ou territoires signataires d'un accord de sécurité sociale avec la France », exemple avec totalisation des périodes accomplies dans l'État tiers : France/Canada/Uruguay", verifie_le: "2026-10-01"}
+    enonce: >-
+      Léna, née en 1964, 170 trimestres requis, a cotisé 30 ans (120
+      trimestres) en France, 7 ans (28 trimestres) au Canada et 6 ans (24
+      trimestres) en Uruguay ; l'accord avec le Canada fait compter les
+      périodes uruguayennes, l'Uruguay étant lié aux deux : « Retraite =
+      Revenu annuel moyen x 50 % x 170/170 x 120/170 », les 172 trimestres
+      limités à 170.
+    carriere: {naissance: "1964-03", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2027-01", debut: "1997-01", niveau_salaire: 1.5, etranger: [{pays: "CA", debut: "1984-01", fin: "1991-01"}, {pays: "UY", debut: "1991-01", fin: "1997-01"}]}
+    attendu: {trimestres_requis: 170, trimestres_valides: 172, taux_liquidation: 0.5, pension_base_sur_sam: 0.35294117647058826}
+
+  - id: cleiss_jahan_japon_maroc
+    source: {editeur: "CLEISS", reference: "cleiss.fr, « Votre retraite après avoir travaillé en France et dans plusieurs Etats ou territoires signataires d'un accord de sécurité sociale avec la France », exemple sans totalisation des périodes accomplies dans l'État tiers : France/Japon/Maroc", verifie_le: "2026-10-01"}
+    enonce: >-
+      Jahan, né en 1963, 170 trimestres requis, a cotisé 25 ans (100
+      trimestres) en France, 15 ans (60 trimestres) au Japon et 4 ans (16
+      trimestres) au Maroc. L'accord avec le Japon ne totalise pas les périodes
+      d'un État tiers, et le Maroc n'est pas lié au Japon : chaque accord
+      totalise ses seules périodes, « Taux minoré (100 + 60) » dans le cadre de
+      l'accord franco-japonais, « Taux minoré (100 + 16) » dans celui de
+      l'accord franco-marocain ; le montant le plus élevé est versé.
+    carriere: {naissance: "1963-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-01", debut: "2001-01", niveau_salaire: 1.5, etranger: [{pays: "JP", debut: "1982-01", fin: "1997-01"}, {pays: "MA", debut: "1997-01", fin: "2001-01"}]}
+    attendu: {trimestres_requis: 170, trimestres_valides: 160}
+
+  - id: cleiss_lena_espagne_tunisie
+    source: {editeur: "CLEISS", reference: "cleiss.fr, « Votre retraite après avoir travaillé en France, dans un autre Etat de l'UE/EEE ou en Suisse et dans un Etat ou territoire signataire d'un accord de sécurité sociale avec la France », exemple de Léna", verifie_le: "2026-10-01"}
+    enonce: >-
+      Léna, née en 1964, 170 trimestres requis, a cotisé 25 ans (100
+      trimestres) en France, 12 ans (48 trimestres) en Espagne et 6 ans (24
+      trimestres) en Tunisie : les règlements européens ne totalisent que
+      l'Espagne, au taux minoré, quand l'accord franco-tunisien totalise aussi
+      l'Espagne, liée aux deux : « Revenu annuel moyen x 50 % x 170/170 x
+      100/170 ».
+    carriere: {naissance: "1964-03", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2027-01", debut: "2002-01", niveau_salaire: 1.5, etranger: [{pays: "ES", debut: "1984-01", fin: "1996-01"}, {pays: "TN", debut: "1996-01", fin: "2002-01"}]}
+    attendu: {trimestres_requis: 170, trimestres_valides: 172, taux_liquidation: 0.5, pension_base_sur_sam: 0.29411764705882354}
+
+  - id: cleiss_lena_burkina_faso
+    source: {editeur: "CLEISS", reference: "cleiss.fr, « Votre retraite après avoir travaillé en France et dans un Etat qui n'a pas signé d'accord de sécurité sociale avec la France », exemple de Léna", verifie_le: "2026-10-01"}
+    enonce: >-
+      Léna, née en 1964, 170 trimestres requis, a cotisé 35 ans (140
+      trimestres) en France et 10 ans (40 trimestres) au Burkina Faso, qu'aucun
+      accord ne lie à la France : « Seul le calcul de sa retraite nationale du
+      régime français sera effectué. Retraite = Revenu annuel moyen x Taux
+      minoré x 140/170 ». Le témoin place ses années burkinabè après 1983,
+      l'exemple ne les datant pas, et la fait partir à 64 ans et 9 mois.
+    carriere: {naissance: "1964-03", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2029-01", debut: "1994-01", niveau_salaire: 1.5, etranger: [{pays: "BF", debut: "1984-01", fin: "1994-01"}]}
+    attendu: {trimestres_requis: 170, trimestres_valides: 140}
+
+  - id: cnav_2021_33_vingt_cinq_meilleures_annees
+    source: {editeur: "Cnav", reference: "circulaire Cnav n° 2021/33 du 24 novembre 2021, « Revenu annuel moyen de base – pension communautaire », point 3, exemple 1", verifie_le: "2026-10-01"}
+    enonce: >-
+      « Une personne née en 1955 totalise 70 trimestres en France à un des
+      régimes visés par la Lura (régime général), 30 trimestres en Belgique, et
+      74 trimestres en Allemagne. Le calcul du revenu annuel moyen de la pension
+      globale théorique se fera sur les vingt-cinq meilleures années », pour une
+      pension prenant effet depuis le 1er juillet 2022.
+    carriere: {naissance: "1955-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-07", debut: "2005-01", niveau_salaire: 1.5, etranger: [{pays: "BE", debut: "1979-01", fin: "1986-07"}, {pays: "DE", debut: "1986-07", fin: "2005-01"}]}
+    attendu: {trimestres_valides: 174, annees_du_salaire_annuel_moyen: 25}

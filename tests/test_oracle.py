@@ -1565,13 +1565,25 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
                                                c.get("niveau_salaire", 1.0))),
             "employeur": emploi.get("employeur", "autre"),
         }
+    def age_du_mois(texte: str) -> float:
+        """L'âge d'un mois, compté comme un début d'activité : depuis le
+        mois de naissance."""
+        return (_mois(texte).rang - naissance.rang) / 12.0
+
+    if "etranger" in c:
+        # La carrière hors de France, comme la saisie la déclare : chaque
+        # période datée comme un début d'activité, salariée quand l'exemple
+        # ne dit pas son activité.
+        communs["etranger"] = {
+            "periodes": [{"pays": periode["pays"], "debut": age_du_mois(periode["debut"]),
+                          "fin": age_du_mois(periode["fin"]),
+                          "activite": periode.get("activite", "salariee")}
+                         for periode in c["etranger"]],
+            "pensions": [], "residence": c.get("residence")}
     if any(cle in c for cle in ("inaptitude", "pension_d_invalidite", "radiation_invalidite")):
         # L'invalidité et l'inaptitude, comme la saisie les déclare : la
         # pension d'invalidité et la radiation datées comme un début
         # d'activité, depuis le mois de naissance.
-        def age_du_mois(texte: str) -> float:
-            return (_mois(texte).rang - naissance.rang) / 12.0
-
         communs["invalidite"] = {
             "pension": (age_du_mois(c["pension_d_invalidite"])
                         if "pension_d_invalidite" in c else None),
@@ -1582,8 +1594,11 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
                 "taux": c.get("taux_invalidite")},
         }
     actuel = simulateur.scenario_actuel
-    if "age_debut" in c:
-        carriere = simulateur.carriere_simple(age_debut=float(c["age_debut"]), **communs)
+    if "age_debut" in c or "debut" in c:
+        # Le début de la carrière en France, à un âge ou à un mois : celui
+        # d'une carrière qui commence hors de France se date.
+        debut = (float(c["age_debut"]) if "age_debut" in c else age_du_mois(c["debut"]))
+        carriere = simulateur.carriere_simple(age_debut=debut, **communs)
         return carriere, actuel.calculer(carriere)
     cible = int(c["trimestres_valides"])
     base = age - cible / 4.0
@@ -1651,6 +1666,12 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
     if cle == "non_ouverte_un_trimestre_plus_tot":
         _, plus_tot = _carriere_exemple(simulateur, exemple, decalage_mois=-3)
         return plus_tot.motif_ouverture == "non_ouverte"
+    if cle == "annees_du_salaire_annuel_moyen":
+        # Le nombre des meilleures années que le salaire annuel moyen du
+        # régime général retient, celui de la pension proratisée compris.
+        periode = simulateur.catalogue["regime_general"].periode(carriere.annee_liquidation)
+        return liquider.nombre_d_annees_retenues(actuel, periode, carriere,
+                                                 carriere.annee_naissance)
     if cle == "pension_base_sur_sam":
         periode = simulateur.catalogue["regime_general"].periode(
             carriere.annee_liquidation)
@@ -1925,7 +1946,7 @@ def test_le_temoin_des_exemples_officiels_est_source():
         assert source["editeur"] in (
             "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
             "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL", "CNIEG",
-            "Agirc-Arrco", "CRPCEN",
+            "Agirc-Arrco", "CRPCEN", "CLEISS",
         ), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]

@@ -874,6 +874,17 @@ def _cas() -> list[dict]:
     cas.append(("etranger_senegal_minimum_ecrete", {
         **en_espagne, "etranger1_pays": "SN", "pension_etrangere1_pays": "SN",
         "pension_etrangere1": "750", "pension_etrangere1_debut": "2020-04"}))
+    # Un seul accord à la fois : le Japon, qui ne fait compter aucun État
+    # tiers, plutôt que le Maroc, qui n'est pas lié au Japon ; la Tunisie, qui
+    # fait compter l'Espagne, liée aux deux États (exemples du CLEISS).
+    cas.append(("etranger_japon_maroc_un_seul_accord", {
+        "naissance": "1963-03-15", "debut": "2001-01", "liquidation": "2026-01",
+        "etranger1_pays": "JP", "etranger1_debut": "1982-01", "etranger1_fin": "1997-01",
+        "etranger2_pays": "MA", "etranger2_debut": "1997-01", "etranger2_fin": "2001-01"}))
+    cas.append(("etranger_espagne_tunisie_etat_tiers", {
+        "naissance": "1964-03-15", "debut": "2002-01", "liquidation": "2027-01",
+        "etranger1_pays": "ES", "etranger1_debut": "1984-01", "etranger1_fin": "1996-01",
+        "etranger2_pays": "TN", "etranger2_debut": "1996-01", "etranger2_fin": "2002-01"}))
     # L'ASPA n'est servie qu'à qui réside en France : une petite carrière,
     # quatre ans au Maroc puis vingt-six en France, repartie vivre au Maroc.
     cas.append(("etranger_residence_au_maroc_sans_aspa", {

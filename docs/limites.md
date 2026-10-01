@@ -220,7 +220,12 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   convention bilatérale —, dans une organisation internationale, ou à
   l'étranger avant le 1er avril 1983, comptent pour le taux, l'ouverture des
   droits, la surcote et la carrière longue de chaque régime que l'accord
-  coordonne, jamais pour la durée qui proratise (`droit/etranger.py`). Quand
+  coordonne, jamais pour la durée qui proratise (`droit/etranger.py`) ; celles
+  d'un seul accord à la fois, avec les États tiers qu'une convention fait
+  compter, comme la caisse les totalise. Les calculs de Léna et de Jahan que
+  le CLEISS publie se rejouent (`tests/temoins/exemples_officiels.yaml`), hors
+  le prorata de son exemple franco-japonais, rapporté à la durée de trois États
+  quand l'accord n'en totalise que deux. Quand
   l'accord compare, chaque régime qui porte le minimum contributif sert la plus
   élevée de la pension nationale et de la pension proratisée, chacune portée à
   son minimum ; l'écrêtement de ce minimum compte les pensions étrangères
@@ -880,7 +885,7 @@ Quatre bornes à connaître, et elles sont étroites :
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->89<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->98<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -976,7 +981,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->89<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->98<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.

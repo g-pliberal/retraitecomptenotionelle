@@ -62,8 +62,16 @@
 #                l'accord vise. Une convention qui ne vise que les salariés ne
 #                coordonne ni la sécurité sociale des indépendants ni les
 #                professions libérales.
-#   etats_tiers  vrai quand l'accord totalise aussi les périodes d'un État lié
-#                aux deux parties par un accord qui coordonne les retraites.
+#   etats_tiers  les États tiers dont la convention totalise aussi les
+#                périodes : ceux qu'un accord qui coordonne les retraites lie
+#                aux deux parties, tels que la page du CLEISS les énumère en
+#                2026 (au 1er janvier pour l'Uruguay, au 1er février pour le
+#                Canada et le Maroc, au 1er mars pour la Serbie et la Tunisie,
+#                au 1er août pour le Brésil, sans date pour l'Inde) ; absent
+#                quand elle n'en totalise aucun. Hors de ces États, la caisse
+#                ne totalise que les périodes d'un accord à la fois, celui qui
+#                lui est le plus favorable (fiche
+#                `totalisation_des_periodes_etrangeres`).
 #   date_lue     faux quand la date n'est pas celle de l'entrée en vigueur lue
 #                dans une source, mais une borne déduite (la publication).
 #   sources      cnav — le nom de l'exposé dans la base législative de la Cnav
@@ -303,7 +311,9 @@ etats:
   BR:
     nom: Brésil
     accords:
-    - {instrument: convention, de: 2014-09-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+    - {instrument: convention, de: 2014-09-01, calcul: comparaison, prorata: limite,
+       etats_tiers: [DE, AR, AT, BE, BG, CA, CV, CL, KR, ES, US, GR, IN, IT, JP, LU, PT,
+                     QC, CZ, CH, UY],
        texte: "accord du 15 décembre 2011", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_bresil_calcul_retraite_personnelle_ex, cleiss: conv_bresil}}
   CA:
@@ -312,7 +322,10 @@ etats:
     - {instrument: convention, de: 1981-03-01, a: 2017-08-01, calcul: non_lu,
        texte: "accord du 9 février 1979", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_canada_accord_09021979_ex}}
-    - {instrument: convention, de: 2017-08-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+    - {instrument: convention, de: 2017-08-01, calcul: comparaison, prorata: limite,
+       etats_tiers: [DE, AT, BE, BR, BG, CL, CY, KR, HR, DK, ES, EE, US, FI, GR, GG, HU,
+                     IN, IE, IS, IT, JP, JE, LV, LT, LU, MK, MT, MA, "NO", NL, PH, PL, PT,
+                     CZ, RO, RS, SK, SI, SE, CH, TR, UY],
        texte: "accord du 14 mars 2013", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_canada_calcul_retraite_personnelle_ex, cleiss: conv_canada}}
   CG:
@@ -375,7 +388,8 @@ etats:
   IN:
     nom: Inde
     accords:
-    - {instrument: convention, de: 2011-07-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+    - {instrument: convention, de: 2011-07-01, calcul: comparaison, prorata: limite,
+       etats_tiers: [DE, AT, BE, BR, CA, KR, DK, FI, HU, JP, LU, "NO", PT, QC, CZ, SE],
        texte: "accord du 30 septembre 2008", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_inde_calcul_retraite_personnelle_ex, cleiss: conv_inde}}
   JE:
@@ -402,7 +416,8 @@ etats:
     - {instrument: convention, de: 1967-01-01, a: 2011-06-01, calcul: non_lu,
        texte: "convention du 9 juillet 1965, son assurance vieillesse remplacée par l'avenant du 21 mai 1979 au 1er avril 1981",
        personnes: salaries, sources: {cnav: accord_international_maroc_convention_09071965_ex}}
-    - {instrument: convention, de: 2011-06-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+    - {instrument: convention, de: 2011-06-01, calcul: comparaison, prorata: limite,
+       etats_tiers: [DZ, DE, BE, CA, DK, ES, LU, NL, PT, QC, SE, TN],
        texte: "convention générale du 22 octobre 2007", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_maroc_calcul_retraite_personnelle_ex, cleiss: conv_maroc}}
   MC:
@@ -464,7 +479,9 @@ etats:
     - {instrument: convention, de: 1951-04-01, a: 2023-12-01, calcul: option, prorata: limite,
        texte: "convention générale franco-yougoslave du 5 janvier 1950", personnes: salaries,
        sources: {cnav: accord_international_yougoslavie_calcul_retraite_personnelle_ex}}
-    - {instrument: convention, de: 2023-12-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+    - {instrument: convention, de: 2023-12-01, calcul: comparaison, prorata: limite,
+       etats_tiers: [DE, AT, BE, BA, BG, CA, CY, HR, DK, GR, HU, IT, LU, MK, ME, "NO", NL,
+                     PL, QC, CZ, RO, GB, SK, SI, SE, CH, TR],
        texte: "accord du 6 novembre 2014", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_serbie_retraite_personnelle_ex, cleiss: conv_serbie}}
   SM:
@@ -491,7 +508,8 @@ etats:
     - {instrument: convention, de: 1966-01-01, a: 2007-04-01, calcul: non_lu, date_lue: false,
        texte: "convention du 17 décembre 1965 et accord du 12 septembre 1975", personnes: salaries,
        sources: {cnav: accord_international_tunisie_accord_12091975_ex}}
-    - {instrument: convention, de: 2007-04-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+    - {instrument: convention, de: 2007-04-01, calcul: comparaison, prorata: limite,
+       etats_tiers: [DZ, DE, AT, BE, BG, ES, IT, LU, MA, NL, PT, CZ, CH, TR],
        texte: "convention générale du 26 juin 2003", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_tunisie_calcul_retraite_personnelle_ex, cleiss: conv_tunisie}}
   TR:
@@ -509,7 +527,9 @@ etats:
   UY:
     nom: Uruguay
     accords:
-    - {instrument: convention, de: 2014-07-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+    - {instrument: convention, de: 2014-07-01, calcul: comparaison, prorata: limite,
+       etats_tiers: [DE, AR, AT, BE, BR, CA, CL, KR, ES, US, GR, IL, IT, LU, NL, PT, QC,
+                     RO, CH],
        texte: "accord du 6 décembre 2010", personnes: salaries_et_non_salaries,
        sources: {cnav: accord_international_uruguay_retraite_personnelle_ex, cleiss: conv_uruguay}}
   XK:

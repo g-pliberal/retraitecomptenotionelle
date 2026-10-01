@@ -67,6 +67,11 @@ def test_le_tableau_des_accords_dit_un_accord_par_date():
                 assert accord.get(cle) is None or accord[cle] in permises, (code, cle)
             if accord["instrument"] == "convention":
                 assert accord["calcul"] in valeurs["calcul"], code
+            # Les États tiers qu'une convention fait compter sont des États du
+            # tableau, autres qu'elle.
+            tiers = accord.get("etats_tiers")
+            assert tiers is None or (accord["instrument"] == "convention" and tiers
+                                     and set(tiers) <= set(etats) - {code, "OI"}), code
 
 
 # -- la saisie ---------------------------------------------------------------------
@@ -726,6 +731,25 @@ process.stdout.write(JSON.stringify(cas.map(([duree, cotisee, ouverte]) =>
     assert json.loads(execution.stdout) == pytest.approx([c[3] for c in cas])
 
 
+def test_la_caisse_ne_totalise_qu_un_accord_a_la_fois(contexte):
+    """Huit ans en Algérie, puis trois à Monaco : les deux conventions ne
+    font compter aucun État tiers, et la caisse retient les périodes d'une
+    seule, celle qui lui en apporte le plus (CLEISS) — 33 trimestres, les
+    mois de 1979 et de 1987 arrondis au trimestre supérieur. Les mêmes années
+    en Espagne et en Tunisie s'additionnent, l'année 1987 ramenée à quatre
+    trimestres : l'accord franco-tunisien fait compter l'Espagne, liée aux
+    deux États."""
+    deux = {**NE_EN_1962, "etranger1_pays": "DZ", "etranger1_debut": "1979-09",
+            "etranger1_fin": "1987-09", "etranger2_pays": "MC", "etranger2_debut": "1987-09",
+            "etranger2_fin": "1990-09"}
+    algerie = _actuel(contexte, **{k: v for k, v in deux.items()
+                                   if not k.startswith("etranger2")})
+    assert _actuel(contexte, **deux).trimestres_etrangers == algerie.trimestres_etrangers == 33
+    espagne_tunisie = _actuel(contexte, **{**deux, "etranger1_pays": "ES",
+                                           "etranger2_pays": "TN"})
+    assert espagne_tunisie.trimestres_etrangers == 33 + 13 - 1
+
+
 #: Des carrières hors de France que les deux moteurs liquident.
 CARRIERES_HORS_DE_FRANCE = [
     {**NE_EN_1962, **AU_MAROC},
@@ -749,6 +773,14 @@ CARRIERES_HORS_DE_FRANCE = [
     {**PETITE_CARRIERE, **AU_MAROC_AVANT, "residence": "MA"},
     {**PETITE_CARRIERE, **AU_MAROC_AVANT, "residence": "autre",
      "metier2_debut": "2005-01", "metier2_statut": "fonctionnaire_etat"},
+    # Un seul accord à la fois, et les États tiers qu'une convention fait
+    # compter.
+    {"naissance": "1963-03-15", "debut": "2001-01", "liquidation": "2026-01",
+     "etranger1_pays": "JP", "etranger1_debut": "1982-01", "etranger1_fin": "1997-01",
+     "etranger2_pays": "MA", "etranger2_debut": "1997-01", "etranger2_fin": "2001-01"},
+    {"naissance": "1964-03-15", "debut": "2002-01", "liquidation": "2027-01",
+     "etranger1_pays": "ES", "etranger1_debut": "1984-01", "etranger1_fin": "1996-01",
+     "etranger2_pays": "TN", "etranger2_debut": "1996-01", "etranger2_fin": "2002-01"},
 ]
 
 #: Ce que le portage liquide de ces carrières.

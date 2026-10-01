@@ -3464,6 +3464,31 @@ page de simulation dit les trimestres que valent les périodes hors de France,
 laquelle des deux pensions l'accord sert, et que l'ASPA ne se sert qu'en
 France ; `docs/limites.md` dit ce qui est servi, et ce qui reste dehors.
 
+**Quatrième étape, le 1er octobre : les exemples publiés.** Neuf exemples
+entrent dans `tests/temoins/exemples_officiels.yaml`, et le modèle les rend
+tous : les huit calculs de Léna et de Jahan que le CLEISS publie — les
+règlements européens (France, Italie, Norvège), un accord à calcul séparé (les
+États-Unis, deux fois), un accord qui compare (l'Inde), plusieurs accords (le
+Canada et l'Uruguay, le Japon et le Maroc), les règlements et un accord
+(l'Espagne et la Tunisie), un État sans accord (le Burkina Faso) — et
+l'exemple 1 de la circulaire Cnav n° 2021/33 : la pension théorique sur les
+vingt-cinq meilleures années depuis juillet 2022. Le banc date désormais une
+carrière qui commence hors de France (`debut`, `etranger`), et une grandeur
+naît, `annees_du_salaire_annuel_moyen`.
+
+Les exemples à plusieurs accords ont appris au modèle la règle qui lui
+manquait : la caisse ne totalise que les périodes d'un seul accord, avec celles
+des États tiers qu'une convention fait compter. Il additionnait les années
+japonaises et marocaines de Jahan, 176 trimestres au taux plein, quand le
+CLEISS n'en compte que 160. Chaque famille de régimes retient désormais
+l'accord qui lui apporte le plus de trimestres (`droit/etranger.py`, et son
+jumeau), et le tableau des accords porte la liste des États tiers de sept
+conventions, telle que le CLEISS l'énumère — le code de la Norvège entre
+guillemets, que YAML lisait « faux ». Le prorata de l'exemple franco-japonais,
+que le CLEISS rapporte à la durée des trois États quand l'accord n'en totalise
+que deux, ne se compare pas, et la fiche `pension_proratisee` le dit. Aucun
+des 681 témoins ne bouge ; deux naissent.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

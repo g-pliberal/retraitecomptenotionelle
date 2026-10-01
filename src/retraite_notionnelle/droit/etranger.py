@@ -48,6 +48,8 @@ TITRES = (ACCORD, ORGANISATION, EQUIVALENCE)
 #: Les instruments d'un accord qui totalise les périodes (tableau des accords).
 INSTRUMENTS_QUI_TOTALISENT = frozenset({
     "reglements_europeens", "accord_de_commerce_et_de_cooperation", "convention"})
+#: L'instrument propre à un État : une convention bilatérale.
+CONVENTION = "convention"
 #: Celui qui, seul, coordonne aussi les régimes des fonctionnaires.
 REGLEMENTS_EUROPEENS = "reglements_europeens"
 #: Les personnes qu'une convention ne vise qu'à moitié : les seuls salariés.
@@ -82,6 +84,9 @@ class PeriodeCoordonnee:
     #: L'accord compare-t-il la pension nationale, qui ignore la période, à
     #: la pension proratisée, qui la compte (fiche ``pension_proratisee``) ?
     comparee: bool = False
+    #: Les États tiers dont la convention qui la fait compter totalise aussi
+    #: les périodes (tableau des accords) ; aucun pour un autre instrument.
+    etats_tiers: tuple[str, ...] = field(default=(), compare=False, repr=False)
 
     def donnees(self) -> dict:
         periode = self.periode
@@ -143,7 +148,8 @@ def coordonner_les_periodes(moteur: ScenarioActuel,
         coordonnees.append(PeriodeCoordonnee(
             periode=periode, titre=titre, instrument=instrument, familles=familles,
             version=None if version is None else version["id"], parametres=parametres,
-            comparee=comparee))
+            comparee=comparee,
+            etats_tiers=tuple(accord.get("etats_tiers") or ()) if titre == ACCORD else ()))
     return tuple(coordonnees)
 
 
@@ -235,8 +241,16 @@ def compter_les_periodes(carriere: Carriere, periodes: tuple[PeriodeCoordonnee, 
     dépasse quatre trimestres avec ceux que la carrière valide en France
     (R. 351-5), ni, l'année du départ, les trimestres civils écoulés avant
     lui ; ceux d'un accord d'abord. L'équivalence ne vaut depuis 2011 qu'à
-    qui a assez de trimestres en France (L. 742-2). La pension nationale
-    retient de même tout ce qu'un accord ne compare pas."""
+    qui a assez de trimestres en France (L. 742-2).
+
+    UN SEUL ACCORD À LA FOIS : la caisse ne totalise que les périodes d'un
+    instrument — les règlements européens, l'accord avec le Royaume-Uni, ou
+    une convention avec les États tiers qu'elle fait compter (CLEISS ;
+    exposés de la Cnav) —, et chaque famille retient celui qui lui apporte le
+    plus de trimestres ; ceux que le droit français fait compter —
+    organisation internationale, équivalence — s'y ajoutent toujours. La
+    pension nationale en retient de même tout ce que cet accord ne compare
+    pas (:func:`_groupes`)."""
     francais = carriere.trimestres_par_annee(carriere.lignes)
     depart = carriere.date_liquidation
     candidats: list[tuple[PeriodeCoordonnee, int, int]] = []
@@ -250,9 +264,48 @@ def compter_les_periodes(carriere: Carriere, periodes: tuple[PeriodeCoordonnee, 
             continue
         for annee, trimestres in _trimestres_de(coordonnee, parametres, depart).items():
             candidats.append((coordonnee, annee, trimestres))
-    pour_le_taux, cotises = _retenir(candidats, francais, depart)
-    nationaux, _ = _retenir([c for c in candidats if not c[0].comparee], francais, depart)
-    return TrimestresEtrangers(pour_le_taux, cotises, periodes, famille, nationaux)
+    calculs = []
+    for groupe, compare in _groupes(candidats):
+        pour_le_taux, cotises = _retenir(groupe, francais, depart)
+        nationaux, _ = _retenir([c for c in groupe if not compare or _accord_de(c[0]) is None],
+                                francais, depart)
+        calculs.append((pour_le_taux, cotises, nationaux))
+    retenus: tuple[dict[str, dict[int, int]], ...] = ({}, {}, {})
+    for retenante in FAMILLES:
+        # Le premier des accords qui en apportent le plus, dans l'ordre des
+        # périodes.
+        meilleur = max(calculs, key=lambda calcul: sum(calcul[0][retenante].values()))
+        for table, retenue in zip(retenus, meilleur):
+            table[retenante] = retenue[retenante]
+    return TrimestresEtrangers(retenus[0], retenus[1], periodes, famille, retenus[2])
+
+
+def _accord_de(coordonnee: PeriodeCoordonnee) -> str | None:
+    """L'accord qui fait compter la période : son instrument, ou l'État de sa
+    convention ; ``None`` pour une période que le droit français fait compter."""
+    if coordonnee.titre != ACCORD:
+        return None
+    return coordonnee.periode.pays if coordonnee.instrument == CONVENTION else coordonnee.instrument
+
+
+def _groupes(candidats: list[tuple[PeriodeCoordonnee, int, int]]
+             ) -> list[tuple[list[tuple[PeriodeCoordonnee, int, int]], bool]]:
+    """Les trimestres que chaque accord ferait totaliser, dans l'ordre des
+    périodes : les siens, ceux des États tiers que sa convention fait compter,
+    et ceux que le droit français fait compter ; et si l'accord compare la
+    pension nationale à la pension proratisée. Sans accord, ces derniers
+    seuls."""
+    accords: dict[str, tuple[set[str], bool]] = {}
+    for coordonnee, _, _ in candidats:
+        cle = _accord_de(coordonnee)
+        if cle is not None:
+            tiers, compare = accords.get(cle, (set(), False))
+            accords[cle] = (tiers | set(coordonnee.etats_tiers), compare or coordonnee.comparee)
+    if not accords:
+        return [(candidats, False)]
+    return [([c for c in candidats if (accord := _accord_de(c[0])) is None or accord == cle
+              or c[0].periode.pays in tiers], compare)
+            for cle, (tiers, compare) in accords.items()]
 
 
 def _retenir(candidats: list[tuple[PeriodeCoordonnee, int, int]], francais: dict[int, int],
