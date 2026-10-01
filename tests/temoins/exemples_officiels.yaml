@@ -58,6 +58,12 @@
 #     annuelle brute que le scénario 1 lui fait servir, à cinquante centimes
 #     près. C'est ce que publie un régime dont la pension ne tient ni à un
 #     taux ni à un salaire — les mines : trimestres × coefficient × valeur ;
+#   pensions_annuelles_a_leur_date — la même, à la date où elle commence
+#     quand elle ne commence pas au départ déclaré : celle du fonctionnaire
+#     radié pour invalidité, celle que la substitution sert à l'ex-invalide ;
+#   departs — les départs que l'échéancier inscrit quand les régimes ne
+#     liquident pas tous au départ déclaré, chacun « AAAA-MM-JJ motif »
+#     (`droit/departs.py`) ; une liste vide pour un départ unique ;
 #   dates_d_effet_de_la_reversion — pour chaque régime nommé, la date d'effet
 #     (AAAA-MM-JJ) de la réversion que le décès de l'assuré ouvre à son
 #     conjoint, telle que l'échéancier la liquide ;

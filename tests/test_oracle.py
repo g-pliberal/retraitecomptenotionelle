@@ -1676,6 +1676,18 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # La pension annuelle brute d'un régime nommé : ce que publie un
         # régime dont la pension ne tient ni à un taux ni à un salaire.
         return {p.regime: p.montant for p in resultat.pensions_par_regime}
+    if cle == "pensions_annuelles_a_leur_date":
+        # La même, à la date où elle commence quand elle ne commence pas au
+        # départ déclaré : la pension du fonctionnaire radié pour invalidité,
+        # celle que la substitution sert avant le départ.
+        return {p.regime: (p.montant if p.montant_a_l_effet is None
+                           else p.montant_a_l_effet)
+                for p in resultat.pensions_par_regime}
+    if cle == "departs":
+        # Les départs que l'échéancier inscrit quand les régimes ne liquident
+        # pas tous au départ déclaré, chacun « AAAA-MM-JJ motif » ; aucun
+        # pour un départ unique.
+        return [f"{d.date_effet} {d.motif}" for d in resultat.departs]
     if cle == "dates_d_effet_de_la_reversion":
         # La réversion telle que l'échéancier la liquide au décès de l'assuré :
         # la date d'effet de chaque régime du défunt.
@@ -1782,10 +1794,12 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         # Un régime nommé que le modèle ne sert pas n'a pas de coefficient.
         return all(regime in mesure and mesure[regime] == pytest.approx(c, abs=1e-9)
                    for regime, c in valeur.items())
-    if cle == "pensions_annuelles_des_regimes":
+    if cle in ("pensions_annuelles_des_regimes", "pensions_annuelles_a_leur_date"):
         # Un régime nommé que le modèle ne sert pas lui verse zéro.
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.5)
                    for regime, montant in valeur.items())
+    if cle == "departs":
+        return mesure == [str(depart) for depart in valeur]
     if cle == "dates_d_effet_de_la_reversion":
         # Un régime nommé que la réversion ne liquide pas n'a pas de date.
         return not isinstance(mesure, str) and all(
