@@ -4038,3 +4038,18 @@ journal:
       annuel moyen réduit de 2004 à juin 2022, la comparaison des pensions des
       fonctionnaires, la révision de l'écrêtement (R. 173-8), la subsidiarité du minimum,
       les mois de séjour et la condition de L. 816-1, les listes d'États tiers d'avant 2026.
+  - date: "2026-10-01"
+    session: >-
+      l'analyse de ce qu'OpenFisca-France-Pension fait mieux que le dépôt, demandée par le
+      propriétaire, et l'action 136 qui en naît, à faire
+    consulte: >-
+      Le code d'OpenFisca-France-Pension à son dernier commit, du 13 mai 2026 (version
+      0.1.3) : ses cinq familles de régimes, ses 140 tests de formules, sa documentation ;
+      les points d'entrée de l'interface web d'openfisca-core 42. Aucun texte de droit.
+    trouve: >-
+      Deux règles du scénario 1 qu'il calcule et que le dépôt ne sert pas : le départ
+      anticipé des fonctionnaires parents de trois enfants, conditions réunies avant 2012,
+      et le temps partiel des fonctionnaires. Ses paramètres s'arrêtent au 1er janvier 2025.
+    reste: >-
+      Les deux règles, à lire sur Légifrance et dans la circulaire qui les applique avant
+      d'en écrire la fiche (action 136, étape 3) ; rien n'en est commencé.
