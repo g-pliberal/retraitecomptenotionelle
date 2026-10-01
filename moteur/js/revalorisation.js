@@ -486,6 +486,7 @@ export function foyerALEcheance(simulateur, carriere, vivante) {
     simulateur.scenarioActuel, carriere.personne, dateIso(vivante.annee, 12, 31),
     vivante.annee, ressources,
     vivante.annee >= carriere.annee_naissance + ageDeLAspa(simulateur.scenarioActuel, carriere),
+    null, carriere.residence,
   );
 }
 

@@ -380,7 +380,8 @@ class Echeancier:
             self.moteur, liquidee.personne, evenement.date, liquidee.annee_liquidation,
             liquidation.total,
             (liquidee.age_liquidation or 0.0)
-            >= _invalidite.age_de_l_aspa(self.moteur, liquidee), contexte)
+            >= _invalidite.age_de_l_aspa(self.moteur, liquidee), contexte,
+            residence=liquidee.residence)
         self.au_depart = resultat_actuel(liquidation, foyer)
         self._inscrire(evenement, f"liquidation_{evenement.id}", "liquidation", liquidation,
                        evenement.date)
@@ -420,7 +421,8 @@ class Echeancier:
                 a.montant for a in self.au_depart.avantages_appliques
                 if a.code == "majoration_enfants"),
             (carriere.age_liquidation or 0.0)
-            >= _invalidite.age_de_l_aspa(self.moteur, carriere), contexte)
+            >= _invalidite.age_de_l_aspa(self.moteur, carriere), contexte,
+            residence=carriere.residence)
         self._inscrire(declare, f"foyer_{declare.id}", "foyer", foyer, declare.date)
 
     def _echeance(self, carriere: Carriere, annee: int) -> None:

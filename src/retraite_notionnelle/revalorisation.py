@@ -676,7 +676,7 @@ def foyer_a_l_echeance(simulateur, carriere, vivante: Revalorisee) -> Foyer:
         simulateur.scenario_actuel, carriere.personne, f"{vivante.annee:04d}-12-31",
         vivante.annee, ressources,
         vivante.annee >= carriere.annee_naissance + invalidite.age_de_l_aspa(
-            simulateur.scenario_actuel, carriere))
+            simulateur.scenario_actuel, carriere), residence=carriere.residence)
 
 
 def aujourd_hui(vivante: Revalorisee, foyer: Foyer, resultat) -> ActuelAujourdhui:

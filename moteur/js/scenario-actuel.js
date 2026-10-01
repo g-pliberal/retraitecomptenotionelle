@@ -267,7 +267,7 @@ export class ScenarioActuel {
       const foyer = foyerEtNet(
         this, carriere.personne, resultat.demande.dateEffet, carriere.anneeLiquidation,
         resultat.total, (carriere.age_liquidation || 0.0) >= ageDeLAspa(this, carriere),
-        contexte);
+        contexte, carriere.residence);
       sortie = resultatActuel(resultat, foyer);
     }
     if (progressive !== null) {
@@ -490,7 +490,8 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
   });
   const foyer = foyerEtNet(
     moteur, carriere.personne, new lesDeparts.Depart(declare).dateEffet, declare.annee,
-    total, (carriere.age_liquidation || 0.0) >= ageDeLAspa(moteur, carriere), contexte);
+    total, (carriere.age_liquidation || 0.0) >= ageDeLAspa(moteur, carriere), contexte,
+    carriere.residence);
   const liste = [...avantages.values()];
   if (foyer.minimumVieillesse > 0) {
     total = foyer.plafond;

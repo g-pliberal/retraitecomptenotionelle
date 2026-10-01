@@ -777,7 +777,9 @@ Le relevé des droits et le résultat le signalent.
     vieillesse, comme la loi le lui permettait (quatrième domaine, § 11) ;
   - pas de pension étrangère, quand l'assuré n'en déclare pas : le minimum
     contributif n'est écrêté que de ses pensions françaises (cinquième
-    domaine, § 11).
+    domaine, § 11) ;
+  - résidence en France après le départ, quand l'assuré n'en déclare pas
+    d'autre : l'ASPA lui est servie (cinquième domaine, § 11).
 - **Un défaut légal** n'est pas une présomption : c'est la loi qui décide
   quand la personne n'a rien fait. Il s'écrit dans la version de la règle,
   parce qu'il change avec elle. Au régime général, les trimestres d'éducation

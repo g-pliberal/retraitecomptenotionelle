@@ -657,6 +657,35 @@ def test_l_ecretement_du_minimum_compte_les_pensions_etrangeres(contexte, simula
     assert 0 < minimum(declaree) < minimum(avec)
 
 
+#: Né en mars 1955, vingt-six ans en France au cinquième du salaire moyen,
+#: parti à soixante-cinq ans en avril 2020 : l'ASPA complète sa pension.
+PETITE_CARRIERE = {"naissance": "1955-03-15", "debut": "1994-01", "liquidation": "2020-04",
+                   "unite_revenu": "moyen", "salaire": "0.2"}
+#: Quatre ans au Maroc avant la France.
+AU_MAROC_AVANT = {"etranger1_pays": "MA", "etranger1_debut": "1990-01",
+                  "etranger1_fin": "1994-01"}
+
+
+@pytest.mark.parametrize("residence", ["MA", "autre"])
+def test_l_aspa_n_est_servie_qu_a_qui_reside_en_france(contexte, residence):
+    """L'allocation de solidarité aux personnes âgées n'est servie qu'à qui
+    réside en France, et supprimée au départ hors de France (L. 815-1) : la
+    même petite carrière, qui part vivre au Maroc ou ailleurs, ne touche que
+    sa pension, à la liquidation comme à chaque échéance."""
+    def aspa(actuel):
+        return sum(a.montant for a in actuel.avantages_appliques
+                   if a.code == "minimum_vieillesse")
+
+    en_france = contexte.simuler(Saisie.depuis_requete(PETITE_CARRIERE))
+    ailleurs = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
+                                                       "residence": residence}))
+    assert aspa(en_france.actuel) > 0 and aspa(ailleurs.actuel) == 0
+    assert ailleurs.actuel.pension_annuelle == pytest.approx(
+        en_france.actuel.pension_annuelle - aspa(en_france.actuel))
+    assert en_france.aujourd_hui.actuel.minimum_vieillesse > 0
+    assert ailleurs.aujourd_hui.actuel.minimum_vieillesse == 0
+
+
 def test_le_minimum_international_suit_les_trois_cas_de_sa_majoration():
     """L'exposé de la Cnav, à la lettre : le minimum théorique, réduit à la
     durée totale quand elle n'atteint pas la durée maximum (160 ici), puis à
@@ -717,6 +746,9 @@ CARRIERES_HORS_DE_FRANCE = [
     {**APRES_LE_SENEGAL, **AU_SENEGAL},
     {**APRES_L_ESPAGNE, "naissance": "1945-02-15", "liquidation": "2005-03",
      "etranger1_debut": "1966-01"},
+    {**PETITE_CARRIERE, **AU_MAROC_AVANT, "residence": "MA"},
+    {**PETITE_CARRIERE, **AU_MAROC_AVANT, "residence": "autre",
+     "metier2_debut": "2005-01", "metier2_statut": "fonctionnaire_etat"},
 ]
 
 #: Ce que le portage liquide de ces carrières.
@@ -727,13 +759,17 @@ import { Saisie } from "./moteur/js/saisie.js";
 
 const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
 const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
-  const actuel = contexte.simuler(
-    Saisie.depuisRequete(requete, false, contexte.paquet.presomptions)).actuel;
+  const simulation = contexte.simuler(
+    Saisie.depuisRequete(requete, false, contexte.paquet.presomptions));
+  const actuel = simulation.actuel;
   return {
     trimestres: [actuel.trimestres_valides, actuel.trimestres_etrangers,
       actuel.trimestres_requis],
     motif: actuel.motif_ouverture,
     pensions: actuel.pensions_par_regime.map((p) => [p.regime, p.montant, p.detail]),
+    total: actuel.pension_annuelle,
+    avantages: actuel.avantages_appliques.map((a) => [a.code, a.montant]),
+    aspa_aujourd_hui: simulation.aujourd_hui?.actuel.minimum_vieillesse ?? null,
   };
 });
 process.stdout.write(JSON.stringify(sortie));
@@ -757,12 +793,17 @@ def test_le_portage_liquide_les_memes_carrieres_hors_de_france(contexte):
     assert execution.returncode == 0, execution.stderr
     attendus = []
     for requete in CARRIERES_HORS_DE_FRANCE:
-        actuel = _actuel(contexte, **requete)
+        simulation = contexte.simuler(Saisie.depuis_requete(requete))
+        actuel = simulation.actuel
         attendus.append({
             "trimestres": [actuel.trimestres_valides, actuel.trimestres_etrangers,
                            actuel.trimestres_requis],
             "motif": actuel.motif_ouverture,
             "pensions": [[p.regime, p.montant, p.detail] for p in actuel.pensions_par_regime],
+            "total": actuel.pension_annuelle,
+            "avantages": [[a.code, a.montant] for a in actuel.avantages_appliques],
+            "aspa_aujourd_hui": (None if simulation.aujourd_hui is None
+                                 else simulation.aujourd_hui.actuel.minimum_vieillesse),
         })
     assert json.loads(execution.stdout) == json.loads(json.dumps(attendus))
     assert all(attendu["trimestres"][1] > 0 for attendu in attendus)

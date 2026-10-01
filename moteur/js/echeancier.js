@@ -424,7 +424,7 @@ export class Echeancier {
     const foyer = foyerEtNet(
       this.moteur, liquidee.personne, evenement.date, liquidee.anneeLiquidation,
       resultat.total, (liquidee.age_liquidation || 0.0) >= ageDeLAspa(this.moteur, liquidee),
-      contexte);
+      contexte, liquidee.residence);
     this.auDepart = resultatActuel(resultat, foyer);
     this._inscrire(evenement, `liquidation_${evenement.id}`, "liquidation", resultat,
       evenement.date);
@@ -468,7 +468,8 @@ export class Echeancier {
     const foyer = foyerEtNet(
       this.moteur, carriere.personne, declare.date, carriere.anneeLiquidation,
       pensions + majoration,
-      (carriere.age_liquidation || 0.0) >= ageDeLAspa(this.moteur, carriere), contexte);
+      (carriere.age_liquidation || 0.0) >= ageDeLAspa(this.moteur, carriere), contexte,
+      carriere.residence);
     this._inscrire(declare, `foyer_${declare.id}`, "foyer", foyer, declare.date);
   }
 

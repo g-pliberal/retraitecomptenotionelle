@@ -10,7 +10,7 @@ domaine: minima
 regimes: [regime_general, msa_salaries, cancava, organic, rsi]
 etape: foyer_et_net
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - la résidence de la personne, en France ou à l'étranger, à la date d'effet de l'allocation
   et à chaque échéance
@@ -91,16 +91,31 @@ versions:
       residence_requise: true
       mois_de_residence_plus_de: 9
   exemples: aucun trouvé
-approximations: []
+approximations:
+- ecart: >-
+    la résidence se déclare une fois, à compter du départ et pour toute la retraite :
+    ni un retour en France, ni un départ plus tardif, ni les mois de séjour de chaque
+    année, que la saisie ne demande pas ; qui la déclare hors de France n'a l'allocation
+    à aucune échéance, qui ne la déclare pas l'a à toutes
+  effet: non mesuré
+- ecart: >-
+    la condition de séjour régulier depuis dix ans de l'étranger qui n'est pas
+    ressortissant de l'Union (L. 816-1) ne se lit pas, faute de connaître la nationalité
+  effet: >-
+    une allocation servie à qui ne l'aurait pas ; non mesuré
+presomptions:
+  residence_en_france: >-
+    la résidence, que l'allocation lit : en France, quand l'assuré n'en déclare pas
+    d'autre
 sources:
   lu_le: 2026-10-01
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
     Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France, à la
-    demande du propriétaire. Le moteur ne la calcule pas encore : la chronologie porte
-    depuis la deuxième étape du domaine l'État où la personne réside après son départ,
-    quand ce n'est pas la France, que l'allocation ne lit pas encore (étape 3).
+    demande du propriétaire. La chronologie porte depuis la deuxième étape du domaine
+    l'État où la personne réside après son départ, quand ce n'est pas la France ;
+    l'allocation le lit depuis la troisième.
   - >-
     À lire : les articles du code d'avant 2006 sur l'allocation supplémentaire (L. 815-2
     et suivants) et leur condition de résidence ; la condition de séjour régulier depuis
@@ -131,12 +146,30 @@ sources:
       dans l'État de résidence seulement
     url: http://publications.europa.eu/resource/celex/02004R0883-20190731
     date: 2026-10-01
+code:
+  python: >-
+    droit/foyer.py : foyer_et_net, condition_de_residence ; ses appels :
+    scenarios/actuel.py (resultat_des_departs, ScenarioActuel.simuler), echeancier.py,
+    revalorisation.py (foyer_a_l_echeance) ; carriere.py : Carriere.residence
+  javascript: >-
+    moteur/js/droit/foyer.js : foyerEtNet, conditionDeResidence ; ses appels :
+    moteur/js/scenario-actuel.js, echeancier.js, revalorisation.js
+  parametres: >-
+    contenu.parametres de chaque version : residence_requise
+  tests: >-
+    tests/test_etranger.py, dans les deux moteurs
 historique:
 - >-
   2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la
   demande du propriétaire.
+- >-
+  2026-10-01 — modélisée, approchée, à la troisième étape du domaine : l'allocation
+  n'est servie, à la liquidation et à chaque échéance, qu'à qui ne déclare pas résider
+  hors de France.
 effet: >-
   Les retraités qui vivent hors de France : 1,28 million fin 2024 (DREES, enquête annuelle
-  auprès des caisses). Le modèle leur sert l'ASPA comme à un résident, quand le droit la
-  leur refuse ; la page Coût, elle, retire déjà de la garantie de la proposition les
-  retraités qui résident à l'étranger.
+  auprès des caisses). Le droit leur refuse l'ASPA, que le modèle servait comme à un
+  résident : né en 1955, une petite carrière de vingt-six ans au cinquième du salaire
+  moyen, parti à soixante-cinq ans en 2020, un assuré qui réside au Maroc touche 2 621 €
+  par an, et non 10 838 € ; la page Coût, elle, retire déjà de la garantie de la
+  proposition les retraités qui résident à l'étranger.

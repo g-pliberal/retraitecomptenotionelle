@@ -5,8 +5,9 @@
  * en regardant toutes les ressources du bénéficiaire, et non une pension —
  * l'ASPA. Elle vient en DERNIER : elle est différentielle, et complète tout le
  * reste, majorations comprises, jusqu'au barème d'une personne seule. Elle
- * s'ouvre à 65 ans et se revoit à chaque échéance. Ce que l'étape écrit,
- * `Foyer`, suit son schéma, `data/reference/etapes/foyer_et_net.yaml`.
+ * s'ouvre à 65 ans, à qui réside en France, et se revoit à chaque échéance.
+ * Ce que l'étape écrit, `Foyer`, suit son schéma,
+ * `data/reference/etapes/foyer_et_net.yaml`.
  */
 
 import { Fiabilite, nomFiabilite } from "../serie.js";
@@ -46,16 +47,33 @@ export class Foyer {
 }
 
 /**
+ * La condition de résidence de l'allocation à cette date (fiche
+ * `residence_et_minimum_vieillesse`) : elle n'est servie qu'en France.
+ * `residence` est l'État où le bénéficiaire réside hors de France, `null` pour
+ * qui n'en déclare pas (présomption `residence_en_france`).
+ */
+export function conditionDeResidence(moteur, residence, date) {
+  if (residence === null || residence === undefined) {
+    return true;
+  }
+  const version = moteur.carrieresHorsDeFrance.version(
+    "residence", { "liquidation.date_effet": date });
+  return version === null || !version.parametres.residence_requise;
+}
+
+/**
  * L'ASPA qu'appellent `ressources` en `annee`. `ageAtteint` dit si l'âge de
  * l'allocation l'est : à la date d'effet pour une liquidation, dans l'année
- * pour une échéance. Voir le Python.
+ * pour une échéance ; `residence`, l'État où le bénéficiaire réside hors de
+ * France, s'il le déclare : elle n'y est pas servie. Voir le Python.
  */
 export function foyerEtNet(moteur, personne, date, annee, ressources, ageAtteint,
-  contexte = null) {
+  contexte = null, residence = null) {
   let montant = 0.0;
   let plafond = null;
   let fiabilite = Fiabilite.CERTIFIEE;
   if (ageAtteint && moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
+      && conditionDeResidence(moteur, residence, date ?? `${annee}-12-31`)
       && !(contexte !== null && contexte.neutralise("avantages_non_contributifs"))) {
     const bareme = moteur.minimumVieillesse.plafond(annee);
     if (bareme !== null) {

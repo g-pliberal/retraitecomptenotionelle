@@ -874,6 +874,12 @@ def _cas() -> list[dict]:
     cas.append(("etranger_senegal_minimum_ecrete", {
         **en_espagne, "etranger1_pays": "SN", "pension_etrangere1_pays": "SN",
         "pension_etrangere1": "750", "pension_etrangere1_debut": "2020-04"}))
+    # L'ASPA n'est servie qu'à qui réside en France : une petite carrière,
+    # quatre ans au Maroc puis vingt-six en France, repartie vivre au Maroc.
+    cas.append(("etranger_residence_au_maroc_sans_aspa", {
+        "naissance": "1955-03-15", "debut": "1994-01", "liquidation": "2020-04",
+        "unite_revenu": "moyen", "salaire": "0.2", "etranger1_pays": "MA",
+        "etranger1_debut": "1990-01", "etranger1_fin": "1994-01", "residence": "MA"}))
     # LE RÉTABLISSEMENT : qui part sans la durée qui ouvre une pension — quinze
     # ans avant 2011, deux depuis — passe au régime général et à l'Ircantec,
     # le premier portant le dernier traitement dans la limite du plafond de

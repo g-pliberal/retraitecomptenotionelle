@@ -5,9 +5,9 @@ non une pension : l'ASPA. Elle vient en DERNIER, et pour cause : elle est
 différentielle. Elle complète tout le reste, majorations comprises, jusqu'au
 montant du barème d'une personne seule — c'est la seule prestation du système
 actuel qui ne suppose aucune cotisation, et donc celle qui creuse le plus
-l'écart avec un compte notionnel. Elle s'ouvre à 65 ans, et se revoit à
-chaque échéance : l'échéancier l'applique après les liquidations du jour, et
-après « faire vivre ».
+l'écart avec un compte notionnel. Elle s'ouvre à 65 ans, à qui réside en
+France, et se revoit à chaque échéance : l'échéancier l'applique après les
+liquidations du jour, et après « faire vivre ».
 
 Les prélèvements selon le revenu du foyer n'y sont pas encore : le modèle
 compare des pensions brutes.
@@ -68,18 +68,34 @@ class Foyer:
                 "fiabilite": self.fiabilite.name.lower()}
 
 
+def condition_de_residence(moteur: ScenarioActuel, residence: str | None, date: str) -> bool:
+    """La condition de résidence de l'allocation à cette date (fiche
+    ``residence_et_minimum_vieillesse``) : elle n'est servie qu'en France, et
+    supprimée au départ hors de France. ``residence`` est l'État où le
+    bénéficiaire réside hors de France, ``None`` pour qui n'en déclare pas
+    (présomption ``residence_en_france``)."""
+    if residence is None:
+        return True
+    version = moteur.carrieres_hors_de_france.version(
+        "residence", {"liquidation.date_effet": date})
+    return version is None or not version["parametres"].get("residence_requise")
+
+
 def foyer_et_net(moteur: ScenarioActuel, personne: str, date: str | None, annee: int,
                  ressources: float, age_atteint: bool,
-                 contexte: Contexte | None = None) -> Foyer:
+                 contexte: Contexte | None = None, residence: str | None = None) -> Foyer:
     """L'ASPA qu'appellent ``ressources`` en ``annee``.
 
     ``age_atteint`` dit si l'âge de l'allocation l'est : à la date d'effet
-    pour une liquidation, dans l'année pour une échéance. Le contexte peut
-    neutraliser les avantages non contributifs, et l'allocation avec eux ; le
-    paramètre ``minimum_vieillesse_dans_le_scenario_actuel`` la retire aussi.
+    pour une liquidation, dans l'année pour une échéance. ``residence`` est
+    l'État où le bénéficiaire réside hors de France, s'il le déclare : elle
+    n'y est pas servie. Le contexte peut neutraliser les avantages non
+    contributifs, et l'allocation avec eux ; le paramètre
+    ``minimum_vieillesse_dans_le_scenario_actuel`` la retire aussi.
     """
     montant, plafond, fiabilite = 0.0, None, Fiabilite.CERTIFIEE
     if (age_atteint and moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
+            and condition_de_residence(moteur, residence, date or f"{annee:04d}-12-31")
             and not (contexte is not None
                      and contexte.neutralise("avantages_non_contributifs"))):
         bareme = moteur.minimum_vieillesse.plafond(annee)

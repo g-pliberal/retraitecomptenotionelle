@@ -3448,7 +3448,10 @@ proratisée, depuis 2004, réduit à la part du régime dans la durée totale no
 limitée ; depuis 2012, l'écrêtement compte les pensions étrangères déclarées,
 et la présomption `pas_de_pension_etrangere` naît (§ 5.6). Les deux fiches
 passent à `approchee` ; trois témoins naissent, aucune pension ne bouge.
-Restent l'ASPA hors de France, et la page.
+Puis l'ASPA, que « foyer et net » ne sert plus, à la liquidation ni à aucune
+échéance, à qui déclare résider hors de France ; la présomption
+`residence_en_france` naît pour qui ne le déclare pas, la fiche passe à
+`approchee`, un témoin naît. Reste la page.
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
