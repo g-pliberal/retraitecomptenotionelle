@@ -1201,7 +1201,7 @@ def sans_bloc_json(html: str) -> str:
 FORMULAIRE_ENTIER = frozenset({
     "simuler", "simuler_saisie_refusee", "simuler_plusieurs_metiers",
     "simuler_releve", "simuler_par_pension", "simuler_revenu_en_multiples",
-    "simuler_reversion", "simuler_demande_de_pension",
+    "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
     "cout", "avantages", "cas_types",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)

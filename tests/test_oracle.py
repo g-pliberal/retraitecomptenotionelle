@@ -1563,6 +1563,22 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
                                                c.get("niveau_salaire", 1.0))),
             "employeur": emploi.get("employeur", "autre"),
         }
+    if any(cle in c for cle in ("inaptitude", "pension_d_invalidite", "radiation_invalidite")):
+        # L'invalidité et l'inaptitude, comme la saisie les déclare : la
+        # pension d'invalidité et la radiation datées comme un début
+        # d'activité, depuis le mois de naissance.
+        def age_du_mois(texte: str) -> float:
+            return (_mois(texte).rang - naissance.rang) / 12.0
+
+        communs["invalidite"] = {
+            "pension": (age_du_mois(c["pension_d_invalidite"])
+                        if "pension_d_invalidite" in c else None),
+            "inaptitude": bool(c.get("inaptitude")),
+            "radiation": None if "radiation_invalidite" not in c else {
+                "age": age_du_mois(c["radiation_invalidite"]),
+                "imputable": bool(c.get("invalidite_imputable")),
+                "taux": c.get("taux_invalidite")},
+        }
     actuel = simulateur.scenario_actuel
     if "age_debut" in c:
         carriere = simulateur.carriere_simple(age_debut=float(c["age_debut"]), **communs)

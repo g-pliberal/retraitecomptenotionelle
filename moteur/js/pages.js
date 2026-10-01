@@ -85,7 +85,7 @@ import {
   CODES_SANS_EMPLOI, CONTRIBUTIONS_ETAT, CONVERSIONS_ACQUIS, CUMUL, DEFAUTS,
   EMPLOYEURS_APRES_DEPART, PREFIXE_DEMANDE,
   ENFANTS_MAXIMUM, ErreurSaisie, INDEXATIONS, LISSAGE_MAXIMUM, METIERS_MAXIMUM,
-  MODES_MONTANT, NAISSANCE_MAXIMALE, NAISSANCE_MINIMALE, PARTS_COTISATION,
+  MODES_MONTANT, NAISSANCE_MAXIMALE, NAISSANCE_MINIMALE, OUI, PARTS_COTISATION,
   POPULATIONS, PROFILS, PROJECTIONS, RATTACHEMENTS, REGIMES_FRAIS, REGIMES_TAUX,
   RELEVE_MAXIMUM, REVALORISATIONS_STOCK, SAISIES, SAISIE_DE_LA_SITUATION,
   SALAIRE_DEFAUT, SANS_EMPLOI, SITUATIONS, SITUATIONS_FOYER, Saisie, TABLES,
@@ -1025,6 +1025,7 @@ export function formulaire(saisie, contexte) {
   ${releveFormulaire(saisie)}
   ${conjointFormulaire(saisie, contexte)}
   ${apresLeDepartFormulaire(saisie, contexte, affiliations, echelle)}
+  ${invaliditeFormulaire(saisie)}
   <details class="options">
     ${g.sommaire("Options de modélisation (sexe, profil, indexation, "
       + "projection)")}
@@ -1191,6 +1192,59 @@ function apresLeDepartFormulaire(saisie, contexte, affiliations, echelle) {
   return `
   <details class="options"${ouvert ? " open" : ""}>
     ${g.sommaire("Retraite progressive, dates des pensions, cumul emploi-retraite")}
+    <div class="grille">${champs}</div>
+  </details>`;
+}
+
+/**
+ * L'invalidité et l'inaptitude (le quatrième domaine, docs/architecture.md,
+ * § 11) : un bloc facultatif, replié tant qu'il est vide. La pension
+ * d'invalidité et la radiation des cadres pour invalidité se datent comme un
+ * début d'activité ; l'inaptitude, l'imputabilité au service et le taux
+ * d'invalidité se disent. La saisie refuse ce qui ne tient pas : une date hors
+ * de la carrière, un taux hors de 1 à 100, l'imputabilité ou le taux sans
+ * radiation.
+ */
+function invaliditeFormulaire(saisie) {
+  const date = (age) => (age === null ? "" : saisie.jourDe(age));
+  const premier = saisie.dateDe(saisie.debut).plusMois(1);
+  const bornes = {
+    min: `${String(premier.annee).padStart(4, "0")}-${String(premier.mois).padStart(2, "0")}-01`,
+    max: saisie.jourDe(saisie.liquidation, true),
+  };
+  const ouiNon = [["", "non"], [OUI, "oui"]];
+  const champs = [
+    g.champDate("invalidite", "Pension d'invalidité, depuis", date(saisie.invalidite),
+      "facultatif : le mois où elle a commencé", "", bornes,
+      "À l'âge légal, soixante-deux ans depuis 2023, la pension de vieillesse la "
+      + "remplace d'office, au taux plein quelle que soit votre durée d'assurance. "
+      + "Laissée vide, elle est présumée dès la première année d'une période "
+      + "d'invalidité qui finit votre carrière."),
+    g.liste("inaptitude", "Inapte au travail", ouiNon, saisie.inaptitude ? OUI : "",
+      "reconnu par votre caisse", {},
+      "L'inapte a le taux plein quelle que soit sa durée d'assurance, à l'âge légal, "
+      + "soixante-deux ans depuis 2023 quand l'âge légal de sa génération est plus "
+      + "haut, et l'allocation de solidarité aux personnes âgées au même âge."),
+    g.champDate("radiation_invalidite", "Radiation des cadres pour invalidité",
+      date(saisie.radiation_invalidite), "fonctionnaire civil : le mois où elle tombe",
+      "", bornes,
+      "La pension se liquide à cette date, à tout âge, sans durée de services ni "
+      + "décote, au minimum garanti de l'invalidité. Déclarez à la même date la "
+      + "période qui suit."),
+    g.liste("invalidite_imputable", "Imputable au service", ouiNon,
+      saisie.invalidite_imputable ? OUI : "", "", {},
+      "Une rente viagère d'invalidité s'ajoute alors à la pension, la pension et la "
+      + "rente ensemble ne dépassant pas le traitement."),
+    g.champ("taux_invalidite", "Taux d'invalidité",
+      saisie.taux_invalidite === null ? "" : String(saisie.taux_invalidite),
+      "en %", "number", { min: "1", max: "100", step: "1" },
+      "À 60 % au moins, la pension ne descend pas sous la moitié du traitement."),
+  ].join("");
+  const ouvert = saisie.invalidite !== null || saisie.inaptitude
+    || saisie.radiation_invalidite !== null;
+  return `
+  <details class="options"${ouvert ? " open" : ""}>
+    ${g.sommaire("Invalidité et inaptitude")}
     <div class="grille">${champs}</div>
   </details>`;
 }
@@ -7514,6 +7568,17 @@ function avantagesDetailListe(contexte) {
 function avantagesDetailEtats(contexte) {
   const inventaire = contexte.inventaireAvantages();
   const c = contexte.avantages();
+  // Les lignes intégrées que ni un retrait ne mesure, ni un écart structurel
+  // n'explique : celles dont un poste publié donne la dépense, lue dans les
+  // comptes de la protection sociale (`LIGNES_LUES`).
+  const neutralisees = new Set(NEUTRALISATIONS.map((n) => n.code));
+  const integreesLues = inventaire.avantages.filter((a) => a.etat_modele === "integre"
+    && !neutralisees.has(a.code) && LIGNES_LUES.includes(a.code));
+  const lues = integreesLues.length === 0 ? ""
+    : `${integreesLues.length === 1 ? "Un est lu" : `${integreesLues.length} sont lus`} `
+      + "dans les comptes de la protection sociale : "
+      + integreesLues.map((a) => echapper(a.libelle.charAt(0).toLowerCase()
+        + a.libelle.slice(1))).join(", ") + ". ";
   const lignes = [
     ["chiffré", String(inventaire.compte("chiffre")),
       "La cascade du scénario 1 en isole le montant en euros. La somme de "
@@ -7521,9 +7586,9 @@ function avantagesDetailEtats(contexte) {
     ["servi, chiffré à part", String(inventaire.compte("integre")),
       "Le scénario 1 les sert, mais l'effet passe par un trimestre, un âge "
       + `ou une assiette. ${NEUTRALISATIONS.length} sont mesurés par retrait : on `
-      + "refait la pension sans l'avantage, et l'écart est le chiffre. Les "
-      + `${inventaire.compte("integre") - NEUTRALISATIONS.length} derniers ne sont `
-      + "pas des dispositifs, et se lisent ailleurs."],
+      + `refait la pension sans l'avantage, et l'écart est le chiffre. ${lues}Les `
+      + `${inventaire.compte("integre") - NEUTRALISATIONS.length - integreesLues.length} `
+      + "derniers ne sont pas des dispositifs, et se lisent ailleurs."],
     ["déclaré, non servi", String(inventaire.compte("declare")),
       "Une fiche de régime les déclare, et le scénario 1 ne les sert pas à "
       + "l'assuré. La réversion est de ceux-là : 756 périodes du catalogue "
@@ -7533,7 +7598,7 @@ function avantagesDetailEtats(contexte) {
       + "sûr de cette page."],
     ["absent", String(inventaire.compte("absent")),
       "Ni déclarés ni servis : les bonifications de service, les départs "
-      + "pour handicap ou inaptitude, l'allocation veuvage. C'est un écart au "
+      + "pour handicap, l'allocation veuvage. C'est un écart au "
       + "droit positif, et le dépôt le nomme plutôt que de l'estimer."],
   ];
   const clesRefus = Object.keys(c.refus).sort();
