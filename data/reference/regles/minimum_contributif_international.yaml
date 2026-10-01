@@ -1,0 +1,180 @@
+schema_version: 1
+id: minimum_contributif_international
+intitule: >-
+  Le minimum contributif d'une pension proratisée se calcule en deux temps : un minimum
+  théorique, réduit à la durée de toute la carrière, française et étrangère, quand elle
+  n'atteint pas la durée maximum, puis proratisé à la part française de cette durée,
+  non limitée ; la majoration pour périodes cotisées de même, les périodes étrangères
+  comptées comme cotisées. Depuis 2012, il n'est servi qu'à qui a demandé toutes ses
+  pensions, françaises et étrangères, et son écrêtement compte les pensions
+  étrangères, hors celles des règlements européens et de six conventions.
+domaine: minima
+regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+etape: completer_tous_regimes
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la pension proratisée et la pension nationale de chaque régime aligné, la durée
+  d'assurance du régime, la durée d'assurance de toute la carrière, française et étrangère,
+  et la durée cotisée de toute la carrière
+- l'accord qui fait compter les périodes étrangères (tableau des accords)
+- les pensions étrangères de la personne, leur montant et leur date d'effet
+ecrit:
+- le minimum théorique et le minimum proratisé, la majoration théorique et la majoration
+  proratisée, avant que la pension proratisée ne soit comparée à la pension nationale
+- l'écrêtement du minimum sur toutes les pensions personnelles, françaises et étrangères,
+  et sa révision quand une pension étrangère commence
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: minimum_proratise_avant_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742925, article: "L. 351-10 CSS", en_vigueur: 1986-07-17}
+  - {reference: "circulaire ministérielle du 13 juillet 1993, point II B 2 a", publie_le: 1993-07-13}
+  bornes:
+    liquidation.date_effet: [null, 2004-01-01]
+  contenu:
+    droit: >-
+      « La retraite théorique est comparée au minimum entier, ou réduit compte tenu de
+      la durée d'assurance de la retraite théorique, par rapport à la durée d'assurance
+      maximum retenue au régime général. Ce montant est ensuite réduit au prorata
+      temporis dans les mêmes conditions que la retraite proratisée, c'est-à dire
+      compte tenu de la durée d'assurance retenue pour la calcul de la retraite du
+      régime général par rapport à la durée d'assurance de la retraite théorique »
+      (exposé de la Cnav « Anciens règlements »)
+    parametres:
+      prorata_du_minimum: comme_la_pension
+      majoration_pour_periodes_cotisees: false
+      ecretement_pensions_etrangeres: false
+  exemples: aucun trouvé
+- id: minimum_majore_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742926, article: "L. 351-10 CSS", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000019959492, article: "L. 351-10 CSS", en_vigueur: 2008-12-19}
+  - {reference: "circulaire Cnav n° 2004/8 du 12 février 2004, point 42 ; circulaire Cnav n° 2005/36 du 29 juillet 2005, points 3, 4 et 442",
+     publie_le: 2005-07-29}
+  nee_de: LEGIARTI000006742926
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2012-01-01]
+  contenu:
+    minimum: >-
+      « Si l'assuré réunit, à l'ensemble des régimes, la durée d'assurance maximum
+      retenue pour la retraite du régime général, le minimum entier est retenu. Sinon,
+      le minimum est réduit compte tenu de sa durée totale d'assurance par rapport à la
+      durée d'assurance maximum au régime général » ; « Le minimum théorique est réduit
+      compte tenu de la durée d'assurance au régime général par rapport à la durée
+      totale d'assurance. La durée totale d'assurance n'est pas limitée à la durée
+      d'assurance maximum » (exposé « Minimum de la retraite communautaire »)
+    majoration: >-
+      la majoration théorique est entière si la durée totale cotisée atteint la durée
+      maximum, réduite sinon à son rapport à elle ; proratisée, elle l'est par la durée
+      du régime général sur la durée totale non limitée quand celle-ci dépasse la durée
+      requise ; sur la durée totale limitée quand la durée cotisée n'atteint pas la
+      durée maximum ; par la durée cotisée au régime général sur la durée maximum quand
+      elle l'atteint. « Les périodes d'assurance, d'emploi ou de résidence validées par
+      un État membre sont retenues en tant que durée cotisée », et comptent pour les 120
+      trimestres cotisés qui ouvrent la majoration
+    conventions: >-
+      la retraite conventionnelle calculée en totalisation-proratisation suit les mêmes
+      règles (exposé « Minimum de la retraite personnelle dans le cadre des accords
+      internationaux ») ; la pension nationale d'un calcul séparé, le minimum de L.
+      351-10 de toute pension
+    comparaison: >-
+      « La retraite proratisée et la retraite nationale sont comparées après la
+      comparaison au minimum majoré. Le montant le plus élevé est servi »
+    parametres:
+      prorata_du_minimum: duree_totale_non_limitee
+      majoration_pour_periodes_cotisees: true
+      periodes_etrangeres_cotisees: true
+      ecretement_pensions_etrangeres: false
+  exemples: aucun trouvé
+- id: ecretement_et_subsidiarite_2012
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023271329, article: "L. 173-2 CSS", en_vigueur: 2010-12-22}
+  - {id: LEGIARTI000036391874, article: "L. 173-2 CSS", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000023719554, article: "R. 173-7 CSS", en_vigueur: 2011-03-17}
+  - {id: LEGIARTI000019959488, article: "L. 351-10-1 CSS", en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000047453225, article: "L. 351-10 CSS", en_vigueur: 2023-09-01}
+  - {reference: "circulaire Cnav n° 2010/54 du 21 mai 2010, note technique n° 3, point 12 ; circulaires Cnav n° 2011/80, 2013/51 et 2015/45, point 26",
+     publie_le: 2015-10-01}
+  nee_de: LEGIARTI000023271329
+  bornes:
+    liquidation.date_effet: [2012-01-01, null]
+  contenu:
+    droit: la version minimum_majore_2004
+    subsidiarite: >-
+      « L'assuré ne peut bénéficier des dispositions de l'article L. 351-10 que s'il a
+      fait valoir les droits aux pensions personnelles de retraite auxquels il peut
+      prétendre au titre des régimes légaux ou rendus légalement obligatoires, de base
+      et complémentaires, français et étrangers » (L. 351-10-1, pour les pensions
+      prenant effet depuis le 1er janvier 2012) ; une pension étrangère qui ne s'ouvre
+      pas encore — l'âge de l'autre État n'est pas atteint — ne fait pas obstacle : « La
+      majoration est alors calculée sans tenir compte de ces retraites jusqu'au dernier
+      jour du mois civil qui précède celui où les conditions sont remplies » (exposé «
+      Minimum contributif »)
+    ecretement: >-
+      le total des pensions personnelles « français et étrangers, ainsi que des régimes
+      des organisations internationales » (L. 173-2), afférentes au mois civil de la
+      date d'effet (R. 173-7) ; ne sont pas comptées les retraites « calculées en
+      application : des règlements européens ; de la convention franco-monégasque ; de
+      la convention franco-britannique ; de la convention franco-indienne ; de la
+      convention franco-argentine ; de la convention franco-brésilienne ; de la
+      convention franco-uruguayenne » (même exposé). Une pension étrangère qui commence
+      après révise l'écrêtement au premier jour du mois (R. 173-8)
+    surcote: >-
+      « La surcote n'est pas incluse dans le montant de la retraite avant comparaison au
+      minimum. Elle s'ajoute au montant de la retraite porté au minimum » (circulaire
+      Cnav n° 2018/4, point 3.4.2)
+    parametres:
+      prorata_du_minimum: duree_totale_non_limitee
+      majoration_pour_periodes_cotisees: true
+      periodes_etrangeres_cotisees: true
+      ecretement_pensions_etrangeres: true
+      pensions_hors_ecretement: [reglements_europeens, accord_de_commerce_et_de_cooperation,
+        MC, GB, IN, AR, BR, UY]
+  exemples: aucun trouvé
+approximations: []
+sources:
+  lu_le: 2026-10-01
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France, à la
+    demande du propriétaire. Le moteur ne la calcule pas encore (étape 3 du domaine) ; la
+    pension étrangère y entre comme une liquidation observée (§ 5.5), que la saisie
+    déclarera.
+  - >-
+    À lire : la circulaire Cnav n° 2004/8, point 42, qui garde en 2004 le calcul
+    d'avant quand la durée de la retraite théorique ne dépasse pas 160 trimestres ; la
+    raison qui écarte de l'écrêtement les pensions des règlements européens et des six
+    conventions — l'article 54 du règlement 883/2004, qui écarte les clauses anticumul
+    d'une prestation au prorata, en est la piste ; ce que devient l'écrêtement d'une
+    pension de l'accord de commerce et de coopération avec le Royaume-Uni, que la Cnav
+    n'a pas encore écrit.
+  lectures:
+  - type: circulaire_cnav
+    reference: >-
+      base législative de la Cnav, exposés « Minimum de la retraite communautaire », «
+      Minimum de la retraite personnelle dans le cadre des accords internationaux », «
+      Minimum contributif » (condition de subsidiarité, plafond autorisé, retraites
+      retenues), « Anciens règlements » (minimum avant 2004 et en 2004)
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=reglement_europeen_retraite_personnelle_minimum_retraite_communautaire_ex.aspx
+    date: 2026-10-01
+  - type: legifrance
+    reference: >-
+      L. 173-2 CSS dans ses rédactions de 2010 (loi n° 2010-1594, article 110 : pensions
+      prenant effet depuis le 1er janvier 2012) et 2018, R. 173-7 (2011), L. 351-10-1
+      (2008, pour les pensions prenant effet depuis le 1er janvier 2012), dans l'index
+      LEGI du dépôt mis à jour au 1er octobre 2026
+    date: 2026-10-01
+historique:
+- >-
+  2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la
+  demande du propriétaire.
+effet: >-
+  Les petites pensions françaises des carrières internationales, au taux plein par la
+  totalisation : le modèle ne les porte pas au minimum faute de taux plein, et ne compte
+  aucune pension étrangère dans l'écrêtement.

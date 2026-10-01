@@ -1,0 +1,259 @@
+schema_version: 1
+id: pension_proratisee
+intitule: >-
+  Un régime en annuités qui coordonne ses périodes avec un autre État sert la plus
+  élevée de deux pensions : la pension nationale, calculée sur les seules périodes
+  françaises, et la pension proratisée — la pension théorique qu'aurait servie une
+  carrière toute française, taux et durée comptés sur toutes les périodes, réduite au
+  prorata des périodes françaises ; une convention à calcul séparé sert la pension
+  nationale, les périodes de l'autre État comptées pour le taux. Les régimes en points
+  servent leur pension nationale, sans prorata.
+domaine: coordination
+regimes: [regime_general, msa_salaries, cancava, organic, rsi, fonction_publique_etat,
+  cnracl, fspoeie]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les trimestres étrangers que chaque accord fait compter (fiche
+  totalisation_des_periodes_etrangeres), et l'accord lui-même — son calcul et son prorata
+- la durée d'assurance de chaque régime, la durée d'assurance tous régimes, la durée maximum
+  du régime général
+- le salaire annuel moyen de la pension nationale, et la date d'effet de la pension
+ecrit:
+- la pension de chaque régime coordonné, nationale ou proratisée, la plus élevée des deux,
+  avec ses deux calculs et le prorata qu'applique la seconde
+dates_qui_decident:
+- liquidation.date_effet
+- assure.generation
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# type de chaque convention — comparaison, calcul séparé, option — est dans le
+# tableau des accords, avec ses dates.
+versions:
+- id: sans_comparaison_1975
+  statut: lue
+  textes:
+  - {id: "http://data.europa.eu/eli/reg/1971/1408/oj", article: "règlement (CEE) n° 1408/71 du 14 juin 1971, article 46, dans sa rédaction d'origine (JO CE L 149 du 5 juillet 1971)",
+     en_vigueur: 1972-10-01}
+  - {reference: "circulaire Cnav n° 20/94 du 31 janvier 1994, point 1", publie_le: 1994-01-31}
+  bornes:
+    liquidation.date_effet: [null, 1992-06-01]
+  contenu:
+    droit: >-
+      « Depuis la loi du 03/01/1975, la comparaison, prévue par les règlements
+      européens, entre la retraite nationale et la retraite proratisée n'était pas
+      effectuée. Toutes les périodes d'assurance des régimes de base français et des
+      autres États étaient retenues pour déterminer le taux de la retraite. La
+      retraite n'était pas réduite au prorata temporis. La retraite ainsi calculée
+      était toujours au moins égale à la retraite proratisée » (exposé de la Cnav «
+      Anciens règlements », circulaire n° 20/94, point 1) : la pension nationale, son
+      taux compté sur toutes les périodes
+    conventions: >-
+      chacune selon son type (tableau des accords) ; une convention dont le calcul n'a
+      pas été lu suit la règle générale de la circulaire n° 117/83 — ses périodes
+      comptent pour le taux de la pension nationale
+    parametres:
+      reglements_europeens: calcul_separe
+      annees_du_salaire_annuel_moyen: entieres
+  exemples: aucun trouvé
+- id: comparaison_1992
+  statut: lue
+  textes:
+  - {id: "http://data.europa.eu/eli/reg/1992/1248/oj", article: "règlement (CEE) n° 1248/92 du 30 avril 1992, article 1er, qui remplace l'article 46 du règlement n° 1408/71 et insère son article 95 bis (JO CE L 136 du 19 mai 1992)",
+     publie_le: 1992-05-19, en_vigueur: 1992-06-01}
+  - {reference: "circulaire ministérielle du 13 juillet 1993 ; circulaire Cnav n° 20/94 du 31 janvier 1994", publie_le: 1994-01-31}
+  - {id: "http://data.europa.eu/eli/reg/1998/1606/oj", article: "règlement (CE) n° 1606/98 du 29 juin 1998 (JO CE L 209 du 25 juillet 1998)", en_vigueur: 1998-10-25}
+  nee_de: "http://data.europa.eu/eli/reg/1992/1248/oj"
+  bornes:
+    liquidation.date_effet: [1992-06-01, 2004-01-01]
+  contenu:
+    droit: >-
+      l'institution calcule « d'une part, en vertu des seules dispositions de la
+      législation qu'elle applique » — la pension nationale, sur les périodes
+      françaises —, « d'autre part » le « montant théorique de la prestation à laquelle
+      l'intéressé pourrait prétendre si toutes les périodes d'assurance [...] avaient
+      été accomplies dans l'État membre en cause », établi ensuite « au prorata de la
+      durée des périodes d'assurance [...] accomplies [...] sous la législation qu'elle
+      applique, par rapport à la durée totale », et l'intéressé « a droit [...] au
+      montant le plus élevé » (article 46 du règlement n° 1408/71, rédaction de 1992)
+    pension_theorique: >-
+      le salaire annuel moyen des seuls salaires français ; le taux et la durée comptés
+      sur toutes les périodes, sans superposition, la durée ramenée à la durée maximum
+      du régime général ; « la retraite proratisée est égale à : retraite théorique x
+      (durée d'assurance au régime général ÷ durée d'assurance de la retraite globale).
+      Ces durées sont limitées à la durée d'assurance maximum retenue au régime général
+      » (exposé « Montant de la retraite communautaire »)
+    comparaison: >-
+      « La retraite la plus élevée est attribuée. En cas d'égalité la retraite
+      proratisée est servie » ; « La comparaison au minimum et au maximum s'effectue
+      avant comparaison avec la retraite nationale » (même exposé)
+    fonctionnaires: >-
+      les régimes spéciaux des fonctionnaires entrent dans la coordination le 25
+      octobre 1998 (règlement n° 1606/98) : leur pension se compare de même, la décote
+      lue sur la durée tous régimes, périodes étrangères comprises, le prorata sur les
+      services
+    conventions: chacune selon son type (tableau des accords)
+    parametres:
+      reglements_europeens: comparaison
+      prorata_reglements_europeens: limite
+      annees_du_salaire_annuel_moyen: entieres
+      fonctionnaires_depuis: 1998-10-25
+  exemples: aucun trouvé
+- id: salaire_moyen_reduit_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006747869, article: "R. 173-4-3 CSS", en_vigueur: 2004-02-15}
+  - {id: LEGIARTI000006747870, article: "R. 173-4-3 CSS", en_vigueur: 2006-01-28}
+  - {reference: "circulaire Cnav n° 2004/29 du 30 juin 2004, point 2 ; circulaire ministérielle DSS/3A/DACI/2008/219 du 3 juillet 2008 ; circulaire Cnav n° 2008/58 du 20 octobre 2008, point 2",
+     publie_le: 2008-10-20}
+  nee_de: LEGIARTI000006747869
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2010-05-01]
+  contenu:
+    droit: la version comparaison_1992
+    salaire_annuel_moyen: >-
+      pour les pensions prenant effet après le 31 décembre 2003, le nombre d'années du
+      salaire annuel moyen d'un polypensionné des régimes alignés se réduit au prorata
+      de la durée de chaque régime (R. 173-4-3) ; la circulaire ministérielle du 3
+      juillet 2008 l'applique à la pension théorique des travailleurs migrants : «
+      Nombre d'années retenues x (Durée d'assurance au régime général non limitée ÷
+      Durée d'assurance tous régimes) », arrondi au plus proche, au moins un, quand
+      l'assuré a été affilié à des régimes étrangers « équivalant au régime général » —
+      « dont le mode de calcul est basé sur des salaires, revenus et cotisations et une
+      durée d'assurance d'au moins 15 ans » (exposé « Montant de la retraite
+      communautaire », circulaires n° 2012/26 et 2013/56)
+    parametres:
+      reglements_europeens: comparaison
+      prorata_reglements_europeens: limite
+      annees_du_salaire_annuel_moyen: reduites_au_prorata
+      fonctionnaires_depuis: 1998-10-25
+  exemples: aucun trouvé
+- id: reglement_883_2004
+  statut: lue
+  textes:
+  - {id: "http://data.europa.eu/eli/reg/2004/883/oj", article: "règlement (CE) n° 883/2004 du 29 avril 2004, articles 52, 56 et 60, et annexe VIII, partie 2, France (version consolidée CELEX 02004R0883-20190731)",
+     publie_le: 2004-04-30, en_vigueur: 2010-05-01}
+  - {id: "http://data.europa.eu/eli/reg/2009/987/oj", article: "règlement (CE) n° 987/2009 du 16 septembre 2009, article 43 (version consolidée CELEX 02009R0987-20180101)",
+     en_vigueur: 2010-05-01}
+  - {reference: "circulaire Cnav n° 2010/54 du 21 mai 2010, note technique n° 2", publie_le: 2010-05-21}
+  - {id: LEGIARTI000022287439, article: "R. 173-4-3 CSS", en_vigueur: 2010-05-08}
+  - {id: LEGIARTI000038790394, article: "R. 173-4-3 CSS", en_vigueur: 2019-07-08}
+  nee_de: "http://data.europa.eu/eli/reg/2004/883/oj"
+  bornes:
+    liquidation.date_effet: [2010-05-01, 2022-07-01]
+  contenu:
+    droit: >-
+      la version salaire_moyen_reduit_2004 sous l'article 52 : « a) en vertu de la
+      législation qu'elle applique, uniquement lorsque les conditions requises pour le
+      droit aux prestations sont remplies en vertu du seul droit national (prestation
+      indépendante) ; b) en calculant un montant théorique et ensuite un montant
+      effectif (prestation au prorata) » ; « L'intéressé a droit [...] aux montants les
+      plus élevés ». « Si la durée totale des périodes [...] est supérieure à la période
+      maximale exigée [...] pour le bénéfice d'une prestation complète, l'institution
+      compétente [...] prend en compte cette période maximale au lieu de la durée
+      totale » (article 56, 1, a)
+    regimes_en_points: >-
+      « Les régimes de base ou les régimes complémentaires dans lesquels les prestations
+      de vieillesse sont calculées sur la base de points de retraite » ne proratisent
+      pas : l'intéressé « a droit à la prestation calculée conformément à la
+      législation » (article 52, paragraphe 5, et annexe VIII, partie 2, France)
+    fonctionnaires: >-
+      les articles 6 et 52 à 59 « s'appliquent mutadis mutandis aux personnes couvertes
+      par un régime spécial destiné aux fonctionnaires » ; le traitement de référence
+      est celui des seules périodes françaises (article 60)
+    parametres:
+      reglements_europeens: comparaison
+      prorata_reglements_europeens: limite
+      annees_du_salaire_annuel_moyen: reduites_au_prorata
+      fonctionnaires_depuis: 1998-10-25
+      regimes_en_points: pension_nationale
+  exemples: aucun trouvé
+- id: salaire_moyen_lura_2022
+  statut: lue
+  textes:
+  - {id: LEGIARTI000034595887, article: "R. 173-4-4-1 CSS", en_vigueur: 2017-07-01}
+  - {id: LEGIARTI000053335493, article: "R. 173-4-4-1 CSS", en_vigueur: 2026-01-01}
+  - {reference: "circulaire Cnav n° 2021/33 du 24 novembre 2021, « Revenu annuel moyen de base – pension communautaire »",
+     publie_le: 2021-11-24}
+  bornes:
+    liquidation.date_effet: [2022-07-01, null]
+  contenu:
+    droit: la version reglement_883_2004
+    salaire_annuel_moyen: >-
+      « S'agissant des assurés nés à partir de 1953 et des pensions liquidées à compter
+      du 1er juillet 2017 dans le cadre des règlements communautaires, le nombre
+      d'années à retenir pour la détermination du revenu annuel moyen de la pension
+      globale théorique doit être fait dans les mêmes conditions que le revenu annuel
+      moyen de la pension nationale, sans avoir recours à une réduction au prorata » ;
+      « les instructions énoncées dans la présente circulaire s'appliqueront aux
+      dossiers relevant des règlements communautaires dont la liquidation initiale
+      prend effet au 1er juillet 2022 » (circulaire n° 2021/33, points 3 et 6). Les
+      générations d'avant 1953 gardent la réduction
+    parametres:
+      reglements_europeens: comparaison
+      prorata_reglements_europeens: limite
+      annees_du_salaire_annuel_moyen: entieres_depuis_la_generation_1953
+      fonctionnaires_depuis: 1998-10-25
+      regimes_en_points: pension_nationale
+  exemples: aucun trouvé
+approximations: []
+sources:
+  lu_le: 2026-10-01
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France, à la
+    demande du propriétaire. Le moteur ne la calcule pas encore (étape 3 du domaine).
+  - >-
+    À lire : la circulaire Cnav n° 2008/58, que la base de la Cnav n'a pas rendue, pour
+    la date d'où la pension théorique des travailleurs migrants réduit les années de son
+    salaire annuel moyen, et la liste des régimes étrangers « équivalents » ; les
+    conventions dont le tableau des accords ne lit pas le prorata ; la règle de la
+    pension proratisée des fonctionnaires, chez le Service des retraites de l'État et à
+    la CNRACL ; la surcote de la pension proratisée, calculée « éventuellement à la date
+    d'attribution définitive » quand les pensions des États se succèdent (exposé «
+    Attributions successives »).
+  lectures:
+  - type: circulaire_cnav
+    reference: >-
+      base législative de la Cnav, exposés « Mode de calcul de la retraite personnelle -
+      règlements européens », « Montant de la retraite communautaire », « Attributions
+      successives - règlements européens », « Anciens règlements » ; « Les accords
+      internationaux » (les quatre types de convention), « Calcul de la retraite
+      personnelle dans le cadre des accords internationaux », et l'exposé « Retraite
+      personnelle » de chaque convention
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=reglement_europeen_retraite_personnelle_montant_retraite_communautaire_ex.aspx
+    date: 2026-10-01
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2021/33 du 24 novembre 2021, « Revenu annuel moyen de base –
+      pension communautaire », exemples 1 et 2 : une personne née en 1955, 70 trimestres
+      en France, 30 en Belgique et 74 en Allemagne, « Le calcul du revenu annuel moyen de
+      la pension globale théorique se fera sur les vingt-cinq meilleures années »
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2021_33_24112021.pdf
+    date: 2021-11-24
+  - type: autre
+    reference: >-
+      règlements (CEE) n° 1408/71 (texte d'origine, CELEX 31971R1408) et n° 1248/92, (CE)
+      n° 1606/98, 883/2004 et 987/2009, lus au dépôt de l'Office des publications de
+      l'Union ; accord de commerce et de coopération avec le Royaume-Uni, article SSC.47
+    url: http://publications.europa.eu/resource/celex/31992R1248
+    date: 2026-10-01
+  - type: autre
+    reference: >-
+      CLEISS, « Votre retraite après avoir travaillé en France et dans un ou plusieurs
+      autres États de l'UE/EEE ou en Suisse », et les pages des accords : les trois
+      types d'accords bilatéraux, et le calcul de Léna — « Retraite française = retraite
+      globale théorique (retraite européenne) x nombre de trimestres d'assurance en
+      France rapporté à la période d'assurance requise pour la génération concernée »
+    url: https://www.cleiss.fr/particuliers/retraite/reglements.html
+    date: 2026-10-01
+historique:
+- >-
+  2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la
+  demande du propriétaire.
+effet: >-
+  Toute pension française d'une carrière passée aussi par un État lié à la France par un
+  accord. Le modèle ne sert que la pension nationale, sur les seules périodes françaises,
+  et son taux décoté faute de durée : la pension proratisée, servie au taux que toute la
+  carrière ouvre, lui est le plus souvent supérieure.

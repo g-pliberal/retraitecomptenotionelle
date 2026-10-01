@@ -2707,7 +2707,14 @@ sources:
     a_en_tirer: >-
       Le calcul d'une pension sous les règlements européens : la comparaison
       entre montant national et montant proratisé, qui est le cœur du sujet.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-01"
+    note: >-
+      La comparaison entre pension nationale et pension européenne, et le calcul
+      de Léna (60 trimestres en France, 28 en Italie, 84 en Norvège) : la pension
+      française vaut le salaire annuel moyen au taux plein, ramené à 60/170. Rangé
+      dans la fiche pension_proratisee, ouverte avec le domaine des carrières hors
+      de France ; l'exemple attend l'étape des exemples publiés du domaine.
 
   - id: cleiss_accord1
     url: https://www.cleiss.fr/particuliers/retraite/accord1.html
@@ -2716,7 +2723,13 @@ sources:
     regimes: []
     a_en_tirer: >-
       Le calcul sous accord bilatéral, premier cas.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-01"
+    note: >-
+      Les trois types d'accords bilatéraux (option, calcul séparé, comparaison) et
+      leurs États, portés dans data/reference/legislation/accords_internationaux.yaml ;
+      l'exemple franco-américain de Léna, au taux plein par ses seuls trimestres
+      français, attend l'étape des exemples publiés du domaine.
 
   - id: cleiss_accord2
     url: https://www.cleiss.fr/particuliers/retraite/accord2.html
@@ -2725,7 +2738,14 @@ sources:
     regimes: []
     a_en_tirer: >-
       Le calcul sous accord bilatéral, second cas.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-01"
+    note: >-
+      Plusieurs accords ne se cumulent pas : la caisse retient les périodes de
+      l'un ou de l'autre, le plus avantageux, sauf les sept accords qui totalisent
+      un État tiers (Brésil, Canada, Inde, Maroc, Serbie, Tunisie, Uruguay). Rangé
+      dans la fiche totalisation_des_periodes_etrangeres et dans le tableau des
+      accords.
 
   - id: cleiss_reglements_accord
     url: https://www.cleiss.fr/particuliers/retraite/reglements-accord.html
@@ -2736,7 +2756,13 @@ sources:
       La carrière qui relève à la fois des règlements européens et d'un accord
       bilatéral : le cas le plus complexe, et celui qui dit jusqu'où va la
       combinatoire.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-01"
+    note: >-
+      Les trois calculs de Léna — nationale, européenne, franco-tunisienne avec
+      l'Espagne en État tiers —, la caisse versant le plus élevé : la combinatoire
+      tient en un calcul par accord. Rangé dans la fiche pension_proratisee ;
+      l'exemple attend l'étape des exemples publiés du domaine.
 
   - id: cleiss_docs_textes
     url: https://www.cleiss.fr/docs/textes/index.html
@@ -2745,7 +2771,13 @@ sources:
     regimes: []
     a_en_tirer: >-
       Les textes des accords bilatéraux, pays par pays.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-01"
+    note: >-
+      Les pages des trente-huit accords bilatéraux et des quatre coordinations d'outre-mer :
+      textes, entrée en vigueur, personnes visées, règle de la vieillesse. Portées
+      dans data/reference/legislation/accords_internationaux.yaml, avec les exposés
+      de la base législative de la Cnav pour le type de calcul et le prorata.
 
   - id: cleiss_reglements_index
     url: https://www.cleiss.fr/reglements/index.html

@@ -1,0 +1,531 @@
+# Les accords qui coordonnent les retraites françaises avec celles d'un autre
+# État ou d'un territoire (le domaine des carrières hors de France,
+# docs/architecture.md, § 11). Lu le 1er octobre 2026.
+# ===========================================================================
+#
+# Ce tableau dit, pour chaque État où une période a pu être accomplie, quel
+# accord la fait compter dans une pension française, et depuis quand. Ce que
+# l'accord en fait est dans les fiches : `totalisation_des_periodes_etrangeres`
+# (ce qui compte pour le taux et l'ouverture des droits), `pension_proratisee`
+# (la pension nationale contre la pension proratisée) et
+# `minimum_contributif_international` (le minimum et son écrêtement).
+#
+# Chaque État a pour clé son code ISO 3166-1 à deux lettres ; le Québec, qui a
+# son entente, QC, et le Kosovo XK, le code d'usage. `OI` désigne
+# l'affiliation au régime de pension d'une institution européenne ou d'une
+# organisation internationale à laquelle la France est partie (L. 161-19-1).
+# Un État absent du tableau n'est lié à la France par aucun accord qui
+# coordonne les retraites : seule son activité d'avant le 1er avril 1983 peut
+# compter, pour le taux, comme période reconnue équivalente (R. 351-4, 1°).
+# Madagascar en est : sa convention du 8 mai 1967 « ne contient aucune
+# disposition de coordination pour les branches [...] vieillesse et
+# survivant » (CLEISS).
+#
+# Les collectivités d'outre-mer qui ont leur régime — la Nouvelle-Calédonie
+# (décrets n° 66-846 et 2002-1371), la Polynésie française (décret
+# n° 94-1146), Mayotte (décret n° 2005-1050), Saint-Pierre-et-Miquelon
+# (depuis le 1er juin 2011) — n'y sont pas : leurs régimes sont des régimes
+# du modèle (`cafat_nouvelle_caledonie`, `cps_polynesie`, `cssm_mayotte`,
+# `cps_saint_pierre_et_miquelon`, et `wallis_et_futuna`), qu'une ligne de
+# carrière déclare, et leurs trimestres comptent déjà dans la durée tous
+# régimes, ce que leur coordination produit (fiche
+# `totalisation_des_periodes_etrangeres`).
+#
+# Les accords d'un État se suivent dans l'ordre. Chacun vaut pour une pension
+# qui prend effet de `de` à `a`, exclu (`liquidation.date_effet`) : c'est
+# l'accord en vigueur à la date d'effet qui s'applique, et il prend en compte
+# les périodes accomplies avant lui (règlement 883/2004, article 87 ;
+# circulaire Cnav 117/83 ; exposés de la Cnav, « Calcul de la retraite
+# personnelle dans le cadre des accords internationaux »).
+#
+#   instrument   reglements_europeens — les règlements de coordination de
+#                l'Union européenne, de l'Espace économique européen et de la
+#                Suisse ; accord_de_commerce_et_de_cooperation — le protocole
+#                de coordination conclu avec le Royaume-Uni (article SSC.47) ;
+#                convention — un accord bilatéral de sécurité sociale ;
+#                organisation_internationale — L. 161-19-1.
+#   calcul       comparaison — la pension nationale, sur les seules périodes
+#                françaises, contre la pension par totalisation-proratisation ;
+#                la plus élevée est servie (type 3 du CLEISS, et les
+#                règlements) ; calcul_separe — la pension nationale, les
+#                périodes de l'autre État comptées pour le taux (type 2) ;
+#                option — l'assuré choisit l'un ou l'autre (type 1) ;
+#                taux_seul — les périodes ne comptent que pour le taux
+#                (organisations internationales) ; non_lu — la convention
+#                d'avant l'entrée de l'État dans l'Union, dont le mode de
+#                calcul n'a pas été lu.
+#   prorata      limite — la durée totale est ramenée à la durée maximum du
+#                régime général, comme l'exposé de la Cnav l'écrit ; non_lu —
+#                l'exposé ne le dit pas ; absent quand le calcul n'a pas de
+#                prorata (calcul séparé, taux seul).
+#   personnes    salaries, ou salaries_et_non_salaries : les assurés que
+#                l'accord vise. Une convention qui ne vise que les salariés ne
+#                coordonne ni la sécurité sociale des indépendants ni les
+#                professions libérales.
+#   etats_tiers  vrai quand l'accord totalise aussi les périodes d'un État lié
+#                aux deux parties par un accord qui coordonne les retraites.
+#   date_lue     faux quand la date n'est pas celle de l'entrée en vigueur lue
+#                dans une source, mais une borne déduite (la publication).
+#   sources      cnav — le nom de l'exposé dans la base législative de la Cnav
+#                (https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=…) ;
+#                cleiss — la page du CLEISS (https://www.cleiss.fr/docs/textes/…).
+#
+# Les règlements européens coordonnent tous les régimes légaux français, de
+# base et complémentaires (annexe XI, France, point 3), et, depuis le
+# 25 octobre 1998 seulement, les régimes spéciaux des fonctionnaires
+# (règlement 1606/98) ; les conventions bilatérales, le régime général et les
+# régimes qui s'en liquident ensemble (sauf les exceptions que la fiche
+# déclare).
+
+schema_version: 1
+lu_le: 2026-10-01
+
+etats:
+
+  # -- L'Union européenne, l'Espace économique européen et la Suisse ---------
+
+  AT:
+    nom: Autriche
+    accords:
+    - {instrument: convention, de: 1972-11-01, a: 1994-01-01, calcul: non_lu,
+       texte: "convention générale du 28 mai 1971 (décret n° 72-1108 du 5 décembre 1972)",
+       personnes: salaries, sources: {cnav: accord_international_autriche_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1994-01-01, texte: "accord sur l'Espace économique européen"}
+  BE:
+    nom: Belgique
+    accords:
+    - {instrument: convention, de: 1949-07-01, a: 1959-01-01, calcul: non_lu,
+       texte: "convention générale du 17 janvier 1948 (décret n° 49-947 du 6 juillet 1949)",
+       personnes: salaries, sources: {cnav: accord_international_belgique_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1959-01-01, texte: "règlements n° 3 et 4 de la Communauté économique européenne"}
+  BG:
+    nom: Bulgarie
+    accords:
+    - {instrument: reglements_europeens, de: 2007-01-01, texte: "traité d'adhésion du 25 avril 2005"}
+  CY:
+    nom: Chypre
+    accords:
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  CZ:
+    nom: République tchèque
+    accords:
+    - {instrument: convention, de: 1949-07-01, a: 2004-05-01, calcul: non_lu,
+       texte: "convention générale franco-tchécoslovaque du 12 octobre 1948 (décret n° 49-1000 du 23 juillet 1949), maintenue le 19 juin 1995",
+       personnes: salaries, sources: {cnav: accord_international_tchecoslovaquie_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  DE:
+    nom: Allemagne
+    accords:
+    - {instrument: convention, de: 1952-01-01, a: 1959-01-01, calcul: non_lu,
+       texte: "convention générale du 10 juillet 1950 (décret n° 52-74 du 15 janvier 1952)",
+       personnes: salaries, sources: {cnav: accord_international_allemagne_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1959-01-01, texte: "règlements n° 3 et 4 de la Communauté économique européenne"}
+  DK:
+    nom: Danemark
+    accords:
+    - {instrument: convention, de: 1952-10-01, a: 1973-04-01, calcul: non_lu,
+       texte: "convention générale du 30 juin 1951 (décret n° 52-1214 du 29 octobre 1952)",
+       personnes: salaries, sources: {cnav: accord_international_danemark_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1973-04-01, texte: "traité d'adhésion du 22 janvier 1972"}
+  EE:
+    nom: Estonie
+    accords:
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  ES:
+    nom: Espagne
+    accords:
+    - {instrument: convention, de: 1976-04-01, a: 1986-01-01, calcul: non_lu,
+       texte: "convention générale du 31 octobre 1974 (décret n° 76-458 du 25 mai 1976), qui remplace celle du 27 juin 1957",
+       personnes: salaries, sources: {cnav: accord_international_espagne_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1986-01-01, texte: "traité d'adhésion du 12 juin 1985"}
+  FI:
+    nom: Finlande
+    accords:
+    - {instrument: reglements_europeens, de: 1994-01-01, texte: "accord sur l'Espace économique européen"}
+  GR:
+    nom: Grèce
+    accords:
+    - {instrument: convention, de: 1959-05-01, a: 1981-01-01, calcul: non_lu,
+       texte: "convention générale du 19 avril 1958 (décret n° 59-684 du 5 mai 1959)",
+       personnes: salaries, sources: {cnav: accord_international_grece_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1981-01-01, texte: "traité d'adhésion du 28 mai 1979"}
+  HR:
+    nom: Croatie
+    accords:
+    - {instrument: convention, de: 1951-04-01, a: 2013-07-01, calcul: option, prorata: limite,
+       texte: "convention générale franco-yougoslave du 5 janvier 1950, maintenue par échange de lettres (décret n° 96-711 du 7 août 1996)",
+       personnes: salaries, sources: {cnav: accord_international_croatie_ex}}
+    - {instrument: reglements_europeens, de: 2013-07-01, texte: "traité d'adhésion du 9 décembre 2011"}
+  HU:
+    nom: Hongrie
+    accords:
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  IE:
+    nom: Irlande
+    accords:
+    - {instrument: reglements_europeens, de: 1973-04-01, texte: "traité d'adhésion du 22 janvier 1972"}
+  IS:
+    nom: Islande
+    accords:
+    - {instrument: reglements_europeens, de: 1994-01-01, texte: "accord sur l'Espace économique européen"}
+  IT:
+    nom: Italie
+    accords:
+    - {instrument: convention, de: 1949-08-01, a: 1959-01-01, calcul: non_lu,
+       texte: "convention générale du 31 mars 1948",
+       personnes: salaries, sources: {cnav: accord_international_italie_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1959-01-01, texte: "règlements n° 3 et 4 de la Communauté économique européenne"}
+  LI:
+    nom: Liechtenstein
+    accords:
+    - {instrument: reglements_europeens, de: 1995-05-01, texte: "accord sur l'Espace économique européen"}
+  LT:
+    nom: Lituanie
+    accords:
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  LU:
+    nom: Luxembourg
+    accords:
+    - {instrument: convention, de: 1950-07-01, a: 1959-01-01, calcul: non_lu,
+       texte: "convention générale du 12 novembre 1949",
+       personnes: salaries, sources: {cnav: accord_international_luxembourg_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1959-01-01, texte: "règlements n° 3 et 4 de la Communauté économique européenne"}
+  LV:
+    nom: Lettonie
+    accords:
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  MT:
+    nom: Malte
+    accords:
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  NL:
+    nom: Pays-Bas
+    accords:
+    - {instrument: convention, de: 1951-11-01, a: 1959-01-01, calcul: non_lu,
+       texte: "convention générale du 7 janvier 1950 (décret n° 51-1476 du 26 décembre 1951)",
+       personnes: salaries, sources: {cnav: accord_international_pays_bas_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1959-01-01, texte: "règlements n° 3 et 4 de la Communauté économique européenne"}
+  "NO":
+    nom: Norvège
+    accords:
+    - {instrument: convention, de: 1956-07-01, a: 1994-01-01, calcul: non_lu,
+       texte: "convention générale du 30 septembre 1954 (décret n° 56-1003 du 12 septembre 1956)",
+       personnes: salaries, sources: {cnav: accord_international_norvege_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1994-01-01, texte: "accord sur l'Espace économique européen"}
+  PL:
+    nom: Pologne
+    accords:
+    - {instrument: convention, de: 1949-03-01, a: 2004-05-01, calcul: non_lu,
+       texte: "convention générale du 9 juin 1948 (décret n° 49-274 du 28 février 1949)",
+       personnes: salaries, sources: {cnav: accord_international_pologne_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  PT:
+    nom: Portugal
+    accords:
+    - {instrument: convention, de: 1973-04-01, a: 1986-01-01, calcul: non_lu,
+       texte: "convention du 29 juillet 1971 (décret n° 73-857 du 31 août 1973), qui abroge celle du 16 novembre 1957",
+       personnes: salaries, sources: {cnav: accord_international_portugal_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1986-01-01, texte: "traité d'adhésion du 12 juin 1985"}
+  RO:
+    nom: Roumanie
+    accords:
+    - {instrument: convention, de: 1978-02-01, a: 2007-01-01, calcul: non_lu,
+       texte: "convention du 16 décembre 1976 (décret n° 78-299 du 24 février 1978)",
+       personnes: salaries, sources: {cnav: accord_international_roumanie_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 2007-01-01, texte: "traité d'adhésion du 25 avril 2005"}
+  SE:
+    nom: Suède
+    accords:
+    - {instrument: convention, de: 1981-08-01, a: 1994-01-01, calcul: non_lu,
+       texte: "convention du 12 décembre 1979 (décret n° 81-777 du 4 août 1981)",
+       personnes: salaries, sources: {cnav: accord_international_suede_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1994-01-01, texte: "accord sur l'Espace économique européen"}
+  SI:
+    nom: Slovénie
+    accords:
+    - {instrument: convention, de: 1951-04-01, a: 2004-05-01, calcul: option, prorata: limite,
+       texte: "convention générale franco-yougoslave du 5 janvier 1950",
+       personnes: salaries, sources: {cnav: accord_international_slovenie_slovenie_ex}}
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  SK:
+    nom: Slovaquie
+    accords:
+    - {instrument: convention, de: 1949-07-01, a: 2004-05-01, calcul: non_lu,
+       texte: "convention générale franco-tchécoslovaque du 12 octobre 1948, maintenue le 7 août 1996 (décret n° 98-845 du 16 septembre 1998)",
+       personnes: salaries, sources: {cnav: accord_international_slovaquie_slovaquie_ex}}
+    - {instrument: reglements_europeens, de: 2004-05-01, texte: "traité d'adhésion du 16 avril 2003"}
+  CH:
+    nom: Suisse
+    accords:
+    - {instrument: convention, de: 1976-11-01, a: 2002-06-01, calcul: non_lu,
+       texte: "convention du 3 juillet 1975 (décret n° 76-1098 du 24 novembre 1976)",
+       personnes: salaries, sources: {cnav: accord_international_suisse_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 2002-06-01, texte: "accord sur la libre circulation des personnes du 21 juin 1999"}
+  GB:
+    nom: Royaume-Uni
+    accords:
+    - {instrument: convention, de: 1958-05-01, a: 1973-04-01, calcul: option, prorata: non_lu,
+       texte: "convention générale du 10 juillet 1956",
+       personnes: salaries, sources: {cnav: accord_international_royaume_uni_champ_application_ex}}
+    - {instrument: reglements_europeens, de: 1973-04-01, a: 2021-01-01, texte: "traité d'adhésion du 22 janvier 1972 ; accord de retrait"}
+    - {instrument: accord_de_commerce_et_de_cooperation, de: 2021-01-01, calcul: comparaison, prorata: limite,
+       texte: "accord de commerce et de coopération du 30 décembre 2020, protocole sur la coordination de la sécurité sociale, article SSC.47",
+       personnes: salaries_et_non_salaries}
+
+  # -- Les conventions bilatérales en vigueur --------------------------------
+
+  AD:
+    nom: Andorre
+    accords:
+    - {instrument: convention, de: 2003-06-01, calcul: comparaison, prorata: limite,
+       texte: "convention du 12 décembre 2000, qui remplace l'arrangement général du 9 juin 1970",
+       personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_andorre_calcul_retraite_personnelle_ex, cleiss: conv_andorre}}
+  AR:
+    nom: Argentine
+    accords:
+    - {instrument: convention, de: 2012-11-01, calcul: comparaison, prorata: limite,
+       texte: "convention du 22 septembre 2008", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_argentine_calcul_retraite_personnelle_ex, cleiss: conv_argentine}}
+  BA:
+    nom: Bosnie-Herzégovine
+    accords:
+    - {instrument: convention, de: 1951-04-01, calcul: option, prorata: limite,
+       texte: "convention générale franco-yougoslave du 5 janvier 1950, maintenue (en vigueur le 4 décembre 2003 dans la succession)",
+       personnes: salaries,
+       sources: {cnav: accord_international_yougoslavie_calcul_retraite_personnelle_ex, cleiss: conv_bosnie_herzegovine}}
+  BJ:
+    nom: Bénin
+    accords:
+    - {instrument: convention, de: 1981-09-01, calcul: calcul_separe,
+       texte: "convention générale du 6 novembre 1979", personnes: salaries,
+       sources: {cnav: accord_international_benin_calcul_retraite_personnelle_ex, cleiss: conv_benin}}
+  BR:
+    nom: Brésil
+    accords:
+    - {instrument: convention, de: 2014-09-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+       texte: "accord du 15 décembre 2011", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_bresil_calcul_retraite_personnelle_ex, cleiss: conv_bresil}}
+  CA:
+    nom: Canada
+    accords:
+    - {instrument: convention, de: 1981-03-01, a: 2017-08-01, calcul: non_lu,
+       texte: "accord du 9 février 1979", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_canada_accord_09021979_ex}}
+    - {instrument: convention, de: 2017-08-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+       texte: "accord du 14 mars 2013", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_canada_calcul_retraite_personnelle_ex, cleiss: conv_canada}}
+  CG:
+    nom: Congo
+    accords:
+    - {instrument: convention, de: 1988-06-01, calcul: calcul_separe,
+       texte: "convention générale du 11 février 1987", personnes: salaries,
+       sources: {cnav: accord_international_congo_calcul_retraite_personnelle_ex, cleiss: conv_congo}}
+  CI:
+    nom: Côte d'Ivoire
+    accords:
+    - {instrument: convention, de: 1987-01-01, calcul: calcul_separe,
+       texte: "convention du 16 janvier 1985", personnes: salaries,
+       sources: {cnav: accord_international_cote_ivoire_calcul_retraite_personnelle_ex, cleiss: conv_cotedivoire}}
+  CL:
+    nom: Chili
+    accords:
+    - {instrument: convention, de: 2001-09-01, calcul: comparaison, prorata: limite,
+       texte: "convention du 25 juin 1999", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_chili_calcul_retraite_personnelle_ex, cleiss: conv_chili}}
+  CM:
+    nom: Cameroun
+    accords:
+    - {instrument: convention, de: 1992-03-01, calcul: calcul_separe,
+       texte: "convention générale du 5 novembre 1990", personnes: salaries,
+       sources: {cnav: accord_international_cameroun_calcul_retraite_personnelle_ex, cleiss: conv_cameroun}}
+  CV:
+    nom: Cap-Vert
+    accords:
+    - {instrument: convention, de: 1983-04-01, calcul: calcul_separe,
+       texte: "convention générale du 15 janvier 1980", personnes: salaries,
+       sources: {cnav: accord_international_cap_vert_calcul_retraite_personnelle_ex, cleiss: conv_capvert}}
+  DZ:
+    nom: Algérie
+    accords:
+    - {instrument: convention, de: 1965-05-19, a: 1982-02-01, calcul: non_lu, date_lue: false,
+       texte: "convention générale du 19 janvier 1965 (décret n° 65-372 du 14 mai 1965, publié le 19 mai 1965)",
+       personnes: salaries, sources: {cnav: accord_international_algerie_champ_application_ex}}
+    - {instrument: convention, de: 1982-02-01, calcul: calcul_separe,
+       texte: "convention générale du 1er octobre 1980 (décret n° 82-166 du 10 février 1982)", personnes: salaries,
+       sources: {cnav: accord_international_algerie_calcul_retraite_personnelle_ex, cleiss: conv_algerie}}
+  GA:
+    nom: Gabon
+    accords:
+    - {instrument: convention, de: 1983-02-01, calcul: comparaison, prorata: limite,
+       texte: "accord du 2 octobre 1980", personnes: salaries,
+       sources: {cnav: accord_international_gabon_calcul_retraite_personnelle_ex, cleiss: conv_gabon}}
+  GG:
+    nom: Guernesey
+    accords:
+    - {instrument: convention, de: 1965-12-01, calcul: option, prorata: non_lu,
+       texte: "convention générale franco-britannique du 10 juillet 1956, étendue à Guernesey", personnes: salaries,
+       sources: {cnav: accord_international_royaume_uni_calcul_retraite_personnelle_ex, cleiss: conv_guernesey}}
+  IL:
+    nom: Israël
+    accords:
+    - {instrument: convention, de: 1966-10-01, calcul: option, prorata: non_lu,
+       texte: "convention du 17 décembre 1965", personnes: salaries,
+       sources: {cnav: accord_international_israel_calcul_retraite_personnelle_ex, cleiss: conv_israel}}
+  IN:
+    nom: Inde
+    accords:
+    - {instrument: convention, de: 2011-07-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+       texte: "accord du 30 septembre 2008", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_inde_calcul_retraite_personnelle_ex, cleiss: conv_inde}}
+  JE:
+    nom: Jersey
+    accords:
+    - {instrument: convention, de: 1980-05-14, calcul: option, prorata: non_lu,
+       texte: "convention générale franco-britannique du 10 juillet 1956, étendue à Jersey", personnes: salaries,
+       sources: {cnav: accord_international_royaume_uni_calcul_retraite_personnelle_ex, cleiss: conv_jersey}}
+  JP:
+    nom: Japon
+    accords:
+    - {instrument: convention, de: 2007-06-01, calcul: comparaison, prorata: limite,
+       texte: "accord du 25 février 2005", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_japon_calcul_retraite_personnelle_ex, cleiss: conv_japon}}
+  KR:
+    nom: Corée du Sud
+    accords:
+    - {instrument: convention, de: 2007-06-01, calcul: comparaison, prorata: limite,
+       texte: "accord du 6 décembre 2004", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_coree_calcul_retraite_personnelle_ex, cleiss: conv_coree}}
+  MA:
+    nom: Maroc
+    accords:
+    - {instrument: convention, de: 1967-01-01, a: 2011-06-01, calcul: non_lu,
+       texte: "convention du 9 juillet 1965, son assurance vieillesse remplacée par l'avenant du 21 mai 1979 au 1er avril 1981",
+       personnes: salaries, sources: {cnav: accord_international_maroc_convention_09071965_ex}}
+    - {instrument: convention, de: 2011-06-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+       texte: "convention générale du 22 octobre 2007", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_maroc_calcul_retraite_personnelle_ex, cleiss: conv_maroc}}
+  MC:
+    nom: Monaco
+    accords:
+    - {instrument: convention, de: 1954-04-01, calcul: calcul_separe,
+       texte: "convention du 28 février 1952", personnes: salaries,
+       sources: {cnav: accord_international_monaco_calcul_retraite_personnelle_ex, cleiss: conv_monaco}}
+  ME:
+    nom: Monténégro
+    accords:
+    - {instrument: convention, de: 1951-04-01, calcul: option, prorata: limite,
+       texte: "convention générale franco-yougoslave du 5 janvier 1950, maintenue (accord de succession du 26 mars 2003)",
+       personnes: salaries,
+       sources: {cnav: accord_international_yougoslavie_calcul_retraite_personnelle_ex, cleiss: conv_montenegro}}
+  MK:
+    nom: Macédoine du Nord
+    accords:
+    - {instrument: convention, de: 1951-04-01, calcul: option, prorata: limite,
+       texte: "convention générale franco-yougoslave du 5 janvier 1950, maintenue (le 14 décembre 1995 dans la succession)",
+       personnes: salaries,
+       sources: {cnav: accord_international_yougoslavie_calcul_retraite_personnelle_ex, cleiss: conv_macedoine}}
+  ML:
+    nom: Mali
+    accords:
+    - {instrument: convention, de: 1983-06-01, calcul: option, prorata: non_lu,
+       texte: "convention générale du 12 juin 1979", personnes: salaries,
+       sources: {cnav: accord_international_mali_calcul_retraite_personnelle_ex, cleiss: conv_mali}}
+  MR:
+    nom: Mauritanie
+    accords:
+    - {instrument: convention, de: 1967-02-01, calcul: option, prorata: non_lu,
+       texte: "convention du 22 juillet 1965", personnes: salaries,
+       sources: {cnav: accord_international_mauritanie_calcul_retraite_personnelle_ex, cleiss: conv_mauritanie}}
+  NE:
+    nom: Niger
+    accords:
+    - {instrument: convention, de: 1974-11-01, calcul: option, prorata: non_lu,
+       texte: "convention générale du 28 mars 1973", personnes: salaries,
+       sources: {cnav: accord_international_niger_calcul_retraite_personnelle_ex, cleiss: conv_niger}}
+  PH:
+    nom: Philippines
+    accords:
+    - {instrument: convention, de: 1994-11-01, calcul: calcul_separe,
+       texte: "convention du 7 février 1990", personnes: salaries,
+       sources: {cnav: accord_international_philippines_calcul_retraite_personnelle_ex, cleiss: conv_philippines}}
+  QC:
+    nom: Québec
+    accords:
+    - {instrument: convention, de: 1981-11-01, a: 2006-12-01, calcul: non_lu,
+       texte: "entente du 12 février 1979", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_quebec_entente_12021979_ex}}
+    - {instrument: convention, de: 2006-12-01, calcul: comparaison, prorata: limite,
+       texte: "entente du 17 décembre 2003", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_quebec_calcul_retraite_personnelle_ex}}
+  RS:
+    nom: Serbie
+    accords:
+    - {instrument: convention, de: 1951-04-01, a: 2023-12-01, calcul: option, prorata: limite,
+       texte: "convention générale franco-yougoslave du 5 janvier 1950", personnes: salaries,
+       sources: {cnav: accord_international_yougoslavie_calcul_retraite_personnelle_ex}}
+    - {instrument: convention, de: 2023-12-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+       texte: "accord du 6 novembre 2014", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_serbie_retraite_personnelle_ex, cleiss: conv_serbie}}
+  SM:
+    nom: Saint-Marin
+    accords:
+    - {instrument: convention, de: 1951-01-01, calcul: option, prorata: non_lu,
+       texte: "convention générale du 12 juillet 1949", personnes: salaries,
+       sources: {cnav: accord_international_saint_marin_calcul_retraite_personnelle_ex, cleiss: conv_saintmarin}}
+  SN:
+    nom: Sénégal
+    accords:
+    - {instrument: convention, de: 1976-09-01, calcul: calcul_separe,
+       texte: "convention du 29 mars 1974", personnes: salaries,
+       sources: {cnav: accord_international_senegal_calcul_retraite_personnelle_ex, cleiss: conv_senegal}}
+  TG:
+    nom: Togo
+    accords:
+    - {instrument: convention, de: 1973-07-01, calcul: option, prorata: non_lu,
+       texte: "convention générale du 7 décembre 1971", personnes: salaries,
+       sources: {cnav: accord_international_togo_calcul_retraite_personnelle_ex, cleiss: conv_togo}}
+  TN:
+    nom: Tunisie
+    accords:
+    - {instrument: convention, de: 1966-01-01, a: 2007-04-01, calcul: non_lu, date_lue: false,
+       texte: "convention du 17 décembre 1965 et accord du 12 septembre 1975", personnes: salaries,
+       sources: {cnav: accord_international_tunisie_accord_12091975_ex}}
+    - {instrument: convention, de: 2007-04-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+       texte: "convention générale du 26 juin 2003", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_tunisie_calcul_retraite_personnelle_ex, cleiss: conv_tunisie}}
+  TR:
+    nom: Turquie
+    accords:
+    - {instrument: convention, de: 1973-08-01, calcul: calcul_separe,
+       texte: "convention générale du 20 janvier 1972", personnes: salaries,
+       sources: {cnav: accord_international_turquie_calcul_retraite_personnelle_ex, cleiss: conv_turquie}}
+  US:
+    nom: États-Unis
+    accords:
+    - {instrument: convention, de: 1988-07-01, calcul: calcul_separe,
+       texte: "accord du 2 mars 1987", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_etats_unis_calcul_retraite_personnelle_ex, cleiss: conv_etatsunis}}
+  UY:
+    nom: Uruguay
+    accords:
+    - {instrument: convention, de: 2014-07-01, calcul: comparaison, prorata: limite, etats_tiers: true,
+       texte: "accord du 6 décembre 2010", personnes: salaries_et_non_salaries,
+       sources: {cnav: accord_international_uruguay_retraite_personnelle_ex, cleiss: conv_uruguay}}
+  XK:
+    nom: Kosovo
+    accords:
+    - {instrument: convention, de: 1951-04-01, calcul: option, prorata: limite,
+       texte: "convention générale franco-yougoslave du 5 janvier 1950, maintenue (le 6 février 2013 dans la succession)",
+       personnes: salaries,
+       sources: {cnav: accord_international_yougoslavie_calcul_retraite_personnelle_ex, cleiss: conv_kosovo}}
+
+  # -- Les institutions européennes et les organisations internationales -----
+
+  OI:
+    nom: Institution européenne ou organisation internationale
+    accords:
+    - {instrument: organisation_internationale, de: 2010-01-01, calcul: taux_seul,
+       texte: "L. 161-19-1 CSS (loi n° 2008-1330, article 85) ; R. 161-16-1 CSS (décret n° 2009-1595)",
+       personnes: salaries_et_non_salaries,
+       sources: {cnav: retraite_personnelle_taux_duree_assurance_pour_taux_plein_ex}}

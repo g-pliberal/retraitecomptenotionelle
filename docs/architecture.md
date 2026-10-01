@@ -1631,7 +1631,8 @@ ouvert le 29 septembre 2026 à la demande du propriétaire, devant
 l'invalidité, et clos le 30 septembre, la décision de la proposition restant
 au propriétaire. Le quatrième, l'invalidité et l'inaptitude, a été ouvert le
 30 septembre 2026, à la demande du propriétaire, et clos le 1er octobre, la
-proposition n'en faisant pas exception.
+proposition n'en faisant pas exception. Le cinquième, les carrières hors de
+France, a été ouvert le 1er octobre 2026, à la demande du propriétaire.
 
 ---
 

@@ -3920,3 +3920,53 @@ journal:
       (circulaire n° 2012/63), qui suppose l'allocation supplémentaire d'invalidité ; la
       pension de veuf ou de veuve invalide de l'assurance invalidité, dont l'index porte
       les textes, à lire.
+  - date: "2026-10-01"
+    session: >-
+      l'ouverture du cinquième domaine, les carrières hors de France, à la demande du
+      propriétaire : les textes lus, quatre fiches nouvelles et le tableau des accords
+    consulte: >-
+      `python scripts/veille_droit.py` ; les index LEGI et JORF du dépôt, mis à jour de
+      leurs incréments jusqu'au 1er octobre 2026 : aucun texte de retraite paru depuis la
+      veille précédente. Les règlements (CE) n° 883/2004 (articles 6 à 8, 50 à 60, annexes
+      VIII, X et XI) et n° 987/2009 (articles 12, 13, 43 à 52) dans leurs versions
+      consolidées, (CEE) n° 1408/71 d'origine, n° 1248/92, (CE) n° 1606/98, n° 859/2003 et
+      (UE) n° 1231/2010, au dépôt de l'Office des publications de l'Union (EUR-Lex ne
+      répond pas d'une session) ; l'accord de commerce et de coopération avec le
+      Royaume-Uni, articles SSC.46 à SSC.50. Dans l'index LEGI : L. 161-19-1 (2008 à 2025),
+      R. 161-16-1, R. 351-4, R. 351-5, R. 351-6, R. 351-27, R. 351-38, R. 173-4-3, L. 173-2,
+      R. 173-7, L. 351-10, L. 351-10-1, L. 742-2, L. 815-1 (2006 à 2026), R. 111-2 et
+      R. 115-6 ; dans l'index JORF, l'article 85 de la loi n° 2008-1330, le décret
+      n° 2009-1595, le décret n° 65-372. Dans la base de la Cnav, que son interface de
+      recherche rend lisible : les 223 exposés des accords internationaux, des règlements
+      européens et des coordinations d'outre-mer, les exposés « Durée d'assurance pour le
+      taux plein », « Surcote », « Minimum contributif », de la carrière longue et de
+      l'ASPA, les circulaires n° 2010/42 et 2021/33. Au CLEISS, les pages de la retraite
+      après une carrière à l'étranger et celles des 42 accords. La page « La durée
+      d'assurance » du Service des retraites de l'État ; la documentation de la CNRACL ne
+      répond pas.
+    trouve: >-
+      Les périodes qu'un accord fait compter s'ajoutent à la durée qui fixe le taux et
+      ouvre les droits — carrière longue, surcote, majoration du minimum —, jamais à
+      celle qui proratise : « Pour le taux de la retraite nationale, toutes les périodes
+      d'assurance à l'étranger sont négligées », mais la pension proratisée, servie si
+      elle est plus élevée, les compte (règlement 883/2004, article 52 ; depuis le 1er
+      juin 1992, règlement 1248/92 ; avant, la pension nationale au taux de toute la
+      carrière) ; les conventions de type 2 les comptent pour le taux de la pension
+      nationale, celles de type 1 laissent le choix (CLEISS). Les régimes en points ne
+      proratisent pas (annexe VIII, partie 2) ; les fonctionnaires sont coordonnés depuis
+      le 25 octobre 1998. L'activité à l'étranger d'avant le 1er avril 1983 compte, pour le
+      taux, comme période reconnue équivalente (R. 351-4, 1°), sous la condition de
+      L. 742-2 depuis 2011 ; une institution européenne ou une organisation
+      internationale, pour le taux seul, depuis le 1er janvier 2010 (L. 161-19-1,
+      circulaire n° 2010/42). Le minimum d'une pension proratisée se proratise sur la
+      durée totale non limitée ; depuis 2012, il suppose toutes les pensions demandées,
+      et son écrêtement compte les pensions étrangères, hors celles des règlements et de
+      six conventions. L'ASPA ne se sert qu'en France : plus de six mois par an, plus de
+      neuf depuis le 1er septembre 2023 (L. 815-1, R. 111-2).
+    reste: >-
+      La circulaire Cnav n° 2008/58, que la base n'a pas rendue (le salaire annuel moyen
+      réduit de la pension théorique) ; la règle des fonctionnaires, à la CNRACL et au
+      Service des retraites de l'État ; le mode de calcul des conventions d'avant l'entrée
+      des États dans l'Union, et le prorata des conventions à option ; le texte qui fixe
+      la durée d'assurance maladie de L. 742-2 ; les exemples chiffrés, à chercher pour
+      l'étape des exemples publiés (circulaires de la Cnav, CLEISS).

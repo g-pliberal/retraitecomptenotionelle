@@ -1,0 +1,141 @@
+schema_version: 1
+id: residence_et_minimum_vieillesse
+intitule: >-
+  L'allocation de solidarité aux personnes âgées n'est servie qu'à qui réside en France
+  de façon stable et régulière — plus de six mois de l'année civile de son versement,
+  plus de neuf mois depuis le 1er septembre 2023 — et elle est supprimée au départ hors
+  de France : c'est une prestation spéciale à caractère non contributif, que les
+  règlements européens ne servent que dans l'État de résidence.
+domaine: minima
+regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+etape: foyer_et_net
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la résidence de la personne, en France ou à l'étranger, à la date d'effet de l'allocation
+  et à chaque échéance
+ecrit:
+- l'allocation de solidarité aux personnes âgées, nulle tant que la personne réside hors de
+  France
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: allocation_supplementaire_avant_2006
+  statut: lue
+  textes:
+  - {id: "http://data.europa.eu/eli/reg/2004/883/oj", article: "règlement (CE) n° 883/2004, article 70 et annexe X, France, a) et c)",
+     publie_le: 2004-04-30, en_vigueur: 2010-05-01}
+  bornes:
+    liquidation.date_effet: [null, 2006-01-01]
+  contenu:
+    droit: >-
+      avant l'allocation de solidarité aux personnes âgées, le minimum vieillesse
+      complétait l'avantage de base par l'allocation supplémentaire du fonds de
+      solidarité vieillesse, que les règlements rangent parmi les prestations
+      servies « exclusivement dans l'État membre dans lequel [l'intéressé] réside »
+      : « Allocations supplémentaires [...] du fonds de solidarité vieillesse par
+      rapport aux droits acquis (loi du 30 juin 1956, codifiée au livre VIII du code de
+      la sécurité sociale) » (annexe X, France)
+    parametres:
+      residence_requise: true
+  exemples: aucun trouvé
+- id: residence_six_mois_2006
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006744832, article: "L. 815-1 CSS", en_vigueur: 2006-01-01}
+  - {id: LEGIARTI000028498876, article: "L. 815-1 CSS", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000031323911, article: "L. 815-1 CSS", en_vigueur: 2015-10-16}
+  - {id: LEGIARTI000006746841, article: "R. 115-6 CSS", en_vigueur: 2007-03-18}
+  - {id: LEGIARTI000031795401, article: "R. 111-2 CSS", en_vigueur: 2016-01-01}
+  - {id: LEGIARTI000034096402, article: "R. 111-2 CSS", en_vigueur: 2017-02-27}
+  - {id: LEGIARTI000038701577, article: "R. 111-2 CSS", en_vigueur: 2019-11-01}
+  - {id: "http://data.europa.eu/eli/reg/2004/883/oj", article: "règlement (CE) n° 883/2004, article 70 et annexe X, France, d)",
+     en_vigueur: 2010-05-01}
+  nee_de: LEGIARTI000006744832
+  bornes:
+    liquidation.date_effet: [2006-01-01, 2023-09-01]
+  contenu:
+    droit: >-
+      « Toute personne justifiant d'une résidence stable et régulière sur le
+      territoire métropolitain ou dans un département mentionné à l'article L. 751-1 et
+      ayant atteint un âge minimum bénéficie d'une allocation de solidarité aux
+      personnes âgées » (L. 815-1) ; « sont réputées avoir en France le lieu de leur
+      séjour principal les personnes qui y séjournent pendant plus de six mois au cours
+      de l'année civile de versement des prestations » (R. 115-6, puis R. 111-2) ; «
+      L'Aspa est supprimée en cas de départ hors de France » (exposé de la Cnav «
+      Condition de résidence - Aspa »). L'allocation de solidarité aux personnes âgées
+      est une prestation de l'annexe X, « à partir du 1er janvier 2006 »
+    parametres:
+      residence_requise: true
+      mois_de_residence_plus_de: 6
+  exemples: aucun trouvé
+- id: residence_neuf_mois_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047453234, article: "L. 815-1 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000054477905, article: "L. 815-1 CSS", en_vigueur: 2026-07-23}
+  - {id: LEGIARTI000047961995, article: "R. 111-2 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000049451865, article: "R. 111-2 CSS", en_vigueur: 2025-01-01}
+  nee_de: LEGIARTI000047453234
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      la version residence_six_mois_2006, sa durée portée à neuf mois : « Un décret en
+      Conseil d'Etat précise la condition de résidence mentionnée au présent article, sa
+      durée ne pouvant être inférieure à neuf mois par année civile » (L. 815-1, rédaction
+      de l'article 18 de la loi n° 2023-270, « aux pensions prenant effet à compter du
+      1er septembre 2023 ») ; « plus de neuf mois au cours de l'année civile de versement
+      de la prestation mentionnée à l'article L. 815-1 » (R. 111-2, décret n° 2023-752)
+    parametres:
+      residence_requise: true
+      mois_de_residence_plus_de: 9
+  exemples: aucun trouvé
+approximations: []
+sources:
+  lu_le: 2026-10-01
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France, à la
+    demande du propriétaire. Le moteur ne la calcule pas encore : il lui faut la
+    résidence de la personne (étape 2 du domaine).
+  - >-
+    À lire : les articles du code d'avant 2006 sur l'allocation supplémentaire (L. 815-2
+    et suivants) et leur condition de résidence ; la condition de séjour régulier depuis
+    dix ans de l'étranger non européen (L. 816-1), que le modèle ne peut pas lire faute de
+    connaître la nationalité ; la tolérance de cent soixante jours que la caisse
+    pratique (exposé « Condition de résidence - Aspa »).
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 815-1 CSS (2006, 2014, 2015, 2023, 2026), R. 115-6 (2007) et R. 111-2 (2016 à
+      2025), dans l'index LEGI du dépôt mis à jour au 1er octobre 2026
+    date: 2026-10-01
+  - type: circulaire_cnav
+    reference: >-
+      base législative de la Cnav, exposés « Conditions d'attribution - Aspa » et «
+      Condition de résidence - Aspa » : « Cette condition est remplie si l'intéressé
+      séjourne pendant plus de 6 mois, au cours de l'année civile de versement de
+      l'allocation » ; « L'Aspa est supprimée en cas de départ hors de France » ; l'article
+      18 de la loi n° 2023-270 porte la durée à neuf mois, « Le site sera mis à jour lors
+      de la publication des instructions réglementaires »
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=aspa_condition_residence_ex.aspx
+    date: 2026-10-01
+  - type: autre
+    reference: >-
+      règlement (CE) n° 883/2004, article 70 et annexe X, France : les allocations
+      supplémentaires du fonds de solidarité vieillesse, l'allocation spéciale et, à
+      partir du 1er janvier 2006, l'allocation de solidarité aux personnes âgées, servies
+      dans l'État de résidence seulement
+    url: http://publications.europa.eu/resource/celex/02004R0883-20190731
+    date: 2026-10-01
+historique:
+- >-
+  2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la
+  demande du propriétaire.
+effet: >-
+  Les retraités qui vivent hors de France : 1,28 million fin 2024 (DREES, enquête annuelle
+  auprès des caisses). Le modèle leur sert l'ASPA comme à un résident, quand le droit la
+  leur refuse ; la page Coût, elle, retire déjà de la garantie de la proposition les
+  retraités qui résident à l'étranger.

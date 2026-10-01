@@ -3323,6 +3323,81 @@ L. 28, que trois sources écrivent chacune autrement ; les exemples de la CNRACL
 et de l'Ircantec ; la pension de veuf ou de veuve invalide de l'assurance
 invalidité. Le domaine suivant se mesurera à son ouverture.
 
+**Le cinquième domaine, les carrières hors de France, ouvert le 1er octobre
+2026** (§ 11), à la demande du propriétaire : « Je veux qu'on traite les
+carrières hors de France. » Il n'a pas été remesuré : la mesure du 28
+septembre le plaçait derrière l'invalidité, désormais close — 1,28 million de
+retraités résidant à l'étranger fin 2024 (DREES, enquête annuelle auprès des
+caisses), un minimum, et 20,3 % des retraités nés à l'étranger fin 2016 (EIR).
+Le modèle ne connaît aucune période à l'étranger : une carrière commencée
+ailleurs part décotée faute de durée, quand la caisse compte ses périodes
+étrangères pour le taux et ne proratise que sur les françaises. Son gabarit
+(§ 11), en cinq étapes :
+1. les fiches et le tableau des accords, lus ce jour (ci-dessous) ;
+2. les faits de la chronologie : les périodes à l'étranger — l'État, le
+   début, la fin —, la pension étrangère, liquidation observée (§ 5.5), et la
+   résidence après le départ ; la saisie qui les lit ;
+3. les fonctions dans l'étape, dans les deux moteurs : les trimestres
+   étrangers que chaque accord fait compter, le taux et l'ouverture des droits
+   qu'ils changent, la pension proratisée contre la pension nationale, le
+   minimum théorique et proratisé, l'écrêtement sur les pensions étrangères,
+   l'ASPA refusée hors de France ; les témoins, et la page ;
+4. les exemples publiés : les quatre calculs de Léna du CLEISS, et ceux des
+   circulaires de la Cnav ;
+5. le bloc du formulaire, la page Coût, la décision de la proposition, la
+   référence de conservation refigée.
+
+**Première étape, le 1er octobre : les textes lus, quatre fiches nouvelles et
+le tableau des accords.** Lus (journal de veille) : les règlements européens
+dans leurs versions consolidées, au dépôt de l'Office des publications de
+l'Union — 883/2004 (articles 6, 50 à 60, annexes VIII, X et XI), 987/2009
+(articles 12, 13, 43), 1408/71, 1248/92, 1606/98, 859/2003, 1231/2010 — et le
+protocole de coordination de l'accord avec le Royaume-Uni (article SSC.47) ;
+dans l'index LEGI, L. 161-19-1 et R. 161-16-1, R. 351-4, R. 351-5, R. 351-27,
+R. 351-38, R. 173-4-3, L. 173-2, R. 173-7, L. 351-10-1, L. 742-2, L. 815-1,
+R. 111-2 et R. 115-6 ; dans la base de la Cnav, ses exposés sur les règlements
+européens, sur chaque convention et sur les coordinations d'outre-mer, et les
+circulaires n° 2010/42 et 2021/33 ; au CLEISS, ses pages sur la retraite après
+une carrière à l'étranger et celles des accords. Ce qu'ils disent est rangé en
+fiches, `pas_encore_modelisee` toutes quatre :
+- `totalisation_des_periodes_etrangeres`, en quatre versions : avant 1983, le
+  taux se lit sur l'âge et les périodes étrangères ne le changent pas ; depuis
+  le 1er avril 1983, celles qu'un accord fait compter s'ajoutent à la durée qui
+  fixe le taux et ouvre les droits, jamais à celle qui proratise, et l'activité
+  à l'étranger d'avant 1983 compte, pour le taux seul, comme période reconnue
+  équivalente ; depuis 2010, les institutions européennes et les organisations
+  internationales, pour le taux seul ; depuis 2011, l'équivalence sous la
+  condition de L. 742-2 ;
+- `pension_proratisee`, en cinq : la pension nationale au taux de toute la
+  carrière jusqu'en juin 1992 ; puis la plus élevée de la pension nationale et
+  de la pension proratisée (règlement 1248/92), les fonctionnaires coordonnés
+  depuis le 25 octobre 1998 ; le salaire annuel moyen de la pension théorique
+  réduit au prorata de 2004 à juin 2022 ; le règlement 883/2004, dont les
+  régimes en points ne proratisent pas ;
+- `minimum_contributif_international`, en trois : le minimum proratisé comme
+  la pension avant 2004 ; depuis, un minimum et une majoration théoriques puis
+  proratisés sur la durée totale non limitée, les périodes étrangères comptées
+  comme cotisées ; depuis 2012, la subsidiarité et l'écrêtement sur les
+  pensions étrangères, hors celles des règlements européens et de six
+  conventions ;
+- `residence_et_minimum_vieillesse`, en trois : l'ASPA ne se sert qu'en France,
+  plus de six mois par an jusqu'en août 2023, plus de neuf mois depuis.
+
+Le tableau `data/reference/legislation/accords_internationaux.yaml` dit, pour
+68 États et pour les organisations internationales, l'accord en vigueur à la
+date d'effet de la pension : les règlements européens depuis l'entrée de
+chacun des 31 États qu'ils lient, et la convention qui les y précédait ; les 37
+conventions bilatérales en vigueur, et celles qu'elles ont remplacées ; leur
+type de calcul — option, calcul séparé, comparaison, le classement du CLEISS —,
+leur prorata quand la Cnav l'écrit, les personnes qu'elles visent. Les collectivités d'outre-mer qui ont leur régime
+n'y sont pas : leurs régimes sont déjà des régimes du modèle, et leurs
+trimestres comptent déjà dans la durée tous régimes. Quatre réserves sont
+déclarées dans les fiches : la règle de la CNRACL et du Service des retraites
+de l'État, injoignables d'une session au-delà d'une page ; la circulaire Cnav
+n° 2008/58, que la base n'a pas rendue ; les conventions d'avant l'entrée des
+États dans l'Union, dont seules les dates sont lues ; le prorata des
+conventions à option, que la Cnav n'écrit pas. Aucun résultat ne bouge.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

@@ -1,0 +1,284 @@
+schema_version: 1
+id: totalisation_des_periodes_etrangeres
+intitule: >-
+  Les périodes d'assurance accomplies hors de France comptent dans la durée qui fixe
+  le taux de la pension et ouvre les droits — taux plein, décote, surcote, carrière
+  longue, majoration du minimum contributif —, jamais dans la durée qui proratise la
+  pension : celles d'un État lié à la France par les règlements européens ou par une
+  convention de sécurité sociale, selon l'accord en vigueur à la date d'effet de la
+  pension ; depuis 2010, celles d'une institution européenne ou d'une organisation
+  internationale, pour le taux seul ; à défaut d'accord, l'activité exercée à
+  l'étranger avant le 1er avril 1983, pour le taux seul, comme période reconnue
+  équivalente.
+domaine: coordination
+regimes: [regime_general, msa_salaries, cancava, organic, rsi, fonction_publique_etat,
+  cnracl, fspoeie, cnavpl, cnbf, msa_non_salaries]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les périodes à l'étranger de la personne, l'État où chacune a été accomplie, son début et
+  sa fin
+- l'accord que data/reference/legislation/accords_internationaux.yaml donne à cet État à la
+  date d'effet de la pension
+- les trimestres que la carrière valide en France chaque année, que les périodes étrangères
+  complètent sans dépasser quatre
+ecrit:
+- pour chaque accord applicable, les trimestres étrangers qu'il fait compter, année par
+  année, dans la durée d'assurance tous régimes qui fixe le taux et ouvre les droits, et qui
+  restent hors de la durée qui proratise la pension de chaque régime
+- les trimestres reconnus équivalents de l'activité à l'étranger antérieure au 1er avril
+  1983, et ceux d'une institution européenne ou d'une organisation internationale, qui ne
+  comptent que pour le taux
+dates_qui_decident:
+- liquidation.date_effet
+- periode.debut
+- periode.fin
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Ce
+# qui change d'un État à l'autre — l'accord et sa date — est dans le tableau
+# des accords ; ce qui change ici est ce que le droit français fait des
+# périodes que l'accord lui apporte.
+versions:
+- id: taux_par_l_age_avant_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006749434, article: "R. 351-27 CSS", en_vigueur: 1985-12-21}
+  - {id: "http://data.europa.eu/eli/reg/1971/1408/oj", article: "règlement (CEE) n° 1408/71 du 14 juin 1971, article 45 (JO CE L 149 du 5 juillet 1971)",
+     en_vigueur: 1972-10-01}
+  bornes:
+    liquidation.date_effet: [null, 1983-04-01]
+  contenu:
+    droit: >-
+      avant le 1er avril 1983, le taux du régime général se lit sur l'âge seul — 25 %
+      à soixante ans, 50 % à soixante-cinq (fiche decote_avant_1983) — et la durée ne
+      fait que proratiser la pension : les périodes accomplies dans un autre État
+      n'en changent pas le taux. Les règlements et les conventions les totalisent
+      pour ouvrir le droit et pour la pension théorique, que le prorata ramène aux
+      périodes françaises (fiche pension_proratisee)
+    parametres:
+      compte_pour_le_taux: false
+  exemples: aucun trouvé
+- id: taux_par_la_duree_1983
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000888522, article: "ordonnance n° 82-270 du 26 mars 1982", publie_le: 1982-03-28}
+  - {id: LEGIARTI000006275868, article: "ordonnance n° 82-270, article 9 : en vigueur le 1er avril 1983",
+     en_vigueur: 1982-07-01}
+  - {id: LEGIARTI000006749434, article: "R. 351-27 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749435, article: "R. 351-27 CSS", en_vigueur: 1993-08-28}
+  - {id: LEGIARTI000006749436, article: "R. 351-27 CSS", en_vigueur: 2004-02-15}
+  - {id: LEGIARTI000020082993, article: "R. 351-27 CSS", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000006749342, article: "R. 351-4 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749343, article: "R. 351-4 CSS", en_vigueur: 2000-04-09}
+  - {id: LEGIARTI000006749344, article: "R. 351-4 CSS", en_vigueur: 2004-09-16}
+  - {id: LEGIARTI000006749394, article: "R. 351-38 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749346, article: "R. 351-5 CSS", en_vigueur: 1985-12-21}
+  - {reference: "circulaire Cnav n° 117/83 du 28 octobre 1983", publie_le: 1983-10-28}
+  - {id: "http://data.europa.eu/eli/reg/1971/1408/oj", article: "règlement (CEE) n° 1408/71, articles 45 et 46 ; règlement (CEE) n° 574/72, article 15",
+     en_vigueur: 1972-10-01}
+  nee_de: JORFTEXT000000888522
+  bornes:
+    liquidation.date_effet: [1983-04-01, 2010-01-01]
+  contenu:
+    droit: >-
+      depuis que le taux plein se lit sur la durée d'assurance tous régimes (R. 351-27,
+      « périodes d'assurance et périodes reconnues équivalentes »), les périodes que
+      l'accord applicable fait compter s'y ajoutent : « les périodes accomplies dans un
+      pays lié à la France par un accord international ou de coordination sont
+      retenues pour le taux de la retraite » (circulaire n° 117/83). Sous les
+      règlements européens, elles comptent dans la pension théorique, qui fixe le taux
+      de la pension proratisée, et non dans la pension nationale ; sous une
+      convention, dans le calcul que la convention prévoit. Elles ne comptent jamais
+      dans la durée qui proratise la pension d'un régime, faite de ses seuls trimestres
+    accords: >-
+      celui que le tableau data/reference/legislation/accords_internationaux.yaml donne
+      à l'État de la période, en vigueur à la date d'effet de la pension ; il prend en
+      compte les périodes accomplies avant lui. Une convention dont le calcul n'a pas
+      été lu suit la règle générale de la circulaire n° 117/83 : ses périodes comptent
+      pour le taux
+    superposition: >-
+      « Il n'est pas retenu plus de 4 trimestres par année civile » (R. 351-5, exposés
+      de la Cnav) : les périodes étrangères complètent celles que la carrière valide en
+      France, sans se superposer à elles ; une période dont les dates ne sont pas
+      précises est présumée ne pas se superposer (règlement 987/2009, article 12, 6)
+    conversion: >-
+      trois mois ou treize semaines font un trimestre, un an quatre trimestres ; une
+      fraction de trimestre est arrondie au trimestre supérieur (règlement 987/2009,
+      article 13 ; arrangements des conventions)
+    equivalentes: >-
+      l'activité professionnelle exercée à l'étranger avant le 1er avril 1983, qui « peut
+      ou aurait pu donner lieu à rachat » (L. 742-2), est une période reconnue
+      équivalente (R. 351-4, 1°) : elle compte pour le taux seul, sans accord, et pour
+      les périodes qu'un accord ne fait pas déjà compter
+    ouverture: >-
+      les mêmes périodes comptent pour la carrière longue — début d'activité et durée
+      cotisée, « dans les mêmes conditions que les périodes accomplies en France » —,
+      pour la surcote et pour les 120 trimestres cotisés du minimum contributif majoré,
+      « telles qu'indiquées sur le formulaire réglementaire de liaison » (exposés de la
+      Cnav)
+    regimes: >-
+      le régime général et les régimes liquidés avec lui ; sous les règlements
+      européens, tous les régimes légaux, ceux des fonctionnaires depuis le 25 octobre
+      1998 seulement (règlement 1606/98) ; une convention ne vise que les régimes et
+      les personnes qu'elle nomme — souvent les seuls salariés
+    parametres:
+      compte_pour_le_taux: true
+      trimestres_par_annee_au_plus: 4
+      mois_par_trimestre: 3
+      equivalentes_avant: 1983-04-01
+  exemples: aucun trouvé
+- id: organisations_internationales_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019959547, article: "L. 161-19-1 CSS", en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000022287794, article: "L. 161-19-1 CSS", en_vigueur: 2010-05-08}
+  - {id: LEGIARTI000021500546, article: "R. 161-16-1 CSS", en_vigueur: 2009-12-21}
+  - {id: LEGIARTI000020082993, article: "R. 351-27 CSS", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000006749344, article: "R. 351-4 CSS", en_vigueur: 2004-09-16}
+  - {id: LEGIARTI000022287538, article: "R. 351-4 CSS", en_vigueur: 2010-05-08}
+  - {reference: "circulaire Cnav n° 2010/42 du 22 avril 2010", publie_le: 2010-04-22}
+  nee_de: LEGIARTI000021500546
+  bornes:
+    liquidation.date_effet: [2010-01-01, 2011-01-01]
+  contenu:
+    droit: >-
+      la version taux_par_la_duree_1983, et les périodes durant lesquelles l'assuré a
+      été affilié au seul régime obligatoire de pension d'une institution européenne
+      ou d'une organisation internationale à laquelle la France est partie (L.
+      161-19-1), « uniquement pour déterminer la durée pour fixer le taux » ; elles sont
+      « exclues de l'application de tout autre disposition relative à la durée
+      d'assurance (majoration de durée d'assurance, limite de déclenchement, durée
+      cotisée ...) » et de la totalisation des conventions (circulaire n° 2010/42,
+      points 31 et 37). Elles « prennent effet le 1er janvier 2010 » (point 5)
+    conversion: >-
+      « de date à date, pour autant de trimestres qu'elles comportent de fois 90 jours
+      » (R. 161-16-1), sans arrondi au trimestre supérieur (circulaire, point 34)
+    parametres:
+      compte_pour_le_taux: true
+      trimestres_par_annee_au_plus: 4
+      mois_par_trimestre: 3
+      equivalentes_avant: 1983-04-01
+      organisations_internationales: taux_seul
+      jours_par_trimestre_organisations_internationales: 90
+  exemples: aucun trouvé
+- id: equivalentes_sous_condition_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000021539134, article: "L. 742-2 CSS", en_vigueur: 2011-01-01}
+  - {id: LEGIARTI000022287538, article: "R. 351-4 CSS", en_vigueur: 2010-05-08}
+  - {id: LEGIARTI000034596041, article: "R. 351-4 CSS", en_vigueur: 2017-05-06}
+  - {id: LEGIARTI000038790293, article: "R. 351-4 CSS", en_vigueur: 2019-07-08}
+  - {id: LEGIARTI000053335565, article: "R. 351-4 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000024113020, article: "R. 351-27 CSS", en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000047633296, article: "R. 351-27 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053335645, article: "R. 351-27 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000054589995, article: "R. 351-27 CSS", en_vigueur: 2026-08-01}
+  - {id: LEGIARTI000037063414, article: "L. 161-19-1 CSS", en_vigueur: 2018-06-14}
+  - {id: LEGIARTI000051289640, article: "L. 161-19-1 CSS", en_vigueur: 2025-02-28}
+  nee_de: LEGIARTI000021539134
+  bornes:
+    liquidation.date_effet: [2011-01-01, null]
+  contenu:
+    droit: >-
+      la version organisations_internationales_2010 ; l'activité à l'étranger d'avant
+      le 1er avril 1983 n'est plus reconnue équivalente qu'à qui aurait pu la racheter
+      sous L. 742-2 dans sa rédaction de 2011 : « Pour les demandes déposées depuis le
+      01/01/2011, l'intéressé doit avoir été à la charge d'un régime obligatoire
+      français d'assurance maladie pendant au moins 5 années civiles ou justifier de 20
+      trimestres d'assurance à l'ensemble des régimes de base obligatoires français »
+      (exposé de la Cnav « Durée d'assurance pour le taux plein »)
+    parametres:
+      compte_pour_le_taux: true
+      trimestres_par_annee_au_plus: 4
+      mois_par_trimestre: 3
+      equivalentes_avant: 1983-04-01
+      equivalentes_trimestres_francais_au_moins: 20
+      organisations_internationales: taux_seul
+      jours_par_trimestre_organisations_internationales: 90
+  exemples: aucun trouvé
+approximations: []
+sources:
+  lu_le: 2026-10-01
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Ouverte le 1er octobre 2026 avec le domaine des carrières hors de France
+    (docs/architecture.md, § 11), à la demande du propriétaire. Le moteur ne la calcule
+    pas encore : il lui faut les périodes à l'étranger dans la chronologie (étape 2 du
+    domaine), puis les trimestres que chaque accord fait compter (étape 3).
+  - >-
+    À lire : le texte réglementaire qui fixe la durée d'affiliation à l'assurance maladie
+    exigée par L. 742-2 depuis 2011, que seul l'exposé de la Cnav donne (cinq années
+    civiles, ou vingt trimestres) ; les arrangements administratifs de chaque convention
+    pour la conversion de leurs périodes ; les conventions d'avant l'entrée des États
+    dans l'Union, dont le tableau des accords ne dit que les dates ; la convention
+    franco-espagnole du 27 juin 1957 et franco-portugaise du 16 novembre 1957, dont les
+    dates ne sont pas lues ; la règle de la caisse des fonctionnaires, que la
+    documentation de la CNRACL et du Service des retraites de l'État, injoignables d'une
+    session, n'a pas permis de lire au-delà de la page « La durée d'assurance » du
+    Service des retraites de l'État.
+  - >-
+    Les périodes d'activité en Algérie antérieures au 1er juillet 1962, que le régime
+    général valide gratuitement (loi n° 64-1330, protocole n° 3 du 19 janvier 1965),
+    sont des périodes françaises : elles relèvent du domaine des périodes assimilées,
+    non de celui-ci.
+  lectures:
+  - type: autre
+    reference: >-
+      règlement (CE) n° 883/2004, articles 6 (totalisation), 50 à 60 et annexes VIII, X
+      et XI (France), et règlement (CE) n° 987/2009, articles 12, 13 et 43, dans leurs
+      versions consolidées lues au dépôt de l'Office des publications de l'Union
+      (CELEX 02004R0883-20190731 et 02009R0987-20180101) ; règlements (CEE) n° 1248/92
+      (article 95 bis : en vigueur le 1er juin 1992) et (CE) n° 1606/98 (en vigueur le
+      25 octobre 1998), (CE) n° 859/2003 et (UE) n° 1231/2010 (ressortissants de pays
+      tiers) ; accord de commerce et de coopération avec le Royaume-Uni, protocole sur la
+      coordination de la sécurité sociale, articles SSC.46 et SSC.47
+    url: http://publications.europa.eu/resource/celex/02004R0883-20190731
+    date: 2026-10-01
+  - type: circulaire_cnav
+    reference: >-
+      base législative de la Cnav, exposés « Durée d'assurance pour le taux plein »
+      (règlements européens : « Pour le taux de la retraite nationale, toutes les
+      périodes d'assurance à l'étranger sont négligées » ; accords internationaux : «
+      retenues pour le taux de la retraite » ; périodes reconnues équivalentes ;
+      organisations internationales), « Montant de la retraite communautaire », «
+      Calcul de la retraite personnelle dans le cadre des accords internationaux », «
+      Les accords internationaux », « Conditions d'attribution de la retraite anticipée
+      carrière longue », « Durée d'assurance cotisée pour le départ en retraite anticipée
+      carrière longue », « Surcote », et les exposés de chaque accord
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_personnelle_taux_duree_assurance_pour_taux_plein_ex.aspx
+    date: 2026-10-01
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2010/42 du 22 avril 2010, « Taux - Organisations
+      internationales - Institutions européennes »
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2010042_22042010.aspx
+    date: 2010-04-22
+  - type: autre
+    reference: >-
+      CLEISS, « Quelle retraite après avoir travaillé à l'étranger ? » et ses quatre
+      pages (règlements européens, un accord, plusieurs accords, un État sans accord) :
+      les trois types d'accords bilatéraux et les exemples de Léna ; la page de chaque
+      accord (textes, entrée en vigueur, personnes visées)
+    url: https://www.cleiss.fr/particuliers/retraite/index.html
+    date: 2026-10-01
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, « La durée d'assurance » : elle comprend les
+      durées acquises « sous certaines conditions, d'un régime de retraite étranger, d'une
+      institution européenne ou d'une organisation internationale »
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-duree-dassurance
+    date: 2026-10-01
+textes_a_rattacher:
+- {id: LEGIARTI000006744128, article: "L. 742-2 CSS", en_vigueur: 2000-01-01,
+   change: "la rédaction d'avant 2011, sans condition d'affiliation à l'assurance maladie"}
+historique:
+- >-
+  2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la
+  demande du propriétaire.
+effet: >-
+  Toute personne qui a travaillé hors de France : 1,28 million de retraités résidaient à
+  l'étranger fin 2024 (DREES, enquête annuelle auprès des caisses), et 20,3 % des retraités
+  étaient nés à l'étranger fin 2016 (DREES, EIR). Le modèle ne connaît aucune période à
+  l'étranger : une carrière commencée ailleurs part décotée faute de durée, et ne
+  liquide qu'à l'âge du taux plein automatique ce que la totalisation lui ouvrait plus tôt.
