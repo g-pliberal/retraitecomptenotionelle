@@ -1846,8 +1846,10 @@ TOLERANCES = {
     "coefficients_des_regimes": {"abs": 1e-9},
     "pension_regime_general_mensuelle": {"abs": 0.05},
     "pensions_annuelles_des_regimes": {"abs": 0.5},
-    # Annuelle, quand la caisse publie douze mensualités arrondies au centime.
-    "cotisation_agirc_de_l_annee": {"abs": 0.05},
+    # Annuelle, quand la caisse publie douze mensualités arrondies au centime
+    # (six centimes au plus) et que la fiche arrondit le partage entre salarié
+    # et employeur au dix-millième : 0,3796 pour 6,24 % sur 16,44 %.
+    "cotisation_agirc_de_l_annee": {"abs": 0.10},
     "reversions_ecretees_mensuelles": {"abs": 0.01},
     "reversions_mensuelles": {"abs": 0.5},
     "deductions_annuelles_du_cumul": {"abs": 0.01},

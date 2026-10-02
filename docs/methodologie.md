@@ -606,7 +606,8 @@ ligne :
 **La garantie minimale de points de l'Agirc n'est pas dans ces tableaux : elle
 n'est pas gratuite.** Le scénario 1 la sert, <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.*.points_minimum_annuels)-->120<!--/--> points par an de
 1989 à 2018, proratisés sur la durée de présence et sur la quotité du temps
-partiel. Mais une cotisation forfaitaire achetait ces points au prix de tout
+partiel ; une année de chômage indemnisé n'en a pas, ses points ne portant que
+sur la tranche B du salaire journalier de référence. Mais une cotisation forfaitaire achetait ces points au prix de tout
 autre point, « en contrepartie de cotisations » (convention du 14 mars 1947,
 article 6) : le compte notionnel la reçoit, et les scénarios notionnels ne la
 retirent pas. Voir la fiche `garantie_minimale_points_agirc`.

@@ -15408,3 +15408,37 @@ la garantie pendant un chômage indemnisé, et qui la payait ; le texte qui
 l'éteint au 1er janvier 2019 ; la série des cotisations forfaitaires de 1989 à
 2017. Le temps partiel ordinaire attend une quotité dans la saisie, que rien ne
 porte encore hors de la retraite progressive.
+
+**Suite, le même jour.** « Occupe toi des problèmes qui sont encore
+restants » : les questions que la fiche laissait ouvertes.
+
+- *Le chômage indemnisé n'a pas de garantie.* L'article 8 bis de l'annexe I
+  à la convention de 1947, lu dans la compilation de l'Agirc-Arrco et dans la
+  rédaction de 2006 que publie l'Unédic, ne « concerne que les points en
+  tranche B », calculés sur le salaire journalier de référence. Le scénario 1
+  servait pourtant la garantie aux années de chômage : cent vingt points de
+  trop par année pour une cadre dont le salaire de référence est sous le
+  plafond. Le plancher ne s'applique plus aux familles que l'Unédic finance ;
+  il reste pour un arrêt de travail, dont l'article 8 reprend les points de
+  l'année précédente, garantie comprise.
+- *La fin de la garantie est lue* : l'accord du 17 novembre 2017 « annule et
+  remplace » la convention de 1947 au 1er janvier 2019 (article 155), et ne
+  nomme la garantie nulle part. La version de la fiche n'est plus supposée.
+- *Le prix est confronté.* La circulaire 2016-11-DRJ de l'Agirc-Arrco
+  (paramètres 2017 : 70,38 € par mois, 844,56 € par an) devient l'exemple
+  `agirc_arrco_gmp_2017`, et six montants publiés, de 2008 à 2018, sont
+  retrouvés au centime de chaque mensualité, part salariale comprise
+  (`test_le_prix_de_la_garantie_suit_les_montants_publies`). Les montants de
+  janvier 2009 à 2012, qu'on aurait pris pour un gel, étaient provisoires,
+  fixés « dans l'attente de la fixation du salaire de référence ».
+- *Le prorata* est désormais cité d'après la réponse des services Agirc-Arrco
+  que rapporte LégiSocial (19 avril 2013).
+- Un témoin de simulation, `garantie_minimale_cadre_sous_le_plafond`, exerce
+  les trois règles — l'entrée en juillet, une année de chômage, deux de
+  maladie — : aucun ne le faisait, et le portage n'y était comparé sur rien.
+  Les 689 témoins concordent avec le Python ; aucun des 688 anciens ne bouge.
+
+**Ce qui reste** : la circulaire du 13 décembre 2017, introuvable en ligne ;
+un texte de l'Agirc pour le prorata ; les montants de 1989 à 2007. Le temps
+partiel ordinaire attend toujours une quotité dans la saisie, et les
+intermittents un statut.

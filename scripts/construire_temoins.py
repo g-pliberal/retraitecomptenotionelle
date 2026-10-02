@@ -1013,6 +1013,16 @@ def _cas() -> list[dict]:
         "salaire": "0.8", "profil": "plat",
         "interruptions": "1990:1990:chomage_indemnise, 1995:1997:maternite",
     }))
+    # La garantie minimale de points de l'Agirc, qu'aucun témoin n'exerçait
+    # dans ses trois règles : une cadre payée sous le plafond, entrée en
+    # juillet, au chômage une année et malade deux. Le plancher se proratise
+    # sur l'année d'entrée, ne vaut pas pour le chômage (annexe I, art. 8 bis),
+    # vaut pour la maladie (art. 8), et le compte reçoit sa cotisation.
+    cas.append(("garantie_minimale_cadre_sous_le_plafond", {
+        "statut": "salarie_prive_cadre", "sexe": "F", "salaire": "0.6",
+        "profil": "plat", "debut": "22.5",
+        "interruptions": "2005:2005:chomage_indemnise, 2008:2009:maladie",
+    }))
     cas.append(("primes_fonction_publique", {
         "statut": "fonctionnaire_etat", "primes": "0.22",
     }))

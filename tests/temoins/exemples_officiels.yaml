@@ -103,8 +103,10 @@
 #   cotisation_agirc_de_l_annee — la cotisation Agirc de l'année `annee`, en
 #     euros : la part de l'assuré (`salariale`) et la cotisation entière
 #     (`totale`), telles que le compte notionnel les reçoit. Le scénario 1 n'a
-#     pas de cotisation en euros, il n'en tire que des points. À cinq centimes
-#     près, quand la caisse publie douze mensualités arrondies au centime.
+#     pas de cotisation en euros, il n'en tire que des points. À dix centimes
+#     près : la caisse publie douze mensualités arrondies au centime, six
+#     centimes d'écart au plus, et la fiche de régime arrondit le partage entre
+#     salarié et employeur au dix-millième.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -1095,6 +1097,19 @@ exemples:
       sous le plafond toute l'année 2018.
     carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
     attendu: {cotisation_agirc_de_l_annee: {annee: 2018, salariale: 331.20, totale: 872.52}}
+
+  # La circulaire de l'Agirc-Arrco qui fixe les paramètres de 2017, lue le
+  # 2 octobre 2026 dans une copie datée : la même garantie, l'année d'avant.
+  - id: agirc_arrco_gmp_2017
+    source: {editeur: "Agirc-Arrco", reference: "circulaire 2016-11-DRJ du 16 décembre 2016, « Paramètres 2017 », Paramètres Agirc au 1er janvier 2017, garantie minimale de points", verifie_le: "2026-10-02"}
+    enonce: >-
+      « Montant de la cotisation GMP applicable au 1er janvier 2017 : valeur
+      mensuelle pourcentage d'appel inclus : 70,38 € (Part patronale : 43,67 €
+      - Part salariale : 26,71 €) ; valeur annuelle pourcentage d'appel inclus :
+      844,56 € », sous un salaire charnière de 3 611,48 € par mois. Ici une
+      cadre à temps plein, payée sous le plafond toute l'année 2017.
+    carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
+    attendu: {cotisation_agirc_de_l_annee: {annee: 2017, salariale: 320.52, totale: 844.56}}
 
   # ---- CARMF, guide « Préparez votre retraite en temps choisi » ----------
   # Le guide de juin 2026, lu le 27 septembre 2026 : un médecin né le 15 mai

@@ -4832,6 +4832,57 @@ def test_la_garantie_minimale_se_proratise(simulateur):
     assert moitie == pytest.approx(entiere / 2, rel=1e-9)
 
 
+def test_la_garantie_minimale_ne_vaut_pas_pour_une_annee_de_chomage(simulateur):
+    """Les points Agirc d'une année de chômage indemnisé « concernent les
+    points en tranche B », calculés sur le salaire journalier de référence
+    (convention du 14 mars 1947, annexe I, art. 8 bis) : pas de garantie. Ceux
+    d'un arrêt de travail reprennent les points de l'année précédente (art. 8),
+    garantie comprise. Le scénario 1 servait la garantie aux deux jusqu'au
+    2 octobre 2026.
+    """
+    import re
+
+    def points_agirc(interruptions):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1975, sexe="F", affiliation="salarie_prive_cadre",
+            mois_naissance=1, age_debut=22, age_liquidation=64,
+            niveau_salaire=0.8, profil_carriere="plat", interruptions=interruptions)
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        detail = {p.regime: p for p in resultat.pensions_par_regime}["agirc"].detail
+        return float(re.search(r"([\d,]+\.\d+) points", detail).group(1).replace(",", ""))
+
+    travaillees = points_agirc({})
+    assert travaillees == pytest.approx(22 * 120)
+    # Un salaire de référence sous le plafond : la tranche B est nulle.
+    assert points_agirc({2005: "chomage_indemnise"}) == pytest.approx(travaillees - 120)
+    assert points_agirc({2005: "maladie"}) == pytest.approx(travaillees)
+
+
+@pytest.mark.parametrize("annee, mensuelle, salariale, source", [
+    (2008, 60.92, 23.11, "ASH, 16 janvier 2009 : le niveau de 2008, maintenu en janvier"),
+    (2009, 62.00, 23.52, "UCANSS, lettre circulaire 004-10"),
+    (2010, 62.81, 23.82, "UCANSS, lettre circulaire 003-11, niveau 2010 maintenu"),
+    (2013, 66.26, 25.13, "circulaire 2013-6-DT, citée par LégiSocial"),
+    (2017, 70.38, 26.71, "circulaire Agirc-Arrco 2016-11-DRJ"),
+    (2018, 72.71, 27.60, "Audiens Retraite Agirc, fiche « La GMP » 2018"),
+])
+def test_le_prix_de_la_garantie_suit_les_montants_publies(simulateur, annee, mensuelle,
+                                                          salariale, source):
+    """La cotisation de la garantie, le prix de 120 points — salaire de
+    référence de l'année, au taux d'appel —, reconstitué par le modèle et non
+    saisi : il doit retomber sur ce que l'Agirc a publié, au centime de chaque
+    mensualité près, part du salarié comprise. Les montants de janvier, fixés
+    « dans l'attente de la fixation du salaire de référence », étaient
+    provisoires : ce sont les montants définitifs qui se comparent.
+    """
+    reference, appel, _ = simulateur.scenario_actuel.valeurs_point.achat("agirc", annee)
+    (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(annee)
+                    if p.assiette == "tranche_b"]
+    prix = 120 * reference * appel / 12
+    assert prix == pytest.approx(mensuelle, abs=0.015), source
+    assert prix * tranche_b.part_salariale == pytest.approx(salariale, abs=0.015), source
+
+
 def test_le_regime_de_base_des_avocats_est_forfaitaire(simulateur):
     """La pension de base d'un avocat ne dépend pas de son revenu.
 

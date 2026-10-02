@@ -525,6 +525,15 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     reference, taux_appel, fiabilite_achat = achat
                     points_annee = cotisation / (taux_appel * reference)
                     garantis = periode.points_garantis(part, ligne.quotite)
+                    if garantis is not None and regime.famille in ligne.familles_financees:
+                        # Une année de CHÔMAGE INDEMNISÉ n'a pas de garantie :
+                        # ses points Agirc se calculent sur la seule tranche B
+                        # du salaire journalier de référence (convention du
+                        # 14 mars 1947, annexe I, art. 8 bis, D). Ceux d'un
+                        # arrêt maladie se calculent, eux, sur les points de
+                        # l'année précédente (art. 8), garantie comprise : le
+                        # plancher les rend.
+                        garantis = None
                     if garantis is not None:
                         # Garantie minimale de points de l'Agirc : tout
                         # cadre cotisant en acquiert au moins 120 par an de

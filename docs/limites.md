@@ -48,7 +48,7 @@ Ce qui suit est le recensement complet de ses paramètres et de leur état.
 | Années retenues au salaire de référence | table 1934-1948, <!--chiffre:minimum(data/reference/legislation/annees_salaire_reference.csv:annees)-->10<!--/--> → <!--chiffre:maximum(data/reference/legislation/annees_salaire_reference.csv:annees)-->25<!--/--> années | **certifiée** (R. 351-29-1) |
 | Coefficients d'anticipation Agirc-Arrco | deux tables, 1 → 0,78 et 1 → 0,43 | barème publié par la caisse, saisi |
 | Plafond de la majoration familiale Agirc-Arrco | <!--chiffre:partout(data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml + data/reference/regimes/unirs.yaml:periodes.*.plafond_majoration_enfants)-->2 367<!--/--> €/an (novembre 2025) | publié par la caisse, saisi |
-| Garantie minimale de points de l'Agirc | <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.*.points_minimum_annuels)-->120<!--/--> points par an, 1989-2018, proratisés sur la durée de présence et le temps partiel ; la cotisation forfaitaire qui les achète, au prix du point, portée au compte notionnel | convention du 14 mars 1947 (article 6), lue ; fiche d'Audiens Retraite Agirc de 2018, rejouée |
+| Garantie minimale de points de l'Agirc | <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.*.points_minimum_annuels)-->120<!--/--> points par an, 1989-2018, proratisés sur la durée de présence et le temps partiel, aucun pour une année de chômage indemnisé ; la cotisation forfaitaire qui les achète, au prix du point, portée au compte notionnel | convention du 14 mars 1947 (article 6 ; annexe I, articles 8 et 8 bis) et accord du 17 novembre 2017 (article 155), lus ; la circulaire Agirc-Arrco de 2016 et la fiche d'Audiens de 2018, rejouées ; six montants publiés, de 2008 à 2018, retrouvés au centime de chaque mensualité |
 | Assiette de l'AVPF | SMIC annuel, <!--chiffre:tenu(test_l_avpf_porte_un_salaire_au_compte)-->1 820<!--/--> heures | principe sourcé, assiette déduite du SMIC |
 | Droits ouverts par motif d'interruption | <!--chiffre:lignes_csv(data/reference/legislation/periodes_non_travaillees.csv)-->9<!--/--> motifs | principe sourcé, fractions non recontrôlées |
 
@@ -890,7 +890,7 @@ Quatre bornes à connaître, et elles sont étroites :
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->109<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->110<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -986,7 +986,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->109<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->110<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.

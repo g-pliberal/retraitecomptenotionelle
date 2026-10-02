@@ -434,7 +434,15 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         if (achat !== null) {
           const [reference, tauxAppel, fiabiliteAchat] = achat;
           let pointsAnnee = cotisation / (tauxAppel * reference);
-          const garantis = periode.pointsGarantis(part, ligne.quotite);
+          let garantis = periode.pointsGarantis(part, ligne.quotite);
+          if (garantis !== null && ligne.familles_financees.includes(regime.famille)) {
+            // Une année de CHÔMAGE INDEMNISÉ n'a pas de garantie : ses points
+            // Agirc se calculent sur la seule tranche B du salaire journalier
+            // de référence (annexe I, art. 8 bis) ; ceux d'un arrêt maladie
+            // reprennent les points de l'année précédente (art. 8), garantie
+            // comprise. Voir acquerir.py.
+            garantis = null;
+          }
           if (garantis !== null) {
             // Garantie minimale de points de l'Agirc : tout cadre cotisant en
             // acquiert au moins 120 par an de 1989 à 2018, même quand sa

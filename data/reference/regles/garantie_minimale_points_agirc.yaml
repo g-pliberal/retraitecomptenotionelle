@@ -58,6 +58,29 @@ versions:
       les règles prévues au D) ci-dessus. »
     lu_le: 2026-10-02
     empreinte: sha256:38966c272726dd11abbcc5ffa18ffb67d2731caa86ca4ce3aa94d0169568ce78
+  - reference: >-
+      convention collective nationale du 14 mars 1947, annexe I, textes mis à jour au 1er
+      janvier 2018, publiés par l'Agirc-Arrco ; la rédaction de 2006, publiée par l'Unédic,
+      dit la même chose
+    article: annexe I, article 8 bis, D
+    citation: >-
+      « Les dispositions du présent article concernent les points en tranche B » ; les
+      titulaires des allocations de chômage « bénéficient, au titre des périodes pendant
+      lesquelles ils reçoivent ces allocations, de points de retraite calculés à partir :
+      du salaire journalier de référence […], du système contractuel de cotisations en
+      vigueur dans l'entreprise […] et du salaire de référence de l'exercice auquel ces
+      points correspondent »
+    lu_le: 2026-10-02
+  - reference: >-
+      convention collective nationale du 14 mars 1947, annexe I, textes mis à jour au 1er
+      janvier 2018, publiés par l'Agirc-Arrco
+    article: annexe I, article 8, § 1er
+    citation: >-
+      pour une incapacité de travail de plus de soixante jours, des droits « sans
+      contrepartie de cotisations » : « le nombre de points est calculé à partir de ceux
+      inscrits au titre de l'année civile précédant celle au cours de laquelle s'est
+      produit l'arrêt de travail »
+    lu_le: 2026-10-02
   bornes:
     revenu.annee: [1989-01-01, 2019-01-01]
   contenu:
@@ -70,45 +93,54 @@ versions:
       le salarié et 45,11 € pour l'employeur, partagés comme la tranche B (au D : 6,24 % et
       10,20 % d'un taux contractuel de 16,44 % depuis 2015). En cas de temps partiel, et
       selon la durée de présence en cas d'embauche ou de départ en cours d'année, elle est
-      proratisée, et les points avec elle.
+      proratisée, et les points avec elle. Elle ne vaut pas pour une année de chômage
+      indemnisé, dont les points ne portent que sur la tranche B du salaire journalier de
+      référence (annexe I, art. 8 bis) ; un arrêt de travail, lui, reprend les points de
+      l'année précédente (art. 8), garantie comprise.
     parametres:
       points_minimum_annuels: 120
       prix_du_point: le salaire de référence de l'année, au taux d'appel de l'année
-  exemples: [audiens_gmp_2018]
+  exemples: [audiens_gmp_2018, agirc_arrco_gmp_2017]
 - id: eteinte_avec_la_fusion
-  statut: supposee
-  hypothese: >-
-    la garantie disparaît avec le régime de l'Agirc, que la fusion du 1er janvier 2019
-    éteint : le régime unifié de l'accord du 17 novembre 2017 n'en porte pas, et les
-    points qu'elle a donnés restent acquis. Le texte qui l'abroge n'a pas été lu
-  fiabilite: haute
+  statut: lue
+  textes:
+  - reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco, fait à Paris le 17 novembre 2017, étendu et élargi par l'arrêté du 24
+      avril 2018 (JORFTEXT000036847920)
+    article: article 155
+    en_vigueur: 2019-01-01
+    citation: >-
+      « Le présent Accord national interprofessionnel porte révision, dans toutes leurs
+      stipulations, de la Convention collective nationale de retraite et de prévoyance des
+      cadres du 14 mars 1947 et de l'Accord national interprofessionnel de retraite
+      complémentaire du 8 décembre 1961. Il annule et remplace, dans toutes leurs
+      stipulations, ces deux conventions à compter du 1er janvier 2019. »
+    lu_le: 2026-10-02
+    empreinte: sha256:352e023e397b2b6c1a01eb10fa295d0791f5d339d9b54c168fb3b3f079af131d
   bornes:
     revenu.annee: [2019-01-01, null]
   contenu:
     droit: aucun
     raison: >-
-      « Avec la mise en place au 1er janvier 2019 du nouveau régime unique Agirc-Arrco, la
-      garantie des 120 points Agirc n'existe plus » ; « les points acquis précédemment via
-      ce dispositif seront conservés »
+      l'accord annule et remplace la convention de 1947, qui portait la garantie, et le
+      régime unifié n'en a pas : l'accord ne la nomme nulle part. Les points qu'elle a
+      donnés restent acquis
   exemples: aucun trouvé
 approximations:
 - version: cent_vingt_points
   ecart: >-
     Le temps partiel n'est connu que par la quotité d'une ligne, que seule la retraite
     progressive renseigne : un temps partiel ordinaire, que la saisie ne porte pas,
-    reçoit la garantie d'une année à temps plein.
-  effet: non mesuré
-- version: cent_vingt_points
-  ecart: >-
-    Le scénario 1 sert la garantie aux années indemnisées où l'Agirc attribue des points
-    sur le salaire d'avant, et le compte notionnel n'en porte aucune cotisation : ce que
-    l'Unédic versait à ce titre n'est pas connu, ni si la garantie s'appliquait.
+    reçoit la garantie d'une année à temps plein. Le calcul lit déjà la quotité : il
+    suivra le jour où la saisie la portera.
   effet: non mesuré
 - version: cent_vingt_points
   ecart: >-
     La garantie des intermittents, appelée à la journée (4,00 € par jour en 2018, sous un
-    salaire charnière de 201,47 €), n'est pas modélisée : leur année se proratise comme
-    celle d'un permanent.
+    salaire charnière de 201,47 €), et leurs points de chômage, que la délibération D53
+    calcule sur ceux de l'année précédente, ne sont pas modélisés : le modèle n'a pas de
+    statut d'intermittent.
   effet: non mesuré
 sources:
   lu_le: 2026-10-02
@@ -116,11 +148,11 @@ sources:
   a_relire:
   - >-
     Lire la circulaire Agirc-Arrco du 13 décembre 2017, qui fixe les paramètres de 2018,
-    et le texte de l'Agirc qui fonde le prorata du temps partiel, que seules deux fiches
-    pratiques ont donné ; dire si la garantie s'appliquait aux périodes de chômage
-    indemnisé, et qui la payait ; chercher la série des cotisations forfaitaires de 1989
-    à 2017, pour confronter le prix que le modèle reconstitue année par année ; lire le
-    texte qui éteint la garantie au 1er janvier 2019.
+    et un texte de l'Agirc qui fonde le prorata du temps partiel : il n'est connu que par
+    la réponse des services Agirc-Arrco que cite LégiSocial et par deux fiches pratiques.
+    Chercher les montants de la garantie de 1989 à 2007, que le modèle reconstitue sans
+    les avoir confrontés : six années publiées, de 2008 à 2018, le sont, à 1,1 centime par
+    mois près.
   lectures:
   - type: autre
     reference: >-
@@ -159,6 +191,61 @@ sources:
       garantie des 120 points Agirc n'existe plus »
     date: 2026-10-02
     url: https://www.cfecgc-adecco.com/2018/11/la-fin-de-la-gmp-garantie-minimale-de.html
+  - type: autre
+    reference: >-
+      Agirc-Arrco, circulaire 2016-11-DRJ du 16 décembre 2016, « Paramètres 2017 » :
+      garantie minimale de points, « Références : Article 6 de la Convention collective
+      nationale du 14 mars 1947 ; Décision du Conseil d'administration de l'Agirc du 6
+      octobre 2016 » ; « Valeur mensuelle pourcentage d'appel inclus : 70,38 € (Part
+      patronale : 43,67 € - Part salariale : 26,71 €) ; Valeur annuelle pourcentage
+      d'appel inclus : 844,56 € » ; salaire charnière de 3 611,48 € par mois (copie datée,
+      sha256:8245a48b6879fdd370d06cc15259c218ecbc2b2fd8ca81f47afccfc440d166ce)
+    date: 2026-10-02
+    url: http://cercledelepargne.com/wp-content/uploads/2015/01/201611drj_Parametres_2017.pdf
+  - type: autre
+    reference: >-
+      LégiSocial, « Cotisations au titre de la GMP : un traitement très particulier ! » (13
+      mai 2013, mis à jour le 29 septembre 2017), d'après la réponse des services
+      Agirc-Arrco du 19 avril 2013 : « La GMP est à proratiser en tenant compte du rapport
+      entre les rémunérations perçues en temps partiel et les rémunérations qui auraient
+      été obtenues si le participant avait travaillé à temps plein » ; entrée ou sortie en
+      cours de mois en trentièmes ; la circulaire 2013-6-DT du 2 avril 2013 : 795,12 € par
+      an, 66,26 € par mois, dont 25,13 € de part salariale
+    date: 2026-10-02
+    url: https://www.legisocial.fr/actualites-sociales/674-cotisations-au-titre-de-la-gmp-un-traitement-tres-particulier.html
+  - type: autre
+    reference: >-
+      UCANSS, lettres circulaires 004-10 du 21 janvier 2010 et 003-11 du 26 janvier 2011 :
+      la garantie « reste provisoirement fixée à 62 € par mois » en janvier 2010, puis «
+      est maintenue à titre transitoire à son niveau 2010 dans l'attente de la fixation du
+      salaire de référence pour l'année 2011. Ce montant reste donc fixé à 62,81 € par mois
+      » (38,99 € et 23,82 €) : un montant provisoire, régularisé sur l'année
+    date: 2026-10-02
+    url: https://jurilettres.ucanss.fr/lettresCirculaires/LC003-11.html
+  - type: autre
+    reference: >-
+      ASH, « La garantie minimale de points AGIRC 2009 est fixée », 16 janvier 2009 : la
+      garantie est maintenue en janvier « à titre transitoire, à son niveau de 2008 » —
+      « 731 € en valeur annuelle », « 60,92 € en valeur mensuelle », dont 37,81 € pour
+      l'employeur et 23,11 € pour le salarié, sous un salaire charnière de 37 908 €
+    date: 2026-10-02
+    url: https://www.ash.tm.fr/magazine/2592/dans-les-textes/la-garantie-minimale-de-points-agirc-2009-est-fixee-397286.php
+  - type: autre
+    reference: >-
+      Unédic, « Attribution d'avantages (AGIRC) en matière de retraite complémentaire »,
+      article 8 bis de l'annexe I à la convention du 14 mars 1947, rédaction de 2006 : «
+      Les dispositions du présent article concernent les points en tranche B », calculés
+      sur le salaire journalier de référence (copie datée,
+      sha256:e91cf7aa507a9bbdbf630457c1d07588e29840aac6f1d687dee7da00909c7a56)
+    date: 2026-10-02
+    url: https://www.unedic.org/ged/documents/regulatory_texts/pdf/Art8b1947.pdf
+  - type: autre
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco, copie publiée par la Revue fiduciaire : articles 2 et 155 ; la garantie
+      minimale de points n'y est nommée nulle part
+    date: 2026-10-02
+    url: https://revuefiduciaire.grouperf.com/plussurlenet/complements/20171120_ANI_Regime_Agirc-Arrco_du_17_novembre_2017_(2).pdf
 code:
   python: >-
     donnees/regimes.py : PeriodeRegime.points_garantis ; droit/acquerir.py : acquerir, le
@@ -171,8 +258,9 @@ code:
     points_minimum_annuels des fiches agirc et agirc_entreprises_nouvelles, de 1989 à 2018 ;
     le salaire de référence et le taux d'appel de l'Agirc (regimes/valeurs_point.csv)
   tests: >-
-    tests/test_simulateur.py : test_la_garantie_minimale_de_points_agirc_est_servie et les
-    tests de sa cotisation ; l'exemple audiens_gmp_2018 (tests/test_oracle.py)
+    tests/test_simulateur.py : test_la_garantie_minimale_de_points_agirc_est_servie, les
+    tests de sa cotisation, de son prorata, des années de chômage et du prix des années
+    publiées ; les exemples audiens_gmp_2018 et agirc_arrco_gmp_2017 (tests/test_oracle.py)
 reformes: [gmp_agirc_1989]
 historique:
 - >-
@@ -182,6 +270,15 @@ historique:
   contributifs. Une cotisation forfaitaire achetait ces points : le compte la reçoit, la
   garantie a quitté l'inventaire des avantages non contributifs, et le plancher se
   proratise sur la durée de présence et le temps partiel.
+- >-
+  2026-10-02 — les questions restées ouvertes, reprises le même jour. Une année de
+  chômage indemnisé n'a pas de garantie, ses points Agirc ne portant que sur la tranche
+  B du salaire journalier de référence (annexe I, art. 8 bis) : le scénario 1 la lui
+  servait, cent vingt points de trop par année pour une cadre dont le salaire de
+  référence est sous le plafond ; un arrêt de travail la garde (art. 8). L'accord du 17
+  novembre 2017 (art. 155), lu, l'éteint ; la circulaire 2016-11-DRJ est rejouée ; six
+  montants publiés, de 2008 à 2018, sont retrouvés au centime de chaque mensualité ; un
+  témoin de simulation exerce les trois règles.
 effet: >-
   Tout cadre payé sous le salaire charnière entre 1989 et 2018 — 1,11 plafond en 2018 —,
   surtout en début de carrière. Pour une cadre née en 1975, entrée à 22 ans et payée
@@ -189,3 +286,6 @@ effet: >-
   (5 835 € de part salariale) : sa pension monte de 543 € par an au scénario 2, de
   1 444 € au scénario 4 et de 1 532 € au scénario 6 ; le scénario 1, qui sert ses 2 640
   points, et les scénarios 3 et 5, qui les convertissent à la bascule, ne bougent pas.
+  Une année de chômage indemnisé, sous le plafond, ne vaut plus les 120 points au
+  scénario 1 : 2 460 points au lieu de 2 580 pour une cadre entrée en juillet 1997 ;
+  aucun des 688 témoins d'alors n'en avait.
