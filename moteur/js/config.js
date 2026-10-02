@@ -187,7 +187,6 @@ export const NEUTRALISATIONS_DEFAUT = Object.freeze({
   bonifications: true,
   categorie_active: true,
   periodes_assimilees: true,
-  garantie_minimale_points: true,
   carriere_longue: true,
   decote_surcote: true,
   coefficient_solidarite: true,

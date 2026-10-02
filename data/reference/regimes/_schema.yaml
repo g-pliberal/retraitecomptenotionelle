@@ -777,10 +777,12 @@ champs_periode:
     description: >-
       Points garantis chaque année à qui cotise au régime, quelle que soit son
       assiette — la garantie minimale de points de l'Agirc, 120 points par an
-      de 1989 à 2018. Droit gratuit, sans contrepartie de cotisation
-      proportionnelle : un cadre payé sous le plafond de la Sécurité sociale,
-      dont la tranche B est nulle, en acquérait autant qu'un autre.
-      `null` : aucune garantie.
+      de 1989 à 2018 : un cadre payé sous le plafond de la Sécurité sociale,
+      dont la tranche B est nulle, en acquérait autant qu'un autre. Ils ne sont
+      pas gratuits : une cotisation forfaitaire les achète au prix de tout
+      autre point (salaire de référence × taux d'appel), que le compte
+      notionnel reçoit, et le nombre se proratise sur la durée de présence et
+      la quotité du temps partiel. `null` : aucune garantie.
 
   capital_seuil_points:
     description: >-

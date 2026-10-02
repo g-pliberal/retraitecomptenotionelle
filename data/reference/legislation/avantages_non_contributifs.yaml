@@ -422,41 +422,6 @@ avantages:
         chiffre l'ASPA actuelle, et c'est le seul avantage pour lequel la
         distribution vaut mieux que les cas types.
 
-  - code: garantie_minimale_points
-    chiffre_par: scripts/cout_avantages.py
-    libelle: Garantie minimale de points de l'Agirc
-    famille: minima_de_pension
-    quoi: >-
-      Cent vingt points par an garantis au cadre dont le salaire au-dessus du
-      plafond ne suffisait pas à les acheter. Éteinte avec la fusion
-      Agirc-Arrco du 1er janvier 2019.
-    base_legale: [accord Agirc du 9 février 1988]
-    fiches: []
-    creation: 1989
-    fin: 2018
-    regimes: Agirc
-    etat_modele: integre
-    ligne_cascade: null
-    pourquoi_pas_chiffre: >-
-      Servie par le champ `points_minimum_annuels: 120` des fiches de régime :
-      elle agit sur le NOMBRE DE POINTS acquis dans l'année, donc en amont de
-      la pension, comme le salaire de référence.
-    sans_chiffre: >-
-      éteinte en 2018, elle ne mord que sur des carrières de cadre dont les
-      premières années tombent après 1989 et qui liquident après 2024
-    cout:
-      mesurable_par: modele
-      note: >-
-        CHIFFRÉE, par recalcul : le plancher de cent vingt points est retiré des
-        fiches de l'Agirc, et le cadre n'acquiert plus que ce que son salaire
-        au-dessus du plafond achète. 205 € par an pour le cadre de la génération
-        1985, 77 € pour celui de 1965.
-        ZÉRO SUR LA FENÊTRE PUBLIÉE, pour une raison de calendrier : le plancher
-        ne mord que sur les premières années d'une carrière de cadre, quand le
-        salaire au-dessus du plafond est encore faible, et il n'a existé que de
-        1989 à 2018. Les carrières dont les débuts tombent dans cette fenêtre
-        liquident toutes après 2024.
-
   - code: pension_majoree_reference
     libelle: Pension majorée de référence du régime agricole
     famille: minima_de_pension

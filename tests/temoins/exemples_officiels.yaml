@@ -100,6 +100,11 @@
 #     L'exemple donne les pensions du défunt, comme le simulateur les demande
 #     (`carriere.pensions_du_defunt_mensuelles`) : le test les prête au
 #     défunt, et le modèle y applique ses taux, ses conditions et son plafond.
+#   cotisation_agirc_de_l_annee — la cotisation Agirc de l'année `annee`, en
+#     euros : la part de l'assuré (`salariale`) et la cotisation entière
+#     (`totale`), telles que le compte notionnel les reçoit. Le scénario 1 n'a
+#     pas de cotisation en euros, il n'en tire que des points. À cinq centimes
+#     près, quand la caisse publie douze mensualités arrondies au centime.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -1072,6 +1077,24 @@ exemples:
       des seize trimestres (17 %). Tous ses points valent donc 0,8675.
     carriere: {naissance: "1962-01", sexe: H, affiliation: salarie_prive_cadre, liquidation: "2025-12", trimestres_valides: 153, niveau_salaire: 6, profil_carriere: plat}
     attendu: {trimestres_requis: 169, liquidation_ouverte: true, coefficients_des_regimes: {agirc: 0.8675, arrco: 0.8675, agirc_arrco: 0.8675}}
+
+  # ---- Audiens Retraite Agirc, fiche « La GMP », 2018 ------------------
+  # La fiche pratique d'une caisse de l'Agirc, lue le 2 octobre 2026 : la
+  # cotisation forfaitaire de la garantie minimale de points, que le compte
+  # notionnel reçoit depuis ce jour-là. Le scénario 1 n'en tire que les 120
+  # points, que `test_la_garantie_minimale_de_points_agirc_est_servie` tient.
+  - id: audiens_gmp_2018
+    source: {editeur: "Audiens", reference: "Audiens Retraite Agirc, fiche pratique « La GMP (garantie minimale de points) », année 2018, tableau « Montant des cotisations »", verifie_le: "2026-10-02"}
+    enonce: >-
+      « La GMP est une cotisation forfaitaire (avec une part salariale et une
+      part patronale) qui est due dès que le salaire du cadre n'atteint pas un
+      minimum appelé salaire charnière » : 43 977,84 € par an en 2018. Pour le
+      personnel permanent, taux contractuel 16,44 %, appelé 20,55 %, cotisation
+      appelée de 872,52 € par an, 72,71 € par mois, dont 27,60 € de part
+      salariale et 45,11 € de part patronale. Ici une cadre à temps plein, payée
+      sous le plafond toute l'année 2018.
+    carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
+    attendu: {cotisation_agirc_de_l_annee: {annee: 2018, salariale: 331.20, totale: 872.52}}
 
   # ---- CARMF, guide « Préparez votre retraite en temps choisi » ----------
   # Le guide de juin 2026, lu le 27 septembre 2026 : un médecin né le 15 mai

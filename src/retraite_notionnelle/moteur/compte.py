@@ -149,6 +149,10 @@ class ConstructeurCompte:
         )
         self.classes = ClassesCotisation(parametres.racine_donnees)
         self.grilles = SalairesForfaitaires(parametres.racine_donnees)
+        # Le prix d'achat du point, que la garantie minimale de points de
+        # l'Agirc demande. Import tardif : le scénario 1 importe ce module.
+        from ..scenarios.actuel import ValeursPoint
+        self.valeurs_point = ValeursPoint(parametres.racine_donnees)
 
     # -- taux ----------------------------------------------------------------
 
@@ -234,6 +238,29 @@ class ConstructeurCompte:
         return periode.cotisation_forfaitaire_euros * self.macro.coefficient_prix(
             reference, annee
         )
+
+    def _assiette_garantie(self, code: str, periode, annee: int, part: float,
+                           quotite: float) -> tuple[float, Fiabilite] | None:
+        """L'assiette que la garantie minimale de points fait cotiser, et sa
+        fiabilité ; ``None`` si la période n'en a pas.
+
+        La cotisation forfaitaire de la garantie achète ses points au prix de
+        tout autre point : leur nombre, fois le salaire de référence, au taux
+        d'appel — 120 × 5,8166 € × 1,25 = 872,49 € pour 2018, que la caisse
+        arrondit à 72,71 € par mois. Ramenée au taux de la tranche B, elle est
+        l'assiette qui la prélève : en 2018, les 353,82 € par mois qui séparent
+        le salaire charnière du plafond. Le scénario 1 en tire les mêmes points
+        (`droit.acquerir`), par le même prix.
+        """
+        points = periode.points_garantis(part, quotite)
+        if not points or periode.taux_cotisation_retraite <= 0:
+            return None
+        achat = self.valeurs_point.achat(periode.points_de or code, annee)
+        if achat is None:
+            return None
+        reference, taux_appel, fiabilite = achat
+        return (points * reference * taux_appel / periode.taux_cotisation_retraite,
+                fiabilite)
 
     def _cotisation_par_classes(self, code: str, periode, revenu: float,
                                 annee: int) -> tuple[float, Fiabilite] | None:
@@ -725,6 +752,23 @@ class ConstructeurCompte:
                     # depuis 2026, comme dans le scénario 1.
                     assiette = max(assiette, periode.assiette_minimale(
                         self.macro.plafond_securite_sociale(annee)) * part)
+                if ligne.cotise:
+                    # LA GARANTIE MINIMALE DE POINTS DE L'AGIRC. De 1989 à 2018,
+                    # le cadre dont la tranche B n'achetait pas 120 points par
+                    # an payait une cotisation forfaitaire qui les achetait :
+                    # 72,71 € par mois en 2018, dont 27,60 € pour lui et 45,11 €
+                    # pour son employeur, partagés comme la tranche B. Le
+                    # scénario 1 en sert les points ; le compte, qui porte ce
+                    # qui a été versé, reçoit la cotisation — par l'assiette qui
+                    # la prélève. Il ne la recevait pas jusqu'au 2 octobre 2026,
+                    # quand la garantie passait pour un droit gratuit. Une année
+                    # indemnisée n'en porte rien : on ne sait pas ce que
+                    # l'Unédic en versait.
+                    garantie = self._assiette_garantie(code, periode, annee, part,
+                                                       ligne.quotite)
+                    if garantie is not None and garantie[0] > assiette:
+                        assiette = garantie[0]
+                        fiabilite = min(fiabilite, garantie[1])
                 # LA COTISATION FORFAITAIRE. Certains complémentaires libéraux
                 # ne sont ni proportionnels ni forfaitaires mais LES DEUX : le
                 # régime des chirurgiens-dentistes appelle 3 210,60 € en 2026,

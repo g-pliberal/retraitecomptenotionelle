@@ -323,15 +323,18 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 8 % appelé à 113,4 % : 9,072 % prélevés sur
       l'assiette, dont un quart à la charge du salarié (OpenFisca-France,
       valeurs au 1er janvier 1989). GARANTIE MINIMALE DE POINTS, accord du
       9 février 1988 : tout cadre cotisant à l'Agirc acquiert au moins 120
-      points par an, même quand sa tranche B est nulle — un droit gratuit,
-      sans cotisation proportionnelle, qui disparaît avec la fusion du 1er
-      janvier 2019. Taux d'appel porté à 113,4 %.
+      points par an, même quand sa tranche B est nulle, « en contrepartie de
+      cotisations » (convention du 14 mars 1947, art. 6, § 2, F) — une
+      cotisation forfaitaire qui les achète au prix de tout autre point,
+      proratisée sur le temps partiel et la durée de présence, et qui
+      disparaît avec la fusion du 1er janvier 2019. Taux d'appel porté à
+      113,4 %.
 
   - debut: 1990
     fin: 1993
@@ -352,7 +355,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 8 % appelé à 117 % : 9,36 % prélevés sur
       l'assiette, dont un quart à la charge du salarié (OpenFisca-France,
@@ -378,7 +381,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 10 % appelé à 121 % : 12,1 % prélevés sur
       l'assiette, dont 30,1 % à la charge du salarié (OpenFisca-France,
@@ -406,7 +409,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 12 % appelé à 125 % : 15 % prélevés sur l'assiette,
       dont 33,333 % à la charge du salarié (OpenFisca-France, valeurs au
@@ -432,7 +435,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 13 % appelé à 125 % : 16,25 % prélevés sur
       l'assiette, dont 34,615 % à la charge du salarié (OpenFisca-France,
@@ -459,7 +462,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 14 % appelé à 125 % : 17,5 % prélevés sur
       l'assiette, dont 35,714 % à la charge du salarié (OpenFisca-France,
@@ -488,7 +491,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 15 % appelé à 125 % : 18,75 % prélevés sur
       l'assiette, dont 36,667 % à la charge du salarié (OpenFisca-France,
@@ -514,7 +517,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 16 % appelé à 125 % : 20 % prélevés sur l'assiette,
       dont 37,5 % à la charge du salarié (OpenFisca-France, valeurs au 1er
@@ -541,7 +544,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 16,24 % appelé à 125 % : 20,3 % prélevés sur
       l'assiette, dont 37,931 % à la charge du salarié (OpenFisca-France,
@@ -573,7 +576,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 16,24 % appelé à 125 % : 20,3 % prélevés sur
       l'assiette, dont 37,931 % à la charge du salarié (OpenFisca-France,
@@ -602,7 +605,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 16,34 % appelé à 125 % : 20,425 % prélevés sur
       l'assiette, dont 37,934 % à la charge du salarié (OpenFisca-France,
@@ -631,7 +634,7 @@ periodes:
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     points_minimum_annuels: 120
-    avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 16,44 % appelé à 125 % : 20,55 % prélevés sur
       l'assiette, dont 37,956 % à la charge du salarié (OpenFisca-France,

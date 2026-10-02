@@ -4179,3 +4179,30 @@ journal:
       Le texte de l'accord Agirc-Arrco sur les enfants à charge, et la durée de cette
       réversion avant 55 ans ; une fiche de réversion pour la RAFP (50 % au simulateur) ;
       le remariage et l'Ircantec, à saisir une autre fois.
+  - date: "2026-10-02"
+    session: >-
+      la garantie minimale de points de l'Agirc, à la demande du propriétaire : « Je veux
+      que tu m'expliques ce que c'est pour voir si on doit la prendre en compte ou pas »,
+      puis « Ok, faisons ça […] y compris le temps partiel » (action 139)
+    consulte: >-
+      La convention collective nationale du 14 mars 1947, textes mis à jour au 1er janvier
+      2018 et publiés par l'Agirc-Arrco, article 6, § 2, B, D et F ; la fiche pratique « La
+      GMP » d'Audiens Retraite Agirc pour 2018 ; la fiche de l'UNA Yonne pour 2018 ; la note
+      de la CFE-CGC Adecco sur la fin de la garantie (novembre 2018). `veille_droit.py`, et
+      l'index LEGI mis à jour au 1er octobre 2026 : L. 161-17-2 et L. 161-17-3 n'ont pas de
+      version postérieure au 31 décembre 2025. Le journal datant de la veille, aucun autre
+      texte paru depuis n'était à consulter.
+    trouve: >-
+      Les 120 points de la garantie s'inscrivent « en contrepartie de cotisations » : une
+      cotisation forfaitaire, 120 fois le salaire de référence au taux d'appel — 872,52 €
+      pour 2018, 72,71 € par mois, dont 27,60 € pour le salarié et 45,11 € pour
+      l'employeur, que le dépôt reconstitue à trois centimes près —, partagée comme la
+      tranche B et proratisée en cas de temps partiel et selon la durée de présence. Le
+      dépôt la tenait pour un droit gratuit : le compte notionnel la reçoit désormais, et le
+      plancher de points du scénario 1 se proratise ; fiche `garantie_minimale_points_agirc`,
+      exemple `audiens_gmp_2018`.
+    reste: >-
+      La circulaire Agirc-Arrco du 13 décembre 2017, et le texte de l'Agirc qui fonde le
+      prorata du temps partiel ; ce que devenait la garantie pendant un chômage indemnisé, et
+      qui la payait ; le texte qui l'éteint au 1er janvier 2019 ; la série des cotisations
+      forfaitaires de 1989 à 2017.

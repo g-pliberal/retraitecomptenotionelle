@@ -1705,6 +1705,24 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # La pension annuelle brute d'un régime nommé : ce que publie un
         # régime dont la pension ne tient ni à un taux ni à un salaire.
         return {p.regime: p.montant for p in resultat.pensions_par_regime}
+    if cle == "cotisation_agirc_de_l_annee":
+        # La cotisation Agirc d'une année, part de l'assuré et cotisation
+        # entière : ce que le droit de l'année prélevait, tel que le compte
+        # notionnel le reçoit sous ses deux conventions. Le scénario 1 n'a pas
+        # de cotisation en euros ; il n'en tire que des points.
+        from retraite_notionnelle.config import PartCotisation
+        from retraite_notionnelle.moteur.compte import ConstructeurCompte
+
+        annee = int(exemple["attendu"][cle]["annee"])
+        mesure = {"annee": annee}
+        for nom, part in (("salariale", PartCotisation.SALARIALE),
+                          ("totale", PartCotisation.TOTALE)):
+            constructeur = ConstructeurCompte(
+                simulateur.macro, simulateur.catalogue, simulateur.affiliations,
+                simulateur.indexation, simulateur.parametres.avec(part_cotisation=part))
+            versees = dict(constructeur.cotisation_annuelle(carriere, annee).par_regime)
+            mesure[nom] = versees.get("agirc", 0.0)
+        return mesure
     if cle == "departs":
         # Les départs que l'échéancier inscrit quand les régimes ne liquident
         # pas tous au départ déclaré, chacun « AAAA-MM-JJ motif » ; aucun
@@ -1828,6 +1846,8 @@ TOLERANCES = {
     "coefficients_des_regimes": {"abs": 1e-9},
     "pension_regime_general_mensuelle": {"abs": 0.05},
     "pensions_annuelles_des_regimes": {"abs": 0.5},
+    # Annuelle, quand la caisse publie douze mensualités arrondies au centime.
+    "cotisation_agirc_de_l_annee": {"abs": 0.05},
     "reversions_ecretees_mensuelles": {"abs": 0.01},
     "reversions_mensuelles": {"abs": 0.5},
     "deductions_annuelles_du_cumul": {"abs": 0.01},
@@ -1872,6 +1892,10 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         return all(mesure[part] == pytest.approx(valeur[part], abs=1e-6) for part in valeur)
     if cle == "mois_sans_pension_du_cumul":
         return mesure == [str(mois) for mois in valeur]
+    if cle == "cotisation_agirc_de_l_annee":
+        return mesure["annee"] == int(valeur["annee"]) and all(
+            mesure[part] == pytest.approx(valeur[part], **TOLERANCES[cle])
+            for part in ("salariale", "totale") if part in valeur)
     if cle in TOLERANCES:
         return mesure == pytest.approx(valeur, **TOLERANCES[cle])
     return mesure == valeur
@@ -1967,7 +1991,7 @@ def test_le_temoin_des_exemples_officiels_est_source():
             "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
             "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL", "CNIEG",
             "Agirc-Arrco", "CRPCEN", "CLEISS", "Direction de la sécurité sociale",
-            "Union Retraite",
+            "Union Retraite", "Audiens",
         ), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]

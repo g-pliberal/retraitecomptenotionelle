@@ -344,9 +344,9 @@ def inventaire_depuis_paquet(lignes: dict) -> Inventaire:
 # * par la CARRIÈRE, quand l'avantage tient à ce que l'assuré a vécu. Une année
 #   de chômage devient une année sans activité, qui ne valide rien.
 # * par le CATALOGUE, quand la fiche du régime le déclare. Le moteur lit
-#   ``avantages_non_contributifs`` et ``points_minimum_annuels`` ; un catalogue
-#   dont la ligne est retirée produit un régime qui ne sert plus l'avantage,
-#   sans qu'aucun code du moteur change.
+#   ``avantages_non_contributifs`` ; un catalogue dont la ligne est retirée
+#   produit un régime qui ne sert plus l'avantage, sans qu'aucun code du moteur
+#   change.
 # * par une TABLE du scénario, quand l'avantage vient d'un barème daté. La
 #   carrière longue a le sien ; un barème vide ne propose plus rien.
 #
@@ -420,12 +420,6 @@ NEUTRALISATIONS: tuple[Neutralisation, ...] = (
         par="catalogue",
     ),
     Neutralisation(
-        code="garantie_minimale_points",
-        quoi="le plancher de cent vingt points par an est retiré des fiches de "
-             "l'Agirc : le cadre n'acquiert plus que ce que son salaire achète",
-        par="catalogue",
-    ),
-    Neutralisation(
         code="salaire_de_reference_des_parents",
         quoi="le salaire de référence des parents repasse à vingt-cinq années, "
              "comme celui des autres assurés",
@@ -452,15 +446,16 @@ _MOTIFS_NEUTRALISES: dict[str, tuple[frozenset[str] | None, str]] = {
 }
 
 
-def _catalogue_sans(catalogue, code: str | None = None,
-                    plancher_de_points: bool = False):
+def _catalogue_sans(catalogue, code: str | None = None):
     """Le catalogue, privé d'une déclaration, sans qu'aucun code du moteur change.
 
-    Le moteur lit ``avantages_non_contributifs`` période par période, et
-    ``points_minimum_annuels`` pour la garantie minimale de points de l'Agirc.
-    Retirer l'un ou l'autre suffit à ce que le régime cesse de servir
-    l'avantage : c'est la contrefactuelle la plus fidèle qui soit, puisqu'elle
-    ne change que la DÉCLARATION, là où le droit l'a lui-même écrite.
+    Le moteur lit ``avantages_non_contributifs`` période par période. Retirer
+    la déclaration suffit à ce que le régime cesse de servir l'avantage : c'est
+    la contrefactuelle la plus fidèle qui soit, puisqu'elle ne change que la
+    DÉCLARATION, là où le droit l'a lui-même écrite. La garantie minimale de
+    points de l'Agirc s'y mesurait aussi, en retirant son plancher, jusqu'au
+    2 octobre 2026 : une cotisation forfaitaire achetait ses points, et elle
+    n'est plus un avantage non contributif.
     """
     variante = copy.deepcopy(catalogue)
     for nom, regime in list(variante._regimes.items()):
@@ -472,8 +467,6 @@ def _catalogue_sans(catalogue, code: str | None = None,
                     declare for declare in periode.avantages_non_contributifs
                     if declare != code
                 )
-            if plancher_de_points and periode.points_minimum_annuels is not None:
-                champs["points_minimum_annuels"] = None
             periodes.append(replace(periode, **champs) if champs else periode)
         variante._regimes[nom] = replace(regime, periodes=tuple(periodes))
     return variante
@@ -493,8 +486,6 @@ def scenarios_neutralises(simulateur: Simulateur) -> dict[str, ScenarioActuel]:
     catalogues = {
         "categorie_active": _catalogue_sans(simulateur.catalogue,
                                             code="categorie_active"),
-        "garantie_minimale_points": _catalogue_sans(simulateur.catalogue,
-                                                    plancher_de_points=True),
     }
     # Le classement de l'emploi et la jouissance militaire partagent leur
     # déclaration : un seul catalogue les neutralise, et c'est l'affiliation de

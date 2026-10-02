@@ -2,7 +2,7 @@
 
 Le scénario 1 est le droit en vigueur. Un compte notionnel ne sert que ce qui a
 été cotisé. **Tout ce qui sépare les deux est ici** :
-<!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->46<!--/--> dispositifs,
+<!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->45<!--/--> dispositifs,
 sous un code, avec leur base légale, les régimes qui les servent, l'état du
 modèle à leur égard et le moyen d'en chiffrer le coût.
 
@@ -48,7 +48,7 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 | État | Combien | Ce que ça veut dire |
 |---|---|---|
 | **chiffré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=chiffre)-->9<!--/--> | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
-| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->12<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Huit le sont désormais**, par retrait : voir les §4 bis et 4 ter. Trois autres ne sont pas des dispositifs ; le dernier, le taux plein par inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les déclare, a sa dépense lue dans les comptes de la protection sociale. |
+| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->11<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Sept le sont désormais**, par retrait : voir les §4 bis et 4 ter. Trois autres ne sont pas des dispositifs ; le dernier, le taux plein par inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les déclare, a sa dépense lue dans les comptes de la protection sociale. |
 | **déclaré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=declare)-->3<!--/--> | Une fiche de régime le déclare, et le scénario 1 ne le sert pas à l'assuré. La réversion, qui est de ceux-là, est la pension d'un autre : le modèle la liquide, depuis le 28 septembre 2026, pour le conjoint qu'on lui déclare, mais pas pour tous les ménages, et son coût est LU dans les séries de la DREES : voir le §4 quater. |
 | **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->22<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
 
@@ -81,7 +81,6 @@ non comme une source. Une déduction n'est pas une lecture.
 | Minimum contributif, et sa majoration | L. 351-10 CSS; D. 351-2-1 CSS; L. 173-2 CSS | chiffré | modèle |
 | Minimum garanti de la fonction publique | L. 17 CPCMR; loi n° 2003-775 article 66 V | chiffré | modèle |
 | Minimum vieillesse (ASPA) | L. 815-1 CSS et suivants; L. 816-2 CSS; L. 161-25 CSS | chiffré | modèle |
-| Garantie minimale de points de l'Agirc | accord Agirc du 9 février 1988 | intégré | modèle |
 | Pension majorée de référence du régime agricole | L. 732-54-1 code rural | déclaré | — |
 
 | **Périodes non cotisées mais validées** | | | |

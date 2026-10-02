@@ -4728,6 +4728,110 @@ def test_la_garantie_minimale_de_points_agirc_est_servie(simulateur):
     assert "3,480.00 points" in agirc.detail
 
 
+def _cotisation_agirc(simulateur, carriere, annee, part):
+    """Ce que le compte notionnel reçoit de l'Agirc une année, et la ligne."""
+    from retraite_notionnelle.moteur.compte import ConstructeurCompte
+
+    constructeur = ConstructeurCompte(
+        simulateur.macro, simulateur.catalogue, simulateur.affiliations,
+        simulateur.indexation, simulateur.parametres.avec(part_cotisation=part))
+    ligne = constructeur.cotisation_annuelle(carriere, annee)
+    return dict(ligne.par_regime).get("agirc", 0.0), ligne
+
+
+def test_la_cotisation_de_la_garantie_minimale_va_au_compte(simulateur):
+    """Les 120 points de l'Agirc n'étaient pas gratuits : une cotisation
+    forfaitaire les achetait, « en contrepartie de cotisations » (convention
+    du 14 mars 1947, art. 6, § 2, F) — 872,52 € pour 2018, 72,71 € par mois,
+    dont 27,60 € pour le cadre. Le compte notionnel, qui porte ce qui a été
+    versé, la reçoit sous le plafond, et entre le plafond et le salaire
+    charnière, où elle complète la tranche B. Au-dessus, la tranche B achète
+    seule ses points, et rien ne s'y ajoute. Il ne la recevait pas jusqu'au
+    2 octobre 2026.
+    """
+    from retraite_notionnelle.config import PartCotisation
+
+    def carriere(niveau):
+        return simulateur.carriere_simple(
+            annee_naissance=1975, sexe="F", affiliation="salarie_prive_cadre",
+            mois_naissance=1, age_debut=22, age_liquidation=64,
+            niveau_salaire=niveau, profil_carriere="plat")
+
+    plafond = simulateur.macro.plafond_securite_sociale(2018)
+    reference, appel, _ = simulateur.scenario_actuel.valeurs_point.achat("agirc", 2018)
+    forfait = 120 * reference * appel
+    assert forfait == pytest.approx(872.52, abs=0.05)
+    (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(2018)
+                    if p.assiette == "tranche_b"]
+
+    # Sous le plafond : le forfait entier, partagé comme la tranche B.
+    totale, ligne = _cotisation_agirc(simulateur, carriere(0.8), 2018, PartCotisation.TOTALE)
+    assert ligne.revenu < plafond
+    assert totale == pytest.approx(forfait, abs=1e-6)
+    salariale, _ = _cotisation_agirc(simulateur, carriere(0.8), 2018,
+                                     PartCotisation.SALARIALE)
+    assert salariale == pytest.approx(27.60 * 12, abs=0.05)
+
+    # Entre le plafond et le salaire charnière, puis au-dessus.
+    _, un = _cotisation_agirc(simulateur, carriere(1.0), 2018, PartCotisation.TOTALE)
+    entre, ligne = _cotisation_agirc(simulateur, carriere(1.05 * plafond / un.revenu),
+                                     2018, PartCotisation.TOTALE)
+    assert plafond < ligne.revenu < plafond + forfait / tranche_b.taux_cotisation_retraite
+    assert entre == pytest.approx(forfait, abs=1e-6)
+    dessus, ligne = _cotisation_agirc(simulateur, carriere(1.2 * plafond / un.revenu),
+                                      2018, PartCotisation.TOTALE)
+    assert dessus == pytest.approx(
+        (ligne.revenu - plafond) * tranche_b.taux_cotisation_retraite, abs=1e-6)
+    assert dessus > forfait
+
+    # La garantie s'éteint avec l'Agirc : rien en 2019.
+    assert _cotisation_agirc(simulateur, carriere(0.8), 2019, PartCotisation.TOTALE)[0] == 0
+
+
+def test_la_garantie_minimale_se_proratise(simulateur):
+    """La garantie est celle d'une année entière à temps plein : « En cas de
+    travail à temps partiel, la GMP est proratisée » (Audiens Retraite Agirc,
+    2018), et selon la durée de présence en cas d'embauche ou de départ en
+    cours d'année. Une cadre entrée en juillet n'acquiert, cette année-là, que
+    la moitié des 120 points, et son compte la moitié de la cotisation. Le
+    plancher valait 120 points entiers jusqu'au 2 octobre 2026.
+    """
+    import re
+
+    from retraite_notionnelle.config import PartCotisation
+
+    # La tranche B porte la garantie, la tranche C non : pas de double compte.
+    tranches = {p.assiette: p for p in simulateur.catalogue["agirc"].periodes_actives(2018)}
+    assert tranches["tranche_c"].points_garantis(1.0, 1.0) is None
+    periode = tranches["tranche_b"]
+    assert periode.points_garantis(1.0, 1.0) == 120
+    assert periode.points_garantis(0.5, 1.0) == periode.points_garantis(1.0, 0.5) == 60
+    assert periode.points_garantis(0.5, 0.5) == 30
+    assert next(iter(simulateur.catalogue["agirc_arrco"].periodes_actives(2019))
+                ).points_garantis(1.0, 1.0) is None
+
+    def carriere(age_debut):
+        return simulateur.carriere_simple(
+            annee_naissance=1975, sexe="F", affiliation="salarie_prive_cadre",
+            mois_naissance=1, age_debut=age_debut, age_liquidation=64,
+            niveau_salaire=0.8, profil_carriere="plat")
+
+    def points_agirc(carriere):
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        detail = {p.regime: p for p in resultat.pensions_par_regime}["agirc"].detail
+        return float(re.search(r"([\d,]+\.\d+) points", detail).group(1).replace(",", ""))
+
+    janvier, juillet = carriere(22.0), carriere(22.5)
+    (premiere,) = juillet.lignes_de(1997)
+    assert premiere.fraction_annee == pytest.approx(0.5)
+    # Tout le reste de la carrière est le même : l'écart est la première année.
+    assert points_agirc(janvier) - points_agirc(juillet) == pytest.approx(60, abs=1e-6)
+    entiere = _cotisation_agirc(simulateur, janvier, 1997, PartCotisation.TOTALE)[0]
+    moitie = _cotisation_agirc(simulateur, juillet, 1997, PartCotisation.TOTALE)[0]
+    assert entiere > 0
+    assert moitie == pytest.approx(entiere / 2, rel=1e-9)
+
+
 def test_le_regime_de_base_des_avocats_est_forfaitaire(simulateur):
     """La pension de base d'un avocat ne dépend pas de son revenu.
 

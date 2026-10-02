@@ -358,8 +358,11 @@ class Neutralisations:
     **Ce que le scénario 1 sert vraiment**, et il ne l'a pas toujours fait :
     minimum contributif, minimum garanti, minimum vieillesse, majoration pour
     enfants, majoration de durée d'assurance et bonification pour enfants de la
-    fonction publique, AVPF, périodes assimilées, garantie minimale de points,
-    carrière longue, décote et surcote.
+    fonction publique, AVPF, périodes assimilées, carrière longue, décote et
+    surcote. La garantie minimale de points de l'Agirc a quitté cette liste le
+    2 octobre 2026 : le scénario 1 la sert toujours, mais une cotisation
+    forfaitaire achetait ses points, et le compte notionnel la reçoit — les
+    scénarios notionnels ne la retirent pas.
 
     **La catégorie active est désormais servie**, et les âges de la pension
     militaire avec elle : le classement de l'emploi ne se devine pas d'un revenu
@@ -396,7 +399,6 @@ class Neutralisations:
     bonifications: bool = True
     categorie_active: bool = True
     periodes_assimilees: bool = True
-    garantie_minimale_points: bool = True
     carriere_longue: bool = True
     decote_surcote: bool = True
     coefficient_solidarite: bool = True

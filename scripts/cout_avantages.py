@@ -125,14 +125,15 @@ def par_carriere(simulateur: Simulateur, generation: int):
     """Ce que chaque avantage vaut à un assuré, cas type par cas type.
 
     C'est le chiffre qui a un sens quand l'agrégat n'en a pas — et c'est ici le
-    cas pour la moitié des lignes. Quatre des neuf avantages mesurés par
+    cas pour la moitié des lignes. Trois des huit avantages mesurés par
     recalcul ne pèsent RIEN sur la fenêtre que la DREES publie, chacune pour une
-    raison qui lui est propre et qui n'a rien d'un défaut de mesure :
+    raison qui lui est propre et qui n'a rien d'un défaut de mesure — la
+    garantie minimale de points de l'Agirc en était une quatrième jusqu'au
+    2 octobre 2026, qu'une cotisation forfaitaire achetait, et qui a quitté la
+    liste :
 
     * le salaire de référence des parents ne s'applique qu'aux pensions
       prenant effet à compter de septembre 2026 ;
-    * la garantie minimale de points ne mord que sur des carrières dont les
-      premières années tombent entre 1989 et 2018, et qui liquident après 2024 ;
     * la carrière longue ne vaut rien sur le MONTANT — son prix est entièrement
       dans la durée, que ``--duree`` mesure ;
     * le service national et les points gratuits de complémentaire ne sont

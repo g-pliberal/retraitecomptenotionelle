@@ -108,3 +108,9 @@ operations:
 - operation: garder
   vise: cultes_salaire_annuel_moyen
   motif: le compte reçoit la cotisation que le régime prélève, sur son assiette forfaitaire
+- operation: garder
+  vise: garantie_minimale_points_agirc
+  motif: >-
+    le compte reçoit la cotisation forfaitaire que la garantie prélève : ses 120 points
+    étaient achetés au prix de tout autre point, en contrepartie de cotisations
+    (convention du 14 mars 1947, article 6)

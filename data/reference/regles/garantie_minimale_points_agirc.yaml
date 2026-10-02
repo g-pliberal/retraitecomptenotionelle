@@ -1,0 +1,191 @@
+schema_version: 1
+id: garantie_minimale_points_agirc
+intitule: >-
+  De 1989 à 2018, tout cadre de l'Agirc acquiert au moins 120 points par an : celui
+  dont la tranche B n'achète pas ce nombre paie une cotisation forfaitaire qui les
+  achète au prix de tout autre point, partagée comme la tranche B et proratisée sur
+  la durée de présence et le temps partiel.
+domaine: points
+regimes: [agirc, agirc_entreprises_nouvelles]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- le revenu de chaque année de cadre, de 1989 à 2018, et l'affiliation qui ouvre l'Agirc
+- la part de l'année que la ligne couvre, et la quotité de son temps partiel
+- le salaire de référence et le taux d'appel de l'Agirc de l'année
+ecrit:
+- les points Agirc de l'année, au moins ceux que la garantie assure
+- au compte notionnel, la cotisation forfaitaire qui les achète, partagée comme la tranche B
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: sans_garantie_avant_1989
+  statut: lue
+  textes:
+  - reference: >-
+      convention collective nationale de retraite et de prévoyance des cadres du 14 mars
+      1947, textes mis à jour au 1er janvier 2018, publiés par l'Agirc-Arrco
+    article: article 6, § 2, F
+    en_vigueur: 1989-01-01
+    citation: « À compter du 1er janvier 1989, tout salarié […] bénéficie de la garantie minimale de points (GMP). »
+    lu_le: 2026-10-02
+  bornes:
+    revenu.annee: [null, 1989-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      la garantie naît au 1er janvier 1989 : avant, le cadre n'acquiert à l'Agirc que ce
+      que sa tranche B achète
+  exemples: aucun trouvé
+- id: cent_vingt_points
+  statut: lue
+  textes:
+  - reference: >-
+      convention collective nationale de retraite et de prévoyance des cadres du 14 mars
+      1947, textes mis à jour au 1er janvier 2018, publiés par l'Agirc-Arrco (hors JORF et
+      hors KALI)
+    article: article 6, § 2, F
+    en_vigueur: 1989-01-01
+    citation: >-
+      « À compter du 1er janvier 1989, tout salarié occupant des fonctions visées par les
+      articles 4 et 4 bis bénéficie de la garantie minimale de points (GMP). En vertu de
+      cette garantie, les participants, qui n'obtiennent pas au titre des dispositions
+      visées au B) ci-dessus un nombre de points au moins égal à celui ci-après déterminé,
+      sont assurés de se voir inscrire, en contrepartie de cotisations, un nombre minimum
+      de points. L'objectif consiste à inscrire 120 points par an. Les cotisations
+      correspondant à la GMP sont réparties entre l'employeur et le participant suivant
+      les règles prévues au D) ci-dessus. »
+    lu_le: 2026-10-02
+    empreinte: sha256:38966c272726dd11abbcc5ffa18ffb67d2731caa86ca4ce3aa94d0169568ce78
+  bornes:
+    revenu.annee: [1989-01-01, 2019-01-01]
+  contenu:
+    droit: >-
+      Le cadre (articles 4 et 4 bis) dont les cotisations de tranche B n'achètent pas 120
+      points dans l'année paie une cotisation forfaitaire qui les complète : 120 fois le
+      salaire de référence, au taux d'appel, moins ce que la tranche B a prélevé. Elle est
+      due sous le salaire charnière — 43 977,84 € par an en 2018, 3 664,82 € par mois — et
+      vaut alors 872,52 € pour 2018, 72,71 € par mois appelés à 20,55 %, dont 27,60 € pour
+      le salarié et 45,11 € pour l'employeur, partagés comme la tranche B (au D : 6,24 % et
+      10,20 % d'un taux contractuel de 16,44 % depuis 2015). En cas de temps partiel, et
+      selon la durée de présence en cas d'embauche ou de départ en cours d'année, elle est
+      proratisée, et les points avec elle.
+    parametres:
+      points_minimum_annuels: 120
+      prix_du_point: le salaire de référence de l'année, au taux d'appel de l'année
+  exemples: [audiens_gmp_2018]
+- id: eteinte_avec_la_fusion
+  statut: supposee
+  hypothese: >-
+    la garantie disparaît avec le régime de l'Agirc, que la fusion du 1er janvier 2019
+    éteint : le régime unifié de l'accord du 17 novembre 2017 n'en porte pas, et les
+    points qu'elle a donnés restent acquis. Le texte qui l'abroge n'a pas été lu
+  fiabilite: haute
+  bornes:
+    revenu.annee: [2019-01-01, null]
+  contenu:
+    droit: aucun
+    raison: >-
+      « Avec la mise en place au 1er janvier 2019 du nouveau régime unique Agirc-Arrco, la
+      garantie des 120 points Agirc n'existe plus » ; « les points acquis précédemment via
+      ce dispositif seront conservés »
+  exemples: aucun trouvé
+approximations:
+- version: cent_vingt_points
+  ecart: >-
+    Le temps partiel n'est connu que par la quotité d'une ligne, que seule la retraite
+    progressive renseigne : un temps partiel ordinaire, que la saisie ne porte pas,
+    reçoit la garantie d'une année à temps plein.
+  effet: non mesuré
+- version: cent_vingt_points
+  ecart: >-
+    Le scénario 1 sert la garantie aux années indemnisées où l'Agirc attribue des points
+    sur le salaire d'avant, et le compte notionnel n'en porte aucune cotisation : ce que
+    l'Unédic versait à ce titre n'est pas connu, ni si la garantie s'appliquait.
+  effet: non mesuré
+- version: cent_vingt_points
+  ecart: >-
+    La garantie des intermittents, appelée à la journée (4,00 € par jour en 2018, sous un
+    salaire charnière de 201,47 €), n'est pas modélisée : leur année se proratise comme
+    celle d'un permanent.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-02
+  prochaine_relecture: 2027-10-01
+  a_relire:
+  - >-
+    Lire la circulaire Agirc-Arrco du 13 décembre 2017, qui fixe les paramètres de 2018,
+    et le texte de l'Agirc qui fonde le prorata du temps partiel, que seules deux fiches
+    pratiques ont donné ; dire si la garantie s'appliquait aux périodes de chômage
+    indemnisé, et qui la payait ; chercher la série des cotisations forfaitaires de 1989
+    à 2017, pour confronter le prix que le modèle reconstitue année par année ; lire le
+    texte qui éteint la garantie au 1er janvier 2019.
+  lectures:
+  - type: autre
+    reference: >-
+      Agirc-Arrco, « Convention collective nationale de retraite et de prévoyance des
+      cadres du 14 mars 1947 et délibérations prises pour son application », textes mis à
+      jour au 1er janvier 2018 : article 6, § 2, B (taux contractuel de la tranche B), D
+      (partage entre l'employeur et le participant) et F (la garantie minimale de points)
+    date: 2026-10-02
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2021/11/CCN_14mars1947-1.pdf
+  - type: autre
+    reference: >-
+      Audiens Retraite Agirc, fiche pratique « La GMP (garantie minimale de points) »,
+      année 2018 (imprimée le 29 janvier 2018) : « La GMP est une cotisation forfaitaire
+      (avec une part salariale et une part patronale) qui est due dès que le salaire du
+      cadre n'atteint pas un minimum appelé salaire charnière. En cas de travail à temps
+      partiel, la GMP est proratisée. » ; tableau des montants : taux contractuel 16,44 %,
+      appelé 20,55 %, 872,52 € par an, 72,71 € par mois, 27,60 € de part salariale et
+      45,11 € de part patronale
+    date: 2026-10-02
+    url: https://www.audiens.org/files/live/sites/siteAudiens/files/03_documents/entreprise/Fiches%20techniques/FP-GMP-V2018.pdf
+  - type: autre
+    reference: >-
+      UNA Yonne, « La Garantie Minimale de Points (GMP) 2018 » (mise à jour de septembre
+      2017) : « Pour les salariés à temps partiel, la GMP est calculée selon le rapport
+      suivant : rémunération à temps partiel / rémunération qui aurait été versée si le
+      salarié était à temps plein » ; « En cas d'embauche ou de départ en cours d'année, la
+      proratisation s'effectuera en fonction de la durée de présence sur l'année » ; entre
+      le plafond et le salaire charnière, « l'assiette de calcul est constituée de la
+      différence entre le salaire charnière et le salaire brut »
+    date: 2026-10-02
+    url: https://www.unayonne.net/wp-content/uploads/2018/02/96-la-garantie-minimal-de-point-2018.pdf
+  - type: autre
+    reference: >-
+      CFE-CGC Adecco, « La fin de la GMP (garantie minimale de points) », novembre 2018 :
+      « Avec la mise en place au 1er janvier 2019 du nouveau régime unique Agirc-Arrco, la
+      garantie des 120 points Agirc n'existe plus »
+    date: 2026-10-02
+    url: https://www.cfecgc-adecco.com/2018/11/la-fin-de-la-gmp-garantie-minimale-de.html
+code:
+  python: >-
+    donnees/regimes.py : PeriodeRegime.points_garantis ; droit/acquerir.py : acquerir, le
+    plancher de points du scénario 1 ; moteur/compte.py : ConstructeurCompte._assiette_garantie
+    et _cotisation_ligne, la cotisation forfaitaire portée au compte
+  javascript: >-
+    moteur/js/regimes.js : pointsGarantis ; moteur/js/droit/acquerir.js : acquerir ;
+    moteur/js/compte.js : _assietteGarantie, _cotisationLigne
+  parametres: >-
+    points_minimum_annuels des fiches agirc et agirc_entreprises_nouvelles, de 1989 à 2018 ;
+    le salaire de référence et le taux d'appel de l'Agirc (regimes/valeurs_point.csv)
+  tests: >-
+    tests/test_simulateur.py : test_la_garantie_minimale_de_points_agirc_est_servie et les
+    tests de sa cotisation ; l'exemple audiens_gmp_2018 (tests/test_oracle.py)
+reformes: [gmp_agirc_1989]
+historique:
+- >-
+  2026-10-02 — née avec la cotisation de la garantie. Le scénario 1 servait les 120
+  points depuis qu'ils avaient été mis ; la garantie passait pour un droit gratuit,
+  absente du compte notionnel des scénarios 2, 4 et 6 et mesurée parmi les avantages non
+  contributifs. Une cotisation forfaitaire achetait ces points : le compte la reçoit, la
+  garantie a quitté l'inventaire des avantages non contributifs, et le plancher se
+  proratise sur la durée de présence et le temps partiel.
+effet: >-
+  Tout cadre payé sous le salaire charnière entre 1989 et 2018 — 1,11 plafond en 2018 —,
+  surtout en début de carrière. Pour une cadre née en 1975, entrée à 22 ans et payée
+  sous le plafond jusqu'en 2018, le compte reçoit 15 479 € de cotisations de garantie
+  (5 835 € de part salariale) : sa pension monte de 543 € par an au scénario 2, de
+  1 444 € au scénario 4 et de 1 532 € au scénario 6 ; le scénario 1, qui sert ses 2 640
+  points, et les scénarios 3 et 5, qui les convertissent à la bascule, ne bougent pas.

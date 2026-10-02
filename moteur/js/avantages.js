@@ -287,12 +287,6 @@ export const NEUTRALISATIONS = [
     par: "catalogue",
   },
   {
-    code: "garantie_minimale_points",
-    quoi: "le plancher de cent vingt points par an est retiré des fiches de "
-      + "l'Agirc : le cadre n'acquiert plus que ce que son salaire achète",
-    par: "catalogue",
-  },
-  {
     code: "salaire_de_reference_des_parents",
     quoi: "le salaire de référence des parents repasse à vingt-cinq années, "
       + "comme celui des autres assurés",
@@ -323,13 +317,15 @@ const MOTIFS_NEUTRALISES = {
 /**
  * Le catalogue, privé d'une déclaration, sans qu'aucun code du moteur change.
  *
- * Le moteur lit `avantages_non_contributifs` période par période, et
- * `points_minimum_annuels` pour la garantie minimale de points de l'Agirc.
- * Retirer l'un ou l'autre suffit à ce que le régime cesse de servir l'avantage :
- * c'est la contrefactuelle la plus fidèle qui soit, puisqu'elle ne change que la
- * DÉCLARATION, là où le droit l'a lui-même écrite.
+ * Le moteur lit `avantages_non_contributifs` période par période. Retirer la
+ * déclaration suffit à ce que le régime cesse de servir l'avantage : c'est la
+ * contrefactuelle la plus fidèle qui soit, puisqu'elle ne change que la
+ * DÉCLARATION, là où le droit l'a lui-même écrite. La garantie minimale de
+ * points de l'Agirc s'y mesurait aussi jusqu'au 2 octobre 2026 : une cotisation
+ * forfaitaire achetait ses points, et elle n'est plus un avantage non
+ * contributif. Voir avantages.py.
  */
-function catalogueSans(paquet, code = null, plancherDePoints = false) {
+function catalogueSans(paquet, code = null) {
   const regimes = paquet.regimes.map((fiche) => ({
     ...fiche,
     periodes: fiche.periodes.map((periode) => {
@@ -337,10 +333,6 @@ function catalogueSans(paquet, code = null, plancherDePoints = false) {
       if (code !== null && (periode.avantages_non_contributifs || []).includes(code)) {
         copie.avantages_non_contributifs = periode.avantages_non_contributifs
           .filter((declare) => declare !== code);
-      }
-      if (plancherDePoints && periode.points_minimum_annuels !== null
-          && periode.points_minimum_annuels !== undefined) {
-        copie.points_minimum_annuels = null;
       }
       return copie;
     }),
@@ -371,7 +363,6 @@ export function scenariosNeutralises(simulateur) {
   const sansClassement = neuf(catalogueSans(paquet, "categorie_active"));
   variantes.categorie_active = sansClassement;
   variantes.age_jouissance_militaire = sansClassement;
-  variantes.garantie_minimale_points = neuf(catalogueSans(paquet, null, true));
 
   const parents = neuf(simulateur.catalogue);
   // La date d'entrée en vigueur, repoussée hors de portée : la branche qui

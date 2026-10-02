@@ -548,10 +548,10 @@ Les tables elles-mêmes sont décrites au §9.
 ## 6. Les neutralisations
 
 > **L'inventaire complet de ce que le scénario 1 sert au-delà de la cotisation
-> — trente-neuf dispositifs, avec leur base légale et le moyen d'en chiffrer le
+> — <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->45<!--/--> dispositifs, avec leur base légale et le moyen d'en chiffrer le
 > coût — est dans `data/reference/legislation/avantages_non_contributifs.yaml`,
 > et `docs/avantages_non_contributifs.md` le commente.** Le tableau ci-dessous
-> ne porte que les quinze champs de `Neutralisations`, qui sont une déclaration
+> ne porte que les quatorze champs de `Neutralisations`, qui sont une déclaration
 > d'intention de réforme et non une liste du droit positif.
 
 Sont **supprimés** dans les scénarios notionnels — tous activés par défaut dans
@@ -566,7 +566,6 @@ Sont **supprimés** dans les scénarios notionnels — tous activés par défaut
 | bonifications, catégorie active | avantage sans cotisation |
 | périodes assimilées (chômage, maladie, service militaire) | pas de cotisation, pas de droit |
 | trimestres assimilés au régime de base | pas de cotisation, pas de droit |
-| garantie minimale de points (Agirc) | droit gratuit |
 | carrières longues | dispositif d'âge, remplacé par l'actuariel |
 | décote et surcote | remplacées par le coefficient de conversion |
 
@@ -600,10 +599,17 @@ ligne :
 | pension de réversion | **non** — elle ne concerne pas l'assuré lui-même |
 | bonifications, catégorie active | **non** — elles supposent des informations que le modèle n'a pas |
 | périodes assimilées | oui, motif par motif — et ce qu'elles ouvrent en services, à part |
-| garantie minimale de points | oui, <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.*.points_minimum_annuels)-->120<!--/--> points par an de 1989 à 2018 |
 | carrières longues | oui, pour dire si le droit ouvre la liquidation |
 | décote et surcote | oui, barème propre à la fonction publique compris |
 | coefficient de solidarité Agirc-Arrco | **non** — dispositif éteint, voir `docs/limites.md` |
+
+**La garantie minimale de points de l'Agirc n'est pas dans ces tableaux : elle
+n'est pas gratuite.** Le scénario 1 la sert, <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.*.points_minimum_annuels)-->120<!--/--> points par an de
+1989 à 2018, proratisés sur la durée de présence et sur la quotité du temps
+partiel. Mais une cotisation forfaitaire achetait ces points au prix de tout
+autre point, « en contrepartie de cotisations » (convention du 14 mars 1947,
+article 6) : le compte notionnel la reçoit, et les scénarios notionnels ne la
+retirent pas. Voir la fiche `garantie_minimale_points_agirc`.
 
 Une seule exception, et elle est explicite : la valorisation des droits acquis
 du scénario 3 appelle le scénario 1 avec `avantages_non_contributifs=False`,

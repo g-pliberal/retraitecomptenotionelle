@@ -1672,6 +1672,20 @@ export class PeriodeRegime {
   }
 
   /**
+   * Les points que la garantie minimale assure à une ligne de l'année, ou
+   * null si le régime n'en donne pas : les 120 points de l'Agirc d'une année
+   * entière à temps plein, proratisés comme la cotisation forfaitaire qui les
+   * achète, sur la durée de présence et sur la quotité du temps partiel. Voir
+   * regimes.py.
+   */
+  pointsGarantis(part, quotite) {
+    if (this.points_minimum_annuels === null || this.points_minimum_annuels === undefined) {
+      return null;
+    }
+    return this.points_minimum_annuels * part * quotite;
+  }
+
+  /**
    * Part de la rémunération que ce régime prend en compte : le traitement
    * seul pour la pension civile, les primes seules pour le RAFP — et
    * celles-ci dans la limite de `plafond_primes_traitement` du traitement,

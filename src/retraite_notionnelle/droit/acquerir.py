@@ -524,7 +524,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 if achat is not None:
                     reference, taux_appel, fiabilite_achat = achat
                     points_annee = cotisation / (taux_appel * reference)
-                    if periode.points_minimum_annuels is not None:
+                    garantis = periode.points_garantis(part, ligne.quotite)
+                    if garantis is not None:
                         # Garantie minimale de points de l'Agirc : tout
                         # cadre cotisant en acquiert au moins 120 par an de
                         # 1989 à 2018, même quand sa tranche B est nulle,
@@ -533,9 +534,14 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         # déclarait ; le moteur ne la servait pas, et un
                         # cadre payé sous le plafond n'acquérait rien à
                         # l'Agirc là où le droit lui donnait ces points.
-                        points_annee = max(
-                            points_annee, periode.points_minimum_annuels
-                        )
+                        # Ils ne sont pas gratuits : une cotisation
+                        # forfaitaire les achète, que le compte notionnel
+                        # porte (`ConstructeurCompte._assiette_garantie`), et
+                        # ils se proratisent comme elle, sur la durée de
+                        # présence et sur la quotité du temps partiel. Le
+                        # plancher valait cent vingt points entiers jusqu'au
+                        # 2 octobre 2026, même pour une année d'un mois.
+                        points_annee = max(points_annee, garantis)
                     # Changement d'unité entre l'achat et le service : les
                     # points Arrco d'avant 1999 sont ceux de l'UNIRS, et
                     # valent 0,387464 point du régime unifié. Sans cette

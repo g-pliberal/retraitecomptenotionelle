@@ -344,8 +344,8 @@ planchers. Le graphique du haut compte les dispositifs année par année depuis
 
 Deux comptes se croisent sur cette page, et il vaut mieux le savoir avant
 qu'on le demande : **40 dispositifs sont en vigueur aujourd'hui**, et le
-tableau du bas en recense **46 dispositifs** depuis 1831, ceux d'hier
-compris. Les 19 que le modèle chiffre se comptent sur les 46.
+tableau du bas en recense **45 dispositifs** depuis 1831, ceux d'hier
+compris. Les 19 que le modèle chiffre se comptent sur les 45.
 
 ### 6. Méthode et Données — deux minutes, pour finir
 

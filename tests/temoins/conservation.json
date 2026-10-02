@@ -239,6 +239,7 @@
    "duree_requise_sncf_ratp",
    "enfants_fonction_publique",
    "fin_de_la_suspension_2028",
+   "garantie_minimale_points_agirc",
    "inaptitude_au_travail",
    "inaptitude_invalidite_penibilite_amiante",
    "interpenetration_fonction_publique",
@@ -430,11 +431,14 @@
    "2026-10-01 | l'analyse de ce qu'OpenFisca-France-Pension fait mieux que le dépôt, demandée par le propriétaire, et l'action 136 qui en naît, à faire",
    "2026-10-01 | l'ouverture du cinquième domaine, les carrières hors de France, à la demande du propriétaire : les textes lus, quatre fiches nouvelles et le tableau des accords",
    "2026-10-01 | la cinquième étape du cinquième domaine, et sa clôture : le formulaire, la page Coût, la proposition",
+   "2026-10-01 | la comparaison du dépôt à tous les modèles du registre, à la demande du propriétaire : « Je souhaite que mon modèle soit meilleur en tous points aux modèles existants » (action 138, étape 1)",
    "2026-10-01 | la fin de la troisième étape du cinquième domaine — l'ASPA hors de France, la page —, et sa quatrième : les exemples publiés, et la règle d'un seul accord à la fois",
    "2026-10-01 | la quatrième étape du quatrième domaine : les exemples publiés, et l'invalidité du survivant à l'Agirc-Arrco, dans les deux moteurs",
    "2026-10-01 | la troisième étape du cinquième domaine, en cours : la pension proratisée contre la pension nationale, leur minimum, et l'écrêtement sur les pensions étrangères, dans les deux moteurs",
    "2026-10-01 | les autres modèles publics, demandés en liste exhaustive par le propriétaire : le registre data/reference/referents.yaml (action 137)",
-   "2026-10-01 | les limites du cinquième domaine, les carrières hors de France, reprises à la demande du propriétaire : « Fait de ton mieux pour gérer ces limites »"
+   "2026-10-01 | les limites du cinquième domaine, les carrières hors de France, reprises à la demande du propriétaire : « Fait de ton mieux pour gérer ces limites »",
+   "2026-10-01 | les simulateurs d'info-retraite saisis à la main par le propriétaire, un cas par tour, selon le § 3.5 de l'architecture : « Tu vas me donner un cas intéressant pour faire avancer notre projet avec le simulateur converne et je te dirais la réponse »",
+   "2026-10-02 | la garantie minimale de points de l'Agirc, à la demande du propriétaire : « Je veux que tu m'expliques ce que c'est pour voir si on doit la prendre en compte ou pas », puis « Ok, faisons ça […] y compris le temps partiel » (action 139)"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1533,6 +1537,7 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "05c647c1e85ce64d",
     "73a09df3f60cf209",
     "6b576a97dda0289d",
     "013ff654ad628555",
@@ -2005,6 +2010,18 @@
     "b7ab51169440c18a",
     "1cfe6129f47adeab",
     "b7c5c75ab8f0414d"
+   ],
+   "139. La garantie minimale de points de l'Agirc : une cotisation, et non un droit gratuit — `fait`": [
+    "8fc483fd5a8326df",
+    "20b94b0f24e1633e",
+    "6af44a3248b10c65",
+    "b807fb5776129d0d",
+    "b85f2e5b02322ed4",
+    "73805e3957149b91",
+    "3473c12fd991f3b9",
+    "304d43d2566ecad6",
+    "05fe113c8aadbdd9",
+    "f229ee914411e9cb"
    ],
    "14. La mortalité différentielle par revenu, que le diviseur ignore — `fait`": [
     "edec51f69231424b",
@@ -6082,7 +6099,7 @@
    "5. Avantages — deux minutes": [
     "e13190fb11225547",
     "56aa2a7d7f4cc059",
-    "669eb8f878073fdc"
+    "dc8ac67e75c63888"
    ],
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",

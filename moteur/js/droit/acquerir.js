@@ -434,12 +434,14 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         if (achat !== null) {
           const [reference, tauxAppel, fiabiliteAchat] = achat;
           let pointsAnnee = cotisation / (tauxAppel * reference);
-          if (periode.points_minimum_annuels !== null
-              && periode.points_minimum_annuels !== undefined) {
+          const garantis = periode.pointsGarantis(part, ligne.quotite);
+          if (garantis !== null) {
             // Garantie minimale de points de l'Agirc : tout cadre cotisant en
             // acquiert au moins 120 par an de 1989 à 2018, même quand sa
-            // tranche B est nulle.
-            pointsAnnee = Math.max(pointsAnnee, periode.points_minimum_annuels);
+            // tranche B est nulle. Une cotisation forfaitaire les achète, que
+            // le compte notionnel porte, et ils se proratisent comme elle, sur
+            // la durée de présence et la quotité du temps partiel.
+            pointsAnnee = Math.max(pointsAnnee, garantis);
           }
           // Changement d'unité entre l'achat et le service : les points
           // Arrco d'avant 1999 sont ceux de l'UNIRS, et valent 0,387464 point

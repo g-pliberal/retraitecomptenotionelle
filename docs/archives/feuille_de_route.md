@@ -15333,3 +15333,78 @@ modèle garde telle quelle.
 qui racontent des dates au mois, qui naissent au 1er ; `README.md`,
 `docs/limites.md`, `docs/architecture.md`, `docs/parcours_presentation.md` ;
 le paquet, les témoins, le bilan et le chiffrage, régénérés.
+
+### 139. La garantie minimale de points de l'Agirc : une cotisation, et non un droit gratuit — `fait`
+
+**Demande**, le 2 octobre 2026 : « Dans les scénarios autres que 1, est-ce que
+tu prends en compte les retraites complémentaires ? », puis « J'aimerais qu'on
+regarde de plus près la garantie minimale de points de l'agirc […] pour voir si
+on doit la prendre en compte ou pas », et, l'explication lue : « Ok, faisons
+ça. Tout le détail de ce que tu viens de dire me convient, y compris le temps
+partiel ».
+
+**Ce que le dépôt en disait.** La garantie — 120 points Agirc par an de 1989 à
+2018, même quand la tranche B est nulle — passait pour un « droit gratuit »
+(`methodologie.md`, `agirc.yaml`, `donnees/regimes.py`). Le scénario 1 la
+servait ; l'inventaire la rangeait parmi les avantages non contributifs, mesurée
+à 205 € par an pour le cadre de la génération 1985 (§ 4 ter de
+`avantages_non_contributifs.md`) ; le compte des scénarios 2, 4 et 6 ne la
+recevait pas, et la pension figée des scénarios 3 et 5 en gardait pourtant les
+points, le plancher ne lisant pas le drapeau qui retire les avantages.
+
+**Ce que disent les textes.** La convention du 14 mars 1947, article 6, § 2,
+F : les points s'inscrivent « en contrepartie de cotisations », réparties
+comme celles de la tranche B (D). La fiche pratique d'Audiens Retraite Agirc
+pour 2018 : « une cotisation forfaitaire (avec une part salariale et une part
+patronale) », 872,52 € par an, 72,71 € par mois, dont 27,60 € pour le salarié
+et 45,11 € pour l'employeur, et « en cas de travail à temps partiel, la GMP
+est proratisée » ; celle de l'UNA Yonne : le rapport du temps partiel, et la
+durée de présence en cas d'embauche ou de départ en cours d'année. Le prix est
+celui de tout autre point : 120 × 5,8166 € × 1,25 = 872,49 € pour 2018,
+844,59 € pour 2017, quand la caisse publie douze mensualités de 72,71 € et de
+70,38 €.
+
+**Ce qui a changé.**
+
+- Le compte notionnel reçoit la cotisation forfaitaire, par l'assiette de
+  tranche B qui la prélève (`ConstructeurCompte._assiette_garantie`, et son
+  jumeau de `compte.js`) : la part salariale aux scénarios 2 et 3, la
+  cotisation entière aux scénarios 4 et 5, et au 6 avant la bascule ; rien pour
+  une année indemnisée.
+- Le plancher du scénario 1 se proratise sur la durée de présence et sur la
+  quotité du temps partiel (`PeriodeRegime.points_garantis`, et
+  `pointsGarantis`) : il valait 120 points entiers, même pour une année d'un
+  mois.
+- La garantie quitte les avantages non contributifs : les déclarations des deux
+  fiches de l'Agirc, l'inventaire (46 lignes, 45 désormais), `Neutralisations`,
+  la mesure par retrait d'`avantages.py`, de `avantages.js` et de
+  `cout_avantages.py`, les deux tableaux de la méthodologie.
+- La fiche `garantie_minimale_points_agirc`, approchée (le temps partiel
+  ordinaire, que la saisie ne porte pas ; les années indemnisées ; les
+  intermittents), que la couche `comptes_notionnels` garde ; l'exemple
+  `audiens_gmp_2018`, rejoué par une grandeur nouvelle de `tests/test_oracle.py`,
+  `cotisation_agirc_de_l_annee` ; deux tests de `tests/test_simulateur.py`,
+  la cotisation sous le plafond, entre le plafond et le salaire charnière et
+  au-dessus, et le prorata d'une année commencée en juillet.
+
+**Ce que ça a déplacé**, sur les 688 témoins de simulation :
+
+| Scénario | Témoins qui bougent | Effet |
+|---|---|---|
+| 1, 3 et 5 | 12 | −0,19 % en médiane, de −0,30 à −0,08 % : le prorata des années incomplètes |
+| 2 | 25 | +3,84 % en médiane, jusqu'à +18,79 % pour la cadre au salaire très bas de `releve_generation_1950` |
+| 4 | 25 | +4,48 % en médiane, jusqu'à +21,56 % |
+| 6 | 25 | +4,62 % en médiane, jusqu'à +21,56 % |
+
+Pour une cadre née en 1975, entrée à 22 ans et payée sous le plafond jusqu'en
+2018 : +543 € par an au scénario 2, +1 444 € au 4, +1 532 € au 6 ; ses
+scénarios 1, 3 et 5 ne bougent pas. La dette du scénario 6 passe de 927 à
+938 Md€, et 53 des 69 rendus de page changent. Le portage reste le jumeau du
+Python : écart relatif maximal de 7 × 10⁻¹⁴ sur les 688 témoins.
+
+**Ce qui reste**, dans les questions de la fiche : la circulaire Agirc-Arrco du
+13 décembre 2017, et le texte de l'Agirc qui fonde le prorata ; ce que devenait
+la garantie pendant un chômage indemnisé, et qui la payait ; le texte qui
+l'éteint au 1er janvier 2019 ; la série des cotisations forfaitaires de 1989 à
+2017. Le temps partiel ordinaire attend une quotité dans la saisie, que rien ne
+porte encore hors de la retraite progressive.
