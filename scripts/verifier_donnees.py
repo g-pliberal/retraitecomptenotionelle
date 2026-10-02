@@ -2126,6 +2126,45 @@ def source_valeurs_point_ircantec_publiees() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+#: Cotisation forfaitaire ANNUELLE de la garantie minimale de points de
+#: l'Agirc, salarié et employeur ensemble, taux d'appel compris : ce que payait
+#: le cadre dont la tranche B n'atteignait pas ce forfait. Transcrite le
+#: 2 octobre 2026 du barème IPP qu'OpenFisca-France reprend
+#: (`prelevements_sociaux/regimes_complementaires_retraite_secteur_prive/gmp/
+#: cotisation_forfaitaire_annuelle`, `gmp_cot_f_a`), qui cite les circulaires
+#: Agirc de 2005 à 2017 et, avant 2005, les barèmes de la fédération. En francs
+#: jusqu'en 2001. 2015 n'a pas de ligne : le forfait de 2014 y restait en
+#: vigueur, le salaire de référence ayant été gelé.
+COTISATION_GMP_FRANCS = {
+    1989: 2843.0, 1990: 3068.0, 1991: 3196.1, 1992: 3276.9, 1993: 3307.3,
+    1994: 3364.6, 1995: 3612.6, 1996: 3605.4, 1997: 3339.0, 1998: 3465.0,
+    1999: 3703.5, 2000: 3958.5, 2001: 4018.5,
+}
+COTISATION_GMP_EUROS = {
+    2002: 622.50, 2003: 633.00, 2004: 648.00, 2005: 663.96, 2006: 682.00,
+    2007: 707.00, 2008: 731.00, 2009: 744.00, 2010: 753.72, 2011: 770.28,
+    2012: 787.68, 2013: 795.12, 2014: 796.08, 2016: 816.84, 2017: 844.56,
+    2018: 872.52,
+}
+
+
+def source_valeurs_point_gmp() -> dict[tuple, float]:
+    """Le forfait de la garantie minimale de points, 1989-2018 : voir
+    :data:`COTISATION_GMP_FRANCS`.
+
+    Le moteur en tire les points de la garantie au prix de l'année — d'où les
+    144 points de 1989 et de 1990, puis les 120 de 1997 —, et le compte
+    notionnel ce qui a été versé. Sans lui, le dépôt supposait 120 points dès
+    1989, quand l'accord du 8 décembre 1988 en visait 144 jusqu'à ce que
+    l'accord du 25 avril 1996 (art. 7) les ramène à 120.
+    """
+    valeurs = {("agirc", str(annee), "cotisation_garantie"): francs / 6.55957
+               for annee, francs in COTISATION_GMP_FRANCS.items()}
+    valeurs.update({("agirc", str(annee), "cotisation_garantie"): euros
+                    for annee, euros in COTISATION_GMP_EUROS.items()})
+    return dict(sorted(valeurs.items()))
+
+
 def source_valeurs_point_agirc_arrco() -> dict[tuple, float]:
     """Barèmes publiés par la fédération Agirc-Arrco, qui les fixe.
 
@@ -5377,6 +5416,19 @@ CERTIFICATIONS = (
         source=source_valeurs_point_ircantec_publiees,
         origine="Ircantec, page « Valeur du point » et paramètres annuels, "
                 "2022-2026, lus le 23 septembre 2026",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="haute",
+    ),
+    Certification(
+        nom="valeurs_point_gmp",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_gmp,
+        origine="OpenFisca-France, barème IPP de la cotisation forfaitaire "
+                "annuelle de la garantie minimale de points (gmp_cot_f_a), "
+                "transcrit le 2 octobre 2026",
         decimales=6,
         tolerance=5e-7,
         niveau="haute",

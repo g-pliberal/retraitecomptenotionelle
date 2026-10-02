@@ -6,7 +6,10 @@
 #            d'appel, lus sur le site de l'Ircantec le 23 septembre 2026 ;
 #            source_valeurs_point_ircantec_publiees de verifier_donnees.py),
 #            ipp_points_independants (complémentaires artisans 1979-2012 et
-#            commerçants 2004-2012), openfisca_points (le reste)
+#            commerçants 2004-2012), openfisca_gmp (forfait de la
+#            garantie minimale de points de l'Agirc, 1989-2018 ;
+#            source_valeurs_point_gmp de verifier_donnees.py),
+#            openfisca_points (le reste)
 #
 # mesure :
 #   salaire_reference : prix d'achat du point, en euros courants de l'année.
@@ -15,6 +18,11 @@
 #   taux_appel        : écart entre ce qui est prélevé et ce qui ouvre des
 #                       droits. 1,25 depuis 1995 : cotiser 125 € n'acquiert
 #                       que 100 € de points.
+#   cotisation_garantie : cotisation forfaitaire annuelle de la garantie
+#                       minimale de points de l'Agirc, 1989-2018, euros
+#                       courants, taux d'appel compris. Le cadre dont la
+#                       tranche B cotisait moins la payait ; elle achète ses
+#                       points au prix de l'année : 144 en 1989, 120 en 2018.
 #
 # Règle annuelle : valeur en vigueur au 31 décembre de l'année. Le salaire
 # de référence change au 1er janvier, la valeur de service au 1er avril
@@ -181,71 +189,100 @@ agirc,1987,valeur_service,0.293922,certifiee
 agirc,1988,salaire_reference,2.542850,certifiee
 agirc,1988,taux_appel,1.100000,haute
 agirc,1988,valeur_service,0.300782,certifiee
+agirc,1989,cotisation_garantie,433.412556,haute
 agirc,1989,salaire_reference,2.654137,certifiee
 agirc,1989,taux_appel,1.134000,haute
 agirc,1989,valeur_service,0.311758,certifiee
+agirc,1990,cotisation_garantie,467.713585,haute
 agirc,1990,salaire_reference,2.776097,certifiee
 agirc,1990,taux_appel,1.170000,haute
 agirc,1990,valeur_service,0.319076,certifiee
+agirc,1991,cotisation_garantie,487.242304,haute
 agirc,1991,salaire_reference,2.866042,certifiee
 agirc,1991,taux_appel,1.170000,haute
 agirc,1991,valeur_service,0.332186,certifiee
+agirc,1992,cotisation_garantie,499.560185,haute
 agirc,1992,salaire_reference,2.931595,certifiee
 agirc,1992,taux_appel,1.170000,haute
 agirc,1992,valeur_service,0.341791,certifiee
+agirc,1993,cotisation_garantie,504.194635,haute
 agirc,1993,salaire_reference,2.939217,certifiee
 agirc,1993,taux_appel,1.170000,haute
 agirc,1993,valeur_service,0.351090,certifiee
+agirc,1994,cotisation_garantie,512.929963,haute
 agirc,1994,salaire_reference,2.975805,certifiee
 agirc,1994,taux_appel,1.210000,haute
 agirc,1994,valeur_service,0.351090,certifiee
+agirc,1995,cotisation_garantie,550.737320,haute
 agirc,1995,salaire_reference,3.053554,certifiee
 agirc,1995,taux_appel,1.250000,haute
 agirc,1995,valeur_service,0.351090,certifiee
+agirc,1996,cotisation_garantie,549.639687,haute
 agirc,1996,salaire_reference,3.225821,certifiee
 agirc,1996,valeur_service,0.356350,certifiee
+agirc,1997,cotisation_garantie,509.027269,haute
 agirc,1997,salaire_reference,3.393515,certifiee
 agirc,1997,valeur_service,0.358133,certifiee
+agirc,1998,cotisation_garantie,528.235845,haute
 agirc,1998,salaire_reference,3.521572,certifiee
 agirc,1998,valeur_service,0.358133,certifiee
+agirc,1999,cotisation_garantie,564.594935,haute
 agirc,1999,salaire_reference,3.763966,certifiee
 agirc,1999,valeur_service,0.359566,certifiee
+agirc,2000,cotisation_garantie,603.469435,haute
 agirc,2000,salaire_reference,4.023130,certifiee
 agirc,2000,valeur_service,0.359566,certifiee
+agirc,2001,cotisation_garantie,612.616376,haute
 agirc,2001,salaire_reference,4.084109,certifiee
 agirc,2001,valeur_service,0.367798,certifiee
+agirc,2002,cotisation_garantie,622.500000,haute
 agirc,2002,salaire_reference,4.149400,certifiee
 agirc,2002,valeur_service,0.373700,certifiee
+agirc,2003,cotisation_garantie,633.000000,haute
 agirc,2003,salaire_reference,4.215800,certifiee
 agirc,2003,valeur_service,0.379600,certifiee
+agirc,2004,cotisation_garantie,648.000000,haute
 agirc,2004,salaire_reference,4.312800,certifiee
 agirc,2004,valeur_service,0.386200,certifiee
+agirc,2005,cotisation_garantie,663.960000,haute
 agirc,2005,salaire_reference,4.416300,certifiee
 agirc,2005,valeur_service,0.394000,certifiee
+agirc,2006,cotisation_garantie,682.000000,haute
 agirc,2006,salaire_reference,4.544400,certifiee
 agirc,2006,valeur_service,0.400500,certifiee
+agirc,2007,cotisation_garantie,707.000000,haute
 agirc,2007,salaire_reference,4.712500,certifiee
 agirc,2007,valeur_service,0.407300,certifiee
+agirc,2008,cotisation_garantie,731.000000,haute
 agirc,2008,salaire_reference,4.872700,certifiee
 agirc,2008,valeur_service,0.413200,certifiee
+agirc,2009,cotisation_garantie,744.000000,haute
 agirc,2009,salaire_reference,4.960400,certifiee
 agirc,2009,valeur_service,0.418600,certifiee
+agirc,2010,cotisation_garantie,753.720000,haute
 agirc,2010,salaire_reference,5.024900,certifiee
 agirc,2010,valeur_service,0.421600,certifiee
+agirc,2011,cotisation_garantie,770.280000,haute
 agirc,2011,salaire_reference,5.135400,certifiee
 agirc,2011,valeur_service,0.423300,certifiee
+agirc,2012,cotisation_garantie,787.680000,haute
 agirc,2012,salaire_reference,5.250900,certifiee
 agirc,2012,valeur_service,0.433000,certifiee
+agirc,2013,cotisation_garantie,795.120000,haute
 agirc,2013,salaire_reference,5.300600,certifiee
 agirc,2013,valeur_service,0.435200,certifiee
+agirc,2014,cotisation_garantie,796.080000,haute
 agirc,2014,salaire_reference,5.307500,certifiee
 agirc,2014,valeur_service,0.435200,certifiee
 agirc,2015,salaire_reference,5.307500,certifiee
 agirc,2015,valeur_service,0.435200,certifiee
+agirc,2016,cotisation_garantie,816.840000,haute
 agirc,2016,salaire_reference,5.445500,certifiee
 agirc,2016,valeur_service,0.435200,certifiee
+agirc,2017,cotisation_garantie,844.560000,haute
 agirc,2017,salaire_reference,5.630600,certifiee
 agirc,2017,valeur_service,0.435200,certifiee
+agirc,2018,cotisation_garantie,872.520000,haute
 agirc,2018,salaire_reference,5.816600,certifiee
 agirc,2018,valeur_service,0.437800,certifiee
 agirc_arrco,2019,salaire_reference,17.057100,certifiee

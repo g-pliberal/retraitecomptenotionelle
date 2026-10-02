@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-09-24",
+ "dernier_passage_le": "2026-10-02",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -1122,6 +1122,17 @@
    "source": "Taux d'appel de l'Ircantec 1971 prolongé sur l'IPACTE et l'IGRANTE (décret 70-1277, art. 7, LEGIARTI000006368121)",
    "valeurs": 40,
    "verifiee_le": "2026-09-13"
+  },
+  "valeurs_point_gmp": {
+   "ajoutees": 29,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "3afedd6c509965db",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
+   "valeurs": 29,
+   "verifiee_le": "2026-10-02"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,

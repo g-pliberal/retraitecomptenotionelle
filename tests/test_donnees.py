@@ -526,6 +526,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "valeurs_point_ircantec": "regimes/valeurs_point.csv",
         # La suite de la Caisse des dépôts, lue sur la page du régime.
         "valeurs_point_ircantec_publiees": "regimes/valeurs_point.csv",
+        # Le forfait de la garantie minimale de points de l'Agirc, 1989-2018.
+        "valeurs_point_gmp": "regimes/valeurs_point.csv",
         "valeurs_point_cnbf": "regimes/valeurs_point.csv",
         "valeurs_point_rafp": "regimes/valeurs_point.csv",
         "valeurs_point_cnavpl": "regimes/valeurs_point.csv",

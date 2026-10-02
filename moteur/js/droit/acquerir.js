@@ -432,24 +432,31 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           ? moteur.valeursPoint.achat(bareme, ligne.annee)
           : null;
         if (achat !== null) {
-          const [reference, tauxAppel, fiabiliteAchat] = achat;
+          const [reference, tauxAppel] = achat;
+          let fiabiliteAchat = achat[2];
           let pointsAnnee = cotisation / (tauxAppel * reference);
-          let garantis = periode.pointsGarantis(part, ligne.quotite);
-          if (garantis !== null && ligne.familles_financees.includes(regime.famille)) {
+          let garantie = moteur.valeursPoint.garantie(
+            bareme, periode, ligne.annee, part, ligne.quotite);
+          if (garantie !== null && ligne.familles_financees.includes(regime.famille)) {
             // Une année de CHÔMAGE INDEMNISÉ n'a pas de garantie : ses points
             // Agirc se calculent sur la seule tranche B du salaire journalier
             // de référence (annexe I, art. 8 bis) ; ceux d'un arrêt maladie
             // reprennent les points de l'année précédente (art. 8), garantie
             // comprise. Voir acquerir.py.
-            garantis = null;
+            garantie = null;
           }
-          if (garantis !== null) {
+          if (garantie !== null) {
             // Garantie minimale de points de l'Agirc : tout cadre cotisant en
-            // acquiert au moins 120 par an de 1989 à 2018, même quand sa
-            // tranche B est nulle. Une cotisation forfaitaire les achète, que
-            // le compte notionnel porte, et ils se proratisent comme elle, sur
-            // la durée de présence et la quotité du temps partiel.
-            pointsAnnee = Math.max(pointsAnnee, garantis);
+            // acquiert au moins ce que le forfait de l'année achète — 144
+            // points en 1989, 120 de 1997 à 2018 —, même quand sa tranche B
+            // est nulle. Le compte notionnel porte ce forfait, et les points
+            // se proratisent comme lui, sur la durée de présence et la
+            // quotité du temps partiel.
+            const garantis = garantie[0] / (tauxAppel * reference);
+            if (garantis > pointsAnnee) {
+              pointsAnnee = garantis;
+              fiabiliteAchat = Math.min(fiabiliteAchat, garantie[1]);
+            }
           }
           // Changement d'unité entre l'achat et le service : les points
           // Arrco d'avant 1999 sont ceux de l'UNIRS, et valent 0,387464 point

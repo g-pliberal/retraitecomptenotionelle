@@ -1673,10 +1673,11 @@ export class PeriodeRegime {
 
   /**
    * Les points que la garantie minimale assure à une ligne de l'année, ou
-   * null si le régime n'en donne pas : les 120 points de l'Agirc d'une année
-   * entière à temps plein, proratisés comme la cotisation forfaitaire qui les
-   * achète, sur la durée de présence et sur la quotité du temps partiel. Voir
-   * regimes.py.
+   * null si le régime n'en donne pas : l'objectif de la fiche pour une année
+   * entière à temps plein, proratisé comme la cotisation forfaitaire qui les
+   * achète, sur la durée de présence et sur la quotité du temps partiel. Le
+   * forfait publié, quand il existe, l'emporte (`ValeursPoint.garantie`).
+   * Voir regimes.py.
    */
   pointsGarantis(part, quotite) {
     if (this.points_minimum_annuels === null || this.points_minimum_annuels === undefined) {
@@ -2308,6 +2309,35 @@ export class ValeursPoint {
     const appel = this._enVigueur(regime, "taux_appel", annee);
     const [taux, fiabiliteAppel] = appel !== null ? appel : [1.0, 1];
     return [reference[0], taux, Math.min(reference[1], fiabiliteAppel)];
+  }
+
+  /**
+   * Cotisation de la garantie minimale de points d'une ligne de l'année, taux
+   * d'appel compris, et sa fiabilité : [cotisation, fiabilité], ou null si la
+   * période n'a pas de garantie ou si le point n'a pas de prix cette année-là.
+   * C'est le forfait publié (`cotisation_garantie`) — 2 843 F en 1989,
+   * 872,52 € en 2018 —, proratisé comme les points qu'il achète au prix de
+   * l'année ; sans forfait publié, les points de la fiche à ce prix. Voir
+   * scenarios/actuel.py.
+   */
+  garantie(regime, periode, annee, part, quotite) {
+    const points = periode.pointsGarantis(part, quotite);
+    if (points === null) {
+      return null;
+    }
+    const achat = this.achat(regime, annee);
+    if (achat === null) {
+      return null;
+    }
+    const [reference, tauxAppel, fiabilite] = achat;
+    const forfaits = this._table.get(`${regime}|cotisation_garantie`);
+    if (forfaits !== undefined && forfaits.annees[0] <= annee
+        && annee <= forfaits.annees[forfaits.annees.length - 1]) {
+      const [forfait, fiabiliteForfait] = this._enVigueur(
+        regime, "cotisation_garantie", annee);
+      return [forfait * part * quotite, fiabiliteForfait];
+    }
+    return [points * reference * tauxAppel, fiabilite];
   }
 
   derniereAnneeServie(regime) {

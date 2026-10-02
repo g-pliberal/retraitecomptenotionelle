@@ -12342,10 +12342,10 @@ contributifs que la carrière suffit à déterminer :</p>
 <p>Deux barèmes propres complètent l'ensemble : la décote de la fonction
 publique, dont le coefficient et l'âge d'annulation montent en charge de 2006 à
 2020 et dont l'âge d'annulation est la limite d'âge du grade et non 67 ans ; et
-la garantie minimale de points de l'Agirc, 120 points par an de 1989 à 2018
-même quand la tranche B est nulle, au prorata du temps de travail : une
-cotisation forfaitaire les achetait, que les comptes notionnels reçoivent
-aussi.</p>
+la garantie minimale de points de l'Agirc, de 1989 à 2018, même quand la
+tranche B est nulle : les points qu'achetait une cotisation forfaitaire publiée
+chaque année, 144 jusqu'en 1996 et 120 ensuite, au prorata du temps de travail
+— une cotisation que les comptes notionnels reçoivent aussi.</p>
 <p>Enfin, le système dit si le droit <strong>ouvre</strong> la liquidation
 demandée : âge légal du régime, avancé par la durée de services là où le
 régime le prévoit (emplois classés, militaires, marins), ou départ anticipé

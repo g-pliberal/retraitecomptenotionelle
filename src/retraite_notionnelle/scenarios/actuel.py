@@ -2338,6 +2338,36 @@ class ValeursPoint:
         taux, fiabilite_appel = appel if appel else (1.0, Fiabilite.MOYENNE)
         return reference[0], taux, min(reference[1], fiabilite_appel)
 
+    def garantie(self, regime: str, periode, annee: int, part: float,
+                 quotite: float) -> tuple[float, Fiabilite] | None:
+        """Cotisation de la garantie minimale de points d'une ligne de l'année,
+        taux d'appel compris, et sa fiabilité ; ``None`` si la période n'a pas
+        de garantie ou si le point n'a pas de prix cette année-là.
+
+        C'est le FORFAIT PUBLIÉ (``cotisation_garantie``) : 2 843 F en 1989,
+        872,52 € en 2018. Il achète ses points au prix de l'année, comme toute
+        cotisation — 144 points en 1989, 120 en 2018, et 136 seulement en 1996,
+        quand l'accord du 25 avril 1996 majora le salaire de référence d'un
+        forfait déjà fixé. Il se proratise comme eux, sur la durée de présence
+        et sur la quotité du temps partiel (:meth:`PeriodeRegime.points_garantis`).
+        Une année sans forfait publié retombe sur les points de la fiche, au
+        prix de l'année. Le scénario 1 en tire les points, le compte notionnel
+        l'assiette qui la prélève.
+        """
+        points = periode.points_garantis(part, quotite)
+        if points is None:
+            return None
+        achat = self.achat(regime, annee)
+        if achat is None:
+            return None
+        reference, taux_appel, fiabilite = achat
+        forfaits = self._table.get((regime, "cotisation_garantie"))
+        if forfaits and min(forfaits) <= annee <= max(forfaits):
+            forfait, fiabilite_forfait = self._en_vigueur(
+                regime, "cotisation_garantie", annee)
+            return forfait * part * quotite, fiabilite_forfait
+        return points * reference * taux_appel, fiabilite
+
     def derniere_annee_servie(self, regime: str) -> int | None:
         valeurs = self._table.get((regime, "valeur_service"))
         return max(valeurs) if valeurs else None

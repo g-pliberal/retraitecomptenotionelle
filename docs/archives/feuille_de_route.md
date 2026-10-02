@@ -15442,3 +15442,92 @@ restants » : les questions que la fiche laissait ouvertes.
 un texte de l'Agirc pour le prorata ; les montants de 1989 à 2007. Le temps
 partiel ordinaire attend toujours une quotité dans la saisie, et les
 intermittents un statut.
+
+**Deuxième suite, le même jour.** « Fait des recherches complémentaires pour
+ce qui est encore ouvert. Par contre, je ne veux pas prendre les contributions
+d'équilibre ; ce ne sont pas des cotisations » : l'action 140 est abandonnée, et
+les questions de la fiche reprises.
+
+- *Les montants de 1989 à 2018 sont trouvés, et ils changent la règle.* Le
+  barème IPP qu'OpenFisca-France reprend (`gmp_cot_f_a`) porte le forfait annuel
+  de chaque année, en francs jusqu'en 2001 : 2 843 F en 1989, 872,52 € en 2018.
+  Au salaire de référence et au taux d'appel du dépôt, il achète exactement 144
+  points en 1989 et en 1990, de 142,45 à 146,62 de 1991 à 1995, 136,31 en 1996,
+  puis 120 de 1997 à 2018, à 0,3 point près. Le dépôt supposait 120 points dès
+  1989 : l'accord du 8 décembre 1988 en visait 144 (UGICT-CGT, l'un de ses
+  signataires), que l'accord du 25 avril 1996 « ramène, à compter du 1er janvier
+  1997, à 120 points » (article 7, lu dans la copie du Medef). Le même accord
+  explique 1996 : le forfait, 144 fois le salaire de référence de 1995, précède
+  la majoration de 4 % de celui de 1996 (article 1er).
+- *Le modèle sert le forfait publié*, versé dans `valeurs_point.csv` sous la
+  mesure `cotisation_garantie` (source `openfisca_gmp`, niveau `haute`, par
+  `source_valeurs_point_gmp` de `verifier_donnees.py`) : le scénario 1 en tire
+  les points au prix de l'année, le compte notionnel la cotisation
+  (`ValeursPoint.garantie` et son jumeau). `points_minimum_annuels` passe à 144
+  de 1989 à 1996, et ne sert plus qu'à dire où vaut la garantie et de repli.
+- *Le texte fondateur est daté* : non pas un « accord du 9 février 1988 », que
+  citaient les deux fiches de l'Agirc et le calendrier, mais l'accord du
+  8 décembre 1988, étendu par l'arrêté du 24 février 1989, que vise l'arrêté du
+  2 novembre 1992 (JORF du 11 novembre, lu dans l'index du dépôt) ; celui-ci
+  étend un avenant du 13 juin 1991, qui n'est pas lu. Le calendrier gagne
+  `gmp_agirc_1997`.
+- *Plusieurs employeurs* : GERESO (fiche C195, octobre 2010) répartit le forfait
+  au prorata des salaires ; le modèle, qui ne voit qu'une ligne par année,
+  retrouve le même total. La même fiche confirme le prorata du temps partiel et
+  les trentièmes de présence.
+- *L'accord de 1996 éclaire la décision du propriétaire* : pour remplacer les
+  autres cotisations forfaitaires de l'Agirc, il crée une contribution
+  « exceptionnelle et temporaire, non génératrice de droits » — la frontière
+  même que le compte notionnel garde.
+
+Un cadre entré en 1990 sous le plafond acquiert 3 645 points Agirc au lieu de
+3 480 : 68 € de pension par an de plus au scénario 1, 62 € aux scénarios 4 et
+6. 26 des 689 témoins bougent, de +0,25 % en médiane au scénario 1 jusqu'à
++1,09 % au scénario 4 pour `releve_generation_1950` ; le coût agrégé ne bouge
+qu'à l'arrondi. Le portage reste le jumeau du Python : écart relatif maximal de
+7 × 10⁻¹⁴ sur les 689 témoins.
+
+**Ce qui reste** : l'accord du 8 décembre 1988 et son avenant de 1991, ni au
+JORF ni dans KALI ; ce qui fait acheter au forfait de 1991 à 1995 un peu plus
+ou un peu moins de 144 points ; une publication de la fédération pour les
+forfaits d'avant 2008 ; les circulaires 2017-07-DT et 2017-12-DRJ ; un texte de
+l'Agirc pour le prorata.
+
+### 140. Les contributions d'équilibre de l'Agirc-Arrco au compte notionnel : CEG, CET, AGFF et ASF — `abandonnée`
+
+**D'où elle vient.** Relevé le 2 octobre 2026, en répondant à « Dans les
+scénarios autres que 1, est-ce que tu prends en compte les retraites
+complémentaires ? ». Le propriétaire l'a laissée pour plus tard, l'action 139
+faite : « Pas maintenant ». Le compte notionnel reçoit les cotisations des
+complémentaires au taux appelé, la majoration de 27 % comprise, qui n'achète
+aucun point ; il ne reçoit pas les contributions d'équilibre, qui n'en achètent
+pas davantage. Ce sont la contribution d'équilibre général (2,15 % sur la
+tranche 1 et 2,70 % sur la tranche 2, partagés à 40 % pour le salarié) et la
+contribution d'équilibre technique (0,35 % au-dessus du plafond) depuis 2019,
+par l'accord du 17 novembre 2017 ; avant elles, l'AGFF d'avril 2001 à 2018
+(accord du 10 février 2001) et l'ASF depuis 1983 (accord du 4 février 1983),
+que l'article 2 de l'accord de 2017 éteint. Les fiches de régime ne les portent
+pas ; seule la fiche de paie (`remuneration.py`) connaît la CEG et la CET de
+l'année. Le taux du régime unique les omet aussi : 25,83 %, quand l'effort
+réel que la fiche de paie du scénario 6 retient est de 27,98 %.
+
+**Ce qui est à faire.**
+
+1. Les taux, année par année et tranche par tranche, avec leur partage : la
+   CEG et la CET dans l'accord de 2017 ; l'AGFF et l'ASF dans leurs accords et
+   les circulaires de l'Agirc et de l'Arrco, que les lettres circulaires de
+   l'UCANSS relaient en partie (004-10 et 003-11, lues le 2 octobre 2026).
+2. Les porter au compte comme la cotisation déplafonnée du régime général : un
+   prélèvement sans points, que le scénario 1 ignore et que le compte reçoit.
+3. Décider si la CEG entre au taux du régime unique, qui passerait de 25,83 % à
+   27,98 %.
+
+**Ce qu'on en attend.** Les comptes des salariés du privé montent aux
+scénarios 2 à 6, où la perte affichée est aujourd'hui surestimée pour eux ;
+presque tous leurs témoins bougent.
+
+Abandonnée le 2 octobre 2026, avant tout commencement, à la demande du
+propriétaire : « je ne veux pas prendre les contributions d'équilibre ; ce ne
+sont pas des cotisations ». La raison est en bas, sous « Ce qui est
+délibérément en bas » : le compte reçoit les cotisations, même sans droits, et
+non les contributions d'équilibre.

@@ -4707,12 +4707,16 @@ def test_le_minimum_vieillesse_complete_les_toutes_petites_pensions(simulateur):
 
 
 def test_la_garantie_minimale_de_points_agirc_est_servie(simulateur):
-    """120 points par an, même quand la tranche B est nulle.
+    """Ce que le forfait de l'année achète, même quand la tranche B est nulle.
 
     Un cadre payé sous le plafond de la Sécurité sociale n'acquérait aucun
-    point à l'Agirc, quand l'accord du 9 février 1988 lui en donnait 120 par
-    an. La fiche du régime le déclarait ; le moteur ne le servait pas.
+    point à l'Agirc, quand l'accord du 8 décembre 1988 lui en garantissait
+    144 par an, ramenés à 120 en 1997. La fiche du régime le déclarait ; le
+    moteur ne le servait pas. Il servit ensuite 120 points dès 1989, jusqu'au
+    2 octobre 2026.
     """
+    import re
+
     commun = dict(
         annee_naissance=1958, sexe="H", affiliation="salarie_prive_cadre",
         age_debut=32, age_liquidation=64, profil_carriere="plat",
@@ -4721,11 +4725,54 @@ def test_la_garantie_minimale_de_points_agirc_est_servie(simulateur):
         simulateur.carriere_simple(niveau_salaire=0.8, **commun))
     agirc = {p.regime: p for p in sous_plafond.pensions_par_regime}["agirc"]
 
-    # Vingt-neuf années cotisées de 1990 à 2018, toutes garanties.
+    # Vingt-neuf années cotisées de 1990 à 2018, toutes garanties : sept à
+    # 136-147 points, vingt-deux à 120.
     assert agirc.montant > 0
-    # Les points s'affichent au centième depuis que la formule doit se
-    # refaire : trente-quatre-cent-quatre-vingts, virgule zéro zéro.
-    assert "3,480.00 points" in agirc.detail
+    attendus = sum(_points_de_la_garantie(simulateur, annee)
+                   for annee in range(1990, 2019))
+    assert attendus > 29 * 120 + 7 * 16
+    # Les points s'affichent au centième depuis que la formule doit se refaire.
+    affiches = re.search(r"([\d,]+\.\d+) points", agirc.detail).group(1)
+    assert float(affiches.replace(",", "")) == pytest.approx(attendus, abs=0.006)
+
+
+def _points_de_la_garantie(simulateur, annee, part=1.0, quotite=1.0):
+    """Les points qu'achète, l'année dite, le forfait publié de la garantie."""
+    valeurs = simulateur.scenario_actuel.valeurs_point
+    (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(annee)
+                    if p.assiette == "tranche_b"]
+    reference, appel, _ = valeurs.achat("agirc", annee)
+    cotisation, _ = valeurs.garantie("agirc", tranche_b, annee, part, quotite)
+    return cotisation / (appel * reference)
+
+
+def test_la_garantie_valait_144_points_jusqu_en_1996(simulateur):
+    """L'accord du 8 décembre 1988 visait 144 points par an ; l'accord du
+    25 avril 1996, article 7, « ramène » la garantie « à compter du
+    1er janvier 1997, à 120 points ». Le forfait publié le confirme : au prix
+    de l'année, il achète 144 points en 1989 et en 1990, 120 de 1997 à 2018.
+
+    1996 fait exception, et le forfait l'explique : 549,64 €, soit 144 points
+    au salaire de référence de 1995, quand le même accord, signé en avril,
+    majora de 4 % celui de 1996 (article 1er). Le cadre n'en eut que 136 —
+    ce que le modèle sert, puisqu'il sert ce que la cotisation achète.
+    """
+    valeurs = simulateur.scenario_actuel.valeurs_point
+    for annee in (1989, 1990):
+        assert _points_de_la_garantie(simulateur, annee) == pytest.approx(144, abs=0.005)
+    for annee in range(1997, 2019):
+        assert _points_de_la_garantie(simulateur, annee) == pytest.approx(120, abs=0.3)
+    reference_1995, appel_1995, _ = valeurs.achat("agirc", 1995)
+    (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(1996)
+                    if p.assiette == "tranche_b"]
+    forfait_1996, _ = valeurs.garantie("agirc", tranche_b, 1996, 1.0, 1.0)
+    assert forfait_1996 == pytest.approx(144 * reference_1995 * appel_1995, abs=0.01)
+    assert _points_de_la_garantie(simulateur, 1996) == pytest.approx(136.31, abs=0.005)
+    # L'objectif de la fiche, que le forfait publié remplace : 144, puis 120.
+    assert tranche_b.points_garantis(1.0, 1.0) == 144
+    (tranche_b_1997,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(1997)
+                         if p.assiette == "tranche_b"]
+    assert tranche_b_1997.points_garantis(1.0, 1.0) == 120
 
 
 def _cotisation_agirc(simulateur, carriere, annee, part):
@@ -4758,11 +4805,11 @@ def test_la_cotisation_de_la_garantie_minimale_va_au_compte(simulateur):
             niveau_salaire=niveau, profil_carriere="plat")
 
     plafond = simulateur.macro.plafond_securite_sociale(2018)
-    reference, appel, _ = simulateur.scenario_actuel.valeurs_point.achat("agirc", 2018)
-    forfait = 120 * reference * appel
-    assert forfait == pytest.approx(872.52, abs=0.05)
     (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(2018)
                     if p.assiette == "tranche_b"]
+    forfait, _ = simulateur.scenario_actuel.valeurs_point.garantie(
+        "agirc", tranche_b, 2018, 1.0, 1.0)
+    assert forfait == pytest.approx(872.52, abs=1e-9)
 
     # Sous le plafond : le forfait entier, partagé comme la tranche B.
     totale, ligne = _cotisation_agirc(simulateur, carriere(0.8), 2018, PartCotisation.TOTALE)
@@ -4825,7 +4872,9 @@ def test_la_garantie_minimale_se_proratise(simulateur):
     (premiere,) = juillet.lignes_de(1997)
     assert premiere.fraction_annee == pytest.approx(0.5)
     # Tout le reste de la carrière est le même : l'écart est la première année.
-    assert points_agirc(janvier) - points_agirc(juillet) == pytest.approx(60, abs=1e-6)
+    assert points_agirc(janvier) - points_agirc(juillet) == pytest.approx(
+        _points_de_la_garantie(simulateur, 1997, part=0.5), abs=0.011)
+    assert _points_de_la_garantie(simulateur, 1997, part=0.5) == pytest.approx(60, abs=0.01)
     entiere = _cotisation_agirc(simulateur, janvier, 1997, PartCotisation.TOTALE)[0]
     moitie = _cotisation_agirc(simulateur, juillet, 1997, PartCotisation.TOTALE)[0]
     assert entiere > 0
@@ -4852,9 +4901,12 @@ def test_la_garantie_minimale_ne_vaut_pas_pour_une_annee_de_chomage(simulateur):
         return float(re.search(r"([\d,]+\.\d+) points", detail).group(1).replace(",", ""))
 
     travaillees = points_agirc({})
-    assert travaillees == pytest.approx(22 * 120)
+    assert travaillees == pytest.approx(
+        sum(_points_de_la_garantie(simulateur, annee) for annee in range(1997, 2019)),
+        abs=0.006)
     # Un salaire de référence sous le plafond : la tranche B est nulle.
-    assert points_agirc({2005: "chomage_indemnise"}) == pytest.approx(travaillees - 120)
+    assert points_agirc({2005: "chomage_indemnise"}) == pytest.approx(
+        travaillees - _points_de_la_garantie(simulateur, 2005), abs=0.011)
     assert points_agirc({2005: "maladie"}) == pytest.approx(travaillees)
 
 
@@ -4868,19 +4920,23 @@ def test_la_garantie_minimale_ne_vaut_pas_pour_une_annee_de_chomage(simulateur):
 ])
 def test_le_prix_de_la_garantie_suit_les_montants_publies(simulateur, annee, mensuelle,
                                                           salariale, source):
-    """La cotisation de la garantie, le prix de 120 points — salaire de
-    référence de l'année, au taux d'appel —, reconstitué par le modèle et non
-    saisi : il doit retomber sur ce que l'Agirc a publié, au centime de chaque
-    mensualité près, part du salarié comprise. Les montants de janvier, fixés
-    « dans l'attente de la fixation du salaire de référence », étaient
-    provisoires : ce sont les montants définitifs qui se comparent.
+    """La cotisation de la garantie que le modèle prélève — le forfait annuel
+    du barème IPP, transcrit dans `valeurs_point.csv` — doit retomber sur ce
+    que d'autres que l'IPP ont publié, au centime de chaque mensualité près,
+    part du salarié comprise. Et c'est bien le prix de 120 points : salaire de
+    référence de l'année, au taux d'appel, à la mensualité arrondie près. Les
+    montants de janvier, fixés « dans l'attente de la fixation du salaire de
+    référence », étaient provisoires : ce sont les définitifs qui se comparent.
     """
     reference, appel, _ = simulateur.scenario_actuel.valeurs_point.achat("agirc", annee)
     (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(annee)
                     if p.assiette == "tranche_b"]
-    prix = 120 * reference * appel / 12
-    assert prix == pytest.approx(mensuelle, abs=0.015), source
+    forfait, _ = simulateur.scenario_actuel.valeurs_point.garantie(
+        "agirc", tranche_b, annee, 1.0, 1.0)
+    prix = forfait / 12
+    assert prix == pytest.approx(mensuelle, abs=0.005), source
     assert prix * tranche_b.part_salariale == pytest.approx(salariale, abs=0.015), source
+    assert 120 * reference * appel / 12 == pytest.approx(mensuelle, abs=0.015), source
 
 
 def test_le_regime_de_base_des_avocats_est_forfaitaire(simulateur):

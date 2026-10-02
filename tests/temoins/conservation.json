@@ -133,6 +133,7 @@
    "fusion_agirc_arrco_2019",
    "generalisation_arrco_1973",
    "gmp_agirc_1989",
+   "gmp_agirc_1997",
    "igrante_1960",
    "ipacte_1951",
    "ircantec_2008",
@@ -438,7 +439,9 @@
    "2026-10-01 | les autres modèles publics, demandés en liste exhaustive par le propriétaire : le registre data/reference/referents.yaml (action 137)",
    "2026-10-01 | les limites du cinquième domaine, les carrières hors de France, reprises à la demande du propriétaire : « Fait de ton mieux pour gérer ces limites »",
    "2026-10-01 | les simulateurs d'info-retraite saisis à la main par le propriétaire, un cas par tour, selon le § 3.5 de l'architecture : « Tu vas me donner un cas intéressant pour faire avancer notre projet avec le simulateur converne et je te dirais la réponse »",
-   "2026-10-02 | la garantie minimale de points de l'Agirc, à la demande du propriétaire : « Je veux que tu m'expliques ce que c'est pour voir si on doit la prendre en compte ou pas », puis « Ok, faisons ça […] y compris le temps partiel » (action 139)"
+   "2026-10-02 | la garantie minimale de points de l'Agirc, à la demande du propriétaire : « Je veux que tu m'expliques ce que c'est pour voir si on doit la prendre en compte ou pas », puis « Ok, faisons ça […] y compris le temps partiel » (action 139)",
+   "2026-10-02 | les questions restées ouvertes sur la garantie minimale de points de l'Agirc, à la demande du propriétaire : « Occupe toi des problèmes qui sont encore restants » (action 139, suite)",
+   "2026-10-02 | recherches complémentaires sur ce que la garantie minimale de points laissait ouvert, à la demande du propriétaire : « Fait des recherches complémentaires pour ce qui est encore ouvert. Par contre, je ne veux pas prendre les contributions d'équilibre ; ce ne sont pas des cotisations » (action 139, deuxième suite ; action 140 abandonnée)"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1189,6 +1192,7 @@
    "openfisca_contribution_employeur_public",
    "openfisca_cotisations",
    "openfisca_fonction_publique_oracle",
+   "openfisca_gmp",
    "openfisca_minimum_contributif",
    "openfisca_parametres_generation",
    "openfisca_part_salariale",
@@ -2021,7 +2025,14 @@
     "3473c12fd991f3b9",
     "304d43d2566ecad6",
     "05fe113c8aadbdd9",
-    "f229ee914411e9cb"
+    "f229ee914411e9cb",
+    "c981e0771cf485b0",
+    "64fa78f2d0f85afe",
+    "4c32949843d50ff8",
+    "2d3773925e769486",
+    "c974f9d6fc23f84b",
+    "349f5c1828304e87",
+    "2c8cb2986f137131"
    ],
    "14. La mortalité différentielle par revenu, que le diviseur ignore — `fait`": [
     "edec51f69231424b",
@@ -2040,6 +2051,14 @@
     "0c3b13a852bbc25a",
     "930d46eb8c941006",
     "81edb3ace5901385"
+   ],
+   "140. Les contributions d'équilibre de l'Agirc-Arrco au compte notionnel : CEG, CET, AGFF et ASF — `abandonnée`": [
+    "68e5593922264625",
+    "55c84babf966e0c9",
+    "738a767abdd3c8ad",
+    "9d532137a2dabef6",
+    "1fbf42d00dd2b8de",
+    "ba68af3e43a0d894"
    ],
    "15. Rendre les pages longues parcourables — `fait`": [
     "ea6c4ffd35b0e2ee",
@@ -5775,7 +5794,10 @@
     "605590aee5df31a9",
     "c1bb5476fc9e73e5",
     "e9e063fff22f3561",
-    "48084d72c20a75ef"
+    "48084d72c20a75ef",
+    "bc21ced8301d18bf",
+    "3af1148f7e3d658c",
+    "df91702878cfa74e"
    ],
    "Les actions en cours": [
     "12843a9770b8672a"
@@ -6104,7 +6126,7 @@
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
     "d8fe3e7fd9af50b2",
-    "b3d3d5299ad8b04b"
+    "52cd4fede1404d81"
    ],
    "Avant de partir": [
     "5d7ed1de7dc7c4d7",

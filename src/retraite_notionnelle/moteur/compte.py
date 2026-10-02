@@ -244,23 +244,21 @@ class ConstructeurCompte:
         """L'assiette que la garantie minimale de points fait cotiser, et sa
         fiabilité ; ``None`` si la période n'en a pas.
 
-        La cotisation forfaitaire de la garantie achète ses points au prix de
-        tout autre point : leur nombre, fois le salaire de référence, au taux
-        d'appel — 120 × 5,8166 € × 1,25 = 872,49 € pour 2018, que la caisse
-        arrondit à 72,71 € par mois. Ramenée au taux de la tranche B, elle est
-        l'assiette qui la prélève : en 2018, les 353,82 € par mois qui séparent
-        le salaire charnière du plafond. Le scénario 1 en tire les mêmes points
-        (`droit.acquerir`), par le même prix.
+        La cotisation est le forfait que la caisse publiait chaque année
+        (`ValeursPoint.garantie`) : 872,52 € pour 2018, soit 72,71 € par mois,
+        proratisés sur la présence et la quotité. Ramenée au taux de la
+        tranche B, elle est l'assiette qui la prélève : en 2018, les 353,82 €
+        par mois qui séparent le salaire charnière du plafond. Le scénario 1
+        tire du même forfait ses points (`droit.acquerir`), au prix de l'année.
         """
-        points = periode.points_garantis(part, quotite)
-        if not points or periode.taux_cotisation_retraite <= 0:
+        if periode.taux_cotisation_retraite <= 0:
             return None
-        achat = self.valeurs_point.achat(periode.points_de or code, annee)
-        if achat is None:
+        garantie = self.valeurs_point.garantie(periode.points_de or code, periode,
+                                               annee, part, quotite)
+        if garantie is None:
             return None
-        reference, taux_appel, fiabilite = achat
-        return (points * reference * taux_appel / periode.taux_cotisation_retraite,
-                fiabilite)
+        cotisation, fiabilite = garantie
+        return cotisation / periode.taux_cotisation_retraite, fiabilite
 
     def _cotisation_par_classes(self, code: str, periode, revenu: float,
                                 annee: int) -> tuple[float, Fiabilite] | None:

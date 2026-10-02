@@ -118,23 +118,23 @@ export class ConstructeurCompte {
 
   /**
    * L'assiette que la garantie minimale de points fait cotiser, et sa
-   * fiabilité ; null si la période n'en a pas. La cotisation forfaitaire
-   * achète ses points au prix de tout autre point — leur nombre, fois le
-   * salaire de référence, au taux d'appel : 872,49 € pour 2018 —, et ramenée au
-   * taux de la tranche B elle est l'assiette qui la prélève. Voir compte.py.
+   * fiabilité ; null si la période n'en a pas. La cotisation est le forfait
+   * que la caisse publiait chaque année — 872,52 € pour 2018, soit 72,71 € par
+   * mois —, proratisé sur la présence et la quotité ; ramenée au taux de la
+   * tranche B, elle est l'assiette qui la prélève. Voir compte.py.
    * @returns {[number, number]|null}
    */
   _assietteGarantie(code, periode, annee, part, quotite) {
-    const points = periode.pointsGarantis(part, quotite);
-    if (!points || periode.taux_cotisation_retraite <= 0) {
+    if (periode.taux_cotisation_retraite <= 0) {
       return null;
     }
-    const achat = this.valeursPoint.achat(periode.points_de || code, annee);
-    if (achat === null) {
+    const garantie = this.valeursPoint.garantie(
+      periode.points_de || code, periode, annee, part, quotite);
+    if (garantie === null) {
       return null;
     }
-    const [reference, tauxAppel, fiabilite] = achat;
-    return [points * reference * tauxAppel / periode.taux_cotisation_retraite, fiabilite];
+    const [cotisation, fiabilite] = garantie;
+    return [cotisation / periode.taux_cotisation_retraite, fiabilite];
   }
 
   /**

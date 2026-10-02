@@ -604,13 +604,15 @@ ligne :
 | coefficient de solidarité Agirc-Arrco | **non** — dispositif éteint, voir `docs/limites.md` |
 
 **La garantie minimale de points de l'Agirc n'est pas dans ces tableaux : elle
-n'est pas gratuite.** Le scénario 1 la sert, <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.*.points_minimum_annuels)-->120<!--/--> points par an de
-1989 à 2018, proratisés sur la durée de présence et sur la quotité du temps
-partiel ; une année de chômage indemnisé n'en a pas, ses points ne portant que
-sur la tranche B du salaire journalier de référence. Mais une cotisation forfaitaire achetait ces points au prix de tout
-autre point, « en contrepartie de cotisations » (convention du 14 mars 1947,
-article 6) : le compte notionnel la reçoit, et les scénarios notionnels ne la
-retirent pas. Voir la fiche `garantie_minimale_points_agirc`.
+n'est pas gratuite.** Le scénario 1 la sert de 1989 à 2018 : les points
+qu'achète, au prix de tout autre point, la cotisation forfaitaire que la caisse
+publiait chaque année — l'objectif était de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1989;assiette=tranche_b.points_minimum_annuels)-->144<!--/--> points par an
+jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1997;assiette=tranche_b.points_minimum_annuels)-->120<!--/--> ensuite —, proratisés sur la durée de présence et
+sur la quotité du temps partiel ; une année de chômage indemnisé n'en a pas, ses
+points ne portant que sur la tranche B du salaire journalier de référence. Cette
+cotisation, versée « en contrepartie de cotisations » (convention du 14 mars
+1947, article 6), le compte notionnel la reçoit, et les scénarios notionnels ne
+la retirent pas. Voir la fiche `garantie_minimale_points_agirc`.
 
 Une seule exception, et elle est explicite : la valorisation des droits acquis
 du scénario 3 appelle le scénario 1 avec `avantages_non_contributifs=False`,
@@ -2100,7 +2102,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->180<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->181<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->39<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 

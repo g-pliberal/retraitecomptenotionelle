@@ -48,7 +48,7 @@ Ce qui suit est le recensement complet de ses paramètres et de leur état.
 | Années retenues au salaire de référence | table 1934-1948, <!--chiffre:minimum(data/reference/legislation/annees_salaire_reference.csv:annees)-->10<!--/--> → <!--chiffre:maximum(data/reference/legislation/annees_salaire_reference.csv:annees)-->25<!--/--> années | **certifiée** (R. 351-29-1) |
 | Coefficients d'anticipation Agirc-Arrco | deux tables, 1 → 0,78 et 1 → 0,43 | barème publié par la caisse, saisi |
 | Plafond de la majoration familiale Agirc-Arrco | <!--chiffre:partout(data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml + data/reference/regimes/unirs.yaml:periodes.*.plafond_majoration_enfants)-->2 367<!--/--> €/an (novembre 2025) | publié par la caisse, saisi |
-| Garantie minimale de points de l'Agirc | <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.*.points_minimum_annuels)-->120<!--/--> points par an, 1989-2018, proratisés sur la durée de présence et le temps partiel, aucun pour une année de chômage indemnisé ; la cotisation forfaitaire qui les achète, au prix du point, portée au compte notionnel | convention du 14 mars 1947 (article 6 ; annexe I, articles 8 et 8 bis) et accord du 17 novembre 2017 (article 155), lus ; la circulaire Agirc-Arrco de 2016 et la fiche d'Audiens de 2018, rejouées ; six montants publiés, de 2008 à 2018, retrouvés au centime de chaque mensualité |
+| Garantie minimale de points de l'Agirc | 1989-2018 : les points qu'achète la cotisation forfaitaire publiée de l'année, au prix du point — un objectif de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1989;assiette=tranche_b.points_minimum_annuels)-->144<!--/--> points par an jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1997;assiette=tranche_b.points_minimum_annuels)-->120<!--/--> ensuite —, proratisés sur la durée de présence et le temps partiel, aucun pour une année de chômage indemnisé ; la cotisation portée au compte notionnel | convention du 14 mars 1947 (article 6 ; annexe I, articles 8 et 8 bis), accord du 25 avril 1996 (article 7) et accord du 17 novembre 2017 (article 155), lus ; forfaits de 1989 à 2018 transcrits du barème IPP ; la circulaire Agirc-Arrco de 2016 et la fiche d'Audiens de 2018, rejouées ; six montants publiés, de 2008 à 2018, retrouvés au centime de chaque mensualité ; l'accord du 8 décembre 1988, qui fixait l'objectif de départ, non lu |
 | Assiette de l'AVPF | SMIC annuel, <!--chiffre:tenu(test_l_avpf_porte_un_salaire_au_compte)-->1 820<!--/--> heures | principe sourcé, assiette déduite du SMIC |
 | Droits ouverts par motif d'interruption | <!--chiffre:lignes_csv(data/reference/legislation/periodes_non_travaillees.csv)-->9<!--/--> motifs | principe sourcé, fractions non recontrôlées |
 
@@ -1934,16 +1934,16 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 ### Le reste du périmètre
 
 - **Les contributions d'équilibre de l'Agirc-Arrco ne vont pas au compte
-  notionnel.** La contribution d'équilibre général et la contribution
-  d'équilibre technique depuis 2019, l'AGFF de 2001 à 2018 et l'ASF avant elle
-  sont prélevées sur les salaires du privé, au salarié et à l'employeur, mais
-  n'ouvrent aucun point : les fiches de régime ne les portent pas, et le
-  compte des scénarios 2 à 6 ne les reçoit pas, alors qu'il reçoit d'autres
-  prélèvements sans droits — la majoration du taux d'appel, la cotisation
-  déplafonnée du régime général. Le taux du régime unique les omet aussi. Le
-  sens de l'erreur est connu : les comptes des salariés du privé sont
-  sous-alimentés, et la perte que montrent pour eux les scénarios notionnels
-  est surestimée. L'action 140 de la feuille de route, à faire, les attend.
+  notionnel, et c'est un choix.** La contribution d'équilibre général et la
+  contribution d'équilibre technique depuis 2019, l'AGFF de 2001 à 2018 et
+  l'ASF avant elle sont prélevées sur les salaires du privé, au salarié et à
+  l'employeur, sans ouvrir de points. Ce ne sont pas des cotisations, mais des
+  contributions que l'accord du 17 novembre 2017 institue « dans une
+  perspective de financement des opérations du régime » (article 37) : le
+  compte, qui reçoit toutes les parts des cotisations — la majoration du taux
+  d'appel, la cotisation déplafonnée du régime général —, ne les reçoit pas, et
+  le taux du régime unique les omet de même. Voir, dans la feuille de route,
+  « Ce qui est délibérément en bas ».
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
   2070, dernière année des projections de population de l'INSEE. Ni l'une ni

@@ -322,18 +322,21 @@ periodes:
     part_salariale: 0.25   # OpenFisca, barème salarié / employeur
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
-    points_minimum_annuels: 120
+    points_minimum_annuels: 144
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 8 % appelé à 113,4 % : 9,072 % prélevés sur
       l'assiette, dont un quart à la charge du salarié (OpenFisca-France,
       valeurs au 1er janvier 1989). GARANTIE MINIMALE DE POINTS, accord du
-      9 février 1988 : tout cadre cotisant à l'Agirc acquiert au moins 120
-      points par an, même quand sa tranche B est nulle, « en contrepartie de
-      cotisations » (convention du 14 mars 1947, art. 6, § 2, F) — une
-      cotisation forfaitaire qui les achète au prix de tout autre point,
-      proratisée sur le temps partiel et la durée de présence, et qui
-      disparaît avec la fusion du 1er janvier 2019. Taux d'appel porté à
+      8 décembre 1988, étendu par l'arrêté du 24 février 1989 : tout cadre
+      cotisant à l'Agirc acquiert au moins 144 points par an, même quand sa
+      tranche B est nulle, « en contrepartie de cotisations » (convention du
+      14 mars 1947, art. 6, § 2, F) — une cotisation forfaitaire publiée
+      chaque année (`valeurs_point.csv`, `cotisation_garantie`), qui les
+      achète au prix de tout autre point, proratisée sur le temps partiel et
+      la durée de présence. L'accord du 25 avril 1996 (art. 7) la ramène à
+      120 points au 1er janvier 1997 ; elle disparaît avec la fusion du
+      1er janvier 2019. Taux d'appel porté à
       113,4 %.
 
   - debut: 1990
@@ -354,7 +357,7 @@ periodes:
     part_salariale: 0.25   # OpenFisca, barème salarié / employeur
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
-    points_minimum_annuels: 120
+    points_minimum_annuels: 144
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 8 % appelé à 117 % : 9,36 % prélevés sur
@@ -380,7 +383,7 @@ periodes:
     part_salariale: 0.301   # OpenFisca, barème salarié / employeur
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
-    points_minimum_annuels: 120
+    points_minimum_annuels: 144
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 10 % appelé à 121 % : 12,1 % prélevés sur
@@ -408,7 +411,7 @@ periodes:
     part_salariale: 0.3333   # OpenFisca, barème salarié / employeur
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
-    points_minimum_annuels: 120
+    points_minimum_annuels: 144
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 12 % appelé à 125 % : 15 % prélevés sur l'assiette,
@@ -434,7 +437,7 @@ periodes:
     part_salariale: 0.3462   # OpenFisca, barème salarié / employeur
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
-    points_minimum_annuels: 120
+    points_minimum_annuels: 144
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 13 % appelé à 125 % : 16,25 % prélevés sur

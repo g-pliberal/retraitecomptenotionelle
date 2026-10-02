@@ -3607,6 +3607,26 @@ institutions:
           Recoupé à chaque exécution contre le rendement instantané que
           l'Agirc-Arrco publie pour l'année en cours : 5,61 % en 2025.
 
+      - id: openfisca_gmp
+        titre: >-
+          Cotisation forfaitaire annuelle de la garantie minimale de points de
+          l'Agirc, 1989-2018
+        url: https://github.com/openfisca/openfisca-france/blob/master/openfisca_france/parameters/prelevements_sociaux/regimes_complementaires_retraite_secteur_prive/gmp/cotisation_forfaitaire_annuelle.yaml
+        acces: api
+        statut_integration: saisi
+        cible: data/reference/regimes/valeurs_point.csv
+        note: >-
+          Le barème IPP `gmp_cot_f_a`, qui cite les circulaires Agirc de 2005
+          à 2017 et, avant 2005, les barèmes de la fédération : en francs
+          jusqu'en 2001, 2015 sans ligne (le forfait de 2014 y restait en
+          vigueur). Transcrit à la main le 2 octobre 2026 dans
+          `COTISATION_GMP_FRANCS` et `COTISATION_GMP_EUROS` de
+          scripts/verifier_donnees.py, qui l'écrit au niveau `haute` sous la
+          mesure `cotisation_garantie`. Recoupé par le dépôt lui-même : au
+          salaire de référence et au taux d'appel de l'année, le forfait
+          achète 144 points en 1989 et en 1990, ce que l'accord du 8 décembre
+          1988 visait, puis 120 points de 1997 à 2018, à 0,3 point près.
+
       - id: openfisca_regime_general_oracle
         titre: Moteur de calcul du régime général — contre-expertise du scénario 1
         url: https://github.com/openfisca/openfisca-france-pension

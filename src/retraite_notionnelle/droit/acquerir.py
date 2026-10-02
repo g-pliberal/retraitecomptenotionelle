@@ -524,8 +524,9 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 if achat is not None:
                     reference, taux_appel, fiabilite_achat = achat
                     points_annee = cotisation / (taux_appel * reference)
-                    garantis = periode.points_garantis(part, ligne.quotite)
-                    if garantis is not None and regime.famille in ligne.familles_financees:
+                    garantie = moteur.valeurs_point.garantie(
+                        bareme, periode, ligne.annee, part, ligne.quotite)
+                    if garantie is not None and regime.famille in ligne.familles_financees:
                         # Une année de CHÔMAGE INDEMNISÉ n'a pas de garantie :
                         # ses points Agirc se calculent sur la seule tranche B
                         # du salaire journalier de référence (convention du
@@ -533,24 +534,28 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         # arrêt maladie se calculent, eux, sur les points de
                         # l'année précédente (art. 8), garantie comprise : le
                         # plancher les rend.
-                        garantis = None
-                    if garantis is not None:
-                        # Garantie minimale de points de l'Agirc : tout
-                        # cadre cotisant en acquiert au moins 120 par an de
-                        # 1989 à 2018, même quand sa tranche B est nulle,
-                        # c'est-à-dire même quand son salaire ne dépasse pas
-                        # le plafond de la Sécurité sociale. La fiche la
-                        # déclarait ; le moteur ne la servait pas, et un
-                        # cadre payé sous le plafond n'acquérait rien à
-                        # l'Agirc là où le droit lui donnait ces points.
-                        # Ils ne sont pas gratuits : une cotisation
-                        # forfaitaire les achète, que le compte notionnel
-                        # porte (`ConstructeurCompte._assiette_garantie`), et
-                        # ils se proratisent comme elle, sur la durée de
-                        # présence et sur la quotité du temps partiel. Le
-                        # plancher valait cent vingt points entiers jusqu'au
-                        # 2 octobre 2026, même pour une année d'un mois.
-                        points_annee = max(points_annee, garantis)
+                        garantie = None
+                    if garantie is not None:
+                        # Garantie minimale de points de l'Agirc : tout cadre
+                        # cotisant en acquiert au moins ce que le forfait de
+                        # l'année achète — 144 points en 1989, 120 de 1997 à
+                        # 2018 —, même quand sa tranche B est nulle, c'est-à-dire
+                        # même quand son salaire ne dépasse pas le plafond de la
+                        # Sécurité sociale. La fiche la déclarait ; le moteur ne
+                        # la servait pas, et un cadre payé sous le plafond
+                        # n'acquérait rien à l'Agirc là où le droit lui donnait
+                        # ces points. Ils ne sont pas gratuits : une cotisation
+                        # forfaitaire les achète, que le compte notionnel porte
+                        # (`ConstructeurCompte._assiette_garantie`), et ils se
+                        # proratisent comme elle, sur la durée de présence et
+                        # sur la quotité du temps partiel. Le plancher valait
+                        # cent vingt points entiers jusqu'au 2 octobre 2026,
+                        # même pour une année d'un mois, et même de 1989 à 1996,
+                        # quand le forfait en achetait de 136 à 147.
+                        garantis = garantie[0] / (taux_appel * reference)
+                        if garantis > points_annee:
+                            points_annee = garantis
+                            fiabilite_achat = min(fiabilite_achat, garantie[1])
                     # Changement d'unité entre l'achat et le service : les
                     # points Arrco d'avant 1999 sont ceux de l'UNIRS, et
                     # valent 0,387464 point du régime unifié. Sans cette
