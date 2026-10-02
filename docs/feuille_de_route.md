@@ -354,6 +354,85 @@ depuis la page — et des versions numérotées, qu'une session ne peut pas
 de plus — le revenu fiscal du foyer, ou « vit seul, sans autre
 ressource » — ou une présomption déclarée.
 
+### 141. Le chômage indemnisé au compte notionnel : ce que l'Unédic versait, et non la cotisation entière — `à faire`
+
+**D'où elle vient.** Relevée le 2 octobre 2026, à la clôture de l'action 139,
+en lisant les accords qui financent les points de chômage ; le propriétaire
+l'ouvre le même jour : « Ouvre une action pour les 60 % de l'Unédic ».
+L'Agirc et l'Arrco inscrivent les points d'une période que l'Unédic indemnise
+sur le salaire journalier de référence entier : « Les droits reconnus chaque
+année aux intéressés sont d'un montant équivalent à ceux qui auraient été
+acquis par cotisations sur le SJR » (guide réglementaire Agirc-Arrco, mis à
+jour le 10 mars 2016, titre VII.3.1.6.1). L'assurance chômage n'en paie
+qu'une partie :
+
+- les cotisations obligatoires, au taux d'appel, « assises sur 60 % de la
+  tranche B du salaire journalier de référence » pour l'Agirc, depuis le
+  1er janvier 1996 (accord du 19 septembre 1996, article unique), et sur 60 %
+  de ce salaire, limité à un plafond pour un cadre et à trois sinon, pour
+  l'Arrco, depuis le 1er janvier 1990 (protocole du 2 janvier 2004, art. 3) ;
+- une part de la participation prélevée sur les allocations : 0,8 % de la
+  tranche B du salaire de référence pour l'Agirc en 1996, et 0,8 % de ce
+  salaire, sa tranche B pour l'Agirc, pour les deux régimes en 2004 ;
+- pour l'Agirc, un vingtième par an, pendant vingt ans, d'un montant exprimé
+  en valeur du 1er janvier 1996, pour le chômage d'avant cette date ;
+- en 2004, des contributions « au titre de la garantie minimale de points »,
+  que le plafond des sommes versées ne compte pas (art. 3, 1°, c).
+
+La règle des 60 % court dans tous les accords de financement agréés et publiés
+au Journal officiel, de 2000 à 2016 : arrêtés du 15 mars 2000
+(JORFARTI000001636772), du 7 août 2001 (JORFARTI000002032949), du 6 octobre
+2004 (JORFARTI000002458586), du 23 février 2006 (JORFARTI000002468100), du
+30 mars 2009 (JORFARTI000020467008), du 15 juin 2011 (JORFARTI000024186090),
+du 25 juin 2014 (JORFARTI000029151115) et du 19 février 2016
+(JORFARTI000032113833). Le reste, le régime le finance lui-même, « pour la
+partie des droits sur la tranche B des rémunérations, excédant ceux financés
+par l'Unédic » (annexe I à la convention du 14 mars 1947, art. 8 bis, § 1er,
+E, rédaction de 2006 que publie l'Unédic). Les copies de 1996 et de 2004 sont
+celles de la banque d'accords du Medef (`accords.medef.com/documents/`,
+n° 235 et 237).
+
+**Ce que fait le modèle.** Le scénario 1 sert les points du salaire entier,
+comme le droit. Le compte notionnel des scénarios 2 à 6, qui ne porte que ce
+qui a été versé, porte pour une année indemnisée la cotisation entière du
+salaire d'avant l'interruption, aux seules complémentaires du privé
+(`ConstructeurCompte._cotisation_ligne`, par `revenu_reference` et
+`familles_financees`, et son jumeau de `compte.js`) : pour une cadre payée
+48 148 € en 2010, les mêmes 2 596,50 € d'Arrco et 2 746,26 € d'Agirc, que
+l'année soit travaillée ou chômée, et leur part salariale aux scénarios 2 et
+3. La méthodologie l'écrit : « Pendant un chômage indemnisé, l'Unédic verse
+de vraies cotisations à l'Agirc-Arrco, calculées sur le salaire d'avant
+l'interruption ». Depuis l'action 139, le compte y ajoute le forfait de la
+garantie minimale de points. Aucune fiche de la carte ne dit ce financement.
+
+**Ce qui est à faire.**
+
+1. Les textes, période par période : ce qui précède 1990 pour l'Arrco et 1996
+   pour l'Agirc — le relevé de conclusions du 9 février 1984 et l'accord du
+   30 novembre 1989, que vise le protocole de 2004 — ; les accords de 2000 à
+   2016 ; ce qui suit l'accord du 14 mai 2014, jusqu'au régime unifié de 2019
+   et après ; la part de la participation reversée aux régimes, année par
+   année ; le financement de l'État pour l'ASS et l'ASFNE (guide, titre
+   VII.3.1.6.2, 2), allocations que le modèle ne distingue pas de celles de
+   l'Unédic.
+2. Décider ce que le compte porte d'une année indemnisée : ce que l'Unédic
+   versait, et rien de ce que le régime donnait sans contrepartie, comme pour
+   la maladie ; la participation prélevée sur l'allocation, que le chômeur
+   paie lui-même ; et la part, salariale ou patronale, à laquelle se rattache
+   le versement de l'Unédic aux scénarios 2 et 3.
+3. Le porter dans les deux moteurs, avec la fiche qui manque à la carte, ses
+   exemples s'il en est de publiés, et un témoin.
+4. Récrire ce qu'en disent la méthodologie, `limites.md` et l'approximation
+   de la fiche `garantie_minimale_points_agirc` sur les contributions de
+   l'Unédic.
+
+**Ce que le propriétaire tranche** : le point 2.
+
+**Ce qu'on en attend.** Le compte d'une année indemnisée descend, aux
+scénarios 2 à 6, de la cotisation entière à ce que l'Unédic versait —
+l'assiette réduite à 60 %, plus la participation ; le scénario 1 ne bouge
+pas. Neuf des 689 témoins de simulation ont une année de chômage indemnisé.
+
 ---
 
 ## Les actions en cours

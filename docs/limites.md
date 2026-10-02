@@ -1944,6 +1944,20 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   d'appel, la cotisation déplafonnée du régime général —, ne les reçoit pas, et
   le taux du régime unique les omet de même. Voir, dans la feuille de route,
   « Ce qui est délibérément en bas ».
+- **Le compte porte, pour une année de chômage indemnisé, plus que ce que
+  l'Unédic versait.** L'Agirc et l'Arrco inscrivent les points d'une période
+  indemnisée sur le salaire journalier de référence entier (guide
+  réglementaire Agirc-Arrco, titre VII.3.1.6.1), mais l'assurance chômage ne
+  les finance qu'en partie : les cotisations obligatoires, assises sur une part
+  seulement de ce salaire — de sa tranche B pour l'Agirc —, et une part de la
+  participation prélevée sur les allocations (accord du 19 septembre 1996 ;
+  accords de financement agréés au Journal officiel jusqu'en 2016) ; le
+  régime finance lui-même le reste (annexe I à la convention du 14 mars 1947,
+  art. 8 bis). Le compte des scénarios 2 à 6, qui ne porte que ce qui a été
+  versé, y porte pourtant la cotisation entière du salaire d'avant
+  l'interruption. Le sens de l'erreur est connu : les comptes des chômeurs
+  indemnisés sont surestimés ; le scénario 1, lui, sert les points du droit.
+  L'action 141 de la feuille de route, à faire, l'attend.
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
   2070, dernière année des projections de population de l'INSEE. Ni l'une ni
