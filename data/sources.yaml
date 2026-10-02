@@ -3631,6 +3631,11 @@ institutions:
           l'UCANSS qui relaient 2000, 2002 et 2003 : au centime de chaque
           mensualité. Pour 2005, la circulaire 2004-7-DRE fixe 664 € par an,
           quand ses douze mensualités de 55,33 € font les 663,96 € du barème.
+          Confronté encore aux Actualités sociales hebdomadaires de 1995 à
+          2002 : le forfait de 1996, calculé sur le salaire de référence
+          définitif de 1995 (n° 1955), et les mensualités de 1999 à 2002, au
+          centime. Ceux de 1989 à 1995, de 1997 et de 1998 n'ont pas d'autre
+          source que le barème.
 
       - id: openfisca_regime_general_oracle
         titre: Moteur de calcul du régime général — contre-expertise du scénario 1

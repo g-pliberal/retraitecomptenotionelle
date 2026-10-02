@@ -15552,6 +15552,61 @@ scénario 6 passe de 938 à 937 Md€.
 13 juin 1991 ; les circulaires de l'Agirc de 1989 à 2002 ; un texte de l'Agirc
 qui fonde le prorata du temps partiel.
 
+**Quatrième suite, le même jour.** « Continue les actions sur GMF » — la GMP :
+les trois questions laissées, cherchées encore.
+
+- *Le prorata du temps partiel a son texte.* La réponse des services
+  Agirc-Arrco du 19 avril 2013, que publie LégiSocial, renvoie « au titre
+  V-2.1.2.2 du guide réglementaire Agirc-Arrco : Modalités d'application de la
+  GMP : Travail à temps partiel » et le cite : le rapport des rémunérations à
+  temps partiel et à temps plein, « même si le plafond retenu par le régime de
+  la Sécurité sociale ne fait pas l'objet d'une telle proratisation » (article
+  R. 242-7). Le guide, que la fédération tenait sur
+  `reglementation.agirc-arrco.eu`, ne répond plus, et les archives du web
+  n'étaient pas joignables d'ici. L'exemple chiffré de LégiSocial pour 2013 —
+  795,12 € × 18 000 / 31 499,48 = 454,36 € — est rejoué par
+  `test_la_garantie_minimale_se_proratise`.
+- *La fin de la garantie est écrite*, et non plus seulement tue par l'accord de
+  2017 : « Suppression de la GMP (maintien des points inscrits jusqu'au
+  31 décembre 2018) » (circulaire Agirc-Arrco 2019-1-DRJ du 9 janvier 2019,
+  fiche 4).
+- *Les forfaits d'avant 2003, par les Actualités sociales hebdomadaires*, en
+  ligne depuis leur n° 1937 (septembre 1995) et parcourues numéro par numéro
+  jusqu'au n° 3080. Le 22 décembre 1995, l'Agirc fixe « à titre conservatoire »
+  le salaire de référence définitif de 1995, 20,03 F : « Il permet de calculer
+  la garantie minimale de points » (n° 1955) — le calcul de 1996 que la note
+  précédente déduisait de l'accord d'avril. Les mensualités de 1999 (308,63 F),
+  de 2000 (329,88 F), de 2001 (334,88 F, 51,05 €) et de 2002 (51,88 €), parts
+  salariales comprises, retombent au centime sur le barème IPP : trois lignes
+  de plus aux deux tests des montants publiés. Le n° 2164 imprime « 23,69 F »
+  pour le salaire de référence de 2000, quand le n° 2163 et le calcul donnent
+  26,39 F. Aucun forfait de 1997 ni de 1998, ni rien d'avant septembre 1995.
+- *Une exception que le modèle ne voit pas* : le titulaire de l'allocation
+  chômeurs âgés, créée en 1997, reçoit « à hauteur du taux minimal du régime
+  assorti de la garantie minimale de points correspondante sans contrepartie
+  de cotisations » (décision de la commission paritaire du 10 mars 1997, n°
+  2018 des ASH ; l'avenant A179 à l'article 8 bis porte la même date). Le
+  modèle, qui ne distingue pas cette allocation, ne la lui sert pas : une
+  approximation de plus, non mesurée.
+- *L'accord de 1988 et son avenant restent introuvables.* L'index JORF du
+  dépôt n'a du Journal officiel de 1989 qu'une sélection (612 textes, contre
+  2 400 à 2 900 les années suivantes) : ni l'arrêté du 24 février 1989, ni
+  l'avis du 20 juillet 1991, qui ouvrit la même enquête pour l'avenant à
+  l'accord et pour l'avenant A-145 à la convention, signé le même jour.
+  Légifrance oppose un défi anti-robot. Gallica n'a que Briens, qui ajoute que
+  la garantie de 1989 valait pour les articles 4, 4 bis « ou 36 » ; la
+  rédaction de 2018 ne nomme plus que les deux premiers.
+
+Rien ne change au calcul : aucun témoin ne bouge. La fiche gagne quatre textes,
+une approximation et quatre lectures ; `limites.md`, le journal de veille et la
+note de `sources.yaml` suivent.
+
+**Ce qui reste** : le texte de l'accord du 8 décembre 1988, de son avenant du
+13 juin 1991 et de l'avenant A-145 ; les circulaires de l'Agirc de 1989 à 1998 ;
+le guide réglementaire lui-même ; la décision du 10 mars 1997, et la date à
+laquelle la garantie cessa d'accompagner l'allocation chômeurs âgés. Une
+bibliothèque, plus qu'une session, les lira.
+
 ### 140. Les contributions d'équilibre de l'Agirc-Arrco au compte notionnel : CEG, CET, AGFF et ASF — `abandonnée`
 
 **D'où elle vient.** Relevé le 2 octobre 2026, en répondant à « Dans les

@@ -4781,7 +4781,10 @@ def test_la_garantie_est_proportionnelle_au_taux_de_l_entreprise(simulateur):
 
     1996 reste à part, et le forfait l'explique : 549,64 €, soit 144 points au
     salaire de référence de 1995, quand le même accord, signé en avril, majora
-    de 4 % celui de 1996 (article 1er) — 136,31 points au taux de 16 %.
+    de 4 % celui de 1996 (article 1er) — 136,31 points au taux de 16 %. L'Agirc
+    l'avait dit le 22 décembre 1995 : « Le salaire de référence définitif pour
+    1995 est fixé à 20,03 F. Il permet de calculer la garantie minimale de
+    points » (Actualités sociales hebdomadaires, n° 1955).
     """
     valeurs = simulateur.scenario_actuel.valeurs_point
     for annee in (1989, 1990):
@@ -4803,6 +4806,7 @@ def test_la_garantie_est_proportionnelle_au_taux_de_l_entreprise(simulateur):
             _points_du_forfait_publie(simulateur, annee), rel=1e-12)
         assert _points_de_la_garantie(simulateur, annee) == pytest.approx(120, abs=0.3)
     reference_1995, appel_1995, _ = valeurs.achat("agirc", 1995)
+    assert reference_1995 * 6.55957 == pytest.approx(20.03, abs=0.005)
     forfait_1996, _ = valeurs._en_vigueur("agirc", "cotisation_garantie", 1996)
     assert forfait_1996 == pytest.approx(144 * reference_1995 * appel_1995, abs=0.01)
     assert _points_du_forfait_publie(simulateur, 1996) == pytest.approx(136.31, abs=0.005)
@@ -4898,7 +4902,9 @@ def test_la_cotisation_de_la_garantie_minimale_va_au_compte(simulateur):
         (ligne.revenu - plafond) * tranche_b.taux_cotisation_retraite, abs=1e-6)
     assert dessus > forfait
 
-    # La garantie s'éteint avec l'Agirc : rien en 2019.
+    # La garantie s'éteint avec l'Agirc : rien en 2019. « Suppression de la GMP
+    # (maintien des points inscrits jusqu'au 31 décembre 2018) » (circulaire
+    # Agirc-Arrco 2019-1-DRJ du 9 janvier 2019, fiche 4).
     assert _cotisation_agirc(simulateur, carriere(0.8), 2019, PartCotisation.TOTALE)[0] == 0
 
 
@@ -4910,6 +4916,12 @@ def test_la_garantie_minimale_se_proratise(simulateur):
     année-là, que la moitié des 105 points que la garantie donne au taux
     minimal de 14 %, et son compte la moitié de la cotisation. Le plancher
     valait 120 points entiers jusqu'au 2 octobre 2026.
+
+    Le prorata du temps partiel est « le rapport entre les rémunérations
+    perçues en temps partiel et les rémunérations qui auraient été obtenues
+    si le participant avait travaillé à temps plein » (guide réglementaire
+    Agirc-Arrco, titre V-2.1.2.2, cité par ses services le 19 avril 2013) :
+    LégiSocial en tire 795,12 € × 18 000 / 31 499,48 = 454,36 € pour 2013.
     """
     import re
 
@@ -4924,6 +4936,9 @@ def test_la_garantie_minimale_se_proratise(simulateur):
     assert periode.points_garantis(0.5, 0.5) == 30
     assert next(iter(simulateur.catalogue["agirc_arrco"].periodes_actives(2019))
                 ).points_garantis(1.0, 1.0) is None
+    partiel, _ = simulateur.scenario_actuel.valeurs_point.garantie(
+        "agirc", _tranche_b(simulateur, "agirc", 2013), 2013, 1.0, 18_000 / 31_499.48)
+    assert partiel == pytest.approx(454.36, abs=0.005)
 
     def carriere(age_debut):
         return simulateur.carriere_simple(
@@ -4979,8 +4994,12 @@ def test_la_garantie_minimale_ne_vaut_pas_pour_une_annee_de_chomage(simulateur):
 
 
 @pytest.mark.parametrize("annee, mensuelle, salariale, source", [
+    (1999, 308.63 / 6.55957, None,
+     "ASH n° 2164 du 28 avril 2000 : le niveau de 1999, gardé au premier trimestre 2000"),
     (2000, 329.88 / 6.55957, 123.70 / 6.55957,
      "UCANSS, lettre du 8 janvier 2001 : le niveau de 2000, en francs"),
+    (2001, 334.88 / 6.55957, 125.58 / 6.55957,
+     "ASH n° 2208 du 30 mars 2001 : décision de l'Agirc du 20 mars 2001"),
     (2007, 58.92, 22.35, "circulaire Agirc 2007-1-DT du 14 mars 2007"),
     (2008, 60.92, 23.11, "circulaire Agirc 2008-4-DT du 14 mars 2008"),
     (2009, 62.00, 23.52, "UCANSS, lettre circulaire 004-10"),
@@ -4998,6 +5017,7 @@ def test_le_prix_de_la_garantie_suit_les_montants_publies(simulateur, annee, men
     référence de l'année, au taux d'appel, à la mensualité arrondie près. Les
     montants de janvier, fixés « dans l'attente de la fixation du salaire de
     référence », étaient provisoires : ce sont les définitifs qui se comparent.
+    Celui de 1999 n'est connu que par sa mensualité, sans la part du salarié.
     """
     reference, appel, _ = simulateur.scenario_actuel.valeurs_point.achat("agirc", annee)
     (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(annee)
@@ -5006,11 +5026,14 @@ def test_le_prix_de_la_garantie_suit_les_montants_publies(simulateur, annee, men
         "agirc", tranche_b, annee, 1.0, 1.0)
     prix = forfait / 12
     assert prix == pytest.approx(mensuelle, abs=0.005), source
-    assert prix * tranche_b.part_salariale == pytest.approx(salariale, abs=0.015), source
+    if salariale is not None:
+        assert prix * tranche_b.part_salariale == pytest.approx(salariale, abs=0.015), source
     assert 120 * reference * appel / 12 == pytest.approx(mensuelle, abs=0.015), source
 
 
 @pytest.mark.parametrize("annee, mensuelle, salariale, source", [
+    (2002, 622.50 / 12, 19.45,
+     "ASH n° 2243 du 28 décembre 2001 : 622,50 € par an, 51,88 € par mois ; UCANSS"),
     (2003, 52.75, 19.78, "UCANSS, lettre du 21 janvier 2003, montant « fixé par l'Agirc »"),
     (2004, 54.00, 20.25, "circulaire Agirc 2003-9-DRE du 5 décembre 2003"),
     (2005, 55.33, 20.75, "circulaire Agirc 2004-7-DRE du 15 décembre 2004"),
@@ -5021,7 +5044,7 @@ def test_la_garantie_suit_les_circulaires_de_l_agirc(simulateur, annee, mensuell
     """Les forfaits d'avant 2008, que le barème IPP tient « de barèmes
     communiqués par l'Agirc-Arrco », confrontés à ce que l'Agirc publiait
     elle-même, au centime de la mensualité, part du salarié comprise. Ceux de
-    2003 à 2005, fixés en décembre, avant le salaire de référence, achètent
+    2002 à 2005, fixés en décembre, avant le salaire de référence, achètent
     un peu plus de 120 points ; celui de 2006, arrondi à l'euro (682 €), à
     peine plus : la mensualité ne retombe pas au centime sur le prix de
     120 points, et ne le doit pas.

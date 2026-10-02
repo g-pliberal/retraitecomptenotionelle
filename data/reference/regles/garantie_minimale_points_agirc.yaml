@@ -83,7 +83,10 @@ versions:
       « En application d'un accord du 8 décembre 1988, un système de garantie annuelle
       minimale de points (G.M.P.) a été institué dans le cadre du régime A.G.I.R.C. Ce
       nouveau dispositif, qui s'apparente à un achat de points, est obligatoire pour toutes
-      les entreprises dès le 1er janvier 1989 » ; « Moyennant le versement des cotisations
+      les entreprises dès le 1er janvier 1989 » ; « Sont concernés l'ensemble des
+      participants relevant des articles 4, 4 bis ou 36, annexe I, même s'ils bénéficient
+      d'une garantie ou d'un forfait de cotisations, que leur salaire soit inférieur ou non
+      au plafond de la […] » ; « Moyennant le versement des cotisations
       correspondantes, le participant peut bénéficier chaque année d'un nombre de points
       proportionnel au taux de cotisations de l'entreprise sur tranche B calculé sur la base
       de : - 72 points pour un taux contractuel de 8 % […] 108 points pour un taux
@@ -104,11 +107,25 @@ versions:
       125 % : « Ce taux s'applique aux cotisations calculées en pourcentage des
       rémunérations ainsi qu'aux garanties et forfaits » (art. 11)
     lu_le: 2026-10-02
+  - reference: >-
+      Actualités sociales hebdomadaires, n° 1955 du 29 décembre 1995, « AGIRC : les mesures
+      conservatoires pour 1996 », qui relaie le communiqué de l'Agirc du 22 décembre 1995
+      (hors JORF)
+    article: communiqué de l'Agirc du 22 décembre 1995
+    en_vigueur: 1996-01-01
+    citation: >-
+      « Le salaire de référence définitif pour 1995 est fixé à 20,03 F. Il permet de
+      calculer la garantie minimale de points (GMP), c'est-à-dire le prix d'achat d'un
+      point de retraite. »
+    lu_le: 2026-10-02
   bornes:
     revenu.annee: [1989-01-01, 1997-01-01]
   contenu:
     droit: >-
-      Le cadre acquiert chaque année un nombre de points proportionnel au taux contractuel
+      Le participant des articles 4 et 4 bis de la convention et de l'article 36 de son
+      annexe I — le cadre, l'assimilé, et le collaborateur auquel un accord étend le
+      régime —, sous le plafond ou non, acquiert chaque année un nombre de points
+      proportionnel au taux contractuel
       de tranche B de son entreprise — 72 points à 8 %, 108 à 12 %, 144 à 16 % —, en
       cotisant au taux de l'entreprise sur une assiette minimale de tranche B : le
       « plancher fixé par l'AGIRC à 1 290 F » par mois en 1989 (L. Marrache-Jupin, 1989),
@@ -118,11 +135,15 @@ versions:
       144 fois un salaire de référence en francs ronds — 18,97, 19,45, 19,63, 19,31 et
       20,07 F —, au taux d'appel, quand celui fixé ensuite valut 18,80, 19,23, 19,28, 19,52
       et 20,03 F : il achète de 142,45 à 146,62 points à 16 %, sans régularisation. En
-      1996, 136,31 : fixé à 144 fois le salaire de référence de 1995, il précède l'accord
-      du 25 avril 1996, qui majore de 4 % celui de 1996 (article 1er). Le modèle prête à
+      1996, 136,31 : fixé à 144 fois le salaire de référence de 1995, que l'Agirc arrête le
+      22 décembre 1995 « à titre conservatoire et précaire » pendant la négociation, en
+      disant qu'il « permet de calculer » la garantie, il précède l'accord du 25 avril
+      1996, qui majore de 4 % celui de 1996 (article 1er). Le modèle prête à
       l'entreprise le taux minimal de la tranche B — 8 % jusqu'en 1993 (12 % aux
       entreprises nouvelles), 10 % en 1994, 12 % en 1995, 13 % en 1996 — et sert la part
-      du forfait qui lui revient, au prix de l'année : 72 points en 1989 et en 1990.
+      du forfait qui lui revient, au prix de l'année : 72 points en 1989 et en 1990. Il ne
+      connaît que des cadres : l'article 36, que la rédaction de 2018 ne nomme plus, lui
+      est étranger.
     parametres:
       points_minimum_annuels: 144
       taux_de_la_garantie: 0.16
@@ -208,6 +229,31 @@ versions:
       sera calculé sur la base du salaire de référence de l'exercice 2004 (qui sera connu en
       avril 2004) »
     lu_le: 2026-10-02
+  - reference: >-
+      guide réglementaire Agirc-Arrco, titre V-2.1.2.2, « Modalités d'application de la GMP
+      : Travail à temps partiel », cité mot pour mot par la réponse des services
+      Agirc-Arrco du 19 avril 2013 que publie LégiSocial (hors JORF ; le guide, que la
+      fédération tenait sur reglementation.agirc-arrco.eu, n'y est plus en ligne)
+    article: titre V-2.1.2.2
+    citation: >-
+      « la GMP est à proratiser en tenant compte du rapport entre les rémunérations perçues
+      en temps partiel et les rémunérations qui auraient été obtenues si le participant
+      avait travaillé à temps plein et ceci, même si le plafond retenu par le régime de la
+      Sécurité sociale ne fait pas l'objet d'une telle proratisation en application de
+      l'article R. 242-7 du code de la Sécurité sociale »
+    lu_le: 2026-10-02
+  - reference: >-
+      Actualités sociales hebdomadaires, n° 2018 du 11 avril 1997, « Acquisition de points
+      de retraite AGIRC par les chômeurs âgés », qui relaie une décision de la commission
+      paritaire de l'Agirc du 10 mars 1997 (hors JORF)
+    article: décision de la commission paritaire du 10 mars 1997
+    en_vigueur: 1997-01-01
+    citation: >-
+      les titulaires de l'allocation chômeurs âgés (ACA) « se verront inscrire des points de
+      retraite à partir du salaire journalier de référence à hauteur du taux minimal du
+      régime assorti de la garantie minimale de points correspondante sans contrepartie de
+      cotisations »
+    lu_le: 2026-10-02
   bornes:
     revenu.annee: [1997-01-01, 2019-01-01]
   contenu:
@@ -225,11 +271,17 @@ versions:
       due sous le salaire charnière — 43 977,84 € par an en 2018, 3 664,82 € par mois — et
       vaut alors 872,52 € pour 2018, 72,71 € par mois appelés à 20,55 %, dont 27,60 € pour
       le salarié et 45,11 € pour l'employeur, partagés comme la tranche B (au D : 6,24 % et
-      10,20 % d'un taux contractuel de 16,44 % depuis 2015). En cas de temps partiel, et
-      selon la durée de présence en cas d'embauche ou de départ en cours d'année, elle est
-      proratisée, et les points avec elle. Elle ne vaut pas pour une année de chômage
+      10,20 % d'un taux contractuel de 16,44 % depuis 2015). En cas de temps partiel, elle
+      est proratisée au rapport des rémunérations à temps partiel et à temps plein, même
+      quand le plafond de la Sécurité sociale ne l'est pas (guide réglementaire, titre
+      V-2.1.2.2) ; selon la durée de présence en cas d'embauche ou de départ en cours
+      d'année ; et les points avec elle. Elle ne vaut pas pour une année de chômage
       indemnisé, dont les points ne portent que sur la tranche B du salaire journalier de
-      référence (annexe I, art. 8 bis) ; un arrêt de travail, lui, reprend les points de
+      référence (annexe I, art. 8 bis), sauf, à partir de 1997, pour le titulaire de
+      l'allocation chômeurs âgés, qui reçoit sans cotisation les points du taux minimal
+      « assorti de la garantie » (décision du 10 mars 1997, jour de l'avenant A179 à
+      l'article 8 bis ; la rédaction de 2006 range l'allocation parmi les autres) ; un
+      arrêt de travail, lui, reprend les points de
       l'année précédente (art. 8), garantie comprise. Un cadre à plusieurs employeurs ne
       paie qu'un forfait, que chacun prélève au prorata de son salaire (GERESO) : le
       modèle, qui ne voit qu'une ligne par année, le retrouve.
@@ -259,21 +311,34 @@ versions:
       stipulations, ces deux conventions à compter du 1er janvier 2019. »
     lu_le: 2026-10-02
     empreinte: sha256:352e023e397b2b6c1a01eb10fa295d0791f5d339d9b54c168fb3b3f079af131d
+  - reference: >-
+      circulaire Agirc-Arrco 2019-1-DRJ du 9 janvier 2019, « Régime Agirc-Arrco —
+      Réglementation applicable aux entreprises », publiée par l'Agirc-Arrco (hors JORF)
+    article: fiche 4, I, « Ce qui change »
+    en_vigueur: 2019-01-01
+    citation: >-
+      « Suppression de la GMP (maintien des points inscrits jusqu'au 31 décembre 2018), de
+      la CET (contribution exceptionnelle et temporaire) et de l'AGFF »
+    lu_le: 2026-10-02
+    empreinte: sha256:f2c12dec48f994dea7ff9b289d3a33bc3bf0ffe1e7290b92ec073926672e7206
   bornes:
     revenu.annee: [2019-01-01, null]
   contenu:
     droit: aucun
     raison: >-
       l'accord annule et remplace la convention de 1947, qui portait la garantie, et le
-      régime unifié n'en a pas : l'accord ne la nomme nulle part. Les points qu'elle a
-      donnés restent acquis
+      régime unifié n'en a pas : l'accord ne la nomme nulle part, et la circulaire qui en
+      détaille la réglementation dit la « Suppression de la GMP ». Les points qu'elle a
+      donnés restent acquis, « inscrits jusqu'au 31 décembre 2018 »
   exemples: aucun trouvé
 approximations:
 - version: cent_quarante_quatre_points
   ecart: >-
     Les règles du temps partiel, du chômage indemnisé et de l'arrêt de travail ne sont
     lues que dans leurs rédactions de 2006 à 2018 : le modèle les applique aussi de 1989
-    à 1996. L'avenant du 13 juin 1991 à l'accord de 1988, étendu en 1992, n'est pas lu.
+    à 1996. L'avenant du 13 juin 1991 à l'accord de 1988, étendu en 1992, n'est pas lu ;
+    l'avenant A-145 à la convention et à son annexe I, signé le même jour et soumis à la
+    même enquête (avis du JORF du 20 juillet 1991), non plus.
   effet: non mesuré
 - version: cent_quarante_quatre_points
   ecart: >-
@@ -296,6 +361,14 @@ approximations:
     calcule sur ceux de l'année précédente, ne sont pas modélisés : le modèle n'a pas de
     statut d'intermittent.
   effet: non mesuré
+- version: cent_vingt_points
+  ecart: >-
+    Le titulaire de l'allocation chômeurs âgés — une allocation de l'Unédic, créée en
+    1997 pour le chômeur de moins de 60 ans qui réunit 160 trimestres — recevait sans
+    cotisation la garantie avec les points de son chômage (décision du 10 mars 1997) : le
+    modèle, qui ne distingue pas cette allocation des autres, ne la lui sert pas. Le
+    texte de la décision n'est pas lu, ni la date à laquelle elle cessa.
+  effet: non mesuré
 sources:
   lu_le: 2026-10-02
   prochaine_relecture: 2027-10-01
@@ -305,18 +378,35 @@ sources:
     JORF ni dans KALI, ni dans la compilation des accords que publie la fédération, qui
     commence en 1993 : la règle de 1988 n'est connue que par la lecture qu'en donne G.
     Briens (1990), et l'avenant, peut-être celui qui mit fin à la régularisation, pas du
-    tout.
+    tout. Cherchés de nouveau le 2 octobre 2026 : l'index JORF du dépôt n'a du Journal
+    officiel de 1989 qu'une sélection (612 textes, quand les années suivantes en ont
+    2 400 à 2 900), ni l'arrêté d'extension du 24 février 1989, ni l'avis du 20 juillet
+    1991 qui ouvrit l'enquête sur l'avenant et sur l'avenant A-145, signé le même jour ;
+    Légifrance oppose un défi anti-robot ; Gallica n'a que Briens, qui ajoute que la
+    garantie valait pour l'article 36. Une bibliothèque, ou le Bulletin officiel du
+    ministère des affaires sociales de 1989 et de 1992.
   - >-
-    Lire les circulaires de l'Agirc de 1989 à 2002, que la fédération ne publie pas (son
-    site commence en 2003) : les forfaits de 1989 à 1999 ne sont connus que par le barème
-    IPP, qui cite le Barème social périodique, et les salaires de référence prévus de 1991
-    à 1995 sont une déduction — 144 fois un salaire en francs ronds retrouve chaque forfait
-    au dixième de franc —, non une lecture.
+    Lire les circulaires de l'Agirc de 1989 à 1998, que la fédération ne publie pas (son
+    site commence en 2003) : les forfaits de 1989 à 1995 et de 1997 et 1998 ne sont
+    connus que par le barème IPP, qui cite le Barème social périodique, et les salaires de
+    référence prévus de 1991 à 1995 sont une déduction — 144 fois un salaire en francs
+    ronds retrouve chaque forfait au dixième de franc —, non une lecture. Les
+    Actualités sociales hebdomadaires, en ligne depuis leur n° 1937 (septembre 1995),
+    relaient le calcul de 1996 et les mensualités de 1999 à 2003, mais aucun forfait de
+    1997 ni de 1998.
   - >-
-    Un texte de l'Agirc qui fonde le prorata du temps partiel : il n'est connu que par la
-    réponse des services Agirc-Arrco que cite LégiSocial (2013) et par trois fiches
-    pratiques (GERESO, Audiens, UNA Yonne). Celui de la durée de présence a, lui, un exemple
-    de la fédération (cahier DSN de juillet 2016 : quatre mensualités de 68,06 €).
+    Lire le guide réglementaire Agirc-Arrco lui-même, dont le titre V-2.1.2.2 fonde le
+    prorata du temps partiel : il n'est connu que par la réponse des services
+    Agirc-Arrco qui le cite (LégiSocial, 2013) et par trois fiches pratiques (GERESO,
+    Audiens, UNA Yonne) ; son site, reglementation.agirc-arrco.eu, ne répond plus, et
+    les archives du web n'étaient pas joignables depuis la session. Celui de la durée de
+    présence a, lui, un exemple de la fédération (cahier DSN de juillet 2016 : quatre
+    mensualités de 68,06 €).
+  - >-
+    Lire la décision de la commission paritaire du 10 mars 1997 sur l'allocation
+    chômeurs âgés, connue par les seules Actualités sociales hebdomadaires, et dire
+    quand la garantie cessa d'accompagner cette allocation : la rédaction de 2006 de
+    l'article 8 bis, qui liste l'avenant A179 du même jour, ne la nomme plus.
   lectures:
   - type: jorf
     reference: >-
@@ -419,11 +509,15 @@ sources:
     reference: >-
       LégiSocial, « Cotisations au titre de la GMP : un traitement très particulier ! » (13
       mai 2013, mis à jour le 29 septembre 2017), d'après la réponse des services
-      Agirc-Arrco du 19 avril 2013 : « La GMP est à proratiser en tenant compte du rapport
-      entre les rémunérations perçues en temps partiel et les rémunérations qui auraient
-      été obtenues si le participant avait travaillé à temps plein » ; entrée ou sortie en
-      cours de mois en trentièmes ; la circulaire 2013-6-DT du 2 avril 2013 : 795,12 € par
-      an, 66,26 € par mois, dont 25,13 € de part salariale
+      Agirc-Arrco du 19 avril 2013, qui renvoie « au titre V-2.1.2.2 du guide réglementaire
+      Agirc-Arrco : Modalités d'application de la GMP : Travail à temps partiel » et le
+      cite : « la GMP est à proratiser en tenant compte du rapport entre les rémunérations
+      perçues en temps partiel et les rémunérations qui auraient été obtenues si le
+      participant avait travaillé à temps plein », même si le plafond de la Sécurité
+      sociale ne l'est pas (article R. 242-7) ; trois exemples chiffrés, dont 795,12 € ×
+      18 000 / 31 499,48 = 454,36 € pour 1 500 € par mois au lieu de 2 624,96 € ; entrée
+      ou sortie en cours de mois en trentièmes ; la circulaire 2013-6-DT du 2 avril 2013 :
+      795,12 € par an, 66,26 € par mois, dont 25,13 € de part salariale
     date: 2026-10-02
     url: https://www.legisocial.fr/actualites-sociales/674-cotisations-au-titre-de-la-gmp-un-traitement-tres-particulier.html
   - type: autre
@@ -549,6 +643,57 @@ sources:
       que publie le groupe CRC)
     date: 2016-07-29
     url: https://www.groupecrc.com/IMG/pdf/aide_a_la_codification_aa_20160729.pdf
+  - type: autre
+    reference: >-
+      Actualités sociales hebdomadaires, n° 1955 du 29 décembre 1995, « AGIRC : les
+      mesures conservatoires pour 1996 », d'après le communiqué de l'Agirc du 22 décembre
+      1995 : « à titre conservatoire et précaire », le taux minimum passe de 12 % à 13 %, le
+      pourcentage d'appel reste à 125 %, et « Le salaire de référence définitif pour 1995
+      est fixé à 20,03 F. Il permet de calculer la garantie minimale de points (GMP) » :
+      144 × 20,03 F × 125 % = 3 605,40 F, le forfait de 1996 du barème IPP. Les n° 1989 du
+      20 septembre 1996, 2018 du 11 avril 1997 et 2068 du 24 avril 1998 donnent les
+      salaires de référence de 1996 (21,16 F, fixé le 2 juillet), de 1997 (22,26 F) et de
+      1998 (23,10 F)
+    date: 1995-12-29
+    url: https://www.ash.tm.fr/magazine/1955/le-social-en-textes/agirc-les-mesures-conservatoires-pour-1996-376130.php
+  - type: autre
+    reference: >-
+      Actualités sociales hebdomadaires, n° 2164 du 28 avril 2000 (GMP de 2000 : 329,88 F
+      par mois, dont 206,18 F pour l'employeur et 123,70 F pour le salarié, « pour un taux
+      de cotisation de 16 % permettant d'acquérir 120 points de retraite par an » ; salaire
+      charnière annuel de 196 193 F ; le premier trimestre 2000 au niveau de 1999,
+      308,63 F par mois ; le salaire de référence de 2000 y est imprimé « 23,69 F », quand
+      le n° 2163 du 21 avril 2000 le donne à 26,39 F, contre 24,69 F en 1999), n° 2196 du
+      5 janvier 2001 (le niveau de 2000 maintenu en janvier 2001, décision du 8 décembre
+      2000), n° 2208 du 30 mars 2001 (salaire de référence de 2001 : 26,79 F, 4,0841 €,
+      décision du 20 mars ; GMP de 334,88 F, 51,05 €, par mois, dont 125,58 F, 19,14 €,
+      pour le salarié ; salaire charnière de 199 492,50 F), n° 2243 du 28 décembre 2001
+      (GMP de 2002 : 622,50 € par an, 51,88 € par mois, dont 19,45 €) et n° 2290 du
+      20 décembre 2002 (GMP de 2003 : 633 €, décidée le 6 décembre 2002)
+    date: 2000-04-28
+    url: https://www.ash.tm.fr/magazine/2164/le-social-en-textes/la-garantie-minimale-de-points-est-revalorisee-370213.php
+  - type: autre
+    reference: >-
+      Actualités sociales hebdomadaires, n° 2018 du 11 avril 1997, « Acquisition de points
+      de retraite AGIRC par les chômeurs âgés » : l'allocation chômeurs âgés (ACA), créée
+      au 1er janvier 1997 pour le chômeur qui justifie de 160 trimestres et versée
+      jusqu'à 60 ans sans dégressivité ; la commission paritaire de l'Agirc décide le
+      10 mars 1997 que ses titulaires « se verront inscrire des points de retraite à partir
+      du salaire journalier de référence à hauteur du taux minimal du régime assorti de la
+      garantie minimale de points correspondante sans contrepartie de cotisations », et
+      pourront acquérir les autres « moyennant un versement égal à 50 % de la cotisation »
+      (la suite de l'article est réservée aux abonnés)
+    date: 1997-04-11
+    url: https://www.ash.tm.fr/magazine/2018/le-social-en-textes/acquisition-de-points-de-retraite-agirc-par-les-chomeurs-ages-406476.php
+  - type: autre
+    reference: >-
+      Agirc-Arrco, circulaire 2019-1-DRJ du 9 janvier 2019, « Régime Agirc-Arrco —
+      Réglementation applicable aux entreprises », huit fiches ; fiche 4, I, « Ce qui
+      change » : « Suppression de la GMP (maintien des points inscrits jusqu'au 31 décembre
+      2018) » (copie datée,
+      sha256:f2c12dec48f994dea7ff9b289d3a33bc3bf0ffe1e7290b92ec073926672e7206)
+    date: 2019-01-09
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2019-1-DRJ_Reglementation__applicable_aux_entreprises.pdf
 code:
   python: >-
     scenarios/actuel.py : ValeursPoint.garantie, le forfait de la ligne ;
@@ -569,9 +714,10 @@ code:
     garantie et à tenir lieu d'un forfait non publié
   tests: >-
     tests/test_simulateur.py : test_la_garantie_minimale_de_points_agirc_est_servie, les
-    tests de sa cotisation, de son prorata, des années de chômage, de sa proportion au taux
-    de l'entreprise, de son forfait fixé avant le salaire de référence et du prix des
-    années publiées, des circulaires de l'Agirc de 2003 à 2006 comprises ; les exemples
+    tests de sa cotisation, de son prorata (l'exemple de temps partiel de LégiSocial
+    compris), des années de chômage, de sa proportion au taux de l'entreprise, de son
+    forfait fixé avant le salaire de référence et du prix des années publiées, de 1999 à
+    2018, des circulaires de l'Agirc de 2002 à 2006 comprises ; les exemples
     agirc_gmp_2004 à agirc_gmp_2008, agirc_arrco_gmp_2017, audiens_gmp_2018 et
     agirc_arrco_gmp_2018 (tests/test_oracle.py)
 reformes: [gmp_agirc_1989, gmp_agirc_1997]
@@ -615,6 +761,19 @@ historique:
   et de 2005, fixés en décembre, s'inscrivent « sur la base du salaire de référence de
   l'exercice ». Les circulaires 2017-07-DT et 2017-12-DRJ, et celles de l'Agirc de 2003 à
   2008, sont lues sur le site de la fédération ; six exemples nouveaux.
+- >-
+  2026-10-02 — les questions restées ouvertes, cherchées encore le même jour. Le prorata
+  du temps partiel a son texte : le titre V-2.1.2.2 du guide réglementaire Agirc-Arrco,
+  que les services de la fédération citent mot pour mot ; le guide lui-même n'est plus en
+  ligne. La fin de la garantie est écrite : « Suppression de la GMP (maintien des points
+  inscrits jusqu'au 31 décembre 2018) » (circulaire 2019-1-DRJ). Les Actualités sociales
+  hebdomadaires relaient le calcul du forfait de 1996 sur le salaire de référence
+  définitif de 1995, annoncé le 22 décembre 1995, et les mensualités de 1999 à 2003, que
+  le modèle retrouve au centime. Elles apprennent aussi que le titulaire de
+  l'allocation chômeurs âgés recevait la garantie sans cotisation à partir de 1997, ce
+  que le modèle ne distingue pas ; et Briens, que la garantie de 1989 valait pour
+  l'article 36. L'accord de 1988 et son avenant de 1991 restent introuvables en ligne.
+  Rien ne change au calcul.
 effet: >-
   Tout cadre payé sous le salaire charnière entre 1989 et 2018 — 1,11 plafond en 2018 —,
   surtout en début de carrière. Pour une cadre née en 1975, entrée à 22 ans et payée
