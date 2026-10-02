@@ -4978,15 +4978,15 @@ registre, au point `a_trancher` du modèle qui le fait :
 ### 141. Le chômage indemnisé au compte notionnel : ce que l'Unédic versait, et non la cotisation entière — `en cours`
 
 **Reprise, au 2 octobre 2026.** Faits : l'étape 1, les textes (note du
-2 octobre et sa suite), et le point 2, la décision (note du même jour). Aux
-scénarios 4 à 6, une année indemnisée portera 60 % de ce qu'une année
-travaillée porterait à l'Agirc et à l'Arrco, garantie minimale comprise, plus
-les 0,8 % de la participation reversés aux régimes, et cela dès la première
-année validée ; aux scénarios 2 et 3, la seule participation de l'allocataire,
-de 0,4 % du salaire en 1988 à 3 % depuis 2003, rien avant. Reste : le point 3,
-puis le point 4. Commencer par la fiche de la carte ; ce que le point 3 doit
-encore régler clôt la note de la décision, et les textes, identifiants et
-empreintes des copies sont dans les deux notes de l'étape 1.
+2 octobre et sa suite) ; le point 2, la décision : aux scénarios 4 à 6, 60 %
+de ce qu'une année travaillée porterait à l'Agirc-Arrco, garantie comprise,
+plus les 0,8 % reversés, dès la première année validée ; aux scénarios 2 et 3,
+la seule participation de l'allocataire ; puis le scénario 1, cherché plus
+loin (note du même jour) : trois écarts à corriger, que le propriétaire range
+dans cette action ou dans une autre. Reste : le point 3, puis le point 4.
+Commencer par la fiche de la carte, qui portera aussi les points du scénario 1 ;
+ce que le point 3 doit régler clôt la note de la décision ; textes,
+identifiants et empreintes sont dans les notes.
 
 **D'où elle vient.** Relevée le 2 octobre 2026, à la clôture de l'action 139,
 en lisant les accords qui financent les points de chômage ; le propriétaire
@@ -5459,5 +5459,118 @@ scénario 1 ne bouge pas : il sert toujours les points du salaire entier.
   de la participation entre l'Agirc et l'Arrco, aux scénarios 2 et 3, et sa
   borne, le versement de l'Unédic ; les limites du précompte ; les 0,93 % des
   annexes VIII et X, que le modèle ne distingue pas, en écart.
+
+Rien ne change au calcul : aucun témoin ne bouge.
+
+**Suite, le 2 octobre 2026 : le scénario 1, cherché plus loin.** « Pour le
+scénario 1, fait plus de recherches. » Lus : l'accord du 17 novembre 2017,
+articles 59 à 67 (la copie de l'étape 1), et son avenant n° 27 du 19 juin
+2025, que diffuse la circulaire 2025-12-SG-DRJ du 16 juillet 2025 et qui ne
+change que des renvois — la convention du 15 novembre 2024, France Travail ; la
+circulaire 2020-02-DRJ, fiche 2, II.2 ; l'article 23 de l'annexe A de l'Arrco
+et l'article 8 bis de l'annexe I de l'Agirc, rédactions de 2006 et, pour
+l'Agirc, de 2001, que publie l'Unédic ; dans l'index LEGI, les règlements
+d'assurance chômage de 2009, de 2019 et de la convention du 15 novembre 2024,
+R. 351-12 du code de la sécurité sociale et l'article 11 ter de l'arrêté du
+30 décembre 1970, pour l'Ircantec ; la fiche de l'Unédic « Trimestres et points
+de retraite », mise à jour le 4 juillet 2025. Le guide réglementaire de 2018
+n'a pu être relu : Common Crawl et la Wayback Machine refusent la connexion
+depuis ce conteneur, et le site réglementaire de l'Agirc-Arrco est
+indisponible ; ce qui en est cité vient de l'étape 1.
+
+- *Ce que fait le modèle.* Une seule allocation, le « chômage indemnisé »
+  (`periodes_non_travaillees.csv`) : quatre trimestres au régime général, et,
+  aux régimes de la famille `complementaire_prive` — Arrco, Agirc, Agirc-Arrco,
+  Ircantec —, les points d'une année travaillée sur le salaire d'avant
+  l'interruption, aux taux minimaux de la période, sans autre borne de date ni
+  d'assiette que celles d'une année travaillée (`droit/acquerir.py`). Aucune
+  fiche de la carte ne porte ces points.
+- *L'allocation d'assurance, conforme au taux d'entreprise près.* L'ARE et
+  l'ASP valent des points calculés à partir « du salaire journalier de
+  référence retenu par Pôle emploi », « des taux de calcul des points
+  obligatoires en vigueur pendant les périodes de chômage » et de la valeur
+  d'achat du point (ANI, art. 60, § 4) ; avant 2019, des « taux contractuels de
+  cotisation obligatoires » à l'Arrco (art. 23, I, 1, D), du « système
+  contractuel de cotisations en vigueur dans l'entreprise » à l'Agirc, sur le
+  salaire journalier de référence pour les périodes indemnisées « à compter du
+  1er janvier 1997 » (art. 8 bis, § 1er, D) ; l'allocation chômeurs âgés,
+  l'allocation unique dégressive et la garantie de ressources y sont
+  comprises. Le salaire d'avant tient lieu de salaire de référence. Seul écart :
+  le taux d'une entreprise qui cotisait au-dessus du minimum, que l'Arrco suit
+  dans la limite de 6 % sur T1 et 16 % sur T2 pour une rupture postérieure au
+  30 juin 1996, et l'Agirc sans limite écrite ; le modèle prête à toute
+  entreprise le taux minimal, comme pour une année travaillée.
+- *Premier écart : quatre plafonds depuis 2019.* Le salaire de référence se
+  calcule « à partir des rémunérations entrant dans l'assiette des
+  contributions » (règlement de 2019, art. 11, § 1er), assiette bornée à
+  « quatre fois le plafond » de la sécurité sociale (art. 49, § 1er,
+  LEGIARTI000049820194 ; convention de 2024, art. 49, LEGIARTI000050847399).
+  Avant 2019, la tranche B de l'Agirc s'arrêtait à quatre plafonds et la
+  tranche 2 de l'Arrco à trois ; depuis, la tranche 2 du régime unifié monte à
+  huit, et le modèle y compte l'année chômée comme une année travaillée :
+  au-delà de quatre plafonds de salaire, des points que le droit ne donne pas.
+- *Deuxième écart : l'ASS, l'ASFNE, la préretraite progressive et l'AER valent
+  4 %.* « Seules les allocations expressément citées dans la présente
+  sous-section donnent lieu à attribution de points » (ANI, art. 59). L'ASS vaut
+  des points sur le salaire journalier de référence de l'allocation d'assurance
+  qui la précédait, revalorisé, « du taux de calcul des points de 4 % »
+  (art. 62) ; l'ASFNE, sur ce salaire « limité à la partie prise en compte pour
+  le financement par l'État », au même taux (art. 61) ; la préretraite
+  progressive aussi (art. 63). Avant 2019, 4 % à l'Arrco — les taux obligatoires
+  pour une rupture d'avant le 1er juin 2000 —, et 8 % ou 12 % sur la tranche B
+  de l'Agirc, selon que l'entreprise était née avant 1981 ou après (Arrco,
+  art. 23, I, 3, 4, 5 et 8 ; Agirc, art. 8 bis, § 4, 5, 6 et 9), depuis le
+  1er avril 1984 à l'Agirc (guide, VII.3.1.6.2, 2, a). Les points ne sont
+  inscrits qu'une fois encaissées les cotisations que l'État doit en vertu de
+  la convention du 23 mars 2000. Le modèle ne connaît pas ces allocations :
+  une année d'ASS y vaut une année d'ARE, soit, depuis 2019, un tiers des
+  points de la tranche 1 en trop et les trois quarts de ceux de la tranche 2.
+  Il ne borne pas non plus la durée de l'ARE — 730 jours, 1 095 à cinquante ans
+  ou plus, au règlement de 2009, sauf l'exception de son § 3 (art. 11, § 1er,
+  LEGIARTI000028037008) : le témoin `invalidite_demandeur_d_emploi` chôme
+  treize ans, de 2012 à 2024, tous au taux de l'ARE.
+- *Troisième écart : la date de départ.* La validation du chômage court « à
+  compter du 1er octobre 1967 » (guide, VII.3.1.2, lu à l'étape 1), celle de
+  l'Ircantec pour les « périodes de chômage postérieures au 1er août 1977 »
+  (arrêté du 30 décembre 1970, art. 11 ter, III, LEGIARTI000042696841). Le
+  modèle n'a pas de date : une année chômée y vaut des points dès 1961 à
+  l'Arrco, 1947 à l'Agirc et 1971 à l'Ircantec. Ce que l'Agirc faisait avant
+  1967 reste à lire dans le guide.
+- *Le reste, à déclarer en écart.* Les jours de différé et le délai d'attente,
+  qui valident des trimestres (R. 351-12, 4°, e) mais « ne permettent pas
+  l'acquisition de points de retraite complémentaire » (fiche de l'Unédic) ;
+  l'Ircantec sans cotisations — l'employeur public en auto-assurance —, qui
+  donne des points gratuits sur le SMIC, après trois mois de carence, un an au
+  plus (art. 11 ter, II) ; la CNBF, la CRPN et la caisse monégasque, qui
+  valident aussi le chômage par convention avec l'Unédic (fiche de l'Unédic),
+  quand le modèle ne l'admet qu'à la famille `complementaire_prive` ;
+  l'activité partielle, qui vaut des points sans cotisations au-delà de
+  soixante heures dans l'année (ANI, art. 67), et que le modèle ne connaît pas.
+- *Le régime général, conforme.* R. 351-12, 4°, c (LEGIARTI000054167657)
+  compte un trimestre par cinquante jours de l'un des revenus de remplacement
+  de L. 5421-2 du code du travail — l'ARE comme l'ASS —, quatre par an au plus,
+  le différé compris (4°, e) ; avant 1980, le chômage involontaire constaté
+  (4°, b). Une année d'allocation y vaut quatre trimestres, quelle qu'en soit
+  la nature, comme au modèle.
+- *Aucun exemple chiffré officiel trouvé* : ceux qui circulent viennent de
+  sites privés.
+- *Ce que le propriétaire range* : les trois écarts, dans cette action — un
+  point 5, après le point 3 — ou dans une action à part. Le premier tient en
+  une borne dans les deux moteurs ; le deuxième veut une allocation de plus à
+  la saisie, la solidarité, ses deux saisies, la chronologie et un témoin ; le
+  troisième, une date. Aucun des neuf témoins de chômage ne dépasse quatre
+  plafonds ni ne chôme avant 1967 : seul le deuxième en ferait bouger, si
+  `invalidite_demandeur_d_emploi` passait à la solidarité au bout de ses droits.
+  La fiche qui manque à la carte porterait les points du scénario 1 avec le
+  financement du compte.
+- *Les copies* (sha256) : circulaire 2025-12-SG-DRJ et avenant n° 27
+  (`wp-content/uploads/2025/07/Circulaire_AgircArrco_2025-12sg-drj.pdf`),
+  `385e8cb29fee5d00222993a9b2e497bb77bab70c77f2559a317930f0e29269eb` ;
+  article 8 bis, rédaction de 2006 (`Art8b1947.pdf`),
+  `e91cf7aa507a9bbdbf630457c1d07588e29840aac6f1d687dee7da00909c7a56` ;
+  fiche de l'Unédic, page lue le 2 octobre 2026,
+  `c57b5cf2e147b635bcf5425a5875f96f6530e5ff7171d25396cb870451a3e0f5` ;
+  l'accord de 2017, la circulaire 2020-02-DRJ, l'article 23 de l'Arrco et
+  l'article 8 bis de 2001, aux empreintes des notes précédentes.
 
 Rien ne change au calcul : aucun témoin ne bouge.
