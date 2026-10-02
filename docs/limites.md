@@ -1933,6 +1933,17 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
 ### Le reste du périmètre
 
+- **Les contributions d'équilibre de l'Agirc-Arrco ne vont pas au compte
+  notionnel.** La contribution d'équilibre général et la contribution
+  d'équilibre technique depuis 2019, l'AGFF de 2001 à 2018 et l'ASF avant elle
+  sont prélevées sur les salaires du privé, au salarié et à l'employeur, mais
+  n'ouvrent aucun point : les fiches de régime ne les portent pas, et le
+  compte des scénarios 2 à 6 ne les reçoit pas, alors qu'il reçoit d'autres
+  prélèvements sans droits — la majoration du taux d'appel, la cotisation
+  déplafonnée du régime général. Le taux du régime unique les omet aussi. Le
+  sens de l'erreur est connu : les comptes des salariés du privé sont
+  sous-alimentés, et la perte que montrent pour eux les scénarios notionnels
+  est surestimée. L'action 140 de la feuille de route, à faire, les attend.
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
   2070, dernière année des projections de population de l'INSEE. Ni l'une ni

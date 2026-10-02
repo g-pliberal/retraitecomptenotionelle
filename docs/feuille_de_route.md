@@ -333,6 +333,39 @@ depuis la page — et des versions numérotées, qu'une session ne peut pas
 de plus — le revenu fiscal du foyer, ou « vit seul, sans autre
 ressource » — ou une présomption déclarée.
 
+### 140. Les contributions d'équilibre de l'Agirc-Arrco au compte notionnel : CEG, CET, AGFF et ASF — `à faire`
+
+**D'où elle vient.** Relevé le 2 octobre 2026, en répondant à « Dans les
+scénarios autres que 1, est-ce que tu prends en compte les retraites
+complémentaires ? ». Le propriétaire l'a laissée pour plus tard, l'action 139
+faite : « Pas maintenant ». Le compte notionnel reçoit les cotisations des
+complémentaires au taux appelé, la majoration de 27 % comprise, qui n'achète
+aucun point ; il ne reçoit pas les contributions d'équilibre, qui n'en achètent
+pas davantage. Ce sont la contribution d'équilibre général (2,15 % sur la
+tranche 1 et 2,70 % sur la tranche 2, partagés à 40 % pour le salarié) et la
+contribution d'équilibre technique (0,35 % au-dessus du plafond) depuis 2019,
+par l'accord du 17 novembre 2017 ; avant elles, l'AGFF d'avril 2001 à 2018
+(accord du 10 février 2001) et l'ASF depuis 1983 (accord du 4 février 1983),
+que l'article 2 de l'accord de 2017 éteint. Les fiches de régime ne les portent
+pas ; seule la fiche de paie (`remuneration.py`) connaît la CEG et la CET de
+l'année. Le taux du régime unique les omet aussi : 25,83 %, quand l'effort
+réel que la fiche de paie du scénario 6 retient est de 27,98 %.
+
+**Ce qui est à faire.**
+
+1. Les taux, année par année et tranche par tranche, avec leur partage : la
+   CEG et la CET dans l'accord de 2017 ; l'AGFF et l'ASF dans leurs accords et
+   les circulaires de l'Agirc et de l'Arrco, que les lettres circulaires de
+   l'UCANSS relaient en partie (004-10 et 003-11, lues le 2 octobre 2026).
+2. Les porter au compte comme la cotisation déplafonnée du régime général : un
+   prélèvement sans points, que le scénario 1 ignore et que le compte reçoit.
+3. Décider si la CEG entre au taux du régime unique, qui passerait de 25,83 % à
+   27,98 %.
+
+**Ce qu'on en attend.** Les comptes des salariés du privé montent aux
+scénarios 2 à 6, où la perte affichée est aujourd'hui surestimée pour eux ;
+presque tous leurs témoins bougent.
+
 ---
 
 ## Les actions en cours
