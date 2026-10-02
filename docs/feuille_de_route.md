@@ -4977,16 +4977,16 @@ registre, au point `a_trancher` du modèle qui le fait :
 
 ### 141. Le chômage indemnisé au compte notionnel : ce que l'Unédic versait, et non la cotisation entière — `en cours`
 
-**Reprise, au 2 octobre 2026.** Fait : l'étape 1, les textes, de 1967 à
-2025 (note du 2 octobre et sa suite). L'Unédic cotise sur 60 % du salaire
-journalier de référence, à l'Arrco depuis 1990 et à l'Agirc depuis 1996, et
-leur reverse 0,8 % de ce salaire, pris sur la participation que l'allocataire
-paie sur son allocation ; avant, elle remboursait des pensions ; les
-conventions d'application de 2006, 2009 et 2012 le confirment. Reste : le
-point 2, que le propriétaire tranche — cinq questions, posées dans la note et
-sa suite —, puis les points 3 et 4. La décision prise, commencer par la fiche
-de la carte : textes, identifiants et empreintes des copies sont dans les
-deux notes.
+**Reprise, au 2 octobre 2026.** Faits : l'étape 1, les textes (note du
+2 octobre et sa suite), et le point 2, la décision (note du même jour). Aux
+scénarios 4 à 6, une année indemnisée portera 60 % de ce qu'une année
+travaillée porterait à l'Agirc et à l'Arrco, garantie minimale comprise, plus
+les 0,8 % de la participation reversés aux régimes, et cela dès la première
+année validée ; aux scénarios 2 et 3, la seule participation de l'allocataire,
+de 0,4 % du salaire en 1988 à 3 % depuis 2003, rien avant. Reste : le point 3,
+puis le point 4. Commencer par la fiche de la carte ; ce que le point 3 doit
+encore régler clôt la note de la décision, et les textes, identifiants et
+empreintes des copies sont dans les deux notes de l'étape 1.
 
 **D'où elle vient.** Relevée le 2 octobre 2026, à la clôture de l'action 139,
 en lisant les accords qui financent les points de chômage ; le propriétaire
@@ -5401,5 +5401,63 @@ les fonds sociaux (n° 382, 2000-2001) ; la circulaire Agirc-Arrco
   `b0ae113684372f8d13630659458333945960cc2cf2d5786c7cc2d116a6bea057`,
   n° 340, convention du 30 décembre 1987,
   `4f8078bbf81191678d37c8e0d51c7fb17792f4df35055f7dae512cf1419d0a28`.
+
+Rien ne change au calcul : aucun témoin ne bouge.
+
+**Fait, le 2 octobre 2026 : le point 2, la décision.** « Continue l'action
+141. » Les cinq questions de la note et de sa suite sont posées en quatre — la
+participation de l'allocataire jointe au principe —, chacune avec une option
+recommandée et l'exemple de la cadre de 2010 ; le propriétaire répond aux
+quatre sans préférence, et les options recommandées sont retenues. Le
+scénario 1 ne bouge pas : il sert toujours les points du salaire entier.
+
+- *Aux scénarios 4 à 6, ce que l'Unédic versait (questions 1 et 2).* Une
+  année indemnisée porte 60 % de la cotisation qu'une année travaillée
+  porterait sur le salaire de référence, au taux d'appel, et les 0,8 % de ce
+  salaire que les régimes reçoivent de la participation — à l'Arrco sous un
+  plafond pour un cadre et trois sinon, à l'Agirc sur la tranche B, sous
+  quatre plafonds depuis 2019 ; rien de « la partie des droits excédant ceux
+  financés par l'assurance chômage », que le régime prend à sa charge, comme
+  rien des points gratuits de la maladie. Les 3 % que l'allocataire paie ne
+  s'y ajoutent pas : ils financent ce versement, et les compter en plus
+  compterait deux fois les 0,8 %. La cadre de 2010 : 3 590,84 € au lieu de
+  5 342,76 €.
+- *Aux scénarios 2 et 3, la participation de l'allocataire (question 3).* Ils
+  ne portent que ce que l'assuré a supporté lui-même : pour une année
+  indemnisée, la participation précomptée sur son allocation, que les textes
+  affectent au financement des retraites complémentaires des chômeurs — 1 %
+  de la partie de 40 %, soit 0,4 % du salaire de référence, pour les périodes
+  postérieures au 29 février 1988 ; 0,8 % au règlement de 1990 ; 1,2 % à
+  l'avenant n° 10 du 24 juillet 1992 ; 3 % à l'avenant n° 5 du 27 décembre
+  2002 —, et rien avant mars 1988. La cadre de 2010 : 1 444,44 €. La clé
+  d'une année travaillée, que le modèle applique aujourd'hui, suppose un
+  employeur qu'il n'y a pas ; le versement entier porterait ce que d'autres
+  ont payé ; les seuls 0,8 % reversés oublieraient le reste, que l'Unédic
+  garde pour le même financement.
+- *Avant 1990 à l'Arrco et 1996 à l'Agirc, la même règle à rebours
+  (question 4).* 60 % de la cotisation et 0,8 % du salaire, dès la première
+  année validée : l'accord du 30 novembre 1989 ne laisse dû à l'Unédic, pour
+  « la période antérieure au 1er janvier 1990 » comme pour l'avenir, que ses
+  cotisations nouvelles, et l'Agirc reçoit de 1997 à 2016, pour le chômage
+  d'avant 1996, un vingtième par an d'un montant fixé en 1996. Une seule
+  règle, sans paramètre nouveau ; la cotisation dont le remboursement tenait
+  lieu payait les pensions servies jusqu'en 1989 à l'Arrco et 1995 à
+  l'Agirc. La participation, elle, suit son histoire.
+- *La garantie minimale de points, ses 60 % (question 5).* Une année chômée de
+  1989 à 2018 porte 60 % de la cotisation de garantie qu'une année travaillée
+  porterait, comme le reste : la convention de 2006 range la garantie parmi
+  les paramètres appliqués à la base de 60 %. Le compte d'une année
+  indemnisée vaut donc, aux scénarios 4 à 6, 60 % de ce qu'une année
+  travaillée porterait à l'Agirc et à l'Arrco, garantie comprise, plus les
+  0,8 %.
+- *Ce que le point 3 aura à régler.* Depuis 2019, la convention du
+  14 décembre 2021 assied les cotisations « sur 60 % du salaire journalier de
+  référence » dans la limite de quatre plafonds, et la CEG sur les tranches
+  des mêmes 60 % : 60 % de la cotisation du salaire entier, comme avant, ou
+  la cotisation de 60 % du salaire, dont les tranches coupent plus bas — à
+  relire. Les dates d'effet des avenants de 1992 et de 2002 ; la répartition
+  de la participation entre l'Agirc et l'Arrco, aux scénarios 2 et 3, et sa
+  borne, le versement de l'Unédic ; les limites du précompte ; les 0,93 % des
+  annexes VIII et X, que le modèle ne distingue pas, en écart.
 
 Rien ne change au calcul : aucun témoin ne bouge.
