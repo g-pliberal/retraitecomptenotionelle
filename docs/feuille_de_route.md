@@ -4977,15 +4977,16 @@ registre, au point `a_trancher` du modèle qui le fait :
 
 ### 141. Le chômage indemnisé au compte notionnel : ce que l'Unédic versait, et non la cotisation entière — `en cours`
 
-**Reprise, au 2 octobre 2026.** Fait : l'étape 1, les textes, de 1979 à
-2025 (note du 2 octobre). L'Unédic cotise sur 60 % du salaire journalier de
-référence, à l'Arrco depuis 1990 et à l'Agirc depuis 1996, et leur reverse
-0,8 % de ce salaire, pris sur la participation que l'allocataire paie sur
-son allocation ; avant, elle remboursait des pensions. Reste : le
-point 2, que le propriétaire tranche — quatre questions, posées dans la
-note —, puis les points 3 et 4. La décision prise, commencer par la fiche de
-la carte : ses textes, leurs identifiants et les empreintes des copies sont
-dans la note.
+**Reprise, au 2 octobre 2026.** Fait : l'étape 1, les textes, de 1967 à
+2025 (note du 2 octobre et sa suite). L'Unédic cotise sur 60 % du salaire
+journalier de référence, à l'Arrco depuis 1990 et à l'Agirc depuis 1996, et
+leur reverse 0,8 % de ce salaire, pris sur la participation que l'allocataire
+paie sur son allocation ; avant, elle remboursait des pensions ; les
+conventions d'application de 2006, 2009 et 2012 le confirment. Reste : le
+point 2, que le propriétaire tranche — cinq questions, posées dans la note et
+sa suite —, puis les points 3 et 4. La décision prise, commencer par la fiche
+de la carte : textes, identifiants et empreintes des copies sont dans les
+deux notes.
 
 **D'où elle vient.** Relevée le 2 octobre 2026, à la clôture de l'action 139,
 en lisant les accords qui financent les points de chômage ; le propriétaire
@@ -5253,5 +5254,152 @@ publie sous « Retraite complémentaire des demandeurs d'emploi » ; l'accord du
   Agirc-Arrco, accord du 17 novembre 2017
   (`storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf`),
   `b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb`.
+
+Rien ne change au calcul : aucun témoin ne bouge.
+
+**Suite, le 2 octobre 2026 : ce qui restait ouvert, cherché ailleurs.** « Fait
+des recherches complémentaires pour ce qui reste ouvert. » Lus, en plus : les
+pages anciennes de l'Unédic et son stockage des textes réglementaires ; le
+guide réglementaire Agirc-Arrco, titre VII, dans la capture de Common Crawl du
+21 octobre 2018 (CC-MAIN-2018-43, empreinte sha1
+OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP, celle de la fiche
+`garantie_minimale_points_agirc`) ; les observations du Gouvernement sur la
+loi de modernisation sociale (JORFARTI000002004267) ; le rapport du Sénat sur
+les fonds sociaux (n° 382, 2000-2001) ; la circulaire Agirc-Arrco
+2020-02-DRJ ; la banque du Medef, reconnue en entier — ses 362 scans et les
+89 documents dont la couche texte était illisible, 2 615 pages.
+
+- *Les conventions d'application confirment les 60 % et les 0,8 %.* Celle du
+  21 avril 2006 assied les cotisations de l'Agirc « sur 60 % de la tranche B
+  du salaire journalier de référence », et celles de l'Arrco « sur 60 % du
+  salaire journalier de référence » (art. 4-1) ; celle du 16 décembre 2009
+  fait verser « 60 % des cotisations obligatoires prévues par la Convention
+  collective nationale du 14 mars 1947 (article 6 § 2), majorées du
+  pourcentage d'appel en vigueur », et de même à l'Arrco (art. 3) ; celle du
+  26 octobre 2012 calcule les cotisations sur les tranches du salaire de
+  référence et fait verser « les cotisations et participations prévues à
+  l'article 2 de l'accord du 6 mai 2011 », celles des 60 % (art. 3 et 4.1).
+  Toutes trois reversent 0,8 % du salaire : sa tranche B à l'Agirc, la part
+  sous trois plafonds à l'Arrco, sous un plafond pour un cadre (art. 4-2).
+  Elles chiffrent le versement pour le chômage d'avant 1996 : « pendant 20 ans
+  de 1997 à 2016 inclus, 1/20e du montant de 1 524 490 172,37 € (valeur au
+  1er janvier 1996), soit 76 224 508,62 € revalorisés chaque année » sur
+  l'indice des prix (2006, art. 4-3), 93 515 398,11 € en valeur de décembre
+  2008 (2009), 98 400 413 € en valeur de décembre 2011 (2012). La garantie
+  minimale de points y a son acompte propre, et son montant n'est pas publié :
+  en 2006, elle est l'un des « paramètres en vigueur » appliqués à la base de
+  60 % ; en 2009 et en 2012, « le taux est fixé chaque année par l'Agirc »,
+  et l'Unédic en paie un acompte annuel. La convention État-Pôle
+  emploi-Agirc-Arrco du 12 novembre 2010, sur le contrat de transition
+  professionnelle, fait payer par l'État les mêmes 60 %.
+- *Le protocole du 2 janvier 2001 est lu* (Unédic, `ProtAvnRtr2001.pdf`). Il
+  est celui de 2004, au montant près — « 1/20e du montant de 10 milliards de
+  francs (valeur 1er janvier 1996) » — et reverse les 0,8 % aux deux régimes
+  « Pendant la durée de la convention du 1er janvier 2001 » : la part de
+  l'Arrco est donc connue depuis 2001. Il nomme le texte de 1984 « relevé de
+  décisions du 9 février 1984 ». Celui du 2 janvier 1997 reste introuvable.
+- *La participation, de sa naissance à 1992.* Elle naît de la convention
+  d'assurance chômage du 30 décembre 1987 (Medef n° 340), qui ajoute à
+  l'article 25 du règlement de la convention du 19 novembre 1985 : « Sur la
+  partie de l'allocation égale à 40 % du salaire journalier de référence, une
+  participation de 1 % est précomptée. [...] Le produit de cette participation
+  est affecté au financement des retraites complémentaires à la charge du
+  régime d'assurance chômage. Cette disposition est appliquée aux allocations
+  versées au titre de périodes postérieures au 29 février 1988 » (art. 5 ;
+  l'accord du même jour, n° 339, la décide « à hauteur de 1 % de la partie
+  proportionnelle de l'allocation de base (40 %) »). Le règlement de
+  l'assurance conversion (n° 323), qui renvoie à la convention du 6 juillet
+  1988, la chiffre : « au même taux que les chômeurs indemnisés en allocation
+  de base, soit 0,40 % du salaire journalier de référence ». Celui de la
+  convention du 1er janvier 1990 (n° 425 ; n° 478, sous la date du
+  22 décembre 1989) écrit en salaire la règle de l'accord de 1989 : « Sur le
+  montant de l'allocation ainsi déterminée, est précomptée une participation
+  de 0,8 % assise sur le salaire journalier de référence », 0,6 % pour
+  l'allocation de base exceptionnelle ; l'avenant n° 10 du 24 juillet 1992
+  (n° 452) la porte à 1,2 %. La part de l'Arrco de 1992 à 2000 reste dite
+  « une partie ».
+- *Le texte de 1984 regarde l'État, non l'Unédic.* La convention du
+  24 février 1984 scinde « le régime unique préexistant en un double système
+  composé d'un régime d'assurance, de nature conventionnelle, à la charge de
+  l'UNÉDIC, et d'un régime de solidarité, de nature réglementaire, à la charge
+  de l'État » (guide, VII.3.1.1) ; le litige que clôt la convention du
+  23 mars 2000 « a pour origine l'engagement pris par l'Etat en 1984, lors de
+  la création du régime de solidarité, et jamais honoré, de prendre en charge
+  la validation des périodes de préretraites et allocation de solidarité
+  spécifique dans les régimes complémentaires » (observations du
+  Gouvernement). Le relevé lui-même reste introuvable, comme le protocole du
+  1er septembre 1988 et la convention Unédic-Agirc du 3 décembre 1987. Le
+  premier protocole est celui du 10 mai 1967 : la validation court « à compter
+  du 1er octobre 1967 » (guide, VII.3.1.2).
+- *L'État paie l'ASS et l'ASFNE à un taux réduit.* Il « s'est engagé à un
+  financement correspondant, pour l'ARRCO, à un taux de 4 %, et pour l'AGIRC,
+  à un taux de 8 % si la dernière entreprise occupant l'intéressé a été créée
+  avant le 1er janvier 1981, et à un taux de 12 % » sinon (guide, VII.3.1.2,
+  3, b). Le texte de la convention du 23 mars 2000 est l'annexe 2 du titre
+  VII, que Common Crawl n'a pas capturée ; ses titres le résument : le calcul
+  des cotisations dues à compter du 1er janvier 1999, leur prise en charge par
+  les pouvoirs publics, la validation des périodes antérieures, la
+  régularisation des droits non attribués depuis le 1er juillet 1996. Le
+  Sénat en donne les chiffres : « Le remboursement au titre des cotisations
+  antérieures se monte à 2,025 milliards de francs en faveur de l'AGIRC et
+  7,425 milliards de francs en faveur de l'ARRCO. Par ailleurs, les pouvoirs
+  publics prennent en charge, à
+  partir du 1er janvier 1999, 70 % des cotisations aux régimes complémentaires
+  relatives aux périodes de préretraite ou de chômage, cotisations calculées
+  sur la base du salaire de la dernière année d'activité. » Le Fonds de
+  solidarité vieillesse les a payées de 2002 à 2025, la Caisse nationale
+  d'assurance vieillesse ensuite : 221 257 987 € pour 2022 (arrêté du 25 mars
+  2024), 203 161 683 € pour 2024 (arrêté du 20 avril 2026). Au scénario 1,
+  l'Arrco calcule l'ASS au « taux contractuel de 4 % », et, pour une rupture
+  du contrat d'avant le 1er juin 2000, « à hauteur des taux contractuels de
+  cotisation obligatoires » (annexe A, art. 23, § 4, rédaction de 2006 que
+  publie l'Unédic) ; à l'Agirc, l'allocataire a droit, « pour les périodes
+  d'indemnisation postérieures au 31 mars 1984, à l'attribution de points de
+  retraite sans contrepartie financière, mais seulement sur la base du taux
+  de 8 % ou de 12 % » (guide, VII.3.1.6.2, 2, a).
+- *Ce que ces lectures changent aux quatre questions.* La première se pose sur
+  des versements réels : les conventions d'application paient bien 60 % et
+  0,8 %. La quatrième gagne le montant du versement pour le chômage d'avant
+  1996 : 76,2 millions d'euros de 1996 par an, indexés sur les prix, de 1997 à
+  2016. Une cinquième naît, la garantie minimale de points : le compte en
+  porte le forfait entier pour une année chômée, quand l'Unédic en payait un
+  taux que l'Agirc fixait chaque année, et que la convention de 2006 range
+  dans la base de 60 %. Ou le forfait entier, comme aujourd'hui ; ou ses
+  60 %, comme le reste ; ou rien, son montant n'étant pas publié.
+- *Ce qui reste introuvable* : le relevé de décisions du 9 février 1984, le
+  protocole du 10 mai 1967, celui du 1er septembre 1988 et la convention
+  Unédic-Agirc du 3 décembre 1987 ; le protocole du 2 janvier 1997 ; les
+  conventions d'application du 25 juin 2004 et du 12 décembre 2017 ; le texte
+  des conventions de l'État du 23 mars 2000 et du 5 juillet 2021. Aucun n'est
+  dans la banque du Medef, cherchée en texte intégral, ni au stockage de
+  l'Unédic sous les noms qu'il donne aux autres.
+- *Les copies* (sha256) : Unédic, convention du 21 avril 2006
+  (`CnvUnedicAgircArrco21042006.pdf`),
+  `2707b937db1adc383d833bc102d5a5797d9ab052b91192380f3b51bb256714b8`, du
+  16 décembre 2009 (`CnvUnedicAgircArrco16122009.pdf`),
+  `9db832a13e96f6ff2c8ad8445d7101b3d08383ea933e4ce39a9a17b199c45783`, du
+  26 octobre 2012 (`CnvUnedicAgircArrco26102012.pdf`),
+  `7e96a10f6fb5368ba4a81bb7c7b06d60bbe2c502e27371e46bd321b36532c5bf`,
+  protocole du 2 janvier 2001 (`ProtAvnRtr2001.pdf`),
+  `a1334e36a4da39ba5596105ae40020baf887e7510cc2572acc269b8884034d6d`, annexe
+  A de l'Arrco, article 23, rédaction de 2006 (`Art201961.pdf`),
+  `581b6b1686f086bb1c073803902b33880d797d55c86c287e74f052261d3966ce`,
+  convention du 12 novembre 2010 (`CnvUnedicPemploiAgircArrco12112010.pdf`),
+  `49be990e0c3efa12334aedadff126d6cfd281531455fe81fa9236378f80203ae` ;
+  Agirc-Arrco, circulaire 2020-02-DRJ,
+  `524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae` ;
+  Sénat, rapport n° 382 (`senat.fr/rap/r00-382/r00-38261.html`),
+  `1cb4f929df620cbae7435e476d6b54763fd4c5dcddf113d3197af5c2bface5f6` ;
+  Medef n° 425, règlement de 1990,
+  `bd870621d1fc10e639a988e8f986f9e86dd249ac51da58a2eedfb8a16c7f2400`,
+  n° 478, `cdf9100cfbfb2c850d1da9db33cdfb3a45d277e6abccfcfc0800209739d77904`,
+  n° 452, avenant n° 10 du 24 juillet 1992,
+  `6e2b73744e343e05d86e8371c8114194473442fe06285d904527493dc7d7d96c`,
+  n° 323, règlement de l'assurance conversion,
+  `cd10c3ee2c8e96426dd59a88b36945f01dafb3215327ed63c742b51107c5715b`,
+  n° 339, accord du 30 décembre 1987,
+  `b0ae113684372f8d13630659458333945960cc2cf2d5786c7cc2d116a6bea057`,
+  n° 340, convention du 30 décembre 1987,
+  `4f8078bbf81191678d37c8e0d51c7fb17792f4df35055f7dae512cf1419d0a28`.
 
 Rien ne change au calcul : aucun témoin ne bouge.
