@@ -1957,7 +1957,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   versé, y porte pourtant la cotisation entière du salaire d'avant
   l'interruption. Le sens de l'erreur est connu : les comptes des chômeurs
   indemnisés sont surestimés ; le scénario 1, lui, sert les points du droit.
-  L'action 141 de la feuille de route, à faire, l'attend.
+  L'action 141 de la feuille de route, en cours, en a lu les textes ; ce que
+  le compte en portera attend la décision du propriétaire.
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
   2070, dernière année des projections de population de l'INSEE. Ni l'une ni

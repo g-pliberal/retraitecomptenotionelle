@@ -354,85 +354,6 @@ depuis la page — et des versions numérotées, qu'une session ne peut pas
 de plus — le revenu fiscal du foyer, ou « vit seul, sans autre
 ressource » — ou une présomption déclarée.
 
-### 141. Le chômage indemnisé au compte notionnel : ce que l'Unédic versait, et non la cotisation entière — `à faire`
-
-**D'où elle vient.** Relevée le 2 octobre 2026, à la clôture de l'action 139,
-en lisant les accords qui financent les points de chômage ; le propriétaire
-l'ouvre le même jour : « Ouvre une action pour les 60 % de l'Unédic ».
-L'Agirc et l'Arrco inscrivent les points d'une période que l'Unédic indemnise
-sur le salaire journalier de référence entier : « Les droits reconnus chaque
-année aux intéressés sont d'un montant équivalent à ceux qui auraient été
-acquis par cotisations sur le SJR » (guide réglementaire Agirc-Arrco, mis à
-jour le 10 mars 2016, titre VII.3.1.6.1). L'assurance chômage n'en paie
-qu'une partie :
-
-- les cotisations obligatoires, au taux d'appel, « assises sur 60 % de la
-  tranche B du salaire journalier de référence » pour l'Agirc, depuis le
-  1er janvier 1996 (accord du 19 septembre 1996, article unique), et sur 60 %
-  de ce salaire, limité à un plafond pour un cadre et à trois sinon, pour
-  l'Arrco, depuis le 1er janvier 1990 (protocole du 2 janvier 2004, art. 3) ;
-- une part de la participation prélevée sur les allocations : 0,8 % de la
-  tranche B du salaire de référence pour l'Agirc en 1996, et 0,8 % de ce
-  salaire, sa tranche B pour l'Agirc, pour les deux régimes en 2004 ;
-- pour l'Agirc, un vingtième par an, pendant vingt ans, d'un montant exprimé
-  en valeur du 1er janvier 1996, pour le chômage d'avant cette date ;
-- en 2004, des contributions « au titre de la garantie minimale de points »,
-  que le plafond des sommes versées ne compte pas (art. 3, 1°, c).
-
-La règle des 60 % court dans tous les accords de financement agréés et publiés
-au Journal officiel, de 2000 à 2016 : arrêtés du 15 mars 2000
-(JORFARTI000001636772), du 7 août 2001 (JORFARTI000002032949), du 6 octobre
-2004 (JORFARTI000002458586), du 23 février 2006 (JORFARTI000002468100), du
-30 mars 2009 (JORFARTI000020467008), du 15 juin 2011 (JORFARTI000024186090),
-du 25 juin 2014 (JORFARTI000029151115) et du 19 février 2016
-(JORFARTI000032113833). Le reste, le régime le finance lui-même, « pour la
-partie des droits sur la tranche B des rémunérations, excédant ceux financés
-par l'Unédic » (annexe I à la convention du 14 mars 1947, art. 8 bis, § 1er,
-E, rédaction de 2006 que publie l'Unédic). Les copies de 1996 et de 2004 sont
-celles de la banque d'accords du Medef (`accords.medef.com/documents/`,
-n° 235 et 237).
-
-**Ce que fait le modèle.** Le scénario 1 sert les points du salaire entier,
-comme le droit. Le compte notionnel des scénarios 2 à 6, qui ne porte que ce
-qui a été versé, porte pour une année indemnisée la cotisation entière du
-salaire d'avant l'interruption, aux seules complémentaires du privé
-(`ConstructeurCompte._cotisation_ligne`, par `revenu_reference` et
-`familles_financees`, et son jumeau de `compte.js`) : pour une cadre payée
-48 148 € en 2010, les mêmes 2 596,50 € d'Arrco et 2 746,26 € d'Agirc, que
-l'année soit travaillée ou chômée, et leur part salariale aux scénarios 2 et
-3. La méthodologie l'écrit : « Pendant un chômage indemnisé, l'Unédic verse
-de vraies cotisations à l'Agirc-Arrco, calculées sur le salaire d'avant
-l'interruption ». Depuis l'action 139, le compte y ajoute le forfait de la
-garantie minimale de points. Aucune fiche de la carte ne dit ce financement.
-
-**Ce qui est à faire.**
-
-1. Les textes, période par période : ce qui précède 1990 pour l'Arrco et 1996
-   pour l'Agirc — le relevé de conclusions du 9 février 1984 et l'accord du
-   30 novembre 1989, que vise le protocole de 2004 — ; les accords de 2000 à
-   2016 ; ce qui suit l'accord du 14 mai 2014, jusqu'au régime unifié de 2019
-   et après ; la part de la participation reversée aux régimes, année par
-   année ; le financement de l'État pour l'ASS et l'ASFNE (guide, titre
-   VII.3.1.6.2, 2), allocations que le modèle ne distingue pas de celles de
-   l'Unédic.
-2. Décider ce que le compte porte d'une année indemnisée : ce que l'Unédic
-   versait, et rien de ce que le régime donnait sans contrepartie, comme pour
-   la maladie ; la participation prélevée sur l'allocation, que le chômeur
-   paie lui-même ; et la part, salariale ou patronale, à laquelle se rattache
-   le versement de l'Unédic aux scénarios 2 et 3.
-3. Le porter dans les deux moteurs, avec la fiche qui manque à la carte, ses
-   exemples s'il en est de publiés, et un témoin.
-4. Récrire ce qu'en disent la méthodologie, `limites.md` et l'approximation
-   de la fiche `garantie_minimale_points_agirc` sur les contributions de
-   l'Unédic.
-
-**Ce que le propriétaire tranche** : le point 2.
-
-**Ce qu'on en attend.** Le compte d'une année indemnisée descend, aux
-scénarios 2 à 6, de la cotisation entière à ce que l'Unédic versait —
-l'assiette réduite à 60 %, plus la participation ; le scénario 1 ne bouge
-pas. Neuf des 689 témoins de simulation ont une année de chômage indemnisé.
-
 ---
 
 ## Les actions en cours
@@ -5053,3 +4974,284 @@ registre, au point `a_trancher` du modèle qui le fait :
 - pour le net de l'étape 2, une présomption déclarée — « aucun autre revenu
   que ses pensions » — ou un champ de plus, la question que l'action 136
   posait déjà.
+
+### 141. Le chômage indemnisé au compte notionnel : ce que l'Unédic versait, et non la cotisation entière — `en cours`
+
+**Reprise, au 2 octobre 2026.** Fait : l'étape 1, les textes, de 1979 à
+2025 (note du 2 octobre). L'Unédic cotise sur 60 % du salaire journalier de
+référence, à l'Arrco depuis 1990 et à l'Agirc depuis 1996, et leur reverse
+0,8 % de ce salaire, pris sur la participation que l'allocataire paie sur
+son allocation ; avant, elle remboursait des pensions. Reste : le
+point 2, que le propriétaire tranche — quatre questions, posées dans la
+note —, puis les points 3 et 4. La décision prise, commencer par la fiche de
+la carte : ses textes, leurs identifiants et les empreintes des copies sont
+dans la note.
+
+**D'où elle vient.** Relevée le 2 octobre 2026, à la clôture de l'action 139,
+en lisant les accords qui financent les points de chômage ; le propriétaire
+l'ouvre le même jour : « Ouvre une action pour les 60 % de l'Unédic ».
+L'Agirc et l'Arrco inscrivent les points d'une période que l'Unédic indemnise
+sur le salaire journalier de référence entier : « Les droits reconnus chaque
+année aux intéressés sont d'un montant équivalent à ceux qui auraient été
+acquis par cotisations sur le SJR » (guide réglementaire Agirc-Arrco, mis à
+jour le 10 mars 2016, titre VII.3.1.6.1). L'assurance chômage n'en paie
+qu'une partie :
+
+- les cotisations obligatoires, au taux d'appel, « assises sur 60 % de la
+  tranche B du salaire journalier de référence » pour l'Agirc, depuis le
+  1er janvier 1996 (accord du 19 septembre 1996, article unique), et sur 60 %
+  de ce salaire, limité à un plafond pour un cadre et à trois sinon, pour
+  l'Arrco, depuis le 1er janvier 1990 (protocole du 2 janvier 2004, art. 3) ;
+- une part de la participation prélevée sur les allocations : 0,8 % de la
+  tranche B du salaire de référence pour l'Agirc en 1996, et 0,8 % de ce
+  salaire, sa tranche B pour l'Agirc, pour les deux régimes en 2004 ;
+- pour l'Agirc, un vingtième par an, pendant vingt ans, d'un montant exprimé
+  en valeur du 1er janvier 1996, pour le chômage d'avant cette date ;
+- en 2004, des contributions « au titre de la garantie minimale de points »,
+  que le plafond des sommes versées ne compte pas (art. 3, 1°, c).
+
+La règle des 60 % court dans tous les accords de financement agréés et publiés
+au Journal officiel, de 2000 à 2016 : arrêtés du 15 mars 2000
+(JORFARTI000001636772), du 7 août 2001 (JORFARTI000002032949), du 6 octobre
+2004 (JORFARTI000002458586), du 23 février 2006 (JORFARTI000002468100), du
+30 mars 2009 (JORFARTI000020467008), du 15 juin 2011 (JORFARTI000024186090),
+du 25 juin 2014 (JORFARTI000029151115) et du 19 février 2016
+(JORFARTI000032113833). Le reste, le régime le finance lui-même, « pour la
+partie des droits sur la tranche B des rémunérations, excédant ceux financés
+par l'Unédic » (annexe I à la convention du 14 mars 1947, art. 8 bis, § 1er,
+E, rédaction de 2006 que publie l'Unédic). Les copies de 1996 et de 2004 sont
+celles de la banque d'accords du Medef (`accords.medef.com/documents/`,
+n° 235 et 237).
+
+**Ce que fait le modèle.** Le scénario 1 sert les points du salaire entier,
+comme le droit. Le compte notionnel des scénarios 2 à 6, qui ne porte que ce
+qui a été versé, porte pour une année indemnisée la cotisation entière du
+salaire d'avant l'interruption, aux seules complémentaires du privé
+(`ConstructeurCompte._cotisation_ligne`, par `revenu_reference` et
+`familles_financees`, et son jumeau de `compte.js`) : pour une cadre payée
+48 148 € en 2010, les mêmes 2 596,50 € d'Arrco et 2 746,26 € d'Agirc, que
+l'année soit travaillée ou chômée, et leur part salariale aux scénarios 2 et
+3. La méthodologie l'écrit : « Pendant un chômage indemnisé, l'Unédic verse
+de vraies cotisations à l'Agirc-Arrco, calculées sur le salaire d'avant
+l'interruption ». Depuis l'action 139, le compte y ajoute le forfait de la
+garantie minimale de points. Aucune fiche de la carte ne dit ce financement.
+
+**Ce qui est à faire.**
+
+1. Les textes, période par période : ce qui précède 1990 pour l'Arrco et 1996
+   pour l'Agirc — le relevé de conclusions du 9 février 1984 et l'accord du
+   30 novembre 1989, que vise le protocole de 2004 — ; les accords de 2000 à
+   2016 ; ce qui suit l'accord du 14 mai 2014, jusqu'au régime unifié de 2019
+   et après ; la part de la participation reversée aux régimes, année par
+   année ; le financement de l'État pour l'ASS et l'ASFNE (guide, titre
+   VII.3.1.6.2, 2), allocations que le modèle ne distingue pas de celles de
+   l'Unédic.
+2. Décider ce que le compte porte d'une année indemnisée : ce que l'Unédic
+   versait, et rien de ce que le régime donnait sans contrepartie, comme pour
+   la maladie ; la participation prélevée sur l'allocation, que le chômeur
+   paie lui-même ; et la part, salariale ou patronale, à laquelle se rattache
+   le versement de l'Unédic aux scénarios 2 et 3.
+3. Le porter dans les deux moteurs, avec la fiche qui manque à la carte, ses
+   exemples s'il en est de publiés, et un témoin.
+4. Récrire ce qu'en disent la méthodologie, `limites.md` et l'approximation
+   de la fiche `garantie_minimale_points_agirc` sur les contributions de
+   l'Unédic.
+
+**Ce que le propriétaire tranche** : le point 2.
+
+**Ce qu'on en attend.** Le compte d'une année indemnisée descend, aux
+scénarios 2 à 6, de la cotisation entière à ce que l'Unédic versait —
+l'assiette réduite à 60 %, plus la participation ; le scénario 1 ne bouge
+pas. Neuf des 689 témoins de simulation ont une année de chômage indemnisé.
+
+**Fait, le 2 octobre 2026 : l'étape 1, les textes.** Le propriétaire lance
+l'action : « Lance l'action 141 ». Lus : l'index du JORF et de LEGI du dépôt ;
+la banque d'accords du Medef, ses 674 documents relevés par leur adresse
+directe (`accords.medef.com/documents/accord_N.pdf`), par leur couche texte ou,
+pour les 362 scans, par reconnaissance de caractères ; les textes que l'Unédic
+publie sous « Retraite complémentaire des demandeurs d'emploi » ; l'accord du
+17 novembre 2017 que publie l'Agirc-Arrco. Les copies restent dans
+`data/brut/`, que git ignore ; leurs empreintes sont au dernier alinéa.
+
+- *Avant 1990 à l'Arrco, avant 1996 à l'Agirc : l'Unédic remboursait des
+  pensions, elle ne versait pas de cotisations.* Le protocole du 2 janvier
+  1990 (Medef n° 409) fait rembourser chaque année à l'Agirc « la fraction des
+  allocations de retraite servies à d'anciens salariés qui ont relevé
+  d'institutions adhérentes à l'AGIRC, correspondant aux droits sur la tranche
+  B des rémunérations, qui auraient été acquis par le versement d'une
+  cotisation dont le montant résulte de l'application du système minimum de
+  cotisation aux salaires pris en considération pour l'attribution des points
+  de retraite » (art. 3, 1°, a) ; à l'Arrco, il fait verser « à compter du
+  1er janvier 1990, des cotisations sur la base du taux et du pourcentage
+  d'appel des opérations obligatoires, assises sur 60 % du salaire de
+  référence retenu pour le calcul des allocations de chômage » (art. 3, 1°,
+  b), avec, de 1990 à 1999, un ajustement si la somme reste sous l'ancien
+  remboursement : les droits « qui auraient été acquis par le versement d'une
+  cotisation égale au produit du montant des salaires pris en considération
+  pour l'attribution d'avantages de retraites par le taux de 4 % ». L'accord
+  du 30 novembre 1989 qu'il vise (n° 500) substitue ces cotisations aux
+  remboursements du protocole du 1er septembre 1988, et « aucune autre
+  contribution financière ne sera due par l'UNEDIC au titre de l'assurance
+  chômage, tant pour la validation des points de retraite pour la période
+  antérieure au 1er janvier 1990 que pour l'avenir » (art. 1er) ; l'Agirc,
+  elle, reste remboursée selon le protocole de 1988 et la convention
+  Unédic-Agirc du 3 décembre 1987 (art. 2). Ni le relevé de conclusions du
+  9 février 1984, ni le protocole de 1988, ni la convention de 1987 ne sont
+  dans la banque, ni trouvés ailleurs en ligne ; la convention d'assurance chômage du
+  24 février 1984 (n° 479) ne parle que de la garantie de ressources, que
+  finance la structure financière, et le protocole du 5 février 1979 (n° 486)
+  que du chômage partiel.
+- *De 1990 et 1996 à 2018 : 60 % du salaire de référence, et une part de la
+  participation.* L'accord du 25 avril 1996 sur l'Agirc (art. 4, n° 233) et
+  celui du 19 septembre 1996 (n° 235) font verser à l'Agirc, à compter du
+  1er janvier 1996, « un montant de cotisations calculé sur 60 % de la
+  tranche B du salaire journalier de référence retenu pour le calcul des
+  allocations de chômage », au système obligatoire de l'article 6, § 2, et
+  au pourcentage d'appel, et le précompte « à hauteur de 0,8 % de la tranche
+  B ». Le protocole du 2 janvier 2004 (n° 237) chiffre la participation au
+  chômage d'avant 1996, que les accords disent « sur vingt ans » : « 1/20e du
+  montant de 1 524 490 172,37 € (valeur 1er janvier 1996) prélevé sur les
+  réserves de l'UNEDIC », chaque année ; à l'Arrco, 60 % du salaire « limité au plafond de la sécurité sociale
+  pour les ressortissants de l'AGIRC, et à un montant égal à 3 plafonds pour
+  les personnes ne relevant pas du régime des cadres », et 0,8 % du même
+  salaire ; à l'Agirc, des contributions au titre de la garantie minimale de
+  points, hors du plafond de masse salariale (art. 3, 1°, c). Les accords
+  agréés de 2000 (JORFARTI000001636772), 2001 (JORFARTI000002032949), 2004
+  (JORFARTI000002458586), 2006 (JORFARTI000002468100), 2009
+  (JORFARTI000020467008), 2011 (JORFARTI000024186090), 2014
+  (JORFARTI000029151115) et 2016 (JORFARTI000032113833), puis l'accord du
+  14 avril 2017, que vise l'arrêté du 4 mai 2017 et dont l'Unédic publie le
+  texte, reprennent la même règle ; ils n'étendent que les bénéficiaires : la
+  convention de reclassement personnalisé (avenant du 27 avril 2005, n° 384),
+  le contrat de sécurisation professionnelle (avenant du 7 octobre 2011,
+  JORFARTI000025824350), le parcours d'accompagnement personnalisé (2017).
+- *Depuis 2019 : la convention de l'Unédic et de l'Agirc-Arrco.* Le règlement
+  du décret n° 2019-797, puis celui de la convention du 15 novembre 2024,
+  renvoient à des conventions : « L'assurance chômage contribue au financement
+  des points de retraite dans les conditions prévues à l'article 19 ainsi que
+  selon des modalités fixées par des conventions conclues, sur le fondement du
+  titre 2 du livre 9 du code de la sécurité sociale, entre l'Unédic et les
+  régimes de retraite complémentaire » (art. 70 ; JORFARTI000038829987,
+  LEGIARTI000050848048). Celle du 14 décembre 2021, à effet du 1er janvier
+  2019, qui remplace celle du 12 décembre 2017 (art. 9), fait verser des
+  cotisations aux taux des articles 35 et 36 de l'accord du 17 novembre 2017,
+  « assises sur 60 % du salaire journalier de référence extrait du fichier
+  transmis par Pôle emploi, dans la limite de quatre fois le plafond de la
+  sécurité sociale » et « majorées par l'application du taux d'appel en
+  vigueur » (art. 3 et 4.1), la CEG à un taux dérogatoire, 0,15 % sur la
+  tranche 1 et 0,5 % sur la tranche 2 des mêmes 60 %, et « une participation
+  financière
+  spécifique de 0,8 % assise sur le salaire journalier de référence ayant
+  servi de base au calcul de l'allocation » (art. 4.2). L'accord du
+  17 novembre 2017 calcule les points sur ce salaire entier, aux taux de
+  calcul des points obligatoires (art. 60, § 4), et le régime « prend à sa
+  charge la partie des droits excédant ceux financés par l'assurance
+  chômage » (art. 60, § 5). La fraction de CEG remplace la garantie : « Afin
+  de compenser la suppression de la GMP, l'Unédic prend désormais en charge
+  une fraction de la Contribution d'Equilibre Général (CEG) » (Unédic,
+  actualité du 3 janvier 2022) ; elle reste hors du compte, comme la CEG d'une
+  année travaillée (action 140, abandonnée).
+- *La participation de l'allocataire, année par année.* Avant 1990, 1 % de la
+  partie proportionnelle de l'allocation ; en 1990, 2 % de cette partie,
+  portée à 40,4 % du salaire journalier de référence (accord du 30 novembre
+  1989, art. 3), la part de l'Arrco lui étant reversée, celle de l'Agirc
+  gardée par l'Unédic tant que dure le remboursement ; 1,2 % du salaire
+  journalier de référence aux règlements de 1993 (art. 51,
+  JORFARTI000001192740), de 1994 (JORFARTI000002363389), de
+  1997 (art. 51, Medef n° 64) et de 2001 (art. 27, JORFARTI000001060170),
+  dont « Le produit [...] est affecté au financement des retraites
+  complémentaires des chômeurs indemnisés », puis, en 2001, « des
+  allocataires du régime d'assurance chômage » ; 3 % depuis l'avenant n° 5 du
+  27 décembre 2002 au règlement de 2001 (n° 189) et la convention de 2004
+  (JORFARTI000002253441), jusqu'aux règlements de 2019 (art. 19,
+  LEGIARTI000038869232) et de 2025 (LEGIARTI000050841519) ; 0,93 % aux
+  annexes VIII et X. Les régimes en reçoivent 0,8 % du salaire : de sa
+  tranche B à l'Agirc dès 1996, aux deux régimes en 2004, dans la limite de
+  quatre plafonds depuis 2019 ; de 1993 à 2003, la part de l'Arrco n'est dite
+  qu'« une partie » (accords de 2000 et de 2001). Le reste demeure à
+  l'Unédic, affecté au même financement : l'Unédic écrit que « Les
+  allocataires participent à ce financement via un prélèvement de 3% du
+  salaire de référence » (actualité du 3 janvier 2022).
+- *L'État, pour l'ASS, l'ASFNE et les préretraites.* Les protocoles de 1990 et
+  de 2004 ne valident ces périodes que « dans la mesure où l'Etat participe à
+  la prise en charge du coût de la validation » (art. 1er, 2°), par des
+  conventions avec l'Agirc et l'Arrco (art. 4) : celle du 23 mars 2000, que le
+  Fonds de solidarité vieillesse paie depuis la loi du 17 janvier 2002
+  (art. 49 ; un arrêté par an, JORFTEXT000000593037 et suivants), puis celle
+  du 5 juillet 2021 (avenant n° 13 à l'accord de 2017,
+  JORFARTI000046096526). L'accord du 17 novembre 2017 calcule les points de
+  l'ASS sur le salaire journalier de référence de l'allocation d'assurance
+  qui la précédait, « du taux de calcul des points de 4 % » (art. 62), ceux
+  de l'ASFNE sur ce salaire « limité à la partie prise en compte pour le
+  financement par l'État », au même taux (art. 61) ; l'article 8 bis de
+  l'Agirc, rédaction de 2001 que publie l'Unédic, prenait l'ASFNE à 8 ou
+  12 %. Le modèle ne distingue pas ces allocations de celles de l'Unédic :
+  une année d'ASS y vaudrait, au scénario 1, les points d'une année
+  d'allocation d'assurance. L'écart est hors de l'action ; `limites.md` le
+  dira au point 4.
+- *Ce que le compte porterait*, aux scénarios 4 à 6, s'il ne portait que le
+  versement de l'Unédic. Pour la cadre de 2010, payée 48 148 € sous un
+  plafond de 34 620 € : à l'Arrco, 60 % des 2 596,50 €, soit 1 557,90 €, plus
+  0,8 % du plafond, 276,96 € — 1 834,86 € ; à l'Agirc, 60 % des 2 746,26 €,
+  soit 1 647,76 €, plus 0,8 % de la tranche B de 13 528 €, 108,22 € —
+  1 755,98 € ; en tout 3 590,84 € au lieu de 5 342,76 €, un tiers de moins
+  (−32,8 %). Elle paie elle-même, sur son allocation, 3 % de son salaire de
+  référence : 1 444,44 € pour l'année.
+- *Ce que le propriétaire tranche : le point 2, en quatre questions.*
+  1. *Le principe.* Le compte porte-t-il ce que l'Unédic versait au régime —
+     60 % du salaire de référence au taux d'appel, les 0,8 %, et la garantie
+     minimale de points jusqu'en 2018 —, et rien de « la partie des droits
+     excédant ceux financés par l'assurance chômage », que le régime prend à
+     sa charge, comme rien des points gratuits de la maladie ?
+  2. *La participation de l'allocataire.* Ses 3 % s'ajoutent-ils au
+     versement de l'Unédic ? La note propose que non : les régimes en
+     reçoivent les 0,8 %, déjà comptés, et le reste demeure à l'Unédic,
+     affecté au même financement ; les porter en plus les compterait deux
+     fois. Ils disent qui paie : c'est la question 3.
+  3. *La part, aux scénarios 2 et 3, qui ne portent que la part salariale.*
+     Ou la clé d'une année travaillée, appliquée au versement réduit — ce que
+     fait le modèle, sur la cotisation entière ; ou le versement entier, la
+     participation de l'allocataire le finançant ; ou la seule participation,
+     les 0,8 % reversés ou les 3 % prélevés, le reste valant part patronale.
+  4. *Le chômage d'avant 1990 à l'Arrco, et d'avant 1996 à l'Agirc*, que
+     l'Unédic payait en remboursant les pensions servies : ou les 60 % et les
+     0,8 % appliqués à rebours ; ou la cotisation dont le remboursement tenait
+     lieu — 4 % des salaires pris en considération à l'Arrco, le système
+     minimum sur la tranche B à l'Agirc ; ou rien, le remboursement venant
+     des années plus tard, et cessant en 1990 à l'Arrco.
+- *Ce qui reste introuvable* : le relevé de conclusions du 9 février 1984, le
+  protocole du 1er septembre 1988, la convention Unédic-Agirc du 3 décembre
+  1987 ; les protocoles du 2 janvier 1997 et du 2 janvier 2001, dont on ne lit
+  que l'avenant du 3 janvier 2000 (n° 224) et le successeur de 2004 ; les
+  conventions d'application de l'Unédic avec l'Agirc et l'Arrco d'avant 2021,
+  où se lisent la part de la participation de 1993 à 2003 et le montant des
+  contributions de la garantie ; les conventions de l'État du 23 mars 2000 et
+  du 5 juillet 2021.
+- *Les copies* (sha256) : Medef n° 409, protocole du 2 janvier 1990,
+  `2e7898edb6f3d0942a7a1fafb553bba1a7abfdd2a3e0535e2e1e05134c65db96` ;
+  n° 500, accord du 30 novembre 1989,
+  `9c46e50cc09c1f1b13c4bb7d6e2c329d25ea2cd8c70042e25bc48eae0986badf` ;
+  n° 224, avenant du 3 janvier 2000,
+  `36035ceb86766478ee54c9c8e457b8629d851b21406d873c7c47f2043beffaa4` ;
+  n° 384, avenant du 27 avril 2005,
+  `1ad92ebfde77f175e31d65f1c7a40a10da47d5097a47f966015e1e7bf193a265` ;
+  n° 64, règlement de 1997,
+  `86cc30fbaa5d03cca2b569fe73d48636abde93d0f582f42d1062fc35019f4e5b` ;
+  n° 189, règlement de 2001,
+  `a699b7103452d502d707c0fd29f2ad635d26a2c38483f7f6ddc071d4a0acdeef` ;
+  n° 479, convention du 24 février 1984,
+  `8ad9df74f4fc9a0162f7e6dc59ee6f650fc8eef01510658e63610fbb6ac4b4d8` ;
+  n° 486, protocole du 5 février 1979,
+  `18a9af9c20f4da3e817b2059272cb9dd3a736236c664fc2c6f2dafe54c8421e5` ;
+  n° 233, 235 et 237, celles de la fiche `garantie_minimale_points_agirc` ;
+  Unédic, accord du 14 avril 2017 (`TXT-ACC-1492593203869.pdf`),
+  `b7c903c59ff5c0470c4788ce6697fbb4a1071a9ea59389b5c294bcde6eb0f6b8`,
+  convention du 14 décembre 2021,
+  `1d26dbd265159f726f902e37ca4f5ca40b473fcdb6fa134574109710b8dcd11f`,
+  article 8 bis de 2001 (`Art8b1947AGIRC06062001.pdf`),
+  `61e00209d4e4573c6b4c85efb775f5626fd4886ed7d9a5bc3b65ebceb1513b80` ;
+  Agirc-Arrco, accord du 17 novembre 2017
+  (`storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf`),
+  `b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb`.
+
+Rien ne change au calcul : aucun témoin ne bouge.
