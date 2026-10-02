@@ -447,8 +447,9 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           }
           if (garantie !== null) {
             // Garantie minimale de points de l'Agirc : tout cadre cotisant en
-            // acquiert au moins ce que le forfait de l'année achète — 144
-            // points en 1989, 120 de 1997 à 2018 —, même quand sa tranche B
+            // acquiert au moins ce que le forfait de l'année achète au taux
+            // de son entreprise — 144 points en 1989 à 16 %, 72 au taux
+            // minimal de 8 %, 120 de 1999 à 2018 —, même quand sa tranche B
             // est nulle. Le compte notionnel porte ce forfait, et les points
             // se proratisent comme lui, sur la durée de présence et la
             // quotité du temps partiel.

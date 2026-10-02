@@ -15493,6 +15493,65 @@ ou un peu moins de 144 points ; une publication de la fédération pour les
 forfaits d'avant 2008 ; les circulaires 2017-07-DT et 2017-12-DRJ ; un texte de
 l'Agirc pour le prorata.
 
+**Troisième suite, le même jour.** « Regarde ces points et trouve des sources
+pour les résoudre » : les cinq questions, cherchées à la source.
+
+- *L'accord de 1988, par la doctrine, et il change la règle.* Le texte reste
+  introuvable — ni au JORF ni dans KALI, ni dans la compilation des accords que
+  publie la fédération, qui commence en 1993 —, mais G. Briens le lit en 1990
+  (*L'Entreprise et le droit de la protection sociale complémentaire*, n° 219,
+  extraits de Gallica) : « un nombre de points proportionnel au taux de
+  cotisations de l'entreprise sur tranche B », 72 points à 8 %, 108 à 12 %, 144
+  à 16 %. Un manuel de paie de 1989 donne le « plancher fixé par l'AGIRC à
+  1 290 F » d'assiette mensuelle — 144 points à 16 % au salaire de référence
+  provisoire de 17,20 F —, et l'accord de 1996 ramène la garantie à « 120 points
+  pour un taux de cotisation de 16 % ». Les 144 points de l'UGICT-CGT sont ceux
+  du taux de 16 %. Le modèle, qui prête à l'entreprise le taux minimal de la
+  tranche B, sert la part du forfait publié à ce taux
+  (`ValeursPoint.TAUX_DE_LA_GARANTIE`, et son jumeau) : 72 points de 1989 à
+  1993 au lieu de 144, 108 aux entreprises nouvelles, de 89 à 113 de 1994 à
+  1998 ; rien ne change à partir de 1999, quand le taux minimal atteint 16 %.
+- *Pourquoi 142,45 à 146,62 points de 1991 à 1995.* Le forfait d'une année
+  précédait son salaire de référence : en 1989 et en 1990, un acompte « calculé
+  à partir d'un salaire de référence provisoire », régularisé « sur la base du
+  salaire de référence définitif » (Briens) ; en décembre 2003 et en décembre
+  2004, un forfait fixé d'avance, les points s'inscrivant « sur la base du
+  salaire de référence de l'exercice 2004 (qui sera connu en avril 2004) »
+  (circulaire Agirc 2003-9-DRE). Ceux de 1991 à 1995 sont, au dixième de franc,
+  144 fois un salaire de référence en francs ronds — 18,97, 19,45, 19,63, 19,31
+  et 20,07 F —, au taux d'appel, quand celui fixé ensuite valut 18,80, 19,23,
+  19,28, 19,52 et 20,03 F. Une déduction, non une lecture : les circulaires de
+  ces années ne sont pas publiées. L'accord du 9 février 1994 (art. 11) dit que
+  l'appel de 121 % « s'applique […] aux garanties et forfaits ».
+- *Une publication de la fédération.* Son site publie les circulaires de
+  l'Agirc depuis 2003, par sa médiathèque : 2003-9-DRE (648 € pour 2004),
+  2004-7-DRE (664 € pour 2005), 2005-9-DRE, 2006-2-DRE (682 €), 2007-1-DT
+  (707 €), 2008-4-DT (731 €). Elles confirment le barème IPP au centime de la
+  mensualité ; pour 2005, la circulaire fixe 664 € l'an quand ses douze
+  mensualités font 663,96 €. Les lettres de l'UCANSS relaient 2000, 2002 et
+  2003. Avant 2003, rien de la fédération en ligne.
+- *Les deux circulaires de 2017* sont lues sur ce site : 2017-07-DT du
+  16 octobre 2017 (salaire de référence de 5,8166 €, garantie de 872,52 €) et
+  2017-12-DRJ du 13 décembre 2017 (72,71 € par mois, salaire charnière de
+  3 664,82 €, « Décision du Conseil d'administration de l'Agirc du 11 octobre
+  2017 »).
+- *Le prorata du temps partiel* reste sans texte de l'Agirc ; celui de la durée
+  de présence a un exemple de la fédération, son cahier DSN de juillet 2016.
+
+Six exemples nouveaux (`agirc_gmp_2004` à `agirc_gmp_2008`,
+`agirc_arrco_gmp_2018`), un test réécrit (la proportion au taux) et deux
+nouveaux (le forfait fixé avant le salaire de référence, les circulaires de 2003
+à 2006). 25 des 689
+témoins bougent, tous à la baisse : −0,50 % en médiane au scénario 1, jusqu'à
+−2,83 % au scénario 4 pour `releve_generation_1950`. Un cadre entré en 1990
+sous le plafond acquiert 3 217 points Agirc au lieu de 3 645 : 177 € de pension
+par an de moins au scénario 1, 160 € aux scénarios 4 et 6. La dette du
+scénario 6 passe de 938 à 937 Md€.
+
+**Ce qui reste** : le texte de l'accord du 8 décembre 1988 et de son avenant du
+13 juin 1991 ; les circulaires de l'Agirc de 1989 à 2002 ; un texte de l'Agirc
+qui fonde le prorata du temps partiel.
+
 ### 140. Les contributions d'équilibre de l'Agirc-Arrco au compte notionnel : CEG, CET, AGFF et ASF — `abandonnée`
 
 **D'où elle vient.** Relevé le 2 octobre 2026, en répondant à « Dans les

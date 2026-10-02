@@ -4711,9 +4711,10 @@ def test_la_garantie_minimale_de_points_agirc_est_servie(simulateur):
 
     Un cadre payé sous le plafond de la Sécurité sociale n'acquérait aucun
     point à l'Agirc, quand l'accord du 8 décembre 1988 lui en garantissait
-    144 par an, ramenés à 120 en 1997. La fiche du régime le déclarait ; le
-    moteur ne le servait pas. Il servit ensuite 120 points dès 1989, jusqu'au
-    2 octobre 2026.
+    144 par an au taux de 16 %, au prorata du taux de son entreprise, puis 120
+    en 1997. La fiche du régime le déclarait ; le moteur ne le servait pas. Il
+    servit ensuite 120 points dès 1989, puis 144 jusqu'en 1996 quel que fût le
+    taux, jusqu'au 2 octobre 2026.
     """
     import re
 
@@ -4725,12 +4726,12 @@ def test_la_garantie_minimale_de_points_agirc_est_servie(simulateur):
         simulateur.carriere_simple(niveau_salaire=0.8, **commun))
     agirc = {p.regime: p for p in sous_plafond.pensions_par_regime}["agirc"]
 
-    # Vingt-neuf années cotisées de 1990 à 2018, toutes garanties : sept à
-    # 136-147 points, vingt-deux à 120.
+    # Vingt-neuf années cotisées de 1990 à 2018, toutes garanties : neuf au
+    # taux minimal, de 8 % à 15 % — de 72 à 113 points —, vingt à 120.
     assert agirc.montant > 0
     attendus = sum(_points_de_la_garantie(simulateur, annee)
                    for annee in range(1990, 2019))
-    assert attendus > 29 * 120 + 7 * 16
+    assert 20 * 120 + 9 * 72 < attendus < 29 * 120
     # Les points s'affichent au centième depuis que la formule doit se refaire.
     affiches = re.search(r"([\d,]+\.\d+) points", agirc.detail).group(1)
     assert float(affiches.replace(",", "")) == pytest.approx(attendus, abs=0.006)
@@ -4746,33 +4747,99 @@ def _points_de_la_garantie(simulateur, annee, part=1.0, quotite=1.0):
     return cotisation / (appel * reference)
 
 
-def test_la_garantie_valait_144_points_jusqu_en_1996(simulateur):
-    """L'accord du 8 décembre 1988 visait 144 points par an ; l'accord du
-    25 avril 1996, article 7, « ramène » la garantie « à compter du
-    1er janvier 1997, à 120 points ». Le forfait publié le confirme : au prix
-    de l'année, il achète 144 points en 1989 et en 1990, 120 de 1997 à 2018.
+def _tranche_b(simulateur, regime, annee):
+    (periode,) = [p for p in simulateur.catalogue[regime].periodes_actives(annee)
+                  if p.assiette == "tranche_b"]
+    return periode
 
-    1996 fait exception, et le forfait l'explique : 549,64 €, soit 144 points
-    au salaire de référence de 1995, quand le même accord, signé en avril,
-    majora de 4 % celui de 1996 (article 1er). Le cadre n'en eut que 136 —
-    ce que le modèle sert, puisqu'il sert ce que la cotisation achète.
+
+def _points_du_forfait_publie(simulateur, annee):
+    """Les points qu'achète le forfait publié, celui du taux de 16 %."""
+    valeurs = simulateur.scenario_actuel.valeurs_point
+    reference, appel, _ = valeurs.achat("agirc", annee)
+    forfait, _ = valeurs._en_vigueur("agirc", "cotisation_garantie", annee)
+    return forfait / (appel * reference)
+
+
+def test_la_garantie_est_proportionnelle_au_taux_de_l_entreprise(simulateur):
+    """« Le participant peut bénéficier chaque année d'un nombre de points
+    proportionnel au taux de cotisations de l'entreprise sur tranche B
+    calculé sur la base de : 72 points pour un taux contractuel de 8 % […]
+    108 points pour un taux contractuel de 12 % […] 144 points pour un taux
+    contractuel de 16 % » (G. Briens, L'Entreprise et le droit de la
+    protection sociale complémentaire, Litec, 1990, n° 219, lisant l'accord du
+    8 décembre 1988). L'accord du 25 avril 1996, article 7, la « ramène, à
+    compter du 1er janvier 1997, à 120 points pour un taux de cotisation de
+    16 % » ; le taux minimal atteint 16 % en 1999 (article 11).
+
+    Le forfait publié est celui du taux de 16 % : au prix de l'année, il
+    achète 144 points en 1989 et en 1990, 120 de 1999 à 2018. Le modèle, qui
+    prête à l'entreprise le taux minimal de la tranche B, en sert la part :
+    72 points de 1989 à 1993 au régime des entreprises anciennes, 108 à celui
+    des entreprises nouvelles, à 12 %. Il servait 144 points quel que fût le
+    taux jusqu'au 2 octobre 2026.
+
+    1996 reste à part, et le forfait l'explique : 549,64 €, soit 144 points au
+    salaire de référence de 1995, quand le même accord, signé en avril, majora
+    de 4 % celui de 1996 (article 1er) — 136,31 points au taux de 16 %.
     """
     valeurs = simulateur.scenario_actuel.valeurs_point
     for annee in (1989, 1990):
-        assert _points_de_la_garantie(simulateur, annee) == pytest.approx(144, abs=0.005)
-    for annee in range(1997, 2019):
+        assert _points_du_forfait_publie(simulateur, annee) == pytest.approx(144, abs=0.005)
+        assert _points_de_la_garantie(simulateur, annee) == pytest.approx(72, abs=0.005)
+        nouvelle = _tranche_b(simulateur, "agirc_entreprises_nouvelles", annee)
+        reference, appel, _ = valeurs.achat("agirc", annee)
+        cotisation, _ = valeurs.garantie("agirc", nouvelle, annee, 1.0, 1.0)
+        assert cotisation / (appel * reference) == pytest.approx(108, abs=0.005)
+    # Le taux minimal monte de 10 % en 1994 à 15 % en 1998 (accords du
+    # 9 février 1994, art. 10, et du 25 avril 1996, art. 11).
+    for annee, taux in ((1994, 0.10), (1995, 0.12), (1996, 0.13), (1997, 0.14),
+                        (1998, 0.15)):
+        assert _points_de_la_garantie(simulateur, annee) == pytest.approx(
+            _points_du_forfait_publie(simulateur, annee) * taux / 0.16, rel=1e-12)
+    assert _points_de_la_garantie(simulateur, 1997) == pytest.approx(105, abs=0.3)
+    for annee in range(1999, 2019):
+        assert _points_de_la_garantie(simulateur, annee) == pytest.approx(
+            _points_du_forfait_publie(simulateur, annee), rel=1e-12)
         assert _points_de_la_garantie(simulateur, annee) == pytest.approx(120, abs=0.3)
     reference_1995, appel_1995, _ = valeurs.achat("agirc", 1995)
-    (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(1996)
-                    if p.assiette == "tranche_b"]
-    forfait_1996, _ = valeurs.garantie("agirc", tranche_b, 1996, 1.0, 1.0)
+    forfait_1996, _ = valeurs._en_vigueur("agirc", "cotisation_garantie", 1996)
     assert forfait_1996 == pytest.approx(144 * reference_1995 * appel_1995, abs=0.01)
-    assert _points_de_la_garantie(simulateur, 1996) == pytest.approx(136.31, abs=0.005)
-    # L'objectif de la fiche, que le forfait publié remplace : 144, puis 120.
-    assert tranche_b.points_garantis(1.0, 1.0) == 144
-    (tranche_b_1997,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(1997)
-                         if p.assiette == "tranche_b"]
-    assert tranche_b_1997.points_garantis(1.0, 1.0) == 120
+    assert _points_du_forfait_publie(simulateur, 1996) == pytest.approx(136.31, abs=0.005)
+    # L'objectif de la fiche, au taux de 16 %, que le forfait publié remplace.
+    assert _tranche_b(simulateur, "agirc", 1996).points_garantis(1.0, 1.0) == 144
+    assert _tranche_b(simulateur, "agirc", 1997).points_garantis(1.0, 1.0) == 120
+
+
+def test_la_garantie_se_fixait_avant_le_salaire_de_reference(simulateur):
+    """Le forfait d'une année était fixé avant le salaire de référence qui
+    achète ses points : « le montant des points à inscrire sera calculé sur la
+    base du salaire de référence de l'exercice 2004 (qui sera connu en avril
+    2004) » (circulaire Agirc 2003-9-DRE du 5 décembre 2003, qui fixe 648 €) ;
+    le forfait de 2005, 664 €, est décidé le 9 décembre 2004 (circulaire
+    2004-7-DRE). Les deux achètent donc un peu plus de 120 points, au salaire
+    de référence publié en mars (circulaires 2004-1-DT et 2005-2-DT).
+
+    Ceux de 1991 à 1995 sont, au dixième de franc, 144 fois un salaire de
+    référence en francs ronds, au taux d'appel : 18,97, 19,45, 19,63, 19,31 et
+    20,07 F, quand le salaire de référence fixé ensuite valut 18,80, 19,23,
+    19,28, 19,52 et 20,03 F. D'où les 142,45 à 146,62 points qu'ils achètent
+    au taux de 16 %. En 1989 et en 1990, l'acompte calculé « à partir d'un
+    salaire de référence provisoire » était régularisé « sur la base du
+    salaire de référence définitif » (G. Briens, 1990) : 144 points exacts.
+    """
+    valeurs = simulateur.scenario_actuel.valeurs_point
+    reference_2004, appel_2004, _ = valeurs.achat("agirc", 2004)
+    assert reference_2004 == pytest.approx(4.3128, abs=1e-6)
+    assert _points_du_forfait_publie(simulateur, 2004) == pytest.approx(
+        648 / (4.3128 * 1.25), abs=1e-6)
+    assert 120.1 < _points_du_forfait_publie(simulateur, 2005) < 120.3
+    prevus = {1991: 18.97, 1992: 19.45, 1993: 19.63, 1994: 19.31, 1995: 20.07}
+    for annee, prevu in prevus.items():
+        reference, appel, _ = valeurs.achat("agirc", annee)
+        forfait, _ = valeurs._en_vigueur("agirc", "cotisation_garantie", annee)
+        assert forfait * 6.55957 == pytest.approx(144 * prevu * appel, abs=0.05)
+        assert abs(reference * 6.55957 - prevu) > 0.03
 
 
 def _cotisation_agirc(simulateur, carriere, annee, part):
@@ -4839,9 +4906,10 @@ def test_la_garantie_minimale_se_proratise(simulateur):
     """La garantie est celle d'une année entière à temps plein : « En cas de
     travail à temps partiel, la GMP est proratisée » (Audiens Retraite Agirc,
     2018), et selon la durée de présence en cas d'embauche ou de départ en
-    cours d'année. Une cadre entrée en juillet n'acquiert, cette année-là, que
-    la moitié des 120 points, et son compte la moitié de la cotisation. Le
-    plancher valait 120 points entiers jusqu'au 2 octobre 2026.
+    cours d'année. Une cadre entrée en juillet 1997 n'acquiert, cette
+    année-là, que la moitié des 105 points que la garantie donne au taux
+    minimal de 14 %, et son compte la moitié de la cotisation. Le plancher
+    valait 120 points entiers jusqu'au 2 octobre 2026.
     """
     import re
 
@@ -4874,7 +4942,7 @@ def test_la_garantie_minimale_se_proratise(simulateur):
     # Tout le reste de la carrière est le même : l'écart est la première année.
     assert points_agirc(janvier) - points_agirc(juillet) == pytest.approx(
         _points_de_la_garantie(simulateur, 1997, part=0.5), abs=0.011)
-    assert _points_de_la_garantie(simulateur, 1997, part=0.5) == pytest.approx(60, abs=0.01)
+    assert _points_de_la_garantie(simulateur, 1997, part=0.5) == pytest.approx(52.5, abs=0.15)
     entiere = _cotisation_agirc(simulateur, janvier, 1997, PartCotisation.TOTALE)[0]
     moitie = _cotisation_agirc(simulateur, juillet, 1997, PartCotisation.TOTALE)[0]
     assert entiere > 0
@@ -4911,12 +4979,15 @@ def test_la_garantie_minimale_ne_vaut_pas_pour_une_annee_de_chomage(simulateur):
 
 
 @pytest.mark.parametrize("annee, mensuelle, salariale, source", [
-    (2008, 60.92, 23.11, "ASH, 16 janvier 2009 : le niveau de 2008, maintenu en janvier"),
+    (2000, 329.88 / 6.55957, 123.70 / 6.55957,
+     "UCANSS, lettre du 8 janvier 2001 : le niveau de 2000, en francs"),
+    (2007, 58.92, 22.35, "circulaire Agirc 2007-1-DT du 14 mars 2007"),
+    (2008, 60.92, 23.11, "circulaire Agirc 2008-4-DT du 14 mars 2008"),
     (2009, 62.00, 23.52, "UCANSS, lettre circulaire 004-10"),
     (2010, 62.81, 23.82, "UCANSS, lettre circulaire 003-11, niveau 2010 maintenu"),
     (2013, 66.26, 25.13, "circulaire 2013-6-DT, citée par LégiSocial"),
     (2017, 70.38, 26.71, "circulaire Agirc-Arrco 2016-11-DRJ"),
-    (2018, 72.71, 27.60, "Audiens Retraite Agirc, fiche « La GMP » 2018"),
+    (2018, 72.71, 27.60, "circulaires Agirc-Arrco 2017-07-DT et 2017-12-DRJ"),
 ])
 def test_le_prix_de_la_garantie_suit_les_montants_publies(simulateur, annee, mensuelle,
                                                           salariale, source):
@@ -4937,6 +5008,31 @@ def test_le_prix_de_la_garantie_suit_les_montants_publies(simulateur, annee, men
     assert prix == pytest.approx(mensuelle, abs=0.005), source
     assert prix * tranche_b.part_salariale == pytest.approx(salariale, abs=0.015), source
     assert 120 * reference * appel / 12 == pytest.approx(mensuelle, abs=0.015), source
+
+
+@pytest.mark.parametrize("annee, mensuelle, salariale, source", [
+    (2003, 52.75, 19.78, "UCANSS, lettre du 21 janvier 2003, montant « fixé par l'Agirc »"),
+    (2004, 54.00, 20.25, "circulaire Agirc 2003-9-DRE du 5 décembre 2003"),
+    (2005, 55.33, 20.75, "circulaire Agirc 2004-7-DRE du 15 décembre 2004"),
+    (2006, 56.83, 21.56, "circulaire Agirc 2006-2-DRE du 19 mai 2006"),
+])
+def test_la_garantie_suit_les_circulaires_de_l_agirc(simulateur, annee, mensuelle,
+                                                     salariale, source):
+    """Les forfaits d'avant 2008, que le barème IPP tient « de barèmes
+    communiqués par l'Agirc-Arrco », confrontés à ce que l'Agirc publiait
+    elle-même, au centime de la mensualité, part du salarié comprise. Ceux de
+    2003 à 2005, fixés en décembre, avant le salaire de référence, achètent
+    un peu plus de 120 points ; celui de 2006, arrondi à l'euro (682 €), à
+    peine plus : la mensualité ne retombe pas au centime sur le prix de
+    120 points, et ne le doit pas.
+    """
+    tranche_b = _tranche_b(simulateur, "agirc", annee)
+    forfait, _ = simulateur.scenario_actuel.valeurs_point.garantie(
+        "agirc", tranche_b, annee, 1.0, 1.0)
+    prix = forfait / 12
+    assert prix == pytest.approx(mensuelle, abs=0.005), source
+    assert prix * tranche_b.part_salariale == pytest.approx(salariale, abs=0.015), source
+    assert 120 <= _points_du_forfait_publie(simulateur, annee) < 120.3, source
 
 
 def test_le_regime_de_base_des_avocats_est_forfaitaire(simulateur):

@@ -435,11 +435,12 @@ class PeriodeRegime:
     #: Nombre de points garantis chaque année à qui cotise au régime, quelle
     #: que soit son assiette. C'est la garantie minimale de points de l'Agirc :
     #: un objectif de 144 points par an de 1989 à 1996, de 120 de 1997 à 2018,
-    #: y compris pour un cadre dont la tranche B est nulle. Ils ne sont pas
-    #: gratuits : une cotisation forfaitaire les achète, au prix de tout autre
-    #: point (convention du 14 mars 1947, art. 6, § 2, F), et le compte
-    #: notionnel la reçoit. Le forfait publié, quand il existe, l'emporte sur
-    #: cet objectif (``ValeursPoint.garantie``). Voir :meth:`points_garantis`.
+    #: écrit pour un taux contractuel de 16 % et proportionnel au taux de
+    #: l'entreprise, y compris pour un cadre dont la tranche B est nulle. Ils
+    #: ne sont pas gratuits : une cotisation forfaitaire les achète, au prix de
+    #: tout autre point (convention du 14 mars 1947, art. 6, § 2, F), et le
+    #: compte notionnel la reçoit. Le forfait publié, quand il existe, l'emporte
+    #: sur cet objectif (``ValeursPoint.garantie``). Voir :meth:`points_garantis`.
     points_minimum_annuels: float | None
     #: Points attribués par TRIMESTRE VALIDÉ, sans égard au montant cotisé.
     #: C'est la règle du régime de base des professions libérales pour tout ce
@@ -627,12 +628,13 @@ class PeriodeRegime:
         """Les points que la garantie minimale assure à une ligne de l'année,
         ou ``None`` si le régime n'en donne pas.
 
-        Les points de la fiche sont ceux d'une année entière à temps plein :
-        la cotisation forfaitaire qui les achète « est proratisée » en cas de
-        temps partiel, et selon la durée de présence en cas d'embauche ou de
-        départ en cours d'année (Audiens Retraite Agirc, fiche « La GMP »,
-        2018). Le scénario 1 et le compte notionnel les lisent tous deux par
-        ``ValeursPoint.garantie``, qui leur préfère le forfait publié.
+        Les points de la fiche sont ceux d'une année entière à temps plein, au
+        taux contractuel de 16 % : la cotisation forfaitaire qui les achète
+        « est proratisée » en cas de temps partiel, et selon la durée de
+        présence en cas d'embauche ou de départ en cours d'année (Audiens
+        Retraite Agirc, fiche « La GMP », 2018). Le scénario 1 et le compte
+        notionnel les lisent tous deux par ``ValeursPoint.garantie``, qui leur
+        préfère le forfait publié et les ramène au taux de la période.
         """
         if self.points_minimum_annuels is None:
             return None

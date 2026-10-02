@@ -2,9 +2,10 @@ schema_version: 1
 id: garantie_minimale_points_agirc
 intitule: >-
   De 1989 à 2018, tout cadre de l'Agirc acquiert au moins les points qu'achète une
-  cotisation forfaitaire publiée chaque année — 144 jusqu'en 1996, 120 ensuite : celui
-  dont la tranche B n'atteint pas ce forfait le paie, au prix de tout autre point,
-  partagé comme la tranche B et proratisé sur la durée de présence et le temps partiel.
+  cotisation forfaitaire publiée chaque année pour un taux contractuel de 16 % — 144
+  jusqu'en 1996, 120 ensuite —, au prorata du taux de son entreprise : celui dont la
+  tranche B n'atteint pas ce forfait le paie, au prix de tout autre point, partagé comme
+  la tranche B et proratisé sur la durée de présence et le temps partiel.
 domaine: points
 regimes: [agirc, agirc_entreprises_nouvelles]
 etape: acquerir_les_droits
@@ -13,6 +14,7 @@ etat: approchee
 lit:
 - le revenu de chaque année de cadre, de 1989 à 2018, et l'affiliation qui ouvre l'Agirc
 - la part de l'année que la ligne couvre, et la quotité de son temps partiel
+- le taux contractuel de la tranche B de la période
 - le salaire de référence et le taux d'appel de l'Agirc de l'année
 - le forfait publié de l'année (regimes/valeurs_point.csv, mesure cotisation_garantie)
 ecrit:
@@ -71,20 +73,62 @@ versions:
       « La Garantie Minimale de Points G.M.P. est ramenée, à compter du 1er janvier 1997, à
       120 points pour un taux de cotisation de 16 %. »
     lu_le: 2026-10-02
+  - reference: >-
+      G. Briens, L'Entreprise et le droit de la protection sociale complémentaire, Litec,
+      1990, n° 219, qui lit l'accord du 8 décembre 1988 (extraits lus par la recherche
+      plein texte de Gallica, ark:/12148/bpt6k3372553q, p. 110 et 111)
+    article: n° 219, « Garantie de cotisations »
+    en_vigueur: 1989-01-01
+    citation: >-
+      « En application d'un accord du 8 décembre 1988, un système de garantie annuelle
+      minimale de points (G.M.P.) a été institué dans le cadre du régime A.G.I.R.C. Ce
+      nouveau dispositif, qui s'apparente à un achat de points, est obligatoire pour toutes
+      les entreprises dès le 1er janvier 1989 » ; « Moyennant le versement des cotisations
+      correspondantes, le participant peut bénéficier chaque année d'un nombre de points
+      proportionnel au taux de cotisations de l'entreprise sur tranche B calculé sur la base
+      de : - 72 points pour un taux contractuel de 8 % […] 108 points pour un taux
+      contractuel de 12 % […] 144 points pour un taux contractuel de 16 % » ; « Les
+      cotisations sont réglées sous forme d'acompte trimestriel calculé à partir d'un
+      salaire de référence provisoire », et régularisées au « 31 décembre de l'exercice par
+      l'institution sur la base du salaire de référence définitif »
+    lu_le: 2026-10-02
+  - reference: >-
+      accord du 9 février 1994 relatif au régime de retraite des cadres, publié par
+      l'Agirc-Arrco dans sa compilation des accords nationaux (hors JORF)
+    article: articles 10 et 11
+    en_vigueur: 1994-01-01
+    citation: >-
+      le taux contractuel minimum de la tranche B « est porté à : 10 % à compter du 1er
+      janvier 1994, 12 % à compter du 1er janvier 1995, 13 % à compter du 1er janvier 1996,
+      14 % à compter du 1er janvier 1997 » (art. 10) ; le pourcentage d'appel, 121 % puis
+      125 % : « Ce taux s'applique aux cotisations calculées en pourcentage des
+      rémunérations ainsi qu'aux garanties et forfaits » (art. 11)
+    lu_le: 2026-10-02
   bornes:
     revenu.annee: [1989-01-01, 1997-01-01]
   contenu:
     droit: >-
-      La règle de la version suivante, à un objectif de 144 points par an au lieu de 120 :
-      l'accord du 8 décembre 1988 les visait (UGICT-CGT, l'un de ses signataires), et le
-      forfait publié les achète exactement en 1989 (2 843 F) et en 1990 (3 068 F), au
-      salaire de référence et au taux d'appel de l'année. De 1991 à 1995, il en achète de
-      142,45 à 146,62. En 1996, 136,31 seulement : fixé à 144 fois le salaire de référence
-      de 1995, au taux d'appel, il précède l'accord du 25 avril 1996, qui majore de 4 %
-      celui de 1996 (article 1er). Le modèle sert ce que la cotisation achète.
+      Le cadre acquiert chaque année un nombre de points proportionnel au taux contractuel
+      de tranche B de son entreprise — 72 points à 8 %, 108 à 12 %, 144 à 16 % —, en
+      cotisant au taux de l'entreprise sur une assiette minimale de tranche B : le
+      « plancher fixé par l'AGIRC à 1 290 F » par mois en 1989 (L. Marrache-Jupin, 1989),
+      144 points à 16 % au salaire de référence provisoire de 17,20 F. Le forfait publié est
+      celui du taux de 16 % : régularisé sur le salaire de référence définitif, il achète
+      exactement 144 points en 1989 (2 843 F) et en 1990 (3 068 F). De 1991 à 1995, il vaut
+      144 fois un salaire de référence en francs ronds — 18,97, 19,45, 19,63, 19,31 et
+      20,07 F —, au taux d'appel, quand celui fixé ensuite valut 18,80, 19,23, 19,28, 19,52
+      et 20,03 F : il achète de 142,45 à 146,62 points à 16 %, sans régularisation. En
+      1996, 136,31 : fixé à 144 fois le salaire de référence de 1995, il précède l'accord
+      du 25 avril 1996, qui majore de 4 % celui de 1996 (article 1er). Le modèle prête à
+      l'entreprise le taux minimal de la tranche B — 8 % jusqu'en 1993 (12 % aux
+      entreprises nouvelles), 10 % en 1994, 12 % en 1995, 13 % en 1996 — et sert la part
+      du forfait qui lui revient, au prix de l'année : 72 points en 1989 et en 1990.
     parametres:
       points_minimum_annuels: 144
-      cotisation_garantie: le forfait annuel publié (regimes/valeurs_point.csv)
+      taux_de_la_garantie: 0.16
+      cotisation_garantie: >-
+        le forfait annuel publié (regimes/valeurs_point.csv), multiplié par le taux
+        contractuel de la période et divisé par 16 %
       prix_du_point: le salaire de référence de l'année, au taux d'appel de l'année
   exemples: aucun trouvé
 - id: cent_vingt_points
@@ -140,14 +184,44 @@ versions:
       120 points pour un taux de cotisation de 16 %. En 1999, elle fera l'objet d'un nouvel
       examen. »
     lu_le: 2026-10-02
+  - reference: >-
+      accord du 25 avril 1996 relatif au régime de retraite des cadres (Agirc), publié par
+      l'Agirc-Arrco dans sa compilation des accords nationaux (hors JORF)
+    article: article 11
+    en_vigueur: 1998-01-01
+    citation: >-
+      « Le taux contractuel minimum de cotisation applicable aux tranches B et C des
+      rémunérations de l'ensemble des participants du régime des cadres est porté de 14 % à
+      compter du 1er janvier 1997 à : - 15 % à compter du 1er janvier 1998 ; - 16 % à
+      compter du 1er janvier 1999. »
+    lu_le: 2026-10-02
+  - reference: >-
+      circulaire Agirc 2003-9-DRE du 5 décembre 2003, « GMP 2004 », publiée par
+      l'Agirc-Arrco
+    article: tableau et dernier alinéa
+    en_vigueur: 2004-01-01
+    citation: >-
+      « Le Conseil d'administration de l'Agirc, lors de sa réunion du 4 décembre 2003, a fixé
+      le montant annuel des cotisations dues au titre de la GMP pour l'exercice 2004 » :
+      « Taux unique 16 % », 518,40 € hors pourcentage d'appel, 648,00 € pourcentage d'appel
+      inclus, 54,00 € par mois ; « Nous vous rappelons que le montant des points à inscrire
+      sera calculé sur la base du salaire de référence de l'exercice 2004 (qui sera connu en
+      avril 2004) »
+    lu_le: 2026-10-02
   bornes:
     revenu.annee: [1997-01-01, 2019-01-01]
   contenu:
     droit: >-
-      Le cadre (articles 4 et 4 bis) dont les cotisations de tranche B n'achètent pas 120
-      points dans l'année paie une cotisation forfaitaire qui les complète : le forfait
-      publié de l'année — 120 fois le salaire de référence, au taux d'appel, à la
-      mensualité arrondie près —, moins ce que la tranche B a prélevé. Elle est
+      Le cadre (articles 4 et 4 bis) dont les cotisations de tranche B n'achètent pas les
+      points de la garantie dans l'année — 120 pour un taux de 16 %, au prorata du taux de
+      son entreprise, soit 105 au taux minimal de 14 % en 1997 et 112,5 à 15 % en 1998, puis
+      120 quand le taux minimal atteint 16 %, en 1999 — paie une cotisation forfaitaire qui
+      les complète : le forfait publié de l'année, à ce prorata — 120 fois le salaire de
+      référence, au taux d'appel, à la mensualité arrondie près, « taux unique 16 % » —,
+      moins ce que la tranche B a prélevé. Fixé avant le salaire de référence de l'année,
+      comme en décembre 2003 et en décembre 2004, le forfait en achète un peu plus : les
+      points s'inscrivent « sur la base du salaire de référence de l'exercice », connu au
+      printemps. Elle est
       due sous le salaire charnière — 43 977,84 € par an en 2018, 3 664,82 € par mois — et
       vaut alors 872,52 € pour 2018, 72,71 € par mois appelés à 20,55 %, dont 27,60 € pour
       le salarié et 45,11 € pour l'employeur, partagés comme la tranche B (au D : 6,24 % et
@@ -161,9 +235,13 @@ versions:
       modèle, qui ne voit qu'une ligne par année, le retrouve.
     parametres:
       points_minimum_annuels: 120
-      cotisation_garantie: le forfait annuel publié (regimes/valeurs_point.csv)
+      taux_de_la_garantie: 0.16
+      cotisation_garantie: >-
+        le forfait annuel publié (regimes/valeurs_point.csv), multiplié par le taux
+        contractuel de la période et divisé par 16 %, sans pouvoir dépasser le forfait
       prix_du_point: le salaire de référence de l'année, au taux d'appel de l'année
-  exemples: [audiens_gmp_2018, agirc_arrco_gmp_2017]
+  exemples: [agirc_gmp_2004, agirc_gmp_2005, agirc_gmp_2006, agirc_gmp_2007, agirc_gmp_2008,
+    agirc_arrco_gmp_2017, audiens_gmp_2018, agirc_arrco_gmp_2018]
 - id: eteinte_avec_la_fusion
   statut: lue
   textes:
@@ -197,6 +275,13 @@ approximations:
     lues que dans leurs rédactions de 2006 à 2018 : le modèle les applique aussi de 1989
     à 1996. L'avenant du 13 juin 1991 à l'accord de 1988, étendu en 1992, n'est pas lu.
   effet: non mesuré
+- version: cent_quarante_quatre_points
+  ecart: >-
+    Le modèle prête à l'entreprise le taux contractuel minimal de la tranche B, et sert la
+    garantie à ce taux : 72 points de 1989 à 1993, quand une entreprise à 16 % en donnait
+    144. Le taux de l'entreprise, que la saisie ne porte pas, décidait aussi de ses autres
+    points de tranche B ; la garantie le suit.
+  effet: non mesuré
 - version: cent_vingt_points
   ecart: >-
     Le temps partiel n'est connu que par la quotité d'une ligne, que seule la retraite
@@ -217,20 +302,21 @@ sources:
   a_relire:
   - >-
     Lire l'accord du 8 décembre 1988 et son avenant du 13 juin 1991, qui ne sont ni au
-    JORF ni dans KALI : l'objectif de 144 points n'est connu que par l'UGICT-CGT et par
-    les forfaits de 1989 et de 1990, et rien n'explique encore que ceux de 1991 à 1995
-    achètent de 142,45 à 146,62 points — un forfait fixé sur un salaire de référence
-    prévu, ou des taux d'appel de 1991 à 1994 autres que ceux du dépôt.
+    JORF ni dans KALI, ni dans la compilation des accords que publie la fédération, qui
+    commence en 1993 : la règle de 1988 n'est connue que par la lecture qu'en donne G.
+    Briens (1990), et l'avenant, peut-être celui qui mit fin à la régularisation, pas du
+    tout.
   - >-
-    Confronter les forfaits de 1989 à 2007 à une publication de la fédération : ils sont
-    transcrits du barème IPP, qui les tient pour 2005 et avant de barèmes communiqués par
-    l'Agirc-Arrco. Ceux de 2008 à 2018 le sont, à 0,5 centime par mois près.
+    Lire les circulaires de l'Agirc de 1989 à 2002, que la fédération ne publie pas (son
+    site commence en 2003) : les forfaits de 1989 à 1999 ne sont connus que par le barème
+    IPP, qui cite le Barème social périodique, et les salaires de référence prévus de 1991
+    à 1995 sont une déduction — 144 fois un salaire en francs ronds retrouve chaque forfait
+    au dixième de franc —, non une lecture.
   - >-
-    Lire les circulaires Agirc-Arrco 2017-07-DT du 16 octobre 2017, qui fixe les
-    paramètres de 2018 (OpenFisca la cite), et 2017-12-DRJ du 13 décembre 2017 (LégiSocial
-    la cite), introuvables en ligne ; et un texte de l'Agirc qui fonde le prorata du temps
-    partiel : il n'est connu que par la réponse des services Agirc-Arrco que cite
-    LégiSocial et par trois fiches pratiques (GERESO, Audiens, UNA Yonne).
+    Un texte de l'Agirc qui fonde le prorata du temps partiel : il n'est connu que par la
+    réponse des services Agirc-Arrco que cite LégiSocial (2013) et par trois fiches
+    pratiques (GERESO, Audiens, UNA Yonne). Celui de la durée de présence a, lui, un exemple
+    de la fédération (cahier DSN de juillet 2016 : quatre mensualités de 68,06 €).
   lectures:
   - type: jorf
     reference: >-
@@ -373,6 +459,96 @@ sources:
       minimale de points n'y est nommée nulle part
     date: 2026-10-02
     url: https://revuefiduciaire.grouperf.com/plussurlenet/complements/20171120_ANI_Regime_Agirc-Arrco_du_17_novembre_2017_(2).pdf
+  - type: autre
+    reference: >-
+      G. Briens, L'Entreprise et le droit de la protection sociale complémentaire, Litec,
+      1990, n° 219 et 220, extraits lus par la recherche plein texte de Gallica (le livre
+      n'y est pas consultable) : l'accord du 8 décembre 1988 donne « un nombre de points
+      proportionnel au taux de cotisations de l'entreprise sur tranche B », 72 points à 8 %,
+      108 à 12 %, 144 à 16 % ; acompte trimestriel sur un salaire de référence provisoire,
+      régularisé au 31 décembre sur le salaire de référence définitif
+    date: 1990-01-01
+    url: https://gallica.bnf.fr/ark:/12148/bpt6k3372553q
+  - type: autre
+    reference: >-
+      L. Marrache-Jupin, La paie, la solution micro-informatique, 1989, p. 144 et 145,
+      extraits lus par la recherche plein texte de Gallica : les cadres « devront cotiser
+      obligatoirement sur une assiette minimale calculée en fonction du prix d'achat du
+      point actuellement évalué à 17,20 F » ; « l'assiette mensuelle minimale de
+      cotisations ne peut désormais être inférieure à un plancher fixé par l'AGIRC à 1 290 F
+      depuis le 1er janvier 1989 » — 144 points à 16 % : 1 290 × 12 × 16 % = 17,20 × 144
+    date: 1989-01-01
+    url: https://gallica.bnf.fr/ark:/12148/bpt6k33286220
+  - type: autre
+    reference: >-
+      G. Huteau et É. Le Bont, Sécurité sociale et politiques sociales, 1994, p. 273,
+      extrait lu par la recherche plein texte de Gallica : « a été instituée une garantie
+      minimale de points (GMP) à compter du 1er janvier 1989 […] Le nombre minimal de points
+      inscrits au compte de l'assuré est fonction du taux de cotisations » de l'entreprise
+    date: 1994-01-01
+    url: https://gallica.bnf.fr/ark:/12148/bpt6k4812885g
+  - type: autre
+    reference: >-
+      Agirc-Arrco, « Retraites complémentaires AGIRC et ARRCO, accords nationaux des
+      partenaires sociaux » (1993 à 2015) : accord du 9 février 1994, articles 10 (taux
+      contractuel minimum de 10 % en 1994 à 14 % en 1997) et 11 (pourcentage d'appel de
+      121 % puis 125 %, qui « s'applique […] aux garanties et forfaits ») ; accord du 25
+      avril 1996, articles 7 et 11 (15 % en 1998, 16 % en 1999) ; accord du 13 novembre
+      2003, article 9 (la GMP « fera l'objet d'un examen ») ; accord national
+      interprofessionnel du 13 mars 2013, article 6 (« La cotisation annuelle GMP est égale
+      à 795,12€ pour l'année 2013 ») (copie datée,
+      sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1)
+    date: 2026-10-02
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf
+  - type: autre
+    reference: >-
+      Agirc, circulaires 2003-9-DRE (GMP 2004 : 648 €, fixée le 4 décembre 2003, « le
+      montant des points à inscrire sera calculé sur la base du salaire de référence de
+      l'exercice 2004 (qui sera connu en avril 2004) »), 2004-7-DRE (paramètres 2005 :
+      664 €, décision du 9 décembre 2004, salaire charnière de 33 512 €), 2005-9-DRE (GMP
+      transitoire pour 2006, 55,33 € par mois), 2006-2-DRE (682 €, 56,83 € par mois,
+      régularisés), 2007-1-DT (707 €, 58,92 €) et 2008-4-DT (731 €, 60,92 €), et les
+      circulaires 2003-3-DT, 2004-1-DT et 2005-2-DT qui fixent en mars le salaire de
+      référence de l'année (4,2158, 4,3128 et 4,4163 €), publiées par l'Agirc-Arrco
+      (copie datée de la 2003-9-DRE,
+      sha256:473b3d5c941433167c68c8e472eccf676a621dbfad66beb32a6bb621a66b8a9d)
+    date: 2026-10-02
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2024/09/Agirc_2003-9-DRE_GMP2004.pdf
+  - type: autre
+    reference: >-
+      Agirc-Arrco, circulaire 2017-07-DT du 16 octobre 2017, « Valeurs des points Agirc et
+      Arrco à compter du 1er novembre 2017 — Valeurs des salaires de référence et de la GMP
+      pour l'exercice 2018 » : salaire de référence de 5,8166 €, GMP de 872,52 € par an,
+      72,71 € par mois (45,11 € et 27,60 €) (copie datée,
+      sha256:a577d51d4f2e567eab0d6cc0173eb213d6c8524db6b70b54c7f21f0f1fb01f40)
+    date: 2017-10-16
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2021/10/201710dt_parametres_Agirc-Arrco.pdf
+  - type: autre
+    reference: >-
+      Agirc-Arrco, circulaire 2017-12-DRJ du 13 décembre 2017, « Paramètres 2018 » : GMP
+      de 72,71 € par mois, 872,52 € par an, salaire charnière de 3 664,82 € par mois et de
+      43 977,84 € par an ; références : article 6 de la convention du 14 mars 1947 et
+      décision du conseil d'administration de l'Agirc du 11 octobre 2017 (copie datée,
+      sha256:6de8378230b8bc9fece632baa0255dc6c34ecc4d9a2b778a502e975dcd1af4db)
+    date: 2017-12-13
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2024/09/201712DRJ_Parametres_2018.pdf
+  - type: autre
+    reference: >-
+      UCANSS, lettres circulaires du 8 janvier 2001 (GMP de 2000, 3 958,50 F par an, 329,88 F
+      par mois, maintenue à titre transitoire en 2001), du 14 janvier 2002 (51,88 € par
+      mois, salaire charnière de 31 337 €) et du 21 janvier 2003 (52,75 € par mois, 32 349
+      €), qui relaient les montants « fixé[s] par l'Agirc » ; « Pour le taux contractuel de
+      cotisation de 16%, ce minimum de points garantis par ce système est de 120 »
+    date: 2026-10-02
+    url: https://jurilettres.ucanss.fr/lettresCirculaires/LC010108.html/
+  - type: autre
+    reference: >-
+      Agirc-Arrco, « DSN — Cahier d'aide à la codification pour la retraite complémentaire
+      Agirc Arrco », version 4.2 de juillet 2016, § 1.1.1 : un cadre dont le contrat est
+      rompu le 30 avril 2016 doit une GMP de 272,24 €, quatre mensualités de 68,06 € (copie
+      que publie le groupe CRC)
+    date: 2016-07-29
+    url: https://www.groupecrc.com/IMG/pdf/aide_a_la_codification_aa_20160729.pdf
 code:
   python: >-
     scenarios/actuel.py : ValeursPoint.garantie, le forfait de la ligne ;
@@ -386,13 +562,18 @@ code:
   parametres: >-
     le forfait annuel de la garantie, de 1989 à 2018, puis le salaire de référence et le
     taux d'appel de l'Agirc (regimes/valeurs_point.csv : cotisation_garantie,
-    salaire_reference, taux_appel) ; points_minimum_annuels des fiches agirc et
-    agirc_entreprises_nouvelles, 144 jusqu'en 1996 et 120 ensuite, qui ne servent plus
-    qu'à dire où vaut la garantie et à tenir lieu d'un forfait non publié
+    salaire_reference, taux_appel) ; le taux contractuel de la tranche B de la période,
+    rapporté au taux de 16 % de la garantie (ValeursPoint.TAUX_DE_LA_GARANTIE) ;
+    points_minimum_annuels des fiches agirc et agirc_entreprises_nouvelles, 144 jusqu'en
+    1996 et 120 ensuite pour un taux de 16 %, qui ne servent plus qu'à dire où vaut la
+    garantie et à tenir lieu d'un forfait non publié
   tests: >-
     tests/test_simulateur.py : test_la_garantie_minimale_de_points_agirc_est_servie, les
-    tests de sa cotisation, de son prorata, des années de chômage, des 144 points d'avant
-    1997 et du prix des années publiées ; les exemples audiens_gmp_2018 et agirc_arrco_gmp_2017 (tests/test_oracle.py)
+    tests de sa cotisation, de son prorata, des années de chômage, de sa proportion au taux
+    de l'entreprise, de son forfait fixé avant le salaire de référence et du prix des
+    années publiées, des circulaires de l'Agirc de 2003 à 2006 comprises ; les exemples
+    agirc_gmp_2004 à agirc_gmp_2008, agirc_arrco_gmp_2017, audiens_gmp_2018 et
+    agirc_arrco_gmp_2018 (tests/test_oracle.py)
 reformes: [gmp_agirc_1989, gmp_agirc_1997]
 historique:
 - >-
@@ -421,15 +602,29 @@ historique:
   la cotisation. Le texte fondateur, que deux fiches et le calendrier citaient « accord
   du 9 février 1988 », est l'accord du 8 décembre 1988, étendu par l'arrêté du 24
   février 1989.
+- >-
+  2026-10-02 — les sources des questions ouvertes, cherchées le même jour. La garantie
+  n'était pas de 144 points quel que fût le taux : l'accord du 8 décembre 1988 donnait
+  « un nombre de points proportionnel au taux de cotisations de l'entreprise sur tranche
+  B », 72 points à 8 %, 108 à 12 %, 144 à 16 % (G. Briens, 1990), sur une assiette
+  minimale de tranche B — un « plancher » de 1 290 F par mois en 1989 (L.
+  Marrache-Jupin) —, et l'accord de 1996 la ramène à « 120 points pour un taux de
+  cotisation de 16 % ». Le modèle, qui prête à l'entreprise le taux minimal, en sert la
+  part : 72 points de 1989 à 1993, puis de 89 à 113 jusqu'en 1998. Les forfaits de 1991 à
+  1995 sont, au dixième de franc, 144 fois un salaire de référence prévu ; ceux de 2004
+  et de 2005, fixés en décembre, s'inscrivent « sur la base du salaire de référence de
+  l'exercice ». Les circulaires 2017-07-DT et 2017-12-DRJ, et celles de l'Agirc de 2003 à
+  2008, sont lues sur le site de la fédération ; six exemples nouveaux.
 effet: >-
   Tout cadre payé sous le salaire charnière entre 1989 et 2018 — 1,11 plafond en 2018 —,
   surtout en début de carrière. Pour une cadre née en 1975, entrée à 22 ans et payée
-  sous le plafond jusqu'en 2018, le compte reçoit 15 482 € de cotisations de garantie
-  (5 837 € de part salariale) : mesurée avec et sans elles, sa pension monte de 568 € par
-  an au scénario 2, de 1 509 € au scénario 4 et de 1 602 € au scénario 6 ; le scénario 1,
-  qui sert ses 2 641 points, et les scénarios 3 et 5, qui les convertissent à la bascule,
-  ne bougent pas. Avant 1997, le forfait achète de 136 à 147 points, et non 120 : un
-  cadre entré en 1990 sous le plafond acquiert 3 645 points Agirc au lieu de 3 480, soit
-  68 € de pension par an de plus au scénario 1 et 62 € aux scénarios 4 et 6. Une année
+  sous le plafond jusqu'en 2018, le compte reçoit 15 386 € de cotisations de garantie
+  (5 802 € de part salariale) : mesurée avec et sans elles, sa pension monte de 563 € par
+  an au scénario 2, de 1 496 € au scénario 4 et de 1 588 € au scénario 6 ; le scénario 1,
+  qui sert ses 2 618 points, et les scénarios 3 et 5, qui les convertissent à la bascule,
+  ne bougent pas. Avant 1999, la garantie suit le taux minimal de l'entreprise : un cadre
+  entré en 1990 sous le plafond acquiert 3 217 points Agirc, et non les 3 645 qu'une
+  garantie de 144 points à tout taux lui donnait, soit 177 € de pension par an de moins
+  au scénario 1 et 160 € aux scénarios 4 et 6. Une année
   de chômage indemnisé, sous le plafond, ne vaut pas les points de la garantie au
   scénario 1 ; aucun des 688 témoins d'alors n'en avait.

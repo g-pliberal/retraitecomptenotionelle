@@ -538,8 +538,9 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     if garantie is not None:
                         # Garantie minimale de points de l'Agirc : tout cadre
                         # cotisant en acquiert au moins ce que le forfait de
-                        # l'année achète — 144 points en 1989, 120 de 1997 à
-                        # 2018 —, même quand sa tranche B est nulle, c'est-à-dire
+                        # l'année achète au taux de son entreprise — 144 points
+                        # en 1989 à 16 %, 72 au taux minimal de 8 %, 120 de 1999
+                        # à 2018 —, même quand sa tranche B est nulle, c'est-à-dire
                         # même quand son salaire ne dépasse pas le plafond de la
                         # Sécurité sociale. La fiche la déclarait ; le moteur ne
                         # la servait pas, et un cadre payé sous le plafond

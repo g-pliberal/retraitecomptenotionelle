@@ -2152,11 +2152,12 @@ def source_valeurs_point_gmp() -> dict[tuple, float]:
     """Le forfait de la garantie minimale de points, 1989-2018 : voir
     :data:`COTISATION_GMP_FRANCS`.
 
-    Le moteur en tire les points de la garantie au prix de l'année — d'où les
-    144 points de 1989 et de 1990, puis les 120 de 1997 —, et le compte
-    notionnel ce qui a été versé. Sans lui, le dépôt supposait 120 points dès
-    1989, quand l'accord du 8 décembre 1988 en visait 144 jusqu'à ce que
-    l'accord du 25 avril 1996 (art. 7) les ramène à 120.
+    C'est le forfait du taux contractuel de 16 %. Le moteur en tire les
+    points de la garantie au prix de l'année — 144 points en 1989 et en 1990
+    à ce taux, puis 120 dès 1997 —, au prorata du taux de la période, et le
+    compte notionnel ce qui a été versé. Sans lui, le dépôt supposait 120
+    points dès 1989, quand l'accord du 8 décembre 1988 en donnait 144 à 16 %
+    jusqu'à ce que l'accord du 25 avril 1996 (art. 7) les ramène à 120.
     """
     valeurs = {("agirc", str(annee), "cotisation_garantie"): francs / 6.55957
                for annee, francs in COTISATION_GMP_FRANCS.items()}

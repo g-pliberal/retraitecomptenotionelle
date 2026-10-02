@@ -1111,6 +1111,89 @@ exemples:
     carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
     attendu: {cotisation_agirc_de_l_annee: {annee: 2017, salariale: 320.52, totale: 844.56}}
 
+  # Les circulaires de la fédération qui fixent la garantie de 2018, lues le
+  # 2 octobre 2026 sur son site : la même cotisation que celle d'Audiens, de
+  # la main de qui la décide.
+  - id: agirc_arrco_gmp_2018
+    source: {editeur: "Agirc-Arrco", reference: "circulaire 2017-12-DRJ du 13 décembre 2017, « Paramètres 2018 », Paramètres Agirc au 1er janvier 2018, garantie minimale de points ; circulaire 2017-07-DT du 16 octobre 2017", verifie_le: "2026-10-02"}
+    enonce: >-
+      « Montant de la cotisation GMP applicable au 1er janvier 2018 : valeur
+      mensuelle pourcentage d'appel inclus : 72,71 € (Part patronale : 45,11 €
+      - Part salariale : 27,60 €) ; valeur annuelle pourcentage d'appel inclus :
+      872,52 € », sous un salaire charnière de 3 664,82 € par mois, 43 977,84 €
+      par an ; références : « Article 6 de la Convention collective nationale
+      du 14 mars 1947 » et « Décision du Conseil d'administration de l'Agirc du
+      11 octobre 2017 ». Ici une cadre à temps plein, payée sous le plafond
+      toute l'année 2018.
+    carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
+    attendu: {cotisation_agirc_de_l_annee: {annee: 2018, salariale: 331.20, totale: 872.52}}
+
+  # ---- Agirc, circulaires de 2003 à 2008 ---------------------------------
+  # Les forfaits d'avant 2008, que le barème IPP tient « de barèmes
+  # communiqués par l'Agirc-Arrco », lus le 2 octobre 2026 dans les
+  # circulaires de l'Agirc que la fédération publie sur son site. Ceux de 2004
+  # et de 2005 sont fixés en décembre, avant le salaire de référence.
+  - id: agirc_gmp_2004
+    source: {editeur: "Agirc-Arrco", reference: "circulaire Agirc 2003-9-DRE du 5 décembre 2003, « GMP 2004 », publiée par l'Agirc-Arrco", verifie_le: "2026-10-02"}
+    enonce: >-
+      « Le Conseil d'administration de l'Agirc, lors de sa réunion du
+      4 décembre 2003, a fixé le montant annuel des cotisations dues au titre
+      de la GMP pour l'exercice 2004 » : taux unique 16 %, 518,40 € hors
+      pourcentage d'appel, 648,00 € pourcentage d'appel inclus, 54,00 € par
+      mois, dont 33,75 € de part patronale et 20,25 € de part salariale. Ici une
+      cadre à temps plein, payée sous le plafond toute l'année 2004.
+    carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
+    attendu: {cotisation_agirc_de_l_annee: {annee: 2004, salariale: 243.00, totale: 648.00}}
+
+  - id: agirc_gmp_2005
+    source: {editeur: "Agirc-Arrco", reference: "circulaire Agirc 2004-7-DRE du 15 décembre 2004, « Paramètres 2005 », garantie minimale de points, publiée par l'Agirc-Arrco", verifie_le: "2026-10-02"}
+    enonce: >-
+      « Décision du 9 décembre 2004 du Conseil d'administration de l'Agirc
+      fixant pour 2005 le montant annuel des cotisations dues au titre de la
+      GMP à 664 € » : taux unique 16 %, 531,20 € hors pourcentage d'appel,
+      55,33 € par mois, dont 34,58 € de part patronale et 20,75 € de part
+      salariale, sous un salaire charnière annuel de 33 512 €. Douze
+      mensualités font 663,96 €, la valeur du barème IPP. Ici une cadre à temps
+      plein, payée sous le plafond toute l'année 2005.
+    carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
+    attendu: {cotisation_agirc_de_l_annee: {annee: 2005, salariale: 249.00, totale: 664.00}}
+
+  - id: agirc_gmp_2006
+    source: {editeur: "Agirc-Arrco", reference: "circulaire Agirc 2006-2-DRE du 19 mai 2006, « Valeur du point, salaire de référence et GMP », publiée par l'Agirc-Arrco", verifie_le: "2026-10-02"}
+    enonce: >-
+      « Compte tenu de ce salaire de référence, le montant de la cotisation GMP
+      est fixé pour l'année 2006 à 682 € en valeur annuelle », 545,60 € hors
+      pourcentage d'appel, 56,83 € par mois, dont 35,27 € de part patronale et
+      21,56 € de part salariale, sous un salaire charnière de 34 428 € ; la
+      cotisation de janvier, « maintenue, à titre transitoire, à son niveau de
+      2005 », est régularisée. Ici une cadre à temps plein, payée sous le
+      plafond toute l'année 2006.
+    carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
+    attendu: {cotisation_agirc_de_l_annee: {annee: 2006, salariale: 258.72, totale: 682.00}}
+
+  - id: agirc_gmp_2007
+    source: {editeur: "Agirc-Arrco", reference: "circulaire Agirc 2007-1-DT du 14 mars 2007, « Valeur du point, salaire de référence et GMP », publiée par l'Agirc-Arrco", verifie_le: "2026-10-02"}
+    enonce: >-
+      « En conséquence de cette nouvelle valeur de salaire de référence, le
+      montant de la cotisation GMP est fixé pour l'année 2007 à 707 € en valeur
+      annuelle, soit une cotisation mensuelle de 58,92 € (part patronale :
+      36,57 €, part salariale : 22,35 €) », sous un salaire charnière de
+      35 666 €. Ici une cadre à temps plein, payée sous le plafond toute
+      l'année 2007.
+    carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
+    attendu: {cotisation_agirc_de_l_annee: {annee: 2007, salariale: 268.20, totale: 707.00}}
+
+  - id: agirc_gmp_2008
+    source: {editeur: "Agirc-Arrco", reference: "circulaire Agirc 2008-4-DT du 14 mars 2008, « Valeur du point, salaire de référence et GMP », publiée par l'Agirc-Arrco", verifie_le: "2026-10-02"}
+    enonce: >-
+      « Le montant de la cotisation GMP est fixé pour l'année 2008 à 731 € en
+      valeur annuelle, soit une cotisation mensuelle de 60,92 € (part
+      patronale : 37,81 €, part salariale : 23,11 €) », sous un salaire
+      charnière de 36 877 €. Ici une cadre à temps plein, payée sous le plafond
+      toute l'année 2008.
+    carriere: {naissance: "1975-01", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2039-01", age_debut: 22, niveau_salaire: 0.8, profil_carriere: plat}
+    attendu: {cotisation_agirc_de_l_annee: {annee: 2008, salariale: 277.32, totale: 731.00}}
+
   # ---- CARMF, guide « Préparez votre retraite en temps choisi » ----------
   # Le guide de juin 2026, lu le 27 septembre 2026 : un médecin né le 15 mai
   # 1965, dont la retraite s'ouvre à 63 ans quand la majoration court de 62.

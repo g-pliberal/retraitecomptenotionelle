@@ -607,8 +607,11 @@ ligne :
 n'est pas gratuite.** Le scénario 1 la sert de 1989 à 2018 : les points
 qu'achète, au prix de tout autre point, la cotisation forfaitaire que la caisse
 publiait chaque année — l'objectif était de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1989;assiette=tranche_b.points_minimum_annuels)-->144<!--/--> points par an
-jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1997;assiette=tranche_b.points_minimum_annuels)-->120<!--/--> ensuite —, proratisés sur la durée de présence et
-sur la quotité du temps partiel ; une année de chômage indemnisé n'en a pas, ses
+jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1997;assiette=tranche_b.points_minimum_annuels)-->120<!--/--> ensuite, pour un taux contractuel de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=ValeursPoint.TAUX_DE_LA_GARANTIE&echelle=100)-->16<!--/--> % —,
+proratisés sur le taux de l'entreprise, que le modèle prend au minimum (la moitié
+des points jusqu'en 1993), sur la durée de présence et sur la quotité du temps
+partiel ; une
+année de chômage indemnisé n'en a pas, ses
 points ne portant que sur la tranche B du salaire journalier de référence. Cette
 cotisation, versée « en contrepartie de cotisations » (convention du 14 mars
 1947, article 6), le compte notionnel la reçoit, et les scénarios notionnels ne

@@ -171,14 +171,17 @@ periodes:
       l'assiette, dont 33,333 % à la charge du salarié (OpenFisca-France,
       valeurs au 1er janvier 1989). GARANTIE MINIMALE DE POINTS, accord du
       8 décembre 1988, étendu par l'arrêté du 24 février 1989 : tout cadre
-      cotisant à l'Agirc acquiert au moins 144 points par an, même quand sa
-      tranche B est nulle, « en contrepartie de cotisations » (convention du
-      14 mars 1947, art. 6, § 2, F) — une cotisation forfaitaire publiée
-      chaque année (`valeurs_point.csv`, `cotisation_garantie`), qui les
-      achète au prix de tout autre point, proratisée sur le temps partiel et
-      la durée de présence. L'accord du 25 avril 1996 (art. 7) la ramène à
-      120 points au 1er janvier 1997 ; elle disparaît avec la fusion du
-      1er janvier 2019. Taux d'appel porté à
+      cotisant à l'Agirc acquiert au moins un nombre de points
+      « proportionnel au taux de cotisations de l'entreprise sur tranche B »,
+      144 par an pour un taux de 16 % (G. Briens, 1990), soit 108 au taux
+      de 12 %, même quand sa tranche B est nulle, « en contrepartie de
+      cotisations » (convention du 14 mars 1947, art. 6, § 2, F) — une
+      cotisation forfaitaire publiée chaque année pour le taux de 16 %
+      (`valeurs_point.csv`, `cotisation_garantie`), qui les achète au prix
+      de tout autre point, proratisée sur le taux, le temps partiel et la
+      durée de présence. L'accord du 25 avril 1996 (art. 7) la ramène à
+      120 points pour un taux de 16 % au 1er janvier 1997 ; elle disparaît
+      avec la fusion du 1er janvier 2019. Taux d'appel porté à
       113,4 %.
 
   - debut: 1990

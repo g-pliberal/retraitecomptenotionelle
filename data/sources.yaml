@@ -3622,10 +3622,15 @@ institutions:
           vigueur). Transcrit à la main le 2 octobre 2026 dans
           `COTISATION_GMP_FRANCS` et `COTISATION_GMP_EUROS` de
           scripts/verifier_donnees.py, qui l'écrit au niveau `haute` sous la
-          mesure `cotisation_garantie`. Recoupé par le dépôt lui-même : au
-          salaire de référence et au taux d'appel de l'année, le forfait
+          mesure `cotisation_garantie`. C'est le forfait du taux contractuel de
+          16 % : au salaire de référence et au taux d'appel de l'année, il
           achète 144 points en 1989 et en 1990, ce que l'accord du 8 décembre
-          1988 visait, puis 120 points de 1997 à 2018, à 0,3 point près.
+          1988 donnait à ce taux, puis 120 points de 1997 à 2018, à 0,3 point
+          près ; le moteur en sert la part du taux de la période. Confronté le
+          même jour aux circulaires de l'Agirc de 2003 à 2008 et aux lettres de
+          l'UCANSS qui relaient 2000, 2002 et 2003 : au centime de chaque
+          mensualité. Pour 2005, la circulaire 2004-7-DRE fixe 664 € par an,
+          quand ses douze mensualités de 55,33 € font les 663,96 € du barème.
 
       - id: openfisca_regime_general_oracle
         titre: Moteur de calcul du régime général — contre-expertise du scénario 1

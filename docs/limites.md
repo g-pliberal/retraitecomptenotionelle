@@ -48,7 +48,7 @@ Ce qui suit est le recensement complet de ses paramètres et de leur état.
 | Années retenues au salaire de référence | table 1934-1948, <!--chiffre:minimum(data/reference/legislation/annees_salaire_reference.csv:annees)-->10<!--/--> → <!--chiffre:maximum(data/reference/legislation/annees_salaire_reference.csv:annees)-->25<!--/--> années | **certifiée** (R. 351-29-1) |
 | Coefficients d'anticipation Agirc-Arrco | deux tables, 1 → 0,78 et 1 → 0,43 | barème publié par la caisse, saisi |
 | Plafond de la majoration familiale Agirc-Arrco | <!--chiffre:partout(data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml + data/reference/regimes/unirs.yaml:periodes.*.plafond_majoration_enfants)-->2 367<!--/--> €/an (novembre 2025) | publié par la caisse, saisi |
-| Garantie minimale de points de l'Agirc | 1989-2018 : les points qu'achète la cotisation forfaitaire publiée de l'année, au prix du point — un objectif de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1989;assiette=tranche_b.points_minimum_annuels)-->144<!--/--> points par an jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1997;assiette=tranche_b.points_minimum_annuels)-->120<!--/--> ensuite —, proratisés sur la durée de présence et le temps partiel, aucun pour une année de chômage indemnisé ; la cotisation portée au compte notionnel | convention du 14 mars 1947 (article 6 ; annexe I, articles 8 et 8 bis), accord du 25 avril 1996 (article 7) et accord du 17 novembre 2017 (article 155), lus ; forfaits de 1989 à 2018 transcrits du barème IPP ; la circulaire Agirc-Arrco de 2016 et la fiche d'Audiens de 2018, rejouées ; six montants publiés, de 2008 à 2018, retrouvés au centime de chaque mensualité ; l'accord du 8 décembre 1988, qui fixait l'objectif de départ, non lu |
+| Garantie minimale de points de l'Agirc | 1989-2018 : les points qu'achète la cotisation forfaitaire publiée de l'année, au prix du point — un objectif de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1989;assiette=tranche_b.points_minimum_annuels)-->144<!--/--> points par an jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1997;assiette=tranche_b.points_minimum_annuels)-->120<!--/--> ensuite, pour un taux contractuel de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=ValeursPoint.TAUX_DE_LA_GARANTIE&echelle=100)-->16<!--/--> % —, proratisés sur le taux de l'entreprise, que le modèle prend au minimum (la moitié des points jusqu'en 1993), sur la durée de présence et le temps partiel, aucun pour une année de chômage indemnisé ; la cotisation portée au compte notionnel | convention du 14 mars 1947 (article 6 ; annexe I, articles 8 et 8 bis), accords du 9 février 1994 (articles 10 et 11), du 25 avril 1996 (articles 7 et 11) et du 17 novembre 2017 (article 155), lus ; forfaits de 1989 à 2018 transcrits du barème IPP ; les circulaires de l'Agirc de 2003 à 2008 et de l'Agirc-Arrco de 2016 et 2017, et la fiche d'Audiens de 2018, rejouées ; l'accord du 8 décembre 1988 connu par la lecture de G. Briens (1990), non lu, son avenant du 13 juin 1991 pas même résumé |
 | Assiette de l'AVPF | SMIC annuel, <!--chiffre:tenu(test_l_avpf_porte_un_salaire_au_compte)-->1 820<!--/--> heures | principe sourcé, assiette déduite du SMIC |
 | Droits ouverts par motif d'interruption | <!--chiffre:lignes_csv(data/reference/legislation/periodes_non_travaillees.csv)-->9<!--/--> motifs | principe sourcé, fractions non recontrôlées |
 
@@ -890,7 +890,7 @@ Quatre bornes à connaître, et elles sont étroites :
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->110<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->116<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -986,7 +986,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->110<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->116<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
@@ -1744,7 +1744,7 @@ sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
 et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->31<!--/--> % du
 PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->43<!--/--> % quand la moitié le font,
-de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->55<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->68<!--/--> % pour
+de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->54<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->68<!--/--> % pour
 la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
 tient donc à ce que les reportés travaillent ; qu'elle en ait un n'en dépend
 plus, depuis que le compte d'un fonctionnaire d'État ne reçoit que la part

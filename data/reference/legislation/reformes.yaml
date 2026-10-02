@@ -195,7 +195,7 @@ reformes:
 
   - code: gmp_agirc_1997
     date: 1997-01-01
-    texte: {reference: "accord du 25 avril 1996 relatif au régime de retraite des cadres, article 7 (garantie minimale de points ramenée de 144 à 120 points), hors JORF", id: null}
+    texte: {reference: "accord du 25 avril 1996 relatif au régime de retraite des cadres, article 7 (garantie minimale de points ramenée de 144 à 120 points pour un taux de cotisation de 16 %), hors JORF", id: null}
     parametres: [points_minimum_annuels]
     regimes: [agirc, agirc_entreprises_nouvelles]
     absorbee_par: []

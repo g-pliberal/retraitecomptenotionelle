@@ -12344,8 +12344,9 @@ publique, dont le coefficient et l'âge d'annulation montent en charge de 2006 �
 2020 et dont l'âge d'annulation est la limite d'âge du grade et non 67 ans ; et
 la garantie minimale de points de l'Agirc, de 1989 à 2018, même quand la
 tranche B est nulle : les points qu'achetait une cotisation forfaitaire publiée
-chaque année, 144 jusqu'en 1996 et 120 ensuite, au prorata du temps de travail
-— une cotisation que les comptes notionnels reçoivent aussi.</p>
+chaque année, 144 jusqu'en 1996 et 120 ensuite pour un taux de 16 %, au prorata
+du taux de l'entreprise et du temps de travail — une cotisation que les comptes
+notionnels reçoivent aussi.</p>
 <p>Enfin, le système dit si le droit <strong>ouvre</strong> la liquidation
 demandée : âge légal du régime, avancé par la durée de services là où le
 régime le prévoit (emplois classés, militaires, marins), ou départ anticipé
