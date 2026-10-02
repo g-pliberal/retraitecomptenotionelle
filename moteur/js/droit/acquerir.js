@@ -435,16 +435,14 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           const [reference, tauxAppel] = achat;
           let fiabiliteAchat = achat[2];
           let pointsAnnee = cotisation / (tauxAppel * reference);
-          let garantie = moteur.valeursPoint.garantie(
+          const garantie = moteur.valeursPoint.garantie(
             bareme, periode, ligne.annee, part, ligne.quotite);
-          if (garantie !== null && ligne.familles_financees.includes(regime.famille)) {
-            // Une année de CHÔMAGE INDEMNISÉ n'a pas de garantie : ses points
-            // Agirc se calculent sur la seule tranche B du salaire journalier
-            // de référence (annexe I, art. 8 bis) ; ceux d'un arrêt maladie
-            // reprennent les points de l'année précédente (art. 8), garantie
-            // comprise. Voir acquerir.py.
-            garantie = null;
-          }
+          // Une année de CHÔMAGE INDEMNISÉ a sa garantie, comme une année
+          // travaillée : l'Agirc valide la période que l'Unédic indemnise au
+          // taux minimum « assorti de la GMP (garantie minimale de points)
+          // correspondante » (guide réglementaire, titre VII.3.1.6.2). Un
+          // arrêt maladie reprend les points de l'année précédente (art. 8),
+          // garantie comprise. Voir acquerir.py.
           if (garantie !== null) {
             // Garantie minimale de points de l'Agirc : tout cadre cotisant en
             // acquiert au moins ce que le forfait de l'année achète au taux

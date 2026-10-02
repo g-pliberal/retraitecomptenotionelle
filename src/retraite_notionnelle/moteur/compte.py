@@ -750,23 +750,28 @@ class ConstructeurCompte:
                     # depuis 2026, comme dans le scénario 1.
                     assiette = max(assiette, periode.assiette_minimale(
                         self.macro.plafond_securite_sociale(annee)) * part)
-                if ligne.cotise:
-                    # LA GARANTIE MINIMALE DE POINTS DE L'AGIRC. De 1989 à 2018,
-                    # le cadre dont la tranche B n'achetait pas 120 points par
-                    # an payait une cotisation forfaitaire qui les achetait :
-                    # 72,71 € par mois en 2018, dont 27,60 € pour lui et 45,11 €
-                    # pour son employeur, partagés comme la tranche B. Le
-                    # scénario 1 en sert les points ; le compte, qui porte ce
-                    # qui a été versé, reçoit la cotisation — par l'assiette qui
-                    # la prélève. Il ne la recevait pas jusqu'au 2 octobre 2026,
-                    # quand la garantie passait pour un droit gratuit. Une année
-                    # indemnisée n'en porte rien : on ne sait pas ce que
-                    # l'Unédic en versait.
-                    garantie = self._assiette_garantie(code, periode, annee, part,
-                                                       ligne.quotite)
-                    if garantie is not None and garantie[0] > assiette:
-                        assiette = garantie[0]
-                        fiabilite = min(fiabilite, garantie[1])
+                # LA GARANTIE MINIMALE DE POINTS DE L'AGIRC. De 1989 à 2018, le
+                # cadre dont la tranche B n'achetait pas 120 points par an
+                # payait une cotisation forfaitaire qui les achetait : 72,71 €
+                # par mois en 2018, dont 27,60 € pour lui et 45,11 € pour son
+                # employeur, partagés comme la tranche B. Le scénario 1 en sert
+                # les points ; le compte, qui porte ce qui a été versé, reçoit
+                # la cotisation — par l'assiette qui la prélève. Il ne la
+                # recevait pas jusqu'au 2 octobre 2026, quand la garantie
+                # passait pour un droit gratuit. Une année de chômage indemnisé
+                # la porte aussi : l'Unédic versait à l'Agirc, en plus de la
+                # tranche B, des « contributions [...] au titre de la garantie
+                # minimale de points » (protocole du 2 janvier 2004, art. 3),
+                # pour une période que l'Agirc validait au taux minimum
+                # « assorti de la GMP » (guide réglementaire, titre
+                # VII.3.1.6.2). Le montant de ces contributions n'est pas
+                # publié : le compte y porte le forfait de l'année, comme il
+                # porte la tranche B sur le salaire d'avant l'interruption.
+                garantie = self._assiette_garantie(code, periode, annee, part,
+                                                   ligne.quotite)
+                if garantie is not None and garantie[0] > assiette:
+                    assiette = garantie[0]
+                    fiabilite = min(fiabilite, garantie[1])
                 # LA COTISATION FORFAITAIRE. Certains complémentaires libéraux
                 # ne sont ni proportionnels ni forfaitaires mais LES DEUX : le
                 # régime des chirurgiens-dentistes appelle 3 210,60 € en 2026,

@@ -620,18 +620,18 @@ export class ConstructeurCompte {
           assiette = Math.max(assiette, periode.assietteMinimale(
             this.macro.plafond_securite_sociale.valeur(annee)) * part);
         }
-        if (ligne.cotise) {
-          // LA GARANTIE MINIMALE DE POINTS DE L'AGIRC. De 1989 à 2018, le cadre
-          // dont la tranche B n'achetait pas 120 points par an payait une
-          // cotisation forfaitaire qui les achetait : 72,71 € par mois en 2018,
-          // partagés comme la tranche B. Le compte, qui porte ce qui a été
-          // versé, la reçoit par l'assiette qui la prélève ; une année
-          // indemnisée n'en porte rien. Voir compte.py.
-          const garantie = this._assietteGarantie(code, periode, annee, part, ligne.quotite);
-          if (garantie !== null && garantie[0] > assiette) {
-            assiette = garantie[0];
-            fiabilite = Math.min(fiabilite, garantie[1]);
-          }
+        // LA GARANTIE MINIMALE DE POINTS DE L'AGIRC. De 1989 à 2018, le cadre
+        // dont la tranche B n'achetait pas 120 points par an payait une
+        // cotisation forfaitaire qui les achetait : 72,71 € par mois en 2018,
+        // partagés comme la tranche B. Le compte, qui porte ce qui a été
+        // versé, la reçoit par l'assiette qui la prélève ; une année de
+        // chômage indemnisé aussi, l'Unédic versant des contributions « au
+        // titre de la garantie minimale de points » (protocole du 2 janvier
+        // 2004). Voir compte.py.
+        const garantie = this._assietteGarantie(code, periode, annee, part, ligne.quotite);
+        if (garantie !== null && garantie[0] > assiette) {
+          assiette = garantie[0];
+          fiabilite = Math.min(fiabilite, garantie[1]);
         }
         // LA COTISATION FORFAITAIRE. Certains complémentaires libéraux ne
         // sont ni proportionnels ni forfaitaires mais LES DEUX : le régime des

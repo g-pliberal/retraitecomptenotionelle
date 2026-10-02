@@ -4332,3 +4332,38 @@ journal:
       l'avenant A-145 du même jour ; les circulaires de l'Agirc de 1989 à 1998 ; le guide
       réglementaire lui-même ; la décision du 10 mars 1997 et la date à laquelle la
       garantie cessa d'accompagner l'allocation chômeurs âgés.
+  - date: "2026-10-02"
+    session: >-
+      la clôture de l'action 139, à la demande du propriétaire : « Reprend l'action 139 et
+      fait en sorte de la clôturer. N'invente rien, source tout » (cinquième suite)
+    consulte: >-
+      `veille_droit.py` ; l'index LEGI du dépôt, à jour de l'incrément du 27 septembre
+      2026 : L. 161-17-2 et L. 161-17-3 sans version postérieure au 31 décembre 2025 — les
+      incréments suivants, injoignables (echanges.dila.gouv.fr ne répond pas) ; l'index
+      JORF (allocation chômeurs âgés, convention Unédic de 2001, accord du 19 septembre
+      1996 et ses visas, garantie minimale de points) ; la banque d'accords du Medef, ses
+      675 documents parcourus par leur adresse directe, couche texte ou reconnaissance de
+      caractères ; Common Crawl, sans son serveur d'index (recherche dans `cluster.idx`,
+      lecture des enregistrements WARC), pour `reglementation.agirc-arrco.eu`, de 2015 à
+      2021 : le guide réglementaire, titres V et VII, mis à jour le 10 mars 2016 ; Gallica
+      par son interface SRU ; les Actualités sociales hebdomadaires (n° 2018) ; l'article
+      8 bis publié par l'Unédic ; des questions écrites du Sénat et de l'Assemblée
+      nationale ; le rapport du Sénat sur la proposition de loi l97-256. Injoignables :
+      les archives du web, archive.ph, Légifrance (défi anti-robot), la page d'accueil du
+      Medef (Cloudflare).
+    trouve: >-
+      L'accord du 8 décembre 1988 (Medef) : « un minimum de droits fonction du taux de
+      cotisation », 72 points à 8 %, 144 à 16 %. Le guide réglementaire fonde le prorata
+      du temps partiel et des trentièmes de présence (V.2.1.2.2), et valide le chômage
+      indemnisé par l'Unédic au taux minimum « assorti de la GMP » (VII.3.1.6.2) ; le
+      protocole du 2 janvier 2004 fait verser par l'Unédic des contributions « au titre de
+      la garantie minimale de points ». Le modèle rend la garantie aux années de chômage,
+      au scénario 1 comme au compte ; un témoin bouge. L'allocation chômeurs âgés est
+      fermée aux entrées nouvelles le 1er janvier 2002 (convention du 1er janvier 2001,
+      art. 10, § 2, 4). Hors de l'action : l'Unédic cotisait à l'Agirc sur 60 % de la
+      tranche B du salaire journalier de référence (accord du 19 septembre 1996), ce que
+      le compte notionnel ne suit pas.
+    reste: >-
+      Hors d'atteinte en ligne : l'avenant du 13 juin 1991 à l'accord de 1988 et l'avenant
+      A-145 ; les circulaires de l'Agirc de 1989 à 1998 ; le texte de la décision du 10
+      mars 1997. L'action 139 est close ; ces textes restent aux questions de la fiche.

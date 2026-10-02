@@ -611,8 +611,9 @@ jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periode
 proratisés sur le taux de l'entreprise, que le modèle prend au minimum (la moitié
 des points jusqu'en 1993), sur la durée de présence et sur la quotité du temps
 partiel ; une
-année de chômage indemnisé n'en a pas, ses
-points ne portant que sur la tranche B du salaire journalier de référence. Cette
+année de chômage indemnisé la garde, l'Agirc la validant au taux minimum
+« assorti de la GMP » (guide réglementaire Agirc-Arrco, titre VII.3.1.6.2) et
+l'Unédic en versant la cotisation (protocole du 2 janvier 2004, article 3). Cette
 cotisation, versée « en contrepartie de cotisations » (convention du 14 mars
 1947, article 6), le compte notionnel la reçoit, et les scénarios notionnels ne
 la retirent pas. Voir la fiche `garantie_minimale_points_agirc`.

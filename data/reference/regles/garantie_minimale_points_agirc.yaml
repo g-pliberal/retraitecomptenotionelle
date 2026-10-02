@@ -5,7 +5,8 @@ intitule: >-
   cotisation forfaitaire publiée chaque année pour un taux contractuel de 16 % — 144
   jusqu'en 1996, 120 ensuite —, au prorata du taux de son entreprise : celui dont la
   tranche B n'atteint pas ce forfait le paie, au prix de tout autre point, partagé comme
-  la tranche B et proratisé sur la durée de présence et le temps partiel.
+  la tranche B et proratisé sur la durée de présence et le temps partiel ; l'Unédic le
+  paie pour une année de chômage indemnisé.
 domaine: points
 regimes: [agirc, agirc_entreprises_nouvelles]
 etape: acquerir_les_droits
@@ -19,7 +20,8 @@ lit:
 - le forfait publié de l'année (regimes/valeurs_point.csv, mesure cotisation_garantie)
 ecrit:
 - les points Agirc de l'année, au moins ceux que la garantie assure
-- au compte notionnel, la cotisation forfaitaire qui les achète, partagée comme la tranche B
+- au compte notionnel, la cotisation forfaitaire qui les achète, partagée comme la tranche B,
+  ou versée par l'Unédic pour une année de chômage indemnisé
 dates_qui_decident:
 - revenu.annee
 versions:
@@ -44,6 +46,22 @@ versions:
 - id: cent_quarante_quatre_points
   statut: lue
   textes:
+  - reference: >-
+      accord instituant une garantie minimale de points, fait à Paris le 8 décembre 1988,
+      étendu par l'arrêté du 24 février 1989 ; copie que publie le Medef dans sa banque
+      d'accords (hors JORF)
+    article: dispositif
+    en_vigueur: 1989-01-01
+    citation: >-
+      « Pour tous les salariés, remplissant des fonctions visées aux articles 4 et 4 bis de
+      la Convention collective nationale du 14 mars 1947 et à l'article 36 de l'annexe I à
+      ladite Convention, des cotisations seront versées par les entreprises permettant aux
+      intéressés d'acquérir, à partir du 1er janvier 1989, un minimum de droits fonction du
+      taux de cotisation. Le nombre annuel minimum de points retenu est de 72 pour les
+      salariés des entreprises cotisant au taux de 8 %, 144 au sein des entreprises ayant
+      opté pour le taux de 16 %,... »
+    lu_le: 2026-10-02
+    empreinte: sha256:1c3e3de60c07e6942572538adadf97c4441841593a6d2c747032ca855a6aaac7
   - reference: >-
       arrêté du 2 novembre 1992 portant extension et élargissement de l'avenant du 13 juin
       1991 à l'accord du 8 décembre 1988 instituant une garantie minimale de points,
@@ -126,7 +144,8 @@ versions:
       annexe I — le cadre, l'assimilé, et le collaborateur auquel un accord étend le
       régime —, sous le plafond ou non, acquiert chaque année un nombre de points
       proportionnel au taux contractuel
-      de tranche B de son entreprise — 72 points à 8 %, 108 à 12 %, 144 à 16 % —, en
+      de tranche B de son entreprise — 72 points à 8 % et 144 à 16 %, dit l'accord du 8
+      décembre 1988, 108 à 12 %, ajoute Briens —, en
       cotisant au taux de l'entreprise sur une assiette minimale de tranche B : le
       « plancher fixé par l'AGIRC à 1 290 F » par mois en 1989 (L. Marrache-Jupin, 1989),
       144 points à 16 % au salaire de référence provisoire de 17,20 F. Le forfait publié est
@@ -142,8 +161,9 @@ versions:
       l'entreprise le taux minimal de la tranche B — 8 % jusqu'en 1993 (12 % aux
       entreprises nouvelles), 10 % en 1994, 12 % en 1995, 13 % en 1996 — et sert la part
       du forfait qui lui revient, au prix de l'année : 72 points en 1989 et en 1990. Il ne
-      connaît que des cadres : l'article 36, que la rédaction de 2018 ne nomme plus, lui
-      est étranger.
+      connaît que des cadres : l'article 36, que l'accord de 1988 nomme, que le guide de
+      2016 nomme encore avec l'annexe IV, et que la rédaction de 2018 de l'article 6 ne
+      nomme plus, lui est étranger.
     parametres:
       points_minimum_annuels: 144
       taux_de_la_garantie: 0.16
@@ -230,18 +250,69 @@ versions:
       avril 2004) »
     lu_le: 2026-10-02
   - reference: >-
-      guide réglementaire Agirc-Arrco, titre V-2.1.2.2, « Modalités d'application de la GMP
-      : Travail à temps partiel », cité mot pour mot par la réponse des services
-      Agirc-Arrco du 19 avril 2013 que publie LégiSocial (hors JORF ; le guide, que la
-      fédération tenait sur reglementation.agirc-arrco.eu, n'y est plus en ligne)
-    article: titre V-2.1.2.2
+      guide réglementaire Agirc-Arrco, « Mise à jour du: 10 mars 2016 », titre V,
+      « Cotisations et gestion des comptes de points », page
+      reglementation.agirc-arrco.eu/guides_html/guide_1/titre_niveau_1_7.html, lue dans sa
+      capture par Common Crawl du 17 janvier 2017 (hors JORF ; le site ne répond plus)
+    article: V.2.1.2.2, « Modalités d'application »
     citation: >-
-      « la GMP est à proratiser en tenant compte du rapport entre les rémunérations perçues
-      en temps partiel et les rémunérations qui auraient été obtenues si le participant
-      avait travaillé à temps plein et ceci, même si le plafond retenu par le régime de la
+      « Le montant des cotisations dues au titre de la GMP et leur répartition sont
+      communiqués par l'AGIRC pour un exercice n. Le montant des points à inscrire est
+      calculé sur la base du salaire de référence définitif de l'exercice n » ; « La GMP
+      est à proratiser en tenant compte du rapport entre les rémunérations perçues en temps
+      partiel et les rémunérations qui auraient été obtenues si le participant avait
+      travaillé à temps plein et ceci, même si le plafond retenu par le régime de la
       Sécurité sociale ne fait pas l'objet d'une telle proratisation en application de
-      l'article R. 242-7 du code de la Sécurité sociale »
+      l'article R. 242-7 du code de la Sécurité sociale » ; « Le montant de la GMP annuelle
+      doit donc être proratisé (en trentièmes en cas de mois incomplet) en fonction de la
+      durée d'activité prise en compte pour fixer le plafond de la Sécurité sociale de la
+      période »
     lu_le: 2026-10-02
+    empreinte: sha256:c5c8a7afbb0bcee54a34df27d2237c1308490d8b9b13bb8b57b4d14dd84d61e1
+  - reference: >-
+      guide réglementaire Agirc-Arrco, « Mise à jour du: 10 mars 2016 », titre VII,
+      « Périodes validables », page
+      reglementation.agirc-arrco.eu/guides_html/guide_1/titre_niveau_1_9.html, lue dans sa
+      capture par Common Crawl du 21 octobre 2018 (hors JORF)
+    article: >-
+      VII.3.1.6.2, « Taux de validation », 1), a), pour les « Périodes de chômage
+      indemnisées par le régime de l'UNÉDIC » — l'allocation chômeurs âgés comme l'aide au
+      retour à l'emploi — ; VII.4.3.2, 2), pour l'incapacité de travail
+    citation: >-
+      « Il est tenu compte du système de cotisation en vigueur à la date de la rupture du
+      contrat de travail de l'intéressé dans l'entreprise au titre de laquelle l'allocation
+      d'assurance chômage est versée. À compter de 1996, si l'entreprise cotise au taux
+      minimum, la validation est effectuée sur la base du taux minimum applicable à chaque
+      exercice, assorti de la GMP (garantie minimale de points) correspondante » ; pour
+      l'incapacité de travail : « il y a lieu de prendre en considération : la GMP
+      (garantie minimale de points) sur la base maximale de 120 points »
+    lu_le: 2026-10-02
+    empreinte: sha256:466b9b0452b388ed136af482db6959fa6f81783e1c28288979c00c3d05175e90
+  - reference: >-
+      protocole du 2 janvier 2004 prévoyant l'attribution d'avantages de retraite
+      complémentaire au titre de périodes de chômage, copie que publie le Medef dans sa
+      banque d'accords (hors JORF)
+    article: article 3, 1°, c)
+    citation: >-
+      « Les sommes versées par l'UNEDIC à l'AGIRC (compte non tenu des contributions
+      versées au titre de la garantie minimale de points) et à l'ARRCO au titre de la
+      tranche B sont fondées sur une masse salariale qui ne peut être globalement
+      supérieure à la tranche B de la masse salariale servant de référence à l'UNEDIC pour
+      indemniser les chômeurs à sa charge »
+    lu_le: 2026-10-02
+    empreinte: sha256:b41baa73acec7cab547eee45f9520eb69066440e65aed330f9f855446a438d16
+  - reference: >-
+      convention du 1er janvier 2001 relative à l'aide au retour à l'emploi et à
+      l'indemnisation du chômage, modifiée jusqu'à son avenant n° 8 du 13 novembre 2003,
+      copie que publie le Medef dans sa banque d'accords
+    article: article 10, § 2, 4)
+    en_vigueur: 2002-01-01
+    citation: >-
+      « à compter du 1er janvier 2002, il ne sera plus admis de nouveaux bénéficiaires à
+      l'allocation chômeurs âgés visée à l'article 74 du règlement annexé à la convention
+      du 1er janvier 1997 »
+    lu_le: 2026-10-02
+    empreinte: sha256:6e4ed84391e28801f0c9a2c423b22739d0132859218cc593fc29688f5d29403b
   - reference: >-
       Actualités sociales hebdomadaires, n° 2018 du 11 avril 1997, « Acquisition de points
       de retraite AGIRC par les chômeurs âgés », qui relaie une décision de la commission
@@ -274,17 +345,27 @@ versions:
       10,20 % d'un taux contractuel de 16,44 % depuis 2015). En cas de temps partiel, elle
       est proratisée au rapport des rémunérations à temps partiel et à temps plein, même
       quand le plafond de la Sécurité sociale ne l'est pas (guide réglementaire, titre
-      V-2.1.2.2) ; selon la durée de présence en cas d'embauche ou de départ en cours
-      d'année ; et les points avec elle. Elle ne vaut pas pour une année de chômage
-      indemnisé, dont les points ne portent que sur la tranche B du salaire journalier de
-      référence (annexe I, art. 8 bis), sauf, à partir de 1997, pour le titulaire de
-      l'allocation chômeurs âgés, qui reçoit sans cotisation les points du taux minimal
-      « assorti de la garantie » (décision du 10 mars 1997, jour de l'avenant A179 à
-      l'article 8 bis ; la rédaction de 2006 range l'allocation parmi les autres) ; un
-      arrêt de travail, lui, reprend les points de
-      l'année précédente (art. 8), garantie comprise. Un cadre à plusieurs employeurs ne
-      paie qu'un forfait, que chacun prélève au prorata de son salaire (GERESO) : le
-      modèle, qui ne voit qu'une ligne par année, le retrouve.
+      V.2.1.2.2) ; selon la durée de présence, en trentièmes, en cas d'embauche ou de départ
+      en cours d'année ; et les points avec elle. Elle vaut aussi pour une année de chômage
+      indemnisé par l'Unédic : l'Agirc la valide « sur la base du taux minimum applicable à
+      chaque exercice, assorti de la GMP (garantie minimale de points) correspondante »,
+      quand l'entreprise cotisait au taux minimum, et sur le système de l'entreprise sinon
+      (guide, titre VII.3.1.6.2), et l'Unédic lui verse, en plus de la tranche B, des
+      « contributions [...] au titre de la garantie minimale de points » (protocole du 2
+      janvier 2004, art. 3). L'article 8 bis, dont les dispositions « concernent les
+      points en tranche B », ne l'exclut pas : la garantie est l'une des « Cotisations sur
+      la tranche B » de l'article 6, § 2, son F. Le titulaire de l'allocation chômeurs
+      âgés, créée en 1997 et fermée aux entrées nouvelles le 1er janvier 2002 (convention
+      du 1er janvier 2001, art. 10, § 2), reçoit sans cotisation les points du taux minimal
+      « assorti de la garantie », et peut acheter le reste du système de son entreprise
+      pour la moitié de la cotisation (décision du 10 mars 1997, jour de l'avenant A179 à
+      l'article 8 bis) ; le guide le range parmi les autres allocataires. Un arrêt de
+      travail, lui, reprend les points de l'année précédente (art. 8), avec « la GMP
+      (garantie minimale de points) sur la base maximale de 120 points » (guide, titre
+      VII.4.3.2). Un cadre à plusieurs employeurs ne paie qu'un forfait, que chacun
+      prélève au prorata de son salaire (GERESO), la garantie étant « réduite dans les
+      mêmes proportions que le plafond » (guide, titre V.1.2.3.1) : le modèle, qui ne voit
+      qu'une ligne par année, le retrouve.
     parametres:
       points_minimum_annuels: 120
       taux_de_la_garantie: 0.16
@@ -336,7 +417,11 @@ approximations:
   ecart: >-
     Les règles du temps partiel, du chômage indemnisé et de l'arrêt de travail ne sont
     lues que dans leurs rédactions de 2006 à 2018 : le modèle les applique aussi de 1989
-    à 1996. L'avenant du 13 juin 1991 à l'accord de 1988, étendu en 1992, n'est pas lu ;
+    à 1996. Le guide réglementaire écrit la validation du chômage « À compter de 1996 »
+    (titre VII.3.1.6.2), et les droits d'une période indemnisée avant 1997 se calculaient
+    « selon des règles antérieures » (titre VII.3.1.6.1), que le modèle ne suit pas : il
+    les calcule, comme ensuite, sur le salaire d'avant l'interruption, garantie comprise.
+    L'avenant du 13 juin 1991 à l'accord de 1988, étendu en 1992, n'est pas lu ;
     l'avenant A-145 à la convention et à son annexe I, signé le même jour et soumis à la
     même enquête (avis du JORF du 20 juillet 1991), non plus.
   effet: non mesuré
@@ -363,28 +448,44 @@ approximations:
   effet: non mesuré
 - version: cent_vingt_points
   ecart: >-
-    Le titulaire de l'allocation chômeurs âgés — une allocation de l'Unédic, créée en
-    1997 pour le chômeur de moins de 60 ans qui réunit 160 trimestres — recevait sans
-    cotisation la garantie avec les points de son chômage (décision du 10 mars 1997) : le
-    modèle, qui ne distingue pas cette allocation des autres, ne la lui sert pas. Le
-    texte de la décision n'est pas lu, ni la date à laquelle elle cessa.
+    L'allocation chômeurs âgés — une allocation de l'Unédic, créée en 1997 pour le
+    chômeur qui réunit 160 trimestres et fermée aux entrées nouvelles le 1er janvier 2002
+    — n'est pas distinguée des autres : le modèle, qui prête à toute entreprise le taux
+    minimal, sert à tout allocataire le taux minimal assorti de la garantie, ce que la
+    décision du 10 mars 1997 donnait au titulaire de l'ACA, et porte au compte ce que
+    l'Unédic verse pour lui comme pour les autres — le protocole du 2 janvier 2004 range
+    cette allocation parmi celles pour lesquelles elle cotise à l'Agirc (art. 1er et 3),
+    quand la décision de 1997 parle de points « sans contrepartie de cotisations ».
+    L'achat facultatif du reste du système de l'entreprise, pour la moitié de la
+    cotisation, n'est pas modélisé.
+  effet: >-
+    aucun au taux minimal que le modèle prête à toute entreprise : l'allocataire de l'ACA
+    et les autres y valident les mêmes points
+- version: [cent_quarante_quatre_points, cent_vingt_points]
+  ecart: >-
+    Pour une année de chômage indemnisé, le compte notionnel porte le forfait de l'année,
+    comme pour une année travaillée : l'Unédic versait à l'Agirc des « contributions
+    [...] au titre de la garantie minimale de points » (protocole du 2 janvier 2004, art.
+    3), dont le montant n'est pas publié. Ses cotisations de tranche B, elle les calculait
+    sur 60 % de la tranche B du salaire journalier de référence (accord du 19 septembre
+    1996, article unique ; protocole de 2004, art. 3), quand le compte porte la tranche B
+    entière du salaire d'avant l'interruption : un écart du traitement du chômage tout
+    entier, que la garantie ne fait que suivre.
   effet: non mesuré
 sources:
   lu_le: 2026-10-02
   prochaine_relecture: 2027-10-01
   a_relire:
   - >-
-    Lire l'accord du 8 décembre 1988 et son avenant du 13 juin 1991, qui ne sont ni au
-    JORF ni dans KALI, ni dans la compilation des accords que publie la fédération, qui
-    commence en 1993 : la règle de 1988 n'est connue que par la lecture qu'en donne G.
-    Briens (1990), et l'avenant, peut-être celui qui mit fin à la régularisation, pas du
-    tout. Cherchés de nouveau le 2 octobre 2026 : l'index JORF du dépôt n'a du Journal
-    officiel de 1989 qu'une sélection (612 textes, quand les années suivantes en ont
-    2 400 à 2 900), ni l'arrêté d'extension du 24 février 1989, ni l'avis du 20 juillet
-    1991 qui ouvrit l'enquête sur l'avenant et sur l'avenant A-145, signé le même jour ;
-    Légifrance oppose un défi anti-robot ; Gallica n'a que Briens, qui ajoute que la
-    garantie valait pour l'article 36. Une bibliothèque, ou le Bulletin officiel du
-    ministère des affaires sociales de 1989 et de 1992.
+    Lire l'avenant du 13 juin 1991 à l'accord du 8 décembre 1988, que l'arrêté du 2
+    novembre 1992 étend, et l'avenant A-145 à la convention, signé le même jour : leur
+    contenu est inconnu. Ni au JORF — l'index du dépôt n'a ni l'avis du 20 juillet 1991
+    qui ouvrit l'enquête, ni l'arrêté du 24 février 1989 —, ni dans KALI, ni dans la
+    compilation des accords de la fédération, qui commence en 1993, ni dans la banque
+    d'accords du Medef, où l'accord de 1988 se lit (ses 675 documents parcourus le 2
+    octobre 2026), ni sur Gallica ; Légifrance oppose un défi anti-robot. Une
+    bibliothèque, ou le Bulletin officiel du ministère des affaires sociales de 1991 et
+    de 1992.
   - >-
     Lire les circulaires de l'Agirc de 1989 à 1998, que la fédération ne publie pas (son
     site commence en 2003) : les forfaits de 1989 à 1995 et de 1997 et 1998 ne sont
@@ -393,20 +494,32 @@ sources:
     ronds retrouve chaque forfait au dixième de franc —, non une lecture. Les
     Actualités sociales hebdomadaires, en ligne depuis leur n° 1937 (septembre 1995),
     relaient le calcul de 1996 et les mensualités de 1999 à 2003, mais aucun forfait de
-    1997 ni de 1998.
-  - >-
-    Lire le guide réglementaire Agirc-Arrco lui-même, dont le titre V-2.1.2.2 fonde le
-    prorata du temps partiel : il n'est connu que par la réponse des services
-    Agirc-Arrco qui le cite (LégiSocial, 2013) et par trois fiches pratiques (GERESO,
-    Audiens, UNA Yonne) ; son site, reglementation.agirc-arrco.eu, ne répond plus, et
-    les archives du web n'étaient pas joignables depuis la session. Celui de la durée de
-    présence a, lui, un exemple de la fédération (cahier DSN de juillet 2016 : quatre
-    mensualités de 68,06 €).
+    1997 ni de 1998. Le guide réglementaire dit seulement que ce montant et sa répartition
+    « sont communiqués par l'AGIRC pour un exercice n », et la banque d'accords du Medef
+    n'a aucune de ces circulaires.
   - >-
     Lire la décision de la commission paritaire du 10 mars 1997 sur l'allocation
-    chômeurs âgés, connue par les seules Actualités sociales hebdomadaires, et dire
-    quand la garantie cessa d'accompagner cette allocation : la rédaction de 2006 de
-    l'article 8 bis, qui liste l'avenant A179 du même jour, ne la nomme plus.
+    chômeurs âgés, et l'avenant A179 du même jour à l'article 8 bis, connus par les seules
+    Actualités sociales hebdomadaires (n° 2018, dont la suite est réservée aux abonnés) :
+    ce qu'ils prévoient pour les chômeurs âgés qui ne pouvaient prétendre à l'ACA, et ce
+    que veut dire « sans contrepartie de cotisations » quand l'Unédic cotisait pour ces
+    allocataires. Quand la garantie cessa de l'accompagner n'est plus une question :
+    l'allocation, fermée aux entrées nouvelles le 1er janvier 2002, la garde dans le
+    guide de 2016, parmi les allocations de l'Unédic.
+  lectures_divergentes:
+  - >-
+    L'article 8 bis de l'annexe I, lu le 2 octobre 2026 comme excluant la garantie d'une
+    année de chômage indemnisé, parce que ses dispositions « concernent les points en
+    tranche B » : une déduction. Le guide réglementaire valide ces périodes au taux
+    minimum « assorti de la GMP (garantie minimale de points) correspondante » (titre
+    VII.3.1.6.2), et le protocole du 2 janvier 2004 fait verser par l'Unédic des
+    « contributions [...] au titre de la garantie minimale de points » (art. 3) : la
+    lecture du guide l'emporte, le même jour, et la garantie est l'une des « Cotisations
+    sur la tranche B » de l'article 6, § 2.
+  - >-
+    L'UGICT-CGT écrit qu'elle « signait le 8 décembre 1988 » l'accord instituant la
+    garantie (2015) ; la copie que publie le Medef ne porte que quatre signatures : CNPF,
+    CGPME, CFE-CGC et Union des cadres et ingénieurs de la CGT-FO.
   lectures:
   - type: jorf
     reference: >-
@@ -416,6 +529,74 @@ sources:
       élargissement de l'accord du 8 décembre 1988 instituant une garantie minimale de
       points » (JORFTEXT000000162226)
     date: 1992-11-11
+  - type: autre
+    reference: >-
+      « Accord instituant une garantie minimale de points », fait à Paris le 8 décembre
+      1988, copie dactylographiée d'une page que publie le Medef dans sa banque d'accords,
+      lue le 2 octobre 2026 : l'engagement pris à l'accord du 24 mars 1988 envers les
+      cadres « dont le salaire n'atteint pas le plafond de la sécurité sociale et qui
+      n'acquièrent aucun point » ; « un minimum de droits fonction du taux de cotisation »
+      pour les articles 4 et 4 bis et l'article 36 de l'annexe I ; 72 points à 8 %, 144 à
+      16 % ; « Un avenant à la Convention collective nationale du 14 mars 1947 sera établi
+      pour préciser les modalités de mise en oeuvre ». La copie porte quatre signatures :
+      CNPF, CGPME, CFE-CGC et Union des cadres et ingénieurs de la CGT-FO (copie datée,
+      sha256:1c3e3de60c07e6942572538adadf97c4441841593a6d2c747032ca855a6aaac7)
+    date: 1988-12-08
+    url: https://accords.medef.com/documents/accord_400.pdf
+  - type: autre
+    reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre V, V.2.1.2
+      (« Cotisations correspondant à la GMP ») : principes — caractère obligatoire depuis
+      l'arrêté d'extension du 24 février 1989, caractère éventuel, bénéficiaires des
+      articles 4 et 4 bis, de l'article 36 de l'annexe I et de l'annexe IV — et modalités :
+      points au salaire de référence définitif de l'exercice, temps partiel, contrat à
+      durée déterminée, embauche et départ en trentièmes, maladie, paies décalées, part
+      patronale seule ; V.1.2.3.1, employeurs multiples : la GMP « réduite dans les mêmes
+      proportions que le plafond ». Lu dans la capture de Common Crawl du 17 janvier 2017
+      (collection CC-MAIN-2017-04), dont le contenu, d'empreinte sha1
+      GUOENUIXPSH2JSI7VZFECEM5XWTOXVPX, est celui des treize autres captures, du 27 mai
+      2016 au 15 février 2019 (copie datée,
+      sha256:c5c8a7afbb0bcee54a34df27d2237c1308490d8b9b13bb8b57b4d14dd84d61e1)
+    date: 2016-03-10
+    url: http://reglementation.agirc-arrco.eu/guides_html/guide_1/titre_niveau_1_7.html
+  - type: autre
+    reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII : VII.3.1.6.1,
+      le calcul des droits du chômage sur le salaire journalier de référence, applicable
+      aux périodes indemnisées à compter du 1er janvier 1997 ; VII.3.1.6.2, 1), a), la
+      validation au taux minimum « assorti de la GMP » des allocations de l'Unédic, dont
+      l'allocation chômeurs âgés et l'aide au retour à l'emploi ; VII.3.1.6.2, 2), les
+      taux de l'ASFNE, qui « doivent s'entendre, depuis 1989, assortis de la GMP » ;
+      VII.4.3.2, la maladie et l'invalidité. Lu dans la capture de Common Crawl du 21
+      octobre 2018 (collection CC-MAIN-2018-43), d'empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP comme celle d'avril 2018 (copie datée,
+      sha256:466b9b0452b388ed136af482db6959fa6f81783e1c28288979c00c3d05175e90)
+    date: 2016-03-10
+    url: http://reglementation.agirc-arrco.eu/guides_html/guide_1/titre_niveau_1_9.html
+  - type: autre
+    reference: >-
+      protocole du 2 janvier 2004 prévoyant l'attribution d'avantages de retraite
+      complémentaire au titre de périodes de chômage, copie que publie le Medef : l'Unédic
+      cotise à l'Agirc pour les allocataires de l'aide au retour à l'emploi et des
+      allocations de la convention de 2001, « chômeurs âgés » compris (art. 1er et 3), sur
+      60 % de la tranche B du salaire journalier de référence et au système obligatoire
+      de l'article 6, § 2, avec un précompte de 0,8 %, « compte non tenu des contributions
+      versées au titre de la garantie minimale de points » (art. 3, 1°, c) (copie datée,
+      sha256:b41baa73acec7cab547eee45f9520eb69066440e65aed330f9f855446a438d16) ; et
+      l'accord du 19 septembre 1996 qu'il vise, dont l'article unique pose le même
+      versement à effet du 1er janvier 1996, sans nommer la garantie (copie datée,
+      sha256:c3d1ecf60c2d25e0702719fadc3b027fa7694f6bbda38c1880fe6f96d4754879)
+    date: 2004-01-02
+    url: https://accords.medef.com/documents/accord_237.pdf
+  - type: autre
+    reference: >-
+      convention du 1er janvier 2001 relative à l'aide au retour à l'emploi et à
+      l'indemnisation du chômage, modifiée jusqu'à son avenant n° 8 du 13 novembre 2003,
+      copie que publie le Medef : article 10, § 2, 4) (« à compter du 1er janvier 2002, il
+      ne sera plus admis de nouveaux bénéficiaires à l'allocation chômeurs âgés ») (copie
+      datée, sha256:6e4ed84391e28801f0c9a2c423b22739d0132859218cc593fc29688f5d29403b)
+    date: 2001-01-01
+    url: https://accords.medef.com/documents/accord_186.pdf
   - type: autre
     reference: >-
       accord du 25 avril 1996 relatif au régime de retraite des cadres (Agirc), copie
@@ -681,8 +862,11 @@ sources:
       10 mars 1997 que ses titulaires « se verront inscrire des points de retraite à partir
       du salaire journalier de référence à hauteur du taux minimal du régime assorti de la
       garantie minimale de points correspondante sans contrepartie de cotisations », et
-      pourront acquérir les autres « moyennant un versement égal à 50 % de la cotisation »
-      (la suite de l'article est réservée aux abonnés)
+      pourront acquérir les autres « moyennant un versement égal à 50 % de la cotisation
+      calculée sur la différence entre le système en vigueur dans l'entreprise et le
+      système minimal » ; « s'agissant des chômeurs âgés ne pouvant prétendre à l'ACA, il
+      est également prévu l'inscription de points de retraite, sans contrepartie de
+      cotisations, pour ceux qui ont » — la suite de l'article est réservée aux abonnés
     date: 1997-04-11
     url: https://www.ash.tm.fr/magazine/2018/le-social-en-textes/acquisition-de-points-de-retraite-agirc-par-les-chomeurs-ages-406476.php
   - type: autre
@@ -715,7 +899,7 @@ code:
   tests: >-
     tests/test_simulateur.py : test_la_garantie_minimale_de_points_agirc_est_servie, les
     tests de sa cotisation, de son prorata (l'exemple de temps partiel de LégiSocial
-    compris), des années de chômage, de sa proportion au taux de l'entreprise, de son
+    compris), de l'année de chômage, qui la garde, de sa proportion au taux de l'entreprise, de son
     forfait fixé avant le salaire de référence et du prix des années publiées, de 1999 à
     2018, des circulaires de l'Agirc de 2002 à 2006 comprises ; les exemples
     agirc_gmp_2004 à agirc_gmp_2008, agirc_arrco_gmp_2017, audiens_gmp_2018 et
@@ -774,6 +958,19 @@ historique:
   que le modèle ne distingue pas ; et Briens, que la garantie de 1989 valait pour
   l'article 36. L'accord de 1988 et son avenant de 1991 restent introuvables en ligne.
   Rien ne change au calcul.
+- >-
+  2026-10-02 — les sources retrouvées le même jour, et l'action 139 close. L'accord du 8
+  décembre 1988 se lit dans la banque d'accords du Medef : « un minimum de droits fonction
+  du taux de cotisation », 72 points à 8 %, 144 à 16 %. Le guide réglementaire se lit
+  dans ses captures par Common Crawl, de 2016 à 2019 : son titre V fonde le prorata, son
+  titre VII valide le chômage indemnisé par l'Unédic au taux minimum « assorti de la
+  GMP », et le protocole du 2 janvier 2004 fait verser par l'Unédic des contributions
+  « au titre de la garantie minimale de points ». Le modèle, qui retirait la garantie
+  aux années de chômage depuis la reprise du matin sur une lecture de l'article 8 bis,
+  la leur rend, au scénario 1 comme au compte. L'allocation chômeurs âgés, fermée aux
+  entrées nouvelles le 1er janvier 2002, gardait la garantie comme les autres. Restent,
+  hors d'atteinte en ligne, l'avenant de 1991, l'avenant A-145, les circulaires de
+  l'Agirc de 1989 à 1998 et le texte de la décision du 10 mars 1997.
 effet: >-
   Tout cadre payé sous le salaire charnière entre 1989 et 2018 — 1,11 plafond en 2018 —,
   surtout en début de carrière. Pour une cadre née en 1975, entrée à 22 ans et payée
@@ -785,5 +982,8 @@ effet: >-
   entré en 1990 sous le plafond acquiert 3 217 points Agirc, et non les 3 645 qu'une
   garantie de 144 points à tout taux lui donnait, soit 177 € de pension par an de moins
   au scénario 1 et 160 € aux scénarios 4 et 6. Une année
-  de chômage indemnisé, sous le plafond, ne vaut pas les points de la garantie au
-  scénario 1 ; aucun des 688 témoins d'alors n'en avait.
+  de chômage indemnisé, sous le plafond, vaut les points de la garantie comme une année
+  travaillée, et le compte en reçoit le forfait : le témoin
+  `garantie_minimale_cadre_sous_le_plafond`, une cadre née en 1975 au chômage en 2005,
+  y gagne 120,27 points Agirc, et sa pension 0,34 % au scénario 1, de 0,29 à 0,44 % aux
+  scénarios 2 à 5 ; le scénario 6, à la garantie vieillesse, ne bouge pas.

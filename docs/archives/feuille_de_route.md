@@ -15607,6 +15607,78 @@ le guide réglementaire lui-même ; la décision du 10 mars 1997, et la date à
 laquelle la garantie cessa d'accompagner l'allocation chômeurs âgés. Une
 bibliothèque, plus qu'une session, les lira.
 
+**Cinquième suite, et clôture, le même jour.** « Reprend l'action 139 et fait en
+sorte de la clôturer. N'invente rien, source tout » : les quatre questions,
+cherchées par d'autres chemins que ceux qui avaient échoué.
+
+- *L'accord du 8 décembre 1988 est lu.* La banque d'accords du Medef, dont les
+  documents se lisent à `accords.medef.com/documents/accord_N.pdf` quand sa page
+  d'accueil est fermée aux robots, en a la copie dactylographiée (n° 400) : « un
+  minimum de droits fonction du taux de cotisation », « 72 pour les salariés des
+  entreprises cotisant au taux de 8 %, 144 au sein des entreprises ayant opté
+  pour le taux de 16 % », pour les articles 4 et 4 bis et l'article 36 — ce que
+  Briens en disait. La copie porte quatre signatures, CNPF, CGPME, CFE-CGC et
+  UCI-FO, quand l'UGICT-CGT écrit l'avoir signé : la fiche le note parmi ses
+  lectures divergentes. Les 675 documents de la banque, parcourus (couche texte,
+  ou reconnaissance de caractères pour les scans), n'ont ni l'avenant du 13 juin
+  1991 ni l'avenant A-145.
+- *Le guide réglementaire est lu*, et il dément une règle de la deuxième suite.
+  Les archives du web restaient injoignables d'ici, mais Common Crawl, que l'on
+  interroge sans son serveur d'index — recherche dichotomique dans `cluster.idx`,
+  puis lecture des enregistrements WARC par plages —, a capturé
+  `reglementation.agirc-arrco.eu` de 2016 à 2019 : le titre V, inchangé dans
+  quatorze captures (empreinte de contenu vérifiée), et le titre VII, « Mise à
+  jour du: 10 mars 2016 ». Le V fonde le prorata du temps partiel, les trentièmes
+  de présence, et les points « sur la base du salaire de référence définitif de
+  l'exercice n ». Le VII valide le chômage indemnisé par l'Unédic — allocation
+  chômeurs âgés et aide au retour à l'emploi comprises — « sur la base du taux
+  minimum applicable à chaque exercice, assorti de la GMP (garantie minimale de
+  points) correspondante », et la maladie avec « la GMP [...] sur la base
+  maximale de 120 points ». Le protocole du 2 janvier 2004 (Medef, n° 237) fait
+  verser par l'Unédic, en plus de la tranche B, des « contributions [...] au
+  titre de la garantie minimale de points ». La deuxième suite avait déduit de
+  l'article 8 bis, dont les dispositions « concernent les points en tranche B »,
+  que le chômage n'avait pas de garantie ; la garantie est l'une des
+  « Cotisations sur la tranche B » de l'article 6, § 2. Une déduction n'était pas
+  une lecture : le modèle la rend aux années de chômage, au scénario 1 (le
+  plancher de `acquerir`) comme au compte, qui en porte le forfait comme versé par
+  l'Unédic (`_cotisation_ligne`), dans les deux langages.
+- *L'allocation chômeurs âgés est datée* : fermée aux entrées nouvelles le
+  1er janvier 2002 (convention du 1er janvier 2001, art. 10, § 2, 4), copie du
+  Medef), elle reste dans le guide de 2016 parmi les allocations validées avec la
+  garantie. Le modèle, qui prête à toute entreprise le taux minimal, lui sert ce
+  que la décision du 10 mars 1997 lui donnait ; l'approximation qui disait le
+  contraire tombe. Les ASH en livrent une phrase de plus : le reste du système de
+  l'entreprise s'achetait pour la moitié de la cotisation.
+- *Les circulaires de l'Agirc de 1989 à 1998 restent introuvables* : ni dans la
+  banque du Medef, ni sur Gallica ; le guide dit seulement que ce montant et sa
+  répartition « sont communiqués par l'AGIRC pour un exercice n ».
+
+Un témoin bouge, `garantie_minimale_cadre_sous_le_plafond`, dont l'année 2005 est
+chômée : 120,27 points Agirc de plus, +0,34 % au scénario 1, de +0,29 à +0,44 %
+aux scénarios 2 à 5 ; le 6, à la garantie vieillesse, ne bouge pas, ni aucun des
+688 autres témoins, ni les rendus de page, ni le chiffrage. Le test du chômage
+est récrit : l'année chômée garde ses points et le compte reçoit le forfait de
+2005 ; l'arrêt maladie garde les siens, sans rien au compte. La fiche gagne le
+texte de 1988, deux titres du guide, le protocole de 2004, la convention de 2001,
+deux lectures divergentes et une approximation — le montant des contributions de
+l'Unédic, non publié ; `limites.md` et la méthodologie suivent.
+
+Une trouvaille, hors de l'action : l'Unédic cotisait à l'Agirc sur 60 % de la
+tranche B du salaire journalier de référence, avec un précompte de 0,8 % (accord
+du 19 septembre 1996, article unique ; protocole de 2004, art. 3), quand le
+compte notionnel porte la tranche B entière du salaire d'avant l'interruption.
+C'est tout le traitement du chômage au compte qui en dépend ; la fiche le déclare,
+le modèle n'en change rien.
+
+**L'action est close.** Ce qui ne se lit pas en ligne — l'avenant du 13 juin
+1991, l'avenant A-145, les circulaires de l'Agirc de 1989 à 1998, le texte de la
+décision du 10 mars 1997 — reste aux questions de la fiche
+(`sources.a_relire`), que la veille relit chaque année : les forfaits de ces
+années sont connus par le barème IPP, la décision par les ASH ; le contenu des
+deux avenants de 1991, lui, ne l'est pas, et une approximation de la fiche le
+déclare.
+
 ### 140. Les contributions d'équilibre de l'Agirc-Arrco au compte notionnel : CEG, CET, AGFF et ASF — `abandonnée`
 
 **D'où elle vient.** Relevé le 2 octobre 2026, en répondant à « Dans les

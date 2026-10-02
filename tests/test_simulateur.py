@@ -4964,22 +4964,31 @@ def test_la_garantie_minimale_se_proratise(simulateur):
     assert moitie == pytest.approx(entiere / 2, rel=1e-9)
 
 
-def test_la_garantie_minimale_ne_vaut_pas_pour_une_annee_de_chomage(simulateur):
-    """Les points Agirc d'une année de chômage indemnisé « concernent les
-    points en tranche B », calculés sur le salaire journalier de référence
-    (convention du 14 mars 1947, annexe I, art. 8 bis) : pas de garantie. Ceux
-    d'un arrêt de travail reprennent les points de l'année précédente (art. 8),
-    garantie comprise. Le scénario 1 servait la garantie aux deux jusqu'au
-    2 octobre 2026.
+def test_la_garantie_minimale_vaut_pour_une_annee_de_chomage(simulateur):
+    """L'Agirc valide une période que l'Unédic indemnise « sur la base du taux
+    minimum applicable à chaque exercice, assorti de la GMP (garantie minimale
+    de points) correspondante » (guide réglementaire Agirc-Arrco, titre
+    VII.3.1.6.2, mis à jour le 10 mars 2016), et l'Unédic lui versait des
+    « contributions [...] au titre de la garantie minimale de points »
+    (protocole du 2 janvier 2004, art. 3) : le scénario 1 sert la garantie à
+    l'année de chômage, et le compte notionnel en reçoit la cotisation. Un
+    arrêt de travail reprend les points de l'année précédente (art. 8),
+    garantie comprise. Le modèle la retirait au chômage le 2 octobre 2026, sur
+    une lecture de l'article 8 bis que le guide dément, et la lui rendit le
+    même jour.
     """
     import re
 
-    def points_agirc(interruptions):
-        carriere = simulateur.carriere_simple(
+    from retraite_notionnelle.config import PartCotisation
+
+    def carriere(interruptions):
+        return simulateur.carriere_simple(
             annee_naissance=1975, sexe="F", affiliation="salarie_prive_cadre",
             mois_naissance=1, age_debut=22, age_liquidation=64,
             niveau_salaire=0.8, profil_carriere="plat", interruptions=interruptions)
-        resultat = simulateur.scenario_actuel.calculer(carriere)
+
+    def points_agirc(interruptions):
+        resultat = simulateur.scenario_actuel.calculer(carriere(interruptions))
         detail = {p.regime: p for p in resultat.pensions_par_regime}["agirc"].detail
         return float(re.search(r"([\d,]+\.\d+) points", detail).group(1).replace(",", ""))
 
@@ -4987,10 +4996,26 @@ def test_la_garantie_minimale_ne_vaut_pas_pour_une_annee_de_chomage(simulateur):
     assert travaillees == pytest.approx(
         sum(_points_de_la_garantie(simulateur, annee) for annee in range(1997, 2019)),
         abs=0.006)
-    # Un salaire de référence sous le plafond : la tranche B est nulle.
-    assert points_agirc({2005: "chomage_indemnise"}) == pytest.approx(
-        travaillees - _points_de_la_garantie(simulateur, 2005), abs=0.011)
+    # Un salaire de référence sous le plafond : la tranche B est nulle, et la
+    # garantie fait seule les points de l'année, chômée comme travaillée.
+    assert points_agirc({2005: "chomage_indemnise"}) == pytest.approx(travaillees)
     assert points_agirc({2005: "maladie"}) == pytest.approx(travaillees)
+
+    # Le compte reçoit le forfait de 2005 pour l'année chômée, comme pour
+    # l'année travaillée ; rien pour l'arrêt maladie, dont les points sont
+    # donnés sans contrepartie.
+    (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(2005)
+                    if p.assiette == "tranche_b"]
+    forfait, _ = simulateur.scenario_actuel.valeurs_point.garantie(
+        "agirc", tranche_b, 2005, 1.0, 1.0)
+    chomee, ligne = _cotisation_agirc(
+        simulateur, carriere({2005: "chomage_indemnise"}), 2005, PartCotisation.TOTALE)
+    assert ligne.revenu < simulateur.macro.plafond_securite_sociale(2005)
+    assert chomee == pytest.approx(forfait, abs=1e-6)
+    assert _cotisation_agirc(simulateur, carriere({}), 2005,
+                             PartCotisation.TOTALE)[0] == pytest.approx(forfait, abs=1e-6)
+    assert _cotisation_agirc(simulateur, carriere({2005: "maladie"}), 2005,
+                             PartCotisation.TOTALE)[0] == 0
 
 
 @pytest.mark.parametrize("annee, mensuelle, salariale, source", [

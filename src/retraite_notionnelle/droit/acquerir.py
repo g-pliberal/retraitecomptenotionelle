@@ -526,15 +526,22 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     points_annee = cotisation / (taux_appel * reference)
                     garantie = moteur.valeurs_point.garantie(
                         bareme, periode, ligne.annee, part, ligne.quotite)
-                    if garantie is not None and regime.famille in ligne.familles_financees:
-                        # Une année de CHÔMAGE INDEMNISÉ n'a pas de garantie :
-                        # ses points Agirc se calculent sur la seule tranche B
-                        # du salaire journalier de référence (convention du
-                        # 14 mars 1947, annexe I, art. 8 bis, D). Ceux d'un
-                        # arrêt maladie se calculent, eux, sur les points de
-                        # l'année précédente (art. 8), garantie comprise : le
-                        # plancher les rend.
-                        garantie = None
+                    # Une année de CHÔMAGE INDEMNISÉ a sa garantie, comme une
+                    # année travaillée : l'Agirc valide la période que l'Unédic
+                    # indemnise « sur la base du taux minimum applicable à
+                    # chaque exercice, assorti de la GMP (garantie minimale de
+                    # points) correspondante » (guide réglementaire
+                    # Agirc-Arrco, titre VII.3.1.6.2), et l'Unédic lui versait
+                    # des « contributions [...] au titre de la garantie
+                    # minimale de points » (protocole du 2 janvier 2004,
+                    # art. 3). Le plancher en était retiré du 2 octobre 2026 au
+                    # même jour : on avait lu l'article 8 bis, dont les
+                    # dispositions « concernent les points en tranche B »,
+                    # comme s'il excluait la garantie, qui est l'une des
+                    # « Cotisations sur la tranche B » de l'article 6, § 2. Un
+                    # arrêt maladie reprend, lui, les points de l'année
+                    # précédente (art. 8), garantie comprise : le plancher les
+                    # rend aussi.
                     if garantie is not None:
                         # Garantie minimale de points de l'Agirc : tout cadre
                         # cotisant en acquiert au moins ce que le forfait de
