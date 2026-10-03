@@ -48,8 +48,9 @@ def _compte(simulateur, carriere, annee, part):
     return constructeur.cotisation_annuelle(carriere, annee)
 
 
-def _points(simulateur, regime, interruptions):
-    resultat = simulateur.scenario_actuel.calculer(_carriere(simulateur, interruptions))
+def _points(simulateur, regime, interruptions, **carriere):
+    resultat = simulateur.scenario_actuel.calculer(
+        _carriere(simulateur, interruptions, **carriere))
     detail = {p.regime: p for p in resultat.pensions_par_regime}[regime].detail
     return float(re.search(r"([\d,]+\.\d+) points", detail).group(1).replace(",", ""))
 
@@ -155,3 +156,17 @@ def test_la_solidarite_vaut_des_points_a_son_taux(simulateur):
         contractuel = periode.taux_cotisation_retraite / appel
         assert (solidarite - sans) / (travaillee - sans) == pytest.approx(
             taux / contractuel, abs=0.001)
+
+
+def test_la_solidarite_n_a_pas_de_garantie_minimale(simulateur):
+    """Le guide réglementaire assortit de la garantie minimale de points les
+    taux de l'allocation spéciale du FNE, « depuis 1989 », et valide l'ASS
+    « seulement sur la base du taux de 8 % ou de 12 % » (titre VII.3.1.6.2) :
+    une cadre payée sous le plafond garde au chômage d'assurance les points de
+    la garantie, et n'a rien à l'Agirc pour une année d'ASS."""
+    carriere = {"niveau": 0.8, "naissance": 1975}
+    sans = _points(simulateur, "agirc", {2005: "sans_activite"}, **carriere)
+    assurance = _points(simulateur, "agirc", {2005: "chomage_indemnise"}, **carriere)
+    solidarite = _points(simulateur, "agirc", {2005: "chomage_solidarite"}, **carriere)
+    assert assurance - sans == pytest.approx(120, abs=1)
+    assert solidarite == pytest.approx(sans, abs=0.01)

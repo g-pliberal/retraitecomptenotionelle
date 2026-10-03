@@ -542,7 +542,7 @@ export class ConstructeurCompte {
       === SourceCotisations.TAUX_UNIFORME && nature === null;
     const intervalles = new Map();
     // Pour une année de chômage, régime par régime : la cotisation d'une année
-    // travaillée, son assiette avant et après la garantie, le taux d'appel.
+    // travaillée, garantie comprise, son assiette sans elle, le taux d'appel.
     const travaillee = new Map();
 
     for (const code of codes) {
@@ -712,14 +712,13 @@ export class ConstructeurCompte {
         if (nature !== null) {
           const achat = this.valeursPoint.achat(periode.points_de || code, annee);
           if (!travaillee.has(code)) {
-            travaillee.set(code, [0.0, 0.0, 0.0, 1.0]);
+            travaillee.set(code, [0.0, 0.0, 1.0]);
           }
           const cumul = travaillee.get(code);
           cumul[0] += montant;
           cumul[1] += assietteSalaire;
-          cumul[2] += assiette;
           if (achat !== null) {
-            cumul[3] = achat[1];
+            cumul[2] = achat[1];
           }
         }
         if (regime.hors_repartition && this.parametres.isoler_capitalisation) {
@@ -825,7 +824,7 @@ export class ConstructeurCompte {
     }
     const parRegime = new Map();
     let cotisation = 0;
-    for (const [code, [montant, assiette, garantie, appel]] of travaillee) {
+    for (const [code, [montant, assiette, appel]] of travaillee) {
       let verse;
       if (nature === "assurance") {
         verse = chomage.assurancePartCotisation * montant
@@ -833,7 +832,7 @@ export class ConstructeurCompte {
       } else {
         const taux = chomage.tauxSolidarite(code, annee, false);
         verse = chomage.solidariteVersement
-          * (taux === null ? montant : garantie * taux * appel);
+          * (taux === null ? montant : assiette * taux * appel);
       }
       parRegime.set(code, verse);
       cotisation += verse;

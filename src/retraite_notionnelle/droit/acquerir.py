@@ -550,8 +550,11 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     # sur la tranche B de l'Agirc avant : non le taux d'une
                     # année travaillée, que le modèle leur prêtait jusqu'au
                     # 3 octobre 2026 en ne connaissant que le chômage
-                    # d'assurance. La garantie minimale de points suit le
-                    # taux, comme elle suit celui d'une entreprise.
+                    # d'assurance. Sans garantie minimale de points : le guide
+                    # réglementaire l'écrit pour l'allocation spéciale du FNE
+                    # (« Ces taux doivent s'entendre, depuis 1989, assortis de
+                    # la GMP »), non pour l'ASS, validée « seulement sur la
+                    # base du taux de 8 % ou de 12 % » (titre VII.3.1.6.2).
                     taux_solidarite = (
                         chomage.taux_solidarite(code, ligne.annee, points=True)
                         if nature == "solidarite" else None
@@ -560,9 +563,10 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         points_annee = cotisation / (taux_appel * reference)
                     else:
                         points_annee = assiette * taux_solidarite / reference
-                    garantie = moteur.valeurs_point.garantie(
-                        bareme, periode, ligne.annee, part, ligne.quotite,
-                        taux_contractuel=taux_solidarite)
+                    garantie = (None if taux_solidarite is not None
+                                else moteur.valeurs_point.garantie(
+                                    bareme, periode, ligne.annee, part,
+                                    ligne.quotite))
                     # Une année de CHÔMAGE INDEMNISÉ a sa garantie, comme une
                     # année travaillée : l'Agirc valide la période que l'Unédic
                     # indemnise « sur la base du taux minimum applicable à

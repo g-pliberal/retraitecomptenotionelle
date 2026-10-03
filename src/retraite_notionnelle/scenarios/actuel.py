@@ -2346,8 +2346,7 @@ class ValeursPoint:
     TAUX_DE_LA_GARANTIE = 0.16
 
     def garantie(self, regime: str, periode, annee: int, part: float,
-                 quotite: float, taux_contractuel: float | None = None,
-                 ) -> tuple[float, Fiabilite] | None:
+                 quotite: float) -> tuple[float, Fiabilite] | None:
         """Cotisation de la garantie minimale de points d'une ligne de l'année,
         taux d'appel compris, et sa fiabilité ; ``None`` si la période n'a pas
         de garantie ou si le point n'a pas de prix cette année-là.
@@ -2366,8 +2365,6 @@ class ValeursPoint:
         (:meth:`PeriodeRegime.points_garantis`). Une année sans forfait publié
         retombe sur les points de la fiche, au prix de l'année. Le scénario 1
         en tire les points, le compte notionnel l'assiette qui la prélève.
-        ``taux_contractuel`` remplace le taux de la période quand la ligne en
-        prend un autre : celui de la solidarité, 8 % ou 12 % à l'Agirc.
         """
         points = periode.points_garantis(part, quotite)
         if points is None:
@@ -2376,9 +2373,8 @@ class ValeursPoint:
         if achat is None:
             return None
         reference, taux_appel, fiabilite = achat
-        contractuel = (periode.taux_cotisation_retraite / taux_appel
-                       if taux_contractuel is None else taux_contractuel)
-        proportion = min(1.0, contractuel / self.TAUX_DE_LA_GARANTIE)
+        proportion = min(1.0, periode.taux_cotisation_retraite / taux_appel
+                         / self.TAUX_DE_LA_GARANTIE)
         forfaits = self._table.get((regime, "cotisation_garantie"))
         if forfaits and min(forfaits) <= annee <= max(forfaits):
             forfait, fiabilite_forfait = self._en_vigueur(

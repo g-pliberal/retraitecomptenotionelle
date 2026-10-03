@@ -2327,10 +2327,9 @@ export class ValeursPoint {
    * forfait en vaut la part au taux de la période, jusqu'à ce que le taux
    * minimal atteigne 16 %, en 1999. Proratisé comme les points qu'il achète au
    * prix de l'année ; sans forfait publié, les points de la fiche à ce prix.
-   * Voir scenarios/actuel.py. `tauxContractuel` remplace le taux de la
-   * période quand la ligne en prend un autre : celui de la solidarité.
+   * Voir scenarios/actuel.py.
    */
-  garantie(regime, periode, annee, part, quotite, tauxContractuel = null) {
+  garantie(regime, periode, annee, part, quotite) {
     const points = periode.pointsGarantis(part, quotite);
     if (points === null) {
       return null;
@@ -2340,9 +2339,8 @@ export class ValeursPoint {
       return null;
     }
     const [reference, tauxAppel, fiabilite] = achat;
-    const contractuel = tauxContractuel === null
-      ? periode.taux_cotisation_retraite / tauxAppel : tauxContractuel;
-    const proportion = Math.min(1.0, contractuel / TAUX_DE_LA_GARANTIE);
+    const proportion = Math.min(1.0, periode.taux_cotisation_retraite / tauxAppel
+                                / TAUX_DE_LA_GARANTIE);
     const forfaits = this._table.get(`${regime}|cotisation_garantie`);
     if (forfaits !== undefined && forfaits.annees[0] <= annee
         && annee <= forfaits.annees[forfaits.annees.length - 1]) {

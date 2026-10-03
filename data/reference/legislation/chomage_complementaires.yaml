@@ -28,9 +28,10 @@ motifs:
 # sur l'Ircantec.
 plafond_salaire_reference: 4
 
-# LE PREMIER JOUR VALIDÉ, régime par régime. Les protocoles avec l'Unédic font
-# courir la validation du chômage « à compter du 1er octobre 1967 » (guide
-# réglementaire Agirc-Arrco, titre VII.3.1.2, lu à l'action 141) ; l'Ircantec
+# LE PREMIER JOUR VALIDÉ, régime par régime. « Le protocole du 10 mai 1967 a
+# pris effet au 1er octobre 1967, sans effet rétroactif. En conséquence, seules
+# les périodes de chômage indemnisées, à compter de cette date, sont
+# validables » (guide réglementaire Agirc-Arrco, titre VII.3.1.3.1) ; l'Ircantec
 # valide les « périodes de chômage postérieures au 1er août 1977 ou en cours à
 # cette date » (arrêté du 30 décembre 1970, art. 11 ter, III,
 # LEGIARTI000042696841). Un régime absent d'ici valide le chômage dès qu'il
@@ -49,7 +50,8 @@ validation_depuis:
 # l'Arrco (annexe A, art. 23, I, 3 à 5 et 8, rédaction de 2006) et de 8 % ou
 # 12 % sur la tranche B de l'Agirc, selon que l'entreprise était née avant ou
 # après 1981 (annexe I, art. 8 bis, § 4 à 6 et 9), pour les périodes
-# « postérieures au 31 mars 1984 » (guide réglementaire, VII.3.1.6.2, 2, a).
+# « postérieures au 31 mars 1984 », sans garantie minimale de points, que le
+# guide ne donne qu'à l'allocation spéciale du FNE (VII.3.1.6.2, 2, a).
 # L'Arrco validait aux taux obligatoires les ruptures de contrat d'avant le
 # 1er juin 2000 : le modèle, qui ne connaît pas la date de la rupture, prend
 # celle de l'année (`points_depuis`). L'État finance ces taux, et ces taux
@@ -86,10 +88,12 @@ assurance:
 # égale à 40 % du salaire, pour les périodes « postérieures au 29 février 1988 »
 # (convention du 30 décembre 1987, art. 5) ; 0,8 % au règlement de la
 # convention du 1er janvier 1990 ; 1,2 % à l'avenant n° 10 du 24 juillet 1992
-# (art. 51), qui n'écrit pas de date d'effet, appliqué au mois qui suit sa
-# signature ; 3 % à l'avenant n° 5 du 27 décembre 2002, appliqué au 1er janvier
-# 2003, et à la convention de 2004 (art. 27, JORFARTI000002253441), jusqu'au
-# règlement de 2025. C'est ce que les scénarios 2 et 3 portent d'une année
+# (art. 51), qu'agrée l'arrêté du 17 août 1992 (JORFTEXT000000299197) sans
+# dater le précompte, appliqué au mois qui suit sa signature ; 3 % à l'avenant
+# n° 5 du 27 décembre 2002 (art. 13, JORFARTI000001466855), qui porte le taux
+# des contributions à 6,40 % « à compter du 1er janvier 2003 » (art. 22), et à
+# la convention de 2004 (art. 27, JORFARTI000002253441), jusqu'au règlement de
+# 2025. C'est ce que les scénarios 2 et 3 portent d'une année
 # d'assurance ; l'allocataire de la solidarité ne paie rien.
 participation_allocataire:
   - {depuis: 1988-03-01, taux: 0.004}

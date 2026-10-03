@@ -448,14 +448,15 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         if (achat !== null) {
           const [reference, tauxAppel] = achat;
           let fiabiliteAchat = achat[2];
-          // La solidarité vaut 4 %, ou 8 % et 12 % à l'Agirc : voir acquerir.py.
+          // La solidarité vaut 4 %, ou 8 % et 12 % à l'Agirc, sans garantie
+          // minimale : voir acquerir.py.
           const tauxSolidarite = nature === "solidarite"
             ? chomage.tauxSolidarite(code, ligne.annee, true) : null;
           let pointsAnnee = tauxSolidarite === null
             ? cotisation / (tauxAppel * reference)
             : assiette * tauxSolidarite / reference;
-          const garantie = moteur.valeursPoint.garantie(
-            bareme, periode, ligne.annee, part, ligne.quotite, tauxSolidarite);
+          const garantie = tauxSolidarite !== null ? null
+            : moteur.valeursPoint.garantie(bareme, periode, ligne.annee, part, ligne.quotite);
           // Une année de CHÔMAGE INDEMNISÉ a sa garantie, comme une année
           // travaillée : l'Agirc valide la période que l'Unédic indemnise au
           // taux minimum « assorti de la GMP (garantie minimale de points)

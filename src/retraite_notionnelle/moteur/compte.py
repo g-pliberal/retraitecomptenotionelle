@@ -673,8 +673,8 @@ class ConstructeurCompte:
         )
         intervalles: dict[str, list[tuple[float, float | None]]] = {}
         #: Pour une année de chômage, régime par régime : la cotisation qu'une
-        #: année travaillée porterait, son assiette avant et après la garantie
-        #: minimale de points, et le taux d'appel du point.
+        #: année travaillée porterait, garantie minimale de points comprise,
+        #: son assiette sans la garantie, et le taux d'appel du point.
         travaillee: dict[str, list[float]] = {}
 
         for code in codes:
@@ -856,12 +856,11 @@ class ConstructeurCompte:
                     assiette_salaire *= validee
                 if nature is not None:
                     achat = self.valeurs_point.achat(periode.points_de or code, annee)
-                    cumul = travaillee.setdefault(code, [0.0, 0.0, 0.0, 1.0])
+                    cumul = travaillee.setdefault(code, [0.0, 0.0, 1.0])
                     cumul[0] += montant
                     cumul[1] += assiette_salaire
-                    cumul[2] += assiette
                     if achat is not None:
-                        cumul[3] = achat[1]
+                        cumul[2] = achat[1]
                 if regime.hors_repartition and self.parametres.isoler_capitalisation:
                     # RAFP, assurances sociales d'avant-guerre : ces droits sont
                     # provisionnés, ils ne rejoignent pas le compte notionnel.
@@ -940,9 +939,9 @@ class ConstructeurCompte:
         depuis 2003, moins avant, rien avant mars 1988.
 
         La SOLIDARITÉ : l'État finance les points à 4 %, ou à 8 % et 12 % à
-        l'Agirc, et en verse 70 % des cotisations (Sénat, 2000-2001) ;
-        l'allocataire ne paie rien. Un régime sans taux de solidarité la
-        traite comme l'assurance, dont il reçoit 70 %.
+        l'Agirc, sans garantie minimale, et en verse 70 % des cotisations
+        (Sénat, 2000-2001) ; l'allocataire ne paie rien. Un régime sans taux de
+        solidarité la traite comme l'assurance, dont il reçoit 70 %.
 
         Le compte portait jusqu'au 3 octobre 2026 la cotisation entière d'une
         année travaillée sur le salaire d'avant l'interruption, dont l'Unédic
@@ -960,14 +959,14 @@ class ConstructeurCompte:
                           for code, cumul in travaillee.items()}
             return sum(par_regime.values()), par_regime, 0.0
         par_regime = {}
-        for code, (montant, assiette, garantie, appel) in travaillee.items():
+        for code, (montant, assiette, appel) in travaillee.items():
             if nature == "assurance":
                 verse = (chomage.assurance_part_cotisation * montant
                          + chomage.assurance_participation_reversee * assiette)
             else:
                 taux = chomage.taux_solidarite(code, annee, points=False)
                 verse = chomage.solidarite_versement * (
-                    montant if taux is None else garantie * taux * appel)
+                    montant if taux is None else assiette * taux * appel)
             par_regime[code] = verse
         cotisation = sum(par_regime.values())
         return cotisation, par_regime, max(0.0, cotisation - participation)

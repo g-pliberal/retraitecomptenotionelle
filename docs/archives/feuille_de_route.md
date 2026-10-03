@@ -16351,3 +16351,58 @@ commits.
   qui suit leur signature ; la convention de 2021, tranche par tranche.
 
 L'action est close ; elle passe aux archives.
+
+**Suite, le 3 octobre 2026 : ce qui restait à relire.** « Fait des recherches pour
+ce qui reste à relire. »
+
+- *Le guide réglementaire de 2018, relu.* Common Crawl ne sert plus son index à ce
+  conteneur, mais ses données si : `cluster.idx`, le bloc CDX puis
+  l'enregistrement WARC, lus par plages d'octets, rendent le titre VII (empreinte
+  sha1 OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP, celle de l'étape 1). « Le protocole du
+  10 mai 1967 a pris effet au 1er octobre 1967, sans effet rétroactif »
+  (VII.3.1.3.1) : rien avant, à l'Agirc comme à l'Arrco ; les salariés agricoles
+  depuis le 1er avril 1974, l'outre-mer depuis 1980, trente jours au moins de
+  1967 à 1973. Le salaire journalier de référence fonde le calcul « à compter du
+  1er janvier 1997 », le guide renvoyant avant aux « règles antérieures »
+  (VII.3.1.6.1). Les taux de validation de l'assurance de 1996 à 2015 — 13 % à
+  16,44 % à l'Agirc, 4,5 % à 6,20 % et 16,20 % à l'Arrco — sont ceux du modèle.
+  L'ASFNE a sa garantie minimale « depuis 1989 », et son salaire de référence
+  s'arrête à deux plafonds pour les conventions conclues depuis le 5 mai 1997 ;
+  l'ASS n'a que « le taux de 8 % ou de 12 % » (VII.3.1.6.2). L'annexe 2, la
+  convention de l'État de 2000, n'est dans aucune de neuf collections de 2016 à
+  2019.
+- *Une correction.* La solidarité perd la garantie minimale de points que la
+  session précédente lui avait étendue par déduction, au scénario 1 comme au
+  compte, dans les deux moteurs ; `ValeursPoint.garantie` perd le taux qu'elle
+  recevait pour elle. Aucun témoin ne bouge ; un test le tient
+  (`test_la_solidarite_n_a_pas_de_garantie_minimale`).
+- *La convention de 2021, tranche par tranche.* Son article 4.1 assied les
+  cotisations « sur 60 % du salaire journalier de référence [...] dans la limite
+  de quatre fois le plafond », sans dire où se coupent les tranches ; une note y
+  veut « la stabilité des contributions au moment du passage au régime unifié »,
+  et l'Unédic verse 3 322 M€ en 2018, 3 387 M€ en 2019 : le compte garde 60 % de
+  la cotisation de chaque tranche.
+- *Les dates de la participation.* L'avenant n° 10 de 1992 est agréé par
+  l'arrêté du 17 août 1992 (JORFTEXT000000299197), qui ne date pas le précompte :
+  le 1er août 1992 reste une présomption. L'avenant n° 5 de 2002 remplace
+  « 1,2 % » par « 3 % » (art. 13) et porte le taux des contributions à 6,40 % « à
+  compter du 1er janvier 2003 » (art. 22, JORFARTI000001466855), ce qui appuie la
+  date retenue.
+- *L'État.* La convention du 5 juillet 2021 s'est substituée, « à effet du 1er
+  janvier 2021 », à celle du 23 mars 2000 et à son avenant du 3 décembre 2002 sur
+  l'AER ; celle de l'Unédic du 14 décembre 2021, à celle du 12 décembre 2017, à
+  effet du 1er janvier 2019 (circulaire 2022-07-DRJ). Leurs textes restent
+  introuvables, comme les conventions d'application de 2004 et de 2017 et
+  l'avenant n° 2 de 1992 à la convention. Les arrêtés du FSV donnent ce que l'État
+  versait : une somme globale indexée sur les prix au début (441 M€ pour 2001),
+  puis des sommes qui suivent les allocataires (256 M€ pour 2020, 202 M€ pour
+  2023).
+- *Les copies* (sha256) : la page du guide,
+  `aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580` ; la
+  circulaire 2022-07-DRJ,
+  `478665eb52ec01977a26f288179be50b634724d94485c7473f18f22417e23713` ; la
+  circulaire Agirc SJ 2003-4978,
+  `72c3f31fa19a3db904076497e276ae3094cf7456025a6a6610724636290fa484` ; la
+  convention de 2021, à l'empreinte de l'étape 1.
+
+Rien d'autre ne change au calcul : aucun témoin ne bouge.

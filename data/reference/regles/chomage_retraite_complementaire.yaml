@@ -32,11 +32,17 @@ versions:
   statut: lue
   textes:
   - reference: >-
-      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII, lu dans sa
-      capture par Common Crawl du 21 octobre 2018 (hors JORF)
-    article: VII.3.1.2
-    citation: la validation court « à compter du 1er octobre 1967 »
-    lu_le: 2026-10-02
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII
+      (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl
+      du 21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
+    article: VII.3.1.3.1, 2
+    citation: >-
+      « Le protocole du 10 mai 1967 a pris effet au 1er octobre 1967, sans effet
+      rétroactif. En conséquence, seules les périodes de chômage indemnisées, à compter de
+      cette date, sont validables. »
+    lu_le: 2026-10-03
+    empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
   - id: LEGIARTI000042696841
     reference: arrêté du 30 décembre 1970 (Ircantec)
     article: article 11 ter, III
@@ -98,14 +104,24 @@ versions:
     lu_le: 2026-10-03
     empreinte: sha256:61e00209d4e4573c6b4c85efb775f5626fd4886ed7d9a5bc3b65ebceb1513b80
   - reference: >-
-      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII, lu dans sa
-      capture par Common Crawl du 21 octobre 2018 (hors JORF)
-    article: VII.3.1.6.2, 2, a
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII
+      (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl
+      du 21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
+    article: VII.3.1.6.1 ; VII.3.1.6.2, 1 et 2, a
     citation: >-
-      l'allocataire de la solidarité a droit, « pour les périodes d'indemnisation
-      postérieures au 31 mars 1984, à l'attribution de points de retraite sans
-      contrepartie financière, mais seulement sur la base du taux de 8 % ou de 12 % »
-    lu_le: 2026-10-02
+      les droits se calculent sur le salaire journalier de référence pour les périodes
+      « indemnisées à compter du 1er janvier 1997 », en distinguant « les fractions T1 et
+      T2 (non-cadres) ou TB (cadres) » ; l'Agirc valide l'assurance « sur la base du taux
+      minimum applicable à chaque exercice, assorti de la GMP » — 13 % pour 1996 à 16,44 %
+      à compter de 2015 —, l'Arrco aux taux obligatoires — 4,5 % pour 1996 à 6,20 % sur T1
+      et 16,20 % sur T2 ; l'allocataire de l'ASS a droit, « pour les périodes
+      d'indemnisation postérieures au 31 mars 1984, à l'attribution de points de retraite
+      sans contrepartie financière, mais seulement sur la base du taux de 8 % ou de 12 % »,
+      quand ceux de l'allocation spéciale du FNE « doivent s'entendre, depuis 1989,
+      assortis de la GMP »
+    lu_le: 2026-10-03
+    empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
   - reference: >-
       avenant n° 10 du 24 juillet 1992 au règlement annexé à la convention du 1er janvier
       1990 relative à l'assurance chômage, copie que publie le Medef (n° 452)
@@ -124,8 +140,8 @@ versions:
       entreprise le taux minimal —, garantie minimale de points comprise de 1989 à 2018
     solidarite: >-
       depuis le 1er avril 1984, 8 % sur la tranche B de l'Agirc (12 % pour une entreprise
-      née après 1981, `agirc_entreprises_nouvelles`), la garantie proratisée au même
-      taux ; 4 % à l'Arrco, pour les ruptures postérieures au 31 mai 2000 — les taux
+      née après 1981, `agirc_entreprises_nouvelles`), sans garantie minimale de points ;
+      4 % à l'Arrco, pour les ruptures postérieures au 31 mai 2000 — les taux
       obligatoires avant —, le modèle prenant l'année pour la rupture (`points_depuis:
       2001`)
     borne: quatre plafonds de la sécurité sociale (`plafond_salaire_reference`)
@@ -214,18 +230,22 @@ approximations:
     Le modèle prête à toute entreprise le taux minimal, quand l'Arrco suit le taux d'une
     entreprise qui cotisait au-dessus, dans la limite de 6 % sur T1 et 16 % sur T2 pour une
     rupture postérieure au 30 juin 1996, et l'Agirc « le système contractuel de
-    cotisations en vigueur dans l'entreprise » ; le calcul d'avant 1997, que l'Agirc ne
-    fondait pas sur le salaire journalier de référence, n'est pas lu.
+    cotisations en vigueur dans l'entreprise » ; avant 1997, le guide renvoie aux « règles
+    antérieures » et aux automates de calcul de la PRC, « par référence à une période
+    d'activité de rattachement » : le salaire d'avant l'interruption en tient lieu.
   effet: non mesuré
 - version: assurance_et_solidarite_jusqu_en_2018
   ecart: >-
     L'Arrco valide aux taux obligatoires la solidarité qui suit une rupture d'avant le 1er
     juin 2000 : le modèle, qui ne connaît pas la date de la rupture, prend l'année de
-    l'allocation, et sert 4 % dès 2001. La garantie minimale de points de la solidarité,
-    au prorata de 8 % ou 12 %, est lue pour l'allocation spéciale du FNE, dont les taux
-    « doivent s'entendre, depuis 1989, assortis de la GMP » (guide, VII.3.1.6.2, 2), et
-    étendue à l'allocation de solidarité spécifique, validée au même alinéa et aux mêmes
-    taux : une déduction.
+    l'allocation, et sert 4 % dès 2001. La solidarité n'a pas de garantie minimale de
+    points, que le guide ne donne qu'à l'allocation spéciale du FNE : l'ASFNE, que le
+    modèle ne distingue pas de l'ASS, en est privée, et son salaire de référence, que le
+    guide borne à deux plafonds pour les conventions conclues depuis le 5 mai 1997, l'est
+    à quatre. Le modèle ne connaît pas non plus les premiers jours propres aux salariés
+    agricoles (1er avril 1974) et aux départements d'outre-mer (1er mars ou 1er septembre
+    1980), ni la durée minimale de trente jours des périodes de 1967 à 1973 (guide,
+    VII.3.1.3.1).
   effet: non mesuré
 - version: [assurance_et_solidarite_jusqu_en_2018, regime_unifie_depuis_2019]
   ecart: >-
@@ -249,23 +269,16 @@ sources:
   prochaine_relecture: 2027-10-01
   a_relire:
   - >-
-    Relire le guide réglementaire Agirc-Arrco de 2018, titre VII, que Common Crawl et la
-    Wayback Machine ne servaient plus le 2 octobre 2026 : ce que l'Agirc faisait du chômage
-    avant 1967, et le calcul des points avant 1997.
-  - >-
-    Lire la date d'effet de l'avenant n° 10 du 24 juillet 1992, qui ne l'écrit pas, et
-    celle de l'avenant n° 5 du 27 décembre 2002 (participation de l'allocataire, fiche
-    `financement_chomage_complementaire`).
+    Lire les « règles antérieures » au calcul sur le salaire journalier de référence, pour
+    les périodes indemnisées avant 1997, que le guide de 2018 ne détaille pas.
 code:
   python:
   - donnees/chargement.py, ChomageComplementaires
   - carriere.py, _revenu_reference
   - droit/acquerir.py, acquerir (premier jour validé, taux de la solidarité)
-  - scenarios/actuel.py, ValeursPoint.garantie (taux_contractuel)
   javascript:
   - carriere.js, ChomageComplementaires, revenuReference
   - droit/acquerir.js
-  - regimes.js, ValeursPoint.garantie
   parametres:
   - legislation/chomage_complementaires.yaml
   - legislation/periodes_non_travaillees.csv (chomage_indemnise, chomage_solidarite)

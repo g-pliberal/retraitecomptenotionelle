@@ -30,11 +30,16 @@ versions:
   statut: lue
   textes:
   - reference: >-
-      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII, lu dans sa
-      capture par Common Crawl du 21 octobre 2018 (hors JORF)
-    article: VII.3.1.2
-    citation: la validation court « à compter du 1er octobre 1967 »
-    lu_le: 2026-10-02
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII
+      (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl
+      du 21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
+    article: VII.3.1.3.1, 2
+    citation: >-
+      « Le protocole du 10 mai 1967 a pris effet au 1er octobre 1967, sans effet
+      rétroactif. »
+    lu_le: 2026-10-03
+    empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
   bornes:
     revenu.annee: [null, 1967-10-01]
   contenu:
@@ -135,6 +140,54 @@ versions:
       « Sur le montant de l'allocation est précomptée une participation de 3 % assise sur
       le salaire journalier de référence. »
     lu_le: 2026-10-03
+  - id: JORFTEXT000000299197
+    reference: >-
+      arrêté du 17 août 1992 portant agrément de l'avenant n° 2 du 24 juillet 1992 à la
+      convention du 1er janvier 1990 relative à l'assurance chômage et de l'avenant n° 10
+      du 24 juillet 1992 au règlement annexé à cette convention
+    citation: >-
+      « sont rendues obligatoires [...] les dispositions de l'avenant n° 10 du 24-07-1992
+      au règlement annexé à la convention du 01-01-1990 » ; ni l'arrêté ni l'avenant ne
+      datent le précompte de 1,2 %
+    publie_le: 1992-08-18
+    lu_le: 2026-10-03
+  - id: JORFARTI000001466855
+    reference: >-
+      arrêté du 5 février 2003 portant agrément de l'avenant n° 5 au règlement annexé à la
+      convention du 1er janvier 2001, annexe
+    article: articles 13 et 22
+    citation: >-
+      « A l'article 27, « 1,2 % » est remplacé par « 3 % » » ; le taux des contributions
+      est porté « à 6,40 % à compter du 1er janvier 2003 »
+    publie_le: 2003-02-08
+    lu_le: 2026-10-03
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII
+      (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl
+      du 21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
+    article: VII.3.1.2, 3, b
+    citation: >-
+      « Pour les droits attribués aux titulaires des allocations à la charge de l'État,
+      celui-ci s'est engagé à un financement correspondant, pour l'ARRCO, à un taux de 4 %,
+      et pour l'AGIRC, à un taux de 8 % si la dernière entreprise occupant l'intéressé a été
+      créée avant le 1er janvier 1981, et à un taux de 12 % s'il s'agit d'une entreprise
+      créée après le 31 décembre 1980 »
+    lu_le: 2026-10-03
+    empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
+  - id: JORFARTI000001262418
+    reference: >-
+      arrêté du 23 janvier 2002 fixant les modalités du versement des sommes dues par le
+      fonds de solidarité vieillesse aux régimes complémentaires ARRCO et AGIRC au titre
+      de la validation des périodes de préretraite et de chômage indemnisées par l'Etat
+    article: article 1er
+    citation: >-
+      pour 2001, « 340 754 043 EUR » à l'Arrco et « 100 677 331 EUR » à l'Agirc ; pour
+      2002, 345 865 354 € et 102 187 491 € ; l'arrêté du 27 janvier 2003
+      (JORFARTI000001916290) régularise 2003 « sur la base du taux d'inflation définitif » :
+      une somme globale, indexée sur les prix
+    publie_le: 2002-02-08
+    lu_le: 2026-10-03
   bornes:
     revenu.annee: [1990-01-01, 2019-01-01]
   contenu:
@@ -183,6 +236,28 @@ versions:
       conventions conclues [...] entre l'Unédic et les régimes de retraite complémentaire »
     en_vigueur: 2025-01-01
     lu_le: 2026-10-02
+  - reference: >-
+      circulaire Agirc-Arrco 2022-07-DRJ du 25 avril 2022, et l'avenant n° 13 du 22 mars
+      2022 à l'accord du 17 novembre 2017 (wp-content/uploads/2024/09/2022-07-DRJ_Actualisation_texte_de_base.pdf)
+    citation: >-
+      la convention entre l'État et l'Agirc-Arrco « conclue le 5 juillet 2021, s'est
+      substituée, à effet du 1er janvier 2021, à la convention du 23 mars 2000 » et à son
+      avenant n° 1 du 3 décembre 2002 relatif à l'AER ; celle du 14 décembre 2021 entre
+      l'Agirc-Arrco et l'Unédic « se substitue à celle du 12 décembre 2017, à effet du
+      1er janvier 2019 »
+    lu_le: 2026-10-03
+    empreinte: sha256:478665eb52ec01977a26f288179be50b634724d94485c7473f18f22417e23713
+  - id: JORFARTI000045215463
+    reference: >-
+      arrêté du 10 février 2022 fixant le montant dû par le Fonds de solidarité vieillesse
+      à l'AGIRC-ARRCO au titre de 2020, et ceux qui le suivent (JORFARTI000047377793,
+      JORFARTI000049339258, JORFARTI000051465816)
+    article: article 1er
+    citation: >-
+      256 428 862 € pour 2020, 243 856 611 € pour 2021, 221 257 987 € pour 2022,
+      202 102 216 € pour 2023 : des sommes qui suivent les allocataires
+    publie_le: 2022-02-24
+    lu_le: 2026-10-03
   bornes:
     revenu.annee: [2019-01-01, null]
   contenu:
@@ -198,15 +273,20 @@ approximations:
 - version: [soixante_pour_cent_et_participation, convention_unedic_agirc_arrco]
   ecart: >-
     Le compte porte 60 % de la cotisation qu'une année travaillée porterait sur le salaire
-    entier, comme le disent les textes jusqu'en 2018 ; depuis 2019, la convention assied
-    les cotisations « sur 60 % du salaire journalier de référence », ce qui, tranche par
-    tranche, peut couper plus bas. La garantie minimale de points, dont l'Unédic payait un
+    entier, comme le disent les textes jusqu'en 2018. Depuis 2019, la convention assied
+    les cotisations « sur 60 % du salaire journalier de référence », sans dire si les
+    tranches se découpent sur le salaire entier ou sur ses 60 % : le compte garde la
+    première lecture, celle des conventions d'avant, que la convention dit prolonger
+    (« dans une logique de stabilité des contributions au moment du passage au régime
+    unifié ») et que les montants versés confirment, 3 322 M€ en 2018 et 3 387 M€ en 2019
+    (`macro/transferts_retraite.csv`) — la seconde aurait fait tomber la part des cadres.
+    La garantie minimale de points, dont l'Unédic payait un
     taux que l'Agirc fixait chaque année et que la convention de 2006 range dans la base
     de 60 %, est portée à 60 % du forfait. La participation n'est pas réduite quand elle
     ferait tomber l'allocation sous son minimum, et les annexes VIII et X, à 0,93 %, ne
-    sont pas distinguées. Les dates d'effet de l'avenant n° 10 du 24 juillet 1992, qui
-    ne l'écrit pas, et de l'avenant n° 5 du 27 décembre 2002 sont prises au mois qui suit
-    leur signature.
+    sont pas distinguées. L'avenant n° 10 du 24 juillet 1992, agréé le 17 août 1992, ne
+    date pas le précompte de 1,2 % : il est pris au 1er août 1992 ; celui de 3 %, au 1er
+    janvier 2003, la date que l'avenant n° 5 donne au taux des contributions.
   effet: non mesuré
 - version: [remboursement_des_pensions]
   ecart: >-
@@ -218,10 +298,14 @@ approximations:
   ecart: >-
     Pour la solidarité, l'État verse « 70 % des cotisations aux régimes complémentaires
     relatives aux périodes de préretraite ou de chômage » depuis 1999 et a remboursé celles
-    d'avant (Sénat, rapport n° 382, 2000-2001) ; la convention du 23 mars 2000, qui le dit,
-    n'est pas lue, ni celle du 5 juillet 2021. Le compte porte 70 % de la cotisation au
-    taux que l'État finance, taux d'appel compris, pour toute année de solidarité depuis
-    1984 ; l'Ircantec, sans taux de solidarité, en reçoit 70 % de la cotisation d'une année
+    d'avant (Sénat, rapport n° 382, 2000-2001) ; la convention du 23 mars 2000, annexe 2 du
+    titre VII du guide, que Common Crawl n'a capturée dans aucune de neuf collections de
+    2016 à 2019, n'est pas lue, ni celle du 5 juillet 2021 qui la remplace. Ce que l'État
+    versait était une somme globale — 441 M€ pour 2001, indexée sur les prix —, puis des
+    sommes qui suivent les allocataires, de 256 M€ pour 2020 à 202 M€ pour 2023. Le compte
+    en porte, par allocataire, 70 % de la cotisation au taux que l'État finance, taux
+    d'appel compris et sans garantie minimale, pour toute année de solidarité depuis 1984 ;
+    l'Ircantec, sans taux de solidarité, en reçoit 70 % de la cotisation d'une année
     travaillée.
   effet: non mesuré
 sources:
@@ -229,12 +313,13 @@ sources:
   prochaine_relecture: 2027-10-01
   a_relire:
   - >-
-    Lire les conventions de l'État du 23 mars 2000 et du 5 juillet 2021 (avenant n° 13 à
-    l'accord de 2017), et les conventions d'application de l'Unédic du 25 juin 2004 et du
-    12 décembre 2017, introuvables le 2 octobre 2026.
+    Lire les conventions de l'État du 23 mars 2000 et du 5 juillet 2021, et les conventions
+    d'application de l'Unédic du 25 juin 2004 et du 12 décembre 2017 : ni au JORF, qui ne
+    publie que les arrêtés du FSV, ni au stockage de l'Unédic, ni dans Common Crawl (le 3
+    octobre 2026).
   - >-
-    Relire la convention du 14 décembre 2021 tranche par tranche : 60 % de la cotisation du
-    salaire entier, ou la cotisation de 60 % du salaire.
+    Lire l'avenant n° 2 du 24 juillet 1992 à la convention du 1er janvier 1990, qui
+    pourrait dater le précompte de 1,2 %.
 code:
   python:
   - moteur/compte.py, ConstructeurCompte._cotisation_ligne et _versement_chomage
