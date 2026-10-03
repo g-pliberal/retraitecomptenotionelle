@@ -533,14 +533,18 @@ export class ConstructeurCompte {
     // répartition n'y servent plus qu'à délimiter l'assiette, qu'on réunit
     // avant de prélever. Le compartiment de capitalisation garde ses taux
     // propres.
-    const acquisitionCommune = this.parametres.source_cotisations
-      === SourceCotisations.TAUX_UNIFORME;
-    const intervalles = new Map();
-
     // Une année de chômage n'est portée que pour les mois que chaque régime
-    // valide : voir compte.py.
+    // valide, et porte ce qu'un tiers a versé aux régimes réels, non le taux
+    // commun : voir compte.py.
     const chomage = chomageComplementaires(this.macro.paquet);
     const nature = ligne.cotise ? null : chomage.nature(ligne.type_periode, annee);
+    const acquisitionCommune = this.parametres.source_cotisations
+      === SourceCotisations.TAUX_UNIFORME && nature === null;
+    const intervalles = new Map();
+    // Pour une année de chômage, régime par régime : la cotisation d'une année
+    // travaillée, son assiette avant et après la garantie, le taux d'appel.
+    const travaillee = new Map();
+
     for (const code of codes) {
       if (!this.catalogue.contient(code)) {
         continue;
@@ -639,6 +643,7 @@ export class ConstructeurCompte {
         // chômage indemnisé aussi, l'Unédic versant des contributions « au
         // titre de la garantie minimale de points » (protocole du 2 janvier
         // 2004). Voir compte.py.
+        let assietteSalaire = assiette;
         const garantie = this._assietteGarantie(code, periode, annee, part, ligne.quotite);
         if (garantie !== null && garantie[0] > assiette) {
           assiette = garantie[0];
@@ -702,6 +707,20 @@ export class ConstructeurCompte {
         if (validee < 1.0) {
           montant *= validee;
           assiette *= validee;
+          assietteSalaire *= validee;
+        }
+        if (nature !== null) {
+          const achat = this.valeursPoint.achat(periode.points_de || code, annee);
+          if (!travaillee.has(code)) {
+            travaillee.set(code, [0.0, 0.0, 0.0, 1.0]);
+          }
+          const cumul = travaillee.get(code);
+          cumul[0] += montant;
+          cumul[1] += assietteSalaire;
+          cumul[2] += assiette;
+          if (achat !== null) {
+            cumul[3] = achat[1];
+          }
         }
         if (regime.hors_repartition && this.parametres.isoler_capitalisation) {
           // RAFP, assurances sociales d'avant-guerre : ces droits sont
@@ -741,6 +760,17 @@ export class ConstructeurCompte {
       }
     }
 
+    if (nature !== null) {
+      const versement = this._versementChomage(
+        chomage, nature, annee, baseLigne, travaillee, partSalarialeSeule);
+      cotisation = versement[0];
+      parRegime.clear();
+      for (const [code, montant] of versement[1]) {
+        parRegime.set(code, montant);
+      }
+      partEmployeur = versement[2];
+    }
+
     return {
       annee,
       revenu: baseLigne,
@@ -761,6 +791,54 @@ export class ConstructeurCompte {
       // régimes : voir compte.py.
       par_regime: [...parRegime].filter(([, montant]) => montant > 0),
     };
+  }
+
+  /**
+   * Ce qu'un tiers a versé pour une année de chômage, régime par régime : 60 %
+   * de la cotisation d'une année travaillée et 0,8 % de l'assiette pour
+   * l'assurance (la participation de l'allocataire aux scénarios 2 et 3),
+   * 70 % de la cotisation au taux de la solidarité pour l'État. Voir
+   * `_versement_chomage` (compte.py). Rend `[cotisation, parRegime,
+   * partEmployeur]`.
+   */
+  _versementChomage(chomage, nature, annee, baseLigne, travaillee, partSalarialeSeule) {
+    const salariale = this.parametres.part_cotisation === PartCotisation.SALARIALE
+      || partSalarialeSeule;
+    const participation = nature === "assurance"
+      ? chomage.tauxParticipation(annee) * baseLigne : 0.0;
+    if (salariale) {
+      let poids = 0;
+      for (const cumul of travaillee.values()) {
+        poids += cumul[0];
+      }
+      if (participation <= 0 || poids <= 0) {
+        return [0.0, new Map(), 0.0];
+      }
+      const parRegime = new Map();
+      let total = 0;
+      for (const [code, cumul] of travaillee) {
+        const part = participation * cumul[0] / poids;
+        parRegime.set(code, part);
+        total += part;
+      }
+      return [total, parRegime, 0.0];
+    }
+    const parRegime = new Map();
+    let cotisation = 0;
+    for (const [code, [montant, assiette, garantie, appel]] of travaillee) {
+      let verse;
+      if (nature === "assurance") {
+        verse = chomage.assurancePartCotisation * montant
+          + chomage.assuranceParticipationReversee * assiette;
+      } else {
+        const taux = chomage.tauxSolidarite(code, annee, false);
+        verse = chomage.solidariteVersement
+          * (taux === null ? montant : garantie * taux * appel);
+      }
+      parRegime.set(code, verse);
+      cotisation += verse;
+    }
+    return [cotisation, parRegime, Math.max(0.0, cotisation - participation)];
   }
 
   // -- accumulation ----------------------------------------------------------

@@ -660,16 +660,23 @@ class ConstructeurCompte:
         # taux propres : il n'est pas un compte notionnel. La source « taux
         # historiques puis uniforme » ne passe pas par ici : avant la bascule,
         # elle est exactement les taux historiques.
-        acquisition_commune = (
-            self.parametres.source_cotisations is SourceCotisations.TAUX_UNIFORME
-        )
-        intervalles: dict[str, list[tuple[float, float | None]]] = {}
-
         # Une année de chômage n'est portée que pour les mois que chaque régime
         # valide : rien avant le 1er octobre 1967, ni avant le 1er août 1977 à
-        # l'Ircantec (`legislation/chomage_complementaires.yaml`).
+        # l'Ircantec (`legislation/chomage_complementaires.yaml`). Elle porte
+        # ce qu'un tiers a versé aux régimes réels — l'Unédic, l'État —, et non
+        # le taux commun, que personne n'a versé pour elle.
         chomage = charger_chomage_complementaires(self.macro.racine)
         nature = None if ligne.cotise else chomage.nature(ligne.type_periode, annee)
+        acquisition_commune = (
+            self.parametres.source_cotisations is SourceCotisations.TAUX_UNIFORME
+            and nature is None
+        )
+        intervalles: dict[str, list[tuple[float, float | None]]] = {}
+        #: Pour une année de chômage, régime par régime : la cotisation qu'une
+        #: année travaillée porterait, son assiette avant et après la garantie
+        #: minimale de points, et le taux d'appel du point.
+        travaillee: dict[str, list[float]] = {}
+
         for code in codes:
             if code not in self.catalogue:
                 continue
@@ -777,6 +784,7 @@ class ConstructeurCompte:
                 # VII.3.1.6.2). Le montant de ces contributions n'est pas
                 # publié : le compte y porte le forfait de l'année, comme il
                 # porte la tranche B sur le salaire d'avant l'interruption.
+                assiette_salaire = assiette
                 garantie = self._assiette_garantie(code, periode, annee, part,
                                                    ligne.quotite)
                 if garantie is not None and garantie[0] > assiette:
@@ -845,6 +853,15 @@ class ConstructeurCompte:
                 if validee < 1.0:
                     montant *= validee
                     assiette *= validee
+                    assiette_salaire *= validee
+                if nature is not None:
+                    achat = self.valeurs_point.achat(periode.points_de or code, annee)
+                    cumul = travaillee.setdefault(code, [0.0, 0.0, 0.0, 1.0])
+                    cumul[0] += montant
+                    cumul[1] += assiette_salaire
+                    cumul[2] += assiette
+                    if achat is not None:
+                        cumul[3] = achat[1]
                 if regime.hors_repartition and self.parametres.isoler_capitalisation:
                     # RAFP, assurances sociales d'avant-guerre : ces droits sont
                     # provisionnés, ils ne rejoignent pas le compte notionnel.
@@ -881,6 +898,11 @@ class ConstructeurCompte:
                     par_regime["taux_commun"] = (par_regime.get("taux_commun", 0.0)
                                                  + assiette * taux_commun)
 
+        if nature is not None:
+            cotisation, par_regime, part_employeur = self._versement_chomage(
+                chomage, nature, annee, base_ligne, travaillee,
+                part_salariale_seule)
+
         taux_effectif = cotisation / base_ligne if base_ligne else 0.0
         return CotisationAnnuelle(
             annee=annee,
@@ -901,6 +923,54 @@ class ConstructeurCompte:
             par_regime=tuple((code, montant) for code, montant in par_regime.items()
                              if montant > 0),
         )
+
+    def _versement_chomage(self, chomage, nature: str, annee: int,
+                           base_ligne: float, travaillee: dict[str, list[float]],
+                           part_salariale_seule: bool,
+                           ) -> tuple[float, dict[str, float], float]:
+        """Ce qu'un tiers a versé pour une année de chômage, régime par régime,
+        à partir de ce qu'une année travaillée y aurait porté (action 141).
+
+        L'ASSURANCE : l'Unédic verse des cotisations « assises sur 60 % » du
+        salaire de référence, au taux d'appel — la garantie minimale de points
+        comprise à ses 60 % —, et 0,8 % de l'assiette de chaque régime, pris
+        sur la participation que l'allocataire paie sur son allocation. Les
+        scénarios 2 et 3, qui ne portent que ce que l'assuré a supporté
+        lui-même, en portent cette participation : 3 % du salaire de référence
+        depuis 2003, moins avant, rien avant mars 1988.
+
+        La SOLIDARITÉ : l'État finance les points à 4 %, ou à 8 % et 12 % à
+        l'Agirc, et en verse 70 % des cotisations (Sénat, 2000-2001) ;
+        l'allocataire ne paie rien. Un régime sans taux de solidarité la
+        traite comme l'assurance, dont il reçoit 70 %.
+
+        Le compte portait jusqu'au 3 octobre 2026 la cotisation entière d'une
+        année travaillée sur le salaire d'avant l'interruption, dont l'Unédic
+        ne versait que 60 %.
+        """
+        salariale = (self.parametres.part_cotisation is PartCotisation.SALARIALE
+                     or part_salariale_seule)
+        participation = (chomage.taux_participation(annee) * base_ligne
+                         if nature == "assurance" else 0.0)
+        if salariale:
+            poids = sum(cumul[0] for cumul in travaillee.values())
+            if participation <= 0 or poids <= 0:
+                return 0.0, {}, 0.0
+            par_regime = {code: participation * cumul[0] / poids
+                          for code, cumul in travaillee.items()}
+            return sum(par_regime.values()), par_regime, 0.0
+        par_regime = {}
+        for code, (montant, assiette, garantie, appel) in travaillee.items():
+            if nature == "assurance":
+                verse = (chomage.assurance_part_cotisation * montant
+                         + chomage.assurance_participation_reversee * assiette)
+            else:
+                taux = chomage.taux_solidarite(code, annee, points=False)
+                verse = chomage.solidarite_versement * (
+                    montant if taux is None else garantie * taux * appel)
+            par_regime[code] = verse
+        cotisation = sum(par_regime.values())
+        return cotisation, par_regime, max(0.0, cotisation - participation)
 
     # -- accumulation --------------------------------------------------------
 

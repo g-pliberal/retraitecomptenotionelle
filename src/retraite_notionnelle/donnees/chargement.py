@@ -701,15 +701,17 @@ class ChomageComplementaires:
 
     def taux_participation(self, annee: int) -> float:
         """Participation de l'allocataire, en part du salaire de référence :
-        la moyenne des mois de l'année."""
-        total = 0.0
+        la moyenne des mois de l'année, ou le taux de l'année entière."""
+        taux_des_mois = []
         for mois in range(1, 13):
             taux = 0.0
             for depuis, debut, valeur in self.participation:
                 if (depuis, debut) <= (annee, mois):
                     taux = valeur
-            total += taux
-        return total / 12
+            taux_des_mois.append(taux)
+        if len(set(taux_des_mois)) == 1:
+            return taux_des_mois[0]
+        return sum(taux_des_mois) / 12
 
 
 _CHOMAGE_COMPLEMENTAIRES: dict[tuple[str, int, int], ChomageComplementaires] = {}

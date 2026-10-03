@@ -638,12 +638,23 @@ distinguer, et ils ne suivent pas la même règle :
   an si elle suit un chômage indemnisé, cinq ans pour l'assuré de cinquante-cinq
   ans qui a vingt ans de cotisations, et rien sinon ;
 - les **points complémentaires** ne sont pas tous de la même nature, et c'est
-  qui les paie qui les sépare. Pendant un chômage indemnisé, l'Unédic verse de
-  vraies cotisations à l'Agirc-Arrco, calculées sur le salaire d'avant
-  l'interruption : ces points sont acquis dans tous les scénarios, y compris
-  en notionnel, puisque des cotisations ont bien été versées — et après la
-  bascule aussi, où le compte porte ce que l'Unédic verse, jamais le taux
-  unifié entier ni le pilier capitalisé, que personne ne paie. Pendant une
+  qui les paie qui les sépare. Pendant un chômage indemnisé, l'Agirc-Arrco
+  attribue ses points sur le salaire journalier de référence, borné à quatre
+  plafonds : aux taux d'une année travaillée pour l'allocation d'assurance, à
+  <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.taux.agirc_arrco.taux*100)-->4<!--/--> % — <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.taux.agirc.taux*100)-->8<!--/--> ou
+  <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.taux.agirc_entreprises_nouvelles.taux*100)-->12<!--/--> % sur la tranche B de l'Agirc avant 2019 — pour
+  l'allocation de solidarité, et rien avant le 1er octobre 1967. Ces points, on
+  les paie en partie : l'Unédic cotise sur
+  <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:assurance.part_cotisation*100)-->60<!--/--> % du salaire de référence, au taux
+  d'appel, et reverse <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:assurance.participation_reversee*100)-->0,8<!--/--> % de ce
+  salaire, pris sur la participation de
+  <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:participation_allocataire.depuis=2003-01-01.taux*100)-->3<!--/--> % que l'allocataire paie sur
+  son allocation ; l'État verse <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.versement*100)-->70<!--/--> % des
+  cotisations de la solidarité. Le scénario 1 sert les points ; le compte notionnel ne porte
+  que ce versement — aux scénarios 4 à 6, celui de l'Unédic ou de l'État, aux
+  scénarios 2 et 3, la participation que l'allocataire a payée lui-même —, et
+  après la bascule aussi, jamais le taux unifié entier ni le pilier capitalisé,
+  que personne ne paie. Pendant une
   maladie, une maternité, une invalidité ou un accident du travail, l'Agirc-
   Arrco attribue ses points « sans contrepartie de cotisations » (guide
   Agirc-Arrco n° 6, février 2017) : le scénario 1 les sert, les scénarios

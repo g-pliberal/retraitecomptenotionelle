@@ -192,16 +192,20 @@ export class ChomageComplementaires {
     return points && annee < depuis ? null : taux;
   }
 
-  /** Participation de l'allocataire, moyenne des mois de l'année. */
+  /** Participation de l'allocataire, moyenne des mois de l'année, ou le taux
+   * de l'année entière. */
   tauxParticipation(annee) {
-    let total = 0.0;
+    const tauxDesMois = [];
     for (let mois = 1; mois <= 12; mois++) {
       let taux = 0.0;
       for (const [depuis, debut, valeur] of this.participation) {
         if (depuis < annee || (depuis === annee && debut <= mois)) taux = valeur;
       }
-      total += taux;
+      tauxDesMois.push(taux);
     }
+    if (tauxDesMois.every((taux) => taux === tauxDesMois[0])) return tauxDesMois[0];
+    let total = 0;
+    for (const taux of tauxDesMois) total += taux;
     return total / 12;
   }
 }

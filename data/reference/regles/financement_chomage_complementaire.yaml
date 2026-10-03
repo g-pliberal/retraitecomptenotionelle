@@ -1,0 +1,253 @@
+schema_version: 1
+id: financement_chomage_complementaire
+intitule: >-
+  Ce qu'un tiers verse aux régimes complémentaires pour une année de chômage indemnisé, et
+  que le compte notionnel porte : pour l'assurance, l'Unédic cotise sur 60 % du salaire de
+  référence, au taux d'appel, et reverse 0,8 % de ce salaire, pris sur la participation que
+  l'allocataire paie sur son allocation ; pour la solidarité, l'État finance les points à
+  4 %, 8 % ou 12 % et en verse 70 % ; les régimes prennent le reste à leur charge.
+domaine: cotisations
+regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, agirc,
+  agirc_entreprises_nouvelles, agirc_arrco, ircantec]
+etape: acquerir_les_droits
+face: financement
+paie: [chomage_retraite_complementaire]
+etat: approchee
+lit:
+- le motif de l'année chômée (assurance ou solidarité) et son salaire de référence
+- la cotisation qu'une année travaillée porterait à chaque régime, garantie minimale de
+  points comprise, et son assiette
+- legislation/chomage_complementaires.yaml (part de la cotisation, participation reversée,
+  participation de l'allocataire, versement de l'État)
+ecrit:
+- >-
+  au compte notionnel des scénarios 4 à 6, le versement de l'Unédic ou de l'État ; à celui
+  des scénarios 2 et 3, la participation de l'allocataire
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: rien_avant_1967
+  statut: lue
+  textes:
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII, lu dans sa
+      capture par Common Crawl du 21 octobre 2018 (hors JORF)
+    article: VII.3.1.2
+    citation: la validation court « à compter du 1er octobre 1967 »
+    lu_le: 2026-10-02
+  bornes:
+    revenu.annee: [null, 1967-10-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      rien n'est validé, rien n'est versé : le compte ne porte rien d'une année chômée
+      avant le premier jour validé (fiche `chomage_retraite_complementaire`)
+  exemples: aucun trouvé
+- id: remboursement_des_pensions
+  statut: lue
+  textes:
+  - reference: >-
+      protocole du 2 janvier 1990 relatif aux régimes de retraite complémentaire des
+      chômeurs, copie que publie le Medef (accords.medef.com, n° 409)
+    article: article 3, 1°, a et b
+    citation: >-
+      l'Unédic rembourse à l'Agirc « la fraction des allocations de retraite servies à
+      d'anciens salariés [...] qui auraient été acquis par le versement d'une cotisation » ;
+      elle verse à l'Arrco, « à compter du 1er janvier 1990, des cotisations sur la base du
+      taux et du pourcentage d'appel des opérations obligatoires, assises sur 60 % du
+      salaire de référence retenu pour le calcul des allocations de chômage »
+    lu_le: 2026-10-02
+    empreinte: sha256:2e7898edb6f3d0942a7a1fafb553bba1a7abfdd2a3e0535e2e1e05134c65db96
+  - reference: accord du 30 novembre 1989, copie que publie le Medef (n° 500)
+    article: article 1er
+    citation: >-
+      « aucune autre contribution financière ne sera due par l'UNEDIC au titre de
+      l'assurance chômage, tant pour la validation des points de retraite pour la période
+      antérieure au 1er janvier 1990 que pour l'avenir »
+    lu_le: 2026-10-02
+    empreinte: sha256:9c46e50cc09c1f1b13c4bb7d6e2c329d25ea2cd8c70042e25bc48eae0986badf
+  bornes:
+    revenu.annee: [1967-10-01, 1990-01-01]
+  contenu:
+    droit: >-
+      l'Unédic ne cotise pas : elle rembourse les pensions servies, jusqu'en 1989 à l'Arrco
+      et 1995 à l'Agirc, puis l'Agirc reçoit, de 1997 à 2016, un vingtième par an de
+      1 524 490 172,37 € de 1996 pour le chômage d'avant 1996
+    compte: >-
+      la règle d'après, 60 % et 0,8 %, appliquée à rebours : l'accord de 1989 solde la
+      période antérieure par les versements nouveaux (décision du propriétaire, action 141,
+      point 2, question 4)
+  exemples: aucun trouvé
+- id: soixante_pour_cent_et_participation
+  statut: lue
+  textes:
+  - reference: >-
+      accord du 19 septembre 1996 relatif au financement des points de retraite
+      complémentaire des chômeurs, copie que publie le Medef (n° 235)
+    article: article unique
+    citation: >-
+      un montant de cotisations « assises sur 60 % de la tranche B du salaire journalier
+      de référence », et le précompte « à hauteur de 0,8 % de la tranche B »
+    lu_le: 2026-10-02
+  - reference: protocole du 2 janvier 2004, copie que publie le Medef (n° 237)
+    article: article 3
+    citation: >-
+      à l'Arrco, 60 % du salaire « limité au plafond de la sécurité sociale pour les
+      ressortissants de l'AGIRC, et à un montant égal à 3 plafonds pour les personnes ne
+      relevant pas du régime des cadres », et 0,8 % du même salaire ; à l'Agirc, des
+      contributions au titre de la garantie minimale de points
+    lu_le: 2026-10-02
+  - reference: >-
+      convention Unédic-Agirc-Arrco du 16 décembre 2009, copie que publie l'Unédic
+      (CnvUnedicAgircArrco16122009.pdf)
+    article: article 3
+    citation: >-
+      « 60 % des cotisations obligatoires prévues par la Convention collective nationale du
+      14 mars 1947 (article 6 § 2), majorées du pourcentage d'appel en vigueur »
+    lu_le: 2026-10-02
+    empreinte: sha256:9db832a13e96f6ff2c8ad8445d7101b3d08383ea933e4ce39a9a17b199c45783
+  - reference: >-
+      convention d'assurance chômage du 30 décembre 1987, copie que publie le Medef
+      (n° 340)
+    article: article 5
+    citation: >-
+      « Sur la partie de l'allocation égale à 40 % du salaire journalier de référence, une
+      participation de 1 % est précomptée. [...] Cette disposition est appliquée aux
+      allocations versées au titre de périodes postérieures au 29 février 1988 »
+    lu_le: 2026-10-02
+    empreinte: sha256:4f8078bbf81191678d37c8e0d51c7fb17792f4df35055f7dae512cf1419d0a28
+  - reference: >-
+      avenant n° 10 du 24 juillet 1992 au règlement annexé à la convention du 1er janvier
+      1990, copie que publie le Medef (n° 452)
+    article: article 51
+    citation: >-
+      « Sur le montant de l'allocation, est précomptée une participation de 1,2 % assise sur
+      le salaire journalier de référence. [...] Le produit de cette participation est
+      affecté au financement des retraites complémentaires des chômeurs indemnisés. »
+    lu_le: 2026-10-03
+    empreinte: sha256:6e2b73744e343e05d86e8371c8114194473442fe06285d904527493dc7d7d96c
+  - id: JORFARTI000002253441
+    reference: >-
+      arrêté du 5 février 2003 portant agrément de la convention du 1er janvier 2004
+      relative à l'aide au retour à l'emploi et à l'indemnisation du chômage, annexe
+    article: règlement, article 27
+    citation: >-
+      « Sur le montant de l'allocation est précomptée une participation de 3 % assise sur
+      le salaire journalier de référence. »
+    lu_le: 2026-10-03
+  bornes:
+    revenu.annee: [1990-01-01, 2019-01-01]
+  contenu:
+    assurance: >-
+      60 % de la cotisation qu'une année travaillée porterait, au taux d'appel, garantie
+      minimale de points comprise à ses 60 %, et 0,8 % de l'assiette de chaque régime ; à
+      l'Arrco depuis 1990, à l'Agirc depuis 1996
+    participation: >-
+      0,4 % du salaire de référence de mars 1988 à 1989, 0,8 % de 1990 à juillet 1992,
+      1,2 % ensuite, 3 % depuis 2003 : ce que les scénarios 2 et 3 portent
+    solidarite: >-
+      70 % de la cotisation au taux que l'État finance, 4 % à l'Arrco, 8 % ou 12 % sur la
+      tranche B de l'Agirc, depuis 1984 ; l'allocataire ne paie rien
+  exemples: aucun trouvé
+- id: convention_unedic_agirc_arrco
+  statut: lue
+  textes:
+  - reference: >-
+      convention Unédic-Agirc-Arrco du 14 décembre 2021, à effet du 1er janvier 2019,
+      copie que publie l'Unédic
+    article: articles 3, 4.1 et 4.2
+    citation: >-
+      des cotisations « assises sur 60 % du salaire journalier de référence extrait du
+      fichier transmis par Pôle emploi, dans la limite de quatre fois le plafond de la
+      sécurité sociale », « majorées par l'application du taux d'appel en vigueur », et
+      « une participation financière spécifique de 0,8 % assise sur le salaire journalier
+      de référence ayant servi de base au calcul de l'allocation »
+    lu_le: 2026-10-02
+    empreinte: sha256:1d26dbd265159f726f902e37ca4f5ca40b473fcdb6fa134574109710b8dcd11f
+  - id: LEGIARTI000050841519
+    reference: >-
+      règlement général annexé à la convention du 15 novembre 2024 relative à l'assurance
+      chômage
+    article: article 19
+    citation: participation de 3 % assise sur le salaire journalier de référence
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-02
+  - id: LEGIARTI000050848048
+    reference: >-
+      règlement général annexé à la convention du 15 novembre 2024 relative à l'assurance
+      chômage
+    article: article 70
+    citation: >-
+      « L'assurance chômage contribue au financement des points de retraite dans les
+      conditions prévues à l'article 19 ainsi que selon des modalités fixées par des
+      conventions conclues [...] entre l'Unédic et les régimes de retraite complémentaire »
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-02
+  bornes:
+    revenu.annee: [2019-01-01, null]
+  contenu:
+    assurance: >-
+      60 % de la cotisation d'une année travaillée sur le salaire de référence borné à
+      quatre plafonds, au taux d'appel, et 0,8 % de ce salaire ; la fraction de la
+      contribution d'équilibre général qui remplace la garantie reste hors du compte,
+      comme celle d'une année travaillée
+    participation: 3 % du salaire de référence, ce que les scénarios 2 et 3 portent
+    solidarite: 70 % de la cotisation à 4 %, au taux d'appel
+  exemples: aucun trouvé
+approximations:
+- version: [soixante_pour_cent_et_participation, convention_unedic_agirc_arrco]
+  ecart: >-
+    Le compte porte 60 % de la cotisation qu'une année travaillée porterait sur le salaire
+    entier, comme le disent les textes jusqu'en 2018 ; depuis 2019, la convention assied
+    les cotisations « sur 60 % du salaire journalier de référence », ce qui, tranche par
+    tranche, peut couper plus bas. La garantie minimale de points, dont l'Unédic payait un
+    taux que l'Agirc fixait chaque année et que la convention de 2006 range dans la base
+    de 60 %, est portée à 60 % du forfait. La participation n'est pas réduite quand elle
+    ferait tomber l'allocation sous son minimum, et les annexes VIII et X, à 0,93 %, ne
+    sont pas distinguées. Les dates d'effet de l'avenant n° 10 du 24 juillet 1992, qui
+    ne l'écrit pas, et de l'avenant n° 5 du 27 décembre 2002 sont prises au mois qui suit
+    leur signature.
+  effet: non mesuré
+- version: [remboursement_des_pensions]
+  ecart: >-
+    Avant 1990 à l'Arrco et 1996 à l'Agirc, l'Unédic remboursait des pensions au lieu de
+    cotiser : le compte y porte la règle d'après, à rebours, comme le propriétaire l'a
+    tranché le 2 octobre 2026.
+  effet: non mesuré
+- version: [soixante_pour_cent_et_participation, convention_unedic_agirc_arrco]
+  ecart: >-
+    Pour la solidarité, l'État verse « 70 % des cotisations aux régimes complémentaires
+    relatives aux périodes de préretraite ou de chômage » depuis 1999 et a remboursé celles
+    d'avant (Sénat, rapport n° 382, 2000-2001) ; la convention du 23 mars 2000, qui le dit,
+    n'est pas lue, ni celle du 5 juillet 2021. Le compte porte 70 % de la cotisation au
+    taux que l'État finance, taux d'appel compris, pour toute année de solidarité depuis
+    1984 ; l'Ircantec, sans taux de solidarité, en reçoit 70 % de la cotisation d'une année
+    travaillée.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-03
+  prochaine_relecture: 2027-10-01
+  a_relire:
+  - >-
+    Lire les conventions de l'État du 23 mars 2000 et du 5 juillet 2021 (avenant n° 13 à
+    l'accord de 2017), et les conventions d'application de l'Unédic du 25 juin 2004 et du
+    12 décembre 2017, introuvables le 2 octobre 2026.
+  - >-
+    Relire la convention du 14 décembre 2021 tranche par tranche : 60 % de la cotisation du
+    salaire entier, ou la cotisation de 60 % du salaire.
+code:
+  python:
+  - moteur/compte.py, ConstructeurCompte._cotisation_ligne et _versement_chomage
+  javascript:
+  - compte.js, _cotisationLigne et _versementChomage
+  parametres:
+  - legislation/chomage_complementaires.yaml (assurance, solidarite,
+    participation_allocataire)
+  tests:
+  - tests/test_chomage_complementaires.py
+  - tests/test_simulateur.py, test_la_garantie_minimale_vaut_pour_une_annee_de_chomage
+effet: >-
+  Le compte d'une année chômée descend, aux scénarios 2, 4 et 6, de la cotisation entière à
+  ce que l'Unédic ou l'État versait : treize témoins sur 694 baissent, de 0,84 % en médiane
+  au scénario 4 et jusqu'à 5,41 % pour `invalidite_demandeur_d_emploi`, treize ans au
+  chômage ; le scénario 1 et les comptes prospectifs des scénarios 3 et 5 ne bougent pas.

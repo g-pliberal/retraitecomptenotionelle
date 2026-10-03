@@ -1944,21 +1944,25 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   d'appel, la cotisation déplafonnée du régime général —, ne les reçoit pas, et
   le taux du régime unique les omet de même. Voir, dans la feuille de route,
   « Ce qui est délibérément en bas ».
-- **Le compte porte, pour une année de chômage indemnisé, plus que ce que
-  l'Unédic versait.** L'Agirc et l'Arrco inscrivent les points d'une période
-  indemnisée sur le salaire journalier de référence entier (guide
-  réglementaire Agirc-Arrco, titre VII.3.1.6.1), mais l'assurance chômage ne
-  les finance qu'en partie : les cotisations obligatoires, assises sur une part
-  seulement de ce salaire — de sa tranche B pour l'Agirc —, et une part de la
-  participation prélevée sur les allocations (accord du 19 septembre 1996 ;
-  accords de financement agréés au Journal officiel jusqu'en 2016) ; le
-  régime finance lui-même le reste (annexe I à la convention du 14 mars 1947,
-  art. 8 bis). Le compte des scénarios 2 à 6, qui ne porte que ce qui a été
-  versé, y porte pourtant la cotisation entière du salaire d'avant
-  l'interruption. Le sens de l'erreur est connu : les comptes des chômeurs
-  indemnisés sont surestimés ; le scénario 1, lui, sert les points du droit.
-  L'action 141 de la feuille de route, en cours, en a lu les textes ; ce que
-  le compte en portera attend la décision du propriétaire.
+- **Le chômage aux complémentaires, approché.** Le scénario 1 sert les points
+  d'une année chômée sur le salaire d'avant l'interruption, borné à quatre
+  plafonds, aux taux d'une année travaillée pour l'allocation d'assurance et à
+  ceux de la solidarité — <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.taux.agirc_arrco.taux*100)-->4<!--/--> %, ou
+  <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.taux.agirc.taux*100)-->8<!--/--> et <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.taux.agirc_entreprises_nouvelles.taux*100)-->12<!--/--> % à l'Agirc
+  avant 2019 — pour l'allocation de solidarité spécifique ; le compte notionnel
+  ne porte que ce qui a été versé : <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:assurance.part_cotisation*100)-->60<!--/--> %
+  de la cotisation et <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:assurance.participation_reversee*100)-->0,8<!--/--> % de
+  l'assiette par l'Unédic, <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.versement*100)-->70<!--/--> % de la
+  cotisation de solidarité par l'État, et aux scénarios 2 et 3 la participation
+  de l'allocataire. Le modèle ne connaît ni les jours de différé,
+  ni le salaire de référence calculé sur vingt-quatre mois, ni le taux d'une
+  entreprise qui cotisait au-dessus du minimum, ni la date de la rupture, que
+  l'Arrco regarde pour la solidarité d'avant juin 2000 ; la préretraite
+  progressive et l'activité partielle ne se saisissent pas, l'Ircantec sans
+  cotisations et les conventions de la CNBF et de la CRPN avec l'Unédic ne sont
+  pas portées, et la durée de l'allocation d'assurance n'est pas bornée : la
+  saisie dit ce qui a été versé. Les fiches `chomage_retraite_complementaire`
+  et `financement_chomage_complementaire` en tiennent la liste.
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
   2070, dernière année des projections de population de l'INSEE. Ni l'une ni

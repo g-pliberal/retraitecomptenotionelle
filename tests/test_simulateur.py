@@ -5001,9 +5001,10 @@ def test_la_garantie_minimale_vaut_pour_une_annee_de_chomage(simulateur):
     assert points_agirc({2005: "chomage_indemnise"}) == pytest.approx(travaillees)
     assert points_agirc({2005: "maladie"}) == pytest.approx(travaillees)
 
-    # Le compte reçoit le forfait de 2005 pour l'année chômée, comme pour
-    # l'année travaillée ; rien pour l'arrêt maladie, dont les points sont
-    # donnés sans contrepartie.
+    # Le compte reçoit pour l'année chômée ce que l'Unédic versait : 60 % du
+    # forfait de 2005 que porte l'année travaillée, plus 0,8 % d'une tranche B
+    # nulle (action 141, point 2) ; rien pour l'arrêt maladie, dont les points
+    # sont donnés sans contrepartie.
     (tranche_b,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(2005)
                     if p.assiette == "tranche_b"]
     forfait, _ = simulateur.scenario_actuel.valeurs_point.garantie(
@@ -5011,7 +5012,7 @@ def test_la_garantie_minimale_vaut_pour_une_annee_de_chomage(simulateur):
     chomee, ligne = _cotisation_agirc(
         simulateur, carriere({2005: "chomage_indemnise"}), 2005, PartCotisation.TOTALE)
     assert ligne.revenu < simulateur.macro.plafond_securite_sociale(2005)
-    assert chomee == pytest.approx(forfait, abs=1e-6)
+    assert chomee == pytest.approx(0.6 * forfait, abs=1e-6)
     assert _cotisation_agirc(simulateur, carriere({}), 2005,
                              PartCotisation.TOTALE)[0] == pytest.approx(forfait, abs=1e-6)
     assert _cotisation_agirc(simulateur, carriere({2005: "maladie"}), 2005,

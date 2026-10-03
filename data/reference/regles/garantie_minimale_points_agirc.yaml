@@ -5,8 +5,8 @@ intitule: >-
   cotisation forfaitaire publiée chaque année pour un taux contractuel de 16 % — 144
   jusqu'en 1996, 120 ensuite —, au prorata du taux de son entreprise : celui dont la
   tranche B n'atteint pas ce forfait le paie, au prix de tout autre point, partagé comme
-  la tranche B et proratisé sur la durée de présence et le temps partiel ; l'Unédic le
-  paie pour une année de chômage indemnisé.
+  la tranche B et proratisé sur la durée de présence et le temps partiel ; l'Unédic en
+  paie une part pour une année de chômage indemnisé.
 domaine: points
 regimes: [agirc, agirc_entreprises_nouvelles]
 etape: acquerir_les_droits
@@ -463,14 +463,12 @@ approximations:
     et les autres y valident les mêmes points
 - version: [cent_quarante_quatre_points, cent_vingt_points]
   ecart: >-
-    Pour une année de chômage indemnisé, le compte notionnel porte le forfait de l'année,
-    comme pour une année travaillée : l'Unédic versait à l'Agirc des « contributions
-    [...] au titre de la garantie minimale de points » (protocole du 2 janvier 2004, art.
-    3), dont le montant n'est pas publié. Ses cotisations de tranche B, elle les calculait
-    sur 60 % de la tranche B du salaire journalier de référence (accord du 19 septembre
-    1996, article unique ; protocole de 2004, art. 3), quand le compte porte la tranche B
-    entière du salaire d'avant l'interruption : un écart du traitement du chômage tout
-    entier, que la garantie ne fait que suivre.
+    Pour une année de chômage indemnisé, le compte notionnel porte 60 % du forfait de
+    l'année, comme de la tranche B : l'Unédic versait à l'Agirc des « contributions [...]
+    au titre de la garantie minimale de points » (protocole du 2 janvier 2004, art. 3), à
+    un taux que l'Agirc fixait chaque année et dont le montant n'est pas publié, et la
+    convention d'application du 21 avril 2006 range la garantie parmi les paramètres
+    appliqués à la base de 60 % (action 141 ; fiche `financement_chomage_complementaire`).
   effet: non mesuré
 sources:
   lu_le: 2026-10-02
