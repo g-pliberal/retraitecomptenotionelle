@@ -124,6 +124,11 @@ fois, par pas réguliers, et resserrer autour des sauts : un barème par classes
 se révèle par ses discontinuités, un coefficient par âge par sa pente. Les
 ruptures sont les seuils, et les seuils sont ce qu'on cherche.
 
+*Ce conseil a précédé la règle du 25 septembre 2026 (`docs/architecture.md`,
+§ 3.5), qui le remplace : un simulateur se saisit aux bornes et dans un budget,
+jamais en grille. La manière de le faire est plus bas, « Saisir un simulateur,
+depuis le 4 octobre 2026 ».*
+
 **Garder peu, et garder le cru.** Les réponses brutes vont dans le répertoire
 de travail de la session, pas dans le dépôt. Ce qui entre, ce sont les
 quelques points qui tiennent le barème — trois ou quatre par règle — transcrits
@@ -140,6 +145,52 @@ lentement, avant de conclure qu'un site refuse.
 **Espacer les requêtes.** Ces serveurs sont ceux d'organismes publics et
 personne ne les a prévenus. Un appel par seconde au plus, une session à la
 fois sur un même hôte, et l'on garde en cache ce qu'on a déjà demandé.
+
+---
+
+## Saisir un simulateur, depuis le 4 octobre 2026
+
+Les saisies à la main prenaient trop de temps au propriétaire : il a ouvert la
+deuxième voie du § 3.5 à Claude, qui saisit à sa place. Ce qui ne change pas :
+une saisie par borne, un budget par simulateur, chaque réponse citée comme un
+exemple officiel. Ce qui change : la saisie elle-même, et tout ce qui
+l'entoure, que `scripts/simulateurs.py` fait seul.
+
+**La feuille.** `python scripts/simulateurs.py fiche <simulateur> --sortie
+<fichier>` choisit les entrées : jamais une saisie déjà faite ; d'abord les
+générations qu'aucun exemple officiel ne couvre, les plus jeunes en tête ;
+jusqu'au budget restant. Elle écrit pour chacune la PRÉDICTION du modèle,
+avant la réponse, par les fonctions mêmes de `tests/test_oracle.py`. Elle va
+dans le répertoire de la session, jamais dans le dépôt. Chaque simulateur a
+son adaptateur dans le script : ce que le formulaire demande, la carrière qui
+met le modèle devant la même règle, la grandeur qui se compare. Ceux de l'âge
+légal et de la carrière longue d'info-retraite sont les premiers.
+
+**Le budget.** Il est au registre (`budget`), dû dès la première saisie, et
+compte des SAISIES : une réponse qui coupe une année en trois donne trois
+exemples pour une saisie. À la première, il vaut le quart des entrées que le
+formulaire offre, dix s'il est ouvert, parce qu'une saisie par borne ne borne
+rien quand chaque entrée est une borne ; le propriétaire le change dans le
+registre. `python scripts/simulateurs.py budget` dit ce qui reste.
+
+**La saisie.** Une personne tape les entrées et colle chaque réponse, telle
+quelle, dans la feuille. Claude peut le faire à sa place, à cinq conditions :
+le simulateur est anonyme et sans captcha ; le lot — le simulateur et ses
+entrées — est présenté au propriétaire, qui l'approuve avant la première
+saisie ; Claude saisit dans le navigateur intégré, qui ne cache pas ce qu'il
+est, par ses outils de page, une entrée à la fois, au rythme d'une personne ;
+il refuse les cookies qui ne sont pas nécessaires ; il s'arrête au premier
+captcha, à la première connexion demandée, au premier écran qu'il
+n'attendait pas. Jamais de script, jamais hors du lot.
+
+**La transcription.** `python scripts/simulateurs.py transcrire <feuille>`
+fait de chaque réponse un exemple officiel : la source nomme le simulateur et
+la saisie, l'énoncé cite la réponse, la carrière et l'attendu en sont tirés.
+La lecture se fait seule quand la réponse ne porte qu'un âge ; sinon elle
+s'écrit dans `lu`, et chacun de ses nombres doit se retrouver dans la
+réponse. Puis chaque exemple est rejoué contre le scénario 1. Un écart ne
+s'accepte pas en silence : on corrige le modèle, ou l'on déclare l'écart
+connu, avec la fiche et le texte qui tranche (`docs/architecture.md`, § 3.3).
 
 ---
 

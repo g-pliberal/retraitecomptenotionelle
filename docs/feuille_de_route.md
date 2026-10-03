@@ -800,16 +800,16 @@ borne basse et l'écart une borne haute.
 
 ### 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026 — `en cours`
 
-**Reprise, au 1er octobre 2026.** Les 260 adresses se dépouillent par lots.
+**Reprise, au 4 octobre 2026.** Les 260 adresses se dépouillent par lots.
 Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
 publique de l'État, la CNRACL et la Caisse des dépôts ; leurs restes sont sous
-« laisse ouvert » et « Puis le rétablissement ». Deux simulateurs
-d'info-retraite ont été saisis à la main (note du 1er octobre, à la fin) : la
-réversion Agirc-Arrco avant 55 ans y attend sa lecture. Restent les adresses
-`a_explorer` de `data/sources_a_explorer.yaml`, dont le RAFP, puis le CLEISS,
-les quatre modèles publics et mon-entreprise (« Marche »). Commencer par le
-RAFP : réserver ses lignes par un commit `en_cours` poussé seul ; méthode :
-`docs/exploration_sources.md`.
+« laisse ouvert » et « Puis le rétablissement ». Trois simulateurs
+d'info-retraite sont saisis (note du 1er octobre, à la fin, et action 142) :
+la réversion Agirc-Arrco avant 55 ans y attend sa lecture. Les saisies passent
+par `scripts/simulateurs.py`, qui tient le budget ; Claude les fait sur un lot
+approuvé. Restent les adresses `a_explorer` de `data/sources_a_explorer.yaml`,
+dont le RAFP, puis le CLEISS, les modèles publics et mon-entreprise. Commencer
+par le RAFP, ses lignes réservées par un commit `en_cours` poussé seul.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
@@ -5047,3 +5047,110 @@ registre, au point `a_trancher` du modèle qui le fait :
 - pour le net de l'étape 2, une présomption déclarée — « aucun autre revenu
   que ses pensions » — ou un champ de plus, la question que l'action 136
   posait déjà.
+
+### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
+
+**Reprise, au 4 octobre 2026.** Fait : l'étape 1, la saisie outillée — la
+deuxième voie du § 3.5 ouverte à Claude (architecture 5.35), le budget au
+registre des sources, `scripts/simulateurs.py`, et un premier lot de deux
+saisies dans le simulateur d'âge légal, qui concorde. Restent, une par
+session : 2. la carrière du propriétaire contre « Mon estimation retraite » ;
+3. le brut en tête sur le site, au format de l'estimation officielle, dont le
+net attend l'étape 2 de l'action 138 ; 4. les moteurs publics en local, avec
+l'action 137. Commencer par l'étape 2 : le propriétaire se connecte lui-même
+et télécharge son relevé ; Claude peut lire la page de l'estimation.
+
+**Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
+peut automatiser avec du computer use ou d'autres techniques l'exploitation de
+simulateurs officiels ? J'aimerais que l'on se base le plus possible sur des
+simulateurs officiels pour corriger nos erreurs. Il n'est cependant pas exclu
+que des simulateurs officiels se trompent, il faut toujours vérifier avec des
+sources officielles. On a déjà fait des simulations manuelles mais ce serait
+mieux si on arrivait à les automatiser. C'est vraiment trop long à faire
+manuellement. Je suis notamment intéressé par des simulateurs qui donnent des
+chiffres. […] je souhaite que tout le monde comprenne et puisse comparer les
+chiffres avec ceux qu'ils connaissent déjà. »
+
+**Ce que la recherche a établi, le 4 octobre 2026.**
+
+- Les quatre simulateurs de `les-simulateurs.info-retraite.fr` — âge légal,
+  carrière longue, handicap, réversion — sont anonymes, sans captcha, de
+  simples formulaires : techniquement, ils s'automatisent en quelques lignes.
+  Leurs conditions d'utilisation (article 7) limitent l'usage au personnel et
+  interdisent la rediffusion « des éléments du Site ».
+- Aucun simulateur anonyme ne chiffre une pension entière. Seul « Mon
+  estimation retraite » le fait — brut mensuel, en euros constants, par
+  régime, pour chaque âge de départ, la convention de l'estimation indicative
+  globale que chacun reçoit —, derrière FranceConnect et sur la carrière
+  réelle de l'assuré, sans carrière fictive possible.
+- Les moteurs publics tournent en local, sans conditions d'utilisation à
+  ménager : `modele-social` de l'Urssaf (publicodes, licence MIT, version
+  11.1.0, ses règles `protection sociale . retraite . trimestres` et
+  `… . complémentaire . points acquis`), Destinie 2 de l'Insee (mis à jour le
+  15 octobre 2025), TRAJECTOiRE de la DREES ; c'est l'action 137.
+- Les sites qui se disent « simulateur Agirc-Arrco sans connexion » ne sont
+  pas officiels, et n'entrent pas.
+
+**Les décisions du propriétaire**, le même jour : Claude saisit à sa place,
+dans le budget, dans les seuls simulateurs anonymes sans captcha, chaque lot
+approuvé avant la première saisie — plutôt que de garder la règle d'avant, ou
+qu'un script tourne seul chaque semaine, que la session déconseillait ; le
+brut en tête sur le site, comme l'estimation officielle ; la saisie outillée
+d'abord. Puis, à la fin de l'étape 1 : Claude peut lire la page de « Mon
+estimation retraite » que le propriétaire a ouverte, connecté lui-même.
+
+**Étape 1, le 4 octobre 2026 : la saisie outillée.**
+
+- *La règle.* Le § 3.5 de l'architecture (version 5.35) ouvre sa deuxième
+  voie à Claude, avec ses conditions ; la quatrième devient « jamais de robot
+  sans surveillance ». `docs/exploration_sources.md` en décrit la marche, dans
+  une section datée : le conseil de « balayer une grille », antérieur à la
+  règle du 25 septembre, y est déclaré remplacé, sans être effacé.
+- *Le budget.* Il est au registre (`budget`), dû dès la première saisie, et
+  compte des saisies, non des exemples. À la première, il vaut le quart des
+  entrées que le formulaire offre, dix s'il est ouvert : une saisie par borne
+  ne borne rien quand chaque entrée en est une. Les quatre simulateurs
+  d'info-retraite ont leur ligne : l'âge légal à 2 (8 entrées), la carrière
+  longue à 7 (28 entrées, 5 faites), la réversion à 10 (4 faites) ; le
+  handicap n'en a pas encore. Les exemples tirés d'un simulateur nomment sa
+  ligne et la saisie ; les neuf du 1er octobre les ont reçues.
+- *L'outil.* `scripts/simulateurs.py budget | fiche | transcrire`. La feuille
+  choisit les entrées — jamais une saisie faite, d'abord les générations
+  qu'aucun exemple ne couvre, les plus jeunes en tête — et écrit la
+  prédiction du modèle par les fonctions mêmes de `tests/test_oracle.py`. Ses
+  prédictions retrouvent les cinq saisies manuelles de la carrière longue et
+  la coupure de 1965 de la circulaire Cnav 2026-07. La transcription lit la
+  réponse, vérifie que chaque nombre lu y figure, écrit l'exemple et le
+  rejoue. `tests/test_simulateurs.py` tient le tout.
+- *Le premier lot.* Deux saisies approuvées, faites par Claude dans le
+  navigateur intégré, cookies refusés : « 1969 et après », 64 ans, et
+  « 1968 », 63 ans et 9 mois, 172 trimestres dans les deux cas. Le modèle les
+  avait prédites, et L. 161-17-2, relu sur Légifrance le même jour, dit la
+  même chose. Le simulateur écrit la durée « est de 172 », sans le mot
+  « trimestres » après, et l'âge du taux plein automatique, 67 ans, à côté de
+  l'âge légal : sa lecture en tient compte. Le budget de l'âge légal est
+  épuisé.
+- *Ailleurs.* `docs/limites.md` ne dit plus qu'aucun simulateur n'est
+  automatisable, et son tableau des exemples publiés a sa ligne Union
+  Retraite.
+
+**Les étapes suivantes.**
+
+2. *La carrière du propriétaire contre « Mon estimation retraite ».* Un
+   script qui lit le relevé de carrière (PDF, par `lecture_pdf` puis
+   `web/releve_lu.lire_releve`) et l'estimation recopiée âge par âge, fait
+   liquider le scénario 1 à chaque date, dans la même convention — brut
+   mensuel, euros de l'année de lecture, par régime —, et dit l'écart en
+   euros et en pour cent. Rien de personnel n'entre au dépôt ; le script
+   refuse un chemin suivi par git. La convention affichée par l'estimation se
+   recopie le jour de la lecture. Le propriétaire se connecte lui-même ;
+   Claude lit la page de l'estimation, n'y tape aucun identifiant, et n'y
+   change une hypothèse qu'avec son accord (§ 3.5, troisième voie).
+3. *Le brut en tête.* Le format de l'estimation officielle : brut mensuel par
+   étage, en euros d'aujourd'hui, âge par âge, le net en second, et un champ
+   où chacun compare son estimation. Le net aux prélèvements officiels — le
+   point de maladie des complémentaires, le taux de CSG selon le revenu du
+   foyer — est l'étape 2 de l'action 138 : la faire d'abord, ou montrer le
+   brut sans attendre.
+4. *Les moteurs publics en local*, avec l'action 137 : TRAJECTOiRE en cas
+   types du COR, puis Destinie 2, sorties figées en témoins.

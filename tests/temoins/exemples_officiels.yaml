@@ -19,7 +19,11 @@
 # Depuis le 1er octobre 2026, deux simulateurs anonymes d'info-retraite y
 # ont leurs réponses (préfixe `ur_`) : des conditions de départ et des
 # réversions, pas encore une pension, saisies à la main selon la règle du
-# § 3.5 de docs/architecture.md.
+# § 3.5 de docs/architecture.md. Depuis le 4 octobre 2026, Claude peut saisir
+# à la place du propriétaire, sur un lot qu'il approuve : la source de ces
+# exemples nomme alors le simulateur (`simulateur`, sa ligne au registre des
+# sources) et ce qu'on y a tapé (`saisie`), que le budget du simulateur
+# compte, et `scripts/simulateurs.py` les transcrit.
 #
 # Ce qui est officiel ET reproductible aujourd'hui, ce sont les EXEMPLES que
 # ces organismes publient : une carrière minuscule dont la réponse est
@@ -1626,7 +1630,7 @@ exemples:
   # d'activité (L. 39, a).
 
   - id: ur_racl_1966_avant_20
-    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1966 » et « 20 ans »", verifie_le: "2026-10-01"}
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1966 » et « 20 ans »", verifie_le: "2026-10-01", simulateur: union_retraite_carriere_longue, saisie: "1966 ; 20 ans"}
     enonce: >-
       « Vous pouvez prétendre à un départ anticipé à la retraite à partir de
       60 ans et 9 mois. Vous devrez avoir cotisé : au moins 172 trimestres et
@@ -1639,7 +1643,7 @@ exemples:
     attendu: {age_ouverture: 60.75, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: ur_racl_1966_avant_21
-    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1966 » et « 21 ans »", verifie_le: "2026-10-01"}
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1966 » et « 21 ans »", verifie_le: "2026-10-01", simulateur: union_retraite_carriere_longue, saisie: "1966 ; 21 ans"}
     enonce: >-
       « Vous pouvez prétendre à un départ anticipé à la retraite à partir de
       63 ans. Vous devrez avoir cotisé : au moins 172 trimestres et au moins 5
@@ -1652,7 +1656,7 @@ exemples:
     attendu: {age_ouverture: 63.0, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: ur_racl_1968_avant_18
-    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1968 » et « 18 ans »", verifie_le: "2026-10-01"}
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1968 » et « 18 ans »", verifie_le: "2026-10-01", simulateur: union_retraite_carriere_longue, saisie: "1968 ; 18 ans"}
     enonce: >-
       « Vous pouvez prétendre à un départ anticipé à la retraite à partir de
       60 ans. Vous devrez avoir cotisé : au moins 172 trimestres et au moins 5
@@ -1664,7 +1668,7 @@ exemples:
     attendu: {age_ouverture: 60.0, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: ur_racl_1969_avant_16
-    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1969 » et « 16 ans »", verifie_le: "2026-10-01"}
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1969 » et « 16 ans »", verifie_le: "2026-10-01", simulateur: union_retraite_carriere_longue, saisie: "1969 ; 16 ans"}
     enonce: >-
       « Vous pouvez prétendre à un départ anticipé à la retraite à partir de
       58 ans. Vous devrez avoir cotisé : au moins 172 trimestres et au moins 5
@@ -1676,7 +1680,7 @@ exemples:
     attendu: {age_ouverture: 58.0, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: ur_racl_1965_decembre
-    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1965 » et « 20 ans »", verifie_le: "2026-10-01"}
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1965 » et « 20 ans »", verifie_le: "2026-10-01", simulateur: union_retraite_carriere_longue, saisie: "1965 ; 20 ans"}
     enonce: >-
       Pour 1965, le simulateur coupe l'année en trois : 60 ans et 9 mois avec
       170 trimestres pour les nés de janvier à mars, avec 171 d'avril à
@@ -1693,7 +1697,7 @@ exemples:
     attendu: {date_effet_au_plus_tot: "2026-09", trimestres_requis: 171, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: ur_reversion_prive_63_ans
-    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié du secteur privé", verifie_le: "2026-10-01"}
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié du secteur privé", verifie_le: "2026-10-01", simulateur: union_retraite_reversion, saisie: "défunt salarié du privé, 1 400 € et 700 € nets ; survivante née le 15 mars 1963, seule, sous le plafond de ressources"}
     enonce: >-
       Le défunt, salarié du secteur privé retraité, touchait 1 400 € nets par
       mois du régime général et 700 € de l'Agirc-Arrco ; sa veuve, née le 15
@@ -1706,7 +1710,7 @@ exemples:
     attendu: {reversions_mensuelles: {regime_general: 756, agirc_arrco: 420}}
 
   - id: ur_reversion_prive_50_ans_deux_enfants
-    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié du secteur privé", verifie_le: "2026-10-01"}
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié du secteur privé", verifie_le: "2026-10-01", simulateur: union_retraite_reversion, saisie: "défunt salarié du privé ; survivante née le 15 mars 1976, deux enfants à charge, non invalide"}
     enonce: >-
       Le même défunt ; sa veuve, née le 15 mars 1976, a deux enfants à charge
       au décès et n'est pas invalide. « Vous êtes éligible — Salarié du secteur
@@ -1729,7 +1733,7 @@ exemples:
       depuis: "2026-10-01"
 
   - id: ur_reversion_etat_mariage_3_ans_et_demi
-    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt fonctionnaire de l'État", verifie_le: "2026-10-01"}
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt fonctionnaire de l'État", verifie_le: "2026-10-01", simulateur: union_retraite_reversion, saisie: "défunt fonctionnaire de l'État, 2 000 € nets ; mariage de 3 ans et demi, sans enfant"}
     enonce: >-
       Le défunt, fonctionnaire de l'État retraité depuis le 1er octobre 2022,
       touchait 2 000 € nets par mois ; sa veuve l'avait épousé le 15 septembre
@@ -1741,7 +1745,7 @@ exemples:
     attendu: {reversions_mensuelles: {fonction_publique_etat: 0}}
 
   - id: ur_reversion_etat_mariage_4_ans
-    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt fonctionnaire de l'État", verifie_le: "2026-10-01"}
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt fonctionnaire de l'État", verifie_le: "2026-10-01", simulateur: union_retraite_reversion, saisie: "défunt fonctionnaire de l'État, 2 000 € nets et 100 € de RAFP ; mariage de 4 ans, sans enfant"}
     enonce: >-
       Le même fonctionnaire, épousé le 14 août 2022 : quatre ans de mariage au
       décès, sans enfant commun ; 2 000 € nets de pension civile et 100 € de
@@ -1750,3 +1754,38 @@ exemples:
       sert pas encore en réversion, n'est pas comparée.
     carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2022-10", age_debut: 22, conjoint: "1963-03-15", conjoint_sexe: F, mariage: "2022-08-14", deces: "2026-08-15", pensions_du_defunt_mensuelles: {fonction_publique_etat: 2000}}
     attendu: {reversions_mensuelles: {fonction_publique_etat: 1000}}
+
+  # ---- Union Retraite : le simulateur d'âge légal, saisi par Claude ----------
+  # Le 4 octobre 2026, sur un lot de deux saisies que le propriétaire a
+  # approuvé (docs/architecture.md, § 3.5), écrit par `scripts/simulateurs.py
+  # fiche` avec la prédiction du modèle et transcrit par `transcrire`. Le
+  # simulateur ne demande que l'année de naissance ; il écrit la durée « est de
+  # 172 », sans le mot « trimestres » après, et l'âge du taux plein automatique
+  # à côté de l'âge légal. La carrière de chaque exemple liquide à 67 ans :
+  # seuls l'âge légal et la durée requise se comparent.
+
+  - id: ur_age_legal_1969
+    source: {editeur: "Union Retraite", reference: "simulateur « Âge légal de départ à la retraite », info-retraite.fr, saisie « 1969 et après »", verifie_le: "2026-10-04", simulateur: union_retraite_age_depart, saisie: "1969 et après"}
+    enonce: >-
+      « Votre âge légal de départ* à la retraite est 64 ans. Cet âge peut être
+      différent dans certains régimes complémentaires. […] Le nombre de
+      trimestres requis pour votre départ à taux plein est de 172. Vous aurez
+      atteint l'âge du taux plein automatique** à 67 ans. » La carrière
+      d'exemple : un salarié du secteur privé né le 15 juin 1969, entré à
+      vingt-deux ans et parti à soixante-sept ; seuls se comparent l'âge légal
+      et la durée requise.
+    carriere: {naissance: "1969-06-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2036-07", age_debut: 22}
+    attendu: {age_ouverture: 64.0, trimestres_requis: 172}
+
+  - id: ur_age_legal_1968
+    source: {editeur: "Union Retraite", reference: "simulateur « Âge légal de départ à la retraite », info-retraite.fr, saisie « 1968 »", verifie_le: "2026-10-04", simulateur: union_retraite_age_depart, saisie: "1968"}
+    enonce: >-
+      « Votre âge légal de départ* à la retraite est 63 ans et 9 mois. Cet âge
+      peut être différent dans certains régimes complémentaires. […] Le nombre
+      de trimestres requis pour votre départ à taux plein est de 172. Vous
+      aurez atteint l'âge du taux plein automatique** à 67 ans. » La carrière
+      d'exemple : un salarié du secteur privé né le 15 juin 1968, entré à
+      vingt-deux ans et parti à soixante-sept ; seuls se comparent l'âge légal
+      et la durée requise.
+    carriere: {naissance: "1968-06-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2035-07", age_debut: 22}
+    attendu: {age_ouverture: 63.75, trimestres_requis: 172}

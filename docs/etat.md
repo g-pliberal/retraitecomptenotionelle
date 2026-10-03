@@ -27,7 +27,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 3 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **41 sur 136** (116 exemples : 111 reproduits, 5 en écart connu, section 2).
+- Confrontées à au moins un exemple officiel : **41 sur 136** (118 exemples : 113 reproduits, 5 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **42 sur 136**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **43 sur 136**, par 2 292 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **26 sur 136**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
@@ -101,7 +101,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors de la page Coût.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR) : le modèle en calcule une pour une personne (scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle ne calcule pas.
 
-**La feuille de route** compte 142 actions : 126 fait, 11 en cours, 2 abandonnée, 2 à faire, 1 archivée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 143 actions : 126 fait, 12 en cours, 2 abandonnée, 2 à faire, 1 archivée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -205,7 +205,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 11 actions en cours** de la feuille de route :
+- **Les 12 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
@@ -217,7 +217,8 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats
   - 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation
   - 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris
-- **Les sources à exploiter** : 149 à explorer sur 301 (64 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
+  - 142. Les simulateurs officiels, sans y passer ses journées
+- **Les sources à exploiter** : 149 à explorer sur 305 (68 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
   - Régime des artistes-auteurs professionnels (IRCEC) : 2 source(s) (cnav_arrierees_artiste_auteur, mon_entreprise_artiste_auteur)

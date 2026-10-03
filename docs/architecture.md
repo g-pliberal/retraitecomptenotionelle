@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.34, du 1er octobre 2026 ; l'architecture a été décidée par le
+*Version 5.35, du 4 octobre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements,
 un par domaine clos ou par décision, est en bas (« Les versions »). Il est
@@ -297,7 +297,9 @@ L'Assurance retraite protège ses pages par un reCAPTCHA « contre les logiciels
 automatiques ». La règle, fixée par le propriétaire le 25 septembre 2026,
 est d'en tirer le plus possible sans jamais solliciter les caisses : ni
 demande d'exemples ou de jeux d'essai, ni demande d'accord, ni demande de
-documents au titre du droit d'accès. Quatre voies, dans cet ordre :
+documents au titre du droit d'accès. Le 4 octobre 2026, il l'a ouverte à
+Claude, qui peut saisir à sa place, et à son rythme, ce qu'une personne
+saisirait. Quatre voies, dans cet ordre :
 
 1. **Ce qu'ils publient déjà, librement réutilisable.**
    - L'open data de l'Assurance retraite, sous Licence Ouverte ; les
@@ -307,19 +309,31 @@ documents au titre du droit d'accès. Quatre voies, dans cet ordre :
    - Les fiches « Traitements algorithmiques » que la loi oblige les
      administrations à publier (article L312-1-3 du code des relations entre
      le public et l'administration).
-2. **Interroger à la main, peu et bien.** Une personne saisit les cas de
-   bascule que fabrique la carte (§ 4.1), un par borne : chaque saisie teste
-   une règle à l'endroit où elle change. Chaque réponse entre comme exemple
-   officiel, ponctuel et cité : le simulateur, la date, la saisie, le
-   résultat. Un budget par simulateur, tenu dans le registre, garde l'ensemble
-   loin d'une extraction substantielle.
+2. **Saisir peu et bien, à la main ou par Claude.** Une personne, ou Claude
+   sous le contrôle du propriétaire, saisit les cas de bascule que fabrique la
+   carte (§ 4.1), un par borne : chaque saisie teste une règle à l'endroit où
+   elle change. Chaque réponse entre comme exemple officiel, ponctuel et cité :
+   le simulateur, la date, la saisie, le résultat. Un budget par simulateur,
+   tenu dans le registre, garde l'ensemble loin d'une extraction
+   substantielle. `scripts/simulateurs.py` fait tout ce qui entoure la
+   saisie : il tient le budget, écrit la feuille — les entrées et la
+   prédiction du modèle, avant la réponse — et transcrit les réponses.
+   Claude ne saisit que dans un simulateur anonyme, sans captcha ; le lot, le
+   simulateur et ses entrées, est approuvé par le propriétaire avant la
+   première ; il saisit une entrée à la fois, au rythme d'une personne, dans
+   un navigateur qui ne cache pas ce qu'il est, et s'arrête au premier
+   captcha, à la première connexion demandée, au premier écran qu'il
+   n'attendait pas (`docs/exploration_sources.md`).
 3. **Comparer une carrière réelle.** Le propriétaire compare la sienne à
    « Mon estimation retraite », et des volontaires peuvent faire de même s'ils
    y consentent : c'est l'usage personnel que les conditions permettent.
    Aucune donnée personnelle n'entre dans le dépôt, seulement l'écart trouvé et
-   la règle qu'il met en cause.
-4. **Jamais d'automate**, même lent : pas de captcha contourné, pas de
-   robot. Un robots.txt permissif ne lève pas des conditions
+   la règle qu'il met en cause. Claude peut lire la page de l'estimation que
+   le propriétaire a ouverte, connecté lui-même : il n'y tape jamais un
+   identifiant, et n'y change une hypothèse qu'avec son accord.
+4. **Jamais de robot sans surveillance**, même lent : pas de script qui
+   balaie un simulateur, pas de captcha contourné, pas de connexion à la
+   place d'un assuré. Un robots.txt permissif ne lève pas des conditions
    d'utilisation qui l'interdisent.
 
 **OpenFisca, précisément.** Le moteur du dépôt n'est pas OpenFisca. OpenFisca
@@ -2460,6 +2474,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.35**, 4 octobre 2026 : la deuxième voie des simulateurs officiels s'ouvre à Claude (§ 3.5), à la demande du propriétaire, que les saisies à la main retardaient : Claude saisit à sa place, dans le budget de chaque simulateur, dans les seuls simulateurs anonymes sans captcha, chaque lot approuvé avant la première saisie ; la troisième lui laisse lire la page de « Mon estimation retraite » que le propriétaire a ouverte, connecté lui-même ; la quatrième devient « jamais de robot sans surveillance ». `scripts/simulateurs.py` tient le budget au registre des sources, écrit la feuille de saisie avec la prédiction du modèle, et transcrit les réponses en exemples officiels qu'il rejoue aussitôt.
 
 - **5.34**, 1er octobre 2026 : le registre des autres modèles dit aussi ce que chacun fait mieux que le dépôt (§ 3.4), à la demande du propriétaire, qui veut le dépôt « meilleur en tous points » : chaque point, lu chez lui, porte le chantier qui le reprend, ou la raison qui l'écarte, ou le choix que le propriétaire tranche ; un test tient la forme, et le tableau de bord compte ce qui reste.
 

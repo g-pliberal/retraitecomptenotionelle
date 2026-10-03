@@ -37,7 +37,9 @@ ACCES = {"session", "chaine_incomplete", "navigateur", "git", "refus", "ferme"}
 STATUTS = {"a_explorer", "en_cours", "explore", "epuise", "sans_suite"}
 
 CHAMPS_EXIGES = ("id", "url", "nature", "acces", "regimes", "a_en_tirer", "statut")
-CHAMPS_CONNUS = set(CHAMPS_EXIGES) | {"note", "explore_le"}
+CHAMPS_CONNUS = set(CHAMPS_EXIGES) | {"note", "explore_le", "budget"}
+
+EXEMPLES = RACINE / "tests" / "temoins" / "exemples_officiels.yaml"
 
 
 @pytest.fixture(scope="module")
@@ -150,6 +152,32 @@ def test_le_sas_se_vide_vers_le_manifeste(sources):
         note = source.get("note", "")
         assert re.search(r"data/|tests/|docs/|\brien\b", note), (
             f"{source['id']} : épuisée sans dire où est passé ce qu'elle portait")
+
+
+def test_un_simulateur_saisi_tient_son_budget(sources):
+    """Un budget par simulateur, tenu ici, garde les saisies loin d'une
+    extraction substantielle (docs/architecture.md, § 3.5). Il compte les
+    SAISIES — une réponse qui coupe une année en trois donne trois exemples
+    pour une saisie —, il est dû dès la première, et seul un simulateur en a.
+    """
+    exemples = yaml.safe_load(EXEMPLES.read_text(encoding="utf-8"))["exemples"]
+    par_id = {source["id"]: source for source in sources}
+    for source in sources:
+        if "budget" in source:
+            assert source["nature"] == "simulateur", f"{source['id']} : budget hors simulateur"
+            assert isinstance(source["budget"], int) and source["budget"] >= 1, source["id"]
+    saisies: dict[str, set[str]] = {}
+    for exemple in exemples:
+        if "simulateur" in exemple["source"]:
+            saisies.setdefault(exemple["source"]["simulateur"], set()).add(
+                str(exemple["source"]["saisie"]))
+    assert saisies, "aucun exemple ne nomme le simulateur qui l'a donné"
+    for simulateur, faites in saisies.items():
+        ligne = par_id.get(simulateur)
+        assert ligne is not None and ligne["nature"] == "simulateur", simulateur
+        assert "budget" in ligne, f"{simulateur} : saisi sans budget au registre"
+        assert len(faites) <= ligne["budget"], (
+            f"{simulateur} : {len(faites)} saisies pour un budget de {ligne['budget']}")
 
 
 def test_l_inventaire_couvre_les_regimes_les_plus_incomplets(sources, codes_de_regime):

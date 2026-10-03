@@ -31,6 +31,12 @@
 #   statut ........ a_explorer | en_cours | explore | epuise | sans_suite
 #   explore_le .... date du dépouillement, quand il a eu lieu
 #   note .......... ce que la session a trouvé, ou ce qui l'a arrêtée
+#   budget ........ pour un simulateur, le nombre de SAISIES que le dépôt
+#                   s'accorde (docs/architecture.md, § 3.5) : dû dès qu'un
+#                   exemple officiel le cite ; à la première, le quart des
+#                   entrées que son formulaire offre, dix s'il est ouvert ;
+#                   le propriétaire le change ici. Ce qui reste :
+#                   `python scripts/simulateurs.py budget`
 #
 # NATURE
 #   simulateur  un formulaire qui calcule. C'est la mine : chaque exécution
@@ -79,7 +85,8 @@ sources:
     a_en_tirer: >-
       La liste des simulateurs du GIP, et pour chacun s'il est anonyme ou
       derrière FranceConnect. Point d'entrée de tout le lot.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-04"
     note: >-
       Ce que `chaine_incomplete` coûte dépend du CLIENT, pas du lieu. Le
       serveur omet l'intermédiaire de son certificat ; un client qui va le
@@ -88,10 +95,85 @@ sources:
       vérification entière (`ssl_verify=0`). Le `curl` d'une session s'arrête,
       lui, sur « unable to get local issuer certificate » : d'où la recette de
       `docs/exploration_sources.md`, qui ajoute le maillon au paquet de
-      confiance. Mesuré le 22 septembre 2026. Deux de ses simulateurs, carrière
-      longue et réversion, ont été interrogés à la main le 1er octobre 2026
-      (docs/architecture.md, § 3.5) : neuf saisies, aux exemples officiels sous
-      le préfixe `ur_`, et leurs imperfections notées en tête de ce lot.
+      confiance. Mesuré le 22 septembre 2026. La page, lue le 4 octobre 2026,
+      porte quatre simulateurs, tous anonymes : l'âge légal, la carrière
+      longue, le handicap et la réversion, de simples formulaires sans
+      captcha. Chacun a sa ligne ci-dessous, avec son budget ; « Mon
+      estimation retraite », le seul qui chiffre une pension entière, est
+      derrière FranceConnect.
+
+  - id: union_retraite_age_depart
+    url: https://les-simulateurs.info-retraite.fr/age-depart
+    nature: simulateur
+    acces: chaine_incomplete
+    regimes: []
+    a_en_tirer: >-
+      L'âge légal et la durée requise que les caisses appliquent, génération
+      par génération, de 1962 à « 1969 et après » : celles que la suspension
+      de 2026 et la fin de son calendrier déplacent.
+    statut: explore
+    explore_le: "2026-10-04"
+    budget: 2
+    note: >-
+      Deux saisies le 4 octobre 2026, par Claude, sur un lot que le propriétaire
+      a approuvé (docs/architecture.md, § 3.5) : « 1969 et après » et « 1968 »,
+      aux exemples officiels sous `ur_age_legal_`. 64 ans, puis 63 ans et 9
+      mois, 172 trimestres dans les deux cas, le taux plein automatique à 67
+      ans : le modèle concorde, et L. 161-17-2, relu le même jour sur
+      Légifrance, dit la même chose. Le budget est épuisé ; 1964 et 1965 sont
+      déjà tenus par les exemples de la circulaire Cnav 2026-07.
+
+  - id: union_retraite_carriere_longue
+    url: https://les-simulateurs.info-retraite.fr/carriere-longue
+    nature: simulateur
+    acces: chaine_incomplete
+    regimes: []
+    a_en_tirer: >-
+      L'âge du départ anticipé et la durée exigée, par génération (1964 à 1970)
+      et par borne de début d'activité (16, 18, 20 et 21 ans) : les portes de
+      la carrière longue telles que la caisse les ouvre.
+    statut: explore
+    explore_le: "2026-10-01"
+    budget: 7
+    note: >-
+      Cinq saisies le 1er octobre 2026, par le propriétaire
+      (docs/architecture.md, § 3.5), aux exemples officiels sous `ur_racl_` :
+      les quatre portes, les 172 trimestres de 1966, 1968 et 1969, et l'année
+      1965 coupée en trois, qui a levé deux arrondis corrigés dans les deux
+      moteurs. Le simulateur omet les quatre trimestres des nés d'octobre et de
+      novembre 1965.
+
+  - id: union_retraite_handicap
+    url: https://les-simulateurs.info-retraite.fr/situation-handicap
+    nature: simulateur
+    acces: chaine_incomplete
+    regimes: []
+    a_en_tirer: >-
+      L'âge de la retraite anticipée des travailleurs handicapés, du privé ou
+      fonctionnaires, générations 1961 à 1973 : la fiche
+      `retraite_anticipee_handicap` confrontée à la caisse.
+    statut: a_explorer
+
+  - id: union_retraite_reversion
+    url: https://les-simulateurs.info-retraite.fr/reversion
+    nature: simulateur
+    acces: chaine_incomplete
+    regimes: []
+    a_en_tirer: >-
+      Le droit à la réversion, régime par régime, selon l'âge, le mariage, les
+      enfants et les ressources du survivant : les taux, les conditions et le
+      plafond tels que les caisses les appliquent.
+    statut: explore
+    explore_le: "2026-10-01"
+    budget: 10
+    note: >-
+      Quatre saisies le 1er octobre 2026, par le propriétaire
+      (docs/architecture.md, § 3.5), aux exemples officiels sous
+      `ur_reversion_` : les 54 % du régime général, les 60 % de l'Agirc-Arrco
+      sans condition de ressources, l'âge de 55 ans et la condition de mariage
+      de la fonction publique ; deux enfants à charge lèvent la condition d'âge
+      de l'Agirc-Arrco, en écart connu. Restent l'exception des enfants à lire
+      dans l'accord, le remariage et l'Ircantec.
 
   - id: union_retraite_progressive
     url: https://parcours.info-retraite.fr/retraite-progressive

@@ -4697,3 +4697,26 @@ journal:
       entrera dans `revalorisation_pensions.csv` comme les tranches de 2020 ; celle des
       complémentaires, à l'accord des partenaires sociaux. Les textes parus depuis le
       4 octobre.
+  - date: "2026-10-04"
+    session: >-
+      la saisie outillée des simulateurs officiels (action 142) : la deuxième voie du
+      § 3.5 de l'architecture ouverte à Claude, et un premier lot dans le simulateur
+      d'âge légal d'info-retraite
+    consulte: >-
+      `python scripts/veille_droit.py` ; sur Légifrance, dans le navigateur intégré,
+      L. 161-17-2 (LEGIARTI000053280889) ; le simulateur « Âge légal de départ à la
+      retraite » de les-simulateurs.info-retraite.fr, saisi deux fois par Claude sur un
+      lot que le propriétaire a approuvé (« 1969 et après » et « 1968 ») ; les
+      conditions générales des services d'info-retraite.
+    trouve: >-
+      L. 161-17-2 est en vigueur depuis le 31 décembre 2025, sans version à venir :
+      63 ans et 9 mois pour les nés en 1968, 64 ans au-delà. Le simulateur rend les
+      mêmes âges et 172 trimestres dans les deux cas, ce que le modèle avait prédit ;
+      les deux réponses sont aux exemples officiels (`ur_age_legal_1968`,
+      `ur_age_legal_1969`). Les conditions générales (article 7) limitent l'usage au
+      personnel et interdisent la rediffusion des éléments du site, d'où le budget.
+    reste: >-
+      Les autres simulateurs d'info-retraite, dans le budget du registre : deux saisies
+      pour la carrière longue, six pour la réversion ; le handicap n'a encore ni
+      adaptateur ni budget. Le Journal officiel et L. 161-17-3 sont parcourus le même
+      jour par les deux entrées qui précèdent.

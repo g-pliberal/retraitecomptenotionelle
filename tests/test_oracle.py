@@ -2,9 +2,11 @@
 
 Le scénario « système actuel » est l'étalon du modèle : tous les écarts affichés
 se mesurent par rapport à lui. Le vérifier en le relisant ne prouve rien — une
-réimplémentation écrite par la même main hérite des mêmes hypothèses. Et aucun
-simulateur officiel n'est automatisable : M@rel exige FranceConnect et le relevé
-de carrière réel, sans mode anonyme ni API.
+réimplémentation écrite par la même main hérite des mêmes hypothèses. Les
+simulateurs anonymes des caisses répondent, eux, une saisie à la fois et dans un
+budget (`docs/architecture.md`, § 3.5) : leurs réponses sont des exemples
+officiels, rejoués plus bas. Mais « Mon estimation retraite », le seul qui
+chiffre une pension entière, exige FranceConnect et le relevé de carrière réel.
 
 Reste OpenFisca-France-Pension, le module « retraites » de l'écosystème
 OpenFisca. Ce n'est pas une source officielle, c'est un autre modèle — mais il
@@ -1983,12 +1985,23 @@ def test_le_temoin_des_exemples_officiels_est_source():
     `conforme` ni `transcrite`, et qui compte l'exemple parmi ses exemples. Ce
     qu'un exemple révèle est déclaré là où il va (§ 9.2), et un écart ne
     s'admet pas sans que sa règle le dise.
+
+    Un exemple tiré d'un simulateur nomme sa ligne au registre des sources et
+    ce qu'on y a saisi : c'est ce que le budget de ce simulateur compte (§ 3.5).
     """
+    import yaml
+
     from retraite_notionnelle.noyau import carte
 
     fiches = carte.fiches()
+    registre = yaml.safe_load((Path(__file__).resolve().parents[1] / "data"
+                               / "sources_a_explorer.yaml").read_text(encoding="utf-8"))
+    simulateurs = {s["id"] for s in registre["sources"] if s["nature"] == "simulateur"}
     for exemple in _charger_exemples():
         source = exemple["source"]
+        if source["reference"].startswith("simulateur") or "simulateur" in source:
+            assert source.get("simulateur") in simulateurs, exemple["id"]
+            assert len(str(source.get("saisie", "")).split()) >= 1, exemple["id"]
         assert source["editeur"] in (
             "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
             "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL", "CNIEG",
