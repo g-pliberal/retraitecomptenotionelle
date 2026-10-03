@@ -645,9 +645,9 @@ distinguer, et ils ne suivent pas la même règle :
   <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.taux.agirc_entreprises_nouvelles.taux*100)-->12<!--/--> % sur la tranche B de l'Agirc avant 2019 — pour
   l'allocation de solidarité et pour la préretraite du FNE, celle-ci garantie
   minimale de points comprise et sur deux plafonds au plus, et rien avant le
-  1er octobre 1967. L'indemnisation cesse quand l'allocataire a l'âge légal et
-  la durée requise, ou l'âge d'annulation de la décote (L. 5421-4 du code du
-  travail) : une année de chômage d'après ne vaut plus rien. Ces points, on
+  1er octobre 1967. L'indemnisation cesse à l'âge d'annulation de la décote, et
+  depuis le 1er avril 1983 à l'âge légal pour qui a la durée requise (L. 5421-4
+  du code du travail) : une année de chômage d'après ne vaut plus rien. Ces points, on
   les paie en partie : l'Unédic cotise sur
   <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:assurance.part_cotisation*100)-->60<!--/--> % du salaire de référence, au taux
   d'appel, et reverse <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:assurance.participation_reversee*100)-->0,8<!--/--> % de ce

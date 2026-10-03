@@ -16439,3 +16439,41 @@ inchangé. Cinq témoins nouveaux (`preretraite_fne_cadre`,
 `chomage_au_dela_du_taux_plein`, `chomage_jusqu_a_l_annulation`) et six tests
 dans `tests/test_chomage_complementaires.py` ; dix rendus de page ne gagnent
 que l'option « préretraite du FNE » du menu.
+
+**Suite, le 3 octobre 2026 : les dates que les lignes ne disent pas.** « Fait
+des recherches pour ce qui reste et corrige en fonction de ce que tu
+trouves ». Le guide de 2018, relu entier sur le chômage, l'accord de 2017 et
+l'index JORF de 1979 à 1984 changent quatre règles des deux moteurs.
+
+- **La coupure** date du 1er avril 1983, non de 1984 : l'Unédic interrompt
+  alors les allocations à soixante ans pour qui a cent cinquante trimestres
+  (arrêté du 29 avril 1983, délibération n° 11-D), et le décret n° 84-344
+  applique L. 351-19 à la même date ; avant, l'âge de soixante-cinq ans les
+  arrêtait (R. 351-3, 1973, pour l'aide publique). `fin_indemnisation` coupe à
+  l'âge d'annulation de tout temps, à l'âge légal avec la durée depuis le
+  1er avril 1983 (`duree_depuis`) ; l'année de la coupure, quand elle couvre
+  l'année entière, s'arrête au mois qui la précède ; les années qu'un relevé
+  porte ne bougent pas (`Carriere.annees_declarees`). La fiche
+  `fin_indemnisation_chomage` a désormais deux versions lues, et ses
+  identifiants du matin, qu'aucun texte ne citait, sont remplacés.
+- **L'ASFNE se lit à la date de sa convention**, que le modèle prend au premier
+  millésime de la préretraite (`ChomageComplementaires.debuts`) : d'avant le
+  1er avril 1984, les règles de l'assurance jusqu'au bout ; depuis le 5 mai
+  1997, deux plafonds, appliqués désormais à l'acquisition et au compte et non
+  plus au salaire de référence de la ligne ; à l'Arrco, 4 % depuis le 1er juin
+  2000.
+- **L'ASS, à l'Arrco, se lit à la date de la rupture** : le premier millésime
+  du chômage qui la précède sans emploi. Une rupture d'avant le 1er juin 2000
+  garde les taux obligatoires, même pour une allocation d'après.
+- Depuis 2019, l'accord ne pose plus de date (art. 61 et 62) ; l'AER n'y figure
+  pas, et n'avait plus d'allocataires.
+
+Quatre témoins bougent : `chomage_au_dela_du_taux_plein` (−1,19 % au
+scénario 1), `chomage_jusqu_a_l_annulation` (−0,87 %) et
+`invalidite_demandeur_d_emploi` (−0,23 %), par l'année de la coupure ;
+`preretraite_fne_cadre` (+1,32 %), entré en préretraite en 1997, garde quatre
+plafonds. Cinq témoins nouveaux (`preretraite_fne_avant_1984`,
+`preretraite_fne_entree_en_1996`, `solidarite_apres_une_rupture_de_1998`,
+`chomage_apres_65_ans_avant_1983`, `chomage_coupe_en_avril_1983`) et quatre
+tests. Restent le décret n° 82-991 et les règlements de l'Unédic d'avant 1983,
+hors de l'index, et les départements d'outre-mer.

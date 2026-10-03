@@ -658,12 +658,13 @@ class ChomageComplementaires:
     #: Premier mois validé pour une affiliation que l'assurance chômage a
     #: couverte plus tard : (affiliation, année, mois).
     validation_depuis_affiliations: tuple[tuple[str, int, int], ...] = ()
-    #: Année de naissance de la solidarité, et part de ses cotisations que
-    #: l'État verse.
+    #: Année de naissance de la solidarité — celle de l'allocation, ou celle
+    #: de la convention de l'allocation spéciale du FNE —, et part de ses
+    #: cotisations que l'État verse.
     solidarite_depuis: int = 0
     solidarite_versement: float = 0.0
-    #: Taux de la solidarité : (code, taux, première année où les points le
-    #: prennent).
+    #: Taux de la solidarité : (code, taux, première année de la rupture du
+    #: contrat ou de la convention dont les points le prennent).
     solidarite_taux: tuple[tuple[str, float, int], ...] = ()
     #: Ce que l'Unédic verse : la part de la cotisation, et la part de
     #: l'assiette prise sur la participation de l'allocataire.
@@ -676,24 +677,58 @@ class ChomageComplementaires:
     duree_minimale_jusqu: int = 0
     duree_minimale_jours: int = 0
     #: Borne du salaire de référence de l'allocation spéciale du FNE, en
-    #: plafonds, à compter de l'année dite.
+    #: plafonds, pour une convention de l'année dite ou d'après.
     fne_plafond_salaire_reference: float | None = None
     fne_plafond_depuis: int = 0
-    #: Première année où l'indemnisation cesse au taux plein (L. 5421-4 du
-    #: code du travail) ; ``None`` : jamais.
-    fin_indemnisation_depuis: int | None = None
+    #: Premier mois où l'indemnisation cesse à l'âge légal pour qui a la
+    #: durée requise (année, mois) ; l'âge d'annulation de la décote la coupe
+    #: de tout temps (L. 5421-4 du code du travail).
+    fin_indemnisation_duree_depuis: tuple[int, int] | None = None
 
-    def nature(self, motif: str, annee: int) -> str | None:
+    def nature(self, motif: str, annee: int, debut: int | None = None) -> str | None:
         """« assurance », « solidarite », « fne », ou ``None`` pour un motif
-        qui n'est pas du chômage. La solidarité et l'allocation spéciale du FNE
-        d'avant le 1er avril 1984 sont de l'assurance : le régime était
-        unique, et le guide valide les conventions FNE d'avant « dans les
-        mêmes conditions que les allocataires du régime d'assurance
-        chômage »."""
+        qui n'est pas du chômage. La solidarité d'avant le 1er avril 1984 est
+        de l'assurance : le régime était unique. L'allocation spéciale du FNE
+        l'est quand sa convention est d'avant (``debut``, :meth:`debuts`) : le
+        guide valide ces conventions-là « dans les mêmes conditions que les
+        allocataires du régime d'assurance chômage », jusqu'au bout."""
         nature = dict(self.motifs).get(motif)
-        if nature in ("solidarite", "fne") and annee < self.solidarite_depuis:
+        date = debut if nature == "fne" and debut is not None else annee
+        if nature in ("solidarite", "fne") and date < self.solidarite_depuis:
             return "assurance"
         return nature
+
+    def debuts(self, lignes) -> dict[tuple[int, str], int]:
+        """L'année qui tient lieu de date à une année de solidarité ou de
+        préretraite, (année, motif) → année : pour l'allocation spéciale du
+        FNE, celle de la convention, que le modèle prend au premier millésime
+        de la préretraite ; pour l'allocation de solidarité, celle de la
+        rupture du contrat, le premier millésime du chômage qui la précède sans
+        emploi entre-temps, l'année où un emploi a pris fin comprise. Les
+        lignes ne disent ni l'une ni l'autre."""
+        motifs: dict[int, set[str]] = {}
+        emploi: set[int] = set()
+        for ligne in lignes:
+            motifs.setdefault(ligne.annee, set()).add(ligne.type_periode)
+            if ligne.cotise:
+                emploi.add(ligne.annee)
+        chomage = {motif for motif, nature in self.motifs
+                   if nature in ("assurance", "solidarite")} | {"chomage_non_indemnise"}
+        resultat: dict[tuple[int, str], int] = {}
+        for annee, presents in motifs.items():
+            for motif in presents:
+                nature = dict(self.motifs).get(motif)
+                debut = annee
+                if nature == "fne":
+                    while motif in motifs.get(debut - 1, ()):
+                        debut -= 1
+                elif nature == "solidarite":
+                    while debut not in emploi and motifs.get(debut - 1, set()) & chomage:
+                        debut -= 1
+                else:
+                    continue
+                resultat[(annee, motif)] = debut
+        return resultat
 
     def part_validee(self, code: str, annee: int,
                      affiliation: str | None = None) -> float:
@@ -719,24 +754,31 @@ class ChomageComplementaires:
         return (annee > self.duree_minimale_jusqu
                 or fraction * 365 >= self.duree_minimale_jours)
 
-    def plafond_reference(self, nature: str | None, annee: int) -> float | None:
-        """Borne du salaire de référence, en plafonds : deux pour l'allocation
-        spéciale du FNE depuis 1998, quatre sinon."""
-        if (nature == "fne" and self.fne_plafond_salaire_reference is not None
-                and annee >= self.fne_plafond_depuis):
-            return self.fne_plafond_salaire_reference
-        return self.plafond_salaire_reference
+    def plafond_preretraite(self, debut: int | None) -> float | None:
+        """Borne du salaire de référence de l'allocation spéciale du FNE, en
+        plafonds, pour une convention de l'année ``debut`` : deux pour une
+        convention conclue depuis le 5 mai 1997, que le modèle date de 1998 ;
+        ``None`` avant, la borne commune de quatre plafonds valant seule."""
+        if (self.fne_plafond_salaire_reference is None or debut is None
+                or debut < self.fne_plafond_depuis):
+            return None
+        return self.fne_plafond_salaire_reference
 
-    def taux_solidarite(self, code: str, annee: int, points: bool) -> float | None:
+    def taux_solidarite(self, code: str, annee: int, points: bool,
+                        rupture: int | None = None) -> float | None:
         """Taux contractuel de la solidarité au régime ``code`` : celui que
         prennent les points (``points``), ou celui que l'État finance.
         ``None`` : le régime traite cette année de solidarité comme
-        l'assurance."""
+        l'assurance. L'Arrco ne sert ses 4 % qu'après une rupture du contrat,
+        ou une convention du FNE, du 1er juin 2000 ou d'après (``rupture``,
+        :meth:`debuts`) : avant, les taux obligatoires, quelle que soit
+        l'année de l'allocation."""
         if annee < self.solidarite_depuis:
             return None
+        date = annee if rupture is None else rupture
         for regime, taux, depuis in self.solidarite_taux:
             if regime == code:
-                return None if points and annee < depuis else taux
+                return None if points and date < depuis else taux
         return None
 
     def taux_participation(self, annee: int) -> float:
@@ -803,8 +845,9 @@ def charger_chomage_complementaires(racine: Path) -> ChomageComplementaires:
         duree_minimale_jours=int(duree_minimale.get("jours", 0)),
         fne_plafond_salaire_reference=fne.get("plafond_salaire_reference"),
         fne_plafond_depuis=int(fne.get("plafond_depuis", 0)),
-        fin_indemnisation_depuis=(None if fin.get("depuis") is None
-                                  else int(fin["depuis"])),
+        fin_indemnisation_duree_depuis=(
+            None if fin.get("duree_depuis") is None
+            else (fin["duree_depuis"].year, fin["duree_depuis"].month)),
     )
     _CHOMAGE_COMPLEMENTAIRES[cle] = regles
     return regles

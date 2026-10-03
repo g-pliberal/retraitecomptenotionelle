@@ -24,7 +24,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois, en_mois
+from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, trimestres_civils
 from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
 from . import compter, coordonner, etranger, invalidite
 from .commun import date_d_effet, derniere_annee
@@ -1029,9 +1029,11 @@ def age_taux_plein_droit(moteur, carriere: Carriere) -> float | None:
 
 def fin_indemnisation(moteur, carriere: Carriere) -> DateMois | None:
     """Le premier mois sans revenu de remplacement du chômage : celui où
-    l'allocataire a l'âge légal et la durée requise pour le taux plein, ou
-    l'âge d'annulation de la décote (L. 5421-4 du code du travail). ``None``
-    pour une carrière qu'aucun régime n'ouvre.
+    l'allocataire atteint l'âge d'annulation de la décote, ou, depuis le
+    1er avril 1983, celui où il a l'âge légal et la durée requise pour le taux
+    plein (L. 5421-4 du code du travail, et avant lui L. 351-19 et la
+    délibération de l'Unédic de 1983). ``None`` pour une carrière qu'aucun
+    régime n'ouvre.
 
     Les termes sont ceux de :func:`age_taux_plein_droit`, sans l'inaptitude ni
     la carrière longue, que le texte ne retient pas — un départ anticipé
@@ -1040,36 +1042,43 @@ def fin_indemnisation(moteur, carriere: Carriere) -> DateMois | None:
     trimestres par an : elle est atteinte au trimestre civil qui la complète,
     majoration pour enfants comprise.
     """
+    chomage = charger_chomage_complementaires(moteur.macro.racine)
     carriere = coordonner.retablir(moteur, carriere)
     annuites, autres = periodes_parcourues(moteur, carriere)
     autres = sans_ages_propres(autres)
     retenues = annuites or autres
     if not retenues:
         return None
+    annulation = carriere.date_de_l_age(
+        min(age_taux_plein(moteur, periode, carriere) for _, periode in retenues))
+    if chomage.fin_indemnisation_duree_depuis is None:
+        return annulation
+    depuis = DateMois(*chomage.fin_indemnisation_duree_depuis)
     ouverture = carriere.date_de_l_age(
         min(age_ouverture(moteur, periode, carriere) for _, periode in retenues))
     opposent = annuites or periodes_opposant_une_duree(autres)
     requis = max((duree_requise(moteur, periode, carriere)[0]
                   for _, periode in opposent), default=0)
-    if not requis:
-        return ouverture
-    annulation = carriere.date_de_l_age(
-        min(age_taux_plein(moteur, periode, carriere) for _, periode in retenues))
-    annee_liquidation = carriere.annee_liquidation
-    lignes = [ligne for ligne in carriere.lignes if ligne.annee <= annee_liquidation]
-    par_annee = carriere.trimestres_par_annee(lignes)
-    majoration = compter.majoration_pour_enfants(
-        moteur, carriere, {code: sum(par_annee.values()) for code, _ in opposent},
-        annee_liquidation)
-    manque = requis - (majoration.trimestres if majoration is not None else 0)
-    cumul = 0
-    for annee, trimestres in sorted(par_annee.items()):
-        if cumul + trimestres >= manque:
-            atteinte = DateMois(annee, 1).plus_mois(3 * max(0, manque - cumul))
-            duree = atteinte if atteinte.rang > ouverture.rang else ouverture
-            return duree if duree.rang < annulation.rang else annulation
-        cumul += trimestres
-    return annulation
+    atteinte: DateMois | None = DateMois(1, 1)
+    if requis:
+        annee_liquidation = carriere.annee_liquidation
+        lignes = [ligne for ligne in carriere.lignes if ligne.annee <= annee_liquidation]
+        par_annee = carriere.trimestres_par_annee(lignes)
+        majoration = compter.majoration_pour_enfants(
+            moteur, carriere, {code: sum(par_annee.values()) for code, _ in opposent},
+            annee_liquidation)
+        manque = requis - (majoration.trimestres if majoration is not None else 0)
+        atteinte = None
+        cumul = 0
+        for annee, trimestres in sorted(par_annee.items()):
+            if cumul + trimestres >= manque:
+                atteinte = DateMois(annee, 1).plus_mois(3 * max(0, manque - cumul))
+                break
+            cumul += trimestres
+    if atteinte is None:
+        return annulation
+    duree = max(ouverture, atteinte, depuis, key=lambda date: date.rang)
+    return duree if duree.rang < annulation.rang else annulation
 
 
 def indemnisation_bornee(moteur, carriere: Carriere) -> Carriere:
@@ -1077,26 +1086,29 @@ def indemnisation_bornee(moteur, carriere: Carriere) -> Carriere:
 
     « Le revenu de remplacement cesse d'être versé » à l'allocataire qui a
     l'âge légal et la durée requise, et à celui qui atteint l'âge
-    d'annulation de la décote (L. 5421-4 du code du travail, depuis le
-    1er avril 1984 ; l'allocation spéciale du FNE de même). Une année de
-    chômage qui commence après (:func:`fin_indemnisation`) devient une année
-    sans activité : ni trimestre, ni point complémentaire, ni versement au
-    compte notionnel. L'année de la coupure reste entière, faute de savoir
-    quels mois la ligne couvre. Le modèle servait jusqu'au 3 octobre 2026
-    l'allocation jusqu'au départ, si tard qu'il vînt. Le chômage non indemnisé
-    qui peut suivre (R. 351-12, 4°, d, du code de la sécurité sociale) n'est
-    pas compté : ses trimestres ne changent rien à une pension déjà entière,
-    sinon au prorata du régime général d'un polypensionné.
+    d'annulation de la décote (L. 5421-4 du code du travail ; l'allocation
+    spéciale du FNE de même) ; « aucun droit ne peut donc être attribué pour
+    des périodes de chômage qui se sont prolongées après la fin de cette
+    indemnisation » (guide réglementaire Agirc-Arrco, VII.3.1.3.3). Une année
+    de chômage qui commence après la coupure (:func:`fin_indemnisation`)
+    devient une année sans activité : ni trimestre, ni point complémentaire,
+    ni versement au compte notionnel ; celle de la coupure s'arrête au mois
+    qui la précède quand elle couvre l'année entière, et reste entière sinon,
+    faute de savoir quels mois elle couvre. Le modèle servait jusqu'au
+    3 octobre 2026 l'allocation jusqu'au départ, si tard qu'il vînt. Le
+    chômage non indemnisé qui peut suivre (R. 351-12, 4°, d, du code de la
+    sécurité sociale) n'est pas compté : ses trimestres ne changent rien à une
+    pension déjà entière, sinon au prorata du régime général d'un
+    polypensionné.
 
-    Rendue telle quelle quand aucune année ne change.
+    Les années qu'un relevé de carrière porte ne bougent pas : ce que la
+    caisse a validé fait foi, comme pour le chômage non indemnisé. Rendue
+    telle quelle quand aucune année ne change.
     """
     chomage = charger_chomage_complementaires(moteur.macro.racine)
-    depuis = chomage.fin_indemnisation_depuis
-    if depuis is None:
-        return carriere
 
     def indemnisee(ligne) -> bool:
-        return (not ligne.cotise and ligne.annee >= depuis
+        return (not ligne.cotise
                 and chomage.nature(ligne.type_periode, ligne.annee) is not None)
 
     if carriere.age_liquidation is None or not any(
@@ -1105,18 +1117,35 @@ def indemnisation_bornee(moteur, carriere: Carriere) -> Carriere:
     coupure = fin_indemnisation(moteur, carriere)
     if coupure is None:
         return carriere
+    declarees = carriere.annees_declarees
 
     def bornee(ligne) -> bool:
-        return indemnisee(ligne) and DateMois(ligne.annee, 1).rang >= coupure.rang
+        return (indemnisee(ligne) and ligne.annee not in declarees
+                and DateMois(ligne.annee, 1).rang >= coupure.rang)
 
-    if not any(bornee(ligne) for ligne in carriere.lignes):
+    def coupee(ligne) -> bool:
+        return (indemnisee(ligne) and ligne.annee not in declarees
+                and ligne.annee == coupure.annee and coupure.mois > 1
+                and round(ligne.fraction_annee * MOIS_PAR_AN) == MOIS_PAR_AN)
+
+    if not any(bornee(ligne) or coupee(ligne) for ligne in carriere.lignes):
         return carriere
-    return carriere.avec_lignes([
-        replace(ligne, type_periode="sans_activite", trimestres_valides=0,
+    mois = coupure.mois - 1
+
+    def nouvelle(ligne):
+        if bornee(ligne):
+            return replace(
+                ligne, type_periode="sans_activite", trimestres_valides=0,
                 revenu_reference=0.0, familles_cotisantes=(), familles_financees=(),
                 reputes_cotises_enveloppe="", reputes_cotises_plafond=0)
-        if bornee(ligne) else ligne
-        for ligne in carriere.lignes])
+        if coupee(ligne):
+            return replace(
+                ligne, fraction_annee=mois / MOIS_PAR_AN,
+                revenu_reference=ligne.revenu_reference * mois / MOIS_PAR_AN,
+                trimestres_valides=min(ligne.trimestres_valides, trimestres_civils(mois)))
+        return ligne
+
+    return carriere.avec_lignes([nouvelle(ligne) for ligne in carriere.lignes])
 
 
 def periodes_opposant_une_duree(

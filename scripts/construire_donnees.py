@@ -1022,7 +1022,9 @@ def _chomage_complementaires() -> dict:
         "duree_minimale_jours": regles.duree_minimale_jours,
         "fne_plafond_salaire_reference": regles.fne_plafond_salaire_reference,
         "fne_plafond_depuis": regles.fne_plafond_depuis,
-        "fin_indemnisation_depuis": regles.fin_indemnisation_depuis,
+        "fin_indemnisation_duree_depuis": (
+            None if regles.fin_indemnisation_duree_depuis is None
+            else list(regles.fin_indemnisation_duree_depuis)),
         "solidarite_depuis": regles.solidarite_depuis,
         "solidarite_versement": regles.solidarite_versement,
         "solidarite_taux": {code: [taux, depuis]

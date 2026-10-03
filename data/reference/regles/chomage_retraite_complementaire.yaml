@@ -153,6 +153,26 @@ versions:
     lu_le: 2026-10-03
     empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
   - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII
+      (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl
+      du 21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
+    article: VII.3.1.6.2, 2, a
+    citation: >-
+      à l'Agirc, les bénéficiaires d'une convention du FNE « conclue antérieurement au 1er
+      avril 1984 [...] ont droit à l'inscription de points de retraite, dans les mêmes
+      conditions que les allocataires du régime d'assurance chômage » ; à l'Arrco, « Si
+      l'allocation de solidarité spécifique (ASS) est versée à la suite d'une rupture de
+      contrat de travail depuis le 1er juin 2000 ou si l'allocation spéciale du Fonds
+      national de l'emploi (ASFNE) est versée dans le cadre d'une convention FNE [...]
+      conclue depuis le 1er juin 2000, les droits ARRCO inscrits au titre de ces périodes
+      sont calculés sur la base du taux de 4 % », et avant « dans des conditions identiques
+      à celles applicables aux périodes de chômage indemnisées par l'UNÉDIC » ; l'AER qui
+      remplace l'ASS « se fait par reconduction à l'identique des conditions retenues »
+      pour elle (VII.3.1.6.1, 1, 3)
+    lu_le: 2026-10-03
+    empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
+  - reference: >-
       avenant n° 10 du 24 juillet 1992 au règlement annexé à la convention du 1er janvier
       1990 relative à l'assurance chômage, copie que publie le Medef (n° 452)
     article: article 52
@@ -172,13 +192,18 @@ versions:
       depuis le 1er avril 1984, 8 % sur la tranche B de l'Agirc (12 % pour une entreprise
       née après 1981, `agirc_entreprises_nouvelles`), sans garantie minimale de points ;
       4 % à l'Arrco, pour les ruptures postérieures au 31 mai 2000 — les taux
-      obligatoires avant —, le modèle prenant l'année pour la rupture (`points_depuis:
-      2001`)
+      obligatoires avant, même pour une allocation d'après —, le modèle prenant pour la
+      rupture le premier millésime du chômage qui précède l'ASS sans emploi
+      (`points_depuis: 2001`, `ChomageComplementaires.debuts`) ; l'AER, comme l'ASS
     preretraite_fne: >-
       les taux de la solidarité, assortis depuis 1989 de la garantie minimale de points à
       leur proportion — 8 % sur 16 % en valent la moitié — (`ValeursPoint.garantie`,
-      `taux_contractuel`) ; un salaire de référence borné à deux plafonds depuis 1998, le
-      modèle prenant l'année pour la date de la convention (`fne`)
+      `taux_contractuel`) ; un salaire de référence borné à deux plafonds pour une
+      convention conclue depuis le 5 mai 1997 ; les taux de l'assurance pour une
+      convention d'avant le 1er avril 1984 ; à l'Arrco, 4 % pour une convention du 1er juin
+      2000 ou d'après, les taux obligatoires avant. Le modèle date la convention du premier
+      millésime de la préretraite : deux plafonds dès 1998, l'assurance avant 1984, les
+      taux obligatoires de l'Arrco avant 2001 (`fne`, `solidarite`)
     borne: quatre plafonds de la sécurité sociale (`plafond_salaire_reference`)
     ircantec: les points d'une année travaillée, depuis le 1er août 1977
     salaries_agricoles: >-
@@ -251,7 +276,9 @@ versions:
     assurance: >-
       les points d'une année travaillée sur le salaire journalier de référence, aux taux
       de calcul des points de 6,20 % sur la tranche 1 et de 17 % sur la tranche 2
-    solidarite: le taux de calcul des points de 4 %, sur les deux tranches
+    solidarite: >-
+      le taux de calcul des points de 4 %, sur les deux tranches, quelle que soit la date de
+      la rupture ou de la convention (art. 61 et 62)
     borne: >-
       quatre plafonds de la sécurité sociale : la tranche 2 d'une année chômée s'arrête là,
       quand celle d'une année travaillée monte à huit
@@ -277,11 +304,14 @@ approximations:
   effet: non mesuré
 - version: assurance_et_solidarite_jusqu_en_2018
   ecart: >-
-    L'Arrco valide aux taux obligatoires la solidarité qui suit une rupture d'avant le 1er
-    juin 2000 : le modèle, qui ne connaît pas la date de la rupture, prend l'année de
-    l'allocation, et sert 4 % dès 2001. Il ne connaît pas non plus la date de la
-    convention de l'allocation spéciale du FNE, et borne à deux plafonds dès 1998 le
-    salaire de celles conclues depuis le 5 mai 1997. Le premier jour propre aux
+    Les lignes ne disent ni la date de la rupture, que l'Arrco regarde pour l'ASS, ni celle
+    de la convention de l'allocation spéciale du FNE. Le modèle prend la première au
+    premier millésime du chômage qui précède l'ASS sans emploi, et une rupture de 2000
+    pour antérieure au 1er juin ; la seconde au premier millésime de la préretraite. L'année
+    qui départage reste ambiguë : une préretraite commencée en 1984 prend les règles d'après
+    le 1er avril 1984, sa convention eût-elle été conclue avant ; une préretraite commencée
+    en 1997 garde quatre plafonds, et une préretraite ou une rupture de 2000 les taux
+    obligatoires de l'Arrco, leur date eût-elle été d'après. Le premier jour propre aux
     départements d'outre-mer (1er mars ou 1er septembre 1980) n'est pas porté : un
     salarié du régime général n'y dit pas où il travaille. La durée minimale de trente
     jours des périodes de 1967 à 1973 se lit sur la ligne, qui compte en mois : elle ne

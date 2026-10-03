@@ -537,7 +537,16 @@ export class ConstructeurCompte {
     // valide, et porte ce qu'un tiers a versé aux régimes réels, non le taux
     // commun : voir compte.py.
     const chomage = chomageComplementaires(this.macro.paquet);
-    const nature = ligne.cotise ? null : chomage.nature(ligne.type_periode, annee);
+    // La préretraite du FNE se lit à la date de sa convention : voir compte.py.
+    const debut = !ligne.cotise && chomage.motifs[ligne.type_periode] === "fne"
+      ? (chomage.debuts(carriere.lignes).get(`${annee}|${ligne.type_periode}`) ?? null)
+      : null;
+    const nature = ligne.cotise ? null : chomage.nature(ligne.type_periode, annee, debut);
+    const plafondFne = nature === "fne" ? chomage.plafondPreretraite(debut) : null;
+    if (plafondFne !== null) {
+      baseLigne = Math.min(baseLigne, plafondFne * part
+        * this.macro.plafond_securite_sociale.valeur(annee));
+    }
     const acquisitionCommune = this.parametres.source_cotisations
       === SourceCotisations.TAUX_UNIFORME && nature === null;
     const intervalles = new Map();

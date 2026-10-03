@@ -4545,3 +4545,33 @@ journal:
       La règle de l'allocation d'assurance d'avant le 1er avril 1984 ; le premier jour des
       départements d'outre-mer, que le modèle ne sait pas porter ; la date de la convention
       de l'allocation spéciale du FNE, que le modèle prend à l'année.
+  - date: "2026-10-03"
+    session: >-
+      la suite de l'action 141, close, à la demande du propriétaire : « fait des
+      recherches pour ce qui reste et corrige en fonction de ce que tu trouves »
+    consulte: >-
+      le guide réglementaire Agirc-Arrco de 2018, titre VII, relu dans sa capture Common
+      Crawl (empreinte sha256 aa8e7d7b…) : VII.3.1.3.1 à VII.3.1.7 ; l'accord du 17 novembre
+      2017, art. 59 à 63 (empreinte sha256 b8af8df7…) ; l'index JORF de 1979 à 1984 (loi
+      n° 83-580, décrets n° 83-714 et n° 84-344, arrêtés du 29 avril et du 8 novembre 1983) ;
+      l'index LEGI (code du travail, R. 351-3 et R. 351-40 de 1973) ; les incréments de la
+      DILA, toujours refusés.
+    trouve: >-
+      La coupure est plus ancienne que le modèle ne la datait : l'Unédic interrompt les
+      allocations « à partir du 01-04-1983 » à soixante ans pour qui a cent cinquante
+      trimestres, le décret n° 84-344 applique L. 351-19 à la même date, et l'âge de
+      soixante-cinq ans arrêtait avant les allocations et l'aide publique ; le guide
+      l'écrit pour les points (VII.3.1.3.3). L'ASFNE se lit à la date de sa convention :
+      d'avant le 1er avril 1984, les règles de l'assurance jusqu'au bout ; depuis le 5 mai
+      1997, deux plafonds ; à l'Arrco, 4 % depuis le 1er juin 2000. L'ASS, à l'Arrco, à la
+      date de la rupture du contrat, et non de l'allocation. Depuis 2019, l'accord ne pose
+      plus de date ; l'AER n'y figure pas, close aux nouveaux allocataires depuis 2011. Le
+      modèle prend désormais ces dates au premier millésime de la préretraite ou du
+      chômage, coupe à soixante-cinq ans de tout temps et à l'âge légal avec la durée
+      depuis le 1er avril 1983, arrête au mois qui la précède l'année entière de la
+      coupure, et laisse intactes les années qu'un relevé porte. Quatre témoins bougent.
+    reste: >-
+      Le décret n° 82-991 et les règlements de l'Unédic d'avant 1983, que l'index du champ
+      social ne porte pas ; le premier jour des départements d'outre-mer ; les catégories
+      dont le décret n° 83-714 maintient la garantie de ressources jusqu'à soixante-cinq
+      ans ; la date exacte de la rupture et de la convention, que les lignes ne disent pas.

@@ -1052,6 +1052,34 @@ def _cas() -> list[dict]:
         "naissance": "1950", "debut": "30", "liquidation": "67",
         "interruptions": "2008:2017:chomage_indemnise",
     }))
+    # Les dates que les lignes ne disent pas. La convention de la préretraite
+    # du FNE, prise à son premier millésime : d'avant le 1er avril 1984, elle
+    # vaut les taux de l'assurance jusqu'au bout ; d'avant 1998, quatre
+    # plafonds. La rupture qui précède l'ASS : d'avant le 1er juin 2000,
+    # l'Arrco valide aux taux obligatoires, même après 2000. Et la coupure :
+    # à soixante-cinq ans avant 1983, à l'âge légal avec la durée depuis le
+    # 1er avril 1983.
+    cas.append(("preretraite_fne_avant_1984", {
+        "statut": "salarie_prive_cadre", "salaire": "2", "naissance": "1926",
+        "debut": "18", "liquidation": "60",
+        "interruptions": "1982:1985:preretraite_fne",
+    }))
+    cas.append(("preretraite_fne_entree_en_1996", {
+        "statut": "salarie_prive_cadre", "salaire": "3", "naissance": "1939",
+        "liquidation": "60", "interruptions": "1996:1998:preretraite_fne",
+    }))
+    cas.append(("solidarite_apres_une_rupture_de_1998", {
+        "naissance": "1950", "liquidation": "60",
+        "interruptions": "1998:1999:chomage_indemnise, 2000:2009:chomage_solidarite",
+    }))
+    cas.append(("chomage_apres_65_ans_avant_1983", {
+        "naissance": "1912", "debut": "20", "liquidation": "67",
+        "interruptions": "1974:1979:chomage_indemnise",
+    }))
+    cas.append(("chomage_coupe_en_avril_1983", {
+        "naissance": "1921", "debut": "18", "liquidation": "65",
+        "interruptions": "1980:1986:chomage_indemnise",
+    }))
     # DEUX CASES QU'AUCUN CAS TYPE N'EXERÇAIT. Un fonctionnaire interrompu :
     # la pension de l'État se proratise sur les SERVICES, dont L. 9 écarte le
     # chômage. Et une carrière longue hachée : le départ anticipé compte la

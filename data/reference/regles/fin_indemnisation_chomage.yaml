@@ -1,9 +1,10 @@
 schema_version: 1
 id: fin_indemnisation_chomage
 intitule: >-
-  Le chômage cesse d'être indemnisé quand l'allocataire a l'âge légal et la durée requise
-  pour le taux plein, ou l'âge d'annulation de la décote : les années qui commencent après
-  ne valent ni trimestre assimilé, ni point complémentaire, ni versement au compte.
+  Le chômage cesse d'être indemnisé quand l'allocataire atteint l'âge d'annulation de la
+  décote, et depuis le 1er avril 1983 quand il a l'âge légal et la durée requise pour le
+  taux plein : les années qui commencent après ne valent ni trimestre assimilé, ni point
+  complémentaire, ni versement au compte.
 domaine: periodes_assimilees
 regimes: [regime_general, msa_salaries, arrco, arrco_tranche_2,
   arrco_tranche_2_entreprises_nouvelles, agirc, agirc_entreprises_nouvelles, agirc_arrco,
@@ -25,23 +26,66 @@ ecrit:
 dates_qui_decident:
 - revenu.annee
 versions:
-- id: sans_coupure_avant_1984
-  statut: supposee
-  hypothese: >-
-    Le modèle ne coupe pas l'indemnisation des années d'avant 1984 : la règle d'alors n'est
-    pas lue pour l'allocation d'assurance ; l'allocation spéciale du FNE était « servie
-    jusqu'à la liquidation des prestations de vieillesse et au plus tard jusqu'à soixante-
-    cinq ans et trois mois » (code du travail, R. 322-7, rédaction de 1973,
-    LEGIARTI000006809121).
-  fiabilite: basse
-  bornes:
-    revenu.annee: [null, 1984-04-01]
-  contenu:
-    droit: aucune coupure
-  exemples: aucun trouvé
-- id: taux_plein_depuis_1984
+- id: soixante_cinq_ans_jusqu_en_mars_1983
   statut: lue
   textes:
+  - id: LEGIARTI000006809675
+    reference: code du travail, article R. 351-3, rédaction du 23 novembre 1973
+    citation: >-
+      ne peuvent bénéficier des allocations d'aide publique « Les personnes âgées de plus de
+      soixante-cinq ans ou qui se trouvent privées de travail en raison de leur inaptitude
+      physique à l'exercice d'un emploi »
+    en_vigueur: 1973-11-23
+    lu_le: 2026-10-03
+  - id: LEGIARTI000006809121
+    reference: code du travail, article R. 322-7, rédaction du 23 novembre 1973
+    citation: >-
+      « L'allocation spéciale est servie jusqu'à la liquidation des prestations de
+      vieillesse et au plus tard jusqu'à soixante-cinq ans et trois mois. »
+    en_vigueur: 1973-11-23
+    lu_le: 2026-10-03
+  - id: JORFTEXT000000842986
+    reference: >-
+      arrêté du 29 avril 1983 portant agrément de la délibération n° 11-D prise à la suite
+      du décret n° 82-991 du 24 novembre 1982, lu dans le résumé analytique de l'index JORF
+    citation: >-
+      « détermination des jours à compter desquels l'âge de 65 ans peut être considéré
+      comme atteint pour interrompre le versement d'allocations du régime de chômage »
+    publie_le: 1983-05-10
+    lu_le: 2026-10-03
+  bornes:
+    revenu.annee: [null, 1983-04-01]
+  contenu:
+    coupure: >-
+      le premier mois où l'allocataire atteint l'âge d'annulation de la décote,
+      soixante-cinq ans pour ces générations (`droit.ouvrir.fin_indemnisation`)
+    effet: >-
+      une année de chômage qui commence à la coupure ou après devient une année sans
+      activité (`droit.ouvrir.indemnisation_bornee`)
+  exemples: aucun trouvé
+- id: taux_plein_depuis_avril_1983
+  statut: lue
+  textes:
+  - id: JORFTEXT000000842986
+    reference: >-
+      arrêté du 29 avril 1983 portant agrément de la délibération n° 11-D, lu dans le
+      résumé analytique de l'index JORF
+    citation: >-
+      « l'interruption du versement des allocations [...] à intervenir à partir du
+      01-04-1983 à l'égard d'intéressés atteignant leur 60ème anniversaire et justifiant de
+      150 trimestres validés au titre de l'assurance vieillesse »
+    publie_le: 1983-05-10
+    lu_le: 2026-10-03
+  - id: JORFTEXT000000336791
+    reference: >-
+      décret n° 84-344 du 7 mai 1984 pris pour l'application de l'article L. 351-19 du code
+      du travail, lu dans le résumé analytique de l'index JORF
+    citation: >-
+      « le revenu de remplacement (allocations d'assurance chômage ou allocations du régime
+      de solidarité) n'est plus versé aux allocataires atteignant 60 ans et justifiant de
+      150 trimestres d'assurance-vieillesse » ; « application à compter du 01-04-1983 »
+    publie_le: 1984-05-10
+    lu_le: 2026-10-03
   - id: LEGIARTI000006648973
     reference: code du travail, ancien article L. 351-19, rédaction du 1er avril 1984
     citation: >-
@@ -118,46 +162,70 @@ versions:
       être indemnisé par France Travail est fixé à 67 ans » ; l'allocation de solidarité
       spécifique est de celles qui s'interrompent
     lu_le: 2026-10-03
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII
+      (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl
+      du 21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
+    article: VII.3.1.3.3
+    citation: >-
+      « L'indemnisation par l'UNÉDIC cesse lorsque l'ancien salarié remplit les conditions
+      de durée d'assurance pour obtenir sa retraite de base à taux plein. Aucun droit ne
+      peut donc être attribué pour des périodes de chômage qui se sont prolongées après la
+      fin de cette indemnisation. »
+    lu_le: 2026-10-03
+    empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
   bornes:
-    revenu.annee: [1984-04-01, null]
+    revenu.annee: [1983-04-01, null]
   contenu:
     coupure: >-
       le premier mois où l'allocataire a l'âge légal et la durée requise — majoration pour
-      enfants comprise, atteinte au trimestre civil qui la complète —, ou l'âge
-      d'annulation de la décote, le plus tôt des deux (`droit.ouvrir.fin_indemnisation`)
+      enfants comprise, atteinte au trimestre civil qui la complète, jamais avant le 1er
+      avril 1983 (`duree_depuis`) —, ou l'âge d'annulation de la décote, le plus tôt des
+      deux (`droit.ouvrir.fin_indemnisation`)
     effet: >-
       une année de chômage qui commence à la coupure ou après devient une année sans
-      activité (`droit.ouvrir.indemnisation_bornee`) ; l'année de la coupure reste entière
+      activité, celle de la coupure s'arrête au mois qui la précède quand elle couvre
+      l'année entière (`droit.ouvrir.indemnisation_bornee`) ; les années qu'un relevé porte
+      ne bougent pas
     retraite_anticipee: >-
       le 3° ne coupe que la retraite prise, que la liquidation arrête de toute façon
   exemples: aucun trouvé
 approximations:
-- version: taux_plein_depuis_1984
+- version: [soixante_cinq_ans_jusqu_en_mars_1983, taux_plein_depuis_avril_1983]
   ecart: >-
-    L'année de la coupure reste entière : la ligne ne dit pas quels mois elle couvre, et le
-    modèle sert jusqu'à onze mois d'allocation que le droit ne verse plus. Le chômage non
-    indemnisé qui peut suivre (R. 351-12, 4°, d, du code de la sécurité sociale) n'est pas
-    compté : ses trimestres ne changent rien à une pension déjà entière, sinon au prorata du
-    régime général d'un polypensionné.
+    Une ligne de l'année de la coupure qui n'en couvre qu'une partie reste entière : elle ne
+    dit pas quels mois elle couvre, et le modèle peut servir jusqu'à onze mois d'allocation
+    que le droit ne verse plus. Le chômage non indemnisé qui peut suivre (R. 351-12, 4°, d,
+    du code de la sécurité sociale) n'est pas compté : ses trimestres ne changent rien à une
+    pension déjà entière, sinon au prorata du régime général d'un polypensionné.
   effet: non mesuré
-- version: taux_plein_depuis_1984
+- version: soixante_cinq_ans_jusqu_en_mars_1983
   ecart: >-
-    Le modèle coupe dès 1984 à l'âge d'annulation de la décote, que l'article L. 351-19 ne
-    cite qu'à compter du 4 janvier 1992 ; il lit la durée requise de la génération, quand
-    le texte disait cent cinquante trimestres jusqu'au 5 février 1995 ; et l'âge légal est
-    le plus bas des régimes que la carrière traverse, comme pour le taux plein, quand le
-    texte vise celui de L. 161-17-2. L'allocation complémentaire que l'État versait sous
-    condition de ressources à qui n'avait pas cent cinquante trimestres dans ses régimes de
-    base n'ouvrait pas de droits à pension : le modèle n'en sert pas non plus.
+    La règle des allocations de l'Unédic d'avant le décret n° 82-991 n'est pas lue : le
+    modèle leur prend l'âge de soixante-cinq ans, celui de l'aide publique et de la
+    délibération de 1983 ; l'allocation spéciale du FNE courait jusqu'à soixante-cinq ans et
+    trois mois.
+  effet: non mesuré
+- version: taux_plein_depuis_avril_1983
+  ecart: >-
+    Le modèle lit la durée requise de la génération, quand les textes disaient cent
+    cinquante trimestres jusqu'au 5 février 1995 ; l'âge légal est le plus bas des régimes
+    que la carrière traverse, comme pour le taux plein, quand le texte vise celui de
+    L. 161-17-2. Les allocataires de la garantie de ressources dont le décret n° 83-714 du
+    2 août 1983 maintient les droits la gardent jusqu'à soixante-cinq ans : le modèle ne
+    les distingue pas. L'allocation complémentaire que l'État versait sous condition de
+    ressources à qui n'avait pas cent cinquante trimestres dans ses régimes de base
+    n'ouvrait pas de droits à pension : le modèle n'en sert pas non plus.
   effet: non mesuré
 sources:
   lu_le: 2026-10-03
   prochaine_relecture: 2027-10-01
   a_relire:
   - >-
-    Lire la règle de l'allocation d'assurance d'avant le 1er avril 1984 — la garantie de
-    ressources, servie de soixante à soixante-cinq ans —, et celle des allocations de
-    solidarité, l'allocation équivalent retraite comprise.
+    Lire le décret n° 82-991 du 24 novembre 1982 et les règlements de l'Unédic d'avant, que
+    l'index du champ social ne porte pas, pour la limite d'âge des allocations d'assurance
+    de 1967 à 1983.
 code:
   python:
   - droit/ouvrir.py, fin_indemnisation et indemnisation_bornee
@@ -170,8 +238,10 @@ code:
   parametres:
   - legislation/chomage_complementaires.yaml (`fin_indemnisation`)
   tests:
-  - tests/test_chomage_complementaires.py, test_l_indemnisation_cesse_au_taux_plein
-  - témoins chomage_au_dela_du_taux_plein, chomage_jusqu_a_l_annulation
+  - tests/test_chomage_complementaires.py, test_l_indemnisation_cesse_au_taux_plein,
+    test_la_coupure_d_avant_1984, test_la_coupure_respecte_le_releve
+  - témoins chomage_au_dela_du_taux_plein, chomage_jusqu_a_l_annulation,
+    chomage_apres_65_ans_avant_1983, chomage_coupe_en_avril_1983
 effet: >-
   Les carrières qui finissent au chômage après le taux plein : jusqu'au 3 octobre 2026, le
   modèle servait l'allocation jusqu'au départ, si tard qu'il vînt, et avec elle des points

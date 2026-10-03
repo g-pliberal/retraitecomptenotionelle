@@ -218,6 +218,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
   const derniereAnneeParRegime = new Map();
   // Le chômage aux régimes complémentaires : voir acquerir.py.
   const chomage = chomageComplementaires(moteur.macro.paquet);
+  // La date que les lignes ne disent pas : convention ou rupture.
+  const debuts = chomage.debuts(carriere.lignes);
   carriere.lignes.forEach((ligne, i) => {
     // Une ligne postérieure à la liquidation décrit une activité exercée
     // APRÈS le départ : elle n'ouvre pas de droits dans la pension qu'on
@@ -239,9 +241,17 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
     const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
     // Assurance (l'Unédic), solidarité ou préretraite du FNE (l'État) ;
     // `null` pour le reste. Trente jours au moins jusqu'en 1973.
-    const nature = ligne.cotise ? null : chomage.nature(ligne.type_periode, ligne.annee);
+    const debut = debuts.get(`${ligne.annee}|${ligne.type_periode}`) ?? null;
+    const nature = ligne.cotise ? null : chomage.nature(ligne.type_periode, ligne.annee, debut);
     if (nature !== null && !chomage.assezLong(ligne.annee, part)) {
       return;
+    }
+    // Deux plafonds pour la préretraite d'une convention conclue depuis le
+    // 5 mai 1997.
+    const plafondFne = nature === "fne" ? chomage.plafondPreretraite(debut) : null;
+    if (plafondFne !== null) {
+      baseLigne = Math.min(baseLigne, plafondFne * part
+        * moteur.macro.plafond_securite_sociale.valeur(ligne.annee));
     }
     for (const code of coordination.regimes[i]) {
       if (!moteur.catalogue.contient(code)) {
@@ -457,7 +467,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           // minimale ; l'allocation du FNE, avec la garantie de son taux :
           // voir acquerir.py.
           const tauxSolidarite = nature === "solidarite" || nature === "fne"
-            ? chomage.tauxSolidarite(code, ligne.annee, true) : null;
+            ? chomage.tauxSolidarite(code, ligne.annee, true, debut) : null;
           let pointsAnnee = tauxSolidarite === null
             ? cotisation / (tauxAppel * reference)
             : assiette * tauxSolidarite / reference;

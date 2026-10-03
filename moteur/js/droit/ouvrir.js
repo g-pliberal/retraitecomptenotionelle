@@ -12,7 +12,7 @@
  * `ageTauxPleinDroit` sont ce que le pilote en lit, sans rien liquider.
  */
 
-import { DateMois, enMois } from "../calendrier.js";
+import { DateMois, MOIS_PAR_AN, enMois, trimestresCivils } from "../calendrier.js";
 import { AnneeCarriere, chomageComplementaires } from "../carriere.js";
 import {
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
@@ -901,13 +901,15 @@ export function ageTauxPleinDroit(moteur, carriereSaisie) {
 }
 
 /**
- * Le premier mois sans revenu de remplacement du chômage : l'âge légal et la
- * durée requise pour le taux plein, ou l'âge d'annulation de la décote
- * (L. 5421-4 du code du travail) ; `null` pour une carrière qu'aucun régime
- * n'ouvre. La durée se lit année par année, au trimestre civil qui la
- * complète. Voir `fin_indemnisation` (ouvrir.py).
+ * Le premier mois sans revenu de remplacement du chômage : l'âge
+ * d'annulation de la décote, de tout temps, ou, depuis le 1er avril 1983,
+ * l'âge légal et la durée requise pour le taux plein (L. 5421-4 du code du
+ * travail) ; `null` pour une carrière qu'aucun régime n'ouvre. La durée se lit
+ * année par année, au trimestre civil qui la complète. Voir
+ * `fin_indemnisation` (ouvrir.py).
  */
 export function finIndemnisation(moteur, carriereSaisie) {
+  const chomage = chomageComplementaires(moteur.macro.paquet);
   const carriere = coordonner.retablir(moteur, carriereSaisie);
   const { annuites, autres: enPoints } = periodesParcourues(moteur, carriere);
   const autres = sansAgesPropres(enPoints);
@@ -915,6 +917,13 @@ export function finIndemnisation(moteur, carriereSaisie) {
   if (retenues.length === 0) {
     return null;
   }
+  const annulation = carriere.dateDeLAge(Math.min(
+    ...retenues.map(([, periode]) => ageTauxPlein(moteur, periode, carriere)),
+  ));
+  if (chomage.finIndemnisationDureeDepuis === null) {
+    return annulation;
+  }
+  const depuis = new DateMois(...chomage.finIndemnisationDureeDepuis);
   const ouverture = carriere.dateDeLAge(Math.min(
     ...retenues.map(([, periode]) => ageOuverture(moteur, periode, carriere)),
   ));
@@ -923,51 +932,52 @@ export function finIndemnisation(moteur, carriereSaisie) {
   for (const [, periode] of opposent) {
     requis = Math.max(requis, dureeRequise(moteur, periode, carriere)[0]);
   }
-  if (!requis) {
-    return ouverture;
-  }
-  const annulation = carriere.dateDeLAge(Math.min(
-    ...retenues.map(([, periode]) => ageTauxPlein(moteur, periode, carriere)),
-  ));
-  const anneeLiquidation = carriere.anneeLiquidation;
-  const parAnnee = carriere.trimestresParAnnee(
-    carriere.lignes.filter((ligne) => ligne.annee <= anneeLiquidation),
-  );
-  let acquis = 0;
-  for (const trimestres of parAnnee.values()) {
-    acquis += trimestres;
-  }
-  const majoration = compter.majorationPourEnfants(moteur,
-    carriere, new Map(opposent.map(([code]) => [code, acquis])), anneeLiquidation,
-  );
-  const manque = requis - (majoration !== null ? majoration.trimestres : 0);
-  let cumul = 0;
-  for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
-    const trimestres = parAnnee.get(annee);
-    if (cumul + trimestres >= manque) {
-      const atteinte = new DateMois(annee, 1).plusMois(3 * Math.max(0, manque - cumul));
-      const duree = atteinte.rang > ouverture.rang ? atteinte : ouverture;
-      return duree.rang < annulation.rang ? duree : annulation;
+  let atteinte = new DateMois(1, 1);
+  if (requis) {
+    const anneeLiquidation = carriere.anneeLiquidation;
+    const parAnnee = carriere.trimestresParAnnee(
+      carriere.lignes.filter((ligne) => ligne.annee <= anneeLiquidation),
+    );
+    let acquis = 0;
+    for (const trimestres of parAnnee.values()) {
+      acquis += trimestres;
     }
-    cumul += trimestres;
+    const majoration = compter.majorationPourEnfants(moteur,
+      carriere, new Map(opposent.map(([code]) => [code, acquis])), anneeLiquidation,
+    );
+    const manque = requis - (majoration !== null ? majoration.trimestres : 0);
+    atteinte = null;
+    let cumul = 0;
+    for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
+      const trimestres = parAnnee.get(annee);
+      if (cumul + trimestres >= manque) {
+        atteinte = new DateMois(annee, 1).plusMois(3 * Math.max(0, manque - cumul));
+        break;
+      }
+      cumul += trimestres;
+    }
   }
-  return annulation;
+  if (atteinte === null) {
+    return annulation;
+  }
+  let duree = ouverture;
+  for (const date of [atteinte, depuis]) {
+    if (date.rang > duree.rang) duree = date;
+  }
+  return duree.rang < annulation.rang ? duree : annulation;
 }
 
 /**
  * La carrière dont le chômage cesse d'être indemnisé au taux plein : une
  * année de chômage qui commence après {@link finIndemnisation} devient une
- * année sans activité, l'année de la coupure restant entière. Rendue telle
- * quelle quand aucune année ne change. Voir `indemnisation_bornee`
- * (ouvrir.py).
+ * année sans activité ; celle de la coupure s'arrête au mois qui la précède
+ * quand elle couvre l'année entière, et reste entière sinon. Les années
+ * qu'un relevé porte ne bougent pas. Rendue telle quelle quand aucune année
+ * ne change. Voir `indemnisation_bornee` (ouvrir.py).
  */
 export function indemnisationBornee(moteur, carriere) {
   const chomage = chomageComplementaires(moteur.macro.paquet);
-  const depuis = chomage.finIndemnisationDepuis;
-  if (depuis === null) {
-    return carriere;
-  }
-  const indemnisee = (ligne) => !ligne.cotise && ligne.annee >= depuis
+  const indemnisee = (ligne) => !ligne.cotise
     && chomage.nature(ligne.type_periode, ligne.annee) !== null;
   if (carriere.age_liquidation === null || !carriere.lignes.some(indemnisee)) {
     return carriere;
@@ -976,18 +986,33 @@ export function indemnisationBornee(moteur, carriere) {
   if (coupure === null) {
     return carriere;
   }
-  const bornee = (ligne) => indemnisee(ligne)
+  const declarees = carriere.anneesDeclarees;
+  const bornee = (ligne) => indemnisee(ligne) && !declarees.has(ligne.annee)
     && new DateMois(ligne.annee, 1).rang >= coupure.rang;
-  if (!carriere.lignes.some(bornee)) {
+  const coupee = (ligne) => indemnisee(ligne) && !declarees.has(ligne.annee)
+    && ligne.annee === coupure.annee && coupure.mois > 1
+    && Math.round(ligne.fraction_annee * MOIS_PAR_AN) === MOIS_PAR_AN;
+  if (!carriere.lignes.some((ligne) => bornee(ligne) || coupee(ligne))) {
     return carriere;
   }
-  return carriere.avecLignes(carriere.lignes.map((ligne) => (bornee(ligne)
-    ? new AnneeCarriere({
-      ...ligne, type_periode: "sans_activite", trimestres_valides: 0,
-      revenu_reference: 0.0, familles_cotisantes: [], familles_financees: [],
-      reputes_cotises_enveloppe: "", reputes_cotises_plafond: 0,
-    })
-    : ligne)));
+  const mois = coupure.mois - 1;
+  return carriere.avecLignes(carriere.lignes.map((ligne) => {
+    if (bornee(ligne)) {
+      return new AnneeCarriere({
+        ...ligne, type_periode: "sans_activite", trimestres_valides: 0,
+        revenu_reference: 0.0, familles_cotisantes: [], familles_financees: [],
+        reputes_cotises_enveloppe: "", reputes_cotises_plafond: 0,
+      });
+    }
+    if (coupee(ligne)) {
+      return new AnneeCarriere({
+        ...ligne, fraction_annee: mois / MOIS_PAR_AN,
+        revenu_reference: ligne.revenu_reference * mois / MOIS_PAR_AN,
+        trimestres_valides: Math.min(ligne.trimestres_valides, trimestresCivils(mois)),
+      });
+    }
+    return ligne;
+  }));
 }
 
 /**

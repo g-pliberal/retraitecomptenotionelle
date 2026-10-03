@@ -65,7 +65,10 @@
 #   (R. 351-12, 4°, c, qui vise le 2° de L. 5123-2 du code du travail « dans
 #   sa rédaction antérieure au 1er janvier 2012 », LEGIARTI000054167657) ; les
 #   points de la solidarité, garantie minimale de points comprise, sur un
-#   salaire borné à deux plafonds. Les trois motifs de chômage partagent
+#   salaire borné à deux plafonds pour une convention conclue depuis le 5 mai
+#   1997, ceux de l'assurance pour une convention d'avant le 1er avril 1984 —
+#   le modèle date la convention du premier millésime de la préretraite
+#   (`chomage_complementaires.yaml`). Les trois motifs de chômage partagent
 #   l'enveloppe des trimestres réputés cotisés (D. 351-1-2, 3°, qui reprend
 #   le c du 4° de R. 351-12).
 #

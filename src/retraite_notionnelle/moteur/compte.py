@@ -668,7 +668,18 @@ class ConstructeurCompte:
         # ce qu'un tiers a versé aux régimes réels — l'Unédic, l'État —, et non
         # le taux commun, que personne n'a versé pour elle.
         chomage = charger_chomage_complementaires(self.macro.racine)
-        nature = None if ligne.cotise else chomage.nature(ligne.type_periode, annee)
+        # La préretraite du FNE se lit à la date de sa convention : d'avant le
+        # 1er avril 1984, de l'assurance ; depuis le 5 mai 1997, sur deux
+        # plafonds, la part que l'État finance (`droit.acquerir`).
+        debut = (chomage.debuts(carriere.lignes).get((annee, ligne.type_periode))
+                 if not ligne.cotise
+                 and dict(chomage.motifs).get(ligne.type_periode) == "fne" else None)
+        nature = (None if ligne.cotise
+                  else chomage.nature(ligne.type_periode, annee, debut))
+        plafond_fne = chomage.plafond_preretraite(debut) if nature == "fne" else None
+        if plafond_fne is not None:
+            base_ligne = min(base_ligne, plafond_fne * part
+                             * self.macro.plafond_securite_sociale(annee))
         acquisition_commune = (
             self.parametres.source_cotisations is SourceCotisations.TAUX_UNIFORME
             and nature is None

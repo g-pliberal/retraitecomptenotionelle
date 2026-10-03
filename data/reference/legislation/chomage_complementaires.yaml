@@ -12,9 +12,10 @@ schema_version: 1
 # ressources), ou la SOLIDARITÉ, que l'État finance (allocation de solidarité
 # spécifique, allocation équivalent retraite), ou la PRÉRETRAITE du Fonds
 # national de l'emploi (allocation spéciale du FNE), que l'État finance aussi,
-# aux mêmes taux que la solidarité, mais garantie minimale comprise et sur un
-# salaire de référence borné à deux plafonds (guide réglementaire, titre
-# VII.3.1.6.1 et VII.3.1.6.2, 2, a).
+# aux mêmes taux que la solidarité pour une convention conclue depuis le 1er
+# avril 1984, mais garantie minimale comprise et sur un salaire de référence
+# borné à deux plafonds pour une convention conclue depuis le 5 mai 1997
+# (guide réglementaire, titre VII.3.1.6.1 et VII.3.1.6.2, 2, a).
 motifs:
   chomage_indemnise: assurance
   chomage_solidarite: solidarite
@@ -74,9 +75,14 @@ duree_minimale:
 # après 1981 (annexe I, art. 8 bis, § 4 à 6 et 9), pour les périodes
 # « postérieures au 31 mars 1984 », sans garantie minimale de points, que le
 # guide ne donne qu'à l'allocation spéciale du FNE (VII.3.1.6.2, 2, a).
-# L'Arrco validait aux taux obligatoires les ruptures de contrat d'avant le
-# 1er juin 2000 : le modèle, qui ne connaît pas la date de la rupture, prend
-# celle de l'année (`points_depuis`). L'État finance ces taux, et ces taux
+# L'Arrco validait aux taux obligatoires l'ASS qui suit une rupture de contrat
+# d'avant le 1er juin 2000, et l'allocation spéciale du FNE d'une convention
+# d'avant cette date, quelle que soit l'année de l'allocation (guide,
+# VII.3.1.6.2, 2, a, Arrco) : le modèle prend pour l'une le premier millésime
+# du chômage qui précède l'ASS sans emploi, pour l'autre le premier millésime
+# de la préretraite, et une rupture de 2000 pour antérieure au 1er juin
+# (`points_depuis`). Depuis 2019, l'accord du 17 novembre 2017 ne pose plus de
+# date (art. 61 et 62). L'État finance ces taux, et ces taux
 # seuls : il verse 70 % des cotisations ainsi calculées depuis 1999, et a
 # remboursé celles d'avant (Sénat, rapport n° 382, 2000-2001) — le compte
 # notionnel en porte 70 % pour toute année de solidarité, comme les 60 % de
@@ -98,9 +104,11 @@ solidarite:
 # plafonds de la Sécurité sociale » pour les conventions conclues à compter du
 # 5 mai 1997 (décret n° 97-438 du 30 avril 1997 ; guide, VII.3.1.6.1 et
 # VII.3.1.6.2, 2, a, 4) — le modèle, qui ne connaît pas la date de la
-# convention, borne à deux plafonds les années 1998 et suivantes. Ses taux,
-# ceux de la solidarité, « doivent s'entendre, depuis 1989, assortis de la GMP
-# (garantie minimale de points) correspondante ».
+# convention, la prend au premier millésime de la préretraite, et borne à deux
+# plafonds la préretraite commencée en 1998 ou après, toutes ses années. Ses
+# taux, ceux de la solidarité, « doivent s'entendre, depuis 1989, assortis de
+# la GMP (garantie minimale de points) correspondante » ; ceux d'une
+# convention d'avant le 1er avril 1984 sont ceux de l'assurance (2).
 fne:
   plafond_salaire_reference: 2
   plafond_depuis: 1998
@@ -118,12 +126,20 @@ fne:
 # (rédaction de 1995, LEGIARTI000006648975) ; l'allocation spéciale du FNE de
 # même, « interrompu[e] lorsque, à partir de leur soixantième anniversaire, ils
 # justifient de 150 trimestres validés » (décret n° 84-295 du 20 avril 1984,
-# art. 5, LEGIARTI000006662816). Le modèle coupe au mois où l'allocataire a
-# l'âge légal et la durée requise, ou l'âge d'annulation de la décote : les
-# années de chômage qui commencent après ne valent plus rien, ni trimestre,
-# ni point, ni versement au compte.
+# art. 5, LEGIARTI000006662816). Le décret n° 84-344 du 7 mai 1984 applique la
+# règle « à compter du 01-04-1983 », et l'Unédic interrompait déjà les
+# allocations « à partir du 01-04-1983 à l'égard d'intéressés atteignant leur
+# 60ème anniversaire et justifiant de 150 trimestres » (arrêté du 29 avril 1983
+# agréant la délibération n° 11-D, JORFTEXT000000842986), à côté de l'âge de
+# 65 ans, qui les arrêtait avant : l'aide publique excluait « les personnes
+# âgées de plus de soixante-cinq ans » (code du travail, R. 351-3, 1973,
+# LEGIARTI000006809675). Le modèle coupe au mois où l'allocataire a l'âge
+# d'annulation de la décote, de tout temps, ou l'âge légal et la durée requise,
+# depuis le 1er avril 1983 (`duree_depuis`) : les années de chômage qui
+# commencent après ne valent plus rien, ni trimestre, ni point, ni versement au
+# compte, sauf celles qu'un relevé porte.
 fin_indemnisation:
-  depuis: 1984
+  duree_depuis: 1983-04-01
 
 # CE QUE L'UNÉDIC VERSE pour une année d'assurance : des cotisations « assises
 # sur 60 % » du salaire de référence, au taux d'appel (accords de financement

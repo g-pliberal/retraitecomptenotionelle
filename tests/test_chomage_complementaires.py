@@ -70,6 +70,9 @@ def test_les_regles_du_chomage_se_lisent(regles):
     # juin 2000, que l'État finance pourtant à 4 %.
     assert regles.taux_solidarite("arrco", 1995, points=True) is None
     assert regles.taux_solidarite("arrco", 1995, points=False) == 0.04
+    # La date de la rupture décide, non l'année de l'allocation.
+    assert regles.taux_solidarite("arrco", 2003, points=True, rupture=1998) is None
+    assert regles.taux_solidarite("arrco", 2003, points=True, rupture=2001) == 0.04
     assert regles.taux_solidarite("agirc", 1990, points=True) == 0.08
     assert regles.taux_solidarite("agirc_entreprises_nouvelles", 1990, points=True) == 0.12
     assert regles.taux_solidarite("agirc_arrco", 2021, points=True) == 0.04
@@ -179,29 +182,47 @@ def test_les_regles_de_la_preretraite_et_des_agricoles_se_lisent(regles):
     depuis 1984."""
     assert regles.nature("preretraite_fne", 1990) == "fne"
     assert regles.nature("preretraite_fne", 1983) == "assurance"
-    assert regles.plafond_reference("fne", 1997) == 4
-    assert regles.plafond_reference("fne", 1998) == 2
-    assert regles.plafond_reference("solidarite", 1998) == 4
+    # La convention décide, non l'année : une préretraite commencée en 1982
+    # garde les taux de l'assurance après 1984.
+    assert regles.nature("preretraite_fne", 1986, debut=1982) == "assurance"
+    assert regles.nature("preretraite_fne", 1986, debut=1985) == "fne"
+    assert regles.plafond_preretraite(1997) is None
+    assert regles.plafond_preretraite(1998) == 2
     assert [regles.part_validee("arrco", a, "salarie_agricole")
             for a in (1973, 1974, 1975)] == [0.0, 0.75, 1.0]
     assert regles.part_validee("arrco", 1973, "salarie_prive_non_cadre") == 1.0
     assert not regles.assez_long(1970, 29 / 365)
     assert regles.assez_long(1970, 1 / 12)
     assert regles.assez_long(1974, 1 / 365)
-    assert regles.fin_indemnisation_depuis == 1984
+    assert regles.fin_indemnisation_duree_depuis == (1983, 4)
 
 
 def test_la_preretraite_du_fne_a_deux_plafonds_et_sa_garantie(simulateur):
     """L'allocation spéciale du FNE : un salaire de référence borné à deux
-    plafonds depuis 1998, les points de 8 % sur la tranche B de l'Agirc, et la
-    garantie minimale de points à la même proportion — 60 points en 2005 quand
-    le forfait en achète 120 à 16 % (guide réglementaire, VII.3.1.6.2)."""
-    carriere = _carriere(simulateur, {1997: "preretraite_fne", 1998: "preretraite_fne"},
-                         niveau=3.0, naissance=1940)
-    assert _ligne(carriere, 1997).revenu_reference > (
-        2.5 * simulateur.macro.plafond_securite_sociale(1997))
-    assert _ligne(carriere, 1998).revenu_reference == pytest.approx(
-        2 * simulateur.macro.plafond_securite_sociale(1998))
+    plafonds pour une convention conclue depuis le 5 mai 1997, que le modèle
+    date du premier millésime de la préretraite, les points de 8 % sur la
+    tranche B de l'Agirc, et la garantie minimale de points à la même
+    proportion — 60 points en 2005 quand le forfait en achète 120 à 16 %
+    (guide réglementaire, VII.3.1.6.2)."""
+    def agirc(motif):
+        return _points(simulateur, "agirc", {1998: motif}, niveau=3.0, naissance=1940)
+
+    carriere = _carriere(simulateur, {1998: "preretraite_fne"}, niveau=3.0, naissance=1940)
+    plafond = simulateur.macro.plafond_securite_sociale(1998)
+    revenu = _ligne(carriere, 1998).revenu_reference
+    assert revenu > 2.5 * plafond
+    # Sur la tranche B, l'ASS vaut 8 % de ce qui dépasse le plafond, la
+    # préretraite de 1998 8 % d'un seul plafond.
+    sans = agirc("sans_activite")
+    assert (agirc("preretraite_fne") - sans) / (agirc("chomage_solidarite") - sans) == (
+        pytest.approx(plafond / (revenu - plafond), abs=1e-4))
+    # Entrée en préretraite en 1997, la convention est d'avant le 5 mai 1997 :
+    # quatre plafonds, comme l'ASS.
+    entree_1997 = _points(simulateur, "agirc", {1997: "preretraite_fne", 1998: "preretraite_fne"},
+                          niveau=3.0, naissance=1940)
+    ass_1997 = _points(simulateur, "agirc", {1997: "preretraite_fne", 1998: "chomage_solidarite"},
+                       niveau=3.0, naissance=1940)
+    assert entree_1997 == pytest.approx(ass_1997, abs=0.02)
     garantie = {"niveau": 0.8, "naissance": 1975}
     sans = _points(simulateur, "agirc", {2005: "sans_activite"}, **garantie)
     assurance = _points(simulateur, "agirc", {2005: "chomage_indemnise"}, **garantie)
@@ -298,6 +319,9 @@ def test_l_indemnisation_cesse_au_taux_plein(simulateur):
     assert {l.annee: l.type_periode for l in bornee.lignes if l.annee >= 2020} == {
         2020: "chomage_indemnise", 2021: "sans_activite", 2022: "sans_activite",
         2023: "sans_activite", 2024: "sans_activite"}
+    # L'année de la coupure, entière, s'arrête au mois qui la précède.
+    (coupee,) = [l for l in bornee.lignes if l.annee == coupure.annee]
+    assert round(coupee.fraction_annee * 12) == coupure.mois - 1
     sans = carriere({**{a: "chomage_indemnise" for a in range(2016, 2021)},
                      **{a: "sans_activite" for a in range(2021, 2025)}})
     assert moteur.calculer(chomee).pension_annuelle == pytest.approx(
@@ -309,3 +333,87 @@ def test_l_indemnisation_cesse_au_taux_plein(simulateur):
     # Une carrière sans chômage au-delà reste la même.
     jeune = carriere({2000: "chomage_indemnise"})
     assert indemnisation_bornee(moteur, jeune) is jeune
+
+
+def test_la_coupure_d_avant_1984(simulateur):
+    """Avant le 1er avril 1983, l'indemnisation cessait à soixante-cinq ans :
+    l'aide publique excluait « les personnes âgées de plus de soixante-cinq
+    ans » (code du travail, R. 351-3, 1973). Depuis, à soixante ans pour qui a
+    cent cinquante trimestres : l'Unédic les interrompt « à partir du
+    01-04-1983 » (arrêté du 29 avril 1983), le décret n° 84-344 applique
+    L. 351-19 « à compter du 01-04-1983 »."""
+    from retraite_notionnelle.calendrier import DateMois
+    from retraite_notionnelle.droit.ouvrir import fin_indemnisation
+
+    def carriere(naissance, annees, depart):
+        return simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H", affiliation="salarie_prive_non_cadre",
+            mois_naissance=1, age_debut=18, age_liquidation=depart, niveau_salaire=1.0,
+            profil_carriere="plat",
+            interruptions={a: "chomage_indemnise" for a in annees})
+
+    moteur = simulateur.scenario_actuel
+    ancien = carriere(1912, range(1974, 1980), 67)
+    assert ancien.age_au(fin_indemnisation(moteur, ancien)) == 65
+    # Soixante ans en 1981 et la durée : la coupure attend le 1er avril 1983.
+    assert fin_indemnisation(moteur, carriere(1921, range(1980, 1987), 65)) == DateMois(1983, 4)
+
+
+def test_l_arrco_suit_la_date_de_la_rupture(simulateur):
+    """L'Arrco valide aux taux obligatoires l'ASS qui suit une rupture d'avant
+    le 1er juin 2000, quelle que soit l'année de l'allocation, et à 4 % celle
+    qui suit une rupture d'après (guide, VII.3.1.6.2, 2, a) : le modèle prend
+    la rupture au premier millésime du chômage qui précède l'ASS sans
+    emploi."""
+    def arrco(interruptions):
+        return _points(simulateur, "arrco", interruptions, naissance=1950)
+
+    rupture_1998 = {1998: "chomage_indemnise", 1999: "chomage_indemnise",
+                    **{a: "chomage_solidarite" for a in range(2000, 2005)}}
+    assurance = {a: "chomage_indemnise" for a in range(1998, 2005)}
+    assert arrco(rupture_1998) == pytest.approx(arrco(assurance), abs=0.02)
+    rupture_2001 = {2001: "chomage_indemnise", 2002: "chomage_indemnise",
+                    2003: "chomage_solidarite", 2004: "chomage_solidarite"}
+    assurance_2001 = {a: "chomage_indemnise" for a in range(2001, 2005)}
+    assert arrco(rupture_2001) < arrco(assurance_2001) - 1
+
+
+def test_la_preretraite_d_avant_1984_garde_les_regles_de_l_assurance(simulateur, regles):
+    """Une convention du FNE conclue avant le 1er avril 1984 vaut des points
+    « dans les mêmes conditions que les allocataires du régime d'assurance
+    chômage » (guide, VII.3.1.6.2, 2, a), même pour les années d'après 1984 :
+    le compte en porte ce que l'assurance versait. Une convention de 1984, ce
+    que l'État verse, à ses taux. Le taux minimal de l'Agirc, de 8 % jusqu'en
+    1994, rend les points égaux : c'est le versement qui les sépare."""
+    avant = _carriere(simulateur, {a: "preretraite_fne" for a in range(1982, 1986)},
+                      naissance=1926)
+    debut = regles.debuts(avant.lignes)[(1985, "preretraite_fne")]
+    assert debut == 1982
+    assert regles.nature("preretraite_fne", 1985, debut) == "assurance"
+    assurance = _carriere(simulateur, {a: "chomage_indemnise" for a in range(1982, 1986)},
+                          naissance=1926)
+    apres = _carriere(simulateur, {a: "preretraite_fne" for a in range(1984, 1986)},
+                      naissance=1926)
+
+    def verse(carriere):
+        return _compte(simulateur, carriere, 1985, PartCotisation.TOTALE).cotisation
+
+    assert verse(avant) == pytest.approx(verse(assurance))
+    assert verse(apres) < verse(assurance) - 1
+
+
+def test_la_coupure_respecte_le_releve(simulateur):
+    """Un relevé de carrière qui porte des trimestres de chômage après le
+    taux plein fait foi : la caisse les a validés, l'indemnisation a donc
+    couru, et le modèle n'y retouche pas."""
+    from retraite_notionnelle.carriere import Carriere, LigneRelevee
+    from retraite_notionnelle.droit.ouvrir import indemnisation_bornee
+
+    releve = ([LigneRelevee(a, "salarie_prive_cadre", 40000.0, 4) for a in range(1978, 2016)]
+              + [LigneRelevee(a, "salarie_prive_cadre", 40000.0, 4, "chomage_indemnise")
+                 for a in range(2016, 2024)])
+    carriere = Carriere.depuis_releve(
+        annee_naissance=1958, sexe="H", releve=releve, age_liquidation=66,
+        macro=simulateur.macro)
+    assert carriere.annees_declarees >= set(range(2016, 2024))
+    assert indemnisation_bornee(simulateur.scenario_actuel, carriere) is carriere

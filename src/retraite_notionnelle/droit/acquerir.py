@@ -295,6 +295,9 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
     # Le chômage aux régimes complémentaires : borne, premier jour validé,
     # taux de la solidarité (`legislation/chomage_complementaires.yaml`).
     chomage = charger_chomage_complementaires(moteur.macro.racine)
+    # La date que les lignes ne disent pas : celle de la convention d'une
+    # préretraite du FNE, celle de la rupture qui précède une ASS.
+    debuts = chomage.debuts(carriere.lignes)
     for ligne, regimes in zip(carriere.lignes, coordination.regimes):
         # Une ligne postérieure à la liquidation décrit une activité
         # exercée APRÈS le départ : elle n'ouvre pas de droits dans la
@@ -318,10 +321,17 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         # tout le reste, maladie comprise. De 1967 à 1973, une période de
         # moins de trente jours ne se validait pas : le modèle compte en mois,
         # et la règle ne mord que sur une ligne plus courte qu'un mois.
+        debut = debuts.get((ligne.annee, ligne.type_periode))
         nature = (None if ligne.cotise
-                  else chomage.nature(ligne.type_periode, ligne.annee))
+                  else chomage.nature(ligne.type_periode, ligne.annee, debut))
         if nature is not None and not chomage.assez_long(ligne.annee, part):
             continue
+        # La préretraite d'une convention conclue depuis le 5 mai 1997 ne
+        # vaut des points que sur deux plafonds, la part que l'État finance.
+        plafond_fne = chomage.plafond_preretraite(debut) if nature == "fne" else None
+        if plafond_fne is not None:
+            base_ligne = min(base_ligne, plafond_fne * part
+                             * moteur.macro.plafond_securite_sociale(ligne.annee))
         for code in regimes:
             if code not in moteur.catalogue:
                 continue
@@ -565,7 +575,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     # L'allocation spéciale du FNE a donc la garantie de son
                     # taux : 60 points à 8 % quand le forfait en achète 120.
                     taux_solidarite = (
-                        chomage.taux_solidarite(code, ligne.annee, points=True)
+                        chomage.taux_solidarite(code, ligne.annee, points=True,
+                                                rupture=debut)
                         if nature in ("solidarite", "fne") else None
                     )
                     if taux_solidarite is None:

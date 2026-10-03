@@ -1955,16 +1955,19 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   l'assiette par l'Unédic, <!--chiffre:valeur(data/reference/legislation/chomage_complementaires.yaml:solidarite.versement*100)-->70<!--/--> % de la
   cotisation de solidarité par l'État, et aux scénarios 2 et 3 la participation
   de l'allocataire. La préretraite du FNE a les taux de la solidarité, garantie
-  minimale de points comprise, sur un salaire borné à deux plafonds ; le
-  salarié agricole n'a rien avant le 1er avril 1974 ; et l'indemnisation cesse
-  quand l'allocataire a l'âge légal et la durée requise, ou l'âge d'annulation
-  de la décote (L. 5421-4 du code du travail) : les années de chômage d'après
-  ne valent plus rien, mais celle de la coupure reste entière. Le modèle ne
-  connaît ni les jours de différé, ni le salaire de référence calculé sur
-  vingt-quatre mois, ni le taux d'une entreprise qui cotisait au-dessus du
-  minimum, ni la date de la rupture, que l'Arrco regarde pour la solidarité
-  d'avant juin 2000, ni le premier jour propre aux départements d'outre-mer, en
-  1980 ; la préretraite progressive et l'activité partielle ne se saisissent
+  minimale de points comprise, sur un salaire borné à deux plafonds, et ceux de
+  l'assurance quand sa convention est d'avant 1984 ; le salarié agricole n'a
+  rien avant le 1er avril 1974 ; et l'indemnisation cesse à l'âge d'annulation
+  de la décote, et depuis le 1er avril 1983 à l'âge légal pour qui a la durée
+  requise (L. 5421-4 du code du travail) : les années de chômage d'après ne
+  valent plus rien, et celle de la coupure s'arrête au mois qui la précède
+  quand elle couvre l'année entière. Les lignes ne disent ni la date de la
+  rupture, que l'Arrco regarde pour la solidarité, ni celle de la convention
+  du FNE : le modèle les prend au premier millésime du chômage ou de la
+  préretraite. Il ne connaît ni les jours de différé, ni le salaire de
+  référence calculé sur vingt-quatre mois, ni le taux d'une entreprise qui
+  cotisait au-dessus du minimum, ni le premier jour propre aux départements
+  d'outre-mer, en 1980 ; la préretraite progressive et l'activité partielle ne se saisissent
   pas, l'Ircantec sans cotisations et les conventions de la CNBF et de la CRPN
   avec l'Unédic ne sont pas portées, et la durée de l'allocation d'assurance
   n'est bornée que par la coupure : la saisie dit ce qui a été versé. Les

@@ -163,7 +163,7 @@ export class ChomageComplementaires {
     this.dureeMinimaleJours = brut.duree_minimale_jours ?? 0;
     this.fnePlafondSalaireReference = brut.fne_plafond_salaire_reference ?? null;
     this.fnePlafondDepuis = brut.fne_plafond_depuis ?? 0;
-    this.finIndemnisationDepuis = brut.fin_indemnisation_depuis ?? null;
+    this.finIndemnisationDureeDepuis = brut.fin_indemnisation_duree_depuis ?? null;
     this.solidariteDepuis = brut.solidarite_depuis ?? 0;
     this.solidariteVersement = brut.solidarite_versement ?? 0.0;
     this.solidariteTaux = brut.solidarite_taux ?? {};
@@ -172,14 +172,53 @@ export class ChomageComplementaires {
     this.participation = brut.participation ?? [];
   }
 
-  /** « assurance », « solidarite », « fne », ou `null` ; la solidarité et
-   * l'allocation du FNE d'avant 1984 sont de l'assurance : voir chargement.py. */
-  nature(motif, annee) {
+  /** « assurance », « solidarite », « fne », ou `null` ; la solidarité
+   * d'avant 1984 est de l'assurance, et l'allocation du FNE dont la
+   * convention (`debut`) est d'avant : voir chargement.py. */
+  nature(motif, annee, debut = null) {
     const nature = this.motifs[motif] ?? null;
-    if ((nature === "solidarite" || nature === "fne") && annee < this.solidariteDepuis) {
+    const date = nature === "fne" && debut !== null ? debut : annee;
+    if ((nature === "solidarite" || nature === "fne") && date < this.solidariteDepuis) {
       return "assurance";
     }
     return nature;
+  }
+
+  /** L'année qui tient lieu de date à une année de solidarité ou de
+   * préretraite : `"année|motif"` → année, celle de la convention (premier
+   * millésime de la préretraite) ou de la rupture (premier millésime du
+   * chômage qui précède sans emploi). Voir chargement.py. */
+  debuts(lignes) {
+    const motifs = new Map();
+    const emploi = new Set();
+    for (const ligne of lignes) {
+      if (!motifs.has(ligne.annee)) motifs.set(ligne.annee, new Set());
+      motifs.get(ligne.annee).add(ligne.type_periode);
+      if (ligne.cotise) emploi.add(ligne.annee);
+    }
+    const chomage = new Set(["chomage_non_indemnise"]);
+    for (const [motif, nature] of Object.entries(this.motifs)) {
+      if (nature === "assurance" || nature === "solidarite") chomage.add(motif);
+    }
+    const resultat = new Map();
+    for (const [annee, presents] of motifs) {
+      for (const motif of presents) {
+        const nature = this.motifs[motif] ?? null;
+        let debut = annee;
+        if (nature === "fne") {
+          while (motifs.get(debut - 1)?.has(motif)) debut -= 1;
+        } else if (nature === "solidarite") {
+          while (!emploi.has(debut)
+              && [...(motifs.get(debut - 1) ?? [])].some((m) => chomage.has(m))) {
+            debut -= 1;
+          }
+        } else {
+          continue;
+        }
+        resultat.set(`${annee}|${motif}`, debut);
+      }
+    }
+    return resultat;
   }
 
   /** Part de l'année que le régime valide au titre du chômage, et
@@ -202,23 +241,27 @@ export class ChomageComplementaires {
     return annee > this.dureeMinimaleJusqu || fraction * 365 >= this.dureeMinimaleJours;
   }
 
-  /** Deux plafonds pour l'allocation du FNE depuis 1998, quatre sinon. */
-  plafondReference(nature, annee) {
-    if (nature === "fne" && this.fnePlafondSalaireReference !== null
-        && annee >= this.fnePlafondDepuis) {
-      return this.fnePlafondSalaireReference;
+  /** Deux plafonds pour l'allocation du FNE d'une convention de 1998 ou
+   * d'après (`debut`), `null` sinon. */
+  plafondPreretraite(debut) {
+    if (this.fnePlafondSalaireReference === null || debut === null
+        || debut < this.fnePlafondDepuis) {
+      return null;
     }
-    return this.plafondSalaireReference;
+    return this.fnePlafondSalaireReference;
   }
 
   /** Taux de la solidarité au régime : celui des points (`points`), ou celui
-   * que l'État finance ; `null` si le régime la traite comme l'assurance. */
-  tauxSolidarite(code, annee, points) {
+   * que l'État finance ; `null` si le régime la traite comme l'assurance. Les
+   * 4 % de l'Arrco suivent la date de la rupture ou de la convention
+   * (`rupture`). Voir chargement.py. */
+  tauxSolidarite(code, annee, points, rupture = null) {
     if (annee < this.solidariteDepuis) return null;
     const regle = this.solidariteTaux[code];
     if (regle === undefined) return null;
     const [taux, depuis] = regle;
-    return points && annee < depuis ? null : taux;
+    const date = rupture === null ? annee : rupture;
+    return points && date < depuis ? null : taux;
   }
 
   /** Participation de l'allocataire, moyenne des mois de l'année, ou le taux
@@ -242,17 +285,19 @@ export class ChomageComplementaires {
 /**
  * Le salaire sur lequel les complémentaires attribuent les points d'une
  * période indemnisée : celui d'avant l'interruption, borné pour le chômage à
- * quatre plafonds, comme le salaire journalier de référence, et à deux pour
- * l'allocation spéciale du FNE. Jumeau de
+ * quatre plafonds, comme le salaire journalier de référence ; les deux
+ * plafonds de l'allocation spéciale du FNE se lisent à l'acquisition. Jumeau de
  * `_revenu_reference` (`carriere.py`).
  */
 function revenuReference(annee, revenu, typePeriode, ouvreComplementaires, macro, part) {
   if (!ouvreComplementaires) return 0.0;
   const chomage = chomageComplementaires(macro.paquet);
-  const nature = chomage.nature(typePeriode, annee);
-  const plafond = nature === null ? null : chomage.plafondReference(nature, annee);
-  if (plafond === null) return revenu;
-  return Math.min(revenu, plafond * macro.plafond_securite_sociale.valeur(annee) * part);
+  if (chomage.nature(typePeriode, annee) === null
+      || chomage.plafondSalaireReference === null) {
+    return revenu;
+  }
+  return Math.min(revenu, chomage.plafondSalaireReference
+    * macro.plafond_securite_sociale.valeur(annee) * part);
 }
 
 const CHOMAGE_PAR_PAQUET = new WeakMap();
@@ -562,6 +607,7 @@ export class Carriere {
     this._radiationPourInvalidite = undefined;
     this._periodesALEtranger = undefined;
     this._pensionsEtrangeres = undefined;
+    this._anneesDeclarees = undefined;
   }
 
   // -- dates -----------------------------------------------------------------
@@ -577,6 +623,21 @@ export class Carriere {
   /** Le mois de naissance, tel que l'état civil le porte. */
   get dateNaissance() {
     return new DateMois(this.annee_naissance, this.mois_naissance);
+  }
+
+  /**
+   * Les années dont un relevé de carrière porte les trimestres : ce que la
+   * caisse a validé fait foi. Voir `carriere.py`.
+   */
+  get anneesDeclarees() {
+    if (this._anneesDeclarees === undefined) {
+      this._anneesDeclarees = new Set(this.chronologie
+        ? chrono.periodes(this.chronologie, this.personne)
+          .filter((periode) => (periode.attributs.trimestres ?? null) !== null)
+          .map((periode) => chrono.anneeDe(periode.debut))
+        : []);
+    }
+    return this._anneesDeclarees;
   }
 
   /**

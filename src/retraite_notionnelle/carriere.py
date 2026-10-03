@@ -411,17 +411,18 @@ def _revenu_reference(annee: int, revenu: float, type_periode: str,
     2026 : depuis 2019, la tranche 2 du régime unifié monte à huit plafonds,
     et une année chômée y valait, au-dessus de quatre, des points que le droit
     ne donne pas. Le plafond se proratise sur les mois de la ligne, comme le
-    revenu. Celui de l'allocation spéciale du FNE s'arrête à deux plafonds,
-    la part que l'État finance (``ChomageComplementaires.plafond_reference``).
+    revenu. Celui de l'allocation spéciale du FNE, que sa convention borne à
+    deux plafonds depuis 1997, se lit à l'acquisition, qui connaît la
+    préretraite entière (``ChomageComplementaires.plafond_preretraite``).
     """
     if cotise or regle is None or not regle.ouvre_droits_complementaires:
         return 0.0
     chomage = charger_chomage_complementaires(macro.racine)
-    nature = chomage.nature(type_periode, annee)
-    plafond = None if nature is None else chomage.plafond_reference(nature, annee)
-    if plafond is None:
+    if (chomage.nature(type_periode, annee) is None
+            or chomage.plafond_salaire_reference is None):
         return revenu
-    return min(revenu, plafond * macro.plafond_securite_sociale(annee) * part)
+    return min(revenu, chomage.plafond_salaire_reference
+               * macro.plafond_securite_sociale(annee) * part)
 
 
 def _ligne_annuelle(
@@ -668,6 +669,18 @@ class Carriere:
     def date_naissance(self) -> DateMois:
         """Le mois de naissance, tel que l'état civil le porte."""
         return DateMois(self.annee_naissance, self.mois_naissance)
+
+    @cached_property
+    def annees_declarees(self) -> frozenset[int]:
+        """Les années dont un relevé de carrière porte les trimestres : ce que
+        la caisse a validé fait foi, et le modèle n'y retouche pas
+        (:func:`limiter_chomage_non_indemnise`,
+        :func:`~retraite_notionnelle.droit.ouvrir.indemnisation_bornee`)."""
+        if not self.chronologie:
+            return frozenset()
+        return frozenset(chrono.annee_de(periode["debut"])
+                         for periode in chrono.periodes(self.chronologie, self.personne)
+                         if periode["attributs"].get("trimestres") is not None)
 
     @cached_property
     def jour_de_naissance(self) -> int:
