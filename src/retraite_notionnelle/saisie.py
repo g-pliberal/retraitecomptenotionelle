@@ -405,6 +405,7 @@ ACTIVITES_A_L_ETRANGER = [
 SANS_EMPLOI = [
     ("chomage_indemnise", "chômage indemnisé"),
     ("chomage_solidarite", "chômage en fin de droits (ASS)"),
+    ("preretraite_fne", "préretraite du FNE"),
     ("chomage_non_indemnise", "chômage non indemnisé"),
     ("maladie", "arrêt maladie"),
     ("accident_travail", "accident du travail"),

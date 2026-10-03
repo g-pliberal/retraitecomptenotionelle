@@ -15,6 +15,7 @@ import { DonneesMacro } from "./macro.js";
 import { DonneesMortalite } from "./mortalite.js";
 import { Indexation } from "./indexation.js";
 import { Echeancier } from "./echeancier.js";
+import { indemnisationBornee } from "./droit/ouvrir.js";
 import { ScenarioActuel } from "./scenario-actuel.js";
 import { ScenarioNotionnel } from "./scenario-notionnel.js";
 import { Affiliations, CatalogueRegimes } from "./regimes.js";
@@ -863,8 +864,13 @@ export class Simulateur {
   /** Calcule les six scénarios pour une carrière. */
   simuler(carriere) {
     this._verifierFiabilite(carriere);
-    const proposition = this.carriereProposition(carriere);
-    const reporte = proposition !== carriere;
+    // Le chômage cesse d'être indemnisé au taux plein (L. 5421-4 du code du
+    // travail) : les comptes notionnels et la proposition partent de la
+    // carrière ainsi bornée, le scénario 1 borne la sienne à son relevé. Voir
+    // simulateur.py.
+    const bornee = indemnisationBornee(this.scenarioActuel, carriere);
+    const proposition = this.carriereProposition(bornee);
+    const reporte = proposition !== bornee;
     if (reporte) {
       // Les années que le report fait travailler entrent dans le calcul :
       // elles ont à tenir la même exigence que les autres.
@@ -884,7 +890,7 @@ export class Simulateur {
         throw new Error(`univers ${cle} : la comparaison ne connaît que `
           + `${CHAMPS_NOTIONNELS.join(", ")}, et ne sait pas encore en afficher un autre`);
       }
-      notionnels[cle] = this.calculerUnivers(cle, calcul.age_legal ? proposition : carriere);
+      notionnels[cle] = this.calculerUnivers(cle, calcul.age_legal ? proposition : bornee);
     }
     const comparaison = new Comparaison({
       carriere,

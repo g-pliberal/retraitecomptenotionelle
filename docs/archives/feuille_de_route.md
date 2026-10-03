@@ -16406,3 +16406,36 @@ ce qui reste à relire. »
   convention de 2021, à l'empreinte de l'étape 1.
 
 Rien d'autre ne change au calcul : aucun témoin ne bouge.
+
+**Suite, le 3 octobre 2026 : le moteur.** « Met à jour le moteur » : les écarts
+que la relecture avait laissés déclarés passent dans les deux moteurs.
+
+- **La fin de l'indemnisation au taux plein** (L. 5421-4 du code du travail,
+  ancien L. 351-19 depuis le 1er avril 1984 ; décrets n° 84-295 et 87-270 pour
+  l'allocation spéciale du FNE). `droit.ouvrir.fin_indemnisation` date le
+  premier mois où l'allocataire a l'âge légal et la durée requise — lue année
+  par année, majoration pour enfants comprise —, ou l'âge d'annulation de la
+  décote ; `indemnisation_bornee` fait des années de chômage qui commencent
+  après des années sans activité. Le relevé du scénario 1 la lit
+  (`droit.releve.construire`), et `Simulateur.simuler` en part pour les
+  comptes notionnels et la proposition, qui prolonge la carrière ainsi bornée.
+  L'année de la coupure reste entière. Nouvelle fiche
+  `fin_indemnisation_chomage`.
+- **La préretraite du FNE**, motif `preretraite_fne`, distincte de l'ASS :
+  quatre trimestres (R. 351-12, 4°, c), les taux de la solidarité, la garantie
+  minimale de points à leur proportion (`ValeursPoint.garantie` reprend un
+  `taux_contractuel`), un salaire de référence borné à deux plafonds depuis
+  1998 ; l'État en verse 70 %, garantie comprise.
+- **Le salarié agricole** n'a rien avant le 1er avril 1974
+  (`validation_depuis_affiliations`), et **la durée minimale** de trente jours
+  vaut jusqu'en 1973, lue sur la part de l'année que la ligne couvre : elle ne
+  mord sur aucune saisie, le modèle comptant en mois. Les départements
+  d'outre-mer restent déclarés.
+
+Un témoin bouge, `invalidite_demandeur_d_emploi`, au chômage jusqu'à 64 ans et
+coupé à 62 : −2,42 % au scénario 2, −1,91 % aux scénarios 4 et 6, le scénario 1
+inchangé. Cinq témoins nouveaux (`preretraite_fne_cadre`,
+`preretraite_fne_garantie`, `chomage_salarie_agricole`,
+`chomage_au_dela_du_taux_plein`, `chomage_jusqu_a_l_annulation`) et six tests
+dans `tests/test_chomage_complementaires.py` ; dix rendus de page ne gagnent
+que l'option « préretraite du FNE » du menu.

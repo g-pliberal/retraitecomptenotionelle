@@ -307,8 +307,8 @@ export const NEUTRALISATIONS = [
 const MOTIFS_NEUTRALISES = {
   periodes_assimilees: [null, "sans_activite"],
   points_gratuits_complementaires: [
-    new Set(["chomage_indemnise", "chomage_solidarite", "maladie", "maternite",
-      "invalidite", "accident_travail"]),
+    new Set(["chomage_indemnise", "chomage_solidarite", "preretraite_fne", "maladie",
+      "maternite", "invalidite", "accident_travail"]),
     "chomage_non_indemnise",
   ],
   service_national: [new Set(["service_militaire"]), "sans_activite"],

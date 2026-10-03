@@ -1015,6 +1015,14 @@ def _chomage_complementaires() -> dict:
         "plafond_salaire_reference": regles.plafond_salaire_reference,
         "validation_depuis": {code: [annee, mois]
                               for code, annee, mois in regles.validation_depuis},
+        "validation_depuis_affiliations": {
+            affiliation: [annee, mois]
+            for affiliation, annee, mois in regles.validation_depuis_affiliations},
+        "duree_minimale_jusqu": regles.duree_minimale_jusqu,
+        "duree_minimale_jours": regles.duree_minimale_jours,
+        "fne_plafond_salaire_reference": regles.fne_plafond_salaire_reference,
+        "fne_plafond_depuis": regles.fne_plafond_depuis,
+        "fin_indemnisation_depuis": regles.fin_indemnisation_depuis,
         "solidarite_depuis": regles.solidarite_depuis,
         "solidarite_versement": regles.solidarite_versement,
         "solidarite_taux": {code: [taux, depuis]

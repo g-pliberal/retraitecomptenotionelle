@@ -34,6 +34,7 @@ import {
 export const PERIODES_NON_COTISEES = new Set([
   "chomage_indemnise",
   "chomage_solidarite",
+  "preretraite_fne",
   "chomage_non_indemnise",
   "maladie",
   "invalidite",
@@ -157,6 +158,12 @@ export class ChomageComplementaires {
     this.motifs = brut.motifs ?? {};
     this.plafondSalaireReference = brut.plafond_salaire_reference ?? null;
     this.validationDepuis = brut.validation_depuis ?? {};
+    this.validationDepuisAffiliations = brut.validation_depuis_affiliations ?? {};
+    this.dureeMinimaleJusqu = brut.duree_minimale_jusqu ?? 0;
+    this.dureeMinimaleJours = brut.duree_minimale_jours ?? 0;
+    this.fnePlafondSalaireReference = brut.fne_plafond_salaire_reference ?? null;
+    this.fnePlafondDepuis = brut.fne_plafond_depuis ?? 0;
+    this.finIndemnisationDepuis = brut.fin_indemnisation_depuis ?? null;
     this.solidariteDepuis = brut.solidarite_depuis ?? 0;
     this.solidariteVersement = brut.solidarite_versement ?? 0.0;
     this.solidariteTaux = brut.solidarite_taux ?? {};
@@ -165,21 +172,43 @@ export class ChomageComplementaires {
     this.participation = brut.participation ?? [];
   }
 
-  /** « assurance », « solidarite », ou `null` ; la solidarité d'avant 1984
-   * est de l'assurance : le régime était unique. */
+  /** « assurance », « solidarite », « fne », ou `null` ; la solidarité et
+   * l'allocation du FNE d'avant 1984 sont de l'assurance : voir chargement.py. */
   nature(motif, annee) {
     const nature = this.motifs[motif] ?? null;
-    if (nature === "solidarite" && annee < this.solidariteDepuis) return "assurance";
+    if ((nature === "solidarite" || nature === "fne") && annee < this.solidariteDepuis) {
+      return "assurance";
+    }
     return nature;
   }
 
-  /** Part de l'année que le régime valide au titre du chômage. */
-  partValidee(code, annee) {
-    const depuis = this.validationDepuis[code];
-    if (depuis === undefined) return 1.0;
-    const [debut, mois] = depuis;
-    if (annee < debut) return 0.0;
-    return annee === debut ? (13 - mois) / 12 : 1.0;
+  /** Part de l'année que le régime valide au titre du chômage, et
+   * l'affiliation avec lui. */
+  partValidee(code, annee, affiliation = null) {
+    let part = 1.0;
+    for (const depuis of [this.validationDepuis[code],
+      affiliation === null ? undefined : this.validationDepuisAffiliations[affiliation]]) {
+      if (depuis === undefined) continue;
+      const [debut, mois] = depuis;
+      if (annee < debut) return 0.0;
+      if (annee === debut) part = Math.min(part, (13 - mois) / 12);
+    }
+    return part;
+  }
+
+  /** Trente jours au moins jusqu'en 1973, sans condition ensuite, pour une
+   * période qui dure `fraction` de l'année ; un mois en vaut 365/12. */
+  assezLong(annee, fraction) {
+    return annee > this.dureeMinimaleJusqu || fraction * 365 >= this.dureeMinimaleJours;
+  }
+
+  /** Deux plafonds pour l'allocation du FNE depuis 1998, quatre sinon. */
+  plafondReference(nature, annee) {
+    if (nature === "fne" && this.fnePlafondSalaireReference !== null
+        && annee >= this.fnePlafondDepuis) {
+      return this.fnePlafondSalaireReference;
+    }
+    return this.plafondSalaireReference;
   }
 
   /** Taux de la solidarité au régime : celui des points (`points`), ou celui
@@ -213,18 +242,17 @@ export class ChomageComplementaires {
 /**
  * Le salaire sur lequel les complémentaires attribuent les points d'une
  * période indemnisée : celui d'avant l'interruption, borné pour le chômage à
- * quatre plafonds, comme le salaire journalier de référence. Jumeau de
+ * quatre plafonds, comme le salaire journalier de référence, et à deux pour
+ * l'allocation spéciale du FNE. Jumeau de
  * `_revenu_reference` (`carriere.py`).
  */
 function revenuReference(annee, revenu, typePeriode, ouvreComplementaires, macro, part) {
   if (!ouvreComplementaires) return 0.0;
   const chomage = chomageComplementaires(macro.paquet);
-  if (chomage.nature(typePeriode, annee) === null
-      || chomage.plafondSalaireReference === null) {
-    return revenu;
-  }
-  return Math.min(revenu, chomage.plafondSalaireReference
-    * macro.plafond_securite_sociale.valeur(annee) * part);
+  const nature = chomage.nature(typePeriode, annee);
+  const plafond = nature === null ? null : chomage.plafondReference(nature, annee);
+  if (plafond === null) return revenu;
+  return Math.min(revenu, plafond * macro.plafond_securite_sociale.valeur(annee) * part);
 }
 
 const CHOMAGE_PAR_PAQUET = new WeakMap();

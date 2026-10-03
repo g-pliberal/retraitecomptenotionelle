@@ -5,8 +5,10 @@ intitule: >-
   salaire journalier de référence de l'allocation, borné à quatre plafonds : aux taux de
   calcul des points d'une année travaillée pour l'allocation d'assurance, que l'Unédic
   finance ; à 4 % depuis 2019 — 4 % à l'Arrco, 8 % ou 12 % sur la tranche B de l'Agirc
-  avant — pour l'allocation de solidarité, que l'État finance ; rien avant le 1er octobre
-  1967, ni avant le 1er août 1977 à l'Ircantec.
+  avant — pour l'allocation de solidarité et la préretraite du FNE, que l'État finance,
+  celle-ci garantie minimale comprise et sur deux plafonds ; rien avant le 1er octobre
+  1967, ni avant le 1er août 1977 à l'Ircantec, ni avant le 1er avril 1974 pour un salarié
+  agricole.
 domaine: points
 regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, agirc,
   agirc_entreprises_nouvelles, agirc_arrco, ircantec]
@@ -15,13 +17,14 @@ face: droit
 etat: approchee
 lit:
 - >-
-  le motif de l'année non travaillée : chômage d'assurance (`chomage_indemnise`) ou de
-  solidarité (`chomage_solidarite`)
+  le motif de l'année non travaillée : chômage d'assurance (`chomage_indemnise`), de
+  solidarité (`chomage_solidarite`) ou préretraite du FNE (`preretraite_fne`)
+- le statut de l'année, pour le salarié agricole, et la part de l'année qu'elle couvre
 - le salaire d'avant l'interruption, qui tient lieu de salaire journalier de référence, et
   le plafond de la sécurité sociale de l'année
 - les taux de calcul des points de la période, le prix d'achat et le taux d'appel du point
-- legislation/chomage_complementaires.yaml (borne, premiers jours validés, taux de la
-  solidarité)
+- legislation/chomage_complementaires.yaml (borne, premiers jours validés, durée
+  minimale, taux de la solidarité, préretraite du FNE)
 ecrit:
 - les points complémentaires de l'année chômée, garantie minimale de points comprise de
   1989 à 2018
@@ -108,6 +111,33 @@ versions:
       (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl
       du 21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
       OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
+    article: VII.3.1.3.1, 2 et 3
+    citation: >-
+      « Pour les salariés de l'agriculture ayant bénéficié d'un régime d'assurance chômage
+      à compter du 1er avril 1974, seules les périodes indemnisées, à compter de cette
+      date, sont validables » ; « les périodes indemnisées entre le 1/10/1967 et le
+      31/12/1973 ne sont validables que si elles sont d'une durée minimum de 30 jours » ;
+      « toute période indemnisée à compter du 1er janvier 1974 doit être prise en compte
+      [...] sans condition de durée »
+    lu_le: 2026-10-03
+    empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII
+      (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl
+      du 21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
+    article: VII.3.1.6.1 ; VII.3.1.6.2, 2, a, 4
+    citation: >-
+      pour l'allocation spéciale du FNE des conventions conclues à compter du 5 mai 1997,
+      le salaire de référence est « limité à la partie prise en compte pour le financement
+      par l'État, c'est-à-dire à deux plafonds de la Sécurité sociale »
+    lu_le: 2026-10-03
+    empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII
+      (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl
+      du 21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
     article: VII.3.1.6.1 ; VII.3.1.6.2, 1 et 2, a
     citation: >-
       les droits se calculent sur le salaire journalier de référence pour les périodes
@@ -144,8 +174,19 @@ versions:
       4 % à l'Arrco, pour les ruptures postérieures au 31 mai 2000 — les taux
       obligatoires avant —, le modèle prenant l'année pour la rupture (`points_depuis:
       2001`)
+    preretraite_fne: >-
+      les taux de la solidarité, assortis depuis 1989 de la garantie minimale de points à
+      leur proportion — 8 % sur 16 % en valent la moitié — (`ValeursPoint.garantie`,
+      `taux_contractuel`) ; un salaire de référence borné à deux plafonds depuis 1998, le
+      modèle prenant l'année pour la date de la convention (`fne`)
     borne: quatre plafonds de la sécurité sociale (`plafond_salaire_reference`)
     ircantec: les points d'une année travaillée, depuis le 1er août 1977
+    salaries_agricoles: >-
+      rien avant le 1er avril 1974, les neuf derniers mois de 1974
+      (`validation_depuis_affiliations`)
+    duree_minimale: >-
+      jusqu'en 1973, rien pour une période de moins de trente jours, que le modèle lit sur
+      la part de l'année que la ligne couvre (`duree_minimale`)
   exemples: aucun trouvé
 - id: regime_unifie_depuis_2019
   statut: lue
@@ -238,20 +279,18 @@ approximations:
   ecart: >-
     L'Arrco valide aux taux obligatoires la solidarité qui suit une rupture d'avant le 1er
     juin 2000 : le modèle, qui ne connaît pas la date de la rupture, prend l'année de
-    l'allocation, et sert 4 % dès 2001. La solidarité n'a pas de garantie minimale de
-    points, que le guide ne donne qu'à l'allocation spéciale du FNE : l'ASFNE, que le
-    modèle ne distingue pas de l'ASS, en est privée, et son salaire de référence, que le
-    guide borne à deux plafonds pour les conventions conclues depuis le 5 mai 1997, l'est
-    à quatre. Le modèle ne connaît pas non plus les premiers jours propres aux salariés
-    agricoles (1er avril 1974) et aux départements d'outre-mer (1er mars ou 1er septembre
-    1980), ni la durée minimale de trente jours des périodes de 1967 à 1973 (guide,
-    VII.3.1.3.1).
+    l'allocation, et sert 4 % dès 2001. Il ne connaît pas non plus la date de la
+    convention de l'allocation spéciale du FNE, et borne à deux plafonds dès 1998 le
+    salaire de celles conclues depuis le 5 mai 1997. Le premier jour propre aux
+    départements d'outre-mer (1er mars ou 1er septembre 1980) n'est pas porté : un
+    salarié du régime général n'y dit pas où il travaille. La durée minimale de trente
+    jours des périodes de 1967 à 1973 se lit sur la ligne, qui compte en mois : elle ne
+    mord sur aucune saisie (guide, VII.3.1.3.1).
   effet: non mesuré
 - version: [assurance_et_solidarite_jusqu_en_2018, regime_unifie_depuis_2019]
   ecart: >-
-    Une seule allocation de solidarité pour l'allocation de solidarité spécifique,
-    l'allocation équivalent retraite et l'allocation spéciale du FNE, dont l'assiette est
-    en droit « limitée à la partie prise en compte pour le financement par l'État » ; la
+    Une seule allocation de solidarité pour l'allocation de solidarité spécifique et
+    l'allocation équivalent retraite ; la
     préretraite progressive, qui se calcule sur la différence entre le salaire à temps
     plein et le salaire réel, et l'activité partielle, qui vaut des points sans
     cotisations au-delà de soixante heures (accord de 2017, art. 63 et 67), ne sont pas
@@ -261,8 +300,9 @@ approximations:
     La CNBF, la CRPN et la caisse monégasque valident aussi le chômage par convention
     avec l'Unédic ; le modèle ne l'admet qu'aux régimes de la famille
     `complementaire_prive`. La durée de l'allocation d'assurance — 730 jours, 1 095 à
-    cinquante ans ou plus, au règlement de 2009, art. 11, § 1er — n'est pas bornée : la
-    saisie dit ce qui a été versé.
+    cinquante ans ou plus, au règlement de 2009, art. 11, § 1er — n'est bornée que par la
+    fin de l'indemnisation au taux plein (fiche `fin_indemnisation_chomage`) : la saisie
+    dit ce qui a été versé.
   effet: non mesuré
 sources:
   lu_le: 2026-10-03
@@ -275,20 +315,27 @@ code:
   python:
   - donnees/chargement.py, ChomageComplementaires
   - carriere.py, _revenu_reference
-  - droit/acquerir.py, acquerir (premier jour validé, taux de la solidarité)
+  - droit/acquerir.py, acquerir (premier jour validé, durée minimale, taux de la
+    solidarité, garantie de la préretraite)
+  - scenarios/actuel.py, ValeursPoint.garantie (taux_contractuel)
   javascript:
   - carriere.js, ChomageComplementaires, revenuReference
   - droit/acquerir.js
+  - regimes.js, garantie (tauxContractuel)
   parametres:
   - legislation/chomage_complementaires.yaml
-  - legislation/periodes_non_travaillees.csv (chomage_indemnise, chomage_solidarite)
+  - legislation/periodes_non_travaillees.csv (chomage_indemnise, chomage_solidarite,
+    preretraite_fne)
   tests:
+  - tests/test_chomage_complementaires.py
   - témoins chomage_puis_solidarite_cadre, solidarite_entreprise_recente,
-    solidarite_regime_unifie, chomage_au_dela_de_quatre_plafonds, chomage_avant_1967
+    solidarite_regime_unifie, chomage_au_dela_de_quatre_plafonds, chomage_avant_1967,
+    preretraite_fne_cadre, preretraite_fne_garantie, chomage_salarie_agricole
 effet: >-
   Une année de solidarité vaut, depuis 2019, un tiers de points de moins sur la tranche 1
   et les trois quarts de moins sur la tranche 2 qu'une année d'assurance ; à l'Agirc avant
   2019, la moitié ou le quart de moins. Au-delà de quatre plafonds de salaire, une année
   chômée ne vaut plus de points sur la tranche 2 au-dessus de quatre plafonds. Aucun des
   689 témoins d'avant le 3 octobre 2026 ne bouge ; cinq témoins nouveaux portent ces
-  règles.
+  règles, et trois de plus la préretraite du FNE et le salarié agricole, que le modèle
+  distingue depuis le même jour.

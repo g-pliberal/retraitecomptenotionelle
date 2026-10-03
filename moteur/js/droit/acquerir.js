@@ -237,8 +237,12 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       baseLigne *= part / ligne.fraction_annee;
     }
     const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
-    // Assurance (l'Unédic) ou solidarité (l'État) ; `null` pour le reste.
+    // Assurance (l'Unédic), solidarité ou préretraite du FNE (l'État) ;
+    // `null` pour le reste. Trente jours au moins jusqu'en 1973.
     const nature = ligne.cotise ? null : chomage.nature(ligne.type_periode, ligne.annee);
+    if (nature !== null && !chomage.assezLong(ligne.annee, part)) {
+      return;
+    }
     for (const code of coordination.regimes[i]) {
       if (!moteur.catalogue.contient(code)) {
         continue;
@@ -247,10 +251,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       if (famillesAdmises !== null && !famillesAdmises.has(regime.famille)) {
         continue;
       }
-      // Le premier jour validé : 1er octobre 1967, 1er août 1977 à l'Ircantec.
+      // Le premier jour validé : 1er octobre 1967, 1er août 1977 à l'Ircantec,
+      // 1er avril 1974 pour le salarié agricole.
       let validee = 1.0;
       if (nature !== null) {
-        validee = chomage.partValidee(code, ligne.annee);
+        validee = chomage.partValidee(code, ligne.annee, ligne.affiliation);
         if (validee <= 0) {
           continue;
         }
@@ -449,14 +454,16 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           const [reference, tauxAppel] = achat;
           let fiabiliteAchat = achat[2];
           // La solidarité vaut 4 %, ou 8 % et 12 % à l'Agirc, sans garantie
-          // minimale : voir acquerir.py.
-          const tauxSolidarite = nature === "solidarite"
+          // minimale ; l'allocation du FNE, avec la garantie de son taux :
+          // voir acquerir.py.
+          const tauxSolidarite = nature === "solidarite" || nature === "fne"
             ? chomage.tauxSolidarite(code, ligne.annee, true) : null;
           let pointsAnnee = tauxSolidarite === null
             ? cotisation / (tauxAppel * reference)
             : assiette * tauxSolidarite / reference;
-          const garantie = tauxSolidarite !== null ? null
-            : moteur.valeursPoint.garantie(bareme, periode, ligne.annee, part, ligne.quotite);
+          const garantie = tauxSolidarite !== null && nature !== "fne" ? null
+            : moteur.valeursPoint.garantie(bareme, periode, ligne.annee, part, ligne.quotite,
+              tauxSolidarite);
           // Une année de CHÔMAGE INDEMNISÉ a sa garantie, comme une année
           // travaillée : l'Agirc valide la période que l'Unédic indemnise au
           // taux minimum « assorti de la GMP (garantie minimale de points)

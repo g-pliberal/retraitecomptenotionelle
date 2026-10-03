@@ -313,10 +313,15 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         familles_admises = (
             None if ligne.cotise else set(ligne.familles_cotisantes)
         )
-        # Une année de chômage est d'assurance (l'Unédic) ou de solidarité
-        # (l'État) ; ``None`` pour tout le reste, maladie comprise.
+        # Une année de chômage est d'assurance (l'Unédic), de solidarité
+        # (l'État) ou de préretraite du FNE (l'État encore) ; ``None`` pour
+        # tout le reste, maladie comprise. De 1967 à 1973, une période de
+        # moins de trente jours ne se validait pas : le modèle compte en mois,
+        # et la règle ne mord que sur une ligne plus courte qu'un mois.
         nature = (None if ligne.cotise
                   else chomage.nature(ligne.type_periode, ligne.annee))
+        if nature is not None and not chomage.assez_long(ligne.annee, part):
+            continue
         for code in regimes:
             if code not in moteur.catalogue:
                 continue
@@ -329,10 +334,12 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
             # 1er août 1977 ; l'année du premier jour n'en compte que les
             # mois qui le suivent. Le modèle n'avait pas de date jusqu'au
             # 3 octobre 2026 : une année chômée valait des points dès 1947 à
-            # l'Agirc et dès 1961 à l'Arrco.
+            # l'Agirc et dès 1961 à l'Arrco. Le salarié agricole, que
+            # l'assurance chômage ne couvre que depuis le 1er avril 1974, n'a
+            # rien avant.
             validee = 1.0
             if nature is not None:
-                validee = chomage.part_validee(code, ligne.annee)
+                validee = chomage.part_validee(code, ligne.annee, ligne.affiliation)
                 if validee <= 0:
                     continue
             derniere_annee_par_regime[code] = max(
@@ -555,18 +562,21 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     # (« Ces taux doivent s'entendre, depuis 1989, assortis de
                     # la GMP »), non pour l'ASS, validée « seulement sur la
                     # base du taux de 8 % ou de 12 % » (titre VII.3.1.6.2).
+                    # L'allocation spéciale du FNE a donc la garantie de son
+                    # taux : 60 points à 8 % quand le forfait en achète 120.
                     taux_solidarite = (
                         chomage.taux_solidarite(code, ligne.annee, points=True)
-                        if nature == "solidarite" else None
+                        if nature in ("solidarite", "fne") else None
                     )
                     if taux_solidarite is None:
                         points_annee = cotisation / (taux_appel * reference)
                     else:
                         points_annee = assiette * taux_solidarite / reference
                     garantie = (None if taux_solidarite is not None
+                                and nature != "fne"
                                 else moteur.valeurs_point.garantie(
                                     bareme, periode, ligne.annee, part,
-                                    ligne.quotite))
+                                    ligne.quotite, taux_solidarite))
                     # Une année de CHÔMAGE INDEMNISÉ a sa garantie, comme une
                     # année travaillée : l'Agirc valide la période que l'Unédic
                     # indemnise « sur la base du taux minimum applicable à

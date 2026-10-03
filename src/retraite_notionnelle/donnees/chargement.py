@@ -648,12 +648,16 @@ class ChomageComplementaires:
     ``ChomageComplementaires`` de ``carriere.js``.
     """
 
-    #: Motif de ``periodes_non_travaillees.csv`` → « assurance » ou « solidarite ».
+    #: Motif de ``periodes_non_travaillees.csv`` → « assurance », « solidarite »
+    #: ou « fne » (l'allocation spéciale du Fonds national de l'emploi).
     motifs: tuple[tuple[str, str], ...] = ()
     #: Borne du salaire de référence, en plafonds de la sécurité sociale.
     plafond_salaire_reference: float | None = None
     #: Premier mois validé, régime par régime : (code, année, mois).
     validation_depuis: tuple[tuple[str, int, int], ...] = ()
+    #: Premier mois validé pour une affiliation que l'assurance chômage a
+    #: couverte plus tard : (affiliation, année, mois).
+    validation_depuis_affiliations: tuple[tuple[str, int, int], ...] = ()
     #: Année de naissance de la solidarité, et part de ses cotisations que
     #: l'État verse.
     solidarite_depuis: int = 0
@@ -667,25 +671,61 @@ class ChomageComplementaires:
     assurance_participation_reversee: float = 0.0
     #: Participation de l'allocataire : (année, mois, taux), dans l'ordre.
     participation: tuple[tuple[int, int, float], ...] = ()
+    #: Jusqu'à cette année, une période plus courte que ce nombre de jours
+    #: n'est pas validée.
+    duree_minimale_jusqu: int = 0
+    duree_minimale_jours: int = 0
+    #: Borne du salaire de référence de l'allocation spéciale du FNE, en
+    #: plafonds, à compter de l'année dite.
+    fne_plafond_salaire_reference: float | None = None
+    fne_plafond_depuis: int = 0
+    #: Première année où l'indemnisation cesse au taux plein (L. 5421-4 du
+    #: code du travail) ; ``None`` : jamais.
+    fin_indemnisation_depuis: int | None = None
 
     def nature(self, motif: str, annee: int) -> str | None:
-        """« assurance », « solidarite », ou ``None`` pour un motif qui n'est
-        pas du chômage. La solidarité d'avant sa naissance, en 1984, est de
-        l'assurance : le régime était unique."""
+        """« assurance », « solidarite », « fne », ou ``None`` pour un motif
+        qui n'est pas du chômage. La solidarité et l'allocation spéciale du FNE
+        d'avant le 1er avril 1984 sont de l'assurance : le régime était
+        unique, et le guide valide les conventions FNE d'avant « dans les
+        mêmes conditions que les allocataires du régime d'assurance
+        chômage »."""
         nature = dict(self.motifs).get(motif)
-        if nature == "solidarite" and annee < self.solidarite_depuis:
+        if nature in ("solidarite", "fne") and annee < self.solidarite_depuis:
             return "assurance"
         return nature
 
-    def part_validee(self, code: str, annee: int) -> float:
+    def part_validee(self, code: str, annee: int,
+                     affiliation: str | None = None) -> float:
         """Part de l'année que le régime ``code`` valide au titre du chômage :
-        rien avant son premier jour, les mois qui le suivent l'année même."""
-        for regime, depuis, mois in self.validation_depuis:
-            if regime == code:
-                if annee < depuis:
-                    return 0.0
-                return (13 - mois) / 12 if annee == depuis else 1.0
-        return 1.0
+        rien avant son premier jour, ni avant celui de l'affiliation, les mois
+        qui le suivent l'année même."""
+        part = 1.0
+        for cle, dates in ((code, self.validation_depuis),
+                           (affiliation, self.validation_depuis_affiliations)):
+            for nom, depuis, mois in dates:
+                if nom == cle:
+                    if annee < depuis:
+                        return 0.0
+                    if annee == depuis:
+                        part = min(part, (13 - mois) / 12)
+        return part
+
+    def assez_long(self, annee: int, fraction: float) -> bool:
+        """La période, qui dure ``fraction`` de l'année, dure-t-elle assez pour
+        être validée ? Jusqu'en 1973, trente jours au moins ; ensuite, sans
+        condition de durée. Un mois en vaut 365/12 : le modèle, qui compte en
+        mois, ne tombe sous la borne qu'avec une ligne plus courte."""
+        return (annee > self.duree_minimale_jusqu
+                or fraction * 365 >= self.duree_minimale_jours)
+
+    def plafond_reference(self, nature: str | None, annee: int) -> float | None:
+        """Borne du salaire de référence, en plafonds : deux pour l'allocation
+        spéciale du FNE depuis 1998, quatre sinon."""
+        if (nature == "fne" and self.fne_plafond_salaire_reference is not None
+                and annee >= self.fne_plafond_depuis):
+            return self.fne_plafond_salaire_reference
+        return self.plafond_salaire_reference
 
     def taux_solidarite(self, code: str, annee: int, points: bool) -> float | None:
         """Taux contractuel de la solidarité au régime ``code`` : celui que
@@ -731,12 +771,20 @@ def charger_chomage_complementaires(racine: Path) -> ChomageComplementaires:
     brut = charger_yaml(chemin)
     solidarite = brut.get("solidarite") or {}
     assurance = brut.get("assurance") or {}
+    duree_minimale = brut.get("duree_minimale") or {}
+    fne = brut.get("fne") or {}
+    fin = brut.get("fin_indemnisation") or {}
     regles = ChomageComplementaires(
         motifs=tuple(sorted((brut.get("motifs") or {}).items())),
         plafond_salaire_reference=brut.get("plafond_salaire_reference"),
         validation_depuis=tuple(
             (code, jour.year, jour.month)
             for code, jour in sorted((brut.get("validation_depuis") or {}).items())
+        ),
+        validation_depuis_affiliations=tuple(
+            (affiliation, jour.year, jour.month)
+            for affiliation, jour in sorted(
+                (brut.get("validation_depuis_affiliations") or {}).items())
         ),
         solidarite_depuis=int(solidarite.get("depuis", 0)),
         solidarite_versement=float(solidarite.get("versement", 0.0)),
@@ -751,6 +799,12 @@ def charger_chomage_complementaires(racine: Path) -> ChomageComplementaires:
             (palier["depuis"].year, palier["depuis"].month, float(palier["taux"]))
             for palier in brut.get("participation_allocataire") or ()
         )),
+        duree_minimale_jusqu=int(duree_minimale.get("jusqu", 0)),
+        duree_minimale_jours=int(duree_minimale.get("jours", 0)),
+        fne_plafond_salaire_reference=fne.get("plafond_salaire_reference"),
+        fne_plafond_depuis=int(fne.get("plafond_depuis", 0)),
+        fin_indemnisation_depuis=(None if fin.get("depuis") is None
+                                  else int(fin["depuis"])),
     )
     _CHOMAGE_COMPLEMENTAIRES[cle] = regles
     return regles

@@ -10,11 +10,15 @@ schema_version: 1
 # à l'emploi, allocation de sécurisation professionnelle, et avant elles
 # l'allocation unique dégressive, l'allocation chômeurs âgés, la garantie de
 # ressources), ou la SOLIDARITÉ, que l'État finance (allocation de solidarité
-# spécifique, allocation équivalent retraite, allocation spéciale du Fonds
-# national de l'emploi).
+# spécifique, allocation équivalent retraite), ou la PRÉRETRAITE du Fonds
+# national de l'emploi (allocation spéciale du FNE), que l'État finance aussi,
+# aux mêmes taux que la solidarité, mais garantie minimale comprise et sur un
+# salaire de référence borné à deux plafonds (guide réglementaire, titre
+# VII.3.1.6.1 et VII.3.1.6.2, 2, a).
 motifs:
   chomage_indemnise: assurance
   chomage_solidarite: solidarite
+  preretraite_fne: fne
 
 # LE SALAIRE DE RÉFÉRENCE, en plafonds de la sécurité sociale. Les points se
 # calculent « à partir du salaire journalier de référence » (accord Agirc-Arrco
@@ -41,6 +45,24 @@ validation_depuis:
   arrco_tranche_2: 1967-10-01
   agirc: 1967-10-01
   ircantec: 1977-08-01
+
+# LE PREMIER JOUR VALIDÉ D'UNE AFFILIATION que l'assurance chômage a couverte
+# plus tard : « Pour les salariés de l'agriculture ayant bénéficié d'un régime
+# d'assurance chômage à compter du 1er avril 1974, seules les périodes
+# indemnisées, à compter de cette date, sont validables » (guide, VII.3.1.3.1).
+# Les salariés des départements d'outre-mer, indemnisés à compter du 1er mars
+# ou du 1er septembre 1980, ne s'y distinguent pas : le modèle ne sait pas où
+# un salarié du régime général a travaillé.
+validation_depuis_affiliations:
+  salarie_agricole: 1974-04-01
+
+# LA DURÉE MINIMALE : « les périodes indemnisées entre le 1/10/1967 et le
+# 31/12/1973 ne sont validables que si elles sont d'une durée minimum de 30
+# jours » ; « toute période indemnisée à compter du 1er janvier 1974 doit être
+# prise en compte [...] sans condition de durée » (guide, VII.3.1.3.1, 3).
+duree_minimale:
+  jusqu: 1973
+  jours: 30
 
 # LA SOLIDARITÉ. L'allocation de solidarité spécifique naît le 1er avril 1984,
 # avec le régime de solidarité que l'État finance. Ses points se calculent sur
@@ -70,6 +92,38 @@ solidarite:
     agirc: {taux: 0.08}
     agirc_entreprises_nouvelles: {taux: 0.12}
     agirc_arrco: {taux: 0.04}
+
+# L'ALLOCATION SPÉCIALE DU FNE : son salaire de référence est « limité à la
+# partie prise en compte pour le financement par l'État, c'est-à-dire à deux
+# plafonds de la Sécurité sociale » pour les conventions conclues à compter du
+# 5 mai 1997 (décret n° 97-438 du 30 avril 1997 ; guide, VII.3.1.6.1 et
+# VII.3.1.6.2, 2, a, 4) — le modèle, qui ne connaît pas la date de la
+# convention, borne à deux plafonds les années 1998 et suivantes. Ses taux,
+# ceux de la solidarité, « doivent s'entendre, depuis 1989, assortis de la GMP
+# (garantie minimale de points) correspondante ».
+fne:
+  plafond_salaire_reference: 2
+  plafond_depuis: 1998
+
+# LA FIN DE L'INDEMNISATION. « Le revenu de remplacement cesse d'être versé :
+# 1° Aux allocataires ayant atteint l'âge prévu à l'article L. 161-17-2 du code
+# de la sécurité sociale justifiant de la durée d'assurance [...] requise pour
+# l'ouverture du droit à une pension de vieillesse à taux plein ; 2° Aux
+# allocataires atteignant l'âge prévu au 1° de l'article L. 351-8 du même
+# code » (code du travail, L. 5421-4, LEGIARTI000051289909). La règle est née
+# le 1er avril 1984 : le revenu de remplacement « cesse d'être versé aux
+# allocataires âgés de plus de soixante ans et justifiant de cent cinquante
+# trimestres validés » (ancien L. 351-19, LEGIARTI000006648973), « et, en tout
+# état de cause, aux allocataires atteignant l'âge de soixante-cinq ans »
+# (rédaction de 1995, LEGIARTI000006648975) ; l'allocation spéciale du FNE de
+# même, « interrompu[e] lorsque, à partir de leur soixantième anniversaire, ils
+# justifient de 150 trimestres validés » (décret n° 84-295 du 20 avril 1984,
+# art. 5, LEGIARTI000006662816). Le modèle coupe au mois où l'allocataire a
+# l'âge légal et la durée requise, ou l'âge d'annulation de la décote : les
+# années de chômage qui commencent après ne valent plus rien, ni trimestre,
+# ni point, ni versement au compte.
+fin_indemnisation:
+  depuis: 1984
 
 # CE QUE L'UNÉDIC VERSE pour une année d'assurance : des cotisations « assises
 # sur 60 % » du salaire de référence, au taux d'appel (accords de financement

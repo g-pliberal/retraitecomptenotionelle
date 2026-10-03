@@ -1024,6 +1024,34 @@ def _cas() -> list[dict]:
         "naissance": "1945-03-15", "debut": "1964-09", "liquidation": "2005-04",
         "interruptions": "1966:1968:chomage_indemnise",
     }))
+    # La préretraite du FNE : les taux de la solidarité, la garantie minimale
+    # de points à leur proportion, et un salaire de référence borné à deux
+    # plafonds depuis 1998. Le salarié agricole n'a rien avant le 1er avril
+    # 1974, quand l'assurance chômage le couvre.
+    cas.append(("preretraite_fne_cadre", {
+        "statut": "salarie_prive_cadre", "salaire": "3", "naissance": "1940",
+        "liquidation": "60", "interruptions": "1997:1999:preretraite_fne",
+    }))
+    cas.append(("preretraite_fne_garantie", {
+        "statut": "salarie_prive_cadre", "salaire": "0.9", "naissance": "1940",
+        "liquidation": "60", "interruptions": "1997:1999:preretraite_fne",
+    }))
+    cas.append(("chomage_salarie_agricole", {
+        "statut": "salarie_agricole", "naissance": "1940",
+        "interruptions": "1972:1975:chomage_indemnise",
+    }))
+    # L'indemnisation cesse au taux plein (L. 5421-4 du code du travail) : à
+    # l'âge légal pour qui a la durée requise, à l'âge d'annulation de la
+    # décote pour qui ne l'a pas. Les années de chômage d'après ne valent rien.
+    cas.append(("chomage_au_dela_du_taux_plein", {
+        "statut": "salarie_prive_cadre", "salaire": "1.5", "naissance": "1958",
+        "debut": "20", "liquidation": "66",
+        "interruptions": "2016:2024:chomage_indemnise",
+    }))
+    cas.append(("chomage_jusqu_a_l_annulation", {
+        "naissance": "1950", "debut": "30", "liquidation": "67",
+        "interruptions": "2008:2017:chomage_indemnise",
+    }))
     # DEUX CASES QU'AUCUN CAS TYPE N'EXERÇAIT. Un fonctionnaire interrompu :
     # la pension de l'État se proratise sur les SERVICES, dont L. 9 écarte le
     # chômage. Et une carrière longue hachée : le départ anticipé compte la

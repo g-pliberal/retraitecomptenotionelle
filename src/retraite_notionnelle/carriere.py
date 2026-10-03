@@ -61,6 +61,7 @@ from .calendrier import (
 PERIODES_NON_COTISEES = {
     "chomage_indemnise",
     "chomage_solidarite",
+    "preretraite_fne",
     "chomage_non_indemnise",
     "maladie",
     "invalidite",
@@ -410,16 +411,17 @@ def _revenu_reference(annee: int, revenu: float, type_periode: str,
     2026 : depuis 2019, la tranche 2 du régime unifié monte à huit plafonds,
     et une année chômée y valait, au-dessus de quatre, des points que le droit
     ne donne pas. Le plafond se proratise sur les mois de la ligne, comme le
-    revenu.
+    revenu. Celui de l'allocation spéciale du FNE s'arrête à deux plafonds,
+    la part que l'État finance (``ChomageComplementaires.plafond_reference``).
     """
     if cotise or regle is None or not regle.ouvre_droits_complementaires:
         return 0.0
     chomage = charger_chomage_complementaires(macro.racine)
-    if (chomage.nature(type_periode, annee) is None
-            or chomage.plafond_salaire_reference is None):
+    nature = chomage.nature(type_periode, annee)
+    plafond = None if nature is None else chomage.plafond_reference(nature, annee)
+    if plafond is None:
         return revenu
-    return min(revenu, chomage.plafond_salaire_reference
-               * macro.plafond_securite_sociale(annee) * part)
+    return min(revenu, plafond * macro.plafond_securite_sociale(annee) * part)
 
 
 def _ligne_annuelle(

@@ -542,7 +542,8 @@ export class ConstructeurCompte {
       === SourceCotisations.TAUX_UNIFORME && nature === null;
     const intervalles = new Map();
     // Pour une année de chômage, régime par régime : la cotisation d'une année
-    // travaillée, garantie comprise, son assiette sans elle, le taux d'appel.
+    // travaillée, garantie comprise, son assiette sans elle, le taux d'appel,
+    // l'assiette avec elle.
     const travaillee = new Map();
 
     for (const code of codes) {
@@ -555,7 +556,8 @@ export class ConstructeurCompte {
       }
       let validee = 1.0;
       if (nature !== null) {
-        validee = chomage.partValidee(code, annee);
+        validee = chomage.assezLong(annee, part)
+          ? chomage.partValidee(code, annee, ligne.affiliation) : 0.0;
         if (validee <= 0) {
           continue;
         }
@@ -712,11 +714,12 @@ export class ConstructeurCompte {
         if (nature !== null) {
           const achat = this.valeursPoint.achat(periode.points_de || code, annee);
           if (!travaillee.has(code)) {
-            travaillee.set(code, [0.0, 0.0, 1.0]);
+            travaillee.set(code, [0.0, 0.0, 1.0, 0.0]);
           }
           const cumul = travaillee.get(code);
           cumul[0] += montant;
           cumul[1] += assietteSalaire;
+          cumul[3] += assiette;
           if (achat !== null) {
             cumul[2] = achat[1];
           }
@@ -796,7 +799,8 @@ export class ConstructeurCompte {
    * Ce qu'un tiers a versé pour une année de chômage, régime par régime : 60 %
    * de la cotisation d'une année travaillée et 0,8 % de l'assiette pour
    * l'assurance (la participation de l'allocataire aux scénarios 2 et 3),
-   * 70 % de la cotisation au taux de la solidarité pour l'État. Voir
+   * 70 % de la cotisation au taux de la solidarité pour l'État, garantie
+   * minimale comprise pour la préretraite du FNE. Voir
    * `_versement_chomage` (compte.py). Rend `[cotisation, parRegime,
    * partEmployeur]`.
    */
@@ -824,15 +828,16 @@ export class ConstructeurCompte {
     }
     const parRegime = new Map();
     let cotisation = 0;
-    for (const [code, [montant, assiette, appel]] of travaillee) {
+    for (const [code, [montant, assiette, appel, garantie]] of travaillee) {
       let verse;
       if (nature === "assurance") {
         verse = chomage.assurancePartCotisation * montant
           + chomage.assuranceParticipationReversee * assiette;
       } else {
         const taux = chomage.tauxSolidarite(code, annee, false);
+        const base = nature === "fne" ? garantie : assiette;
         verse = chomage.solidariteVersement
-          * (taux === null ? montant : assiette * taux * appel);
+          * (taux === null ? montant : base * taux * appel);
       }
       parRegime.set(code, verse);
       cotisation += verse;

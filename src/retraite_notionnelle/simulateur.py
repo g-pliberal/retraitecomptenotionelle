@@ -40,6 +40,7 @@ from .donnees.macro import DonneesMacro
 from .donnees.mortalite import DonneesMortalite
 from .donnees.regimes import CatalogueRegimes
 from .donnees.taux import CourbeTauxSansRisque
+from .droit.ouvrir import indemnisation_bornee
 from .droit.reversion import Reversion
 from .echeancier import Echeancier
 from .journal import Journal
@@ -1272,8 +1273,14 @@ class Simulateur:
     def simuler(self, carriere: Carriere) -> Comparaison:
         """Calcule les six scénarios pour une carrière."""
         self._verifier_fiabilite(carriere)
-        proposition = self.carriere_proposition(carriere)
-        reporte = proposition is not carriere
+        # LE CHÔMAGE CESSE D'ÊTRE INDEMNISÉ AU TAUX PLEIN (L. 5421-4 du code du
+        # travail) : les comptes notionnels portent ce que l'Unédic a vraiment
+        # versé, et la proposition prolonge la carrière ainsi bornée. Le
+        # scénario 1 borne la sienne à son relevé
+        # (`droit.ouvrir.indemnisation_bornee`).
+        bornee = indemnisation_bornee(self.scenario_actuel, carriere)
+        proposition = self.carriere_proposition(bornee)
+        reporte = proposition is not bornee
         if reporte:
             # Les années que le report fait travailler entrent dans le calcul :
             # elles ont à tenir la même exigence que les autres.
@@ -1288,7 +1295,7 @@ class Simulateur:
         # Les cinq autres sont les univers de la proposition, dans l'ordre de
         # leurs numéros ; celui qui ajoute l'âge légal part à cet âge.
         notionnels = {
-            cle: self.calculer_univers(cle, proposition if calcul.age_legal else carriere)
+            cle: self.calculer_univers(cle, proposition if calcul.age_legal else bornee)
             for cle, calcul in self.calculs.items()
         }
         inconnus = sorted(set(notionnels) - _CHAMPS_NOTIONNELS)

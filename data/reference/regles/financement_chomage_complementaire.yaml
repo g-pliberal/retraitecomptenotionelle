@@ -201,6 +201,9 @@ versions:
     solidarite: >-
       70 % de la cotisation au taux que l'État finance, 4 % à l'Arrco, 8 % ou 12 % sur la
       tranche B de l'Agirc, depuis 1984 ; l'allocataire ne paie rien
+    preretraite_fne: >-
+      de même, sur l'assiette que la garantie minimale de points fait cotiser quand elle
+      dépasse le salaire de référence, borné à deux plafonds depuis 1998
   exemples: aucun trouvé
 - id: convention_unedic_agirc_arrco
   statut: lue
@@ -331,6 +334,7 @@ code:
   tests:
   - tests/test_chomage_complementaires.py
   - tests/test_simulateur.py, test_la_garantie_minimale_vaut_pour_une_annee_de_chomage
+  - témoins preretraite_fne_cadre, preretraite_fne_garantie
 effet: >-
   Le compte d'une année chômée descend, aux scénarios 2, 4 et 6, de la cotisation entière à
   ce que l'Unédic ou l'État versait : treize témoins sur 694 baissent, de 0,84 % en médiane

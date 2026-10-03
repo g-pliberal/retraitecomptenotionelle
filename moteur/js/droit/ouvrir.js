@@ -13,6 +13,7 @@
  */
 
 import { DateMois, enMois } from "../calendrier.js";
+import { AnneeCarriere, chomageComplementaires } from "../carriere.js";
 import {
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   GENERATION_REFORME_2023, REFORME_2023_EFFET,
@@ -897,6 +898,96 @@ export function ageTauxPleinDroit(moteur, carriereSaisie) {
     return anticipe;
   }
   return tauxPlein;
+}
+
+/**
+ * Le premier mois sans revenu de remplacement du chômage : l'âge légal et la
+ * durée requise pour le taux plein, ou l'âge d'annulation de la décote
+ * (L. 5421-4 du code du travail) ; `null` pour une carrière qu'aucun régime
+ * n'ouvre. La durée se lit année par année, au trimestre civil qui la
+ * complète. Voir `fin_indemnisation` (ouvrir.py).
+ */
+export function finIndemnisation(moteur, carriereSaisie) {
+  const carriere = coordonner.retablir(moteur, carriereSaisie);
+  const { annuites, autres: enPoints } = periodesParcourues(moteur, carriere);
+  const autres = sansAgesPropres(enPoints);
+  const retenues = annuites.length > 0 ? annuites : autres;
+  if (retenues.length === 0) {
+    return null;
+  }
+  const ouverture = carriere.dateDeLAge(Math.min(
+    ...retenues.map(([, periode]) => ageOuverture(moteur, periode, carriere)),
+  ));
+  const opposent = annuites.length > 0 ? annuites : periodesOpposantUneDuree(autres);
+  let requis = 0;
+  for (const [, periode] of opposent) {
+    requis = Math.max(requis, dureeRequise(moteur, periode, carriere)[0]);
+  }
+  if (!requis) {
+    return ouverture;
+  }
+  const annulation = carriere.dateDeLAge(Math.min(
+    ...retenues.map(([, periode]) => ageTauxPlein(moteur, periode, carriere)),
+  ));
+  const anneeLiquidation = carriere.anneeLiquidation;
+  const parAnnee = carriere.trimestresParAnnee(
+    carriere.lignes.filter((ligne) => ligne.annee <= anneeLiquidation),
+  );
+  let acquis = 0;
+  for (const trimestres of parAnnee.values()) {
+    acquis += trimestres;
+  }
+  const majoration = compter.majorationPourEnfants(moteur,
+    carriere, new Map(opposent.map(([code]) => [code, acquis])), anneeLiquidation,
+  );
+  const manque = requis - (majoration !== null ? majoration.trimestres : 0);
+  let cumul = 0;
+  for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
+    const trimestres = parAnnee.get(annee);
+    if (cumul + trimestres >= manque) {
+      const atteinte = new DateMois(annee, 1).plusMois(3 * Math.max(0, manque - cumul));
+      const duree = atteinte.rang > ouverture.rang ? atteinte : ouverture;
+      return duree.rang < annulation.rang ? duree : annulation;
+    }
+    cumul += trimestres;
+  }
+  return annulation;
+}
+
+/**
+ * La carrière dont le chômage cesse d'être indemnisé au taux plein : une
+ * année de chômage qui commence après {@link finIndemnisation} devient une
+ * année sans activité, l'année de la coupure restant entière. Rendue telle
+ * quelle quand aucune année ne change. Voir `indemnisation_bornee`
+ * (ouvrir.py).
+ */
+export function indemnisationBornee(moteur, carriere) {
+  const chomage = chomageComplementaires(moteur.macro.paquet);
+  const depuis = chomage.finIndemnisationDepuis;
+  if (depuis === null) {
+    return carriere;
+  }
+  const indemnisee = (ligne) => !ligne.cotise && ligne.annee >= depuis
+    && chomage.nature(ligne.type_periode, ligne.annee) !== null;
+  if (carriere.age_liquidation === null || !carriere.lignes.some(indemnisee)) {
+    return carriere;
+  }
+  const coupure = finIndemnisation(moteur, carriere);
+  if (coupure === null) {
+    return carriere;
+  }
+  const bornee = (ligne) => indemnisee(ligne)
+    && new DateMois(ligne.annee, 1).rang >= coupure.rang;
+  if (!carriere.lignes.some(bornee)) {
+    return carriere;
+  }
+  return carriere.avecLignes(carriere.lignes.map((ligne) => (bornee(ligne)
+    ? new AnneeCarriere({
+      ...ligne, type_periode: "sans_activite", trimestres_valides: 0,
+      revenu_reference: 0.0, familles_cotisantes: [], familles_financees: [],
+      reputes_cotises_enveloppe: "", reputes_cotises_plafond: 0,
+    })
+    : ligne)));
 }
 
 /**

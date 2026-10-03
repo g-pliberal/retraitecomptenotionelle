@@ -53,12 +53,21 @@
 #
 # `chomage_solidarite` — l'allocation de SOLIDARITÉ que l'État finance, après
 #   l'assurance : allocation de solidarité spécifique, allocation équivalent
-#   retraite, allocation spéciale du FNE. Quatre trimestres comme l'assurance
-#   (R. 351-12, 4°, c, qui vise tous les revenus de remplacement de
-#   L. 5421-2 du code du travail) ; des points complémentaires à un taux
-#   réduit, 4 % depuis 2019, 4 % à l'Arrco et 8 % ou 12 % à l'Agirc avant,
-#   que l'État finance (`chomage_complementaires.yaml`). Les deux motifs de
-#   chômage partagent l'enveloppe des trimestres réputés cotisés.
+#   retraite. Quatre trimestres comme l'assurance (R. 351-12, 4°, c, qui vise
+#   tous les revenus de remplacement de L. 5421-2 du code du travail) ; des
+#   points complémentaires à un taux réduit, 4 % depuis 2019, 4 % à l'Arrco
+#   et 8 % ou 12 % à l'Agirc avant, que l'État finance
+#   (`chomage_complementaires.yaml`).
+#
+# `preretraite_fne` — l'allocation spéciale du FONDS NATIONAL DE L'EMPLOI, la
+#   préretraite d'un salarié licencié que l'État finance, fermée aux
+#   conventions conclues depuis le 1er janvier 2012. Quatre trimestres
+#   (R. 351-12, 4°, c, qui vise le 2° de L. 5123-2 du code du travail « dans
+#   sa rédaction antérieure au 1er janvier 2012 », LEGIARTI000054167657) ; les
+#   points de la solidarité, garantie minimale de points comprise, sur un
+#   salaire borné à deux plafonds. Les trois motifs de chômage partagent
+#   l'enveloppe des trimestres réputés cotisés (D. 351-1-2, 3°, qui reprend
+#   le c du 4° de R. 351-12).
 #
 # `cotisations_complementaires_versees` — QUI PAIE CES POINTS, et c'est ce que
 #   le compte notionnel regarde, lui qui ne porte que ce qui a été versé.
@@ -123,6 +132,7 @@
 motif,trimestres_assimiles,ouvre_droits_complementaires,cotisations_complementaires_versees,avpf,services_fonction_publique,services_plafond_annees_par_enfant,reputes_cotises_enveloppe,reputes_cotises_plafond,fiabilite
 chomage_indemnise,4,oui,oui,non,non,,chomage,4,haute
 chomage_solidarite,4,oui,oui,non,non,,chomage,4,moyenne
+preretraite_fne,4,oui,oui,non,non,,chomage,4,moyenne
 chomage_non_indemnise,4,non,non,non,non,,,,haute
 maladie,4,oui,non,non,oui,,incapacite_temporaire,4,moyenne
 maternite,4,oui,non,non,oui,,maternite,,moyenne

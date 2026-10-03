@@ -14,6 +14,7 @@ import * as acquerirEtape from "./acquerir.js";
 import { dateDEffet } from "./commun.js";
 import * as compterEtape from "./compter.js";
 import * as coordonnerEtape from "./coordonner.js";
+import { indemnisationBornee } from "./ouvrir.js";
 
 /** La version du contrat C.5 que les lignes et l'enveloppe suivent. */
 export const SCHEMA_VERSION = 1;
@@ -186,9 +187,11 @@ export class Releve {
  * trois drapeaux sont ceux de `ScenarioActuel.calculer`. Voir `construire`
  * dans le Python.
  */
-export function construire(moteur, carriere, {
+export function construire(moteur, carriereSaisie, {
   avantagesNonContributifs = true, pointsGratuits = true, liquiderSuccessions = true,
 } = {}) {
+  // Le chômage que le relevé lit cesse d'être indemnisé au taux plein.
+  const carriere = indemnisationBornee(moteur, carriereSaisie);
   const coordination = coordonnerEtape.coordonner(moteur, carriere);
   const durees = compterEtape.compter(moteur, coordination, avantagesNonContributifs);
   const droits = acquerirEtape.acquerir(moteur, coordination, durees, pointsGratuits);

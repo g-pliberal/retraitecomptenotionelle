@@ -32,6 +32,7 @@ from .. import chronologie as chrono
 from . import acquerir as _acquerir
 from . import compter as _compter
 from . import coordonner as _coordonner
+from . import ouvrir as _ouvrir
 from .commun import date_d_effet as _date_d_effet
 
 if TYPE_CHECKING:
@@ -185,7 +186,11 @@ def construire(moteur: ScenarioActuel, carriere: Carriere, *,
     Les trois drapeaux sont ceux de :meth:`ScenarioActuel.calculer`, qui les
     documente : les trimestres des enfants, les points gratuits, et la
     liquidation ensemble des régimes qui se succèdent.
+
+    Le chômage que le relevé lit cesse d'être indemnisé au taux plein
+    (:func:`~retraite_notionnelle.droit.ouvrir.indemnisation_bornee`).
     """
+    carriere = _ouvrir.indemnisation_bornee(moteur, carriere)
     coordination = _coordonner.coordonner(moteur, carriere)
     durees = _compter.compter(moteur, coordination, avantages_non_contributifs)
     droits = _acquerir.acquerir(moteur, coordination, durees, points_gratuits)
