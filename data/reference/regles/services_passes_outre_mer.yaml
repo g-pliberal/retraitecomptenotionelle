@@ -1,0 +1,251 @@
+schema_version: 1
+id: services_passes_outre_mer
+intitule: >-
+  Les années d'un salarié de Nouvelle-Calédonie antérieures au 1er janvier 1995, et celle
+  d'un salarié de Saint-Pierre-et-Miquelon antérieure au 1er janvier 1988, dates où l'Arrco
+  y devient obligatoire, sont des services passés : l'institution les valide sans
+  cotisation, à une pension prise depuis, quand le régime de base local les reconnaît ; le
+  compte notionnel, qui ne porte que ce qui a été versé, n'en porte rien.
+domaine: periodes_assimilees
+regimes: [arrco, arrco_tranche_2, unirs]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- le statut de l'année — salarié de Nouvelle-Calédonie ou de Saint-Pierre-et-Miquelon — et
+  la date d'effet de la pension
+- le salaire de l'année, les taux et le prix d'achat du point d'une année cotisée
+- legislation/affiliations.yaml (`services_passes` des périodes des deux statuts)
+ecrit:
+- au scénario 1, les points Arrco ou UNIRS de l'année, ceux d'une année cotisée
+- au compte notionnel, rien
+dates_qui_decident:
+- revenu.annee
+- liquidation.date_effet
+versions:
+- id: avant_les_generalisations
+  statut: lue
+  textes:
+  - id: JORFTEXT000000498739
+    reference: >-
+      arrêté du 21 juin 1988 portant extension du champ d'application professionnel de
+      l'accord national interprofessionnel de retraite du 8 décembre 1961, publié au
+      Journal officiel du 30 juin 1988 (résumé de l'index JORF du dépôt)
+    citation: >-
+      « LE CHAMP D'APPLICATION DE CET ACCORD EST ETENDU DANS LA COLLECTIVITE TERRITORIALE DE
+      SAINT-PIERRE-ET-MIQUELON [...] AUX BRANCHES D'ACTIVITE DONT LES TRAVAILLEURS SALARIES
+      SONT ASSUJETTIS A TITRE OBLIGATOIRE AU REGIME D'ASSURANCE VIEILLESSE INSTITUE PAR LA
+      LOI 87563 DU 17-07-1987 »
+    lu_le: 2026-10-03
+  - reference: >-
+      accord interprofessionnel territorial du 29 août 1994 pour la généralisation des
+      régimes de retraite complémentaire ARRCO et AGIRC sur le Territoire de
+      Nouvelle-Calédonie, étendu par l'arrêté n° 1745-T du 25 avril 1995 (JONC n° 7063 du 2
+      mai 1995), copie « mise à jour le 04/05/2006 » que publie la direction du travail et de
+      l'emploi de Nouvelle-Calédonie (hors JORF)
+    article: article 2
+    citation: >-
+      « Les entreprises qui relèvent du champ d'application du présent accord sont tenues
+      d'affilier, au plus tard le 1er Janvier 1995, la totalité de leur personnel salarié au
+      régime de retraite complémentaire ARRCO »
+    lu_le: 2026-10-03
+    empreinte: sha256:844f90f1c5d03470a17284fc59f71cd043e9c342ff52e7cc669e79512f53fb34
+  bornes:
+    liquidation.date_effet: [null, 1988-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      ni la Nouvelle-Calédonie ni Saint-Pierre-et-Miquelon n'ont encore l'Arrco : une
+      pension prise avant n'a aucun point pour les années de ces statuts
+  exemples: aucun trouvé
+- id: saint_pierre_et_miquelon_depuis_1988
+  statut: lue
+  textes:
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre II
+      (guides_html/guide_1/titre_niveau_1_4.html), lu dans sa capture par Common Crawl du
+      17 décembre 2018, collection CC-MAIN-2018-51, empreinte sha1
+      MCQ4UXA3RBQKSCFXDTNQQKBFBIHAA4DH (hors JORF)
+    article: II.3.1.2 ; II.3.3
+    citation: >-
+      « les arrêtés du 21 juin 1988 (J.O. du 30 juin 1988) ont visé la collectivité
+      territoriale de Saint-Pierre-et-Miquelon, à effet du 1er janvier 1988, tant pour
+      l'AGIRC que pour l'ARRCO » ; l'extension « permet la validation des services passés
+      n'ayant pas donné lieu à versement de cotisations, que ces services aient été
+      effectués dans des entreprises existantes ou dans des entreprises disparues avant
+      obligation »
+    lu_le: 2026-10-03
+    empreinte: sha256:64b2702d7c50cae4bd99a8dc86c58748ead311da895cb72340ed13137a3fc516
+  - id: JORFTEXT000000498739
+    reference: >-
+      arrêté du 21 juin 1988 portant extension du champ d'application professionnel de
+      l'accord national interprofessionnel de retraite du 8 décembre 1961 (résumé de l'index
+      JORF du dépôt)
+    lu_le: 2026-10-03
+  bornes:
+    liquidation.date_effet: [1988-01-01, 1995-01-01]
+  contenu:
+    saint_pierre_et_miquelon: >-
+      1987, première année que le modèle route au régime de la loi n° 87-563, vaut les
+      points Arrco d'une année cotisée, sans rien au compte notionnel
+    nouvelle_caledonie: aucun point Arrco, la généralisation n'y étant pas faite
+  exemples: aucun trouvé
+- id: nouvelle_caledonie_depuis_1995
+  statut: lue
+  textes:
+  - reference: >-
+      accord interprofessionnel territorial du 29 août 1994 pour la généralisation des
+      régimes de retraite complémentaire ARRCO et AGIRC sur le Territoire de
+      Nouvelle-Calédonie, étendu par l'arrêté n° 1745-T du 25 avril 1995 (JONC n° 7063 du 2
+      mai 1995), copie « mise à jour le 04/05/2006 » que publie la direction du travail et de
+      l'emploi de Nouvelle-Calédonie (hors JORF)
+    article: préambule ; articles 2, 4 et 6
+    citation: >-
+      le préambule rappelle « l'obligation, introduite par la délibération n° 290 du Congrès
+      du Territoire » de faire bénéficier d'un régime de retraite complémentaire « tous les
+      salariés relevant de la CAFAT avant le 1er Janvier 1995 » ; l'article 6 accorde, « dans
+      le cadre d'une pesée démographique globale », « la validation gratuite des services
+      passés effectués en Nouvelle-Calédonie par les actifs, les radiés et les retraités des
+      entreprises existantes et disparues, pour la période antérieure au 1er janvier 1995 »
+    lu_le: 2026-10-03
+    empreinte: sha256:844f90f1c5d03470a17284fc59f71cd043e9c342ff52e7cc669e79512f53fb34
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre II
+      (guides_html/guide_1/titre_niveau_1_4.html), lu dans sa capture par Common Crawl du
+      17 décembre 2018, collection CC-MAIN-2018-51, empreinte sha1
+      MCQ4UXA3RBQKSCFXDTNQQKBFBIHAA4DH (hors JORF)
+    article: II.4.2.1.3, 2
+    citation: >-
+      « La généralisation de la retraite complémentaire en Nouvelle-Calédonie s'applique, à
+      compter du 1er janvier 1995, à l'ensemble des salariés des entreprises du secteur
+      privé » ; « Pour l'ARRCO, les services antérieurs au 1er janvier 1995 qui sont reconnus
+      par la CAFAT doivent faire l'objet d'une demande de transfert de droits inscrits (DTDI)
+      vers la CRE. Ces services sont susceptibles d'être validés selon la réglementation qui
+      était applicable en matière d'opérations supplémentaires en Métropole jusqu'au 1er
+      janvier 1992. »
+    lu_le: 2026-10-03
+    empreinte: sha256:64b2702d7c50cae4bd99a8dc86c58748ead311da895cb72340ed13137a3fc516
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII
+      (guides_html/guide_1/titre_niveau_1_9.html), lu dans sa capture par Common Crawl du
+      21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      OFPBY3CMW6C2DJR2MBKQLAB3DRPYDNLP (hors JORF)
+    article: VII.1.2.2.2 ; VII.1.2.2.3, 1
+    citation: >-
+      les services passés calédoniens sont validés « sous réserve qu'ils soient reconnus par
+      le régime de base de la CAFAT » ; « les droits attribués pour des services passés
+      accomplis entre 16 et 21 ans sont d'un montant égal à 75 % des droits de base calculés
+      dans les conditions habituelles »
+    lu_le: 2026-10-03
+    empreinte: sha256:aa8e7d7be98583bab7267b844ee376e01d091d4dc3b47764763e960e30463580
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre IV
+      (guides_html/guide_1/titre_niveau_1_6.html), lu dans sa capture par Common Crawl du
+      21 octobre 2018, collection CC-MAIN-2018-43, empreinte sha1
+      6SOYFQP4DSZLSCEJ3G4M5HURMJQILLUS (hors JORF)
+    article: IV.2.1, tableau des « opérations supplémentaires »
+    citation: >-
+      du 1er juillet 1988 au 1er janvier 1992, « Application de % de validation : actifs :
+      αa = 100 % si âge moyen ≤ 52 ans, αa selon pesée si âge moyen > 52 ans ; retraités et
+      radiés : αr selon pesée si αa = 100 % »
+    lu_le: 2026-10-03
+    empreinte: sha256:853180d14b798ab2001bea21c71a9b3157aade6bd136e39978ee635686b4bb44
+  bornes:
+    liquidation.date_effet: [1995-01-01, null]
+  contenu:
+    nouvelle_caledonie: >-
+      les années de 1958, première que le modèle route à la CAFAT, à 1994 valent les points
+      d'une année cotisée — à l'Arrco et sur sa tranche 2 depuis 1961, au barème de l'UNIRS
+      avant —, sans rien au compte notionnel ; depuis 1995, des années cotisées
+    saint_pierre_et_miquelon: 1987, comme depuis 1988
+  exemples: aucun trouvé
+approximations:
+- version: [saint_pierre_et_miquelon_depuis_1988, nouvelle_caledonie_depuis_1995]
+  ecart: >-
+    Les points d'un service passé sont ceux d'une année cotisée de métropole : le salaire
+    de l'année, le taux et le prix d'achat du point de l'année — 2,5 % de cotisation de 1961
+    à 1966, l'équivalent de 4 % de taux contractuel ensuite. Le droit calcule ceux de
+    Nouvelle-Calédonie selon les « opérations supplémentaires » d'avant 1992, au taux de
+    l'adhésion — 4 % en 1995, 4,5 % en 1996 —, à 100 % pour les salariés en activité si leur
+    âge moyen ne passe pas cinquante-deux ans, selon une pesée démographique globale pour les
+    anciens salariés et les retraités : le modèle valide tout à 100 %. Les années accomplies
+    entre seize et vingt et un ans, que l'Arrco valide à 75 %, comptent entières.
+  effet: non mesuré
+- version: [avant_les_generalisations, saint_pierre_et_miquelon_depuis_1988]
+  ecart: >-
+    Une pension calédonienne prise avant 1995 n'a aucun point Arrco : le modèle calcule la
+    pension à sa date d'effet, et ne porte pas la révision qui a servi aux retraités, à la
+    généralisation, les droits de leurs services passés au taux de la pesée globale (accord
+    du 29 août 1994, art. 6).
+  effet: non mesuré
+- version: [avant_les_generalisations, saint_pierre_et_miquelon_depuis_1988,
+    nouvelle_caledonie_depuis_1995]
+  ecart: >-
+    Le modèle ne connaît pas l'employeur. Les entreprises calédoniennes déjà adhérentes
+    avant 1995 par la caisse de leur siège en métropole (accord du 29 août 1994, art. 4),
+    les professions de Saint-Pierre-et-Miquelon couvertes avant 1988 par avenant (guide,
+    II.3), cotisaient : leurs années passent pour des services passés. Les années comptent
+    depuis 1958, sans lire ce que la CAFAT reconnaît. Les services passés des cadres à
+    l'Agirc, antérieurs au 1er janvier 1984 seulement en Nouvelle-Calédonie (guide,
+    II.4.2.1.3), sont hors du modèle, qui n'y connaît pas de cadre. La cascade des avantages
+    ne les isole pas : ils y comptent comme des points cotisés.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-03
+  prochaine_relecture: 2027-10-01
+  lectures:
+  - type: autre
+    reference: >-
+      accord interprofessionnel territorial du 29 août 1994 et ses deux avenants de 1995,
+      avec les arrêtés d'extension n° 3809-T du 4 octobre 1994, n° 1745-T du 25 avril 1995
+      qui l'abroge, n° 735-T et 725-T du 20 février 1996, dans la copie de la direction du
+      travail et de l'emploi de Nouvelle-Calédonie : les avenants ne touchent que le champ
+      et la commission de suivi
+    url: https://dtenc.gouv.nc/sites/default/files/atoms/files/accord_territorial_retraite_arrco_et_agirc_secteur_prive.pdf
+    date: 2006-05-04
+  - type: autre
+    reference: >-
+      CLEISS, « La sécurité sociale des salariés en Nouvelle-Calédonie », pension
+      complémentaire : « les périodes non cotisées avant 1995 sont prises en compte :
+      « validation des services passés » »
+    url: https://www.cleiss.fr/docs/regimes/regime_nc_salaries.html
+    date: 2026-10-03
+  - type: jorf
+    reference: >-
+      arrêté du 21 juin 1988 portant extension du champ d'application professionnel de
+      l'accord national interprofessionnel de retraite du 8 décembre 1961
+      (JORFTEXT000000498739), et celui qui étend la convention du 14 mars 1947
+      (JORFTEXT000000873503), à Saint-Pierre-et-Miquelon
+    date: 1988-06-30
+  a_relire:
+  - >-
+    Le calcul des droits des services passés calédoniens — taux, salaire retenu, taux de
+    validation des anciens salariés et des retraités —, que fixent les délibérations des
+    commissions paritaires de l'Arrco et de l'Agirc des 15 et 28 juin 1994 et le chapitre 7
+    de la délibération 6B, introuvables en ligne ; la délibération n° 290 du Congrès du 14
+    janvier 1992, citée par l'accord, non lue.
+  - >-
+    Le régime complémentaire créé à Saint-Pierre-et-Miquelon par l'accord du 18 février
+    1983, agréé par un avis du 31 décembre 1987 (JORFTEXT000000888235), dont l'index ne
+    porte que le titre.
+code:
+  python:
+  - carriere.py, Affiliations.services_passes
+  - droit/acquerir.py, acquerir (pension prise avant la généralisation, fiabilité estimée)
+  - moteur/compte.py, ConstructeurCompte._cotisation_ligne
+  javascript:
+  - regimes.js, Affiliations.servicesPasses
+  - droit/acquerir.js
+  - compte.js, cotisationLigne
+  parametres:
+  - legislation/affiliations.yaml (salarie_nouvelle_caledonie,
+    salarie_saint_pierre_et_miquelon)
+  tests:
+  - tests/test_services_passes.py
+  - témoins chomage_et_services_passes_caledoniens, chomage_saint_pierre_et_miquelon, et
+    le balayage des deux statuts
+effet: >-
+  Les salariés de Nouvelle-Calédonie, et d'un an ceux de Saint-Pierre-et-Miquelon. Le
+  compte notionnel du salarié calédonien ne porte plus d'Arrco avant 1995, quand il en
+  portait les cotisations depuis 1961 ; sa pension du scénario 1 garde ces points, sauf
+  prise avant 1995, où le modèle lui servait une Arrco qui n'existait pas.

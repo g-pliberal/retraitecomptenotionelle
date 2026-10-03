@@ -159,6 +159,7 @@ export class ChomageComplementaires {
     this.plafondSalaireReference = brut.plafond_salaire_reference ?? null;
     this.validationDepuis = brut.validation_depuis ?? {};
     this.validationDepuisAffiliations = brut.validation_depuis_affiliations ?? {};
+    this.sansValidation = new Set(brut.sans_validation ?? []);
     this.dureeMinimaleJusqu = brut.duree_minimale_jusqu ?? 0;
     this.dureeMinimaleJours = brut.duree_minimale_jours ?? 0;
     this.fnePlafondSalaireReference = brut.fne_plafond_salaire_reference ?? null;
@@ -222,8 +223,10 @@ export class ChomageComplementaires {
   }
 
   /** Part de l'année que le régime valide au titre du chômage, et
-   * l'affiliation avec lui. */
+   * l'affiliation avec lui ; rien pour une affiliation dont un autre régime
+   * que l'assurance chômage indemnise le chômage. */
   partValidee(code, annee, affiliation = null) {
+    if (affiliation !== null && this.sansValidation.has(affiliation)) return 0.0;
     let part = 1.0;
     for (const depuis of [this.validationDepuis[code],
       affiliation === null ? undefined : this.validationDepuisAffiliations[affiliation]]) {

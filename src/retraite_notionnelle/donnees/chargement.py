@@ -658,6 +658,9 @@ class ChomageComplementaires:
     #: Premier mois validé pour une affiliation que l'assurance chômage a
     #: couverte plus tard : (affiliation, année, mois).
     validation_depuis_affiliations: tuple[tuple[str, int, int], ...] = ()
+    #: Affiliations dont le chômage n'est jamais validé : un autre régime que
+    #: l'assurance chômage l'indemnise — la CAFAT en Nouvelle-Calédonie.
+    sans_validation: frozenset[str] = frozenset()
     #: Année de naissance de la solidarité — celle de l'allocation, ou celle
     #: de la convention de l'allocation spéciale du FNE —, et part de ses
     #: cotisations que l'État verse.
@@ -734,7 +737,10 @@ class ChomageComplementaires:
                      affiliation: str | None = None) -> float:
         """Part de l'année que le régime ``code`` valide au titre du chômage :
         rien avant son premier jour, ni avant celui de l'affiliation, les mois
-        qui le suivent l'année même."""
+        qui le suivent l'année même ; rien du tout pour une affiliation dont
+        un autre régime que l'assurance chômage indemnise le chômage."""
+        if affiliation in self.sans_validation:
+            return 0.0
         part = 1.0
         for cle, dates in ((code, self.validation_depuis),
                            (affiliation, self.validation_depuis_affiliations)):
@@ -828,6 +834,7 @@ def charger_chomage_complementaires(racine: Path) -> ChomageComplementaires:
             for affiliation, jour in sorted(
                 (brut.get("validation_depuis_affiliations") or {}).items())
         ),
+        sans_validation=frozenset(brut.get("sans_validation") or ()),
         solidarite_depuis=int(solidarite.get("depuis", 0)),
         solidarite_versement=float(solidarite.get("versement", 0.0)),
         solidarite_taux=tuple(

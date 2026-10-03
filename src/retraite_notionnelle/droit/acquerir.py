@@ -332,6 +332,15 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         if plafond_fne is not None:
             base_ligne = min(base_ligne, plafond_fne * part
                              * moteur.macro.plafond_securite_sociale(ligne.annee))
+        # LES SERVICES PASSÉS : les années d'avant la généralisation de
+        # l'Arrco à un statut, que l'institution valide sans cotisation
+        # (`Affiliations.services_passes`) — en Nouvelle-Calédonie avant 1995,
+        # à Saint-Pierre-et-Miquelon avant 1988. Ils valent les points d'une
+        # année cotisée, mais à une pension prise depuis la généralisation
+        # seulement : avant, le régime n'existait pas pour ce statut, et le
+        # modèle lui servait trente-quatre ans d'Arrco calédonien.
+        services, generalisation = moteur.affiliations.services_passes(
+            ligne.affiliation, ligne.annee, carriere.date_entree(ligne.affiliation))
         for code in regimes:
             if code not in moteur.catalogue:
                 continue
@@ -339,6 +348,14 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
             if (familles_admises is not None
                     and regime.famille not in familles_admises):
                 continue
+            if code in services:
+                if annee_liquidation < generalisation:
+                    continue
+                # Le taux de la généralisation, la pesée des anciens salariés
+                # et des retraités : rien de cela n'est lu (fiche
+                # `services_passes_outre_mer`), les points sont estimés.
+                fiabilite_points[code] = min(
+                    fiabilite_points.get(code, Fiabilite.CERTIFIEE), Fiabilite.ESTIMEE)
             # LE PREMIER JOUR VALIDÉ. Les complémentaires ne valident le
             # chômage que depuis le 1er octobre 1967, l'Ircantec depuis le
             # 1er août 1977 ; l'année du premier jour n'en compte que les

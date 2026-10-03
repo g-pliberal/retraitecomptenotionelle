@@ -2015,6 +2015,37 @@ export class Affiliations {
    * sans eux, la liste des régimes possibles est rendue telle quelle.
    */
   regimes(affiliation, annee, anneeEntree = null, revenu = null, plafond = null) {
+    const periode = this._periode(affiliation, annee, anneeEntree);
+    if (periode === null) {
+      return [];
+    }
+    let regimes = periode.regimes || [];
+    const seuils = periode.seuil_pass || null;
+    if (seuils && revenu !== null && revenu !== undefined
+        && plafond !== null && plafond !== undefined) {
+      regimes = regimes.filter(
+        (code) => revenu >= Number(seuils[code] ?? 0.0) * plafond,
+      );
+    }
+    return regimes;
+  }
+
+  /**
+   * Ceux des régimes de l'année qui la VALIDENT SANS COTISATION — les
+   * services passés, d'avant la généralisation de l'Arrco au statut —, et
+   * l'année à compter de laquelle une pension les sert : `[Set, année]`, un
+   * ensemble vide et zéro sans services passés. Voir carriere.py.
+   */
+  servicesPasses(affiliation, annee, anneeEntree = null) {
+    const regle = this._periode(affiliation, annee, anneeEntree)?.services_passes ?? null;
+    if (!regle) {
+      return [new Set(), 0];
+    }
+    return [new Set(regle.regimes ?? []), Number(regle.pension_depuis)];
+  }
+
+  /** La période du statut qui couvre cette année, pour cette entrée. */
+  _periode(affiliation, annee, anneeEntree = null) {
     const profil = this._profils[affiliation];
     if (profil === undefined) {
       throw new Error(
@@ -2042,17 +2073,9 @@ export class Affiliations {
       if (depuis !== null && entree < rangBorne(depuis)) {
         continue;
       }
-      let regimes = periode.regimes || [];
-      const seuils = periode.seuil_pass || null;
-      if (seuils && revenu !== null && revenu !== undefined
-          && plafond !== null && plafond !== undefined) {
-        regimes = regimes.filter(
-          (code) => revenu >= Number(seuils[code] ?? 0.0) * plafond,
-        );
-      }
-      return regimes;
+      return periode;
     }
-    return [];
+    return null;
   }
 }
 

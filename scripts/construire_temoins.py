@@ -1040,6 +1040,19 @@ def _cas() -> list[dict]:
         "statut": "salarie_agricole", "naissance": "1940",
         "interruptions": "1972:1975:chomage_indemnise",
     }))
+    # L'outre-mer. En Nouvelle-Calédonie, l'Arrco n'est obligatoire que depuis
+    # 1995 : les années d'avant sont des services passés, validés sans
+    # cotisation et absents du compte notionnel, et le chômage, que la CAFAT
+    # indemnise, ne vaut aucun point. À Saint-Pierre-et-Miquelon, l'Unédic
+    # indemnise, et l'Arrco valide.
+    cas.append(("chomage_et_services_passes_caledoniens", {
+        "statut": "salarie_nouvelle_caledonie", "naissance": "1950",
+        "interruptions": "1990:1990:chomage_indemnise, 2003:2004:chomage_indemnise",
+    }))
+    cas.append(("chomage_saint_pierre_et_miquelon", {
+        "statut": "salarie_saint_pierre_et_miquelon", "naissance": "1960",
+        "interruptions": "2003:2004:chomage_indemnise",
+    }))
     # L'indemnisation cesse au taux plein (L. 5421-4 du code du travail) : à
     # l'âge légal pour qui a la durée requise, à l'âge d'annulation de la
     # décote pour qui ne l'a pas. Les années de chômage d'après ne valent rien.

@@ -294,11 +294,13 @@ inventaire:
     manque: >-
       La valeur de référence qui convertit les cotisations en points n'est pas publiée
       : le rendement est estimé ; taux et barème de 2026 projetés sur toute la période
-      ; plafond de 548 600 FCFP remplacé par le plafond national. Les salariés du privé
-      de Nouvelle-Calédonie relèvent aussi, obligatoirement, de l'Agirc-Arrco depuis
-      l'accord territorial de 1994, étendu en 1995 et généralisé au 1er janvier 1995
-      avec validation des services passés : le statut `salarie_nouvelle_caledonie` ne
-      route pas vers la complémentaire.
+      ; plafond de 548 600 FCFP remplacé par le plafond national. Le statut `salarie_nouvelle_caledonie`
+      route aussi l'Agirc-Arrco du non-cadre, obligatoire depuis le 1er janvier 1995
+      ; les années d'avant, depuis 1958, en sont des services passés, validés sans cotisation
+      à une pension prise depuis 1995 et absents du compte notionnel, sur les barèmes
+      de métropole faute de ceux de la généralisation (fiche `services_passes_outre_mer`).
+      Le chômage, que la CAFAT indemnise, ne vaut aucun point complémentaire ; il ne
+      vaut pas non plus de points CAFAT, dont la règle n'est pas lue.
 
   - code: wallis_et_futuna
     nom: Retraite des salariés de Wallis-et-Futuna
@@ -352,7 +354,7 @@ inventaire:
     integre_dans: arrco
     couverture: partiel
     statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente, maitre_enseignement_prive,
-      agent_chemins_fer_secondaires]
+      agent_chemins_fer_secondaires, salarie_nouvelle_caledonie]
     textes:
     - {reference: accord du 15 mai 1957 créant l'UNIRS (hors JORF), id: null}
     manque: >-
@@ -360,7 +362,8 @@ inventaire:
       CGRCR, IRPSIMMEC, CAPIMMEC et les autres —, dont aucune n'a de fiche propre :
       chacune avait son barème, et le dépôt n'en connaît qu'un ; et ce barème n'est
       chiffré nulle part dans l'index (deux occurrences du nom avant 1975, sans taux)
-      : 2,5 % par continuité avec l'Arrco de 1962.
+      : 2,5 % par continuité avec l'Arrco de 1962. Il sert aussi de barème aux services
+      passés calédoniens de 1958 à 1960, que l'Arrco valide sans cotisation depuis 1995.
 
   - code: arrco
     nom: Association des régimes de retraite complémentaire des salariés

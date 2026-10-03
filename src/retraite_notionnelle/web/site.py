@@ -31,6 +31,7 @@ import atexit
 import enum
 import json
 import math
+import os
 import re
 import selectors
 import shutil
@@ -178,8 +179,12 @@ class Site:
             ["node", str(PROGRAMME)], cwd=RACINE, stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=self._journal, text=True, encoding="utf-8",
             bufsize=1)
-        self._selecteur = selectors.DefaultSelector()
-        self._selecteur.register(self._processus.stdout, selectors.EVENT_READ)
+        # Sous Windows, `select` n'attend que des sockets, pas un tube : la
+        # lecture y attend sans délai, et un node arrêté rend une ligne vide.
+        self._selecteur = None
+        if os.name != "nt":
+            self._selecteur = selectors.DefaultSelector()
+            self._selecteur.register(self._processus.stdout, selectors.EVENT_READ)
 
     # -- ce que les pages demandent -------------------------------------------
 
@@ -222,7 +227,7 @@ class Site:
             raise ErreurSite("node s'est arrêté : " + self._lire_journal())
         self._processus.stdin.write(json.dumps(_vers_json(demande), ensure_ascii=False) + "\n")
         self._processus.stdin.flush()
-        if not self._selecteur.select(timeout=DELAI):
+        if self._selecteur is not None and not self._selecteur.select(timeout=DELAI):
             raise ErreurSite(f"node n'a pas répondu en {DELAI:.0f} s")
         ligne = self._processus.stdout.readline()
         if not ligne:

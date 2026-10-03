@@ -253,6 +253,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       baseLigne = Math.min(baseLigne, plafondFne * part
         * moteur.macro.plafond_securite_sociale.valeur(ligne.annee));
     }
+    // Les services passés : les points d'une année cotisée, à une pension
+    // prise depuis la généralisation de l'Arrco au statut seulement. Voir
+    // acquerir.py.
+    const [services, generalisation] = moteur.affiliations.servicesPasses(
+      ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation));
     for (const code of coordination.regimes[i]) {
       if (!moteur.catalogue.contient(code)) {
         continue;
@@ -260,6 +265,13 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       const regime = moteur.catalogue.obtenir(code);
       if (famillesAdmises !== null && !famillesAdmises.has(regime.famille)) {
         continue;
+      }
+      if (services.has(code)) {
+        if (anneeLiquidation < generalisation) {
+          continue;
+        }
+        fiabilitePoints.set(code, Math.min(
+          fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, Fiabilite.ESTIMEE));
       }
       // Le premier jour validé : 1er octobre 1967, 1er août 1977 à l'Ircantec,
       // 1er avril 1974 pour le salarié agricole.

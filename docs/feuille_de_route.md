@@ -1423,16 +1423,16 @@ réversion.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 
-**Reprise, au 1er octobre 2026.** Fait : le plafond du RAFP, les points
-gratuits de la RCO, l'Arrco des cultes et le salaire annuel moyen de la
-CAVIMAC. Reste, dans cet ordre : les fractions de pension de la CAVIMAC (avant
-1979, puis 1979 à 1997) ; les ouvriers de l'État hors du RAFP ; le barème de
-l'Ircantec pour enfants ; le routage calédonien et sa ligne d'inventaire ; les
-deux exceptions au plafond du RAFP (GIPA, compte épargne-temps) et la
-cotisation volontaire outre-mer ; les 66 points gratuits des conjoints, aides
-familiaux et collaborateurs ; les huit taux de l'Arrco des cultes. Commencer
-par les fractions de la CAVIMAC (note « Puis le salaire annuel moyen de la
-CAVIMAC », `limites.md`, registre de veille).
+**Reprise, au 3 octobre 2026.** Fait : le plafond du RAFP, les points
+gratuits de la RCO, l'Arrco des cultes, le salaire annuel moyen de la CAVIMAC
+et le routage calédonien — services passés d'avant 1995, chômage de la CAFAT
+sans points (note du 3 octobre). Reste, dans cet ordre : les fractions de
+pension de la CAVIMAC (avant 1979, puis 1979 à 1997) ; les ouvriers de l'État
+hors du RAFP ; le barème de l'Ircantec pour enfants ; les deux exceptions au
+plafond du RAFP (GIPA, compte épargne-temps) et la cotisation volontaire
+outre-mer ; les 66 points gratuits des conjoints, aides familiaux et
+collaborateurs ; les huit taux de l'Arrco des cultes. Commencer par les
+fractions de la CAVIMAC (note « Puis le salaire annuel moyen de la CAVIMAC »).
 
 **Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
 régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
@@ -1553,6 +1553,39 @@ demie le salaire moyen, la pension de base du ministre était 2,17 fois trop
 haute. La page de la caisse, réservée puis lue, dit aussi que les années
 d'avant 1979 sont validées gratuitement, quand le statut affirmait qu'elles ne
 portaient aucun droit.
+
+**Puis, le 3 octobre 2026, le routage calédonien et le chômage d'outre-mer.**
+« Vérifier deux points sur les salariés de Nouvelle-Calédonie », relevés
+pendant l'action 141. L'Arrco n'y est obligatoire que depuis le 1er janvier
+1995 : l'accord interprofessionnel territorial du 29 août 1994, étendu par
+l'arrêté n° 1745-T du 25 avril 1995, fait affilier tout le personnel « au plus
+tard le 1er Janvier 1995 » et valide « gratuitement » les services passés
+d'avant (art. 2 et 6) ; le guide réglementaire de 2016 les valide, « reconnus
+par la CAFAT », selon les opérations supplémentaires d'avant 1992 (II.4.2.1.3)
+— à 100 % pour les actifs dont l'âge moyen ne passe pas cinquante-deux ans,
+selon une pesée pour les anciens salariés et les retraités (IV.2.1). Une
+période d'affiliation porte désormais `services_passes` : ces années valent au
+scénario 1 les points d'une année cotisée, à une pension prise depuis la
+généralisation, et le compte notionnel n'en porte rien
+(`Affiliations.services_passes`, dans les deux moteurs). La Nouvelle-Calédonie
+de 1958 à 1994, l'UNIRS tenant lieu de barème avant 1961 ; Saint-Pierre-et-
+Miquelon pour 1987, l'Arrco y étant étendue au 1er janvier 1988 (arrêté du
+21 juin 1988). Le chômage calédonien, que la CAFAT indemnise, ne vaut plus de
+points : l'Agirc-Arrco ne valide que l'Unédic, l'État et les organismes
+auto-assurés du code du travail (guide, VII.3.1.3.1 ; accord de 2017, art. 59
+à 79) — `sans_validation`, dans `chomage_complementaires.yaml`. Celui de
+Saint-Pierre-et-Miquelon garde ses points, la convention d'assurance chômage y
+« s'appliqu[ant] ». Fiche `services_passes_outre_mer` ; ligne d'inventaire de
+la CAFAT récrite ; le routage calédonien de la liste ci-dessous est fait.
+Onze témoins bougent, tous calédoniens ou saint-pierrais, et deux naissent
+(`chomage_et_services_passes_caledoniens`, `chomage_saint_pierre_et_miquelon`).
+Au scénario 1, la pension calédonienne prise en 1989 perd l'Arrco qu'elle
+n'avait pas (− 27,5 %), celle de 1999 gagne trois ans d'UNIRS (+ 1 %) ; au
+scénario 2, le taux de remplacement calédonien perd 30 % né en 1925, 14 % né en
+1945, 3 % né en 1965, et le saint-pierrais l'année 1987 — 11 % né en 1925,
+moins de 2 % ensuite. Sous Windows, `web/site.py` attend
+désormais node sans `select`, qui n'y lit pas les tubes : la régénération y
+échouait.
 
 **Ce qui reste**, dans l'ordre où le prendre : les fractions de pension de la
 CAVIMAC d'avant 1979, validées gratuitement, et de 1979 à 1997, portées au

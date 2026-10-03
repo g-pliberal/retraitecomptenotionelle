@@ -511,11 +511,15 @@ export class ConstructeurCompte {
     // quelqu'un paie encaissent, et sur le salaire d'avant l'interruption.
     const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_financees);
 
+    // Les services passés ne portent rien au compte : l'Arrco les valide sans
+    // cotisation. Voir compte.py.
+    const [services] = this.affiliations.servicesPasses(
+      ligne.affiliation, annee, carriere.dateEntree(ligne.affiliation));
     const codes = this.affiliations.regimes(
       ligne.affiliation, annee, carriere.dateEntree(ligne.affiliation),
       ligne.cotise ? ligne.revenu : ligne.revenu_reference,
       this.macro.plafond_securite_sociale.valeur(annee),
-    );
+    ).filter((code) => !services.has(code));
     const sansEmployeur = this.affiliations.sansEmployeur(ligne.affiliation);
     const partSalarialeSeule = this.affiliations.partSalarialeSeule(ligne.affiliation);
     const militaire = this.statutsMilitaires.has(ligne.affiliation);

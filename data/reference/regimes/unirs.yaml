@@ -18,7 +18,8 @@ inventaire:
   population: Non-cadres du secteur privé, avant l'Arrco
   couverture: partiel
   statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente,
-            maitre_enseignement_prive, agent_chemins_fer_secondaires]
+            maitre_enseignement_prive, agent_chemins_fer_secondaires,
+            salarie_nouvelle_caledonie]
   textes:
     - {reference: "accord du 15 mai 1957 créant l'UNIRS (hors JORF)", id: null}
   manque: >-
@@ -27,6 +28,8 @@ inventaire:
     fiche propre : chacune avait son barème, et le dépôt n'en connaît qu'un ;
     et ce barème n'est chiffré nulle part dans l'index (deux occurrences du
     nom avant 1975, sans taux) : 2,5 % par continuité avec l'Arrco de 1962.
+    Il sert aussi de barème aux services passés calédoniens de 1958 à 1960,
+    que l'Arrco valide sans cotisation depuis 1995.
 periodes:
   - debut: 1957
     fin: 1961

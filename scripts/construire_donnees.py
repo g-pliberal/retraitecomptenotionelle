@@ -1018,6 +1018,7 @@ def _chomage_complementaires() -> dict:
         "validation_depuis_affiliations": {
             affiliation: [annee, mois]
             for affiliation, annee, mois in regles.validation_depuis_affiliations},
+        "sans_validation": sorted(regles.sans_validation),
         "duree_minimale_jusqu": regles.duree_minimale_jusqu,
         "duree_minimale_jours": regles.duree_minimale_jours,
         "fne_plafond_salaire_reference": regles.fne_plafond_salaire_reference,

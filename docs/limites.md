@@ -1957,7 +1957,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   de l'allocataire. La préretraite du FNE a les taux de la solidarité, garantie
   minimale de points comprise, sur un salaire borné à deux plafonds, et ceux de
   l'assurance quand sa convention est d'avant 1984 ; le salarié agricole n'a
-  rien avant le 1er avril 1974 ; et l'indemnisation cesse à l'âge d'annulation
+  rien avant le 1er avril 1974, le salarié calédonien jamais rien, la CAFAT et
+  non l'Unédic indemnisant son chômage ; et l'indemnisation cesse à l'âge d'annulation
   de la décote, et depuis le 1er avril 1983 à l'âge légal pour qui a la durée
   requise (L. 5421-4 du code du travail) : les années de chômage d'après ne
   valent plus rien, et celle de la coupure s'arrête au mois qui la précède
@@ -1973,6 +1974,18 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   n'est bornée que par la coupure : la saisie dit ce qui a été versé. Les
   fiches `chomage_retraite_complementaire`, `financement_chomage_complementaire`
   et `fin_indemnisation_chomage` en tiennent la liste.
+- **Les services passés de l'outre-mer, approchés.** L'Arrco n'est obligatoire
+  en Nouvelle-Calédonie que depuis 1995, à Saint-Pierre-et-Miquelon que depuis
+  1988 : les années d'avant y sont des services passés, que l'institution valide
+  sans cotisation. Le scénario 1 leur sert les points d'une année cotisée de
+  métropole, à une pension prise depuis la généralisation, quand le droit les
+  calcule au taux de l'adhésion, et selon une pesée démographique pour les
+  anciens salariés et les retraités ; une pension calédonienne prise avant 1995
+  n'a pas d'Arrco, et la révision qui a servi aux retraités, à la
+  généralisation, leurs services passés n'est pas portée ; le compte notionnel
+  n'en porte rien. Le modèle ne connaît pas l'employeur qui cotisait déjà, ni
+  ce que la CAFAT reconnaît. La fiche `services_passes_outre_mer` en tient la
+  liste.
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
   2070, dernière année des projections de population de l'INSEE. Ni l'une ni

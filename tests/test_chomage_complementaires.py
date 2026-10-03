@@ -417,3 +417,34 @@ def test_la_coupure_respecte_le_releve(simulateur):
         macro=simulateur.macro)
     assert carriere.annees_declarees >= set(range(2016, 2024))
     assert indemnisation_bornee(simulateur.scenario_actuel, carriere) is carriere
+
+
+def test_le_chomage_caledonien_ne_vaut_aucun_point(simulateur, regles):
+    """En Nouvelle-Calédonie, la CAFAT indemnise le chômage sous un régime
+    territorial, et l'Agirc-Arrco ne valide que les allocations de
+    l'assurance chômage et de l'État (guide réglementaire, VII.3.1.3.1 ;
+    accord du 17 novembre 2017, art. 59) : une année chômée n'y vaut aucun
+    point, et le compte notionnel n'en porte rien. À Saint-Pierre-et-Miquelon,
+    l'Unédic indemnise : l'année chômée vaut ses points et sa cotisation."""
+    from retraite_notionnelle.droit import releve as _releve
+
+    assert regles.sans_validation == frozenset({"salarie_nouvelle_caledonie"})
+    for code, annee in (("arrco", 2005), ("arrco_tranche_2", 1990), ("agirc_arrco", 2020)):
+        assert regles.part_validee(code, annee, "salarie_nouvelle_caledonie") == 0.0
+        assert regles.part_validee(code, annee, "salarie_saint_pierre_et_miquelon") == 1.0
+
+    def chomage(affiliation):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1955, sexe="F", affiliation=affiliation, mois_naissance=1,
+            age_debut=21, age_liquidation=64, niveau_salaire=1.0,
+            profil_carriere="plat", interruptions={2005: "chomage_indemnise"})
+        points = {code for code, annee, points, _ in _releve.construire(
+            simulateur.scenario_actuel, carriere).droits.points
+            if annee == 2005 and points > 0}
+        compte = _compte(simulateur, carriere, 2005, PartCotisation.TOTALE)
+        return points, compte.cotisation
+
+    points, cotisation = chomage("salarie_nouvelle_caledonie")
+    assert points == set() and cotisation == 0.0
+    points, cotisation = chomage("salarie_saint_pierre_et_miquelon")
+    assert points == {"arrco"} and cotisation > 0.0

@@ -2513,6 +2513,49 @@ class Affiliations:
         rendue telle quelle : c'est la liste des régimes POSSIBLES, celle
         que l'inventaire et les tests de cohérence attendent.
         """
+        periode = self._periode(affiliation, annee, annee_entree)
+        if periode is None:
+            return ()
+        regimes = tuple(periode.get("regimes") or ())
+        seuils = periode.get("seuil_pass") or {}
+        if seuils and revenu is not None and plafond is not None:
+            regimes = tuple(
+                code for code in regimes
+                if revenu >= float(seuils.get(code, 0.0)) * plafond
+            )
+        return regimes
+
+    def services_passes(self, affiliation: str, annee: int,
+                        annee_entree: int | DateMois | None = None
+                        ) -> tuple[frozenset[str], int]:
+        """Ceux des régimes de l'année qui la VALIDENT SANS COTISATION, et
+        l'année à compter de laquelle une pension les sert.
+
+        Ce sont les SERVICES PASSÉS : les années accomplies avant que
+        l'affiliation à l'Arrco soit obligatoire, que l'institution valide
+        gratuitement quand la retraite complémentaire se généralise. En
+        Nouvelle-Calédonie, l'accord territorial du 29 août 1994 généralise
+        l'Arrco au 1er janvier 1995 ; à Saint-Pierre-et-Miquelon, les arrêtés
+        du 21 juin 1988 l'étendent au 1er janvier 1988. Le modèle routait ces
+        années comme des années cotisées, et le compte notionnel y portait des
+        cotisations que personne n'avait versées. Une période porte alors
+        ``services_passes: {regimes: [...], pension_depuis: AAAA}`` : le
+        scénario 1 inscrit les points de ces années comme ceux d'une année
+        cotisée, mais à une pension prise à compter du 1er janvier de
+        ``pension_depuis`` seulement — avant, le régime n'existait pas pour ce
+        statut —, et le compte notionnel n'en porte rien, comme des points
+        de la maladie. Rien, et l'année zéro, pour une année sans services
+        passés. Voir la fiche `services_passes_outre_mer`.
+        """
+        periode = self._periode(affiliation, annee, annee_entree)
+        regle = (periode or {}).get("services_passes")
+        if not regle:
+            return frozenset(), 0
+        return frozenset(regle.get("regimes") or ()), int(regle["pension_depuis"])
+
+    def _periode(self, affiliation: str, annee: int,
+                 annee_entree: int | DateMois | None = None) -> dict | None:
+        """La période du statut qui couvre cette année, pour cette entrée."""
         if affiliation not in self._profils:
             raise KeyError(
                 f"affiliation inconnue : {affiliation!r}. Disponibles : "
@@ -2533,12 +2576,5 @@ class Affiliations:
                 continue
             if depuis is not None and entree < rang_borne(depuis):
                 continue
-            regimes = tuple(periode.get("regimes") or ())
-            seuils = periode.get("seuil_pass") or {}
-            if seuils and revenu is not None and plafond is not None:
-                regimes = tuple(
-                    code for code in regimes
-                    if revenu >= float(seuils.get(code, 0.0)) * plafond
-                )
-            return regimes
-        return ()
+            return periode
+        return None

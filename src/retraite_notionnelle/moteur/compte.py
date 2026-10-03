@@ -640,6 +640,15 @@ class ConstructeurCompte:
             revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
             plafond=self.macro.plafond_securite_sociale(annee),
         )
+        # Les SERVICES PASSÉS ne portent rien au compte : l'Arrco les valide
+        # sans cotisation, et le compte ne porte que ce qui a été versé. Le
+        # compte d'un salarié calédonien portait jusqu'au 3 octobre 2026 les
+        # cotisations de trente-quatre ans d'Arrco que personne n'avait
+        # payées (`Affiliations.services_passes`).
+        services, _ = self.affiliations.services_passes(
+            ligne.affiliation, annee, carriere.date_entree(ligne.affiliation))
+        if services:
+            codes = tuple(code for code in codes if code not in services)
         sans_employeur = self.affiliations.sans_employeur(ligne.affiliation)
         part_salariale_seule = self.affiliations.part_salariale_seule(
             ligne.affiliation)
