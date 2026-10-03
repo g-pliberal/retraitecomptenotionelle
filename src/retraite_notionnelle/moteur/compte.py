@@ -23,7 +23,7 @@ from functools import cached_property
 
 from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
 from ..config import ContributionEtat, Parametres, PartCotisation, SourceCotisations
-from ..donnees.chargement import Fiabilite
+from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
                               ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
@@ -665,12 +665,22 @@ class ConstructeurCompte:
         )
         intervalles: dict[str, list[tuple[float, float | None]]] = {}
 
+        # Une année de chômage n'est portée que pour les mois que chaque régime
+        # valide : rien avant le 1er octobre 1967, ni avant le 1er août 1977 à
+        # l'Ircantec (`legislation/chomage_complementaires.yaml`).
+        chomage = charger_chomage_complementaires(self.macro.racine)
+        nature = None if ligne.cotise else chomage.nature(ligne.type_periode, annee)
         for code in codes:
             if code not in self.catalogue:
                 continue
             regime = self.catalogue[code]
             if familles_admises is not None and regime.famille not in familles_admises:
                 continue
+            validee = 1.0
+            if nature is not None:
+                validee = chomage.part_validee(code, annee)
+                if validee <= 0:
+                    continue
             fiabilite = min(fiabilite, regime.fiabilite)
             en_repartition = not (
                 regime.hors_repartition and self.parametres.isoler_capitalisation
@@ -832,6 +842,9 @@ class ConstructeurCompte:
                                 is PartCotisation.SALARIALE
                                 or part_salariale_seule else deplafonnee)
 
+                if validee < 1.0:
+                    montant *= validee
+                    assiette *= validee
                 if regime.hors_repartition and self.parametres.isoler_capitalisation:
                     # RAFP, assurances sociales d'avant-guerre : ces droits sont
                     # provisionnés, ils ne rejoignent pas le compte notionnel.

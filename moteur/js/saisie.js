@@ -367,6 +367,7 @@ export const ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXI
  */
 export const SANS_EMPLOI = [
   ["chomage_indemnise", "chômage indemnisé"],
+  ["chomage_solidarite", "chômage en fin de droits (ASS)"],
   ["chomage_non_indemnise", "chômage non indemnisé"],
   ["maladie", "arrêt maladie"],
   ["accident_travail", "accident du travail"],

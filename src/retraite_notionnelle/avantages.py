@@ -438,8 +438,8 @@ NEUTRALISATIONS: tuple[Neutralisation, ...] = (
 _MOTIFS_NEUTRALISES: dict[str, tuple[frozenset[str] | None, str]] = {
     "periodes_assimilees": (None, "sans_activite"),
     "points_gratuits_complementaires": (
-        frozenset({"chomage_indemnise", "maladie", "maternite", "invalidite",
-                   "accident_travail"}),
+        frozenset({"chomage_indemnise", "chomage_solidarite", "maladie",
+                   "maternite", "invalidite", "accident_travail"}),
         "chomage_non_indemnise",
     ),
     "service_national": (frozenset({"service_militaire"}), "sans_activite"),

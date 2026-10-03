@@ -998,6 +998,32 @@ def _cas() -> list[dict]:
         "interruptions": "1999:2001:chomage_indemnise, 2008:2009:maladie",
         "naissance": "1970",
     }))
+    # LE CHÔMAGE AUX COMPLÉMENTAIRES (action 141). La solidarité — l'ASS, qui
+    # suit l'assurance — vaut des points à 4 % à l'Arrco et à 8 % sur la
+    # tranche B de l'Agirc avant 2019, à 12 % dans une entreprise née après
+    # 1981, à 4 % au régime unifié ; le salaire de référence s'arrête à quatre
+    # plafonds ; et rien n'est validé avant le 1er octobre 1967.
+    cas.append(("chomage_puis_solidarite_cadre", {
+        "statut": "salarie_prive_cadre", "salaire": "1.5", "naissance": "1965",
+        "interruptions": "2010:2011:chomage_indemnise, 2012:2014:chomage_solidarite",
+    }))
+    cas.append(("solidarite_entreprise_recente", {
+        "statut": "salarie_prive_cadre_entreprise_recente", "salaire": "1.5",
+        "naissance": "1966",
+        "interruptions": "2009:2010:chomage_indemnise, 2011:2013:chomage_solidarite",
+    }))
+    cas.append(("solidarite_regime_unifie", {
+        "naissance": "1968",
+        "interruptions": "2019:2020:chomage_indemnise, 2021:2023:chomage_solidarite",
+    }))
+    cas.append(("chomage_au_dela_de_quatre_plafonds", {
+        "statut": "salarie_prive_cadre", "salaire": "8", "profil": "plat",
+        "naissance": "1970", "interruptions": "2021:2022:chomage_indemnise",
+    }))
+    cas.append(("chomage_avant_1967", {
+        "naissance": "1945-03-15", "debut": "1964-09", "liquidation": "2005-04",
+        "interruptions": "1966:1968:chomage_indemnise",
+    }))
     # DEUX CASES QU'AUCUN CAS TYPE N'EXERÇAIT. Un fonctionnaire interrompu :
     # la pension de l'État se proratise sur les SERVICES, dont L. 9 écarte le
     # chômage. Et une carrière longue hachée : le départ anticipé compte la

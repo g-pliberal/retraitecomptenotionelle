@@ -11,7 +11,9 @@
  */
 
 import { DateMois } from "../calendrier.js";
-import { assietteMinimale as assietteMinimaleDe, salaireMoyenAnnuel } from "../carriere.js";
+import {
+  assietteMinimale as assietteMinimaleDe, chomageComplementaires, salaireMoyenAnnuel,
+} from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { derniereAnnee } from "./commun.js";
 import * as compter from "./compter.js";
@@ -214,6 +216,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
   // Dernière année cotisée dans chaque régime : elle désigne, dans une
   // chaîne de succession, la caisse qui liquide.
   const derniereAnneeParRegime = new Map();
+  // Le chômage aux régimes complémentaires : voir acquerir.py.
+  const chomage = chomageComplementaires(moteur.macro.paquet);
   carriere.lignes.forEach((ligne, i) => {
     // Une ligne postérieure à la liquidation décrit une activité exercée
     // APRÈS le départ : elle n'ouvre pas de droits dans la pension qu'on
@@ -233,6 +237,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       baseLigne *= part / ligne.fraction_annee;
     }
     const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
+    // Assurance (l'Unédic) ou solidarité (l'État) ; `null` pour le reste.
+    const nature = ligne.cotise ? null : chomage.nature(ligne.type_periode, ligne.annee);
     for (const code of coordination.regimes[i]) {
       if (!moteur.catalogue.contient(code)) {
         continue;
@@ -240,6 +246,14 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       const regime = moteur.catalogue.obtenir(code);
       if (famillesAdmises !== null && !famillesAdmises.has(regime.famille)) {
         continue;
+      }
+      // Le premier jour validé : 1er octobre 1967, 1er août 1977 à l'Ircantec.
+      let validee = 1.0;
+      if (nature !== null) {
+        validee = chomage.partValidee(code, ligne.annee);
+        if (validee <= 0) {
+          continue;
+        }
       }
       derniereAnneeParRegime.set(
         code, Math.max(derniereAnneeParRegime.get(code) ?? 0, ligne.annee),
@@ -434,9 +448,14 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         if (achat !== null) {
           const [reference, tauxAppel] = achat;
           let fiabiliteAchat = achat[2];
-          let pointsAnnee = cotisation / (tauxAppel * reference);
+          // La solidarité vaut 4 %, ou 8 % et 12 % à l'Agirc : voir acquerir.py.
+          const tauxSolidarite = nature === "solidarite"
+            ? chomage.tauxSolidarite(code, ligne.annee, true) : null;
+          let pointsAnnee = tauxSolidarite === null
+            ? cotisation / (tauxAppel * reference)
+            : assiette * tauxSolidarite / reference;
           const garantie = moteur.valeursPoint.garantie(
-            bareme, periode, ligne.annee, part, ligne.quotite);
+            bareme, periode, ligne.annee, part, ligne.quotite, tauxSolidarite);
           // Une année de CHÔMAGE INDEMNISÉ a sa garantie, comme une année
           // travaillée : l'Agirc valide la période que l'Unédic indemnise au
           // taux minimum « assorti de la GMP (garantie minimale de points)
@@ -464,7 +483,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           // de 1999 n'en produisaient que 11,15.
           const [echelle, fiabiliteEchelle] = moteur.conversionsPoints
             .echelle(bareme, ligne.annee, anneeLiquidation);
-          crediter(code, ligne.annee, pointsAnnee * echelle,
+          crediter(code, ligne.annee, pointsAnnee * validee * echelle,
             Boolean(periode.points_abattus_a_l_age));
           fiabilitePoints.set(code, Math.min(
             fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, fiabiliteAchat,

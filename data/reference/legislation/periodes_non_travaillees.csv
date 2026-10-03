@@ -51,6 +51,15 @@
 #   pourquoi une année de chômage indemnisé n'est pas vide à l'Agirc-Arrco
 #   alors qu'elle l'est à la CNAV. Le scénario 1 les sert tous.
 #
+# `chomage_solidarite` — l'allocation de SOLIDARITÉ que l'État finance, après
+#   l'assurance : allocation de solidarité spécifique, allocation équivalent
+#   retraite, allocation spéciale du FNE. Quatre trimestres comme l'assurance
+#   (R. 351-12, 4°, c, qui vise tous les revenus de remplacement de
+#   L. 5421-2 du code du travail) ; des points complémentaires à un taux
+#   réduit, 4 % depuis 2019, 4 % à l'Arrco et 8 % ou 12 % à l'Agirc avant,
+#   que l'État finance (`chomage_complementaires.yaml`). Les deux motifs de
+#   chômage partagent l'enveloppe des trimestres réputés cotisés.
+#
 # `cotisations_complementaires_versees` — QUI PAIE CES POINTS, et c'est ce que
 #   le compte notionnel regarde, lui qui ne porte que ce qui a été versé.
 #   Pour le CHÔMAGE INDEMNISÉ, de vraies cotisations : l'Unédic les verse à
@@ -113,6 +122,7 @@
 # Un motif absent de cette table est traité comme `sans_activite`.
 motif,trimestres_assimiles,ouvre_droits_complementaires,cotisations_complementaires_versees,avpf,services_fonction_publique,services_plafond_annees_par_enfant,reputes_cotises_enveloppe,reputes_cotises_plafond,fiabilite
 chomage_indemnise,4,oui,oui,non,non,,chomage,4,haute
+chomage_solidarite,4,oui,oui,non,non,,chomage,4,moyenne
 chomage_non_indemnise,4,non,non,non,non,,,,haute
 maladie,4,oui,non,non,oui,,incapacite_temporaire,4,moyenne
 maternite,4,oui,non,non,oui,,maternite,,moyenne

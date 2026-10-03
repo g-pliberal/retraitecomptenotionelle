@@ -404,6 +404,7 @@ ACTIVITES_A_L_ETRANGER = [
 #: indemnisé de 58 ans à 62 ans ».
 SANS_EMPLOI = [
     ("chomage_indemnise", "chômage indemnisé"),
+    ("chomage_solidarite", "chômage en fin de droits (ASS)"),
     ("chomage_non_indemnise", "chômage non indemnisé"),
     ("maladie", "arrêt maladie"),
     ("accident_travail", "accident du travail"),

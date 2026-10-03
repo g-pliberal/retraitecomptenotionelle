@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING
 from ..calendrier import DateMois
 from ..carriere import salaire_moyen_annuel
 from ..donnees.chargement import (
+    charger_chomage_complementaires,
     Fiabilite,
     assiette_minimale as _assiette_minimale_de,
     charger_assiettes_minimales,
@@ -291,6 +292,9 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
     # Dernière année cotisée dans chaque régime : elle désigne, dans une
     # chaîne de succession, la caisse qui liquide.
     derniere_annee_par_regime: dict[str, int] = {}
+    # Le chômage aux régimes complémentaires : borne, premier jour validé,
+    # taux de la solidarité (`legislation/chomage_complementaires.yaml`).
+    chomage = charger_chomage_complementaires(moteur.macro.racine)
     for ligne, regimes in zip(carriere.lignes, coordination.regimes):
         # Une ligne postérieure à la liquidation décrit une activité
         # exercée APRÈS le départ : elle n'ouvre pas de droits dans la
@@ -309,6 +313,10 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         familles_admises = (
             None if ligne.cotise else set(ligne.familles_cotisantes)
         )
+        # Une année de chômage est d'assurance (l'Unédic) ou de solidarité
+        # (l'État) ; ``None`` pour tout le reste, maladie comprise.
+        nature = (None if ligne.cotise
+                  else chomage.nature(ligne.type_periode, ligne.annee))
         for code in regimes:
             if code not in moteur.catalogue:
                 continue
@@ -316,6 +324,17 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
             if (familles_admises is not None
                     and regime.famille not in familles_admises):
                 continue
+            # LE PREMIER JOUR VALIDÉ. Les complémentaires ne valident le
+            # chômage que depuis le 1er octobre 1967, l'Ircantec depuis le
+            # 1er août 1977 ; l'année du premier jour n'en compte que les
+            # mois qui le suivent. Le modèle n'avait pas de date jusqu'au
+            # 3 octobre 2026 : une année chômée valait des points dès 1947 à
+            # l'Agirc et dès 1961 à l'Arrco.
+            validee = 1.0
+            if nature is not None:
+                validee = chomage.part_validee(code, ligne.annee)
+                if validee <= 0:
+                    continue
             derniere_annee_par_regime[code] = max(
                 derniere_annee_par_regime.get(code, 0), ligne.annee
             )
@@ -523,9 +542,27 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                          if periode.type_calcul in ("points", "mixte") else None)
                 if achat is not None:
                     reference, taux_appel, fiabilite_achat = achat
-                    points_annee = cotisation / (taux_appel * reference)
+                    # LA SOLIDARITÉ. L'allocation de solidarité spécifique,
+                    # l'allocation équivalent retraite et l'allocation
+                    # spéciale du FNE valent des points « du taux de calcul
+                    # des points de 4 % » depuis 2019 (accord du 17 novembre
+                    # 2017, art. 61 à 63), de 4 % à l'Arrco et de 8 % ou 12 %
+                    # sur la tranche B de l'Agirc avant : non le taux d'une
+                    # année travaillée, que le modèle leur prêtait jusqu'au
+                    # 3 octobre 2026 en ne connaissant que le chômage
+                    # d'assurance. La garantie minimale de points suit le
+                    # taux, comme elle suit celui d'une entreprise.
+                    taux_solidarite = (
+                        chomage.taux_solidarite(code, ligne.annee, points=True)
+                        if nature == "solidarite" else None
+                    )
+                    if taux_solidarite is None:
+                        points_annee = cotisation / (taux_appel * reference)
+                    else:
+                        points_annee = assiette * taux_solidarite / reference
                     garantie = moteur.valeurs_point.garantie(
-                        bareme, periode, ligne.annee, part, ligne.quotite)
+                        bareme, periode, ligne.annee, part, ligne.quotite,
+                        taux_contractuel=taux_solidarite)
                     # Une année de CHÔMAGE INDEMNISÉ a sa garantie, comme une
                     # année travaillée : l'Agirc valide la période que l'Unédic
                     # indemnise « sur la base du taux minimum applicable à
@@ -574,7 +611,7 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     echelle, fiabilite_echelle = moteur.conversions_points.echelle(
                         bareme, ligne.annee, annee_liquidation
                     )
-                    crediter(code, ligne.annee, points_annee * echelle,
+                    crediter(code, ligne.annee, points_annee * validee * echelle,
                              periode.points_abattus_a_l_age)
                     fiabilite_points[code] = min(
                         fiabilite_points.get(code, Fiabilite.CERTIFIEE),

@@ -1004,6 +1004,27 @@ def _periodes_non_travaillees() -> dict:
     }
 
 
+def _chomage_complementaires() -> dict:
+    """Ce que les régimes complémentaires font d'une année de chômage
+    (``legislation/chomage_complementaires.yaml``), tel que le Python le lit."""
+    from retraite_notionnelle.donnees.chargement import charger_chomage_complementaires
+
+    regles = charger_chomage_complementaires(DONNEES)
+    return {
+        "motifs": dict(regles.motifs),
+        "plafond_salaire_reference": regles.plafond_salaire_reference,
+        "validation_depuis": {code: [annee, mois]
+                              for code, annee, mois in regles.validation_depuis},
+        "solidarite_depuis": regles.solidarite_depuis,
+        "solidarite_versement": regles.solidarite_versement,
+        "solidarite_taux": {code: [taux, depuis]
+                            for code, taux, depuis in regles.solidarite_taux},
+        "assurance_part_cotisation": regles.assurance_part_cotisation,
+        "assurance_participation_reversee": regles.assurance_participation_reversee,
+        "participation": [list(palier) for palier in regles.participation],
+    }
+
+
 def _profil_salaire(fichier: str, cle: str) -> dict:
     """Profil salarial, groupé par sa première clé puis par tranche d'âge.
 
@@ -1678,6 +1699,7 @@ def construire(bilan: bytes) -> bytes:
         "coefficients_minoration": _table_par_generation(CoefficientsMinoration),
         "annees_salaire_reference": _table_par_generation(AnneesSalaireReference),
         "periodes_non_travaillees": _periodes_non_travaillees(),
+        "chomage_complementaires": _chomage_complementaires(),
         "assiette_minimale_independants": _assiette_minimale_independants(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(

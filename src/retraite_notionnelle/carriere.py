@@ -32,6 +32,7 @@ from pathlib import Path
 from .donnees.chargement import (
     assiette_minimale,
     charger_assiettes_minimales,
+    charger_chomage_complementaires,
     charger_periodes_non_travaillees,
     charger_table_csv,
     charger_yaml,
@@ -59,6 +60,7 @@ from .calendrier import (
 #: notionnels, sauf si des cotisations ont réellement été versées.
 PERIODES_NON_COTISEES = {
     "chomage_indemnise",
+    "chomage_solidarite",
     "chomage_non_indemnise",
     "maladie",
     "invalidite",
@@ -364,7 +366,8 @@ def limiter_chomage_non_indemnise(lignes: list[AnneeCarriere], annee_naissance: 
                        or precedente.annee != ligne.annee - 1)
         if debut_serie:
             suit_indemnise = (precedente is not None
-                              and precedente.type_periode == "chomage_indemnise"
+                              and precedente.type_periode in (
+                                  "chomage_indemnise", "chomage_solidarite")
                               and precedente.annee == ligne.annee - 1)
             serie_premiere = not premiere_vue or not suit_indemnise
             if not serie_premiere:
@@ -391,6 +394,32 @@ def limiter_chomage_non_indemnise(lignes: list[AnneeCarriere], annee_naissance: 
             resultat[indice] = replace(ligne, trimestres_valides=accordes)
         precedente = ligne
     return resultat
+
+
+def _revenu_reference(annee: int, revenu: float, type_periode: str,
+                      cotise: bool, regle, macro: DonneesMacro,
+                      part: float) -> float:
+    """Le salaire sur lequel les régimes complémentaires attribuent les points
+    d'une période indemnisée : celui d'avant l'interruption.
+
+    Pour le CHÔMAGE, c'est le salaire journalier de référence de l'allocation,
+    calculé sur « les rémunérations entrant dans l'assiette des
+    contributions », assiette bornée à quatre plafonds de la sécurité sociale
+    (règlement annexé au décret n° 2019-797, art. 11 et 49 ; convention du
+    15 novembre 2024, art. 49). Le modèle comptait au-delà jusqu'au 3 octobre
+    2026 : depuis 2019, la tranche 2 du régime unifié monte à huit plafonds,
+    et une année chômée y valait, au-dessus de quatre, des points que le droit
+    ne donne pas. Le plafond se proratise sur les mois de la ligne, comme le
+    revenu.
+    """
+    if cotise or regle is None or not regle.ouvre_droits_complementaires:
+        return 0.0
+    chomage = charger_chomage_complementaires(macro.racine)
+    if (chomage.nature(type_periode, annee) is None
+            or chomage.plafond_salaire_reference is None):
+        return revenu
+    return min(revenu, chomage.plafond_salaire_reference
+               * macro.plafond_securite_sociale(annee) * part)
 
 
 def _ligne_annuelle(
@@ -458,10 +487,8 @@ def _ligne_annuelle(
         # attribuent des points sur le salaire d'avant. L'Unédic les paie pour
         # le chômage ; l'Agirc-Arrco les donne pour la maladie, sans
         # contrepartie de cotisations. Les deux familles le disent.
-        revenu_reference=(
-            0.0 if cotise or regle is None
-            or not regle.ouvre_droits_complementaires else revenu
-        ),
+        revenu_reference=_revenu_reference(
+            annee, revenu, type_periode, cotise, regle, macro, part),
         familles_cotisantes=(
             () if cotise or regle is None
             or not regle.ouvre_droits_complementaires

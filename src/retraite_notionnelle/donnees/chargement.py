@@ -639,3 +639,116 @@ def charger_periodes_non_travaillees(racine: Path) -> dict[str, PeriodeNonTravai
                 fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
             )
     return table
+
+@dataclass(frozen=True)
+class ChomageComplementaires:
+    """Ce que les régimes complémentaires font d'une année de chômage indemnisé
+    (``legislation/chomage_complementaires.yaml``) : le scénario 1 en tire les
+    points, le compte notionnel ce qui a été versé. Le jumeau JavaScript est
+    ``ChomageComplementaires`` de ``carriere.js``.
+    """
+
+    #: Motif de ``periodes_non_travaillees.csv`` → « assurance » ou « solidarite ».
+    motifs: tuple[tuple[str, str], ...] = ()
+    #: Borne du salaire de référence, en plafonds de la sécurité sociale.
+    plafond_salaire_reference: float | None = None
+    #: Premier mois validé, régime par régime : (code, année, mois).
+    validation_depuis: tuple[tuple[str, int, int], ...] = ()
+    #: Année de naissance de la solidarité, et part de ses cotisations que
+    #: l'État verse.
+    solidarite_depuis: int = 0
+    solidarite_versement: float = 0.0
+    #: Taux de la solidarité : (code, taux, première année où les points le
+    #: prennent).
+    solidarite_taux: tuple[tuple[str, float, int], ...] = ()
+    #: Ce que l'Unédic verse : la part de la cotisation, et la part de
+    #: l'assiette prise sur la participation de l'allocataire.
+    assurance_part_cotisation: float = 1.0
+    assurance_participation_reversee: float = 0.0
+    #: Participation de l'allocataire : (année, mois, taux), dans l'ordre.
+    participation: tuple[tuple[int, int, float], ...] = ()
+
+    def nature(self, motif: str, annee: int) -> str | None:
+        """« assurance », « solidarite », ou ``None`` pour un motif qui n'est
+        pas du chômage. La solidarité d'avant sa naissance, en 1984, est de
+        l'assurance : le régime était unique."""
+        nature = dict(self.motifs).get(motif)
+        if nature == "solidarite" and annee < self.solidarite_depuis:
+            return "assurance"
+        return nature
+
+    def part_validee(self, code: str, annee: int) -> float:
+        """Part de l'année que le régime ``code`` valide au titre du chômage :
+        rien avant son premier jour, les mois qui le suivent l'année même."""
+        for regime, depuis, mois in self.validation_depuis:
+            if regime == code:
+                if annee < depuis:
+                    return 0.0
+                return (13 - mois) / 12 if annee == depuis else 1.0
+        return 1.0
+
+    def taux_solidarite(self, code: str, annee: int, points: bool) -> float | None:
+        """Taux contractuel de la solidarité au régime ``code`` : celui que
+        prennent les points (``points``), ou celui que l'État finance.
+        ``None`` : le régime traite cette année de solidarité comme
+        l'assurance."""
+        if annee < self.solidarite_depuis:
+            return None
+        for regime, taux, depuis in self.solidarite_taux:
+            if regime == code:
+                return None if points and annee < depuis else taux
+        return None
+
+    def taux_participation(self, annee: int) -> float:
+        """Participation de l'allocataire, en part du salaire de référence :
+        la moyenne des mois de l'année."""
+        total = 0.0
+        for mois in range(1, 13):
+            taux = 0.0
+            for depuis, debut, valeur in self.participation:
+                if (depuis, debut) <= (annee, mois):
+                    taux = valeur
+            total += taux
+        return total / 12
+
+
+_CHOMAGE_COMPLEMENTAIRES: dict[tuple[str, int, int], ChomageComplementaires] = {}
+
+
+def charger_chomage_complementaires(racine: Path) -> ChomageComplementaires:
+    """Les règles du chômage aux régimes complémentaires, gardées comme les
+    autres points de passage du disque, indexées sur la signature du fichier ;
+    sans fichier, aucune règle."""
+    chemin = racine / "reference" / "legislation" / "chomage_complementaires.yaml"
+    if not chemin.exists():
+        return ChomageComplementaires()
+    etat = chemin.stat()
+    cle = (str(chemin), etat.st_mtime_ns, etat.st_size)
+    if cle in _CHOMAGE_COMPLEMENTAIRES:
+        return _CHOMAGE_COMPLEMENTAIRES[cle]
+    brut = charger_yaml(chemin)
+    solidarite = brut.get("solidarite") or {}
+    assurance = brut.get("assurance") or {}
+    regles = ChomageComplementaires(
+        motifs=tuple(sorted((brut.get("motifs") or {}).items())),
+        plafond_salaire_reference=brut.get("plafond_salaire_reference"),
+        validation_depuis=tuple(
+            (code, jour.year, jour.month)
+            for code, jour in sorted((brut.get("validation_depuis") or {}).items())
+        ),
+        solidarite_depuis=int(solidarite.get("depuis", 0)),
+        solidarite_versement=float(solidarite.get("versement", 0.0)),
+        solidarite_taux=tuple(
+            (code, float(regle["taux"]), int(regle.get("points_depuis", 0)))
+            for code, regle in sorted((solidarite.get("taux") or {}).items())
+        ),
+        assurance_part_cotisation=float(assurance.get("part_cotisation", 1.0)),
+        assurance_participation_reversee=float(
+            assurance.get("participation_reversee", 0.0)),
+        participation=tuple(sorted(
+            (palier["depuis"].year, palier["depuis"].month, float(palier["taux"]))
+            for palier in brut.get("participation_allocataire") or ()
+        )),
+    )
+    _CHOMAGE_COMPLEMENTAIRES[cle] = regles
+    return regles

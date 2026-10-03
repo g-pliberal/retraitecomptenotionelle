@@ -13,7 +13,7 @@
  */
 
 import { ContributionEtat, SourceCotisations, PartCotisation } from "./config.js";
-import { salaireMoyenAnnuel } from "./carriere.js";
+import { chomageComplementaires, salaireMoyenAnnuel } from "./carriere.js";
 import {
   ClassesCotisation, ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
   SalairesForfaitaires, ValeursPoint,
@@ -537,6 +537,10 @@ export class ConstructeurCompte {
       === SourceCotisations.TAUX_UNIFORME;
     const intervalles = new Map();
 
+    // Une année de chômage n'est portée que pour les mois que chaque régime
+    // valide : voir compte.py.
+    const chomage = chomageComplementaires(this.macro.paquet);
+    const nature = ligne.cotise ? null : chomage.nature(ligne.type_periode, annee);
     for (const code of codes) {
       if (!this.catalogue.contient(code)) {
         continue;
@@ -544,6 +548,13 @@ export class ConstructeurCompte {
       const regime = this.catalogue.obtenir(code);
       if (famillesAdmises !== null && !famillesAdmises.has(regime.famille)) {
         continue;
+      }
+      let validee = 1.0;
+      if (nature !== null) {
+        validee = chomage.partValidee(code, annee);
+        if (validee <= 0) {
+          continue;
+        }
       }
       fiabilite = Math.min(fiabilite, regime.fiabilite);
       const enRepartition = !(
@@ -688,6 +699,10 @@ export class ConstructeurCompte {
             ? deplafonnee * partAgent : deplafonnee;
         }
 
+        if (validee < 1.0) {
+          montant *= validee;
+          assiette *= validee;
+        }
         if (regime.hors_repartition && this.parametres.isoler_capitalisation) {
           // RAFP, assurances sociales d'avant-guerre : ces droits sont
           // provisionnés, ils ne rejoignent pas le compte notionnel.

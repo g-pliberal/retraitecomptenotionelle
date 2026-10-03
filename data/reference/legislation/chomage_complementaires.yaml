@@ -1,0 +1,98 @@
+# LE CHÔMAGE AUX RÉGIMES COMPLÉMENTAIRES : ce que les deux moteurs lisent d'une
+# année de chômage indemnisé — le scénario 1 pour en servir les points, le
+# compte notionnel pour y porter ce qui a été versé. La fiche qui dit ces
+# règles, leurs textes et leurs écarts est
+# `data/reference/regles/chomage_retraite_complementaire.yaml`.
+schema_version: 1
+
+# LES MOTIFS de `periodes_non_travaillees.csv` qui sont du chômage, et le régime
+# qui les indemnise : l'ASSURANCE chômage, que l'Unédic finance (aide au retour
+# à l'emploi, allocation de sécurisation professionnelle, et avant elles
+# l'allocation unique dégressive, l'allocation chômeurs âgés, la garantie de
+# ressources), ou la SOLIDARITÉ, que l'État finance (allocation de solidarité
+# spécifique, allocation équivalent retraite, allocation spéciale du Fonds
+# national de l'emploi).
+motifs:
+  chomage_indemnise: assurance
+  chomage_solidarite: solidarite
+
+# LE SALAIRE DE RÉFÉRENCE, en plafonds de la sécurité sociale. Les points se
+# calculent « à partir du salaire journalier de référence » (accord Agirc-Arrco
+# du 17 novembre 2017, art. 60, § 4), établi « à partir des rémunérations
+# entrant dans l'assiette des contributions » (règlement annexé au décret
+# n° 2019-797, art. 11, § 1er), assiette bornée à « quatre fois le plafond »
+# (même règlement, art. 49, § 1er, LEGIARTI000049820194 ; convention du
+# 15 novembre 2024, art. 49, LEGIARTI000050847399). Avant 2019, la tranche B
+# de l'Agirc s'arrêtait à quatre plafonds et la tranche 2 de l'Arrco à trois :
+# la borne ne mord que sur le régime unifié, dont la tranche 2 monte à huit, et
+# sur l'Ircantec.
+plafond_salaire_reference: 4
+
+# LE PREMIER JOUR VALIDÉ, régime par régime. Les protocoles avec l'Unédic font
+# courir la validation du chômage « à compter du 1er octobre 1967 » (guide
+# réglementaire Agirc-Arrco, titre VII.3.1.2, lu à l'action 141) ; l'Ircantec
+# valide les « périodes de chômage postérieures au 1er août 1977 ou en cours à
+# cette date » (arrêté du 30 décembre 1970, art. 11 ter, III,
+# LEGIARTI000042696841). Un régime absent d'ici valide le chômage dès qu'il
+# existe ; l'année du premier jour ne compte que ses mois validés.
+validation_depuis:
+  arrco: 1967-10-01
+  arrco_tranche_2: 1967-10-01
+  agirc: 1967-10-01
+  ircantec: 1977-08-01
+
+# LA SOLIDARITÉ. L'allocation de solidarité spécifique naît le 1er avril 1984,
+# avec le régime de solidarité que l'État finance. Ses points se calculent sur
+# le salaire journalier de référence de l'allocation d'assurance qui la
+# précédait, « du taux de calcul des points de 4 % » depuis 2019 (accord du
+# 17 novembre 2017, art. 61 à 63) ; avant, « du taux contractuel de 4 % » à
+# l'Arrco (annexe A, art. 23, I, 3 à 5 et 8, rédaction de 2006) et de 8 % ou
+# 12 % sur la tranche B de l'Agirc, selon que l'entreprise était née avant ou
+# après 1981 (annexe I, art. 8 bis, § 4 à 6 et 9), pour les périodes
+# « postérieures au 31 mars 1984 » (guide réglementaire, VII.3.1.6.2, 2, a).
+# L'Arrco validait aux taux obligatoires les ruptures de contrat d'avant le
+# 1er juin 2000 : le modèle, qui ne connaît pas la date de la rupture, prend
+# celle de l'année (`points_depuis`). L'État finance ces taux, et ces taux
+# seuls : il verse 70 % des cotisations ainsi calculées depuis 1999, et a
+# remboursé celles d'avant (Sénat, rapport n° 382, 2000-2001) — le compte
+# notionnel en porte 70 % pour toute année de solidarité, comme les 60 % de
+# l'Unédic à rebours. Un régime absent d'ici traite la solidarité comme
+# l'assurance ; une année d'avant le 1er avril 1984 aussi.
+solidarite:
+  depuis: 1984
+  versement: 0.70
+  taux:
+    arrco: {taux: 0.04, points_depuis: 2001}
+    arrco_tranche_2: {taux: 0.04, points_depuis: 2001}
+    arrco_tranche_2_entreprises_nouvelles: {taux: 0.04, points_depuis: 2001}
+    agirc: {taux: 0.08}
+    agirc_entreprises_nouvelles: {taux: 0.12}
+    agirc_arrco: {taux: 0.04}
+
+# CE QUE L'UNÉDIC VERSE pour une année d'assurance : des cotisations « assises
+# sur 60 % » du salaire de référence, au taux d'appel (accords de financement
+# de 1996 à 2017, convention du 14 décembre 2021, art. 3 et 4.1), et une part
+# de la participation de l'allocataire, 0,8 % de l'assiette de chaque régime
+# (protocole du 2 janvier 2004, art. 3 ; convention de 2021, art. 4.2). Le
+# compte notionnel en porte autant pour toute année d'assurance, la garantie
+# minimale de points comprise à ses 60 % (action 141, point 2).
+assurance:
+  part_cotisation: 0.60
+  participation_reversee: 0.008
+
+# LA PARTICIPATION DE L'ALLOCATAIRE, en part du salaire de référence, précomptée
+# sur l'allocation d'assurance et « affecté[e] au financement des retraites
+# complémentaires des chômeurs indemnisés » : 1 % de la partie de l'allocation
+# égale à 40 % du salaire, pour les périodes « postérieures au 29 février 1988 »
+# (convention du 30 décembre 1987, art. 5) ; 0,8 % au règlement de la
+# convention du 1er janvier 1990 ; 1,2 % à l'avenant n° 10 du 24 juillet 1992
+# (art. 51), qui n'écrit pas de date d'effet, appliqué au mois qui suit sa
+# signature ; 3 % à l'avenant n° 5 du 27 décembre 2002, appliqué au 1er janvier
+# 2003, et à la convention de 2004 (art. 27, JORFARTI000002253441), jusqu'au
+# règlement de 2025. C'est ce que les scénarios 2 et 3 portent d'une année
+# d'assurance ; l'allocataire de la solidarité ne paie rien.
+participation_allocataire:
+  - {depuis: 1988-03-01, taux: 0.004}
+  - {depuis: 1990-01-01, taux: 0.008}
+  - {depuis: 1992-08-01, taux: 0.012}
+  - {depuis: 2003-01-01, taux: 0.03}

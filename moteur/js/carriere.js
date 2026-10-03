@@ -33,6 +33,7 @@ import {
  */
 export const PERIODES_NON_COTISEES = new Set([
   "chomage_indemnise",
+  "chomage_solidarite",
   "chomage_non_indemnise",
   "maladie",
   "invalidite",
@@ -145,6 +146,96 @@ export class AnneeCarriere {
  * foi ; une carrière paramétrique les déduit du montant cotisé.
  */
 /**
+ * Ce que les régimes complémentaires font d'une année de chômage indemnisé
+ * (`legislation/chomage_complementaires.yaml`) : le scénario 1 en tire les
+ * points, le compte notionnel ce qui a été versé. Jumeau de
+ * `ChomageComplementaires` (`donnees/chargement.py`).
+ */
+export class ChomageComplementaires {
+  constructor(paquet) {
+    const brut = paquet.chomage_complementaires ?? {};
+    this.motifs = brut.motifs ?? {};
+    this.plafondSalaireReference = brut.plafond_salaire_reference ?? null;
+    this.validationDepuis = brut.validation_depuis ?? {};
+    this.solidariteDepuis = brut.solidarite_depuis ?? 0;
+    this.solidariteVersement = brut.solidarite_versement ?? 0.0;
+    this.solidariteTaux = brut.solidarite_taux ?? {};
+    this.assurancePartCotisation = brut.assurance_part_cotisation ?? 1.0;
+    this.assuranceParticipationReversee = brut.assurance_participation_reversee ?? 0.0;
+    this.participation = brut.participation ?? [];
+  }
+
+  /** « assurance », « solidarite », ou `null` ; la solidarité d'avant 1984
+   * est de l'assurance : le régime était unique. */
+  nature(motif, annee) {
+    const nature = this.motifs[motif] ?? null;
+    if (nature === "solidarite" && annee < this.solidariteDepuis) return "assurance";
+    return nature;
+  }
+
+  /** Part de l'année que le régime valide au titre du chômage. */
+  partValidee(code, annee) {
+    const depuis = this.validationDepuis[code];
+    if (depuis === undefined) return 1.0;
+    const [debut, mois] = depuis;
+    if (annee < debut) return 0.0;
+    return annee === debut ? (13 - mois) / 12 : 1.0;
+  }
+
+  /** Taux de la solidarité au régime : celui des points (`points`), ou celui
+   * que l'État finance ; `null` si le régime la traite comme l'assurance. */
+  tauxSolidarite(code, annee, points) {
+    if (annee < this.solidariteDepuis) return null;
+    const regle = this.solidariteTaux[code];
+    if (regle === undefined) return null;
+    const [taux, depuis] = regle;
+    return points && annee < depuis ? null : taux;
+  }
+
+  /** Participation de l'allocataire, moyenne des mois de l'année. */
+  tauxParticipation(annee) {
+    let total = 0.0;
+    for (let mois = 1; mois <= 12; mois++) {
+      let taux = 0.0;
+      for (const [depuis, debut, valeur] of this.participation) {
+        if (depuis < annee || (depuis === annee && debut <= mois)) taux = valeur;
+      }
+      total += taux;
+    }
+    return total / 12;
+  }
+}
+
+/**
+ * Le salaire sur lequel les complémentaires attribuent les points d'une
+ * période indemnisée : celui d'avant l'interruption, borné pour le chômage à
+ * quatre plafonds, comme le salaire journalier de référence. Jumeau de
+ * `_revenu_reference` (`carriere.py`).
+ */
+function revenuReference(annee, revenu, typePeriode, ouvreComplementaires, macro, part) {
+  if (!ouvreComplementaires) return 0.0;
+  const chomage = chomageComplementaires(macro.paquet);
+  if (chomage.nature(typePeriode, annee) === null
+      || chomage.plafondSalaireReference === null) {
+    return revenu;
+  }
+  return Math.min(revenu, chomage.plafondSalaireReference
+    * macro.plafond_securite_sociale.valeur(annee) * part);
+}
+
+const CHOMAGE_PAR_PAQUET = new WeakMap();
+
+/** Les règles du chômage du paquet, construites une fois par paquet. */
+export function chomageComplementaires(paquet) {
+  let regles = CHOMAGE_PAR_PAQUET.get(paquet);
+  if (regles === undefined) {
+    regles = new ChomageComplementaires(paquet);
+    CHOMAGE_PAR_PAQUET.set(paquet, regles);
+  }
+  return regles;
+}
+
+/**
  * La règle d'assiette minimale que ce statut subit cette année-là, lue dans
  * `legislation/assiette_minimale_independants.csv`, ou `null`.
  */
@@ -216,7 +307,8 @@ export function limiterChomageNonIndemnise(lignes, anneeNaissance,
       || precedente.annee !== ligne.annee - 1;
     if (debutSerie) {
       const suitIndemnise = precedente !== null
-        && precedente.type_periode === "chomage_indemnise"
+        && (precedente.type_periode === "chomage_indemnise"
+          || precedente.type_periode === "chomage_solidarite")
         && precedente.annee === ligne.annee - 1;
       seriePremiere = !premiereVue || !suitIndemnise;
       if (!seriePremiere) {
@@ -310,7 +402,8 @@ function ligneAnnuelle({
     // Pendant une période indemnisée, les régimes complémentaires attribuent
     // des points sur le salaire d'avant. L'Unédic les paie pour le chômage ;
     // l'Agirc-Arrco les donne pour la maladie, sans contrepartie.
-    revenu_reference: ouvreComplementaires ? revenu : 0.0,
+    revenu_reference: revenuReference(annee, revenu, typePeriode, ouvreComplementaires,
+      macro, part),
     familles_cotisantes: ouvreComplementaires ? ["complementaire_prive"] : [],
     familles_financees: complementairesVersees ? ["complementaire_prive"] : [],
     cotisations_versees: cotise,

@@ -1,0 +1,281 @@
+schema_version: 1
+id: chomage_retraite_complementaire
+intitule: >-
+  Une période de chômage indemnisé vaut des points complémentaires, jour par jour, sur le
+  salaire journalier de référence de l'allocation, borné à quatre plafonds : aux taux de
+  calcul des points d'une année travaillée pour l'allocation d'assurance, que l'Unédic
+  finance ; à 4 % depuis 2019 — 4 % à l'Arrco, 8 % ou 12 % sur la tranche B de l'Agirc
+  avant — pour l'allocation de solidarité, que l'État finance ; rien avant le 1er octobre
+  1967, ni avant le 1er août 1977 à l'Ircantec.
+domaine: points
+regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, agirc,
+  agirc_entreprises_nouvelles, agirc_arrco, ircantec]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- >-
+  le motif de l'année non travaillée : chômage d'assurance (`chomage_indemnise`) ou de
+  solidarité (`chomage_solidarite`)
+- le salaire d'avant l'interruption, qui tient lieu de salaire journalier de référence, et
+  le plafond de la sécurité sociale de l'année
+- les taux de calcul des points de la période, le prix d'achat et le taux d'appel du point
+- legislation/chomage_complementaires.yaml (borne, premiers jours validés, taux de la
+  solidarité)
+ecrit:
+- les points complémentaires de l'année chômée, garantie minimale de points comprise de
+  1989 à 2018
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: sans_validation_avant_1967
+  statut: lue
+  textes:
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII, lu dans sa
+      capture par Common Crawl du 21 octobre 2018 (hors JORF)
+    article: VII.3.1.2
+    citation: la validation court « à compter du 1er octobre 1967 »
+    lu_le: 2026-10-02
+  - id: LEGIARTI000042696841
+    reference: arrêté du 30 décembre 1970 (Ircantec)
+    article: article 11 ter, III
+    citation: >-
+      « Les dispositions qui précèdent sont applicables aux formulaires de demande de
+      retraite reçus à compter du 1er janvier 2009 et pour les périodes de chômage
+      postérieures au 1er août 1977 ou en cours à cette date. »
+    lu_le: 2026-10-02
+  bornes:
+    revenu.annee: [null, 1967-10-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      le premier protocole avec l'Unédic fait courir la validation du chômage du 1er
+      octobre 1967 ; l'Ircantec ne valide que les périodes postérieures au 1er août 1977
+      (`validation_depuis`)
+  exemples: aucun trouvé
+- id: assurance_et_solidarite_jusqu_en_2018
+  statut: lue
+  textes:
+  - reference: >-
+      annexe A à l'accord du 8 décembre 1961 (Arrco), article 23, rédaction modifiée
+      jusqu'à l'avenant n° 93 du 21 mars 2006, copie que publie l'Unédic
+      (regulatory_texts/pdf/Art201961.pdf)
+    article: article 23, I, 1, D ; 3 ; 4 ; 5 ; 8
+    citation: >-
+      les points sont calculés « à partir du salaire journalier de référence retenu par
+      l'Unédic pour le calcul de l'allocation versée par le régime d'assurance chômage, des
+      taux contractuels de cotisation obligatoires pendant les périodes de chômage, et du
+      salaire de référence de l'exercice » ; pour l'allocation de solidarité spécifique,
+      « du taux contractuel de 4 % », et, « s'agissant des ruptures de contrat de travail
+      intervenues avant le 1er juin 2000 », des « taux contractuels de cotisation
+      obligatoires »
+    lu_le: 2026-10-02
+    empreinte: sha256:581b6b1686f086bb1c073803902b33880d797d55c86c287e74f052261d3966ce
+  - reference: >-
+      annexe I à la convention collective nationale du 14 mars 1947 (Agirc), article 8
+      bis, rédaction modifiée jusqu'à l'avenant A241 du 21 mars 2006, copie que publie
+      l'Unédic (regulatory_texts/pdf/Art8b1947.pdf)
+    article: article 8 bis, § 1er, D ; § 4 à 6 ; § 9
+    citation: >-
+      les points sont calculés à partir « du salaire journalier de référence retenu par
+      l'Unédic [...], s'agissant des périodes de chômage indemnisées à compter du 1er
+      janvier 1997, du système contractuel de cotisations en vigueur dans l'entreprise » ;
+      pour la solidarité, « du taux contractuel de 8 % si le contrat de travail en cause
+      liait l'intéressé à une entreprise créée avant le 1er janvier 1981, ou de 12 % en cas
+      de création d'entreprise après le 31 décembre 1980 »
+    lu_le: 2026-10-02
+    empreinte: sha256:e91cf7aa507a9bbdbf630457c1d07588e29840aac6f1d687dee7da00909c7a56
+  - reference: >-
+      annexe I à la convention collective nationale du 14 mars 1947 (Agirc), article 8
+      bis, rédaction de l'avenant A199 du 6 juin 2001, copie que publie l'Unédic
+      (regulatory_texts/pdf/Art8b1947AGIRC06062001.pdf)
+    article: article 8 bis, § 5
+    citation: >-
+      pour l'allocation de solidarité spécifique ouverte à compter du 1er janvier 1997,
+      les points d'avant les attestations de 2004 se calculent à partir de ceux de l'année
+      précédant son versement, au taux de 8 % ou de 12 %
+    lu_le: 2026-10-03
+    empreinte: sha256:61e00209d4e4573c6b4c85efb775f5626fd4886ed7d9a5bc3b65ebceb1513b80
+  - reference: >-
+      guide réglementaire Agirc-Arrco, mis à jour le 10 mars 2016, titre VII, lu dans sa
+      capture par Common Crawl du 21 octobre 2018 (hors JORF)
+    article: VII.3.1.6.2, 2, a
+    citation: >-
+      l'allocataire de la solidarité a droit, « pour les périodes d'indemnisation
+      postérieures au 31 mars 1984, à l'attribution de points de retraite sans
+      contrepartie financière, mais seulement sur la base du taux de 8 % ou de 12 % »
+    lu_le: 2026-10-02
+  - reference: >-
+      avenant n° 10 du 24 juillet 1992 au règlement annexé à la convention du 1er janvier
+      1990 relative à l'assurance chômage, copie que publie le Medef (n° 452)
+    article: article 52
+    citation: >-
+      « Le salaire de référence ainsi revalorisé ne peut excéder quatre fois le plafond du
+      régime d'assurance-vieillesse de la sécurité sociale »
+    lu_le: 2026-10-03
+    empreinte: sha256:6e2b73744e343e05d86e8371c8114194473442fe06285d904527493dc7d7d96c
+  bornes:
+    revenu.annee: [1967-10-01, 2019-01-01]
+  contenu:
+    assurance: >-
+      les points d'une année travaillée sur le salaire journalier de référence de
+      l'allocation, aux taux obligatoires de la période — le modèle prête à toute
+      entreprise le taux minimal —, garantie minimale de points comprise de 1989 à 2018
+    solidarite: >-
+      depuis le 1er avril 1984, 8 % sur la tranche B de l'Agirc (12 % pour une entreprise
+      née après 1981, `agirc_entreprises_nouvelles`), la garantie proratisée au même
+      taux ; 4 % à l'Arrco, pour les ruptures postérieures au 31 mai 2000 — les taux
+      obligatoires avant —, le modèle prenant l'année pour la rupture (`points_depuis:
+      2001`)
+    borne: quatre plafonds de la sécurité sociale (`plafond_salaire_reference`)
+    ircantec: les points d'une année travaillée, depuis le 1er août 1977
+  exemples: aucun trouvé
+- id: regime_unifie_depuis_2019
+  statut: lue
+  textes:
+  - reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco, applicable au 1er janvier 2019, copie que publie l'Agirc-Arrco
+      (storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf)
+    article: articles 59 à 63
+    citation: >-
+      « Seules les allocations expressément citées dans la présente sous-section donnent
+      lieu à attribution de points de retraite complémentaire » (art. 59) ; l'aide au
+      retour à l'emploi et l'allocation de sécurisation professionnelle, « à partir du
+      salaire journalier de référence retenu par Pôle emploi », « des taux de calcul des
+      points obligatoires en vigueur pendant les périodes de chômage » et « de la valeur
+      d'achat du point » (art. 60, § 4) ; l'allocation de solidarité spécifique, l'allocation
+      spéciale du FNE et la préretraite progressive, « du taux de calcul des points de 4 % »
+      (art. 61 à 63)
+    lu_le: 2026-10-02
+    empreinte: sha256:b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb
+  - reference: >-
+      avenant n° 27 du 19 juin 2025 à l'accord du 17 novembre 2017, diffusé par la
+      circulaire Agirc-Arrco 2025-12-SG-DRJ du 16 juillet 2025
+      (wp-content/uploads/2025/07/Circulaire_AgircArrco_2025-12sg-drj.pdf)
+    article: articles 60, 61, 62 et 66
+    citation: >-
+      substitue « la convention du 15 novembre 2024 relative à l'Assurance chômage » au
+      décret n° 2019-797, et « France Travail » à « Pôle emploi » : le calcul ne change pas
+    lu_le: 2026-10-02
+    empreinte: sha256:385e8cb29fee5d00222993a9b2e497bb77bab70c77f2559a317930f0e29269eb
+  - reference: >-
+      circulaire Agirc-Arrco 2020-02-DRJ, Régime Agirc-Arrco, réglementation applicable
+      aux individus
+    article: fiche 2, II.2
+    citation: les points des allocations d'assurance au taux de calcul des points, ceux de l'ASFNE et de l'ASS au taux de 4 %
+    lu_le: 2026-10-02
+    empreinte: sha256:524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae
+  - id: LEGIARTI000049820194
+    reference: règlement d'assurance chômage annexé au décret n° 2019-797 du 26 juillet 2019
+    article: article 11, § 1er, et article 49, § 1er
+    citation: >-
+      le salaire de référence « est établi [...] à partir des rémunérations entrant dans
+      l'assiette des contributions » ; ces rémunérations « sont comprises dans l'assiette
+      des contributions dans la limite d'un plafond fixé à quatre fois le plafond mentionné
+      à l'article L. 241-3 du code de la sécurité sociale »
+    en_vigueur: 2024-07-01
+    lu_le: 2026-10-02
+  - id: LEGIARTI000050847399
+    reference: >-
+      règlement général annexé à la convention du 15 novembre 2024 relative à l'assurance
+      chômage, agréée par l'arrêté du 19 décembre 2024
+    article: article 49
+    citation: >-
+      « Les rémunérations mentionnées au premier alinéa sont comprises dans l'assiette des
+      contributions dans la limite d'un plafond fixé à quatre fois le plafond mentionné à
+      l'article L. 241-3 du code de la sécurité sociale. »
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-02
+  bornes:
+    revenu.annee: [2019-01-01, null]
+  contenu:
+    assurance: >-
+      les points d'une année travaillée sur le salaire journalier de référence, aux taux
+      de calcul des points de 6,20 % sur la tranche 1 et de 17 % sur la tranche 2
+    solidarite: le taux de calcul des points de 4 %, sur les deux tranches
+    borne: >-
+      quatre plafonds de la sécurité sociale : la tranche 2 d'une année chômée s'arrête là,
+      quand celle d'une année travaillée monte à huit
+  exemples: aucun trouvé
+approximations:
+- version: [assurance_et_solidarite_jusqu_en_2018, regime_unifie_depuis_2019]
+  ecart: >-
+    Le salaire d'avant l'interruption tient lieu de salaire journalier de référence, et
+    l'année entière de jours indemnisés : le modèle ne connaît ni le calcul du salaire de
+    référence sur vingt-quatre mois depuis 2021, ni les jours de différé et le délai
+    d'attente, qui valident des trimestres (R. 351-12, 4°, e) mais « ne permettent pas
+    l'acquisition de points de retraite complémentaire » (Unédic, fiche « Trimestres et
+    points de retraite », 4 juillet 2025).
+  effet: non mesuré
+- version: assurance_et_solidarite_jusqu_en_2018
+  ecart: >-
+    Le modèle prête à toute entreprise le taux minimal, quand l'Arrco suit le taux d'une
+    entreprise qui cotisait au-dessus, dans la limite de 6 % sur T1 et 16 % sur T2 pour une
+    rupture postérieure au 30 juin 1996, et l'Agirc « le système contractuel de
+    cotisations en vigueur dans l'entreprise » ; le calcul d'avant 1997, que l'Agirc ne
+    fondait pas sur le salaire journalier de référence, n'est pas lu.
+  effet: non mesuré
+- version: assurance_et_solidarite_jusqu_en_2018
+  ecart: >-
+    L'Arrco valide aux taux obligatoires la solidarité qui suit une rupture d'avant le 1er
+    juin 2000 : le modèle, qui ne connaît pas la date de la rupture, prend l'année de
+    l'allocation, et sert 4 % dès 2001. La garantie minimale de points de la solidarité,
+    au prorata de 8 % ou 12 %, est lue pour l'allocation spéciale du FNE, dont les taux
+    « doivent s'entendre, depuis 1989, assortis de la GMP » (guide, VII.3.1.6.2, 2), et
+    étendue à l'allocation de solidarité spécifique, validée au même alinéa et aux mêmes
+    taux : une déduction.
+  effet: non mesuré
+- version: [assurance_et_solidarite_jusqu_en_2018, regime_unifie_depuis_2019]
+  ecart: >-
+    Une seule allocation de solidarité pour l'allocation de solidarité spécifique,
+    l'allocation équivalent retraite et l'allocation spéciale du FNE, dont l'assiette est
+    en droit « limitée à la partie prise en compte pour le financement par l'État » ; la
+    préretraite progressive, qui se calcule sur la différence entre le salaire à temps
+    plein et le salaire réel, et l'activité partielle, qui vaut des points sans
+    cotisations au-delà de soixante heures (accord de 2017, art. 63 et 67), ne sont pas
+    saisies. L'Ircantec sert à la solidarité les points de l'assurance ; sans
+    cotisations — un employeur public en auto-assurance —, elle donne en droit des points
+    gratuits sur le SMIC, après trois mois de carence, un an au plus (art. 11 ter, II).
+    La CNBF, la CRPN et la caisse monégasque valident aussi le chômage par convention
+    avec l'Unédic ; le modèle ne l'admet qu'aux régimes de la famille
+    `complementaire_prive`. La durée de l'allocation d'assurance — 730 jours, 1 095 à
+    cinquante ans ou plus, au règlement de 2009, art. 11, § 1er — n'est pas bornée : la
+    saisie dit ce qui a été versé.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-03
+  prochaine_relecture: 2027-10-01
+  a_relire:
+  - >-
+    Relire le guide réglementaire Agirc-Arrco de 2018, titre VII, que Common Crawl et la
+    Wayback Machine ne servaient plus le 2 octobre 2026 : ce que l'Agirc faisait du chômage
+    avant 1967, et le calcul des points avant 1997.
+  - >-
+    Lire la date d'effet de l'avenant n° 10 du 24 juillet 1992, qui ne l'écrit pas, et
+    celle de l'avenant n° 5 du 27 décembre 2002 (participation de l'allocataire, fiche
+    `financement_chomage_complementaire`).
+code:
+  python:
+  - donnees/chargement.py, ChomageComplementaires
+  - carriere.py, _revenu_reference
+  - droit/acquerir.py, acquerir (premier jour validé, taux de la solidarité)
+  - scenarios/actuel.py, ValeursPoint.garantie (taux_contractuel)
+  javascript:
+  - carriere.js, ChomageComplementaires, revenuReference
+  - droit/acquerir.js
+  - regimes.js, ValeursPoint.garantie
+  parametres:
+  - legislation/chomage_complementaires.yaml
+  - legislation/periodes_non_travaillees.csv (chomage_indemnise, chomage_solidarite)
+  tests:
+  - témoins chomage_puis_solidarite_cadre, solidarite_entreprise_recente,
+    solidarite_regime_unifie, chomage_au_dela_de_quatre_plafonds, chomage_avant_1967
+effet: >-
+  Une année de solidarité vaut, depuis 2019, un tiers de points de moins sur la tranche 1
+  et les trois quarts de moins sur la tranche 2 qu'une année d'assurance ; à l'Agirc avant
+  2019, la moitié ou le quart de moins. Au-delà de quatre plafonds de salaire, une année
+  chômée ne vaut plus de points sur la tranche 2 au-dessus de quatre plafonds. Aucun des
+  689 témoins d'avant le 3 octobre 2026 ne bouge ; cinq témoins nouveaux portent ces
+  règles.
