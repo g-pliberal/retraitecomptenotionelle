@@ -475,7 +475,7 @@ résumé :
 | Taux de cotisation, régime général | 1980 et 1981 | haute, **comme leurs voisines** | le décret n° 79-650 du 30 juillet 1979 a relevé des taux « à titre exceptionnel » du 1er août 1979 au 31 janvier 1981 : c'est le point du plan Barrot, porté par la seule cotisation MALADIE du salarié, et la vieillesse n'y est pas — voir plus bas |
 | Taux de cotisation, salariés agricoles | <!--chiffre:minimum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=msa_salaries&fiabilite=certifiee)-->1980<!--/-->-<!--chiffre:maximum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=msa_salaries&fiabilite=certifiee)-->2026<!--/--> | **certifiée** | DILA, base LEGI, décret n° 50-444 du 20 avril 1950, article 2, puis code rural `D. 741-35`, qui renvoie à `D. 242-4` depuis 2014 |
 | Taux de cotisation, salariés agricoles | 1967-1979 | moyenne | la série du régime général tenant lieu, faute d'une version antérieure de l'article 2 |
-| Taux de cotisation, cultes, Mayotte, Saint-Pierre-et-Miquelon | depuis 1979 et 1987 | haute | la série du régime général du dépôt, que ces trois régimes portent faute d'un barème propre : la valeur est certifiée, la substitution est une décision de modélisation |
+| Taux de cotisation, cultes, Mayotte, Saint-Pierre-et-Miquelon | depuis 1979 et 1987 | haute | la série du régime général du dépôt, que ces trois régimes portent faute d'un barème propre : la valeur est certifiée, la substitution est une décision de modélisation. Les cultes avaient pourtant le leur de 1979 à 1997, des montants forfaitaires que des arrêtés annuels fixaient (décret n° 79-607, art. 24 et 25), que le modèle ne lit pas |
 | Taux de cotisation, complémentaires du privé | Arrco 1962-2018, Agirc 1981-2018, Agirc-Arrco 2019- | moyenne | OpenFisca-France, taux effectifs par tranche, recoupés à chaque exécution. **Ne se certifieront pas** : ces taux sont fixés par accord collectif, l'IPP — source amont d'OpenFisca — laisse lui-même la colonne du *Journal officiel* vide pour chacune de leurs 25 marches, et le JO ne publie que l'avis d'extension, qui renvoie au Bulletin officiel sans écrire le chiffre |
 | Retenue pour pension, État, CNRACL, ouvriers de l'État | 1948-2026, une période par taux | moyenne | OpenFisca-France, article L. 61 et barème de la caisse, recoupés à chaque exécution |
 | Cotisation vieillesse de base des artisans et commerçants | 1973-2018, moyennes par période | moyenne | OpenFisca-France, décrets d'application de la loi du 3 juillet 1972, recoupés à chaque exécution |
@@ -1213,16 +1213,22 @@ forfait, là où `assiette_plancher` ne relevait que les assiettes trop basses.
 que la clause transitoire de R. 382-89 rend probable sans l'écrire ; et la
 garantie mensuelle de rémunération qui, du 1<sup>er</sup> janvier 2002 au
 30 juin 2005, s'ajoutait à cette base n'est pas modélisée — ces quatre années
-sous-estiment donc la cotisation. L. 382-27 réserve les périodes antérieures
-au 1<sup>er</sup> janvier 1998 aux règles d'avant — la caisse porte leur
-fraction de pension au minimum contributif, ou au maximum de la pension
-« Cavimac » quand le taux est minoré — : le modèle applique les règles du
-régime général sur toute la durée, sur un salaire annuel moyen fait du forfait,
-comme celui que la caisse calcule. Et les années d'activité cultuelle d'avant
-1979, qu'elle valide gratuitement et dont elle sert une fraction de pension, ne
-sont pas comptées : le modèle n'ouvre rien avant la création du régime. Cela ne
-touche que le scénario 1 ; les comptes notionnels, eux, ne lisent que des
-cotisations, et celles-là sont sourcées de bout en bout.
+sous-estiment donc la cotisation. La pension se calcule en deux fractions,
+comme la caisse le fait (fiche `cultes_fractions_de_pension`) : celle des
+périodes d'après 1997 aux règles du régime général, sur un salaire annuel moyen
+fait du forfait ; celle des périodes antérieures au 1<sup>er</sup> janvier
+1998 aux règles d'avant, le maximum de la pension « Cavimac » au prorata de la
+durée — les années d'activité cultuelle d'avant 1979, que la caisse valide
+gratuitement, comprises —, à soixante-cinq ans jusqu'en 2006, puis portée au
+minimum contributif au taux plein et décotée sinon. Restent approchés : 2006,
+où la fraction d'après 1997 s'ouvre à l'âge légal dix mois avant l'autre, et
+que le modèle laisse toute l'année à soixante-cinq ans ; le taux plein du
+régime général pour les majorations, que le décret n° 2006-1325 laisse à
+soixante-cinq ans ; le maximum de 1982, 1984 et 1986, estimé. Cela ne touche
+que le scénario 1 ; les comptes notionnels, eux, ne lisent que des
+cotisations — celles de 1979 à 1997, que des arrêtés fixaient chaque année en
+montants forfaitaires, prises aux taux du régime général sur le forfait du
+SMIC.
 
 **Les autres, et le mur devant chacun** : voir la couverture « à modéliser »
 de l'inventaire, qui porte pour chacun ce qui bloque.

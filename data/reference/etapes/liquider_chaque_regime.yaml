@@ -45,6 +45,7 @@ objets:
       prorata_cotise: {porte: "la durée cotisée acquise dans le régime, rapportée à la même durée", type: nombre, obligatoire: true}
       taux_plein: {porte: "la pension est-elle liquidée au taux plein dans ce régime", type: booleen, obligatoire: true}
       surcote: {porte: "le coefficient de surcote déjà incorporé au montant, que le minimum retire avant de comparer", type: nombre, obligatoire: true}
+      hors_minimum: {porte: "la part du montant que le minimum ne relève pas — la fraction d'avant 1998 des cultes, qu'il retire avant de comparer", type: nombre, defaut: 0}
 
   garanti:
     champs:

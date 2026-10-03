@@ -4038,7 +4038,7 @@ sources:
       La liquidation du régime des cultes : conditions et montant, pour un
       régime que le dépôt modélise sur peu de sources.
     statut: explore
-    explore_le: 2026-09-23
+    explore_le: 2026-10-03
     note: >-
       Le salaire annuel moyen des cultes « calculé sur la base du SMIC » pour
       tous : le modèle le prenait sur le revenu saisi, il le prend sur le
@@ -4048,6 +4048,12 @@ sources:
       au maximum de la pension « Cavimac », 452,15 € par mois en 2026 ; depuis
       1998, aux règles du régime général —, dont le modèle n'écrit que la
       dernière. Le tableau des âges tient compte de la suspension de 2026.
+      Relue le 3 octobre 2026 : le modèle écrit désormais les trois (fiche
+      `cultes_fractions_de_pension`) ; la page donne le maximum, l'ancre de
+      2026 de `legislation/cultes_maximum_pension.csv`, le minimum contributif
+      (756,29 €) et majoré (903,93 €) qu'il sert déjà, et la condition de
+      120 trimestres cotisés du minimum majoré de la fraction de 1979 à 1997.
+      Aucun exemple chiffré.
 
   - id: cavimac_guide
     url: https://www.cavimac.fr/guide-cavimac
@@ -4058,7 +4064,11 @@ sources:
       Le guide de la caisse : assiette forfaitaire, taux, et le mode de
       validation des périodes de ministère, qui n'est celui d'aucun autre
       régime.
-    statut: a_explorer
+    statut: explore
+    explore_le: 2026-10-03
+    note: >-
+      Un sommaire du site, sans le guide lui-même ni le calcul des fractions
+      de pension : rien à en tirer.
 
   # ---- CNIEG : la réglementation du régime des IEG (huitième lot) ---------
   # Les pages « réglementation » de la CNIEG sont au régime des IEG ce que

@@ -13,7 +13,7 @@
 import { DateMois } from "../calendrier.js";
 import * as chrono from "../chronologie.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
-import { derniereAnnee } from "./commun.js";
+import { derniereAnnee, ligneCotisee } from "./commun.js";
 import * as coordonner from "./coordonner.js";
 import { compterLesPeriodes, familleDesRegimes } from "./etranger.js";
 
@@ -241,6 +241,10 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
       servicesLigne = Math.min(servicesLigne, restant);
       budgetServicesPlafonnes.set(plafond, restant - servicesLigne);
     }
+    // Une année que tous ses régimes valident sans cotisation — l'activité
+    // cultuelle d'avant 1979 — entre dans la durée, pas parmi les trimestres
+    // cotisés (`ligneCotisee`).
+    const cotisee = ligneCotisee(moteur, carriere, ligne);
     for (const code of coordination.regimes[i]) {
       if (!moteur.catalogue.contient(code)) {
         continue;
@@ -249,7 +253,7 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
       if (servicesLigne > 0) {
         crediterTrimestres("services", code, ligne.annee, servicesLigne);
       }
-      if (ligne.cotise) {
+      if (cotisee) {
         crediterTrimestres("cotises", code, ligne.annee, retenusLigne);
       }
     }

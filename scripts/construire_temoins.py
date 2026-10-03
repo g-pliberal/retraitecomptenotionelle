@@ -1053,6 +1053,27 @@ def _cas() -> list[dict]:
         "statut": "salarie_saint_pierre_et_miquelon", "naissance": "1960",
         "interruptions": "2003:2004:chomage_indemnise",
     }))
+    # Le régime des cultes, en deux fractions (`droit/cultes.py`). Avant 1998,
+    # le maximum de l'année au prorata de cent cinquante trimestres, à
+    # soixante-cinq ans, les années d'avant 1979 validées gratuitement ; de
+    # 1998 à 2006, la même et celle des règles du régime général ; depuis le
+    # décret n° 2006-1325, au taux plein, portée au minimum contributif, et à
+    # taux minoré, au maximum décoté.
+    cas.append(("cultes_avant_1998", {
+        "statut": "ministre_du_culte", "naissance": "1925", "debut": "35",
+        "liquidation": "65",
+    }))
+    cas.append(("cultes_deux_fractions_avant_2006", {
+        "statut": "ministre_du_culte", "naissance": "1938", "debut": "20",
+        "liquidation": "65",
+    }))
+    cas.append(("cultes_taux_plein_depuis_2010", {
+        "statut": "ministre_du_culte", "naissance": "1950", "debut": "20",
+    }))
+    cas.append(("cultes_taux_minore", {
+        "statut": "membre_congregation", "naissance": "1955", "debut": "30",
+        "liquidation": "62",
+    }))
     # L'indemnisation cesse au taux plein (L. 5421-4 du code du travail) : à
     # l'âge légal pour qui a la durée requise, à l'âge d'annulation de la
     # décote pour qui ne l'a pas. Les années de chômage d'après ne valent rien.

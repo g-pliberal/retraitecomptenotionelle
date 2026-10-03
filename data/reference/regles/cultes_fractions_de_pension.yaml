@@ -1,0 +1,317 @@
+schema_version: 1
+id: cultes_fractions_de_pension
+intitule: >-
+  La pension du régime des cultes se calcule en deux fractions : celle des périodes
+  d'avant le 1er janvier 1998 aux règles du 31 décembre 1997 — le maximum de la pension
+  au prorata de la durée, les années d'activité cultuelle d'avant 1979 validées
+  gratuitement —, portée depuis le 1er novembre 2006 au minimum contributif au taux plein
+  et décotée sinon ; celle des périodes suivantes aux règles du régime général.
+domaine: minima
+regimes: [cavimac]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- le statut de chaque année — ministre du culte ou membre d'une congrégation — et ses
+  trimestres, avant 1979, de 1979 à 1997 et depuis 1998, cotisés ou non
+- la génération de l'assuré, la date d'effet de la pension, sa durée d'assurance et ses
+  trimestres cotisés tous régimes, le taux plein et la décote du régime
+- legislation/cultes_maximum_pension.csv, legislation/revalorisation_pensions.csv,
+  legislation/minimum_contributif.csv
+- legislation/affiliations.yaml (`services_passes` des périodes d'avant 1979 des deux
+  statuts)
+ecrit:
+- la pension de la CAVIMAC, somme des deux fractions, et le détail de chacune
+- la part de cette pension que le minimum contributif peut relever, la seule fraction
+  d'après 1997
+dates_qui_decident:
+- liquidation.date_effet
+- periode.debut
+- assure.generation
+versions:
+- id: regime_forfaitaire
+  statut: lue
+  textes:
+  - id: LEGIARTI000006744307
+    reference: >-
+      code de la sécurité sociale, L. 721-6, rédaction du 21 décembre 1985 au
+      23 décembre 1997 (index LEGI du dépôt)
+    citation: >-
+      « La pension est calculée sur des bases forfaitaires, en fonction de la durée
+      d'assurance, dans les limites d'un minimum et d'un maximum fixés par voie
+      réglementaire. Un décret fixera le mode de calcul de la pension et les conditions
+      dans lesquelles les périodes d'activité antérieures à la création du régime seront
+      prises en compte pour le calcul de la pension. »
+    lu_le: 2026-10-03
+  - id: LEGIARTI000006738455
+    reference: code de la sécurité sociale, D. 721-7, rédaction du 21 décembre 1985
+    citation: >-
+      « Lorsque l'assuré a accompli moins de 150 trimestres d'assurance, mais plus de
+      sept, la pension est égale à autant de cent cinquantièmes du montant maximum
+      défini ci-dessus qu'il justifie de trimestres d'assurance. Lorsque l'assuré a
+      accompli moins de huit trimestres d'assurance, il a droit au remboursement des
+      cotisations personnelles qu'il a payées. »
+    lu_le: 2026-10-03
+  - id: LEGIARTI000006738457
+    reference: code de la sécurité sociale, D. 721-8, rédaction du 21 décembre 1985
+    citation: >-
+      « Le montant annuel du maximum de pension est fixé à 7.500 F au 1er janvier 1979. Ce
+      montant est revalorisé chaque année par arrêté »
+    lu_le: 2026-10-03
+  - id: LEGIARTI000006738898
+    reference: code de la sécurité sociale, D. 721-6, rédaction du 21 décembre 1985
+    citation: >-
+      « L'âge à partir duquel est allouée la pension de vieillesse prévue à la présente
+      sous-section est fixé à soixante-cinq ans. »
+    lu_le: 2026-10-03
+  - id: LEGIARTI000006739120
+    reference: code de la sécurité sociale, D. 721-11, rédaction du 13 novembre 1988
+    citation: >-
+      « sont prises en compte pour l'ouverture du droit et le calcul de la pension, les
+      périodes d'exercice d'activités mentionnées à l'article L. 721-1 accomplies
+      antérieurement au 1er janvier 1979 en qualité de ministre d'un culte ou de membre
+      d'une congrégation ou collectivité religieuse [...] lorsque ces périodes ne sont pas
+      validées par un autre régime obligatoire d'assurance vieillesse de base »
+    lu_le: 2026-10-03
+  - id: LEGIARTI000006766268
+    reference: décret n° 79-607 du 3 juillet 1979, art. 42, la même règle dès 1979
+    lu_le: 2026-10-03
+  bornes:
+    liquidation.date_effet: [null, 1998-01-01]
+  contenu:
+    pension: >-
+      le maximum de l'année (D. 721-8 et les arrêtés annuels) × trimestres / 150, borné
+      au maximum ; rien sous huit trimestres, que le remboursement des cotisations
+      personnelles
+    trimestres: >-
+      ceux qui ont porté la cotisation forfaitaire depuis 1979, les périodes assimilées,
+      et les années d'activité cultuelle d'avant 1979 que ne valide aucun autre régime de
+      base (D. 721-9 à D. 721-11)
+    age: soixante-cinq ans ; soixante pour l'inaptitude et les déportés (D. 721-6)
+    minimum_contributif: aucun, L. 351-10 ne vaut pas pour le régime
+  exemples: aucun trouvé
+- id: alignement_de_1998
+  statut: lue
+  textes:
+  - id: LEGIARTI000006744308
+    reference: >-
+      code de la sécurité sociale, L. 721-6, rédaction du 23 décembre 1997 au 20 décembre
+      2005, issue de la loi n° 97-1164 du 19 décembre 1997, art. 19
+    citation: >-
+      « la pension de vieillesse est calculée, liquidée et servie dans les conditions
+      définies au deuxième, troisième et quatrième alinéas de l'article L. 351-1 [...] aux
+      articles L. 351-4, L. 351-8 à L. 351-13 [...]. Les prestations afférentes aux
+      périodes d'assurance antérieures au 1er janvier 1998 sont indiquées dans les
+      conditions législatives et réglementaires en vigueur au 31 décembre 1997. Le minimum
+      et le maximum mentionnés à l'article L. 721-6 dans sa rédaction antérieure au 1er
+      janvier 1998 sont revalorisés dans les conditions prévues à l'article L. 351-11. »
+    lu_le: 2026-10-03
+  - id: LEGIARTI000006744052
+    reference: code de la sécurité sociale, L. 721-5, rédaction du 1er janvier 2002
+    citation: >-
+      « reçoivent une pension de vieillesse dans les conditions et à un âge fixés par
+      décret »
+    lu_le: 2026-10-03
+  - id: LEGIARTI000006752336
+    reference: code de la sécurité sociale, R. 721-39-2, rédaction du 29 décembre 1999
+    citation: >-
+      « Le salaire annuel moyen mentionné à l'article R. 351-29 est déterminé en retenant
+      la base forfaitaire prévue à l'article R. 721-30. »
+    lu_le: 2026-10-03
+  bornes:
+    liquidation.date_effet: [1998-01-01, 2006-11-01]
+  contenu:
+    fraction_d_avant_1998: >-
+      celle du régime forfaitaire, le maximum revalorisé comme les pensions du régime
+      général depuis 1998, à soixante-cinq ans
+    fraction_depuis_1998: >-
+      les règles du régime général, sur le salaire annuel moyen du forfait et la durée
+      des seules années d'après 1997, minimum contributif compris, à soixante-cinq ans :
+      L. 721-6 ne renvoie pas au premier alinéa de L. 351-1, qui porte l'âge, et
+      L. 721-5 laisse l'âge au décret ; ni à L. 351-1-2, qui porte la surcote
+  exemples: aucun trouvé
+- id: decret_de_2006
+  statut: lue
+  textes:
+  - id: LEGIARTI000006256155
+    reference: >-
+      décret n° 2006-1325 du 31 octobre 2006, art. 2, rédaction du 1er novembre 2006 au
+      30 janvier 2010
+    citation: >-
+      « III. - La pension [...] est allouée pour son montant maximum à l'assuré qui
+      justifie d'une durée d'assurance [...] au moins égale à la durée maximale fixée à
+      l'article R. 351-6 [...] » ; « V. - Pour les assurés nés postérieurement au 31
+      décembre 1938 [...] Cette majoration est calculée à partir d'une fraction de l'écart
+      entre, d'une part, le maximum de pension [...] et, d'autre part, le montant du
+      minimum de pension majoré au titre des périodes ayant donné lieu à cotisations à la
+      charge de l'assuré [...] Cette fraction est égale à : a) 20 % de l'écart pour les
+      assurés nés en 1939 ; b) 40 % [...] en 1940 ; c) 60 % [...] en 1941 ; d) 80 % [...]
+      en 1942 ; e) 100 % de l'écart pour les assurés nés après 1942. La majoration est
+      attribuée au prorata du nombre de trimestres cotisés par l'assuré entre le 1er
+      janvier 1979 et le 31 décembre 1997 »
+    lu_le: 2026-10-03
+  bornes:
+    liquidation.date_effet: [2006-11-01, 2010-02-01]
+  contenu:
+    age: >-
+      l'âge légal pour qui a la durée requise tous régimes (I) ; sinon à cet âge avec le
+      coefficient de minoration de R. 351-27, ou à soixante-cinq ans (II)
+    fraction_d_avant_1998: >-
+      le maximum × trimestres d'avant 1998 / durée maximale de R. 351-6 (III), surcote
+      comprise (IV) ; au taux plein, une majoration de la fraction de l'écart de la
+      génération entre le minimum contributif majoré et le maximum, au prorata des
+      trimestres cotisés de 1979 à 1997 (V)
+    fraction_depuis_1998: les règles du régime général (L. 382-27)
+    revalorisation: >-
+      le maximum par les coefficients de L. 161-23-1 (VIII)
+  exemples: aucun trouvé
+- id: decret_de_2010
+  statut: lue
+  textes:
+  - id: LEGIARTI000021763033
+    reference: >-
+      décret n° 2006-1325, art. 2, rédaction issue du décret n° 2010-103 du 28 janvier
+      2010, pour les pensions prenant effet à compter du 1er février 2010
+    citation: >-
+      « V bis. - [...] Cette majoration est calculée à partir de l'écart entre, d'une part,
+      le maximum de pension [...] et, d'autre part, le montant du minimum de pension, non
+      majoré au titre des périodes ayant donné lieu à cotisations à la charge de l'assuré
+      [...]. La majoration est attribuée au prorata du nombre de trimestres d'assurance
+      accomplis par l'assuré antérieurement au 1er janvier 1979 »
+    lu_le: 2026-10-03
+  - id: LEGIARTI000023397816
+    reference: >-
+      la même, rédaction issue du décret n° 2010-1734, pour les pensions prenant effet à
+      compter du 1er juillet 2011 : l'âge de L. 161-17-2 au lieu de soixante ans (I)
+    lu_le: 2026-10-03
+  bornes:
+    liquidation.date_effet: [2010-02-01, null]
+  contenu:
+    fraction_d_avant_1998: >-
+      celle du décret de 2006, et, au taux plein, une majoration de l'écart entre le
+      minimum contributif et le maximum, au prorata des trimestres d'avant 1979 (V bis)
+    lecture_de_la_caisse: >-
+      « votre pension sera portée au niveau du minimum contributif au prorata notamment de
+      votre durée d'assurance « Cavimac » pour cette période » (avant 1979) ; pour 1979 à
+      1997, au minimum contributif majoré « si vous totalisez au moins 120 trimestres
+      cotisés tous régimes » ; à taux minoré, les deux fractions « seront portées au niveau
+      du montant maximum de la pension « Cavimac » et vous aurez de plus une décote »
+  exemples: aucun trouvé
+approximations:
+- version: [regime_forfaitaire, alignement_de_1998]
+  ecart: >-
+    Les âges abaissés de D. 721-6 — soixante ans pour l'inaptitude et les déportés, de
+    soixante à soixante-quatre ans pour les anciens combattants — ne sont pas lus : la
+    pension s'ouvre à soixante-cinq ans. Sous huit trimestres d'avant 1998, le modèle ne
+    sert rien, et ne rembourse pas les cotisations.
+  effet: non mesuré
+- version: [alignement_de_1998]
+  ecart: >-
+    En 2006, L. 382-27 ouvre la fraction d'après 1997 à l'âge légal dès le 20 décembre
+    2005, et le décret n° 2006-1325 celle d'avant au 1er novembre : le modèle, qui lit la
+    période à l'année et ne liquide pas une fraction sans l'autre, garde soixante-cinq ans
+    toute l'année, et pour la fraction d'après 1997 de 1998 à 2005.
+  effet: non mesuré
+- version: [decret_de_2006, decret_de_2010]
+  ecart: >-
+    Le taux plein qui ouvre les majorations est celui du régime général — la durée
+    requise, ou l'âge d'annulation de la décote —, que décrit la caisse ; le décret garde
+    soixante-cinq ans (D. 721-6 de 1997) pour la fraction d'avant 1998, ce qui ne change
+    rien pour les générations nées avant 1951. Le minimum contributif majoré des
+    trimestres de 1979 à 1997 suppose cent vingt trimestres cotisés tous régimes, comme
+    la caisse l'écrit. Les deux majorations ne sont pas écrêtées (L. 173-2), faute de
+    texte qui le dise. Quand les trimestres d'avant 1998 passent la durée maximale, les
+    trimestres cotisés de 1979 à 1997 passent avant ceux d'avant 1979, et les deux
+    ensemble ne la dépassent pas : le décret ne dit pas comment se partagent ses deux
+    prorata.
+  effet: non mesuré
+- version: [regime_forfaitaire, alignement_de_1998, decret_de_2006, decret_de_2010]
+  ecart: >-
+    Le maximum de 1982, 1984 et 1986 est la moyenne géométrique de ceux qui l'encadrent,
+    les arrêtés n'étant pas dans l'index ; celui de 1998 à 2025 est revalorisé sans
+    l'arrondi de la caisse, à deux centimes par mois près en 2026. Le modèle prend le
+    maximum et le minimum contributif de l'année de la date d'effet.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-03
+  prochaine_relecture: 2027-10-01
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 721-5, L. 721-6, D. 721-6 à D. 721-13 et R. 721-39-2 dans toutes leurs
+      rédactions, L. 382-27 en vigueur, le décret n° 79-607 du 3 juillet 1979 (art. 37 à
+      44), le décret n° 2006-1325 (art. 2) dans ses trois rédactions et les arrêtés annuels
+      du maximum de 1987 à 1997, lus dans l'index LEGI du dépôt
+    date: 2026-10-03
+  - type: jorf
+    reference: >-
+      les arrêtés du maximum de pension et des cotisations de 1980, 1981, 1983, 1985 et
+      1991 (résumés de l'index JORF du dépôt), ceux de 1984 et 1986 (titres seuls)
+    date: 2026-10-03
+  - type: autre
+    reference: >-
+      CAVIMAC, « Demander ma retraite de base » : trois fractions ; « Le montant mensuel du
+      maximum de la pension au 1er janvier 2026 est de 452,15 € » ; minimum contributif de
+      756,29 €, majoré de 903,93 €
+    url: >-
+      https://www.cavimac.fr/assurance-retraite/assurance-retraite/demander-ma-retraite-de-base-0
+    date: 2026-10-03
+  - type: autre
+    reference: >-
+      réponse ministérielle à la question écrite n° 11394 (Assemblée nationale, JO du 24
+      mars 2003) : pensions de la CAVIMAC « portés [...], sous condition d'une durée
+      d'assurance de 150 trimestres, à 3 839,26 euros par an »
+    url: https://www.assemblee-nationale.fr/dyn/12/questions/QANR5L12QE11394
+    date: 2003-03-24
+  a_relire:
+  - >-
+    Les arrêtés du maximum de pension de 1982, 1984 et 1986, à lire sur le fac-similé du
+    Journal officiel ; une circulaire de la CAVIMAC sur le décret n° 2006-1325, qui dirait
+    l'âge du taux plein de la fraction d'avant 1998, l'écrêtement des majorations et le
+    partage de leurs prorata.
+  - >-
+    Les cotisations de 1979 à 1997 n'étaient pas un taux sur le SMIC mais des montants
+    forfaitaires fixés chaque année par arrêté — 2 348 F à la charge de l'assuré en 1980,
+    6 210 F en 1990 —, avec une cotisation de solidarité des collectivités (décret
+    n° 79-607, art. 24 et 25 ; R. 721-29 et R. 721-30) : le compte notionnel les prend
+    aux taux du régime général sur le forfait du SMIC.
+code:
+  interrupteurs:
+    fractions_des_cultes: true
+  moteur: >-
+    `fractions_des_cultes` : la pension de la CAVIMAC est la somme de deux fractions
+    (`droit/cultes.py`). Celle d'après 1997 est celle du régime général, sur le salaire
+    annuel moyen des seules années d'après 1997 et leur durée, enfants compris ; elle seule
+    porte le minimum contributif. Celle d'avant 1998 est le maximum de l'année au prorata
+    des trimestres d'avant 1998 — cent cinquante jusqu'au 31 octobre 2006, la durée de
+    R. 351-6 ensuite —, décotée comme l'autre quand le taux n'est pas plein, surcotée et
+    majorée jusqu'au minimum contributif quand il l'est.
+  python:
+  - droit/cultes.py
+  - droit/liquider.py, liquider_chaque_regime
+  - droit/completer.py, completer (la fraction d'avant 1998 hors du minimum contributif)
+  - scenarios/actuel.py, MaximumDesCultes
+  - carriere.py, Affiliations.validee_sans_cotisation
+  - droit/compter.py, compter ; droit/ouvrir.py, ouvrir
+  javascript:
+  - droit/cultes.js
+  - droit/liquider.js
+  - droit/completer.js
+  - scenario-actuel.js, MaximumDesCultes
+  - regimes.js, Affiliations.valideeSansCotisation
+  - droit/compter.js ; droit/ouvrir.js
+  parametres:
+  - legislation/cultes_maximum_pension.csv
+  - regimes/cavimac.yaml (`fractions_des_cultes`, l'âge de soixante-cinq ans jusqu'en
+    2006)
+  - legislation/affiliations.yaml (ministre_du_culte, membre_congregation)
+  tests:
+  - tests/test_cultes.py
+  - le balayage des deux statuts et les témoins `cultes_*`
+effet: >-
+  Les ministres des cultes et les membres des congrégations, au scénario 1, partis à
+  soixante-quatre ans : + 98 % nés en 1925, + 30 % en 1945, + 5 % en 1955, moins de 1 % en
+  1965 ; rien pour qui est au minimum contributif majoré, nés en 1968 ou 1975. Ceux de
+  1925 et de 1935 ne sont plus ouverts à cet âge. Les scénarios prospectifs valorisent
+  les droits d'avant 1998 à leur part contributive, le maximum : − 11 % pour le ministre
+  né en 1965, − 13 % pour le religieux.

@@ -23,6 +23,7 @@ import { dateDEffet, derniereAnnee } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
+import * as cultes from "./cultes.js";
 import { familleDuRegime } from "./etranger.js";
 import * as invalidite from "./invalidite.js";
 import * as ouvrir from "./ouvrir.js";
@@ -91,6 +92,9 @@ export class Pensions {
         taux_plein: eligible.tauxPlein,
         surcote: eligible.surcote,
       };
+      if (eligible.horsMinimum) {
+        regimes[eligible.indice].minimum.hors_minimum = eligible.horsMinimum;
+      }
     }
     for (const eligible of this.garanti) {
       regimes[eligible.indice].garanti = {
@@ -122,6 +126,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const requisReference = ouverture.requis;
   const ignorerPenaliteAge = contexte !== null && contexte.neutralise("decote_surcote");
   const avpf = contexte === null || !contexte.neutralise("avpf");
+  // Les majorations de la fraction d'avant 1998 des cultes, que la cascade des
+  // avantages non contributifs mesure avec le minimum contributif.
+  const majorationsDesCultes = contexte === null
+    || !contexte.neutralise("avantages_non_contributifs");
   const codes = droits.codes.filter((code) => regimes === null || regimes.has(code));
   const groupes = releve.groupes;
 
@@ -356,6 +364,12 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // revenus, c'est-à-dire sur un taux de remplacement de 100 %.
     const plafonner = ["plafonnee", "tranche_1", "tranche_a"].includes(periode.assiette);
     const indicePension = pensions.length;
+    // LA PENSION DES CULTES EN DEUX FRACTIONS (`cultes.js`) : ce qui suit ne
+    // calcule que celle des périodes d'après 1997, sur leur salaire annuel
+    // moyen et leur durée ; l'autre s'y ajoute plus bas.
+    const dureesCultes = periode.fractions_des_cultes
+      ? cultes.durees(durees, membres, anneeLiquidation >= cultes.ALIGNEMENT)
+      : null;
     const forfaitaire = periode.pension_forfaitaire_annuelle !== null
       && periode.pension_forfaitaire_annuelle !== undefined;
     const enfantsMajores = majorationEnfants !== null ? carriere.nombre_enfants : 0;
@@ -375,7 +389,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       )
       : salaireDeReference(
         moteur, code, carriere, periode, anneeLiquidation, plafonner,
-        carriere.annee_naissance, avpf, membres, enfantsMajores, null,
+        carriere.annee_naissance, avpf, membres, enfantsMajores,
+        dureesCultes === null ? null : cultes.ALIGNEMENT,
         anneesAlignees === null ? null : anneesAlignees[0],
       );
     const [requis, fiabiliteDuree] = ouvrir.dureeRequise(moteur, periode, carriere);
@@ -411,7 +426,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       ? membres.reduce((somme, m) => somme + (bonificationsParRegime.get(m) ?? 0), 0)
       : 0;
     let trimestresRegime = Math.min(
-      cumulPlafonne(acquisParRegime, membres), proratisation + bonifications,
+      dureesCultes !== null ? dureesCultes.depuis1998 : cumulPlafonne(acquisParRegime, membres),
+      proratisation + bonifications,
     );
     // Rapport des trimestres liquidables à la durée requise, borné au taux
     // maximum — 80/75 avec des bonifications, un sans elles.
@@ -462,6 +478,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // Âge d'annulation de la décote, que l'ouverture transitoire du minimum
     // garanti minore.
     let ageAnnulation = null;
+    // Le facteur dont la décote réduit le taux : la fraction d'avant 1998 des
+    // cultes subit la même (décret n° 2006-1325, art. 2, II).
+    let facteurDecote = 1.0;
     // La durée du régime avant sa majoration après l'âge du taux plein, quand
     // elle a été majorée : le détail la dit.
     let dureeNonMajoree = null;
@@ -487,7 +506,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         if (fiabiliteDecote !== null) {
           fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteDecote);
         }
-        taux *= Math.max(0.0, 1.0 - decote * trimestresDecote);
+        facteurDecote = Math.max(0.0, 1.0 - decote * trimestresDecote);
+        taux *= facteurDecote;
       }
       if (periode.majoration_d_ajournement && decote) {
         // Avant le 1er avril 1983, le taux croît avec l'âge seul, au-delà de
@@ -557,6 +577,25 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     tauxRetenu = Math.max(tauxRetenu, taux);
     const prorata = Math.min(trimestresRegime / proratisation, rapportMaximum);
     let montant = salaireReference * taux * prorata;
+    // Le taux plein, que le minimum contributif et les majorations de la
+    // fraction d'avant 1998 des cultes demandent : lu pour eux seuls.
+    const tauxPleinDuRegime = (dureesCultes !== null
+      || periode.avantages_non_contributifs.includes("minimum_contributif"))
+      && (trimestres >= requis
+        || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
+        || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation));
+    const fractionCultes = dureesCultes !== null
+      ? cultes.fractionDAvant1998(
+        moteur, carriere, dureesCultes, proratisation, tauxPleinDuRegime,
+        facteurDecote, coefficientSurcote, ouverture.trimestresCotises,
+        majorationsDesCultes)
+      : null;
+    // La fraction d'après 1997 seule, que le détail dit avant l'autre.
+    const montantApres1997 = montant;
+    if (fractionCultes !== null) {
+      montant += fractionCultes.montant;
+      fiabiliteGlobale = Math.min(fiabiliteGlobale, fractionCultes.fiabilite);
+    }
     // Ce que la retraite pour invalidité ajoute à la pension : le plancher de
     // L. 30, la rente viagère de L. 28, le plafond de L. 30 ter.
     let detailInvalidite = "";
@@ -571,23 +610,25 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // si la pension est liquidée AU TAUX PLEIN (L. 351-10).
       // Le minimum se proratise « dans les mêmes conditions que la pension » :
       // c'est donc la durée de proratisation qui fait office ici aussi.
-      const cotisesRegime = Math.min(
-        cumulPlafonne("cotises", membres), proratisation,
-      );
+      // Des cultes, seule la fraction d'après 1997 : ses durées, et la
+      // fraction d'avant 1998 hors de ce que le minimum relève.
+      const cotiseeRegime = dureesCultes === null
+        ? cumulPlafonne("cotises", membres) : dureesCultes.cotisesDepuis1998;
+      const cotisesRegime = Math.min(cotiseeRegime, proratisation);
       eligiblesMinimum.push({
         indice: indicePension,
         prorataAssurance: prorata,
         prorataCotise: cotisesRegime / proratisation,
-        tauxPlein: trimestres >= requis
-          || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
-          || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation),
+        tauxPlein: tauxPleinDuRegime,
         surcote: coefficientSurcote,
         // Ce que le minimum d'une pension proratisée lit en plus : voir
         // `EligibleMinimum` du Python.
-        dureeRegime: cumulPlafonne("assurance", membres),
-        cotiseeRegime: cumulPlafonne("cotises", membres),
+        dureeRegime: dureesCultes === null
+          ? cumulPlafonne("assurance", membres) : dureesCultes.depuis1998,
+        cotiseeRegime,
         proratisation,
         requis,
+        horsMinimum: fractionCultes === null ? 0.0 : fractionCultes.montant,
       });
     }
     if (periode.avantages_non_contributifs.includes("minimum_garanti")) {
@@ -621,14 +662,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           ? proratisation : null,
       });
     }
-    pensions.push({
-      regime: code,
-      montant,
-      type_calcul: "annuites",
-      // Salaire de référence au centime et taux au millième : à l'euro et au
-      // centième, refaire « SR × taux × durée » ratait le montant de 1,20 €
-      // sur un régime spécial, le taux arrondi pesant à lui seul 0,89 €.
-      detail: `${forfaitaire ? "forfait" : "SR"} `
+    // Salaire de référence au centime et taux au millième : à l'euro et au
+    // centième, refaire « SR × taux × durée » ratait le montant de 1,20 € sur
+    // un régime spécial, le taux arrondi pesant à lui seul 0,89 €.
+    let detail = `${forfaitaire ? "forfait" : "SR"} `
         + `${formatFixe(salaireReference, 2, true)} € `
         + `× taux ${formatPourcentage(taux, 3)} × ${trimestresRegime}/${proratisation}`
         + (trimestresRegime / proratisation > rapportMaximum
@@ -644,7 +681,20 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           + `(${membres.slice(1).join(", ")} puis ${membres[0]})`)
         + (pourInvalidite === null ? ""
           : ", retraite pour invalidité"
-            + (detailInvalidite ? ` : ${detailInvalidite}` : "")),
+            + (detailInvalidite ? ` : ${detailInvalidite}` : ""));
+    if (fractionCultes !== null) {
+      // Les deux fractions des cultes, chacune avec son montant ; avant 1998,
+      // la seule qui existe.
+      detail = anneeLiquidation < cultes.ALIGNEMENT
+        ? `${fractionCultes.detail} = ${formatFixe(fractionCultes.montant, 2, true)} €`
+        : `${detail} = ${formatFixe(montantApres1997, 2, true)} € ; `
+          + `${fractionCultes.detail} = ${formatFixe(fractionCultes.montant, 2, true)} €`;
+    }
+    pensions.push({
+      regime: code,
+      montant,
+      type_calcul: "annuites",
+      detail,
       fiabilite: Math.min(...membres.map((m) => moteur.catalogue.obtenir(m).fiabilite)),
     });
   }

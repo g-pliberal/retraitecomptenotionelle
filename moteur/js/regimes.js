@@ -909,6 +909,47 @@ export class MinimumVieillesse {
 MinimumVieillesse.AGE_OUVERTURE = 65;
 
 /**
+ * Le maximum de la pension du régime des cultes, l'année demandée : la
+ * fraction de pension des périodes d'avant 1998 le proratise. Les arrêtés le
+ * fixent de 1979 à 1997 ; depuis, il suit les revalorisations des pensions du
+ * régime général, jusqu'à l'ancre que publie la caisse, puis les prix. Voir
+ * `MaximumDesCultes` dans scenarios/actuel.py.
+ */
+export class MaximumDesCultes {
+  constructor(paquet, macro, revalorisations) {
+    this.macro = macro;
+    this.revalorisations = revalorisations;
+    this._table = paquet.cultes_maximum_pension ?? {};
+    this._annees = Object.keys(this._table).map(Number).sort((a, b) => a - b);
+  }
+
+  /**
+   * Le montant annuel en vigueur au 1er janvier de l'année, et sa fiabilité,
+   * ou `null` avant la création du régime.
+   */
+  valeur(annee) {
+    if (this._table[String(annee)] !== undefined) {
+      return this._table[String(annee)];
+    }
+    const anterieures = this._annees.filter((a) => a < annee);
+    if (anterieures.length === 0) {
+      return null;
+    }
+    const ancre = anterieures[anterieures.length - 1];
+    const [valeur, fiabilite] = this._table[String(ancre)];
+    if (ancre <= MaximumDesCultes.DERNIER_ARRETE) {
+      const [coefficient, fiabiliteRevalorisations] = this.revalorisations.generale(
+        `${ancre}-01-01`, `${annee}-01-01`, false, valeur / 12);
+      return [valeur * coefficient, Math.min(fiabilite, fiabiliteRevalorisations)];
+    }
+    return [valeur * this.macro.coefficientPrix(ancre, annee), fiabilite];
+  }
+}
+
+/** La dernière année qu'un arrêté fixe. */
+MaximumDesCultes.DERNIER_ARRETE = 1997;
+
+/**
  * Trimestres accordés au titre des enfants, enfant par enfant, lus dans les
  * versions des fiches qui les portent (docs/architecture.md, § 4.1).
  *
@@ -2042,6 +2083,23 @@ export class Affiliations {
       return [new Set(), 0];
     }
     return [new Set(regle.regimes ?? []), Number(regle.pension_depuis)];
+  }
+
+  /**
+   * L'année est-elle validée SANS AUCUNE COTISATION, par tous ses régimes ?
+   * L'activité cultuelle d'avant 1979, que la CAVIMAC valide gratuitement :
+   * dans la durée du régime, jamais parmi les trimestres cotisés. Voir
+   * carriere.py.
+   */
+  valideeSansCotisation(affiliation, annee, anneeEntree = null) {
+    const periode = this._periode(affiliation, annee, anneeEntree);
+    const regle = periode?.services_passes ?? null;
+    if (!regle) {
+      return false;
+    }
+    const regimes = periode.regimes ?? [];
+    const gratuits = new Set(regle.regimes ?? []);
+    return regimes.length > 0 && regimes.every((code) => gratuits.has(code));
   }
 
   /** La période du statut qui couvre cette année, pour cette entrée. */

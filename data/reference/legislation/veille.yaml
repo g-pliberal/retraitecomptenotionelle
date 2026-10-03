@@ -4612,3 +4612,40 @@ journal:
       la délibération n° 290 du Congrès du 14 janvier 1992, non lue ; le régime
       complémentaire créé à Saint-Pierre-et-Miquelon par l'accord du 18 février 1983 ; la
       validation du chômage par la CAFAT pour sa propre retraite.
+  - date: "2026-10-03"
+    session: >-
+      action 119, les fractions de pension de la CAVIMAC : celle d'avant 1979, validée
+      gratuitement, et celle de 1979 à 1997, portée au minimum contributif ou au maximum de
+      la pension « Cavimac »
+    consulte: >-
+      veille_droit.py ; l'index LEGI du dépôt, à jour au 27 septembre 2026 — L. 161-17-2 et
+      L. 161-17-3 n'y ont pas de version postérieure au 31 décembre 2025, les incréments de
+      la DILA sont refusés — : L. 721-5, L. 721-6, D. 721-6 à D. 721-13 et R. 721-39 à
+      R. 721-43 dans toutes leurs rédactions, L. 382-27 en vigueur, les articles 37 à 49 du
+      décret n° 79-607, l'article 2 du décret n° 2006-1325 dans ses trois rédactions,
+      D. 351-1-4 et R. 351-6, les arrêtés du maximum de 1987 à 1997 ; l'index JORF, pour les
+      arrêtés de 1980, 1981, 1983, 1985 et 1991, les titres seuls de ceux de 1984 et 1986,
+      rien de celui de 1982 ; la page de la CAVIMAC sur la retraite de base, relue, et son
+      « guide », un sommaire ; la réponse ministérielle à la question écrite n° 11394 (JO du
+      24 mars 2003).
+    trouve: >-
+      Avant 1998, la pension des cultes est le maximum de l'année au prorata de cent
+      cinquante trimestres, à soixante-cinq ans, sur des trimestres qui comprennent
+      l'activité d'avant 1979 (D. 721-6 à D. 721-11). L. 721-6 de 1998 et L. 721-5 gardent
+      soixante-cinq ans à toute la pension jusqu'au décret n° 2006-1325, qui, pour les
+      pensions prenant effet depuis le 1er novembre 2006, prend la durée de R. 351-6, ouvre
+      l'âge légal, décote et surcote la fraction d'avant 1998, et porte au taux plein les
+      trimestres cotisés de 1979 à 1997 au minimum contributif majoré (V, par génération),
+      puis, depuis le 1er février 2010, ceux d'avant 1979 au minimum contributif (V bis).
+      Le maximum vaut 7 500 F en 1979, 23 449 F en 1997, puis suit les pensions : 452,15 €
+      par mois en 2026, selon la caisse. Le modèle appliquait les règles d'après 1998 à
+      toute la carrière, l'âge légal et le minimum contributif dès 1979, une surcote dès
+      2004 que L. 382-27 n'ouvre qu'au 20 décembre 2005, et ne comptait pas les années
+      d'avant 1979 ; il sert désormais les deux fractions (fiche
+      `cultes_fractions_de_pension`).
+    reste: >-
+      Les arrêtés du maximum de 1982, 1984 et 1986, à lire sur le fac-similé ; une
+      circulaire de la caisse qui dise l'âge du taux plein de la fraction d'avant 1998,
+      l'écrêtement de ses majorations et le partage de leurs prorata ; les cotisations
+      forfaitaires de 1979 à 1997 que fixent les mêmes arrêtés, que le compte notionnel
+      prend aux taux du régime général sur le forfait du SMIC.

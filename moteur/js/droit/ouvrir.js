@@ -19,7 +19,7 @@ import {
   GENERATION_REFORME_2023, REFORME_2023_EFFET,
 } from "../regimes.js";
 import { Fiabilite, nomFiabilite } from "../serie.js";
-import { dateDEffet, derniereAnnee } from "./commun.js";
+import { dateDEffet, derniereAnnee, ligneCotisee } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { borneCarriere, REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
@@ -173,7 +173,7 @@ export function ouvrir(moteur, releve, regimes = null) {
   // longue et la majoration du minimum contributif. Ceux qu'un accord fait
   // compter hors de France le sont aussi.
   let trimestresCotises = carriere.trimestresCumules(carriere.lignes.filter(
-    (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation,
+    (ligne) => ligneCotisee(moteur, carriere, ligne) && ligne.annee <= anneeLiquidation,
   ));
   let etrangers = null;
   if (durees.etranger !== null) {
@@ -792,7 +792,7 @@ export function ageCarriereLongue(moteur, carriere, annuites) {
   ) || 160;
   const anneeLiquidation = carriere.anneeLiquidation;
   let cotises = carriere.trimestresCumules(carriere.lignes.filter(
-    (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation,
+    (ligne) => ligneCotisee(moteur, carriere, ligne) && ligne.annee <= anneeLiquidation,
   ));
   const famille = etranger.familleDesRegimes(moteur, annuites.map(([code]) => code));
   const etrangers = etranger.trimestresEtrangers(moteur, carriere);

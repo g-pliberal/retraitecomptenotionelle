@@ -1,0 +1,55 @@
+# Maximum de pension du régime des cultes (CAMAVIC, puis CAVIMAC)
+# ------------------------------------------------------------------
+# source_id: dila_legi_cultes (décret n° 79-607 et arrêtés annuels),
+#            cavimac_demander_retraite (montant de 2026)
+#
+# La pension que la caisse sert pour les périodes d'avant le 1er janvier 1998
+# ne dépend d'aucun salaire : elle est « calculée sur des bases forfaitaires,
+# en fonction de la durée d'assurance, dans les limites d'un minimum et d'un
+# maximum fixés par voie réglementaire » (L. 721-6, rédaction de 1985). Le
+# maximum, acquis à cent cinquante trimestres, est « fixé à 7.500 F au
+# 1er janvier 1979 » et revalorisé chaque année par arrêté (décret n° 79-607,
+# art. 39 ; D. 721-8 du code de 1985) ; depuis 1998, « dans les conditions
+# prévues à l'article L. 351-11 » (L. 382-27), c'est-à-dire par les
+# coefficients des pensions du régime général (décret n° 2006-1325, art. 2,
+# VIII). Voir la fiche `cultes_fractions_de_pension`.
+#
+# CE SONT DES ANCRES. Une ligne par arrêté, pour l'année qu'il fixe, lu dans
+# les index LEGI et JORF du dépôt — 1987 à 1997 dans leur texte, 1980, 1981,
+# 1983 et 1985 dans le résumé que le Journal officiel en donne. Le moteur
+# porte les années suivantes depuis 1997 par les revalorisations des pensions
+# (`revalorisation_pensions.csv`), jusqu'à l'ancre de 2026, le montant que
+# publie la caisse (452,15 € par mois au 1er janvier 2026), puis par les prix.
+# Sans arrondi, le calcul depuis 1997 donne 452,17 € par mois en 2026, et
+# 3 839,27 € par an en 2002, quand la réponse ministérielle du 24 mars 2003
+# (question n° 11394) en écrit 3 839,26 € : la caisse arrondit à chaque
+# revalorisation, ce que le moteur ne fait pas.
+#
+# TROIS ANNÉES ESTIMÉES : les arrêtés de 1982, 1984 et 1986 existent, mais
+# l'index n'a que le titre des deux derniers (JORFTEXT000000314636 et
+# JORFTEXT000000494052) et rien du premier ; leur montant est la moyenne
+# géométrique de ceux qui les encadrent, arrondie au franc.
+#
+# Valeurs en francs jusqu'en 1997, converties en euros par division par
+# 6,55957 — conversion arithmétique, sans revalorisation. Montants annuels.
+annee,valeur,francs,fiabilite,reference
+1979,1143.367629,7500,haute,"décret n° 79-607 du 3 juillet 1979, art. 39 (LEGIARTI000006766265)"
+1980,1387.286057,9100,haute,arrêté du 27 mars 1980 (JORFTEXT000000861446)
+1981,1579.371819,10360,haute,arrêté du 17 décembre 1980 (JORFTEXT000000676770)
+1982,1852.408008,12151,estimee,"moyenne géométrique de 1981 et 1983, l'arrêté n'étant pas dans l'index"
+1983,2172.703394,14252,haute,arrêté du 12 janvier 1983 (JORFTEXT000000470945)
+1984,2358.996093,15474,estimee,"moyenne géométrique de 1983 et 1985, l'index n'ayant que le titre de l'arrêté du 27 décembre 1983 (JORFTEXT000000314636)"
+1985,2561.143490,16800,haute,arrêté du 7 décembre 1984 (JORFTEXT000000860072)
+1986,2625.172077,17220,estimee,"moyenne géométrique de 1985 et 1987, l'index n'ayant que le titre de l'arrêté du 13 décembre 1985 (JORFTEXT000000494052)"
+1987,2690.725154,17650,haute,arrêté du 9 décembre 1986 (LEGIARTI000006784444)
+1988,2759.327212,18100,haute,arrêté du 23 décembre 1987 (LEGIARTI000006785418)
+1989,2881.286426,18900,haute,arrêté du 22 décembre 1988 (LEGIARTI000006786099)
+1990,2995.623189,19650,haute,arrêté du 3 janvier 1990 (LEGIARTI000006786637)
+1991,3087.092599,20250,haute,arrêté du 8 février 1991 (JORFTEXT000000506439)
+1992,3210.576303,21060,haute,arrêté du 17 mars 1992 (LEGIARTI000006788462)
+1993,3338.633477,21900,haute,arrêté du 17 février 1993 (LEGIARTI000006927787)
+1994,3405.406147,22338,haute,arrêté du 6 mai 1994 (LEGIARTI000006789523)
+1995,3446.262484,22606,haute,arrêté du 5 avril 1995 (LEGIARTI000006789912)
+1996,3532.396178,23171,haute,arrêté du 19 septembre 1996 (LEGIARTI000006790615)
+1997,3574.777005,23449,haute,arrêté du 18 février 1997 (LEGIARTI000006790668)
+2026,5425.800000,,haute,"CAVIMAC, « Demander ma retraite de base » : 452,15 € par mois au 1er janvier 2026"

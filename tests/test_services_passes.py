@@ -53,7 +53,9 @@ def test_les_services_passes_se_lisent(simulateur):
 def test_un_service_passe_precede_la_generalisation(simulateur):
     """Un service passé est un régime de sa période, et sa période finit avant
     l'année d'où une pension le sert : sans quoi une année serait à la fois
-    cotisée et validée sans cotisation."""
+    cotisée et validée sans cotisation. Trois périodes d'outre-mer, et les
+    deux d'avant 1979 des statuts des cultes (fiche
+    ``cultes_fractions_de_pension``)."""
     affiliations = simulateur.affiliations
     vus = 0
     for statut in affiliations.codes:
@@ -65,7 +67,7 @@ def test_un_service_passe_precede_la_generalisation(simulateur):
             assert set(regle["regimes"]) <= set(periode["regimes"]), (statut, periode)
             assert periode["fin"] is not None, (statut, periode)
             assert periode["fin"] < int(regle["pension_depuis"]), (statut, periode)
-    assert vus == 3
+    assert vus == 5
 
 
 def test_le_compte_ne_porte_pas_les_services_passes(simulateur):

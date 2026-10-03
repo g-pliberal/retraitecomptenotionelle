@@ -11,7 +11,7 @@
 import * as chrono from "../chronologie.js";
 import { nomFiabilite } from "../serie.js";
 import * as acquerirEtape from "./acquerir.js";
-import { dateDEffet } from "./commun.js";
+import { dateDEffet, ligneCotisee } from "./commun.js";
 import * as compterEtape from "./compter.js";
 import * as coordonnerEtape from "./coordonner.js";
 import { indemnisationBornee } from "./ouvrir.js";
@@ -35,7 +35,8 @@ export const PRESOMPTIONS_ENFANTS = {
  * régimes que la coordination fait liquider ensemble.
  */
 export class Releve {
-  constructor(coordination, durees, droits, groupes, servicesLus = new Set()) {
+  constructor(coordination, durees, droits, groupes, servicesLus = new Set(),
+    gratuites = new Set()) {
     this.coordination = coordination;
     this.durees = durees;
     this.droits = droits;
@@ -43,6 +44,12 @@ export class Releve {
     this.groupes = groupes;
     /** Les régimes dont la liquidation lit les services : seules leurs lignes se publient. */
     this.servicesLus = servicesLus;
+    /**
+     * Les années d'emploi que leur régime valide sans cotisation, « régime|année » :
+     * l'activité cultuelle d'avant 1979 (`ligneCotisee`). Leurs lignes ne sont pas
+     * contributives.
+     */
+    this.gratuites = gratuites;
   }
 
   /** La carrière que la liquidation lit, rétablissement fait. */
@@ -83,7 +90,7 @@ export class Releve {
     const retablies = new Set();
     carriere.lignes.forEach((ligne, i) => {
       for (const code of this.coordination.regimes[i]) {
-        if (ligne.cotise) {
+        if (ligne.cotise && !this.gratuites.has(`${code}|${ligne.annee}`)) {
           cotisees.add(`${code}|${ligne.annee}`);
         }
         if (ligne.revenu_retabli > 0) {
@@ -207,7 +214,15 @@ export function construire(moteur, carriereSaisie, {
   const servicesLus = new Set([...durees.parAnnee.services.keys()].filter(
     (code) => moteur.catalogue.obtenir(code).famille === "fonction_publique",
   ));
-  return new Releve(coordination, durees, droits, groupes, servicesLus);
+  const gratuites = new Set();
+  coordination.carriere.lignes.forEach((ligne, i) => {
+    if (ligne.cotise && !ligneCotisee(moteur, coordination.carriere, ligne)) {
+      for (const code of coordination.regimes[i]) {
+        gratuites.add(`${code}|${ligne.annee}`);
+      }
+    }
+  });
+  return new Releve(coordination, durees, droits, groupes, servicesLus, gratuites);
 }
 
 /**

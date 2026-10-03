@@ -30,7 +30,8 @@ from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from . import etranger as _etranger
 from . import liquider, ouvrir
-from .commun import AvantageApplique, PensionRegime, date_d_effet, derniere_annee
+from .commun import (AvantageApplique, PensionRegime, date_d_effet, derniere_annee,
+                     ligne_cotisee)
 from .compter import trimestres_de_la_ligne_entre as _trimestres_de_la_ligne_entre
 
 if TYPE_CHECKING:
@@ -256,8 +257,11 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             # aussi la règle d'avant avril 2009.
             if not eligible.taux_plein:
                 return 0.0
-            return complement_minimum(pension.montant / eligible.surcote, plancher,
-                                      eligible.surcote, date_effet)
+            # La fraction d'avant 1998 des cultes a ses propres majorations
+            # (:mod:`.cultes`) : le minimum ne relève que l'autre.
+            return complement_minimum(
+                (pension.montant - eligible.hors_minimum) / eligible.surcote, plancher,
+                eligible.surcote, date_effet)
 
         def plancher_national(eligible, majoration: bool) -> float:
             plancher = montant_base * min(1.0, eligible.prorata_assurance)
@@ -281,7 +285,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             # France pour la majoration.
             cotises_francais = carriere.trimestres_cumules(
                 ligne for ligne in carriere.lignes
-                if ligne.cotise and ligne.annee <= annee_liquidation)
+                if ligne_cotisee(moteur, carriere, ligne)
+                and ligne.annee <= annee_liquidation)
             duree_totale = durees.pour_le_taux(_etranger.GENERALE)
         #: Complément dû à chaque régime, avant écrêtement.
         complements: dict[int, float] = {}

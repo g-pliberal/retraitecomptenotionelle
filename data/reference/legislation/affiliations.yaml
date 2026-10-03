@@ -28,6 +28,12 @@
 # pas pour ce statut —, et le compte notionnel n'en porte rien, personne n'y
 # ayant cotisé (`Affiliations.services_passes`, fiche
 # `services_passes_outre_mer`).
+# Depuis le 3 octobre 2026, une période peut aussi précéder la création du
+# régime de BASE du statut : les années d'activité cultuelle d'avant 1979, que
+# la CAVIMAC valide gratuitement (D. 721-11 du code de 1985). Le scénario 1 en
+# compte les trimestres dans la durée du régime, et l'année ne compte pas
+# parmi les trimestres cotisés quand tous ses régimes la valident ainsi
+# (`Affiliations.validee_sans_cotisation`, fiche `cultes_fractions_de_pension`).
 #
 # `famille` range le statut dans le menu du simulateur : soixante statuts à la
 # file ne se parcourent pas, sept groupes se parcourent. Les valeurs admises
@@ -1009,6 +1015,8 @@ affiliations:
     libelle: Ministre du culte ou religieux percevant une rémunération individuelle
     famille: special
     periodes:
+      - {debut: 1930, fin: 1978, regimes: [cavimac],
+         services_passes: {regimes: [cavimac], pension_depuis: 1979}}
       - {debut: 1979, fin: 2005, regimes: [cavimac]}
       - {debut: 2006, fin: null, regimes: [cavimac, arrco_cultes]}
     note: >-
@@ -1017,9 +1025,16 @@ affiliations:
       cultuelle antérieures ne sont pas perdues pour autant : la CAVIMAC les
       valide gratuitement et en sert une fraction de pension (sa page sur la
       retraite de base, la réponse ministérielle au Sénat du 16 janvier 2008).
-      Le modèle ne les compte pas, et sous-estime donc la pension des
+      Le modèle ne les comptait pas, et sous-estimait donc la pension des
       générations entrées avant 1979 ; le statut disait jusqu'au 23 septembre
-      2026 que c'était « le droit lui-même ». Le statut n'est PAS marqué `sans_employeur` :
+      2026 que c'était « le droit lui-même ». Depuis le 3 octobre 2026, la
+      période d'avant 1979 les route à la CAVIMAC en services passés : « sont
+      prises en compte pour l'ouverture du droit et le calcul de la pension,
+      les périodes d'exercice d'activités [...] accomplies antérieurement au
+      1er janvier 1979 » (D. 721-11 du code de 1985, décret n° 79-607, art.
+      42). Elles comptent dans la durée du régime, jamais parmi les trimestres
+      cotisés, et le compte notionnel n'en porte rien (fiche
+      `cultes_fractions_de_pension`). Le statut n'est PAS marqué `sans_employeur` :
       la congrégation joue le rôle d'employeur et l'article R. 382-90 met à sa
       charge la part patronale du régime général, que les scénarios 4 et 5
       doivent donc compter.
@@ -1037,10 +1052,13 @@ affiliations:
     libelle: Membre d'une congrégation religieuse, sans rémunération individuelle
     famille: special
     periodes:
+      - {debut: 1930, fin: 1978, regimes: [cavimac],
+         services_passes: {regimes: [cavimac], pension_depuis: 1979}}
       - {debut: 1979, fin: null, regimes: [cavimac]}
     note: >-
       Le régime des cultes seul, depuis sa création en 1979 — les années
-      d'avant, que la caisse valide gratuitement, ne sont pas comptées : voir
+      d'avant, que la caisse valide gratuitement, n'étaient pas comptées
+      jusqu'au 3 octobre 2026 ; elles le sont depuis, en services passés : voir
       `ministre_du_culte`. L. 921-1 ne donne l'Arrco qu'à qui « bénéficie d'un
       revenu d'activité perçu individuellement », et le religieux qui vit de sa
       communauté n'en perçoit pas. Pas plus que `ministre_du_culte`, le statut

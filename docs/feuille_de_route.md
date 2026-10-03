@@ -1424,15 +1424,15 @@ réversion.
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 
 **Reprise, au 3 octobre 2026.** Fait : le plafond du RAFP, les points
-gratuits de la RCO, l'Arrco des cultes, le salaire annuel moyen de la CAVIMAC
-et le routage calédonien — services passés d'avant 1995, chômage de la CAFAT
-sans points (note du 3 octobre). Reste, dans cet ordre : les fractions de
-pension de la CAVIMAC (avant 1979, puis 1979 à 1997) ; les ouvriers de l'État
-hors du RAFP ; le barème de l'Ircantec pour enfants ; les deux exceptions au
-plafond du RAFP (GIPA, compte épargne-temps) et la cotisation volontaire
-outre-mer ; les 66 points gratuits des conjoints, aides familiaux et
-collaborateurs ; les huit taux de l'Arrco des cultes. Commencer par les
-fractions de la CAVIMAC (note « Puis le salaire annuel moyen de la CAVIMAC »).
+gratuits de la RCO, l'Arrco des cultes, le salaire annuel moyen et les
+fractions de pension de la CAVIMAC, le routage calédonien (notes du
+3 octobre). Reste, dans cet ordre : les ouvriers de l'État hors du RAFP ; le
+barème de l'Ircantec pour enfants ; les deux exceptions au plafond du RAFP
+(GIPA, compte épargne-temps) et la cotisation volontaire outre-mer ; les 66
+points gratuits des conjoints, aides familiaux et collaborateurs ; les huit
+taux de l'Arrco des cultes ; les cotisations forfaitaires de la CAVIMAC de 1979
+à 1997. Commencer par les ouvriers de l'État (« Un sixième est sorti », sous
+« Ce que la relecture a trouvé »).
 
 **Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
 régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
@@ -1586,6 +1586,40 @@ scénario 2, le taux de remplacement calédonien perd 30 % né en 1925, 14 % né
 moins de 2 % ensuite. Sous Windows, `web/site.py` attend
 désormais node sans `select`, qui n'y lit pas les tubes : la régénération y
 échouait.
+
+**Puis, le 3 octobre 2026, les fractions de pension de la CAVIMAC.** L. 382-27
+laisse les périodes d'avant 1998 aux règles du 31 décembre 1997 : une pension
+« calculée sur des bases forfaitaires » (L. 721-6 de 1985), le maximum de
+l'année au prorata de cent cinquante trimestres (D. 721-7), à soixante-cinq ans
+(D. 721-6), sur des trimestres qui comprennent l'activité cultuelle d'avant
+1979 (D. 721-11). L. 721-5 et L. 721-6 de 1998 gardent cet âge à toute la
+pension jusqu'au décret n° 2006-1325, qui, depuis le 1er novembre 2006, ouvre
+l'âge légal, décote la fraction d'avant 1998 à taux minoré, la surcote, et la
+porte au taux plein au minimum contributif majoré pour les trimestres cotisés
+de 1979 à 1997 — une part de l'écart pour les générations 1939 à 1942 (V) —,
+puis, depuis le 1er février 2010, au minimum contributif pour ceux d'avant
+1979 (V bis). Le maximum : 7 500 F en 1979, 23 449 F en 1997 par les arrêtés
+— 1982, 1984 et 1986 estimés, l'index n'en ayant pas le texte —, les
+pensions ensuite, que le calcul suit à quelques centimes des 3 839,26 € de
+2002 (question n° 11394) et des 452,15 € par mois de 2026 (la caisse). La
+pension est désormais la somme des deux fractions, dans les deux moteurs
+(`droit/cultes.py`, `fractions_des_cultes`, `legislation/cultes_maximum_pension.csv`) :
+celle d'après 1997 a seule son salaire annuel moyen, sa durée et le minimum
+contributif (`hors_minimum`) ; les années d'avant 1979 sont routées à la
+CAVIMAC en services passés, hors des trimestres cotisés
+(`Affiliations.validee_sans_cotisation`, `ligne_cotisee`). La fiche servait
+l'âge légal et le minimum contributif dès 1979, et une surcote dès 2004 que
+L. 382-27 n'ouvre qu'au 20 décembre 2005. Fiche `cultes_fractions_de_pension` ;
+`cultes_salaire_annuel_moyen` passe conforme. Au scénario 1, le ministre né en
+1925 gagne 98 %, né en 1945 30 %, né en 1955 5 %, né en 1965 moins de 1 % ;
+celui de 1975, au minimum majoré, rien ; à soixante-quatre ans, ceux de 1925
+et de 1935 ne sont plus ouverts. Les scénarios prospectifs valorisent les
+droits d'avant 1998 au maximum seul, qui est leur part contributive : − 11 %
+pour le ministre né en 1965, − 13 % pour le religieux. Quatre témoins
+naissent (`cultes_*`) ; le formulaire ne dit plus « (depuis 1979) ». Les
+cotisations de 1979 à 1997 étaient des montants fixés par les mêmes arrêtés,
+et non un taux sur le SMIC : à reprendre. Les fractions de la liste ci-dessous
+sont faites.
 
 **Ce qui reste**, dans l'ordre où le prendre : les fractions de pension de la
 CAVIMAC d'avant 1979, validées gratuitement, et de 1979 à 1997, portées au

@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING
 from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, trimestres_civils
 from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
 from . import compter, coordonner, etranger, invalidite
-from .commun import date_d_effet, derniere_annee
+from .commun import date_d_effet, derniere_annee, ligne_cotisee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -232,7 +232,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
     # totalisation_des_periodes_etrangeres).
     trimestres_cotises = carriere.trimestres_cumules(
         ligne for ligne in carriere.lignes
-        if ligne.cotise and ligne.annee <= annee_liquidation
+        if ligne_cotisee(moteur, carriere, ligne) and ligne.annee <= annee_liquidation
     )
     etrangers = None
     if durees.etranger is not None:
@@ -930,7 +930,7 @@ def age_carriere_longue(moteur, carriere: Carriere,
     annee_liquidation = carriere.annee_liquidation
     cotises = carriere.trimestres_cumules(
         ligne for ligne in carriere.lignes
-        if ligne.cotise and ligne.annee <= annee_liquidation
+        if ligne_cotisee(moteur, carriere, ligne) and ligne.annee <= annee_liquidation
     )
     famille = etranger.famille_des_regimes(moteur, [code for code, _ in periodes])
     etrangers = etranger.trimestres_etrangers(moteur, carriere)

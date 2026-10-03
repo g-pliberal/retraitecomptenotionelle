@@ -62,7 +62,7 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from . import compter, coordonner, etranger, invalidite, ouvrir
-from .commun import derniere_annee
+from .commun import derniere_annee, ligne_cotisee
 
 if TYPE_CHECKING:
     from ..carriere import AnneeCarriere, Carriere
@@ -250,7 +250,7 @@ def _carriere_longue_acquise(moteur: ScenarioActuel, carriere: Carriere,
     annee_liquidation = carriere.annee_liquidation
     cotises = carriere.trimestres_cumules(
         ligne for ligne in carriere.lignes
-        if ligne.cotise and ligne.annee <= annee_liquidation)
+        if ligne_cotisee(moteur, carriere, ligne) and ligne.annee <= annee_liquidation)
     famille = etranger.famille_des_regimes(moteur, [code for code, _ in periodes])
     etrangers = etranger.trimestres_etrangers(moteur, carriere)
     majoration = compter.majoration_pour_enfants(

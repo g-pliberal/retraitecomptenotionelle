@@ -24,7 +24,7 @@
 
 import { DateMois } from "../calendrier.js";
 import { menerAuMois } from "../revalorisation.js";
-import { derniereAnnee } from "./commun.js";
+import { derniereAnnee, ligneCotisee } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import * as etranger from "./etranger.js";
@@ -222,7 +222,7 @@ function carriereLongueAcquise(moteur, carriere, periodes) {
     ([, periode]) => ouvrirLeDroit.dureeRequise(moteur, periode, carriere)[0])) || 160;
   const anneeLiquidation = carriere.anneeLiquidation;
   let cotises = carriere.trimestresCumules(carriere.lignes.filter(
-    (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation));
+    (ligne) => ligneCotisee(moteur, carriere, ligne) && ligne.annee <= anneeLiquidation));
   const famille = etranger.familleDesRegimes(moteur, periodes.map(([code]) => code));
   const etrangers = etranger.trimestresEtrangers(moteur, carriere);
   const majoration = compter.majorationPourEnfants(

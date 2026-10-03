@@ -36,7 +36,7 @@ from ..calendrier import DateMois
 from ..carriere import salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
 from .. import revalorisation
-from . import acquerir, coordonner, invalidite, ouvrir
+from . import acquerir, coordonner, cultes, invalidite, ouvrir
 from .compter import trimestres_de_la_ligne_entre
 from .commun import PensionRegime, date_d_effet, derniere_annee
 from .etranger import famille_du_regime
@@ -270,6 +270,9 @@ class EligibleMinimum:
     cotisee_regime: int = 0
     proratisation: int = 0
     requis: int = 0
+    #: La part du montant que le minimum ne relève pas : la fraction d'avant
+    #: 1998 des cultes, qui a ses propres majorations (:mod:`.cultes`).
+    hors_minimum: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -319,6 +322,8 @@ class Pensions:
                 "taux_plein": eligible.taux_plein,
                 "surcote": eligible.surcote,
             }
+            if eligible.hors_minimum:
+                regimes[eligible.indice]["minimum"]["hors_minimum"] = eligible.hors_minimum
         for eligible in self.garanti:
             regimes[eligible.indice]["garanti"] = {
                 "trimestres_services": eligible.trimestres_services,
@@ -353,6 +358,10 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     requis_reference = ouverture.requis
     ignorer_penalite_age = contexte is not None and contexte.neutralise("decote_surcote")
     avpf = contexte is None or not contexte.neutralise("avpf")
+    #: Les majorations de la fraction d'avant 1998 des cultes, que la cascade
+    #: des avantages non contributifs mesure avec le minimum contributif.
+    majorations_des_cultes = (contexte is None
+                              or not contexte.neutralise("avantages_non_contributifs"))
     codes = [code for code in droits.codes if regimes is None or code in regimes]
     groupes = releve.groupes
 
@@ -616,6 +625,14 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         # revenus, c'est-à-dire sur un taux de remplacement de 100 %.
         plafonner = periode.assiette in ("plafonnee", "tranche_1", "tranche_a")
         annees_alignees: tuple[int, str] | None = None
+        # LA PENSION DES CULTES EN DEUX FRACTIONS (:mod:`.cultes`) : ce qui suit
+        # ne calcule que celle des périodes d'après 1997, sur leur salaire
+        # annuel moyen et leur durée ; l'autre s'y ajoute plus bas.
+        durees_cultes = (
+            cultes.durees(durees, membres,
+                          enfants=annee_liquidation >= cultes.ALIGNEMENT)
+            if periode.fractions_des_cultes else None
+        )
         if periode.pension_forfaitaire_annuelle is not None:
             salaire_reference = (
                 periode.pension_forfaitaire_annuelle
@@ -647,6 +664,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 code, carriere, periode, annee_liquidation, plafonner,
                 carriere.annee_naissance, avpf, membres,
                 enfants_majores=enfants_majores,
+                depuis=None if durees_cultes is None else cultes.ALIGNEMENT,
                 annees=None if annees_alignees is None else annees_alignees[0],
             )
         requis, fiabilite_duree = ouvrir.duree_requise(moteur, periode, carriere)
@@ -680,7 +698,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         # ANNÉE : deux activités cumulées dans deux régimes alignés ne
         # valident pas huit trimestres la même année.
         trimestres_regime = min(
-            cumul_plafonne(
+            durees_cultes.depuis_1998 if durees_cultes is not None
+            else cumul_plafonne(
                 "services"
                 if moteur.catalogue[code].famille == "fonction_publique"
                 else "assurance",
@@ -743,6 +762,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         #: Âge d'annulation de la décote, que l'ouverture transitoire du
         #: minimum garanti minore.
         age_annulation: float | None = None
+        #: Le facteur dont la décote réduit le taux : la fraction d'avant 1998
+        #: des cultes subit la même (décret n° 2006-1325, art. 2, II).
+        facteur_decote = 1.0
         #: La durée du régime avant sa majoration après l'âge du taux plein,
         #: quand elle a été majorée : le détail la dit.
         duree_non_majoree: int | None = None
@@ -770,7 +792,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 # proratisation : leur `decote_par_trimestre` est nul.
                 if fiabilite_decote is not None:
                     fiabilite_globale = min(fiabilite_globale, fiabilite_decote)
-                taux *= max(0.0, 1.0 - decote * trimestres_decote)
+                facteur_decote = max(0.0, 1.0 - decote * trimestres_decote)
+                taux *= facteur_decote
             if periode.majoration_d_ajournement and decote:
                 # Avant le 1er avril 1983, le taux croît avec l'âge seul,
                 # au-delà de soixante-cinq ans comme en deçà.
@@ -840,6 +863,29 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         taux_retenu = max(taux_retenu, taux)
         prorata = min(trimestres_regime / proratisation, rapport_maximum)
         montant = salaire_reference * taux * prorata
+        #: Le taux plein, que le minimum contributif et les majorations de la
+        #: fraction d'avant 1998 des cultes demandent : durée requise, ou âge
+        #: d'annulation de la décote, ou inaptitude. Lu pour eux seuls.
+        taux_plein_du_regime = (
+            (durees_cultes is not None
+             or "minimum_contributif" in periode.avantages_non_contributifs)
+            and (trimestres >= requis
+                 or age_liquidation >= ouvrir.age_taux_plein(moteur, periode, carriere)
+                 or invalidite.taux_plein_de_l_inapte(
+                     moteur, code, carriere, age_liquidation))
+        )
+        fraction_cultes = (
+            cultes.fraction_d_avant_1998(
+                moteur, carriere, durees_cultes, proratisation, taux_plein_du_regime,
+                facteur_decote, coefficient_surcote, ouverture.trimestres_cotises,
+                majorations_des_cultes)
+            if durees_cultes is not None else None
+        )
+        #: La fraction d'après 1997 seule, que le détail dit avant l'autre.
+        montant_apres_1997 = montant
+        if fraction_cultes is not None:
+            montant += fraction_cultes.montant
+            fiabilite_globale = min(fiabilite_globale, fraction_cultes.fiabilite)
         #: Ce que la retraite pour invalidité ajoute à la pension : le
         #: plancher de L. 30, la rente viagère de L. 28, le plafond de
         #: L. 30 ter (:func:`~.invalidite.pension_du_fonctionnaire_invalide`).
@@ -863,25 +909,23 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # Le minimum se proratise « dans les mêmes conditions que la
             # pension » : c'est donc la durée de proratisation, et non la
             # durée requise, qui fait office ici aussi.
-            cotises_regime = min(
-                cumul_plafonne("cotises", membres),
-                proratisation,
-            )
+            # Des cultes, seule la fraction d'après 1997 : ses durées, et la
+            # fraction d'avant 1998 hors de ce que le minimum relève.
+            cotisee_regime = (cumul_plafonne("cotises", membres) if durees_cultes is None
+                              else durees_cultes.cotises_depuis_1998)
+            cotises_regime = min(cotisee_regime, proratisation)
             eligibles_minimum.append(EligibleMinimum(
                 indice=len(pensions),
                 prorata_assurance=prorata,
                 prorata_cotise=cotises_regime / proratisation,
-                taux_plein=(
-                    trimestres >= requis
-                    or age_liquidation >= ouvrir.age_taux_plein(moteur, periode, carriere)
-                    or invalidite.taux_plein_de_l_inapte(
-                        moteur, code, carriere, age_liquidation)
-                ),
+                taux_plein=taux_plein_du_regime,
                 surcote=coefficient_surcote,
-                duree_regime=cumul_plafonne("assurance", membres),
-                cotisee_regime=cumul_plafonne("cotises", membres),
+                duree_regime=(cumul_plafonne("assurance", membres) if durees_cultes is None
+                              else durees_cultes.depuis_1998),
+                cotisee_regime=cotisee_regime,
                 proratisation=proratisation,
                 requis=requis,
+                hors_minimum=0.0 if fraction_cultes is None else fraction_cultes.montant,
             ))
         if "minimum_garanti" in periode.avantages_non_contributifs:
             # Depuis la loi du 9 novembre 2010, le minimum garanti n'est dû
@@ -927,9 +971,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     else None
                 ),
             ))
-        pensions.append(PensionRegime(
-            regime=code, montant=montant, type_calcul="annuites",
-            detail=(
+        detail = (
                 f"{'forfait' if periode.pension_forfaitaire_annuelle is not None else 'SR'} "
                 # Salaire de référence au centime et taux au millième : à
                 # l'euro et au centième, refaire « SR × taux × durée »
@@ -952,7 +994,19 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 + ("" if len(membres) == 1 else
                    f", {len(membres)} caisses liquidées ensemble "
                    f"({', '.join(membres[1:])} puis {membres[0]})")
-            ),
+        )
+        if fraction_cultes is not None:
+            # Les deux fractions des cultes, chacune avec son montant ; avant
+            # 1998, la seule qui existe.
+            detail = (
+                f"{fraction_cultes.detail} = {fraction_cultes.montant:,.2f} €"
+                if annee_liquidation < cultes.ALIGNEMENT
+                else (f"{detail} = {montant_apres_1997:,.2f} € ; "
+                      f"{fraction_cultes.detail} = {fraction_cultes.montant:,.2f} €")
+            )
+        pensions.append(PensionRegime(
+            regime=code, montant=montant, type_calcul="annuites",
+            detail=detail,
             fiabilite=min(moteur.catalogue[m].fiabilite for m in membres),
         ))
 

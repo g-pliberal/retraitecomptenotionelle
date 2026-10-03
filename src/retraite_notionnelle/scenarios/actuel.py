@@ -60,6 +60,7 @@ from __future__ import annotations
 import csv
 from bisect import bisect_right
 from dataclasses import dataclass, field, replace
+from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -1588,6 +1589,60 @@ class MinimumVieillesse:
         return self._en_vigueur(self._table_couple, annee)
 
 
+class MaximumDesCultes:
+    """Le maximum de la pension du régime des cultes, l'année demandée.
+
+    La fraction de pension des périodes d'avant 1998 ne dépend d'aucun
+    salaire : c'est ce maximum, au prorata de la durée (D. 721-7 du code de
+    1985 ; fiche ``cultes_fractions_de_pension``). Des arrêtés le fixent
+    chaque année de 1979 à 1997 ; depuis, il suit les revalorisations des
+    pensions du régime général (L. 382-27 ; décret n° 2006-1325, art. 2,
+    VIII), jusqu'au montant que la caisse publie pour 2026, puis les prix.
+    Le fichier en garde les ancres : ``legislation/cultes_maximum_pension.csv``.
+    """
+
+    #: La dernière année qu'un arrêté fixe.
+    DERNIER_ARRETE = 1997
+
+    def __init__(self, racine: Path, macro: DonneesMacro,
+                 revalorisations: RevalorisationsPensions) -> None:
+        self.macro = macro
+        self.revalorisations = revalorisations
+        self._table: dict[int, tuple[float, Fiabilite]] = {}
+        chemin = racine / "reference" / "legislation" / "cultes_maximum_pension.csv"
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                self._table[int(ligne["annee"])] = (
+                    float(ligne["valeur"]),
+                    Fiabilite.depuis_texte(ligne["fiabilite"]),
+                )
+
+    def valeur(self, annee: int) -> tuple[float, Fiabilite] | None:
+        """Le montant annuel en vigueur au 1er janvier de l'année, ou ``None``
+        avant la création du régime.
+
+        Une ancre passe avant tout calcul. Entre le dernier arrêté et l'ancre
+        suivante, le montant de 1997 suit les coefficients de L. 161-23-1 —
+        en 2020, celui des retraites de moins de 2 000 € par mois, que le
+        maximum n'a jamais approchées — ; après la dernière ancre, les prix.
+        """
+        if annee in self._table:
+            return self._table[annee]
+        anterieures = [a for a in self._table if a < annee]
+        if not anterieures:
+            return None
+        ancre = max(anterieures)
+        valeur, fiabilite = self._table[ancre]
+        if ancre <= self.DERNIER_ARRETE:
+            coefficient, fiabilite_revalorisations = self.revalorisations.generale(
+                date(ancre, 1, 1), date(annee, 1, 1), False, valeur / 12)
+            return valeur * coefficient, min(fiabilite, fiabilite_revalorisations)
+        return valeur * self.macro.coefficient_prix(ancre, annee), fiabilite
+
+
 class CarriereLongue:
     """Départ anticipé pour carrière longue — article L. 351-1-1.
 
@@ -2467,6 +2522,10 @@ class ScenarioActuel:
         #: traitement d'une pension différée : voir
         #: :func:`~retraite_notionnelle.revalorisation.coefficient_traitement_differe`.
         self.revalorisations_pensions = RevalorisationsPensions(parametres.racine_donnees)
+        #: Le maximum de la pension des cultes, que la fraction d'avant 1998
+        #: proratise : voir :mod:`~retraite_notionnelle.droit.cultes`.
+        self.maximum_des_cultes = MaximumDesCultes(
+            parametres.racine_donnees, macro, self.revalorisations_pensions)
         self.carriere_longue = CarriereLongue(parametres.racine_donnees)
         #: Vrai pendant que :func:`~retraite_notionnelle.droit.ouvrir.ouverture_carriere_longue` date le droit :
         #: la condition de durée qu'elle lit est celle de la génération, et non

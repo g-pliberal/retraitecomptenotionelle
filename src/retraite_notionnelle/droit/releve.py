@@ -34,6 +34,7 @@ from . import compter as _compter
 from . import coordonner as _coordonner
 from . import ouvrir as _ouvrir
 from .commun import date_d_effet as _date_d_effet
+from .commun import ligne_cotisee as _ligne_cotisee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -73,6 +74,10 @@ class Releve:
     #: publique. Le compte des services se tient pour toute année d'emploi,
     #: mais seules leurs lignes se publient.
     services_lus: frozenset[str] = frozenset()
+    #: Les années d'emploi que leur régime valide sans cotisation, régime par
+    #: régime : l'activité cultuelle d'avant 1979 (:func:`~.commun.ligne_cotisee`).
+    #: Leurs lignes ne sont pas contributives.
+    gratuites: frozenset[tuple[str, int]] = frozenset()
 
     @property
     def carriere(self) -> Carriere:
@@ -102,7 +107,7 @@ class Releve:
         retablies: set[tuple[str, int]] = set()
         for ligne, regimes in zip(carriere.lignes, self.coordination.regimes):
             for code in regimes:
-                if ligne.cotise:
+                if ligne.cotise and (code, ligne.annee) not in self.gratuites:
                     cotisees.add((code, ligne.annee))
                 if ligne.revenu_retabli > 0:
                     retablies.add((code, ligne.annee))
@@ -206,7 +211,12 @@ def construire(moteur: ScenarioActuel, carriere: Carriere, *,
     services_lus = frozenset(
         code for code in durees.par_annee["services"]
         if moteur.catalogue[code].famille == "fonction_publique")
-    return Releve(coordination, durees, droits, groupes, services_lus)
+    gratuites = frozenset(
+        (code, ligne.annee)
+        for ligne, regimes in zip(coordination.carriere.lignes, coordination.regimes)
+        if ligne.cotise and not _ligne_cotisee(moteur, coordination.carriere, ligne)
+        for code in regimes)
+    return Releve(coordination, durees, droits, groupes, services_lus, gratuites)
 
 
 def _ligne(ident: str, personne: str, fait: str | None, date: str | None,

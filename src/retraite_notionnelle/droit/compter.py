@@ -28,7 +28,7 @@ from .. import chronologie as chrono
 from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from . import coordonner
-from .commun import derniere_annee
+from .commun import derniere_annee, ligne_cotisee
 from .etranger import TrimestresEtrangers, compter_les_periodes, famille_des_regimes
 
 if TYPE_CHECKING:
@@ -269,6 +269,10 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
         retenus_ligne = carriere.trimestres_retenus(ligne)
         if retenus_ligne <= 0:
             continue
+        # Une année que tous ses régimes valident sans cotisation — l'activité
+        # cultuelle d'avant 1979 — entre dans la durée, pas parmi les
+        # trimestres cotisés (:func:`~.commun.ligne_cotisee`).
+        cotisee = ligne_cotisee(moteur, carriere, ligne)
         services_ligne = (
             services_a_temps_partiel(retenus_ligne, ligne.quotite)
             if ligne.services_fonction_publique else 0
@@ -286,7 +290,7 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
             crediter_trimestres("assurance", code, ligne.annee, retenus_ligne)
             if services_ligne:
                 crediter_trimestres("services", code, ligne.annee, services_ligne)
-            if ligne.cotise:
+            if cotisee:
                 crediter_trimestres("cotises", code, ligne.annee, retenus_ligne)
     durees = Durees(carriere, par_annee, hors_annee, None, trimestres, {}, {})
     # Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES

@@ -32,7 +32,8 @@ import {
   DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
   DureesRequisesFonctionPublique, DureesRequisesRegimes, CalendriersDureeRequise,
   DureesServicesMilitaires,
-  MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
+  MajorationsPourEnfants, MaximumDesCultes, MinimumContributif, MinimumGaranti,
+  MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
   CarrieresHorsDeFrance, Invalidites, MajorationsEnfantsPoints, Reversions,
   ServicesOuvrantPension, SurcoteBaremes,
@@ -87,6 +88,9 @@ export class ScenarioActuel {
     // Les revalorisations des pensions servies, qui portent aussi le
     // traitement d'une pension différée : voir `coefficientTraitementDiffere`.
     this.revalorisationsPensions = new RevalorisationsPensions(paquet);
+    // Le maximum de la pension des cultes, que la fraction d'avant 1998
+    // proratise : voir `cultes.js`.
+    this.maximumDesCultes = new MaximumDesCultes(paquet, macro, this.revalorisationsPensions);
     this.minimumVieillesse = new MinimumVieillesse(paquet, macro);
     this.carriereLongue = new CarriereLongue(paquet);
     // Vrai pendant que `ouvertureCarriereLongue` date le droit : voir le Python.

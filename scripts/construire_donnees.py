@@ -675,6 +675,7 @@ def _regimes() -> list[dict]:
                     **_duree_majoree(p),
                     **_points_abattus(p),
                     **_non_salaries_2026(p),
+                    **_fractions_des_cultes(p),
                     **_regles_des_marins(p),
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),
@@ -765,6 +766,14 @@ def _points_abattus(p) -> dict:
     Même raison que pour les marins.
     """
     return {"points_abattus_a_l_age": True} if p.points_abattus_a_l_age else {}
+
+
+def _fractions_des_cultes(p) -> dict:
+    """La pension des cultes en deux fractions, et seulement là. Même raison
+    que pour les marins : le moteur JavaScript lit son absence comme sa
+    nullité.
+    """
+    return {"fractions_des_cultes": True} if p.fractions_des_cultes else {}
 
 
 def _non_salaries_2026(p) -> dict:
@@ -1259,6 +1268,18 @@ def _baremes_trimestre() -> dict:
     }
 
 
+def _maximum_des_cultes() -> dict:
+    """Les ancres du maximum de la pension des cultes, indexées par année."""
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+    from retraite_notionnelle.revalorisation import RevalorisationsPensions
+    from retraite_notionnelle.scenarios.actuel import MaximumDesCultes
+
+    table = MaximumDesCultes(DONNEES, DonneesMacro(DONNEES),
+                             RevalorisationsPensions(DONNEES))._table
+    return {str(annee): [valeur, int(fiabilite)]
+            for annee, (valeur, fiabilite) in sorted(table.items())}
+
+
 def _minimum_vieillesse(couple: bool = False) -> dict:
     """Barème de l'ASPA par année : personne seule, ou couple d'allocataires."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
@@ -1722,6 +1743,7 @@ def construire(bilan: bytes) -> bytes:
         "contribution_employeur_militaires": _contribution_employeur_militaires(),
         "contribution_etat_retraite_seule": _contribution_etat_retraite_seule(),
         "minimum_contributif": _minimum_contributif(),
+        "cultes_maximum_pension": _maximum_des_cultes(),
         "minimum_garanti": _minimum_garanti(),
         "baremes_trimestre": _baremes_trimestre(),
         "minimum_vieillesse": _minimum_vieillesse(),

@@ -7,22 +7,19 @@ intitule: >-
   de R. 382-89 et R. 382-90, « une base SMIC pour tous les assurés cultuels ». Les
   périodes antérieures au 1er janvier 1998 gardent leurs règles (L. 382-27, deuxième
   phrase) ; celles d'avant 1979 sont validées gratuitement.
-etat: approchee
+etat: conforme
 effet: >-
   Le salaire annuel moyen est désormais fait du forfait de chaque année, dans les
   deux moteurs (`_assiette_de_reference`) : le ministre déclaré à une fois et demie
   le salaire moyen recevait une pension de base 2,17 fois trop haute. Tenu par `test_le_salaire_de_reference_des_cultes_est_fait_du_forfait`
-  et son pendant JavaScript. Reste une APPROXIMATION : le modèle applique les règles
-  d'après 1998 à toute la carrière, et ne compte pas les années d'avant 1979.
+  et son pendant JavaScript. Le modèle appliquait les règles d'après 1998 à toute la
+  carrière, et ne comptait pas les années d'avant 1979 : depuis le 3 octobre 2026, le
+  salaire annuel moyen et la durée de cette fraction ne sont faits que des années
+  d'après 1997, la fraction d'avant 1998 ayant ses règles et sa fiche,
+  `cultes_fractions_de_pension`.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-10-03
   prochaine_relecture: 2027-09-30
-  a_relire:
-  - >-
-    La fraction d'avant 1979, validée gratuitement ; celle de 1979 à 1997, portée
-    au minimum contributif ou au maximum de la pension « Cavimac », dont il faut
-    la série. Les deux demandent une pension par fractions que le moteur ne sait
-    pas écrire.
   lectures:
   - type: legifrance
     reference: >-
@@ -40,6 +37,12 @@ sources:
     url: >-
       https://www.cavimac.fr/assurance-retraite/assurance-retraite/demander-ma-retraite-de-base-0
     date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      R. 721-39-2, rédaction du 29 décembre 1999 (LEGIARTI000006752336) : « Le salaire
+      annuel moyen mentionné à l'article R. 351-29 est déterminé en retenant la base
+      forfaitaire prévue à l'article R. 721-30 », base des cotisations d'après 1997
+    date: 2026-10-03
   - type: autre
     reference: >-
       réponse ministérielle à la question orale n° 0122S (Sénat, 16 janvier 2008)

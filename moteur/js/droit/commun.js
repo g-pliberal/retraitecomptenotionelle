@@ -1,6 +1,7 @@
 /**
  * Ce que les étapes du droit partagent avec la liquidation : la dernière
- * année d'un régime, la date d'effet d'une demande.
+ * année d'un régime, la date d'effet d'une demande, ce qu'est une année
+ * cotisée.
  *
  * Jumeau de `src/retraite_notionnelle/droit/commun.py`.
  */
@@ -24,4 +25,15 @@ export function dateDEffet(carriere) {
   }
   const date = carriere.dateLiquidation;
   return `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`;
+}
+
+/**
+ * La ligne compte-t-elle parmi les trimestres COTISÉS ? Une année d'emploi,
+ * sauf celle que tous ses régimes valident sans cotisation : l'activité
+ * cultuelle d'avant 1979, que la CAVIMAC valide gratuitement. La carrière
+ * longue et le minimum contributif majoré lisent ce compte. Voir commun.py.
+ */
+export function ligneCotisee(moteur, carriere, ligne) {
+  return ligne.cotise && !moteur.affiliations.valideeSansCotisation(
+    ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation));
 }

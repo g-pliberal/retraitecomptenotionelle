@@ -14,7 +14,7 @@
 import { DateMois } from "../calendrier.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, nomFiabilite } from "../serie.js";
-import { dateDEffet, derniereAnnee } from "./commun.js";
+import { dateDEffet, derniereAnnee, ligneCotisee } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as etranger from "./etranger.js";
 import * as liquider from "./liquider.js";
@@ -164,10 +164,12 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     const dateEffet = [anneeLiquidation, carriere.moisLiquidation];
     // Le minimum se compare à la pension AVANT surcote, et la surcote,
     // calculée sur cette pension nue, s'ajoute au minimum (D. 351-2-1) : voir
-    // `complementMinimum`, qui porte aussi la règle d'avant 2009.
+    // `complementMinimum`, qui porte aussi la règle d'avant 2009. La fraction
+    // d'avant 1998 des cultes a ses propres majorations (`cultes.js`) : le
+    // minimum ne relève que l'autre.
     const complementDu = (pension, eligible, plancher) => (!eligible.tauxPlein ? 0.0
-      : complementMinimum(pension.montant / eligible.surcote, plancher, eligible.surcote,
-        dateEffet));
+      : complementMinimum((pension.montant - (eligible.horsMinimum ?? 0.0)) / eligible.surcote,
+        plancher, eligible.surcote, dateEffet));
     const plancherNational = (eligible, majoration) => {
       let plancher = montantBase * Math.min(1.0, eligible.prorataAssurance);
       if (majoration) {
@@ -191,7 +193,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       // La pension nationale ne compte que les trimestres cotisés en France
       // pour la majoration.
       cotisesFrancais = carriere.trimestresCumules(carriere.lignes.filter(
-        (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation));
+        (ligne) => ligneCotisee(moteur, carriere, ligne)
+          && ligne.annee <= anneeLiquidation));
       dureeTotale = durees.pourLeTaux(etranger.GENERALE);
     }
     const complements = new Map();

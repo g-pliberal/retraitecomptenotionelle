@@ -1,7 +1,8 @@
 """Ce que les étapes du droit partagent avec la liquidation.
 
 La dernière année d'un régime, que l'acquisition et la liquidation lisent ;
-la date d'effet d'une demande ;
+la date d'effet d'une demande ; ce qu'est une année cotisée, que l'ouverture,
+le compte des durées et les départs lisent ;
 la pension d'un régime, que « liquider chaque régime » écrit et que
 « compléter tous régimes » relève ; l'avantage non contributif, que la
 cascade des avantages mesure et que les deux étapes qui complètent
@@ -30,6 +31,17 @@ def date_d_effet(carriere) -> str | None:
         return None
     date = carriere.date_liquidation
     return f"{date.annee:04d}-{date.mois:02d}-01"
+
+
+def ligne_cotisee(moteur, carriere, ligne) -> bool:
+    """La ligne compte-t-elle parmi les trimestres COTISÉS ?
+
+    Une année d'emploi, sauf celle que tous ses régimes valident sans
+    cotisation : l'activité cultuelle d'avant 1979, que la CAVIMAC valide
+    gratuitement (:meth:`~retraite_notionnelle.carriere.Affiliations.validee_sans_cotisation`).
+    La carrière longue et le minimum contributif majoré lisent ce compte."""
+    return ligne.cotise and not moteur.affiliations.validee_sans_cotisation(
+        ligne.affiliation, ligne.annee, carriere.date_entree(ligne.affiliation))
 
 
 @dataclass(frozen=True)

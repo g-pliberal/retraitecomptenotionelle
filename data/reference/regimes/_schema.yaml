@@ -850,6 +850,18 @@ champs_periode:
     valeurs: [true]
     defaut: false
 
+  fractions_des_cultes:
+    description: >-
+      La pension du régime des cultes se calcule-t-elle en deux fractions ? Celle
+      des périodes d'avant 1998, aux règles du 31 décembre 1997 — un maximum au
+      prorata de la durée, les années d'avant 1979 validées gratuitement —,
+      adaptées depuis le 1er novembre 2006 (décret n° 2006-1325, art. 2) ; celle
+      des périodes suivantes, aux règles du régime général (L. 382-27). Une
+      période où elle vaut renvoie à la fiche qui le dit.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
   points_de:
     description: >-
       Code du régime dont cette période emprunte le BARÈME DU POINT — prix

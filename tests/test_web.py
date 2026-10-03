@@ -1138,6 +1138,21 @@ def _refaire_la_formule(detail: str) -> float | None:
     def sans_virgules(texte: str) -> float:
         return float(texte.replace(",", ""))
 
+    def fraction_des_cultes() -> float:
+        """La fraction d'avant 1998 du régime des cultes : le maximum au prorata
+        de la durée, décoté ou surcoté, et ses majorations au minimum
+        contributif."""
+        trouve = re.search(r"avant 1998, maximum ([\d,]+\.\d+) € × (\d+)/(\d+)"
+                           r"(?: × (?:décote|surcote) ([\d.]+))?([^=]*)=", detail)
+        if not trouve:
+            return 0.0
+        maximum, retenus, duree, coefficient, majorations = trouve.groups()
+        return (sans_virgules(maximum) * int(retenus) / int(duree) * float(coefficient or 1.0)
+                + sum(sans_virgules(m) for m in re.findall(r"\+ ([\d,]+\.\d+) € pour",
+                                                            majorations)))
+
+    if detail.startswith("avant 1998, maximum"):
+        return fraction_des_cultes()
     annuites = re.match(r"(?:SR|forfait) ([\d,]+\.\d+) € × taux ([\d.]+)% × (\d+)/(\d+)",
                         detail)
     if annuites:
@@ -1149,7 +1164,8 @@ def _refaire_la_formule(detail: str) -> float | None:
         # Les deux planchers disent de combien ils relèvent la pension.
         plancher = re.search(
             r"porté au minimum (?:contributif|garanti) par \+ ([\d,]+\.\d+) €", detail)
-        return montant + (sans_virgules(plancher.group(1)) if plancher else 0.0)
+        return (montant + fraction_des_cultes()
+                + (sans_virgules(plancher.group(1)) if plancher else 0.0))
 
     # La pension agricole que borne la moitié du plafond (L. 732-24, III) :
     # le plafond, et la surcote qui le majore.

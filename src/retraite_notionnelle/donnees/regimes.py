@@ -598,6 +598,11 @@ class PeriodeRegime:
     #: celle du taux plafonné : en 2025, le salarié porte 0,40 point sur 2,42,
     #: soit 16,6 %, contre 44,7 % sur la part plafonnée.
     part_salariale_deplafonnee: float = 0.0
+    #: LA PENSION DES CULTES EN DEUX FRACTIONS : celle des périodes d'avant
+    #: 1998 aux règles du 31 décembre 1997, adaptées en 2006, et celle des
+    #: suivantes aux règles du régime général (L. 382-27). Voir
+    #: :mod:`~retraite_notionnelle.droit.cultes`.
+    fractions_des_cultes: bool = False
     #: POINTS GRATUITS attribués à la liquidation pour les années d'avant la
     #: création du régime : voir :class:`PointsGratuits`. ``None`` partout
     #: ailleurs qu'à la RCO des non-salariés agricoles.
@@ -1237,6 +1242,7 @@ INTERRUPTEURS: dict[str, object] = {
     "bareme_points": None,
     "meilleures_annees_non_salaries": False,
     "calcul_provisoire_non_salaries": False,
+    "fractions_des_cultes": False,
 }
 
 
@@ -1642,6 +1648,7 @@ class CatalogueRegimes:
                 calcul_provisoire_non_salaries=bool(
                     p.get("calcul_provisoire_non_salaries", False)
                 ),
+                fractions_des_cultes=bool(p.get("fractions_des_cultes", False)),
                 points_de=p.get("points_de"),
                 valeur_point_euros=(
                     None if p.get("valeur_point_euros") is None

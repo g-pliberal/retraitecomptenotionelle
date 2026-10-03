@@ -2553,6 +2553,26 @@ class Affiliations:
             return frozenset(), 0
         return frozenset(regle.get("regimes") or ()), int(regle["pension_depuis"])
 
+    def validee_sans_cotisation(self, affiliation: str, annee: int,
+                                annee_entree: int | DateMois | None = None) -> bool:
+        """L'année est-elle validée SANS AUCUNE COTISATION, par tous ses régimes ?
+
+        Ce sont les années d'activité cultuelle d'avant 1979, que la CAVIMAC
+        valide gratuitement (D. 721-11 du code de 1985) : elles comptent dans
+        la durée du régime, jamais parmi les trimestres COTISÉS — ni pour la
+        carrière longue, ni pour le minimum contributif majoré. Le modèle les
+        comptait cotisées, sans les router nulle part. Les services passés
+        d'un salarié calédonien s'ajoutent au contraire à une année que la
+        CAFAT encaisse : elle reste cotisée. Voir la fiche
+        `cultes_fractions_de_pension`.
+        """
+        periode = self._periode(affiliation, annee, annee_entree)
+        regle = (periode or {}).get("services_passes")
+        if not regle:
+            return False
+        regimes = frozenset(periode.get("regimes") or ())
+        return bool(regimes) and regimes <= frozenset(regle.get("regimes") or ())
+
     def _periode(self, affiliation: str, annee: int,
                  annee_entree: int | DateMois | None = None) -> dict | None:
         """La période du statut qui couvre cette année, pour cette entrée."""

@@ -35,10 +35,8 @@ periodes:
   - debut: 1979
     fin: 1982
     type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
+    age_ouverture: 65
+    age_taux_plein: 65
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_proratisation_par_generation: taux_plein_et_proratisation
@@ -49,12 +47,13 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 2028
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1119
     part_salariale: 0.3343
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_contributif, minimum_vieillesse, reversion]
+      [minimum_vieillesse, reversion]
     notes: >-
       Taux repris du régime général, comme l'exigent R. 382-89 pour la part
       de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
@@ -70,13 +69,18 @@ periodes:
       1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
       la durée requise voyait sa pension majorée de dix pour cent que
       personne ne lui devait.
+      NI ÂGE LÉGAL NI MINIMUM CONTRIBUTIF AVANT 1998. La pension se calcule
+      « sur des bases forfaitaires, en fonction de la durée d'assurance »
+      (L. 721-6, rédaction de 1985) : le maximum de D. 721-8 au prorata de
+      cent cinquante trimestres (D. 721-7), à soixante-cinq ans (D. 721-6).
+      La fiche servait dès 1979 les règles du régime général, à l'âge légal
+      et avec le minimum contributif, jusqu'au 3 octobre 2026 (fiche
+      `cultes_fractions_de_pension`).
   - debut: 1983
     fin: 1993
     type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
+    age_ouverture: 65
+    age_taux_plein: 65
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_proratisation_par_generation: taux_plein_et_proratisation
@@ -87,12 +91,13 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 2028
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1461
     part_salariale: 0.4390
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_contributif, minimum_vieillesse, reversion]
+      [minimum_vieillesse, reversion]
     notes: >-
       Taux repris du régime général, comme l'exigent R. 382-89 pour la part
       de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
@@ -108,13 +113,12 @@ periodes:
       1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
       la durée requise voyait sa pension majorée de dix pour cent que
       personne ne lui devait.
+      NI ÂGE LÉGAL NI MINIMUM CONTRIBUTIF AVANT 1998 : voir la période de 1979.
   - debut: 1994
-    fin: 2001
+    fin: 1997
     type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
+    age_ouverture: 65
+    age_taux_plein: 65
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_proratisation_par_generation: taux_plein_et_proratisation
@@ -125,6 +129,45 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 2028
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
+    taux_cotisation_retraite: 0.1475
+    part_salariale: 0.4441
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      2028 heures de SMIC par an (169 heures par mois).
+      LA SURCOTE N'EXISTAIT PAS, et la fiche en servait une. Le régime des
+      cultes reprend les règles du régime général — c'est ce que dit déjà
+      la note sur les taux —, et le régime général n'a de surcote que
+      depuis la loi du 21 août 2003, appliquée aux liquidations de 2004 :
+      0,75 % par trimestre jusqu'en 2008, 1,25 % ensuite. La fiche servait
+      1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
+      la durée requise voyait sa pension majorée de dix pour cent que
+      personne ne lui devait.
+      NI ÂGE LÉGAL NI MINIMUM CONTRIBUTIF AVANT 1998 : voir la période de 1979.
+  - debut: 1998
+    fin: 2001
+    type_calcul: annuites
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 2028
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1475
     part_salariale: 0.4441
     decote_par_trimestre: 0.0125
@@ -146,13 +189,18 @@ periodes:
       1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
       la durée requise voyait sa pension majorée de dix pour cent que
       personne ne lui devait.
+      DEUX FRACTIONS DEPUIS 1998, ET TOUJOURS SOIXANTE-CINQ ANS. La fraction
+      des périodes d'après 1997 suit le régime général, minimum contributif
+      compris ; celle d'avant garde les règles du 31 décembre 1997 (L. 721-6,
+      rédaction de 1998). L'âge reste celui de D. 721-6 jusqu'en 2006 : L.
+      721-5 le laisse au décret, et L. 721-6 ne renvoie qu'aux deuxième à
+      quatrième alinéas de L. 351-1, non au premier, qui porte l'âge du
+      régime général (fiche `cultes_fractions_de_pension`).
   - debut: 2002
     fin: 2003
     type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
+    age_ouverture: 65
+    age_taux_plein: 65
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_proratisation_par_generation: taux_plein_et_proratisation
@@ -163,6 +211,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1475
     part_salariale: 0.4441
     decote_par_trimestre: 0.0125
@@ -184,7 +233,86 @@ periodes:
       1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
       la durée requise voyait sa pension majorée de dix pour cent que
       personne ne lui devait.
+      DEUX FRACTIONS, ET SOIXANTE-CINQ ANS : voir la période de 1998.
   - debut: 2004
+    fin: 2005
+    type_calcul: annuites
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
+    taux_cotisation_retraite: 0.1487
+    part_salariale: 0.4445
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      1820 heures de SMIC par an (151,67 heures par mois).
+      LA SURCOTE N'EXISTAIT PAS, et la fiche en servait une. Le régime des
+      cultes reprend les règles du régime général — c'est ce que dit déjà
+      la note sur les taux —, et le régime général n'a de surcote que
+      depuis la loi du 21 août 2003, appliquée aux liquidations de 2004 :
+      0,75 % par trimestre jusqu'en 2008, 1,25 % ensuite. La fiche servait
+      1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
+      la durée requise voyait sa pension majorée de dix pour cent que
+      personne ne lui devait.
+      ET ELLE ATTEND 2006 DANS CE RÉGIME : L. 721-6, dans sa rédaction de 1998
+      à 2005, ne renvoie pas à L. 351-1-2, qui la crée ; L. 382-27, qui
+      renvoie à « L. 351-1 à L. 351-1-3 », est en vigueur depuis le
+      20 décembre 2005. La fiche la servait dès 2004 jusqu'au 3 octobre 2026.
+      DEUX FRACTIONS, ET SOIXANTE-CINQ ANS : voir la période de 1998.
+  - debut: 2006
+    fin: 2006
+    type_calcul: annuites
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_proratisation_par_generation: taux_plein_et_proratisation
+    salaire_reference_par_generation: salaire_annuel_moyen
+    decote_par_generation: decote_regime_general
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
+    taux_cotisation_retraite: 0.1487
+    part_salariale: 0.4445
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_bareme: surcote_regime_general
+    avantages_non_contributifs:
+      [minimum_contributif, minimum_vieillesse, reversion]
+    notes: >-
+      Taux repris du régime général, comme l'exigent R. 382-89 pour la part
+      de l'assuré et R. 382-90 pour celle de la congrégation : « le taux de
+      la cotisation d'assurance vieillesse des assurés est celui de la
+      cotisation mise à la charge des salariés affiliés au régime
+      général ». Assiette forfaitaire égale au SMIC mensuel, soit
+      1820 heures de SMIC par an (151,67 heures par mois).
+      L'ANNÉE DE LA BASCULE. L. 382-27 ouvre la fraction d'après 1997 à
+      l'âge légal dès le 20 décembre 2005 ; le décret n° 2006-1325 n'abaisse
+      celui de la fraction d'avant qu'à compter du 1er novembre 2006. Le
+      modèle, qui lit la période à l'année et ne liquide pas une fraction
+      sans l'autre, garde soixante-cinq ans toute l'année : c'est l'âge de
+      la fraction qui porte l'essentiel de la pension de ces générations.
+  - debut: 2007
     fin: 2008
     type_calcul: annuites
     age_ouverture: 62
@@ -201,6 +329,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1487
     part_salariale: 0.4445
     decote_par_trimestre: 0.0125
@@ -223,6 +352,10 @@ periodes:
       1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
       la durée requise voyait sa pension majorée de dix pour cent que
       personne ne lui devait.
+      L'ÂGE LÉGAL POUR LES DEUX FRACTIONS depuis le 1er novembre 2006 : l'âge
+      de celle d'avant 1998 « est également abaissé à soixante ans » pour qui
+      a la durée requise, et elle est servie décotée aux autres (décret
+      n° 2006-1325, art. 2, I et II).
   - debut: 2009
     fin: 2010
     type_calcul: annuites
@@ -240,6 +373,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1495
     part_salariale: 0.4448
     decote_par_trimestre: 0.0125
@@ -271,6 +405,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1533
     part_salariale: 0.4463
     decote_par_trimestre: 0.0125
@@ -302,6 +437,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1545
     part_salariale: 0.4466
     decote_par_trimestre: 0.0125
@@ -321,6 +457,10 @@ periodes:
       cultuels » (page « Demander ma retraite de base », lue le 23 septembre
       2026), ce que le moteur fait depuis dans `assiette_de_reference`
       (`droit/liquider.py`). Il
-      applique en revanche les règles d'après 1998 à toute la carrière, et
-      ne compte pas les années d'avant 1979, que la caisse valide
-      gratuitement : voir `docs/limites.md`.
+      appliquait en revanche les règles d'après 1998 à toute la carrière, et
+      ne comptait pas les années d'avant 1979, que la caisse valide
+      gratuitement. Il sert depuis le 3 octobre 2026 la fraction des périodes
+      d'avant 1998 à ses règles — le maximum de la pension au prorata de la
+      durée, porté au minimum contributif au taux plein —, et ne fait que de
+      celles d'après 1998 le salaire annuel moyen et la durée de la fraction
+      du régime général (fiche `cultes_fractions_de_pension`, `droit/cultes.py`).

@@ -1061,6 +1061,13 @@ def test_toute_annee_routee_trouve_une_periode_de_regime(catalogue):
     for statut in affiliations.codes:
         for periode in affiliations.periodes(statut):
             fin = periode["fin"]
+            # Une année que tous ses régimes valident SANS COTISATION — l'activité
+            # cultuelle d'avant 1979, que la CAVIMAC valide gratuitement — ne
+            # porte rien au compte : elle n'a pas besoin des taux d'une période.
+            regimes = set(periode["regimes"] or ())
+            gratuits = set((periode.get("services_passes") or {}).get("regimes") or ())
+            if regimes and regimes <= gratuits:
+                continue
             for code in periode["regimes"] or ():
                 regime = catalogue[code]
                 if fin is None and not any(p.fin is None for p in regime.periodes):
