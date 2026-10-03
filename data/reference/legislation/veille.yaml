@@ -4649,3 +4649,25 @@ journal:
       l'écrêtement de ses majorations et le partage de leurs prorata ; les cotisations
       forfaitaires de 1979 à 1997 que fixent les mêmes arrêtés, que le compte notionnel
       prend aux taux du régime général sur le forfait du SMIC.
+  - date: "2026-10-04"
+    session: >-
+      la vérification de la suspension de 2026 refaite, à la demande du propriétaire,
+      après le refus des incréments de la DILA
+    consulte: >-
+      le workflow `index-dila.yml`, lancé à la main (run 37158422505) ; le serveur
+      echanges.dila.gouv.fr, depuis ce poste, sa WSL, un navigateur et les machines de
+      GitHub ; le jeu LEGI de data.gouv.fr ; sur Légifrance, les pages de L. 161-17-2
+      (LEGIARTI000053280889) et de L. 161-17-3 (LEGIARTI000053280903), lues dans le
+      navigateur intégré.
+    trouve: >-
+      Le serveur de la DILA, un F5 BIG-IP, coupe toute connexion HTTPS dès la requête
+      reçue, quel que soit le client — Python, curl, un navigateur — et l'adresse — ce
+      poste comme les machines de GitHub, qui téléchargeaient encore les incréments le
+      28 septembre ; le premier refus est consigné le 2 octobre, et data.gouv.fr pointe
+      toujours vers ce serveur. Le workflow échoue donc, et l'index reste à jour au
+      27 septembre. Sur Légifrance, L. 161-17-2 et L. 161-17-3 sont en vigueur depuis le
+      31 décembre 2025, modifiés en dernier par la loi n° 2025-1403, sans date de fin ni
+      version à venir : la suspension tient.
+    reste: >-
+      Les textes parus au Journal officiel depuis le 27 septembre, que l'index ne porte
+      pas ; le workflow du lundi échouera tant que la DILA n'aura pas rétabli son serveur.
