@@ -1423,16 +1423,16 @@ réversion.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 
-**Reprise, au 3 octobre 2026.** Fait : le plafond du RAFP, les points
+**Reprise, au 4 octobre 2026.** Fait : le plafond du RAFP, les points
 gratuits de la RCO, l'Arrco des cultes, le salaire annuel moyen et les
 fractions de pension de la CAVIMAC, le routage calédonien (notes du
-3 octobre). Reste, dans cet ordre : les ouvriers de l'État hors du RAFP ; le
-barème de l'Ircantec pour enfants ; les deux exceptions au plafond du RAFP
-(GIPA, compte épargne-temps) et la cotisation volontaire outre-mer ; les 66
-points gratuits des conjoints, aides familiaux et collaborateurs ; les huit
-taux de l'Arrco des cultes ; les cotisations forfaitaires de la CAVIMAC de 1979
-à 1997. Commencer par les ouvriers de l'État (« Un sixième est sorti », sous
-« Ce que la relecture a trouvé »).
+3 octobre) ; les ouvriers de l'État hors du RAFP, par l'action 133. Reste,
+dans cet ordre : le barème de l'Ircantec pour enfants ; les deux exceptions au
+plafond du RAFP (GIPA, compte épargne-temps) et la cotisation volontaire
+outre-mer ; les 66 points gratuits des conjoints, aides familiaux et
+collaborateurs ; les huit taux de l'Arrco des cultes ; les cotisations
+forfaitaires de la CAVIMAC de 1979 à 1997. Commencer par l'Ircantec (point 4
+de « Ce que la relecture a trouvé »).
 
 **Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
 régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
@@ -1620,6 +1620,12 @@ naissent (`cultes_*`) ; le formulaire ne dit plus « (depuis 1979) ». Les
 cotisations de 1979 à 1997 étaient des montants fixés par les mêmes arrêtés,
 et non un taux sur le SMIC : à reprendre. Les fractions de la liste ci-dessous
 sont faites.
+
+**Puis, le 4 octobre 2026, les ouvriers de l'État hors du RAFP, déjà faits.**
+L'action 133 les en a sortis le 28 septembre, sur l'article 76 de la loi
+n° 2003-775 et la page « Actif » de l'ERAFP (fiche `rafp_beneficiaires`) ;
+aucun des quatorze témoins d'ouvrier de l'État n'a plus de RAFP. La liste
+ci-dessous l'ignorait.
 
 **Ce qui reste**, dans l'ordre où le prendre : les fractions de pension de la
 CAVIMAC d'avant 1979, validées gratuitement, et de 1979 à 1997, portées au
