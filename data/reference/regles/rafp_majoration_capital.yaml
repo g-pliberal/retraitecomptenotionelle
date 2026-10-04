@@ -8,7 +8,11 @@ intitule: >-
   une fois, ou en deux près du seuil depuis mai 2019.
 domaine: points
 regimes: [rafp]
-etape: liquider_chaque_regime
+# L'étape qui l'applique est liquider_chaque_regime, mais la fiche ne la dit
+# pas encore : la couche comptes_notionnels neutralise cette étape par son
+# sélecteur et garde le RAFP par son nom, « servis à l'identique », et une pile
+# refuse deux décisions sur la même fiche (noyau/univers.py). La dire attend
+# qu'une couche sache excepter une fiche de son sélecteur.
 face: droit
 etat: approchee
 lit:
