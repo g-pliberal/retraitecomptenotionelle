@@ -50,7 +50,7 @@ CHAMPS_EXIGES = (
 )
 CHAMPS_CONNUS = set(CHAMPS_EXIGES) | {
     "pays", "code", "documentation", "version", "depend_de", "ecarts",
-    "fait_mieux", "manifeste", "sas", "note",
+    "fait_mieux", "bilan", "manifeste", "sas", "note",
 }
 CHAMPS_ECART = ("constat", "tranche", "preuve")
 
@@ -165,6 +165,15 @@ def test_un_ecart_dit_qui_avait_raison_et_sa_preuve(referents):
         for ecart in modele.get("ecarts", []):
             manquants = [c for c in CHAMPS_ECART if not ecart.get(c)]
             assert not manquants, f"{modele['id']} : écart sans {manquants}"
+
+
+def test_chaque_modele_dit_ce_qu_il_fait_mieux_ou_pourquoi_rien(referents):
+    """Le propriétaire a voulu savoir, modèle par modèle, tout ce que le dépôt
+    fait de moins bien (le relevé du 4 octobre 2026, action 138) : chaque
+    modèle porte son bilan, même quand il ne fait mieux sur rien, sans quoi
+    on ne saurait pas s'il a été regardé."""
+    for modele in referents:
+        assert str(modele.get("bilan", "")).strip(), f"{modele['id']} : sans bilan"
 
 
 def test_ce_qu_un_modele_fait_mieux_dit_sa_preuve_et_son_chantier(referents):

@@ -5282,16 +5282,16 @@ OpenFisca-France-Pension, en est un cas particulier, mené à part.
 
 ### 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris — `en cours`
 
-**Reprise, au 1er octobre 2026.** Fait : l'étape 1. Les modèles du registre
-ont été relus pour ce qu'ils font mieux que le dépôt ; 94 points, lus chez
-eux, sont au registre (`fait_mieux`), avec le chantier qui les reprend, ou la
-raison qui les laisse au propriétaire ; le préfinancement du diviseur est
-rendu sur la pension servie ; des descriptions fausses des systèmes étrangers
-sont corrigées. Reste : les étapes
-2 à 12, une par session, dans l'ordre ci-dessous, et les choix de l'étape 13,
-que le propriétaire tranche. Commencer par l'étape 2, le net du foyer et
-l'ASPA du couple : le registre dit, au chantier « 138.2 », ce que chaque
-modèle en fait et où le lire. Le tableau de bord compte ce qui reste.
+**Reprise, au 4 octobre 2026.** Fait : l'étape 1, et son relevé repris le 4
+octobre sur les 69 modèles, chaque point vérifié chez eux, chez nous et au
+texte : 279 points au registre (`fait_mieux`, avec leur `verification`), 145
+écarts, un `bilan` par modèle ; aucun moteur n'est encore touché. Reste : les
+étapes 2 à 19, une par session, et les choix de l'étape 13. Commencer par
+l'étape 15, le minimum contributif daté, une erreur du scénario 1 que trois
+modèles et le barème de la Cnav tranchent ; puis 16 et 2, dans l'ordre que
+propose la note du 4 octobre. Le registre dit, au chantier de chaque étape
+(« 138.15 »…), ce que chaque modèle en fait et où le lire ; le tableau de
+bord compte ce qui reste.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais qu'on regarde les modèles de
 simulation qui existent et qu'on les compare à notre projet. Il faut que l'on
@@ -5464,6 +5464,149 @@ registre, au point `a_trancher` du modèle qui le fait :
 - pour le net de l'étape 2, une présomption déclarée — « aucun autre revenu
   que ses pensions » — ou un champ de plus, la question que l'action 136
   posait déjà.
+
+**Demande**, le 4 octobre 2026 : « Je veux que tu regardes tous les modèles
+publics comme openfisca ou destinie 2 et que tu me dises tout ce que notre
+modèle fait de moins bien comparé à chaque modèle. Attention, s'il y a un
+écart entre notre modèle et un modèle public, cela ne veut pas forcément dire
+que le modèle public fait mieux. On a déjà vu par le passé que des modèles
+publics avaient des erreurs ou n'étaient pas à jour. […] Ne fait pas de
+changement dans les moteurs pour l'instant. Je veux uniquement préparer le
+travail dans un premier temps. Il faut que tu regardes avec tous les
+modèles. »
+
+**Fait, le 4 octobre 2026 : le relevé repris modèle par modèle, sur les
+soixante-neuf, et vérifié.** Dix recherches menées en parallèle, une par
+famille — OpenFisca, l'IPP, l'INSEE, la DREES, la microsimulation statique, le
+COR et les caisses, l'Urssaf et Catala, la société civile, les comptes
+notionnels nordiques, les autres comptes notionnels et les organisations
+internationales —, chacune lisant le code au commit ou la publication le jour
+même. Chaque point a été vérifié trois fois : chez eux, chez nous, et contre
+le texte en vigueur (index LEGI et JORF du dépôt, à jour au 27 septembre
+2026) ou la publication officielle qui l'applique. Aucun moteur n'est touché,
+à la demande du propriétaire. Le registre reçoit 186 points (279 en tout) ; 29
+autres, que la vérification n'a pas tenus, n'y sont pas entrés. Il reçoit 105
+écarts nouveaux, les erreurs et les retards des autres (145 en tout), et deux
+champs : `verification`, ce qui établit qu'un point a raison, et `bilan`, que
+chaque modèle porte désormais et qu'un test exige. Vingt points anciens sont
+repris : des preuves mal placées (ANCETRE, TAXIPP, Saphir, la maquette du
+COR), des chiffres périmés, un point d'ANCETRE rendu à TRAJECTOiRE ; deux
+écarts anciens sont corrigés, et deux, faux, retirés (« 169 trimestres » chez
+OpenFisca-France-Pension ; le RSA chez modele-ti, qui pose la question) ;
+CALIPER est désormais `calcul_pension`, et la licence de Saphir, les règles
+d'EUROMOD et les conditions de l'OIT sont lues.
+
+**Ce que le relevé apprend.**
+
+- *Le dépôt a tort, au scénario 1, là où plusieurs modèles font juste*, et la
+  session a retrouvé chaque erreur dans le code :
+  1. le minimum contributif. Ses montants sont projetés sur les prix entre
+     six ancres, quand D. 351-2-1 les revalorise comme les pensions, et
+     l'ancre « 2007 » est le montant du 1er janvier 2008 ; la majoration est
+     servie avant sa création, en 2004, le seuil de 120 trimestres opposé
+     avant avril 2009 (`droit/completer.py`, sans date), l'écrêtement avant
+     2012, la proratisation sur la durée cotisée avant juillet 2005. Le
+     majoré de 2004 est trop haut de 7,9 %, celui de 2019 de 4,7 %
+     (OpenFisca-France-Pension, Destinie 2, les barèmes de l'IPP et celui de
+     la Cnav concordent) ;
+  2. le salaire annuel moyen garde les années qui ne valident aucun
+     trimestre, que R. 351-29 exclut depuis 2004 ; avant 1995, la Cnav le
+     rapportait aux trimestres ; avant 1973, il portait sur les dix dernières
+     années, non sur les dix meilleures ;
+  3. l'assiette de l'AVPF : 1 820 heures du SMIC de l'année
+     (`carriere.py:513-515`), quand R. 381-3 dit 169 heures par mois au SMIC
+     du 1er juillet précédent, soit 9 à 10 % de trop peu, 12,5 % avant 1982 ;
+  4. le revenu moyen des artisans et des commerçants passe à vingt-cinq ans
+     plus lentement que celui des salariés (R. 634-1-1) ; les taux de
+     cotisation du régime général sont des moyennes par période ; le salaire
+     de référence de l'IGRANTE et de l'IPACTE de 1948 est dix fois trop haut.
+- *Ce que d'autres font et que le dépôt n'a pas*, au-delà du relevé du 1er
+  octobre : la majoration exceptionnelle de 2023, les versements uniques des
+  petites pensions, la bonification du cinquième, le départ anticipé des
+  parents de trois enfants, le plafond de L. 18, la majoration pour enfants à
+  charge de l'Agirc-Arrco, le minimum de réversion ; chez les non-salariés,
+  l'assiette abattue de 26 %, les taux propres des artisans, le plafond du
+  RCI, la CAVEC et la CNBF année par année, les cotisations PCV des
+  professions de santé, Mayotte ; pour le net, l'impôt sur les pensions, et
+  l'ASPA hors de l'assiette de la CSG, que le site prélève aujourd'hui
+  (95 € par mois à un allocataire sans autre ressource) ; pour le Coût, la
+  rétro-projection, l'incertitude propagée, le bilan du compte notionnel en
+  indicateur, les variantes de longévité qui montrent ce que le diviseur
+  absorbe.
+- *Ce que la proposition doit trancher*, en plus des choix du 1er octobre : 33
+  points nouveaux, au registre en `a_trancher`. Le plus lourd est l'assiette
+  qui fait le rendement du compte : les seuls salaires des comptes nationaux,
+  comme aujourd'hui, ou l'assiette de la caisse fusionnée, revenu des
+  indépendants compris, comme en Lettonie, en Pologne et en Grèce. Sur les
+  séries certifiées du dépôt, de 1950 à 2024, les salaires sont multipliés
+  par 216,3, salaires et revenu mixte par 137,4 : 0,61 point de rendement par
+  an (calcul refait par la session). Viennent ensuite le calendrier de
+  l'indexation — le compte reçoit la croissance de l'année du départ, qu'une
+  caisse réelle ne connaît pas encore : +7,9 % de pension pour un départ en
+  2021, −4,0 % en 2020 —, un plancher de revalorisation, les années d'enfant
+  et l'AVPF au compte, que la règle de l'action 141 ferait entrer, les droits
+  acquis après le départ, une garantie à retrait partiel, une transition
+  panachée par génération, un âge lié à l'espérance de vie.
+- *Ce que les modèles publics ont de faux ou de périmé* : hors les barèmes de
+  l'IPP, aucun modèle français n'a la loi du 30 décembre 2025 ; TRAJECTOiRE
+  garde le versement forfaitaire unique de la Cnav, abrogé en 2016, et le
+  coefficient de solidarité de l'Agirc-Arrco, éteint en 2024 ; EUROMOD sert
+  l'ASPA du couple à qui seul y a droit et prélève la CRDS des exonérés ; Ines
+  a un abattement de l'ASPA nul en 2026 ; les diviseurs suédois, norvégien et
+  finlandais lisent une table du moment, moins exacte que la table de
+  génération du dépôt. Quatre modèles ne font mieux sur rien : Destinie 1,
+  Ariane, le fator previdenciário, qui n'est plus qu'une règle de transition
+  depuis 2019, et OG-Core ; leur bilan dit pourquoi.
+- *Ce qui attend son étape*, hors des moteurs comme dedans : deux phrases
+  inexactes du code (`cout.py:80-84`, qui dit retirés les points des chômeurs,
+  et `equilibre.py:319-322`) ; l'en-tête de `masse_salariale.csv`, qui en
+  fait « l'assiette des cotisations » ; la fiche `temps_partiel_fonction_publique`,
+  qui dit à tort la quotité « lue nulle part » (`compter.py:276-278`) ; les
+  fiches `salaire_annuel_moyen` et `minimum_contributif`, dites conformes ;
+  `limites.md:822`, qui croit introuvables les tables de revalorisation des
+  salaires de 2013 et de 2015, que publie l'API des barèmes de la Cnav
+  (`legislation.lassuranceretraite.fr/api/v1/baremes`, 396 barèmes, montants
+  jusqu'en 2026). Cette API tranche presque toutes les séries : chaque étape
+  qui touche une série du régime général commence par elle.
+
+**Les étapes nouvelles**, qui s'ajoutent aux étapes 2 à 14 ; le registre cite
+chacune par son chantier :
+
+15. Le minimum contributif daté : ses montants de 1983 à 2026, revalorisés
+    comme les pensions ; la majoration de 2004 ; le seuil de 120 trimestres
+    des pensions d'avril 2009 ; l'écrêtement de 2012 ; la proratisation sur la
+    durée d'assurance jusqu'en juin 2005 ; l'AVPF dans la majoration depuis
+    septembre 2023, vingt-quatre trimestres au plus (D. 351-2-1, D. 351-2-2,
+    L. 351-10, L. 173-2).
+16. Les assiettes et les séries du régime général : le salaire annuel moyen
+    (les années validantes depuis 2004, le calcul trimestriel avant 1995, les
+    dix dernières années avant 1973) ; l'assiette de l'AVPF ; le revenu moyen
+    des indépendants ; les taux de cotisation de chaque année ; les tables
+    anciennes de revalorisation des salaires ; les coefficients de l'Agirc et
+    de l'Arrco d'avant 1965 ; l'IGRANTE et l'IPACTE de 1948.
+17. Les règles qui manquent au régime général, à la fonction publique et aux
+    complémentaires : la majoration exceptionnelle de 2023, les versements
+    uniques, la bonification du cinquième et la majoration des hospitaliers
+    actifs, le départ des parents de trois enfants, le plafond de L. 18, les
+    taux pleins par catégorie de L. 351-8, la pension maximale, la majoration
+    pour enfants à charge de l'Agirc-Arrco, la majoration pour conjoint à
+    charge.
+18. Les non-salariés et Mayotte, caisse par caisse : l'assiette abattue, les
+    taux propres, le plafond du RCI, les grilles de la CAVEC et de la CNBF,
+    les cotisations PCV, les points d'incapacité, le conjoint collaborateur,
+    les dispenses, les points d'avant 1973 des artisans et des commerçants ;
+    le SMIC, le plafond et les taux de Mayotte, la Lodeom.
+19. La page Coût éprouvée, et le bilan du compte : la rétro-projection depuis
+    une année passée, l'incertitude propagée, la part de la solidarité
+    confrontée aux masses publiées, une carrière heurtée dans la grille des
+    cas types ; le bilan du compte notionnel (durée de rotation, actif de
+    cotisation, réserves et leur rendement), le taux de cotisation d'équilibre.
+
+**L'ordre proposé**, ce que le dépôt a de faux d'abord : 15, 16 et 2 (le net
+du foyer et l'ASPA du couple, l'ASPA prélevée à tort comprise), puis 6, 4,
+17, 18, 12 et 8, au scénario 1 ; puis 3, 19, 7, 5, 11, 9 et 10, pour le Coût
+et la proposition ; 14 avec l'action 136 ; l'étape 13 reçoit 33 choix, que le
+propriétaire tranche quand il le veut.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
