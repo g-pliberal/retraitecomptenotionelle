@@ -1,0 +1,314 @@
+schema_version: 1
+id: reversion_ircantec
+intitule: >-
+  Allocation de réversion de l'Ircantec (arrêté du 30 décembre 1970, articles 20 à 25) :
+  la moitié des points de l'agent décédé, sans son coefficient d'anticipation, à partir
+  de cinquante ans, ou dès le décès avec deux enfants de moins de vingt et un ans à
+  charge, sous condition de durée ou d'antériorité du mariage ; supprimée au remariage.
+domaine: reversion
+regimes:
+- ircantec
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, la naissance de l'agent et la cessation de ses fonctions,
+  pour la condition de durée ou d'antériorité du mariage
+- union.fin, pour l'ex-conjoint divorcé, et une nouvelle union du survivant, qui éteint
+  le droit
+- la naissance du survivant, qui dit son âge, et les enfants de moins de vingt et un ans
+  à sa charge, qui le lèvent
+- les enfants issus du mariage
+- les points de l'agent décédé
+ecrit:
+- l'allocation de réversion du survivant, en points de l'agent décédé
+dates_qui_decident:
+- conjoint.deces
+# Les versions forment un partage de la date du décès (§ 4.1). L'arrêté du 26
+# décembre 2003 applique sa rédaction aux « décès qui interviennent à compter
+# du 1er janvier 2004 » ; les rédactions de 1976, 1980 et 1994 sont prêtées de
+# même aux décès qui les suivent. Celles de 2018 et de 2024 de l'article 20
+# (une numérotation, puis les droits de l'article 14) ne changent pas ce que le
+# moteur calcule. `deux_enfants_sans_age` dit quels survivants deux enfants
+# dispensent de l'âge : la veuve seule avant 2004, le conjoint depuis.
+versions:
+- id: veuves_1971
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381623, article: "arrêté du 30 décembre 1970, article 20", en_vigueur: 1971-02-09}
+  - {id: LEGIARTI000006381628, article: "arrêté du 30 décembre 1970, article 21", en_vigueur: 1971-02-09}
+  - {id: LEGIARTI000006368133, article: "décret n° 70-1277, article 11", en_vigueur: 1970-12-30}
+  nee_de: LEGIARTI000006381623
+  bornes:
+    conjoint.deces: [null, 1976-01-03]
+  contenu:
+    droit: >-
+      une allocation calculée sur la moitié des points du défunt, sans son coefficient
+      d'anticipation, sans pouvoir dépasser ses points affectés de ce coefficient
+    beneficiaire: la veuve non remariée, à cinquante ans ; le veuf n'a pas de droit
+    conditions: >-
+      un mariage contracté deux ans au moins avant que le mari ait atteint cinquante-cinq
+      ans ou cessé ses fonctions, ou qui a duré quatre ans ; dès le décès, à tout âge,
+      avec deux enfants mineurs à charge, jusqu'à la majorité du dernier
+    parametres:
+      taux: 0.50
+      beneficiaire: veuve
+      age_minimum: null
+      age_minimum_veuve: 50
+      age_minimum_veuf: null
+      mariage_minimum_annees: 4
+      mariage_avant_annees: 2
+      mariage_avant_age: 55
+      mariage_leve_par_enfant: false
+      deux_enfants_sans_age: [F]
+      deux_enfants_moins_de_ans: 21
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: veufs_1976
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381624, article: "arrêté du 30 décembre 1970, article 20", en_vigueur: 1976-01-03}
+  - {id: LEGIARTI000006381629, article: "arrêté du 30 décembre 1970, article 21", en_vigueur: 1976-01-03}
+  nee_de: LEGIARTI000006381624
+  bornes:
+    conjoint.deces: [1976-01-03, 1980-03-18]
+  contenu:
+    droit: >-
+      la version veuves_1971 ; le veuf non remarié reçoit à soixante ans la moitié des
+      points de la défunte, dans la limite de 26 000 points
+    beneficiaire: la veuve à cinquante ans, le veuf à soixante ans
+    conditions: >-
+      celles de veuves_1971 ; deux enfants de moins de vingt et un ans à charge, depuis
+      le 23 mars 1978, dispensent la veuve de l'âge
+    parametres:
+      taux: 0.50
+      beneficiaire: conjoint
+      age_minimum: null
+      age_minimum_veuve: 50
+      age_minimum_veuf: 60
+      mariage_minimum_annees: 4
+      mariage_avant_annees: 2
+      mariage_avant_age: 55
+      mariage_leve_par_enfant: false
+      deux_enfants_sans_age: [F]
+      deux_enfants_moins_de_ans: 21
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: divorces_1980
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381625, article: "arrêté du 30 décembre 1970, article 20", en_vigueur: 1980-03-18}
+  - {id: LEGIARTI000006381630, article: "arrêté du 30 décembre 1970, article 21", en_vigueur: 1980-03-18}
+  nee_de: LEGIARTI000006381625
+  bornes:
+    conjoint.deces: [1980-03-18, 1994-01-06]
+  contenu:
+    droit: >-
+      la version veufs_1976, sans le coefficient d'anticipation pour le veuf aussi ;
+      l'ancien conjoint divorcé non remarié y a droit aux mêmes âges, et l'allocation se
+      partage entre les conjoints au prorata de la durée de chaque mariage
+    beneficiaire: la veuve et l'ancienne épouse à cinquante ans, le veuf à soixante ans
+    conditions: >-
+      quatre ans de mariage, ou un mariage contracté deux ans au moins avant les
+      cinquante-cinq ans de l'agent ou la cessation de ses fonctions ; deux enfants de
+      moins de vingt et un ans à charge dispensent la veuve ou l'ancienne épouse de l'âge
+    parametres:
+      taux: 0.50
+      beneficiaire: conjoint
+      age_minimum: null
+      age_minimum_veuve: 50
+      age_minimum_veuf: 60
+      mariage_minimum_annees: 4
+      mariage_avant_annees: 2
+      mariage_avant_age: 55
+      mariage_leve_par_enfant: false
+      deux_enfants_sans_age: [F]
+      deux_enfants_moins_de_ans: 21
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: enfant_1994
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381626, article: "arrêté du 30 décembre 1970, article 20", en_vigueur: 1994-01-06}
+  nee_de: LEGIARTI000006381626
+  bornes:
+    conjoint.deces: [1994-01-06, 2004-01-01]
+  contenu:
+    droit: >-
+      la version divorces_1980 ; le veuf titulaire d'une pension d'invalidité d'un régime
+      de base a droit dès cinquante ans
+    beneficiaire: la veuve et l'ancienne épouse à cinquante ans, le veuf à soixante ans
+    conditions: >-
+      celles de divorces_1980 ; aucune durée de mariage quand un enfant au moins en est
+      issu, ou quand l'agent est devenu, après le mariage, titulaire d'une pension
+      d'invalidité d'un régime de base ou en situation de l'obtenir
+    parametres:
+      taux: 0.50
+      beneficiaire: conjoint
+      age_minimum: null
+      age_minimum_veuve: 50
+      age_minimum_veuf: 60
+      mariage_minimum_annees: 4
+      mariage_avant_annees: 2
+      mariage_avant_age: 55
+      mariage_leve_par_enfant: true
+      deux_enfants_sans_age: [F]
+      deux_enfants_moins_de_ans: 21
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: conjoints_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381627, article: "arrêté du 30 décembre 1970, article 20", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000036755178, article: "arrêté du 30 décembre 1970, article 20", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000049864855, article: "arrêté du 30 décembre 1970, article 20", en_vigueur: 2024-09-01}
+  - {id: LEGIARTI000006381631, article: "arrêté du 30 décembre 1970, article 21", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000036755227, article: "arrêté du 30 décembre 1970, article 21", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000036755337, article: "arrêté du 30 décembre 1970, article 22", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000049864853, article: "arrêté du 30 décembre 1970, article 23", en_vigueur: 2024-09-01}
+  - {id: LEGIARTI000036755216, article: "arrêté du 30 décembre 1970, article 24", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000019511940, article: "arrêté du 30 décembre 1970, article 25", en_vigueur: 2008-09-25}
+  nee_de: LEGIARTI000006381627
+  bornes:
+    conjoint.deces: [2004-01-01, null]
+  contenu:
+    droit: >-
+      une allocation calculée sur la moitié des points de l'agent décédé, sans le
+      coefficient de réduction de sa retraite, sans que les points de tous ses conjoints
+      dépassent les siens affectés de ce coefficient ; servie au mois, au trimestre ou à
+      l'année selon le nombre de points, en un versement unique sous 300 points ; aucune
+      après un versement unique servi à l'agent
+    beneficiaire: >-
+      le conjoint non remarié, de l'un et l'autre sexe, à cinquante ans ; l'ancien
+      conjoint divorcé non remarié aux mêmes conditions, l'allocation se partageant au
+      prorata de la durée de chaque mariage
+    conditions: >-
+      quatre ans de mariage, ou un mariage contracté deux ans au moins avant les
+      cinquante-cinq ans de l'agent ou la cessation de ses fonctions ; aucune durée quand
+      un enfant est issu du mariage ou quand l'agent est devenu invalide après lui ; dès
+      le décès, à tout âge, avec deux enfants de moins de vingt et un ans à charge,
+      jusqu'aux vingt et un ans du dernier ; supprimée au remariage, rétablie au veuvage
+      ou au divorce qui suit ; à chaque orphelin, le cinquième des points
+    parametres:
+      taux: 0.50
+      beneficiaire: conjoint
+      age_minimum: 50
+      mariage_minimum_annees: 4
+      mariage_avant_annees: 2
+      mariage_avant_age: 55
+      mariage_leve_par_enfant: true
+      deux_enfants_sans_age: [F, H]
+      deux_enfants_moins_de_ans: 21
+      seuil_versement_unique_points: 300
+      rien_apres_un_capital: true
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: [ur_reversion_contractuel_ircantec_52_ans]
+approximations:
+- ecart: >-
+    la moitié s'applique à la retraite servie, coefficient d'anticipation compris,
+    quand l'arrêté calcule l'allocation sur les points sans ce coefficient
+  effet: >-
+    la réversion d'un agent parti avec un coefficient de minoration est sous-estimée
+    d'autant ; non mesuré
+- version: [veuves_1971]
+  ecart: >-
+    le veuf, que l'arrêté ne servait pas avant 1976, reçoit la réversion comme la veuve,
+    à cinquante ans
+  effet: non mesuré
+- version: [veufs_1976, divorces_1980, enfant_1994]
+  ecart: >-
+    la limite de 26 000 points du veuf n'est pas appliquée, ni l'âge de cinquante ans du
+    veuf invalide, de 1994 à 2003
+  effet: non mesuré
+- ecart: >-
+    deux enfants de moins de vingt et un ans au décès, déclarés ou présumés, lèvent
+    l'âge pour toujours : l'arrêté interrompt l'allocation aux vingt et un ans du
+    dernier, jusqu'à ce que le survivant ait l'âge ; tout enfant de moins de vingt et un
+    ans est tenu pour à sa charge, et l'infirme majeur n'est pas porté
+  effet: non mesuré
+- ecart: >-
+    la condition d'antériorité tient le départ pour la cessation des fonctions, et tout
+    enfant déclaré pour un enfant issu du mariage ; l'invalidité de l'agent, qui lève la
+    durée du mariage, n'est pas lue ; le versement unique sous 300 points, au survivant
+    ou à l'agent, n'est pas porté — l'allocation est servie comme une rente, et l'agent
+    payé en une fois laisse une réversion ; le partage entre conjoints, la suppression
+    au remariage et l'allocation d'orphelin ne sont pas portés ; les montants sont ceux
+    de l'année du décès
+  effet: non mesuré
+presomptions:
+  conjoint_de_l_autre_sexe: >-
+    l'âge de la veuve ou du veuf, avant 2004, quand le sexe du conjoint n'est pas dit
+  mariage_des_conjoints: >-
+    la condition de durée ou d'antériorité du mariage, quand sa date n'est pas déclarée
+  naissance_des_enfants: >-
+    les enfants de moins de vingt et un ans au décès, qui lèvent l'âge, quand leurs
+    naissances ne sont pas déclarées
+  reversion_demandee_dans_l_annee: >-
+    la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge requis
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 4 octobre 2026, à l'étape de l'action 142 qui sert la réversion du RAFP,
+    de la RCI et de l'Ircantec, lue dans l'index LEGI : les articles 20 à 25 de
+    l'arrêté du 30 décembre 1970 dans toutes leurs rédactions, et l'article 11 du
+    décret n° 70-1277, qui renvoie à l'arrêté les modalités du régime.
+  - >-
+    L'âge de cinquante ans est celui de l'arrêté et de la base documentaire de
+    l'Ircantec ; le simulateur d'info-retraite sert la moitié à une veuve de 52 ans
+    (ur_reversion_contractuel_ircantec_52_ans), ce qui ne départage pas cinquante et
+    cinquante-deux.
+  lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970 relatif à l'Ircantec, article 20 dans ses rédactions de
+      1971, 1976, 1980, 1994, 2004, 2018 et 2024, article 21 dans celles de 1971, 1976,
+      1980, 2004 et 2018, articles 22 à 25 en vigueur ; décret n° 70-1277, article 11
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      base documentaire de l'Ircantec, « Conditions d'attribution des droits de
+      réversion », mise à jour le 13 mai 2024 : cinquante ans ou deux enfants de moins
+      de vingt et un ans à charge, quatre ans de mariage ou deux ans avant les
+      cinquante-cinq ans ou la cessation des fonctions, sauf enfant issu du mariage ou
+      pension d'invalidité de l'agent
+    date: 2024-05-13
+    url: https://baseircantec.retraites.fr/en-cas-de-deces/reversion/conditions-dattribution-des-droits-de-reversion
+  - type: autre
+    reference: >-
+      Ircantec, page « La pension de réversion » : 50 % des droits de l'agent, la
+      périodicité selon les points, le capital unique sous 300 points, 20 % par orphelin
+    date: 2026-10-04
+    url: https://www.ircantec.retraites.fr/deces/pension-reversion
+code:
+  python: >-
+    droit/reversion.py : reversion, _age_ircantec, _mariage_ircantec,
+    _enfants_de_moins_de ; scenarios/actuel.py : Reversions
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, ageIrcantec, mariageIrcantec,
+    enfantsDeMoinsDe ; moteur/js/regimes.js : Reversions
+  parametres: >-
+    contenu.parametres de chaque version : taux, age_minimum, age_minimum_veuve,
+    age_minimum_veuf, mariage_minimum_annees, mariage_avant_annees, mariage_avant_age,
+    mariage_leve_par_enfant, deux_enfants_sans_age, deux_enfants_moins_de_ans,
+    rien_apres_un_capital
+  tests: tests/test_reversion.py
+historique:
+- >-
+  2026-10-04 — née et lue par le moteur à l'étape de l'action 142 qui sert la
+  réversion du RAFP, de la RCI et de l'Ircantec : les simulateurs anonymes la
+  servaient, le modèle disait « non portée ».
+effet: >-
+  Tout conjoint, ou ex-conjoint, d'un agent contractuel de l'État, des collectivités ou
+  des hôpitaux, ou d'un élu local, qui décède. Le modèle la calcule pour le conjoint
+  que la saisie déclare, sur la retraite servie.

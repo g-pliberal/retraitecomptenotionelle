@@ -9,11 +9,13 @@
  * vivre » — et applique à chaque régime la version de sa fiche que les dates
  * choisissent : le régime général et les régimes alignés (`reversion`), la
  * fonction publique et la CNRACL (`reversion_fonction_publique`),
- * l'Agirc-Arrco (`reversion_agirc_arrco`). Les autres régimes n'ont pas encore
- * de fiche : leur ligne le dit, sans montant. Ce qui n'est pas encore porté,
- * et les montants — ceux de l'année du décès —, sont dits dans l'en-tête du
- * Python. Sans décès déclaré, l'échéancier liquide une réversion d'essai pour
- * un décès supposé juste après le départ (présomption `deces_apres_le_depart`).
+ * l'Agirc-Arrco (`reversion_agirc_arrco`), le RAFP (`reversion_rafp`),
+ * l'Ircantec (`reversion_ircantec`), la complémentaire des indépendants
+ * (`reversion_rci`). Les autres régimes n'ont pas encore de fiche : leur ligne
+ * le dit, sans montant. Ce qui n'est pas encore porté, et les montants — ceux
+ * de l'année du décès —, sont dits dans l'en-tête du Python. Sans décès
+ * déclaré, l'échéancier liquide une réversion d'essai pour un décès supposé
+ * juste après le départ (présomption `deces_apres_le_depart`).
  */
 
 import * as chrono from "../chronologie.js";
@@ -30,6 +32,13 @@ export const MOTIFS = Object.freeze({
   mariage: "condition d'antériorité ou de durée du mariage non remplie",
   non_portee: "la réversion de ce régime n'est pas encore portée",
 });
+
+/**
+ * Les fiches dont les réversions se chiffrent après les autres, parce que celles
+ * des autres régimes de base comptent à leurs ressources : le régime général et
+ * les régimes alignés, puis la complémentaire des indépendants.
+ */
+export const APRES_LES_BASES = Object.freeze(["reversion", "reversion_rci"]);
 
 /** La réversion d'un régime du défunt. */
 export class ReversionRegime {
@@ -168,15 +177,62 @@ function mariageSuffit(parametres, conjoint, deces, depart, enfants) {
 }
 
 /**
+ * L'âge requis à l'Ircantec : celui du conjoint depuis 2004 ; avant, celui de
+ * la veuve ou du veuf. Le veuf d'avant 1976, que l'arrêté ne servait pas,
+ * attend l'âge de la veuve : une approximation que la fiche déclare.
+ */
+function ageIrcantec(parametres, sexe) {
+  if (parametres.age_minimum !== null && parametres.age_minimum !== undefined) {
+    return Number(parametres.age_minimum);
+  }
+  const veuf = parametres.age_minimum_veuf;
+  if (sexe === "H" && veuf !== null && veuf !== undefined) {
+    return Number(veuf);
+  }
+  return Number(parametres.age_minimum_veuve);
+}
+
+/**
+ * La condition de l'article 20 de l'arrêté du 30 décembre 1970 : quatre ans de
+ * mariage au décès, ou un mariage contracté deux ans au moins avant les
+ * cinquante-cinq ans de l'agent né le jour `naissance`, ou avant la cessation
+ * de ses fonctions — que le modèle tient pour son départ ; depuis 1994, aucune
+ * durée quand un enfant est issu du mariage, que le modèle tient pour tout
+ * enfant déclaré.
+ */
+function mariageIrcantec(parametres, conjoint, naissance, deces, depart, enfants) {
+  if (parametres.mariage_leve_par_enfant && enfants > 0) {
+    return true;
+  }
+  const avant = parametres.mariage_avant_annees;
+  const limite = chrono.plusAns(naissance, Math.trunc(Number(parametres.mariage_avant_age)));
+  return chrono.anneesRevolues(conjoint.mariage, deces) >= parametres.mariage_minimum_annees
+    || chrono.anneesRevolues(conjoint.mariage, limite) >= avant
+    || chrono.anneesRevolues(conjoint.mariage, depart) >= avant;
+}
+
+/**
+ * Les enfants nés au décès qui n'ont pas encore `ans` ans : ceux que la
+ * chronologie porte, déclarés ou présumés, et que le modèle tient pour à la
+ * charge du survivant.
+ */
+function enfantsDeMoinsDe(carriere, deces, ans) {
+  return carriere.naissancesDesEnfants.filter(
+    ([, naissance]) => naissance <= deces && deces < chrono.plusAns(naissance, ans)).length;
+}
+
+/**
  * La réversion que le décès de la personne de `carriere` ouvre à son
  * conjoint, régime par régime ; `null` sans décès ou sans conjoint.
  * `pensions` sont les pensions du défunt à l'année `annee`, où les montants se
  * chiffrent : `[régime, montant, fiabilité]`, dans l'ordre de sa liquidation.
- * Un régime qui ne lui sert rien n'a rien à reverser. `decesSuppose` date le
- * décès que la présomption `deces_apres_le_depart` suppose, quand la
- * chronologie n'en dit pas. Voir `reversion` du Python.
+ * Un régime qui ne lui sert rien n'a rien à reverser, ni celui qui lui a versé
+ * son droit en capital, quand la fiche le dit : `enCapital` nomme ces régimes.
+ * `decesSuppose` date le décès que la présomption `deces_apres_le_depart`
+ * suppose, quand la chronologie n'en dit pas. Voir `reversion` du Python.
  */
-export function reversion(moteur, pensions, carriere, annee, decesSuppose = null) {
+export function reversion(moteur, pensions, carriere, annee, decesSuppose = null,
+  enCapital = new Set()) {
   const conjoint = carriere.conjoint;
   const deces = decesSuppose === null ? carriere.deces : decesSuppose;
   if (deces === null || conjoint === null) {
@@ -200,9 +256,11 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   });
 
   const lignes = new Map();
-  // La fonction publique et l'Agirc-Arrco d'abord : la réversion d'un autre
-  // régime de base compte aux ressources du régime général ; celle des
-  // complémentaires, non (R. 353-1, 2°).
+  // La fonction publique, le RAFP, l'Ircantec et l'Agirc-Arrco d'abord : la
+  // réversion d'un autre régime de base compte aux ressources du régime
+  // général ; celle des complémentaires du régime général et des
+  // indépendants, non (R. 353-1, 2°), et le RAFP, complémentaire de la
+  // fonction publique, le dit dans sa fiche (`compte_aux_ressources`).
   let autresBases = 0.0;
   for (const [regime, base, fiabilite] of servies) {
     const fiche = table.ficheDuRegime(regime);
@@ -212,11 +270,16 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       }));
       continue;
     }
-    if (fiche.id === "reversion") {
+    if (APRES_LES_BASES.includes(fiche.id)) {
       continue;
     }
     const version = table.version(fiche, lendemain, deces);
     const parametres = version.parametres;
+    if (parametres.rien_apres_un_capital && enCapital.has(regime)) {
+      // Un droit direct versé en capital ne laisse rien à reverser : la ligne
+      // ne s'écrit pas, comme celle d'un régime qui ne sert rien.
+      continue;
+    }
     const taux = Number(parametres.taux);
     if (fiche.id === "reversion_fonction_publique") {
       const servie = mariageSuffit(parametres, conjoint, deces, depart, enfants);
@@ -224,6 +287,31 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       autresBases += montant;
       lignes.set(regime, ligne(regime, base, montant, servie ? "servie" : "mariage",
         fiche, version, taux, lendemain, fiabilite));
+      continue;
+    }
+    if (fiche.id === "reversion_rafp") {
+      const montant = taux * base;
+      if (parametres.compte_aux_ressources) {
+        autresBases += montant;
+      }
+      lignes.set(regime, ligne(regime, base, montant, "servie", fiche, version, taux,
+        lendemain, fiabilite));
+      continue;
+    }
+    if (fiche.id === "reversion_ircantec") {
+      const naissance = chrono.naissance(carriere.chronologie, carriere.personne).debut;
+      const servie = mariageIrcantec(parametres, conjoint, naissance, deces, depart, enfants);
+      let dateEffet = aLAge(conjoint.naissance, lendemain,
+        ageIrcantec(parametres, conjoint.sexe));
+      if ((parametres.deux_enfants_sans_age ?? []).includes(conjoint.sexe)
+          && enfantsDeMoinsDe(carriere, deces,
+            Math.trunc(Number(parametres.deux_enfants_moins_de_ans))) >= 2) {
+        // Deux enfants de moins de vingt et un ans à sa charge au décès lèvent
+        // l'âge (article 21) : la réversion part au mois qui suit le décès.
+        dateEffet = lendemain;
+      }
+      lignes.set(regime, ligne(regime, base, servie ? taux * base : 0.0,
+        servie ? "servie" : "mariage", fiche, version, taux, dateEffet, fiabilite));
       continue;
     }
     let dateEffet = aLAge(conjoint.naissance, lendemain,
@@ -286,10 +374,54 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       dateEffet, fiabilite));
   }
 
+  // La complémentaire des indépendants en dernier : ses ressources sont celles
+  // de R. 353-1, que les réversions de tous les régimes de base grossissent
+  // (articles 17 et 35 de son règlement). Un dépassement de son plafond réduit
+  // ses réversions à due concurrence, chacune au prorata de son montant.
+  const independantes = [];
+  for (const [regime, base, fiabilite] of servies) {
+    const fiche = table.ficheDuRegime(regime);
+    if (fiche === null || fiche.id !== "reversion_rci") {
+      continue;
+    }
+    const version = table.version(fiche, lendemain, deces);
+    if ((version.parametres.portee ?? true) === false) {
+      lignes.set(regime, new ReversionRegime({
+        regime, base, montant: 0.0, motif: "non_portee",
+      }));
+      continue;
+    }
+    independantes.push([regime, base, fiabilite, fiche, version]);
+  }
+  if (independantes.length > 0) {
+    const premiers = independantes[0][4].parametres;
+    const plafondAnnuel = Number(premiers.plafond_pass)
+      * moteur.macro.plafond_securite_sociale.valeur(annee);
+    let brut = 0.0;
+    for (const [, base, , , version] of independantes) {
+      brut += Number(version.parametres.taux) * base;
+    }
+    const depassement = Math.max(0.0, ressources + autresBases + brut - plafondAnnuel);
+    for (const [regime, base, fiabilite, fiche, version] of independantes) {
+      const parametres = version.parametres;
+      const taux = Number(parametres.taux);
+      let montant = taux * base;
+      let motif = "servie";
+      if (depassement > 0) {
+        montant = Math.max(0.0, montant - depassement * montant / brut);
+        motif = "ecretee";
+      }
+      const dateEffet = aLAge(conjoint.naissance, lendemain, Number(parametres.age_minimum));
+      lignes.set(regime, ligne(regime, base, montant, motif, fiche, version, taux,
+        dateEffet, fiabilite));
+    }
+  }
+
   return new Reversion({
     personne: conjoint.personne, defunt: carriere.personne, deces, annee,
     ressources, ressources_presumees: presumees,
-    regimes: servies.map(([regime]) => lignes.get(regime)),
+    regimes: servies.filter(([regime]) => lignes.has(regime))
+      .map(([regime]) => lignes.get(regime)),
     deces_suppose: decesSuppose !== null,
   });
 }

@@ -320,7 +320,7 @@ listes:
         dit: le conjoint survivant n'a d'autres ressources que les réversions qu'il reçoit
         valeur: 0
         unite: euros par an
-        appliquee_par: reversion (droit/reversion.py), qui ne compte au plafond du régime général que les réversions des autres régimes de base ; son jumeau JavaScript
+        appliquee_par: reversion (droit/reversion.py), qui ne compte au plafond du régime général, et à celui de la complémentaire des indépendants, que les réversions des autres régimes de base ; son jumeau JavaScript
         entrera_a: liquider_chaque_regime
         raison: >-
           le plafond du régime général compare la réversion aux ressources du

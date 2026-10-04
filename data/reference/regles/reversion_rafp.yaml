@@ -1,0 +1,161 @@
+schema_version: 1
+id: reversion_rafp
+intitule: >-
+  Prestation de réversion de la retraite additionnelle de la fonction publique (décret
+  n° 2004-569, article 10, et arrêté du 26 novembre 2004) : 50 % de la prestation
+  obtenue par le fonctionnaire ou qu'il aurait pu obtenir au jour de son décès, sans
+  condition d'âge, de ressources ni de durée du mariage ; aucune quand le droit direct
+  a été versé en capital ; suspendue au remariage ou au concubinage notoire.
+domaine: reversion
+regimes:
+- rafp
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut et union.fin, d'un mariage ; une nouvelle union du survivant suspend le droit
+- la prestation du défunt, servie ou qu'il aurait pu obtenir au jour de son décès, et sa
+  forme, rente ou capital
+ecrit:
+- la prestation de réversion du survivant, au régime additionnel
+dates_qui_decident:
+- conjoint.deces
+# Une seule version : le taux, les bénéficiaires et le capital n'ont pas changé
+# depuis l'arrêté du 26 novembre 2004. Sa rédaction du 31 décembre 2011, qui
+# retient l'âge légal plutôt que soixante ans pour la prestation d'un
+# fonctionnaire mort avant, et celle du 23 novembre 2017 du décret, qui ne
+# change qu'un renvoi, ne changent pas ce que le moteur calcule.
+versions:
+- id: decret_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006453308, article: "décret n° 2004-569, article 10", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000036070850, article: "décret n° 2004-569, article 10", en_vigueur: 2017-11-23}
+  - {id: LEGIARTI000037483756, article: "décret n° 2004-569, article 9", en_vigueur: 2018-10-11}
+  - {id: LEGIARTI000036070843, article: "décret n° 2004-569, article 6", en_vigueur: 2017-11-23}
+  - {id: LEGIARTI000019412507, article: "arrêté du 26 novembre 2004, article 4", en_vigueur: 2004-12-01}
+  - {id: LEGIARTI000019412506, article: "arrêté du 26 novembre 2004, article 5", en_vigueur: 2004-12-01}
+  - {id: LEGIARTI000019412508, article: "arrêté du 26 novembre 2004, article 6", en_vigueur: 2004-12-01}
+  - {id: LEGIARTI000025127705, article: "arrêté du 26 novembre 2004, article 6", en_vigueur: 2011-12-31}
+  - {id: LEGIARTI000019412509, article: "arrêté du 26 novembre 2004, article 7", en_vigueur: 2004-12-01}
+  - {id: LEGIARTI000019412511, article: "arrêté du 26 novembre 2004, article 9", en_vigueur: 2004-12-01}
+  - {id: LEGIARTI000019412512, article: "arrêté du 26 novembre 2004, article 10", en_vigueur: 2004-12-01}
+  nee_de: LEGIARTI000006453308
+  bornes:
+    conjoint.deces: [null, null]
+  contenu:
+    droit: >-
+      50 % de la prestation obtenue par le bénéficiaire ou qu'il aurait pu obtenir au
+      titre des droits acquis au jour de son décès, en liquidant à l'âge de son décès, ou
+      à l'âge légal s'il meurt avant (soixante ans jusqu'au 30 décembre 2011) ; servie
+      en rente, en capital quand elle tombe sous le seuil de 5 125 points de l'article 9,
+      apprécié en valeur brute et par tête ; cumulable avec toute rémunération et toute
+      autre pension
+    beneficiaire: le conjoint survivant, le conjoint séparé de corps et le conjoint divorcé
+    conditions: >-
+      aucune d'âge, de ressources ni de durée du mariage ; effet au plus tôt au premier
+      jour du mois qui suit le décès ; aucune réversion quand la prestation de droit
+      direct a été versée en capital ; entre conjoints successifs, un partage au prorata
+      de la durée des mariages ; suspendue au remariage ou au concubinage notoire,
+      rétablie à leur fin sur demande ; à chaque orphelin de moins de vingt et un ans,
+      10 %, réduits si le total dépasse la prestation du défunt
+    parametres:
+      taux: 0.50
+      age_minimum: null
+      seuil_capital_points: 5125
+      rien_apres_un_capital: true
+      compte_aux_ressources: true
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: [ur_reversion_etat_mariage_3_ans_et_demi, ur_reversion_etat_mariage_4_ans,
+             ur_reversion_cnracl_enfant_mariage_1_an]
+approximations:
+- ecart: >-
+    la réversion de moins de 5 125 points, que l'ERAFP verse en capital, est montrée
+    comme la rente dont ce capital est l'équivalent, comme le droit direct du défunt
+  effet: >-
+    la forme de la prestation, non son montant annuel ; non mesuré
+- ecart: >-
+    le RAFP compte aux ressources du régime général et de la complémentaire des
+    indépendants, R. 353-1, 2°, n'écartant que les réversions des régimes
+    complémentaires du régime général, des régimes agricoles, des professions libérales
+    et des indépendants : une lecture du texte, que la circulaire de la Cnav qui énumère
+    les ressources n'a pas encore confirmée
+  effet: >-
+    la réversion du régime général d'un fonctionnaire qui a aussi cotisé au privé,
+    près du plafond, baisse de la moitié de son RAFP ; non mesuré
+- ecart: >-
+    le partage entre conjoints successifs, la suspension au remariage, la prestation
+    d'orphelin et la réversion d'un fonctionnaire mort en activité, à l'âge de son
+    décès, ne sont pas portés ; les montants sont ceux de l'année du décès
+  effet: non mesuré
+presomptions:
+  reversion_demandee_dans_l_annee: >-
+    la date d'effet, au premier jour du mois qui suit le décès
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-03-31
+  lectures_divergentes:
+  - >-
+    Le simulateur « Droit à la réversion » d'info-retraite refuse la réversion du RAFP
+    quand le mariage ne remplit pas la condition de L. 39 du code des pensions civiles
+    (exemple ur_reversion_etat_mariage_3_ans_et_demi, en écart connu) : ni le décret
+    n° 2004-569, ni l'arrêté du 26 novembre 2004, ni la fiche pratique de l'ERAFP ne
+    posent de condition de durée du mariage, et la fiche dit que le conjoint sans
+    réversion d'un régime de base de la fonction publique demande celle du RAFP à la
+    Caisse des dépôts. Le modèle suit le texte.
+  a_relire:
+  - >-
+    Ouverte le 4 octobre 2026, à l'étape de l'action 142 qui sert la réversion du RAFP,
+    de la RCI et de l'Ircantec, lue dans l'index LEGI et sur la fiche pratique de
+    l'ERAFP. À confirmer auprès de l'ERAFP : qu'aucune condition de durée du mariage ne
+    s'applique, quand le simulateur d'info-retraite en applique une.
+  - >-
+    La circulaire de la Cnav qui énumère les ressources de R. 353-1 : y compte-t-elle
+    la réversion du RAFP, que le texte ne range pas parmi celles qu'il écarte ?
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2004-569, articles 6, 9 et 10, dans l'index LEGI (rédactions de 2004,
+      2017 et 2018) ; arrêté du 26 novembre 2004 portant application du décret, articles
+      4 à 10 (rédactions de 2004, et du 31 décembre 2011 pour l'article 6)
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      ERAFP, fiche pratique « La réversion », 20 décembre 2024 : « Le conjoint survivant
+      bénéficie d'une réversion sans aucune condition d'âge », effet au premier jour du
+      mois qui suit le décès, aucune réversion après un droit direct versé en capital,
+      suspension au remariage ou au concubinage notoire
+    date: 2024-12-20
+    url: https://media.rafp.fr/s3fs-public/2024-12/RAFP-2025-Beneficiaire-Fiches_04.pdf
+  - type: autre
+    reference: >-
+      ERAFP, page « La réversion » de rafp.fr : 50 % pour un conjoint seul, au prorata
+      des unions sinon, 10 % par orphelin, rente ou capital selon le seuil de 5 125
+      points
+    date: 2026-10-04
+    url: https://www.rafp.fr/actif/activite/reversion
+code:
+  python: >-
+    droit/reversion.py : reversion ; droit/liquider.py et droit/commun.py :
+    PensionRegime.capital ; echeancier.py : _pensions_au_deces ; scenarios/actuel.py :
+    Reversions
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion ; moteur/js/droit/liquider.js ;
+    moteur/js/echeancier.js : _pensionsAuDeces ; moteur/js/regimes.js : Reversions
+  parametres: >-
+    contenu.parametres : taux, rien_apres_un_capital, compte_aux_ressources
+  tests: tests/test_reversion.py ; le témoin reversion_fonctionnaire des simulations
+historique:
+- >-
+  2026-10-04 — née et lue par le moteur à l'étape de l'action 142 qui sert la
+  réversion du RAFP, de la RCI et de l'Ircantec : les simulateurs anonymes la
+  servaient, le modèle disait « non portée ».
+effet: >-
+  Tout conjoint, ou ex-conjoint, d'un fonctionnaire de l'État ou d'un agent des
+  collectivités et des hôpitaux qui décède. Le modèle la calcule pour le conjoint que
+  la saisie déclare, sauf quand le défunt a touché son droit en capital.

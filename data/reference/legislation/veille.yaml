@@ -5129,6 +5129,7 @@ journal:
     reste: >-
       Un exemple chiffré d'assuré ; la réversion de ces points (L. 732-62) ; le statut
       de conjoint, d'aide familial ou de collaborateur, que le simulateur ne demande pas.
+  - date: "2026-10-04"
     session: "action 138, étape 2 : la cotisation maladie de 1 % des complémentaires"
     consulte: >-
       Index LEGI du dépôt : D. 242-8 du code de la sécurité sociale, ses rédactions de
@@ -5148,3 +5149,40 @@ journal:
       prélèvent sur leurs pensions ; un exemple publié du net d'une pension
       Agirc-Arrco ; l'exonération selon le revenu fiscal (D. 242-9), avec le reste de
       l'étape 2.
+  - date: "2026-10-04"
+    session: "action 142 : la réversion du RAFP, de l'Ircantec et de la RCI"
+    consulte: >-
+      veille_droit.py (dernière veille consignée du jour) ; l'index LEGI du dossier
+      principal, aux incréments du 27 septembre 2026, le serveur de la DILA refusant les
+      suivants. Pour le RAFP, le décret n° 2004-569, articles 6 (LEGIARTI000036070843), 9
+      (LEGIARTI000037483756) et 10 (LEGIARTI000006453308, LEGIARTI000036070850), et
+      l'arrêté du 26 novembre 2004, articles 4 à 10 ; pour l'Ircantec, le décret
+      n° 70-1277, article 11 (LEGIARTI000006368133), et l'arrêté du 30 décembre 1970,
+      articles 20 à 25 dans toutes leurs rédactions ; pour la RCI, le règlement approuvé
+      par l'arrêté du 9 février 2012 dans ses rédactions de 2013 (LEGIARTI000025397326), du
+      26 juin 2024, de 2025 et de 2027, et R. 353-1. Hors de Légifrance : la fiche pratique
+      « La réversion » de l'ERAFP (20 décembre 2024) et sa page rafp.fr ; la base
+      documentaire de l'Ircantec (13 mai 2024) et sa page « La pension de réversion » ; les
+      circulaires Cnav 2021-4, 2024-07 et 2026-01, § 9, sur le plafond de ressources de la
+      réversion RCI.
+    trouve: >-
+      Le RAFP sert la moitié sans condition d'âge, de ressources ni de durée du mariage,
+      rien après un droit direct versé en capital, et verse en capital une réversion de
+      moins de 5 125 points. L'Ircantec sert la moitié des points, sans le coefficient
+      d'anticipation, à cinquante ans — le veuf à soixante de 1976 à 2003, et rien avant —,
+      dès le décès avec deux enfants de moins de vingt et un ans, sous condition de quatre
+      ans de mariage ou d'un mariage contracté deux ans avant les cinquante-cinq ans de
+      l'agent ou sa cessation de fonctions, sauf enfant issu du mariage depuis 1994. La RCI
+      sert 60 % des points, sans abattement, à cinquante-cinq ans, réduite à due
+      concurrence au-delà d'un plafond que le CPSTI fixe à deux plafonds annuels de la
+      Sécurité sociale (96 120 euros en 2026). Le simulateur d'info-retraite refuse le RAFP
+      sous la condition de mariage de L. 39, que ses textes ne posent pas (écart connu à
+      l'exemple ur_reversion_etat_mariage_3_ans_et_demi). L'article 34 du règlement de la
+      RCI renvoyait en 2013 à l'âge de L. 161-17-2 quand l'article 17 dit L. 353-1 ; la
+      rédaction du 26 juin 2024 dit L. 353-1 aux deux.
+    reste: >-
+      La confirmation par l'ERAFP qu'aucune durée de mariage ne vaut ; la circulaire Cnav
+      qui dirait si la réversion du RAFP compte aux ressources de R. 353-1 ; le plafond de
+      la RCI de 2013 à 2020, et les règles des complémentaires des artisans et des
+      commerçants d'avant 2013 ; le versement unique de l'Ircantec sous 300 points ; le
+      départ anticipé des assurés handicapés, que le modèle ne traite pas ; le remariage.

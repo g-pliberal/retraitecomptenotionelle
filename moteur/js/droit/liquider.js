@@ -330,6 +330,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // Les années qu'aucun prix d'achat ne couvre encore passent par le
       // rendement : le seuil se compare aux points que vaut TOUT le montant.
       let pointsTotaux = points;
+      let capital = null;
       const seuilCapital = periode.capital_seuil_points;
       if (seuilCapital !== null && seuilCapital !== undefined) {
         const valeurSeuil = valeurDuPoint(moteur, periode.points_de ?? code, anneeLiquidation);
@@ -342,7 +343,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         // SOUS LE SEUIL, UN CAPITAL (décret n° 2004-569, art. 9). Le
         // montant annuel reste celui de la rente dont le capital est
         // l'équivalent actuariel.
-        const capital = montant * conversionCapitalRafp(ageLiquidation);
+        capital = montant * conversionCapitalRafp(ageLiquidation);
         detail += ` ; versé en capital, ${formatFixe(capital, 0, true)} € en une fois `
           + `(moins de ${formatFixe(periode.capital_seuil_points, 0, true)} points)`;
       }
@@ -352,6 +353,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         type_calcul: periode.type_calcul,
         detail,
         fiabilite: fiabiliteRegime,
+        // Le capital versé en une fois, que la réversion lit : il n'y en a
+        // pas après lui (fiche `reversion_rafp`). Absent pour une rente.
+        ...(capital === null ? {} : { capital }),
       });
       continue;
     }

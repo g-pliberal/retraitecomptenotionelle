@@ -1047,7 +1047,8 @@ MajorationsPourEnfants.BENEFICIAIRES = Object.freeze(["mere"]);
 /**
  * Les fiches de la réversion (domaine « reversion »), dont le moteur lit les
  * versions : celle du régime général et des régimes alignés, celle de la
- * fonction publique, celle de l'Agirc-Arrco (docs/architecture.md, § 4.1).
+ * fonction publique, celles de l'Agirc-Arrco, du RAFP, de l'Ircantec et de la
+ * complémentaire des indépendants (docs/architecture.md, § 4.1).
  * Chaque fiche, que le paquet porte préparée (`versions_des_fiches`), dit ses
  * régimes ; les autres n'en ont pas encore, et la réversion le dit. Voir
  * `Reversions` du Python.
@@ -1093,6 +1094,7 @@ export class Reversions {
 /** Les fiches de la réversion que le moteur lit, dans cet ordre. */
 Reversions.FICHES = Object.freeze([
   "reversion", "reversion_fonction_publique", "reversion_agirc_arrco",
+  "reversion_rafp", "reversion_ircantec", "reversion_rci",
 ]);
 
 /**

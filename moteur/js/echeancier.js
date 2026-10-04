@@ -298,8 +298,8 @@ export class Echeancier {
       personnes: [carriere.personne], vise: {}, sorte: "deces",
     });
     this._inscrire(deces, deces.id, "evenement", deces, deces.date);
-    const [annee, pensions] = this._pensionsAuDeces(carriere, carriere.deces);
-    this.reversion = reversion(this.moteur, pensions, carriere, annee);
+    const [annee, pensions, enCapital] = this._pensionsAuDeces(carriere, carriere.deces);
+    this.reversion = reversion(this.moteur, pensions, carriere, annee, null, enCapital);
     const survivant = carriere.conjoint.personne;
     const evenement = new Evenement({
       id: `reversion_${survivant}`, date: moisSuivant(carriere.deces),
@@ -322,13 +322,14 @@ export class Echeancier {
       + `${String(liquidation.mois).padStart(2, "0")}-01`;
     const courante = `${String(this.simulateur.parametres.annee_courante).padStart(4, "0")}-01-01`;
     const deces = depart > courante ? depart : courante;
-    const [annee, pensions] = this._pensionsAuDeces(carriere, deces);
-    this.reversion = reversion(this.moteur, pensions, carriere, annee, deces);
+    const [annee, pensions, enCapital] = this._pensionsAuDeces(carriere, deces);
+    this.reversion = reversion(this.moteur, pensions, carriere, annee, deces, enCapital);
   }
 
   /**
    * Les pensions du défunt menées à l'année du décès — l'année courante pour
-   * un décès à venir, jamais avant le départ —, et cette année.
+   * un décès à venir, jamais avant le départ —, cette année, et les régimes qui
+   * lui ont versé leur droit en capital avant son décès.
    */
   _pensionsAuDeces(carriere, deces) {
     const annee = Math.max(carriere.anneeLiquidation, Math.min(
@@ -338,11 +339,15 @@ export class Echeancier {
       (r) => [r.regime, r.au_depart * r.coefficient, r.fiabilite]);
     // Une pension qu'un régime ne sert pas encore au décès est celle que le
     // défunt « eût obtenue » : la réversion la lit, au montant du départ
-    // déclaré (`droit/departs.js`).
+    // déclaré (`droit/departs.js`). Celle qu'il sert déjà, quand elle a été
+    // versée en une fois, est soldée : le RAFP ne la reverse pas.
     const vues = new Set(servies.map(([regime]) => regime));
+    const enCapital = new Set(this.auDepart.pensions_par_regime
+      .filter((p) => p.capital !== undefined && p.capital !== null && vues.has(p.regime))
+      .map((p) => p.regime));
     return [annee, [...servies, ...this.auDepart.pensions_par_regime
       .filter((p) => !vues.has(p.regime))
-      .map((p) => [p.regime, p.montant, p.fiabilite])]];
+      .map((p) => [p.regime, p.montant, p.fiabilite])], enCapital];
   }
 
   /**

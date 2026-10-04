@@ -5820,10 +5820,10 @@ d'OpenFisca-France confrontées à celles du dépôt.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
-**Reprise, au 4 octobre 2026.** Faites : les étapes 1 à 3, et le relevé
-prolongé jusqu'au départ sur tout le site. Le propriétaire veut tout le reste
-(« Le restant », en fin d'action), une étape par session, par zones : au
-modèle, la réversion du RAFP, de la RCI et de l'Ircantec, puis le départ des
+**Reprise, au 4 octobre 2026.** Faites : les étapes 1 à 3, le relevé prolongé
+jusqu'au départ sur tout le site, et la réversion du RAFP, de la RCI et de
+l'Ircantec. Le propriétaire veut tout le reste (« Le restant », en fin
+d'action), une étape par session, par zones : au modèle, le départ des
 handicapés ; aux données, la délibération de l'ERAFP ; aux moteurs publics
 (4., avec l'action 137), R dans la WSL Ubuntu, Destinie 2 puis TRAJECTOiRE ;
 au site, le net officiel dans le bloc (138.2 : le 1 %, puis la CSG,
@@ -6341,6 +6341,34 @@ lui ; Destinie 2 importe `xlsx`, donc Java.
 - *Tests.* `tests/test_releve_prolonge.py` (huit, niveau rapide), deux
   relevés de plus dans `test_estimation_du_site.py`, la phrase de la page dans
   `test_web_saisie.py`. Les relevés sont fictifs.
+
+**La réversion du RAFP, de l'Ircantec et de la RCI, le 4 octobre 2026.** Les
+trois régimes que le simulateur de réversion servait et que le modèle disait
+« non portés » ont chacun leur fiche, lue dans l'index LEGI (incréments du 27
+septembre, la DILA refusant les suivants). `reversion_rafp` : décret
+n° 2004-569, articles 6, 9 et 10, arrêté du 26 novembre 2004, articles 4 à 10,
+et la fiche pratique de l'ERAFP — la moitié, sans âge, ressources ni durée du
+mariage, et rien quand le droit direct a été versé en capital, ce que
+`PensionRegime.capital` dit désormais à l'échéancier. `reversion_ircantec` :
+arrêté du 30 décembre 1970, articles 20 à 25 dans toutes leurs rédactions,
+cinq versions de 1971 à 2004, le décret n° 70-1277 lui renvoyant tout
+(article 11) — la moitié à cinquante ans, ou dès le décès avec deux enfants de
+moins de vingt et un ans, sous la condition de mariage de l'article 20.
+`reversion_rci` : le règlement approuvé par l'arrêté du 9 février 2012,
+articles 16 à 35, dans ses rédactions de 2013 à 2027, et les circulaires Cnav
+2021-4, 2024-07 et 2026-01 (§ 9) — 60 % à cinquante-cinq ans, réduite au
+prorata quand les ressources, réversions des régimes de base comprises,
+dépassent deux plafonds annuels de la Sécurité sociale. Le Python d'abord,
+puis son jumeau ; quatre témoins de simulation naissent, et
+`reversion_fonctionnaire` sert désormais son RAFP. Les exemples `ur_reversion_`
+se comparent sur les trois régimes et concordent, sauf le mariage de trois ans
+et demi, en écart connu : le simulateur y refuse le RAFP sous la condition de
+mariage de la pension civile, qu'aucun texte du RAFP ne pose. Restent : le
+confirmer auprès de l'ERAFP ; la circulaire Cnav qui dirait si la réversion du
+RAFP compte aux ressources de R. 353-1, ce que le modèle fait à la lettre du
+2° ; le plafond de la RCI de 2013 à 2020 et les complémentaires des artisans
+et des commerçants d'avant 2013 ; le versement unique de l'Ircantec sous 300
+points.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

@@ -61,6 +61,12 @@ class PensionRegime:
     #: prix. ``None`` pour un départ unique, où tout liquide à la même date.
     date_effet: str | None = None
     montant_a_l_effet: float | None = None
+    #: La prestation versée en une fois, sous le seuil de points d'un régime
+    #: qui en a un (le RAFP, décret n° 2004-569, article 9) : ce capital, en
+    #: euros de la liquidation ; ``None`` pour une rente. ``montant`` reste la
+    #: rente dont il est l'équivalent, et la réversion sait qu'il n'y en a pas
+    #: après lui (fiche ``reversion_rafp``).
+    capital: float | None = None
 
 
 @dataclass(frozen=True)

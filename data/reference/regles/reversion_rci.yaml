@@ -1,0 +1,186 @@
+schema_version: 1
+id: reversion_rci
+intitule: >-
+  Pension de réversion de la retraite complémentaire des indépendants (règlement
+  approuvé par l'arrêté du 9 février 2012, articles 16 à 35) : 60 % des points de
+  l'assuré décédé, sans son abattement, à l'âge de la réversion du régime général,
+  réduite à due concurrence quand elle porte les ressources du survivant au-delà d'un
+  plafond, deux plafonds annuels de la Sécurité sociale.
+domaine: reversion
+regimes:
+- rci
+- rco_artisans
+- nric
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut et union.fin, d'un mariage, présent ou dissous par un divorce
+- la naissance du survivant, qui dit son âge
+- les ressources du survivant, personnelles ou du ménage, et ses réversions des régimes
+  de base
+- les points de l'assuré décédé, au régime complémentaire des indépendants et à ceux
+  qu'il a repris en 2013
+ecrit:
+- la pension de réversion du survivant, en points de l'assuré décédé
+dates_qui_decident:
+- conjoint.deces
+# Les versions forment un partage de la date du décès (§ 4.1). Le règlement
+# s'applique depuis le 1er janvier 2013, et aux pensions que les régimes des
+# artisans et des commerçants avaient liquidées avant (article 35) ; leurs
+# règles d'avant 2013 ne sont pas lues, et le moteur n'en sert pas la
+# réversion (`portee: false`). Le plafond, que l'instance délibérante fixe
+# chaque année, n'est lu qu'à partir de 2021, dans les circulaires de la Cnav :
+# deux plafonds annuels de la Sécurité sociale (`plafond_pass`).
+versions:
+- id: avant_2013
+  statut: supposee
+  hypothese: >-
+    les règlements du régime complémentaire des artisans et du nouveau régime des
+    industriels et commerçants ne sont pas lus : le moteur ne sert pas la réversion d'un
+    décès d'avant 2013, et sa ligne le dit
+  fiabilite: estimee
+  bornes:
+    conjoint.deces: [null, 2013-01-01]
+  contenu:
+    droit: la réversion des régimes complémentaires des artisans et des commerçants
+    parametres:
+      portee: false
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: reglement_2013
+  statut: lue
+  textes:
+  - {id: LEGIARTI000025397326, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2013-01-01}
+  nee_de: LEGIARTI000025397326
+  bornes:
+    conjoint.deces: [2013-01-01, 2021-01-01]
+  contenu:
+    droit: >-
+      60 % de chacun des éléments de la pension de l'assuré, sans son abattement, ou des
+      points qu'il avait acquis au dernier jour du trimestre qui précède son décès ;
+      réduite à due concurrence quand, avec les ressources du survivant, elle dépasse le
+      plafond, une réversion d'artisan et une de commerçant d'avant 2013 au prorata de
+      leurs montants
+    beneficiaire: le conjoint marié ou divorcé ; entre plusieurs, un partage au prorata
+    conditions: >-
+      l'âge de L. 353-1, cinquante-cinq ans ; des ressources, personnelles ou du ménage,
+      appréciées comme celles de R. 353-1 et R. 353-1-1, sous un plafond que le conseil
+      d'administration de la caisse nationale du régime social des indépendants fixe
+      chaque année ; effet au plus tôt au premier jour du mois qui suit le décès, quand
+      la demande vient dans l'année ; aucune condition de durée du mariage
+    parametres:
+      taux: 0.60
+      age_minimum: 55
+      ressources: ecretement
+      plafond_pass: 2
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: plafond_2021
+  statut: lue
+  textes:
+  - {reference: "circulaire Cnav n° 2021-4 du 25 janvier 2021, § 9", en_vigueur: 2021-01-01}
+  - {reference: "circulaire Cnav n° 2024-07 du 16 janvier 2024, § 9", en_vigueur: 2024-01-01}
+  - {reference: "circulaire Cnav n° 2026-01 du 5 janvier 2026, § 9", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000049779679, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000049782878, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2025-01-01}
+  - {id: LEGIARTI000052379026, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2027-01-01}
+  bornes:
+    conjoint.deces: [2021-01-01, null]
+  contenu:
+    droit: la version reglement_2013
+    beneficiaire: le conjoint marié ou divorcé ; entre plusieurs, un partage au prorata
+    conditions: >-
+      celles de reglement_2013 ; le plafond, que le Conseil de la protection sociale des
+      travailleurs indépendants fixe chaque année, vaut deux plafonds annuels de la
+      Sécurité sociale : 96 120 euros par an en 2026, quel que soit le ménage
+    parametres:
+      taux: 0.60
+      age_minimum: 55
+      ressources: ecretement
+      plafond_pass: 2
+      fiabilite: haute
+  exemples: [ur_reversion_independant_rci]
+approximations:
+- version: [reglement_2013]
+  ecart: >-
+    le plafond de 2013 à 2020, que le conseil d'administration de la caisse nationale du
+    régime social des indépendants puis le CPSTI fixaient, n'est pas lu : le moteur lui
+    prête les deux plafonds annuels qu'il vaut depuis 2021
+  effet: >-
+    seuls les survivants dont les ressources approchent deux plafonds annuels sont
+    touchés ; non mesuré
+- version: [avant_2013]
+  ecart: >-
+    la réversion d'un décès d'avant 2013, aux régimes complémentaires des artisans et
+    des commerçants, n'est pas servie : sa ligne le dit
+  effet: non mesuré
+- ecart: >-
+    les 60 % s'appliquent à la retraite servie, abattement compris, quand le règlement
+    les calcule sans lui ; les ressources sont celles que le survivant déclare, sans
+    celles du ménage ni l'abattement de 30 % de ses revenus d'activité ; le partage
+    entre conjoints, le droit dérivé des conjoints de commerçants et la réversion d'un
+    assuré mort avant son départ ne sont pas portés ; les montants sont ceux de l'année
+    du décès
+  effet: non mesuré
+presomptions:
+  ressources_du_survivant: >-
+    le plafond de ressources, quand le survivant ne les déclare pas
+  reversion_demandee_dans_l_annee: >-
+    la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge requis
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-03-31
+  lectures_divergentes:
+  - >-
+    L'article 34 du règlement, dans sa rédaction de 2013, ne laisse pas partir la
+    réversion avant l'âge de L. 161-17-2, l'âge légal, quand l'article 17 l'ouvre à
+    celui de L. 353-1 ; la rédaction du 26 juin 2024 dit L. 353-1 aux deux articles. Le
+    modèle sert la réversion à cinquante-cinq ans dès 2013, comme l'article 17.
+  a_relire:
+  - >-
+    Ouverte le 4 octobre 2026, à l'étape de l'action 142 qui sert la réversion du RAFP,
+    de la RCI et de l'Ircantec, lue dans l'index LEGI (le règlement dans ses rédactions
+    de 2013, 2024, 2025 et 2027) et dans les circulaires de la Cnav sur le plafond de la
+    Sécurité sociale de 2021, 2024 et 2026.
+  - >-
+    Les décisions annuelles du conseil d'administration de la caisse nationale du RSI,
+    de 2013 à 2018, puis du CPSTI, de 2019 à 2020, qui fixent le plafond ; et les
+    règlements d'avant 2013 des régimes complémentaires des artisans et des commerçants.
+  lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire
+      obligatoire d'assurance vieillesse des professions artisanales, industrielles et
+      commerciales : articles 16 à 23, 34 et 35, dans les rédactions de 2013
+      (LEGIARTI000025397326), 2024, 2025 et 2027 de l'index LEGI ; R. 353-1
+    date: 2026-10-04
+  - type: circulaire_cnav
+    reference: >-
+      circulaires Cnav n° 2021-4 du 25 janvier 2021, n° 2024-07 du 16 janvier 2024 et
+      n° 2026-01 du 5 janvier 2026, « Plafond de la sécurité sociale […] Incidences en
+      matière d'assurance vieillesse », § 9 : le plafond de ressources des retraites de
+      réversion RCI, deux plafonds annuels, 96 120 euros par an en 2026, et la réduction
+      à due concurrence de l'article 35
+    date: 2026-01-05
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_01_05012026.pdf
+code:
+  python: >-
+    droit/reversion.py : reversion ; scenarios/actuel.py : Reversions
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion ; moteur/js/regimes.js : Reversions
+  parametres: >-
+    contenu.parametres de chaque version : portee, taux, age_minimum, plafond_pass
+  tests: tests/test_reversion.py
+historique:
+- >-
+  2026-10-04 — née et lue par le moteur à l'étape de l'action 142 qui sert la
+  réversion du RAFP, de la RCI et de l'Ircantec : les simulateurs anonymes la
+  servaient, le modèle disait « non portée ».
+effet: >-
+  Tout conjoint, ou ex-conjoint, d'un artisan, d'un commerçant ou d'un industriel qui
+  décède depuis 2013. Le modèle la calcule pour le conjoint que la saisie déclare.

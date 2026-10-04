@@ -1397,6 +1397,26 @@ def _cas() -> list[dict]:
     cas.append(("reversion_hypothese_au_depart", {"conjoint": "1977"}))
     cas.append(("reversion_hypothese_deja_parti", {
         "naissance": "1955", "liquidation": "62", "conjoint": "1957"}))
+    # Le 4 octobre 2026 (action 142), la réversion du RAFP, de l'Ircantec et de
+    # la complémentaire des indépendants : le fonctionnaire ci-dessus reverse
+    # aussi la moitié de son RAFP. Le veuf de quarante-huit ans d'une
+    # contractuelle, avec leurs deux enfants de moins de vingt et un ans, touche
+    # tout de suite la moitié de son Ircantec, le régime général à cinquante-cinq
+    # ans ; épousée deux ans avant sa mort, après son départ, elle ne lui en
+    # laisse rien ; la veuve d'un artisan, aux ressources proches de deux
+    # plafonds annuels, voit ses réversions complémentaires réduites au prorata ;
+    # le fonctionnaire aux petites primes, payé de son RAFP en une fois, n'en
+    # laisse rien non plus.
+    cas.append(("reversion_contractuelle_deux_enfants", {
+        **reversion, "statut": "contractuel_public", "sexe": "F", "conjoint": "1975",
+        "conjoint_sexe": "H", "enfants": "2", "naissances": "2005,2008"}))
+    cas.append(("reversion_contractuelle_mariage_court", {
+        **reversion, "statut": "contractuel_public", "sexe": "F", "conjoint": "1950",
+        "conjoint_sexe": "H", "mariage": "2021-06"}))
+    cas.append(("reversion_artisan_plafond", {
+        **reversion, "statut": "artisan", "ressources_conjoint": "86000"}))
+    cas.append(("reversion_rafp_en_capital", {
+        **reversion, "statut": "fonctionnaire_etat", "primes": "0.02"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

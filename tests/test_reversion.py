@@ -1,12 +1,13 @@
 """La réversion, régime par régime : ce que le décès de l'assuré ouvre à son conjoint.
 
 Le domaine de la réversion (docs/architecture.md, § 11). Les versions des fiches
-``reversion``, ``reversion_fonction_publique`` et ``reversion_agirc_arrco`` se
-lisent sur la date d'effet de la réversion et sur la date du décès
-(``droit/reversion.py``). Ce fichier tient les bornes et les conditions que
-chaque version porte : la veille et le jour d'un taux, l'âge qui reporte la
-date d'effet, le plafond de ressources, la durée du mariage. Les deux moteurs,
-eux, sont comparés par les témoins ``reversion_*`` des simulations.
+``reversion``, ``reversion_fonction_publique``, ``reversion_agirc_arrco``,
+``reversion_rafp``, ``reversion_ircantec`` et ``reversion_rci`` se lisent sur la
+date d'effet de la réversion et sur la date du décès (``droit/reversion.py``).
+Ce fichier tient les bornes et les conditions que chaque version porte : la
+veille et le jour d'un taux, l'âge qui reporte la date d'effet, le plafond de
+ressources, la durée du mariage, le droit direct versé en capital. Les deux
+moteurs, eux, sont comparés par les témoins ``reversion_*`` des simulations.
 """
 
 from __future__ import annotations
@@ -31,14 +32,16 @@ def simulateur() -> Simulateur:
 def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: str,
               mariage: str | None = None, ressources: float | None = None,
               enfants: int = 0, sexe_conjoint: str = "F",
-              invalidite: str | None = None) -> Carriere:
-    """Un salarié né en janvier ``naissance``, parti à ``depart`` ans, et son
+              invalidite: str | None = None, sexe: str = "H",
+              naissances: tuple[str, ...] = ()) -> Carriere:
+    """Un salarié né en janvier ``naissance``, parti à ``depart`` ans, ses
+    enfants nés aux dates ``naissances`` quand elles sont dites, et son
     conjoint, invalide depuis ``invalidite`` s'il est dit ; le décès ouvre la
     réversion. Les pensions, elles, sont données à :func:`reversion` : seule
     la règle est en cause ici."""
     return Carriere.depuis_profil(
-        naissance, "H", "salarie_prive", 21.0, depart, simulateur.macro,
-        nombre_enfants=enfants,
+        naissance, sexe, "salarie_prive", 21.0, depart, simulateur.macro,
+        nombre_enfants=enfants, naissances_enfants=naissances,
         conjoint={"naissance": conjoint, "sexe": sexe_conjoint, "mariage": mariage,
                   "ressources": ressources, "invalidite": invalidite},
         deces=deces)
@@ -209,12 +212,182 @@ def test_l_invalidite_du_survivant_leve_l_age_de_l_agirc_arrco(simulateur):
         "2012-04-01"]
 
 
+# -- le RAFP --------------------------------------------------------------------------
+
+def test_le_rafp_reverse_la_moitie_sans_age_ni_duree_du_mariage(simulateur):
+    """Décret n° 2004-569, article 10, et arrêté du 26 novembre 2004 : la
+    moitié de la prestation, au mois qui suit le décès, sans condition d'âge,
+    de ressources ni de durée du mariage — quand la pension civile attend la
+    condition de L. 39, que le mariage d'après le départ ne remplit pas."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1985-03-10", "2015-02-10",
+                         mariage="2013-05")
+    lignes = _lignes(simulateur, carriere,
+                     [("fonction_publique_etat", 30000.0), ("rafp", 800.0)], 2015)
+    assert [(l[0], l[2], l[3], l[4], l[5]) for l in lignes] == [
+        ("fonction_publique_etat", 0.0, "mariage", "conjoints_2004", "2015-03-01"),
+        ("rafp", 400.0, "servie", "decret_2004", "2015-03-01")]
+
+
+def test_un_droit_direct_verse_en_capital_ne_laisse_rien_a_reverser(simulateur):
+    """« Aucune prestation de réversion n'est due lorsque la prestation
+    additionnelle de droit direct a été servie sous forme de capital » (arrêté
+    du 26 novembre 2004, article 4) : la ligne du RAFP ne s'écrit pas."""
+    carriere = _carriere(simulateur, 1957, 62.0, "1965", "2022-03-10")
+    pensions = [("fonction_publique_etat", 30000.0, HAUTE), ("rafp", 500.0, HAUTE)]
+    capital = reversion(simulateur.scenario_actuel, pensions, carriere, 2022,
+                        en_capital=frozenset({"rafp"}))
+    rente = reversion(simulateur.scenario_actuel, pensions, carriere, 2022)
+    assert [r.regime for r in capital.regimes] == ["fonction_publique_etat"]
+    assert [(r.regime, r.montant) for r in rente.regimes] == [
+        ("fonction_publique_etat", 15000.0), ("rafp", 250.0)]
+
+
+@pytest.mark.parametrize("primes, en_capital", [("0.02", True), ("0.2", False)])
+def test_l_echeancier_dit_quel_rafp_a_ete_verse_en_capital(contexte, primes, en_capital):
+    """Aux primes d'un cinquantième du traitement, le fonctionnaire n'a pas les
+    5 125 points du RAFP : il le touche en une fois (décret n° 2004-569,
+    article 9), et son conjoint n'en reçoit rien ; aux primes d'un
+    cinquième, une rente, dont il reçoit la moitié."""
+    sortie = contexte.simuler(Saisie.depuis_requete({
+        "naissance": "1958", "liquidation": "62", "statut": "fonctionnaire_etat",
+        "primes": primes, "conjoint": "1960", "deces": "2023-05"})).dictionnaire()
+    rafp, = [p for p in sortie["scenarios"]["actuel"]["par_regime"] if p["regime"] == "rafp"]
+    assert ("versé en capital" in rafp["detail"]) is en_capital
+    lignes = {r["regime"]: r for r in sortie["reversion"]["regimes"]}
+    assert ("rafp" in lignes) is not en_capital
+    if not en_capital:
+        assert lignes["rafp"]["montant"] == pytest.approx(lignes["rafp"]["base"] / 2)
+
+
+def test_le_rafp_compte_aux_ressources_du_regime_general(simulateur):
+    """R. 353-1, 2°, n'écarte des ressources que les réversions des régimes
+    complémentaires du régime général, des régimes agricoles, des professions
+    libérales et des indépendants : celle du RAFP, complémentaire de la
+    fonction publique, y compte, comme la pension civile."""
+    plafond = _plafond(simulateur, 2023)
+    carriere = _carriere(simulateur, 1958, 62.0, "1960", "2023-05-10", ressources=5000.0)
+    lignes = _lignes(simulateur, carriere, [
+        ("fonction_publique_etat", 30000.0), ("rafp", 1000.0), ("regime_general", 10000.0)],
+        2023)
+    assert lignes[2][2:4] == (round(plafond - 5000.0 - 15000.0 - 500.0, 2), "ecretee")
+
+
+# -- l'Ircantec -----------------------------------------------------------------------
+
+def test_l_ircantec_sert_la_moitie_a_cinquante_ans(simulateur):
+    """Arrêté du 30 décembre 1970, articles 20 et 21 : la moitié des points, à
+    partir de cinquante ans, au premier jour du mois qui suit ; le régime
+    général attend cinquante-cinq ans."""
+    carriere = _carriere(simulateur, 1955, 62.0, "1975-03-10", "2020-06-15")
+    lignes = _lignes(simulateur, carriere,
+                     [("ircantec", 3000.0), ("regime_general", 10000.0)], 2020)
+    assert [(l[0], l[2], l[4], l[5]) for l in lignes] == [
+        ("ircantec", 1500.0, "conjoints_2004", "2025-04-01"),
+        ("regime_general", 5400.0, "minimum_2026", "2030-04-01")]
+
+
+@pytest.mark.parametrize("naissances, attendu", [
+    (("2003-05", "2006-09"), "2020-07-01"),
+    (("1997-05", "2006-09"), "2025-04-01"),
+])
+def test_deux_enfants_de_moins_de_vingt_et_un_ans_levent_l_age_de_l_ircantec(
+        simulateur, naissances, attendu):
+    """Article 21 : avec deux enfants de moins de vingt et un ans à sa charge
+    au décès, le conjoint reçoit l'allocation dès le décès, à tout âge ; avec
+    un seul, il attend cinquante ans."""
+    carriere = _carriere(simulateur, 1955, 62.0, "1975-03-10", "2020-06-15",
+                         enfants=2, naissances=naissances)
+    ligne, = _lignes(simulateur, carriere, [("ircantec", 3000.0)], 2020)
+    assert ligne[5] == attendu
+
+
+@pytest.mark.parametrize("depart, mariage, deces, enfants, servie", [
+    (62.0, "2017-05", "2020-06-15", 0, False),
+    (62.0, "2016-01", "2020-06-15", 0, True),
+    (62.0, "2014-12", "2018-06-15", 0, True),
+    (52.0, "2006-06", "2009-06-15", 0, True),
+    (62.0, "2017-05", "2020-06-15", 1, True),
+])
+def test_la_duree_du_mariage_de_l_ircantec(simulateur, depart, mariage, deces, enfants,
+                                           servie):
+    """Article 20, IV : quatre ans de mariage, ou un mariage contracté deux ans
+    au moins avant la cessation des fonctions — le départ, pour le modèle — ou
+    avant les cinquante-cinq ans de l'agent ; sans durée, un enfant issu du
+    mariage. Marié après son départ, l'agent mort trois ans plus tard n'ouvre
+    rien ; marié quatre ans avant sa mort, deux ans avant son départ, ou à
+    cinquante et un ans, tout ; avec un enfant, tout."""
+    carriere = _carriere(simulateur, 1955, depart, "1960", deces, mariage=mariage,
+                         enfants=enfants)
+    ligne, = _lignes(simulateur, carriere, [("ircantec", 3000.0)], int(deces[:4]))
+    assert ligne[2:4] == ((1500.0, "servie") if servie else (0.0, "mariage"))
+
+
+def test_avant_2004_le_veuf_attend_soixante_ans_a_l_ircantec(simulateur):
+    """De 1976 à 2003, le veuf reçoit l'allocation à soixante ans, la veuve à
+    cinquante (article 20, rédactions de 1976, 1980 et 1994) ; depuis 2004, le
+    conjoint à cinquante ans."""
+    pensions = [("ircantec", 3000.0)]
+    veuf = _carriere(simulateur, 1940, 60.0, "1945-03-10", "2001-06-15", sexe="F",
+                     sexe_conjoint="H")
+    veuve = _carriere(simulateur, 1940, 60.0, "1945-03-10", "2001-06-15")
+    assert [(l[4], l[5]) for l in _lignes(simulateur, veuf, pensions, 2001)] == [
+        ("enfant_1994", "2005-04-01")]
+    assert [(l[4], l[5]) for l in _lignes(simulateur, veuve, pensions, 2001)] == [
+        ("enfant_1994", "2001-07-01")]
+    veuf_2004 = _carriere(simulateur, 1940, 60.0, "1945-03-10", "2004-06-15", sexe="F",
+                          sexe_conjoint="H")
+    assert [(l[4], l[5]) for l in _lignes(simulateur, veuf_2004, pensions, 2004)] == [
+        ("conjoints_2004", "2004-07-01")]
+
+
+# -- la complémentaire des indépendants ------------------------------------------------
+
+def test_la_rci_sert_soixante_pour_cent_a_cinquante_cinq_ans(simulateur):
+    """Règlement approuvé par l'arrêté du 9 février 2012, articles 17, 19 et
+    34 : 60 % des points, à l'âge de L. 353-1, cinquante-cinq ans, les points
+    repris en 2013 des régimes des artisans et des commerçants comme les
+    autres."""
+    carriere = _carriere(simulateur, 1955, 62.0, "1975-03-10", "2020-06-15")
+    lignes = _lignes(simulateur, carriere, [("rci", 2000.0), ("rco_artisans", 3000.0)], 2020)
+    assert [(l[0], l[2], l[3], l[4], l[5]) for l in lignes] == [
+        ("rci", 1200.0, "servie", "reglement_2013", "2030-04-01"),
+        ("rco_artisans", 1800.0, "servie", "reglement_2013", "2030-04-01")]
+
+
+def test_le_plafond_de_la_rci_compte_les_reversions_des_regimes_de_base(simulateur):
+    """Articles 17 et 35 : les ressources, appréciées comme celles de R. 353-1,
+    comptent les réversions des régimes de base ; leur dépassement de deux
+    plafonds annuels de la Sécurité sociale, 96 120 euros en 2026 (circulaire
+    Cnav n° 2026-01, § 9), réduit les réversions de la RCI à due concurrence,
+    au prorata de chacune."""
+    plafond = 2 * simulateur.macro.plafond_securite_sociale(2026)
+    assert plafond == 96120.0
+    carriere = _carriere(simulateur, 1958, 62.0, "1960", "2026-05-10",
+                         ressources=plafond - 20000.0)
+    lignes = _lignes(simulateur, carriere, [
+        ("fonction_publique_etat", 30000.0), ("rci", 4000.0), ("nric", 6000.0)], 2026)
+    # 15 000 euros de pension civile et 6 000 de réversions brutes : 1 000 de
+    # trop, imputés pour deux cinquièmes et trois cinquièmes.
+    assert [(l[0], l[2], l[3], l[4]) for l in lignes] == [
+        ("fonction_publique_etat", 15000.0, "servie", "complement_aspa_2025"),
+        ("rci", 2000.0, "ecretee", "plafond_2021"),
+        ("nric", 3000.0, "ecretee", "plafond_2021")]
+
+
 # -- ce qui n'est pas porté ----------------------------------------------------------
 
 def test_un_regime_sans_fiche_le_dit_et_un_regime_vide_ne_reverse_rien(simulateur):
     carriere = _carriere(simulateur, 1957, 62.0, "1965", "2022-03-10")
-    lignes = _lignes(simulateur, carriere, [("rafp", 500.0), ("ircantec", 0.0)], 2022)
-    assert lignes == [("rafp", 0.0, 0.0, "non_portee", None, None)]
+    lignes = _lignes(simulateur, carriere, [("cnavpl", 500.0), ("ircantec", 0.0)], 2022)
+    assert lignes == [("cnavpl", 0.0, 0.0, "non_portee", None, None)]
+
+
+def test_avant_2013_la_reversion_de_la_rci_n_est_pas_portee(simulateur):
+    """Les règlements des régimes complémentaires des artisans et des
+    commerçants d'avant 2013 ne sont pas lus : leur ligne le dit."""
+    carriere = _carriere(simulateur, 1945, 62.0, "1950", "2010-05-10")
+    assert _lignes(simulateur, carriere, [("rco_artisans", 3000.0)], 2010) == [
+        ("rco_artisans", 0.0, 0.0, "non_portee", None, None)]
 
 
 def test_sans_conjoint_pas_de_reversion(simulateur):

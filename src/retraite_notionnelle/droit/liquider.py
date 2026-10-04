@@ -590,6 +590,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # le rendement : le seuil se compare donc aux points que vaut
             # TOUT le montant, à la valeur de service de la liquidation.
             points_totaux = points
+            capital = None
             if periode.capital_seuil_points is not None:
                 valeur = valeur_du_point(moteur, 
                     periode.points_de or code, annee_liquidation)
@@ -613,6 +614,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 regime=code, montant=montant, type_calcul=periode.type_calcul,
                 detail=detail,
                 fiabilite=fiabilite_regime,
+                capital=capital,
             ))
             continue
 

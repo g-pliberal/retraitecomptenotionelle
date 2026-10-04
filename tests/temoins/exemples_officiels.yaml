@@ -1758,9 +1758,26 @@ exemples:
       2022, sans enfant de ce mariage. Le simulateur demande la durée du
       mariage par demi-années, « arrondir au chiffre inférieur » : 3 ans et
       demi. « Vous n'êtes pas éligible actuellement — Fonctionnaire de l'État -
-      retraite de base (SRE) ; retraite additionnelle (RAFP) ».
-    carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2022-10", age_debut: 22, conjoint: "1963-03-15", conjoint_sexe: F, mariage: "2022-09-15", deces: "2026-08-15", pensions_du_defunt_mensuelles: {fonction_publique_etat: 2000}}
-    attendu: {reversions_mensuelles: {fonction_publique_etat: 0}}
+      retraite de base (SRE) ; retraite additionnelle (RAFP) ». Le simulateur
+      ne demande pas la prestation du RAFP, qu'il écarte avec la pension
+      civile : on lui prête les 100 € de l'exemple suivant, le même
+      fonctionnaire, le refus ne dépendant pas du montant.
+    carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2022-10", age_debut: 22, conjoint: "1963-03-15", conjoint_sexe: F, mariage: "2022-09-15", deces: "2026-08-15", pensions_du_defunt_mensuelles: {fonction_publique_etat: 2000, rafp: 100}}
+    attendu: {reversions_mensuelles: {fonction_publique_etat: 0, rafp: 0}}
+    ecart_connu:
+      modele: {reversions_mensuelles: {fonction_publique_etat: 0, rafp: 50}}
+      explication: >-
+        Le simulateur applique au RAFP la condition de durée du mariage de
+        L. 39 du code des pensions civiles. Ni l'article 10 du décret
+        n° 2004-569, ni les articles 4 et 6 de l'arrêté du 26 novembre 2004,
+        lus dans l'index LEGI le 4 octobre 2026, ni la fiche pratique de
+        l'ERAFP n'en posent : « Le conjoint survivant bénéficie d'une
+        réversion sans aucune condition d'âge », et celui qui n'a pas de
+        réversion d'un régime de base de la fonction publique demande la
+        sienne à la Caisse des dépôts. Le modèle suit le texte et sert la
+        moitié ; à confirmer auprès de l'ERAFP.
+      fiche: reversion_rafp
+      depuis: "2026-10-04"
 
   - id: ur_reversion_etat_mariage_4_ans
     source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt fonctionnaire de l'État", verifie_le: "2026-10-01", simulateur: union_retraite_reversion, saisie: "défunt fonctionnaire de l'État, 2 000 € nets et 100 € de RAFP ; mariage de 4 ans, sans enfant"}
@@ -1768,10 +1785,10 @@ exemples:
       Le même fonctionnaire, épousé le 14 août 2022 : quatre ans de mariage au
       décès, sans enfant commun ; 2 000 € nets de pension civile et 100 € de
       RAFP. « Vous êtes éligible […] Montant estimatif de votre réversion (net
-      mensuel) : 1050 € », la moitié de chacune. La RAFP, que le modèle ne
-      sert pas encore en réversion, n'est pas comparée.
-    carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2022-10", age_debut: 22, conjoint: "1963-03-15", conjoint_sexe: F, mariage: "2022-08-14", deces: "2026-08-15", pensions_du_defunt_mensuelles: {fonction_publique_etat: 2000}}
-    attendu: {reversions_mensuelles: {fonction_publique_etat: 1000}}
+      mensuel) : 1050 € », la moitié de chacune : 1 000 € de la pension
+      civile, 50 € du RAFP.
+    carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2022-10", age_debut: 22, conjoint: "1963-03-15", conjoint_sexe: F, mariage: "2022-08-14", deces: "2026-08-15", pensions_du_defunt_mensuelles: {fonction_publique_etat: 2000, rafp: 100}}
+    attendu: {reversions_mensuelles: {fonction_publique_etat: 1000, rafp: 50}}
 
   # Le 4 octobre 2026, six saisies de plus, par Claude, sur un lot que le
   # propriétaire a approuvé, la prédiction du modèle écrite avant chacune. Le
@@ -1786,11 +1803,10 @@ exemples:
       avant le décès, et ils avaient un enfant. Le simulateur ne demande alors
       ni l'âge ni les ressources : « Vous êtes éligible », 900 € de la CNRACL
       et 30 € du RAFP, « Montant estimatif de votre réversion (net mensuel) :
-      930 € ». L'enfant commun lève la condition de durée du mariage. La
-      réversion du RAFP, la moitié aussi, que le modèle ne sert pas encore,
-      n'est pas comparée.
+      930 € ». L'enfant commun lève la condition de durée du mariage à la
+      CNRACL ; le RAFP, qui n'en pose pas, sert la moitié aussi.
     carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2022-07", age_debut: 22, nombre_enfants: 1, naissances_enfants: ["2024-05"], conjoint: "1975-03-15", conjoint_sexe: F, mariage: "2025-08-01", deces: "2026-08-15", pensions_du_defunt_mensuelles: {cnracl: 1800, rafp: 60}}
-    attendu: {reversions_mensuelles: {cnracl: 900}}
+    attendu: {reversions_mensuelles: {cnracl: 900, rafp: 30}}
 
   - id: ur_reversion_prive_ressources_plafond_2024
     source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié du secteur privé", verifie_le: "2026-10-04", simulateur: union_retraite_reversion, saisie: "défunt salarié du privé, 700 € nets d'Agirc-Arrco ; survivante née le 15 mars 1960, seule, ressources au-dessus de 6 058 € sur trois mois et de 24 232 € sur douze"}
@@ -1855,10 +1871,10 @@ exemples:
       des indépendants ; sa veuve, née le 15 mars 1964, vit seule de 12 000 €
       par an. Le simulateur ne demande que sa date de naissance et ses
       ressources : « Vous êtes éligible », 432 € de la base et 120 € de la RCI,
-      552 € en tout. La RCI sert 60 % ; le modèle, qui ne la sert pas encore
-      en réversion, n'est comparé que sur la base.
+      552 € en tout. La RCI sert 60 %, loin de son plafond de ressources, deux
+      plafonds annuels de la Sécurité sociale.
     carriere: {naissance: "1958-06-15", sexe: H, affiliation: artisan, liquidation: "2020-07", age_debut: 18, conjoint: "1964-03-15", conjoint_sexe: F, mariage: "1986-06-14", deces: "2026-08-15", ressources_conjoint: 12000, pensions_du_defunt_mensuelles: {regime_general: 800, rci: 200}}
-    attendu: {reversions_mensuelles: {regime_general: 432}}
+    attendu: {reversions_mensuelles: {regime_general: 432, rci: 120}}
 
   - id: ur_reversion_contractuel_ircantec_52_ans
     source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt contractuel de droit public", verifie_le: "2026-10-04", simulateur: union_retraite_reversion, saisie: "défunt contractuel de droit public, 300 € nets d'Ircantec ; mariage de 5 ans et plus, sans enfant commun ; survivante née le 15 mars 1974, sans deux enfants à charge"}
@@ -1870,11 +1886,11 @@ exemples:
       l'Ircantec, puis seulement sa pension : « Vous êtes éligible —
       Contractuel de droit public - retraite complémentaire (IRCANTEC) […]
       150 € » ; pour le régime général, « vous n'avez pas encore atteint l'âge
-      requis (55 ans) ». L'Ircantec sert donc déjà la moitié à 52 ans ; le
-      modèle ne la sert pas encore en réversion. La réversion de base part le
-      mois qui suit les 55 ans.
+      requis (55 ans) ». L'Ircantec sert donc déjà la moitié à 52 ans,
+      l'arrêté du 30 décembre 1970 l'ouvrant à cinquante : le mois qui suit le
+      décès. La réversion de base part le mois qui suit les 55 ans.
     carriere: {naissance: "1958-06-15", sexe: H, affiliation: contractuel_public, liquidation: "2020-07", age_debut: 22, conjoint: "1974-03-15", conjoint_sexe: F, mariage: "1998-06-13", deces: "2026-08-15", pensions_du_defunt_mensuelles: {regime_general: 1000, ircantec: 300}}
-    attendu: {dates_d_effet_de_la_reversion: {regime_general: "2029-04-01"}}
+    attendu: {dates_d_effet_de_la_reversion: {regime_general: "2029-04-01", ircantec: "2026-09-01"}, reversions_mensuelles: {ircantec: 150}}
 
   # ---- Union Retraite : le simulateur d'âge légal, saisi par Claude ----------
   # Le 4 octobre 2026, sur un lot de deux saisies que le propriétaire a

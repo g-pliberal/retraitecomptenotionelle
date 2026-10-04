@@ -275,8 +275,9 @@ class Echeancier:
         deces = Evenement(id=f"deces_{carriere.personne}", date=carriere.deces,
                           personnes=(carriere.personne,), vise={}, sorte="deces")
         self._inscrire(deces, deces.id, "evenement", deces, deces.date)
-        annee, pensions = self._pensions_au_deces(carriere, carriere.deces)
-        self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee)
+        annee, pensions, en_capital = self._pensions_au_deces(carriere, carriere.deces)
+        self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
+                                              en_capital=en_capital)
         survivant = carriere.conjoint.personne
         evenement = Evenement(id=f"reversion_{survivant}", date=_reversion.mois_suivant(
             carriere.deces), personnes=(survivant,), vise={"regimes": "du défunt"},
@@ -294,16 +295,17 @@ class Echeancier:
         depart = (f"{carriere.date_liquidation.annee:04d}"
                   f"-{carriere.date_liquidation.mois:02d}-01")
         deces = max(depart, f"{self.simulateur.parametres.annee_courante:04d}-01-01")
-        annee, pensions = self._pensions_au_deces(carriere, deces)
+        annee, pensions, en_capital = self._pensions_au_deces(carriere, deces)
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
-                                              deces_suppose=deces)
+                                              deces_suppose=deces, en_capital=en_capital)
 
-    def _pensions_au_deces(self, carriere: Carriere,
-                           deces: str) -> tuple[int, list[tuple[str, float, Fiabilite]]]:
+    def _pensions_au_deces(self, carriere: Carriere, deces: str) -> tuple[
+            int, list[tuple[str, float, Fiabilite]], frozenset[str]]:
         """Les pensions du défunt menées à l'année du décès — l'année courante
         pour un décès à venir, où s'arrêtent les revalorisations publiées ;
-        jamais avant le départ, dont les montants sont les euros —, et cette
-        année."""
+        jamais avant le départ, dont les montants sont les euros —, cette
+        année, et les régimes qui lui ont versé leur droit en capital avant
+        son décès."""
         annee = max(carriere.annee_liquidation,
                     min(int(deces[:4]), self.simulateur.parametres.annee_courante))
         vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
@@ -311,11 +313,14 @@ class Echeancier:
                    for r in vivante.regimes]
         # Une pension qu'un régime ne sert pas encore au décès est celle que le
         # défunt « eût obtenue » : la réversion la lit, au montant du départ
-        # déclaré (:mod:`.droit.departs`).
+        # déclaré (:mod:`.droit.departs`). Celle qu'il sert déjà, quand elle
+        # a été versée en une fois, est soldée : le RAFP ne la reverse pas.
         vues = {regime for regime, _, _ in servies}
+        en_capital = frozenset(p.regime for p in self.au_depart.pensions_par_regime
+                               if p.capital is not None and p.regime in vues)
         return annee, servies + [(p.regime, p.montant, p.fiabilite)
                                  for p in self.au_depart.pensions_par_regime
-                                 if p.regime not in vues]
+                                 if p.regime not in vues], en_capital
 
     def _progresser(self, carriere: Carriere) -> None:
         """La retraite progressive que la carrière demande : examinée, et,
