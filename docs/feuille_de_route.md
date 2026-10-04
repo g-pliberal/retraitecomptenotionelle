@@ -812,6 +812,45 @@ un réglage change le modèle, un regard ne vaut que pour sa page
    d'être publié sur le site d'un parti. Un repère, pas un avis juridique :
    articles cités de mémoire, à lire.
 
+### 146. Le musée des horreurs : les cas les plus loufoques des retraites, d'hier et d'aujourd'hui, en une page — `à faire`
+
+**Demande**, le 4 octobre 2026 : « Je veux que tu prépares une page avec les
+cas les plus dingues qu'on ait vu. Une sorte de musée des horreurs. Cette page
+aurait pour but de faire rire ou pleurer les visiteurs en voyant le plus
+loufoque dans les systèmes actuels ou passés de retraite en France. Ne fait
+pas de changement pour l'instant, je veux juste que tu documentes. » Puis, la
+recherche faite : « Est-ce que tes recherches ont été commit ? Si non, fait
+le ». Elle naît `à faire` : rien n'en est construit, et elle attend le tri du
+propriétaire.
+
+**Ce que la recherche a établi, le 4 octobre 2026.** Cinquante-six pièces en
+sept salles — les seuils, les cotisations perdues, les régimes à part, les
+veuves, les cadeaux, les fantômes, les calculs impossibles —, au catalogue
+`docs/musee_des_horreurs.md`. Les fiches des régimes et des règles ont été
+balayées par un agent, les documents à la main ; chaque pièce retenue a été
+relue dans son fichier, qui porte sa propre lecture datée du texte officiel,
+et aucune sur Légifrance. Le propriétaire trie dans une copie de travail, un
+document Claude privé dont le catalogue donne l'adresse. Deux pièces
+s'appuient sur une source faible : les assemblées, hors Journal officiel, et
+les âges de réversion de l'Agirc avant 1990, en version supposée.
+
+**Ce sur quoi la page s'appuierait, déjà là.** Les fiches citées, pour le
+droit ; le paquet, pour les chiffres que le dépôt tient en données ; le
+catalogue des affirmations, dont l'état `hors_modele` exige déjà la source
+dans la page même, comme sur la page Risque ; les cartes de la page Partager.
+
+**Les étapes, une par session.**
+
+1. *Le tri*, par le propriétaire : une vingtaine de pièces, deux ou trois par
+   salle, et la place de la page — sous « Faire connaître », ce qui est
+   recommandé, ou en section repliée de « Pourquoi changer ».
+2. *La relecture* des pièces retenues, sur Légifrance et dans la circulaire
+   qui les applique, au droit du jour ; les chiffres datés se redatent.
+3. *La page* : `musee(contexte)` dans `pages.js`, ses entrées dans `TITRES`,
+   `DESCRIPTIONS` et `GROUPES_NAVIGATION`, ses phrases fortes au catalogue des
+   affirmations, son témoin, son budget de mots, ses incises et le test du
+   menu. Le détail est à la fin du catalogue.
+
 ---
 
 ## Les actions en cours

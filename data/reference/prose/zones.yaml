@@ -328,6 +328,11 @@ fichiers:
   # leur date de lecture, et la page Risque fait foi pour ceux du modèle.
   docs/risque_de_defaut.md:
     defaut: recit
+  # Le catalogue du musée des horreurs, relevé le 4 octobre 2026 pour
+  # l'action 146 : ses pièces ont été lues dans les fichiers du dépôt ce
+  # jour-là, et la page les relira au droit du jour où elle s'écrira.
+  docs/musee_des_horreurs.md:
+    defaut: recit
   # Le procès-verbal du sondage des 164 adresses remises le 22 septembre 2026,
   # et la méthode qu'il a fondée. Ses chiffres sont ceux de ce jour-là — ce
   # qu'une session a obtenu de chaque hôte —, et un certificat réparé les
