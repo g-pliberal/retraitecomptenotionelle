@@ -1426,13 +1426,13 @@ réversion.
 **Reprise, au 4 octobre 2026.** Fait : le plafond du RAFP, les points
 gratuits de la RCO, l'Arrco des cultes, le salaire annuel moyen et les
 fractions de pension de la CAVIMAC, le routage calédonien (notes du
-3 octobre) ; les ouvriers de l'État hors du RAFP, par l'action 133. Reste,
-dans cet ordre : le barème de l'Ircantec pour enfants ; les deux exceptions au
-plafond du RAFP (GIPA, compte épargne-temps) et la cotisation volontaire
-outre-mer ; les 66 points gratuits des conjoints, aides familiaux et
-collaborateurs ; les huit taux de l'Arrco des cultes ; les cotisations
-forfaitaires de la CAVIMAC de 1979 à 1997. Commencer par l'Ircantec (point 4
-de « Ce que la relecture a trouvé »).
+3 octobre) ; les ouvriers de l'État hors du RAFP, par l'action 133 ; le
+barème de l'Ircantec pour enfants (note du 4 octobre). Reste, dans cet ordre :
+les deux exceptions au plafond du RAFP (GIPA, compte épargne-temps) et la
+cotisation volontaire outre-mer ; les 66 points gratuits des conjoints, aides
+familiaux et collaborateurs ; les huit taux de l'Arrco des cultes ; les
+cotisations forfaitaires de la CAVIMAC de 1979 à 1997. Commencer par les
+exceptions au plafond du RAFP (fiche `rafp_assiette_plafond`, ses `a_relire`).
 
 **Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
 régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
@@ -1626,6 +1626,24 @@ L'action 133 les en a sortis le 28 septembre, sur l'article 76 de la loi
 n° 2003-775 et la page « Actif » de l'ERAFP (fiche `rafp_beneficiaires`) ;
 aucun des quatorze témoins d'ouvrier de l'État n'a plus de RAFP. La liste
 ci-dessous l'ignorait.
+
+**Puis, le 4 octobre 2026, le barème de l'Ircantec pour enfants.** « Le total
+des points de retraite est majoré de : 10 % pour trois enfants ; 15 % pour
+quatre enfants ; 20 % pour cinq enfants ; 25 % pour six enfants ; 30 % pour
+sept enfants et au-delà » : l'article 15 de l'arrêté du 30 décembre 1970, une
+seule rédaction depuis 1971, lu dans l'index LEGI, et la page de l'Ircantec,
+qui le redit sans plafond. Le modèle servait 10 % à tous. Chaque période de
+`ircantec.yaml` porte désormais le barème (`taux_majoration_enfants`), que les
+deux moteurs lisaient déjà pour les régimes spéciaux : rien à changer au code.
+Fiche `ircantec_majoration_enfants`. L'exemple de la caisse — sept enfants,
+2 500 points, 750 de plus — entre aux exemples officiels, avec une grandeur
+nouvelle, `majorations_enfants_des_regimes`, la majoration de chaque régime
+rapportée à sa pension ; l'Ircantec rejoint les éditeurs admis. Aucun témoin
+n'avait plus de trois enfants : deux naissent, une contractuelle mère de
+quatre et de sept enfants, qui gagne 633 € et 2 534 € par an (+ 1,3 et
++ 5,3 %). Reste hors du modèle la bonification de l'article 15 bis, des points
+gratuits par enfant pour qui a interrompu son activité, que le modèle ne
+connaît pas.
 
 **Ce qui reste**, dans l'ordre où le prendre : les fractions de pension de la
 CAVIMAC d'avant 1979, validées gratuitement, et de 1979 à 1997, portées au

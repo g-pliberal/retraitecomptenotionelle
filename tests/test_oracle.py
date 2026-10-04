@@ -1665,6 +1665,18 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         part = sum(montant for regime, montant in majoration.par_regime
                    if regime in base)
         return part / sum(base.values())
+    if cle == "majorations_enfants_des_regimes":
+        # La majoration que chaque régime sert, rapportée à SA pension : le
+        # barème propre d'une complémentaire, que la caisse publie en
+        # pourcentage de ses points (l'Ircantec, article 15 de son arrêté).
+        majoration = next(
+            (a for a in resultat.avantages_appliques
+             if a.code == "majoration_enfants"), None)
+        if majoration is None:
+            return "aucune majoration pour enfants servie"
+        pensions = {p.regime: p.montant for p in resultat.pensions_par_regime}
+        return {regime: montant / pensions[regime]
+                for regime, montant in majoration.par_regime if pensions.get(regime)}
     if cle == "non_ouverte_un_trimestre_plus_tot":
         _, plus_tot = _carriere_exemple(simulateur, exemple, decalage_mois=-3)
         return plus_tot.motif_ouverture == "non_ouverte"
@@ -1844,6 +1856,7 @@ TOLERANCES = {
     "taux_liquidation": {"abs": 1e-6},
     "age_ouverture": {},
     "majoration_enfants_sur_pensions": {"abs": 1e-9},
+    "majorations_enfants_des_regimes": {"abs": 1e-9},
     "pension_base_sur_sam": {"abs": 1e-9},
     "coefficients_des_regimes": {"abs": 1e-9},
     "pension_regime_general_mensuelle": {"abs": 0.05},
@@ -1869,6 +1882,10 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         return mesure == f"{_mois(valeur).annee}-{_mois(valeur).mois:02d}"
     if isinstance(mesure, str) and cle in TOLERANCES:
         return False  # la mesure dit pourquoi elle n'en est pas une
+    if cle == "majorations_enfants_des_regimes":
+        # Un régime nommé que le modèle ne majore pas n'a pas de taux.
+        return all(regime in mesure and mesure[regime] == pytest.approx(taux, abs=1e-9)
+                   for regime, taux in valeur.items())
     if cle == "coefficients_des_regimes":
         # Un régime nommé que le modèle ne sert pas n'a pas de coefficient.
         return all(regime in mesure and mesure[regime] == pytest.approx(c, abs=1e-9)
@@ -2006,7 +2023,7 @@ def test_le_temoin_des_exemples_officiels_est_source():
             "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
             "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL", "CNIEG",
             "Agirc-Arrco", "CRPCEN", "CLEISS", "Direction de la sécurité sociale",
-            "Union Retraite", "Audiens",
+            "Union Retraite", "Audiens", "Ircantec",
         ), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]

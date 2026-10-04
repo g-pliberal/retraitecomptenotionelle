@@ -1,0 +1,103 @@
+schema_version: 1
+id: ircantec_majoration_enfants
+intitule: >-
+  Le total des points de retraite de l'Ircantec est majoré de 10 % pour trois enfants,
+  15 % pour quatre, 20 % pour cinq, 25 % pour six et 30 % pour sept et au-delà, sans
+  plafond.
+domaine: enfants
+regimes: [ircantec]
+etape: completer_tous_regimes
+face: droit
+etat: conforme
+lit:
+- le nombre d'enfants de l'assuré, nés ou élevés neuf ans au moins avant leurs seize ans
+- la pension de l'Ircantec, avant la majoration
+- regimes/ircantec.yaml (`taux_majoration_enfants` de chaque période)
+ecrit:
+- la majoration pour enfants que sert l'Ircantec, dans celle de tous les régimes
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_l_ircantec
+  statut: lue
+  textes:
+  - id: LEGITEXT000006061718
+    reference: >-
+      décret n° 70-1277 du 23 décembre 1970 portant création d'un régime de retraites
+      complémentaire des assurances sociales, qui remplace au 1er janvier 1971 les
+      régimes des décrets n° 51-1445 (IPACTE) et n° 59-1569 (IGRANTE) (article 12)
+    lu_le: 2026-10-04
+  bornes:
+    liquidation.date_effet: [null, 1971-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      l'Ircantec n'existe pas encore ; les pensions de l'IPACTE et de l'IGRANTE suivent
+      leurs règlements, que le dépôt n'a pas lus
+  exemples: aucun trouvé
+- id: depuis_1971
+  statut: lue
+  textes:
+  - id: LEGIARTI000006381603
+    reference: >-
+      arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime de
+      retraites complémentaire des assurances sociales institué par le décret du
+      23 décembre 1970, article 15, seule rédaction depuis le 9 février 1971 (index LEGI
+      du dépôt)
+    citation: >-
+      « Si l'agent a eu au moins trois enfants, le total des points de retraite est majoré
+      de : 10 % pour trois enfants ; 15 % pour quatre enfants ; 20 % pour cinq enfants ;
+      25 % pour six enfants ; 30 % pour sept enfants et au-delà. »
+    lu_le: 2026-10-04
+  bornes:
+    liquidation.date_effet: [1971-01-01, null]
+  contenu:
+    bareme: >-
+      10 % pour trois enfants, 5 % de plus par enfant jusqu'à 30 % pour sept et au-delà,
+      sur le total des points, sans plafond
+    beneficiaires: >-
+      les parents, et les allocataires qui ont élevé l'enfant et l'ont eu à leur charge,
+      ou à celle de leur conjoint, neuf ans au moins avant ses seize ans
+  exemples: [ircantec_majoration_sept_enfants]
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-01
+  lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, articles 15 et 15 bis dans toutes leurs rédactions, lus
+      dans l'index LEGI du dépôt
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      Ircantec, « Le nombre d'enfants » (3 enfants ou plus) : 10 % pour 3 enfants, 15 %
+      pour 4, 20 % pour 5, 25 % pour 6, 30 % pour 7 et plus, du « total des points de
+      retraite » ; sept enfants et 2 500 points donnent 750 points de plus, 3 250 en tout
+    url: https://www.ircantec.retraites.fr/actif/acquisition-droits/enfants/3-enfants-ou-plus
+    date: 2026-10-04
+  a_relire:
+  - >-
+    La bonification de points de l'article 15 bis, autre règle que celle-ci : par enfant
+    élevé, la moyenne annuelle des points acquis, au prorata de l'interruption d'activité
+    dans la limite d'une année, à qui a un an de services (aux femmes affiliées de 1976
+    à 1992, à qui a interrompu son activité depuis). Le modèle ne connaît pas les
+    interruptions pour élever un enfant ; elle n'est pas servie.
+  - >-
+    Les points de l'IGRANTE et de l'IPACTE, que l'Ircantec reprend en 1971 et majore avec
+    les siens ; une pension prise avant 1971 suit les règlements de ces deux institutions,
+    non lus, et le modèle ne la majore pas.
+code:
+  python:
+  - droit/completer.py, _taux_majoration_enfants (le barème propre d'une période)
+  javascript:
+  - droit/completer.js, tauxMajorationEnfants
+  parametres:
+  - regimes/ircantec.yaml (`taux_majoration_enfants`)
+  tests:
+  - tests/temoins/exemples_officiels.yaml, ircantec_majoration_sept_enfants
+  - les témoins `ircantec_quatre_enfants` et `ircantec_sept_enfants`
+effet: >-
+  Les affiliés de l'Ircantec qui ont eu quatre enfants ou plus : leur pension de
+  l'Ircantec était majorée de 10 % au lieu de 15 à 30 %. La contractuelle des témoins,
+  12 668 € d'Ircantec par an, y gagne 633 € avec quatre enfants (+ 1,3 % de sa pension)
+  et 2 534 € avec sept (+ 5,3 %). Aucun témoin d'avant n'avait plus de trois enfants.

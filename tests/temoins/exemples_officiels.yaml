@@ -61,6 +61,9 @@
 #     23 septembre 2026, la grandeur rapportait la majoration de TOUS les
 #     régimes à toutes les pensions, Agirc-Arrco compris, dont les points
 #     n'ont pas tous le même taux (accord du 17 novembre 2017, article 94).
+#   majorations_enfants_des_regimes — pour chaque régime nommé, la majoration
+#     pour enfants qu'il sert, rapportée à sa pension : le barème propre d'un
+#     régime complémentaire, que la caisse publie en pourcentage des points ;
 #   coefficients_des_regimes — pour chaque régime en points nommé, le
 #     coefficient d'anticipation ou de majoration que le scénario 1 applique
 #     à sa pension, 1 s'il n'en applique aucun. C'est ce que les sections
@@ -800,6 +803,21 @@ exemples:
       fiche arrondit à la centaine.
     carriere: {naissance: "1969-07", sexe: H, affiliation: mineur, liquidation: "2024-07", age_debut: 25}
     attendu: {trimestres_valides: 120, liquidation_ouverte: true, pensions_annuelles_des_regimes: {mines: 16347.32}}
+
+  # ---- Ircantec ------------------------------------------------------------
+  # La page de la caisse sur les enfants, lue le 4 octobre 2026 (action 119) :
+  # le barème de l'article 15 de l'arrêté du 30 décembre 1970, que le modèle
+  # servait au taux commun de 10 %.
+  - id: ircantec_majoration_sept_enfants
+    source: {editeur: "Ircantec", reference: "ircantec.retraites.fr, Actif, « Le nombre d'enfants », 3 enfants ou plus", verifie_le: "2026-10-04"}
+    enonce: >-
+      Le total des points de retraite est majoré de 10 % pour 3 enfants, 15 %
+      pour 4, 20 % pour 5, 25 % pour 6 et 30 % pour 7 et plus : avec 7 enfants
+      et 2 500 points acquis, 750 points de plus, 3 250 points en tout. La
+      carrière d'exemple : une contractuelle du public, mère de sept enfants,
+      partie au taux plein ; seul se compare le taux de la majoration.
+    carriere: {naissance: "1962-05", sexe: F, affiliation: contractuel_public, liquidation: "2029-05", age_debut: 22, nombre_enfants: 7}
+    attendu: {majorations_enfants_des_regimes: {ircantec: 0.30}}
 
   # ---- ENIM (régime des marins) ------------------------------------------
   # Les deux pages que l'Établissement national des invalides de la marine

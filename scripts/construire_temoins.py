@@ -1155,6 +1155,14 @@ def _cas() -> list[dict]:
         "enfants": "3", "sexe": "F",
     }))
     cas.append(("enfants", {"enfants": "3", "sexe": "F"}))
+    # L'Ircantec majore le total de ses points de 10 % pour trois enfants, 5 %
+    # de plus par enfant jusqu'à 30 % pour sept (article 15 de l'arrêté du
+    # 30 décembre 1970) : le modèle servait 10 % à toutes. Deux contractuelles
+    # du public, mères de quatre et de sept enfants.
+    cas.append(("ircantec_quatre_enfants", {
+        "statut": "contractuel_public", "enfants": "4", "sexe": "F"}))
+    cas.append(("ircantec_sept_enfants", {
+        "statut": "contractuel_public", "enfants": "7", "sexe": "F"}))
 
     # Les trimestres accordés au titre des enfants ne dépendent pas du seul
     # nombre d'enfants : la MDA n'existe pas avant 1972, elle vaut un an par
