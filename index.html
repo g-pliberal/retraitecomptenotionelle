@@ -2357,9 +2357,32 @@ function poserBloc(dessin, bloc, x, y) {
  * deux gestes, un outil, et une image dont la signature partait au premier
  * rognage. Elle se compose maintenant ici, aux mêmes dimensions, à partir de ce
  * que la feuille de style dit de son aperçu.
+ *
+ * Sur un téléphone, les cartes de « Le saviez-vous ? » se LISENT dans un autre
+ * format que celui de l'image : à la largeur de l'écran, en tailles de
+ * lecture. Le temps de la composer, la carte reprend celui de l'image — la
+ * classe `en-image` lui rend ses 36 rem et son 16/9 —, et le quitte avant que
+ * l'écran ne se redessine.
  */
 async function imageDeCarteAPublier(affiche) {
   await polices();
+  const cadreCarte = affiche.closest(".cadre-carte");
+  cadreCarte?.classList.add("en-image");
+  let composee;
+  try {
+    composee = dessinerCarteAPublier(affiche);
+  } finally {
+    cadreCarte?.classList.remove("en-image");
+  }
+  if (!composee) { return null; }
+  const { toile, dessin, hauteur, couleur } = composee;
+  filigrane(dessin, LARGEUR_IMAGE, hauteur, couleur);
+  return new Promise((rendre) => toile.toBlob(rendre, "image/png"));
+}
+
+/** Le fond et les textes d'une carte à publier, sans le filigrane : celui-ci
+ * se pose en dernier, à l'export, comme sur l'image d'un graphique. */
+function dessinerCarteAPublier(affiche) {
   const cadre = affiche.getBoundingClientRect();
   if (!cadre.width) { return null; }
   const echelle = LARGEUR_IMAGE / cadre.width;
@@ -2415,8 +2438,7 @@ async function imageDeCarteAPublier(affiche) {
     y = poserBloc(dessin, bloc, marge, y + (rang ? bloc.marge : 0));
   });
 
-  filigrane(dessin, LARGEUR_IMAGE, hauteur, style.color);
-  return new Promise((rendre) => toile.toBlob(rendre, "image/png"));
+  return { toile, dessin, hauteur, couleur: style.color };
 }
 
 /** Le conteneur d'une barre de partage : la carte d'un graphique, ou celle
@@ -2468,8 +2490,10 @@ function texteDeLaCarte(carte) {
   // L'adresse d'un graphique est celle de la page où le lecteur était : elle la
   // rouvre, ce qui est tout l'intérêt d'un lien dans un message. Une carte à
   // publier, elle, renvoie au simulateur — nul ne clique pour arriver sur une
-  // page de cartes à publier.
-  const adresse = affiche
+  // page de cartes à publier. Sauf celles de « Le saviez-vous ? », que la page
+  // marque : qui doute d'une règle doit trouver, en cliquant, le texte qui la
+  // fonde, et ce texte est sous la carte.
+  const adresse = affiche && !carte.closest("[data-partage-ici]")
     ? `${location.origin}${location.pathname}#/simuler`
     : location.href;
   const pied = `${adresse} ${SIGNATURE}`;

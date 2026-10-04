@@ -2456,7 +2456,7 @@ Rien ne s'y efface.
 
 | Champ | Ce qu'il porte | Défaut |
 |---|---|---|
-| `adresses` | les adresses du site : `#/simuler`, `#/simuler?…`, `#/cout`, `#/risque`, `#/partager`, `#/cas-types`, `#/avantages`, `#/methode`, et celles qui restent lues après une refonte (`#/trajectoire`, `#/donnees`, `#/?…`) | — |
+| `adresses` | les adresses du site : `#/simuler`, `#/simuler?…`, `#/cout`, `#/risque`, `#/partager`, `#/saviez-vous`, `#/cas-types`, `#/avantages`, `#/methode`, et celles qui restent lues après une refonte (`#/trajectoire`, `#/donnees`, `#/?…`) | — |
 | `entree` | les paramètres d'une simulation dans l'adresse (`naissance`, `sexe`, `statut`, `debut`, `liquidation`…, la liste que le site écrit), chacun avec son format | un paramètre ajouté a une valeur par défaut, qui laisse les anciennes adresses donner le même résultat |
 | `sortie` | ce qu'une simulation rend : les pensions de chaque scénario en composantes, le relevé, les présomptions, les hypothèses, les empreintes | — |
 | `theme` | les variables de thème (couleurs, polices) qu'un hôte peut redéfinir ; les sélecteurs internes n'en font pas partie | — |

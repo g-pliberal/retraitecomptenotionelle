@@ -70,8 +70,12 @@ export const GROUPES_NAVIGATION = [
   // Partager n'est ni une réponse ni une preuve : c'est ce qu'on fait APRÈS
   // avoir lu. La barre de partage de chaque graphique y renvoie déjà sans
   // passer par ici ; la page tient la liste complète des cartes, pour qui les
-  // veut toutes.
-  ["Faire connaître", [["/partager", "Partager"]]],
+  // veut toutes. « Le saviez-vous ? » la rejoint le 4 octobre 2026 : douze
+  // règles du système actuel, chacune une carte à publier avec sa source, et
+  // non un onglet de plus en tête, que la refonte du 23 septembre a voulue à
+  // quatre.
+  ["Faire connaître", [["/partager", "Partager"],
+    ["/saviez-vous", "Le saviez-vous ?"]]],
   // HUIT PAGES, ET NON PLUS DIX, depuis le 23 septembre 2026 : « Cumul versé »
   // redisait un dépliant des résultats, et « Sources » est devenue la fin de la
   // page Méthode. Leurs adresses mènent là où leur contenu est allé — voir

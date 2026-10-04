@@ -16477,3 +16477,85 @@ plafonds. Cinq témoins nouveaux (`preretraite_fne_avant_1984`,
 `chomage_apres_65_ans_avant_1983`, `chomage_coupe_en_avril_1983`) et quatre
 tests. Restent le décret n° 82-991 et les règlements de l'Unédic d'avant 1983,
 hors de l'index, et les départements d'outre-mer.
+
+### 146. Le musée des horreurs : les cas les plus loufoques des retraites, d'hier et d'aujourd'hui, en une page — `fait`
+
+**Demande**, le 4 octobre 2026 : « Je veux que tu prépares une page avec les
+cas les plus dingues qu'on ait vu. Une sorte de musée des horreurs. Cette page
+aurait pour but de faire rire ou pleurer les visiteurs en voyant le plus
+loufoque dans les systèmes actuels ou passés de retraite en France. Ne fait
+pas de changement pour l'instant, je veux juste que tu documentes. » Puis, la
+recherche faite : « Est-ce que tes recherches ont été commit ? Si non, fait
+le ». Elle naît `à faire` : rien n'en est construit, et elle attend le tri du
+propriétaire.
+
+**Ce que la recherche a établi, le 4 octobre 2026.** Cinquante-six pièces en
+sept salles — les seuils, les cotisations perdues, les régimes à part, les
+veuves, les cadeaux, les fantômes, les calculs impossibles —, au catalogue
+`docs/musee_des_horreurs.md`. Les fiches des régimes et des règles ont été
+balayées par un agent, les documents à la main ; chaque pièce retenue a été
+relue dans son fichier, qui porte sa propre lecture datée du texte officiel,
+et aucune sur Légifrance. Le propriétaire trie dans une copie de travail, un
+document Claude privé dont le catalogue donne l'adresse. Deux pièces
+s'appuient sur une source faible : les assemblées, hors Journal officiel, et
+les âges de réversion de l'Agirc avant 1990, en version supposée.
+
+**Ce sur quoi la page s'appuierait, déjà là.** Les fiches citées, pour le
+droit ; le paquet, pour les chiffres que le dépôt tient en données ; le
+catalogue des affirmations, dont l'état `hors_modele` exige déjà la source
+dans la page même, comme sur la page Risque ; les cartes de la page Partager.
+
+**Les étapes, une par session.**
+
+1. *Le tri*, par le propriétaire : une vingtaine de pièces, deux ou trois par
+   salle, et la place de la page — sous « Faire connaître », ce qui est
+   recommandé, ou en section repliée de « Pourquoi changer ».
+2. *La relecture* des pièces retenues, sur Légifrance et dans la circulaire
+   qui les applique, au droit du jour ; les chiffres datés se redatent.
+3. *La page* : `musee(contexte)` dans `pages.js`, ses entrées dans `TITRES`,
+   `DESCRIPTIONS` et `GROUPES_NAVIGATION`, ses phrases fortes au catalogue des
+   affirmations, son témoin, son budget de mots, ses incises et le test du
+   menu. Le détail est à la fin du catalogue.
+
+**La page, le 4 octobre 2026 : « Le saviez-vous ? ».** « Je veux qu'on ajoute
+la page avec le musée des horreurs qu'on a analysé cette nuit et ce matin.
+Renomme cela autrement, car sinon on va nous prendre au dépourvu
+politiquement. Il faut que ce soit quelque chose de visuel [...] il faut que
+ce soit digeste [...]. Il faut bien évidemment regarder les sources
+officielles car sinon on pourrait nous dire que l'on a menti. » Les trois
+étapes en une session, à cette demande. La copie de travail du propriétaire
+n'avait aucun verdict : le tri est celui de la session.
+
+- *Le nom* : « Le saviez-vous ? », à l'adresse `/saviez-vous`, sous « Faire
+  connaître » à côté de Partager. Un titre qui informe ne prête pas le flanc
+  comme un titre qui se moque ; les étiquettes rire, larmes et rire jaune du
+  catalogue ne sont pas reprises.
+- *Le tri* : douze pièces, trois par thème. Un seuil, et tout bascule (les
+  150 heures, les 5 125 points du RAFP, le semestre des marins) ; Cotiser sans
+  acquérir de droits (38 % de la cotisation Agirc-Arrco sous le plafond, les
+  2,51 % déplafonnés, la CET de 0,35 %, pièce nouvelle) ; Un même deuil, trois
+  règles (54, 60 ou 50 %, le PACS, le remariage) ; Chaque caisse a son
+  histoire (le ballet de l'Opéra à 40 ans, Colbert en 1673, les TUC en 2023).
+  Restent au catalogue : ce qui vise les armées, la police ou les élus, dont
+  les dix-sept ans des militaires (L. 24, II, relu et en vigueur), par
+  prudence ; ce qui ne se relisait pas au texte, le taux de 1945 et la date de
+  1698 de l'Opéra ; le cumul emploi-retraite, refait pour les pensions prises
+  à compter du 1er janvier 2027 (loi n° 2025-1403, art. 102) ; les deux
+  sources faibles et les deux chiffres calculés par le dépôt.
+- *La relecture* : chaque texte dans sa version en vigueur, par l'index LEGI
+  ou sur la page de la caisse ; le journal de veille du jour en garde les
+  identifiants. R. 351-9 a changé au 1er janvier 2026 (décret n° 2025-1409)
+  sans toucher aux 150 heures.
+- *La page* (`saviezVous`, dans `pages.js`) : les cartes de Partager
+  (`cartePartage`, qui prend un argument `apres`), le titre de chaque thème
+  dans la première case de la grille, et sous chaque carte, replié, « Ce que
+  dit le texte » : la règle en clair et le lien vers sa version lue. 673 mots
+  ouverts. Sur un téléphone, la carte se lit à la largeur de l'écran ;
+  `index.html` lui rend son format 1200 × 675 (classe `en-image`) le temps de
+  composer l'image, et le message renvoie à la page plutôt qu'au simulateur
+  (`data-partage-ici`). Douze entrées `hors_modele` au catalogue des
+  affirmations, le témoin `saviez_vous`, un budget de 700 mots, aucune
+  incise, le menu.
+
+Reste au propriétaire : le nom et le choix des pièces, qui se changent d'un
+mot dans `saviezVous`.

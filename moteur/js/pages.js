@@ -281,6 +281,9 @@ export const DESCRIPTIONS = {
   "/partager": "Les chiffres du programme au format des réseaux sociaux, "
     + "1200 × 675, en filigrane @pliberal : le plancher, le taux, "
     + "le déficit, et l'appel au simulateur.",
+  "/saviez-vous": "Douze règles du système de retraite actuel en une carte "
+    + "chacune : les seuils, les cotisations sans droits, la réversion, les "
+    + "caisses à part. Chaque carte cite le texte officiel qui la fonde.",
 };
 
 export const TITRES = {
@@ -289,6 +292,7 @@ export const TITRES = {
   "/cout": "Coût",
   "/risque": "Pourquoi changer",
   "/partager": "Partager",
+  "/saviez-vous": "Le saviez-vous ?",
   "/cas-types": "Carrières types",
   "/avantages": "Droits non cotisés",
   "/methode": "Méthode et sources",
@@ -346,6 +350,9 @@ export function rendre(contexte, cheminDemande, parametres = null) {
 
   if (chemin === "/partager") {
     return [TITRES[chemin], partager(contexte)];
+  }
+  if (chemin === "/saviez-vous") {
+    return [TITRES[chemin], saviezVous()];
   }
   if (chemin in PAGES_AGREGEES) {
     return [TITRES[chemin], refus + agregee(chemin, contexte, regles, requete)];
@@ -2317,9 +2324,12 @@ function trajectoire(contexte, comparaison, saisie) {
  * recadre tout seul, le filigrane coûte la carte.
  *
  * `nom` est le nom de la carte, lu AVANT elle : c'est ce qui permet de choisir
- * laquelle publier sans les regarder toutes.
+ * laquelle publier sans les regarder toutes. `apres` se pose sous la barre de
+ * partage, hors de l'image : c'est là que la page « Le saviez-vous ? » met le
+ * lien de chaque source, qu'une image ne permet pas de suivre.
  */
-function cartePartage(nom, surtitre, chiffre, phrase, detail, classes = "") {
+function cartePartage(nom, surtitre, chiffre, phrase, detail, classes = "",
+  apres = "") {
   const boite = `carte-partage ${classes}`.trim();
   const pied = `<div class="pied"><span class="compte">${g.SIGNATURE}</span>`
     + `<span class="adresse">${g.ADRESSE_SITE}</span></div>`;
@@ -2329,7 +2339,7 @@ function cartePartage(nom, surtitre, chiffre, phrase, detail, classes = "") {
     + `<div class="phrase">${phrase}</div>`
     + `<div class="detail">${detail}</div></div>${pied}</div>`;
   return `<figure class="carte"><figcaption>${nom}</figcaption>`
-    + `<div class="cadre-carte">${corps}</div>${g.barrePartage()}</figure>`;
+    + `<div class="cadre-carte">${corps}</div>${g.barrePartage()}${apres}</figure>`;
 }
 
 /**
@@ -2454,6 +2464,300 @@ ${tete}
     cadre.</p>
   </div>
 </div>
+`;
+}
+
+/**
+ * Douze règles du système actuel, une carte chacune, et le texte qui la fonde
+ * sous chaque carte.
+ *
+ * LA PAGE A ÉTÉ CATALOGUÉE SOUS UN AUTRE NOM, le « musée des horreurs »
+ * (`docs/musee_des_horreurs.md`, action 146 de la feuille de route), et
+ * renommée avant d'être écrite, à la demande du propriétaire : un titre qui
+ * se moque se retourne contre celui qui l'écrit. Elle ne garde donc que des
+ * faits, dits sur le ton d'un fait (un chiffre, une phrase, sa source), et
+ * elle montre des règles, jamais ceux qui en relèvent. Les pièces du
+ * catalogue qui touchent aux armées, à la police ou aux élus n'y sont pas.
+ *
+ * CHAQUE CARTE A ÉTÉ RELUE LE 4 OCTOBRE 2026 DANS SON TEXTE EN VIGUEUR :
+ * l'article de Légifrance, lu dans l'index LEGI de la DILA, ou la page de la
+ * caisse quand la règle est conventionnelle (Agirc-Arrco) ou historique
+ * (Enim). Le journal de veille du même jour en garde la liste, identifiant
+ * par identifiant, et chaque lien ci-dessous mène à la version lue. Ce qui ne
+ * se relisait pas ainsi est resté au catalogue : le taux de 1945, dont
+ * l'ordonnance n'est pas dans l'index ; le cumul emploi-retraite, que la loi
+ * de financement pour 2026 refait au 1er janvier 2027 ; la date de 1698 de
+ * l'Opéra, qui ne repose que sur un panorama.
+ *
+ * Les cartes sont celles de la page Partager, et pour la même raison : un
+ * fait qui circule doit emporter sa source et son adresse. Le détail de
+ * l'image porte la référence du texte ; le lien, sous la barre de partage,
+ * mène au texte lui-même.
+ */
+function saviezVous() {
+  const article = (base, id) => `https://www.legifrance.gouv.fr/${base}/article_lc/${id}`;
+  const code = (id) => article("codes", id);
+  const decret = (id) => article("loda", id);
+  const agircTaux = "https://reglementation.agirc-arrco.fr/home/liste-fiche-"
+    + "reglementaires/listes-area/liste-de-fiches-reglementaires/"
+    + "taux-de-cotisations.html";
+  const agircReversion = "https://www.agirc-arrco.fr/particuliers/ma-retraite/"
+    + "demander-ma-retraite/la-pension-de-reversion/";
+  const l3531 = ["code de la sécurité sociale, art. L. 353-1",
+    code("LEGIARTI000047453693")];
+  const l38 = ["code des pensions civiles et militaires, art. L. 38",
+    code("LEGIARTI000053549564")];
+
+  // Le pourcentage d'appel et la contribution d'équilibre de l'Agirc-Arrco,
+  // sous le plafond, depuis le 1er janvier 2019 : de ce qui est versé, seule
+  // la part au taux contractuel achète des points.
+  const contractuel = 0.062;
+  const verse = contractuel * 1.27 + 0.0215;
+  // La cotisation vieillesse sur la totalité du salaire, en 2026 : 2,11 %
+  // pour l'employeur, 0,40 % pour le salarié.
+  const deplafonnee = 0.0211 + 0.004;
+
+  const themes = [
+    {
+      titre: "Un seuil, et tout bascule",
+      chapeau: "Une heure, un point ou un mois de plus suffisent à faire "
+        + "basculer un droit.",
+      classes: "",
+      cartes: [
+        {
+          nom: "Les 150 heures",
+          chiffre: "150 heures",
+          phrase: "payées au SMIC valident un trimestre de retraite. 149 heures "
+            + "n'en valident aucun.",
+          detail: "Code de la sécurité sociale, art. R. 351-9",
+          explication: "Quatre trimestres au plus par an : 600 heures au SMIC "
+            + "en valident autant qu'une année entière à temps plein.",
+          sources: [["code de la sécurité sociale, art. R. 351-9",
+            code("LEGIARTI000053335598")]],
+        },
+        {
+          nom: "Le point de trop",
+          chiffre: `${g.nombre(5125, 0)} points`,
+          phrase: "pour toucher en rente la retraite additionnelle des "
+            + `fonctionnaires. Avec ${g.nombre(5124, 0)}, elle est versée d'un coup.`,
+          detail: "Décret n° 2004-569 du 18 juin 2004, art. 9",
+          explication: "Le RAFP, la retraite que les fonctionnaires acquièrent "
+            + "sur leurs primes, se verse en rente à partir du seuil ; "
+            + "au-dessous, en un capital calculé sur cette rente.",
+          sources: [["décret n° 2004-569, art. 9", decret("LEGIARTI000037483756")]],
+        },
+        {
+          nom: "Le semestre des marins",
+          chiffre: "3 mois",
+          phrase: "de service en plus valent six mois dans la pension d'un marin. "
+            + "Deux mois et demi ne valent rien.",
+          detail: "Code des pensions de retraite des marins, art. R. 12",
+          explication: "Les services se comptent au semestre : une fraction d'au "
+            + "moins trois mois compte pour six, une fraction plus courte est "
+            + "négligée.",
+          sources: [["code des pensions de retraite des marins, art. R. 12",
+            code("LEGIARTI000006791988")]],
+        },
+      ],
+    },
+    {
+      titre: "Cotiser sans acquérir de droits",
+      chapeau: "Une part de ce que l'on verse pour la retraite n'ouvre aucun "
+        + "droit à celui qui le verse.",
+      classes: "claire",
+      cartes: [
+        {
+          nom: "Le pourcentage d'appel",
+          chiffre: g.pourcentage(1 - contractuel / verse, false, 0),
+          phrase: "de la cotisation complémentaire d'un salarié payé sous le "
+            + "plafond n'achète aucun point de retraite.",
+          detail: "Agirc-Arrco, accord du 17 novembre 2017",
+          explication: `Sur ${g.pourcentage(verse, false, 2)} du salaire versés, `
+            + `${g.pourcentage(contractuel, false, 2)} achètent des points. Le `
+            + "reste, un « pourcentage d'appel » de 127 % et une contribution "
+            + "d'équilibre, n'ouvre aucun droit.",
+          sources: [["Agirc-Arrco, taux de cotisation", agircTaux]],
+        },
+        {
+          nom: "Au-delà du plafond",
+          chiffre: g.pourcentage(deplafonnee, false, 2),
+          phrase: "du salaire au-dessus du plafond de la sécurité sociale va "
+            + "encore à la retraite de base, qui ne compte pas ce salaire.",
+          detail: "Code de la sécurité sociale, art. D. 242-4 et R. 351-29",
+          explication: "La pension du régime général ne retient le salaire que "
+            + `jusqu'au plafond, ${g.euros(4005)} par mois en 2026. La cotisation `
+            + "« déplafonnée », 2,11 % pour l'employeur et 0,40 % pour le "
+            + "salarié, court au-delà.",
+          sources: [
+            ["art. D. 242-4", code("LEGIARTI000053302465")],
+            ["art. R. 351-29", code("LEGIARTI000053335651")],
+            ["arrêté du 22 décembre 2025",
+              "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053143451"],
+          ],
+        },
+        {
+          nom: "L'équilibre technique",
+          chiffre: g.pourcentage(0.0035, false, 2),
+          phrase: "de tout le salaire, dès le premier euro, pour qui gagne plus "
+            + "que le plafond, sans un seul point de retraite en échange.",
+          detail: "Agirc-Arrco, accord du 17 novembre 2017",
+          explication: "Cette contribution d'équilibre technique, 0,21 % pour "
+            + "l'employeur et 0,14 % pour le salarié, est « non génératrice de "
+            + "droits ».",
+          sources: [["Agirc-Arrco, taux de cotisation", agircTaux]],
+        },
+      ],
+    },
+    {
+      titre: "Un même deuil, trois règles",
+      chapeau: "La pension de réversion dépend de la caisse du défunt : son "
+        + "taux, l'âge où elle s'ouvre, et ce qui la fait perdre.",
+      classes: "",
+      cartes: [
+        {
+          nom: "Trois taux",
+          chiffre: "54, 60 ou 50 %",
+          phrase: "de la pension du défunt, selon sa caisse, et sous des "
+            + "conditions d'âge et de ressources qui ne sont pas les mêmes.",
+          detail: "Code de la sécurité sociale, art. D. 353-1 ; Agirc-Arrco ; "
+            + "code des pensions, art. L. 38",
+          explication: "Régime général : 54 %, à partir de 55 ans, sous plafond "
+            + "de ressources. Agirc-Arrco : 60 %, à partir de 55 ans, sans "
+            + "plafond. Fonction publique de l'État : 50 %, sans condition "
+            + "d'âge ni de ressources.",
+          sources: [
+            ["art. D. 353-1", code("LEGIARTI000053356066")],
+            ["art. D. 353-3", code("LEGIARTI000020090020")],
+            ["art. L. 353-1", l3531[1]],
+            ["Agirc-Arrco", agircReversion],
+            l38,
+          ],
+          classes: "long",
+        },
+        {
+          nom: "Le PACS",
+          chiffre: "0 €",
+          phrase: "de réversion pour un partenaire de PACS ou un concubin, même "
+            + "après trente ans de vie commune.",
+          detail: "Code de la sécurité sociale, art. L. 353-1 ; Agirc-Arrco ; "
+            + "code des pensions, art. L. 38",
+          explication: "Les textes ne connaissent que le « conjoint » : seul le "
+            + "mariage ouvre la réversion, au régime général, à l'Agirc-Arrco "
+            + "et dans la fonction publique.",
+          sources: [l3531, ["Agirc-Arrco", agircReversion], l38],
+        },
+        {
+          nom: "Le remariage",
+          chiffre: "Se remarier",
+          phrase: "fait perdre la réversion de l'Agirc-Arrco et celle de l'État, "
+            + "pas celle du régime général.",
+          detail: "Code des pensions civiles et militaires, art. L. 46 ; "
+            + "Agirc-Arrco ; code de la sécurité sociale, art. L. 353-1",
+          explication: "L'État la retire aussi pour un « concubinage notoire », "
+            + "et la rend si la nouvelle union prend fin. Au régime général, les "
+            + "revenus du nouveau ménage ne comptent que pour le plafond de "
+            + "ressources.",
+          sources: [
+            ["code des pensions civiles et militaires, art. L. 46",
+              code("LEGIARTI000025076807")],
+            ["Agirc-Arrco", agircReversion],
+            l3531,
+          ],
+          classes: "long",
+        },
+      ],
+    },
+    {
+      titre: "Chaque caisse a son histoire",
+      chapeau: "Chaque métier, chaque époque a laissé ses règles, et elles "
+        + "coexistent encore.",
+      classes: "claire",
+      cartes: [
+        {
+          nom: "L'Opéra de Paris",
+          chiffre: "40 ans",
+          phrase: "est l'âge où un artiste du ballet de l'Opéra de Paris peut "
+            + "toucher sa pension.",
+          detail: "Décret n° 68-382 du 5 avril 1968, art. 6",
+          explication: "Les artistes des chœurs peuvent partir à 57 ans, les "
+            + "musiciens à 60, la plupart des autres personnels à 62.",
+          sources: [["décret n° 68-382, art. 6", decret("LEGIARTI000029135150")]],
+        },
+        {
+          nom: "Colbert",
+          chiffre: "1673",
+          phrase: "est l'année où Colbert fonde le fonds des invalides de la "
+            + "marine, dont la caisse des marins tient encore son nom.",
+          detail: "Enim, « Notre histoire »",
+          explication: "La pension des marins date de 1689. Elle se calcule "
+            + "toujours sur un salaire forfaitaire, fixé pour vingt catégories "
+            + "de fonctions à bord.",
+          sources: [
+            ["Enim, « Notre histoire »", "https://www.enim.eu/lenim/notre-histoire"],
+            ["décret n° 52-540, art. 1", decret("LEGIARTI000044510001")],
+          ],
+        },
+        {
+          nom: "Les TUC",
+          chiffre: "2023",
+          phrase: "est l'année où les TUC des années 1980 ont commencé à compter "
+            + "pour la retraite.",
+          detail: "Code de la sécurité sociale, art. L. 351-3 et R. 351-12",
+          explication: "Depuis le 1er septembre 2023, ces stages, dont l'État "
+            + "payait les cotisations, valident des trimestres, près de quarante "
+            + "ans après.",
+          sources: [
+            ["art. L. 351-3, 9°", code("LEGIARTI000053279221")],
+            ["art. R. 351-12", code("LEGIARTI000054167657")],
+          ],
+        },
+      ],
+    },
+  ];
+
+  const lien = ([libelle, adresse]) => `<a href="${adresse}">${libelle}</a>`;
+  const sections = themes.map((theme) => {
+    const cartes = theme.cartes.map((carte) => cartePartage(
+      carte.nom,
+      "Le saviez-vous ?",
+      carte.chiffre,
+      carte.phrase,
+      carte.detail,
+      [theme.classes, carte.classes || ""].join(" ").trim(),
+      // Replié : la carte se lit d'un coup d'œil, et sa référence est déjà
+      // dans l'image. Qui doute ouvre, lit la règle en clair et suit le lien.
+      `<details class="source">${g.sommaire("Ce que dit le texte")}`
+        + `<p>${carte.explication} Le texte : `
+        + `${carte.sources.map(lien).join(" ; ")}.</p></details>`,
+    )).join("");
+    // LE TITRE DU THÈME PREND LA PREMIÈRE CASE DE LA GRILLE. Les cartes vont
+    // deux par ligne, et trois cartes laissaient une case vide sous chaque
+    // thème ; le titre la comble, à côté de la première carte, et la grille se
+    // lit en deux lignes pleines. Sur un téléphone, il reste au-dessus.
+    return `<section class="theme"><div class="cartes lisibles" data-partage-ici>`
+      + `<div class="intro"><h2>${theme.titre}</h2>`
+      + `<p class="chapeau">${theme.chapeau}</p></div>${cartes}</div></section>`;
+  }).join("\n");
+
+  const tete = g.affiche(
+    "Le saviez-vous ?",
+    "Douze règles du système actuel, "
+    + '<span class="cle-texte">textes à l\'appui.</span>',
+    "Une carte par règle, avec le texte officiel qui la fonde, lu dans sa "
+    + "version en vigueur le 4 octobre 2026. Chacune se partage d'un bouton.",
+  );
+
+  return `
+${tete}
+
+${sections}
+
+<div class="note"><strong>Notre proposition.</strong> Un compte à votre nom,
+en euros, où chaque cotisation est inscrite, avec les mêmes règles pour tous.
+Pas de trimestres, pas de barèmes, pas de surprise.
+<a href="${g.lien("/")}">Le programme</a> le détaille, et
+<a href="${g.lien("/simuler")}">le simulateur</a> l'applique à votre
+carrière.</div>
 `;
 }
 

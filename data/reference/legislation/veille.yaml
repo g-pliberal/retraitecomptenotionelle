@@ -5055,3 +5055,33 @@ journal:
       Le net aux prélèvements officiels (action 138, étape 2) ; le traitement de référence de
       la fonction publique lu sur une ligne d'un mois (action 134, point 1), que les relevés
       subissent désormais comme les carrières de métiers.
+  - date: "2026-10-04"
+    session: "action 146 : la page « Le saviez-vous ? », douze règles relues au texte"
+    consulte: >-
+      L'index LEGI de la DILA, incréments jusqu'au 27 septembre 2026 (la mise à jour du jour
+      a échoué, le serveur de la DILA coupant la connexion). Code de la sécurité sociale :
+      R. 351-9 (LEGIARTI000053335598), D. 242-4 (LEGIARTI000053302465), R. 351-29
+      (LEGIARTI000053335651), D. 353-1 (LEGIARTI000053356066), D. 353-3
+      (LEGIARTI000020090020), L. 353-1 (LEGIARTI000047453693), L. 351-3
+      (LEGIARTI000053279221), R. 351-12 (LEGIARTI000054167657), L. 161-22-1
+      (LEGIARTI000053279754) et L. 161-22-1-1 (LEGIARTI000053279747). Code des pensions
+      civiles et militaires : L. 24 (LEGIARTI000047452804), L. 38 (LEGIARTI000053549564),
+      L. 46 (LEGIARTI000025076807). Code des pensions de retraite des marins : R. 12
+      (LEGIARTI000006791988). Décrets n° 2004-569, art. 9 (LEGIARTI000037483756), n° 68-382,
+      art. 6 (LEGIARTI000029135150), n° 52-540, art. 1 (LEGIARTI000044510001). Index JORF :
+      l'arrêté du 22 décembre 2025 (plafond de 2026, JORFTEXT000053143451) et l'article 2 du
+      décret n° 2025-1409. Sites des caisses : Agirc-Arrco, « Taux de cotisations » et « La
+      pension de réversion » ; Enim, « Notre histoire ». La fiche F13552 de service-public
+      répond 404. veille_droit.py n'a pas été lancé : la session ne touche pas au scénario 1.
+    trouve: >-
+      Les douze règles de la page sont en vigueur telles qu'elle les écrit. R. 351-9 a changé
+      au 1er janvier 2026 (décret n° 2025-1409, art. 2, 24°), sans toucher aux 150 heures ;
+      L. 351-3 et R. 351-12 auront une version au 1er novembre 2026, qui garde les TUC. Le
+      cumul emploi-retraite est refait pour les pensions prises à compter du 1er janvier 2027
+      (loi n° 2025-1403, art. 102) : laissé au catalogue. L'article 6 du statut de l'Opéra
+      n'a pas bougé depuis 2014 ; le décret n° 2023-840 n'en a touché que les articles 6 ter,
+      16, 28 et 33. L. 46 retire la réversion de l'État au remariage et au « concubinage
+      notoire », sans nommer le PACS.
+    reste: >-
+      Relire les cartes quand leurs textes changent : le plafond et le taux déplafonné de
+      2026 se redatent chaque 1er janvier ; L. 351-3 et R. 351-12 au 1er novembre 2026.

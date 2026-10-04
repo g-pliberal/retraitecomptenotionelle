@@ -68,7 +68,9 @@ affirmations:
     controle: compte_notionnel_en_euros
 
   - id: accueil.pas_de_trimestres
-    page: /
+    # Redite au pied de « Le saviez-vous ? », après douze cartes de trimestres
+    # et de barèmes : le même contrôle la tient sur les deux pages.
+    page: [/, /saviez-vous]
     extrait: "Pas de trimestres, pas de barèmes, pas de surprise."
     porte: la pension notionnelle ne dépend que du capital et du diviseur
     etat: verifiee
@@ -2360,6 +2362,107 @@ affirmations:
     porte: ce que la Grèce a coupé, et ce que les juges en ont fait
     etat: hors_modele
     source: "Tinios"
+
+  # ------------------------------------------------------------------------
+  # Le saviez-vous ? — douze règles du droit, une carte chacune
+  # ------------------------------------------------------------------------
+  #
+  # Aucune de ces phrases n'est en gras : elles sont au catalogue parce
+  # qu'elles affirment le droit, et que la page doit garder, sous chacune, le
+  # texte qui la fonde. Toutes ont été relues le 4 octobre 2026 dans leur
+  # version en vigueur (journal de veille du même jour) ; la source nommée
+  # ici est un fragment de la référence que la page cite, sur la carte et
+  # dans le lien replié dessous.
+
+  - id: saviez.150_heures
+    page: /saviez-vous
+    extrait: "payées au SMIC valident un trimestre de retraite"
+    porte: un trimestre se valide par 150 heures au SMIC, quatre au plus par an
+    etat: hors_modele
+    source: "art. R. 351-9"
+
+  - id: saviez.rafp_capital
+    page: /saviez-vous
+    extrait: "pour toucher en rente la retraite additionnelle des fonctionnaires"
+    porte: le RAFP se verse en capital sous 5 125 points, en rente à partir de ce seuil
+    etat: hors_modele
+    source: "décret n° 2004-569, art. 9"
+
+  - id: saviez.semestre_des_marins
+    page: /saviez-vous
+    extrait: "de service en plus valent six mois dans la pension d'un marin"
+    porte: les services des marins se comptent au semestre, la fraction de trois mois valant six
+    etat: hors_modele
+    source: "art. R. 12"
+
+  - id: saviez.pourcentage_d_appel
+    page: /saviez-vous
+    extrait: "de la cotisation complémentaire d'un salarié payé sous le plafond"
+    porte: sous le plafond, 6,20 % des 10,02 % versés à l'Agirc-Arrco achètent des points
+    etat: hors_modele
+    source: "Agirc-Arrco, taux de cotisation"
+
+  - id: saviez.cotisation_deplafonnee
+    page: /saviez-vous
+    extrait: "va encore à la retraite de base, qui ne compte pas ce salaire"
+    porte: la cotisation déplafonnée court au-delà du plafond, que la pension ne dépasse pas
+    etat: hors_modele
+    source: "art. D. 242-4"
+
+  - id: saviez.equilibre_technique
+    page: /saviez-vous
+    extrait: "sans un seul point de retraite en échange"
+    porte: la CET de 0,35 % frappe tout le salaire au-delà du plafond sans ouvrir de droit
+    etat: hors_modele
+    source: "Agirc-Arrco, taux de cotisation"
+
+  - id: saviez.trois_taux_de_reversion
+    page: /saviez-vous
+    extrait: "de la pension du défunt, selon sa caisse"
+    porte: 54 % au régime général, 60 % à l'Agirc-Arrco, 50 % dans la fonction publique de l'État
+    etat: hors_modele
+    source: "art. D. 353-1"
+
+  - id: saviez.pacs
+    page: /saviez-vous
+    extrait: "de réversion pour un partenaire de PACS ou un concubin"
+    porte: seul le mariage ouvre la réversion, dans les trois régimes
+    etat: hors_modele
+    source: "art. L. 353-1"
+
+  - id: saviez.remariage
+    page: /saviez-vous
+    extrait: "fait perdre la réversion de l'Agirc-Arrco et celle de l'État"
+    porte: le remariage éteint la réversion complémentaire et celle de l'État, pas celle du régime général
+    etat: hors_modele
+    source: "art. L. 46"
+
+  - id: saviez.ballet_de_l_opera
+    page: /saviez-vous
+    extrait: "est l'âge où un artiste du ballet de l'Opéra de Paris peut toucher sa pension"
+    porte: le droit à pension des artistes du ballet de l'Opéra s'ouvre à quarante ans
+    etat: hors_modele
+    source: "décret n° 68-382, art. 6"
+
+  - id: saviez.colbert
+    page: /saviez-vous
+    extrait: "est l'année où Colbert fonde le fonds des invalides de la marine"
+    porte: le fonds des invalides de la marine, dont l'Enim tient son nom, date de 1673
+    etat: hors_modele
+    source: "Notre histoire"
+
+  - id: saviez.tuc
+    page: /saviez-vous
+    extrait: "est l'année où les TUC des années 1980 ont commencé à compter pour la retraite"
+    porte: les TUC valident des trimestres depuis le 1er septembre 2023
+    etat: hors_modele
+    source: "art. R. 351-12"
+
+  - id: saviez.notre_proposition
+    page: /saviez-vous
+    extrait: "Notre proposition."
+    porte: l'intertitre de la note finale
+    etat: sans_portee
 
   # ------------------------------------------------------------------------
   # Le pied de page, commun à toutes

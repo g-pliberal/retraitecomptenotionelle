@@ -1181,17 +1181,19 @@ def test_la_navigation_met_l_electeur_d_abord():
         ("groupe", "L&#x27;essentiel"), ("groupe", "Faire connaître"),
         ("groupe secondaire", "Pour vérifier")]
     pages = [re.findall(r'href="([^"]+)"', liens) for _, _, liens in groupes]
+    # « Le saviez-vous ? » rejoint Partager le 4 octobre 2026 : des cartes à
+    # publier, ce qu'on fait APRÈS avoir lu, et non un cinquième onglet en tête.
     assert pages == [["#/", "#/simuler", "#/cout", "#/risque"],
-                     ["#/partager"],
+                     ["#/partager", "#/saviez-vous"],
                      ["#/cas-types", "#/avantages", "#/methode"]]
     libelles = [re.findall(r">([^<]+)</a>", liens) for _, _, liens in groupes]
     assert libelles == [["Programme", "Simuler", "Coût", "Pourquoi changer"],
-                        ["Partager"],
+                        ["Partager", "Le saviez-vous ?"],
                         ["Carrières types", "Droits non cotisés",
                          "Méthode et sources"]]
     assert 'href="#/cout" aria-current="page"' in entete
     assert [chemin for chemin, _ in g.LIENS] == [
-        "/", "/simuler", "/cout", "/risque", "/partager",
+        "/", "/simuler", "/cout", "/risque", "/partager", "/saviez-vous",
         "/cas-types", "/avantages", "/methode"]
     # Le titre de chaque page est le libellé de son onglet : c'est lui que
     # l'onglet du navigateur affiche.
@@ -1485,6 +1487,9 @@ INCISES_MAXIMUM = {
     # Méthode et Sources ont fait une page le 23 septembre 2026 : ses bornes
     # s'additionnent, 9 et 6.
     "/methode": 15, "/partager": 4, "/risque": 4,
+    # Écrite le 4 octobre 2026 sans aucune : une règle, sa source, et rien
+    # entre deux tirets.
+    "/saviez-vous": 0,
     # Celles qui restent sur Avantages sont citées et non rédigées : le
     # message de refus du garde-fou, et une énumération de choix que le dépôt
     # refuse de trancher à la place du lecteur.

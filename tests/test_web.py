@@ -3257,6 +3257,11 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # Partager ne porte que des cartes : leur texte est court par
     # construction — il doit tenir dans une image de 1200 × 675.
     "/partager": (400, 0, 0, 0),
+    # Le saviez-vous ? en porte douze, rangées sous quatre titres : une
+    # cinquantaine de mots par carte, barre de partage et pied compris. Ce
+    # qui explique chaque règle, et le lien vers son texte, sont repliés sous
+    # la carte (673 mots ouverts le 4 octobre 2026).
+    "/saviez-vous": (700, 0, 0, 0),
     # Cas types et Données ont gagné, à la revue de septembre 2026, ce qu'un
     # lecteur doit lire AVANT les chiffres : la clé de lecture des grilles et
     # la trajectoire du système actuel pour l'une, le résumé en langage

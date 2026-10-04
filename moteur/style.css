@@ -1755,6 +1755,27 @@ ul.serree li { margin: 0.3rem 0; }
   letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--texte-tres-doux);
 }
+/* « Le saviez-vous ? » : les mêmes cartes, rangées par thème. Un thème sur
+   deux passe sur la carte claire, pour que l'œil sache où il en est en
+   descendant la page ; le chiffre y prend la couleur d'accent de la crème,
+   l'or y serait illisible. Un chiffre qui s'écrit en mots — « Se remarier »,
+   « 54, 60 ou 50 % » — prend la taille de celui du déficit. Sous la barre de
+   partage, hors de l'image et replié, ce que dit le texte et le lien qui y
+   mène : c'est lui qui répond à « d'où sortez-vous ça ? ». */
+.theme { margin-top: 3.5rem; }
+.theme > .cartes { margin-top: 0; }
+/* Le titre du thème occupe la première case de la grille, à côté de la
+   première carte : sans lui, trois cartes deux par deux laissaient un trou. */
+.theme .intro { align-self: center; max-width: 30rem; }
+.theme .intro > h2 { margin: 0 0 1rem; }
+.theme .intro > .chapeau { margin: 0; }
+.carte-partage.claire .chiffre { color: var(--sur-creme-accent); }
+.carte-partage.long .chiffre { font-size: 56px; font-size: 9.333cqw; }
+.cartes > figure > details.source { margin-top: 0.25rem; }
+.cartes > figure > details.source > p {
+  margin: 0.25rem 0 0; max-width: 40rem;
+  font-size: 0.9375rem; line-height: 1.5; color: var(--texte-doux);
+}
 
 footer {
   width: calc(100% - 2 * var(--marge)); max-width: calc(var(--largeur) - 2 * var(--marge));
@@ -1913,6 +1934,28 @@ body.calcul-en-cours::after {
      figure : on lit ce qu'on va publier. */
   .cartes > figure { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .cadre-carte { min-width: 36rem; }
+  /* Sauf sur « Le saviez-vous ? », où l'on lit d'abord la règle : la carte y
+     prend la largeur de l'écran, en tailles de lecture, et ne reprend le
+     format de l'image (36 rem, 16/9, tailles en `cqw`) que le temps de la
+     composer, sous la classe `en-image` que pose `index.html`. */
+  .cartes.lisibles > figure { overflow-x: visible; }
+  .cartes.lisibles .cadre-carte:not(.en-image) { min-width: 0; }
+  .cartes.lisibles .cadre-carte:not(.en-image) > .carte-partage {
+    aspect-ratio: auto; padding: 1.25rem; gap: 1.5rem;
+  }
+  .cartes.lisibles .cadre-carte:not(.en-image) .surtitre { font-size: 0.75rem; }
+  .cartes.lisibles .cadre-carte:not(.en-image) .chiffre { font-size: 3rem; }
+  .cartes.lisibles .cadre-carte:not(.en-image) .long .chiffre { font-size: 2.25rem; }
+  .cartes.lisibles .cadre-carte:not(.en-image) .phrase {
+    margin-top: 0.75rem; font-size: 1.3rem;
+  }
+  .cartes.lisibles .cadre-carte:not(.en-image) .detail {
+    margin-top: 0.6rem; max-width: none; font-size: 0.8125rem;
+  }
+  .cartes.lisibles .cadre-carte:not(.en-image) .pied {
+    padding-top: 0.75rem; font-size: 0.875rem;
+  }
+  .cartes.lisibles .cadre-carte:not(.en-image) .pied .adresse { font-size: 0.75rem; }
   .graphique .graduation { font-size: 18px; }
   .graphique .etiquette-serie { font-size: 20px; stroke-width: 7px; }
   .graphique .annee-lue { font-size: 18px; }
