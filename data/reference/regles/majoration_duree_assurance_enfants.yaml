@@ -339,7 +339,14 @@ referents:
   openfisca_france_pension:
     equivalent: variable nombre_enfants (un nombre, sans dates)
     confrontation: aucune ; les profils de l'oracle sont sans enfant
-  destinie_2: à confronter (réversion et enfants y sont modélisés)
+  destinie_2:
+    equivalent: >-
+      durees_majo (src/DroitsRetr.cpp), CoefMdaRG : deux années par enfant, à la mère
+      seule, dans le régime où elle était affiliée à sa naissance
+    confrontation: >-
+      le 5 octobre 2026, Destinie exécuté à part (tests/test_destinie.py) : vingt-quatre
+      trimestres à la mère de trois enfants, qui lui donnent le taux plein à 62 ans,
+      rien au père, des deux côtés ; concordant au trimestre
 historique:
 - >-
   Le scénario « système actuel » ajoutait huit trimestres par enfant à tout assuré
@@ -369,6 +376,9 @@ historique:
   de chaque année d'éducation, huit au plus (D. 351-1-7, circulaire Cnav n° 2004/22),
   et non huit d'un coup : la mère d'un enfant de moins de sept ans à la date d'effet
   en reçoit moins.
+- >-
+  2026-10-05 — confrontée à Destinie 2, exécuté à part (action 142, étape 4) : la
+  majoration de la mère et l'absence de celle du père concordent.
 reformes:
 - parents_2026
 effet: >-

@@ -5243,3 +5243,26 @@ journal:
       Les seuils de l'outre-mer, les demi-parts autres que celle du conjoint, le lissage
       par l'antépénultième année ; l'ASPA du couple et les non-résidents, le reste de
       l'étape 2.
+  - date: "2026-10-05"
+    session: "action 142, étape 4 : Destinie 2 exécuté à part, ses sorties en témoins"
+    consulte: >-
+      veille_droit.py (dernière veille consignée : 2026-10-04) ; le code de Destinie 2
+      au commit 4c1d34b, exécuté dans la WSL ; l'index LEGI du dossier principal :
+      L. 353-1 en vigueur (LEGIARTI000047453693) et ses rédactions depuis 1985, R. 351-30
+      (LEGIARTI000006750045), L. 351-12 (LEGIARTI000047453177), L. 351-1-2
+      (LEGIARTI000025014540) ; l'API de la législation de la Cnav, barème « Montant
+      minimum à l'attribution de la retraite personnelle » (circulaires 2013/29 et
+      2017/32) ; les colonnes de coefficients des salaires de la Cnav du témoin du dépôt.
+    trouve: >-
+      L. 353-1 majore la réversion du survivant qui remplit les conditions de L. 351-12
+      (10 % pour trois enfants, R. 351-30), et oppose au plafond « son montant majoré » :
+      le dépôt ne l'applique pas, sa fiche le dit désormais. Le minimum contributif daté
+      de l'étape 15 concorde au centime avec Destinie et le barème en 2018. Contre
+      Destinie : la surcote de L. 351-1-2, « accomplie après l'âge », qu'il prête au né
+      de fin d'année ; ses coefficients des salaires décalés d'un an. Aucune règle du
+      scénario 1 n'est modifiée.
+    reste: >-
+      La réversion de la majoration pour enfants de l'Agirc-Arrco (accord du 17 novembre
+      2017, base KALI, hors de l'index) ; le minimum, les majorations de 11,1 et 10 % de la
+      réversion, à l'étape 4 de l'action 138 ; le point d'indice prêté à l'année d'une
+      hausse en cours d'année, à vérifier sur un exemple.

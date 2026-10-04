@@ -447,12 +447,15 @@ versions:
 approximations:
 - ecart: >-
     le minimum de réversion (D. 353-1), la majoration de 11,1 % du survivant aux
-    petites retraites (L. 353-6) et la majoration forfaitaire pour enfant à charge
-    (L. 353-5) ne sont pas appliqués
+    petites retraites (L. 353-6), la majoration de 10 % du survivant de trois enfants
+    (L. 353-1, qui renvoie à L. 351-12) et la majoration forfaitaire pour enfant à
+    charge (L. 353-5) ne sont pas appliqués
   effet: >-
     la réversion des petites pensions est sous-estimée : depuis 2026, le minimum la
     porte à 3 983,29 euros par an (valeur de 2025) pour un défunt qui avait au moins
-    soixante trimestres ; non mesuré
+    soixante trimestres. Destinie 2, exécuté à part, la mesure pour un décès de 2023
+    (tests/test_destinie.py) : −41 % sous le minimum, −47 % avec la majoration de
+    11,1 %, −9,6 % pour la survivante de trois enfants
 - version: [avant_1982, taux_52, taux_54]
   ecart: >-
     les limites de cumul de la réversion avec la retraite personnelle du survivant
@@ -603,7 +606,13 @@ code:
     tests/test_reversion.py ; les témoins reversion_* des simulations, dans les deux
     moteurs
 referents:
-  destinie_2: à confronter (la réversion y est modélisée)
+  destinie_2: >-
+    confrontée le 5 octobre 2026, Destinie exécuté à part (tests/test_destinie.py) : le
+    taux de 54 % concorde, sur la même pension menée au décès ; le minimum et les
+    majorations, que le dépôt n'applique pas, s'y mesurent ; quatre écarts de Destinie
+    (l'âge levé par deux enfants à charge, la réversion complémentaire comptée aux
+    ressources, la base et le plafond de la réversion majorée, la revalorisation de
+    2020) sont au registre
 historique:
 - >-
   Jusqu'au 28 septembre 2026, la fiche ne portait que son intitulé : « le modèle décrit
@@ -617,6 +626,10 @@ historique:
   2026-09-28 — lue par le moteur, à la deuxième étape du domaine : le scénario 1
   liquide la réversion du conjoint que la saisie déclare, au décès de l'assuré après
   son départ, régime par régime.
+- >-
+  2026-10-05 — confrontée à Destinie 2, exécuté à part (action 142, étape 4) : la
+  majoration de 10 % du survivant de trois enfants, que la fiche portait en paramètre
+  sans la dire absente, rejoint les approximations.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024

@@ -301,7 +301,16 @@ referents:
   openfisca_france_pension:
     equivalent: variable nombre_enfants (un nombre, sans dates)
     confrontation: aucune ; les profils de l'oracle sont sans enfant
-  destinie_2: à confronter (réversion et enfants y sont modélisés)
+  destinie_2:
+    equivalent: >-
+      durees_majo (src/DroitsRetr.cpp), CoefMdaFP : une année par enfant né avant 2004
+      à la mère fonctionnaire, comptée à la liquidation (LiqPublic) ; la majoration de
+      10 % (AppliqueBonif), plafonnée au traitement
+    confrontation: >-
+      le 5 octobre 2026, Destinie exécuté à part (tests/test_destinie.py) : la
+      bonification de huit trimestres de la mère de deux enfants porte la pension civile
+      à 168/166 des deux côtés ; la majoration de 10 % du père de trois enfants
+      concorde, à l'écart de 0,6 % de la pension près
 historique:
 - >-
   La fonction publique recevait la majoration du régime général, huit trimestres par
@@ -322,6 +331,9 @@ historique:
   2026-09-27 — le b ter à sa date : les pensions prenant effet à compter du 1er septembre
   2026, et non dès janvier, comme le modèle le faisait en datant à l'année. Un trimestre
   de services de moins par enfant né depuis 2004 aux pensions de janvier à août 2026.
+- >-
+  2026-10-05 — confrontée à Destinie 2, exécuté à part (action 142, étape 4) : la
+  bonification, qui compte à la liquidation, et la majoration de 10 % concordent.
 effet: >-
   Toute mère fonctionnaire ou agente d'un régime spécial : quatre trimestres par enfant
   né avant 2004, en services, donc au prorata de la pension ; deux par enfant né depuis,

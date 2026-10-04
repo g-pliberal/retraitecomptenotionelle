@@ -5407,16 +5407,16 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
-**Reprise, au 1er octobre 2026.** Fait : le registre (69 modèles, 47 en
+**Reprise, au 5 octobre 2026.** Fait : le registre (69 modèles, 47 en
 France) ; sa relecture, pour ce que chaque modèle fait mieux que le dépôt, à
 l'action 138, qui a lu le code de Destinie 2, d'Ines, de `legiretraite` et
 d'EDIFIS, et refait les diviseurs suédois, norvégien, finlandais, italien et
 polonais : ce qu'elle en tire est au registre, en `fait_mieux` et en
-`ecarts`. Reste ici : exécuter à part, R installé, les modèles ouverts comme
-témoins — Destinie 2 d'abord (l'étape 4 de l'action 138), puis les cas types
-du COR par TRAJECTOiRE, et Ines ; relire la page de la DREES sur CALIPER,
-quand son serveur répondra ; les pistes non vérifiées (le moteur réel de
-M@rel, l'usage d'Oscar) ; les `referents` des fiches, à leur relecture.
+`ecarts` ; Destinie 2 exécuté à part, ses sorties en témoins (action 142,
+étape 4, sa note). Reste ici : les cas types du COR par TRAJECTOiRE, puis
+Ines, sur ce modèle ; relire la page de la DREES sur CALIPER, quand son
+serveur répondra ; les pistes non vérifiées (le moteur réel de M@rel, l'usage
+d'Oscar) ; les `referents` des fiches, à leur relecture.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore
@@ -5487,6 +5487,14 @@ OpenFisca-France-Pension, en est un cas particulier, mené à part.
 4. Les fiches nomment leurs référents par l'identifiant du registre (le champ
    `referents` du contrat de la fiche) : trois le font ; les autres le feront
    à leur relecture.
+
+**Destinie 2, exécuté à part, le 5 octobre 2026.** Le premier modèle ouvert
+confronté par son exécution : dix-huit carrières écrites des deux côtés, ses
+sorties figées (`tests/temoins/destinie_2.json`) et rejouées dans le scénario
+1 par `tests/test_destinie.py`, sans R. Ce qu'il a montré est au registre
+(`destinie_2`, compté désormais parmi les modèles confrontés) et dans la note
+de l'étape 4 de l'action 142 ; les trois fiches qui l'attendaient ont leur
+réponse.
 
 ### 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris — `en cours`
 
@@ -5926,15 +5934,16 @@ décret n° 84-995, dont l'index ne garde que le titre.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
-**Reprise, au 4 octobre 2026.** Faites : les étapes 1 à 3, le relevé prolongé
-jusqu'au départ sur tout le site, et la réversion du RAFP, de la RCI et de
-l'Ircantec. Le propriétaire veut tout le reste (« Le restant », en fin
-d'action), une étape par session, par zones : au modèle, le départ des
-handicapés ; aux données, la délibération de l'ERAFP ; aux moteurs publics
-(4., avec l'action 137), R dans la WSL Ubuntu, Destinie 2 puis TRAJECTOiRE ;
-au site, le net officiel dans le bloc (138.2 : le 1 %, puis la CSG,
-présomption et champ) ; avec lui, connecté, le prix d'achat Agirc-Arrco
-implicite de la page. Détail : en fin d'action.
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 3, le relevé prolongé
+jusqu'au départ sur tout le site, la réversion du RAFP, de la RCI et de
+l'Ircantec, et de l'étape 4 Destinie 2, exécuté à part dans la WSL, ses
+sorties en témoins (sa note, en fin d'action). Le propriétaire veut tout le
+reste (« Le restant »), une étape par session, par zones : au modèle, le départ
+des handicapés ; aux données, la délibération de l'ERAFP ; aux moteurs
+publics, TRAJECTOiRE, sur le modèle de `scripts/fetch/destinie_2.py` ; au
+site, le net officiel dans le bloc (138.2 : le 1 %, puis la CSG, présomption
+et champ) ; avec lui, connecté, le prix d'achat Agirc-Arrco implicite de la
+page. Détail : en fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -6475,6 +6484,69 @@ RAFP compte aux ressources de R. 353-1, ce que le modèle fait à la lettre du
 2° ; le plafond de la RCI de 2013 à 2020 et les complémentaires des artisans
 et des commerçants d'avant 2013 ; le versement unique de l'Ircantec sous 300
 points.
+
+**Étape 4, le 5 octobre 2026 : Destinie 2 exécuté à part, ses sorties en
+témoins.** Avec l'action 137 ; l'étape 4 de l'action 138 y trouve sa mesure.
+
+- *L'installation, hors du dépôt.* Dans la distribution Ubuntu de la WSL :
+  l'archive du dépôt de l'INSEE au commit `4c1d34b` (15 octobre 2025), dans
+  `~/modeles/Destinie-2` — téléchargée, et non clonée, la garde d'isolement
+  des sessions refusant tout `git` hors de leur worktree ; `xlsx` 0.6.5 et
+  `xlsxjars` 0.9.0 du CRAN dans la bibliothèque de l'utilisateur ; le paquet
+  `destinie` 2.0 compilé par `R CMD INSTALL` (R 4.3.3, Rcpp 1.0.12). Aucune
+  installation système. Le code de Destinie n'entre pas au dépôt.
+- *L'exécution.* `scripts/fetch/destinie_2.py` écrit dix-huit cas deux fois :
+  en requête du simulateur (le relevé de carrière en euros de chaque année,
+  les enfants, le conjoint, le décès) et en tables de Destinie (`ech`, `emp`,
+  `fam`, `union_base`, `union`) ; `destinie_2.R` lance `destinieSim` sans
+  simuler de population, sous `anLeg` 2023, les hypothèses du COR de 2023 que
+  le paquet livre, deux fois (tel quel, puis sans les majorations pour trois
+  enfants, dont l'écart dit leur montant). Chacun part au taux plein, que sa
+  carrière atteint à l'âge d'ouverture : `comp_exo` ne liquide pas (sa branche
+  de `TestLiq` n'appelle pas `Liq()`). Trois pièges, dits dans le script : le
+  scénario démographique de 2022 que le paquet ne livre pas entier,
+  `FinEtudeMoy` à lire, le facteur `NomVar` que R 4 rend en chaînes.
+- *Le témoin.* `tests/temoins/destinie_2.json` : la version, le commit, la
+  date, la législation, la licence (GPL-3.0, paramètres sous ODbL), les
+  requêtes, les sorties et les paramètres que Destinie a lus.
+  `tests/test_destinie.py` (niveau contrôle) rejoue chaque requête dans le
+  scénario 1 et confronte durées, taux, pensions, majorations et réversions ;
+  chaque écart est déclaré avec sa cause et sa borne, et un écart déclaré qui
+  rentre dans la tolérance fait échouer le test. `DESTINIE_2=Ubuntu` rejoue
+  Destinie et compare au témoin ; sans lui, le test se saute.
+- *Ce qui concorde.* Les durées, la majoration de durée d'assurance de la mère
+  (vingt-quatre trimestres, rien au père), la bonification de la mère
+  fonctionnaire, qui compte à la liquidation ; le taux plein, sous la loi de
+  2023 aussi ; le régime général à 0,2 % près, la pension civile à 0,6 % (le
+  dépôt ramène le revenu de 2017 au départ par le point du 1er janvier 2017,
+  relevé le 1er février) ; le minimum contributif daté, au centime en 2018 —
+  rebasé sur l'étape 15 de l'action 138, publiée pendant cette étape, qui
+  retire les deux écarts que la première exécution mesurait (+3,9 et +1,6 %) ;
+  les majorations de 10 % ; la réversion de 54, 50 et 60 % ; la valeur du
+  point de l'Agirc-Arrco.
+- *Contre le scénario 1* : le minimum de réversion (−41 %), la majoration de
+  11,1 % (−47 % avec lui), celle de 10 % de la survivante de trois enfants
+  (−9,6 %, L. 353-1, qui renvoie à L. 351-12), que la fiche `reversion`
+  portait en paramètres sans les dire toutes absentes — elle le dit
+  désormais ; la réversion de l'Agirc-Arrco que deux enfants à charge doivent
+  dès le décès, écart déjà déclaré. Rien n'est corrigé ici : l'étape 4 de
+  l'action 138 a ses mesures.
+- *Contre Destinie* (le registre) : la chaîne des coefficients des salaires
+  décalée d'un an (SAM de 2024 +3,75 %), trois trimestres de surcote au né
+  d'octobre avant son âge d'ouverture, la revalorisation moyenne de 2020, la
+  base et le plafond de la réversion majorée, la valeur du point de 2024
+  projetée ; confirmés à l'exécution, l'âge de la réversion levé par deux
+  enfants et la réversion complémentaire comptée aux ressources (−13 %).
+- *À trancher, au propriétaire* : Destinie acquiert les points aux taux
+  contractuels moyens des entreprises, le dépôt aux taux minimaux de l'accord
+  — 15 à 26 % de points de plus chez lui (registre, 138.13).
+- *Restent* : l'Agirc-Arrco reverse-t-elle la majoration pour enfants du
+  défunt, comme Destinie ? (l'accord du 17 novembre 2017 à lire ; écart
+  ouvert, déclaré au test) ; le point d'indice du 1er janvier que le dépôt
+  prête à toute l'année d'une hausse en cours d'année (+0,6 % en 2018,
+  peut-être +1,7 % pour un départ de 2023), à vérifier sur un exemple ; la
+  valeur de service de l'année de la liquidation, prise en fin d'année des
+  deux côtés, quand la caisse sert celle du jour ; TRAJECTOiRE.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

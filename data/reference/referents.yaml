@@ -1939,22 +1939,33 @@ referents:
       retraites de l'État, CNRACL, indépendants, Agirc-Arrco ; droits
       directs, réversion, ASPA. La législation se choisit par année ; ses
       derniers seuils sont de 2023, sans la loi du 30 décembre 2025.
+    version: "2.0, commit 4c1d34b"
     confrontation: >-
-      Un calcul rejoué : l'exécuter à part sur des carrières que le dépôt
-      décrit aussi, et confronter ses pensions, sa réversion et ses
-      majorations pour enfants, que trois fiches attendent (`reversion`,
-      `majoration_duree_assurance_enfants`, `enfants_fonction_publique`). Le
-      seul modèle public avec la réversion et l'ASPA, et des législations
-      passées qu'on choisit.
+      Un calcul rejoué, fait le 5 octobre 2026 : exécuté à part dans R (la
+      WSL Ubuntu du poste), sous sa législation la plus récente (`anLeg`
+      2023), sur dix-huit carrières écrites des deux côtés
+      (`scripts/fetch/destinie_2.py`, `destinie_2.R`) ; ses sorties sont
+      figées dans `tests/temoins/destinie_2.json`, et `tests/test_destinie.py`
+      y confronte le scénario 1 sans R, chaque écart déclaré avec sa cause.
+      Concordent : les durées, la majoration de durée d'assurance de la mère
+      et la bonification de la mère fonctionnaire, que les fiches
+      `majoration_duree_assurance_enfants` et `enfants_fonction_publique`
+      attendaient ; le taux plein à l'âge d'ouverture, sous la loi de 2023
+      aussi ; le régime général à 0,2 % près, la pension civile à 0,6 % ;
+      les majorations de 10 % ; la réversion de 54 %, de 50 % et de 60 %, sur
+      les points de chacun. Le reste est aux écarts et aux points ci-dessous.
     ecarts:
       - constat: >-
           Il lève au régime général la condition d'âge de 55 ans de la
           réversion pour le survivant qui a deux enfants à charge
-          (`src/Retraite.cpp:224-229`).
+          (`src/Retraite.cpp:224-229`). Exécuté : la survivante de 48 ans
+          touche 54 % dès le décès.
         tranche: >-
           R. 353-1, que la fiche du dépôt lit sans cette exception ; l'écart
           est le sien
-        preuve: data/reference/regles/reversion.yaml
+        preuve: >-
+          data/reference/regles/reversion.yaml ; tests/temoins/destinie_2.json,
+          cas reversion_jeune_deux_enfants
       - constat: >-
           Tout couple simulé y est marié (`src/Separations.cpp:189-190` ;
           `CONCUBINAGE`, `src/Constantes.h:30`, n'est jamais affecté), ce qui
@@ -2026,13 +2037,84 @@ referents:
           réversion du RG pour le survivant qui n'a pas liquidé
           (`src/Retraite.h:269-275`, `src/Retraite.cpp:347-354`) ;
           deux fois l'Arrco dans le test de la majoration de 11,1 %
-          (`src/Retraite.cpp:368`).
+          (`src/Retraite.cpp:368`). Exécuté : une survivante dont la
+          pension approche le plafond voit sa réversion écrêtée de
+          13 %, que le dépôt sert entière.
         tranche: >-
           R. 353-1 : les ressources « ne comprennent pas […] les
           avantages de réversion servis par les régimes légalement
           obligatoires complémentaires » ; un montant ne compte
           qu'une fois.
-        preuve: LEGIARTI000038790257
+        preuve: >-
+          LEGIARTI000038790257 ; tests/temoins/destinie_2.json, cas
+          reversion_plafond
+      - constat: >-
+          Il revalorise les salaires portés au compte d'une année de
+          trop : sa chaîne part du coefficient de l'année de la
+          liquidation (`DroitsRetr::SalBase`, `revalcum =
+          RevaloSPC[date]`), quand celle de la Cnav s'arrête au
+          coefficient de l'année qui la précède. Exécuté : le salaire
+          annuel moyen d'un départ de 2024 dépasse de 3,75 % celui de
+          la colonne du 1er janvier 2024 ; de 0,13 % pour un départ de
+          2018, quand les revalorisations successives se ressemblent.
+        tranche: >-
+          la colonne des coefficients que la Cnav publie pour les
+          pensions prenant effet en 2024, que le dépôt sert à
+          l'identique ; l'écart est le sien
+        preuve: >-
+          tests/temoins/cnav_revalorisation_salaires.json (colonne
+          2024-01-01) ; tests/temoins/destinie_2.json, cas
+          loi_2023_salaire_moyen
+      - constat: >-
+          Il compte la surcote de l'année civile où tombe l'âge
+          d'ouverture sans regarder le mois de naissance
+          (`DroitsRetr::DecoteSurcote`). Exécuté : né en octobre 1961,
+          parti à 62 ans et 3 mois en février 2024 sans un jour de
+          travail après cet âge, il reçoit trois trimestres de surcote,
+          un taux de 51,875 %.
+        tranche: >-
+          L. 351-1-2 : la majoration vaut pour la durée d'assurance «
+          accomplie après l'âge prévu au premier alinéa de l'article
+          L. 351-1 » ; le dépôt n'en compte aucune ; l'écart est le sien
+        preuve: >-
+          LEGIARTI000025014540 ; tests/temoins/destinie_2.json, cas
+          rg_ne_en_octobre
+      - constat: >-
+          Il revalorise toutes les pensions de 2020 d'un même taux
+          moyen, 0,74 % au régime général et 0,58 % dans la fonction
+          publique (ParamRetrBase, RevaloRG et RevaloFP).
+        tranche: >-
+          loi n° 2019-1446, art. 81, et circulaire Cnav 2020/9 : 1 %
+          jusqu'à 2 000 € de retraites par mois, dégressif jusqu'à 0,3
+          % ; le dépôt sert le taux de chaque pension ; l'écart est le
+          sien
+        preuve: >-
+          data/reference/legislation/revalorisation_pensions.csv
+          (2020) ; tests/temoins/destinie_2.json, cas
+          reversion_fonctionnaire
+      - constat: >-
+          Il réverse au survivant de trois enfants 54 % de la pension
+          du défunt revalorisée, moins sa majoration pour enfants
+          non revalorisée (`src/Reversion.cpp`, `pension_rg -
+          liq->majo_3enf_rg`) : la base excède de 0,7 % en cinq ans
+          celle qui l'ôte ; et il oppose au plafond la réversion sans
+          sa propre majoration de 10 %.
+        tranche: >-
+          L. 353-1 (LEGIARTI000047453693) : « Lorsque son montant
+          majoré des ressources […] excède les plafonds prévus, la
+          pension de réversion est réduite » ; la majoration du défunt
+          n'entre pas dans la pension réversible ; l'écart est le sien
+        preuve: >-
+          tests/temoins/destinie_2.json, cas reversion_trois_enfants
+      - constat: >-
+          Sa valeur de service de l'Agirc-Arrco de 2024, 1,4463 €, est
+          la projection des hypothèses du COR de 2023.
+        tranche: >-
+          la fédération l'a fixée à 1,4386 € au 1er novembre 2024, que
+          le dépôt sert ; l'écart, de 0,5 %, est le sien
+        preuve: >-
+          data/reference/regimes/valeurs_point.csv (agirc_arrco, 2024) ;
+          tests/temoins/destinie_2.json, cas loi_2023_salaire_moyen
       - constat: >-
           Il sert 54 % de réversion au régime général dès 1975
           (ParamRev, colonne TauxRevRG).
@@ -2116,11 +2198,21 @@ referents:
           2025 que lit le dépôt. Le dépôt la déclare absente
           (`data/reference/regles/reversion.yaml:444-470`,
           `droit/reversion.py:19-24`, `docs/limites.md:73-86`) ; Destinie,
-          exécuté à part, en serait le témoin, sorties seules.
+          exécuté à part, en est le témoin, sorties seules.
         preuve: >-
           `src/Reversion.cpp:23-49, 76-106`, `src/Retraite.cpp:235-268,
           300-334, 347-357, 365-380` et `src/Retraite.h:274`, au commit
           `4c1d34b`
+        verification: >-
+          Exécuté le 5 octobre 2026 (tests/temoins/destinie_2.json,
+          tests/test_destinie.py), pour un décès de janvier 2023 : il sert
+          le minimum de réversion (D. 353-1), 3 701,38 €, quand le dépôt
+          sert 2 189,24 € à la veuve d'une petite pension (−41 %) ; avec la
+          majoration de 11,1 % de la survivante passée l'âge du taux plein
+          (L. 353-6), 4 112,23 € (−47 %) ; la majoration de 10 % de la
+          survivante de trois enfants (L. 353-1, LEGIARTI000047453693, qui
+          renvoie à L. 351-12 ; 10 % par R. 351-30), −9,6 %. La fiche du
+          dépôt en porte les paramètres sans les appliquer.
         etat: a_reprendre
         chantier: "138.4"
       - quoi: >-
@@ -2193,7 +2285,14 @@ referents:
           et 6 706,39 € au 1er janvier 2004 (LEGIARTI000006736531),
           6 760,82 € au 1er janvier 2006 (LEGIARTI000006736532), 6
           958,21 et 7 603,41 € « au 1er janvier 2008 »
-          (LEGIARTI000017870194).
+          (LEGIARTI000017870194). Exécuté le 5 octobre 2026, après la
+          reprise (tests/test_destinie.py) : le majoré d'un départ de
+          février 2018 concorde au centime, 8 322,13 € par an, le barème
+          de la Cnav depuis le 1er octobre 2017 (circulaire 2017/32) ;
+          le minimum d'un départ de février 2015 est de 0,1 % sous celui
+          de Destinie, qui sert dès janvier la valeur d'octobre (le
+          barème : 7 547,96 € depuis le 1er avril 2013, circulaire
+          2013/29, lu dans l'API de la législation de la Cnav).
         etat: repris
         chantier: "138.15"
       - quoi: >-
@@ -2410,6 +2509,31 @@ referents:
           représentatif n'est pas public.
         etat: a_reprendre
         chantier: "138.14"
+      - quoi: >-
+          Il acquiert les points de l'Arrco et de l'Agirc aux taux
+          contractuels moyens des entreprises (ParamRetrComp : 5,42 %
+          à l'Arrco de 1970 à 1990, 13,9 % à l'Agirc vers 1980, 6,61 %
+          depuis 2015, à l'Agirc-Arrco unifiée aussi), quand le dépôt
+          prête à chaque salarié le taux contractuel minimal de l'accord
+          (4 %, 8 %, 6,2 % ; fiches `arrco` et `agirc`). Exécuté : 15 à
+          26 % de points de plus chez lui pour les mêmes salaires, à la
+          même valeur du point.
+        preuve: >-
+          tests/temoins/destinie_2.json (parametres_destinie :
+          TauxARRCO_1, TauxAGIRC_B, TauxAGIRC_ARRCO_1) ;
+          tests/test_destinie.py
+        verification: >-
+          data/reference/regimes/arrco.yaml et agirc.yaml : le taux
+          contractuel minimal de chaque période, que l'accord impose à
+          toute entreprise ; un taux supérieur n'engage que celle qui
+          l'a souscrit.
+        etat: a_trancher
+        chantier: "138.13"
+        raison: >-
+          une convention de cas type, non l'erreur de l'un ou de
+          l'autre : le taux minimal est le seul opposable à tout
+          salarié, le taux moyen décrit mieux la carrière moyenne ; au
+          propriétaire de choisir l'un, ou de montrer les deux.
     bilan: >-
       Au-delà de la réversion et de l'ASPA du ménage, il fait mieux par
       ses séries annuelles longues (minimum contributif depuis 1984,
@@ -2420,13 +2544,22 @@ referents:
       unique, plafond de L. 18). Il a tort sur onze points, outre la loi
       du 30 décembre 2025 : CSG à 6,6 %, coefficient de solidarité après
       avril 2024, ressources et taux historique de la réversion,
-      Ircantec, complémentaire des indépendants.
+      Ircantec, complémentaire des indépendants. Exécuté le 5 octobre
+      2026, il confirme le minimum contributif daté que le dépôt vient de
+      reprendre et la réversion entière qui lui manque encore, et ajoute
+      cinq torts que le code ne montrait pas : coefficients des salaires
+      décalés d'un an, surcote
+      avant l'âge pour les nés de fin d'année, revalorisation moyenne de
+      2020, base et plafond de la réversion majorée, valeur du point de
+      2024 projetée. Les taux contractuels moyens sont une convention à
+      trancher.
     sas: [insee_destinie_2]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-05
     lu_dans:
       - https://github.com/InseeFr/Destinie-2
       - https://www.insee.fr/fr/information/3606338
       - https://www.insee.fr/fr/statistiques/8563753
+      - tests/temoins/destinie_2.json
     note: >-
       La confirmation la plus indépendante du registre : ses paramètres sont
       les siens (sa feuille de documentation cite la Cnav, le COR,

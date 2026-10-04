@@ -81,8 +81,9 @@ CONTROLES = {
     # La prose et les affirmations du site, confrontées au dépôt.
     "test_prose.py", "test_affirmations.py",
     # La confrontation à OpenFisca, seconde implémentation écrite par d'autres
-    # (ses exemples officiels restent rapides, plus bas).
-    "test_oracle.py",
+    # (ses exemples officiels restent rapides, plus bas), et à Destinie 2,
+    # exécuté à part, dont les sorties sont figées.
+    "test_oracle.py", "test_destinie.py",
     # Les données : leur socle, leur certification, les lecteurs des
     # documents qui les apportent.
     "test_donnees.py", "test_verification.py", "test_bonifications_jaune.py",
