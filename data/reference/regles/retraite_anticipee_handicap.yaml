@@ -24,20 +24,33 @@ sources:
       d'avant la loi du 14 avril 2023 (168 trimestres de 1961 à 1963, 169 de 1964 à
       1966, 170 de 1967 à 1969, 171 de 1970 à 1972)
     date: 2026-10-04
+  - type: legifrance
+    reference: >-
+      décret n° 2003-1306, article 25, II, en vigueur depuis le 2 janvier 2025
+      (LEGIARTI000050941689) : pour les fonctionnaires de la CNRACL, la seule durée
+      d'assurance cotisée, « au moins égale au nombre de trimestres fixé à l'article
+      16, diminué de » 60 à 100 trimestres, de 55 à 59 ans — le barème du régime
+      général, sans durée validée
+    date: 2026-10-04
   - type: autre
     reference: >-
       simulateur « Retraite anticipée en situation de handicap » d'info-retraite.fr,
-      dix saisies le 4 octobre 2026, toutes conformes au barème ci-dessus : 1961 à 59
-      ans, 68 trimestres cotisés ; 1964 à 58, 79 ; 1965 à 57, 89 ; 1966 à 56, 99 ;
-      1967 à 55, 110 ; 1970 à 57, 91 ; 1973 et après à 55, 112, à 59, 72 ; et les
-      mêmes pour un fonctionnaire territorial ou hospitalier (1966 à 56, 99 ; 1973 à
-      55, 112). Il ne propose que 59 ans aux nés de 1961 à 1963, 58 et 59 en 1964, 57
-      à 59 en 1965, 56 à 59 en 1966.
+      vingt-quatre saisies le 4 octobre 2026, le budget entier. Vingt-trois suivent le
+      barème ci-dessus : au régime général, 68 trimestres cotisés à 59 ans pour les
+      nés de 1961 à 1963, 69 de 1964 à 1966, 70 en 1967 ; 79 à 58 ans en 1964, 81 en
+      1972, 82 en 1973 ; 89 à 57 ans en 1965, 91 en 1970, 92 en 1973 ; 99 à 56 ans en
+      1966, 100 en 1968, 101 en 1971, 102 en 1973 ; 110 à 55 ans en 1967 et 1969, 111
+      en 1970, 112 en 1973 ; à la CNRACL, 99 (1966, 56 ans), 91 (1970, 57) et 112
+      (1973, 55). Pour un fonctionnaire né en 1961 parti à 59 ans, il demande « un
+      total de 88 trimestres, dont 68 cotisés » : l'ancienne double condition, que
+      l'article 25 n'écrit plus. Il ne propose que 59 ans aux nés de 1961 à 1963, 58
+      et 59 en 1964, 57 à 59 en 1965, 56 à 59 en 1966.
     url: https://les-simulateurs.info-retraite.fr/situation-handicap
     date: 2026-10-04
 textes_a_rattacher:
 - reference: L. 351-1-3 CSS
 - reference: D. 351-1-5 CSS (décret n° 2026-345)
 - reference: décret n° 2026-344, article 3 C et G
+- reference: décret n° 2003-1306, article 25, II (CNRACL)
 reformes:
 - lfss_2026_suspension

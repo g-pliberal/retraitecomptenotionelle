@@ -6085,7 +6085,14 @@ qu'un accès en lecture, et ces formulaires se remplissent par leur page.
   texte, D. 351-1-5 du 1er septembre 2026 : les dix concordent (fiche
   `retraite_anticipee_handicap`). Pour que le budget décompte les saisies
   qu'aucun exemple ne porte, celles-ci et celles du RAFP, le registre prend
-  un champ `saisies_hors_exemples`, que `scripts/simulateurs.py` lit.
+  un champ `saisies_hors_exemples`, que `scripts/simulateurs.py` lit. Puis,
+  à la demande du propriétaire (« Continue avec le reste du budget
+  handicap »), les quatorze autres, budget épuisé : les bascules de
+  génération et la ligne « 1973 ou plus tard » entière. Treize concordent ;
+  pour un fonctionnaire né en 1961 parti à 59 ans, le simulateur demande
+  « un total de 88 trimestres, dont 68 cotisés », l'ancienne double
+  condition, que l'article 25, II, du décret n° 2003-1306, lu le même jour,
+  n'écrit plus : la CNRACL a le barème du régime général.
 
 **Le net dit « avant impôt », le 4 octobre 2026.** Le mot de l'estimation
 officielle : le menu, la bascule des montants et la clé de lecture disent

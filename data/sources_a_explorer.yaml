@@ -160,21 +160,29 @@ sources:
     statut: explore
     explore_le: "2026-10-04"
     budget: 24
-    saisies_hors_exemples: 10
+    saisies_hors_exemples: 24
     note: >-
       94 entrées : fonctionnaire territorial ou hospitalier ou régime spécial
       (oui ou non), treize années de naissance de 1961 à « 1973 ou plus
       tard », et l'âge de départ — 59 seul de 1961 à 1963, 58 et 59 en 1964,
       57 à 59 en 1965, 56 à 59 en 1966, 55 à 59 ensuite ; budget au quart.
-      Dix saisies le 4 octobre 2026, par Claude, sur un lot approuvé, aucune
-      en exemple officiel : le modèle ne traite pas ce départ. Toutes donnent
-      la durée cotisée en situation de handicap de D. 351-1-5 dans sa version
-      du 1er septembre 2026 (décret n° 2026-345) — la durée de la génération,
-      celle d'avant 2023 pour les nés avant 1973, moins 60 à 100 trimestres
-      de 55 à 59 ans : non, 1961, 59 ans : 68 ; 1964, 58 : 79 ; 1965, 57 :
-      89 ; 1966, 56 : 99 ; 1967, 55 : 110 ; 1970, 57 : 91 ; 1973, 55 : 112 ;
-      1973, 59 : 72 ; oui, 1966, 56 : 99 ; oui, 1973, 55 : 112. La réponse
-      ajoute un départ au taux plein dès 62 ans, sans durée.
+      Vingt-quatre saisies le 4 octobre 2026, par Claude, en deux lots
+      approuvés ; le budget est épuisé, et aucune n'est en exemple officiel :
+      le modèle ne traite pas ce départ. Vingt-trois donnent la durée cotisée
+      en situation de handicap de D. 351-1-5 dans sa version du 1er septembre
+      2026 (décret n° 2026-345) — la durée de la génération, celle d'avant
+      2023 pour les nés avant 1973, moins 60 à 100 trimestres de 55 à 59 ans :
+      non, 1961, 59 ans : 68 ; 1963, 59 : 68 ; 1964, 58 : 79, 59 : 69 ; 1965,
+      57 : 89 ; 1966, 56 : 99, 59 : 69 ; 1967, 55 : 110, 59 : 70 ; 1968, 56 :
+      100 ; 1969, 55 : 110 ; 1970, 55 : 111, 57 : 91 ; 1971, 56 : 101 ; 1972,
+      58 : 81 ; 1973 et après, 55 : 112, 56 : 102, 57 : 92, 58 : 82, 59 : 72 ;
+      oui, 1966, 56 : 99 ; 1970, 57 : 91 ; 1973, 55 : 112. La vingt-quatrième,
+      oui, 1961, 59 ans, demande « un total de 88 trimestres, dont 68
+      cotisés » : la double condition d'avant le 1er septembre 2023 (durée
+      validée moins 80), que l'article 25, II, du décret n° 2003-1306 en
+      vigueur n'écrit plus ; des quatre saisies « oui », celle-là seule
+      l'applique, les générations de 1962 à 1965 n'ont pas été saisies.
+      La réponse ajoute un départ au taux plein dès 62 ans, sans durée.
 
   - id: union_retraite_reversion
     url: https://les-simulateurs.info-retraite.fr/reversion
