@@ -5039,3 +5039,19 @@ journal:
       Le départ anticipé des assurés handicapés au modèle, au barème que régime général
       et CNRACL partagent ; les générations de 1962 à 1965 des fonctionnaires, que le
       simulateur n'a pas dites.
+  - date: "2026-10-04"
+    session: "action 142, étape 3, suite : le relevé prolongé jusqu'au départ"
+    consulte: >-
+      veille_droit.py (la dernière veille consignée est du jour ; L. 161-17-2 et L. 161-17-3,
+      relus sur Légifrance ce même jour par une session précédente, sont en vigueur depuis le
+      31 décembre 2025 sans version à venir). Aucun autre texte : l'étape ne change aucune
+      règle, elle poursuit la carrière d'un relevé jusqu'au départ à la convention de
+      projection que le modèle porte déjà (Carriere.prolongee).
+    trouve: >-
+      Rien de nouveau au droit. Sur tout le site, la dernière année d'un relevé se poursuit
+      jusqu'au départ, son revenu au rythme du salaire moyen ; qui ne travaille plus le
+      déclare dans « Interruptions ».
+    reste: >-
+      Le net aux prélèvements officiels (action 138, étape 2) ; le traitement de référence de
+      la fonction publique lu sur une ligne d'un mois (action 134, point 1), que les relevés
+      subissent désormais comme les carrières de métiers.

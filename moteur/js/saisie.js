@@ -1052,7 +1052,6 @@ export class Saisie {
    * à une, et c'est l'outil le plus fin des deux.
    */
   interruptionsDeCarriere(motifsConnus = null) {
-    const annees = new Map();
     const debut = this.dateDe(this.debut);
     const fin = this.dateDe(this.liquidation, true);
     const lignes = this.lignesCarriere;
@@ -1065,31 +1064,49 @@ export class Saisie {
       creuxDeCarriere.push([ligne.statut, this.dateDe(ligne.debut),
         suivante ? this.dateDe(suivante.debut) : fin]);
     });
-    // Une période à l'étranger ne compte que pour les mois de la carrière
-    // qu'elle couvre : celle qui précède le premier emploi en France n'en
-    // interrompt aucun. Voir `interruptions_de_carriere` du Python.
+    creuxDeCarriere.push(...this.creuxALEtranger(debut, fin));
+    const annees = anneesCreuses(creuxDeCarriere, debut, fin);
+    this.interruptionsAnalysees(motifsConnus).forEach((motif, annee) => {
+      annees.set(annee, motif);
+    });
+    return annees;
+  }
+
+  /**
+   * Les années non cotisées d'une carrière qui se poursuit de `depuis` au
+   * départ : celle d'un relevé, dont la dernière année se prolonge
+   * (`prolongerReleve`). Ce sont celles d'une carrière de métiers, moins les
+   * métiers, qu'un relevé remplace : une période passée hors de France, puis
+   * le champ « Interruptions », qui garde le dernier mot. Voir
+   * `interruptions_apres` du Python.
+   */
+  interruptionsApres(depuis, motifsConnus = null) {
+    const fin = this.dateLiquidation;
+    const annees = anneesCreuses(this.creuxALEtranger(depuis, fin), depuis, fin);
+    this.interruptionsAnalysees(motifsConnus).forEach((motif, annee) => {
+      annees.set(annee, motif);
+    });
+    return annees;
+  }
+
+  /**
+   * Les périodes passées hors de France, en creux `sans_activite` de la
+   * carrière qui court de `debut` à `fin`. Une période ne compte que pour les
+   * mois de la carrière qu'elle couvre : celle qui précède le premier emploi
+   * en France n'en interrompt aucun. Voir `_creux_a_l_etranger` du Python.
+   */
+  creuxALEtranger(debut, fin) {
+    const creux = [];
     for (const periode of this.etranger) {
       const debutPeriode = this.dateDe(periode.debut);
       const finPeriode = this.dateDe(periode.fin);
       const ouverture = debutPeriode.rang > debut.rang ? debutPeriode : debut;
       const cloture = finPeriode.rang < fin.rang ? finPeriode : fin;
       if (cloture.rang > ouverture.rang) {
-        creuxDeCarriere.push(["sans_activite", ouverture, cloture]);
+        creux.push(["sans_activite", ouverture, cloture]);
       }
     }
-    for (const [motif, ouverture, cloture] of creuxDeCarriere) {
-      for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
-        const creux = moisTravailles(annee, ouverture, cloture);
-        const portee = moisTravailles(annee, debut, fin);
-        if (portee && creux * 2 > portee) {
-          annees.set(annee, motif);
-        }
-      }
-    }
-    this.interruptionsAnalysees(motifsConnus).forEach((motif, annee) => {
-      annees.set(annee, motif);
-    });
-    return annees;
+    return creux;
   }
 
   /**
@@ -2094,6 +2111,26 @@ export class Saisie {
         + `=${encodeURIComponent(String(valeur)).replace(/%20/g, "+")}`)
       .join("&");
   }
+}
+
+/**
+ * Le motif de chaque année qu'un creux occupe plus qu'à moitié, rapporté aux
+ * mois que la carrière, de `debut` à `fin`, y travaille ; à égalité, l'année
+ * reste travaillée. Un creux suivant l'emporte sur le précédent la même année.
+ * Voir `_annees_creuses` du Python.
+ */
+function anneesCreuses(creux, debut, fin) {
+  const annees = new Map();
+  for (const [motif, ouverture, cloture] of creux) {
+    for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
+      const occupes = moisTravailles(annee, ouverture, cloture);
+      const portee = moisTravailles(annee, debut, fin);
+      if (portee && occupes * 2 > portee) {
+        annees.set(annee, motif);
+      }
+    }
+  }
+  return annees;
 }
 
 /**

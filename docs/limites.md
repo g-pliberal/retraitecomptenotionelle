@@ -328,11 +328,12 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   un mois, que le pas annuel du moteur traite parfois comme une année : le
   traitement de référence de la fonction publique se lit sur la ligne de
   cette année-là, une ligne d'un mois reçoit le minimum annuel de points de la
-  RCO, un relevé qui s'arrête à l'année d'avant n'est contigu au départ que si
-  celui-ci tombe en janvier, et la fenêtre de la surcote parentale perd un
-  trimestre quand elle chevauche une année de départ qui ne compte pas un
-  nombre entier de trimestres civils. Ces effets valaient déjà pour tout
-  départ hors de janvier ; l'action 134 de la feuille de route les reprend.
+  RCO, et la fenêtre de la surcote parentale perd un trimestre quand elle
+  chevauche une année de départ qui ne compte pas un nombre entier de
+  trimestres civils. Ces effets valaient déjà pour tout départ hors de
+  janvier ; l'action 134 de la feuille de route les reprend. Un relevé qui
+  s'arrête à l'année d'avant, lui, n'en souffre plus : le site lui ajoute les
+  mois qui le séparent du départ (§ 5, « Les carrières réelles »).
 - **La durée requise d'un droit ouvert avant soixante ans : servie, sauf au
   civil non classé.** Le XXIV, B de l'article 10 de la loi du 14 avril 2023 pour
   l'État, et le II, B de l'article 13 du décret n° 2023-435 pour la CNRACL et le
@@ -1747,8 +1748,10 @@ encore au départ, chacune à son revenu — jusqu'au 23 septembre 2026, seule l
 dernière ligne de l'année le faisait, et le salarié qui exerçait aussi en
 libéral perdait son salaire pendant les années du report. Qui finissait sa
 carrière au chômage la finit au chômage, et une carrière qui s'arrêtait avant
-son départ — un relevé dont les dernières années sont vides — ne gagne aucune
-année travaillée.
+son départ ne gagne aucune année travaillée. Sur le site, un relevé n'en est
+plus une : il se prolonge d'abord jusqu'à son départ, à la même convention
+(§ 5, « Les carrières réelles »), et le report le poursuit ; qui y déclare
+ses dernières années sans activité les finit sans activité.
 
 **Le report est immédiat.** Toute liquidation qui prendrait effet à compter du
 1<sup>er</sup> janvier de la bascule est portée à l'âge légal, sans montée en
@@ -2073,7 +2076,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   seconde n'est plus réservée au Python : le **profil paramétrique** — des
   métiers, un niveau de revenu relatif, une progression —, ou le **relevé**
   saisi année par année dans le champ prévu du simulateur, qui n'en reconstitue
-  rien. Il reste à ce chemin une approximation et une impossibilité.
+  rien. Il reste à ce chemin une approximation, une convention et une
+  impossibilité.
 
   L'approximation est le MOIS. Un relevé donne l'année, jamais le mois : chaque
   ligne vaut donc une année civile pleine, sauf celle du départ, que la date de
@@ -2084,6 +2088,25 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   derniers mois de service n'en souffre pas, cette année-là n'étant pas la
   dernière ; un régime qui prend les vingt-cinq meilleures années y voit une
   année faible de plus, exactement comme le droit.
+
+  La convention est l'AVENIR. Un relevé s'arrête à sa dernière année ; le site
+  le poursuit jusqu'au départ, comme le dernier métier d'un parcours court
+  jusqu'à lui et comme l'estimation officielle prolonge les revenus — décision
+  du propriétaire, le 4 octobre 2026 : jusque-là, qui déposait son relevé à
+  quarante ans recevait la pension de qui cesserait de travailler le jour
+  même. La convention est celle du report de la proposition (§ 4, « L'âge
+  légal de la proposition ») : la dernière année se prolonge, son statut et la
+  nature de sa période, son revenu avancé au rythme du salaire moyen, l'année
+  du départ au prorata de ses mois, les trimestres déduits du revenu
+  (`prolonger_releve`, `Contexte.releve_prolonge`). Les années ajoutées
+  prennent le motif que la saisie leur donne, comme celles d'une carrière de
+  métiers : une période à l'étranger les vide, le champ « Interruptions »
+  garde le dernier mot, et qui ne travaille plus les y déclare
+  `sans_activite`, ce que la page lui propose — il retrouve alors, dans les
+  six scénarios, la pension de son relevé arrêté. La retraite progressive les
+  met à temps partiel ; la radiation pour invalidité d'un fonctionnaire les
+  arrête à sa date. Rien ne s'ajoute à qui est parti une année déjà passée :
+  son relevé dit toute sa carrière.
 
   L'impossibilité reste l'INTERROGATION AUTOMATIQUE du répertoire de gestion
   des carrières uniques : il n'est pas ouvert au public, et son accès passe par
@@ -2687,10 +2710,11 @@ suivent le salaire moyen du modèle, quand l'estimation officielle leur prête
 « une évolution régulière », un peu plus rapide (action 142, étape 2) : à
 carrière égale, une part de l'écart en vient. Et les âges sont ceux que le
 droit oppose à la carrière SAISIE : une carrière reconstituée par ses métiers
-n'a pas tout à fait les trimestres de la vraie, et un relevé déposé s'arrête à
-sa dernière année, quand l'estimation officielle prolonge les revenus jusqu'au
-départ. Le minimum vieillesse n'y entre pas, que l'estimation ne compte pas non
-plus.
+n'a pas tout à fait les trimestres de la vraie, et un relevé déposé se
+prolonge jusqu'au départ à partir du revenu de sa dernière année (§ 5, « Les
+carrières réelles »), quand
+l'estimation officielle part de celui qu'elle prête à la situation actuelle.
+Le minimum vieillesse n'y entre pas, que l'estimation ne compte pas non plus.
 
 ---
 

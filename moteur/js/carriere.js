@@ -1717,6 +1717,51 @@ function quotiteDeLAnnee(annee, debut, fin, progressive) {
 }
 
 /**
+ * Le relevé, poursuivi jusqu'à `fin` — le mois du départ, qui n'est plus
+ * travaillé : les années qui l'en séparent s'ajoutent après lui, à la
+ * convention de `Carriere.prolongee` — la dernière année se prolonge, chacune
+ * de ses lignes sous son statut, avec la nature de sa période et son revenu
+ * avancé au rythme du salaire moyen, l'année de `fin` au prorata de ses mois,
+ * les trimestres déduits du revenu. `interruptions` (une `Map` année → motif)
+ * donne à une année ajoutée son motif ; `progressive` met à temps partiel les
+ * mois qu'elle touche. Voir `prolonger_releve` du Python.
+ */
+export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
+  progressive = null) {
+  const lignes = [...releve];
+  if (lignes.length === 0) {
+    return lignes;
+  }
+  const derniere = Math.max(...lignes.map((ligne) => ligne.annee));
+  const sources = lignes.filter((ligne) => ligne.annee === derniere);
+  const reference = salaireMoyenAnnuel(macro, derniere);
+  const quotite = quotiteDeLAnnee(derniere, new DateMois(derniere, 1), fin, progressive);
+  for (let annee = derniere + 1; annee <= fin.annee; annee += 1) {
+    const mois = annee < fin.annee ? MOIS_PAR_AN : fin.mois - 1;
+    if (mois <= 0) {
+      continue;
+    }
+    const facteur = reference > 0 ? salaireMoyenAnnuel(macro, annee) / reference : 1.0;
+    for (const source of sources) {
+      const typePeriode = interruptions.get(annee) ?? source.type_periode;
+      const base = source.type_periode === "emploi" ? source.revenu / quotite : source.revenu;
+      let revenu = base * facteur * mois / MOIS_PAR_AN;
+      if (typePeriode === "emploi") {
+        revenu *= quotiteDeLAnnee(annee, new DateMois(annee, 1), fin, progressive);
+      }
+      lignes.push({
+        annee,
+        affiliation: source.affiliation,
+        revenu,
+        trimestres: null,
+        type_periode: typePeriode,
+      });
+    }
+  }
+  return lignes;
+}
+
+/**
  * Les années d'un parcours, et le mois d'entrée dans chaque statut. Les
  * métiers principaux couvrent la carrière bout à bout ; les activités
  * cumulées s'y ajoutent, chacune sur ses mois ; une année d'interruption

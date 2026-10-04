@@ -49,6 +49,21 @@ REQUETES = {
     "releve": {"naissance": "1975-01-01", "liquidation": "2039-01", "releve": "\n".join(
         f"{annee}:salarie_prive_non_cadre:{20_000 + 500 * (annee - 1997)}"
         for annee in range(1997, 2026))},
+    # Le même relevé, prolongé jusqu'à chaque départ, mais coupé de chômage,
+    # puis d'une période en Allemagne, que la prolongation respecte.
+    "releve_interrompu": {"naissance": "1975-01-01", "liquidation": "2039-01",
+                          "releve": "\n".join(
+                              f"{annee}:salarie_prive_non_cadre:{20_000 + 500 * (annee - 1997)}"
+                              for annee in range(1997, 2026)),
+                          "interruptions": "2028:2029:chomage_indemnise",
+                          "etranger1_pays": "DE", "etranger1_debut": "2031-01",
+                          "etranger1_fin": "2033-07", "etranger1_activite": "salariee"},
+    # Un relevé qui s'arrête en 2018, d'un né en 1966 : prolongé, il atteint
+    # la durée requise avant 67 ans ; arrêté, il ne le faisait jamais, et le
+    # taux plein attendait l'âge où il est automatique.
+    "releve_ancien": {"naissance": "1966-09-01", "releve": "\n".join(
+        f"{annee}:salarie_prive_cadre:{30_000 + 900 * (annee - 1990)}"
+        for annee in range(1990, 2019))},
     "deux_metiers": {"unite_revenu": "euros_mois", "salaire": "2900",
                      "metier2_debut": "40", "metier2_statut": "artisan",
                      "metier2_salaire": "4200"},

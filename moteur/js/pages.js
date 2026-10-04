@@ -1415,7 +1415,8 @@ function releveFormulaire(saisie) {
     + "2002 est en francs, à diviser par 6,55957 — le dépôt le fait tout seul. "
     + "Les codes de régime sont ceux du menu ci-dessus. Rempli, ce champ "
     + "<strong>remplace</strong> les métiers, le profil et le niveau de "
-    + "revenu : rien n'est plus reconstitué. Naissance, date de départ, "
+    + "revenu : rien n'est plus reconstitué, sinon les années qui le séparent "
+    + "du départ, où sa dernière année se poursuit. Naissance, date de départ, "
     + "enfants, primes et interruptions continuent de valoir.",
   );
   return `
@@ -1978,7 +1979,9 @@ function resumeParcours(contexte, saisie) {
  * affichés au-dessus, avec le statut et le revenu qu'ils portaient, et rien ne
  * dirait qu'ils n'ont pas servi. La lecture du relevé se termine donc par ce
  * qu'aucun relevé ne donne — le mois d'entrée dans la vie active —, parce que
- * c'est la seule approximation que ce chemin conserve.
+ * c'est la seule approximation que ce chemin conserve. Puis par ce que le site
+ * y ajoute : les années qui séparent le relevé du départ
+ * (`Contexte.releveProlonge`), et comment les dire sans emploi.
  */
 function resumeReleve(contexte, saisie) {
   const releve = saisie.releveAnalyse(
@@ -1999,7 +2002,38 @@ function resumeReleve(contexte, saisie) {
     + "sont lus un par un. Une ligne vaut une année civile entière, sauf "
     + "celle du départ, que la date de liquidation tronque : le relevé donne "
     + "l'année, jamais le mois, et l'année d'entrée dans la vie active reste "
-    + "donc comptée pour une année pleine.</p>";
+    + `donc comptée pour une année pleine.${suiteDuReleve(contexte, saisie, releve)}</p>`;
+}
+
+/**
+ * Les années que le site ajoute après le relevé, jusqu'au départ, en une ou
+ * deux phrases : la convention, puis comment les dire sans emploi — ou combien
+ * le sont déjà. Rien pour un relevé qui atteint le départ, ni pour qui est
+ * déjà parti.
+ */
+function suiteDuReleve(contexte, saisie, releve) {
+  const ajoutees = contexte.releveProlonge(saisie).slice(releve.length);
+  if (ajoutees.length === 0) return "";
+  const annees = [...new Set(ajoutees.map((ligne) => ligne.annee))];
+  const premiere = annees[0];
+  const derniere = annees[annees.length - 1];
+  const sansEmploi = new Set(ajoutees.filter((ligne) => ligne.type_periode !== "emploi")
+    .map((ligne) => ligne.annee)).size;
+  const quand = premiere === derniere ? `en ${premiere}` : `de ${premiere} à ${derniere}`;
+  const apres = ` Après ${Math.max(...releve.map((ligne) => ligne.annee))}, `;
+  if (sansEmploi === annees.length) {
+    return `${apres}vous restez sans emploi ${quand}, comme vous le déclarez.`;
+  }
+  const suite = `${apres}votre dernière année se poursuit ${quand} : même statut, et `
+    + "un revenu qui suit le salaire moyen, comme l'estimation officielle prolonge "
+    + "vos revenus jusqu'au départ.";
+  if (sansEmploi > 0) {
+    return `${suite} ${sansEmploi} de ces années ${sansEmploi > 1 ? "restent" : "reste"} `
+      + "sans emploi, comme vous le déclarez.";
+  }
+  return `${suite} Si vous ne travaillez plus, déclarez `
+    + `${annees.length > 1 ? "ces années" : "cette année"} dans « Interruptions » : `
+    + `<code>${premiere}:${derniere}:sans_activite</code>.`;
 }
 
 /**
@@ -3866,10 +3900,6 @@ function estimationOfficielle(contexte, saisie, montants) {
   const minimum = departs.some((depart) => depart.minimum_vieillesse / 12 >= 0.5)
     ? " Le minimum vieillesse n'y est pas : l'estimation officielle ne le compte pas."
     : "";
-  const releve = saisie.releveActif
-    ? " Votre relevé arrête la carrière à sa dernière année ; l'estimation "
-      + "officielle prolonge vos revenus jusqu'au départ."
-    : "";
   return `
 <h2 id="estimation-officielle">Comme votre estimation officielle</h2>
 <p class="chapeau">Le système 1 au format de « Mon estimation retraite », que
@@ -3884,7 +3914,7 @@ l'écart s'affiche à côté.</p>
   ${g.pourcentage(montants.tauxPension, false, 1)}, sans le point de maladie
   des complémentaires. Vos revenus à venir suivent le salaire moyen ;
   l'estimation officielle leur prête « une évolution régulière », un peu plus
-  rapide.${minimum}${releve}
+  rapide.${minimum}
   Ce que vous recopiez reste dans votre navigateur, avec le reste de la
   saisie.</p>
 </div>`;

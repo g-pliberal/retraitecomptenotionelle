@@ -573,7 +573,11 @@ class Confrontation:
             raise Refus(f"départ du {depart.isoformat()} : le relevé porte encore "
                         f"{self.derniere_annee}, qui le suivrait.")
         saisie = self._saisie(depart, self.releve_prolonge(depart))
-        return self.contexte._carriere_relevee(self.simulateur, saisie, self.motifs)
+        # Le relevé est déjà prolongé, à la convention que --revenus-futurs
+        # choisit ; « aucun » l'arrête à sa dernière année, et le site, qui
+        # prolonge le sien, ne doit pas y revenir.
+        return self.contexte._carriere_relevee(self.simulateur, saisie, self.motifs,
+                                               prolonger=False)
 
     def servi(self, depart: Depart) -> Servi:
         return servi(self.simulateur.simuler(self.carriere(depart.date)))

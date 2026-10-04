@@ -895,7 +895,11 @@ def test_le_releve_remplace_la_carriere_parametrique(contexte):
         **commun, "releve": _releve(1998, 2038)}))
     reconstituee = contexte.simuler(Saisie.depuis_requete(commun))
     assert lue.carriere.annee_liquidation == reconstituee.carriere.annee_liquidation
-    assert [ligne.annee for ligne in lue.carriere.lignes] == list(range(1998, 2039))
+    # Les années du relevé, puis janvier 2039, que le site lui ajoute avant le
+    # départ du 1er février : celles de la carrière reconstituée.
+    assert [ligne.annee for ligne in lue.carriere.lignes] == list(range(1998, 2040))
+    assert ([ligne.annee for ligne in lue.carriere.lignes]
+            == [ligne.annee for ligne in reconstituee.carriere.lignes])
     # Les revenus sont ceux du relevé, en euros de chaque année, et non ceux
     # qu'un niveau relatif et un profil auraient fabriqués.
     assert lue.carriere.ligne(1998).revenu == 14000.0
@@ -1037,6 +1041,21 @@ def test_la_page_dit_que_la_carriere_a_ete_lue(page):
     # Le dépliant est ouvert : sinon l'adresse porterait une carrière que la
     # page ne montrerait pas.
     assert '<details class="releve" open>' in texte
+
+
+def test_la_page_dit_ce_qu_elle_ajoute_au_releve_jusqu_au_depart(page):
+    """Le relevé se prolonge jusqu'au départ (``Contexte.releve_prolonge``) : la
+    page le dit, avec la ligne qui l'en dispense à qui ne travaille plus ; une
+    fois cette ligne écrite, elle dit ce qu'elle en a fait."""
+    texte = page("/simuler", naissance=1975, liquidation=64, releve=_releve(1998, 2024))
+    assert "Après 2024, votre dernière année se poursuit de 2025 à 2039" in texte
+    assert "<code>2025:2039:sans_activite</code>" in texte
+    texte = page("/simuler", naissance=1975, liquidation=64, releve=_releve(1998, 2024),
+                 interruptions="2025:2039:sans_activite")
+    assert "Après 2024, vous restez sans emploi de 2025 à 2039, comme vous le déclarez." in texte
+    texte = page("/simuler", naissance=1975, liquidation=64, releve=_releve(1998, 2024),
+                 interruptions="2030:2031:chomage_indemnise")
+    assert "2 de ces années restent sans emploi" in texte
 
 
 # -- plusieurs métiers -------------------------------------------------------

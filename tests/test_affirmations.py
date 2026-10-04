@@ -1581,7 +1581,13 @@ def _(m: Modele):
         releve="2000:salarie_prive_non_cadre:24000\n2001:artisan:25000",
         naissance=1975)
     lignes = [(l.annee, l.affiliation, l.revenu) for l in comparaison.carriere.lignes]
-    assert lignes == [(2000, "salarie_prive_non_cadre", 24000.0), (2001, "artisan", 25000.0)]
+    assert lignes[:2] == [(2000, "salarie_prive_non_cadre", 24000.0), (2001, "artisan", 25000.0)]
+    # Puis sa dernière année, poursuivie jusqu'au départ (Contexte.releve_prolonge) :
+    # rien n'y vient du métier du formulaire.
+    depart = comparaison.carriere.date_liquidation
+    derniere = depart.annee if depart.mois > 1 else depart.annee - 1
+    assert [annee for annee, _, _ in lignes[2:]] == list(range(2002, derniere + 1))
+    assert {affiliation for _, affiliation, _ in lignes[2:]} == {"artisan"}
 
 
 @controle("saisie_hors_bornes_refusee")

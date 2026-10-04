@@ -1173,7 +1173,6 @@ class Saisie:
         Le champ « Interruptions » garde le dernier mot : il désigne des années
         une à une, et c'est l'outil le plus fin des deux.
         """
-        annees: dict[int, str] = {}
         debut, fin = self.date_de(self.debut), self.date_de(self.liquidation, depart=True)
         lignes = self.lignes_carriere
         creux_de_carriere = []
@@ -1185,22 +1184,38 @@ class Saisie:
             suivantes = [autre for autre in lignes[rang + 1:] if not autre.cumul]
             creux_de_carriere.append((ligne.statut, self.date_de(ligne.debut),
                                       self.date_de(suivantes[0].debut) if suivantes else fin))
-        # Une période à l'étranger ne compte que pour les mois de la carrière
-        # qu'elle couvre : celle qui précède le premier emploi en France n'en
-        # interrompt aucun.
+        creux_de_carriere.extend(self._creux_a_l_etranger(debut, fin))
+        annees = _annees_creuses(creux_de_carriere, debut, fin)
+        annees.update(self.interruptions_analysees(motifs_connus))
+        return annees
+
+    def interruptions_apres(self, depuis: DateMois,
+                            motifs_connus: Iterable[str] | None = None,
+                            ) -> dict[int, str]:
+        """Les années non cotisées d'une carrière qui se poursuit de ``depuis``
+        au départ : celle d'un relevé, dont la dernière année se prolonge
+        (:func:`~retraite_notionnelle.carriere.prolonger_releve`). Ce sont
+        celles d'une carrière de métiers, moins les métiers, qu'un relevé
+        remplace : une période passée hors de France, puis le champ
+        « Interruptions », qui garde le dernier mot."""
+        fin = self.date_liquidation
+        annees = _annees_creuses(self._creux_a_l_etranger(depuis, fin), depuis, fin)
+        annees.update(self.interruptions_analysees(motifs_connus))
+        return annees
+
+    def _creux_a_l_etranger(self, debut: DateMois, fin: DateMois,
+                            ) -> list[tuple[str, DateMois, DateMois]]:
+        """Les périodes passées hors de France, en creux ``sans_activite`` de
+        la carrière qui court de ``debut`` à ``fin``. Une période ne compte
+        que pour les mois de la carrière qu'elle couvre : celle qui précède
+        le premier emploi en France n'en interrompt aucun."""
+        creux = []
         for periode in self.etranger:
             ouverture = max(self.date_de(periode.debut), debut, key=lambda d: d.rang)
             cloture = min(self.date_de(periode.fin), fin, key=lambda d: d.rang)
             if cloture.rang > ouverture.rang:
-                creux_de_carriere.append(("sans_activite", ouverture, cloture))
-        for motif, ouverture, cloture in creux_de_carriere:
-            for annee in range(ouverture.annee, cloture.annee + 1):
-                creux = mois_travailles(annee, ouverture, cloture)
-                portee = mois_travailles(annee, debut, fin)
-                if portee and creux * 2 > portee:
-                    annees[annee] = motif
-        annees.update(self.interruptions_analysees(motifs_connus))
-        return annees
+                creux.append(("sans_activite", ouverture, cloture))
+        return creux
 
     def _verifier_niveau(self, niveau: float, rang: int,
                          echelle: "Echelle") -> None:
@@ -2032,6 +2047,22 @@ class Saisie:
             champs[f"pension_etrangere{rang}_debut"] = self.mois_de(pension.debut)
         champs.update(remplacements)
         return urlencode(champs)
+
+
+def _annees_creuses(creux: list[tuple[str, DateMois, DateMois]], debut: DateMois,
+                    fin: DateMois) -> dict[int, str]:
+    """Le motif de chaque année qu'un creux occupe plus qu'à moitié, rapporté
+    aux mois que la carrière, de ``debut`` à ``fin``, y travaille ; à
+    égalité, l'année reste travaillée. Un creux suivant l'emporte sur le
+    précédent la même année."""
+    annees: dict[int, str] = {}
+    for motif, ouverture, cloture in creux:
+        for annee in range(ouverture.annee, cloture.annee + 1):
+            occupes = mois_travailles(annee, ouverture, cloture)
+            portee = mois_travailles(annee, debut, fin)
+            if portee and occupes * 2 > portee:
+                annees[annee] = motif
+    return annees
 
 
 def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,

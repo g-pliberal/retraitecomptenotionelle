@@ -4,8 +4,8 @@
  * Portage de ``src/retraite_notionnelle/contexte.py``.
  */
 
-import { MOIS_PAR_AN } from "./calendrier.js";
-import { salaireMoyenAnnuel } from "./carriere.js";
+import { DateMois, MOIS_PAR_AN } from "./calendrier.js";
+import { prolongerReleve, salaireMoyenAnnuel } from "./carriere.js";
 import { formaterBorne } from "./regimes.js";
 import { PARAMETRES_DEFAUT, cleParametres } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
@@ -465,16 +465,29 @@ export class Contexte {
   }
 
   /**
+   * Le relevé que `simuler` calcule : celui de la saisie, puis les années qui
+   * le séparent du départ (`releveJusquAuDepart`). La page dit celles qu'elle
+   * a ajoutées. Voir `releve_prolonge` du Python.
+   */
+  releveProlonge(saisie) {
+    const simulateur = this.simulateur(saisie.parametres(this.base));
+    const motifs = Object.keys(this.paquet.periodes_non_travaillees ?? {});
+    return releveJusquAuDepart(simulateur, saisie, saisie.releveAnalyse(motifs), motifs);
+  }
+
+  /**
    * La carrière telle que le relevé la donne, sans rien reconstituer.
    *
    * Aucune échelle des salaires n'intervient : le relevé est déjà en euros de
    * chaque année, quand le formulaire paramétrique saisit un revenu
    * d'aujourd'hui que le modèle promène ensuite le long du salaire moyen. C'est
    * ce qui fait de ce chemin le plus exact — et le seul où l'euro n'est pas
-   * converti.
+   * converti. Seules les années qui suivent le relevé, jusqu'au départ, se
+   * projettent (`releveJusquAuDepart`) ; `prolonger = false` s'en tient au
+   * relevé.
    */
-  carriereRelevee(simulateur, saisie, motifs) {
-    const releve = saisie.releveAnalyse(motifs);
+  carriereRelevee(simulateur, saisie, motifs, prolonger = true) {
+    let releve = saisie.releveAnalyse(motifs);
     for (const ligne of releve) {
       if (!simulateur.affiliations.contient(ligne.affiliation)) {
         throw new ErreurSaisie(
@@ -482,6 +495,9 @@ export class Contexte {
           + `« ${ligne.affiliation} ».`,
         );
       }
+    }
+    if (prolonger) {
+      releve = releveJusquAuDepart(simulateur, saisie, releve, motifs);
     }
     const carriere = simulateur.carriereReleve({
       annee_naissance: saisie.naissance,
@@ -567,6 +583,36 @@ function etrangerDeclare(simulateur, saisie) {
     }
   }
   return { ...etranger, pensions };
+}
+
+/**
+ * Le relevé, sa dernière année poursuivie jusqu'au départ (`prolongerReleve`) :
+ * comme le dernier métier d'un parcours court jusqu'à lui, et comme « Mon
+ * estimation retraite » prolonge les revenus. Les années ajoutées prennent leur
+ * motif comme celles d'une carrière de métiers (`interruptionsApres`) ; la
+ * retraite progressive les met à temps partiel ; la radiation pour invalidité
+ * les arrête à sa date quand elle ne tombe pas avant la dernière année du
+ * relevé. Rien ne s'ajoute à qui est parti une année déjà passée. Voir
+ * `_releve_jusqu_au_depart` du Python.
+ */
+function releveJusquAuDepart(simulateur, saisie, releve, motifs) {
+  const depart = saisie.dateLiquidation;
+  if (depart.annee < simulateur.parametres.annee_courante) {
+    return releve;
+  }
+  const derniere = Math.max(...releve.map((ligne) => ligne.annee));
+  let fin = depart;
+  if (saisie.radiation_invalidite !== null) {
+    const radiation = saisie.dateDe(saisie.radiation_invalidite);
+    if (radiation.annee >= derniere && radiation.rang < fin.rang) {
+      fin = radiation;
+    }
+  }
+  const declaree = saisie.retraiteProgressiveDeclaree();
+  const progressive = declaree === null ? null
+    : [saisie.dateDe(declaree.age, true), declaree.quotite];
+  return prolongerReleve(releve, fin, simulateur.macro,
+    saisie.interruptionsApres(new DateMois(derniere + 1, 1), motifs), progressive);
 }
 
 /**

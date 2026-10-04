@@ -17,7 +17,8 @@ from dataclasses import dataclass, field, replace
 from . import memoire
 from .avantages import charger_avantages
 from .calendrier import MOIS_PAR_AN, DateMois
-from .carriere import Affiliations, Metier, formater_borne, salaire_moyen_annuel
+from .carriere import (Affiliations, LigneRelevee, Metier, formater_borne,
+                       prolonger_releve, salaire_moyen_annuel)
 from .config import Parametres
 from .donnees.assiette import AssietteActivite
 from .donnees.bilan import BilanFige, charger_bilan
@@ -482,15 +483,27 @@ class Contexte:
         comparaison = simulateur.simuler(carriere)
         return replace(comparaison, niveau_inverse=trouve)
 
+    def releve_prolonge(self, saisie: Saisie) -> list[LigneRelevee]:
+        """Le relevé que :meth:`simuler` calcule : celui de la saisie, puis
+        les années qui le séparent du départ (:func:`_releve_jusqu_au_depart`).
+        La page dit celles qu'elle a ajoutées."""
+        simulateur = self.simulateur(saisie.parametres(self.base))
+        motifs = charger_periodes_non_travaillees(simulateur.macro.racine)
+        return _releve_jusqu_au_depart(simulateur, saisie,
+                                       saisie.releve_analyse(motifs), motifs)
+
     def _carriere_relevee(self, simulateur: Simulateur, saisie: Saisie,
-                          motifs) -> "Carriere":
+                          motifs, prolonger: bool = True) -> "Carriere":
         """La carrière telle que le relevé la donne, sans rien reconstituer.
 
         Aucune échelle des salaires n'intervient : le relevé est déjà en euros
         de chaque année, quand le formulaire paramétrique saisit un revenu
         d'aujourd'hui que le modèle promène ensuite le long du salaire moyen.
         C'est ce qui fait de ce chemin le plus exact — et le seul où l'euro
-        n'est pas converti.
+        n'est pas converti. Seules les années qui suivent le relevé, jusqu'au
+        départ, se projettent (:func:`_releve_jusqu_au_depart`) ;
+        ``prolonger=False`` s'en tient au relevé, pour qui l'a déjà prolongé à
+        sa façon (``scripts/estimation_officielle.py``).
         """
         releve = saisie.releve_analyse(motifs)
         for ligne in releve:
@@ -499,6 +512,8 @@ class Contexte:
                     f"Relevé, année {ligne.annee} : statut d'affiliation "
                     f"inconnu « {ligne.affiliation} »."
                 )
+        if prolonger:
+            releve = _releve_jusqu_au_depart(simulateur, saisie, releve, motifs)
         carriere = simulateur.carriere_releve(
             annee_naissance=saisie.naissance,
             sexe=saisie.sexe,
@@ -597,6 +612,43 @@ def _depart_estime(simulateur: Simulateur, parametres: Parametres, carriere,
         trimestres_requis=resultat.trimestres_requis,
         motif_ouverture=resultat.motif_ouverture,
     )
+
+
+def _releve_jusqu_au_depart(simulateur: Simulateur, saisie: Saisie,
+                            releve: list[LigneRelevee], motifs) -> list[LigneRelevee]:
+    """Le relevé, sa dernière année poursuivie jusqu'au départ
+    (:func:`~retraite_notionnelle.carriere.prolonger_releve`) : comme le
+    dernier métier d'un parcours court jusqu'à lui, et comme « Mon estimation
+    retraite » prolonge les revenus jusqu'au départ qu'elle chiffre. Sans
+    cela, qui dépose son relevé à quarante ans recevait la pension de qui
+    cesserait de travailler le jour même.
+
+    Les années ajoutées prennent leur motif comme celles d'une carrière de
+    métiers (:meth:`Saisie.interruptions_apres`) : une période à l'étranger,
+    puis le champ « Interruptions », qui garde le dernier mot —
+    ``sans_activite`` pour qui ne travaille plus. La retraite progressive
+    les met à temps partiel. La radiation pour invalidité, qui clôt l'emploi
+    de fonctionnaire, les arrête à sa date quand elle ne tombe pas avant la
+    dernière année du relevé : ce qui la suit, le relevé ne le dit pas.
+
+    Rien ne s'ajoute à qui est parti une année déjà passée : son relevé dit
+    toute sa carrière, et ce qui y manque n'a pas été travaillé.
+    """
+    depart = saisie.date_liquidation
+    if depart.annee < simulateur.parametres.annee_courante:
+        return releve
+    derniere = max(ligne.annee for ligne in releve)
+    fin = depart
+    if saisie.radiation_invalidite is not None:
+        radiation = saisie.date_de(saisie.radiation_invalidite)
+        if radiation.annee >= derniere and radiation.rang < fin.rang:
+            fin = radiation
+    declaree = saisie.retraite_progressive_declaree()
+    progressive = (None if declaree is None else
+                   (saisie.date_de(declaree["age"], depart=True), declaree["quotite"]))
+    return prolonger_releve(releve, fin, simulateur.macro,
+                            saisie.interruptions_apres(DateMois(derniere + 1, 1), motifs),
+                            progressive)
 
 
 def _demandes_de_pension(simulateur: Simulateur, saisie: Saisie) -> dict[str, float] | None:

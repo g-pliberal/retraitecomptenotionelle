@@ -147,6 +147,7 @@ def _cas_releve() -> list[tuple[str, dict]]:
     le portage JavaScript de tout cela ne serait comparé à rien.
     """
     prive = lignes_releve(1998, 2038, "salarie_prive_non_cadre", 14000)
+    jusqu_en_2024 = lignes_releve(1998, 2024, "salarie_prive_non_cadre", 14000)
     return [
         # Le cas nu : quarante et une années pleines, quatre trimestres chacune.
         ("releve_prive", {"releve": prive}),
@@ -199,6 +200,32 @@ def _cas_releve() -> list[tuple[str, dict]]:
         ("releve_annees_manquantes", {
             "releve": lignes_releve(1998, 2010, "salarie_prive_non_cadre", 14000)
             + "," + lignes_releve(2018, 2038, "artisan", 25000),
+        }),
+        # Après sa dernière année, en revanche, le relevé se prolonge jusqu'au
+        # départ : la dernière année poursuivie, son revenu au rythme du
+        # salaire moyen (Contexte.releve_prolonge).
+        ("releve_prolonge_jusqu_au_depart", {"releve": jusqu_en_2024}),
+        # Les années ajoutées prennent le motif que la saisie leur donne :
+        # chômage, puis plus d'activité du tout.
+        ("releve_prolonge_interrompu", {
+            "releve": jusqu_en_2024,
+            "interruptions": "2028:2029:chomage_indemnise,2035:2039:sans_activite",
+        }),
+        # Une période à l'étranger vide les années qu'elle occupe.
+        ("releve_prolonge_a_l_etranger", {
+            "releve": jusqu_en_2024, "etranger1_pays": "DE",
+            "etranger1_debut": "2030-01", "etranger1_fin": "2032-07",
+            "etranger1_activite": "salariee",
+        }),
+        # La retraite progressive met à temps partiel les années qu'elle touche.
+        ("releve_prolonge_progressive", {
+            "releve": jusqu_en_2024, "progressive": "62", "quotite": "60",
+        }),
+        # La radiation pour invalidité arrête l'emploi de fonctionnaire qu'elle
+        # clôt : le relevé ne se prolonge pas au-delà.
+        ("releve_prolonge_radiation", {
+            "releve": lignes_releve(1998, 2024, "fonctionnaire_etat", 22000),
+            "radiation_invalidite": "2030-06", "taux_invalidite": "60",
         }),
     ]
 

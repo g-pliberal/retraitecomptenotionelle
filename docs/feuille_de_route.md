@@ -196,7 +196,9 @@ aux cas types, qui naissent en janvier.
 3. La contiguïté d'un relevé au départ (`Carriere.prolongee`) : un relevé qui
    s'arrête à l'année d'avant n'est contigu que si le départ tombe en
    janvier, et la proposition ne prolonge pas les autres — le témoin
-   `releve_deux_statuts` y a perdu 2,31 % au scénario 6.
+   `releve_deux_statuts` y a perdu 2,31 % au scénario 6. Réglé pour le site
+   le 4 octobre 2026 (action 142, étape 3, suite) : le relevé y est prolongé
+   jusqu'au départ, ses mois compris, et le témoin regagne 2,53 %.
 4. La fenêtre de la surcote parentale, datée au mois : elle chevauche l'année
    du départ, qui ne valide que ses trimestres civils écoulés, et perd un
    trimestre deux mois de naissance sur trois. Chercher la circulaire qui
@@ -5738,15 +5740,15 @@ d'OpenFisca-France confrontées à celles du dépôt.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
-**Reprise, au 4 octobre 2026.** Faites : les étapes 1 à 3. Le propriétaire veut
-tout le reste (« Le restant », en fin d'action), une étape par session, par
-zones : au modèle, la réversion du RAFP, de la RCI et de l'Ircantec, puis le
-départ des handicapés ; aux données, la délibération de l'ERAFP ; aux moteurs
-publics (4., avec l'action 137), R dans la WSL Ubuntu, Destinie 2 puis
-TRAJECTOiRE ; au site, une fois le relevé prolongé jusqu'au départ, le net
-officiel dans le bloc (138.2 : le 1 %, puis la CSG, présomption et champ) ;
-avec lui, connecté, le prix d'achat Agirc-Arrco implicite de la page.
-Détail : en fin d'action.
+**Reprise, au 4 octobre 2026.** Faites : les étapes 1 à 3, et le relevé
+prolongé jusqu'au départ sur tout le site. Le propriétaire veut tout le reste
+(« Le restant », en fin d'action), une étape par session, par zones : au
+modèle, la réversion du RAFP, de la RCI et de l'Ircantec, puis le départ des
+handicapés ; aux données, la délibération de l'ERAFP ; aux moteurs publics
+(4., avec l'action 137), R dans la WSL Ubuntu, Destinie 2 puis TRAJECTOiRE ;
+au site, le net officiel dans le bloc (138.2 : le 1 %, puis la CSG,
+présomption et champ) ; avec lui, connecté, le prix d'achat Agirc-Arrco
+implicite de la page. Détail : en fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -6208,6 +6210,57 @@ défaut, et un champ facultatif dans les réglages (action 138, étape 13).
 Pour les moteurs publics, R dans la distribution Ubuntu de la WSL, que le
 propriétaire installe lui-même, son mot de passe `sudo` n'étant tapé que par
 lui ; Destinie 2 importe `xlsx`, donc Java.
+
+**Étape 3, suite, le 4 octobre 2026 : le relevé prolongé jusqu'au départ.**
+
+- *Les décisions du propriétaire*, le même jour, avant toute ligne : la
+  carrière d'un relevé se prolonge sur tout le site, et non dans le seul
+  bloc — les quatre montants, le détail et le bloc partent de la même
+  carrière — ; qui ne travaille plus le déclare dans « Interruptions », sans
+  champ nouveau.
+- *La convention*, celle de `Carriere.prolongee` : la dernière année se
+  prolonge (`prolonger_releve`, dans `carriere.py`). Chacune de ses lignes,
+  sous son statut, avec la nature de sa période et son revenu avancé au
+  rythme du salaire moyen ; l'année du départ au prorata de ses mois ; les
+  trimestres déduits du revenu. `_releve_jusqu_au_depart` (contexte) dit
+  quand et jusqu'où : rien pour qui est parti une année passée ; jusqu'au
+  départ, ou jusqu'à la radiation pour invalidité qui clôt l'emploi de
+  fonctionnaire, faute de quoi son contrôle refusait la carrière prolongée.
+  Les années ajoutées prennent leur motif comme celles d'une carrière de
+  métiers (`Saisie.interruptions_apres`, qui partage avec
+  `interruptions_de_carriere` la règle des périodes à l'étranger) : une
+  période à l'étranger les vide, le champ « Interruptions » garde le dernier
+  mot ; la retraite progressive les met à temps partiel. Déclarées
+  `sans_activite`, elles rendent dans les six scénarios la pension du relevé
+  arrêté, à l'identique. `Contexte.releve_prolonge` les donne à la page. Les
+  jumeaux JavaScript concordent au bit près. `estimation_officielle.py`
+  garde sa propre prolongation (`prolonger=False`), que `--revenus-futurs`
+  règle.
+- *La page.* Le résumé du relevé dit les années ajoutées et la ligne à
+  écrire pour qui ne travaille plus (`2025:2039:sans_activite`), ou combien
+  en sont déclarées sans emploi ; l'aide du relevé le dit d'une incise ; la
+  réserve du bloc « Comme votre estimation officielle » tombe.
+  `docs/limites.md` le dit au § 5 (« Les carrières réelles »), au § 4 (le
+  report) et au § 5 ante ter.
+- *Ce que ça déplace.* Sept témoins de simulation sur 712, tous des relevés
+  qui finissent en 2038 pour un départ au 1er février 2039 : janvier 2039
+  s'y ajoute. Au scénario 1, de +0,06 % à +2,45 % (la fonction publique, dont
+  le traitement de référence se lit alors sur la ligne de 2039 : le point 1
+  de l'action 134, que la carrière de métiers subissait déjà). Au scénario 6,
+  `releve_deux_statuts` regagne +2,53 % (le point 3 de l'action 134, réglé
+  pour le site) ; cinq relevés modestes du privé baissent de 1,3 à 1,4 %,
+  mais pension et rente capitalisée obligatoire font la même somme au
+  centime : ils sont au plancher de la garantie vieillesse, et le mois de
+  plus déplace le complément vers la rente. Cinq témoins neufs
+  (`releve_prolonge_*`) tiennent le portage sur chaque branche. Dix rendus de
+  page sur 70 : l'incise de l'aide, et `simuler_releve`.
+- *Les témoins sous Linux.* Copiés sur le disque de la WSL (`git archive
+  HEAD data`, puis `src` et `scripts` du dossier), les 717 témoins s'y
+  calculent en 84 secondes, contre 13 minutes depuis `/mnt/c` ; les 705 que
+  le changement ne touche pas sortent identiques à `main` au bit près.
+- *Tests.* `tests/test_releve_prolonge.py` (huit, niveau rapide), deux
+  relevés de plus dans `test_estimation_du_site.py`, la phrase de la page dans
+  `test_web_saisie.py`. Les relevés sont fictifs.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

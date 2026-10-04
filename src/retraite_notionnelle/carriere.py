@@ -1785,6 +1785,55 @@ def _quotite_de_l_annee(annee: int, debut: DateMois, fin: DateMois,
     return (travailles - partiels + partiels * quotite) / travailles
 
 
+def prolonger_releve(releve: list[LigneRelevee], fin: DateMois, macro: DonneesMacro,
+                     interruptions: dict[int, str] | None = None,
+                     progressive: tuple[DateMois, float] | None = None,
+                     ) -> list[LigneRelevee]:
+    """Le relevé, poursuivi jusqu'à ``fin`` — le mois du départ, qui n'est
+    plus travaillé : les années qui l'en séparent s'ajoutent après lui.
+
+    LA CONVENTION EST CELLE DE :meth:`Carriere.prolongee` : LA DERNIÈRE ANNÉE
+    SE PROLONGE. Chacune de ses lignes, sous son statut, avec la nature de sa
+    période et son revenu — le salaire de référence, pour une interruption —,
+    avancé chaque année au rythme du salaire moyen ; l'année de ``fin`` au
+    prorata des mois travaillés avant elle. Les trimestres ne se déclarent
+    pas : le modèle les déduit du revenu, comme d'une carrière de métiers.
+
+    ``interruptions`` donne à une année ajoutée son motif, comme le champ
+    « Interruptions » le donne aux années du relevé : ``sans_activite`` pour
+    qui ne travaille plus. ``progressive`` — le mois de la retraite
+    progressive et sa quotité — met à temps partiel les mois qu'elle touche :
+    leur revenu est celui du temps partiel, comme le relevé le porterait
+    (:func:`_lignes_du_releve`), et celui de la dernière année, s'il l'était
+    déjà, se prolonge à temps plein avant d'y être ramené.
+
+    Rend le relevé tel quel quand sa dernière année touche déjà ``fin`` :
+    c'est celle du départ, ou celle d'avant un départ de janvier.
+    """
+    lignes = list(releve)
+    if not lignes:
+        return lignes
+    interruptions = interruptions or {}
+    derniere = max(ligne.annee for ligne in lignes)
+    sources = [ligne for ligne in lignes if ligne.annee == derniere]
+    reference = salaire_moyen_annuel(macro, derniere)
+    quotite = _quotite_de_l_annee(derniere, DateMois(derniere, 1), fin, progressive)
+    for annee in range(derniere + 1, fin.annee + 1):
+        mois = MOIS_PAR_AN if annee < fin.annee else fin.mois - 1
+        if mois <= 0:
+            continue
+        facteur = salaire_moyen_annuel(macro, annee) / reference if reference > 0 else 1.0
+        for source in sources:
+            type_periode = interruptions.get(annee, source.type_periode)
+            base = source.revenu / quotite if source.type_periode == "emploi" else source.revenu
+            revenu = base * facteur * mois / MOIS_PAR_AN
+            if type_periode == "emploi":
+                revenu *= _quotite_de_l_annee(annee, DateMois(annee, 1), fin, progressive)
+            lignes.append(LigneRelevee(annee=annee, affiliation=source.affiliation,
+                                       revenu=revenu, type_periode=type_periode))
+    return lignes
+
+
 def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: DateMois,
                         macro: DonneesMacro,
                         progressive: tuple[DateMois, float] | None = None
