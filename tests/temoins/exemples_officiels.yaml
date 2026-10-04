@@ -140,7 +140,9 @@
 # `inaptitude` déclare l'inaptitude reconnue au départ, `invalidite_imputable`
 # et `taux_invalidite` qualifient la radiation, comme la saisie ;
 # `traitement_mensuel` et `taux_de_la_pension` ne servent qu'à la grandeur
-# qui les prête.
+# qui les prête, comme `points_rafp` et `valeur_de_service_rafp`, les points
+# et la valeur de service que l'ERAFP publie ou que son simulateur affiche, et
+# `retraite_de_base`, le mois de la pension de base quand le RAFP la suit.
 #
 # UN EXEMPLE QUE LE MODÈLE NE REPRODUIT PAS ENTRE QUAND MÊME, à l'état
 # « écart connu » (docs/architecture.md, § 9.2) : ce qu'on apprend n'est
@@ -1977,3 +1979,266 @@ exemples:
       lui ouvre.
     carriere: {naissance: "1970-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2030-06", debut: "1986-01"}
     attendu: {age_ouverture: 60.0, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  # Le simulateur de prestation de l'ERAFP : dix saisies le 4 octobre 2026, par
+  # Claude, sur un lot que le propriétaire a approuvé, transcrites le 5 octobre
+  # par l'adaptateur `PrestationRafp` de scripts/simulateurs.py. Le texte de
+  # l'écran n'a pas été gardé : l'énoncé est le relevé que la session en a
+  # fait. La grandeur `prestation_rafp` prête au RAFP les points saisis et la
+  # valeur de service affichée, et compare l'âge légal, la forme de la
+  # prestation, le coefficient de majoration et les montants.
+
+  - id: erafp_1964_effet_2027_04_6000_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1964 ; 01/04/2027 ; 6000 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1964 ; 01/04/2027 ; 6000"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : âge
+      légal 62 ans et 9 mois ; coefficient de majoration 1,03 ; rente de 29,21
+      € par mois, à la valeur de service de 0,05671 €. La carrière d'exemple :
+      un fonctionnaire de l'État né le 15 juin 1964, dont la prestation prend
+      effet en avril 2027 ; le test lui prête les 6 000 points saisis et la
+      valeur de service affichée, 0,05671 €.
+    carriere: {naissance: "1964-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2027-04", age_debut: 22, points_rafp: 6000, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: rente, age_legal: 62.75, coefficient: 1.03, rente_mensuelle: 29.21}}
+
+  - id: erafp_1964_effet_2028_07_6000_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1964 ; 01/07/2028 ; 6000 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1964 ; 01/07/2028 ; 6000"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : âge
+      légal 62 ans et 9 mois ; coefficient de majoration 1,08 ; rente de 30,62
+      € par mois, à la valeur de service de 0,05671 €. La carrière d'exemple :
+      un fonctionnaire de l'État né le 15 juin 1964, dont la prestation prend
+      effet en juillet 2028 ; le test lui prête les 6 000 points saisis et la
+      valeur de service affichée, 0,05671 €.
+    carriere: {naissance: "1964-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2028-07", age_debut: 22, points_rafp: 6000, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: rente, age_legal: 62.75, coefficient: 1.08, rente_mensuelle: 30.62}}
+
+  - id: erafp_1964_effet_2031_07_6000_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1964 ; 01/07/2031 ; 6000 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1964 ; 01/07/2031 ; 6000"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : âge
+      légal 62 ans et 9 mois ; coefficient de majoration 1,22 ; rente de 34,59
+      € par mois, à la valeur de service de 0,05671 €. La carrière d'exemple :
+      un fonctionnaire de l'État né le 15 juin 1964, dont la prestation prend
+      effet en juillet 2031 ; le test lui prête les 6 000 points saisis et la
+      valeur de service affichée, 0,05671 €.
+    carriere: {naissance: "1964-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2031-07", age_debut: 22, points_rafp: 6000, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: rente, age_legal: 62.75, coefficient: 1.22, rente_mensuelle: 34.59}}
+
+  - id: erafp_1964_effet_2039_07_6000_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1964 ; 01/07/2039 ; 6000 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1964 ; 01/07/2039 ; 6000"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : âge
+      légal 62 ans et 9 mois ; coefficient de majoration 1,81 à 75 ans, quand
+      le tableau que l'ERAFP publie à part écrit 1,80 ; rente de 51,32 € par
+      mois, à la valeur de service de 0,05671 €. La carrière d'exemple : un
+      fonctionnaire de l'État né le 15 juin 1964, dont la prestation prend
+      effet en juillet 2039 ; le test lui prête les 6 000 points saisis et la
+      valeur de service affichée, 0,05671 €.
+    carriere: {naissance: "1964-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2039-07", age_debut: 22, points_rafp: 6000, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: rente, age_legal: 62.75, coefficient: 1.81, rente_mensuelle: 51.32}}
+
+  - id: erafp_1966_effet_2029_04_3000_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1966 ; 01/04/2029 ; 3000 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1966 ; 01/04/2029 ; 3000"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : « date
+      d'effet non atteinte », l'âge légal étant de 63 ans et 3 mois. La
+      carrière d'exemple : un fonctionnaire de l'État né le 15 juin 1966, dont
+      la prestation prend effet en avril 2029 ; le test lui prête les 3 000
+      points saisis et la valeur de service affichée, 0,05671 €.
+    carriere: {naissance: "1966-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2029-04", age_debut: 22, points_rafp: 3000, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: non_ouverte, age_legal: 63.25}}
+
+  - id: erafp_1966_effet_2031_01_3000_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1966 ; 01/01/2031 ; 3000 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1966 ; 01/01/2031 ; 3000"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : âge
+      légal 63 ans et 3 mois ; coefficient de majoration 1,10 ; coefficient de
+      conversion 25,18 ; capital de 4 712,26 €, versé en une fois, à la valeur
+      de service de 0,05671 €. La carrière d'exemple : un fonctionnaire de
+      l'État né le 15 juin 1966, dont la prestation prend effet en janvier
+      2031 ; le test lui prête les 3 000 points saisis et la valeur de service
+      affichée, 0,05671 €.
+    carriere: {naissance: "1966-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2031-01", age_debut: 22, points_rafp: 3000, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: capital, age_legal: 63.25, coefficient: 1.1, conversion: 25.18, capital: 4712.26}}
+
+  - id: erafp_1970_effet_2034_06_5124_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1970 ; 01/06/2034 ; 5124 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1970 ; 01/06/2034 ; 5124"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : « date
+      d'effet non atteinte », l'âge légal étant de 64 ans. La carrière
+      d'exemple : un fonctionnaire de l'État né le 15 juin 1970, dont la
+      prestation prend effet en juin 2034 ; le test lui prête les 5 124 points
+      saisis et la valeur de service affichée, 0,05671 €.
+    carriere: {naissance: "1970-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2034-06", age_debut: 22, points_rafp: 5124, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: non_ouverte, age_legal: 64.0}}
+
+  - id: erafp_1970_effet_2034_07_5125_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1970 ; 01/07/2034 ; 5125 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1970 ; 01/07/2034 ; 5125"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : âge
+      légal 64 ans ; coefficient de majoration 1,08 ; rente de 26,16 € par
+      mois, à la valeur de service de 0,05671 €. La carrière d'exemple : un
+      fonctionnaire de l'État né le 15 juin 1970, dont la prestation prend
+      effet en juillet 2034 ; le test lui prête les 5 125 points saisis et la
+      valeur de service affichée, 0,05671 €.
+    carriere: {naissance: "1970-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2034-07", age_debut: 22, points_rafp: 5125, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: rente, age_legal: 64.0, coefficient: 1.08, rente_mensuelle: 26.16}}
+
+  - id: erafp_1958_effet_2026_11_8000_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1958 ; 01/11/2026 ; 8000 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1958 ; 01/11/2026 ; 8000"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : âge
+      légal 64 ans, que le simulateur prête à la génération 1958 ; coefficient
+      de majoration 1,30 à 68 ans et 4 mois ; rente de 49,15 € par mois, à la
+      valeur de service de 0,05671 €. La carrière d'exemple : un fonctionnaire
+      de l'État né le 15 juin 1958, dont la prestation prend effet en novembre
+      2026 ; le test lui prête les 8 000 points saisis et la valeur de service
+      affichée, 0,05671 €.
+    carriere: {naissance: "1958-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2026-11", age_debut: 22, points_rafp: 8000, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: rente, age_legal: 64.0, coefficient: 1.3, rente_mensuelle: 49.15}}
+    ecart_connu:
+      modele: {prestation_rafp: {forme: rente, age_legal: 62.0, coefficient: 1.296667, rente_mensuelle: 49.02}}
+      explication: >-
+        Deux écarts, que le texte tranche contre le simulateur. L'arrondi :
+        entre 68 ans (1,28) et 69 ans (1,33), quatre mois valent 1,2967, que
+        le simulateur arrondit à 1,30 ; la délibération du 5 février 2015
+        donne un barème par âge, les rapports annuels de l'ERAFP le disent
+        calculé « en tenant compte du nombre d'années et du nombre de mois »,
+        aucun ne dit d'arrondi : le modèle garde le prorata exact. L'âge
+        légal : le simulateur prête 64 ans à un fonctionnaire né en 1958, à
+        qui L. 161-17-2 et l'article 6 du décret n° 2004-569 ouvrent le RAFP
+        à 62 ans ; sans effet ici, la date d'effet le passant. À confirmer
+        auprès de l'ERAFP.
+      fiche: rafp_majoration_capital
+      depuis: "2026-10-05"
+
+  - id: erafp_1963_effet_2026_11_5000_points
+    source: {editeur: "ERAFP", reference: "simulateur de prestation de l'ERAFP, rafp.fr, saisie « 15/06/1963 ; 01/11/2026 ; 5000 »", verifie_le: "2026-10-04", simulateur: rafp_simulateur_prestation, saisie: "15/06/1963 ; 01/11/2026 ; 5000"}
+    enonce: >-
+      Relevé de la saisie du 4 octobre 2026, gardé dans la fiche
+      rafp_majoration_capital, le texte de l'écran ne l'ayant pas été : âge
+      légal 62 ans et 9 mois ; coefficient de majoration 1,05 à 63 ans et 4
+      mois ; « capital fractionné », première fraction de 99,24 €, le tiers de
+      la rente annuelle, à la valeur de service de 0,05671 €. La carrière
+      d'exemple : un fonctionnaire de l'État né le 15 juin 1963, dont la
+      prestation prend effet en novembre 2026 ; le test lui prête les 5 000
+      points saisis et la valeur de service affichée, 0,05671 €.
+    carriere: {naissance: "1963-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2026-11", age_debut: 22, points_rafp: 5000, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: capital_fractionne, age_legal: 62.75, coefficient: 1.05, premiere_fraction: 99.24}}
+    ecart_connu:
+      modele: {prestation_rafp: {forme: capital_fractionne, age_legal: 62.75, coefficient: 1.053333, premiere_fraction: 99.56}}
+      explication: >-
+        L'arrondi : entre 63 ans (1,04) et 64 ans (1,08), quatre mois valent
+        1,0533, que le simulateur arrondit à 1,05, et la première fraction,
+        quatre mois de rente (délibération n° 7 du 8 février 2024), en suit :
+        99,24 € au lieu de 99,56 €. Ni les délibérations ni les notes de
+        l'ERAFP ne disent d'arrondi : le modèle garde le prorata exact. La
+        forme concorde : 5 000 points, entre 4 900 et 5 124, au lendemain du
+        départ, se versent en deux fois. À confirmer auprès de l'ERAFP.
+      fiche: rafp_majoration_capital
+      depuis: "2026-10-05"
+
+  # L'ERAFP publie aussi ses calculs : les « prestations-types » de ses
+  # rapports annuels, exemples fictifs qu'il donne « à titre indicatif », et
+  # ceux de sa page « Calcul et paiement de votre prestation ». Ils datent ce
+  # que le simulateur, qui n'accepte que des dates futures, ne peut pas
+  # montrer : le barème de conversion de 2005, le fractionnement en quinze
+  # mois de rente, le capital d'un départ de base trop ancien. Un rapport ne
+  # datant pas le départ dans l'année, la carrière d'exemple part en juillet.
+
+  - id: erafp_ra2015_alice_capital_62_ans
+    source: {editeur: "ERAFP", reference: "rapport annuel de l'ERAFP 2015, « Simulations de versement de prestations-types », page 17", verifie_le: "2026-10-04"}
+    enonce: >-
+      Alice, adjointe administrative, prend sa retraite en 2015 à 62 ans avec
+      4 500 points, moins de 5 125 : un capital de 4 500 × 0,04465 × 24,62 =
+      4 946,77 € bruts, la valeur de service de 2015 par le coefficient de
+      conversion de 62 ans, celui du barème de 2005, et le coefficient de
+      majoration de 62 ans, 1,00 depuis mars 2015.
+    carriere: {naissance: "1953-06-15", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2015-07", age_debut: 22, points_rafp: 4500, valeur_de_service_rafp: 0.04465}
+    attendu: {prestation_rafp: {forme: capital, coefficient: 1.0, conversion: 24.62, capital: 4946.77}}
+
+  - id: erafp_ra2015_rente_62_ans
+    source: {editeur: "ERAFP", reference: "rapport annuel de l'ERAFP 2015, « Simulations de versement de prestations-types », page 17", verifie_le: "2026-10-04"}
+    enonce: >-
+      Chi-Thiên, attaché, prend sa retraite en 2015 à 62 ans avec 7 000
+      points, plus de 5 125 : une rente de 7 000 × 0,04465 × 1,00 = 312,55 €
+      bruts par an, soit 26,05 € par mois.
+    carriere: {naissance: "1953-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2015-07", age_debut: 22, points_rafp: 7000, valeur_de_service_rafp: 0.04465}
+    attendu: {prestation_rafp: {forme: rente, coefficient: 1.0, rente_annuelle: 312.55, rente_mensuelle: 26.05}}
+
+  - id: erafp_ra2015_rente_67_ans
+    source: {editeur: "ERAFP", reference: "rapport annuel de l'ERAFP 2015, « Simulations de versement de prestations-types », page 17", verifie_le: "2026-10-04"}
+    enonce: >-
+      Le même attaché, parti en 2015 à 67 ans avec 7 000 points : une rente de
+      7 000 × 0,04465 × 1,22 = 381,31 € bruts par an, soit 31,78 € par mois,
+      le coefficient de 67 ans du barème de 2015.
+    carriere: {naissance: "1948-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2015-07", age_debut: 22, points_rafp: 7000, valeur_de_service_rafp: 0.04465}
+    attendu: {prestation_rafp: {forme: rente, coefficient: 1.22, rente_annuelle: 381.31, rente_mensuelle: 31.78}}
+
+  - id: erafp_ra2022_sylvie_capital_62_ans
+    source: {editeur: "ERAFP", reference: "rapport annuel de l'ERAFP 2022, « Simulations de versement de prestations-types », page 29", verifie_le: "2026-10-04"}
+    enonce: >-
+      Sylvie, secrétaire à l'Aide sociale à l'enfance, prend sa retraite en
+      2022 à 62 ans avec 4 557 points, moins de 4 600 : un capital de 4 557 ×
+      0,04764 × 27,11 × 1,00 = 5 885,46 € bruts, au coefficient de conversion
+      du barème de la délibération du 16 décembre 2021.
+    carriere: {naissance: "1960-06-15", sexe: F, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2022-07", age_debut: 22, points_rafp: 4557, valeur_de_service_rafp: 0.04764}
+    attendu: {prestation_rafp: {forme: capital, coefficient: 1.0, conversion: 27.11, capital: 5885.46}}
+
+  - id: erafp_ra2022_alain_capital_apres_la_base
+    source: {editeur: "ERAFP", reference: "rapport annuel de l'ERAFP 2022, « Simulations de versement de prestations-types », page 29", verifie_le: "2026-10-04"}
+    enonce: >-
+      Alain, aide-soignant hospitalier, a pris sa retraite en 2020 à 60 ans ;
+      son RAFP prend effet à 62 ans, avec 4 834 points, entre 4 600 et 5 124.
+      Parti plus de quinze mois avant cette date d'effet, il n'est pas
+      concerné par le fractionnement : un capital de 4 834 × 0,04764 × 27,11 ×
+      1,00 = 6 243,21 € bruts, en une fois.
+    carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_territorial_hospitalier_actif, liquidation: "2022-07", age_debut: 22, retraite_de_base: "2020-07", points_rafp: 4834, valeur_de_service_rafp: 0.04764}
+    attendu: {prestation_rafp: {forme: capital, coefficient: 1.0, conversion: 27.11, capital: 6243.21}}
+
+  - id: erafp_ra2022_christine_capital_fractionne
+    source: {editeur: "ERAFP", reference: "rapport annuel de l'ERAFP 2022, « Simulations de versement de prestations-types », page 29", verifie_le: "2026-10-04"}
+    enonce: >-
+      Christine, adjointe administrative d'État, prend sa retraite en 2022 à
+      62 ans avec 4 971 points, entre 4 600 et 5 124 : la première fraction de
+      son capital vaut quinze mois de rente, 4 971 × 0,04764 × 1,00 ÷ 12 × 15
+      = 296,02 € bruts, le solde venant à l'issue de ces quinze mois.
+    carriere: {naissance: "1960-06-15", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2022-07", age_debut: 22, points_rafp: 4971, valeur_de_service_rafp: 0.04764}
+    attendu: {prestation_rafp: {forme: capital_fractionne, coefficient: 1.0, premiere_fraction: 296.02}}
+
+  - id: erafp_ra2022_eric_rente_62_ans
+    source: {editeur: "ERAFP", reference: "rapport annuel de l'ERAFP 2022, « Simulations de versement de prestations-types », page 29", verifie_le: "2026-10-04"}
+    enonce: >-
+      Éric, responsable du contrôle de gestion, prend sa retraite en 2022 à 62
+      ans avec 7 246 points, plus de 5 125 : une rente de 7 246 × 0,04764 ×
+      1,00 = 345,20 € bruts par an, soit 28,77 € par mois.
+    carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2022-07", age_debut: 22, points_rafp: 7246, valeur_de_service_rafp: 0.04764}
+    attendu: {prestation_rafp: {forme: rente, coefficient: 1.0, rente_annuelle: 345.20, rente_mensuelle: 28.77}}
+
+  - id: erafp_ra2022_patricia_rente_64_ans
+    source: {editeur: "ERAFP", reference: "rapport annuel de l'ERAFP 2022, « Simulations de versement de prestations-types », page 29", verifie_le: "2026-10-04"}
+    enonce: >-
+      Patricia, attachée d'administration d'État, prend sa retraite en 2022 à
+      64 ans avec 7 896 points : une rente de 7 896 × 0,04764 × 1,08 = 406,26 €
+      bruts par an, soit 33,85 € par mois, le coefficient de 64 ans.
+    carriere: {naissance: "1958-06-15", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2022-07", age_debut: 22, points_rafp: 7896, valeur_de_service_rafp: 0.04764}
+    attendu: {prestation_rafp: {forme: rente, coefficient: 1.08, rente_annuelle: 406.26, rente_mensuelle: 33.85}}
+
+  - id: erafp_page_fraction_depuis_avril_2024
+    source: {editeur: "ERAFP", reference: "page « Calcul et paiement de votre prestation RAFP », rafp.fr, capital fractionné, droits liquidés à partir du 1er avril 2024", verifie_le: "2026-10-04"}
+    enonce: >-
+      Pour des droits liquidés à partir du 1er avril 2024, de 4 900 à 5 124
+      points, la première fraction : « (5 100 x 1,08 x 0,05671 / 12) x 4 =
+      104,12 € », le solde au cinquième mois ; pour un départ à 64 ans en
+      2026, à la valeur de service de 2026.
+    carriere: {naissance: "1962-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2026-07", age_debut: 22, points_rafp: 5100, valeur_de_service_rafp: 0.05671}
+    attendu: {prestation_rafp: {forme: capital_fractionne, coefficient: 1.08, premiere_fraction: 104.12}}

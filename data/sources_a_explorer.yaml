@@ -588,22 +588,23 @@ sources:
     statut: explore
     explore_le: "2026-10-04"
     budget: 10
-    saisies_hors_exemples: 10
     note: >-
       Anonyme, trois champs ouverts (naissance, date d'effet, points), dates
       d'effet futures seulement, valeur de service 0,05671 € « en vigueur
       depuis le 1er septembre 2026 ». Dix saisies le 4 octobre 2026, par
-      Claude, sur un lot approuvé : le budget est épuisé, mais aucune n'est
-      encore transcrite en exemple officiel, faute d'adaptateur dans
-      `scripts/simulateurs.py` ; les réponses sont dans la fiche
-      `rafp_majoration_capital`. Le simulateur INTERPOLE LA MAJORATION AU
-      MOIS, arrondie au centième (62 ans 9 mois : 1,03 ; 64 ans 6 mois :
-      1,10 ; 68 ans 4 mois : 1,30 ; 63 ans 4 mois : 1,05), retient 1,81 à
-      75 ans contre 1,80 au barème publié, verse un « capital fractionné »
-      à 5 000 points (première fraction 99,24 €, le tiers de la rente
-      annuelle), et prête à la génération 1958 un âge légal de 64 ans.
-      Âges légaux affichés : 1963 et 1964, 62 ans 9 mois ; 1966, 63 ans
-      3 mois ; 1970, 64 ans.
+      Claude, sur un lot approuvé : le budget est épuisé. Transcrites le 5
+      octobre 2026 par l'adaptateur `PrestationRafp` de
+      `scripts/simulateurs.py` en exemples `erafp_…` : huit concordent, deux
+      en écart connu. Le simulateur INTERPOLE LA MAJORATION AU MOIS, comme
+      les rapports annuels de l'ERAFP l'écrivent, mais l'ARRONDIT AU
+      CENTIÈME, ce qu'aucun texte ne dit (68 ans 4 mois : 1,30 pour 1,2967 ;
+      63 ans 4 mois : 1,05 pour 1,0533) ; retient 1,81 à 75 ans, comme la
+      délibération du 5 février 2015, contre 1,80 au tableau publié à part ;
+      verse un « capital fractionné » à 5 000 points (première fraction
+      99,24 €, quatre mois de rente) ; et prête à la génération 1958 un âge
+      légal de 64 ans, quand L. 161-17-2 lui donne 62 ans. Âges légaux
+      affichés : 1963 et 1964, 62 ans 9 mois ; 1966, 63 ans 3 mois ; 1970,
+      64 ans.
 
   - id: rafp_calculette_points
     url: https://www.rafp.fr/actif/futur-retraite/calculette-points

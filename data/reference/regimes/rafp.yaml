@@ -104,12 +104,17 @@ periodes:
       valeur de repli de l'ouverture et n'est pas lu.
       LA VALEUR DE SERVICE EST MODULÉE PAR L'ÂGE : « en fonction de l'âge
       de liquidation de la retraite additionnelle » (art. 8,
-      LEGIARTI000037483754), selon le barème actuariel que publie l'ERAFP
-      — 1,00 jusqu'à 62 ans, 1,08 à 64, 1,22 à 67, 1,40 à 70, 1,80 dès 75.
+      LEGIARTI000037483754), selon le barème actuariel que le conseil
+      d'administration de l'ERAFP établit — depuis le 1er mars 2015 (sa
+      délibération du 5 février 2015), 1,00 jusqu'à 62 ans, 1,08 à 64,
+      1,22 à 67, 1,40 à 70, 1,81 dès 75 ; avant, celui de 2005, au pivot de
+      soixante ans —, au prorata des mois entre deux âges entiers.
       SOUS 5 125 POINTS, UN CAPITAL : la prestation est « servie sous forme
       de capital lorsque le nombre de points acquis est inférieur à 5 125 »
       (art. 9, LEGIARTI000037483756), au coefficient de conversion de
-      l'âge — 25,57 à 64 ans, interpolé au mois. La calculette de l'ERAFP
-      donne, pour 3 000 points à 65 ans en 2026, 4 723,63 € : 3 000 ×
-      1,12 × 0,05671 × 24,79. Le montant annuel de la fiche reste celui
-      de la rente équivalente, le capital est écrit dans le détail.
+      l'âge — 25,57 à 64 ans depuis 2022, interpolé au mois —, versé en
+      deux fois de 4 900 à 5 124 points depuis le 1er avril 2024 (de 4 600
+      depuis mai 2019). La calculette de l'ERAFP donne, pour 3 000 points à
+      65 ans en 2026, 4 723,63 € : 3 000 × 1,12 × 0,05671 × 24,79. Le
+      montant annuel de la fiche reste celui de la rente équivalente, le
+      capital est écrit dans le détail (fiche `rafp_majoration_capital`).

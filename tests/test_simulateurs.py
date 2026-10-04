@@ -77,20 +77,22 @@ def test_le_budget_compte_les_saisies_et_non_les_exemples():
 
 
 def test_une_saisie_sans_exemple_se_decompte_aussi():
-    """Le RAFP et le handicap ont été saisis le 4 octobre 2026 sans qu'aucun
-    exemple ne rejoue leurs réponses : le registre les déclare, et le budget
-    les décompte comme les autres, sans quoi on pourrait les refaire."""
+    """Le handicap a été saisi le 4 octobre 2026 sans qu'aucun exemple ne
+    rejoue ses réponses : le registre les déclare, et le budget les décompte
+    comme les autres, sans quoi on pourrait les refaire. Le RAFP, saisi le
+    même jour, ne déclare plus rien : ses dix saisies sont des exemples."""
     faites = {"1965": ["a", "b"]}
     assert simulateurs.decomptees({}, faites) == 1
     assert simulateurs.decomptees({"saisies_hors_exemples": 10}, faites) == 11
     lignes = simulateurs.registre()
     etat = {identifiant: (budget, nombre, reste) for identifiant, budget, nombre, reste
             in simulateurs.etat_des_budgets(lignes, simulateurs.exemples())}
-    for identifiant in ("rafp_simulateur_prestation", "union_retraite_handicap"):
-        ligne = lignes[identifiant]
-        assert ligne["saisies_hors_exemples"] > 0, identifiant
-        assert etat[identifiant][1] >= ligne["saisies_hors_exemples"], identifiant
-        assert etat[identifiant][2] >= 0, identifiant
+    ligne = lignes["union_retraite_handicap"]
+    assert ligne["saisies_hors_exemples"] > 0
+    assert etat["union_retraite_handicap"][1] >= ligne["saisies_hors_exemples"]
+    assert etat["union_retraite_handicap"][2] >= 0
+    assert not lignes["rafp_simulateur_prestation"].get("saisies_hors_exemples")
+    assert etat["rafp_simulateur_prestation"] == (10, 10, 0)
 
 
 def test_la_feuille_ne_repropose_rien_et_s_arrete_au_budget():
@@ -207,3 +209,79 @@ def test_une_saisie_de_trop_est_refusee():
         for annee in ("1966", "1967")])
     with pytest.raises(simulateurs.Refus, match="dépasseraient le budget"):
         simulateurs.exemples_de_la_feuille(donnees, lignes, tous)
+
+
+# -- le simulateur de prestation de l'ERAFP ------------------------------------
+
+def _vierge_rafp() -> tuple[dict, list[dict]]:
+    """Le registre et les exemples comme si l'ERAFP n'avait rien rendu."""
+    lignes, tous = simulateurs.registre(), simulateurs.exemples()
+    adaptateur = simulateurs.ADAPTATEURS["rafp_simulateur_prestation"]
+    lignes[adaptateur.simulateur]["budget"] = 10
+    return lignes, [e for e in tous if e["source"].get("simulateur") != adaptateur.simulateur]
+
+
+def test_les_dix_saisies_de_l_erafp_sont_des_exemples_du_lot():
+    """Chaque exemple `erafp_…` est une saisie de l'adaptateur, et le lot du 4
+    octobre 2026 est entier : la feuille suivante ne propose que les bornes
+    qu'il n'a pas touchées. Les exemples que l'ERAFP publie couvrent la
+    génération 1960 : la plus jeune, 1966, passe en tête."""
+    adaptateur = simulateurs.ADAPTATEURS["rafp_simulateur_prestation"]
+    tous = simulateurs.exemples()
+    faites = simulateurs.saisies(adaptateur.simulateur, tous)
+    lot = [c.cle for c in adaptateur.cas()]
+    assert len(faites) == 10 and set(faites) == set(lot[:10])
+    assert all(e["source"]["editeur"] == "ERAFP" for e in tous
+               if e["source"].get("simulateur") == adaptateur.simulateur)
+    lignes = simulateurs.registre()
+    lignes[adaptateur.simulateur]["budget"] = 12
+    proposees = simulateurs.a_saisir(adaptateur, lignes, tous)
+    assert 1960 in adaptateur.couvertes(tous)
+    assert [c.cle for c in proposees] == lot[10:12]
+
+
+def test_une_reponse_de_l_erafp_devient_un_exemple_qui_se_rejoue(contexte, tmp_path):
+    """La prédiction du modèle, recopiée comme réponse : l'exemple qu'elle
+    donne passe le contrôle des sources et concorde. 4 900 points en 2031 se
+    versent en deux fois, quatre mois de rente d'abord."""
+    lignes, tous = _vierge_rafp()
+    adaptateur = simulateurs.ADAPTATEURS["rafp_simulateur_prestation"]
+    cas = next(c for c in adaptateur.cas() if c.cle == "15/06/1966 ; 01/01/2031 ; 4900")
+    (lu,) = adaptateur.predire(contexte, cas)
+    assert lu["forme"] == "capital_fractionne" and lu["age_legal"] == "63 ans et 3 mois"
+    assert lu["coefficient"] == 1.1
+    reponse = (f"Âge légal {lu['age_legal']} ; coefficient de majoration 1,10 ; capital "
+               f"fractionné, première fraction de {str(lu['premiere_fraction']).replace('.', ',')} €.")
+    lu = {cle: lu[cle] for cle in ("forme", "age_legal", "coefficient", "premiere_fraction")}
+    donnees = {"simulateur": adaptateur.simulateur, "saisie_le": "2026-10-05",
+               "cas": [{"saisie": dict(cas.saisie), "reponse": reponse, "lu": [lu]}]}
+    (exemple,) = simulateurs.exemples_de_la_feuille(donnees, lignes, tous)
+    assert exemple["id"] == "erafp_1966_effet_2031_01_4900_points"
+    assert exemple["source"]["editeur"] == "ERAFP"
+    assert exemple["carriere"]["points_rafp"] == 4900
+    assert exemple["attendu"]["prestation_rafp"]["age_legal"] == 63.25
+    assert len(exemple["enonce"].split()) >= 12
+    copie = tmp_path / "exemples_officiels.yaml"
+    shutil.copy(simulateurs.EXEMPLES, copie)
+    simulateurs.ecrire([exemple], copie)
+    relu = {e["id"]: e for e in simulateurs.exemples(copie)}[exemple["id"]]
+    assert relu == exemple
+    assert contexte.confronter(relu) == []
+
+
+def test_une_lecture_de_l_erafp_ne_s_invente_pas():
+    lignes, tous = _vierge_rafp()
+    adaptateur = simulateurs.ADAPTATEURS["rafp_simulateur_prestation"]
+    cas = adaptateur.cas()[0]
+    reponse = "Âge légal 62 ans et 9 mois ; coefficient de majoration 1,03 ; rente de 29,21 €."
+    for lu, motif in (({"forme": "rente", "coefficient": 1.04}, "coefficient lu"),
+                      ({"forme": "rente", "age_legal": "63 ans"}, "âge légal lu"),
+                      ({"forme": "viagere"}, "forme lue")):
+        donnees = {"simulateur": adaptateur.simulateur, "saisie_le": "2026-10-04",
+                   "cas": [{"saisie": dict(cas.saisie), "reponse": reponse, "lu": [lu]}]}
+        with pytest.raises(simulateurs.Refus, match=motif):
+            simulateurs.exemples_de_la_feuille(donnees, lignes, tous)
+    sans_lecture = {"simulateur": adaptateur.simulateur, "saisie_le": "2026-10-04",
+                    "cas": [{"saisie": dict(cas.saisie), "reponse": reponse, "lu": None}]}
+    with pytest.raises(simulateurs.Refus, match="écrire `lu`"):
+        simulateurs.exemples_de_la_feuille(sans_lecture, lignes, tous)

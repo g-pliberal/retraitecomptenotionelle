@@ -1,71 +1,423 @@
 schema_version: 1
 id: rafp_majoration_capital
 intitule: >-
-  RAFP : valeur de service modulée par l'âge de liquidation (1,00 à 62 ans jusqu'à
-  1,80 à 75) ; prestation versée en capital sous 5 125 points, au coefficient de
-  conversion de l'âge.
+  RAFP : la valeur de service modulée par l'âge à la date d'effet, selon le barème
+  actuariel du conseil d'administration de l'ERAFP — âge pivot à 60 ans jusqu'en
+  février 2015, à 62 ans depuis, 1,81 dès 75 ans —, calculé au mois ; sous 5 125
+  points, la prestation versée en capital, au coefficient de conversion de l'âge, en
+  une fois, ou en deux près du seuil depuis mai 2019.
+domaine: points
+regimes: [rafp]
+etape: liquider_chaque_regime
+face: droit
 etat: approchee
-effet: >-
-  Le modèle servait la valeur de service nue à tout âge : 22 % de moins à 67 ans.
-  Il sert maintenant la majoration par âge entier, et sous le seuil écrit le capital
-  dans le détail de la pension ; le montant annuel reste celui de la rente équivalente.
-  Le capital fractionné entre 4 900 et 5 124 points n'est pas distingué.
+lit:
+- la date de naissance de l'assuré, et la date d'effet de sa retraite additionnelle
+- les points acquis au RAFP, et la valeur de service de l'année
+- la date d'effet de la pension de base, que le départ déclaré donne
+ecrit:
+- le coefficient de majoration de la retraite additionnelle
+- la forme de la prestation, rente ou capital, et le capital avec sa première fraction
+dates_qui_decident:
+- liquidation.date_effet
+# Le décret renvoie les deux barèmes au conseil d'administration, dont les
+# délibérations deviennent exécutoires faute d'opposition du commissaire du
+# Gouvernement dans le mois (article 27) : aucune n'est au Journal officiel.
+# Les versions coupent la date d'effet aux changements de l'un des trois —
+# majoration, conversion, fractionnement.
+versions:
+- id: deliberation_2005
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006453306, article: "décret n° 2004-569, article 8", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000006453307, article: "décret n° 2004-569, article 9", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000019412514, article: "arrêté du 26 novembre 2004, article 12", en_vigueur: 2004-12-01}
+  - reference: >-
+      ERAFP, rapport annuel 2012, annexes 1 et 2 (hors JORF) : la délibération du 10
+      novembre 2005, que le site de l'ERAFP ne publie pas, n'est lue que là
+    article: annexe 1, « barème de surcote », et annexe 2, « barème de conversion des rentes en capital »
+    citation: >-
+      « Le coefficient est calculé en fonction de l'âge du demandeur à la date d'effet
+      de prestation du RAFP, en tenant compte du nombre d'années et du nombre de
+      mois » ; « 60 1,00 […] 64 1,18 […] 75 2,08 » ; « Au-delà de 75 ans, le droit à
+      surcote continue de s'appliquer pour le calcul de la prestation »
+    lu_le: 2026-10-04
+    empreinte: sha256:929d3a2f5765c19d658a234c7c6f76b877a14bb8a587f070fb6aad41960c0974
+  nee_de: LEGIARTI000006453306
+  bornes:
+    liquidation.date_effet: [null, 2015-03-01]
+  contenu:
+    droit: >-
+      la rente annuelle est le produit des points par la valeur de service « après
+      application d'un barème actuariel modulant cette valeur en fonction de l'âge de
+      liquidation » (article 8), au pivot de soixante ans ; sous le seuil, un capital,
+      la rente multipliée par le coefficient de conversion de l'âge, versé en une fois
+    conditions: >-
+      l'âge à la date d'effet, en années et en mois révolus ; le seuil de l'article 9,
+      une rente annuelle de 205 € à la valeur de service de 2005 (0,04 €) : 5 125 points
+    parametres:
+      majoration: {60: 1.00, 61: 1.04, 62: 1.08, 63: 1.13, 64: 1.18, 65: 1.23, 66: 1.29,
+                   67: 1.35, 68: 1.42, 69: 1.49, 70: 1.57, 71: 1.65, 72: 1.74, 73: 1.84,
+                   74: 1.96, 75: 2.08}
+      conversion: {60: 25.98, 61: 25.30, 62: 24.62, 63: 23.92, 64: 23.22, 65: 22.51,
+                   66: 21.80, 67: 21.08, 68: 20.36, 69: 19.63, 70: 18.90, 71: 18.16,
+                   72: 17.43, 73: 16.70, 74: 15.97, 75: 15.24}
+      au_mois: true
+      seuil_capital_points: 5125
+      fractionnement: null
+  unites:
+    age: années et mois révolus à la date d'effet, entre deux âges entiers au prorata des mois
+  exemples: aucun trouvé
+- id: deliberation_2015
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006453306, article: "décret n° 2004-569, article 8", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000037483754, article: "décret n° 2004-569, article 8", en_vigueur: 2018-10-11}
+  - {id: LEGIARTI000006453307, article: "décret n° 2004-569, article 9", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000037483756, article: "décret n° 2004-569, article 9", en_vigueur: 2018-10-11}
+  - {id: LEGIARTI000019412514, article: "arrêté du 26 novembre 2004, article 12", en_vigueur: 2004-12-01}
+  - reference: >-
+      délibération du conseil d'administration de l'ERAFP du 5 février 2015 portant sur
+      la fixation des paramètres du Régime (hors JORF, publiée sur rafp.fr)
+    citation: >-
+      « la valeur de service du point est modulée en fonction de l'âge de liquidation
+      de la retraite additionnelle selon le barème actuariel suivant : […] ≤ 62 1,00
+      […] ≥ 75 1,81. Ce barème sera appliqué aux prestations dont la date de prise
+      d'effet sera égale ou postérieure au premier jour du mois suivant la date à
+      laquelle cette délibération sera devenue exécutoire » ; le barème de conversion
+      de la délibération du 10 novembre 2005 « reste valable »
+    lu_le: 2026-10-04
+    empreinte: sha256:254515d53ffeefad621dfac9408440c874f868ef2ff06a3015a91d4f70f495c6
+  - reference: ERAFP, rapports annuels 2014 et 2015 (hors JORF)
+    article: « Adoption d'un nouveau barème de surcote »
+    citation: >-
+      « Jusqu'à la fin du mois de février 2015, la surcote s'appliquait à partir d'un
+      âge pivot de 60 ans » ; « Le coefficient est calculé en fonction de l'âge du
+      demandeur à la date d'effet de prestation du RAFP, en tenant compte du nombre
+      d'années et du nombre de mois au-delà de 62 ans »
+    lu_le: 2026-10-04
+    empreinte: sha256:80ad01001d7ac5dfa0d4754be1bd200e70b2df509d53381b79fe36e5817542e0
+  bornes:
+    liquidation.date_effet: [2015-03-01, 2019-05-01]
+  contenu:
+    droit: >-
+      le barème au pivot de soixante-deux ans, aux prestations qui prennent effet
+      depuis le 1er mars 2015, celles d'avant gardant le barème de 2005 ; le capital,
+      toujours au barème de conversion de 2005, versé en une fois
+    conditions: l'âge à la date d'effet, en années et en mois révolus
+    parametres:
+      majoration: {62: 1.00, 63: 1.04, 64: 1.08, 65: 1.12, 66: 1.17, 67: 1.22, 68: 1.28,
+                   69: 1.33, 70: 1.40, 71: 1.47, 72: 1.54, 73: 1.62, 74: 1.71, 75: 1.81}
+      conversion: celui de 2005
+      au_mois: true
+      seuil_capital_points: 5125
+      fractionnement: null
+  exemples: [erafp_ra2015_alice_capital_62_ans, erafp_ra2015_rente_62_ans,
+             erafp_ra2015_rente_67_ans]
+- id: fractionnement_2019
+  statut: lue
+  textes:
+  - {id: LEGIARTI000037483756, article: "décret n° 2004-569, article 9", en_vigueur: 2018-10-11}
+  - reference: >-
+      délibération n° 7 du conseil d'administration de l'ERAFP du 8 février 2024, NOR
+      ECOY2403506X (hors JORF ; publiée sur rafp.fr et au Bulletin officiel de
+      l'administration centrale), qui rappelle la délibération n° 3 du 28 mars 2019
+    article: premier considérant
+    citation: >-
+      « Le capital dû à un bénéficiaire est versé par fractions lorsque le nombre de
+      points acquis à la date de la liquidation initiale est supérieur ou égal au seuil
+      de 4 600 et inférieur à 5 125. La première fraction, versée lors de la
+      liquidation initiale, est égale au produit du nombre de points acquis par la
+      valeur de service du point en vigueur, après application du barème actuariel
+      [...], divisé par 12 et multiplié par 15 » ; le solde « est payé le 16ème mois
+      suivant la date de la liquidation initiale »
+    lu_le: 2026-10-04
+    empreinte: sha256:ec125ca51734e5b63ee64206d06de930c856f38f4d24c95986847c1a92bf3ff1
+  nee_de: LEGIARTI000037483756
+  bornes:
+    liquidation.date_effet: [2019-05-01, 2020-06-01]
+  contenu:
+    droit: >-
+      le capital de 4 600 à 5 124 points se verse en deux fois, quinze mois de rente à
+      la liquidation initiale, le solde au seizième mois ; jamais celui d'une réversion
+    parametres:
+      majoration: celui de 2015
+      conversion: celui de 2005
+      au_mois: true
+      seuil_capital_points: 5125
+      fractionnement: {seuil: 4600, mois_de_rente: 15, mois_du_solde: 16, ecart_maximal: null}
+  exemples: aucun trouvé
+- id: fractionnement_2020
+  statut: lue
+  textes:
+  - {id: LEGIARTI000037483756, article: "décret n° 2004-569, article 9", en_vigueur: 2018-10-11}
+  - reference: >-
+      délibération n° 5 du conseil d'administration de l'ERAFP du 30 avril 2020 (hors
+      JORF ; publiée sur rafp.fr et au Bulletin officiel de l'administration centrale)
+    article: article 1er
+    citation: >-
+      le dispositif de fractionnement « n'est pas applicable aux bénéficiaires du RAFP
+      dont le nombre de points acquis à la date de la liquidation initiale est
+      supérieur ou égal au seuil de 4 600 et inférieur à 5 125 (i) et dont la date
+      d'effet de la prestation RAFP est postérieure de plus de 15 mois de la date
+      d'admission à la retraite de base [...] (ii) et est également postérieure au 31
+      mai 2020 (iii) »
+    lu_le: 2026-10-04
+    empreinte: sha256:58aed24395528c3c21351c6ffa3a2c53199a6ef62d0d70f9b585cbf0f60d6797
+  - reference: >-
+      délibération n° 2 du conseil d'administration de l'ERAFP du 16 décembre 2021,
+      NOR ECOY2138219X (hors JORF, publiée sur rafp.fr)
+    citation: « Le nouveau barème entre au vigueur au 1er janvier 2022 »
+    lu_le: 2026-10-04
+    empreinte: sha256:89fe8eb5807458356b93375681880d24e64acaf921fc29cfb0ae8f371845d23d
+  bornes:
+    liquidation.date_effet: [2020-06-01, 2022-01-01]
+  contenu:
+    droit: >-
+      le fractionnement de 2019, sauf quand la date d'effet du RAFP suit de plus de
+      quinze mois l'admission à la retraite de base : le capital se verse alors en une
+      fois
+    parametres:
+      majoration: celui de 2015
+      conversion: celui de 2005
+      au_mois: true
+      seuil_capital_points: 5125
+      fractionnement: {seuil: 4600, mois_de_rente: 15, mois_du_solde: 16, ecart_maximal: 15}
+  exemples: aucun trouvé
+- id: conversion_2022
+  statut: lue
+  textes:
+  - {id: LEGIARTI000037483756, article: "décret n° 2004-569, article 9", en_vigueur: 2018-10-11}
+  - reference: >-
+      délibération n° 2 du conseil d'administration de l'ERAFP du 16 décembre 2021,
+      NOR ECOY2138219X (hors JORF, publiée sur rafp.fr), et son annexe
+    citation: >-
+      « Le conseil d'administration adopte le barème actuariel appliqué au montant de
+      la rente annuelle pour la détermination du montant du capital » ; « 62 ans
+      27,11 » … « 75 ans 17,07 »
+    lu_le: 2026-10-04
+    empreinte: sha256:89fe8eb5807458356b93375681880d24e64acaf921fc29cfb0ae8f371845d23d
+  - reference: >-
+      ERAFP, « Valeurs des coefficients de conversion en capital » (hors JORF)
+    citation: >-
+      « Le coefficient est calculé en fonction de l'âge du demandeur à la date d'effet
+      de prestation du RAFP. Toutefois, cette valeur est calculée en tenant compte du
+      nombre d'années et du nombre de mois »
+    lu_le: 2026-10-04
+    empreinte: sha256:0e2fb00320174298a782037d3e2b4d4e289eab54274e9e789a27727be0d4f636
+  bornes:
+    liquidation.date_effet: [2022-01-01, 2024-04-01]
+  contenu:
+    droit: >-
+      le barème de conversion recalé sur le taux d'actualisation de 2021 (0,8 %) et les
+      tables de mortalité d'expérience du régime : dix pour cent de capital de plus
+    parametres:
+      majoration: celui de 2015
+      conversion: {62: 27.11, 63: 26.34, 64: 25.57, 65: 24.79, 66: 24.02, 67: 23.25,
+                   68: 22.47, 69: 21.70, 70: 20.92, 71: 20.15, 72: 19.37, 73: 18.61,
+                   74: 17.84, 75: 17.07}
+      au_mois: true
+      seuil_capital_points: 5125
+      fractionnement: {seuil: 4600, mois_de_rente: 15, mois_du_solde: 16, ecart_maximal: 15}
+  exemples: [erafp_ra2022_sylvie_capital_62_ans, erafp_ra2022_alain_capital_apres_la_base,
+             erafp_ra2022_christine_capital_fractionne, erafp_ra2022_eric_rente_62_ans,
+             erafp_ra2022_patricia_rente_64_ans]
+- id: fractionnement_2024
+  statut: lue
+  textes:
+  - {id: LEGIARTI000037483754, article: "décret n° 2004-569, article 8", en_vigueur: 2018-10-11}
+  - {id: LEGIARTI000037483756, article: "décret n° 2004-569, article 9", en_vigueur: 2018-10-11}
+  - reference: >-
+      délibération n° 7 du conseil d'administration de l'ERAFP du 8 février 2024, NOR
+      ECOY2403506X (hors JORF ; publiée sur rafp.fr et au Bulletin officiel de
+      l'administration centrale)
+    article: articles 1er et 2
+    citation: >-
+      « Le capital dû à un bénéficiaire est versé par fractions lorsque le nombre de
+      points acquis à la date de la liquidation initiale est supérieur ou égal au seuil
+      de 4 900 et inférieur à 5 125 » ; sont exclus ceux dont la date d'effet « est
+      postérieure de plus de 4 mois à la date d'admission à la retraite de base » ;
+      « [Nombre de points acquis] x [Valeur de service du point] x [Coefficient de
+      majoration] / 12 x 4 » ; le solde « est payé le 5ème mois suivant la date de la
+      liquidation initiale » ; « aux prestations prenant effet à compter du 1er avril
+      2024 »
+    lu_le: 2026-10-04
+    empreinte: sha256:ec125ca51734e5b63ee64206d06de930c856f38f4d24c95986847c1a92bf3ff1
+  bornes:
+    liquidation.date_effet: [2024-04-01, null]
+  contenu:
+    droit: >-
+      le capital de 4 900 à 5 124 points se verse en deux fois, quatre mois de rente à
+      la liquidation initiale, le solde au cinquième mois ; en une fois quand la date
+      d'effet du RAFP suit de plus de quatre mois l'admission à la retraite de base
+    parametres:
+      majoration: celui de 2015
+      conversion: celui de 2022
+      au_mois: true
+      seuil_capital_points: 5125
+      fractionnement: {seuil: 4900, mois_de_rente: 4, mois_du_solde: 5, ecart_maximal: 4}
+  exemples: [erafp_1964_effet_2027_04_6000_points, erafp_1964_effet_2028_07_6000_points,
+             erafp_1964_effet_2031_07_6000_points, erafp_1964_effet_2039_07_6000_points,
+             erafp_1966_effet_2029_04_3000_points, erafp_1966_effet_2031_01_3000_points,
+             erafp_1970_effet_2034_06_5124_points, erafp_1970_effet_2034_07_5125_points,
+             erafp_1958_effet_2026_11_8000_points, erafp_1963_effet_2026_11_5000_points,
+             erafp_page_fraction_depuis_avril_2024]
+approximations:
+- version: [deliberation_2005, deliberation_2015, fractionnement_2019, fractionnement_2020,
+            conversion_2022, fractionnement_2024]
+  ecart: >-
+    entre deux âges entiers, le coefficient de majoration se prend au prorata exact des
+    mois, sans arrondi : ni les délibérations, ni les notes de l'ERAFP n'en disent ; son
+    simulateur l'arrondit au centième (1,30 pour 1,2967 à 68 ans et 4 mois)
+  effet: >-
+    au plus un demi-centième du coefficient, soit 0,5 % de la rente ; 0,26 % et 0,32 %
+    aux deux exemples en écart connu
+- version: deliberation_2005
+  ecart: >-
+    au-delà de soixante-quinze ans, le barème de 2005 se continuait, à des valeurs que
+    le rapport annuel ne publie pas : le modèle s'arrête à 2,08
+  effet: non mesuré ; aucune liquidation du modèle n'y tombe
+- ecart: >-
+    le capital est montré comme la rente annuelle dont il est l'équivalent, et dit dans
+    le détail de la pension, sa première fraction comprise ; la régularisation des
+    droits connus après la liquidation, qui fait d'un capital une rente au-delà de 5 125
+    points, n'est pas portée
+  effet: la forme de la prestation, non son montant annuel ; non mesuré
+- version: [fractionnement_2020, conversion_2022, fractionnement_2024]
+  ecart: >-
+    la date d'admission à la retraite de base, qui décide du fractionnement, est le
+    départ que la personne déclare
+  effet: non mesuré
+- version: fractionnement_2024
+  textes:
+  - {id: LEGIARTI000049421944, article: "décret n° 2004-569, article 9-1", en_vigueur: 2024-04-17}
+  ecart: >-
+    le capital de qui a versé la cotisation exceptionnelle unique du II de l'article 76
+    bis de la loi du 21 août 2003, que l'article 9-1 fractionne toujours sous 5 125
+    points, quinze mois de rente puis le solde au seizième mois, n'est pas distingué :
+    le modèle ne porte pas cette cotisation (fiche rafp_cotisation_volontaire_outre_mer)
+  effet: non mesuré
 sources:
-  lu_le: 2026-09-22
+  lu_le: 2026-10-04
   prochaine_relecture: 2027-03-31
+  lectures_divergentes:
+  - >-
+    Le tableau « Valeurs des coefficients de majoration » que l'ERAFP publie à part,
+    sans date, écrit 1,80 à 75 ans et plus ; la délibération du 5 février 2015, les
+    rapports annuels 2014 et 2015 et le simulateur de prestation, 1,81. Aucune
+    délibération lue depuis ne touche le barème (celles des 16 février et 13 décembre
+    2016, 16 décembre 2021, 15 décembre 2022, 8 février et 12 décembre 2024, 16 décembre
+    2025 ne fixent que les valeurs du point) : le modèle suit la délibération.
+  - >-
+    Le simulateur arrondit au centième le coefficient qu'il interpole au mois, ce
+    qu'aucun texte ne dit (exemples erafp_1958_effet_2026_11_8000_points et
+    erafp_1963_effet_2026_11_5000_points, en écart connu) ; le SNES, en 2014, écrivait
+    1,105 à 62 ans et 6 mois, sans arrondir. Le modèle garde le prorata exact.
+  - >-
+    Le simulateur prête à un fonctionnaire né en 1958 un âge légal de 64 ans, quand
+    L. 161-17-2 lui en donne 62 (exemple erafp_1958_effet_2026_11_8000_points).
+  - >-
+    La page « Calcul et paiement » écrit, pour un capital fractionné d'avant avril 2024,
+    « (4 810 x 1,08 x 0,05593 / 12) x 15 = 368,25 € » : la valeur de service écrite
+    donne 363,18 €, et le résultat est calculé à celle de 2026, 0,05671 €. L'exemple
+    n'est pas retenu ; celui de Christine, au rapport annuel 2022, tient la même règle.
   a_relire:
   - >-
-    Le simulateur de l'ERAFP interpole la majoration au mois, le barème publié
-    ne le dit pas : obtenir la délibération du conseil d'administration (art. 8
-    et 9 du décret lui renvoient le barème et le seuil du capital fractionné)
-    avant de toucher au moteur, et dire d'où vient le 1,81 à 75 ans.
+    Demander à l'ERAFP si ses liquidations arrondissent au centième le coefficient de
+    majoration interpolé au mois, comme son simulateur, et si le 1,80 de son tableau
+    est une coquille de la délibération du 5 février 2015.
+  - >-
+    La délibération du 10 novembre 2005 n'est pas publiée : son barème est lu au
+    rapport annuel 2012 de l'ERAFP. La demander, avec la délibération n° 3 du 28 mars
+    2019, que celle du 8 février 2024 rappelle.
   lectures:
   - type: legifrance
     reference: >-
-      article 8 : la valeur de service « est modulée en fonction de l'âge de liquidation
-      » ; article 9 : « servie sous forme de capital lorsque le nombre de points
-      acquis est inférieur à 5 125 »
-    date: 2026-09-22
-  - type: autre
-    reference: >-
-      ERAFP, « Valeurs des coefficients de majoration » et coefficients de conversion
-      en capital au 1er janvier 2022 ; page « calcul et paiement de votre prestation
-      » : 4 448 × 1,08 × 0,05671 × 25,57 = 6 965,93 €
-    url: >-
-      https://www.rafp.fr/actif/activite/calcul-et-paiement-votre-prestation-rafp
-    date: 2026-09-22
-  - type: autre
-    reference: >-
-      ERAFP, « Valeurs des coefficients de majoration » (PDF relu le 4 octobre
-      2026) : par âge entier, « ≤ 62 ans 1,00 » … « ≥ 75 ans 1,80 », sans mot
-      d'une interpolation.
-    url: >-
-      https://www.rafp.fr/sites/default/files/file/valeurs_des_coefficients_de_majoration.pdf
+      décret n° 2004-569, articles 8, 9, 9-1 et 27, dans l'index LEGI (rédactions de
+      2004, 2014, 2017, 2018 et 2024) ; arrêté du 26 novembre 2004, articles 11 et 12 ;
+      décret n° 2018-873 du 9 octobre 2018 (LEGITEXT000037482967). Au JORF, aucune
+      délibération sur les barèmes : seuls les budgets et comptes de l'établissement
+      y sont approuvés.
     date: 2026-10-04
   - type: autre
     reference: >-
-      Simulateur de prestation de l'ERAFP, dix saisies (naissance ; effet ;
-      points → coefficient, prestation) : 15/06/1964 ; 01/04/2027 ; 6000 →
-      1,03, rente 29,21 €/mois. 01/07/2028 → 1,08, 30,62 €. 01/07/2031 →
-      1,22, 34,59 €. 01/07/2039 → 1,81, 51,32 €. 15/06/1966 ; 01/04/2029 ;
-      3000 → « date d'effet non atteinte » (âge légal 63 ans 3 mois).
-      01/01/2031 ; 3000 → 1,10, conversion 25,18, capital 4 712,26 €.
-      15/06/1970 ; 01/06/2034 ; 5124 → non atteinte (64 ans). 01/07/2034 ;
-      5125 → 1,08, rente 26,16 €. 15/06/1958 ; 01/11/2026 ; 8000 → 1,30,
-      rente 49,15 €. 15/06/1963 ; 01/11/2026 ; 5000 → 1,05, « capital
-      fractionné », première fraction 99,24 €. Valeur de service 0,05671 €.
-      Le modèle aurait dit 1,00, 1,08, 1,22, 1,80, —, 1,08, —, 1,08, 1,28,
-      1,04 ; la conversion en capital au mois concorde.
-    url: >-
-      https://www.rafp.fr/actif/futur-retraite/simulateur-prestation
+      ERAFP, délibérations du conseil d'administration du 5 février 2015 (paramètres et
+      barème de majoration), n° 5 du 30 avril 2020 et n° 7 du 8 février 2024
+      (fractionnement), n° 2 du 16 décembre 2021 (conversion), et celles des valeurs du
+      point de 2016 à 2025, copies datées du 4 octobre 2026 dans data/brut/rafp
+    url: https://www.rafp.fr/en/about-us/governance
     date: 2026-10-04
-textes_a_rattacher:
-- reference: décret n° 2004-569, article 8 (LEGIARTI000037483754)
-- reference: décret n° 2004-569, article 9 (LEGIARTI000037483756)
+  - type: autre
+    reference: >-
+      ERAFP, rapports annuels 2012 (annexes 1 et 2 : barèmes de surcote et de
+      conversion d'avant 2015), 2014 et 2015 (le barème de 2015, « au-delà de 62 ans »,
+      au mois) ; les prestations-types des rapports 2015 et 2022, exemples erafp_ra… :
+      le capital au barème de 2005 en 2015, au barème de 2021 en 2022, le
+      fractionnement en quinze mois de rente, et le capital en une fois de qui a pris
+      sa retraite de base plus de quinze mois avant
+    url: https://media.rafp.fr/s3fs-public/2022-12/2012-RAFP-Rapport-Annuel.pdf
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      ERAFP, « Valeurs des coefficients de majoration » (sans date : « ≥ 75 ans 1,80 »,
+      sans mot des mois) et « Valeurs des coefficients de conversion en capital » (au
+      mois) ; page « calcul et paiement de votre prestation » (capital fractionné de
+      4 600 puis 4 900 points, exemples à 15 et à 4 mois de rente)
+    url: https://www.rafp.fr/actif/activite/calcul-et-paiement-votre-prestation-rafp
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      Simulateur de prestation de l'ERAFP, dix saisies du 4 octobre 2026, transcrites
+      en exemples erafp_… : huit concordent, deux en écart connu (l'arrondi au centième ;
+      l'âge légal de la génération 1958)
+    url: https://www.rafp.fr/actif/futur-retraite/simulateur-prestation
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      Questions écrites de M. Christian Estrosi (n° 92389, JO du 12 janvier 2016) et de
+      Mme Dominique Estrosi Sassone (n° 23414, 6 octobre 2016) : à 64 ans en novembre
+      2015, « 1,08 au lieu de 1,18 » depuis le 1er mars 2015 ; SNES, « Droits acquis,
+      liquidation de la pension » (2014) : le barème de 2005 de 60 à 65 ans, et
+      « 1,08 + (1,13 – 1,08) x 6 / 12 = 1,105 »
+    url: https://questions.assemblee-nationale.fr/q14/14-92389QE.htm
+    date: 2026-10-04
 code:
   interrupteurs:
     surcote_points: rafp
   moteur: >-
-    `surcote_points: rafp` : le barème actuariel de l'ERAFP, un coefficient par âge entier
-    à la date d'effet, de 1,00 à 62 ans à 1,80 à 75 (décret n° 2004-569, art. 8), sans
-    taux par trimestre.
+    `surcote_points: rafp` : le barème de majoration de la date d'effet, celui de 2005
+    avant le 1er mars 2015, celui de 2015 depuis, au prorata des mois entre deux âges
+    entiers (majoration_rafp) ; sous 5 125 points, prestation_rafp dit le capital, au
+    barème de conversion de la date d'effet, et son fractionnement
+    (fractionnement_rafp), la date de la pension de base étant le départ déclaré
+    (mois_apres_le_depart).
+  python: >-
+    droit/liquider.py : majoration_rafp, conversion_capital_rafp, fractionnement_rafp,
+    prestation_rafp, mois_apres_le_depart, surcote_points
+  javascript: >-
+    moteur/js/droit/liquider.js : majorationRafp, conversionCapitalRafp,
+    fractionnementRafp, prestationRafp, moisApresLeDepart, surcotePoints
+  tests: >-
+    tests/test_rafp.py ; les exemples erafp_… (grandeur prestation_rafp de
+    tests/test_oracle.py), dix du simulateur et neuf des publications de l'ERAFP ;
+    l'adaptateur PrestationRafp de scripts/simulateurs.py
+historique:
+- >-
+  2026-09-22 — née : le modèle servait la valeur de service nue à tout âge, 22 % de
+  moins à 67 ans ; elle sert le barème par âge entier et le capital dans le détail.
+- >-
+  2026-10-04 — dix saisies du simulateur de l'ERAFP : il interpole au mois, arrondit au
+  centième et retient 1,81 à 75 ans ; le moteur attend la délibération.
+- >-
+  2026-10-05 — lues : les délibérations du 5 février 2015 (barème, 1,81), du 16
+  décembre 2021 (conversion) et sur le fractionnement (2019, 2020, 2024), le barème de
+  2005 au rapport annuel 2012. Le moteur date ses barèmes, calcule au mois sans
+  arrondir et dit le capital fractionné ; les dix saisies deviennent des exemples, et
+  neuf calculs que l'ERAFP publie aussi.
+effet: >-
+  Tout fonctionnaire qui touche son RAFP hors d'un âge entier, ou avant mars 2015 :
+  jusqu'à 5,4 % de plus qu'au barème par âge entier, à 74 ans et 11 mois (1,8017 pour
+  1,71), 3,6 % à 68 ans et 11 mois (1,3258 pour 1,28) ; 8 % de plus à 62 ans avant
+  mars 2015 (1,08 pour 1,00). À 75 ans, 1,81 au lieu de 1,80. Le capital d'avant 2022
+  baisse de 9 % (24,62 pour 27,11 à 62 ans) ; celui de 4 900 à 5 124 points se dit en
+  deux fois.

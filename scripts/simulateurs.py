@@ -211,6 +211,8 @@ class Adaptateur:
     intitule: str
     espace: int | None
     jour: int
+    #: Qui publie le simulateur, comme le contrôle des sources de l'oracle le nomme.
+    editeur = "Union Retraite"
 
     def cas(self) -> list[Cas]:
         raise NotImplementedError
@@ -252,6 +254,31 @@ class Adaptateur:
 
     def predire(self, contexte: "Contexte", cas: Cas) -> list[dict]:
         raise NotImplementedError
+
+    def source(self, cas: Cas, saisie_le: str) -> dict:
+        return {"editeur": self.editeur,
+                "reference": f"{self.intitule}, saisie « {cas.cle} »",
+                "verifie_le": str(saisie_le),
+                "simulateur": self.simulateur, "saisie": cas.cle}
+
+    def verifier(self, lu: dict, reponse: str) -> None:
+        """Chaque nombre lu se retrouve dans la réponse."""
+        _verifier_lecture(lu, reponse)
+
+    def exemple(self, cas: Cas, lu: dict, reponse: str, saisie_le: str) -> dict:
+        """L'exemple qu'une lecture donne : la réponse citée, la carrière qui
+        la rejoue, l'âge et la durée qu'elle publie."""
+        ans, mois = age_lu(lu["age"])
+        periode = str(lu.get("periode") or cas.periode)
+        carriere = self.carriere(cas, periode, ans, mois)
+        naissance = dt.date.fromisoformat(carriere["naissance"])
+        return {
+            "id": self.identifiant(cas, periode),
+            "source": self.source(cas, saisie_le),
+            "enonce": f"« {reponse} » {self.decrire(carriere)}",
+            "carriere": carriere,
+            "attendu": self.attendu(naissance, ans, mois, lu.get("trimestres")),
+        }
 
 
 def _slug(periode: str) -> str:
@@ -407,6 +434,131 @@ class CarriereLongue(Adaptateur):
         return [lu]
 
 
+def _date_saisie(texte: str) -> dt.date:
+    """« 15/06/1964 », comme le formulaire de l'ERAFP l'écrit."""
+    jour, mois, annee = (int(x) for x in texte.split("/"))
+    return dt.date(annee, mois, jour)
+
+
+def _nombre_ecrit(valeur: float) -> str:
+    """1.03 en « 1,03 », 4712.26 en « 4712,26 » : les décimales que la lecture
+    porte, à la française."""
+    texte = repr(float(valeur))
+    if texte.endswith(".0"):
+        texte = texte[:-2]
+    return texte.replace(".", ",")
+
+
+class PrestationRafp(Adaptateur):
+    """Le simulateur de prestation de l'ERAFP : une naissance, une date d'effet
+    et un nombre de points, qu'on y tape ; il rend l'âge légal, le coefficient
+    de majoration et la prestation — une rente, un capital, ou un capital
+    versé en deux fois —, à la valeur de service qu'il affiche, ou dit la date
+    d'effet non atteinte. Il n'accepte que des dates d'effet futures.
+
+    La réponse ne se lit pas seule : sa lecture s'écrit dans `lu` — `forme`
+    (`rente`, `capital`, `capital_fractionne` ou `non_ouverte`), `age_legal`
+    comme le simulateur l'écrit, et ceux de `coefficient`, `rente_mensuelle`,
+    `conversion`, `capital` et `premiere_fraction` qu'il affiche —, et chacun
+    de ses nombres doit se retrouver dans la réponse."""
+
+    simulateur = "rafp_simulateur_prestation"
+    intitule = "simulateur de prestation de l'ERAFP, rafp.fr"
+    editeur = "ERAFP"
+    espace = None
+    jour = 15
+    NAISSANCE, EFFET, POINTS = ("Date de naissance", "Date d'effet de la prestation",
+                                "Nombre de points")
+    #: La valeur de service que le simulateur affiche le 4 octobre 2026.
+    VALEUR_DE_SERVICE = 0.05671
+    #: Les saisies, la naissance au 15 : d'abord le lot du 4 octobre 2026,
+    #: approuvé par le propriétaire — l'âge légal atteint ou non, des âges au
+    #: mois, 75 ans, les seuils de 4 900 et 5 125 points —, puis les bornes
+    #: qu'il n'a pas encore touchées : 4 899 points, 77 ans, 70 ans et 7 mois.
+    SAISIES = (
+        ("15/06/1964", "01/04/2027", 6000), ("15/06/1964", "01/07/2028", 6000),
+        ("15/06/1964", "01/07/2031", 6000), ("15/06/1964", "01/07/2039", 6000),
+        ("15/06/1966", "01/04/2029", 3000), ("15/06/1966", "01/01/2031", 3000),
+        ("15/06/1970", "01/06/2034", 5124), ("15/06/1970", "01/07/2034", 5125),
+        ("15/06/1958", "01/11/2026", 8000), ("15/06/1963", "01/11/2026", 5000),
+        ("15/06/1966", "01/01/2031", 4899), ("15/06/1966", "01/01/2031", 4900),
+        ("15/06/1960", "01/07/2037", 6000), ("15/06/1960", "01/02/2031", 6000),
+    )
+    #: Les nombres que la lecture peut porter, et les formes de la prestation.
+    GRANDEURS = ("coefficient", "rente_mensuelle", "conversion", "capital",
+                 "premiere_fraction")
+    FORMES = ("rente", "capital", "capital_fractionne", "non_ouverte")
+
+    def cas(self) -> list[Cas]:
+        return [Cas(((self.NAISSANCE, naissance), (self.EFFET, effet),
+                     (self.POINTS, str(points))), naissance[-4:], int(naissance[-4:]))
+                for naissance, effet, points in self.SAISIES]
+
+    def couvertes(self, tous: list[dict]) -> set[int]:
+        return {int(str(e["carriere"]["naissance"])[:4]) for e in tous
+                if "prestation_rafp" in e["attendu"]}
+
+    def carriere(self, cas: Cas, periode: str = "", ans: int = 0, mois: int = 0) -> dict:
+        """Un fonctionnaire de l'État qui part à la date d'effet saisie, à qui
+        l'on prête les points saisis et la valeur de service affichée."""
+        saisie = dict(cas.saisie)
+        naissance, effet = _date_saisie(saisie[self.NAISSANCE]), _date_saisie(saisie[self.EFFET])
+        return {"naissance": naissance.isoformat(), "sexe": "H",
+                "affiliation": "fonctionnaire_etat",
+                "liquidation": f"{effet.year}-{effet.month:02d}", "age_debut": 22,
+                "points_rafp": int(saisie[self.POINTS]),
+                "valeur_de_service_rafp": self.VALEUR_DE_SERVICE}
+
+    def identifiant(self, cas: Cas, periode: str = "") -> str:
+        saisie = dict(cas.saisie)
+        effet = _date_saisie(saisie[self.EFFET])
+        return (f"erafp_{cas.generation}_effet_{effet.year}_{effet.month:02d}"
+                f"_{saisie[self.POINTS]}_points")
+
+    def decrire(self, carriere: dict) -> str:
+        points = f"{carriere['points_rafp']:,}".replace(",", " ")
+        return (f"La carrière d'exemple : un fonctionnaire de l'État né le "
+                f"{en_lettres(carriere['naissance'])}, dont la prestation prend effet en "
+                f"{en_lettres(carriere['liquidation'])} ; le test lui prête les {points} "
+                f"points saisis et la valeur de service affichée, "
+                f"{_nombre_ecrit(carriere['valeur_de_service_rafp'])} €.")
+
+    def lire(self, cas: Cas, reponse: str) -> list[dict] | None:
+        return None
+
+    def verifier(self, lu: dict, reponse: str) -> None:
+        texte = _plat(reponse)
+        if lu.get("forme") not in self.FORMES:
+            raise Refus(f"la forme lue, {lu.get('forme')!r}, n'est pas l'une de {self.FORMES}")
+        if "age_legal" in lu and _plat(lu["age_legal"]) not in texte:
+            raise Refus(f"l'âge légal lu « {lu['age_legal']} » n'est pas dans la réponse")
+        for grandeur in self.GRANDEURS:
+            if grandeur in lu and _nombre_ecrit(lu[grandeur]) not in texte.replace(" ", ""):
+                raise Refus(f"{grandeur} lu, {_nombre_ecrit(lu[grandeur])}, n'est pas "
+                            "dans la réponse")
+
+    def exemple(self, cas: Cas, lu: dict, reponse: str, saisie_le: str) -> dict:
+        carriere = self.carriere(cas)
+        attendu: dict = {"forme": lu["forme"]}
+        if "age_legal" in lu:
+            ans, mois = age_lu(lu["age_legal"])
+            attendu["age_legal"] = ans + mois / 12
+        attendu.update({grandeur: float(lu[grandeur]) for grandeur in self.GRANDEURS
+                        if grandeur in lu})
+        return {"id": self.identifiant(cas), "source": self.source(cas, saisie_le),
+                "enonce": f"{reponse} {self.decrire(carriere)}",
+                "carriere": carriere, "attendu": {"prestation_rafp": attendu}}
+
+    def predire(self, contexte: "Contexte", cas: Cas) -> list[dict]:
+        """Ce que le modèle rend pour la saisie, comme la lecture l'écrit."""
+        (mesure,) = contexte.mesurer(self.carriere(cas), ("prestation_rafp",))
+        lu = {"forme": mesure["forme"], "age_legal": age_ecrit(mesure["age_legal"])}
+        for grandeur in self.GRANDEURS:
+            if grandeur in mesure:
+                lu[grandeur] = round(mesure[grandeur], 4 if grandeur == "coefficient" else 2)
+        return [lu]
+
+
 def _regrouper(lectures: list) -> list[dict]:
     """Les mois consécutifs qui rendent la même réponse forment une période."""
     groupes: list[list] = []
@@ -420,7 +572,7 @@ def _regrouper(lectures: list) -> list[dict]:
 
 
 ADAPTATEURS = {adaptateur.simulateur: adaptateur
-               for adaptateur in (AgeLegal(), CarriereLongue())}
+               for adaptateur in (AgeLegal(), CarriereLongue(), PrestationRafp())}
 
 
 # ---------------------------------------------------------------------------
@@ -527,6 +679,8 @@ def feuille(adaptateur: Adaptateur, cas: list[Cas], contexte: Contexte,
 # ---------------------------------------------------------------------------
 
 def _scalaire(valeur) -> str:
+    if isinstance(valeur, dict):
+        return _en_ligne(valeur)
     if valeur is True:
         return "true"
     if valeur is False:
@@ -605,21 +759,8 @@ def exemples_de_la_feuille(donnees: dict, lignes: dict[str, dict],
                         "aucun là où le simulateur l'écrit ; écrire `lu`")
         cles.add(cas.cle)
         for lu in lectures:
-            _verifier_lecture(lu, reponse)
-            ans, mois = age_lu(lu["age"])
-            periode = str(lu.get("periode") or cas.periode)
-            carriere = adaptateur.carriere(cas, periode, ans, mois)
-            naissance = dt.date.fromisoformat(carriere["naissance"])
-            exemple = {
-                "id": adaptateur.identifiant(cas, periode),
-                "source": {"editeur": "Union Retraite",
-                           "reference": f"{adaptateur.intitule}, saisie « {cas.cle} »",
-                           "verifie_le": str(saisie_le),
-                           "simulateur": adaptateur.simulateur, "saisie": cas.cle},
-                "enonce": f"« {reponse} » {adaptateur.decrire(carriere)}",
-                "carriere": carriere,
-                "attendu": adaptateur.attendu(naissance, ans, mois, lu.get("trimestres")),
-            }
+            adaptateur.verifier(lu, reponse)
+            exemple = adaptateur.exemple(cas, lu, reponse, saisie_le)
             if exemple["id"] in deja or any(e["id"] == exemple["id"] for e in nouveaux):
                 raise Refus(f"cas {rang} : l'exemple {exemple['id']} existe déjà")
             nouveaux.append(exemple)

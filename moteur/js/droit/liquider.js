@@ -15,6 +15,7 @@
 
 import { DateMois } from "../calendrier.js";
 import { salaireMoyenAnnuel } from "../carriere.js";
+import * as chrono from "../chronologie.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../revalorisation.js";
 import { Fiabilite, nomFiabilite } from "../serie.js";
@@ -340,12 +341,23 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       }
       if (seuilCapital !== null && seuilCapital !== undefined
           && pointsTotaux > 0 && pointsTotaux < seuilCapital) {
-        // SOUS LE SEUIL, UN CAPITAL (décret n° 2004-569, art. 9). Le
-        // montant annuel reste celui de la rente dont le capital est
-        // l'équivalent actuariel.
-        capital = montant * conversionCapitalRafp(ageLiquidation);
-        detail += ` ; versé en capital, ${formatFixe(capital, 0, true)} € en une fois `
-          + `(moins de ${formatFixe(periode.capital_seuil_points, 0, true)} points)`;
+        // SOUS LE SEUIL, UN CAPITAL (décret n° 2004-569, art. 9), en une
+        // fois, ou en deux près du seuil depuis mai 2019. Le montant annuel
+        // reste celui de la rente dont le capital est l'équivalent actuariel.
+        const versee = prestationRafp(
+          montant, pointsTotaux, seuilCapital, ageLiquidation,
+          carriere.dateDeLAge(ageLiquidation), moisApresLeDepart(carriere, ageLiquidation));
+        capital = versee.capital;
+        if (versee.forme === "capital") {
+          detail += ` ; versé en capital, ${formatFixe(capital, 0, true)} € en une fois `
+            + `(moins de ${formatFixe(seuilCapital, 0, true)} points)`;
+        } else {
+          detail += ` ; versé en capital, ${formatFixe(capital, 0, true)} € en deux fois, `
+            + `${formatFixe(versee.premiere_fraction, 0, true)} € à la liquidation et le `
+            + `solde le ${ORDINAUX[versee.mois_du_solde]} mois qui la suit `
+            + `(de ${formatFixe(versee.seuil_du_fractionnement, 0, true)} à `
+            + `${formatFixe(seuilCapital - 1, 0, true)} points)`;
+        }
       }
       pensions.push({
         regime: code,
@@ -2131,8 +2143,9 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
   }
   if (mode === "rafp") {
     // Le RAFP module sa valeur de service par un barème d'âge, sans taux
-    // par trimestre : 1,08 à 64 ans, 1,22 à 67, 1,40 à 70.
-    return majorationRafp(ageLiquidation);
+    // par trimestre, au mois près : 1,08 à 64 ans, 1,10 à 64 ans et 6 mois,
+    // 1,22 à 67, 1,40 à 70 — 1,18 à 64 ans avant mars 2015.
+    return majorationRafp(ageLiquidation, carriere.dateDeLAge(ageLiquidation));
   }
   if (mode === "ircantec") {
     return surcoteIrcantec(
@@ -2327,34 +2340,136 @@ export function auTrimestreSuperieur(trimestres) {
   return Math.max(0, Math.ceil(Math.round(trimestres * 1000) / 1000));
 }
 
-// RAFP — barème actuariel de modulation de la valeur de service, par âge
-// ENTIER à la date d'effet (décret n° 2004-569, art. 8 ; tableau de l'ERAFP).
-const MAJORATION_RAFP = {
-  62: 1.00, 63: 1.04, 64: 1.08, 65: 1.12, 66: 1.17, 67: 1.22, 68: 1.28,
-  69: 1.33, 70: 1.40, 71: 1.47, 72: 1.54, 73: 1.62, 74: 1.71, 75: 1.80,
-};
+// RAFP — les barèmes actuariels qui modulent la valeur de service selon l'âge
+// à la date d'effet, que le conseil d'administration établit (décret
+// n° 2004-569, art. 8), chacun avec le premier mois d'effet qu'il régit :
+// la délibération du 10 novembre 2005, âge pivot à 60 ans (rapport annuel
+// 2012 de l'ERAFP), puis celle du 5 février 2015, au 1er mars 2015, « ≥ 75
+// 1,81 » (fiche `rafp_majoration_capital`).
+const MAJORATION_RAFP = [
+  [new DateMois(2005, 1), {
+    60: 1.00, 61: 1.04, 62: 1.08, 63: 1.13, 64: 1.18, 65: 1.23, 66: 1.29,
+    67: 1.35, 68: 1.42, 69: 1.49, 70: 1.57, 71: 1.65, 72: 1.74, 73: 1.84,
+    74: 1.96, 75: 2.08,
+  }],
+  [new DateMois(2015, 3), {
+    62: 1.00, 63: 1.04, 64: 1.08, 65: 1.12, 66: 1.17, 67: 1.22, 68: 1.28,
+    69: 1.33, 70: 1.40, 71: 1.47, 72: 1.54, 73: 1.62, 74: 1.71, 75: 1.81,
+  }],
+];
 
-// RAFP — coefficients de conversion en capital depuis le 1er janvier 2022,
-// interpolés au mois entre deux âges entiers, comme le document l'écrit.
-const CONVERSION_CAPITAL_RAFP = {
-  62: 27.11, 63: 26.34, 64: 25.57, 65: 24.79, 66: 24.02, 67: 23.25,
-  68: 22.47, 69: 21.70, 70: 20.92, 71: 20.15, 72: 19.37, 73: 18.61,
-  74: 17.84, 75: 17.07,
-};
+// RAFP — les barèmes de conversion de la rente en capital : celui de la
+// délibération du 10 novembre 2005, puis celui de la délibération n° 2 du
+// 16 décembre 2021, « au 1er janvier 2022 ».
+const CONVERSION_CAPITAL_RAFP = [
+  [new DateMois(2005, 1), {
+    60: 25.98, 61: 25.30, 62: 24.62, 63: 23.92, 64: 23.22, 65: 22.51,
+    66: 21.80, 67: 21.08, 68: 20.36, 69: 19.63, 70: 18.90, 71: 18.16,
+    72: 17.43, 73: 16.70, 74: 15.97, 75: 15.24,
+  }],
+  [new DateMois(2022, 1), {
+    62: 27.11, 63: 26.34, 64: 25.57, 65: 24.79, 66: 24.02, 67: 23.25,
+    68: 22.47, 69: 21.70, 70: 20.92, 71: 20.15, 72: 19.37, 73: 18.61,
+    74: 17.84, 75: 17.07,
+  }],
+];
 
-function majorationRafp(ageLiquidation) {
-  return MAJORATION_RAFP[Math.min(75, Math.max(62, Math.trunc(ageLiquidation + 1e-9)))];
+// Le capital du RAFP versé en deux fois (décret n° 2004-569, art. 9) :
+// délibérations n° 3 du 28 mars 2019, n° 5 du 30 avril 2020 et n° 7 du
+// 8 février 2024. Le premier mois d'effet, le seuil en points, la première
+// fraction en mois de rente, le mois du solde, l'écart maximal à la retraite
+// de base (null : aucun).
+const FRACTIONNEMENT_RAFP = [
+  { debut: new DateMois(2019, 5), seuil: 4600, mois_de_rente: 15, mois_du_solde: 16,
+    ecart_maximal: null },
+  { debut: new DateMois(2020, 6), seuil: 4600, mois_de_rente: 15, mois_du_solde: 16,
+    ecart_maximal: 15 },
+  { debut: new DateMois(2024, 4), seuil: 4900, mois_de_rente: 4, mois_du_solde: 5,
+    ecart_maximal: 4 },
+];
+
+const ORDINAUX = { 5: "cinquième", 16: "seizième" };
+
+function baremeRafp(baremes, dateEffet) {
+  let retenu = baremes[0][1];
+  for (const [debut, bareme] of baremes) {
+    if (debut.rang <= dateEffet.rang) {
+      retenu = bareme;
+    }
+  }
+  return retenu;
 }
 
-function conversionCapitalRafp(ageLiquidation) {
-  const age = Math.min(75.0, Math.max(62.0, ageLiquidation));
+// Entre deux âges entiers, au prorata des mois révolus, sans arrondi ; en
+// deçà du premier âge, sa valeur ; au-delà du dernier, la sienne.
+function auMois(bareme, ageLiquidation) {
+  const ages = Object.keys(bareme).map(Number);
+  const premier = Math.min(...ages);
+  const dernier = Math.max(...ages);
+  const age = Math.min(dernier, Math.max(premier, ageLiquidation));
   const ans = Math.trunc(age + 1e-9);
-  if (ans >= 75) {
-    return CONVERSION_CAPITAL_RAFP[75];
+  if (ans >= dernier) {
+    return bareme[dernier];
   }
   const mois = Math.trunc((age - ans) * 12 + 1e-6);
-  const bas = CONVERSION_CAPITAL_RAFP[ans];
-  return bas + (CONVERSION_CAPITAL_RAFP[ans + 1] - bas) * mois / 12;
+  const bas = bareme[ans];
+  return bas + (bareme[ans + 1] - bas) * mois / 12;
+}
+
+export function majorationRafp(ageLiquidation, dateEffet) {
+  return auMois(baremeRafp(MAJORATION_RAFP, dateEffet), ageLiquidation);
+}
+
+export function conversionCapitalRafp(ageLiquidation, dateEffet) {
+  return auMois(baremeRafp(CONVERSION_CAPITAL_RAFP, dateEffet), ageLiquidation);
+}
+
+export function fractionnementRafp(points, dateEffet, moisApresLaBase) {
+  let retenu = null;
+  for (const regle of FRACTIONNEMENT_RAFP) {
+    if (regle.debut.rang <= dateEffet.rang) {
+      retenu = regle;
+    }
+  }
+  if (retenu === null || points < retenu.seuil) {
+    return null;
+  }
+  if (retenu.ecart_maximal !== null && moisApresLaBase > retenu.ecart_maximal) {
+    return null;
+  }
+  return retenu;
+}
+
+/**
+ * La forme de la prestation du RAFP et ses montants : rente à partir du
+ * seuil, capital en deçà, en une fois ou en deux (voir le jumeau Python).
+ */
+export function prestationRafp(rente, points, seuil, age, dateEffet, moisApresLaBase) {
+  if (!(points > 0 && points < seuil)) {
+    return { forme: "rente", capital: null, conversion: null, premiere_fraction: null,
+      mois_du_solde: null, seuil_du_fractionnement: null };
+  }
+  const conversion = conversionCapitalRafp(age, dateEffet);
+  const capital = rente * conversion;
+  const fraction = fractionnementRafp(points, dateEffet, moisApresLaBase);
+  if (fraction === null) {
+    return { forme: "capital", capital, conversion, premiere_fraction: null,
+      mois_du_solde: null, seuil_du_fractionnement: null };
+  }
+  return { forme: "capital_fractionne", capital, conversion,
+    premiere_fraction: rente * fraction.mois_de_rente / 12,
+    mois_du_solde: fraction.mois_du_solde, seuil_du_fractionnement: fraction.seuil };
+}
+
+// Les mois entre un départ à cet âge et le départ que la personne déclare,
+// celui de sa pension de base ; zéro sans départ déclaré.
+export function moisApresLeDepart(carriere, age) {
+  const acte = carriere.chronologie ? chrono.depart(carriere.chronologie, carriere.personne)
+    : null;
+  if (acte === null || acte.attributs.age === null || acte.attributs.age === undefined) {
+    return 0;
+  }
+  return Math.max(0, Math.floor((age - Number(acte.attributs.age)) * 12 + 0.5));
 }
 
 function coefficientAnticipation(trimestresManquants, maximum) {

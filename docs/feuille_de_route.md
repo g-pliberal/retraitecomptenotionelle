@@ -5970,15 +5970,15 @@ décret n° 84-995, dont l'index ne garde que le titre.
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
 **Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 3, le relevé prolongé
-jusqu'au départ sur tout le site, la réversion du RAFP, de la RCI et de
-l'Ircantec, et de l'étape 4 Destinie 2, exécuté à part dans la WSL, ses
-sorties en témoins (sa note, en fin d'action). Le propriétaire veut tout le
-reste (« Le restant »), une étape par session, par zones : au modèle, le départ
-des handicapés ; aux données, la délibération de l'ERAFP ; aux moteurs
-publics, TRAJECTOiRE, sur le modèle de `scripts/fetch/destinie_2.py` ; au
-site, le net officiel dans le bloc (138.2 : le 1 %, puis la CSG, présomption
-et champ) ; avec lui, connecté, le prix d'achat Agirc-Arrco implicite de la
-page. Détail : en fin d'action.
+jusqu'au départ, la réversion du RAFP, de la RCI et de l'Ircantec, l'étape 4
+(Destinie 2 exécuté à part, ses sorties en témoins) et la délibération de
+l'ERAFP (barèmes datés, au mois ; dix saisies et neuf calculs en exemples). Le
+propriétaire veut tout le reste (« Le restant »), une étape par session, par
+zones : au modèle, le départ des handicapés ; aux moteurs publics, TRAJECTOiRE,
+sur le modèle de `scripts/fetch/destinie_2.py` ; au site, le net officiel dans
+le bloc (138.2 : le 1 %, puis la CSG, présomption et champ) ; avec lui,
+connecté, le prix d'achat Agirc-Arrco implicite de la page. Détail : en fin
+d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -6582,6 +6582,70 @@ témoins.** Avec l'action 137 ; l'étape 4 de l'action 138 y trouve sa mesure.
   peut-être +1,7 % pour un départ de 2023), à vérifier sur un exemple ; la
   valeur de service de l'année de la liquidation, prise en fin d'année des
   deux côtés, quand la caisse sert celle du jour ; TRAJECTOiRE.
+
+**La délibération de l'ERAFP, le 5 octobre 2026.** Le décret n° 2004-569
+renvoie au conseil d'administration de l'ERAFP le barème qui module la valeur
+de service selon l'âge (article 8), celui de la conversion en capital et le
+capital fractionné (article 9) ; ses délibérations deviennent exécutoires faute
+d'opposition dans le mois (article 27), et aucune n'est au JORF, dont l'index
+n'a que les budgets de l'établissement. Lues sur rafp.fr, copies datées dans
+`data/brut/rafp` du dossier principal, empreintes dans la fiche
+`rafp_majoration_capital`, réécrite en six versions :
+
+- *La majoration.* La délibération du 5 février 2015 : « ≤ 62 1,00 » …
+  « ≥ 75 1,81 », aux prestations qui prennent effet depuis le 1er mars 2015 ;
+  avant, le barème de la délibération du 10 novembre 2005, que le site ne
+  publie pas et que le rapport annuel 2012 reproduit, au pivot de soixante
+  ans : 1,08 à 62 ans, 1,18 à 64, 2,08 à 75. Le 1,80 du tableau que l'ERAFP
+  publie à part est démenti par la délibération, les rapports annuels 2014 et
+  2015 et le simulateur, qui disent 1,81 ; aucune délibération lue depuis
+  (2016 à 2025) ne touche le barème.
+- *Au mois, sans arrondi.* La délibération donne un barème par âge ; les
+  rapports annuels 2012, 2014 et 2015 le disent calculé « en tenant compte du
+  nombre d'années et du nombre de mois », comme le tableau des coefficients de
+  conversion : le modèle interpole au prorata des mois révolus. Le simulateur
+  arrondit en plus au centième, ce qu'aucun texte ne dit — le SNES écrivait
+  1,105 en 2014 — : le modèle ne le suit pas, au plus 0,5 % de la rente.
+- *La conversion* : le barème de 2005 (24,62 à 62 ans) jusqu'au 31 décembre
+  2021, celui de la délibération n° 2 du 16 décembre 2021 (27,11) depuis ; le
+  modèle servait le second à toutes les dates.
+- *Le capital fractionné* : délibérations n° 3 du 28 mars 2019 (de 4 600 à
+  5 124 points, quinze mois de rente, le solde au seizième mois), n° 5 du 30
+  avril 2020 (en une fois quand le RAFP suit la retraite de base de plus de
+  quinze mois) et n° 7 du 8 février 2024 (dès 4 900 points, quatre mois, le
+  solde au cinquième ; au-delà de quatre mois, en une fois). Le détail de la
+  pension le dit, la retraite de base datée par le départ déclaré. L'article
+  9-1 (la cotisation exceptionnelle unique, 2024) n'est pas porté, la
+  cotisation non plus.
+- *Le modèle.* `majoration_rafp`, `conversion_capital_rafp`,
+  `fractionnement_rafp`, `prestation_rafp` et `mois_apres_le_depart`
+  (`droit/liquider.py`), puis leurs jumeaux, au bit près.
+- *L'adaptateur.* `PrestationRafp` dans `scripts/simulateurs.py`, où chaque
+  adaptateur dit son éditeur et fait ses exemples ; la grandeur
+  `prestation_rafp` de l'oracle prête les points saisis et la valeur de
+  service affichée. Les dix saisies deviennent les exemples `erafp_…` : huit
+  concordent ; deux en écart connu, l'arrondi, et l'âge légal de 64 ans que le
+  simulateur prête à la génération 1958, quand L. 161-17-2 lui donne 62 ans.
+  Le registre ne déclare plus de saisie hors exemple.
+- *Les calculs que l'ERAFP publie* : les prestations-types de ses rapports
+  annuels 2015 et 2022 et l'exemple de 2026 de sa page « Calcul et
+  paiement », neuf exemples `erafp_ra…` et `erafp_page…`, tous concordants :
+  ils datent ce que le simulateur, qui n'accepte que des dates futures, ne
+  montre pas — le barème de conversion de 2005, la fraction de quinze mois,
+  le capital en une fois après une retraite de base trop ancienne (un champ
+  `retraite_de_base` le date). L'exemple d'avant avril 2024 de la même page
+  n'est pas retenu : son résultat est calculé à la valeur de service de 2026,
+  pas à celle qu'il écrit.
+- *Ce que ça déplace.* Un témoin de simulation sur 721,
+  `reversion_rafp_en_capital` : son capital, pris en 2020, passe de 1 205 € à
+  1 095 €, au barème de conversion de 2005 ; aucune pension ne bouge, dans
+  aucun scénario, ni aucun rendu de page. Les autres témoins ne bougeant sous
+  Windows qu'aux derniers chiffres, la chaîne est greffée sur les témoins de
+  `main`, et les notes du RAFP sur son paquet, sans la WSL.
+- *Tests.* `tests/test_rafp.py` (huit, rapides, le jumeau compris), trois de
+  plus dans `tests/test_simulateurs.py`. Carrières fictives.
+- *Restent* : demander à l'ERAFP si ses liquidations arrondissent comme son
+  simulateur, et ses délibérations de 2005 et de 2019.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

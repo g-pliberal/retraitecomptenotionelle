@@ -68,7 +68,7 @@ from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.droit import invalidite, liquider, ouvrir
+from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir
 from retraite_notionnelle.droit.reversion import reversion
 from retraite_notionnelle.echeancier import Echeancier
 
@@ -1796,6 +1796,34 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         rente = float(lu.group(1).replace(",", "")) if lu else 0.0
         return {"pension": (total - rente) / traitement, "rente": rente / traitement,
                 "total": total / traitement}
+    if cle == "prestation_rafp":
+        # L'ERAFP publie des points et une date d'effet, son simulateur les
+        # prend : le test prête ces points au RAFP, et la valeur de service
+        # publiée. Le modèle dit l'âge légal qui ouvre le droit, puis, s'il est
+        # atteint, le coefficient de majoration, la forme de la prestation —
+        # rente, capital en une fois ou en deux — et ses montants. La
+        # retraite de base est le départ, sauf quand l'exemple la date
+        # (`retraite_de_base`) : le fractionnement en compte les mois.
+        c = exemple["carriere"]
+        points, valeur = float(c["points_rafp"]), float(c["valeur_de_service_rafp"])
+        legal = departs.age_legal(actuel, carriere)
+        effet = carriere.date_liquidation
+        if effet < carriere.date_de_l_age(legal):
+            return {"forme": "non_ouverte", "age_legal": legal}
+        age = carriere.age_liquidation
+        coefficient = liquider.majoration_rafp(age, effet)
+        rente = points * coefficient * valeur
+        seuil = simulateur.catalogue["rafp"].periode(effet.annee).capital_seuil_points
+        ecart = (effet.rang - _mois(str(c["retraite_de_base"])).rang
+                 if c.get("retraite_de_base") else liquider.mois_apres_le_depart(carriere, age))
+        versee = liquider.prestation_rafp(rente, points, seuil, age, effet, ecart)
+        mesure = {"forme": versee.forme, "age_legal": legal, "coefficient": coefficient,
+                  "rente_annuelle": rente, "rente_mensuelle": rente / 12}
+        if versee.forme != "rente":
+            mesure.update(conversion=versee.conversion, capital=versee.capital)
+        if versee.forme == "capital_fractionne":
+            mesure["premiere_fraction"] = versee.premiere_fraction
+        return mesure
     if cle in ("deductions_annuelles_du_cumul", "mois_sans_pension_du_cumul",
                "plafond_mensuel_du_cumul", "cumul_integral_depuis"):
         resultat_cumul = _cumul_exemple(simulateur, exemple, carriere, resultat)
@@ -1913,6 +1941,15 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         return all(mesure[part] == pytest.approx(valeur[part], abs=1e-6) for part in valeur)
     if cle == "mois_sans_pension_du_cumul":
         return mesure == [str(mois) for mois in valeur]
+    if cle == "prestation_rafp":
+        # Seules se comparent les grandeurs que l'ERAFP publie ou que son
+        # simulateur affiche : la forme à l'égalité, les coefficients et l'âge
+        # au millionième, les montants au centime, qu'il arrondit.
+        return mesure["forme"] == valeur["forme"] and all(
+            grandeur in mesure and mesure[grandeur] == pytest.approx(
+                attendue, abs=1e-6 if grandeur in ("coefficient", "conversion", "age_legal")
+                else 0.0051)
+            for grandeur, attendue in valeur.items() if grandeur != "forme")
     if cle == "cotisation_agirc_de_l_annee":
         return mesure["annee"] == int(valeur["annee"]) and all(
             mesure[part] == pytest.approx(valeur[part], **TOLERANCES[cle])
@@ -2023,7 +2060,7 @@ def test_le_temoin_des_exemples_officiels_est_source():
             "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
             "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL", "CNIEG",
             "Agirc-Arrco", "CRPCEN", "CLEISS", "Direction de la sécurité sociale",
-            "Union Retraite", "Audiens", "Ircantec",
+            "Union Retraite", "Audiens", "Ircantec", "ERAFP",
         ), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]

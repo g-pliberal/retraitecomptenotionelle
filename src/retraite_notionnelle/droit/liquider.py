@@ -158,41 +158,193 @@ def _au_trimestre_superieur(trimestres: float) -> int:
     return max(0, -(-int(round(trimestres * 1000)) // 1000))
 
 
-#: RAFP — barème actuariel de modulation de la valeur de service, par âge
-#: ENTIER à la date d'effet : « la valeur de service du point est modulée en
-#: fonction de l'âge de liquidation de la retraite additionnelle » (décret
-#: n° 2004-569, art. 8). Tableau publié par l'ERAFP, « Valeurs des
-#: coefficients de majoration » ; 1,00 jusqu'à 62 ans, 1,80 dès 75.
-_MAJORATION_RAFP = {
-    62: 1.00, 63: 1.04, 64: 1.08, 65: 1.12, 66: 1.17, 67: 1.22, 68: 1.28,
-    69: 1.33, 70: 1.40, 71: 1.47, 72: 1.54, 73: 1.62, 74: 1.71, 75: 1.80,
-}
+#: RAFP — les barèmes actuariels qui modulent la valeur de service selon l'âge
+#: à la date d'effet : « Ce barème est établi par le conseil d'administration
+#: de l'établissement public gestionnaire du régime » (décret n° 2004-569,
+#: art. 8). Chacun avec le premier mois d'effet qu'il régit (fiche
+#: `rafp_majoration_capital`).
+_MAJORATION_RAFP: tuple[tuple[DateMois, dict[int, float]], ...] = (
+    # Délibération du 10 novembre 2005, âge pivot à 60 ans, que celle du 5
+    # février 2015 garde aux prestations d'avant le 1er mars 2015 ; ses
+    # valeurs, au rapport annuel 2012 de l'ERAFP (annexe 1).
+    (DateMois(2005, 1), {
+        60: 1.00, 61: 1.04, 62: 1.08, 63: 1.13, 64: 1.18, 65: 1.23, 66: 1.29,
+        67: 1.35, 68: 1.42, 69: 1.49, 70: 1.57, 71: 1.65, 72: 1.74, 73: 1.84,
+        74: 1.96, 75: 2.08,
+    }),
+    # Délibération du 5 février 2015 : « ≤ 62 1,00 » … « ≥ 75 1,81 », aux
+    # prestations qui prennent effet « au premier jour du mois suivant la date
+    # à laquelle cette délibération sera devenue exécutoire », le 1er mars
+    # 2015. Le tableau que l'ERAFP publie à part écrit 1,80 à 75 ans : la
+    # délibération, son rapport annuel et son simulateur, 1,81.
+    (DateMois(2015, 3), {
+        62: 1.00, 63: 1.04, 64: 1.08, 65: 1.12, 66: 1.17, 67: 1.22, 68: 1.28,
+        69: 1.33, 70: 1.40, 71: 1.47, 72: 1.54, 73: 1.62, 74: 1.71, 75: 1.81,
+    }),
+)
 
-#: RAFP — coefficients de conversion en capital, par âge à la date d'effet,
-#: pour les prestations servies depuis le 1er janvier 2022 (barème de l'ERAFP).
-#: Le document les interpole au MOIS entre deux âges entiers : 62 ans et 7
-#: mois valent 27,11 + (26,34 − 27,11) × 7 / 12.
-_CONVERSION_CAPITAL_RAFP = {
-    62: 27.11, 63: 26.34, 64: 25.57, 65: 24.79, 66: 24.02, 67: 23.25,
-    68: 22.47, 69: 21.70, 70: 20.92, 71: 20.15, 72: 19.37, 73: 18.61,
-    74: 17.84, 75: 17.07,
-}
+#: RAFP — les barèmes de conversion de la rente en capital (arrêté du 26
+#: novembre 2004, art. 12 ; décret n° 2004-569, art. 9), par âge à la date
+#: d'effet : celui de la délibération du 10 novembre 2005, que celle du 5
+#: février 2015 confirme, au rapport annuel 2012 ; puis celui de la
+#: délibération n° 2 du 16 décembre 2021, « au 1er janvier 2022 ».
+_CONVERSION_CAPITAL_RAFP: tuple[tuple[DateMois, dict[int, float]], ...] = (
+    (DateMois(2005, 1), {
+        60: 25.98, 61: 25.30, 62: 24.62, 63: 23.92, 64: 23.22, 65: 22.51,
+        66: 21.80, 67: 21.08, 68: 20.36, 69: 19.63, 70: 18.90, 71: 18.16,
+        72: 17.43, 73: 16.70, 74: 15.97, 75: 15.24,
+    }),
+    (DateMois(2022, 1), {
+        62: 27.11, 63: 26.34, 64: 25.57, 65: 24.79, 66: 24.02, 67: 23.25,
+        68: 22.47, 69: 21.70, 70: 20.92, 71: 20.15, 72: 19.37, 73: 18.61,
+        74: 17.84, 75: 17.07,
+    }),
+)
 
 
-def _majoration_rafp(age_liquidation: float) -> float:
-    """Coefficient de majoration du RAFP à l'âge de liquidation."""
-    return _MAJORATION_RAFP[min(75, max(62, int(age_liquidation + 1e-9)))]
+@dataclass(frozen=True)
+class FractionnementRafp:
+    """Le capital du RAFP versé en deux fois, comme le conseil
+    d'administration l'a réglé : « Le conseil d'administration peut décider
+    que le capital est versé par fractions lorsque le nombre de points acquis
+    à la date de la liquidation est supérieur ou égal à un seuil qu'il
+    détermine et inférieur à 5 125 » (décret n° 2004-569, art. 9, rédaction
+    du décret n° 2018-873)."""
+
+    #: Le premier mois d'effet qu'il régit.
+    debut: DateMois
+    #: Les points à partir desquels le capital se fractionne.
+    seuil: int
+    #: La première fraction, en mois de la rente : « divisé par 12 et
+    #: multiplié par 15 », puis « par 4 ».
+    mois_de_rente: int
+    #: Le mois, après la liquidation initiale, où le solde est payé.
+    mois_du_solde: int
+    #: Au-delà de tant de mois entre la retraite de base et la date d'effet
+    #: du RAFP, le capital se verse en une fois ; ``None`` : aucune borne.
+    ecart_maximal: int | None
 
 
-def _conversion_capital_rafp(age_liquidation: float) -> float:
-    """Coefficient de conversion en capital du RAFP, interpolé au mois."""
-    age = min(75.0, max(62.0, age_liquidation))
+#: Délibérations n° 3 du 28 mars 2019 (effet au 1er mai 2019), n° 5 du 30
+#: avril 2020 (au-delà du 31 mai 2020) et n° 7 du 8 février 2024 (« à compter
+#: du 1er avril 2024 »). Avant mai 2019, le capital se versait en une fois.
+_FRACTIONNEMENT_RAFP: tuple[FractionnementRafp, ...] = (
+    FractionnementRafp(DateMois(2019, 5), 4600, 15, 16, None),
+    FractionnementRafp(DateMois(2020, 6), 4600, 15, 16, 15),
+    FractionnementRafp(DateMois(2024, 4), 4900, 4, 5, 4),
+)
+
+#: Les mois du premier ordinal, pour dire quand le solde se paie.
+_ORDINAUX = {5: "cinquième", 16: "seizième"}
+
+
+def _bareme_rafp(baremes: tuple[tuple[DateMois, dict[int, float]], ...],
+                 date_effet: DateMois) -> dict[int, float]:
+    """Le barème qui régit une prestation prenant effet à cette date : le
+    dernier dont le premier mois d'effet ne la dépasse pas."""
+    retenu = baremes[0][1]
+    for debut, bareme in baremes:
+        if debut <= date_effet:
+            retenu = bareme
+    return retenu
+
+
+def _au_mois(bareme: dict[int, float], age: float) -> float:
+    """Le coefficient d'un barème par âge entier, à l'âge en années et en mois.
+
+    « Le coefficient est calculé en fonction de l'âge du demandeur à la date
+    d'effet de prestation du RAFP, en tenant compte du nombre d'années et du
+    nombre de mois » (ERAFP, rapports annuels 2012, 2014 et 2015, et tableau
+    des coefficients de conversion) : entre deux âges entiers, au prorata des
+    mois révolus, sans arrondi, que ni les délibérations ni ces notes ne
+    disent. En deçà du premier âge, la valeur du premier ; au-delà du dernier,
+    celle du dernier.
+    """
+    premier, dernier = min(bareme), max(bareme)
+    age = min(float(dernier), max(float(premier), age))
     ans = int(age + 1e-9)
-    if ans >= 75:
-        return _CONVERSION_CAPITAL_RAFP[75]
+    if ans >= dernier:
+        return bareme[dernier]
     mois = int((age - ans) * 12 + 1e-6)
-    bas = _CONVERSION_CAPITAL_RAFP[ans]
-    return bas + (_CONVERSION_CAPITAL_RAFP[ans + 1] - bas) * mois / 12
+    bas = bareme[ans]
+    return bas + (bareme[ans + 1] - bas) * mois / 12
+
+
+def majoration_rafp(age_liquidation: float, date_effet: DateMois) -> float:
+    """Coefficient de majoration du RAFP à l'âge et à la date d'effet."""
+    return _au_mois(_bareme_rafp(_MAJORATION_RAFP, date_effet), age_liquidation)
+
+
+def conversion_capital_rafp(age_liquidation: float, date_effet: DateMois) -> float:
+    """Coefficient de conversion en capital du RAFP, à l'âge et à la date d'effet."""
+    return _au_mois(_bareme_rafp(_CONVERSION_CAPITAL_RAFP, date_effet), age_liquidation)
+
+
+def fractionnement_rafp(points: float, date_effet: DateMois,
+                        mois_apres_la_base: int) -> FractionnementRafp | None:
+    """Le fractionnement qui s'applique à un capital de ``points`` prenant
+    effet à cette date, ``mois_apres_la_base`` mois après la retraite de base ;
+    ``None`` quand le capital se verse en une fois. Le capital d'une réversion
+    ne se fractionne jamais (« Le versement d'un capital aux bénéficiaires de
+    droits dérivés ne donne pas lieu à un fractionnement »)."""
+    retenu = None
+    for regle in _FRACTIONNEMENT_RAFP:
+        if regle.debut <= date_effet:
+            retenu = regle
+    if retenu is None or points < retenu.seuil:
+        return None
+    if retenu.ecart_maximal is not None and mois_apres_la_base > retenu.ecart_maximal:
+        return None
+    return retenu
+
+
+@dataclass(frozen=True)
+class PrestationRafp:
+    """La prestation du RAFP, telle que l'ERAFP la verse : une rente à partir
+    de 5 125 points, un capital en deçà, versé en une fois ou en deux.
+    ``premiere_fraction`` et ``mois_du_solde`` ne valent que pour le second."""
+
+    forme: str  # « rente », « capital » ou « capital_fractionne »
+    capital: float | None = None
+    conversion: float | None = None
+    premiere_fraction: float | None = None
+    mois_du_solde: int | None = None
+    seuil_du_fractionnement: int | None = None
+
+
+def prestation_rafp(rente: float, points: float, seuil: float, age: float,
+                    date_effet: DateMois, mois_apres_la_base: int) -> PrestationRafp:
+    """La forme de la prestation du RAFP et ses montants : ``rente`` est la
+    rente annuelle, majorée ; ``points`` ceux qu'elle compte, que ``seuil``
+    (5 125) sépare de la rente. Le capital est « déterminé sur la base du
+    montant de la rente annuelle par application d'un barème actuariel »
+    (décret n° 2004-569, art. 9) ; sa première fraction, « le produit du
+    nombre de points acquis par la valeur de service du point en vigueur,
+    après application du barème actuariel [...], divisé par 12 et multiplié
+    par » 15 puis 4 : autant de mois de la rente."""
+    if not 0 < points < seuil:
+        return PrestationRafp("rente")
+    conversion = conversion_capital_rafp(age, date_effet)
+    capital = rente * conversion
+    fraction = fractionnement_rafp(points, date_effet, mois_apres_la_base)
+    if fraction is None:
+        return PrestationRafp("capital", capital, conversion)
+    return PrestationRafp("capital_fractionne", capital, conversion,
+                          rente * fraction.mois_de_rente / 12, fraction.mois_du_solde,
+                          fraction.seuil)
+
+
+def mois_apres_le_depart(carriere: Carriere, age: float) -> int:
+    """Les mois qui séparent un départ à ``age`` du départ que la personne
+    déclare, celui de sa pension de base : le RAFP qui attend l'âge légal
+    prend effet après elle. Zéro sans départ déclaré."""
+    from .. import chronologie as chrono
+
+    acte = (chrono.depart(carriere.chronologie, carriere.personne)
+            if carriere.chronologie else None)
+    if acte is None or acte["attributs"].get("age") is None:
+        return 0
+    return max(0, math.floor((age - float(acte["attributs"]["age"])) * 12 + 0.5))
 
 
 def _coefficient_anticipation(trimestres_manquants: float,
@@ -608,17 +760,31 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             if (periode.capital_seuil_points is not None
                     and 0 < points_totaux < periode.capital_seuil_points):
                 # SOUS LE SEUIL, UN CAPITAL. Le RAFP ne sert de rente qu'à
-                # partir de 5 125 points ; en deçà, il verse une fois
-                # « points × coefficient de majoration × valeur de service ×
-                # coefficient de conversion en capital » (décret
-                # n° 2004-569, art. 9). Le montant annuel reste celui de la
-                # rente dont le capital est l'équivalent actuariel : c'est
+                # partir de 5 125 points ; en deçà, il verse « points ×
+                # coefficient de majoration × valeur de service × coefficient
+                # de conversion en capital » (décret n° 2004-569, art. 9), en
+                # une fois, ou en deux près du seuil depuis mai 2019
+                # (:func:`prestation_rafp`). Le montant annuel reste celui de
+                # la rente dont le capital est l'équivalent actuariel : c'est
                 # lui que les comparaisons annuelles savent lire.
-                capital = montant * _conversion_capital_rafp(age_liquidation)
-                detail += (
-                    f" ; versé en capital, {capital:,.0f} € en une fois "
-                    f"(moins de {periode.capital_seuil_points:,.0f} points)"
-                )
+                versee = prestation_rafp(
+                    montant, points_totaux, periode.capital_seuil_points,
+                    age_liquidation, carriere.date_de_l_age(age_liquidation),
+                    mois_apres_le_depart(carriere, age_liquidation))
+                capital = versee.capital
+                if versee.forme == "capital":
+                    detail += (
+                        f" ; versé en capital, {capital:,.0f} € en une fois "
+                        f"(moins de {periode.capital_seuil_points:,.0f} points)"
+                    )
+                else:
+                    detail += (
+                        f" ; versé en capital, {capital:,.0f} € en deux fois, "
+                        f"{versee.premiere_fraction:,.0f} € à la liquidation et le "
+                        f"solde le {_ORDINAUX[versee.mois_du_solde]} mois qui la suit "
+                        f"(de {versee.seuil_du_fractionnement:,.0f} à "
+                        f"{periode.capital_seuil_points - 1:,.0f} points)"
+                    )
             pensions.append(PensionRegime(
                 regime=code, montant=montant, type_calcul=periode.type_calcul,
                 detail=detail,
@@ -2880,8 +3046,9 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         return 1.0
     if mode == "rafp":
         # Le RAFP module sa valeur de service par un barème d'âge, sans
-        # taux par trimestre : 1,08 à 64 ans, 1,22 à 67, 1,40 à 70.
-        return _majoration_rafp(age_liquidation)
+        # taux par trimestre, au mois près : 1,08 à 64 ans, 1,10 à 64 ans
+        # et 6 mois, 1,22 à 67, 1,40 à 70 — 1,18 à 64 ans avant mars 2015.
+        return majoration_rafp(age_liquidation, carriere.date_de_l_age(age_liquidation))
     if mode == "ircantec":
         return surcote_ircantec(moteur, 
             periode, carriere, trimestres, requis,
