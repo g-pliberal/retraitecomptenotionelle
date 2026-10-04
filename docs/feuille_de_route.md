@@ -729,6 +729,46 @@ un réglage change le modèle, un regard ne vaut que pour sa page
     sans code, sauf un levier qui manque. Après l'élection, `actif: false`,
     et les fichiers restent.
 
+**Où regarder, relevé le 4 octobre 2026**, pour n'avoir pas à le chercher :
+
+- *Les deux moteurs ne lisent pas leurs tables au même endroit.* Le
+  JavaScript les construit depuis le paquet (`regimes.js` :
+  `paquet.ages_ouverture`, `paquet.durees_requises`,
+  `paquet.durees_requises_avant_suspension`, `paquet.minimum_contributif`…) ;
+  le Python, qui fait foi, depuis les fichiers de
+  `data/reference/legislation/` (`TableParGeneration`, dans
+  `scenarios/actuel.py` : `AgesOuverture` lit `age_ouverture_requis.csv`,
+  `DureesRequises` `duree_assurance_requise.csv`), par
+  `charger_table_par_generation`, mémorisé et partagé. Le levier de table
+  se calcule donc une fois, en Python (point 3), mais le moteur Python doit
+  apprendre, une fois pour toutes, à recevoir une table substituée : une
+  table neuve, jamais une retouche de celle que la mémoire partage.
+- *Les réglages* : `CLES_MODELISATION` et `DEFAUTS`, dans `saisie.js` ; en
+  Python, la même liste et les défauts de `Saisie`, dans `saisie.py`.
+  `requeteModelisation()` (`requete_modelisation()` en Python) écrit dans
+  l'adresse les réglages qui s'écartent du défaut, et c'est elle qui allume
+  l'encadré (`avertissementReglages`, dans `pages.js`) : l'option
+  `candidats` doit voyager sans passer par elle, ou en être filtrée.
+- *Les univers du paquet* : la clé `univers`, dont chaque entrée porte son
+  `calcul`, nul pour le droit réel. Le simulateur garde ceux dont le calcul
+  n'est pas nul (`scenariosNotionnels`) et refuse toute clé hors de
+  `CHAMPS_NOTIONNELS` ; le Python les lit dans `SCENARIOS_NOTIONNELS`
+  (`simulateur.py`). Un candidat, qui n'a pas de calcul notionnel, y entrera
+  par une autre porte.
+- *La page Coût* : `SCENARIOS` commande `CLES_CAS_TYPES` et `CLES_MASSES`
+  (`cout.js`). Le coût d'un système y est, pour le passé, la dépense
+  observée multipliée par le rapport de sa masse à celle du système actuel,
+  et, pour l'avenir, un ancrage multiplié par sa masse (en-tête de
+  `cout.js`) : celui d'un candidat se lira de même, rapporté au scénario 1.
+  Son solde passe par `ressourcesDe` : une mesure de financement y
+  demandera un levier côté ressources. L'axe du bilan est fixe sous tous
+  les réglages, plafonné par la variante la plus dépensière des comptes du
+  COR (`depenseMaximaleToutesVariantes`, dans `equilibre.js`) : une section
+  qui le partage vérifie qu'aucun candidat ne le dépasse.
+- *Le contrôle des citations* : `citations()` et `controler()`, dans
+  `noyau/univers.py`, se reprennent tels quels, contre la copie d'une
+  source au lieu du README.
+
 **Ce qui est à faire**, dans l'ordre, chaque étape valant seule :
 
 1. Le format, le chargeur, les contrôles et `candidats.py`, sans rien
