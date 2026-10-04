@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -26,6 +27,8 @@ from retraite_notionnelle.web.releve_lu import REGIMES, lire_releve
 from retraite_notionnelle.web.site import disponible, rendre
 
 RACINE = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
+from lecture_pdf import lignes_pdf  # noqa: E402
 
 #: Le relevé du régime général : une caisse, un tableau, une ligne par employeur
 #: — et une année coupée en deux, moitié emploi moitié chômage.
@@ -137,8 +140,86 @@ Pour valider un trimestre, il faut avoir perçu un certain revenu. En 2026, il f
 01/01/202531/12/202542 800 €01/10/202431/12/202411 400 €FONDERIE DU NORDL’Assurance retraite, Agirc-Arrco01/01/202424/09/202433 600 €
 """
 
+#: Le relevé de carrière qu'info-retraite délivre en 2026, à la forme du
+#: document réel — lu le 4 octobre 2026, dans l'ordre où `lecture_pdf` le rend
+#: depuis qu'il suit le repère de la page —, mais inventé de bout en bout :
+#: aucun nom, aucune date, aucun montant n'est celui d'une carrière réelle. Un
+#: résumé par caisse, puis deux tableaux, des années les plus anciennes aux plus
+#: récentes. « Détail par année » tient chaque année sur deux sous-lignes :
+#: l'année, la durée tous régimes et les points de la complémentaire, dont le
+#: nom passe en tête parce qu'il est posé un dixième de point plus haut ; puis
+#: la durée du régime de base. « Détail de votre carrière » porte une ligne par
+#: période, le nom de l'employeur au-dessus de son bloc, les régimes sur la
+#: première ligne du bloc seulement. Une même paie y figure deux fois quand la
+#: base et la complémentaire ne la voient pas tout à fait de même — une ligne
+#: « L'Assurance retraite », une ligne « Agirc-Arrco » —, et une période que
+#: seule l'Agirc-Arrco écrit à part y suit une ligne commune aux deux ; des
+#: années y dépassent le plafond de la Sécurité sociale ; un contrat de la
+#: fonction publique y est déclaré à l'Assurance retraite et à l'Ircantec ; et
+#: rien n'y dit la date de naissance.
+RELEVE_2026 = """
+Relevé de carrière LEMOINE Camille
+Vos droits par régime
+L’Assurance retraite Total 21 trimestres
+Ircantec Total 48 points
+Agirc-Arrco Total 704,91 points
+Edité le 15/09/2026 1 / 3
+Relevé de carrière LEMOINE Camille
+Numéro de sécurité sociale 1 70 13 99 000 000
+Détail par année
+Année Durée Durée par régime Points par régime
+tous régimes
+Agirc-Arrco 2018 0 trim. 2,90 pts
+L’Assurance retraite 0 trim. (A)
+Ircantec 2019 1 trim. 7 pts
+L’Assurance retraite 1 trim.
+Agirc-Arrco 2020 1 trim. 9,50 pts
+L’Assurance retraite 1 trim.
+Agirc-Arrco 2021 4 trim. 96,44 pts
+L’Assurance retraite 4 trim.
+Agirc-Arrco 2022 4 trim. 187,62 pts
+L’Assurance retraite 4 trim.
+Agirc-Arrco 2023 4 trim. 198,10 pts
+L’Assurance retraite 4 trim.
+Agirc-Arrco 2024 4 trim. 210,35 pts
+L’Assurance retraite 4 trim.
+Ircantec 2025 3 trim. 41 pts
+L’Assurance retraite 3 trim.
+(A) Le revenu de l’année ne valide aucun trimestre.
+Edité le 15/09/2026 2 / 3
+Relevé de carrière LEMOINE Camille
+Détail de votre carrière 1 70 13 99 000 000
+Employeur/activité Date début Date fin Revenus* Régime(s)
+LIBRAIRIE DES QUAIS
+02/07/2018 28/07/2018 655 € L’Assurance retraite, Agirc-Arrco
+COMMUNE DE VALBRUNE
+07/10/2019 20/12/2019 2 885 € L’Assurance retraite, Ircantec
+08/09/2025 19/12/2025 6 045 €
+MISSIONS DES DEUX RIVES
+02/03/2020 27/03/2020 1 165 € L’Assurance retraite, Agirc-Arrco
+10/01/2022 25/02/2022 4 065 €
+MISSIONS DES DEUX RIVES
+06/04/2020 24/04/2020 845 € Agirc-Arrco
+CENTRE DE FORMATION DU LITTORAL
+07/09/2020 27/11/2020 L’Assurance retraite
+TRANSPORTS VALLIER
+02/03/2021 17/12/2021 18 315 € L’Assurance retraite
+03/01/2022 16/12/2022 30 485 €
+TRANSPORTS VALLIER
+02/03/2021 18/06/2021 7 285 € Agirc-Arrco
+21/06/2021 26/11/2021 9 135 €
+29/11/2021 17/12/2021 1 905 €
+03/01/2022 15/12/2022 30 715 €
+ATELIERS DU PORT
+04/01/2023 22/12/2023 49 765 € L’Assurance retraite, Agirc-Arrco
+03/01/2024 20/12/2024 52 345 €
+*Revenu d'activité soumis à cotisations retraite.
+Edité le 15/09/2026 3 / 3
+"""
+
 RELEVES = {
     "estimation": ESTIMATION,
+    "releve_2026": RELEVE_2026,
     "regime_general": REGIME_GENERAL,
     "tous_regimes": TOUS_REGIMES,
     "ancienne": ANCIENNE,
@@ -256,6 +337,114 @@ def test_l_estimation_d_info_retraite_se_lit_en_entier():
     assert any("01/12/2022" in ligne for ligne in lecture.ignorees)
 
 
+def test_le_releve_de_2026_se_lit_en_entier():
+    """Les années, les trimestres du premier tableau, les revenus du second,
+    et ce qui ne se lit pas : la période d'une formation sans revenu, que le
+    lecteur doit voir pour la compléter. Le pied de page daté, le numéro de
+    sécurité sociale et le résumé par caisse ne font aucune année."""
+    lecture = _lire("releve_2026")
+    lues = {ligne.annee: ligne for ligne in lecture.lignes}
+    assert sorted(lues) == list(range(2018, 2026))
+    assert [lues[annee].trimestres for annee in sorted(lues)] == [0, 1, 1, 4, 4, 4, 4, 3]
+    assert {annee: round(ligne.revenu) for annee, ligne in lues.items()} == {
+        2018: 655, 2019: 2_885, 2020: 1_165 + 845, 2021: 18_315,
+        2022: 30_485 + 4_065, 2023: 49_765, 2024: 52_345, 2025: 6_045,
+    }
+    assert lecture.ignorees == ("07/09/2020 27/11/2020 L’Assurance retraite",)
+    assert lecture.regimes == ("regime_general", "ircantec", "arrco")
+    # Rien n'y dit la date de naissance, et rien ne doit en tenir lieu.
+    assert lecture.naissance is None
+
+
+def test_une_paie_vue_par_la_base_et_par_la_complementaire_ne_compte_qu_une_fois():
+    """Quand la base et la complémentaire ne voient pas la même paie tout à
+    fait de même — une date, quelques euros —, le relevé la porte deux fois
+    sous le même employeur : un bloc qui ne nomme que « L'Assurance
+    retraite », un bloc qui ne nomme que « Agirc-Arrco », chacun poursuivi
+    sans le répéter. Les additionner doublait le revenu de l'année ; c'est
+    celui de la base qui compte."""
+    lecture = _lire("releve_2026")
+    lues = {ligne.annee: ligne for ligne in lecture.lignes}
+    assert round(lues[2021].revenu) == 18_315
+    assert round(lues[2022].revenu) == 30_485 + 4_065
+    assert any("une seconde fois" in note for note in lecture.notes)
+    assert not any("une seconde fois" in note for note in _lire("tous_regimes").notes)
+
+
+def test_une_periode_que_seule_la_complementaire_ecrit_compte_sans_base_a_part():
+    """Une ligne « Agirc-Arrco » qui suit une ligne commune aux deux caisses,
+    l'année où rien ne nomme la base seule, n'a pas de double : elle écrit à
+    part une période que la base compte aussi. Le relevé réel du 4 octobre le
+    montre, dont la base valide un trimestre que ses propres lignes, sans
+    celle-ci, n'atteignent pas. Ici, 1 165 € ne valident aucun trimestre en
+    2020 — le seuil est de 150 fois le SMIC horaire, 1 522,50 € —, et la base
+    en compte un : il faut les 845 € de la ligne « Agirc-Arrco »."""
+    lues = {ligne.annee: ligne for ligne in _lire("releve_2026").lignes}
+    assert round(lues[2020].revenu) == 1_165 + 845
+    assert lues[2020].trimestres == 1
+
+
+def test_l_ircantec_avec_la_base_dit_un_contractuel_public():
+    """« L'Assurance retraite, Ircantec » : le régime général et l'Ircantec
+    couvrent ensemble un agent contractuel de la fonction publique, et non un
+    salarié du privé. La ligne qui suit dans le bloc, sans répéter les
+    régimes, relève du même contrat."""
+    lecture = _lire("releve_2026")
+    statuts = {ligne.annee: ligne.statut for ligne in lecture.lignes}
+    assert statuts[2019] == "contractuel_public"
+    assert statuts[2025] == "contractuel_public"
+    assert statuts[2024] == "salarie_prive_non_cadre"
+    assert any("Ircantec" in note for note in lecture.notes)
+
+
+def test_le_releve_de_2026_se_lit_dans_son_pdf_comme_dans_ses_lignes():
+    """Le document tel qu'info-retraite le fabrique : un repère retourné en
+    vingtièmes de point, une ``Tm`` par ligne, la page coupée en deux flux au
+    milieu d'un objet texte. Lu sans le repère, il sortait du bas vers le
+    haut, et chaque ligne de bloc prenait le régime du bloc du dessous."""
+    lignes = RELEVE_2026.strip().split("\n")
+    pdf = _pdf_d_info_retraite(lignes)
+    assert lignes_pdf(pdf) == lignes
+    assert lire_releve(lignes_pdf(pdf)).parametres() == _lire("releve_2026").parametres()
+
+
+def _pdf_d_info_retraite(lignes: list[str]) -> bytes:
+    """Un PDF à la façon du relevé d'info-retraite (2026), une ligne par ``Tm``.
+
+    Le texte est en WinAnsi, que la police déclare, avec une table ToUnicode
+    pour le signe euro et l'apostrophe ; la page pose deux flux, et le second
+    commence au milieu d'un objet texte."""
+    def chaine(ligne: str) -> bytes:
+        brut = ligne.encode("cp1252")
+        for special in (b"\\", b"(", b")"):
+            brut = brut.replace(special, b"\\" + special)
+        return b"(" + brut + b")"
+
+    poses = [b"1 0 0 -1 794 %d Tm %s Tj" % (900 + 280 * rang, chaine(ligne))
+             for rang, ligne in enumerate(lignes)]
+    moitie = len(poses) // 2
+    premier = (b"0.05 0 0 -0.05 0 841.9 cm BT /F1 180 Tf "
+               + b" ".join(poses[:moitie]))
+    second = b" ".join(poses[moitie:]) + b" ET"
+    table = (b"1 begincodespacerange\n<00> <FF>\nendcodespacerange\n"
+             b"2 beginbfchar\n<80> <20AC>\n<92> <2019>\nendbfchar\n")
+
+    def objet(numero: int, corps: bytes) -> bytes:
+        return b"%d 0 obj\n" % numero + corps + b"\nendobj\n"
+
+    def flux(donnees: bytes) -> bytes:
+        return b"<< /Length %d >>\nstream\n" % len(donnees) + donnees + b"\nendstream"
+
+    return (b"%PDF-1.5\n"
+            + objet(1, b"<< /Type /Page /Resources << /Font << /F1 4 0 R >> >> "
+                       b"/Contents [2 0 R 3 0 R] >>")
+            + objet(2, flux(premier)) + objet(3, flux(second))
+            + objet(4, b"<< /Type /Font /Subtype /TrueType "
+                       b"/Encoding /WinAnsiEncoding /ToUnicode 5 0 R >>")
+            + objet(5, flux(table))
+            + b"trailer\n<< >>\n%%EOF\n")
+
+
 def test_un_document_qui_n_est_pas_un_releve_ne_rend_pas_de_carriere():
     """Une fiche de paie porte une année et des nombres ; elle ne décrit aucune
     carrière, et la lecture ne doit pas en fabriquer une.
@@ -287,8 +476,12 @@ def test_la_date_de_naissance_de_l_en_tete_est_lue():
 def test_le_plafond_du_releve_est_dit():
     """Le revenu porté au compte du régime général s'arrête au plafond de la
     Sécurité sociale : le simulateur lit donc un salaire tronqué, et il doit le
-    dire à qui dépose son relevé plutôt que de le laisser croire exact."""
+    dire à qui dépose son relevé plutôt que de le laisser croire exact. Le
+    relevé d'info-retraite, lui, porte le « revenu d'activité soumis à
+    cotisations retraite », plafond franchi compris — 52 345 € en 2024, pour
+    un plafond de 46 368 € — : la même note y serait fausse."""
     assert any("plafonné" in note for note in _lire("regime_general").notes)
+    assert not any("plafonné" in note for note in _lire("releve_2026").notes)
 
 
 def test_tous_les_statuts_cites_existent_au_catalogue():

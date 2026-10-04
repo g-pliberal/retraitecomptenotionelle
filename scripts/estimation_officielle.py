@@ -119,8 +119,11 @@ REVENUS_FUTURS = {
 #: le relevé porte le revenu entier.
 TOLERANCE_DU_PLAFOND = 0.01
 
-#: Les statuts dont un relevé du régime général porte le revenu plafonné.
-STATUTS_PLAFONNES = ("salarie_prive_non_cadre", "salarie_prive_cadre")
+#: Les statuts dont un relevé du régime général porte le revenu plafonné : le
+#: salarié du privé, et le contractuel public, que le régime général couvre
+#: aussi — la lecture du relevé le reconnaît à l'Ircantec.
+STATUTS_PLAFONNES = ("salarie_prive_non_cadre", "salarie_prive_cadre",
+                     "contractuel_public")
 
 GABARIT = """\
 # « Mon estimation retraite » (info-retraite.fr), recopiée le jour de la lecture

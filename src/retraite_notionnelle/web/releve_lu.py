@@ -16,11 +16,14 @@ et la lecture se fait chez lui — le PDF ne quitte jamais la page.
 régime, le revenu porté au compte et les trimestres retenus. Il ne donne ni le
 mois, ni la part de primes, ni le caractère cadre ou non cadre d'un emploi —
 c'est la présence de points Agirc, avant leur fusion de 2019, qui le dit. Et
-son revenu est PLAFONNÉ : le régime général ne reporte au compte que la part
-du salaire brut qui tombe sous le plafond de la Sécurité sociale, si bien
-qu'une rémunération plus élevée n'y figure pas en entier. C'est le relevé qui
-est ainsi, pas la lecture ; ``docs/limites.md`` le dit, et le site le répète à
-qui dépose son relevé.
+le revenu du relevé du régime général est PLAFONNÉ : la caisse ne reporte au
+compte que la part du salaire brut qui tombe sous le plafond de la Sécurité
+sociale, si bien qu'une rémunération plus élevée n'y figure pas en entier.
+C'est le relevé qui est ainsi, pas la lecture ; ``docs/limites.md`` le dit, et
+le site le répète à qui dépose son relevé. Le relevé tous régimes
+qu'info-retraite délivre en 2026, lui, porte le « revenu d'activité soumis à
+cotisations retraite », plafond franchi compris, et la lecture ne le dit pas
+plafonné.
 
 **Les francs.** Un relevé du régime général porte les revenus dans la monnaie
 de leur année : en francs de 1960 à 2001, en anciens francs avant 1960. Le
@@ -82,6 +85,25 @@ MOTS_PAR_LIGNE = 12
 #: 01/06/2060 … vous pourriez avoir droit à 2 764,30 € » — et non des carrières.
 EDITION = ("edite le", "editee le", "situation au", "releve au", "arrete au",
            "mis a jour le")
+
+#: Ce par quoi un relevé dit porter le revenu ENTIER, et non sa part plafonnée.
+#: Le relevé tous régimes d'info-retraite (2026) titre sa colonne « Revenus* »,
+#: et l'astérisque renvoie au « Revenu d'activité soumis à cotisations
+#: retraite » : des années y dépassent le plafond de la Sécurité sociale.
+REVENU_ENTIER = ("revenu d activite soumis a cotisations retraite",)
+
+#: Ce qu'un régime complémentaire nommé avec le régime de base dit de
+#: l'emploi : « L'Assurance retraite, Ircantec » est un emploi de contractuel
+#: de la fonction publique, que le régime général et l'Ircantec couvrent
+#: ensemble, et non un emploi du privé.
+PRECISIONS = {("regime_general", "ircantec"): "contractuel_public"}
+
+#: Les en-têtes de colonnes qui ouvrent un tableau du relevé d'info-retraite :
+#: le régime nommé à la fin du tableau d'avant n'y vaut plus. Sous
+#: « Employeur/activité Date début Date fin Revenus* Régime(s) », chaque bloc
+#: nomme les siens, et l'Ircantec qui fermait le tableau des années n'en dit
+#: rien.
+ENTETES = ("date debut date fin", "duree par regime")
 
 
 @dataclass(frozen=True)
@@ -337,6 +359,30 @@ def _regime_de(plat: str) -> Regime | None:
     return trouve
 
 
+def _regimes_de(plat: str) -> list[Regime]:
+    """Tous les régimes qu'une ligne nomme, dans l'ordre où elle les nomme.
+
+    « L'Assurance retraite, Ircantec » en nomme deux, et le second dit de
+    l'emploi ce que le premier tait. Un alias couvre ceux qu'il contient, le
+    plus long d'abord : « agirc arrco » ne nomme pas aussi l'Agirc.
+    """
+    trouves = []
+    for regime in REGIMES:
+        for alias in regime.alias:
+            for m in re.finditer(rf"(?<![a-z0-9]){re.escape(alias)}(?![a-z0-9])", plat):
+                trouves.append((m.start(), m.end(), regime))
+    retenus: list[tuple[int, int, Regime]] = []
+    for debut, fin, regime in sorted(trouves, key=lambda t: (t[0] - t[1], t[0])):
+        if all(fin <= autre_debut or debut >= autre_fin
+               for autre_debut, autre_fin, _ in retenus):
+            retenus.append((debut, fin, regime))
+    nommes: list[Regime] = []
+    for _, _, regime in sorted(retenus, key=lambda t: t[0]):
+        if regime not in nommes:
+            nommes.append(regime)
+    return nommes
+
+
 def _motif_de(plat: str) -> str | None:
     for texte, motif in MOTIFS:
         if sans_accent(texte) in plat:
@@ -414,6 +460,10 @@ class _Annee:
     revenu_du_statut: float = -1.0
     motif: str | None = None
     source: str = ""
+    #: Le revenu des lignes qui ne nomment qu'une complémentaire, tenu à part.
+    vu: float = 0.0
+    #: Si une ligne de l'année ne nomme que le régime de base, revenu à l'appui.
+    base_seule: bool = False
 
 
 def _annee_et_nombres(
@@ -500,7 +550,9 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
 
     1. **Une ligne qui NOMME un régime le rend courant** pour celles qui
        suivent, jusqu'au prochain. C'est ainsi que le relevé tous régimes est
-       bâti, et le nom peut aussi bien tenir dans la ligne de l'année.
+       bâti, et le nom peut aussi bien tenir dans la ligne de l'année — ou dans
+       la première ligne d'un bloc seulement, comme le relevé d'info-retraite
+       de 2026 l'écrit sous chaque employeur.
     2. **Une ligne de carrière porte son année**, en général la première. Ce
        qui suit est fait de nombres — le revenu, les trimestres — et de mots —
        l'employeur, la nature de la période. Un nombre supérieur à quatre est
@@ -508,7 +560,10 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
     3. **Une année revient autant de fois que le relevé la coupe** : un
        employeur par ligne, parfois une période par ligne. Les revenus
        s'additionnent, les trimestres aussi, plafonnés à quatre — c'est la
-       règle du droit, et c'est ce que le total du relevé affiche.
+       règle du droit, et c'est ce que le total du relevé affiche. Une ligne
+       qui ne nomme qu'une caisse complémentaire, l'année où une autre ne
+       nomme que la base, est la vue de cette caisse sur la même paie : son
+       revenu ne s'y ajoute pas.
     4. **Ce qui n'est pas compris n'est pas deviné.** Une ligne qui porte une
        année sans qu'on sache lire ce qui l'accompagne ressort telle quelle
        dans ``ignorees``, et le site la montre : c'est au lecteur de trancher,
@@ -516,12 +571,18 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
     """
     courant: Regime | None = None
     section: Regime | None = None
+    # Les régimes que nommait la ligne qui a ouvert la section : sous chaque
+    # employeur, le relevé d'info-retraite (2026) n'écrit « L'Assurance
+    # retraite, Ircantec » que sur la première ligne du bloc.
+    nommes_de_section: tuple[Regime, ...] = ()
     annees: dict[int, _Annee] = {}
     ignorees: list[str] = []
     regimes: list[str] = []
     cadres: set[int] = set()
     francs = False
     points = False
+    vues = False
+    precises = False
     naissance: str | None = None
 
     # Le plafond des années lues : celui que l'appelant donne — le site passe
@@ -554,7 +615,14 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
             if naissance is None:
                 naissance = entete
             continue
+        if any(titres in plat for titres in ENTETES):
+            # UN EN-TÊTE OUVRE UN TABLEAU, et ferme la section du précédent.
+            # Une ligne du tableau qui précède celle où son bloc nomme ses
+            # régimes relève alors de la base, et non de la complémentaire
+            # par laquelle finissait le tableau d'avant.
+            section, nommes_de_section = None, ()
         regime = _regime_de(plat)
+        nommes = _regimes_de(plat) if regime is not None else []
         if regime is not None:
             # DEUX RÉGIMES COURANTS, ET C'EST LE RELEVÉ QUI L'IMPOSE. La
             # SECTION est le dernier régime nommé, quel qu'il soit : un relevé
@@ -564,10 +632,12 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
             # carrière : c'est de lui que vient le statut de l'année, jamais de
             # la caisse qui ne tient que des points.
             section = regime
+            nommes_de_section = tuple(nommes)
             if regime.genre != "indice":
                 courant = regime
-            if regime.code not in regimes:
-                regimes.append(regime.code)
+            for nomme in [regime, *nommes]:
+                if nomme.code not in regimes:
+                    regimes.append(nomme.code)
 
         annee, nombres, plage, par_la_date, dates = _annee_et_nombres(ligne)
         if annee is None:
@@ -619,6 +689,17 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
             if nombres:
                 ignorees.append(ligne)
             continue
+        # Les régimes dont relève la ligne : ceux qu'elle nomme, sinon ceux de
+        # la ligne qui a ouvert son bloc. Le statut qu'elle donne à l'année est
+        # celui du régime de base, que précise une complémentaire nommée avec
+        # lui.
+        regimes_de_la_ligne = nommes if regime is not None else nommes_de_section
+        statut = courant.statut
+        precise = False
+        for nomme in regimes_de_la_ligne:
+            if (courant.code, nomme.code) in PRECISIONS:
+                statut, precise = PRECISIONS[(courant.code, nomme.code)], True
+                break
 
         etiquetes = [unite for _, unite in nombres if unite]
         revenu = 0.0
@@ -646,6 +727,23 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
                     # sont la colonne de droite d'un relevé, et une année
                     # assimilée y porte « 0 4 » — zéro euro, quatre trimestres.
                     trimestres = int(valeur)
+        # LA MÊME PAIE, VUE PAR DEUX CAISSES. Quand la base et la
+        # complémentaire ne la voient pas tout à fait de même — une date,
+        # quelques euros —, le relevé d'info-retraite (2026) la porte deux
+        # fois sous le même employeur : une ligne qui ne nomme que
+        # « L'Assurance retraite », une qui ne nomme que « Agirc-Arrco ». Les
+        # additionner doublait le revenu de l'année. Le revenu d'une ligne de
+        # complémentaire seule se tient donc à part, et ne rejoint l'année que
+        # si aucune ligne n'y nomme la base seule : il est alors une période
+        # que la base compte sans l'écrire à part — le relevé réel le montre,
+        # dont la base valide un trimestre que ses propres lignes n'atteignent
+        # pas sans elle.
+        base_seule = (not indice_seul
+                      and any(r.genre != "indice" for r in regimes_de_la_ligne)
+                      and not any(r.genre == "indice" for r in regimes_de_la_ligne))
+        vu = 0.0
+        if indice_seul and revenu:
+            vu, revenu = revenu, 0.0
         if courant.genre == "points":
             # Le nombre lu est un nombre de POINTS, pas un revenu. L'année et
             # ses trimestres se gardent ; le revenu reste à compléter.
@@ -660,13 +758,17 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
             if regime is not None and not indice_seul:
                 ignorees.append(ligne)
             continue
-        if revenu == 0.0 and trimestres is None and not motif and not emploi:
+        if (revenu == 0.0 and not vu and trimestres is None and not motif
+                and not emploi):
             ignorees.append(ligne)
             continue
 
         montant = _en_euros(revenu, annee)
         cumul = annees.setdefault(annee, _Annee())
         cumul.revenu += montant
+        cumul.vu += _en_euros(vu, annee)
+        if base_seule and montant > 0:
+            cumul.base_seule = True
         if trimestres is not None:
             cumul.trimestres = min(TRIMESTRES_PAR_AN,
                                    (cumul.trimestres or 0) + trimestres)
@@ -674,19 +776,24 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
         # l'année d'un changement de métier relève d'un seul régime, et c'est
         # la convention que le modèle applique partout ailleurs.
         if montant >= cumul.revenu_du_statut or not cumul.statut:
-            cumul.statut = courant.statut
+            cumul.statut = statut
             cumul.revenu_du_statut = montant
+        precises = precises or precise
         if motif and not cumul.motif:
             cumul.motif = motif
         if not cumul.source:
             cumul.source = ligne
-        if annee < PREMIERE_ANNEE_EN_EUROS and revenu:
+        if annee < PREMIERE_ANNEE_EN_EUROS and (revenu or vu):
             francs = True
 
     lues: list[LigneLue] = []
     interruptions: list[tuple[int, int, str]] = []
     for annee in sorted(annees):
         cumul = annees[annee]
+        if cumul.vu and cumul.base_seule:
+            vues = True
+        elif cumul.vu:
+            cumul.revenu += cumul.vu
         statut = cumul.statut
         if annee in cadres and statut == "salarie_prive_non_cadre":
             statut = "salarie_prive_cadre"
@@ -716,7 +823,22 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
             "exploitants agricoles — ne porte pas de revenu au relevé : ses "
             "années sont lues sans montant, à compléter à la main."
         )
-    if any(regime in ("regime_general", "msa_salaries") for regime in regimes):
+    if vues:
+        notes.append(
+            "Une ligne qui ne nomme qu'une caisse complémentaire, l'année où une "
+            "autre ne nomme que le régime de base, redit la même paie : son "
+            "revenu n'est pas compté une seconde fois."
+        )
+    if precises:
+        notes.append(
+            "Une période déclarée à l'Assurance retraite et à l'Ircantec est lue "
+            "comme un emploi de contractuel de la fonction publique."
+        )
+    # Le relevé du régime général s'arrête au plafond ; celui qui dit porter le
+    # revenu soumis à cotisations le porte entier, et la note serait fausse.
+    entier = any(marqueur in plat_entier for marqueur in REVENU_ENTIER)
+    if not entier and any(regime in ("regime_general", "msa_salaries")
+                          for regime in regimes):
         notes.append(
             "Le revenu porté au relevé est plafonné : au-delà du plafond de la "
             "Sécurité sociale, le salaire n'y figure pas en entier, et la "

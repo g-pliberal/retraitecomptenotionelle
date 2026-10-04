@@ -2079,10 +2079,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   `releve` reçoit ce que l'un et l'autre ont compris. Restent quatre choses que
   le document lui-même ne donne pas, et que le site dit à qui le dépose :
 
-  - **Le revenu est plafonné.** Le régime général ne reporte au compte que la
-    part du salaire brut qui tombe sous le plafond de la Sécurité sociale :
-    au-delà, le relevé n'affiche pas le salaire en entier, et la simulation lit
-    donc un revenu tronqué. La carrière paramétrique, elle, ne l'est pas.
+  - **Le revenu du relevé du régime général est plafonné.** La caisse ne
+    reporte au compte que la part du salaire brut qui tombe sous le plafond de
+    la Sécurité sociale : au-delà, ce relevé n'affiche pas le salaire en
+    entier, et la simulation lit donc un revenu tronqué. Le relevé tous
+    régimes qu'info-retraite délivre en 2026 porte, lui, le « revenu
+    d'activité soumis à cotisations retraite », plafond franchi compris, et la
+    lecture ne le dit pas plafonné. La carrière paramétrique ne l'est pas.
   - **Un régime qui compte en points ne porte aucun revenu.** Les professions
     libérales depuis 2004, les exploitants agricoles : leur relevé donne des
     points et des trimestres. La lecture prend les années et les trimestres,
@@ -2124,7 +2127,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
     de la norme, et le texte tourné existe partout — mais **rien ne dit encore
     qu'un document intact d'Info Retraite les aurait exigés**.
 
-  Le relevé n'a donc toujours pas été confronté à un PDF de caisse INTACT. Ce
+  Ce jour-là, le relevé n'avait été confronté à aucun PDF de caisse INTACT. Ce
   qui a été vérifié sur celui-ci est que la carrière s'en lit en entier, et le
   contrôle vient du document lui-même : le total de trimestres enregistrés qu'il
   annonce en synthèse est exactement celui que la lecture recompose, année par
@@ -2152,6 +2155,32 @@ n'est plus une limite : c'est un paramètre connu du résultat.
     bout. Additionnée à la première, elle faisait des revenus de deux millions
     d'euros. Celle-ci venait de la suite bureautique ; un document rouvert pour
     être anonymisé, ou simplement ré-enregistré, en porte une.
+
+  **Ce qu'un relevé intact a appris, le 4 octobre 2026.** Le relevé de
+  carrière qu'info-retraite délivre en 2026, téléchargé par l'assuré et lu
+  sans être rouvert, sort du même composeur (`KslPrn`). Il confirme le texte
+  tourné — un tampon dans la marge de chaque page — et a montré quatre choses
+  de plus, que la lecture suit désormais :
+
+  - **Le repère de ses pages est retourné.** Chaque page s'ouvre sur une
+    matrice `cm` qui place l'origine en haut de la feuille, et certaines pages
+    sont coupées en plusieurs flux, un opérateur commencé dans l'un s'achevant
+    dans le suivant. Lu sans ce repère, le texte sortait du bas vers le haut,
+    et chaque ligne d'un bloc prenait le régime du bloc du dessous.
+  - **Une même paie peut y figurer deux fois.** Quand la base et l'Agirc-Arrco
+    ne la voient pas tout à fait de même, le relevé porte, sous le même
+    employeur, une ligne qui ne nomme que « L'Assurance retraite » et une qui
+    ne nomme que « Agirc-Arrco ». Seule la première compte. Une ligne de
+    complémentaire seule ne compte que l'année où rien ne nomme la base
+    seule : elle écrit alors une période que la base compte aussi, et sans
+    elle la base validerait un trimestre que ses propres lignes n'atteignent
+    pas.
+  - **Son revenu est entier**, plafond franchi compris (plus haut).
+  - **L'Ircantec y dit le contractuel public**, que le régime général couvre
+    avec elle : une période « L'Assurance retraite, Ircantec » n'est pas un
+    emploi du privé.
+
+  Il ne porte pas la date de naissance, qui se saisit à part.
 
 - **La coordination interrégimes.** Chaque régime liquide sur ses seules
   années, et la durée acquise dans chacun est comptée séparément — c'est le

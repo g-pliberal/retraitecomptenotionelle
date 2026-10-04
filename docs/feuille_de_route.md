@@ -5718,15 +5718,15 @@ d'OpenFisca-France confrontées à celles du dépôt.
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
 **Reprise, au 4 octobre 2026.** Faites : l'étape 1, la saisie outillée
-(`scripts/simulateurs.py`), et l'étape 2, la carrière du propriétaire contre
-« Mon estimation retraite » (`scripts/estimation_officielle.py`) : les
-trimestres et la retraite de base concordent, l'Agirc-Arrco projetée non. Deux
-corrections en sortent, chacune sa session : la projection du prix d'achat
-Agirc-Arrco, et la lecture du relevé tous régimes de 2026. Restent, une par
-session : 3. le brut en tête sur le site, au format de l'estimation officielle,
-dont le net attend l'étape 2 de l'action 138 ; 4. les moteurs publics en local,
-avec l'action 137. Commencer par l'étape 3. Détail : « Étape 2, le 4 octobre
-2026 », à la fin de l'action.
+(`scripts/simulateurs.py`), l'étape 2, la carrière du propriétaire contre
+« Mon estimation retraite » (`scripts/estimation_officielle.py`) — les
+trimestres et la retraite de base concordent, l'Agirc-Arrco projetée non —, et
+la lecture du relevé tous régimes de 2026, corrigée des deux côtés. Reste, de
+l'étape 2, la projection du prix d'achat Agirc-Arrco, sa session. Restent, une
+par session : 3. le brut en tête sur le site, au format de l'estimation
+officielle, dont le net attend l'étape 2 de l'action 138 ; 4. les moteurs
+publics en local, avec l'action 137. Commencer par l'étape 3. Détail : « Étape
+2, le 4 octobre 2026 » et « La lecture du relevé de 2026 », en fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -5878,6 +5878,56 @@ Ce qui suit n'en garde que des écarts relatifs.
   une année Ircantec s'y lit comme un emploi du privé : le modèle n'y voit pas
   l'Ircantec, que la page sert en capital, en versement unique sous 300 points.
   La correction des deux lectures jumelles a sa tâche.
+
+**La lecture du relevé de 2026, le 4 octobre 2026.** La tâche de l'étape 2,
+faite dans les deux lectures jumelles et dans leurs portages JavaScript. Le
+relevé réel n'a été lu que sur le poste du propriétaire, texte masqué : la
+structure de ses opérateurs, la forme de ses lignes, et des comptes.
+
+- *Le lecteur de PDF.* Le composeur d'info-retraite (`KslPrn`) ouvre chaque
+  page par un repère retourné, « 0.05 0 0 -0.05 0 841.9 cm », et coupe ses
+  premières pages en plusieurs flux `/Contents`, une `Tm` à la fin de l'un, la
+  chaîne qu'elle place au début du suivant. `lecture_pdf.py` et
+  `lecture-pdf.js` suivent désormais le repère de la page (`cm`, que `q` et `Q`
+  sauvent et rendent), gardent la matrice de texte entière, rangent les
+  fragments en points de la feuille, et lisent bout à bout les flux d'une page.
+  Sur les cinq PDF publics du dossier principal (jaune et PAP du PLF 2026,
+  retraites de l'État, CDC), la lecture ne change que là où elle le devait :
+  deux libellés tournés réordonnés, une phrase d'encadré remise à l'endroit,
+  une page en deux flux recollée. Les jumeaux divergeaient déjà sur quelques
+  pages de ces documents, les mêmes avant et après : laissé. Ordonner chaque
+  ligne par abscisse remettrait les exposants à leur place, mais changerait un
+  millier de lignes que lisent les scripts de certification : laissé aussi.
+- *La même paie, vue deux fois.* La règle demandée — ne compter que les lignes
+  qui nomment la base — a été éprouvée sur le relevé réel avant d'être écrite.
+  Elle corrigeait les deux années doublées, mais en abîmait une troisième, où
+  une ligne « Agirc-Arrco » seule suit une ligne commune aux deux caisses :
+  sans elle, la base y validerait un trimestre que ses propres lignes
+  n'atteignent pas. La règle retenue est plus étroite : une ligne de
+  complémentaire seule ne compte pas l'année où une autre ne nomme que la
+  base. Seules les deux années corrigées à la main changent, et dans chaque
+  année du relevé, le revenu lu valide exactement les trimestres que la base
+  compte. L'assertion du relevé d'essai du 22 septembre, qui comptait une telle
+  période, reste vraie.
+- *Le reste de la lecture.* Les régimes d'une ligne se lisent tous
+  (`_regimes_de`) ; la ligne qui ouvre un bloc les donne à celles qui le
+  poursuivent ; l'en-tête de colonnes d'un tableau ferme la section du tableau
+  d'avant. « L'Assurance retraite, Ircantec » se lit en contractuel public
+  (`PRECISIONS`), et `estimation_officielle.py` compte ce statut parmi ceux
+  dont le relevé du régime général plafonne le revenu. La note « plafonné »
+  tombe quand le relevé dit porter le « revenu d'activité soumis à
+  cotisations retraite ». La naissance absente n'appelle rien : le site garde
+  son champ, l'estimation privée sa ligne `assure.naissance`. Deux notes
+  disent au lecteur la paie comptée une fois et le contractuel.
+- *Les tests.* `RELEVE_2026`, relevé inventé de bout en bout à la forme réelle,
+  passe par les deux lectures et par un PDF fabriqué comme celui de `KslPrn` ;
+  deux documents minimaux tiennent le repère et les flux, en Python et en
+  JavaScript. Chaque test nouveau échoue avec le code d'avant, sauf celui de
+  la période que seule l'Agirc-Arrco écrit : l'ancien code la comptait déjà,
+  et la règle trop large l'aurait perdue.
+- *Reste.* `releve.corrections` n'a plus rien à corriger dans ce relevé. Le
+  versement unique de l'Ircantec, que le modèle ne sert pas, a sa limite à
+  écrire avec la tâche qui le traitera.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

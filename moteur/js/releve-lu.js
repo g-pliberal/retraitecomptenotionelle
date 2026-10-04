@@ -59,6 +59,26 @@ export const MOTS_PAR_LIGNE = 12;
 export const EDITION = ["edite le", "editee le", "situation au", "releve au",
   "arrete au", "mis a jour le"];
 
+/**
+ * Ce par quoi un relevé dit porter le revenu ENTIER, et non sa part plafonnée :
+ * le relevé tous régimes d'info-retraite (2026) renvoie sa colonne « Revenus* »
+ * au « Revenu d'activité soumis à cotisations retraite ».
+ */
+export const REVENU_ENTIER = ["revenu d activite soumis a cotisations retraite"];
+
+/**
+ * Ce qu'un régime complémentaire nommé avec le régime de base dit de l'emploi :
+ * « L'Assurance retraite, Ircantec » est un emploi de contractuel de la
+ * fonction publique, et non un emploi du privé.
+ */
+export const PRECISIONS = new Map([["regime_general ircantec", "contractuel_public"]]);
+
+/**
+ * Les en-têtes de colonnes qui ouvrent un tableau du relevé d'info-retraite :
+ * le régime nommé à la fin du tableau d'avant n'y vaut plus.
+ */
+export const ENTETES = ["date debut date fin", "duree par regime"];
+
 /** Ce qu'on lit devant une date pour savoir si elle est celle du document. */
 const AVANT_LA_DATE = 24;
 
@@ -261,6 +281,35 @@ function regimeDe(plat) {
   return trouve;
 }
 
+/**
+ * Tous les régimes qu'une ligne nomme, dans l'ordre où elle les nomme : un
+ * alias couvre ceux qu'il contient, le plus long d'abord — « agirc arrco » ne
+ * nomme pas aussi l'Agirc.
+ */
+function regimesDe(plat) {
+  const trouves = [];
+  for (const regime of REGIMES) {
+    for (const alias of regime.alias) {
+      const motif = new RegExp(`(?<![a-z0-9])${alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![a-z0-9])`, "g");
+      for (const t of plat.matchAll(motif)) {
+        trouves.push([t.index, t.index + t[0].length, regime]);
+      }
+    }
+  }
+  const retenus = [];
+  const parLongueur = [...trouves].sort((a, b) => (a[0] - a[1]) - (b[0] - b[1]) || a[0] - b[0]);
+  for (const [debut, fin, regime] of parLongueur) {
+    if (retenus.every(([autreDebut, autreFin]) => fin <= autreDebut || debut >= autreFin)) {
+      retenus.push([debut, fin, regime]);
+    }
+  }
+  const nommes = [];
+  for (const [, , regime] of [...retenus].sort((a, b) => a[0] - b[0])) {
+    if (!nommes.includes(regime)) nommes.push(regime);
+  }
+  return nommes;
+}
+
 function motifDe(plat) {
   for (const [texte, motif] of MOTIFS) {
     if (plat.includes(sansAccent(texte))) return motif;
@@ -381,14 +430,20 @@ function anneeEtNombres(ligne) {
  * tableau des revenus par période :
  *
  * 1. **Une ligne qui NOMME un régime ouvre une section**, et les lignes qui
- *    suivent en relèvent. Seul un régime qui porte une carrière donne son
- *    statut à l'année ; une caisse complémentaire n'en donne aucun.
+ *    suivent en relèvent — sous chaque employeur, le relevé d'info-retraite de
+ *    2026 ne nomme les régimes que sur la première ligne du bloc. Seul un
+ *    régime qui porte une carrière donne son statut à l'année ; une caisse
+ *    complémentaire n'en donne aucun, et ne fait que le préciser : avec
+ *    l'Ircantec, le régime général couvre un contractuel public.
  * 2. **L'unité écrite l'emporte sur la position** : « 49 150 € » est un
  *    revenu, « 4 trim. » une durée, « 203,91 pts » des points, où qu'ils
  *    tombent dans la ligne. Un tableau qui n'écrit pas ses unités se lit à la
  *    position, le revenu au-dessus de quatre et les trimestres en dessous.
  * 3. **Une année revient autant de fois que le relevé la coupe** : les revenus
- *    s'additionnent, les trimestres aussi, plafonnés à quatre.
+ *    s'additionnent, les trimestres aussi, plafonnés à quatre. Une ligne qui ne
+ *    nomme qu'une caisse complémentaire, l'année où une autre ne nomme que la
+ *    base, est la vue de cette caisse sur la même paie : son revenu ne s'y
+ *    ajoute pas.
  * 4. **Ce qui ressemble à une ligne sans en être une est écarté** : une phrase
  *    française, une ligne de quarante nombres, une date de référence sans sa
  *    seconde borne, une année postérieure à l'édition du document.
@@ -401,12 +456,18 @@ function anneeEtNombres(ligne) {
 export function lireReleve(lignes, anneeMaximale = null) {
   let courant = null;
   let section = null;
+  // Les régimes que nommait la ligne qui a ouvert la section : sous chaque
+  // employeur, le relevé d'info-retraite (2026) n'écrit « L'Assurance retraite,
+  // Ircantec » que sur la première ligne du bloc.
+  let nommesDeSection = [];
   const annees = new Map();
   const ignorees = [];
   const regimes = [];
   const cadres = new Set();
   let francs = false;
   let points = false;
+  let vues = false;
+  let precises = false;
   let naissance = null;
 
   // Le plafond des années lues : celui que l'appelant donne, resserré par la
@@ -441,7 +502,15 @@ export function lireReleve(lignes, anneeMaximale = null) {
       if (naissance === null) naissance = entete;
       continue;
     }
+    if (ENTETES.some((titres) => plat.includes(titres))) {
+      // UN EN-TÊTE OUVRE UN TABLEAU, et ferme la section du précédent : une
+      // ligne qui précède celle où son bloc nomme ses régimes relève alors de
+      // la base, et non de la complémentaire qui finissait le tableau d'avant.
+      section = null;
+      nommesDeSection = [];
+    }
     const regime = regimeDe(plat);
+    const nommes = regime !== null ? regimesDe(plat) : [];
     if (regime !== null) {
       // DEUX RÉGIMES COURANTS, ET C'EST LE RELEVÉ QUI L'IMPOSE. La SECTION est
       // le dernier régime nommé, quel qu'il soit : les lignes qui suivent
@@ -449,8 +518,11 @@ export function lireReleve(lignes, anneeMaximale = null) {
       // le dernier régime qui porte une carrière : c'est de lui que vient le
       // statut de l'année, jamais de la caisse qui ne tient que des points.
       section = regime;
+      nommesDeSection = nommes;
       if (regime.genre !== "indice") courant = regime;
-      if (!regimes.includes(regime.code)) regimes.push(regime.code);
+      for (const nomme of [regime, ...nommes]) {
+        if (!regimes.includes(nomme.code)) regimes.push(nomme.code);
+      }
     }
 
     const { annee, nombres, plage, parLaDate, dates } = anneeEtNombres(ligne);
@@ -480,6 +552,20 @@ export function lireReleve(lignes, anneeMaximale = null) {
     if (courant === null) {
       if (nombres.length) ignorees.push(ligne);
       continue;
+    }
+    // Les régimes dont relève la ligne : ceux qu'elle nomme, sinon ceux de la
+    // ligne qui a ouvert son bloc. Le statut qu'elle donne à l'année est celui
+    // du régime de base, que précise une complémentaire nommée avec lui.
+    const regimesDeLaLigne = regime !== null ? nommes : nommesDeSection;
+    let statut = courant.statut;
+    let precise = false;
+    for (const nomme of regimesDeLaLigne) {
+      const cle = `${courant.code} ${nomme.code}`;
+      if (PRECISIONS.has(cle)) {
+        statut = PRECISIONS.get(cle);
+        precise = true;
+        break;
+      }
     }
 
     const etiquetes = nombres.filter(([, unite]) => unite).map(([, unite]) => unite);
@@ -511,6 +597,20 @@ export function lireReleve(lignes, anneeMaximale = null) {
         }
       }
     }
+    // LA MÊME PAIE, VUE PAR DEUX CAISSES. Quand la base et la complémentaire ne
+    // la voient pas tout à fait de même, le relevé d'info-retraite (2026) la
+    // porte deux fois sous le même employeur : une ligne qui ne nomme que la
+    // base, une qui ne nomme que la complémentaire. Le revenu de celle-ci se
+    // tient à part, et ne rejoint l'année que si aucune ligne n'y nomme la base
+    // seule : il est alors une période que la base compte sans l'écrire à part.
+    const baseSeule = !indiceSeul
+      && regimesDeLaLigne.some((r) => r.genre !== "indice")
+      && !regimesDeLaLigne.some((r) => r.genre === "indice");
+    let vu = 0.0;
+    if (indiceSeul && revenu) {
+      vu = revenu;
+      revenu = 0.0;
+    }
     if (courant.genre === "points") {
       // Le nombre lu est un nombre de POINTS, pas un revenu. L'année et ses
       // trimestres se gardent ; le revenu reste à compléter.
@@ -524,7 +624,7 @@ export function lireReleve(lignes, anneeMaximale = null) {
       if (regime !== null && !indiceSeul) ignorees.push(ligne);
       continue;
     }
-    if (revenu === 0.0 && trimestres === null && !motif && !emploi) {
+    if (revenu === 0.0 && !vu && trimestres === null && !motif && !emploi) {
       ignorees.push(ligne);
       continue;
     }
@@ -533,27 +633,32 @@ export function lireReleve(lignes, anneeMaximale = null) {
     if (!annees.has(annee)) {
       annees.set(annee, {
         revenu: 0.0, trimestres: null, statut: "", revenuDuStatut: -1.0,
-        motif: null, source: "",
+        motif: null, source: "", vu: 0.0, baseSeule: false,
       });
     }
     const cumul = annees.get(annee);
     cumul.revenu += montant;
+    cumul.vu += enEuros(vu, annee);
+    if (baseSeule && montant > 0) cumul.baseSeule = true;
     if (trimestres !== null) {
       cumul.trimestres = Math.min(TRIMESTRES_PAR_AN, (cumul.trimestres ?? 0) + trimestres);
     }
     if (montant >= cumul.revenuDuStatut || !cumul.statut) {
-      cumul.statut = courant.statut;
+      cumul.statut = statut;
       cumul.revenuDuStatut = montant;
     }
+    precises = precises || precise;
     if (motif && !cumul.motif) cumul.motif = motif;
     if (!cumul.source) cumul.source = ligne;
-    if (annee < PREMIERE_ANNEE_EN_EUROS && revenu) francs = true;
+    if (annee < PREMIERE_ANNEE_EN_EUROS && (revenu || vu)) francs = true;
   }
 
   const lues = [];
   const interruptions = [];
   for (const annee of [...annees.keys()].sort((a, b) => a - b)) {
     const cumul = annees.get(annee);
+    if (cumul.vu && cumul.baseSeule) vues = true;
+    else if (cumul.vu) cumul.revenu += cumul.vu;
     let statut = cumul.statut;
     if (cadres.has(annee) && statut === "salarie_prive_non_cadre") {
       statut = "salarie_prive_cadre";
@@ -586,7 +691,23 @@ export function lireReleve(lignes, anneeMaximale = null) {
       + "sans montant, à compléter à la main.",
     );
   }
-  if (regimes.some((code) => code === "regime_general" || code === "msa_salaries")) {
+  if (vues) {
+    notes.push(
+      "Une ligne qui ne nomme qu'une caisse complémentaire, l'année où une "
+      + "autre ne nomme que le régime de base, redit la même paie : son "
+      + "revenu n'est pas compté une seconde fois.",
+    );
+  }
+  if (precises) {
+    notes.push(
+      "Une période déclarée à l'Assurance retraite et à l'Ircantec est lue "
+      + "comme un emploi de contractuel de la fonction publique.",
+    );
+  }
+  // Le relevé du régime général s'arrête au plafond ; celui qui dit porter le
+  // revenu soumis à cotisations le porte entier, et la note serait fausse.
+  const entier = REVENU_ENTIER.some((marqueur) => platEntier.includes(marqueur));
+  if (!entier && regimes.some((code) => code === "regime_general" || code === "msa_salaries")) {
     notes.push(
       "Le revenu porté au relevé est plafonné : au-delà du plafond de la "
       + "Sécurité sociale, le salaire n'y figure pas en entier, et la "

@@ -31,9 +31,26 @@ qui rendaient tout le document en lettres décalées — « 5DSSRUW » pour
    en chaînes ``(…)`` à un octet par code, non en hexadécimal. La table
    ``/ToUnicode`` vaut pour elles aussi, avec la largeur de code que son
    ``codespacerange`` déclare : un octet ici, deux pour une police Type0.
+
+Et deux dernières, rencontrées sur le relevé de carrière qu'info-retraite
+délivre en 2026, dont chaque page sortait du bas vers le haut :
+
+5. **Le repère de la page.** ``cm`` compose la matrice courante, que ``q``
+   sauve et ``Q`` rend : elle place tout ce que la page écrit. Ce relevé ouvre
+   chaque page par « 0.05 0 0 -0.05 0 841.9 cm » — des vingtièmes de point,
+   l'origine en haut de la feuille et l'axe vertical RETOURNÉ —, si bien que
+   ses ordonnées croissent vers le bas. On range donc les fragments par leur
+   position sur la feuille, la matrice de texte composée avec ce repère.
+
+6. **Une page en plusieurs flux.** Une page peut poser ``/Contents`` en
+   tableau ; ses flux se lisent alors bout à bout, comme un seul, et un
+   opérateur commencé dans l'un s'achève dans le suivant. Le même relevé coupe
+   ainsi ses deux premières pages : le repère dans un flux, une ``Tm`` à la
+   fin du deuxième, la chaîne qu'elle place au début du troisième.
 """
 from __future__ import annotations
 
+import math
 import re
 import zlib
 
@@ -360,6 +377,10 @@ JETONS = re.compile(
     # rendait le document à l'envers, une ligne par fragment.
     rb"(?P<bt>\bBT\b)"
     rb"|(?P<tm>[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+Tm)"
+    # Le repère de la page : ``cm`` le compose, ``q`` le sauve, ``Q`` le rend.
+    rb"|(?P<cm>[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+cm)"
+    rb"|(?P<sauve>\bq\b)"
+    rb"|(?P<rend>\bQ\b)"
     rb"|(?P<td>[-\d.]+\s+[-\d.]+\s+T[dD])"
     rb"|(?P<tl>[-\d.]+\s+TL)"
     rb"|(?P<etoile>T\*)"
@@ -412,6 +433,72 @@ def _reels(operandes: bytes) -> list[float]:
     return valeurs
 
 
+#: Une matrice de la norme, « a b c d e f » : le point (x, y) qu'elle
+#: transforme devient (a x + c y + e, b x + d y + f).
+Matrice = tuple[float, float, float, float, float, float]
+IDENTITE: Matrice = (1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+
+
+def _composer(m: Matrice, n: Matrice) -> Matrice:
+    """La matrice qui applique ``m``, puis ``n`` : la norme écrit m × n."""
+    a, b, c, d, e, f = m
+    a2, b2, c2, d2, e2, f2 = n
+    return (a * a2 + b * c2, a * b2 + b * d2,
+            c * a2 + d * c2, c * b2 + d * d2,
+            e * a2 + f * c2 + e2, e * b2 + f * d2 + f2)
+
+
+def _decaler(matrice: Matrice, tx: float, ty: float) -> Matrice:
+    """``tx ty Td`` : l'origine avance de (tx, ty) dans le repère du texte.
+
+    C'est ce repère qui porte l'échelle — « 9 0 0 9 82.97 723.62 Tm » place
+    le curseur ET multiplie par neuf tout ce qui suit — et, pour un texte
+    tourné, la direction : un ``Td`` y avance le long des glyphes, non le long
+    des axes de la page.
+    """
+    a, b, c, d, e, f = matrice
+    return (a, b, c, d, tx * a + ty * c + e, tx * b + ty * d + f)
+
+
+def _position(matrice: Matrice, repere: Matrice) -> tuple[int, float, float]:
+    """La bande, la ligne et la colonne d'un fragment, en points de la feuille.
+
+    La matrice de texte composée avec le repère de la page donne l'origine du
+    fragment et le sens de son écriture. Un texte droit se range par ordonnée,
+    puis par abscisse : c'est la bande 0. Un texte tourné — la bande 1 — se lit
+    le long de son propre axe : sa ligne est sa hauteur dans le sens de ses
+    glyphes, sa colonne son avancée dans le sens de l'écriture. Les normes se
+    calculent par une racine, et non par ``hypot``, que Python et JavaScript
+    n'arrondissent pas toujours de même.
+    """
+    a, b, c, d, e, f = _composer(matrice, repere)
+    if not (b or c):
+        return 0, f, e
+    longueur = math.sqrt(a * a + b * b) or 1.0
+    hauteur = math.sqrt(c * c + d * d) or 1.0
+    return 1, (e * c + f * d) / hauteur, (e * a + f * b) / longueur
+
+
+def _contenus_des_pages(objets: dict[int, bytes]) -> dict[int, tuple[int, ...]]:
+    """Pour chaque flux d'une page qui en pose plusieurs, tous ceux de la page.
+
+    ``/Contents [15 0 R 21 0 R 31 0 R 41 0 R]`` : les quatre flux n'en font
+    qu'un, lu dans cet ordre, et la norme permet de couper un opérateur entre
+    deux. Lus chacun pour soi, le repère posé dans le premier ne valait plus
+    pour les suivants, et la première chaîne de chaque flux tombait à
+    l'origine de la page, sa ``Tm`` restée dans le flux d'avant.
+    """
+    pages: dict[int, tuple[int, ...]] = {}
+    for objet in objets.values():
+        m = re.search(rb"/Contents\s*\[([^\]]*)\]", objet)
+        if not m:
+            continue
+        numeros = tuple(int(n) for n in re.findall(rb"(\d+)\s+0\s+R", m.group(1)))
+        for numero in numeros:
+            pages.setdefault(numero, numeros)
+    return pages
+
+
 def _fragments(octets: bytes) -> list[tuple[int, int, float, float, str]]:
     """Reconstitue les lignes visuelles du document, de haut en bas.
 
@@ -430,17 +517,22 @@ def _fragments(octets: bytes) -> list[tuple[int, int, float, float, str]]:
     objets = _objets(octets)
     communes = _polices(octets)
     par_contenu = _polices_par_contenu(objets)
+    pages = _contenus_des_pages(objets)
+    lus: set[int] = set()
     fragments: list[tuple[int, int, float, float, str]] = []
     for page, (numero, objet) in enumerate(objets.items()):
         # Une image JPEG contient « Tj » une fois sur dix, par hasard : on ne
         # la lit pas comme du texte.
-        if b"/Image" in objet[:max(objet.find(b"stream"), 0)]:
+        if numero in lus or b"/Image" in objet[:max(objet.find(b"stream"), 0)]:
             continue
-        contenu = _flux(objet)
+        # Les flux d'une même page se lisent ensemble, à la place du premier
+        # qu'on rencontre, et dans l'ordre de la page.
+        flux = pages.get(numero, (numero,))
+        lus.update(flux)
+        contenu = b"\n".join(filter(None, (_flux(objets.get(n, b"")) for n in flux)))
         if not contenu or (b"Tj" not in contenu and b"TJ" not in contenu):
             continue
         tables = par_contenu.get(numero, communes)
-        x = y = 0.0
         # ÉCHELLE DE LA MATRICE DE TEXTE. `Tm` ne pose pas seulement une
         # position, il pose un repère : « 9 0 0 9 82.97 723.62 Tm » place le
         # curseur ET multiplie par neuf tout ce qui suit. Les décalages `Td`
@@ -450,8 +542,17 @@ def _fragments(octets: bytes) -> list[tuple[int, int, float, float, str]]:
         # distantes de 14,4 points sur la feuille se retrouvaient à 1,6 l'une
         # de l'autre, donc sous la tolérance de regroupement, donc fondues en
         # une seule. C'est ce qui rendait illisibles les tableaux de la
-        # chronologie de la CARMF — trente-six lignes ramenées à quatre.
-        echelle_x = echelle_y = 1.0
+        # chronologie de la CARMF — trente-six lignes ramenées à quatre. La
+        # matrice de ligne se garde donc entière, et chaque `Td` s'y applique.
+        matrice = IDENTITE
+        # LE REPÈRE DE LA PAGE, que `cm` compose et que `q` et `Q` sauvent et
+        # rendent. Le relevé de carrière d'info-retraite retourne l'axe
+        # vertical — l'origine en haut, les ordonnées croissant vers le bas —
+        # et redresse ses glyphes par « 1 0 0 -1 x y Tm » : sans ce repère,
+        # chaque page se rangeait du pied de page au titre, et une ligne de
+        # carrière héritait du régime du bloc du dessous au lieu du sien.
+        repere = IDENTITE
+        sauves: list[Matrice] = []
         interligne = 0.0
         police = None
         dans_tableau = False
@@ -464,9 +565,7 @@ def _fragments(octets: bytes) -> list[tuple[int, int, float, float, str]]:
         # caractères par page venaient se coller dans les montants du relevé,
         # qui devenaient des revenus de deux millions d'euros. La bande — 0
         # pour le texte droit, 1 pour le texte tourné — entre donc dans la clé
-        # de regroupement, et les deux ne se mélangent plus. Un texte tourné se
-        # lit le long de l'autre axe : sa ligne est son abscisse.
-        bande = 0
+        # de regroupement, et les deux ne se mélangent plus (`_position`).
         for jeton in JETONS.finditer(contenu):
             if jeton.group("dict"):
                 continue
@@ -475,40 +574,49 @@ def _fragments(octets: bytes) -> list[tuple[int, int, float, float, str]]:
                 continue
             if jeton.group("nombre"):
                 if dans_tableau and float(jeton.group("nombre")) < ESPACE_DE_TABLEAU:
-                    fragments.append((page, bande, *((x, -y) if bande else (y, x)), " "))
+                    fragments.append((page, *_position(matrice, repere), " "))
                 continue
             if jeton.group("bt"):
-                x = y = 0.0
-                echelle_x = echelle_y = 1.0
+                matrice = IDENTITE
             elif jeton.group("tm"):
                 nombres = _reels(jeton.group("tm"))
                 if len(nombres) < 6:
                     continue
-                echelle_x, echelle_y = nombres[0], nombres[3]
-                x, y = nombres[4], nombres[5]
-                bande = 1 if (nombres[1] or nombres[2]) else 0
+                matrice = (nombres[0], nombres[1], nombres[2],
+                           nombres[3], nombres[4], nombres[5])
+            elif jeton.group("cm"):
+                nombres = _reels(jeton.group("cm"))
+                if len(nombres) < 6:
+                    continue
+                repere = _composer((nombres[0], nombres[1], nombres[2],
+                                    nombres[3], nombres[4], nombres[5]), repere)
+            elif jeton.group("sauve"):
+                sauves.append(repere)
+            elif jeton.group("rend"):
+                # Un `Q` sans `q` ne rend rien : on garde le repère courant.
+                if sauves:
+                    repere = sauves.pop()
             elif jeton.group("td"):
                 nombres = _reels(jeton.group("td"))
                 if len(nombres) < 2:
                     continue
-                x += nombres[0] * echelle_x
-                y += nombres[1] * echelle_y
+                matrice = _decaler(matrice, nombres[0], nombres[1])
                 if jeton.group("td").rstrip().endswith(b"TD"):
-                    interligne = -nombres[1] * echelle_y
+                    interligne = -nombres[1]
             elif jeton.group("tl"):
                 nombres = _reels(jeton.group("tl"))
                 if not nombres:
                     continue
-                interligne = nombres[0] * echelle_y
+                interligne = nombres[0]
             elif jeton.group("etoile") or jeton.group("retour"):
-                y -= interligne
+                matrice = _decaler(matrice, 0.0, -interligne)
             elif jeton.group("tf"):
                 police = jeton.group(NOM_DE_POLICE)
             else:
                 morceau = (_hexa(jeton.group("hex"), tables.get(police))
                            if jeton.group("hex")
                            else _litteral(jeton.group("txt")[1:-1], tables.get(police)))
-                ligne, colonne = (x, -y) if bande else (y, x)
+                bande, ligne, colonne = _position(matrice, repere)
                 if morceau.strip():
                     fragments.append((page, bande, ligne, colonne, morceau))
                 elif morceau:

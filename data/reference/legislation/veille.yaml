@@ -4886,3 +4886,27 @@ journal:
       régimes de 2026 (texte à l'envers, paie comptée deux fois, note « plafonné »
       fausse, années Ircantec), et le versement unique de l'Ircantec sous 300 points,
       que la page sert en capital et que le modèle ne voit pas.
+  - date: "2026-10-04"
+    session: "action 142 : la lecture du relevé tous régimes de 2026, corrigée des deux côtés"
+    consulte: >-
+      Aucun texte de droit : la session ne touche aucune règle du scénario 1. Le relevé de
+      carrière du propriétaire, téléchargé sur info-retraite.fr, lu sur son poste sans en
+      rien sortir — la structure de ses opérateurs PDF, la forme de ses lignes, texte
+      masqué, et des comptes ; la série du SMIC horaire du dépôt, pour le seuil d'un
+      trimestre ; cinq PDF publics du dossier principal, lus avant et après la correction.
+    trouve: >-
+      Le composeur d'info-retraite (`KslPrn`) retourne le repère de chaque page par un
+      `cm` et coupe ses premières pages en plusieurs flux : `lecture_pdf` et son jumeau
+      suivent désormais l'un et l'autre. Une paie que la base et l'Agirc-Arrco voient
+      différemment y figure deux fois, une ligne de la base seule et une de l'Agirc-Arrco
+      seule ; une ligne de l'Agirc-Arrco seule, l'année où rien ne nomme la base seule,
+      porte en revanche une période que la base compte, sans quoi la base validerait un
+      trimestre que ses propres lignes n'atteignent pas. Le revenu y est entier ; une
+      période « L'Assurance retraite, Ircantec » est celle d'un contractuel public ; la
+      date de naissance n'y figure pas.
+    reste: >-
+      Le versement unique de l'Ircantec sous 300 points, que le modèle ne sert pas ;
+      ordonner par abscisse chaque ligne lue, qui remettrait les exposants à leur place
+      mais changerait les lignes que lisent les scripts de certification ; les écarts
+      anciens du lecteur JavaScript sur quelques pages du jaune, des PAP et du rapport de
+      la Caisse des dépôts.

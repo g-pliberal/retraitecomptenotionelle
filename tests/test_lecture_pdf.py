@@ -7,7 +7,10 @@ littérales à un octet par code, le même nom de police qui désigne une police
 différente d'une page à l'autre, et le rang du groupe qui portait le nom de la
 police, faux depuis l'origine. Puis trois défauts de lecture qui collaient ou
 salissaient les tableaux : les espaces posées seules, les dictionnaires en
-ligne du contenu balisé, et les reculs d'un tableau ``TJ``.
+ligne du contenu balisé, et les reculs d'un tableau ``TJ``. Et deux que le
+relevé de carrière d'info-retraite (2026) a montrés, qui le rendaient page par
+page du bas vers le haut : le repère retourné de la page, et la page coupée en
+plusieurs flux.
 """
 
 from __future__ import annotations
@@ -181,4 +184,42 @@ def test_chaque_objet_texte_repart_de_l_origine_de_la_page():
                b"BT /F1 10 Tf 60 660 Td (BAS) Tj ET")
     pdf = _document(_objet(1, _flux(b"<< >>", contenu)))
     assert lignes_pdf(pdf) == ["HAUT", "MILIEU", "BAS"], lignes_pdf(pdf)
+
+
+def test_le_repere_retourne_de_la_page_se_lit_de_haut_en_bas():
+    """« 0.05 0 0 -0.05 0 841.9 cm » : des vingtièmes de point, l'origine en
+    haut de la feuille, les ordonnées croissant vers le bas. C'est ainsi que
+    le relevé de carrière d'info-retraite (2026) ouvre chaque page, et ses
+    glyphes se redressent par « 1 0 0 -1 x y Tm ». Lu sans ce repère, il
+    sortait du pied de page au titre.
+
+    Une image posée entre ``q`` et ``Q`` compose son propre repère, que ``Q``
+    défait ; le tampon de la marge, tourné d'un quart de tour, reste dans sa
+    bande et se lit dans le sens de ses glyphes, vers le haut de la feuille.
+    """
+    contenu = (b"0.05 0 0 -0.05 0 841.9 cm "
+               b"q 1698 0 0 -421 1013 11519 cm /X1 Do Q "
+               b"BT /F1 200 Tf 1 0 0 -1 800 1000 Tm (HAUT) Tj ET "
+               b"BT 0 -1 -1 0 385 6942 Tm (TAMPON) Tj 0 -1 -1 0 385 6000 Tm (LATERAL) Tj ET "
+               b"BT 1 0 0 -1 800 1400 Tm (MILIEU) Tj ET "
+               b"BT 1 0 0 -1 800 1800 Tm (BAS) Tj ET")
+    pdf = _document(_objet(1, _flux(b"<< >>", contenu)))
+    assert lignes_pdf(pdf) == ["HAUT", "MILIEU", "BAS", "TAMPON LATERAL"], lignes_pdf(pdf)
+
+
+def test_une_page_en_plusieurs_flux_se_lit_d_un_seul_tenant():
+    """``/Contents [2 0 R 3 0 R 4 0 R]`` : trois flux qui n'en font qu'un. Le
+    relevé d'info-retraite pose le repère dans le premier, et coupe ses lignes
+    entre les suivants : la ``Tm`` à la fin de l'un, la chaîne qu'elle place au
+    début de l'autre. Lus chacun pour soi, la chaîne tombait à l'origine de la
+    page, et le titre se coupait en deux pages."""
+    pdf = _document(
+        _objet(1, b"<< /Type /Page /Contents [2 0 R 3 0 R 4 0 R] >>"),
+        _objet(2, _flux(b"<< >>", b"0.05 0 0 -0.05 0 841.9 cm")),
+        _objet(3, _flux(b"<< >>", b"BT /F1 200 Tf 1 0 0 -1 800 1000 Tm (RELEVE) Tj "
+                                  b"1 0 0 -1 3000 1000 Tm")),
+        _objet(4, _flux(b"<< >>", b"(DE CARRIERE) Tj 1 0 0 -1 800 1400 Tm "
+                                  b"(Detail par annee) Tj ET")),
+    )
+    assert lignes_pdf(pdf) == ["RELEVE DE CARRIERE", "Detail par annee"], lignes_pdf(pdf)
 

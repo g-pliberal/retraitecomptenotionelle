@@ -4,7 +4,8 @@
  * Portage de ``scripts/fetch/lecture_pdf.py``, qui fait foi : mêmes fonctions,
  * mêmes expressions régulières, mêmes défauts corrigés — les flux d'objets
  * compressés, les polices à encodage propre, l'échelle de la matrice de texte,
- * le numéro de flux dans la clé de regroupement. Toute correction apportée d'un
+ * le numéro de flux dans la clé de regroupement, le repère de la page et les
+ * pages coupées en plusieurs flux. Toute correction apportée d'un
  * côté est à porter de l'autre, et `tests/js/lecture-pdf.test.js` rejoue ici
  * les documents minimaux de `tests/test_lecture_pdf.py`.
  *
@@ -488,6 +489,10 @@ const JETONS = new RegExp([
   // l'envers, une ligne par fragment.
   "(?<bt>\\bBT\\b)",
   "(?<tm>[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+Tm)",
+  // Le repère de la page : ``cm`` le compose, ``q`` le sauve, ``Q`` le rend.
+  "(?<cm>[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+cm)",
+  "(?<sauve>\\bq\\b)",
+  "(?<rend>\\bQ\\b)",
   "(?<td>[-\\d.]+\\s+[-\\d.]+\\s+T[dD])",
   "(?<tl>[-\\d.]+\\s+TL)",
   "(?<etoile>T\\*)",
@@ -529,6 +534,60 @@ function reels(operandes) {
 }
 
 /**
+ * Une matrice de la norme, « a b c d e f » : le point (x, y) qu'elle transforme
+ * devient (a x + c y + e, b x + d y + f).
+ */
+const IDENTITE = [1.0, 0.0, 0.0, 1.0, 0.0, 0.0];
+
+/** La matrice qui applique ``m``, puis ``n`` : la norme écrit m × n. */
+function composer(m, n) {
+  const [a, b, c, d, e, f] = m;
+  const [a2, b2, c2, d2, e2, f2] = n;
+  return [a * a2 + b * c2, a * b2 + b * d2,
+    c * a2 + d * c2, c * b2 + d * d2,
+    e * a2 + f * c2 + e2, e * b2 + f * d2 + f2];
+}
+
+/**
+ * ``tx ty Td`` : l'origine avance de (tx, ty) dans le repère du texte, qui
+ * porte l'échelle et, pour un texte tourné, la direction.
+ */
+function decaler(matrice, tx, ty) {
+  const [a, b, c, d, e, f] = matrice;
+  return [a, b, c, d, tx * a + ty * c + e, tx * b + ty * d + f];
+}
+
+/**
+ * La bande, la ligne et la colonne d'un fragment, en points de la feuille. Un
+ * texte droit se range par ordonnée, puis par abscisse ; un texte tourné se lit
+ * le long de son propre axe. Les normes se calculent par une racine, et non par
+ * `Math.hypot`, que Python et JavaScript n'arrondissent pas toujours de même.
+ */
+function position(matrice, repere) {
+  const [a, b, c, d, e, f] = composer(matrice, repere);
+  if (!(b || c)) return [0, f, e];
+  const longueur = Math.sqrt(a * a + b * b) || 1.0;
+  const hauteur = Math.sqrt(c * c + d * d) || 1.0;
+  return [1, (e * c + f * d) / hauteur, (e * a + f * b) / longueur];
+}
+
+/**
+ * Pour chaque flux d'une page qui en pose plusieurs, tous ceux de la page :
+ * ``/Contents [15 0 R 21 0 R]`` se lit bout à bout, comme un seul flux, et la
+ * norme permet de couper un opérateur entre deux.
+ */
+function contenusDesPages(objets) {
+  const pages = new Map();
+  for (const objet of objets.values()) {
+    const tableau = /\/Contents\s*\[([^\]]*)\]/.exec(objet);
+    if (!tableau) continue;
+    const numeros = [...tableau[1].matchAll(/(\d+)\s+0\s+R/g)].map((t) => Number(t[1]));
+    for (const numero of numeros) if (!pages.has(numero)) pages.set(numero, numeros);
+  }
+  return pages;
+}
+
+/**
  * Reconstitue les fragments du document, avec leur page et leur position.
  *
  * LE NUMÉRO DE FLUX FAIT PARTIE DE LA CLÉ, et c'est tout sauf un détail.
@@ -540,6 +599,8 @@ async function fragments(octets) {
   const { objets, flux } = await lireObjets(octets);
   const communes = polices(objets, flux);
   const parContenu = policesParContenu(objets, flux);
+  const pages = contenusDesPages(objets);
+  const lus = new Set();
   const tous = [];
   let page = -1;
   for (const [numero, objet] of objets) {
@@ -547,20 +608,29 @@ async function fragments(octets) {
     // Une image JPEG contient « Tj » une fois sur dix, par hasard : on ne la
     // lit pas comme du texte.
     const debutFlux = objet.indexOf("stream");
-    if (objet.slice(0, Math.max(debutFlux, 0)).includes("/Image")) continue;
-    const contenu = flux.get(numero);
+    if (lus.has(numero) || objet.slice(0, Math.max(debutFlux, 0)).includes("/Image")) continue;
+    // Les flux d'une même page se lisent ensemble, à la place du premier qu'on
+    // rencontre, et dans l'ordre de la page.
+    const fluxDePage = pages.get(numero) ?? [numero];
+    for (const n of fluxDePage) lus.add(n);
+    const contenu = fluxDePage.map((n) => flux.get(n)).filter(Boolean).join("\n");
     if (!contenu || (!contenu.includes("Tj") && !contenu.includes("TJ"))) continue;
     const tables = parContenu.get(numero) ?? communes;
-    let x = 0.0;
-    let y = 0.0;
     // ÉCHELLE DE LA MATRICE DE TEXTE. `Tm` ne pose pas seulement une position,
     // il pose un repère : « 9 0 0 9 82.97 723.62 Tm » place le curseur ET
     // multiplie par neuf tout ce qui suit. Les décalages `Td` qui viennent
     // ensuite sont exprimés dans CE repère, pas en points de la page. Les
     // additionner tels quels écrasait les interlignes d'un facteur neuf, et
-    // fondait en une seule des lignes distantes de quatorze points.
-    let echelleX = 1.0;
-    let echelleY = 1.0;
+    // fondait en une seule des lignes distantes de quatorze points. La matrice
+    // de ligne se garde donc entière, et chaque `Td` s'y applique.
+    let matrice = IDENTITE;
+    // LE REPÈRE DE LA PAGE, que `cm` compose et que `q` et `Q` sauvent et
+    // rendent. Le relevé de carrière d'info-retraite retourne l'axe vertical et
+    // redresse ses glyphes par « 1 0 0 -1 x y Tm » : sans ce repère, chaque page
+    // se rangeait du pied de page au titre, et une ligne de carrière héritait
+    // du régime du bloc du dessous au lieu du sien.
+    let repere = IDENTITE;
+    const sauves = [];
     let interligne = 0.0;
     let police = null;
     let dansTableau = false;
@@ -572,8 +642,7 @@ async function fragments(octets) {
     // retraite d'Info Retraite, vingt-deux caractères par page venaient se
     // coller dans les montants du relevé, qui devenaient des revenus de deux
     // millions d'euros. La bande — 0 pour le texte droit, 1 pour le texte
-    // tourné — entre donc dans la clé de regroupement.
-    let bande = 0;
+    // tourné — entre donc dans la clé de regroupement (`position`).
     JETONS.lastIndex = 0;
     for (let jeton = JETONS.exec(contenu); jeton; jeton = JETONS.exec(contenu)) {
       const g = jeton.groups;
@@ -581,40 +650,43 @@ async function fragments(octets) {
       if (g.ouvre || g.ferme) { dansTableau = Boolean(g.ouvre); continue; }
       if (g.nombre) {
         if (dansTableau && Number(g.nombre) < ESPACE_DE_TABLEAU) {
-          tous.push([page, bande, ...(bande ? [x, -y] : [y, x]), " "]);
+          tous.push([page, ...position(matrice, repere), " "]);
         }
         continue;
       }
       if (g.bt) {
-        x = 0.0;
-        y = 0.0;
-        echelleX = 1.0;
-        echelleY = 1.0;
+        matrice = IDENTITE;
       } else if (g.tm) {
         const nombres = reels(g.tm);
         if (nombres.length < 6) continue;
-        [echelleX, echelleY] = [nombres[0], nombres[3]];
-        [x, y] = [nombres[4], nombres[5]];
-        bande = nombres[1] || nombres[2] ? 1 : 0;
+        matrice = nombres.slice(0, 6);
+      } else if (g.cm) {
+        const nombres = reels(g.cm);
+        if (nombres.length < 6) continue;
+        repere = composer(nombres.slice(0, 6), repere);
+      } else if (g.sauve) {
+        sauves.push(repere);
+      } else if (g.rend) {
+        // Un `Q` sans `q` ne rend rien : on garde le repère courant.
+        if (sauves.length) repere = sauves.pop();
       } else if (g.td) {
         const nombres = reels(g.td);
         if (nombres.length < 2) continue;
-        x += nombres[0] * echelleX;
-        y += nombres[1] * echelleY;
-        if (g.td.trimEnd().endsWith("TD")) interligne = -nombres[1] * echelleY;
+        matrice = decaler(matrice, nombres[0], nombres[1]);
+        if (g.td.trimEnd().endsWith("TD")) interligne = -nombres[1];
       } else if (g.tl) {
         const nombres = reels(g.tl);
         if (!nombres.length) continue;
-        interligne = nombres[0] * echelleY;
+        interligne = nombres[0];
       } else if (g.etoile || g.retour) {
-        y -= interligne;
+        matrice = decaler(matrice, 0.0, -interligne);
       } else if (g.tf) {
         police = g.nomPolice;
       } else {
         const morceau = g.hex
           ? hexa(g.hex, tables.get(police))
           : litteral(g.txt.slice(1, -1), tables.get(police));
-        const [ligne, colonne] = bande ? [x, -y] : [y, x];
+        const [bande, ligne, colonne] = position(matrice, repere);
         if (morceau.trim()) tous.push([page, bande, ligne, colonne, morceau]);
         else if (morceau) {
           // Une chaîne qui n'est qu'une espace est l'espace entre deux mots que

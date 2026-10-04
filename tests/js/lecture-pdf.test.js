@@ -7,7 +7,9 @@
  * qui change de table d'une page à l'autre, les codes sur deux octets d'une
  * police Type0, les polices d'un formulaire, les espaces posées seules et les
  * reculs d'un tableau ``TJ``, les dictionnaires en ligne du contenu balisé, les
- * échappements lus en une passe, et l'image qu'on ne lit pas comme du texte.
+ * échappements lus en une passe, et l'image qu'on ne lit pas comme du texte ;
+ * puis, depuis le relevé de carrière d'info-retraite (2026), le repère
+ * retourné de la page et la page coupée en plusieurs flux.
  *
  * Les mêmes documents sont refaits ici, octet pour octet, et le portage doit en
  * rendre les mêmes lignes. Un lecteur qui diverge du modèle sur l'un d'eux
@@ -207,5 +209,33 @@ test("chaque objet texte repart de l'origine de la page", async () => {
     + "BT /F1 10 Tf 60 660 Td (BAS) Tj ET";
   const pdf = document(objet(1, flux("<< >>", contenu)));
   assert.deepEqual(await lignesPdf(pdf), ["HAUT", "MILIEU", "BAS"]);
+});
+
+test("le repère retourné de la page se lit de haut en bas", async () => {
+  // Le relevé de carrière d'info-retraite (2026) ouvre chaque page par ce
+  // repère : l'origine en haut, les ordonnées croissant vers le bas. Une image
+  // entre `q` et `Q` ne le défait pas ; le tampon tourné garde sa bande.
+  const contenu = "0.05 0 0 -0.05 0 841.9 cm "
+    + "q 1698 0 0 -421 1013 11519 cm /X1 Do Q "
+    + "BT /F1 200 Tf 1 0 0 -1 800 1000 Tm (HAUT) Tj ET "
+    + "BT 0 -1 -1 0 385 6942 Tm (TAMPON) Tj 0 -1 -1 0 385 6000 Tm (LATERAL) Tj ET "
+    + "BT 1 0 0 -1 800 1400 Tm (MILIEU) Tj ET "
+    + "BT 1 0 0 -1 800 1800 Tm (BAS) Tj ET";
+  const pdf = document(objet(1, flux("<< >>", contenu)));
+  assert.deepEqual(await lignesPdf(pdf), ["HAUT", "MILIEU", "BAS", "TAMPON LATERAL"]);
+});
+
+test("une page en plusieurs flux se lit d'un seul tenant", async () => {
+  // Le repère dans le premier flux, une `Tm` à la fin du deuxième, la chaîne
+  // qu'elle place au début du troisième : trois flux qui n'en font qu'un.
+  const pdf = document(
+    objet(1, "<< /Type /Page /Contents [2 0 R 3 0 R 4 0 R] >>"),
+    objet(2, flux("<< >>", "0.05 0 0 -0.05 0 841.9 cm")),
+    objet(3, flux("<< >>", "BT /F1 200 Tf 1 0 0 -1 800 1000 Tm (RELEVE) Tj "
+      + "1 0 0 -1 3000 1000 Tm")),
+    objet(4, flux("<< >>", "(DE CARRIERE) Tj 1 0 0 -1 800 1400 Tm "
+      + "(Detail par annee) Tj ET")),
+  );
+  assert.deepEqual(await lignesPdf(pdf), ["RELEVE DE CARRIERE", "Detail par annee"]);
 });
 
