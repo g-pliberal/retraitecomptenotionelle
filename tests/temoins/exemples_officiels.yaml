@@ -1773,6 +1773,109 @@ exemples:
     carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2022-10", age_debut: 22, conjoint: "1963-03-15", conjoint_sexe: F, mariage: "2022-08-14", deces: "2026-08-15", pensions_du_defunt_mensuelles: {fonction_publique_etat: 2000}}
     attendu: {reversions_mensuelles: {fonction_publique_etat: 1000}}
 
+  # Le 4 octobre 2026, six saisies de plus, par Claude, sur un lot que le
+  # propriétaire a approuvé, la prédiction du modèle écrite avant chacune. Le
+  # simulateur ne pose que les questions des régimes du défunt, et ne demande
+  # plus la pension d'un régime qu'il a déjà écarté.
+
+  - id: ur_reversion_cnracl_enfant_mariage_1_an
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt fonctionnaire territorial ou hospitalier", verifie_le: "2026-10-04", simulateur: union_retraite_reversion, saisie: "défunt fonctionnaire territorial ou hospitalier, 1 800 € nets de CNRACL et 60 € de RAFP ; mariage de 12 mois, un enfant commun"}
+    enonce: >-
+      Le défunt, fonctionnaire territorial retraité, touchait 1 800 € nets par
+      mois de la CNRACL et 60 € du RAFP ; sa veuve l'avait épousé douze mois
+      avant le décès, et ils avaient un enfant. Le simulateur ne demande alors
+      ni l'âge ni les ressources : « Vous êtes éligible », 900 € de la CNRACL
+      et 30 € du RAFP, « Montant estimatif de votre réversion (net mensuel) :
+      930 € ». L'enfant commun lève la condition de durée du mariage. La
+      réversion du RAFP, la moitié aussi, que le modèle ne sert pas encore,
+      n'est pas comparée.
+    carriere: {naissance: "1960-06-15", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2022-07", age_debut: 22, nombre_enfants: 1, naissances_enfants: ["2024-05"], conjoint: "1975-03-15", conjoint_sexe: F, mariage: "2025-08-01", deces: "2026-08-15", pensions_du_defunt_mensuelles: {cnracl: 1800, rafp: 60}}
+    attendu: {reversions_mensuelles: {cnracl: 900}}
+
+  - id: ur_reversion_prive_ressources_plafond_2024
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié du secteur privé", verifie_le: "2026-10-04", simulateur: union_retraite_reversion, saisie: "défunt salarié du privé, 700 € nets d'Agirc-Arrco ; survivante née le 15 mars 1960, seule, ressources au-dessus de 6 058 € sur trois mois et de 24 232 € sur douze"}
+    enonce: >-
+      Le défunt, salarié du secteur privé retraité, touchait 1 400 € nets du
+      régime général et 700 € de l'Agirc-Arrco ; sa veuve, née le 15 mars
+      1960, vit seule de sa propre retraite, 24 600 € brut sur douze mois. Le
+      simulateur propose les ressources par tranches : « Supérieur à
+      6 058,00 € » sur trois mois, puis « Supérieur à 24 232,00 € » sur douze.
+      Il ne demande plus alors que la pension de l'Agirc-Arrco : « Vous êtes
+      éligible […] 420 € » ; pour le régime général, « vous ne pouvez pas
+      bénéficier d'une réversion, en raison de vos ressources ».
+    carriere: {naissance: "1958-06-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2020-07", age_debut: 20, conjoint: "1960-03-15", conjoint_sexe: F, mariage: "1990-06-16", deces: "2026-08-15", ressources_conjoint: 24600, pensions_du_defunt_mensuelles: {regime_general: 1400, agirc_arrco: 700}}
+    attendu: {reversions_mensuelles: {regime_general: 0, agirc_arrco: 420}}
+    ecart_connu:
+      modele: {reversions_mensuelles: {regime_general: 33.47, agirc_arrco: 420}}
+      explication: >-
+        C'est le simulateur qui se trompe : ses seuils sont ceux de 2024,
+        2 080 fois le SMIC horaire de 11,65 €. D. 353-1-1, relu sur Légifrance
+        le 4 octobre 2026, fixe le plafond à 2 080 fois le SMIC « en vigueur au
+        1er janvier », et la circulaire Cnav 2025-33 du 23 décembre 2025 le
+        chiffre pour 2026 à 25 001,60 € par an et 6 250,40 € par trimestre, au
+        SMIC de 12,02 €. Sous ce plafond, la réversion du régime général est
+        réduite à due concurrence du dépassement, non refusée : 33,47 € par
+        mois, ce que le modèle sert. Le simulateur refuse donc à tort tout
+        survivant seul dont les ressources annuelles tombent entre 24 232 € et
+        25 001,60 €.
+      fiche: reversion
+      depuis: "2026-10-04"
+
+  - id: ur_reversion_prive_veuve_invalide_52_ans
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié du secteur privé", verifie_le: "2026-10-04", simulateur: union_retraite_reversion, saisie: "défunt salarié du privé, 700 € nets d'Agirc-Arrco ; survivante née le 15 mars 1974, invalide, sans deux enfants à charge"}
+    enonce: >-
+      Le même défunt, 1 400 € et 700 € nets ; sa veuve, née le 15 mars 1974,
+      est invalide et n'avait pas deux enfants à charge au décès. Le
+      simulateur ne demande pas ses ressources : « Vous êtes éligible —
+      Salarié du secteur privé - retraite complémentaire (AGIRC-ARRCO) […]
+      420 € » ; pour le régime général, « vous n'avez pas encore atteint l'âge
+      requis (55 ans) ». L'invalidité lève l'âge à l'Agirc-Arrco, non au
+      régime général : la réversion complémentaire part le mois qui suit le
+      décès, celle de base le mois qui suit les 55 ans.
+    carriere: {naissance: "1958-06-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2020-07", age_debut: 20, conjoint: "1974-03-15", conjoint_sexe: F, mariage: "1995-06-17", deces: "2026-08-15", conjoint_invalidite: "2020-01-01", pensions_du_defunt_mensuelles: {regime_general: 1400, agirc_arrco: 700}}
+    attendu: {dates_d_effet_de_la_reversion: {agirc_arrco: "2026-09-01", regime_general: "2029-04-01"}, reversions_mensuelles: {agirc_arrco: 420}}
+
+  - id: ur_reversion_salarie_agricole
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt salarié agricole", verifie_le: "2026-10-04", simulateur: union_retraite_reversion, saisie: "défunt salarié agricole, 900 € nets de la MSA et 250 € d'Agirc-Arrco ; survivante née le 15 mars 1966, seule, ressources sous 6 058 € sur trois mois"}
+    enonce: >-
+      Le défunt, salarié agricole retraité, touchait 900 € nets par mois de la
+      MSA et 250 € de l'Agirc-Arrco ; sa veuve, née le 15 mars 1966, vit seule
+      de 15 000 € par an. « Vous êtes éligible » : « Salarié agricole -
+      retraite de base (MSA SA) : 486 € », « retraite complémentaire
+      (AGIRC-ARRCO) : 150 € », 636 € en tout. La MSA des salariés sert les
+      54 % du régime général.
+    carriere: {naissance: "1958-06-15", sexe: H, affiliation: salarie_agricole, liquidation: "2020-07", age_debut: 18, conjoint: "1966-03-15", conjoint_sexe: F, mariage: "1988-06-18", deces: "2026-08-15", ressources_conjoint: 15000, pensions_du_defunt_mensuelles: {msa_salaries: 900, agirc_arrco: 250}}
+    attendu: {reversions_mensuelles: {msa_salaries: 486, agirc_arrco: 150}}
+
+  - id: ur_reversion_independant_rci
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt travailleur indépendant", verifie_le: "2026-10-04", simulateur: union_retraite_reversion, saisie: "défunt artisan ou commerçant, 800 € nets de base et 200 € de RCI ; survivante née le 15 mars 1964, seule, ressources sous 6 058 € sur trois mois"}
+    enonce: >-
+      Le défunt, artisan retraité, touchait 800 € nets par mois de sa retraite
+      de base, servie par l'Assurance retraite, et 200 € de la complémentaire
+      des indépendants ; sa veuve, née le 15 mars 1964, vit seule de 12 000 €
+      par an. Le simulateur ne demande que sa date de naissance et ses
+      ressources : « Vous êtes éligible », 432 € de la base et 120 € de la RCI,
+      552 € en tout. La RCI sert 60 % ; le modèle, qui ne la sert pas encore
+      en réversion, n'est comparé que sur la base.
+    carriere: {naissance: "1958-06-15", sexe: H, affiliation: artisan, liquidation: "2020-07", age_debut: 18, conjoint: "1964-03-15", conjoint_sexe: F, mariage: "1986-06-14", deces: "2026-08-15", ressources_conjoint: 12000, pensions_du_defunt_mensuelles: {regime_general: 800, rci: 200}}
+    attendu: {reversions_mensuelles: {regime_general: 432}}
+
+  - id: ur_reversion_contractuel_ircantec_52_ans
+    source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt contractuel de droit public", verifie_le: "2026-10-04", simulateur: union_retraite_reversion, saisie: "défunt contractuel de droit public, 300 € nets d'Ircantec ; mariage de 5 ans et plus, sans enfant commun ; survivante née le 15 mars 1974, sans deux enfants à charge"}
+    enonce: >-
+      Le défunt, contractuel de droit public retraité, touchait 1 000 € nets du
+      régime général et 300 € de l'Ircantec ; sa veuve, née le 15 mars 1974,
+      l'avait épousé plus de cinq ans avant, sans enfant commun ni deux
+      enfants à charge. Le simulateur demande la durée du mariage, pour
+      l'Ircantec, puis seulement sa pension : « Vous êtes éligible —
+      Contractuel de droit public - retraite complémentaire (IRCANTEC) […]
+      150 € » ; pour le régime général, « vous n'avez pas encore atteint l'âge
+      requis (55 ans) ». L'Ircantec sert donc déjà la moitié à 52 ans ; le
+      modèle ne la sert pas encore en réversion. La réversion de base part le
+      mois qui suit les 55 ans.
+    carriere: {naissance: "1958-06-15", sexe: H, affiliation: contractuel_public, liquidation: "2020-07", age_debut: 22, conjoint: "1974-03-15", conjoint_sexe: F, mariage: "1998-06-13", deces: "2026-08-15", pensions_du_defunt_mensuelles: {regime_general: 1000, ircantec: 300}}
+    attendu: {dates_d_effet_de_la_reversion: {regime_general: "2029-04-01"}}
+
   # ---- Union Retraite : le simulateur d'âge légal, saisi par Claude ----------
   # Le 4 octobre 2026, sur un lot de deux saisies que le propriétaire a
   # approuvé (docs/architecture.md, § 3.5), écrit par `scripts/simulateurs.py
@@ -1807,3 +1910,29 @@ exemples:
       et la durée requise.
     carriere: {naissance: "1968-06-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2035-07", age_debut: 22}
     attendu: {age_ouverture: 63.75, trimestres_requis: 172}
+
+  - id: ur_racl_1970_avant_16
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1970 ; 16 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_carriere_longue, saisie: "1970 ; 16 ans"}
+    enonce: >-
+      « vous pouvez prétendre à un départ anticipé à la retraite à partir de
+      58 ans. Vous devrez avoir cotisé : au moins 172 trimestres et au moins 5
+      trimestres avant la fin de l'année civile de votre 16e anniversaire (ou
+      4 trimestres si vous êtes né entre le 1er octobre et le 31 décembre). »
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1970,
+      au travail depuis janvier 1985, qui part au premier mois que la réponse
+      lui ouvre.
+    carriere: {naissance: "1970-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-06", debut: "1985-01"}
+    attendu: {age_ouverture: 58.0, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_racl_1970_avant_18
+    source: {editeur: "Union Retraite", reference: "simulateur de départ anticipé pour carrière longue, info-retraite.fr, saisie « 1970 ; 18 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_carriere_longue, saisie: "1970 ; 18 ans"}
+    enonce: >-
+      « vous pouvez prétendre à un départ anticipé à la retraite à partir de
+      60 ans. Vous devrez avoir cotisé : au moins 172 trimestres et au moins 5
+      trimestres avant la fin de l'année civile de votre 18e anniversaire (ou
+      4 trimestres si vous êtes né entre le 1er octobre et le 31 décembre). »
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1970,
+      au travail depuis janvier 1986, qui part au premier mois que la réponse
+      lui ouvre.
+    carriere: {naissance: "1970-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2030-06", debut: "1986-01"}
+    attendu: {age_ouverture: 60.0, trimestres_requis: 172, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}

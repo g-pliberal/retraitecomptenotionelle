@@ -5736,15 +5736,16 @@ d'OpenFisca-France confrontées à celles du dépôt.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
-**Reprise, au 4 octobre 2026.** Faites : l'étape 1, la saisie outillée
-(`scripts/simulateurs.py`) ; l'étape 2, la carrière du propriétaire contre
-« Mon estimation retraite » (`scripts/estimation_officielle.py`), et ses
-corrections : le relevé tous régimes de 2026, la valeur d'achat Agirc-Arrco
-sur le salaire moyen, le salaire de référence de l'Ircantec, lu (les prix,
-que le moteur suivait déjà). Restent, une par session : 3. le brut en tête
-sur le site, au format de l'estimation officielle, dont le net attend
-l'étape 2 de l'action 138 ; 4. les moteurs publics en local, avec l'action
-137. Commencer par l'étape 3. Détail : les notes de fin d'action.
+**Reprise, au 4 octobre 2026.** Faites : l'étape 1 (`scripts/simulateurs.py`) ;
+l'étape 2 contre « Mon estimation retraite » (`scripts/estimation_officielle.py`)
+et ses corrections : le relevé de 2026, la valeur d'achat Agirc-Arrco, le
+salaire de référence de l'Ircantec, lu (les prix, que le moteur suivait déjà) ;
+les simulateurs anonymes du 4 octobre (carrière longue, RAFP et réversion
+épuisés ; handicap, 10 sur 24 ; « Mon estimation » à vingt et un âges).
+Restent : le prix d'achat Agirc-Arrco implicite de la page, la délibération
+de l'ERAFP, la réversion du RAFP, de la RCI et de l'Ircantec, le départ des
+handicapés ; puis, une par session, 3. le brut en tête (le net attend l'étape
+2 de l'action 138) et 4. les moteurs publics, avec l'action 137. Détail : en fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -6026,6 +6027,64 @@ salaire moyen.** L'autre correction de l'étape 2.
   des prix, celui que la page semble prêter, à 0,5 % à 2,8 % au-dessous.
   L'Ircantec garde son rendement de prolongation, faute d'avoir lu le texte de
   son salaire de référence.
+
+**Les simulateurs anonymes, le 4 octobre 2026.** Le propriétaire a demandé
+« de vérifier beaucoup plus de choses dans les simulateurs officiels », et
+approuvé quatre lots : « Mon estimation retraite » en faisant varier l'âge et
+les revenus, le RAFP, le reste de la réversion et de la carrière longue, le
+handicap. Le navigateur intégré suffit : le computer use ne donne à Chrome
+qu'un accès en lecture, et ces formulaires se remplissent par leur page.
+
+- *La carrière longue.* Les deux saisies restantes, génération 1970, avant
+  16 et avant 18 ans : 58 et 60 ans, 172 trimestres, comme prévu
+  (`ur_racl_1970_avant_16`, `…_18`). Le budget est épuisé.
+- *Le RAFP.* Dix saisies, budget épuisé, réponses dans la fiche
+  `rafp_majoration_capital`, aucune encore en exemple officiel : il faut un
+  adaptateur à `scripts/simulateurs.py`. Le simulateur interpole la
+  majoration au mois, arrondie au centième, et retient 1,81 à 75 ans ; le
+  barème publié va par âge entier jusqu'à 1,80, et le décret (art. 8 et 9)
+  renvoie barème et capital fractionné au conseil d'administration. Le
+  moteur reste tel quel tant que la délibération n'est pas lue : un
+  simulateur peut se tromper. L'écart vaut jusqu'à 2 % de la rente (68 ans
+  et 4 mois : 1,30 contre 1,28). La conversion en capital et les âges
+  légaux concordent ; le simulateur prête 64 ans à la génération 1958.
+- *« Mon estimation retraite », personnalisée.* Le propriétaire connecté,
+  Claude a ajouté des âges de départ (« Ajouter un âge de départ », par
+  années et mois), lu le détail par régime, puis changé les revenus à venir
+  en « Pas d'évolution » ; rien n'a été enregistré. Onze âges, de l'âge
+  légal à 70 ans, sous la projection par défaut, dix sous des revenus
+  plats : le régime général concorde À L'EURO à chacun des vingt et un,
+  trimestres, décote et surcote compris ; le modèle ne dit rien de neuf
+  sur ses règles. « Lire les données de l'évolution des revenus » donne la
+  série de la page : + 1,00 % par an exactement, ce que l'étape 2 avait
+  déduit. L'Agirc-Arrco du modèle reste en dessous, de 1,6 % à l'âge légal
+  à 3,3 % à 70 ans sous la projection par défaut, de 1,1 % à 2,6 % sous des
+  revenus plats, l'écart croissant à chaque année travaillée. Sous des
+  revenus plats, la page acquiert le MÊME nombre de points chaque année :
+  son prix d'achat ne suit pas le salaire moyen, comme l'accord le veut et
+  le modèle le fait, et vaut, rapporté au revenu, 11,6 % de plus que celui
+  de 2026, ce qui reste à expliquer. L'Ircantec, sous 300 points, se verse
+  en capital unique, avec sa propre majoration par trimestre.
+- *La réversion*, à la demande du propriétaire (« Continue avec la réversion
+  et le handicap ») : les six saisies du budget, budget épuisé, aux exemples
+  `ur_reversion_` du 4 octobre. Le simulateur ne pose que les questions des
+  régimes cochés, ne demande plus la pension d'un régime qu'il a écarté, et
+  garde ses réponses dans `sessionStorage` d'une simulation à l'autre : la
+  vider avant chacune. Concordent la CNRACL et l'enfant commun qui lève la
+  durée du mariage, la MSA des salariés, l'invalidité qui lève l'âge à
+  l'Agirc-Arrco et non au régime général, la base des indépendants. Le
+  simulateur se trompe sur le plafond de ressources : ses tranches sont
+  celles de 2024 (24 232 € par an), quand D. 353-1-1 et la circulaire Cnav
+  2025-33 donnent 25 001,60 € en 2026 ; il refuse à tort entre les deux,
+  écart déclaré, le modèle suivant le texte. Le RAFP (50 %), la RCI (60 %)
+  et l'Ircantec (50 %, servie à 52 ans) restent dans les énoncés : le modèle
+  ne les sert pas en réversion.
+- *Le handicap* : budget ouvert au quart de ses 94 entrées, 24 ; dix saisies.
+  Le modèle ne traite pas ce départ, la prédiction a donc été celle du
+  texte, D. 351-1-5 du 1er septembre 2026 : les dix concordent (fiche
+  `retraite_anticipee_handicap`). Pour que le budget décompte les saisies
+  qu'aucun exemple ne porte, celles-ci et celles du RAFP, le registre prend
+  un champ `saisies_hors_exemples`, que `scripts/simulateurs.py` lit.
 
 **Le net dit « avant impôt », le 4 octobre 2026.** Le mot de l'estimation
 officielle : le menu, la bascule des montants et la clé de lecture disent

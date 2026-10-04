@@ -412,7 +412,10 @@ versions:
       majoration_plafond_annee: 2010
       majoration_enfants_taux: 0.10
       fiabilite: haute
-  exemples: [ur_reversion_prive_63_ans, ur_reversion_prive_50_ans_deux_enfants]
+  exemples: [ur_reversion_prive_63_ans, ur_reversion_prive_50_ans_deux_enfants,
+             ur_reversion_prive_ressources_plafond_2024,
+             ur_reversion_prive_veuve_invalide_52_ans, ur_reversion_salarie_agricole,
+             ur_reversion_independant_rci, ur_reversion_contractuel_ircantec_52_ans]
 - id: minimum_2026_age_51
   statut: lue
   textes:
@@ -568,6 +571,18 @@ sources:
       professions libérales hors avocats
     date: 2010-02-10
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2010015_10022010.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2025-33 du 23 décembre 2025, revalorisation du SMIC au 1er
+      janvier 2026 : SMIC brut horaire de 12,02 euros, plafond de ressources de la
+      réversion de 25 001,60 euros par an et 6 250,40 euros par trimestre, 40 002,56
+      euros pour un ménage ; relue le 4 octobre 2026 avec D. 353-1-1
+      (LEGIARTI000006736552, « en vigueur au 1er janvier ») et R. 353-1
+      (LEGIARTI000038790257). Le simulateur de réversion d'info-retraite propose
+      encore les seuils de 2024, 6 058 et 24 232 euros (exemple
+      ur_reversion_prive_ressources_plafond_2024).
+    date: 2025-12-23
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_33_23122025.pdf
 textes_a_rattacher:
 - {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23, change: "la majoration forfaitaire pour enfant à charge du survivant sans retraite personnelle"}
 - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22, change: "le partage entre conjoints au prorata de la durée de chaque mariage"}

@@ -76,16 +76,33 @@ def test_le_budget_compte_les_saisies_et_non_les_exemples():
     assert simulateurs.budget_par_defaut(None) == simulateurs.BUDGET_ESPACE_OUVERT
 
 
+def test_une_saisie_sans_exemple_se_decompte_aussi():
+    """Le RAFP et le handicap ont été saisis le 4 octobre 2026 sans qu'aucun
+    exemple ne rejoue leurs réponses : le registre les déclare, et le budget
+    les décompte comme les autres, sans quoi on pourrait les refaire."""
+    faites = {"1965": ["a", "b"]}
+    assert simulateurs.decomptees({}, faites) == 1
+    assert simulateurs.decomptees({"saisies_hors_exemples": 10}, faites) == 11
+    lignes = simulateurs.registre()
+    etat = {identifiant: (budget, nombre, reste) for identifiant, budget, nombre, reste
+            in simulateurs.etat_des_budgets(lignes, simulateurs.exemples())}
+    for identifiant in ("rafp_simulateur_prestation", "union_retraite_handicap"):
+        ligne = lignes[identifiant]
+        assert ligne["saisies_hors_exemples"] > 0, identifiant
+        assert etat[identifiant][1] >= ligne["saisies_hors_exemples"], identifiant
+        assert etat[identifiant][2] >= 0, identifiant
+
+
 def test_la_feuille_ne_repropose_rien_et_s_arrete_au_budget():
     lignes, tous = simulateurs.registre(), simulateurs.exemples()
     adaptateur = simulateurs.ADAPTATEURS["union_retraite_carriere_longue"]
     faites = simulateurs.saisies(adaptateur.simulateur, tous)
-    assert len(faites) == 5
-    lignes[adaptateur.simulateur]["budget"] = 8
+    assert len(faites) == 7
+    lignes[adaptateur.simulateur]["budget"] = 10
     cas = simulateurs.a_saisir(adaptateur, lignes, tous)
     assert len(cas) == 3
     assert not {c.cle for c in cas} & set(faites)
-    lignes[adaptateur.simulateur]["budget"] = 5
+    lignes[adaptateur.simulateur]["budget"] = 7
     with pytest.raises(simulateurs.Refus, match="épuisé"):
         simulateurs.a_saisir(adaptateur, lignes, tous)
     del lignes[adaptateur.simulateur]["budget"]

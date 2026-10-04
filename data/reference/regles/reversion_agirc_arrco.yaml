@@ -158,7 +158,9 @@ versions:
   exemples: [aa_reversion_leila, aa_reversion_kim, aa_reversion_annie, aa_reversion_eric,
              aa_reversion_francois, aa_reversion_david, aa_reversion_simone,
              aa_reversion_claude, ur_reversion_prive_63_ans,
-             ur_reversion_prive_50_ans_deux_enfants]
+             ur_reversion_prive_50_ans_deux_enfants,
+             ur_reversion_prive_ressources_plafond_2024,
+             ur_reversion_prive_veuve_invalide_52_ans, ur_reversion_salarie_agricole]
 approximations:
 - ecart: >-
     les 60 % s'appliquent à la retraite servie, coefficient d'anticipation compris,

@@ -37,6 +37,9 @@
 #                   entrées que son formulaire offre, dix s'il est ouvert ;
 #                   le propriétaire le change ici. Ce qui reste :
 #                   `python scripts/simulateurs.py budget`
+#   saisies_hors_exemples  les saisies faites qu'aucun exemple officiel ne
+#                   porte encore — le modèle ou l'adaptateur manque — : le
+#                   budget les décompte avec les autres
 #
 # NATURE
 #   simulateur  un formulaire qui calcule. C'est la mine : chaque exécution
@@ -133,7 +136,7 @@ sources:
       et par borne de début d'activité (16, 18, 20 et 21 ans) : les portes de
       la carrière longue telles que la caisse les ouvre.
     statut: explore
-    explore_le: "2026-10-01"
+    explore_le: "2026-10-04"
     budget: 7
     note: >-
       Cinq saisies le 1er octobre 2026, par le propriétaire
@@ -141,7 +144,9 @@ sources:
       les quatre portes, les 172 trimestres de 1966, 1968 et 1969, et l'année
       1965 coupée en trois, qui a levé deux arrondis corrigés dans les deux
       moteurs. Le simulateur omet les quatre trimestres des nés d'octobre et de
-      novembre 1965.
+      novembre 1965. Deux de plus le 4 octobre, par Claude : 1970, avant 16 et
+      avant 18 ans, 58 et 60 ans avec 172 trimestres, comme le modèle. Le
+      budget est épuisé.
 
   - id: union_retraite_handicap
     url: https://les-simulateurs.info-retraite.fr/situation-handicap
@@ -152,7 +157,24 @@ sources:
       L'âge de la retraite anticipée des travailleurs handicapés, du privé ou
       fonctionnaires, générations 1961 à 1973 : la fiche
       `retraite_anticipee_handicap` confrontée à la caisse.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-04"
+    budget: 24
+    saisies_hors_exemples: 10
+    note: >-
+      94 entrées : fonctionnaire territorial ou hospitalier ou régime spécial
+      (oui ou non), treize années de naissance de 1961 à « 1973 ou plus
+      tard », et l'âge de départ — 59 seul de 1961 à 1963, 58 et 59 en 1964,
+      57 à 59 en 1965, 56 à 59 en 1966, 55 à 59 ensuite ; budget au quart.
+      Dix saisies le 4 octobre 2026, par Claude, sur un lot approuvé, aucune
+      en exemple officiel : le modèle ne traite pas ce départ. Toutes donnent
+      la durée cotisée en situation de handicap de D. 351-1-5 dans sa version
+      du 1er septembre 2026 (décret n° 2026-345) — la durée de la génération,
+      celle d'avant 2023 pour les nés avant 1973, moins 60 à 100 trimestres
+      de 55 à 59 ans : non, 1961, 59 ans : 68 ; 1964, 58 : 79 ; 1965, 57 :
+      89 ; 1966, 56 : 99 ; 1967, 55 : 110 ; 1970, 57 : 91 ; 1973, 55 : 112 ;
+      1973, 59 : 72 ; oui, 1966, 56 : 99 ; oui, 1973, 55 : 112. La réponse
+      ajoute un départ au taux plein dès 62 ans, sans durée.
 
   - id: union_retraite_reversion
     url: https://les-simulateurs.info-retraite.fr/reversion
@@ -164,7 +186,7 @@ sources:
       enfants et les ressources du survivant : les taux, les conditions et le
       plafond tels que les caisses les appliquent.
     statut: explore
-    explore_le: "2026-10-01"
+    explore_le: "2026-10-04"
     budget: 10
     note: >-
       Quatre saisies le 1er octobre 2026, par le propriétaire
@@ -172,8 +194,18 @@ sources:
       `ur_reversion_` : les 54 % du régime général, les 60 % de l'Agirc-Arrco
       sans condition de ressources, l'âge de 55 ans et la condition de mariage
       de la fonction publique ; deux enfants à charge lèvent la condition d'âge
-      de l'Agirc-Arrco, en écart connu. Restent l'exception des enfants à lire
-      dans l'accord, le remariage et l'Ircantec.
+      de l'Agirc-Arrco, en écart connu. Six de plus le 4 octobre, par Claude ;
+      le budget est épuisé. Le simulateur ne pose que les questions des
+      régimes cochés, garde ses réponses dans `sessionStorage` (`demandeur`),
+      d'une simulation à l'autre, et propose les ressources par tranches, au
+      seuil de 2024 (6 058 € sur trois mois, 24 232 € sur douze) quand
+      D. 353-1-1 et la circulaire Cnav 2025-33 donnent 6 250,40 € et
+      25 001,60 € en 2026 : il refuse à tort entre les deux. La CNRACL, la MSA
+      salariés, l'invalidité qui lève l'âge à l'Agirc-Arrco concordent ; le
+      RAFP (50 %), la RCI (60 %) et l'Ircantec (50 %, servie à une veuve de
+      52 ans, après une question de durée du mariage) ont leur réponse dans
+      l'énoncé, faute de fiche. Restent l'exception des enfants à lire dans l'accord, le
+      remariage, et les régimes que le modèle ne sert pas en réversion.
 
   - id: union_retraite_progressive
     url: https://parcours.info-retraite.fr/retraite-progressive
@@ -545,7 +577,25 @@ sources:
       selon le seuil, coefficient de majoration par âge. Plusieurs exécutions
       donnent la TABLE de conversion entière, que le dépôt applique aujourd'hui
       de mémoire d'arrêté.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-04"
+    budget: 10
+    saisies_hors_exemples: 10
+    note: >-
+      Anonyme, trois champs ouverts (naissance, date d'effet, points), dates
+      d'effet futures seulement, valeur de service 0,05671 € « en vigueur
+      depuis le 1er septembre 2026 ». Dix saisies le 4 octobre 2026, par
+      Claude, sur un lot approuvé : le budget est épuisé, mais aucune n'est
+      encore transcrite en exemple officiel, faute d'adaptateur dans
+      `scripts/simulateurs.py` ; les réponses sont dans la fiche
+      `rafp_majoration_capital`. Le simulateur INTERPOLE LA MAJORATION AU
+      MOIS, arrondie au centième (62 ans 9 mois : 1,03 ; 64 ans 6 mois :
+      1,10 ; 68 ans 4 mois : 1,30 ; 63 ans 4 mois : 1,05), retient 1,81 à
+      75 ans contre 1,80 au barème publié, verse un « capital fractionné »
+      à 5 000 points (première fraction 99,24 €, le tiers de la rente
+      annuelle), et prête à la génération 1958 un âge légal de 64 ans.
+      Âges légaux affichés : 1963 et 1964, 62 ans 9 mois ; 1966, 63 ans
+      3 mois ; 1970, 64 ans.
 
   - id: rafp_calculette_points
     url: https://www.rafp.fr/actif/futur-retraite/calculette-points

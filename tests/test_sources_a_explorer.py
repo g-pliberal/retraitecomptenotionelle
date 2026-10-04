@@ -37,7 +37,8 @@ ACCES = {"session", "chaine_incomplete", "navigateur", "git", "refus", "ferme"}
 STATUTS = {"a_explorer", "en_cours", "explore", "epuise", "sans_suite"}
 
 CHAMPS_EXIGES = ("id", "url", "nature", "acces", "regimes", "a_en_tirer", "statut")
-CHAMPS_CONNUS = set(CHAMPS_EXIGES) | {"note", "explore_le", "budget"}
+CHAMPS_CONNUS = set(CHAMPS_EXIGES) | {"note", "explore_le", "budget",
+                                     "saisies_hors_exemples"}
 
 EXEMPLES = RACINE / "tests" / "temoins" / "exemples_officiels.yaml"
 
@@ -162,11 +163,18 @@ def test_un_simulateur_saisi_tient_son_budget(sources):
     """
     exemples = yaml.safe_load(EXEMPLES.read_text(encoding="utf-8"))["exemples"]
     par_id = {source["id"]: source for source in sources}
+    saisies: dict[str, set[str]] = {}
     for source in sources:
         if "budget" in source:
             assert source["nature"] == "simulateur", f"{source['id']} : budget hors simulateur"
             assert isinstance(source["budget"], int) and source["budget"] >= 1, source["id"]
-    saisies: dict[str, set[str]] = {}
+        if "saisies_hors_exemples" in source:
+            # Des saisies qu'aucun exemple ne porte encore : le budget les
+            # décompte comme les autres (`scripts/simulateurs.py`).
+            hors = source["saisies_hors_exemples"]
+            assert isinstance(hors, int) and hors >= 1, source["id"]
+            assert "budget" in source, f"{source['id']} : saisi sans budget au registre"
+            saisies[source["id"]] = set()
     for exemple in exemples:
         if "simulateur" in exemple["source"]:
             saisies.setdefault(exemple["source"]["simulateur"], set()).add(
@@ -176,8 +184,9 @@ def test_un_simulateur_saisi_tient_son_budget(sources):
         ligne = par_id.get(simulateur)
         assert ligne is not None and ligne["nature"] == "simulateur", simulateur
         assert "budget" in ligne, f"{simulateur} : saisi sans budget au registre"
-        assert len(faites) <= ligne["budget"], (
-            f"{simulateur} : {len(faites)} saisies pour un budget de {ligne['budget']}")
+        total = len(faites) + ligne.get("saisies_hors_exemples", 0)
+        assert total <= ligne["budget"], (
+            f"{simulateur} : {total} saisies pour un budget de {ligne['budget']}")
 
 
 def test_l_inventaire_couvre_les_regimes_les_plus_incomplets(sources, codes_de_regime):

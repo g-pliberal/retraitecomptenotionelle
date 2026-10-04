@@ -89,6 +89,14 @@ def saisies(simulateur: str, tous: list[dict]) -> dict[str, list[str]]:
     return faites
 
 
+def decomptees(ligne: dict, faites: dict[str, list[str]]) -> int:
+    """Les saisies que le budget décompte : celles qu'un exemple officiel
+    porte, et celles que le registre déclare sans exemple
+    (`saisies_hors_exemples`), faute d'un modèle ou d'un adaptateur qui sache
+    encore les rejouer. Une saisie faite reste faite, transcrite ou non."""
+    return len(faites) + int(ligne.get("saisies_hors_exemples") or 0)
+
+
 def budget_par_defaut(espace: int | None) -> int:
     if espace is None:
         return BUDGET_ESPACE_OUVERT
@@ -452,7 +460,7 @@ def etat_des_budgets(lignes: dict[str, dict], tous: list[dict]) -> list[tuple]:
     for identifiant, ligne in lignes.items():
         if ligne["nature"] != "simulateur":
             continue
-        faites = len(saisies(identifiant, tous))
+        faites = decomptees(ligne, saisies(identifiant, tous))
         budget = ligne.get("budget")
         etat.append((identifiant, budget, faites,
                      None if budget is None else budget - faites))
@@ -472,10 +480,10 @@ def a_saisir(adaptateur: Adaptateur, lignes: dict[str, dict], tous: list[dict]) 
             f"d'abord — par défaut {budget_par_defaut(adaptateur.espace)}, le quart "
             "de ses entrées (docs/exploration_sources.md)")
     faites = saisies(adaptateur.simulateur, tous)
-    reste = ligne["budget"] - len(faites)
+    reste = ligne["budget"] - decomptees(ligne, faites)
     if reste <= 0:
-        raise Refus(f"{adaptateur.simulateur} : budget épuisé ({len(faites)} saisies "
-                    f"pour {ligne['budget']})")
+        raise Refus(f"{adaptateur.simulateur} : budget épuisé "
+                    f"({decomptees(ligne, faites)} saisies pour {ligne['budget']})")
     couvertes = adaptateur.couvertes(tous)
     candidats = [cas for cas in adaptateur.cas() if cas.cle not in faites]
     candidats.sort(key=lambda cas: (cas.generation in couvertes, -cas.generation))
@@ -486,7 +494,7 @@ def feuille(adaptateur: Adaptateur, cas: list[Cas], contexte: Contexte,
             lignes: dict[str, dict], tous: list[dict], aujourd_hui: dt.date) -> str:
     """La feuille de saisie, en YAML commenté."""
     ligne = lignes[adaptateur.simulateur]
-    faites = len(saisies(adaptateur.simulateur, tous))
+    faites = decomptees(ligne, saisies(adaptateur.simulateur, tous))
     donnees = {
         "simulateur": adaptateur.simulateur,
         "adresse": ligne["url"],
@@ -616,8 +624,9 @@ def exemples_de_la_feuille(donnees: dict, lignes: dict[str, dict],
                 raise Refus(f"cas {rang} : l'exemple {exemple['id']} existe déjà")
             nouveaux.append(exemple)
     budget = lignes[adaptateur.simulateur].get("budget")
-    if budget is None or len(faites) + len(cles) > budget:
-        raise Refus(f"{adaptateur.simulateur} : {len(faites) + len(cles)} saisies "
+    total = decomptees(lignes[adaptateur.simulateur], faites) + len(cles)
+    if budget is None or total > budget:
+        raise Refus(f"{adaptateur.simulateur} : {total} saisies "
                     f"dépasseraient le budget ({budget})")
     return nouveaux
 
