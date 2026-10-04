@@ -17,7 +17,10 @@ from __future__ import annotations
 import dataclasses
 import html
 import itertools
+import json
+import math
 import re
+import sys
 from pathlib import Path
 from urllib.parse import parse_qsl
 
@@ -411,10 +414,51 @@ def _construction():
     return module
 
 
+#: L'écart relatif que tolère, hors de Linux, la comparaison d'un fichier
+#: fabriqué : la libm de Windows déplace la dernière décimale de quelques
+#: flottants, de 7 · 10⁻¹⁴ au plus le 4 octobre 2026. Le portage, lui,
+#: tolère 10⁻⁹ (``tests/js/comparer.mjs``).
+TOLERANCE_HORS_LINUX = 1e-12
+
+
+def _egaux_a_la_tolerance(ecrit, attendu, tolerance: float = TOLERANCE_HORS_LINUX) -> bool:
+    """Deux JSON lus : mêmes clés, mêmes types, mêmes chaînes, et des
+    flottants égaux à ``tolerance`` près, en écart relatif."""
+    if type(ecrit) is not type(attendu):
+        return False
+    if isinstance(ecrit, float):
+        return (math.isclose(ecrit, attendu, rel_tol=tolerance)
+                or math.isnan(ecrit) and math.isnan(attendu))
+    if isinstance(ecrit, dict):
+        return ecrit.keys() == attendu.keys() and all(
+            _egaux_a_la_tolerance(ecrit[cle], attendu[cle], tolerance) for cle in ecrit)
+    if isinstance(ecrit, list):
+        return len(ecrit) == len(attendu) and all(
+            _egaux_a_la_tolerance(a, b, tolerance) for a, b in zip(ecrit, attendu))
+    return ecrit == attendu
+
+
+def _fichier_a_jour(chemin: Path, contenu: bytes, plateforme: str = sys.platform) -> bool:
+    """Le fichier versionné est-il ce que le dépôt en fabrique ?
+
+    Au bit près sous Linux, où la CI le fabrique et le compare. Ailleurs, ce
+    que la CI a écrit ne se refait pas au bit près, et l'échec n'apprendrait
+    rien qu'un vrai oubli ne dise pareil : un JSON qui n'en diffère qu'à la
+    dernière décimale de ses flottants est à jour.
+    """
+    ecrit = chemin.read_bytes()
+    if ecrit == contenu:
+        return True
+    if plateforme == "linux" or chemin.suffix != ".json":
+        return False
+    return _egaux_a_la_tolerance(json.loads(ecrit), json.loads(contenu))
+
+
 def test_le_paquet_est_a_jour(contexte):
     """Le paquet et la feuille de style servis au site doivent refléter le dépôt.
 
-    S'il échoue : ``python scripts/construire_donnees.py``.
+    S'il échoue : ``python scripts/construire_donnees.py``. Au bit près sous
+    Linux ; ailleurs, à la dernière décimale près (``_fichier_a_jour``).
 
     Le contexte du module est passé au constructeur, et ce n'est pas une
     élégance : depuis que le paquet embarque le bilan figé, le construire
@@ -431,7 +475,7 @@ def test_le_paquet_est_a_jour(contexte):
     construction = _construction()
     for chemin, contenu in construction.sorties(contexte).items():
         assert chemin.exists(), f"{chemin.name} est absent"
-        assert chemin.read_bytes() == contenu, (
+        assert _fichier_a_jour(chemin, contenu), (
             f"{chemin.name} est périmé — lancer python scripts/construire_donnees.py"
         )
 
@@ -477,7 +521,8 @@ def test_les_temoins_du_portage_sont_a_jour():
 
     S'il échoue : ``python scripts/construire_temoins.py`` — et relire le diff,
     qui montre exactement quels montants le changement déplace. Juste après
-    une régénération réussie, rien à refaire (``fabrique.py``).
+    une régénération réussie, rien à refaire (``fabrique.py``). Au bit près
+    sous Linux ; ailleurs, à la dernière décimale près (``_fichier_a_jour``).
     """
     if fabrique.a_jour("témoins"):
         pytest.skip("témoins inchangés depuis la dernière fabrication")
@@ -491,9 +536,36 @@ def test_les_temoins_du_portage_sont_a_jour():
 
     for fichier, contenu in module.construire().items():
         assert fichier.exists(), f"{fichier.name} est absent"
-        assert fichier.read_bytes() == contenu, (
+        assert _fichier_a_jour(fichier, contenu), (
             f"{fichier.name} est périmé — lancer python scripts/construire_temoins.py"
         )
+
+
+def test_hors_de_linux_un_fichier_fabrique_se_compare_a_la_derniere_decimale_pres():
+    """La comparaison des deux tests précédents, hors de Linux : un ulp passe ;
+    un écart relatif de 10⁻⁹, ce que le portage tolère encore, échoue, comme
+    toute clé, toute chaîne ou tout type qui change."""
+    temoin = {"pension": 1234.56, "taux": [0.1, 0.2], "nom": "cas", "annees": 42}
+    assert _egaux_a_la_tolerance(temoin, {**temoin, "pension": math.nextafter(1234.56, 2e3)})
+    assert not _egaux_a_la_tolerance(temoin, {**temoin, "pension": 1234.56 * (1 + 1e-9)})
+    assert not _egaux_a_la_tolerance(temoin, {**temoin, "decote": 0.0})
+    assert not _egaux_a_la_tolerance(temoin, {c: v for c, v in temoin.items() if c != "nom"})
+    assert not _egaux_a_la_tolerance(temoin, {**temoin, "nom": "autre cas"})
+    assert not _egaux_a_la_tolerance(temoin, {**temoin, "annees": 42.0})
+    assert not _egaux_a_la_tolerance(temoin, {**temoin, "taux": [0.1]})
+
+
+def test_sous_linux_un_fichier_fabrique_se_compare_au_bit_pres(tmp_path):
+    """La CI, sous Linux, ne tolère rien : un ulp y rend le fichier périmé.
+    Ailleurs, seul un JSON se compare à la tolérance."""
+    ecrit = json.dumps({"pension": 1234.56}).encode("utf-8")
+    un_ulp = json.dumps({"pension": math.nextafter(1234.56, 2e3)}).encode("utf-8")
+    temoin, texte = tmp_path / "temoin.json", tmp_path / "temoin.txt"
+    temoin.write_bytes(ecrit)
+    texte.write_bytes(ecrit)
+    assert not _fichier_a_jour(temoin, un_ulp, "linux")
+    assert _fichier_a_jour(temoin, un_ulp, "win32")
+    assert not _fichier_a_jour(texte, un_ulp, "win32")
 
 
 def test_une_adresse_d_avant_le_calendrier_et_ses_dates_font_les_memes_chiffres():

@@ -467,7 +467,9 @@ def sonde_portage(quoi: str) -> float:
     ``tests/temoins/simulations.json``, dans un processus à part et une fois
     par exécution, comme ``tests``. Le README en portait deux chiffres qu'il
     avouait ne pas tenir, faute de savoir lancer ``node`` ; le premier était
-    devenu sept fois trop petit.
+    devenu sept fois trop petit. ``identiques`` et ``pire`` dépendent de la
+    plateforme où ``node`` calcule : seule la CI, sous Linux, les tient
+    (``test_aucun_chiffre_ancre_n_a_derive``).
     """
     if not _PORTAGE:
         compte = subprocess.run(
@@ -765,6 +767,7 @@ class Anomalie:
     ligne: int
     genre: str      # « derive », « sonde », « nu », « lettres », « section »
     message: str
+    mesure: str = ""  # celle dont la valeur a dérivé : « portage(identiques) »
 
 
 def _en_nombre(texte: str) -> float:
@@ -833,7 +836,8 @@ def verifier_ancres(fichier: str, texte: str) -> tuple[str, list[Anomalie]]:
         juste = _ecrire_comme(attendu, nombres[0])
         anomalies.append(Anomalie(
             fichier, ligne, "derive",
-            f"la prose dit {nombres[0]}, {nom}({argument}) en donne {juste}"))
+            f"la prose dit {nombres[0]}, {nom}({argument}) en donne {juste}",
+            mesure=f"{nom}({argument})"))
         # Le remplacement porte sur le CONTENU de l'ancre, jamais sur sa
         # sonde : « 0 » provisoire autour de ``annee=2070`` réécrivait
         # l'argument en « annee=251170 », premier « 0 » venu.

@@ -36,6 +36,11 @@ RACINE = Path(__file__).resolve().parents[1]
 #: Ce que dit une sonde quand node manque : le pont vers le site
 #: (``web/site.py``), ou le système, pour une sonde qui lance node elle-même.
 SANS_NODE = ("node absent", "No such file or directory: 'node'")
+#: Les mesures que seule la CI tient : la part des témoins que node retrouve
+#: au bit près, et le pire écart, dépendent de la plateforme où il calcule —
+#: 93,1 % sous Windows quand la CI, sous Linux, en comptait 93,0, en octobre
+#: 2026. Le nombre de valeurs comparées, lui, n'en dépend pas.
+PROPRES_A_LINUX = ("portage(identiques)", "portage(pire)")
 
 
 def _charger():
@@ -63,6 +68,12 @@ def anomalies(zonage):
     return verifier_prose.controler(zonage, corriger=False)[0]
 
 
+def tenue(derive, plateforme: str = sys.platform) -> bool:
+    """Une dérive compte partout, sauf, hors de Linux, celle d'une mesure qui
+    lui est propre : son échec n'y apprendrait rien, et la CI la tient."""
+    return plateforme == "linux" or derive.mesure not in PROPRES_A_LINUX
+
+
 # -- ce que le dépôt doit tenir ----------------------------------------------
 
 
@@ -72,12 +83,14 @@ def test_aucun_chiffre_ancre_n_a_derive(request):
     C'est le contrôle qui remplace les tests écrits un par un : là où un test
     tenait un chiffre et un seul, celui-ci tient tous ceux qu'on a ancrés, et
     le suivant sans rien écrire de plus que l'ancre. Juste après une
-    régénération réussie, rien à refaire (``fabrique.py``).
+    régénération réussie, rien à refaire (``fabrique.py``). Hors de Linux,
+    les mesures du portage propres à la plateforme ne comptent pas
+    (``PROPRES_A_LINUX``).
     """
     if fabrique.a_jour("prose"):
         pytest.skip("chiffres ancrés inchangés depuis la dernière fabrication")
     anomalies = request.getfixturevalue("anomalies")
-    derives = [a for a in anomalies if a.genre == "derive"]
+    derives = [a for a in anomalies if a.genre == "derive" and tenue(a)]
     assert not derives, "\n".join(
         f"{a.fichier}:{a.ligne}: {a.message}" for a in derives
     ) + "\n\nlancer : python scripts/verifier_prose.py --corriger"
@@ -467,6 +480,21 @@ def test_une_ancre_citee_dans_un_bloc_de_code_n_est_pas_evaluee():
              "```\n")
     _, anomalies = verifier_prose.verifier_ancres("exemple.md", texte)
     assert not anomalies
+
+
+def test_hors_de_linux_seul_le_bit_pres_du_portage_ne_derive_pas(monkeypatch):
+    """Le README dit ce que la CI compte, sous Linux. Ailleurs, la part que
+    node retrouve au bit près peut s'en écarter d'un dixième, et cette
+    dérive-là n'apprend rien ; le nombre de valeurs comparées, lui, ne dépend
+    que des témoins, et sa dérive compte partout, comme toutes les autres."""
+    monkeypatch.setitem(verifier_prose.SONDES, "portage",
+                        lambda quoi: {"valeurs": 130715.0, "identiques": 93.1}[quoi])
+    texte = ("<!--chiffre:portage(valeurs)-->130 714<!--/--> nombres, dont "
+             "<!--chiffre:portage(identiques)-->93,0<!--/--> % identiques\n")
+    _, derives = verifier_prose.verifier_ancres("exemple.md", texte)
+    assert [d.mesure for d in derives] == ["portage(valeurs)", "portage(identiques)"]
+    assert [tenue(d, "linux") for d in derives] == [True, True]
+    assert [tenue(d, "win32") for d in derives] == [True, False]
 
 
 # --- L'outillage d'interface : la prose et le script qui l'installe --------

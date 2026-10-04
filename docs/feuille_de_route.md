@@ -4980,16 +4980,16 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 4 octobre 2026.** Fait : le levier 1 (scripts) ; le 3 pour
+**Reprise, au 5 octobre 2026.** Fait : le levier 1 (scripts) ; le 3 pour
 l'essentiel — sous Windows, la suite complète passe de 56 à moins de 15 min
-à froid, et de 10 à 7 min à chaud (l'instantané des données, un calcul à la
-fois, la mémoire commune aux worktrees, la grille du coût gardée, les fichiers
-isolés) ; le hook de démarrage ; « Économiser le contexte ». Reste : les trois
-tests qui échouent toujours sous Windows, à sauter ou à comparer à une
-tolérance, que le propriétaire décide ; le levier 2, des tests sans
-présomptions ; l'indexation de la mémoire sur le seul code du modèle et
-`actions/cache` sur GitHub ; le 4 et le 5. Commencer par la décision du
-propriétaire. Détail : la note du 4 octobre.
+à froid, et de 10 à 7 min à chaud, et sans plus aucun échec : hors de Linux,
+le paquet, les témoins et le bit près du portage se comparent à la dernière
+décimale près, la CI restant au bit près — ; le hook de démarrage ;
+« Économiser le contexte ». Reste : le levier 2, des tests sans
+présomptions ; les tests du portage que node rejoue ; l'indexation de la
+mémoire sur le seul code du modèle et `actions/cache` sur GitHub ; le 4 et
+le 5. Commencer par les tests du portage que node rejoue. Détail : les notes
+du 4 et du 5 octobre.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
@@ -5366,6 +5366,44 @@ passer sous Windows et y coûtent quatre minutes de travail par suite — les
 sauter hors de Linux, ou y comparer à une tolérance, que le propriétaire
 décide ; les tests du portage que node rejoue ; l'indexation de la mémoire sur
 le seul code du modèle ; `actions/cache` sur GitHub.
+
+**Le 5 octobre 2026, les trois tests de la dernière décimale, à la décision du
+propriétaire** : les comparer à une tolérance hors de Linux, la CI, sous
+Linux, restant au bit près. Ils échouaient sous Windows même quand tout était
+à jour, et un vrai oubli de régénération y donnait le même message.
+
+- **Le paquet et les témoins** (`test_web.py`). La comparaison octet par octet
+  demeure ; si elle échoue hors de Linux, un JSON se compare en structure —
+  mêmes clés, mêmes types, mêmes chaînes, les flottants à 10⁻¹² près en écart
+  relatif (`_fichier_a_jour`) —, et le test n'échoue qu'au-delà, avec le même
+  message. La libm de Windows déplaçait la dernière décimale de 7 · 10⁻¹⁴ au
+  plus, le 4 octobre ; le portage, lui, tolère 10⁻⁹.
+- **La prose** (`test_prose.py`). Hors de Linux, `portage(identiques)` et
+  `portage(pire)` ne dérivent plus (`PROPRES_A_LINUX`) : ce que node retrouve
+  au bit près des témoins dépend de la plateforme — ce jour-là, 121 721 valeurs
+  sur 130 714 sous Windows, soit 93,1 %, quand la CI comptait tantôt 93,0,
+  tantôt 93,1. Une dérive porte désormais sa mesure (`Anomalie.mesure`, dans
+  `verifier_prose.py`). `portage(valeurs)`, qui ne compte que les témoins,
+  reste tenu partout.
+- **La mécanique a ses tests** : un ulp passe ; un écart relatif de 10⁻⁹
+  échoue, comme une clé en plus ou en moins, une chaîne, un type ou une liste
+  qui changent ; sous Linux, un ulp périme le fichier, et ailleurs seul un
+  JSON se compare à la tolérance ; seules les deux mesures du bit près sont
+  exemptées, et hors de Linux seulement.
+
+**Mesuré** sous Windows, sans rien régénérer : les trois tests passent —
+avant, ceux du paquet et des témoins échouaient, et celui de la prose ne
+passait que parce que le README disait 93,1, comme Windows ; il passe aussi à
+93,0, le chiffre de la CI des jours d'avant. La suite complète passe sans un
+échec : 3 328 tests passés, 12 sautés, en 7 min 37 s.
+
+**Ce qui reste.** Ces trois tests coûtent toujours leur calcul, quatre minutes
+de travail par suite : la tolérance les fait passer, pas aller plus vite. Sous
+Windows, `regenerer.py` réécrit encore les trois fichiers à la dernière
+décimale, et `verifier_prose.py --corriger` les deux mesures du bit près : ce
+qu'on y régénère ne se commite toujours pas, la WSL ou HEAD y pourvoient. Puis,
+comme le 4 octobre : les tests du portage que node rejoue ; l'indexation de la
+mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
