@@ -1516,8 +1516,8 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false, siVide = "") {
       + `${g.euros(repere(echelle.mensuel(1)))}`;
   let complement;
   if (converti) {
-    complement = "En euros d'aujourd'hui, tels qu'ils arrivent sur le compte — "
-      + "pour un salarié, la ligne « net à payer » de la fiche de paie. Le "
+    complement = "En euros d'aujourd'hui, avant impôt sur le revenu — pour "
+      + "un salarié, la ligne « net à payer avant impôt » de la fiche de paie. Le "
       + "modèle remonte au brut par les prélèvements de votre statut, puis le "
       + "suit le long du salaire moyen, année après année.";
   } else if (enNet) {
@@ -2091,8 +2091,8 @@ function lectureDesMontants(comparaison, saisie) {
   // montants nets, et « un brut sur un brut, donc plus bas qu'un taux calculé
   // sur des nets » au-dessus d'un taux calculé, précisément, sur des nets.
   const prelevements = saisie.enNet
-    ? "Montants <strong>nets</strong>, arrondis à l'euro, tels qu'ils arrivent "
-      + "sur le compte : après CSG, CRDS et Casa — 9,10 %, le taux plein, "
+    ? "Montants <strong>nets</strong> avant impôt, arrondis à l'euro, comme "
+      + "« Mon estimation retraite » les donne : après CSG, CRDS et Casa — 9,10 %, le taux plein, "
       + "appliqué ici à tout le monde — et avant impôt sur le revenu, comme le "
       + "revenu d'activité saisi plus haut. Le détail du calcul les donne au "
       + "centime. Le <strong>taux de remplacement</strong> "
@@ -4678,9 +4678,10 @@ function basculeMontants(saisie, echelle, tauxPension) {
     remplacementsMontants(saisie, echelle, tauxPension)))}`;
   // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà.
   const branches = versLeNet
-    ? [["net", cible], ["brut", "#"]]
-    : [["net", "#"], ["brut", cible]];
-  return g.bascule("Montants", branches, saisie.enNet ? "net" : "brut");
+    ? [["net avant impôt", cible], ["brut", "#"]]
+    : [["net avant impôt", "#"], ["brut", cible]];
+  return g.bascule("Montants", branches,
+    saisie.enNet ? "net avant impôt" : "brut");
 }
 
 /**

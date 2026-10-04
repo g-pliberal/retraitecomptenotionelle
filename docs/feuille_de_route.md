@@ -5494,6 +5494,12 @@ par son chantier (« 138.2 »…) :
    L. 815-9, D. 815-2, R. 815-29, fiches F2971 et F16871. Confrontations :
    OpenFisca-France, Ines, `retraites_2027`, et la répartition des taux de
    l'EACR.
+   *Décidé le 4 octobre 2026 par le propriétaire* : le 1 % maladie des
+   complémentaires s'applique au scénario 1, au taux plein comme le reste,
+   ce que fait « Mon estimation retraite » ; il pèse environ 1 % de
+   l'Agirc-Arrco, 0,25 à 0,5 % de la pension. Pour les scénarios
+   notionnels, au compte unique, rien n'est choisi : les laisser sans, ou
+   une couche de la proposition. Peut se faire seul, avant le reste de 2.
 3. La page Coût décomposée comme le COR : les retraités projetés par régime
    (le classeur du COR), la décomposition dépendance × couverture × pension
    relative confrontée au COR de juin 2026 et à l'Ageing Report de 2024, la
@@ -6008,6 +6014,13 @@ salaire moyen.** L'autre correction de l'étape 2.
   des prix, celui que la page semble prêter, à 0,5 % à 2,8 % au-dessous.
   L'Ircantec garde son rendement de prolongation, faute d'avoir lu le texte de
   son salaire de référence.
+
+**Le net dit « avant impôt », le 4 octobre 2026.** Le mot de l'estimation
+officielle : le menu, la bascule des montants et la clé de lecture disent
+« net avant impôt », non plus « ce qui arrive sur le compte », faux depuis le
+prélèvement à la source. Aucun chiffre ne bouge ; le budget de mots du
+formulaire monte de deux, pour la bascule. Le 1 % des complémentaires, que
+le net du dépôt omet, est décidé à l'étape 2 de l'action 138.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

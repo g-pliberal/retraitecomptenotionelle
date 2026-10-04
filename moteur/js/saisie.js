@@ -217,7 +217,7 @@ export const NIVEAU_MAXIMAL = 10.0;
 // parce que c'est ce qu'on touche et ce qu'on connaît de soi ; le brut reste à
 // un clic, et reste la langue des capitaux et des assiettes, bruts par nature.
 export const MODES_MONTANT = [
-  ["net", "net — ce qui arrive sur le compte"],
+  ["net", "net avant impôt — après CSG"],
   ["brut", "brut — avant CSG et cotisations"],
 ];
 

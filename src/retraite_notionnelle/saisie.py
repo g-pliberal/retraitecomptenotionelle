@@ -277,7 +277,7 @@ PENSION_DEFAUT = 1500.0
 #: capitaux, les assiettes et les tableaux de détail sont bruts par nature et
 #: ne bougent pas — on ne « nette » pas un capital notionnel.
 MODES_MONTANT = [
-    ("net", "net — ce qui arrive sur le compte"),
+    ("net", "net avant impôt — après CSG"),
     ("brut", "brut — avant CSG et cotisations"),
 ]
 

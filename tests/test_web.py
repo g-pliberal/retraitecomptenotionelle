@@ -2214,8 +2214,10 @@ def test_le_simulateur_tient_en_peu_de_mots():
     # l'inaptitude), dont les champs restent repliés. Le même jour, de quatre :
     # le dépliant « Carrière hors de France » (le domaine des carrières hors de
     # France), replié lui aussi.
+    # Le 4 octobre 2026, elle monte de deux mots pour un contrôle : la
+    # bascule des montants dit « net avant impôt », le mot d'Info-retraite.
     vierge = rendre("/simuler", {})[1]
-    assert _mots_visibles(vierge) <= 178, "le formulaire reprend de la prose"
+    assert _mots_visibles(vierge) <= 180, "le formulaire reprend de la prose"
 
     resultats = rendre("/simuler", {
         "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",

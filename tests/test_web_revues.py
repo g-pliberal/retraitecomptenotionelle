@@ -1782,7 +1782,7 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere():
     # On cherche donc la branche « brut » sous sa forme de lien, et on vérifie
     # au passage que « net » est bien marqué comme l'état courant.
     corps = rendre("/simuler", depart)[1]
-    assert '<span class="actif" aria-current="true">net</span>' in corps
+    assert '<span class="actif" aria-current="true">net avant impôt</span>' in corps
     lien = re.search(r'<a href="#/simuler\?([^"]*)">brut</a>', corps)
     assert lien, "la page ne porte pas de branche « brut »"
     vers_brut = dict(parse_qsl(html.unescape(lien.group(1))))
@@ -1792,7 +1792,7 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere():
 
     retour = rendre("/simuler", vers_brut)[1]
     assert '<span class="actif" aria-current="true">brut</span>' in retour
-    lien = re.search(r'<a href="#/simuler\?([^"]*)">net</a>', retour)
+    lien = re.search(r'<a href="#/simuler\?([^"]*)">net avant impôt</a>', retour)
     assert lien, "la page ne porte pas de branche « net »"
     vers_net = dict(parse_qsl(html.unescape(lien.group(1))))
     assert float(vers_net["salaire"]) == pytest.approx(2500, abs=2)
@@ -1890,9 +1890,11 @@ def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique():
     sont là, un seul est un lien, et l'état courant porte `aria-current` — sans
     quoi une synthèse vocale lirait deux mots sans savoir lequel s'applique.
     """
-    for mode, autre in (("net", "brut"), ("brut", "net")):
+    libelles = {"net": "net avant impôt", "brut": "brut"}
+    for code, autre_code in (("net", "brut"), ("brut", "net")):
+        mode, autre = libelles[code], libelles[autre_code]
         corps = rendre("/simuler",
-                       {"naissance": "1975", "montants": mode})[1]
+                       {"naissance": "1975", "montants": code})[1]
         bascules = re.findall(
             r'<div class="bascule" role="group" aria-label="Montants">.*?</div>',
             corps, re.S)
@@ -1949,7 +1951,7 @@ def test_la_cle_de_lecture_ne_dement_jamais_les_chiffres_qu_elle_explique():
               "liquidation": "2049-03-01", "unite_revenu": "euros_mois",
               "salaire": "2500"}
     attendu = {
-        "net": ("Montants <strong>nets</strong>", "un net sur un net"),
+        "net": ("Montants <strong>nets</strong> avant impôt", "un net sur un net"),
         "brut": ("Montants <strong>bruts</strong>", "un brut sur un brut"),
     }
     for mode, (montants, rapport) in attendu.items():

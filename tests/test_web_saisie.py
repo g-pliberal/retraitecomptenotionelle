@@ -531,7 +531,7 @@ def test_le_formulaire_dit_brut_ou_net_et_donne_l_echelle():
     aussi — un SMIC net n'est pas un SMIC brut.
     """
     for mode, ligne in (("brut", "la ligne « brut » de la fiche de paie"),
-                        ("net", "la ligne « net à payer » de la fiche de paie")):
+                        ("net", "la ligne « net à payer avant impôt » de la fiche de paie")):
         _, corps = rendre("/simuler", {"montants": mode})
         assert f"Revenu d&#x27;activité {mode} mensuel" in corps
         assert ligne in corps
