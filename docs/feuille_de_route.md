@@ -5497,9 +5497,22 @@ par son chantier (« 138.2 »…) :
    *Décidé le 4 octobre 2026 par le propriétaire* : le 1 % maladie des
    complémentaires s'applique au scénario 1, au taux plein comme le reste,
    ce que fait « Mon estimation retraite » ; il pèse environ 1 % de
-   l'Agirc-Arrco, 0,25 à 0,5 % de la pension. Pour les scénarios
-   notionnels, au compte unique, rien n'est choisi : les laisser sans, ou
-   une couche de la proposition. Peut se faire seul, avant le reste de 2.
+   l'Agirc-Arrco, 0,25 à 0,5 % de la pension. Il s'applique aussi dans les
+   cinq autres, à la part de la pension qui vient d'une complémentaire, en
+   règle de la proposition (option B ; écartés : aucun prélèvement, ou un
+   taux unique à recette constante) : la pension déjà liquidée à la
+   bascule, que `_deja_liquide` (`scenarios/notionnel.py`) reprend du
+   scénario 1 ; la part complémentaire des droits figés que `_droits_acquis`
+   convertit en capital, et que le moteur fond aujourd'hui dans
+   `pension_figee` ; dans le compte, la part qu'ont alimentée des
+   cotisations de complémentaire, revalorisée comme le reste — celles des
+   régimes réels avant la bascule (`_cotisation_ligne`, `moteur/compte.py`),
+   la part complémentaire du taux pivot privé après (`taux_unifie`),
+   anciens fonctionnaires compris, et la même proportion des 18 % du
+   scénario 6. À écrire : la phrase du README, la fiche dans
+   `regles/proposition/`, la couche ; le net, un taux unique sur le total
+   (`contexte.js`), devra connaître cette part. Peut se faire seul, avant
+   le reste de 2.
 3. La page Coût décomposée comme le COR : les retraités projetés par régime
    (le classeur du COR), la décomposition dépendance × couverture × pension
    relative confrontée au COR de juin 2026 et à l'Ageing Report de 2024, la
