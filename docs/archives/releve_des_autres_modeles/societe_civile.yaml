@@ -1,0 +1,284 @@
+# Le rapport de la recherche « societe_civile » (les simulateurs de la société civile), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+# Dépôt lu au commit 714ad0c (4 octobre 2026). Clones dans scratchpad/modeles/<id>, tous aux commits du registre.
+groupe: societe_civile
+modeles:
+  - id: retraites_scherrer
+    version: "f3c2d92 (30 septembre 2020)"
+    lu_dans: [https://github.com/brunoscherrer/retraites, retraites/SimulateurRetraites.py, retraites/ModelePensionProbabiliste.py, doc/Incertitudes/*.ipynb, doc/pilotage-vie-en-retraite.ipynb, doc/Calcule-naissance-retraite-mort.ipynb, doc/EtudeImpact/]
+    existants:
+      - debut: "Il pilote le système par n'importe quel levier, l'"
+        verdict: confirme
+        commentaire: "Toujours vrai chez eux (`SimulateurRetraites.py:290-900`, `:1309`, `:1837` pour l'âge qui tient une part de vie en retraite). Toujours absent chez nous. Les lignes ont glissé : `PensionFinancee` est à `cout.py:1333-1365`, et le recul de l'âge « ne se chiffre pas ici » à `:1361-1364`. Ses données sont celles du COR de 2019 : c'est la méthode qui se reprend."
+    nouveaux:
+      - quoi: "Il propage par Monte-Carlo l'incertitude de trois entrées (âge de départ, élasticité du report, chômage). Il en ordonne le poids, année par année, par les indices de Sobol : l'élasticité ne pèse rien, l'âge et le chômage pèsent autant. La page Coût du dépôt ne montre que des variantes prises une à une (`comptes_retraite_variantes.csv`), et pas l'incertitude démographique (`docs/limites.md:2812-2818`)."
+        preuve: "`retraites/ModelePensionProbabiliste.py:4-120` (OpenTURNS) et `doc/Incertitudes/modele-pension-sensibilite.ipynb` (« Indices de Sobol' en fonction de l'année »), au commit `f3c2d92`"
+        verification: "Méthode. Le chiffre central n'en devient pas plus juste. La page dirait en revanche quels paramètres font l'écart (part des reportés en emploi, mortalité, productivité), au lieu d'une variante à la fois. Sans OpenTURNS, puisque le dépôt n'admet que PyYAML, un tirage en Python pur suffit."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "nouveau: l'incertitude du coût, propagée et décomposée"
+      - quoi: "Il calcule la part de la vie passée en retraite, (60 + e60 − âge)/(60 + e60), et l'âge qui la tient constante : 29,05 % en 2020 et 32,25 % en 2070 au COR de 2019. Le dépôt n'a ni durée de retraite ni part de vie en retraite (cherchées en vain dans `pages.js` et dans `src/`)."
+        preuve: "`doc/pilotage-vie-en-retraite.ipynb` et `SimulateurRetraites.py:1837`, au commit `f3c2d92`"
+        verification: "Méthode : c'est l'indicateur de durée de retraite du COR. Le point rejoint celui de trajectoire au 138.9. Ses espérances de vie datent de 2019 : il faudrait prendre les tables du dépôt."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.9"
+      - quoi: "Il numérise l'étude d'impact du projet de loi de 2020 (graphiques 59 et 73) et en rejoue le budget."
+        preuve: "`retraites/EtudeImpact.py`, `doc/EtudeImpact/`, au commit `f3c2d92`"
+        verification: "Sans objet."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Hors champ : le projet a été retiré en 2020."
+    ecarts_nouveaux: []
+    conclusion: "Il reste le seul à piloter le système par l'âge et par la part de vie en retraite, et il ajoute une analyse de sensibilité (Sobol) que la page Coût n'a pas. Tout le reste date du COR de 2019."
+
+  - id: retraites_cor2026
+    version: "b75b211 (16 juin 2026)"
+    lu_dans: [https://github.com/AxelCorral/retraites-cor2026, config/hypotheses.yaml, src/maquette.py, docs/inventaire_COR2026.md]
+    existants:
+      - debut: "Il porte les variantes démographiques de l'INSEE d"
+        verdict: confirme
+        commentaire: "Toujours vrai (`config/hypotheses.yaml:26-31, 86-95`). Le dépôt n'a que le scénario central (`population_par_age.csv`), et `docs/limites.md:2812-2818` dit que les seize autres ne sont pas montrés. Ses données brutes ne sont pas versionnées : la source à lire est l'INSEE (IP2108, scénarios à une composante)."
+    nouveaux:
+      - quoi: "Il écrit le taux d'équilibre comme le produit R/A × P/W et le cale sur le COR de 2026 et sur l'IP2108."
+        preuve: "`src/maquette.py:1-30`, `config/hypotheses.yaml:105-115`, au commit `b75b211`"
+        verification: "Pas meilleur que la décomposition du COR, déjà rangée au 138.3. Chez lui, les retraités sont les 65 ans et plus, et l'emploi est un paramètre provisoire (`config/hypotheses.yaml:37-46, 50`)."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Doublon moins exact d'un point déjà au 138.3."
+    ecarts_nouveaux:
+      - constat: "Ses hypothèses économiques, dites du COR de 2025, portent une productivité haute de 1,6 % et un chômage de 4,5 % (`config/hypotheses.yaml:41, 59-63`). Le code ne les lit pas : `src/maquette.py:187` et `src/figures.py:158, 471` ne lisent que la référence."
+        tranche: "Depuis juin 2025, et encore en juin 2026, le COR retient une productivité de 0,4, 0,7 et 1,0 % et un chômage de 7 % en 2040 (variantes à 5 et 10 %). L'écart est le sien ; ces valeurs ne sont pas à copier."
+        preuve: "Citations du COR dans `data/reference/macro/hypotheses_projection.yaml:12-19, 136-159`"
+    conclusion: "Les variantes démographiques restent son seul apport. Le reste est une maquette moins fine que la page Coût, avec deux paramètres faux, inutilisés, et l'erreur de noria déjà au registre."
+
+  - id: retraites_2027
+    version: "431dd9f (20 septembre 2026)"
+    lu_dans: [https://github.com/AntoineTilloy/retraites-2027, params.js, app.js, outils/simulation-plafond.py, outils/simulation-csg.py]
+    existants:
+      - debut: "Il calcule la pension nette par foyer : la CSG sel"
+        verdict: confirme
+        commentaire: "Toujours vrai (`app.js:37-87`). Le dépôt retient toujours le taux plein pour tous (`prelevements_remuneration.yaml:703-705`) et omet le 1 % (`:718-723`). Il n'a les seuils de CSG que pour une part (`:754-758`)."
+    nouveaux:
+      - quoi: "Il chiffre trois leviers du budget 2027 (revalorisation, abattement de 10 %, CSG des retraités) avec des fourchettes de sources. Il cale les plafonds intermédiaires par une microsimulation lognormale."
+        preuve: "`params.js:41-91`, `outils/simulation-plafond.py`, `outils/simulation-csg.py:1-5`, au commit `431dd9f`"
+        verification: "Hors champ pour les leviers. La microsimulation n'est pas meilleure, de son propre aveu : 41 % d'exonérés simulés contre 29 % observés selon lui (`simulation-csg.py:3-4`), et 22,1 % selon l'EACR."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "La page Coût chiffre la proposition, pas le budget 2027 ; sa distribution simulée est moins juste que l'EIR du dépôt (`distribution_pensions.csv`)."
+    ecarts_nouveaux:
+      - constat: "Son barème 2027, « barème revenus 2025 (LF 2026) indexé de 2 % » (`params.js:58`), porte une deuxième borne de 30 091 € (`params.js:62`, `outils/simulation-plafond.py:20`). Sa référence 2026, obtenue en divisant par 1,02 (`app.js:19-20`), tombe à 29 501 €."
+        tranche: "CGI art. 197 (LEGIARTI000053542636, en vigueur depuis le 21 février 2026) : 29 579 €, soit 30 171 € une fois indexé de 2 %. C'est une erreur de calcul, la sienne, et elle tranche la note du registre."
+        preuve: "CGI art. 197, LEGIARTI000053542636 (index LEGI)"
+    conclusion: "Son seul avantage reste le net par foyer (138.2), qui est déjà au registre. Rien d'autre ne fait mieux que le dépôt, et sa borne d'impôt contient une erreur de calcul."
+
+  - id: simulateur_aurain
+    version: "59b7985 (16 septembre 2026)"
+    lu_dans: [https://github.com/ManZanau/retraites-simulateur, README.md, docs/hypotheses.md, parametres/*.yaml, modeles/*.py, app/retraites.html]
+    existants:
+      - debut: "Il source la part des reportés restés en emploi : "
+        verdict: confirme
+        commentaire: "Toujours vrai (`docs/hypotheses.md:191-226`). Le dépôt garde 1,0 (`config.py:844-863`, lignes glissées)."
+      - debut: "Il chiffre l'effet retour d'une baisse des pension"
+        verdict: confirme
+        commentaire: "Toujours vrai (`modeles/fiscal.py:357-391`). Chez nous, le minimum vieillesse reste hors des pensions comparées (`cout.py:603-611`), et les ressources non cotisées sont reconduites telles quelles (`cout.py:95-98`)."
+      - debut: "Son interface résout à l'envers, compare deux jeux"
+        verdict: a_corriger
+        commentaire: "La moitié du constat est fausse depuis le commit du registre (1299bc1). Le site a un solveur inverse individuel : dans la saisie par la pension, le revenu « c'est lui que la page cherche » (`pages.js:1583-1592`). Il a aussi une feuille d'impression (`style.css:1940-1946`). Ce qui manque vraiment, et qu'il faut écrire à la place : le solveur budgétaire par dichotomie (`app/retraites.html:1523-1548`), la comparaison A/B de deux jeux d'hypothèses, et le rapport avec ses repères budgétaires (`:784-789, 1939-1943, 2025-2028`)."
+    nouveaux:
+      - quoi: "Il compare, au trimestre de naissance, la loi de 2023 sans suspension (B0) au droit en vigueur (B1), et donne le gain de la suspension génération par génération. C'est le point d'outil_quand_partir, à la maille exacte du texte. Le dépôt n'a aucun univers contrefactuel."
+        preuve: "`modeles/baseline.py:183-221`, `parametres/baselines_retraites.yaml:90-235`, au commit `59b7985`"
+        verification: "Ses bornes B1 sont celles de L. 161-17-2 (LEGIARTI000053280889) et de L. 161-17-3 (LEGIARTI000053280903), et celles du dépôt (`age_ouverture_requis.csv:139-145`, `duree_assurance_requise.csv`). Ses bornes B0 (63 ans et 171 trimestres à 1964) sont celles des versions du 1er septembre 2023."
+        confronte: site
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.10"
+      - quoi: "Il porte les seuils de CSG à 1, 2, 2,5 et 3 parts, avec le supplément par demi-part (3 484, 4 555 et 7 066 €), et la règle de lissage sur deux ans. Il calcule l'impôt du foyer retraité : décote, plafond du quotient, abattement de 10 % par foyer (4 439 €, minimum 454 €), seuil de 61 €. Le dépôt n'a les seuils que pour une part et ne calcule pas l'impôt (`prelevements_remuneration.yaml:688-697, 754-758`)."
+        preuve: "`parametres/parametres_fiscaux_2026.yaml:44-216`, `docs/hypotheses.md:49-78`, `modeles/fiscal.py:197-312`, au commit `59b7985`"
+        verification: "L. 136-8 (LEGIARTI000054336623) : le III 2° garde 3,8 % si le revenu de l'avant-dernière OU de l'antépénultième année reste sous le seuil, et le III bis n'a pas cette clause. Sa règle de lissage est donc celle du texte. CGI art. 197 (LEGIARTI000053542636) : son barème est le bon. Le point rejoint retraites_2027 au 138.2. En passant : le dépôt cite la version de L. 136-8 du 31 décembre 2025 (LEGIARTI000053278668, `prelevements_remuneration.yaml:767`), remplacée le 27 juin 2026 ; le changement ne touche pas les pensions."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Il donne l'incidence d'une mesure par décile de pension (onglet « Qui paie »)."
+        preuve: "`modeles/reforme.py:146-205`, `README.md` (§ Onglets), au commit `59b7985`"
+        verification: "Sa méthode applique un barème à la distribution des pensions servies. Elle ne se transpose pas à une réforme qui change le calcul carrière par carrière."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Il faudrait la population de carrières déjà prévue au 138.14."
+    ecarts_nouveaux:
+      - constat: "Il écrit que la loi pour 2026 « fixe le terme de la suspension au 2028-01-01 sans préciser les modalités de sortie ». Il exige donc tout chiffrage d'après 2028 en fourchette de trois modes : retour progressif, rattrapage, gel (`parametres/baselines_retraites.yaml:140, 243-252`, `docs/hypotheses.md:80-86`)."
+        tranche: "L. 161-17-2 (LEGIARTI000053280889) et L. 161-17-3 (LEGIARTI000053280903), en vigueur depuis le 31 décembre 2025, fixent sans terme l'âge et la durée de chaque génération, jusqu'à 64 ans (1969) et 172 trimestres (1966). L'article 105 (JORFARTI000053227007) ne cite 2028 que pour une durée particulière, au 2° du C qu'il modifie. Son « retour progressif » est donc le droit, et les deux autres modes sont des lois à venir. Le dépôt applique le texte."
+        preuve: "Index LEGI et JORF : L. 161-17-2 sans occurrence de 2028 ; art. 105 de la loi n° 2025-1403"
+    conclusion: "Il apporte deux hypothèses sourcées pour la page Coût (part des reportés en emploi, effet retour), une interface budgétaire que le site n'a pas, et le contrefactuel de la suspension au trimestre près. Sa lecture d'une sortie de suspension en 2028 n'est pas dans la loi."
+
+  - id: outil_quand_partir
+    version: "94616bc (29 septembre 2026)"
+    lu_dans: [https://github.com/ataieb3342/lfi-site, src/lib/boite-a-outils/retraite/outil.js, src/lib/boite-a-outils/retraite/index.html]
+    existants:
+      - debut: "Il donne, pour une génération, son âge et sa durée"
+        verdict: confirme
+        commentaire: "Toujours vrai (`outil.js:41-102`), et le dépôt n'a toujours aucun univers contrefactuel (`data/reference/univers/` : l'actuel et cinq notionnels). Les durées des deux états existent déjà (`duree_requise_avant_reforme_2023.csv`, `duree_requise_avant_suspension.csv`), mais `droit/ouvrir.py:337-363` ne les lit que pour les pensions antérieures aux dates d'effet. Les âges de la loi de 2023 sans suspension manquent. Sa maille est l'année ; Aurain fait la même chose au trimestre de naissance."
+    nouveaux: []
+    ecarts_nouveaux:
+      - constat: "Il oppose l'âge de départ à l'espérance de vie sans incapacité À LA NAISSANCE (64,1 et 63,7 ans), « l'âge jusqu'auquel une personne née aujourd'hui peut espérer vivre sans être limitée » (`outil.js:103-106, 288-305`)."
+        tranche: "DREES, Études et Résultats n° 1363 (janvier 2026) : à 65 ans, une femme peut espérer vivre encore 11,8 ans sans incapacité, un homme 10,5. L'indicateur à la naissance compte les incapacités de toute la vie ; c'est celui à 65 ans qui porte sur les années d'après la vie active. La comparaison est fausse, et c'est la sienne."
+        preuve: "https://drees.solidarites-sante.gouv.fr/sites/default/files/2026-01/ER1363_esperance_de_vie_sans_incapacit%C3%A9_0.pdf (page 1)"
+    conclusion: "Rien de neuf au-delà du point contrefactuel déjà au registre ; j'ai examiné ses tables d'âge et de durée et sa partie santé. Sa comparaison avec l'espérance de vie sans incapacité est un contresens."
+
+  - id: simulateur_sud_education
+    version: "eec62c9 (5 septembre 2020)"
+    lu_dans: [https://github.com/Brndan/simulateur-retraites, static/js/retraites.js, content/_index.md]
+    existants:
+      - debut: "Il saisit l'enseignant par son corps et son échelo"
+        verdict: confirme
+        commentaire: "Toujours vrai (`static/js/retraites.js:12-104`). Le dépôt n'a aucun champ d'indice (« indice » absent de `saisie.py` et de `saisie.js`) ; il lit le traitement des six derniers mois sur le revenu de la dernière année (`droit/liquider.py:1786-1815`). La valeur du point est déjà au dépôt (`point_indice_fonction_publique.csv`, 59,0734 € par an de 2024 à 2027) : un champ « indice majoré » n'a besoin que d'elle."
+    nouveaux:
+      - quoi: "Il compare le droit de 2020 au système universel à points du rapport Delevoye, primes comprises."
+        preuve: "`static/js/retraites.js:50-57, 229-367`, au commit `eec62c9`"
+        verification: "Voir le même point chez devcrafting_retraites."
+        confronte: proposition
+        importance: faible
+        etat: a_trancher
+        raison: "C'est un choix du programme : le projet de 2019-2020 n'est pas du droit."
+      - quoi: "Il porte les primes des enseignants (ISOE, REP, REP+, HSA, ISS de direction)."
+        preuve: "`static/js/retraites.js:59-75`, au commit `eec62c9`"
+        verification: "Barèmes de 2020, périmés (REP+ relevée depuis)."
+        confronte: proposition
+        importance: faible
+        etat: ecarte
+        raison: "Le dépôt a une part de primes (`saisie.py:591, 901-902`), lue par le compte (`moteur/compte.py:512-527`)."
+    ecarts_nouveaux:
+      - constat: "Sa pension de fonctionnaire multiplie 75 % du dernier traitement par une décote sans borne ni critère d'âge, 1 − 1,25 % × (requis − acquis), et par un prorata non plafonné (`static/js/retraites.js:179-185`)."
+        tranche: "L. 13 CPCMR (LEGIARTI000053280906) fixe le maximum à 75 %. L. 14 (LEGIARTI000048844775) : 1,25 % par trimestre « dans la limite de vingt trimestres », sur le plus petit des décomptes par l'âge et par la durée. L'écart est le sien."
+        preuve: "Index LEGI"
+      - constat: "Il sert aux fonctionnaires le minimum contributif du régime général, 695,59 € au prorata (`static/js/retraites.js:47, 207-225`)."
+        tranche: "L. 17 CPCMR (LEGIARTI000048697797) : le fonctionnaire a droit au minimum garanti, sous ses propres conditions."
+        preuve: "Index LEGI"
+      - constat: "Il liquide les contractuels à 75 % de la moyenne de leurs 25 meilleures années, « avec intégration des primes » (`static/js/retraites.js:46, 186-201`)."
+        tranche: "Le contractuel relève du régime général (50 % du salaire annuel moyen plafonné, au prorata : R. 351-29, LEGIARTI000053335651) et de l'Ircantec, en points. Le dépôt calcule les deux. L'hypothèse est la sienne et n'a pas de source."
+        preuve: "Index LEGI ; `data/reference/regimes/ircantec.yaml`"
+      - constat: "Saisir des années de direction d'une école de quatre classes arrête le calcul : la ligne 125 lit `anneesDirection24`, une variable jamais déclarée (`static/js/retraites.js:108, 123-125`)."
+        tranche: "Le code lui-même : la variable déclarée est `anneesDirection4`, donc lire l'autre lève une ReferenceError."
+        preuve: "`static/js/retraites.js:108, 125`, au commit `eec62c9`"
+      - constat: "Ses durées requises sont celles de la loi de 2014 (`:150-164`) et son point est celui de février 2017, 4,686 € (`:51`)."
+        tranche: "L. 161-17-3 (LEGIARTI000053280903) : 168 puis 169 trimestres en 1961, 169 en 1962, 170 de 1963 au 31 mars 1965. Valeur du point : 59,0734 € par an. Tout cela est périmé."
+        preuve: "Index LEGI ; `point_indice_fonction_publique.csv`"
+    conclusion: "La saisie par indice reste son seul apport. Son calcul de 2020 cumule cinq erreurs ou retards, que les textes en vigueur tranchent tous en faveur du dépôt."
+
+  - id: devcrafting_retraites
+    version: "2312ebd (21 janvier 2020)"
+    lu_dans: [https://github.com/devcrafting/retraites, Domain.fs, CurrentRegimeGeneralDeBase.fs, CurrentSalaries.fs, CurrentSsi.fs, CurrentCipav.fs, Reformed.fs, retraites.fsx, analyse/comparaison-salaries.md]
+    existants: []
+    nouveaux:
+      - quoi: "Il arrête la première tranche du RCI (7 %) à un plafond propre au régime (37 846 €), et non au plafond de la sécurité sociale. Le dépôt coupe au plafond de chaque année de 2013 à 2024 (`rci.yaml:29-47, 55-73`) et sait qu'il a tort (`regles/rci_seuil_premiere_tranche.yaml`, état manquante)."
+        preuve: "`CurrentSsi.fs:14-17`, au commit `2312ebd`"
+        verification: "D. 635-7, LEGIARTI000025263581, 000034624601 et 000041966498 : « Au titre de l'exercice 2013, le montant du plafond mentionné au 1° est fixé au plafond annuel […] », puis revalorisé chaque année. Le COR donne 42 946 € en 2024. Pour 2025, un dépliant de l'Assurance retraite (réf. 252070, février 2025) donne encore 7 et 8 % et un plafond RCI de 43 891 €, contre la version de 2024 du texte (LEGIARTI000049904623) : à relire avant de couper 2025."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Son taux de remplacement net retire 10,1 % à l'Agirc-Arrco et 9,1 % à la base. Le dépôt omet par convention le 1 % maladie de la complémentaire (`prelevements_remuneration.yaml:718-723`)."
+        preuve: "`CurrentSalaries.fs:46`, au commit `2312ebd` (sa pension nette mensuelle, elle, retire 9,1 % partout : `Domain.fs:30`)"
+        verification: "D. 242-8 (LEGIARTI000037456300) : 1 % sur les avantages de L. 131-2 autres que ceux du régime général. Le point rejoint ceux d'ines et de retraites_2027."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Au-dessus du plafond, il prélève sur l'artisan 0,60 %, son taux propre. Le dépôt crédite le compte des 2,30 puis 2,51 % du régime général : c'est une convention déclarée (`docs/limites.md:2481-2486`). Sous le plafond, les deux totaux se valent (17,75 % en 2020)."
+        preuve: "`CurrentSsi.fs:9-12`, au commit `2312ebd`"
+        verification: "Barèmes IPP au commit fe2cdff, `ret_ac/tous_independants/tout_salaire.yaml` : 0,60 % de 2017 à 2024, 0,72 % depuis 2025 ; `ret_ac/artisans/sous_pss.yaml` : 17,15 % depuis 2016. La convention surcrédite donc le compte de l'artisan d'environ 1,8 point au-delà du plafond."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il calcule le système universel à points du projet de 2019 pour les salariés et les indépendants : achat à 10 €, service à 0,55 €, âge d'équilibre à 64 ans à 5 % par an, 25,31 % générateurs de droits et 2,81 % déplafonnés, minimum à 85 % du SMIC net. Le dépôt n'a aucun univers de ce genre (« Delevoye » et « système universel » absents)."
+        preuve: "`Reformed.fs:1-76`, au commit `2312ebd`"
+        verification: "Paramètres du rapport Delevoye cités par le modèle (`readme.md:5-8`), cohérents avec SUD éducation (`retraites.js:50-57`)."
+        confronte: proposition
+        importance: faible
+        etat: a_trancher
+        raison: "C'est un choix du programme. Le projet a été retiré, mais c'est la seule autre réforme systémique chiffrée ; une couche « points » se poserait sur le droit réel."
+      - quoi: "Il compare les régimes par un rendement (pension annuelle sur cotisations), avec et sans les cotisations qui n'ouvrent pas de droits, sur un balayage des revenus."
+        preuve: "`Domain.fs:24-31`, `retraites.fsx:93-195`, au commit `2312ebd`"
+        verification: "Méthode moins exacte qu'un TRI, puisqu'elle ignore la durée de service. Le TRI est déjà au 138.9 (destinie_2, trajectoire), et le dépôt porte la frontière contributive (`frontiere_contributive.yaml`)."
+        confronte: site
+        importance: faible
+        etat: ecarte
+        raison: "Pas meilleur."
+    ecarts_nouveaux:
+      - constat: "Son prorata, trimestres validés sur requis, n'est pas plafonné (`CurrentRegimeGeneralDeBase.fs:9-14`)."
+        tranche: "R. 351-6 (LEGIARTI000053335582) : la pension n'est réduite au prorata qu'en deçà de la durée maximum."
+        preuve: "Index LEGI"
+      - constat: "Au-delà de la durée, les trimestres manquants deviennent négatifs : la décote se change en surcote de 0,625 point par trimestre en sus, à tout âge. La décote, elle, ignore l'âge du taux plein (`CurrentRegimeGeneralDeBase.fs:11-13`)."
+        tranche: "L. 351-1-2 (LEGIARTI000025014540) : la surcote ne paie que les trimestres cotisés après l'âge légal ET au-delà de la durée. R. 351-27 (LEGIARTI000054589995) : la décote retient le plus petit des deux décomptes."
+        preuve: "Index LEGI"
+      - constat: "Ses coefficients Agirc-Arrco dépassent 1 pour des trimestres en sus (`CurrentSalaries.fs:22-23`), et il ignore le coefficient de solidarité, en vigueur à sa date."
+        tranche: "ANI du 17 novembre 2017 (coefficients de solidarité et majorants, de 2019 à 2023), supprimés par l'avenant n° 17 (JORFARTI000049224707). Le dépôt les porte (`agirc_arrco.yaml:99-107`)."
+        preuve: "`data/reference/regimes/agirc_arrco.yaml:99-107`"
+      - constat: "Sa seconde tranche du RCI part du plafond de la sécurité sociale, pas du plafond du régime, et va jusqu'à quatre plafonds au-dessus de lui (`CurrentSsi.fs:17-19`). Entre 37 846 et 41 136 €, le revenu ne cotise donc pas."
+        tranche: "D. 635-7 (LEGIARTI000034624601) : 8 % sur la part qui excède le seuil du 1°, dans la limite de quatre plafonds."
+        preuve: "Index LEGI"
+      - constat: "Sa durée requise est celle de la loi de 2014 (`Domain.fs:65-70`) : 169 trimestres à 1964-1966."
+        tranche: "L. 161-17-3 (LEGIARTI000053280903) : 170 trimestres à 1964, 172 dès 1966. Périmé."
+        preuve: "Index LEGI"
+      - constat: "Son salaire moyen est la moyenne brute des 25 dernières années d'un profil linéaire, sans revalorisation (`CurrentRegimeGeneralDeBase.fs:7-8`)."
+        tranche: "L. 351-11 (LEGIARTI000031688444) revalorise les salaires selon L. 161-23-1. Le calcul n'est juste que si les salaires saisis sont déjà revalorisés, ce que le modèle ne dit pas."
+        preuve: "Index LEGI"
+    conclusion: "Modèle jouet de 2020, mais j'y trouve trois avantages vérifiés : le plafond propre du RCI, que le dépôt sait lui manquer, le 1 % maladie de la complémentaire, et le taux propre des artisans au-dessus du plafond. Ses erreurs sur le prorata, la surcote et la durée sont tranchées par les textes."
+
+  - id: calcul_verification_pension
+    version: "5344b10 (28 février 2026)"
+    lu_dans: [https://gitlab.com/jean-ricky-fr/calcul-verification-pension-retraite, Simulateur_Pension_AR___MSA.2026.v1.xlsx (feuilles, formules et noms définis)]
+    existants:
+      - debut: "Il valide les trimestres d'avant 1972 par un seuil"
+        verdict: confirme
+        commentaire: "Toujours vrai (feuille Carriere, cellules F7:F10). Le dépôt écrit toujours qu'aucun seuil n'existait avant 1972 (`donnees/macro.py:273-275, 287-288`), contre R. 351-9 (LEGIARTI000053335598). La valeur de 1971 se vérifie au JO : décret n° 70-879 du 29 septembre 1970 (JORFTEXT000000518679), qui porte l'AVTS à 1 750 F par an, soit les 437,5 F par trimestre du classeur."
+      - debut: "Il recalcule les trimestres d'un relevé réel depui"
+        verdict: confirme
+        commentaire: "Toujours vrai. Chez nous, `carriere.py:450-452` (lignes glissées) et `droit/releve.py:285-287` : le relevé « fait foi »."
+    nouveaux:
+      - quoi: "Il proratise le plafond au jour près dans les années incomplètes (feuille « salaire base »)."
+        preuve: "Feuille « salaire base », cellules B18:H18, au commit `5344b10`"
+        verification: "Un relevé porte des salaires déjà écrêtés par l'employeur, et la carrière paramétrique du dépôt se compte en mois (`droit/liquider.py:1763-1772`)."
+        confronte: scenario_1
+        importance: faible
+        etat: ecarte
+        raison: "Pas meilleur pour le dépôt."
+    ecarts_nouveaux:
+      - constat: "Il retient 24 meilleures années pour la mère d'un enfant et 23 au-delà, quelle que soit la date de départ, et pour les seules mères (nom défini `nA_RAM_M`, cellules `Pension!F30` et `H30`)."
+        tranche: "R. 173-3-2 (LEGIARTI000054589934) : seulement pour les pensions prenant effet à compter du 1er septembre 2026 (décret n° 2026-699, art. 6), et pour quiconque bénéficie de la majoration ou de la bonification, le père compris. Le dépôt applique cette date (`droit/liquider.py:1863-1875`)."
+        preuve: "Index LEGI"
+      - constat: "Il compte les trimestres jusqu'à l'âge du taux plein en jours divisés par 91, arrondis à l'entier inférieur (`Pension!K27`) : un départ un mois avant 67 ans n'a donc pas de décote."
+        tranche: "R. 351-27 (LEGIARTI000054589995) : ce nombre est « arrondi au chiffre immédiatement supérieur ». Le dépôt arrondit au-dessus (`droit/liquider.py:2135-2152`)."
+        preuve: "Index LEGI"
+    conclusion: "Ses deux avantages déjà au registre tiennent toujours, et le JO confirme une valeur de son seuil d'avant 1972. Rien d'autre : son calcul s'arrête à la base, et je lui trouve deux erreurs de plus."
+
+  - id: nosretraites_cas_types
+    version: "5e4abf1 (22 janvier 2023), données 942e9f6"
+    lu_dans: [https://github.com/nosretraites/simulateur_cas_types, utils/calculationUtils.js, utils/legalParametersByYearOfBirth.json, components/Summary.js, https://github.com/nosretraites/simulateur_cas_types_data]
+    existants:
+      - debut: "Il donne, de 58 à 67 ans et sous deux états du dro"
+        verdict: confirme
+        commentaire: "Toujours vrai (`utils/calculationUtils.js:20-25, 148-153`). Le site ne calcule toujours qu'un âge, et n'avertit que si la liquidation n'est pas ouverte (`pages.js:4029-4044`). Ce qui se reprend est la forme, pas son droit, qui est périmé."
+    nouveaux: []
+    ecarts_nouveaux:
+      - constat: "Son droit « mac » met toute la génération 1961 à 62 ans et 3 mois, avec 169 trimestres (`legalParametersByYearOfBirth.json`, clé 1961)."
+        tranche: "L. 161-17-2 (LEGIARTI000053280889) et L. 161-17-3 (LEGIARTI000053280903) : les nés de janvier à août 1961 gardent 62 ans et 168 trimestres."
+        preuve: "Index LEGI"
+      - constat: "Il donne à la mère fonctionnaire quatre trimestres par enfant né avant 2004, sans condition (`calculationUtils.js:55-60`)."
+        tranche: "L. 12 b CPCMR (LEGIARTI000053280361) : la bonification n'est due qu'« à condition qu'ils aient interrompu ou réduit leur activité »."
+        preuve: "Index LEGI"
+      - constat: "Ses deux états, le droit d'avant 2023 et le projet du 10 janvier 2023, sont tous deux périmés : 63 ans et 171 trimestres à 1964, et pas de carrière longue pour un début d'activité avant 21 ans (`calculationUtils.js:37-48`)."
+        tranche: "La loi du 30 décembre 2025 donne 62 ans et 9 mois et 170 trimestres à 1964. D. 351-1-1 (LEGIARTI000054059621) ouvre le départ à 63 ans pour un début avant 21 ans."
+        preuve: "Index LEGI"
+    conclusion: "Rien de neuf au-delà de la table d'âges déjà au registre. Son droit est celui d'un moment, et les textes en vigueur le contredisent sur trois points."

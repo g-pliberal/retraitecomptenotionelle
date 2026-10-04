@@ -1,0 +1,389 @@
+# Le rapport de la recherche « ndc_international » (les autres comptes notionnels et les organisations internationales), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+groupe: ndc_international
+modeles:
+  - id: modello_rgs
+    version: "Rapporto n. 27, « aggiornamento 2026 », PDF du 22 septembre 2026, 553 p."
+    lu_dans: ["https://www.rgs.mef.gov.it/_Documenti/VERSIONE-I/Attivit--i/Spesa-soci/Attivita_di_previsione_RGS/2026/Ltdmlpdspess-2026.pdf (§ 2.3 p. 63-64 ; riquadro 5.1 p. 158-159 ; § 6.3 p. 164-167 ; § 6.5 p. 174-175 ; app. 1, B.1 p. 195-197)"]
+    existants:
+      - debut: "Ses taux de remplacement nets comptent l'impôt ; l"
+        verdict: confirme
+        commentaire: "§ 6.5 relu. Côté salaire : la cotisation salariale est ôtée, puis l'IRPEF moyenne, avec les additionnels régional (1,73 %) et communal (0,8 %). Côté pension : l'IRPEF seule. Les barèmes sont supposés suivre le salaire moyen (« coefficiente di raccordo »). Le dépôt retire toujours 9,1 % sans impôt (prelevements_remuneration.yaml:712), et son salaire net est lui aussi sans impôt (contexte.py:676-700). Le 138.2 ne nomme que CSG, CRDS et CASA : il faut y ajouter l'impôt sur le revenu, ou le mettre au 138.5."
+    nouveaux:
+      - quoi: "Il mesure ce que l'ajustement automatique du diviseur absorbe d'un choc de longévité : espérance de vie haute et basse, avec et sans révision des coefficients. La révision seule retire 0,6 à 0,7 point de PIB en fin de période. Le dépôt n'a qu'une mortalité projetée et aucune variante démographique : hypotheses_projection.yaml:92-160 ne varie que la productivité et le chômage."
+        preuve: "RGS n° 27, riquadro 5.1, p. 159 : « la differenza nel rapporto spesa/PIL si attesta attorno a 0,6-0,7 punti percentuali »"
+        verification: "Méthode. Le diviseur de génération est le stabilisateur de la proposition ; le chiffrer sous deux longévités est la seule façon de montrer qu'il joue. L'INSEE publie des variantes d'espérance de vie."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: "Il décompose la dépense en pension moyenne sur productivité, fois pensions sur occupés. Ce second facteur se décompose en dépendance (70 ans et plus sur 20-69 ans), pensions sur population âgée et inverse du taux d'emploi. Il sépare pensions et pensionnés, et ventile par prestation, sexe et secteur. Le dépôt suppose la couverture constante (cout.py:58) et pèse des effectifs de caisse, non des personnes (cout.py:53)."
+        preuve: "RGS n° 27, § 2.3, p. 63-64"
+        verification: "Méthode, la même que l'Ageing Report (encadré I.1.1) : une seconde source pour le même chantier."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Le départ anticipé du régime contributif (64 ans, 20 ans de cotisation) exige une pension d'au moins trois fois l'assegno sociale, soit 1 638,72 € par mois en 2026, et 3,2 fois dès 2030. Un départ précoce ne bascule donc pas sur la solidarité. Les scénarios 2 à 5 gardent les âges du droit réel ; le scénario 6 impose 65 ans sans condition de montant (age_legal_de_la_proposition.yaml)."
+        preuve: "RGS n° 27, § 6.3, p. 166, et note 202 (loi de budget pour 2025 : 3,2 fois dès 2030)"
+        verification: "Règle italienne en vigueur, décrite par la RGS. C'est un choix de conception, pas un calcul plus juste."
+        confronte: proposition
+        importance: faible
+        etat: a_trancher
+        raison: "Subordonner un départ à un montant minimal de pension est une règle du programme ; elle toucherait la garantie vieillesse du scénario 6."
+      - quoi: "Ses taux de remplacement bruts du régime contributif (33 % de cotisation, 38 ans), pris comme exemple chiffré de l'arithmétique notionnelle."
+        preuve: "RGS n° 27, § 6.3, p. 164-167"
+        verification: "Non retenu : ces taux dépendent du scénario macroéconomique de la RGS (productivité par occupé, PIB)."
+        confronte: proposition
+        importance: faible
+        etat: ecarte
+        raison: "Ce n'est pas un exemple officiel de formule. Les diviseurs du tableau C.2 en sont un (point existant de coefficienti_italie)."
+    ecarts_nouveaux: []
+    conclusion: "Il fait mieux sur les sorties : taux nets après impôt, variantes de longévité qui isolent l'effet du diviseur, décomposition de la dépense. Le reste du modèle n'est pas public, et je n'y ai trouvé aucune erreur."
+
+  - id: coefficienti_italie
+    version: "Décret directorial du 20 novembre 2024 (coefficients 2025-2026) et sa note technique du 19 novembre 2024 ; taux de capitalisation 2025 (ministère du Travail, 28 octobre 2025). Le décret 2027-2028 n'est pas paru (RGS n° 27, note 191, p. 163 : « ancora non pubblicato »)."
+    lu_dans: ["https://www.lavoro.gov.it/documenti-e-norme/normativa/decreto-direttoriale-20112024-coefficienti-trasformazione.pdf", "https://www.lavoro.gov.it/temi-e-priorita-previdenza/focus/nota-tecnica-decreto-ct-2025", "https://www.lavoro.gov.it/notizie/pagine/tasso-annuo-di-capitalizzazione-rivalutazione-montanti-contributivi-2025", "gazzettaufficiale.it, D.L. 65/2015, art. 5 (GU du 20 juillet 2015)", "RGS n° 27, app. 1, B.1"]
+    existants:
+      - debut: "Son diviseur tarife la réversion : Δx = [Σs (a_x,s"
+        verdict: confirme
+        commentaire: "Tableau C.2 relu, à 65 ans. Hommes : 16,502 + 2,530 = 19,031. Femmes : 18,677 + 0,390 = 19,067. Ensemble : 17,590 + 1,460 = 19,049. La réversion ôte donc 7,7 % à la pension directe (17,590/19,049), et 13,3 % pour un homme. La Grèce tarife aussi la survie dans sa rente (fiche grecque, p. 17). Lignes du dépôt à jour : conversion.py:229-235, cout.py:674."
+      - debut: "Le tableau C.2 de la Nota tecnica publie le divise"
+        verdict: confirme
+        commentaire: "C.2 relu (note technique, p. 11). La fiche n'a toujours aucun exemple, à coefficient_de_conversion.yaml:50 (et non 48). Pour rejouer 19,049 au millième, il faudra le paramètre k (point nouveau ci-dessous)."
+      - debut: "La loi revalorise les comptes sur la moyenne du PI"
+        verdict: confirme
+        commentaire: "Relu : le taux 2025, 4,0445 %, est la moyenne « nei cinque anni precedenti il 2025 » (ministère du Travail, 28 octobre 2025). Le plancher vient du D.L. 65/2015, art. 5, c. 1 : « non puo' essere inferiore a uno, salvo recupero da effettuare sulle rivalutazioni successive » ; le c. 1-bis exclut le rattrapage à la première application. Le dépôt : fenêtre de t−4 à t (indexation.py:107), plancher constant sans rattrapage (indexation.py:113-115), config.py:32-39. La Lettonie a le même plancher à rattrapage (art. 12(4))."
+    nouveaux:
+      - quoi: "Ses diviseurs lisent la mortalité âge par âge (probabilités de l'Istat pour 2023), et des probabilités prospectives pour le conjoint survivant. Le dépôt projette la mortalité par une loi de Gompertz-Makeham à trois paramètres, calée sur les espérances à 60 et 65 ans (donnees/mortalite.py:9-13, 29). Elle est juste là où le diviseur se joue, approchée ailleurs."
+        preuve: "Note technique du 19 novembre 2024, p. 2-3 et tableau A ; RGS n° 27, B.1, p. 196 : « anno 2023 per la stima della probabilità di morte »"
+        verification: "Méthode : une table par âge rend la forme de la mortalité, que trois paramètres n'ont pas. C'est le premier volet du 138.7."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: "Son diviseur corrige la fréquence des versements : k = 1/2 − 6/(13n), soit 0,4615 pour douze mensualités d'avance et la treizième. Celui du dépôt somme la survie moyenne de chaque année (conversion.py:234-235), c'est-à-dire l'annuité moins un demi-an, sans paramètre. La pension française est payée par mois à terme échu ; l'annuité exacte vaut l'annuité moins 13/24 d'an. Le diviseur du dépôt est donc trop long de 0,04 an, soit 0,2 % de pension."
+        preuve: "Note technique, p. 3, note 6 ; RGS n° 27, B.1, p. 196-197 : « k = 0,4615 (n = 12) »"
+        verification: "R. 355-2 CSS en vigueur depuis le 1er janvier 2026 (LEGIARTI000053335726) : « payables mensuellement et à terme échu ». L'écart est faible, mais k est nécessaire pour rejouer 19,049 au millième."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.11"
+    ecarts_nouveaux:
+      - constat: "Le taux d'actualisation de 1,5 % (« prevedibile tasso di crescita reale di lungo periodo del PIL ») n'est confirmé qu'en écartant 2008-2009, 2012-2013 et 2020-2021. Sur 1996-2023, la note technique elle-même trouve 0,7 % par an. Comme les pensions servies suivent les prix, le coefficient paie d'avance une croissance que le système n'a pas eue."
+        tranche: "La note technique tranche elle-même. Le dépôt, à ν = 0 et avec une pension revalorisée au taux du compte, ne paie rien d'avance (conversion.py:14-22 ; revalorisation.py:896-906) : c'est lui qui est cohérent. Le registre ne doit pas prendre 1,5 % pour une référence."
+        preuve: "Note technique du 19 novembre 2024, p. 2, note 4 : « per il quale si riscontra una variazione media annua pari a 0,7% »"
+    conclusion: "Il fait mieux sur trois points : la réversion tarifée dans le diviseur (à trancher), le plancher à rattrapage, et un exemple officiel au millième. Sa mortalité par âge et sa correction de fréquence ne sont que des raffinements, et son taux de 1,5 % est plus généreux que la croissance qu'il constate lui-même."
+
+  - id: t_dymm
+    version: "International Journal of Microsimulation 17(1), 30 avril 2024 ; modèle sur LIAM2, simulation de 2016 à 2070"
+    lu_dans: ["https://microsimulation.pub/articles/00303"]
+    existants: []
+    nouveaux:
+      - quoi: "Le départ y est un choix : chaque année, tout éligible compare la valeur de partir et celle d'attendre (option value de Stock et Wise, paramètres estimés pour l'Italie par Belloni et Alessie, 2013), sur salaires et pensions nets, pondérés par la survie. Le dépôt prend l'âge déclaré et le dit (limites.md:2005-2010). La page Coût ne déplace que l'âge légal du scénario 6 (cout.py:1987-2003)."
+        preuve: "§ 3.3 : « The choice function introduced is based on an option value model (Stock and Wise, 1990) »"
+        verification: "Méthode. Le dépôt écrit lui-même qu'un diviseur qui récompense l'attente déplace les départs (limites.md:2005-2010) ; un choix estimé est plus proche du réel qu'un âge fixe."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.14"
+      - quoi: "Il simule une population réelle et se valide sur elle. AD-SILC apparie IT-SILC 2004-2017, les carrières de l'INPS de 1922 à 2018 et les déclarations fiscales (238 431 individus en 2015). Le module de pensions est confronté aux distributions de l'INPS. La page Coût, elle, pondère les cas types par les effectifs des caisses (cout.py:39-54)."
+        preuve: "§ 2 et § 4 : « particular attention should be paid to results stemming from the Pension module »"
+        verification: "Méthode. L'équivalent français est l'EIC et l'EIR au CASD, que nomme le 138.14."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.14"
+      - quoi: "Il en tire la distribution des retraités : Gini, pauvreté relative, effet redistributif des transferts et de l'impôt, par un module socio-fiscal (IRPEF, minima sociaux). Le dépôt ne projette ni impôt ni distribution des niveaux de vie."
+        preuve: "§ 4, figures 13-14 : « a redistributive effect of transfers three times higher than that of taxes by the end of the simulation »"
+        verification: "Méthode ; il faut d'abord la population du point précédent."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.14"
+    ecarts_nouveaux: []
+    conclusion: "Tout ce qu'il fait de mieux demande des microdonnées : départs choisis, population réelle, validation, distribution. Il ne dit rien de l'arithmétique du compte, que l'article ne décrit pas, et son code n'est pas publié."
+
+  - id: fus23
+    version: "Prognoza wpływów i wydatków Funduszu Emerytalnego do 2080 roku, ZUS, octobre 2025 (modèle FUS23, droit de septembre 2025)"
+    lu_dans: ["https://bip.zus.pl/documents/493361/494125/Publikacja_Fundusz_Emerytalny_2026_2080.pdf/eb15d7cf-ebff-e6ea-dec9-f81654a28011 (p. 5-8, 17, 55-58)"]
+    existants: []
+    nouveaux:
+      - quoi: "Il projette les retraités par cohorte d'âge et de sexe, sur les données de la ZUS, avec un modèle à décréments multiples (conversion, perte du droit, décès), en trois variantes. La page Coût ne projette pas de retraités : elle pèse des cas types (cout.py:39-54)."
+        preuve: "p. 6 : « zastosowaliśmy model szkodowości wielorakiej (ang. multiple decrement model) » ; hypothèses p. 7-8"
+        verification: "Méthode actuarielle classique, la même que celle de l'OIT ; plus proche du réel qu'une grille pondérée."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.14"
+      - quoi: "Il chiffre l'effet d'une mortalité de ±5 % sur recettes, dépenses et solde, et celui de ±1 point sur chaque hypothèse (salaire réel, chômage, prix, recouvrement, indexation). Le dépôt a les variantes de productivité et de chômage du COR, aucune de mortalité (hypotheses_projection.yaml:92-160)."
+        preuve: "Annexe B, p. 55-57 (tableaux B.1 à B.3) ; annexe C, p. 58"
+        verification: "Méthode : seule une variante de mortalité éprouve le diviseur."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: "En Pologne, l'État cotise pour le congé parental, la maternité et la garde d'enfant, et ces sommes entrent dans les recettes de cotisation du fonds. En Lettonie, l'assiette qui fait l'indice compte les cotisations versées par le budget. Le compte du dépôt neutralise l'AVPF (couches/comptes_notionnels.yaml:69-71, « ni AVPF »), alors que la CNAF la verse bel et bien. Depuis l'action 141, le même compte porte pourtant « ce qu'un tiers a versé aux régimes réels — l'Unédic, l'État » (compte.py:676-678). Deux phrases du dépôt sont inexactes : equilibre.py:319-322 dit le chômage indemnisé « la seule période non travaillée que quelqu'un paie », et cout.py:80-84 dit encore retirés les points des chômeurs, qu'equilibre.py:248-254 garde depuis le 23 septembre."
+        preuve: "FUS23, p. 17, note 3 : « przekazywanie z budżetu państwa składek za osoby: przebywające na urlopach wychowawczych, pobierające zasiłki macierzyńskie oraz sprawujące osobistą opiekę nad dziećmi » ; fiche lettone de l'Ageing Report 2024, p. 6"
+        verification: "L. 381-1 CSS en vigueur (LEGIARTI000047453431) : « une cotisation à la charge exclusive des organismes débiteurs des prestations familiales et calculée sur des assiettes forfaitaires »."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le README écarte l'AVPF ; la règle de l'action 141 (porter ce qu'un tiers verse) la ferait entrer. Le propriétaire tranche. Les deux phrases inexactes de cout.py et d'equilibre.py sont à corriger dans tous les cas."
+    ecarts_nouveaux: []
+    conclusion: "Il fait mieux sur la projection : une population de retraités en décréments multiples, et des sensibilités par paramètre, mortalité comprise. Il rappelle aussi qu'un compte notionnel porte les cotisations que l'État verse pour les périodes de garde d'enfant, ce que le dépôt refuse à l'AVPF."
+
+  - id: diviseur_pologne
+    version: "Dz.U. 2025 poz. 1749 (texte consolidé, droit au 22 octobre 2025, modifié depuis par Dz.U. 2026 poz. 26 et 425), lu par l'API ELI du Sejm ; communiqué du GUS du 25 mars 2026"
+    lu_dans: ["https://api.sejm.gov.pl/eli/acts/DU/2025/1749/text.pdf (art. 15, 25, 25a, 26, 173-174)", "https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-tablicy-sredniego-dalszego-trwania-zycia-kobiet-i-mezczyzn,285,14.html", "https://arslege.pl/wysokosc-emerytury/k63/a22756/"]
+    existants:
+      - debut: "Son capital initial comble les trous : la pension "
+        verdict: confirme
+        commentaire: "Relu. Art. 173 ust. 2-3 : espérance de vie à 62 ans, au 1er janvier 1999. Ust. 6a : le capital « nie może ulec obniżeniu ». Art. 174 ust. 7-8 : 24 % de la kwota bazowa, coefficient p. Art. 15 ust. 2a : salaire minimum « proporcjonalnie do okresu podlegania ubezpieczeniu i wymiaru czasu pracy ». Côté dépôt, rien n'a changé : notionnel.py:658-735, releve_lu.py:634 et 648-654."
+      - debut: "L'année du départ, la revalorisation y est trimest"
+        verdict: confirme
+        commentaire: "Art. 25a ust. 1-5 relu. Le dépôt crédite toute la revalorisation de l'année du départ, « puisque le compte est crédité au 1er janvier » (compte.py:1022-1027 ; indexation.py:229-234)."
+      - debut: "Le GUS publie chaque année la table qui fait le di"
+        verdict: confirme
+        commentaire: "Relu au communiqué du 25 mars 2026 : 222,7 mois à 65 ans, 250,0 à 62, 268,9 à 60. C'est une espérance pure, la même formule que celle du dépôt à ν = 0. La fiche du dépôt : coefficient_de_conversion.yaml:50."
+    nouveaux:
+      - quoi: "Le compte ne baisse jamais, et sa revalorisation ne passe pas sous les prix : l'indice vaut les prix majorés de la croissance réelle de la somme des cotisations, et il « nie może być niższy » que l'indice des prix. La revalorisation trimestrielle de l'année du départ a le même plancher. L'Italie et la Lettonie plancher à un avec rattrapage. Le dépôt n'a par défaut aucun plancher (config.py:522-525). Son plancher éventuel est un taux constant, sans plancher réel ni rattrapage possibles (indexation.py:113-115), et le triple lock inversé peut être négatif par construction."
+        preuve: "Dz.U. 2025 poz. 1749, art. 25 ust. 3 et 6, art. 25a ust. 4-5, art. 173 ust. 6a"
+        verification: "Loi en vigueur, lue dans le texte consolidé."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Un plancher, aux prix comme en Pologne ou à un avec rattrapage comme en Italie et en Lettonie, est une règle de la proposition ; le README n'en fixe pas."
+      - quoi: "L'indice du 1er juin de l'année t se lit sur l'année t−1, déjà publiée : les prix et la somme des cotisations de l'année précédente. Le dépôt revalorise l'année t au taux de l'année t (indexation.py:138-140 et 229-234), y compris l'année du départ, que personne ne connaîtrait encore. L'Italie prend les cinq années qui précèdent, la Grèce la croissance de t−2 (fiche grecque, p. 17), PROST l'inflation de t−1 (éq. 119, p. 73)."
+        preuve: "Dz.U. 2025 poz. 1749, art. 25 ust. 6-8 : « w roku kalendarzowym poprzedzającym termin waloryzacji »"
+        verification: "Loi en vigueur. Méthode : une règle appliquée ne lit que des données déjà publiées."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le README dit « chaque année » sans dire sur quelle année se lit le taux. Décaler d'un an change le capital d'une année de croissance : c'est au programme de choisir entre la règle idéale et une règle applicable."
+    ecarts_nouveaux: []
+    conclusion: "Il fait mieux sur l'arithmétique appliquée : capital initial sans trou, revalorisation trimestrielle l'année du départ, exemple officiel, plancher, taux lu sur une année publiée. Son diviseur sur table du moment est moins exact que celui du dépôt, et son art. 26 ust. 6 ne corrige que ce défaut-là."
+
+  - id: modele_lettonie
+    version: "Fiche lettone de l'Ageing Report 2024 (ministère du Bien-être ; projections arrêtées à l'automne 2023, droit au 1er décembre 2023)"
+    lu_dans: ["https://economy-finance.ec.europa.eu/document/download/51c6f5df-e7f1-4409-9fd6-877912a647fd_en?filename=2024-ageing-report-country-fiche-Latvia.pdf (p. 5-6, 25, 28)"]
+    existants: []
+    nouveaux:
+      - quoi: "Il publie ce que la longévité coûte à un système notionnel de génération : +2 ans d'espérance de vie ne font que +0,1 point de PIB en 2070, et une fécondité de −20 % +0,2 point. La France à prestations définies prend +0,7 et +1,2 point (fiche France, tableau 17, p. 38). Faute de variante démographique (hypotheses_projection.yaml:92-160), le dépôt ne peut pas montrer cet effet pour les scénarios 2 à 6."
+        preuve: "Fiche lettone, § 3.5, tableau 16, p. 25 : « The higher life expectancy scenario increases the number of pensioners, but that is partly offset by smaller average pension amounts »"
+        verification: "Méthode ; c'est un résultat publié à retrouver avec les variantes de l'INSEE."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.7"
+    ecarts_nouveaux:
+      - constat: "Sa fiche reconnaît deux défauts du modèle. Il ne prend pas en compte les transferts au compte notionnel depuis 2020, qui augmentent les recettes. Et ses auteurs ne sont « pas convaincus » que la part garantie des pensions y soit bien modélisée."
+        tranche: "La fiche elle-même : ses recettes et ses dépenses projetées se lisent avec ces réserves."
+        preuve: "Fiche lettone, § 4.3, p. 28 : « the model does not capture this » ; « we are not convinced that the model performs adequately »"
+    conclusion: "Ce qu'il fait de mieux est un résultat : la stabilité d'un notionnel de génération face à la longévité, que le dépôt devrait pouvoir retrouver. Le modèle lui-même, une projection agrégée par cellules, est fermé et reconnu imparfait par ses auteurs."
+
+  - id: diviseur_lettonie
+    version: "Loi « Par valsts pensijām », version consolidée de likumi.lv lue le 4 octobre 2026 (art. 12 modifié en dernier par la loi du 15 juin 2023) ; table G du 1er janvier 2026 (VSAA)"
+    lu_dans: ["https://likumi.lv/ta/id/38048-par-valsts-pensijam (art. 12, 13, 24, dispositions transitoires 13 et 33)", "https://www.vsaa.gov.lv/lv/media/5322/download?attachment=", "Fiche lettone de l'Ageing Report 2024, p. 5-6"]
+    existants:
+      - debut: "Son capital initial se passe d'archives : Ks = Vi "
+        verdict: confirme
+        commentaire: "Relu. Disposition 13 : Ks = Vi × As × 0,2, Vi étant la moyenne de 48 mois de 1996 à 2000. Disposition 33 : une carrière de 30 ans sous la moyenne prend la moyenne nationale. Art. 12(4) : plancher à un avec rattrapage. À préciser : les 40 % sont ceux du salaire moyen cotisé national de l'année qui précède le départ, et non de 1996-2000 ; ils s'appliquent aussi à qui n'a rien cotisé depuis 1996."
+    nouveaux:
+      - quoi: "Le capital se revalorise sur la somme des salaires cotisés, et la fiche précise que cette assiette compte les revenus des non-salariés et les cotisations versées par le budget. La Pologne prend la somme des cotisations (art. 25 ust. 6-8), la Grèce les gains cotisés de ses assurés (fiche grecque, p. 16). Le défaut du dépôt, la « masse salariale », lit les seuls salaires des comptes nationaux (D11, masse_salariale.csv), et le dépôt écrit que c'est « l'assiette des cotisations » (masse_salariale.csv:16 ; config.py:77-85). Or la caisse fusionnée couvre aussi les non-salariés. Sur les données certifiées du dépôt (assiette_activite.csv), de 1950 à 2024, les salaires sont multipliés par 216,3 et les salaires plus le revenu mixte par 137,4 : rapport 1,574, soit +0,61 point par an (+0,69 de 1960 à 2000). La part du revenu mixte est tombée de 43,5 % à 11,0 %. La salarisation gonfle donc le rendement de tous les comptes rétroactifs."
+        preuve: "Art. 12(1) ; fiche lettone, p. 6 : « The contribution wage sum consists of the total base (employed and self-employed income, pension contributions transfers from the state basic budget and the state special budget) on which contributions are made »"
+        verification: "Lois polonaise (art. 25 ust. 6-8, lu) et lettone (art. 12(1), lu) ; calcul fait sur assiette_activite.csv du dépôt (INSEE, D11 et B3G des ménages, certifiés)."
+        confronte: proposition
+        importance: forte
+        etat: a_trancher
+        raison: "Le README dit « la masse salariale ». La lire comme l'assiette de la caisse fusionnée (salaires et revenu mixte), à la manière de la Lettonie, de la Pologne et de la Grèce, ou garder D11, est un choix du programme. Dans tous les cas, la phrase « l'assiette des cotisations » est à corriger, et l'autre série est à offrir en variante (138.11)."
+      - quoi: "Les cotisations versées après le départ entrent au compte : la pension est recalculée automatiquement, au plus tôt tous les douze mois, en ajoutant P = K/G sur le capital accumulé depuis. Les systèmes 2 à 6 du dépôt n'ont ni cumul ni seconde pension, « et la proposition n'a pas encore dit ce qu'elle fait de l'activité après lui » (limites.md:172-174)."
+        preuve: "« Par valsts pensijām », art. 24(1), (1¹) et (2) ; fiche lettone, p. 5 : « the benefit is recalculated once a year »"
+        verification: "Loi en vigueur, lue. Méthode : c'est la lecture directe de « seules les cotisations comptent »."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le README ne dit rien de l'activité après le départ ; le propriétaire tranche."
+      - quoi: "La table G du 1er janvier 2026 (17,76 à 65 ans, 18,49 à 64, 19,95 à 62) est un exemple officiel de diviseur unisexe de génération, sans actualisation. La fiche du dépôt n'en a aucun (coefficient_de_conversion.yaml:50)."
+        preuve: "VSAA, « plānotie vecuma pensijas izmaksas laika periodi (gados) G no 2026. gada 1. janvāra » ; fiche lettone, p. 5 : « projected cohort-specific unisex life expectancy at retirement »"
+        verification: "Table officielle de l'organisme de paiement, établie sur les données du bureau statistique (art. 13)."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.11"
+    ecarts_nouveaux:
+      - constat: "G est interpolé linéairement entre les âges quinquennaux : le pas vaut exactement 0,73 an de 60 à 65 ans, puis 0,67-0,68 de 65 à 70. L'espérance de vie étant convexe en l'âge, G est un peu trop long aux âges intermédiaires."
+        tranche: "La table elle-même. Le diviseur du dépôt intègre la survie à l'âge exact (conversion.py:203-256) : il est le plus fin des deux. L'écart reste petit."
+        preuve: "Table G de la VSAA du 1er janvier 2026 (60 : 21,41 ; 61 : 20,68 ; 62 : 19,95 ; 63 : 19,22 ; 64 : 18,49 ; 65 : 17,76)"
+    conclusion: "Ses règles éclairent surtout ce que le dépôt doit trancher : l'assiette qui fait le rendement, les cotisations d'après le départ, le plancher à rattrapage. Son diviseur est de génération comme celui du dépôt, mais interpolé plus grossièrement."
+
+  - id: projections_grece
+    version: "Fiche grecque de l'Ageing Report 2024 (décembre 2023)"
+    lu_dans: ["https://economy-finance.ec.europa.eu/document/download/2704c5dc-e3ae-485e-9244-e32978a31b7e_en?filename=2024-ageing-report-country-fiche-Greece.pdf (p. 7-8, 16-17, 51-52)"]
+    existants:
+      - debut: "Taux technique et revalorisation y sont couplés : "
+        verdict: a_corriger
+        commentaire: "La formule est celle de la fiche grecque, et non « la formule de la RGS ». P. 17 : « t = min((1+g_{t−2})/(1+r) − 1, CPI_{t−1}) », r = 1,3 % « used in annuities calculation », « The indexation can take negative values ». Les pages sont 8, 16 et 17 : la p. 52 porte la fiscalité et l'invalidité, et le modèle de l'OIT est décrit p. 51. La reprise est faite (revalorisation.py:896-906 et 926-935) ; elle ne prend ni le plafond aux prix ni le décalage de deux ans, deux choix du programme qu'il faut écrire au point."
+      - debut: "L'indexation y est suspendue en cas de déficit. Le"
+        verdict: confirme
+        commentaire: "P. 8 et 16 : « no pension indexation in case of deficit » ; « Any deficits are covered by fund's assets ». Le dépôt calcule le coefficient d'équilibre sans l'appliquer (cout.py:63-68)."
+    nouveaux:
+      - quoi: "Sa rente tarifie la réversion : « a whole life annuity is used, taking into account the transfer of pension rights to Assignees (survivors) », recalculée tous les trois ans. Le diviseur du dépôt n'a pas de terme de survie (conversion.py:229-235), et la convention « servie » du coût sert la réversion sans la charger (cout.py:280-289, 674)."
+        preuve: "Fiche grecque, p. 17"
+        verification: "Même règle qu'en Italie (tableau C.2 : 1,460 des 19,049 années de rente à 65 ans) : deux lois la confirment."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Tarifer la réversion dans le diviseur est le choix déjà soumis au propriétaire au point italien (138.13)."
+    ecarts_nouveaux: []
+    conclusion: "Sa formule couple rente et revalorisation, et le dépôt l'a reprise ; ce qui reste chez lui relève de choix : suspension de l'indexation en déficit, réversion tarifée, plafond aux prix. Je n'y ai pas trouvé d'erreur."
+
+  - id: fator_previdenciario
+    version: "Lei 9.876/1999 (planalto.gov.br injoignable le 4 octobre 2026 ; lue par le registre le 1er octobre) ; EC 103/2019 lue dans la note technique de la Consultoria Legislativa de la Chambre des députés"
+    lu_dans: ["https://bd.camara.leg.br/bitstreams/2743e797-05ec-43df-a20c-96c9d708e01f/download (p. 6, 13-14)"]
+    existants: []
+    nouveaux: []
+    ecarts_nouveaux:
+      - constat: "Le registre le traite comme une variante en usage du diviseur. Or la EC 103/2019 (13 novembre 2019) supprime la retraite à la durée de cotisation. Depuis, le fator ne calcule plus que la règle de transition de l'art. 17 (péage de 50 %, pour qui avait plus de 28 ans de cotisation, femme, ou 33, homme) et les droits acquis."
+        tranche: "EC 103/2019, art. 17, parágrafo único, lu dans la note de la Chambre : « multiplicada pelo fator previdenciário » (p. 14) et « Extingue a aposentadoria por tempo de contribuição » (p. 6)."
+        preuve: "Câmara dos Deputados, Resumo da EC 103/2019, R. Baars Paternostro, nota técnica"
+    conclusion: "Rien de mieux : Es se lit sur la table du moment de l'IBGE, unisexe, sans rendement, que le bonus (Id + Tc·a)/100 remplace ; le dépôt, lui, divise par une table de génération. Le facteur n'est plus qu'une règle de transition, et le registre devrait le dire."
+
+  - id: prost
+    version: "« Calculus for PROST 15 », mis à jour le 19 novembre 2019 (PDF de la Banque mondiale du 6 juin 2024)"
+    lu_dans: ["https://documents1.worldbank.org/curated/en/099061024110535659/pdf/P1777231d8367c0111800816452e83c58d7.pdf (éq. 110-126 p. 66-76, éq. 161 p. 104)"]
+    existants:
+      - debut: "Il valorise les droits acquis au diviseur de la gé"
+        verdict: confirme
+        commentaire: "Éq. 112 relue (p. 69) : P_AGE = max(ret_age(T,g), a), P_YEAR = T + P_AGE − a. Le facteur AF des éq. 110-111 suit la mortalité m%(a+i, t+i, g) en diagonale : il est donc de génération, et sexué. Lignes du dépôt : notionnel.py:715-722 ; scenario-notionnel.js:383-388. Je n'ai pas recalculé les −9,0 % et −11,8 % : il aurait fallu exécuter le moteur, et la consigne est la lecture seule."
+      - debut: "Il impute les salaires manquants par leur moyenne "
+        verdict: confirme
+        commentaire: "Éq. 116 relue (p. 71) : la moyenne des salaires indexés disponibles depuis since_year s'applique aux années sans données. Trois voies au choix : droits promis (éq. 112), cotisations passées (éq. 115-117), capital initial direct (éq. 118)."
+    nouveaux:
+      - quoi: "Il produit, par individu, le taux de remplacement initial (sur le salaire moyen et sur le dernier salaire), le taux de remplacement au décès, le taux de rendement interne réel et la valeur actuelle nette d'être couvert. Le dépôt ne rend que le taux au départ (simulateur.py:278-331). Il n'a de rendement interne que pour le pilier capitalisé (capitalisation.py:349), et aucun taux au décès, alors que c'est précisément ce que change la double indexation de la proposition (revalorisation.py:860-906)."
+        preuve: "« Calculus for PROST 15 », § 5.5, éq. 161, p. 104"
+        verification: "Méthode : ce sont les indicateurs standards de cycle de vie, chiffrables sur les cas types du dépôt."
+        confronte: site
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.9"
+    ecarts_nouveaux: []
+    conclusion: "Il fait mieux sur la transition : diviseur de la génération de l'assuré pour les droits acquis (à trancher), imputation des salaires manquants, indicateurs individuels de cycle de vie. Le dépôt a déjà son équivalent de dette implicite (cout.py:3460-3527) ; l'outil reste non téléchargeable."
+
+  - id: modeles_ocde
+    version: "Pensions at a Glance 2025 (novembre 2025). Valeurs 2024 lues sur l'API SDMX de l'OCDE (DSD_PAG@DF_PRR, DF_PW, DF_PAG), car oecd.org répond 403."
+    lu_dans: ["https://sdmx.oecd.org/public/rest/data/OECD.ELS.SPD,DSD_PAG@DF_PRR,1.0/FRA..........?format=csvfilewithlabels", "idem DF_PW et DF_PAG", "oecd.org, « Methodology and assumptions: Pensions at a Glance 2025 » et « Net pension replacement rates » (extraits lus par la recherche ; les pages répondent 403)"]
+    existants:
+      - debut: "Il calcule le patrimoine retraite, valeur actuelle"
+        verdict: confirme
+        commentaire: "GPW100 : 11,5 années de salaire pour les hommes, 13,1 pour les femmes ; NPW100 : 14,3 et 16,2 (SDMX, 2024). Le taux réel d'actualisation est de 1,5 %, contre 2,0 % dans les éditions précédentes : je ne l'ai lu que dans un extrait de la page de méthode, la page elle-même répondant 403. Ajouter l'API SDMX au champ lu_dans."
+      - debut: "Il publie, pour la France et une carrière de 22 à "
+        verdict: confirme
+        commentaire: "SDMX 2024 : GPRR 56,6 / 56,6 / 47,4 et NPRR 66,1 / 70,0 / 58,9 à 0,5, 1 et 2 salaires moyens. L'âge futur de départ d'une entrée à 22 ans vaut 65 ans (FRPLF22). La LFSS pour 2026 ne change rien pour la génération 2002 (art. 105 : 64 ans dès la génération 1969, 172 trimestres dès 1966). Les hypothèses (prix +2 %, salaires réels +1,25 %) sont confirmées par l'extrait de la page de méthode."
+    nouveaux:
+      - quoi: "Son taux de remplacement net compte l'impôt et les cotisations sur le salaire comme sur la pension : 70,0 % net contre 56,6 % brut au salaire moyen. Le net du dépôt ne retire que 9,1 % à la pension et fait le salaire net sans impôt (contexte.py:676-700)."
+        preuve: "SDMX DSD_PAG@DF_PRR, NPRR100 = 70 (2024) ; Pensions at a Glance 2025, « Net pension replacement rates » : « higher effective tax and social contribution rates that people pay on their earnings than on their pensions »"
+        verification: "Méthode : le revenu disponible est la mesure de l'OCDE comme de la RGS ; l'impôt sur le revenu dépend du foyer, et le 138.2 doit le dire."
+        confronte: site
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Il publie les âges et les durées de la retraite. Âge de départ d'une carrière entrée à 22 ans : 64,3 ans pour un départ en 2024, 65 ans pour une entrée en 2024. Âge effectif de sortie du marché du travail en 2024 : 61,9 ans (hommes), 62,4 (femmes). Années de vie après la sortie : 22,5 et 26,1. Le dépôt n'a ni indicateur de durée de retraite, ni témoin qui se confronte à ces âges."
+        preuve: "SDMX DSD_PAG@DF_PAG : CRPLF22, FRPLF22, ELMEA, EYLME (France)"
+        verification: "Âges cohérents avec L. 161-17-2 et L. 161-17-3 dans leur rédaction issue de la LFSS pour 2026 (JORFARTI000053227007)."
+        confronte: site
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.9"
+    ecarts_nouveaux: []
+    conclusion: "Il fait mieux sur les indicateurs : patrimoine retraite, taux nets après impôt, durées de retraite, tous publiés pour la France et lisibles par l'API SDMX. Sur la France, il est à jour : la LFSS pour 2026 ne touche pas ses carrières types."
+
+  - id: ageing_report
+    version: "2024 Ageing Report et fiche France (mars 2024) ; l'édition 2027 n'est pas parue"
+    lu_dans: ["https://economy-finance.ec.europa.eu/document/download/e412927a-ea31-406d-bb6c-c925914123e9_en (fiche France, tableaux 7, 9, 10, 14, 17-20)", "fiches grecque et lettone de 2024"]
+    existants:
+      - debut: "Il décompose la dépense en dépendance, couverture,"
+        verdict: confirme
+        commentaire: "Tableau 9 de la fiche France relu (p. 28). Côté dépôt, rien n'a bougé : cout.py:58, et le 138.3 n'est pas commencé."
+      - debut: "Pour la France, il projette 14,4 % du PIB en 2022 "
+        verdict: confirme
+        commentaire: "Tableaux 7, 9 et 10 relus : 14,4 % puis 13,6 % du PIB ; effets +6,0 / −2,2 / −3,4 (marché du travail −1,0, résidu −0,3) ; ratio de prestation de 47 à 37 %. Le scénario 1 du dépôt donne 18,24 % en 2070 (limites.md:2879), sous d'autres hypothèses. La projection date d'avant la LFSS pour 2026 : voir l'écart."
+    nouveaux:
+      - quoi: "Il soumet la projection à des scénarios standard. Effets en 2070 pour la France : +2 ans d'espérance de vie, +0,7 point de PIB ; fécondité −20 %, +1,2 ; migration ±33 %, −0,6 et +0,7 ; emploi des seniors +10 points, −0,5 ; productivité (PTF) convergeant vers 1,0 % ou 0,6 %, −0,4 et +0,7. Le dépôt n'a que les variantes de productivité et de chômage du COR (hypotheses_projection.yaml:92-160), aucune de démographie."
+        preuve: "Fiche France, tableau 17, p. 38"
+        verification: "Méthode commune de l'AWG ; les variantes INSEE existent."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: "Il décompose aussi le flux des pensions nouvelles : nombre, durée de cotisation, taux d'acquisition, salaire de référence, facteur de soutenabilité, mois servis la première année. Pour un système notionnel, le facteur de soutenabilité est l'effet du diviseur. Le dépôt n'a pas cette décomposition."
+        preuve: "Fiche France, tableau 14, p. 34"
+        verification: "Méthode commune de l'AWG."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Il confronte sa projection précédente à l'observé et décompose l'erreur. Pour 2019-2021, la projection de 2021 (14,8 / 16,2 / 15,3 % du PIB) est comparée à la dépense réelle (14,5 / 15,7 / 14,7 %), l'écart venant surtout des hypothèses. Il décompose aussi les révisions d'une édition à l'autre. Le dépôt a un contrôle externe, le COR (limites.md:2874-2881), mais ne rejoue jamais sa projection depuis une année passée."
+        preuve: "Fiche France, tableaux 18-20, p. 40-42"
+        verification: "Méthode : une rétro-projection depuis une année ancienne, ancrée comme aujourd'hui sur la dernière année connue, mesurerait l'erreur propre du moteur du coût."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "nouveau: rétro-projection de la page Coût"
+      - quoi: "Il publie la dépense nette d'impôts et de cotisations des retraités (12,8 % du PIB en 2022, 12,1 % en 2070, contre 14,4 et 13,6 en brut), les cotisations (11,1 %) et le solde (−3,3 %). La page Coût du dépôt est en brut."
+        preuve: "Fiche France, tableau 7, p. 23"
+        verification: "Définition AWG : « Net pension expenditure excludes taxes on pensions and compulsory social security contributions paid by beneficiaries »."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.3"
+    ecarts_nouveaux:
+      - constat: "La fiche France projette la loi du 14 avril 2023 entière (§ 3.3 et tableau 14 : la réforme « should reduce the number of pensioners by 1.3% in 2040 »)."
+        tranche: "La LFSS pour 2026 (loi n° 2025-1403, art. 105) décale le calendrier : 64 ans dès la génération 1969 au lieu de 1968, 170 trimestres pour les assurés nés du 1er janvier 1963 au 31 mars 1965, 172 dès 1966. Une confrontation devra attendre l'édition 2027, ou corriger l'effet de la réforme."
+        preuve: "JORFARTI000053227007 (LFSS 2026, art. 105) ; décrets n° 2026-344 et 2026-345 du 7 mai 2026"
+    conclusion: "Il fait mieux sur l'analyse de la dépense : décomposition, scénarios standard, rétro-évaluation de ses propres projections, dépense nette. Sur la France, il est antérieur à la suspension de 2025."
+
+  - id: ilo_pensions
+    version: "« The ILO Pension Model — A Technical Guide » (OIT, 2018, ISBN 978-92-2-031103-5) ; outil en ligne ILO/PENSIONS (accès par compte)"
+    lu_dans: ["https://researchrepository.ilo.org/view/pdfCoverPage?instCode=41ILO_INST&filePid=13100838450002676&download=true (p. vii-viii, 9, 11-21)", "https://qpss.ilo.org/APT", "Fiche grecque de l'Ageing Report 2024, p. 51"]
+    existants:
+      - debut: "Il projette des flux par cohorte, avec des probabi"
+        verdict: a_corriger
+        commentaire: "Le fond tient. Guide technique, partie II, § 1.1, p. 12-14 : simulation année par année, probabilités de transition (décès, retraite, retrait, entrées), densité de cotisation, taux de couverture, facteur de recouvrement ; distribution des droits passés et des revenus (p. 9). La preuve est à remplacer : le guide se lit sur researchrepository.ilo.org. Les conditions sont désormais lues : droit d'auteur réservé à l'unité PFACTS de l'OIT (p. 11), modèle remis aux experts des pays membres en coopération technique (préface), outil en ligne derrière un compte. Champ licence : « droits réservés (OIT, PFACTS) » ; champ usage : resultats_publies."
+    nouveaux:
+      - quoi: "Il calcule le taux de cotisation qui équilibre la répartition, décomposé en rapport de dépendance du système (pensionnés sur cotisants) fois rapport de remplacement du système (pension moyenne sur revenu assuré moyen). Il calcule aussi la prime moyenne générale sur une période, réserves comprises, et le taux qui tient un ratio de réserve cible. La page Coût du dépôt donne le solde, le coefficient d'équilibre (cout.py:108-118) et un taux de TVA requis (cout.py:2692-2715), mais aucun taux de cotisation d'équilibre."
+        preuve: "Guide technique, partie II, § 1.2, p. 19-21 : « C_t^PAYG = d_t · r_t », « Level contribution rate »"
+        verification: "Méthode actuarielle standard. Le COR publie lui aussi le levier du taux de prélèvement, que le 138.3 nomme « tax gap »."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.3"
+    ecarts_nouveaux: []
+    conclusion: "Il fait mieux sur la projection actuarielle : une population par états et ses transitions, et les taux de cotisation d'équilibre. Il n'est pas ouvert, et son guide technique de 2018 suffit à en confronter la méthode."
+
+  - id: og_core
+    version: "Commit 10d3577 du 2 octobre 2026 (version 0.20.3, plus la PR #1241 non publiée)"
+    lu_dans: ["https://github.com/PSLmodels/OG-Core (ogcore/pensions.py, household.py, tax.py, default_parameters.json, CHANGELOG.md)"]
+    existants: []
+    nouveaux:
+      - quoi: "Les effets d'équilibre général et de comportement d'une bascule notionnelle : offre de travail, épargne, taux d'intérêt, salaires. Le dépôt calcule à comportement et prix inchangés (limites.md:2005-2010)."
+        preuve: "ogcore/SS.py, TPI.py, household.py (FOC_labor l. 624-783), pensions.py (NDC_amount l. 380-474)"
+        verification: "Non retenu : la marge du travail de son module notionnel est fausse (premier écart ci-dessous)."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Hors du champ comptable du dépôt, et OG-Core ne fournit pas aujourd'hui d'estimation fiable de cet effet pour un système notionnel."
+    ecarts_nouveaux:
+      - constat: "La condition du travail ignore la pension notionnelle : le coin fiscal vaut 1 − tau_payroll − MTR (household.py:760-780). deriv_theta et deriv_NDC (pensions.py:568-649) ne sont appelés nulle part. La cotisation notionnelle y agit donc comme un pur impôt, à l'inverse du principe du compte et de sa propre docstring."
+        tranche: "Leur code au commit 10d3577 (grep : aucun appel hors de pensions.py). La note du registre (commit b690537) reste vraie."
+        preuve: "ogcore/household.py:760-780 ; ogcore/pensions.py:568-649"
+      - constat: "tax.py:303-305 passe Y = 1 à pension_amount, avec le commentaire « TODO: replace '1' with Y ». Or, avec l'option « Curr GDP » qu'offre default_parameters.json, g_ndc et g_dir indexent Y[1:] (pensions.py:785-786 et 812-813). Le « PIB courant » que le registre annonce ne peut donc pas tourner dans le calcul des impôts nets."
+        tranche: "Lecture de leur code : un entier ne s'indexe pas."
+        preuve: "ogcore/tax.py:303-305 ; ogcore/pensions.py:768-790"
+      - constat: "Le coefficient de conversion prend la mortalité stationnaire de fin de période (p.rho[-1]) pour toutes les cohortes, et un âge de départ unique (issue #1014). Le long de la transition, aucune génération n'a son propre diviseur. Le terme de survie indR et la correction de fréquence k_ret valent zéro par défaut."
+        tranche: "Leur code. Le diviseur du dépôt, sur table de génération à l'âge et au mois exacts (conversion.py:203-256), est plus exact."
+        preuve: "ogcore/pensions.py:820-855 et 404-407 ; default_parameters.json (indR, k_ret = 0)"
+    conclusion: "Rien de mieux sur l'arithmétique : son diviseur est stationnaire, et la réversion et la fréquence de versement n'y sont que des paramètres nuls par défaut. Son seul apport possible, l'équilibre général, est hors du champ du dépôt, et faussé par une marge du travail qui traite la cotisation notionnelle en impôt."

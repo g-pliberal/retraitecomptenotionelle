@@ -1,0 +1,265 @@
+# Le rapport de la recherche « drees » (TRAJECTOiRE, calcul_pension, CALIPER, legiretraite, ANCETRE, PROMESS), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+groupe: drees
+modeles:
+  - id: trajectoire
+    version: "v1.1.2, commit 0963b57 du 4 avril 2025 (le même qu'au 1er octobre)"
+    lu_dans:
+      - "https://git.drees.fr/drees_code_public/modeles/trajectoire, cloné le 4 octobre 2026 avec ses objets LFS"
+      - "R/fonctionsCalculsPensions.R, R/fonctionsCalculsDivers.R, R/3-points.R, R/1-lecture-ipp.R, R/gestionParametres.R, R/fonctionsImport.R, inst/extdata/trajectoire/*.csv, inst/extdata/cor/hypo_parametres_Pstab2024.xlsx, inst/extdata/ipp/seriesIPP.Rds, data/etapes.rda, inst/scripts/casTypesCOR.R, docs/en-bref.qmd, docs/3-, 4-, 6-*.qmd"
+      - "COR, rapport annuel de juin 2026, https://www.cor-retraites.fr/sites/default/files/2026-07/RA_2026_def.pdf"
+    existants:
+      - debut: "Il calcule, par cas type et génération, les taux d"
+        verdict: confirme
+        commentaire: "Même commit, mêmes lignes (fonctionsCalculsPensions.R:4783-4795). Le dépôt n'a toujours que le taux de remplacement (simulateur.py:280-305 : les lignes ont glissé)."
+      - debut: "Il refait les treize cas types du COR sans les don"
+        verdict: confirme
+        commentaire: "Le RA de juin 2026 les calcule « à l'aide d'un module du modèle Trajectoire de la Drees, disponible en open source », exécuté sur SSPcloud (note 128, p. 134)."
+      - debut: "Il lit les variantes de fécondité et d'espérance d"
+        verdict: confirme
+        commentaire: "Variantes du millésime INSEE 2021 (fonctionsImport.R:116-127, 205-212). Le dépôt lit le seul scénario central des projections 2026 (data/sources.yaml:444-460, et non plus 464-465) : les variantes sont à prendre dans ce millésime-là."
+      - debut: "Il impute aux cas types du COR le taux de CSG de l"
+        verdict: confirme
+        commentaire: "Toujours vrai (casTypesCOR.R:107-114). Hors cas types, il fait mieux encore : voir le point nouveau sur la CSG de la microsimulation."
+    nouveaux:
+      - quoi: "Depuis septembre 2023, il compte les trimestres d'AVPF parmi les 120 trimestres cotisés qui ouvrent la majoration du minimum contributif, et dans sa proratisation. Le dépôt n'y compte que les années d'emploi (completer.py:60, 248-250 ; ouvrir.py:233-236 ; commun.py:36-44, une ligne d'AVPF n'étant pas « cotise »). Au passage, une erreur du dépôt : il oppose les 120 trimestres à toute date, quand la loi ne les exige que des pensions d'avril 2009 et après."
+        preuve: "inst/extdata/trajectoire/reglePourMicoMajore.csv:3 (« 2023-09,AVPF en plus ») et R/fonctionsCalculsPensions.R:2835-2841, au commit 0963b57"
+        verification: "L. 351-10 CSS (LEGIARTI000048697787) : majoration « au titre des périodes ayant donné lieu à cotisations [...] et, dans la limite d'un plafond fixé par décret, des périodes validées en application des articles L. 381-1 et L. 381-2 » ; D. 351-2-2 (LEGIARTI000047961311, pensions depuis le 1er septembre 2023) : plafond de vingt-quatre trimestres, que TRAJECTOiRE n'applique pas (écart). Le seuil de 120 trimestres vient de la loi du 17 décembre 2008 pour les pensions d'avril 2009 (L. 351-10, LEGIARTI000019959492 ; D. 351-2-2, LEGIARTI000020090096) ; la rédaction de 2004 (LEGIARTI000006742926) n'a aucun seuil."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il sert, dans la chronique des pensions, la majoration exceptionnelle due depuis le 1er septembre 2023 aux pensions du régime général et des salariés agricoles liquidées avant cette date au minimum contributif. Le dépôt ne la connaît pas : l'échéancier revalorise du départ à l'échéance sans elle (echeancier.py:18-30 ; aucune occurrence dans src/, moteur/js/ ni data/reference/)."
+        preuve: "R/fonctionsCalculsPensions.R:3720-3924 (revaloMicoStockEic) et 3925-4201 (EIR), plafond de 100 € par mois et par personne (:3822-3829) ; docs/6-calcul-des-pensions.qmd:1416-1430, qui dit son architecture « hypothétique », au commit 0963b57"
+        verification: "Loi n° 2023-270, art. 18, V (LEGIARTI000047447828) : pensions de base « ayant pris effet avant le 31 août 2023 », liquidées au taux plein, avec une durée cotisée minimale ; majoration proratisée sur la durée cotisée dans le régime, plafonnée, sous le plafond de L. 173-2, « due à compter du 1er septembre 2023 ». Décret n° 2023-754 (JORFTEXT000047956498) : « La majoration exceptionnelle des petites pensions [...] est due à compter du 1er septembre 2023 pour les pensions ayant pris effet avant cette date ». Ses montants sont dans les articles du décret, absents de l'index : le plafond de 100 € de TRAJECTOiRE reste à vérifier."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il sert aux exploitants la pension majorée de référence et le complément différentiel de la RCO, et les relève aussi pour les pensions déjà liquidées. Le dépôt ne sert ni l'un ni l'autre (config.py:394 n'est qu'un drapeau ; aucun code)."
+        preuve: "R/fonctionsCalculsPensions.R:2994-2999 (PMR) et 3670-3718 (complementDiffRCO, appliqué à la chronique des pensions servies) ; docs/6-calcul-des-pensions.qmd:1410-1414, au commit 0963b57"
+        verification: "L. 732-63 du code rural (LEGIARTI000053280353, version du 1er janvier 2026) ; loi n° 2023-270, art. 18, VI : pour les pensions d'avant le 1er septembre 2023, « les montants du salaire minimum de croissance et des éléments de calcul du complément différentiel [...] sont ceux en vigueur au 1er septembre 2023 » ; D. 732-111 (LEGIARTI000047961256) pour leur PMR. TRAJECTOiRE ne compare au seuil que les pensions de la MSA, non le total tous régimes, et ignore les années de chef à titre secondaire que L. 732-63 compte depuis 2026."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.8"
+      - quoi: "Il applique les coefficients temporaires de l'Agirc-Arrco aux liquidations depuis 2019 des générations 1957 et suivantes : 10 % de minoration pendant trois ans au plus et jusqu'à 67 ans, 5 % au taux réduit de CSG, aucune pour les exonérés, invalides et inaptes ; 10, 20 ou 30 % de majoration pendant un an après deux, trois ou quatre ans de report. Le dépôt les écarte (docs/limites.md:278-284) parce que « le modèle ne calcule qu'une pension annuelle unique », objection que l'échéancier, qui distingue le départ de l'échéance, affaiblit."
+        preuve: "R/fonctionsCalculsPensions.R:3212-3255 (calculeModulationTemporaire) et 3450-3516 (applicationModulationTemporaire), étape 6.0/24 de data/etapes.rda, au commit 0963b57"
+        verification: "Service-public.fr, actualité A15237 : coefficient supprimé pour les retraites prenant effet depuis le 1er décembre 2023, et levé le 1er avril 2024 pour les autres ; coefficients_anticipation_agirc_arrco.yaml:139 cite l'avenant n° 17 qui l'écarte. TRAJECTOiRE n'a pas cette fin (écart)."
+        confronte: scenario_1
+        importance: faible
+        etat: a_trancher
+        raison: "Le dépôt l'a écarté par choix (limites.md:278-284) ; le servir demande un événement de fin dans l'échéancier, sorte que le vocabulaire réserve (echeancier.py:18-23)."
+      - quoi: "Il verse en capital les petites complémentaires : à l'Agirc-Arrco jusqu'à 100 points (pension annuelle × coefficient de l'âge), à l'Ircantec sous 300 points (points × salaire de référence). Le dépôt sert une rente à tout nombre de points (aucun versement unique dans src/, moteur/js/ ni data/reference/regles/)."
+        preuve: "inst/extdata/trajectoire/vfuSeuilPt.csv, vfuCoefAA.csv, vfuCoefIrcantec.csv ; R/fonctionsCalculsPensions.R:3261-3350 (calculeVfu), au commit 0963b57"
+        verification: "Arrêté du 30 décembre 1970, art. 25 (LEGIARTI000019511940, en vigueur depuis le 25 septembre 2008) : « Lorsque le nombre de points est inférieur à 300, il n'est pas versé d'allocation ; l'intéressé reçoit lors de la liquidation un versement unique égal au produit du total des points de retraite par le salaire de référence de l'année précédant la date de la liquidation » ; Agirc-Arrco, page « Conditions de versement de la retraite », et circulaire 2025-21-SG-DRJ (coefficients de versement unique de 2026) : capital jusqu'à l'équivalent de 100 points. Ses coefficients par âge sont anciens."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Ses cas types servent la bonification du cinquième au super-actif (quatre trimestres par cinq ans de services, vingt au plus) et la majoration de durée d'assurance d'un an pour dix ans à l'hospitalier de catégorie active, sur le taux et non sur la proratisation. Le dépôt ne sert aucune bonification de service (config.py:379-383 ; docs/limites.md:116-117) et n'a pas cette majoration."
+        preuve: "R/fonctionsCalculsDivers.R:1412-1435 (bonifDeterministes) et inst/scripts/casTypesCOR.R:304-317 (policier, aide-soignante), au commit 0963b57"
+        verification: "Décret n° 2003-1306, art. 15, 2° (LEGIARTI000054590023) : bonification du cinquième des sapeurs-pompiers « sous réserve d'avoir accompli dix-sept années en cette qualité et vingt-sept années de service », cinq ans au plus — conditions que TRAJECTOiRE omet ; loi n° 2003-775, art. 78 (LEGIARTI000047453001) : pour l'hospitalier qui remplit les conditions de la catégorie active, « la durée d'assurance fait l'objet d'une majoration [...] fixée à un an par période de dix années de services effectifs », pour le I de L. 14 ; L. 12 quater CPCMR (LEGIARTI000048805987, depuis le 31 décembre 2023) : quatre trimestres par dix ans aux actifs de la défense et de l'INI."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Sa microsimulation range chaque retraité dans l'un des quatre taux de CSG d'après sa pension, prise pour seule ressource, abattement de 10 % compris, contre les seuils de revenu fiscal de l'année, et retire la cotisation maladie de 1 % des complémentaires. Le dépôt retient le taux plein pour tous (prelevements_remuneration.yaml:705) et omet ce 1 % par choix (:718-722)."
+        preuve: "R/fonctionsCalculsPensions.R:3421-3446 (determineCategCSG) ; R/fonctionsCalculsDivers.R:867-930 (calculePensionNette) ; inst/extdata/trajectoire/borneCSG.csv, au commit 0963b57"
+        verification: "L. 136-8 CSS (LEGIARTI000054336623) : 0, 3,8, 6,6 ou 8,3 % selon le revenu fiscal de référence du foyer. Méthode : la pension seule et une part sont une approximation, plus proche du réel que le taux plein pour les petites pensions. Ses seuils s'arrêtent en 2022 et se prolongent."
+        confronte: site
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Il projette l'âge de départ que le COR publie : âge conjoncturel de 63,1 ans en 2025 et de 64,6 ans à partir des années 2040 ; par génération, environ 64,6 ans à partir des générations des années 1970. Le dépôt n'a que l'âge observé (data/reference/macro/age_conjoncturel_depart.csv), que src/ ne lit pas : rien ne borne les âges du pilote en projection."
+        preuve: "COR, rapport annuel de juin 2026, figure 2.5 (p. 76, « Source : Drees, modèles Ancêtre et Trajectoire ») et figure 4.5 (p. 216, « modèle Ancètre pour le constaté, calculs SG-COR à partir des évolutions du modèle Trajectoire pour le projeté »)"
+        verification: "Méthode : projection publiée, suspension de 2025 comprise (version interne de TRAJECTOiRE). C'est le second point d'ANCETRE au registre, qui revient à TRAJECTOiRE."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Il chiffre une réforme sur une population : 750 000 carrières de l'EIC prolongées, calées sur les cotisants par régime et le chômage du COR, salaires bruités, tous niveaux de revenu, avec masses de cotisations et de prestations par caisse. La page Coût pondère treize cas types par des effectifs de caisse, jusqu'à 2,5 fois le salaire moyen, à taux d'emploi et de couverture constants (cout.py:52-74)."
+        preuve: "docs/en-bref.qmd (étapes et sources) ; R/fonctionsImputations.R (prolongerCarriere, imputerSalaires) ; R/fonctionsAgregation.R (massesCotis, massesPrestaEffectifs, sousPopGenQuanti), au commit 0963b57"
+        verification: "Méthode : une population représentative rend la dispersion des carrières et des revenus que des cas types effacent ; le RA 2026 en tire ses effectifs de retraités et le coût de la suspension, « 1,8 milliard d'euros en moyenne en année pleine jusqu'en 2032 » (synthèse, note 1, p. 9 du PDF). Les données (EIC, EIR) sont au CASD."
+        confronte: cout
+        importance: forte
+        etat: a_reprendre
+        chantier: "138.14"
+      - quoi: "Il modélise les départs : probabilité de liquider à chaque trimestre entre l'âge d'ouverture et 70 ans selon la distance au taux plein, la caisse, le sexe (logistique estimée sur l'EIR), non-recours à la carrière longue, transitions de fin de carrière selon la distance à l'âge d'ouverture (effet horizon). Le dépôt raisonne à comportement inchangé, aux âges déclarés (docs/limites.md:2005-2010)."
+        preuve: "docs/en-bref.qmd (« Comportements de départ ») ; docs/4-comportements-de-depart.qmd ; R/fonctionsImport.R:1657 (estimeModeleDepart) ; R/fonctionsCalculsPensions.R:717-1098 (non-recours à la carrière longue), au commit 0963b57"
+        verification: "Méthode : un compte notionnel qui récompense le report déplace les départs ; la proposition le chiffre à comportement figé. L'estimation demande l'EIR."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le comportement inchangé est un choix écrit (limites.md:2005-2010), et un modèle de départ demande des microdonnées."
+      - quoi: "Il retire du salaire annuel moyen, depuis 2004, les années sans trimestre cotisé ; le dépôt les garde. Même moteur que calcul_pension, où le point est détaillé."
+        preuve: "R/fonctionsCalculsPensions.R:2081, au commit 0963b57"
+        verification: "R. 351-29 CSS (LEGIARTI000006750042) ; voir calcul_pension."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il compte les services à temps partiel des fonctionnaires à leur quotité (nbTrimValide × quotité / 100)."
+        preuve: "docs/3-acquisition-des-droits.qmd:1630-1638, au commit 0963b57"
+        verification: "L. 5 et L. 14 CPCMR, que cite la fiche temps_partiel_fonction_publique."
+        confronte: scenario_1
+        importance: faible
+        etat: ecarte
+        raison: "Pas meilleur : le moteur du dépôt le fait déjà (compter.py:276-278, services_a_temps_partiel), seule la saisie manque. La fiche temps_partiel_fonction_publique, « manquante », dit à tort le champ quotite « lu nulle part » : à rafraîchir."
+      - quoi: "Il fait mourir chacun selon le quartile de sa pension, estimé sur deux EIR successifs."
+        preuve: "R/fonctionsImport.R:1925 (mortaDiff) ; docs/3-acquisition-des-droits.qmd:3-90, au commit 0963b57"
+        verification: "Méthode."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Pas meilleur : le dépôt a la mortalité par vingtile de niveau de vie de l'INSEE (donnees/mortalite.py:300-345), qu'il applique aux bénéficiaires des minima et aux cas types (cout.py:2266, 2939)."
+    ecarts_nouveaux:
+      - constat: "Il garde le versement forfaitaire unique de la Cnav et des salariés agricoles après 2016, sans condition de date (R/fonctionsCalculsPensions.R:3296-3306), « Il a temporairement été décidé de conserver le dispositif de VFU pour l'ensemble des assurés » (docs/6-calcul-des-pensions.qmd:1347-1355), sans texte cité."
+        tranche: "Loi n° 2014-40, art. 44 : « IV. ― L'article L. 351-9 du même code est abrogé. V. ― Le présent article s'applique aux assurés dont l'ensemble des pensions prend effet à compter du 1er janvier 2016 » ; il le remplace par le reversement des cotisations, à la demande, de l'assuré d'un seul régime qui a au plus huit trimestres (L. 161-22-2 ; R. 161-19-1). L'écart est le sien ; il tranche ce que la note du registre laissait ouvert."
+        preuve: "JORFARTI000028493878 ; L. 351-9, LEGIARTI000006742677 (1985-12-21 → 2016-01-01) ; R. 161-19-1, LEGIARTI000031986254"
+      - constat: "Ses coefficients temporaires de l'Agirc-Arrco valent pour toute liquidation depuis 2019, projections comprises, sans fin (R/fonctionsCalculsPensions.R:3222, 3236-3249)."
+        tranche: "Coefficient supprimé pour les retraites prenant effet depuis le 1er décembre 2023, levé le 1er avril 2024 pour les autres ; l'écart est le sien, et il pèse sur toutes ses projections."
+        preuve: "service-public.fr, actualité A15237 ; docs/limites.md:278-284 (le dispositif est éteint)"
+      - constat: "Sa revalorisation de 2020 (revaloSpeciale2020, R/fonctionsCalculsPensions.R:3647-3664) ignore la zone de lissage de 2 000 à 2 014 €, comme calcul_pension ; le code le dit : « il y aurait une subtilité non codée »."
+        tranche: "Loi n° 2019-1446, art. 81, et circulaire Cnav 2020/9 : 1 % jusqu'à 2 000 €, 0,8, 0,6 et 0,4 % jusqu'à 2 014 €, 0,3 % au-delà ; l'écart est le sien."
+        preuve: "data/reference/legislation/revalorisation_pensions.csv (l. 120-124)"
+      - constat: "Il partage les années du SAM entre régimes alignés à l'arrondi inférieur (floor, R/fonctionsCalculsPensions.R:2105)."
+        tranche: "R. 173-4-3 CSS : « arrondi, pour chaque régime, au nombre d'années le plus proche sans que ce nombre puisse être inférieur à 1 » ; le dépôt l'applique (fiche salaire_annuel_moyen) ; l'écart est le sien."
+        preuve: "R. 173-4-3, LEGIARTI000006747869 à LEGIARTI000038790394 ; circulaire Cnav 2004/29"
+      - constat: "Il compte tous les trimestres d'AVPF au seuil et dans la proratisation de la majoration du minimum contributif (R/fonctionsCalculsPensions.R:2835-2841)."
+        tranche: "D. 351-2-2 CSS, II et III, pensions depuis le 1er septembre 2023 : ces trimestres comptent dans la limite de vingt-quatre ; l'écart est le sien."
+        preuve: "LEGIARTI000047961311, LEGIARTI000054589231"
+      - constat: "Ses paramètres réglementaires (inst/extdata/trajectoire/*.csv) s'arrêtent en 2020-2022 (valeurPtService.csv en 2020, revalo.csv en juillet 2022, pmr.csv en janvier 2020, avts.csv en avril 2020) ; la suite vient des hypothèses du COR du programme de stabilité 2024 (R/gestionParametres.R:58-62) : revalorisation des pensions de +2,6 % en janvier 2025 et +1,7 % en janvier 2026, valeur de service Agirc-Arrco de 1,44377 en 2024 et 1,46658 en 2025, salaire de référence de 20,2084 en 2025."
+        tranche: "Circulaires Cnav 2024/39 et 2025/29 : +2,2 % et +0,9 % ; valeur de service de 1,4386 en 2024 et en 2025, salaire de référence de 20,1877 en 2025, que le dépôt certifie ; l'écart est celui de la version publique."
+        preuve: "inst/extdata/cor/hypo_parametres_Pstab2024.xlsx, feuilles Revalo_RB et AGIRC-ARRCO ; data/reference/legislation/revalorisation_pensions.csv (l. 130-131) ; data/reference/regimes/valeurs_point.csv (l. 299-302)"
+      - constat: "Sa garantie minimale de points de l'Agirc vient de la série IPP, 144 points dès 1947 et 120 dès 1997 (R/1-lecture-ipp.R:274-278, gmp.yaml de seriesIPP.Rds), qui remplace un CSV faux (120 dès 1988) ; il la sert en points gratuits, entière quel que soit le taux de l'entreprise (R/3-points.R:200-211)."
+        tranche: "L'accord du 8 décembre 1988 la crée pour 1989 ; elle est ramenée à 120 points au 1er janvier 1997, au prorata du taux contractuel de l'entreprise, achetée par une cotisation forfaitaire ; le dépôt a raison, l'écart est le sien et celui de la série IPP."
+        preuve: "data/reference/regles/garantie_minimale_points_agirc.yaml (l. 3-9, 91-92)"
+    conclusion: "Ce qu'il fait de mieux tient à la population et aux chroniques : une microsimulation qui chiffre coût et redistribution, des départs modélisés, des indicateurs de cycle de vie ; et, au scénario 1, des règles que le dépôt n'a pas, de la majoration exceptionnelle de 2023 aux versements uniques des complémentaires, aux bonifications de service et aux minima des exploitants. Sa version publique est à jour de la loi du 14 avril 2023 et de ses décrets d'août 2023, non de la loi du 30 décembre 2025 ; ses valeurs sont réelles jusqu'en 2024 et projetées ensuite, son coefficient de solidarité et son VFU de la Cnav ne s'éteignent jamais."
+
+  - id: calcul_pension
+    version: "0.1, commit ec5a871 du 20 janvier 2023 (branche main ; dev, racl et 3-cas-types-du-cor sont plus anciennes)"
+    lu_dans:
+      - "https://gitlab.com/DREES_code/public/outils/calcul_pension, cloné le 4 octobre 2026"
+      - "R/fonctionsCalculsPensions.R, R/fonctionsCalculsDivers.R, inst/extdata/parametres.Rds (lu par le paquet Python rdata)"
+      - "https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1071.pdf (COR, séance du 28 janvier 2009, document n° 11)"
+    existants:
+      - debut: "Il sert aux exploitants agricoles la pension major"
+        verdict: confirme
+        commentaire: "Toujours au commit ec5a871 (fonctionsCalculsPensions.R:2483-2488, 3117-3146) ; toujours absent du dépôt (config.py:394, un drapeau sans code). TRAJECTOiRE y ajoute le relèvement des pensions déjà liquidées (voir trajectoire)."
+    nouveaux:
+      - quoi: "Il retire du salaire annuel moyen les années sans trimestre cotisé, pour les liquidations depuis 2004. Le dépôt garde toute année où le revenu est positif (liquider.py:1707-1775, avec carriere.py:165-166) : une année de petit job, sous le seuil d'un trimestre, entre dans la moyenne de qui a moins de vingt-cinq années, ou moins que sa part d'années de polypensionné. La fiche salaire_annuel_moyen, « conforme », ne le dit pas."
+        preuve: "R/fonctionsCalculsPensions.R:1555-1557 (« Les années sans trimestres cotisées ne sont pas comptabilisées dans le SAM pour les liquidations après 2004 ») et 1636, au commit ec5a871"
+        verification: "R. 351-29 CSS, rédaction du 15 février 2004 (LEGIARTI000006750042) : le salaire « correspondant aux cotisations permettant la validation d'au moins un trimestre d'assurance selon les règles définies par l'article R. 351-9 » ; la rédaction de 1993 (LEGIARTI000006750041) ne le disait pas. COR, 28 janvier 2009, document n° 11, p. 3 : « les salaires dont le montant est insuffisant pour valider un trimestre d'assurance sont exclus du SAM [...] pour les pensions qui prennent effet à compter du 1er janvier 2004 ». Sa trimestrialisation des salaires de la MSA et du RSI avant 2017 (:1628) n'a pas été vérifiée."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte déjà, figées en janvier 2023, les règles de TRAJECTOiRE que le dépôt n'a pas : coefficients temporaires de l'Agirc-Arrco, versements uniques de l'Agirc-Arrco et de l'Ircantec, bonification du cinquième et majoration d'un dixième des cas types de la fonction publique, indicateurs de cycle de vie."
+        preuve: "R/fonctionsCalculsPensions.R:2701-2749 (calculeModulationTemporaire), 2750-2790 (calculeVfu), 3189 (calculIndicateursRetraite) ; R/fonctionsCalculsDivers.R:1951-1976 (bonifDeterministes), au commit ec5a871"
+        verification: "Les mêmes textes que pour trajectoire ; même famille, une seule confirmation."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+    ecarts_nouveaux:
+      - constat: "Sa législation s'arrête avant la réforme de 2023 : âge d'ouverture de 62 ans pour toute génération depuis 1955, 169 trimestres pour 1964 (ageDuree de inst/extdata/parametres.Rds)."
+        tranche: "La loi du 30 décembre 2025, que le dépôt certifie : 62 ans et 9 mois et 170 trimestres pour 1964 ; l'écart est celui d'un dépôt que la DREES ne met plus à jour."
+        preuve: "data/reference/legislation/age_ouverture_requis.csv (l. 139), duree_assurance_requise.csv (l. 129)"
+      - constat: "Les écarts de TRAJECTOiRE y sont déjà : VFU de la Cnav sans fin en 2016 (R/fonctionsCalculsPensions.R:2790), coefficients temporaires sans fin (:2712, 2738), arrondi inférieur du partage des années du SAM (:1653)."
+        tranche: "Loi n° 2014-40, art. 44 ; service-public.fr A15237 ; R. 173-4-3 CSS (voir trajectoire)."
+        preuve: "JORFARTI000028493878 ; R. 173-4-3, LEGIARTI000038790394"
+    conclusion: "C'est le moteur de TRAJECTOiRE figé en janvier 2023 et, selon la DREES, la réécriture en R de CALIPER : il fait mieux que le dépôt sur les minima des exploitants et sur le salaire annuel moyen depuis 2004, et porte les règles de TRAJECTOiRE. Sa législation est celle de la loi du 20 janvier 2014, ses paramètres s'arrêtent en 2022 ; ses écarts sont ceux de TRAJECTOiRE, plus la CSG des salaires prélevée sur les pensions."
+
+  - id: caliper
+    version: "Document de travail DREES n° 111 (novembre 2011) ; le code est devenu calcul_pension (commit ec5a871)"
+    lu_dans:
+      - "https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/loutil-caliper-calcul-interregimes-des-pensions-de-retraite, lue le 4 octobre 2026 par WebFetch (curl reçoit une page de test anti-robot)"
+      - "https://www.drees.solidarites-sante.gouv.fr/sites/default/files/2020-10/dt111.pdf (Lermechin, Duc, Burricand, « Présentation et applications de l'outil CALIPER »)"
+      - "https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1071.pdf"
+    existants:
+      - debut: "Il a été validé sur des pensions réelles, celles d"
+        verdict: confirme
+        commentaire: "Même tableau dans le DT 111, encadré 1 (aussi MSA salariés 90,9 %, Ircantec 91 %). La page de la DREES répond le 4 octobre : l'outil « a été réécrit en R », son code est ouvert à https://gitlab.com/DREES_code/public/outils/calcul_pension. La ligne caliper du registre est donc à corriger : publication ouvert, code et usage (executer_a_part) de calcul_pension, une seule confirmation avec lui et TRAJECTOiRE."
+    nouveaux:
+      - quoi: "Il calcule le SAM tel que la Cnav le calculait avant 1995 : la somme des meilleurs salaires rapportée aux trimestres validés de ces années, fois quatre, et non au nombre d'années. Le dépôt annualise à toute date (liquider.py:1784-1785, 1846) : une pension liquidée de 1973 à 1994 dont les meilleures années valident moins de quatre trimestres sort sous-estimée."
+        preuve: "DT 111, tableau 3 (p. 15, « calcul trimestrialisé / annualisé »), p. 54 (« À partir du 1er juillet 1995, les meilleurs salaires retenus n'ont plus été corrigés du nombre de trimestres validés au cours de ces meilleures années ») et tableau 4 (p. 61)"
+        verification: "COR, 28 janvier 2009, document n° 11, p. 3 : « Jusqu'en 1994, le calcul du SAM s'effectue en rapportant la somme des salaires annuels retenus au nombre de trimestres correspondant aux années considérées, et en multipliant ce rapport par quatre » (circulaire Cnav 1/73 du 3 janvier 1973) ; « depuis 1995, le salaire annuel moyen est égal à la somme des salaires annuels retenus divisée par le nombre d'années correspondant » (circulaire Cnav 95/94 du 29 décembre 1994). La date exacte, 1er janvier ou 1er juillet 1995, se lit dans la circulaire."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il exclut du SAM, depuis 2004, les années qui ne valident aucun trimestre ; le dépôt les garde. Le point est détaillé sous calcul_pension, qui le code."
+        preuve: "DT 111, p. 56-57 (« Depuis la réforme de 2003, les années qui ne permettent pas de valider de trimestres ne sont pas [...] prises en compte dans le calcul du salaire de référence »)"
+        verification: "R. 351-29 CSS (LEGIARTI000006750042)."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+    ecarts_nouveaux: []
+    conclusion: "Son code est désormais calcul_pension : CALIPER ne compte plus que pour une confirmation avec lui et TRAJECTOiRE. Sa documentation de 2011 apprend encore au dépôt le SAM trimestrialisé d'avant 1995 et l'exclusion des années sans trimestre depuis 2004, et lui donne une précision à viser, celle d'une validation sur des pensions réelles ; elle décrit la législation de 2010."
+
+  - id: ancetre
+    version: "versions 2022 à 2024 (pseudo-EIR calés sur l'EACR), lues dans leurs publications"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_03_SI_Drees.pdf (COR, 19 décembre 2024, document n° 3)"
+      - "COR, rapport annuel de juin 2026 (RA_2026_def.pdf), tableau 3.2, figures 2.5 et 4.5"
+      - "EACR du 26 mai 2026, feuille A-Prelev_sociaux, copiée dans legiretraite (inst/extdata/drees/eacr/a-prelevements-sociaux.parquet, commit 98d2cbb)"
+    existants:
+      - debut: "Il décrit des personnes, non des caisses : un pseu"
+        verdict: a_corriger
+        commentaire: "Le fond tient, la preuve non : le document n° 3 du 19 décembre 2024 (17 pages, une seule image, un logo) n'a ni tableau 3.2 ni ces montants. 1 610 € au régime général et 2 570 € aux civils de l'État sont au tableau 3.2 du RA de juin 2026 (p. 161), « fin 2024 », « Sources : Drees, EACR, modèle Ancètre ». Le dépôt n'a toujours pas de pension par régime principal (caracteristiques_retraites.csv n'en porte que les bénéficiaires d'un minimum)."
+      - debut: "Il projette l'âge de départ : 63,5 ans pour la gén"
+        verdict: a_corriger
+        commentaire: "Ce n'est pas ANCETRE qui projette : la figure 4.5 du RA 2026 (p. 216) dit « modèle Ancètre pour le constaté, calculs SG-COR à partir des évolutions du modèle Trajectoire pour le projeté ». Le document de 2024 cité n'a pas ces figures ; elles sont au RA 2026 (figure 2.5, p. 76 : 63,1 ans en 2025, 64,6 ans à partir des années 2040 ; texte p. 215 : par génération, « autour de 64,6 ans à partir des générations nées dans les années 1975 »). Les « 63,5 ans pour 1965, 64,5 ans de 1980 à 2000 » ne s'y lisent pas. Le point passe à TRAJECTOiRE (voir trajectoire) ; ANCETRE n'y garde que l'âge constaté."
+    nouveaux:
+      - quoi: "Il donne la répartition tous régimes, sans doublon, des retraités par taux de CSG : en 2024, droits directs, 3 815 436 exonérés, 2 320 138 au taux réduit, 3 742 249 au taux médian, 7 420 422 au taux plein (22,1, 13,4, 21,6 et 42,9 %), et les droits dérivés. La page Coût écrit que « le dépôt ne sait pas dire combien le sont » (pages.js:10836-10839) et retire 9,1 % à tous."
+        preuve: "EACR, feuille A-Prelev_sociaux, lignes de source « Ancetre 2024 », année 2024 ; copiées dans legiretraite, inst/extdata/drees/eacr/a-prelevements-sociaux.parquet, au commit 98d2cbb"
+        verification: "Méthode : comptage tous régimes, au taux que les caisses appliquent ; c'est la donnée du point de legiretraite, qui la redistribue (une confirmation). Des effectifs, non des masses : elle borne le taux effectif sans le donner."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.2"
+    ecarts_nouveaux: []
+    conclusion: "Il donne ce qu'aucune caisse ne donne seule — des retraités sans doublon, leur pension par régime principal, leur répartition par taux de CSG — que la page Coût n'a pas. Mais les deux points du registre citent un document qui ne les contient pas, et la projection de l'âge de départ est celle de TRAJECTOiRE."
+
+  - id: promess
+    version: "2010, document de travail DREES n° 102 (Aubert, Duc, Ducoudré, décembre 2010) ; non public, refondu dans TRAJECTOiRE"
+    lu_dans:
+      - "https://www.insee.fr/fr/information/4497060"
+      - "https://drees.solidarites-sante.gouv.fr/sites/default/files/2020-10/dt102.pdf (lu par WebFetch)"
+      - "https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1510.pdf (COR, 4 mai 2011, document n° 6, P. Aubert, « L'effet horizon : de quoi parle-t-on ? »)"
+    existants: []
+    nouveaux:
+      - quoi: "Il modélise les fins de carrière après 54 ans et l'effet horizon : une probabilité de cesser tout emploi pour chacun des six âges qui précèdent l'âge d'ouverture, décalée quand cet âge recule, et une sortie plus fréquente après 55 ans de qui a déjà sa durée. Le dépôt raisonne à comportement inchangé, aux âges déclarés (docs/limites.md:2005-2010)."
+        preuve: "COR, 4 mai 2011, document n° 6 : « une probabilité spécifique pour chacun des 6 âges précédant l'âge d'ouverture des droits [...] répliquée autant de fois qu'il y a d'année de report de l'âge d'ouverture des droits » (renvoi au DT 102, encadré 2, p. 17-19)"
+        verification: "Méthode : effet horizon « atténué », entre maintien en emploi et décalage total ; ses paramètres datent de 2010, et TRAJECTOiRE le reprend depuis 50 ans (docs/en-bref.qmd)."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le comportement inchangé est un choix écrit du dépôt ; PROMESS est fermé et ancien, et son successeur est TRAJECTOiRE."
+    ecarts_nouveaux: []
+    conclusion: "Fermé, de 2010, refondu dans TRAJECTOiRE : seul l'effet horizon de ses fins de carrière se confronte au dépôt, qui raisonne à comportement inchangé. Rien d'autre de ses publications ne vaut contre le dépôt d'aujourd'hui."
+
+  - id: legiretraite
+    version: "0.1.6, commit 98d2cbb du 18 septembre 2026 (le même qu'au 1er octobre)"
+    lu_dans:
+      - "https://git.drees.fr/drees_code_public/outils/legiretraite, cloné le 4 octobre 2026"
+      - "inst/extdata/{aod,aad,ageMaximum,dureeRequise,dureeProratisation,revalo}.csv ; inst/extdata/drees/eacr/*.parquet (lus par pyarrow) et millesime.csv ; R/aod.R"
+    existants:
+      - debut: "Il embarque les tables de l'EACR, dont la répartit"
+        verdict: a_corriger
+        commentaire: "Toujours vrai, toujours absent du dépôt (pages.js:10836-10839). Corriger l'année : la table porte annee = 2024, source « Ancetre 2024 », non « fin 2023 » ; la donnée est d'ANCETRE, que legiretraite redistribue (voir ancetre)."
+    nouveaux:
+      - quoi: "Il embarque, prêtes à lire, les autres tables de l'EACR du 26 mai 2026 : E, les minima (bénéficiaires du minimum contributif, du minimum garanti, de la PMR) ; H, les conditions de liquidation (taux plein, décote, surcote, par motif, en flux et en stock) ; B, les liquidants par âge, durée et motif ; C, les droits directs par âge ; et les coefficients Agirc-Arrco de 2019 à 2023 (solidarité à 10 et 5 %, majorants, exemptés). Le dépôt ne lit de l'EACR que la feuille A-Cadrage et l'âge conjoncturel (scripts/fetch/drees_eacr.py:6-35)."
+        preuve: "inst/extdata/drees/eacr/{e-minima,h-conditions-liquidation,b-liquidants,c-droits-directs,coefficients-agirc-arrco}.parquet et millesime.csv, au commit 98d2cbb"
+        verification: "Méthode : comptages exhaustifs des caisses, cibles de contrôle pour la page Coût (part des liquidants au minimum, décotés, surcotés) et pour les coefficients temporaires ; ils se lisent aussi à la source, classeur « 62 EACR diffusée » du 26 mai 2026 sur data.drees."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.3"
+    ecarts_nouveaux: []
+    conclusion: "Ses paramètres de législation ne valent pas mieux que les séries certifiées du dépôt, et les trois écarts du registre tiennent au même commit (dureeRequise.csv:136-137, aod.csv:31, 33, 85, 87). Ses âges sont à jour de la loi du 30 décembre 2025, ses durées en sont restées à la loi de 2023, ses revalorisations vont jusqu'en janvier 2026. Son apport est l'EACR de mai 2026 mise en tables, que le dépôt ne lit qu'en partie."

@@ -349,6 +349,13 @@ fichiers:
   docs/archives/conventions.md:
     defaut: recit
 
+  # Le relevé des autres modèles du 4 octobre 2026 (action 138) : la vue
+  # modèle par modèle tirée du registre ce jour-là, et, dans le dossier du
+  # même nom, les dix rapports des recherches tels qu'ils sont arrivés. Le
+  # registre, data/reference/referents.yaml, fait foi.
+  docs/archives/releve_des_autres_modeles.md:
+    defaut: recit
+
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.

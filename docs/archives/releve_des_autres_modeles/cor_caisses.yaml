@@ -1,0 +1,432 @@
+# Le rapport de la recherche « cor_caisses » (les maquettes du COR et les modèles des caisses et des ministères), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+groupe: cor_caisses
+# Dépôt lu à 714ad0c, puis à 4533a27 (ce commit ne change que des documents : veille.yaml, etat.md, feuille_de_route.md). Rien n'a été écrit dans le dépôt.
+# Fichiers de travail : scratchpad/cor_caisses/pdf/ (PDF et classeurs téléchargés), scratchpad/cor_caisses/outils/xlsx.py (lecteur xlsx).
+modeles:
+  - id: maquette_globale_cor
+    version: "rapport annuel du COR de juin 2026 (RA_2026_def.pdf) et ses données P1, P2, P3_2, P4 ; annexe méthodologique en ligne 2026 ; classeur par régime du COR (complément du RA 2024, V2 de février 2025) ; doc. n° 7 du 20 avril 2023"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2026-07/RA_2026_def.pdf"
+      - "https://www.cor-retraites.fr/sites/default/files/2026-06/Données_RA2026_P2.xlsx (fig. 2.3, 2.6, 2.7, 2.18-2.20, 2.23, 2.24, tab. 2.10, 2.11)"
+      - "https://www.cor-retraites.fr/sites/default/files/2026-07/Données_RA2026_P1.xlsx (tab. 1.1, fig. 1.14, 1.15)"
+      - "https://www.cor-retraites.fr/sites/default/files/2026-06/Données_RA2026_P3_2.xlsx (fig. 3.3, 3.6, 3.7)"
+      - "https://www.cor-retraites.fr/sites/default/files/2026-06/Données_RA2026_P4_0.xlsx (fig. 4.3)"
+      - "https://www.cor-retraites.fr/sites/default/files/2026-06/Annexe_méthodo_en_ligne_2026.pdf"
+      - "https://www.cor-retraites.fr/sites/default/files/2025-02/Données_régimes_publi_V2.xlsx (feuilles FSV, CNRACL, IRCANTEC, FPE)"
+      - "https://www.cor-retraites.fr/sites/default/files/2023-04/Doc_07_Organisation_Projections.pdf"
+      - "https://www.cor-retraites.fr/sites/default/files/2024-12/RA_2024_finale_impression.pdf"
+    existants:
+      - debut: "Il décompose la dépense en effectifs et pension re"
+        verdict: confirme
+        commentaire: "Relu dans les données P2 : pension relative 54,6 % (2025) puis 45,3 % (2070) (fig. 2.3) ; Cnav 24,2 puis 24,2 %, Agirc-Arrco 18,5 puis 10,7 %, FPE 74,7 puis 47,0 %, CNRACL 43,9 puis 34,6 % (fig. 2.7, p. 80). `scripts/fetch/cor_comptes_retraite.py:153-158` ne lit toujours que comptes, solde, structure et déterminants des ressources. À lire aussi pour la couverture que `limites.md:2847-2851` suppose constante : l'âge conjoncturel de départ, 63,1 puis 64,6 ans (fig. 2.5), et les taux de retraités par âge (fig. 4.6)."
+      - debut: "Il chiffre ce qui équilibrerait le système d'ici 2"
+        verdict: confirme
+        commentaire: "Tableau 2.11 (p. 128 du PDF) : −1,4 / −3,5 / −4,5 / −8,6 % des pensions, ou +0,4 / 1,1 / 1,4 / 2,8 points de prélèvement (2030, 2045, 2050, 2070). Figure 2.24 : âge d'équilibre de 67,6 ans en 2070, contre 64,6. Le levier de l'âge reste écarté à `cout.py:1362`."
+      - debut: "Il publie, par cas type et génération, les taux de"
+        verdict: a_corriger
+        commentaire: "Le TRI net du non-cadre vaut 1,98 % pour la génération 1940, 0,88 % pour 1970, 0,80 % pour 1980 et 0,83 % pour 2000 (fig. 3.7, p. 142). « 0,8 % dès 1970 » doit devenir « 0,9 % en 1970, 0,8 % dès 1980 ». Attribution : le TRI est un « calcul SG-COR ». Les taux de remplacement (fig. 3.3) et la durée de retraite (fig. 3.6) viennent de TRAJECTOiRE (« Source : Drees, modèle Trajectoire »), et non de la maquette globale."
+      - debut: "Il projette l'ASPA du FSV, 0,15 % du PIB en 2023 e"
+        verdict: a_corriger
+        commentaire: "Le texte du RA 2024 ne contient pas ces chiffres. La preuve est le classeur par régime (complément du RA 2024), feuille FSV : dépenses du FSV de 0,68 % du PIB en 2023 et 0,52 % en 2070 ; « Pec Aspa » à 22,6 % puis 21,2 % de ces dépenses, soit 0,15 puis 0,11 % du PIB. Bloc « Sensibilité aux hypothèses d'indexation de l'Aspa » : 0,70 % contre 0,50 % en 2070 dans le scénario de productivité à 1,3 %, et 0,66 contre 0,57 % à 0,4 %. C'est l'exercice de 2024, sous ses propres hypothèses."
+    nouveaux:
+      - quoi: "Il projette la dépense par groupe de régimes (fig. 2.6, p. 80). En 2025 puis 2070 : LURA 6,00 puis 8,07 % du PIB, FPE 2,15 puis 1,26, CNRACL 0,97 puis 1,13, complémentaires 4,03 puis 4,40, régimes spéciaux 0,64 puis 0,22, non-salariés 0,33 puis 0,21. Il projette aussi le solde par groupe (fig. 2.12, 2.15). La page Coût n'a ni cette ventilation ni de masses par régime. Elle pèse ses cas types par des têtes de caisse (`castypes.py:299-337`), qui comptent deux fois le polypensionné (`limites.md:2688-2694`). Ainsi l'Ircantec donne 2,1 millions de têtes (9 % des poids en 2024) à une carrière complète, `contractuel_public` (`castypes.py:285-291`), alors que sa pension relative est de 4,5 % (classeur, 2023). Ventiler la trajectoire du dépôt par groupe dirait d'où viennent les trois points d'écart de 2070 (18,24 % contre 15,3 %). Peser par les masses supprimerait le double compte."
+        preuve: "RA 2026, données P2, fig. 2.6 « hors transferts internes » ; classeur par régime 2024, feuille IRCANTEC, blocs « Pension relative » et « Effectifs de retraités de droit direct »"
+        verification: "Méthode. Le COR agrège des masses régime par régime en neutralisant leurs liens financiers (annexe méthodologique 2026, § 1.1 ; doc. 7 du 20 avril 2023, § 2.1). Une masse se pèse en euros, et le dépôt écrit lui-même qu'un effectif de caisse n'est pas un effectif de personnes."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Il publie la situation sur le marché du travail par âge fin, de 50 à 69 ans (fig. 4.3, p. 215, enquête Emploi 2023-2025). À 60 ans, 62,2 % sont en emploi pour 86,9 % de non-retraités, soit 72 % des non-retraités en emploi. À 61 ans, 50,4 % pour 75,8 %, soit 66 %. Le reste est surtout inactif en mauvaise santé (14 %) ou au chômage (4 %). Le dépôt suppose que tous les reportés travaillent (`config.py:863`, part_reportes_en_emploi = 1.0). Il le déclare comme un plafond (`limites.md:1732-1745`), et ce paramètre décide de l'essentiel de ce que l'âge légal fait au solde : −0,46 point à 100 %, −0,63 à 50 %."
+        preuve: "RA 2026, données P4, figure 4.3 (« Sources : Insee, Enquête Emploi »), lignes 60 et 61 ans"
+        verification: "Donnée de l'enquête Emploi de l'INSEE, publiée par le COR. L'étape 3 de l'action 138 demande déjà « la part des reportés en emploi lue à l'INSEE au lieu du plafond de un »."
+        confronte: cout
+        importance: forte
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Il chiffre la sensibilité de la dépense aux hypothèses démographiques. En 2070, contre 15,30 % du PIB au scénario central : 14,34 % en fécondité haute et 16,34 % en basse ; 14,30 % en espérance de vie basse et 16,35 % en haute ; 14,16 % en solde migratoire haut et 16,40 % en bas (fig. 2.18 à 2.20, p. 113-115). Il publie aussi les soldes correspondants. La page Coût ne porte que le scénario central de l'INSEE (`limites.md:2815-2817`). Elle a déjà les variantes de productivité et de chômage (`data/reference/macro/hypotheses_projection.yaml:94-165`)."
+        preuve: "RA 2026, données P2, fig. 2.18, 2.19, 2.20 (lignes « Var fécondité haute/basse », « Var mortalité haute/basse », « Var smi haut/bas »)"
+        verification: "Méthode : l'INSEE publie ces variantes avec ses projections de 2026, et le COR les fait passer dans tous les régimes. La plage est d'un point de PIB de chaque côté, du même ordre que l'écart de la page au COR."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: "Il projette les rémunérations publiques sur les hypothèses de la Direction du budget. Le traitement indiciaire perd 2,6 % en réel de 2025 à 2037 et gagne 22,6 % sur toute la période, contre +35,7 % pour le revenu moyen d'activité. La part des primes passe de 26,8 % (2023) à 33,7 % (2037) à l'État, de 26,6 à 32,8 % à la FPT, de 25,2 à 31,3 % à la FPH (p. 55-56, tab. 1.3, fig. 1.14-1.15). Le dépôt garde une part de primes fixe par cas type (`castypes.py:176, 186, 205`), qui ne sert que d'assiette au RAFP (`carriere.py:114-115`) : le traitement de ses fonctionnaires suit le salaire moyen. La variante du COR sur ces hypothèses déplace la dépense de 2070 de 0,15 point (15,45 % contre 15,30 %, fig. 2.23, p. 120)."
+        preuve: "RA 2026, p. 55 (« une baisse de 2,6 % du traitement indiciaire […] entre 2025 et 2037 ») ; données P1, fig. 1.15 ; données P2, fig. 2.23"
+        verification: "Hypothèses officielles de l'exercice (« Source : hypothèses Direction du budget pour COR, juin 2026 »), reprises par Pablo et Canopée. C'est une convention, pas une loi, mais la seule publiée."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Il publie les effets macroéconomiques des leviers (tab. 2.10, p. 125). Un an d'âge d'ouverture des droits ajoute, à vingt ans, 0,1 à 0,8 % de PIB, 200 000 à 240 000 emplois et 0,3 à 0,65 point de solde public. Une hausse des cotisations retire 15 000 à 80 000 emplois. Le dépôt est comptable de bout en bout et l'assume (`limites.md:2968-2972`), alors que la proposition relève l'âge légal à 65 ans."
+        preuve: "RA 2026, tableau 2.10 (« SG COR d'après les simulations de la DG Trésor (Mésange et modèle comptable), I-MIP (modèle CepreHANK) et OFCE (modèle EmeRaude) »)"
+        verification: "Méthode : trois modèles indépendants, présentés en fourchette. C'est plus proche du réel qu'un emploi figé, mais chaque multiplicateur reste une hypothèse de modèle."
+        confronte: cout
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le dépôt écarte le bouclage macroéconomique et l'assume. En tirer une bande de ces multiplicateurs, sans modèle macroéconomique, est un choix du programme."
+      - quoi: "Il projette ce que le FSV verse aux régimes de base pour les périodes de chômage : 61,9 % de ses dépenses en 2023 (0,68 % du PIB) et 59,2 % en 2070 (« Pec cot chômage RB »). C'est un versement fait par un tiers. Pourtant, pour une année de chômage, le compte notionnel ne porte que ce que l'Unédic verse aux complémentaires (`moteur/compte.py:574-577`)."
+        preuve: "classeur par régime du COR (complément du RA 2024), feuille FSV, bloc « Structure des dépenses »"
+        verification: "Comptes du FSV projetés par la DSS (doc. 7 du 20 avril 2023, note 3). La version en vigueur de L. 135-2 n'est pas lisible dans l'index LEGI (dates incohérentes) : à relire."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le principe de l'action 141 (le compte porte ce qu'un tiers a versé) s'arrête aux complémentaires. Y faire entrer la prise en charge du FSV au régime de base est un choix du programme, à chiffrer."
+      - quoi: "Il tient le stock : les réserves des régimes en répartition valent 223,9 Md€ fin 2025, 7,5 % du PIB, dont 91 % aux complémentaires et 52 % à l'Agirc-Arrco (p. 100, tab. 2.3). La dette de la page Coût part de zéro et ne les porte pas (`cout.py:1531-1535`)."
+        preuve: "RA 2026, p. 100 et tableau 2.3 (p. 102)"
+        verification: "Valeur de marché déclarée par les régimes. Le choix de partir de zéro est écrit et motivé : ne pas mêler deux périmètres."
+        confronte: cout
+        importance: faible
+        etat: a_trancher
+        raison: "Partir des réserves, et de la dette de la CADES, ferait du stock un patrimoine net. Le dépôt a choisi de ne porter que ce que les soldes à venir ajoutent."
+      - quoi: "Il sépare le solde en une part conjoncturelle et une part structurelle (écart de production), et ses tax gap et pension gap visent l'équilibre structurel. Le dépôt ne fait pas cette séparation (aucune occurrence dans `cout.py` ni `donnees/`)."
+        preuve: "annexe méthodologique en ligne 2026, § 1.3 ; RA 2026, p. 125-128"
+        verification: "Méthode du rapport économique, social et financier."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "L'écart de production vaut −0,2 à −0,7 % du PIB de 2025 à 2029 (tab. 1.1), et les scénarios de long terme le referment. Effet négligeable sur des moyennes 2026-2070, le seul horizon de la page."
+    ecarts_nouveaux:
+      - constat: "Dans le classeur Données_RA2026_P2, la feuille du tableau 2.11 porte des notes périmées : « Sources : projections COR - juin 2025 », et une lecture « baisse de 3,7 % dès 2025 […] sur les 15 prochaines années ». Le PDF de 2026 donne une baisse de 1,4 % sur 5 ans, et dit tour à tour « dès 2026 » et « à partir du 1er janvier 2025 »."
+        tranche: "Les valeurs du classeur sont celles du tableau du PDF (p. 128), daté juin 2026 ; seules les notes sont restées de 2025. Un script qui daterait le millésime par ces notes se tromperait."
+        preuve: "Données_RA2026_P2.xlsx, feuille « Tab 2.11 », lignes 12 et 15 ; RA_2026_def.pdf, p. 128"
+    conclusion: "La maquette globale décompose ce que la page Coût agrège : la dépense par groupe de régimes, les effectifs et la pension relative, les variantes démographiques, les leviers et leurs effets macroéconomiques, les réserves. Elle localiserait l'écart de 2070 (18,24 % contre 15,3 %), et son enquête Emploi donne la part des reportés en emploi que le dépôt fixe à un."
+
+  - id: maquette_sg_cor
+    version: "doc-4018, séance du COR du 5 juillet 2017"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2019-06/doc-4018.pdf"
+    existants:
+      - debut: "Il soumet un système stylisé à quatre chocs, en an"
+        verdict: confirme
+        commentaire: "doc-4018, p. 13 du PDF : déficits « de l'ordre de 10% de la masse des cotisations, contre près de 90% pour les régimes en points et en annuités », pendant « environ 40 ans ». Il y a bien quatre chocs : espérance de vie, fécondité permanente, fécondité transitoire, salaires réels (§ 2.1 à 2.3). L'étape 11 de l'action 138 porte déjà « les chocs stylisés du secrétariat général du COR »."
+    nouveaux: []
+    ecarts_nouveaux: []
+    conclusion: "Rien de nouveau au-delà des chocs stylisés, déjà au registre (138.11). Ses autres conclusions confirment des choix du dépôt (`limites.md:2958-2962`) : l'équilibre par construction quand on indexe sur la masse salariale, et un coefficient qui doit anticiper la croissance quand les pensions suivent les prix."
+
+  - id: simulateur_cor
+    version: "documentation technique de juillet 2016, copie de `brunoscherrer/retraites` au commit f3c2d92 (clonée dans scratchpad/modeles/brunoscherrer_retraites) ; page du simulateur relue le 4 octobre 2026"
+    lu_dans:
+      - "https://www.cor-retraites.fr/simulateur/ (« temporairement fermé pour révision des scénarios économiques »)"
+      - "brunoscherrer/retraites@f3c2d92:doc/Documentation_technique_vf.pdf, p. 3"
+    existants:
+      - debut: "Il boucle la projection par une équation, « S = B "
+        verdict: confirme
+        commentaire: "p. 3 : « S = B x [ T – ( NR / NC ) x ( P + dP ) ] » ; un an d'âge retire G retraités et ajoute 0,5 G cotisants ; effet de 0,9 point de PIB en 2018 à 0,6 en 2060 avec le facteur 0,5. Le simulateur est toujours fermé."
+    nouveaux:
+      - quoi: "Sa documentation fixe à 0,5 la part des retraités retardés qui deviennent cotisants, parce qu'« une partie des nouveaux retraités ne sont plus en emploi au moment où ils liquident leurs droits ». Elle en publie la sensibilité : des facteurs de 0,25 ou 0,75 déplacent l'effet d'un an d'âge d'environ 0,1 point de PIB (en 2018 : 0,8 / 0,9 / 0,9 point). Le dépôt prend 1 par défaut (`config.py:863`), un plafond qu'il déclare (`limites.md:1732-1745`) et ne mesure qu'à 100, 50 et 0 %."
+        preuve: "documentation technique du simulateur du COR, juillet 2016, p. 3 (« Le facteur 0,5 est choisi conventionnellement… ») et son tableau de sensibilité"
+        verification: "C'est une convention du COR, pas une mesure. Elle est plus proche du réel qu'un facteur de un, que l'enquête Emploi dément : 66 à 72 % des non-retraités sont en emploi à 60-61 ans (voir maquette_globale_cor)."
+        confronte: cout
+        importance: forte
+        etat: a_reprendre
+        chantier: "138.3"
+    ecarts_nouveaux: []
+    conclusion: "Fermé, le simulateur ne se confronte que par sa documentation de 2016. Celle-ci apporte l'équation de bouclage (déjà au registre) et le facteur de 0,5 avec sa sensibilité : c'est le premier repère pour remplacer le plafond de un du dépôt."
+
+  - id: prisme
+    version: "doc. n° 9 du COR (5 mars 2020) et son annexe Cnav « Une estimation de l'importance des mécanismes de solidarité » (18 octobre 2019) ; étude d'impact du PLFRSS 2023 (art. 7) ; étude Cnav de novembre 2009"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%209_%20DSPR_CNAV.pdf"
+      - "https://www.assemblee-nationale.fr/dyn/16/textes/l16b0760_etude-impact.pdf (p. 39-40)"
+      - "https://www.statistiques-recherche.lassuranceretraite.fr/app/uploads/2009/11/simulations-effets-passage-calcul-pensions-rg-a-systeme-en-comptes-notionnels_evolution.pdf (p. 6 du PDF)"
+      - "RA 2026, p. 107 ; annexe méthodologique 2026, § 2.3"
+    existants:
+      - debut: "Il a chiffré la mesure d'âge du PLFRSS 2023 : 3,3,"
+        verdict: confirme
+        commentaire: "Étude d'impact du PLFRSS 2023, art. 7, IV.1 (p. 39) : mesure « évaluée en mobilisant le modèle Prisme de la Cnav », « 3,3 Md€ en 2024, 5,3 Md€ en 2025, et 7,5 Md€ en 2026 pour l'ensemble du système de retraite » (2,1 / 3,4 / 4,9 sur les régimes de base). Le dépôt n'a toujours pas d'univers sans la réforme : `data/reference/univers/` compte l'actuel et cinq notionnels. Second témoin à confronter depuis : la suspension de la LFSS 2026, « environ 1,8 milliard d'euros courants chaque année » de 2026 à 2032 (RA 2026, p. 107, TRAJECTOiRE)."
+      - debut: "Il différencie le non-recours à l'ASPA « selon la "
+        verdict: confirme
+        commentaire: "Doc. n° 9, p. 23 du PDF : « une part de non-recours est introduite, différenciée selon la situation conjugale, le sexe, le montant de l'allocation ainsi que l'âge de l'assuré ». Le taux uniforme du dépôt est maintenant à `config.py:877`."
+    nouveaux:
+      - quoi: "Il chiffre, dispositif par dispositif, la part de la solidarité dans les masses de droits propres de tous les régimes : 26 % en 2016 et 25 % en 2070. Détail : chômage 5,9 %, maladie-maternité 1,5 %, invalidité 0,6 %, carrières longues 2,3 %, taux pleins dérogatoires 1,4 %, départs catégoriels 3,4 %, majoration pour trois enfants 3,3 %, MDA 2,3 %, AVPF 1,3 %, minima 3,3 %. Il les ventile aussi par décile, par sexe (40 % de la pension des femmes de la génération 1950, 19 % des hommes) et par type de départ. Pour le total de ses avantages, le dépôt n'a que le « de l'ordre d'un cinquième » du COR de 2010 (`avantages_non_contributifs.yaml:81-88`, « le seul contrôle externe du total »). Ses masses de cas types sont des planchers qu'il chiffre lui-même à 3 % de la dépense (`avantages.py:36-40`)."
+        preuve: "COR, doc. n° 9 du 5 mars 2020, annexe Cnav (Beaufort, Mattmuller, Mayo), p. 25-40 du PDF : « la solidarité représenterait aujourd'hui environ 26 % des masses de prestations de droits propres versées »"
+        verification: "Méthode : chaque pension est recalculée sans le dispositif, à date de départ inchangée, puis recalée sur le total (p. 28-29). Recoupé par la DREES : 22,7 % au sens large en 2016 (Cheloudko 2019, É&R n° 1116, cité p. 32). Législation de 2019, antérieure à la réforme de 2023."
+        confronte: cout
+        importance: forte
+        etat: a_reprendre
+        chantier: "nouveau: les masses des avantages confrontées aux parts publiées (Cnav 2019, DREES 2019)"
+      - quoi: "Sa bascule de 2009 en comptes notionnels intègre au coefficient de conversion le décès des actifs avant la retraite : « L'effet correcteur dû au décès prématuré d'un certain nombre d'actifs augmente les coefficients de conversion d'environ 7% pour les premiers liquidants (en 2012) et d'environ 4% pour les pensions délivrées en 2050. » C'est le gain d'héritage que le dépôt n'a pas, et le seul chiffrage français."
+        preuve: "Cnav, Albert et Oliveau, novembre 2009, p. 6 du PDF"
+        verification: "Méthode : c'est le même mécanisme qu'en Suède (SFB 62:9-17) et en Norvège, déjà au registre en a_trancher (+9,6 % et +8,9 % pour la génération 1960)."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le gain d'héritage est un choix du programme que le README ne fait pas (étape 13 de l'action 138). Ce chiffre français complète les chiffres étrangers."
+      - quoi: "Il applique aux retraités de la Cnav des quotients de mortalité estimés sur ses fichiers (2013-2014), par type de pension (normale, inapte, invalide), et ceux de l'INSEE aux autres. Les retraités pour inaptitude vivent au moins quatre ans de moins (Cadr@ge n° 40). La page Coût fait vivre chaque cas type comme la population générale (`cout.py:2151-2152`). C'est le même point que misraa."
+        preuve: "doc. n° 9, p. 14 du PDF"
+        verification: "Méthode, sur données de gestion ; la reprise est décrite à misraa."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: "Il projette le rapport de la durée de retraite à la durée de vie (« proche de 28 % » pour les générations que touche la réforme de 2023) et la pension moyenne à la liquidation par sexe et génération. Le COR lui emprunte sa « décomposition de la durée de vie » (doc. 7 du 20 avril 2023, p. 6). Le dépôt ne calcule aucune durée de retraite (aucune occurrence dans `src/`)."
+        preuve: "étude d'impact du PLFRSS 2023, art. 7, IV.2.d, p. 40 (« Source : Cnav - Modèle PRISME 2022 »)"
+        verification: "Méthode ; c'est l'un des indicateurs du COR, et l'action 143 en a besoin."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.9"
+      - quoi: "Il fait partir chacun par 48 équations logistiques au pas mensuel (estimées sur 2011-2016), selon la carrière, le taux, la carrière longue et l'inaptitude. Il valide sur un échantillon test : 18,6 % de départs à 60 ans en carrière longue simulés pour 18,7 % observés. Il simule aussi le cumul emploi-retraite et le compte de prévention. Le dépôt fait partir chaque cas type au taux plein de sa génération (`castypes.py:84`) et suppose la couverture constante (`limites.md:2847-2851`)."
+        preuve: "doc. n° 9, p. 18-21 et 24 du PDF"
+        verification: "Méthode, sur données de gestion. Mais les modules de départ donnent des dépenses « assez proches », le système étant « actuariellement neutre à la marge » (DG Trésor, DT 2016/04, p. 29)."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.14"
+    ecarts_nouveaux:
+      - constat: "Sa bascule de 2009 calcule les coefficients de conversion sur des tables transversales, alors que ses assurés meurent selon des tables longitudinales : « Les pensions sont par conséquent plus élevées que celles qui permettraient d'épuiser le capital notionnel » (p. 6 du PDF)."
+        tranche: "La Cnav le reconnaît elle-même. Le dépôt lit une table de génération (`limites.md:2952-2955`)."
+        preuve: "Cnav, novembre 2009, p. 6 ; docs/limites.md:2952-2955"
+    conclusion: "Prisme fait mieux sur ce qu'une population seule permet de voir : la part et la distribution des droits non contributifs, la mortalité par type de pension, les départs et le non-recours. Ses chiffrages publiés (réforme de 2023, solidarité de 26 %, gain d'héritage de 2009) se confrontent dès maintenant."
+
+  - id: moteur_cnav
+    version: "huit fiches « retraite » des traitements algorithmiques de l'Assurance retraite, version 03/2026"
+    lu_dans:
+      - "https://www.lassuranceretraite.fr/portail-info/hors-menu/footer/traitements-algorithmiques.html et ses PDF (montant, MDA ×2, minimum contributif, majoration du minimum, CER ×3)"
+    existants:
+      - debut: "À chaque date de revalorisation, il applique le co"
+        verdict: confirme
+        commentaire: "Fiche « Cumul emploi-retraite : revalorisation du montant du droit » (03/2026) : à chaque date, le coefficient s'applique au montant théorique, puis le montant retenu est le minimum entre ce montant et le plafond de la date ; « Environ 35 000 décisions sont prises chaque année ». D. 161-2-22-1 est en vigueur (LEGIARTI000047958952, depuis le 1er septembre 2023 : 5 % du plafond annuel). Le dépôt ne revalorise toujours pas la nouvelle pension (`seconde_pension.yaml:119-122`). Sa propre fiche note que les premières pensions de 2027 n'ont plus de plafond (`seconde_pension.yaml:131-132`) : la comparaison au plafond ne vaut donc que pour les secondes pensions de 2023 à 2026."
+    nouveaux: []
+    ecarts_nouveaux:
+      - constat: "Deux fiches décrivent « une majoration de durée d'assurance associée au minimum contributif, destinée à garantir un niveau minimal de la retraite » : « calcul et proratisation de la majoration de durée d'assurance » et « détermination de l'ouverture du droit à majoration de durée d'assurance »."
+        tranche: "La majoration de durée d'assurance est un droit pour enfant (L. 351-4). Ce que majore le minimum contributif, c'est son montant, « au titre des périodes ayant donné lieu à cotisations » (L. 351-10, LEGIARTI000048697787). L'intitulé confond deux dispositifs ; c'est une erreur de rédaction, et rien n'en découle pour le calcul."
+        preuve: "fiches 03/2026 citées ; index LEGI, L. 351-10 et L. 351-4"
+    conclusion: "Les fiches décrivent des étapes sans formules ; le dépôt les couvre toutes (coordination internationale, LURA, minimum contributif, cumul et seconde pension), à la revalorisation près, déjà au registre. Ce qui se confronte reste les exemples officiels de la Cnav, déjà au banc."
+
+  - id: rgcu_mvc
+    version: "doc. n° 8 du COR (19 décembre 2024, DSS)"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_08_RGCU%20-DSS.pdf"
+      - "index JORF : arrêté du 20 juillet 2018 (JORFTEXT000037252519), dont l'index ne porte pas l'annexe"
+    existants: []
+    nouveaux:
+      - quoi: "Son modèle de données porte des éléments de carrière que la carrière du dépôt ne saisit pas : rachats, versements volontaires, stages de formation, périodes de guerre, apprentissage, handicap, choix de majoration de durée d'assurance. Le dépôt connaît le service militaire et les périodes assimilées (`carriere.py:61-73`), mais ne rachète ni ne surcotise (`limites.md:129-135`)."
+        preuve: "doc. n° 8 du COR, p. 9 du PDF (« Source : arrêté du 20 juillet 2018 »)"
+        verification: "Arrêté du 20 juillet 2018 fixant les modalités d'alimentation du RGCU. La liste rejoint l'étape 12 (rachat de trimestres)."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+    ecarts_nouveaux: []
+    conclusion: "Le RGCU et son moteur calculent durées et salaire annuel moyen à la demande, sans rien stocker ni publier (« les droits ne sont pas stockés suite à un calcul ») : aucune sortie ne se confronte, et ses règles sont celles que le dépôt applique déjà. Il annonce des extractions complètes pour le CASD « à une date qui reste à préciser » (p. 23), utiles un jour à l'étape 14."
+
+  - id: pablo
+    version: "doc. n° 10 du COR (5 mars 2020, B. Buisson, SRE) ; doc. n° 6 (19 décembre 2024, SRE : « Pablo V2 ») ; Rapport sur les pensions de retraite de la fonction publique, annexe au PLF 2026"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf"
+      - "https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_06_SI_SRE.pdf"
+      - "https://questions.assemblee-nationale.fr/dyn/contenu/visualisation/1090002/file/12-Jaune2026_Pensions.pdf (p. 30-31, 218)"
+    existants:
+      - debut: "Microsimulé sur le compte individuel de retraite, "
+        verdict: confirme
+        commentaire: "Doc. n° 10, p. 15 du PDF : 1 845 contre 1 535 Md€ constants 2015. Les 310 Md€ d'écart se répartissent ainsi : 46 Md€ de champ (CIR contre SIASP), que le point omet, 45 de mortalité propre, 140 de pensions moyennes et 79 d'effets de structure. Le dépôt calcule toujours sur 13 cas types."
+    nouveaux:
+      - quoi: "Il calcule chaque année, pour le compte général de l'État, l'engagement de retraite des fonctionnaires civils et militaires, par unités de crédit projetées et avec la mortalité du régime : 1 573 Md€ fin 2024 au taux réel de 1,38 % (OAT€i 2047), de 1 541 à 2 037 Md€ entre 1,5 % et 0 %, dont 878 pour les retraités et 695 pour les actifs. Le dépôt calcule un engagement acquis pour tout le système, au prorata de la carrière (`cout.py:3460-3527`, `3551`). Son seul contrôle externe est le tableau 29 d'Eurostat (`cout.py:3481-3482`) ; il n'en a aucun par régime."
+        preuve: "annexe « pensions » au PLF 2026, partie I, tableau 7 (« Source : Paragraphe 25.1.1.2 de l'annexe au CGE 2024 ») ; doc. n° 6 de 2024 : « la traduction comptable de long terme dans le compte général de l'État grâce à son modèle de micro-simulation Pablo »"
+        verification: "Norme comptable n° 13 de l'État (méthode d'IAS 19). Pablo est « certifié par la Cour des comptes en décembre 2017 » (doc. n° 10, p. 14). La convention d'acquisition est la même que celle du dépôt ; seul le taux diffère, et la grille de sensibilité du dépôt (`cout.py:3456`) permet de se placer à 1,38 %."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Il fait mourir les fonctionnaires de l'État selon 23 tables relationnelles (Hannerz) : 60 000 décès de moins qu'avec l'INSEE d'ici 2029, 2,2 Md€ de pensions de plus en 2034, 45 Md€ d'engagements. La page Coût fait vivre ses fonctionnaires comme la population générale (`cout.py:2151-2152`), alors qu'elle connaît leur espérance de vie pour le diviseur (`limites.md:439`). C'est le même point que misraa."
+        preuve: "doc. n° 10, p. 8 et 13 du PDF"
+        verification: "Méthode, sur les données du SRE."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: "Il chiffre la réforme de 2023 au régime de l'État par rapport à un droit sans réforme : dépenses −0,4 % en 2025 et −2 % en 2033 ; recettes +0,2 % en 2025 et +1,5 % vers 2035. Le dépôt n'a pas d'univers sans la réforme : même lacune que pour Prisme."
+        preuve: "annexe « pensions » au PLF 2026, partie V, p. 218 (« L'effet de cette réforme a été simulé via l'outil de micro-simulation Pablo »)"
+        verification: "Chiffrage officiel, à retrouver comme témoin."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.3"
+    ecarts_nouveaux: []
+    conclusion: "Pablo fait mieux par sa population exhaustive et sa mortalité propre, dont il mesure le biais de l'individu moyen, et par un engagement par régime publié chaque année. Cet engagement est le contrôle par régime qui manque au dépôt ; le dépôt a déjà repris la décomposition du taux de l'État de la Cour des comptes du 22 septembre 2026 (`contribution_etat_retraite_seule.csv`)."
+
+  - id: oscar
+    version: "doc. n° 10 du COR (5 mars 2020), partie V"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf (p. 16-18 du PDF)"
+    existants: []
+    nouveaux:
+      - quoi: "Il calcule chaque cas type sur une plage d'âges de liquidation (« par exemple 62-70 ans »), à partir de grilles indiciaires par génération. Le site du dépôt montre une pension à un seul âge."
+        preuve: "doc. n° 10, p. 17 du PDF"
+        verification: "Méthode ; c'est la même que celle des cas types du COR."
+        confronte: site
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.10"
+      - quoi: "Son moteur du système actuel a été « testé avec succès sur le flux de liquidation réel 2018 » du SRE. Le dépôt n'est validé que sur des exemples officiels, jamais sur un flux de pensions réelles."
+        preuve: "doc. n° 10, p. 18 du PDF"
+        verification: "Méthode de validation. Elle demande les données du SRE, ou au moins ses agrégats publiés : l'annexe « pensions » au PLF et les cubes de data.economie.gouv.fr cités au doc. n° 6 de 2024."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.14"
+    ecarts_nouveaux: []
+    conclusion: "Oscar est l'outil en R du SRE pour les cas types et le système en points de 2020. Le dépôt a déjà son pas mensuel, son calcul du RAFP et un moteur commun aux cas types et à la population ; il ne lui manque que la plage d'âges (138.10) et la validation sur un flux réel (138.14). Son usage depuis 2020 n'est pas publié et aucun résultat ne se confronte."
+
+  - id: ariane
+    version: "doc. n° 10 du COR (5 mars 2020), introduction et partie IV"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf (p. 2 et 15)"
+      - "recherche web de l'audit de la Cour des comptes de 2009 : non trouvé en ligne"
+    existants: []
+    nouveaux: []
+    ecarts_nouveaux: []
+    conclusion: "Rien. Ariane était une méso-simulation par génération en quatre groupes (civils, militaires, La Poste, Orange), qui raisonnait sur des « individus moyens » comme les cas types du dépôt, et Pablo l'a remplacée. Son seul résultat publié, 1 535 Md€ d'engagements fin 2015 contre 1 845 pour Pablo, mesure le biais de l'individu moyen, déjà au point de Pablo."
+
+  - id: canopee
+    version: "doc. n° 11 du COR (5 mars 2020, Caisse des dépôts) ; doc. n° 7 (19 décembre 2024) ; classeur par régime du COR 2024, feuille CNRACL"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2011_CANOPEE_CNRACL.pdf"
+      - "https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_07_SI_CNRACL.pdf"
+      - "https://www.cor-retraites.fr/sites/default/files/2025-02/Données_régimes_publi_V2.xlsx (feuille CNRACL, lue par colonne)"
+    existants:
+      - debut: "Il projette les retraités de droit direct de la CN"
+        verdict: confirme
+        commentaire: "Classeur par régime, feuille CNRACL, lu colonne par colonne : 1,344 million en 2023, 1,387 en 2024, 2,133 en 2070. La pondération des retraités s'arrête toujours en 2024 et reconduit cette dernière année au-delà, alors que celle des cotisants va de 2010 à 2070 (`cout.py:2744-2750`, plus précis que `donnees/effectifs.py:39-41`)."
+    nouveaux:
+      - quoi: "Il sépare, à la CNRACL et grade par grade, les départs actifs, sédentaires, pour invalidité et en carrière longue. En 2018, 47 % des nouveaux retraités de la FPH partaient en catégorie active, 7 % à la FPT. À long terme, les sédentaires feraient « trois-quarts des départs » et l'invalidité 10 %. Dans le classeur du COR, l'âge moyen de départ à la CNRACL passe de 61,5 ans en 2023 à 64,3 ans en 2070. Le dépôt donne tout l'effectif de la CNRACL (1,39 million en 2024, 6 % des poids) au seul cas type de catégorie active, parti à 57 ans (`castypes.py:182-198`, pondération `castypes.py:299-337`). Il prête ainsi à toute la caisse le départ que le notionnel pénalise le plus."
+        preuve: "doc. n° 11, p. 6 du PDF (« En 2018, 47 % des nouveaux liquidants de droit direct vieillesse à la FPH ont bénéficié d'un départ anticipé au titre de la catégorie active […] FPT (7 %) ») et p. 22 ; classeur par régime 2024, feuille CNRACL, bloc « Âge moyen de départ à la retraite »"
+        verification: "Données de gestion de la CNRACL (recueil statistique 2018, cité au doc. n° 11) et projection de la caisse pour le COR. Un âge moyen de 61,5 ans contredit un départ unique à 57 ans."
+        confronte: cout
+        importance: forte
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Il fait mourir les fonctionnaires territoriaux et hospitaliers selon des tables adaptées par sexe, invalidité et catégorie hiérarchique (QRS n° 19, Soulat 2017), parce qu'ils « décèdent en moyenne plus tardivement que la moyenne nationale ». C'est le même point que misraa."
+        preuve: "doc. n° 11, p. 19 du PDF"
+        verification: "Méthode, sur les données de la CNRACL."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.7"
+    ecarts_nouveaux:
+      - constat: "La description de 2020 suit les grilles de 2015, sans le protocole PPCR (« celles prévalant en 2015 »), et fait liquider tout le monde au taux plein, sans décote ni surcote (p. 16 et 26 du PDF)."
+        tranche: "PPCR s'applique depuis 2016 (Pablo a dû l'introduire par calage : doc. n° 10, p. 11). La Caisse des dépôts annonçait les deux corrections ; la note de 2024 ne dit pas si elles sont faites. Sans effet sur ce que lit le dépôt : le classeur de 2024 est postérieur."
+        preuve: "doc. n° 11, p. 16 et 26 ; doc. n° 10, p. 11"
+    conclusion: "Canopée fait mieux par la composition de la CNRACL : actifs ou sédentaires, invalidité, grades, mortalité propre. Ses chiffres publiés montrent que le dépôt pèse toute la caisse sur un départ à 57 ans quand l'âge moyen y est de 61,5 ans, une erreur de pondération qui grossit les économies des scénarios notionnels."
+
+  - id: mistral
+    version: "doc. n° 7 du COR (19 décembre 2024) ; classeur par régime du COR 2024, feuille IRCANTEC"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_07_SI_CNRACL.pdf (p. 7 du PDF)"
+      - "https://www.cor-retraites.fr/sites/default/files/2025-02/Données_régimes_publi_V2.xlsx (feuille IRCANTEC)"
+    existants:
+      - debut: "Il projette les retraités de droit direct de l'Irc"
+        verdict: a_corriger
+        commentaire: "Les chiffres sont exacts (2,043 millions en 2023, 5,468 en 2070), mais ce sont des droits, pas des personnes ni des carrières. La pension relative de l'Ircantec est de 4,5 % en 2023 et 3,3 % en 2070, et son âge moyen de départ de 66,6 puis 65,5 ans (même feuille) : ce sont surtout des polypensionnés à petite pension. Les donner comme poids à `contractuel_public`, carrière complète au régime général et à l'Ircantec, multiplierait par 2,7 le double compte que `limites.md:2688-2694` déclare. La reprise doit peser par la masse (voir maquette_globale_cor)."
+    nouveaux:
+      - quoi: "Il évalue chaque année la solvabilité de l'Ircantec à long terme « au regard d'indicateurs définis dans le cadre de sa convention d'objectifs et de gestion (COG) et de ses textes réglementaires »."
+        preuve: "doc. n° 7 du 19 décembre 2024, p. 7 du PDF"
+        verification: "C'est un pilotage propre au régime ; la note ne publie pas les indicateurs."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Le dépôt ne projette ni les régimes un à un ni leurs réserves. La solvabilité d'un régime complémentaire sort du champ de la page Coût."
+    ecarts_nouveaux: []
+    conclusion: "Mistral, l'outil de la Caisse des dépôts pour l'Ircantec (avec Prévir pour l'emploi des contractuels), n'est connu que par une ligne de la note de 2024 et par ses projections dans le classeur du COR. Il ne fait mieux que par ces projections, qui sont à lire comme des droits de polypensionnés."
+
+  - id: misraa
+    version: "doc. n° 12 du COR (DT 2020-08, 10 février 2020) ; doc. n° 5 (DT 2024-60, septembre 2024) ; RA 2026, p. 10, 64, 107 et données P3_2, fig. 3.3"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2012_Mod%C3%A8le%20Agirc-Arrco.pdf"
+      - "https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_05_SI_Agirc-Arrco.pdf"
+      - "RA_2026_def.pdf ; Données_RA2026_P3_2.xlsx"
+    existants:
+      - debut: "Il projette l'Agirc-Arrco sous la convention du CO"
+        verdict: a_corriger
+        commentaire: "Trois corrections. (1) La convention est celle de l'Agirc-Arrco : « Ces hypothèses ont été définies par la Fédération Agirc-Arrco, après consultation des partenaires sociaux » (RA 2026, p. 10, note 2 ; p. 64). Sa révision ajoute 0,3 point de PIB à la dépense de 2070 (p. 107). (2) Les 24,6 % et 16,4 % sont la part Agirc-Arrco du taux de remplacement net du non-cadre, en part du dernier salaire (76,9 puis 68,7 % au total), calculée par TRAJECTOiRE (fig. 3.3, « Source : Drees, modèle Trajectoire »). Ce n'est pas la part complémentaire de la pension, qui vaut 32 puis 24 %. (3) Références du dépôt : le rendement figé est à `data/reference/regimes/rendements_points.csv:51` (2027-2100, 5,61 %), et la valeur de service prolongée par les prix à `droit/liquider.py:1535-1545`. `scenarios/actuel.py:2314` et `liquider.py:1448-1452` ne pointent plus là."
+    nouveaux:
+      - quoi: "Il pose qu'ignorer la mortalité différentielle « est susceptible de sous-estimer les dépenses » : les anciens cadres vivent plus longtemps et ont plus de droits. Il prévoyait en 2020 des tables par niveau de points au-delà du plafond, et établit depuis ses propres tables sur ses données individuelles. La page Coût fait vivre tous les cas types comme la population générale (`cout.py:2151-2152`) : la pension du cadre (2,2 salaires moyens) et celle du SMIC ont la même survie. Le dépôt a pourtant les tables de l'INSEE par vingtile de niveau de vie, qu'il n'utilise que pour le diviseur (`config.py:611-628`) et la garantie (`cout.py:2376`)."
+        preuve: "doc. n° 12, p. 11 du PDF (« Le fait d'ignorer cette différence d'espérance de vie entre ces deux sous-populations, est susceptible de sous-estimer les dépenses d'allocations du régime ») ; doc. n° 5 de 2024, p. 8 du PDF (« Elles permettent entre autres, d'établir les tables de mortalité »)"
+        verification: "Méthode : à nombre de décès égal, leur répartition entre fortes et faibles pensions change la masse (même doc.). Le biais est chiffré par Pablo (45 Md€ d'engagements, 2,2 Md€ de pensions en 2034) et traité par Prisme et Canopée. Les tables par vingtile (Insee Résultats 2025) sont déjà au dépôt (`limites.md:438`)."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.7"
+    ecarts_nouveaux: []
+    conclusion: "MisrAA fait mieux par la mortalité différentielle, qui manque aux masses du Coût, et par la seule trajectoire publiée de la valeur du point (déjà en a_trancher). Le point existant est à corriger sur l'auteur de la convention, la nature des 24,6 et 16,4 %, et les lignes du dépôt citées."
+
+  - id: osiris
+    version: "caliper.pdf (DREES, 2013) ; étude d'impact du projet de loi instituant un système universel de retraite (24 janvier 2020, AN n° 2623)"
+    lu_dans:
+      - "http://gesd.free.fr/caliper.pdf"
+      - "https://www.assemblee-nationale.fr/dyn/15/textes/l15b2623_etude-impact.pdf (p. 128, 202-207 du PDF)"
+      - "recherches web « maquette Osiris » et PLFSS 2026 : aucun autre usage publié"
+    existants: []
+    nouveaux:
+      - quoi: "Ses cas types comprennent une carrière heurtée : un non-cadre du tiers inférieur des salaires perd son emploi à 42 ans, touche l'ARE deux ans puis l'ASS deux ans, reste un an et demi au chômage non indemnisé, puis est inactif jusqu'au départ. Aucun des 13 cas types du dépôt ne connaît le chômage (`avantages.py:38`), alors que le chômage est le premier poste de solidarité (5,9 % des masses, Cnav 2019) et que le droit l'applique désormais (action 141)."
+        preuve: "étude d'impact de 2020, p. 202 du PDF (définition) et p. 207 (tableau 51), « Source : DSS/SDEPF/6C – maquette Osiris »"
+        verification: "Méthode : c'est une carrière type proche de celles du COR."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "nouveau: une carrière heurtée (chômage ARE, ASS, non indemnisé) dans la grille des cas types"
+      - quoi: "Il présente chaque cas type à six âges de départ (62 à 67 ans) pour les générations 1975, 1980, 1990 et 2003."
+        preuve: "étude d'impact de 2020, p. 207 du PDF (tableau 51)"
+        verification: "Méthode."
+        confronte: site
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.10"
+    ecarts_nouveaux:
+      - constat: "Ses résultats « sans réforme » de 2020 font partir les générations 1975 à 2003 dès 62 ou 63 ans. Exemple : 80 % du SMIC, génération 1980, taux de remplacement net de 65 % à 63 ans (tableau 11, p. 128)."
+        tranche: "L'âge d'ouverture est de 64 ans pour les assurés nés à compter du 1er janvier 1969 (L. 161-17-2, LEGIARTI000053280889, en vigueur depuis le 31 décembre 2025, pensions prenant effet depuis le 1er septembre 2026). Ces résultats sont périmés et ne sont plus des témoins du scénario 1."
+        preuve: "étude d'impact de 2020, p. 128 et 207 ; index LEGI, L. 161-17-2"
+    conclusion: "Osiris, maquette interne de la DSS, ne publie que ses cas types de 2020, calculés sous un droit périmé. Il n'en reste que la forme de deux de ses cas types : une carrière heurtée par le chômage, que la grille du dépôt n'a pas, et une plage d'âges."
+
+  - id: aphrodite
+    version: "doc. n° 6 du COR (5 mars 2020, extraits du DT DG Trésor 2016/04) ; DT DG Trésor 2016/04 (juillet 2016)"
+    lu_dans:
+      - "https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%206_Aphrodite_DG-Tr%C3%A9sor.pdf"
+      - "https://www.tresor.economie.gouv.fr/Articles/482ec69f-5251-4129-98b2-f4dfaccfb81e/files/5ad8638a-a272-4e14-8823-54a245de9606"
+    existants: []
+    nouveaux:
+      - quoi: "Il simule les fins de carrière après 55 ans (emploi, chômage, inactivité, maladie) par des logits emboîtés estimés sur l'EIC 2009, et peut y ajouter un effet horizon. Avec un décalage de deux ans, le taux d'emploi gagne 2 points entre 57 et 66 ans en 2040, et passe de 44 à 48 % à 62 ans. Dans son échantillon, 22 % des femmes et 12 % des hommes du privé sont déjà inactifs à 55 ans. Le dépôt suppose en emploi tous ceux que l'âge légal fait attendre (`config.py:863`)."
+        preuve: "doc. n° 6, p. 4-7, et annexe p. 12-15 du PDF (tableaux 1 et 2, graphique 6)"
+        verification: "Méthode, sur données administratives. L'effet horizon y est « conventionnel » (note 9), pas estimé : les valeurs à retenir sont plutôt celles de l'enquête Emploi (maquette_globale_cor) et de la convention du COR (simulateur_cor)."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Il calcule la réversion sur quatre mariages successifs, avec les conditions de ressources, de non-remariage et de durée de mariage. Il traite le partage entre ex-conjoints et calcule une pension fictive pour l'assuré mort avant d'avoir liquidé. Le dépôt laisse dehors le partage, le remariage et la réversion d'un assuré mort avant son départ (`limites.md:79-82`)."
+        preuve: "doc. n° 6, p. 9-10 du PDF"
+        verification: "L. 353-3 (LEGIARTI000006742651, en vigueur depuis le 22 août 2003) : partage « au prorata de la durée respective de chaque mariage ». L'étape 4 de l'action 138 le prévoit déjà."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.4"
+      - quoi: "Il se boucle avec Mésange : réforme simulée, effets sur l'emploi, les salaires et les prix, réinjectés jusqu'à convergence. Le dépôt est comptable (`limites.md:2968-2972`) ; voir le tableau 2.10 du COR, au point de maquette_globale_cor."
+        preuve: "DT 2016/04, § 4.4, p. 44-45 du PDF"
+        verification: "Méthode ; les multiplicateurs publiés par le COR en 2026 en viennent en partie (DG Trésor, Mésange)."
+        confronte: cout
+        importance: moyenne
+        etat: a_trancher
+        raison: "C'est le même choix que pour le tableau 2.10 : le bouclage est déclaré hors du dépôt, et le propriétaire tranche."
+      - quoi: "Il projette au choix sous les projections de l'INSEE ou sous les scénarios démographiques de l'Ageing Working Group. Le dépôt n'a que le scénario central de l'INSEE (`limites.md:2815-2817`)."
+        preuve: "doc. n° 6, p. 4 du PDF"
+        verification: "Méthode ; variantes publiées par l'INSEE et la Commission européenne."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: "Il propose plusieurs comportements de départ (taux plein, taux de remplacement cible, Stock et Wise), mais écrit que les dépenses projetées sont « assez proches », le système étant « actuariellement neutre à la marge »."
+        preuve: "DT 2016/04, p. 29 du PDF"
+        verification: "Méthode."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Pas meilleur pour la dépense, de son propre aveu. Le dépôt fait déjà partir ses cas types au taux plein de leur génération (`castypes.py:84`)."
+    ecarts_nouveaux:
+      - constat: "Ses résultats publiés reposent sur la législation de 2016 et le scénario B du COR de 2015 (productivité 1,5 %) : dépenses de droit direct de 12,4 % du PIB en 2015 à 11,3 % en 2060. Son cas d'usage crédite l'accord Agirc-Arrco de 2015 de 0,3 point de PIB, dont environ 100 000 actifs de plus en 2025 grâce aux coefficients de solidarité."
+        tranche: "Le coefficient de solidarité est supprimé pour les retraites prenant effet depuis le 1er décembre 2023, et pour toutes depuis le 1er avril 2024 (RA 2026, p. 136). Le COR projette aujourd'hui une productivité de 0,7 %. Ces résultats sont périmés."
+        preuve: "doc. n° 6, p. 10-11 ; DT 2016/04, p. 34 ; RA 2026, p. 136"
+    conclusion: "Aphrodite fait mieux par ses fins de carrière et sa réversion complète (ex-conjoints, décès avant le départ), deux points déjà prévus par les étapes 3 et 4, et par son bouclage avec Mésange. Ses résultats chiffrés, de 2016, ne se confrontent plus ; son usage après 2020 n'est pas publié."

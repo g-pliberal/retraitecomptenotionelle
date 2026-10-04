@@ -1,0 +1,301 @@
+# Le rapport de la recherche « ipp » (les barèmes de l'IPP, TIL-Pension, PENSIPP), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+groupe: ipp
+modeles:
+  - id: baremes_ipp
+    version: "commit fe2cdff (21 septembre 2026), le même que celui du registre"
+    lu_dans:
+      - "gitlab.com/ipp/partage-public-ipp/baremes-ipp/baremes-ipp-yaml : les 155 fichiers de parameters/retraites/, plus prestations_sociales/solidarite_insertion/minimum_vieillesse/ et prelevements_sociaux/ (CSG, maladie, cotisations, libéraux, secteur public)"
+      - "legislation.lassuranceretraite.fr/api/v1/baremes : 396 barèmes officiels de la Cnav, qui servent d'arbitre"
+      - "index LEGI et JORF du dépôt ; COR, document n° 13 de la séance du 28 janvier 2009 ; agirc-arrco.fr ; service-public.fr (actualité A15237)"
+    familles_ipp:   # chaque famille, l'échantillon comparé, le verdict
+      - famille: "régime général : durée requise, proratisation, âges, décote, surcote, taux plein"
+        statut: "nous l'avons, identique. Seule différence : l'IPP n'a pas la surcote parentale de 2023 (surcote_parentale.csv)."
+        echantillon: "durée requise et proratisation, générations 1955-1975 (170 pour 1964 ; 170 puis 171 pour 1965 ; 172 pour 1966) ; âge légal 1951,5-1972 (62,75 ; 63 ; 63,25 … 64) ; décote 1944-1953 (2,375 % à 1,25 %) ; surcote 2004-2009"
+      - famille: "régime général : revalorisations"
+        statut: "pensions : nous l'avons, et plus fin (99 dates identiques de 1949 à 2026 ; en 2020, le dépôt module le taux de 1 % à 0,3 % selon le montant, l'IPP met 1,003 partout). Salaires portés au compte : nous l'avons sur 2017-2026 ; l'IPP a en plus trois colonnes anciennes (nouveau point 4) et une coquille (écart E1)."
+        echantillon: "coefficients annuels de 2019 (1,015) et 2020 (1,01), recoupés avec le rapport des colonnes du dépôt"
+      - famille: "régime général : SAM, validation des trimestres, minimum contributif"
+        statut: "nous l'avons, avec des différences ; l'IPP a raison sur la règle des dix dernières années avant 1973 (nouveau point 1), les trimestres d'avant 1972 (point 2) et la série du minimum contributif (point 5)"
+        echantillon: "SAM 1934-1948 (11 → 25) identique ; salaire validant un trimestre 1972-2025 identique (1 782 € en 2025) ; minimum contributif de 1984 à 2022 confronté année par année"
+      - famille: réversion
+        statut: "taux identiques (50, 52, 54 %). Âge avant 1973 : différent, et l'IPP a raison (point 3). Le dépôt n'a pas le minimum de réversion ni la majoration (point 11). Le plafond de ressources vaut 2 080 h de SMIC des deux côtés, mais le dépôt prend le SMIC du 1er janvier et l'IPP suit chaque relèvement."
+        echantillon: "plafond 1971-1982, comparé à 2 080 × SMIC"
+      - famille: "fonction publique, Ircantec, IGRANTE, IPACTE, RAFP"
+        statut: "nous l'avons, identique jusqu'en 2012-2014. Ensuite l'IPP est figé (écart E6) et a une coquille sur la décote de 2010 (E3). Ircantec : identique jusqu'en 2026. IGRANTE et IPACTE : l'IPP a raison pour 1948 (point 10). RAFP : le dépôt a 2026 en plus."
+        echantillon: "minimum garanti 2004-2013 (217 à 227 ; 0,597 à 0,575) ; décote 2006-2019 ; 78 valeurs de service et 56 salaires de référence Ircantec ; RAFP 2005-2025"
+      - famille: régimes spéciaux
+        statut: "l'IPP n'a aucun fichier. Le dépôt en porte une vingtaine (SNCF, RATP, IEG, CRPCEN, mines, marins…)."
+      - famille: indépendants
+        statut: "complémentaires des artisans (1979-2012) et des commerçants (2004-2012) : le dépôt les a déjà reprises de l'IPP. RCI : identique jusqu'en 2023, puis l'IPP s'arrête et le dépôt va jusqu'en 2026. Nombre d'années du revenu moyen : différent, et l'IPP a raison (point 7). Points de base d'avant 1973 : le dépôt n'en a pas (point 12)."
+        echantillon: "RCI 2013-2023 (14 années, valeurs d'achat et de service)"
+      - famille: agricoles
+        statut: "l'IPP n'a que la PMR (point existant, à corriger). Le dépôt porte MSA salariés, non-salariés et RCO."
+      - famille: libéraux
+        statut: "l'IPP n'a que des cotisations (ret_pl, ret_comp_pl), que le dépôt a déjà reprises (ipp_retraite_complementaire_liberaux). Aucun point ni valeur de service : le dépôt va plus loin."
+      - famille: "complémentaires du privé"
+        statut: "nous l'avons, identique. L'IPP a en plus : les coefficients d'avant 1965 (point 9), le point de PRO BTP (point 14) et le coefficient de solidarité, mais sans sa fin (écart E7)."
+        echantillon: "Agirc 1947-2018 (72 + 72 valeurs), Arrco 1999-2018, Agirc-Arrco 2019-2025, UNIRS 1949-1998 : aucun écart au-delà de 0,2 %. GMP de 144 puis 120 points."
+      - famille: "minima, ASPA, minimum vieillesse"
+        statut: "ASPA d'une personne seule : identique quand le dépôt a l'année. L'IPP a en plus le couple, des années qui manquent au dépôt, l'AVTS, l'allocation supplémentaire et la majoration pour conjoint à charge (points 8 et 13, point existant 1)."
+        echantillon: "ASPA d'une personne seule 2006-2026"
+      - famille: "prélèvements sur les pensions ; cotisations"
+        statut: "taux de 2026 identiques (8,3, 0,5 et 0,3 %). L'IPP a l'histoire de ces taux (point 15). Cotisations identiques, et déjà contrôlées par ipp_taux_cotisation.py."
+        echantillon: "vieillesse du régime général 2024 (15,45 % + 2,42 %) et 2026 (2,51 % déplafonnés) ; CNRACL 2025-2028 (34,65 à 43,65 %)"
+    existants:
+      - debut: "Il porte les séries de l'AVTS (1962-2026, 4 023,5"
+        verdict: confirme
+        commentaire: "Toujours vrai. Les renvois au code tiennent : scenarios/actuel.py:1570-1580, minimum_vieillesse.csv:36-42, droit/acquerir.py:100-109. À ajouter : l'IPP a aussi l'AVTS de 1941 à 1961 (avts_av_1961 : villes de plus et de moins de 5 000 habitants, région parisienne, majoration pour conjoint). Le barème de la Cnav ancienne_prestation_autre_prestation_montant_bar donne les mêmes montants (3 600 AF en 1941 ; 72 380 et 68 640 AF en 1956 ; 800 F au 1er avril 1962 ; 4 059,72 € en 2026) : il peut servir de source certifiable. L'allocation supplémentaire s'arrête en 2022 chez l'IPP."
+      - debut: "Il porte la pension majorée de référence des exploi"
+        verdict: a_corriger
+        commentaire: "Toujours absente du moteur, mais la fiche est désormais à avantages_non_contributifs.yaml:425-451. L'IPP n'est pas la source à copier. De 2010 à 2026, ses valeurs sont toutes des « Calculs IPP » : indexées sur les prix, en baisse en 2015 (8 075,55 €), et mal datées. Le décret D. 732-111 donne les ancres : 7 596 et 6 036 € au 1er janvier 2009 ; 8 557,38 € au 1er janvier 2022 ; 8 970,86 € au 1er janvier 2023 et 10 170,86 € au 1er septembre 2023. Ce sont les montants du minimum contributif majoré, que le dépôt porte déjà. Voir l'écart E4."
+      - debut: "Il porte le salaire qui valide un trimestre à La R"
+        verdict: a_corriger
+        commentaire: "Les années sont fausses : l'écart va de 1972 à 1995, et existe aussi de 1948 à 1951 (en 1971, le montant est le même partout). La Guadeloupe, la Guyane et la Martinique ont leur propre barème, lui aussi plus bas (2 112 F contre 2 586 F en 1980). Deux sources le confirment : le barème de la Cnav salaire_validant_un_trimestre_montant_bar, et l'article R. 351-9 en vigueur (LEGIARTI000053335598), qui retient « le montant du salaire minimum de croissance … en vigueur dans ledit département ». Voir aussi le nouveau point 2, sur les trimestres d'avant 1972."
+    ecarts_existants: "Les trois écarts au registre tiennent encore. Les seuils de CSG s'arrêtent au 1er janvier 2025. La cotisation d'Alsace-Moselle reste à 1,5 %, dans maladie_alsace_moselle.yaml comme dans avantages_vieillesse.yaml. Les chirurgiens-dentistes s'arrêtent en 2019 (chir_dent_sage_femmes)."
+    nouveaux:
+      - quoi: "Avant 1973, le salaire de base du régime général était la moyenne des dix DERNIÈRES années, pas des dix meilleures. Le dépôt sert les dix meilleures dès 1945 (regime_general.yaml:52, :101, et :127 pour 1972). Sa propre fiche cite pourtant une circulaire qui dit « dernières » (decote_avant_1983.yaml:303-312)."
+        preuve: "retraites/secteur_prive/regime_general_cnav/sam.yaml:22 : « Précédemment, le salaire annuel moyen était établi sur les dix dernières années de carrière et non sur les dix meilleures » ; aussi retraites/independants/ram.yaml:28 ; commit fe2cdff"
+        verification: "Circulaire ministérielle 20/SS du 6 février 1961, base de la Cnav (CR_MIN_20SS_06021961) : « calculé sur la moyenne des dix dernières années avant la liquidation ». Notice JORF du décret n° 72-1229 du 29 décembre 1972 (JORFTEXT000000693828) : il réforme « L'ART. 74-VII (DETERMINATION DU SALAIRE SERVANT DE BASE…) », prononce l'« ABROGATION DE L'ART. L343 » et fixe l'« ENTREE EN VIGUEUR : 01-01-1973 ». Le changement date donc de 1973, pas de 1972 (écart E10)."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "nouveau: le droit d'avant 1973 (salaire de base, coefficients des complémentaires)"
+      - quoi: "Avant 1972, un trimestre se validait par un montant. De 1949 à 1971, la rémunération annuelle était divisée par l'AVTS trimestrielle. Avant, d'autres seuils : 1 800 F de 1946 à 1948, la retenue de 1936 à 1945, 60 cotisations journalières par trimestre de 1930 à 1935 (22 trimestres au plus). Le dépôt valide quatre trimestres par année travaillée, en écrivant qu'« aucun seuil de montant n'existait » (donnees/macro.py:269-305, validation_trimestres.csv:10-12)."
+        preuve: "…/salval/salaire_validant_trimestre/metropole.yaml:3-42 : 60 ; 15 ; 60 ; 1 800 ; 8 500 F en 1949 … 437,50 F en 1971. Note aux lignes :161-163 : « Un trimestre correspond à l'AVTS trimestrielle (jusqu'au 31/12/1962, ce montant est celui des villes de plus de 5 000 habitants) ». Commit fe2cdff."
+        verification: "Article R. 351-9 en vigueur (LEGIARTI000053335598) : « Pour la période comprise entre le 1er janvier 1949 et le 31 décembre 1971, il y a lieu de retenir autant de trimestres … que le salaire annuel … représente de fois le montant trimestriel de l'allocation aux vieux travailleurs salariés au 1er janvier ». Décret n° 45-0179, article 71, § 2 (LEGIARTI000006760608) pour 1930-1948. Le barème de la Cnav donne les mêmes montants de 1949 à 1971. Les valeurs de 1936 à 1948 mêlent retenue et salaire (15 et 60 F chez l'IPP, 30 et 216 AF à la Cnav, 15 et 1 800 F au décret) : à relire au décret."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.6"
+      - quoi: "Avant 1973, la réversion du régime général s'ouvrait à 65 ans, ou 60 en cas d'inaptitude. Le dépôt prête 55 ans à toute réversion d'avant 1982, par hypothèse (reversion.yaml:45-74, version avant_1982, statut supposee)."
+        preuve: "…/regime_general_cnav/reversion.yaml:40-46 : 65 ans en 1946, 55 ans en 1973, en citant le décret n° 72-1098 ; commit fe2cdff"
+        verification: "Décret n° 72-1098, article 1 (LEGIARTI000006761979, en vigueur le 1er janvier 1973) : « L'article L. 351 du Code de la sécurité sociale est abrogé en tant qu'il fixe à soixante-cinq ans, et à soixante ans en cas d'inaptitude au travail, l'âge auquel le conjoint survivant a droit à une pension de réversion »"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.4"
+      - quoi: "L'IPP a trois tables anciennes des coefficients de revalorisation des salaires portés au compte : arrêtés de 1949, de 1952 et du 24 janvier 1994 (salaires de 1947 à 1992). Le dépôt n'a que les tables de 2017 à 2026 ; avant, il recalcule depuis celle de 2017 et dit l'écart « invérifiable » (donnees/macro.py:404-470, limites.md:822-826). Mesuré sur une liquidation de 1994, ce recalcul s'écarte de la table de 1994 de −0,15 % (salaires de 1992-1993) à +0,83 % (salaires de 1947-1975). La table Cnav d'avril 2013 montre le même profil (+0,75 %) : ce n'est donc pas un effet d'arrondi."
+        preuve: "…/regime_general_cnav/reval_s_49/arrete_24_01_1994_jo_27_01_1994.yaml, arrete_23_06_1949_jo_29_06_1949.yaml, arrete_02_10_1952_jo_03_10_1952.yaml ; commit fe2cdff"
+        verification: "Pour l'arrêté du 24 janvier 1994 (JORFTEXT000000363083), l'index ne garde que le dispositif ; la table est à lire au Journal officiel. Par ailleurs, la Cnav publie dans son API de barèmes les tables d'avril 2013 et d'octobre 2015 (revalorisation_coefficient_revalorisation_salaire_cotisation_04_2013_bar et …_10_2015_bar), que limites.md:822 croit inaccessibles."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "L'IPP a la série complète du minimum contributif : chaque revalorisation de 1984 à 2023, le minimum majoré de 2004 à 2023, le plafond de 2012 à 2023. Le dépôt n'a que des ancres (minimum_contributif.csv) et les relie par les prix (scenarios/actuel.py:2745-2780). Trois défauts en résultent. Son ancre « 2007 » est en fait le montant du 1er janvier 2008 (6 958,21 €, ligne 70), et il manque les ancres de 2004 et 2006. L'écart au montant réellement servi va de +1,1 % (2007) à +4,7 % (2019), et le majoré est trop haut de 4 à 8 % de 2004 à 2007. Enfin, le majoré est servi avant 2004, année de sa création, car aucune date ne borne la majoration (droit/completer.py:248-250, :266-272)."
+        preuve: "…/regime_general_cnav/montant_mico.yaml : 50 dates, chacune avec sa circulaire Cnav ; majoré nul avant 2004 (:357-369). Aussi plafond_mico/minimum_contributif_plafond_mensuel.yaml. Commit fe2cdff."
+        verification: "Barème Cnav retraite_personnelle_montant_minimum_bar : mêmes montants, du 1er avril 1983 (26 400 F) au 1er janvier 2026 (9 075,50 €), majoré « Depuis 2004 ». Article D. 351-2-1 : « 6 511,06 Euros par an au 1er janvier 2004 » (LEGIARTI000006736531), « 6 760,82 Euros par an au 1er janvier 2006 » (LEGIARTI000006736532), « 6 958,21 euros par an au 1er janvier 2008 » (LEGIARTI000017870194)."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "L'IPP a l'assiette publiée de l'AVPF de 1972 à 2021, en métropole et outre-mer (plus basse aux Antilles et à La Réunion jusqu'en 1995) : 169 heures de SMIC par mois, au SMIC du 1er juillet de l'année précédente, soit 1 715,35 € par mois en 2021. Le dépôt porte 1 820 heures du SMIC de l'année (carriere.py:510-516), une « assiette déduite du SMIC » (limites.md:52). Il compte ainsi 9 à 10 % de trop peu (18 655 € contre 20 584 € en 2021), et 12,5 % de trop peu avant 1982, quand la durée légale était de 40 heures."
+        preuve: "prestations_sociales/solidarite_insertion/minimum_vieillesse/avpf/salaire_forfaitaire/metropole.yaml:3-102, reunion.yaml, guadeloupe_guyane_martinique.yaml ; commit fe2cdff"
+        verification: "Article R. 381-3 en vigueur (LEGIARTI000047961951) : « assiette forfaitaire égale, par mois, à 169 fois le salaire horaire minimum de croissance en vigueur au 1er juillet de l'année civile précédente ». Rédaction de 1987-1994 (LEGIARTI000006750081) : le SMIC multiplié par 52/12 de la durée hebdomadaire légale. Barème Cnav cotisation_salaire_avpf_bar : 1 715,35 € en 2021, 2 031,38 € en 2026."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Pour les artisans et commerçants, le revenu annuel moyen passe de 10 à 25 années plus lentement que chez les salariés : 11 années pour les générations 1934-1935 … 24 pour 1952, et 25 seulement dès 1953. Le dépôt applique à l'ORGANIC, à la CANCAVA et au RSI la table du régime général, qui atteint 25 dès 1948 (organic.yaml:159, cancava.yaml:160, rsi.yaml:37, via droit/liquider.py:1848-1876). Un commerçant né en 1948 a ainsi un revenu moyen calculé sur 25 ans au lieu de 20."
+        preuve: "retraites/independants/ram.yaml:59-192, qui cite les décrets 93-1022, 2004-144 et 2007-614 ; commit fe2cdff"
+        verification: "Article R. 634-1-1 (LEGIARTI000006751727, du 27 avril 2007 au 1er janvier 2026) : « Onze années pour l'assuré né en 1934 ou 1935 ; … Vingt années pour l'assuré né en 1948 ; … Vingt-quatre années pour l'assuré né en 1952 »"
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "L'IPP a la majoration pour conjoint à charge de 1948 à 2002 et son plafond de ressources : 14 500 AF en 1948, 36 190 AF en 1956 (la moitié de l'AVTS), 4 000 F en 1976, puis 609,80 €. Le dépôt la déclare absente au motif que « le modèle … n'a pas de conjoint » (avantages_non_contributifs.yaml:1384-1404). Or le moteur de réversion connaît désormais le conjoint et l'union (droit/reversion.py)."
+        preuve: "prestations_sociales/solidarite_insertion/minimum_vieillesse/majconj/montant_majoration_conjoint_charge.yaml:3-66 et plafond_conjoint_pour_maj_pac.yaml ; commit fe2cdff"
+        verification: "Article L. 351-13 (LEGIARTI000023033932) : majoration supprimée au 1er janvier 2011, maintenue pour ceux qui la touchaient déjà. Décret n° 45-0179, article 72-2 (LEGIARTI000006760610) : conjoint de 65 ans, sans avantage propre, sous le plafond de l'AVTS, avec un complément différentiel. Barème Cnav ancienne_prestation_mc_montant_bar : mêmes montants."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.6"
+      - quoi: "L'IPP a des coefficients d'anticipation et de majoration d'ajournement pour l'Agirc avant 1955 et l'Arrco avant 1965. Chez l'Arrco, par exemple : 0,75 à 60 ans, et de 1,05 à 1,25 au-delà de 65 ans. Le dépôt applique à toute date la table de l'accord de 2017 (droit/liquider.py:2512-2523), sans aucune majoration d'ajournement (agirc.yaml:40), et n'a pas lu les textes de 1947 et 1961 (coefficients_anticipation_agirc_arrco.yaml:63-72)."
+        preuve: "retraites/secteur_prive/regimes_complementaires/arrco/coefficient_de_minoration.yaml:68-74 et suivantes ; agirc/coefficient_de_minoration.yaml:63-69 et :98-132 ; aucune référence citée ; commit fe2cdff"
+        verification: "COR, document n° 13 du 28 janvier 2009, p. 14-15 : « Il existait à l'origine des surcotes pour les liquidations après 65 ans. Ces surcotes ont été supprimées en 1955 à l'AGIRC et en 1965 à l'ARRCO (UNIRS) ». Les valeurs Arrco 1957-1965 du COR (0,75 à 60 ans … 0,95 à 64 ans) sont celles de l'IPP ; les valeurs Agirc ne le sont pas (écart E5)."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "nouveau: le droit d'avant 1973 (salaire de base, coefficients des complémentaires)"
+      - quoi: "Pour 1948, l'IPP donne le bon salaire de référence de l'IGRANTE et de l'IPACTE : 0,37 F, soit 0,0564 €. Le dépôt porte 0,56 € (valeurs_point.csv:526 et :648), dix fois trop, valeur reprise d'OpenFisca-France-Pension (salaire_reference_igrante.yaml:35-36). Les points acquis en 1948 dans ces deux régimes ressortent donc dix fois trop peu nombreux."
+        preuve: "retraites/secteur_public/regimes_complementaires/ircantec/salaire_de_reference/salaire_reference_igrante.yaml:33-38 (0,26 ; 0,37 ; 0,42 F de 1947 à 1949) et salaire_reference_ipacte.yaml:37-38 ; commit fe2cdff"
+        verification: "Vérifié par la continuité de la série, au taux de 6,55957 : 0,0396 € en 1947, 0,0564 € en 1948, 0,064 € en 1949. L'erreur vient de la conversion faite par OpenFisca-France-Pension, pas de l'original de l'IPP."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "L'IPP a le minimum de réversion de 1964 à 2021 et le plafond de la majoration de 11,1 % de 2010 à 2025. Le dépôt n'applique ni l'un ni l'autre, et n'en garde que deux montants : 3 983,29 € (2025) et 2 400 € (2010, à revaloriser) (reversion.yaml:405-451)."
+        preuve: "…/regime_general_cnav/reversion_minimum.yaml (80 dates, 3 492,37 € en 2021 aux lignes :161-162) ; majoreversion_plafond.yaml:31-32 (2 993,14 € en 2025) ; commit fe2cdff"
+        verification: "Barèmes Cnav retraite_reversion_montant_minimum_bar et retraite_reversion_plafond_ressource_majoration_retraite_reversion_bar : mêmes montants, plus ceux que l'IPP n'a pas (4 019,13 € et 3 020,07 € en 2026)."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.4"
+      - quoi: "L'IPP a la valeur de service des points acquis avant 1973 au régime de base des commerçants (1949-2019) et des artisans (1973-2019, puis rsi_vp jusqu'en 2021). Le dépôt remplace ces points par un rendement « estimé » de 9 % (rendements_points.csv:74-75). Ce n'est que la moitié du calcul : ni l'IPP ni le dépôt n'ont le nombre de points acquis par classe de cotisation."
+        preuve: "retraites/independants/pt_organic/…/valeur_point_acquis_par_cotisations.yaml:3-158, pt_cancava/…, rsi_vp/… ; commit fe2cdff"
+        verification: "Barème Cnav ti_prestation_valeur_point_retraite_commercant_bar : valeur du point de 1988 à 2026 (10,7637 € pour les artisans, 14,84302 € pour les commerçants en 2026)."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "L'IPP a l'ASPA d'un couple de 2006 à 2026, les plafonds de ménage de l'AVTS et de l'allocation supplémentaire depuis 1956, et l'abattement sur les revenus d'activité (0,9 et 1,5 SMIC depuis 2015). Le dépôt n'a le couple qu'en 2026 (minimum_vieillesse_couple.csv). Pour une personne seule, il lui manque 2008, 2013 et 2015. Il sert aussi 9 600 € sur toute l'année 2014 (minimum_vieillesse.csv:69), alors que ce montant ne vaut qu'à partir du 1er octobre (9 503,89 € avant)."
+        preuve: "prestations_sociales/solidarite_insertion/minimum_vieillesse/aspa/montant_maximum_annuel/couples.yaml et personnes_seules.yaml (9 503,89 au 2014-04-01, 9 600 au 2014-10-01) ; aspa/abattement_forfaitaire/ ; as/plafond_ressources/ ; commit fe2cdff"
+        verification: "Décret n° 2014-1215 du 20 octobre 2014 (JORFTEXT000029616738) : revalorisation exceptionnelle de l'ASPA « au 1er octobre 2014 ». Décret n° 2014-1568 du 22 décembre 2014 (JORFTEXT000029954019) : prise en compte des revenus d'activité."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "L'IPP a le point de la CNRO (PRO BTP) de 1960 à 1998, l'institution Arrco des ouvriers du bâtiment. Son rendement dépassait celui de l'UNIRS de 1 à 3 points de 1962 à 1975 (15,0 % contre 12,2 % en 1975). Le dépôt applique à tout salarié du privé d'avant 1999 le point de l'UNIRS, choix qu'il présente comme « une décision du dépôt » (en-tête de valeurs_point.csv)."
+        preuve: "retraites/secteur_prive/regimes_complementaires/probtp/point.yaml:13-106 et probtp/salaire_de_reference.yaml ; commit fe2cdff"
+        verification: "Rendement calculé sur les deux séries de l'IPP : valeur de service divisée par le salaire de référence."
+        confronte: scenario_1
+        importance: faible
+        etat: a_trancher
+        raison: "Il faudrait demander l'institution Arrco de l'assuré, une donnée que le dépôt ne recueille pas, pour une seule branche professionnelle."
+      - quoi: "L'IPP a l'histoire des prélèvements sur les pensions : cotisation maladie de 1 % à 2,8 % de 1980 à 1997 (2 % puis 3,8 %, puis 1 % sur les complémentaires) ; CSG de 1,1 % en 1991 jusqu'à 8,3 %, avec un taux réduit dès 1997 et un taux médian dès 2019. Le dépôt applique à toute année les 9,1 % de 2026 (prelevements_remuneration.yaml:731-734, remuneration.py:549-562)."
+        preuve: "prelevements_sociaux/cotisations_securite_sociale_regime_general/mmid_ret/avantages_de_retraite/ ; prelevements_sociaux/contributions_sociales/csg/remplacement/pensions_retraite_invalidite/ ; commit fe2cdff"
+        verification: "Un taux de remplacement net au départ, par génération, demande les prélèvements de l'année du départ. Pour une pension servie aujourd'hui, les taux de 2026 suffisent."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.9"
+      - quoi: "L'IPP a les âges du taux plein de catégories d'avant 1983 (anciens combattants, déportés, inaptes, travailleurs manuels à 60 ans avec 42 ans d'assurance) et des assurés handicapés (55 ans)."
+        preuve: "…/regime_general_cnav/aad.yaml (blocs anciens_combattants, anciens_deportes, inaptitude, handicape, travailleurs_manuels) ; commit fe2cdff"
+        verification: "Le dépôt a lu les articles en vigueur (décret 45-0179, articles 70-1 et 70-2, decote_avant_1983.yaml:33-37 et :355-366)."
+        confronte: scenario_1
+        importance: faible
+        etat: ecarte
+        raison: "Ce qui manque au dépôt, c'est l'information sur la catégorie de l'assuré, pas le paramètre ; l'IPP n'a que l'âge."
+      - quoi: "L'IPP a une série de revalorisation des pensions civiles de 1960 à 2003, avec +27 % en 1961."
+        preuve: "retraites/secteur_public/pension_civile/revalorisation_pension.yaml, dont la documentation dit : « Valeurs de 1960 à 2003 issus du calculateur de la DREES » ; commit fe2cdff"
+        verification: "Le dépôt revalorise ces pensions par la péréquation sur le point d'indice (point_indice_fonction_publique.csv)."
+        confronte: scenario_1
+        importance: faible
+        etat: ecarte
+        raison: "La série vient d'un autre modèle, pas d'un texte ; le point d'indice est plus proche du droit."
+    ecarts_nouveaux:
+      - constat: "E1. Dans la table de l'arrêté du 24 janvier 1994, le coefficient des salaires de 1957 vaut 11,875 (reval_s_49/arrete_24_01_1994_jo_27_01_1994.yaml:25-26), entre 24,59 pour 1956 et 20,153 pour 1958."
+        tranche: "Les tables de la Cnav fixent les rapports entre années voisines à 1,075 et 1,135. La bonne valeur est donc d'environ 22,87 : c'est une coquille, l'IPP a tort."
+        preuve: "barème Cnav revalorisation_coefficient_revalorisation_salaire_cotisation_04_2013_bar (33,167 ; 30,851 ; 27,176 pour 1956-1958) ; revalorisation_salaires.csv, table d'octobre 2017 (33,465 ; 31,128 ; 27,42)"
+      - constat: "E2. Le minimum contributif de 636,56 € est daté du 1er octobre 2019 (montant_mico.yaml:105), alors que l'IPP cite lui-même la circulaire Cnav 2019/4 du 9 janvier 2019."
+        tranche: "La bonne date est le 1er janvier 2019, comme dans la série de revalorisation de l'IPP lui-même (1,003 au 2019-01-01). L'IPP se trompe de neuf mois."
+        preuve: "barème Cnav retraite_personnelle_montant_minimum_bar : « 01/01/2019 | 7 638,78 € | 636,56 € »"
+      - constat: "E3. La décote de la fonction publique vaut 0,65 % par trimestre pour l'année 2010 (secteur_public/pension_civile/decote.yaml:66-70)."
+        tranche: "La loi dit 0,625 % ; le dépôt a raison (decote_fonction_publique.csv, 0,00625, certifiée)."
+        preuve: "loi n° 2003-775, article 66 (LEGIARTI000006758610) : « 2010 : 0,625 % »"
+      - constat: "E4. La PMR est entièrement calculée par l'IPP de 2010 à 2026 (independants/pmr_msa.yaml, notes) : indexée sur les prix jusqu'en 2020, en baisse en 2015 (8 075,55 €, lignes :15-16), datée du 1er janvier quand les pensions étaient revalorisées en avril ou en octobre. Elle vaut 10 170,84 € au 1er septembre 2023 (:33-34), et ses montants de 2024 à 2026 sont datés de septembre. Il n'y a qu'une série depuis 2023."
+        tranche: "Le décret D. 732-111 tranche. PMRmax vaut 8 557,38 € au 1er janvier 2022. En 2023, il y a deux séries : 8 970,86 € au 1er janvier pour les pensions d'avant le 1er septembre, revalorisés comme les pensions ; 10 170,86 € au 1er septembre pour les suivantes, revalorisés comme le minimum contributif. Une revalorisation ne peut pas être négative. L'IPP a tort."
+        preuve: "LEGIARTI000035918254, LEGIARTI000044944271, LEGIARTI000047961256, LEGIARTI000053365711 ; article L. 161-25 (LEGIARTI000031781092) : « Si ce coefficient est inférieur à un, il est porté à cette valeur »"
+      - constat: "E5. Pour l'Agirc de 1947 à 1955, l'IPP reprend les coefficients de l'Arrco (0,95 à 64 ans … 0,75 à 60 ans) et met 1,05 dès 65 ans (agirc/coefficient_de_minoration.yaml:63-69, :98-104), sans citer de source."
+        tranche: "Le COR donne pour l'Agirc 1947-1955 : 0,93 à 64 ans … 0,72 à 60 ans, 1,00 à 65 ans, puis de 1,05 à 66 ans jusqu'à 1,25 à 70 ans. À confirmer dans le texte d'origine de la convention de 1947."
+        preuve: "COR, document n° 13 de la séance du 28 janvier 2009, p. 15"
+      - constat: "E6. La fonction publique s'arrête en 2012-2014 : âges d'ouverture et limites d'âge (aod_a, aod_s, la_a, la_s : dernière législation au 1er janvier 2012), durées (trimtp, 2014). On n'y trouve ni la réforme de 2023 ni la suspension de 2026, que l'IPP a pourtant portées au régime général."
+        tranche: "Loi n° 2023-270 et loi n° 2025-1403, article 105 : l'IPP est périmé. Le dépôt porte les deux (categorie_active.csv : 57,25 ans pour les actifs nés à la fin de 1966, 57,75 ans pour 1969)."
+        preuve: "categorie_active.csv ; duree_requise_fonction_publique.csv"
+      - constat: "E7. Les coefficients de solidarité et majorants de l'Agirc-Arrco s'appliquent depuis 2019 sans date de fin (regimes_complementaires/coeff_temp.yaml)."
+        tranche: "Le coefficient de solidarité est supprimé pour les retraites prenant effet à compter du 1er décembre 2023, et au 1er avril 2024 pour les autres (accord du 5 octobre 2023). L'IPP est périmé ; le dépôt le dit (avantages_non_contributifs.yaml:1406-1420)."
+        preuve: "service-public.fr, actualité A15237"
+      - constat: "E8. Le nombre d'années du salaire annuel moyen s'arrête aux 25 années de la génération 1948 (sam.yaml, dernière législation en 2008)."
+        tranche: "Pour les pensions qui partent dès le 1er septembre 2026, l'article R. 173-3-2 compte 24 années avec un enfant et 23 avec deux. L'IPP est périmé ; le dépôt applique la règle (droit/liquider.py:1861-1874)."
+        preuve: "R. 173-3-2 (LEGIARTI000054589934, en vigueur le 1er août 2026)"
+      - constat: "E9. Plusieurs séries s'arrêtent avant 2026 : minimum contributif (1er septembre 2023), minimum de réversion (2021), plafond de la majoration de réversion et plafond de ressources (2025), salaire validant un trimestre (2025), AVPF (2021), RCI (2023), RAFP (2025), allocation supplémentaire et plafonds de l'AVTS (2022). La surcote parentale de 2023 et la carrière longue du régime général manquent."
+        tranche: "Les barèmes Cnav de 2026 donnent : minimum contributif 9 075,50 € ; minimum de réversion 4 019,13 € ; plafond de la majoration 3 020,07 € par trimestre ; salaire validant 1 803 € ; AVPF 2 031,38 € par mois. Le dépôt porte RCI 2026 (21,726 et 1,347 €) et RAFP 2026 (1,4596 et 0,05671 €). L'IPP est en retard."
+        preuve: "API baremes de legislation.lassuranceretraite.fr ; valeurs_point.csv ; surcote_parentale.csv ; carriere_longue.csv"
+      - constat: "E10. L'IPP date de 1972 (loi n° 71-1132) le passage aux dix meilleures années (sam.yaml, valeur au 1er janvier 1972)."
+        tranche: "C'est le décret n° 72-1229 qui opère ce passage, au 1er janvier 1973 ; la circulaire Cnav 2/72 n'en parle pas. L'IPP se trompe probablement d'un an ; à confirmer dans le texte du décret."
+        preuve: "notice JORFTEXT000000693828 : « ABROGATION DE L'ART. L343 … ENTREE EN VIGUEUR : 01-01-1973 »"
+    conclusion: "L'IPP a raison contre le dépôt sur des règles anciennes ou mal reconstruites : les dix dernières années avant 1973, les trimestres d'avant 1972, la réversion à 65 ans, l'assiette de l'AVPF, le revenu moyen des artisans et commerçants, la série du minimum contributif et l'IGRANTE de 1948. Ailleurs il est identique au dépôt, en retard (fonction publique, plusieurs séries de 2021 à 2025) ou faux (dix écarts). Le barème de la Cnav, accessible par API, tranche presque tous les cas mieux que lui."
+
+  - id: til_pension
+    version: "Til-Pension au commit c4e0d50 (14 septembre 2014) ; til-france au commit 9b1260e (2 octobre 2018)"
+    lu_dans: ["github.com/TaxIPP-Life/Til-Pension", "github.com/TaxIPP-Life/til-france"]
+    existants: []
+    nouveaux:
+      - quoi: "Il sert la majoration de l'Agirc et de l'Arrco pour enfants À CHARGE, 5 % des points par enfant, et retient la plus forte de celle-ci ou de la majoration pour enfants nés ou élevés (regime.py:234-272 ; taux dans param.xml:2563-2566, valable depuis 1962). Le dépôt ne sert que la seconde : « La majoration pour enfants à charge (article 95, 5 % par enfant) n'est pas modélisée » (majoration_enfants_agirc_arrco.yaml:22-25). Il connaît pourtant les dates de naissance des enfants (carriere.py:600)."
+        preuve: "til_pension/regime.py:246 (taux_pac) et :272 (return maximum(points_born, points_pac)), au commit c4e0d50"
+        verification: "agirc-arrco.fr, page « Majorations pour enfants » : « 5 % par enfant » à charge (enfant de moins de 18 ans, de moins de 25 ans s'il est étudiant, apprenti ou demandeur d'emploi, ou invalide avant 21 ans), appliqués « sur la totalité des droits ». « Les majorations ne sont pas cumulables … c'est la majoration la plus élevée qui vous sera attribuée. » Source : ANI du 17 novembre 2017, article 95. Cette majoration est temporaire : il faudra que l'échéancier bascule sur l'autre quand l'enfant cesse d'être à charge."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il prend pour l'AVPF l'assiette mensuelle publiée, multipliée par douze (trimesters_functions.py:42-52 ; param.xml:830-836 : 1 594 € par mois en 2014), et non 1 820 heures de SMIC comme le dépôt (carriere.py:510-516). C'est le même point que pour les barèmes IPP, d'où vient sa série."
+        preuve: "til_pension/trimesters_functions.py:50-51 (sali_avpf = 12*multiply(year_avpf, avpf)), au commit c4e0d50"
+        verification: "article R. 381-3 (LEGIARTI000047961951) : 169 fois le SMIC du 1er juillet de l'année précédente, par mois"
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Son comportement de départ consiste à partir au taux plein, au plus tard des trois régimes (til_france/pgm/depart_retirement.py:10-27)."
+        preuve: "depart_retirement.py:13 (« if behavior == 'taux_plein' »), au commit 9b1260e"
+        verification: "C'est déjà la règle du pilote du dépôt (pilote.py:6-12)."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Rien de plus que le dépôt. En outre, dans la dernière version, le calcul des pensions est débranché (retraite.yml:18 : « date_depart: -1 #pension(…) » ; :24 : « new_rsti: 0 »)."
+      - quoi: "Sa démographie (naissances, décès, unions, ruptures, migrations) est alignée sur les projections de l'INSEE (param/demo/projpop0760_FECcentESPcentMIGcent.xls)."
+        preuve: "til_france/model/standard/demographie/*.yml, au commit 9b1260e"
+        verification: "Ce sont les projections 2007-2060 de l'INSEE, que les projections plus récentes du dépôt remplacent."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Les projections sont périmées, et une population microsimulée relève de 138.14."
+    ecarts_nouveaux:
+      - constat: "Il valide un trimestre pour 200 heures de SMIC dès 1945 (param.xml:1153-1156)."
+        tranche: "Avant 1972, un trimestre se validait par l'AVTS trimestrielle (1949-1971) ou par d'autres seuils (avant 1949). Til-Pension a tort avant 1972."
+        preuve: "article R. 351-9 en vigueur (LEGIARTI000053335598)"
+      - constat: "Sa législation s'arrête en 2014 : le SMIC de 2014 (9,53 €) vaut « jusqu'en 2100 » (param.xml, deb=\"2014-01-01\" fin=\"2100-12-01\"). Il note, sans le coder, qu'« Avant 1972 : le SAM du RG était calculé sur les 10 dernières années » (param.xml:1-4)."
+        tranche: "Il ne connaît ni la réforme de 2023, ni la suspension de 2026, ni les barèmes postérieurs à 2014 : il est périmé."
+        preuve: "loi n° 2023-270 ; loi n° 2025-1403, article 105"
+    conclusion: "Til-Pension couvre le régime général, le RSI, la fonction publique, l'Agirc et l'Arrco avec le droit de 2014. Il n'a ni réversion, ni régimes spéciaux, ni minimum garanti (Fonction_publique.py:204-205), et confie l'ASPA à OpenFisca (regime_prive.py:164) ; til-france ne calcule plus de pension dans sa dernière version. Son seul apport propre est la majoration de l'Agirc-Arrco pour enfants à charge ; pour l'AVPF, il confirme l'assiette des barèmes IPP."
+
+  - id: pensipp
+    version: "commit fbaf3fa (22 mai 2013)"
+    lu_dans: ["github.com/abozio/PENSIPP : Modele/Outils/OutilsRetraite/*.R, Simulations/CN/*, Simulations/MDF/*"]
+    existants: []
+    nouveaux:
+      - quoi: "Il code quatre règles de départ : au taux plein ; à un âge fixé de l'extérieur ; dès qu'une pension cible est atteinte ; et l'arbitrage de Destinie. Dans ce dernier, l'assuré part quand sa pension dépasse son salaire du moment, ou un taux de remplacement cible qui croît de 1 % par an après 60 ans, sauf si attendre un an lui rapporte plus qu'un seuil β (OutilsRetr.R:809-890 ; paramètres dans SimulCN-variantes macro.R:91-93). Le dépôt fait partir au taux plein ou à l'âge saisi (pilote.py:6-12), et prévient que ses écarts sont « à comportement inchangé » (limites.md:2005-2010)."
+        preuve: "OutilsRetr.R:861-889 (option « sw »), au commit fbaf3fa"
+        verification: "Un comportement de départ rapprocherait du réel une réforme qui pénalise les départs précoces. Mais les paramètres de PENSIPP (k tiré d'une loi log-logistique, δk = 1 %, β = 200) ne sont calés nulle part dans son dépôt. Et ses propres simulations de comptes notionnels gardent l'âge de référence (SimDir(i,t,\"exo\",ageref), SimulCN-variantes macro.R:143) : l'option « sw » y est commentée (SimulRef-variantes macro.R:82)."
+        confronte: cout
+        importance: moyenne
+        etat: a_trancher
+        raison: "Un comportement non calé déplacerait les chiffres de la page Coût sans source, alors que le programme affiche des effets à comportement inchangé."
+      - quoi: "Ses comptes notionnels peuvent créditer des périodes non cotisées, chaque crédit étant désactivable par une option : le chômage (cotisation sur le dernier salaire, entre le SMIC et 4 plafonds) ; l'AVPF (au SMIC) ; chaque naissance (deux ans de cotisation sur le meilleur des deux derniers salaires) ; 10 % de plus pour trois enfants ; un minimum en points (10 % des points sous le seuil du minimum vieillesse, dégressif jusqu'au SMIC) (OutilsCN.R:25-36, :137-205). Il chiffre aussi la masse de ces crédits (Simulations/CN/Dispositifs NC/ANC_CN.R). Le compte du dépôt n'en sert aucun, hors le chômage indemnisé, par choix du README (couches/comptes_notionnels.yaml:40-77)."
+        preuve: "OutilsCN.R:157-195, au commit fbaf3fa"
+        verification: "C'est une variante du programme, pas un rapprochement du réel : la chiffrer éclairerait le choix du README."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le README exclut ces dispositifs du compte ; seul le propriétaire peut décider d'en chiffrer une variante."
+      - quoi: "La fonction UseLeg(Leg, g) applique à une génération le barème que prévoyait la législation d'une année donnée, par exemple « UseLeg(1992,1942) » (OutilsLeg.R:30-49, :69-140). Elle couvre la durée requise, le nombre d'années du salaire de base, la décote, la surcote et la fonction publique, de 1946 à 2011 : on peut calculer des droits contrefactuels à toute date. Le dépôt n'en prévoit que deux : le droit au 31 août 2023 et la loi de 2023 sans suspension (chantier 138.10)."
+        preuve: "OutilsLeg.R:30-49, au commit fbaf3fa"
+        verification: "Les barèmes IPP rangent déjà la durée, les âges et la proratisation par date de législation (durée requise : 1983, 1994, 2009, 2011, 2015, 2023, 2026) : de quoi écrire les millésimes qui manquent au dépôt."
+        confronte: site
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.10"
+      - quoi: "Son coefficient de conversion vaut S(40)/Σ(1+g)^(a−u)·S(u), calculé sur une table de mortalité du moment, hommes et femmes additionnés (OutilsCN.R:57-80). Le facteur S(40)/S(a) rend aux survivants les comptes des assurés morts entre 39 ans et le départ (l'indice 40 correspond à 39 ans) : c'est un gain d'héritage implicite. Le taux g est la croissance prévue moins la revalorisation des pensions. Le diviseur du dépôt est l'espérance de vie actualisée, conditionnelle à l'âge de départ, sur table de génération, avec ν = 0 par défaut (moteur/conversion.py:1-28, :203-245)."
+        preuve: "OutilsCN.R:66-75, au commit fbaf3fa"
+        verification: "Le gain d'héritage est un choix de programme, déjà posé au registre avec le diviseur norvégien. La table du moment est moins proche du réel qu'une table de génération."
+        confronte: proposition
+        importance: faible
+        etat: a_trancher
+        raison: "C'est une variante de diviseur. La note du registre (« ni gain d'héritage explicite ») est juste à la lettre, mais il y en a un implicite."
+      - quoi: "Il projette une population microsimulée, faite des biographies de Destinie (Modele/Outils/OutilsBio/BiosDestinie2.RData), et en tire des séries : masses de salaires et de pensions, rapport pensions/PIB, rapport démographique, âge de départ, pension moyenne par régime (SimulCN-variantes macro.R:40-62)."
+        preuve: "SimulCN-variantes macro.R:40-62, au commit fbaf3fa"
+        verification: "Ces sorties exigent une population de carrières ; c'est Destinie 2, examiné à part, qui la fournit."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Relève de 138.14 et de Destinie 2 ; PENSIPP n'y ajoute rien de public."
+    ecarts_nouveaux:
+      - constat: "Son salaire de base est toujours la moyenne des meilleures années, avant 1973 compris (OutilsRetr.R:209-230)."
+        tranche: "Jusqu'en 1972, c'étaient les dix dernières années (circulaire 20/SS de 1961 ; décret n° 72-1229). PENSIPP se trompe, comme le dépôt."
+        preuve: "notice JORFTEXT000000693828 ; base de la Cnav, CR_MIN_20SS_06021961"
+      - constat: "Sa législation s'arrête en 2011-2012 (OutilsLeg.R, branche Leg >= 2011 ; dernier commit le 22 mai 2013)."
+        tranche: "Il ne connaît ni la loi de 2014, ni celle de 2023, ni la suspension de 2026 : il est périmé."
+        preuve: "loi n° 2014-40 ; loi n° 2023-270 ; loi n° 2025-1403, article 105"
+    conclusion: "PENSIPP couvre le régime général, la fonction publique, l'Agirc, l'Arrco et les indépendants avec le droit de 1946 à 2011. Il ne calcule pas la réversion (variables rev_* seulement revalorisées, OutilsRetr.R:763-799) et laisse le minimum vieillesse en commentaire (:745, :795). Il ne fait mieux que le dépôt sur aucune règle en vigueur : ses apports sont des choix de programme (comportement de départ, crédits non cotisés dans le compte, diviseur avec gain d'héritage) et des contrefactuels par millésime de législation."

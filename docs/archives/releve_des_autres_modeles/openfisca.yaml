@@ -1,0 +1,254 @@
+# Le rapport de la recherche « openfisca » (OpenFisca-France, OpenFisca-France-Pension, LexImpact, TAXIPP), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+groupe: openfisca
+depot_lu_au_commit: "714ad0c (4 octobre 2026), en lecture seule ; montants du dépôt recalculés par ses propres classes (MinimumContributif, MinimumVieillesse), sans écriture"
+modeles:
+  - id: openfisca_france_pension
+    version: "1c45423 (0.1.3, 13 mai 2026)"
+    lu_dans:
+      - "https://github.com/openfisca/openfisca-france-pension (clone, commit 1c45423) : regimes/*.py, variables/*.py, parameters/retraites/**, tests/formulas/ (140 tests), doc/*.md"
+      - "index LEGI et JORF du dépôt (D. 351-2-1, D. 351-2-2, L. 173-2, R. 351-7, R. 351-9, R. 351-29, L. 351-8, L. 161-17-2, L. 161-17-3, D. 353-1, décret n° 74-191)"
+      - "https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1518.pdf (COR, 25 mai 2011)"
+      - "https://www.service-public.gouv.fr/particuliers/vosdroits/F21552 (vérifiée le 1er septembre 2026)"
+    existants:
+      - debut: "Il code le départ anticipé des fonctionnaires pare"
+        verdict: confirme
+        commentaire: "Toujours là au commit 1c45423 (`regimes/fonction_publique.py:179-195, 290-327, 422-439`, quatre tests : deux dans `parent_trois_enfants.yml`, deux dans `decote.yml`) ; toujours absent du dépôt (`docs/limites.md:350-352`). À savoir avant reprise : il sert l'âge anticipé à quiconque déclare la raison « famille », sans contrôle, et ne date la décote de l'année des conditions que pour une liquidation antérieure au 1er juillet 2011 ; la règle se relit dans la loi de 2010, pas chez lui."
+      - debut: "Sa quotité de travail réduit les services sans réd"
+        verdict: confirme
+        commentaire: "`variables/fonction_publique.py:332-335` et `:1193-1196` ; la fiche `temps_partiel_fonction_publique` reste `manquante` (l. 9). Il ne porte pas les exceptions que la fiche nomme : temps partiel de droit pour un enfant né depuis 2004, surcotisation de L. 11 bis."
+      - debut: "Il calcule, et le plus souvent teste, la majoratio"
+        verdict: confirme
+        commentaire: "140 tests de formules au commit 1c45423 ; l'oracle du dépôt compte toujours 48 profils (10, 10, 7, 10, 11 dans `tests/temoins/openfisca_*.json`)."
+      - debut: "Il rend, pour toute simulation, chaque variable ca"
+        verdict: confirme
+        commentaire: "`docs/etat.md:70` : 733 lignes du relevé sur 22 789 citent leur fiche, 14 leur version."
+      - debut: "Il calcule une population d'un coup, en vecteurs, "
+        verdict: confirme
+        commentaire: "`doc/Proposition.md:36, 141` ; le `scenario.py` que cite `doc/modelisation.md` n'est pas publié."
+      - debut: "`openfisca serve` expose `/calculate`, `/trace`, `"
+        verdict: confirme
+        commentaire: "`.github/has-functional-changes.sh`, `.github/is-version-number-acceptable.sh`, `CHANGELOG.md` (0.1.3) ; le dépôt ne date toujours aucun résultat d'une version."
+      - debut: "Il écrit chaque règle une fois, dans un moteur Pyt"
+        verdict: confirme
+        commentaire: "Écarté, raison inchangée (§ 7.1)."
+    nouveaux:
+      - quoi: "Il date le minimum contributif texte par texte : montants de 1984 à 2023 à chaque revalorisation, majoration créée en 2004, condition des 120 trimestres cotisés pour les seules pensions d'avril 2009 et après, écrêtement en 2012 seulement. Le dépôt n'a que six ancres par grandeur (`legislation/minimum_contributif.csv:70-87`) ; il date de 2007 les montants que D. 351-2-1 fixe « au 1er janvier 2008 », projette les autres années sur les prix et non sur la revalorisation des pensions (`scenarios/actuel.py:2746-2779`), exige 120 trimestres à toute date et sert majoration et écrêtement à toute liquidation depuis 1983 (`droit/completer.py:248-271, 344`). Recalculé : minimum de 2004 trop haut de 1,7 %, majoré de 7,9 % ; +2,8 % en 2008, +3,9 % en 2018, +4,7 % en 2019 ; en 1984, un majoré de 4 587 € et un plafond d'écrêtement de 6 689 € qui n'existaient pas ; en 2023, les montants de septembre pour toute l'année (+13,4 % sur le majoré de janvier à août)."
+        preuve: "`parameters/retraites/secteur_prive/regime_general_cnav/montant_mico.yaml` (1984-01-01 à 2023-09-01 ; l. 66-78 pour 2004-2008) et `plafond_mico/minimum_contributif_plafond_mensuel.yaml` (2012-2023) ; `regimes/regime_general_cnav.py:1005-1015` (1983 : minimum seul), `:967-1003` (2004 : majoration), `:941-943` (120 trimestres, « | liquidation_date < date(2009, 4, 1) »), `:736-792` (écrêtement, formule de 2012 seule), au commit 1c45423"
+        verification: "D. 351-2-1, rédactions LEGIARTI000006736531 (6 511,06 et 6 706,39 € « au 1er janvier 2004 »), LEGIARTI000006736532 (6 760,82 et 7 172,54 € au 1er janvier 2006) et LEGIARTI000017870194 (6 958,21 et 7 603,41 € « au 1er janvier 2008 ») : égaux aux siens ; « revalorisés aux mêmes dates et dans les mêmes conditions que celles prévues pour les pensions de vieillesse par l'article L. 161-23-1 », et non sur les prix (même article, rédaction de 2004). D. 351-2-2 (120 trimestres) n'existe que depuis le 1er avril 2009 (LEGIARTI000020090096). L. 173-2 n'écrête que « les pensions prenant effet à compter du 1er janvier 2012 » (LEGIARTI000023271329) ; de 1985 à 2003, il limitait seulement le cumul de plusieurs minima de base au plus élevé (LEGIARTI000006740908), règle qu'aucun des deux ne porte."
+        confronte: scenario_1
+        importance: forte
+        etat: a_reprendre
+        chantier: "nouveau: le minimum contributif daté, ses montants et ses règles de 1983 à 2023"
+      - quoi: "Il valide les trimestres d'avant 1972 au seuil de R. 351-9 : de 1949 à 1971, le montant trimestriel de l'AVTS (8 500 F en 1949, 437,5 F en 1971) ; de 1946 à 1948, 18 F ; les règles de 1930 à 1945. Le dépôt valide quatre trimestres à toute année travaillée avant 1972 (`donnees/macro.py:269-296`, `legislation/validation_trimestres.csv:9-11`). Même constat que `calcul_verification_pension`."
+        preuve: "`regimes/regime_general_cnav.py:478-497` et `parameters/.../salval/salaire_validant_trimestre/metropole.yaml:76-115`, au commit 1c45423"
+        verification: "R. 351-9, rédaction de 1985 (LEGIARTI000006749353) et en vigueur (LEGIARTI000053335598) : « autant de trimestres que le salaire annuel [...] représente de fois le montant trimestriel de l'allocation aux vieux travailleurs salariés au 1er janvier de l'année considérée [...] jusqu'au 31 décembre 1962, ce montant est celui des villes de plus de 5 000 habitants »"
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.6"
+      - quoi: "Depuis 2004, son salaire annuel moyen ne retient que les années dont le salaire valide au moins un trimestre. Le dépôt retient toute année qui porte un revenu (`droit/liquider.py:1706-1775`), et sa fiche `salaire_annuel_moyen`, conforme, n'en dit rien : une courte carrière au régime général avec une année de petit emploi voit son salaire moyen tiré vers le bas, cas fréquent chez les polypensionnés de la fonction publique."
+        preuve: "`regimes/regime_general_cnav.py:1079-1087` (condition « period.start.year < 2004 | salaire >= salaire validant »), au commit 1c45423"
+        verification: "R. 351-29, rédaction du 15 février 2004 (LEGIARTI000006750042) et en vigueur (LEGIARTI000053335651) : « le salaire annuel moyen correspondant aux cotisations permettant la validation d'au moins un trimestre d'assurance selon les règles définies par l'article R. 351-9 » ; absent de la rédaction de 1985 (LEGIARTI000006750038). CFDT Retraités et la presse spécialisée le redisent."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte le minimum de réversion du régime général de 1964 à 2021 (3 492,37 € par an en 2021). Le dépôt ne le sert pas (`droit/reversion.py:19-23`)."
+        preuve: "`parameters/retraites/secteur_prive/regime_general_cnav/reversion_minimum.yaml` (barème IPP min_rev_RG), au commit 1c45423 ; paramètre sans formule, série arrêtée en 2021"
+        verification: "D. 353-1 en vigueur (LEGIARTI000053356066) : « Le montant minimum de base annuel [...] est égal à 3 983,29 euros au 1er janvier 2025 », entier à quinze ans d'assurance, réduit en soixantièmes en deçà ; sa valeur de 2021 revalorisée jusqu'en 2025 donne 3 983,32 €."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.4"
+      - quoi: "Il porte, en entrée, les taux pleins par catégorie de L. 351-8 : anciens déportés et internés (depuis 1965), anciens combattants et prisonniers de guerre (1974), travailleurs manuels et mères de famille ouvrières (1976). Le dépôt n'en porte aucun, avant 1983 (`regles/decote_avant_1983.yaml:33-37`) ni après."
+        preuve: "`regimes/regime_general_cnav.py:102-200` (`raison_depart_taux_plein_anticipe`) et `parameters/.../regime_general_cnav/aad.yaml:201-286`, au commit 1c45423"
+        verification: "L. 351-8, 3°, 4° et 5°, en vigueur (LEGIARTI000051289852) ; décret n° 74-191, art. 1er (LEGIARTI000006762031). Ses âges et durées sont faux en partie (écarts ci-dessous) : la règle se reprend des textes, pas de lui."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il borne la pension du régime général à la moitié du plafond, surcote en sus. Le dépôt n'a aucun maximum, avant 1983 ni après (`regles/decote_avant_1983.yaml:33-34, 57-60`)."
+        preuve: "`regimes/regime_general_cnav.py:1022-1037` (`pension_maximale`) et le plafonnement de `pension_brute` (`:753-756`), au commit 1c45423"
+        verification: "service-public.fr, F21552, vérifiée le 1er septembre 2026 : « ne peut pas dépasser 50 % du plafond de la Sécurité sociale applicable l'année de votre départ », sauf surcote ; circulaire Cnav n° 22/83, que cite la fiche du dépôt. Ne mord guère qu'avant 1983, par l'ajournement et les taux acquis."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il sert la majoration de l'Agirc-Arrco pour enfants à charge, 5 % par enfant, quand elle passe celle des enfants nés ou élevés. Le dépôt ne la porte pas (`regles/majoration_enfants_agirc_arrco.yaml:22-25`)."
+        preuve: "`regimes/regimes_complementaires_prives.py:87-102` (le plus avantageux des deux), `:222-233` (Arrco) et `:360-371` (Agirc, depuis 2012), au commit 1c45423"
+        verification: "article 95 de l'accord du 17 novembre 2017, que la fiche du dépôt cite pour dire qu'elle manque"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte la valeur de service des points d'avant 1973 des artisans (CANCAVA, 1973-2019) et des commerçants (ORGANIC, 1949-2019). Le dépôt sert ces droits par un rendement estimé de 9 % (`regimes/rendements_points.csv:74-75`, `estimee`)."
+        preuve: "`parameters/retraites/independants/pt_cancava/…/valeur_annuelle.yaml` et `pt_organic/…/valeur_point_acquis_par_cotisations.yaml`, au commit 1c45423 ; paramètres sans formule, et sans barème d'acquisition des points"
+        verification: "Concordent avec les valeurs du point de la Sécurité sociale des indépendants qu'il cite (secu-independants.fr) et reprend dans `rsi_vp` : 9,1234 € (artisans) et 12,58032 € (commerçants) en octobre 2015. L'acquisition (points par classe de cotisation) reste à lire ailleurs."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte le seuil de validation des Antilles-Guyane et de La Réunion, plus bas qu'en métropole de 1948 à 1995 (en 1980 : 2 112 F et 1 897,5 F contre 2 586 F). Le dépôt ignore les départements d'outre-mer (aucune occurrence dans `src/` ni `legislation/`). Même constat que `baremes_ipp`."
+        preuve: "`parameters/.../salval/salaire_validant_trimestre/guadeloupe_guyane_martinique.yaml` et `reunion.yaml`, choisis par `regime_general_cnav_salaire_validant_trimestre` (`regimes/regime_general_cnav.py:1145-1152`), au commit 1c45423"
+        verification: "R. 351-9 en vigueur (LEGIARTI000053335598) : pour l'assuré qui a travaillé dans un département de L. 751-1, « le montant du salaire minimum de croissance à retenir est celui qui est en vigueur dans ledit département »"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.6"
+    ecarts_nouveaux:
+      - constat: "Sa durée requise et son âge d'ouverture s'arrêtent à la loi de 2023 : 171 trimestres et 63 ans à la génération 1964, 172 trimestres et 63 ans et 3 mois à 1965 (`regime_general_cnav/trimtp.yaml:273-292`, `aod.yaml:290-341`). L'écart du registre qui lui prête 169 trimestres à la génération 1965 est faux au commit 1c45423 : il y porte 172 depuis le 1er septembre 2023 ; c'est la suspension qu'il ignore."
+        tranche: "L. 161-17-3 (LEGIARTI000053280903) et L. 161-17-2 (LEGIARTI000053280889), rédaction de la loi n° 2025-1403 du 30 décembre 2025 : 170 trimestres jusqu'aux nés du 31 mars 1965, 171 d'avril à décembre 1965 ; le dépôt a raison"
+        preuve: "`legislation/duree_assurance_requise.csv:129-131`, `age_ouverture_requis.csv:139-141`"
+      - constat: "Depuis avril 2009, son minimum contributif multiplie le minimum par (1 + surcote) (`regimes/regime_general_cnav.py:959-962`)."
+        tranche: "D. 351-2-1, dernier alinéa depuis le 1er avril 2009 (LEGIARTI000020090091, en vigueur LEGIARTI000047961314) : la surcote « est calculée sur la base du montant de pension avant qu'il ne soit porté au montant minimum », et s'y ajoute ; le dépôt a raison depuis le 23 septembre 2026"
+        preuve: "`droit/completer.py:68-98`, circulaire Cnav 2018-04 (621 + 24,07 + 15,52 = 660,59 €)"
+      - constat: "Sa majoration de durée au-delà de l'âge du taux plein prend le taux de décote de la génération, 1,25 % par trimestre dès 1953, et court dès l'âge d'annulation de la catégorie, 60 ans pour l'inapte (`regimes/regime_general_cnav.py:214-241, 243-270`)."
+        tranche: "R. 351-7 en vigueur (LEGIARTI000053335592) : 2,5 % par trimestre au-delà de l'âge du 1° de L. 351-8, ou de 65 ans pour l'inapte ; le dépôt a raison"
+        preuve: "`regles/majoration_duree_apres_65_ans.yaml:53-64`"
+      - constat: "Il sert le taux plein à 60 ans à tout ancien combattant dès 1975 (`aad.yaml:246-262`) ; il fixe à 42 ans la durée des travailleurs manuels sans l'appliquer (`aad.yaml:282-286`, « TODO » à `regimes/regime_general_cnav.py:115, 136`)."
+        tranche: "décret n° 74-191, art. 1er (LEGIARTI000006762031) : de 64 ans pour six à dix-sept mois de captivité ou de services de guerre à 60 ans pour cinquante-quatre mois ; décret de 1945, art. 70-2, rédaction de 1978 (LEGIARTI000006760658) : quarante et un ans, quarante-trois avant le 1er juillet 1977. Les deux écarts sont les siens"
+        preuve: "`regles/decote_avant_1983.yaml:137-147`"
+      - constat: "Sa revalorisation des pensions de 2020 est uniforme, 0,3 %, et sa série s'arrête en 2024 (`regime_general_cnav/revalorisation_pension.yaml`)."
+        tranche: "loi n° 2019-1446, art. 81 : l'inflation, 1 %, pour les pensions de 2 000 € par mois au plus, en tranches jusqu'à 0,3 % ; décision n° 2019-795 DC (JORFARTI000039675440) : le seuil « soustrait 77 % des assurés à la revalorisation dérogatoire » ; le dépôt a raison, et porte 2025 et 2026"
+        preuve: "`legislation/revalorisation_pensions.csv:120-124`"
+      - constat: "De janvier 2004 à juin 2005, il proratise la majoration du minimum contributif sur la durée cotisée (`regimes/regime_general_cnav.py:988`)."
+        tranche: "COR, séance du 25 mai 2011, document n° 1518, p. 3 : jusqu'au 30 juin 2005, « le minimum contributif majoré est calculé en fonction de la durée d'assurance validée sans distinction entre périodes cotisées et non cotisées ». Le dépôt fait la même erreur (`droit/completer.py:266-271`)"
+        preuve: "https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1518.pdf"
+      - constat: "Ses points des indépendants ont des fautes de saisie : la valeur ORGANIC du 1er avril 2011 reprend celle de la CANCAVA, 8,8124 € au lieu d'environ 12,15 € (`pt_organic/…/valeur_point_acquis_par_cotisations.yaml:150-151`) ; la valeur de 2001 du point des artisans est en euros dans une série en francs (`pt_rc_art/valeur_points_acquis.yaml:77-78`) ; trous de 2013 à 2015. Sans effet chez lui : aucune formule ne les lit."
+        tranche: "sa propre série : 11,90139 € en 2009 et 12,4048 € en 2012 encadrent 2011 ; le dépôt a 0,2847 € pour 2001"
+        preuve: "`regimes/valeurs_point.csv` (rco_artisans, 2001)"
+      - constat: "Avant 1983, son minimum de pension lit `prestations_sociales.…avts_av_1961` (`regimes/regime_general_cnav.py:1017-1020`), que le paquet ne livre pas : `parameters/` n'a que `marche_travail`, `prelevements_sociaux` et `retraites`."
+        tranche: "un défaut du paquet publié, sans texte à lire"
+        preuve: "`openfisca_france_pension/parameters/`, au commit 1c45423"
+    conclusion: "Ce qu'il fait de mieux tient à des paramètres datés texte par texte que le dépôt projette ou ignore — d'abord le minimum contributif, dont le dépôt sert la majoration et l'écrêtement avant leur création —, et à quelques règles qui manquent au dépôt (seuil de validation d'avant 1972, salaire moyen sur années validantes, minimum de réversion, catégories de L. 351-8). Il reste borné à cinq familles de régimes, arrêté à la loi de 2023, et faux sur le minimum surcoté, la majoration de durée et la revalorisation de 2020."
+
+  - id: openfisca_france
+    version: "16b2e69 (176.1.2, 1er octobre 2026)"
+    lu_dans:
+      - "https://github.com/openfisca/openfisca-france (clone, commit 16b2e69) : model/prelevements_obligatoires/prelevements_sociaux/contributions_sociales/remplacement.py, model/prestations/minima_sociaux/asi_aspa.py, model/prelevements_obligatoires/impot_revenu/ir.py, model/revenus/remplacement/retraite.py, parameters/prestations_sociales/solidarite_insertion/minimum_vieillesse/**, parameters/prelevements_sociaux/**, parameters/impot_revenu/calcul_revenus_imposables/**"
+      - "confrontation des séries par script (scratchpad openfisca/compare_series.py) : plafond de la sécurité sociale, SMIC horaire, point d'indice, ASPA"
+      - "index JORF (décrets n° 90-265 et 90-266) et LEGI (L. 136-8, L. 351-13, L. 816-1)"
+      - "https://www.service-public.gouv.fr/particuliers/vosdroits/F415 (vérifiée le 15 avril 2026)"
+    series_confrontees: "Plafond de la sécurité sociale (somme des douze mois, 80 années), SMIC horaire au 1er janvier (57 années), point d'indice (68 années) : identiques à 0,2 % près, sans exception. ASPA de 2006 à 2026 : mêmes montants ; seul diffère l'usage d'une ligne par an, que le dépôt date de la revalorisation d'avril (2009-2012, 2018) ; 2008 projeté à +0,9 % de la valeur de septembre. Seuils de CSG de 2026 : identiques (13 048, 17 057, 26 472 €). Valeurs du point Agirc, Arrco, Agirc-Arrco, Ircantec, RAFP (dans OpenFisca-France-Pension) : identiques là où les deux séries existent ; les siennes s'arrêtent en 2021 (RAFP), 2022 (Ircantec), novembre 2024 (Agirc-Arrco). Personne n'a tort ; les séries du dépôt sont plus longues."
+    existants:
+      - debut: "Il calcule la CSG, la CRDS et la CASA des pensions"
+        verdict: confirme
+        commentaire: "Inchangé au commit 16b2e69 (`remplacement.py:285-308, 417-438, 477-496`). Il a les demi-parts (3 484, 4 555, 7 066 € en 2026) et les seuils depuis 2015, que le dépôt n'a pas (`prelevements_remuneration.yaml:755-759`, une part, 2026). Le dépôt retire toujours 9,1 % (`remuneration.py:559-565`, `contexte.py:668-670`), l'ASPA comprise (`pages.js:3678-3685`). Avant 2015, sa formule est fausse (écart ci-dessous)."
+      - debut: "Il sert l'ASPA d'un couple sous le plafond du coup"
+        verdict: confirme
+        commentaire: "`asi_aspa.py:330-385` et `:16-104` ; le dépôt sert toujours le barème d'une personne seule (`droit/foyer.py:125`), `plafond_couple` restant inemployé."
+    nouveaux:
+      - quoi: "Il calcule l'impôt sur le revenu des retraités : abattement de 10 % des pensions (454 € par pensionné au moins, 4 439 € par foyer au plus, revenus de 2025), abattement des contribuables de 65 ans ou invalides, parts, décote. Le dépôt ne calcule aucun impôt, ni dans la pension nette ni dans l'effet retour de la page Coût (aucune occurrence dans `src/`)."
+        preuve: "`model/prelevements_obligatoires/impot_revenu/ir.py:445-497` (abattement des pensions), `:3615-3680` (`abat_spe`), `:3737` (`nbptr`) ; `parameters/impot_revenu/calcul_revenus_imposables/deductions/abatpen/*.yaml`, `abat_rni/contribuable_age_invalide.yaml`, au commit 16b2e69"
+        verification: "service-public.fr, F415, vérifiée le 15 avril 2026 : « abattement de 10 % [...] 454 € par pensionné [...] 4 439 € par foyer fiscal », égal à ses paramètres ; CGI, art. 157 bis, pour l'abattement des personnes âgées (BOFiP 2036-PGP, qu'il cite)"
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.5"
+      - quoi: "Il porte le minimum vieillesse d'avant l'ASPA : AVTS (1962-2022), allocation supplémentaire d'une personne seule (1956-2022) et d'un ménage (1982-2022), leurs plafonds, le complément exceptionnel, l'AVTS d'avant 1961 par taille de commune. Le dépôt déflate sur les prix le montant de 2006 (`scenarios/actuel.py:1571-1581`), étiqueté `certifiee` : 1 195 € en 1970 au lieu de 442 € (+170 %), 2 387 € au lieu de 1 677 € en 1978 (+42 %), 5 526 € au lieu de 5 293 € en 1990 (+4 %). Même série que `baremes_ipp`, dont il la tient."
+        preuve: "`parameters/prestations_sociales/solidarite_insertion/minimum_vieillesse/avts/`, `as/`, `avts_av_1961/`, au commit 16b2e69 ; paramètres sans formule avant 2006 (`asi_aspa.py:387`)"
+        verification: "décret n° 90-265 (JORFARTI000002138946) : AVTS « portés à 14800 F par an à compter du 1er janvier 1990 » ; décret n° 90-266 (JORFARTI000001947321) : allocation supplémentaire « fixé à 19920 F à compter du 1er janvier 1990 » ; égaux aux siens. Leur somme de 2006, 7 323,48 €, est l'ancre certifiée du dépôt (D. 815-1)."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.6"
+      - quoi: "Il porte la majoration pour conjoint à charge (4 000 F par an depuis 1976, 609,80 € depuis 2002) et le plafond de ressources du conjoint jusqu'en 2022. Le dépôt ne la sert pas à qui l'avait avant 2011 (aucune occurrence de L. 351-13 dans `src/` ni `regles/`)."
+        preuve: "`minimum_vieillesse/majconj/montant_majoration_conjoint_charge.yaml` et `plafond_conjoint_pour_maj_pac.yaml`, au commit 16b2e69 ; paramètres sans formule"
+        verification: "L. 351-13 en vigueur (LEGIARTI000023033932) : majoration « supprimée à compter du 1er janvier 2011 », « maintenue pour les pensionnés qui en bénéficiaient au 31 décembre 2010 », réduite si la durée d'assurance est incomplète"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il oppose à l'ASPA et à l'ASI la condition de séjour de dix ans de l'étranger hors Espace économique européen et Suisse. Le dépôt ne la lit pas, faute de connaître la nationalité (`regles/residence_et_minimum_vieillesse.yaml:111-113`)."
+        preuve: "`model/prestations/minima_sociaux/asi_aspa.py:168-182` et `aspa/duree_min_titre_sejour.yaml`, au commit 16b2e69"
+        verification: "L. 816-1 en vigueur (LEGIARTI000042920144), 1° et 3° ; il omet le 2° (réfugiés, apatrides, protection subsidiaire, anciens combattants) et l'attestation par les périodes d'assurance de L. 351-2"
+        confronte: scenario_1
+        importance: faible
+        etat: a_trancher
+        raison: "Une question de nationalité à la saisie, que le propriétaire tranche ; dix ans d'assurance en France attestent la condition (L. 816-1, 1°), ce que le moteur pourrait présumer d'une carrière saisie."
+      - quoi: "Il calcule l'ASI, minimum des pensionnés d'invalidité avant l'âge de l'ASPA. Le dépôt ne la porte pas (`regles/inaptitude_au_travail.yaml:211`)."
+        preuve: "`model/prestations/minima_sociaux/asi_aspa.py:202-303`, au commit 16b2e69"
+        verification: "méthode ; allocation d'invalidité, servie avant la retraite"
+        confronte: scenario_1
+        importance: faible
+        etat: ecarte
+        raison: "Hors champ : une prestation d'invalidité, qui cesse à l'âge de l'ASPA ; le dépôt ne modélise l'invalidité que jusqu'à la pension substituée."
+    ecarts_nouveaux:
+      - constat: "Avant 2015, sa CSG et sa CRDS des pensions sont au taux plein pour tous (`remplacement.py:333-338, 399-404, 461-466`, formules « à corriger », dit-il)."
+        tranche: "L. 136-8, III, rédaction de 2010 à 2012 (LEGIARTI000023263645) : 3,8 % pour les pensionnés dont l'impôt de l'année précédente est sous le seuil de recouvrement, exonération sous condition de revenu (L. 136-2, III) ; l'écart est le sien. Le dépôt, à 9,1 % en toute année, ne fait pas mieux"
+        preuve: "LEGIARTI000023263645, lu dans l'index LEGI du dépôt"
+      - constat: "Sa condition de nationalité de l'ASPA omet les réfugiés, apatrides, bénéficiaires de la protection subsidiaire et anciens combattants, et l'attestation par les périodes d'assurance (`asi_aspa.py:180-182`)."
+        tranche: "L. 816-1, 1° et 2° (LEGIARTI000042920144) ; l'écart est le sien"
+        preuve: "LEGIARTI000042920144"
+    conclusion: "Il fait mieux sur tout ce qui sépare la pension brute du revenu du retraité — CSG selon le revenu fiscal, ASPA du couple, impôt avec ses abattements — et sur les montants historiques du minimum vieillesse et des avantages d'avant 2011. Il ne calcule pas la pension ; ses séries de plafond, de SMIC et de point d'indice sont celles du dépôt, à l'euro, et sa CSG d'avant 2015 est fausse."
+
+  - id: leximpact
+    version: "openfisca-france-reforms 6e2fabf (1.0.306, 1er octobre 2026) ; leximpact-socio-fiscal-openfisca-json 15fe1cc (0.0.505, 1er octobre 2026)"
+    lu_dans:
+      - "https://git.leximpact.dev/leximpact/simulateur-socio-fiscal/openfisca/openfisca-france-reforms (clone) : plf_plfss_2026/, plf_plfss_2027/, contrefactuel_plf/, .claude/skills/plf-2027/SKILL.md"
+      - "https://git.leximpact.dev/leximpact/simulateur-socio-fiscal/leximpact-socio-fiscal-openfisca-json (clone) : test_cases.json, decompositions.json, waterfalls.json"
+      - "API GitLab de git.leximpact.dev (liste des projets du groupe simulateur-socio-fiscal ; README de budget/leximpact-prepare-data)"
+      - "https://leximpact.an.fr (outils) ; presse sur le PLF 2027 (legifiscal.fr, 1er octobre 2026)"
+    existants:
+      - debut: "Il suit les projets de loi de finances et de finan"
+        verdict: a_corriger
+        commentaire: "Le journal de veille du dépôt nomme désormais les deux projets (`veille.yaml:4146-4155`, `4695-4699`), sans les avoir lus au texte. Chez LexImpact, seul le sous-plafond de 3 000 € est codé (`plf_plfss_2027/abattement_retraite.py:33`, `__init__.py:166-177`) ; la revalorisation différenciée n'y est qu'esquissée — seuils de 1 260 et 2 034 €, taux de 2027 égaux à 2 %, « temp » (`parameters/inflateurs/inflateur_retraites.yaml:14, 26`) —, et l'article 35 n'y figure nulle part. Le PLF 2027, présenté le 1er octobre 2026, crée bien à son article 3 un sous-plafond de 3 000 € par foyer pour les retraites (legifiscal.fr). Le point reste à reprendre (138.12), récrit ainsi."
+    nouveaux:
+      - quoi: "Il décrit seize ménages de retraités rangés par décile de niveau de vie, chacun situé par sa part dans le décile : couples du 2e au 9e décile, célibataires du 4e au 6e, trois cas pour les trois taux de CSG, deux pour l'ASPA (une personne seule, un couple dont un seul a une pension), pension de base et complémentaire distinguées. Le dépôt n'a que des carrières individuelles (`castypes.py`), sans ménage ni foyer fiscal."
+        preuve: "`test_cases.json`, cas 004, 005, 006, 017, 025-028, 036, 037, 044-046, 049-051, au commit 15fe1cc"
+        verification: "méthode : des ménages calés sur la distribution des niveaux de vie sont les témoins naturels de la pension nette du foyer et de l'ASPA du couple ; leurs résultats se recalculent à part par OpenFisca-France"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Il tient, avec l'Assemblée nationale, un baromètre de la parution des décrets d'application, loi par loi. La veille du dépôt lit les sommaires du Journal officiel et l'index de la DILA (`scripts/veille_droit.py`), sans suivre les décrets qu'une loi attend."
+        preuve: "https://leximpact.an.fr, outil « Baromètre de l'application des lois » (https://www.assemblee-nationale.fr/dyn/taux-application-lois : « Suivez l'état de la publication des décrets d'application »), lu le 4 octobre 2026"
+        verification: "méthode : le décret qu'attend une loi, celle du 30 décembre 2025 ou la LFSS pour 2027, se repère avant sa parution"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il chiffre l'effet budgétaire des mesures sur les ménages, pensions comprises, sur l'ERFS-FPR vieillie et calée. La page Coût ne simule ni l'impôt ni la CSG des retraités."
+        preuve: "README de `budget/leximpact-prepare-data` (API GitLab, branche master) : « Le socle de la simulation budgétaire est l'ERFS-FPR » ; `budget/leximpact-socio-fiscal-simu-etat`"
+        verification: "méthode"
+        confronte: cout
+        importance: moyenne
+        etat: ecarte
+        raison: "L'ERFS-FPR ne s'ouvre qu'aux habilités, sur serveur sécurisé ; le dépôt passe par les distributions publiées (138.3)."
+    ecarts_nouveaux:
+      - constat: "Sa réforme `plf_plfss_2027` date du 1er janvier 2026 un barème de revalorisation des retraites à trois tranches, 0,9 % sous 1 260 €, 1 % jusqu'à 2 034 €, 0 % au-delà (`parameters/inflateurs/inflateur_retraites.yaml:1-35`) ; sa docstring dit qu'elle ne porte « aucune mesure du texte, qui n'est pas connu » (`__init__.py:3`), quand le fichier code les articles 2 et 3 du PLF (`:114`, `:166-177`)."
+        tranche: "circulaire Cnav 2025/29 du 22 décembre 2025 : 0,9 % pour toutes les pensions de base au 1er janvier 2026 ; l'écart est le sien, sans effet sur un calcul de 2027 dont la pension de 2026 est une entrée"
+        preuve: "`legislation/revalorisation_pensions.csv`, ligne du 1er janvier 2026"
+    conclusion: "Rien sur la pension elle-même : il hérite d'OpenFisca-France, déjà relu. Ses avantages propres sont des ménages types de retraités, la veille des projets et des décrets, et un chiffrage sur données que le dépôt ne peut pas reproduire ; son dépôt de réformes pour 2027 est en chantier."
+
+  - id: taxipp
+    version: "28e2f0a (2.4.2, 24 février 2026), sur openfisca-france 174.2.6 ; openfisca-france-data 1a96eeb (9 septembre 2026)"
+    lu_dans:
+      - "https://gitlab.com/ipp/partage-public-ipp/taxipp (clone, commit 28e2f0a) : simulation/scenarios/fideli_felin_dads/, simulation/utils/non_recours.py, simulation/tests/, simulation/assets/agregats/"
+      - "https://github.com/openfisca/openfisca-france-data (clone, commit 1a96eeb) : felin/input_data_builder/create_variables_individuelles.py, common.py"
+      - "https://drees.solidarites-sante.gouv.fr/communique-de-presse-jeux-de-donnees/241216_DATA_minimum-vieillesse-donnees-2023"
+    existants:
+      - debut: "Il calcule un prélèvement effectif sur les pension"
+        verdict: a_corriger
+        commentaire: "Le fond tient ; la preuve est fausse : `create_variables_individuelles.py:10-56` n'est pas dans TAXIPP mais dans openfisca-france-data (`felin/input_data_builder/create_variables_individuelles.py:10-56`, commit 1a96eeb) ; TAXIPP injecte le revenu fiscal de Félin en N−1 et N−2 (`simulation/scenarios/fideli_felin_dads/scenario.py:363-376`, commit 28e2f0a). Même correction pour la preuve du premier écart du registre. Le dépôt n'a pas bougé (`pages.js:10775-10776, 10832-10839`) ; le chiffre de la CCSS (23,7 Md€) n'a pas été relu."
+    nouveaux:
+      - quoi: "Il cale le recours à l'ASPA, année par année, sur le nombre d'allocataires que publie la DREES (722 510 fin 2023), en tirant les recourants parmi les éligibles, et confronte nombre et masse d'ASPA aux agrégats officiels. Le dépôt retient 50 % pour la garantie (`config.py:868-877`), mesure de 2016 sur les seules personnes seules, et sert l'ASPA du scénario 1 à tous (`legislation/minimum_vieillesse.csv:25-26`)."
+        preuve: "`simulation/utils/non_recours.py:70-81` (cibles 2016-2025) et `simulation/scenarios/fideli_felin_dads/tax_and_benefit_system.py:401-432` (`recourant_aspa`), `simulation/tests/test_agregats_automatise.py:39-152`, au commit 28e2f0a"
+        verification: "DREES, minimum vieillesse, données 2023 : 723 020 allocataires fin 2023, ASV et ASPA ; méthode : un taux de recours tiré du nombre observé rapporté aux éligibles est plus proche du réel qu'un taux de 2016 appliqué partout"
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "Il mesure les effets redistributifs d'une mesure par décile, sur données fiscales et sociales appariées. Le dépôt n'a aucune distribution des niveaux de vie."
+        preuve: "`simulation/utils/redistribution_utils.py`, `documentation/donnees/`, au commit 28e2f0a"
+        verification: "méthode"
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Fidéli, Félin et les DADS ne se lisent qu'au CASD, sur habilitation (138.14)."
+    ecarts_nouveaux: []
+    conclusion: "Microsimulation statique sur données administratives, il ne calcule pas la pension ; ce qu'il fait de mieux tient à ses données — un taux de CSG tiré du revenu fiscal réel, un recours à l'ASPA calé sur les allocataires observés. Le reste exige le CASD."

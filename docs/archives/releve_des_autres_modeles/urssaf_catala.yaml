@@ -1,0 +1,290 @@
+# Le rapport de la recherche « urssaf_catala » (modele-ti, modele-social, modele-as, Catala, ir-catala), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+groupe: urssaf_catala
+modeles:
+  - id: modele_ti
+    version: "mon-entreprise 05cb5be (2 octobre 2026) ; répertoire modele-ti identique à 6bb0f26 (git diff vide) ; paquet npm 0.1.0, le dépôt en avance (correction RCI/Cipav du 2 septembre)"
+    a_jour: "2026 : PSS 4 005 €/mois, SMIC 12,02 € puis 12,31 € (juin), RCI 21,726/1,347, CNAVPL 557 points et 0,6599, CARMF 11,8 %, CARPIMKO 8,7 %, CAVEC 2026, Acre de 2026, Mayotte jusqu'en 2036 ; plafond RCI (PRCI) arrêté à 2025."
+    lu_dans:
+      - "scratchpad/modeles/mon-entreprise/modele-ti/règles/** (commit 05cb5be)"
+      - "https://www.cnavpl.fr/wp-content/uploads/2025/07/Guide-2025.pdf (lu le 4 octobre 2026)"
+      - "https://entreprendre.service-public.gouv.fr/vosdroits/F11677 (mise à jour du 1er juillet 2026)"
+      - "index LEGI : D. 633-3, D. 635-7, D. 643-1, D. 136-5, L. 131-6, L. 131-6-4, D. 131-6-1, L. 613-11, D. 633-19-2, décret n° 2011-2085 art. 4-2"
+    existants:
+      - debut: "Chaque règle porte ses `références`, et l'applicat"
+        verdict: confirme
+        commentaire: "140 blocs pour 218 règles au commit 05cb5be. « Le détail du calcul » du dépôt toujours sans fiche ni article (pages.js:6155) ; action 136 « à faire »."
+    nouveaux:
+      - quoi: "Il calcule l'assiette sociale depuis le revenu brut : abattement de 26 % borné entre 1,76 % et 130 % du PASS, plus les revenus de remplacement abattus (indemnités journalières, AJPA), moins l'épargne salariale ; avant 2025, le revenu professionnel. Le dépôt demande l'assiette déjà abattue (pages.js:5068-5070 ; profil `independant`, prelevements_remuneration.yaml:650-680), sans l'abattement, ses bornes ni les revenus de remplacement."
+        preuve: "indépendant/cotisations-et-contributions/cotisations-et-contributions.publicodes:71-158 ; indépendant/revenus/revenus-remplacement.publicodes:1-60, au commit 05cb5be"
+        verification: "D. 136-5 (LEGIARTI000049899286) : plancher 1,76 %, plafond 130 % du PASS ; L. 131-6 (LEGIARTI000048683707) : « Cette assiette inclut également le montant des revenus de remplacement sans lien avec une affection de longue durée »"
+        confronte: site
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il applique aux artisans et commerçants les taux du code : vieillesse de base 17,15 % plafonnée plus 0,72 % sur tout depuis 2025 (0,60 % avant), RCI 8,1 et 9,1 %. Le dépôt leur prête depuis 2019 les taux du régime général, 15,45 % et 2,51 % (remuneration.py:1107-1160 ; docs/limites.md:2482-2486) ; sa fiche de paie et le compte notionnel, qui porte la déplafonnée versée (moteur/compte.py:849-875), comptent 1,8 point de trop au-dessus du plafond, 0,1 à 0,2 en dessous."
+        preuve: "indépendant/cotisations-et-contributions/cotisations/cotisations.publicodes:434-448 et 529-544, au commit 05cb5be"
+        verification: "D. 633-3 (LEGIARTI000049904636, dès 2025 : « 17,15 % » plafonné, « 0,72 % » sur la totalité ; LEGIARTI000041967101 : 0,60 % avant) ; D. 635-7 (LEGIARTI000049904623). Ses 17,87 % sous le plafond et 0,72 % au-delà (écriture de l'Urssaf) valent l'écriture du code."
+        confronte: proposition
+        importance: faible
+        etat: a_trancher
+        raison: "convention écrite du modèle entier (limites l. 2482-2486) : fiche du régime général ou fiche propre aux indépendants depuis 2019"
+      - quoi: "Il accorde les 400 points CNAVPL de l'année d'incapacité d'exercice de plus de six mois (et exonère chez lui la complémentaire de la section). Le dépôt n'a ni ces points ni l'exonération : aucune fiche de régime ne porte l'incapacité (cnavpl.yaml, grep)."
+        preuve: "protection-sociale/retraite-base.publicodes:146-194 ; professions-libérales/CNAVPL.publicodes:121-132 ; Cipav.publicodes:35-37, au commit 05cb5be"
+        verification: "D. 643-1 (LEGIARTI000049904642) : « Le nombre de points attribué en application du dernier alinéa de l'article L. 642-1 est de 400 » ; guide CNAVPL 2025, p. 26 : ces périodes « sont comptées comme périodes d'assurance »"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte les grilles de la CAVEC de 2023 à 2026 (2025 : 782 € jusqu'à 16 190 €, 2 934 € jusqu'à 32 350 €, 4 629 € jusqu'à 44 790 €…). Le dépôt ramène la grille de 2026 aux autres années par le rapport des plafonds (cavec_complementaire.yaml:190-196) : en 2025, classe A vers 880 € (898 × 47 100 / 48 060) au lieu de 782 €, classe C vers 5 443 € au lieu de 4 629 €."
+        preuve: "professions-libérales/CAVEC.publicodes:13-140, au commit 05cb5be"
+        verification: "guide CNAVPL 2025, p. 74 : « Classe A 16 190 € 782 € ; Classe B 32 350 € 2 934 € ; Classe C 44 790 € 4 629 € » (2025 vérifiée ; 2023 et 2024 à relire aux guides de ces années)"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il cite, règle par règle, le guide annuel de la CNAVPL (édition 2025) : cotisations, classes, points, valeurs du point et seuils de toutes les sections et de leurs PCV, pour l'année. Aucune fiche du dépôt ne le cite (grep « Guide-2025 », « cnavpl.fr/wp-content » : rien), et plusieurs reconstruisent des années depuis une seule (CAVEC, CNBF, ASV)."
+        preuve: "références « Guide de l'assurance vieillesse des professions libérales (2025) » : retraite-base.publicodes:63 et 133, cotisations.publicodes:420, Cipav.publicodes:41, CAVEC.publicodes, au commit 05cb5be"
+        verification: "le guide, lu le 4 octobre 2026 : p. 26 (trimestres), p. 74 (CAVEC), p. 85 (PCV des médecins)"
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte les cotisations PCV (ex-ASV) de toutes les professions de santé conventionnées, 2023 à 2026, avec la part de l'assurance maladie : médecins de secteur 1 et 2, auxiliaires médicaux, chirurgiens-dentistes, sages-femmes, directeurs de laboratoire. Le dépôt ne porte que le médecin, au tiers du secteur 1, forfait de 2016 indexé sur les prix (asv_conventionnes.yaml:37-46) ; infirmier, kiné, dentiste et sage-femme n'ont pas cet étage (affiliations.yaml:640-657 : « Un infirmier conventionné est donc sous-estimé de cet étage »)."
+        preuve: "CARMF.publicodes:148-200, CARPIMKO.publicodes:54-80, CARCDSF.publicodes:96-233, CAVP.publicodes:111-145, au commit 05cb5be"
+        verification: "guide CNAVPL 2025 : médecin S1 1 852 € et 1,2667 %, S2 5 556 € et 3,80 % ; auxiliaires 222 € + 443 € de l'assurance maladie et 0,40 % ; dentistes 1 648,76 € + 3 297,52 €, « 10 points » par forfait, 1,45 % ; CARMF, taux 2026 : 1 917 € (S1) et 5 751 € (S2). Les points se lisent au guide, non chez lui."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte l'indépendant de Mayotte : vieillesse de base 10,05 % en 2025, 10,75 % en 2026, vers 17,75 % en 2036, assiette d'au moins 450 SMIC horaires de Mayotte, pas de RCI. Le dépôt n'a aucun statut qui route un non-salarié vers la caisse de Mayotte (cssm_mayotte.yaml:45-49)."
+        preuve: "cotisations.publicodes:376-388, 450-474 et 486-490 ; assiette-minimale.publicodes:49-62, au commit 05cb5be"
+        verification: "décret n° 2011-2085, art. 4-2 (LEGIARTI000053297541, depuis le 1er janvier 2026) : « 450 fois le salaire horaire minimum … applicable à Mayotte », 10,05 % en 2025, 10,75 % en 2026, 17,75 % en 2036 ; l'article ne prévoit pas de complémentaire"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il calcule les cotisations retraite du conjoint collaborateur selon les options du code : forfait d'un tiers du PASS (la moitié à la CNAVPL), un tiers ou la moitié du revenu du chef, avec ou sans partage, et la complémentaire qui en découle. Le dépôt n'a pas ce statut (affiliations.yaml : seul `organic_conjoints_batiment`, jusqu'en 2003)."
+        preuve: "indépendant/conjoint-collaborateur.publicodes:1-144 ; cotisations/conjoint-collaborateur.publicodes:1-109, au commit 05cb5be"
+        verification: "D. 633-19-2 (LEGIARTI000041966711) : « Soit sur un revenu forfaitaire égal au tiers du plafond … Soit sur 33,33 % … Soit sur 50 % du revenu d'activité du chef d'entreprise »"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il dispense de l'assiette minimale l'activité saisonnière, comme le bénéficiaire du RSA ou de la prime d'activité, sur question posée. Le dépôt l'applique à tous (carriere.py:455-470 ; assiette_minimale_independants.yaml:10-14)."
+        preuve: "assiette-minimale.publicodes:1-12 ; entreprise/activité.publicodes:155-172, au commit 05cb5be"
+        verification: "L. 613-11 (LEGIARTI000041394691) : minimums « pas applicables … aux cotisations … dues par les personnes au titre des activités accessoires saisonnières », « sauf demande contraire »"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il appelle le forfait CNBF selon l'ancienneté (363 € la première année à 1 988 € dès la sixième en 2026), de 2023 à 2026. Le dépôt porte le forfait de croisière à toutes les années (cnbf.yaml:104-118) ; le compte notionnel surestime les cinq premières années de 4 586 €."
+        preuve: "professions-libérales/CNBF.publicodes:10-85, au commit 05cb5be"
+        verification: "barème CNBF 2026, déjà lu par le dépôt (cnbf.yaml:107-109)"
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il modélise l'Acre, réforme de 2026 comprise (exonération au quart, publics restreints). Le dépôt ne la connaît pas."
+        preuve: "cotisations/exonérations/Acre.publicodes:1-213, au commit 05cb5be"
+        verification: "L. 131-6-4 (LEGIARTI000053282569) ; D. 131-6-1 (LEGIARTI000053451315) : « au quart du montant total des cotisations »"
+        confronte: site
+        importance: faible
+        etat: ecarte
+        raison: "exonération d'un an, sans effet sur les trimestres (F11677) ; la fiche de paie du site décrit une année de croisière"
+    ecarts_nouveaux:
+      - constat: "L'Acre abat la cotisation de base (cotisations.publicodes:400-409), donc le revenu cotisé qui valide les trimestres (retraite-base.publicodes:74-79) : un créateur de 2025 sous 75 % du PASS, exonéré en entier, valide zéro trimestre."
+        tranche: "service-public F11677 (1er juillet 2026) : « le chef d'entreprise acquiert des trimestres pour la retraite … en fonction de son revenu » ; modele-social, même dépôt, l'exclut du revenu cotisé (dirigeant/exonérations.publicodes:215-218). L'erreur est la sienne ; la note du registre « à trancher par L. 131-6-4 » (texte muet sur les droits) est close."
+        preuve: "https://entreprendre.service-public.gouv.fr/vosdroits/F11677"
+      - constat: "Trimestres CNAVPL validés sur (tranche 1 + tranche 2) / taux de tranche 1 (retraite-base.publicodes:74-106 ; CNAVPL.publicodes:46-81) : 10,60/8,73 = 1,21 fois l'assiette sous le plafond ; 6 000 € valident 4 trimestres au lieu de 3. L'exonération pour incapacité, qui annule la cotisation, n'en valide aucun."
+        tranche: "guide CNAVPL 2025, p. 26 : « autant de trimestres que les revenus professionnels ayant servi d'assiette … représentent de fois … 150 heures de SMIC », et les périodes d'exonération pour incapacité « sont comptées » ; le dépôt valide sur l'assiette (carriere.py:468-470) et a raison"
+        preuve: "guide CNAVPL 2025, p. 26 (qu'il cite lui-même)"
+      - constat: "Vieillesse de base de l'indépendant de Mayotte en 2032 : 14,85 % (cotisations.publicodes:466-467)."
+        tranche: "décret n° 2011-2085, art. 4-2 : « 2032 14,95 % » ; coquille de sa part, sans effet avant 2032"
+        preuve: "LEGIARTI000053297541"
+    ecarts_registre:
+      - "« Il appelle la cotisation minimale à revenu nul… ni lui ni le dépôt ne savent qui touche le RSA » : à corriger, il pose la question (modele-commun/règles/situation-personnelle.publicodes:4-8) et dispense (assiette-minimale.publicodes:2-12) ; seul le dépôt l'ignore."
+    conclusion: "Il fait mieux sur le détail des cotisations des indépendants après 2025 (assiette, taux, sections libérales année par année, PCV, incapacité, Mayotte, conjoint, dispenses) et sur la traçabilité. Il fait moins bien sur les droits : trimestres CNAVPL surestimés, annulés par l'Acre ou l'incapacité, et une pension de base à 50 % du revenu de l'année."
+
+  - id: modele_social
+    version: "paquet 11.1.0 (package.json) au commit 05cb5be ; règles inchangées depuis 6bb0f26"
+    a_jour: "salariés 2026 (patronale déplafonnée 2,11 %, RGDU, Agirc-Arrco 20,1877/1,4386, SMIC de juin 2026, Mayotte et Lodeom de juillet 2026) ; micro-entrepreneurs 2026 (décret n° 2025-943) ; taxe sur les salaires 2025 ; branche indépendante d'avant 2025."
+    lu_dans:
+      - "scratchpad/modeles/mon-entreprise/modele-social/règles/** et modele-commun/règles/** (05cb5be)"
+      - "index LEGI : D. 613-4, D. 613-6, L. 382-3, décret n° 2019-422, décret n° 2011-2085 art. 4, CGI 231, L. 752-3-2, L. 6243-3 C. trav. ; JORF : décret n° 2025-1228, arrêté du 22 mai 2026"
+      - "https://entreprendre.service-public.gouv.fr/vosdroits/F23369 (1er avril 2026)"
+      - "https://www.audiens.org/solutions/entreprises-la-retraite-complementaire-agirc-arcco-au-1er-janvier-2019.html"
+    existants:
+      - debut: "Il saisit le micro-entrepreneur par son chiffre d'"
+        verdict: confirme
+        commentaire: "Règles et dépôt inchangés. Il porte en outre 2026 : D. 613-4 (LEGIARTI000052218738 : BNC 25,6 %, Cipav 23,2 %) et D. 613-6 (LEGIARTI000052218747 : vente, 43,45 % de base et 19,75 % de complémentaire). La note du dépôt (micro_entrepreneurs.yaml:20-28, « 58,3 % pour la retraite ») est la ventilation de 2025 : 63,2 % en 2026."
+      - debut: "Il porte le seuil d'affiliation des artistes-auteu"
+        verdict: confirme
+        commentaire: "Le 1,15 est lu : L. 382-3 (LEGIARTI000032078751), BNC « majorés de 15 % ». Règles aux lignes 75 et 194-231 (05cb5be)."
+      - debut: "Il dispense des cotisations minimales le bénéficia"
+        verdict: confirme
+        commentaire: "Base lue : L. 613-11 (LEGIARTI000041394691) : RSA, prime d'activité et activité accessoire saisonnière, « sauf demande contraire ». Voir modele_ti pour la saison."
+      - debut: "Chaque règle porte ses `références`, et l'applicat"
+        verdict: confirme
+        commentaire: "400 blocs pour 644 règles."
+    nouveaux:
+      - quoi: "Il porte le plafond de première tranche du RCI de 2021 à 2025 (38 493, 38 916, 40 784, 42 946, 43 891 €). Le dépôt la coupe au PASS jusqu'en 2024 (regles/rci_seuil_premiere_tranche.yaml, état `manquante`, qui demande « la série des seuils de 2014 à 2023 »)."
+        preuve: "dirigeant/indépendant/cotisations-et-contributions.publicodes:340-359 ; modele-ti, 2023-2025 (cotisations.publicodes:545-558), au commit 05cb5be"
+        verification: "2024 = 42 946 €, valeur du COR que le dépôt cite ; chaque année vaut la précédente revalorisée comme les pensions (+1,1 %, +4,8 %, +5,3 %, +2,2 %), règle de D. 635-7 (LEGIARTI000041966498). La page Cnav qu'il cite (application JavaScript) n'a pas pu être lue."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte le salarié de Mayotte : vieillesse 5,54 % salariale et 9,90 % patronale en 2026, sans déplafonnée ni complémentaire ; plafond mahorais 2 821 €/mois en 2025, 3 022 € en 2026 ; SMIC de Mayotte de 2021 à juin 2026. Le dépôt prête à la caisse de Mayotte les taux, le plafond et le SMIC nationaux, qui valident moins vite (cssm_mayotte.yaml:39-49), et n'a pas de fiche de paie outre-mer (remuneration.py:244)."
+        preuve: "base.publicodes:1-35 et 84-135 ; salarié/cotisations.publicodes:1035-1128 et 1335-1359, au commit 05cb5be"
+        verification: "décret n° 2011-2085, art. 4 (LEGIARTI000053469930) : « 5,54% 9,90% » en 2026, jusqu'à 6,75 % en 2036 (il n'a que 2026) ; décret n° 2025-1228 (« A Mayotte … 9,33 euros ») ; arrêté du 22 mai 2026 (9,56 €)"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte la taxe sur les salaires (4,25, 8,50 et 13,60 %) et l'employeur qui la doit (non assujetti à la TVA). Le dépôt n'a ni barème ni profil : la suppression que la proposition en fait n'atteint aucune fiche (docs/limites.md:2519-2533, qui demande « un cinquième profil … et le barème de la taxe »)."
+        preuve: "salarié/salarié.publicodes:507-545, au commit 05cb5be"
+        verification: "CGI, art. 231 (LEGIARTI000054370158) : mêmes taux ; seuils 2026 9 229 et 18 423 € (il garde ceux de 2025, voir écarts)"
+        confronte: proposition
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il compte le versement mobilité au taux de la commune, la taxe d'apprentissage, la formation, la PEEC, le dialogue social, le forfait social. Le dépôt les exclut (prelevements_remuneration.yaml:97-112 ; docs/limites.md:2493-2502) ; même point qu'EDIFIS, la commune en plus."
+        preuve: "salarié/cotisations.publicodes:740, 878, 1130, 1214, 1228, 1245-1260, au commit 05cb5be"
+        verification: "méthode : prélèvements assis sur le brut ; à coût fixé, ils absorbent une part de l'écart de brut (registre, EDIFIS)"
+        confronte: site
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il applique outre-mer la Lodeom au lieu de la réduction générale. Le dépôt donne la réduction générale à tout salarié du privé, Antilles, Guyane et Réunion compris (prelevements_remuneration.yaml:176-238)."
+        preuve: "salarié/exonérations/lodeom.publicodes (726 lignes), au commit 05cb5be"
+        verification: "L. 752-3-2 (LEGIARTI000053285063, dès le 1er juillet 2026) : non cumulable « avec une autre exonération totale ou partielle de cotisations patronales »"
+        confronte: site
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il calcule le précompte de l'artiste-auteur : plafonnée moins 0,75 point et déplafonnée nulle (prises en charge par l'État), CSG abattue sur les seuls traitements et salaires, formation 0,35 %, RAAP, RACD, RACL. Le dépôt n'affiche aucun net à l'auteur (remuneration.py:1339-1341, 1359-1377) et ignore la prise en charge."
+        preuve: "artiste-auteur.publicodes:121-178 et 180-310, au commit 05cb5be"
+        verification: "décret n° 2019-422, art. 3 (LEGIARTI000038458028) : État payant « l'intégralité de la cotisation vieillesse assise sur la totalité » et « 0,75 point » de la plafonnée, qui « ouvre les mêmes droits »"
+        confronte: site
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il donne aux intermittents du spectacle des taux Agirc-Arrco propres (tranche 1 : 7,87 % à parts égales pour les techniciens, 8,89 % pour les artistes non cadres). Le dépôt n'a pas ce statut."
+        preuve: "salarié/conventions-collectives/spectacle-vivant.publicodes:87-180"
+        verification: "non vérifié : la page Audiens qu'il cite (2019) dit 7,87 % partagés 40/60 pour tous"
+        confronte: scenario_1
+        importance: faible
+        etat: ecarte
+        raison: "taux non confirmés par sa propre source"
+      - quoi: "Il porte le barème de l'IR 2023-2026, décote et hauts revenus compris."
+        preuve: "modele-commun/règles/impôt/barème-standard.publicodes:1-319"
+        verification: "ses propres mots : n'intègre pas « pensions et retraites » (barème-standard.publicodes:44-50)"
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "rien pour l'impôt du retraité ; voir ir_catala"
+    ecarts_nouveaux:
+      - constat: "Sa branche `dirigeant . indépendant` est d'avant 2025 : assiette = revenu professionnel (dirigeant/indépendant/indépendant.publicodes:47-58), vieillesse 17,75 % et 0,60 % (cotisations-et-contributions.publicodes:291-317), RCI 7 et 8 % au PRCI (318-359), outre CNAVPL et Cipav déjà au registre."
+        tranche: "D. 633-3 (17,15 % + 0,72 %), D. 635-7 (8,1 et 9,1 %, tranche 1 au PASS), D. 136-5 (abattement de 26 %) ; modele-ti, même dépôt, suit 2025"
+        preuve: "LEGIARTI000049904636, LEGIARTI000049904623, LEGIARTI000049899286"
+      - constat: "Seuils de la taxe sur les salaires de 2025 : 9 147 et 18 258 € (salarié.publicodes:517-535)."
+        tranche: "CGI 231 en vigueur : 9 229 et 18 423 € pour 2026"
+        preuve: "LEGIARTI000054370158"
+      - constat: "Trimestres de l'apprenti validés sur sa cotisation salariale après exonération (contrat/apprentissage.publicodes:126-150 ; protection-sociale.publicodes:237-242) : moins que son salaire."
+        tranche: "L. 6243-3 C. trav. : « L'Etat prend en charge les cotisations … qui font l'objet des exonérations », plus un complément « afin de valider … un nombre de trimestres correspondant à la durée du contrat »"
+        preuve: "LEGIARTI000051289076"
+    ecarts_registre:
+      - "Les trois écarts du registre tiennent au commit 05cb5be (CNAVPL.publicodes:48 et protection-sociale.publicodes:458 ; revenu abattu, protection-sociale.publicodes:150-243 ; 2 860 €, ligne 88, F23369 disant 2 792 €)."
+    conclusion: "Côté salarié et micro-entrepreneur, il est à jour de 2026 et fait mieux sur ce qui entoure la retraite : chiffre d'affaires, Mayotte, taxe sur les salaires, coût complet, Lodeom, précompte des auteurs, PRCI. Sa branche indépendante (d'avant 2025) et ses trimestres d'apprenti sont faux : modele-ti ou le dépôt y font foi."
+
+  - id: modele_as
+    version: "paquet 0.1.0 au commit 05cb5be (dernier commit du répertoire : 10 septembre 2026)"
+    a_jour: "2026 (PSS, SMIC et Acre de 2026, par modele-commun)"
+    lu_dans:
+      - "scratchpad/modeles/mon-entreprise/modele-as/règles/** (05cb5be)"
+      - "index LEGI : L. 241-13 (LEGIARTI000053280526)"
+    existants:
+      - debut: "Ses règles portent leurs `références`, comme celle"
+        verdict: confirme
+        commentaire: "76 blocs pour 90 règles."
+    nouveaux:
+      - quoi: "Il décrit la fiche de paie du dirigeant assimilé salarié (président de SAS) : régime général et Agirc-Arrco, mais ni assurance chômage, ni AGS, ni réduction générale. Le dépôt n'a pas ce statut : saisi en salarié du privé, ce dirigeant reçoit chômage (prelevements_remuneration.yaml:296-303) et réduction générale (remuneration.py:1339-1355) qu'il n'a pas."
+        preuve: "modele-as/règles/cotisations/cotisations.publicodes (939 lignes) : aucune règle de chômage, d'AGS ni de réduction générale ; protection-sociale/retraite-base.publicodes:41-73, au commit 05cb5be"
+        verification: "L. 241-13, II, 1° (LEGIARTI000053280526) : réduction réservée aux salariés « pour lesquels l'employeur est soumis à l'obligation prévue à l'article L. 5422-13 du code du travail »"
+        confronte: site
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+    ecarts_nouveaux: []
+    conclusion: "Rien de mieux sur les droits, ceux d'un salarié, que le dépôt calcule bien mieux (sa pension de base vaut 50 % du revenu de l'année). Seule sa fiche de paie, sans chômage ni réduction générale, manque au dépôt."
+
+  - id: catala
+    version: "catala-examples 2694b17 (18 septembre 2026)"
+    a_jour: "âges d'avant la LFSS pour 2026 ; SMIC jusqu'en novembre 2024 ; ASPA jusqu'en 2020"
+    lu_dans:
+      - "scratchpad/modeles/catala-examples (aides_logement/code_sécurité_sociale.catala_fr, smic/Smic.catala_fr)"
+      - "index LEGI : L. 161-17-2 (LEGIARTI000053280889) ; JORF : décrets n° 2024-951, 2025-1228, arrêté du 22 mai 2026"
+    existants:
+      - debut: "Chaque règle y est écrite sous l'alinéa qu'elle tr"
+        verdict: confirme
+        commentaire: "code_sécurité_sociale.catala_fr:460-469 inchangé ; action 136 « à faire »."
+    nouveaux:
+      - quoi: "Il recopie, décret par décret, le SMIC de Mayotte de 2019 à novembre 2024 (7,57 € à 8,98 €) ; modele-social le prolonge à juin 2026. Le dépôt n'en a aucun et valide les trimestres de la caisse de Mayotte au SMIC national (cssm_mayotte.yaml:39-42)."
+        preuve: "smic/Smic.catala_fr:53-65 à 478-490, au commit 2694b17"
+        verification: "décret n° 2024-951, art. 1 (JORFARTI000050392696) : « A Mayotte, son montant est fixé à 8,98 euros » ; le SMIG mahorais valide les trimestres (décrets n° 87-175 art. 3 et n° 2003-589 art. 8, cités par cssm_mayotte.yaml)"
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il calcule les aides au logement de tout ménage, retraité compris, avec ses tests."
+        preuve: "aides_logement/ et aides_logement/tests/, au commit 2694b17"
+        verification: "hors retraite"
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "loyer, zone et foyer, que le simulateur ne demande pas ; l'effet retour (138.5) se borne à l'ASPA, la CSG et l'impôt"
+    ecarts_nouveaux:
+      - constat: "Son calendrier d'âges précède la LFSS pour 2026 : L. 161-17-2 recopié en version LEGIARTI000051289659 (64 ans dès 1968), D. 161-2-1-9 de 2023 : 63 ans pour 1964, 63 ans et 3 mois pour 1965, 64 ans pour 1968 (code_sécurité_sociale.catala_fr:108-125, 313-474)."
+        tranche: "L. 161-17-2 en vigueur (pensions dès le 1er septembre 2026) : 62 ans 9 mois du 1er janvier 1963 au 31 mars 1965, 63 ans d'avril à décembre 1965, 63 ans 3 mois en 1966, 63 ans 6 mois en 1967, 63 ans 9 mois en 1968, 64 ans dès 1969"
+        preuve: "LEGIARTI000053280889"
+      - constat: "Son SMIC s'arrête au 1er novembre 2024, et 8,98 € à Mayotte vaut dès « |2024-01-01| », en conflit avec 8,80 € de janvier à octobre 2024 (smic/Smic.catala_fr:431-490)."
+        tranche: "décret n° 2024-951 : 8,98 € « A compter du 1er novembre 2024 » ; puis 12,02 € et 9,33 € (décret n° 2025-1228), 12,31 € et 9,56 € (arrêté du 22 mai 2026)"
+        preuve: "JORFARTI000050392696 ; JORFARTI000053042543 ; JORFARTI000054126607"
+    ecarts_registre:
+      - "L'écart sur 1967 (62 ans 9 mois codés sous un texte qui dit 63 ans 9 mois) est toujours là (lignes 466-469)."
+    conclusion: "Sa seule avance reste la traçabilité, chaque règle sous l'alinéa qu'elle transcrit. Ses règles de retraite, d'avant la LFSS pour 2026 et fautives pour 1967, ne valent rien comme référence ; seul son SMIC de Mayotte sert au dépôt."
+
+  - id: ir_catala
+    version: "7f5fe83 (2 octobre 2024), cloné le 4 octobre 2026"
+    a_jour: "revenus de 2022"
+    lu_dans:
+      - "scratchpad/modeles/ir-catala (sources/archives_cgi.catala_fr, sources/cgi_revenus.catala_fr, etudes/abattement_pensions)"
+      - "index LEGI : CGI 158 (LEGIARTI000054373673), CGI 195 (LEGIARTI000046860994)"
+    existants:
+      - debut: "Il calcule l'abattement de 10 % des pensions (CGI,"
+        verdict: a_corriger
+        commentaire: "Montants lus : CGI 158, 5 a (LEGIARTI000054373673, version du 1er juillet 2026) : plafond 4 439 €, plancher 454 € ; les siens (4 123 € et 422 €, archives_cgi.catala_fr:341-370) sont de 2022. Le point tient pour la structure (plancher par pensionné, plafond par foyer) ; le dépôt garde 9,1 % pour tous (prelevements_remuneration.yaml:755-759 ; docs/limites.md:2561-2580)."
+    nouveaux:
+      - quoi: "Il calcule le quotient familial avec les demi-parts des retraités : plus de 74 ans titulaires de la carte du combattant, veuves de guerre, invalides. Le dépôt ne calcule pas l'impôt (prelevements_remuneration.yaml:150-151)."
+        preuve: "sources/cgi_revenus.catala_fr:5119-5240, au commit 7f5fe83"
+        verification: "CGI 195, version LEGIARTI000046860994, en vigueur dans l'index du 27 septembre 2026 : « f. Sont âgés de plus de 74 ans et titulaires de la carte du combattant »"
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.5"
+      - quoi: "Il confronte par tirages aléatoires (qcheck) l'abattement tiré du droit à celui du code M de la DGFiP : un euro d'écart pour un foyer à deux pensionnés."
+        preuve: "etudes/abattement_pensions/README.md, au commit 7f5fe83"
+        verification: "méthode"
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "le dépôt confronte déjà portage et oracles (tests/test_oracle.py ; tirages à graine, tests/test_web.py:600) ; rien de propre aux retraites tant qu'il ne calcule pas l'impôt"
+    ecarts_nouveaux:
+      - constat: "Abattement des pensions à 4 123 € et 422 € (archives_cgi.catala_fr:341-370)."
+        tranche: "CGI 158, 5 a, en vigueur : 4 439 € et 454 €"
+        preuve: "LEGIARTI000054373673"
+    conclusion: "Une brique pour 138.2 et 138.5 : l'abattement des pensions et le quotient familial des retraités, transcrits du CGI. Montants de 2022, preuve de concept arrêtée depuis octobre 2024."

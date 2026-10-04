@@ -1,0 +1,186 @@
+# Le rapport de la recherche « statique » (Ines, Saphir, EUROMOD), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+groupe: statique
+modeles:
+  - id: ines
+    version: "commit a55816c (16 juin 2026, Ines 2024.1, législation 2024 ; paramètres jusqu'à janvier 2026)"
+    lu_dans:
+      - "https://gitlab.com/insee_drees_cnaf/ines-public, cloné dans scratchpad/modeles/ines"
+      - "R/12_cotisations.R, R/14_minima_pa.R, R/07_impot_revenus.R"
+      - "parametres/param_prelev.xlsx (onglets cotis, IR, Imput), param_presta_mensuel.xlsx (onglet Minima), Param_Revalo.xlsx, derive_revenu.xlsx, Cibles_Ines.xlsx, Marges_Calage.xlsx"
+      - "docs/prelevement_oblig.qmd, prestations.qmd, derive.qmd, prod_annuelle.qmd ; public/Note_validation_2024_1.html ; NEWS.md ; modele_demarrer.R"
+    existants:
+      - debut: "Il fixe le taux de CSG des pensions selon le reven"
+        verdict: confirme
+        commentaire: "Toujours vrai chez lui (R/12_cotisations.R:361-376 ; seuils de 2015 à 2025 au quart de part, param_prelev.xlsx, onglet cotis, l. 281-286). Toujours absent chez nous (prelevements_remuneration.yaml:705 ; remuneration.py:560-565). Il lit le RFR de N-2, pas le lissage par N-3 (L. 136-8, III 2°, LEGIARTI000054336623 ; F2971 : « franchir le plafond du taux réduit 2 années consécutives »), ni les seuils des DOM, ni les non-résidents (D. 242-8 : 3,20 % et 4,20 %). Aucun modèle du groupe ne les porte : 138.2 les prendra au texte."
+      - debut: "Il impute la part complémentaire de chaque pension"
+        verdict: a_corriger
+        commentaire: "Vrai chez lui (R/12_cotisations.R:1956-1998). Mais l'imputation n'apporte rien au dépôt : au scénario 1, il calcule l'Agirc-Arrco et l'Ircantec à part. Récrire : « Il prélève la cotisation maladie de 1 % sur les retraites complémentaires du privé (D. 242-8, LEGIARTI000037456300) ; le dépôt l'omet (prelevements_remuneration.yaml:718). » Ne pas recopier son exonération : il fait payer les exonérés de CSG (écart au registre). La règle est D. 242-9 (LEGIARTI000043870910) : exonération sous le seuil du taux réduit en N-2 ou en N-3, et pour les allocataires de l'ASPA."
+      - debut: "Il sert l'ASPA d'un couple sous le plafond du coup"
+        verdict: confirme
+        commentaire: "Toujours vrai (R/14_minima_pa.R:165-177, 254-266). Il borne le membre seul éligible au montant d'une personne seule (D. 815-1, a, LEGIARTI000036760292). Il abat les revenus d'activité de 0,9 ou 1,5 SMIC par trimestre, multiplié par quatre à l'année (R. 815-29, LEGIARTI000029968931, en vigueur ; F16871 : 6 562,91 € et 10 938,20 € sur douze mois en 2026). Le dépôt sert toujours le barème d'une personne seule sur les seules pensions (droit/foyer.py:125-128). Son barème du couple n'a qu'une ligne, 2026, et ne sert qu'à l'accueil (minimum_vieillesse_couple.csv ; moteur/js/pages.js:13623). Ines porte le plafond du couple depuis 1998 (param_presta_mensuel.xlsx, Minima, l. 4, mv_plfc). Son abattement de 2026 vaut zéro : ne pas le recopier (écart ci-dessous)."
+    ecarts_existants:
+      - debut: "Il fait payer la cotisation maladie de 1 % aux pen"
+        verdict: confirme
+        commentaire: "Toujours à R/12_cotisations.R:2016-2017. D. 242-9, 1° (LEGIARTI000043870910) tranche."
+      - debut: "L'exonération de CSG des pensions des allocataires"
+        verdict: confirme
+        commentaire: "Toujours déclarée, à R/12_cotisations.R:2004-2010. L. 136-1-2, II 1° (LEGIARTI000051289679) tranche."
+    nouveaux:
+      - quoi: "L'ASPA reste hors de l'assiette de la CSG, de la CRDS et de la CASA : il calcule ces prélèvements sur les pensions seules, puis l'ASPA. En mode net, le site retire 9,1 % à toute la somme servie, ASPA comprise (contexte.py:668-670 ; moteur/js/contexte.js:688-691 ; moteur/js/pages.js:3678-3687). La page dit « appliqué ici à tout le monde » (pages.js:2094-2096), sans dire que l'ASPA n'y est jamais soumise. Un allocataire sans autre ressource y perd 95 € par mois."
+        preuve: "R/12_cotisations.R:1939-2037 (assiette : zrsti, les pensions) ; l'ASPA vient ensuite, sans prélèvement (R/14_minima_pa.R:254-266, 450-474) ; commit a55816c"
+        verification: "L. 136-1-2, I et II 1° (LEGIARTI000051289679) : l'assiette est le revenu de remplacement, et les pensions des titulaires d'un avantage non contributif en sont exclues. retraitesdeletat.gouv.fr, « Les prélèvements sociaux et les exonérations » : l'ASPA et l'ASI sont au nombre des prestations exonérées. Ines omet l'exonération de la pension de l'allocataire (écart au registre) : on ne lui prend que la règle sur l'ASPA elle-même."
+        confronte: site
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Il calcule l'impôt sur le revenu des pensions : abattement de 10 %, avec un plancher par pensionné et un plafond par foyer ; abattement des personnes de 65 ans ou plus et des invalides ; CSG déductible de 3,8, 4,2 ou 5,9 % ; parts et demi-parts. Le dépôt n'en calcule aucun. Le site affiche le net « avant impôt sur le revenu » (pages.js:2094-2096), et la page Coût n'a pas d'effet retour par l'impôt (138.5 prévoit de le borner par l'IPP). L'abattement de 10 % sert aussi au RFR que 138.2 doit estimer."
+        preuve: "R/07_impot_revenus.R:244-276 (abattement au plancher par personne, plafonné au foyer) et 1875-1888 (P0580 à P0610) ; param_prelev.xlsx, onglet IR (min_abatt_prb_indiv 450 €, max_abatt_prb_foyer 4 399 €, impôt 2025) et onglet cotis, l. 280, 287-289 (CSG déductible) ; commit a55816c"
+        verification: "CGI art. 158, 5 a. Version du 1er janvier au 30 juin 2026 (LEGIARTI000053542725) : 10 %, plafond de 4 399 € « au montant total des pensions […] de l'ensemble des membres du foyer fiscal », plancher de 450 €. Version en vigueur depuis le 1er juillet 2026 (LEGIARTI000054373673) : 4 439 € et 454 €. Il est à jour pour 2024 et 2025, les années qu'il simule."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.5"
+      - quoi: "Il tient le barème de l'ASPA au mois depuis janvier 2021, 1er juillet 2022 compris. De 2011 à 2020, il porte la moyenne de l'année, avec la revalorisation d'avril au prorata. Le dépôt ne porte qu'une valeur par an (_en_vigueur, scenarios/actuel.py:1571-1585). De 2009 à 2018, il applique dès janvier le montant d'avril : en 2012, 9 325,98 € au lieu de 8 907,34 € jusqu'en mars. 2008 et 2013 n'ont pas de ligne et sont projetés sur les prix. Le 1er juillet 2022 est écarté (minimum_vieillesse.csv:33-35, 63-80)."
+        preuve: "param_presta_mensuel.xlsx, onglet Minima, l. 2-4 (mv_mi, mv_plfi, mv_plfc), colonnes jan_2021 à janv_2026, dont juillet_2022 = 11 441,49 € ; 2012 = 9 221,32 € = (3 × 8 907,34 + 9 × 9 325,98) / 12 ; commit a55816c"
+        verification: "D. 815-1 (LEGIARTI000020562595) : montants « à compter du 1er avril » 2009, 2010, 2011 et 2012. Loi n° 2022-1158, art. 9 (JORFARTI000046186749) : coefficient de 1,04 au 1er juillet 2022. Circulaire Cnav 2024-39 : 12 411,44 € par an en 2025, valeur d'Ines. Il cite comme source les barèmes de l'IPP (baremes_ipp), qui portent les dates exactes : une seule confirmation."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Il cale le recours à l'ASPA par type de ménage, par tirage sur les effectifs servis : personnes seules, couples à un et à deux allocataires (442 756, 107 923 et 12 164 en 2024). Le dépôt sert l'ASPA à tout ayant droit au scénario 1 (limites.md:395-399). Pour la garantie de la proposition, il retient un recours uniforme de 50 %, mesuré sur les seules personnes seules (config.py:868-877)."
+        preuve: "R/14_minima_pa.R:327-475 (tirage_rec sur trois cibles) ; param_presta_mensuel.xlsx, Minima, l. 7-9 ; commit a55816c"
+        verification: "méthode : les cibles sont des effectifs servis, sur le champ de l'ERFS. Le taux de recours qu'elles impliquent demande les ayants droit, donc une population : ce n'est plus proche du réel qu'avec des microdonnées."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.14"
+      - quoi: "Il sert l'ASI aux invalides avant l'âge de l'ASPA, seuls ou en couple. Il calcule au barème du couple l'ASPA d'un allocataire dont le conjoint touche l'ASI. Le dépôt ne porte pas l'ASI (regles/inaptitude_au_travail.yaml:209-212)."
+        preuve: "R/14_minima_pa.R:270-316 (D.2 et E, circulaire Cnav 2007/15, § 241) ; commit a55816c"
+        verification: "D. 815-1, dernier alinéa (LEGIARTI000036760292) : le barème du couple s'applique à l'ASPA du demandeur dont le conjoint bénéficie de l'ASI (L. 815-24)."
+        confronte: scenario_1
+        importance: faible
+        etat: a_trancher
+        raison: "L'ASI complète une pension d'invalidité jusqu'à l'âge de l'ASPA. Le domaine de l'invalidité du dépôt sert la pension, pas ce minimum : au propriétaire de dire s'il entre au scénario 1."
+      - quoi: "Il impose les rentes viagères à titre onéreux sur une fraction fixée par l'âge : 70, 50, 40 ou 30 %. Le dépôt traite la rente du pilier capitalisé en rente à titre gratuit (prelevements_remuneration.yaml:724-730)."
+        preuve: "R/07_impot_revenus.R:327-338 ; param_prelev.xlsx, IR, rvto_tx1-4 (depuis 1979)"
+        verification: "méthode : c'est le droit des rentes volontaires, pas celui d'un pilier obligatoire."
+        confronte: proposition
+        importance: faible
+        etat: ecarte
+        raison: "Le dépôt a tranché pour une rente issue d'une cotisation obligatoire, et l'écrit (limites.md, § 5 ante ter, point 3)."
+    ecarts_nouveaux:
+      - constat: "abat_aspa_celib et abat_aspa_couple valent 0 en janvier 2026 (param_presta_mensuel.xlsx, Minima, l. 5-6). Avant, il suit les relèvements du SMIC en cours d'année : mai 2022, août 2022, mai 2023, novembre 2024."
+        tranche: "R. 815-29, en vigueur, prend le SMIC « en vigueur au 1er janvier de l'année » ; F16871 (23 juin 2026) donne pour 2026 un abattement de 1 640,72 € par trimestre pour une personne seule, de 2 734,55 € pour un couple. Ines a tort."
+        preuve: "LEGIARTI000029968931 ; service-public F16871"
+      - constat: "retrCP_t5, la part complémentaire des anciens cadres du dernier quintile, vaut 64,9 pour 2020, contre 0,65 les autres années (param_prelev.xlsx, onglet Imput, l. 11). La pension brute et le 1 % de ces retraités en sortent faux pour la législation 2020."
+        tranche: "Faute de frappe : un pourcentage saisi pour une part. Le reste de la série (0,652 de 2019 à 2025) tranche."
+        preuve: "param_prelev.xlsx, Imput, l. 11, colonne valeur_INES_2020 ; usage : R/12_cotisations.R:1962, 1981"
+    examine_sans_avantage: "Réversion : rien, les pensions viennent de l'ERFS. Revalorisations : sa dérive prend des moyennes annuelles pour vieillir l'échantillon (derive_revenu.xlsx, param_derive, l. 34) ; le dépôt porte les arrêtés datés et les cinq tranches de 2020 (revalorisation_pensions.csv:120-124). Calage et validation : Marges_Calage, Cibles_Ines et la note de validation (ASPA simulée 3,12 Md€ contre 3,50 Md€ en 2024) ne servent qu'à une microsimulation ; la page Coût lit les comptes (prestations_non_contributives.csv). Restent hors champ : l'indemnité inflation de 2022, le chèque énergie, l'APA et la taxe d'habitation."
+    conclusion: "Ines fait mieux que le dépôt sur tout ce qui entoure la pension d'un retraité : le net selon le RFR et les parts, le 1 % des complémentaires, l'ASPA du couple sur les ressources du foyer et hors des prélèvements, l'impôt, le barème de l'ASPA daté. Il ne fait rien sur la pension elle-même ni sur la réversion, qui sont des données. Deux de ses paramètres sont faux : l'abattement de l'ASPA de 2026 et une part complémentaire de 2020."
+
+  - id: saphir
+    version: "commit 7bc72c9 (5 septembre 2018, unique)"
+    lu_dans:
+      - "https://github.com/DGTresor/Saphir, cloné dans scratchpad/modeles/saphir"
+      - "Programmes/6-Definition_revenus_bruts.sas, 7a-Legislation_sociale.sas, 7b-Legislation_IR.sas, 8a-Calcul_CSG_CRDS_cotis_2015_2016.sas, 9a-Calcul_CSG_CRDS_cotis_2017.sas, 12-Prestations_20ans.sas, 1-Correction_donnees_et_variables_auxiliaires.sas ; README.md ; LICENSE"
+    existants:
+      - debut: "Il fixe le régime de CSG des pensions — exonératio"
+        verdict: a_corriger
+        commentaire: "Vrai, mais la preuve est mal placée. 6-Definition_revenus_bruts.sas:226-230 applique les seuils de 2015 (10 633 € et 13 900 €, l. 40-44) pour remonter au revenu brut. Le barème de 2017 est en 9a-Calcul_CSG_CRDS_cotis_2017.sas:45-49, avec les seuils de 7a-Legislation_sociale.sas:118-129 : 10 996 € plus 2 936 € par demi-part, 14 375 € plus 3 838 €. Il n'a que trois cas, le taux médian n'existant que depuis 2019, et la CASA au seul taux plein (8a:336), juste pour 2017. Le dépôt retire toujours 9,1 % à tous."
+    nouveaux:
+      - quoi: "Il sert l'ASPA de 2017 sous le plafond du couple et borne le membre seul éligible au montant d'une personne seule. Les ressources sont celles du foyer : revenus d'activité abattus, chômage, pensions, rentes, pensions alimentaires, revenus du patrimoine. L'ASPA reste hors des prélèvements. Le dépôt applique le barème d'une personne seule aux seules pensions (droit/foyer.py:125-128)."
+        preuve: "Programmes/12-Prestations_20ans.sas:560-605 ; 7a-Legislation_sociale.sas:1495-1511 ; commit 7bc72c9"
+        verification: "D. 815-1, a et b (LEGIARTI000036760292) ; R. 815-22 (LEGIARTI000047770487). Son abattement est faux (écart ci-dessous). Il ne vaut que pour 2017 et confirme Ines."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Il calcule l'impôt des pensions de 2016 et 2017 : abattement de 10 % (au moins 379 €, au plus 3 711 € pour l'impôt 2016, relevés pour 2017), abattement des personnes âgées ou invalides, fractions imposables des rentes à titre onéreux. Le dépôt n'en calcule aucun."
+        preuve: "Programmes/7b-Legislation_IR.sas:346-358, 396-399 ; commit 7bc72c9"
+        verification: "CGI art. 158, 5 a (plafond par foyer, plancher par pensionné). Juste pour 2016 et 2017 seulement."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.5"
+    ecarts_nouveaux:
+      - constat: "Il retranche une seule fois 0,9 SMIC mensuel (1,5 pour un couple) de revenus d'activité annuels, au lieu de quatre fois. Pour un couple, il l'applique aux revenus de chaque conjoint, et seulement si la personne de référence est éligible (12-Prestations_20ans.sas:577-585 ; 7a-Legislation_sociale.sas:1510-1511)."
+        tranche: "R. 815-29 fixe l'abattement par trimestre, sur les revenus professionnels du foyer pour un couple ; F16871 donne pour douze mois quatre fois le montant trimestriel. Ines multiplie par quatre (R/14_minima_pa.R:170-177, circulaire Cnav de 2015). Saphir a tort."
+        preuve: "LEGIARTI000029968931 ; service-public F16871 (2026 : 6 562,91 € et 10 938,20 € sur douze mois)"
+    corrections_registre:
+      - "licence : les paramètres des programmes 6, 7a et 7b sont sous « Licence Ouverte / Open License » 2.0, recopiables en citant. Le pied de chaque programme le dit (ex. 12-Prestations_20ans.sas:732) ; seul le code est sous CeCILL 2.1."
+    conclusion: "Saphir ne fait rien qu'Ines ne fasse à jour. Il confirme, pour 2017 seulement, le régime de CSG à trois cas selon le RFR et les parts, l'ASPA du couple et l'impôt des pensions. Ses paramètres se recopient, mais ils sont figés en 2017, et son abattement de l'ASPA est faux."
+
+  - id: euromod
+    version: "modèle J2.54+ (bêta, septembre 2026 ; FR.xml du 2 septembre 2026, systèmes FR_2006 à FR_2026) ; logiciel ed02e6c (30 septembre 2026) ; rapport pays Y16_CR_FR (février 2026)"
+    lu_dans:
+      - "https://euromod-web.jrc.ec.europa.eu/sites/default/files/2026-09/EUROMOD_RELEASES_J2.54%2B.zip : XMLParam/Countries/FR/FR.xml, FR_DataConfig.xml, EUROMOD_model_licence_J12.54+.txt (CC BY 4.0)"
+      - "https://github.com/ec-jrc/JRC-EUROMOD-software-source-code (logiciel seul : aucune règle pays)"
+      - "https://euromod-web.jrc.ec.europa.eu/sites/default/files/2026-02/Y16_CR_FR.pdf"
+    existants: []
+    ecarts_existants:
+      - debut: "Il décrit pour 2022 à 2025 le critère d'un « impôt"
+        verdict: a_corriger
+        commentaire: "Le rapport le dit (p. 94) et se dément deux paragraphes plus bas. Le code applique le RFR depuis FR_2015 : tin_s < 61 en FR_2014, il_rniy <= sin36_s en FR_2015. L'écart est du rapport, pas des règles."
+      - debut: "Il prend les ressources de l'ASPA nettes imposable"
+        verdict: confirme
+        commentaire: "FR.xml:1518480-1518482, FR_2026 : Withdraw_Base = max(il_rniy_bens,0)+bdi_s. R. 815-22 tranche."
+    nouveaux:
+      - quoi: "Il fixe le taux de CSG des pensions (0, 3,8, 6,6 ou 8,3 %) et la CASA, due aux deux derniers taux, selon le revenu fiscal et les parts. Il prend les seuils de 2026 et leurs majorations par demi-part : 13 048 € plus 3 484 €, 17 057 € plus 4 555 €, 26 472 € plus 7 066 €. Ses règles, sous CC BY 4.0, se recopient en citant. Le dépôt retire 9,1 % à tous (prelevements_remuneration.yaml:705) ; son barème n'a que les seuils d'une part (prelevements_remuneration.yaml:755-759)."
+        preuve: "FR.xml (J2.54+), FR_2026 : seuils l. 1498890-1498955 (tinty_fr, $tscxc_thres1 à 6) ; taux et CASA vers l. 1500847 (tscxc_fr, « Amount of CSG - pensions ») ; rapport, p. 94-95, tableaux 2.66 à 2.68 pour 2022-2025"
+        verification: "service-public F2971, vérifiée le 1er juin 2026 : mêmes seuils pour une part et par demi-part. L. 136-8, III à III ter (LEGIARTI000054336623) ; L. 137-41, II 1° pour la CASA. Il prend le revenu imposable de l'année au lieu du RFR de N-2, sans le lissage par N-3 (rapport, § 2.6.4.1), et sa CRDS n'est pas graduée (écart ci-dessous) : recopier les seuils, pas l'assiette."
+        confronte: site
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "L'ASPA reste hors de l'assiette de la CSG, de la CRDS et de la CASA. En mode net, le site lui retire 9,1 % (contexte.py:668-670 ; pages.js:3678-3687)."
+        preuve: "FR.xml (J2.54+), FR_2026 : il_tscxc_pen = poa00, pdi00, psu, ypp (IlDef_fr) et il_crds_base_full (l. 1522462-1522500), sans bsaoa_s ; rapport, § 2.5.11.4 : « Not taxable […] and not subjected to CRDS »"
+        verification: "L. 136-1-2, I et II 1° (LEGIARTI000051289679) ; retraitesdeletat.gouv.fr, « Les prélèvements sociaux et les exonérations » : ASPA et ASI exonérées."
+        confronte: site
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Il calcule l'impôt des pensions de 2026 : abattement de 10 % (au moins 454 €, au plus 4 439 €), abattement des 65 ans et plus ou invalides (2 822 € sous 17 670 € de revenu, 1 411 € jusqu'à 28 430 €), CSG déductible de 3,8, 4,2 ou 5,9 %, quotient familial. Le dépôt n'en calcule aucun (pages.js:2094-2096)."
+        preuve: "FR.xml (J2.54+), FR_2026, tinty_fr : l. 1497532-1497599 (abattement des pensions), l. 1498656-1498669 (454 € et 4 439 €), abattement spécial et CSG déductible dans la même politique"
+        verification: "CGI art. 158, 5 a (LEGIARTI000054373673, depuis le 1er juillet 2026) : 10 %, 4 439 € par foyer, au moins 454 €. Mais il applique le plafond par personne (écart ci-dessous)."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.5"
+      - quoi: "Il sert l'ASPA sous le plafond du couple, sur les ressources du foyer. Le dépôt applique le barème d'une personne seule à ses seules pensions (droit/foyer.py:125-128)."
+        preuve: "FR.xml (J2.54+), FR_2026, bsaoa_fr : l. 1518415-1518482"
+        verification: "D. 815-1 (LEGIARTI000036760292), R. 815-22, R. 815-29."
+        confronte: scenario_1
+        importance: faible
+        etat: ecarte
+        raison: "Pas plus proche du réel. Il donne le plafond du couple au membre seul éligible, exclut tout revenu d'activité, prend des ressources nettes imposables et ne sert que les allocataires observés. Ines le fait selon la loi."
+      - quoi: "Il porte la dépense et les effectifs du minimum vieillesse de 2009 à 2023 : 1 910 M€ et 583 200 allocataires en 2009, 4 106 M€ et 723 020 en 2023. Le dépôt ne lit le minimum vieillesse qu'à partir de 2020 (prestations_non_contributives.csv:42-90)."
+        preuve: "FR.xml (J2.54+), ExternalStatistic bsaoa_s, source : Panorama de la DREES, « Total tous régimes »"
+        verification: "La source première est le Panorama de la DREES, que le dépôt peut lire sans lui."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Le périmètre diffère de celui des comptes de la protection sociale que lit la page Coût, et limites.md:1823-1829 interdit de les mêler."
+    ecarts_nouveaux:
+      - constat: "Il sert le plafond du couple, 1 620,18 € par mois, quand un seul membre a 65 ans (FR.xml:1518454-1518469 ; rapport, tableau 2.35, note 1)."
+        tranche: "D. 815-1, a : quand « seul un des conjoints » en bénéficie, le montant maximum est celui d'une personne seule ; F16871 2026 : 1 043,59 € pour un couple à un seul bénéficiaire. EUROMOD a tort, Ines a raison (R/14_minima_pa.R:262-263)."
+        preuve: "LEGIARTI000036760292 ; service-public F16871"
+      - constat: "Il refuse l'ASPA à qui a un revenu d'activité (ils_earns#1=0, FR.xml:1518417 et 1518456) ; le rapport la dit réservée aux retraités « not working » (§ 2.5.11.1)."
+        tranche: "L. 815-1 ne pose aucune condition de cessation d'activité. R. 815-29 compte les revenus professionnels après abattement. EUROMOD a tort."
+        preuve: "LEGIARTI000054477905 ; LEGIARTI000029968931"
+      - constat: "Il prélève la CRDS sur toutes les pensions, même exonérées de CSG (tscdf_fr, « Base fully taxed », FR.xml:1522462-1522487). Il n'exonère pas non plus la pension des allocataires de l'ASPA. Son rapport dit pourtant les petites pensions exonérées « from CSG and CRDS » (p. 94)."
+        tranche: "Ordonnance n° 96-50, art. 14, I : la CRDS suit les conditions des articles L. 136-1-1 à L. 136-4, donc les exclusions de L. 136-1-2, II 1°. F2971 : « Si vous ne payez pas de CSG (taux zéro), vous êtes exonéré de CRDS et de Casa ». EUROMOD a tort."
+        preuve: "LEGIARTI000038834962 ; LEGIARTI000051289679 ; service-public F2971"
+      - constat: "Il plafonne l'abattement de 10 % des pensions par personne (TAX_UNIT tu_individual_fr, FR.xml:1497573 et 1497599)."
+        tranche: "CGI art. 158, 5 a : « Ce plafond s'applique au montant total des pensions et retraites perçues par l'ensemble des membres du foyer fiscal ». Ines plafonne au foyer (R/07_impot_revenus.R:271-275)."
+        preuve: "LEGIARTI000054373673"
+      - constat: "Le rapport (février 2026, tableau 1.1, p. 8) donne 63 ans à la génération 1964 et 63 ans et 3 mois à 1965, d'après la réforme de 2023 seule. Son code n'en dépend pas (RetAge_min = 62,75 en 2026)."
+        tranche: "La LFSS pour 2026 suspend la réforme : 62 ans et 9 mois pour 1964 et pour les nés de janvier à mars 1965, 63 ans ensuite (age_ouverture_requis.csv:138-141, certifiée). Le rapport est périmé."
+        preuve: "data/reference/legislation/age_ouverture_requis.csv:138-141"
+    corrections_registre:
+      - "code et documentation : les règles pays ne sont pas dans le dépôt du logiciel. Elles sont dans le paquet du modèle (J2.54+, téléchargeable sans inscription, CC BY 4.0 selon le fichier de licence), dans XMLParam/Countries/FR/FR.xml, systèmes FR_2006 à FR_2026."
+      - "couvre : ajouter l'impôt des pensions (abattement de 10 %, abattement des 65 ans et plus). L'ASPA n'est servie qu'aux allocataires observés dans EU-SILC."
+    conclusion: "EUROMOD fait mieux que le dépôt sur le net des pensions : CSG et CASA graduées par RFR et parts au barème exact de 2026, recopiable sous CC BY 4.0, et l'ASPA hors des prélèvements. Il fait mieux aussi sur l'impôt des pensions. Il ne simule aucune pension, faute d'historique de carrière ; il sert l'ASPA plus mal que la loi et prélève la CRDS sur toutes les pensions : on lui reprend ses seuils, pas ses assiettes. Son outil de ménages types (HHoT) peut confronter à part le net d'un couple de retraités une fois 138.2 fait."

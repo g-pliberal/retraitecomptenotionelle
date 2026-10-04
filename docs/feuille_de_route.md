@@ -5667,6 +5667,15 @@ du foyer et l'ASPA du couple, l'ASPA prélevée à tort comprise), puis 6, 4,
 et la proposition ; 14 avec l'action 136 ; l'étape 13 reçoit 33 choix, que le
 propriétaire tranche quand il le veut.
 
+**Le même jour, le relevé archivé**, à la demande du propriétaire (« Est-ce
+que tes recherches ont été commit ? Si non, fait le ») : la vue modèle par
+modèle tirée du registre, et les dix rapports des recherches tels qu'ils sont
+arrivés, sont dans `docs/archives/releve_des_autres_modeles.md` et le dossier
+du même nom. Ils gardent ce que le registre ne garde pas : les 29 points que
+la vérification n'a pas tenus et leur raison, les verdicts sur les points
+anciens, la comparaison des barèmes de l'IPP famille par famille, les séries
+d'OpenFisca-France confrontées à celles du dépôt.
+
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
 **Reprise, au 4 octobre 2026.** Fait : l'étape 1, la saisie outillée — la

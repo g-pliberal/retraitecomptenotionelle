@@ -1,0 +1,300 @@
+# Le rapport de la recherche « nordiques » (les comptes notionnels suédois, norvégien et finlandais), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+groupe: nordiques
+modeles:
+  - id: pensionsmodellen
+    version: "2.2 du 10 octobre 2024 (archive du 21 janvier 2025), lue à distance sans tout télécharger : liste des 623 fichiers, PensionSystem.xlsb et Main.xlsm, module VBA mRuleSystem extrait par olevba ; manuel PID123479 v1.5.4 du 20 janvier 2015, le même dans l'archive"
+    lu_dans:
+      - "https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/pensionsmodellen (page mise à jour le 20 mai 2026)"
+      - "https://static.pensionsmyndigheten.se/statistik/pensionsmodellen/Pensionsmodellen_2.2.zip : « Pensionsmodellen filer/PensionSystem.xlsb » (module mRuleSystem), « användarmanual_pensionsmodellen_eng.pdf »"
+      - "https://www.pensionsmyndigheten.se/statistik/publikationer/orange-rapport-2025/orange-rapport-2025.pdf"
+    existants:
+      - debut: "Il projette le bilan du système suédois, durée de "
+        verdict: a_corriger
+        commentaire: "Vrai dans le code de la v2.2. La durée de rotation y vaut l'âge moyen de paiement moins l'âge moyen de cotisation (mRuleSystem, l. 5073-5085 de l'extraction, règle simplifiée de 2015). L'actif de cotisation vaut la durée × les cotisations (l. 5133-5136). Le fonds tampon et son rendement sont aux l. 5117-5122. `cout.py:114-121` reste juste. La raison est à revoir : le bilan ne sert pas qu'à un équilibrage appliqué. Pensionsmyndigheten le publie chaque année comme indicateur, même quand il ne mord pas (1,1472 pour 2027, « kommer inte att påverka indexeringen », rapport orange 2025, p. 4). Ranger son calcul a_reprendre (point nouveau de balanstal_suede), laisser a_trancher la seule application."
+      - debut: "Il projette sur « 498 status groups », croisés par"
+        verdict: confirme
+        commentaire: "Manuel v1.5.4, p. 24 : « 498 status groups, providing a resolution of 51 288 ». La v2.2 garde la population par états (Data/TransPop2019 : facteurs « has_high_edu », « is_parent_0_4 », « has_transfer », « is_abroad »…). `castypes.py:127` inchangé."
+    nouveaux:
+      - quoi: "Il projette le fonds tampon (AP1 à AP4 et AP6), sa valeur de marché et son rendement, et le compte à l'actif du système (`x_Y_buffer_fund`, `x_Y_buffer_fund_return`). La page Coût laisse les réserves des régimes hors du calcul, « que le COR chiffre à part, le solde disant le flux et jamais le stock » (`cout.py:95-100`). Elle ne dit ni ce qu'elles rapportent, ni combien d'années de déficit elles couvrent."
+        preuve: "mRuleSystem (PensionSystem.xlsb v2.2), l. 5117-5122 de l'extraction : « x_Y_buffer_fund_return = x_Y_buffer_fund(yr − 1) × apvu + … ». Rapport orange 2025, tableau 1.1 : fonds de 2 234 Md SEK fin 2025, rendement de 5,8 %. La fiche suédoise de l'Ageing Report 2024 le projette à 4 % l'an (tableau 16)."
+        verification: "Méthode : la France a des réserves (FRR, Agirc-Arrco, régimes des libéraux), et le dépôt écrit que le COR les chiffre (`cout.py:98-100`). Un solde sans stock surestime le besoin de court terme d'un système qui a des réserves."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.3"
+      - quoi: "On y choisit le scénario démographique de SCB (« Du kan välja olika befolkningsscenarier »), en plus de la croissance, de l'inflation et du rendement. Le dépôt a les variantes économiques du COR (`hypotheses_projection.yaml:92-160`), pas les démographiques : il n'a que le scénario central de l'INSEE."
+        preuve: "page Pensionsmodellen du 20 mai 2026 ; la v2.2 porte les projections de SCB de 2023 et de 2024."
+        verification: "Méthode ; même chantier que les points de destinie_2, trajectoire et retraites_cor2026."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.7"
+    ecarts_nouveaux:
+      - constat: "Son manuel est celui de 2015, même dans l'archive de la v2.2. Il annonce l'âge minimal porté à 62 ans en 2015, puis à 63 « according to current forecasts » en 2019, et l'âge cible à 66 ans en 2019 (v1.5.4, p. 23)."
+        tranche: "La loi : l'âge minimal vaut l'âge cible moins trois ans (SFB 56:3), et l'âge cible est de 67 ans depuis 2026 (SFB 2:10 a-c ; loi 2022:879, appliquée dès le 1er janvier 2026). Les données de la v2.2 datent de 2023-2024 ; le manuel, lui, est périmé."
+        preuve: "manuel PID123479 v1.5.4, p. 23 ; SFB consolidée jusqu'à SFS 2026:1658."
+      - constat: "La v2.2 ne distribue un excédent que pendant le rattrapage d'un frein. `x_Y_distributableSurplusIndexation` n'est calculé que si l'indice d'équilibre est sous l'indice de revenu ; hors frein, un indice au-dessus de un ne fait rien (mRuleSystem, l. 5161-5190 de l'extraction)."
+        tranche: "La loi 2026:1301, en vigueur le 1er août 2026 et appliquée dès 2027, distribue hors de tout frein. Au-delà de 1,15, le facteur vaut 1 + (indice − 1,15)/3, sauf l'année d'un frein et la suivante (SFB 58:25 a-b, 62:19 a, 62:43). Le modèle, de 2024, ne la connaît pas : ne pas s'en servir pour chiffrer l'équilibrage symétrique."
+        preuve: "SFB 58:25 a-c et dispositions transitoires de la loi 2026:1301 ; PensionSystem.xlsb v2.2."
+    conclusion: "Ce qu'il fait de mieux tient au bilan (durée de rotation, actif de cotisation, fonds tampon et son rendement), calculé sur une population par états. De quoi donner à la page Coût un indicateur de stock et ses réserves ; mais son manuel date de 2015 et son code ignore l'accélérateur de 2026."
+
+  - id: typfallsmodellen
+    version: "4.8 du 27 avril 2026, par le portage mathiasboos/Typfallsmodellen au commit bb46d93 (25 septembre 2026) : VBA d'origine dans reference/vba, moteur TypeScript, données extraites ; manuel PID289138 v2.2 du 27 janvier 2025"
+    lu_dans:
+      - "https://github.com/mathiasboos/Typfallsmodellen au commit bb46d93 : reference/vba/Pensionssystemet.bas, reference/vba/Mortality.bas, packages/engine/src/{pension,model,bidrag}/*.ts, packages/data/mortality.json, docs/anvandarmanual-typfallsmodellen.pdf"
+      - "https://data.riksdagen.se/dokument/sfs-2010-110.text (SFB consolidée jusqu'à SFS 2026:1658)"
+      - "https://data.riksdagen.se/dokument/sfs-1998-675.text"
+      - "PFS 2025:2, PFS 2026:1 et PFS 2026:3 (pensionsmyndigheten.se, Lagar och regler, föreskrifter)"
+      - "https://www.lafinancepourtous.com/pratique/retraite/epargne-retraite/la-rente-viagere/"
+    existants:
+      - debut: "Il impute chaque année au compte les gains d'hérit"
+        verdict: a_corriger
+        commentaire: "Vrai : `Pensionssystemet.bas:1027` au commit bb46d93 ; la citation est SFB 62:11. Deux corrections. D'abord la ligne du dépôt : depuis l'action 141, l'accumulation est en `compte.py:1004-1062`, et `compte.py:847-905` tombe sur le calcul des cotisations. Ensuite, la forme suédoise n'est pas 1/p_x. Jusqu'à cinq ans de l'âge cible, le facteur rapporte les comptes des morts aux comptes des survivants de même âge (62:14-15) ; ensuite, les décès projetés aux survivants (62:16-17). 1/p_x n'en est que l'approximation. PFS 2026:1 donne les facteurs de 2026, 1,000655 pour la génération 1980 et 1,003457 pour 1964 : un exemple prêt si le propriétaire tranche. Ordre de grandeur refait sur la table de génération du dépôt, profil plat de 22 à 64 ans : +9,9 % pour 1960, +6,5 % pour 1980, +4,9 % pour 2000, cohérent avec 9,6 % et 6,3 %."
+      - debut: "Il déduit du compte les frais de gestion, 0,0319 %"
+        verdict: a_corriger
+        commentaire: "Vrai : `Pensionssystemet.bas:1031` ; 0,999681 pour 2025 (PFS 2025:2). Plus récent : 0,999666 pour 2026, soit 0,0334 % (PFS 2026:3, décidée le 2 septembre, en vigueur le 12 octobre 2026). Ligne du dépôt : `compte.py:1004-1062`."
+      - debut: "Il rend la pension par étage, avant et après impôt"
+        verdict: confirme
+        commentaire: "Manuel v2.2, § 2 : « pensionsinkomsten före och efter skatt samt eventuellt bostadstillägg » ; « Inkomsterna före och efter skatt beräknas dels vid pensioneringstillfället, dels åren strax före samt efter pensionering ». `simulateur.py:278-298` inchangé ; l'après-impôt attend l'étape 138.2."
+    nouveaux:
+      - quoi: "Il calcule l'uttag partiel, et les droits acquis après un premier uttag, portés chaque année à la pension. Le compte du dépôt s'arrête à la liquidation (`compte.py:1028`) : une cotisation versée ensuite ne crée rien. Le README le dit : « la proposition n'en a encore rien dit » (`README.md:404`)."
+        preuve: "`Pensionssystemet.bas:1034` (« partiellt uttag (0<andel<1), månadsvis omräkning ») et `:1045` (« Andra uttaget och partiellt ELLER prätt »), au commit bb46d93."
+        verification: "SFB 56:2 (uttag limité à trois quarts, la moitié ou un quart). SFB 62:46-47 : la pension est recalculée chaque année comme un retrait suivi d'un nouvel uttag, droits nouveaux compris. La Norvège sert de même de 20 à 100 % entre 62 et 75 ans, sans condition de revenu (Andreassen et al., IJM 2020)."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le cumul et le départ partiel sous la proposition sont un choix du programme, qu'il n'a pas fait. S'il le fait, l'arithmétique suédoise dit comment : recalcul annuel au diviseur de l'âge atteint."
+      - quoi: "Il porte au compte les années d'enfant (« barnår », trois méthodes, la plus favorable retenue), payées par une cotisation de l'État. Il fait de même pour les études, le service militaire et les indemnités de maladie, parentales ou de chômage. La proposition retire l'AVPF (`comptes_notionnels.yaml:69-71` ; « Ni majorations enfants, ni MDA, ni AVPF », `README.md:408`). Or la CNAF la paie par une cotisation, que `equilibre.py:38-49` nomme ainsi, et le même compte porte ce que l'Unédic et l'État versent pour un chômage (`compte.py:575-578, 951-1001`, action 141)."
+        preuve: "`Pensionssystemet.bas:1271-1294` (fonction `pgb_barn` : « Metod 1: Individuell jämförelse », « Metod 2: Generell jämförelse », « Metod 3: Enhetligt belopp ») ; `packages/engine/src/model/mcalc.ts:207-240`."
+        verification: "SFB 60:21-54 (barnår) et 59:13 (prestations sociales comptées comme revenu) ; loi 1998:676 sur la cotisation de l'État. En France, L. 381-1 en vigueur (LEGIARTI000047453431) : « une cotisation à la charge exclusive des organismes débiteurs des prestations familiales et calculée sur des assiettes forfaitaires »."
+        confronte: proposition
+        importance: forte
+        etat: a_trancher
+        raison: "Le README retire l'AVPF en toutes lettres. Mais la règle de l'action 141, porter au compte ce qu'un tiers a versé, la ferait entrer, avec la recette de la CNAF que la page Coût retire aujourd'hui. L'asymétrie est au propriétaire."
+      - quoi: "Sa garantie se retire à 48 % au-delà de 1,26 base de prix : chaque couronne de pension au-dessus du seuil en laisse 52 öre. La garantie vieillesse de la proposition est différentielle à 100 % jusqu'à 800 € (`garantie_vieillesse.yaml:3-6`, `config.py:814`) : sous le plancher, cotiser ne rapporte rien."
+        preuve: "`packages/engine/src/bidrag/garantipension.ts` (« 0.87 * pbb - 0.48 * (inkomst - 1.26 * pbb) ») ; manuel v2.2, § 2."
+        verification: "SFB 67:21-24 (loi 2022:1031) : « minskat med 48 procent av den del av beräkningsunderlaget som överstiger 1,26 prisbasbelopp »."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "La proposition écrit une garantie qui « remplace l'ASPA », que le dépôt lit différentielle. Un retrait partiel est un autre choix, plus coûteux, qui garde un rendement aux cotisations des petites pensions."
+      - quoi: "La transition suédoise réelle a recalculé pour tous les droits notionnels de 1960 à 1998, au taux nouveau de 18,5 % sur les revenus enregistrés, années d'enfant comprises. Elle a ensuite panaché par génération, un vingtième par année de naissance de 1938 à 1953. Le dépôt a le rétroactif aux taux historiques (scénarios 2, 4 et 6, `config.py:536`) et le prospectif aux droits figés (3 et 5, `valorisation_des_droits_acquis.yaml:3-6`), sans panachage. Son taux uniforme (`config.py:548`) ne sert à aucun scénario."
+        preuve: "`packages/engine/src/pension/contributions.ts:68-75` (« share = (1 / 20) * (cohort - 1935 + 1) ») et `atp.ts:6-7`, au commit bb46d93."
+        verification: "Loi 1998:675, art. 28 et 31 (« För åren 1960-1994 skall pensionsrätt för inkomstpension utgöra 18,5 procent av pensionsunderlaget ») ; SFB 61:10 et 63:16 (un vingtième par année)."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "Le chemin de la bascule est un choix du programme (étape 13, le diviseur des droits acquis). La Suède en a pris un troisième, réel, entre les scénarios 2 et 3."
+      - quoi: "Sa prime pension liquidée suit le rendement de ses fonds : la pension de l'année vaut celle de l'an passé × rendement ÷ 1,0165, le taux avancé dans le diviseur. La rente du pilier capitalisé du dépôt est nivelée à taux technique nul et « que rien ne revalorise » (`revalorisation.py:955-968`, `config.py:1173-1180`). Sa réserve ne rapporte rien à son titulaire, et les prix seuls la déprécient."
+        preuve: "`packages/engine/src/model/drawdown.ts:286-310` (« The forskottsranta built into the divisor, unwound year by year ») et `:540-552` (le solde × le rendement, plus les gains d'héritage), au commit bb46d93."
+        verification: "SFB 64:2 (« pensionernas storlek är beroende av värdeutvecklingen på de fonderade medlen ») et 64:10. Pour un contrat français : « La rente viagère est revalorisée tous les ans en fonction des résultats des placements réalisés par l'assureur » (lafinancepourtous.com, IEFP). À taux technique nul, toute la participation aux bénéfices revalorise la rente."
+        confronte: proposition
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "nouveau: la rente du pilier capitalisé revalorisée par le rendement de sa réserve"
+      - quoi: "Il lit des risques de décès projetés par année de 1980 à 2120, par sexe et par âge. Le dépôt réduit la mortalité projetée à une loi de Gompertz-Makeham calée sur e60 et e65 (`mortalite.py:1-30`)."
+        preuve: "`packages/data/mortality.json` (firstYear 1980, lastYear 2120, source « mortality!A:D ») ; `packages/engine/src/pension/mortality.ts:30-60`."
+        verification: "Méthode ; même chantier que destinie_2 (les quotients projetés âge par âge)."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.7"
+      - quoi: "Il présente la pension au niveau de salaire d'aujourd'hui : croissance réelle nulle, rendement de 1,7 % au-delà des salaires (« prognosstandard », manuel § 1.3.2). Le dépôt projette sur le scénario du COR, en euros constants de 2026."
+        preuve: "manuel PID289138 v2.2, § 1.3.2."
+        verification: "Méthode : convention de présentation."
+        confronte: site
+        importance: faible
+        etat: ecarte
+        raison: "Pas plus juste : c'est une convention de présentation, que le dépôt remplace par une projection sourcée."
+    ecarts_nouveaux:
+      - constat: "Son diviseur projeté (`Calculate_Deltal`) fait une moyenne « sur cinq ans » qui compte deux fois l'année génération + âge cible − 3, soit quatre années distinctes en tout (`Mortality.bas:234-240`). Il fixe aussi l'âge cible une seule fois, avant la boucle des sexes : aux jeunes âges, les femmes lisent des années décalées (`Mortality.bas:213-228`, que le portage signale, `mortality.ts:132`)."
+        tranche: "SFB 62:17 prend la statistique d'une « femårsperiod », cinq années. L'effet est faible, et les diviseurs officiels n'en souffrent pas : PFS 2026:2 se refait au centième sur cinq années distinctes (voir delningstal_suede). Ne pas prendre ses diviseurs projetés pour exemple."
+        preuve: "`Mortality.bas:213-240` au commit bb46d93 ; SFB 62:17 ; recalcul de PFS 2026:2 du 4 octobre 2026."
+    conclusion: "Au-delà des gains d'héritage et des frais déjà au registre, il montre des choix que la proposition n'a pas faits : droits après le départ, années d'enfant, garantie à retrait partiel, transition par génération. Il sert aussi une rente capitalisée qui garde son rendement, ce que le dépôt devrait reprendre ; son diviseur projeté porte deux coquilles de moyenne, sans effet sur les tables officielles."
+
+  - id: delningstal_suede
+    version: "SFB (2010:110) consolidée jusqu'à SFS 2026:1658 ; PFS 2026:2 décidée le 2 septembre 2026 ; rapport orange 2025, annexe A.8 ; table SCB LivslangdFemarigA"
+    lu_dans:
+      - "https://data.riksdagen.se/dokument/sfs-2010-110.text (62:28-47)"
+      - "PFS 2026:2, « om delningstal avseende inkomstpension för personer födda 1960 respektive 1963 » (pensionsmyndigheten.se, föreskrifter 2026)"
+      - "https://api.scb.se/OV0104/v1/doris/sv/ssd/BE/BE0101/BE0101I/LivslangdFemarigA (« totalt », risques de décès 2019-2023 à 2021-2025)"
+      - "https://www.pensionsmyndigheten.se/statistik/publikationer/orange-rapport-2025/orange-rapport-2025.pdf"
+    existants:
+      - debut: "La pension servie y est revalorisée moins la norme"
+        verdict: confirme
+        commentaire: "Repris au commit 1299bc1 et vérifié : `revalorisation.py:926-935`, `moteur/js/revalorisation.js:713-719`. SFB 62:43 relu : le quotient des indices est « dividerats med talet 1,016 », et la loi 2026:1301 y ajoute le facteur de distribution. Lignes à jour : `config.py:648`, `moteur/conversion.py:229-235`."
+      - debut: "Sa grille de 2026 (PFS 2026:2 : 19,13 à 62 ans, 17"
+        verdict: confirme
+        commentaire: "Refait le 4 octobre 2026 sur SCB « totalt », risques de décès 2020-2024, par la formule A.8.1 (douze mensualités à échoir, survie linéaire, 1,016). Résultat : 19,125, 17,340, 16,151, 14,374, 8,661, 4,202 et 1,933 à 62, 65, 67, 70, 80, 90 et 100 ans, soit la grille au centième. La période 2021-2025 donnerait 17,51 à 65 ans : prendre 2020-2024. L'annexe A.8 parle encore d'une « fyraårsperiod » et des âges 62 et 66 d'avant la loi 2022:879 : suivre la loi et la PFS. Sur la même table, la formule du dépôt à ν = 1,6 % (rente continue, `conversion.py:233-235`) donne 17,30 à 65 ans. Le test doit prendre la convention suédoise, ou tolérer 1/24 d'année."
+    nouveaux:
+      - quoi: "Son diviseur est la valeur des mensualités, versées d'avance (« en kommande månadsutbetalning », 62:36). Celui du dépôt est une rente continue, l'espérance de vie complète (`conversion.py:233-235`), à mi-chemin du terme à échoir et du terme échu. Or la pension française se paie à terme échu : son diviseur exact serait plus court de 1/24 d'année, et la pension plus haute d'environ 0,25 %."
+        preuve: "SFB 62:36 ; rapport orange 2025, annexe A.8, formule A.8.1 (somme sur X = 0 à 11 mois, 1,016^(−X/12))."
+        verification: "R. 355-2 en vigueur (LEGIARTI000053335726) : « payables mensuellement et à terme échu ». Écart refait sur la table suédoise : 17,34 contre 17,30 à 65 ans."
+        confronte: proposition
+        importance: faible
+        etat: a_trancher
+        raison: "Le README définit le diviseur comme « l'espérance de vie restante », que le dépôt calcule exactement. Prendre la valeur des mensualités réellement payées est un autre choix, qui pèse 0,25 %."
+      - quoi: "Son diviseur est le même pour tous (« desamma för kvinnor och män », 62:34), comme en Norvège et en Finlande. Celui du dépôt suit, par défaut, la mortalité du vingtile de niveau de vie (`config.py:610-629`)."
+        preuve: "SFB 62:34 ; PFS 2026:2, une seule grille par génération."
+        verification: "Méthode : l'uniformité n'est pas plus proche du réel, elle transfère des modestes vers les aisés (`limites.md:1853-1856`)."
+        confronte: proposition
+        importance: faible
+        etat: ecarte
+        raison: "Pas meilleur, et déjà tranché (action 14, défaut depuis le 21 septembre 2026). Bon à savoir seulement : aucun système notionnel nordique ne différencie le diviseur."
+    ecarts_nouveaux:
+      - constat: "Son diviseur lit la mortalité du moment, cinq années observées (62:17, 62:36). Il se recalcule une fois à l'âge cible (62:44-45), puis reste figé : « Efter 66 års ålder sker inte någon ytterligare omräkning av delningstalen »."
+        tranche: "La longévité des générations dépasse celle du moment, et Pensionsmyndigheten le chiffre : en 2025, la hausse de l'espérance de vie des retraités a accru la dette de 51,9 Md SEK, « en påfrestning på balanstalet ». La table de génération du dépôt (`config.py:661`, `mortalite.py:648-666`) est plus proche du réel ; ne pas reprendre la table du moment."
+        preuve: "rapport orange 2025, tableau 2.1 et note 9 (« Värdet av förändringen i livslängd », −51 850 Mkr), annexe A.8 ; `limites.md:2952-2957`."
+    conclusion: "Il apporte un exemple officiel que le dépôt n'a pas et qui se refait au centième, et une définition du diviseur en mensualités. Sur la mortalité, le dépôt est plus exact, et Pensionsmyndigheten chiffre elle-même ce que lui coûte la table du moment."
+
+  - id: balanstal_suede
+    version: "SFB 58:10-28 consolidée (lois 2015:676, 2025:379, 2026:1301), 62:5, 62:19 a, 62:43 ; rapport orange 2025"
+    lu_dans:
+      - "https://data.riksdagen.se/dokument/sfs-2010-110.text (58 kap., dispositions transitoires des lois 2015:676 et 2026:1301)"
+      - "https://www.pensionsmyndigheten.se/statistik/publikationer/orange-rapport-2025/orange-rapport-2025.pdf"
+    existants:
+      - debut: "L'indice d'équilibre se calcule sur un stock — cot"
+        verdict: confirme
+        commentaire: "Relu au texte : 58:14-25 c, 62:19 a, 62:43 ; citer aussi 62:19 a, le facteur de distribution sur les comptes. Pour 2027, l'indice vaut 1,1472 : ni frein (il dépasse 1) ni distribution (il reste sous 1,15), « balanstalet kommer inte att påverka indexeringen … för år 2027 ». L'indice amorti vaut 1,0491. La loi 2026:1301 est en vigueur depuis le 1er août 2026, appliquée dès 2027. Lignes à jour : `limites.md:1908-1929`, `cout.py:3460`. Le calcul de l'indice, séparable de son application, fait un point nouveau."
+      - debut: "De 1999 à 2016, l'indice de revenu suédois lissait"
+        verdict: confirme
+        commentaire: "Refait le 4 octobre 2026 sur les séries du dépôt, en lecture seule. De 1940 à 2025, par rapport au taux brut, la masse salariale lissée sur cinq ans gagne +21,3 % en nominal et −2,55 % en réel. À ajouter : la Suède a quitté ce lissage en 2017 (loi 2015:676, 58:12, transitoires 3 et 4) ; son indice est depuis la variation d'une seule année du revenu moyen. Le défaut du dépôt, sans lissage, est donc la loi suédoise d'aujourd'hui ; le point ne vaut que pour la variante lissée."
+    nouveaux:
+      - quoi: "Calculer l'indice d'équilibre comme indicateur, sans l'appliquer. Au numérateur, l'actif de cotisation (cotisations × durée de rotation, environ 31 ans : un euro cotisé en moyenne à 45 ans est servi à 76) plus les réserves ; au dénominateur, la dette (comptes des actifs, pensions servies × diviseur économique). La page Coût n'a que le coefficient de flux de l'année (`cout.py:103-121`) et un engagement acquis au prorata temporis, choisi commun aux six systèmes (`cout.py:3559-3568`). Ni durée de rotation ni actif de cotisation dans `src/` ou `moteur/js/`."
+        preuve: "SFB 58:14-20 ; rapport orange 2025, p. 3-4 et tableau 1.1 (actif de cotisation 11 370 Md SEK, fonds 2 234, dette 11 859) ; formule codée dans Pensionsmodellen v2.2, mRuleSystem, l. 5073-5136 de l'extraction."
+        verification: "Méthode : la loi suédoise en fait la mesure de solvabilité d'un compte notionnel, publiée chaque année même quand elle ne mord pas. Un rapport de flux prend un calendrier pour un déséquilibre. En Norvège, « stort omfang av tidliguttak øker pensjonsutgiftene på kort sikt » (Fredriksen et Stølen, Økonomiske analyser 6/2014), sans rien coûter en valeur actuelle. Sa limite est écrite : il suppose stable la population active (rapport orange 2025, note 3)."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "nouveau: le bilan du compte notionnel en indicateur (durée de rotation, actif de cotisation, réserves)"
+      - quoi: "Un compte suédois ne reçoit que des indices publiés. Celui de l'année t mesure le revenu moyen de t−2 à t−1 (58:12) et s'applique à la fin de t−1 (62:18-20). Au départ, la pension se calcule sur ce solde (62:30) ; la croissance de l'année du départ n'arrive qu'à la pension servie, en janvier suivant, divisée par 1,016 (62:42-43). Le dépôt arrête le compte à la fin de l'année de liquidation et lui donne la croissance de cette année-là (`indexation.py:213-235`, `compte.py:1028, 1042`), qu'aucune caisse ne connaîtrait au départ. Sur ses propres séries, la pension d'une carrière cotisée avant l'année du départ en sort plus haute de 7,9 % pour un départ en 2021, de 7,8 % en 2022 et de 5,6 % en 2023, et plus basse de 4,0 % en 2020. La pension servie de la page Coût garde cette année d'avance."
+        preuve: "SFB 58:12, 62:18-20, 62:30, 62:42-43 ; Typfallsmodellen, `Pensionssystemet.bas:1042` au commit bb46d93 (« pension = pbh_ing * andel / deltal », sur le solde d'ouverture de l'année)."
+        verification: "Méthode : un compte réel ne se revalorise que d'un indice connu, et le rétroactif « comme si la règle avait toujours existé » doit en suivre le calendrier. Taux de la masse salariale lus dans le dépôt : −4,02 % (2020), +7,87 % (2021), +7,84 % (2022), +5,62 % (2023). Ce point complète celui de la Pologne sur le prorata des mois, qui ne règle pas le décalage de mesure."
+        confronte: proposition
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.11"
+      - quoi: "Il indexe sur le revenu moyen par tête (58:11), l'emploi passant par l'indice d'équilibre. Le dépôt indexe par défaut sur la masse salariale (`config.py:494-502`), qui met l'emploi dans l'indexation même."
+        preuve: "SFB 58:11."
+        verification: "Méthode : sans équilibrage, le revenu moyen laisserait la démographie de l'emploi hors du compte ; le dépôt l'écrit (`limites.md:2962`)."
+        confronte: proposition
+        importance: faible
+        etat: ecarte
+        raison: "Pas plus exact sans le frein qui va avec ; c'est un choix fait et motivé du dépôt."
+    ecarts_nouveaux: []
+    conclusion: "Il apporte une mesure de solvabilité de stock, écrite dans la loi, que la page Coût peut calculer sans l'appliquer. Il apporte aussi un calendrier d'indexation sur des indices publiés, que le compte du dépôt devance d'un an ; l'équilibrage appliqué reste au propriétaire."
+
+  - id: sesim
+    version: "SESIM18 réécrit en R ; fiche suédoise de l'Ageing Report 2024 (ministère des Finances ; simulations de Folkhälsomyndigheten)"
+    lu_dans:
+      - "https://economy-finance.ec.europa.eu/document/download/1a05f725-4231-411e-bcde-7d567ddd7689_en?filename=2024-ageing-report-country-fiche-Sweden.pdf (§ 3.3-3.4, tableaux 13 à 16, § 4.1-4.4)"
+    existants:
+      - debut: "Il simule environ 320 000 personnes, dont le dépar"
+        verdict: confirme
+        commentaire: "Fiche, § 4.4, p. 30-31 : « approximately 320 000 individuals », « spouses tend to coordinate their retirement ». À nuancer : ses départs sont statistiques, « not by financial incentives », et alignés sur l'âge effectif que suppose l'AWG. Il ne simule pas non plus de pension partielle (« The model does not handle part time pensions »). Il ne dit donc rien de la réponse des départs aux règles d'un compte notionnel."
+    nouveaux: []
+    ecarts_nouveaux:
+      - constat: "La fiche décrit l'accélérateur comme une proposition au seuil de 1,1, « not enacted, and is not included in the pension calculations ». Elle projette le fonds au-delà de 60 % du PIB à la fin des années 2060 (p. 24-25)."
+        tranche: "La loi 2026:1301 l'a créé, au seuil de 1,15, appliqué dès 2027 (SFB 58:25 a-c, 62:19 a, 62:43). La projection suédoise de l'Ageing Report 2024 est périmée sur ce point, et son fonds surestimé."
+        preuve: "SFB consolidée, dispositions transitoires de la loi 2026:1301 ; fiche, p. 24-25."
+      - constat: "Sa base, l'échantillon LINDA tiré en 1999, s'arrête en 2018 et n'est plus tenue : « LINDA is no longer updated » (§ 4.2, note 19)."
+        tranche: "C'est un retard de données, non de droit : ses comportements sont estimés sur des années que le dépôt dépasse par ses séries publiées."
+        preuve: "fiche, § 4.2 et note 19."
+    conclusion: "Son seul avantage, la population simulée, est déjà au registre (138.14), et il est plus mince qu'il n'y paraît : départs non incitatifs, pas de pension partielle. Le reste de la fiche double des points déjà relevés ailleurs — la décomposition (ageing_report), le fonds à 4 % (pensionsmodellen), le frein codé mais inactif (balanstal_suede) — et ignore l'accélérateur de 2026."
+
+  - id: mosart
+    version: "MOSART 7.5 (novembre 2024) : documentation technique NOT2025-04 du 22 janvier 2025 ; Andreassen et al., « The dynamic cross-sectional microsimulation model MOSART », International Journal of Microsimulation 13(1), 2020"
+    lu_dans:
+      - "https://www.ssb.no/befolkning/metoder-og-dokumentasjon/mosart-7.5.teknisk-dokumentasjon/_/attachment/inline/4d238e34-04c3-4dc3-a324-544e5a3a572e:e14fd155e59697117b6a359d5861dbab1e74a17e/NOT2025-04.pdf"
+      - "https://microsimulation.pub/articles/00214"
+    existants: []
+    nouveaux:
+      - quoi: "Il projette des départs qui suivent l'espérance de vie. Chaque génération reporte son départ des deux tiers du gain, assez pour garder sa pension : c'est l'hypothèse principale de ses projections depuis 2011. Le dépôt fait partir chaque cas type à l'âge que le droit lui ouvre (`castypes.py:58-88` ; variantes « droit » et « absolu » seules, `pilote.py:43`), et la proposition à 65 ans (`config.py:842`), sans variante de comportement."
+        preuve: "IJM 2020, § 6.1 et 6.2 : « A postponement of 2/3 of the growth in life expectancy is therefore chosen as the main assumption in the projections »."
+        verification: "Méthode : une variante, non une meilleure estimation ; MOSART juge l'effet « too early to validate ». Elle borne ce que le coût d'un système notionnel doit au comportement, puisque le diviseur fait du départ un choix. Elle se pose sur les cas types, sans microdonnées."
+        confronte: cout
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "nouveau: une variante de départ qui suit l'espérance de vie (deux tiers du gain)"
+      - quoi: "Il rapporte les pensions de toute la retraite aux revenus de toute la carrière, par décile de revenu et par sexe, pour la génération 1963. Le dépôt n'a que le taux de remplacement au départ (`simulateur.py:278-298`)."
+        preuve: "IJM 2020, § 8, figure 9."
+        verification: "Méthode : c'est l'indicateur de cycle de vie que l'étape 138.9 prévoit (le taux de remplacement sur le cycle de vie de trajectoire), ici par niveau de revenu et par sexe. Il servirait aussi l'action 143."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.9"
+      - quoi: "Il se valide sur les pensions observées : la distribution simulée des pensions de 2017, partie de la population de 1980, est confrontée à celle des déclarations fiscales. Le dépôt confronte des masses à la dépense publiée, jamais une distribution simulée à une distribution observée."
+        preuve: "IJM 2020, § 7, figure 5 : « it tracks very well the observed data »."
+        verification: "Méthode ; en France, il y faudrait l'EIR, au CASD."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.14"
+      - quoi: "Il boucle sur l'offre de travail et un modèle d'équilibre général : pour les finances publiques, l'effet de la réforme de 2011 sur l'emploi pèserait plus que la baisse des pensions."
+        preuve: "IJM 2020, § 6.2 et § 10."
+        verification: "Méthode."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "Hors champ : le dépôt est comptable par construction, et le dit (`limites.md:2968-2973`)."
+    ecarts_nouveaux: []
+    conclusion: "Code fermé (C#, sur un serveur de SSB). Ce qu'il fait de mieux tient à sa population — départs simulés, validation sur les pensions déclarées, indicateurs par décile — et demande des microdonnées, sauf l'hypothèse des deux tiers, transposable aux cas types ; sur l'arithmétique du compte, il applique la loi norvégienne, que delingstall_norvege couvre."
+
+  - id: delingstall_norvege
+    version: "forskrift 2009-12-22-1810, chapitre 4 (§ 4-3, § 4-4, formule 4 en annexe ; dernière modification FOR-2010-11-30-1502), lu par WebFetch, Lovdata refusant curl ; Delingstall.xlsx de NAV, publié le 26 juin 2026"
+    lu_dans:
+      - "https://lovdata.no/dokument/SF/forskrift/2009-12-22-1810/KAPITTEL_4"
+      - "https://www.nav.no/redirects/delingstal (Delingstall.xlsx, feuilles « Delingstall » et « Prognoser delingstall »)"
+      - "Innst. O. nr. 67 (2008-2009), chap. 5, stortinget.no (par la recherche)"
+    existants:
+      - debut: "Son diviseur rapporte la survie à l'âge de départ "
+        verdict: confirme
+        commentaire: "Formule relue (annexe, formule 4) : DT = l_A / ((1/40) Σ l_i, de 27 à 66 ans) × Σ 0,9925^(x−A) p, pour les générations 1954 et suivantes, de 62 à 75 ans. Refait le 4 octobre 2026 sur la table de génération du dépôt, départ à 65 ans : 1,0883 (1960), 1,0584 (1980), 1,0440 (2000), soit le point au millième. Ligne à jour : `conversion.py:229-235`."
+    nouveaux:
+      - quoi: "NAV publie chaque juin la grille entière de ses diviseurs, génération par génération et mois par mois de 62 à 75 ans (générations 1954-1965 ; 20,41 à 62 ans pour 1965), avec une prévision jusqu'à la génération 2040. Le dépôt ne publie aucune grille de ses diviseurs ; le site n'affiche que celui d'une simulation (`pages.js:6129`)."
+        preuve: "Delingstall.xlsx, feuilles « Delingstall » et « Prognoser delingstall », publiées le 26 juin 2026."
+        verification: "Méthode : traçabilité. Une grille publiée laisse chacun vérifier un diviseur, et montre d'un millésime à l'autre ce que les tables de génération déplacent."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.11"
+    ecarts_nouveaux:
+      - constat: "Après 60 ans, son diviseur lit la mortalité moyenne observée des dix années qui précèdent les 61 ans de la génération (§ 4-3), puis se fige."
+        tranche: "Comme en Suède, la table du moment ignore les gains de longévité à venir. La table de génération du dépôt (`config.py:661`) est plus proche de la durée réellement servie ; ne pas reprendre la table du moment."
+        preuve: "forskrift 2009-12-22-1810, § 4-3 ; `limites.md:2952-2957`."
+    conclusion: "Son diviseur porte le gain d'héritage, déjà au registre et vérifié au millième, et NAV publie ses grilles et leur prévision, ce que le dépôt ne fait pas. Sa mortalité du moment est moins exacte que la table de génération du dépôt."
+
+  - id: elinaikakerroin
+    version: "mémo de l'ETK du 26 octobre 2023 (eak2024.pdf) ; pages de l'ETK lues le 4 octobre 2026 (coefficients jusqu'à la génération 1964, âge minimal lié à l'espérance de vie)"
+    lu_dans:
+      - "https://www.etk.fi/wp-content/uploads/2023/11/eak2024.pdf"
+      - "https://www.etk.fi/suomen-elakejarjestelma/elaketurva/elinaikakerroin/elinaikakertoimen-laskentakaavat/"
+      - "https://www.etk.fi/suomen-elakejarjestelma/elaketurva/elinaikakerroin/vanhuuselakeian-maaraytyminen/"
+    existants:
+      - debut: "Le mémo de l'ETK publie un exemple complet, EAL202"
+        verdict: confirme
+        commentaire: "Refait le 4 octobre 2026 depuis les quotients du mémo (annexe 1) : EAL2009 = 16,778288 et EAL2024 = 17,718722 à la sixième décimale, par la formule même du dépôt, L_x = (l_x + l_x+1)/2 actualisé au milieu de l'année (`conversion.py:229-235`). 16,778288/17,718722 = 0,94692. Le test doit lire les quotients du mémo, de 62 à 100 ans avec q100 = 1 000 ‰, et non la table du dépôt."
+    nouveaux:
+      - quoi: "L'ETK publie pour chaque génération l'âge qui compense le coefficient (« tavoite-eläkeikä ») : 66 ans et 3 mois pour la génération 1962, soit quinze mois de report. Le dépôt ne dit nulle part à quel âge une génération retrouverait, à cotisations égales, la pension d'une génération de référence."
+        preuve: "eak2024.pdf, p. 3 (TyEL 75 c §)."
+        verification: "Méthode : le diviseur du dépôt le donne directement, c'est l'âge où le diviseur d'une génération égale celui de la génération de référence à 65 ans. Il servirait l'étape 138.9 et l'action 143."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.9"
+      - quoi: "Depuis la réforme de 2017, l'âge minimal des générations 1965 et suivantes suit l'espérance de vie. La règle tient (âge − 18) / e(âge) égal à (65 − 18) / e(65) de 2025, par mois entiers, deux mois par an au plus, la première fois pour 2027. La Suède indexe de même son âge cible : 65 ans plus les deux tiers du gain d'espérance de vie à 65 ans depuis 1994. La proposition fixe l'âge légal à 65 ans (`config.py:842`). La variante du dépôt qui indexe l'âge de référence vise un rapport fixe de 0,5 depuis 22 ans, par pas de trois mois, sans ancrage sur l'année de base ni plafond annuel, et ne touche pas l'âge de départ (`age_reference.py:137-151`, `config.py:606`)."
+        preuve: "etk.fi, « Vanhuuseläkeiän määräytyminen » : formule de ra_v ; « Tarkistukset toteutetaan täysinä kuukausina, enintään 2 kuukaudella vuodessa »."
+        verification: "SFB 2:10 a-c (loi 2019:649). En Norvège, MOSART a servi à étudier la même règle (Fredriksen, Kruse et Stølen, « Dynamisk justering av aldersgrensene i pensjonssystemet », Rapporter 2022/22)."
+        confronte: proposition
+        importance: moyenne
+        etat: a_trancher
+        raison: "L'âge de départ est un choix du programme (65 ans au README). Si le propriétaire le lie à l'espérance de vie, la règle finlandaise donne la forme — ancrée sur l'année de la bascule, par mois, bornée — plutôt que le rapport fixe de la variante actuelle."
+    ecarts_nouveaux:
+      - constat: "Son coefficient lit la mortalité des cinq dernières années observées, et ne bouge plus une fois fixé à 62 ans."
+        tranche: "Même biais que les diviseurs suédois et norvégien. La table de génération du dépôt (`config.py:661`) est plus proche de la longévité réelle des générations ; ne pas reprendre la table du moment."
+        preuve: "etk.fi, « Elinaikakerroin ja sen määräytyminen » : « viiden viimeisen vuoden … kuolevuustilastojen », « eikä se muutu enää sen vahvistamisen jälkeen »."
+    conclusion: "Sa formule est celle du dépôt, au millionième : un exemple officiel tout prêt. Il n'apporte en plus qu'un indicateur, l'âge qui compense la longévité, et une règle d'âge liée à l'espérance de vie, que la proposition n'a pas choisie."

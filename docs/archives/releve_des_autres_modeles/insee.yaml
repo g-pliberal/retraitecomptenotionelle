@@ -1,0 +1,215 @@
+# Le rapport de la recherche « insee » (Destinie 2, Destinie 1, EDIFIS), le 4 octobre 2026,
+# tel qu'elle l'a rendu, AVANT son intégration au registre. Un récit, gelé :
+# le registre (data/reference/referents.yaml) fait foi, et dit l'étape de chaque
+# point. Voir docs/archives/releve_des_autres_modeles.md.
+
+groupe: insee
+modeles:
+  - id: destinie_2
+    version: "commit 4c1d34b (15 octobre 2025) ; paramètres inst/extdata/COR_2023/ParamSociaux.xls"
+    lu_dans:
+      - "modeles/destinie2 : src/*.cpp et *.h en entier (Legislation, DroitsRetr, Retraite, Reversion, OutilsComp, Indicateurs_*, CotisationsTRI, Cotisations, Mortalite, Destinie, Simulation.h), R/Outils.R, R/niveau_vie.R, data-raw/, documentation/ (documentation.pdf, conseils_pratiques.txt, Destinie_DT.txt)"
+      - "ParamSociaux.xls (COR_2023), feuilles Doc, ParamGene, ParamRetrBase, ParamRetrComp, ParamRev, ParamAutres"
+      - "https://www.insee.fr/fr/statistiques/8563753 ; https://www.insee.fr/fr/statistiques/8561097 ; https://www.insee.fr/fr/statistiques/fichier/1377517/ES441F.pdf"
+      - "dépôt au commit 714ad0c ; index LEGI et JORF du dépôt"
+    existants:
+      - debut: "Il calcule la réversion du régime général entière "
+        verdict: confirme
+        commentaire: "Toujours absente chez nous (`droit/reversion.py:19-24`, `reversion.yaml:444-470`). À élargir : il porte aussi le remariage et le partage à la fonction publique et à l'Agirc-Arrco (suspension si le survivant est marié, perte si remarié avant le décès de l'ex-conjoint, pas de cumul de deux réversions de fonctionnaire, prorata des mariages sur les vivants au RG et à la FP, sur tous les mariages à l'Agirc-Arrco : `src/Retraite.cpp:235-293, 300-334`), et le minimum de réversion depuis 1975 (ParamRev, colonne MinRevRG), que la fiche n'a que depuis 2026 (`reversion.yaml:515-518`). Témoin à corriger de ses écarts : ressources du plafond, 54 % dès 1975 (ci-dessous), exception d'âge, concubins, L. 353-5 (registre)."
+      - debut: "Il sert l'ASPA au ménage, sur ses ressources, cell"
+        verdict: confirme
+        commentaire: "Toujours vrai (`droit/foyer.py:5-7`, `docs/limites.md:395-399`). Il porte en outre le barème du couple depuis 1970 (ParamRetrBase, « Minimum vieillesse, couple »), juste en 1982 (44 400 F, décret n° 81-1167) et en 2000 (76 977 F, décret n° 99-1146, art. 5) ; le dépôt ne l'a que pour 2026 (`minimum_vieillesse_couple.csv`)."
+      - debut: "Il importe les variantes démographiques de l'INSEE"
+        verdict: confirme
+        commentaire: "Quatre modalités par composante : bas, central, haut et une variante extrême « travail » (fécondité très basse, espérance de vie constante, solde migratoire nul : `data-raw/obtention_hypdemo.R:32-58`, `obtention_variante_demo_name.R:43-45`), d'où 64 jeux, projections de 2021. À reprendre sur les seize variantes de 2026 que `data/sources.yaml:462-466` écarte, non sur ses fichiers."
+      - debut: "Il lit les quotients de mortalité projetés de l'IN"
+        verdict: confirme
+        commentaire: "Le dépôt récupère déjà ces quotients (2023-2125, `sources.yaml:420-433`, `scripts/fetch/insee_projections_mortalite.py`) mais n'en garde que e0, e60, e65 (`mortalite/esperances_vie.csv`) : l'usage direct ne demande aucune donnée nouvelle."
+      - debut: "Il calcule un taux de rendement interne des cotisa"
+        verdict: confirme
+        commentaire: "Le seul taux interne du dépôt est celui du pilier de capitalisation (`moteur/capitalisation.py:348-359`). Le sien compte cotisations patronales, CSG du FSV et part de TVA (`src/CotisationsTRI.h:17-66`, DT G2015/02). Il sort aussi, par génération et sexe, âge de liquidation, durée validée, pension à la liquidation et à 68 ans, taux de remplacement brut (`src/Indicateurs_gen.h:20-50`)."
+    nouveaux:
+      - quoi: "Il porte le minimum contributif de chaque année depuis 1984 et son majoré depuis 2004, avec la règle de chaque époque : pas de majoration avant 2004, majoration sans seuil de 2004 à mars 2009, seuil de 120 trimestres ensuite. Le dépôt n'a que des ancres (`minimum_contributif.csv:70-87`), projetées sur les prix entre elles et à rebours (`scenarios/actuel.py:2746-2779`), et sert la majoration au seuil de 120 trimestres à toute date (`droit/completer.py:248-250`) : majoré de 7 238 € en 2004 au lieu de 6 706,39 €, de 8 741 € en 2019 contre 8 347,09 € chez Destinie, majoration servie avant 2004. Son ancre « 2007 » est le montant du 1er janvier 2008. La fiche `minimum_contributif`, « conforme », n'a ni versions ni approximations."
+        preuve: "`src/DroitsRetr.cpp:932-1003` (branches datées l. 950, 955, 970-971) ; ParamRetrBase, colonnes « Minimum contributif » et « majoré » : 4 097,10 € (26 875 F) en 1984, 6 511,06 et 6 706,39 € en 2004, 6 760,82 € en 2006, égales au dépôt en 2020, 2023 et 2024, au commit 4c1d34b"
+        verification: "R. 351-25 (LEGIARTI000006749365, 1985-2004) : « 26 400 F par an au 1er avril 1983 », revalorisé comme les pensions, sans majoration ; L. 351-10 (LEGIARTI000006742926 : majoration sans seuil de 2004 à 2008 ; LEGIARTI000019959492 : seuil pour les pensions prenant effet à compter du 1er avril 2009) ; D. 351-2-1 : 6 511,06 et 6 706,39 € au 1er janvier 2004 (LEGIARTI000006736531), 6 760,82 € au 1er janvier 2006 (LEGIARTI000006736532), 6 958,21 et 7 603,41 € « au 1er janvier 2008 » (LEGIARTI000017870194)."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "nouveau: les montants servis et les règles du minimum contributif, de 1983 à 2019"
+      - quoi: "Il porte le minimum vieillesse de chaque année depuis 1970, seul et en couple. Le dépôt ne l'a que depuis 2006 (`minimum_vieillesse.csv`) et le ramène avant sur les prix (`scenarios/actuel.py:1571-1581`) : 3 405 € en 1981 au lieu de 2 591,63 €, 1 195 € en 1970 contre 442 € chez Destinie, faute de suivre les relèvements des années 1970 et de 1981-1982."
+        preuve: "ParamRetrBase, colonnes « Minimum vieillesse, personne seule » et « couple », 1970-2023, au commit 4c1d34b ; égale au dépôt en 2006, 2007, 2009, 2010"
+        verification: "décret n° 80-1159 du 31 décembre 1980 (JORFTEXT000000517402) : minimum vieillesse de 17 000 F par an au 1er janvier 1981 (2 591,63 €, sa valeur) ; décret n° 99-1146, art. 5 (JORFARTI000001630936) : 42 910 F seul et 76 977 F en couple en 2000 (6 541,6 et 11 735,1 €, les siennes). Mais 1982 seul est faux chez lui (écart ci-dessous) : série à recouper décret par décret, que l'index JORF porte."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.6"
+      - quoi: "Pour les pensions prenant effet depuis septembre 2023, il compte l'AVPF, jusqu'à six ans, dans le seuil de 120 trimestres et dans le prorata de la majoration du minimum contributif. Le dépôt ne compte que les trimestres cotisés (`droit/completer.py:248-250`, `droit/ouvrir.py:233-236`), et l'AVPF est une ligne non cotisée (`carriere.py:511-515`)."
+        preuve: "`src/DroitsRetr.cpp:941, 946, 993-1001` (« prise en compte AVPF pour éligibilité et calcul majoration mico »), au commit 4c1d34b"
+        verification: "L. 351-10 (LEGIARTI000048697787) : majoration « dans la limite d'un plafond fixé par décret, des périodes validées en application des articles L. 381-1 et L. 381-2 » ; D. 351-2-2 (LEGIARTI000053198185, LEGIARTI000054589231) : plafond de vingt-quatre trimestres, seuil de 120 trimestres. Destinie oublie les aidants (L. 381-2) et les trimestres de la fonction publique du III."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il porte au compte, pour une année d'AVPF, 2 028 heures de SMIC de l'année précédente (169 heures par mois). Le dépôt en porte 1 820 au SMIC de janvier de l'année (`carriere.py:511-515`, `moteur/js/carriere.js:497`, tenu par `test_l_avpf_porte_un_salaire_au_compte`, `docs/limites.md:52` « assiette déduite du SMIC ») : 1 823,03 € par mois en 2026, 10,3 % sous l'assiette publiée. Le cas type « carrière interrompue » et les droits figés de la proposition en dépendent."
+        preuve: "`src/DroitsRetr.cpp:576-577, 603-604, 627-628` (« SMIC de l'année précédente ») ; ParamGene, colonne « SMIC_AVPF=SMIChoraire*169*12 », au commit 4c1d34b"
+        verification: "R. 381-3 (LEGIARTI000047961951 ; même texte en 2002, LEGIARTI000006750084) : assiette « égale, par mois, à 169 fois le salaire horaire minimum de croissance en vigueur au 1er juillet de l'année civile précédente » ; circulaire Cnav n° 2025-33, point 2.7 : « 2 031,38 euros » par mois en 2026."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il ouvre la liquidation anticipée du fonctionnaire parent de trois enfants qui a quinze ans de services avant 2012, avec la durée et la décote de l'année des conditions s'il était à moins de cinq ans de son âge d'ouverture en 2011, celles de sa génération sinon. Le dépôt ne sert ce départ à personne (`docs/limites.md:349-352`, `droit/ouvrir.py:401-406`)."
+        preuve: "`src/Legislation.cpp:21-28` (ouverture), `342-357` et `397-414` (paramètres), au commit 4c1d34b ; réservé aux mères (`X.sexe == FEMME`)"
+        verification: "loi n° 2010-1330, art. 44, III (LEGIARTI000023023951, en vigueur) : le fonctionnaire « ayant accompli quinze années de services […] avant le 1er janvier 2012 et parent à cette date de trois enfants vivants […] conserve la possibilité de liquider sa pension par anticipation », sous condition d'interruption d'activité, père compris."
+        confronte: scenario_1
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il remplace la petite pension du régime général par un versement forfaitaire unique de quinze annuités jusqu'en 2015, et celle de l'Arrco (moins de 100 points) et de l'Agirc (moins de 500) par un capital jusqu'en 2018. Le dépôt sert toujours une rente (aucune occurrence dans `src/` ni `moteur/js/droit/`)."
+        preuve: "`src/DroitsRetr.cpp:1238-1242` et `1267-1279`, au commit 4c1d34b ; son coefficient de capital (21 à 55 ans, 2,5 à 99) est une approximation qu'il dit telle, et l'Agirc-Arrco unifiée reste « à faire »"
+        verification: "L. 351-9 (LEGIARTI000006742677, abrogé au 1er janvier 2016) et R. 351-26 (LEGIARTI000025749165) : sous 175 F par an au 1er juillet 1974 revalorisés, la pension « est remplacée par un versement forfaitaire unique, égal à quinze fois ce montant » ; agirc-arrco.fr, « Conditions de versement de la retraite » : « versée en une seule fois quand son montant est inférieur ou égal à une somme équivalant à 100 points », coefficient selon l'âge."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il plafonne la pension civile majorée pour enfants au traitement de référence. Le dépôt majore sans plafond (fiche `majoration_enfants_plafond_fonction_publique`, état manquante)."
+        preuve: "`src/DroitsRetr.cpp:877-878` (`min(0.1+0.05*(n-3), sr_fp/pension_fp-1)`), au commit 4c1d34b"
+        verification: "L. 18, V, CPCMR (LEGIARTI000047456782) : « sans que le montant de la pension majorée puisse excéder le montant du traitement […] les montants de la pension et de la majoration sont réduits à due proportion ». Il plafonne aussi avec surcote, cas que le SRE excepte : texte à lire avant de reprendre (note du registre)."
+        confronte: scenario_1
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.12"
+      - quoi: "Il calcule la retraite nette : CSG, CRDS et CASA nulles, au taux réduit ou au taux plein selon les ressources du foyer et des seuils à une et deux parts, plus 1 % de cotisation maladie sur les complémentaires. Le dépôt applique le taux plein à tous (`docs/limites.md:2012-2018`, `droit/foyer.py:13-14`)."
+        preuve: "`src/Retraite.cpp:97-129`, au commit 4c1d34b"
+        verification: "L. 136-8 (LEGIARTI000054336623) : exonération, 3,8 %, 6,6 %, 8,3 % selon le revenu fiscal et les parts. Méthode plus proche du réel pour les petites pensions, mais sans le taux de 6,6 % (écart ci-dessous), et le revenu fiscal approché par les pensions."
+        confronte: site
+        importance: moyenne
+        etat: a_reprendre
+        chantier: "138.2"
+      - quoi: "Il applique le coefficient de solidarité de l'Agirc-Arrco aux liquidations de 2019 à 2023 (10 % trois ans au plus, jusqu'à 67 ans ; 5 % au taux réduit de CSG ; rien pour l'exonéré, selon les revenus du foyer) et les coefficients majorants (10, 20, 30 % un an), avec leur date de fin. Le dépôt l'écarte parce qu'il ne calculerait qu'une pension annuelle unique (`docs/limites.md:278-284`) ; son échéancier fait pourtant varier une pension dans le temps."
+        preuve: "`src/DroitsRetr.cpp:1562-1667`, `src/Retraite.cpp:151-178`, au commit 4c1d34b"
+        verification: "service-public.gouv.fr, actualité A15237 (mise à jour le 4 avril 2024) : « suppression pour les assurés dont la retraite prend effet à compter du 1er décembre 2023 » et « au 1er avril 2024 » pour les autres ; Destinie ignore la seconde date (écart ci-dessous)."
+        confronte: scenario_1
+        importance: faible
+        etat: a_trancher
+        chantier: "138.13"
+        raison: "choix déjà fait par le dépôt sur un dispositif éteint et temporaire ; Destinie montre qu'il se porte par un coefficient et sa date de fin."
+      - quoi: "L'Insee y a simulé en 2025 l'indexation des droits sur les salaires, avec correcteur démographique ou correcteur tenant les retraites/PIB, et en publie l'effet jusqu'en 2070 sur les retraites/PIB, la pension relative et la pauvreté des retraités. Le dépôt calcule son coefficient d'équilibre sans l'appliquer (`cout.py:63-68`, `pilote.py:17-19`)."
+        preuve: "Insee Analyses n° 109 (avril 2025), https://www.insee.fr/fr/statistiques/8563753 : « partant de 12,5 % en 2023 pour atteindre 11,8 % à l'horizon 2070 » (indexation sur les prix, productivité 1,3 %) ; DT 2025-08 ; scripts absents du code public"
+        verification: "méthode : un correcteur appliqué à une population est ce qu'un système piloté ferait ; témoin d'ordre de grandeur, à scénarios du COR près (le dépôt : 0,4/0,7/1,0 %)."
+        confronte: cout
+        importance: moyenne
+        etat: a_trancher
+        chantier: "138.13"
+        raison: "appliquer une règle de pilotage est un choix du programme ; l'étude chiffre ce qu'elle déplacerait."
+      - quoi: "Il simule une population (naissances, unions, séparations, migrations, décès calés sur l'Insee ; carrières projetées) et sort chaque année, par régime et sexe, les agrégats du COR : cotisants, retraités directs et réversataires, flux et âges de liquidation, pension moyenne, bénéficiaires et masses des minima et du minimum vieillesse, décès, niveau de vie des ménages. Le dépôt pèse douze cas types (`cout.py:39-49`)."
+        preuve: "`src/Indicateurs_annee_COR.h:22-120`, `src/Indicateurs_gen.h:20-50`, `R/niveau_vie.R`, `src/Destinie.cpp:271-372`, au commit 4c1d34b"
+        verification: "méthode : une population rend effectifs et dispersion que des cas types ignorent ; mais l'échantillon fourni est « sans aucune représentativité » (`documentation/conseils_pratiques.txt`, point 5) et le représentatif n'est pas public."
+        confronte: cout
+        importance: faible
+        etat: a_reprendre
+        chantier: "138.14"
+      - quoi: "Il choisit l'âge de départ : taux plein, utilité instantanée, mixte, âge exogène."
+        preuve: "`src/OutilsComp.cpp:325-380`, `src/Constantes.h:51-56`"
+        verification: "sa documentation : « la plupart n'ont pas été expertisés depuis un certain temps. Le choix le plus prudent est celui du départ au taux plein » (documentation.pdf, p. 6, note 1)."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "pas meilleur : le pilote du dépôt fait déjà partir au taux plein (`pilote.py:6-13`)."
+      - quoi: "Mortalité différentielle par diplôme ou par âge de fin d'études, en option."
+        preuve: "`src/Mortalite.cpp:30-70`, `inst/extdata/Param_demo_2022/MORTA_DIP.xls`"
+        verification: "le dépôt a l'espérance de vie par vingtile de niveau de vie (Insee, 2025 : `donnees/mortalite.py:340-390`, `docs/limites.md:438`)."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "pas meilleur : plus ancien, et moins lié aux ressources que le dépôt compare."
+      - quoi: "Jeux macroéconomiques du COR de 2023 : productivité de 0 à 1,6 %, chômage de 5, 7 ou 10 %."
+        preuve: "ParamSociaux.xls (COR_2023), feuilles `cho5%_pib0,4%` à `cho10%_pib0,4%`"
+        verification: "le dépôt porte les scénarios du COR de 2025-2026 et ses variantes de chômage (`macro/hypotheses_projection.yaml:10-25, 134-147`)."
+        confronte: cout
+        importance: faible
+        etat: ecarte
+        raison: "pas meilleur : périmé."
+      - quoi: "Une transition vers des comptes notionnels, et un départ « permettant de retrouver le même niveau de pension que celui d'un scénario de référence », figuraient parmi ses fonctions en 2011."
+        preuve: "Économie et Statistique n° 441-442 (2011), tableau 1 ; seule trace dans le code : `src/DroitsRetr.cpp:1440, 1537`"
+        verification: "absent du code publié."
+        confronte: proposition
+        importance: faible
+        etat: ecarte
+        raison: "impossible : module non public."
+    ecarts_nouveaux:
+      - constat: "Il réserve la majoration de durée d'assurance pour enfants et la surcote parentale aux mères, celle-ci dès 1964 (`src/DroitsRetr.cpp:172`, `src/Legislation.cpp:246-250`)."
+        tranche: "L. 351-1-2-1 vise « les assurés qui bénéficient d'au moins un trimestre de majoration […] au titre des articles L. 351-4, L. 351-4-1 ou L. 351-5 », pères compris, quand l'âge légal atteint 63 ans ; le dépôt a raison."
+        preuve: "LEGIARTI000047449229 ; data/reference/regles/surcote_parentale.yaml:1-6"
+      - constat: "Pour le polypensionné des régimes alignés d'avant la liquidation unique, il garde le même nombre d'années dans chaque régime : `max(1, arr(durée du régime / durée totale))` vaut toujours 1 (`src/DroitsRetr.cpp:516-519`)."
+        tranche: "R. 173-4-3 : nombre d'années multiplié par la part de durée du régime, arrondi, au moins 1 ; le dépôt l'applique."
+        preuve: "data/reference/regles/salaire_annuel_moyen.yaml:9-16, 34-43"
+      - constat: "Sous le plafond de la réversion du régime général, il compte les réversions de l'Agirc-Arrco, et deux fois la réversion du RG pour le survivant qui n'a pas liquidé (`src/Retraite.h:269-275`, `src/Retraite.cpp:347-354`) ; deux fois l'Arrco dans le test de la majoration de 11,1 % (`src/Retraite.cpp:368`)."
+        tranche: "R. 353-1 : les ressources « ne comprennent pas […] les avantages de réversion servis par les régimes légalement obligatoires complémentaires » ; un montant ne compte qu'une fois."
+        preuve: "LEGIARTI000038790257"
+      - constat: "Il sert 54 % de réversion au régime général dès 1975 (ParamRev, colonne TauxRevRG)."
+        tranche: "50 % jusqu'au 30 novembre 1982, 52 % ensuite (D. 353-1, LEGIARTI000006736586), 54 % depuis 1995 (LEGIARTI000006736587) ; le dépôt a raison."
+        preuve: "data/reference/regles/reversion.yaml:45-123"
+      - constat: "Il garde le coefficient de solidarité jusqu'à son terme pour les retraites prises avant décembre 2023 (`src/Retraite.cpp:151-178`)."
+        tranche: "accord du 5 octobre 2023 : suppression au 1er avril 2024 pour ces retraités."
+        preuve: "https://www.service-public.gouv.fr/particuliers/actualites/A15237"
+      - constat: "Sa CSG sur les retraites n'a que 4,3 % et 9,1 % (CRDS et CASA comprises), seuils arrêtés en 2018 (ParamAutres, TauxCSGRet*, SeuilExoCSG*)."
+        tranche: "L. 136-8, III bis : taux de 6,6 % depuis 2019 ; F2971 (2026) : de 17 058 € à 26 472 € pour une part."
+        preuve: "LEGIARTI000054336623 ; https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
+      - constat: "Il inscrit les contractuels de droit public à l'Arrco, ce que son code dit « à corriger » (`src/DroitsRetr.cpp:667, 701`, `src/Cotisations.cpp:194`)."
+        tranche: "ils relèvent de l'Ircantec (décret n° 70-1277), que le dépôt porte."
+        preuve: "data/reference/regles/ircantec_majoration_enfants.yaml:26 ; data/reference/regimes/ircantec.yaml"
+      - constat: "Il ne sert aux indépendants aucune complémentaire : ses points ne naissent que d'un statut salarié (`src/DroitsRetr.cpp:666-667, 698-702`)."
+        tranche: "L. 635-1 : régime complémentaire obligatoire des indépendants, que le dépôt porte."
+        preuve: "LEGIARTI000037062054 ; data/reference/regles/rci_valeurs_point.yaml"
+      - constat: "Par défaut, il revalorise le plafond d'écrêtement des minima (1 120 € par mois en 2014) sur les prix (`src/DroitsRetr.cpp:1087-1097`)."
+        tranche: "D. 173-21-0-0-1 : « revalorisé aux mêmes dates et dans les mêmes proportions que le salaire minimum de croissance » ; le dépôt le suit."
+        preuve: "LEGIARTI000028602639 ; minimum_contributif.csv:50-61"
+      - constat: "Il écrête le minimum garanti avec le minimum contributif, et le refuse à qui n'a pas tout liquidé ensemble (`src/DroitsRetr.cpp:1109-1124`)."
+        tranche: "mesures de L. 17 CPCMR que la CNRACL dit « pas appliquée[s] en l'absence de décret d'application » ; le dépôt ne les applique pas."
+        preuve: "data/reference/regles/minimum_garanti.yaml:28-33"
+      - constat: "Sa série porte 24 000 F de minimum vieillesse pour une personne seule en 1982 (ParamRetrBase)."
+        tranche: "décret n° 81-1167 : « 24 900 FRS pour une personne seule ; 44 400 FRS pour un ménage » au 1er janvier 1982."
+        preuve: "JORFTEXT000000876016"
+    conclusion: "Au-delà de la réversion et de l'ASPA du ménage, il fait mieux par ses séries annuelles longues (minimum contributif depuis 1984, minimum vieillesse depuis 1970, AVPF à 169 heures), là où le dépôt projette des ancres ou déduit, et par quatre règles du scénario 1 qui nous manquent (AVPF dans le minimum depuis 2023, départ des fonctionnaires parents de trois enfants, versement forfaitaire unique, plafond de L. 18). Il a tort sur onze points, outre la loi du 30 décembre 2025 : CSG à 6,6 %, coefficient de solidarité après avril 2024, ressources et taux historique de la réversion, Ircantec, complémentaire des indépendants."
+
+  - id: destinie_1
+    version: "non public ; Blanchet et Chanut, Économie et Statistique n° 315 (1998)"
+    lu_dans:
+      - "https://www.insee.fr/fr/information/4497060"
+      - "https://www.persee.fr/doc/estat_0336-1454_1998_num_315_1_2643"
+      - "modeles/destinie2/documentation/Destinie_DT.txt"
+    existants: []
+    nouveaux: []
+    ecarts_nouveaux: []
+    conclusion: "Rien de mieux : code non public, résultats d'un droit (réforme de 1993) et d'un échantillon (enquête Actifs financiers de 1991) anciens. Destinie 2 l'a remplacé en 2010 et en reprend les fonctions."
+
+  - id: edifis
+    version: "commit 95ef983 (11 février 2026)"
+    lu_dans:
+      - "modeles/edifis : data/Maquette_cas_types_2015.xls à 2025.xls (feuille « Barème »), R/bareme.R, R/base.R, R/cas-type.R, README.md"
+      - "dépôt au commit 714ad0c ; index LEGI"
+    existants:
+      - debut: "Son coût du travail compte la formation, l'apprent"
+        verdict: confirme
+        commentaire: "Toujours 4,13 % (feuille « Barème » 2025, ligne 264 : apprentissage, formation, construction, versement mobilité de zone 2 à 2 %), compté dans ses taux employeur (lignes 265-269, `R/base.R:328-337`) ; toujours exclu du dépôt (`docs/limites.md:2493-2499`). Taux dépendant de la taille et de la commune : un employeur type à choisir."
+    nouveaux:
+      - quoi: "Ses barèmes de 2015 à 2025 portent les taux de vieillesse de chaque année. Le dépôt applique au régime général des moyennes par période (`regimes/regime_general.yaml:429-430, 461-462`, « moyenne OpenFisca sur la période ») : 15,33 % plafonnés et 2,10 % déplafonnés de 2011 à 2022 quand ils valaient 15,45 % et 2,30 % dès 2017 ; 2,41 % depuis 2023 au lieu de 2,30 % (2023), 2,42 % (2024-2025), 2,51 % (2026). Le compte notionnel porte ces taux (`moteur/compte.py:222-223, 867`)."
+        preuve: "lignes « Assurance vieillesse » : salarié 0,30/6,85 % et employeur 1,80/8,50 % en 2015 ; 0,35/6,90 et 1,85/8,55 en 2016 ; 0,40/6,90 et 1,90/8,55 de 2017 à 2023 ; 0,40/6,90 et 2,02/8,55 en 2024-2025 (lignes 237-238, 251-252 en 2025), au commit 95ef983"
+        verification: "D. 242-4 : LEGIARTI000029924557 (2015, 2016, dès 2017), LEGIARTI000048852488 (2,02 % dès 2024), LEGIARTI000053302465 (2,11 % en 2026) ; ses valeurs sont celles du code."
+        confronte: proposition
+        importance: faible
+        etat: a_reprendre
+        chantier: "nouveau: les taux de cotisation du régime général année par année"
+      - quoi: "Il calcule le revenu disponible d'un ménage type d'actifs selon le salaire : impôt sur le revenu (barème, décote, quotient familial), RSA, prime d'activité, aides au logement, prestations familiales, AAH, ASS. Le dépôt s'arrête au salaire net (`remuneration.py:1-11`) et ne calcule aucun impôt sur le revenu."
+        preuve: "`R/cas-type.R:70-1548` (fonction `IR` l. 754), feuille « Barème » 2025, sections I et II.A, au commit 95ef983"
+        verification: "méthode : ce que la proposition rend au salaire (`docs/limites.md:2521-2530`) passe au revenu disponible par ces barèmes ; c'est l'effet retour côté actifs."
+        confronte: proposition
+        importance: faible
+        etat: a_trancher
+        chantier: "138.13"
+        raison: "hors du champ choisi : le dépôt décrit une carrière, non un ménage (`docs/limites.md:2012-2018`) ; à décider avec 138.5."
+    ecarts_nouveaux:
+      - constat: "Le supplément par quart de part du seuil du taux réduit de CSG reprend celui de l'exonération (feuille « Barème » 2025, lignes 283 et 285 : 142,58 € par mois chacun)."
+        tranche: "L. 136-8, III : 2 971 € par demi-part pour l'exonération, 3 884 € pour le taux réduit (montants de base) ; F2971 (2026) : quart de part de 1 742 € et 2 278 €. Paramètre importé (`R/bareme.R:98`) que le calcul ne lit pas : sans effet sur ses résultats."
+        preuve: "LEGIARTI000051287395 ; https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
+    conclusion: "Rien sur les pensions. Il apporte un barème de cotisations année par année, qui montre que le dépôt applique au régime général des moyennes par période, et un coût du travail complet, déjà au registre."
