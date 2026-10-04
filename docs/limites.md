@@ -1257,6 +1257,16 @@ verrouille le nombre de lignes par niveau, et y verser des valeurs demande un
 contrôle dans `verifier_donnees.py` — donc un récupérateur pour la valeur de
 service, que la caisse publie en PDF depuis 2010.
 
+**Au-delà du dernier barème publié, l'Agirc-Arrco garde le rendement de ce
+barème**, <!--chiffre:cellule(data/reference/regimes/rendements_points.csv:rendement*100?regime=agirc_arrco&debut=2027)-->5,61<!--/--> % : le prix d'achat du point y suit les prix, comme sa
+valeur de service. L'accord national interprofessionnel du 10 mai 2019 le fait
+au contraire évoluer « comme le salaire annuel moyen des ressortissants du
+régime » (article 2), et son annexe projette de même. La complémentaire d'une
+carrière qui a encore des décennies à courir en ressort trop haute : de près
+d'un dixième sur la carrière réelle confrontée à « Mon estimation retraite » le
+4 octobre 2026, dont la retraite de base concordait à l'euro (feuille de route,
+action 142).
+
 UN PIÈGE DÉCOUVERT EN CHEMIN, et refermé par un test. La table des tranches
 d'assiette existe DEUX FOIS — `BORNES_ASSIETTE` dans `donnees/regimes.py` et
 dans `moteur/js/regimes.js` —, parce que le portage ne lit pas le Python. La

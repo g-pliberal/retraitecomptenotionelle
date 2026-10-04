@@ -5717,15 +5717,16 @@ d'OpenFisca-France confrontées à celles du dépôt.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
-**Reprise, au 4 octobre 2026.** Fait : l'étape 1, la saisie outillée — la
-deuxième voie du § 3.5 ouverte à Claude (architecture 5.35), le budget au
-registre des sources, `scripts/simulateurs.py`, et un premier lot de deux
-saisies dans le simulateur d'âge légal, qui concorde. Restent, une par
-session : 2. la carrière du propriétaire contre « Mon estimation retraite » ;
-3. le brut en tête sur le site, au format de l'estimation officielle, dont le
-net attend l'étape 2 de l'action 138 ; 4. les moteurs publics en local, avec
-l'action 137. Commencer par l'étape 2 : le propriétaire se connecte lui-même
-et télécharge son relevé ; Claude peut lire la page de l'estimation.
+**Reprise, au 4 octobre 2026.** Faites : l'étape 1, la saisie outillée
+(`scripts/simulateurs.py`), et l'étape 2, la carrière du propriétaire contre
+« Mon estimation retraite » (`scripts/estimation_officielle.py`) : les
+trimestres et la retraite de base concordent, l'Agirc-Arrco projetée non. Deux
+corrections en sortent, chacune sa session : la projection du prix d'achat
+Agirc-Arrco, et la lecture du relevé tous régimes de 2026. Restent, une par
+session : 3. le brut en tête sur le site, au format de l'estimation officielle,
+dont le net attend l'étape 2 de l'action 138 ; 4. les moteurs publics en local,
+avec l'action 137. Commencer par l'étape 3. Détail : « Étape 2, le 4 octobre
+2026 », à la fin de l'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -5821,6 +5822,62 @@ estimation retraite » que le propriétaire a ouverte, connecté lui-même.
    brut sans attendre.
 4. *Les moteurs publics en local*, avec l'action 137 : TRAJECTOiRE en cas
    types du COR, puis Destinie 2, sorties figées en témoins.
+
+**Étape 2, le 4 octobre 2026 : la carrière du propriétaire contre « Mon
+estimation retraite ».** Le propriétaire a demandé, le même jour : « Je ne veux
+aucune de mes données personnelles sur le dépôt Github, c'est très important ».
+Ce qui suit n'en garde que des écarts relatifs.
+
+- *L'outil.* `scripts/estimation_officielle.py` : `--modele` imprime le gabarit
+  de l'estimation ; `--releve` et `--estimation` lisent le relevé, par
+  `lecture_pdf` puis `lire_releve`, et l'estimation recopiée âge par âge dans un
+  fichier privé, hors du dépôt. Pour chaque âge, le scénario 1 est liquidé à la
+  même date, en brut mensuel et en euros de l'année de la page, régime par
+  régime puis étage par étage. La carrière à venir part du revenu que la page
+  prête à la situation actuelle ; elle suit le salaire moyen (par défaut) ou les
+  prix, plus ce que `--croissance` y ajoute, ou s'arrête au relevé. Une année
+  mal lue se corrige à la main dans l'estimation privée, et le rapport le dit.
+  Le script n'écrit rien, refuse un fichier rangé dans un dépôt git sans y être
+  ignoré, et dit si le relevé qu'il a lu est plafonné. Ses tests, sur des
+  relevés fictifs, sont au niveau `controle` (`tests/test_estimation_officielle.py`).
+- *Le passage.* Le propriétaire s'est connecté lui-même, par FranceConnect, et
+  a téléchargé son relevé ; Claude a lu l'« estimation rapide » (simulateur
+  27.50.5, moteur 10.0.0-rc6 du 18 août 2026, qui « prend en compte la
+  suspension de la réforme des retraites ») sans y changer d'hypothèse :
+  l'affichage du net, basculé pour être lu, a été remis en brut. Trois âges y
+  sont chiffrés : l'âge légal, le taux plein, l'âge du taux plein automatique.
+  La page ne nomme pas l'année de ses euros : elle compte les points à leur
+  « valeur actuelle », et applique par défaut « une évolution régulière de vos
+  revenus ».
+- *Ce qui concorde.* Les trimestres aux trois âges, l'année du départ comprise ;
+  la durée requise ; la décote et la surcote du régime général, sa
+  proratisation ; la minoration de l'Agirc-Arrco à l'âge légal sans le taux
+  plein. La retraite de base concorde À L'EURO aux trois âges, du même salaire
+  annuel moyen, quand la carrière à venir suit les prix plus 1,0 % par an :
+  c'est la croissance que la page applique. Sous la convention du modèle — le
+  salaire moyen, 0,69 % par an au-delà des prix —, elle ressort de 6 à 7 % plus
+  bas : une hypothèse de projection, non une règle. Les points Agirc-Arrco déjà
+  acquis concordent à moins d'un demi pour cent.
+- *Ce qui ne concorde pas : la projection de l'Agirc-Arrco.* Avec la carrière à
+  venir de la page, la complémentaire du modèle ressort de 8,8 à 9,0 % au-dessus
+  (de 3,6 à 3,9 % sous sa propre convention). Au-delà du dernier barème publié,
+  `rendements_points.csv` garde le rendement de 2026 jusqu'en 2100 : le prix
+  d'achat du point y suit les prix, comme sa valeur de service. L'accord
+  national interprofessionnel du 10 mai 2019, lu le même jour sur le site de
+  l'Agirc-Arrco, le fait évoluer « comme le salaire annuel moyen des
+  ressortissants du régime » (article 2), et son annexe projette de même.
+  Recompté à part, avec un prix d'achat qui croît de 0,55 à 0,6 % par an
+  au-delà des prix, le nombre de points de la page se retrouve à un demi pour
+  cent près. La correction, au modèle et à son jumeau, a sa tâche, qui lira
+  d'abord l'accord du 5 octobre 2023 ; `docs/limites.md` porte la limite.
+- *Ce que la lecture du relevé a appris.* Le relevé tous régimes qu'info-retraite
+  délivre en 2026 se lit mal. Son texte sort à l'envers, page par page : un
+  repère retourné que `lecture_pdf` ignore. Une même paie, déclarée à part à la
+  base et à la complémentaire, s'additionne : deux années ici, corrigées à la
+  main. La note « plafonné » est fausse pour lui, qui porte le revenu entier. Et
+  une année Ircantec s'y lit comme un emploi du privé : le modèle n'y voit pas
+  l'Ircantec, que la page sert en capital, en versement unique sous 300 points.
+  La correction des deux lectures jumelles a sa tâche.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

@@ -81,8 +81,9 @@ CONTROLES = {
     # partage-ci, et le filet des déplacements (docs/architecture.md, § 12).
     "test_dila_index.py", "test_pousser.py", "test_niveaux.py",
     "test_conservation.py", "test_outillage.py",
-    # La saisie outillée des simulateurs officiels (docs/architecture.md, § 3.5).
-    "test_simulateurs.py",
+    # La saisie outillée des simulateurs officiels, et la confrontation d'une
+    # carrière réelle à « Mon estimation retraite » (docs/architecture.md, § 3.5).
+    "test_simulateurs.py", "test_estimation_officielle.py",
 }
 
 #: Les tests qui ne sont pas du niveau de leur fichier.
