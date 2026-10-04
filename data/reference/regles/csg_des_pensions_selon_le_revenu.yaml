@@ -1,0 +1,161 @@
+schema_version: 1
+id: csg_des_pensions_selon_le_revenu
+intitule: >-
+  Le taux de CSG d'une pension — exonérée, 3,8 %, 6,6 % ou 8,3 % — se lit sur le revenu
+  fiscal de référence du foyer et ses parts ; la CRDS suit hors de l'exonération, la CASA
+  et la cotisation maladie des complémentaires aux deux derniers taux, et l'allocataire de
+  l'ASPA est exonéré de tout.
+domaine: cotisations
+regimes: [regime_general, agirc_arrco, fonction_publique_etat, cnracl, ircantec]
+etape: foyer_et_net
+face: cotisation
+etat: approchee
+lit:
+- le revenu fiscal de référence que la saisie dit, ou, présumé, la pension du système 1
+  et les ressources du conjoint déclaré, abattues de 10 %
+- les parts du foyer, une ou deux selon le conjoint déclaré
+- le minimum vieillesse que le système 1 sert
+ecrit:
+- la tranche de CSG du foyer, et le taux qui sépare sa pension brute de la nette, que les
+  cinq scénarios notionnels gardent
+- la nette de chaque âge de l'estimation officielle, à sa propre tranche
+dates_qui_decident:
+- pension.echeance
+presomptions:
+  aucun_autre_revenu_que_ses_pensions: le revenu fiscal du foyer, quand la saisie ne le dit pas
+versions:
+- id: sans_taux_median
+  statut: lue
+  vise: pensions_servies
+  textes:
+  - {id: LEGIARTI000036390220, article: "L. 136-8 du code de la sécurité sociale", en_vigueur: 2018-01-01}
+  nee_de: LEGIARTI000036390220
+  bornes:
+    pension.echeance: [null, 2019-01-01]
+  contenu:
+    droit: >-
+      Trois cas seulement : l'exonération, le taux réduit et le taux plein ; la rédaction
+      ne porte pas de III bis, que l'index LEGI du dépôt ne trouve qu'à partir du
+      1er janvier 2019. Le modèle ne s'en sert pas : il nette les pensions aux taux
+      d'aujourd'hui.
+  exemples: aucun trouvé
+- id: quatre_taux
+  statut: lue
+  vise: pensions_servies
+  textes:
+  - {id: LEGIARTI000037947799, article: "L. 136-8 du code de la sécurité sociale", en_vigueur: 2019-01-01}
+  - {id: LEGIARTI000054336623, article: "L. 136-8 du code de la sécurité sociale", en_vigueur: 2026-06-27}
+  - {id: LEGIARTI000051289679, article: "L. 136-1-2 du code de la sécurité sociale", en_vigueur: 2025-02-28}
+  - {id: LEGIARTI000042675242, article: "L. 137-41 du code de la sécurité sociale", en_vigueur: 2021-01-01}
+  - {id: LEGIARTI000043870910, article: "D. 242-9 du code de la sécurité sociale", en_vigueur: 2021-07-30}
+  - {id: LEGIARTI000054373673, article: "article 158 du code général des impôts", en_vigueur: 2026-07-01}
+  nee_de: LEGIARTI000037947799
+  bornes:
+    pension.echeance: [2019-01-01, null]
+  contenu:
+    droit: >-
+      Exonérées : les pensions des personnes dont le revenu de l'avant-dernière année
+      « n'excède pas » le premier seuil, ou « titulaires d'un avantage de vieillesse ou
+      d'invalidité non contributif » (L. 136-1-2, II 1°). Au taux de 3,8 % : au-delà, si
+      le revenu de l'avant-dernière ou de l'antépénultième année reste « inférieur ou
+      égal » au deuxième seuil (L. 136-8, III). Au taux de 6,6 % : au-delà du deuxième
+      seuil et « inférieur » au troisième (III bis). Au taux de 8,3 % sinon. Chaque seuil
+      vaut pour la première part de quotient familial, majoré pour chaque demi-part, et
+      se revalorise au 1er janvier sur les prix (III ter). La CRDS suit la CSG hors de
+      l'exonération ; la CASA (L. 137-41, II 1°) et la cotisation maladie des
+      complémentaires (D. 242-9) ne sont dues qu'aux deux derniers taux, et jamais par
+      l'allocataire de l'ASPA. Le revenu fiscal d'un retraité est fait de ses pensions
+      abattues de 10 %, au moins 454 € par pensionné, au plus 4 439 € pour le foyer
+      (CGI, art. 158, 5 a).
+    parametres:
+      seuils_2026_premiere_part: [13048, 17057, 26472]
+      majorations_2026_demi_part: [3484, 4555, 7066]
+      taux: [0.0, 0.038, 0.066, 0.083]
+  exemples: aucun trouvé
+approximations:
+- version: quatre_taux
+  ecart: >-
+    Sans revenu fiscal dit, la présomption `aucun_autre_revenu_que_ses_pensions` : le
+    revenu de l'année même, en euros de l'année de référence, pour celui de
+    l'avant-dernière ; les ressources du conjoint comptées comme des pensions.
+  effet: non mesuré
+- version: quatre_taux
+  ecart: >-
+    Une seule année de revenu : le lissage par l'antépénultième année (L. 136-8, III 2° ;
+    D. 242-9, 1°) ne joue jamais.
+  effet: non mesuré
+- version: quatre_taux
+  ecart: >-
+    Une part, deux avec un conjoint déclaré : ni les demi-parts des enfants à charge, ni
+    celles des invalides, des anciens combattants ou des parents isolés.
+  effet: non mesuré
+- version: quatre_taux
+  ecart: >-
+    Les seuils de la métropole : ceux de la Martinique, de la Guadeloupe, de La Réunion,
+    de la Guyane et de Mayotte ne sont pas appliqués.
+  effet: non mesuré
+- version: quatre_taux
+  ecart: >-
+    Les cinq scénarios notionnels gardent le taux de la personne au scénario 1 : une
+    hypothèse, que la page dit, décidée le 4 octobre 2026 par le propriétaire.
+  effet: le net de chaque scénario garde le rapport de son brut à celui du scénario 1
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-01-15
+  a_relire:
+  - >-
+    Les seuils de 2027, revalorisés au 1er janvier sur les prix (III ter), et
+    l'abattement de 10 % de la loi de finances.
+  - Chercher un exemple publié du passage du brut au net d'une pension, par tranche.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 136-8 du code de la sécurité sociale, rédaction en vigueur depuis le 27 juin 2026
+      (LEGIARTI000054336623), III, III bis et III ter lus dans l'index LEGI du dépôt ; la
+      rédaction du 1er janvier 2019 (LEGIARTI000037947799), la première qui porte un III bis
+    date: 2026-10-04
+  - type: legifrance
+    reference: >-
+      L. 136-1-2, II 1° (LEGIARTI000051289679) et D. 242-9 (LEGIARTI000043870910), lus dans
+      l'index LEGI ; L. 137-41, II 1° (LEGIARTI000042675242) et l'article 158, 5 a du CGI
+      (LEGIARTI000054373673), relevés au registre des autres modèles
+    date: 2026-10-04
+  - type: service_public
+    reference: >-
+      fiche F2971, « CSG, CRDS et Casa sur les pensions de retraite », vérifiée le 1er juin
+      2026 : les seuils de 2026 et leurs majorations par demi-part, relevés au registre
+    date: 2026-06-01
+  - type: autre
+    reference: >-
+      urssaf.fr, « Les revenus de remplacement » : le tableau des prestations retraite, la
+      CASA et la cotisation maladie aux taux médian et plein
+    date: 2026-10-04
+    url: https://www.urssaf.fr/accueil/employeur/cotisations/liste-cotisations/revenus-de-remplacement.html
+textes_a_rattacher:
+- reference: L. 131-9 du code de la sécurité sociale, les non-résidents
+- reference: CGI, article 194, le quotient familial
+code:
+  python: >-
+    remuneration.py : PrelevementsPension (seuil, tranche, taux_de_la_tranche,
+    maladie_de_la_tranche, revenu_fiscal_presume) ; contexte.py : Montants.du_foyer,
+    net_d_un_depart, revenu_fiscal_du_foyer, parts_du_foyer, minimum_vieillesse_servi
+  javascript: >-
+    moteur/js/remuneration.js : PrelevementsPension ; moteur/js/contexte.js :
+    Montants.duFoyer, netDUnDepart ; moteur/js/pages.js : noteDuMode,
+    estimationOfficielle, le champ revenu_fiscal
+  parametres: legislation/prelevements_remuneration.yaml, pensions.bareme_csg et abattement_pensions
+  tests: tests/test_net_pensions.py ; tests/test_estimation_du_site.py
+referents:
+  openfisca_france: la CSG, la CRDS et la CASA des pensions selon le revenu fiscal de N−2 et les parts
+  ines: le taux de CSG selon le revenu fiscal et les parts
+  trajectoire: la pension prise pour seule ressource, abattement de 10 % compris
+  destinie_2: trois cas, sans le taux médian, et le revenu approché par les pensions
+  euromod: les seuils de 2026 et leurs majorations par demi-part, sans le lissage
+  simulateur_aurain: les seuils à plusieurs parts et le lissage sur deux ans
+historique:
+- >-
+  2026-10-04 — née avec l'action 138, étape 2 : le dépôt retenait le taux plein pour tout
+  le monde ; la tranche du foyer, présumée ou dite, le remplace.
+effet: >-
+  Tout retraité en mode net : un foyer d'une part sous 13 048 € de revenu fiscal n'est plus
+  prélevé ; au salaire moyen, la pension passe du taux plein au taux médian.

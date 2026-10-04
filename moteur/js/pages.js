@@ -1015,6 +1015,17 @@ export function formulaire(saisie, contexte, comparaison = null) {
       + `${contexte.paquet.presomptions.naissance_des_enfants.valeur} ans.`),
     g.champ("interruptions", "Interruptions", saisie.interruptions,
       "« 1995:1999:education_enfant », séparées par des virgules"),
+    // LE REVENU FISCAL DU FOYER (action 138, étapes 2 et 13) : facultatif. Il
+    // fixe la tranche de CSG de la pension ; sans lui, le net présume un foyer
+    // sans autre revenu que ses pensions.
+    g.champ("revenu_fiscal", "Revenu fiscal de référence",
+      saisie.revenu_fiscal === null ? "" : nombreBrut(saisie.revenu_fiscal),
+      "facultatif : celui de votre foyer, sur l'avis d'impôt", "number",
+      { min: "0", step: "1" },
+      "Il fixe le taux de CSG de votre pension selon les parts du foyer, une "
+      + "ou deux avec un conjoint déclaré : exonérée, 3,8 %, 6,6 % ou 8,3 %. "
+      + "Sans lui, le simulateur présume que votre foyer n'a pas d'autre revenu "
+      + "que ses pensions, abattues de 10 %. Il ne change que les montants nets."),
   ].join("") + champsModelisation(saisie);
 
   const tete = g.affiche(
@@ -2165,10 +2176,12 @@ function lectureDesMontants(comparaison, saisie) {
   // sur des nets » au-dessus d'un taux calculé, précisément, sur des nets.
   const prelevements = saisie.enNet
     ? "Montants <strong>nets</strong> avant impôt, arrondis à l'euro, comme "
-      + "« Mon estimation retraite » les donne : après CSG, CRDS et Casa — 9,10 %, le taux plein, "
-      + "appliqué ici à tout le monde —, puis la cotisation maladie de 1 % des "
-      + "retraites complémentaires, et avant impôt sur le revenu, comme le "
-      + "revenu d'activité saisi plus haut. Le détail du calcul les donne au "
+      + "« Mon estimation retraite » les donne : après la CSG, la CRDS et la "
+      + "Casa au taux que fixe le revenu fiscal de votre foyer, présumé fait "
+      + "de vos seules pensions si vous ne le dites pas, après la cotisation "
+      + "maladie de 1 % des retraites complémentaires quand ce taux la prélève, "
+      + "et avant impôt sur le revenu, comme le revenu d'activité saisi plus "
+      + "haut. Le détail du calcul les donne au "
       + "centime. Le <strong>taux de remplacement</strong> "
       + "rapporte la pension annuelle au dernier revenu d'activité ramené à "
       + "l'année pleine — un net sur un net, donc plus haut qu'un taux calculé "
@@ -4202,10 +4215,10 @@ function departEnClair(depart) {
  * partent avec le reste de la saisie, dans l'adresse, et restent dans le
  * navigateur comme elle. Ils n'entrent dans aucun calcul.
  *
- * Le net retire la CSG, la CRDS et la CASA au taux plein sur les deux étages,
- * et la cotisation maladie de 1 % sur ce que servent les complémentaires qui
- * la prélèvent, à chaque âge sur sa propre part. La CSG selon le revenu du
- * foyer reste à l'étape 2 de l'action 138. Rien pour qui est déjà parti, ni pour qui saisit sa pension :
+ * Le net retire, à chaque âge, ce que prélève SA tranche de CSG — sous la
+ * présomption, le revenu fiscal du foyer est fait de cette pension seule —, et
+ * la cotisation maladie de 1 % sur sa propre part complémentaire, aux deux
+ * taux du haut. Rien pour qui est déjà parti, ni pour qui saisit sa pension :
  * l'estimation officielle chiffre un départ à venir.
  */
 function estimationOfficielle(contexte, saisie, montants) {
@@ -4236,7 +4249,8 @@ function estimationOfficielle(contexte, saisie, montants) {
         + `${departEnClair(depart)}</span>`,
       ...parts.map((part) => g.euros(part)),
       g.euros(total),
-      g.euros(montants.netDAssiette(total, depart.assiette_maladie / 12)),
+      g.euros(montants.netDUnDepart(depart.total, depart.assiette_maladie,
+        depart.minimum_vieillesse) / 12),
       champ,
       ...(compare ? [ecart] : []),
     ];
@@ -4261,9 +4275,11 @@ l'écart s'affiche à côté.</p>
 <div class="carte estimation-officielle">
   ${tableau}
   <p class="comparer"><button type="submit" form="simulateur" id="comparer-estimation">Comparer</button></p>
-  <p class="discret">Le net retire la CSG, la CRDS et la CASA au taux plein,
-  ${g.pourcentage(montants.tauxSansMaladie, false, 1)}, et la cotisation maladie de
-  ${g.pourcentage(montants.tauxMaladie, false, 0)} sur la complémentaire. Vos revenus à venir suivent le salaire moyen ;
+  <p class="discret">Le net retire, à chaque âge, la CSG, la CRDS et la CASA de
+  la tranche que fixe le revenu fiscal de votre foyer (${montants.revenuPresume
+    ? "présumé fait de cette pension seule, abattue de 10 %"
+    : "celui que vous avez dit"}), et 1 % de cotisation maladie sur la
+  complémentaire aux deux taux du haut. Vos revenus à venir suivent le salaire moyen ;
   l'estimation officielle leur prête « une évolution régulière », un peu plus
   rapide.${minimum}
   Ce que vous recopiez reste dans votre navigateur, avec le reste de la
@@ -5111,24 +5127,40 @@ function eurosSigne(montant, centimes = true) {
 /**
  * Ce que le mode courant suppose, en une phrase, là où il s'applique.
  *
- * En NET, ce sont les deux conventions qu'il faut dire : la loi fait dépendre
- * le taux de CSG du revenu fiscal du foyer, que le simulateur ne demande pas, et
- * le dépôt retient le taux plein ; les cinq systèmes notionnels gardent le taux
- * de la personne au système 1, cotisation maladie de sa complémentaire comprise
- * (`prelevements_remuneration.yaml`). En BRUT, c'est le rappel qu'un brut n'est pas ce qu'on
+ * En NET, ce qu'il faut dire : le taux de la personne, sa tranche de CSG et le
+ * revenu fiscal qui la fixe — présumé fait de ses seules pensions, ou celui
+ * qu'elle a dit —, et l'hypothèse des cinq systèmes notionnels, qui gardent ce
+ * taux (`prelevements_remuneration.yaml`). En BRUT, c'est le rappel qu'un brut n'est pas ce qu'on
  * touche.
  */
 function noteDuMode(montants) {
   if (montants.net) {
-    return "La pension est nette de "
-      + `${g.pourcentage(montants.tauxPension, false, 1)} : CSG, CRDS `
-      + "et contribution de solidarité, au <strong>taux plein</strong>, et "
-      + "cotisation maladie de 1 % sur la part complémentaire de votre "
-      + "pension du système actuel. Les autres systèmes gardent ce taux : le "
-      + "simulateur suppose que la réforme ne change pas vos prélèvements. La "
-      + "loi fait dépendre la CSG du revenu fiscal du foyer, que ce "
-      + "simulateur ne demande pas : une petite pension, exonérée en "
-      + "réalité, est donc ici un peu sous-estimée.";
+    const autres = " Les autres systèmes gardent ce taux : le simulateur suppose "
+      + "que la réforme ne change pas vos prélèvements.";
+    if (montants.aspa) {
+      return "La pension n'est pas prélevée : allocataire de l'ASPA, vous êtes "
+        + "exonéré de CSG, de CRDS, de contribution de solidarité et de "
+        + "cotisation maladie, et l'ASPA ne l'est jamais." + autres;
+    }
+    let revenu = "";
+    if (montants.revenuFiscal !== null) {
+      revenu = montants.revenuPresume
+        ? ", présumé fait de vos seules pensions, abattues de 10 % : "
+          + `${g.euros(montants.revenuFiscal)}. Vous pouvez dire le vôtre dans `
+          + "les options de modélisation"
+        : `, celui que vous avez dit : ${g.euros(montants.revenuFiscal)}`;
+    }
+    const assise = `Ce taux se lit sur le revenu fiscal de référence de votre foyer${revenu}.`;
+    if (montants.tauxPension === 0) {
+      return `La pension n'est pas prélevée : votre foyer est exonéré. ${assise}${autres}`;
+    }
+    const prelevements = montants.tranche === "taux réduit"
+      ? "la CSG au taux réduit et la CRDS"
+      : `la CSG au ${montants.tranche}, la CRDS, la contribution de solidarité et `
+        + "1 % de cotisation maladie sur la part complémentaire de votre pension "
+        + "du système actuel";
+    return `La pension est nette de ${g.pourcentage(montants.tauxPension, false, 1)} : `
+      + `${prelevements}. ${assise}${autres}`;
   }
   return "Le brut n'est pas ce qui arrive sur le compte : il reste à en "
     + "retirer les cotisations pour un salaire, la CSG pour une pension.";

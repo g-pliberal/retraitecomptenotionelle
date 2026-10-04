@@ -805,6 +805,59 @@ function phraseStatutFerme(affiliations, code, fermeture, quand) {
     + `« ${affiliations.libelle(releve)} » : choisir ce statut.`;
 }
 
+/** Les parts du foyer : une, deux avec un conjoint déclaré (CGI, art. 194). */
+function partsDuFoyer(saisie) {
+  return saisie.conjoint ? 2 : 1;
+}
+
+/** Les pensions du foyer, une par pensionné, et celles du conjoint déclaré. */
+function foyer(saisie, pension) {
+  const pensions = [pension];
+  if (saisie.conjoint && saisie.ressources_conjoint) pensions.push(saisie.ressources_conjoint);
+  return pensions;
+}
+
+/**
+ * La pension saisie, annuelle et brute. Voir `_pension_saisie_brute` dans
+ * `contexte.py`.
+ */
+function pensionSaisieBrute(saisie, pensions) {
+  const annuelle = saisie.pension * MOIS_PAR_AN;
+  if (!saisie.enNet) return annuelle;
+  const parts = partsDuFoyer(saisie);
+  for (const tranche of pensions.bareme_csg) {
+    const brute = annuelle / (1 - pensions.tauxDeLaTranche(tranche));
+    const revenu = pensions.revenuFiscalPresume(foyer(saisie, brute));
+    if (pensions.tranche(revenu, parts) === tranche) return brute;
+  }
+  return annuelle
+    / (1 - pensions.tauxDeLaTranche(pensions.bareme_csg[pensions.bareme_csg.length - 1]));
+}
+
+/**
+ * Le revenu fiscal de référence du foyer, et s'il est présumé. Voir
+ * `revenu_fiscal_du_foyer` dans `contexte.py`.
+ */
+function revenuFiscalDuFoyer(saisie, pensions, pension) {
+  if (saisie.revenu_fiscal !== null && saisie.revenu_fiscal !== undefined) {
+    return [saisie.revenu_fiscal, false];
+  }
+  let annuelle = pension;
+  if (saisie.saisie_par === "pension") annuelle = pensionSaisieBrute(saisie, pensions);
+  if (annuelle === null) return [null, false];
+  return [pensions.revenuFiscalPresume(foyer(saisie, annuelle)), true];
+}
+
+/** Le minimum vieillesse que le scénario 1 sert, à l'échéance ou au départ. */
+function minimumVieillesseServi(actuel, aujourdhui = null) {
+  if (aujourdhui !== null) return aujourdhui.minimum_vieillesse;
+  let total = 0;
+  for (const avantage of actuel.avantages_appliques) {
+    if (avantage.code === "minimum_vieillesse") total += avantage.montant;
+  }
+  return total;
+}
+
 /**
  * Le mode net/brut, et ce qu'il fait à chaque montant affiché.
  *
@@ -829,6 +882,17 @@ export class Montants {
     this.tauxMaladie = maladie?.tauxMaladie ?? 0;
     this.partMaladie = maladie?.partMaladie ?? 0;
     this.regimesMaladie = maladie?.regimesMaladie ?? new Set();
+    // La tranche de CSG du foyer, son taux, le revenu fiscal qui la fixe et
+    // s'il est présumé, l'exonération de l'allocataire de l'ASPA, les parts du
+    // foyer ; le barème et la saisie, pour la tranche d'un autre départ.
+    this.tranche = maladie?.tranche ?? "taux plein";
+    this.tauxCsg = maladie?.tauxCsg ?? 0;
+    this.revenuFiscal = maladie?.revenuFiscal ?? null;
+    this.revenuPresume = maladie?.revenuPresume ?? false;
+    this.aspa = maladie?.aspa ?? false;
+    this.parts = maladie?.parts ?? 1;
+    this.bareme = maladie?.bareme ?? null;
+    this.saisie = maladie?.saisie ?? null;
     // Ce qu'un euro de salaire brut laisse en net, au DERNIER revenu
     // d'activité. Zéro quand le statut n'a pas de fiche de paie : le taux
     // reste alors brut, faute de pouvoir le netter honnêtement.
@@ -856,25 +920,57 @@ export class Montants {
       }
     }
     // LE TAUX DE LA PERSONNE, lu sur sa pension du scénario 1 telle que la page
-    // l'affiche ; sans comparaison, celui d'une pension de base. Voir
-    // `Montants.depuis` dans `contexte.py`.
+    // l'affiche, en euros de l'année de référence. Voir `Montants.depuis` dans
+    // `contexte.py`.
     const pensions = simulateur.baremePrelevements.pensions;
-    let part = 0;
-    const actuel = comparaison ? comparaison.actuel : null;
-    if (actuel !== null && actuel !== undefined) {
-      const servie = comparaison.aujourd_hui ?? null;
-      const [assiette, total] = assietteMaladie(pensions.regimes_maladie, actuel,
-        servie === null ? null : servie.actuel);
-      part = total > 0 ? assiette / total : 0;
+    const actuel = comparaison ? (comparaison.actuel ?? null) : null;
+    let servie = null;
+    let coefficient = 1;
+    if (actuel !== null) {
+      const aujourdhui = comparaison.aujourd_hui ?? null;
+      servie = aujourdhui === null ? null : aujourdhui.actuel;
+      coefficient = servie !== null ? comparaison.coefficient_euros_aujourd_hui
+        : comparaison.coefficient_euros_constants;
     }
-    return new Montants(saisie.enNet,
-      pensions.tauxTotal + pensions.maladie_complementaire * part,
-      rapport, rapportProposition, {
-        tauxSansMaladie: pensions.tauxTotal,
-        tauxMaladie: pensions.maladie_complementaire,
-        partMaladie: part,
-        regimesMaladie: pensions.regimes_maladie,
-      });
+    return Montants.duFoyer(saisie, pensions, actuel, servie, coefficient,
+      rapport, rapportProposition);
+  }
+
+  /**
+   * Le mode, et le taux du foyer : la CSG, la CRDS et la CASA de sa tranche,
+   * et la cotisation maladie de la part complémentaire de sa pension du
+   * scénario 1 ; l'allocataire de l'ASPA exonéré de tout. Voir
+   * `Montants.du_foyer` dans `contexte.py`.
+   */
+  static duFoyer(saisie, pensions, actuel = null, aujourdhui = null, coefficient = 1,
+    rapport = 0, rapportProposition = 0) {
+    let part = 0;
+    let minimum = 0;
+    let pension = null;
+    if (actuel !== null) {
+      const [assiette, total] = assietteMaladie(pensions.regimes_maladie, actuel, aujourdhui);
+      part = total > 0 ? assiette / total : 0;
+      minimum = minimumVieillesseServi(actuel, aujourdhui);
+      pension = total * coefficient;
+    }
+    const [revenu, presume] = revenuFiscalDuFoyer(saisie, pensions, pension);
+    const parts = partsDuFoyer(saisie);
+    let tranche;
+    if (minimum > 0) {
+      tranche = pensions.bareme_csg[0];
+    } else if (revenu === null) {
+      tranche = pensions.bareme_csg[pensions.bareme_csg.length - 1];
+    } else {
+      tranche = pensions.tranche(revenu, parts);
+    }
+    const taux = pensions.tauxDeLaTranche(tranche);
+    const maladie = pensions.maladieDeLaTranche(tranche);
+    return new Montants(saisie.enNet, taux + maladie * part, rapport, rapportProposition, {
+      tauxSansMaladie: taux, tauxMaladie: maladie, partMaladie: part,
+      regimesMaladie: pensions.regimes_maladie,
+      tranche: tranche.libelle, tauxCsg: tranche.taux, revenuFiscal: revenu,
+      revenuPresume: presume, aspa: minimum > 0, parts, bareme: pensions, saisie,
+    });
   }
 
   /**
@@ -928,6 +1024,25 @@ export class Montants {
    */
   pensionDuRegime(brut, regime) {
     return this.pensionDAssiette(brut, this.regimesMaladie.has(regime) ? brut : 0);
+  }
+
+  /**
+   * La nette d'un autre départ du scénario 1, quel que soit le mode, à SA
+   * tranche. Voir `Montants.net_d_un_depart` dans `contexte.py`.
+   */
+  netDUnDepart(total, assiette, minimum = 0) {
+    const bareme = this.bareme;
+    if (bareme === null) return this.netDAssiette(total, assiette);
+    let tranche;
+    if (minimum > 0) {
+      tranche = bareme.bareme_csg[0];
+    } else {
+      const revenu = !this.revenuPresume && this.revenuFiscal !== null
+        ? this.revenuFiscal : bareme.revenuFiscalPresume(foyer(this.saisie, total));
+      tranche = bareme.tranche(revenu, this.parts);
+    }
+    return total * (1 - bareme.tauxDeLaTranche(tranche))
+      - bareme.maladieDeLaTranche(tranche) * assiette;
   }
 
   /**

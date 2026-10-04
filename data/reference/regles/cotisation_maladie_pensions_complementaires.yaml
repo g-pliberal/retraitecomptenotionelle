@@ -72,12 +72,11 @@ versions:
 approximations:
 - version: un_pour_cent
   ecart: >-
-    Taux plein pour tous : la cotisation est prélevée sur toute pension
-    complémentaire, comme la CSG au taux plein, alors que la loi en exonère les
-    foyers sous le seuil du taux médian de CSG (D. 242-9).
-  effet: >-
-    non mesuré ; 1 % de la part complémentaire des petites pensions, que la
-    convention de CSG surestime déjà
+    La cotisation suit la tranche de CSG du foyer, fixée sur un revenu fiscal
+    présumé fait de ses seules pensions quand la personne ne dit pas le sien
+    (fiche `csg_des_pensions_selon_le_revenu`) ; le lissage par l'antépénultième
+    année (D. 242-9, 1°) ne joue pas.
+  effet: non mesuré
 - version: un_pour_cent
   ecart: >-
     Les cinq scénarios notionnels, qui n'ont qu'un compte, gardent le taux de la

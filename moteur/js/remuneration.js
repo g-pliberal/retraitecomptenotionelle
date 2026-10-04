@@ -261,6 +261,61 @@ export class PrelevementsPension {
     const maladie = fiche.maladie_complementaire ?? {};
     this.maladie_complementaire = maladie.taux ?? 0;
     this.regimes_maladie = new Set(maladie.regimes ?? []);
+    // L'abattement de 10 % des pensions (CGI, art. 158, 5 a).
+    const abattement = fiche.abattement_pensions ?? {};
+    this.abattement_taux = abattement.taux ?? 0;
+    this.abattement_minimum = abattement.minimum_par_pensionne ?? 0;
+    this.abattement_maximum = abattement.maximum_par_foyer ?? 0;
+  }
+
+  /**
+   * Le seuil qui borne `tranche` pour un foyer de `parts` parts : celui de la
+   * première part, majoré pour chaque demi-part de plus.
+   */
+  seuil(tranche, parts) {
+    if (tranche.revenu_fiscal_maximum === null || tranche.revenu_fiscal_maximum === undefined) {
+      return null;
+    }
+    const demiParts = Math.round(2 * (parts - 1));
+    return tranche.revenu_fiscal_maximum + (tranche.majoration_demi_part ?? 0) * demiParts;
+  }
+
+  /** La tranche de L. 136-8 où tombe un revenu fiscal de référence. */
+  tranche(revenuFiscal, parts) {
+    for (const tranche of this.bareme_csg) {
+      const seuil = this.seuil(tranche, parts);
+      if (seuil === null || revenuFiscal < seuil
+          || (tranche.maximum_inclus && revenuFiscal === seuil)) {
+        return tranche;
+      }
+    }
+    return this.bareme_csg[this.bareme_csg.length - 1];
+  }
+
+  /** La CSG de la tranche, et la CRDS et la CASA qu'elle prélève. */
+  tauxDeLaTranche(tranche) {
+    return tranche.taux + (tranche.crds ? this.crds : 0) + (tranche.casa ? this.casa : 0);
+  }
+
+  /** La cotisation maladie des complémentaires, si la tranche la prélève. */
+  maladieDeLaTranche(tranche) {
+    return tranche.maladie ? this.maladie_complementaire : 0;
+  }
+
+  /**
+   * Le revenu fiscal d'un foyer qui n'a que des pensions, une par pensionné.
+   * Voir `revenu_fiscal_presume` dans `remuneration.py`.
+   */
+  revenuFiscalPresume(pensions) {
+    let total = 0;
+    let abattement = 0;
+    for (const pension of pensions) {
+      if (pension <= 0) continue;
+      total += pension;
+      abattement += Math.min(pension, Math.max(this.abattement_taux * pension,
+        this.abattement_minimum));
+    }
+    return total - Math.min(abattement, this.abattement_maximum);
   }
 
   /**

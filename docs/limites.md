@@ -2647,22 +2647,26 @@ les mêmes six scénarios.
 Le simulateur se lit entièrement en brut ou entièrement en net, saisie comprise,
 en brut par défaut. Quatre réserves, dont la première commande tout le reste.
 
-**1. Le taux de CSG sur les pensions est celui du TAUX PLEIN, pour tout le
-monde.** L'article L. 136-8 le fait dépendre du revenu fiscal de référence du
+**1. Le taux de CSG d'une pension suit le revenu fiscal du foyer, présumé
+quand il n'est pas dit.** L'article L. 136-8 le fait dépendre du revenu fiscal de référence du
 foyer, perçu l'avant-dernière année, et en tire quatre cas pour une part de
 quotient familial (montants 2026, revalorisés chaque année sur les prix) :
 exonéré jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=exonéré.revenu_fiscal_maximum)-->13 048<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.taux*100)-->3,80<!--/--> % jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.revenu_fiscal_maximum)-->17 057<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.taux*100)-->6,60<!--/--> % jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.revenu_fiscal_maximum)-->26 472<!--/--> €,
-<!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux plein.taux*100)-->8,30<!--/--> % au-delà. Le simulateur ne demande ni la composition du foyer, ni les
-autres ressources, ni un revenu d'il y a deux ans : il applique donc <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.csg_taux_plein*100)-->8,30<!--/--> %,
-plus <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.crds*100)-->0,50<!--/--> % de CRDS et <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.casa*100)-->0,30<!--/--> % de CASA, soit **<!--chiffre:mesure(prelevement_pension)-->9,10<!--/--> %**.
+<!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux plein.taux*100)-->8,30<!--/--> % au-delà. Le simulateur lit ce revenu dans un champ facultatif ; sans lui,
+il le présume fait des seules pensions du foyer — celle du système 1 et les
+ressources du conjoint déclaré —, abattues de <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.abattement_pensions.taux*100)-->10<!--/--> %. Le foyer compte une part,
+deux avec un conjoint. Au taux plein, la CSG fait <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.csg_taux_plein*100)-->8,30<!--/--> %, la CRDS
+<!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.crds*100)-->0,50<!--/--> % et la CASA <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.casa*100)-->0,30<!--/--> %, soit **<!--chiffre:mesure(prelevement_pension)-->9,10<!--/--> %** ;
+la CRDS suit la CSG hors de l'exonération, la CASA et la cotisation maladie
+ne jouent qu'aux deux derniers taux, et l'allocataire de l'ASPA n'est prélevé
+de rien. Une pension de <!--chiffre:illustration()-->660<!--/--> € par mois, seule ressource d'une personne
+seule, n'est ainsi pas prélevée, comme le droit le veut.
 
-La convention SURESTIME le prélèvement sur les petites pensions — et ce sont
-justement celles des scénarios notionnels. Une pension de <!--chiffre:illustration()-->660<!--/--> € par mois
-placerait son titulaire, s'il vivait seul et n'avait rien d'autre, sous le
-premier seuil : il serait exonéré des trois, et son net vaudrait son brut. Le
-site lui retire <!--chiffre:mesure(prelevement_pension)-->9,1<!--/--> %. L'écart entre systèmes affiché en net est donc un peu
-RESSERRÉ pour les petites pensions, et exact pour les grandes. La page le dit
-sous la clé de lecture.
+Trois choses restent approchées : une seule année de revenu, si bien que le
+lissage par l'antépénultième année ne joue pas ; ni les demi-parts des
+enfants à charge, des invalides ou des parents isolés ; les seuils de la
+métropole partout. Les cinq systèmes notionnels gardent le taux de la
+personne au système 1, et la page le dit sous la clé de lecture.
 
 **2. La cotisation maladie de <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_complementaire.taux*100)-->1<!--/--> % sur la retraite complémentaire est comptée
 au système 1, et les cinq autres gardent le taux qui en résulte.** Elle porte sur

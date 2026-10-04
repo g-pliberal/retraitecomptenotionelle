@@ -46,7 +46,7 @@ from retraite_notionnelle.saisie import (
     ErreurSaisie,
     Saisie,
 )
-from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.contexte import Contexte, Montants
 from retraite_notionnelle.web.site import disponible, module, rendre, site
 from outils_web import (
     _echelle, _prose, contexte, page, pages,
@@ -594,7 +594,7 @@ def _pension_affichee(corps: str) -> float:
 
 
 @pytest.mark.parametrize("pension,mode", [
-    (1500, "net"), (2400, "net"), (1000, "net"), (2000, "brut"),
+    (1500, "net"), (2400, "net"), (1100, "net"), (2000, "brut"),
 ])
 def test_la_pension_saisie_est_celle_que_le_systeme_actuel_sert(
     contexte, pension, mode,
@@ -796,9 +796,12 @@ def test_la_bascule_net_brut_traduit_la_pension_saisie(contexte):
     assert lien, "la bascule ne mène nulle part"
     vers_brut = dict(parse_qsl(html.unescape(lien.group(1))))
     assert vers_brut["montants"] == "brut"
-    # 1 800 € nets valent environ 1 985 € bruts : 9,1 % de CSG, de CRDS et de
-    # CASA, et la cotisation maladie de 1 % de la part complémentaire.
-    assert 1960 <= float(vers_brut["pension"]) <= 2000, (
+    # 1 800 € nets valent le brut que le taux du foyer laisse : sa tranche de
+    # CSG, présumée sur ses seules pensions, et la cotisation maladie de sa
+    # part complémentaire (action 138, étape 2).
+    saisie = Saisie.depuis_requete(base)
+    taux = Montants.depuis(saisie, contexte.base, contexte.simuler(saisie)).taux_pension
+    assert float(vers_brut["pension"]) == pytest.approx(1800 / (1 - taux), abs=1.0), (
         f"la pension n'a pas été traduite : {vers_brut['pension']}"
     )
     # Et la carrière est la même des deux côtés : le revenu déduit en brut est

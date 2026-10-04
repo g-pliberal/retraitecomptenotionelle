@@ -1571,9 +1571,18 @@ def _prelevements_remuneration() -> dict:
             },
             "bareme_csg": [
                 {"libelle": tranche.libelle, "taux": tranche.taux,
-                 "revenu_fiscal_maximum": tranche.revenu_fiscal_maximum}
+                 "revenu_fiscal_maximum": tranche.revenu_fiscal_maximum,
+                 "majoration_demi_part": tranche.majoration_demi_part,
+                 "maximum_inclus": tranche.maximum_inclus,
+                 "crds": tranche.crds, "casa": tranche.casa,
+                 "maladie": tranche.maladie}
                 for tranche in prelevements.pensions.bareme_csg
             ],
+            "abattement_pensions": {
+                "taux": prelevements.pensions.abattement_taux,
+                "minimum_par_pensionne": prelevements.pensions.abattement_minimum,
+                "maximum_par_foyer": prelevements.pensions.abattement_maximum,
+            },
         },
     }
 

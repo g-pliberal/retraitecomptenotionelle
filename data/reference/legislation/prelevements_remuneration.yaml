@@ -700,18 +700,22 @@ profils:
 # jusqu'au 23 septembre 2026 ; ceux-ci sont lus sur la fiche F2971 de
 # service-public.fr, mise à jour le 1er juin 2026.
 #
-# Le simulateur ne connaît pas ce revenu : il ne demande ni la composition du
-# foyer, ni les autres ressources, ni un revenu d'il y a deux ans. **Le dépôt
-# retient donc le TAUX PLEIN pour tout le monde**, et l'écrit sur la page.
+# Ce revenu, le simulateur le PRÉSUME, ou le lit dans un champ facultatif.
+# Décidé le 4 octobre 2026 par le propriétaire (action 138, étape 13) : la
+# présomption `aucun_autre_revenu_que_ses_pensions` par défaut, que la page
+# dit — le revenu fiscal du foyer est fait de ses seules pensions, celles du
+# système 1 et les ressources que la saisie prête au conjoint, abattues de
+# 10 % (`abattement_pensions`) —, et le revenu fiscal de référence que la
+# personne dit, qui la remplace. Le foyer compte une part, deux avec un
+# conjoint déclaré. Les seuils sont ceux de l'avant-dernière année ; le
+# revenu, faute d'histoire, celui de l'année même, en euros d'aujourd'hui, si
+# bien que le lissage par l'antépénultième année (L. 136-8, III 2° ; D. 242-9)
+# ne joue jamais. Un allocataire de l'ASPA est exonéré de tout (L. 136-1-2,
+# II 1° ; D. 242-9, 2°), et l'ASPA elle-même n'est jamais prélevée.
 #
-# C'est la convention la plus simple, et il faut dire ce qu'elle coûte : elle
-# SURESTIME le prélèvement sur les petites pensions. Une pension de 660 € par
-# mois — l'ordre de grandeur des scénarios notionnels sur la seule part
-# salariale — placerait son titulaire, s'il vivait seul et n'avait rien
-# d'autre, sous le premier seuil : il serait exonéré de CSG, de CRDS et de
-# CASA, et son net vaudrait son brut. Le site lui retire 9,1 %. L'écart entre
-# les systèmes affichés est donc, de ce fait, un peu resserré pour les petites
-# pensions et exact pour les grandes. `docs/limites.md` porte la réserve.
+# Les cinq systèmes notionnels gardent le taux de la personne au système 1 :
+# la même hypothèse que pour la cotisation maladie, ci-dessous. Jusqu'au
+# 4 octobre 2026, le dépôt retenait le taux plein pour tout le monde.
 #
 # LA COTISATION D'ASSURANCE MALADIE DES PENSIONS COMPLÉMENTAIRES
 # ------------------------------------------------------------
@@ -798,15 +802,29 @@ pensions:
       - crpnpac
       - crpnpac_tranche_2
       - enseignants_prive_additionnel
-  #: Les quatre cas de l'article L. 136-8, pour mémoire et pour la page : le
-  #: modèle applique le taux plein, mais le lecteur doit pouvoir situer sa
-  #: propre situation. Montants 2026 (revenus de 2024), pour une part de
-  #: quotient familial, lus sur la fiche F2971 de service-public.fr.
+  #: Les quatre cas de l'article L. 136-8 (LEGIARTI000054336623, en vigueur
+  #: depuis le 27 juin 2026) : le seuil de chaque tranche pour la première
+  #: part de quotient familial, et sa majoration par demi-part, montants 2026
+  #: (revenus de 2024) lus sur la fiche F2971 de service-public.fr. Une tranche
+  #: s'arrête à son seuil compris — « n'excède pas », « inférieurs ou égaux »
+  #: —, sauf le taux médian, « inférieurs à » (III bis, 2°). Ce que chacune
+  #: prélève en plus de la CSG : la CRDS hors de l'exonération (ordonnance
+  #: n° 96-50, art. 14) ; la CASA (L. 137-41, II 1°) et la cotisation maladie
+  #: des complémentaires (D. 242-9, 1°) aux deux derniers taux.
   bareme_csg:
-    - {libelle: "exonéré", taux: 0.0, revenu_fiscal_maximum: 13048}
-    - {libelle: "taux réduit", taux: 0.038, revenu_fiscal_maximum: 17057}
-    - {libelle: "taux médian", taux: 0.066, revenu_fiscal_maximum: 26472}
-    - {libelle: "taux plein", taux: 0.083, revenu_fiscal_maximum: null}
+    - {libelle: "exonéré", taux: 0.0, revenu_fiscal_maximum: 13048, majoration_demi_part: 3484,
+       maximum_inclus: true, crds: false, casa: false, maladie: false}
+    - {libelle: "taux réduit", taux: 0.038, revenu_fiscal_maximum: 17057, majoration_demi_part: 4555,
+       maximum_inclus: true, crds: true, casa: false, maladie: false}
+    - {libelle: "taux médian", taux: 0.066, revenu_fiscal_maximum: 26472, majoration_demi_part: 7066,
+       maximum_inclus: false, crds: true, casa: true, maladie: true}
+    - {libelle: "taux plein", taux: 0.083, revenu_fiscal_maximum: null, majoration_demi_part: null,
+       maximum_inclus: false, crds: true, casa: true, maladie: true}
+  #: L'ABATTEMENT DE 10 % DES PENSIONS, qui fait de leur somme le revenu
+  #: fiscal : CGI, art. 158, 5 a, en vigueur depuis le 1er juillet 2026
+  #: (LEGIARTI000054373673) — 10 %, au moins 454 € par pensionné sans dépasser
+  #: sa pension, au plus 4 439 € pour le foyer.
+  abattement_pensions: {taux: 0.10, minimum_par_pensionne: 454, maximum_par_foyer: 4439}
   note: >-
     CSG 8,30 %, CRDS 0,50 %, CASA 0,30 % : 9,10 % au total, sans abattement,
     et 1 % de plus sur la part complémentaire (`maladie_complementaire`).
@@ -817,6 +835,10 @@ pensions:
   textes:
     - "Article L. 136-8 du code de la sécurité sociale, version en vigueur du 31 décembre 2025 (LEGIARTI000053278668), II 2° pour le taux de 8,30 %, III et III bis pour les taux réduits et leurs seuils"
     - "Article L. 137-41 du code de la sécurité sociale, en vigueur depuis le 1er janvier 2021 (LEGIARTI000042675242), II 1° : la CASA de 0,30 % exclut les pensions des foyers dont le revenu n'excède pas les seuils du 2° du III de L. 136-8"
+    - "Article L. 136-8 du code de la sécurité sociale, en vigueur depuis le 27 juin 2026 (LEGIARTI000054336623), III, III bis et III ter : les trois taux réduits, leurs seuils, le lissage du taux réduit, la revalorisation"
+    - "Article L. 136-1-2 du code de la sécurité sociale, en vigueur depuis le 28 février 2025 (LEGIARTI000051289679), II 1° : l'exonération sous le premier seuil, et des titulaires d'un avantage non contributif"
+    - "Article D. 242-9 du code de la sécurité sociale, en vigueur depuis le 30 juillet 2021 (LEGIARTI000043870910) : l'exonération de la cotisation maladie sous le seuil du taux réduit, et des allocataires de l'ASPA"
+    - "Code général des impôts, article 158, 5 a, en vigueur depuis le 1er juillet 2026 (LEGIARTI000054373673) : l'abattement de 10 % des pensions"
     - "Ordonnance n° 96-50 du 24 janvier 1996, articles 14 et 19 (CRDS, 0,50 %)"
     - "service-public.fr, fiche F2971 « CSG, CRDS et Casa sur les pensions de retraite », mise à jour le 1er juin 2026"
     - "Article L. 131-2 du code de la sécurité sociale, en vigueur depuis le 1er septembre 2023 (LEGIARTI000047453476), 1° : les avantages de retraite soumis à la cotisation d'assurance maladie"

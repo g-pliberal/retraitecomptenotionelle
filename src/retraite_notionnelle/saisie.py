@@ -676,6 +676,10 @@ class Saisie:
     pensions_etrangeres: list[PensionEtrangereSaisie] = field(default_factory=list)
     residence: str = ""
     mois_en_france: int | None = None
+    #: Le revenu fiscal de référence du foyer, en euros, s'il le dit : il fixe
+    #: le taux de CSG de sa pension (action 138, étape 2). ``None`` : la
+    #: présomption ``aucun_autre_revenu_que_ses_pensions``.
+    revenu_fiscal: float | None = None
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
@@ -792,6 +796,8 @@ class Saisie:
             mariage=(parametres.get("mariage") or "").strip(),
             ressources_conjoint=(None if parametres.get("ressources_conjoint") in (None, "")
                                  else _reel(parametres, "ressources_conjoint", 0.0)),
+            revenu_fiscal=(None if parametres.get("revenu_fiscal") in (None, "")
+                           else _reel(parametres, "revenu_fiscal", 0.0)),
             conjoint_invalidite=(parametres.get("conjoint_invalidite") or "").strip(),
             deces=(parametres.get("deces") or "").strip(),
             progressive=(None if parametres.get("progressive") in (None, "")
@@ -924,6 +930,8 @@ class Saisie:
             raise ErreurSaisie(
                 f"Nombre d'enfants attendu entre 0 et {ENFANTS_MAXIMUM}."
             )
+        if self.revenu_fiscal is not None and self.revenu_fiscal < 0:
+            raise ErreurSaisie("Revenu fiscal de référence : un montant annuel positif.")
         self._verifier_naissances()
         self._verifier_conjoint()
         self._verifier_progressive()
@@ -1989,6 +1997,8 @@ class Saisie:
             **({"residence": self.residence} if self.residence else {}),
             **({"mois_en_france": self.mois_en_france}
                if self.mois_en_france is not None else {}),
+            **({"revenu_fiscal": _nombre(self.revenu_fiscal)}
+               if self.revenu_fiscal is not None else {}),
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,

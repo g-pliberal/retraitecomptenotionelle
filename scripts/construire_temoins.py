@@ -1799,6 +1799,11 @@ def _pages() -> dict:
         ("simuler_estimation_recopiee", "/simuler", {
             **BASE, "estimation_legal": "2500", "estimation_automatique": "3100",
         }),
+        # Le revenu fiscal dit, qui remplace la présomption et fixe la tranche
+        # de CSG (action 138, étape 2), en net.
+        ("simuler_revenu_fiscal_dit", "/simuler", {
+            **BASE, "montants": "net", "revenu_fiscal": "40000",
+        }),
         # Le salaire saisi en euros : le formulaire change de libellé et donne
         # l'échelle chiffrée, au lieu du multiple que personne ne connaît.
         ("simuler_revenu_en_euros", "/simuler", {

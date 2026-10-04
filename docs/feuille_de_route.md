@@ -5452,12 +5452,12 @@ OpenFisca-France-Pension, en est un cas particulier, mené à part.
 
 ### 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris — `en cours`
 
-**Reprise, au 4 octobre 2026.** Fait : l'étape 1 et son relevé repris sur
+**Reprise, au 5 octobre 2026.** Fait : l'étape 1 et son relevé repris sur
 les 69 modèles (279 points au registre, 145 écarts) ; l'étape 15, le minimum
 contributif daté — chaque revalorisation depuis 1983, la règle en huit
 versions, la proratisation tous régimes des polypensionnés —, dont les cinq
-points du registre sont `repris` ; de l'étape 2, le 1 % maladie des
-complémentaires (sa note). Reste : les étapes 2 à 14 et 16 à 19, une par
+points du registre sont `repris` ; de l'étape 2, le 1 % maladie et la CSG du
+foyer (leurs notes). Reste : les étapes 2 à 14 et 16 à 19, une par
 session, et les choix de l'étape 13. Commencer par l'étape 16, les assiettes
 et les séries du régime général, que l'API des barèmes de la Cnav tranche
 presque toutes ; puis la suite de 2. Le registre dit, au chantier de chaque
@@ -5595,6 +5595,18 @@ par son chantier (« 138.2 »…) :
    des nets à chaque tour. Les points d'Ines et de devcrafting_retraites sont
    repris. Reste de 2 : le net selon le revenu fiscal du foyer, l'ASPA du
    couple.
+   *Le net du foyer, fait le 5 octobre 2026.* La tranche de CSG suit le
+   revenu fiscal de référence (L. 136-8, LEGIARTI000054336623 ; L. 136-1-2,
+   II 1° ; D. 242-9 ; CGI, art. 158, 5 a), comme l'étape 13 l'a tranché : le
+   champ facultatif `revenu_fiscal`, dans les options de modélisation, ou la
+   présomption `aucun_autre_revenu_que_ses_pensions` — la pension du système
+   1 et les ressources du conjoint, abattues de 10 % —, une part, deux avec
+   un conjoint. La CRDS, la CASA et le 1 % suivent la tranche ; l'allocataire
+   de l'ASPA n'est prélevé de rien ; les cinq autres systèmes gardent le taux
+   du système 1, et l'estimation officielle nette chaque âge à sa tranche.
+   Fiche `csg_des_pensions_selon_le_revenu`. Au salaire moyen, la pension
+   passe du taux plein au taux médian ; au SMIC, elle n'est plus prélevée.
+   Reste de 2 : l'ASPA du couple, puis les non-résidents (L. 131-9).
 3. La page Coût décomposée comme le COR : les retraités projetés par régime
    (le classeur du COR), la décomposition dépendance × couverture × pension
    relative confrontée au COR de juin 2026 et à l'Ageing Report de 2024, la

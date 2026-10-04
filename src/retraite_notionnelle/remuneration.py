@@ -522,11 +522,20 @@ class ProfilRemuneration:
 
 @dataclass(frozen=True)
 class TrancheCsgPension:
-    """Un des quatre cas de l'article L. 136-8, pour situer le lecteur."""
+    """Un des quatre cas de l'article L. 136-8 : son taux de CSG, le seuil qui
+    la borne pour la première part de quotient familial et sa majoration par
+    demi-part, et ce qu'elle prélève en plus de la CSG."""
 
     libelle: str
     taux: float
     revenu_fiscal_maximum: float | None
+    majoration_demi_part: float | None = None
+    #: La tranche s'arrête-t-elle à son seuil compris ?
+    maximum_inclus: bool = True
+    crds: bool = True
+    casa: bool = True
+    #: La cotisation maladie des complémentaires (D. 242-9, 1°).
+    maladie: bool = True
 
 
 @dataclass(frozen=True)
@@ -562,6 +571,11 @@ class PrelevementsPension:
     #: qui en résulte pour la même personne (:class:`~.contexte.Montants`).
     maladie_complementaire: float = 0.0
     regimes_maladie: frozenset[str] = frozenset()
+    #: L'abattement de 10 % des pensions (CGI, art. 158, 5 a) : son taux, son
+    #: minimum par pensionné et son maximum par foyer.
+    abattement_taux: float = 0.0
+    abattement_minimum: float = 0.0
+    abattement_maximum: float = 0.0
 
     @property
     def taux_total(self) -> float:
@@ -579,6 +593,50 @@ class PrelevementsPension:
         """
         reste = 1.0 - self.taux_total
         return net / reste if reste > 0 else net
+
+    def seuil(self, tranche: TrancheCsgPension, parts: float) -> float | None:
+        """Le seuil qui borne ``tranche`` pour un foyer de ``parts`` parts :
+        celui de la première part, majoré pour chaque demi-part de plus."""
+        if tranche.revenu_fiscal_maximum is None:
+            return None
+        demi_parts = round(2.0 * (parts - 1.0))
+        return (tranche.revenu_fiscal_maximum
+                + (tranche.majoration_demi_part or 0.0) * demi_parts)
+
+    def tranche(self, revenu_fiscal: float, parts: float) -> TrancheCsgPension:
+        """La tranche de L. 136-8 où tombe un revenu fiscal de référence."""
+        for tranche in self.bareme_csg:
+            seuil = self.seuil(tranche, parts)
+            if seuil is None or revenu_fiscal < seuil or (
+                    tranche.maximum_inclus and revenu_fiscal == seuil):
+                return tranche
+        return self.bareme_csg[-1]
+
+    def taux_de_la_tranche(self, tranche: TrancheCsgPension) -> float:
+        """La CSG de la tranche, et la CRDS et la CASA qu'elle prélève."""
+        return (tranche.taux + (self.crds if tranche.crds else 0.0)
+                + (self.casa if tranche.casa else 0.0))
+
+    def maladie_de_la_tranche(self, tranche: TrancheCsgPension) -> float:
+        """La cotisation maladie des complémentaires, si la tranche la prélève."""
+        return self.maladie_complementaire if tranche.maladie else 0.0
+
+    def revenu_fiscal_presume(self, pensions: list[float]) -> float:
+        """Le revenu fiscal d'un foyer qui n'a que des pensions, une par
+        pensionné : leur somme, moins l'abattement de 10 % — au moins le
+        minimum par pensionné sans dépasser sa pension, au plus le maximum pour
+        le foyer (CGI, art. 158, 5 a). La présomption
+        ``aucun_autre_revenu_que_ses_pensions``. Son jumeau est
+        ``revenuFiscalPresume``, dans ``moteur/js/remuneration.js``."""
+        total = 0.0
+        abattement = 0.0
+        for pension in pensions:
+            if pension <= 0:
+                continue
+            total += pension
+            abattement += min(pension, max(self.abattement_taux * pension,
+                                           self.abattement_minimum))
+        return total - min(abattement, self.abattement_maximum)
 
 
 def assiette_maladie(regimes: frozenset[str], actuel,
@@ -690,6 +748,12 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
                 (pensions.get("maladie_complementaire") or {}).get("taux", 0.0)),
             regimes_maladie=frozenset(
                 (pensions.get("maladie_complementaire") or {}).get("regimes") or ()),
+            abattement_taux=float(
+                (pensions.get("abattement_pensions") or {}).get("taux", 0.0)),
+            abattement_minimum=float(
+                (pensions.get("abattement_pensions") or {}).get("minimum_par_pensionne", 0.0)),
+            abattement_maximum=float(
+                (pensions.get("abattement_pensions") or {}).get("maximum_par_foyer", 0.0)),
             bareme_csg=tuple(
                 TrancheCsgPension(
                     libelle=tranche["libelle"],
@@ -697,6 +761,13 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
                     revenu_fiscal_maximum=(
                         None if tranche.get("revenu_fiscal_maximum") is None
                         else float(tranche["revenu_fiscal_maximum"])),
+                    majoration_demi_part=(
+                        None if tranche.get("majoration_demi_part") is None
+                        else float(tranche["majoration_demi_part"])),
+                    maximum_inclus=bool(tranche.get("maximum_inclus", True)),
+                    crds=bool(tranche.get("crds", True)),
+                    casa=bool(tranche.get("casa", True)),
+                    maladie=bool(tranche.get("maladie", True)),
                 )
                 for tranche in pensions["bareme_csg"]
             ),

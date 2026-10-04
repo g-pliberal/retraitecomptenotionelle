@@ -329,6 +329,22 @@ listes:
           demande pas, et la réversion n'est alors écrêtée que si elle dépasse
           le plafond avec celles des autres régimes de base. Une ressource
           déclarée prend la place de la présomption
+      aucun_autre_revenu_que_ses_pensions:
+        dit: le revenu fiscal de référence du foyer est fait de ses seules pensions
+        valeur: >-
+          la pension du système 1, et les ressources du conjoint déclaré,
+          abattues de 10 %
+        appliquee_par: >-
+          le net (contexte.py, Montants.du_foyer, et son jumeau JavaScript),
+          quand la saisie ne dit pas le revenu fiscal
+        entrera_a: foyer_et_net
+        raison: >-
+          le taux de CSG d'une pension, et la CASA et la cotisation maladie qui
+          le suivent, dépendent du revenu fiscal de référence du foyer
+          (L. 136-8), que le formulaire ne demande pas d'office ; décidé le
+          4 octobre 2026 par le propriétaire (action 138, étape 13) : la
+          présomption par défaut, que la page dit, et un champ facultatif, le
+          revenu fiscal, qui la remplace
       conjoint_de_l_autre_sexe:
         dit: le conjoint déclaré est de l'autre sexe que l'assuré
         valeur: l'autre sexe

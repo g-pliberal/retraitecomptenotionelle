@@ -828,6 +828,71 @@ def _phrase_statut_ferme(affiliations: Affiliations, code: str,
     )
 
 
+def parts_du_foyer(saisie: Saisie) -> float:
+    """Les parts de quotient familial du foyer : une, deux avec un conjoint
+    déclaré (CGI, art. 194)."""
+    return 2.0 if saisie.conjoint else 1.0
+
+
+def _foyer(saisie: Saisie, pension: float) -> list[float]:
+    """Les pensions du foyer, une par pensionné : la sienne, et les ressources
+    que la saisie prête au conjoint déclaré."""
+    foyer = [pension]
+    if saisie.conjoint and saisie.ressources_conjoint:
+        foyer.append(saisie.ressources_conjoint)
+    return foyer
+
+
+def _pension_saisie_brute(saisie: Saisie, pensions) -> float:
+    """La pension que la personne saisit, annuelle et brute, en euros de
+    l'année de référence. Nette, elle remonte au brut par la tranche où ce
+    brut tombe : la première dont le revenu présumé est bien le sien — la
+    nette baisse d'un cran à chaque seuil, si bien qu'une nette peut avoir
+    deux bruts, et c'est le plus petit. La cotisation maladie, qui dépend de
+    la part complémentaire, n'y entre pas."""
+    annuelle = saisie.pension * MOIS_PAR_AN
+    if not saisie.en_net:
+        return annuelle
+    parts = parts_du_foyer(saisie)
+    for tranche in pensions.bareme_csg:
+        brute = annuelle / (1.0 - pensions.taux_de_la_tranche(tranche))
+        revenu = pensions.revenu_fiscal_presume(_foyer(saisie, brute))
+        if pensions.tranche(revenu, parts) is tranche:
+            return brute
+    return annuelle / (1.0 - pensions.taux_de_la_tranche(pensions.bareme_csg[-1]))
+
+
+def revenu_fiscal_du_foyer(saisie: Saisie, pensions,
+                           pension: float | None) -> tuple[float | None, bool]:
+    """Le revenu fiscal de référence du foyer, et s'il est présumé.
+
+    Le revenu que la saisie dit l'emporte. Sinon, la présomption
+    ``aucun_autre_revenu_que_ses_pensions`` : la pension du système 1 — celle
+    que la personne saisit quand elle saisit sa pension, sinon ``pension``,
+    celle que la simulation lui sert, annuelle, en euros de l'année de
+    référence —, et les ressources du conjoint, abattues de 10 %. ``None``
+    quand il n'y a encore ni l'une ni l'autre."""
+    if saisie.revenu_fiscal is not None:
+        return saisie.revenu_fiscal, False
+    if saisie.saisie_par == "pension":
+        pension = _pension_saisie_brute(saisie, pensions)
+    if pension is None:
+        return None, False
+    return pensions.revenu_fiscal_presume(_foyer(saisie, pension)), True
+
+
+def minimum_vieillesse_servi(actuel, aujourd_hui=None) -> float:
+    """Le minimum vieillesse que le scénario 1 sert : l'ASPA de l'échéance
+    pour qui est déjà parti, celle du départ sinon."""
+    if aujourd_hui is not None:
+        return aujourd_hui.minimum_vieillesse
+    total = 0.0
+    for avantage in actuel.avantages_appliques:
+        if avantage.code == "minimum_vieillesse":
+            total += avantage.montant
+    return total
+
+
 @dataclass(frozen=True)
 class Montants:
     """Le mode net/brut, et ce qu'il fait à chaque montant affiché.
@@ -866,28 +931,58 @@ class Montants:
                 rapport = derniere.droit_en_vigueur.net / derniere.droit_en_vigueur.brut
             if derniere.proposition.brut > 0:
                 rapport_proposition = derniere.proposition.net / derniere.proposition.brut
-        # LE TAUX DE LA PERSONNE : 9,1 %, plus la cotisation maladie de la part
-        # complémentaire de SA pension du scénario 1, telle que la page
-        # l'affiche — au départ, ou aujourd'hui pour qui est déjà parti. Sans
-        # comparaison — le formulaire, la saisie —, il n'y a pas encore de
-        # pension, et le taux est celui d'une pension de base.
-        part = 0.0
+        # LE TAUX DE LA PERSONNE, lu sur SA pension du scénario 1 telle que la
+        # page l'affiche — au départ, ou aujourd'hui pour qui est déjà parti —,
+        # en euros de l'année de référence.
         actuel = getattr(comparaison, "actuel", None)
+        servie = None
+        coefficient = 1.0
         if actuel is not None:
-            servie = getattr(comparaison, "aujourd_hui", None)
-            assiette, total = assiette_maladie(
-                pensions.regimes_maladie, actuel,
-                None if servie is None else servie.actuel)
+            aujourd_hui = getattr(comparaison, "aujourd_hui", None)
+            servie = None if aujourd_hui is None else aujourd_hui.actuel
+            coefficient = (comparaison.coefficient_euros_aujourd_hui if servie is not None
+                           else comparaison.coefficient_euros_constants)
+        return cls.du_foyer(saisie, pensions, actuel, servie, coefficient,
+                            rapport, rapport_proposition)
+
+    @classmethod
+    def du_foyer(cls, saisie: Saisie, pensions, actuel=None, aujourd_hui=None,
+                 coefficient: float = 1.0, rapport: float = 0.0,
+                 rapport_proposition: float = 0.0) -> "Montants":
+        """Le mode, et le taux du foyer (action 138, étape 2) : la CSG, la CRDS
+        et la CASA de SA tranche de L. 136-8, et la cotisation maladie de la
+        part complémentaire de sa pension du scénario 1 — ``actuel`` au départ,
+        ``aujourd_hui`` pour qui est déjà parti, que ``coefficient`` mène en
+        euros de l'année de référence. Un allocataire de l'ASPA est exonéré de
+        tout (L. 136-1-2, II 1° ; D. 242-9, 2°). Sans pension, ni saisie qui en
+        dise une, ni revenu fiscal dit : le taux plein, comme avant toute
+        simulation. Les cinq autres scénarios gardent ce taux : la réforme, par
+        hypothèse, ne change pas les prélèvements de la personne."""
+        part = minimum = 0.0
+        pension = None
+        if actuel is not None:
+            assiette, total = assiette_maladie(pensions.regimes_maladie, actuel, aujourd_hui)
             part = assiette / total if total > 0 else 0.0
-        return cls(net=saisie.en_net,
-                   taux_pension=(pensions.taux_total
-                                 + pensions.maladie_complementaire * part),
+            minimum = minimum_vieillesse_servi(actuel, aujourd_hui)
+            pension = total * coefficient
+        revenu, presume = revenu_fiscal_du_foyer(saisie, pensions, pension)
+        parts = parts_du_foyer(saisie)
+        if minimum > 0:
+            tranche = pensions.bareme_csg[0]
+        elif revenu is None:
+            tranche = pensions.bareme_csg[-1]
+        else:
+            tranche = pensions.tranche(revenu, parts)
+        taux = pensions.taux_de_la_tranche(tranche)
+        maladie = pensions.maladie_de_la_tranche(tranche)
+        return cls(net=saisie.en_net, taux_pension=taux + maladie * part,
                    rapport_net_brut_salaire=rapport,
                    rapport_net_brut_proposition=rapport_proposition,
-                   taux_sans_maladie=pensions.taux_total,
-                   taux_maladie=pensions.maladie_complementaire,
-                   part_maladie=part,
-                   regimes_maladie=pensions.regimes_maladie)
+                   taux_sans_maladie=taux, taux_maladie=maladie, part_maladie=part,
+                   regimes_maladie=pensions.regimes_maladie,
+                   tranche=tranche.libelle, taux_csg=tranche.taux,
+                   revenu_fiscal=revenu, revenu_presume=presume, aspa=minimum > 0,
+                   parts=parts, bareme=pensions, saisie=saisie)
 
     def pension(self, brut: float) -> float:
         """Une pension, une rente, une garantie : tout ce qui se sert après,
@@ -910,6 +1005,26 @@ class Montants:
         rien, 10,1 % pour une complémentaire qui la prélève, 9,1 % sinon."""
         return self.pension_d_assiette(
             brut, brut if regime in self.regimes_maladie else 0.0)
+
+    def net_d_un_depart(self, total: float, assiette: float,
+                        minimum: float = 0.0) -> float:
+        """La nette d'un autre départ du scénario 1 — un âge de l'estimation
+        officielle —, quel que soit le mode, à SA tranche : sous la
+        présomption, son revenu fiscal est fait de sa propre pension.
+        ``total``, ``assiette`` et ``minimum`` sont annuels, en euros de
+        l'année de référence."""
+        bareme = self.bareme
+        if bareme is None:
+            return self.net_d_assiette(total, assiette)
+        if minimum > 0:
+            tranche = bareme.bareme_csg[0]
+        else:
+            revenu = (self.revenu_fiscal if not self.revenu_presume
+                      and self.revenu_fiscal is not None
+                      else bareme.revenu_fiscal_presume(_foyer(self.saisie, total)))
+            tranche = bareme.tranche(revenu, self.parts)
+        return (total * (1.0 - bareme.taux_de_la_tranche(tranche))
+                - bareme.maladie_de_la_tranche(tranche) * assiette)
 
     def pension_servie(self, actuel, aujourd_hui=None) -> float:
         """La pension du scénario 1 — du départ, ou d'aujourd'hui pour qui est
@@ -960,6 +1075,17 @@ class Montants:
     taux_maladie: float = 0.0
     part_maladie: float = 0.0
     regimes_maladie: frozenset[str] = frozenset()
+    #: La tranche de CSG du foyer, son taux, le revenu fiscal qui la fixe et
+    #: s'il est présumé, l'exonération de l'allocataire de l'ASPA, les parts du
+    #: foyer ; le barème et la saisie, pour la tranche d'un autre départ.
+    tranche: str = "taux plein"
+    taux_csg: float = 0.0
+    revenu_fiscal: float | None = None
+    revenu_presume: bool = False
+    aspa: bool = False
+    parts: float = 1.0
+    bareme: object = field(default=None, compare=False, repr=False)
+    saisie: object = field(default=None, compare=False, repr=False)
 
     @property
     def mot(self) -> str:

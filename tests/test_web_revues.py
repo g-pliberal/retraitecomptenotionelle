@@ -694,7 +694,7 @@ def test_les_resultats_s_ouvrent_sur_le_resume_la_cle_puis_les_montants():
     # deux fois plus longue.
     carte = " ".join(visible[premier:reperes].split())
     assert "n'est pas une prévision" in carte
-    assert "au <strong>taux plein</strong>" in carte
+    assert "le revenu fiscal de référence de votre foyer" in carte
     paragraphe = cle[:cle.index("</p>")]
     assert len(re.sub(r"<[^>]+>", " ", paragraphe).split()) < 90, (
         "la clé de lecture s'allonge de nouveau")
@@ -1846,14 +1846,15 @@ def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres(contexte):
     # 9,1 %, et 1 % de sa part complémentaire (action 138, étape 2).
     saisie = Saisie.depuis_requete({**commun, "salaire": "3158", "montants": "brut"})
     taux = Montants.depuis(saisie, contexte.base, contexte.simuler(saisie)).taux_pension
-    assert 0.091 < taux < 0.101
+    assert 0.0 < taux <= 0.101
     assert en_net == pytest.approx(en_brut * (1 - taux), rel=2e-3)
 
 
 def test_la_complementaire_paie_sa_cotisation_maladie_sur_la_page(contexte):
-    """En net, l'étage complémentaire du système 1 paie 10,1 %, la base 9,1 % :
-    la composition sous le montant le montre, et la note du mode dit le taux de
-    la personne et l'hypothèse des autres systèmes (action 138, étape 2). Un
+    """En net, l'étage complémentaire du système 1 paie un point de plus que la
+    base, celui de la cotisation maladie : la composition sous le montant le
+    montre, et la note du mode dit le taux de la personne, le revenu fiscal
+    présumé et l'hypothèse des autres systèmes (action 138, étape 2). Un
     revenu en multiple du salaire moyen ne dépend pas du mode : la carrière est
     la même des deux côtés."""
     commun = {"naissance": "1985-03-01", "sexe": "F",
@@ -1870,16 +1871,19 @@ def test_la_complementaire_paie_sa_cotisation_maladie_sur_la_page(contexte):
     en_brut = etages(rendre("/simuler", {**commun, "montants": "brut"})[1])
     corps = rendre("/simuler", {**commun, "montants": "net"})[1]
     en_net = etages(corps)
-    base, complementaire = "retraite de base", "retraite complémentaire"
-    assert en_net[base] == pytest.approx(en_brut[base] * (1 - 0.091), abs=2.5)
-    assert en_net[complementaire] == pytest.approx(
-        en_brut[complementaire] * (1 - 0.101), abs=2.5)
     saisie = Saisie.depuis_requete({**commun, "montants": "net"})
-    taux = Montants.depuis(saisie, contexte.base, contexte.simuler(saisie)).taux_pension
+    montants = Montants.depuis(saisie, contexte.base, contexte.simuler(saisie))
+    taux, base_seule = montants.taux_pension, montants.taux_sans_maladie
+    assert montants.taux_maladie == pytest.approx(0.01)
+    base, complementaire = "retraite de base", "retraite complémentaire"
+    assert en_net[base] == pytest.approx(en_brut[base] * (1 - base_seule), abs=2.5)
+    assert en_net[complementaire] == pytest.approx(
+        en_brut[complementaire] * (1 - base_seule - 0.01), abs=2.5)
     note = re.search(r"La pension est nette de ([\d,]+)", html.unescape(corps))
     assert note, "la note du mode a disparu"
     assert note.group(1) == f"{taux * 100:.1f}".replace(".", ",")
-    assert "cotisation maladie de 1" in corps
+    assert "1 % de cotisation maladie" in corps
+    assert "présumé fait de vos seules pensions" in corps
     assert "ne change pas vos prélèvements" in corps
 
 

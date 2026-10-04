@@ -545,6 +545,9 @@ export const DEFAUTS = Object.freeze({
   pensions_etrangeres: Object.freeze([]),
   residence: "",
   mois_en_france: null,
+  // Le revenu fiscal de référence du foyer, s'il le dit. Voir `revenu_fiscal`
+  // dans `saisie.py`.
+  revenu_fiscal: null,
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -657,6 +660,8 @@ export class Saisie {
       mariage: (parametres.mariage || "").trim(),
       ressources_conjoint: [undefined, null, ""].includes(parametres.ressources_conjoint)
         ? null : reel(parametres, "ressources_conjoint", 0.0),
+      revenu_fiscal: [undefined, null, ""].includes(parametres.revenu_fiscal)
+        ? null : reel(parametres, "revenu_fiscal", 0.0),
       conjoint_invalidite: (parametres.conjoint_invalidite || "").trim(),
       deces: (parametres.deces || "").trim(),
       progressive: [undefined, null, ""].includes(parametres.progressive) ? null
@@ -790,6 +795,9 @@ export class Saisie {
       throw new ErreurSaisie(
         `Nombre d'enfants attendu entre 0 et ${ENFANTS_MAXIMUM}.`,
       );
+    }
+    if (this.revenu_fiscal !== null && this.revenu_fiscal < 0) {
+      throw new ErreurSaisie("Revenu fiscal de référence : un montant annuel positif.");
     }
     this.verifierNaissances();
     this.verifierConjoint();
@@ -2040,6 +2048,7 @@ export class Saisie {
       ].filter(([, valeur]) => valeur !== null)),
       ...(this.residence ? { residence: this.residence } : {}),
       ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),
+      ...(this.revenu_fiscal !== null ? { revenu_fiscal: nombreBrut(this.revenu_fiscal) } : {}),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,
