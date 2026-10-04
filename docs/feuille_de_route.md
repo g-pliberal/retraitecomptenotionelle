@@ -514,6 +514,245 @@ ce que la page mesurera plutôt qu'elle ne l'affirmera. Et si le dépliant de la
 page Pourquoi changer sur le rendement des générations y renvoie, ou s'y
 fond.
 
+### 144. Les propositions des candidats à la présidentielle, au simulateur et à la page Coût : leurs mots seuls, montrées par défaut, masquables — `à faire`
+
+**Demande**, le 4 octobre 2026 : « J'aimerais que l'on puisse voir les
+scénarios des candidats à la présidentielle dans la page des coûts et dans le
+simulateur. Il faut que ce soit une option désactivable mais activée par
+défaut. Il faut s'en tenir à leurs propositions, il ne faut rien inventer.
+C'est quelque chose qui sera amené à beaucoup changer pendant la campagne
+électorale. Il faut prévoir une architecture légère et flexible pour mettre
+ça en place. Je veux seulement documenter pour l'instant mais ne pas encore
+ajouter cette fonctionnalité. » Elle naît `à faire` : rien n'en est
+construit, et elle attend que le propriétaire la lance.
+
+**Ce sur quoi elle s'appuie, déjà là.** La fiche
+`fin_de_la_suspension_2028` le dit : l'élection « peut abroger, prolonger ou
+refaire le calendrier ». La proposition d'un candidat est un autre droit,
+posé sur le droit réel : un univers (`docs/architecture.md`, § 4.8), comme
+les scénarios 2 à 6, dont la pile se résout à la fabrication du paquet, que
+le site lit sans rien résoudre (§ 13.5). Le contrôle des couches refuse déjà
+tout passage cité qu'il ne retrouve pas mot pour mot dans le README
+(`controler`, dans `noyau/univers.py`) : « une déduction n'est pas une
+lecture » vaut pour un programme comme pour la proposition. Le registre des
+sources sait garder la copie d'un document hors du dépôt, son empreinte et
+ce que sa licence permet (`miroir`, `sha256`, `rediffusion`). Les réglages
+s'écrivent une fois, dans `champsModelisation`, pour les options du
+simulateur et pour le bloc de réglages de la page Coût. Et le pilote par
+univers est réservé, « codé plus tard sans rien refondre » (§ 13.5).
+
+**Ce qui manque.** Le moteur ne calcule un univers que s'il ajoute le compte
+notionnel, et le droit réel que par l'échéancier, sans couche
+(`scenarios/univers.py`) : un droit réel modifié, ce qu'est presque toute
+proposition de campagne, n'a pas de chemin. La page Coût connaît six
+systèmes en liste fermée (`SCENARIOS`, dans `cout.py` et `cout.js`), la
+comparaison du simulateur ses cinq univers notionnels (`CHAMPS_NOTIONNELS`,
+dans `simulateur.js`). Et rien ne masque un bloc sur deux pages à la fois :
+un réglage change le modèle, un regard ne vaut que pour sa page
+(`VUES_DE_PAGE`).
+
+**Les règles, qui font « ne rien inventer ».**
+
+1. *Une mesure est une citation.* Mot pour mot, entre guillemets français,
+   d'un texte du candidat : son programme, son site, un discours, un
+   entretien où il est cité entre guillemets, une publication de son compte.
+   Elle porte sa date de publication, sa date de lecture, son adresse et une
+   copie datée. Une paraphrase de presse, un propos rapporté sans
+   guillemets, le chiffrage d'un tiers ne sont jamais une source ; le
+   chiffrage d'un tiers peut servir de contrôle, comme un autre modèle
+   (§ 3.4).
+2. *Chaque nombre du calcul se lit dans la citation.* L'âge, la durée, le
+   montant, la date qu'un levier emploie figurent dans le passage cité —
+   hors la date que fournirait la convention de calendrier, si elle est
+   admise —, et un test le vérifie, comme `controler` vérifie les motifs
+   des couches.
+3. *Ce que le candidat ne dit pas ne se complète pas.* La mesure reste
+   `non_chiffree`, avec ce qui manque — un montant sans dire s'il est brut
+   ou net, un âge sans dire pour quelles générations —, et le site la
+   montre citée, à côté des chiffres. Seule exception possible, que le
+   propriétaire tranche : une convention de calendrier, la même pour tous.
+4. *Rien d'amputé non plus.* Un chiffre qui ne compte qu'une partie d'une
+   proposition le dit (« trois mesures sur cinq »). Le solde d'un candidat
+   ne paraît que si ses mesures de financement sont chiffrées : sinon la
+   page montre la dépense, et dit pourquoi le solde manque. Une dépense sans
+   les recettes annoncées trahirait la proposition autant qu'un chiffre
+   inventé.
+5. *Le même traitement pour tous.* Un seul gabarit, l'ordre alphabétique des
+   noms, aucune couleur qui classe ; ni commentaire, ni note, ni adjectif :
+   le bloc ne dit que ce que le candidat a dit et ce que le modèle a
+   calculé. Chaque candidat se compare au scénario 1, l'étalon, jamais à la
+   proposition du dépôt, et son bloc reste à part des six scénarios. Le
+   coût qu'un candidat annonce lui-même se montre, cité, à côté de celui du
+   modèle.
+6. *Rien ne se perd.* Une mesure qui change reçoit une version datée et
+   sourcée ; une mesure abandonnée, une version qui le dit ; un candidat qui
+   se retire, un statut daté. Aucun fichier ne s'efface : la campagne reste
+   lisible après coup.
+7. *Le scénario 1 n'en reçoit rien.* Une proposition n'entre au droit réel
+   qu'une fois votée et publiée, par la veille (`docs/veille_droit.md`),
+   jamais par ce bloc.
+
+**L'architecture prévue : des données, et presque pas de code.**
+
+1. *Un fichier par candidat*, `data/reference/candidats/<identifiant>.yaml`,
+   et un fichier commun dans le même dossier, `conventions.yaml` : le
+   critère d'inclusion, la convention de calendrier si elle est admise, et
+   un interrupteur `actif`. Ajouter, corriger ou retirer un candidat ou une
+   mesure ne touche que ces fichiers : ni code, ni fiche de règle, ni
+   univers ni couche à écrire à la main. Les sources s'y écrivent avec les
+   champs du registre, pour que `source_locale.py` sache en garder la copie
+   dans `data/brut/`, sans charger `data/sources.yaml` du va-et-vient d'une
+   campagne. Le format, à fixer à l'étape 1 :
+
+   ```yaml
+   schema_version: 1
+   id: <identifiant>
+   nom: <prénom et nom>
+   etiquette: <le parti ou le mouvement, tel que le candidat le dit>
+   statuts:                  # déclaré, investi, retiré : chacun daté, sourcé
+   - {etat: declare, du: <date>, source: <id>}
+   sources:
+   - id: <id>
+     type: programme         # ou site, discours, entretien, publication
+     url: <adresse>
+     publie_le: <date>
+     lu_le: <date>
+     miroir: <copie datée : archive du web, ou release du dépôt>
+     sha256: <empreinte de la copie lue>
+     rediffusion: {statut: a_lire}   # ce que sa licence permet
+   mesures:
+   - id: <id>
+     cote: depense           # ou financement
+     versions:
+     - du: <date de la déclaration>
+       source: <id>
+       citation: « <le passage, mot pour mot> »
+       levier: <un levier du catalogue>
+       valeurs: {<paramètre>: <nombre lu dans la citation>}
+       # ou, à la place du levier et des valeurs :
+       # non_chiffree: <ce qui manque, ou « aucun levier ne la calcule »>
+   cout_annonce: {citation: « … », source: <id>}   # s'il en publie un
+   ```
+
+2. *L'univers se déduit du fichier.* Le chargeur des univers lit chaque
+   candidat comme un univers `candidat_<identifiant>` — le droit réel, puis
+   une couche faite de la dernière version de chaque mesure chiffrée — :
+   le contrôle, le paquet et les moteurs voient un univers ordinaire. Au
+   contraire de la proposition, ce que le candidat ne touche pas garde le
+   droit réel, et le test des fiches sans décision ne s'y applique pas : qui
+   ne dit rien de la réversion garde la réversion en vigueur.
+3. *Un catalogue fermé de leviers*, dans le code : ce qu'une mesure sait
+   changer. Deux sortes.
+   - *Le levier de table* réécrit une table que le paquet porte déjà
+     (`ages_ouverture`, `durees_requises`, `minimum_contributif`…), à la
+     fabrication, en Python seul : le moteur JavaScript lit la table
+     substituée comme l'originale, sans connaître le levier. C'est la sorte
+     à préférer : elle ne se paie qu'une fois.
+   - *Le levier de règle* écrit une règle qu'aucune table ne porte : dans
+     les deux moteurs, avec sa fiche, comme tout changement du modèle.
+
+   Un levier ne s'écrit que quand une mesure sourcée le demande, aucun
+   d'avance. En attendant, la mesure est `non_chiffree` (« le modèle ne sait
+   pas encore la calculer »), ce qui n'est pas une erreur ; un nom de levier
+   inconnu en est une, que le contrôle refuse, comme `scenarios/univers.py`
+   refuse ce qu'il ne sait pas faire. À regarder à l'étape 2 : les tables
+   vont par génération, et le moteur coupe les dates d'effet par des
+   constantes (`SUSPENSION_2026_EFFET`, `REFORME_2023_EFFET`, dans
+   `droit/ouvrir.py`) ; une mesure datée à l'effet de la pension demandera
+   peut-être d'en faire une table datée, changement du modèle, dans les deux
+   moteurs.
+4. *Le paquet* porte les candidats sous une clé à eux, résolus comme les
+   univers aujourd'hui, avec la date du relevé, que chaque bloc affiche ;
+   `actif: false` l'en retire en entier. C'est l'interrupteur du
+   propriétaire, distinct de celui du lecteur : pour la fin de la campagne,
+   ou pour retirer le bloc sur l'heure.
+5. *L'option du lecteur* : un paramètre, `candidats`, que l'adresse ne porte
+   pas quand les candidats se montrent — le défaut n'a pas besoin de
+   voyager — et qui vaut `non` quand le lecteur les masque. Une case, écrite
+   une fois dans `champsModelisation`, paraît donc dans les options du
+   simulateur et dans les réglages de la page Coût. C'est une troisième
+   sorte, entre le réglage et le regard : elle voyage de page en page comme
+   un réglage, mais ne change aucun chiffre, comme un regard, et n'allume
+   donc pas l'encadré « Ces chiffres ne sont pas ceux des réglages par
+   défaut ». Les réglages qui valent pour tout le modèle — la projection,
+   l'emploi, les euros constants — valent pour les candidats ; ceux du
+   compte notionnel ne les touchent pas. À la surface publique (annexe C.9),
+   `entree` gagne `candidats`, au défaut « oui » : une ancienne adresse rend
+   les mêmes six résultats, plus le bloc ; `sortie` grandit par la règle
+   additive, et `docs/integration-partiliberalfrancais.md` le dit à l'hôte
+   avant la mise en ligne, puisque ses pages changeront sans qu'il ait rien
+   fait.
+6. *Au simulateur*, sous les six scénarios, un bloc à part : pour chaque
+   candidat, la pension de la même carrière sous son univers, l'âge de
+   départ, l'écart au scénario 1, puis ses mesures, chiffrées ou non,
+   citées, datées, sourcées. Le budget de mots du formulaire vierge
+   (`test_le_simulateur_tient_en_peu_de_mots`) dira si la case y tient.
+7. *À la page Coût*, une section à elle, et non des courbes de plus sur le
+   bilan : la dépense de chaque candidat, comparée au scénario 1, et son
+   solde quand son financement est chiffré, sur le même axe pour tous,
+   comme le bilan. Le pilote par univers la calcule. Chaque candidat coûte
+   un passage de plus des cas types sur les générations : `budget_calcul.py`
+   le mesure à l'étape 4, la section ne se calcule que si elle se montre,
+   et, s'il le faut, ses agrégats aux réglages par défaut se fabriquent
+   d'avance, le navigateur ne recalculant que sous d'autres réglages.
+8. *Les témoins* : un fichier à eux, `tests/temoins/candidats.json`, et les
+   témoins de pages faits sous `candidats=non`. Une semaine de campagne ne
+   récrit alors qu'un fichier, et non chaque témoin de page.
+9. *Les contrôles* : la forme de chaque fichier ; chaque citation retrouvée
+   dans la copie de sa source, gardée dans `data/brut/` sous son empreinte,
+   jamais versionnée si sa licence l'interdit ; chaque nombre d'un levier
+   dans sa citation ; chaque levier connu ; aucun chiffre sans la liste de
+   ses mesures ; `candidats=non` laisse le reste de la page identique au
+   caractère près ; un seul gabarit pour tous.
+10. *La routine de campagne* : `scripts/candidats.py`, à écrire, liste les
+    candidats, leurs mesures par état et les sources que personne n'a
+    relues depuis trop longtemps (`--perimees`). Une mesure nouvelle se
+    saisit ainsi : lire la source, en garder la copie, écrire la version,
+    puis `candidats.py --verifier`, `regenerer.py`, la suite, `pousser.sh` —
+    sans code, sauf un levier qui manque. Après l'élection, `actif: false`,
+    et les fichiers restent.
+
+**Ce qui est à faire**, dans l'ordre, chaque étape valant seule :
+
+1. Le format, le chargeur, les contrôles et `candidats.py`, sans rien
+   afficher ; puis les premiers candidats, saisis à leurs sources, une fois
+   le critère d'inclusion tranché. Aucun résultat ne bouge.
+2. Le moteur : les leviers que les mesures saisies demandent, l'échéancier
+   sous l'univers d'un candidat dans les deux moteurs, les témoins des
+   candidats, la mesure du budget de calcul.
+3. Le simulateur : le bloc, l'option `candidats`, la surface publique,
+   l'avis à l'hôte, les témoins de pages sous `candidats=non`.
+4. La page Coût : le pilote par univers, la section, la règle du solde, le
+   budget.
+5. La version de l'architecture (§ 4.8, § 8, annexe C.9), et ce que vaut le
+   chiffre d'un candidat, dans `limites.md`.
+
+**Ce que le propriétaire tranche**, avant l'étape 1 :
+
+1. *Qui figure.* Un critère objectif, le même pour tous et écrit dans
+   `conventions.yaml` : une candidature déclarée et sourcée, puis la liste
+   officielle du Conseil constitutionnel quand elle paraît. Et si un
+   candidat sans proposition sur les retraites figure quand même, sous la
+   mention « aucune proposition relevée », datée.
+2. *Le calendrier qu'un candidat ne donne pas.* Strict, ce que dit la
+   demande : une mesure sans date ne se chiffre pas. Ou une convention, une
+   seule pour tous, montrée à côté de chaque chiffre comme une hypothèse du
+   site et non du candidat. Recommandé : strict d'abord, et la convention
+   seulement si trop peu de mesures se chiffrent, pour le seul calendrier,
+   jamais pour une valeur.
+3. *Le chiffrage partiel.* Un candidat se chiffre sur ses mesures chiffrées,
+   leur compte affiché, ce qui est recommandé ; ou ne se chiffre que si
+   toutes le sont.
+4. *Les corrections.* Par où l'équipe d'un candidat signale une erreur, et
+   dans quel délai elle est reprise.
+5. *Le droit d'une publication en campagne*, à faire relire par un juriste
+   avant la mise en ligne : le droit de citation (L. 122-5 du code de la
+   propriété intellectuelle), le référé contre la diffusion en ligne
+   d'allégations inexactes pendant les trois mois qui précèdent un scrutin
+   général (L. 163-2 du code électoral), et ce qu'implique, en campagne,
+   d'être publié sur le site d'un parti. Un repère, pas un avis juridique :
+   articles cités de mémoire, à lire.
+
 ---
 
 ## Les actions en cours
