@@ -5929,6 +5929,22 @@ structure de ses opérateurs, la forme de ses lignes, et des comptes.
   versement unique de l'Ircantec, que le modèle ne sert pas, a sa limite à
   écrire avec la tâche qui le traitera.
 
+**La naissance par le numéro de sécurité sociale, le 4 octobre 2026.** Le
+propriétaire l'a relevé le même jour : « il y a la date de naissance dans le
+numéro de sécurité sociale en partie ». Les deux lectures jumelles en tirent
+désormais l'année et le mois (`mois_de_naissance`), le siècle étant le dernier
+qui ne place pas la naissance après la première année travaillée ; un mois
+hors de 01 à 12 ne se lit pas, et le numéro sort de la ligne avant toute
+lecture, si bien qu'aucun de ses chiffres ne ressort. Le site remplit le
+calendrier au jour que présume `jour_de_naissance` et le dit, pour qu'on le
+corrige ; `estimation_officielle.py` garde la date recopiée, dont le jour
+compte, mais la confronte au mois du numéro. Vérifié dans le navigateur, sur
+le relevé fictif déposé, et sur le relevé réel, sans en rien imprimer : mois
+trouvé, siècle plausible, jumeaux identiques. Chemin faisant, le tableau des
+années collé sans le résumé qui le précède perdait sa première année, que
+plus rien ne rattachait à une base : une ligne de complémentaire qui précède
+toute base prend la première que le document nomme.
+
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
 **Reprise, au 4 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à

@@ -156,7 +156,8 @@ Pour valider un trimestre, il faut avoir perçu un certain revenu. En 2026, il f
 #: seule l'Agirc-Arrco écrit à part y suit une ligne commune aux deux ; des
 #: années y dépassent le plafond de la Sécurité sociale ; un contrat de la
 #: fonction publique y est déclaré à l'Assurance retraite et à l'Ircantec ; et
-#: rien n'y dit la date de naissance.
+#: la date de naissance n'y est qu'à moitié, dans le numéro de sécurité
+#: sociale — inventé lui aussi, et impossible : un rang et une commune à zéro.
 RELEVE_2026 = """
 Relevé de carrière LEMOINE Camille
 Vos droits par régime
@@ -165,7 +166,7 @@ Ircantec Total 48 points
 Agirc-Arrco Total 704,91 points
 Edité le 15/09/2026 1 / 3
 Relevé de carrière LEMOINE Camille
-Numéro de sécurité sociale 1 70 13 99 000 000
+Numéro de sécurité sociale 2 98 08 99 000 000
 Détail par année
 Année Durée Durée par régime Points par régime
 tous régimes
@@ -188,7 +189,7 @@ L’Assurance retraite 3 trim.
 (A) Le revenu de l’année ne valide aucun trimestre.
 Edité le 15/09/2026 2 / 3
 Relevé de carrière LEMOINE Camille
-Détail de votre carrière 1 70 13 99 000 000
+Détail de votre carrière 2 98 08 99 000 000
 Employeur/activité Date début Date fin Revenus* Régime(s)
 LIBRAIRIE DES QUAIS
 02/07/2018 28/07/2018 655 € L’Assurance retraite, Agirc-Arrco
@@ -217,9 +218,24 @@ ATELIERS DU PORT
 Edité le 15/09/2026 3 / 3
 """
 
+#: Le seul tableau des années du relevé de 2026, collé sans le résumé qui le
+#: précède : chaque année s'y ouvre sur la ligne de sa complémentaire, et la
+#: base n'est nommée qu'à la sous-ligne suivante.
+TABLEAU_DES_ANNEES = """
+Relevé de carrière
+Numéro de sécurité sociale 1 97 03 971 00 000 12
+Détail par année
+Année Durée Durée par régime Points par régime
+Agirc-Arrco 2018 0 trim. 2,90 pts
+L’Assurance retraite 0 trim. (A)
+Ircantec 2019 1 trim. 7 pts
+L’Assurance retraite 1 trim.
+"""
+
 RELEVES = {
     "estimation": ESTIMATION,
     "releve_2026": RELEVE_2026,
+    "tableau_des_annees": TABLEAU_DES_ANNEES,
     "regime_general": REGIME_GENERAL,
     "tous_regimes": TOUS_REGIMES,
     "ancienne": ANCIENNE,
@@ -352,8 +368,38 @@ def test_le_releve_de_2026_se_lit_en_entier():
     }
     assert lecture.ignorees == ("07/09/2020 27/11/2020 L’Assurance retraite",)
     assert lecture.regimes == ("regime_general", "ircantec", "arrco")
-    # Rien n'y dit la date de naissance, et rien ne doit en tenir lieu.
+    # La date entière n'y est pas : le numéro de sécurité sociale n'en dit
+    # que le mois.
     assert lecture.naissance is None
+    assert lecture.mois_de_naissance == "1998-08"
+
+
+@pytest.mark.parametrize(("numero", "premiere", "attendu"), [
+    ("1 05 11 99 000 000", 2023, "2005-11"),
+    ("2 62 05 99 000 000 41", 1981, "1962-05"),
+    ("1 62 05 2A 000 000", 1981, "1962-05"),
+    ("1 62 05 971 00 000", 1981, "1962-05"),
+    ("2 62 20 99 000 000", 1981, None),
+])
+def test_le_numero_de_securite_sociale_donne_le_mois_de_naissance(numero, premiere,
+                                                                  attendu):
+    """Le relevé d'info-retraite ne porte pas la date de naissance en clair,
+    mais son numéro de sécurité sociale en porte l'année, sans le siècle, et
+    le mois. Le siècle se lit dans la carrière : l'année de naissance est la
+    dernière qui finit par ces deux chiffres sans dépasser la première année
+    travaillée. Un mois hors de 01 à 12 ne se lit pas. Et le numéro ne
+    ressort nulle part : ni dans la saisie, ni dans une ligne ignorée, ni dans
+    une note."""
+    lecture = lire_releve(["Relevé de carrière", f"Numéro de sécurité sociale {numero}",
+                           "Régime général", f"{premiere} EMPLOI SAISONNIER 3 200 2"])
+    assert lecture.naissance is None
+    assert lecture.mois_de_naissance == attendu
+    assert [ligne.annee for ligne in lecture.lignes] == [premiere]
+    sorties = [*lecture.parametres().values(), *lecture.ignorees, *lecture.notes,
+               *(ligne.source for ligne in lecture.lignes)]
+    assert not any(numero[2:8] in sortie for sortie in sorties)
+    # La date de naissance écrite en clair l'emporte, et donne son mois.
+    assert _lire("regime_general").mois_de_naissance == "1962-05"
 
 
 def test_une_paie_vue_par_la_base_et_par_la_complementaire_ne_compte_qu_une_fois():
@@ -382,6 +428,20 @@ def test_une_periode_que_seule_la_complementaire_ecrit_compte_sans_base_a_part()
     lues = {ligne.annee: ligne for ligne in _lire("releve_2026").lignes}
     assert round(lues[2020].revenu) == 1_165 + 845
     assert lues[2020].trimestres == 1
+
+
+def test_la_premiere_annee_du_tableau_ne_se_perd_pas_sans_le_resume():
+    """Lu dans l'ordre de la page, le tableau des années nomme la complémentaire
+    d'une année avant sa base. Sans le résumé qui le précède, rien n'avait
+    encore nommé de base à la première année, et sa ligne ressortait parmi
+    celles qu'on ne comprend pas : elle prend la première base que le document
+    nomme."""
+    lecture = _lire("tableau_des_annees")
+    assert [(ligne.annee, ligne.trimestres, ligne.statut) for ligne in lecture.lignes] == [
+        (2018, 0, "salarie_prive_non_cadre"), (2019, 1, "contractuel_public")]
+    assert lecture.ignorees == ()
+    # Son numéro, inventé, est celui d'un assuré né outre-mer, clé comprise.
+    assert lecture.mois_de_naissance == "1997-03"
 
 
 def test_l_ircantec_avec_la_base_dit_un_contractuel_public():
@@ -533,4 +593,5 @@ def test_le_portage_javascript_lit_les_memes_releves():
         attendu["regimes"] = list(lecture.regimes)
         attendu["notes"] = list(lecture.notes)
         attendu["naissance"] = lecture.naissance
+        attendu["mois_de_naissance"] = lecture.mois_de_naissance
         assert javascript == attendu, nom

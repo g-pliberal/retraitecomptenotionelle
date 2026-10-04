@@ -482,12 +482,21 @@ class Confrontation:
 
     def _naissance(self) -> str:
         lue, recopiee = self.lecture.naissance, self.estimation.naissance
+        # Le relevé d'info-retraite ne porte que le mois de naissance, par le
+        # numéro de sécurité sociale : il ne remplace pas la date recopiée, dont
+        # le jour compte, mais il la contrôle.
+        mois = self.lecture.mois_de_naissance
         if lue and recopiee and lue != recopiee.isoformat():
             raise Refus(f"la naissance du relevé ({lue}) n'est pas celle de "
                         f"l'estimation ({recopiee.isoformat()}).")
+        if mois and recopiee and recopiee.isoformat()[:7] != mois:
+            raise Refus(f"le relevé dit une naissance en {mois}, l'estimation le "
+                        f"{recopiee.isoformat()}.")
         if not lue and not recopiee:
-            raise Refus("le relevé ne porte pas la date de naissance : la recopier "
-                        "dans assure.naissance.")
+            raise Refus("le relevé ne porte pas la date de naissance"
+                        + (f" — son numéro de sécurité sociale n'en dit que le mois, "
+                           f"{mois}" if mois else "")
+                        + " : la recopier dans assure.naissance.")
         return lue or recopiee.isoformat()
 
     def _releve_corrige(self) -> str:

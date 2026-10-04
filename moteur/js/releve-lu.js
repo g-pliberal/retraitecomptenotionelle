@@ -255,6 +255,20 @@ const DATE = /(?<!\d)(\d{1,2})[/.-](\d{1,2})[/.-]((?:1[89]|20)\d{2})(?!\d)/g;
  */
 export const NAISSANCE = ["date de naissance", "ne le", "nee le", "ne e le"];
 
+/**
+ * Le numéro de sécurité sociale, tel que le relevé d'info-retraite (2026)
+ * l'imprime en tête de ses pages : un chiffre, les deux derniers chiffres de
+ * l'année de naissance, le mois, le département — trois chiffres outre-mer — et
+ * la commune, le rang, la clé parfois derrière. Il ne donne de la naissance que
+ * l'année sans son siècle et le mois ; un mois hors de 01 à 12 ne se lit pas.
+ */
+const SEPARATEUR = "[    ]";
+export const NIR = new RegExp(
+  `(?<![\\dA-Za-z])[1-8]${SEPARATEUR}(\\d\\d)${SEPARATEUR}(\\d\\d)${SEPARATEUR}`
+  + `(?:(?:\\d\\d|2[AB])${SEPARATEUR}\\d{3}|\\d{3}${SEPARATEUR}\\d\\d)${SEPARATEUR}\\d{3}`
+  + `(?:${SEPARATEUR}\\d\\d)?(?!\\d)`,
+);
+
 /** La date de naissance qu'une ligne d'en-tête annonce, au format ISO. */
 function naissanceDe(ligne, plat) {
   if (!NAISSANCE.some((marqueur) => plat.includes(marqueur))) return null;
@@ -469,6 +483,9 @@ export function lireReleve(lignes, anneeMaximale = null) {
   let vues = false;
   let precises = false;
   let naissance = null;
+  // L'année sur deux chiffres et le mois que porte le numéro de sécurité
+  // sociale, le premier lu.
+  let nir = null;
 
   // Le plafond des années lues : celui que l'appelant donne, resserré par la
   // date d'édition du document quand il la porte. Ce qui est postérieur est une
@@ -481,6 +498,7 @@ export function lireReleve(lignes, anneeMaximale = null) {
   if (!MARQUEURS.some((marqueur) => platEntier.includes(marqueur))) {
     return {
       lignes: [], interruptions: [], ignorees: [], regimes: [], naissance: null,
+      moisDeNaissance: null,
       notes: [
         "Ce document ne ressemble pas à un relevé de carrière : ni son titre, "
         + "ni la colonne des trimestres qu'une caisse imprime toujours ne s'y "
@@ -490,9 +508,31 @@ export function lireReleve(lignes, anneeMaximale = null) {
     };
   }
 
+  // La première base que le document nomme, pour la ligne d'une caisse
+  // complémentaire qui la précède : le tableau des années d'info-retraite (2026)
+  // ouvre chaque année sur la ligne de sa complémentaire, et ne nomme la base
+  // qu'à la sous-ligne suivante. Sans le résumé qui le précède — collé seul, par
+  // exemple —, sa première année se perdait.
+  const premiereBase = lignes.map((l) => regimeDe(sansAccent(l)))
+    .find((r) => r !== null && r.genre !== "indice") ?? null;
+
   for (const brute of lignes) {
-    const ligne = brute.trim();
+    let ligne = brute.trim();
     if (!ligne) continue;
+    const numero = NIR.exec(ligne);
+    if (numero !== null) {
+      // LE NUMÉRO DE SÉCURITÉ SOCIALE DIT LE MOIS DE NAISSANCE, que le relevé
+      // d'info-retraite (2026) ne porte pas en clair. On n'en garde que cela :
+      // le numéro sort de la ligne avant toute lecture, et ses chiffres ne
+      // deviennent ni des trimestres ni une ligne montrée au lecteur.
+      if (nir === null && Number(numero[2]) >= 1 && Number(numero[2]) <= 12) {
+        nir = [Number(numero[1]), Number(numero[2])];
+      }
+      ligne = `${ligne.slice(0, numero.index).trimEnd()} `
+        + `${ligne.slice(numero.index + numero[0].length).trimStart()}`;
+      ligne = ligne.trim();
+      if (!ligne) continue;
+    }
     const plat = sansAccent(ligne);
     const entete = naissanceDe(ligne, plat);
     if (entete !== null) {
@@ -549,7 +589,8 @@ export function lireReleve(lignes, anneeMaximale = null) {
     const gouverne = regime !== null ? regime : section;
     const indiceSeul = gouverne !== null && gouverne.genre === "indice";
     if (indiceSeul && gouverne.code === "agirc") cadres.add(annee);
-    if (courant === null) {
+    const base = courant !== null ? courant : (indiceSeul ? premiereBase : null);
+    if (base === null) {
       if (nombres.length) ignorees.push(ligne);
       continue;
     }
@@ -557,10 +598,10 @@ export function lireReleve(lignes, anneeMaximale = null) {
     // ligne qui a ouvert son bloc. Le statut qu'elle donne à l'année est celui
     // du régime de base, que précise une complémentaire nommée avec lui.
     const regimesDeLaLigne = regime !== null ? nommes : nommesDeSection;
-    let statut = courant.statut;
+    let statut = base.statut;
     let precise = false;
     for (const nomme of regimesDeLaLigne) {
-      const cle = `${courant.code} ${nomme.code}`;
+      const cle = `${base.code} ${nomme.code}`;
       if (PRECISIONS.has(cle)) {
         statut = PRECISIONS.get(cle);
         precise = true;
@@ -611,7 +652,7 @@ export function lireReleve(lignes, anneeMaximale = null) {
       vu = revenu;
       revenu = 0.0;
     }
-    if (courant.genre === "points") {
+    if (base.genre === "points") {
       // Le nombre lu est un nombre de POINTS, pas un revenu. L'année et ses
       // trimestres se gardent ; le revenu reste à compléter.
       if (revenu) points = true;
@@ -714,9 +755,21 @@ export function lireReleve(lignes, anneeMaximale = null) {
       + "simulation lit ce que le relevé porte.",
     );
   }
+  let moisDeNaissance = naissance ? naissance.slice(0, 7) : null;
+  if (moisDeNaissance === null && nir !== null && lues.length) {
+    // Le siècle, que le numéro tait, se lit dans la carrière : l'année de
+    // naissance est la dernière qui finit par ces deux chiffres sans dépasser
+    // la première année travaillée.
+    // Ce qu'on fait du jour qui manque appartient à qui lit le mois : le site
+    // le présume, et le dit ; l'estimation officielle le demande.
+    const [deuxChiffres, mois] = nir;
+    const premiere = lues[0].annee;
+    moisDeNaissance = `${String(premiere - ((premiere - deuxChiffres) % 100)).padStart(4, "0")}`
+      + `-${String(mois).padStart(2, "0")}`;
+  }
   return {
     lignes: lues, interruptions: fusionner(interruptions), ignorees, regimes,
-    notes, naissance,
+    notes, naissance, moisDeNaissance,
   };
 }
 

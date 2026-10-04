@@ -23,6 +23,7 @@ const sortie = releves.map((lignes) => {
     regimes: lecture.regimes,
     notes: lecture.notes,
     naissance: lecture.naissance,
+    mois_de_naissance: lecture.moisDeNaissance,
   };
 });
 

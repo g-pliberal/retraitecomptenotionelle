@@ -1452,9 +1452,18 @@ async function deposerLeReleve(contenu, fichier) {
       + `${neutraliser(statuts.map((code) => affiliations.libelle(code)).join(", "))}.`);
 
     const naissance = formulaire.elements.naissance;
-    if (lecture.naissance && naissance) {
-      naissance.value = lecture.naissance;
-      faits.push("Date de naissance reprise du relevé.");
+    // Le relevé d'info-retraite ne porte que le mois de naissance, par le
+    // numéro de sécurité sociale : le calendrier demande un jour, et reçoit
+    // celui que le modèle présume quand on ne le dit pas, nommé comme tel.
+    const jour = contexte.paquet.presomptions.jour_de_naissance.valeur;
+    const reprise = lecture.naissance
+      ?? (lecture.moisDeNaissance ? `${lecture.moisDeNaissance}-${String(jour).padStart(2, "0")}` : null);
+    if (reprise && naissance) {
+      naissance.value = reprise;
+      faits.push(lecture.naissance
+        ? "Date de naissance reprise du relevé."
+        : "Mois et année de naissance repris du numéro de sécurité sociale du "
+          + `relevé, qui ne dit pas le jour : il est présumé le ${jour}, corrigez-le.`);
       // Les autres dates sont des ÂGES déguisés : le formulaire les borne
       // entre deux âges comptés depuis la naissance, et le navigateur refuse
       // de soumettre une date qui en sort. Reprendre la naissance du relevé

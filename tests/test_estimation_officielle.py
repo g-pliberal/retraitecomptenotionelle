@@ -216,6 +216,19 @@ def test_une_naissance_contredite_ou_absente_est_refusee(contexte, catalogue):
     sans_naissance = _releve().replace("DUPONT Marie — Date de naissance : 12/05/1966\n", "")
     with pytest.raises(Refus, match="assure.naissance"):
         _confrontation(contexte, catalogue, texte=sans_naissance)
+    # Le numéro de sécurité sociale — inventé, et impossible : une commune et
+    # un rang à zéro — ne donne que le mois : il ne suffit pas, mais il
+    # contrôle la date recopiée.
+    par_le_numero = _releve().replace("DUPONT Marie — Date de naissance : 12/05/1966",
+                                      "Numéro de sécurité sociale 2 66 05 99 000 000")
+    with pytest.raises(Refus, match="n'en dit que le mois, 1966-05"):
+        _confrontation(contexte, catalogue, texte=par_le_numero)
+    with pytest.raises(Refus, match="une naissance en 1966-05, l'estimation le 1966-06-12"):
+        _confrontation(contexte, catalogue, texte=par_le_numero,
+                       assure={"sexe": "F", "naissance": dt.date(1966, 6, 12)})
+    assert _confrontation(contexte, catalogue, texte=par_le_numero,
+                          assure={"sexe": "F", "naissance": dt.date(1966, 5, 12)}
+                          ).naissance == "1966-05-12"
 
 
 # ---------------------------------------------------------------------------

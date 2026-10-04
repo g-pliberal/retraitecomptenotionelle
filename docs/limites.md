@@ -2180,7 +2180,11 @@ n'est plus une limite : c'est un paramètre connu du résultat.
     avec elle : une période « L'Assurance retraite, Ircantec » n'est pas un
     emploi du privé.
 
-  Il ne porte pas la date de naissance, qui se saisit à part.
+  Il ne porte pas la date de naissance en clair, mais son numéro de sécurité
+  sociale en donne l'année et le mois, que la lecture reprend — le siècle se
+  déduit de la première année travaillée. Le jour, que le numéro tait, le
+  site le présume comme le modèle le fait quand on ne le dit pas, et le dit à
+  l'assuré pour qu'il le corrige.
 
 - **La coordination interrégimes.** Chaque régime liquide sur ses seules
   années, et la durée acquise dans chacun est comptée séparément — c'est le

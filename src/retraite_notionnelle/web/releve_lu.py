@@ -299,6 +299,21 @@ DATE = re.compile(r"(?<!\d)(\d{1,2})[/.-](\d{1,2})[/.-]((?:1[89]|20)\d{2})(?!\d)
 #: dépend, l'âge légal comme la durée requise.
 NAISSANCE = ("date de naissance", "ne le", "nee le", "ne e le")
 
+#: Le numéro de sécurité sociale, tel que le relevé d'info-retraite (2026)
+#: l'imprime en tête de ses pages : un chiffre, puis les deux derniers chiffres
+#: de l'année de naissance et son mois, le département — « 2A », « 2B » pour la
+#: Corse, trois chiffres outre-mer — et la commune, le rang ;
+#: « 1 62 05 75 123 456 », la clé parfois derrière. Ce relevé ne porte pas la
+#: date de naissance en clair, et le numéro n'en donne que la moitié : l'année
+#: sans son siècle, le mois, jamais le jour. Un mois hors de 01 à 12 n'en est
+#: pas un, et ne se lit pas.
+SEPARATEUR = "[    ]"
+NIR = re.compile(
+    rf"(?<![\dA-Za-z])[1-8]{SEPARATEUR}(\d\d){SEPARATEUR}(\d\d){SEPARATEUR}"
+    rf"(?:(?:\d\d|2[AB]){SEPARATEUR}\d{{3}}|\d{{3}}{SEPARATEUR}\d\d){SEPARATEUR}\d{{3}}"
+    rf"(?:{SEPARATEUR}\d\d)?(?!\d)"
+)
+
 
 @dataclass(frozen=True)
 class LigneLue:
@@ -329,6 +344,10 @@ class Lecture:
     notes: tuple[str, ...]
     #: La date de naissance lue en tête du relevé, « AAAA-MM-JJ », ou `None`.
     naissance: str | None = None
+    #: Le mois de naissance, « AAAA-MM » : celui de la date, ou, quand le
+    #: relevé ne la porte pas, celui du numéro de sécurité sociale ; `None`
+    #: s'il ne porte ni l'une ni l'autre.
+    mois_de_naissance: str | None = None
 
     @property
     def vide(self) -> bool:
@@ -584,6 +603,9 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
     vues = False
     precises = False
     naissance: str | None = None
+    # L'année sur deux chiffres et le mois que porte le numéro de sécurité
+    # sociale, le premier lu.
+    nir: tuple[int, int] | None = None
 
     # Le plafond des années lues : celui que l'appelant donne — le site passe
     # l'année courante —, resserré par la date d'édition du document quand il
@@ -602,10 +624,31 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
             "années qui n'existent pas.",
         ), None)
 
+    # La première base que le document nomme, pour la ligne d'une caisse
+    # complémentaire qui la précède : le tableau des années d'info-retraite
+    # (2026) ouvre chaque année sur la ligne de sa complémentaire, et ne nomme
+    # la base qu'à la sous-ligne suivante. Sans le résumé qui le précède —
+    # collé seul, par exemple —, sa première année se perdait.
+    premiere_base = next((regime for regime in map(_regime_de, map(sans_accent, lignes))
+                          if regime is not None and regime.genre != "indice"), None)
+
     for brute in lignes:
         ligne = brute.strip()
         if not ligne:
             continue
+        numero = NIR.search(ligne)
+        if numero is not None:
+            # LE NUMÉRO DE SÉCURITÉ SOCIALE DIT LE MOIS DE NAISSANCE, que le
+            # relevé d'info-retraite (2026) ne porte pas en clair. On n'en
+            # garde que cela : le numéro sort de la ligne avant toute lecture,
+            # et ses chiffres ne deviennent ni des trimestres ni une ligne
+            # montrée au lecteur.
+            if nir is None and 1 <= int(numero.group(2)) <= 12:
+                nir = (int(numero.group(1)), int(numero.group(2)))
+            ligne = (ligne[:numero.start()].rstrip() + " "
+                     + ligne[numero.end():].lstrip()).strip()
+            if not ligne:
+                continue
         plat = sans_accent(ligne)
         entete = _naissance_de(ligne, plat)
         if entete is not None:
@@ -685,7 +728,9 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
         indice_seul = gouverne is not None and gouverne.genre == "indice"
         if indice_seul and gouverne.code == "agirc":
             cadres.add(annee)
-        if courant is None:
+        base = courant if courant is not None else (premiere_base if indice_seul
+                                                    else None)
+        if base is None:
             if nombres:
                 ignorees.append(ligne)
             continue
@@ -694,11 +739,11 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
         # celui du régime de base, que précise une complémentaire nommée avec
         # lui.
         regimes_de_la_ligne = nommes if regime is not None else nommes_de_section
-        statut = courant.statut
+        statut = base.statut
         precise = False
         for nomme in regimes_de_la_ligne:
-            if (courant.code, nomme.code) in PRECISIONS:
-                statut, precise = PRECISIONS[(courant.code, nomme.code)], True
+            if (base.code, nomme.code) in PRECISIONS:
+                statut, precise = PRECISIONS[(base.code, nomme.code)], True
                 break
 
         etiquetes = [unite for _, unite in nombres if unite]
@@ -744,7 +789,7 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
         vu = 0.0
         if indice_seul and revenu:
             vu, revenu = revenu, 0.0
-        if courant.genre == "points":
+        if base.genre == "points":
             # Le nombre lu est un nombre de POINTS, pas un revenu. L'année et
             # ses trimestres se gardent ; le revenu reste à compléter.
             if revenu:
@@ -844,8 +889,20 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
             "Sécurité sociale, le salaire n'y figure pas en entier, et la "
             "simulation lit ce que le relevé porte."
         )
+    mois_de_naissance = naissance[:7] if naissance else None
+    if mois_de_naissance is None and nir is not None and lues:
+        # Le siècle, que le numéro tait, se lit dans la carrière : l'année de
+        # naissance est la dernière qui finit par ces deux chiffres sans
+        # dépasser la première année travaillée.
+        # Ce qu'on fait du jour qui manque appartient à qui lit le mois : le
+        # site le présume, et le dit ; l'estimation officielle le demande.
+        deux_chiffres, mois = nir
+        premiere = lues[0].annee
+        mois_de_naissance = (f"{premiere - (premiere - deux_chiffres) % 100:04d}"
+                             f"-{mois:02d}")
     return Lecture(tuple(lues), tuple(_fusionner(interruptions)),
-                   tuple(ignorees), tuple(regimes), tuple(notes), naissance)
+                   tuple(ignorees), tuple(regimes), tuple(notes), naissance,
+                   mois_de_naissance)
 
 
 
