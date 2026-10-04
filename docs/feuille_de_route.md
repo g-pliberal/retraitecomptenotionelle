@@ -354,6 +354,166 @@ depuis la page — et des versions numérotées, qu'une session ne peut pas
 de plus — le revenu fiscal du foyer, ou « vit seul, sans autre
 ressource » — ou une présomption déclarée.
 
+### 143. La même carrière, née une autre année : une page qui compare les générations — `à faire`
+
+**Demande**, le 4 octobre 2026 : « Je veux que tu crées une page avec une
+comparaison entre années de naissance. Je veux qu'avec cette page les gens se
+rendent compte de la différence de traitement en fonction de l'année de
+naissance. Il faut un comparateur pour des cas égaux qui différencient
+uniquement l'année de naissance. Il faut aussi des statistiques qui montrent
+les différences entre les années de naissance. Il faut que l'on puisse voir
+les nombres d'années à travailler, l'âge de départ à la retraite, le cumul net
+de l'argent reçu au cours de la vie, le nombre d'heures travaillées au cours
+de la vie, etc. » Puis : « Je veux juste que tu documentes pour l'instant. »
+Elle naît `à faire` : elle attend que le propriétaire la lance.
+
+**Ce que le site en montre déjà, épars.** La page Carrières types croise
+treize carrières et sept générations (`GENERATIONS`, 1940 à 2000, de dix en
+dix), mais chaque case y rapporte un système à un autre pour une même
+génération : elle compare des systèmes, non des générations ; son dépliant
+« À quel âge chacun part » donne pourtant l'âge de liquidation de chaque cas
+type par génération. Le dépliant « Ce que chaque système finit par verser »,
+au bas des résultats du simulateur, cumule une pension jusqu'à 105 ans, en
+euros constants, avec la part de la génération encore en vie à chaque âge.
+La page Pourquoi changer cite, dans « Les jeunes cotisent plus pour recevoir
+moins », le rendement interne par génération de Dubois et Marino (INSEE,
+2015) et celui du COR. Aucun de ces morceaux ne met deux années de naissance
+côte à côte.
+
+**« Des cas égaux » : ce qui reste fixe, ce qui bouge.** Un cas type
+(`castypes.CasType`) est déjà « une carrière de référence, indépendante de la
+génération » : un âge d'entrée, un salaire en multiples du salaire moyen de
+chaque année, un profil par âge, un sexe, des enfants, un statut, des
+interruptions au même âge. Le comparateur fixe tout cela et ne change que
+l'année de naissance. Ce qui bouge est ce que la page veut montrer : le droit
+de chaque génération (âge légal, durée requise, décote, taux de cotisation,
+revalorisations, fermeture d'un régime spécial), les salaires et les prix
+qu'elle traverse, sa mortalité. Le départ suit la règle du cas type, que le
+pilote résout sous le droit de chaque génération (`pilote.age_de_depart`,
+variante `droit`) ; la variante `absolu`, qui fait partir toutes les
+générations à l'âge écrit du cas type, isole ce que la pension doit au seul
+barème. Pour les générations qui ne sont pas parties, le droit est celui
+d'aujourd'hui, appliqué tel qu'il est écrit, et le contexte celui des
+projections : la page le dit à chaque génération. Ce qu'elle ne fait pas
+varier, et doit le dire aussi : les comportements — études plus longues,
+chômage, temps partiel —, qui séparent les générations réelles. La partie
+statistique les montre.
+
+**Les indicateurs, et ce que le modèle en sait le 4 octobre 2026.**
+
+1. **L'âge de départ** : calculé, par le pilote ; l'âge légal et l'âge
+   d'annulation de la décote sont des tables par génération
+   (`age_ouverture_requis.csv`, `age_annulation_decote.csv`).
+2. **Les années à travailler**, deux grandeurs à ne pas confondre : la durée
+   requise pour le taux plein, par génération (`duree_assurance_requise.csv`),
+   et les années que le cas type travaille vraiment, que sa carrière porte.
+3. **Les heures travaillées sur la vie** : aucune série d'heures au dépôt.
+   Deux voies, qui ne disent pas la même chose. Les heures LÉGALES — durée
+   hebdomadaire, congés payés, jours fériés chômés, selon les textes qui les
+   fixent depuis 1936, à lire sur Légifrance avant toute valeur — sont la
+   règle, dans la logique du scénario 1. Les heures EFFECTIVES — comptes
+   nationaux de l'INSEE, enquêtes de la DARES — sont le fait. Le dépôt
+   télécharge déjà la croissance de la productivité horaire (idbank
+   011793337, `scripts/fetch/insee_bdm.py`) à côté de la productivité par
+   tête : leur rapport donne l'évolution des heures par emploi, non leur
+   niveau, et temps partiel compris. L'indicateur ne se choisit pas pour sa
+   conclusion : à âge d'entrée égal, les générations anciennes ont fait des
+   semaines plus longues et des carrières plus courtes, et la page montre ce
+   que la série dit.
+4. **Les années de retraite** : l'espérance de vie à l'âge de départ, sur la
+   table de génération (`esperance_residuelle`), par sexe ; calculée. Elle
+   donne la part de la vie passée à la retraite, et les années de retraite par
+   année travaillée.
+5. **La pension** : brute au départ, calculée, avec le taux de remplacement ;
+   nette, convertie par le site à un taux unique, le taux plein d'aujourd'hui
+   (9,10 %).
+6. **Le cumul reçu sur la vie** : la pension sommée sur la survie de la
+   génération, en euros constants, comme le cumul des résultats. Brut,
+   calculé. Net, c'est un trou : `limites.md` admet le taux d'aujourd'hui pour
+   tous parce qu'il ne déplace aucun écart ENTRE SCÉNARIOS ; entre générations,
+   il en déplace, la CSG des pensions et la Casa étant nées ou relevées
+   pendant la retraite des générations anciennes. Il faut la série des
+   prélèvements sur les pensions — CSG, CRDS, Casa, cotisation maladie —,
+   année par année, lue sur Légifrance. Après le départ, le droit pour le
+   passé — le dépôt mène déjà une pension liquidée jusqu'à aujourd'hui par
+   les textes de chaque régime, contrôlé sur la figure 3.14 du COR —, le
+   pouvoir d'achat constant pour l'avenir, convention déclarée.
+7. **Les cotisations versées** : le compte qui porte les taux réels de chaque
+   régime (`SourceCotisations.TAUX_HISTORIQUES`) les somme déjà
+   (`cotisations_versees`), mais en euros courants : à remettre en euros
+   constants. Ce qu'un taux contient sans rien acquérir — le taux d'appel des
+   complémentaires, la contribution d'équilibre de l'État — se dit, puisqu'il
+   pèse sur le rendement.
+8. **Le rendement** : ce qu'un euro cotisé rapporte de pension, et le taux de
+   rendement interne de la carrière, l'indicateur de référence de l'équité
+   entre générations, que le site cite sans le calculer. Il se tire des deux
+   flux précédents.
+
+**Le piège des euros.** En euros constants, une pension de la génération 2000
+se compare mal à une pension de la génération 1950 : entre-temps les salaires
+auront crû, et un écart en euros mêle la croissance au traitement. Les
+grandeurs de tête sont donc relatives — âges, années, heures, taux de
+remplacement, cumul en années de salaire, rendement —, et les euros viennent
+ensuite, dits pour ce qu'ils sont.
+
+**Le « cumul net », deux lectures.** Net des prélèvements sur la pension, ce
+qui arrive sur le compte ; ou net de ce qui a été cotisé, ce que la génération
+reçoit de plus qu'elle n'a versé. Le revenu net de toute la vie, salaires
+compris, n'est pas à portée : la fiche de paie du modèle (`remuneration.py`)
+ne connaît, hors retraite, que les taux de 2026.
+
+**Les statistiques.** Une partie distincte du comparateur : ce que les
+générations réelles ont vécu ou vivront — âge moyen de départ, durée validée,
+durée de retraite, espérance de vie à 60 ans, taux de prélèvement, rendement
+interne —, chaque chiffre dit observé, projeté ou modélisé. Sources à relever,
+à inscrire au registre et à certifier : la DREES, dont le dépôt lit déjà deux
+séries (`caracteristiques_retraites.csv`, `age_conjoncturel_depart.csv`), mais
+par année et non par génération ; le rapport annuel du COR
+(`cor_rapport_annuel`) ; les tables de mortalité par génération de l'INSEE
+(`insee_tables_mortalite`). Le modèle a aussi les siennes : la page Coût
+simule les générations 1880 à 2015, de cinq en cinq, pondérées par les
+effectifs (`cout.js`) ; les moyennes par génération se tirent de cette grille.
+
+**Le calcul, et son prix.** Le comparateur calcule une carrière par année de
+naissance choisie, dans le navigateur et sous les réglages du lecteur, comme
+les pages qui agrègent (`PAGES_AGREGEES`). Une courbe année par année, de 1930
+à 2005, en calcule soixante-seize : à mesurer d'abord
+(`scripts/budget_calcul.py`) et, si elle dépasse le budget, à fabriquer à
+l'avance, comme `data/derive/equilibre.json`.
+
+**Ce qui est à faire**, dans l'ordre, chaque étape valant seule :
+
+1. Les indicateurs à portée — âges, durées, années de retraite, pension, cumul
+   brut, cotisations, rendement —, en Python d'abord, puis dans son jumeau,
+   avec un témoin par génération pour deux cas types.
+2. La page : son adresse, son titre, sa place dans la navigation ; le
+   comparateur (un profil, deux ou trois années de naissance, le sexe) ; un
+   tableau sous chaque graphique (`donneesDuGraphique`) ; et ce que toute page
+   demande : témoins de pages, catalogue des affirmations, tests du site, et
+   l'adresse dans `docs/integration-partiliberalfrancais.md`, qui promet de
+   dire toute adresse.
+3. Le net : la série des prélèvements sur les pensions depuis leur création,
+   ses fiches, puis le cumul net.
+4. Les heures : la série choisie, enregistrée et certifiée, puis l'indicateur.
+5. Les statistiques, source par source.
+6. Peut-être, « votre carrière, née une autre année » : la saisie du
+   simulateur décalée d'autant d'années, ses salaires gardés en multiples du
+   salaire moyen ; il y faut une règle qui translate les dates et les montants
+   saisis.
+
+**Ce que le propriétaire tranche.** Une page de plus, ou une partie de la page
+Carrières types : le site est passé de dix pages à huit le 23 septembre 2026,
+en fondant deux pages dans d'autres. Son nom, son adresse (`#/generations` ?),
+sa place (« L'essentiel » ou « Pour vérifier »). Les quatre ou cinq
+indicateurs de tête. La lecture du « net ». Les heures légales ou effectives.
+La plage des générations — l'action 121 veut toutes les personnes vivantes —
+et les profils offerts : les treize cas types, ou quelques-uns. S'il faut
+montrer à côté ce que la proposition ferait des mêmes écarts : un taux unique
+et une pension convertie par l'espérance de vie sont faits pour les réduire,
+ce que la page mesurera plutôt qu'elle ne l'affirmera. Et si le dépliant de la
+page Pourquoi changer sur le rendement des générations y renvoie, ou s'y
+fond.
+
 ---
 
 ## Les actions en cours
