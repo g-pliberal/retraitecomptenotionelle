@@ -5725,14 +5725,13 @@ d'OpenFisca-France confrontées à celles du dépôt.
 
 **Reprise, au 4 octobre 2026.** Faites : l'étape 1, la saisie outillée
 (`scripts/simulateurs.py`) ; l'étape 2, la carrière du propriétaire contre
-« Mon estimation retraite » (`scripts/estimation_officielle.py`) ; et ses deux
-corrections, la lecture du relevé tous régimes de 2026 et la valeur d'achat
-Agirc-Arrco projetée sur le salaire moyen (fiche `agirc_arrco_valeur_achat`).
-Restent, une par session : 3. le brut en tête sur le site, au format de
-l'estimation officielle, dont le net attend l'étape 2 de l'action 138 ; 4. les
-moteurs publics en local, avec l'action 137. Commencer par l'étape 3. Détail :
-« Étape 2 », « La lecture du relevé de 2026 » et « La valeur d'achat de
-l'Agirc-Arrco », en fin d'action.
+« Mon estimation retraite » (`scripts/estimation_officielle.py`), et ses
+corrections : le relevé tous régimes de 2026, la valeur d'achat Agirc-Arrco
+sur le salaire moyen, le salaire de référence de l'Ircantec, lu (les prix,
+que le moteur suivait déjà). Restent, une par session : 3. le brut en tête
+sur le site, au format de l'estimation officielle, dont le net attend
+l'étape 2 de l'action 138 ; 4. les moteurs publics en local, avec l'action
+137. Commencer par l'étape 3. Détail : les notes de fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -6021,6 +6020,45 @@ officielle : le menu, la bascule des montants et la clé de lecture disent
 prélèvement à la source. Aucun chiffre ne bouge ; le budget de mots du
 formulaire monte de deux, pour la bascule. Le 1 % des complémentaires, que
 le net du dépôt omet, est décidé à l'étape 2 de l'action 138.
+
+**Le salaire de référence de l'Ircantec, le 4 octobre 2026 : les prix, que le
+moteur suivait déjà.** Ce que la note sur la valeur d'achat de l'Agirc-Arrco
+laissait ouvert.
+
+- *Le texte (§ 3.3 de l'architecture).* Depuis 2018, la valeur de service, le
+  salaire de référence et le rendement réel sont fixés « en application de la
+  règle d'évolution arrêtée dans le cadre du plan quadriennal » (arrêté du
+  30 décembre 1970, article 9 bis, LEGIARTI000053281114, lu dans l'index LEGI ;
+  l'article 16, que la fiche citait, porte l'anticipation), dont le décret
+  n° 70-1277 charge le conseil d'administration (article 2, III). À défaut de
+  plan, l'arrêté majore le salaire de référence des cinq tiers et la valeur de
+  service des deux tiers de la revalorisation des pensions. Les deux premiers
+  plans ont gardé le rendement réel de 7,75 % de 2018 à 2025, les deux
+  paramètres indexés sur l'inflation (rapport d'activité 2025 de l'Ircantec,
+  actualité du 28 décembre 2023) ; en 2026, l'un et l'autre montent de 0,9 %,
+  et le taux d'appel passe de 125 à 127 % (arrêté du 19 décembre 2025). Les
+  prix toujours, jamais les salaires : le rendement du dernier barème, que le
+  moteur prolongeait, fait exactement cela, et l'Ircantec n'entre pas dans
+  `prolongement_points.csv`.
+- *Ce qui reste ouvert.* Le plan de 2026 à 2029 (délibération n° 2025-12-15 du
+  11 décembre 2025) n'est pas publié, et le rapport d'activité n'en donne pas
+  les paramètres. Une dépêche AEF du 19 décembre 2025, seule source, lui prête
+  « à partir de 2028 » un salaire de référence surindexé de 2,6 points sur la
+  revalorisation des pensions, sans dire si c'est une fois ou chaque année : le
+  modèle ne le suit pas (§ 3.3, point 5). Mesuré sur des contractuels entrés à
+  22 ans et partis à 64, en prolongeant le prix d'achat par les prix — ce qui
+  redonne le modèle à 0,01 % près —, puis surindexé : des générations 1975 à
+  2005, la part Ircantec baisserait de 0,8 à 2,5 % pour la seule année 2028,
+  de 1,6 à 4,8 % pour 2028 et 2029, l'horizon du plan, et de 5 à 42 % si
+  c'était chaque année. Le salaire de référence de janvier 2028 tranchera ; il
+  faudrait alors un indice que le moteur ne connaît pas, les prix majorés.
+- *Ce qui change.* La fiche `ircantec_valeurs_point` passe en versions : les
+  barèmes publiés, lus, puis les prix supposés au-delà, la surindexation en
+  approximation mesurée, avec les copies datées de ses sources hors JORF ;
+  quatre rédactions de l'arrêté et du décret y sont rattachées (cliquet des
+  textes à 10 127). `test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme`
+  exige que la ligne de prolongation de `rendements_points.csv` porte le
+  rendement du dernier barème. `limites.md` le dit. Aucun chiffre ne bouge.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

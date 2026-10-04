@@ -4,7 +4,10 @@
 # valeurs_point.csv s'arrête au dernier barème publié. Au-delà, un régime que
 # ce fichier ne nomme pas n'a plus de prix d'achat : ses cotisations passent
 # par le rendement instantané de rendements_points.csv, c'est-à-dire par un
-# prix d'achat et une valeur de service qui suivent tous deux les prix.
+# prix d'achat et une valeur de service qui suivent tous deux les prix. C'est
+# la règle de l'Ircantec, dont le plan quadriennal revalorise le salaire de
+# référence et la valeur de service comme les pensions : il n'a pas de ligne
+# ici (fiche ircantec_valeurs_point).
 #
 # Un régime qu'il nomme garde ses points : le salaire de référence d'une année
 # postérieure est le dernier publié, porté par l'indice que la colonne `suit`

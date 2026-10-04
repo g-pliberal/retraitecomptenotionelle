@@ -2211,9 +2211,32 @@ def test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme(sim
         # Plus cher que par les prix, puisque le salaire moyen les devance.
         assert prolonge > reference * macro.coefficient_prix(derniere, annee)
         assert fiabilite == Fiabilite.MOYENNE
-    # Un régime dont le texte n'est pas lu n'est pas prolongé : l'Ircantec
-    # garde le rendement de son dernier barème.
+    # L'Ircantec n'est pas prolongé : son plan quadriennal revalorise le
+    # salaire de référence comme les pensions (test suivant).
     assert valeurs.achat_prolonge("ircantec", derniere + 4, macro) is None
+
+
+def test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme(simulateur):
+    """Depuis 2018, la valeur de service, le salaire de référence et le
+    rendement réel de l'Ircantec « sont fixés [...] en application de la règle
+    d'évolution arrêtée dans le cadre du plan quadriennal » (arrêté du 30
+    décembre 1970, article 9 bis), et ce plan les revalorise tous deux comme
+    les pensions, sur l'inflation, à rendement réel constant (fiche
+    ``ircantec_valeurs_point``). Au-delà du dernier barème, le moteur convertit
+    donc les cotisations au rendement de ce barème, à son taux d'appel : un
+    barème nouveau qui laisserait la ligne de prolongation en place servirait
+    aux années suivantes le rendement d'un barème périmé.
+    """
+    scenario = simulateur.scenario_actuel
+    valeurs = scenario.valeurs_point
+    derniere = max(a for a in range(1971, 2101)
+                   if valeurs.achat("ircantec", a) is not None)
+    reference, appel, _ = valeurs.achat("ircantec", derniere)
+    service, _ = valeurs._en_vigueur("ircantec", "valeur_service", derniere)
+    for annee in (derniere + 1, derniere + 30):
+        assert valeurs.achat_prolonge("ircantec", annee, scenario.macro) is None
+        rendement, _ = scenario.rendements.rendement("ircantec", annee)
+        assert rendement == pytest.approx(service / (appel * reference), abs=5e-5)
 
 
 def test_les_annees_apres_le_dernier_bareme_agirc_arrco_ont_des_points(simulateur):

@@ -1,38 +1,260 @@
 schema_version: 1
 id: ircantec_valeurs_point
 intitule: >-
-  Valeur de service, salaire de référence et pourcentage d'appel du point Ircantec
-  de 2022 à 2026 ; au-delà du dernier barème publié, les cotisations de l'Ircantec
-  achètent des points au rendement de ce barème.
-etat: transcrite
-effet: >-
-  Toute pension Ircantec. La table s'arrêtait à la valeur de janvier 2022, 0,49241
-  €, et le rendement moyen de 2009 à 2021, 8,52 %, prolongeait tout le reste. Le
-  rendement au-delà de 2026 est désormais celui du barème de 2026, 7,63 %, et celui
-  de l'Agirc-Arrco celui du sien, 5,61 %, au lieu de la moyenne 2019-2026, 5,81
-  % — jusqu'au 4 octobre 2026 : l'Agirc-Arrco achète depuis ses points au salaire de
-  référence que ses accords font suivre le salaire moyen (fiche
-  agirc_arrco_valeur_achat), et ce rendement ne lui sert plus que de filet. L'Ircantec
-  le garde, faute d'avoir lu ce que son texte fait suivre à son salaire de référence.
-  Mesuré sur un contractuel entré à 22 ans et parti à 64 : la part Ircantec gagne
-  2,8 % pour la génération 1960, que les valeurs de 2022 à 2026 relèvent, et perd
-  3,2 % pour 1975, 6,5 % pour 1985 et 10,5 % pour 2005, que le rendement de prolongation
-  abaisse. Les valeurs passent par `source_valeurs_point_ircantec_publiees` de `scripts/verifier_donnees.py`,
-  et non par une saisie dans le fichier, qui s'écrit par ce script.
+  Le salaire de référence de l'Ircantec, prix d'achat de son point, et la valeur de
+  service évoluent chaque 1er janvier selon la règle du plan quadriennal du conseil
+  d'administration, qui les revalorise tous deux comme les pensions ; au-delà du dernier
+  barème publié, le modèle convertit les cotisations au rendement de ce barème, ce qui
+  fait suivre les prix à l'un et à l'autre.
+domaine: points
+regimes: [ircantec]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- la cotisation de chaque année à l'Ircantec, et son année
+- le salaire de référence, la valeur de service et le taux d'appel publiés
+  (regimes/valeurs_point.csv)
+- le rendement du dernier barème, au-delà de lui (regimes/rendements_points.csv, ligne
+  ircantec 2027-2100)
+- l'indice des prix du modèle, qui revalorise jusqu'à la liquidation les cotisations des
+  années sans barème
+ecrit:
+- les points Ircantec des années d'un barème publié
+- la pension que donnent, au rendement du dernier barème, les cotisations des années
+  postérieures
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_l_ircantec
+  statut: lue
+  textes:
+  - id: LEGITEXT000006061718
+    reference: >-
+      décret n° 70-1277 du 23 décembre 1970 portant création d'un régime de retraites
+      complémentaire des assurances sociales, qui remplace au 1er janvier 1971 les
+      régimes des décrets n° 51-1445 (IPACTE) et n° 59-1569 (IGRANTE) (article 12)
+    lu_le: 2026-10-04
+  bornes:
+    revenu.annee: [null, 1971-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      l'Ircantec n'existe pas encore : les points s'acquièrent à l'IPACTE ou à l'IGRANTE,
+      sous leurs propres textes, que cette fiche ne couvre pas
+  exemples: aucun trouvé
+- id: baremes_publies
+  statut: lue
+  nee_de: LEGITEXT000006061718
+  textes:
+  - id: LEGITEXT000006061718
+    reference: décret n° 70-1277 du 23 décembre 1970, qui crée l'Ircantec au 1er janvier 1971
+    lu_le: 2026-10-04
+  - id: LEGIARTI000020101346
+    reference: >-
+      arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime de
+      retraites complémentaire des assurances sociales institué par le décret du
+      23 décembre 1970, article 10, rédaction en vigueur depuis le 4 janvier 2009 (index
+      LEGI du dépôt)
+    article: article 10
+    en_vigueur: 2009-01-04
+    citation: >-
+      « Le nombre de points de retraite inscrits à ce compte au cours d'une année civile
+      déterminée s'obtient en divisant le montant des cotisations afférentes à cette
+      année, calculées en appliquant les taux prévus à l'article 7 du décret du 23
+      décembre 1970 susvisé, par le salaire de référence de l'année considérée. »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000036755171
+    reference: >-
+      même arrêté, article 9 bis, rédaction du 31 mars 2018 au 1er janvier 2026 (index LEGI
+      du dépôt)
+    article: article 9 bis
+    en_vigueur: 2018-03-31
+    citation: >-
+      « A partir du 1er janvier 2018, la valeur de service du point, le salaire de
+      référence et le rendement réel sont fixés à la date prévue à l'article L. 161-23-1
+      du code de la sécurité sociale en application de la règle d'évolution arrêtée dans
+      le cadre du plan quadriennal prévu au III de l'article 2 du décret n° 70-1277 du 23
+      décembre 1970 modifié. »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000053281114
+    reference: >-
+      même arrêté, article 9 bis, rédaction en vigueur depuis le 1er janvier 2026, issue
+      de l'arrêté du 19 décembre 2025 (JORFTEXT000053157653, JORF du 24 décembre 2025),
+      qui remplace « 125 % » par « 127 % » (index LEGI du dépôt)
+    article: article 9 bis
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Le taux d'appel des cotisations mentionné au V de l'article 7 du décret n°
+      70-1277 du 23 décembre 1970 modifié est égal à 127 %. »
+    lu_le: 2026-10-04
+  - reference: >-
+      Ircantec, « Revalorisation de la valeur du point Ircantec », actualité du 28
+      décembre 2023, sur le site du régime (hors JORF)
+    article: actualité
+    en_vigueur: 2024-01-01
+    citation: >-
+      le plan adopté en décembre 2021 indexe sur l'inflation la valeur de service et le
+      salaire de référence, « de façon à maintenir constant le rendement réel de 7,75% »
+    lu_le: 2026-10-04
+    empreinte: sha256:3186942fe5a3780acdf28c590080c8af553442e5fe0ab168d16489b5f7899f80
+  - reference: >-
+      Ircantec, rapport d'activité 2025, présenté au conseil d'administration du 25 juin
+      2026, « Valeur du point et salaire de référence » (hors JORF)
+    article: rapport d'activité, page 65
+    citation: >-
+      le rendement réel de 7,75 % « a été conservé sur la période 2018-2025 par
+      délibérations du Conseil d'administration », dans les deux premiers plans
+      quadriennaux
+    lu_le: 2026-10-04
+    empreinte: sha256:e3212bf06cee5103bea945512d16556e916af19f99c2f51588eea7f9dff6c441
+  bornes:
+    revenu.annee: [1971-01-01, 2027-01-01]
+  contenu:
+    droit: >-
+      Les points d'une année sont ses cotisations au taux théorique — la cotisation
+      appelée divisée par le taux d'appel — divisées par le salaire de référence de
+      l'année. Les barèmes publiés sont dans regimes/valeurs_point.csv, certifiés de 1971 à
+      2021 sur les tableaux du gestionnaire et lus de 2022 à 2026 sur le site de
+      l'Ircantec, par `source_valeurs_point_ircantec_publiees` de
+      `scripts/verifier_donnees.py` et non par une saisie dans le fichier : le modèle les
+      lit, il ne les recalcule pas. Depuis 2018, le plan quadriennal les fixe : le
+      rendement réel de 7,75 % conservé de 2018 à 2025, la valeur de service et le salaire
+      de référence revalorisés comme les pensions de base ; en 2026, l'un et l'autre de 0,9
+      % (0,56053 € et 5,787 €), et le taux d'appel porté de 125 à 127 %, ce qui ramène le
+      rendement réel à 7,63 %.
+    parametres:
+      prix_du_point: >-
+        le salaire de référence publié de l'année, au taux d'appel publié : 7,11 / 5,60 en
+        2026, le rapport des taux appelés arrondis aux taux théoriques
+  exemples: aucun trouvé
+- id: prix_au_dela_du_bareme
+  statut: supposee
+  nee_de: LEGIARTI000053281114
+  hypothese: >-
+    le plan quadriennal en vigueur continue de revaloriser le salaire de référence et la
+    valeur de service comme les pensions de base, sur l'inflation, à rendement réel
+    constant, comme en 2026. Le plan de 2026 à 2029, adopté par la délibération n°
+    2025-12-15 du conseil d'administration du 11 décembre 2025, que l'Ircantec ne publie
+    pas, surindexerait selon la presse le salaire de référence à partir de 2028 ; le
+    modèle ne le suit pas tant que ni la caisse ni un texte publié ne le confirment
+    (approximations). À défaut de plan, l'article 9 bis ferait croître le salaire de
+    référence des cinq tiers et la valeur de service des deux tiers de la revalorisation
+    des pensions : les prix toujours, jamais les salaires
+  fiabilite: moyenne
+  textes:
+  - id: LEGIARTI000041969453
+    reference: >-
+      décret n° 70-1277 du 23 décembre 1970, article 2, III, rédaction en vigueur depuis le
+      25 mai 2020 (index LEGI du dépôt)
+    article: article 2, III
+    en_vigueur: 2020-05-25
+    citation: >-
+      « A ce titre, il détermine les règles d'évolution de la valeur du point de retraite
+      et du salaire de référence et en fixe, chaque année, la valeur. » ; « A défaut de
+      plan quadriennal remplissant les critères de solvabilité précités, les valeurs du
+      point de retraite et du salaire de référence évoluent annuellement selon des
+      modalités fixées par arrêté, l'évolution des taux de cotisation étant fixée par
+      décret. »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000053281114
+    reference: >-
+      arrêté du 30 décembre 1970, article 9 bis, rédaction en vigueur depuis le 1er janvier
+      2026 (index LEGI du dépôt)
+    article: article 9 bis
+    en_vigueur: 2026-01-01
+    citation: >-
+      « A défaut de ce plan, les règles d'évolution des paramètres prévues au III du même
+      article sont les suivantes : 1° La valeur de service est majorée des deux tiers de
+      la revalorisation prévue par l'article L. 161-23-1 du code de la sécurité sociale ;
+      2° Le salaire de référence est majoré des cinq tiers de la revalorisation prévue par
+      l'article L. 161-23-1 du code de la sécurité sociale ; »
+    lu_le: 2026-10-04
+  - reference: >-
+      Ircantec, rapport d'activité 2025, « Le plan quadriennal 2026-2029 » (hors JORF)
+    article: rapport d'activité, page 31
+    citation: >-
+      le plan, adopté par la « délibération n°2025-12-15 du CA du 11 décembre 2025 »,
+      agit sur les paramètres pour la solvabilité, avec une clause de revoyure en 2027
+    lu_le: 2026-10-04
+    empreinte: sha256:e3212bf06cee5103bea945512d16556e916af19f99c2f51588eea7f9dff6c441
+  - reference: >-
+      AEF info, dépêche n° 742881 du 19 décembre 2025, « Syndicats et employeurs publics
+      s'accordent sur le plan quadriennal de l'Ircantec 2026-2029 », note 2 de la partie
+      publique (hors JORF)
+    article: dépêche, note 2
+    citation: >-
+      la valeur de service et le salaire de référence suivent l'inflation des douze
+      derniers mois ; à partir de 2028, « une valeur du salaire de référence surindexée
+      de 2,6 points » par rapport à la revalorisation des pensions
+    lu_le: 2026-10-04
+    empreinte: sha256:1d8f229ed12c7c69b75d4939af50cefb5ad23eb73595c9776e6350ec929487d6
+  bornes:
+    revenu.annee: [2027-01-01, null]
+  contenu:
+    droit: >-
+      Pour une année postérieure au dernier barème publié — 2027 et au-delà le 4 octobre
+      2026 —, les cotisations, revalorisées par les prix jusqu'à la liquidation, sont
+      converties au rendement du dernier barème, 0,56053 / (7,11 / 5,60 × 5,787), soit
+      7,63 % : un salaire de référence et une valeur de service qui suivent tous deux les
+      prix, comme le plan les revalorise. L'Ircantec n'a donc pas de ligne dans
+      regimes/prolongement_points.csv, dont le seul indice, le salaire moyen, ne
+      correspond à aucune de ses règles.
+    parametres:
+      rendement: regimes/rendements_points.csv, ligne ircantec 2027-2100
+      # La surindexation que la presse prête au plan de 2026 à 2029 à partir de
+      # 2028, par rapport à la revalorisation des pensions : le modèle ne la
+      # suit pas (voir les approximations).
+      surindexation_rapportee: 0.026
+  exemples: aucun trouvé
+approximations:
+- version: prix_au_dela_du_bareme
+  ecart: >-
+    Le plan de 2026 à 2029 surindexerait le salaire de référence de 2,6 points par
+    rapport à la revalorisation des pensions « à partir de 2028 », selon une dépêche de
+    presse, seule source : une fois, en 2028 et 2029, l'horizon du plan, ou chaque année,
+    elle ne le dit pas, et la délibération n'est pas publiée. Le modèle n'en suit aucune
+    lecture.
+  effet: >-
+    mesuré le 4 octobre 2026 sur des contractuels entrés à 22 ans et partis à 64, en
+    donnant à l'Ircantec un prix d'achat prolongé par les prix, qui redonne le modèle à
+    0,01 % près, puis surindexé : des générations 1975 à 2005, la part Ircantec baisserait
+    de 0,8 à 2,5 % pour une surindexation de la seule année 2028, de 1,6 à 4,8 % pour 2028
+    et 2029, et de 5,0 à 42,1 % si elle valait chaque année ; la pension totale de 0,3 à
+    0,7 %, de 0,5 à 1,5 % et de 1,6 à 12,7 %. Rien ne bouge pour la génération 1960,
+    partie en 2024.
+- version: prix_au_dela_du_bareme
+  ecart: >-
+    Les prix du modèle, et non la revalorisation de l'article L. 161-23-1, moyenne
+    annuelle des prix hors tabac des douze derniers indices ; et le rendement de
+    prolongation arrondi à quatre décimales, 7,63 % pour 7,6289 %.
+  effet: >-
+    l'arrondi : la part Ircantec ressort de 0,01 % au-dessus d'un prix d'achat prolongé
+    sans lui, de la génération 1975 à 2005. L'écart d'indice, non mesuré.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-10-04
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
     Relire chaque 1er janvier la valeur du point et le salaire de référence de l'Ircantec,
-    que `scripts/fetch/cdc_ircantec.py` ne couvre que jusqu'en 2021.
+    que `scripts/fetch/cdc_ircantec.py` ne couvre que jusqu'en 2021 ; un barème nouveau
+    déplace la ligne de prolongation de regimes/rendements_points.csv à l'année qui le
+    suit, à son rendement, ce que
+    test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme exige.
   - >-
-    Lire ce que l'arrêté du 30 décembre 1970 et les délibérations du conseil
-    d'administration font suivre au salaire de référence de l'Ircantec : s'il suit le
-    salaire moyen, comme celui de l'Agirc-Arrco, son rendement de prolongation, qui le
-    fait suivre les prix, surestime les carrières jeunes, et le régime entre dans
-    regimes/prolongement_points.csv.
+    Le salaire de référence de 2028, publié en janvier 2028, et la délibération n°
+    2025-12-15 si elle se publie : s'ils confirment la surindexation, la version supposée
+    se coupe au 1er janvier 2028, et l'Ircantec entre dans
+    regimes/prolongement_points.csv avec un indice que le moteur ne connaît pas encore,
+    les prix majorés (ValeursPoint.INDICES_DU_PROLONGEMENT et son jumeau). La clause de
+    revoyure de 2027 peut aussi changer la règle.
   lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, articles 9 bis (rédactions de 2018 et de 2026) et 10 ;
+      décret n° 70-1277 du 23 décembre 1970, article 2 ; arrêté du 19 décembre 2025
+      (JORFTEXT000053157653), lus dans les index LEGI et JORF du dépôt
+    date: 2026-10-04
   - type: autre
     reference: >-
       Ircantec, « Valeur du point » et paramètres du régime : valeur de service
@@ -41,7 +263,62 @@ sources:
       d'appel de 125 %, puis 7,11 / 5,60 en 2026
     url: https://www.ircantec.retraites.fr/retraite/valeur-point
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    arrêté du 30 décembre 1970, article 16 (délibérations annuelles du conseil d'administration
-    de l'Ircantec)
+  - type: autre
+    reference: >-
+      Ircantec, actualité du 28 décembre 2023 : le plan adopté en décembre 2021 indexe
+      la valeur de service et le salaire de référence sur l'inflation, à rendement réel
+      constant (copie datée,
+      sha256:3186942fe5a3780acdf28c590080c8af553442e5fe0ab168d16489b5f7899f80)
+    url: https://www.ircantec.retraites.fr/nous-connaitre/actualite/revalorisation-de-la-valeur-du-point-ircantec
+    date: 2023-12-28
+  - type: autre
+    reference: >-
+      Ircantec, rapport d'activité 2025 (version accessible, août 2026) : le rendement
+      réel conservé de 2018 à 2025, le plan de 2026 à 2029 adopté le 11 décembre 2025,
+      sans ses paramètres (copie datée,
+      sha256:e3212bf06cee5103bea945512d16556e916af19f99c2f51588eea7f9dff6c441)
+    url: https://www.ircantec.retraites.fr/sites/default/files/RA_2025_Ircantec_Pages_ACC.pdf
+    date: 2026-06-25
+  - type: autre
+    reference: >-
+      AEF info, dépêche n° 742881 du 19 décembre 2025, partie publique : le plan de 2026
+      à 2029 et la surindexation du salaire de référence à partir de 2028 (copie datée,
+      sha256:1d8f229ed12c7c69b75d4939af50cefb5ad23eb73595c9776e6350ec929487d6)
+    url: https://www.aefinfo.fr/depeche/742881-syndicats-et-employeurs-publics-saccordent-sur-le-plan-quadriennal-de-lircantec-2026-2029
+    date: 2025-12-19
+code:
+  python: >-
+    scenarios/actuel.py : ValeursPoint.achat, et achat_prolonge, qui ne prolonge pas
+    l'Ircantec ; Rendements.rendement ; droit/acquerir.py : acquerir, les cotisations des
+    années sans barème revalorisées par les prix ; droit/liquider.py : leur conversion au
+    rendement
+  javascript: >-
+    moteur/js/regimes.js : ValeursPoint.achatProlonge et rendement ;
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js : la conversion
+    au rendement
+  parametres: >-
+    regimes/valeurs_point.csv (ircantec) ; regimes/rendements_points.csv, ligne ircantec
+    2027-2100 ; regimes/prolongement_points.csv, qui ne nomme pas l'Ircantec
+  tests: >-
+    tests/test_simulateur.py : test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme ;
+    les témoins de simulation, que le portage rejoue
+historique:
+- >-
+  Jusqu'au 23 septembre 2026, la table s'arrêtait à la valeur de janvier 2022, 0,49241 €,
+  et le rendement moyen de 2009 à 2021, 8,52 %, prolongeait tout le reste ; depuis, le
+  rendement au-delà de 2026 est celui du barème de 2026, 7,63 %. Mesuré alors sur un
+  contractuel entré à 22 ans et parti à 64 : la part Ircantec gagnait 2,8 % pour la
+  génération 1960, que les valeurs de 2022 à 2026 relèvent, et perdait 3,2 % pour 1975,
+  6,5 % pour 1985 et 10,5 % pour 2005, que le rendement de prolongation abaisse.
+- >-
+  Le 4 octobre 2026, l'Agirc-Arrco a quitté ce rendement pour un prix d'achat qui suit le
+  salaire moyen (fiche agirc_arrco_valeur_achat), et la question s'est posée pour
+  l'Ircantec, qui le gardait faute d'avoir lu son texte. Lu le même jour : l'arrêté du
+  30 décembre 1970 (article 9 bis, et non 16, qui porte l'anticipation) renvoie au plan
+  quadriennal, qui revalorise les deux paramètres comme les pensions. Rien n'a bougé.
+effet: >-
+  Toute pension Ircantec qui compte des cotisations postérieures au dernier barème : elles
+  donnent, au rendement de 7,63 %, ce qu'achèterait un salaire de référence revalorisé
+  comme les pensions, la règle du plan quadriennal. La lecture du 4 octobre 2026 ne
+  déplace aucun chiffre ; la surindexation que la presse prête au plan à partir de 2028
+  baisserait la part Ircantec de 0,8 à 42 % selon sa lecture (approximations).

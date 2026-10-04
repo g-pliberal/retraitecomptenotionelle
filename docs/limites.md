@@ -1275,8 +1275,18 @@ d'un peu au-dessus de la page à un peu au-dessous. Et la valeur de service suit
 les prix, la convention de la page, quand l'annexe de l'accord du 5 octobre
 2023 la projette de 2027 à 2037 au salaire moyen moins <!--chiffre:valeur(data/reference/regles/agirc_arrco_valeur_achat.yaml:versions.id=salaire_moyen_2023_2026.contenu.parametres.soutenabilite_valeur_service_projetee*100)-->1,16<!--/--> % :
 aucune source ne tranche avant l'accord qui couvrira 2027 à 2030. Les autres
-régimes en points, l'Ircantec compris, gardent au-delà de leur dernier barème
-le rendement de ce barème.
+régimes en points gardent au-delà de leur dernier barème le rendement de ce
+barème. Pour l'Ircantec, c'est sa règle : l'arrêté du 30 décembre 1970
+(article 9 bis) renvoie au plan quadriennal du conseil d'administration, qui
+revalorise chaque 1<sup>er</sup> janvier le salaire de référence et la valeur
+de service comme les pensions de base, sur l'inflation ; à défaut de plan,
+l'arrêté ferait croître le premier des cinq tiers de cette revalorisation, la
+seconde des deux tiers. Les prix toujours, jamais les salaires (fiche
+`ircantec_valeurs_point`). Une
+dépêche de presse prête au plan de 2026 à 2029 un salaire de référence
+surindexé de <!--chiffre:valeur(data/reference/regles/ircantec_valeurs_point.yaml:versions.id=prix_au_dela_du_bareme.contenu.parametres.surindexation_rapportee*100)-->2,6<!--/--> points à partir de 2028 — une fois ou chaque année,
+elle ne le dit pas —, que ni la caisse ni un texte publié ne confirment : le
+modèle ne le suit pas, et la fiche mesure ce qu'il en coûterait.
 
 UN PIÈGE DÉCOUVERT EN CHEMIN, et refermé par un test. La table des tranches
 d'assiette existe DEUX FOIS — `BORNES_ASSIETTE` dans `donnees/regimes.py` et
