@@ -1,0 +1,43 @@
+code: cnrv
+nom: >-
+  Caisse nationale des retraites pour la vieillesse (CNRV)
+famille: base_prive
+population: >-
+  Tout déposant volontaire, puis les assurés que des régimes obligatoires
+  y affiliaient pour constituer leurs rentes : caisse de retraites ou de
+  rentes viagères pour la vieillesse créée par la loi du 18 juin 1850 et
+  gérée par la Caisse des dépôts, en capitalisation et à adhésion
+  facultative, organisée par la loi du 20 juillet 1886 sous son nom de
+  Caisse nationale des retraites pour la vieillesse. Elle a servi de
+  support aux régimes d'agents publics qui constituaient des rentes
+  viagères — auxiliaires de
+  l'État (arrêté du 16 juillet 1942), personnel temporaire du commissariat
+  à la reconstruction (décret du 7 avril 1944), « agents de l'État
+  tributaires du régime général de la caisse » (loi du 30 mars 1944) —,
+  jusqu'à sa réunion à la Caisse nationale d'assurance en cas de décès
+  sous le nom de Caisse nationale d'assurances sur la vie (décret
+  n° 49-669 du 16 mai 1949).
+creation: 1850
+fermeture: 1949
+extinction: 1949
+succede_a: []
+integre_dans: null
+inventaire:
+  section: prive_base
+  rang: 5
+  population: Déposants volontaires et affiliés des régimes en rentes viagères, avant 1949
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi du 18 juin 1850 créant une caisse de retraites ou de rentes viagères pour la vieillesse, gérée par la Caisse des dépôts (page historique « 1850 » de la Caisse des dépôts, lue le 4 octobre 2026 par l'extrait d'un moteur de recherche, la page répondant 404 ; hors index)", id: null}
+    - {reference: "loi du 20 juillet 1886 relative à l'organisation de la Caisse nationale de retraites pour la vieillesse (notice JORF)", id: JORFTEXT000000877358}
+    - {reference: "loi du 30 mars 1944 relative aux indemnités allouées aux anciens agents de l'État tributaires du régime général de la Caisse nationale des retraites pour la vieillesse ou d'un régime spécial comportant affiliation à ladite caisse (notice JORF)", id: JORFTEXT000000887383}
+    - {reference: "décret n° 49-669 du 16 mai 1949 réunissant la Caisse nationale d'assurance en cas de décès et la Caisse nationale des retraites pour la vieillesse sous le nom de Caisse nationale d'assurances sur la vie (notice JORF)", id: JORFTEXT000000488511}
+  raison_hors_champ: >-
+    Une caisse de capitalisation à adhésion facultative, antérieure à
+    1930 pour l'essentiel de son activité : ses rentes s'achetaient par
+    versements et ne relèvent pas des comptes notionnels, et les régimes
+    obligatoires qui y constituaient des rentes — les régimes d'agents
+    publics que la loi du 30 mars 1944 et les textes de 1942 et 1944
+    nomment — relèvent des successeurs que l'inventaire décrit
+    (Ircantec, après l'IPACTE et l'IGRANTE, et fonction publique).

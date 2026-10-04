@@ -1,0 +1,44 @@
+code: cci_paris
+nom: >-
+  Régime spécial d'assurance vieillesse et d'assurance maladie du personnel de la chambre de commerce et d'industrie de Paris (RSAV)
+famille: special
+population: >-
+  Agents titulaires de la chambre de commerce et d'industrie de Paris :
+  pension de leur régime spécial jusqu'au 31 décembre 2005, financée par
+  une cotisation de 24,68 % en 1991 portée à 29,43 % en 1999, dont 7,35 %
+  à la charge de l'agent en 1991 et 6,95 % depuis 1999 (décret n° 91-613,
+  article 16) ;
+  règlement approuvé par le décret n° 97-1325 du 30 décembre 1997, adopté
+  par la commission paritaire locale et non publié au Journal officiel. Le
+  régime est fermé au 1er janvier 2006 par l'article 70 de la loi
+  n° 2005-882 : vieillesse et invalidité passent au régime général, les
+  droits acquis lui sont transférés « dans la limite des règles qui lui
+  sont propres », tout le personnel est affilié à l'Agirc-Arrco, et la
+  chambre couvre le reste par une institution du livre IX.
+creation: null
+fermeture: 2005
+extinction: null
+succede_a: []
+integre_dans: regime_general
+inventaire:
+  section: speciaux
+  rang: 200
+  nom: Régime spécial d'assurance vieillesse du personnel de la chambre de commerce et d'industrie de Paris
+  population: Agents titulaires de la CCI de Paris
+  couverture: a_modeliser
+  statuts: []
+  textes:
+    - {reference: "décret n° 97-1325 du 30 décembre 1997 portant approbation du règlement du régime spécial d'assurance vieillesse et d'assurance maladie du personnel de la CCI de Paris (règlement consultable à la chambre, non publié au JORF)", id: JORFTEXT000000752576}
+    - {reference: "décret n° 91-613 du 28 juin 1991 fixant les taux des cotisations de divers régimes spéciaux, article 16 (24,68 % en 1991, 25,61 % en 1992 … 29,43 % en 1999)", id: LEGIARTI000006775993}
+    - {reference: "arrêté du 23 août 2004 approuvant la convention constitutive du GIP « Information des assurés sur leurs droits à retraite » (la CCIP parmi ses membres)", id: JORFARTI000001284713}
+    - {reference: "loi n° 2005-882 du 2 août 2005 en faveur des petites et moyennes entreprises, article 70 (fin du régime spécial au 1er janvier 2006)", id: JORFARTI000001680091}
+    - {reference: "décret n° 2006-1748 du 23 décembre 2006 portant application de l'article 70 de la loi n° 2005-882 (rentes du régime général, rétablissement des droits depuis le 1er juillet 1930)", id: JORFTEXT000000460859}
+    - {reference: "arrêté du 23 décembre 2006 fixant le montant de la contribution de la CCI de Paris au régime général", id: JORFTEXT000000275406}
+  manque: >-
+    Aucun statut ne porte l'agent de la chambre : un agent entré avant
+    2006 est simulé en salarié du privé, ce que le régime général lui
+    rend depuis 2006 par le rétablissement de ses droits, mais pas la
+    pension du régime spécial des agents partis avant 2006, ni les droits
+    que la chambre couvre au-delà du régime général et de l'Agirc-Arrco.
+    Le règlement de 1997 n'est pas publié ; les rentes de transfert de
+    2006 sont lues, et la fiche `cci_paris_transfert_2006` les décrit.

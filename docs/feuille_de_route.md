@@ -23,9 +23,11 @@ avec la raison, et l'action elle-même dans l'archive. Une découverte faite en 
 ici, pas dans un commentaire de code.
 
 **Le constat de septembre 2026, qui fonde ce classement.** La couverture des
-régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->91<!--/--> lignes d'inventaire, plus aucune ligne « à modéliser »,
+régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->108<!--/--> lignes d'inventaire,
 <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->40<!--/--> fiches partielles dont chaque mur est documenté dans `regimes.md` et
-`limites.md` §4. Continuer sur cet axe rapporte peu : les manques restants
+`limites.md` §4, et <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=a_modeliser)-->9<!--/--> lignes « à modéliser » — aucune en
+septembre, celles-ci rouvertes le 4 octobre par l'action 145 pour des régimes
+que l'inventaire ne nommait pas, documentés et non calculés. Continuer sur cet axe rapporte peu : les manques restants
 portent sur des populations minuscules ou des barèmes que personne ne publie.
 Les gains sont sur ce qui porte les résultats de tête du README : les agrégats
 de la page Coût, la part patronale, les taux de cotisation qui sont la matière
@@ -5771,3 +5773,92 @@ estimation retraite » que le propriétaire a ouverte, connecté lui-même.
    brut sans attendre.
 4. *Les moteurs publics en local*, avec l'action 137 : TRAJECTOiRE en cas
    types du COR, puis Destinie 2, sorties figées en témoins.
+
+### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
+
+**Reprise, au 4 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à
+l'inventaire, neuf à modéliser et huit hors champ, et sept fiches de règles
+`pas_encore_modelisee` pour les régimes à modéliser dont les textes se lisent.
+Reste : 2. les fiches de règles des régimes de l'inventaire qui n'en ont
+aucune ou n'ont que la fiche générique de liquidation — l'outre-mer, l'IPACTE
+et l'IGRANTE, le personnel navigant, les assemblées, le CESE, les gérants de
+débits de tabac, l'ASV, les conjoints d'Organic, puis les hors champ dont des
+assurés vivent encore (Crédit foncier, ORTF, CRFOM) ; 3. les pistes que
+l'index ne porte que par leur titre. Commencer par l'étape 2, l'outre-mer
+d'abord ; la note de l'étape 1 dit où sont les sources.
+
+**Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
+retraite que nous n'avons pas encore documenter pour l'instant. Il faut
+documenter le plus de régimes de retraite possibles dans le détail le plus fin
+possible. Je veux juste que tu documentes pour l'instant. Ne fait pas de
+changement dans les moteurs. »
+
+**Étape 1, le 4 octobre 2026 : les régimes absents de l'inventaire.**
+
+- *La méthode.* L'inventaire se disait complet ; il a été relu contre trois
+  énumérations qu'il ne citait pas. Les décrets annuels de contribution au
+  fonds spécial d'allocation vieillesse, de 1984 à 1993, nomment tous les
+  débiteurs de pensions (décret n° 84-104, article 2, `LEGIARTI000006766410`,
+  à décret n° 93-426, `LEGIARTI000006928885`) ; la convention du GIP Info
+  Retraite nomme ses trente-huit membres de 2004 ; la carte des mandats de la
+  Caisse des dépôts (février 2026) et ses arrêtés de délégation de 2003 à
+  2006 détaillent ses « pensions sur fonds spéciaux ». L'article 61 du décret
+  n° 46-1378 et R. 711-1, relus dans leurs trois rédactions, y ont ajouté la
+  Compagnie générale des eaux, que `docs/regimes.md` tenait pour citée de
+  mémoire.
+- *Ce qui est entré.* Neuf lignes **à modéliser** : les régimes spéciaux de la
+  CCI de Paris (fermé en 2006), de la Compagnie générale des eaux (1991) et
+  de l'ancienne CCI de Roubaix (1998) ; le personnel statutaire de la CANSSM ;
+  le personnel titulaire des ports autonomes de Bordeaux, du Havre et de
+  Marseille ; le RETREP des maîtres du privé ; les pensions des ministres des
+  cultes d'Alsace-Moselle ; l'allocation temporaire complémentaire des
+  ingénieurs du contrôle aérien ; l'affiliation des représentants au
+  Parlement européen. Huit lignes **hors champ** : la SUDAC, la caisse du
+  personnel sédentaire de la CGMF, la caisse du chemin de fer
+  franco-éthiopien, les régimes locaux d'Alsace-Moselle, les cantonniers de
+  l'État et les pensions sur fonds spéciaux, les régimes par rente des élus
+  locaux d'avant 1992, l'Assemblée de l'Union française, la Caisse nationale
+  des retraites pour la vieillesse de 1850. Chaque ligne cite ses textes, avec
+  leur identifiant quand l'index le porte, et dit ce qui manque ou pourquoi.
+- *Les fiches de règles.* Sept, toutes `pas_encore_modelisee`, découpées en
+  versions datées et citant leurs articles : `retrep_avantages_temporaires`
+  (six versions, du décret de 1980 au décret n° 2023-435),
+  `atc_icna_allocation` (cinq), `cultes_alsace_moselle_pension` (trois, la
+  première supposée faute du texte de 1909), `parlement_europeen_affiliation`
+  (trois), et les trois transferts au régime général —
+  `compagnie_generale_eaux_transfert_1991`, `cci_roubaix_transfert_1998`,
+  `cci_paris_transfert_2006` —, qui suivent un même gabarit : une rente
+  forfaitaire du régime général, 64 650 F puis 62 150 F pour cent cinquante
+  trimestres validés depuis le 1er juillet 1930, puis, en 2006, le
+  rétablissement des droits au régime général et l'affiliation à
+  l'Agirc-Arrco. Le personnel de la CANSSM et les ports n'ont pas de fiche :
+  leurs règlements ne sont publiés nulle part où le dépôt lit.
+- *Ce qui n'est pas entré.* Les compléments de pension CGE et SEVESC de la
+  Caisse des dépôts (des bonifications d'insalubrité d'agents détachés, au-
+  dessus de la CNRACL), le fonds de la mairie de Fort-de-France, les rentes
+  d'invalidité de la Ville de Paris, les régimes facultatifs, les
+  organisations internationales, les membres du Gouvernement (aucun texte
+  d'affiliation dans l'index) ; `docs/regimes.md` les nomme, avec les pistes
+  connues par leur seul titre.
+- *Les tests.* Deux assertions fermaient la couverture « à modéliser » ;
+  elles l'acceptent désormais, à condition qu'une fiche de règles décrive la
+  ligne ou que son `manque` dise longuement ce qui bloque
+  (`test_l_inventaire_couvre_les_regimes_que_le_code_enumere`), et le filtre
+  de la page Données propose exactement les couvertures que l'inventaire
+  porte. Aucun moteur n'est touché.
+- *Ce que ça déplace.* Aucun témoin de simulation ; les pages Méthode et
+  Programme comptent cent huit régimes, et le parcours de présentation suit.
+
+**Les étapes suivantes.**
+
+2. *Les fiches des régimes sans fiche.* Une fiche `pas_encore_modelisee` ou
+   `approchee`, selon que le régime est calculé, par régime de l'inventaire
+   qui n'a que la fiche générique de liquidation, en lisant ses textes dans
+   l'index ou sur le site de sa caisse ; l'outre-mer d'abord, dont les
+   délibérations sont citées par les lignes de l'inventaire.
+3. *Les pistes.* La caisse de retraites de la presse (ordonnance
+   n° 45-2411), les ingénieurs des minéraux solides (1947), l'Institut de
+   France (décret n° 49-1372), les praticiens-conseils (1963), l'ONIVIT
+   (décret n° 79-814), le statut du personnel de la CANSSM, les règlements
+   des ports : à lire au fac-similé du Journal officiel ou aux archives, puis
+   inscrire ou écarter.

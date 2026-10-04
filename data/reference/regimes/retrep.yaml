@@ -1,0 +1,43 @@
+code: retrep
+nom: >-
+  Régime temporaire de retraite des maîtres de l'enseignement privé sous contrat (RETREP)
+famille: fonction_publique
+population: >-
+  Maîtres contractuels ou agréés, et documentalistes, des établissements
+  d'enseignement privés liés à l'État par contrat (L. 914-1 du code de
+  l'éducation) : salariés affiliés au régime général et à l'Agirc-Arrco,
+  ils peuvent cesser leur activité aux âges des maîtres titulaires de
+  l'enseignement public et toucher, jusqu'à leur pension du régime général
+  à taux plein, des « avantages temporaires de retraite » que l'État paie
+  seul (décret n° 80-7 du 2 janvier 1980, puis R. 914-120 à R. 914-140 du
+  code de l'éducation depuis le 29 décembre 2008, L. 914-1-1 depuis le
+  30 décembre 2011).
+creation: 1980
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: fonction_publique
+  rang: 140
+  nom: Régime temporaire de retraite des maîtres de l'enseignement privé sous contrat (RETREP)
+  population: Maîtres et documentalistes de l'enseignement privé sous contrat
+  couverture: a_modeliser
+  statuts: []
+  textes:
+    - {reference: "décret n° 80-7 du 2 janvier 1980 relatif aux conditions de cessation d'activité de certains maîtres contractuels ou agréés des établissements d'enseignement privés sous contrat (versions de 1980 à 2006 dans l'index LEGI)", id: LEGITEXT000006063310}
+    - {reference: "code de l'éducation, R. 914-120 à R. 914-140 (codification du décret n° 80-7, depuis le 29 décembre 2008), R. 914-120", id: LEGIARTI000020055876}
+    - {reference: "code de l'éducation, L. 914-1-1, créé par l'article 129 de la loi n° 2011-1977 du 28 décembre 2011 de finances pour 2012 (« avantages temporaires de retraite », « régime temporaire de retraite »)", id: LEGIARTI000025058639}
+    - {reference: "arrêté du 24 mars 1987 désignant l'Association pour la prévoyance collective pour liquider et payer les avantages du décret n° 80-7, à compter du 1er juin 1987", id: LEGIARTI000006462912}
+  manque: >-
+    Aucun statut ne porte le maître du privé jusqu'au départ anticipé : le
+    statut `maitre_enseignement_prive` route le régime général,
+    l'Agirc-Arrco et le régime additionnel, et liquide au droit commun.
+    Manquent l'âge du maître titulaire public (cinquante-cinq ans pour
+    quinze ans d'échelle d'instituteur, soixante sinon, puis les âges de
+    la fonction publique), la condition de quinze ans de services, et
+    l'avantage lui-même : une pension du régime général et de la
+    complémentaire liquidées comme à l'âge du taux plein, sur les seuls
+    services d'enseignement, servies jusqu'à la pension réelle du régime
+    général à taux plein, puis éteintes. La fiche
+    `retrep_avantages_temporaires` le décrit version par version.

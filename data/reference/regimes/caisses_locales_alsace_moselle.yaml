@@ -1,0 +1,44 @@
+code: caisses_locales_alsace_moselle
+nom: >-
+  Régimes locaux de retraite des collectivités, des établissements publics et des chambres consulaires d'Alsace-Moselle
+famille: fonction_publique
+population: >-
+  Agents titulaires des départements, des communes et des établissements
+  publics du Bas-Rhin, du Haut-Rhin et de la Moselle — et personnel des
+  chambres de commerce de Strasbourg, de Colmar et de la Moselle — restés,
+  en vertu du droit local, à un « régime obligatoire de retraites institué
+  par la collectivité locale » plutôt qu'à la CNRACL, que ces collectivités
+  peuvent choisir sans y être tenues. De 1984 à 1993, les listes des
+  contributeurs au fonds spécial d'allocation vieillesse nomment les trois
+  caisses départementales, les caisses de retraites d'une soixantaine de
+  communes (Metz, Strasbourg, Mulhouse, Colmar…), celles des hospices et
+  centres hospitaliers de Strasbourg, Colmar, Mulhouse, Metz, Haguenau,
+  et la caisse de secours et de pensions du personnel de la chambre de la
+  Moselle. La caisse du personnel départemental du Haut-Rhin, dont le
+  règlement a été approuvé le 11 juillet 1924 et dont la Caisse des dépôts
+  paie les pensions, comptait deux pensionnés fin 2022.
+creation: null
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: cnracl
+inventaire:
+  section: fonction_publique
+  rang: 150
+  nom: Régimes locaux de retraite des collectivités et établissements publics d'Alsace-Moselle
+  population: Agents titulaires des collectivités d'Alsace-Moselle non affiliés à la CNRACL
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "décret n° 2003-1306 du 26 décembre 2003 relatif au régime de retraite des fonctionnaires affiliés à la CNRACL, article 66 (affiliation facultative des collectivités du Haut-Rhin, du Bas-Rhin et de la Moselle ; renonciation des titulaires qui relevaient d'un régime local)", id: LEGIARTI000023414174}
+    - {reference: "décret n° 84-104 du 9 février 1984, article 2 (caisses départementales des retraites de la Moselle, du Bas-Rhin et du Haut-Rhin, caisses de retraites des communes et des établissements publics des trois départements)", id: LEGIARTI000006766410}
+    - {reference: "décret n° 93-426 du 18 mars 1993, article 2 (même liste, la dernière que l'index porte)", id: LEGIARTI000006928885}
+    - {reference: "Caisse des dépôts, page « Régime de la caisse de retraite du personnel départemental du Haut-Rhin » (règlement approuvé par le commissaire général de la République le 11 juillet 1924 ; deux pensionnés au 31 décembre 2022), hors JORF", id: null}
+  raison_hors_champ: >-
+    Des dizaines de régimes, un par collectivité, chacun sur son
+    règlement local, que ni le Journal officiel ni l'index ne publient ;
+    les collectivités qui ont rejoint la CNRACL y ont affilié tous leurs
+    titulaires, hors ceux qui ont renoncé dans les six mois, et la seule
+    caisse dont l'effectif est publié n'a plus que deux pensionnés. Le
+    statut territorial route vers la CNRACL, ce qui est juste pour les
+    collectivités affiliées.

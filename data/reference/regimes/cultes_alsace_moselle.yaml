@@ -1,0 +1,43 @@
+code: cultes_alsace_moselle
+nom: >-
+  Pensions des ministres des cultes rétribués par l'État en Alsace-Moselle (loi locale du 15 novembre 1909)
+famille: fonction_publique
+population: >-
+  Ministres des cultes reconnus du Bas-Rhin, du Haut-Rhin et de la Moselle
+  (curés, desservants, vicaires, pasteurs, rabbins) et employés des
+  secrétariats des autorités religieuses, rémunérés par le ministère de
+  l'intérieur : 2 400 ministres en 1970, 1 397 personnes rémunérées par
+  l'État fin 2014 (Observatoire de la laïcité, avis de mai 2015). Ils ne
+  sont pas fonctionnaires (Conseil d'État, avis du 27 août 1948), mais
+  leur pension, servie par l'État sans cotisation, suit la loi locale du
+  15 novembre 1909, que la réforme de 2023 n'a pas touchée.
+creation: 1909
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: fonction_publique
+  rang: 160
+  nom: Pensions des ministres des cultes rétribués par l'État en Alsace-Moselle
+  population: Ministres des cultes reconnus d'Alsace-Moselle et employés des autorités religieuses
+  couverture: a_modeliser
+  statuts: []
+  textes:
+    - {reference: "loi locale du 15 novembre 1909 relative aux traitements et pensions des ministres des cultes rétribués par l'État et de leurs veuves et orphelins (notice JORF ; texte allemand, traduction publiée par le décret n° 2013-395)", id: JORFTEXT000000315082}
+    - {reference: "arrêté du 29 mai 2001 modifiant l'arrêté du 19 mars 1910 portant règlement d'exécution de la loi locale du 15 novembre 1909 (à l'article 7, « 65 » remplacé par « 60 »)", id: JORFTEXT000000590423}
+    - {reference: "décret n° 2007-1341 du 11 septembre 2007 modifiant la loi locale du 15 novembre 1909 (traitement selon un classement indiciaire, pensions « de l'État » et non plus « sur la caisse d'Alsace-Lorraine »)", id: JORFTEXT000000279682}
+    - {reference: "décret n° 51-75 du 19 janvier 1951 relatif au régime de sécurité sociale des ministres des cultes en exercice en Alsace et en Lorraine (régime spécial pour la maladie, au 1er janvier 1947)", id: LEGITEXT000028855715}
+    - {reference: "réponse du ministre de l'intérieur à la question écrite n° 06644 de M. Jean Louis Masson, JO Sénat du 27 juillet 2023 : la loi du 15 novembre 1909 « détermine le régime de retraite spécifique des agents des cultes statutaires d'Alsace-Moselle », inchangé par la loi du 14 avril 2023 (hors JORF)", id: null}
+  manque: >-
+    Aucun statut ne route le ministre du culte concordataire : il n'est ni
+    fonctionnaire de l'État ni salarié du régime général, et sa pension
+    d'État n'est pas calculée. Manquent les règles de la loi locale et de
+    son règlement d'exécution de 1910, dont le texte consolidé n'est pas
+    dans l'index : seules leurs modifications de 2001 et de 2007 y sont,
+    et la presse en résume le reste (dix années de services au moins,
+    pension proportionnelle aux années et au dernier traitement, sans
+    cotisation, un certificat médical avant soixante ans). Manque aussi
+    la coordination avec le régime général pour qui quitte le ministère
+    sans droit. La fiche `cultes_alsace_moselle_pension` dit ce qui est lu
+    et ce qui ne l'est pas.

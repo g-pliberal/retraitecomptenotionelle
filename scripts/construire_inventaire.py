@@ -53,6 +53,11 @@ ENTETE = """\
 # L. 921-4 (les complémentaires obligatoires), le programme 195 des lois de
 # finances (les régimes fermés que l'État finance). Tout ce qui est marqué
 # « à modéliser » l'est par décision, y compris l'outre-mer et les assemblées.
+# Le 4 octobre 2026, trois énumérations de plus (action 145) : les débiteurs de
+# pensions qui contribuent au fonds spécial d'allocation vieillesse (décrets
+# annuels de 1984 à 1993), les membres du GIP Info Retraite (arrêté du 23 août
+# 2004) et la carte des régimes et mandats que gère la Caisse des dépôts
+# (février 2026) ; elles ont fait entrer dix-sept lignes.
 
 source_id: legifrance_inventaire_regimes
 

@@ -1,0 +1,38 @@
+code: cantonniers_etat
+nom: >-
+  Régime de retraites des cantonniers de l'État et pensions sur fonds spéciaux (chemin de fer de l'Hérault, cantonniers de l'Isère)
+famille: fonction_publique
+population: >-
+  Cantonniers et agents des Ponts et Chaussées affiliés au régime de
+  retraites du décret du 22 février 1896, qui constituait des rentes
+  viagères dont un décret fixait chaque année le montant maximum (décret
+  n° 50-430 du 4 avril 1950 pour 1949), et, parmi les « pensions sur
+  fonds spéciaux » que la Caisse des dépôts gère, les pensions des agents
+  du chemin de fer de l'Hérault et des cantonniers de l'Isère. En 1993,
+  « chemin de fer de l'Hérault, cantonniers de l'Isère » et la direction
+  départementale de l'équipement de Maine-et-Loire figurent encore parmi
+  les débiteurs de pensions qui contribuent au fonds spécial d'allocation
+  vieillesse.
+creation: 1896
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: fonction_publique
+  rang: 180
+  nom: Régime de retraites des cantonniers de l'État et pensions sur fonds spéciaux
+  population: Anciens cantonniers et agents des Ponts et Chaussées, du chemin de fer de l'Hérault et des cantonniers de l'Isère
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "décret du 22 février 1896 portant régime de retraites des cantonniers de l'État (notice JORF)", id: JORFTEXT000000848515}
+    - {reference: "décret n° 50-430 du 4 avril 1950 fixant pour 1949 le montant maximum de rente viagère des agents des Ponts et Chaussées affiliés au régime de retraite du décret du 22 février 1896 (notice JORF)", id: JORFTEXT000000496487}
+    - {reference: "décret n° 93-426 du 18 mars 1993, article 2 (« Chemin de fer de l'Hérault, cantonniers de l'Isère » et « D.D.E. de Maine-et-Loire » contributeurs au fonds spécial d'allocation vieillesse)", id: LEGIARTI000006928885}
+    - {reference: "arrêté du 14 avril 2006 portant délégation de signature pour la direction des retraites de la Caisse des dépôts, article 29 (pensions sur fonds spéciaux : pensions des chemins de fer de l'Hérault, des cantonniers de l'Isère, régime spécial de l'Imprimerie nationale, caisse du personnel de la préfecture du Haut-Rhin)", id: JORFARTI000002103219}
+  raison_hors_champ: >-
+    Des rentes viagères constituées avant la sécurité sociale pour des
+    agents des Ponts et Chaussées et de services départementaux, dont il
+    ne reste que des pensions résiduelles, gérées en fonds spéciaux par
+    la Caisse des dépôts : plus de carrière à simuler. L'index n'a des
+    textes de 1896 et 1950 que les titres.

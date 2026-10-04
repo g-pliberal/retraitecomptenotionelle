@@ -1,0 +1,34 @@
+code: chemin_fer_franco_ethiopien
+nom: >-
+  Caisse de retraite du chemin de fer franco-éthiopien (CRCFE)
+famille: special
+population: >-
+  Anciens agents de nationalité française de la Compagnie du chemin de fer
+  franco-éthiopien (Djibouti - Addis-Abeba) et leurs ayants droit : l'État
+  paie leurs pensions depuis la loi n° 77-770 du 12 juillet 1977 ; un
+  accord avec l'État éthiopien du 5 mars 1993 en met la charge au budget
+  français, et une convention du 30 mars 1993 en confie la gestion à la
+  Caisse des dépôts, qui ne liquide plus que des réversions selon la
+  réglementation de la compagnie en vigueur au 12 juillet 1977. Huit
+  pensionnés au 31 décembre 2019, deux de droit direct, de 82 à 101 ans.
+creation: null
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: speciaux
+  rang: 270
+  population: Anciens agents français du chemin de fer franco-éthiopien
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi n° 77-770 du 12 juillet 1977 relative à la radiation des cadres des militaires originaires du Territoire français des Afars et des Issas et au paiement des pensions dues aux retraités de nationalité française de la société du chemin de fer franco-éthiopien", id: JORFTEXT000000704674}
+    - {reference: "décret n° 93-426 du 18 mars 1993, article 2 (« Caisse des chemins de fer éthiopiens » contributrice au fonds spécial d'allocation vieillesse)", id: LEGIARTI000006928885}
+    - {reference: "Caisse des dépôts, rapport annuel des comptes 2019 de la CRCFE (convention du 30 mars 1993, accord franco-éthiopien du 5 mars 1993, article 7 de la loi n° 77-770, huit pensionnés), hors JORF", id: null}
+  raison_hors_champ: >-
+    Caisse d'une compagnie concessionnaire en Éthiopie, dont l'État paie
+    les pensions des retraités français depuis la loi du 12 juillet 1977 :
+    huit pensionnés en 2019, âgés de 82 à 101 ans, et seules des
+    réversions se liquident encore, sur le règlement de la compagnie figé
+    au 12 juillet 1977. Il n'y a plus de carrière à simuler.

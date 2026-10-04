@@ -1,0 +1,28 @@
+code: assemblee_union_francaise
+nom: >-
+  Caisse de retraite des membres de l'ancienne Assemblée de l'Union française
+famille: special
+population: >-
+  Anciens conseillers de l'Assemblée de l'Union française, assemblée
+  consultative de la Constitution de 1946, disparue avec la IVe République : la loi
+  n° 62-698 du 27 juin 1962 organise leur caisse de retraite, les pensions
+  étant « calculées dans les conditions auxquelles sont soumises les
+  pensions des députés » (notice du Journal officiel).
+creation: null
+fermeture: 1958
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: fonction_publique
+  rang: 200
+  population: Anciens membres de l'Assemblée de l'Union française (IVe République)
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi n° 62-698 du 27 juin 1962 relative à la caisse de retraite des membres de l'ancienne Assemblée de l'Union française (notice JORF : pensions calculées comme celles des députés)", id: JORFTEXT000000313963}
+  raison_hors_champ: >-
+    Assemblée disparue avec la IVe République, en 1958 : aucun membre
+    n'a pu y acquérir de droit depuis, et les survivants éventuels,
+    majeurs en 1958, ont plus de quatre-vingt-cinq ans. Le régime suivait celui des députés, que la ligne des assemblées
+    parlementaires décrit.

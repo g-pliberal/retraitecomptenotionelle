@@ -1,0 +1,33 @@
+code: sudac
+nom: >-
+  Pension statutaire et complément de pension des anciens agents de la Société urbaine de distribution d'air comprimé (SUDAC)
+famille: special
+population: >-
+  Anciens agents de la Société urbaine de distribution d'air comprimé,
+  concessionnaire de la Ville de Paris pour le réseau d'air comprimé :
+  leur pension statutaire est devenue une allocation différentielle, que
+  la Caisse des dépôts verse pour le compte de la société et qui diminue
+  à mesure que l'agent perçoit ses pensions du régime général et des
+  complémentaires (« CNP-ARRCO-CRICA », selon la page du fonds).
+creation: null
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: speciaux
+  rang: 250
+  nom: Pension statutaire et complément de pension des anciens agents de la SUDAC
+  population: Anciens agents de la SUDAC, concessionnaire de la Ville de Paris
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "arrêté du 13 novembre 2003 portant délégation de signature à la Caisse des dépôts (« complément de pension de la Société urbaine de distribution d'air comprimé (SUDAC) » parmi les caisses et fonds gérés)", id: JORFARTI000001092999}
+    - {reference: "Caisse des dépôts, pages « Pension et complément de pension de la SUDAC » et carte des mandats de février 2026 (allocations égales à la différence entre la pension statutaire et les pensions du régime général et des complémentaires), hors JORF", id: null}
+  raison_hors_champ: >-
+    Un avantage d'entreprise, non un régime légal : la pension statutaire
+    d'un concessionnaire de la Ville de Paris, réduite à un complément
+    différentiel au-dessus du régime général et des complémentaires, que
+    la Caisse des dépôts verse aux anciens agents ; la page du fonds ne
+    publie ni le nombre de bénéficiaires ni le financement. Les droits de
+    base sont ceux du régime général.

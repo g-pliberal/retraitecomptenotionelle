@@ -1120,7 +1120,7 @@ document saisi à la main, et les portails officiels ne servent pas de liste
 exploitable —, si bien qu'un régime pouvait manquer à la liste des manquants.
 [`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml)
 énumère maintenant TOUS les régimes obligatoires, vivants, disparus ou hors
-champ — <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->91<!--/--> lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
+champ — <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->108<!--/--> lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
 programme 195 des lois de finances, chacune avec son texte fondateur et, quand
 l'index DILA du dépôt le porte, son identifiant —, et dit pour chacun s'il est
 modélisé, partiel, à modéliser ou hors champ. `tests/test_donnees.py` impose

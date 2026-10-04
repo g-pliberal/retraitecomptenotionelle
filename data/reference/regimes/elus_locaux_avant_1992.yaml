@@ -1,0 +1,38 @@
+code: elus_locaux_avant_1992
+nom: >-
+  Régimes de retraite par rente des élus départementaux, régionaux et communaux constitués avant la loi du 3 février 1992
+famille: special
+population: >-
+  Anciens conseillers généraux, régionaux et municipaux affiliés aux
+  régimes de retraite que des collectivités avaient institués pour leurs
+  élus avant la loi n° 92-108 : la loi rend les cotisations des
+  collectivités exclusives de toute autre contribution, mais fait honorer
+  les pensions liquidées et les droits acquis par les organismes auprès
+  desquels ils ont été constitués, les collectivités couvrant le
+  déficit (article 32). La Caisse des dépôts gère les régimes des anciens
+  conseillers généraux de cinq départements — Bouches-du-Rhône, Creuse,
+  Gard, Haute-Savoie, Lot-et-Garonne —, « régimes de retraite
+  supplémentaire par rente fermés depuis 1992 », aux droits figés au
+  30 mars 1992 et financés surtout par une subvention départementale.
+creation: null
+fermeture: 1992
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: fonction_publique
+  rang: 190
+  nom: Régimes de retraite par rente des élus locaux constitués avant 1992
+  population: Anciens conseillers généraux de cinq départements et autres élus locaux d'avant 1992
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice des mandats locaux, article 32, rédaction initiale (pensions liquidées et droits acquis honorés par les organismes, subvention d'équilibre des collectivités)", id: LEGIARTI000006367557}
+    - {reference: "même article 32, rédaction de 1995 (les élus en fonctions avant la loi peuvent continuer à cotiser à ces organismes)", id: LEGIARTI000006367559}
+    - {reference: "Caisse des dépôts, page « Conseils généraux » et carte des mandats de février 2026 (« Conseils départementaux 13, 23, 30, 47, 74 » ; droits figés au 30 mars 1992), hors JORF", id: null}
+  raison_hors_champ: >-
+    Des régimes supplémentaires par rente, propres à chaque collectivité,
+    fermés en 1992 et dont les droits sont figés au 30 mars 1992 : ils
+    s'ajoutent à l'Ircantec, que le statut `elu_local` route depuis 1973,
+    et à la retraite par rente que la loi de 1992 a ouverte (FONPEL,
+    CAREL), facultative. Aucun règlement n'est publié.

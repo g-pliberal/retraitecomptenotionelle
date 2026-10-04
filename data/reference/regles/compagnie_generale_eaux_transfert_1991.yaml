@@ -1,0 +1,130 @@
+schema_version: 1
+id: compagnie_generale_eaux_transfert_1991
+intitule: >-
+  Au 1er janvier 1991, le régime spécial de la Compagnie générale des eaux prend fin :
+  ses pensions en cours et les droits de ses affiliés non liquidés deviennent des
+  rentes du régime général, de 64 650 F par an pour cent cinquante trimestres validés
+  depuis le 1er juillet 1930 et en cent-cinquantièmes au-dessous, revalorisées comme
+  ses pensions ; les salariés en activité cotisent depuis au régime général, la
+  compagnie prenant en charge l'écart de cotisation.
+domaine: coordination
+regimes: [compagnie_generale_eaux, regime_general]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les périodes d'affiliation au régime spécial, du 1er juillet 1930 au 31 décembre 1990, telles qu'il les a validées
+- les périodes d'arrêt de travail indemnisées par la compagnie, et les périodes et majorations que le régime général aurait validées
+- "la situation au 31 décembre 1990 : pension en cours ou non, âge, réversion"
+ecrit:
+- une rente du régime général, immédiate ou différée, et sa réversion
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: regime_special
+  statut: supposee
+  hypothese: >-
+    avant 1991, le régime spécial de la compagnie, maintenu par l'article 61 du
+    décret n° 46-1378 et par R. 711-1, sert ses propres pensions selon la convention
+    collective du 22 mai 1969 « relatives au régime spécial », que l'index ne publie pas
+  fiabilite: faible pour le montant, haute pour l'existence du régime
+  bornes:
+    liquidation.date_effet: [null, 1991-01-01]
+  contenu:
+    droit: une pension du régime spécial, dont les règles ne sont pas lues
+  exemples: aucun trouvé
+- id: rentes_de_transfert
+  statut: lue
+  textes:
+  - {id: JORFARTI000001952341, article: "loi n° 91-73 du 18 janvier 1991, article 17", publie_le: 1991-01-20, en_vigueur: 1991-01-01}
+  - {id: JORFARTI000001543934, article: "décret n° 91-408 du 26 avril 1991, article 10", publie_le: 1991-05-03}
+  - {id: JORFARTI000000965964, article: "décret n° 91-408, article 10, alinéas 2 et suivants", publie_le: 1991-05-03}
+  - {id: JORFARTI000001737987, article: "décret n° 91-408, article 11", publie_le: 1991-05-03}
+  - {id: JORFARTI000002297422, article: "décret n° 91-408, article 12", publie_le: 1991-05-03}
+  - {id: JORFARTI000001737988, article: "décret n° 91-408, article 13", publie_le: 1991-05-03}
+  - {id: JORFARTI000001737989, article: "décret n° 91-408, article 16", publie_le: 1991-05-03}
+  - {id: JORFARTI000001348274, article: "décret n° 91-408, article 18", publie_le: 1991-05-03}
+  nee_de: JORFARTI000001952341
+  bornes:
+    liquidation.date_effet: [1991-01-01, null]
+  contenu:
+    principe: >-
+      « Il est mis fin à compter de la même date au régime spécial » ; les obligations
+      envers les bénéficiaires au 31 décembre 1990 sont transférées au régime général
+      « dans la limite des règles qui sont propres à celui-ci concernant l'âge de
+      l'ouverture du droit, la durée maximale d'assurance et le montant maximal de la
+      pension » (article 17, I et III)
+    rente_immediate: >-
+      aux titulaires d'une pension de retraite au 31 décembre 1990 âgés d'au moins
+      soixante ans : « Le montant annuel de cette rente est fixé à 64650 F pour les
+      personnes justifiant d'une durée d'assurance d'au moins 150 trimestres », réduit
+      « à autant de cent-cinquantièmes qu'elles justifient de trimestres » (article 10)
+    duree_retenue: >-
+      les périodes du 1er juillet 1930 au 31 décembre 1990 validées par le régime
+      spécial, de date à date, arrondies au trimestre selon que le reste atteint
+      quarante-cinq jours ; les arrêts de travail indemnisés par la compagnie ; les
+      périodes de L. 351-3 et les majorations de L. 351-4 et L. 351-5 que le régime
+      général aurait accordées ; quatre trimestres au plus par année, et rien de ce
+      qu'un autre régime compte déjà (article 10)
+    rente_differee: >-
+      liquidée au 1er janvier 1991 et calculée de même pour les pensionnés de moins de
+      soixante ans, servie au premier jour du mois qui suit leur soixantième
+      anniversaire, et pour les affiliés dont les droits n'étaient pas liquidés, servie
+      à la date d'effet de leur pension du régime général (article 12)
+    reversion: >-
+      au taux des pensions de réversion du régime général appliqué à la rente que
+      l'assuré aurait eue, immédiate si les conditions du régime général sont remplies
+      au 1er janvier 1991, différée sinon, majorée selon L. 353-1 et L. 353-5
+      (articles 11 et 13)
+    retraite_progressive: >-
+      les périodes d'affiliation postérieures au 30 juin 1930 comptent pour la retraite
+      progressive de L. 351-15, la rente étant servie comme la pension (article 16)
+    cotisation: >-
+      la compagnie prend en charge, pour ses salariés qui relevaient du régime spécial,
+      la différence entre la cotisation vieillesse du régime général et celle qui
+      résulterait du taux salarial appliqué à l'assiette du régime spécial (article
+      18) ; elle verse au régime général une contribution de 40 millions de francs
+      (arrêté du 26 avril 1991)
+    au_dela: >-
+      « Pour celles des obligations […] qui ne sont pas prises en charge par le régime
+      général », la compagnie « pourvoit » aux couvertures complémentaires par une
+      institution de prévoyance et un accord d'entreprise qui se substitue à la
+      convention collective du 22 mai 1969 (article 17, IV)
+  unites:
+    rente: francs par an en 1991, revalorisés comme les pensions du régime général
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Le décret ne dit pas d'où viennent les 64 650 F : ce n'est pas la moitié du plafond
+    annuel de 1990, que la série du dépôt donne à 131 040 F (19 977 euros). Chercher
+    s'il s'agit de la pension maximale du régime général au 1er janvier 1991, avant de
+    l'écrire comme une règle qu'un autre transfert pourrait suivre.
+  - >-
+    Lire l'accord d'entreprise substitué à la convention du 22 mai 1969, et l'arrêté du
+    2 novembre 1992 étendant la convention de 1947 à la compagnie, pour savoir ce que
+    les cadres et les autres salariés ont reçu au-delà de la rente.
+  lectures:
+  - type: jorf
+    reference: >-
+      loi n° 91-73 du 18 janvier 1991, article 17 (JORFARTI000001952341) ; décret
+      n° 91-408 du 26 avril 1991 (JORFTEXT000000504104), articles 3 à 23, que l'index
+      range sous le titre « Décret du 26 avril 1991 portant délégation de signature » ;
+      arrêté du 26 avril 1991 (JORFTEXT000000864974)
+    date: 2026-10-04
+  - type: legifrance
+    reference: >-
+      décret n° 46-1378, article 61 (LEGIARTI000006761348) ; R. 711-1 du code de la
+      sécurité sociale, rédaction de 1985 (LEGIARTI000006752039)
+    date: 2026-10-04
+historique:
+- >-
+  2026-10-04 — née avec l'action 145. L'inventaire tenait la compagnie pour un régime
+  « cité de mémoire » sans texte de retraite (docs/regimes.md) : la loi de 1991 et son
+  décret le documentent.
+effet: >-
+  Les salariés de la compagnie entrés avant 1991, partis depuis : leurs années d'avant
+  1991 valent une rente forfaitaire du régime général, et non une pension calculée sur
+  leur salaire annuel moyen comme le simulerait le modèle.

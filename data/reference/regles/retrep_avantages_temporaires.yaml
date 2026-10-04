@@ -1,0 +1,276 @@
+schema_version: 1
+id: retrep_avantages_temporaires
+intitule: >-
+  Le maître de l'enseignement privé sous contrat qui cesse son activité aux âges du
+  maître titulaire public, sans avoir droit à sa pension du régime général à taux
+  plein, touche de l'État des « avantages temporaires de retraite » : une pension du
+  régime général et une pension complémentaire liquidées comme s'il avait l'âge du
+  taux plein, sur ses seuls services d'enseignement, minorées depuis 2006 comme la
+  pension d'un enseignant public, et servies jusqu'à sa pension réelle du régime
+  général à taux plein.
+domaine: depart_anticipe
+regimes: [retrep]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la date de naissance du maître, et l'âge légal et l'âge anticipé de catégorie active de sa génération
+- ses services d'enseignement sous contrat ou agrément, et ceux accomplis sur l'échelle des instituteurs
+- sa durée d'assurance au régime général et ses droits à la complémentaire au titre de ces services
+- la durée requise d'un enseignant public de la même génération, pour la minoration depuis 2006
+ecrit:
+- l'avantage temporaire de retraite de base et l'avantage complémentaire, de la cessation d'activité au taux plein du régime général
+- la date à laquelle l'État cesse de les servir
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_le_regime
+  statut: supposee
+  hypothese: >-
+    avant le décret n° 80-7, le maître du privé sous contrat est un salarié du régime
+    général et de la complémentaire comme un autre, qui ne peut liquider qu'aux
+    conditions de ces régimes : aucun avantage temporaire n'existe
+  fiabilite: >-
+    haute : l'arrêté du 24 mars 1987 désigne l'organisme qui paie « les avantages de
+    retraite institués par le décret n° 80-7 »
+  bornes:
+    liquidation.date_effet: [null, 1980-01-10]
+  contenu:
+    droit: aucun avantage temporaire ; la pension du régime général et de la complémentaire à leurs conditions propres
+  exemples: aucun trouvé
+- id: decret_1980
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006441897, article: "décret n° 80-7, article 1er", en_vigueur: 1981-01-01}
+  - {id: LEGIARTI000006441898, article: "décret n° 80-7, article 2, rédaction du décret n° 93-1156", en_vigueur: 1993-10-12}
+  - {id: LEGIARTI000006441900, article: "décret n° 80-7, article 4", en_vigueur: 1993-10-12}
+  - {id: LEGIARTI000006441901, article: "décret n° 80-7, article 5", en_vigueur: 1981-01-01}
+  - {id: LEGIARTI000006441904, article: "décret n° 80-7, article 8", en_vigueur: 1981-01-01}
+  - {id: LEGIARTI000006441905, article: "décret n° 80-7, articles 8-1 à 8-3 (réversion)", en_vigueur: 1981-01-01}
+  - {id: LEGIARTI000006441911, article: "décret n° 80-7, article 11 (non-cumul)", en_vigueur: 1981-01-01}
+  - {id: LEGIARTI000006441913, article: "décret n° 80-7, article 13 (mise en place des âges)", en_vigueur: 1980-01-10}
+  - {id: LEGIARTI000006441914, article: "décret n° 80-7, article 14 (mise en place des âges)", en_vigueur: 1980-01-10}
+  nee_de: LEGIARTI000006441913
+  bornes:
+    liquidation.date_effet: [1980-01-10, 2006-07-29]
+  contenu:
+    beneficiaire: >-
+      le maître contractuel ou agréé à titre définitif (décret du 10 mars 1964), qui
+      justifie de quinze années de services — condition non opposable en cas
+      d'incapacité permanente constatée par la commission de réforme
+    droit: >-
+      « cesser leur activité et bénéficier d'avantages de retraite dès leur cessation
+      d'activité, lorsqu'en raison de leur âge ils n'ont pas droit à des pensions de
+      vieillesse […] liquidées aux taux normalement applicables à l'âge de soixante-cinq
+      ans » (article 1er)
+    age: >-
+      soixante ans ; cinquante-cinq ans pour qui justifie de quinze années de services
+      sur l'échelle indiciaire des instituteurs titulaires publics (article 2). Mise en
+      place : les maîtres « à cinquante-cinq ans » y sont admis à 61 ans en 1980, 59 en
+      1981, 57 en 1982 ; les maîtres « à soixante ans » à 63, 62 puis 61 ans (articles 13
+      et 14)
+    services: >-
+      services dans les établissements privés validés au régime général, services
+      d'enseignant public non pris en compte par le code des pensions, services
+      militaires, scolarité en centre de formation pédagogique privé à partir de dix-huit
+      ans, périodes d'indemnité de soins aux tuberculeux dans la limite de neuf ans ;
+      au prorata en cas de temps incomplet (article 4)
+    calcul: >-
+      un avantage « liquidé selon les règles suivies par le régime général pour les
+      assurés âgés de soixante-cinq ans », sur la seule durée d'assurance au titre des
+      services de l'article 4, des années d'activité professionnelle qui ont ouvert le
+      contrat, des bonifications de deux ans par enfant pour les femmes, des périodes de
+      maladie, maternité, invalidité (article 5) ; et un avantage complémentaire liquidé
+      selon les règles de l'institution complémentaire pour un assuré de soixante-cinq
+      ans, sur les seuls droits acquis au titre de ces services (article 8)
+    duree: >-
+      servis « aussi longtemps qu'ils ne remplissent pas » les conditions du taux du
+      régime général à soixante-cinq ans, et de même pour la complémentaire (articles 5
+      et 8)
+    reversion: >-
+      aux veuves et ex-conjointes non remariées jusqu'à cinquante-cinq ans, aux
+      conditions de ressources et de mariage du régime général ; aux veufs infirmes ; la
+      réversion complémentaire jusqu'à cinquante ans pour les veuves, soixante-cinq pour
+      certains veufs (articles 8-1 à 8-3)
+    cumul: >-
+      non cumulables avec la garantie de ressources, une rémunération publique
+      (L. 84 du code des pensions) ou une pension personnelle du régime général ou d'une
+      complémentaire (article 11)
+    financement: >-
+      « La charge financière en résultant est intégralement supportée par l'État »
+      (articles 7 et 9) ; liquidation et paiement par l'Association pour la prévoyance
+      collective depuis le 1er juin 1987 (arrêté du 24 mars 1987)
+  exemples: aucun trouvé
+- id: decret_2006
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006253463, article: "décret n° 2006-933, article 1er", en_vigueur: 2006-07-29}
+  - {id: LEGIARTI000006436558, article: "décret n° 2006-933, article 4 (âges)", en_vigueur: 2006-07-29}
+  - {id: LEGIARTI000006436559, article: "décret n° 2006-933, article 5 (calcul)", en_vigueur: 2006-07-29}
+  - {id: LEGIARTI000006436560, article: "décret n° 2006-933, article 6 (minoration, majoration)", en_vigueur: 2006-07-29}
+  - {id: LEGIARTI000006436563, article: "décret n° 2006-933, article 8 (fin du service)", en_vigueur: 2006-07-29}
+  - {id: LEGIARTI000006436564, article: "décret n° 2006-933, article 9 (limites d'âge)", en_vigueur: 2006-07-29}
+  nee_de: LEGIARTI000006253463
+  bornes:
+    liquidation.date_effet: [2006-07-29, 2008-12-29]
+  contenu:
+    age: >-
+      soixante ans, ou cinquante-cinq ans pour quinze années sur l'échelle des
+      instituteurs ; sans condition d'âge pour l'incapacité permanente et les cas des
+      3° et 4° du I de L. 24 du code des pensions ; soixante ans abaissé pour les
+      maîtres handicapés comme pour les fonctionnaires (article 4)
+    calcul: >-
+      un avantage de base liquidé selon les règles du régime général pour les assurés
+      qui ont l'âge du 1° de L. 351-8, et un avantage complémentaire pour les assurés
+      de soixante-cinq ans, sur la durée et les droits acquis au titre des services de
+      l'article 3 et des majorations de durée de L. 351-4, L. 351-4-1 et L. 351-5
+      (article 5)
+    minoration: >-
+      quand la durée d'assurance tous régimes est inférieure à celle qu'il faudrait à
+      « un enseignant titulaire du public né la même année » pour le pourcentage maximum
+      (L. 13 du code des pensions et II de l'article 66 de la loi n° 2003-775), un
+      coefficient de minoration calculé selon le I de L. 14 et le III de l'article 66
+      (article 6, I) ; la durée cotisée après soixante ans, depuis 2004, au-delà de la
+      durée requise, ouvre une majoration (article 6, II)
+    duree: >-
+      les avantages cessent au taux plein du régime général s'ils n'étaient pas
+      minorés ; sinon à l'âge où la minoration de la pension du régime général
+      (R. 351-27) serait la plus proche de celle de l'avantage, le taux immédiatement
+      inférieur en cas d'égalité (article 8)
+    limite_d_age: >-
+      soixante-cinq ans pour les maîtres « à soixante ans », soixante ans pour les
+      maîtres « à cinquante-cinq ans », prolongeables d'année scolaire en année scolaire
+      jusqu'à soixante-cinq ans (article 9) ; maintien en activité au-delà, dans la
+      limite de dix trimestres et de la durée maximale du régime général (article 10)
+    cumul: >-
+      non cumulables avec l'allocation de chômage ou une pension civile ou militaire
+      (article 11) ; cumul avec une rémunération publique selon L. 84, L. 85 et L. 86-1
+      du code des pensions, intégral pour l'incapacité permanente (article 12)
+  exemples: aucun trouvé
+- id: code_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000020055876, article: "code de l'éducation, R. 914-120", en_vigueur: 2008-12-29}
+  - {id: LEGIARTI000020055858, article: "R. 914-123, rédaction de 2008", en_vigueur: 2008-12-29}
+  - {id: LEGIARTI000020055850, article: "R. 914-124, rédaction de 2008", en_vigueur: 2008-12-29}
+  - {id: LEGIARTI000020055834, article: "R. 914-125, rédaction de 2008", en_vigueur: 2008-12-29}
+  - {id: LEGIARTI000020055827, article: "R. 914-127", en_vigueur: 2008-12-29}
+  - {id: LEGIARTI000020055823, article: "R. 914-128, rédaction de 2008", en_vigueur: 2008-12-29}
+  nee_de: LEGIARTI000020055876
+  bornes:
+    liquidation.date_effet: [2008-12-29, 2011-10-20]
+  contenu:
+    droit: >-
+      codification du décret n° 2006-933 dans le code de l'éducation (décret
+      n° 2008-1429) : mêmes âges de soixante et cinquante-cinq ans (R. 914-123), même
+      calcul au taux normalement applicable à soixante-cinq ans (R. 914-124), même
+      minoration sur la durée d'un enseignant public de la même génération
+      (R. 914-125), même fin de service (R. 914-127), mêmes limites d'âge de
+      soixante-cinq et soixante ans (R. 914-128)
+  exemples: aucun trouvé
+- id: code_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000024685069, article: "R. 914-123, rédaction de 2011", en_vigueur: 2011-10-20}
+  - {id: LEGIARTI000024685080, article: "R. 914-124, rédaction de 2011", en_vigueur: 2011-10-20}
+  - {id: LEGIARTI000026354375, article: "R. 914-124, rédaction de 2012", en_vigueur: 2012-09-07}
+  - {id: LEGIARTI000024685089, article: "R. 914-128, rédaction de 2011", en_vigueur: 2011-10-20}
+  - {id: LEGIARTI000025058639, article: "code de l'éducation, L. 914-1-1", en_vigueur: 2011-12-30}
+  nee_de: LEGIARTI000024685069
+  bornes:
+    liquidation.date_effet: [2011-10-20, 2023-09-01]
+  contenu:
+    age: >-
+      l'âge de L. 161-17-2 du code de la sécurité sociale avec quinze années de
+      services, ou, pour les durées de services sur l'échelle des instituteurs de
+      l'article 35 de la loi n° 2010-1330, l'âge anticipé du 1° du I de L. 24 du code
+      des pensions — l'âge de la catégorie active ; sans condition d'âge pour
+      l'incapacité permanente, les cas des 3° et 4° du I de L. 24 et de l'article 44,
+      III de la loi n° 2010-1330 (R. 914-123)
+    calcul: >-
+      les avantages se liquident selon les règles du régime général et de la
+      complémentaire pour un assuré aux âges des 1° et 1° ter de L. 351-8 — l'âge
+      d'annulation de la décote et son abaissement pour les parents de trois enfants —,
+      sur les seuls services d'enseignement (R. 914-124)
+    loi: >-
+      depuis le 30 décembre 2011, la loi elle-même : avantages « dont la charge
+      financière est intégralement supportée par l'État », « destinés à permettre à ces
+      personnels de cesser leur activité dans les mêmes conditions que les maîtres
+      titulaires de l'enseignement public », liquidés sur les services augmentés des
+      majorations de L. 351-4, L. 351-4-1 et L. 351-5 et des majorations pour enfants
+      des complémentaires, avec « un coefficient de minoration ou de majoration […]
+      dans les mêmes conditions que pour les maîtres titulaires » (L. 914-1-1)
+    limite_d_age: >-
+      la limite d'âge de la loi n° 84-834 pour les maîtres à l'âge légal, cette limite
+      minorée de cinq ans pour les maîtres à l'âge anticipé (R. 914-128)
+  exemples: aucun trouvé
+- id: code_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047633447, article: "R. 914-124, rédaction du décret n° 2023-435", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047633439, article: "R. 914-125, rédaction du décret n° 2023-435", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047633431, article: "R. 914-128, rédaction du décret n° 2023-435", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047633419, article: "R. 914-129, rédaction du décret n° 2023-435", en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000047633447
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    calcul: >-
+      pour les pensions qui prennent effet depuis le 1er septembre 2023, l'avantage se
+      liquide comme pour un assuré aux âges du 1° et, pour les assurés handicapés, du
+      4° bis de L. 351-8, et non plus du 1° et du 1° ter (R. 914-124)
+    minoration: >-
+      inchangée : la durée requise d'un enseignant public né la même année, et l'âge
+      d'annulation de la décote de L. 14 bis (R. 914-125)
+    limite_d_age: >-
+      les limites d'âge de L. 556-1 du code général de la fonction publique, 1° pour
+      l'âge légal et 2° pour l'âge anticipé ; prolongation d'activité selon L. 556-5,
+      accordée par le recteur (R. 914-128 et R. 914-129)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Lire l'allocation temporaire de cessation d'activité de l'enseignement agricole
+    privé (décret du 17 mars 2003, visé par l'article 5 du décret n° 2006-79), jumelle
+    de ces avantages pour les maîtres de L. 813-8 du code rural, et les dispositions de
+    Polynésie française et de Nouvelle-Calédonie que L. 914-1-1 renvoie au règlement.
+  - >-
+    Chercher le nombre de bénéficiaires et un exemple chiffré : ni la Caisse des
+    dépôts, ni l'Association pour la prévoyance collective, ni le ministère n'en
+    publient dans les sources lues.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 80-7 du 2 janvier 1980 (LEGITEXT000006063310), articles 1er à 15, versions
+      de 1980 à 2006 dans l'index LEGI ; décret n° 2006-933 du 28 juillet 2006
+      (LEGITEXT000006054113), articles 1er à 13 ; code de l'éducation, R. 914-120 à
+      R. 914-140, toutes leurs versions de 2008 à 2025, et L. 914-1-1
+    date: 2026-10-04
+  - type: legifrance
+    reference: >-
+      arrêté du 24 mars 1987 portant désignation de l'organisme chargé d'effectuer la
+      liquidation et le paiement des avantages de retraite institués par le décret
+      n° 80-7 (LEGITEXT000006057373)
+    date: 2026-10-04
+textes_a_rattacher:
+- reference: >-
+    R. 914-133 à R. 914-136 du code de l'éducation : avantages temporaires et rente
+    viagère d'invalidité du maître dont le contrat est résilié pour invalidité, calculés
+    en anticipant les trimestres à échoir jusqu'au taux plein, au moins 50 % du
+    traitement à 60 % d'invalidité
+  change: un départ pour invalidité, avec rente, que les versions ne décrivent pas
+- reference: >-
+    R. 914-138 à R. 914-140 : le régime additionnel se liquide aussi à la date d'un
+    avantage temporaire de retraite, sur une fraction des avantages perçus
+  change: la date d'effet de la pension du régime additionnel, déjà calculé par le dépôt
+historique:
+- >-
+  2026-10-04 — née avec l'action 145 : un régime que l'inventaire ne nommait pas,
+  documenté de ses quatre textes successifs sans être modélisé.
+effet: >-
+  Tous les maîtres et documentalistes du privé sous contrat qui partent aux âges des
+  enseignants publics : ceux qui avaient quinze ans d'échelle d'instituteur partaient à
+  cinquante-cinq ans jusqu'en 2011, quand le modèle les fait attendre l'âge du régime
+  général. Ni l'effectif ni la dépense ne sont dans les sources lues.

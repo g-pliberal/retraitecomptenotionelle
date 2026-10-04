@@ -1,0 +1,146 @@
+schema_version: 1
+id: cultes_alsace_moselle_pension
+intitule: >-
+  Le ministre d'un culte reconnu d'Alsace-Moselle rétribué par l'État reçoit de l'État,
+  sans avoir cotisé, une pension de retraite selon la loi locale du 15 novembre 1909 et
+  l'arrêté du 19 mars 1910, après dix années de services au moins, quand il devient
+  durablement incapable d'exercer son ministère ; sa veuve et ses orphelins ont droit à
+  une pension. Le décret n° 2007-1341 met sa pension à la charge « de l'État » et lui
+  applique les règles d'ancienneté de l'ordonnance du 16 mars 1910.
+domaine: duree
+regimes: [cultes_alsace_moselle]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les années de services du ministre rétribuées par l'État, et son ancienneté de pension
+- son dernier traitement, selon le classement indiciaire des ministres des cultes
+- la constatation de son incapacité, et son âge à la demande
+ecrit:
+- la pension de l'État du ministre, et celle de sa veuve et de ses orphelins
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: loi_locale_1909
+  statut: supposee
+  hypothese: >-
+    le texte de la loi locale et de son règlement de 1910 n'est pas dans l'index, qui
+    n'en porte que la notice (« articles 10, 11, 12 al. 3 et 4, et article 14 »,
+    modifiés par des décrets de 1923 à 1934) ; sa règle est reprise de l'extrait de sa
+    version consolidée sur le site Legirel du CNRS, lu par un moteur de recherche le
+    4 octobre 2026, le site étant injoignable : les ministres « peuvent obtenir une
+    pension de retraite sur la caisse d'Alsace-Lorraine, conformément aux dispositions
+    applicables aux fonctionnaires d'Alsace-Lorraine, lorsque, après au moins dix ans de
+    service, ils deviennent définitivement incapables d'exercer leur ministère en raison
+    d'une infirmité physique ou d'un affaiblissement de leurs facultés physiques ou
+    intellectuelles, et sont mis à la retraite pour cette raison » (article 10)
+  fiabilite: moyenne, une lecture indirecte que les modifications de 2001 et 2007 confirment
+  bornes:
+    liquidation.date_effet: [null, 2001-06-23]
+  contenu:
+    condition: dix années de services au moins, et l'incapacité définitive d'exercer le ministère
+    droit: une pension « sur la caisse d'Alsace-Lorraine », aux règles des fonctionnaires d'Alsace-Lorraine
+    age: >-
+      aucun âge légal : la mise à la retraite suit l'incapacité ; l'arrêté du 19 mars
+      1910 (article 7, modifié en 1978) fixait à soixante-cinq ans un seuil que l'arrêté
+      de 2001 abaisse à soixante — selon la presse, l'âge en deçà duquel un certificat
+      médical est exigé
+    cotisation: aucune, selon la presse (Journal du Net) et le Conseil d'État, qui refuse aux ministres la qualité de fonctionnaire (avis du 27 août 1948)
+  exemples: aucun trouvé
+- id: arrete_2001
+  statut: lue
+  textes:
+  - {id: JORFARTI000001451965, article: "arrêté du 29 mai 2001, article 1er", publie_le: 2001-06-23}
+  nee_de: JORFARTI000001451965
+  bornes:
+    liquidation.date_effet: [2001-06-23, 2007-09-13]
+  contenu:
+    droit: >-
+      « A l'avant-dernière phrase du premier alinéa de l'article 7 de l'arrêté du 19 mars
+      1910 susvisé, le nombre : « 65 » est remplacé par le nombre : « 60 » », l'arrêté
+      étant pris au visa de la loi locale, « notamment son article 10 », et de l'arrêté
+      de 1910 « modifié par l'arrêté du 6 mars 1978 » ; le reste est celui de la version
+      précédente
+  exemples: aucun trouvé
+- id: decret_2007
+  statut: lue
+  textes:
+  - {id: JORFARTI000002478887, article: "décret n° 2007-1341, article 2 (nouvel article 1er de la loi locale)", publie_le: 2007-09-13}
+  - {id: JORFARTI000001307187, article: "décret n° 2007-1341, article 3 (article 7 de la loi locale)", publie_le: 2007-09-13}
+  - {id: JORFARTI000002478888, article: "décret n° 2007-1341, article 4 (article 8 de la loi locale)", publie_le: 2007-09-13}
+  - {id: JORFARTI000002290398, article: "décret n° 2007-1341, article 6 (article 10 de la loi locale)", publie_le: 2007-09-13}
+  - {id: JORFARTI000002290399, article: "décret n° 2007-1341, article 7 (article 11 de la loi locale)", publie_le: 2007-09-13}
+  nee_de: JORFARTI000002478887
+  bornes:
+    liquidation.date_effet: [2007-09-13, null]
+  contenu:
+    traitement: >-
+      les ministres « perçoivent un traitement de l'État selon un classement indiciaire
+      fixé par décret et par référence aux indices » des personnels civils et militaires
+      de l'État (nouvel article 1er) — la pension suit ce traitement
+    incapacite: « l'âge ou » est supprimé de l'article 7 de la loi locale
+    anciennete: >-
+      s'appliquent les articles 2 à 4 (article 8) puis 5 à 7 (article 10) de
+      l'ordonnance du Statthalter du 16 mars 1910 « relative à la fixation de
+      l'ancienneté de traitement et de l'ancienneté de pension des ministres du culte »
+    debiteur: >-
+      les pensions des articles 10 et 11 sont dues « de l'État » et non plus « sur la
+      caisse d'Alsace-Lorraine », le « Statthalter » devenant le ministre de l'intérieur
+    en_2023: >-
+      inchangée par la loi du 14 avril 2023 : la loi de 1909 « détermine le régime de
+      retraite spécifique des agents des cultes statutaires d'Alsace-Moselle »
+      (réponse du ministre de l'intérieur, JO Sénat du 27 juillet 2023)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Lire le texte français de la loi locale et de son règlement, publié en traduction
+    au recueil des actes administratifs des préfectures du Bas-Rhin, du Haut-Rhin et de
+    la Moselle (décret n° 2013-395) ou sur Legirel, injoignable le 4 octobre 2026 : le
+    barème de la pension (la presse parle d'un tiers du dernier traitement brut après
+    dix ans, trois quarts après quarante ans), la pension de veuve et d'orphelin, la
+    revalorisation, la coordination avec le régime général du ministre qui part sans
+    droit — rétabli au régime général, sans Ircantec selon la base Ircantec.
+  lectures:
+  - type: jorf
+    reference: >-
+      loi locale du 15 novembre 1909, notice JORF (JORFTEXT000000315082) ; arrêté du
+      29 mai 2001 (JORFTEXT000000590423) ; décret n° 2007-1341 du 11 septembre 2007,
+      articles 1er à 8 (JORFTEXT000000279682) ; décret n° 51-75 du 19 janvier 1951
+      (LEGITEXT000028855715)
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      réponse du ministre de l'intérieur à la question écrite n° 06644, JO Sénat du
+      27 juillet 2023
+    date: 2026-10-04
+    url: https://www.senat.fr/questions/base/2023/qSEQ230506644.html
+  - type: autre
+    reference: >-
+      Observatoire de la laïcité, avis sur le régime local des cultes en Alsace et en
+      Moselle, mai 2015 : 2 400 ministres en 1970, 1 397 personnes rémunérées fin 2014,
+      ministres non fonctionnaires qui « ne bénéficient pas des dispositions propres à la
+      fonction publique concernant les régimes des pensions et l'âge de départ »
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      base Ircantec, « Ministre du culte » : ministres « assimilés à des
+      fonctionnaires » qui « cotisent auprès d'un régime local de retraite » et, sans
+      droit à ce régime, ne peuvent pas bénéficier de l'Ircantec
+    date: 2026-10-04
+    url: https://baseircantec.retraites.fr/carriere/periodes-dactivite/activites-a-letranger-ou-en-alsacemoselle/alsacemoselle/ministre-du-culte
+  lectures_divergentes:
+  - >-
+    La base Ircantec écrit que les ministres « cotisent auprès d'un régime local de
+    retraite » ; le Journal du Net (« les ministres des cultes ne cotisent pas du
+    tout ») et l'économie de la loi locale, une pension servie par l'État sur le
+    traitement, disent qu'aucune cotisation n'est retenue. À trancher sur le texte.
+historique:
+- >-
+  2026-10-04 — née avec l'action 145 : le régime de retraite des ministres des cultes
+  concordataires n'avait pas de ligne d'inventaire.
+effet: >-
+  Les quelque 1 400 ministres et employés des cultes rémunérés par l'État en
+  Alsace-Moselle : le modèle n'a ni leur statut ni leur pension d'État.

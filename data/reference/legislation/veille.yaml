@@ -4806,3 +4806,43 @@ journal:
       relira son texte au moment d'écrire la règle, l'API des barèmes de la Cnav d'abord.
       Les montants du décret n° 2023-754 (majoration exceptionnelle de 2023), absents de
       l'index, sont à lire au Journal officiel.
+  - date: "2026-10-04"
+    session: "action 145, les régimes que l'inventaire ne nommait pas"
+    consulte: >-
+      veille_droit.py (la dernière veille du jour suffit, aucune règle du scénario 1 ne
+      change) ; l'index JORF et LEGI du dépôt, à jour au 27 septembre 2026 : article 61
+      du décret n° 46-1378 et R. 711-1 dans ses trois rédactions ; les décrets annuels de
+      contribution au fonds spécial d'allocation vieillesse de 1984 à 1993 ; le décret
+      n° 91-613 (taux des régimes spéciaux) ; l'arrêté du 23 août 2004 (membres du GIP
+      Info Retraite) ; les arrêtés de délégation de signature de la direction des
+      retraites de la Caisse des dépôts (2003 à 2006) ; puis, régime par régime, la loi
+      n° 91-73 et le décret n° 91-408 (Compagnie générale des eaux), la loi n° 97-1164 et
+      le décret n° 98-183 (CCI de Roubaix), la loi n° 2005-882 et le décret
+      n° 2006-1748 (CCI de Paris), le décret n° 80-7, le décret n° 2006-933, L. 914-1-1
+      et R. 914-120 à R. 914-140 du code de l'éducation (RETREP), l'article 6-1 de la loi
+      n° 89-1007 (ATC-ICNA), l'article 6 de la loi n° 79-563 (Parlement européen), les
+      modifications de 2001 et 2007 de la loi locale du 15 novembre 1909 (cultes
+      d'Alsace-Moselle), l'article 66 du décret n° 2003-1306, l'ordonnance n° 2005-389.
+      Hors de l'index : la carte des mandats de la Caisse des dépôts (février 2026) et
+      les pages de ses fonds, le rapport 2019 de la CRCFE, la réponse ministérielle au
+      Sénat du 27 juillet 2023 sur les cultes, l'avis de l'Observatoire de la laïcité de
+      2015, la base Ircantec, EUR-Lex par l'extrait d'un moteur de recherche.
+    trouve: >-
+      Dix-sept régimes que l'inventaire ne nommait pas, dont neuf touchent des assurés
+      vivants et sont marqués à modéliser : les régimes spéciaux de la CCI de Paris
+      (fermé en 2006), de la Compagnie générale des eaux (1991) et de l'ancienne CCI de
+      Roubaix (1998), dont les droits sont devenus des rentes du régime général ; le
+      personnel statutaire de la CANSSM ; le personnel titulaire des ports autonomes ;
+      le RETREP des maîtres du privé ; les pensions des ministres des cultes
+      d'Alsace-Moselle ; l'allocation temporaire complémentaire des ICNA ;
+      l'affiliation des représentants au Parlement européen au régime général et à
+      l'Ircantec. Sept fiches de règles les décrivent, toutes `pas_encore_modelisee` ;
+      aucune règle du droit applicable que le modèle calcule n'en est changée.
+    reste: >-
+      Les textes que l'index ne porte que par leur notice : le règlement du régime de
+      la CCI de Paris (décret n° 97-1325), la loi locale de 1909 en français, les
+      règlements des ports autonomes, le statut du personnel de la CANSSM, le décret
+      n° 98-1096 et l'indemnité spéciale de qualification des ICNA. Les pistes de la
+      caisse de retraites de la presse (1945), des ingénieurs des minéraux solides
+      (1947), de l'Institut de France (1949), des praticiens-conseils (1963), de
+      l'ONIVIT (1979). Et les fiches des régimes de l'inventaire qui n'en ont aucune.

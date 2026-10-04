@@ -1,0 +1,41 @@
+code: atc_icna
+nom: >-
+  Allocation temporaire complémentaire et complément individuel temporaire des ingénieurs du contrôle de la navigation aérienne (ATC-ICNA)
+famille: fonction_publique
+population: >-
+  Ingénieurs du contrôle de la navigation aérienne (ICNA), fonctionnaires
+  de l'État pensionnés au code des pensions civiles et militaires, radiés
+  des cadres par limite d'âge, sur leur demande dès cinquante ans
+  (cinquante-deux depuis 2017) ou pour invalidité : l'allocation, servie
+  huit ans puis treize ans depuis 2004 en sus de la pension, vaut une
+  fraction de l'indemnité spéciale de qualification d'un premier
+  contrôleur (loi n° 89-1007, article 6-1, créé par la loi n° 97-1239) ;
+  depuis 2012, un complément individuel temporaire compense la pension
+  incomplète des radiés par limite d'âge. Le fonds de gestion est confié à
+  la Caisse des dépôts (décret n° 98-1096 du 4 décembre 1998).
+creation: 1997
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: fonction_publique
+  rang: 170
+  nom: Allocation temporaire complémentaire des ingénieurs du contrôle de la navigation aérienne (ATC-ICNA)
+  population: Ingénieurs du contrôle de la navigation aérienne radiés des cadres
+  couverture: a_modeliser
+  statuts: []
+  textes:
+    - {reference: "loi n° 89-1007 du 31 décembre 1989 relative au corps des ingénieurs du contrôle de la navigation aérienne, article 6-1, dans sa rédaction du 30 décembre 1997 (huit ans, 75 % de l'indemnité spéciale de qualification)", id: LEGIARTI000006450772}
+    - {reference: "même article 6-1, dans sa rédaction du 31 décembre 2025 (treize ans ; 150 %, 118 % puis 64 % pour les radiés depuis 2017 ; II : complément individuel temporaire)", id: LEGIARTI000053279787}
+    - {reference: "décret n° 2016-1892 du 27 décembre 2016 relatif au versement et à la gestion du complément individuel temporaire (formule du complément, sur le traitement indiciaire, la durée d'assurance et la durée moyenne de retraite)", id: LEGITEXT000033737524}
+    - {reference: "décret n° 98-1096 du 4 décembre 1998 portant création du fonds de gestion de l'allocation temporaire complémentaire (visé par le décret n° 2016-1892, absent de l'index)", id: null}
+    - {reference: "Caisse des dépôts, carte des régimes, fonds et mandats gérés par la direction des politiques sociales, février 2026 (« ATC ICNA », rubrique Retraite)", id: null}
+  manque: >-
+    Aucun statut ne distingue l'ICNA du fonctionnaire civil de l'État, et
+    ni l'allocation ni le complément ne sont portés : il manque le corps
+    dans la saisie, l'indemnité spéciale de qualification d'un premier
+    contrôleur année par année, qui n'est pas dans le dépôt, et la formule
+    du complément individuel temporaire, que le Journal officiel ne publie
+    qu'en image. La fiche `atc_icna_allocation` lit l'article 6-1 version
+    par version.

@@ -1,0 +1,49 @@
+code: ports_autonomes_titulaires
+nom: >-
+  Régimes de retraite du personnel titulaire des ports autonomes de Bordeaux, du Havre et de Marseille et de leurs chambres de commerce concessionnaires
+famille: special
+population: >-
+  Personnel titulaire de trois établissements portuaires, dont la
+  retraite relevait d'un règlement propre antérieur à la sécurité
+  sociale : le port autonome de Bordeaux (règlement de retraite approuvé
+  par arrêté du 4 juin 1946, avenants de 1948 et 1950 ; caisse de
+  prévoyance du personnel titulaire, régime spécial pour la maladie
+  jusqu'au 1er janvier 2018), la chambre de commerce et le port autonome
+  du Havre (caisse de retraites dont les statuts sont modifiés en 1943,
+  régime de sécurité sociale des agents titulaires en 1958, règlement de
+  retraites de 1962, caisse de retraites complémentaires qui contribue au
+  fonds spécial jusqu'en 1990), la chambre de commerce de Marseille
+  (règlement annexé au décret n° 59-809). Le code des transports maintient
+  les décrets de Marseille et du Havre pour le personnel intégré dans le
+  port autonome (R. 5313-28).
+creation: null
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: speciaux
+  rang: 240
+  nom: Régimes de retraite du personnel titulaire des ports autonomes de Bordeaux, du Havre et de Marseille
+  population: Personnel titulaire des ports autonomes et des chambres de commerce concessionnaires
+  couverture: a_modeliser
+  statuts: []
+  textes:
+    - {reference: "arrêté du 4 juin 1946 de retraite du personnel titulaire du port autonome de Bordeaux (règlement annexé, notice JORF seule)", id: JORFTEXT000000426789}
+    - {reference: "arrêté du 11 décembre 1948 approuvant l'avenant n° 2 au règlement de retraite du personnel titulaire du port autonome de Bordeaux", id: JORFTEXT000000253001}
+    - {reference: "arrêté du 26 novembre 1943 approuvant les modifications des statuts de la caisse de retraites de la chambre de commerce et du port autonome du Havre", id: JORFTEXT000000830053}
+    - {reference: "décret n° 58-437 du 15 avril 1958 relatif au régime de sécurité sociale des agents titulaires du port autonome et de la chambre de commerce du Havre", id: JORFTEXT000000684822}
+    - {reference: "décret n° 62-152 du 18 janvier 1962 relatif au régime de retraites du personnel titulaire de la chambre de commerce et du port autonome du Havre (règlement annexé)", id: JORFTEXT000000299349}
+    - {reference: "décret n° 59-809 du 4 juillet 1959 relatif au régime de retraites du personnel titulaire de la chambre de commerce de Marseille (règlement annexé)", id: JORFTEXT000000299092}
+    - {reference: "code des transports, R. 5313-28 (décrets n° 59-809 et n° 62-152 applicables au personnel des ports de Marseille et du Havre ; convention collective des ports, dont l'annexe n° 2 forme règlement de retraite)", id: LEGIARTI000030030816}
+    - {reference: "décret n° 2017-1644 du 30 novembre 2017 relatif à l'intégration au régime général du régime spécial d'assurance maladie, maternité et décès du grand port maritime de Bordeaux", id: JORFTEXT000036127031}
+  manque: >-
+    Aucun des trois règlements n'est dans l'index, qui ne porte que les
+    titres et notices : on ne sait ni s'ils servent une pension de base ou
+    un complément au-dessus du régime général — le décret n° 58-437 range
+    les titulaires du Havre au régime de sécurité sociale, et la
+    convention collective des ports donne son propre règlement de retraite
+    —, ni s'ils sont fermés ; le décret n° 96-1151 range encore le port de
+    Bordeaux parmi les régimes spéciaux dont il modifie la cotisation
+    maladie des actifs et des retraités. Il faudrait les règlements, aux
+    archives des ports ou au Bulletin officiel des ministères.

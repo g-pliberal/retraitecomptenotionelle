@@ -1,0 +1,114 @@
+schema_version: 1
+id: cci_roubaix_transfert_1998
+intitule: >-
+  Au 1er janvier 1998, le régime spécial de l'ancienne chambre de commerce et
+  d'industrie de Roubaix prend fin pour l'invalidité et la vieillesse : ses pensions en
+  cours et les droits non liquidés deviennent des rentes du régime général, de 62 150 F
+  par an pour cent cinquante trimestres validés depuis le 1er juillet 1930 et en
+  cent-cinquantièmes au-dessous ; les pensions de retraite pour invalidité des moins de
+  soixante ans deviennent des pensions d'invalidité de 62 150 F.
+domaine: coordination
+regimes: [cci_roubaix, regime_general]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les périodes d'affiliation au régime spécial du 1er juillet 1930 au 31 décembre 1997, telles qu'il les a validées
+- "la situation au 31 décembre 1997 : pension de retraite, de retraite pour invalidité ou de réversion en cours, âge"
+ecrit:
+- une rente du régime général, immédiate ou différée, ou une pension d'invalidité, et leur réversion
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: regime_special
+  statut: supposee
+  hypothese: >-
+    avant 1998, la caisse de retraites des employés de la chambre sert ses propres
+    pensions, sur un règlement que l'index ne publie pas ; la cotisation vieillesse est
+    de 25,75 % de 1992 à 1997, dont 7,35 % à la charge de l'agent (décret n° 91-613,
+    article 16-1)
+  fiabilite: faible pour le montant, haute pour l'existence du régime
+  bornes:
+    liquidation.date_effet: [null, 1998-01-01]
+  contenu:
+    droit: une pension du régime spécial, dont les règles ne sont pas lues
+  exemples: aucun trouvé
+- id: rentes_de_transfert
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006757374, article: "loi n° 97-1164 du 19 décembre 1997, article 20", en_vigueur: 1997-12-23}
+  - {id: LEGIARTI000006772198, article: "décret n° 98-183 du 17 mars 1998, article 2", en_vigueur: 1998-03-20}
+  - {id: LEGIARTI000006772199, article: "décret n° 98-183, article 3", en_vigueur: 1998-03-20}
+  - {id: LEGIARTI000006772201, article: "décret n° 98-183, article 5", en_vigueur: 1998-03-20}
+  - {id: LEGIARTI000006772202, article: "décret n° 98-183, article 6", en_vigueur: 1998-03-20}
+  - {id: LEGIARTI000006772203, article: "décret n° 98-183, article 7", en_vigueur: 1998-03-20}
+  - {id: LEGIARTI000006772204, article: "décret n° 98-183, article 8", en_vigueur: 1998-03-20}
+  - {id: LEGIARTI000006772209, article: "décret n° 98-183, article 13", en_vigueur: 1998-03-20}
+  nee_de: LEGIARTI000006757374
+  bornes:
+    liquidation.date_effet: [1998-01-01, null]
+  contenu:
+    principe: >-
+      les salariés et anciens salariés « sont affiliés ou pris en charge, pour ces
+      risques, par le régime général » ; « Il est mis fin à ce régime spécial » ; les
+      obligations envers les bénéficiaires au 31 décembre 1997 passent au régime
+      général « dans la limite des règles qui sont propres à celui-ci concernant l'âge de
+      l'ouverture du droit, la durée maximale d'assurance et le montant maximal de la
+      pension », la chambre de Lille-Roubaix-Tourcoing pourvoyant au reste par une
+      couverture complémentaire du livre IX (article 20, I à III)
+    rente_immediate: >-
+      aux titulaires d'une pension de retraite au 31 décembre 1997 âgés d'au moins
+      soixante ans : « Le montant annuel de cette rente est fixé à 62 150 F pour les
+      personnes justifiant d'une durée d'assurance d'au moins cent cinquante
+      trimestres », réduit à autant de cent-cinquantièmes que de trimestres ; durée :
+      périodes du 1er juillet 1930 au 31 décembre 1997 validées par le régime spécial,
+      de date à date, arrondies au trimestre (article 5)
+    invalidite: >-
+      les titulaires d'une pension de retraite pour invalidité de moins de soixante ans
+      reçoivent une pension d'invalidité du régime général de 62 150 F, revalorisée comme
+      ces pensions (article 2), remplacée à soixante ans par la rente de l'article 7
+      (article 3)
+    rente_differee: >-
+      le régime général « garantit » une rente à jouissance différée, liquidée au
+      1er janvier 1998, aux pensionnés de moins de soixante ans, servie le mois qui suit
+      leur soixantième anniversaire, et aux affiliés dont les droits n'étaient pas
+      liquidés, servie aux conditions d'entrée en jouissance des pensions du régime
+      général (article 7)
+    reversion: >-
+      rente de réversion au taux du régime général, immédiate ou différée selon les
+      conditions de ce régime, majorée selon L. 353-1 et L. 353-5 (articles 6 et 8) ;
+      pension d'invalidité de veuf ou de veuve avant cinquante-cinq ans (article 4) ;
+      allocation de veuvage (article 12)
+    retraite_progressive: >-
+      les périodes postérieures au 30 juin 1930 comptent pour L. 351-15 (article 11)
+    contribution: >-
+      la chambre de Lille-Roubaix-Tourcoing verse au régime général 28 600 000 F au plus
+      tard le 31 décembre 1998 (article 13)
+  unites:
+    rente: francs par an en 1998, revalorisés comme les pensions du régime général
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Le décret ne dit pas d'où viennent les 62 150 F, inférieurs aux 64 650 F du
+    transfert de la Compagnie générale des eaux sept ans plus tôt : chercher leur
+    fondement, et lire la couverture complémentaire que la chambre a mise en place pour
+    le reste des droits (article 20, III).
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 97-1164 du 19 décembre 1997, article 20 (LEGIARTI000006757374) ; décret
+      n° 98-183 du 17 mars 1998 (LEGITEXT000005625415), articles 1er à 18 ; décret
+      n° 91-613, article 16-1 (LEGIARTI000006776001)
+    date: 2026-10-04
+historique:
+- >-
+  2026-10-04 — née avec l'action 145 : la caisse de Roubaix, contributrice du fonds
+  spécial jusqu'en 1993 sous le nom de la chambre de Lille-Roubaix-Tourcoing, n'avait
+  pas de ligne d'inventaire.
+effet: >-
+  Les salariés de l'ancienne chambre de Roubaix entrés avant 1998 : leurs années
+  d'avant 1998 valent une rente forfaitaire du régime général, et non une pension
+  calculée sur leur salaire.

@@ -1,0 +1,170 @@
+schema_version: 1
+id: atc_icna_allocation
+intitule: >-
+  L'ingénieur du contrôle de la navigation aérienne radié des cadres par limite
+  d'âge, sur sa demande à partir de cinquante ans (cinquante-deux depuis 2017) ou
+  pour invalidité touche, en plus de sa pension civile, une allocation temporaire
+  complémentaire égale à une fraction de l'indemnité spéciale de qualification d'un
+  premier contrôleur, pendant huit ans, puis treize ans depuis 2004 ; depuis 2012, un
+  complément individuel temporaire s'y ajoute pour le radié par limite d'âge dont la
+  pension n'atteint pas le pourcentage maximum.
+domaine: depart_anticipe
+regimes: [atc_icna]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la date de radiation des cadres de l'ingénieur, et son motif (limite d'âge, demande, invalidité)
+- son âge à la radiation et ses années de services effectifs dans le corps
+- l'indemnité spéciale de qualification versée à un premier contrôleur, année par année
+- pour le complément individuel, son traitement indiciaire, sa durée d'assurance, la durée requise et l'espérance de vie à soixante ans
+ecrit:
+- l'allocation temporaire complémentaire, par année de perception, et sa réversion
+- le complément individuel temporaire, fixé pour treize ans à la radiation
+dates_qui_decident:
+- radiation
+versions:
+- id: avant_1998
+  statut: supposee
+  hypothese: >-
+    avant l'article 46 de la loi n° 97-1239, qui crée l'article 6-1 de la loi
+    n° 89-1007, l'ingénieur radié n'a que sa pension civile
+  fiabilite: haute, l'article 6-1 n'a pas de rédaction antérieure au 30 décembre 1997 dans l'index
+  bornes:
+    radiation: [null, 1997-12-30]
+  contenu:
+    droit: la pension civile du code des pensions, sans allocation
+  exemples: aucun trouvé
+- id: huit_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006450772, article: "loi n° 89-1007, article 6-1", en_vigueur: 1997-12-30}
+  nee_de: LEGIARTI000006450772
+  bornes:
+    radiation: [1997-12-30, 2004-01-01]
+  contenu:
+    beneficiaire: >-
+      l'ingénieur « radié des cadres par limite d'âge ou sur leur demande à compter de
+      leur cinquantième anniversaire ou pour invalidité »
+    droit: >-
+      « pendant une durée de huit ans à compter de la date de leur cessation
+      d'activité, d'une allocation temporaire complémentaire, dont le montant est fixé à
+      75 % du montant de l'indemnité spéciale de qualification versée à un premier
+      contrôleur »
+    cumul: >-
+      non cumulable avec une rémunération d'activité, « y compris celle versée par une
+      organisation internationale », sauf les cas du deuxième alinéa de L. 86 du code
+      des pensions
+    reversion: >-
+      les ayants droit de l'ingénieur décédé en activité ou moins de huit ans après sa
+      cessation d'activité — ceux du capital décès des fonctionnaires — reçoivent
+      l'allocation ou sa réversion, partagée comme ce capital, pour la durée restant à
+      courir
+  exemples: aucun trouvé
+- id: treize_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006450773, article: "loi n° 89-1007, article 6-1", en_vigueur: 2004-12-31}
+  - {id: LEGIARTI000006450774, article: "loi n° 89-1007, article 6-1", en_vigueur: 2006-12-31}
+  nee_de: LEGIARTI000006450773
+  bornes:
+    radiation: [2004-01-01, 2012-01-01]
+  contenu:
+    droit: >-
+      « pendant une durée de treize ans pour ceux d'entre eux radiés dans ces conditions
+      à compter du 1er janvier 2004 » ; pour ceux qui perçoivent l'indemnité, 108 % de
+      l'indemnité spéciale de qualification les huit premières années et 54 % les cinq
+      dernières (rédaction de 2004), puis, à compter du 1er janvier 2007, 118 % et 64 %,
+      les radiés de 2004 à 2006 passant à 118 % pour le reste de leurs huit premières
+      années (rédaction de 2006)
+    condition_de_services: >-
+      depuis la rédaction de 2006, quinze années de services effectifs dans le corps
+      pour les ingénieurs titularisés à compter du 1er janvier 2007
+    cumul: non cumulable avec une rémunération d'activité, sauf les cas du I de L. 86
+  exemples: aucun trouvé
+- id: complement_individuel
+  statut: lue
+  textes:
+  - {id: LEGIARTI000030024692, article: "loi n° 89-1007, article 6-1, II", en_vigueur: 2015-01-01}
+  - {id: LEGITEXT000033737524, article: "décret n° 2016-1892, article 1er", en_vigueur: 2016-12-30}
+  nee_de: LEGIARTI000030024692
+  bornes:
+    radiation: [2012-01-01, 2017-01-01]
+  contenu:
+    droit: >-
+      l'allocation de la version précédente, et, pour les ingénieurs « radiés des cadres
+      par limite d'âge ou pour invalidité à compter du 1er janvier 2012, lorsqu'ils
+      n'ont pas pu acquérir la durée des services et bonifications nécessaire pour
+      obtenir le pourcentage maximum » de L. 13, un complément individuel temporaire
+      cumulable avec l'allocation, pendant la même durée (II, créé par l'article 124 de
+      la loi n° 2014-1654)
+    formule: >-
+      le complément est servi treize ans, jamais négatif, fixé à la radiation et non
+      revalorisé ; sa formule, que le Journal officiel ne publie qu'en image, combine le
+      traitement indiciaire brut annuel de L. 15, la durée d'assurance tous régimes
+      plafonnée à la durée requise pour le taux plein, cette durée requise, la durée
+      moyenne de retraite (espérance de vie à soixante ans de l'INSEE) et la limite
+      d'âge de l'agent (décret n° 2016-1892, article 1er) ; depuis le 22 août 2025, les
+      majorations de L. 12 bis et L. 12 ter sont exclues de la durée quand elles
+      diminuent le complément (article 1-1)
+  exemples: aucun trouvé
+- id: cinquante_deux_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000033809571, article: "loi n° 89-1007, article 6-1", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000053279787, article: "loi n° 89-1007, article 6-1, rédaction de la loi n° 2025-1403", en_vigueur: 2025-12-31}
+  nee_de: LEGIARTI000033809571
+  bornes:
+    radiation: [2017-01-01, null]
+  contenu:
+    beneficiaire: >-
+      radiés par limite d'âge, sur leur demande à compter du cinquante-deuxième
+      anniversaire ou pour invalidité ; quinze années de services effectifs pour les
+      titularisés depuis 2007, dix-sept pour les titularisés depuis le 1er janvier 2017
+    droit: >-
+      pour les radiés à compter du 1er janvier 2017, 150 % de l'indemnité spéciale de
+      qualification les deux premières années, 118 % les six suivantes, 64 % les cinq
+      dernières ; les radiés de 2015 et 2016 passent à 150 % pour le reste de leurs deux
+      premières années ; treize années de perception au plus
+    cumul: >-
+      suspension immédiate en cas de cumul avec une rémunération, reprise le mois
+      suivant la fin de l'activité ; depuis la loi n° 2025-1403, les exceptions sont
+      celles du C du III de L. 161-22, pour les assurés dont la première pension de base
+      prend effet à compter du 1er janvier 2027
+    complement: le complément individuel temporaire du II, inchangé
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Lire le décret n° 98-1096 du 4 décembre 1998 portant création du fonds de gestion
+    de l'allocation, absent de l'index, pour son financement ; et l'indemnité spéciale
+    de qualification d'un premier contrôleur, année par année, sans laquelle
+    l'allocation ne se chiffre pas.
+  - >-
+    La formule du complément individuel temporaire n'est publiée qu'en image dans le
+    décret n° 2016-1892 : la lire sur le fac-similé du Journal officiel du 30 décembre
+    2016.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 89-1007 du 31 décembre 1989, article 6-1, ses sept rédactions dans l'index
+      LEGI (LEGIARTI000006450772, 6450773, 6450774, 030024692, 033809571, 053279787) ;
+      décret n° 2016-1892 du 27 décembre 2016, articles 1er et 1-1
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      Caisse des dépôts, page « Allocation des ingénieurs du contrôle de la navigation
+      aérienne (ATC-ICNA) » et carte des régimes, fonds et mandats de février 2026
+    date: 2026-10-04
+    url: https://politiques-sociales.caissedesdepots.fr/ATC-ICNA/
+historique:
+- >-
+  2026-10-04 — née avec l'action 145 : un étage de plus sur la pension des ICNA, que
+  l'inventaire ne nommait pas, documenté sans être modélisé.
+effet: >-
+  Les ingénieurs du contrôle de la navigation aérienne radiés depuis 1998 : jusqu'à
+  treize ans d'une allocation de 64 à 150 % de l'indemnité spéciale de qualification,
+  et depuis 2012 un complément, qui manquent à leur retraite dans le modèle. Ni
+  l'effectif ni le montant de l'indemnité ne sont dans les sources lues.

@@ -19,6 +19,11 @@
 # L. 921-4 (les complémentaires obligatoires), le programme 195 des lois de
 # finances (les régimes fermés que l'État finance). Tout ce qui est marqué
 # « à modéliser » l'est par décision, y compris l'outre-mer et les assemblées.
+# Le 4 octobre 2026, trois énumérations de plus (action 145) : les débiteurs de
+# pensions qui contribuent au fonds spécial d'allocation vieillesse (décrets
+# annuels de 1984 à 1993), les membres du GIP Info Retraite (arrêté du 23 août
+# 2004) et la carte des régimes et mandats que gère la Caisse des dépôts
+# (février 2026) ; elles ont fait entrer dix-sept lignes.
 
 source_id: legifrance_inventaire_regimes
 
@@ -27,6 +32,40 @@ inventaire:
   # ---------------------------------------------------------------------
   # Salariés du privé — régimes de base
   # ---------------------------------------------------------------------
+
+  - code: cnrv
+    nom: Caisse nationale des retraites pour la vieillesse (CNRV)
+    famille: base_prive
+    population: >-
+      Déposants volontaires et affiliés des régimes en rentes viagères, avant 1949
+    creation: 1850
+    fermeture: 1949
+    extinction: 1949
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+    - {reference: "loi du 18 juin 1850 créant une caisse de retraites ou de rentes viagères\
+        \ pour la vieillesse, gérée par la Caisse des dépôts (page historique « 1850\
+        \ » de la Caisse des dépôts, lue le 4 octobre 2026 par l'extrait d'un moteur\
+        \ de recherche, la page répondant 404 ; hors index)", id: null}
+    - {reference: "loi du 20 juillet 1886 relative à l'organisation de la Caisse nationale\
+        \ de retraites pour la vieillesse (notice JORF)", id: JORFTEXT000000877358}
+    - {reference: "loi du 30 mars 1944 relative aux indemnités allouées aux anciens\
+        \ agents de l'État tributaires du régime général de la Caisse nationale des\
+        \ retraites pour la vieillesse ou d'un régime spécial comportant affiliation\
+        \ à ladite caisse (notice JORF)", id: JORFTEXT000000887383}
+    - {reference: "décret n° 49-669 du 16 mai 1949 réunissant la Caisse nationale d'assurance\
+        \ en cas de décès et la Caisse nationale des retraites pour la vieillesse sous\
+        \ le nom de Caisse nationale d'assurances sur la vie (notice JORF)", id: JORFTEXT000000488511}
+    raison_hors_champ: >-
+      Une caisse de capitalisation à adhésion facultative, antérieure à 1930 pour l'essentiel
+      de son activité : ses rentes s'achetaient par versements et ne relèvent pas des
+      comptes notionnels, et les régimes obligatoires qui y constituaient des rentes
+      — les régimes d'agents publics que la loi du 30 mars 1944 et les textes de 1942
+      et 1944 nomment — relèvent des successeurs que l'inventaire décrit (Ircantec,
+      après l'IPACTE et l'IGRANTE, et fonction publique).
 
   - code: retraites_ouvrieres_paysannes
     nom: Retraites ouvrières et paysannes
@@ -798,6 +837,39 @@ inventaire:
     - {reference: "arrêté du 28 juillet 2006 pris pour l'application du décret n° 2005-1233,\
         \ article 1 (taux de 0,75 %, 1 %, puis 1,5 % patronal et salarial)", id: LEGIARTI000049688551}
 
+  - code: parlement_europeen
+    nom: >-
+      Affiliation des représentants français au Parlement européen au régime général
+      et à l'Ircantec
+    famille: complementaire_prive
+    population: Représentants au Parlement européen ni députés ni sénateurs
+    creation: 1979
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+    - {reference: "loi n° 79-563 du 6 juillet 1979 relative à l'indemnité des représentants\
+        \ au Parlement européen, article 6, rédaction initiale (affiliation au régime\
+        \ général et au régime complémentaire des agents non titulaires)", id: LEGIARTI000006273317}
+    - {reference: "même article 6, rédaction du 30 juin 2010, en vigueur (les membres\
+        \ du Conseil économique, social et environnemental élus demeurent affiliés à\
+        \ la caisse de la loi n° 57-761)", id: LEGIARTI000022405517}
+    - {reference: "décision 2005/684/CE, Euratom du Parlement européen du 28 septembre\
+        \ 2005 portant adoption du statut des députés au Parlement européen, en vigueur\
+        \ le 14 juillet 2009, article 14 (pension d'ancienneté à soixante-trois ans,\
+        \ 3,5 % du traitement par année de mandat, 70 % au plus ; EUR-Lex, hors JORF)",
+      id: null}
+    manque: >-
+      Aucun statut ne route le représentant au Parlement européen : le statut `elu_local`
+      porte l'Ircantec des élus locaux, pas cette affiliation au régime général et à
+      l'Ircantec sur l'indemnité parlementaire européenne de 1979 à 2009. Il faudrait
+      un statut qui route les deux régimes sur ce revenu, et dire, pour les mandats
+      postérieurs au 14 juillet 2009, que la pension européenne est hors du modèle.
+      La fiche `parlement_europeen_affiliation` lit l'article 6.
+
   # ---------------------------------------------------------------------
   # Fonction publique et assimilés
   # ---------------------------------------------------------------------
@@ -1188,6 +1260,246 @@ inventaire:
       fonctionnaires de Polynésie relèvent de la CPS, portée par le statut salarié.
       Les cotisations d'avant 2023 sont projetées ; la durée de services requise et
       la table exacte de l'âge après 2025 restent à lire dans la loi du pays.
+
+  - code: retrep
+    nom: >-
+      Régime temporaire de retraite des maîtres de l'enseignement privé sous contrat
+      (RETREP)
+    famille: fonction_publique
+    population: Maîtres et documentalistes de l'enseignement privé sous contrat
+    creation: 1980
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+    - {reference: "décret n° 80-7 du 2 janvier 1980 relatif aux conditions de cessation\
+        \ d'activité de certains maîtres contractuels ou agréés des établissements d'enseignement\
+        \ privés sous contrat (versions de 1980 à 2006 dans l'index LEGI)", id: LEGITEXT000006063310}
+    - {reference: "code de l'éducation, R. 914-120 à R. 914-140 (codification du décret\
+        \ n° 80-7, depuis le 29 décembre 2008), R. 914-120", id: LEGIARTI000020055876}
+    - {reference: "code de l'éducation, L. 914-1-1, créé par l'article 129 de la loi\
+        \ n° 2011-1977 du 28 décembre 2011 de finances pour 2012 (« avantages temporaires\
+        \ de retraite », « régime temporaire de retraite »)", id: LEGIARTI000025058639}
+    - {reference: "arrêté du 24 mars 1987 désignant l'Association pour la prévoyance\
+        \ collective pour liquider et payer les avantages du décret n° 80-7, à compter\
+        \ du 1er juin 1987", id: LEGIARTI000006462912}
+    manque: >-
+      Aucun statut ne porte le maître du privé jusqu'au départ anticipé : le statut
+      `maitre_enseignement_prive` route le régime général, l'Agirc-Arrco et le régime
+      additionnel, et liquide au droit commun. Manquent l'âge du maître titulaire public
+      (cinquante-cinq ans pour quinze ans d'échelle d'instituteur, soixante sinon, puis
+      les âges de la fonction publique), la condition de quinze ans de services, et
+      l'avantage lui-même : une pension du régime général et de la complémentaire liquidées
+      comme à l'âge du taux plein, sur les seuls services d'enseignement, servies jusqu'à
+      la pension réelle du régime général à taux plein, puis éteintes. La fiche `retrep_avantages_temporaires`
+      le décrit version par version.
+
+  - code: caisses_locales_alsace_moselle
+    nom: >-
+      Régimes locaux de retraite des collectivités et établissements publics d'Alsace-Moselle
+    famille: fonction_publique
+    population: >-
+      Agents titulaires des collectivités d'Alsace-Moselle non affiliés à la CNRACL
+    creation: null
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: cnracl
+    couverture: hors_champ
+    statuts: []
+    textes:
+    - {reference: "décret n° 2003-1306 du 26 décembre 2003 relatif au régime de retraite\
+        \ des fonctionnaires affiliés à la CNRACL, article 66 (affiliation facultative\
+        \ des collectivités du Haut-Rhin, du Bas-Rhin et de la Moselle ; renonciation\
+        \ des titulaires qui relevaient d'un régime local)", id: LEGIARTI000023414174}
+    - {reference: "décret n° 84-104 du 9 février 1984, article 2 (caisses départementales\
+        \ des retraites de la Moselle, du Bas-Rhin et du Haut-Rhin, caisses de retraites\
+        \ des communes et des établissements publics des trois départements)", id: LEGIARTI000006766410}
+    - {reference: "décret n° 93-426 du 18 mars 1993, article 2 (même liste, la dernière\
+        \ que l'index porte)", id: LEGIARTI000006928885}
+    - {reference: "Caisse des dépôts, page « Régime de la caisse de retraite du personnel\
+        \ départemental du Haut-Rhin » (règlement approuvé par le commissaire général\
+        \ de la République le 11 juillet 1924 ; deux pensionnés au 31 décembre 2022),\
+        \ hors JORF", id: null}
+    raison_hors_champ: >-
+      Des dizaines de régimes, un par collectivité, chacun sur son règlement local,
+      que ni le Journal officiel ni l'index ne publient ; les collectivités qui ont
+      rejoint la CNRACL y ont affilié tous leurs titulaires, hors ceux qui ont renoncé
+      dans les six mois, et la seule caisse dont l'effectif est publié n'a plus que
+      deux pensionnés. Le statut territorial route vers la CNRACL, ce qui est juste
+      pour les collectivités affiliées.
+
+  - code: cultes_alsace_moselle
+    nom: >-
+      Pensions des ministres des cultes rétribués par l'État en Alsace-Moselle
+    famille: fonction_publique
+    population: >-
+      Ministres des cultes reconnus d'Alsace-Moselle et employés des autorités religieuses
+    creation: 1909
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+    - {reference: "loi locale du 15 novembre 1909 relative aux traitements et pensions\
+        \ des ministres des cultes rétribués par l'État et de leurs veuves et orphelins\
+        \ (notice JORF ; texte allemand, traduction publiée par le décret n° 2013-395)",
+      id: JORFTEXT000000315082}
+    - {reference: "arrêté du 29 mai 2001 modifiant l'arrêté du 19 mars 1910 portant\
+        \ règlement d'exécution de la loi locale du 15 novembre 1909 (à l'article 7,\
+        \ « 65 » remplacé par « 60 »)", id: JORFTEXT000000590423}
+    - {reference: "décret n° 2007-1341 du 11 septembre 2007 modifiant la loi locale\
+        \ du 15 novembre 1909 (traitement selon un classement indiciaire, pensions «\
+        \ de l'État » et non plus « sur la caisse d'Alsace-Lorraine »)", id: JORFTEXT000000279682}
+    - {reference: "décret n° 51-75 du 19 janvier 1951 relatif au régime de sécurité\
+        \ sociale des ministres des cultes en exercice en Alsace et en Lorraine (régime\
+        \ spécial pour la maladie, au 1er janvier 1947)", id: LEGITEXT000028855715}
+    - {reference: "réponse du ministre de l'intérieur à la question écrite n° 06644\
+        \ de M. Jean Louis Masson, JO Sénat du 27 juillet 2023 : la loi du 15 novembre\
+        \ 1909 « détermine le régime de retraite spécifique des agents des cultes statutaires\
+        \ d'Alsace-Moselle », inchangé par la loi du 14 avril 2023 (hors JORF)", id: null}
+    manque: >-
+      Aucun statut ne route le ministre du culte concordataire : il n'est ni fonctionnaire
+      de l'État ni salarié du régime général, et sa pension d'État n'est pas calculée.
+      Manquent les règles de la loi locale et de son règlement d'exécution de 1910,
+      dont le texte consolidé n'est pas dans l'index : seules leurs modifications de
+      2001 et de 2007 y sont, et la presse en résume le reste (dix années de services
+      au moins, pension proportionnelle aux années et au dernier traitement, sans cotisation,
+      un certificat médical avant soixante ans). Manque aussi la coordination avec le
+      régime général pour qui quitte le ministère sans droit. La fiche `cultes_alsace_moselle_pension`
+      dit ce qui est lu et ce qui ne l'est pas.
+
+  - code: atc_icna
+    nom: >-
+      Allocation temporaire complémentaire des ingénieurs du contrôle de la navigation
+      aérienne (ATC-ICNA)
+    famille: fonction_publique
+    population: >-
+      Ingénieurs du contrôle de la navigation aérienne radiés des cadres
+    creation: 1997
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+    - {reference: "loi n° 89-1007 du 31 décembre 1989 relative au corps des ingénieurs\
+        \ du contrôle de la navigation aérienne, article 6-1, dans sa rédaction du 30\
+        \ décembre 1997 (huit ans, 75 % de l'indemnité spéciale de qualification)",
+      id: LEGIARTI000006450772}
+    - {reference: "même article 6-1, dans sa rédaction du 31 décembre 2025 (treize ans\
+        \ ; 150 %, 118 % puis 64 % pour les radiés depuis 2017 ; II : complément individuel\
+        \ temporaire)", id: LEGIARTI000053279787}
+    - {reference: "décret n° 2016-1892 du 27 décembre 2016 relatif au versement et à\
+        \ la gestion du complément individuel temporaire (formule du complément, sur\
+        \ le traitement indiciaire, la durée d'assurance et la durée moyenne de retraite)",
+      id: LEGITEXT000033737524}
+    - {reference: "décret n° 98-1096 du 4 décembre 1998 portant création du fonds de\
+        \ gestion de l'allocation temporaire complémentaire (visé par le décret n° 2016-1892,\
+        \ absent de l'index)", id: null}
+    - {reference: "Caisse des dépôts, carte des régimes, fonds et mandats gérés par\
+        \ la direction des politiques sociales, février 2026 (« ATC ICNA », rubrique\
+        \ Retraite)", id: null}
+    manque: >-
+      Aucun statut ne distingue l'ICNA du fonctionnaire civil de l'État, et ni l'allocation
+      ni le complément ne sont portés : il manque le corps dans la saisie, l'indemnité
+      spéciale de qualification d'un premier contrôleur année par année, qui n'est pas
+      dans le dépôt, et la formule du complément individuel temporaire, que le Journal
+      officiel ne publie qu'en image. La fiche `atc_icna_allocation` lit l'article 6-1
+      version par version.
+
+  - code: cantonniers_etat
+    nom: >-
+      Régime de retraites des cantonniers de l'État et pensions sur fonds spéciaux
+    famille: fonction_publique
+    population: >-
+      Anciens cantonniers et agents des Ponts et Chaussées, du chemin de fer de l'Hérault
+      et des cantonniers de l'Isère
+    creation: 1896
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+    - {reference: "décret du 22 février 1896 portant régime de retraites des cantonniers\
+        \ de l'État (notice JORF)", id: JORFTEXT000000848515}
+    - {reference: "décret n° 50-430 du 4 avril 1950 fixant pour 1949 le montant maximum\
+        \ de rente viagère des agents des Ponts et Chaussées affiliés au régime de retraite\
+        \ du décret du 22 février 1896 (notice JORF)", id: JORFTEXT000000496487}
+    - {reference: "décret n° 93-426 du 18 mars 1993, article 2 (« Chemin de fer de l'Hérault,\
+        \ cantonniers de l'Isère » et « D.D.E. de Maine-et-Loire » contributeurs au\
+        \ fonds spécial d'allocation vieillesse)", id: LEGIARTI000006928885}
+    - {reference: "arrêté du 14 avril 2006 portant délégation de signature pour la direction\
+        \ des retraites de la Caisse des dépôts, article 29 (pensions sur fonds spéciaux\
+        \ : pensions des chemins de fer de l'Hérault, des cantonniers de l'Isère, régime\
+        \ spécial de l'Imprimerie nationale, caisse du personnel de la préfecture du\
+        \ Haut-Rhin)", id: JORFARTI000002103219}
+    raison_hors_champ: >-
+      Des rentes viagères constituées avant la sécurité sociale pour des agents des
+      Ponts et Chaussées et de services départementaux, dont il ne reste que des pensions
+      résiduelles, gérées en fonds spéciaux par la Caisse des dépôts : plus de carrière
+      à simuler. L'index n'a des textes de 1896 et 1950 que les titres.
+
+  - code: elus_locaux_avant_1992
+    nom: >-
+      Régimes de retraite par rente des élus locaux constitués avant 1992
+    famille: special
+    population: >-
+      Anciens conseillers généraux de cinq départements et autres élus locaux d'avant
+      1992
+    creation: null
+    fermeture: 1992
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+    - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice\
+        \ des mandats locaux, article 32, rédaction initiale (pensions liquidées et\
+        \ droits acquis honorés par les organismes, subvention d'équilibre des collectivités)",
+      id: LEGIARTI000006367557}
+    - {reference: "même article 32, rédaction de 1995 (les élus en fonctions avant la\
+        \ loi peuvent continuer à cotiser à ces organismes)", id: LEGIARTI000006367559}
+    - {reference: "Caisse des dépôts, page « Conseils généraux » et carte des mandats\
+        \ de février 2026 (« Conseils départementaux 13, 23, 30, 47, 74 » ; droits figés\
+        \ au 30 mars 1992), hors JORF", id: null}
+    raison_hors_champ: >-
+      Des régimes supplémentaires par rente, propres à chaque collectivité, fermés en
+      1992 et dont les droits sont figés au 30 mars 1992 : ils s'ajoutent à l'Ircantec,
+      que le statut `elu_local` route depuis 1973, et à la retraite par rente que la
+      loi de 1992 a ouverte (FONPEL, CAREL), facultative. Aucun règlement n'est publié.
+
+  - code: assemblee_union_francaise
+    nom: >-
+      Caisse de retraite des membres de l'ancienne Assemblée de l'Union française
+    famille: special
+    population: >-
+      Anciens membres de l'Assemblée de l'Union française (IVe République)
+    creation: null
+    fermeture: 1958
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+    - {reference: "loi n° 62-698 du 27 juin 1962 relative à la caisse de retraite des\
+        \ membres de l'ancienne Assemblée de l'Union française (notice JORF : pensions\
+        \ calculées comme celles des députés)", id: JORFTEXT000000313963}
+    raison_hors_champ: >-
+      Assemblée disparue avec la IVe République, en 1958 : aucun membre n'a pu y acquérir
+      de droit depuis, et les survivants éventuels, majeurs en 1958, ont plus de quatre-vingt-cinq
+      ans. Le régime suivait celui des députés, que la ligne des assemblées parlementaires
+      décrit.
 
   # ---------------------------------------------------------------------
   # Régimes spéciaux de salariés
@@ -1618,6 +1930,292 @@ inventaire:
     raison_hors_champ: >-
       Une prestation financée par les collectivités, sans cotisation du bénéficiaire
       : ce n'est pas un régime de retraite au sens du modèle.
+
+  - code: cci_paris
+    nom: >-
+      Régime spécial d'assurance vieillesse du personnel de la chambre de commerce et
+      d'industrie de Paris
+    famille: special
+    population: Agents titulaires de la CCI de Paris
+    creation: null
+    fermeture: 2005
+    extinction: null
+    succede_a: []
+    integre_dans: regime_general
+    couverture: a_modeliser
+    statuts: []
+    textes:
+    - {reference: "décret n° 97-1325 du 30 décembre 1997 portant approbation du règlement\
+        \ du régime spécial d'assurance vieillesse et d'assurance maladie du personnel\
+        \ de la CCI de Paris (règlement consultable à la chambre, non publié au JORF)",
+      id: JORFTEXT000000752576}
+    - {reference: "décret n° 91-613 du 28 juin 1991 fixant les taux des cotisations\
+        \ de divers régimes spéciaux, article 16 (24,68 % en 1991, 25,61 % en 1992 …\
+        \ 29,43 % en 1999)", id: LEGIARTI000006775993}
+    - {reference: "arrêté du 23 août 2004 approuvant la convention constitutive du GIP\
+        \ « Information des assurés sur leurs droits à retraite » (la CCIP parmi ses\
+        \ membres)", id: JORFARTI000001284713}
+    - {reference: "loi n° 2005-882 du 2 août 2005 en faveur des petites et moyennes\
+        \ entreprises, article 70 (fin du régime spécial au 1er janvier 2006)", id: JORFARTI000001680091}
+    - {reference: "décret n° 2006-1748 du 23 décembre 2006 portant application de l'article\
+        \ 70 de la loi n° 2005-882 (rentes du régime général, rétablissement des droits\
+        \ depuis le 1er juillet 1930)", id: JORFTEXT000000460859}
+    - {reference: "arrêté du 23 décembre 2006 fixant le montant de la contribution de\
+        \ la CCI de Paris au régime général", id: JORFTEXT000000275406}
+    manque: >-
+      Aucun statut ne porte l'agent de la chambre : un agent entré avant 2006 est simulé
+      en salarié du privé, ce que le régime général lui rend depuis 2006 par le rétablissement
+      de ses droits, mais pas la pension du régime spécial des agents partis avant 2006,
+      ni les droits que la chambre couvre au-delà du régime général et de l'Agirc-Arrco.
+      Le règlement de 1997 n'est pas publié ; les rentes de transfert de 2006 sont lues,
+      et la fiche `cci_paris_transfert_2006` les décrit.
+
+  - code: compagnie_generale_eaux
+    nom: >-
+      Régime spécial de sécurité sociale du personnel de la Compagnie générale des eaux
+    famille: special
+    population: Salariés de la Compagnie générale des eaux avant 1991
+    creation: null
+    fermeture: 1990
+    extinction: null
+    succede_a: []
+    integre_dans: regime_general
+    couverture: a_modeliser
+    statuts: []
+    textes:
+    - {reference: "décret n° 46-1378 du 8 juin 1946, article 61, 9° (la Compagnie générale\
+        \ des eaux reste soumise à une organisation spéciale de sécurité sociale)",
+      id: LEGIARTI000006761348}
+    - {reference: "code de la sécurité sociale, R. 711-1, 9°, rédaction du 21 décembre\
+        \ 1985 au 17 mai 1991", id: LEGIARTI000006752039}
+    - {reference: "décret n° 84-104 du 9 février 1984, article 2 (« Caisse de retraites\
+        \ de la Compagnie générale des eaux » parmi les organismes qui contribuent au\
+        \ fonds spécial d'allocation vieillesse)", id: LEGIARTI000006766410}
+    - {reference: "loi n° 91-73 du 18 janvier 1991 portant dispositions relatives à\
+        \ la santé publique et aux assurances sociales, article 17 (fin du régime spécial\
+        \ au 1er janvier 1991)", id: JORFARTI000001952341}
+    - {reference: "décret n° 91-408 du 26 avril 1991 fixant les modalités d'intégration\
+        \ au régime général, articles 10 à 18 (rentes de 64 650 F pour 150 trimestres)",
+      id: JORFTEXT000000504104}
+    - {reference: "arrêté du 26 avril 1991 fixant la contribution de la Compagnie générale\
+        \ des eaux au régime général (40 millions de francs)", id: JORFTEXT000000864974}
+    - {reference: "décret n° 91-489 du 14 mai 1991 supprimant le régime spécial de la\
+        \ Compagnie générale des eaux de R. 711-1", id: JORFTEXT000000866470}
+    manque: >-
+      Aucun statut ne porte le salarié de la compagnie : ses années d'avant 1991 sont
+      simulées au régime général comme celles d'un salarié du privé, quand la loi les
+      lui rend en rente forfaitaire — 64 650 F par an pour cent cinquante trimestres
+      validés, en cent-cinquantièmes au-dessous, revalorisée comme les pensions du régime
+      général. Ne sont pas lus : les avantages que la compagnie sert au-delà, par une
+      institution de prévoyance et un accord d'entreprise substitué à la convention
+      collective du 22 mai 1969 qui réglait le régime spécial (IV de l'article 17) ;
+      l'extension de la convention de 1947 à la compagnie (arrêté du 2 novembre 1992)
+      ; la pension du régime spécial des salariés partis avant 1991. La fiche `compagnie_generale_eaux_transfert_1991`
+      décrit les rentes.
+
+  - code: cci_roubaix
+    nom: >-
+      Régime spécial de retraite de l'ancienne chambre de commerce et d'industrie de
+      Roubaix
+    famille: special
+    population: Salariés de l'ancienne CCI de Roubaix avant 1998
+    creation: null
+    fermeture: 1997
+    extinction: null
+    succede_a: []
+    integre_dans: regime_general
+    couverture: a_modeliser
+    statuts: []
+    textes:
+    - {reference: "décret n° 84-104 du 9 février 1984, article 2 (« Caisse de retraites\
+        \ des employés de la chambre de commerce et d'industrie de Roubaix », contributrice\
+        \ au fonds spécial d'allocation vieillesse)", id: LEGIARTI000006766410}
+    - {reference: "décret n° 91-613 du 28 juin 1991, article 16-1, créé par le décret\
+        \ n° 92-998 du 14 septembre 1992 (cotisation vieillesse de 25,75 % du régime\
+        \ spécial de l'ex-chambre de commerce de Roubaix)", id: LEGIARTI000006776001}
+    - {reference: "loi n° 97-1164 du 19 décembre 1997 de financement de la sécurité\
+        \ sociale pour 1998, article 20 (fin du régime spécial au 1er janvier 1998)",
+      id: LEGIARTI000006757374}
+    - {reference: "décret n° 98-183 du 17 mars 1998 fixant les modalités d'intégration\
+        \ au régime général (rentes de 62 150 F pour 150 trimestres ; contribution de\
+        \ 28 600 000 F)", id: LEGITEXT000005625415}
+    manque: >-
+      Aucun statut ne porte le salarié de la chambre : ses années d'avant 1998 sont
+      simulées au régime général, quand la loi les lui rend en rente forfaitaire du
+      régime général — 62 150 F par an pour cent cinquante trimestres validés depuis
+      le 1er juillet 1930, en cent-cinquantièmes au-dessous —, et la pension du régime
+      spécial des salariés partis avant 1998, comme la couverture que la chambre assure
+      au-delà, ne sont pas lues. La fiche `cci_roubaix_transfert_1998` décrit les rentes.
+
+  - code: canssm_personnel
+    nom: >-
+      Régime de retraite du personnel statutaire de la CANSSM (« retraite des statutaires
+      »)
+    famille: special
+    population: >-
+      Agents statutaires de la Caisse autonome nationale de la sécurité sociale dans
+      les mines
+    creation: null
+    fermeture: 2005
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+    - {reference: "décret n° 84-104 du 9 février 1984, article 2 (« Caisse autonome\
+        \ nationale de la sécurité sociale dans les mines (pour son personnel) », contributrice\
+        \ au fonds spécial d'allocation vieillesse, comme en 1990 et 1993)", id: LEGIARTI000006766410}
+    - {reference: "décret n° 91-613 du 28 juin 1991, article 14 (régime spécial de sécurité\
+        \ sociale du personnel de la CANSSM ; II : cotisation vieillesse de 7,85 % à\
+        \ la charge de l'agent, seul alinéa en vigueur depuis 1996)", id: LEGIARTI000006775989}
+    - {reference: "ordonnance n° 2005-389 du 28 avril 2005 relative au transfert d'une\
+        \ partie du personnel de la CANSSM à la Caisse des dépôts, article 2 (maintien\
+        \ des régimes ; droits acquis régis par le statut en cas d'option)", id: JORFARTI000001525907}
+    - {reference: "même ordonnance, article 4 (fin des recrutements sous le statut de\
+        \ l'article 79 du décret n° 46-2769 au 1er mai 2005)", id: JORFARTI000001480595}
+    - {reference: "Caisse des dépôts, page « Retraite des statutaires » (gestion du\
+        \ régime de retraite du personnel sous statut CANSSM transférée en janvier 2009\
+        \ ; décret du 19 juin 2006 sur le droit à l'information), hors JORF", id: null}
+    manque: >-
+      Aucun statut ne porte l'agent statutaire de la caisse, et le règlement de son
+      régime de retraite — âge, durée, calcul, taux de la cotisation employeur — n'est
+      publié ni au Journal officiel ni sur le site de la Caisse des dépôts, qui n'en
+      donne que les rapports d'activité : il faudrait lire le statut du personnel pris
+      sur l'article 79 du décret n° 46-2769 et ses avenants, ou les rapports annuels
+      du régime.
+
+  - code: ports_autonomes_titulaires
+    nom: >-
+      Régimes de retraite du personnel titulaire des ports autonomes de Bordeaux, du
+      Havre et de Marseille
+    famille: special
+    population: >-
+      Personnel titulaire des ports autonomes et des chambres de commerce concessionnaires
+    creation: null
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+    - {reference: "arrêté du 4 juin 1946 de retraite du personnel titulaire du port\
+        \ autonome de Bordeaux (règlement annexé, notice JORF seule)", id: JORFTEXT000000426789}
+    - {reference: "arrêté du 11 décembre 1948 approuvant l'avenant n° 2 au règlement\
+        \ de retraite du personnel titulaire du port autonome de Bordeaux", id: JORFTEXT000000253001}
+    - {reference: "arrêté du 26 novembre 1943 approuvant les modifications des statuts\
+        \ de la caisse de retraites de la chambre de commerce et du port autonome du\
+        \ Havre", id: JORFTEXT000000830053}
+    - {reference: "décret n° 58-437 du 15 avril 1958 relatif au régime de sécurité sociale\
+        \ des agents titulaires du port autonome et de la chambre de commerce du Havre",
+      id: JORFTEXT000000684822}
+    - {reference: "décret n° 62-152 du 18 janvier 1962 relatif au régime de retraites\
+        \ du personnel titulaire de la chambre de commerce et du port autonome du Havre\
+        \ (règlement annexé)", id: JORFTEXT000000299349}
+    - {reference: "décret n° 59-809 du 4 juillet 1959 relatif au régime de retraites\
+        \ du personnel titulaire de la chambre de commerce de Marseille (règlement annexé)",
+      id: JORFTEXT000000299092}
+    - {reference: "code des transports, R. 5313-28 (décrets n° 59-809 et n° 62-152 applicables\
+        \ au personnel des ports de Marseille et du Havre ; convention collective des\
+        \ ports, dont l'annexe n° 2 forme règlement de retraite)", id: LEGIARTI000030030816}
+    - {reference: "décret n° 2017-1644 du 30 novembre 2017 relatif à l'intégration au\
+        \ régime général du régime spécial d'assurance maladie, maternité et décès du\
+        \ grand port maritime de Bordeaux", id: JORFTEXT000036127031}
+    manque: >-
+      Aucun des trois règlements n'est dans l'index, qui ne porte que les titres et
+      notices : on ne sait ni s'ils servent une pension de base ou un complément au-dessus
+      du régime général — le décret n° 58-437 range les titulaires du Havre au régime
+      de sécurité sociale, et la convention collective des ports donne son propre règlement
+      de retraite —, ni s'ils sont fermés ; le décret n° 96-1151 range encore le port
+      de Bordeaux parmi les régimes spéciaux dont il modifie la cotisation maladie des
+      actifs et des retraités. Il faudrait les règlements, aux archives des ports ou
+      au Bulletin officiel des ministères.
+
+  - code: sudac
+    nom: >-
+      Pension statutaire et complément de pension des anciens agents de la SUDAC
+    famille: special
+    population: Anciens agents de la SUDAC, concessionnaire de la Ville de Paris
+    creation: null
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+    - {reference: "arrêté du 13 novembre 2003 portant délégation de signature à la Caisse\
+        \ des dépôts (« complément de pension de la Société urbaine de distribution\
+        \ d'air comprimé (SUDAC) » parmi les caisses et fonds gérés)", id: JORFARTI000001092999}
+    - {reference: "Caisse des dépôts, pages « Pension et complément de pension de la\
+        \ SUDAC » et carte des mandats de février 2026 (allocations égales à la différence\
+        \ entre la pension statutaire et les pensions du régime général et des complémentaires),\
+        \ hors JORF", id: null}
+    raison_hors_champ: >-
+      Un avantage d'entreprise, non un régime légal : la pension statutaire d'un concessionnaire
+      de la Ville de Paris, réduite à un complément différentiel au-dessus du régime
+      général et des complémentaires, que la Caisse des dépôts verse aux anciens agents
+      ; la page du fonds ne publie ni le nombre de bénéficiaires ni le financement.
+      Les droits de base sont ceux du régime général.
+
+  - code: crcgmf
+    nom: >-
+      Caisse de retraites du personnel sédentaire du groupe de la Compagnie générale
+      maritime et financière
+    famille: special
+    population: Personnel à terre de la Transat et des Messageries maritimes
+    creation: null
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+    - {reference: "arrêté du 30 novembre 1990 approuvant la modification des statuts\
+        \ de la caisse de retraites du personnel sédentaire des sociétés du groupe de\
+        \ la CGMF (institution du titre III du livre VII du code de la sécurité sociale)",
+      id: JORFTEXT000000526848}
+    - {reference: "arrêté du 10 avril 1995 approuvant les modifications des statuts\
+        \ et du règlement de la caisse, institution de retraite supplémentaire du titre\
+        \ IV du livre IX", id: JORFARTI000002170505}
+    - {reference: "Caisse des dépôts, page « CRCGMF » (institution de retraite supplémentaire\
+        \ instituée par l'arrêté du 10 avril 1995), hors JORF", id: null}
+    raison_hors_champ: >-
+      Une retraite d'entreprise, devenue supplémentaire : la caisse est une institution
+      de retraite supplémentaire depuis 1995, au-dessus des régimes obligatoires du
+      personnel à terre, et le modèle ne décrit que les régimes légalement obligatoires.
+      Son règlement n'est pas publié, et l'index ne dit pas quel régime de base couvrait
+      ce personnel avant 1990.
+
+  - code: chemin_fer_franco_ethiopien
+    nom: Caisse de retraite du chemin de fer franco-éthiopien (CRCFE)
+    famille: special
+    population: Anciens agents français du chemin de fer franco-éthiopien
+    creation: null
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+    - {reference: "loi n° 77-770 du 12 juillet 1977 relative à la radiation des cadres\
+        \ des militaires originaires du Territoire français des Afars et des Issas et\
+        \ au paiement des pensions dues aux retraités de nationalité française de la\
+        \ société du chemin de fer franco-éthiopien", id: JORFTEXT000000704674}
+    - {reference: "décret n° 93-426 du 18 mars 1993, article 2 (« Caisse des chemins\
+        \ de fer éthiopiens » contributrice au fonds spécial d'allocation vieillesse)",
+      id: LEGIARTI000006928885}
+    - {reference: "Caisse des dépôts, rapport annuel des comptes 2019 de la CRCFE (convention\
+        \ du 30 mars 1993, accord franco-éthiopien du 5 mars 1993, article 7 de la loi\
+        \ n° 77-770, huit pensionnés), hors JORF", id: null}
+    raison_hors_champ: >-
+      Caisse d'une compagnie concessionnaire en Éthiopie, dont l'État paie les pensions
+      des retraités français depuis la loi du 12 juillet 1977 : huit pensionnés en 2019,
+      âgés de 82 à 101 ans, et seules des réversions se liquident encore, sur le règlement
+      de la compagnie figé au 12 juillet 1977. Il n'y a plus de carrière à simuler.
 
   # ---------------------------------------------------------------------
   # Non-salariés non agricoles

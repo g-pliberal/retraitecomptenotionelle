@@ -1,0 +1,41 @@
+code: cci_roubaix
+nom: >-
+  Régime spécial de retraite du personnel de l'ancienne chambre de commerce et d'industrie de Roubaix
+famille: special
+population: >-
+  Salariés de l'ancienne chambre de commerce et d'industrie de Roubaix,
+  fondue dans la chambre de Lille-Roubaix-Tourcoing : régime spécial pour
+  l'invalidité et la vieillesse, servi par la « caisse de retraites des
+  employés de la chambre de commerce et d'industrie de Roubaix », à une
+  cotisation vieillesse de 25,75 % en 1992, dont 7,35 % à la charge de
+  l'agent (décret n° 91-613, article 16-1). Le régime prend fin au
+  1er janvier 1998 (loi n° 97-1164, article 20) : pensions en cours et
+  droits non liquidés deviennent des rentes du régime général, la chambre
+  verse 28,6 millions de francs et couvre le reste par une institution du
+  livre IX.
+creation: null
+fermeture: 1997
+extinction: null
+succede_a: []
+integre_dans: regime_general
+inventaire:
+  section: speciaux
+  rang: 220
+  nom: Régime spécial de retraite de l'ancienne chambre de commerce et d'industrie de Roubaix
+  population: Salariés de l'ancienne CCI de Roubaix avant 1998
+  couverture: a_modeliser
+  statuts: []
+  textes:
+    - {reference: "décret n° 84-104 du 9 février 1984, article 2 (« Caisse de retraites des employés de la chambre de commerce et d'industrie de Roubaix », contributrice au fonds spécial d'allocation vieillesse)", id: LEGIARTI000006766410}
+    - {reference: "décret n° 91-613 du 28 juin 1991, article 16-1, créé par le décret n° 92-998 du 14 septembre 1992 (cotisation vieillesse de 25,75 % du régime spécial de l'ex-chambre de commerce de Roubaix)", id: LEGIARTI000006776001}
+    - {reference: "loi n° 97-1164 du 19 décembre 1997 de financement de la sécurité sociale pour 1998, article 20 (fin du régime spécial au 1er janvier 1998)", id: LEGIARTI000006757374}
+    - {reference: "décret n° 98-183 du 17 mars 1998 fixant les modalités d'intégration au régime général (rentes de 62 150 F pour 150 trimestres ; contribution de 28 600 000 F)", id: LEGITEXT000005625415}
+  manque: >-
+    Aucun statut ne porte le salarié de la chambre : ses années d'avant
+    1998 sont simulées au régime général, quand la loi les lui rend en
+    rente forfaitaire du régime général — 62 150 F par an pour cent
+    cinquante trimestres validés depuis le 1er juillet 1930, en
+    cent-cinquantièmes au-dessous —, et la pension du régime spécial des
+    salariés partis avant 1998, comme la couverture que la chambre assure
+    au-delà, ne sont pas lues. La fiche `cci_roubaix_transfert_1998`
+    décrit les rentes.

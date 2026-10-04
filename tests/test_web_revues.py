@@ -335,8 +335,11 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
     assert 'id="inventaire-famille"' in corps and 'id="inventaire-couverture"' in corps
     assert (f'data-compte-de="inventaire" data-unite="régimes">{len(lignes)} régimes</p>'
             in corps)
-    # Une couverture qu'aucune ligne ne porte n'est pas proposée au filtre.
-    assert 'value="a_modeliser"' not in corps
+    # Une couverture qu'aucune ligne ne porte n'est pas proposée au filtre, et
+    # chacune de celles que l'inventaire porte l'est.
+    selecteur = re.search(r'<select id="inventaire-couverture".*?</select>', corps, re.S).group(0)
+    proposees = set(re.findall(r'<option value="([^"]+)"', selecteur))
+    assert proposees == {ligne.couverture for ligne in lignes}
     # La fiabilité de chaque fiche calculée est dans la ligne du régime.
     catalogue = {r.code: str(r.fiabilite) for r in contexte.simulateur().catalogue}
     for ligne in lignes:

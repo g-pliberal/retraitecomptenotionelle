@@ -1,0 +1,104 @@
+schema_version: 1
+id: parlement_europeen_affiliation
+intitule: >-
+  Le représentant de la France au Parlement européen qui n'est ni député ni sénateur
+  est affilié, pour sa pension, au régime général et à l'Ircantec sur l'indemnité que
+  lui verse l'État (loi n° 79-563, article 6) ; depuis le 14 juillet 2009, le statut
+  des députés au Parlement européen lui sert indemnité et pension sur le budget de
+  l'Union : 3,5 % du traitement par année de mandat, 70 % au plus, à soixante-trois ans.
+domaine: coordination
+regimes: [parlement_europeen, regime_general, ircantec]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les années de mandat au Parlement européen, et si l'élu est aussi député, sénateur ou membre du Conseil économique et social
+- l'indemnité versée par l'État, et depuis 2009 le traitement versé par le Parlement européen
+ecrit:
+- les années et l'assiette portées au régime général et à l'Ircantec, jusqu'en 2009
+- depuis 2009, une pension du statut européen, hors des régimes français
+dates_qui_decident:
+- periode.debut
+versions:
+- id: avant_1979
+  statut: supposee
+  hypothese: >-
+    avant l'élection au suffrage universel de 1979, les représentants à l'Assemblée
+    des Communautés européennes sont désignés parmi les parlementaires nationaux, dont
+    ils gardent le régime ; la loi n° 79-563 n'a pas de rédaction antérieure
+  fiabilite: moyenne, déduite de l'objet de la loi de 1979 et non d'un texte lu
+  bornes:
+    periode.debut: [null, 1979-07-07]
+  contenu:
+    droit: le régime de l'assemblée nationale dont le représentant est membre
+  exemples: aucun trouvé
+- id: loi_1979
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006273317, article: "loi n° 79-563 du 6 juillet 1979, article 6", en_vigueur: 1979-07-07}
+  - {id: LEGIARTI000006273318, article: "même article, rédaction du 22 août 2003", en_vigueur: 2003-08-22}
+  nee_de: LEGIARTI000006273317
+  bornes:
+    periode.debut: [1979-07-07, 2009-07-14]
+  contenu:
+    beneficiaire: les représentants « qui ne sont ni député ni sénateur »
+    droit: >-
+      « Pour les pensions de retraite, ils sont affiliés à l'assurance vieillesse du
+      régime général de sécurité sociale et au régime complémentaire de retraite
+      institué au profit des agents non titulaires des collectivités publiques » ; les
+      indemnités de l'article 1er sont soumises aux cotisations de l'article 41 de
+      l'ordonnance n° 67-706 et à celles du régime complémentaire
+    exception: >-
+      « les membres du Conseil économique et social élus à l'assemblée des communautés
+      européennes demeurent affiliés à la caisse des retraites instituée en application
+      de la loi n° 57-761 du 10 juillet 1957 »
+    maladie: le régime de sécurité sociale de l'Assemblée nationale ou du Sénat, au choix de l'élu
+  exemples: aucun trouvé
+- id: statut_europeen
+  statut: lue
+  textes:
+  - {reference: "décision 2005/684/CE, Euratom du Parlement européen du 28 septembre 2005 portant adoption du statut des députés au Parlement européen, article 14 (EUR-Lex)", en_vigueur: 2009-07-14}
+  - {id: LEGIARTI000022405517, article: "loi n° 79-563, article 6, rédaction du 30 juin 2010", en_vigueur: 2010-06-30}
+  bornes:
+    periode.debut: [2009-07-14, null]
+  contenu:
+    droit: >-
+      « À l'âge de 63 ans révolus, les anciens députés ont droit à une pension
+      d'ancienneté », de 3,5 % du traitement pour chaque année complète de mandat et
+      d'un douzième de cette somme par mois supplémentaire, sans dépasser 70 % au total,
+      à la charge du budget de l'Union (article 14 du statut, lu par l'extrait EUR-Lex
+      d'un moteur de recherche)
+    loi_francaise: >-
+      l'article 6 demeure, pour l'indemnité nationale qu'il vise ; sa rédaction de 2010
+      ne change que le nom du Conseil économique, social et environnemental
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Lire l'article 25 du statut de 2005 — les députés réélus en 2009 pouvaient garder
+    le régime national pour toute la durée de leur mandat — et les articles 1er à 4 de
+    la loi n° 79-563, que l'index ne porte que par leur sommaire, pour l'indemnité
+    d'avant 2009 et son assiette.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 79-563 du 6 juillet 1979, article 6, ses trois rédactions dans l'index LEGI
+      (LEGIARTI000006273317, LEGIARTI000006273318, LEGIARTI000022405517) ; notice JORF
+      de la loi (JORFTEXT000000339348)
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      EUR-Lex, décision 2005/684/CE, Euratom, statut des députés au Parlement européen,
+      article 14, par l'extrait d'un moteur de recherche
+    date: 2026-10-04
+    url: https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32005Q0684
+historique:
+- >-
+  2026-10-04 — née avec l'action 145 : une affiliation au régime général et à
+  l'Ircantec, comme celle des élus locaux, que l'inventaire ne portait pas.
+effet: >-
+  Les représentants français au Parlement européen de 1979 à 2009 qui n'étaient pas
+  parlementaires nationaux : leurs années de mandat ouvrent des droits au régime
+  général et à l'Ircantec que le modèle ne peut pas router.

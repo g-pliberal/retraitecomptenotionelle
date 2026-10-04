@@ -1,0 +1,40 @@
+code: canssm_personnel
+nom: >-
+  Régime de retraite du personnel statutaire de la Caisse autonome nationale de la sécurité sociale dans les mines
+famille: special
+population: >-
+  Agents de la Caisse autonome nationale de la sécurité sociale dans les
+  mines recrutés sous le statut de l'article 79 du décret n° 46-2769 :
+  régime spécial de sécurité sociale propre, dont le décret n° 91-613
+  (article 14) fixait les taux maladie jusqu'en 1996 et fixe la
+  cotisation vieillesse de l'agent, 7,85 % depuis 1991. La caisse cesse de recruter
+  sous ce statut au 1er mai 2005 (ordonnance n° 2005-389, article 4) ;
+  les agents transférés alors à la Caisse des dépôts gardent leur régime,
+  ou n'y gardent que leurs droits acquis s'ils optent pour la convention
+  collective de la Caisse des dépôts, qui gère le régime depuis janvier
+  2009 sous le nom de « retraite des statutaires ».
+creation: null
+fermeture: 2005
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: speciaux
+  rang: 230
+  nom: Régime de retraite du personnel statutaire de la CANSSM (« retraite des statutaires »)
+  population: Agents statutaires de la Caisse autonome nationale de la sécurité sociale dans les mines
+  couverture: a_modeliser
+  statuts: []
+  textes:
+    - {reference: "décret n° 84-104 du 9 février 1984, article 2 (« Caisse autonome nationale de la sécurité sociale dans les mines (pour son personnel) », contributrice au fonds spécial d'allocation vieillesse, comme en 1990 et 1993)", id: LEGIARTI000006766410}
+    - {reference: "décret n° 91-613 du 28 juin 1991, article 14 (régime spécial de sécurité sociale du personnel de la CANSSM ; II : cotisation vieillesse de 7,85 % à la charge de l'agent, seul alinéa en vigueur depuis 1996)", id: LEGIARTI000006775989}
+    - {reference: "ordonnance n° 2005-389 du 28 avril 2005 relative au transfert d'une partie du personnel de la CANSSM à la Caisse des dépôts, article 2 (maintien des régimes ; droits acquis régis par le statut en cas d'option)", id: JORFARTI000001525907}
+    - {reference: "même ordonnance, article 4 (fin des recrutements sous le statut de l'article 79 du décret n° 46-2769 au 1er mai 2005)", id: JORFARTI000001480595}
+    - {reference: "Caisse des dépôts, page « Retraite des statutaires » (gestion du régime de retraite du personnel sous statut CANSSM transférée en janvier 2009 ; décret du 19 juin 2006 sur le droit à l'information), hors JORF", id: null}
+  manque: >-
+    Aucun statut ne porte l'agent statutaire de la caisse, et le règlement
+    de son régime de retraite — âge, durée, calcul, taux de la cotisation
+    employeur — n'est publié ni au Journal officiel ni sur le site de la
+    Caisse des dépôts, qui n'en donne que les rapports d'activité : il
+    faudrait lire le statut du personnel pris sur l'article 79 du décret
+    n° 46-2769 et ses avenants, ou les rapports annuels du régime.

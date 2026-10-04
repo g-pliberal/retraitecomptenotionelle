@@ -1,0 +1,38 @@
+code: parlement_europeen
+nom: >-
+  Affiliation des représentants français au Parlement européen au régime général et à l'Ircantec
+famille: complementaire_prive
+population: >-
+  Représentants de la France à l'Assemblée des Communautés européennes,
+  puis au Parlement européen, qui ne sont ni députés ni sénateurs : pour
+  leur pension, la loi n° 79-563 du 6 juillet 1979 (article 6) les affilie
+  à l'assurance vieillesse du régime général et à l'Ircantec, sur
+  l'indemnité que leur verse l'État (articles 1er à 4, que l'index ne
+  porte que par leur sommaire) ; les membres du Conseil économique et
+  social élus restent à la caisse du Conseil. Depuis le 14 juillet 2009, le statut des députés au Parlement
+  européen leur sert une indemnité et une pension sur le budget de
+  l'Union : la loi française demeure pour l'indemnité nationale qu'elle
+  vise, la pension européenne n'est pas un régime français.
+creation: 1979
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: prive_complementaires
+  rang: 210
+  population: Représentants au Parlement européen ni députés ni sénateurs
+  couverture: a_modeliser
+  statuts: []
+  textes:
+    - {reference: "loi n° 79-563 du 6 juillet 1979 relative à l'indemnité des représentants au Parlement européen, article 6, rédaction initiale (affiliation au régime général et au régime complémentaire des agents non titulaires)", id: LEGIARTI000006273317}
+    - {reference: "même article 6, rédaction du 30 juin 2010, en vigueur (les membres du Conseil économique, social et environnemental élus demeurent affiliés à la caisse de la loi n° 57-761)", id: LEGIARTI000022405517}
+    - {reference: "décision 2005/684/CE, Euratom du Parlement européen du 28 septembre 2005 portant adoption du statut des députés au Parlement européen, en vigueur le 14 juillet 2009, article 14 (pension d'ancienneté à soixante-trois ans, 3,5 % du traitement par année de mandat, 70 % au plus ; EUR-Lex, hors JORF)", id: null}
+  manque: >-
+    Aucun statut ne route le représentant au Parlement européen : le
+    statut `elu_local` porte l'Ircantec des élus locaux, pas cette
+    affiliation au régime général et à l'Ircantec sur l'indemnité
+    parlementaire européenne de 1979 à 2009. Il faudrait un statut qui
+    route les deux régimes sur ce revenu, et dire, pour les mandats
+    postérieurs au 14 juillet 2009, que la pension européenne est hors du
+    modèle. La fiche `parlement_europeen_affiliation` lit l'article 6.

@@ -1,0 +1,132 @@
+schema_version: 1
+id: cci_paris_transfert_2006
+intitule: >-
+  Au 1er janvier 2006, le régime spécial d'assurance vieillesse du personnel de la
+  chambre de commerce et d'industrie de Paris prend fin : les pensionnés reçoivent une
+  rente du régime général égale, pour la durée requise, à la moitié de 90 % du plafond
+  de 2005, les affiliés non pensionnés sont rétablis dans les droits qu'ils auraient eus
+  au régime général depuis le 1er juillet 1930, tout le personnel est affilié à
+  l'Agirc-Arrco, et la chambre couvre le reste par une institution du livre IX.
+domaine: coordination
+regimes: [cci_paris, regime_general, agirc_arrco]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les périodes d'affiliation au régime spécial du 1er juillet 1930 au 31 décembre 2005, telles qu'il les a validées
+- les périodes d'invalidité indemnisées par le régime spécial d'assurance maladie de la chambre
+- "la situation au 31 décembre 2005 : pension en cours ou non, âge, réversion"
+ecrit:
+- une rente du régime général, immédiate ou différée, et sa réversion
+- pour l'affilié non pensionné, ses périodes rétablies au régime général
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: regime_special
+  statut: supposee
+  hypothese: >-
+    jusqu'au 31 décembre 2005, le régime spécial sert ses pensions selon son
+    règlement, approuvé par le décret n° 97-1325 et modifié par les décrets n° 99-888 et
+    n° 2001-331, consultable à la chambre et annoncé au Bulletin officiel du secrétariat
+    d'État à l'industrie, mais absent du Journal officiel ; cotisation de 24,68 % en
+    1991 à 29,43 % en 1999 (décret n° 91-613, article 16)
+  fiabilite: faible pour le montant, haute pour l'existence du régime et ses taux
+  bornes:
+    liquidation.date_effet: [null, 2006-01-01]
+  contenu:
+    droit: une pension du régime spécial, dont les règles ne sont pas lues
+  exemples: aucun trouvé
+- id: adossement
+  statut: lue
+  textes:
+  - {id: JORFARTI000001680091, article: "loi n° 2005-882 du 2 août 2005, article 70", publie_le: 2005-08-03, en_vigueur: 2006-01-01}
+  - {id: JORFARTI000002282473, article: "décret n° 2006-1748 du 23 décembre 2006, article 1er", publie_le: 2006-12-30}
+  - {id: JORFARTI000001497936, article: "décret n° 2006-1748, article 2", publie_le: 2006-12-30}
+  - {id: JORFARTI000001110573, article: "décret n° 2006-1748, article 3", publie_le: 2006-12-30}
+  - {id: JORFARTI000002076273, article: "décret n° 2006-1748, article 4", publie_le: 2006-12-30}
+  - {id: JORFARTI000001137923, article: "décret n° 2006-1748, article 5", publie_le: 2006-12-30}
+  - {id: JORFARTI000002103783, article: "décret n° 2006-1748, article 8", publie_le: 2006-12-30}
+  nee_de: JORFARTI000001680091
+  bornes:
+    liquidation.date_effet: [2006-01-01, null]
+  contenu:
+    principe: >-
+      « Il est mis fin à ce régime spécial » ; les droits au 31 décembre 2005 « sont pris
+      en charge par le régime général de sécurité sociale dans la limite des règles qui
+      lui sont propres » ; « L'ensemble des personnels de la chambre de commerce et
+      d'industrie de Paris est affilié aux régimes de retraite complémentaire des
+      salariés mentionnés à l'article L. 921-4 » ; pour les droits que ni le régime
+      général ni les complémentaires ne prennent, la chambre « pourvoit […] aux
+      couvertures complémentaires nécessaires » ; elle peut créer une retraite
+      supplémentaire à cotisations définies et une épargne retraite (article 70, I à V)
+    rente_immediate: >-
+      aux titulaires d'une pension au 31 décembre 2005 âgés d'au moins soixante ans :
+      « Le montant annuel de la rente est fixé à la moitié de 90 % du montant annuel du
+      plafond de la sécurité sociale pour 2005 pour les personnes justifiant d'une durée
+      d'assurance égale à celle fixée au II de l'article R. 351-6 », réduit en
+      conséquence au-dessous (article 1er)
+    duree_retenue: >-
+      les périodes du 1er juillet 1930 au 31 décembre 2005 validées par le régime
+      spécial ; les arrêts de travail indemnisés pour invalidité par son régime maladie ;
+      les périodes de L. 351-3 et les majorations de L. 351-4 et L. 351-4-1 que le régime
+      général aurait accordées, si un autre régime ne les compte pas (article 1er)
+    retablissement: >-
+      les affiliés dont les droits n'étaient pas liquidés « sont rétablis, en ce qui
+      concerne l'assurance vieillesse, dans les droits qu'ils auraient eu si le régime
+      général leur avait été applicable durant les périodes pendant lesquelles
+      postérieurement au 30 juin 1930 ils ont été affiliés à leur régime spécial » ;
+      périodes d'invalidité et de service national, majorations et bonifications prises
+      « dans la limite de ses propres règles » (article 4) — à la différence des
+      transferts de 1991 et de 1998, qui leur donnaient une rente forfaitaire différée
+    rente_differee: >-
+      pensionnés de moins de soixante ans : rente liquidée au 1er janvier 2006, servie le
+      mois qui suit leur soixantième anniversaire, sans préjudice des carrières longues
+      et des assurés handicapés de L. 351-1-1 et L. 351-1-3 (article 3)
+    reversion: >-
+      rente de réversion au taux du régime général sur la rente de l'assuré, sans la
+      condition de ressources de R. 353-1, immédiate ou différée jusqu'à la condition
+      d'âge (articles 2 et 5) ; allocation de veuvage (article 9)
+    retraite_progressive: les périodes postérieures au 1er juillet 1930 comptent pour L. 351-15 (article 8)
+  unites:
+    rente: euros par an, la moitié de 90 % du plafond annuel de 2005, revalorisés comme les pensions du régime général
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Lire le règlement du régime spécial (décret n° 97-1325 et ses modifications de 1999
+    et 2001), que le Journal officiel ne publie pas, pour les pensions liquidées avant
+    2006 ; et l'arrêté du 23 décembre 2006 qui fixe la contribution de la chambre au
+    régime général (JORFTEXT000000275406).
+  - >-
+    Lire ce que la chambre sert au-delà du régime général et de l'Agirc-Arrco
+    (article 70, IV) : l'institution du livre IX qu'elle a choisie, et ses règles.
+  lectures:
+  - type: jorf
+    reference: >-
+      loi n° 2005-882 du 2 août 2005, article 70 (JORFARTI000001680091) ; décret
+      n° 2006-1748 du 23 décembre 2006 (JORFTEXT000000460859), articles 1er à 13 ; décret
+      n° 97-1325 (JORFTEXT000000752576), dont l'annexe n'est pas publiée
+    date: 2026-10-04
+  - type: legifrance
+    reference: décret n° 91-613, article 16, rédactions de 1991 à 2013 (LEGIARTI000006775993 à LEGIARTI000006776000)
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      réponse du ministre à la question écrite n° 73172 de M. François Lamy, JO
+      Assemblée nationale du 11 octobre 2005 : délibération unanime de l'assemblée
+      générale de la chambre du 29 juin 2005 demandant l'intégration
+    date: 2026-10-04
+    url: https://www.assemblee-nationale.fr/dyn/12/questions/QANR5L12QE73172
+historique:
+- >-
+  2026-10-04 — née avec l'action 145 : la chambre de Paris, membre du GIP Info
+  Retraite en 2004 au même titre que la Banque de France, n'avait pas de ligne
+  d'inventaire.
+effet: >-
+  Les agents titulaires de la chambre partis avant 2006 touchent depuis leur pension
+  en deux parts, une rente du régime général et ce que la chambre sert au-delà
+  (article 70, IV) ; les agents en poste en 2006 sont rétablis au régime général et
+  affiliés à l'Agirc-Arrco, ce que le modèle simule déjà en les traitant en salariés
+  du privé, au complément de la chambre près.

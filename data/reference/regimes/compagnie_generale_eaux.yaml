@@ -1,0 +1,47 @@
+code: compagnie_generale_eaux
+nom: >-
+  Régime spécial de sécurité sociale du personnel de la Compagnie générale des eaux
+famille: special
+population: >-
+  Salariés de la Compagnie générale des eaux qui relevaient, avant 1991,
+  de son régime spécial d'assurance maladie, maternité, invalidité,
+  vieillesse et décès — un régime antérieur à la sécurité sociale, maintenu
+  par l'article 61 du décret n° 46-1378 puis par le 9° de R. 711-1 du code
+  de la sécurité sociale, et servi par la caisse de retraites de la
+  compagnie. Le régime prend fin au 1er janvier 1991 (loi n° 91-73,
+  article 17) : les pensions en cours et les droits non liquidés
+  deviennent des rentes du régime général, forfaitaires et proportionnelles
+  à la durée validée depuis le 1er juillet 1930, et la compagnie verse au
+  régime général une contribution de 40 millions de francs.
+creation: null
+fermeture: 1990
+extinction: null
+succede_a: []
+integre_dans: regime_general
+inventaire:
+  section: speciaux
+  rang: 210
+  population: Salariés de la Compagnie générale des eaux avant 1991
+  couverture: a_modeliser
+  statuts: []
+  textes:
+    - {reference: "décret n° 46-1378 du 8 juin 1946, article 61, 9° (la Compagnie générale des eaux reste soumise à une organisation spéciale de sécurité sociale)", id: LEGIARTI000006761348}
+    - {reference: "code de la sécurité sociale, R. 711-1, 9°, rédaction du 21 décembre 1985 au 17 mai 1991", id: LEGIARTI000006752039}
+    - {reference: "décret n° 84-104 du 9 février 1984, article 2 (« Caisse de retraites de la Compagnie générale des eaux » parmi les organismes qui contribuent au fonds spécial d'allocation vieillesse)", id: LEGIARTI000006766410}
+    - {reference: "loi n° 91-73 du 18 janvier 1991 portant dispositions relatives à la santé publique et aux assurances sociales, article 17 (fin du régime spécial au 1er janvier 1991)", id: JORFARTI000001952341}
+    - {reference: "décret n° 91-408 du 26 avril 1991 fixant les modalités d'intégration au régime général, articles 10 à 18 (rentes de 64 650 F pour 150 trimestres)", id: JORFTEXT000000504104}
+    - {reference: "arrêté du 26 avril 1991 fixant la contribution de la Compagnie générale des eaux au régime général (40 millions de francs)", id: JORFTEXT000000864974}
+    - {reference: "décret n° 91-489 du 14 mai 1991 supprimant le régime spécial de la Compagnie générale des eaux de R. 711-1", id: JORFTEXT000000866470}
+  manque: >-
+    Aucun statut ne porte le salarié de la compagnie : ses années d'avant
+    1991 sont simulées au régime général comme celles d'un salarié du
+    privé, quand la loi les lui rend en rente forfaitaire — 64 650 F par an
+    pour cent cinquante trimestres validés, en cent-cinquantièmes
+    au-dessous, revalorisée comme les pensions du régime général. Ne sont
+    pas lus : les avantages que la compagnie sert au-delà, par une
+    institution de prévoyance et un accord d'entreprise substitué à la
+    convention collective du 22 mai 1969 qui réglait le régime spécial
+    (IV de l'article 17) ; l'extension de la convention de 1947 à la
+    compagnie (arrêté du 2 novembre 1992) ; la pension du régime spécial
+    des salariés partis avant 1991. La fiche
+    `compagnie_generale_eaux_transfert_1991` décrit les rentes.

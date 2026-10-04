@@ -1,0 +1,36 @@
+code: crcgmf
+nom: >-
+  Caisse de retraites du personnel sédentaire des sociétés du groupe de la Compagnie générale maritime et financière (CRCGMF)
+famille: special
+population: >-
+  Personnel sédentaire — à terre — des sociétés du groupe de la Compagnie
+  générale maritime et financière qui relevait des statuts du personnel de
+  la Compagnie générale transatlantique et de la Compagnie des messageries
+  maritimes, les navigants relevant de l'ENIM : caisse autorisée comme
+  institution du titre III du livre VII du code de la sécurité sociale
+  (arrêté du 30 novembre 1990), puis comme institution de retraite
+  supplémentaire du titre IV du livre IX (arrêté du 10 avril 1995), gérée
+  par la Caisse des dépôts.
+creation: null
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+inventaire:
+  section: speciaux
+  rang: 260
+  nom: Caisse de retraites du personnel sédentaire du groupe de la Compagnie générale maritime et financière
+  population: Personnel à terre de la Transat et des Messageries maritimes
+  couverture: hors_champ
+  statuts: []
+  textes:
+    - {reference: "arrêté du 30 novembre 1990 approuvant la modification des statuts de la caisse de retraites du personnel sédentaire des sociétés du groupe de la CGMF (institution du titre III du livre VII du code de la sécurité sociale)", id: JORFTEXT000000526848}
+    - {reference: "arrêté du 10 avril 1995 approuvant les modifications des statuts et du règlement de la caisse, institution de retraite supplémentaire du titre IV du livre IX", id: JORFARTI000002170505}
+    - {reference: "Caisse des dépôts, page « CRCGMF » (institution de retraite supplémentaire instituée par l'arrêté du 10 avril 1995), hors JORF", id: null}
+  raison_hors_champ: >-
+    Une retraite d'entreprise, devenue supplémentaire : la caisse est une
+    institution de retraite supplémentaire depuis 1995, au-dessus des
+    régimes obligatoires du personnel à terre, et le modèle ne décrit que
+    les régimes légalement obligatoires. Son règlement n'est pas publié,
+    et l'index ne dit pas quel régime de base couvrait ce personnel avant
+    1990.

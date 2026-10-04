@@ -20,9 +20,9 @@ appliquées à travers son histoire. Ce document fait la première moitié ; la
 seconde est l'étape suivante, esquissée en fin de page.
 
 <!-- compte:debut -->
-L'inventaire compte **91 lignes** : 34 régimes modélisés,
+L'inventaire compte **108 lignes** : 34 régimes modélisés,
 40 calculés mais incomplets, 2 affiliations portées par un statut,
-15 hors champ — et plus aucune ligne à modéliser.
+23 hors champ — 9 à modéliser.
 <!-- compte:fin -->
 
 | Couverture | Ce que cela veut dire |
@@ -60,6 +60,7 @@ repris par un autre.
 
 | Régime | Famille | Période | Couverture | Statuts | Ce qui manque, ou pourquoi |
 |---|---|---|---|---|---|
+| Caisse nationale des retraites pour la vieillesse (CNRV) | base, privé | 1850-1949 | ⊘ hors champ | — | Une caisse de capitalisation à adhésion facultative, antérieure à 1930 pour l'essentiel de son activité : ses rentes s'achetaient par versements et ne relèvent pas des comptes notionnels, et les régimes obligatoires qui y constituaient des rentes — les régimes d'agents publics que la loi du 30 mars 1944 et les textes de 1942 et 1944 nomment — relèvent des successeurs que l'inventaire décrit (Ircantec, après l'IPACTE et l'IGRANTE, et fonction publique). |
 | Retraites ouvrières et paysannes | base, privé | 1911-1930 | ⊘ hors champ | — | Régime en capitalisation, antérieur à 1930, l'année où le modèle commence : aucun assuré vivant n'y a cotisé, et le texte n'est pas dans le dump de la DILA, qui commence en 1947. |
 | Assurances sociales (assurance vieillesse) (`assurances_sociales`) | base, privé | 1930-1945 | ✅ modélisé | `salarie_prive_non_cadre`, `salarie_prive_cadre`, `salarie_agricole`, `salarie_prive_cadre_entreprise_recente`, `salarie_prive_non_cadre_entreprise_recente`, `salarie_regime_professionnel_integre` |  |
 | Régime local d'assurance invalidité-vieillesse d'Alsace-Moselle | base, privé | 1919-1946 | ⊘ hors champ | — | Législation allemande de 1889 et 1911 maintenue après 1918, fondue dans le régime général en 1946 : les droits acquis sous ce régime sont liquidés par le régime général selon les décrets de 1974 à 1977. Aucun assuré vivant n'y a cotisé assez longtemps pour que ses règles pèsent. |
@@ -97,6 +98,7 @@ repris par un autre.
 | Régime des auteurs et compositeurs lyriques (IRCEC) (`ircec_racl`) | libéral | depuis 1962 | ◐ partiel | `auteur_lyrique` | Le taux de 6,5 % et le barème du point viennent du seul mémo 2026 de l'IRCEC, appliqués à toute la carrière ; le seuil d'affiliation (3 170 €) est ignoré et le plafond de 435 938 € arrondi à huit plafonds de la Sécurité sociale. La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les générations nées avant 1955 jusqu'en 2024, elle est approchée (voir `docs/limites.md`). |
 | Régimes professionnels de salariés intégrés à l'Agirc-Arrco (`regimes_professionnels_integres`) | complémentaire, privé | depuis 1947, fermé en 1993 | ◐ partiel | `salarie_regime_professionnel_integre` | La fiche porte le barème bancaire pour toutes les populations : le complément de 35 % du dernier salaire en 42 ans, la Sécurité sociale déduite, et 16 % de cotisation ; les barèmes propres de la CPPOSS, de la CGRCE, des CCI, de l'IRREP, de la CAMARCA et du personnel au sol d'Air France (règlement de 1956, régime différentiel de 1993), le complément différentiel de 1994 et son rabot, et l'Agirc du cadre bancaire ne le sont pas. |
 | Régime additionnel de retraite des enseignants du privé sous contrat (`enseignants_prive_additionnel`) | spécial | depuis 2005 | ✅ modélisé | `maitre_enseignement_prive` |  |
+| Affiliation des représentants français au Parlement européen au régime général et à l'Ircantec | complémentaire, privé | depuis 1979 | ✚ à modéliser | — | Aucun statut ne route le représentant au Parlement européen : le statut `elu_local` porte l'Ircantec des élus locaux, pas cette affiliation au régime général et à l'Ircantec sur l'indemnité parlementaire européenne de 1979 à 2009. Il faudrait un statut qui route les deux régimes sur ce revenu, et dire, pour les mandats postérieurs au 14 juillet 2009, que la pension européenne est hors du modèle. La fiche `parlement_europeen_affiliation` lit l'article 6. |
 
 ## Fonction publique et assimilés
 
@@ -115,6 +117,13 @@ repris par un autre.
 | Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM) | fonction publique | depuis 1977, fermé en 2010 | ⊘ hors champ | — | Caisse locale créée en mars 1977 par délibération hors Journal officiel, fermée par l'intégration de ses affiliés dans les fonctions publiques d'État, territoriale et hospitalière au plus tard fin 2010, en liquidation depuis : ses pensions sont versées par la CNRACL ou par l'État, la caisse ne préliquidant plus que la part antérieure. Les statuts de fonctionnaire portent la carrière ; le règlement de la caisse n'est pas dans l'index. |
 | Régimes de retraite des élus des assemblées de Polynésie française et de Nouvelle-Calédonie | spécial | — | ⊘ hors champ | — | Régimes fixés par les assemblées elles-mêmes, hors Journal officiel de la République. En Polynésie, les représentants ont un régime par capitalisation auprès d'un assureur privé, exclu des comptes notionnels comme toute capitalisation, et les membres du gouvernement ne cotisent au régime de base de la CPS que depuis le 1er juin 2024 ; en Nouvelle-Calédonie, la loi organique confie au congrès et aux assemblées de province le régime de retraite de leurs membres, et le dépôt n'a lu aucune de leurs délibérations. Aucun barème lu. |
 | Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française (`fonctionnaires_pacifique`) | fonction publique | depuis 1959 | ◐ partiel | `fonctionnaire_pacifique` | La fiche est celle de la Caisse locale de retraites de Nouvelle- Calédonie ; les fonctionnaires de Polynésie relèvent de la CPS, portée par le statut salarié. Les cotisations d'avant 2023 sont projetées ; la durée de services requise et la table exacte de l'âge après 2025 restent à lire dans la loi du pays. |
+| Régime temporaire de retraite des maîtres de l'enseignement privé sous contrat (RETREP) | fonction publique | depuis 1980 | ✚ à modéliser | — | Aucun statut ne porte le maître du privé jusqu'au départ anticipé : le statut `maitre_enseignement_prive` route le régime général, l'Agirc-Arrco et le régime additionnel, et liquide au droit commun. Manquent l'âge du maître titulaire public (cinquante-cinq ans pour quinze ans d'échelle d'instituteur, soixante sinon, puis les âges de la fonction publique), la condition de quinze ans de services, et l'avantage lui-même : une pension du régime général et de la complémentaire liquidées comme à l'âge du taux plein, sur les seuls services d'enseignement, servies jusqu'à la pension réelle du régime général à taux plein, puis éteintes. La fiche `retrep_avantages_temporaires` le décrit version par version. |
+| Régimes locaux de retraite des collectivités et établissements publics d'Alsace-Moselle | fonction publique | — | ⊘ hors champ | — | Des dizaines de régimes, un par collectivité, chacun sur son règlement local, que ni le Journal officiel ni l'index ne publient ; les collectivités qui ont rejoint la CNRACL y ont affilié tous leurs titulaires, hors ceux qui ont renoncé dans les six mois, et la seule caisse dont l'effectif est publié n'a plus que deux pensionnés. Le statut territorial route vers la CNRACL, ce qui est juste pour les collectivités affiliées. |
+| Pensions des ministres des cultes rétribués par l'État en Alsace-Moselle | fonction publique | depuis 1909 | ✚ à modéliser | — | Aucun statut ne route le ministre du culte concordataire : il n'est ni fonctionnaire de l'État ni salarié du régime général, et sa pension d'État n'est pas calculée. Manquent les règles de la loi locale et de son règlement d'exécution de 1910, dont le texte consolidé n'est pas dans l'index : seules leurs modifications de 2001 et de 2007 y sont, et la presse en résume le reste (dix années de services au moins, pension proportionnelle aux années et au dernier traitement, sans cotisation, un certificat médical avant soixante ans). Manque aussi la coordination avec le régime général pour qui quitte le ministère sans droit. La fiche `cultes_alsace_moselle_pension` dit ce qui est lu et ce qui ne l'est pas. |
+| Allocation temporaire complémentaire des ingénieurs du contrôle de la navigation aérienne (ATC-ICNA) | fonction publique | depuis 1997 | ✚ à modéliser | — | Aucun statut ne distingue l'ICNA du fonctionnaire civil de l'État, et ni l'allocation ni le complément ne sont portés : il manque le corps dans la saisie, l'indemnité spéciale de qualification d'un premier contrôleur année par année, qui n'est pas dans le dépôt, et la formule du complément individuel temporaire, que le Journal officiel ne publie qu'en image. La fiche `atc_icna_allocation` lit l'article 6-1 version par version. |
+| Régime de retraites des cantonniers de l'État et pensions sur fonds spéciaux | fonction publique | depuis 1896 | ⊘ hors champ | — | Des rentes viagères constituées avant la sécurité sociale pour des agents des Ponts et Chaussées et de services départementaux, dont il ne reste que des pensions résiduelles, gérées en fonds spéciaux par la Caisse des dépôts : plus de carrière à simuler. L'index n'a des textes de 1896 et 1950 que les titres. |
+| Régimes de retraite par rente des élus locaux constitués avant 1992 | spécial | — | ⊘ hors champ | — | Des régimes supplémentaires par rente, propres à chaque collectivité, fermés en 1992 et dont les droits sont figés au 30 mars 1992 : ils s'ajoutent à l'Ircantec, que le statut `elu_local` route depuis 1973, et à la retraite par rente que la loi de 1992 a ouverte (FONPEL, CAREL), facultative. Aucun règlement n'est publié. |
+| Caisse de retraite des membres de l'ancienne Assemblée de l'Union française | spécial | — | ⊘ hors champ | — | Assemblée disparue avec la IVe République, en 1958 : aucun membre n'a pu y acquérir de droit depuis, et les survivants éventuels, majeurs en 1958, ont plus de quatre-vingt-cinq ans. Le régime suivait celui des députés, que la ligne des assemblées parlementaires décrit. |
 
 ## Régimes spéciaux de salariés
 
@@ -139,6 +148,14 @@ repris par un autre.
 | Régime de retraite des personnels de l'ORTF | spécial | depuis 1964, fermé en 1975 | ⊘ hors champ | — | Régime en extinction dont l'État verse les derniers engagements ; aucun cotisant depuis 1975. |
 | Caisse des retraites des régies ferroviaires d'outre-mer et caisses des chemins de fer d'Afrique du Nord | spécial | depuis 1930, fermé en 1962 | ⊘ hors champ | — | Régimes de rapatriés en extinction, gérés par l'État depuis 1993 ; les services sont validés au régime général par les lois de 1964 et 1965 sur les rapatriés. |
 | Prestation de fidélisation et de reconnaissance des sapeurs-pompiers volontaires | spécial | depuis 2005 | ⊘ hors champ | — | Une prestation financée par les collectivités, sans cotisation du bénéficiaire : ce n'est pas un régime de retraite au sens du modèle. |
+| Régime spécial d'assurance vieillesse du personnel de la chambre de commerce et d'industrie de Paris | spécial | — | ✚ à modéliser | — | Aucun statut ne porte l'agent de la chambre : un agent entré avant 2006 est simulé en salarié du privé, ce que le régime général lui rend depuis 2006 par le rétablissement de ses droits, mais pas la pension du régime spécial des agents partis avant 2006, ni les droits que la chambre couvre au-delà du régime général et de l'Agirc-Arrco. Le règlement de 1997 n'est pas publié ; les rentes de transfert de 2006 sont lues, et la fiche `cci_paris_transfert_2006` les décrit. |
+| Régime spécial de sécurité sociale du personnel de la Compagnie générale des eaux | spécial | — | ✚ à modéliser | — | Aucun statut ne porte le salarié de la compagnie : ses années d'avant 1991 sont simulées au régime général comme celles d'un salarié du privé, quand la loi les lui rend en rente forfaitaire — 64 650 F par an pour cent cinquante trimestres validés, en cent-cinquantièmes au-dessous, revalorisée comme les pensions du régime général. Ne sont pas lus : les avantages que la compagnie sert au-delà, par une institution de prévoyance et un accord d'entreprise substitué à la convention collective du 22 mai 1969 qui réglait le régime spécial (IV de l'article 17) ; l'extension de la convention de 1947 à la compagnie (arrêté du 2 novembre 1992) ; la pension du régime spécial des salariés partis avant 1991. La fiche `compagnie_generale_eaux_transfert_1991` décrit les rentes. |
+| Régime spécial de retraite de l'ancienne chambre de commerce et d'industrie de Roubaix | spécial | — | ✚ à modéliser | — | Aucun statut ne porte le salarié de la chambre : ses années d'avant 1998 sont simulées au régime général, quand la loi les lui rend en rente forfaitaire du régime général — 62 150 F par an pour cent cinquante trimestres validés depuis le 1er juillet 1930, en cent-cinquantièmes au-dessous —, et la pension du régime spécial des salariés partis avant 1998, comme la couverture que la chambre assure au-delà, ne sont pas lues. La fiche `cci_roubaix_transfert_1998` décrit les rentes. |
+| Régime de retraite du personnel statutaire de la CANSSM (« retraite des statutaires ») | spécial | — | ✚ à modéliser | — | Aucun statut ne porte l'agent statutaire de la caisse, et le règlement de son régime de retraite — âge, durée, calcul, taux de la cotisation employeur — n'est publié ni au Journal officiel ni sur le site de la Caisse des dépôts, qui n'en donne que les rapports d'activité : il faudrait lire le statut du personnel pris sur l'article 79 du décret n° 46-2769 et ses avenants, ou les rapports annuels du régime. |
+| Régimes de retraite du personnel titulaire des ports autonomes de Bordeaux, du Havre et de Marseille | spécial | — | ✚ à modéliser | — | Aucun des trois règlements n'est dans l'index, qui ne porte que les titres et notices : on ne sait ni s'ils servent une pension de base ou un complément au-dessus du régime général — le décret n° 58-437 range les titulaires du Havre au régime de sécurité sociale, et la convention collective des ports donne son propre règlement de retraite —, ni s'ils sont fermés ; le décret n° 96-1151 range encore le port de Bordeaux parmi les régimes spéciaux dont il modifie la cotisation maladie des actifs et des retraités. Il faudrait les règlements, aux archives des ports ou au Bulletin officiel des ministères. |
+| Pension statutaire et complément de pension des anciens agents de la SUDAC | spécial | — | ⊘ hors champ | — | Un avantage d'entreprise, non un régime légal : la pension statutaire d'un concessionnaire de la Ville de Paris, réduite à un complément différentiel au-dessus du régime général et des complémentaires, que la Caisse des dépôts verse aux anciens agents ; la page du fonds ne publie ni le nombre de bénéficiaires ni le financement. Les droits de base sont ceux du régime général. |
+| Caisse de retraites du personnel sédentaire du groupe de la Compagnie générale maritime et financière | spécial | — | ⊘ hors champ | — | Une retraite d'entreprise, devenue supplémentaire : la caisse est une institution de retraite supplémentaire depuis 1995, au-dessus des régimes obligatoires du personnel à terre, et le modèle ne décrit que les régimes légalement obligatoires. Son règlement n'est pas publié, et l'index ne dit pas quel régime de base couvrait ce personnel avant 1990. |
+| Caisse de retraite du chemin de fer franco-éthiopien (CRCFE) | spécial | — | ⊘ hors champ | — | Caisse d'une compagnie concessionnaire en Éthiopie, dont l'État paie les pensions des retraités français depuis la loi du 12 juillet 1977 : huit pensionnés en 2019, âgés de 82 à 101 ans, et seules des réversions se liquident encore, sur le règlement de la compagnie figé au 12 juillet 1977. Il n'y a plus de carrière à simuler. |
 
 ## Non-salariés non agricoles
 
@@ -281,13 +298,88 @@ polynésien fondateur du régime des représentants (Lexpol et le rapport de
 l'assemblée sont inaccessibles ou scannés sans texte), et la page de la Cour
 des comptes sur la CRFM, qui répond indisponible.
 
+## Ce qu'une quatrième passe a trouvé : les débiteurs de pensions et les mandats de la Caisse des dépôts
+
+Le 4 octobre 2026 (action 145 de la feuille de route), la liste a été relue
+contre trois énumérations que l'inventaire ne citait pas. La première est la
+plus complète : de 1984 à 1993, un décret fixe chaque année ce que doivent au
+fonds spécial d'allocation vieillesse « les organismes et collectivités »
+chargés d'allouer des retraites (décret n° 84-104, article 2,
+`LEGIARTI000006766410`, jusqu'au décret n° 93-426, `LEGIARTI000006928885`) —
+la liste nominative de tous les débiteurs de pensions, plus de cent lignes en
+1984. La deuxième est la convention du GIP Info Retraite, qui nomme ses
+trente-huit membres en 2004 (`JORFARTI000001284713`). La troisième est la carte
+des régimes, fonds et mandats que gère la Caisse des dépôts (février 2026), et
+les arrêtés de délégation de signature de sa direction des retraites, de 2003 à
+2006, qui détaillent ses « pensions sur fonds spéciaux ».
+
+Elles ont fait entrer **dix-sept lignes**. Neuf sont **à modéliser** — des
+régimes qui touchent des assurés vivants et dont les textes se lisent :
+
+- le **régime spécial de la CCI de Paris** (vieillesse et maladie), membre du
+  GIP en 2004 au même titre que la Banque de France, fermé au 1er janvier 2006
+  par l'article 70 de la loi n° 2005-882 ;
+- le **régime spécial de la Compagnie générale des eaux**, maintenu par
+  l'article 61 du décret n° 46-1378 et par le 9° de `R. 711-1` jusqu'en 1991 —
+  la liste ci-dessous le tenait pour cité de mémoire ;
+- le **régime spécial de l'ancienne CCI de Roubaix**, fermé au 1er janvier
+  1998 ;
+- le **personnel statutaire de la CANSSM**, dont la caisse cesse de recruter
+  en 2005 et dont la Caisse des dépôts gère la « retraite des statutaires » ;
+- le **personnel titulaire des ports autonomes** de Bordeaux, du Havre et de
+  Marseille et de leurs chambres de commerce, dont les règlements de 1946,
+  1959 et 1962 ne sont connus que par leur titre ;
+- le **RETREP**, les avantages temporaires de retraite que l'État sert aux
+  maîtres du privé sous contrat qui partent aux âges des enseignants publics,
+  depuis le décret n° 80-7 du 2 janvier 1980 ;
+- les **pensions des ministres des cultes d'Alsace-Moselle**, de la loi locale
+  du 15 novembre 1909, inchangées par la réforme de 2023 ;
+- l'**allocation temporaire complémentaire des ingénieurs du contrôle de la
+  navigation aérienne**, servie treize ans en plus de la pension civile ;
+- l'**affiliation des représentants au Parlement européen** au régime général
+  et à l'Ircantec, de 1979 à 2009.
+
+Les trois transferts au régime général — 1991, 1998, 2006 — suivent un même
+gabarit, que leurs fiches décrivent article par article : une rente du
+régime général, forfaitaire et proportionnelle aux trimestres validés depuis
+le 1er juillet 1930 pour les deux premiers, le rétablissement des droits au
+régime général pour les affiliés de la CCI de Paris. Huit lignes sont **hors
+champ** : la SUDAC, la caisse du personnel sédentaire de la Compagnie générale
+maritime et financière, la caisse du chemin de fer franco-éthiopien, les
+régimes locaux des collectivités d'Alsace-Moselle (que l'article 66 du décret
+n° 2003-1306 laisse subsister à côté de la CNRACL), les cantonniers de l'État
+et les pensions sur fonds spéciaux, les régimes par rente des élus locaux
+d'avant 1992, la caisse des membres de l'Assemblée de l'Union française, et la
+Caisse nationale des retraites pour la vieillesse de 1850.
+
+**Ce qui n'est pas entré, et pourquoi.** Les compléments de pension de la
+Compagnie générale des eaux et de la SEVESC que gère la Caisse des dépôts ne
+prolongent aucun régime : ils compensent, au-dessus de la CNRACL, les
+bonifications d'insalubrité perdues par des agents d'assainissement détachés.
+Le fonds de la mairie de Fort-de-France est une incitation au départ, les
+rentes de la Ville de Paris et de l'AP-HP des prestations d'invalidité. Les
+régimes facultatifs — Préfon, COREM, CRH, FONPEL, CAREL, COREVA — restent hors
+de la liste, qui n'énumère que les régimes obligatoires. Les organisations
+internationales servent leurs propres pensions, hors du droit français. Les
+membres du Gouvernement n'ont pas de texte d'affiliation dans l'index. Restent
+des pistes que l'index ne porte que par leur titre : la caisse générale de
+retraites de la presse française (ordonnance n° 45-2411, affiliation
+obligatoire), la caisse de retraite complémentaire des ingénieurs de
+l'industrie des minéraux solides (1947), le régime complémentaire du personnel
+de l'Institut de France (décret n° 49-1372), le régime des praticiens-conseils
+du contrôle médical (1963), ceux de l'ONIVIT (1979), du Crédit municipal de
+Paris (1926), de l'entrepôt réel des douanes du Havre (1938), de la Condition
+des soies de Lyon (fermée en 1958).
+
 ## Ce qui a été cherché sans être trouvé
 
 Pour que personne ne refasse le trajet : ces régimes ont été cherchés dans
 l'index JORF et LEGI du dépôt et n'y ont pas laissé de texte propre.
 
 - **Compagnie générale des eaux** : cité de mémoire comme régime spécial fermé ;
-  aucun texte de retraite à son nom dans l'index. Non inscrit.
+  aucun texte de retraite à son nom dans l'index. Non inscrit. *Trouvé le
+  4 octobre 2026* : la loi n° 91-73, article 17, et le décret n° 91-408 y sont,
+  sous un titre que l'index a mal rangé ; voir la section précédente.
 - **Régime professionnel des banques (AFB)** et **CPPOSS** des organismes de
   sécurité sociale : leur intégration à l'Arrco et à l'Agirc en 1994 est un
   accord collectif, absent du JORF ; ils figurent dans la ligne groupée des

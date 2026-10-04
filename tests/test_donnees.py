@@ -2576,7 +2576,6 @@ def test_le_document_des_regimes_suit_l_inventaire():
     assert attendu == module.DOCUMENT.read_text(encoding="utf-8"), (
         "docs/regimes.md est périmé : lancer python scripts/construire_regimes_md.py"
     )
-    assert "✚ à modéliser" not in attendu.split("<!-- tableaux:debut -->")[1].split("<!-- tableaux:fin -->")[0]
 
 
 def test_l_inventaire_couvre_les_regimes_que_le_code_enumere(inventaire):
@@ -2592,13 +2591,22 @@ def test_l_inventaire_couvre_les_regimes_que_le_code_enumere(inventaire):
                  "cprn_complementaire", "cnbf", "micro_entrepreneurs", "asv_conventionnes",
                  "gerants_debits_tabac", "cssm_mayotte", "assemblees_parlementaires"):
         assert code in codes, f"{code} manque à l'inventaire"
-    par_couverture = {}
+    # Le 4 octobre 2026 (action 145), les listes des contributeurs au fonds
+    # spécial d'allocation vieillesse et les mandats de la Caisse des dépôts ont
+    # fait remonter des régimes que l'inventaire ne nommait pas : ils rouvrent la
+    # couverture « à modéliser », que ce test fermait. Une telle ligne n'est pas
+    # un silence : une fiche de règles la décrit, ou son `manque` dit longuement
+    # ce qui bloque et où chercher.
+    from retraite_notionnelle.noyau import carte
+
+    decrits = {code for fiche in carte.fiches().values() for code in fiche.get("regimes") or ()}
     for ligne in inventaire:
-        par_couverture[ligne.couverture] = par_couverture.get(ligne.couverture, 0) + 1
-    assert set(par_couverture) == {"modelise", "partiel", "routage", "hors_champ"}, (
-        "il ne doit plus rester de ligne `a_modeliser` : chacune a sa fiche, son "
-        "statut ou sa raison"
-    )
+        assert ligne.couverture in {"modelise", "partiel", "routage", "hors_champ", "a_modeliser"}
+        if ligne.couverture == "a_modeliser":
+            assert ligne.code in decrits or len(ligne.manque.split()) >= 40, (
+                f"{ligne.code} : à modéliser sans fiche de règles qui la décrive, ni "
+                "`manque` qui dise ce qui bloque et où chercher"
+            )
 
 
 def test_le_seuil_d_affiliation_de_l_elu_local_est_lu():
