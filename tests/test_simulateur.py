@@ -2169,14 +2169,65 @@ def test_le_prix_du_point_n_est_pas_prolonge_au_dela_du_publie(simulateur):
 
     Prolonger le dernier prix d'achat connu ferait acheter les points trop bon
     marché et gonflerait la pension sans que rien ne le signale. Ces années
-    doivent retomber sur le rendement instantané, qui, lui, s'annonce approximatif.
+    retombent sur le rendement instantané, qui, lui, s'annonce approximatif, ou
+    sur le prolongement qu'un texte écrit (le test suivant) — jamais sur le
+    dernier prix recopié.
     """
     from retraite_notionnelle.scenarios.actuel import ValeursPoint
 
     valeurs = ValeursPoint(simulateur.parametres.racine_donnees)
     assert valeurs.achat("agirc", 2018) is not None
     assert valeurs.achat("agirc", 2019) is None, "barème Agirc prolongé après sa fermeture"
+    assert valeurs.achat_prolonge("agirc", 2019, simulateur.scenario_actuel.macro) is None
     assert valeurs.achat("rafp", 2005) is not None
+
+
+def test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme(simulateur):
+    """La valeur d'achat de l'Agirc-Arrco « évolue au premier janvier de chaque
+    année [...] comme le salaire annuel moyen des ressortissants du régime tel
+    qu'estimé pour l'exercice précédent » (accord du 5 octobre 2023, article
+    5.1), et l'accord du 17 novembre 2017 la détermine « en fonction du taux
+    d'évolution du salaire moyen des ressortissants du régime » (article 28).
+
+    Au-delà du dernier barème, le moteur gardait le rendement de 2026 : le prix
+    d'achat suivait les prix, et la complémentaire d'une carrière à trente ans
+    du départ ressortait de 9 % au-dessus de « Mon estimation retraite », dont
+    la retraite de base concordait à l'euro (action 142). Le dernier prix publié
+    suit désormais le salaire moyen du modèle, avec un an de retard, au même
+    taux d'appel ; la valeur de service, elle, suit les prix.
+    """
+    scenario = simulateur.scenario_actuel
+    macro, valeurs = scenario.macro, scenario.valeurs_point
+    derniere = max(a for a in range(2019, 2101)
+                   if valeurs.achat("agirc_arrco", a) is not None)
+    reference, appel, _ = valeurs.achat("agirc_arrco", derniere)
+    for annee in (derniere + 1, derniere + 4, derniere + 20):
+        assert valeurs.achat("agirc_arrco", annee) is None
+        prolonge, taux, fiabilite = valeurs.achat_prolonge("agirc_arrco", annee, macro)
+        assert taux == appel
+        assert prolonge == pytest.approx(
+            reference * macro.coefficient_salaire_moyen(derniere - 1, annee - 1),
+            rel=1e-12)
+        # Plus cher que par les prix, puisque le salaire moyen les devance.
+        assert prolonge > reference * macro.coefficient_prix(derniere, annee)
+        assert fiabilite == Fiabilite.MOYENNE
+    # Un régime dont le texte n'est pas lu n'est pas prolongé : l'Ircantec
+    # garde le rendement de son dernier barème.
+    assert valeurs.achat_prolonge("ircantec", derniere + 4, macro) is None
+
+
+def test_les_annees_apres_le_dernier_bareme_agirc_arrco_ont_des_points(simulateur):
+    """Une carrière qui cotise au-delà du dernier barème liquide des POINTS, et
+    non des cotisations au rendement : la formule affichée n'en dit plus rien,
+    et chaque année en achète au prix prolongé de son année."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1990, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=22, age_liquidation=64,
+    )
+    resultat = simulateur.simuler(carriere).actuel
+    pension = next(p for p in resultat.pensions_par_regime if p.regime == "agirc_arrco")
+    assert "rendement" not in pension.detail
+    assert "points × valeur de service" in pension.detail
 
 
 def test_rafp_et_rci_sont_calcules_en_points(simulateur):

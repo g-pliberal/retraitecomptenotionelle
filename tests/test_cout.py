@@ -3107,6 +3107,16 @@ def test_la_proposition_ne_perd_plus_un_point_a_la_croissance():
     indexé sur les prix, en profite. La proposition gagne donc MOINS que le
     droit constant à ce que la croissance soit forte, et ce résultat-là lui
     appartient. Ce que le test borne est l'amplitude résiduelle, pas son signe.
+
+    ELLE A GRANDI LE 4 OCTOBRE 2026, POUR LA MÊME RAISON. Au-delà du dernier
+    barème, la valeur d'achat du point Agirc-Arrco suit désormais le salaire
+    moyen, comme ses accords le veulent (fiche ``agirc_arrco_valeur_achat``) :
+    une croissance plus forte n'achète plus de points de surcroît au droit en
+    vigueur, dont la valeur de service suit les prix. Sa masse recule donc
+    davantage en part de PIB quand la croissance est forte, le rapport de la
+    proposition à elle monte d'autant, et l'amplitude est passée de 0,44 à
+    0,61 point. La borne suit, aux trois quarts d'un point : loin du 1,14 de
+    l'ancien raccord, qu'elle doit continuer d'attraper.
     """
     soldes = {}
     for scenario in ("cor_productivite_basse", "cor_reference",
@@ -3117,7 +3127,7 @@ def test_la_proposition_ne_perd_plus_un_point_a_la_croissance():
         ligne = cout.solde.annees[-1]
         soldes[scenario] = ligne.solde("notionnel_liberal")
     amplitude = soldes["cor_productivite_basse"] - soldes["cor_productivite_haute"]
-    assert 0.0 < amplitude < 0.005, soldes
+    assert 0.0 < amplitude < 0.0075, soldes
 
 
 def test_la_carte_du_solde_garde_le_meme_axe_sous_tous_les_scenarios():

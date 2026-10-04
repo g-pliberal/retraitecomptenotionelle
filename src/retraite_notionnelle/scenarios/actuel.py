@@ -27,8 +27,10 @@ est une **approximation documentée**, pas un simulateur officiel :
   des sections libérales et de l'IRCEC, dont les caisses publient un rendement
   ou un barème annuel mais aucune série de prix d'achat, quelques petits
   régimes — CAFAT, tranche B de la Polynésie, additionnel des enseignants du
-  privé, gérants de débits de tabac, conjoints du bâtiment —, et, pour tous,
-  les années postérieures au dernier barème publié ;
+  privé, gérants de débits de tabac, conjoints du bâtiment —, et les années
+  postérieures au dernier barème publié, sauf là où le texte dit ce que suit
+  le prix d'achat : l'Agirc-Arrco, dont le salaire de référence suit le
+  salaire moyen (``regimes/prolongement_points.csv``) ;
 * trois horloges, comme dans le droit — ce qui s'ACQUIERT est lu à l'année
   travaillée (taux de cotisation, assiette, plafond, prix d'achat du point,
   heures pour valider un trimestre) ; ce qui commande la MONTÉE EN CHARGE des
@@ -2341,15 +2343,24 @@ class ValeursPoint:
 
     Les régimes que ce fichier ne couvre pas retombent sur le rendement
     instantané de :class:`Rendements`, qui reste l'approximation d'origine, tout
-    comme les années postérieures au dernier barème publié. Ceux dont la caisse
-    publie un barème EN POINTS plutôt qu'un prix d'achat — le régime de base des
-    libéraux, la complémentaire agricole — n'en ont pas besoin : leur fiche
-    porte ``points_maximum``, et seule la valeur de service est lue ici.
+    comme les années postérieures au dernier barème publié — sauf pour un régime
+    dont ``prolongement_points.csv`` dit ce que suit le prix d'achat
+    (:meth:`achat_prolonge`). Ceux dont la caisse publie un barème EN POINTS
+    plutôt qu'un prix d'achat — le régime de base des libéraux, la
+    complémentaire agricole — n'en ont pas besoin : leur fiche porte
+    ``points_maximum``, et seule la valeur de service est lue ici.
     """
+
+    #: Les indices qu'un prix d'achat peut suivre au-delà du dernier barème.
+    INDICES_DU_PROLONGEMENT = ("salaire_moyen",)
 
     def __init__(self, racine: Path) -> None:
         self._table: dict[tuple[str, str], dict[int, tuple[float, Fiabilite]]] = {}
-        chemin = racine / "reference" / "regimes" / "valeurs_point.csv"
+        #: Ce que suit le prix d'achat au-delà du dernier barème publié :
+        #: régime -> (indice, décalage en années, fiabilité du prix prolongé).
+        self._prolongements: dict[str, tuple[str, int, Fiabilite]] = {}
+        dossier = racine / "reference" / "regimes"
+        chemin = dossier / "valeurs_point.csv"
         if not chemin.exists():
             return
         with chemin.open(encoding="utf-8") as flux:
@@ -2358,6 +2369,21 @@ class ValeursPoint:
                 cle = (ligne["regime"], ligne["mesure"])
                 self._table.setdefault(cle, {})[int(ligne["annee"])] = (
                     float(ligne["valeur"]),
+                    Fiabilite.depuis_texte(ligne["fiabilite"]),
+                )
+        chemin = dossier / "prolongement_points.csv"
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                if ligne["suit"] not in self.INDICES_DU_PROLONGEMENT:
+                    raise ValueError(
+                        f"prolongement_points.csv : le prix d'achat de "
+                        f"{ligne['regime']} suit {ligne['suit']!r}, que le moteur "
+                        f"ne sait pas prolonger")
+                self._prolongements[ligne["regime"]] = (
+                    ligne["suit"], int(ligne["decalage"]),
                     Fiabilite.depuis_texte(ligne["fiabilite"]),
                 )
 
@@ -2381,7 +2407,9 @@ class ValeursPoint:
         Rien n'est renvoyé au-delà de la dernière année publiée. Prolonger le
         dernier prix connu reviendrait à supposer un barème gelé : les points
         seraient achetés trop bon marché et la pension surestimée. Ces années
-        retombent sur le rendement instantané, qui, lui, s'assume approximatif.
+        retombent sur le rendement instantané, qui, lui, s'assume approximatif,
+        ou sur le prolongement que le texte du régime écrit
+        (:meth:`achat_prolonge`).
         """
         derniere = self._table.get((regime, "salaire_reference"))
         if not derniere or annee > max(derniere):
@@ -2392,6 +2420,45 @@ class ValeursPoint:
         appel = self._en_vigueur(regime, "taux_appel", annee)
         taux, fiabilite_appel = appel if appel else (1.0, Fiabilite.MOYENNE)
         return reference[0], taux, min(reference[1], fiabilite_appel)
+
+    def achat_prolonge(self, regime: str, annee: int,
+                       macro: DonneesMacro) -> tuple[float, float, Fiabilite] | None:
+        """Prix d'achat d'un point, publié ou, au-delà du dernier barème,
+        prolongé comme ``regimes/prolongement_points.csv`` le dit du régime.
+
+        Ce n'est pas un gel : le dernier salaire de référence publié suit
+        l'indice que son texte nomme, au dernier taux d'appel. La valeur d'achat
+        de l'Agirc-Arrco « évolue au premier janvier de chaque année [...] comme
+        le salaire annuel moyen des ressortissants du régime tel qu'estimé pour
+        l'exercice précédent » (accords du 10 mai 2019, article 2, et du 5
+        octobre 2023, article 5.1), et l'accord qui institue le régime la
+        détermine « en fonction du taux d'évolution du salaire moyen des
+        ressortissants du régime » (17 novembre 2017, article 28) : au-delà de
+        2026, le salaire moyen du modèle la porte, avec un an de retard (fiche
+        ``agirc_arrco_valeur_achat``). Les points de ces années s'achètent donc
+        plus cher que les prix ne le feraient, et la valeur de service, qui les
+        sert, suit les prix (:func:`~retraite_notionnelle.droit.liquider.valeur_du_point`).
+        Un régime sans prolongement n'a pas de prix au-delà de son dernier
+        barème : ses cotisations passent par le rendement instantané.
+        """
+        achat = self.achat(regime, annee)
+        if achat is not None:
+            return achat
+        regle = self._prolongements.get(regime)
+        publiees = self._table.get((regime, "salaire_reference"))
+        if regle is None or not publiees or annee <= max(publiees):
+            return None
+        derniere = max(publiees)
+        dernier = self.achat(regime, derniere)
+        if dernier is None:
+            return None
+        _, decalage, fiabilite = regle
+        reference, taux_appel, fiabilite_achat = dernier
+        return (
+            reference * macro.coefficient_salaire_moyen(derniere - decalage,
+                                                        annee - decalage),
+            taux_appel, min(fiabilite_achat, fiabilite),
+        )
 
     #: Taux contractuel de tranche B auquel la garantie est écrite : « 144
     #: points pour un taux contractuel de 16 % » (accord du 8 décembre 1988,

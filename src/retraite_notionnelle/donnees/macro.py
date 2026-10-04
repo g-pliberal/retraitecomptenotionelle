@@ -350,6 +350,23 @@ class DonneesMacro:
             return coefficient
         return 1.0 / self.coefficient_prix(annee_arrivee, annee_depart)
 
+    def coefficient_salaire_moyen(self, annee_depart: int, annee_arrivee: int) -> float:
+        """Coefficient de passage par le salaire moyen par tête, d'une année à
+        l'autre : le produit de ses croissances nominales.
+
+        Prolonge un barème que son texte indexe sur les salaires : la valeur
+        d'achat du point Agirc-Arrco, au-delà du dernier barème publié
+        (``regimes/prolongement_points.csv``).
+        """
+        if annee_arrivee == annee_depart:
+            return 1.0
+        if annee_arrivee > annee_depart:
+            coefficient = 1.0
+            for annee in range(annee_depart + 1, annee_arrivee + 1):
+                coefficient *= 1 + self.salaire_moyen(annee)
+            return coefficient
+        return 1.0 / self.coefficient_salaire_moyen(annee_arrivee, annee_depart)
+
     def coefficient_smic(self, annee_depart: int, annee_arrivee: int) -> float:
         """Coefficient de passage par le SMIC, d'une année à l'autre.
 

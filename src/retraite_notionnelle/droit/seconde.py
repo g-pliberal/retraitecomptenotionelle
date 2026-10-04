@@ -306,18 +306,17 @@ def _nouvelle_pension(moteur: ScenarioActuel, code: str, salaires: dict[int, flo
 
 def _prix_du_point(moteur: ScenarioActuel, annee: int) -> tuple[float, float] | None:
     """Le prix d'achat d'un point de l'Agirc-Arrco : le salaire de référence et
-    le taux d'appel de l'année ; au-delà du dernier publié, le salaire de
-    référence suit le plafond de la sécurité sociale."""
-    connu = annee
-    while connu >= 2019:
-        achat = moteur.valeurs_point.achat(AGIRC_ARRCO, connu)
-        if achat is not None:
-            reference, taux_appel, _ = achat
-            macro = moteur.macro
-            return (reference * macro.plafond_securite_sociale(annee)
-                    / macro.plafond_securite_sociale(connu), taux_appel)
-        connu -= 1
-    return None
+    le taux d'appel de l'année ; au-delà du dernier publié, celui que le texte
+    prolonge sur le salaire moyen, comme pour la première pension
+    (`ValeursPoint.achat_prolonge`). Le salaire de référence suivait ici le
+    plafond de la sécurité sociale, qui suit lui-même le salaire moyen au-delà
+    du dernier publié : les mêmes valeurs, à l'arrondi près, par une seconde
+    règle."""
+    achat = moteur.valeurs_point.achat_prolonge(AGIRC_ARRCO, annee, moteur.macro)
+    if achat is None:
+        return None
+    reference, taux_appel, _ = achat
+    return reference, taux_appel
 
 
 def _seconde_retraite_complementaire(moteur: ScenarioActuel, salaires: dict[int, float],

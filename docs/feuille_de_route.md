@@ -5718,15 +5718,15 @@ d'OpenFisca-France confrontées à celles du dépôt.
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
 **Reprise, au 4 octobre 2026.** Faites : l'étape 1, la saisie outillée
-(`scripts/simulateurs.py`), l'étape 2, la carrière du propriétaire contre
-« Mon estimation retraite » (`scripts/estimation_officielle.py`) — les
-trimestres et la retraite de base concordent, l'Agirc-Arrco projetée non —, et
-la lecture du relevé tous régimes de 2026, corrigée des deux côtés. Reste, de
-l'étape 2, la projection du prix d'achat Agirc-Arrco, sa session. Restent, une
-par session : 3. le brut en tête sur le site, au format de l'estimation
-officielle, dont le net attend l'étape 2 de l'action 138 ; 4. les moteurs
-publics en local, avec l'action 137. Commencer par l'étape 3. Détail : « Étape
-2, le 4 octobre 2026 » et « La lecture du relevé de 2026 », en fin d'action.
+(`scripts/simulateurs.py`) ; l'étape 2, la carrière du propriétaire contre
+« Mon estimation retraite » (`scripts/estimation_officielle.py`) ; et ses deux
+corrections, la lecture du relevé tous régimes de 2026 et la valeur d'achat
+Agirc-Arrco projetée sur le salaire moyen (fiche `agirc_arrco_valeur_achat`).
+Restent, une par session : 3. le brut en tête sur le site, au format de
+l'estimation officielle, dont le net attend l'étape 2 de l'action 138 ; 4. les
+moteurs publics en local, avec l'action 137. Commencer par l'étape 3. Détail :
+« Étape 2 », « La lecture du relevé de 2026 » et « La valeur d'achat de
+l'Agirc-Arrco », en fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -5944,6 +5944,70 @@ trouvé, siècle plausible, jumeaux identiques. Chemin faisant, le tableau des
 années collé sans le résumé qui le précède perdait sa première année, que
 plus rien ne rattachait à une base : une ligne de complémentaire qui précède
 toute base prend la première que le document nomme.
+
+**La valeur d'achat de l'Agirc-Arrco, le 4 octobre 2026 : projetée sur le
+salaire moyen.** L'autre correction de l'étape 2.
+
+- *Le texte (§ 3.3 de l'architecture).* L'accord du 17 novembre 2017, conclu
+  sans terme, détermine la valeur d'achat « en fonction du taux d'évolution du
+  salaire moyen des ressortissants du régime, éventuellement corrigé d'un
+  facteur de soutenabilité », avec effet au 1er janvier suivant (article 28,
+  lu sur Légifrance, KALITEXT000036731682). Les accords du 10 mai 2019
+  (article 2) et du 5 octobre 2023 (article 5.1, KALITEXT000048674954) la font
+  évoluer « comme le salaire annuel moyen des ressortissants du régime tel
+  qu'estimé pour l'exercice précédent », et leurs annexes la projettent sur le
+  salaire moyen. Le conseil d'administration ne l'a pas modifiée au 1er janvier
+  2026, faute d'accord (communiqué du 17 octobre 2025) : ce gel est le barème
+  de 2026, que le dépôt certifiait déjà. L'accord de 2023 échoit le 31 décembre
+  2026 ; celui de 2027 à 2030 se négocie, et le conseil décide le 14 octobre
+  2026 de la valeur de service de novembre et de la valeur d'achat de 2027.
+- *La correction.* Au-delà du dernier barème, le dernier salaire de référence
+  publié suit la croissance du salaire moyen par tête du modèle, celle de
+  l'année précédente, au taux d'appel de 127 % : 20,6823 € en 2027 au scénario
+  de référence. `regimes/prolongement_points.csv` le déclare ;
+  `ValeursPoint.achat_prolonge` et `DonneesMacro.coefficient_salaire_moyen` le
+  servent, et leurs jumeaux `achatProlonge` et `coefficientSalaireMoyen`, par
+  le paquet (`prolongement_points`). Les années d'après 2026 ont des points, et
+  non plus des cotisations converties au rendement de 2026 — qui faisait suivre
+  les prix au prix d'achat, et ne sert plus que de filet ; la seconde pension, dont le
+  prix suivait le plafond de la sécurité sociale, prend le même, aux mêmes
+  valeurs à l'arrondi près. La valeur de service reste prolongée par les prix.
+  Fiche `agirc_arrco_valeur_achat`, sans manque : versions lues de 2019 à
+  2026, supposée au-delà ; `ircantec_valeurs_point` ne parle plus que de
+  l'Ircantec.
+- *Ce que ça déplace.* 146 témoins de simulation sur 712. Au scénario 1, 146
+  pensions baissent et aucune ne monte : −0,37 % en médiane, jusqu'à −3,63 %
+  (`generation_2005`), −2,92 % (`generation_2000`) et −1,73 % (`salaire_8`),
+  treize de plus de 1 %. Aux scénarios 3 et 5, les deux bascules futures
+  seules, de −0,45 % à −1,66 %, par les droits qu'elles convertissent ; les
+  scénarios 2, 4 et 6 ne bougent pas. Sur des carrières fictives entrées à
+  22 ans et parties à 64, l'Agirc-Arrco baisse de 2,8 % (née en 1975) à 14,6 %
+  (née en 2005) en non-cadre, de 3,2 % à 16,0 % en cadre, la pension totale de
+  0,4 % à 4,1 %. Le système actuel coûte en 2070 17,8 % du PIB au lieu de 18,2,
+  693 Md€ au lieu de 710 : l'écart d'arrivée au COR passe de trois points à deux
+  et demi. La dette de la proposition en 2070 passe de 31 à 35 % du PIB : sa
+  dépense est celle du COR multipliée par son rapport au système actuel, que la
+  baisse du système actuel fait monter (`cout.py`). L'accueil le cite
+  (`MESURES_BLOCAGES` : dette de 35 %, coefficient de 0,89 au plus bas et de
+  1,04 en 2070, variante prospective à −2,8 points), et le parcours de
+  présentation suit, sa référence de conservation refigée. Entre les variantes
+  de productivité, le solde de la proposition en 2070 varie désormais de 0,61
+  point et non de 0,44 : une croissance forte n'achète plus de points de
+  surcroît au système actuel ; la borne du test passe d'un demi-point aux trois
+  quarts (`test_la_proposition_ne_perd_plus_un_point_a_la_croissance`). 54
+  rendus de page sur 69.
+- *Ce qui reste ouvert.* La valeur de service : l'accord de 2017 la détermine
+  sur le salaire moyen « éventuellement corrigé », l'annexe de 2023 la projette
+  de 2027 à 2037 au salaire moyen moins 1,16 %, « Mon estimation retraite »
+  compte les points à leur valeur actuelle ; le modèle garde les prix, la
+  convention de la page, et la fiche déclare la lecture divergente. Le salaire
+  moyen est celui du modèle, non celui des ressortissants. La carrière du
+  propriétaire n'a pas été reconfrontée, ses fichiers privés n'étant pas dans
+  la session : sur des carrières fictives, la complémentaire passe de 2,4 % à
+  15,7 % au-dessus d'un prix d'achat qui croîtrait de 0,575 % par an au-delà
+  des prix, celui que la page semble prêter, à 0,5 % à 2,8 % au-dessous.
+  L'Ircantec garde son rendement de prolongation, faute d'avoir lu le texte de
+  son salaire de référence.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

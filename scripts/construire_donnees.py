@@ -846,6 +846,16 @@ def _valeurs_point() -> dict:
     }
 
 
+def _prolongement_points() -> dict:
+    """Ce que suit le prix d'achat d'un point au-delà du dernier barème publié :
+    ``regime`` -> [indice, décalage en années, fiabilité du prix prolongé]."""
+    valeurs = ValeursPoint(DONNEES)
+    return {
+        regime: [suit, decalage, int(fiabilite)]
+        for regime, (suit, decalage, fiabilite) in sorted(valeurs._prolongements.items())
+    }
+
+
 def _classes_cotisation() -> dict:
     """Grilles de cotisation par classes, régime par régime et par millésime.
 
@@ -1707,6 +1717,7 @@ def construire(bilan: bytes) -> bytes:
         "avantages": _avantages(),
         "affiliations": _affiliations(),
         "valeurs_point": _valeurs_point(),
+        "prolongement_points": _prolongement_points(),
         "rendements_points": _rendements(),
         "conversions_points": _conversions_points(),
         "classes_cotisation": _classes_cotisation(),

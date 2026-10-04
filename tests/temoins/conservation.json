@@ -187,6 +187,7 @@
    "age_reference_decote_ieg",
    "age_reference_decote_sncf_ratp",
    "age_surcote_sncf_ratp",
+   "agirc_arrco_valeur_achat",
    "assiette_minimale_agricole",
    "assiette_minimale_independants",
    "asv_medecins_ajustement",
@@ -469,11 +470,14 @@
    "2026-10-03 | la suite de l'action 141, close, à la demande du propriétaire : « fait des recherches pour ce qui reste et corrige en fonction de ce que tu trouves »",
    "2026-10-04 | action 119, le barème de l'Ircantec pour enfants",
    "2026-10-04 | action 138, le relevé repris modèle par modèle sur les soixante-neuf modèles",
+   "2026-10-04 | action 142 : la valeur d'achat de l'Agirc-Arrco, projetée sur le salaire moyen",
+   "2026-10-04 | action 142, étape 2 : une carrière réelle contre « Mon estimation retraite »",
    "2026-10-04 | action 145, les régimes que l'inventaire ne nommait pas",
    "2026-10-04 | la demande du propriétaire de montrer les propositions des candidats à la présidentielle au simulateur et à la page Coût, documentée sans être construite : l'action 144 qui en naît, à faire",
    "2026-10-04 | la page qui comparerait les générations à carrière égale, demandée par le propriétaire et seulement documentée : l'action 143, à faire",
    "2026-10-04 | la saisie outillée des simulateurs officiels (action 142) : la deuxième voie du § 3.5 de l'architecture ouverte à Claude, et un premier lot dans le simulateur d'âge légal d'info-retraite",
    "2026-10-04 | la vérification de la suspension de 2026 refaite, à la demande du propriétaire, après le refus des incréments de la DILA",
+   "2026-10-04 | le musée des horreurs de la retraite, demandé par le propriétaire et seulement documenté : l'action 146 qui en naît, à faire, et son catalogue",
    "2026-10-04 | les sommaires du Journal officiel du 27 septembre au 4 octobre, que l'index de la DILA ne porte pas, parcourus à la demande du propriétaire"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
@@ -4754,6 +4758,437 @@
     "e852d65c5c6077af"
    ]
   },
+  "docs/archives/releve_des_autres_modeles.md": {
+   "ANCETRE (`ancetre`)": [
+    "575778d86cd6cc73",
+    "9e0cb876593fe27d",
+    "80eb1fd78791f095"
+   ],
+   "Ageing Report et ses fiches pays (`ageing_report`)": [
+    "24e0382dce2cccb9",
+    "69d1e722f1145a78",
+    "84d4d1b286f29f98",
+    "ec785ab4ff1f70e7"
+   ],
+   "Aphrodite (`aphrodite`)": [
+    "0e936452da8a6f92",
+    "b9df8b653d9c24e8",
+    "b11bf238d4e4a4b3",
+    "116cfc781bc75b8f"
+   ],
+   "Ariane (`ariane`)": [
+    "e25a037401c2a4b8",
+    "b31c947f04ef7aeb"
+   ],
+   "Barèmes IPP (`baremes_ipp`)": [
+    "19ce5f3c6156c74e",
+    "4958dd1964de542c",
+    "9a08d9295e8d21d4",
+    "035bc9a68a1b29e9"
+   ],
+   "CALIPER (CALcul Interrégimes des PEnsions de Retraite) (`caliper`)": [
+    "f1b23c764b49ca09",
+    "4f42d6ffde3ad220",
+    "db753f478c69ad5c"
+   ],
+   "Canopée (`canopee`)": [
+    "e5b480d3f74d693d",
+    "811d084c9c536be3",
+    "bc0b67b87a08eb02",
+    "718f5c1668208020"
+   ],
+   "Catala (catala-examples) (`catala`)": [
+    "a56523c667b09600",
+    "780d614a6cf51695",
+    "6e42a76f39b417c8",
+    "fd05e71b06eb55d7"
+   ],
+   "Destinie 1 (`destinie_1`)": [
+    "d1033aaf3963d7c1",
+    "858fe0bf5548b86f"
+   ],
+   "Destinie 2 (`destinie_2`)": [
+    "d9949397c40167eb",
+    "ea1b8869e98daae4",
+    "a046eb17f5c7da23",
+    "a712a9f790db525a"
+   ],
+   "EDIFIS (`edifis`)": [
+    "8bf1d22c8d9c8ca8",
+    "3b38617521a08766",
+    "19ecbe390e566439",
+    "ea34a3129455e1a6"
+   ],
+   "EUROMOD (France) (`euromod`)": [
+    "17d6fbd87a42ceb4",
+    "615319ed31c42b0b",
+    "782fdf3571f1b003",
+    "d2888312226019f1"
+   ],
+   "ILO/PENSIONS (`ilo_pensions`)": [
+    "ce4ead22d96725cd",
+    "a4f46e8c888516d7",
+    "d9edd101abc8e92e"
+   ],
+   "Ines (`ines`)": [
+    "22f0535f4d2fd858",
+    "d3ff91b23ecaa626",
+    "4b0d2540901f28ee",
+    "9faecb7922d17530"
+   ],
+   "L'IPP, OpenFisca, et ce qui s'y alimente": [
+    "9e78c1325beddf45"
+   ],
+   "L'Urssaf : les règles publicodes": [
+    "1d601e6173cbc48c"
+   ],
+   "L'indice d'équilibre suédois (balanstal) (`balanstal_suede`)": [
+    "53062cee1c51f2b6",
+    "ee998cff8fcffe9b",
+    "fb44b85332d6391e"
+   ],
+   "La recherche": [
+    "d57d47484bc0a6b1"
+   ],
+   "La société civile et la presse": [
+    "fc97cd6b5de30910"
+   ],
+   "La statistique publique : l'INSEE": [
+    "fdbd041d92f236f1"
+   ],
+   "La statistique publique : la DREES": [
+    "75854e4134da93f3"
+   ],
+   "Le COR": [
+    "00ad2b589062cf23"
+   ],
+   "Le coefficient d'espérance de vie finlandais (elinaikakerroin) (`elinaikakerroin`)": [
+    "354a9bca4b9d90be",
+    "cb9ad67b4bd533b2",
+    "957065ac88798917",
+    "55fc1a8d5628e31e"
+   ],
+   "Le diviseur letton (P = K / G) (`diviseur_lettonie`)": [
+    "a0e13f1bccce20a9",
+    "da21c2025e062ad5",
+    "5148a3262c667cdb",
+    "45f259ba88cd6145"
+   ],
+   "Le diviseur norvégien (delingstall) (`delingstall_norvege`)": [
+    "8ad8efe2868df36d",
+    "4ad979cf7dbd1326",
+    "097aca33d3616c6d",
+    "3316489df8f807ad"
+   ],
+   "Le diviseur polonais (`diviseur_pologne`)": [
+    "a1d1337a2f4126c0",
+    "c88223c22f37384a",
+    "9f3a9c07f5b61adb"
+   ],
+   "Le diviseur suédois (delningstal) (`delningstal_suede`)": [
+    "91329926f8f3b7d8",
+    "fad82e54227e1640",
+    "f744e45a29c976d7",
+    "3185445880ea4537"
+   ],
+   "Le fator previdenciário (`fator_previdenciario`)": [
+    "379c2fb7b9a649f6",
+    "e615256014afd729",
+    "6f111d8f61897aa9"
+   ],
+   "Le relevé des autres modèles, au 4 octobre 2026": [
+    "a4ca3e13f5f263a9",
+    "d5f4445cabcbd22a",
+    "fcbe6377a2177d37",
+    "a820ab2b24db2099",
+    "d56f8bbb5bbb9c57"
+   ],
+   "Les caisses": [
+    "df28861db5d0df70"
+   ],
+   "Les coefficients de transformation italiens (`coefficienti_italie`)": [
+    "c9fa9eefea428eba",
+    "82d5f18c194d3cb6",
+    "45fcf2fa92e60084",
+    "edee81bed88a1001"
+   ],
+   "Les ministères": [
+    "64bd8410286d157a"
+   ],
+   "Les modèles de pension de l'OCDE (`modeles_ocde`)": [
+    "3f9093ab95ab8662",
+    "cf3536456cbed235",
+    "c326dd47b0f7e958"
+   ],
+   "Les organisations internationales": [
+    "f363b8010a837561"
+   ],
+   "Les transcriptions du droit en code": [
+    "e2f883ece6642767"
+   ],
+   "LexImpact (simulateur socio-fiscal) (`leximpact`)": [
+    "0124c360ce763eae",
+    "c8589e63f77c0ac4",
+    "421c8ff3070aabf9",
+    "2aee6bbaf6aac5d7"
+   ],
+   "MOSART (`mosart`)": [
+    "4ad713295f08023d",
+    "d93240d53857fcd8",
+    "4c8e7540a511f6da"
+   ],
+   "Maquette globale de projection du COR (`maquette_globale_cor`)": [
+    "584f53a1539eeb23",
+    "aaacbb57fbbcbe01",
+    "871993b9a079e06a",
+    "98afb763249ded20"
+   ],
+   "Maquette simplifiée du secrétariat général du COR (`maquette_sg_cor`)": [
+    "2ba90d119bab692a",
+    "e7f55a41ada0d56b",
+    "ba71ee63368fbd80"
+   ],
+   "MisrAA (`misraa`)": [
+    "e73a60a31d9e1aa9",
+    "3cbde4a3ce46a365",
+    "5bb4b5641118c61c"
+   ],
+   "Mistral (`mistral`)": [
+    "b2a6e5658ab3ac54",
+    "3f7a9a824492efb1",
+    "747132d53f5b40ac"
+   ],
+   "Modèle FUS23 (`fus23`)": [
+    "a548da60b50b461c",
+    "30735c59016aaf03",
+    "45b36e508937d8fa"
+   ],
+   "Modèle de projection des pensions lettonnes (`modele_lettonie`)": [
+    "2266cb0eb0c2d909",
+    "8f7b0c23a0ace826",
+    "a281703cf17f6c22",
+    "9a2a61bd16fa3fa1"
+   ],
+   "Modèle de prévision de la Ragioneria Generale dello Stato (`modello_rgs`)": [
+    "e11cdcf043606c9c",
+    "6c398e914bae7627",
+    "0403dcbcb2b83198"
+   ],
+   "Moteur de calcul des retraites de l'Assurance retraite (`moteur_cnav`)": [
+    "46273b838423eede",
+    "745ae122bce9d3c9",
+    "1e1a04f38bb6aff7",
+    "44fdf87bbc8acc10"
+   ],
+   "OG-Core (`og_core`)": [
+    "0c94df120c89aa8e",
+    "786408a7b03487d4",
+    "75a092820a12529f"
+   ],
+   "OpenFisca-France (`openfisca_france`)": [
+    "d40a9b1955cf434a",
+    "456610755434b158",
+    "6e7d6f5a31fe3765",
+    "0e8745d9baf687cc"
+   ],
+   "OpenFisca-France-Pension (`openfisca_france_pension`)": [
+    "d7a739fd8d3311c6",
+    "e1bf0b6054f1ef78",
+    "2225250ab652b3fc",
+    "b087dd3b1de065e5"
+   ],
+   "Oscar (`oscar`)": [
+    "677c6262cc90b26d",
+    "3ed30f30d01e47ea",
+    "b5e15c13335a96bd"
+   ],
+   "Osiris (`osiris`)": [
+    "2f77f7675336ec66",
+    "08c67843bf867582",
+    "a1c8c0b3869c09cd",
+    "49a1eac83e93966a"
+   ],
+   "PENSIPP (`pensipp`)": [
+    "323e09341a7ce2b4",
+    "96551df770cde2cf",
+    "9b806bd73ab03941",
+    "c22b9ca4bace3f1d"
+   ],
+   "PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations) (`prisme`)": [
+    "a5616650c2305ef6",
+    "195388ea1deeb6af",
+    "aa6757e134197d58",
+    "778fb0aa451d3861"
+   ],
+   "PROMESS (`promess`)": [
+    "7913ef8463c63484",
+    "2f158904fc30391f",
+    "a2edd155d10433e8"
+   ],
+   "PROST (Pension Reform Options Simulation Toolkit) (`prost`)": [
+    "d5187f05e3a8a884",
+    "87fb09a62675ac68",
+    "cfd074211c01077d"
+   ],
+   "Pablo (`pablo`)": [
+    "d840459904a5e3c6",
+    "893b92588bec1cc3",
+    "db1cb31b89a86707"
+   ],
+   "Pensionsmodellen (`pensionsmodellen`)": [
+    "072b4bda0c9386ec",
+    "9241699a90211237",
+    "f114618268d0fb79",
+    "03c7aa5ef706e96c"
+   ],
+   "Projections de l'Autorité actuarielle nationale (`projections_grece`)": [
+    "37e37373b47002e9",
+    "095c992089f5c7ad",
+    "a3129f398ea637f9"
+   ],
+   "RGCU et moteur de valorisation des carrières (`rgcu_mvc`)": [
+    "9337f2277203b081",
+    "7a6036b757d5b8ee",
+    "3918f2d2fc063ab5"
+   ],
+   "Retraites 2027 (`retraites_2027`)": [
+    "e49637a7c056d243",
+    "eeade24bc0c42d52",
+    "5ba3cbfa23c8b84f",
+    "5fb6d2888cd1ee91"
+   ],
+   "SESIM (`sesim`)": [
+    "fe931c1009f10190",
+    "6b67ed6cbc65ab8d",
+    "df41d65f97664e7a",
+    "2b6fc766b9c9a1f3"
+   ],
+   "Saphir (`saphir`)": [
+    "5b54fadc8a527e73",
+    "866a210e23bb4916",
+    "7a54bc51341138ab",
+    "45a9f434d322be1e"
+   ],
+   "Simulateur de SUD éducation (`simulateur_sud_education`)": [
+    "64f0db1b42fbae5c",
+    "024f7017e416d828",
+    "bf4039b643697c4c",
+    "7191665ac337f6c3"
+   ],
+   "Simulateur de cas types de Nos Retraites (`nosretraites_cas_types`)": [
+    "c03bfa72fac2d2bf",
+    "ad6b469c2a981c99",
+    "1ebe408e73af6648",
+    "2c4760fa9485ead0"
+   ],
+   "Simulateur de dépense publique, volet retraites (`simulateur_aurain`)": [
+    "4480a69afb3ae62c",
+    "755ff3f6508e01ae",
+    "4457c2977eea1194",
+    "4e37eef5ba94d37c"
+   ],
+   "Simulateur du COR (`simulateur_cor`)": [
+    "e2ef2a42a4d2ddad",
+    "9624bdc0bf5fd9ba",
+    "b77132f49b3f8806"
+   ],
+   "T-DYMM (`t_dymm`)": [
+    "8ab58dbf4a4cfb4a",
+    "1d81682239fa7a20",
+    "43b24e7f5e0adc19"
+   ],
+   "TAXIPP (`taxipp`)": [
+    "0e94e57b32c11fe1",
+    "862695e4c0c66cf8",
+    "020d0b597e9a9cf8",
+    "dada6c2868ffb01e"
+   ],
+   "TIL (TaxIPP-Life) et Til-Pension (`til_pension`)": [
+    "9e47f14663d1dc8e",
+    "8c851765d499ce71",
+    "60f82227aba4ff5e",
+    "94398c94d7c75578"
+   ],
+   "TRAJECTOiRE (`trajectoire`)": [
+    "1e7529dd1282a913",
+    "f5d091bb0db00702",
+    "0b5f655abe920aaa",
+    "06c73bc4374dfd7f"
+   ],
+   "Typfallsmodellen (`typfallsmodellen`)": [
+    "25942c8135c9f4d5",
+    "82c6e3362419e629",
+    "c23afca38ee02d7e",
+    "89e377ef9dad3aa8"
+   ],
+   "calcul-verification-pension-retraite (`calcul_verification_pension`)": [
+    "ae88f88b85abf86f",
+    "cac10e821df8be75",
+    "77bd088272ff37e0",
+    "c97c646dd3abbec5"
+   ],
+   "calcul_pension (paquet R calculPension) (`calcul_pension`)": [
+    "18b99847f4c1c7d9",
+    "58cfddf99edd8132",
+    "acd15071f873066c",
+    "2e4c3bcfac4a149c"
+   ],
+   "devcrafting/retraites (`devcrafting_retraites`)": [
+    "89b9118ae85a09eb",
+    "00711bb70279daf1",
+    "6abf88e220149e94",
+    "faaffc47eca3e045"
+   ],
+   "ir-catala (`ir_catala`)": [
+    "7bfd67cbb7d69f30",
+    "b19e66e11215bda0",
+    "f4a9a36e4b2f5de0",
+    "acb4813d6f62d9d6"
+   ],
+   "legiretraite (paquet R) (`legiretraite`)": [
+    "a9be2fa839eea57d",
+    "44b30d6ddbdd3c33",
+    "ba20dd025a941601",
+    "84b39a499f8dc008"
+   ],
+   "modele-as (`modele_as`)": [
+    "49e3cc8f9625ae67",
+    "e942b0ba8b3e2790",
+    "22106f62a40723e5"
+   ],
+   "modele-social (`modele_social`)": [
+    "67bcb31a82ffd22f",
+    "d6fa6168b7eda9c4",
+    "580fa31eeeb2f16c",
+    "33075be26ab2a9ab"
+   ],
+   "modele-ti (`modele_ti`)": [
+    "fd45a1c13d7fb9dc",
+    "341a42e99ba2a9fd",
+    "bb04f8306731f2fd",
+    "b7b30a8295cc4ccc"
+   ],
+   "retraites (simulateur du COR réécrit) (`retraites_scherrer`)": [
+    "34d327f413807b1b",
+    "59f02c49185ab345",
+    "ce7a0b290b802052"
+   ],
+   "retraites-cor2026 (`retraites_cor2026`)": [
+    "25ae03caa3507dc1",
+    "ff7863b0afb8aa63",
+    "587ea92ef0691346",
+    "9fbe6d4133e7cbe5"
+   ],
+   "« Quand pourrai-je partir à la retraite ? » (`outil_quand_partir`)": [
+    "760ad3a15861c08c",
+    "258d599efac8ed8d",
+    "28340e8e2342382e",
+    "8417370cc07f7c61"
+   ],
+   "À l'étranger : les comptes notionnels": [
+    "dc2783288900688f"
+   ]
+  },
   "docs/archives/veille_droit.md": {
    "Ce que le registre porte aujourd'hui": [
     "74df298ba56a190b",
@@ -6189,6 +6624,58 @@
     "abd3104cda4c86e6"
    ]
   },
+  "docs/musee_des_horreurs.md": {
+   "Ce qui reste à vérifier avant de publier": [
+    "ac431e3bdda46010",
+    "e66f4b1f2f7a9a1c"
+   ],
+   "Le musée des horreurs de la retraite — les pièces relevées le 4 octobre 2026": [
+    "333fe12493c59f1f",
+    "e64cff8a6102e6b9",
+    "3054aa848daeda0a",
+    "132df5bfe389fd39"
+   ],
+   "Monter la page": [
+    "045539668363f5b5",
+    "52fd4e38573cd373",
+    "231ecc2b95b87d59"
+   ],
+   "Salle des cadeaux : les années qui comptent double": [
+    "18b5a15ba9912e1e",
+    "2d5eae4079034556",
+    "c5ea4cc5446abbea"
+   ],
+   "Salle des calculs impossibles : quand même les caisses se trompent": [
+    "25e83a7e53fa0952",
+    "5ee722acc4a06673",
+    "b850e49eb9e467ea"
+   ],
+   "Salle des cotisations perdues : payer pour rien": [
+    "a8e6eb7473449899",
+    "4a7744dd83396f2d",
+    "ab8656ea22ee4f0c"
+   ],
+   "Salle des fantômes : les règles d'antan": [
+    "a4b0504ff83e4b04",
+    "74e372b32a9d0026",
+    "d9930aa392d333cf"
+   ],
+   "Salle des régimes à part : un métier, une caisse": [
+    "217a1ae551fdef25",
+    "e6ee26d4da5598c6",
+    "40cd428d571b84f9"
+   ],
+   "Salle des seuils : un jour, une heure, un point de trop": [
+    "412d0d6987b01a4b",
+    "66c17464ff8ea6d9",
+    "4eb6783f92b066f7"
+   ],
+   "Salle des veuves : la réversion, une loterie": [
+    "862c7a51f69395cb",
+    "ad581c708fc6eca8",
+    "9c439a4f9a1bf2fb"
+   ]
+  },
   "docs/parcours_presentation.md": {
    "1. Programme — trois minutes": [
     "4affbd8c4e78027d",
@@ -6201,7 +6688,7 @@
     "8b54fd5e1937e909",
     "0d257cb8ed5931ca",
     "da9d078a811cdd8c",
-    "9c3da05e91752941",
+    "11d17457b5c21143",
     "9e3e659d80b97682",
     "35e77b79a9d702ee",
     "832e64567e3e3c6d"
@@ -6210,13 +6697,13 @@
     "97ff69c81eb19473",
     "773b3cc972166f9e",
     "967088dee9441d19",
-    "958eb0c6366c2ec7",
+    "7456e84152066784",
     "22ed574a0dc38854"
    ],
    "4 bis. Risque — deux minutes, si on a le temps": [
     "68969bf92be67711",
     "f971f23cb7a212f4",
-    "4bc9dd56ecdd4489",
+    "4f59ef99acfac088",
     "2a1bb678954f5440",
     "7be0c23682934574",
     "c8fe453896f43ca8"
@@ -6278,13 +6765,13 @@
     "f4bd4f6659915c98",
     "2712fab5d274d643",
     "019a3736392adf66",
-    "adca267aa5659dd6",
+    "1718b480cbe59c19",
     "e96e70e1d0dacf78",
     "b638caf9172c7a49",
     "78c469803454345f",
     "5f719a1303f242e0",
     "42fbe0590ab543ae",
-    "030d2673d679a577",
+    "02b04f408b336a35",
     "790f142cf35cd7c6",
     "efa808bc3c21fb03"
    ]

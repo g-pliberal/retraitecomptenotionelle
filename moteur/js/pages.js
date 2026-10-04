@@ -13996,18 +13996,18 @@ export const MESURES_BLOCAGES = {
   // −0,9, 59 % et 0,85, et 1,03 en 2070.
   solde_moyen_proposition: -0.5,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 31,
+  dette_2070_proposition: 35,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.9,
+  coefficient_minimum: 0.89,
   decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.07,
+  coefficient_2070: 1.04,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.
   tva_affectee: 0.0,
   // proposition_prospective.py : le solde moyen de la variante qui laisse le
   // stock intact, en points de PIB.
-  solde_moyen_prospectif: -2.7,
+  solde_moyen_prospectif: -2.8,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
   cout_diviseur_age_legal: 0.2,

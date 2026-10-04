@@ -120,7 +120,7 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 - **Le système 1 est la référence** : le droit en vigueur, minima et
   majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
   porte un troisième chiffre, plus récent que le reste de ce parcours, et il
-  vaut d'être lu à voix haute : **financé, 2 548 €**, soit 91 % de ce qu'il
+  vaut d'être lu à voix haute : **financé, 2 535 €**, soit 91 % de ce qu'il
   promet. Le reste attend des cotisations que personne n'a versées. La barre
   sous la ligne le montre, et la page Risque le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
@@ -176,9 +176,9 @@ net :
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | 1 240 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 990 € | -20,1 % |
-| 4. La proposition | 1 086 € | -12,4 % |
+| 1. Actuel | 1 235 € | référence |
+| 3. Ce qui a été cotisé, deux parts | 990 € | -19,8 % |
+| 4. La proposition | 1 086 € | -12,0 % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € brut
 pour une personne seule dès 65 ans. Sous la proposition, cette carrière part
@@ -214,9 +214,9 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | 2 441 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 556 € | -36,3 % |
-| 4. La proposition | 1 917 € | -21,5 % |
+| 1. Actuel | 2 366 € | référence |
+| 3. Ce qui a été cotisé, deux parts | 1 556 € | -34,3 % |
+| 4. La proposition | 1 917 € | -19,0 % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large
@@ -241,7 +241,7 @@ Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (militaire non
   officier, +69 % pour la génération 2000) et la moins bien traitée (carrière
-  interrompue, -36 %), et les 105 points qui les séparent. Dire aussitôt
+  interrompue, -34 %), et les 103 points qui les séparent. Dire aussitôt
   d'où vient le premier : le droit en vigueur laisse ce militaire partir à
   44 ans, après vingt-cinq ans de services, et la proposition le fait servir
   jusqu'à 65 ans —
@@ -315,7 +315,7 @@ cet ordre :
 | | |
 |---|---|
 | Prélevé chaque mois sur un salaire moyen | 940 €, cotisation salariale et patronale réunies |
-| Promis au-delà de ce que ces cotisations financent | 34 % de la pension |
+| Promis au-delà de ce que ces cotisations financent | 33 % de la pension |
 | Non financé en 2070, sans rien changer | 16 % |
 
 Le 940 € est le chiffre qui porte : c'est le premier poste de la fiche de

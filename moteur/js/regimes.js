@@ -2355,6 +2355,9 @@ export class ValeursPoint {
         valeurs: annees.map((a) => valeurs[String(a)]),
       });
     }
+    // Ce que suit le prix d'achat au-delà du dernier barème publié : régime ->
+    // [indice, décalage en années, fiabilité du prix prolongé].
+    this._prolongements = new Map(Object.entries(paquet.prolongement_points ?? {}));
   }
 
   /**
@@ -2396,6 +2399,38 @@ export class ValeursPoint {
     const appel = this._enVigueur(regime, "taux_appel", annee);
     const [taux, fiabiliteAppel] = appel !== null ? appel : [1.0, 1];
     return [reference[0], taux, Math.min(reference[1], fiabiliteAppel)];
+  }
+
+  /**
+   * Prix d'achat d'un point, publié ou, au-delà du dernier barème, prolongé
+   * comme `regimes/prolongement_points.csv` le dit du régime : le dernier
+   * salaire de référence publié suit l'indice que son texte nomme, au dernier
+   * taux d'appel. La valeur d'achat de l'Agirc-Arrco suit le salaire moyen,
+   * avec un an de retard (fiche `agirc_arrco_valeur_achat`). Sans prolongement,
+   * rien au-delà du dernier barème. Voir scenarios/actuel.py.
+   */
+  achatProlonge(regime, annee, macro) {
+    const achat = this.achat(regime, annee);
+    if (achat !== null) {
+      return achat;
+    }
+    const regle = this._prolongements.get(regime);
+    const publiees = this._table.get(`${regime}|salaire_reference`);
+    if (regle === undefined || publiees === undefined
+        || annee <= publiees.annees[publiees.annees.length - 1]) {
+      return null;
+    }
+    const derniere = publiees.annees[publiees.annees.length - 1];
+    const dernier = this.achat(regime, derniere);
+    if (dernier === null) {
+      return null;
+    }
+    const [, decalage, fiabilite] = regle;
+    const [reference, tauxAppel, fiabiliteAchat] = dernier;
+    return [
+      reference * macro.coefficientSalaireMoyen(derniere - decalage, annee - decalage),
+      tauxAppel, Math.min(fiabiliteAchat, fiabilite),
+    ];
   }
 
   /**

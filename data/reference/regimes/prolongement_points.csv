@@ -1,0 +1,25 @@
+# Le prix d'achat du point au-delà du dernier barème publié
+# fiche: agirc_arrco_valeur_achat (data/reference/regles/)
+#
+# valeurs_point.csv s'arrête au dernier barème publié. Au-delà, un régime que
+# ce fichier ne nomme pas n'a plus de prix d'achat : ses cotisations passent
+# par le rendement instantané de rendements_points.csv, c'est-à-dire par un
+# prix d'achat et une valeur de service qui suivent tous deux les prix.
+#
+# Un régime qu'il nomme garde ses points : le salaire de référence d'une année
+# postérieure est le dernier publié, porté par l'indice que la colonne `suit`
+# désigne, au dernier taux d'appel. La valeur de service qui sert ces points
+# reste prolongée par les prix (droit/liquider.py, valeur_du_point).
+#
+#   suit       salaire_moyen : le salaire moyen par tête du modèle, nominal
+#              (macro/salaire_moyen.csv, puis le scénario de projection)
+#   decalage   le retard de l'indice sur le barème, en années. La valeur
+#              d'achat de l'Agirc-Arrco « évolue au premier janvier de chaque
+#              année [...] comme le salaire annuel moyen des ressortissants du
+#              régime tel qu'estimé pour l'exercice précédent » (accord du
+#              5 octobre 2023, article 5.1) : celle de 2027 suit la croissance
+#              de 2026.
+#   fiabilite  celle du prix prolongé : le dernier texte prolongé, non un
+#              barème lu.
+regime,suit,decalage,fiabilite
+agirc_arrco,salaire_moyen,1,moyenne

@@ -272,6 +272,26 @@ export class DonneesMacro {
   }
 
   /**
+   * Coefficient de passage par le salaire moyen par tête, d'une année à
+   * l'autre : le produit de ses croissances nominales. Prolonge un barème que
+   * son texte indexe sur les salaires : la valeur d'achat du point
+   * Agirc-Arrco, au-delà du dernier barème publié. Voir donnees/macro.py.
+   */
+  coefficientSalaireMoyen(depart, arrivee) {
+    if (arrivee === depart) {
+      return 1.0;
+    }
+    if (arrivee > depart) {
+      let coefficient = 1.0;
+      for (let annee = depart + 1; annee <= arrivee; annee += 1) {
+        coefficient *= 1 + this.salaire_moyen.valeur(annee);
+      }
+      return coefficient;
+    }
+    return 1.0 / this.coefficientSalaireMoyen(arrivee, depart);
+  }
+
+  /**
    * Coefficient de passage par le SMIC, d'une année à l'autre.
    *
    * Plusieurs montants du droit positif ne suivent ni les prix ni les salaires

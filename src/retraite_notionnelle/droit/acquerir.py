@@ -6,8 +6,9 @@ Ce que chaque année verse aux régimes qui la reçoivent, et ce qu'ils en font 
   trimestre validé ou le barème nommé de la proportionnelle agricole, chacun
   avec le taux de majoration pour enfants de son année d'acquisition ;
 * des COTISATIONS, revalorisées aux prix de l'année de liquidation, pour les
-  régimes dont on n'a pas le prix d'achat du point, que la liquidation
-  convertit par leur rendement ;
+  régimes dont on n'a pas le prix d'achat du point, et pour les années qui
+  suivent le dernier barème quand aucun texte ne dit ce que ce prix suit, que
+  la liquidation convertit par leur rendement ;
 * la DURÉE qu'un régime plafonne, et la part de ses points qu'il retient ;
 * les POINTS attribués sans cotisation, à la liquidation.
 
@@ -572,7 +573,13 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         regime.fiabilite, fiabilite_echelle,
                     )
                     continue
-                achat = (moteur.valeurs_point.achat(bareme, ligne.annee)
+                # Au-delà du dernier barème publié, le prix que le texte du
+                # régime prolonge : la valeur d'achat de l'Agirc-Arrco suit le
+                # salaire moyen (`ValeursPoint.achat_prolonge`). Ses années ont
+                # des points, et non des cotisations au rendement de 2026, qui
+                # faisaient suivre les prix au prix d'achat.
+                achat = (moteur.valeurs_point.achat_prolonge(
+                             bareme, ligne.annee, moteur.macro)
                          if periode.type_calcul in ("points", "mixte") else None)
                 if achat is not None:
                     reference, taux_appel, fiabilite_achat = achat

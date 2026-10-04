@@ -469,8 +469,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           ));
           continue;
         }
+        // Au-delà du dernier barème publié, le prix que le texte du régime
+        // prolonge : la valeur d'achat de l'Agirc-Arrco suit le salaire moyen.
+        // Voir acquerir.py.
         const achat = (periode.type_calcul === "points" || periode.type_calcul === "mixte")
-          ? moteur.valeursPoint.achat(bareme, ligne.annee)
+          ? moteur.valeursPoint.achatProlonge(bareme, ligne.annee, moteur.macro)
           : null;
         if (achat !== null) {
           const [reference, tauxAppel] = achat;

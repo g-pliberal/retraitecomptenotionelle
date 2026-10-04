@@ -1504,7 +1504,11 @@ def valeur_du_point(moteur, code: str,
     liquidation par l'indice des prix, pris un an plus tôt comme la
     revalorisation du 1er janvier le prend. C'est une approximation, signalée
     comme telle par la fiabilité renvoyée ; c'est surtout un aveu
-    d'ignorance, préférable à un coefficient inventé.
+    d'ignorance, préférable à un coefficient inventé. Pour l'Agirc-Arrco, dont
+    les accords projettent la valeur de service au salaire moyen moins
+    1,16 %, c'est la convention de « Mon estimation retraite », qui compte les
+    points à leur valeur actuelle : la fiche ``agirc_arrco_valeur_achat`` garde
+    les deux lectures.
     """
     conversion = 1.0
     courant = code

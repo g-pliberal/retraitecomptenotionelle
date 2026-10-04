@@ -246,20 +246,17 @@ function nouvellePension(moteur, code, salaires, periode, dateEffet, requis, pla
 
 /**
  * Le prix d'achat d'un point de l'Agirc-Arrco : le salaire de référence et le
- * taux d'appel de l'année ; au-delà du dernier publié, le salaire de référence
- * suit le plafond de la sécurité sociale.
+ * taux d'appel de l'année ; au-delà du dernier publié, celui que le texte
+ * prolonge sur le salaire moyen, comme pour la première pension. Voir
+ * seconde.py.
  */
 function prixDuPoint(moteur, annee) {
-  for (let connu = annee; connu >= 2019; connu -= 1) {
-    const achat = moteur.valeursPoint.achat(AGIRC_ARRCO, connu);
-    if (achat !== null && achat !== undefined) {
-      const [reference, tauxAppel] = achat;
-      const macro = moteur.macro;
-      return [reference * macro.plafond_securite_sociale.valeur(annee)
-        / macro.plafond_securite_sociale.valeur(connu), tauxAppel];
-    }
+  const achat = moteur.valeursPoint.achatProlonge(AGIRC_ARRCO, annee, moteur.macro);
+  if (achat === null) {
+    return null;
   }
-  return null;
+  const [reference, tauxAppel] = achat;
+  return [reference, tauxAppel];
 }
 
 /**

@@ -1,0 +1,365 @@
+schema_version: 1
+id: agirc_arrco_valeur_achat
+intitule: >-
+  La valeur d'achat du point Agirc-Arrco, qui convertit en points la cotisation de
+  l'année, évolue chaque 1er janvier comme le salaire annuel moyen des ressortissants du
+  régime estimé pour l'année précédente ; au-delà du dernier barème publié, le modèle
+  prolonge le dernier salaire de référence par le salaire moyen du modèle, avec un an de
+  retard, et la valeur de service qui sert ces points par les prix.
+domaine: points
+regimes: [agirc_arrco]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- la cotisation de chaque année au régime, et son année
+- le dernier salaire de référence publié et le taux d'appel (regimes/valeurs_point.csv)
+- la croissance nominale du salaire moyen par tête du modèle (macro/salaire_moyen.csv, puis
+  le scénario de projection de macro/hypotheses_projection.yaml)
+- le prolongement que regimes/prolongement_points.csv déclare
+ecrit:
+- les points Agirc-Arrco des années postérieures au dernier barème publié, achetés au
+  salaire de référence prolongé
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_le_regime_unifie
+  statut: lue
+  textes:
+  - reference: >-
+      accord national interprofessionnel du 10 mai 2019 sur la retraite complémentaire
+      Agirc-Arrco, dans la publication de la fédération (hors JORF)
+    article: préambule
+    en_vigueur: 2019-01-01
+    citation: >-
+      « L'accord national interprofessionnel du 17 novembre 2017 a institué, à effet du
+      1er janvier 2019, un nouveau régime de retraite complémentaire issu du rapprochement
+      de l'Agirc et de l'Arrco. »
+    lu_le: 2026-10-04
+    empreinte: sha256:0f239c783c1a328ba15022f27f961beabead8ab29c76346986312edaccd3f5b3
+  bornes:
+    revenu.annee: [null, 2019-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      le régime unifié naît au 1er janvier 2019 : avant, l'Agirc et l'Arrco achetaient
+      leurs points chacun à son salaire de référence, publié jusqu'en 2018 et lu dans
+      regimes/valeurs_point.csv ; aucun des deux n'est prolongé, leurs points étant repris
+      par le régime unifié
+  exemples: aucun trouvé
+- id: salaire_moyen_2019_2022
+  statut: lue
+  textes:
+  - reference: >-
+      accord national interprofessionnel du 10 mai 2019 sur la retraite complémentaire
+      Agirc-Arrco, dans la publication de la fédération (hors JORF) ; KALITEXT000039097685
+      sur Légifrance
+    article: article 2, « Valeur d'achat du point »
+    en_vigueur: 2019-01-01
+    citation: >-
+      « La valeur d'achat du point évolue au premier janvier de chaque année (2019, 2020,
+      2021, 2022) comme le salaire annuel moyen des ressortissants du régime tel
+      qu'estimé pour l'exercice précédent. En conséquence, elle est fixée pour 2019 à
+      17,0571 €. »
+    lu_le: 2026-10-04
+    empreinte: sha256:0f239c783c1a328ba15022f27f961beabead8ab29c76346986312edaccd3f5b3
+  - reference: >-
+      même accord, annexe 1, « Projections financières Agirc-Arrco sur la base du scénario
+      économique « Variante 2 » »
+    article: annexe 1, « Hypothèse retenue »
+    citation: >-
+      « Indexation de la valeur d'achat du point sur l'évolution du salaire moyen » ;
+      « Indexation de la valeur de service du point sur les prix pendant 4 ans (2019-2022)
+      puis sur l'évolution du salaire moyen affectée d'un coefficient de soutenabilité de -
+      1,16 % pendant 11 ans (2023-2033) »
+    lu_le: 2026-10-04
+    empreinte: sha256:0f239c783c1a328ba15022f27f961beabead8ab29c76346986312edaccd3f5b3
+  bornes:
+    revenu.annee: [2019-01-01, 2023-01-01]
+  contenu:
+    droit: >-
+      Le salaire de référence de l'année, prix d'un point, suit le salaire annuel moyen
+      des ressortissants estimé pour l'année précédente ; le conseil d'administration le
+      fixe chaque année dans ce cadre (article 6.4). Les barèmes publiés de 2019 à 2022 —
+      17,0571 €, 17,3982 €, 17,3982 € et 17,4316 € — sont dans regimes/valeurs_point.csv,
+      certifiés sur la compilation de la fédération : le modèle les lit, il ne les
+      recalcule pas.
+    parametres:
+      prix_du_point: le salaire de référence publié de l'année, au taux d'appel de 127 %
+  exemples: aucun trouvé
+- id: salaire_moyen_2023_2026
+  statut: lue
+  textes:
+  - id: KALITEXT000048674954
+    reference: >-
+      accord national interprofessionnel du 5 octobre 2023 relatif à la retraite
+      complémentaire Agirc-Arrco, étendu et élargi par arrêtés du 18 décembre 2023 (JORF du
+      9 janvier 2024), lu sur Légifrance
+    article: article 5, « Valeur d'achat du point »
+    en_vigueur: 2023-01-01
+    citation: >-
+      « La valeur d'achat du point évolue au premier janvier de chaque année 2023 à 2026
+      comme le salaire annuel moyen des ressortissants du régime tel qu'estimé pour
+      l'exercice précédent. En conséquence, elle est fixée : – pour 2023 à 18,7669 € ; –
+      pour 2024 à 19,6321 €. En aucun cas pendant cette période 2023 à 2026, la valeur
+      d'achat du point ne peut diminuer en valeur absolue. » (5.1) ; « Le conseil
+      d'administration fixe, pour les années 2025 et 2026, la valeur d'achat du point dans
+      le respect des orientations stratégiques définies au point 5.1 et des règles
+      suivantes : En cas d'écart entre la prévision de l'année ou des années précédente(s)
+      et l'évolution constatée du salaire annuel moyen des ressortissants du régime, il
+      est procédé à un rattrapage. » (5.2)
+    lu_le: 2026-10-04
+  - id: KALITEXT000048674954
+    reference: même accord, annexe 1, « Hypothèses d'indexations retenues »
+    article: annexe 1
+    citation: >-
+      « Indexation de la valeur d'achat sur l'évolution du salaire moyen. Indexation de la
+      valeur de service : – 2023 : + 4,9 % ; – 2024-2026 : inflation hors tabac – 0,4 % ;
+      – 2027-2037 : Salaire moyen – 1,16 %. »
+    lu_le: 2026-10-04
+  - reference: >-
+      Agirc-Arrco, communiqué de presse du 17 octobre 2025, « Les retraites
+      complémentaires Agirc-Arrco ne seront pas revalorisées » (hors JORF)
+    article: communiqué
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Ce 17 octobre, faute d'accord entre les représentants des organisations patronales
+      et syndicales qui le composent, les retraites complémentaires Agirc-Arrco ne seront
+      pas revalorisées au 1er novembre 2025. La valeur d'achat du point Agirc-Arrco ne sera
+      pas modifiée au 1er janvier 2026. »
+    lu_le: 2026-10-04
+    empreinte: sha256:a97f2c387043cd3ef8dc8506f9b719b0786ad70d8691b41f4241ae103a6f87ff
+  bornes:
+    revenu.annee: [2023-01-01, 2027-01-01]
+  contenu:
+    droit: >-
+      La même règle, de 2023 à 2026, avec un plancher : la valeur d'achat ne baisse pas,
+      et un rattrapage corrige la prévision du salaire moyen. Barèmes publiés, dans
+      regimes/valeurs_point.csv : 18,7669 € en 2023, 19,6321 € en 2024, 20,1877 € en 2025,
+      et 20,1877 € en 2026, que le conseil d'administration a laissé inchangé faute
+      d'accord, le 17 octobre 2025, en même temps qu'il gelait la valeur de service à
+      1,4386 €. Le gel de 2026 n'applique pas la règle de l'article 5.1 : il est le
+      barème, et le modèle le lit.
+    parametres:
+      prix_du_point: le salaire de référence publié de l'année, au taux d'appel de 127 %
+      # Le facteur que l'annexe 1 retire au salaire moyen pour projeter la valeur
+      # de service de 2027 à 2037 : une hypothèse de projection financière, que
+      # le modèle ne suit pas (voir les lectures divergentes).
+      soutenabilite_valeur_service_projetee: 0.0116
+  exemples: aucun trouvé
+- id: salaire_moyen_au_dela_du_bareme
+  statut: supposee
+  nee_de: KALITEXT000048674954
+  hypothese: >-
+    le dernier texte reste en vigueur. L'accord du 5 octobre 2023 arrive à échéance le 31
+    décembre 2026, et celui qui fixera les orientations de 2027 à 2030 se négocie encore
+    le 4 octobre 2026 ; l'accord du 17 novembre 2017, conclu sans terme, détermine la
+    valeur d'achat « en fonction du taux d'évolution du salaire moyen des ressortissants
+    du régime, éventuellement corrigé d'un facteur de soutenabilité », et les deux
+    accords quadriennaux l'ont fait suivre ce salaire sans correction, comme leurs
+    annexes la projettent. Le modèle prolonge donc le dernier salaire de référence publié
+    par la croissance du salaire moyen par tête de son scénario, celle de l'année
+    précédente, sans facteur de soutenabilité ni rattrapage du gel de 2026
+  fiabilite: moyenne
+  textes:
+  - id: KALITEXT000036731682
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco de retraite complémentaire, étendu et élargi par l'arrêté du 24 avril
+      2018 (JORFTEXT000036847920), lu sur Légifrance dans sa version en vigueur
+    article: article 28, « Valeur d'achat du point (prix d'acquisition d'un point de retraite) »
+    en_vigueur: 2019-01-01
+    citation: >-
+      « La valeur d'achat du point, paramètre servant au calcul du nombre de points à
+      inscrire au compte des participants salariés, est fixée par le conseil
+      d'administration de la fédération dans le respect des décisions prises par les
+      partenaires sociaux. Elle est déterminée en fonction du taux d'évolution du salaire
+      moyen des ressortissants du régime, éventuellement corrigé d'un facteur de
+      soutenabilité selon des critères définis à l'article 25 et tenant compte de la
+      situation économique et du marché du travail. La valeur d'achat du point est
+      déterminée, chaque année, au même moment que la valeur de service du point et prend
+      effet au 1er janvier de l'année suivante. »
+    lu_le: 2026-10-04
+  - id: KALITEXT000048674954
+    reference: accord national interprofessionnel du 5 octobre 2023, lu sur Légifrance
+    article: article 10, « Dispositions finales »
+    en_vigueur: 2023-01-01
+    citation: >-
+      « le présent accord est conclu pour une durée de quatre ans. Il arrive à échéance le
+      31 décembre 2026. »
+    lu_le: 2026-10-04
+  bornes:
+    revenu.annee: [2027-01-01, null]
+  contenu:
+    droit: >-
+      Pour une année postérieure au dernier barème publié — 2027 et au-delà le 4 octobre
+      2026 —, le salaire de référence est le dernier publié, multiplié par la croissance
+      du salaire moyen par tête du modèle entre l'année qui précède le dernier barème et
+      celle qui précède l'année d'acquisition : celui de 2027 suit la croissance de 2026,
+      2,45 % au scénario de référence, soit 20,6823 €. Le taux d'appel reste le dernier en
+      vigueur, 127 %. Les points s'achètent ainsi environ 0,7 % par an plus cher qu'aux
+      prix, et la valeur de service qui les sert à la liquidation suit les prix
+      (droit/liquider.py, valeur_du_point).
+    parametres:
+      indice: salaire_moyen
+      decalage: 1
+      fichier: regimes/prolongement_points.csv
+  exemples: aucun trouvé
+approximations:
+- version: salaire_moyen_au_dela_du_bareme
+  ecart: >-
+    Le salaire moyen est celui du modèle — le salaire moyen par tête des comptes
+    nationaux, puis la croissance de son scénario de projection, 2,45 % par an en nominal
+    au scénario de référence —, non celui des ressortissants du régime, que la fédération
+    estime pour ses salariés du privé et que le dépôt ne porte pas. Ni facteur de
+    soutenabilité, ni rattrapage du gel de 2026, que le prochain accord peut décider.
+  effet: >-
+    non mesuré contre le salaire des ressortissants. Confrontée le 4 octobre 2026 à « Mon
+    estimation retraite », la page achetait les points d'une carrière à plus de trente
+    ans du départ comme si leur prix croissait de 0,55 à 0,6 % par an au-delà des prix ;
+    le modèle les achète à 0,69 %. Sur des carrières fictives parties à 64 ans, la
+    complémentaire ressort désormais de 0,5 % (née en 1975) à 2,8 % (née en 2005)
+    au-dessous d'un prix croissant de 0,575 %, quand elle ressortait de 2,4 % à 15,7 %
+    au-dessus
+- version: salaire_moyen_au_dela_du_bareme
+  ecart: >-
+    La valeur de service des liquidations postérieures au dernier barème suit les prix,
+    avec un an de retard, comme pour tout régime en points (valeur_du_point). L'accord du
+    17 novembre 2017 la détermine « en fonction du taux d'évolution du salaire moyen des
+    ressortissants du régime éventuellement corrigé d'un facteur de soutenabilité »
+    (article 27), et l'annexe de l'accord du 5 octobre 2023 la projette de 2027 à 2037 au
+    « Salaire moyen – 1,16 % », soit 1,29 % par an au scénario de référence, 0,46 point
+    sous les prix ; « Mon estimation retraite » compte les points à leur « valeur
+    actuelle ». Le modèle suit la page et sa propre convention : voir les lectures
+    divergentes.
+  effet: >-
+    non mesuré dans le modèle. Une valeur de service qui suivrait l'annexe plutôt que les
+    prix servirait environ 0,46 % de moins par année de liquidation après 2026 : près de
+    9 % de moins pour une liquidation en 2046, 16 % pour une liquidation en 2064
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2026-10-31
+  a_relire:
+  - >-
+    La décision du conseil d'administration attendue le 14 octobre 2026 : la valeur de
+    service au 1er novembre 2026 et la valeur d'achat de 2027, « déterminée, chaque
+    année, au même moment que la valeur de service du point » (article 28). Publiée, la
+    valeur d'achat de 2027 entre dans regimes/valeurs_point.csv par le récupérateur de la
+    fédération (scripts/fetch/agirc_arrco_valeurs_point.py), et le prolongement part de
+    2028.
+  - >-
+    L'accord national interprofessionnel de 2027 à 2030, dès sa signature : s'il corrige
+    la valeur d'achat d'un facteur de soutenabilité, rattrape le gel de 2026 ou indexe
+    autrement la valeur de service, la version supposée se coupe, et prolongement_points.csv
+    suit.
+  - >-
+    Le salaire annuel moyen des ressortissants du régime, que la fédération estime et que
+    ses accords citent : une série publiée permettrait de mesurer ce que le salaire moyen
+    par tête du modèle en écarte.
+  lectures_divergentes:
+  - >-
+    La valeur de service au-delà de 2026. L'accord du 17 novembre 2017 la fait déterminer
+    en fonction du salaire moyen des ressortissants, « éventuellement corrigé d'un facteur
+    de soutenabilité » (article 27) ; l'annexe 1 de l'accord du 5 octobre 2023 la projette
+    au « Salaire moyen – 1,16 % » de 2027 à 2037, comme celle du 10 mai 2019 de 2023 à
+    2033 ; « Mon estimation retraite » compte les points à leur « valeur actuelle », ce
+    qui revient à une valeur de service qui suit les prix ; le modèle la prolonge par les
+    prix. Aucune source ne tranche : le facteur n'est pas encore décidé, et l'annexe est
+    une hypothèse de projection financière, non une règle. Le scénario 1 garde les prix,
+    la convention du simulateur officiel, et le dit (§ 3.3, point 5).
+  lectures:
+  - type: legifrance
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco, articles 25 à 29 (« Pilotage »), version en vigueur sur Légifrance
+      (KALITEXT000036731682) : article 27, la valeur de service « déterminée en fonction du
+      taux d'évolution du salaire moyen des ressortissants du régime éventuellement corrigé
+      d'un facteur de soutenabilité », revalorisée au 1er novembre ; article 28, la valeur
+      d'achat, de même, avec effet au 1er janvier de l'année suivante
+    date: 2017-11-17
+    url: https://www.legifrance.gouv.fr/conv_coll/id/KALITEXT000036731682
+  - type: autre
+    reference: >-
+      accord national interprofessionnel du 10 mai 2019 sur la retraite complémentaire
+      Agirc-Arrco : article 1er, la valeur de service sur le salaire moyen moins un facteur
+      de soutenabilité, au moins comme les prix ; article 2, la valeur d'achat ; article
+      6.4, le conseil d'administration la fixe chaque année ; annexe 1, les deux
+      indexations projetées (copie datée,
+      sha256:0f239c783c1a328ba15022f27f961beabead8ab29c76346986312edaccd3f5b3)
+    date: 2019-05-10
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2021/11/Accord_national_interprofessionnel_10052019.pdf
+  - type: legifrance
+    reference: >-
+      accord national interprofessionnel du 5 octobre 2023 relatif à la retraite
+      complémentaire Agirc-Arrco, sur Légifrance (KALITEXT000048674954) : article 4, la
+      valeur de service 2024-2026 « comme les prix à la consommation hors tabac estimée pour
+      l'année en cours moins un facteur de soutenabilité de 0,40 point », « Par exception à
+      l'application de l'article 27 de l'ANI du 17 novembre 2017 » ; article 5, la valeur
+      d'achat ; article 10, l'échéance du 31 décembre 2026 ; annexe 1, les indexations
+      projetées jusqu'en 2037
+    date: 2023-10-05
+    url: https://www.legifrance.gouv.fr/conv_coll/id/KALITEXT000048674954
+  - type: autre
+    reference: >-
+      Agirc-Arrco, communiqué de presse du 17 octobre 2025 : ni revalorisation au 1er
+      novembre 2025, ni changement de la valeur d'achat au 1er janvier 2026, faute
+      d'accord au conseil d'administration (copie datée,
+      sha256:a97f2c387043cd3ef8dc8506f9b719b0786ad70d8691b41f4241ae103a6f87ff)
+    date: 2025-10-17
+    url: https://www.agirc-arrco.fr/storage/20251017_CP_Revalorisation-valeur-du-point-Agirc-Arrco.pdf
+  - type: autre
+    reference: >-
+      presse spécialisée de septembre 2026 (Meilleurtaux Placement, 28 septembre 2026) : le
+      conseil d'administration décide de la revalorisation le 14 octobre 2026, et l'accord
+      de 2027 à 2030 n'est pas conclu ; aucune règle nouvelle pour la valeur d'achat
+    date: 2026-09-28
+    url: https://placement.meilleurtaux.com/retraite/actualites/2026-septembre/agirc-arrco-quels-scenarios-de-hausse-au-1er-novembre-2026.html
+  - type: autre
+    reference: >-
+      « Mon estimation retraite » (simulateur 27.50.5 d'info-retraite), confrontée le 4
+      octobre 2026 à une carrière réelle à plus de trente ans du départ (feuille de route,
+      action 142, étape 2) : la retraite de base concorde à l'euro ; les points
+      Agirc-Arrco de la page se retrouvent à un demi pour cent près avec un prix d'achat
+      qui croît de 0,55 à 0,6 % par an au-delà des prix, et la complémentaire du modèle,
+      qui gardait le rendement de 2026, ressortait de 8,8 à 9,0 % au-dessus
+    date: 2026-10-04
+    url: https://www.info-retraite.fr/portail-services/sir
+code:
+  python: >-
+    donnees/macro.py : DonneesMacro.coefficient_salaire_moyen ; scenarios/actuel.py :
+    ValeursPoint.achat_prolonge, qui lit regimes/prolongement_points.csv ;
+    droit/acquerir.py : acquerir, les points de chaque année ; droit/seconde.py :
+    _prix_du_point, ceux de la seconde pension, qui suivaient le plafond de la sécurité
+    sociale ; droit/liquider.py : valeur_du_point, la valeur de service prolongée par les
+    prix
+  javascript: >-
+    moteur/js/macro.js : coefficientSalaireMoyen ; moteur/js/regimes.js :
+    ValeursPoint.achatProlonge ; moteur/js/droit/acquerir.js : acquerir ;
+    moteur/js/droit/seconde.js : prixDuPoint ; le paquet porte prolongement_points
+    (scripts/construire_donnees.py)
+  parametres: >-
+    regimes/prolongement_points.csv : agirc_arrco, salaire_moyen, décalage d'un an,
+    fiabilité moyenne ; les salaires de référence et le taux d'appel publiés de
+    regimes/valeurs_point.csv ; la croissance du salaire moyen de macro/salaire_moyen.csv
+    et de macro/hypotheses_projection.yaml. La ligne agirc_arrco 2027-2100 de
+    regimes/rendements_points.csv ne sert plus que de filet
+  tests: >-
+    tests/test_simulateur.py :
+    test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme,
+    test_les_annees_apres_le_dernier_bareme_agirc_arrco_ont_des_points,
+    test_le_prix_du_point_n_est_pas_prolonge_au_dela_du_publie ; les témoins de simulation,
+    que le portage rejoue
+historique:
+- >-
+  Jusqu'au 4 octobre 2026, les cotisations des années postérieures au dernier barème
+  publié passaient par le rendement instantané du dernier barème, 5,61 % (fiche
+  ircantec_valeurs_point) : un prix d'achat et une valeur de service qui suivaient tous
+  deux les prix. La confrontation à « Mon estimation retraite » (action 142, étape 2) a
+  montré l'écart, et les accords l'ont tranché.
+effet: >-
+  Toute carrière qui cotise à l'Agirc-Arrco après 2026 : ses points de ces années coûtent
+  le salaire moyen et non les prix, environ 0,7 % de plus par année d'écart à 2026. Sur
+  des carrières fictives entrées à 22 ans et parties à 64, la complémentaire baisse de 2,8
+  % pour une salariée non cadre née en 1975, de 7,6 % pour 1990 et de 14,6 % pour 2005 —
+  de 3,2 %, 8,6 % et 16,0 % pour une cadre —, la pension totale de 0,4 % à 4,1 % ; rien ne
+  bouge pour qui a liquidé avant 2027.

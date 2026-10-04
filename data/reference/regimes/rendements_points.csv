@@ -47,7 +47,12 @@ agirc_arrco,2019,2026,0.0581,haute
 # Au-delà du dernier barème publié, le rendement de ce barème, comme pour le
 # RCI plus bas : la moyenne 2019-2026, 5,81 %, prêtait aux années projetées
 # un rendement que le régime ne sert plus depuis 2023. 2026 : 1,4386 /
-# (1,27 × 20,1877).
+# (1,27 × 20,1877). CETTE LIGNE NE SERT PLUS QUE DE FILET : depuis le
+# 4 octobre 2026, les années postérieures au dernier barème achètent des
+# points, au salaire de référence que prolongement_points.csv fait suivre le
+# salaire moyen (fiche agirc_arrco_valeur_achat). Un rendement constant
+# faisait suivre les prix au prix d'achat, que les accords indexent sur les
+# salaires.
 agirc_arrco,2027,2100,0.0561,haute
 ircantec,1971,1989,0.2281,haute
 ircantec,1990,2008,0.1225,haute

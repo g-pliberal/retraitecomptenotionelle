@@ -14,24 +14,24 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | régime partiel | 4 354 564 | 11 % |
 | sections libérales, couverture mêlée | 424 386 | 1 % |
 
-*Modélisé ne veut pas dire exact* : les 56 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
+*Modélisé ne veut pas dire exact* : les 57 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
 
-**La carte des règles** (`data/reference/regles/`) : 144 fiches, dont 1 relation. La veille en est une vue (`python scripts/veille_droit.py`).
+**La carte des règles** (`data/reference/regles/`) : 145 fiches, dont 1 relation. La veille en est une vue (`python scripts/veille_droit.py`).
 
 | État | Fiches |
 |---|---|
 | conformes | 49 |
 | transcrites | 25 |
-| approchées | 56 |
+| approchées | 57 |
 | pas encore modélisées | 10 |
 | manquantes | 3 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **42 sur 144** (119 exemples : 114 reproduits, 5 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **42 sur 144**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
-- Désignées par les interrupteurs des périodes de régime : **43 sur 144**, par 2 292 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
-- Mûres, sans rien qui manque à leur contrat : **34 sur 144**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **34 sur 144**, soit 148 versions, dont 18 supposées ; le partage des versions se contrôle sur chacune.
+- Confrontées à au moins un exemple officiel : **42 sur 145** (119 exemples : 114 reproduits, 5 en écart connu, section 2).
+- Citées dans le code par leur identifiant : **43 sur 145**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Désignées par les interrupteurs des périodes de régime : **43 sur 145**, par 2 292 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
+- Mûres, sans rien qui manque à leur contrat : **35 sur 145**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
+- Découpées en versions : **35 sur 145**, soit 152 versions, dont 19 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 111, dont 10 déclarées non appliquées.
 
 **La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 11 617 rédactions d'articles, de 67 textes, lues le 2026-10-01 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20260930-215413). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
@@ -74,7 +74,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `preparer_la_chronologie` | `droit/preparer.py` | la chronologie, présomptions posées (contrat C.1) | aucune encore |
 | `coordonner_les_affiliations` | `droit/coordonner.py` | les régimes qui reçoivent chaque ligne, les rétablissements, les groupes | `cci_paris_transfert_2006`, `cci_roubaix_transfert_1998`, `compagnie_generale_eaux_transfert_1991`, `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `parlement_europeen_affiliation`, `retablissement_fonction_publique`, `totalisation_des_periodes_etrangeres` |
 | `compter_les_durees` | `droit/compter.py` | les trimestres de chaque compte, par régime et par année ; ceux des enfants | `enfants_fonction_publique`, `fin_indemnisation_chomage`, `majoration_duree_assurance_enfants`, `priorite_majorations_enfants`, `services_et_duree_fonction_publique` |
-| `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `assiette_minimale_agricole`, `assiette_minimale_independants`, `asv_medecins_ajustement`, `chomage_retraite_complementaire`, `cotisation_par_classes_liberales`, `droits_apres_la_premiere_pension`, `financement_chomage_complementaire`, `garantie_minimale_points_agirc`, `rco_points_gratuits`, `retraite_proportionnelle_msa`, `services_passes_outre_mer` |
+| `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `agirc_arrco_valeur_achat`, `assiette_minimale_agricole`, `assiette_minimale_independants`, `asv_medecins_ajustement`, `chomage_retraite_complementaire`, `cotisation_par_classes_liberales`, `droits_apres_la_premiere_pension`, `financement_chomage_complementaire`, `garantie_minimale_points_agirc`, `rco_points_gratuits`, `retraite_proportionnelle_msa`, `services_passes_outre_mer` |
 
 **La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types sans rien liquider. Les 712 témoins font chacun de 1 à 12 appels de `liquider`, liquidations d'essai comprises, et au plus 6 par départ ; aucun ne dépasse les 6 par départ que le nombre déclaré accorde (§ 7.8).
 
@@ -91,11 +91,11 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | Scénario | Univers | Couches posées sur le droit réel | Fiches ajoutées | Fiches du droit réel sans décision |
 |---|---|---|---|---|
 | 1 | `actuel` | aucune : c'est l'étalon | 0 | — |
-| 2 | `notionnel_retroactif` | `comptes_notionnels` | 5 | 84 sur 144 |
-| 3 | `notionnel_prospectif` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels` | 6 | 84 sur 144 |
-| 4 | `notionnel_retroactif_employeur` | `comptes_notionnels`, `part_patronale` | 5 | 84 sur 144 |
-| 5 | `notionnel_prospectif_employeur` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels`, `part_patronale` | 6 | 84 sur 144 |
-| 6 | `notionnel_liberal` | `comptes_notionnels`, `part_patronale`, `taux_unique`, `capitalisation_obligatoire`, `garantie_vieillesse`, `age_legal_de_la_proposition` | 8 | 84 sur 144 |
+| 2 | `notionnel_retroactif` | `comptes_notionnels` | 5 | 85 sur 145 |
+| 3 | `notionnel_prospectif` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels` | 6 | 85 sur 145 |
+| 4 | `notionnel_retroactif_employeur` | `comptes_notionnels`, `part_patronale` | 5 | 85 sur 145 |
+| 5 | `notionnel_prospectif_employeur` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels`, `part_patronale` | 6 | 85 sur 145 |
+| 6 | `notionnel_liberal` | `comptes_notionnels`, `part_patronale`, `taux_unique`, `capitalisation_obligatoire`, `garantie_vieillesse`, `age_legal_de_la_proposition` | 8 | 85 sur 145 |
 
 **La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : la veille. Restent des registres : la frontière contributive, l'inventaire des régimes.
 
@@ -138,6 +138,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `retraite_anticipee_handicap` | pas_encore_modelisee | Demande une information médicale que le modèle ne collecte pas : l'assuré est déclaré non ouvert. |
 | `retrep_avantages_temporaires` | pas_encore_modelisee | Tous les maîtres et documentalistes du privé sous contrat qui partent aux âges des enseignants publics : ceux qui avaient quinze ans d'éche… |
 | `fin_de_la_suspension_2028` | a_verifier | Tout changement de calendrier touche les générations 1965 et suivantes. |
+| `agirc_arrco_valeur_achat` | approchee | Toute carrière qui cotise à l'Agirc-Arrco après 2026 : ses points de ces années coûtent le salaire moyen et non les prix, environ 0,7 % de… |
 | `assiette_minimale_agricole` | approchee | Les chefs d'exploitation aux revenus faibles, et, à la complémentaire, tous les chefs qui cotisent depuis 2017. |
 | `assiette_minimale_independants` | approchee | Un indépendant à 3 000 € validait un trimestre au lieu de trois et n'avait ni le salaire ni les points du minimum. |
 | `asv_medecins_ajustement` | approchee | La fiche servait 36 points à tout médecin, soit jusqu'à 7,75 points de trop sous 70 000 €. |
@@ -195,9 +196,9 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `totalisation_des_periodes_etrangeres` | approchee | Toute personne qui a travaillé hors de France : 1,28 million de retraités résidaient à l'étranger fin 2024 (DREES, enquête annuelle auprès… |
 | `un_statut_par_annee` | approchee | DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux moteurs : chacune verse à son régime, sur son revenu, et… |
 
-**Un état peut-être périmé.** Pour 17 des 56 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
+**Un état peut-être périmé.** Pour 17 des 57 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
 
-**Des approximations non déclarées.** 31 des 56 fiches approchées ne déclarent encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
+**Des approximations non déclarées.** 31 des 57 fiches approchées ne déclarent encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
 
 **Les exemples officiels que le modèle ne reproduit pas**, entrés en écart connu, avec la règle qui le déclare :
 
@@ -237,8 +238,8 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - et 56 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 69 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 23 non public(s). 10 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, TRAJECTOiRE, ANCETRE, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), modele-ti, modele-social), et 145 écarts y ont été trouvés. 16 sont à confronter au scénario 1 en premier, parce que leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du registre ; dans l'ordre du registre, qui range les administrations d'abord : `destinie_2`, `ines`, `legiretraite`, `edifis`, `saphir`, `modele_as`, et 10 autres.
 - **Ce que les autres modèles font mieux** (action 138) : 279 points, lus chez 65 modèles : 225 à reprendre, 42 à trancher par le propriétaire (des choix du programme), 2 repris, 10 écartés. Les points à reprendre, par chantier de la feuille de route : 136.2 (1), 136.3 (2), 136.4 (5), 136.5 (1), 136.6 (1), 138.2 (24), 138.3 (29), 138.4 (6), 138.5 (7), 138.6 (8), 138.7 (18), 138.8 (3), 138.9 (13), 138.10 (9), 138.11 (16), 138.12 (12), 138.14 (14), 138.15 (5), 138.16 (14), 138.17 (13), 138.18 (17), 138.19 (7).
-- **Les fiches sans exemple officiel** : 102.
-- **Les domaines sans décision** (§ 8) : 84 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 22 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `cci_paris_transfert_2006`, `cci_roubaix_transfert_1998`, `chomage_retraite_complementaire`, `compagnie_generale_eaux_transfert_1991`, `cumul_emploi_retraite_et_retraite_progressive`, `cumul_emploi_retraite_fonction_publique`, `droits_apres_la_premiere_pension`, `financement_chomage_complementaire`, `interpenetration_fonction_publique`, `liquidation_regime_par_regime`, `liquidation_unique_regimes_alignes`, `parlement_europeen_affiliation`, `pension_d_invalidite_substituee`, `rafp_age_d_ouverture`, `residence_et_minimum_vieillesse`, `retablissement_fonction_publique`, `retraite_progressive`, `retraite_proportionnelle_msa`, `services_passes_outre_mer`, `totalisation_des_periodes_etrangeres`. Les 62 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
+- **Les fiches sans exemple officiel** : 103.
+- **Les domaines sans décision** (§ 8) : 85 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 23 disent leur étape, et c'est une décision qui manque : `agirc_arrco_valeur_achat`, `assiette_minimale_independants`, `asv_medecins_ajustement`, `cci_paris_transfert_2006`, `cci_roubaix_transfert_1998`, `chomage_retraite_complementaire`, `compagnie_generale_eaux_transfert_1991`, `cumul_emploi_retraite_et_retraite_progressive`, `cumul_emploi_retraite_fonction_publique`, `droits_apres_la_premiere_pension`, `financement_chomage_complementaire`, `interpenetration_fonction_publique`, `liquidation_regime_par_regime`, `liquidation_unique_regimes_alignes`, `parlement_europeen_affiliation`, `pension_d_invalidite_substituee`, `rafp_age_d_ouverture`, `residence_et_minimum_vieillesse`, `retablissement_fonction_publique`, `retraite_progressive`, `retraite_proportionnelle_msa`, `services_passes_outre_mer`, `totalisation_des_periodes_etrangeres`. Les 62 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
 - **Faire mûrir la carte** : 831 champs obligatoires manquent, à 110 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |
@@ -254,7 +255,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `approximations` | 31 |
 
 - **Les textes** : 352 rédactions à rattacher à une version de la fiche qui les cite, 770 à examiner, et 10 131 sans statut, que le cliquet tient à 10 131 au plus. Les textes qui en ont le plus : `css` 5 159, `rural` 968, `decret_46_2769` 946, `cpcmr` 633, `decret_90_1215` 335 (`python scripts/textes.py`).
-- **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`) ; 2026-12-31 (`coefficients_anticipation_agirc_arrco`).
+- **Les relectures prévues les plus proches** : 2026-10-31 (`agirc_arrco_valeur_achat`) ; 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
 ## 4. Ce que ce tableau ne sait pas encore dire
