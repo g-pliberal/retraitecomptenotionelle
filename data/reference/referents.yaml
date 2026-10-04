@@ -2549,7 +2549,7 @@ referents:
           l'ASPA.
         preuve: >-
           `R/12_cotisations.R:1956-1998`, au commit `a55816c`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il sert l'ASPA d'un couple sous le plafond du couple, sur des
@@ -6744,7 +6744,7 @@ referents:
           D. 242-8 (LEGIARTI000037456300) : 1 % sur les avantages de
           L. 131-2 autres que ceux du régime général. Le point
           rejoint ceux d'ines et de retraites_2027.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Au-dessus du plafond, il prélève sur l'artisan 0,60 %, son

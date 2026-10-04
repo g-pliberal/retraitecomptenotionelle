@@ -796,8 +796,8 @@ def test_la_bascule_net_brut_traduit_la_pension_saisie(contexte):
     assert lien, "la bascule ne mène nulle part"
     vers_brut = dict(parse_qsl(html.unescape(lien.group(1))))
     assert vers_brut["montants"] == "brut"
-    # 1 800 € nets valent environ 1 980 € bruts : une pension ne supporte que
-    # la CSG, la CRDS et la CASA, soit 9,1 %.
+    # 1 800 € nets valent environ 1 985 € bruts : 9,1 % de CSG, de CRDS et de
+    # CASA, et la cotisation maladie de 1 % de la part complémentaire.
     assert 1960 <= float(vers_brut["pension"]) <= 2000, (
         f"la pension n'a pas été traduite : {vers_brut['pension']}"
     )

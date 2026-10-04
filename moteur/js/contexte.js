@@ -18,7 +18,7 @@ import { DepensesRetraite } from "./depenses.js";
 import { ComptesRetraite, varianteDuScenario } from "./equilibre.js";
 import { Restitution } from "./restitution.js";
 import { Population } from "./population.js";
-import { salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
+import { assietteMaladie, salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur, niveauPourPension } from "./simulateur.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./droit/coordonner.js";
 import * as g from "./gabarit.js";
@@ -40,10 +40,9 @@ import {
  * page est en net, en euros de l'année de référence —, faute de quoi le refus
  * opposerait des annuels bruts à quelqu'un qui vient de taper un net mensuel.
  */
-function refusDePension(trouve, montants, constants) {
-  const afficher = (annuel) => g.euros(
-    montants.pension((annuel * constants) / MOIS_PAR_AN),
-  );
+function refusDePension(trouve, constants) {
+  // La dichotomie les a déjà nettés : il ne reste que l'unité.
+  const afficher = (annuel) => g.euros((annuel * constants) / MOIS_PAR_AN);
   if (trouve.sousLePlancher) {
     return "Aucune carrière de cette forme ne sert une pension si petite : au "
       + `revenu le plus bas que le formulaire accepte, elle sert déjà `
@@ -425,7 +424,8 @@ export class Contexte {
    * LA CIBLE EST RAMENÉE À CE QUE LE MODÈLE CALCULE, et dans cet ordre : la
    * pension saisie est mensuelle, nette peut-être, en euros constants de
    * l'année de référence ; le scénario 1 rend une pension annuelle, brute, en
-   * euros de l'année de liquidation. Le coefficient des euros constants ne
+   * euros de l'année de liquidation, que chaque tour nette quand la saisie
+   * l'est. Le coefficient des euros constants ne
    * dépend que de l'année de liquidation, jamais du niveau de revenu : il se
    * calcule une fois, avant la dichotomie, et non à chaque tour.
    */
@@ -440,21 +440,24 @@ export class Contexte {
       retraite ? parametres.annee_courante : saisie.dateDe(saisie.liquidation).annee,
       parametres.annee_euros_constants,
     );
-    const brute = saisie.enNet
-      ? saisie.pension / (1.0 - montants.tauxPension) : saisie.pension;
-    const cible = brute * MOIS_PAR_AN / constants;
+    // La cible reste dans la langue de la saisie, nette peut-être : le taux
+    // qui sépare une pension de sa nette dépend de sa part complémentaire,
+    // donc du niveau cherché. Voir `_simuler_par_pension` dans `contexte.py`.
+    const cible = saisie.pension * MOIS_PAR_AN / constants;
     const combien = parcours.length;
     const pensionDeNiveau = (niveau) => {
       const carriere = batir(new Array(combien).fill(niveau));
-      return retraite
-        ? simulateur.pensionActuelleAujourdhui(carriere)
-        : simulateur.scenarioActuel.calculer(carriere).pension_annuelle;
+      if (retraite) {
+        const echeancier = simulateur.echeancier(carriere);
+        return montants.pensionServie(echeancier.auDepart, echeancier.aujourdhui);
+      }
+      return montants.pensionServie(simulateur.scenarioActuel.calculer(carriere));
     };
 
     const trouve = niveauPourPension(pensionDeNiveau, cible,
       NIVEAU_MINIMAL, NIVEAU_MAXIMAL);
     if (!trouve.atteinte) {
-      throw new ErreurSaisie(refusDePension(trouve, montants, constants));
+      throw new ErreurSaisie(refusDePension(trouve, constants));
     }
     const carriere = batir(new Array(combien).fill(trouve.niveau));
     verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
@@ -667,11 +670,16 @@ function departEstime(simulateur, parametres, carriere, quoi) {
   const passage = simulateur.macro.coefficientPrix(
     carriere.anneeLiquidation, parametres.annee_euros_constants);
   const etages = {};
+  const regimes = simulateur.baremePrelevements.pensions.regimes_maladie;
+  let assiette = 0.0;
   const porter = (code, montant) => {
     const etage = simulateur.catalogue.obtenir(code).etage;
     etages[etage] = (etages[etage] ?? 0.0) + montant * passage;
   };
-  for (const pension of resultat.pensions_par_regime) porter(pension.regime, pension.montant);
+  for (const pension of resultat.pensions_par_regime) {
+    porter(pension.regime, pension.montant);
+    if (regimes.has(pension.regime)) assiette += pension.montant * passage;
+  }
   let minimum = 0.0;
   for (const avantage of resultat.avantages_appliques) {
     if (avantage.code === "majoration_enfants") {
@@ -690,6 +698,9 @@ function departEstime(simulateur, parametres, carriere, quoi) {
     trimestres: resultat.trimestres_valides,
     trimestres_requis: resultat.trimestres_requis,
     motif_ouverture: resultat.motif_ouverture,
+    // Ce que la cotisation maladie de 1 % frappe dans `etages`. Voir
+    // `DepartEstime.assiette_maladie` (contexte.py).
+    assiette_maladie: assiette,
     get total() {
       return Object.values(this.etages).reduce((somme, montant) => somme + montant, 0.0);
     },
@@ -804,9 +815,20 @@ function phraseStatutFerme(affiliations, code, fermeture, quand) {
  * sont bruts par nature, et le site les laisse tels quels.
  */
 export class Montants {
-  constructor(net, tauxPension, rapportNetBrutSalaire = 0, rapportNetBrutProposition = 0) {
+  constructor(net, tauxPension, rapportNetBrutSalaire = 0, rapportNetBrutProposition = 0,
+    maladie = null) {
     this.net = net;
+    // Le taux de CETTE PERSONNE : 9,1 %, et la cotisation maladie de 1 % sur la
+    // part de sa pension du scénario 1 que des complémentaires servent. Les
+    // cinq autres scénarios le gardent : la réforme ne change pas ses
+    // prélèvements, par hypothèse. Voir `Montants` dans `contexte.py`.
     this.tauxPension = tauxPension;
+    // Le taux d'une pension de base, la cotisation maladie, la part de la
+    // pension du scénario 1 qui la paie, et les régimes qui la prélèvent.
+    this.tauxSansMaladie = maladie?.tauxSansMaladie ?? tauxPension;
+    this.tauxMaladie = maladie?.tauxMaladie ?? 0;
+    this.partMaladie = maladie?.partMaladie ?? 0;
+    this.regimesMaladie = maladie?.regimesMaladie ?? new Set();
     // Ce qu'un euro de salaire brut laisse en net, au DERNIER revenu
     // d'activité. Zéro quand le statut n'a pas de fiche de paie : le taux
     // reste alors brut, faute de pouvoir le netter honnêtement.
@@ -833,8 +855,26 @@ export class Montants {
         rapportProposition = derniere.proposition.net / derniere.proposition.brut;
       }
     }
+    // LE TAUX DE LA PERSONNE, lu sur sa pension du scénario 1 telle que la page
+    // l'affiche ; sans comparaison, celui d'une pension de base. Voir
+    // `Montants.depuis` dans `contexte.py`.
+    const pensions = simulateur.baremePrelevements.pensions;
+    let part = 0;
+    const actuel = comparaison ? comparaison.actuel : null;
+    if (actuel !== null && actuel !== undefined) {
+      const servie = comparaison.aujourd_hui ?? null;
+      const [assiette, total] = assietteMaladie(pensions.regimes_maladie, actuel,
+        servie === null ? null : servie.actuel);
+      part = total > 0 ? assiette / total : 0;
+    }
     return new Montants(saisie.enNet,
-      simulateur.baremePrelevements.pensions.tauxTotal, rapport, rapportProposition);
+      pensions.tauxTotal + pensions.maladie_complementaire * part,
+      rapport, rapportProposition, {
+        tauxSansMaladie: pensions.tauxTotal,
+        tauxMaladie: pensions.maladie_complementaire,
+        partMaladie: part,
+        regimesMaladie: pensions.regimes_maladie,
+      });
   }
 
   /**
@@ -857,9 +897,46 @@ export class Montants {
     return tauxBrut * (1 - this.tauxPension) / rapport;
   }
 
-  /** Une pension, une rente, une garantie : tout ce qui se sert après. */
+  /**
+   * Une pension, une rente, une garantie : tout ce qui se sert après, au taux
+   * de la personne — celui de sa pension du scénario 1, que les cinq autres
+   * gardent.
+   */
   pension(brut) {
     return this.net ? brut * (1 - this.tauxPension) : brut;
+  }
+
+  /**
+   * Une part de pension dont `assiette` paie aussi la cotisation maladie : un
+   * étage ou une ligne du scénario 1, et non plus un total.
+   */
+  pensionDAssiette(brut, assiette) {
+    return this.net ? this.netDAssiette(brut, assiette) : brut;
+  }
+
+  /**
+   * La même, nette quel que soit le mode : la colonne du net d'un tableau qui
+   * montre les deux.
+   */
+  netDAssiette(brut, assiette) {
+    return brut * (1 - this.tauxSansMaladie) - this.tauxMaladie * assiette;
+  }
+
+  /**
+   * La pension d'un seul régime : la cotisation maladie y est toute ou rien,
+   * 10,1 % pour une complémentaire qui la prélève, 9,1 % sinon.
+   */
+  pensionDuRegime(brut, regime) {
+    return this.pensionDAssiette(brut, this.regimesMaladie.has(regime) ? brut : 0);
+  }
+
+  /**
+   * La pension du scénario 1 — du départ, ou d'aujourd'hui pour qui est déjà
+   * parti —, nette de sa propre cotisation maladie.
+   */
+  pensionServie(actuel, aujourdhui = null) {
+    const [assiette, total] = assietteMaladie(this.regimesMaladie, actuel, aujourdhui);
+    return this.pensionDAssiette(total, assiette);
   }
 
   /** Un salaire, lu sur la fiche de paie qui porte déjà les deux. */

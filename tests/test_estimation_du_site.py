@@ -126,7 +126,8 @@ def test_les_deux_moteurs_datent_et_chiffrent_les_memes_departs(contexte):
                   "minimum_vieillesse": depart.minimum_vieillesse,
                   "trimestres": depart.trimestres,
                   "trimestres_requis": depart.trimestres_requis,
-                  "motif_ouverture": depart.motif_ouverture}
+                  "motif_ouverture": depart.motif_ouverture,
+                  "assiette_maladie": depart.assiette_maladie}
                  for depart in _departs(contexte, nom)] for nom in REQUETES]
     ecarts: list[str] = []
     for nom, obtenu, attendu in zip(REQUETES, obtenus, attendus):
@@ -243,12 +244,16 @@ def test_la_page_montre_le_brut_par_etage_le_net_puis_l_ecart(contexte, page):
                        "Votre estimation", "Écart"]
     rangees = re.findall(r'<tr><th[^>]*scope="row">(.*?)</th>(.*?)</tr>', bloc)
     assert len(rangees) == len(departs) == 3
-    taux = Montants.depuis(Saisie.depuis_requete(requete), contexte.base).taux_pension
+    # Le net retire 9,1 % du tout, et 1 % de la part complémentaire de CE
+    # départ (action 138, étape 2).
+    montants = Montants.depuis(Saisie.depuis_requete(requete), contexte.base)
     for (tete, cellules), depart, recopie in zip(rangees, departs, (2500, None, 3300)):
         valeurs = re.findall(r"<td[^>]*>(.*?)</td>", cellules)
         base, complementaire, total, net = (_nombres(v) for v in valeurs[:4])
         assert base + complementaire == total == round(depart.total / 12)
-        assert net == round(depart.total / 12 * (1 - taux))
+        assert 0 < depart.assiette_maladie < depart.total
+        assert net == round(montants.net_d_assiette(
+            depart.total / 12, depart.assiette_maladie / 12))
         assert 'form="simulateur"' in valeurs[4]
         assert f'name="estimation_{depart.quoi[0]}"' in valeurs[4]
         if recopie is None:

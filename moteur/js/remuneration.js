@@ -254,9 +254,19 @@ export class PrelevementsPension {
     // cette part de la recette est prélevée sur la dépense.
     this.csg_affectee_vieillesse = fiche.csg_affectee_vieillesse ?? 0;
     this.bareme_csg = fiche.bareme_csg;
+    // La cotisation d'assurance maladie des pensions complémentaires de
+    // salariés (L. 131-2, 1° ; D. 242-8) : 1 %, sur ce que servent les
+    // régimes de `regimes_maladie`, majoration pour enfants exclue. Voir
+    // `PrelevementsPension` dans `remuneration.py`.
+    const maladie = fiche.maladie_complementaire ?? {};
+    this.maladie_complementaire = maladie.taux ?? 0;
+    this.regimes_maladie = new Set(maladie.regimes ?? []);
   }
 
-  /** Ce qui sépare une pension brute de sa nette : 9,1 %. */
+  /**
+   * Ce qui sépare une pension de BASE de sa nette : 9,1 %. Une complémentaire
+   * paie en plus `maladie_complementaire`.
+   */
   get tauxTotal() {
     return this.csg_taux_plein + this.crds + this.casa;
   }
@@ -270,6 +280,28 @@ export class PrelevementsPension {
     const reste = 1 - this.tauxTotal;
     return reste > 0 ? net / reste : net;
   }
+}
+
+/**
+ * Ce que la cotisation maladie frappe dans la pension du scénario 1, et cette
+ * pension, dans les mêmes euros : `actuel` est le résultat du départ,
+ * `aujourdhui`, pour qui est déjà parti, le système 1 de l'année courante, dont
+ * les montants remplacent ceux du départ. La majoration pour enfants, que le
+ * moteur compte à part, reste hors de l'assiette (L. 131-2, 1°). Voir
+ * `assiette_maladie` dans `remuneration.py`.
+ */
+export function assietteMaladie(regimes, actuel, aujourdhui = null) {
+  let assiette = 0;
+  if (aujourdhui !== null && aujourdhui !== undefined) {
+    for (const r of aujourdhui.regimes) {
+      if (regimes.has(r.regime)) assiette += r.aujourd_hui;
+    }
+    return [assiette, aujourdhui.pension_annuelle];
+  }
+  for (const p of actuel.pensions_par_regime) {
+    if (regimes.has(p.regime)) assiette += p.montant;
+  }
+  return [assiette, actuel.pension_annuelle];
 }
 
 /** Les quatre profils, tels que le paquet de données les porte, et les pensions. */

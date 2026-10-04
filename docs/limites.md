@@ -2658,12 +2658,16 @@ site lui retire <!--chiffre:mesure(prelevement_pension)-->9,1<!--/--> %. L'écar
 RESSERRÉ pour les petites pensions, et exact pour les grandes. La page le dit
 sous la clé de lecture.
 
-**2. La cotisation maladie de <!--chiffre:illustration()-->1<!--/--> % sur la retraite complémentaire n'est pas
-comptée.** Elle ne porte que sur une partie de la pension, et les cinq scénarios
-notionnels ne distinguent pas base et complémentaire — leur compte est unique.
-L'appliquer aux uns et pas aux autres fabriquerait un écart qui ne viendrait
-d'aucune règle. Le net d'un retraité du privé est donc, de ce fait, très
-légèrement surestimé.
+**2. La cotisation maladie de <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_complementaire.taux*100)-->1<!--/--> % sur la retraite complémentaire est comptée
+au système 1, et les cinq autres gardent le taux qui en résulte.** Elle porte sur
+ce que servent les complémentaires de salariés, majoration pour enfants exclue
+(L. 131-2, 1° ; D. 242-8), et non sur la base. Les scénarios notionnels n'ont
+qu'un compte, sans base ni complémentaire : ils appliquent à la pension de chacun
+son taux du système 1. C'est une hypothèse, que la page dit — la réforme ne change
+pas les prélèvements —, et le net y garde les rapports du brut. Restent hors du
+calcul la cotisation supplémentaire du régime local d'Alsace-Moselle, les taux des
+non-résidents, et ce que les régimes spéciaux, la fonction publique et les
+indépendants prélèvent par leurs propres textes, qui ne sont pas lus.
 
 **3. La rente du pilier capitalisé suit le barème des pensions**, et c'est une
 convention : le dépôt la traite en rente viagère à titre GRATUIT, ce qu'elle est

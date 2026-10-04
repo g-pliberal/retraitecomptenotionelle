@@ -34,6 +34,7 @@ from .droit.coordonner import REGIMES_CODE_DES_PENSIONS
 from .frontiere import charger_frontiere
 from .pilote import ages_de_l_estimation
 from .remuneration import (
+    assiette_maladie,
     charger_prelevements,
     salaire_brut_depuis_net,
     salaire_net_depuis_brut,
@@ -53,8 +54,7 @@ from .saisie import (
 from .simulateur import Comparaison, NiveauInverse, Simulateur, niveau_pour_pension
 
 
-def _refus_de_pension(trouve: "NiveauInverse", saisie: Saisie,
-                      montants: "Montants", constants: float) -> str:
+def _refus_de_pension(trouve: "NiveauInverse", constants: float) -> str:
     """Pourquoi aucune carrière ne sert la pension saisie, et ce qui la sert.
 
     Les trois refus disent une règle du droit, jamais une limite du calcul, et
@@ -65,10 +65,10 @@ def _refus_de_pension(trouve: "NiveauInverse", saisie: Saisie,
     Les montants sont rendus dans la langue du formulaire — mensuels, nets si
     la page est en net, en euros de l'année de référence —, faute de quoi le
     refus opposerait des annuels bruts à quelqu'un qui vient de taper un net
-    mensuel.
+    mensuel. La dichotomie les a déjà nettés : il ne reste que l'unité.
     """
     def afficher(annuel: float) -> str:
-        return euros(montants.pension(annuel * constants / MOIS_PAR_AN))
+        return euros(annuel * constants / MOIS_PAR_AN)
 
     if trouve.sous_le_plancher:
         return (
@@ -449,8 +449,8 @@ class Contexte:
         POUR UN RETRAITÉ, LA CIBLE EST LA PENSION D'AUJOURD'HUI. Il saisit ce
         qu'il touche, pas ce qu'il touchait le premier mois : la dichotomie
         compare donc au montant saisi la pension du départ revalorisée comme
-        le droit l'a fait depuis — :meth:`Simulateur.pension_actuelle_aujourd_hui`
-        —, en euros de l'année courante. Ce coefficient-là dépend du niveau,
+        le droit l'a fait depuis — l'échéance de l'année courante de
+        :meth:`Simulateur.echeancier` —, en euros de l'année courante. Ce coefficient-là dépend du niveau,
         par la tranche de 2020 et par le poids de la complémentaire : il se
         refait à chaque tour, et c'est le prix de l'exactitude.
         """
@@ -462,21 +462,25 @@ class Contexte:
             else saisie.date_de(saisie.liquidation).annee,
             parametres.annee_euros_constants,
         )
-        brute = (saisie.pension / (1.0 - montants.taux_pension)
-                 if saisie.en_net else saisie.pension)
-        cible = brute * MOIS_PAR_AN / constants
+        # La cible reste dans la langue de la saisie, nette peut-être : le taux
+        # qui sépare une pension de sa nette dépend de sa part complémentaire,
+        # donc du niveau cherché. C'est la pension de chaque niveau qu'on nette,
+        # et non la cible qu'on remonte au brut.
+        cible = saisie.pension * MOIS_PAR_AN / constants
 
         def pension_de_niveau(niveau: float) -> float:
             carriere = batir([niveau] * combien)
             if retraite:
-                return simulateur.pension_actuelle_aujourd_hui(carriere)
-            return simulateur.scenario_actuel.calculer(carriere).pension_annuelle
+                echeancier = simulateur.echeancier(carriere)
+                return montants.pension_servie(echeancier.au_depart,
+                                               echeancier.aujourd_hui)
+            return montants.pension_servie(
+                simulateur.scenario_actuel.calculer(carriere))
 
         trouve = niveau_pour_pension(pension_de_niveau, cible,
                                      NIVEAU_MINIMAL, NIVEAU_MAXIMAL)
         if not trouve.atteinte:
-            raise ErreurSaisie(_refus_de_pension(trouve, saisie, montants,
-                                                 constants))
+            raise ErreurSaisie(_refus_de_pension(trouve, constants))
         carriere = batir([trouve.niveau] * combien)
         _verifier_statuts_ouverts(simulateur.affiliations, carriere, parcours)
         _verifier_radiation_pour_invalidite(simulateur.affiliations, carriere)
@@ -572,6 +576,10 @@ class DepartEstime:
     trimestres: int
     trimestres_requis: int
     motif_ouverture: str
+    #: Ce que la cotisation maladie de 1 % frappe dans :attr:`etages` : les
+    #: lignes des complémentaires qui la prélèvent, sans leur majoration pour
+    #: enfants (``remuneration.assiette_maladie``).
+    assiette_maladie: float = 0.0
 
     @property
     def total(self) -> float:
@@ -589,6 +597,8 @@ def _depart_estime(simulateur: Simulateur, parametres: Parametres, carriere,
     passage = simulateur.macro.coefficient_prix(
         carriere.annee_liquidation, parametres.annee_euros_constants)
     etages: dict[str, float] = {}
+    regimes = charger_prelevements(parametres.racine_donnees).pensions.regimes_maladie
+    assiette = 0.0
 
     def porter(code: str, montant: float) -> None:
         etage = simulateur.catalogue[code].etage
@@ -596,6 +606,8 @@ def _depart_estime(simulateur: Simulateur, parametres: Parametres, carriere,
 
     for pension in resultat.pensions_par_regime:
         porter(pension.regime, pension.montant)
+        if pension.regime in regimes:
+            assiette += pension.montant * passage
     minimum = 0.0
     for avantage in resultat.avantages_appliques:
         if avantage.code == "majoration_enfants":
@@ -611,6 +623,7 @@ def _depart_estime(simulateur: Simulateur, parametres: Parametres, carriere,
         trimestres=resultat.trimestres_valides,
         trimestres_requis=resultat.trimestres_requis,
         motif_ouverture=resultat.motif_ouverture,
+        assiette_maladie=assiette,
     )
 
 
@@ -827,8 +840,12 @@ class Montants:
     """
 
     net: bool
-    #: Ce qui sépare une pension brute de sa nette : CSG 8,30 %, CRDS 0,50 %,
-    #: CASA 0,30 %. Voir ``remuneration.PrelevementsPension``.
+    #: Ce qui sépare une pension brute de sa nette, POUR CETTE PERSONNE : CSG
+    #: 8,30 %, CRDS 0,50 %, CASA 0,30 %, et la cotisation maladie de 1 % sur la
+    #: part de sa pension du scénario 1 que des complémentaires servent. Les
+    #: cinq autres scénarios gardent ce taux : c'est l'hypothèse que la
+    #: réforme ne change pas ses prélèvements. Voir
+    #: ``remuneration.PrelevementsPension``.
     taux_pension: float
 
     @classmethod
@@ -849,13 +866,56 @@ class Montants:
                 rapport = derniere.droit_en_vigueur.net / derniere.droit_en_vigueur.brut
             if derniere.proposition.brut > 0:
                 rapport_proposition = derniere.proposition.net / derniere.proposition.brut
-        return cls(net=saisie.en_net, taux_pension=pensions.taux_total,
+        # LE TAUX DE LA PERSONNE : 9,1 %, plus la cotisation maladie de la part
+        # complémentaire de SA pension du scénario 1, telle que la page
+        # l'affiche — au départ, ou aujourd'hui pour qui est déjà parti. Sans
+        # comparaison — le formulaire, la saisie —, il n'y a pas encore de
+        # pension, et le taux est celui d'une pension de base.
+        part = 0.0
+        actuel = getattr(comparaison, "actuel", None)
+        if actuel is not None:
+            servie = getattr(comparaison, "aujourd_hui", None)
+            assiette, total = assiette_maladie(
+                pensions.regimes_maladie, actuel,
+                None if servie is None else servie.actuel)
+            part = assiette / total if total > 0 else 0.0
+        return cls(net=saisie.en_net,
+                   taux_pension=(pensions.taux_total
+                                 + pensions.maladie_complementaire * part),
                    rapport_net_brut_salaire=rapport,
-                   rapport_net_brut_proposition=rapport_proposition)
+                   rapport_net_brut_proposition=rapport_proposition,
+                   taux_sans_maladie=pensions.taux_total,
+                   taux_maladie=pensions.maladie_complementaire,
+                   part_maladie=part,
+                   regimes_maladie=pensions.regimes_maladie)
 
     def pension(self, brut: float) -> float:
-        """Une pension, une rente, une garantie : tout ce qui se sert après."""
+        """Une pension, une rente, une garantie : tout ce qui se sert après,
+        au taux de la personne — celui de sa pension du scénario 1, que les
+        cinq autres gardent."""
         return brut * (1.0 - self.taux_pension) if self.net else brut
+
+    def pension_d_assiette(self, brut: float, assiette: float) -> float:
+        """Une part de pension dont ``assiette`` paie aussi la cotisation
+        maladie : un étage ou une ligne du scénario 1, et non plus un total."""
+        return self.net_d_assiette(brut, assiette) if self.net else brut
+
+    def net_d_assiette(self, brut: float, assiette: float) -> float:
+        """La même, nette quel que soit le mode : la colonne du net d'un
+        tableau qui montre les deux."""
+        return brut * (1.0 - self.taux_sans_maladie) - self.taux_maladie * assiette
+
+    def pension_du_regime(self, brut: float, regime: str) -> float:
+        """La pension d'un seul régime : la cotisation maladie y est toute ou
+        rien, 10,1 % pour une complémentaire qui la prélève, 9,1 % sinon."""
+        return self.pension_d_assiette(
+            brut, brut if regime in self.regimes_maladie else 0.0)
+
+    def pension_servie(self, actuel, aujourd_hui=None) -> float:
+        """La pension du scénario 1 — du départ, ou d'aujourd'hui pour qui est
+        déjà parti —, nette de sa propre cotisation maladie."""
+        assiette, total = assiette_maladie(self.regimes_maladie, actuel, aujourd_hui)
+        return self.pension_d_assiette(total, assiette)
 
     def salaire(self, fiche) -> float:
         """Un salaire, lu sur la fiche de paie qui porte déjà les deux."""
@@ -893,6 +953,13 @@ class Montants:
     rapport_net_brut_salaire: float = 0.0
     #: Le même, sur la fiche de paie de la PROPOSITION.
     rapport_net_brut_proposition: float = 0.0
+    #: Le taux d'une pension de base, 9,1 %, la cotisation maladie des
+    #: complémentaires, 1 %, la part de la pension du scénario 1 qui la paie,
+    #: et les régimes qui la prélèvent.
+    taux_sans_maladie: float = 0.0
+    taux_maladie: float = 0.0
+    part_maladie: float = 0.0
+    regimes_maladie: frozenset[str] = frozenset()
 
     @property
     def mot(self) -> str:

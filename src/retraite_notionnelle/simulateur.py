@@ -954,18 +954,6 @@ class Simulateur:
         return RevalorisationServie(self, self.parametres.annee_debut_repartition,
                                     self.parametres.annee_courante)
 
-    def pension_actuelle_aujourd_hui(self, carriere: Carriere) -> float:
-        """Le système 1 servi l'année courante, en euros de cette année.
-
-        La grandeur que l'inversion cherche pour un retraité : la pension qu'il
-        lit sur son relevé, et non celle de son premier mois. Pour qui liquide
-        cette année ou plus tard, c'est la pension du départ, dans ses euros.
-        """
-        echeancier = self.echeancier(carriere)
-        if echeancier.aujourd_hui is None:
-            return echeancier.au_depart.pension_annuelle
-        return echeancier.aujourd_hui.pension_annuelle
-
     def echeancier(self, carriere: Carriere) -> Echeancier:
         """L'échéancier du scénario 1 parcouru pour ``carriere`` : son départ,
         puis, pour qui a liquidé avant l'année courante, l'échéance de cette

@@ -555,10 +555,18 @@ class PrelevementsPension:
     #: calcul de pension — une pension nette ne dépend pas de qui encaisse —,
     #: mais au COMPTE : cette part de la recette est prélevée sur la dépense.
     csg_affectee_vieillesse: float = 0.0
+    #: La cotisation d'assurance maladie des pensions complémentaires de
+    #: salariés (L. 131-2, 1° ; D. 242-8) : 1 %, sur ce que servent les régimes
+    #: de :attr:`regimes_maladie`, majoration pour enfants exclue. Le scénario 1
+    #: la prélève sur sa part complémentaire ; les cinq autres gardent le taux
+    #: qui en résulte pour la même personne (:class:`~.contexte.Montants`).
+    maladie_complementaire: float = 0.0
+    regimes_maladie: frozenset[str] = frozenset()
 
     @property
     def taux_total(self) -> float:
-        """Ce qui sépare une pension brute de sa pension nette : 9,1 %."""
+        """Ce qui sépare une pension de BASE de sa nette : 9,1 %. Une
+        complémentaire paie en plus :attr:`maladie_complementaire`."""
         return self.csg_taux_plein + self.crds + self.casa
 
     def net(self, brut: float) -> float:
@@ -571,6 +579,27 @@ class PrelevementsPension:
         """
         reste = 1.0 - self.taux_total
         return net / reste if reste > 0 else net
+
+
+def assiette_maladie(regimes: frozenset[str], actuel,
+                     aujourd_hui=None) -> tuple[float, float]:
+    """Ce que la cotisation maladie frappe dans la pension du scénario 1, et
+    cette pension, dans les mêmes euros.
+
+    ``actuel`` est le ``ResultatActuel`` du départ ; ``aujourd_hui``, pour qui
+    est déjà parti, l'``ActuelAujourdhui`` de l'année courante, dont les
+    montants remplacent ceux du départ. Les lignes des régimes ne portent pas
+    la majoration pour enfants, que le moteur compte à part : L. 131-2, 1°
+    l'exclut de l'assiette, et elle en reste dehors. Son jumeau est
+    ``assietteMaladie``, dans ``moteur/js/remuneration.js``.
+    """
+    if aujourd_hui is not None:
+        return (sum(r.aujourd_hui for r in aujourd_hui.regimes
+                    if r.regime in regimes),
+                aujourd_hui.pension_annuelle)
+    return (sum(p.montant for p in actuel.pensions_par_regime
+                if p.regime in regimes),
+            actuel.pension_annuelle)
 
 
 @dataclass(frozen=True)
@@ -657,6 +686,10 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
             casa=float(pensions["casa"]),
             csg_affectee_vieillesse=float(
                 pensions.get("csg_affectee_vieillesse", 0.0)),
+            maladie_complementaire=float(
+                (pensions.get("maladie_complementaire") or {}).get("taux", 0.0)),
+            regimes_maladie=frozenset(
+                (pensions.get("maladie_complementaire") or {}).get("regimes") or ()),
             bareme_csg=tuple(
                 TrancheCsgPension(
                     libelle=tranche["libelle"],

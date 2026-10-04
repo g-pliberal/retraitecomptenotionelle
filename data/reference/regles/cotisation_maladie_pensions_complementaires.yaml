@@ -1,0 +1,154 @@
+schema_version: 1
+id: cotisation_maladie_pensions_complementaires
+intitule: >-
+  Une pension complémentaire de salarié, que l'employeur a financée, paie une
+  cotisation d'assurance maladie de 1 % en plus de la CSG, de la CRDS et de la
+  CASA, sauf sur sa majoration pour enfants ; la pension de base du régime général
+  et les pensions d'indépendants n'en paient pas.
+domaine: cotisations
+regimes: [agirc_arrco, agirc, arrco, arrco_tranche_2, agirc_entreprises_nouvelles,
+  arrco_tranche_2_entreprises_nouvelles, unirs, regimes_professionnels_integres,
+  ircantec, ipacte, igrante, crpnpac, crpnpac_tranche_2, enseignants_prive_additionnel]
+etape: foyer_et_net
+face: cotisation
+etat: approchee
+lit:
+- la pension de chaque régime au scénario 1, au départ ou à l'échéance de l'année
+  courante, sans la majoration pour enfants
+- le mode, net ou brut, de la page
+ecrit:
+- le taux qui sépare la pension brute de la nette pour la personne, 9,1 % et 1 % de
+  sa part complémentaire, que les cinq scénarios notionnels gardent
+- la nette de chaque étage du scénario 1 et de chaque ligne de réversion, au taux de
+  son régime
+dates_qui_decident:
+- pension.echeance
+versions:
+- id: taux_anterieurs
+  statut: lue
+  vise: pensions_servies
+  textes:
+  - {id: LEGIARTI000006736390, article: "D. 242-8 du code de la sécurité sociale", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006736394, article: "D. 242-8 du code de la sécurité sociale", en_vigueur: 1996-12-29}
+  nee_de: LEGIARTI000006736390
+  bornes:
+    pension.echeance: [null, 1997-12-30]
+  contenu:
+    droit: >-
+      Des taux plus élevés, et une cotisation sur la pension de base du régime
+      général aussi : en dernier lieu, 2,80 % sur celle-ci et 3,80 % sur les autres
+      avantages de retraite (rédaction du 29 décembre 1996). Le modèle ne s'en sert
+      pas : il nette les pensions aux taux d'aujourd'hui.
+    parametres:
+      taux_regime_general: 0.028
+      taux_autres_avantages: 0.038
+  exemples: aucun trouvé
+- id: un_pour_cent
+  statut: lue
+  vise: pensions_servies
+  textes:
+  - {id: LEGIARTI000006736395, article: "D. 242-8 du code de la sécurité sociale", en_vigueur: 1997-12-30}
+  - {id: LEGIARTI000037456300, article: "D. 242-8 du code de la sécurité sociale", en_vigueur: 2018-09-30}
+  - {id: LEGIARTI000047453476, article: "L. 131-2 du code de la sécurité sociale", en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000006736395
+  bornes:
+    pension.echeance: [1997-12-30, null]
+  contenu:
+    droit: >-
+      « Le taux de la cotisation d'assurance maladie, maternité, invalidité, décès
+      assise sur les avantages de retraite mentionnés à l'article L. 131-2, autres
+      que ceux servis par les organismes du régime général de sécurité sociale des
+      salariés, est fixé à 1 % pour les personnes qui remplissent les conditions
+      définies à l'article L. 136-1 » (D. 242-8). Ces avantages sont ceux « servis
+      aux assurés du régime général, soit qu'ils aient été financés en tout ou partie
+      par une contribution de l'employeur, soit qu'ils aient donné lieu à rachat de
+      cotisations », « à l'exclusion des bonifications ou majorations pour enfants
+      autres que les annuités supplémentaires, des pensions servies au titre d'une
+      activité indépendante » (L. 131-2, 1°). Exonération sous les seuils de la CSG
+      (D. 242-9) ; 3,20 % et 4,20 % pour les non-résidents (L. 131-9).
+    parametres:
+      taux: 0.01
+  exemples: aucun trouvé
+approximations:
+- version: un_pour_cent
+  ecart: >-
+    Taux plein pour tous : la cotisation est prélevée sur toute pension
+    complémentaire, comme la CSG au taux plein, alors que la loi en exonère les
+    foyers sous le seuil du taux médian de CSG (D. 242-9).
+  effet: >-
+    non mesuré ; 1 % de la part complémentaire des petites pensions, que la
+    convention de CSG surestime déjà
+- version: un_pour_cent
+  ecart: >-
+    Les cinq scénarios notionnels, qui n'ont qu'un compte, gardent le taux de la
+    personne au scénario 1 : c'est une hypothèse — la réforme ne change pas ses
+    prélèvements —, et non une règle de la proposition. Décidé le 4 octobre 2026 par
+    le propriétaire (action 138, étape 2).
+  effet: le net de chaque scénario garde le rapport de son brut à celui du scénario 1
+- version: un_pour_cent
+  ecart: >-
+    Ni la cotisation de 1,30 % du régime local d'Alsace-Moselle, ni les taux des
+    non-résidents, ni ce que l'Ircec, l'Arrco des cultes, les régimes spéciaux et la
+    fonction publique prélèveraient par leurs propres textes, qui ne sont pas lus.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - Chercher un exemple publié du passage du brut au net d'une pension Agirc-Arrco.
+  - >-
+    Lire ce que l'Ircec, l'Arrco des cultes, les régimes spéciaux et la fonction
+    publique prélèvent sur leurs pensions, et si le personnel navigant et le régime
+    additionnel de l'enseignement privé, tenus pour soumis par le texte, le sont
+    dans la pratique de leur caisse.
+  lectures:
+  - type: legifrance
+    reference: >-
+      D. 242-8 du code de la sécurité sociale, ses rédactions dans l'index LEGI du
+      dépôt : LEGIARTI000006736394 (29 décembre 1996, 2,80 % et 3,80 %),
+      LEGIARTI000006736395 (30 décembre 1997, 1 %), LEGIARTI000037456300
+      (30 septembre 2018, en vigueur)
+    date: 2026-10-04
+  - type: legifrance
+    reference: >-
+      L. 131-2 du code de la sécurité sociale, 1°, en vigueur depuis le 1er septembre
+      2023 (LEGIARTI000047453476), lu dans l'index LEGI du dépôt ; D. 242-9,
+      l'exonération (LEGIARTI000043870910), relevé au registre des autres modèles
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      urssaf.fr, « Les revenus de remplacement », tableau des prestations retraite en
+      métropole pour 2025 : « 1 % sur les prestations de retraite complémentaire et
+      supplémentaire », aux taux médian et plein de CSG ; 1,30 % de plus en
+      Alsace-Moselle, 3,20 % et 4,20 % pour les non-résidents
+    date: 2026-10-04
+    url: https://www.urssaf.fr/accueil/employeur/cotisations/liste-cotisations/revenus-de-remplacement.html
+textes_a_rattacher:
+- reference: L. 131-9 du code de la sécurité sociale, les non-résidents
+- reference: D. 242-9 du code de la sécurité sociale, l'exonération
+code:
+  python: >-
+    remuneration.py : PrelevementsPension (maladie_complementaire, regimes_maladie)
+    et assiette_maladie ; contexte.py : Montants (taux_pension, pension_d_assiette,
+    pension_du_regime, pension_servie) et l'inversion d'une pension saisie nette
+  javascript: >-
+    moteur/js/remuneration.js : PrelevementsPension et assietteMaladie ;
+    moteur/js/contexte.js : Montants ; moteur/js/pages.js : etagesActuels,
+    compositionActuelle, reversionDuConjoint, noteDuMode
+  parametres: legislation/prelevements_remuneration.yaml, pensions.maladie_complementaire
+  tests: tests/test_net_pensions.py
+referents:
+  ines: >-
+    prélève le 1 % sur les complémentaires du privé, par catégorie et quantile, mais
+    aussi sur les pensions exonérées de CSG
+  devcrafting_retraites: son taux de remplacement net retire 10,1 % à l'Agirc-Arrco et 9,1 % à la base
+  openfisca_france: paramètre le 1 % sans qu'aucune variable le lise
+  taxipp: l'oublie en remontant de la pension imposable à la pension brute
+historique:
+- >-
+  2026-10-04 — née avec l'action 138, étape 2 : le dépôt omettait la cotisation
+  partout ; le scénario 1 la prélève, les cinq autres gardent le taux de la personne.
+effet: >-
+  Tout salarié ou contractuel dont la pension du système actuel comprend une
+  complémentaire : sa pension nette baisse de 1 % de cette part, soit 0,25 à 0,5 %
+  de la pension, et celle des cinq autres systèmes du même taux.

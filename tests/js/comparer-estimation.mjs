@@ -33,6 +33,7 @@ const sortie = requetes.map((requete) => {
       trimestres: depart.trimestres,
       trimestres_requis: depart.trimestres_requis,
       motif_ouverture: depart.motif_ouverture,
+      assiette_maladie: depart.assiette_maladie,
     }));
   } catch (erreur) {
     return { erreur: String(erreur.message ?? erreur) };

@@ -416,15 +416,31 @@ export function rendre(contexte, cheminDemande, parametres = null) {
       messageErreur(erreur.message) + formulaire(saisie, contexte)];
   }
 
-  let corps = formulaire(saisie, contexte);
+  // La comparaison se calcule une fois, pour les résultats ET pour le
+  // formulaire : sa bascule net/brut traduit la pension saisie au taux de la
+  // personne, que seule la simulation donne, et doit écrire le même lien que
+  // celle des résultats.
+  // Saisie refusée, données insuffisantes, régime inconnu : le message est
+  // rendu dans la page. Une adresse mal formée doit afficher une phrase, pas
+  // une trace d'exécution. Une faute de programme, elle, n'est pas une faute
+  // de saisie et ne doit pas être présentée comme telle.
+  let comparaison = null;
+  let echec = null;
   if (saisie.demandee) {
     try {
-      corps += resultats(contexte, saisie);
+      comparaison = contexte.simuler(saisie);
     } catch (erreur) {
-      // Saisie refusée, données insuffisantes, régime inconnu : le message est
-      // rendu dans la page. Une adresse mal formée doit afficher une phrase,
-      // pas une trace d'exécution. Une faute de programme, elle, n'est pas une
-      // faute de saisie et ne doit pas être présentée comme telle.
+      if (fauteDeProgramme(erreur)) throw erreur;
+      echec = erreur;
+    }
+  }
+  let corps = formulaire(saisie, contexte, comparaison);
+  if (echec !== null) {
+    corps += messageErreur(echec.message);
+  } else if (comparaison !== null) {
+    try {
+      corps += resultats(contexte, saisie, comparaison);
+    } catch (erreur) {
       if (fauteDeProgramme(erreur)) throw erreur;
       corps += messageErreur(erreur.message);
     }
@@ -918,12 +934,15 @@ function consigneDuFormulaire(saisie) {
     : "L'exemple est déjà rempli. Calculez-le tel quel, ou saisissez la vôtre.";
 }
 
-export function formulaire(saisie, contexte) {
+export function formulaire(saisie, contexte, comparaison = null) {
   const affiliations = contexte.simulateur().affiliations;
   const echelle = contexte.echelle(saisie);
   // La bascule net/brut traduit la pension saisie comme elle traduit les
-  // salaires : il lui faut donc ce qu'une pension supporte.
-  const tauxPension = Montants.depuis(saisie, contexte.simulateur()).tauxPension;
+  // salaires : il lui faut donc ce qu'une pension supporte — le taux de la
+  // personne quand la page a calculé sa pension, celui d'une pension de base
+  // sinon.
+  const tauxPension = Montants.depuis(
+    saisie, contexte.simulateur(), comparaison).tauxPension;
 
   // Trois champs là où il en fallait cinq : une date de naissance porte son
   // mois, une date de départ porte l'âge qu'on écrivait en deux fois. Les
@@ -1760,7 +1779,20 @@ export function requeteBasculee(contexte, formulaire, lien) {
   const saisie = Saisie.depuisRequete(formulaire, false, contexte.paquet.presomptions);
   const vers = (nom) => (nom in lien ? lien[nom] : saisie[nom]);
   if (vers("montants") !== saisie.montants) {
-    const tauxPension = Montants.depuis(saisie, contexte.simulateur()).tauxPension;
+    // La pension saisie se traduit au taux de la personne, que seule la
+    // simulation donne : c'est ce que fait le rendu. Une saisie que le
+    // simulateur refuse se traduit au taux d'une pension de base, comme le
+    // formulaire qui la remontrera avec son refus.
+    let comparaison = null;
+    if (saisie.saisie_par === "pension") {
+      try {
+        comparaison = contexte.simuler(saisie);
+      } catch (erreur) {
+        if (fauteDeProgramme(erreur)) throw erreur;
+      }
+    }
+    const tauxPension = Montants.depuis(
+      saisie, contexte.simulateur(), comparaison).tauxPension;
     return saisie.requete(
       remplacementsMontants(saisie, contexte.echelle(saisie), tauxPension));
   }
@@ -2134,7 +2166,8 @@ function lectureDesMontants(comparaison, saisie) {
   const prelevements = saisie.enNet
     ? "Montants <strong>nets</strong> avant impôt, arrondis à l'euro, comme "
       + "« Mon estimation retraite » les donne : après CSG, CRDS et Casa — 9,10 %, le taux plein, "
-      + "appliqué ici à tout le monde — et avant impôt sur le revenu, comme le "
+      + "appliqué ici à tout le monde —, puis la cotisation maladie de 1 % des "
+      + "retraites complémentaires, et avant impôt sur le revenu, comme le "
       + "revenu d'activité saisi plus haut. Le détail du calcul les donne au "
       + "centime. Le <strong>taux de remplacement</strong> "
       + "rapporte la pension annuelle au dernier revenu d'activité ramené à "
@@ -3952,22 +3985,32 @@ const ETAGES_ACTUEL = [
  * minimum vieillesse, qu'aucun régime ne sert, est un terme à part. Rend
  * `null` quand ces termes ne font pas le total : la page n'écrit pas une
  * somme fausse.
+ *
+ * `assiettes` dit, étage par étage, ce que la cotisation maladie frappe : les
+ * lignes des régimes de `regimesMaladie`, sans leur majoration pour enfants.
  */
-function etagesActuels(comparaison, catalogue) {
+function etagesActuels(comparaison, catalogue, regimesMaladie = new Set()) {
   const actuel = comparaison.actuel;
   const servi = comparaison.aujourd_hui === null ? null : comparaison.aujourd_hui.actuel;
   const isoler = comparaison.parametres.isoler_capitalisation;
   const coefficients = new Map(
     servi === null ? [] : servi.regimes.map((r) => [r.regime, r.coefficient]));
   const etages = new Map();
-  const porter = (code, montant) => {
+  const assiettes = new Map();
+  const porter = (code, montant, soumise = false) => {
     const regime = catalogue.obtenir(code);
     if (isoler && regime.hors_repartition) return;
     const coefficient = coefficients.has(code) ? coefficients.get(code) : 1.0;
     etages.set(regime.etage, (etages.get(regime.etage) ?? 0.0) + montant * coefficient);
+    if (soumise) {
+      assiettes.set(regime.etage,
+        (assiettes.get(regime.etage) ?? 0.0) + montant * coefficient);
+    }
   };
   let minimum = 0.0;
-  for (const pension of actuel.pensions_par_regime) porter(pension.regime, pension.montant);
+  for (const pension of actuel.pensions_par_regime) {
+    porter(pension.regime, pension.montant, regimesMaladie.has(pension.regime));
+  }
   for (const avantage of actuel.avantages_appliques) {
     if (avantage.code === "majoration_enfants") {
       for (const [code, part] of avantage.par_regime ?? []) porter(code, part);
@@ -3979,7 +4022,7 @@ function etagesActuels(comparaison, catalogue) {
   const total = servi === null ? actuel.pension_annuelle : servi.pension_annuelle;
   let somme = minimum;
   for (const montant of etages.values()) somme += montant;
-  return Math.abs(somme - total) <= 0.01 ? { etages, minimum, total } : null;
+  return Math.abs(somme - total) <= 0.01 ? { etages, assiettes, minimum, total } : null;
 }
 
 /**
@@ -4008,16 +4051,20 @@ function arrondisQuiSadditionnent(parts, total) {
  * détail, régime par régime, est dans « Le détail du calcul ».
  *
  * `constant` est le montant annuel affiché, en euros constants : chaque étage
- * en prend sa part, puisque la conversion est la même pour tous.
+ * en prend sa part. En net, chacun paie la CSG, la CRDS et la CASA, et la
+ * cotisation maladie de 1 % sur son assiette : les étages nets font ainsi le
+ * total net, que la page calcule au taux de la personne.
  */
 function compositionActuelle(comparaison, catalogue, montants, constant) {
-  const composition = etagesActuels(comparaison, catalogue);
+  const composition = etagesActuels(comparaison, catalogue, montants.regimesMaladie);
   if (composition === null || composition.total <= 0 || constant <= 0) return "";
-  const mensuel = (montant) => montants.pension(
-    constant * montant / composition.total) / 12;
+  const mensuel = (montant, assiette = 0) => montants.pensionDAssiette(
+    constant * montant / composition.total,
+    constant * assiette / composition.total) / 12;
   const termes = ETAGES_ACTUEL
     .filter(([etage]) => composition.etages.has(etage))
-    .map(([etage, , libelle]) => [etage, libelle, mensuel(composition.etages.get(etage))]);
+    .map(([etage, , libelle]) => [etage, libelle, mensuel(
+      composition.etages.get(etage), composition.assiettes.get(etage) ?? 0)]);
   if (composition.minimum > 0) {
     termes.push(["minimum", "de minimum vieillesse", mensuel(composition.minimum)]);
   }
@@ -4155,10 +4202,10 @@ function departEnClair(depart) {
  * partent avec le reste de la saisie, dans l'adresse, et restent dans le
  * navigateur comme elle. Ils n'entrent dans aucun calcul.
  *
- * Le net est celui de la bascule : la CSG, la CRDS et la CASA au taux plein,
- * sur les deux étages. Le net aux prélèvements officiels — le point de maladie
- * des complémentaires, la CSG selon le revenu du foyer — est l'étape 2 de
- * l'action 138. Rien pour qui est déjà parti, ni pour qui saisit sa pension :
+ * Le net retire la CSG, la CRDS et la CASA au taux plein sur les deux étages,
+ * et la cotisation maladie de 1 % sur ce que servent les complémentaires qui
+ * la prélèvent, à chaque âge sur sa propre part. La CSG selon le revenu du
+ * foyer reste à l'étape 2 de l'action 138. Rien pour qui est déjà parti, ni pour qui saisit sa pension :
  * l'estimation officielle chiffre un départ à venir.
  */
 function estimationOfficielle(contexte, saisie, montants) {
@@ -4189,7 +4236,7 @@ function estimationOfficielle(contexte, saisie, montants) {
         + `${departEnClair(depart)}</span>`,
       ...parts.map((part) => g.euros(part)),
       g.euros(total),
-      g.euros(total * (1 - montants.tauxPension)),
+      g.euros(montants.netDAssiette(total, depart.assiette_maladie / 12)),
       champ,
       ...(compare ? [ecart] : []),
     ];
@@ -4215,8 +4262,8 @@ l'écart s'affiche à côté.</p>
   ${tableau}
   <p class="comparer"><button type="submit" form="simulateur" id="comparer-estimation">Comparer</button></p>
   <p class="discret">Le net retire la CSG, la CRDS et la CASA au taux plein,
-  ${g.pourcentage(montants.tauxPension, false, 1)}, sans le point de maladie
-  des complémentaires. Vos revenus à venir suivent le salaire moyen ;
+  ${g.pourcentage(montants.tauxSansMaladie, false, 1)}, et la cotisation maladie de
+  ${g.pourcentage(montants.tauxMaladie, false, 0)} sur la complémentaire. Vos revenus à venir suivent le salaire moyen ;
   l'estimation officielle leur prête « une évolution régulière », un peu plus
   rapide.${minimum}
   Ce que vous recopiez reste dans votre navigateur, avec le reste de la
@@ -4224,8 +4271,7 @@ l'écart s'affiche à côté.</p>
 </div>`;
 }
 
-function resultats(contexte, saisie) {
-  const comparaison = contexte.simuler(saisie);
+function resultats(contexte, saisie, comparaison = contexte.simuler(saisie)) {
   const carriere = comparaison.carriere;
 
   const [constants, capitalise, capitaliseVolontaire] = montantsAffiches(comparaison);
@@ -4909,7 +4955,13 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   const catalogue = simulateur.catalogue;
   const coefficient = simulateur.macro.coefficientPrix(
     reversion.annee, comparaison.parametres.annee_euros_constants);
-  const mensuel = (annuel) => montants.pension(annuel * coefficient) / MOIS_PAR_AN;
+  // Chaque ligne au taux de SON régime : la cotisation maladie de 1 % ne
+  // frappe que la réversion d'une complémentaire qui la prélève. Le total est
+  // la somme des lignes, et non le total au taux du titulaire.
+  const mensuel = (annuel, regime) => montants.pensionDuRegime(
+    annuel * coefficient, regime) / MOIS_PAR_AN;
+  const totalMensuel = reversion.regimes.reduce(
+    (somme, ligne) => somme + mensuel(ligne.montant, ligne.regime), 0);
   const nomRegime = (code) => (catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
   const mois = (date) => echapper(String(new DateMois(
     Number(date.slice(0, 4)), Number(date.slice(5, 7)))));
@@ -4926,15 +4978,15 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
 
   const lignes = reversion.regimes.map((ligne) => [
     echapper(nomRegime(ligne.regime)),
-    g.euros(mensuel(ligne.base)),
+    g.euros(mensuel(ligne.base, ligne.regime)),
     ligne.fiche === null ? "—" : g.pourcentage(ligne.taux, false, 0),
-    ligne.motif === "servie" ? g.euros(mensuel(ligne.montant))
-      : `${g.euros(mensuel(ligne.montant))} <span class="discret">`
+    ligne.motif === "servie" ? g.euros(mensuel(ligne.montant, ligne.regime))
+      : `${g.euros(mensuel(ligne.montant, ligne.regime))} <span class="discret">`
         + `(${MOTIFS_DE_REVERSION[ligne.motif]})</span>`,
     ligne.date_effet === null ? "—" : mois(ligne.date_effet),
   ]);
   lignes.push(["Réversion du système actuel", "", "",
-    `<strong>${g.euros(mensuel(reversion.total))}</strong>`, ""]);
+    `<strong>${g.euros(totalMensuel)}</strong>`, ""]);
   const tableau = g.tableau(
     ["Régime", "Votre pension", "Taux", "Sa réversion", "À partir de"],
     lignes,
@@ -4960,7 +5012,7 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
 <div class="carte" id="resultats-reversion">
 <h3>La réversion de votre conjoint</h3>
 <p>${quand} votre conjoint recevrait du système actuel
-<strong>${g.nombre(mensuel(reversion.total), 0)} ${montants.unitePension}</strong>
+<strong>${g.nombre(totalMensuel, 0)} ${montants.unitePension}</strong>
 de pension de réversion, en euros de ${saisie.euros} comme les montants
 ci-dessus.</p>
 ${tableau}
@@ -5059,17 +5111,22 @@ function eurosSigne(montant, centimes = true) {
 /**
  * Ce que le mode courant suppose, en une phrase, là où il s'applique.
  *
- * En NET, c'est la convention de CSG qu'il faut dire : la loi fait dépendre le
- * taux du revenu fiscal du foyer, que le simulateur ne demande pas, et le dépôt
- * retient le taux plein. En BRUT, c'est le rappel qu'un brut n'est pas ce qu'on
+ * En NET, ce sont les deux conventions qu'il faut dire : la loi fait dépendre
+ * le taux de CSG du revenu fiscal du foyer, que le simulateur ne demande pas, et
+ * le dépôt retient le taux plein ; les cinq systèmes notionnels gardent le taux
+ * de la personne au système 1, cotisation maladie de sa complémentaire comprise
+ * (`prelevements_remuneration.yaml`). En BRUT, c'est le rappel qu'un brut n'est pas ce qu'on
  * touche.
  */
 function noteDuMode(montants) {
   if (montants.net) {
     return "La pension est nette de "
       + `${g.pourcentage(montants.tauxPension, false, 1)} : CSG, CRDS `
-      + "et contribution de solidarité, au <strong>taux plein</strong>. La "
-      + "loi fait dépendre ce taux du revenu fiscal du foyer, que ce "
+      + "et contribution de solidarité, au <strong>taux plein</strong>, et "
+      + "cotisation maladie de 1 % sur la part complémentaire de votre "
+      + "pension du système actuel. Les autres systèmes gardent ce taux : le "
+      + "simulateur suppose que la réforme ne change pas vos prélèvements. La "
+      + "loi fait dépendre la CSG du revenu fiscal du foyer, que ce "
       + "simulateur ne demande pas : une petite pension, exonérée en "
       + "réalité, est donc ici un peu sous-estimée.";
   }
@@ -5139,8 +5196,9 @@ function remplacementsMontants(saisie, echelle, tauxPension) {
   // tel quel dans l'autre mode le ferait relire comme un brut — une pension
   // plus petite d'un dixième —, et la page reviendrait en décrivant une autre
   // carrière que celle qu'on venait de calculer. Le taux est celui des
-  // pensions, non celui d'un salaire : une pension ne supporte que la CSG, la
-  // CRDS et la CASA.
+  // pensions, non celui d'un salaire : la CSG, la CRDS, la CASA et la
+  // cotisation maladie d'une complémentaire — le taux de la personne, que la
+  // simulation donne, ou celui d'une pension de base quand il n'y en a pas.
   if (saisie.saisie_par === "pension") {
     remplacements.pension = nombreBrut(arrondir(
       versLeNet ? saisie.pension * (1 - tauxPension)

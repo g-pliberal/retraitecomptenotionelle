@@ -713,13 +713,35 @@ profils:
 # les systèmes affichés est donc, de ce fait, un peu resserré pour les petites
 # pensions et exact pour les grandes. `docs/limites.md` porte la réserve.
 #
+# LA COTISATION D'ASSURANCE MALADIE DES PENSIONS COMPLÉMENTAIRES
+# ------------------------------------------------------------
+# Une pension complémentaire de salarié paie en plus une cotisation
+# d'assurance maladie de 1 % (L. 131-2, 1° ; D. 242-8). Elle porte sur les
+# pensions que l'employeur a financées, servies aux assurés du régime
+# général, sauf la pension de base du régime général elle-même ; ni sur la
+# majoration pour enfants, ni sur une pension d'indépendant. Elle suit la
+# CSG : due aux taux médian et plein, non en dessous (tableau de l'Urssaf) ;
+# au taux plein de la convention, elle est due par tous.
+#
+# Le scénario 1 la prélève sur ce que ces régimes servent, majoration pour
+# enfants exclue (`maladie_complementaire`, ci-dessous) : 9,1 % sur la base,
+# 10,1 % sur la complémentaire. Les cinq scénarios notionnels n'ont qu'un
+# compte, sans base ni complémentaire : ils appliquent à la pension de chacun
+# le TAUX DU SCÉNARIO 1 DE LA MÊME PERSONNE. C'est une hypothèse, « la réforme
+# ne change pas vos prélèvements », que la page dit ; la comparaison en net y
+# garde les rapports de la comparaison en brut. Décidé le 4 octobre 2026 par
+# le propriétaire (action 138, étape 2), à la place d'une règle qui aurait
+# cherché une part complémentaire dans le compte notionnel : il aurait fallu
+# l'inventer pour les anciens fonctionnaires et pour les 18 % du scénario 6.
+# Jusqu'à ce jour, le dépôt omettait la cotisation partout.
+#
 # CE QUI N'EST PAS ICI
 # --------------------
-# La cotisation d'assurance maladie de 1 % due sur la retraite COMPLÉMENTAIRE
-# des salariés. Elle ne porte que sur une partie de la pension, et les cinq
-# scénarios notionnels ne distinguent pas base et complémentaire — leur compte
-# est unique. L'appliquer aux uns et pas aux autres fabriquerait un écart qui
-# ne viendrait d'aucune règle.
+# La cotisation supplémentaire de 1,30 % du régime local d'Alsace-Moselle,
+# due sur toutes les pensions ; les taux des non-résidents (3,20 % et
+# 4,20 %, au lieu de la CSG) ; et ce que les régimes spéciaux, la fonction
+# publique et les indépendants prélèveraient par leurs propres textes, que le
+# dépôt n'a pas lus.
 #
 # LA RENTE DU PILIER CAPITALISÉ suit le même barème que la pension, et c'est
 # une convention : le dépôt la traite en rente viagère à titre GRATUIT, ce
@@ -748,6 +770,34 @@ pensions:
   #: veille.yaml du même jour, dont la première porte le partage complet des
   #: 9,20 points d'activité et des 10,60 points de capital.
   csg_affectee_vieillesse: 0.0294
+  #: LA COTISATION D'ASSURANCE MALADIE DES PENSIONS COMPLÉMENTAIRES : 1 %
+  #: (D. 242-8, LEGIARTI000037456300, en vigueur depuis le 30 septembre
+  #: 2018 ; 1 % depuis la rédaction du 30 décembre 1997, 3,80 % avant). Ses
+  #: régimes : les complémentaires des salariés affiliés au régime général,
+  #: que l'employeur finance (L. 131-2, 1°, LEGIARTI000047453476) —
+  #: l'Agirc-Arrco et ceux qu'il a repris, l'Ircantec et les siens, le
+  #: personnel navigant, le régime additionnel de l'enseignement privé. Ni les
+  #: complémentaires d'indépendants et de libéraux, que L. 131-2 exclut, ni
+  #: l'Ircec des artistes-auteurs, dont l'activité est indépendante, ni
+  #: l'Arrco des cultes, dont les assurés relèvent de la Cavimac : ces deux-là
+  #: sont à relire. Fiche `cotisation_maladie_pensions_complementaires`.
+  maladie_complementaire:
+    taux: 0.01
+    regimes:
+      - agirc_arrco
+      - agirc
+      - arrco
+      - arrco_tranche_2
+      - agirc_entreprises_nouvelles
+      - arrco_tranche_2_entreprises_nouvelles
+      - unirs
+      - regimes_professionnels_integres
+      - ircantec
+      - ipacte
+      - igrante
+      - crpnpac
+      - crpnpac_tranche_2
+      - enseignants_prive_additionnel
   #: Les quatre cas de l'article L. 136-8, pour mémoire et pour la page : le
   #: modèle applique le taux plein, mais le lecteur doit pouvoir situer sa
   #: propre situation. Montants 2026 (revenus de 2024), pour une part de
@@ -758,7 +808,8 @@ pensions:
     - {libelle: "taux médian", taux: 0.066, revenu_fiscal_maximum: 26472}
     - {libelle: "taux plein", taux: 0.083, revenu_fiscal_maximum: null}
   note: >-
-    CSG 8,30 %, CRDS 0,50 %, CASA 0,30 % : 9,10 % au total, sans abattement.
+    CSG 8,30 %, CRDS 0,50 %, CASA 0,30 % : 9,10 % au total, sans abattement,
+    et 1 % de plus sur la part complémentaire (`maladie_complementaire`).
     La CASA est due dès le taux médian de CSG — elle n'exclut que les pensions
     des foyers sous le seuil du taux réduit —, ce que la convention du dépôt,
     qui applique partout le taux plein, rend toujours vrai. Le fichier la
@@ -768,5 +819,8 @@ pensions:
     - "Article L. 137-41 du code de la sécurité sociale, en vigueur depuis le 1er janvier 2021 (LEGIARTI000042675242), II 1° : la CASA de 0,30 % exclut les pensions des foyers dont le revenu n'excède pas les seuils du 2° du III de L. 136-8"
     - "Ordonnance n° 96-50 du 24 janvier 1996, articles 14 et 19 (CRDS, 0,50 %)"
     - "service-public.fr, fiche F2971 « CSG, CRDS et Casa sur les pensions de retraite », mise à jour le 1er juin 2026"
+    - "Article L. 131-2 du code de la sécurité sociale, en vigueur depuis le 1er septembre 2023 (LEGIARTI000047453476), 1° : les avantages de retraite soumis à la cotisation d'assurance maladie"
+    - "Article D. 242-8 du code de la sécurité sociale, en vigueur depuis le 30 septembre 2018 (LEGIARTI000037456300) : 1 % sur ces avantages, autres que ceux du régime général"
+    - "urssaf.fr, « Les revenus de remplacement », tableau des prestations retraite en métropole, lu le 4 octobre 2026 : « 1 % sur les prestations de retraite complémentaire et supplémentaire », aux taux médian et plein de CSG ; 1,30 % de plus en Alsace-Moselle"
 
 fiabilite: haute

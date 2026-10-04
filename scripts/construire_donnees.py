@@ -1556,6 +1556,13 @@ def _prelevements_remuneration() -> dict:
             "casa": prelevements.pensions.casa,
             "csg_affectee_vieillesse":
                 prelevements.pensions.csg_affectee_vieillesse,
+            # La cotisation maladie des complémentaires : son taux, et les
+            # régimes qui la prélèvent, triés pour que le paquet ne dépende
+            # pas de l'ordre d'un ensemble.
+            "maladie_complementaire": {
+                "taux": prelevements.pensions.maladie_complementaire,
+                "regimes": sorted(prelevements.pensions.regimes_maladie),
+            },
             "bareme_csg": [
                 {"libelle": tranche.libelle, "taux": tranche.taux,
                  "revenu_fiscal_maximum": tranche.revenu_fiscal_maximum}

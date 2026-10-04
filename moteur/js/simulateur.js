@@ -756,19 +756,6 @@ export class Simulateur {
   }
 
   /**
-   * Le système 1 servi l'année courante, en euros de cette année : la
-   * grandeur que l'inversion cherche pour un retraité. Pour qui liquide cette
-   * année ou plus tard, c'est la pension du départ.
-   */
-  pensionActuelleAujourdhui(carriere) {
-    const echeancier = this.echeancier(carriere);
-    if (echeancier.aujourdhui === null) {
-      return echeancier.auDepart.pension_annuelle;
-    }
-    return echeancier.aujourdhui.pension_annuelle;
-  }
-
-  /**
    * L'échéancier du scénario 1 parcouru pour `carriere` : son départ, puis,
    * pour qui a liquidé avant l'année courante, l'échéance de cette année-là.
    */

@@ -5393,13 +5393,13 @@ OpenFisca-France-Pension, en est un cas particulier, mené à part.
 **Reprise, au 4 octobre 2026.** Fait : l'étape 1, et son relevé repris le 4
 octobre sur les 69 modèles, chaque point vérifié chez eux, chez nous et au
 texte : 279 points au registre (`fait_mieux`, avec leur `verification`), 145
-écarts, un `bilan` par modèle ; aucun moteur n'est encore touché. Reste : les
-étapes 2 à 19, une par session, et les choix de l'étape 13. Commencer par
-l'étape 15, le minimum contributif daté, une erreur du scénario 1 que trois
-modèles et le barème de la Cnav tranchent ; puis 16 et 2, dans l'ordre que
-propose la note du 4 octobre. Le registre dit, au chantier de chaque étape
-(« 138.15 »…), ce que chaque modèle en fait et où le lire ; le tableau de
-bord compte ce qui reste.
+écarts, un `bilan` par modèle ; de l'étape 2, le 1 % maladie des
+complémentaires (sa note). Reste : les étapes 2 à 19, une par session, et les
+choix de l'étape 13. Commencer par l'étape 15, le minimum contributif daté,
+une erreur du scénario 1 que trois modèles et le barème de la Cnav tranchent ;
+puis 16 et 2, dans l'ordre que propose la note du 4 octobre. Le registre dit,
+au chantier de chaque étape (« 138.15 »…), ce que chaque modèle en fait et où
+le lire ; le tableau de bord compte ce qui reste.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais qu'on regarde les modèles de
 simulation qui existent et qu'on les compare à notre projet. Il faut que l'on
@@ -5523,6 +5523,16 @@ par son chantier (« 138.2 »…) :
    unique aujourd'hui (`tauxPension`, `contexte.js`, et son jumeau
    Python), qui devient celui de la personne. Peut se faire seul, avant le
    reste de 2.
+   *Fait le 4 octobre 2026.* La cotisation est lue (D. 242-8,
+   LEGIARTI000037456300 ; L. 131-2, 1°, LEGIARTI000047453476 ; le tableau de
+   l'Urssaf), sa fiche est `cotisation_maladie_pensions_complementaires`, et
+   ses quatorze régimes sont dans `prelevements_remuneration.yaml`.
+   `Montants` porte le taux de la personne (9,35 % pour une non-cadre au
+   salaire moyen) ; les étages du scénario 1 et les lignes de réversion
+   paient chacun celui de leur régime ; la saisie d'une pension nette compare
+   des nets à chaque tour. Les points d'Ines et de devcrafting_retraites sont
+   repris. Reste de 2 : le net selon le revenu fiscal du foyer, l'ASPA du
+   couple.
 3. La page Coût décomposée comme le COR : les retraités projetés par régime
    (le classeur du COR), la décomposition dépendance × couverture × pension
    relative confrontée au COR de juin 2026 et à l'Ageing Report de 2024, la

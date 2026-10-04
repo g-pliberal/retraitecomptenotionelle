@@ -46,7 +46,7 @@ from retraite_notionnelle.saisie import (
     ErreurSaisie,
     Saisie,
 )
-from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.contexte import Contexte, Montants
 from retraite_notionnelle.web.site import disponible, module, rendre, site
 from outils_web import (
     FEUILLE_DE_STYLE, PAGES_AGREGEES, SIMULATION_TEMOIN, TITRES, _hors_depliants,
@@ -1818,12 +1818,13 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere():
     assert float(vers_net["salaire"]) == pytest.approx(2500, abs=2)
 
 
-def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres():
+def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres(contexte):
     """Même carrière, deux modes : le rapport des pensions est celui du barème.
 
     C'est le seul test qui relie les deux moitiés de la bascule — la saisie,
-    qui convertit un net en brut, et l'affichage, qui retire 9,1 % de la
-    pension. S'il tombe, l'une des deux a bougé sans l'autre.
+    qui convertit un net en brut, et l'affichage, qui retire de la pension
+    9,1 % et la cotisation maladie de sa part complémentaire. S'il tombe,
+    l'une des deux a bougé sans l'autre.
     """
     def pension(parametres):
         corps = rendre("/simuler", parametres)[1]
@@ -1841,7 +1842,45 @@ def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres():
     # donne la correspondance, et on la reprend ici pour ne pas la deviner.
     en_brut = pension({**commun, "salaire": "3158", "montants": "brut"})
     en_net = pension({**commun, "salaire": "2500", "montants": "net"})
-    assert en_net == pytest.approx(en_brut * (1 - 0.091), rel=2e-3)
+    # Le taux de la personne, que le modèle tire de sa pension du scénario 1 :
+    # 9,1 %, et 1 % de sa part complémentaire (action 138, étape 2).
+    saisie = Saisie.depuis_requete({**commun, "salaire": "3158", "montants": "brut"})
+    taux = Montants.depuis(saisie, contexte.base, contexte.simuler(saisie)).taux_pension
+    assert 0.091 < taux < 0.101
+    assert en_net == pytest.approx(en_brut * (1 - taux), rel=2e-3)
+
+
+def test_la_complementaire_paie_sa_cotisation_maladie_sur_la_page(contexte):
+    """En net, l'étage complémentaire du système 1 paie 10,1 %, la base 9,1 % :
+    la composition sous le montant le montre, et la note du mode dit le taux de
+    la personne et l'hypothèse des autres systèmes (action 138, étape 2). Un
+    revenu en multiple du salaire moyen ne dépend pas du mode : la carrière est
+    la même des deux côtés."""
+    commun = {"naissance": "1985-03-01", "sexe": "F",
+              "statut": "salarie_prive_non_cadre", "debut": "2007-09-01",
+              "liquidation": "2049-03-01", "unite_revenu": "moyen", "salaire": "1"}
+
+    def etages(corps):
+        bloc = re.search(r'<span class="composition">(.*?)</span>', corps, re.S)
+        assert bloc, "la composition du système 1 a disparu"
+        texte = re.sub(r"<[^>]+>", "", html.unescape(bloc.group(1)))
+        return {libelle.strip(): float(re.sub(r"\D", "", montant))
+                for montant, libelle in re.findall(r"([\d\s]+)\s*€\s*de ([^+]+)", texte)}
+
+    en_brut = etages(rendre("/simuler", {**commun, "montants": "brut"})[1])
+    corps = rendre("/simuler", {**commun, "montants": "net"})[1]
+    en_net = etages(corps)
+    base, complementaire = "retraite de base", "retraite complémentaire"
+    assert en_net[base] == pytest.approx(en_brut[base] * (1 - 0.091), abs=2.5)
+    assert en_net[complementaire] == pytest.approx(
+        en_brut[complementaire] * (1 - 0.101), abs=2.5)
+    saisie = Saisie.depuis_requete({**commun, "montants": "net"})
+    taux = Montants.depuis(saisie, contexte.base, contexte.simuler(saisie)).taux_pension
+    note = re.search(r"La pension est nette de ([\d,]+)", html.unescape(corps))
+    assert note, "la note du mode a disparu"
+    assert note.group(1) == f"{taux * 100:.1f}".replace(".", ",")
+    assert "cotisation maladie de 1" in corps
+    assert "ne change pas vos prélèvements" in corps
 
 
 def test_le_mode_des_montants_voyage_dans_l_adresse():
