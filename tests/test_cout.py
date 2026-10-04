@@ -725,8 +725,7 @@ def test_les_poids_cotisants_somment_a_un_et_ne_sont_pas_ceux_des_retraites():
     assert cotisants.fiabilite("fonction_publique_etat_civile", 2030) == Fiabilite.ESTIMEE
 
 
-def test_la_recette_pese_les_cotisants_et_la_depense_les_retraites(
-        cout: Cout, depenses, population, comptes):
+def test_la_recette_pese_les_cotisants_et_la_depense_les_retraites(cout: Cout):
     """Chaque côté du bilan a son poids, et le rapport de recettes s'en ressent.
 
     Peser la recette par les retraités surreprésentait les régimes qui
@@ -738,11 +737,19 @@ def test_la_recette_pese_les_cotisants_et_la_depense_les_retraites(
     assert cout.poids_cotisants != cout.poids
     assert cout.poids_cotisants["agent_sncf_conduite"] < cout.poids["agent_sncf_conduite"]
 
-    # L'ancienne convention, reproduite : les retraités des deux côtés.
-    simulateur = Simulateur(Parametres())
-    simulateur.__dict__["cotisants"] = simulateur.effectifs
-    ancien = calculer_cout(simulateur, depenses, population, comptes,
-                           convention_recette=CONVENTION_RAPPORT)
+    # L'ancienne convention, reproduite : les retraités des deux côtés. Sur un
+    # simulateur retouché, que la clé du coût ne décrit pas : le calcul se
+    # garde sous la sienne, et retouche lui-même un simulateur neuf.
+    def ancienne_convention():
+        simulateur = Simulateur(Parametres())
+        simulateur.__dict__["cotisants"] = simulateur.effectifs
+        return calculer_cout(simulateur, DepensesRetraite(RACINE_DONNEES),
+                             Population(RACINE_DONNEES), ComptesRetraite(RACINE_DONNEES),
+                             convention_recette=CONVENTION_RAPPORT)
+
+    ancien = memoire.memoriser_pour(
+        Parametres(), ("cout_retraites_des_deux_cotes", Parametres(), CONVENTION_RAPPORT),
+        ancienne_convention)
     assert ancien.poids_cotisants == ancien.poids
     for annee in (2030, 2050, 2070):
         ligne = cout.avenir.annee(annee)

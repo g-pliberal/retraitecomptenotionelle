@@ -18,7 +18,6 @@ import pytest
 
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
@@ -27,13 +26,8 @@ import age_depart_csp  # noqa: E402
 
 
 @pytest.fixture(scope="module")
-def simulateur():
-    return Simulateur(Parametres())
-
-
-@pytest.fixture(scope="module")
-def confrontations(simulateur):
-    return age_depart_csp.confronter(simulateur)
+def confrontations():
+    return age_depart_csp.confrontations_du_depot(Parametres())
 
 
 @pytest.fixture(scope="module")

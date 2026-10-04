@@ -4980,16 +4980,16 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 1er octobre 2026.** Fait : le levier 1 (scripts) ; une bonne
-part du levier 3, la suite complète tenant en deux minutes à chaud ;
-l'installation au démarrage, par un hook asynchrone ; contre le coût en
-jetons, « Économiser le contexte » dans `CLAUDE.md` et ces blocs « Reprise ».
-Reste : le levier 2, des tests sans présomptions ; le 3, indexer la mémoire
-des calculs sur le seul code du modèle (`memoire.py`), puis `test_cout.py`,
-les grilles des tests d'âge et `actions/cache` sur GitHub ; le 4, le parcours
-de présentation, à déclarer autrement qu'en récit ; le 5, que le propriétaire
-décide. Commencer par l'indexation. Détail : « Les cinq leviers », et la note
-du 1er octobre sur les jetons.
+**Reprise, au 4 octobre 2026.** Fait : le levier 1 (scripts) ; le 3 pour
+l'essentiel — sous Windows, la suite complète passe de 56 à moins de 15 min
+à froid, et de 10 à 7 min à chaud (l'instantané des données, un calcul à la
+fois, la mémoire commune aux worktrees, la grille du coût gardée, les fichiers
+isolés) ; le hook de démarrage ; « Économiser le contexte ». Reste : les trois
+tests qui échouent toujours sous Windows, à sauter ou à comparer à une
+tolérance, que le propriétaire décide ; le levier 2, des tests sans
+présomptions ; l'indexation de la mémoire sur le seul code du modèle et
+`actions/cache` sur GitHub ; le 4 et le 5. Commencer par la décision du
+propriétaire. Détail : la note du 4 octobre.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
@@ -5304,6 +5304,68 @@ section « Économiser le contexte » — une session par étape, chercher avant
 lire, les sorties longues par `tail`, l'enquête à la mesure de la question —,
 et, sous le titre de chaque action en cours, un bloc « Reprise » de dix lignes
 au plus, seul à lire au démarrage, que la session qui avance l'action récrit.
+
+**Le 4 octobre 2026, la suite complète sous Windows, à la demande du
+propriétaire** : « il faut rendre le plus possible les tests plus rapides […]
+la plupart des sessions sont bloquées par la suite complète qui tourne ». Son
+poste — quatre cœurs, seize gigaoctets, plusieurs sessions à la fois, chacune
+dans son worktree — tenait la suite en dix à vingt minutes, et en cinquante-six,
+mesurée à froid dans un worktree neuf pendant que deux autres suites
+tournaient. Un greffon de mesure, hors du dépôt — durées par fichier, calculs
+gardés, processus lancés, appels à `stat` —, et deux profils du coût agrégé ont
+dit pourquoi. Six retouches, sans aucun résultat déplacé : les vingt-cinq
+calculs gardés que l'ancien code et le nouveau ont en commun sont égaux au bit
+près.
+
+- **Le `stat` de Windows.** Les chargeurs du disque se gardent sur la
+  signature du fichier, au prix d'un `stat` à chaque appel : 285 818 par coût
+  agrégé, à près de 260 µs sous Windows, le tiers de son temps. Trois
+  chargeurs appelés à chaque ligne de chaque carrière — l'assiette minimale
+  des indépendants, le chômage des complémentaires, les tables du profil
+  salarial — et trois fonctions du profil, qui regroupaient leur table à
+  chaque appel, ne s'appellent plus qu'une fois par arguments le temps d'un
+  calcul (`chargement.instantane`, qu'ouvrent la construction d'une carrière,
+  la simulation, la grille des cas types et chaque calcul gardé) : 26 032
+  `stat`, et un coût deux fois plus court. Un calcul voit ses données telles
+  qu'elles étaient à son début.
+- **Les calculs faits en double.** La recherche d'âges de
+  `test_cout_age_depart.py` se faisait trois fois ensemble, une par worker,
+  un quart d'heure chacune. Un verrou du système par calcul (`memoire._seul`) :
+  qui demande un calcul en cours attend qu'il finisse, puis le relit.
+- **Un worktree neuf repartait sans mémoire**, quand le dépôt principal
+  gardait, sous la même empreinte, les trente calculs que la suite refaisait.
+  `.cache/calculs/` est désormais celui du dépôt principal, commun à ses
+  worktrees (`memoire.dossier_commun`), et garde seize empreintes au lieu de
+  quatre.
+- **Les tests de `pousser.sh`**, chaque git coûtant près d'une seconde sur la
+  machine chargée, tenaient le cinquième de la suite chaude. Leur atelier se
+  monte une fois par fichier et se copie ; surtout, un fichier isolé — qui ne
+  lit rien du modèle, seulement ce qu'il déclare, ici le script — ne rejoue
+  plus un cas qui a réussi tant que ni lui, ni le script, ni git n'ont bougé
+  (`ISOLES`, dans `tests/conftest.py`) ; visé expressément, il se rejoue.
+- **La grille des cas types**, l'essentiel d'un coût agrégé, que chaque
+  variante refaisait alors qu'elle ne dépend que des paramètres, des cas types
+  et de la liquidation : `memoire.cout` la garde, et la passe à
+  `calculer_cout` (`grille_simulee`). Cinq des treize variantes de la suite la
+  relisent, et se calculent en six secondes au lieu de cinquante.
+- **Ce que des tests refaisaient pour rien** : le contrôle de la prose, que
+  quatre tests relançaient ; le refus d'une pondération inconnue, qui tombait
+  après la grille ; l'ancienne convention des cotisants dans `test_cout.py` et
+  les deux grilles des tests d'âge, désormais gardées par la mémoire des
+  calculs.
+
+**Mesuré**, la machine chargée d'autres sessions, ce qui rend chaque chiffre
+approché : à froid, la suite passe de 56 min à 14 min ; à chaud, de 10 min
+23 s, mesurées après les trois premières retouches, à 6 min 54 s. Les
+trente-deux calculs gardés que les deux dernières suites froides ont en commun,
+avant et après la grille gardée, sont égaux au bit près. Les trois tests qui
+échouent sous Windows à la dernière décimale échouent toujours, et eux seuls.
+
+**Ce qui reste**, par ordre de gain : ces trois tests, qui ne peuvent pas
+passer sous Windows et y coûtent quatre minutes de travail par suite — les
+sauter hors de Linux, ou y comparer à une tolérance, que le propriétaire
+décide ; les tests du portage que node rejoue ; l'indexation de la mémoire sur
+le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 

@@ -55,10 +55,18 @@ def zonage():
     return verifier_prose.charger_zonage()
 
 
+@pytest.fixture(scope="module")
+def anomalies(zonage):
+    """Les anomalies du contrôle de la prose, une fois par processus : quatre
+    tests les lisent, et chaque contrôle recalculait les quatre cents mesures
+    que la prose cite, près d'une minute sous Windows."""
+    return verifier_prose.controler(zonage, corriger=False)[0]
+
+
 # -- ce que le dépôt doit tenir ----------------------------------------------
 
 
-def test_aucun_chiffre_ancre_n_a_derive(zonage):
+def test_aucun_chiffre_ancre_n_a_derive(request):
     """Chaque chiffre ancré est recalculé, et doit tomber juste.
 
     C'est le contrôle qui remplace les tests écrits un par un : là où un test
@@ -68,14 +76,14 @@ def test_aucun_chiffre_ancre_n_a_derive(zonage):
     """
     if fabrique.a_jour("prose"):
         pytest.skip("chiffres ancrés inchangés depuis la dernière fabrication")
-    anomalies, _ = verifier_prose.controler(zonage, corriger=False)
+    anomalies = request.getfixturevalue("anomalies")
     derives = [a for a in anomalies if a.genre == "derive"]
     assert not derives, "\n".join(
         f"{a.fichier}:{a.ligne}: {a.message}" for a in derives
     ) + "\n\nlancer : python scripts/verifier_prose.py --corriger"
 
 
-def test_aucune_zone_d_etat_ne_porte_de_chiffre_nu(zonage):
+def test_aucune_zone_d_etat_ne_porte_de_chiffre_nu(anomalies):
     """Une section déclarée « etat » décrit ce qui est vrai AUJOURD'HUI.
 
     Un chiffre nu y est une promesse que rien ne tient : c'est ainsi que la
@@ -84,18 +92,16 @@ def test_aucune_zone_d_etat_ne_porte_de_chiffre_nu(zonage):
     lettres, qui vieillissent exactement pareil et que l'ancre ne sait pas
     tenir — il faut les réécrire en chiffres.
     """
-    anomalies, _ = verifier_prose.controler(zonage, corriger=False)
     nus = [a for a in anomalies if a.genre in ("nu", "lettres")]
     assert not nus, "\n".join(f"{a.fichier}:{a.ligne}: {a.message}" for a in nus)
 
 
-def test_chaque_sonde_nommee_existe_et_repond(zonage):
+def test_chaque_sonde_nommee_existe_et_repond(anomalies):
     """Une ancre qui nomme une sonde inconnue, ou un fichier disparu, échoue.
 
     Sans quoi l'ancre deviendrait décorative : le jour où le fichier qu'elle
     interroge est déplacé, elle cesserait de tenir quoi que ce soit en silence.
     """
-    anomalies, _ = verifier_prose.controler(zonage, corriger=False)
     muettes = [a for a in anomalies if a.genre == "sonde"]
     if not disponible():
         # Une sonde qui lit le portage ou le texte du site ne répond que par
@@ -105,13 +111,12 @@ def test_chaque_sonde_nommee_existe_et_repond(zonage):
     assert not muettes, "\n".join(f"{a.fichier}:{a.ligne}: {a.message}" for a in muettes)
 
 
-def test_zones_yaml_ne_declare_que_des_sections_qui_existent(zonage):
+def test_zones_yaml_ne_declare_que_des_sections_qui_existent(anomalies):
     """Une section renommée doit être redéclarée, pas oubliée.
 
     C'est la mécanique d'`inventaire.yaml` : le catalogue et le document se
     tiennent l'un l'autre, et le divorce est une erreur, jamais un silence.
     """
-    anomalies, _ = verifier_prose.controler(zonage, corriger=False)
     orphelines = [a for a in anomalies if a.genre == "section"]
     assert not orphelines, "\n".join(f"{a.fichier}: {a.message}" for a in orphelines)
 

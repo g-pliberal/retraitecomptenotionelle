@@ -55,3 +55,47 @@ def test_un_fichier_que_rien_ne_nomme_est_rapide():
     assert conftest.niveau("test_web.py", "test_quelconque") == "complet"
     assert conftest.niveau("test_oracle.py",
                            "test_les_exemples_publies_par_les_caisses_sont_reproduits") == "rapide"
+
+
+# -- les fichiers isolés -------------------------------------------------------
+
+
+def test_chaque_fichier_isole_et_ce_qu_il_lit_existent():
+    racine = TESTS.parent
+    absents = sorted(f for f in conftest.ISOLES if not (TESTS / f).is_file())
+    absents += sorted(c for lus in conftest.ISOLES.values() for c in lus
+                      if not (racine / c).is_file())
+    assert not absents, f"{absents} : la table des fichiers isolés nomme des fichiers disparus"
+
+
+def test_un_fichier_isole_n_importe_rien_du_depot():
+    """Isolé, il ne lit que ce qu'il déclare : un import du modèle, ou d'un
+    module des tests, ferait dépendre son résultat de ce que son empreinte
+    ne lit pas."""
+    for fichier in conftest.ISOLES:
+        arbre = ast.parse((TESTS / fichier).read_text(encoding="utf-8"))
+        modules = {alias.name.split(".")[0] for n in ast.walk(arbre)
+                   if isinstance(n, ast.Import) for alias in n.names}
+        modules |= {(n.module or "").split(".")[0] for n in ast.walk(arbre)
+                    if isinstance(n, ast.ImportFrom) and not n.level}
+        assert modules <= {"__future__", "pathlib", "pytest", "shutil", "subprocess"}, (
+            fichier, sorted(modules))
+
+
+def test_l_empreinte_d_un_fichier_isole_suit_ce_qu_il_lit(monkeypatch, tmp_path):
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests" / "test_isole.py").write_text("def test_x(): pass\n", encoding="utf-8")
+    (tmp_path / "tests" / "conftest.py").write_text("", encoding="utf-8")
+    (tmp_path / "script.sh").write_text("echo 1\n", encoding="utf-8")
+    monkeypatch.setattr(conftest, "RACINE", tmp_path)
+    monkeypatch.setattr(conftest, "ISOLES", {"test_isole.py": ("script.sh",)})
+    monkeypatch.setattr(conftest, "OUTILS_DES_ISOLES", ())
+    monkeypatch.setattr(conftest, "_EMPREINTES", {})
+    avant = conftest.empreinte_isolee("test_isole.py")
+    (tmp_path / "script.sh").write_text("echo 2\n", encoding="utf-8")
+    assert conftest.empreinte_isolee("test_isole.py") == avant      # une fois par processus
+    monkeypatch.setattr(conftest, "_EMPREINTES", {})
+    apres = conftest.empreinte_isolee("test_isole.py")
+    assert apres != avant
+    assert (conftest.marque_de_reussite(apres, "tests/test_isole.py::test_x")
+            != conftest.marque_de_reussite(avant, "tests/test_isole.py::test_x"))

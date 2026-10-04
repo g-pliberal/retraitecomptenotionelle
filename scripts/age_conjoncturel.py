@@ -66,6 +66,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
+from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import (  # noqa: E402
     CAS_TYPES, CasType, calculer_cas_types, poids_effectifs,
 )
@@ -179,6 +180,14 @@ def mesurer(simulateur: Simulateur,
             cas_types=len(retenus),
         ))
     return mesures
+
+
+def mesures_du_depot(parametres: Parametres) -> list[Annee]:
+    """``mesurer`` sur un simulateur neuf et les données du dépôt : la grille
+    entière, une demi-minute de simulations, gardée par la mémoire des calculs
+    (``retraite_notionnelle/memoire.py``)."""
+    return memoire.memoriser_pour(parametres, ("age_conjoncturel", parametres),
+                                  lambda: mesurer(Simulateur(parametres)))
 
 
 def imprimer(mesures: list[Annee]) -> None:

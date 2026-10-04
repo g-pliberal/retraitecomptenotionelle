@@ -28,7 +28,7 @@ from .carriere import (
     salaire_moyen_annuel,
 )
 from .config import ContributionEtat, Parametres, PartCotisation
-from .donnees.chargement import DonneeInsuffisante, Fiabilite
+from .donnees.chargement import DonneeInsuffisante, Fiabilite, dans_un_instantane
 from .donnees.cotisants import EffectifsCotisants
 from .donnees.caracteristiques import CaracteristiquesRetraites
 from .donnees.distribution import DistributionPensions
@@ -1036,6 +1036,7 @@ class Simulateur:
             )
         return self._scenarios[cle]
 
+    @dans_un_instantane
     def calculer_univers(self, univers: str, carriere: Carriere) -> ResultatNotionnel:
         """Un univers de la proposition sur cette carrière, telle quelle :
         l'âge légal que l'univers ajoute, c'est à :meth:`carriere_proposition`
@@ -1258,6 +1259,7 @@ class Simulateur:
         """
         return self.calculer_univers("notionnel_liberal", carriere)
 
+    @dans_un_instantane
     def simuler(self, carriere: Carriere) -> Comparaison:
         """Calcule les six scénarios pour une carrière."""
         self._verifier_fiabilite(carriere)

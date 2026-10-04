@@ -13,6 +13,7 @@ dépôt courant.
 
 from __future__ import annotations
 
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -44,14 +45,17 @@ def commiter(depot: Path, nom: str, texte: str = "x") -> str:
     return git(depot, "rev-parse", "HEAD")
 
 
-@pytest.fixture
-def atelier(tmp_path: Path) -> tuple[Path, Path]:
-    """Un dépôt nu qui joue GitHub, et un clone posé sur une branche de session."""
-    distant = tmp_path / "origin.git"
+@pytest.fixture(scope="module")
+def modele_d_atelier(tmp_path_factory) -> Path:
+    """L'atelier, monté une fois par module, que chaque cas copie : sous
+    Windows, la machine chargée, un git coûte près d'une seconde, et monter
+    l'atelier prenait de dix à vingt-cinq secondes par cas."""
+    racine = tmp_path_factory.mktemp("atelier")
+    distant = racine / "origin.git"
     subprocess.run(["git", "init", "--quiet", "--bare", "--initial-branch=main",
                     str(distant)], check=True)
 
-    amorce = tmp_path / "amorce"
+    amorce = racine / "amorce"
     subprocess.run(["git", "clone", "--quiet", str(distant), str(amorce)], check=True)
     git(amorce, "config", "user.email", "essai@exemple.fr")
     git(amorce, "config", "user.name", "Essai")
@@ -59,12 +63,23 @@ def atelier(tmp_path: Path) -> tuple[Path, Path]:
     commiter(amorce, "depart.txt")
     git(amorce, "push", "--quiet", "origin", "main")
 
-    session = tmp_path / "session"
+    session = racine / "session"
     subprocess.run(["git", "clone", "--quiet", str(distant), str(session)], check=True)
     # L'identité d'une session web : la seule adresse qu'elle publie.
     git(session, "config", "user.email", "noreply@anthropic.com")
     git(session, "config", "user.name", "Claude")
     git(session, "checkout", "--quiet", "-b", "claude/essai")
+    return racine
+
+
+@pytest.fixture
+def atelier(modele_d_atelier: Path, tmp_path: Path) -> tuple[Path, Path]:
+    """Un dépôt nu qui joue GitHub, et un clone posé sur une branche de session,
+    copiés du modèle : la session suit le dépôt nu de sa copie."""
+    distant, session = tmp_path / "origin.git", tmp_path / "session"
+    shutil.copytree(modele_d_atelier / "origin.git", distant)
+    shutil.copytree(modele_d_atelier / "session", session)
+    git(session, "remote", "set-url", "origin", str(distant))
     return distant, session
 
 

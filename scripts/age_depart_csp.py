@@ -62,6 +62,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts"))
 
+from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, poids_effectifs  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
@@ -180,6 +181,14 @@ def confronter(simulateur: Simulateur) -> tuple[list[Confrontation], dict[str, s
 
     confrontations.sort(key=lambda ligne: -abs(ligne.ecart))
     return confrontations, hors_champ
+
+
+def confrontations_du_depot(
+        parametres: Parametres) -> tuple[list[Confrontation], dict[str, str]]:
+    """``confronter`` sur un simulateur neuf et les données du dépôt, gardé
+    par la mémoire des calculs (``retraite_notionnelle/memoire.py``)."""
+    return memoire.memoriser_pour(parametres, ("confrontations_csp", parametres),
+                                  lambda: confronter(Simulateur(parametres)))
 
 
 def imprimer(confrontations: list[Confrontation], hors_champ: dict[str, str],

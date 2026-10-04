@@ -189,11 +189,16 @@ qu'elle dure. D'où cinq règles.
 - **Les temps tiennent à des mémoires** qu'il ne faut pas contourner :
   `charger_yaml` (qui rend une copie), `charger_serie_annuelle` et la table
   des quotients de mortalité, indexées sur la signature du fichier, partagées
-  et jamais modifiées ; les lois de mortalité calibrées, gardées dans
+  et jamais modifiées ; le temps d'un calcul, les chargeurs marqués
+  `une_fois_par_instantane` ne regardent le disque qu'une fois
+  (`chargement.instantane`), un `stat` coûtant cher sous Windows ; les lois
+  de mortalité calibrées, gardées dans
   `data/derive/calibrations_mortalite.json` et reprises seulement si
   l'empreinte de leurs entrées est celle du jour ; le coût agrégé, ses
-  variantes et le coût des avantages, que `memoire.py` garde dans
-  `.cache/calculs/` sous l'empreinte de `src/`, `data/` et `scripts/`
+  variantes et le coût des avantages, que `memoire.py` garde dans le
+  `.cache/calculs/` du dépôt principal, commun à tous ses worktrees, sous
+  l'empreinte de `src/`, `data/` et `scripts/`, un seul processus faisant
+  chaque calcul pendant que les autres l'attendent
   (`CALCULS_SANS_MEMOIRE=1` s'en passe) et ne sert que sur le modèle intact :
   qui en remplace une fonction s'ouvre sous `memoire.modele_modifie()`, et
   `monkeypatch` la fait taire. `SerieAnnuelle` et

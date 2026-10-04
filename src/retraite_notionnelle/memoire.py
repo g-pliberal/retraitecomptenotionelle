@@ -22,8 +22,11 @@ tient pas des sources — et sous l'EMPREINTE des sources : tout ce que git voit
 sous ``src/``, ``data/`` et ``scripts/``, octet par octet, et la version de
 Python. Qu'un de ces fichiers bouge, et tout se refait ; un calcul pendant
 lequel l'un d'eux a bougé ne se garde pas. Il se relit d'abord du processus,
-puis de ``.cache/calculs/<empreinte>/``, que git ignore ; les quatre empreintes
-les plus récentes y restent. Chaque lecture rend un objet neuf, comme
+puis de ``.cache/calculs/<empreinte>/``, que git ignore, dans le dépôt
+principal, que tous ses worktrees partagent (:func:`dossier_commun`) ; les
+seize empreintes les plus récentes y restent. Un calcul ne se fait
+qu'une fois à la fois : qui le demande pendant qu'un autre processus le fait
+attend, puis le relit (:func:`_seul`). Chaque lecture rend un objet neuf, comme
 ``charger_yaml`` rend une copie : ce qu'un appelant en fait ne touche pas les
 autres. ``CALCULS_SANS_MEMOIRE=1`` fait tout recalculer.
 
@@ -49,22 +52,57 @@ import shutil
 import subprocess
 import sys
 import threading
+import time
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Callable, TypeVar
 
 from .config import RACINE_DONNEES, RACINE_PROJET, Parametres
+from .donnees.chargement import instantane
 
 T = TypeVar("T")
 
-#: Où les calculs se gardent : un dossier par empreinte.
-DOSSIER = RACINE_PROJET / ".cache" / "calculs"
+def dossier_commun(racine: Path) -> Path:
+    """``.cache/calculs`` du dépôt principal, que ses worktrees partagent.
+
+    La clé et l'empreinte disent tout d'un calcul : une session neuve, dans
+    son worktree, n'a pas à refaire ce qu'une autre a calculé sur les mêmes
+    sources. Le 4 octobre 2026, une suite partie d'un worktree neuf refaisait,
+    une heure durant, les trente calculs que le dépôt principal gardait déjà
+    sous la même empreinte. Hors d'un worktree, c'est le dossier du dépôt.
+    """
+    propre = racine / ".cache" / "calculs"
+    try:
+        lien = (racine / ".git").read_text(encoding="utf-8")
+    except OSError:              # un dépôt ordinaire : .git est un dossier
+        return propre
+    if not lien.startswith("gitdir:"):
+        return propre
+    prive = Path(lien[len("gitdir:"):].strip())
+    if not prive.is_absolute():
+        prive = racine / prive
+    try:
+        commun = (prive / (prive / "commondir").read_text(encoding="utf-8").strip()).resolve()
+    except OSError:
+        return propre
+    if commun.name != ".git":    # un dépôt nu : pas de dépôt principal où garder
+        return propre
+    return commun.parent / ".cache" / "calculs"
+
+
+#: Où les calculs se gardent : un dossier par empreinte, commun aux worktrees.
+DOSSIER = dossier_commun(RACINE_PROJET)
 #: Posée, cette variable d'environnement fait tout recalculer, sans rien lire
 #: ni écrire.
 SANS_MEMOIRE = "CALCULS_SANS_MEMOIRE"
-#: Les empreintes gardées, les plus récentes : de quoi aller et venir entre deux
-#: états du dépôt sans tout refaire.
-EMPREINTES_GARDEES = 4
+#: Les empreintes gardées, les plus récentes : de quoi aller et venir entre les
+#: états du dépôt de plusieurs sessions sans tout refaire. Une quinzaine de
+#: mégaoctets chacune, les grilles du coût comprises.
+EMPREINTES_GARDEES = 16
+#: L'attente la plus longue d'un calcul qu'un autre processus fait : au-delà,
+#: on le refait soi-même. La recherche d'âges a pris un quart d'heure sous
+#: Windows, la machine chargée de trois suites.
+ATTENTE_MAX = 30 * 60
 #: Ce dont un calcul dépend, tel que git le voit. Ce qu'il ignore n'en est pas :
 #: ``data/brut``, les téléchargements, ne se lit que par les scripts de
 #: récupération. Les scripts en sont : certains calculs gardés y sont écrits.
@@ -190,25 +228,102 @@ def memoriser(cle: tuple, calcul: Callable[[], T]) -> T:
     if nom_ in _EN_MEMOIRE:
         return pickle.loads(_EN_MEMOIRE[nom_])
     empreinte_ = empreinte()
-    donnees = _relire(empreinte_, nom_)
-    if donnees is not None:
-        try:
-            objet = pickle.loads(donnees)
-        except Exception:        # noqa: BLE001 — tronqué, illisible : à refaire
-            pass
-        else:
-            _EN_MEMOIRE[nom_] = donnees
-            return objet
+    trouve, objet = _lire(empreinte_, nom_)
+    if trouve:
+        return objet
     if _en_lecture_seule():
         raise Absent(nom_)
-    objet = calcul()
-    try:
-        donnees = pickle.dumps(objet, protocol=pickle.HIGHEST_PROTOCOL)
-    except Exception:            # noqa: BLE001 — un objet qui ne s'écrit pas
-        return objet
-    _EN_MEMOIRE[nom_] = donnees
-    _garder(empreinte_, nom_, donnees)
+    with _seul(empreinte_, nom_):
+        # Un autre l'a peut-être fait pendant qu'on attendait.
+        trouve, objet = _lire(empreinte_, nom_)
+        if trouve:
+            return objet
+        with instantane():
+            objet = calcul()
+        try:
+            donnees = pickle.dumps(objet, protocol=pickle.HIGHEST_PROTOCOL)
+        except Exception:        # noqa: BLE001 — un objet qui ne s'écrit pas
+            return objet
+        _EN_MEMOIRE[nom_] = donnees
+        _garder(empreinte_, nom_, donnees)
     return objet
+
+
+def _lire(empreinte_: str | None, nom_: str) -> tuple[bool, object]:
+    """Le calcul gardé sur le disque, s'il s'y trouve et se relit."""
+    donnees = _relire(empreinte_, nom_)
+    if donnees is None:
+        return False, None
+    try:
+        objet = pickle.loads(donnees)
+    except Exception:            # noqa: BLE001 — tronqué, illisible : à refaire
+        return False, None
+    _EN_MEMOIRE[nom_] = donnees
+    try:                         # l'empreinte sert : elle passe devant les autres
+        os.utime(DOSSIER / empreinte_)
+    except OSError:
+        pass
+    return True, objet
+
+
+def _verrouiller(descripteur: int) -> bool:
+    try:
+        if os.name == "nt":
+            import msvcrt
+            msvcrt.locking(descripteur, msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(descripteur, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        return False
+    return True
+
+
+def _deverrouiller(descripteur: int) -> None:
+    try:
+        if os.name == "nt":
+            import msvcrt
+            os.lseek(descripteur, 0, os.SEEK_SET)
+            msvcrt.locking(descripteur, msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(descripteur, fcntl.LOCK_UN)
+    except OSError:
+        pass
+
+
+@contextmanager
+def _seul(empreinte_: str | None, nom_: str):
+    """Un calcul ne se fait qu'une fois à la fois. Le processus qui le demande
+    pendant qu'un autre le fait — un autre worker de la suite, une autre
+    session — attend qu'il finisse, puis le relit, au lieu de le refaire à
+    côté : la suite froide du 4 octobre 2026 faisait trois fois ensemble la
+    même recherche d'âges, un quart d'heure chacune. Le verrou est celui du
+    système, que la mort de son processus lève ; au-delà d'``ATTENTE_MAX``,
+    ou faute de pouvoir verrouiller, chacun calcule pour soi, comme avant."""
+    if empreinte_ is None:
+        yield
+        return
+    try:
+        dossier = DOSSIER / empreinte_
+        dossier.mkdir(parents=True, exist_ok=True)
+        descripteur = os.open(dossier / f".{nom_}.verrou", os.O_RDWR | os.O_CREAT)
+    except OSError:
+        yield
+        return
+    try:
+        limite = time.monotonic() + ATTENTE_MAX
+        tenu = _verrouiller(descripteur)
+        while not tenu and time.monotonic() < limite:
+            time.sleep(0.2)
+            tenu = _verrouiller(descripteur)
+        try:
+            yield
+        finally:
+            if tenu:
+                _deverrouiller(descripteur)
+    finally:
+        os.close(descripteur)
 
 
 @contextmanager
@@ -287,6 +402,7 @@ def cout(parametres: Parametres | None = None, *, comptes: bool = True,
     grille = tuple(cas_types) if cas_types is not None else CAS_TYPES
 
     def calcul():
+        from . import cout as module
         from .donnees.assiette import AssietteActivite
         from .donnees.depenses import DepensesRetraite
         from .donnees.equilibre import ComptesRetraite, variante_du_scenario
@@ -296,11 +412,20 @@ def cout(parametres: Parametres | None = None, *, comptes: bool = True,
         racine = parametres.racine_donnees
         variante = variante_du_scenario(parametres.scenario_projection,
                                         racine / "reference" / "macro")
+        simulateur = Simulateur(parametres)
+        # La grille simulée ne dépend que des paramètres, des cas types et de
+        # la liquidation : les variantes qui ne diffèrent que par la pondération,
+        # les conventions, les comptes ou l'assiette la partagent. Lue à
+        # l'appel dans le module, comme ``calculer_cout`` la lit : un contexte
+        # qui la remplace fait taire la mémoire, et c'est la sienne qui sert.
+        simulee = memoriser_pour(
+            parametres, ("grille_du_cout", parametres, grille, reglages["liquidation"]),
+            lambda: module._pensionnes(simulateur, grille, reglages["liquidation"]))
         return calculer_cout(
-            Simulateur(parametres), DepensesRetraite(racine), Population(racine),
+            simulateur, DepensesRetraite(racine), Population(racine),
             ComptesRetraite(racine, variante=variante) if comptes else None,
             cas_types=grille, assiette=AssietteActivite(racine) if assiette else None,
-            **reglages)
+            grille_simulee=simulee, **reglages)
 
     return memoriser_pour(parametres, ("cout", parametres, comptes, assiette, grille,
                                   tuple(sorted(reglages.items()))), calcul)

@@ -9,15 +9,20 @@ from __future__ import annotations
 
 import copy
 import csv
+import functools
 import json
 import pickle
+import threading
 from bisect import bisect_left, bisect_right
+from contextlib import contextmanager
 from dataclasses import dataclass
 from enum import IntEnum
 from pathlib import Path
-from typing import Iterator
+from typing import Callable, Iterator, TypeVar
 
 import yaml
+
+T = TypeVar("T")
 
 
 class Fiabilite(IntEnum):
@@ -205,6 +210,80 @@ class SerieAnnuelle:
         )
 
 
+# -- l'instantané : le temps d'un calcul, le disque ne se regarde qu'une fois --
+
+#: Ce que les chargeurs ont rendu dans l'instantané ouvert par ce fil, par
+#: chargeur et par arguments ; ``None`` hors d'un instantané.
+_FIL = threading.local()
+
+
+@contextmanager
+def instantane() -> Iterator[None]:
+    """Le temps d'un calcul, les données sont celles de son début.
+
+    Les chargeurs du disque se gardent sur la signature du fichier, sa date et
+    sa taille, pour relire une donnée modifiée sans qu'on ait à rien vider :
+    c'est un ``stat`` à chaque appel. Sous Windows, il coûte deux à trois cents
+    microsecondes, et la construction des carrières en faisait près de trois
+    cent mille par coût agrégé, le tiers de son temps (feuille de route,
+    action 135). Dans un instantané, un chargeur marqué
+    :func:`une_fois_par_instantane` ne s'appelle qu'une fois par arguments : ce
+    qu'il a rendu, il le rend encore, sans regarder le disque. Un calcul voit
+    donc ses données telles qu'elles étaient à son début, ce qui vaut mieux
+    qu'un mélange si l'une change en cours de route ; le suivant les relit.
+    Imbriqué, l'instantané est celui du dehors ; il ne vaut que pour le fil
+    qui l'ouvre.
+    """
+    if getattr(_FIL, "vu", None) is not None:
+        yield
+        return
+    _FIL.vu = {}
+    try:
+        yield
+    finally:
+        _FIL.vu = None
+
+
+def dans_un_instantane(calcul: Callable[..., T]) -> Callable[..., T]:
+    """Le calcul décoré s'exécute dans un instantané (:func:`instantane`)."""
+
+    @functools.wraps(calcul)
+    def enrobe(*args, **kwargs):
+        if getattr(_FIL, "vu", None) is not None:
+            return calcul(*args, **kwargs)
+        with instantane():
+            return calcul(*args, **kwargs)
+
+    return enrobe
+
+
+def une_fois_par_instantane(chargeur: Callable[..., T]) -> Callable[..., T]:
+    """Dans un instantané, le chargeur décoré ne s'appelle qu'une fois par
+    arguments ; hors d'un instantané, il s'appelle comme avant.
+
+    Seulement pour ce qui se partage déjà, d'un appel à l'autre, sans copie :
+    un objet que personne ne modifie, ou un nombre. ``charger_yaml``, qui rend
+    une copie que l'appelant peut modifier, n'en est pas.
+    """
+
+    @functools.wraps(chargeur)
+    def enrobe(*args, **kwargs):
+        vu = getattr(_FIL, "vu", None)
+        if vu is None or kwargs:
+            return chargeur(*args, **kwargs)
+        cle = (enrobe, *args)
+        try:
+            return vu[cle]
+        except KeyError:
+            pass
+        except TypeError:        # un argument qui ne se hache pas
+            return chargeur(*args)
+        resultat = vu[cle] = chargeur(*args)
+        return resultat
+
+    return enrobe
+
+
 # Même raison que pour le YAML plus bas : les mêmes CSV sont relus des dizaines
 # de fois par une construction de témoins, une fois par jeu de données rebâti.
 # La série rendue est partagée et non copiée — c'est sûr, et même souhaitable :
@@ -315,6 +394,7 @@ def charger_table_par_generation(
 _TABLES_CSV_EN_CACHE: dict[tuple, tuple[dict, tuple]] = {}
 
 
+@une_fois_par_instantane
 def charger_table_csv(
     chemin: Path, cles: tuple[str, ...], colonne: str,
 ) -> tuple[dict[tuple[str, ...], float], tuple[Fiabilite, ...]]:
@@ -539,6 +619,7 @@ class AssietteMinimale:
 _ASSIETTES_MINIMALES: dict[tuple[str, int, int], tuple[AssietteMinimale, ...]] = {}
 
 
+@une_fois_par_instantane
 def charger_assiettes_minimales(racine: Path) -> tuple[AssietteMinimale, ...]:
     """Assiette minimale du régime de base des indépendants, par statut.
 
@@ -805,6 +886,7 @@ class ChomageComplementaires:
 _CHOMAGE_COMPLEMENTAIRES: dict[tuple[str, int, int], ChomageComplementaires] = {}
 
 
+@une_fois_par_instantane
 def charger_chomage_complementaires(racine: Path) -> ChomageComplementaires:
     """Les règles du chômage aux régimes complémentaires, gardées comme les
     autres points de passage du disque, indexées sur la signature du fichier ;

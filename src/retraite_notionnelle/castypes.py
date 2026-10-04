@@ -18,6 +18,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from .carriere import PROFIL_AUTOMATIQUE, Carriere
+from .donnees.chargement import dans_un_instantane
 from .simulateur import Comparaison, Simulateur
 from . import pilote
 from .pilote import VARIANTES_LIQUIDATION
@@ -404,6 +405,7 @@ class ResultatCasTypes:
         }
 
 
+@dans_un_instantane
 def calculer_cas_types(
     simulateur: Simulateur,
     cas_types: tuple[CasType, ...] = CAS_TYPES,

@@ -20,7 +20,6 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
@@ -31,7 +30,7 @@ SERIE = age_conjoncturel.SERIE
 
 @pytest.fixture(scope="module")
 def mesures():
-    return age_conjoncturel.mesurer(Simulateur(Parametres()))
+    return age_conjoncturel.mesures_du_depot(Parametres())
 
 
 @pytest.fixture(scope="module")

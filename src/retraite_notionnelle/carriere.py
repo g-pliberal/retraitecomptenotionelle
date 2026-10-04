@@ -36,6 +36,8 @@ from .donnees.chargement import (
     charger_periodes_non_travaillees,
     charger_table_csv,
     charger_yaml,
+    dans_un_instantane,
+    une_fois_par_instantane,
 )
 from .donnees.macro import DonneesMacro
 from . import chronologie as chrono
@@ -1638,6 +1640,7 @@ class Carriere:
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
+    @dans_un_instantane
     def depuis_chronologie(cls, chronologie: dict, macro: DonneesMacro,
                            personne: str = chrono.ASSURE,
                            identifiant: str = "assuré") -> "Carriere":
@@ -2124,6 +2127,7 @@ SECTION_ENSEMBLE = "B-S"
 TRANCHE_SECTEUR_JEUNE, TRANCHE_SECTEUR_AGEE = "Y_LT30", "Y_GE50"
 
 
+@une_fois_par_instantane
 def _facteur_secteur(racine: Path, affiliation: str) -> float:
     """De combien la pente d'un secteur s'écarte de celle de l'économie.
 
@@ -2196,6 +2200,7 @@ ANNEE_FORME_CATEGORIE = 2024
 TRANCHE_JEUNE, TRANCHE_AGEE = "Y26T30", "Y51T60"
 
 
+@une_fois_par_instantane
 def _table_profil(racine: Path, fichier: str,
                   cle: str) -> dict[str, dict[str, float]]:
     """Un des deux fichiers de profil, groupé par sa première clé."""
@@ -2230,6 +2235,7 @@ def _interpole_tranches(profil: dict[str, float], milieux: dict[str, float],
     return points[-1][1]
 
 
+@une_fois_par_instantane
 def _modulation_annee(racine: Path, annee: int) -> float:
     """Pente de carrière de l'année, rapportée à celle de l'année de référence.
 

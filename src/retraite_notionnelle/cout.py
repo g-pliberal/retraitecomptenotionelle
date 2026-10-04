@@ -3734,7 +3734,9 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   liquidation: str = "droit",
                   assiette: AssietteActivite | None = None,
                   convention_recette: str = CONVENTION_ASSIETTE,
-                  convention_reversion: str = CONVENTION_REVERSION_SUPPRIMEE) -> Cout:
+                  convention_reversion: str = CONVENTION_REVERSION_SUPPRIMEE,
+                  grille_simulee: tuple[list[Pensionne], dict[str, int]] | None = None,
+                  ) -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
     Les années où le modèle ne sert AUCUNE pension — celles d'avant la première
@@ -3761,6 +3763,11 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     1 la sert dans les deux cas. Ce n'est pas un réglage d'affichage : la
     réversion pèse un dixième de la masse versée.
 
+    ``grille_simulee`` : ce que :func:`_pensionnes` rend pour ce simulateur,
+    ces cas types et cette liquidation, déjà calculé. C'est l'essentiel du
+    calcul, et il ne dépend d'aucune autre option : ``memoire.cout`` le garde
+    d'une variante à l'autre. Sans lui, la grille se simule ici.
+
     ``comptes`` porte le second terme du bilan — les ressources. Il est
     facultatif : sans lui, tout ce qui précède est calculé à l'identique et le
     solde reste vide, ce qui est exactement l'état du dépôt avant que ces
@@ -3776,8 +3783,12 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
             f"convention de réversion inconnue : {convention_reversion!r} "
             f"(attendu : {CONVENTIONS_REVERSION})"
         )
+    # Avant la grille, et non après : son refus tombait au bout d'une minute.
+    if ponderation not in PONDERATIONS:
+        raise ValueError(f"pondération inconnue : {ponderation!r} (attendu : {PONDERATIONS})")
     reversion_servie = convention_reversion == CONVENTION_REVERSION_SERVIE
-    pensionnes, echecs = _pensionnes(simulateur, cas_types, liquidation)
+    pensionnes, echecs = (grille_simulee if grille_simulee is not None
+                          else _pensionnes(simulateur, cas_types, liquidation))
     poids = _ponderation(simulateur, ponderation, cas_types)
     poids_cotisants = _ponderation(simulateur, ponderation, cas_types, COTE_COTISANTS)
     macro = simulateur.macro

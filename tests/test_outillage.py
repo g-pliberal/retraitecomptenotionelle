@@ -212,7 +212,7 @@ def test_un_calcul_pendant_lequel_une_source_bouge_ne_se_garde_pas(monkeypatch,
     empreintes = iter(["avant", "après"])
     monkeypatch.setattr(memoire_isolee, "empreinte", lambda: next(empreintes))
     memoire_isolee.memoriser(("essai",), lambda: 1.0)
-    assert not memoire_isolee.DOSSIER.exists()
+    assert not list(memoire_isolee.DOSSIER.rglob("*.pickle"))
 
 
 def test_un_calcul_fait_apres_une_retouche_du_code_ne_se_garde_pas(monkeypatch,
@@ -222,7 +222,7 @@ def test_un_calcul_fait_apres_une_retouche_du_code_ne_se_garde_pas(monkeypatch,
     monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
     monkeypatch.setattr(memoire_isolee, "_code_retouche", lambda: True)
     memoire_isolee.memoriser(("essai",), lambda: 1.0)
-    assert not memoire_isolee.DOSSIER.exists()
+    assert not list(memoire_isolee.DOSSIER.rglob("*.pickle"))
 
 
 def test_une_memoire_illisible_se_refait_et_l_on_peut_s_en_passer(monkeypatch,
@@ -278,7 +278,72 @@ def test_la_memoire_ne_garde_que_les_empreintes_recentes(monkeypatch, memoire_is
         memoire_isolee.memoriser(("essai",), lambda: 1.0)
         os.utime(memoire_isolee.DOSSIER / f"e{rang}", (1000 + rang, 1000 + rang))
     restent = sorted(d.name for d in memoire_isolee.DOSSIER.iterdir())
-    assert restent == [f"e{rang}" for rang in range(2, memoire_isolee.EMPREINTES_GARDEES + 2)]
+    assert restent == sorted(f"e{rang}"
+                             for rang in range(2, memoire_isolee.EMPREINTES_GARDEES + 2))
+
+
+def test_un_calcul_ne_se_fait_qu_une_fois_a_la_fois(monkeypatch, memoire_isolee):
+    """Deux demandeurs du même calcul en même temps — deux workers, deux
+    sessions : le second attend le premier, puis relit son calcul."""
+    import threading
+    import time
+
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    faits, rendus = [], []
+    commence = threading.Event()
+
+    def calcul():
+        faits.append("lent")
+        commence.set()
+        time.sleep(0.5)
+        return 42.0
+
+    def demander():
+        rendus.append(memoire_isolee.memoriser(("essai", 7), calcul))
+
+    premier = threading.Thread(target=demander)
+    premier.start()
+    commence.wait(10)
+    monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})     # un autre processus
+    demander()
+    premier.join()
+    assert faits == ["lent"]
+    assert rendus == [42.0, 42.0]
+
+
+def test_un_verrou_qui_ne_se_leve_pas_n_empeche_pas_de_calculer(monkeypatch, memoire_isolee):
+    """Au-delà de l'attente permise, chacun calcule pour soi, comme avant."""
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    monkeypatch.setattr(memoire_isolee, "ATTENTE_MAX", 0.3)
+    nom_ = memoire_isolee.nom(("essai", 8))
+    dossier = memoire_isolee.DOSSIER / "e1"
+    dossier.mkdir(parents=True)
+    tenu = os.open(dossier / f".{nom_}.verrou", os.O_RDWR | os.O_CREAT)
+    try:
+        assert memoire_isolee._verrouiller(tenu)
+        assert memoire_isolee.memoriser(("essai", 8), lambda: 8.0) == 8.0
+    finally:
+        memoire_isolee._deverrouiller(tenu)
+        os.close(tenu)
+
+
+def test_les_worktrees_partagent_la_memoire_du_depot_principal(tmp_path):
+    """La clé et l'empreinte disent tout d'un calcul : un worktree neuf relit
+    ce que le dépôt principal, ou un autre worktree, a déjà calculé."""
+    depot = tmp_path / "depot"
+    subprocess.run(["git", "init", "-q", str(depot)], check=True)
+    subprocess.run(["git", "-C", str(depot), "-c", "user.name=Essai",
+                    "-c", "user.email=essai@exemple.fr", "commit", "-q",
+                    "--allow-empty", "-m", "amorce"], check=True)
+    branche = tmp_path / "ailleurs" / "branche"
+    subprocess.run(["git", "-C", str(depot), "worktree", "add", "-q", "--detach",
+                    str(branche)], check=True)
+    attendu = (depot / ".cache" / "calculs").resolve()
+    assert memoire.dossier_commun(depot).resolve() == attendu
+    assert memoire.dossier_commun(branche).resolve() == attendu
+    seul = tmp_path / "seul"
+    seul.mkdir()
+    assert memoire.dossier_commun(seul) == seul / ".cache" / "calculs"
 
 
 def test_l_empreinte_suit_les_sources_que_git_voit(monkeypatch, memoire_isolee, tmp_path):
@@ -336,6 +401,71 @@ def test_le_contexte_du_site_lit_ses_couts_dans_la_memoire(monkeypatch, memoire_
     assert contexte.pour(derive).cout() == "c"
     assert demandes == [("cout", contexte.base), ("avantages", contexte.base),
                         ("cout", derive)]
+
+
+# -- l'instantané des données ---------------------------------------------------
+
+
+def _table(chemin: Path, valeur: str) -> None:
+    chemin.write_text(f"cle,annee,valeur,fiabilite\nx,2000,{valeur},haute\n",
+                      encoding="utf-8")
+
+
+def test_un_instantane_voit_les_donnees_de_son_debut(tmp_path):
+    """Dans un instantané, un chargeur ne regarde le disque qu'une fois ; le
+    calcul suivant relit ce qui a changé."""
+    from retraite_notionnelle.donnees import chargement
+
+    chemin = tmp_path / "table.csv"
+    _table(chemin, "1.0")
+
+    def lire():
+        return chargement.charger_table_csv(chemin, ("cle", "annee"), "valeur")[0][("x", "2000")]
+
+    with chargement.instantane():
+        assert lire() == 1.0
+        _table(chemin, "2.50")
+        assert lire() == 1.0
+        with chargement.instantane():            # imbriqué : celui du dehors
+            assert lire() == 1.0
+    assert lire() == 2.5
+
+
+def test_un_instantane_ne_vaut_que_pour_son_fil(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor as Fils
+    from retraite_notionnelle.donnees import chargement
+
+    chemin = tmp_path / "table.csv"
+    _table(chemin, "1.0")
+
+    def lire():
+        return chargement.charger_table_csv(chemin, ("cle", "annee"), "valeur")[0][("x", "2000")]
+
+    with chargement.instantane():
+        assert lire() == 1.0
+        _table(chemin, "2.50")
+        with Fils(1) as fil:
+            assert fil.submit(lire).result() == 2.5
+        assert lire() == 1.0
+
+
+def test_un_chargeur_garde_sous_instantane_s_appelle_comme_avant_hors_de_lui():
+    """Des arguments qui ne se hachent pas, ou nommés : l'appel passe tel quel."""
+    from retraite_notionnelle.donnees import chargement
+
+    appels = []
+
+    @chargement.une_fois_par_instantane
+    def chargeur(*args, **kwargs):
+        appels.append((args, kwargs))
+        return len(appels)
+
+    assert chargeur(1) == 1 and chargeur(1) == 2            # hors d'un instantané
+    with chargement.instantane():
+        assert chargeur(1) == 3 and chargeur(1) == 3
+        assert chargeur([1]) == 4 and chargeur([1]) == 5    # ne se hache pas
+        assert chargeur(1, nom=2) == 6 and chargeur(1, nom=2) == 7
+    assert chargeur(1) == 8
 
 
 # -- le précalcul des chiffres ancrés -------------------------------------------

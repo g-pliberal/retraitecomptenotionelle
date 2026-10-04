@@ -30,9 +30,20 @@ tout envoi sur ``main``, et que GitHub rejoue à chaque envoi.
 Une marque de plus ne dit pas un niveau mais un moment : ``site``, le filet
 qu'on rejoue en une minute après une retouche des pages, du formulaire ou d'un
 champ de saisie, avant la suite complète (``python -m pytest -m site``).
+
+Un fichier isolé — qui ne lit rien du modèle, seulement ce qu'il déclare dans
+``ISOLES`` — ne rejoue pas un cas qui a réussi tant que rien de ce qu'il lit
+n'a bougé.
 """
 
 from __future__ import annotations
+
+import hashlib
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 
@@ -143,12 +154,97 @@ def pytest_configure(config):
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(config, items):
-    """Marque chaque test de son niveau, avant que ``-m`` ne choisisse."""
+    """Marque chaque test de son niveau, avant que ``-m`` ne choisisse ; passe
+    ceux d'un fichier isolé qui ont réussi tels quels (:data:`ISOLES`)."""
+    vises = {Path(str(argument).split("::")[0]).name for argument in config.args}
     for item in items:
         nom = getattr(item, "originalname", None) or item.name
         item.add_marker(niveau(item.path.name, nom))
         if (item.path.name, nom) in SITE:
             item.add_marker("site")
+        fichier = item.path.name
+        if fichier not in ISOLES or os.environ.get(TESTS_SANS_MEMOIRE):
+            continue
+        empreinte = empreinte_isolee(fichier)
+        if fichier not in vises and marque_de_reussite(empreinte, item.nodeid).exists():
+            item.add_marker(pytest.mark.skip(
+                reason="réussi au dernier passage, et rien de ce qu'il lit n'a bougé"))
+
+
+# -- les fichiers isolés : ne se rejoue que ce qui a bougé ----------------------
+
+#: Les fichiers de tests qui ne lisent rien du modèle, seulement ce qu'ils
+#: déclarent ici et les outils qu'ils lancent. Un cas qui y a réussi ne se
+#: rejoue pas tant que ni son fichier, ni ce qu'il lit, ni ces outils n'ont
+#: bougé : son résultat serait le même. La mémoire en est commune aux
+#: worktrees, comme celle des calculs. Visé expressément, le fichier se
+#: rejoue ; ``TESTS_SANS_MEMOIRE=1`` rejoue tout, et GitHub, sans mémoire,
+#: aussi.
+ISOLES: dict[str, tuple[str, ...]] = {
+    # Le script de publication, sur des dépôts montés dans un dossier
+    # temporaire. Sous Windows, la machine chargée, un git coûte près d'une
+    # seconde : ses onze cas tenaient le cinquième de la suite chaude, le
+    # 4 octobre 2026.
+    "test_pousser.py": ("scripts/pousser.sh",),
+}
+#: Les outils qu'un fichier isolé lance : leur version et leur configuration
+#: entrent dans son empreinte.
+OUTILS_DES_ISOLES = (("git", "--version"), ("bash", "--version"),
+                     ("git", "config", "--system", "--list"),
+                     ("git", "config", "--global", "--list"))
+TESTS_SANS_MEMOIRE = "TESTS_SANS_MEMOIRE"
+#: Où les réussites se gardent : une marque par cas, sous l'empreinte.
+REUSSITES = memoire.DOSSIER.parent / "tests"
+#: Les empreintes gardées, les plus récentes.
+EMPREINTES_DES_ISOLES = 8
+RACINE = Path(__file__).resolve().parents[1]
+_EMPREINTES: dict[str, str] = {}
+
+
+def empreinte_isolee(fichier: str) -> str:
+    """Tout ce dont dépend le résultat d'un fichier isolé : lui-même, ce
+    ``conftest.py``, ce qu'il déclare lire, les outils qu'il lance, leurs
+    variables ``GIT_*``, Python et pytest. Une fois par processus."""
+    if fichier not in _EMPREINTES:
+        somme = hashlib.sha256(f"{sys.version}|{sys.platform}|{pytest.__version__}".encode())
+        for chemin in (f"tests/{fichier}", "tests/conftest.py", *ISOLES[fichier]):
+            somme.update(chemin.encode() + b"\0" + (RACINE / chemin).read_bytes())
+        for outil in OUTILS_DES_ISOLES:
+            try:
+                acheve = subprocess.run(outil, capture_output=True)
+                somme.update(acheve.stdout + acheve.stderr + str(acheve.returncode).encode())
+            except OSError as souci:
+                somme.update(repr(souci).encode())
+        for nom in sorted(n for n in os.environ if n.startswith("GIT_")):
+            somme.update(f"{nom}={os.environ[nom]}".encode())
+        _EMPREINTES[fichier] = somme.hexdigest()[:24]
+    return _EMPREINTES[fichier]
+
+
+def marque_de_reussite(empreinte: str, nodeid: str) -> Path:
+    return REUSSITES / empreinte / hashlib.sha256(nodeid.encode()).hexdigest()[:24]
+
+
+def pytest_runtest_logreport(report):
+    """Un cas d'un fichier isolé a réussi : il se marque, sous l'empreinte que
+    ce processus a prise en le collectant (le maître de xdist, qui ne collecte
+    rien, ne marque rien)."""
+    if report.when != "call" or not report.passed or os.environ.get(TESTS_SANS_MEMOIRE):
+        return
+    fichier = Path(report.nodeid.split("::")[0]).name
+    if fichier not in _EMPREINTES:
+        return
+    marque = marque_de_reussite(_EMPREINTES[fichier], report.nodeid)
+    try:
+        if not marque.parent.exists():
+            marque.parent.mkdir(parents=True, exist_ok=True)
+            anciennes = sorted((d for d in REUSSITES.iterdir() if d != marque.parent),
+                               key=lambda d: d.stat().st_mtime, reverse=True)
+            for ancienne in anciennes[EMPREINTES_DES_ISOLES - 1:]:
+                shutil.rmtree(ancienne, ignore_errors=True)
+        marque.touch()
+    except OSError:              # la mémoire n'est qu'un raccourci
+        pass
 
 
 # -- la mémoire des calculs, et ce qui la fait taire -----------------------------
