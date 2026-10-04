@@ -25,12 +25,8 @@ sources:
   prochaine_relecture: 2027-09-30
   a_relire:
   - >-
-    Les points du V et du VI de L. 732-56 — 66 par an, dix-sept annuités au plus
-    (D. 732-154-1 à -3) — pour les conjoints, aides familiaux et collaborateurs,
-    et pour le chef qui n'a pas dix-sept ans et demi comme chef : ils demandent
-    un statut que le modèle ne connaît pas. Les majorations de durée d'assurance
-    que D. 732-151 compte dans les dix-sept ans et demi depuis 2026 : le modèle
-    n'en attribue aucune au régime des non-salariés agricoles, dont la fiche n'en
+    Les majorations de durée d'assurance que D. 732-151 compte dans les dix-sept
+    ans et demi depuis 2026 : le modèle n'en attribue aucune au régime des non-salariés agricoles, dont la fiche n'en
     déclare pas. La révision de 2023 des pensions prises avant le 1er septembre,
     le modèle calculant la pension à sa date d'effet. La distinction entre activité
     principale et secondaire.
@@ -57,6 +53,10 @@ sources:
       1er septembre 2023, que la page n'a pas mise à jour
     url: https://www.msa.fr/lfp/retraite/non-salaries-agricoles
     date: 2026-09-23
+historique:
+- >-
+  2026-10-04 — les points du V et du VI de L. 732-56, 66 par an et dix-sept
+  annuités au plus, lus : fiche `rco_points_gratuits_66`, non modélisée.
 textes_a_rattacher:
 - reference: >-
     code rural, D. 732-154, trois versions (LEGIARTI000006597590 de 2005, LEGIARTI000047961251

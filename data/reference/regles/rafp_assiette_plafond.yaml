@@ -17,12 +17,6 @@ effet: >-
 sources:
   lu_le: 2026-09-23
   prochaine_relecture: 2027-09-30
-  a_relire:
-  - >-
-    Les deux exceptions de l'ERAFP ne sont pas portées : la GIPA, cotisée sans plafond,
-    et les jours de compte épargne-temps convertis en points ; ni la cotisation
-    volontaire des agents de l'État outre-mer (loi de finances pour 2024, article
-    201).
   lectures:
   - type: legifrance
     reference: >-
@@ -40,6 +34,13 @@ sources:
     url: >-
       https://www.rafp.fr/actif/activite/calculer-vos-cotisations-et-vos-points-rafp
     date: 2026-09-23
+historique:
+- >-
+  2026-10-04 — les deux exceptions au plafond, la GIPA et le compte épargne-temps,
+  lues : fiches `rafp_gipa_hors_plafond` et `rafp_compte_epargne_temps` ; la
+  cotisation volontaire des agents de l'État outre-mer et sa garantie de 4 000 € :
+  fiches `rafp_cotisation_volontaire_outre_mer` et `rafp_garantie_outre_mer`. Ni
+  les unes ni les autres ne sont modélisées.
 textes_a_rattacher:
 - reference: >-
     décret n° 2004-569, article 2, six versions de LEGIARTI000006453300 (2004) à

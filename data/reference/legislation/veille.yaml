@@ -5085,3 +5085,47 @@ journal:
     reste: >-
       Relire les cartes quand leurs textes changent : le plafond et le taux déplafonné de
       2026 se redatent chaque 1er janvier ; L. 351-3 et R. 351-12 au 1er novembre 2026.
+  - date: "2026-10-04"
+    session: "action 119 : les exceptions au plafond du RAFP et la cotisation volontaire outre-mer"
+    consulte: >-
+      Dans l'index LEGI : le décret n° 2008-964 (GIPA) et le décret n° 2014-452 ; les
+      articles du compte épargne-temps qui versent au RAFP, décrets n° 2002-634 (6, 6-1),
+      n° 2004-878 (5, 6) et n° 2002-788 (5, 6) ; l'article 76 bis de la loi n° 2003-775,
+      ses trois rédactions, et les articles 201 de la loi n° 2023-1322, 167 de la loi
+      n° 2025-127 et 175 de la loi n° 2026-103 dans l'index JORF ; les articles 15-1 et
+      15-2 du décret n° 2004-569, les décrets n° 2024-348, n° 2024-839 et n° 2025-1339.
+      Sur Légifrance, l'article 4 de l'arrêté du 28 août 2009, ses trois rédactions. Les
+      pages de l'ERAFP sur le compte épargne-temps et de la DGAFP sur la cotisation
+      volontaire.
+    trouve: >-
+      La GIPA cotise au RAFP hors plafond depuis 2008 ; les jours de CET versés au RAFP
+      aussi, depuis 2009, au forfait de 125, 80 et 65 €, puis 135, 90 et 75 € en 2019,
+      150, 100 et 83 € depuis 2024, par une formule qui redonne au centime les valeurs
+      nettes de l'ERAFP. Depuis le 1er avril 2024, une cotisation volontaire hors
+      plafond sur les majorations de traitement du Pacifique et de Saint-Pierre, et une
+      garantie de 4 000 € par an pour les agents qui y étaient au 1er janvier 2024 et y
+      résident à leur départ. Quatre fiches, `pas_encore_modelisee`.
+    reste: >-
+      La rente de l'exemple CET de l'ERAFP (0,061245 € le point) ; les GIPA de 2012 et
+      2013 ; l'indemnité temporaire de retraite, que la garantie compte ; le simulateur
+      Excel de la DGAFP.
+  - date: "2026-10-04"
+    session: "action 119 : les 66 points gratuits de la RCO agricole"
+    consulte: >-
+      Dans l'index LEGI : L. 732-56 du code rural, ses sept rédactions ; D. 732-151,
+      D. 732-151-1, D. 732-154-1, -2 et -3, dans toutes leurs rédactions. Dans l'index
+      JORF : l'article 34 de la loi n° 2014-40 et l'article 2 du décret n° 2014-494. La
+      page de la MSA sur les non-salariés agricoles, son guide de septembre 2023 et sa
+      synthèse statistique de décembre 2018 sur la RCO.
+    trouve: >-
+      Depuis le 1er février 2014, 66 points par an, dix-sept annuités au plus, pour les
+      années d'avant 2011 d'aide familial, de conjoint ou de collaborateur et celles
+      d'avant 2003 du chef sans ses dix-sept ans et demi, à qui a dix-sept ans et demi
+      d'activité non salariée agricole ; la durée tous régimes jusqu'au 31 août 2023,
+      le taux plein ensuite, les majorations de durée comptées depuis 2026. La MSA
+      compte 448 000 bénéficiaires en 2017 et 377 € par an pour une aide familiale :
+      dix-sept annuités à la valeur de 2017, au centime près. Fiche
+      `rco_points_gratuits_66`, non modélisée : le simulateur ne connaît que le chef.
+    reste: >-
+      Un exemple chiffré d'assuré ; la réversion de ces points (L. 732-62) ; le statut
+      de conjoint, d'aide familial ou de collaborateur, que le simulateur ne demande pas.

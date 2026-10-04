@@ -637,11 +637,14 @@ sources:
       `plafond_primes_traitement` de data/reference/regimes/fonction_publique.yaml,
       ligne `rafp_assiette_plafond` du registre de veille, récit dans
       docs/limites.md). Les valeurs du point de 2025 et 2026 sont celles que
-      le dépôt certifie. Restent : les deux exceptions au plafond — la GIPA,
-      cotisée en entier, et les jours de compte épargne-temps convertis en
-      points —, la cotisation volontaire des agents de l'État outre-mer, et
-      l'exemple de la page, 350 € de cotisation pour 240 points arrondis au
-      point supérieur.
+      le dépôt certifie. Les deux exceptions au plafond — la GIPA, cotisée en
+      entier, et les jours de compte épargne-temps convertis en points — et la
+      cotisation volontaire des agents de l'État outre-mer sont lues au texte
+      le 4 octobre 2026, documentées sans être modélisées (fiches
+      `rafp_gipa_hors_plafond`, `rafp_compte_epargne_temps`,
+      `rafp_cotisation_volontaire_outre_mer`, `rafp_garantie_outre_mer`).
+      Reste l'exemple de la page, 350 € de cotisation pour 240 points
+      arrondis au point supérieur.
 
   - id: rafp_retraite
     url: https://www.rafp.fr/retraite
@@ -661,7 +664,16 @@ sources:
     a_en_tirer: >-
       La monétisation du compte épargne-temps en points RAFP : un canal
       d'acquisition que le dépôt ignore, à chiffrer ou à déclarer.
-    statut: a_explorer
+    statut: explore
+    explore_le: 2026-10-04
+    note: >-
+      Déclaré : fiche `rafp_compte_epargne_temps`, non modélisée, le simulateur
+      ne demandant pas les jours de CET. La conversion hors plafond, le barème
+      de 2026 (150, 100 et 83 € bruts ; 142,50, 95,00 et 78,85 € nets ; 98, 66
+      et 55 points par jour), que la formule V = M / (P + T) du décret
+      n° 2002-634 redonne au centime ; la rente de quinze jours (1 470 points,
+      90,03 € par an en catégorie A) ne se retrouve pas à la valeur de service
+      de 2026.
 
   # ---- Service des retraites de l'État -----------------------------------
 
@@ -4165,7 +4177,14 @@ sources:
     a_en_tirer: >-
       La cotisation VOLONTAIRE au RAFP, ouverte récemment : un canal
       d'acquisition surnuméraire, à déclarer ou à chiffrer.
-    statut: a_explorer
+    statut: explore
+    explore_le: 2026-10-04
+    note: >-
+      Déclaré : fiches `rafp_cotisation_volontaire_outre_mer` et
+      `rafp_garantie_outre_mer`, non modélisées. La page (29 avril 2024, mise à
+      jour le 17 juillet 2024) ne donne ni le taux ni le délai : ils sont lus
+      à l'article 76 bis de la loi n° 2003-775 et aux articles 15-1 et 15-2 du
+      décret n° 2004-569. Son simulateur Excel n'est pas ouvert.
 
   # ---- CAVIMAC ------------------------------------------------------------
 

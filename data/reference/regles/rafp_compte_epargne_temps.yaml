@@ -1,0 +1,146 @@
+schema_version: 1
+id: rafp_compte_epargne_temps
+intitule: >-
+  Les jours de compte épargne-temps que le fonctionnaire titulaire ou le magistrat
+  verse au RAFP, au-delà du seuil de son compte, se valorisent au forfait de sa
+  catégorie et cotisent presque en entier, hors de la limite de 20 % du traitement
+  indiciaire.
+domaine: cotisations
+regimes: [rafp]
+etape: acquerir_les_droits
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les jours de compte épargne-temps au-delà du seuil que le titulaire verse au RAFP, année par année, et sa catégorie statutaire
+ecrit:
+- la cotisation au RAFP de ces jours, hors plafond, et les points qu'elle achète
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_2009
+  statut: supposee
+  hypothese: >-
+    avant le décret n° 2009-1065, qui crée l'article 6-1 du décret n° 2002-634, les
+    jours du compte ne se versent pas au RAFP
+  fiabilite: haute, l'article 6-1 n'a pas de rédaction antérieure au 31 août 2009 dans l'index
+  bornes:
+    revenu.annee: [null, 2009-01-01]
+  contenu:
+    droit: aucun versement de jours au RAFP
+  exemples: aucun trouvé
+- id: cet_125_80_65
+  statut: lue
+  textes:
+  - {id: LEGIARTI000037457049, article: "décret n° 2002-634, article 6-1", en_vigueur: 2018-09-30}
+  - {id: LEGIARTI000021010268, article: "décret n° 2002-634, article 6-1", en_vigueur: 2009-08-31}
+  - {id: LEGIARTI000038020077, article: "décret n° 2002-634, article 6", en_vigueur: 2018-12-30}
+  - {id: LEGIARTI000037457036, article: "décret n° 2004-878, article 6", en_vigueur: 2018-09-30}
+  - {id: LEGIARTI000052872761, article: "décret n° 2004-878, article 5", en_vigueur: 2025-11-29}
+  - {id: LEGIARTI000026739912, article: "décret n° 2002-788, article 6", en_vigueur: 2012-12-09}
+  - {id: LEGIARTI000038020109, article: "décret n° 2002-788, article 5", en_vigueur: 2018-12-30}
+  nee_de: LEGIARTI000021010268
+  bornes:
+    revenu.annee: [2009-01-01, 2019-01-01]
+  contenu:
+    beneficiaire: >-
+      le fonctionnaire titulaire et le magistrat, pas le contractuel ; dans la
+      territoriale, si la collectivité l'a délibéré (décret n° 2004-878, article 5)
+    droit: >-
+      les jours inscrits au compte au-delà du seuil (quinze dans la territoriale) se
+      versent au RAFP, s'y gardent ou s'indemnisent, au choix du titulaire ; « en
+      l'absence d'exercice d'une option », ils vont au RAFP. Chaque jour vaut
+      V = M / (P + T) : M le forfait de la catégorie, P les taux de CSG et de CRDS,
+      T les taux de cotisation RAFP de l'agent et de l'employeur ; l'agent cotise
+      sur V au taux de 100 % diminué de la CSG et de la CRDS, l'employeur au même
+      taux ; « l'indemnité mentionnée au I n'est pas prise en compte dans l'assiette
+      des éléments de rémunération auxquels s'applique la limite »
+    forfait: >-
+      arrêté du 28 août 2009, article 4, du 31 août 2009 au 1er janvier 2019 :
+      125 € en catégorie A, 80 € en B, 65 € en C (Légifrance)
+  exemples: aucun trouvé
+- id: cet_135_90_75
+  statut: lue
+  textes:
+  - {id: LEGIARTI000037457049, article: "décret n° 2002-634, article 6-1", en_vigueur: 2018-09-30}
+  nee_de: LEGIARTI000037457049
+  bornes:
+    revenu.annee: [2019-01-01, 2024-01-01]
+  contenu:
+    droit: la même formule, le même hors-plafond
+    forfait: >-
+      arrêté du 28 août 2009, article 4, rédaction de l'arrêté du 28 novembre 2018,
+      du 1er janvier 2019 au 30 novembre 2023 : 135 €, 90 €, 75 € (Légifrance)
+  exemples: aucun trouvé
+- id: cet_150_100_83
+  statut: lue
+  textes:
+  - {id: LEGIARTI000037457049, article: "décret n° 2002-634, article 6-1", en_vigueur: 2018-09-30}
+  nee_de: LEGIARTI000037457049
+  bornes:
+    revenu.annee: [2024-01-01, null]
+  contenu:
+    droit: la même formule, le même hors-plafond
+    forfait: >-
+      arrêté du 28 août 2009, article 4, rédaction de l'arrêté du 24 novembre 2023,
+      en vigueur depuis le 30 novembre 2023 pour les indemnisations à compter du
+      1er janvier 2024 : 150 €, 100 €, 83 € (Légifrance)
+    exemple_de_la_caisse: >-
+      hors de tests/temoins/exemples_officiels.yaml, qu'aucune grandeur du modèle
+      ne peut rejouer, faute de jours de CET au simulateur. ERAFP, page « Compte
+      épargne-temps », valeurs 2026 : un jour vaut 142,50 €, 95,00 € et 78,85 €
+      nets, soit 98, 66 et 55 points. La formule du décret, avec P = 9,7 % ×
+      98,25 % et T = 2 × (1 − P), redonne 142,49 €, 95,00 € et 78,85 € ; divisés
+      par le salaire de référence de 2026 (1,4596 €, valeurs_point.csv) et
+      arrondis au point supérieur, 98, 66 et 55 points. Quinze jours en catégorie
+      A, 1 470 points, y valent « 90,03 € » de rente annuelle : 0,061245 € le
+      point, 8 % au-dessus de la valeur de service de 2026 (0,05671 €), écart que
+      la page n'explique pas.
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    La rente de l'exemple de l'ERAFP (0,061245 € le point, contre 0,05671 € de valeur
+    de service en 2026) : lire sur quelle valeur, ou quel coefficient d'âge, la page
+    la calcule.
+  - >-
+    Le forfait par jour dans la territoriale et l'hospitalière (article 7 des décrets
+    n° 2004-878 et n° 2002-788) n'est pas lu : l'ERAFP donne le même barème aux trois
+    versants.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2002-634, articles 6
+      (LEGIARTI000038020077) et 6-1 (…021010268, …037457049) ; décret n° 2004-878,
+      articles 5 (LEGIARTI000052872761) et 6 (…037457036) ; décret n° 2002-788,
+      articles 5 (LEGIARTI000038020109) et 6 (…026739912), dans l'index LEGI
+    date: 2026-10-04
+  - type: legifrance
+    reference: >-
+      arrêté du 28 août 2009 pris pour l'application du décret n° 2002-634,
+      article 4 (LEGIARTI000037694815), ses trois rédactions : 125/80/65 € du
+      31 août 2009 au 1er janvier 2019, 135/90/75 € jusqu'au 30 novembre 2023
+      (arrêté du 28 novembre 2018), 150/100/83 € depuis (arrêté du 24 novembre 2023)
+    date: 2026-10-04
+    url: https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000037694815
+  - type: autre
+    reference: >-
+      ERAFP, « Compte épargne-temps » : la conversion « sans tenir compte du
+      plafonnement des 20 % », « comme pour la GIPA », barème et points de 2026,
+      trois versants et la magistrature ; et « Calculer vos cotisations et vos
+      points RAFP », qui nomme les deux exceptions
+    date: 2026-10-04
+    url: https://www.rafp.fr/employeur/compte-epargne-temps
+historique:
+- >-
+  2026-10-04 — née avec l'action 119 : l'une des deux exceptions au plafond de 20 %
+  que la fiche `rafp_assiette_plafond` laissait à relire, documentée sans être
+  modélisée ; l'autre, la GIPA, a sa fiche, `rafp_gipa_hors_plafond`.
+effet: >-
+  Les fonctionnaires qui ont versé des jours de compte épargne-temps au RAFP ont
+  des points que le modèle ne compte pas : quinze jours en catégorie A, 1 470 points
+  en 2026, environ 83 € de rente par an à la valeur de service de 2026. Le
+  simulateur ne demande pas ces jours.
+textes_a_rattacher:
+- reference: 'décret n° 2009-1065 du 28 août 2009 : il crée le versement des jours au RAFP dans la fonction publique de l''État'

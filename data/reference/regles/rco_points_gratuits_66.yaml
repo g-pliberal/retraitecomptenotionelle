@@ -1,0 +1,147 @@
+schema_version: 1
+id: rco_points_gratuits_66
+intitule: >-
+  Depuis le 1er février 2014, la RCO agricole attribue sans cotisation 66 points par
+  an, dix-sept annuités au plus, pour les années d'avant 2011 d'aide familial, de
+  conjoint participant aux travaux ou de collaborateur, et pour celles d'avant 2003
+  du chef d'exploitation qui n'a pas ses dix-sept ans et demi comme chef, à qui
+  justifie de dix-sept ans et demi d'activité non salariée agricole et part au taux
+  plein.
+domaine: points
+regimes: [msa_rco]
+etape: acquerir_les_droits
+face: droit
+etat: pas_encore_modelisee
+lit:
+- le statut de chaque année d'activité non salariée agricole — chef, aide familial, conjoint participant aux travaux, collaborateur — et son caractère exclusif ou principal
+- la durée d'assurance comme non-salarié agricole et comme chef, à la date d'effet de la pension de base
+- le taux plein de la pension de base (avant septembre 2023, la durée d'assurance tous régimes)
+- les années d'affiliation à la RCO et les points gratuits de cent déjà attribués
+ecrit:
+- les points gratuits de soixante-six, par annuité, au compte de RCO
+dates_qui_decident:
+- pension.echeance
+versions:
+- id: avant_2014
+  statut: supposee
+  hypothese: >-
+    avant les V et VI de L. 732-56, créés par l'article 34 de la loi n° 2014-40, seuls
+    les chefs aux dix-sept ans et demi reçoivent des points gratuits, les cent de
+    D. 732-154
+  fiabilite: haute, L. 732-56 n'a pas de V de ce contenu avant le 22 janvier 2014 dans l'index
+  bornes:
+    pension.echeance: [null, 2014-02-01]
+  contenu:
+    droit: aucun point de soixante-six
+  exemples: aucun trouvé
+- id: duree_tous_regimes
+  statut: lue
+  textes:
+  - {id: LEGIARTI000028498813, article: "code rural, L. 732-56, V et VI", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000046806448, article: "code rural, L. 732-56, V et VI", en_vigueur: 2022-12-25}
+  - {id: LEGIARTI000028941346, article: "code rural, D. 732-151-1", en_vigueur: 2014-02-01}
+  - {id: LEGIARTI000028941720, article: "code rural, D. 732-154-1", en_vigueur: 2014-02-01}
+  - {id: LEGIARTI000028941700, article: "code rural, D. 732-154-2", en_vigueur: 2014-02-01}
+  - {id: LEGIARTI000028941729, article: "code rural, D. 732-154-3", en_vigueur: 2014-02-01}
+  nee_de: LEGIARTI000028498813
+  bornes:
+    pension.echeance: [2014-02-01, 2023-09-01]
+  contenu:
+    beneficiaire: >-
+      V : qui a exercé à titre exclusif ou principal comme chef avant 2003 sans la
+      durée minimale à ce titre, ou comme aide familial, conjoint participant aux
+      travaux (avant 2009, D. 732-154-2) ou collaborateur avant 2011, retraité
+      avant 1997 (1°) ou entre 1997 et le 1er janvier 2014 (2°), points attribués
+      « au 1er février 2014 » ; VI : celui dont la retraite prend effet après le
+      31 décembre 2013, à sa date d'effet
+    conditions: >-
+      avant 1997, trente-deux ans et demi d'assurance comme non-salarié agricole
+      à titre exclusif ou principal ; depuis, dix-sept ans et demi (D. 732-151-1),
+      et une durée d'assurance tous régimes « au moins égale à la durée requise
+      par l'article L. 732-25 pour ouvrir droit à une pension à taux plein »
+    droit: >-
+      « 66 points de retraite complémentaire obligatoire par an » (D. 732-154-1),
+      « pas plus de dix-sept annuités », et au total des points gratuits au plus
+      trente-sept ans et demi moins la durée d'affiliation à la RCO, les années
+      de chef des cent points « retenues en priorité » (D. 732-154-3) ; une année
+      compte si elle a donné lieu à cotisation pour la retraite forfaitaire ou à
+      période assimilée (D. 732-154-2, II)
+  exemples: aucun trouvé
+- id: taux_plein
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047453314, article: "code rural, L. 732-56, V et VI", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047961246, article: "code rural, D. 732-154-1", en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000047453314
+  bornes:
+    pension.echeance: [2023-09-01, 2026-01-01]
+  contenu:
+    conditions: >-
+      la durée tous régimes cède la place à une pension « liquidé[e] à taux plein
+      dans le régime d'assurance vieillesse des personnes non salariées des
+      professions agricoles », comme pour les cent points ; le reste inchangé
+    droit: inchangé
+  exemples: aucun trouvé
+- id: majorations_de_duree
+  statut: lue
+  textes:
+  - {id: LEGIARTI000051289591, article: "code rural, L. 732-56, V et VI", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000053365762, article: "code rural, D. 732-151-1", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000053365768, article: "code rural, D. 732-154-2", en_vigueur: 2026-01-01}
+  nee_de: LEGIARTI000053365768
+  bornes:
+    pension.echeance: [2026-01-01, null]
+  contenu:
+    conditions: >-
+      les majorations de durée d'assurance de la pension de base s'ajoutent aux
+      années qui comptent, pour les dix-sept ans et demi comme pour les annuités
+      (décret n° 2025-1410) ; les statuts sont ceux de L. 732-34 et L. 732-35
+      « dans leur rédaction antérieure à la loi n° 2025-199 »
+    droit: inchangé
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Aucun exemple chiffré d'un assuré n'est publié : la page de la MSA sur les
+    non-salariés agricoles ne parle plus que des cent points, et son guide de
+    septembre 2023 (réf. 8687) de l'assouplissement du taux plein.
+  - >-
+    La réversion de ces points (L. 732-62, rédaction de la loi n° 2014-40) n'est pas
+    lue pour elle-même.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code rural, L. 732-56, ses sept rédactions dans l'index LEGI, de
+      LEGIARTI000006585649 (2003) à LEGIARTI000051289591 (2026), les V et VI depuis
+      LEGIARTI000028498813 ; D. 732-151 (LEGIARTI000053365751), D. 732-151-1
+      (…028941346, …053365762), D. 732-154-1 (…028941720, …047961246), D. 732-154-2
+      (…028941700, …053365768), D. 732-154-3 (…028941729) ; loi n° 2014-40,
+      article 34 (JORFARTI000028493774), et décret n° 2014-494, article 2
+      (JORFARTI000028939595), dans l'index JORF
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      MSA, « La retraite complémentaire obligatoire agricole », synthèse statistique
+      de décembre 2018 : l'article 34 de la loi du 20 janvier 2014, « 66 points par an
+      avant 2011, dans la limite de 17 années », appliqué au 1er février 2014 aux
+      pensions déjà liquidées ; 467 500 bénéficiaires en 2015, 448 000 en 2017 ;
+      en 2017, au taux plein, 377 € de points gratuits par an pour une aide
+      familiale, 416 € et 377 € pour un conjoint collaborateur et une conjointe —
+      1 122 points (17 × 66) à 0,3362 € (valeurs_point.csv) font 377,22 €
+    date: 2026-10-04
+    url: https://statistiques.msa.fr/wp-content/uploads/2018/12/SY-RCO.pdf
+historique:
+- >-
+  2026-10-04 — née avec l'action 119 : les points du V et du VI de L. 732-56 que la
+  fiche `rco_points_gratuits` laissait à relire, documentés sans être modélisés.
+effet: >-
+  Les conjoints, aides familiaux et collaborateurs d'exploitation d'avant 2011 —
+  près de 450 000 retraités en 2017, sept sur dix des femmes — et les chefs aux
+  carrières courtes : jusqu'à 1 122 points, 440 € par an à la valeur de service de
+  2025, que le modèle ne sert pas. Le simulateur ne connaît que le statut de chef,
+  pour qui les deux durées de dix-sept ans et demi se confondent : la règle n'y
+  trouve jamais à s'appliquer.
+textes_a_rattacher:
+- reference: 'code rural, L. 732-60 : l''inscription des points au compte, au 1er février 2014 ou à la date d''effet'

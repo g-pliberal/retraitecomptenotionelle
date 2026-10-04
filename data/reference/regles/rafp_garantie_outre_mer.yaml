@@ -1,0 +1,102 @@
+schema_version: 1
+id: rafp_garantie_outre_mer
+intitule: >-
+  À l'agent de l'État en activité au 1er janvier 2024 à Wallis-et-Futuna, en
+  Polynésie française, à Saint-Pierre-et-Miquelon ou en Nouvelle-Calédonie, qui y
+  réside à son départ, l'État verse à la liquidation une cotisation unique au RAFP
+  qui porte à 4 000 € par an la rente de ses cotisations volontaires et son
+  indemnité temporaire de retraite réunies.
+domaine: minima
+regimes: [rafp]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- son activité dans l'un des quatre territoires au 1er janvier 2024
+- sa résidence à la date d'effet de la pension, ses quinze ans de services dans ces territoires ou son droit aux congés bonifiés
+- la décote de sa pension civile, ses points de cotisation volontaire, son indemnité temporaire de retraite
+ecrit:
+- la cotisation supplémentaire unique de l'État et les points qu'elle achète
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_2024
+  statut: supposee
+  hypothese: l'article 76 bis, créé par la loi n° 2023-1322, ne vaut que pour les pensions prenant effet depuis le 1er janvier 2024
+  fiabilite: haute, le IV de l'article le dit
+  bornes:
+    liquidation.date_effet: [null, 2024-01-01]
+  contenu:
+    droit: aucune garantie
+  exemples: aucun trouvé
+- id: garantie_4000
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048805651, article: "loi n° 2003-775, article 76 bis, II et IV", en_vigueur: 2023-12-31}
+  - {id: LEGIARTI000051202149, article: "loi n° 2003-775, article 76 bis, II et IV", en_vigueur: 2025-02-16}
+  - {id: LEGIARTI000053548472, article: "loi n° 2003-775, article 76 bis, II et IV", en_vigueur: 2026-02-21}
+  - {id: LEGIARTI000050003428, article: "décret n° 2024-839, article 1er", en_vigueur: 2024-07-18}
+  - {id: LEGIARTI000050003431, article: "décret n° 2024-839, article 2", en_vigueur: 2024-07-18}
+  - {id: LEGIARTI000053218448, article: "décret n° 2024-839, article 2", en_vigueur: 2025-12-28}
+  - {id: LEGIARTI000050003435, article: "décret n° 2024-839, article 3", en_vigueur: 2024-07-18}
+  nee_de: LEGIARTI000048805651
+  bornes:
+    liquidation.date_effet: [2024-01-01, null]
+  contenu:
+    beneficiaire: >-
+      l'agent « en activité au 1er janvier 2024 » dans l'un des quatre territoires,
+      dont la pension civile ou militaire prend effet à compter du 1er janvier 2024 ;
+      et le pensionné du code des pensions militaires d'invalidité qui y réside, sans
+      les autres conditions (IV, 1°, et décret n° 2024-839, article 3)
+    conditions: >-
+      une pension civile sans coefficient de minoration (L. 14) ; à la date d'effet,
+      une « résidence effective » dans l'une des collectivités et quinze ans de
+      services effectifs dans ces collectivités, ou les critères des congés bonifiés ;
+      la cotisation volontaire exercée « pour l'ensemble des périodes éligibles »,
+      condition levée pour les pensions prenant effet entre le 1er janvier et le
+      30 avril 2024, puis le 1er mai 2024 (loi n° 2025-127, article 167)
+    droit: >-
+      si les points de la cotisation volontaire, multipliés par la valeur de service
+      « après application du barème actuariel du régime », plus l'indemnité
+      temporaire de retraite (loi n° 2008-1443, article 137, II), font moins de
+      4 000 € par an, l'État verse une cotisation supplémentaire unique qui achète
+      les points de la différence, divisée par la même valeur de service
+    procedure: >-
+      la demande se joint à celle de la pension ; la DGFiP vérifie l'éligibilité et
+      calcule la cotisation, l'ERAFP notifie l'attribution ou le rejet (décret
+      n° 2024-839, article 2, rédaction du décret n° 2025-1339)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    L'indemnité temporaire de retraite (loi n° 2008-1443, article 137), que la
+    garantie ajoute aux points, n'a pas de fiche : le modèle ne la sert pas.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 2003-775, article 76 bis, ses trois rédactions dans l'index LEGI
+      (LEGIARTI000048805651, …051202149, …053548472) ; loi n° 2025-127,
+      article 167 (JORFARTI000051169421), dans l'index JORF ; décret n° 2024-839,
+      articles 1er, 2 (deux rédactions) et 3 ; décret n° 2025-1339, visas
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      DGAFP, « Tout savoir sur la cotisation volontaire au régime de retraite
+      additionnelle de la fonction publique », mise à jour le 17 juillet 2024 : une
+      garantie de « 4 000 euros bruts annuels » sous condition de cotiser
+      volontairement pour l'ensemble des périodes éligibles
+    date: 2026-10-04
+    url: https://www.fonction-publique.gouv.fr/toutes-les-actualites/tout-savoir-sur-la-cotisation-volontaire-au-regime-de-retraite-additionnelle-de-la-fonction-publique
+historique:
+- >-
+  2026-10-04 — née avec l'action 119 : la garantie que l'article 76 bis attache à la
+  cotisation volontaire, et que la fiche `rafp_assiette_plafond` ne nommait pas,
+  documentée sans être modélisée.
+effet: >-
+  Les agents de l'État partis depuis 2024 qui vivent à Wallis-et-Futuna, en
+  Polynésie, à Saint-Pierre-et-Miquelon ou en Nouvelle-Calédonie : jusqu'à 4 000 €
+  par an de RAFP et d'indemnité temporaire que le modèle ne sert pas.
+textes_a_rattacher:
+- reference: 'loi n° 2008-1443, article 137 : l''indemnité temporaire de retraite, que la garantie compte'

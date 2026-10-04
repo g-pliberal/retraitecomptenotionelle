@@ -1,0 +1,81 @@
+schema_version: 1
+id: rafp_gipa_hors_plafond
+intitule: >-
+  L'indemnité de garantie individuelle du pouvoir d'achat (GIPA) des fonctionnaires,
+  militaires et magistrats cotise au RAFP en entier, hors de la limite de 20 % du
+  traitement indiciaire qui borne les autres primes.
+domaine: cotisations
+regimes: [rafp]
+etape: acquerir_les_droits
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la GIPA versée à l'agent, année par année
+ecrit:
+- la cotisation au RAFP de la GIPA, hors plafond, et les points qu'elle achète
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_2008
+  statut: supposee
+  hypothese: la GIPA n'existe pas avant le décret n° 2008-539 du 6 juin 2008
+  fiabilite: haute, le décret n° 2008-964 la dit « instituée » par celui-ci
+  bornes:
+    revenu.annee: [null, 2008-01-01]
+  contenu:
+    droit: aucune GIPA, aucune dérogation au plafond
+  exemples: aucun trouvé
+- id: gipa
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019492450, article: "décret n° 2008-964, article 1er", en_vigueur: 2008-09-18}
+  - {id: LEGIARTI000019492448, article: "décret n° 2008-964, article 2", en_vigueur: 2008-09-18}
+  - {id: LEGIARTI000028892713, article: "décret n° 2014-452, article 1er", en_vigueur: 2014-05-05}
+  nee_de: LEGIARTI000019492450
+  bornes:
+    revenu.annee: [2008-01-01, null]
+  contenu:
+    beneficiaire: les fonctionnaires, les militaires et les magistrats
+    droit: >-
+      la GIPA « fait partie des éléments de rémunération soumis à cotisations » au
+      RAFP ; « à titre dérogatoire, cette indemnité n'est pas soumise à la limite »
+      du deuxième alinéa de l'article 2 du décret n° 2004-569
+    duree: >-
+      l'article 2 du décret n° 2008-964 bornait la règle aux GIPA versées au titre de
+      2008 à 2011 (LEGIARTI000019492448) ; le décret n° 2014-452 l'abroge au 5 mai
+      2014, et la dérogation vaut depuis pour toute GIPA ; celles de 2012 et 2013
+      sont à relire
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Les GIPA versées au titre de 2012 et de 2013, entre la fin de l'article 2 du
+    décret n° 2008-964 (2011) et son abrogation (5 mai 2014) : cotisées hors plafond
+    ou non ?
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-964 du 16 septembre 2008, articles 1er et 2
+      (LEGIARTI000019492450, …492448), et décret n° 2014-452, article 1er
+      (LEGIARTI000028892713), dans l'index LEGI
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      ERAFP, « Compte épargne-temps » : la conversion « sans tenir compte du
+      plafonnement des 20 % », « comme pour la GIPA » ; et « Calculer vos
+      cotisations et vos points RAFP », qui nomme la GIPA parmi les deux exceptions
+    date: 2026-10-04
+    url: https://www.rafp.fr/employeur/compte-epargne-temps
+historique:
+- >-
+  2026-10-04 — née avec l'action 119 : l'une des deux exceptions au plafond de 20 %
+  que la fiche `rafp_assiette_plafond` laissait à relire, documentée sans être
+  modélisée.
+effet: >-
+  Les fonctionnaires qui ont touché la GIPA ont, pour la part qui dépasse le
+  plafond de leurs primes, des points RAFP que le modèle ne compte pas. Le
+  simulateur ne demande pas la GIPA.
+textes_a_rattacher:
+- reference: 'décret n° 2008-539 du 6 juin 2008 : la GIPA elle-même, son calcul et ses années'

@@ -61,7 +61,11 @@ periodes:
       agent dont les primes font 25 % de la rémunération cotisait sur 25 %
       au lieu de 15 %. Les deux exceptions de l'ERAFP ne sont pas portées :
       la GIPA, cotisée sans plafond, et les jours de compte épargne-temps
-      convertis en points.
+      convertis en points (fiches `rafp_gipa_hors_plafond` et
+      `rafp_compte_epargne_temps`) ; ni, depuis avril 2024, la cotisation
+      volontaire des agents de l'État dans le Pacifique et à
+      Saint-Pierre-et-Miquelon, et sa garantie de 4 000 € (fiches
+      `rafp_cotisation_volontaire_outre_mer` et `rafp_garantie_outre_mer`).
       L'ÂGE EST DATÉ PAR L'ARTICLE 9 DU DÉCRET N° 2004-569 : jusqu'au 2 juin
       2011 (LEGIARTI000006453304), « l'ouverture des droits est subordonnée
       à la condition qu'ils aient atteint l'âge de soixante ans » ; la

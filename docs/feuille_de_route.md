@@ -1887,12 +1887,12 @@ réversion.
 gratuits de la RCO, l'Arrco des cultes, le salaire annuel moyen et les
 fractions de pension de la CAVIMAC, le routage calédonien (notes du
 3 octobre) ; les ouvriers de l'État hors du RAFP, par l'action 133 ; le
-barème de l'Ircantec pour enfants (note du 4 octobre). Reste, dans cet ordre :
-les deux exceptions au plafond du RAFP (GIPA, compte épargne-temps) et la
-cotisation volontaire outre-mer ; les 66 points gratuits des conjoints, aides
-familiaux et collaborateurs ; les huit taux de l'Arrco des cultes ; les
-cotisations forfaitaires de la CAVIMAC de 1979 à 1997. Commencer par les
-exceptions au plafond du RAFP (fiche `rafp_assiette_plafond`, ses `a_relire`).
+barème de l'Ircantec pour enfants ; les exceptions au plafond du RAFP et la
+cotisation volontaire outre-mer, documentées en quatre fiches non modélisées ;
+les 66 points gratuits de la RCO, documentés sans être modélisés (notes du
+4 octobre). Reste, dans cet ordre : les huit taux de l'Arrco des cultes ; les
+cotisations forfaitaires de la CAVIMAC de 1979 à 1997. Commencer par les taux
+de l'Arrco des cultes (fiche `cultes_retraite_complementaire`, ses `a_relire`).
 
 **Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
 régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
@@ -2104,6 +2104,53 @@ quatre et de sept enfants, qui gagne 633 € et 2 534 € par an (+ 1,3 et
 + 5,3 %). Reste hors du modèle la bonification de l'article 15 bis, des points
 gratuits par enfant pour qui a interrompu son activité, que le modèle ne
 connaît pas.
+
+**Puis, le 4 octobre 2026, les exceptions au plafond du RAFP et la cotisation
+volontaire outre-mer, documentées.** La GIPA cotise au RAFP hors de la limite
+de 20 % depuis 2008 (décret n° 2008-964, article 1er ; borné à 2011 par son
+article 2, que le décret n° 2014-452 abroge en 2014). Les jours de compte
+épargne-temps au-delà du seuil, que le titulaire verse au RAFP — et qui y vont
+s'il ne choisit pas —, depuis 2009 dans les trois versants (décrets
+n° 2002-634, 2004-878 et 2002-788) : un jour vaut V = M / (P + T), M le forfait
+de l'arrêté du 28 août 2009, article 4, lu sur Légifrance en trois rédactions
+(125, 80, 65 € ; 135, 90, 75 € en 2019 ; 150, 100, 83 € depuis 2024), hors
+plafond. La formule redonne au centime les 142,50, 95,00 et 78,85 € nets de
+l'ERAFP, et ses 98, 66 et 55 points au salaire de référence de 2026 arrondi au
+point supérieur ; la rente de quinze jours, 90,03 € pour 1 470 points, ne se
+retrouve pas (0,0612 € le point, 0,0567 € de valeur de service). Depuis le
+1er avril 2024, l'article 76 bis de la loi n° 2003-775 (loi de finances pour
+2024, article 201 ; 2025, article 167 ; 2026, article 175) ouvre aux agents de
+l'État qui prennent un poste dans le Pacifique ou à Saint-Pierre une
+cotisation volontaire hors plafond sur leurs majorations de traitement, partagée
+moitié-moitié (décret n° 2004-569, articles 15-1 et 15-2 ; liste du décret
+n° 2025-1339) ; et une garantie que la note d'avant ignorait : l'État complète
+à 4 000 € par an la rente de ces points et l'indemnité temporaire de retraite
+de qui y était en activité au 1er janvier 2024 et y réside à son départ, sans
+décote (décret n° 2024-839). Quatre fiches `pas_encore_modelisee` :
+`rafp_gipa_hors_plafond`, `rafp_compte_epargne_temps`,
+`rafp_cotisation_volontaire_outre_mer`, `rafp_garantie_outre_mer` ; le
+simulateur ne demande ni GIPA, ni jours de CET, ni affectation outre-mer, et
+l'exemple de l'ERAFP n'entre pas aux exemples officiels, qu'aucune grandeur ne
+rejoue. Les deux pages officielles passent `explore`.
+
+**Puis, le 4 octobre 2026, les 66 points gratuits de la RCO, documentés.**
+L'article 34 de la loi n° 2014-40 ajoute à L. 732-56 un V et un VI : depuis
+le 1er février 2014, pensions en cours comprises (décret n° 2014-494,
+article 2), 66 points par an (D. 732-154-1), dix-sept annuités au plus et
+trente-sept ans et demi de points gratuits en tout (D. 732-154-3), pour les
+années d'avant 2011 d'aide familial, de conjoint participant aux travaux
+(avant 2009) ou de collaborateur, et celles d'avant 2003 du chef qui n'a pas
+ses dix-sept ans et demi comme chef (D. 732-154-2). Il faut dix-sept ans et
+demi d'activité non salariée agricole (D. 732-151-1), et la durée tous régimes
+du taux plein jusqu'au 31 août 2023, une pension au taux plein ensuite ;
+depuis 2026, les majorations de durée comptent (décret n° 2025-1410). La
+synthèse statistique de la MSA de décembre 2018 en compte 467 500
+bénéficiaires en 2015, 448 000 en 2017, sept sur dix des femmes, et 377 € par
+an pour une aide familiale au taux plein : 17 × 66 points à 0,3362 €, au
+centime. Fiche `rco_points_gratuits_66`, `pas_encore_modelisee` : le
+simulateur ne connaît que le chef, pour qui les deux durées de dix-sept ans et
+demi se confondent, et la règle n'y trouve jamais à s'appliquer. Aucun exemple
+d'assuré n'est publié.
 
 **Ce qui reste**, dans l'ordre où le prendre : les fractions de pension de la
 CAVIMAC d'avant 1979, validées gratuitement, et de 1979 à 1997, portées au

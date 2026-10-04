@@ -1,0 +1,124 @@
+schema_version: 1
+id: rafp_cotisation_volontaire_outre_mer
+intitule: >-
+  Depuis le 1er avril 2024, le fonctionnaire de l'État, le magistrat ou le militaire
+  qui prend un poste à Wallis-et-Futuna, en Polynésie française, à
+  Saint-Pierre-et-Miquelon ou en Nouvelle-Calédonie peut cotiser au RAFP au-delà
+  de la limite de 20 % sur les majorations de traitement de ce poste, l'employeur
+  au même taux.
+domaine: cotisations
+regimes: [rafp]
+etape: acquerir_les_droits
+face: droit
+etat: pas_encore_modelisee
+lit:
+- le territoire et les dates de chaque affectation de l'agent dans l'un des quatre territoires, et son option à la prise de poste
+- les majorations de traitement ou de solde de ces affectations, année par année
+ecrit:
+- les cotisations volontaires, de l'agent et de l'employeur, et les points qu'elles achètent
+dates_qui_decident:
+- periode.debut
+versions:
+- id: avant_2024
+  statut: supposee
+  hypothese: >-
+    l'article 76 bis n'existe pas avant la loi n° 2023-1322 ; les majorations
+    outre-mer cotisent au RAFP comme toute prime, dans la limite de 20 %
+  fiabilite: haute, l'article est créé par l'article 201 de la loi de finances pour 2024
+  bornes:
+    periode.debut: [null, 2024-04-01]
+  contenu:
+    droit: aucune cotisation volontaire
+  exemples: aucun trouvé
+- id: elements_indexes
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048805651, article: "loi n° 2003-775, article 76 bis", en_vigueur: 2023-12-31}
+  - {id: LEGIARTI000049421934, article: "décret n° 2004-569, article 15-1", en_vigueur: 2024-04-17}
+  - {id: LEGIARTI000049421936, article: "décret n° 2004-569, article 15-2", en_vigueur: 2024-04-17}
+  - {id: LEGIARTI000049419467, article: "décret n° 2024-348, article 2", en_vigueur: 2024-04-17}
+  nee_de: LEGIARTI000048805651
+  bornes:
+    periode.debut: [2024-04-01, 2025-04-01]
+  contenu:
+    beneficiaire: >-
+      les fonctionnaires de l'État, les magistrats et les militaires, « lors de leur
+      prise de poste » dans l'un des quatre territoires, pour la durée de celui-ci ;
+      ceux déjà en poste optent dans les six mois du décret n° 2024-348, délai porté
+      « jusqu'au 31 décembre 2025 » par la loi de finances pour 2025, puis abrogé
+      par l'article 175 de la loi de finances pour 2026
+    assiette: >-
+      « l'ensemble des éléments de rémunération afférents à leur affectation dans ces
+      territoires et indexés sur leur traitement indiciaire », au-delà de la fraction
+      maximale de l'article 76
+    taux: >-
+      le taux global de l'article 3 du décret n° 2004-569, « réparti à parts égales
+      entre l'employeur et le bénéficiaire » (article 15-2)
+    option: >-
+      exercée « à peine de forclusion, dans un délai de deux mois suivant sa prise de
+      poste » (article 15-1)
+  exemples: aucun trouvé
+- id: majorations_mensuelles
+  statut: lue
+  textes:
+  - {id: LEGIARTI000051202149, article: "loi n° 2003-775, article 76 bis", en_vigueur: 2025-02-16}
+  - {id: LEGIARTI000053548472, article: "loi n° 2003-775, article 76 bis", en_vigueur: 2026-02-21}
+  - {id: LEGIARTI000053194296, article: "décret n° 2024-839, article 3-1", en_vigueur: 2025-12-28}
+  nee_de: LEGIARTI000051202149
+  bornes:
+    periode.debut: [2025-04-01, null]
+  contenu:
+    assiette: >-
+      « les indemnités spécifiques à leur affectation dans ces territoires, versées
+      mensuellement et correspondant à une majoration de leur traitement ou de leur
+      solde », pour qui prend ou change de poste à compter du 1er avril 2025
+      (article 167, II, de la loi n° 2025-127) ; leur liste, depuis le décret
+      n° 2025-1339 : les majorations de solde des index de correction, le complément
+      spécial de solde des militaires (loi n° 50-772, article 2), la majoration du
+      décret n° 67-600, article 2, et celles de Saint-Pierre-et-Miquelon
+      (L. 741-1 du code général de la fonction publique, décret n° 78-293)
+    taux: inchangé
+    option: inchangée
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-04
+  prochaine_relecture: 2027-10-04
+  a_relire:
+  - >-
+    Le simulateur Excel que la DGAFP met en ligne pour la cotisation volontaire n'est
+    pas ouvert : il porterait l'exemple chiffré qui manque.
+  - >-
+    Entre le 16 février 2025 et le 28 décembre 2025, la liste des indemnités que
+    renvoie l'article 76 bis n'était pas encore prise : l'assiette de qui a pris
+    poste dans cet intervalle reste à lire.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 2003-775, article 76 bis, ses trois rédactions dans l'index LEGI
+      (LEGIARTI000048805651 du 31 décembre 2023, …051202149 du 16 février 2025,
+      …053548472 du 21 février 2026) ; loi n° 2023-1322, article 201
+      (JORFARTI000048727562), loi n° 2025-127, article 167 (JORFARTI000051169421),
+      loi n° 2026-103, article 175 (JORFARTI000053509375), dans l'index JORF ;
+      décret n° 2004-569, articles 15-1 et 15-2 ; décret n° 2024-348, articles 2 et
+      3 ; décret n° 2024-839, article 3-1 ; décret n° 2025-1339, visas et article 1er
+    date: 2026-10-04
+  - type: autre
+    reference: >-
+      DGAFP, « Tout savoir sur la cotisation volontaire au régime de retraite
+      additionnelle de la fonction publique », publiée le 29 avril 2024, mise à jour
+      le 17 juillet 2024 : les quatre territoires, l'assiette des « émoluments
+      outre-mer », un simulateur Excel
+    date: 2026-10-04
+    url: https://www.fonction-publique.gouv.fr/toutes-les-actualites/tout-savoir-sur-la-cotisation-volontaire-au-regime-de-retraite-additionnelle-de-la-fonction-publique
+historique:
+- >-
+  2026-10-04 — née avec l'action 119 : la cotisation volontaire que la fiche
+  `rafp_assiette_plafond` laissait à relire, documentée sans être modélisée ; la
+  garantie qui s'y attache a sa fiche, `rafp_garantie_outre_mer`.
+effet: >-
+  Les agents de l'État affectés depuis avril 2024 à Wallis-et-Futuna, en Polynésie,
+  à Saint-Pierre-et-Miquelon ou en Nouvelle-Calédonie, qui ont opté, ont des points
+  RAFP que le modèle ne compte pas. Le simulateur ne demande ni l'affectation ni
+  l'option.
+textes_a_rattacher:
+- reference: 'décret n° 67-600 du 23 juillet 1967, article 2 : le coefficient de majoration des traitements dans les territoires d''outre-mer'
