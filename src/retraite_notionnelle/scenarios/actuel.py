@@ -2762,107 +2762,122 @@ class ScenarioActuel:
         return resultat
 
 
-#: Année à partir de laquelle chaque montant suit le SMIC et non plus les prix.
-#: Le plafond d'écrêtement bascule avec le décret du 14 février 2014, qui le
-#: revalorise « aux mêmes dates et dans les mêmes proportions que le salaire
-#: minimum de croissance » (D. 173-21-0-0-1) ; les deux minima basculent avec
-#: la réforme du 14 avril 2023. Avant ces dates, ils suivaient les prix, comme
-#: les pensions.
-INDEXATION_SUR_LE_SMIC = {
-    "montant_base": 2023,
-    "montant_majore": 2023,
-    "plafond_ecretement": 2014,
+#: La règle du minimum contributif quand la fiche manque : celle du droit en
+#: vigueur (version ``avpf_et_ava_2023`` de la fiche ``minimum_contributif``).
+REGLE_DU_MINIMUM_EN_VIGUEUR = {
+    "existe": True,
+    "majoration": "periodes_cotisees",
+    "seuil_trimestres_cotises": 120,
+    "plafond_avpf": 24,
+    "ecretement": True,
+    "cumul_des_minima": False,
+    "duree_tous_regimes": True,
 }
 
 
 class MinimumContributif:
-    """Minimum contributif, minimum majoré et plafond d'écrêtement.
+    """Minimum contributif, minimum majoré et plafond d'écrêtement, et la règle
+    que leur applique la date d'effet de la pension.
 
     Trois grandeurs, et pas une seule :
 
     * le **minimum**, auquel est portée la pension de base d'un assuré au taux
       plein, au prorata de sa durée dans le régime ;
-    * le **minimum majoré**, servi à sa place quand la durée COTISÉE atteint la
-      durée requise — près d'un cinquième au-dessus du premier ;
-    * le **plafond d'écrêtement** de l'article L. 173-2 : le complément est
-      rogné dès que l'ensemble des pensions dépasse ce total. Sans cette
-      condition, le modèle servait le minimum à des assurés que leurs régimes
-      complémentaires placent déjà bien au-dessus.
+    * le **minimum majoré**, créé au 1er janvier 2004, servi à sa place au
+      titre des périodes COTISÉES — près d'un cinquième au-dessus du premier ;
+    * le **plafond d'écrêtement** de l'article L. 173-2, pour les pensions qui
+      prennent effet depuis le 1er janvier 2012 : le complément est rogné dès
+      que l'ensemble des pensions dépasse ce total.
 
-    Les trois sont des **ancres datées**, lues dans le code de la sécurité
-    sociale (D. 351-2-1 et D. 173-21-0-0-1) et non dans une série annuelle : le
-    code n'est pas modifié chaque année, les montants sont revalorisés par
-    l'effet de la loi. C'est donc au modèle de le faire, et sur le bon index —
-    **le SMIC** à partir de la date d'effet, les prix avant elle. Les
-    revaloriser sur les prix comme le faisait ce module les décrochait d'autant
-    que le SMIC a progressé plus vite.
+    **Des montants datés, et non des ancres.** Le fichier porte chaque date de
+    revalorisation depuis le 1er avril 1983 : les ancres du code (R. 351-25,
+    D. 351-2-1, D. 173-21-0-0-1), certifiées, et entre elles ce que la Cnav a
+    servi, transcrit de son barème. Le modèle lit le montant EN VIGUEUR le
+    premier jour du mois de la date d'effet. Il reliait jusqu'au 4 octobre
+    2026 six ancres par les prix : le majoré de 2004 sortait 7,9 % trop haut,
+    celui de 2019 4,7 %, et la première ancre, « 2007 », était le montant du
+    1er janvier 2008. Au-delà du dernier montant publié, il revalorise sur le
+    SMIC, comme la loi le fait depuis 2023 pour les minima (L. 351-10) et
+    depuis 2012 pour le plafond (D. 173-21-0-0-1).
+
+    **La règle**, elle, est celle de la fiche ``minimum_contributif``, dont le
+    moteur lit la version qui vaut à la date d'effet : pas de minimum avant le
+    1er avril 1983, pas de majoration avant 2004, puis une majoration sans
+    distinction des périodes jusqu'en juin 2005, le seuil de 120 trimestres
+    cotisés depuis avril 2009, l'écrêtement depuis 2012, l'AVPF depuis
+    septembre 2023.
     """
 
     def __init__(self, racine: Path, macro: DonneesMacro) -> None:
         self.macro = macro
-        self._table: dict[tuple[str, int], tuple[float, Fiabilite]] = {}
+        self._table: dict[str, tuple[tuple[str, float, Fiabilite], ...]] = {}
         chemin = racine / "reference" / "legislation" / "minimum_contributif.csv"
-        if not chemin.exists():
-            return
-        with chemin.open(encoding="utf-8") as flux:
-            lignes = (l for l in flux if not l.lstrip().startswith("#"))
-            for ligne in csv.DictReader(lignes):
-                self._table[(ligne["mesure"], int(ligne["annee"]))] = (
-                    float(ligne["valeur"]),
-                    Fiabilite.depuis_texte(ligne["fiabilite"]),
-                )
+        if chemin.exists():
+            lues: dict[str, list[tuple[str, float, Fiabilite]]] = {}
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    lues.setdefault(ligne["mesure"], []).append((
+                        ligne["date"], float(ligne["valeur"]),
+                        Fiabilite.depuis_texte(ligne["fiabilite"])))
+            self._table = {mesure: tuple(sorted(datees))
+                           for mesure, datees in lues.items()}
+        fiche = racine / "reference" / "regles" / "minimum_contributif.yaml"
+        self._fiche = versions.preparer(charger_yaml(fiche)) if fiche.exists() else None
 
-    def _revalorise(self, mesure: str, annee: int) -> tuple[float, Fiabilite]:
-        """Ancre de la mesure, portée à l'année demandée.
+    def fiche(self) -> dict | None:
+        """La fiche préparée : ce que le paquet du site porte."""
+        return self._fiche
 
-        **Un montant connu passe avant tout calcul.** Quand l'année demandée
-        figure au fichier, on la sert telle quelle : c'est ce que les caisses
-        ont payé, et aucune projection ne vaut mieux que cela.
+    def regle(self, date_effet: str) -> dict:
+        """Les paramètres de la version qui vaut pour une pension prenant effet
+        à ``date_effet`` (AAAA-MM-JJ) : ``existe``, ``majoration`` (« aucune »,
+        « sans_distinction », « periodes_cotisees »),
+        ``seuil_trimestres_cotises``, ``plafond_avpf``, ``ecretement``,
+        ``cumul_des_minima``, ``duree_tous_regimes``."""
+        if self._fiche is None:
+            return dict(REGLE_DU_MINIMUM_EN_VIGUEUR)
+        version = versions.applicable(self._fiche, {"liquidation.date_effet": date_effet})
+        return dict(REGLE_DU_MINIMUM_EN_VIGUEUR if version is None
+                    else version["parametres"])
 
-        Sinon, on projette depuis la valeur EN VIGUEUR à cette date — la
-        dernière fixée avant elle, jamais une postérieure. Ramener une valeur
-        postérieure en arrière ferait glisser dans le passé les marches que la
-        loi a créées : la réforme de 2023 a relevé le minimum majoré de plus de
-        30 %, et l'appliquer à 2020 le surestimait de 7,6 % par rapport au
-        montant que l'État a lui-même rappelé.
+    def _en_vigueur(self, mesure: str, annee: int, mois: int
+                    ) -> tuple[float, Fiabilite] | None:
+        """Le montant en vigueur le premier jour de ce mois, ``None`` avant le
+        premier : un montant connu, ou, au-delà du dernier, ce dernier
+        revalorisé sur le SMIC de chaque année traversée."""
+        datees = self._table.get(mesure)
+        if not datees:
+            return None
+        jour = f"{annee:04d}-{mois:02d}-01"
+        rang = bisect_right(datees, (jour, float("inf")))
+        if rang == 0:
+            return None
+        date_valeur, valeur, fiabilite = datees[rang - 1]
+        derniere = int(datees[-1][0][:4])
+        if rang == len(datees) and annee > derniere:
+            valeur *= self.macro.coefficient_smic(derniere, annee)
+        return valeur, fiabilite
 
-        L'index de la projection ne dépend pas de l'ancre mais de l'ANNÉE
-        TRAVERSÉE : les prix jusqu'à la bascule que la loi a fixée pour cette
-        grandeur, le SMIC ensuite. Un montant ancré en 2007 et lu en 2015 se
-        revalorise donc sur les prix, règle d'alors, quand le même ancré en
-        2023 et lu en 2025 se revalorise sur le SMIC.
-        """
-        ancres = sorted(a for (m, a) in self._table if m == mesure)
-        if not ancres:
-            return 0.0, Fiabilite.ESTIMEE
-        if annee in ancres:
-            return self._table[(mesure, annee)]
-        anterieures = [a for a in ancres if a < annee]
-        reference = max(anterieures) if anterieures else ancres[0]
-        valeur, fiabilite = self._table[(mesure, reference)]
-
-        bascule = INDEXATION_SUR_LE_SMIC[mesure]
-        pivot = min(max(reference, bascule), annee)
-        coefficient = (self.macro.coefficient_prix(reference, pivot)
-                       * self.macro.coefficient_smic(pivot, annee))
-        return valeur * coefficient, fiabilite
-
-    def valeurs(self, annee: int) -> tuple[float, float, float, Fiabilite]:
-        """Montant de base, montant majoré et plafond d'écrêtement de l'année.
+    def valeurs(self, annee: int, mois: int = 1) -> tuple[float, float, float, Fiabilite]:
+        """Montant de base, montant majoré et plafond d'écrêtement en vigueur le
+        premier jour du mois, en euros par an.
 
         Les deux montants sont rendus ensemble parce que le droit les additionne
         plutôt qu'il ne choisit entre eux : la pension est portée au montant de
         BASE au prorata de la durée d'assurance acquise dans le régime, puis
         l'écart entre le majoré et le base s'y ajoute au prorata de la seule
-        durée COTISÉE. Servir l'un OU l'autre, comme le faisait ce module,
-        donnait le montant plein de la majoration à qui n'a cotisé qu'une part
-        de sa durée, et rien du tout à qui lui manque un trimestre.
+        durée COTISÉE. Avant le 1er avril 1983, il n'y a pas de minimum : tout
+        vaut zéro ; avant 2004, pas de majoration : le majoré vaut le minimum ;
+        avant 2012, pas d'écrêtement : le plafond vaut zéro, et la règle de la
+        date d'effet (:meth:`regle`) ne le lit pas.
         """
         if not self._table:
             return 0.0, 0.0, 0.0, Fiabilite.ESTIMEE
-        base, fiabilite_base = self._revalorise("montant_base", annee)
-        majore, fiabilite_majore = self._revalorise("montant_majore", annee)
-        plafond, fiabilite_plafond = self._revalorise("plafond_ecretement", annee)
-        return base, majore, plafond, min(
-            fiabilite_base, fiabilite_majore, fiabilite_plafond
-        )
+        base = self._en_vigueur("montant_base", annee, mois)
+        if base is None:
+            return 0.0, 0.0, 0.0, Fiabilite.CERTIFIEE
+        majore = self._en_vigueur("montant_majore", annee, mois) or base
+        plafond = self._en_vigueur("plafond_ecretement", annee, mois)
+        fiabilite = min(base[1], majore[1], *(() if plafond is None else (plafond[1],)))
+        return base[0], majore[0], 0.0 if plafond is None else plafond[0], fiabilite

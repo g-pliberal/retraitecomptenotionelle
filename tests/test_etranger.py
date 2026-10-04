@@ -618,15 +618,15 @@ def test_la_pension_nationale_est_servie_quand_son_minimum_l_emporte(contexte, s
     pension = _pension(actuel, "regime_general")
     assert (actuel.trimestres_valides, actuel.trimestres_etrangers) == (189, 20)
     assert pension.detail.startswith(
-        "pension nationale, plus élevée que la pension proratisée (10,208.58 €) : "
+        "pension nationale, plus élevée que la pension proratisée (10,208.63 €) : "
         "SR 18,376.48 € × taux 51.250% × 167/167 = 9,417.95 €, porté au minimum "
-        "contributif par + 1,325.32 €")
+        "contributif par + 1,325.37 €")
     # Le minimum se compare à la pension avant surcote, qui s'y ajoute : la
     # nationale a celle de ses deux trimestres français au-delà des 167, la
     # proratisée celle des huit trimestres d'après l'âge légal.
     nue = 18376.48 * 0.5
     assert pension.montant == pytest.approx(majore + nue * 0.025, abs=0.02)
-    assert majore * 167 / 189 + nue * 0.1 == pytest.approx(10208.58, abs=0.02)
+    assert majore * 167 / 189 + nue * 0.1 == pytest.approx(10208.63, abs=0.02)
 
 
 def test_la_pension_proratisee_est_portee_au_minimum_international(contexte, simulateur):
@@ -652,7 +652,7 @@ def test_une_convention_a_calcul_separe_garde_le_minimum_de_toute_pension(contex
     senegal = _pension(_actuel(contexte, **APRES_LE_SENEGAL), "regime_general")
     espagne = _pension(_actuel(contexte, **APRES_L_ESPAGNE), "regime_general")
     assert senegal.detail == ("SR 18,831.96 € × taux 55.000% × 85/167 = 5,271.82 €, "
-                              "porté au minimum contributif par + 558.65 €")
+                              "porté au minimum contributif par + 558.67 €")
     assert senegal.montant > espagne.montant
 
 

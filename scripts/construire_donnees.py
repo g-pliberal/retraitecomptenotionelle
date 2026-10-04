@@ -1154,13 +1154,19 @@ def _durees_services_militaires() -> dict:
 
 
 def _minimum_contributif() -> dict:
-    """Ancres datées du minimum contributif, de sa majoration et du plafond."""
+    """Les montants datés du minimum contributif, de sa majoration et du
+    plafond, à chaque date de revalorisation, et la fiche dont le moteur lit la
+    règle de la date d'effet."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
     from retraite_notionnelle.scenarios.actuel import MinimumContributif
 
-    table = MinimumContributif(DONNEES, DonneesMacro(DONNEES))._table
-    return {f"{mesure}|{annee}": [valeur, int(fiabilite)]
-            for (mesure, annee), (valeur, fiabilite) in sorted(table.items())}
+    minimum = MinimumContributif(DONNEES, DonneesMacro(DONNEES))
+    return {
+        "montants": {mesure: [[jour, valeur, int(fiabilite)]
+                              for jour, valeur, fiabilite in datees]
+                     for mesure, datees in sorted(minimum._table.items())},
+        "fiche": minimum.fiche(),
+    }
 
 
 def _durees_requises_regimes() -> dict:

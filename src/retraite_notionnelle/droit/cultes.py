@@ -195,7 +195,8 @@ def fraction_d_avant_1998(moteur: ScenarioActuel, carriere: Carriere,
         detail += f" × surcote {surcote:.4f}"
     if not majorations:
         return FractionAvant1998(montant=montant, detail=detail, fiabilite=fiabilite)
-    minimum, majore, _, fiabilite_minimum = moteur.minimum_contributif.valeurs(annee)
+    minimum, majore, _, fiabilite_minimum = moteur.minimum_contributif.valeurs(
+        annee, carriere.mois_liquidation)
     # LES DEUX MAJORATIONS se partagent la durée maximale : les trimestres
     # cotisés de 1979 à 1997 d'abord, ceux d'avant 1979 dans ce qui reste.
     # Le décret ne dit pas comment s'additionnent ses deux prorata quand la

@@ -5452,16 +5452,16 @@ OpenFisca-France-Pension, en est un cas particulier, mené à part.
 
 ### 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris — `en cours`
 
-**Reprise, au 4 octobre 2026.** Fait : l'étape 1, et son relevé repris le 4
-octobre sur les 69 modèles, chaque point vérifié chez eux, chez nous et au
-texte : 279 points au registre (`fait_mieux`, avec leur `verification`), 145
-écarts, un `bilan` par modèle ; de l'étape 2, le 1 % maladie des
-complémentaires (sa note). Reste : les étapes 2 à 19, une par session, et les
-choix de l'étape 13. Commencer par l'étape 15, le minimum contributif daté,
-une erreur du scénario 1 que trois modèles et le barème de la Cnav tranchent ;
-puis 16 et 2, dans l'ordre que propose la note du 4 octobre. Le registre dit,
-au chantier de chaque étape (« 138.15 »…), ce que chaque modèle en fait et où
-le lire ; le tableau de bord compte ce qui reste.
+**Reprise, au 4 octobre 2026.** Fait : l'étape 1 et son relevé repris sur
+les 69 modèles (279 points au registre, 145 écarts) ; l'étape 15, le minimum
+contributif daté — chaque revalorisation depuis 1983, la règle en huit
+versions, la proratisation tous régimes des polypensionnés —, dont les cinq
+points du registre sont `repris` ; de l'étape 2, le 1 % maladie des
+complémentaires (sa note). Reste : les étapes 2 à 14 et 16 à 19, une par
+session, et les choix de l'étape 13. Commencer par l'étape 16, les assiettes
+et les séries du régime général, que l'API des barèmes de la Cnav tranche
+presque toutes ; puis la suite de 2. Le registre dit, au chantier de chaque
+étape (« 138.16 »…), ce que chaque modèle en fait et où le lire.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais qu'on regarde les modèles de
 simulation qui existent et qu'on les compare à notre projet. Il faut que l'on
@@ -5817,6 +5817,62 @@ du même nom. Ils gardent ce que le registre ne garde pas : les 29 points que
 la vérification n'a pas tenus et leur raison, les verdicts sur les points
 anciens, la comparaison des barèmes de l'IPP famille par famille, les séries
 d'OpenFisca-France confrontées à celles du dépôt.
+
+**Demande**, le 4 octobre 2026 : « J'aimerais qu'on regarde les résultats de
+notre analyse des modèles publics qu'on a fait cette nuit et ce matin et qu'on
+corrige notre modèle. Il faut bien sûr vérifier à chaque fois qui a raison par
+des sources officielles. »
+
+**Fait, le 4 octobre 2026 : l'étape 15, le minimum contributif daté.** Chaque
+point du relevé a été relu au texte, dans l'index LEGI du dépôt (L. 351-10,
+D. 351-2-1, D. 351-2-2, R. 351-25, L. 173-2 et D. 173-21-0-0-1, toutes leurs
+rédactions), puis chez la caisse qui l'applique : les deux barèmes de la Cnav,
+lus par son API (le minimum depuis le 1er avril 1983, le plafond depuis 2012),
+ses exposés « Minimum avant 2012 » et « Calcul du minimum contributif », ses
+circulaires 2003/56, 2004/13, 2005/30, 2009/17, 2023/16, 2024/3, 2024/28,
+2025/8, 2025/33 et 2026/16, les lettres ministérielles du 25 mars et du 26
+novembre 2004. Les trois modèles avaient raison sur tout. Ce qui change :
+
+- *les montants* : chaque revalorisation depuis 1983, 101 dates au lieu de
+  dix-huit lignes annuelles reliées par les prix, lues au mois de la date
+  d'effet ; les onze ancres du code certifiées à la date que leur texte leur
+  donne (le récupérateur LEGI lit désormais R. 351-25 et les rédactions de
+  2004 et 2006, qui écrivent « Euros »), et entre elles le barème de la Cnav,
+  au niveau `haute` (`scripts/fetch/cnav_minimum_contributif.py`). Les
+  montants de 2025 du dépôt étaient ceux de la circulaire 2024/40, que la
+  2025/8 a corrigés (747,47 € et non 747,69 € ; plafond de 1 394,44 €) ;
+- *la règle*, en huit versions de la fiche `minimum_contributif`, que le
+  moteur lit : rien avant avril 1983 ; de décembre 1984 à 2003, le cumul de
+  plusieurs pensions portées au minimum limité au minimum entier ; la
+  majoration en 2004, sans distinction des périodes jusqu'en juin 2005 ; le
+  seuil de 120 trimestres cotisés en avril 2009 ; l'écrêtement en 2012 ;
+  l'AVPF et l'AVA, 24 trimestres au plus, en septembre 2023 ;
+- *un point que le relevé n'avait pas* : depuis 2004, le minimum d'un
+  polypensionné au-delà de la durée requise se proratise sur sa durée tous
+  régimes, non limitée (L. 351-10 ; circulaire 2005/30, point 513 ; exposé
+  actuel de la Cnav), et non sur la durée de proratisation ;
+- *les preuves* : les huit exemples chiffrés des circulaires 2005/30 et
+  2009/17 rejoués au centime dans les deux moteurs ; l'exemple 1 de la
+  2005/30 au témoin des exemples officiels (570,04 € par mois, que l'ancien
+  modèle dépassait de 7 %).
+
+*Les effets.* Au scénario 1, quinze témoins sur 712 bougent : les carrières
+des cultes liquidées de 2010 à 2022, jusqu'à −3,85 % (membre d'une
+congrégation né en 1955), qui recevaient un majoré projeté sur les prix ; les
+autres, de quelques centimes. Le coût du minimum contributif que le modèle
+tire de sa grille tombe en 2024 de 2,11 à 1,07 Md€ : la carrière complète au
+SMIC, qui en porte presque toute la masse, recevait avant 2004 une majoration
+qui n'existait pas, et depuis des montants trop hauts de 3 à 8 % — 1 442 € de
+complément par an au lieu de 423 € pour la génération 1940, partie en 2000.
+La proratisation tous régimes ne touche aucun cas de la grille. Au README, le
+cumul passé du système 2 passe de 2 866 à 2 876 Md€.
+
+Restent, à la fiche (`approximations`) : la durée tous régimes que le modèle
+compte et non celle que chaque régime communique ; la limitation d'avant 2004
+sans le minimum garanti de la fonction publique ; les trimestres que la
+fonction publique valide au titre de l'AVPF (D. 351-2-2, III) ; au-delà de
+juin 2026, le plafond projeté sur le SMIC annuel. Et à lire : le texte du
+décret n° 84-995, dont l'index ne garde que le titre.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 

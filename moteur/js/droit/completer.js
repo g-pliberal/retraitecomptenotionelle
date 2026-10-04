@@ -32,18 +32,133 @@ export const FICHES = {
 };
 
 /**
- * Durée cotisée, tous régimes, qui ouvre la majoration du minimum contributif
- * au titre des périodes cotisées (article L. 351-10). En deçà, seul le montant
- * de base est dû.
- */
-const TRIMESTRES_COTISES_MINIMUM_MAJORE = 120;
-
-/**
  * Première date d'effet, [année, mois], où la surcote s'AJOUTE au minimum
  * contributif au lieu d'entrer dans la pension qu'on lui compare : décret
  * n° 2008-1509, dernier alinéa de D. 351-2-1.
  */
 const SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS = [2009, 4];
+
+/**
+ * La majoration au titre des périodes cotisées est-elle due ? Pas avant 2004,
+ * sans condition jusqu'en mars 2009, à 120 trimestres cotisés tous régimes
+ * depuis — l'AVPF et l'AVA comprises depuis septembre 2023. Voir
+ * `majoration_ouverte` du Python.
+ */
+export function majorationOuverte(regle, cotises) {
+  if (regle.majoration === "aucune") {
+    return false;
+  }
+  const seuil = regle.seuil_trimestres_cotises;
+  return seuil === null || seuil === undefined || cotises >= seuil;
+}
+
+/**
+ * Les trimestres d'AVPF et d'AVA que la majoration compte parmi les périodes
+ * cotisées depuis le 1er septembre 2023, dans la limite de `plafond`, chaque
+ * année dans la place que les trimestres cotisés laissent. Voir `avpf_retenue`
+ * du Python.
+ */
+export function avpfRetenue(moteur, carriere, plafond) {
+  if (!(plafond > 0)) {
+    return 0;
+  }
+  const anneeLiquidation = carriere.anneeLiquidation;
+  const cotises = carriere.trimestresParAnnee(carriere.lignes.filter(
+    (ligne) => ligneCotisee(moteur, carriere, ligne) && ligne.annee <= anneeLiquidation));
+  const avpf = carriere.trimestresParAnnee(carriere.lignes.filter(
+    (ligne) => ligne.revenu_avpf > 0 && ligne.annee <= anneeLiquidation));
+  let retenus = 0;
+  for (const annee of [...avpf.keys()].sort((a, b) => a - b)) {
+    const place = Math.max(0, carriere.plafondTrimestres(annee) - (cotises.get(annee) ?? 0));
+    retenus = Math.min(plafond, retenus + Math.min(avpf.get(annee), place));
+  }
+  return retenus;
+}
+
+/**
+ * Le minimum auquel la pension d'un régime est portée, majoration comprise :
+ * au prorata de la durée du régime, ou, depuis 2004, de la durée tous régimes
+ * quand elle dépasse la durée requise. Voir `plancher_du_regime` du Python.
+ */
+export function plancherDuRegime(eligible, montantBase, montantMajore, majoration,
+  tousRegimes) {
+  const dureeTotale = eligible.dureeTousRegimes ?? 0;
+  if (tousRegimes && dureeTotale > eligible.requis && dureeTotale > eligible.dureeRegime) {
+    const part = eligible.dureeRegime / dureeTotale;
+    let plancher = montantBase * part;
+    if (majoration) {
+      plancher += (montantMajore - montantBase) * part
+        * Math.min(1.0, eligible.cotiseeTousRegimes / eligible.proratisation);
+    }
+    return plancher;
+  }
+  let plancher = montantBase * Math.min(1.0, eligible.prorataAssurance);
+  if (majoration) {
+    plancher += (montantMajore - montantBase) * Math.min(1.0, eligible.prorataCotise);
+  }
+  return plancher;
+}
+
+/**
+ * Les durées cotisées de l'éligible, telles que la majoration de cette date les
+ * lit : la durée d'assurance de janvier 2004 à juin 2005, l'AVPF et l'AVA en
+ * plus au régime général depuis septembre 2023. Voir `selon_la_regle` du
+ * Python.
+ */
+export function selonLaRegle(eligible, regle, avpf) {
+  if (regle.majoration === "sans_distinction") {
+    return {
+      ...eligible, cotiseeRegime: eligible.dureeRegime,
+      prorataCotise: Math.min(1.0, eligible.prorataAssurance),
+      cotiseeTousRegimes: eligible.dureeTousRegimes,
+    };
+  }
+  if (avpf > 0 && eligible.porteAvpf) {
+    const cotisee = eligible.cotiseeRegime + avpf;
+    return {
+      ...eligible, cotiseeRegime: cotisee,
+      prorataCotise: Math.min(cotisee, eligible.proratisation) / eligible.proratisation,
+      cotiseeTousRegimes: eligible.cotiseeTousRegimes + avpf,
+    };
+  }
+  return eligible;
+}
+
+/**
+ * La limitation du cumul des pensions portées au minimum, de décembre 1984 à
+ * 2003 : leur total ne dépasse pas le minimum entier ; le régime de la plus
+ * longue durée sert sa pension portée au minimum, les autres un complément
+ * différentiel au prorata de leurs durées. Voir `limiter_le_cumul` du Python.
+ */
+export function limiterLeCumul(complements, pensions, eligibles, montantBase) {
+  const portes = eligibles.filter((e) => complements.has(e.indice));
+  if (portes.length < 2) {
+    return complements;
+  }
+  const total = portes.reduce(
+    (somme, e) => somme + pensions[e.indice].montant + complements.get(e.indice), 0.0);
+  if (total <= montantBase) {
+    return complements;
+  }
+  let premier = portes[0];
+  for (const e of portes.slice(1)) {
+    if (e.dureeRegime > premier.dureeRegime
+        || (e.dureeRegime === premier.dureeRegime && e.indice > premier.indice)) {
+      premier = e;
+    }
+  }
+  const autres = portes.filter((e) => e !== premier);
+  const marge = Math.max(0.0, montantBase - pensions[premier.indice].montant
+    - complements.get(premier.indice)
+    - autres.reduce((somme, e) => somme + pensions[e.indice].montant, 0.0));
+  const duree = autres.reduce((somme, e) => somme + e.dureeRegime, 0);
+  const limites = new Map(complements);
+  for (const e of autres) {
+    limites.set(e.indice, duree > 0
+      ? Math.min(complements.get(e.indice), marge * e.dureeRegime / duree) : 0.0);
+  }
+  return limites;
+}
 
 /**
  * Le minimum d'une pension proratisée se proratise-t-il sur la durée totale non
@@ -152,15 +267,21 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   let minimumApplique = false;
   let minimumEcrete = null;
 
-  if (avantagesNonContributifs && eligiblesMinimum.length > 0) {
+  // La règle du minimum que la date d'effet fait valoir (fiche
+  // `minimum_contributif`) : il n'existe que depuis le 1er avril 1983, sa
+  // majoration depuis 2004, son seuil depuis avril 2009, son écrêtement depuis
+  // 2012, l'AVPF dans sa majoration depuis septembre 2023.
+  const regle = moteur.minimumContributif.regle(dateDEffet(carriere));
+  if (avantagesNonContributifs && eligiblesMinimum.length > 0 && regle.existe) {
     // Le minimum contributif ne relève que les pensions liquidées AU TAUX
-    // PLEIN (L. 351-10). Sa majoration au titre des périodes cotisées demande
-    // en outre 120 trimestres cotisés tous régimes ; elle se proratise
-    // ensuite sur la durée cotisée DANS le régime, quand le montant de base
-    // se proratise sur sa durée d'assurance (D. 351-2-2).
+    // PLEIN (L. 351-10). Sa majoration au titre des périodes cotisées se
+    // proratise sur la durée cotisée DANS le régime, quand le montant de base
+    // se proratise sur sa durée d'assurance. Les montants sont ceux du mois de
+    // la date d'effet.
     const [montantBase, montantMajore, plafond, fiabiliteMinimum] = moteur
-      .minimumContributif.valeurs(anneeLiquidation);
-    const majorationOuverte = trimestresCotises >= TRIMESTRES_COTISES_MINIMUM_MAJORE;
+      .minimumContributif.valeurs(anneeLiquidation, carriere.moisLiquidation);
+    const avpf = avpfRetenue(moteur, carriere, regle.plafond_avpf);
+    const majoree = majorationOuverte(regle, trimestresCotises + avpf);
     const dateEffet = [anneeLiquidation, carriere.moisLiquidation];
     // Le minimum se compare à la pension AVANT surcote, et la surcote,
     // calculée sur cette pension nue, s'ajoute au minimum (D. 351-2-1) : voir
@@ -170,14 +291,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     const complementDu = (pension, eligible, plancher) => (!eligible.tauxPlein ? 0.0
       : complementMinimum((pension.montant - (eligible.horsMinimum ?? 0.0)) / eligible.surcote,
         plancher, eligible.surcote, dateEffet));
-    const plancherNational = (eligible, majoration) => {
-      let plancher = montantBase * Math.min(1.0, eligible.prorataAssurance);
-      if (majoration) {
-        plancher += (montantMajore - montantBase)
-          * Math.min(1.0, eligible.prorataCotise);
-      }
-      return plancher;
-    };
+    const plancherNational = (eligible, majoration) => plancherDuRegime(
+      selonLaRegle(eligible, regle, avpf), montantBase, montantMajore, majoration,
+      regle.duree_tous_regimes);
     // LA PENSION PRORATISÉE ET LA PENSION NATIONALE : quand un accord les
     // compare, chacune est portée à SON minimum, puis la plus élevée est
     // servie — la proratisée à égalité.
@@ -204,18 +320,19 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       const pension = pensions[eligible.indice];
       const alternative = alternatives.get(pension.regime);
       let complement;
-      let avecMajoration = majorationOuverte;
+      let avecMajoration = majoree;
       if (alternative === undefined) {
-        complement = complementDu(pension, eligible,
-          plancherNational(eligible, majorationOuverte));
+        complement = complementDu(pension, eligible, plancherNational(eligible, majoree));
       } else {
         const plancher = international
-          ? plancherInternational(eligible, montantBase, montantMajore, dureeTotale,
-            trimestresCotises, majorationOuverte)
-          : plancherNational(eligible, majorationOuverte);
+          ? plancherInternational(selonLaRegle(eligible, regle, avpf), montantBase,
+            montantMajore, dureeTotale,
+            regle.majoration === "sans_distinction" ? dureeTotale : trimestresCotises + avpf,
+            majoree)
+          : plancherNational(eligible, majoree);
         complement = complementDu(pension, eligible, plancher);
         const [nationale, eligibleNational] = alternative;
-        const majoreeNationale = cotisesFrancais >= TRIMESTRES_COTISES_MINIMUM_MAJORE;
+        const majoreeNationale = majorationOuverte(regle, cotisesFrancais + avpf);
         const complementNational = complementDu(nationale, eligibleNational,
           plancherNational(eligibleNational, majoreeNationale));
         const proratisee = pension.montant + complement;
@@ -241,10 +358,17 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         majore = majore || avecMajoration;
       }
     }
+    if (regle.cumul_des_minima) {
+      const limites = limiterLeCumul(complements, pensions, eligiblesMinimum, montantBase);
+      for (const [indice, complement] of limites) {
+        complements.set(indice, complement);
+      }
+    }
     total = pensions.reduce((somme, p) => somme + p.montant, 0.0);
     let releveMinimum = [...complements.values()].reduce((a, b) => a + b, 0.0);
-    if (releveMinimum > 0) {
-      // Écrêtement de l'article L. 173-2 : le complément est rogné de ce qui
+    if (releveMinimum > 0 && regle.ecretement) {
+      // Écrêtement de l'article L. 173-2, pour les pensions qui prennent effet
+      // depuis le 1er janvier 2012 : le complément est rogné de ce qui
       // dépasse le plafond, tous régimes confondus, et jamais au-delà. La
       // comparaison porte sur les pensions PERSONNELLES, majorations pour
       // enfants exclues — raison de plus pour les calculer après —, celles que

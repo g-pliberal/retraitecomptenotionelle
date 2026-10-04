@@ -2404,9 +2404,11 @@ def source_minimum_contributif() -> dict[tuple, float]:
     `docs/limites.md` a longtemps écrit que ces montants ne figuraient dans
     aucune source machine ouverte, et qu'il n'y avait donc pas de chemin de
     certification à écrire. C'était la même erreur que pour la MSA : la donnée
-    est dans la loi, il fallait chercher par le NUMÉRO D'ARTICLE. D. 351-2-1
-    du code de la sécurité sociale porte les deux montants, D. 173-21-0-0-1 le
-    plafond d'écrêtement. La base LEGI en garde toutes les versions datées.
+    est dans la loi, il fallait chercher par le NUMÉRO D'ARTICLE. R. 351-25
+    porte le montant de 1983, D. 351-2-1 les deux montants de 2004, 2006, 2008
+    et septembre 2023, D. 173-21-0-0-1 le plafond d'écrêtement. La base LEGI en
+    garde toutes les versions datées ; chaque ancre est écrite à la date que le
+    texte lui donne (``mesure``, ``date``).
     """
     return {
         tuple(cle.split("|")): valeur
@@ -2415,6 +2417,28 @@ def source_minimum_contributif() -> dict[tuple, float]:
                         "scripts/fetch/dila_legi_minimum_contributif.py").items()
         )
     }
+
+
+def source_minimum_contributif_cnav() -> dict[tuple, float]:
+    """Ce que la Cnav a servi entre les ancres du code, date par date.
+
+    Le code ne fixe que cinq dates ; la loi revalorise entre elles — comme les
+    pensions jusqu'en 2023, selon le SMIC depuis. Le barème de la caisse porte
+    chacune de ces revalorisations depuis le 1er avril 1983, et le plafond
+    d'écrêtement à chaque relèvement du SMIC depuis 2012. Transcription de la
+    caisse : niveau ``haute``, et seulement aux dates que la base LEGI ne
+    certifie pas — sur les siennes, le récupérateur a vérifié que les deux
+    sources concordent au centime.
+    """
+    serie = _serie_json("cnav_minimum_contributif.json",
+                        "scripts/fetch/cnav_minimum_contributif.py")
+    try:
+        certifiees = set(source_minimum_contributif())
+    except SourceAbsente:
+        certifiees = set()
+    return {cle: valeur for cle, valeur in (
+        (tuple(brute.split("|")), v) for brute, v in sorted(serie.items()))
+        if cle not in certifiees}
 
 
 def source_point_indice() -> dict[tuple, float]:
@@ -5548,14 +5572,28 @@ CERTIFICATIONS = (
     Certification(
         nom="minimum_contributif",
         chemin=REFERENCE / "legislation" / "minimum_contributif.csv",
-        cles=("mesure", "annee"),
+        cles=("mesure", "date"),
         colonne="valeur",
         source=source_minimum_contributif,
-        origine="DILA, base LEGI, code de la sécurité sociale D. 351-2-1 et "
-                "D. 173-21-0-0-1",
+        origine="DILA, base LEGI, code de la sécurité sociale R. 351-25, "
+                "D. 351-2-1 et D. 173-21-0-0-1",
         decimales=6,
         tolerance=5e-3,
         unite=" €/an",
+    ),
+    Certification(
+        nom="minimum_contributif_cnav",
+        chemin=REFERENCE / "legislation" / "minimum_contributif.csv",
+        cles=("mesure", "date"),
+        colonne="valeur",
+        source=source_minimum_contributif_cnav,
+        origine="Cnav, barèmes « Montant minimum de la retraite personnelle » et "
+                "« Plafond de retraites personnelles pour l'attribution du minimum »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €/an",
+        niveau="haute",
+        complementaire=True,
     ),
     Certification(
         nom="valeurs_point_insee",
@@ -7359,19 +7397,18 @@ CONFRONTATIONS_TAUX = (
 
 
 def controle_vraisemblance_minimum_contributif() -> list[str]:
-    """Confronte les montants SERVIS du minimum contributif à OpenFisca-France-Pension.
+    """Confronte les montants servis du minimum contributif à OpenFisca-France-Pension.
 
-    Le fichier du dépôt est une table d'ANCRES : une ligne par montant qui
-    change, à l'année où il change. Les ancres du code sont certifiées depuis
-    la base LEGI ; les montants réellement servis entre deux ancres sont
-    transcrits de réponses ministérielles et de publications de la Cnav, au
-    niveau ``haute``. OpenFisca transcrit les mêmes circulaires : on oppose à
-    chaque ligne transcrite la dernière date d'effet qu'il porte DANS CETTE
-    ANNÉE-LÀ — et rien quand il n'en porte aucune, sa série s'arrêtant en 2023.
+    Le fichier du dépôt porte chaque date de revalorisation : les ancres du
+    code, certifiées depuis la base LEGI, et entre elles ce que la Cnav a
+    servi, transcrit de son barème au niveau ``haute``. OpenFisca transcrit
+    les mêmes circulaires : on oppose à chaque ligne transcrite le montant
+    qu'il porte À LA MÊME DATE — et rien quand il n'en porte aucune, sa série
+    s'arrêtant en 2023.
 
     Un contrôle, pas une certification : les deux sont des transcriptions, à
     quelques centimes l'une de l'autre — douze mensualités arrondies contre un
-    montant annuel —, et la ligne garde la valeur que le dépôt a transcrite.
+    montant annuel —, et la ligne garde la valeur que la caisse publie.
     """
     try:
         changements = _lire_json("openfisca_minimum_contributif.json",
@@ -7383,20 +7420,15 @@ def controle_vraisemblance_minimum_contributif() -> list[str]:
     for ligne in lignes:
         if ligne["fiabilite"] == "certifiee":
             continue
-        mesure, annee = ligne["mesure"], ligne["annee"]
-        dans_l_annee = sorted(
-            (jour, montant) for jour_mesure, montant in changements.items()
-            for m, jour in [jour_mesure.split("|")]
-            if m == mesure and jour[:4] == annee
-        )
-        if not dans_l_annee:
+        cle = f"{ligne['mesure']}|{ligne['date']}"
+        if cle not in changements:
             continue
         comparees += 1
-        publie, saisi = dans_l_annee[-1][1], float(ligne["valeur"])
+        publie, saisi = changements[cle], float(ligne["valeur"])
         if abs(publie - saisi) > 0.5:
             ecarts.append(
-                f"SUSPECT minimum contributif {mesure} {annee} : fiche {saisi:.2f} €, "
-                f"OpenFisca {publie:.2f} € au {dans_l_annee[-1][0]}"
+                f"SUSPECT minimum contributif {cle} : fiche {saisi:.2f} €, "
+                f"OpenFisca {publie:.2f} €"
             )
     return [
         f"OK      vraisemblance minimum contributif : {comparees} montants servis "

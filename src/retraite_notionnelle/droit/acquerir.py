@@ -110,6 +110,8 @@ def points_msa(moteur: ScenarioActuel, periode: PeriodeRegime, annee: int,
     avts = (periode.pension_forfaitaire_annuelle or 0.0) * moteur.macro.coefficient_prix(
         periode.pension_forfaitaire_annee or annee, annee
     )
+    # Le minimum en vigueur au 1er janvier de l'année : R. 732-71 ne dit pas
+    # à quelle date le lire.
     minimum_contributif, _, _, _ = moteur.minimum_contributif.valeurs(annee)
     maximum = (0.5 * pass_annuel - avts) / (37.5 * valeur_point)
     if revenu <= 400 * smic:

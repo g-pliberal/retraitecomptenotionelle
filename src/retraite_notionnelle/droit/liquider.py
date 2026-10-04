@@ -273,6 +273,15 @@ class EligibleMinimum:
     #: La part du montant que le minimum ne relève pas : la fraction d'avant
     #: 1998 des cultes, qui a ses propres majorations (:mod:`.cultes`).
     hors_minimum: float = 0.0
+    #: Ce que le minimum d'un polypensionné lit depuis 2004 (fiche
+    #: ``minimum_contributif``) : la durée d'assurance et la durée cotisée
+    #: tous régimes de base, celles du régime comprises, sommées régime par
+    #: régime sans limite de quatre trimestres par an.
+    duree_tous_regimes: int = 0
+    cotisee_tous_regimes: int = 0
+    #: Le régime valide-t-il l'AVPF et l'AVA, que la majoration compte depuis
+    #: septembre 2023 ? Le régime général, seul.
+    porte_avpf: bool = False
 
 
 @dataclass(frozen=True)
@@ -916,18 +925,32 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             cotisee_regime = (cumul_plafonne("cotises", membres) if durees_cultes is None
                               else durees_cultes.cotises_depuis_1998)
             cotises_regime = min(cotisee_regime, proratisation)
+            duree_regime = (cumul_plafonne("assurance", membres) if durees_cultes is None
+                            else durees_cultes.depuis_1998)
+            # Les autres régimes de base, que le minimum d'un polypensionné
+            # compte depuis 2004 : chacun pour sa durée, « même si [les
+            # trimestres] se superposent, et non limités à 4 par an »
+            # (exposé de la Cnav « Calcul du minimum contributif »).
+            autres_de_base = [
+                autre for autre, nombre in durees.trimestres_par_regime.items()
+                if autre not in membres and nombre > 0 and autre in moteur.catalogue
+                and moteur.catalogue[autre].etage in ("base", "integre")]
             eligibles_minimum.append(EligibleMinimum(
                 indice=len(pensions),
                 prorata_assurance=prorata,
                 prorata_cotise=cotises_regime / proratisation,
                 taux_plein=taux_plein_du_regime,
                 surcote=coefficient_surcote,
-                duree_regime=(cumul_plafonne("assurance", membres) if durees_cultes is None
-                              else durees_cultes.depuis_1998),
+                duree_regime=duree_regime,
                 cotisee_regime=cotisee_regime,
                 proratisation=proratisation,
                 requis=requis,
                 hors_minimum=0.0 if fraction_cultes is None else fraction_cultes.montant,
+                duree_tous_regimes=duree_regime + sum(
+                    durees.trimestres_par_regime[autre] for autre in autres_de_base),
+                cotisee_tous_regimes=cotisee_regime + sum(
+                    cumul_plafonne("cotises", (autre,)) for autre in autres_de_base),
+                porte_avpf="regime_general" in membres,
             ))
         if "minimum_garanti" in periode.avantages_non_contributifs:
             # Depuis la loi du 9 novembre 2010, le minimum garanti n'est dû

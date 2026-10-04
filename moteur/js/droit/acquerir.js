@@ -54,6 +54,8 @@ export function pointsMsa(moteur, periode, annee, revenu) {
   }
   const avts = (periode.pension_forfaitaire_annuelle ?? 0.0)
     * moteur.macro.coefficientPrix(periode.pension_forfaitaire_annee ?? annee, annee);
+  // Le minimum en vigueur au 1er janvier de l'année : R. 732-71 ne dit pas à
+  // quelle date le lire.
   const minimumContributif = moteur.minimumContributif.valeurs(annee)[0];
   const maximum = (0.5 * passAnnuel - avts) / (37.5 * valeurPoint);
   let points;

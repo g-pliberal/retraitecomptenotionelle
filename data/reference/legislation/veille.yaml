@@ -5186,3 +5186,42 @@ journal:
       la RCI de 2013 à 2020, et les règles des complémentaires des artisans et des
       commerçants d'avant 2013 ; le versement unique de l'Ircantec sous 300 points ; le
       départ anticipé des assurés handicapés, que le modèle ne traite pas ; le remariage.
+  - date: "2026-10-04"
+    session: "action 138, étape 15 : le minimum contributif daté"
+    consulte: >-
+      veille_droit.py (dernière veille consignée du jour). Dans l'index LEGI du dépôt, à
+      jour au 27 septembre 2026 : L. 351-10 dans ses rédactions de 1986, 2004, 2008,
+      septembre et décembre 2023 ; D. 351-2-1 (2003, 2005, 2007, 2009, 2020, 2023) ;
+      D. 351-2-2 (2009, 2023, 28 décembre 2025, 1er août 2026) ; R. 351-25 (1985) ;
+      L. 173-2 (1985, 2008, 2010, 2018) ; D. 173-21-0-0-1 (2011, 2014). Au Journal
+      officiel, le décret n° 83-773 du 30 août 1983, le décret n° 84-995 du 5 novembre
+      1984 et la loi n° 83-430 du 31 mai 1983, dont l'index ne garde que les titres. À
+      la Cnav : les barèmes « Montant minimum de la retraite personnelle » et « Plafond
+      de retraites personnelles pour l'attribution du minimum », par l'API de sa base
+      de législation ; les exposés « Minimum avant 2012 », « Calcul du minimum
+      contributif » et « Minimum contributif » ; les circulaires 2003/56, 2004/13,
+      2005/30, 2009/17, 2023/16, 2024/3, 2024/28, 2025/8, 2025/33 et 2026/16, et les
+      lettres ministérielles du 25 mars et du 26 novembre 2004 (instructions
+      ministérielles n° 2005/2).
+    trouve: >-
+      Les trois modèles et le barème de la Cnav avaient raison contre le dépôt : le
+      minimum est revalorisé comme les pensions jusqu'en 2023, selon le SMIC au 1er
+      janvier depuis (L. 351-10 ; coefficients 1,0337, 1,0197 et 1,0118) ; la
+      majoration n'existe que depuis le 1er janvier 2004, sans distinction des
+      périodes cotisées jusqu'au 30 juin 2005 (lettre du 25 mars 2004, instructions
+      n° 2005/2, point 3), le seuil de 120 trimestres que pour les pensions d'avril
+      2009, l'écrêtement que pour celles de 2012, l'AVPF et l'AVA, 24 trimestres au
+      plus, que depuis septembre 2023 ; de décembre 1984 à 2003, le cumul de plusieurs
+      pensions portées au minimum était limité au minimum entier. Deux faits que le
+      relevé n'avait pas : depuis 2004, le minimum d'un polypensionné au-delà de la
+      durée requise se proratise sur la durée tous régimes (L. 351-10 ; circulaire
+      2005/30, point 513), règle que la Cnav applique encore ; et les montants de 2025
+      du dépôt (747,69 € et un plafond de 1 394,86 €) étaient ceux de la circulaire
+      2024/40, que la 2025/8 a corrigés (747,47 € et 1 394,44 €). Le plafond a été
+      relevé le 1er juin 2026 avec le SMIC (1 444,89 €, circulaire 2026/16) ; les
+      minima ne bougent qu'au 1er janvier.
+    reste: >-
+      Le texte du décret n° 84-995 et les articles R. 173-7 à R. 173-14 de 1985, pour
+      les attributions successives ; les trimestres que la fonction publique valide au
+      titre de l'AVPF (D. 351-2-2, III), que le modèle ne distingue pas ; la
+      comparaison à l'AVTS d'avant le 1er avril 1983, à l'étape 138.6.

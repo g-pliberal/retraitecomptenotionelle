@@ -1027,16 +1027,26 @@ précédent, et le modèle en prenait deux à l'envers.
    Les naissances que le formulaire ne dit pas sont présumées aux trente ans
    du parent.
 3. **Minimum contributif** — réservé aux pensions liquidées AU TAUX PLEIN
-   (L. 351-10). Deux durées le proratisent, et ce ne sont pas les mêmes : le
-   montant de base suit la durée d'assurance acquise dans le régime, sa
-   majoration au titre des périodes cotisées suit la seule durée cotisée
-   (D. 351-2-2), et cette majoration demande en outre <!--chiffre:mesure(constante?de=retraite_notionnelle.droit.completer&nom=TRIMESTRES_COTISES_MINIMUM_MAJORE)-->120<!--/--> trimestres cotisés
-   tous régimes. Il se compare à la pension AVANT surcote, et la surcote,
+   (L. 351-10), depuis le 1er avril 1983, au montant en vigueur le mois de la
+   date d'effet : chaque revalorisation que la Cnav a appliquée, comme les
+   pensions jusqu'en 2023, selon le SMIC depuis. Deux durées le proratisent,
+   et ce ne sont pas les mêmes : le montant de base suit la durée d'assurance
+   acquise dans le régime, sa majoration au titre des périodes cotisées,
+   créée en 2004, suit la seule durée cotisée — depuis juillet 2005 ; en 2004
+   et au premier semestre 2005, toutes les périodes. Au-delà de la durée
+   requise tous régimes, les deux se proratisent sur la durée tous régimes
+   (L. 351-10). Pour les pensions prenant effet depuis le 1er avril 2009, la
+   majoration demande en outre <!--chiffre:valeur(data/reference/regles/minimum_contributif.yaml:versions.id=seuil_de_120_trimestres_2009.contenu.parametres.seuil_trimestres_cotises)-->120<!--/--> trimestres cotisés
+   tous régimes (D. 351-2-2), l'AVPF et l'AVA comptées depuis septembre 2023
+   dans la limite de <!--chiffre:valeur(data/reference/regles/minimum_contributif.yaml:versions.id=avpf_et_ava_2023.contenu.parametres.plafond_avpf)-->24<!--/--> trimestres. Il se compare à la pension AVANT surcote, et la surcote,
    calculée sur cette pension, s'ajoute au minimum pour les pensions prenant
    effet depuis le 1er avril 2009 (D. 351-2-1, dernier alinéa) ; avant, elle
-   entrait dans la pension comparée au minimum. Il est enfin écrêté de ce qui
-   ferait dépasser le plafond de l'article L. 173-2 — plafond auquel se
-   comparent les pensions personnelles, majorations pour enfants exclues.
+   entrait dans la pension comparée au minimum. Il est enfin écrêté, depuis
+   2012, de ce qui ferait dépasser le plafond de l'article L. 173-2 — plafond
+   auquel se comparent les pensions personnelles, majorations pour enfants
+   exclues ; de décembre 1984 à 2003, c'est le cumul de plusieurs pensions
+   portées au minimum qui était limité au minimum entier. La règle de chaque
+   date est une version de la fiche `minimum_contributif`.
 4. **Minimum garanti** de la fonction publique (L. 17) — non pas un plancher
    proratisé mais un barème en escalier sur la durée de services : <!--chiffre:tenu(test_le_minimum_garanti_de_la_fonction_publique_est_servi)-->57,5<!--/--> % de la
    référence à quinze ans, <!--chiffre:tenu(test_le_minimum_garanti_de_la_fonction_publique_est_servi)-->95<!--/--> % à trente, la totalité à quarante. La référence

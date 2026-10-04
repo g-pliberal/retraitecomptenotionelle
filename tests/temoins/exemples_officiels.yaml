@@ -250,6 +250,31 @@ exemples:
       interruptions: {2000: chomage_indemnise, 2001: chomage_indemnise, 2002: chomage_indemnise, 2003: chomage_indemnise, 2004: chomage_indemnise, 2005: chomage_indemnise, 2006: chomage_indemnise, 2007: chomage_indemnise, 2026: chomage_indemnise}
     attendu: {trimestres_valides: 170, trimestres_requis: 170, taux_liquidation: 0.5, pension_regime_general_mensuelle: 873.53}
 
+  # Le minimum contributif daté (fiche minimum_contributif) : de juillet 2005 à
+  # mars 2009, la majoration au prorata de la durée cotisée, sans seuil, aux
+  # montants du 1er janvier 2005. Le modèle reliait jusqu'au 4 octobre 2026 ses
+  # ancres par les prix, et servait ici 7 % de trop.
+  - id: cnav_2005_30_minimum_majore_monopensionne
+    source: {editeur: "Cnav", reference: "circulaire n° 2005/30 du 4 juillet 2005, Minimum contributif majoré, point 5112, exemple 1", verifie_le: "2026-10-04"}
+    enonce: >-
+      Assuré né en 1945, retraite au 1er octobre 2005, monopensionné du régime
+      général, 162 trimestres dont 156 cotisés : « Minimum : 6641,28 X 154/154
+      = 6641,28 euros », « Majoration : (6840,51 - 6641,28) X 154/154 = 199,23
+      euros », « Montant du minimum contributif majoré au régime général :
+      6840,51 euros ». La carrière construite a 162 trimestres dont 158
+      cotisés — au-delà des 154 de la durée de proratisation, comme ceux de
+      l'exemple —, à un salaire assez bas pour que le minimum s'applique.
+    carriere:
+      naissance: "1945-09"
+      sexe: H
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2005-10"
+      age_debut: 19.5
+      niveau_salaire: 0.3
+      profil_carriere: plat
+      interruptions: {1990: chomage_indemnise}
+    attendu: {trimestres_valides: 162, trimestres_requis: 160, taux_liquidation: 0.5, pension_regime_general_mensuelle: 570.04}
+
   # Le cumul emploi-retraite (fiches cumul_emploi_retraite_et_retraite_progressive
   # et cumul_emploi_retraite_fonction_publique) : l'activité exercée après le
   # départ, `emploi_retraite`, ses mois comme la liquidation, son employeur

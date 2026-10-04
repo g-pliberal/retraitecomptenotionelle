@@ -295,7 +295,9 @@ def test_les_deux_montants_du_minimum_se_lisent_sans_verbe():
     L'article D. 351-2-1 porte le minimum puis sa majoration, et le verbe qui
     les introduit a changé trois fois en vingt ans — « est fixé à », « est
     porté à », « de façon à atteindre ». On relève donc tous les montants
-    annuels et l'on retient le plus petit, puis le plus grand.
+    annuels et l'on retient le plus petit, puis le plus grand, chacun à la
+    date que le texte lui donne : la rédaction du 31 décembre 2007 fixe le
+    montant du 1er janvier 2008, que le récupérateur datait « 2007 ».
     """
     module = _charger_script("dila_legi_minimum_contributif", "scripts", "fetch",
                              "dila_legi_minimum_contributif.py")
@@ -308,19 +310,28 @@ def test_les_deux_montants_du_minimum_se_lisent_sans_verbe():
         "10 170,86 euros par an au 1er septembre 2023."
     )
     assert module.montants(texte) == {
-        "montant_base": pytest.approx(8509.61),
-        "montant_majore": pytest.approx(10170.86),
+        "montant_base": ("2023-09-01", pytest.approx(8509.61)),
+        "montant_majore": ("2023-09-01", pytest.approx(10170.86)),
     }
-    # Une rédaction antérieure, sans majoration : un seul montant.
-    assert module.montants("est fixé à 6 958,21 euros par an") == {
-        "montant_base": pytest.approx(6958.21)
+    # Les rédactions de 2004 et de 2006 écrivent « Euros » : le récupérateur
+    # ne les lisait pas, et le dépôt n'avait ni l'ancre de 2004 ni celle de 2006.
+    assert module.montants(
+        "est fixé à 6 511,06 Euros par an au 1er janvier 2004. Ce montant "
+        "minimum est majoré […] de façon à atteindre 6 706,39 Euros par an au "
+        "1er janvier 2004") == {
+        "montant_base": ("2004-01-01", pytest.approx(6511.06)),
+        "montant_majore": ("2004-01-01", pytest.approx(6706.39)),
+    }
+    # R. 351-25, avant la majoration : un seul montant, en francs.
+    assert module.montants("est fixé à 26 400 F par an au 1er avril 1983") == {
+        "montant_base": ("1983-04-01", pytest.approx(26_400 / 6.55957))
     }
     # Le plafond est publié au MOIS : il est porté à l'année.
     assert module.plafond(
         "Le montant mensuel total des pensions personnelles de retraite "
         "mentionné au premier alinéa de l'article L. 173-2 est fixé à "
         "1 120 euros au 1er février 2014."
-    ) == (2014, pytest.approx(13440.0))
+    ) == ("2014-02-01", pytest.approx(13440.0))
 
 
 def test_une_generation_coupee_en_cours_d_annee_rend_deux_segments():

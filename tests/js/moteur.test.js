@@ -20,7 +20,9 @@ import { Saisie } from "../../moteur/js/saisie.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { rendre } from "../../moteur/js/pages.js";
 import { Affiliations } from "../../moteur/js/regimes.js";
-import { complementMinimum } from "../../moteur/js/droit/completer.js";
+import {
+  complementMinimum, majorationOuverte, plancherDuRegime, selonLaRegle,
+} from "../../moteur/js/droit/completer.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import { AnneeCarriere, limiterChomageNonIndemnise } from "../../moteur/js/carriere.js";
@@ -445,6 +447,46 @@ test("la surcote s'ajoute au minimum comme la circulaire le calcule", () => {
   assert.equal(complementMinimum(630, 633.61, 1.015, [2008, 1]), 0);
   assert.equal(complementMinimum(621, 645.07, 1.025, [2009, 3]),
     Math.max(0, 645.07 - 621 * 1.025));
+});
+
+/**
+ * Les huit exemples chiffrés des circulaires Cnav 2005/30 et 2009/17, et la
+ * majoration sans distinction de 2004 : le même calcul que le Python
+ * (`test_les_exemples_des_circulaires_de_2005_et_2009_sont_rejoues`), dont les
+ * témoins n'atteignent ni les polypensionnés ni 2004.
+ */
+test("le minimum se calcule comme les circulaires de 2005 et 2009", () => {
+  const eligible = (regime, cotisee, proratisation, requis, autres = 0, cotiseeAutres = 0) => ({
+    indice: 0, prorataAssurance: regime / proratisation,
+    prorataCotise: Math.min(cotisee, proratisation) / proratisation, tauxPlein: true,
+    dureeRegime: regime, cotiseeRegime: cotisee, proratisation, requis,
+    dureeTousRegimes: regime + autres, cotiseeTousRegimes: cotisee + cotiseeAutres,
+    porteAvpf: true,
+  });
+  const cas2005 = [
+    [[162, 156, 0, 0], 6840.51], [[140, 140, 0, 0], 6218.63], [[140, 40, 0, 0], 6089.26],
+    [[100, 90, 56, 54], 4428.94], [[60, 50, 140, 130], 2052.14], [[142, 110, 30, 30], 5632.43],
+  ];
+  for (const [[regime, cotisee, autres, cotiseeAutres], attendu] of cas2005) {
+    const plancher = plancherDuRegime(eligible(regime, cotisee, 154, 160, autres, cotiseeAutres),
+      6641.28, 6840.51, true, true);
+    assert.ok(Math.abs(plancher - attendu) < 0.03, `${regime}/${cotisee} : ${plancher}`);
+  }
+  const regle = { majoration: "periodes_cotisees", seuil_trimestres_cotises: 120 };
+  assert.ok(majorationOuverte(regle, 144));
+  assert.ok(!majorationOuverte(regle, 118));
+  assert.ok(Math.abs(plancherDuRegime(eligible(100, 90, 161, 161, 56, 54), 584.48, 638.68,
+    true, true) - 393.32) < 0.01);
+  assert.ok(Math.abs(plancherDuRegime(eligible(150, 118, 152, 160), 584.48, 638.68,
+    false, true) - 576.78) < 0.01);
+  // De janvier 2004 à juin 2005 : le majoré, au prorata de la durée d'assurance.
+  const transitoire = { majoration: "sans_distinction" };
+  const mono = selonLaRegle(eligible(140, 40, 152, 160), transitoire, 0);
+  assert.ok(Math.abs(plancherDuRegime(mono, 6511.06, 6706.39, true, true)
+    - 6706.39 * 140 / 152) < 1e-9);
+  const poly = selonLaRegle(eligible(60, 10, 152, 160, 140, 130), transitoire, 0);
+  assert.ok(Math.abs(plancherDuRegime(poly, 6511.06, 6706.39, true, true)
+    - 6706.39 * 60 / 200) < 1e-9);
 });
 
 /**

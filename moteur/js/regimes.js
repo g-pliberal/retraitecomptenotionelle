@@ -496,93 +496,106 @@ export class AnneesSalaireReference extends TableParGeneration {
 }
 
 /**
- * Minimum contributif, minimum majoré et plafond d'écrêtement.
- *
- * Trois grandeurs : le minimum auquel est portée la pension de base, le
- * minimum MAJORÉ servi à sa place quand la durée cotisée atteint la durée
- * requise, et le plafond de l'article L. 173-2 au-delà duquel le complément
- * est rogné.
- *
- * Les trois sont des ANCRES DATÉES, lues dans le code de la sécurité sociale
- * et non dans une série annuelle : le code n'est pas modifié chaque année, les
- * montants sont revalorisés par l'effet de la loi. C'est donc au modèle de le
- * faire, et sur le bon index — le SMIC à partir de la date d'effet, les prix
- * avant elle.
+ * La règle du minimum contributif quand la fiche manque : celle du droit en
+ * vigueur (version `avpf_et_ava_2023` de la fiche `minimum_contributif`).
  */
-/**
- * Année à partir de laquelle chaque montant suit le SMIC et non plus les prix :
- * le plafond d'écrêtement depuis le décret du 14 février 2014, les deux minima
- * depuis la réforme du 14 avril 2023. Avant, ils suivaient les prix.
- */
-export const INDEXATION_SUR_LE_SMIC = Object.freeze({
-  montant_base: 2023,
-  montant_majore: 2023,
-  plafond_ecretement: 2014,
+export const REGLE_DU_MINIMUM_EN_VIGUEUR = Object.freeze({
+  existe: true,
+  majoration: "periodes_cotisees",
+  seuil_trimestres_cotises: 120,
+  plafond_avpf: 24,
+  ecretement: true,
+  cumul_des_minima: false,
+  duree_tous_regimes: true,
 });
 
+/**
+ * Minimum contributif, minimum majoré et plafond d'écrêtement, et la règle que
+ * leur applique la date d'effet de la pension.
+ *
+ * Trois grandeurs : le minimum auquel est portée la pension de base, le minimum
+ * MAJORÉ au titre des périodes cotisées, créé en 2004, et le plafond de
+ * l'article L. 173-2, depuis 2012, au-delà duquel le complément est rogné.
+ *
+ * Des MONTANTS DATÉS, et non des ancres : chaque date de revalorisation depuis
+ * le 1er avril 1983, les ancres du code certifiées et entre elles ce que la Cnav
+ * a servi. Le modèle lit le montant en vigueur le premier jour du mois de la
+ * date d'effet ; au-delà du dernier publié, il le revalorise sur le SMIC. La
+ * RÈGLE est celle de la fiche `minimum_contributif`, dont il lit la version.
+ * Voir `MinimumContributif` du Python.
+ */
 export class MinimumContributif {
   constructor(paquet, macro) {
     this.macro = macro;
-    this._table = paquet.minimum_contributif ?? {};
+    const minimum = paquet.minimum_contributif ?? {};
+    this._table = minimum.montants ?? {};
+    this._fiche = minimum.fiche ?? null;
+  }
+
+  /** La fiche préparée, telle que le paquet la porte. */
+  fiche() {
+    return this._fiche;
   }
 
   /**
-   * Ancre de la mesure, portée à l'année demandée.
-   *
-   * Un montant CONNU passe avant tout calcul : quand l'année figure au
-   * fichier, on la sert telle quelle. Sinon on projette depuis la valeur en
-   * vigueur à cette date — la dernière fixée avant elle, jamais une
-   * postérieure, sans quoi les marches créées par une réforme glisseraient
-   * dans le passé.
-   *
-   * L'index dépend de l'ANNÉE TRAVERSÉE et non de l'ancre : les prix jusqu'à
-   * la bascule que la loi a fixée pour cette grandeur, le SMIC ensuite.
-   *
-   * @returns {[number, number]} valeur, et fiabilité.
+   * Les paramètres de la version qui vaut pour une pension prenant effet à
+   * `dateEffet` (AAAA-MM-JJ).
    */
-  _revalorise(mesure, annee) {
-    const ancres = Object.keys(this._table)
-      .filter((cle) => cle.startsWith(`${mesure}|`))
-      .map((cle) => Number(cle.split("|")[1]))
-      .sort((a, b) => a - b);
-    if (ancres.length === 0) {
-      return [0.0, 0];
+  regle(dateEffet) {
+    if (this._fiche === null) {
+      return { ...REGLE_DU_MINIMUM_EN_VIGUEUR };
     }
-    if (ancres.includes(annee)) {
-      return this._table[`${mesure}|${annee}`];
-    }
-    const anterieures = ancres.filter((a) => a < annee);
-    const reference = anterieures.length
-      ? anterieures[anterieures.length - 1]
-      : ancres[0];
-    const [valeur, fiabilite] = this._table[`${mesure}|${reference}`];
-    const bascule = INDEXATION_SUR_LE_SMIC[mesure];
-    const pivot = Math.min(Math.max(reference, bascule), annee);
-    const coefficient = this.macro.coefficientPrix(reference, pivot)
-      * this.macro.coefficientSmic(pivot, annee);
-    return [valeur * coefficient, fiabilite];
+    const version = applicable(this._fiche, { "liquidation.date_effet": dateEffet });
+    return { ...(version === null ? REGLE_DU_MINIMUM_EN_VIGUEUR : version.parametres) };
   }
 
   /**
-   * Montant de base, montant majoré et plafond d'écrêtement de l'année.
+   * Le montant en vigueur le premier jour de ce mois, null avant le premier :
+   * un montant connu, ou, au-delà du dernier, ce dernier revalorisé sur le
+   * SMIC de chaque année traversée.
    *
-   * Les deux montants sont rendus ensemble parce que le droit les ADDITIONNE
-   * plutôt qu'il ne choisit entre eux : la pension est portée au montant de
-   * base au prorata de la durée d'assurance acquise dans le régime, puis
-   * l'écart entre le majoré et le base s'y ajoute au prorata de la seule durée
-   * COTISÉE (D. 351-2-2).
+   * @returns {[number, number]|null} valeur, et fiabilité.
+   */
+  _enVigueur(mesure, annee, mois) {
+    const datees = this._table[mesure] ?? [];
+    if (datees.length === 0) {
+      return null;
+    }
+    const jour = `${String(annee).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
+    let rang = 0;
+    while (rang < datees.length && datees[rang][0] <= jour) {
+      rang += 1;
+    }
+    if (rang === 0) {
+      return null;
+    }
+    let [, valeur, fiabilite] = datees[rang - 1];
+    const derniere = Number(datees[datees.length - 1][0].slice(0, 4));
+    if (rang === datees.length && annee > derniere) {
+      valeur *= this.macro.coefficientSmic(derniere, annee);
+    }
+    return [valeur, fiabilite];
+  }
+
+  /**
+   * Montant de base, montant majoré et plafond d'écrêtement en vigueur le
+   * premier jour du mois, en euros par an : tout à zéro avant le 1er avril
+   * 1983 ; le majoré égal au minimum avant 2004 ; le plafond nul avant 2012.
    *
    * @returns {[number, number, number, number]} base, majoré, plafond, fiabilité.
    */
-  valeurs(annee) {
+  valeurs(annee, mois = 1) {
     if (Object.keys(this._table).length === 0) {
-      return [0.0, 0.0, 0.0, 0];
+      return [0.0, 0.0, 0.0, Fiabilite.ESTIMEE];
     }
-    const [base, fiabiliteBase] = this._revalorise("montant_base", annee);
-    const [majore, fiabiliteMajore] = this._revalorise("montant_majore", annee);
-    const [plafond, fiabilitePlafond] = this._revalorise("plafond_ecretement", annee);
-    return [base, majore, plafond,
-      Math.min(fiabiliteBase, fiabiliteMajore, fiabilitePlafond)];
+    const base = this._enVigueur("montant_base", annee, mois);
+    if (base === null) {
+      return [0.0, 0.0, 0.0, Fiabilite.CERTIFIEE];
+    }
+    const majore = this._enVigueur("montant_majore", annee, mois) ?? base;
+    const plafond = this._enVigueur("plafond_ecretement", annee, mois);
+    const fiabilite = Math.min(base[1], majore[1], ...(plafond === null ? [] : [plafond[1]]));
+    return [base[0], majore[0], plafond === null ? 0.0 : plafond[0], fiabilite];
   }
 }
 

@@ -54,11 +54,6 @@ FICHES = {
     "majoration_enfants": "majoration_dix_pour_cent",
 }
 
-#: Durée cotisée, tous régimes, qui ouvre la majoration du minimum contributif
-#: au titre des périodes cotisées (article L. 351-10 du code de la sécurité
-#: sociale). En deçà, seul le montant de base est dû.
-TRIMESTRES_COTISES_MINIMUM_MAJORE = 120
-
 #: Première date d'effet, (année, mois), où la surcote s'AJOUTE au minimum
 #: contributif au lieu d'entrer dans la pension qu'on lui compare : décret
 #: n° 2008-1509 du 30 décembre 2008, dernier alinéa de D. 351-2-1.
@@ -91,6 +86,135 @@ def complement_minimum(nue: float, plancher: float, coefficient_surcote: float,
     if date_effet >= SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS:
         return max(0.0, plancher - nue)
     return max(0.0, plancher - nue * coefficient_surcote)
+
+
+def majoration_ouverte(regle: dict, cotises: int) -> bool:
+    """La majoration au titre des périodes cotisées est-elle due ?
+
+    Pas avant le 1er janvier 2004, qui la crée ; sans condition de 2004 à mars
+    2009 ; pour les pensions qui prennent effet depuis le 1er avril 2009, à qui
+    justifie de 120 trimestres cotisés tous régimes, quatre par an au plus
+    (L. 351-10, D. 351-2-2) — ceux d'AVPF et d'AVA compris depuis septembre
+    2023. Le modèle opposait le seuil à toute date, et servait la majoration
+    dès 1983. ``regle`` est la version de la fiche ``minimum_contributif``
+    (:meth:`~retraite_notionnelle.scenarios.actuel.MinimumContributif.regle`).
+    """
+    if regle["majoration"] == "aucune":
+        return False
+    seuil = regle["seuil_trimestres_cotises"]
+    return seuil is None or cotises >= seuil
+
+
+def avpf_retenue(moteur: ScenarioActuel, carriere: Carriere, plafond: int) -> int:
+    """Les trimestres d'AVPF et d'AVA que la majoration compte parmi les
+    périodes cotisées : depuis le 1er septembre 2023, « dans la limite de 24
+    trimestres (AVPF/AVA confondus) », individualisés année par année
+    (L. 351-10 ; D. 351-2-2 ; circulaire Cnav 2024/28, point 3.3).
+
+    Chaque année, ils ne comptent que dans la place que les trimestres cotisés
+    de l'année laissent sous les quatre trimestres civils ; les années se
+    prennent dans l'ordre jusqu'à la limite. Zéro avant septembre 2023
+    (``plafond`` nul)."""
+    if plafond <= 0:
+        return 0
+    annee_liquidation = carriere.annee_liquidation
+    cotises = carriere.trimestres_par_annee(
+        ligne for ligne in carriere.lignes
+        if ligne_cotisee(moteur, carriere, ligne) and ligne.annee <= annee_liquidation)
+    avpf = carriere.trimestres_par_annee(
+        ligne for ligne in carriere.lignes
+        if ligne.revenu_avpf > 0 and ligne.annee <= annee_liquidation)
+    retenus = 0
+    for annee in sorted(avpf):
+        place = max(0, carriere.plafond_trimestres(annee) - cotises.get(annee, 0))
+        retenus = min(plafond, retenus + min(avpf[annee], place))
+    return retenus
+
+
+def plancher_du_regime(eligible, montant_base: float, montant_majore: float,
+                       majoration: bool, tous_regimes: bool) -> float:
+    """Le minimum auquel la pension d'un régime est portée, majoration comprise.
+
+    Le minimum entier se réduit au prorata de la durée d'assurance du régime
+    sur sa durée de proratisation, et la majoration — l'écart entre le majoré
+    et le minimum entiers — au prorata de sa durée COTISÉE (circulaire Cnav
+    2005/30, point 511). Mais depuis 2004, quand la durée d'assurance tous
+    régimes dépasse la durée requise pour le taux plein, le minimum se calcule
+    « comme si l'assuré avait accompli toute sa carrière à un seul régime,
+    puis [ses] montants sont répartis » (L. 351-10, « le cas échéant rapportée
+    à la durée d'assurance accomplie tant dans le régime général que dans un ou
+    plusieurs autres régimes obligatoires » ; point 513) : le minimum au
+    prorata de la durée du régime sur la durée tous régimes, non limitée ; la
+    majoration de même, et en outre au prorata de la durée cotisée tous
+    régimes sur la durée de proratisation quand elle ne l'atteint pas. Le
+    modèle proratisait toujours sur la durée de proratisation, et servait à un
+    polypensionné un minimum plus élevé que la loi.
+    """
+    duree_totale = eligible.duree_tous_regimes
+    if (tous_regimes and duree_totale > eligible.requis
+            and duree_totale > eligible.duree_regime):
+        part = eligible.duree_regime / duree_totale
+        plancher = montant_base * part
+        if majoration:
+            plancher += ((montant_majore - montant_base) * part
+                         * min(1.0, eligible.cotisee_tous_regimes / eligible.proratisation))
+        return plancher
+    plancher = montant_base * min(1.0, eligible.prorata_assurance)
+    if majoration:
+        plancher += (montant_majore - montant_base) * min(1.0, eligible.prorata_cotise)
+    return plancher
+
+
+def selon_la_regle(eligible, regle: dict, avpf: int):
+    """Les durées cotisées de l'éligible, telles que la majoration de cette date
+    les lit.
+
+    De janvier 2004 à juin 2005, la majoration ne distinguait pas les périodes
+    cotisées : la lettre ministérielle du 25 mars 2004 autorisait « à titre
+    transitoire, à appliquer à l'ensemble des pensions prenant effet en 2004 le
+    montant afférent aux périodes cotisées », reconduit au premier semestre
+    2005 ; la durée cotisée vaut alors la durée d'assurance. Depuis septembre
+    2023, l'AVPF et l'AVA retenues s'ajoutent à la durée cotisée du régime
+    général, qui les valide."""
+    if regle["majoration"] == "sans_distinction":
+        return replace(eligible, cotisee_regime=eligible.duree_regime,
+                       prorata_cotise=min(1.0, eligible.prorata_assurance),
+                       cotisee_tous_regimes=eligible.duree_tous_regimes)
+    if avpf and eligible.porte_avpf:
+        cotisee = eligible.cotisee_regime + avpf
+        return replace(eligible, cotisee_regime=cotisee,
+                       prorata_cotise=min(cotisee, eligible.proratisation) / eligible.proratisation,
+                       cotisee_tous_regimes=eligible.cotisee_tous_regimes + avpf)
+    return eligible
+
+
+def limiter_le_cumul(complements: dict[int, float], pensions, eligibles,
+                     montant_base: float) -> dict[int, float]:
+    """La limitation du cumul des pensions portées au minimum, de décembre 1984
+    à 2003 : leur total ne dépasse pas « le minimum entier le plus élevé
+    susceptible d'être servi par le régime le plus favorable » — le même dans
+    le régime général et les régimes alignés. Le régime de la plus longue durée
+    d'assurance (le dernier à égalité) sert sa pension portée au minimum ; les
+    autres, un complément différentiel au prorata de leurs durées (L. 173-2 et
+    R. 173-11 de 1985, décret n° 84-995 ; exposé de la Cnav « Minimum avant
+    2012 »). Les complements, limités."""
+    portes = [e for e in eligibles if e.indice in complements]
+    if len(portes) < 2:
+        return complements
+    total = sum(pensions[e.indice].montant + complements[e.indice] for e in portes)
+    if total <= montant_base:
+        return complements
+    premier = max(portes, key=lambda e: (e.duree_regime, e.indice))
+    autres = [e for e in portes if e is not premier]
+    marge = max(0.0, montant_base - pensions[premier.indice].montant
+                - complements[premier.indice]
+                - sum(pensions[e.indice].montant for e in autres))
+    duree = sum(e.duree_regime for e in autres)
+    limites = dict(complements)
+    for e in autres:
+        limites[e.indice] = (min(complements[e.indice], marge * e.duree_regime / duree)
+                             if duree > 0 else 0.0)
+    return limites
 
 
 def _minimum_international(moteur: ScenarioActuel, carriere: Carriere) -> bool:
@@ -233,21 +357,25 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     minimum_applique = False
     minimum_ecrete: MinimumEcrete | None = None
 
-    if avantages_non_contributifs and eligibles_minimum:
+    # La règle du minimum que la date d'effet fait valoir (fiche
+    # ``minimum_contributif``) : il n'existe que depuis le 1er avril 1983, sa
+    # majoration depuis 2004, son seuil depuis avril 2009, son écrêtement
+    # depuis 2012, l'AVPF dans sa majoration depuis septembre 2023.
+    regle = moteur.minimum_contributif.regle(date_d_effet(carriere))
+    if avantages_non_contributifs and eligibles_minimum and regle["existe"]:
         # Le minimum contributif ne relève que les pensions liquidées AU
         # TAUX PLEIN (L. 351-10). Sa majoration au titre des périodes
-        # cotisées demande en outre 120 trimestres cotisés tous régimes ;
-        # elle se proratise sur la durée COTISÉE dans le régime, quand le
-        # montant de base se proratise sur sa durée d'assurance
-        # (D. 351-2-2). Ce n'est pas la même fraction : une carrière
-        # entrecoupée de chômage indemnisé valide sa durée d'assurance
-        # sans cotiser, et n'a donc droit qu'à une part de la majoration.
+        # cotisées se proratise sur la durée COTISÉE dans le régime, quand le
+        # montant de base se proratise sur sa durée d'assurance : une carrière
+        # entrecoupée de chômage indemnisé valide sa durée d'assurance sans
+        # cotiser, et n'a donc droit qu'à une part de la majoration. Les
+        # montants sont ceux du mois de la date d'effet.
         montant_base, montant_majore, plafond, fiabilite_minimum = (
-            moteur.minimum_contributif.valeurs(annee_liquidation)
+            moteur.minimum_contributif.valeurs(annee_liquidation,
+                                               carriere.mois_liquidation)
         )
-        majoration_ouverte = (
-            trimestres_cotises >= TRIMESTRES_COTISES_MINIMUM_MAJORE
-        )
+        avpf = avpf_retenue(moteur, carriere, regle["plafond_avpf"])
+        majoree = majoration_ouverte(regle, trimestres_cotises + avpf)
         date_effet = (annee_liquidation, carriere.mois_liquidation)
 
         def complement_du(pension: PensionRegime, eligible, plancher: float) -> float:
@@ -264,12 +392,9 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 eligible.surcote, date_effet)
 
         def plancher_national(eligible, majoration: bool) -> float:
-            plancher = montant_base * min(1.0, eligible.prorata_assurance)
-            if majoration:
-                plancher += (montant_majore - montant_base) * min(
-                    1.0, eligible.prorata_cotise
-                )
-            return plancher
+            return plancher_du_regime(
+                selon_la_regle(eligible, regle, avpf), montant_base, montant_majore,
+                majoration, regle["duree_tous_regimes"])
 
         # LA PENSION PRORATISÉE ET LA PENSION NATIONALE : quand un accord les
         # compare, chacune est portée à SON minimum, puis la plus élevée est
@@ -295,19 +420,21 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         for eligible in eligibles_minimum:
             pension = pensions[eligible.indice]
             alternative = alternatives.get(pension.regime)
-            avec_majoration = majoration_ouverte
+            avec_majoration = majoree
             if alternative is None:
                 complement = complement_du(
-                    pension, eligible, plancher_national(eligible, majoration_ouverte))
+                    pension, eligible, plancher_national(eligible, majoree))
             else:
                 plancher = (
                     plancher_international(
-                        eligible, montant_base, montant_majore, duree_totale,
-                        trimestres_cotises, majoration_ouverte)
-                    if international else plancher_national(eligible, majoration_ouverte))
+                        selon_la_regle(eligible, regle, avpf), montant_base,
+                        montant_majore, duree_totale,
+                        (duree_totale if regle["majoration"] == "sans_distinction"
+                         else trimestres_cotises + avpf), majoree)
+                    if international else plancher_national(eligible, majoree))
                 complement = complement_du(pension, eligible, plancher)
                 nationale, eligible_national = alternative
-                majoree_nationale = cotises_francais >= TRIMESTRES_COTISES_MINIMUM_MAJORE
+                majoree_nationale = majoration_ouverte(regle, cotises_francais + avpf)
                 complement_national = complement_du(
                     nationale, eligible_national,
                     plancher_national(eligible_national, majoree_nationale))
@@ -327,10 +454,14 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             if complement > 0:
                 complements[eligible.indice] = complement
                 majore = majore or avec_majoration
+        if regle["cumul_des_minima"]:
+            complements = limiter_le_cumul(complements, pensions, eligibles_minimum,
+                                           montant_base)
         total = sum(p.montant for p in pensions)
         releve_minimum = sum(complements.values())
-        if releve_minimum > 0:
-            # Écrêtement de l'article L. 173-2 : le complément est rogné de
+        if releve_minimum > 0 and regle["ecretement"]:
+            # Écrêtement de l'article L. 173-2, pour les pensions qui prennent
+            # effet depuis le 1er janvier 2012 : le complément est rogné de
             # ce qui dépasse le plafond, tous régimes confondus, et jamais
             # au-delà. La comparaison porte sur les pensions PERSONNELLES,
             # majorations pour enfants exclues — raison de plus pour que

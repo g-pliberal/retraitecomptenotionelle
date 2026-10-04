@@ -619,6 +619,15 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       const cotiseeRegime = dureesCultes === null
         ? cumulPlafonne("cotises", membres) : dureesCultes.cotisesDepuis1998;
       const cotisesRegime = Math.min(cotiseeRegime, proratisation);
+      const dureeRegime = dureesCultes === null
+        ? cumulPlafonne("assurance", membres) : dureesCultes.depuis1998;
+      // Les autres régimes de base, que le minimum d'un polypensionné compte
+      // depuis 2004, chacun pour sa durée, sans limite de quatre par an.
+      const autresDeBase = [...durees.trimestresParRegime]
+        .filter(([autre, nombre]) => !membres.includes(autre) && nombre > 0
+          && moteur.catalogue.contient(autre)
+          && ["base", "integre"].includes(moteur.catalogue.obtenir(autre).etage))
+        .map(([autre]) => autre);
       eligiblesMinimum.push({
         indice: indicePension,
         prorataAssurance: prorata,
@@ -627,12 +636,18 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         surcote: coefficientSurcote,
         // Ce que le minimum d'une pension proratisée lit en plus : voir
         // `EligibleMinimum` du Python.
-        dureeRegime: dureesCultes === null
-          ? cumulPlafonne("assurance", membres) : dureesCultes.depuis1998,
+        dureeRegime,
         cotiseeRegime,
         proratisation,
         requis,
         horsMinimum: fractionCultes === null ? 0.0 : fractionCultes.montant,
+        // Ce que le minimum d'un polypensionné lit depuis 2004, et l'AVPF que
+        // le régime général valide.
+        dureeTousRegimes: dureeRegime + autresDeBase.reduce(
+          (somme, autre) => somme + durees.trimestresParRegime.get(autre), 0),
+        cotiseeTousRegimes: cotiseeRegime + autresDeBase.reduce(
+          (somme, autre) => somme + cumulPlafonne("cotises", [autre]), 0),
+        porteAvpf: membres.includes("regime_general"),
       });
     }
     if (periode.avantages_non_contributifs.includes("minimum_garanti")) {

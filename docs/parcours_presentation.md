@@ -336,8 +336,8 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
 40 dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; 97,6 Md € en 2024 pour les 19 que le modèle sait chiffrer, dont
-38,3 Md € de réversion, qui est lue et non calculée ; 11,0 Md € de pensions
+cinquième ; 96,5 Md € en 2024 pour les 19 que le modèle sait chiffrer, dont
+38,3 Md € de réversion, qui est lue et non calculée ; 11,1 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.
@@ -353,8 +353,8 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
-croire sur parole. » 42 399 valeurs recontrôlées automatiquement contre le
-fichier de l'institution qui les produit, sur 113 séries ; 108 régimes
+croire sur parole. » 42 494 valeurs recontrôlées automatiquement contre le
+fichier de l'institution qui les produit, sur 114 séries ; 108 régimes
 recensés dont 74 calculés ; 39 institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples

@@ -1021,20 +1021,26 @@ institutions:
     role: Régime général — paramètres, barèmes, statistiques.
     jeux:
       - id: cnav_montants_minimum
-        titre: Montants servis du minimum contributif et du plafond, 2024-2026
-        url: https://www.legislation.lassuranceretraite.fr/
-        acces: document
-        statut_integration: saisi
+        titre: Barèmes du minimum contributif et du plafond d'écrêtement, 1983-2026
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_personnelle_montant_minimum_bar.aspx
+        acces: api
+        statut_integration: automatise
         cible: data/reference/legislation/minimum_contributif.csv
+        recuperation: scripts/fetch/cnav_minimum_contributif.py
         note: >-
-          Montants mensuels en vigueur au 31 décembre de chaque année, tels que
-          publiés et relayés : 733,03 € puis 747,69 € et 756,29 € pour le
-          minimum, 876,13 € puis 893,39 € et 903,93 € pour le majoré, plafond
-          d'écrêtement 1 394,86 € puis 1 444,89 €. Transcription, donc `haute`
-          et jamais `certifiee` — mais préférée à une projection, parce qu'elle
-          dit ce qui a été payé. Le montant de 2023 n'est pas repris ici : le
-          code le porte déjà, au centime près.
-
+          Deux barèmes de la base de législation de la Cnav, servis par son API
+          publique : retraite_personnelle_montant_minimum_bar, chaque date de
+          revalorisation du minimum depuis le 1er avril 1983 (26 400 F) et du
+          majoré depuis 2004, avec le texte qui fixe chacune ; et
+          retraite_personnelle_minimum_plafond_retraite_bar, le plafond de
+          L. 173-2 à chaque relèvement du SMIC depuis 2012. Transcription de la
+          caisse, donc `haute`, aux seules dates que la base LEGI ne certifie
+          pas ; le récupérateur refuse d'écrire si le barème ne redonne pas les
+          ancres du code au centime. Ils ont remplacé, le 4 octobre 2026, des
+          ancres que le modèle reliait par les prix : le majoré de 2004 sortait
+          7,9 % trop haut, et les montants de 2025, recopiés de la circulaire
+          2024/40 (minimum à 747,69 €, plafond à 1 394,86 €), sont ceux que la
+          circulaire 2025/8 a corrigés (747,47 € et 1 394,44 €).
       - id: cnav_baremes_rci
         titre: Prix et valeur du point RCI, 2024-2026, dans la base de législation
         url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=rci_valeur_point_bar.aspx
@@ -1805,19 +1811,18 @@ institutions:
         titre: Question écrite n° 32630 — montants du minimum contributif en 2020
         url: https://www.assemblee-nationale.fr/dyn/15/questions/QANR5L15QE32630.pdf
         acces: document
-        statut_integration: saisi
+        statut_integration: controle
         cible: data/reference/legislation/minimum_contributif.csv
         note: >-
           « Le montant du minimum contributif s'élève en 2020 à 642,93 euros
           pour une carrière complète. Celui-ci est majoré à 702,55 euros
           lorsque l'intéressé justifie d'une durée d'assurance de plus de
-          120 trimestres. […] le minimum contributif ne peut pas porter la
-          somme des pensions au-dessus d'un certain montant, soit
-          1 191,57 euros. »
-          Ces trois montants sont ce que les caisses ont RÉELLEMENT SERVI cette
-          année-là. Ils priment sur toute projection depuis les ancres du code :
-          la réforme de 2023 ayant relevé le minimum majoré de plus de 30 %,
-          ramener sa valeur en arrière surestimait 2020 de 7,6 %.
+          120 trimestres. […] » Ces montants ont longtemps été saisis à la
+          main ; depuis le 4 octobre 2026, le fichier porte ceux du barème de
+          la Cnav, que la réponse ministérielle recoupe au centime près
+          (702,54 € et 1 191,56 € au barème, arrondis à 702,55 € et 1 191,57 €
+          par la réponse). Elle reste un contrôle, rejoué par le test des
+          montants servis.
 
   union_retraite:
     nom: Union Retraite / Info-Retraite
@@ -2570,18 +2575,16 @@ institutions:
         cible: data/reference/legislation/minimum_contributif.csv
         recuperation: scripts/fetch/dila_legi_minimum_contributif.py
         note: >-
-          Articles D. 351-2-1 (les deux montants) et D. 173-21-0-0-1 (le
-          plafond de l'article L. 173-2) du code de la sécurité sociale. Ce
-          manifeste a longtemps tenu ces montants pour introuvables hors des
-          circulaires CNAV : c'était la même erreur que pour la MSA, la donnée
-          est dans la loi et il fallait chercher par le numéro d'article.
-          Ce sont des ANCRES DATÉES, non des séries : le code n'est pas modifié
-          chaque année, les montants sont revalorisés par l'effet de la loi —
-          sur le SMIC depuis février 2014 pour le plafond, depuis la réforme du
-          14 avril 2023 pour les deux minima. Le modèle fait cette
-          revalorisation, et elle retombe sur les montants publiés par les
-          caisses à 0,03 % près.
-
+          Articles R. 351-25 (26 400 F au 1er avril 1983), D. 351-2-1 (les deux
+          montants de 2004, 2006, 2008 et septembre 2023) et D. 173-21-0-0-1
+          (le plafond de l'article L. 173-2, 2012 et février 2014) du code de la
+          sécurité sociale : onze ancres, chacune à la date que le texte lui
+          donne. Jusqu'au 4 octobre 2026, le récupérateur datait une ancre de
+          l'entrée en vigueur de la rédaction qui la porte — le montant du 1er
+          janvier 2008 devenait « 2007 » — et ne lisait pas les rédactions de
+          2004 et 2006, qui écrivent « Euros » avec une capitale. Entre les
+          ancres, la loi revalorise, et le barème de la Cnav dit de combien
+          (cnav_montants_minimum).
       - id: dila_legi_parametres_retraite
         titre: Âge d'ouverture, durée requise, coefficient de minoration,
           proratisation, assiette du trimestre et années du salaire de référence
@@ -3717,13 +3720,10 @@ institutions:
         recuperation: scripts/fetch/openfisca_minimum_contributif.py
         note: >-
           Le minimum, le minimum majoré et le plafond d'écrêtement, datés
-          circulaire par circulaire. Contrôle de vraisemblance sur les seules
-          lignes que la base LEGI ne certifie pas, à la dernière date d'effet
-          de l'année de l'ancre — un contrôle et non une certification, les
-          deux étant des transcriptions à quelques centimes l'une de l'autre.
-          La série s'arrête en 2023 : les montants servis depuis restent
-          transcrits à la main, sans recoupement.
-
+          circulaire par circulaire. Contrôle de vraisemblance des lignes que la
+          base LEGI ne certifie pas, À LA MÊME DATE que la ligne du dépôt — un
+          contrôle et non une certification : les deux sont des transcriptions
+          des mêmes circulaires. Sa série s'arrête en 2023.
       - id: openfisca_parametres_generation
         titre: Durée requise, âge d'annulation de la décote et durée de services de la fonction publique, par génération
         url: https://github.com/openfisca/openfisca-france-pension/tree/master/openfisca_france_pension/parameters/retraites

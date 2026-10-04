@@ -1,71 +1,511 @@
 schema_version: 1
 id: minimum_contributif
 intitule: >-
-  Montant de base et montant majoré (120 trimestres cotisés), au prorata de la durée
-  d'assurance et de la durée cotisée, réservés au taux plein, écrêtement de l'ensemble
-  des pensions ; pour les pensions prenant effet depuis le 1er avril 2009, la surcote
-  se calcule sur la pension d'avant le minimum et s'y ajoute.
-etat: conforme
+  La pension de base au taux plein est portée à un minimum, réduit au prorata de la durée
+  d'assurance dans le régime, ou de la durée tous régimes quand celle-ci dépasse la durée
+  requise ; depuis 2004, ce minimum est majoré au titre des périodes cotisées — de
+  toutes les périodes jusqu'en juin 2005, des seules périodes cotisées ensuite, à partir
+  de 120 trimestres cotisés depuis avril 2009, l'AVPF et l'AVA comprises dans la limite
+  de 24 trimestres depuis septembre 2023 ; jusqu'en 2003, le cumul de plusieurs pensions
+  portées au minimum est limité au minimum entier ; depuis 2012, le complément est écrêté
+  sur l'ensemble des pensions ; la surcote s'y ajoute depuis avril 2009.
+domaine: minima
+regimes: [regime_general, msa_salaries, cancava, organic, rsi, cavimac]
 etape: completer_tous_regimes
-effet: >-
-  Petites pensions au taux plein. Le plafond d'écrêtement de la ligne 2024 était
-  celui de novembre, 1 394,86 €, à côté des minima de janvier : il est celui de
-  janvier à octobre, 1 367,51 € — le plafond suit le SMIC, que le 1er novembre 2024
-  a relevé de 2 % : 1 367,51 × 1,02 = 1 394,86. Le test le fixe. Jusqu'au 23 septembre
-  2026, le module servait le minimum SURCOTÉ — le plancher multiplié par le coefficient
-  de surcote —, ce qu'aucune des deux règles ne fait : 661,20 € au lieu de 660,59
-  € dans l'exemple de la circulaire, et l'écart grandit avec la surcote et avec
-  la distance au plancher. Les deux exemples de la circulaire sont rejoués par `test_la_surcote_s_ajoute_au_minimum_comme_la_circulaire_le_calcule`
-  et par son double JavaScript.
+face: droit
+etat: approchee
+lit:
+- la pension de chaque régime qui porte le minimum, sa durée d'assurance, sa durée cotisée,
+  sa durée de proratisation et sa durée requise, et le taux plein qui ouvre le droit
+- la durée d'assurance et la durée cotisée des autres régimes de base, et les trimestres
+  cotisés tous régimes, à quatre par an au plus
+- les trimestres d'assurance vieillesse des parents au foyer et des aidants, année par
+  année
+- les montants du minimum, du majoré et du plafond en vigueur à la date d'effet
+  (legislation/minimum_contributif.csv)
+- les pensions déjà servies et les pensions étrangères, pour l'écrêtement
+ecrit:
+- le complément de chaque régime porté au minimum, majoration des périodes cotisées
+  comprise, après la limitation du cumul ou l'écrêtement que sa date d'effet demande
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_le_minimum_contributif
+  statut: lue
+  textes:
+  - reference: >-
+      Cnav, exposé « Minimum avant 2012 », partie « Avant le 01/04/1983 » : « Le minimum
+      contributif est applicable depuis le 01/04/1983. Avant cette date, la retraite était
+      comparée au montant de l'allocation aux vieux travailleurs salariés (AVTS) si elle
+      était attribuée au taux plein »
+    lu_le: 2026-10-04
+  bornes:
+    liquidation.date_effet: [null, 1983-04-01]
+  contenu:
+    droit: >-
+      pas de minimum contributif ; la comparaison à l'AVTS d'avant le 1er avril 1983 est
+      l'affaire de l'étape 138.6, non de cette fiche
+    parametres:
+      existe: false
+      majoration: aucune
+      seuil_trimestres_cotises: null
+      plafond_avpf: 0
+      ecretement: false
+      cumul_des_minima: false
+      duree_tous_regimes: false
+  exemples: aucun trouvé
+- id: minimum_de_1983
+  statut: lue
+  textes:
+  - id: JORFTEXT000000687040
+    reference: >-
+      décret n° 83-773 du 30 août 1983, dont le Journal officiel résume l'objet :
+      « montant minimum auquel est porté la pension de vieillesse au taux plein est fixé
+      à 26400 Frs par an au 01-04-1983, revalorisation au 01-01-1984 […], proratisation du
+      montant minimum lorsque l'assuré ne justifie pas de 150 trimestres d'assurance dans
+      le régime général »
+    publie_le: 1983-09-01
+  - id: LEGIARTI000006749365
+    article: R. 351-25 CSS
+    en_vigueur: 1985-12-21
+    citation: >-
+      « fixé à 26 400 F par an au 1er avril 1983. Ce montant est, à compter du 1er
+      janvier 1984, revalorisé aux mêmes dates et selon les mêmes taux que les pensions de
+      vieillesse du régime général » ; « Lorsque cette durée est inférieure à 150
+      trimestres, le montant minimum est réduit à autant de cent cinquantièmes que
+      l'assuré justifie de trimestres d'assurance »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000006742924
+    article: L. 351-10 CSS
+    en_vigueur: 1985-12-21
+    lu_le: 2026-10-04
+  nee_de: JORFTEXT000000687040
+  bornes:
+    liquidation.date_effet: [1983-04-01, 1984-12-01]
+  contenu:
+    droit: >-
+      le minimum entier si la durée d'assurance au régime atteint la durée de
+      proratisation, 150 trimestres pour les générations qui partent alors, réduit au
+      prorata sinon ; aucune majoration, aucun écrêtement ; revalorisé comme les pensions
+    parametres:
+      existe: true
+      majoration: aucune
+      seuil_trimestres_cotises: null
+      plafond_avpf: 0
+      ecretement: false
+      cumul_des_minima: false
+      duree_tous_regimes: false
+  exemples: aucun trouvé
+- id: limitation_du_cumul_1984
+  statut: lue
+  textes:
+  - id: JORFTEXT000000508140
+    reference: >-
+      décret n° 84-995 du 5 novembre 1984 pris pour l'application de l'article 6 de la loi
+      n° 83-430 du 31 mai 1983 : « régime du cumul de plusieurs pensions personnelles de
+      retraite » (titre au Journal officiel)
+    publie_le: 1984-11-10
+  - id: LEGIARTI000006740908
+    article: L. 173-2 CSS
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Le bénéficiaire de pensions personnelles de retraite attribuées au titre de
+      plusieurs régimes de base et portées au montant minimum prévu éventuellement par
+      chacun de ces régimes ne peut percevoir, du fait du cumul de telles pensions, une
+      somme supérieure au montant de la pension minimale la plus élevée susceptible d'être
+      servie dans le régime le plus favorable »
+    lu_le: 2026-10-04
+  - reference: >-
+      Cnav, exposé « Minimum avant 2012 », partie « Du 01/04/1983 au 31/12/2003 » : la
+      limite « était le minimum entier le plus élevé susceptible d'être servi par le
+      régime le plus favorable » ; pour des attributions simultanées et un minimum
+      identique, « le régime de la plus longue durée d'assurance […] payait sa retraite
+      portée au minimum ; les autres régimes calculaient un complément différentiel
+      proportionnel à leur durée d'assurance » (R. 173-11) ; pour les retraites attribuées
+      depuis le 01/12/1984
+    lu_le: 2026-10-04
+  nee_de: JORFTEXT000000508140
+  bornes:
+    liquidation.date_effet: [1984-12-01, 2004-01-01]
+  contenu:
+    droit: >-
+      la règle de 1983, et le total des pensions portées au minimum dans plusieurs régimes
+      de base limité au minimum entier ; le régime de la plus longue durée sert sa pension
+      portée au minimum, les autres un complément différentiel au prorata de leurs durées
+    parametres:
+      existe: true
+      majoration: aucune
+      seuil_trimestres_cotises: null
+      plafond_avpf: 0
+      ecretement: false
+      cumul_des_minima: true
+      duree_tous_regimes: false
+  exemples: aucun trouvé
+- id: majoration_sans_distinction_2004
+  statut: lue
+  textes:
+  - id: LEGIARTI000006742926
+    article: L. 351-10 CSS
+    en_vigueur: 2004-01-01
+    publie_le: 2003-08-22
+    citation: >-
+      « un montant minimum tenant compte de la durée d'assurance accomplie par l'assuré
+      dans le régime général, le cas échéant rapportée à la durée d'assurance accomplie
+      tant dans le régime général que dans un ou plusieurs autres régimes obligatoires,
+      lorsque celle-ci dépasse la limite visée au deuxième alinéa de l'article L. 351-1 » ;
+      « Ce montant minimum est majoré au titre des périodes ayant donné lieu à cotisations
+      à la charge de l'assuré »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000006736531
+    article: D. 351-2-1 CSS
+    en_vigueur: 2003-12-30
+    citation: >-
+      « 6 511,06 Euros par an au 1er janvier 2004 » ; « de façon à atteindre 6 706,39
+      Euros par an au 1er janvier 2004 »
+    lu_le: 2026-10-04
+  - reference: >-
+      lettre ministérielle du 25 mars 2004, point 2 : les caisses « sont autorisées, à
+      titre transitoire, à appliquer à l'ensemble des pensions prenant effet en 2004 le
+      montant afférent aux périodes cotisées » ; pour les pluriactifs au-delà de 160
+      trimestres, « le produit du montant du minimum pour une carrière complète dans ce
+      régime par le rapport entre la durée d'assurance dans ce régime et la durée totale
+      d'assurance » ; diffusion des instructions ministérielles n° 2005/2 du 4 février
+      2005, point 3 : ces dispositions « sont reconduites pour celles qui prennent effet au
+      cours du premier semestre 2005 »
+    publie_le: 2004-03-25
+    lu_le: 2026-10-04
+  nee_de: LEGIARTI000006742926
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2005-07-01]
+  contenu:
+    droit: >-
+      le minimum majoré pour toute pension au taux plein, sans distinguer les périodes
+      cotisées, réduit au prorata de la durée d'assurance au régime sur la durée de
+      proratisation ; au-delà de la durée requise tous régimes, au prorata de la durée du
+      régime sur la durée tous régimes ; la limitation du cumul abrogée (article 26 II de
+      la loi du 21 août 2003, circulaire Cnav 2004/13)
+    parametres:
+      existe: true
+      majoration: sans_distinction
+      seuil_trimestres_cotises: null
+      plafond_avpf: 0
+      ecretement: false
+      cumul_des_minima: false
+      duree_tous_regimes: true
+  exemples: aucun trouvé
+- id: majoration_des_periodes_cotisees_2005
+  statut: lue
+  textes:
+  - reference: >-
+      lettre ministérielle du 26 novembre 2004, diffusée par les instructions
+      ministérielles n° 2005/2 du 4 février 2005 : « La mise en œuvre de la distinction
+      entre périodes cotisées et périodes non cotisées […] s'applique aux retraites dont le
+      point de départ est fixé à partir du 1er juillet 2005 »
+    publie_le: 2005-02-04
+    lu_le: 2026-10-04
+  - reference: >-
+      circulaire Cnav n° 2005/30 du 4 juillet 2005, points 511 à 513, 52 et annexe :
+      minimum au prorata de la durée d'assurance, majoration au prorata de la durée
+      cotisée ; au-delà de la « limite de déclenchement », le minimum et sa majoration
+      « déterminés comme si l'assuré avait accompli toute sa carrière à un seul régime,
+      puis leurs montants sont répartis » ; six exemples chiffrés
+    publie_le: 2005-07-04
+    lu_le: 2026-10-04
+  bornes:
+    liquidation.date_effet: [2005-07-01, 2009-04-01]
+  contenu:
+    droit: >-
+      le minimum au prorata de la durée d'assurance au régime, la majoration (l'écart
+      entre le majoré et le minimum entiers) au prorata de la durée cotisée au régime ; au
+      -delà de la durée requise tous régimes, le minimum au prorata de la durée du régime
+      sur la durée tous régimes, la majoration de même, et en outre au prorata de la durée
+      cotisée tous régimes sur la durée de proratisation quand elle ne l'atteint pas ;
+      aucune durée cotisée n'est exigée
+    parametres:
+      existe: true
+      majoration: periodes_cotisees
+      seuil_trimestres_cotises: null
+      plafond_avpf: 0
+      ecretement: false
+      cumul_des_minima: false
+      duree_tous_regimes: true
+  exemples:
+  - cnav_2005_30_minimum_majore_monopensionne
+- id: seuil_de_120_trimestres_2009
+  statut: lue
+  textes:
+  - id: LEGIARTI000019959492
+    article: L. 351-10 CSS
+    en_vigueur: 2008-12-19
+    publie_le: 2008-12-18
+    citation: >-
+      « Loi n° 2008-1330 du 17 décembre 2008 articles 81 II et 89 III : Les modifications
+      introduites par les présents articles sont applicables aux pensions prenant effet à
+      compter du 1er avril 2009 » ; majoration « lorsque la durée d'assurance ayant donné
+      lieu à cotisations à la charge de l'assuré, accomplie tant dans le régime général que
+      dans un ou plusieurs autres régimes obligatoires, est au moins égale à une limite
+      fixée par décret »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000020090096
+    article: D. 351-2-2 CSS
+    en_vigueur: 2009-04-01
+    citation: >-
+      « fixée à 120 trimestres » ; « le nombre de trimestres retenu au titre de chaque
+      année civile ne peut être supérieur à quatre »
+    lu_le: 2026-10-04
+  - reference: >-
+      circulaire Cnav n° 2009/17 du 16 février 2009, points 21 et 22 : la majoration « est
+      calculée et attribuée lorsque l'assuré justifie d'au moins 120 trimestres cotisés »,
+      quatre par année civile tous régimes de base confondus ; deux exemples chiffrés
+    publie_le: 2009-02-16
+    lu_le: 2026-10-04
+  nee_de: LEGIARTI000019959492
+  bornes:
+    liquidation.date_effet: [2009-04-01, 2012-01-01]
+  contenu:
+    droit: >-
+      la règle de 2005, et la majoration réservée à 120 trimestres cotisés tous régimes,
+      quatre par an au plus ; la surcote se calcule désormais sur la pension d'avant le
+      minimum et s'y ajoute (D. 351-2-1, dernier alinéa, décret n° 2008-1509)
+    parametres:
+      existe: true
+      majoration: periodes_cotisees
+      seuil_trimestres_cotises: 120
+      plafond_avpf: 0
+      ecretement: false
+      cumul_des_minima: false
+      duree_tous_regimes: true
+  exemples: aucun trouvé
+- id: ecretement_2012
+  statut: lue
+  textes:
+  - id: LEGIARTI000023271329
+    article: L. 173-2 CSS
+    en_vigueur: 2010-12-22
+    publie_le: 2010-12-21
+    citation: >-
+      « Loi n° 2010-1594 du 20 décembre 2010, article 110 II : Le I est applicable aux
+      pensions prenant effet à compter du 1er janvier 2012 » ; « En cas de dépassement de
+      ce montant, la majoration résultant de l'article L. 351-10 est réduite à due
+      concurrence du dépassement »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000024280080
+    article: D. 173-21-0-0-1 CSS
+    en_vigueur: 2011-07-01
+    citation: >-
+      « fixé à 1 005 euros au 1er janvier 2012. Ce montant est revalorisé aux mêmes dates
+      et dans les mêmes proportions que le salaire minimum de croissance »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000019959488
+    article: L. 351-10-1 CSS
+    en_vigueur: 2008-12-19
+    lu_le: 2026-09-29
+  - reference: >-
+      Cnav, exposés « Calcul du minimum contributif » et « Minimum contributif » (depuis
+      2012) : la durée tous régimes « totalisée même si les trimestres se superposent, et
+      non limitée à 4 par an » ; au-delà de la durée maximum, « Minimum non majoré réduit =
+      Minimum entier non majoré × (Durée d'assurance au régime général ÷ Durée d'assurance
+      à tous les régimes) », la majoration réduite à la durée cotisée tous régimes puis
+      répartie de même ; le dépassement du plafond déduit de la majoration
+    lu_le: 2026-10-04
+  nee_de: LEGIARTI000023271329
+  bornes:
+    liquidation.date_effet: [2012-01-01, 2023-09-01]
+  contenu:
+    droit: >-
+      la règle de 2009, et le complément écrêté de ce que l'ensemble des pensions
+      personnelles, de base et complémentaires, dépasse le plafond de L. 173-2
+    parametres:
+      existe: true
+      majoration: periodes_cotisees
+      seuil_trimestres_cotises: 120
+      plafond_avpf: 0
+      ecretement: true
+      cumul_des_minima: false
+      duree_tous_regimes: true
+  exemples: aucun trouvé
+- id: avpf_et_ava_2023
+  statut: lue
+  textes:
+  - id: LEGIARTI000047453225
+    article: L. 351-10 CSS
+    en_vigueur: 2023-09-01
+    publie_le: 2023-04-15
+    citation: >-
+      « Ce montant minimum est majoré au titre des périodes ayant donné lieu à cotisations
+      à la charge de l'assuré et, dans la limite d'un plafond fixé par décret, des
+      périodes validées en application des articles L. 381-1 et L. 381-2 » ; « revalorisés,
+      au 1er janvier de chaque année, d'un taux au moins égal à l'évolution, depuis le 1er
+      janvier précédent, du salaire minimum de croissance »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000048697787
+    article: L. 351-10 CSS
+    en_vigueur: 2023-12-28
+    lu_le: 2026-10-04
+  - id: LEGIARTI000047961311
+    article: D. 351-2-2 CSS
+    en_vigueur: 2023-09-01
+    citation: >-
+      « Le plafond prévu à la deuxième phrase du premier alinéa de l'article L. 351-10 est
+      fixé à vingt-quatre trimestres »
+    lu_le: 2026-10-04
+  - id: LEGIARTI000053198185
+    article: D. 351-2-2 CSS
+    en_vigueur: 2025-12-28
+    lu_le: 2026-10-04
+  - id: LEGIARTI000054589231
+    article: D. 351-2-2 CSS
+    en_vigueur: 2026-08-01
+    lu_le: 2026-10-04
+  - id: LEGIARTI000047961314
+    article: D. 351-2-1 CSS
+    en_vigueur: 2023-09-01
+    citation: >-
+      « 8 509,61 euros par an au 1er septembre 2023 » ; « 10 170,86 euros par an au 1er
+      septembre 2023 »
+    lu_le: 2026-10-04
+  - reference: >-
+      circulaires Cnav n° 2023/16 du 8 septembre 2023 (montants du 1er septembre 2023 ;
+      barèmes revalorisés au 1er janvier « sur la base du Smic ») et n° 2024/28 du 14
+      octobre 2024, point 3.3 : les trimestres d'AVPF et d'AVA « retenus dans la durée
+      d'assurance cotisée minimale (120 trimestres au minimum) ouvrant droit à la
+      majoration […], dans la limite de 24 trimestres (AVPF/AVA confondus) », individualisés
+      année par année
+    publie_le: 2024-10-14
+    lu_le: 2026-10-04
+  nee_de: LEGIARTI000047453225
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      la règle de 2012, et les trimestres d'AVPF et d'AVA comptés parmi les périodes
+      cotisées, pour le seuil de 120 trimestres comme pour le prorata de la majoration,
+      dans la limite de 24 ; depuis le 28 décembre 2025, les trimestres que la fonction
+      publique valide au même titre s'imputent sur ces 24 (D. 351-2-2, III)
+    parametres:
+      existe: true
+      majoration: periodes_cotisees
+      seuil_trimestres_cotises: 120
+      plafond_avpf: 24
+      ecretement: true
+      cumul_des_minima: false
+      duree_tous_regimes: true
+  exemples:
+  - sp_a15703_minimum_contributif_2026
+approximations:
+- ecart: >-
+    la durée tous régimes est la somme des durées d'assurance que le modèle compte à
+    chaque régime de base ou intégré, majorations pour enfants comprises, et non la durée
+    que chaque régime communique ; la durée cotisée tous régimes, de même ; les périodes
+    reconnues équivalentes, que la Cnav en exclut, n'y sont pas distinguées
+  effet: non mesuré
+- ecart: >-
+    la limitation du cumul d'avant 2004 ne compare que les régimes qui portent le minimum
+    contributif (régime général et régimes alignés) ; le minimum garanti de la fonction
+    publique, qu'elle comprenait, n'y entre pas, et les attributions successives sont
+    traitées comme simultanées
+  effet: non mesuré
+- ecart: >-
+    les trimestres d'AVPF et d'AVA se comptent ligne par ligne, chaque année après les
+    trimestres cotisés de l'année et dans la limite de quatre, dans l'ordre des années ;
+    ceux que la fonction publique valide au même titre (D. 351-2-2, III) ne sont pas
+    distingués
+  effet: non mesuré
+- ecart: >-
+    au-delà du dernier montant publié, le minimum et le majoré se revalorisent chaque
+    année sur le SMIC annuel du modèle, et non sur son évolution d'un 1er janvier à
+    l'autre ; le plafond de même, et non à chaque relèvement du SMIC
+  effet: non mesuré
+- ecart: >-
+    la condition de subsidiarité (L. 351-10-1), depuis 2012, se présume remplie : toutes les
+    pensions auxquelles l'assuré peut prétendre sont demandées
+  effet: non mesuré
 sources:
-  lu_le: 2026-09-29
+  lu_le: 2026-10-04
   prochaine_relecture: 2027-01-31
   a_relire:
-  - Relire les montants à chaque revalorisation de janvier.
+  - Relire les montants à chaque revalorisation de janvier (circulaire Cnav « Revalorisation
+    du Smic ») et le plafond à chaque relèvement du SMIC.
+  - >-
+    Lire le décret n° 84-995 du 5 novembre 1984 au Journal officiel (l'index du dépôt n'en
+    garde que le titre) et les articles R. 173-7 à R. 173-14 de 1985, pour la limitation du
+    cumul des pensions attribuées successivement.
   lectures:
-  - type: service_public
-    reference: actualité A15703, montants 2026
-    date: 2026-02-12
+  - type: circulaire_cnav
+    reference: >-
+      barèmes « Montant minimum de la retraite personnelle » (du 1er avril 1983 au 1er
+      janvier 2026) et « Plafond de retraites personnelles pour l'attribution du minimum »
+      (du 1er janvier 2012 au 1er juin 2026), par l'API de la base de législation
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_personnelle_montant_minimum_bar.aspx
+    date: 2026-10-04
+  - type: circulaire_cnav
+    reference: >-
+      exposés « Minimum avant 2012 », « Calcul du minimum contributif » et « Minimum
+      contributif » de la base de législation de la Cnav
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_personnelle_minimum_contributif_minimum_avant_2012_ex.aspx
+    date: 2026-10-04
+  - type: circulaire_cnav
+    reference: >-
+      circulaires 2003/56, 2004/13, 2005/30, 2009/17, 2023/16, 2024/3, 2024/28, 2025/8,
+      2025/33 et 2026/16 ; lettres ministérielles du 25 mars et du 26 novembre 2004
+      (instructions ministérielles n° 2005/2)
+    date: 2026-10-04
   - type: legifrance
     reference: >-
-      D. 351-2-1 CSS, LEGIARTI000047961314 : « La majoration prévue à l'article
-      L. 351-1-2 est calculée sur la base du montant de pension avant qu'il ne soit
-      porté au montant minimum » ; alinéa apparu dans la version du 1er avril 2009,
-      LEGIARTI000020090091
-    date: 2026-09-23
+      L. 351-10 (rédactions de 1986, 2004, 2008, septembre et décembre 2023), D. 351-2-1
+      (2003, 2005, 2007, 2009, 2020, 2023), D. 351-2-2 (2009, 2023, 2025, 2026), R. 351-25
+      (1985), L. 173-2 (1985, 2008, 2010, 2018) et D. 173-21-0-0-1 (2011, 2014), dans
+      l'index LEGI du dépôt à jour au 27 septembre 2026
+    date: 2026-10-04
   - type: legifrance
     reference: >-
-      décret n° 2008-1509 du 30 décembre 2008, article 8, LEGIARTI000020057518 :
-      ses articles 6 et 7 « sont applicables aux pensions prenant effet à compter
-      du 1er avril 2009 »
+      D. 351-2-1 CSS, LEGIARTI000047961314 : « La majoration prévue à l'article L. 351-1-2
+      est calculée sur la base du montant de pension avant qu'il ne soit porté au montant
+      minimum » ; alinéa apparu dans la version du 1er avril 2009, LEGIARTI000020090091
     date: 2026-09-23
   - type: circulaire_cnav
     reference: >-
-      2018-04 du 1er février 2018, points 3.4.1 et 3.4.2 : avant avril 2009, 621
-      × 1,015 = 630,31 € portés au minimum de 633,61 € ; depuis, 621 + (645,07 −
-      621) + 15,52 = 660,59 €
+      2018-04 du 1er février 2018, points 3.4.1 et 3.4.2 : avant avril 2009, 621 × 1,015 =
+      630,31 € portés au minimum de 633,61 € ; depuis, 621 + (645,07 − 621) + 15,52 =
+      660,59 €
     date: 2018-02-01
-  - type: legifrance
-    reference: >-
-      Lus le 29 septembre 2026 pour le domaine des départs multiples, dans l'index
-      LEGI : L. 351-10-1 (LEGIARTI000019959488, pour les pensions prenant effet
-      depuis le 1er janvier 2012) : « L'assuré ne peut bénéficier des dispositions de
-      l'article L. 351-10 que s'il a fait valoir les droits aux pensions personnelles
-      de retraite auxquels il peut prétendre » ; L. 173-2 (LEGIARTI000036391874) :
-      l'écrêtement sur « ses pensions personnelles de retraite attribuées au titre
-      d'un ou plusieurs régimes [...], de base et complémentaires » ; R. 173-7
-      (LEGIARTI000023719554) : les pensions comptées « sont ceux afférents au mois
-      civil de la date d'effet de celle-ci » ; R. 173-8 (LEGIARTI000023719547) : la
-      majoration « est révisée lorsque le montant des avantages personnels de retraite
-      a varié », la révision prenant effet au premier jour du mois de la modification.
-      Un polypensionné qui liquide ses régimes à des dates différentes voit donc son
-      minimum écrêté sur les pensions déjà servies, puis révisé quand une autre
-      commence
-    date: 2026-09-29
+  - type: service_public
+    reference: actualité A15703, montants 2026
+    date: 2026-02-12
 textes_a_rattacher:
 - reference: L. 351-10 CSS
-- reference: D. 351-2-1 CSS, dernier alinéa (décret n° 2008-1509, articles 6 et
-    8)
+- reference: D. 351-2-1 CSS, dernier alinéa (décret n° 2008-1509, articles 6 et 8)
 - reference: L. 173-2 CSS
+code:
+  python: >-
+    scenarios/actuel.py : MinimumContributif (valeurs, regle) ; droit/completer.py :
+    completer, plancher_national, avpf_retenue, limiter_le_cumul, complement_minimum ;
+    droit/liquider.py : EligibleMinimum (duree_tous_regimes, cotisee_tous_regimes,
+    porte_avpf)
+  javascript: >-
+    moteur/js/regimes.js : MinimumContributif ; moteur/js/droit/completer.js :
+    completer, plancherNational, avpfRetenue, limiterLeCumul ; moteur/js/droit/liquider.js
+  parametres: >-
+    contenu.parametres de chaque version ; data/reference/legislation/minimum_contributif.csv
+  tests: >-
+    tests/test_simulateur.py et tests/js/moteur.test.js : les exemples des circulaires
+    2005/30 et 2009/17 rejoués dans les deux moteurs
+historique:
+- >-
+  2026-09-23 — la surcote ajoutée au minimum depuis avril 2009, et non le minimum
+  surcoté ; le plafond de 2024 celui de janvier.
+- >-
+  2026-10-04 — datée, à l'étape 138.15 : les montants de chaque revalorisation depuis
+  1983, au lieu de six ancres reliées par les prix ; huit versions, de l'absence de
+  minimum avant avril 1983 à l'AVPF de 2023 ; la proratisation tous régimes des
+  polypensionnés, que le relevé n'avait pas vue.
 exemples:
+- cnav_2005_30_minimum_majore_monopensionne
 - sp_a15703_minimum_contributif_2026
+effet: >-
+  Petites pensions au taux plein. Le majoré de 2004 sortait 7,9 % trop haut et celui de
+  2019 4,7 %, faute des montants servis ; le majoré et l'écrêtement étaient servis à
+  toute date depuis 1983, le seuil de 120 trimestres opposé avant avril 2009 ; un
+  polypensionné au-delà de la durée requise recevait son minimum au prorata de la durée
+  de proratisation et non de sa durée tous régimes ; l'AVPF n'entrait pas dans la
+  majoration depuis septembre 2023.

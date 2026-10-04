@@ -3615,99 +3615,229 @@ def test_le_minimum_contributif_distingue_le_montant_majore(simulateur):
     base, majore, plafond, _ = minimum.valeurs(2025)
 
     assert majore > base * 1.15
+    # Les montants de la circulaire Cnav 2025/8, qui a corrigé ceux de la
+    # 2024/40 : le dépôt portait ceux-là, 747,69 € et un plafond de 1 394,86 €.
+    assert base == pytest.approx(747.47 * 12, abs=0.05)
+    assert majore == pytest.approx(893.39 * 12, abs=0.05)
+    assert plafond == pytest.approx(1394.44 * 12)
 
-    # Les montants publiés par les caisses pour 2025 : 8 972 € et 10 721 €
-    # par an. L'ancre du code, revalorisée sur le SMIC, doit les retrouver.
-    assert base == pytest.approx(8972.28, rel=0.01)
-    assert majore == pytest.approx(10720.68, rel=0.01)
-    assert plafond == pytest.approx(16738.32, rel=0.01)
 
+def test_le_minimum_contributif_suit_chaque_revalorisation(simulateur):
+    """Le montant en vigueur le premier jour du mois de la date d'effet.
 
-def test_le_minimum_contributif_est_revalorise_sur_le_smic(simulateur):
-    """Le SMIC, et non les prix : c'est ce que la loi dit depuis 2014 et 2023.
-
-    L'index ne dépend pas de l'ancre mais de l'ANNÉE TRAVERSÉE. Prendre celui
-    de l'ancre appliquerait à quinze ans de revalorisations une règle que la
-    loi n'a introduite qu'en 2023.
+    Le dépôt ne portait que six ANCRES, reliées par les prix : le majoré de 2004
+    sortait 7,9 % trop haut, celui de 2019 4,7 %. Il porte désormais chaque
+    revalorisation que la Cnav a appliquée depuis le 1er avril 1983 — au 1er
+    janvier, au 1er juillet, au 1er avril ou au 1er octobre selon les années.
     """
     minimum = simulateur.scenario_actuel.minimum_contributif
+    # 1984 : le 1er janvier, puis le 1er juillet (26 875,20 F, 27 466,44 F).
+    assert minimum.valeurs(1984, 6)[0] == pytest.approx(26_875.20 / 6.55957)
+    assert minimum.valeurs(1984, 7)[0] == pytest.approx(27_466.44 / 6.55957)
+    # 2009 : le 1er avril, et non le 1er janvier.
+    assert minimum.valeurs(2009, 3)[:2] == pytest.approx((7013.87, 7664.23))
+    assert minimum.valeurs(2009, 4)[:2] == pytest.approx((7084.00, 7740.87))
+    # 2019 : 636,56 € et 695,59 € par mois, et non les 8 741 € que projetaient
+    # les prix depuis l'ancre de 2008.
+    assert minimum.valeurs(2019, 6)[:2] == pytest.approx((7638.78, 8347.09))
+
+    # Depuis 2024, le 1er janvier, « d'un taux au moins égal à l'évolution,
+    # depuis le 1er janvier précédent, du salaire minimum de croissance »
+    # (L. 351-10) : 1,0337, 1,0197 puis 1,0118 (circulaires 2024/3, 2025/8 et
+    # 2025/33), sur le mensuel arrondi au centime.
+    for annee, coefficient in ((2024, 1.0337), (2025, 1.0197), (2026, 1.0118)):
+        avant = minimum.valeurs(annee - 1, 12)
+        apres = minimum.valeurs(annee, 1)
+        assert apres[0] / avant[0] == pytest.approx(coefficient, abs=1e-4), annee
+        assert apres[1] / avant[1] == pytest.approx(coefficient, abs=1e-4), annee
+
+    # Le plafond suit le SMIC à chacun de ses relèvements : le 1er novembre
+    # 2024, le 1er juin 2026 (circulaire 2026/16), et non au 1er janvier seul.
+    assert minimum.valeurs(2024, 10)[2] == pytest.approx(1367.51 * 12)
+    assert minimum.valeurs(2024, 11)[2] == pytest.approx(1394.44 * 12)
+    assert minimum.valeurs(2026, 5)[2] == pytest.approx(1410.89 * 12)
+    assert minimum.valeurs(2026, 6)[2] == pytest.approx(1444.89 * 12)
+
+    # Au-delà du dernier montant publié, le SMIC de chaque année traversée.
     macro = simulateur.macro
-
-    # Le plafond bascule sur le SMIC en 2014. Une année qui n'a pas de montant
-    # connu se projette donc sur le SMIC depuis cette ancre — et le SMIC monte
-    # plus vite que les prix.
-    ancre, _ = minimum._revalorise("plafond_ecretement", 2014)
-    porte, _ = minimum._revalorise("plafond_ecretement", 2018)
-    assert porte == pytest.approx(ancre * macro.coefficient_smic(2014, 2018))
-    assert porte > ancre * macro.coefficient_prix(2014, 2018)
-
-    # 2025, lui, a un montant connu : aucune projection ne s'y applique. Et ce
-    # montant se recoupe par un chemin INDÉPENDANT de sa ligne : l'ancre de 2014
-    # portée au SMIC de 2025 le redonne à 0,2 % près. Le test relisait jusqu'au
-    # 23 septembre 2026 la valeur qu'il vérifiait, et n'aurait vu ni une faute
-    # de frappe ni une ligne décalée d'un an.
-    connu = minimum._revalorise("plafond_ecretement", 2025)[0]
-    assert connu == pytest.approx(1394.86 * 12)
-    assert ancre * macro.coefficient_smic(2014, 2025) == pytest.approx(connu, rel=2e-3)
-
-    # Les deux minima ne basculent qu'en 2023. Une année antérieure se
-    # revalorise donc sur les prix, depuis l'ancre de 2007.
-    depuis_2007, _ = minimum._revalorise("montant_base", 2007)
-    en_2012, _ = minimum._revalorise("montant_base", 2012)
-    assert en_2012 == pytest.approx(depuis_2007 * macro.coefficient_prix(2007, 2012))
+    connu, porte = minimum.valeurs(2026, 1), minimum.valeurs(2029, 1)
+    assert porte[0] == pytest.approx(connu[0] * macro.coefficient_smic(2026, 2029))
+    assert porte[1] == pytest.approx(connu[1] * macro.coefficient_smic(2026, 2029))
 
 
-def test_les_montants_reellement_servis_priment_sur_toute_projection(simulateur):
-    """Ce que les caisses ont payé passe avant ce que le modèle calcule.
+def test_les_montants_sont_ceux_que_la_cnav_a_servis(simulateur):
+    """Les ancres du code au centime, et ce que l'État a rappelé.
 
-    Le fichier porte deux sortes de valeurs : les ancres du code, certifiées,
-    et les montants réellement servis, transcrits de leur publication. Les
-    secondes ne sont que `haute` — ce sont des transcriptions — et elles
-    l'emportent pourtant, parce qu'une valeur transcrite qui dit vrai vaut
-    mieux qu'une valeur calculée qui dit faux.
+    Le fichier porte les ancres certifiées depuis la base LEGI — R. 351-25
+    pour 1983, D. 351-2-1 pour 2004, 2006, 2008 et septembre 2023 — et entre
+    elles le barème de la Cnav, que le récupérateur refuse s'il ne les redonne
+    pas. La réponse ministérielle à la question écrite n° 32630 recoupe 2020 à
+    un centime près par mois : 642,93 €, 702,55 € et un plafond de 1 191,57 €
+    (le barème : 702,54 € et 1 191,56 €).
     """
     minimum = simulateur.scenario_actuel.minimum_contributif
-
-    # Réponse du ministère à la question écrite n° 32630 (Assemblée nationale) :
-    # 642,93 €/mois en 2020, majoré à 702,55 €, plafond 1 191,57 € — que les
-    # circulaires Cnav transcrites par OpenFisca-France-Pension recoupent à
-    # quelques centimes près, douze mensualités arrondies contre un annuel.
-    servis = {
-        2020: (642.93 * 12, 702.55 * 12, 1191.57 * 12),
-        # De janvier à octobre 2024 : le plafond de 1 367,51 €, et non celui du
-        # 1er novembre, 1 394,86 €, que le test demandait à côté des minima de
-        # janvier. Le SMIC a bougé deux fois cette année-là.
-        2024: (733.03 * 12, 876.13 * 12, 1367.51 * 12),
-        2025: (747.69 * 12, 893.39 * 12, 1394.86 * 12),
+    ancres = {
+        (1983, 4): (26_400 / 6.55957, None),
+        (2004, 1): (6511.06, 6706.39),
+        (2006, 1): (6760.82, 7172.54),
+        (2008, 1): (6958.21, 7603.41),
+        (2023, 9): (8509.61, 10170.86),
     }
-    for annee, (base, majore, plafond) in servis.items():
-        assert minimum.valeurs(annee)[0] == pytest.approx(base), annee
-        assert minimum.valeurs(annee)[1] == pytest.approx(majore), annee
-        assert minimum.valeurs(annee)[2] == pytest.approx(plafond), annee
+    for (annee, mois), (base, majore) in ancres.items():
+        lu = minimum.valeurs(annee, mois)
+        assert lu[0] == pytest.approx(base), (annee, mois)
+        if majore is not None:
+            assert lu[1] == pytest.approx(majore), (annee, mois)
+    base, majore, plafond, _ = minimum.valeurs(2020, 6)
+    assert (base / 12, majore / 12, plafond / 12) == pytest.approx(
+        (642.93, 702.55, 1191.57), abs=0.015)
 
 
 def test_une_reforme_ne_glisse_pas_dans_le_passe(simulateur):
-    """La projection part de la valeur EN VIGUEUR, jamais d'une postérieure.
+    """Chaque marche reste à sa date, et rien n'existe avant sa création.
 
-    La réforme du 14 avril 2023 a relevé le minimum majoré de plus de 30 %.
-    Ramener cette valeur en arrière, comme le faisait la règle de l'ancre la
-    plus proche, surestimait de 7,6 % le montant de 2020 — celui-là même que
-    l'État a rappelé dans sa réponse à une question écrite.
+    La réforme du 14 avril 2023 a relevé le majoré de 100 € par mois au 1er
+    septembre 2023 ; le décret n° 2007-1899, de 4,1 % au 1er janvier 2008, que
+    l'ancre « 2007 » du dépôt faisait glisser d'un an. Le majoré n'existe que
+    depuis 2004, le minimum que depuis le 1er avril 1983, le plafond
+    d'écrêtement que depuis 2012 : le dépôt les servait dès 1983.
     """
     minimum = simulateur.scenario_actuel.minimum_contributif
-    ancres = sorted(a for (mesure, a) in minimum._table if mesure == "montant_majore")
-    assert ancres[0] == 2007 and 2023 in ancres
+    assert minimum.valeurs(2023, 8)[1] == pytest.approx(8970.86)
+    assert minimum.valeurs(2023, 9)[1] == pytest.approx(10170.86)
+    assert minimum.valeurs(2007, 12)[1] == pytest.approx(7301.64)
+    assert minimum.valeurs(2008, 1)[1] == pytest.approx(7603.41)
+    base, majore, plafond, _ = minimum.valeurs(2003, 12)
+    assert (majore, plafond) == (base, 0.0)
+    assert minimum.valeurs(2011, 12)[2] == 0.0
+    assert minimum.valeurs(1983, 3)[:3] == (0.0, 0.0, 0.0)
 
-    # 2015 n'est pas au fichier : il est projeté depuis l'ancre de 2007, donc
-    # reste très en dessous du montant d'après réforme.
-    projete, _ = minimum._revalorise("montant_majore", 2015)
-    avant_reforme = minimum._table[("montant_majore", 2007)][0]
-    apres_reforme = minimum._table[("montant_majore", 2023)][0]
-    assert avant_reforme < projete < apres_reforme * 0.9
 
-    # Et une année antérieure à toute ancre se projette depuis la première.
-    ancien, _ = minimum._revalorise("montant_majore", 1990)
-    assert ancien < avant_reforme
+def test_la_regle_du_minimum_suit_la_date_d_effet(simulateur):
+    """Huit versions, que la fiche ``minimum_contributif`` date et que le
+    moteur lit : chaque bascule se joue au premier jour de son mois."""
+    minimum = simulateur.scenario_actuel.minimum_contributif
+    bascules = {
+        # date d'effet : (existe, majoration, seuil, plafond AVPF, écrêtement,
+        #                 cumul des minima, durée tous régimes)
+        "1983-03-01": (False, "aucune", None, 0, False, False, False),
+        "1983-04-01": (True, "aucune", None, 0, False, False, False),
+        "1984-12-01": (True, "aucune", None, 0, False, True, False),
+        "2004-01-01": (True, "sans_distinction", None, 0, False, False, True),
+        "2005-06-01": (True, "sans_distinction", None, 0, False, False, True),
+        "2005-07-01": (True, "periodes_cotisees", None, 0, False, False, True),
+        "2009-03-01": (True, "periodes_cotisees", None, 0, False, False, True),
+        "2009-04-01": (True, "periodes_cotisees", 120, 0, False, False, True),
+        "2012-01-01": (True, "periodes_cotisees", 120, 0, True, False, True),
+        "2023-08-01": (True, "periodes_cotisees", 120, 0, True, False, True),
+        "2023-09-01": (True, "periodes_cotisees", 120, 24, True, False, True),
+    }
+    champs = ("existe", "majoration", "seuil_trimestres_cotises", "plafond_avpf",
+              "ecretement", "cumul_des_minima", "duree_tous_regimes")
+    for jour, attendu in bascules.items():
+        regle = minimum.regle(jour)
+        assert tuple(regle[c] for c in champs) == attendu, jour
+
+
+def _eligible(regime: int, cotisee_regime: int, proratisation: int, requis: int,
+              autres: int = 0, cotisee_autres: int = 0):
+    """Un régime porteur du minimum, tel que la circulaire le décrit."""
+    from retraite_notionnelle.droit.liquider import EligibleMinimum
+
+    return EligibleMinimum(
+        indice=0, prorata_assurance=regime / proratisation,
+        prorata_cotise=min(cotisee_regime, proratisation) / proratisation,
+        taux_plein=True, duree_regime=regime, cotisee_regime=cotisee_regime,
+        proratisation=proratisation, requis=requis,
+        duree_tous_regimes=regime + autres,
+        cotisee_tous_regimes=cotisee_regime + cotisee_autres, porte_avpf=True)
+
+
+def test_les_exemples_des_circulaires_de_2005_et_2009_sont_rejoues():
+    """Les huit exemples chiffrés des circulaires Cnav 2005/30 (points 511 à
+    513) et 2009/17 (point 22), au centime : les circulaires tronquent, le
+    modèle arrondit.
+
+    Les montants entiers sont ceux du 1er janvier 2005 (6 641,28 € et
+    6 840,51 € par an) et du 1er septembre 2008 (584,48 € et 638,68 € par
+    mois). Un assuré né en 1945 a une durée de proratisation de 154 trimestres
+    et une durée requise de 160 ; né en 1949, 161 et 161 ; né en 1944, 152.
+    """
+    from retraite_notionnelle.droit.completer import (majoration_ouverte,
+                                                      plancher_du_regime)
+
+    base, majore = 6641.28, 6840.51
+    cas_2005 = [
+        # (régime, dont cotisés, autres régimes, dont cotisés) : minimum majoré
+        ((162, 156, 0, 0), 6840.51),      # 511, exemple 1
+        ((140, 140, 0, 0), 6218.63),      # 511, exemple 2 (inapte)
+        ((140, 40, 0, 0), 6089.26),       # 511, exemple 3 (inapte)
+        ((100, 90, 56, 54), 4428.94),     # 512, régime agricole
+        ((60, 50, 140, 130), 2052.14),    # 5132, professions libérales
+        ((142, 110, 30, 30), 5632.43),    # 5133, artisans
+    ]
+    for (regime, cotise, autres, cotise_autres), attendu in cas_2005:
+        eligible = _eligible(regime, cotise, 154, 160, autres, cotise_autres)
+        plancher = plancher_du_regime(eligible, base, majore, True, True)
+        assert plancher == pytest.approx(attendu, abs=0.03), (regime, cotise, autres)
+
+    # 2009/17 : le seuil de 120 trimestres cotisés, tous régimes.
+    regle = {"majoration": "periodes_cotisees", "seuil_trimestres_cotises": 120}
+    base, majore = 584.48, 638.68
+    poly = _eligible(100, 90, 161, 161, 56, 54)
+    assert majoration_ouverte(regle, 144)
+    assert plancher_du_regime(poly, base, majore, True, True) == pytest.approx(
+        393.32, abs=0.01)
+    mono = _eligible(150, 118, 152, 160)
+    assert not majoration_ouverte(regle, 118)
+    assert plancher_du_regime(mono, base, majore, False, True) == pytest.approx(
+        576.78, abs=0.01)
+
+
+def test_la_majoration_de_2004_ne_distinguait_pas_les_periodes_cotisees():
+    """De janvier 2004 à juin 2005, « le montant afférent aux périodes
+    cotisées » à toute pension au taux plein, au prorata de la durée
+    d'assurance (lettre ministérielle du 25 mars 2004, point 2) ; pour un
+    pluriactif au-delà de 160 trimestres, au prorata de la durée du régime sur
+    la durée tous régimes."""
+    from retraite_notionnelle.droit.completer import plancher_du_regime, selon_la_regle
+
+    regle = {"majoration": "sans_distinction"}
+    base, majore = 6511.06, 6706.39
+    mono = selon_la_regle(_eligible(140, 40, 152, 160), regle, 0)
+    assert plancher_du_regime(mono, base, majore, True, True) == pytest.approx(
+        majore * 140 / 152)
+    poly = selon_la_regle(_eligible(60, 10, 152, 160, 140, 130), regle, 0)
+    assert plancher_du_regime(poly, base, majore, True, True) == pytest.approx(
+        majore * 60 / 200)
+
+
+def test_la_majoration_compte_l_avpf_depuis_septembre_2023(simulateur):
+    """Depuis le 1er septembre 2023, les trimestres d'AVPF et d'AVA comptent
+    parmi les périodes cotisées de la majoration, pour le seuil de 120
+    trimestres comme pour son prorata, dans la limite de 24 (L. 351-10,
+    D. 351-2-2, circulaire Cnav 2024/28, point 3.3). Le dépôt ne comptait que
+    les trimestres cotisés : une mère qui a élevé ses enfants dix-huit ans sous
+    l'AVPF n'avait pas les 120 trimestres, ni donc la majoration."""
+    from retraite_notionnelle.droit.commun import ligne_cotisee
+    from retraite_notionnelle.droit.completer import avpf_retenue
+
+    moteur = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1962, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=20, age_liquidation=64.5, niveau_salaire=0.3, profil_carriere="plat",
+        interruptions={annee: "education_enfant" for annee in range(1985, 2003)},
+    )
+    cotises = carriere.trimestres_cumules(
+        ligne for ligne in carriere.lignes
+        if ligne_cotisee(moteur, carriere, ligne)
+        and ligne.annee <= carriere.annee_liquidation)
+    assert avpf_retenue(moteur, carriere, 24) == 24
+    assert avpf_retenue(moteur, carriere, 0) == 0
+    assert cotises < 120 <= cotises + 24
+    resultat = simulateur.simuler(carriere).actuel
+    minimum = [a for a in resultat.avantages_appliques if a.code == "minimum_contributif"]
+    assert minimum and "majoration des périodes cotisées comprise" in minimum[0].detail
 
 
 # -- mortalité observée avant 1986 -------------------------------------------

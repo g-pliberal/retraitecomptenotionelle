@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-02",
+ "dernier_passage_le": "2026-10-04",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -574,15 +574,26 @@
    "verifiee_le": "2026-09-21"
   },
   "minimum_contributif": {
-   "ajoutees": 0,
+   "ajoutees": 11,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "86693c4efe70d0d7",
-   "identiques": 6,
+   "empreinte": "639c45e9e772a7d3",
+   "identiques": 0,
    "niveau": "certifiee",
-   "source": "DILA, base LEGI, code de la sécurité sociale D. 351-2-1 et D. 173-21-0-0-1",
-   "valeurs": 6,
-   "verifiee_le": "2026-09-17"
+   "source": "DILA, base LEGI, code de la sécurité sociale R. 351-25, D. 351-2-1 et D. 173-21-0-0-1",
+   "valeurs": 11,
+   "verifiee_le": "2026-10-04"
+  },
+  "minimum_contributif_cnav": {
+   "ajoutees": 90,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "a22b5d886e0a199d",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "Cnav, barèmes « Montant minimum de la retraite personnelle » et « Plafond de retraites personnelles pour l'attribution du minimum »",
+   "valeurs": 90,
+   "verifiee_le": "2026-10-04"
   },
   "minimum_garanti_indice": {
    "ajoutees": 0,

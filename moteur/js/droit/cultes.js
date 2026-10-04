@@ -128,7 +128,8 @@ export function fractionDAvant1998(moteur, carriere, duree, proratisation, tauxP
   if (!majorations) {
     return { montant, detail, fiabilite };
   }
-  const [minimum, majore, , fiabiliteMinimum] = moteur.minimumContributif.valeurs(annee);
+  const [minimum, majore, , fiabiliteMinimum] = moteur.minimumContributif.valeurs(
+    annee, carriere.moisLiquidation);
   // Les deux majorations se partagent la durée maximale : les trimestres
   // cotisés de 1979 à 1997 d'abord, ceux d'avant 1979 dans ce qui reste.
   const cotises = Math.min(duree.cotisesDe1979A1997, proratisation);

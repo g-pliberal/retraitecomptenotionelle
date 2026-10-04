@@ -30,6 +30,12 @@ sources:
     Calculer le maximum M avec l'allocation aux vieux travailleurs salariés de l'année, au
     lieu de la retraite forfaitaire, quand sa série, lue dans ses décrets de
     revalorisation, sera entrée au dépôt (zone des données).
+  - >-
+    R. 732-71 ne dit pas à quelle date lire « l'intégralité du montant annuel minimal non
+    majoré de pension garanti en application de l'article L. 351-10 » (MC) : le modèle
+    prend, depuis le 4 octobre 2026, le montant en vigueur au 1er janvier de l'année,
+    que le dépôt porte désormais à chaque date de revalorisation (fiche
+    minimum_contributif). Lire l'instruction de la caisse centrale de la MSA qui le fixe.
   lectures:
   - type: legifrance
     reference: >-
