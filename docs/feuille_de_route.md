@@ -5580,7 +5580,9 @@ registre, au point `a_trancher` du modèle qui le fait :
   déduits du compte, à la suédoise ;
 - pour le net de l'étape 2, une présomption déclarée — « aucun autre revenu
   que ses pensions » — ou un champ de plus, la question que l'action 136
-  posait déjà.
+  posait déjà. *Décidé le 4 octobre 2026 par le propriétaire : les deux* —
+  la présomption par défaut, que la page dit, et un champ facultatif dans
+  les réglages, le revenu fiscal de référence, qui la remplace.
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu regardes tous les modèles
 publics comme openfisca ou destinie 2 et que tu me dises tout ce que notre
@@ -5736,16 +5738,15 @@ d'OpenFisca-France confrontées à celles du dépôt.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
-**Reprise, au 4 octobre 2026.** Faites : l'étape 1 (`scripts/simulateurs.py`) ;
-l'étape 2 contre « Mon estimation retraite » et ses corrections (relevé de
-2026, valeur d'achat Agirc-Arrco, salaire de référence de l'Ircantec) ; les
-simulateurs anonymes du 4 octobre ; l'étape 3, le brut en tête : brut par
-défaut, net « avant impôt », système 1 au format de l'estimation officielle.
-Restent : le prix d'achat Agirc-Arrco implicite de la page, la délibération
-de l'ERAFP, la réversion du RAFP, de la RCI et de l'Ircantec, le départ des
-handicapés ; le net officiel dans le bloc (138.2) ; le relevé prolongé
-jusqu'au départ, sur le site ; puis 4. les moteurs publics, avec l'action
-137. Détail : en fin d'action.
+**Reprise, au 4 octobre 2026.** Faites : les étapes 1 à 3. Le propriétaire veut
+tout le reste (« Le restant », en fin d'action), une étape par session, par
+zones : au modèle, la réversion du RAFP, de la RCI et de l'Ircantec, puis le
+départ des handicapés ; aux données, la délibération de l'ERAFP ; aux moteurs
+publics (4., avec l'action 137), R dans la WSL Ubuntu, Destinie 2 puis
+TRAJECTOiRE ; au site, une fois le relevé prolongé jusqu'au départ, le net
+officiel dans le bloc (138.2 : le 1 %, puis la CSG, présomption et champ) ;
+avec lui, connecté, le prix d'achat Agirc-Arrco implicite de la page.
+Détail : en fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -6187,6 +6188,19 @@ laissait ouvert.
   sa dernière année quand l'estimation officielle prolonge les revenus
   jusqu'au départ : `estimation_officielle.py` sait la prolonger, le site
   pas encore.
+
+**Le restant, le 4 octobre 2026.** Le propriétaire, ce soir-là : « fait le
+restant ». Il a choisi, parmi trois périmètres, « tout ce que l'action 142
+garde en suspens » : le prix d'achat Agirc-Arrco implicite de « Mon
+estimation retraite » (il se reconnectera), la délibération de l'ERAFP, la
+réversion du RAFP, de la RCI et de l'Ircantec, le départ anticipé des
+assurés handicapés, le net officiel dans le bloc, le relevé prolongé — qu'une
+autre session fait déjà — et les moteurs publics. Pour la CSG d'une pension,
+« les deux » : la présomption « aucun autre revenu que ses pensions » par
+défaut, et un champ facultatif dans les réglages (action 138, étape 13).
+Pour les moteurs publics, R dans la distribution Ubuntu de la WSL, que le
+propriétaire installe lui-même, son mot de passe `sudo` n'étant tapé que par
+lui ; Destinie 2 importe `xlsx`, donc Java.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
