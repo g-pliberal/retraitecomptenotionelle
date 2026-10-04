@@ -481,6 +481,23 @@ les pages qui agrègent (`PAGES_AGREGEES`). Une courbe année par année, de 193
 (`scripts/budget_calcul.py`) et, si elle dépasse le budget, à fabriquer à
 l'avance, comme `data/derive/equilibre.json`.
 
+**Ce qu'une page de plus touche**, relevé le 4 octobre 2026 en cherchant
+`/cas-types` dans le dépôt. Dans `moteur/js/pages.js` : `DESCRIPTIONS`,
+`TITRES`, `PAGES_AGREGEES` ; et sans doute `VUES_DE_PAGE`, ce que le lecteur
+choisit — le profil, les années de naissance, le sexe — étant un regard, qui
+ne change aucune règle et ne voyage pas vers les autres pages, non un
+réglage. Dans `moteur/js/gabarit.js`, `GROUPES_NAVIGATION`. Dans
+`index.html`, `MESSAGES_ATTENTE`, qui annonce encore « 12 cas types » pour
+Carrières types et pour Coût quand `CAS_TYPES` en compte treize. Puis les
+témoins de pages (`scripts/construire_temoins.py`,
+`tests/temoins/pages.json`), le catalogue des affirmations
+(`data/reference/site/affirmations.yaml`, `tests/test_affirmations.py`), le
+parcours de présentation (`docs/parcours_presentation.md`,
+`tests/test_parcours.py`), les tests du site (`test_web.py`,
+`test_web_revues.py`), et la table des adresses de
+`docs/integration-partiliberalfrancais.md`, dont l'accueil renvoie aux « sept
+autres pages ».
+
 **Ce qui est à faire**, dans l'ordre, chaque étape valant seule :
 
 1. Les indicateurs à portée — âges, durées, années de retraite, pension, cumul
