@@ -360,7 +360,7 @@ sources:
       Elle donne les taux de CSG, CRDS, Casa et l'assiette fiscale des
       pensions complémentaires, lisibles directement dans le source plutôt
       que déduits d'une prose. À lire ligne à ligne, c'est un barème exécutable.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_points_obtenus
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/points-de-retraite-comment-sont-ils-obtenus/
@@ -372,7 +372,7 @@ sources:
       telle que le régime l'énonce, à confronter aux valeurs de
       data/reference/regimes/valeurs_point.csv, qui viennent d'OpenFisca —
       source secondaire plafonnée au niveau `haute`.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_points_carriere
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/points-de-retraite-et-evenements-de-la-carriere/
@@ -383,7 +383,7 @@ sources:
       Les points attribués sans cotisation : chômage, maladie, invalidité,
       temps partiel. C'est exactement la frontière que docs/frontiere_contributive.md
       arbitre, et l'un des postes que l'action 81 a chiffrés à 17,9 milliards.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_points_vie
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/points-de-retraite-et-evenements-de-la-vie/
@@ -393,7 +393,7 @@ sources:
     a_en_tirer: >-
       Les points liés aux événements familiaux, et la majoration pour enfants :
       matière de l'action 43, qui montre ce que chaque système sert à une mère.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_etranger
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/travailler-a-letranger/
@@ -403,7 +403,7 @@ sources:
     a_en_tirer: >-
       Ce que devient la complémentaire pendant une expatriation, à croiser
       avec le parcours expatriation du GIP.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_ouverture_droits
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/conditions-douverture-de-mes-droits/
@@ -414,7 +414,7 @@ sources:
       Conditions d'ouverture et coefficient de solidarité (le « malus » de
       10 % pendant trois ans), supprimé pour les liquidations récentes :
       vérifier la date d'extinction que le dépôt applique.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_majorations_enfants
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/majorations-pour-enfants/
@@ -425,7 +425,7 @@ sources:
       Majoration de 10 % pour trois enfants, majoration pour enfant à charge,
       leur plafond, et leur histoire Agirc/Arrco avant 2012 — le dépôt doit
       dire laquelle il applique année par année.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_retraite_progressive
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/retraite-progressive/
@@ -435,7 +435,7 @@ sources:
     a_en_tirer: >-
       La retraite progressive vue par la complémentaire, à joindre au parcours
       du GIP pour chiffrer ce que le dispositif vaut.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_reversion
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/
@@ -445,7 +445,7 @@ sources:
     a_en_tirer: >-
       Taux de 60 %, âge, condition de non-remariage, absence de condition de
       ressources : la réversion complémentaire, que le dépôt ne modélise pas.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_reversion_orphelin
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion-de-lorphelin/
@@ -455,7 +455,7 @@ sources:
     a_en_tirer: >-
       La réversion d'orphelin, propre à la complémentaire : 50 % des points,
       conditions d'âge. Un droit dont aucun régime de base n'a l'équivalent.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_cumul_emploi_retraite
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/vivre-ma-retraite/cumul-emploi-retraite/
@@ -466,7 +466,7 @@ sources:
       Le cumul emploi-retraite et les droits nouveaux qu'il ouvre depuis 2023 :
       dispositif que la proposition notionnelle rend sans objet, et qu'il faut
       donc savoir décrire pour dire ce qu'elle simplifie.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_circulaire_2025_16
     url: https://www.agirc-arrco.fr/storage/CirculaireAgircArrco2025-16sg-drj.pdf
@@ -476,7 +476,7 @@ sources:
     a_en_tirer: >-
       Une circulaire précise, à lire pour ce qu'elle fixe et pour ses exemples
       chiffrés, que test_oracle.py sait rejouer.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_textes_de_reference
     url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/textes-de-reference/
@@ -486,7 +486,7 @@ sources:
     a_en_tirer: >-
       L'accord national interprofessionnel et ses avenants : le TEXTE du
       régime, là où la fiche grand public n'en est que le résumé.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_circulaires
     url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/circulaires-agirc-arrco/
@@ -496,7 +496,7 @@ sources:
     a_en_tirer: >-
       Toutes les circulaires, pas seulement la 2025-16 : à dérouler, année par
       année, pour dater les changements de paramètres.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_parametres_statistiques
     url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/parametres-et-donnees-statistiques/
@@ -508,7 +508,7 @@ sources:
       de service, taux d'appel, rendement — de quoi CERTIFIER valeurs_point.csv
       au lieu de la tenir d'OpenFisca. Et les effectifs, qui pèsent les cas
       types depuis l'action 1.
-    statut: a_explorer
+    statut: en_cours
 
   - id: agirc_arrco_guides
     url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-pratique/guides-dinformation-retraite/
@@ -518,7 +518,7 @@ sources:
     a_en_tirer: >-
       Les guides d'information : c'est là que les exemples chiffrés complets
       se trouvent, carrière et résultat.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- Ircantec ---------------------------------------------------------
 
@@ -615,7 +615,7 @@ sources:
       Les points acquis pour une cotisation donnée, mois par mois et année par
       année depuis 2005 : de quoi recouper les valeurs d'acquisition de
       `valeurs_point.csv` et l'arrondi des points au point supérieur.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Ouverte le 23 septembre 2026, pas lancée. Elle part de la cotisation
       déjà versée, part de l'agent, qu'elle double pour l'employeur, et non
@@ -655,7 +655,7 @@ sources:
     a_en_tirer: >-
       Liquidation, âge, seuil de versement en capital : la porte d'entrée des
       pages « retraite » du régime, à dérouler.
-    statut: a_explorer
+    statut: en_cours
 
   - id: rafp_compte_epargne_temps
     url: https://www.rafp.fr/employeur/compte-epargne-temps
@@ -4146,7 +4146,7 @@ sources:
       Le seuil qui sépare la rente du capital, le coefficient de majoration par
       âge et la table de conversion : le dépôt applique ce barème sans l'avoir
       lu chez l'ERAFP.
-    statut: a_explorer
+    statut: en_cours
 
   - id: rafp_reversion
     url: https://www.rafp.fr/actif/activite/reversion
@@ -4156,7 +4156,7 @@ sources:
     a_en_tirer: >-
       La réversion du régime additionnel, qui n'a pas les conditions de la
       pension civile.
-    statut: a_explorer
+    statut: en_cours
 
   - id: fonction_publique_retraite_progressive
     url: https://www.fonction-publique.gouv.fr/toutes-les-publications/faq-relative-la-retraite-progressive-dans-la-fonction-publique

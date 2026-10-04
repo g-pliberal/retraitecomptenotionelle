@@ -246,9 +246,8 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris
   - 142. Les simulateurs officiels, sans y passer ses journées
   - 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés
-- **Les sources à exploiter** : 159 à explorer sur 320 (73 explorées, 88 épuisées). 17 d'entre elles visent un régime partiel, et pourraient le compléter :
+- **Les sources à exploiter** : 139 à explorer sur 320 (73 explorées, 88 épuisées). 14 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Caisse nationale d'assurance vieillesse des professions libérales, régime de base : 7 source(s) (mon_entreprise_comparaison_ei, cnavpl_wordpress, cavec_wordpress…)
-  - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
   - Régime des artistes-auteurs professionnels (IRCEC) : 2 source(s) (cnav_arrierees_artiste_auteur, mon_entreprise_artiste_auteur)
   - Complémentaire des agents généraux d'assurance (CAVAMAC) : 1 source(s) (cavamac_wordpress)
