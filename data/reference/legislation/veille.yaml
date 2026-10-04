@@ -5266,3 +5266,21 @@ journal:
       2017, base KALI, hors de l'index) ; le minimum, les majorations de 11,1 et 10 % de la
       réversion, à l'étape 4 de l'action 138 ; le point d'indice prêté à l'année d'une
       hausse en cours d'année, à vérifier sur un exemple.
+  - date: "2026-10-05"
+    session: "action 138, étape 2 : les prélèvements d'un retraité qui réside hors de France"
+    consulte: >-
+      Index LEGI du dépôt : L. 131-9 du code de la sécurité sociale
+      (LEGIARTI000048683656, 28 décembre 2023), L. 160-3 (LEGIARTI000037950374,
+      1er juillet 2019) et L. 136-1 ; D. 242-8 (LEGIARTI000037456300), déjà lu le
+      4 octobre ; le tableau des accords internationaux du dépôt.
+    trouve: >-
+      Hors de France, ni CSG, ni CRDS, ni CASA ; une cotisation maladie de 3,20 % sur
+      la base du régime général et de 4,20 % sur les complémentaires pour qui bénéficie
+      à titre obligatoire de la prise en charge de ses frais de santé, ce que L. 160-3
+      accorde quand la France est seule compétente (règlements européens, conventions)
+      ou que la pension rémunère au moins quinze années d'assurance.
+    reste: >-
+      Les conventions bilatérales qui rendent la France seule compétente hors de
+      l'Union ; ce que la fonction publique, les régimes spéciaux et les indépendants
+      prélèvent sur la pension d'un non-résident ; le règlement n° 883/2004 quand
+      plusieurs États autres que celui de résidence servent une pension.

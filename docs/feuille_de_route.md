@@ -5528,8 +5528,8 @@ réponse.
 les 69 modèles (279 points au registre, 145 écarts) ; l'étape 15, le minimum
 contributif daté — chaque revalorisation depuis 1983, la règle en huit
 versions, la proratisation tous régimes des polypensionnés —, dont les cinq
-points du registre sont `repris` ; de l'étape 2, le 1 % maladie et la CSG du
-foyer (leurs notes). Reste : les étapes 2 à 14 et 16 à 19, une par
+points du registre sont `repris` ; de l'étape 2, le 1 % maladie, la CSG du
+foyer et les non-résidents (leurs notes). Reste : les étapes 2 à 14 et 16 à 19, une par
 session, et les choix de l'étape 13. Commencer par l'étape 16, les assiettes
 et les séries du régime général, que l'API des barèmes de la Cnav tranche
 presque toutes ; puis la suite de 2. Le registre dit, au chantier de chaque
@@ -5679,6 +5679,15 @@ par son chantier (« 138.2 »…) :
    Fiche `csg_des_pensions_selon_le_revenu`. Au salaire moyen, la pension
    passe du taux plein au taux médian ; au SMIC, elle n'est plus prélevée.
    Reste de 2 : l'ASPA du couple, puis les non-résidents (L. 131-9).
+   *Les non-résidents, faits le 5 octobre 2026.* Le propriétaire : « je veux
+   que tu prennes la législation ». Hors de France, ni CSG, ni CRDS, ni CASA
+   (L. 136-1, présomption `domicile_fiscal_au_pays_de_residence`) ; si la
+   France prend en charge les soins (L. 160-3 : sous les règlements
+   européens, quand l'État de résidence ne sert pas de pension ; ailleurs,
+   quinze années d'assurance française), 3,20 % sur la base du régime
+   général et 4,20 % sur la complémentaire (L. 131-9 ; D. 242-8). Fiche
+   `cotisation_maladie_des_non_residents`. Reste de 2 : l'ASPA du couple,
+   dont le plafond n'est au dépôt que pour 2026.
 3. La page Coût décomposée comme le COR : les retraités projetés par régime
    (le classeur du COR), la décomposition dépendance × couverture × pension
    relative confrontée au COR de juin 2026 et à l'Ageing Report de 2024, la

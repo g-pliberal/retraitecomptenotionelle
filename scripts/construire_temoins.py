@@ -1804,6 +1804,11 @@ def _pages() -> dict:
         ("simuler_revenu_fiscal_dit", "/simuler", {
             **BASE, "montants": "net", "revenu_fiscal": "40000",
         }),
+        # Hors de France, sous les règlements européens : la cotisation maladie
+        # des non-résidents, au lieu de la CSG (action 138, étape 2).
+        ("simuler_non_resident", "/simuler", {
+            **BASE, "montants": "net", "residence": "ES",
+        }),
         # Le salaire saisi en euros : le formulaire change de libellé et donne
         # l'échelle chiffrée, au lieu du multiple que personne ne connaît.
         ("simuler_revenu_en_euros", "/simuler", {

@@ -1,0 +1,131 @@
+schema_version: 1
+id: cotisation_maladie_des_non_residents
+intitule: >-
+  Qui réside hors de France ne doit ni CSG, ni CRDS, ni CASA ; si la France prend en charge
+  ses frais de santé, il doit une cotisation d'assurance maladie de 3,20 % sur la pension de
+  base du régime général et de 4,20 % sur les complémentaires, et rien sinon.
+domaine: cotisations
+regimes: [regime_general, agirc_arrco, ircantec]
+etape: foyer_et_net
+face: cotisation
+etat: approchee
+lit:
+- l'État où la personne réside après son départ, et les pensions que d'autres États lui servent
+- l'accord que le tableau donne à cet État, règlements européens ou non
+- les trimestres que le système 1 valide au titre d'un régime français
+- la pension de chaque régime au scénario 1
+ecrit:
+- si la France prend en charge les soins, et pourquoi
+- le taux qui sépare la pension brute de la nette, que les cinq scénarios notionnels gardent
+dates_qui_decident:
+- pension.echeance
+presomptions:
+  domicile_fiscal_au_pays_de_residence: qui réside hors de France n'y a pas son domicile fiscal
+versions:
+- id: avant_la_prise_en_charge_de_2019
+  statut: supposee
+  vise: pensions_servies
+  hypothese: >-
+    Le modèle nette les pensions aux règles d'aujourd'hui : la prise en charge des soins
+    d'un pensionné résidant à l'étranger, avant la rédaction de L. 160-3 du 1er juillet
+    2019, n'est pas lue.
+  fiabilite: sans effet sur le calcul, qui ne regarde que l'échéance de l'année courante
+  bornes:
+    pension.echeance: [null, 2019-07-01]
+  contenu:
+    droit: non lu
+  exemples: aucun trouvé
+- id: quinze_ans_ou_competence_exclusive
+  statut: lue
+  vise: pensions_servies
+  textes:
+  - {id: LEGIARTI000037950374, article: "L. 160-3 du code de la sécurité sociale", en_vigueur: 2019-07-01}
+  - {id: LEGIARTI000048683656, article: "L. 131-9 du code de la sécurité sociale", en_vigueur: 2023-12-28}
+  - {id: LEGIARTI000037456300, article: "D. 242-8 du code de la sécurité sociale", en_vigueur: 2018-09-30}
+  nee_de: LEGIARTI000037950374
+  bornes:
+    pension.echeance: [2019-07-01, null]
+  contenu:
+    droit: >-
+      La CSG n'est due que par les personnes « à la fois considérées comme domiciliées en
+      France pour l'établissement de l'impôt sur le revenu et à la charge […] d'un régime
+      obligatoire français d'assurance maladie » (L. 136-1). Des taux particuliers de
+      cotisation d'assurance maladie « sont applicables aux personnes qui ne remplissent
+      pas les conditions de résidence définies à l'article L. 136-1 et qui bénéficient à
+      titre obligatoire de la prise en charge de leurs frais de santé en application de
+      l'article L. 160-1 » (L. 131-9) : 3,20 % sur les avantages du régime général, 4,20 %
+      sur les autres avantages de L. 131-2 (D. 242-8). Le titulaire d'une pension de base
+      française qui réside à l'étranger en bénéficie « lorsque la France est exclusivement
+      compétente » en vertu des conventions, ou quand « sa pension rémunère une durée
+      d'assurance supérieure ou égale à quinze années au titre d'un régime français »
+      (L. 160-3, a et b), sous réserve des règlements européens : l'État de résidence qui
+      sert une pension est compétent (règlement (CE) n° 883/2004, art. 23), la France
+      sinon (art. 24).
+    parametres:
+      regime_general: 0.032
+      complementaires: 0.042
+      duree_minimale_trimestres: 60
+  exemples: aucun trouvé
+approximations:
+- version: quinze_ans_ou_competence_exclusive
+  ecart: >-
+    Les conventions bilatérales, qui peuvent rendre la France seule compétente hors de
+    l'Union (L. 160-3, a), ne sont pas lues : hors des règlements européens, seules les
+    quinze années d'assurance ouvrent la prise en charge.
+  effet: non mesuré
+- version: quinze_ans_ou_competence_exclusive
+  ecart: >-
+    Sous les règlements européens, l'État de résidence qui sert une pension est
+    compétent, la France sinon : le cas de pensions servies par plusieurs autres États,
+    que l'article 24 tranche par la plus longue assurance, n'est pas distingué.
+  effet: non mesuré
+- version: quinze_ans_ou_competence_exclusive
+  ecart: >-
+    Ce que la fonction publique, les régimes spéciaux et les indépendants prélèvent sur la
+    pension d'un non-résident n'est pas lu : rien n'y est prélevé.
+  effet: non mesuré
+- version: quinze_ans_ou_competence_exclusive
+  ecart: >-
+    Sans carrière calculée — la recherche d'une pension saisie —, la prise en charge
+    hors de l'Union est présumée ; la page la recalcule sur la carrière trouvée.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-10-05
+  a_relire:
+  - Lire les conventions bilatérales qui rendent la France seule compétente pour les soins.
+  - Chercher ce que le SRE, la CNRACL et les régimes spéciaux prélèvent sur la pension d'un non-résident.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 131-9 (LEGIARTI000048683656) et L. 160-3 (LEGIARTI000037950374) du code de la
+      sécurité sociale, lus dans l'index LEGI du dépôt ; L. 136-1, rédaction de 2018 ;
+      D. 242-8 (LEGIARTI000037456300)
+    date: 2026-10-05
+  - type: autre
+    reference: >-
+      urssaf.fr, « Les revenus de remplacement » : pour les non-résidents relevant du
+      régime général, 3,20 % sur la retraite de base et 4,20 % sur la complémentaire, au
+      lieu de la CSG, de la CRDS et de la CASA
+    date: 2026-10-04
+    url: https://www.urssaf.fr/accueil/employeur/cotisations/liste-cotisations/revenus-de-remplacement.html
+textes_a_rattacher:
+- reference: règlement (CE) n° 883/2004, articles 23 à 25, les soins des titulaires de pension
+- reference: CGI, article 4 B, le domicile fiscal
+code:
+  python: >-
+    contexte.py : couverture_francaise, reglements_europeens, Montants.du_foyer (qui réside
+    hors de France), pension_du_regime ; remuneration.py : PrelevementsPension
+    (non_residents_regime_general, non_residents_complementaires, regimes_generaux)
+  javascript: >-
+    moteur/js/contexte.js : couvertureFrancaise, reglementsEuropeens, Montants.duFoyer ;
+    moteur/js/pages.js : noteDuMode, etagesActuels, estimationOfficielle
+  parametres: legislation/prelevements_remuneration.yaml, pensions.non_residents
+  tests: tests/test_net_pensions.py
+historique:
+- >-
+  2026-10-05 — née avec l'action 138, étape 2 : le dépôt prélevait la CSG de tout le
+  monde, résident ou non ; le propriétaire a demandé d'appliquer la législation.
+effet: >-
+  Tout retraité qui déclare résider hors de France : plus de CSG ni de CRDS ni de CASA ;
+  3,5 % environ au salaire moyen si la France prend en charge ses soins, rien sinon.

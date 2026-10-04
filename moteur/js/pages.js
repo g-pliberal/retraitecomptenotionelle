@@ -4002,7 +4002,8 @@ const ETAGES_ACTUEL = [
  * `assiettes` dit, étage par étage, ce que la cotisation maladie frappe : les
  * lignes des régimes de `regimesMaladie`, sans leur majoration pour enfants.
  */
-function etagesActuels(comparaison, catalogue, regimesMaladie = new Set()) {
+function etagesActuels(comparaison, catalogue, regimesMaladie = new Set(),
+  regimesGeneraux = new Set()) {
   const actuel = comparaison.actuel;
   const servi = comparaison.aujourd_hui === null ? null : comparaison.aujourd_hui.actuel;
   const isoler = comparaison.parametres.isoler_capitalisation;
@@ -4010,7 +4011,8 @@ function etagesActuels(comparaison, catalogue, regimesMaladie = new Set()) {
     servi === null ? [] : servi.regimes.map((r) => [r.regime, r.coefficient]));
   const etages = new Map();
   const assiettes = new Map();
-  const porter = (code, montant, soumise = false) => {
+  const generales = new Map();
+  const porter = (code, montant, soumise = false, generale = false) => {
     const regime = catalogue.obtenir(code);
     if (isoler && regime.hors_repartition) return;
     const coefficient = coefficients.has(code) ? coefficients.get(code) : 1.0;
@@ -4019,10 +4021,15 @@ function etagesActuels(comparaison, catalogue, regimesMaladie = new Set()) {
       assiettes.set(regime.etage,
         (assiettes.get(regime.etage) ?? 0.0) + montant * coefficient);
     }
+    if (generale) {
+      generales.set(regime.etage,
+        (generales.get(regime.etage) ?? 0.0) + montant * coefficient);
+    }
   };
   let minimum = 0.0;
   for (const pension of actuel.pensions_par_regime) {
-    porter(pension.regime, pension.montant, regimesMaladie.has(pension.regime));
+    porter(pension.regime, pension.montant, regimesMaladie.has(pension.regime),
+      regimesGeneraux.has(pension.regime));
   }
   for (const avantage of actuel.avantages_appliques) {
     if (avantage.code === "majoration_enfants") {
@@ -4035,7 +4042,8 @@ function etagesActuels(comparaison, catalogue, regimesMaladie = new Set()) {
   const total = servi === null ? actuel.pension_annuelle : servi.pension_annuelle;
   let somme = minimum;
   for (const montant of etages.values()) somme += montant;
-  return Math.abs(somme - total) <= 0.01 ? { etages, assiettes, minimum, total } : null;
+  return Math.abs(somme - total) <= 0.01
+    ? { etages, assiettes, generales, minimum, total } : null;
 }
 
 /**
@@ -4069,15 +4077,18 @@ function arrondisQuiSadditionnent(parts, total) {
  * total net, que la page calcule au taux de la personne.
  */
 function compositionActuelle(comparaison, catalogue, montants, constant) {
-  const composition = etagesActuels(comparaison, catalogue, montants.regimesMaladie);
+  const composition = etagesActuels(comparaison, catalogue, montants.regimesMaladie,
+    montants.regimesGeneraux);
   if (composition === null || composition.total <= 0 || constant <= 0) return "";
-  const mensuel = (montant, assiette = 0) => montants.pensionDAssiette(
+  const mensuel = (montant, assiette = 0, generale = 0) => montants.pensionDAssiette(
     constant * montant / composition.total,
-    constant * assiette / composition.total) / 12;
+    constant * assiette / composition.total,
+    constant * generale / composition.total) / 12;
   const termes = ETAGES_ACTUEL
     .filter(([etage]) => composition.etages.has(etage))
     .map(([etage, , libelle]) => [etage, libelle, mensuel(
-      composition.etages.get(etage), composition.assiettes.get(etage) ?? 0)]);
+      composition.etages.get(etage), composition.assiettes.get(etage) ?? 0,
+      composition.generales.get(etage) ?? 0)]);
   if (composition.minimum > 0) {
     termes.push(["minimum", "de minimum vieillesse", mensuel(composition.minimum)]);
   }
@@ -4250,7 +4261,7 @@ function estimationOfficielle(contexte, saisie, montants) {
       ...parts.map((part) => g.euros(part)),
       g.euros(total),
       g.euros(montants.netDUnDepart(depart.total, depart.assiette_maladie,
-        depart.minimum_vieillesse) / 12),
+        depart.minimum_vieillesse, depart.assiette_regime_general) / 12),
       champ,
       ...(compare ? [ecart] : []),
     ];
@@ -4262,6 +4273,22 @@ function estimationOfficielle(contexte, saisie, montants) {
     ["", ...etages.map(() => "nombre"), "nombre", "nombre", "nombre",
       ...(compare ? ["nombre"] : [])],
     `Le système 1, par mois, en euros de ${saisie.euros}`, true);
+  // Ce que le net retire : la tranche du foyer, ou, hors de France, la
+  // cotisation maladie que doit qui relève de l'assurance maladie française.
+  let leNet;
+  if (montants.nonResident) {
+    leNet = montants.couvert
+      ? "Le net retire la cotisation maladie d'un non-résident : "
+        + `${g.pourcentage(montants.tauxRegimeGeneral, false, 1)} sur la base du régime `
+        + `général, ${g.pourcentage(montants.tauxMaladie, false, 1)} sur la complémentaire.`
+      : "Le net vaut le brut : résidant hors de France, vous n'êtes pas prélevé.";
+  } else {
+    leNet = "Le net retire, à chaque âge, la CSG, la CRDS et la CASA de la tranche que "
+      + "fixe le revenu fiscal de votre foyer ("
+      + (montants.revenuPresume ? "présumé fait de cette pension seule, abattue de 10 %"
+        : "celui que vous avez dit")
+      + "), et 1 % de cotisation maladie sur la complémentaire aux deux taux du haut.";
+  }
   const minimum = departs.some((depart) => depart.minimum_vieillesse / 12 >= 0.5)
     ? " Le minimum vieillesse n'y est pas : l'estimation officielle ne le compte pas."
     : "";
@@ -4275,11 +4302,7 @@ l'écart s'affiche à côté.</p>
 <div class="carte estimation-officielle">
   ${tableau}
   <p class="comparer"><button type="submit" form="simulateur" id="comparer-estimation">Comparer</button></p>
-  <p class="discret">Le net retire, à chaque âge, la CSG, la CRDS et la CASA de
-  la tranche que fixe le revenu fiscal de votre foyer (${montants.revenuPresume
-    ? "présumé fait de cette pension seule, abattue de 10 %"
-    : "celui que vous avez dit"}), et 1 % de cotisation maladie sur la
-  complémentaire aux deux taux du haut. Vos revenus à venir suivent le salaire moyen ;
+  <p class="discret">${leNet} Vos revenus à venir suivent le salaire moyen ;
   l'estimation officielle leur prête « une évolution régulière », un peu plus
   rapide.${minimum}
   Ce que vous recopiez reste dans votre navigateur, avec le reste de la
@@ -5137,6 +5160,29 @@ function noteDuMode(montants) {
   if (montants.net) {
     const autres = " Les autres systèmes gardent ce taux : le simulateur suppose "
       + "que la réforme ne change pas vos prélèvements.";
+    if (montants.nonResident) {
+      const motifs = {
+        france_competente: "la France seule vous sert une pension",
+        residence_competente: "l'État où vous résidez vous sert une pension, et c'est "
+          + "lui qui prend en charge vos soins",
+        quinze_ans: "votre pension française rémunère au moins quinze années d'assurance",
+        moins_de_quinze_ans: "votre pension française rémunère moins de quinze années "
+          + "d'assurance",
+      };
+      const sansCsg = "Vous résidez hors de France : ni CSG, ni CRDS, ni contribution "
+        + "de solidarité.";
+      if (!montants.couvert) {
+        return `La pension n'est pas prélevée. ${sansCsg} Vous ne relevez pas non plus `
+          + `de l'assurance maladie française : ${motifs[montants.motifCouverture]}.`
+          + autres;
+      }
+      return `La pension est nette de ${g.pourcentage(montants.tauxPension, false, 1)}. `
+        + `${sansCsg} Mais vous relevez de l'assurance maladie française, parce que `
+        + `${motifs[montants.motifCouverture]} : une cotisation de `
+        + `${g.pourcentage(montants.tauxRegimeGeneral, false, 1)} sur la retraite de `
+        + `base du régime général et de ${g.pourcentage(montants.tauxMaladie, false, 1)} `
+        + "sur la complémentaire." + autres;
+    }
     if (montants.aspa) {
       return "La pension n'est pas prélevée : allocataire de l'ASPA, vous êtes "
         + "exonéré de CSG, de CRDS, de contribution de solidarité et de "

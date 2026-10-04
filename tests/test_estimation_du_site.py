@@ -127,7 +127,8 @@ def test_les_deux_moteurs_datent_et_chiffrent_les_memes_departs(contexte):
                   "trimestres": depart.trimestres,
                   "trimestres_requis": depart.trimestres_requis,
                   "motif_ouverture": depart.motif_ouverture,
-                  "assiette_maladie": depart.assiette_maladie}
+                  "assiette_maladie": depart.assiette_maladie,
+                  "assiette_regime_general": depart.assiette_regime_general}
                  for depart in _departs(contexte, nom)] for nom in REQUETES]
     ecarts: list[str] = []
     for nom, obtenu, attendu in zip(REQUETES, obtenus, attendus):

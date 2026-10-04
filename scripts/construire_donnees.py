@@ -1583,6 +1583,13 @@ def _prelevements_remuneration() -> dict:
                 "minimum_par_pensionne": prelevements.pensions.abattement_minimum,
                 "maximum_par_foyer": prelevements.pensions.abattement_maximum,
             },
+            "non_residents": {
+                "regime_general": prelevements.pensions.non_residents_regime_general,
+                "complementaires": prelevements.pensions.non_residents_complementaires,
+                "regimes_generaux": sorted(prelevements.pensions.regimes_generaux),
+                "duree_minimale_trimestres":
+                    prelevements.pensions.non_residents_duree_minimale,
+            },
         },
     }
 

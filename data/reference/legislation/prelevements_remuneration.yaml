@@ -742,10 +742,9 @@ profils:
 # CE QUI N'EST PAS ICI
 # --------------------
 # La cotisation supplémentaire de 1,30 % du régime local d'Alsace-Moselle,
-# due sur toutes les pensions ; les taux des non-résidents (3,20 % et
-# 4,20 %, au lieu de la CSG) ; et ce que les régimes spéciaux, la fonction
+# due sur toutes les pensions ; et ce que les régimes spéciaux, la fonction
 # publique et les indépendants prélèveraient par leurs propres textes, que le
-# dépôt n'a pas lus.
+# dépôt n'a pas lus — sur la pension d'un non-résident aussi (`non_residents`).
 #
 # LA RENTE DU PILIER CAPITALISÉ suit le même barème que la pension, et c'est
 # une convention : le dépôt la traite en rente viagère à titre GRATUIT, ce
@@ -825,6 +824,23 @@ pensions:
   #: (LEGIARTI000054373673) — 10 %, au moins 454 € par pensionné sans dépasser
   #: sa pension, au plus 4 439 € pour le foyer.
   abattement_pensions: {taux: 0.10, minimum_par_pensionne: 454, maximum_par_foyer: 4439}
+  #: LES NON-RÉSIDENTS. Qui ne réside pas en France n'y est pas domicilié pour
+  #: l'impôt, et ne doit ni CSG, ni CRDS, ni CASA (L. 136-1). S'il bénéficie à
+  #: titre obligatoire de la prise en charge de ses frais de santé en France,
+  #: il doit à leur place une cotisation d'assurance maladie à des taux
+  #: particuliers (L. 131-9, LEGIARTI000048683656) : 3,20 % sur la pension de
+  #: base du régime général, 4,20 % sur les autres avantages de L. 131-2 — les
+  #: complémentaires de `maladie_complementaire` (D. 242-8,
+  #: LEGIARTI000037456300). Il en bénéficie (L. 160-3, LEGIARTI000037950374)
+  #: quand la France est seule compétente pour ses soins dans l'État où il
+  #: réside — sous les règlements européens, quand cet État ne lui sert pas de
+  #: pension (règlement (CE) n° 883/2004, art. 23 et 24) — ou, ailleurs, quand
+  #: sa pension française rémunère au moins quinze années d'assurance.
+  non_residents:
+    regime_general: 0.032
+    complementaires: 0.042
+    regimes_generaux: [regime_general]
+    duree_minimale_trimestres: 60
   note: >-
     CSG 8,30 %, CRDS 0,50 %, CASA 0,30 % : 9,10 % au total, sans abattement,
     et 1 % de plus sur la part complémentaire (`maladie_complementaire`).

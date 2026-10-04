@@ -2675,9 +2675,13 @@ ce que servent les complémentaires de salariés, majoration pour enfants exclue
 qu'un compte, sans base ni complémentaire : ils appliquent à la pension de chacun
 son taux du système 1. C'est une hypothèse, que la page dit — la réforme ne change
 pas les prélèvements —, et le net y garde les rapports du brut. Restent hors du
-calcul la cotisation supplémentaire du régime local d'Alsace-Moselle, les taux des
-non-résidents, et ce que les régimes spéciaux, la fonction publique et les
-indépendants prélèvent par leurs propres textes, qui ne sont pas lus.
+calcul la cotisation supplémentaire du régime local d'Alsace-Moselle, et ce que les
+régimes spéciaux, la fonction publique et les indépendants prélèvent par leurs
+propres textes, qui ne sont pas lus. Qui réside hors de France ne doit ni CSG, ni
+CRDS, ni CASA ; si la France prend en charge ses soins, il doit une cotisation
+maladie sur la base du régime général et sur la complémentaire (fiche
+`cotisation_maladie_des_non_residents`) ; les conventions bilatérales qui
+rendraient la France seule compétente hors de l'Union ne sont pas lues.
 
 **3. La rente du pilier capitalisé suit le barème des pensions**, et c'est une
 convention : le dépôt la traite en rente viagère à titre GRATUIT, ce qu'elle est

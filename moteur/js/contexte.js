@@ -670,8 +670,10 @@ function departEstime(simulateur, parametres, carriere, quoi) {
   const passage = simulateur.macro.coefficientPrix(
     carriere.anneeLiquidation, parametres.annee_euros_constants);
   const etages = {};
-  const regimes = simulateur.baremePrelevements.pensions.regimes_maladie;
+  const prelevements = simulateur.baremePrelevements.pensions;
+  const regimes = prelevements.regimes_maladie;
   let assiette = 0.0;
+  let generale = 0.0;
   const porter = (code, montant) => {
     const etage = simulateur.catalogue.obtenir(code).etage;
     etages[etage] = (etages[etage] ?? 0.0) + montant * passage;
@@ -679,6 +681,7 @@ function departEstime(simulateur, parametres, carriere, quoi) {
   for (const pension of resultat.pensions_par_regime) {
     porter(pension.regime, pension.montant);
     if (regimes.has(pension.regime)) assiette += pension.montant * passage;
+    if (prelevements.regimes_generaux.has(pension.regime)) generale += pension.montant * passage;
   }
   let minimum = 0.0;
   for (const avantage of resultat.avantages_appliques) {
@@ -701,6 +704,7 @@ function departEstime(simulateur, parametres, carriere, quoi) {
     // Ce que la cotisation maladie de 1 % frappe dans `etages`. Voir
     // `DepartEstime.assiette_maladie` (contexte.py).
     assiette_maladie: assiette,
+    assiette_regime_general: generale,
     get total() {
       return Object.values(this.etages).reduce((somme, montant) => somme + montant, 0.0);
     },
@@ -848,6 +852,38 @@ function revenuFiscalDuFoyer(saisie, pensions, pension) {
   return [pensions.revenuFiscalPresume(foyer(saisie, annuelle)), true];
 }
 
+/** L'instrument des accords qui coordonne aussi l'assurance maladie. */
+const REGLEMENTS_EUROPEENS_SANTE = "reglements_europeens";
+
+/** Les règlements européens s'appliquent-ils à cet État à cette date ? */
+function reglementsEuropeens(accords, pays, date) {
+  for (const accord of (accords[pays] ?? {}).accords ?? []) {
+    if (accord.instrument === REGLEMENTS_EUROPEENS_SANTE && accord.de <= date
+        && (accord.a === null || accord.a === undefined || date < accord.a)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Si la France prend en charge les frais de santé de qui réside hors de
+ * France (L. 160-3), et pourquoi. Voir `couverture_francaise` dans
+ * `contexte.py`.
+ */
+function couvertureFrancaise(saisie, actuel, europeen, dureeMinimale) {
+  if (europeen) {
+    if (saisie.pensions_etrangeres.some((pension) => pension.pays === saisie.residence)) {
+      return [false, "residence_competente"];
+    }
+    return [true, "france_competente"];
+  }
+  if (actuel === null) return [true, "quinze_ans"];
+  const trimestres = actuel.trimestres_valides - actuel.trimestres_etrangers;
+  return [trimestres >= dureeMinimale,
+    trimestres >= dureeMinimale ? "quinze_ans" : "moins_de_quinze_ans"];
+}
+
 /** Le minimum vieillesse que le scénario 1 sert, à l'échéance ou au départ. */
 function minimumVieillesseServi(actuel, aujourdhui = null) {
   if (aujourdhui !== null) return aujourdhui.minimum_vieillesse;
@@ -893,6 +929,14 @@ export class Montants {
     this.parts = maladie?.parts ?? 1;
     this.bareme = maladie?.bareme ?? null;
     this.saisie = maladie?.saisie ?? null;
+    // Qui réside hors de France : la cotisation maladie sur la base du régime
+    // général, sa part, et si la France prend en charge ses soins.
+    this.tauxRegimeGeneral = maladie?.tauxRegimeGeneral ?? 0;
+    this.partRegimeGeneral = maladie?.partRegimeGeneral ?? 0;
+    this.regimesGeneraux = maladie?.regimesGeneraux ?? new Set();
+    this.nonResident = maladie?.nonResident ?? false;
+    this.couvert = maladie?.couvert ?? false;
+    this.motifCouverture = maladie?.motifCouverture ?? "";
     // Ce qu'un euro de salaire brut laisse en net, au DERNIER revenu
     // d'activité. Zéro quand le statut n'a pas de fiche de paie : le taux
     // reste alors brut, faute de pouvoir le netter honnêtement.
@@ -932,8 +976,13 @@ export class Montants {
       coefficient = servie !== null ? comparaison.coefficient_euros_aujourd_hui
         : comparaison.coefficient_euros_constants;
     }
+    // QUI RÉSIDE HORS DE FRANCE : l'accord que le tableau donne à son État
+    // aujourd'hui dit si les règlements européens décident de ses soins.
+    const europeen = Boolean(saisie.residence) && reglementsEuropeens(
+      simulateur.macro.paquet.accords_internationaux ?? {}, saisie.residence,
+      `${String(simulateur.parametres.annee_courante).padStart(4, "0")}-01-01`);
     return Montants.duFoyer(saisie, pensions, actuel, servie, coefficient,
-      rapport, rapportProposition);
+      rapport, rapportProposition, europeen);
   }
 
   /**
@@ -943,15 +992,33 @@ export class Montants {
    * `Montants.du_foyer` dans `contexte.py`.
    */
   static duFoyer(saisie, pensions, actuel = null, aujourdhui = null, coefficient = 1,
-    rapport = 0, rapportProposition = 0) {
+    rapport = 0, rapportProposition = 0, europeen = false) {
     let part = 0;
     let minimum = 0;
     let pension = null;
+    let partGenerale = 0;
     if (actuel !== null) {
       const [assiette, total] = assietteMaladie(pensions.regimes_maladie, actuel, aujourdhui);
       part = total > 0 ? assiette / total : 0;
       minimum = minimumVieillesseServi(actuel, aujourdhui);
       pension = total * coefficient;
+      const [generale] = assietteMaladie(pensions.regimes_generaux, actuel, aujourdhui);
+      partGenerale = total > 0 ? generale / total : 0;
+    }
+    if (saisie.residence) {
+      const [couvert, motif] = couvertureFrancaise(
+        saisie, actuel, europeen, pensions.non_residents_duree_minimale);
+      const tauxGeneral = couvert ? pensions.non_residents_regime_general : 0;
+      const maladie = couvert ? pensions.non_residents_complementaires : 0;
+      return new Montants(saisie.enNet, maladie * part + tauxGeneral * partGenerale,
+        rapport, rapportProposition, {
+          tauxSansMaladie: 0, tauxMaladie: maladie, partMaladie: part,
+          regimesMaladie: pensions.regimes_maladie,
+          tauxRegimeGeneral: tauxGeneral, partRegimeGeneral: partGenerale,
+          regimesGeneraux: pensions.regimes_generaux,
+          tranche: "non-résident", nonResident: true, couvert, motifCouverture: motif,
+          bareme: pensions, saisie,
+        });
     }
     const [revenu, presume] = revenuFiscalDuFoyer(saisie, pensions, pension);
     const parts = partsDuFoyer(saisie);
@@ -1006,16 +1073,17 @@ export class Montants {
    * Une part de pension dont `assiette` paie aussi la cotisation maladie : un
    * étage ou une ligne du scénario 1, et non plus un total.
    */
-  pensionDAssiette(brut, assiette) {
-    return this.net ? this.netDAssiette(brut, assiette) : brut;
+  pensionDAssiette(brut, assiette, assietteGenerale = 0) {
+    return this.net ? this.netDAssiette(brut, assiette, assietteGenerale) : brut;
   }
 
   /**
    * La même, nette quel que soit le mode : la colonne du net d'un tableau qui
    * montre les deux.
    */
-  netDAssiette(brut, assiette) {
-    return brut * (1 - this.tauxSansMaladie) - this.tauxMaladie * assiette;
+  netDAssiette(brut, assiette, assietteGenerale = 0) {
+    return brut * (1 - this.tauxSansMaladie) - this.tauxMaladie * assiette
+      - this.tauxRegimeGeneral * assietteGenerale;
   }
 
   /**
@@ -1023,16 +1091,17 @@ export class Montants {
    * 10,1 % pour une complémentaire qui la prélève, 9,1 % sinon.
    */
   pensionDuRegime(brut, regime) {
-    return this.pensionDAssiette(brut, this.regimesMaladie.has(regime) ? brut : 0);
+    return this.pensionDAssiette(brut, this.regimesMaladie.has(regime) ? brut : 0,
+      this.regimesGeneraux.has(regime) ? brut : 0);
   }
 
   /**
    * La nette d'un autre départ du scénario 1, quel que soit le mode, à SA
    * tranche. Voir `Montants.net_d_un_depart` dans `contexte.py`.
    */
-  netDUnDepart(total, assiette, minimum = 0) {
+  netDUnDepart(total, assiette, minimum = 0, generale = 0) {
     const bareme = this.bareme;
-    if (bareme === null) return this.netDAssiette(total, assiette);
+    if (bareme === null || this.nonResident) return this.netDAssiette(total, assiette, generale);
     let tranche;
     if (minimum > 0) {
       tranche = bareme.bareme_csg[0];
@@ -1051,7 +1120,8 @@ export class Montants {
    */
   pensionServie(actuel, aujourdhui = null) {
     const [assiette, total] = assietteMaladie(this.regimesMaladie, actuel, aujourdhui);
-    return this.pensionDAssiette(total, assiette);
+    const [generale] = assietteMaladie(this.regimesGeneraux, actuel, aujourdhui);
+    return this.pensionDAssiette(total, assiette, generale);
   }
 
   /** Un salaire, lu sur la fiche de paie qui porte déjà les deux. */

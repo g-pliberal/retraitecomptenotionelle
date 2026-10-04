@@ -576,6 +576,14 @@ class PrelevementsPension:
     abattement_taux: float = 0.0
     abattement_minimum: float = 0.0
     abattement_maximum: float = 0.0
+    #: Les non-résidents (L. 131-9 ; D. 242-8) : la cotisation maladie sur la
+    #: pension de base du régime général, celle sur les complémentaires, les
+    #: régimes du premier taux, et les trimestres français qui ouvrent la prise
+    #: en charge des soins hors de l'Union (L. 160-3, b).
+    non_residents_regime_general: float = 0.0
+    non_residents_complementaires: float = 0.0
+    regimes_generaux: frozenset[str] = frozenset()
+    non_residents_duree_minimale: int = 0
 
     @property
     def taux_total(self) -> float:
@@ -754,6 +762,14 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
                 (pensions.get("abattement_pensions") or {}).get("minimum_par_pensionne", 0.0)),
             abattement_maximum=float(
                 (pensions.get("abattement_pensions") or {}).get("maximum_par_foyer", 0.0)),
+            non_residents_regime_general=float(
+                (pensions.get("non_residents") or {}).get("regime_general", 0.0)),
+            non_residents_complementaires=float(
+                (pensions.get("non_residents") or {}).get("complementaires", 0.0)),
+            regimes_generaux=frozenset(
+                (pensions.get("non_residents") or {}).get("regimes_generaux") or ()),
+            non_residents_duree_minimale=int(
+                (pensions.get("non_residents") or {}).get("duree_minimale_trimestres", 0)),
             bareme_csg=tuple(
                 TrancheCsgPension(
                     libelle=tranche["libelle"],

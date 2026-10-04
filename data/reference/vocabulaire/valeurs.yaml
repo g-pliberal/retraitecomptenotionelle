@@ -329,6 +329,18 @@ listes:
           demande pas, et la réversion n'est alors écrêtée que si elle dépasse
           le plafond avec celles des autres régimes de base. Une ressource
           déclarée prend la place de la présomption
+      domicile_fiscal_au_pays_de_residence:
+        dit: qui réside hors de France après son départ n'y a pas son domicile fiscal
+        valeur: le pays de résidence que la saisie dit
+        appliquee_par: >-
+          le net (contexte.py, Montants.du_foyer, et son jumeau JavaScript), qui
+          ne prélève alors ni CSG, ni CRDS, ni CASA (L. 136-1)
+        entrera_a: foyer_et_net
+        raison: >-
+          la CSG ne frappe que les personnes domiciliées en France pour l'impôt
+          (L. 136-1) ; le domicile fiscal suit le foyer ou le lieu de séjour
+          principal (CGI, art. 4 B), que le formulaire ne demande pas à part de
+          la résidence
       aucun_autre_revenu_que_ses_pensions:
         dit: le revenu fiscal de référence du foyer est fait de ses seules pensions
         valeur: >-

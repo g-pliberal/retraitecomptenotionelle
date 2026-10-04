@@ -40,6 +40,7 @@ from .remuneration import (
     salaire_net_depuis_brut,
 )
 from .restitution import Restitution
+from .scenarios.actuel import CarrieresHorsDeFrance
 from .saisie import (
     AUTRE_ETAT,
     HEURES_SMIC_PAR_MOIS,
@@ -580,6 +581,9 @@ class DepartEstime:
     #: lignes des complémentaires qui la prélèvent, sans leur majoration pour
     #: enfants (``remuneration.assiette_maladie``).
     assiette_maladie: float = 0.0
+    #: La pension de base du régime général, qu'un non-résident paie à son
+    #: propre taux (L. 131-9 ; D. 242-8).
+    assiette_regime_general: float = 0.0
 
     @property
     def total(self) -> float:
@@ -597,8 +601,9 @@ def _depart_estime(simulateur: Simulateur, parametres: Parametres, carriere,
     passage = simulateur.macro.coefficient_prix(
         carriere.annee_liquidation, parametres.annee_euros_constants)
     etages: dict[str, float] = {}
-    regimes = charger_prelevements(parametres.racine_donnees).pensions.regimes_maladie
-    assiette = 0.0
+    prelevements = charger_prelevements(parametres.racine_donnees).pensions
+    regimes = prelevements.regimes_maladie
+    assiette = generale = 0.0
 
     def porter(code: str, montant: float) -> None:
         etage = simulateur.catalogue[code].etage
@@ -608,6 +613,8 @@ def _depart_estime(simulateur: Simulateur, parametres: Parametres, carriere,
         porter(pension.regime, pension.montant)
         if pension.regime in regimes:
             assiette += pension.montant * passage
+        if pension.regime in prelevements.regimes_generaux:
+            generale += pension.montant * passage
     minimum = 0.0
     for avantage in resultat.avantages_appliques:
         if avantage.code == "majoration_enfants":
@@ -624,6 +631,7 @@ def _depart_estime(simulateur: Simulateur, parametres: Parametres, carriere,
         trimestres_requis=resultat.trimestres_requis,
         motif_ouverture=resultat.motif_ouverture,
         assiette_maladie=assiette,
+        assiette_regime_general=generale,
     )
 
 
@@ -881,6 +889,41 @@ def revenu_fiscal_du_foyer(saisie: Saisie, pensions,
     return pensions.revenu_fiscal_presume(_foyer(saisie, pension)), True
 
 
+#: Les instruments des accords qui coordonnent aussi l'assurance maladie : les
+#: règlements européens (le tableau des accords).
+REGLEMENTS_EUROPEENS = "reglements_europeens"
+
+
+def reglements_europeens(accords: dict, pays: str, date: str) -> bool:
+    """Les règlements européens s'appliquent-ils à cet État à cette date ?"""
+    for accord in (accords.get(pays) or {}).get("accords", ()):
+        if (accord.get("instrument") == REGLEMENTS_EUROPEENS and accord["de"] <= date
+                and (accord.get("a") is None or date < accord["a"])):
+            return True
+    return False
+
+
+def couverture_francaise(saisie: Saisie, actuel, europeen: bool,
+                         duree_minimale: int) -> tuple[bool, str]:
+    """Si la France prend en charge les frais de santé de qui réside hors de
+    France (L. 160-3), et pourquoi. Sous les règlements européens, l'État de
+    résidence est compétent s'il sert lui-même une pension (règlement (CE)
+    n° 883/2004, art. 23), la France sinon (art. 24). Ailleurs, la pension
+    française doit rémunérer quinze années d'assurance (L. 160-3, b) — les
+    conventions bilatérales, qui peuvent rendre la France seule compétente
+    (a), ne sont pas lues. Sans carrière calculée, la prise en charge est
+    présumée."""
+    if europeen:
+        if any(pension.pays == saisie.residence for pension in saisie.pensions_etrangeres):
+            return False, "residence_competente"
+        return True, "france_competente"
+    if actuel is None:
+        return True, "quinze_ans"
+    trimestres = actuel.trimestres_valides - actuel.trimestres_etrangers
+    return trimestres >= duree_minimale, ("quinze_ans" if trimestres >= duree_minimale
+                                          else "moins_de_quinze_ans")
+
+
 def minimum_vieillesse_servi(actuel, aujourd_hui=None) -> float:
     """Le minimum vieillesse que le scénario 1 sert : l'ASPA de l'échéance
     pour qui est déjà parti, celle du départ sinon."""
@@ -942,13 +985,18 @@ class Montants:
             servie = None if aujourd_hui is None else aujourd_hui.actuel
             coefficient = (comparaison.coefficient_euros_aujourd_hui if servie is not None
                            else comparaison.coefficient_euros_constants)
+        # QUI RÉSIDE HORS DE FRANCE : l'accord que le tableau donne à son État
+        # aujourd'hui dit si les règlements européens décident de ses soins.
+        europeen = bool(saisie.residence) and reglements_europeens(
+            CarrieresHorsDeFrance(base.racine_donnees).accords, saisie.residence,
+            f"{base.annee_courante:04d}-01-01")
         return cls.du_foyer(saisie, pensions, actuel, servie, coefficient,
-                            rapport, rapport_proposition)
+                            rapport, rapport_proposition, europeen)
 
     @classmethod
     def du_foyer(cls, saisie: Saisie, pensions, actuel=None, aujourd_hui=None,
                  coefficient: float = 1.0, rapport: float = 0.0,
-                 rapport_proposition: float = 0.0) -> "Montants":
+                 rapport_proposition: float = 0.0, europeen: bool = False) -> "Montants":
         """Le mode, et le taux du foyer (action 138, étape 2) : la CSG, la CRDS
         et la CASA de SA tranche de L. 136-8, et la cotisation maladie de la
         part complémentaire de sa pension du scénario 1 — ``actuel`` au départ,
@@ -957,14 +1005,36 @@ class Montants:
         tout (L. 136-1-2, II 1° ; D. 242-9, 2°). Sans pension, ni saisie qui en
         dise une, ni revenu fiscal dit : le taux plein, comme avant toute
         simulation. Les cinq autres scénarios gardent ce taux : la réforme, par
-        hypothèse, ne change pas les prélèvements de la personne."""
-        part = minimum = 0.0
+        hypothèse, ne change pas les prélèvements de la personne.
+
+        QUI RÉSIDE HORS DE FRANCE ne doit ni CSG, ni CRDS, ni CASA (L. 136-1) ;
+        si la France prend en charge ses soins (:func:`couverture_francaise`),
+        une cotisation maladie à ses taux particuliers, sur la pension de base
+        du régime général et sur les complémentaires (L. 131-9 ; D. 242-8)."""
+        part = minimum = part_generale = 0.0
         pension = None
         if actuel is not None:
             assiette, total = assiette_maladie(pensions.regimes_maladie, actuel, aujourd_hui)
             part = assiette / total if total > 0 else 0.0
             minimum = minimum_vieillesse_servi(actuel, aujourd_hui)
             pension = total * coefficient
+            generale, _ = assiette_maladie(pensions.regimes_generaux, actuel, aujourd_hui)
+            part_generale = generale / total if total > 0 else 0.0
+        if saisie.residence:
+            couvert, motif = couverture_francaise(
+                saisie, actuel, europeen, pensions.non_residents_duree_minimale)
+            generale_taux = pensions.non_residents_regime_general if couvert else 0.0
+            maladie = pensions.non_residents_complementaires if couvert else 0.0
+            return cls(net=saisie.en_net,
+                       taux_pension=maladie * part + generale_taux * part_generale,
+                       rapport_net_brut_salaire=rapport,
+                       rapport_net_brut_proposition=rapport_proposition,
+                       taux_sans_maladie=0.0, taux_maladie=maladie, part_maladie=part,
+                       regimes_maladie=pensions.regimes_maladie,
+                       taux_regime_general=generale_taux, part_regime_general=part_generale,
+                       regimes_generaux=pensions.regimes_generaux,
+                       tranche="non-résident", non_resident=True, couvert=couvert,
+                       motif_couverture=motif, bareme=pensions, saisie=saisie)
         revenu, presume = revenu_fiscal_du_foyer(saisie, pensions, pension)
         parts = parts_du_foyer(saisie)
         if minimum > 0:
@@ -990,32 +1060,39 @@ class Montants:
         cinq autres gardent."""
         return brut * (1.0 - self.taux_pension) if self.net else brut
 
-    def pension_d_assiette(self, brut: float, assiette: float) -> float:
+    def pension_d_assiette(self, brut: float, assiette: float,
+                           assiette_generale: float = 0.0) -> float:
         """Une part de pension dont ``assiette`` paie aussi la cotisation
-        maladie : un étage ou une ligne du scénario 1, et non plus un total."""
-        return self.net_d_assiette(brut, assiette) if self.net else brut
+        maladie des complémentaires, et ``assiette_generale`` celle d'un
+        non-résident sur la base du régime général : un étage ou une ligne du
+        scénario 1, et non plus un total."""
+        return (self.net_d_assiette(brut, assiette, assiette_generale)
+                if self.net else brut)
 
-    def net_d_assiette(self, brut: float, assiette: float) -> float:
+    def net_d_assiette(self, brut: float, assiette: float,
+                       assiette_generale: float = 0.0) -> float:
         """La même, nette quel que soit le mode : la colonne du net d'un
         tableau qui montre les deux."""
-        return brut * (1.0 - self.taux_sans_maladie) - self.taux_maladie * assiette
+        return (brut * (1.0 - self.taux_sans_maladie) - self.taux_maladie * assiette
+                - self.taux_regime_general * assiette_generale)
 
     def pension_du_regime(self, brut: float, regime: str) -> float:
-        """La pension d'un seul régime : la cotisation maladie y est toute ou
-        rien, 10,1 % pour une complémentaire qui la prélève, 9,1 % sinon."""
+        """La pension d'un seul régime : chaque cotisation maladie y est toute
+        ou rien."""
         return self.pension_d_assiette(
-            brut, brut if regime in self.regimes_maladie else 0.0)
+            brut, brut if regime in self.regimes_maladie else 0.0,
+            brut if regime in self.regimes_generaux else 0.0)
 
     def net_d_un_depart(self, total: float, assiette: float,
-                        minimum: float = 0.0) -> float:
+                        minimum: float = 0.0, generale: float = 0.0) -> float:
         """La nette d'un autre départ du scénario 1 — un âge de l'estimation
         officielle —, quel que soit le mode, à SA tranche : sous la
         présomption, son revenu fiscal est fait de sa propre pension.
         ``total``, ``assiette`` et ``minimum`` sont annuels, en euros de
         l'année de référence."""
         bareme = self.bareme
-        if bareme is None:
-            return self.net_d_assiette(total, assiette)
+        if bareme is None or self.non_resident:
+            return self.net_d_assiette(total, assiette, generale)
         if minimum > 0:
             tranche = bareme.bareme_csg[0]
         else:
@@ -1030,7 +1107,8 @@ class Montants:
         """La pension du scénario 1 — du départ, ou d'aujourd'hui pour qui est
         déjà parti —, nette de sa propre cotisation maladie."""
         assiette, total = assiette_maladie(self.regimes_maladie, actuel, aujourd_hui)
-        return self.pension_d_assiette(total, assiette)
+        generale, _ = assiette_maladie(self.regimes_generaux, actuel, aujourd_hui)
+        return self.pension_d_assiette(total, assiette, generale)
 
     def salaire(self, fiche) -> float:
         """Un salaire, lu sur la fiche de paie qui porte déjà les deux."""
@@ -1084,6 +1162,15 @@ class Montants:
     revenu_presume: bool = False
     aspa: bool = False
     parts: float = 1.0
+    #: Qui réside hors de France : la cotisation maladie sur la pension de base
+    #: du régime général, et la part de celle-ci dans la pension ; si la France
+    #: prend en charge ses soins, et pourquoi (:func:`couverture_francaise`).
+    taux_regime_general: float = 0.0
+    part_regime_general: float = 0.0
+    regimes_generaux: frozenset[str] = frozenset()
+    non_resident: bool = False
+    couvert: bool = False
+    motif_couverture: str = ""
     bareme: object = field(default=None, compare=False, repr=False)
     saisie: object = field(default=None, compare=False, repr=False)
 

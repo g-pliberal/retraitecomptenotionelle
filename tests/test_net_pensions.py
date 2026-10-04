@@ -20,7 +20,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from retraite_notionnelle.contexte import Contexte, Montants
+from retraite_notionnelle.contexte import Contexte, Montants, couverture_francaise
 from retraite_notionnelle.remuneration import assiette_maladie, charger_prelevements
 from retraite_notionnelle.saisie import Saisie
 
@@ -247,3 +247,52 @@ def test_une_pension_saisie_nette_tombe_dans_sa_tranche(contexte, pension, tranc
     nette = montants.pension_servie(comparaison.actuel, comparaison.aujourd_hui.actuel)
     assert comparaison.aujourd_hui_en_euros_constants(nette) / 12 == pytest.approx(
         float(pension), abs=1.0)
+
+
+def test_un_non_resident_que_la_france_soigne_paie_la_cotisation_maladie(contexte, pensions):
+    """L. 136-1 : hors de France, ni CSG, ni CRDS, ni CASA. L. 131-9 et D. 242-8 :
+    qui relève de l'assurance maladie française paie 3,2 % sur la base du
+    régime général et 4,2 % sur la complémentaire. En Espagne, sans pension
+    espagnole, la France est seule compétente (règlement n° 883/2004, art. 24)."""
+    _, montants = _simuler(contexte, {**PRIVE, "residence": "ES"})
+    assert montants.non_resident and montants.couvert
+    assert montants.motif_couverture == "france_competente"
+    assert montants.taux_sans_maladie == 0.0
+    assert montants.taux_pension == pytest.approx(
+        pensions.non_residents_regime_general * montants.part_regime_general
+        + pensions.non_residents_complementaires * montants.part_maladie)
+    assert montants.pension_du_regime(1000.0, "regime_general") == pytest.approx(968.0)
+    assert montants.pension_du_regime(1000.0, "agirc_arrco") == pytest.approx(958.0)
+    assert montants.pension_du_regime(1000.0, "fonction_publique_etat") == 1000.0
+
+
+def test_l_etat_de_residence_qui_sert_une_pension_soigne(contexte):
+    """Règlement n° 883/2004, art. 23 : l'État de résidence qui sert une
+    pension prend en charge les soins ; la France ne prélève rien."""
+    _, montants = _simuler(contexte, {
+        **PRIVE, "residence": "ES", "pension_etrangere1_pays": "ES",
+        "pension_etrangere1": "300", "pension_etrangere1_debut": "2049-03"})
+    assert montants.non_resident and not montants.couvert
+    assert montants.motif_couverture == "residence_competente"
+    assert montants.taux_pension == 0.0
+
+
+def test_hors_de_l_union_quinze_ans_d_assurance_francaise(contexte):
+    """L. 160-3, b : hors des règlements européens, la France soigne le
+    pensionné dont la pension rémunère quinze années d'assurance."""
+    _, montants = _simuler(contexte, {**PRIVE, "residence": "MA"})
+    assert montants.couvert and montants.motif_couverture == "quinze_ans"
+
+
+def test_moins_de_quinze_ans_hors_de_l_union_ne_paie_rien():
+    """Sous quinze années d'assurance française, hors de l'Union, la France ne
+    prend pas en charge les soins : rien n'est prélevé."""
+    saisie = Saisie.depuis_requete({**PRIVE, "residence": "MA"})
+
+    class Actuel:
+        trimestres_valides = 70
+        trimestres_etrangers = 20
+
+    assert couverture_francaise(saisie, Actuel(), False, 60) == (False, "moins_de_quinze_ans")
+    Actuel.trimestres_etrangers = 0
+    assert couverture_francaise(saisie, Actuel(), False, 60) == (True, "quinze_ans")

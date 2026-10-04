@@ -266,6 +266,13 @@ export class PrelevementsPension {
     this.abattement_taux = abattement.taux ?? 0;
     this.abattement_minimum = abattement.minimum_par_pensionne ?? 0;
     this.abattement_maximum = abattement.maximum_par_foyer ?? 0;
+    // Les non-résidents (L. 131-9 ; D. 242-8). Voir `PrelevementsPension` dans
+    // `remuneration.py`.
+    const nonResidents = fiche.non_residents ?? {};
+    this.non_residents_regime_general = nonResidents.regime_general ?? 0;
+    this.non_residents_complementaires = nonResidents.complementaires ?? 0;
+    this.regimes_generaux = new Set(nonResidents.regimes_generaux ?? []);
+    this.non_residents_duree_minimale = nonResidents.duree_minimale_trimestres ?? 0;
   }
 
   /**
