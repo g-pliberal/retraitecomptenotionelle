@@ -6059,6 +6059,13 @@ laissait ouvert.
   textes à 10 127). `test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme`
   exige que la ligne de prolongation de `rendements_points.csv` porte le
   rendement du dernier barème. `limites.md` le dit. Aucun chiffre ne bouge.
+- *Décidé le 4 octobre 2026 par le propriétaire* : « tant que ce n'est pas
+  officiel, on ne prend pas en compte ; on ne surinterprète pas ce qui
+  pourrait se produire dans le futur, nous n'avons pas de boule de cristal ».
+  La surindexation de 2028 quitte les approximations de la fiche, qui ne la
+  chiffre plus, et `limites.md` ; elle reste à lire le jour où elle sera
+  officielle. Au-delà du dernier texte officiel, la dernière règle officielle
+  reste en vigueur.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

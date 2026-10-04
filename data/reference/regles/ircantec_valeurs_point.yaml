@@ -134,13 +134,14 @@ versions:
   hypothese: >-
     le plan quadriennal en vigueur continue de revaloriser le salaire de référence et la
     valeur de service comme les pensions de base, sur l'inflation, à rendement réel
-    constant, comme en 2026. Le plan de 2026 à 2029, adopté par la délibération n°
-    2025-12-15 du conseil d'administration du 11 décembre 2025, que l'Ircantec ne publie
-    pas, surindexerait selon la presse le salaire de référence à partir de 2028 ; le
-    modèle ne le suit pas tant que ni la caisse ni un texte publié ne le confirment
-    (approximations). À défaut de plan, l'article 9 bis ferait croître le salaire de
-    référence des cinq tiers et la valeur de service des deux tiers de la revalorisation
-    des pensions : les prix toujours, jamais les salaires
+    constant, comme en 2026 : la dernière règle officielle reste en vigueur. Le plan de
+    2026 à 2029, adopté par la délibération n° 2025-12-15 du conseil d'administration du
+    11 décembre 2025, n'est pas publié ; ce que la presse en dit pour 2028 n'est pas
+    officiel, et le modèle ne le prend pas en compte (décidé le 4 octobre 2026 par le
+    propriétaire : « tant que ce n'est pas officiel, on ne prend pas en compte »). À
+    défaut de plan, l'article 9 bis ferait croître le salaire de référence des cinq tiers
+    et la valeur de service des deux tiers de la revalorisation des pensions : les prix
+    toujours, jamais les salaires
   fiabilite: moyenne
   textes:
   - id: LEGIARTI000041969453
@@ -178,17 +179,6 @@ versions:
       agit sur les paramètres pour la solvabilité, avec une clause de revoyure en 2027
     lu_le: 2026-10-04
     empreinte: sha256:e3212bf06cee5103bea945512d16556e916af19f99c2f51588eea7f9dff6c441
-  - reference: >-
-      AEF info, dépêche n° 742881 du 19 décembre 2025, « Syndicats et employeurs publics
-      s'accordent sur le plan quadriennal de l'Ircantec 2026-2029 », note 2 de la partie
-      publique (hors JORF)
-    article: dépêche, note 2
-    citation: >-
-      la valeur de service et le salaire de référence suivent l'inflation des douze
-      derniers mois ; à partir de 2028, « une valeur du salaire de référence surindexée
-      de 2,6 points » par rapport à la revalorisation des pensions
-    lu_le: 2026-10-04
-    empreinte: sha256:1d8f229ed12c7c69b75d4939af50cefb5ad23eb73595c9776e6350ec929487d6
   bornes:
     revenu.annee: [2027-01-01, null]
   contenu:
@@ -202,27 +192,8 @@ versions:
       correspond à aucune de ses règles.
     parametres:
       rendement: regimes/rendements_points.csv, ligne ircantec 2027-2100
-      # La surindexation que la presse prête au plan de 2026 à 2029 à partir de
-      # 2028, par rapport à la revalorisation des pensions : le modèle ne la
-      # suit pas (voir les approximations).
-      surindexation_rapportee: 0.026
   exemples: aucun trouvé
 approximations:
-- version: prix_au_dela_du_bareme
-  ecart: >-
-    Le plan de 2026 à 2029 surindexerait le salaire de référence de 2,6 points par
-    rapport à la revalorisation des pensions « à partir de 2028 », selon une dépêche de
-    presse, seule source : une fois, en 2028 et 2029, l'horizon du plan, ou chaque année,
-    elle ne le dit pas, et la délibération n'est pas publiée. Le modèle n'en suit aucune
-    lecture.
-  effet: >-
-    mesuré le 4 octobre 2026 sur des contractuels entrés à 22 ans et partis à 64, en
-    donnant à l'Ircantec un prix d'achat prolongé par les prix, qui redonne le modèle à
-    0,01 % près, puis surindexé : des générations 1975 à 2005, la part Ircantec baisserait
-    de 0,8 à 2,5 % pour une surindexation de la seule année 2028, de 1,6 à 4,8 % pour 2028
-    et 2029, et de 5,0 à 42,1 % si elle valait chaque année ; la pension totale de 0,3 à
-    0,7 %, de 0,5 à 1,5 % et de 1,6 à 12,7 %. Rien ne bouge pour la génération 1960,
-    partie en 2024.
 - version: prix_au_dela_du_bareme
   ecart: >-
     Les prix du modèle, et non la revalorisation de l'article L. 161-23-1, moyenne
@@ -242,12 +213,11 @@ sources:
     suit, à son rendement, ce que
     test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme exige.
   - >-
-    Le salaire de référence de 2028, publié en janvier 2028, et la délibération n°
-    2025-12-15 si elle se publie : s'ils confirment la surindexation, la version supposée
-    se coupe au 1er janvier 2028, et l'Ircantec entre dans
-    regimes/prolongement_points.csv avec un indice que le moteur ne connaît pas encore,
-    les prix majorés (ValeursPoint.INDICES_DU_PROLONGEMENT et son jumeau). La clause de
-    revoyure de 2027 peut aussi changer la règle.
+    Le plan de 2026 à 2029 (délibération n° 2025-12-15), à lire quand il deviendra
+    officiel : publié, ou appliqué par la caisse au salaire de référence d'une année. Une
+    dépêche AEF du 19 décembre 2025 lui prête une surindexation du salaire de référence à
+    partir de 2028 ; d'ici là, le modèle ne la prend pas en compte, ni ne la chiffre. La
+    clause de revoyure de 2027 peut aussi changer la règle.
   lectures:
   - type: legifrance
     reference: >-
@@ -281,8 +251,9 @@ sources:
     date: 2026-06-25
   - type: autre
     reference: >-
-      AEF info, dépêche n° 742881 du 19 décembre 2025, partie publique : le plan de 2026
-      à 2029 et la surindexation du salaire de référence à partir de 2028 (copie datée,
+      AEF info, dépêche n° 742881 du 19 décembre 2025, partie publique, source non
+      officielle : le plan de 2026 à 2029 et une surindexation du salaire de référence à
+      partir de 2028, que le modèle ne prend pas en compte (copie datée,
       sha256:1d8f229ed12c7c69b75d4939af50cefb5ad23eb73595c9776e6350ec929487d6)
     url: https://www.aefinfo.fr/depeche/742881-syndicats-et-employeurs-publics-saccordent-sur-le-plan-quadriennal-de-lircantec-2026-2029
     date: 2025-12-19
@@ -316,9 +287,11 @@ historique:
   l'Ircantec, qui le gardait faute d'avoir lu son texte. Lu le même jour : l'arrêté du
   30 décembre 1970 (article 9 bis, et non 16, qui porte l'anticipation) renvoie au plan
   quadriennal, qui revalorise les deux paramètres comme les pensions. Rien n'a bougé.
+  La surindexation que la presse prête au plan à partir de 2028, chiffrée ce jour-là
+  sous trois lectures, a été écartée le même jour par le propriétaire : « tant que ce
+  n'est pas officiel, on ne prend pas en compte ».
 effet: >-
   Toute pension Ircantec qui compte des cotisations postérieures au dernier barème : elles
   donnent, au rendement de 7,63 %, ce qu'achèterait un salaire de référence revalorisé
   comme les pensions, la règle du plan quadriennal. La lecture du 4 octobre 2026 ne
-  déplace aucun chiffre ; la surindexation que la presse prête au plan à partir de 2028
-  baisserait la part Ircantec de 0,8 à 42 % selon sa lecture (approximations).
+  déplace aucun chiffre.

@@ -1282,11 +1282,7 @@ revalorise chaque 1<sup>er</sup> janvier le salaire de référence et la valeur
 de service comme les pensions de base, sur l'inflation ; à défaut de plan,
 l'arrêté ferait croître le premier des cinq tiers de cette revalorisation, la
 seconde des deux tiers. Les prix toujours, jamais les salaires (fiche
-`ircantec_valeurs_point`). Une
-dépêche de presse prête au plan de 2026 à 2029 un salaire de référence
-surindexé de <!--chiffre:valeur(data/reference/regles/ircantec_valeurs_point.yaml:versions.id=prix_au_dela_du_bareme.contenu.parametres.surindexation_rapportee*100)-->2,6<!--/--> points à partir de 2028 — une fois ou chaque année,
-elle ne le dit pas —, que ni la caisse ni un texte publié ne confirment : le
-modèle ne le suit pas, et la fiche mesure ce qu'il en coûterait.
+`ircantec_valeurs_point`).
 
 UN PIÈGE DÉCOUVERT EN CHEMIN, et refermé par un test. La table des tranches
 d'assiette existe DEUX FOIS — `BORNES_ASSIETTE` dans `donnees/regimes.py` et
