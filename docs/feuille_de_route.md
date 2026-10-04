@@ -1260,16 +1260,16 @@ borne basse et l'écart une borne haute.
 
 ### 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026 — `en cours`
 
-**Reprise, au 4 octobre 2026.** Les 260 adresses se dépouillent par lots.
+**Reprise, au 5 octobre 2026.** Les 260 adresses se dépouillent par lots.
 Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
 publique de l'État, la CNRACL et la Caisse des dépôts ; leurs restes sont sous
 « laisse ouvert » et « Puis le rétablissement ». Trois simulateurs
-d'info-retraite sont saisis (note du 1er octobre, à la fin, et action 142) :
-la réversion Agirc-Arrco avant 55 ans y attend sa lecture. Les saisies passent
-par `scripts/simulateurs.py`, qui tient le budget ; Claude les fait sur un lot
-approuvé. Restent les adresses `a_explorer` de `data/sources_a_explorer.yaml`,
-dont le RAFP, puis le CLEISS, les modèles publics et mon-entreprise. Commencer
-par le RAFP, ses lignes réservées par un commit `en_cours` poussé seul.
+d'info-retraite sont saisis (note du 1er octobre, action 142) : la réversion
+Agirc-Arrco avant 55 ans y attend sa lecture. Les saisies passent par
+`scripts/simulateurs.py`, qui tient le budget, sur un lot approuvé. Restent
+les lignes `a_explorer` de `data/sources_a_explorer.yaml` : le RAFP, le CLEISS,
+les modèles publics, mon-entreprise, et quinze API publiques (dernière note).
+D'abord le RAFP, ses lignes réservées par un commit `en_cours` poussé seul.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
@@ -1880,6 +1880,32 @@ remariage (perte de l'Agirc-Arrco, plafond du ménage à 1,6) et l'Ircantec, à
 saisir une autre fois ; le budget par simulateur du § 3.5, qu'aucun registre
 ne tient encore — cinq saisies pour la carrière longue, quatre pour la
 réversion.
+
+**Les API publiques, sondées le 5 octobre 2026.** Le propriétaire a demandé
+la liste des API publiques qui pourraient servir, après celle de la Cnav.
+Le catalogue des API de l'État (`www.data.gouv.fr/api/1/dataservices/`) n'en
+recense aucune d'ouverte sur la retraite : hors des portails de données déjà
+branchés (Urssaf, DREES), tout y est réservé aux administrations (API
+Particulier, API Entreprise), et Légifrance est derrière un compte PISTE.
+Aucune des caisses sondées ne sert sa base réglementaire comme la Cnav.
+Quinze lignes entrent au vivier, sous « Les API publiques », toutes mesurées
+le jour même : les cubes de pensions du SRE (data.economie.gouv.fr, de 2015 à
+2025), l'API de calcul de mon-entreprise (`mon_entreprise_developpeur` passe
+`explore`), les fiches de service-public en XML, datées, l'interface SRU de
+Gallica, les WordPress ouverts de la CNAVPL, de la CAVEC, de la CAVAMAC, de la
+CAVOM, de la CPRN et de la CRPN, les pages en JSON de la base de l'Ircantec et
+de la Cipav, deux jeux de la DREES (taux de remplacement, minimum vieillesse)
+et Légifrance par PISTE, en `refus` faute de compte. Parmi elles, commencer
+par les cubes du SRE et l'API de mon-entreprise. *Laissé* : l'open data de la
+Caisse des dépôts, déjà au manifeste (`cdc_open_data`) ; le jeu 1393 de la
+DREES, que le critère 1 fait remonter à l'EACR et à l'EIR ; l'API web
+d'OpenFisca, qui sert le YAML déjà lu ; Webstat, ILOSTAT et le grunnbeløp de
+la NAV, sans rien pour le modèle ; l'API tabulaire de data.gouv.fr, un outil —
+les cinq CSV de la MSA n'y comptent que des retraités par intercommunalité.
+*Sondés sans résultat* : la réglementation de l'Agirc-Arrco (pages HTML
+seules), les simulateurs d'info-retraite, la MSA (refus), le SRE et le COR
+(pare-feu), le BOSS, la CNIEG, Juris-CNRACL (un flux RSS d'un seul article, de
+2019) et les WordPress fermés de la CNBF, de l'IRCEC et de la CARPV.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 

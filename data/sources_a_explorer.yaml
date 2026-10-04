@@ -1283,12 +1283,15 @@ sources:
     a_en_tirer: >-
       L'API et les modules : savoir s'il existe un point d'appel qui rende un
       calcul complet sans navigateur.
-    statut: a_explorer
+    statut: explore
+    explore_le: 2026-10-05
     note: >-
       Resondé le 22 septembre 2026 par `scripts/fetch/sonder_sources.py` : le 200
       porte une coquille de 7 Ko, presque sans texte, que le JavaScript remplit.
       La page se lit dans Chromium ; les règles, elles, sont dans le dépôt du
-      code (`mon_entreprise_depot`), qui se clone.
+      code (`mon_entreprise_depot`), qui se clone. Le 5 octobre 2026, le point
+      d'appel s'est trouvé sans la page : `POST /api/v1/evaluate` rend le
+      calcul sans navigateur ni compte, et il a sa ligne, `mon_entreprise_api`.
 
   - id: mon_entreprise_depot
     url: https://github.com/betagouv/mon-entreprise
@@ -5027,3 +5030,236 @@ sources:
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+
+  # ---- Les API publiques, sondées le 5 octobre 2026 --------------------------
+  # Ces lignes ne viennent pas non plus des 260 adresses : elles sont nées de
+  # la liste des API publiques que le propriétaire a demandée ce jour-là, après
+  # celle de la Cnav (docs/exploration_sources.md). Le catalogue des API de
+  # l'État (`www.data.gouv.fr/api/1/dataservices/`) n'en recense aucune
+  # d'ouverte sur la retraite : ce sont des portails de données, et des sites
+  # de caisses qui servent leurs pages en JSON. Ce qui a été sondé sans
+  # résultat est dans la note de l'action 89 du même jour.
+
+  - id: sre_cubes_pensions
+    url: https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets?where=%22cube%22%20and%20%22retraite%22
+    nature: index
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Les quinze cubes du Service des retraites de l'État : pensions civiles
+      et militaires de droit direct, en stock et en flux de 2015 à 2025, par
+      génération de 1944 à 1957, et la retraite progressive — effectif, âge,
+      montant mensuel moyen, durées de services et de bonifications. Ce que
+      la caisse publie d'elle-même, à confronter au jaune budgétaire
+      (`scripts/fetch/sre_jaune_pensions.py`) et au modèle.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : catalogue Opendatasoft ouvert, sans compte ;
+      les cubes, publiés par la DGFiP, datent du 11 août 2026. Chacun se lit
+      par `…/datasets/<id>/records`, ou s'exporte en CSV.
+
+  - id: mon_entreprise_api
+    url: https://mon-entreprise.urssaf.fr/api/v1/evaluate
+    nature: simulateur
+    acces: session
+    regimes: [regime_general, agirc_arrco]
+    a_en_tirer: >-
+      Les cotisations vieillesse de l'année — plafonnée, déplafonnée,
+      Agirc-Arrco —, salariales et patronales, que l'Urssaf calcule pour le
+      salaire qu'on lui donne : des exemples officiels pour les taux de
+      cotisation du dépôt, en une requête et sans navigateur.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : un POST de JSON, `{"situation": {…},
+      "expressions": […]}`, rend chaque expression évaluée, avec son unité ;
+      « plafond sécurité sociale » y vaut 4 005 €/mois. Le droit de l'année
+      en cours seulement.
+
+  - id: service_public_fiches_xml
+    url: https://lecomarquage.service-public.fr/vdd/3.4/part/zip/vosdroits-latest.zip
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Toutes les fiches « Vos droits » en XML, chacune avec sa date de
+      dernière modification importante : à chaque veille, dire lesquelles des
+      fiches que citent les règles du dépôt ont changé, sans ouvrir le site.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : l'archive entière pèse 23 Mo ; une fiche se
+      lit seule à `…/vdd/3.4/part/xml/F13243.xml`, attribut
+      `dateDerniereModificationImportante` (le 1er janvier 2026 pour
+      celle-là).
+
+  - id: gallica_sru
+    url: https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&query=dc.title%20all%20%22Journal%20officiel%22
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le Journal officiel numérisé, interrogé en plein texte : l'identifiant
+      ark et la page d'un texte daté, que les fiches citent aujourd'hui à la
+      main (neuf liens vers Gallica), retrouvés par une requête plutôt qu'en
+      feuilletant.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : l'interface SRU de la BnF répond en XML,
+      sans compte (420 notices au titre « Journal officiel »).
+
+  - id: cnavpl_wordpress
+    url: https://www.cnavpl.fr/wp-json/wp/v2
+    nature: index
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      La liste datée de ce que le site publie : 73 documents du gestionnaire
+      de téléchargements (`wpdmpro`, dont le guide 2026 en trois parties),
+      31 PDF, 26 pages et 10 chiffres clés (`ucpt_statistique`) — ce que le
+      lot des libérales n'a pas vu, et, à chaque veille, ce qui a bougé.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : l'API REST de WordPress est ouverte, sans
+      compte ; `search=`, `modified_after=` et `per_page=100` y servent, et le
+      total est dans l'en-tête `X-WP-Total`. Les graphiques `visualizer` n'y
+      portent pas leurs données (`chart_data` : false).
+
+  - id: cavec_wordpress
+    url: https://www.cavec.fr/wp-json/wp/v2
+    nature: index
+    acces: session
+    regimes: [cavec_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les 269 pages et 50 PDF du site, chacun daté : relever ce que le lot
+      des libérales n'a pas vu, et, à chaque veille, ce qui a bougé.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
+      de la CNAVPL (`cnavpl_wordpress`).
+
+  - id: cavamac_wordpress
+    url: https://www.cavamac.fr/wp-json/wp/v2
+    nature: index
+    acces: session
+    regimes: [cavamac_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les 44 pages et 70 PDF du site, chacun daté : relever ce que le lot des
+      libérales n'a pas vu, et, à chaque veille, ce qui a bougé.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
+      de la CNAVPL (`cnavpl_wordpress`).
+
+  - id: cavom_wordpress
+    url: https://www.cavom.net/wp-json/wp/v2
+    nature: index
+    acces: session
+    regimes: [cavom_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les 38 pages et 63 PDF du site, chacun daté, dont les règlements de la
+      caisse au 1er juillet 2026 : relever ce que le lot des libérales n'a pas
+      vu, et, à chaque veille, ce qui a bougé.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
+      de la CNAVPL (`cnavpl_wordpress`).
+
+  - id: cprn_wordpress
+    url: https://www.cprn.fr/wp-json/wp/v2
+    nature: index
+    acces: session
+    regimes: [cprn_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les 59 pages et 111 PDF du site, chacun daté : relever ce que le lot des
+      notaires n'a pas vu, et, à chaque veille, ce qui a bougé.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
+      de la CNAVPL (`cnavpl_wordpress`).
+
+  - id: crpn_wordpress
+    url: https://www.crpn.fr/wp-json/wp/v2
+    nature: index
+    acces: session
+    regimes: [crpnpac, crpnpac_tranche_2]
+    a_en_tirer: >-
+      Les 76 pages et 373 PDF du site, chacun daté, dont les notices de
+      réversion : relever ce que le lot de la CRPN n'a pas vu, et, à chaque
+      veille, ce qui a bougé.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
+      de la CNAVPL (`cnavpl_wordpress`).
+
+  - id: baseircantec_json
+    url: https://baseircantec.retraites.fr/?_format=json
+    nature: index
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Chaque page de la base servie en JSON (`?_format=json`), avec sa date de
+      modification (`changed`) : savoir, à chaque veille, lesquelles des
+      pages lues au lot de l'Ircantec ont bougé, sans les relire.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : le titre, la date et quelques champs en
+      HTML ; le corps, rangé en paragraphes Drupal, n'est pas servi
+      (`/entity/paragraph/<id>` répond 404).
+
+  - id: lacipav_json
+    url: https://www.lacipav.fr/?_format=json
+    nature: index
+    acces: session
+    regimes: [cnavpl, cipav_complementaire]
+    a_en_tirer: >-
+      Chaque page du site de la Cipav servie en JSON, avec sa date de
+      modification (`changed`) : la veille des pages que le lot des libérales
+      a lues, sans les relire.
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : un Drupal qui sert ses pages en JSON, comme
+      la base de l'Ircantec (`baseircantec_json`).
+
+  - id: drees_taux_de_remplacement
+    url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/repartition-des-taux-de-remplacement-entre-les-revenus-juste-avant-et-juste-apres-la-retraite/
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les quantiles du taux de remplacement (10, 25, 50, 75 et 90 %) à la
+      première année pleine de retraite, par catégorie, sexe et définition du
+      revenu — 4 806 lignes, mises à jour le 19 mars 2026 : de quoi confronter
+      les taux de remplacement que le modèle calcule.
+    statut: a_explorer
+
+  - id: drees_minimum_vieillesse
+    url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/1377_le-minimum-vieillesse/
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      L'enquête annuelle sur le minimum vieillesse — allocataires, montants
+      versés, caractéristiques —, en dix-huit classeurs mis à jour le
+      15 décembre 2025 : les effectifs et la dépense constatés, en face du
+      barème que le dépôt tient de LEGI
+      (`scripts/fetch/dila_legi_minimum_vieillesse.py`).
+    statut: a_explorer
+    note: >-
+      Mesuré le 5 octobre 2026 : le jeu n'a pas de lignes, seulement des
+      pièces jointes (`…/datasets/1377_le-minimum-vieillesse/attachments`).
+
+  - id: legifrance_piste
+    url: https://api.piste.gouv.fr/dila/legifrance/lf-engine-app
+    nature: index
+    acces: refus
+    regimes: []
+    a_en_tirer: >-
+      Légifrance interrogé en direct : tout le JORF et tous les codes, à une
+      date, au-delà du champ social que porte l'index du dépôt — et les
+      circulaires, si l'API les sert.
+    statut: a_explorer
+    note: >-
+      Sans jeton, l'API répond 400 (mesuré le 5 octobre 2026) : il faut un
+      compte PISTE et l'acceptation de ses conditions, un geste du
+      propriétaire qu'aucune session ne fait ; le catalogue de l'État la range
+      en accès restreint. En attendant, l'index plein texte LEGI et JORF du
+      dépôt sert (`scripts/fetch/dila_cherche.py`).
