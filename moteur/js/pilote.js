@@ -8,7 +8,9 @@
  * plusieurs fois, jusqu'à un point fixe ; il ne lui faut qu'un âge, et il
  * n'interroge donc que l'étape « ouvrir le droit » (`droit/ouvrir.js`), sans
  * rien liquider. La date qu'il trouve devient celle du départ de la carrière,
- * que l'échéancier traite (`echeancier.js`). Les populations — les cas types
+ * que l'échéancier traite (`echeancier.js`). Les mêmes points fixes datent
+ * les trois départs que « Mon estimation retraite » chiffre, pour la carrière
+ * d'une saisie (`agesDeLEstimation`). Les populations — les cas types
  * pondérés — restent dans `castypes.js`.
  */
 
@@ -69,9 +71,20 @@ export function ageDeDepart(simulateur, cas, generation, variante = "droit") {
   if (!["ouverture", "taux_plein"].includes(cas.regle_liquidation)) {
     throw new Error(`règle de liquidation inconnue : ${cas.regle_liquidation}`);
   }
-  let age = cas.age_liquidation;
+  return pointFixe(cas.age_liquidation,
+    (age) => agePropose(simulateur, cas, generation, age));
+}
+
+/**
+ * L'âge que `proposer` confirme, en partant de `age` : la boucle de
+ * `ageDeDepart`, que `agesDeLEstimation` emprunte. Une montée se suit ; une
+ * descente ne se retient que si l'âge plus précoce se confirme lui-même. Voir
+ * `point_fixe` (pilote.py).
+ */
+export function pointFixe(depart, proposer) {
+  let age = depart;
   for (let passe = 0; passe < PASSES_LIQUIDATION; passe += 1) {
-    const propose = agePropose(simulateur, cas, generation, age);
+    const propose = proposer(age);
     if (propose === null || Math.abs(propose - age) < 1e-9) {
       break;
     }
@@ -79,7 +92,7 @@ export function ageDeDepart(simulateur, cas, generation, variante = "droit") {
       age = propose;
       continue;
     }
-    const confirme = agePropose(simulateur, cas, generation, propose);
+    const confirme = proposer(propose);
     if (confirme === null) {
       break;
     }
@@ -110,4 +123,36 @@ export function agePropose(simulateur, cas, generation, age) {
     ? ouvrir.ageTauxPleinDroit(actuel, carriere)
     : ouvrir.ageOuvertureDroit(actuel, carriere);
   return reference === null ? null : reference + cas.ecart_liquidation;
+}
+
+/**
+ * Les départs que « Mon estimation retraite » chiffre, dans l'ordre de sa
+ * synthèse : au plus tôt — l'âge légal, ou la carrière longue qui le devance —,
+ * au taux plein, au taux plein automatique.
+ */
+export const DEPARTS_DE_L_ESTIMATION = Object.freeze(["legal", "taux_plein", "automatique"]);
+
+/**
+ * Les trois âges de « Mon estimation retraite », pour la carrière que
+ * `batir(age)` rend liquidée à `age` : chacun un point fixe, le premier parti
+ * de `depart`, chacun des suivants du précédent, qu'il ne précède jamais.
+ * `null` quand le droit n'oppose aucun âge à cette carrière. Voir
+ * `ages_de_l_estimation` (pilote.py).
+ */
+export function agesDeLEstimation(actuel, batir, depart) {
+  // Les trois règles répondent `null` dans le même cas : aucun régime retenu.
+  if (ouvrir.ageOuvertureDroit(actuel, batir(depart)) === null) {
+    return null;
+  }
+  const regles = [ouvrir.ageOuvertureDroit, ouvrir.ageTauxPleinDroit,
+    ouvrir.ageAnnulationDroit];
+  const ages = {};
+  let age = depart;
+  DEPARTS_DE_L_ESTIMATION.forEach((quoi, rang) => {
+    const regle = regles[rang];
+    const trouve = pointFixe(age, (a) => regle(actuel, batir(a)));
+    age = rang > 0 ? Math.max(age, trouve) : trouve;
+    ages[quoi] = age;
+  });
+  return ages;
 }

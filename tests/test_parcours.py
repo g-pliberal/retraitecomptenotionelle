@@ -134,7 +134,11 @@ def _saisie_par_defaut() -> dict[str, str]:
 
 
 def _rendue(chemin: str) -> str:
-    parametres = _saisie_par_defaut() if chemin == "/simuler" else {}
+    # Le parcours décrit l'exemple en net — « 3 500 € net par mois » —, le
+    # défaut de son temps ; le brut l'est depuis le 4 octobre 2026. Le récit ne
+    # se récrit pas : la page se rend dans le mode qu'il décrit.
+    parametres = ({**_saisie_par_defaut(), "montants": "net"} if chemin == "/simuler"
+                  else {})
     return _prose(rendre(chemin, parametres)[1])
 
 

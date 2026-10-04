@@ -31,6 +31,7 @@ from .donnees.equilibre import ComptesRetraite, variante_du_scenario
 from .donnees.population import Population
 from .droit.coordonner import REGIMES_CODE_DES_PENSIONS
 from .frontiere import charger_frontiere
+from .pilote import ages_de_l_estimation
 from .remuneration import (
     charger_prelevements,
     salaire_brut_depuis_net,
@@ -312,6 +313,75 @@ class Contexte:
         if saisie.releve_actif:
             return simulateur.simuler(self._carriere_relevee(
                 simulateur, saisie, motifs))
+        parcours, batir = self._parcours(simulateur, saisie, motifs)
+        if saisie.par_pension:
+            return self._simuler_par_pension(simulateur, saisie, batir,
+                                             len(parcours), parcours)
+        return simulateur.simuler(self._carriere_parcourue(simulateur, parcours, batir))
+
+    def carriere(self, saisie: Saisie) -> "Carriere":
+        """La carrière que :meth:`simuler` calcule pour une saisie par le
+        revenu : celle du relevé, ou celle des métiers."""
+        simulateur = self.simulateur(saisie.parametres(self.base))
+        motifs = charger_periodes_non_travaillees(simulateur.macro.racine)
+        if saisie.releve_actif:
+            return self._carriere_relevee(simulateur, saisie, motifs)
+        parcours, batir = self._parcours(simulateur, saisie, motifs)
+        return self._carriere_parcourue(simulateur, parcours, batir)
+
+    def departs_de_l_estimation(self, saisie: Saisie) -> tuple["DepartEstime", ...]:
+        """Les départs que « Mon estimation retraite » chiffre — au plus tôt,
+        au taux plein, au taux plein automatique —, tels que le scénario 1 les
+        sert à la carrière de cette saisie
+        (:func:`~retraite_notionnelle.pilote.ages_de_l_estimation`).
+
+        Chaque départ refait la carrière à sa date, comme la saisie la ferait
+        si on y écrivait cette date, et la liquide : le brut de chaque étage,
+        annuel, en euros constants de l'année de référence, la convention de
+        l'estimation indicative globale. Deux âges confondus font un départ.
+
+        Vide pour une saisie par la pension, pour qui est déjà parti, pour une
+        carrière dont la saisie date elle-même des pensions — demandées régime
+        par régime, ouvertes par l'invalidité ou par la radiation —, quand le
+        droit n'oppose aucun âge, ou quand la saisie ou le modèle refusent la
+        carrière à l'un des âges ; un départ d'une année déjà passée est omis.
+        """
+        if (saisie.par_pension or saisie.demandes or saisie.invalidite is not None
+                or saisie.radiation_invalidite is not None):
+            return ()
+        parametres = saisie.parametres(self.base)
+        simulateur = self.simulateur(parametres)
+        annee = parametres.annee_courante
+        if saisie.date_liquidation.annee < annee:
+            return ()
+
+        def batir(age: float) -> "Carriere":
+            # La saisie refuse ce que sa date rend incohérent — un métier
+            # commencé après le départ —, avec ses mots, avant le modèle.
+            autre = replace(saisie, liquidation=age)
+            autre.verifier()
+            return self.carriere(autre)
+
+        departs: list[DepartEstime] = []
+        try:
+            ages = ages_de_l_estimation(simulateur.scenario_actuel, batir,
+                                        saisie.liquidation)
+            for quoi, age in (ages or {}).items():
+                if departs and abs(departs[-1].age - age) < 1e-9:
+                    departs[-1] = replace(departs[-1], quoi=departs[-1].quoi + (quoi,))
+                    continue
+                carriere = batir(age)
+                if carriere.annee_liquidation >= annee:
+                    departs.append(_depart_estime(simulateur, parametres, carriere, quoi))
+        except (ErreurSaisie, ValueError):
+            # Une carrière que la saisie ou le modèle refusent à l'un des âges :
+            # le bloc se tait plutôt que de chiffrer une autre carrière.
+            return ()
+        return tuple(departs)
+
+    def _parcours(self, simulateur: Simulateur, saisie: Saisie, motifs):
+        """Les métiers de la saisie, et de quoi bâtir leur carrière à des
+        niveaux de revenu donnés."""
         parcours = saisie.parcours(self.echelle(saisie))
         for metier in parcours:
             if metier.affiliation not in simulateur.affiliations:
@@ -348,13 +418,14 @@ class Contexte:
                 identifiant="assuré",
             )
 
-        if saisie.par_pension:
-            return self._simuler_par_pension(simulateur, saisie, batir,
-                                             len(parcours), parcours)
+        return parcours, batir
+
+    @staticmethod
+    def _carriere_parcourue(simulateur: Simulateur, parcours, batir) -> "Carriere":
         carriere = batir([metier.niveau_salaire for metier in parcours])
         _verifier_statuts_ouverts(simulateur.affiliations, carriere, parcours)
         _verifier_radiation_pour_invalidite(simulateur.affiliations, carriere)
-        return simulateur.simuler(carriere)
+        return carriere
 
     def _simuler_par_pension(self, simulateur: Simulateur, saisie: Saisie,
                              batir, combien: int, parcours) -> Comparaison:
@@ -461,6 +532,71 @@ class Contexte:
                 f"Activité après le départ : statut d'affiliation inconnu "
                 f"« {emploi['affiliation']} ».")
         return emploi
+
+
+@dataclass(frozen=True)
+class DepartEstime:
+    """Un départ de « Mon estimation retraite », tel que le scénario 1 le sert.
+
+    Les montants sont bruts, annuels, en euros constants de l'année de
+    référence : la page les divise par douze. ``etages`` additionne, étage
+    par étage (base, complémentaire, intégré, additionnel), la pension de
+    chaque régime, minima compris, et la part qu'il sert de la majoration
+    pour enfants. Le minimum vieillesse, qu'aucun régime ne sert et que
+    l'estimation ignore, reste à part.
+    """
+
+    #: Les âges de :data:`~retraite_notionnelle.pilote.DEPARTS_DE_L_ESTIMATION`
+    #: que ce départ réunit.
+    quoi: tuple[str, ...]
+    age: float
+    #: Le mois du départ, « AAAA-MM ».
+    date: str
+    etages: dict[str, float]
+    minimum_vieillesse: float
+    trimestres: int
+    trimestres_requis: int
+    motif_ouverture: str
+
+    @property
+    def total(self) -> float:
+        # De gauche à droite, comme le jumeau : la somme de Python 3.12 est
+        # compensée, et différerait au dernier chiffre.
+        total = 0.0
+        for montant in self.etages.values():
+            total += montant
+        return total
+
+
+def _depart_estime(simulateur: Simulateur, parametres: Parametres, carriere,
+                   quoi: str) -> DepartEstime:
+    resultat = simulateur.echeancier(carriere).au_depart
+    passage = simulateur.macro.coefficient_prix(
+        carriere.annee_liquidation, parametres.annee_euros_constants)
+    etages: dict[str, float] = {}
+
+    def porter(code: str, montant: float) -> None:
+        etage = simulateur.catalogue[code].etage
+        etages[etage] = etages.get(etage, 0.0) + montant * passage
+
+    for pension in resultat.pensions_par_regime:
+        porter(pension.regime, pension.montant)
+    minimum = 0.0
+    for avantage in resultat.avantages_appliques:
+        if avantage.code == "majoration_enfants":
+            for code, part in avantage.par_regime:
+                porter(code, part)
+        elif avantage.code == "minimum_vieillesse":
+            minimum += avantage.montant
+    date = carriere.date_liquidation
+    return DepartEstime(
+        quoi=(quoi,), age=carriere.age_liquidation,
+        date=f"{date.annee:04d}-{date.mois:02d}", etages=etages,
+        minimum_vieillesse=minimum * passage,
+        trimestres=resultat.trimestres_valides,
+        trimestres_requis=resultat.trimestres_requis,
+        motif_ouverture=resultat.motif_ouverture,
+    )
 
 
 def _demandes_de_pension(simulateur: Simulateur, saisie: Saisie) -> dict[str, float] | None:

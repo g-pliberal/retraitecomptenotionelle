@@ -924,6 +924,17 @@ td.nombre, td.date, th.date { white-space: nowrap; }
    la grille la réduisait à deux cents points et une note de trente lignes
    faisait une rangée de sept cents. */
 td.long, th.long { min-width: 18rem; }
+/* « Comme votre estimation officielle » : l'âge en tête de rangée, sa date et
+   ce qu'il est dessous ; le total recopié dans un champ étroit, aligné sur les
+   montants de sa rangée, et non sur la largeur d'un champ de formulaire. */
+.estimation-officielle th .aide {
+  display: block; font-size: 0.875rem; font-weight: 400;
+  color: var(--texte-doux); min-width: 11rem;
+}
+.estimation-officielle td input.recopie[type="number"] {
+  width: 7rem; min-height: 0; padding: 0.35rem 0.5rem; text-align: right;
+}
+.estimation-officielle .comparer { margin: 1rem 0 0.5rem; }
 /* Les deux grands tableaux de la page Données : 91 séries sur cinq colonnes,
    89 régimes sur sept. Sans largeur minimale, la colonne des statuts d'un
    régime mettait un code par ligne et une rangée faisait cinq cents points. */

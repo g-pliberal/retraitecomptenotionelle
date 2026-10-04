@@ -8,8 +8,9 @@
  * l'âge légal de la génération (`ageOuverture`) ; la durée requise
  * (`dureeRequise`) ; la carrière longue quand l'âge demandé précède tous les
  * autres. `ouvrir` écrit ce que l'étape dit d'une demande — son schéma est
- * `data/reference/etapes/ouvrir_le_droit.yaml` ; `ageOuvertureDroit` et
- * `ageTauxPleinDroit` sont ce que le pilote en lit, sans rien liquider.
+ * `data/reference/etapes/ouvrir_le_droit.yaml` ; `ageOuvertureDroit`,
+ * `ageTauxPleinDroit` et `ageAnnulationDroit` sont ce que le pilote en lit,
+ * sans rien liquider.
  */
 
 import { DateMois, MOIS_PAR_AN, enMois, trimestresCivils } from "../calendrier.js";
@@ -898,6 +899,23 @@ export function ageTauxPleinDroit(moteur, carriereSaisie) {
     return anticipe;
   }
   return tauxPlein;
+}
+
+/**
+ * L'âge auquel cette carrière a le taux plein SANS CONDITION DE DURÉE : l'âge
+ * d'annulation de la décote, le plus précoce des régimes retenus. Le troisième
+ * terme de `ageTauxPleinDroit`, posé seul : l'âge du « taux plein
+ * automatique », le dernier que « Mon estimation retraite » chiffre
+ * (`agesDeLEstimation`, pilote.js). Voir `age_annulation_droit` (ouvrir.py).
+ */
+export function ageAnnulationDroit(moteur, carriereSaisie) {
+  const carriere = coordonner.retablir(moteur, carriereSaisie);
+  const { annuites, autres } = periodesParcourues(moteur, carriere);
+  const retenues = annuites.length > 0 ? annuites : sansAgesPropres(autres);
+  if (retenues.length === 0) {
+    return null;
+  }
+  return Math.min(...retenues.map(([, periode]) => ageTauxPlein(moteur, periode, carriere)));
 }
 
 /**

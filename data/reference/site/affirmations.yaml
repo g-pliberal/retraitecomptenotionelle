@@ -2373,7 +2373,7 @@ affirmations:
 
   - id: pied.net_ou_brut
     page: "*"
-    extrait: "s'affichent au net ou au brut, à votre choix"
-    porte: les deux unités existent, le lecteur choisit, et le défaut est le net
+    extrait: "s'affichent au brut ou au net, à votre choix"
+    porte: les deux unités existent, le lecteur choisit, et le défaut est le brut
     etat: verifiee
     controle: montants_au_net_ou_au_brut

@@ -510,12 +510,14 @@ def _cas() -> list[dict]:
 
     # Le salaire saisi en euros : la division qui le ramène au multiple du
     # salaire moyen est le seul endroit où l'euro entre dans le modèle, et elle
-    # doit donner le même chiffre des deux côtés du portage.
+    # doit donner le même chiffre des deux côtés du portage. Saisi en NET, le
+    # défaut jusqu'au 4 octobre 2026 : le net remonte au brut par la fiche de
+    # paie avant la division, et c'est ce chemin que ces deux témoins tiennent.
     cas.append(("revenu_en_euros", {
-        "unite_revenu": "euros_mois", "salaire": "2500",
+        "unite_revenu": "euros_mois", "salaire": "2500", "montants": "net",
     }))
     cas.append(("revenu_en_euros_par_metier", {
-        "unite_revenu": "euros_mois", "salaire": "2000",
+        "unite_revenu": "euros_mois", "salaire": "2000", "montants": "net",
         "metier2_debut": "38", "metier2_statut": "salarie_prive_cadre",
         "metier2_salaire": "4500",
     }))
@@ -1616,9 +1618,11 @@ def _pages() -> dict:
             **BASE, "situation": "retraite", "saisie_par": "revenu",
             "naissance": "1955", "debut": "20", "liquidation": "62",
         }),
-        ("simuler_par_pension_brute", "/simuler", {
+        # La pension saisie dans l'autre mode que le défaut : nette, depuis
+        # que le brut l'est (4 octobre 2026).
+        ("simuler_par_pension_nette", "/simuler", {
             **BASE, "saisie_par": "pension", "pension": "2400",
-            "montants": "brut",
+            "montants": "net",
         }),
         # Au-dessus de ce que le statut peut acquérir : le plafond de tranche.
         ("simuler_pension_trop_haute", "/simuler", {
@@ -1742,6 +1746,11 @@ def _pages() -> dict:
         }),
         ("simuler_liquidation_non_ouverte", "/simuler", {
             **BASE, "liquidation": "55", "debut": "30",
+        }),
+        # Le système 1 au format de « Mon estimation retraite », un total
+        # recopié à deux des âges : la colonne de l'écart, et ses deux signes.
+        ("simuler_estimation_recopiee", "/simuler", {
+            **BASE, "estimation_legal": "2500", "estimation_automatique": "3100",
         }),
         # Le salaire saisi en euros : le formulaire change de libellé et donne
         # l'échelle chiffrée, au lieu du multiple que personne ne connaît.

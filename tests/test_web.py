@@ -1014,9 +1014,11 @@ def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie():
     comme un salaire —, et avec lui le recoupement qu'il permettait. Le salaire
     net en offre un autre, et meilleur : il est écrit une fois en tête de
     chaque carte, et une seconde fois dans la fiche de paie repliée. Deux
-    chemins de calcul, deux rendus, un seul nombre attendu.
+    chemins de calcul, deux rendus, un seul nombre attendu. En net, demandé :
+    le brut est le défaut depuis le 4 octobre 2026, et la carte dit alors le
+    salaire brut.
     """
-    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", {**SIMULATION_TEMOIN, "montants": "net"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
     assert len(blocs) == 4, f"{len(blocs)} systèmes affichés, quatre attendus"
     # Le nombre des cartes est NU depuis que l'unité est passée sous lui
@@ -3419,7 +3421,10 @@ def test_la_page_de_resultats_replie_son_detail():
     assert mots <= mots_max, (
         f"{mots} mots à traverser sur la page de résultats, {mots_max} au plus"
     )
-    assert visible.count("<table") == 0, "un tableau de détail reste ouvert"
+    # Le seul tableau ouvert est un résultat, non un détail : le système 1 au
+    # format de l'estimation officielle (action 142, étape 3).
+    assert visible.count("<table") == visible.count(
+        'class="carte estimation-officielle"'), "un tableau de détail reste ouvert"
     assert visible.count('<figure class="graphique"') == 0, (
         "un graphique reste ouvert"
     )

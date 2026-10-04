@@ -784,7 +784,8 @@ def test_la_bascule_net_brut_traduit_la_pension_saisie(contexte):
     qu'on venait de calculer, sans un mot. C'est le bogue que la bascule évite
     depuis toujours pour les salaires ; la pension l'avait rouvert.
     """
-    base = {"saisie_par": "pension", "pension": "1800",
+    # En net, que la page ne prend plus par défaut depuis le 4 octobre 2026.
+    base = {"saisie_par": "pension", "pension": "1800", "montants": "net",
             "naissance": "1975-01-01", "debut": "1996-01",
             "liquidation": "2039-01"}
     _, corps = rendre("/simuler", base)

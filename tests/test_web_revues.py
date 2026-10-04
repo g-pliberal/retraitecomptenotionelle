@@ -657,8 +657,11 @@ def test_les_resultats_s_ouvrent_sur_le_resume_la_cle_puis_les_montants():
     l'électeur, puis la clé qui dit ce qu'on regarde, puis les quatre montants,
     puis seulement les repères techniques. Dans l'ordre inverse, un téléphone
     montrait un coefficient de conversion et pas un euro ; sans le résumé, il
-    montrait dix nombres et rien qui dise lesquels comparer."""
-    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
+    montrait dix nombres et rien qui dise lesquels comparer.
+
+    En net, demandé : la note de la CSG, que la page ne porte qu'en net, se lit
+    sous les barres, et le brut est le défaut depuis le 4 octobre 2026."""
+    corps = rendre("/simuler", {**SIMULATION_TEMOIN, "montants": "net"})[1]
     visible = _hors_depliants(corps)
     resultats = visible.index('id="resultats"')
     bref = visible.index('<section class="en-bref"', resultats)
@@ -725,8 +728,12 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres():
     deux systèmes, dans les mêmes mots et au même euro que sous leurs barres :
     le taire pour l'un flatterait l'autre (action 62). Les systèmes 2 et 3,
     étalons et non choix, n'y figurent pas.
+
+    En net, demandé : le salaire que les barres affichent est alors le salaire
+    net dont le résumé parle. Le brut, défaut depuis le 4 octobre 2026, est tenu
+    à la fin, sur les pensions.
     """
-    corps = rendre("/simuler", SIMULATION_TEMOIN)[1]
+    corps = rendre("/simuler", {**SIMULATION_TEMOIN, "montants": "net"})[1]
     bref = re.search(r'<section class="en-bref".*?</section>', corps, re.S).group(0)
     # Les blancs ORDINAIRES seuls sont repliés : `split()` couperait aussi
     # l'espace fine insécable des milliers, que les montants portent.
@@ -776,6 +783,14 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres():
     # à la route.
     assert 'data-vers="resultats-financement"' in bref
     assert 'id="resultats-financement"' in corps
+    # En brut, le défaut : les mêmes pensions que les barres, dites brutes.
+    en_brut = rendre("/simuler", SIMULATION_TEMOIN)[1]
+    bref = re.search(r'<section class="en-bref".*?</section>', en_brut, re.S).group(0)
+    texte = re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", bref))
+    blocs = en_brut.split('<div class="scenario">')[1:]
+    for bloc in (blocs[0], blocs[3]):
+        assert euro(principal(bloc)) in texte
+    assert "bruts par mois" in texte
 
 
 def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee():
@@ -785,7 +800,7 @@ def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee():
     sans ligne de salaire.
 
     La pension qu'il y lit est celle qu'il touche AUJOURD'HUI, et c'est celle
-    qu'il a saisie : 1 600 € nets en 2026, et non 1 600 € en avril 2017. Le
+    qu'il a saisie : 1 600 € bruts en 2026, et non 1 600 € en avril 2017. Le
     résumé disait « votre retraite était de », et donnait la pension du
     départ ramenée par les prix — ce que personne n'a jamais touché."""
     corps = rendre("/simuler", {
@@ -795,7 +810,7 @@ def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee():
         "pension": "1600"})[1]
     bref = re.search(r'<section class="en-bref".*?</section>', corps, re.S).group(0)
     texte = re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", bref))
-    assert "votre retraite est aujourd'hui de 1\u202f600\u202f€ nets par mois" in texte
+    assert "votre retraite est aujourd'hui de 1\u202f600\u202f€ bruts par mois" in texte
     assert "celle de votre départ, en avril 2017, revalorisée depuis" in texte
     assert "elle serait recalculée sur ce qui a été cotisé" in texte
     assert "Pendant que vous travaillez" not in texte
@@ -1066,12 +1081,12 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference():
         # exige qu'aucune ne s'écarte des autres.
         unites = re.findall(r'<span class="unite">([^<]*)</span>', entete)
         assert unites
-        assert set(unites) == {"€ net/mois"}
+        assert set(unites) == {"€ brut/mois"}
         # Le second chiffre, s'il est là, dit de quoi il parle : sans son
         # étiquette, deux nombres se toucheraient sans que rien ne les sépare.
         if 'class="chiffre salaire"' in entete:
             assert ">salaire</span>" in entete
-            assert "€ net/mois" in entete
+            assert "€ brut/mois" in entete
         # Le troisième, de même : il dit ce que les comptes financent de la
         # pension promise, et il ne paraît que là où ils en financent moins
         # qu'elle. Sans son étiquette, il se lirait comme un montant de plus.
@@ -1080,7 +1095,7 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference():
     assert "Deux fois le même montant" not in corps
     assert "grand chiffre" not in corps
     assert f"en euros de {depart}" not in corps.split('<div class="carte">')[0]
-    assert ("en net tous les trois, par mois, en euros d'aujourd'hui"
+    assert ("en brut tous les trois, par mois, en euros d'aujourd'hui"
             in " ".join(corps.split()))
 
 
@@ -1831,12 +1846,12 @@ def test_le_mode_des_montants_voyage_dans_l_adresse():
     l'omettrait retomberait sur le défaut et décrirait une autre carrière.
     C'est pourquoi `requete` l'écrit toujours, comme l'unité.
     """
-    saisie = Saisie.depuis_requete({"naissance": "1975", "montants": "brut"})
-    assert "montants=brut" in saisie.requete()
-    assert "montants=net" in Saisie.depuis_requete({"naissance": "1975"}).requete()
+    saisie = Saisie.depuis_requete({"naissance": "1975", "montants": "net"})
+    assert "montants=net" in saisie.requete()
+    assert "montants=brut" in Saisie.depuis_requete({"naissance": "1975"}).requete()
     # Et le formulaire le renvoie quand on le soumet, par un champ caché.
-    corps = rendre("/simuler", {"naissance": "1975", "montants": "brut"})[1]
-    assert '<input type="hidden" name="montants" value="brut">' in corps
+    corps = rendre("/simuler", {"naissance": "1975", "montants": "net"})[1]
+    assert '<input type="hidden" name="montants" value="net">' in corps
 
 
 def test_le_taux_de_remplacement_parle_la_langue_du_mode():

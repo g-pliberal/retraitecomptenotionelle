@@ -5737,15 +5737,15 @@ d'OpenFisca-France confrontées à celles du dépôt.
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
 **Reprise, au 4 octobre 2026.** Faites : l'étape 1 (`scripts/simulateurs.py`) ;
-l'étape 2 contre « Mon estimation retraite » (`scripts/estimation_officielle.py`)
-et ses corrections : le relevé de 2026, la valeur d'achat Agirc-Arrco, le
-salaire de référence de l'Ircantec, lu (les prix, que le moteur suivait déjà) ;
-les simulateurs anonymes du 4 octobre (carrière longue, RAFP et réversion
-épuisés ; handicap, 10 sur 24 ; « Mon estimation » à vingt et un âges).
+l'étape 2 contre « Mon estimation retraite » et ses corrections (relevé de
+2026, valeur d'achat Agirc-Arrco, salaire de référence de l'Ircantec) ; les
+simulateurs anonymes du 4 octobre ; l'étape 3, le brut en tête : brut par
+défaut, net « avant impôt », système 1 au format de l'estimation officielle.
 Restent : le prix d'achat Agirc-Arrco implicite de la page, la délibération
 de l'ERAFP, la réversion du RAFP, de la RCI et de l'Ircantec, le départ des
-handicapés ; puis, une par session, 3. le brut en tête (le net attend l'étape
-2 de l'action 138) et 4. les moteurs publics, avec l'action 137. Détail : en fin d'action.
+handicapés ; le net officiel dans le bloc (138.2) ; le relevé prolongé
+jusqu'au départ, sur le site ; puis 4. les moteurs publics, avec l'action
+137. Détail : en fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -5838,7 +5838,7 @@ estimation retraite » que le propriétaire a ouverte, connecté lui-même.
    où chacun compare son estimation. Le net aux prélèvements officiels — le
    point de maladie des complémentaires, le taux de CSG selon le revenu du
    foyer — est l'étape 2 de l'action 138 : la faire d'abord, ou montrer le
-   brut sans attendre.
+   brut sans attendre. *Faite, le 4 octobre 2026, sans attendre.*
 4. *Les moteurs publics en local*, avec l'action 137 : TRAJECTOiRE en cas
    types du COR, puis Destinie 2, sorties figées en témoins.
 
@@ -6138,6 +6138,55 @@ laissait ouvert.
   chiffre plus, et `limites.md` ; elle reste à lire le jour où elle sera
   officielle. Au-delà du dernier texte officiel, la dernière règle officielle
   reste en vigueur.
+
+**Étape 3, le 4 octobre 2026 : le brut en tête.**
+
+- *Les décisions du propriétaire*, le même jour, avant toute ligne : le brut
+  sans attendre l'étape 2 de l'action 138, le net du site en second, tel
+  qu'il est ; le brut par défaut sur tout le site, et non dans un seul bloc ;
+  la comparaison du total, âge par âge.
+- *Le défaut.* `montants` vaut `brut` dans les deux saisies, et la bascule
+  écrit le brut d'abord. Les adresses que le site écrit portent toujours leur
+  mode et ne changent pas de sens ; les deux témoins de simulation qui
+  saisissaient des euros sans le dire le disent désormais, en net, et leurs
+  chiffres ne bougent pas ; la pension saisie dans l'autre mode a son témoin
+  de page (`simuler_par_pension_nette`). Le salaire et la pension par défaut
+  gardent leurs nombres, lus en brut. Le pied de page et son affirmation
+  disent le brut d'abord (`pied.net_ou_brut`) ; les tests qui portaient sur le
+  net le demandent ; le parcours de présentation, récit qui décrit l'exemple
+  en net, se rend en net pour son test.
+- *Les âges.* `age_annulation_droit` (ouvrir) dit l'âge du taux plein
+  automatique ; `point_fixe`, la boucle d'`age_de_depart` que celui-ci
+  emprunte désormais, à l'identique sur les 221 âges des cas types, et
+  `ages_de_l_estimation` datent les trois départs de la synthèse officielle
+  (pilote). `Contexte.carriere` et `Contexte.departs_de_l_estimation`
+  refont la carrière de la saisie à chaque âge et la liquident : le brut de
+  chaque étage, en euros constants, le minimum vieillesse à part. Leurs
+  jumeaux JavaScript, et `tests/test_estimation_du_site.py`, qui les tient
+  d'accord sur onze saisies fictives (`tests/js/comparer-estimation.mjs`).
+- *La page.* « Comme votre estimation officielle », sous la carte des
+  repères : une rangée par âge — l'âge, sa date, ce qu'il est —, la base et
+  la complémentaire (ou le régime intégré et l'additionnelle), arrondies pour
+  faire le total brut, le net avant impôt — le mot que la bascule a pris le
+  même jour —, puis un champ où recopier le total de
+  l'estimation officielle, et l'écart. Les champs appartiennent au formulaire
+  du haut (`form="simulateur"`) : ils partent dans l'adresse et restent dans
+  le navigateur. « Comparer », ou Entrée dans un champ, recalcule sur place,
+  le focus rendu au champ (`index.html`). Rien pour qui est déjà parti, qui
+  saisit sa pension, ou dont la saisie date elle-même une pension — demandes
+  régime par régime, invalidité, radiation — ; rien non plus quand la saisie
+  refuse la carrière à l'un des âges. `docs/limites.md` (§ 5 ante ter) en dit
+  les trois réserves. Vérifié dans le navigateur intégré, au bureau et au
+  téléphone.
+- *Ce que ça déplace.* Aucun chiffre du modèle : les 712 témoins de
+  simulation recalculés ici restent à moins d'un milliardième de ceux de
+  Linux. 56 rendus de page sur 70, par le défaut et par le bloc, dont un
+  témoin neuf, `simuler_estimation_recopiee`.
+- *Reste.* Le net aux prélèvements officiels, à l'étape 2 de l'action 138,
+  qui le mettra dans le bloc. Et la carrière d'un relevé, que le site arrête à
+  sa dernière année quand l'estimation officielle prolonge les revenus
+  jusqu'au départ : `estimation_officielle.py` sait la prolonger, le site
+  pas encore.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

@@ -10,9 +10,9 @@ calendrier du régime ou l'année d'ouverture des droits
 carrière longue peut encore l'ouvrir.
 
 :func:`ouvrir` écrit ce que l'étape dit d'une demande — son schéma est
-``data/reference/etapes/ouvrir_le_droit.yaml`` ; :func:`age_ouverture_droit`
-et :func:`age_taux_plein_droit` sont ce que le pilote en lit quand il ne lui
-faut qu'un âge, sans rien liquider (§ 7.7).
+``data/reference/etapes/ouvrir_le_droit.yaml`` ; :func:`age_ouverture_droit`,
+:func:`age_taux_plein_droit` et :func:`age_annulation_droit` sont ce que le
+pilote en lit quand il ne lui faut qu'un âge, sans rien liquider (§ 7.7).
 
 Les tables sont celles que le moteur du scénario 1 tient (``moteur``, un
 :class:`~retraite_notionnelle.scenarios.actuel.ScenarioActuel`), jusqu'aux
@@ -1025,6 +1025,26 @@ def age_taux_plein_droit(moteur, carriere: Carriere) -> float | None:
     if anticipe is not None and anticipe < taux_plein:
         return anticipe
     return taux_plein
+
+
+def age_annulation_droit(moteur, carriere: Carriere) -> float | None:
+    """L'âge auquel cette carrière a le taux plein SANS CONDITION DE DURÉE :
+    l'âge d'annulation de la décote, le plus précoce des régimes retenus —
+    soixante-sept ans au régime général pour les générations nées depuis
+    1955, la limite d'âge pour un emploi classé (:func:`age_taux_plein`).
+
+    C'est le troisième terme de :func:`age_taux_plein_droit`, posé seul :
+    l'âge du « taux plein automatique », le dernier que « Mon estimation
+    retraite » chiffre (:func:`~retraite_notionnelle.pilote.ages_de_l_estimation`).
+
+    ``None`` dans le même cas que :func:`age_ouverture_droit`.
+    """
+    carriere = coordonner.retablir(moteur, carriere)
+    annuites, autres = periodes_parcourues(moteur, carriere)
+    retenues = annuites or sans_ages_propres(autres)
+    if not retenues:
+        return None
+    return min(age_taux_plein(moteur, periode, carriere) for _, periode in retenues)
 
 
 def fin_indemnisation(moteur, carriere: Carriere) -> DateMois | None:

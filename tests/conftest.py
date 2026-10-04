@@ -53,6 +53,9 @@ COMPLETS = {
     "test_parcours.py",
     # Le pont par lequel le Python lit le site : il lance node.
     "test_site.py",
+    # Le système 1 au format de « Mon estimation retraite » : les deux
+    # moteurs, et la page qui le montre.
+    "test_estimation_du_site.py",
     # La page Coût et les scripts qui la déplacent : chacun recalcule le coût
     # agrégé, sous une variante.
     "test_cout.py", "test_cout_age_depart.py", "test_age_conjoncturel.py",

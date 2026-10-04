@@ -1005,7 +1005,7 @@ export function formulaire(saisie, contexte) {
   // « Calculer », au formulaire d'un actif — sa pension ignorée, le calcul
   // fait sur le salaire de l'exemple.
   return tete + `
-<form class="carte" method="get" action="${g.route("/simuler")}">
+<form class="carte" id="simulateur" method="get" action="${g.route("/simuler")}">
   ${g.cache("unite_revenu", saisie.unite_revenu)}
   ${g.cache("montants", saisie.montants)}
   ${g.cache("situation", saisie.situation)}
@@ -3783,6 +3783,113 @@ function ecartsAffiches(comparaison, constants) {
   return ecarts;
 }
 
+/**
+ * Les étages de l'estimation officielle, dans l'ordre de ses lignes : la
+ * retraite de base, ou le régime intégré qui fait les deux, puis la
+ * complémentaire et la retraite additionnelle.
+ */
+const ETAGES_ESTIMATION = [
+  ["base", "Base"],
+  ["integre", "Régime intégré"],
+  ["complementaire", "Complémentaire"],
+  ["additionnel", "Additionnelle"],
+];
+
+/** Ce qu'est un départ de l'estimation, dit en quelques mots. */
+function departEnClair(depart) {
+  if (depart.quoi.includes("legal")) {
+    const tot = depart.motif_ouverture === "carriere_longue"
+      ? "carrière longue" : "âge légal";
+    return depart.quoi.includes("taux_plein") ? `${tot}, taux plein` : `${tot}, avec décote`;
+  }
+  return depart.quoi.includes("automatique") ? "taux plein automatique" : "taux plein";
+}
+
+/**
+ * Le système 1 au format de « Mon estimation retraite » (info-retraite.fr),
+ * l'estimation que chacun consulte : à chaque âge que sa synthèse chiffre — au
+ * plus tôt, au taux plein, au taux plein automatique —, le brut mensuel de
+ * chaque étage, en euros de l'année de référence, le total, puis le net. La
+ * dernière colonne reçoit le total brut que l'estimation officielle affiche au
+ * même âge, et l'écart s'écrit à côté.
+ *
+ * LES CHAMPS APPARTIENNENT AU FORMULAIRE DU HAUT (`form="simulateur"`) : ils
+ * partent avec le reste de la saisie, dans l'adresse, et restent dans le
+ * navigateur comme elle. Ils n'entrent dans aucun calcul.
+ *
+ * Le net est celui de la bascule : la CSG, la CRDS et la CASA au taux plein,
+ * sur les deux étages. Le net aux prélèvements officiels — le point de maladie
+ * des complémentaires, la CSG selon le revenu du foyer — est l'étape 2 de
+ * l'action 138. Rien pour qui est déjà parti, ni pour qui saisit sa pension :
+ * l'estimation officielle chiffre un départ à venir.
+ */
+function estimationOfficielle(contexte, saisie, montants) {
+  const departs = contexte.departsDeLEstimation(saisie);
+  if (departs.length === 0) return "";
+  const mensuel = (depart, etage) => (depart.etages[etage] ?? 0.0) / 12;
+  const etages = ETAGES_ESTIMATION.filter(([etage]) =>
+    departs.some((depart) => mensuel(depart, etage) >= 0.5));
+  const recopies = departs.map((depart) => saisie[`estimation_${depart.quoi[0]}`]);
+  const compare = recopies.some((valeur) => valeur !== null);
+  const lignes = departs.map((depart, rang) => {
+    const [annee, mois] = depart.date.split("-").map(Number);
+    const total = depart.total / 12;
+    const recopie = recopies[rang];
+    const nom = `estimation_${depart.quoi[0]}`;
+    const champ = `<input type="number" class="recopie" id="${nom}" name="${nom}" `
+      + 'form="simulateur" min="1" step="1" inputmode="numeric" '
+      + `value="${recopie === null ? "" : echapper(nombreBrut(recopie))}" `
+      + `aria-label="Votre estimation officielle à ${echapper(age(depart.age))}, total brut">`;
+    const ecart = recopie === null ? "—"
+      : `${eurosSigne(total - recopie, false)} `
+        + `<span class="discret">(${g.pourcentage(total / recopie - 1, true)})</span>`;
+    // Les étages arrondis font le total arrondi, comme sous les barres.
+    const parts = arrondisQuiSadditionnent(
+      etages.map(([etage]) => mensuel(depart, etage)), total);
+    return [
+      `${age(depart.age)}<span class="aide">${echapper(String(new DateMois(annee, mois)))}, `
+        + `${departEnClair(depart)}</span>`,
+      ...parts.map((part) => g.euros(part)),
+      g.euros(total),
+      g.euros(total * (1 - montants.tauxPension)),
+      champ,
+      ...(compare ? [ecart] : []),
+    ];
+  });
+  const tableau = g.tableau(
+    ["Départ", ...etages.map(([, libelle]) => libelle), "Total brut", "Net avant impôt",
+      "Votre estimation", ...(compare ? ["Écart"] : [])],
+    lignes,
+    ["", ...etages.map(() => "nombre"), "nombre", "nombre", "nombre",
+      ...(compare ? ["nombre"] : [])],
+    `Le système 1, par mois, en euros de ${saisie.euros}`, true);
+  const minimum = departs.some((depart) => depart.minimum_vieillesse / 12 >= 0.5)
+    ? " Le minimum vieillesse n'y est pas : l'estimation officielle ne le compte pas."
+    : "";
+  const releve = saisie.releveActif
+    ? " Votre relevé arrête la carrière à sa dernière année ; l'estimation "
+      + "officielle prolonge vos revenus jusqu'au départ."
+    : "";
+  return `
+<h2 id="estimation-officielle">Comme votre estimation officielle</h2>
+<p class="chapeau">Le système 1 au format de « Mon estimation retraite », que
+chacun consulte sur <a href="https://www.info-retraite.fr/">info-retraite.fr</a> :
+le brut de chaque mois, base et complémentaire, aux âges qu'elle chiffre.
+Recopiez le total brut de la vôtre dans la colonne « Votre estimation » :
+l'écart s'affiche à côté.</p>
+<div class="carte estimation-officielle">
+  ${tableau}
+  <p class="comparer"><button type="submit" form="simulateur" id="comparer-estimation">Comparer</button></p>
+  <p class="discret">Le net retire la CSG, la CRDS et la CASA au taux plein,
+  ${g.pourcentage(montants.tauxPension, false, 1)}, sans le point de maladie
+  des complémentaires. Vos revenus à venir suivent le salaire moyen ;
+  l'estimation officielle leur prête « une évolution régulière », un peu plus
+  rapide.${minimum}${releve}
+  Ce que vous recopiez reste dans votre navigateur, avec le reste de la
+  saisie.</p>
+</div>`;
+}
+
 function resultats(contexte, saisie) {
   const comparaison = contexte.simuler(saisie);
   const carriere = comparaison.carriere;
@@ -4101,6 +4208,7 @@ ${revenuDeduit(contexte, comparaison, saisie, montants)}
   <div class="fiches">${fiches}</div>
   ${resumeParcours(contexte, saisie)}
 </div>
+${estimationOfficielle(contexte, saisie, montants)}
 ${salaireNet(comparaison, saisie)}
 ${reversionDuConjoint(contexte, comparaison, saisie, montants)}
 <h2>Pour aller plus loin</h2>
@@ -4676,10 +4784,11 @@ function basculeMontants(saisie, echelle, tauxPension) {
   // désigner une section — `montants=brut#resultats` n'est pas un mode.
   const cible = `#/simuler?${echapper(saisie.requete(
     remplacementsMontants(saisie, echelle, tauxPension)))}`;
-  // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà.
+  // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà. Le brut
+  // d'abord, comme l'estimation officielle et comme le défaut.
   const branches = versLeNet
-    ? [["net avant impôt", cible], ["brut", "#"]]
-    : [["net avant impôt", "#"], ["brut", cible]];
+    ? [["brut", "#"], ["net avant impôt", cible]]
+    : [["brut", cible], ["net avant impôt", "#"]];
   return g.bascule("Montants", branches,
     saisie.enNet ? "net avant impôt" : "brut");
 }

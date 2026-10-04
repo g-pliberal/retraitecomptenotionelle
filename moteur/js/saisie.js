@@ -196,11 +196,23 @@ export const SAISIE_DE_LA_SITUATION = { actif: "revenu", retraite: "pension" };
 export const SAISIES = [["revenu", ""], ["pension", ""]];
 
 /**
- * Pension mensuelle proposée par défaut, en euros NETS. Voisine de la pension
- * moyenne de droit direct des retraités de droit français, pour que le
- * formulaire s'ouvre sur un cas qui ressemble à celui de qui le lit.
+ * Pension mensuelle proposée par défaut, en euros BRUTS, comme les montants par
+ * défaut. Voisine de la pension moyenne de droit direct des retraités de droit
+ * français, pour que le formulaire s'ouvre sur un cas qui ressemble à celui de
+ * qui le lit.
  */
 const PENSION_DEFAUT = 1500.0;
+
+/**
+ * Ce que « Mon estimation retraite » affiche à chaque âge — le total brut
+ * mensuel de sa synthèse —, recopié pour être comparé à celui du simulateur :
+ * un champ par départ de `DEPARTS_DE_L_ESTIMATION` (pilote.js), au plus tôt,
+ * au taux plein, au taux plein automatique. Ils n'entrent dans aucun calcul,
+ * et restent dans le navigateur avec le reste de la saisie. Voir
+ * `CHAMPS_ESTIMATION` (saisie.py).
+ */
+export const CHAMPS_ESTIMATION = Object.freeze(
+  ["estimation_legal", "estimation_taux_plein", "estimation_automatique"]);
 
 /**
  * Les bornes du niveau de revenu, en multiples du salaire moyen. Le formulaire
@@ -213,12 +225,13 @@ export const NIVEAU_MAXIMAL = 10.0;
 // Les deux façons de lire tout montant du simulateur — ce qu'on saisit comme
 // ce qu'on affiche. Un seul réglage pour les deux : lire un salaire net et une
 // pension brute sur la même page compare deux grandeurs différentes, et c'est
-// exactement ce que le site faisait avant cette bascule. Le défaut est le NET,
-// parce que c'est ce qu'on touche et ce qu'on connaît de soi ; le brut reste à
-// un clic, et reste la langue des capitaux et des assiettes, bruts par nature.
+// exactement ce que le site faisait avant cette bascule. Le défaut est le BRUT,
+// depuis le 4 octobre 2026 : c'est la langue de l'estimation officielle, celle
+// des chiffres que chacun connaît déjà ; le net avant impôt reste à un clic.
+// Les capitaux et les assiettes sont bruts par nature. Voir saisie.py.
 export const MODES_MONTANT = [
-  ["net", "net avant impôt — après CSG"],
   ["brut", "brut — avant CSG et cotisations"],
+  ["net", "net avant impôt — après CSG"],
 ];
 
 // Durée mensuelle de référence du SMIC : 35 heures par semaine ramenées au
@@ -441,7 +454,12 @@ export const DEFAUTS = Object.freeze({
   //: ce que le métier paie maintenant, et le modèle suit ensuite le salaire
   //: moyen d'une année à l'autre.
   unite_revenu: "euros_mois",
-  montants: "net",
+  montants: "brut",
+  //: Les totaux bruts mensuels de « Mon estimation retraite », recopiés pour
+  //: être comparés (`CHAMPS_ESTIMATION`) ; `null` quand rien ne l'est.
+  estimation_legal: null,
+  estimation_taux_plein: null,
+  estimation_automatique: null,
   //: Ce que le formulaire demande : `revenu` — ce qu'on gagne en travaillant,
   //: d'où le simulateur tire une pension — ou `pension` — ce qu'on touche déjà,
   //: d'où il remonte au revenu. Voir `SAISIES`.
@@ -616,6 +634,8 @@ export class Saisie {
       saisie_par: parmi(parametres, "saisie_par", SAISIES,
         SAISIE_DE_LA_SITUATION[situation]),
       pension: reel(parametres, "pension", DEFAUTS.pension),
+      ...Object.fromEntries(CHAMPS_ESTIMATION.map((nom) => [nom,
+        [undefined, null, ""].includes(parametres[nom]) ? null : reel(parametres, nom, 0.0)])),
       naissance: anneeNaissance,
       naissance_mois: moisNaissance,
       naissance_jour: jourNaissance,
@@ -802,6 +822,7 @@ export class Saisie {
       );
     }
     this._verifierPension();
+    this._verifierEstimation();
     // Les métiers se suivent sans se recouvrir : chacun commence après le
     // précédent et avant le départ à la retraite.
     let precedent = this.debut;
@@ -892,6 +913,20 @@ export class Saisie {
     if (this.saisie_par !== "pension") return;
     if (!(this.pension > 0)) {
       throw new ErreurSaisie("La pension doit être strictement positive.");
+    }
+  }
+
+  /**
+   * L'estimation officielle recopiée : des montants mensuels, que le
+   * formulaire borne à un euro au moins. Voir `_verifier_estimation` du
+   * Python.
+   */
+  _verifierEstimation() {
+    for (const nom of CHAMPS_ESTIMATION) {
+      if (this[nom] !== null && !(this[nom] >= 1)) {
+        throw new ErreurSaisie(
+          "Votre estimation officielle : un montant brut mensuel, d'un euro au moins.");
+      }
     }
   }
 
@@ -2016,6 +2051,10 @@ export class Saisie {
     champs.situation = this.situation;
     champs.saisie_par = this.saisie_par;
     champs.pension = nombreBrut(this.pension);
+    // L'estimation officielle recopiée, seulement ce qui l'a été.
+    for (const nom of CHAMPS_ESTIMATION) {
+      if (this[nom] !== null) champs[nom] = nombreBrut(this[nom]);
+    }
     // Les métiers qui suivent le premier, un groupe de trois champs chacun. Une
     // ligne vide du formulaire n'en produit aucun : l'adresse ne porte que ce
     // qui a été saisi.

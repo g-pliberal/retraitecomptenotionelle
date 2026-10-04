@@ -262,23 +262,35 @@ SAISIE_DE_LA_SITUATION = {"actif": "revenu", "retraite": "pension"}
 #: adresse a le droit de dire.
 SAISIES = [("revenu", ""), ("pension", "")]
 
-#: Pension mensuelle proposée par défaut, en euros NETS. Voisine de la pension
-#: moyenne de droit direct des retraités de droit français, pour que le
-#: formulaire s'ouvre sur un cas qui ressemble à celui de qui le lit.
+#: Pension mensuelle proposée par défaut, en euros BRUTS, comme les montants
+#: par défaut. Voisine de la pension moyenne de droit direct des retraités de
+#: droit français, pour que le formulaire s'ouvre sur un cas qui ressemble à
+#: celui de qui le lit.
 PENSION_DEFAUT = 1500.0
+
+#: Ce que « Mon estimation retraite » affiche à chaque âge — le total brut
+#: mensuel de sa synthèse —, recopié pour être comparé à celui du simulateur :
+#: un champ par départ de
+#: :data:`~retraite_notionnelle.pilote.DEPARTS_DE_L_ESTIMATION`, au plus tôt,
+#: au taux plein, au taux plein automatique. Ils n'entrent dans aucun calcul,
+#: et restent dans le navigateur avec le reste de la saisie.
+CHAMPS_ESTIMATION = ("estimation_legal", "estimation_taux_plein",
+                     "estimation_automatique")
 
 #: Les deux façons de lire tout montant du simulateur — ce qu'on saisit comme
 #: ce qu'on affiche. Un seul réglage pour les deux : lire un salaire net et une
 #: pension brute sur la même page compare deux grandeurs différentes, et c'est
 #: exactement ce que le site faisait avant cette bascule.
 #:
-#: Le défaut est le NET, parce que c'est ce qu'on touche et ce qu'on connaît de
-#: soi. Le brut reste à un clic, et il reste la langue du reste du site : les
-#: capitaux, les assiettes et les tableaux de détail sont bruts par nature et
-#: ne bougent pas — on ne « nette » pas un capital notionnel.
+#: Le défaut est le BRUT, depuis le 4 octobre 2026 : c'est la langue de
+#: l'estimation officielle (« Mon estimation retraite », sur info-retraite.fr),
+#: celle des chiffres que chacun connaît déjà, et le propriétaire l'a voulu
+#: « en tête » pour qu'on puisse les comparer. Le net avant impôt reste à un
+#: clic. Les capitaux, les assiettes et les tableaux de détail sont bruts par
+#: nature et ne bougent pas — on ne « nette » pas un capital notionnel.
 MODES_MONTANT = [
-    ("net", "net avant impôt — après CSG"),
     ("brut", "brut — avant CSG et cotisations"),
+    ("net", "net avant impôt — après CSG"),
 ]
 
 #: Durée mensuelle de référence du SMIC : 35 heures par semaine ramenées au
@@ -572,12 +584,17 @@ class Saisie:
     #: touche AUJOURD'HUI, et le simulateur la compare à sa pension de départ
     #: revalorisée comme le droit l'a fait. Voir ``_champ_pension``.
     pension: float = PENSION_DEFAUT
-    #: Net ou brut : vaut pour TOUT le simulateur, la saisie comprise. En
+    #: Brut ou net : vaut pour TOUT le simulateur, la saisie comprise. En
     #: « net », le salaire tapé est un net mensuel que le modèle convertit en
     #: brut par la fiche de paie du statut, et tous les montants affichés —
     #: salaire, pension, rente — sont nets de ce qui les frappe. Voir
     #: ``MODES_MONTANT``.
-    montants: str = "net"
+    montants: str = "brut"
+    #: Les totaux bruts mensuels de « Mon estimation retraite », recopiés pour
+    #: être comparés (:data:`CHAMPS_ESTIMATION`) ; ``None`` quand rien ne l'est.
+    estimation_legal: float | None = None
+    estimation_taux_plein: float | None = None
+    estimation_automatique: float | None = None
     #: Les métiers exercés APRÈS le premier. Le premier, lui, est décrit par
     #: ``statut``, ``debut`` et ``salaire`` : une adresse d'avant les carrières
     #: multiples reste donc valide, et décrit la carrière d'un seul métier.
@@ -751,6 +768,9 @@ class Saisie:
             saisie_par=_parmi(parametres, "saisie_par", SAISIES,
                               SAISIE_DE_LA_SITUATION[situation]),
             pension=_reel(parametres, "pension", defauts.pension),
+            **{nom: (None if parametres.get(nom) in (None, "")
+                     else _reel(parametres, nom, 0.0))
+               for nom in CHAMPS_ESTIMATION},
             naissance=annee_naissance,
             naissance_mois=mois_naissance,
             naissance_jour=jour_naissance,
@@ -932,6 +952,7 @@ class Saisie:
                 "(1 = aucun lissage)."
             )
         self._verifier_pension()
+        self._verifier_estimation()
         # Les métiers se suivent sans se recouvrir : chacun commence après le
         # précédent et avant le départ à la retraite. C'est la seule chose que
         # le moteur exige, et elle se dit ici plutôt que par une exception
@@ -1023,6 +1044,17 @@ class Saisie:
             return
         if self.pension <= 0:
             raise ErreurSaisie("La pension doit être strictement positive.")
+
+    def _verifier_estimation(self) -> None:
+        """L'estimation officielle recopiée : des montants mensuels, que le
+        formulaire borne à un euro au moins. Rien d'autre : c'est la page
+        officielle qui les a calculés, et la comparaison dira l'écart."""
+        for nom in CHAMPS_ESTIMATION:
+            montant = getattr(self, nom)
+            if montant is not None and montant < 1:
+                raise ErreurSaisie(
+                    "Votre estimation officielle : un montant brut mensuel, d'un "
+                    "euro au moins.")
 
     # -- l'unité des revenus -------------------------------------------------
 
@@ -1970,6 +2002,10 @@ class Saisie:
         champs["situation"] = self.situation
         champs["saisie_par"] = self.saisie_par
         champs["pension"] = _nombre(self.pension)
+        # L'estimation officielle recopiée, seulement ce qui l'a été.
+        for nom in CHAMPS_ESTIMATION:
+            if getattr(self, nom) is not None:
+                champs[nom] = _nombre(getattr(self, nom))
         # Les métiers qui suivent le premier, un groupe de trois champs chacun.
         # Une ligne vide du formulaire n'en produit aucun : l'adresse ne porte
         # que ce qui a été saisi.

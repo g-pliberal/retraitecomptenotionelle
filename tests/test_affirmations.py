@@ -2705,14 +2705,15 @@ def _(m: Modele):
 def _(m: Modele):
     """Le pied affirme que le lecteur choisit son unité : les deux existent.
 
-    Il affirmait « Les montants sont bruts » alors que le défaut est le NET
+    Il affirmait « Les montants sont bruts » alors que le défaut était le NET
     depuis la bascule, et rien ne tenait la phrase : elle était fausse en bas
     de chaque page, y compris celles qu'on projette. Ce contrôle exige les
-    deux modes, le net par défaut, et une conversion qui fasse bien descendre
+    deux modes, le brut par défaut — celui de l'estimation officielle,
+    depuis le 4 octobre 2026 —, et une conversion qui fasse bien descendre
     un brut vers un net.
     """
-    assert [code for code, _ in MODES_MONTANT] == ["net", "brut"]
-    assert Saisie().montants == "net"
+    assert [code for code, _ in MODES_MONTANT] == ["brut", "net"]
+    assert Saisie().montants == "brut"
     assert Saisie(montants="net").en_net
     assert not Saisie(montants="brut").en_net
     pensions = charger_prelevements(m.contexte.base.racine_donnees).pensions

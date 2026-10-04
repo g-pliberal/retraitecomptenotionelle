@@ -2615,8 +2615,8 @@ les mêmes six scénarios.
 
 ## 5 ante ter. Le net et le brut : ce que la bascule suppose
 
-Le simulateur se lit entièrement en net ou entièrement en brut, saisie comprise.
-Quatre réserves, dont la première commande tout le reste.
+Le simulateur se lit entièrement en brut ou entièrement en net, saisie comprise,
+en brut par défaut. Quatre réserves, dont la première commande tout le reste.
 
 **1. Le taux de CSG sur les pensions est celui du TAUX PLEIN, pour tout le
 monde.** L'article L. 136-8 le fait dépendre du revenu fiscal de référence du
@@ -2674,6 +2674,23 @@ pas une estimation, c'est l'inverse exact du calcul qui produit le net. Les
 statuts que le modèle ne sait pas décrire — exploitant agricole, élu,
 collectivités d'outre-mer — font exception : leur montant est lu tel quel, et le
 formulaire l'affiche plutôt que de le taire.
+
+**Et le format de l'estimation officielle.** Le brut est le défaut depuis le
+4 octobre 2026 : c'est la langue de « Mon estimation retraite », celle des
+chiffres que chacun connaît déjà. Sous les quatre montants, la page montre le
+système 1 comme cette estimation le chiffre — le brut de chaque étage aux âges
+de sa synthèse, au plus tôt, au taux plein et au taux plein automatique, le net
+en second — et l'écart au total que le lecteur recopie de la sienne. Trois
+réserves. Le net y est celui de la bascule, avec les réserves 1 et 2 : le net
+aux prélèvements officiels est l'étape 2 de l'action 138. Les revenus à venir
+suivent le salaire moyen du modèle, quand l'estimation officielle leur prête
+« une évolution régulière », un peu plus rapide (action 142, étape 2) : à
+carrière égale, une part de l'écart en vient. Et les âges sont ceux que le
+droit oppose à la carrière SAISIE : une carrière reconstituée par ses métiers
+n'a pas tout à fait les trimestres de la vraie, et un relevé déposé s'arrête à
+sa dernière année, quand l'estimation officielle prolonge les revenus jusqu'au
+départ. Le minimum vieillesse n'y entre pas, que l'estimation ne compte pas non
+plus.
 
 ---
 

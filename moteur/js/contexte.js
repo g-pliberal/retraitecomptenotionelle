@@ -22,9 +22,10 @@ import { salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur, niveauPourPension } from "./simulateur.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./droit/coordonner.js";
 import * as g from "./gabarit.js";
+import { agesDeLEstimation } from "./pilote.js";
 import {
   AUTRE_ETAT, Echelle, ErreurSaisie, HEURES_SMIC_PAR_MOIS, NIVEAU_MAXIMAL, NIVEAU_MINIMAL,
-  refus,
+  Saisie, refus,
 } from "./saisie.js";
 
 /**
@@ -290,6 +291,89 @@ export class Contexte {
     if (saisie.releveActif) {
       return simulateur.simuler(this.carriereRelevee(simulateur, saisie, motifs));
     }
+    const [parcours, batir] = this._parcours(simulateur, saisie, motifs);
+    if (saisie.parPension) {
+      return this._simulerParPension(simulateur, saisie, batir, parcours);
+    }
+    return simulateur.simuler(carriereParcourue(simulateur, parcours, batir));
+  }
+
+  /**
+   * La carrière que `simuler` calcule pour une saisie par le revenu : celle du
+   * relevé, ou celle des métiers.
+   */
+  carriere(saisie) {
+    const simulateur = this.simulateur(saisie.parametres(this.base));
+    const motifs = Object.keys(this.paquet.periodes_non_travaillees ?? {});
+    if (saisie.releveActif) {
+      return this.carriereRelevee(simulateur, saisie, motifs);
+    }
+    const [parcours, batir] = this._parcours(simulateur, saisie, motifs);
+    return carriereParcourue(simulateur, parcours, batir);
+  }
+
+  /**
+   * Les départs que « Mon estimation retraite » chiffre — au plus tôt, au taux
+   * plein, au taux plein automatique —, tels que le scénario 1 les sert à la
+   * carrière de cette saisie : le brut de chaque étage, annuel, en euros
+   * constants de l'année de référence. Deux âges confondus font un départ.
+   * Vide pour une saisie par la pension, pour qui est déjà parti, pour une
+   * carrière dont la saisie date elle-même des pensions — demandées régime par
+   * régime, ouvertes par l'invalidité ou par la radiation —, quand le droit
+   * n'oppose aucun âge, ou quand la saisie ou le modèle refusent la carrière à
+   * l'un des âges ; un départ d'une année déjà passée est omis. Voir
+   * `departs_de_l_estimation` (contexte.py).
+   */
+  departsDeLEstimation(saisie) {
+    if (saisie.parPension || saisie.demandes.length > 0 || saisie.invalidite !== null
+        || saisie.radiation_invalidite !== null) {
+      return [];
+    }
+    const parametres = saisie.parametres(this.base);
+    const simulateur = this.simulateur(parametres);
+    const annee = parametres.annee_courante;
+    if (saisie.dateLiquidation.annee < annee) {
+      return [];
+    }
+    // La saisie refuse ce que sa date rend incohérent — un métier commencé
+    // après le départ —, avec ses mots, avant le modèle.
+    const batir = (age) => {
+      const autre = new Saisie({ ...saisie, liquidation: age });
+      autre.verifier();
+      return this.carriere(autre);
+    };
+    const departs = [];
+    try {
+      const ages = agesDeLEstimation(simulateur.scenarioActuel, batir, saisie.liquidation);
+      for (const [quoi, age] of Object.entries(ages ?? {})) {
+        const dernier = departs[departs.length - 1];
+        if (dernier !== undefined && Math.abs(dernier.age - age) < 1e-9) {
+          dernier.quoi.push(quoi);
+          continue;
+        }
+        const carriere = batir(age);
+        if (carriere.anneeLiquidation >= annee) {
+          departs.push(departEstime(simulateur, parametres, carriere, quoi));
+        }
+      }
+    } catch (erreur) {
+      // Une carrière que la saisie ou le modèle refusent à l'un des âges : le
+      // bloc se tait plutôt que de chiffrer une autre carrière. Une faute de
+      // programme, elle, remonte.
+      if (erreur instanceof TypeError || erreur instanceof ReferenceError
+          || erreur instanceof RangeError || erreur instanceof SyntaxError) {
+        throw erreur;
+      }
+      return [];
+    }
+    return departs;
+  }
+
+  /**
+   * Les métiers de la saisie, et de quoi bâtir leur carrière à des niveaux de
+   * revenu donnés.
+   */
+  _parcours(simulateur, saisie, motifs) {
     const parcours = saisie.parcours(this.echelle(saisie));
     for (const metier of parcours) {
       if (!simulateur.affiliations.contient(metier.affiliation)) {
@@ -325,14 +409,7 @@ export class Contexte {
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
-
-    if (saisie.parPension) {
-      return this._simulerParPension(simulateur, saisie, batir, parcours);
-    }
-    const carriere = batir(parcours.map((metier) => metier.niveau_salaire));
-    verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
-    verifierRadiationPourInvalidite(simulateur.affiliations, carriere);
-    return simulateur.simuler(carriere);
+    return [parcours, batir];
   }
 
   /**
@@ -524,6 +601,55 @@ function demandesDePension(simulateur, saisie) {
  * sa première ligne qu'en 2023, et n'est pas recruté après la fermeture pour
  * autant.
  */
+/** La carrière des métiers, à leurs niveaux de revenu, contrôlée. */
+function carriereParcourue(simulateur, parcours, batir) {
+  const carriere = batir(parcours.map((metier) => metier.niveau_salaire));
+  verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
+  verifierRadiationPourInvalidite(simulateur.affiliations, carriere);
+  return carriere;
+}
+
+/**
+ * Un départ de « Mon estimation retraite », tel que le scénario 1 le sert :
+ * le brut de chaque étage, annuel, en euros constants de l'année de référence
+ * — la pension de chaque régime, minima compris, et la part qu'il sert de la
+ * majoration pour enfants —, le minimum vieillesse à part. Voir `DepartEstime`
+ * et `_depart_estime` (contexte.py).
+ */
+function departEstime(simulateur, parametres, carriere, quoi) {
+  const resultat = simulateur.echeancier(carriere).auDepart;
+  const passage = simulateur.macro.coefficientPrix(
+    carriere.anneeLiquidation, parametres.annee_euros_constants);
+  const etages = {};
+  const porter = (code, montant) => {
+    const etage = simulateur.catalogue.obtenir(code).etage;
+    etages[etage] = (etages[etage] ?? 0.0) + montant * passage;
+  };
+  for (const pension of resultat.pensions_par_regime) porter(pension.regime, pension.montant);
+  let minimum = 0.0;
+  for (const avantage of resultat.avantages_appliques) {
+    if (avantage.code === "majoration_enfants") {
+      for (const [code, part] of avantage.par_regime ?? []) porter(code, part);
+    } else if (avantage.code === "minimum_vieillesse") {
+      minimum += avantage.montant;
+    }
+  }
+  const date = carriere.dateLiquidation;
+  return {
+    quoi: [quoi],
+    age: carriere.age_liquidation,
+    date: `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}`,
+    etages,
+    minimum_vieillesse: minimum * passage,
+    trimestres: resultat.trimestres_valides,
+    trimestres_requis: resultat.trimestres_requis,
+    motif_ouverture: resultat.motif_ouverture,
+    get total() {
+      return Object.values(this.etages).reduce((somme, montant) => somme + montant, 0.0);
+    },
+  };
+}
+
 /**
  * La radiation pour invalidité clôt un emploi de fonctionnaire civil — de
  * l'État, territorial, hospitalier, ouvrier de l'État —, et la carrière ne

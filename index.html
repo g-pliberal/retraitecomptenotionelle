@@ -1519,9 +1519,18 @@ document.addEventListener("submit", (evenement) => {
     requete = fusionnerAvecLaMemoire(enObjet(requete));
   }
   // Un formulaire qui simule mène à des résultats ; les autres — « Recalculer
-  // cette page » — recalculent la page sous les yeux du lecteur.
-  const simule = route === "/simuler";
-  noterDeclencheur(evenement.submitter || formulaire, simule ? "calcul" : "sur-place");
+  // cette page » — recalculent la page sous les yeux du lecteur. Un contrôle
+  // rattaché au formulaire sans y être (`form="…"`) le fait aussi : le bouton
+  // « Comparer » et les montants recopiés sous l'estimation officielle
+  // laissent le lecteur devant le tableau qu'il vient de remplir. Entrée dans
+  // l'un de ces champs soumet par le premier bouton du formulaire : c'est
+  // alors le champ qui dit d'où l'on vient.
+  const declenche = evenement.submitter && !formulaire.contains(evenement.submitter)
+    ? evenement.submitter : document.activeElement;
+  const dehors = declenche?.form === formulaire && !formulaire.contains(declenche);
+  const simule = route === "/simuler" && !dehors;
+  noterDeclencheur(dehors ? declenche : evenement.submitter || formulaire,
+    simule ? "calcul" : "sur-place");
   naviguer(`#${route}?${requete}`);
 });
 

@@ -5009,3 +5009,18 @@ journal:
     reste: >-
       La réversion du RAFP, de la RCI et de l'Ircantec, que le modèle ne sert pas ; le
       départ anticipé des assurés handicapés, que le modèle ne traite pas ; le remariage.
+  - date: "2026-10-04"
+    session: "action 142, étape 3 : le brut en tête, au format de l'estimation officielle"
+    consulte: >-
+      veille_droit.py (la dernière veille consignée est du jour ; L. 161-17-2 et L. 161-17-3,
+      relus sur Légifrance ce même jour par une session précédente, sont en vigueur depuis le
+      31 décembre 2025 sans version à venir). Aucun autre texte : l'étape ne change aucune
+      règle, elle date les départs par celles que le modèle porte déjà (âge d'ouverture,
+      durée requise, âge d'annulation de la décote, carrière longue).
+    trouve: >-
+      Rien de nouveau au droit. Le site montre le système 1 en brut par défaut, et au format
+      de « Mon estimation retraite » : le brut de chaque étage au plus tôt, au taux plein et
+      au taux plein automatique, le net de la bascule en second, l'écart au total recopié.
+    reste: >-
+      Le net aux prélèvements officiels (action 138, étape 2) ; la carrière d'un relevé
+      prolongée jusqu'au départ, sur le site.

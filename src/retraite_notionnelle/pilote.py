@@ -10,7 +10,9 @@ un pilote fixe le reste.
   (:func:`~retraite_notionnelle.droit.ouvrir.age_ouverture_droit`,
   :func:`~retraite_notionnelle.droit.ouvrir.age_taux_plein_droit`), sans rien
   liquider. La date qu'il trouve devient celle du départ de la carrière, que
-  l'échéancier traite (:mod:`~retraite_notionnelle.echeancier`).
+  l'échéancier traite (:mod:`~retraite_notionnelle.echeancier`). Les mêmes
+  points fixes datent les trois départs que « Mon estimation retraite »
+  chiffre, pour la carrière d'une saisie (:func:`ages_de_l_estimation`).
 * LES POPULATIONS : aujourd'hui les cas types pondérés, que
   :mod:`~retraite_notionnelle.castypes` décrit ; des tirages, des couples et
   des décès simulés demain, sans changer le moteur.
@@ -24,11 +26,12 @@ Son jumeau est ``moteur/js/pilote.js``.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from .droit import ouvrir
 
 if TYPE_CHECKING:
+    from .carriere import Carriere
     from .castypes import CasType
     from .simulateur import Simulateur
 
@@ -88,15 +91,27 @@ def age_de_depart(simulateur: Simulateur, cas: CasType, generation: int,
         raise ValueError(
             f"règle de liquidation inconnue : {cas.regle_liquidation!r}"
         )
-    age = cas.age_liquidation
+    return point_fixe(cas.age_liquidation,
+                      lambda age: age_propose(simulateur, cas, generation, age))
+
+
+def point_fixe(age: float, proposer: Callable[[float], float | None]) -> float:
+    """L'âge que ``proposer`` confirme, en partant de ``age`` : la boucle
+    de :func:`age_de_depart`, que :func:`ages_de_l_estimation` emprunte.
+
+    ``proposer(age)`` dit ce que le droit oppose à la carrière liquidée à
+    ``age``, ou ``None`` s'il n'oppose rien. Une montée se suit ; une
+    descente ne se retient que si l'âge plus précoce se confirme lui-même ;
+    le nombre de passes est borné (:data:`PASSES_LIQUIDATION`).
+    """
     for _ in range(PASSES_LIQUIDATION):
-        propose = age_propose(simulateur, cas, generation, age)
+        propose = proposer(age)
         if propose is None or abs(propose - age) < 1e-9:
             break
         if propose > age:
             age = propose
             continue
-        confirme = age_propose(simulateur, cas, generation, propose)
+        confirme = proposer(propose)
         if confirme is None:
             break
         if confirme > propose + 1e-9:
@@ -112,6 +127,43 @@ def age_de_depart(simulateur: Simulateur, cas: CasType, generation: int,
             break
         age = propose
     return age
+
+
+#: Les départs que « Mon estimation retraite » chiffre, dans l'ordre de sa
+#: synthèse : au plus tôt — l'âge légal, ou la carrière longue qui le
+#: devance —, au taux plein, au taux plein automatique.
+DEPARTS_DE_L_ESTIMATION: tuple[str, ...] = ("legal", "taux_plein", "automatique")
+
+
+def ages_de_l_estimation(actuel, batir: Callable[[float], "Carriere"],
+                         depart: float) -> dict[str, float] | None:
+    """Les trois âges de « Mon estimation retraite », pour la carrière que
+    ``batir(age)`` rend liquidée à ``age`` : au plus tôt
+    (:func:`~retraite_notionnelle.droit.ouvrir.age_ouverture_droit`), au
+    taux plein (:func:`~retraite_notionnelle.droit.ouvrir.age_taux_plein_droit`),
+    au taux plein automatique
+    (:func:`~retraite_notionnelle.droit.ouvrir.age_annulation_droit`).
+
+    Chacun est un point fixe, comme le départ d'un cas type : la carrière
+    dépend de l'âge, et ce que le droit lui oppose dépend de la carrière. Le
+    premier part de ``depart``, l'âge que la saisie demande ; chacun des
+    suivants part du précédent, et ne le précède jamais. Deux âges peuvent
+    se confondre : la page les réunit. ``None`` quand le droit n'oppose
+    aucun âge à cette carrière.
+    """
+    # Les trois règles répondent `None` dans le même cas : aucun régime
+    # retenu. Une question suffit donc à le savoir.
+    if ouvrir.age_ouverture_droit(actuel, batir(depart)) is None:
+        return None
+    regles = (ouvrir.age_ouverture_droit, ouvrir.age_taux_plein_droit,
+              ouvrir.age_annulation_droit)
+    ages: dict[str, float] = {}
+    age = depart
+    for quoi, regle in zip(DEPARTS_DE_L_ESTIMATION, regles):
+        trouve = point_fixe(age, lambda a, regle=regle: regle(actuel, batir(a)))
+        age = max(age, trouve) if ages else trouve
+        ages[quoi] = age
+    return ages
 
 
 def age_propose(simulateur: Simulateur, cas: CasType, generation: int,
