@@ -6016,12 +6016,11 @@ décret n° 84-995, dont l'index ne garde que le titre.
 jusqu'au départ, la réversion du RAFP, de la RCI et de l'Ircantec, l'étape 4
 (Destinie 2 puis TRAJECTOiRE exécutés à part, leurs sorties en témoins ; la
 valeur de service du jour, erreur du dépôt, va en 138.20), la délibération de
-l'ERAFP (dix saisies et neuf calculs en exemples) et le départ anticipé des
-handicapés (vingt-quatre saisies et trois calculs de la Cnav en exemples). Le
-propriétaire veut tout le reste (« Le restant »), une étape par session, par
-zones : aux moteurs publics, Ines ; au site, le net officiel dans le bloc
-(138.2 : le 1 %, puis la CSG, présomption et champ) ; avec lui, connecté, le
-prix d'achat Agirc-Arrco implicite de la page. Détail : en fin d'action.
+l'ERAFP et le départ anticipé des handicapés ; le net officiel du bloc, que
+l'action 138 a fait (le 1 %, puis la CSG du foyer, présomption et champ).
+Reste le seul point qui demande le propriétaire, connecté à « Mon estimation
+retraite » : le prix d'achat Agirc-Arrco implicite de la page ; l'action se
+clôt ensuite. Ines va à l'action 137. Détail : en fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
