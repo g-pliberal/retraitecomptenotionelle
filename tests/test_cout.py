@@ -632,7 +632,7 @@ def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir, compte
         propre = ligne.base_modele / ligne.coefficient_constants / ligne.pib
         assert 0.10 < propre < 0.20, f"{ligne.annee} : {propre:.1%}"
     # L'écart au COR à l'horizon, lu dans son compte : deux points et demi
-    # aujourd'hui, et une dérive au-delà de trois et demi relèverait d'une
+    # jusqu'à l'étape 8 de l'action 147, moins d'un depuis, et une dérive au-delà de trois et demi relèverait d'une
     # erreur de méthode plutôt que d'un désaccord d'hypothèses.
     horizon = avenir.annees[-1]
     propre = horizon.base_modele / horizon.coefficient_constants / horizon.pib
@@ -669,8 +669,9 @@ RECONSTITUTION_DEPUIS = 2000
 #: Le pire écart admis, depuis 2000, entre la base du modèle et la dépense
 #: observée. Un cliquet, qui ne doit que descendre : -19,2 % en 2009, le
 #: 5 octobre 2026 ; -19,8 % le même jour, l'étape 138.16 ayant corrigé un
-#: défaut qui en compensait un autre (voir le test).
-RECONSTITUTION_CLIQUET = 0.20
+#: défaut qui en compensait un autre (voir le test) ; -17,1 % le même jour,
+#: l'étape 8 de l'action 147 ayant corrigé la comptabilité de la base.
+RECONSTITUTION_CLIQUET = 0.18
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -711,6 +712,11 @@ def test_la_projection_refait_le_passe(avenir, depenses):
     seule, la colonne rend 0,54 point des 0,62, les autres causes de
     l'étape le reste. Le défaut corrigé masquait une part de celui que ce
     test mesure.
+
+    *Le même jour*, l'étape 8 de l'action 147 le ramène à -17,1 % en 2009
+    (-14,9 % en 2000, -4,4 % en 2020, -23,1 % en 1990) : la base porte la
+    réversion à la part de chaque année, et les poids des cas types sont
+    calés sur la dépense de chaque groupe du COR.
     """
     reconstitution = avenir.reconstitution()
     # L'année d'ancrage est refaite par construction : sinon, la formule de
@@ -739,8 +745,10 @@ DECOMPOSITION_TETES = 0.03
 #: reculer de 3,3 % de 2025 à 2070, le COR de 17,2 % ; 16,8 % de trop, le
 #: 5 octobre 2026, puis 14,0 % le même jour, une fois suivies les deux
 #: conventions du COR (rendement de l'Agirc-Arrco, primes des fonctionnaires,
-#: action 147, étape 4). Il ne doit que descendre, vers la cible.
-DECOMPOSITION_PENSION_CLIQUET = 0.15
+#: action 147, étape 4), puis 13,1 % (le modèle -6,3 %), les poids calés
+#: groupe par groupe sur la dépense du COR (étape 8). Il ne doit que
+#: descendre, vers la cible.
+DECOMPOSITION_PENSION_CLIQUET = 0.14
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -775,8 +783,9 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
     Le COR la fait reculer de 17 % de 2025 à 2070 — l'indexation des droits sur
     les prix, la baisse du rendement de l'Agirc-Arrco, la part croissante des
     primes des fonctionnaires, que sa figure 2.7 lit régime par régime ; le
-    modèle, de 5,6 % seulement, depuis qu'il suit les deux dernières
-    conventions (de 3,5 % avant). C'est l'écart tout entier : les effectifs, eux,
+    modèle, de 6,3 % seulement, depuis qu'il suit les deux dernières
+    conventions et que ses poids sont calés sur la dépense des groupes du COR
+    (de 3,5 % avant, puis de 5,6 %). C'est l'écart tout entier : les effectifs, eux,
     se suivent (``test_la_projection_compte_les_retraites_du_cor``). Le même
     défaut fait la reconstitution du passé (``test_la_projection_refait_le_passe``) :
     la pension relative du modèle croît de 17,5 % de 2005 à 2025, celle du COR
@@ -814,7 +823,10 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés
 #: le même jour : pension relative de la FPE +37,6 %, de la CNRACL +12,3 %, de
 #: l'Agirc-Arrco +46,3 % ; dépense de la FPE +92,4 %, des non-salariés +129,7 %,
-#: des régimes spéciaux +81,4 %, des complémentaires +12,0 %.
+#: des régimes spéciaux +81,4 %, des complémentaires +12,0 %. Les complémentaires
+#: passent à +13,3 % à l'étape 8 : le calage des poids sur la dépense des
+#: groupes du COR alourdit le cadre, dont l'Agirc croît plus vite ; la
+#: correction d'un défaut qui en masquait un autre.
 DECOMPOSITION_GROUPES_CLIQUETS = {
     ("pension_relative", "fpe"): 0.38,
     ("pension_relative", "cnracl"): 0.13,
@@ -822,7 +834,7 @@ DECOMPOSITION_GROUPES_CLIQUETS = {
     ("depense_part_pib", "fpe"): 0.93,
     ("depense_part_pib", "non_salaries_base"): 1.30,
     ("depense_part_pib", "regimes_speciaux"): 0.82,
-    ("depense_part_pib", "complementaires"): 0.12,
+    ("depense_part_pib", "complementaires"): 0.14,
 }
 
 
@@ -861,8 +873,12 @@ def test_la_masse_se_decompose_regime_par_regime(avenir):
                     if regime in dans_un_groupe)
         # Au cent-millième : les non-salariés des premières générations ont
         # une part de pension servie par des régimes disparus que la grille ne
-        # détaille pas — 3 millionièmes de la masse en 2025, rien après.
-        assert somme == pytest.approx(ligne.base_modele, rel=1e-5), ligne.annee
+        # détaille pas — 3 millionièmes de la masse en 2025, rien après. La
+        # base porte la réversion, que les masses par régime n'ont pas. Le
+        # RAFP, hors répartition, n'est pas dans la pension du scénario 1 :
+        # sa part s'y ajoute, et la somme ne le compte pas.
+        assert somme == pytest.approx(ligne.base_modele / ligne.facteur_reversion,
+                                      rel=1e-5), ligne.annee
 
 
 def test_la_projection_suit_le_cor_groupe_par_groupe(avenir, comptes):
@@ -925,9 +941,11 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
         attendue = (ligne.base_modele / ligne.base) / (jonction.base_modele / jonction.base)
         assert ligne.derive == pytest.approx(attendue, rel=1e-12), ligne.annee
     horizon = avenir.annee(avenir.derniere_annee)
-    # 1,200 jusqu'à l'étape 4 de l'action 147, 1,174 depuis : un cliquet, qui
-    # ne doit que descendre à mesure que l'écart s'explique.
-    assert 1.1 < horizon.derive < 1.18, horizon.derive
+    # 1,200 jusqu'à l'étape 4 de l'action 147, 1,174 jusqu'à l'étape 8, qui
+    # corrige deux écarts de comptabilité à la dépense du COR — la part de la
+    # réversion, l'ancrage unique — et la ramène à 1,097 : un cliquet, qui ne
+    # doit que descendre à mesure que l'écart s'explique.
+    assert 1.05 < horizon.derive < 1.10, horizon.derive
 
 
 def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
@@ -1075,7 +1093,11 @@ def test_la_recette_pese_les_cotisants_et_la_depense_les_retraites(cout: Cout):
     ancien = memoire.memoriser_pour(
         Parametres(), ("cout_retraites_des_deux_cotes", Parametres(), CONVENTION_RAPPORT),
         ancienne_convention)
-    assert ancien.poids_cotisants == ancien.poids
+    # Les cotisants y pèsent ce que pèsent les retraités avant leur calage sur
+    # la dépense de chaque groupe du COR, qui ne touche que les pensions.
+    assert ancien.poids_cotisants == _ponderation(
+        Simulateur(Parametres()), "effectifs", CAS_TYPES)(
+            DepensesRetraite(RACINE_DONNEES).derniere_annee)
     for annee in (2030, 2050, 2070):
         ligne = cout.avenir.annee(annee)
         nouveau = ligne.rapports_recettes["notionnel_liberal"]

@@ -7252,15 +7252,15 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 7 (le passé refait,
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 8 (le passé refait,
 la décomposition du COR, sa dépense, la fourchette, ses deux conventions,
-l'écart groupe par groupe, la pondération par génération écartée, puis la
-méthode du COR relue : la dérive de 2070, 1,174, tient pour 8,8 points à
-trois écarts de comptabilité — réversion, RAFP, ancrage unique — et pour
-9,1 à la croissance des groupes, dont 7,0 à la FPE). Reste, une session
-neuve par point : les trois corrections de comptabilité (dérive attendue
-1,087), puis la FPE et la CNRACL, les points Agirc-Arrco, les carrières.
-Commencer par le point 1 des « Restent » de la note de l'étape 7.
+l'écart groupe par groupe, la pondération par génération écartée, la méthode
+du COR relue, puis sa comptabilité corrigée : la base porte la réversion à la
+part du COR, les poids des cas types sont calés sur la dépense de ses six
+groupes, et la dérive de 2070 tombe de 1,174 à 1,097). Le RAFP n'était pas
+dans la masse. Reste, une session neuve par point : la FPE et la CNRACL, les
+points Agirc-Arrco, les carrières incomplètes. Commencer par le point (2) des
+« Restent » de la note de l'étape 7, et lire la note de l'étape 8.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7759,3 +7759,43 @@ décomposé.**
   (DGAFP), les effectifs du COR, les entrées tardives ; (3) les points
   Agirc-Arrco, contre les cas types n° 1 et 2 du COR ; (4) les carrières
   incomplètes et les migrants, avec la population de l'action 136.
+
+**Étape 8, le 5 octobre 2026 : la comptabilité de la trajectoire propre,
+corrigée.** Deux corrections sur les trois, dans les deux moteurs ; la
+troisième n'avait pas d'objet.
+
+- *La réversion.* La base du modèle (`base_modele`) est portée chaque année
+  à la part de réversion que projette le COR : ancrage × masse × (1 − part
+  de 2024) / (1 − part de l'année) (`AvenirAnnuel.facteur_reversion`) ;
+  avant 2010, la série reconduit sa première part. La décomposition, qui se
+  compare à la pension de droits directs du COR, divise par ce facteur.
+  Dérive de 2070 : 1,174 → 1,116.
+- *Le RAFP* n'était pas dans la masse : la pension du scénario 1
+  (`pension_annuelle`) écarte les régimes hors répartition, dont il est. Sa
+  part dans `masses_regimes` s'ajoute à la masse sans en faire partie, et la
+  mesure de l'étape 7 (→ 1,111) en était l'artefact. Rien à corriger ; la
+  question du dénominateur des rapports tombe avec elle.
+- *L'ancrage par groupe* (`_poids_par_groupe`, `poidsParGroupe`). Un
+  coefficient par cas type, le même chaque année, trouvé par cent passes
+  multiplicatives, cale la masse de droits directs de 2025 sur la part que le
+  COR donne à la dépense de chacun de ses six groupes (`depense_part_pib`,
+  réversion comprise : ni le rapport de 2026 ni le dépôt n'ont les droits
+  directs par groupe) ; les poids de chaque année sont ramenés à leur somme.
+  Le calage est exact (LURA 49,6 → 42,5 %, FPE 10,0 → 15,3, régimes spéciaux
+  2,2 → 4,5) ; poser les poids plutôt que la masse fait hériter tous les
+  systèmes, la garantie et l'engagement de 2021 compris. Sans compte, la
+  décomposition est lue sur le disque ; la pondération égale reste telle
+  quelle. Dérive : → 1,097, et non 1,087, la cible étant la dépense totale.
+- *Ce que ça déplace.* La trajectoire propre de 2070 : 17,4 → 16,3 % du PIB,
+  à un point du COR. La borne haute : dérive de 17 à 10 % ; la proposition à
+  9,4 % du PIB en 2070 (9,9), solde moyen −1,26 (−1,46), dette 79 % (90). La
+  borne basse, par les poids : 8,6 % en 2070 (8,4), solde moyen −0,85
+  (−0,73), coefficient 0,99 (1,01), dette 54 % (47) ; le scénario 6 n'est
+  plus à l'équilibre que de 2028 à 2030, et le README le dit. Le cadre pèse
+  plus, l'agent de conduite 1,5 % (0,7). Engagement du système actuel en
+  2021 : 497 % (509). Cliquets : reconstitution −17,1 % en 2009 (0,18),
+  pension moyenne relative +13,1 % (0,14), dérive sous 1,10 ; la dépense des
+  complémentaires monte de +12,0 à +13,3 % (0,14), le cadre pesant plus. 55
+  témoins de page, aucun de simulation.
+- *Restent* les points (2) à (4) de l'étape 7 ; la dérive restante est la
+  croissance des groupes, dont la FPE.

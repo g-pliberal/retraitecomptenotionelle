@@ -46,7 +46,7 @@ import { coutGarantie, coutGarantieParSexe, facteursParSexe, manqueMoyen,
 import { CaracteristiquesRetraites } from "./caracteristiques.js";
 import { DistributionPensions } from "./distribution.js";
 import { Fiabilite } from "./serie.js";
-import { ORGANISMES, POSTES } from "./equilibre.js";
+import { GROUPES_DU_MODELE, ORGANISMES, POSTES } from "./equilibre.js";
 import { RevalorisationServie } from "./revalorisation.js";
 import { AssietteTva } from "./tva.js";
 
@@ -1181,6 +1181,101 @@ export function ponderation(simulateur, mode, casTypes, cote = COTE_RETRAITES) {
   };
 }
 
+// Combien de passes le calage des groupes fait, et d'où il cherche son année.
+// Voir `PASSES_CALAGE` dans `cout.py`.
+const PASSES_CALAGE = 100;
+const PREMIERE_ANNEE_CALAGE = 2000;
+
+/** La première année où le COR publie la dépense de ses six groupes. */
+function anneeCalage(decomposition) {
+  const groupes = Object.keys(GROUPES_DU_MODELE);
+  for (let annee = PREMIERE_ANNEE_CALAGE; annee <= HORIZON; annee += 1) {
+    if (groupes.every((groupe) => decomposition.valeur("depense_part_pib", groupe, annee) !== null)) {
+      return annee;
+    }
+  }
+  return null;
+}
+
+/**
+ * Les poids des cas types, recalés sur la dépense de chaque groupe de régimes
+ * du COR, l'année où il les publie tous : un coefficient par cas type, trouvé
+ * par passes, puis les poids de chaque année ramenés à leur somme. Portage de
+ * `_poids_par_groupe` dans `cout.py`, qui dit pourquoi (action 147, étape 8).
+ */
+function poidsParGroupe(poids, liste, population, revalorisation, decomposition) {
+  const annee = anneeCalage(decomposition);
+  if (annee === null) return poids;
+  const groupesModele = Object.entries(GROUPES_DU_MODELE);
+  const masses = new Map();
+  for (const [code, part] of Object.entries(poids(annee))) {
+    if (part <= 0) continue;
+    const { massesRegime } = massesRegimes(liste, population, annee, { [code]: part },
+                                           revalorisation);
+    const groupes = {};
+    let somme = 0;
+    for (const [groupe, membres] of groupesModele) {
+      let masse = 0;
+      for (const regime of membres) masse += massesRegime.get(regime) ?? 0;
+      groupes[groupe] = masse;
+      somme += masse;
+    }
+    if (somme > 0) masses.set(code, groupes);
+  }
+  const servis = groupesModele.map(([groupe]) => groupe)
+    .filter((groupe) => [...masses.values()].some((groupes) => groupes[groupe] > 0));
+  if (servis.length === 0) return poids;
+  const cibles = {};
+  let totalCible = 0;
+  for (const groupe of servis) {
+    cibles[groupe] = decomposition.valeur("depense_part_pib", groupe, annee);
+    totalCible += cibles[groupe];
+  }
+  const coefficients = new Map([...masses.keys()].map((code) => [code, 1.0]));
+  for (let passe = 0; passe < PASSES_CALAGE; passe += 1) {
+    const parGroupe = {};
+    let total = 0;
+    for (const groupe of servis) {
+      let masse = 0;
+      for (const [code, groupes] of masses) masse += coefficients.get(code) * groupes[groupe];
+      parGroupe[groupe] = masse;
+      total += masse;
+    }
+    const corrections = {};
+    for (const groupe of servis) {
+      corrections[groupe] = (cibles[groupe] / totalCible) / (parGroupe[groupe] / total);
+    }
+    for (const [code, groupes] of masses) {
+      let corrige = 0;
+      let somme = 0;
+      for (const groupe of servis) {
+        corrige += groupes[groupe] * corrections[groupe];
+        somme += groupes[groupe];
+      }
+      coefficients.set(code, coefficients.get(code) * (corrige / somme));
+    }
+  }
+  const memoire = new Map();
+  return (millesime) => {
+    if (!memoire.has(millesime)) {
+      const bruts = poids(millesime);
+      const recales = {};
+      let sommeBruts = 0;
+      let somme = 0;
+      for (const [code, part] of Object.entries(bruts)) {
+        recales[code] = part * (coefficients.get(code) ?? 1.0);
+        sommeBruts += part;
+        somme += recales[code];
+      }
+      const echelle = somme > 0 ? sommeBruts / somme : 1.0;
+      const cales = {};
+      for (const [code, part] of Object.entries(recales)) cales[code] = part * echelle;
+      memoire.set(millesime, cales);
+    }
+    return memoire.get(millesime);
+  };
+}
+
 /**
  * Le rapport de chaque masse à celle du système actuel, composante comprise.
  * Les six systèmes viennent de la grille ; la composante vient de la
@@ -1276,8 +1371,13 @@ class AvenirAnnuel {
               reversionServie = false, reformeEnVigueur = true, garantie = null,
               pilier = null, partStock = 0.0, facteurAssietteLiberal = 1.0,
               baseModele = 0.0, tetes = 0.0, salaireReel = 0.0, derive = 1.0,
-              massesRegimes = new Map(), tetesRegimes = new Map()) {
+              massesRegimes = new Map(), tetesRegimes = new Map(),
+              facteurReversion = 1.0) {
     this.annee = annee;
+    // Ce par quoi la base du modèle porte la réversion à la part que le COR
+    // projette cette année-là : un moins la part de l'ancrage, sur un moins
+    // celle de l'année. Voir `AvenirAnnuel.facteur_reversion` dans `cout.py`.
+    this.facteurReversion = facteurReversion;
     // La base du modèle régime par régime, et ses têtes : ce que
     // `Avenir.decompositionGroupes` confronte au COR groupe par groupe.
     this.massesRegimes = massesRegimes;
@@ -1433,7 +1533,10 @@ class Avenir {
         || reference.baseModele <= 0) {
       return rendu;
     }
-    const pensionRelative = (ligne) => ligne.baseModele / ligne.tetes / ligne.salaireReel;
+    // En droits directs, comme la figure 2.3 du COR : sans la réversion que
+    // la base porte (`facteurReversion`).
+    const pensionRelative = (ligne) => ligne.baseModele / ligne.facteurReversion
+      / ligne.tetes / ligne.salaireReel;
     const depart = pensionRelative(reference);
     for (const ligne of this.annees) {
       if (ligne.tetes > 0 && ligne.salaireReel > 0) {
@@ -2597,8 +2700,11 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
   // Les deux termes sont mis dans la MÊME unité avant d'être divisés : la
   // dépense publiée, en euros de son année, est ramenée aux euros constants où
   // les pensions du modèle sont déjà exprimées.
+  // La réversion que compte la dépense de l'ancrage est portée chaque année à
+  // la part que le COR projette (`facteurReversion`).
   const ancrage = depenses.repartition(dernierePubliee)
     * macro.coefficientPrix(dernierePubliee, anneeEuros) / ancrageMasses.actuel;
+  const partAncrage = depenses.partDroitsDerives(dernierePubliee);
 
   // Le PIB est publié jusqu'en 2025 ; au-delà il croît au rythme nominal des
   // hypothèses de projection, TRAJECTOIRE D'EMPLOI COMPRISE : `macro.pib_nominal`, la même série que lit
@@ -2640,9 +2746,11 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
     }
     // La base du modèle est calculée chaque année, publiée ou non : la même
     // formule, appliquée au passé, est ce qui la contrôle.
-    const modele = ancrage * total.actuel;
     const { massesRegime, tetesRegime } = massesRegimes(
       liste, population, annee, poidsAnnee, revalorisation);
+    const partDerives = depenses.partDroitsDerives(annee);
+    const reversion = (1.0 - partAncrage) / (1.0 - partDerives);
+    const modele = ancrage * total.actuel * reversion;
     const pib = pibProjete.has(annee)
       ? pibProjete.get(annee)
       : depenses.pib.valeur(Math.min(annee, dernierePib));
@@ -2663,7 +2771,6 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       derive = modele / base / jonction;
     }
     const actifs = population.actifs.valeur(annee);
-    const partDerives = depenses.partDroitsDerives(annee);
     const projetee = garantie.chiffrer(total, tetes);
     lignes.push(new AvenirAnnuel(
       annee,
@@ -2690,6 +2797,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       derive,
       new Map([...massesRegime].map(([regime, masse]) => [regime, ancrage * masse])),
       tetesRegime,
+      reversion,
     ));
   }
 
@@ -2813,7 +2921,7 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   }
   const reversionServie = conventionReversion === CONVENTION_REVERSION_SERVIE;
   const { liste, motifs } = pensionnes(simulateur, casTypes, liquidation);
-  const poids = ponderation(simulateur, mode, casTypes);
+  let poids = ponderation(simulateur, mode, casTypes);
   const poidsCotisants = ponderation(simulateur, mode, casTypes, COTE_COTISANTS);
   const macro = simulateur.macro;
   const anneeEuros = simulateur.parametres.annee_euros_constants;
@@ -2826,6 +2934,12 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   // Sous les conventions du COR, comme la grille (`pensionnes`).
   const revalorisation = new RevalorisationServie(simulateur.pourLaProjection(),
     premiereLiquidation, HORIZON);
+  // Les poids des retraités, recalés sur la dépense de chaque groupe du COR :
+  // tout ce qui suit en hérite. Voir `calculer_cout` dans `cout.py`, qui lit
+  // la décomposition sur le disque sans compte ; la page en a toujours un.
+  if (comptes !== null && mode === "effectifs") {
+    poids = poidsParGroupe(poids, liste, population, revalorisation, comptes.decomposition);
+  }
 
   // La garantie vieillesse ne se lit pas sur la grille mais sur la
   // distribution des pensions ; la grille dit seulement de combien cette

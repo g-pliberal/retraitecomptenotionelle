@@ -11548,7 +11548,9 @@ function coutDetailPoids(contexte) {
 démographique, et vient de l'INSEE. Celle du <strong>cas type</strong> est
 sociologique, et elle se lit des deux côtés du bilan : dans les
 <strong>dépenses</strong>, un cas type pèse les retraités de sa caisse (combien
-ont eu cette carrière-là), publiés par la DREES ; dans les
+ont eu cette carrière-là), publiés par la DREES, puis calés d'un même
+coefficient chaque année pour que chaque groupe de régimes pèse dans la masse
+la part que le COR donne à sa dépense en 2025 ; dans les
 <strong>recettes</strong>, il pèse ses cotisants, publiés et projetés par le
 COR. La colonne de droite rappelle ce que valait la convention antérieure, qui
 les pesait à égalité.</p>
@@ -14837,23 +14839,23 @@ export const MESURES_BLOCAGES = {
   // la bascule, que la part « retraite seule » du taux que l'État verse — le
   // défaut depuis le même jour : sous le taux entier, la proposition était à
   // −0,9, 59 % et 0,85, et 1,03 en 2070.
-  solde_moyen_proposition: -0.7,
+  solde_moyen_proposition: -0.8,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 47,
+  dette_2070_proposition: 54,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.87,
+  coefficient_minimum: 0.86,
   decennie_coefficient_minimum: 2050,
-  coefficient_2070: 1.01,
+  coefficient_2070: 0.99,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.
   tva_affectee: 0.0,
   // proposition_prospective.py : le solde moyen de la variante qui laisse le
   // stock intact, en points de PIB.
-  solde_moyen_prospectif: -3.0,
+  solde_moyen_prospectif: -3.1,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
-  cout_diviseur_age_legal: 0.2,
+  cout_diviseur_age_legal: 0.1,
 };
 
 /**

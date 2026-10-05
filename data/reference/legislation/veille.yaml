@@ -5615,3 +5615,19 @@ journal:
       Agirc-Arrco et les carrières, chacun dans une session neuve ; la décision du
       conseil d'administration de l'Agirc-Arrco du 14 octobre 2026, qui fixera la
       valeur de service de novembre 2026.
+  - date: "2026-10-05"
+    session: "action 147, étape 8 : la comptabilité de la trajectoire propre, corrigée"
+    consulte: >-
+      La veille du jour (scripts/veille_droit.py), déjà consignée : rien de paru depuis.
+      Le code du scénario 1 qui fait la pension de la page Coût (pension_annuelle, les
+      régimes hors répartition), la série part_droits_derives.csv et la dépense par
+      groupe du COR (decomposition_depense_retraite.csv).
+    trouve: >-
+      Aucun texte de droit : l'étape ne touche aucune règle, seulement la comptabilité
+      du coût. La base porte la réversion à la part du COR, les poids des cas types
+      sont calés sur la dépense de ses six groupes ; le RAFP n'était pas dans la
+      masse. La dérive de 2070 tombe de 1,174 à 1,097.
+    reste: >-
+      La FPE et la CNRACL, les points Agirc-Arrco et les carrières, chacun dans une
+      session neuve ; la décision du conseil d'administration de l'Agirc-Arrco du
+      14 octobre 2026.

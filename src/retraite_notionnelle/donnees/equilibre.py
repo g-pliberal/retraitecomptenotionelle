@@ -440,7 +440,11 @@ GROUPES_DECOMPOSITION = ("lura", "fpe", "cnracl", "non_salaries_base",
 #: action 147, étape 5). Les complémentaires sont celles de la note 74 du
 #: rapport de juin 2026 ; LURA, la Cnav et les indépendants que la liquidation
 #: unique sert avec elle. Le RAFP n'est dans aucun groupe : la note 74 ne
-#: le compte pas parmi les complémentaires.
+#: le compte pas parmi les complémentaires, et le COR le laisse hors de son
+#: champ (« hors RAFP », figures 2.2 et 2.6). La masse du scénario 1 aussi : sa
+#: pension laisse de côté les régimes hors répartition, et la part du RAFP
+#: qu'en donnent les masses par régime s'y ajoute sans en faire partie
+#: (action 147, étape 8). Le portage recopie les groupes (``equilibre.js``).
 REGIMES_DU_MODELE: dict[str, tuple[str, ...]] = {
     "cnav": ("regime_general",),
     "fpe": ("fonction_publique_etat",),
@@ -467,9 +471,11 @@ class DecompositionDepense:
     combien de cotisants pour un retraité, quelle pension moyenne rapportée au
     revenu d'activité moyen, quelle dépense par groupe de régimes, et à quel
     rythme les effectifs de retraités et la pension moyenne réelle progressent
-    sous-période par sous-période. Rien de tout cela n'entre dans un calcul :
-    c'est le CONTRÔLE de la trajectoire que le modèle refait de ses cas types
-    (``Avenir.decomposition``), et la mesure de son écart (action 147).
+    sous-période par sous-période. C'est le CONTRÔLE de la trajectoire que le
+    modèle refait de ses cas types (``Avenir.decomposition``), et la mesure de
+    son écart (action 147). Une seule grandeur entre dans un calcul : la
+    dépense par groupe, l'année où le COR publie les six, sur laquelle les
+    poids des cas types se calent (``cout._poids_par_groupe``, étape 8).
     """
 
     def __init__(self, macro: Path) -> None:

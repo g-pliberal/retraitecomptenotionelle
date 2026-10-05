@@ -150,7 +150,13 @@ from .donnees.distribution import (
     part_femmes as part_femmes_distribution,
 )
 from .donnees.taux import CourbeTauxSansRisque
-from .donnees.equilibre import ORGANISMES, POSTES, ComptesRetraite
+from .donnees.equilibre import (
+    GROUPES_DU_MODELE,
+    ORGANISMES,
+    POSTES,
+    ComptesRetraite,
+    DecompositionDepense,
+)
 from .donnees.tva import AssietteTva
 from .donnees.population import Population
 from .garantie import (
@@ -763,6 +769,16 @@ class AvenirAnnuel:
     #: projetées ; sur les années publiées, elle refait le passé par la
     #: mécanique qui projette l'avenir (:meth:`Avenir.reconstitution`).
     base_modele: float = 0.0
+    #: Ce par quoi la base du modèle porte la réversion à la part que le COR
+    #: projette cette année-là (``part_derives``) : un moins la part de
+    #: l'année de l'ancrage, sur un moins celle de l'année. La masse du modèle
+    #: n'a que des droits directs, et l'ancrage la convertit en une dépense
+    #: qui compte la réversion à sa part de l'ancrage ; sans ce facteur, la
+    #: réversion y gardait 10,4 % de la dépense jusqu'en 2070, quand le COR la
+    #: fait tomber à 5,7 % (action 147, étape 8). Avant 2010, la série du COR
+    #: reconduit sa première part. ``base_modele`` divisée par lui est la
+    #: masse de droits directs, à l'échelle de l'ancrage.
+    facteur_reversion: float = 1.0
     #: Les retraités que le modèle compte cette année-là : les cohortes de la
     #: grille parvenues à l'âge de départ de leur cas type, pesées comme dans
     #: la masse. Des têtes de cas type, non des personnes que l'INSEE compte :
@@ -895,8 +911,11 @@ class Avenir:
                 or reference.salaire_reel <= 0.0 or reference.base_modele <= 0.0):
             return {}
 
+        # En droits directs, comme la figure 2.3 du COR : la réversion que la
+        # base porte est retirée (:attr:`AvenirAnnuel.facteur_reversion`).
         def pension_relative(ligne: AvenirAnnuel) -> float:
-            return ligne.base_modele / ligne.tetes / ligne.salaire_reel
+            return (ligne.base_modele / ligne.facteur_reversion
+                    / ligne.tetes / ligne.salaire_reel)
 
         depart = pension_relative(reference)
         return {
@@ -3020,6 +3039,111 @@ def _ponderation(simulateur: Simulateur, mode: str,
     return poids
 
 
+#: Combien de passes le calage des groupes fait (:func:`_poids_par_groupe`).
+#: Quatre groupes sur six n'ont que leurs propres cas types, et sont calés dès
+#: la première ; LURA et les complémentaires se partagent ceux du privé, et
+#: c'est leur partage qui demande des passes : à cent, le calage ne bouge plus
+#: au millionième.
+PASSES_CALAGE = 100
+#: D'où chercher l'année du calage : le COR publie ses groupes depuis 2025.
+PREMIERE_ANNEE_CALAGE = 2000
+
+
+def _annee_calage(decomposition: DecompositionDepense) -> int | None:
+    """La première année où le COR publie la dépense de ses six groupes."""
+    for annee in range(PREMIERE_ANNEE_CALAGE, HORIZON + 1):
+        if all(decomposition.valeur("depense_part_pib", groupe, annee) is not None
+               for groupe in GROUPES_DU_MODELE):
+            return annee
+    return None
+
+
+def _poids_par_groupe(poids: Callable[[int], dict[str, float]],
+                      pensionnes: list[Pensionne], population: Population,
+                      revalorisation: RevalorisationServie,
+                      decomposition: DecompositionDepense
+                      ) -> Callable[[int], dict[str, float]]:
+    """Les poids des cas types, recalés sur la dépense de chaque groupe de
+    régimes du COR (action 147, étape 8).
+
+    POURQUOI. Un seul ancrage convertissait la masse du modèle en euros, et
+    gardait donc la STRUCTURE de la grille : en 2025, LURA y faisait 49,5 % de
+    la masse, quand le COR lui en donne 42,5 ; la fonction publique d'État
+    10,0 contre 15,3 ; les régimes spéciaux 2,2 contre 4,5. Les groupes ne
+    croissant pas au même rythme, la structure fausse fait la pente : elle
+    portait le tiers de l'écart de comptabilité à la dépense du COR.
+
+    COMMENT. Le COR part de la dépense de chaque régime ; on fait de même, mais
+    sur les POIDS des cas types plutôt que sur la seule masse du système
+    actuel. Chaque système en hérite, et les rapports de masses comparent
+    toujours les mêmes carrières — un coefficient sur la masse du scénario 1
+    seul les aurait fait comparer deux populations. Chaque cas type reçoit un
+    coefficient, le même chaque année, tel que la masse de droits directs du
+    scénario 1, l'année du calage, se répartisse entre les six groupes comme la
+    dépense que le COR leur donne (``depense_part_pib``). Un cas type du privé
+    sert à la fois LURA et une complémentaire : le coefficient est trouvé par
+    passes successives, chacune multipliant celui d'un cas type par la moyenne
+    des corrections de ses groupes, pondérée par ce qu'il y touche.
+
+    CE QUI EST CONVENU. La cible est la dépense de chaque groupe, réversion
+    comprise : le rapport de juin 2026 ne publie pas les droits directs par
+    groupe, et le classeur par régime de 2024 n'est pas gardé. Les poids de
+    chaque année sont ramenés à la somme qu'ils avaient : le calage déplace les
+    carrières, il ne crée pas de retraités. Sans année où le COR publie les six
+    groupes, les poids sont rendus tels quels.
+    """
+    annee = _annee_calage(decomposition)
+    if annee is None:
+        return poids
+    masses: dict[str, dict[str, float]] = {}
+    for code, part in poids(annee).items():
+        if part <= 0.0:
+            continue
+        regimes, _ = _masses_regimes(pensionnes, population, annee, {code: part},
+                                     revalorisation)
+        groupes = {groupe: sum(regimes.get(regime, 0.0) for regime in membres)
+                   for groupe, membres in GROUPES_DU_MODELE.items()}
+        if sum(groupes.values()) > 0.0:
+            masses[code] = groupes
+    # Les groupes que la grille sert : une grille réduite n'en a pas six, et
+    # la dépense des autres ne se répartit pas sur les siens.
+    servis = [groupe for groupe in GROUPES_DU_MODELE
+              if any(groupes[groupe] > 0.0 for groupes in masses.values())]
+    if not servis:
+        return poids
+    cibles = {groupe: decomposition.valeur("depense_part_pib", groupe, annee)
+              for groupe in servis}
+    total_cible = sum(cibles.values())
+    coefficients = {code: 1.0 for code in masses}
+    for _ in range(PASSES_CALAGE):
+        par_groupe = {groupe: sum(coefficients[code] * masses[code][groupe]
+                                  for code in masses)
+                      for groupe in servis}
+        total = sum(par_groupe.values())
+        corrections = {groupe: (cibles[groupe] / total_cible) / (par_groupe[groupe] / total)
+                       for groupe in servis}
+        for code, groupes in masses.items():
+            coefficients[code] *= (
+                sum(groupes[groupe] * corrections[groupe] for groupe in servis)
+                / sum(groupes[groupe] for groupe in servis)
+            )
+    memoire: dict[int, dict[str, float]] = {}
+
+    def cales(millesime: int) -> dict[str, float]:
+        if millesime not in memoire:
+            bruts = poids(millesime)
+            recales = {code: part * coefficients.get(code, 1.0)
+                       for code, part in bruts.items()}
+            somme = sum(recales.values())
+            echelle = sum(bruts.values()) / somme if somme > 0.0 else 1.0
+            memoire[millesime] = {code: part * echelle for code, part in recales.items()}
+        return memoire[millesime]
+
+    return cales
+
+
+
+
 def _rapports(masses: dict[str, float], garantie: GarantieProjetee,
               base_constants: float, part_derives: float) -> dict[str, float]:
     """Le rapport de chaque masse à celle du système actuel, composante comprise.
@@ -3524,11 +3648,17 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     # d'être divisés : la dépense publiée, en euros de son année, est ramenée
     # aux euros constants où les pensions du modèle sont déjà exprimées. Les
     # mélanger déflaterait deux fois, et ferait fondre la projection d'un tiers.
+    # La masse est déjà celle du champ du COR, « hors RAFP » : la pension du
+    # scénario 1 laisse de côté les régimes hors répartition, dont il est.
     ancrage = (
         depenses.repartition(derniere_publiee)
         * macro.coefficient_prix(derniere_publiee, annee_euros)
         / masses_ancrage["actuel"]
     )
+    # La dépense de l'ancrage compte la réversion à sa part de cette année-là,
+    # et la masse du modèle n'en a pas : chaque année, la base du modèle la
+    # porte à la part que le COR projette (:attr:`AvenirAnnuel.facteur_reversion`).
+    part_ancrage = depenses.part_droits_derives(derniere_publiee)
 
     # Le PIB est publié jusqu'en 2025 ; au-delà il croît au rythme nominal des
     # hypothèses de projection, TRAJECTOIRE D'EMPLOI COMPRISE — c'est-à-dire
@@ -3577,9 +3707,11 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
                 })
         # La base du modèle est calculée chaque année, publiée ou non : la même
         # formule, appliquée au passé, est ce qui la contrôle.
-        modele = ancrage * masses["actuel"]
         masses_regimes, tetes_regimes = _masses_regimes(
             pensionnes, population, annee, poids_annee, revalorisation)
+        part_derives = depenses.part_droits_derives(annee)
+        reversion = (1.0 - part_ancrage) / (1.0 - part_derives)
+        modele = ancrage * masses["actuel"] * reversion
         pib = pib_projete.get(annee, depenses.pib(min(annee, derniere_pib)))
         if not projete:
             base = depenses.repartition(annee) * coefficient
@@ -3596,7 +3728,6 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
                 jonction = modele / base
             derive = modele / base / jonction
         actifs = population.actifs(annee)
-        part_derives = depenses.part_droits_derives(annee)
         projetee = garantie.chiffrer(masses, tetes)
         lignes.append(AvenirAnnuel(
             annee=annee,
@@ -3619,6 +3750,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             pilier=pilier,
             part_stock=masses[MASSE_STOCK] / masses["actuel"],
             base_modele=modele,
+            facteur_reversion=reversion,
             tetes=tetes[TETES_TOUTES],
             salaire_reel=(macro.coefficient_salaire_moyen(annee_euros, annee)
                           / macro.coefficient_prix(annee_euros, annee)),
@@ -3900,6 +4032,11 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
         min((p.annee_liquidation for p in pensionnes), default=horizon) - _DEMI_TRANCHE,
         horizon,
     )
+    # Les poids recalés groupe par groupe, comme ceux de la trajectoire.
+    if ponderation == "effectifs":
+        poids = _poids_par_groupe(
+            poids, pensionnes, population, revalorisation,
+            DecompositionDepense(simulateur.parametres.racine_donnees / "reference" / "macro"))
 
     derniere_publiee = depenses.derniere_annee
     masses_ancrage, _, _ = _masses(pensionnes, population, derniere_publiee,
@@ -3907,12 +4044,17 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     if masses_ancrage["actuel"] <= 0.0:
         return EngagementAcquis(annee, horizon, {}, 0.0, 0.0, 0.0)
     # Le prix d'une unité de masse du modèle, en euros constants de référence :
-    # le même ancrage que la trajectoire, et pour la même raison.
+    # le même ancrage que la trajectoire, et pour la même raison, la réversion
+    # portée chaque année à la part que le COR projette.
     ancrage = (
         depenses.repartition(derniere_publiee)
         * macro.coefficient_prix(derniere_publiee, annee_euros)
         / masses_ancrage["actuel"]
     )
+    part_ancrage = depenses.part_droits_derives(derniere_publiee)
+    reversion = {millesime: (1.0 - part_ancrage)
+                 / (1.0 - depenses.part_droits_derives(millesime))
+                 for millesime in range(annee, horizon + 1)}
 
     derniere_pib = depenses.pib.derniere_annee
     pib: dict[int, float] = {}
@@ -3999,7 +4141,8 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
                         continue
                     commun = (
                         acquis * part_caisse * effectif
-                        * ancrage / macro.coefficient_prix(millesime, annee_euros)
+                        * ancrage * reversion[millesime]
+                        / macro.coefficient_prix(millesime, annee_euros)
                         / pib[millesime]
                     )
                     coefficients = {
@@ -4118,6 +4261,16 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         min((p.annee_liquidation for p in pensionnes), default=HORIZON) - _DEMI_TRANCHE,
         HORIZON,
     )
+    # Les poids des retraités, recalés sur la dépense de chaque groupe du COR :
+    # tout ce qui suit en hérite, la garantie comme la trajectoire. Lue sur le
+    # disque sans compte, la décomposition : les ressources restent un ajout,
+    # qui ne corrige rien de ce qui précède. L'ancienne convention, qui
+    # n'existe que pour mesurer, reste telle quelle.
+    if ponderation == "effectifs":
+        poids = _poids_par_groupe(
+            poids, pensionnes, population, revalorisation,
+            comptes.decomposition if comptes is not None else DecompositionDepense(
+                simulateur.parametres.racine_donnees / "reference" / "macro"))
 
     # La garantie vieillesse ne se lit pas sur la grille mais sur la
     # distribution des pensions ; la grille dit seulement de combien cette

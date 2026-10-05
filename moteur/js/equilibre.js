@@ -314,11 +314,27 @@ export function depenseMaximaleToutesVariantes(paquet) {
 }
 
 /**
+ * Ce que chaque groupe du COR réunit des régimes du modèle, chacun au bout de
+ * ses fusions. Portage de `GROUPES_DU_MODELE` dans `donnees/equilibre.py` ; le
+ * calage des poids (`poidsParGroupe`, dans `cout.js`) le lit.
+ */
+export const GROUPES_DU_MODELE = {
+  lura: ["regime_general", "msa_salaries"],
+  fpe: ["fonction_publique_etat"],
+  cnracl: ["cnracl"],
+  non_salaries_base: ["msa_non_salaries", "cnavpl", "cnbf"],
+  regimes_speciaux: ["sncf", "ieg", "ratp", "crpcen", "banque_de_france", "fspoeie"],
+  complementaires: ["agirc_arrco", "ircantec", "crpnpac", "cipav_complementaire",
+    "cnbf_complementaire", "msa_rco", "rci"],
+};
+
+/**
  * Ce qui fait la dépense du système de retraite, chez le COR : pension moyenne
  * relative et cotisants par retraité, ensemble et par régime, dépense par
  * groupe de régimes, et croissances par sous-période. Le contrôle de la
  * trajectoire que le modèle refait de ses cas types (`Avenir.decomposition`),
- * jamais une entrée de calcul. Portage de `DecompositionDepense` dans
+ * et, pour la seule dépense par groupe, le calage des poids des cas types
+ * (`poidsParGroupe`, action 147, étape 8). Portage de `DecompositionDepense` dans
  * `donnees/equilibre.py`.
  */
 export class DecompositionDepense {
