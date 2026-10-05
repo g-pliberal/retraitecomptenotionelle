@@ -408,6 +408,35 @@ def reconstitution(**reglages: str) -> float:
     return (rapports[annee] - 1) * 100
 
 
+def decomposition(**reglages: str) -> float:
+    """Variation, en %, d'un facteur de la dépense du système actuel, de
+    ``de`` à ``a`` : ``facteur=retraites`` ou ``facteur=pension_relative``,
+    chez le modèle (``Avenir.decomposition``) ou, avec ``source=cor``, chez le
+    COR (``decomposition_depense_retraite.csv`` et
+    ``croissance_depense_retraite.csv``) — pour la pension relative, d'un
+    régime avec ``groupe=cnav``, ``fpe``, ``cnracl`` ou ``agirc_arrco``."""
+    from retraite_notionnelle.donnees.equilibre import ComptesRetraite
+
+    facteur = reglages["facteur"]
+    if facteur not in ("retraites", "pension_relative"):
+        raise ValueError(f"facteur attend retraites ou pension_relative, reçu « {facteur} »")
+    de, a = int(reglages["de"]), int(reglages["a"])
+    if reglages.get("source", "modele") == "cor":
+        cor = ComptesRetraite(_parametres().racine_donnees).decomposition
+        indice = (cor.indice_croissance("retraites", de, a) if facteur == "retraites"
+                  else cor.indice("pension_relative", reglages.get("groupe", "ensemble"),
+                                  de, a))
+        if indice is None:
+            raise ValueError(f"le COR ne publie pas {facteur} de {de} à {a}")
+        return (indice - 1) * 100
+    if a == de:
+        return 0.0
+    decompose = _cout_de(reglages).avenir.decomposition(de)
+    if a not in decompose:
+        raise ValueError(f"l'année {a} n'est pas dans la trajectoire")
+    return (decompose[a][0 if facteur == "retraites" else 1] - 1) * 100
+
+
 def fusion(**reglages: str) -> float:
     """Un champ du régime unique qui naît à la bascule — ``champ=…``.
 
@@ -1636,6 +1665,7 @@ MESURES = {
     "poids_trimestre": poids_trimestre,
     "dependance": dependance,
     "reconstitution": reconstitution,
+    "decomposition": decomposition,
     "emploi_projete": emploi_projete,
     "composition_revalorisation": composition_revalorisation,
     "age_reference": age_reference,

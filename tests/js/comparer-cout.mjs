@@ -5,8 +5,9 @@
  * Reçoit en argument un fichier JSON — ``{parametres, annees}`` : les
  * paramètres qui s'écartent du défaut, et les années à lire — et écrit sur la
  * sortie standard, pour chaque année, le solde de chaque système et le facteur
- * d'assiette de la proposition, puis les soldes moyens de la projection, et la
- * reconstitution du passé par la mécanique de la projection.
+ * d'assiette de la proposition, puis les soldes moyens de la projection, la
+ * reconstitution du passé par la mécanique de la projection, et sa
+ * décomposition en retraités et en pension moyenne relative.
  * `tests/test_cout.py` compare le tout au modèle Python.
  *
  * Il existe pour les paramètres que le site n'expose pas, et qu'aucune page
@@ -44,6 +45,7 @@ const sortie = {
     s, solde.soldeMoyen(s, solde.premiereAnneeProjetee, solde.annees.at(-1).annee),
   ])),
   reconstitution: Object.fromEntries(cout.avenir.reconstitution()),
+  decomposition: Object.fromEntries(cout.avenir.decomposition(cout.avenir.premiereAnneeProjetee)),
 };
 
 process.stdout.write(JSON.stringify(sortie));

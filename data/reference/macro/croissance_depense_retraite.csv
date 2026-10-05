@@ -1,0 +1,35 @@
+# Taux de croissance annuels moyens de la dépense de retraite et de ce qui la fait
+# source_id: cor_comptes_systeme_retraite
+# unite: taux annuel moyen sur la sous-période, en fraction
+# fiabilite:
+#   haute    : sous-période achevée à la dernière année que le COR
+#             marque « Obs » (tableau 2.1 du rapport de juin 2026).
+#   projetee : sous-périodes du scénario de référence du même rapport.
+#
+# Quatre grandeurs : la dépense en euros constants (depenses), le nombre
+# de retraités ayant au moins un droit direct (retraites), la pension
+# moyenne réelle (pension_moyenne) et le PIB en volume (pib_volume).
+# C'est la seule publication du COR qui donne le RYTHME des effectifs
+# de retraités : la figure d'ensemble ne les donne que rapportés aux
+# cotisants. Le modèle s'y confronte pour dire si sa trajectoire
+# s'écarte de celle du COR par les têtes ou par la pension.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+periode,grandeur,taux,fiabilite
+2002-2025,depenses,0.0193846,haute
+2002-2025,pension_moyenne,0.0040912,haute
+2002-2025,pib_volume,0.0121759,haute
+2002-2025,retraites,0.0151675,haute
+2025-2030,depenses,0.0089470,projetee
+2025-2030,pension_moyenne,0.0053674,projetee
+2025-2030,pib_volume,0.0113386,projetee
+2025-2030,retraites,0.0053024,projetee
+2030-2045,depenses,0.0094801,projetee
+2030-2045,pension_moyenne,0.0012072,projetee
+2030-2045,pib_volume,0.0090501,projetee
+2030-2045,retraites,0.0080871,projetee
+2045-2070,depenses,0.0059615,projetee
+2045-2070,pension_moyenne,0.0022835,projetee
+2045-2070,pib_volume,0.0028638,projetee
+2045-2070,retraites,0.0038702,projetee

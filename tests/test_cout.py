@@ -693,6 +693,73 @@ def test_la_projection_refait_le_passe(avenir, depenses):
         f"à {math.ceil(ecart * 200) / 200:.1%}")
 
 
+#: Ce que le contrôle par la décomposition du COR tolère sur les EFFECTIFS de
+#: retraités, à chaque fin de sous-période du COR, la dernière année observée du
+#: compte valant un. Mesuré le 5 octobre 2026 : +2,3 % en 2030, -1,0 % en 2045,
+#: -0,8 % en 2070.
+DECOMPOSITION_TETES = 0.03
+#: Le cliquet de la PENSION MOYENNE RELATIVE à l'horizon : le modèle la fait
+#: reculer de 3,3 % de 2025 à 2070, le COR de 17,2 % ; 16,8 % de trop, le
+#: 5 octobre 2026. Il ne doit que descendre, vers la cible.
+DECOMPOSITION_PENSION_CLIQUET = 0.17
+DECOMPOSITION_PENSION_CIBLE = 0.03
+
+
+def test_la_projection_compte_les_retraites_du_cor(avenir, comptes):
+    """La trajectoire du système actuel refait les EFFECTIFS du COR.
+
+    La masse des pensions est un nombre de retraités multiplié par une pension
+    moyenne. Le COR publie le rythme du premier, sous-période par sous-période
+    (tableau 2.1 du rapport de juin 2026) ; le modèle compte les siens, cohorte
+    par cohorte, à l'âge de départ de chaque cas type
+    (:meth:`Avenir.decomposition`). Les deux se suivent à quelques pour cent
+    près, sur un horizon où les retraités croissent d'un quart : ce n'est pas
+    par les têtes que la projection s'écarte du COR.
+    """
+    depuis = comptes.derniere_annee_observee
+    modele = avenir.decomposition(depuis)
+    cor = comptes.decomposition
+    fins = [fin for debut, fin in cor.periodes() if debut >= depuis]
+    assert fins, "décomposition du COR absente ou sans sous-période projetée"
+    for fin in fins:
+        attendu = cor.indice_croissance("retraites", depuis, fin)
+        assert attendu is not None, fin
+        ecart = modele[fin][0] / attendu - 1.0
+        assert abs(ecart) <= DECOMPOSITION_TETES, (
+            f"{fin} : le modèle compte {modele[fin][0]:.3f} fois les retraités de "
+            f"{depuis}, le COR {attendu:.3f} ({ecart:+.1%})")
+
+
+def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
+    """Ce qui sépare la trajectoire du COR : la pension moyenne relative.
+
+    Le COR la fait reculer de 17 % de 2025 à 2070 — l'indexation des droits sur
+    les prix, la baisse du rendement de l'Agirc-Arrco, la part croissante des
+    primes des fonctionnaires, que sa figure 2.7 lit régime par régime ; le
+    modèle, de 3 % seulement. C'est l'écart tout entier : les effectifs, eux,
+    se suivent (``test_la_projection_compte_les_retraites_du_cor``). Le même
+    défaut fait la reconstitution du passé (``test_la_projection_refait_le_passe``) :
+    la pension relative du modèle croît de 17,5 % de 2005 à 2025, celle du COR
+    de 8,9 %.
+
+    Le seuil est un CLIQUET, comme celui de la reconstitution : il ne doit que
+    descendre, et un écart qui passe d'un point sous lui demande de l'abaisser.
+    """
+    depuis = comptes.derniere_annee_observee
+    horizon = avenir.derniere_annee
+    modele = avenir.decomposition(depuis)[horizon][1]
+    attendu = comptes.decomposition.indice("pension_relative", "ensemble", depuis, horizon)
+    assert attendu is not None
+    ecart = modele / attendu - 1.0
+    assert ecart <= DECOMPOSITION_PENSION_CLIQUET, (
+        f"{horizon} : pension relative du modèle {modele:.3f}, du COR {attendu:.3f} "
+        f"({ecart:+.1%}, cliquet {DECOMPOSITION_PENSION_CLIQUET:.0%}, cible "
+        f"{DECOMPOSITION_PENSION_CIBLE:.0%})")
+    assert ecart > DECOMPOSITION_PENSION_CLIQUET - 0.01, (
+        f"{ecart:+.1%} : l'écart a baissé, abaisser le cliquet à "
+        f"{math.ceil(ecart * 100) / 100:.0%}")
+
+
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):
     """Le PIB suit le rythme nominal du COR CORRIGÉ de la population d'âge
     actif, qui recule. Il doit donc croître moins vite que l'hypothèse brute —
@@ -3479,6 +3546,20 @@ def test_le_portage_refait_le_meme_passe(cout_a_mi_emploi, portage_a_mi_emploi):
     assert lue.keys() == attendue.keys()
     for annee, rapport in attendue.items():
         assert lue[annee] == pytest.approx(rapport, rel=1e-9), annee
+
+
+def test_le_portage_decompose_la_trajectoire_de_meme(cout_a_mi_emploi,
+                                                     portage_a_mi_emploi):
+    """La décomposition en retraités et en pension moyenne relative
+    (:meth:`Avenir.decomposition`), refaite en JavaScript année par année."""
+    avenir = cout_a_mi_emploi.avenir
+    attendue = avenir.decomposition(avenir.premiere_annee_projetee)
+    lue = {int(annee): valeurs
+           for annee, valeurs in portage_a_mi_emploi["decomposition"].items()}
+    assert attendue and lue.keys() == attendue.keys()
+    for annee, (tetes, pension) in attendue.items():
+        assert lue[annee][0] == pytest.approx(tetes, rel=1e-9), annee
+        assert lue[annee][1] == pytest.approx(pension, rel=1e-9), annee
 
 
 # -- la TVA, que la proposition ne réforme plus -------------------------------

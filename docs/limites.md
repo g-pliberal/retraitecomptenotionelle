@@ -3125,6 +3125,52 @@ depuis 2000 sous un cliquet, qui ne doit que descendre jusqu'à quelques pour
 cent (`test_la_projection_refait_le_passe`) ; l'action 147 de la feuille de
 route en est le chantier.
 
+**Le contrôle par la décomposition du COR : les retraités se suivent, la
+pension moyenne non.** La masse des pensions de droit direct est un nombre de
+retraités multiplié par une pension moyenne. Le COR publie les deux facteurs —
+le rythme des effectifs de retraités sous-période par sous-période (tableau
+2.1 du rapport de juin 2026) et la pension moyenne de l'ensemble des retraités
+rapportée au revenu d'activité moyen (figure 2.3), que le dépôt porte depuis
+le 5 octobre 2026 dans `decomposition_depense_retraite.csv` et
+`croissance_depense_retraite.csv` —, et le modèle compte les siens
+(`Avenir.decomposition`). De 2025 à 2070, le COR compte
+<!--chiffre:mesure(decomposition?facteur=retraites&de=2025&a=2070&source=cor)-->27,6<!--/--> % de
+retraités de plus, le modèle
+<!--chiffre:mesure(decomposition?facteur=retraites&de=2025&a=2070)-->26,6<!--/--> % : ce n'est pas par
+les têtes que la trajectoire s'écarte. La pension moyenne relative, elle, recule
+de <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070&source=cor)-->−17,2<!--/--> %
+chez le COR et de
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−3,3<!--/--> % seulement
+dans le modèle ; et sur le passé, de 2005 à 2025, elle a crû de
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025&source=cor)-->8,9<!--/--> %
+quand le modèle la fait croître de
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025)-->17,5<!--/--> %. L'écart
+de 2070 et celui de la reconstitution sont donc un seul et même défaut : la
+pension que la grille sert à chaque retraité progresse, d'une génération à
+l'autre, plus vite que la pension moyenne réelle. Deux tests le tiennent,
+`test_la_projection_compte_les_retraites_du_cor` et, sous un cliquet,
+`test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor`.
+
+La figure 2.7 du COR dit où, régime par régime. La pension moyenne relative de
+la Cnav y varie de
+<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=cnav&de=2025&a=2070&source=cor)-->0,3<!--/--> %
+de 2025 à 2070 ; celle de l'Agirc-Arrco de
+<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=agirc_arrco&de=2025&a=2070&source=cor)-->−41,9<!--/--> %,
+celle de la fonction publique d'État de
+<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=fpe&de=2025&a=2070&source=cor)-->−37,1<!--/--> %.
+Deux conventions que le COR écrit y concourent, et le modèle ne les suit pas :
+à l'Agirc-Arrco, une valeur de service qui suit le salaire moyen minoré d'un
+coefficient de soutenabilité de 2027 à 2037, puis un rendement stabilisé, valeur
+de service et valeur d'achat suivant le salaire moyen sous un coefficient
+moindre (rapport de juin 2026, partie 1, chapitre 2, « Le pilotage de
+l'Agirc-Arrco ») ; dans la fonction publique, une
+part des primes qui croît jusqu'en 2037 (figures 1.14 et 1.15), quand la
+pension se calcule sur le seul traitement indiciaire. Le modèle fait baisser le
+rendement de l'Agirc-Arrco au seul rythme de la productivité, valeur de service
+sur les prix et valeur d'achat sur les salaires, et tient la part des primes de
+chaque cas type constante d'une génération à l'autre — la variante du COR, non
+son scénario de référence.
+
 ## 5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands
 
 Trois travaux français ont simulé le passage des retraites aux comptes

@@ -7160,15 +7160,15 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Fait : l'étape 1 — la projection du système
-actuel refaite à rebours sur les années publiées (`Avenir.reconstitution`, et
-son jumeau), et un test qui tient son pire écart depuis 2000 sous un cliquet
-de 19,5 %, à abaisser jusqu'à 5 %. Reste : 2. entrer au dépôt la
-décomposition du COR — nombre de retraités, pension moyenne rapportée au
-revenu d'activité moyen — pour situer l'écart de 2070 année par année ;
-3. tant que l'écart dure, donner la dette de la proposition en fourchette ;
-puis corriger la dérive. Commencer par l'étape 2 ; la note de l'étape 1 dit
-ce que la reconstitution mesure, et ses suspects.
+**Reprise, au 5 octobre 2026.** Faites : l'étape 1 — la projection refaite à
+rebours, sous un cliquet — et l'étape 2 — la décomposition du COR au dépôt
+(`decomposition_depense_retraite.csv`, `croissance_depense_retraite.csv`) et
+celle du modèle (`Avenir.decomposition`, et son jumeau) : les retraités se
+suivent à 1 % près en 2070, la pension moyenne relative non (−3 % contre
+−17 %), sous un second cliquet. Restent : la correction de la dérive, par les
+deux conventions du COR que le modèle ne suit pas (rendement de l'Agirc-Arrco,
+part des primes des fonctionnaires), puis l'étape 3, la fourchette, pour ce qui
+restera. Lire la note de l'étape 2 ; la demande du 5 octobre est dessous.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7224,3 +7224,57 @@ cliquet.**
 - *Ce que ça déplace.* Rien : aucun témoin, aucun rendu de page ; le site
   pèse un ou deux kilo-octets de plus.
 - *Restent* : les étapes 2 et 3, puis la correction.
+
+**Demande**, le 5 octobre 2026 : « J'ai un problème avec la page des coûts,
+on ne retrouve pas de bons chiffres officiels quand on refait les calculs.
+Regarde toutes les limites et toutes les actions qui pourraient améliorer la
+page des coûts et applique tout ce qui est nécessaire pour que la page des
+coûts soit indiscutable. »
+
+**Étape 2, le 5 octobre 2026 : la décomposition du COR, et l'écart localisé.**
+
+- *Ce qui est fait.* Le récupérateur du COR lit quatre figures de plus du
+  rapport de juin 2026 — 2.3 (pension moyenne relative et cotisants par
+  retraité, observés puis projetés), 2.6 (dépense par groupe de régimes), 2.7
+  (les mêmes facteurs pour la Cnav, la FPE, la CNRACL et l'Agirc-Arrco) et le
+  tableau 2.1 (croissances par sous-période) ; `verifier_donnees.py` les écrit
+  dans `decomposition_depense_retraite.csv` et `croissance_depense_retraite.csv`,
+  que `ComptesRetraite.decomposition` lit. Le récupérateur redemande une
+  adresse dont la connexion tombe, et ne télécharge plus qu'une fois chaque
+  classeur : le serveur du COR coupait en route, et un lecteur qui avalait
+  l'erreur concluait qu'une figure manquait au rapport. Le modèle porte, année
+  par année, ses retraités (`tetes`) et l'indice réel du salaire moyen ;
+  `Avenir.decomposition` en tire l'indice des retraités et celui de la pension
+  moyenne relative, le jumeau aussi, et `comparer-cout.mjs` le rend.
+- *Ce que ça mesure.* De 2025 à 2070, les retraités du modèle croissent de
+  26,6 %, ceux du COR de 27,6 % ; la pension moyenne relative recule de 3,3 %
+  dans le modèle, de 17,2 % chez le COR. Sur le passé, de 2005 à 2025, elle
+  croît de 17,5 % dans le modèle, de 8,9 % chez le COR. L'écart de 2070 et
+  celui de la reconstitution sont un seul défaut : la pension que la grille
+  sert à chaque retraité progresse plus vite, d'une génération à l'autre, que
+  la pension moyenne réelle. Les trois suspects de l'étape 1 qui portaient sur
+  les effectifs sont donc écartés. Par régime, la figure 2.7 situe la baisse
+  du COR : la pension relative de la Cnav est stable de 2025 à 2070, celle de
+  l'Agirc-Arrco recule de 42 %, celle de la FPE de 37 %. Deux conventions que
+  le COR écrit et que le modèle ne suit pas y concourent : le pilotage de
+  l'Agirc-Arrco (valeur de service au salaire moyen moins 1,16 % de 2027 à
+  2037, puis valeur de service et valeur d'achat au salaire moyen moins
+  0,86 % : partie 1, chapitre 2), quand le modèle met la valeur de service sur
+  les prix et la valeur d'achat sur les salaires pour toujours ; et la part des
+  primes des fonctionnaires, qui croît jusqu'en 2037 (figures 1.14 et 1.15),
+  quand le modèle la tient constante — la variante du COR, non sa référence.
+  Mesures de la même session, sur la grille : servir aux pensions du système
+  actuel leurs revalorisations réelles plutôt que les prix ne rapproche le
+  passé que de 1 à 5 points (−17,3 % au lieu de −18,5 % en 2000) ; pondérer
+  les cas types par les retraités que le COR projette caisse par caisse
+  plutôt que par ceux de 2024 ne déplace pas 2070.
+- *Les tests.* `test_la_projection_compte_les_retraites_du_cor` tient les
+  effectifs à 3 % près à chaque fin de sous-période du COR (le pire, +2,3 % en
+  2030) ; `test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor` tient
+  l'écart de 2070 sous un cliquet de 17 %, cible 3 % ;
+  `test_le_portage_decompose_la_trajectoire_de_meme` tient le jumeau. La
+  sonde `decomposition` ancre les chiffres de `limites.md` § 5 ter.
+- *Ce que ça déplace.* Rien : aucun chiffre de page, aucun témoin.
+- *Restent* : la correction, l'étape 3, et ce que la demande du jour ajoute :
+  une seule dépense officielle sur toute la page Coût, et les chiffres écrits
+  en dur relus contre leur source.

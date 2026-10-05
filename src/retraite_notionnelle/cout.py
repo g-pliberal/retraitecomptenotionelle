@@ -736,6 +736,15 @@ class AvenirAnnuel:
     #: projetées ; sur les années publiées, elle refait le passé par la
     #: mécanique qui projette l'avenir (:meth:`Avenir.reconstitution`).
     base_modele: float = 0.0
+    #: Les retraités que le modèle compte cette année-là : les cohortes de la
+    #: grille parvenues à l'âge de départ de leur cas type, pesées comme dans
+    #: la masse. Des têtes de cas type, non des personnes que l'INSEE compte :
+    #: c'est leur RYTHME qui se confronte à celui des effectifs du COR
+    #: (:meth:`Avenir.decomposition`).
+    tetes: float = 0.0
+    #: Le salaire moyen par tête de l'année, en indice réel — un l'année des
+    #: euros constants : le dénominateur de la pension moyenne relative.
+    salaire_reel: float = 0.0
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
@@ -812,6 +821,38 @@ class Avenir:
     def cumul_reprises(self) -> float:
         """Ce que les successions rendent sur les années projetées, en euros constants."""
         return sum(ligne.reprises_constants() for ligne in self.projetees())
+
+    def decomposition(self, depuis: int) -> dict[int, tuple[float, float]]:
+        """La trajectoire du système actuel en ses deux facteurs, comme le COR.
+
+        La masse des pensions de droit direct est le produit d'un nombre de
+        retraités et d'une pension moyenne ; rapportée au salaire moyen, cette
+        pension est la « pension moyenne relative » que le COR publie
+        (``decomposition_depense_retraite.csv``). Chaque année rend deux
+        indices, un l'année ``depuis`` : celui des retraités du modèle, et
+        celui de sa pension moyenne relative. Leur produit, multiplié par la
+        croissance réelle du salaire moyen, est celle de la masse — c'est-à-dire
+        de la base du modèle (``base_modele``), dont l'ancrage se simplifie.
+
+        C'est ce qui dit d'où vient l'écart au COR (action 147, étape 2) : par
+        les têtes, la grille compterait mal qui est à la retraite ; par la
+        pension, elle compterait mal ce que chacun touche. Une année sans tête
+        ou sans salaire est absente.
+        """
+        reference = self.annee(depuis)
+        if (reference is None or reference.tetes <= 0.0
+                or reference.salaire_reel <= 0.0 or reference.base_modele <= 0.0):
+            return {}
+
+        def pension_relative(ligne: AvenirAnnuel) -> float:
+            return ligne.base_modele / ligne.tetes / ligne.salaire_reel
+
+        depart = pension_relative(reference)
+        return {
+            ligne.annee: (ligne.tetes / reference.tetes, pension_relative(ligne) / depart)
+            for ligne in self.annees
+            if ligne.tetes > 0.0 and ligne.salaire_reel > 0.0
+        }
 
     def reconstitution(self) -> dict[int, float]:
         """Le passé refait par la mécanique de la projection, année publiée par
@@ -3350,6 +3391,9 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             pilier=pilier,
             part_stock=masses[MASSE_STOCK] / masses["actuel"],
             base_modele=modele,
+            tetes=tetes[TETES_TOUTES],
+            salaire_reel=(macro.coefficient_salaire_moyen(annee_euros, annee)
+                          / macro.coefficient_prix(annee_euros, annee)),
         ))
     _reprises_successions(lignes, simulateur, garantie)
 

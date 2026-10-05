@@ -628,7 +628,9 @@ institutions:
         cible: >-
           data/reference/macro/comptes_retraite.csv,
           data/reference/macro/structure_ressources_retraite.csv,
-          data/reference/macro/taux_prelevement_retraite.csv
+          data/reference/macro/taux_prelevement_retraite.csv,
+          data/reference/macro/decomposition_depense_retraite.csv,
+          data/reference/macro/croissance_depense_retraite.csv
         millesime: juin 2026
         note: >-
           Le seul compte français où DÉPENSES ET RESSOURCES de la retraite
@@ -662,6 +664,15 @@ institutions:
           La note de cette figure date aussi la base du dénominateur :
           « comptes nationaux de l'Insee base 2020 », celle de pib_courant.csv,
           ce que controle_base_comptable_retraite vérifie en euros.
+          QUATRIÈME ET CINQUIÈME CIBLES depuis le 5 octobre 2026 : la
+          DÉCOMPOSITION de la dépense — pension moyenne relative et cotisants
+          par retraité, ensemble (figure 2.3) et par régime (figure 2.7),
+          dépense par groupe de régimes (figure 2.6), taux de croissance des
+          effectifs et de la pension moyenne par sous-période (tableau 2.1).
+          Elles ne servent à aucun calcul : elles contrôlent la trajectoire du
+          système actuel que le modèle refait de ses cas types, et disent que
+          son écart au COR vient de la pension moyenne, non des effectifs
+          (action 147).
       - id: cor_cas_types
         titre: Cas types du COR (carrières de référence)
         url: https://www.cor-retraites.fr/simulateurs

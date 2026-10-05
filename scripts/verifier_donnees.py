@@ -1299,6 +1299,125 @@ def _taux_prelevement(marqueur: str) -> dict[tuple, float]:
     return {(annee,): part for annee, part in sorted(taux[marqueur].items())}
 
 
+#: Ce que la décomposition de la dépense nomme, du libellé du COR au code du
+#: dépôt, comparé sans accents ni casse sur le DÉBUT du libellé. Les blocs de la
+#: figure par régime, puis ses régimes ; les groupes de la figure de la dépense
+#: par groupe ; les grandeurs du tableau des croissances.
+BLOCS_REGIMES_DECOMPOSITION: tuple[tuple[str, str], ...] = (
+    ("cotisants_par_retraite", "ratio cotisant"),
+    ("pension_relative", "pension moyenne relative"),
+)
+REGIMES_DECOMPOSITION: tuple[tuple[str, str], ...] = (
+    ("cnav", "cnav"),
+    ("fpe", "fpe"),
+    ("cnracl", "cnracl"),
+    ("agirc_arrco", "agirc-arrco"),
+)
+#: Le bloc de la dépense par groupe que le dépôt retient : HORS transferts
+#: internes, dont la somme est la dépense du compte consolidé — l'autre bloc
+#: compte deux fois ce qu'un régime verse à un autre.
+BLOC_GROUPES_DECOMPOSITION = "hors transferts internes"
+GROUPES_DECOMPOSITION: tuple[tuple[str, str], ...] = (
+    ("lura", "lura"),
+    ("fpe", "fpe"),
+    ("cnracl", "cnracl"),
+    ("non_salaries_base", "non-salaries base"),
+    ("regimes_speciaux", "regimes speciaux"),
+    ("complementaires", "regimes complementaires"),
+)
+GRANDEURS_CROISSANCE: tuple[tuple[str, str], ...] = (
+    ("depenses", "depenses"),
+    ("retraites", "nombre de retraites"),
+    ("pension_moyenne", "pension moyenne"),
+    ("pib_volume", "pib en volume"),
+)
+
+
+def _decomposition_brute() -> dict:
+    decomposition = _cor_comptes().get("decomposition")
+    if decomposition is None:
+        raise SourceAbsente(
+            "data/brut/cor_comptes_retraite.json sans décomposition (relancer "
+            "scripts/fetch/cor_comptes_retraite.py)")
+    return decomposition
+
+
+def _code(libelle: str, codes: tuple[tuple[str, str], ...]) -> str:
+    plie = _sans_accents(libelle)
+    for code, attendu in codes:
+        if plie.startswith(attendu):
+            return code
+    raise ValueError(f"libellé du COR inconnu : {libelle!r}")
+
+
+def _decomposition(marqueur: str) -> dict[tuple, float]:
+    """Ce qui fait la dépense du système de retraite, chez le COR.
+
+    Trois grandeurs : la pension moyenne de l'ensemble des retraités rapportée
+    au revenu d'activité moyen (``pension_relative``), le nombre de cotisants
+    par retraité de droit direct (``cotisants_par_retraite``) — ensemble, puis
+    pour la Cnav, la FPE, la CNRACL et l'Agirc-Arrco —, et la dépense de chaque
+    groupe de régimes en part de PIB (``depense_part_pib``). Les figures par
+    régime et par groupe ne marquent aucune année « Obs » : elles commencent à
+    la première année projetée et sont tout entières ``projetee``.
+    """
+    brute = _decomposition_brute()
+    valeurs: dict[tuple, float] = {}
+    for grandeur, rangee in brute["ensemble"].items():
+        for annee, valeur in rangee[marqueur].items():
+            valeurs[(annee, grandeur, "ensemble")] = valeur
+    if marqueur == "projete":
+        for titre, lignes in brute["regimes"].items():
+            grandeur = _code(titre, BLOCS_REGIMES_DECOMPOSITION)
+            for libelle, serie in lignes.items():
+                regime = _code(libelle, REGIMES_DECOMPOSITION)
+                for annee, valeur in serie.items():
+                    valeurs[(annee, grandeur, regime)] = valeur
+        for titre, lignes in brute["groupes"].items():
+            if not _sans_accents(titre).startswith(BLOC_GROUPES_DECOMPOSITION):
+                continue
+            for libelle, serie in lignes.items():
+                groupe = _code(libelle, GROUPES_DECOMPOSITION)
+                for annee, valeur in serie.items():
+                    valeurs[(annee, "depense_part_pib", groupe)] = valeur
+    return dict(sorted(valeurs.items()))
+
+
+def source_decomposition() -> dict[tuple, float]:
+    """La décomposition observée : l'ensemble des régimes, jusqu'à l'« Obs »."""
+    return _decomposition("observe")
+
+
+def source_decomposition_projetee() -> dict[tuple, float]:
+    """La même, projetée, et les figures par régime et par groupe."""
+    return _decomposition("projete")
+
+
+def _croissances(observees: bool) -> dict[tuple, float]:
+    """Les taux de croissance annuels moyens, sous-période par sous-période.
+
+    Une sous-période est observée si elle s'achève au plus tard à la dernière
+    année du compte que le COR marque « Obs » : 2002-2025 dans le rapport de
+    juin 2026, les trois autres étant projetées.
+    """
+    derniere = max(int(a) for a in _cor_comptes()["comptes"]["depenses"]["observe"])
+    valeurs: dict[tuple, float] = {}
+    for libelle, taux in _decomposition_brute()["croissances"].items():
+        grandeur = _code(libelle, GRANDEURS_CROISSANCE)
+        for periode, valeur in taux.items():
+            if (int(periode.split("-")[1]) <= derniere) == observees:
+                valeurs[(periode, grandeur)] = valeur
+    return dict(sorted(valeurs.items()))
+
+
+def source_croissances() -> dict[tuple, float]:
+    return _croissances(True)
+
+
+def source_croissances_projetees() -> dict[tuple, float]:
+    return _croissances(False)
+
+
 def source_taux_prelevement() -> dict[tuple, float]:
     """Le taux observé, 2002 à la dernière année que le COR marque « Obs »."""
     return _taux_prelevement("observe")
@@ -4522,6 +4641,113 @@ CERTIFICATIONS = (
         origine="COR, rapport annuel, scénario de référence",
         decimales=5,
         tolerance=5.1e-6,
+        niveau="projetee",
+    ),
+    Certification(
+        nom="decomposition_depense_retraite",
+        chemin=REFERENCE / "macro" / "decomposition_depense_retraite.csv",
+        cles=("annee", "grandeur", "groupe"),
+        colonne="valeur",
+        source=source_decomposition,
+        origine="COR, rapport annuel, déterminants de la masse des pensions",
+        decimales=7,
+        tolerance=5.1e-8,
+        niveau="haute",
+        entete=(
+            "# Ce qui fait la dépense du système de retraite, observé puis projeté par le COR",
+            "# source_id: cor_comptes_systeme_retraite",
+            "# unite: selon la grandeur — pension_relative en fraction du revenu",
+            "#        d'activité moyen brut, cotisants_par_retraite en cotisants par",
+            "#        retraité de droit direct, depense_part_pib en fraction du PIB",
+            "# fiabilite:",
+            "#   haute    (2002-…) : ensemble des régimes, années que le COR marque",
+            "#             « Obs » (figure 2.3 du rapport de juin 2026), recontrôlé",
+            "#             par scripts/verifier_donnees.py contre son classeur.",
+            "#   projetee (…-2070) : scénario de référence du même rapport, et les",
+            "#             figures par régime (2.7) et par groupe de régimes (2.6),",
+            "#             qui ne marquent aucune année observée.",
+            "#",
+            "# À QUOI CE FICHIER SERT",
+            "# ------------------------",
+            "# À CONTRÔLER la trajectoire du système actuel que le modèle refait de",
+            "# ses cas types, et à dire OÙ elle s'écarte de celle du COR (action 147,",
+            "# étape 2). La masse des pensions rapportée au PIB est, à part des",
+            "# revenus d'activité dans le PIB près, le produit de deux facteurs : le",
+            "# nombre de retraités par cotisant, et la pension moyenne rapportée au",
+            "# revenu d'activité moyen. Le COR publie les deux, pour l'ensemble et",
+            "# pour quatre régimes ; le modèle peut calculer les siens. Aucune valeur",
+            "# de ce fichier n'entre dans un calcul de pension ou de coût.",
+            "#",
+            "# CE QU'IL FAUT SAVOIR AVANT DE LE LIRE",
+            "# --------------------------------------",
+            "# 1. La pension moyenne est celle des retraités de DROIT DIRECT résidant",
+            "#    en France ; le revenu d'activité moyen, celui des personnes en",
+            "#    emploi, indemnisation de l'activité partielle comprise en 2020 et",
+            "#    2021. Une pension de réversion n'y entre pas.",
+            "# 2. Par régime, un retraité est un retraité de la caisse : un",
+            "#    polypensionné compte dans chacune des siennes, et la pension",
+            "#    moyenne relative d'un régime est celle qu'il verse, non celle de",
+            "#    ses retraités.",
+            "# 3. La dépense par groupe est HORS transferts internes : la somme des",
+            "#    six groupes est la dépense de comptes_retraite.csv. LURA réunit la",
+            "#    Cnav, les salariés agricoles et les indépendants que la liquidation",
+            "#    unique sert ensemble.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="decomposition_depense_retraite_projetee",
+        chemin=REFERENCE / "macro" / "decomposition_depense_retraite.csv",
+        cles=("annee", "grandeur", "groupe"),
+        colonne="valeur",
+        source=source_decomposition_projetee,
+        origine="COR, rapport annuel, scénario de référence",
+        decimales=7,
+        tolerance=5.1e-8,
+        niveau="projetee",
+    ),
+    Certification(
+        nom="croissance_depense_retraite",
+        chemin=REFERENCE / "macro" / "croissance_depense_retraite.csv",
+        cles=("periode", "grandeur"),
+        colonne="taux",
+        source=source_croissances,
+        origine="COR, rapport annuel, taux de croissance par sous-période",
+        decimales=7,
+        tolerance=5.1e-8,
+        niveau="haute",
+        entete=(
+            "# Taux de croissance annuels moyens de la dépense de retraite et de ce qui la fait",
+            "# source_id: cor_comptes_systeme_retraite",
+            "# unite: taux annuel moyen sur la sous-période, en fraction",
+            "# fiabilite:",
+            "#   haute    : sous-période achevée à la dernière année que le COR",
+            "#             marque « Obs » (tableau 2.1 du rapport de juin 2026).",
+            "#   projetee : sous-périodes du scénario de référence du même rapport.",
+            "#",
+            "# Quatre grandeurs : la dépense en euros constants (depenses), le nombre",
+            "# de retraités ayant au moins un droit direct (retraites), la pension",
+            "# moyenne réelle (pension_moyenne) et le PIB en volume (pib_volume).",
+            "# C'est la seule publication du COR qui donne le RYTHME des effectifs",
+            "# de retraités : la figure d'ensemble ne les donne que rapportés aux",
+            "# cotisants. Le modèle s'y confronte pour dire si sa trajectoire",
+            "# s'écarte de celle du COR par les têtes ou par la pension.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="croissance_depense_retraite_projetee",
+        chemin=REFERENCE / "macro" / "croissance_depense_retraite.csv",
+        cles=("periode", "grandeur"),
+        colonne="taux",
+        source=source_croissances_projetees,
+        origine="COR, rapport annuel, scénario de référence",
+        decimales=7,
+        tolerance=5.1e-8,
         niveau="projetee",
     ),
     Certification(

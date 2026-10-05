@@ -422,6 +422,89 @@ def depense_maximale_toutes_variantes(racine: Path) -> float:
     return max(serie(annee) for serie in series for annee in serie.annees())
 
 
+#: Les grandeurs de la décomposition, et les groupes sous lesquels le COR les
+#: publie. ``ensemble`` porte la pension relative et les cotisants par retraité
+#: de tous les régimes, observés puis projetés ; les quatre régimes, les mêmes
+#: grandeurs, projetées ; les six groupes, la dépense en part de PIB.
+GRANDEURS_DECOMPOSITION = ("pension_relative", "cotisants_par_retraite", "depense_part_pib")
+REGIMES_DECOMPOSITION = ("cnav", "fpe", "cnracl", "agirc_arrco")
+GROUPES_DECOMPOSITION = ("lura", "fpe", "cnracl", "non_salaries_base",
+                         "regimes_speciaux", "complementaires")
+
+
+class DecompositionDepense:
+    """Ce qui fait la dépense du système de retraite, chez le COR.
+
+    Le compte dit combien le système dépense ; ce qui suit dit pourquoi :
+    combien de cotisants pour un retraité, quelle pension moyenne rapportée au
+    revenu d'activité moyen, quelle dépense par groupe de régimes, et à quel
+    rythme les effectifs de retraités et la pension moyenne réelle progressent
+    sous-période par sous-période. Rien de tout cela n'entre dans un calcul :
+    c'est le CONTRÔLE de la trajectoire que le modèle refait de ses cas types
+    (``Avenir.decomposition``), et la mesure de son écart (action 147).
+    """
+
+    def __init__(self, macro: Path) -> None:
+        chemin = macro / "decomposition_depense_retraite.csv"
+        self.series: dict[tuple[str, str], SerieAnnuelle] = {}
+        if chemin.exists():
+            paires = {
+                (ligne["grandeur"], ligne["groupe"])
+                for ligne in csv.DictReader(
+                    l for l in chemin.read_text(encoding="utf-8").splitlines()
+                    if not l.startswith("#"))
+            }
+            for grandeur, groupe in sorted(paires):
+                self.series[(grandeur, groupe)] = charger_serie_annuelle(
+                    chemin, "valeur", nom=f"decomposition_{grandeur}_{groupe}",
+                    filtre={"grandeur": grandeur, "groupe": groupe})
+        #: Les taux de croissance annuels moyens, par sous-période : la seule
+        #: publication du RYTHME des effectifs de retraités.
+        self.croissances: dict[tuple[int, int], dict[str, float]] = {}
+        chemin = macro / "croissance_depense_retraite.csv"
+        if chemin.exists():
+            for ligne in csv.DictReader(
+                    l for l in chemin.read_text(encoding="utf-8").splitlines()
+                    if not l.startswith("#")):
+                debut, fin = (int(a) for a in ligne["periode"].split("-"))
+                self.croissances.setdefault((debut, fin), {})[ligne["grandeur"]] = float(
+                    ligne["taux"])
+
+    def valeur(self, grandeur: str, groupe: str, annee: int) -> float | None:
+        """La grandeur d'un groupe une année, ou ``None`` hors de sa fenêtre."""
+        serie = self.series.get((grandeur, groupe))
+        if serie is None or not serie.premiere_annee <= annee <= serie.derniere_annee:
+            return None
+        return serie(annee)
+
+    def indice(self, grandeur: str, groupe: str, depuis: int, annee: int) -> float | None:
+        """La grandeur d'une année rapportée à celle de ``depuis``."""
+        depart, arrivee = (self.valeur(grandeur, groupe, depuis),
+                           self.valeur(grandeur, groupe, annee))
+        if not depart or arrivee is None:
+            return None
+        return arrivee / depart
+
+    def periodes(self) -> list[tuple[int, int]]:
+        return sorted(self.croissances)
+
+    def indice_croissance(self, grandeur: str, depuis: int, annee: int) -> float | None:
+        """Ce que les taux d'une grandeur cumulent de ``depuis`` à ``annee``.
+
+        Les sous-périodes s'enchaînent sans se chevaucher ; une borne qui ne
+        tombe pas sur l'une d'elles rend ``None`` plutôt qu'un taux coupé.
+        """
+        indice, courant = 1.0, depuis
+        for debut, fin in self.periodes():
+            if fin <= depuis or debut >= annee:
+                continue
+            if debut != courant or fin > annee:
+                return None
+            indice *= (1.0 + self.croissances[(debut, fin)][grandeur]) ** (fin - debut)
+            courant = fin
+        return indice if courant == annee else None
+
+
 class ComptesRetraite:
     """Le compte du système de retraite : dépenses, ressources, solde, structure.
 
@@ -501,6 +584,10 @@ class ComptesRetraite:
         # accumule, pour qu'il se lise à l'échelle.
         self.dette_publique = charger_serie_annuelle(
             macro / "dette_publique.csv", "part_pib", nom="dette_publique")
+        # Ce qui FAIT la dépense chez le COR : retraités par cotisant, pension
+        # moyenne relative, dépense par groupe de régimes. Le contrôle de la
+        # trajectoire du modèle, jamais une entrée de calcul.
+        self.decomposition = DecompositionDepense(macro)
 
     # -- la variante ------------------------------------------------------------
 

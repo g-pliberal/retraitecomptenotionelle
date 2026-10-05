@@ -1172,8 +1172,16 @@ class AvenirAnnuel {
               dependance, recettes = {}, partDerives = 0.0,
               reversionServie = false, reformeEnVigueur = true, garantie = null,
               pilier = null, partStock = 0.0, facteurAssietteLiberal = 1.0,
-              baseModele = 0.0) {
+              baseModele = 0.0, tetes = 0.0, salaireReel = 0.0) {
     this.annee = annee;
+    // Les retraités que le modèle compte cette année-là : les cohortes de la
+    // grille parvenues à l'âge de départ de leur cas type, pesées comme dans la
+    // masse. Leur RYTHME se confronte à celui des effectifs du COR
+    // (`Avenir.decomposition`).
+    this.tetes = tetes;
+    // Le salaire moyen par tête de l'année, en indice réel — un l'année des
+    // euros constants : le dénominateur de la pension moyenne relative.
+    this.salaireReel = salaireReel;
     // Ce que le modèle donne lui-même au système actuel cette année-là, en
     // millions d'euros constants : sa masse de pensions, mise à l'échelle par
     // l'ancrage de la dernière année publiée. La base des années projetées ;
@@ -1286,6 +1294,31 @@ class Avenir {
     let somme = 0;
     for (const ligne of this.projetees()) somme += ligne.reprisesConstants();
     return somme;
+  }
+
+  /**
+   * La trajectoire du système actuel en ses deux facteurs, comme le COR la
+   * décompose : pour chaque année, l'indice des retraités du modèle et celui
+   * de sa pension moyenne relative au salaire moyen, un l'année `depuis`.
+   * Portage de `Avenir.decomposition` dans `cout.py`, qui dit ce que l'écart
+   * de chacun au COR apprend (action 147, étape 2).
+   */
+  decomposition(depuis) {
+    const reference = this.annee(depuis);
+    const rendu = new Map();
+    if (reference === null || reference.tetes <= 0 || reference.salaireReel <= 0
+        || reference.baseModele <= 0) {
+      return rendu;
+    }
+    const pensionRelative = (ligne) => ligne.baseModele / ligne.tetes / ligne.salaireReel;
+    const depart = pensionRelative(reference);
+    for (const ligne of this.annees) {
+      if (ligne.tetes > 0 && ligne.salaireReel > 0) {
+        rendu.set(ligne.annee, [ligne.tetes / reference.tetes,
+          pensionRelative(ligne) / depart]);
+      }
+    }
+    return rendu;
   }
 
   /**
@@ -2456,6 +2489,8 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       total[MASSE_STOCK] / total.actuel,
       facteurAssiette(cotisations, annee, simulateur.parametres.annee_bascule),
       modele,
+      tetes[TETES_TOUTES],
+      macro.coefficientSalaireMoyen(anneeEuros, annee) / macro.coefficientPrix(anneeEuros, annee),
     ));
   }
 

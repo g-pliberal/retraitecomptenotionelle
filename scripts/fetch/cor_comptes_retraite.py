@@ -80,6 +80,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import time
 import unicodedata
 import urllib.error
 import urllib.parse
@@ -162,6 +163,33 @@ FIGURES: tuple[tuple[str, str], ...] = (
 #: le critère 2 du manifeste qui en dépend.
 MARQUEURS = {"obs": "observe", "sc. ref": "projete", "sc ref": "projete"}
 
+#: LA DÉCOMPOSITION DE LA DÉPENSE, que le COR publie et que le dépôt ne lisait
+#: pas (action 147, étape 2). Le compte dit combien le système dépense ; ces
+#: quatre figures disent POURQUOI : combien de retraités pour un cotisant, et
+#: quelle pension moyenne rapportée au revenu d'activité moyen — ensemble, puis
+#: régime par régime —, la dépense de chaque groupe de régimes, et le rythme
+#: des effectifs et de la pension moyenne sous-période par sous-période. Elles
+#: ne servent à aucun calcul : elles CONTRÔLENT la trajectoire du modèle, qui
+#: refait le compte du COR à partir de ses cas types, et disent où elle s'en
+#: écarte. Comparées sans accents ni casse, sur un morceau du titre qui ne
+#: contient pas d'apostrophe : le COR écrit « l’évolution » avec la courbe.
+DECOMPOSITION: tuple[tuple[str, str], ...] = (
+    ("ensemble", "evolution de la masse des pensions dans le sc"),
+    ("regimes", "evolution de la masse des pensions des regimes dans le sc"),
+    ("groupes", "depenses de retraite en % du pib par groupe de regimes"),
+    ("croissances", "taux de croissance annuel moyen des depenses de retraite"),
+)
+
+#: Les deux séries de la figure d'ensemble, reconnues au DÉBUT de leur
+#: intitulé, numéro de figure retiré.
+SERIES_ENSEMBLE: tuple[tuple[str, str], ...] = (
+    ("pension_relative", "pension moyenne de l"),
+    ("cotisants_par_retraite", "rapport entre le nombre de cotisants"),
+)
+
+#: Une sous-période du tableau des taux de croissance : « 2002-2025 ».
+PERIODE = re.compile(r"^\s*(\d{4})\s*-\s*(\d{4})\s*$")
+
 #: Bornes du contrôle de vraisemblance des années lues en en-tête.
 PREMIERE_ANNEE_PLAUSIBLE, DERNIERE_ANNEE_PLAUSIBLE = 1980, 2120
 
@@ -172,10 +200,43 @@ def _sans_accents(texte: str) -> str:
     return re.sub(r"\s+", " ", plie).strip().lower()
 
 
+#: Combien de fois une adresse est redemandée avant d'abandonner, et l'attente
+#: avant la première reprise, doublée à chaque fois.
+ESSAIS, ATTENTE = 4, 2.0
+
+
 def _recuperer(url: str) -> bytes:
-    demande = urllib.request.Request(url, headers=ENTETES)
-    with urllib.request.urlopen(demande, timeout=180) as reponse:
-        return reponse.read()
+    """Une adresse du COR, redemandée quand la connexion tombe en route.
+
+    Le serveur coupe volontiers une connexion au milieu d'un classeur quand
+    on lui en demande plusieurs d'affilée. Un lecteur qui avalait l'erreur et
+    passait au classeur suivant concluait ensuite qu'une figure manquait au
+    rapport, quand elle manquait seulement au téléchargement.
+    """
+    for essai in range(ESSAIS):
+        try:
+            demande = urllib.request.Request(url, headers=ENTETES)
+            with urllib.request.urlopen(demande, timeout=180) as reponse:
+                return reponse.read()
+        except urllib.error.HTTPError:
+            raise
+        except (urllib.error.URLError, ConnectionError, TimeoutError):
+            if essai == ESSAIS - 1:
+                raise
+            time.sleep(ATTENTE * 2 ** essai)
+    raise AssertionError("inatteignable")  # pragma: no cover
+
+
+#: Les classeurs déjà lus pendant cette exécution : quatre lecteurs parcourent
+#: les mêmes, et chacun les retéléchargeait.
+_CLASSEURS: dict[str, dict] = {}
+
+
+def _classeur(adresse: str) -> dict:
+    """Les feuilles d'un classeur, téléchargé une fois par exécution."""
+    if adresse not in _CLASSEURS:
+        _CLASSEURS[adresse] = feuilles(_recuperer(adresse))
+    return _CLASSEURS[adresse]
 
 
 def page_du_rapport() -> str:
@@ -478,7 +539,7 @@ def sensibilites(adresses: list[str]) -> dict[str, dict[str, dict[str, dict[str,
         if len(trouves) == len(SENSIBILITES):
             break
         try:
-            classeur = feuilles(_recuperer(adresse))
+            classeur = _classeur(adresse)
         except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
             continue
         for grille in classeur.values():
@@ -505,7 +566,7 @@ def blocs(adresses: list[str]) -> dict[str, list[dict]]:
         if len(trouves) == len(FIGURES):
             break
         try:
-            classeur = feuilles(_recuperer(adresse))
+            classeur = _classeur(adresse)
         except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
             continue
         for grille in classeur.values():
@@ -530,7 +591,7 @@ def bloc_eec(adresses: list[str]) -> dict[str, dict[str, float]]:
     """Cherche la figure des ressources et y lit son second bloc."""
     for adresse in adresses:
         try:
-            classeur = feuilles(_recuperer(adresse))
+            classeur = _classeur(adresse)
         except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
             continue
         for grille in classeur.values():
@@ -545,6 +606,149 @@ def bloc_eec(adresses: list[str]) -> dict[str, dict[str, float]]:
                 continue
             return lire_bloc_eec(grille)
     raise LookupError("figure des ressources sans bloc « convention EEC »")
+
+
+def _annees_de_ligne(grille: dict, ligne: int) -> dict[int, int]:
+    """Les colonnes d'une ligne qui portent une année, ou rien."""
+    return {
+        c: int(v) for (l, c), v in grille.items()
+        if l == ligne and isinstance(v, float)
+        and PREMIERE_ANNEE_PLAUSIBLE <= v <= DERNIERE_ANNEE_PLAUSIBLE
+        and v == int(v)
+    }
+
+
+def lire_ensemble(grille: dict) -> dict[str, dict[str, dict[str, float]]]:
+    """La figure d'ensemble : pension relative et cotisants par retraité.
+
+    UNE LIGNE SANS MARQUEUR, ET CE QU'ON EN FAIT. Le COR marque « Obs » puis
+    « Sc. Ref » la pension relative, mais n'écrit que « Obs » devant le
+    rapport des cotisants aux retraités : sa projection suit, sur la ligne de
+    dessous, sans un mot. Elle n'est rangée sous ``projete`` que si elle
+    reprend l'intitulé de l'observé ET commence à sa dernière année, la
+    jonction que les séries marquées portent elles aussi ; toute autre ligne
+    muette est une erreur de lecture, et le dit.
+    """
+    series = lire_bloc(grille)
+    rendu: dict[str, dict[str, dict[str, float]]] = {}
+    precedente: dict | None = None
+    for serie in series:
+        if not serie["marqueur"]:
+            if (precedente is None or precedente["marqueur"] != "observe"
+                    or precedente["intitule"] != serie["intitule"]
+                    or min(serie["valeurs"], key=int) != max(precedente["valeurs"], key=int)):
+                raise LookupError(
+                    f"ligne sans marqueur qui ne prolonge pas l'observé : {serie['intitule']!r}")
+            serie = {**serie, "marqueur": "projete"}
+        precedente = serie
+        plie = re.sub(r"^\s*[\d.]+[a-z]?\s+", "", _sans_accents(serie["intitule"]))
+        code = next((c for c, debut in SERIES_ENSEMBLE if plie.startswith(debut)), None)
+        if code is None:
+            raise LookupError(f"série inconnue dans la figure d'ensemble : {serie['intitule']!r}")
+        rangee = rendu.setdefault(code, {"observe": {}, "projete": {}})
+        rangee[serie["marqueur"]].update(serie["valeurs"])
+    for code, rangee in rendu.items():
+        for annee in set(rangee["observe"]) & set(rangee["projete"]):
+            rangee["projete"].pop(annee)
+    manquantes = [code for code, _ in SERIES_ENSEMBLE if code not in rendu]
+    if manquantes:
+        raise LookupError("séries absentes de la figure d'ensemble : " + ", ".join(manquantes))
+    return rendu
+
+
+def lire_blocs_etiquetes(grille: dict) -> dict[str, dict[str, dict[str, float]]]:
+    """Une figure à plusieurs blocs, chacun sous son en-tête d'années.
+
+    ``{titre du bloc: {étiquette de ligne: {année: valeur}}}``. Un en-tête est
+    une ligne qui porte au moins huit années ; son titre est le texte qui les
+    précède — « Hors transferts internes », « Pension moyenne relative ». Les
+    lignes d'un bloc vont jusqu'au suivant ou jusqu'aux notes, qui ne portent
+    aucune valeur.
+    """
+    lignes = sorted({l for l, _ in grille})
+    blocs_lus: dict[str, dict[str, dict[str, float]]] = {}
+    titre = ""
+    annees: dict[int, int] = {}
+    for ligne in lignes:
+        en_tete = _annees_de_ligne(grille, ligne)
+        if len(en_tete) >= 8:
+            annees = en_tete
+            premiere = min(annees)
+            textes = [grille[(ligne, c)] for c in range(premiere)
+                      if isinstance(grille.get((ligne, c)), str)
+                      and grille[(ligne, c)].strip()]
+            titre = textes[-1].strip() if textes else ""
+            blocs_lus.setdefault(titre, {})
+            continue
+        if not annees:
+            continue
+        premiere = min(annees)
+        textes = [grille[(ligne, c)] for c in range(premiere)
+                  if isinstance(grille.get((ligne, c)), str) and grille[(ligne, c)].strip()]
+        valeurs = {str(a): grille[(ligne, c)] for c, a in sorted(annees.items())
+                   if isinstance(grille.get((ligne, c)), float)}
+        if textes and valeurs:
+            blocs_lus[titre][textes[-1].strip()] = valeurs
+    if not any(blocs_lus.values()):
+        raise LookupError("aucun bloc chiffré dans la figure")
+    return blocs_lus
+
+
+def lire_croissances(grille: dict) -> dict[str, dict[str, float]]:
+    """Le tableau des taux de croissance : ``{grandeur: {« 2002-2025 »: taux}}``."""
+    lignes = sorted({l for l, _ in grille})
+    for ligne in lignes:
+        periodes = {
+            c: v.strip() for (l, c), v in grille.items()
+            if l == ligne and isinstance(v, str) and PERIODE.match(v)
+        }
+        if len(periodes) < 2:
+            continue
+        lu: dict[str, dict[str, float]] = {}
+        suivante = ligne + 1
+        while True:
+            etiquettes = [grille[(suivante, c)] for c in range(min(periodes))
+                          if isinstance(grille.get((suivante, c)), str)
+                          and grille[(suivante, c)].strip()]
+            taux = {PERIODE.sub(r"\1-\2", p): grille[(suivante, c)]
+                    for c, p in periodes.items()
+                    if isinstance(grille.get((suivante, c)), float)}
+            if not etiquettes or not taux:
+                break
+            lu[etiquettes[-1].strip()] = taux
+            suivante += 1
+        if lu:
+            return lu
+    raise LookupError("aucune ligne de sous-périodes dans le tableau des croissances")
+
+
+def decomposition(adresses: list[str]) -> dict:
+    """Les quatre figures de ``DECOMPOSITION``, cherchées par leur titre."""
+    lecteurs = {"ensemble": lire_ensemble, "regimes": lire_blocs_etiquetes,
+                "groupes": lire_blocs_etiquetes, "croissances": lire_croissances}
+    trouves: dict[str, dict] = {}
+    for adresse in adresses:
+        if len(trouves) == len(DECOMPOSITION):
+            break
+        try:
+            classeur = _classeur(adresse)
+        except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
+            continue
+        for grille in classeur.values():
+            titre = grille.get((0, 0)) or grille.get((0, 1)) or ""
+            if not isinstance(titre, str):
+                continue
+            plie = _sans_accents(titre)
+            for cle, attendu in DECOMPOSITION:
+                if cle not in trouves and attendu in plie:
+                    trouves[cle] = lecteurs[cle](grille)
+    manquantes = [cle for cle, _ in DECOMPOSITION if cle not in trouves]
+    if manquantes:
+        raise LookupError(
+            "figures de décomposition introuvables dans les classeurs du "
+            "rapport : " + ", ".join(manquantes)
+        )
+    return trouves
 
 
 def pages_annuelles() -> list[str]:
@@ -606,7 +810,7 @@ def ventilations(pages: list[str]) -> dict[str, dict[str, float]]:
         annee_lue = None
         for adresse in classeurs(page):
             try:
-                classeur = feuilles(_recuperer(adresse))
+                classeur = _classeur(adresse)
             except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
                 continue
             for grille in classeur.values():
@@ -635,6 +839,7 @@ def main() -> int:
         lus = blocs(adresses)
         eec = bloc_eec(adresses)
         sensibilite = sensibilites(adresses)
+        decompose = decomposition(adresses)
         ventilation = ventilations(pages_annuelles())
     except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
         print(f"COR indisponible : {erreur}", file=sys.stderr)
@@ -673,6 +878,11 @@ def main() -> int:
         # est la somme des deux, et verifier_donnees.py contrôle cette
         # dérivation sur le scénario de référence avant de s'en servir.
         "sensibilite": sensibilite,
+        # Ce qui fait la dépense : retraités par cotisant et pension moyenne
+        # relative, ensemble et par régime, dépense par groupe de régimes, et
+        # croissances par sous-période. Rien n'y est calculé : c'est le
+        # contrôle de la trajectoire du modèle. Voir DECOMPOSITION.
+        "decomposition": decompose,
         # En MILLIONS d'euros, contrairement au reste : c'est un contrôle de la
         # série des rapports à la CCSS, qui sont écrits dans cette unité.
         "ventilation_transferts": ventilation,
@@ -693,6 +903,8 @@ def main() -> int:
     for dimension, grandeurs in sorted(sensibilite.items()):
         variantes = sorted(grandeurs["depenses"])
         print(f"Sensibilité {dimension} : {', '.join(variantes)}")
+    for cle, contenu in sorted(decompose.items()):
+        print(f"Décomposition {cle} : {', '.join(sorted(contenu))}")
     return 0
 
 
