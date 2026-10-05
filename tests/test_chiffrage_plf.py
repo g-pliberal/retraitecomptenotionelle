@@ -69,7 +69,11 @@ def test_le_tableau_f_cumule_les_ecarts_des_tableaux_annuels(retro):
     """L'économie cumulée est la somme des écarts annuels que les tableaux A et
     B affichent, en part de PIB, ramenés aux euros constants — la base du COR,
     et non la dépense que le modèle projette lui-même, plus haute de trois
-    points de PIB en 2070, qui la surestimait d'environ neuf pour cent."""
+    points de PIB en 2070, qui la surestimait d'environ neuf pour cent.
+
+    *Le 5 octobre 2026*, la trajectoire de la page Coût a pris elle aussi la
+    dépense du COR (action 147) : les deux calculs coïncident désormais, et le
+    test tient cette coïncidence plutôt que leur écart."""
     attendu = sum(
         (retro.pensions(annee) - retro.solde[annee].depense("actuel"))
         * retro.avenir[annee].pib * retro.avenir[annee].coefficient_constants
@@ -78,6 +82,4 @@ def test_le_tableau_f_cumule_les_ecarts_des_tableaux_annuels(retro):
     projetee = sum(retro.avenir[annee].cout_constants(LIBERAL)
                    - retro.avenir[annee].cout_constants("actuel")
                    for annee in retro.annees)
-    # Les deux bases ne se confondent pas : si elles se rejoignaient, ce test
-    # ne distinguerait plus rien.
-    assert abs(projetee / attendu - 1.0) > 0.03
+    assert projetee == pytest.approx(attendu, rel=1e-9)

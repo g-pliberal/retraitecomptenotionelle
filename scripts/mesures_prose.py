@@ -352,6 +352,18 @@ def part_pib(**reglages: str) -> float:
     return _avenir(reglages).part_pib(_scenario(reglages["scenario"])) * 100
 
 
+def trajectoire_propre(**reglages: str) -> float:
+    """Ce que le modèle donne LUI-MÊME au système actuel une année, sa masse à
+    l'échelle de la dernière année publiée (``AvenirAnnuel.base_modele``) :
+    en % du PIB, ou en Md€ constants avec ``en=milliards``. Ce n'est plus la
+    trajectoire affichée, qui est celle du COR depuis le 5 octobre 2026 ; c'est
+    le contrôle que le COR lui oppose."""
+    ligne = _avenir(reglages)
+    if reglages.get("en") == "milliards":
+        return ligne.base_modele / 1000
+    return ligne.base_modele / ligne.coefficient_constants / ligne.pib * 100
+
+
 def cumul_avenir(**reglages: str) -> float:
     """Cumul d'un système sur les années projetées, en Md€ constants."""
     return _cout_de(reglages).avenir.cumul(_scenario(reglages["scenario"])) / 1000
@@ -1666,6 +1678,7 @@ MESURES = {
     "dependance": dependance,
     "reconstitution": reconstitution,
     "decomposition": decomposition,
+    "trajectoire_propre": trajectoire_propre,
     "emploi_projete": emploi_projete,
     "composition_revalorisation": composition_revalorisation,
     "age_reference": age_reference,

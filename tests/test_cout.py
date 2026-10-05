@@ -613,16 +613,50 @@ def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir, compte
     juste, elle dit qu'une trajectoire qui en sortirait relèverait d'une erreur
     de méthode et non d'un désaccord d'hypothèses. Elle n'a pas bougé — la
     borne haute de 20 % tient de 1,65 point.
+
+    *Le 5 octobre 2026*, la trajectoire que la page affiche est devenue celle
+    du COR (``test_la_trajectoire_du_systeme_actuel_est_celle_du_cor``), et ce
+    test tient désormais celle que le modèle se donne lui-même
+    (``base_modele``) : c'est elle que l'écart mesure, et elle seule qui
+    puisse dériver.
     """
     for ligne in avenir.annees:
         part = ligne.part_pib("actuel")
         assert 0.10 < part < 0.20, f"{ligne.annee} : {part:.1%}"
-    # L'écart au COR à l'horizon, lu dans son compte : trois points aujourd'hui,
-    # et une dérive au-delà de trois et demi relèverait d'une erreur de méthode
-    # plutôt que d'un désaccord d'hypothèses.
+    # La trajectoire propre du modèle sur les années projetées ; sur les années
+    # publiées, c'est la reconstitution qui la tient, sous son cliquet.
+    for ligne in avenir.projetees():
+        propre = ligne.base_modele / ligne.coefficient_constants / ligne.pib
+        assert 0.10 < propre < 0.20, f"{ligne.annee} : {propre:.1%}"
+    # L'écart au COR à l'horizon, lu dans son compte : deux points et demi
+    # aujourd'hui, et une dérive au-delà de trois et demi relèverait d'une
+    # erreur de méthode plutôt que d'un désaccord d'hypothèses.
     horizon = avenir.annees[-1]
-    ecart = horizon.part_pib("actuel") - comptes.depense(horizon.annee)
+    propre = horizon.base_modele / horizon.coefficient_constants / horizon.pib
+    ecart = propre - comptes.depense(horizon.annee)
     assert 0.0 < ecart < 0.035, f"{horizon.annee} : écart au COR {ecart:.2%}"
+
+
+def test_la_trajectoire_du_systeme_actuel_est_celle_du_cor(avenir, comptes):
+    """Au-delà de la dernière année publiée, le système actuel coûte ce que le
+    COR projette, à la part de PIB près — et donc au chiffre de son rapport.
+
+    Décision du 5 octobre 2026 (action 147) : la page portait deux dépenses pour
+    le même système, celle du COR dans les cartes du haut et celle que le modèle
+    se donne dans le dépliant des quatre systèmes, 17,8 % du PIB en 2070 contre
+    15,3. Le lecteur qui refaisait le calcul ne retrouvait pas le chiffre
+    officiel. La trajectoire prend désormais la dépense du COR, et les autres
+    systèmes en tirent la leur par le rapport de masses, comme le bilan.
+    """
+    projetees = avenir.projetees()
+    assert projetees
+    for ligne in projetees:
+        assert ligne.part_pib("actuel") == pytest.approx(
+            comptes.depense(ligne.annee), rel=1e-12), ligne.annee
+        # Le rapport s'applique à cette dépense-là, part dérivée à part.
+        assert ligne.cout_constants("notionnel_liberal") == pytest.approx(
+            ligne.base * (1.0 - ligne.part_derives) * ligne.rapports["notionnel_liberal"],
+            rel=1e-12), ligne.annee
 
 
 #: Première année que la reconstitution du passé contrôle. Les années 1990,
@@ -1682,12 +1716,29 @@ def test_le_solde_ne_se_donne_jamais_pour_certifie(solde):
 
 
 def test_sans_comptes_le_cout_est_calcule_a_l_identique(comptes, cout):
-    """Les ressources sont un ajout, jamais une correction de ce qui précède."""
+    """Les ressources sont un ajout, jamais une correction de ce qui précède.
+
+    Une exception, et elle est voulue depuis le 5 octobre 2026 : au-delà de la
+    dernière année publiée, la dépense du système actuel EST celle du compte du
+    COR (action 147). Sans compte, la trajectoire retombe sur celle que le
+    modèle se donne lui-même ; les rapports entre systèmes, eux, ne bougent pas,
+    ni le passé, ni la trajectoire propre du modèle.
+    """
     sans = memoire.cout(Parametres(), comptes=False, assiette=False)
     assert sans.solde.annees == []
     assert sans.cumul("notionnel_retroactif") == pytest.approx(
         cout.cumul("notionnel_retroactif"))
-    assert sans.avenir.cumul("actuel") == pytest.approx(cout.avenir.cumul("actuel"))
+    assert len(sans.avenir.annees) == len(cout.avenir.annees)
+    for seule, avec in zip(sans.avenir.annees, cout.avenir.annees):
+        assert seule.annee == avec.annee
+        assert seule.base_modele == pytest.approx(avec.base_modele, rel=1e-12)
+        for scenario, _ in SCENARIOS:
+            assert seule.rapports[scenario] == pytest.approx(
+                avec.rapports[scenario], rel=1e-12), (seule.annee, scenario)
+        if seule.projete:
+            assert seule.base == pytest.approx(seule.base_modele, rel=1e-12)
+        else:
+            assert seule.base == pytest.approx(avec.base, rel=1e-12)
 
 
 def test_les_postes_couvrent_la_structure_des_ressources():

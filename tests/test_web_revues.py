@@ -597,11 +597,12 @@ def test_l_autocritique_de_la_page_cout_est_un_encart_de_vigilance():
     """La comparaison à la projection du COR est un gage de sérieux : elle est
     marquée comme un point de vigilance, non noyée dans un paragraphe."""
     corps = rendre("/cout", {})[1]
-    encart = re.search(r'<div class="note vigilance"><strong>Point de vigilance : notre '
-                       r"projection\ns'écarte de celle du COR\.</strong>(.*?)</div>",
+    encart = re.search(r'<div class="note vigilance"><strong>Point de vigilance : le '
+                       r"modèle ne refait\npas lui-même la projection du COR\.</strong>(.*?)</div>",
                        corps, re.S)
     assert encart, "le point de vigilance a disparu"
-    assert "celui du COR recule" in re.sub(r"\s+", " ", encart.group(1))
+    texte = re.sub(r"\s+", " ", encart.group(1))
+    assert "chez le COR" in texte and "seulement dans le modèle" in texte
     assert ".note.vigilance" in FEUILLE_DE_STYLE
 
 

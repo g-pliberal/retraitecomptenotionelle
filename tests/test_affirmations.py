@@ -2071,10 +2071,27 @@ def _(m: Modele):
 def _(m: Modele):
     # Le repère du COR est LU dans son compte, comme la page le lit : une
     # constante de juin 2025 tenait ce contrôle quand le dépôt portait le
-    # rapport de juin 2026.
+    # rapport de juin 2026. Depuis le 5 octobre 2026, la trajectoire affichée
+    # est celle du COR ; l'écart se lit dans celle que le modèle se donne
+    # lui-même, et sa décomposition le met dans la pension, non dans les têtes.
     avenir = m.cout.avenir
+    horizon = avenir.annee(avenir.derniere_annee)
     cor = m.contexte.comptes().depense(avenir.derniere_annee)
-    assert abs(avenir.annee(avenir.derniere_annee).part_pib("actuel") - cor) > 0.005
+    propre = horizon.base_modele / horizon.coefficient_constants / horizon.pib
+    assert abs(propre - cor) > 0.005
+    tetes, pension = avenir.decomposition(avenir.premiere_annee_projetee)[avenir.derniere_annee]
+    decomposition = m.contexte.comptes().decomposition
+    assert abs(tetes / decomposition.indice_croissance(
+        "retraites", avenir.premiere_annee_projetee, avenir.derniere_annee) - 1) < 0.03
+    assert pension > 0.01 + decomposition.indice(
+        "pension_relative", "ensemble", avenir.premiere_annee_projetee, avenir.derniere_annee)
+
+
+@controle("trajectoire_du_cor")
+def _(m: Modele):
+    comptes = m.contexte.comptes()
+    for ligne in m.cout.avenir.projetees():
+        assert _proche(ligne.part_pib("actuel"), comptes.depense(ligne.annee))
 
 
 @controle("projection_du_cor")

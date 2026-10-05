@@ -1966,16 +1966,31 @@ formule ne change pas d'un terme ; seule change l'origine de la dépense qu'elle
 multiplie :
 
 ```
-jusqu'en 2024   base = dépense de répartition OBSERVÉE
+jusqu'en 2024   base = dépense de répartition OBSERVÉE (DREES)
+au-delà         base = dépense PROJETÉE par le COR, en part de PIB × PIB
+```
+
+Le modèle n'y apporte que le rapport de masses, sans dimension : ce qui le fait
+bouger est ce qui doit le faire bouger, la pyramide des âges et les pensions que
+chaque génération acquiert sous chaque système. Au passage de 2024 à 2025, la
+base change de producteur, et de périmètre : en 2024, la répartition obligatoire
+de la DREES vaut <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % du PIB, le champ du COR
+<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> %.
+
+Jusqu'au 5 octobre 2026, la base projetée était celle du modèle lui-même :
+
+```
 au-delà         base = ancrage × masse actuelle du modèle
                 ancrage = base observée en 2024 ÷ masse actuelle en 2024
 ```
 
-Les deux expressions coïncident EXACTEMENT en 2024 — c'est la définition de
-l'ancrage —, si bien que la trajectoire ne saute pas au passage de l'observation
-à la projection. Ce qui la fait bouger ensuite est ce qui doit la faire bouger :
-la pyramide des âges, et les pensions que chaque génération acquiert sous chaque
-système.
+Les deux expressions coïncidaient exactement en 2024, et la trajectoire ne
+sautait pas. Mais elle donnait au système actuel <!--chiffre:mesure(trajectoire_propre?annee=2070)-->17,8<!--/--> % du PIB en 2070 quand le
+COR en projette <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/-->, sous les mêmes hypothèses, parce que la pension moyenne de
+la grille ne recule pas comme celle du COR ; le lecteur qui refaisait le calcul
+ne retrouvait pas le chiffre officiel. Elle est gardée pour ce qu'elle
+contrôle — la reconstitution du passé et la décomposition de l'écart
+(`docs/limites.md`, § 5 ter) — et n'est plus affichée comme une projection.
 
 Deux précisions d'unité, parce qu'elles sont la source d'erreur la plus facile.
 La série projetée est tenue en euros **constants** — les pensions du modèle le

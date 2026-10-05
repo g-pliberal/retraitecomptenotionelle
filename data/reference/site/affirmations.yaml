@@ -1150,10 +1150,22 @@ affirmations:
 
   - id: cout.vigilance_cor
     page: /cout
-    extrait: "Point de vigilance : notre projection s'écarte de celle du COR."
-    porte: la part de PIB projetée par le modèle à l'horizon diffère de celle du COR
+    extrait: "Point de vigilance : le modèle ne refait pas lui-même la projection du COR."
+    porte: >-
+      la part de PIB que le modèle donne lui-même au système actuel à l'horizon,
+      sa masse à l'échelle de la dernière année publiée, diffère de celle du COR,
+      et l'écart tient à la pension moyenne relative, non aux effectifs
     etat: verifiee
     controle: projection_s_ecarte_du_cor
+
+  - id: cout.depense_officielle
+    page: /cout
+    extrait: "celui du Conseil d'orientation des retraites"
+    porte: >-
+      au-delà de la dernière année publiée, la dépense du système actuel de la
+      trajectoire est celle que le COR projette, à la part de PIB près
+    etat: verifiee
+    controle: trajectoire_du_cor
 
   - id: cout.pensions_repartition_obligatoire
     page: /cout

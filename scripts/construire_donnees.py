@@ -55,6 +55,7 @@ from retraite_notionnelle.donnees.macro import lire_smic_releve  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
     POSTES,
     POSTES_TRANSFERTS,
+    ComptesRetraite,
     variantes_disponibles,
 )
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
@@ -326,7 +327,19 @@ def _comptes_retraite() -> dict:
     # système. Elle ne sert à aucun calcul.
     series["dette_publique"] = charger_serie_annuelle(
         macro / "dette_publique.csv", "part_pib", nom="dette_publique")
-    return {nom: _serie(serie) for nom, serie in sorted(series.items())}
+    # Ce qui FAIT la dépense chez le COR — pension moyenne relative, cotisants
+    # par retraité, dépense par groupe de régimes —, et les croissances par
+    # sous-période : le contrôle que la page oppose à la trajectoire du
+    # modèle. Aucun calcul ne les lit.
+    decomposition = ComptesRetraite(DONNEES).decomposition
+    for (grandeur, groupe), serie in decomposition.series.items():
+        series[f"decomposition_{grandeur}_{groupe}"] = serie
+    paquet = {nom: _serie(serie) for nom, serie in sorted(series.items())}
+    paquet["croissances"] = {
+        f"{debut}-{fin}": dict(sorted(taux.items()))
+        for (debut, fin), taux in sorted(decomposition.croissances.items())
+    }
+    return paquet
 
 
 def _tva() -> dict:

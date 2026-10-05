@@ -7303,9 +7303,9 @@ export function milliards(millions, decimales = 0) {
  *   là les montants lointains. C'est la règle que le tableau poste par poste et
  *   le simulateur suivaient déjà.
  *
- * Seule la trajectoire du modèle y échappe, dans le dépliant des quatre
- * systèmes : elle est tenue en euros constants depuis toujours, ses tableaux le
- * disent, et ses parts de PIB en sont tirées plutôt que l'inverse.
+ * Seule la trajectoire y échappe, dans le dépliant des quatre systèmes : elle
+ * est tenue en euros constants depuis toujours, ses tableaux le disent, et ses
+ * milliards sont la part de PIB du COR multipliée par le PIB projeté.
  */
 export function pibDeConversion(comptes, annee) {
   return comptes.pib.valeur(Math.min(annee, comptes.pib.derniereAnnee));
@@ -8987,9 +8987,19 @@ function coutDetailScenarios(contexte) {
   // euros constants comme la trajectoire les tient.
   const garantieFin = horizon.coutConstants(COMPOSANTE_GARANTIE);
   const totalFin = horizon.coutConstants("notionnel_liberal") + garantieFin;
-  // Ce que le COR projette, converti comme le modèle convertit ses parts.
+  // Ce que le modèle donnerait LUI-MÊME au système actuel à l'horizon — sa
+  // masse, à l'échelle de la dernière année publiée —, et que la page ne
+  // prend plus pour une projection : le contrôle que le COR lui oppose.
+  const modelePart = horizon.baseModele / horizon.coefficientConstants / horizon.pib;
   const corFin = corHorizon * horizon.pib * horizon.coefficientConstants;
-  const modeleFin = horizon.coutConstants("actuel");
+  const decomposee = avenir.decomposition(avenir.premiereAnneeProjetee);
+  const premiereProjetee = avenir.premiereAnneeProjetee;
+  const [tetesModele, pensionModele] = decomposee.get(avenir.derniereAnnee) ?? [1, 1];
+  const decomposition = comptes.decomposition;
+  const tetesCor = decomposition.indiceCroissance("retraites", premiereProjetee,
+                                                  avenir.derniereAnnee);
+  const pensionCor = decomposition.indice("pension_relative", "ensemble", premiereProjetee,
+                                          avenir.derniereAnnee);
   return g.depliant("Les quatre systèmes comparés, du passé jusqu'à 2070", `
 <p>La carte du haut ne montre que la proposition. Voici les quatre systèmes que
 le site compare, sur le passé puis sur l'avenir. Le
@@ -9053,22 +9063,30 @@ ${milliards(c.cumul("notionnel_retroactif_employeur"), 0)}, et il applique une
 Méthode montre qu'elle domine tout le reste.</p>
 
 <h4>Ce qu'ils coûteraient d'ici ${avenir.derniereAnnee}</h4>
-<div class="note vigilance"><strong>Point de vigilance : notre projection
-s'écarte de celle du COR.</strong> L'assiette de cette section n'est pas celle
-des cartes du haut. Le modèle décrit ici des <strong>pensions de répartition
-obligatoire</strong> — ${milliards(depenses.repartition(derniere), 1)} en
-${derniere} —, il porte son propre niveau de dépense, et ce niveau s'écarte de
-celui du COR : il donne ${g.pourcentage(horizon.partPib("actuel"), false, 1)} du PIB pour le
-système actuel en ${avenir.derniereAnnee}, ${g.milliards(modeleFin)} en euros
-constants de ${euros}, quand le COR en projette
-${g.pourcentage(corHorizon, false, 1)}, ${g.milliards(corFin)}. L'écart est de
-${g.nombre((horizon.partPib("actuel") - corHorizon) * 100, 1)} points,
-${g.milliards(modeleFin - corFin)}, et il n'est pas flatteur : notre
-${g.terme("taux de remplacement")} ne recule pas, celui du
-COR recule. <a href="${g.DEPOT}/blob/main/docs/limites.md">Le § 5 ter des
-limites</a> porte la mesure. C'est pourquoi les cartes
-du haut n'utilisent du modèle que son <strong>rapport</strong> entre systèmes,
-sans dimension, appliqué aux dépenses du COR.</div>
+<p>Le système actuel de ce tableau est <strong>celui du Conseil d'orientation
+des retraites</strong>, année par année : ${g.pourcentage(corHorizon, false, 1)}
+du PIB en ${avenir.derniereAnnee}, ${g.milliards(corFin)} en euros constants de
+${euros}, le chiffre de son rapport. Les trois autres en sont tirés par le
+<strong>rapport</strong> de masses du modèle, sans dimension, comme dans les
+cartes du haut : la page ne porte qu'une dépense pour le système actuel, et
+c'est la dépense officielle.</p>
+<div class="note vigilance"><strong>Point de vigilance : le modèle ne refait
+pas lui-même la projection du COR.</strong> Mise à l'échelle de la dépense
+de ${derniere}, sa propre masse de pensions donnerait au système actuel
+${g.pourcentage(modelePart, false, 1)} du PIB en ${avenir.derniereAnnee}, quand le
+COR en projette ${g.pourcentage(corHorizon, false, 1)}. Le nombre de retraités,
+le modèle le suit : de ${premiereProjetee} à ${avenir.derniereAnnee}, il en
+compte ${g.pourcentage(tetesModele - 1, false, 0)} de plus, le COR
+${tetesCor === null ? "—" : g.pourcentage(tetesCor - 1, false, 0)}. La pension
+moyenne rapportée au revenu d'activité moyen, il la suit mal : elle recule de
+${pensionCor === null ? "—" : g.pourcentage(1 - pensionCor, false, 0)} chez le
+COR et de ${g.pourcentage(1 - pensionModele, false, 0)} seulement dans le modèle,
+dont les treize carrières types gardent un ${g.terme("taux de remplacement")}
+que le COR fait reculer — par la baisse du rendement de l'Agirc-Arrco et la part
+croissante des primes des fonctionnaires, qu'il projette. C'est pourquoi aucune
+dépense du système actuel n'est prise au modèle sur cette page ; le rapport qu'on lui prend, lui, porte encore cet
+écart, et <a href="${g.DEPOT}/blob/main/docs/limites.md">le § 5 ter des
+limites</a> dit ce qu'il déplace.</div>
 
 ${g.tableau(
     ["Système", `Coût ${avenir.derniereAnnee}`,
@@ -9126,7 +9144,8 @@ ${g.pourcentage(horizon.partPib("notionnel_liberal")
                 - horizon.partPibReprises(), false, 1)},
 ${g.milliards(totalFin - horizon.reprisesConstants())}, net des reprises
 sur succession. Ici comme dans les tableaux du dessus, les milliards sont des
-euros constants de ${euros} : ceux de la trajectoire du modèle.</p>
+euros constants de ${euros}, ceux de la trajectoire : la part de PIB du COR,
+multipliée par le PIB que ses hypothèses projettent.</p>
 `, "cout-scenarios");
 }
 

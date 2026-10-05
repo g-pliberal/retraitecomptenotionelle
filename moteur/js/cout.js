@@ -2402,7 +2402,16 @@ function reprisesSuccessions(lignes, simulateur, calage) {
 }
 
 function construireAvenir(liste, depenses, population, simulateur, poids, revalorisation,
-                          reversionServie = false, poidsCotisants = null, garantie = null) {
+                          reversionServie = false, poidsCotisants = null, garantie = null,
+                          comptes = null) {
+  // Au-delà de la dernière année publiée par la DREES, la base du système
+  // actuel est la dépense que le COR projette (`comptes`), en part de PIB
+  // multipliée par le PIB de l'année : la page n'affiche plus pour lui qu'une
+  // dépense officielle. Celle que le modèle se donne lui-même — sa masse mise
+  // à l'échelle de la dernière année publiée — reste calculée (`baseModele`)
+  // pour ce qu'elle contrôle : la reconstitution et la décomposition. Sans
+  // compte du COR, elle redevient la base. Voir `_avenir` dans `cout.py`.
+
   // `poids` pèse les cas types dans les masses de PENSIONS, `poidsCotisants`
   // dans les masses de COTISATIONS ; sans le second, le premier sert aux deux,
   // ce qui est l'ancienne convention.
@@ -2463,7 +2472,20 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
     // La base du modèle est calculée chaque année, publiée ou non : la même
     // formule, appliquée au passé, est ce qui la contrôle.
     const modele = ancrage * total.actuel;
-    const base = projete ? modele : depenses.repartition(annee) * coefficient;
+    const pib = pibProjete.has(annee)
+      ? pibProjete.get(annee)
+      : depenses.pib.valeur(Math.min(annee, dernierePib));
+    let base;
+    if (!projete) {
+      base = depenses.repartition(annee) * coefficient;
+    } else if (comptes !== null && comptes.premiereAnnee <= annee
+               && annee <= comptes.derniereAnnee) {
+      // Le COR, en part de PIB, sur le PIB de l'année : la part de PIB
+      // affichée est exactement la sienne.
+      base = comptes.depense(annee) * pib * coefficient;
+    } else {
+      base = modele;
+    }
     const actifs = population.actifs.valeur(annee);
     const partDerives = depenses.partDroitsDerives(annee);
     const projetee = garantie.chiffrer(total, tetes);
@@ -2472,9 +2494,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       projete,
       base,
       coefficient,
-      pibProjete.has(annee)
-        ? pibProjete.get(annee)
-        : depenses.pib.valeur(Math.min(annee, dernierePib)),
+      pib,
       rapports(total, projetee, base, partDerives),
       actifs
         ? population.effectifTranche(AGE_DEPENDANCE, population.ageMaximal, annee)
@@ -2661,7 +2681,7 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   // pas l'être.
   const avenir = construireAvenir(liste, depenses, population, simulateur, poids,
                                   revalorisation, reversionServie, poidsCotisants,
-                                  garantie);
+                                  garantie, comptes);
   // La TVA à taux unique que la proposition affecte à sa retraite : lue ici
   // plutôt que passée, pour que tout appelant la reçoive — elle est un terme de
   // la proposition, pas un réglage de page.

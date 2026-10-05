@@ -311,6 +311,68 @@ export function depenseMaximaleToutesVariantes(paquet) {
   return sommet;
 }
 
+/**
+ * Ce qui fait la dépense du système de retraite, chez le COR : pension moyenne
+ * relative et cotisants par retraité, ensemble et par régime, dépense par
+ * groupe de régimes, et croissances par sous-période. Le contrôle de la
+ * trajectoire que le modèle refait de ses cas types (`Avenir.decomposition`),
+ * jamais une entrée de calcul. Portage de `DecompositionDepense` dans
+ * `donnees/equilibre.py`.
+ */
+export class DecompositionDepense {
+  constructor(brut) {
+    this.series = new Map();
+    for (const [cle, serie] of Object.entries(brut)) {
+      if (cle.startsWith("decomposition_")) {
+        this.series.set(cle, SerieAnnuelle.depuisPaquet(cle, serie));
+      }
+    }
+    // Les taux de croissance annuels moyens, par sous-période « 2025-2030 ».
+    this.croissances = new Map(
+      Object.entries(brut.croissances ?? {}).map(([periode, taux]) => [
+        periode.split("-").map(Number).join("-"), taux,
+      ]),
+    );
+  }
+
+  /** La grandeur d'un groupe une année, ou `null` hors de sa fenêtre. */
+  valeur(grandeur, groupe, annee) {
+    const serie = this.series.get(`decomposition_${grandeur}_${groupe}`);
+    if (!serie || annee < serie.premiereAnnee || annee > serie.derniereAnnee) return null;
+    return serie.valeur(annee);
+  }
+
+  /** La grandeur d'une année rapportée à celle de `depuis`. */
+  indice(grandeur, groupe, depuis, annee) {
+    const depart = this.valeur(grandeur, groupe, depuis);
+    const arrivee = this.valeur(grandeur, groupe, annee);
+    if (!depart || arrivee === null) return null;
+    return arrivee / depart;
+  }
+
+  periodes() {
+    return [...this.croissances.keys()]
+      .map((periode) => periode.split("-").map(Number))
+      .sort((a, b) => a[0] - b[0]);
+  }
+
+  /**
+   * Ce que les taux d'une grandeur cumulent de `depuis` à `annee` ; une borne
+   * qui ne tombe pas sur une sous-période rend `null` plutôt qu'un taux coupé.
+   */
+  indiceCroissance(grandeur, depuis, annee) {
+    let indice = 1.0;
+    let courant = depuis;
+    for (const [debut, fin] of this.periodes()) {
+      if (fin <= depuis || debut >= annee) continue;
+      if (debut !== courant || fin > annee) return null;
+      indice *= (1.0 + this.croissances.get(`${debut}-${fin}`)[grandeur]) ** (fin - debut);
+      courant = fin;
+    }
+    return courant === annee ? indice : null;
+  }
+}
+
 /** Le compte du système de retraite : dépenses, ressources, solde, structure. */
 export class ComptesRetraite {
   constructor(paquet, variante = VARIANTE_REFERENCE) {
@@ -360,6 +422,9 @@ export class ComptesRetraite {
     // en part de PIB : ce que le pays porte déjà. Elle ne sert à aucun calcul ;
     // la page Coût pose dessus le stock que chaque système accumule.
     this.dettePublique = SerieAnnuelle.depuisPaquet("dette_publique", brut.dette_publique);
+    // Ce qui FAIT la dépense chez le COR : le contrôle de la trajectoire du
+    // modèle, jamais une entrée de calcul.
+    this.decomposition = new DecompositionDepense(brut);
     this.premiereAnnee = this.depenses.premiereAnnee;
     this.derniereAnnee = this.depenses.derniereAnnee;
     // La frontière entre observé et projeté se lit dans la FIABILITÉ et non

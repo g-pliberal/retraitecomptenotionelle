@@ -3285,13 +3285,29 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             revalorisation: RevalorisationServie,
             reversion_servie: bool = False,
             poids_cotisants: Callable[[int], dict[str, float]] | None = None,
-            garantie: GarantieDistribution | None = None) -> Avenir:
+            garantie: GarantieDistribution | None = None,
+            comptes: ComptesRetraite | None = None) -> Avenir:
     """La trajectoire de la répartition, de la première année ventilée à l'horizon.
 
-    Deux régimes, une seule formule. Jusqu'à la dernière année publiée, la base
-    est la dépense de répartition OBSERVÉE. Au-delà, elle est celle que le
-    modèle produit, mise à l'échelle par un ancrage calculé sur cette même
-    dernière année : les deux expressions coïncident exactement à la jonction.
+    Jusqu'à la dernière année publiée par la DREES, la base est la dépense de
+    répartition OBSERVÉE. Au-delà, elle est la dépense que le COR projette pour
+    le système actuel (``comptes``), en part de PIB multipliée par le PIB de
+    l'année : la page n'affiche plus pour le système actuel qu'une dépense
+    officielle, observée puis projetée, et les autres systèmes en tirent la
+    leur par le rapport de masses du modèle, comme le bilan le fait déjà.
+
+    LA DÉPENSE QUE LE MODÈLE DONNE LUI-MÊME AU SYSTÈME ACTUEL N'EST PLUS UNE
+    PROJECTION, ET C'EST UNE DÉCISION DU 5 OCTOBRE 2026 (action 147). Elle
+    était la base des années projetées : la masse de pensions des cas types,
+    mise à l'échelle par l'ancrage de la dernière année publiée. Elle donnait
+    au système actuel 17,8 % du PIB en 2070 quand le COR en projette 15,3, sous
+    les mêmes hypothèses, et ne refaisait pas le passé — un écart que sa
+    décomposition situe tout entier dans la pension moyenne
+    (:meth:`Avenir.decomposition`). Le lecteur qui refaisait le calcul ne
+    retrouvait donc pas le chiffre officiel, et la page en portait deux pour le
+    même système. Elle est gardée, année par année (``base_modele``), pour ce
+    qu'elle contrôle : la reconstitution du passé et la décomposition. Sans
+    compte du COR, elle redevient la base, comme avant.
 
     ``poids`` pèse les cas types dans les masses de PENSIONS, ``poids_cotisants``
     dans les masses de COTISATIONS ; sans le second, le premier sert aux deux,
@@ -3366,7 +3382,16 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
         # La base du modèle est calculée chaque année, publiée ou non : la même
         # formule, appliquée au passé, est ce qui la contrôle.
         modele = ancrage * masses["actuel"]
-        base = modele if projete else depenses.repartition(annee) * coefficient
+        pib = pib_projete.get(annee, depenses.pib(min(annee, derniere_pib)))
+        if not projete:
+            base = depenses.repartition(annee) * coefficient
+        elif comptes is not None and comptes.premiere_annee <= annee <= comptes.derniere_annee:
+            # Le COR, en part de PIB, sur le PIB de l'année : publié jusqu'en
+            # 2025, puis celui des hypothèses du COR, emploi compris. La part de
+            # PIB affichée est donc exactement la sienne.
+            base = comptes.depense(annee) * pib * coefficient
+        else:
+            base = modele
         actifs = population.actifs(annee)
         part_derives = depenses.part_droits_derives(annee)
         projetee = garantie.chiffrer(masses, tetes)
@@ -3375,7 +3400,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             projete=projete,
             base=base,
             coefficient_constants=coefficient,
-            pib=pib_projete.get(annee, depenses.pib(min(annee, derniere_pib))),
+            pib=pib,
             rapports=_rapports(masses, projetee, base, part_derives),
             garantie=projetee,
             dependance=population.effectif_tranche(
@@ -3907,7 +3932,8 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         default=Fiabilite.ESTIMEE,
     )
     avenir = _avenir(pensionnes, depenses, population, simulateur, poids,
-                     revalorisation, reversion_servie, poids_cotisants, garantie)
+                     revalorisation, reversion_servie, poids_cotisants, garantie,
+                     comptes)
     # La TVA à taux unique que la proposition affecte à sa retraite : lue ici
     # plutôt que passée, pour que tout appelant la reçoive — elle est un terme
     # de la proposition, pas un réglage de page.

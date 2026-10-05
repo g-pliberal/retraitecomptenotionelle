@@ -222,16 +222,26 @@ def trajectoire(parametres: Parametres, cas_types: tuple[CasType, ...],
                 ) -> dict[str, float]:
     """La part de PIB de chaque système à l'horizon, sous cette grille.
 
-    `part_pib` et non `depense` : c'est le NIVEAU de dépense propre au modèle,
-    celui que la page Coût oppose à la projection du COR (`cor_horizon`), et
-    donc la grandeur sur laquelle porte la question ouverte du § 5 ter. Le coût
-    est celui de la page, sur les données du dépôt, et un calcul gardé
-    (``retraite_notionnelle/memoire.py``) : sous la grille du dépôt, c'est
-    celui que les tests et les chiffres ancrés partagent.
+    Le NIVEAU de dépense propre au modèle — sa masse à l'échelle de la dernière
+    année publiée (``base_modele``), multipliée par le rapport de chaque
+    système —, celui qu'on oppose à la projection du COR (`cor_horizon`), et
+    donc la grandeur sur laquelle porte la question ouverte du § 5 ter. Ce
+    n'est plus celui que la page affiche : depuis le 5 octobre 2026, la
+    trajectoire de la page prend la dépense du COR pour le système actuel, et
+    ne bougerait donc pas avec la grille. Le coût est celui de la page, sur les
+    données du dépôt, et un calcul gardé (``retraite_notionnelle/memoire.py``) :
+    sous la grille du dépôt, c'est celui que les tests et les chiffres ancrés
+    partagent.
     """
     avenir = memoire.cout(parametres, cas_types=cas_types).avenir
     horizon = avenir.annee(avenir.derniere_annee)
-    return {scenario: horizon.part_pib(scenario) for scenario, _ in C.SCENARIOS}
+    return {
+        scenario: C.masse_du_scenario(
+            horizon.base_modele, horizon.part_derives, horizon.rapports[scenario],
+            scenario, horizon.reversion_servie, horizon.reforme_en_vigueur,
+        ) / horizon.coefficient_constants / horizon.pib
+        for scenario, _ in C.SCENARIOS
+    }
 
 
 def concordance(simulateur: Simulateur,

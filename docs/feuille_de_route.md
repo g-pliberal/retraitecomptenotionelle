@@ -7160,15 +7160,15 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : l'étape 1 — la projection refaite à
-rebours, sous un cliquet — et l'étape 2 — la décomposition du COR au dépôt
-(`decomposition_depense_retraite.csv`, `croissance_depense_retraite.csv`) et
-celle du modèle (`Avenir.decomposition`, et son jumeau) : les retraités se
-suivent à 1 % près en 2070, la pension moyenne relative non (−3 % contre
-−17 %), sous un second cliquet. Restent : la correction de la dérive, par les
-deux conventions du COR que le modèle ne suit pas (rendement de l'Agirc-Arrco,
-part des primes des fonctionnaires), puis l'étape 3, la fourchette, pour ce qui
-restera. Lire la note de l'étape 2 ; la demande du 5 octobre est dessous.
+**Reprise, au 5 octobre 2026.** Faites : l'étape 1 (le passé refait, sous un
+cliquet), l'étape 2 (la décomposition du COR et celle du modèle : les retraités
+se suivent, la pension moyenne relative non, −3 % contre −17 % en 2070) et
+l'étape 2 bis (la trajectoire de la page Coût prend la dépense du COR pour le
+système actuel ; celle du modèle reste un contrôle, `base_modele`). Restent :
+la correction de la dérive par les deux conventions du COR que le modèle ne suit
+pas (rendement de l'Agirc-Arrco, part des primes des fonctionnaires), qui porte
+sur le RAPPORT, puis l'étape 3, la fourchette, pour ce qui restera. Lire les
+notes des étapes 2 et 2 bis ; la demande du 5 octobre est dessous.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7278,3 +7278,36 @@ coûts soit indiscutable. »
 - *Restent* : la correction, l'étape 3, et ce que la demande du jour ajoute :
   une seule dépense officielle sur toute la page Coût, et les chiffres écrits
   en dur relus contre leur source.
+
+**Étape 2 bis, le 5 octobre 2026 : une seule dépense pour le système actuel,
+celle du COR.**
+
+- *Ce qui est fait.* Au-delà de la dernière année publiée par la DREES, la
+  base de la trajectoire est la dépense que le COR projette, en part de PIB
+  multipliée par le PIB que ses hypothèses projettent (`_avenir` et
+  `construireAvenir`, qui reçoivent le compte) ; sans compte, elle retombe sur
+  la masse du modèle mise à l'échelle de 2024, qui reste calculée année par
+  année (`base_modele`) pour la reconstitution et la décomposition. Le
+  dépliant des quatre systèmes dit que son système actuel est celui du COR, et
+  son point de vigilance dit ce que le modèle donnerait seul (17,8 % en 2070)
+  et pourquoi, chiffres de la décomposition à l'appui, que le paquet porte
+  désormais (`DecompositionDepense`, et son jumeau). README, `methodologie.md`
+  et `limites.md` § 5 ter suivent ; la sonde `trajectoire_propre` y ancre la
+  trajectoire du modèle seul.
+- *Ce que ça déplace.* Le dépliant : le système actuel passe de 17,8 à 15,3 %
+  du PIB en 2070, de 694 à 596 Md€ constants, la proposition de 9,5 à 8,2 %,
+  son cumul 2025-2070 de 15 828 à 14 794 Md€, son économie cumulée de 9 749 à
+  9 078 Md€. La garantie vieillesse du bilan et de la cascade n'est plus
+  rognée du rapport des deux bases : 9,0 Md€ au lieu de 7,8 dans la frise de
+  2070, au PIB de 2025, et 14,2 au lieu de 14,7 dans la cascade de 2025. Le
+  solde, le coefficient d'équilibre et la dette ne bougent pas : ils prenaient
+  déjà la dépense du COR.
+- *Les tests.* `test_la_trajectoire_du_systeme_actuel_est_celle_du_cor` ; le
+  contrôle de vraisemblance et `cout_age_depart.py` portent désormais sur la
+  trajectoire propre du modèle ; le catalogue des affirmations reçoit la
+  dépense officielle (`trajectoire_du_cor`) et le nouveau point de vigilance.
+- *Ce qui ne bouge pas, et qu'il faut savoir.* Le RAPPORT que la page emprunte
+  au modèle porte toujours l'écart : ses cas types font reculer la pension du
+  système actuel moins que le COR, si bien que le rapport de la proposition à
+  ce système est, pour sa part propre au système actuel, trop bas. La
+  correction des deux conventions, puis la fourchette, en sont le chantier.

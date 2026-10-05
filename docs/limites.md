@@ -3036,7 +3036,10 @@ avancée avant la dernière année publiée.
 
 La seconde moitié de la page **Coût** projette les six systèmes de 2025 à 2070.
 Rien n'y est certifié, rien ne peut l'être, et le lecteur doit savoir sur quoi
-chaque chiffre repose.
+chaque chiffre repose. La dépense du système actuel, elle, n'est pas du modèle :
+c'est celle que le COR projette dans son dernier rapport, à la part de PIB près
+(`test_la_trajectoire_du_systeme_actuel_est_celle_du_cor`) ; les autres systèmes
+en sont tirés par le rapport de masses du modèle.
 
 **Ce qui n'est pas de nous.** La démographie est celle du scénario central des
 projections de population 2026 de l'INSEE : effectifs par âge de 1962 à 2070,
@@ -3104,10 +3107,16 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->17,82<!--/--> %**. Trois dixièmes de point
+FSV, hors RAFP »). Le modèle, laissé à lui-même — sa masse de pensions mise à
+l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->17,82<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **deux
-points et demi à l'arrivée**.
+points et demi à l'arrivée**. C'est pourquoi, depuis le 5 octobre 2026, la page
+ne prend plus au modèle la dépense du système actuel projetée : elle prend celle
+du COR, année par année, et n'emprunte au modèle que le rapport de masses qui
+en tire les autres systèmes (action 147). Le chiffre que le lecteur retrouve
+dans le rapport du COR est donc celui qu'il lit sur la page ; l'écart, lui,
+demeure dans le rapport, et les deux contrôles qui suivent le mesurent.
 
 **Le contrôle interne : refaire le passé.** Au-delà de la dernière année
 publiée, le coût du système actuel est la masse de pensions des cas types, mise
