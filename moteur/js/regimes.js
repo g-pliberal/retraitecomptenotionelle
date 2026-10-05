@@ -2452,6 +2452,10 @@ export class ValeursPoint {
     // Ce que suit le prix d'achat au-delà du dernier barème publié : régime ->
     // [indice, décalage en années, fiabilité du prix prolongé].
     this._prolongements = new Map(Object.entries(paquet.prolongement_points ?? {}));
+    // La valeur de service au jour où elle prend effet : régime -> lignes
+    // [année, mois, valeur, fiabilité], dans l'ordre des dates
+    // (`regimes/valeurs_service_datees.csv`).
+    this._datees = new Map(Object.entries(paquet.valeurs_service_datees ?? {}));
   }
 
   /**
@@ -2574,6 +2578,49 @@ export class ValeursPoint {
 
   service(regime, annee) {
     return this._enVigueur(regime, "valeur_service", annee);
+  }
+
+  /**
+   * La valeur de service en vigueur le 1er du mois `mois` de `annee` : une
+   * pension se liquide « par la valeur de service du point de retraite du
+   * régime à cette même date » (circulaire Agirc-Arrco 2020-02-DRJ). La
+   * dernière valeur datée qui a pris effet, jusqu'à la dernière décision
+   * publiée ; au-delà, celle du 31 décembre du millésime (`millesime`). Un
+   * régime sans ligne datée, ou une date antérieure à la première, garde la
+   * valeur du 31 décembre de l'année. Voir scenarios/actuel.py.
+   */
+  serviceAu(regime, annee, mois) {
+    const datees = this._datees.get(regime);
+    const rang = annee * 12 + mois;
+    if (datees === undefined || rang < datees[0][0] * 12 + datees[0][1]) {
+      return this.service(regime, annee);
+    }
+    const [derniere, releve] = datees[datees.length - 1];
+    if (rang < (derniere + 1) * 12 + releve) {
+      let retenue = datees[0];
+      for (const ligne of datees) {
+        if (ligne[0] * 12 + ligne[1] > rang) {
+          break;
+        }
+        retenue = ligne;
+      }
+      return [retenue[2], retenue[3]];
+    }
+    return this.service(regime, this.millesime(regime, annee, mois));
+  }
+
+  /**
+   * L'année dont la valeur du 31 décembre est en vigueur le 1er du mois
+   * `mois` de `annee` : elle-même dès le relèvement de l'année, la précédente
+   * avant lui. Le relèvement tombe au mois de la dernière décision datée — le
+   * 1er novembre à l'Agirc-Arrco ; un régime sans ligne datée, au 1er janvier.
+   */
+  millesime(regime, annee, mois) {
+    const datees = this._datees.get(regime);
+    if (datees === undefined) {
+      return annee;
+    }
+    return mois >= datees[datees.length - 1][1] ? annee : annee - 1;
   }
 }
 

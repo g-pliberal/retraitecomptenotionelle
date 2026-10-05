@@ -125,6 +125,10 @@
 #     le test prête à l'assuré la pension de
 #     `carriere.pensions_au_foyer_mensuelles`, au conjoint ses ressources
 #     (`ressources_conjoint`), et lit l'allocation à `carriere.date_du_foyer`.
+#   valeurs_de_service_au_jour — pour chaque régime en points nommé, la valeur
+#     de service qu'une pension prenant effet au départ de l'exemple reçoit,
+#     fusions comprises, au dix-millième d'euro : celle du jour, non celle du
+#     31 décembre.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -1369,6 +1373,28 @@ exemples:
       points Agirc-Arrco ».
     carriere: {naissance: "1985-03", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2049-04", age_debut: 22, releve: {2024: 69368}}
     attendu: {points_de_l_annee: {annee: 2024, agirc_arrco: [146.43, 199.16]}}
+
+  # ---- Agirc-Arrco : la valeur de service du jour -------------------------
+  # La circulaire qui applique l'accord du 17 novembre 2017 aux personnes
+  # convertit au 1er janvier 2019 les pensions déjà servies en points du
+  # régime unifié, à la valeur de service de CE JOUR-LÀ : 1,2588 €, celle de
+  # l'Arrco, et non les 1,2714 € du 1er novembre, que le scénario 1 servait à
+  # tout départ de 2019 jusqu'au 5 octobre 2026 (action 138, étape 20). La
+  # carrière est prêtée : seule sa date d'effet, janvier 2019, compte.
+  - id: agirc_arrco_drj_2020_02_valeur_du_1er_janvier_2019
+    source: {editeur: "Agirc-Arrco", reference: "circulaire 2020-02-DRJ, « Régime Agirc-Arrco – Réglementation applicable aux individus », fiche 1, I.2 « Droits liquidés »", verifie_le: "2026-10-05"}
+    enonce: >-
+      « Lorsque les participants bénéficiaient, avant le 1er janvier 2019,
+      d'une pension au titre des régimes Agirc et/ou Arrco, le nombre de points
+      du présent régime correspondant à cette pension est obtenu en divisant
+      son montant par la valeur de service du point du régime au 1er janvier
+      2019. » L'exemple : 6 000 € de pensions au 31 décembre 2018, 2 400 € de
+      l'Agirc et 3 600 € de l'Arrco, font « 1 906,58 points au titre des
+      anciens points Agirc (2400 / 1,2588) et 2859,87 points au titre des
+      anciens points Arrco (3 600 / 1,2588) ». Le point Agirc, converti au
+      quotient 0,347791548 (« 0,4378/1,2588 », fiche 1, I.1), vaut 0,4378 €.
+    carriere: {naissance: "1957-01", sexe: H, affiliation: salarie_prive_cadre, liquidation: "2019-01", age_debut: 22}
+    attendu: {valeurs_de_service_au_jour: {agirc_arrco: 1.2588, arrco: 1.2588, agirc: 0.4378}}
 
   # ---- Agirc-Arrco : la date d'effet de la réversion --------------------
   # La page « La pension de réversion » de la fédération date la réversion

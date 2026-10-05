@@ -2213,6 +2213,20 @@ referents:
           décret n° 81-1167 : « 24 900 FRS pour une personne seule ;
           44 400 FRS pour un ménage » au 1er janvier 1982.
         preuve: JORFTEXT000000876016
+      - constat: >-
+          Il sert à la liquidation la valeur de service de l'Agirc et de
+          l'Arrco du 31 décembre de l'année du départ, sa série annuelle :
+          1,2588 € à l'Arrco pour un départ de février 2018, au lieu des
+          1,2513 € du jour ; exécuté, ses onze carrières le montrent.
+        tranche: >-
+          accord du 17 novembre 2017, articles 27 et 92 ; circulaire
+          Agirc-Arrco 2020-02-DRJ : la valeur « à cette même date » ; la
+          compilation de la fédération date chaque valeur. Le dépôt sert
+          celle du jour depuis le 5 octobre 2026 (étape 138.20) ; l'écart
+          est le sien.
+        preuve: >-
+          data/reference/regles/agirc_arrco_valeur_service.yaml ;
+          tests/test_destinie.py, VALEUR_DU_JOUR
     fait_mieux:
       - quoi: >-
           Il calcule la réversion du régime général entière : minimum
@@ -3198,25 +3212,31 @@ referents:
         chantier: "138.4"
       - quoi: >-
           Il sert à la liquidation la valeur de service de l'Agirc-Arrco
-          en vigueur au mois du départ, comme la caisse ; le dépôt sert
+          en vigueur au mois du départ, comme la caisse ; le dépôt servait
           celle du 31 décembre de l'année de la liquidation
           (`droit/liquider.py`, valeur_du_point ; valeurs_point.csv, «
           valeur en vigueur au 31 décembre de l'année ») : +5,1 % de
           retraite complémentaire à un départ de janvier 2022 (1,3498 €
-          au lieu de 1,2841 €, relevée au 1er juillet), +4,9 % en
+          au lieu de 1,2841 €, relevée au 1er novembre), +4,9 % en
           octobre 2023, +1,6 % avant novembre 2024, +0,6 % en février
-          2018. Destinie fait comme le dépôt.
+          2018. Destinie fait comme le dépôt faisait. Repris le 5 octobre
+          2026 : la valeur du jour, datée de 1947 à 2025 dans
+          `regimes/valeurs_service_datees.csv`, dans les deux moteurs, et
+          la pension menée de relèvement en relèvement.
         preuve: >-
           tests/temoins/trajectoire.json (parametres_trajectoire.valeur_service
           ; cas cor_1_1960, cor_10_1963, loi_2023_salaire_moyen) ;
           tests/test_trajectoire.py,
           test_la_valeur_du_point_de_trajectoire_est_celle_du_jour
         verification: >-
-          Les deux tables datent les relèvements au même mois (le 1er
-          novembre, le 1er juillet en 2022) ; le dépôt lit la sienne à
-          l'année. La règle de l'accord du 17 novembre 2017 reste à
-          citer à la reprise.
-        etat: a_reprendre
+          Accord du 17 novembre 2017, article 27 : « La revalorisation de
+          la valeur de service du point prend effet au 1er novembre de
+          chaque année » ; article 92 : l'allocation multiplie les points
+          « par la valeur de service du point de retraite du régime » ;
+          circulaire Agirc-Arrco 2020-02-DRJ : « à cette même date » ;
+          la compilation de la fédération date chaque valeur depuis 1947
+          (fiche agirc_arrco_valeur_service).
+        etat: repris
         chantier: "138.20"
       - quoi: >-
           Il lit les variantes de fécondité et d'espérance de vie de l'INSEE ;

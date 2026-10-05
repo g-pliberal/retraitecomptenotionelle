@@ -3070,6 +3070,58 @@ def test_les_coefficients_de_fusion_se_recalculent_depuis_les_valeurs_de_point()
     assert conversions[("arrco", 2019)] == pytest.approx(1.0, abs=1e-9)
 
 
+def test_la_valeur_datee_du_31_decembre_est_celle_de_l_annee():
+    """La table datée et la série annuelle disent la même chose.
+
+    `valeurs_service_datees.csv` date chaque valeur de service au jour de son
+    effet, celle que la liquidation sert ; `valeurs_point.csv` garde, par
+    année, celle du 31 décembre, que la fédération certifie. La valeur datée
+    en vigueur au 31 décembre de chaque année est donc la valeur annuelle, au
+    millionième d'euro, à la même fiabilité — une année sans ligne datée, sans
+    relèvement, garde celle d'avant. Au-delà de la dernière ligne datée, une
+    valeur annuelle ne se certifie pas sans sa décision : la ligne du
+    1er novembre manque."""
+    dossier = RACINE_DONNEES / "reference" / "regimes"
+    with (dossier / "valeurs_point.csv").open(encoding="utf-8") as f:
+        annuelles = {
+            (l["regime"], int(l["annee"])): (float(l["valeur"]), l["fiabilite"])
+            for l in csv.DictReader(x for x in f if not x.startswith("#"))
+            if l["mesure"] == "valeur_service"
+        }
+    datees: dict[str, list[tuple[tuple[int, int], float, str]]] = {}
+    with (dossier / "valeurs_service_datees.csv").open(encoding="utf-8") as f:
+        for l in csv.DictReader(x for x in f if not x.startswith("#")):
+            annee, mois, jour = (int(n) for n in l["date_effet"].split("-"))
+            assert jour == 1 and 1 <= mois <= 12, (l["regime"], l["date_effet"])
+            datees.setdefault(l["regime"], []).append(
+                ((annee, mois), float(l["valeur"]), l["fiabilite"]))
+    assert {"agirc", "arrco", "unirs", "agirc_arrco"} <= set(datees)
+    for regime, lignes in datees.items():
+        dates = [d for d, _, _ in lignes]
+        assert dates == sorted(set(dates)), f"{regime} : dates en double ou en désordre"
+        derniere_datee = dates[-1][0]
+        en_vigueur = None
+        for annee in range(dates[0][0], derniere_datee + 1):
+            for date_effet, valeur, fiabilite in lignes:
+                if date_effet[0] == annee:
+                    en_vigueur = (valeur, fiabilite)
+            annuelle = annuelles.get((regime, annee))
+            assert annuelle is not None, f"{regime} {annee} : sans valeur annuelle"
+            assert en_vigueur[0] == pytest.approx(annuelle[0], abs=1.5e-6), (regime, annee)
+            assert en_vigueur[1] == annuelle[1], (regime, annee)
+        for (autre, annee), (valeur, fiabilite) in annuelles.items():
+            if autre == regime and annee > derniere_datee:
+                assert fiabilite != "certifiee" and valeur == pytest.approx(en_vigueur[0]), (
+                    f"{regime} {annee} : la valeur annuelle change ou se certifie, "
+                    "la décision qui la fixe manque à la table datée")
+    # Les dates des relèvements, pour l'Agirc-Arrco : le régime naît au
+    # 1er janvier 2019 avec la valeur de l'Arrco, puis se relève chaque
+    # 1er novembre (accord du 17 novembre 2017, article 27).
+    unifie = datees["agirc_arrco"]
+    assert unifie[0][:2] == ((2019, 1), 1.2588)
+    assert all(mois == 11 for (_, mois), _, _ in unifie[1:])
+
+
 # -- les interrupteurs, renvois aux fiches (phase 6) -------------------------
 
 

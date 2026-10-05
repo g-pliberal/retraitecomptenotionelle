@@ -12874,7 +12874,7 @@ jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, plutôt qu
 « Indexation sur les prix », qui neutralise la question de l'indexation quand on
 veut isoler l'effet propre des comptes notionnels. Sur une carrière
 (un salarié du privé non cadre au salaire moyen, entré à 20 ans et parti
-à 62), la correction reste modeste : +5,5 points pour la génération 1920,
+à 62), la correction reste modeste : +5,6 points pour la génération 1920,
 +0,0 pour 1945, -0,5 pour 1958. Les cotisations se concentrent sur les dernières années, là où
 les deux règles coïncident.</p>
 
@@ -14629,9 +14629,9 @@ export const MESURES_BLOCAGES = {
   // la bascule, que la part « retraite seule » du taux que l'État verse — le
   // défaut depuis le même jour : sous le taux entier, la proposition était à
   // −0,9, 59 % et 0,85, et 1,03 en 2070.
-  solde_moyen_proposition: -0.5,
+  solde_moyen_proposition: -0.6,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 35,
+  dette_2070_proposition: 37,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.89,
   decennie_coefficient_minimum: 2040,

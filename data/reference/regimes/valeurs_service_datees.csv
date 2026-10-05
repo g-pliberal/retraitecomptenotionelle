@@ -1,0 +1,327 @@
+# Valeurs de service du point, datées au jour de leur effet
+# ---------------------------------------------------------
+# source_id: agirc_arrco_valeurs_point — la compilation de la fédération
+#            Agirc-Arrco, « Valeurs de service du point et salaires de
+#            référence / valeurs d'achat du point — Historique », au
+#            1er novembre 2025 (Compilation_valeurs_de_point_novembre_2025.pdf,
+#            sha256:b1262a855f12906ef5fe8feeef2dab5f6bdccaf9932efadab61d5df0d3308aa1),
+#            pages 2 à 5 et 59, lue le 5 octobre 2026.
+#
+# POURQUOI CE FICHIER EXISTE. valeurs_point.csv garde, pour chaque année, la
+# valeur en vigueur au 31 décembre. Une pension se liquide pourtant à SA date
+# d'effet, « par la valeur de service du point de retraite du régime à cette
+# même date » (circulaire Agirc-Arrco 2020-02-DRJ, sur l'article 92 de
+# l'accord du 17 novembre 2017) : le relèvement de l'année, quand il vient
+# après, ne lui est pas encore servi. Le scénario 1 donnait à un départ de
+# janvier 2022 la valeur de novembre, 1,3498 € au lieu de 1,2841 € — 5,12 %
+# de complémentaire en trop ; 4,9 % en octobre 2023, 1,6 % avant novembre
+# 2024, 0,6 % en février 2018 (action 138, étape 20, que TRAJECTOiRE a mise
+# au jour).
+#
+# Chaque ligne : la valeur de service en vigueur à compter de `date_effet`,
+# en euros — les francs à la parité de 6,55957, les anciens francs divisés
+# par cent jusqu'en 1959, comme dans valeurs_point.csv. Les dates sont celles
+# des colonnes du document :
+#   agirc       : 1er janvier et 1er juillet jusqu'en 1989 (1er octobre en
+#                 1948), 1er janvier de 1990 à 2000, 1er avril de 2001 à 2015,
+#                 1er novembre de 2016 à 2018 ;
+#   arrco       : 1er janvier 1999, le point unifié à 6,5596 F, puis 1er avril
+#                 jusqu'en 2015 et 1er novembre de 2016 à 2018 ; avant 1999,
+#                 les valeurs de l'UNIRS, qui en tiennent lieu au niveau
+#                 `moyenne`, comme dans valeurs_point.csv ;
+#   unirs       : deux colonnes par année, dont le document change les dates —
+#                 1er janvier et 1er octobre en 1961, en 1969 et de 1972 à
+#                 1992, 1er avril et 1er octobre de 1962 à 1968, en 1970 et de
+#                 1993 à 1995, 1er juillet et 1er octobre en 1971, 1er janvier
+#                 et 1er avril de 1996 à 1998 ; il imprime la valeur en
+#                 vigueur à chacune, changée ou non, et la ligne le redit ;
+#   agirc_arrco : 1er janvier 2019, la valeur de l'Arrco, puis le 1er novembre
+#                 de chaque année (accord du 17 novembre 2017, article 27),
+#                 gels de 2020 et de 2025 compris.
+# Le 1er novembre vient de l'accord du 30 octobre 2015, qui l'a substitué au
+# 1er avril pour l'Agirc et l'Arrco ; une note du document le dit.
+#
+# DEUX CONTRÔLES ONT VALIDÉ LA LECTURE, faite le 5 octobre 2026 sur la
+# position des mots dans la page : l'évolution que le document imprime en
+# regard de chaque valeur de l'Agirc et de l'Arrco, recalculée sur la valeur
+# précédente de la suite datée, à un dixième de point près ; et la dernière
+# valeur de chaque année, égale à celle de valeurs_point.csv au millionième
+# d'euro. Le second reste un test (tests/test_donnees.py,
+# test_la_valeur_datee_du_31_decembre_est_celle_de_l_annee), et la fiabilité
+# de chaque ligne est celle de son année dans valeurs_point.csv.
+#
+# AU-DELÀ DE LA DERNIÈRE LIGNE D'UN RÉGIME, la valeur se relève une fois l'an,
+# au mois de cette ligne : la valeur du 31 décembre d'une année, publiée ou
+# prolongée par les prix, prend effet au 1er novembre de cette année
+# (ValeursPoint.millesime). Une ligne agirc_arrco s'ajoute chaque automne, au
+# 1er novembre, gel compris, quand la fédération publie sa décision : le test
+# refuse une valeur annuelle que la table datée ne suit pas.
+regime,date_effet,valeur,fiabilite
+agirc,1947-01-01,0.006098,certifiee
+agirc,1948-01-01,0.007622,certifiee
+agirc,1948-10-01,0.009147,certifiee
+agirc,1950-07-01,0.012196,certifiee
+agirc,1951-01-01,0.013720,certifiee
+agirc,1951-07-01,0.016769,certifiee
+agirc,1952-01-01,0.018294,certifiee
+agirc,1952-07-01,0.019056,certifiee
+agirc,1955-01-01,0.019818,certifiee
+agirc,1956-01-01,0.021343,certifiee
+agirc,1957-01-01,0.022867,certifiee
+agirc,1958-01-01,0.025154,certifiee
+agirc,1958-07-01,0.027441,certifiee
+agirc,1959-01-01,0.028965,certifiee
+agirc,1959-07-01,0.030490,certifiee
+agirc,1960-01-01,0.032014,certifiee
+agirc,1960-07-01,0.033539,certifiee
+agirc,1961-01-01,0.035063,certifiee
+agirc,1962-01-01,0.038112,certifiee
+agirc,1962-07-01,0.038874,certifiee
+agirc,1963-07-01,0.041161,certifiee
+agirc,1964-07-01,0.045735,certifiee
+agirc,1965-07-01,0.048021,certifiee
+agirc,1966-01-01,0.048784,certifiee
+agirc,1966-07-01,0.049546,certifiee
+agirc,1967-07-01,0.051833,certifiee
+agirc,1968-07-01,0.055644,certifiee
+agirc,1969-01-01,0.058236,certifiee
+agirc,1969-07-01,0.061742,certifiee
+agirc,1970-07-01,0.066315,certifiee
+agirc,1971-01-01,0.068602,certifiee
+agirc,1971-07-01,0.074700,certifiee
+agirc,1972-07-01,0.083085,certifiee
+agirc,1973-01-01,0.085371,certifiee
+agirc,1973-07-01,0.091469,certifiee
+agirc,1974-01-01,0.094518,certifiee
+agirc,1974-07-01,0.102903,certifiee
+agirc,1975-01-01,0.109763,certifiee
+agirc,1975-07-01,0.115251,certifiee
+agirc,1976-01-01,0.123484,certifiee
+agirc,1976-07-01,0.129582,certifiee
+agirc,1977-01-01,0.134765,certifiee
+agirc,1977-07-01,0.138729,certifiee
+agirc,1978-01-01,0.145192,certifiee
+agirc,1978-07-01,0.152449,certifiee
+agirc,1979-01-01,0.158547,certifiee
+agirc,1979-07-01,0.166779,certifiee
+agirc,1980-01-01,0.176231,certifiee
+agirc,1980-07-01,0.185988,certifiee
+agirc,1981-01-01,0.200013,certifiee
+agirc,1981-07-01,0.210075,certifiee
+agirc,1982-01-01,0.224100,certifiee
+agirc,1982-07-01,0.231723,certifiee
+agirc,1983-01-01,0.239345,certifiee
+agirc,1983-07-01,0.253065,certifiee
+agirc,1984-01-01,0.262212,certifiee
+agirc,1984-07-01,0.264651,certifiee
+agirc,1985-01-01,0.272884,certifiee
+agirc,1985-07-01,0.280354,certifiee
+agirc,1986-01-01,0.284622,certifiee
+agirc,1986-07-01,0.287366,certifiee
+agirc,1987-01-01,0.291787,certifiee
+agirc,1987-07-01,0.293922,certifiee
+agirc,1988-01-01,0.300782,certifiee
+agirc,1989-01-01,0.307795,certifiee
+agirc,1989-07-01,0.311758,certifiee
+agirc,1990-01-01,0.319076,certifiee
+agirc,1991-01-01,0.332186,certifiee
+agirc,1992-01-01,0.341791,certifiee
+agirc,1993-01-01,0.351090,certifiee
+agirc,1994-01-01,0.351090,certifiee
+agirc,1995-01-01,0.351090,certifiee
+agirc,1996-01-01,0.356350,certifiee
+agirc,1997-01-01,0.358133,certifiee
+agirc,1998-01-01,0.358133,certifiee
+agirc,1999-01-01,0.359566,certifiee
+agirc,2000-01-01,0.359566,certifiee
+agirc,2001-04-01,0.367798,certifiee
+agirc,2002-04-01,0.373700,certifiee
+agirc,2003-04-01,0.379600,certifiee
+agirc,2004-04-01,0.386200,certifiee
+agirc,2005-04-01,0.394000,certifiee
+agirc,2006-04-01,0.400500,certifiee
+agirc,2007-04-01,0.407300,certifiee
+agirc,2008-04-01,0.413200,certifiee
+agirc,2009-04-01,0.418600,certifiee
+agirc,2010-04-01,0.421600,certifiee
+agirc,2011-04-01,0.423300,certifiee
+agirc,2012-04-01,0.433000,certifiee
+agirc,2013-04-01,0.435200,certifiee
+agirc,2014-04-01,0.435200,certifiee
+agirc,2015-04-01,0.435200,certifiee
+agirc,2016-11-01,0.435200,certifiee
+agirc,2017-11-01,0.435200,certifiee
+agirc,2018-11-01,0.437800,certifiee
+agirc_arrco,2019-01-01,1.258800,certifiee
+agirc_arrco,2019-11-01,1.271400,certifiee
+agirc_arrco,2020-11-01,1.271400,certifiee
+agirc_arrco,2021-11-01,1.284100,certifiee
+agirc_arrco,2022-11-01,1.349800,certifiee
+agirc_arrco,2023-11-01,1.415900,certifiee
+agirc_arrco,2024-11-01,1.438600,certifiee
+agirc_arrco,2025-11-01,1.438600,certifiee
+arrco,1961-01-01,0.029453,moyenne
+arrco,1961-10-01,0.031344,moyenne
+arrco,1962-10-01,0.033295,moyenne
+arrco,1963-04-01,0.033295,moyenne
+arrco,1963-10-01,0.036405,moyenne
+arrco,1964-04-01,0.036405,moyenne
+arrco,1964-10-01,0.039759,moyenne
+arrco,1965-04-01,0.039759,moyenne
+arrco,1965-10-01,0.042198,moyenne
+arrco,1966-04-01,0.042198,moyenne
+arrco,1966-10-01,0.044454,moyenne
+arrco,1967-04-01,0.044454,moyenne
+arrco,1967-10-01,0.046954,moyenne
+arrco,1968-04-01,0.048784,moyenne
+arrco,1968-10-01,0.048784,moyenne
+arrco,1969-01-01,0.050308,moyenne
+arrco,1969-10-01,0.053662,moyenne
+arrco,1970-10-01,0.058540,moyenne
+arrco,1971-07-01,0.061894,moyenne
+arrco,1972-10-01,0.069517,moyenne
+arrco,1973-01-01,0.069517,moyenne
+arrco,1973-10-01,0.076834,moyenne
+arrco,1974-01-01,0.076834,moyenne
+arrco,1974-10-01,0.087811,moyenne
+arrco,1975-01-01,0.093299,moyenne
+arrco,1975-10-01,0.096958,moyenne
+arrco,1976-01-01,0.107934,moyenne
+arrco,1976-10-01,0.117081,moyenne
+arrco,1977-01-01,0.121959,moyenne
+arrco,1977-10-01,0.129582,moyenne
+arrco,1978-01-01,0.134765,moyenne
+arrco,1978-10-01,0.142692,moyenne
+arrco,1979-01-01,0.148485,moyenne
+arrco,1979-10-01,0.159462,moyenne
+arrco,1980-01-01,0.168914,moyenne
+arrco,1980-10-01,0.185988,moyenne
+arrco,1981-01-01,0.199403,moyenne
+arrco,1981-10-01,0.211599,moyenne
+arrco,1982-01-01,0.223795,moyenne
+arrco,1982-10-01,0.239040,moyenne
+arrco,1983-01-01,0.243309,moyenne
+arrco,1983-10-01,0.253065,moyenne
+arrco,1984-01-01,0.262212,moyenne
+arrco,1984-10-01,0.272579,moyenne
+arrco,1985-01-01,0.279287,moyenne
+arrco,1985-10-01,0.286604,moyenne
+arrco,1986-01-01,0.293922,moyenne
+arrco,1986-10-01,0.296971,moyenne
+arrco,1987-01-01,0.302459,moyenne
+arrco,1987-10-01,0.314045,moyenne
+arrco,1988-01-01,0.314045,moyenne
+arrco,1988-10-01,0.317246,moyenne
+arrco,1989-01-01,0.320448,moyenne
+arrco,1989-10-01,0.323802,moyenne
+arrco,1990-01-01,0.331729,moyenne
+arrco,1990-10-01,0.341181,moyenne
+arrco,1991-01-01,0.346974,moyenne
+arrco,1991-10-01,0.350633,moyenne
+arrco,1992-01-01,0.358408,moyenne
+arrco,1992-10-01,0.363896,moyenne
+arrco,1993-04-01,0.369780,moyenne
+arrco,1993-10-01,0.369780,moyenne
+arrco,1994-04-01,0.369780,moyenne
+arrco,1994-10-01,0.369780,moyenne
+arrco,1995-04-01,0.374232,moyenne
+arrco,1995-10-01,0.374232,moyenne
+arrco,1996-01-01,0.379842,moyenne
+arrco,1996-04-01,0.379842,moyenne
+arrco,1997-01-01,0.379842,moyenne
+arrco,1997-04-01,0.382876,moyenne
+arrco,1998-01-01,0.382876,moyenne
+arrco,1998-04-01,0.387464,moyenne
+arrco,1999-01-01,1.000005,certifiee
+arrco,1999-04-01,1.008999,certifiee
+arrco,2000-04-01,1.017094,certifiee
+arrco,2001-04-01,1.036394,certifiee
+arrco,2002-04-01,1.053000,certifiee
+arrco,2003-04-01,1.069800,certifiee
+arrco,2004-04-01,1.088600,certifiee
+arrco,2005-04-01,1.110400,certifiee
+arrco,2006-04-01,1.128700,certifiee
+arrco,2007-04-01,1.148000,certifiee
+arrco,2008-04-01,1.164800,certifiee
+arrco,2009-04-01,1.179900,certifiee
+arrco,2010-04-01,1.188400,certifiee
+arrco,2011-04-01,1.213500,certifiee
+arrco,2012-04-01,1.241400,certifiee
+arrco,2013-04-01,1.251300,certifiee
+arrco,2014-04-01,1.251300,certifiee
+arrco,2015-04-01,1.251300,certifiee
+arrco,2016-11-01,1.251300,certifiee
+arrco,2017-11-01,1.251300,certifiee
+arrco,2018-11-01,1.258800,certifiee
+unirs,1961-01-01,0.029453,certifiee
+unirs,1961-10-01,0.031344,certifiee
+unirs,1962-10-01,0.033295,certifiee
+unirs,1963-04-01,0.033295,certifiee
+unirs,1963-10-01,0.036405,certifiee
+unirs,1964-04-01,0.036405,certifiee
+unirs,1964-10-01,0.039759,certifiee
+unirs,1965-04-01,0.039759,certifiee
+unirs,1965-10-01,0.042198,certifiee
+unirs,1966-04-01,0.042198,certifiee
+unirs,1966-10-01,0.044454,certifiee
+unirs,1967-04-01,0.044454,certifiee
+unirs,1967-10-01,0.046954,certifiee
+unirs,1968-04-01,0.048784,certifiee
+unirs,1968-10-01,0.048784,certifiee
+unirs,1969-01-01,0.050308,certifiee
+unirs,1969-10-01,0.053662,certifiee
+unirs,1970-10-01,0.058540,certifiee
+unirs,1971-07-01,0.061894,certifiee
+unirs,1972-10-01,0.069517,certifiee
+unirs,1973-01-01,0.069517,certifiee
+unirs,1973-10-01,0.076834,certifiee
+unirs,1974-01-01,0.076834,certifiee
+unirs,1974-10-01,0.087811,certifiee
+unirs,1975-01-01,0.093299,certifiee
+unirs,1975-10-01,0.096958,certifiee
+unirs,1976-01-01,0.107934,certifiee
+unirs,1976-10-01,0.117081,certifiee
+unirs,1977-01-01,0.121959,certifiee
+unirs,1977-10-01,0.129582,certifiee
+unirs,1978-01-01,0.134765,certifiee
+unirs,1978-10-01,0.142692,certifiee
+unirs,1979-01-01,0.148485,certifiee
+unirs,1979-10-01,0.159462,certifiee
+unirs,1980-01-01,0.168914,certifiee
+unirs,1980-10-01,0.185988,certifiee
+unirs,1981-01-01,0.199403,certifiee
+unirs,1981-10-01,0.211599,certifiee
+unirs,1982-01-01,0.223795,certifiee
+unirs,1982-10-01,0.239040,certifiee
+unirs,1983-01-01,0.243309,certifiee
+unirs,1983-10-01,0.253065,certifiee
+unirs,1984-01-01,0.262212,certifiee
+unirs,1984-10-01,0.272579,certifiee
+unirs,1985-01-01,0.279287,certifiee
+unirs,1985-10-01,0.286604,certifiee
+unirs,1986-01-01,0.293922,certifiee
+unirs,1986-10-01,0.296971,certifiee
+unirs,1987-01-01,0.302459,certifiee
+unirs,1987-10-01,0.314045,certifiee
+unirs,1988-01-01,0.314045,certifiee
+unirs,1988-10-01,0.317246,certifiee
+unirs,1989-01-01,0.320448,certifiee
+unirs,1989-10-01,0.323802,certifiee
+unirs,1990-01-01,0.331729,certifiee
+unirs,1990-10-01,0.341181,certifiee
+unirs,1991-01-01,0.346974,certifiee
+unirs,1991-10-01,0.350633,certifiee
+unirs,1992-01-01,0.358408,certifiee
+unirs,1992-10-01,0.363896,certifiee
+unirs,1993-04-01,0.369780,certifiee
+unirs,1993-10-01,0.369780,certifiee
+unirs,1994-04-01,0.369780,certifiee
+unirs,1994-10-01,0.369780,certifiee
+unirs,1995-04-01,0.374232,certifiee
+unirs,1995-10-01,0.374232,certifiee
+unirs,1996-01-01,0.379842,certifiee
+unirs,1996-04-01,0.379842,certifiee
+unirs,1997-01-01,0.379842,certifiee
+unirs,1997-04-01,0.382876,certifiee
+unirs,1998-01-01,0.382876,certifiee
+unirs,1998-04-01,0.387464,certifiee

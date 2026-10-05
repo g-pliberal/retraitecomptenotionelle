@@ -869,6 +869,17 @@ def _valeurs_point() -> dict:
     }
 
 
+def _valeurs_service_datees() -> dict:
+    """La valeur de service au jour où elle prend effet : ``regime`` ->
+    lignes [année, mois, valeur, fiabilité], dans l'ordre des dates."""
+    valeurs = ValeursPoint(DONNEES)
+    return {
+        regime: [[annee, mois, valeur, int(fiabilite)]
+                 for (annee, mois), (valeur, fiabilite) in zip(dates, lignes)]
+        for regime, (dates, lignes) in sorted(valeurs._datees.items())
+    }
+
+
 def _prolongement_points() -> dict:
     """Ce que suit le prix d'achat d'un point au-delà du dernier barème publié :
     ``regime`` -> [indice, décalage en années, fiabilité du prix prolongé]."""
@@ -1781,6 +1792,7 @@ def construire(bilan: bytes) -> bytes:
         "avantages": _avantages(),
         "affiliations": _affiliations(),
         "valeurs_point": _valeurs_point(),
+        "valeurs_service_datees": _valeurs_service_datees(),
         "prolongement_points": _prolongement_points(),
         "rendements_points": _rendements(),
         "conversions_points": _conversions_points(),

@@ -673,10 +673,11 @@ export function plafondMajoration(moteur, code, periode, carriere, anneeLiquidat
   }
   const plafond = periode.plafond_majoration_enfants;
   const anneeReference = periode.plafond_majoration_annee;
-  if (anneeReference === null || anneeReference === anneeLiquidation) {
+  if (anneeReference === null || anneeReference === undefined) {
     return plafond;
   }
-  const servie = liquider.valeurDuPoint(moteur, code, anneeLiquidation);
+  // Le plafond de la date d'effet, comme la valeur du point qu'il suit.
+  const servie = liquider.valeurDuPoint(moteur, code, carriere.dateLiquidation);
   const publiee = liquider.valeurDuPoint(moteur, code, anneeReference);
   if (servie === null || publiee === null || publiee[0] <= 0) {
     return plafond * moteur.macro.coefficientPrix(anneeReference, anneeLiquidation);

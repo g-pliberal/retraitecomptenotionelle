@@ -346,7 +346,7 @@ def _seconde_retraite_complementaire(moteur: ScenarioActuel, salaires: dict[int,
         points += (assiette * tranche_1.taux_calcul_points / reference
                    if tranche_1.taux_calcul_points is not None
                    else assiette * tranche_1.taux_cotisation_retraite / (taux_appel * reference))
-    valeur = _liquider.valeur_du_point(moteur, AGIRC_ARRCO, date_effet.annee)
+    valeur = _liquider.valeur_du_point(moteur, AGIRC_ARRCO, date_effet)
     if points <= 0 or valeur is None:
         return None
     montant = points * valeur[0]

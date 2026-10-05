@@ -2431,6 +2431,10 @@ class ValeursPoint:
     plutôt qu'un prix d'achat — le régime de base des libéraux, la
     complémentaire agricole — n'en ont pas besoin : leur fiche porte
     ``points_maximum``, et seule la valeur de service est lue ici.
+
+    La valeur de service d'une année est celle du 31 décembre ; celle d'un
+    JOUR, que la liquidation sert, se lit dans ``valeurs_service_datees.csv``
+    (:meth:`service_au`).
     """
 
     #: Les indices qu'un prix d'achat peut suivre au-delà du dernier barème.
@@ -2441,7 +2445,29 @@ class ValeursPoint:
         #: Ce que suit le prix d'achat au-delà du dernier barème publié :
         #: régime -> (indice, décalage en années, fiabilité du prix prolongé).
         self._prolongements: dict[str, tuple[str, int, Fiabilite]] = {}
+        #: La valeur de service au jour où elle prend effet : régime ->
+        #: (dates (année, mois), valeurs et fiabilités), dans l'ordre des dates.
+        self._datees: dict[str, tuple[list[tuple[int, int]],
+                                      list[tuple[float, Fiabilite]]]] = {}
         dossier = racine / "reference" / "regimes"
+        chemin = dossier / "valeurs_service_datees.csv"
+        if chemin.exists():
+            lues: dict[str, list[tuple[tuple[int, int], float, Fiabilite]]] = {}
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    annee, mois, jour = (int(n) for n in ligne["date_effet"].split("-"))
+                    if jour != 1:
+                        raise ValueError(
+                            f"valeurs_service_datees.csv : {ligne['regime']} "
+                            f"{ligne['date_effet']}, une valeur prend effet le 1er du mois")
+                    lues.setdefault(ligne["regime"], []).append(
+                        ((annee, mois), float(ligne["valeur"]),
+                         Fiabilite.depuis_texte(ligne["fiabilite"])))
+            for regime, datees in lues.items():
+                datees.sort(key=lambda d: d[0])
+                self._datees[regime] = ([d for d, _, _ in datees],
+                                        [(v, f) for _, v, f in datees])
         chemin = dossier / "valeurs_point.csv"
         if not chemin.exists():
             return
@@ -2602,6 +2628,42 @@ class ValeursPoint:
 
     def service(self, regime: str, annee: int) -> tuple[float, Fiabilite] | None:
         return self._en_vigueur(regime, "valeur_service", annee)
+
+    def service_au(self, regime: str, annee: int,
+                   mois: int) -> tuple[float, Fiabilite] | None:
+        """La valeur de service en vigueur le 1er du mois ``mois`` de ``annee``.
+
+        Une pension se liquide à SA date d'effet, « par la valeur de service du
+        point de retraite du régime à cette même date » (circulaire Agirc-Arrco
+        2020-02-DRJ, sur l'article 92 de l'accord du 17 novembre 2017). La
+        valeur du 31 décembre servait par avance à un départ de janvier 2022 le
+        relèvement de novembre : 5,12 % de trop. ``valeurs_service_datees.csv``
+        date chaque valeur au jour de son effet, jusqu'à la dernière décision
+        publiée ; au-delà, le régime se relève une fois l'an, au mois de cette
+        décision (:meth:`millesime`). Un régime que le fichier ne date pas, ou
+        une date antérieure à sa première ligne, garde la valeur du 31 décembre
+        de l'année.
+        """
+        datees = self._datees.get(regime)
+        if datees is None or (annee, mois) < datees[0][0]:
+            return self.service(regime, annee)
+        dates, valeurs = datees
+        derniere, releve = dates[-1]
+        if (annee, mois) < (derniere + 1, releve):
+            return valeurs[bisect_right(dates, (annee, mois)) - 1]
+        return self.service(regime, self.millesime(regime, annee, mois))
+
+    def millesime(self, regime: str, annee: int, mois: int) -> int:
+        """L'année dont la valeur du 31 décembre est en vigueur le 1er du mois
+        ``mois`` de ``annee`` : ``annee`` dès le relèvement de l'année, la
+        précédente avant lui. Le relèvement tombe au mois de la dernière
+        décision datée du régime — le 1er novembre à l'Agirc-Arrco, « chaque
+        année » (accord du 17 novembre 2017, article 27) ; un régime que
+        ``valeurs_service_datees.csv`` ne date pas se relève au 1er janvier."""
+        datees = self._datees.get(regime)
+        if datees is None:
+            return annee
+        return annee if mois >= datees[0][-1][1] else annee - 1
 
 
 class ScenarioActuel:

@@ -15,12 +15,13 @@ type de ``tests/test_revalorisation.py`` en refait le compte à la main.
 CE MODULE DIT CE QUE LA PENSION EST DEVENUE, régime par régime, dans les textes
 qui l'ont revalorisée.
 
-* **Les régimes en points** servent leurs points à la valeur de service de
-  l'année : la pension d'aujourd'hui est la pension du départ multipliée par
-  le rapport des deux valeurs du point, lues dans ``valeurs_point.csv`` et le
-  long des fusions (Agirc et Arrco dans l'Agirc-Arrco). C'est exact par
-  construction. Au-delà de la dernière valeur publiée, la règle générale prend
-  le relais, et la fiabilité le dit.
+* **Les régimes en points** servent leurs points à la valeur de service du
+  jour : la pension d'aujourd'hui est la pension du départ multipliée par le
+  rapport des deux valeurs du point, chacune à sa date — celle de la date
+  d'effet et celle de l'échéance, lues dans ``valeurs_service_datees.csv``
+  et ``valeurs_point.csv`` et le long des fusions (Agirc et Arrco dans
+  l'Agirc-Arrco). C'est exact par construction. Au-delà de la dernière valeur
+  publiée, la règle générale prend le relais, et la fiabilité le dit.
 * **Le régime général et les régimes alignés** suivent l'article L. 161-23-1 du
   code de la sécurité sociale : les coefficients sont ceux que la Cnav publie
   depuis 1949 (``revalorisation_pensions.csv``), y compris les cinq tranches de
@@ -466,14 +467,19 @@ class PensionServie:
         if pension.type_calcul in ("points", "mixte"):
             periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
             bareme = (periode.points_de if periode is not None else None) or code
-            au_depart = liquider.valeur_du_point(self.actuel, bareme, annee_liquidation)
+            au_depart = liquider.valeur_du_point(self.actuel, bareme, depart)
             publiee = _derniere_valeur_publiee(self.actuel, bareme)
             if au_depart is not None and au_depart[0] > 0 and publiee is not None:
                 # Au-delà de la dernière valeur publiée, la règle générale
                 # prend le relais : c'est celle du régime de base des
                 # libéraux, dont la série s'arrête en 2025.
                 ancre = min(jusqu_a.year, publiee)
-                a_l_ancre = liquider.valeur_du_point(self.actuel, bareme, ancre)
+                # LA VALEUR DU JOUR AUX DEUX BOUTS : celle de la date d'effet,
+                # qui a servi la pension, et celle de l'échéance. Une pension
+                # de février 2022 menée à décembre reçoit le relèvement de
+                # novembre ; menée à juin, rien.
+                a_l_ancre = liquider.valeur_du_point(
+                    self.actuel, bareme, jusqu_a if jusqu_a.year <= publiee else ancre)
                 # Un CHANGEMENT D'ÉCHELLE survenu depuis le départ convertit
                 # les points déjà servis : l'Arrco de 1999 a fait de chaque
                 # point de l'ancienne unité 0,387464 point de la nouvelle.

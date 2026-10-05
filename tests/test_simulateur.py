@@ -3073,12 +3073,13 @@ def test_la_majoration_pour_enfants_de_la_complementaire_est_plafonnee(simulateu
     # ET LE PLAFOND EST LE BON, au centime : 2 367,48 € pour les pensions
     # servies depuis le 1er novembre 2024, gelés en 2025 (circulaires
     # 2024-12-DT et 2025-16-SG-DRJ), revalorisés comme la valeur de service du
-    # point jusqu'à l'année de liquidation. L'inégalité seule passait un
+    # point jusqu'à la date d'effet — la valeur de ce jour-là, non celle du
+    # 31 décembre de l'année (étape 138.20). L'inégalité seule passait un
     # plafond multiplié par 0,01 comme par 1,2 jusqu'au 23 septembre 2026 ; le
     # dépôt l'arrondissait à 2 367 € jusqu'au 5 octobre 2026.
-    annee = carriere.annee_liquidation
     actuel = simulateur.scenario_actuel
-    plafond = (2367.48 * liquider.valeur_du_point(actuel, "agirc_arrco", annee)[0]
+    plafond = (2367.48 * liquider.valeur_du_point(actuel, "agirc_arrco",
+                                                  carriere.date_liquidation)[0]
                / liquider.valeur_du_point(actuel, "agirc_arrco", 2025)[0])
     par_regime = dict(majoration.par_regime)
     base = next(p.montant for p in resultat.pensions_par_regime

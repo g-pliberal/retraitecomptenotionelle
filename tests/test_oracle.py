@@ -63,6 +63,7 @@ from pathlib import Path
 
 import pytest
 
+from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
@@ -579,7 +580,7 @@ def _nos_points_arrco(simulateur: Simulateur, profil: dict) -> dict[str, float]:
         if ("coefficient d'anticipation" in pension.detail
                 or "coefficient de majoration" in pension.detail):
             coefficient = float(pension.detail.rsplit(" ", 1)[1])
-    service = scenario.valeurs_point.service("arrco", profil["liquidation"] - 1)
+    service = liquider.valeur_du_point(scenario, "arrco", DateMois(profil["liquidation"], 1))
     return {
         "points": points,
         "coefficient_de_minoration": coefficient,
@@ -616,16 +617,14 @@ def test_les_points_arrco_concordent(oracle_arrco, simulateur):
     )
 
 
-def test_la_valeur_de_service_arrco_concorde_a_une_convention_pres(
-        oracle_arrco, simulateur):
-    """La même valeur du point, lue à deux dates.
+def test_la_valeur_de_service_arrco_concorde_au_jour(oracle_arrco, simulateur):
+    """La même valeur du point, au même jour.
 
-    Le dépôt retient pour chaque année la valeur EN VIGUEUR AU 31 DÉCEMBRE ;
-    OpenFisca lit celle du 1er janvier de la liquidation, qui est la valeur de
-    l'année précédente. Une liquidation au 1er janvier 2012 se voit servir
-    1,2135 € chez lui — la valeur d'avril 2011 — et c'est exactement notre
-    valeur de 2011. La chaîne des valeurs est donc la même ; seule la
-    convention de millésime diffère, et elle est documentée des deux côtés.
+    OpenFisca lit la valeur du 1er janvier de la liquidation : une liquidation
+    au 1er janvier 2012 se voit servir 1,2135 € chez lui, la valeur d'avril
+    2011. Le dépôt, qui retenait celle du 31 décembre — 1,2414 € —, sert
+    désormais celle du jour (`valeurs_service_datees.csv`, étape 138.20) :
+    au 1er janvier, la même.
     """
     for code, entree in oracle_arrco["profils"].items():
         nous = _nos_points_arrco(simulateur, entree["profil"])
@@ -925,27 +924,25 @@ def test_les_points_agirc_concordent(oracle_agirc, simulateur):
 
 def test_la_valeur_de_service_agirc_suit_la_date_de_revalorisation(
         oracle_agirc, simulateur):
-    """La même chaîne de valeurs, lue à deux dates.
+    """La même valeur, au même jour.
 
-    Le dépôt retient la valeur en vigueur au 31 décembre, OpenFisca celle du
-    1er janvier de la liquidation. Tant que l'Agirc revalorise au 1er janvier
-    — jusqu'en 2000 —, les deux lectures donnent le même millésime ; à partir
-    de 2001, où elle passe au 1er avril, la sienne est celle de l'année
-    précédente. Un seul paramètre sépare donc les deux séries : la date, et
-    le témoin la met à l'épreuve des deux côtés.
+    OpenFisca lit la valeur du 1er janvier de la liquidation. Tant que l'Agirc
+    revalorise au 1er janvier — jusqu'en 2000 —, c'est celle de l'année ; à
+    partir de 2001, où elle passe au 1er avril, celle de l'année précédente.
+    Le dépôt, qui retenait celle du 31 décembre, sert désormais celle du jour
+    (`valeurs_service_datees.csv`, étape 138.20) : au 1er janvier, la même, et
+    le témoin la met à l'épreuve des deux côtés de la bascule.
     """
     des_deux_cotes = set()
     for code, entree in oracle_agirc["profils"].items():
         profil, mesures = entree["profil"], entree["openfisca"]
         liquidation = profil["liquidation"]
-        millesime = (liquidation - 1
-                     if liquidation >= ANNEE_DU_1ER_AVRIL_SERVICE_AGIRC
-                     else liquidation)
-        service = simulateur.scenario_actuel.valeurs_point.service("agirc", millesime)
+        service = liquider.valeur_du_point(simulateur.scenario_actuel, "agirc",
+                                           DateMois(liquidation, 1))
         assert service is not None, code
         assert service[0] == pytest.approx(
             mesures["valeur_du_point"], abs=1e-4), code
-        des_deux_cotes.add(millesime == liquidation)
+        des_deux_cotes.add(liquidation >= ANNEE_DU_1ER_AVRIL_SERVICE_AGIRC)
     assert des_deux_cotes == {True, False}, (
         "les profils ne couvrent pas les deux conventions de date"
     )
@@ -1769,6 +1766,12 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # La pension annuelle brute d'un régime nommé : ce que publie un
         # régime dont la pension ne tient ni à un taux ni à un salaire.
         return {p.regime: p.montant for p in resultat.pensions_par_regime}
+    if cle == "valeurs_de_service_au_jour":
+        # La valeur de service qu'une pension prenant effet au départ de
+        # l'exemple reçoit, régime par régime, fusions comprises : celle du
+        # jour, non celle du 31 décembre (circulaire Agirc-Arrco 2020-02-DRJ).
+        return {regime: liquider.valeur_du_point(actuel, regime, carriere.date_liquidation)[0]
+                for regime in exemple["attendu"][cle]}
     if cle == "points_de_l_annee":
         # Les points qu'un salaire de l'année acquiert, tels que la fédération
         # les calcule dans ses guides : l'exemple donne le salaire de l'année
@@ -1974,6 +1977,8 @@ TOLERANCES = {
     "coefficients_des_regimes": {"abs": 1e-9},
     "pension_regime_general_mensuelle": {"abs": 0.05},
     "pensions_annuelles_des_regimes": {"abs": 0.5},
+    # Au dix-millième d'euro, que la fédération écrit.
+    "valeurs_de_service_au_jour": {"abs": 5e-5},
     # Annuelle, quand la caisse publie douze mensualités arrondies au centime
     # (six centimes au plus) et que la fiche arrondit le partage entre salarié
     # et employeur au dix-millième : 0,3796 pour 6,24 % sur 16,44 %.
@@ -2011,6 +2016,9 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         # Un régime nommé que le modèle ne sert pas lui verse zéro.
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.5)
                    for regime, montant in valeur.items())
+    if cle == "valeurs_de_service_au_jour":
+        return all(mesure[regime] == pytest.approx(v, **TOLERANCES[cle])
+                   for regime, v in valeur.items())
     if cle == "departs":
         return mesure == [str(depart) for depart in valeur]
     if cle == "dates_d_effet_de_la_reversion":

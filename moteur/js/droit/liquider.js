@@ -219,7 +219,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           + `${sansZerosInutiles(valeurTrimestre, 2)} €`,
         );
       } else if (points) {
-        let valeur = valeurDuPoint(moteur, periode.points_de ?? code, anneeLiquidation);
+        let valeur = valeurDuPoint(moteur, periode.points_de ?? code, carriere.dateLiquidation);
         if (valeur === null && periode.valeur_point_euros !== null
             && periode.valeur_point_euros !== undefined) {
           // Valeur de service écrite dans la fiche, faute d'une série
@@ -340,7 +340,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       let capital = null;
       const seuilCapital = periode.capital_seuil_points;
       if (seuilCapital !== null && seuilCapital !== undefined) {
-        const valeurSeuil = valeurDuPoint(moteur, periode.points_de ?? code, anneeLiquidation);
+        const valeurSeuil = valeurDuPoint(moteur, periode.points_de ?? code, carriere.dateLiquidation);
         if (valeurSeuil !== null && valeurSeuil[0] > 0) {
           pointsTotaux = montantBrut / valeurSeuil[0];
         }
@@ -1202,8 +1202,25 @@ export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve
   };
 }
 
+/** Une année se lit au 31 décembre ; une date (DateMois ou « AAAA-MM-JJ »), au 1er de son mois. */
+function anneeEtMois(quand) {
+  if (typeof quand === "number") {
+    return [quand, 12];
+  }
+  if (typeof quand === "string") {
+    return [Number(quand.slice(0, 4)), Number(quand.slice(5, 7))];
+  }
+  return [quand.annee, quand.mois];
+}
+
 /**
- * Ce que vaut, à la liquidation, un point acquis dans ``code``.
+ * Ce que vaut, au jour `quand`, un point acquis dans ``code``.
+ *
+ * `quand` est la date d'effet d'une pension — un DateMois, ou une date
+ * « AAAA-MM-JJ » lue au 1er de son mois — ou une année, lue au 31 décembre.
+ * La liquidation sert la valeur du jour, « la valeur de service du point de
+ * retraite du régime à cette même date » (circulaire Agirc-Arrco 2020-02-DRJ),
+ * que `ValeursPoint.serviceAu` lit. Voir le Python.
  *
  * Un régime fermé ne sert plus ses points : ils ont été convertis dans son
  * successeur, au coefficient que l'accord de fusion a fixé. La méthode remonte
@@ -1222,7 +1239,8 @@ export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve
  * — la dernière valeur publiée est ramenée en euros de la liquidation par
  * l'indice des prix, approximation signalée par la fiabilité.
  */
-export function valeurDuPoint(moteur, code, anneeLiquidation) {
+export function valeurDuPoint(moteur, code, quand) {
+  const [anneeLiquidation, mois] = anneeEtMois(quand);
   let conversion = 1.0;
   let courant = code;
   let fiabilite = Fiabilite.CERTIFIEE;
@@ -1232,7 +1250,7 @@ export function valeurDuPoint(moteur, code, anneeLiquidation) {
       return null;
     }
     if (anneeLiquidation <= derniere) {
-      const valeur = moteur.valeursPoint.service(courant, anneeLiquidation);
+      const valeur = moteur.valeursPoint.serviceAu(courant, anneeLiquidation, mois);
       if (valeur === null) {
         // Liquidation antérieure au premier barème publié. Symétrique du cas
         // ci-dessous : la première valeur connue est ramenée en euros de la
@@ -1257,10 +1275,16 @@ export function valeurDuPoint(moteur, code, anneeLiquidation) {
     if (reprise === null) {
       // AVEC UN AN DE RETARD : la revalorisation du 1er janvier suit les prix
       // de l'année écoulée (L. 161-25). Voir le Python.
+      const millesime = moteur.valeursPoint.millesime(courant, anneeLiquidation, mois);
+      if (millesime <= derniere) {
+        // Avant le relèvement de l'année, la dernière valeur publiée reste celle du jour.
+        const valeur = moteur.valeursPoint.service(courant, millesime);
+        return [conversion * valeur[0], Math.min(fiabilite, valeur[1])];
+      }
       const ancienne = moteur.valeursPoint.service(courant, derniere);
       return [
         conversion * ancienne[0]
-          * moteur.macro.coefficientPrix(derniere - 1, anneeLiquidation - 1),
+          * moteur.macro.coefficientPrix(derniere - 1, millesime - 1),
         Math.min(fiabilite, ancienne[1], Fiabilite.MOYENNE),
       ];
     }

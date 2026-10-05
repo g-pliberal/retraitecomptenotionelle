@@ -22,9 +22,11 @@ from __future__ import annotations
 import json
 from datetime import date
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import Parametres, RevalorisationStock
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.revalorisation import (
@@ -32,6 +34,7 @@ from retraite_notionnelle.revalorisation import (
     REGLE_GENERALE,
     REGLE_POINT,
     REGLE_REGIME_SPECIAL,
+    PensionServie,
     RevalorisationsPensions,
 )
 from retraite_notionnelle.config import RACINE_DONNEES
@@ -201,9 +204,76 @@ def test_les_points_d_avant_1999_changent_d_echelle_avec_l_arrco(simulateur):
                             affiliation="salarie_prive_cadre",
                             age_debut=20, age_liquidation=65, niveau_salaire=2.0)
     arrco = next(r for r in comparaison.aujourd_hui.actuel.regimes if r.regime == "arrco")
-    valeur_1990 = liquider.valeur_du_point(simulateur.scenario_actuel, "arrco", 1990)[0]
+    depart = comparaison.carriere.date_liquidation
+    assert depart.annee == 1990
+    valeur_1990 = liquider.valeur_du_point(simulateur.scenario_actuel, "arrco", depart)[0]
     assert arrco.regle == REGLE_POINT
     assert arrco.coefficient == pytest.approx(0.387464 * 1.4386 / valeur_1990, rel=1e-12)
+
+
+def test_la_liquidation_sert_la_valeur_du_point_du_jour(simulateur):
+    """Une pension se liquide « par la valeur de service du point de retraite
+    du régime à cette même date » (circulaire Agirc-Arrco 2020-02-DRJ, sur
+    l'article 92 de l'accord du 17 novembre 2017) : celle de son jour, non
+    celle du 31 décembre. Un départ de janvier 2022 a 1,2841 €, un départ de
+    novembre 1,3498 €, après le relèvement de 5,12 %. L'Agirc et l'Arrco se
+    relevaient au 1er avril, au 1er novembre depuis 2016 ; le régime unifié
+    naît le 1er janvier 2019 à la valeur de l'Arrco, que le point Agirc
+    converti retrouve. Au-delà de la dernière valeur publiée, un départ
+    antérieur au 1er novembre prend la valeur prolongée de l'année d'avant.
+    Un régime que la table ne date pas garde la valeur de l'année."""
+    actuel = simulateur.scenario_actuel
+
+    def au(code, annee, mois):
+        return liquider.valeur_du_point(actuel, code, DateMois(annee, mois))[0]
+
+    def de_l_annee(code, annee):
+        return liquider.valeur_du_point(actuel, code, annee)[0]
+
+    assert au("agirc_arrco", 2022, 1) == au("agirc_arrco", 2022, 10) == 1.2841
+    assert au("agirc_arrco", 2022, 11) == de_l_annee("agirc_arrco", 2022) == 1.3498
+    assert au("agirc_arrco", 2023, 10) == 1.3498
+    assert au("agirc_arrco", 2019, 3) == 1.2588
+    assert au("agirc", 2019, 3) == pytest.approx(0.4378, abs=1e-9)
+    assert au("arrco", 2018, 2) == 1.2513
+    assert (au("agirc", 2012, 3), au("agirc", 2012, 4)) == (0.4233, 0.4330)
+    assert au("arrco", 1999, 3) == pytest.approx(6.5596 / 6.55957, abs=1e-6)
+    for annee in (2027, 2030, 2040):
+        assert au("agirc_arrco", annee, 10) == de_l_annee("agirc_arrco", annee - 1)
+        assert au("agirc_arrco", annee, 11) == de_l_annee("agirc_arrco", annee)
+    assert au("ircantec", 2022, 3) == de_l_annee("ircantec", 2022)
+
+
+def test_la_pension_menee_recoit_le_relevement_de_novembre(simulateur):
+    """La pension liquidée en février 2022, à 1,2841 € le point, n'a rien reçu
+    en juin ; en décembre, le relèvement du 1er novembre, 5,12 %. Lue à la
+    valeur de l'année, elle l'avait dès son départ et ne le recevait plus."""
+    servie = PensionServie(simulateur)
+    pension = SimpleNamespace(regime="agirc_arrco", type_calcul="points")
+    depart = date(2022, 2, 1)
+    assert servie.coefficient(pension, 2022, depart, date(2022, 6, 1), None)[0] == 1.0
+    assert servie.coefficient(pension, 2022, depart, date(2022, 12, 31), None)[0] == (
+        pytest.approx(1.3498 / 1.2841, rel=1e-12))
+
+
+def test_les_pensions_de_2018_passent_au_point_unifie_sans_changer(simulateur):
+    """L'exemple de la circulaire Agirc-Arrco 2020-02-DRJ (fiche 1, I.2) : 6 000 €
+    de pensions au 31 décembre 2018, 2 400 € de l'Agirc et 3 600 € de l'Arrco,
+    font au 1er janvier 2019 1 906,58 et 2 859,87 points du régime unifié,
+    « en divisant son montant par la valeur de service du point du régime au
+    1er janvier 2019 », 1,2588 € : 6 000 € encore en janvier, puis le 1 % du
+    1er novembre. À la valeur de l'année, le scénario 1 servait ce relèvement
+    dès janvier."""
+    servie = PensionServie(simulateur)
+    decembre_2018 = date(2018, 12, 1)
+    for code, montant, points in (("agirc", 2400.0, 1906.58), ("arrco", 3600.0, 2859.87)):
+        pension = SimpleNamespace(regime=code, type_calcul="points")
+        assert montant / 1.2588 == pytest.approx(points, abs=0.005)
+        janvier = servie.coefficient(pension, 2018, decembre_2018, date(2019, 1, 1), None)[0]
+        assert montant * janvier == pytest.approx(montant, abs=0.005), code
+        decembre = servie.coefficient(pension, 2018, decembre_2018, date(2019, 12, 1),
+                                      None)[0]
+        assert montant * decembre == pytest.approx(points * 1.2714, abs=0.01), code
 
 
 def test_la_tranche_de_2020_suit_la_retraite_de_decembre_2019(simulateur):
@@ -345,10 +415,10 @@ REVALORISATIONS_DEPUIS_2012 = (
     ("2026-01-01", 1.009),
 )
 
-#: Valeur de service du point Arrco au 31 décembre 2012 — celle qui a servi la
-#: pension de départ dans le modèle —, et du point Agirc-Arrco en 2026, gelé
-#: depuis le 1er novembre 2024.
-POINT_ARRCO_2012 = 1.2414
+#: Valeur de service du point Arrco au jour du départ, en janvier 2012 — celle
+#: du 1er avril 2011, la hausse de 2012 ne venant qu'au 1er avril, à 1,2414 € —,
+#: et du point Agirc-Arrco en 2026, gelé depuis le 1er novembre 2024.
+POINT_ARRCO_JANVIER_2012 = 1.2135
 POINT_AGIRC_ARRCO_2026 = 1.4386
 
 
@@ -379,13 +449,13 @@ def test_le_cas_type_d_un_retraite_se_refait_a_la_main(simulateur):
     for effet, coefficient in REVALORISATIONS_DEPUIS_2012:
         if effet < "2020":
             base_2019 *= coefficient
-    arrco_2019 = depart["arrco"] / POINT_ARRCO_2012 * 1.2714
+    arrco_2019 = depart["arrco"] / POINT_ARRCO_JANVIER_2012 * 1.2714
     assert (base_2019 + arrco_2019) / 12 <= 2000.0
 
     base = depart["regime_general"]
     for _, coefficient in REVALORISATIONS_DEPUIS_2012:
         base *= coefficient
-    points = depart["arrco"] / POINT_ARRCO_2012
+    points = depart["arrco"] / POINT_ARRCO_JANVIER_2012
     complementaire = points * POINT_AGIRC_ARRCO_2026
     aujourd_hui = comparaison.aujourd_hui.actuel
     assert aujourd_hui.pension_annuelle == pytest.approx(base + complementaire, rel=1e-12)

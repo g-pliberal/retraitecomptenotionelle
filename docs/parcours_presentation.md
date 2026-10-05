@@ -88,7 +88,7 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de moins,
   en médiane ». La première des « Vos questions », « Ma
-  retraite va-t-elle baisser ? », en donne le détail : 24 % pour qui n'est
+  retraite va-t-elle baisser ? », en donne le détail : 23 % pour qui n'est
   pas encore à la retraite, 13 % s'il place les cinq points rendus, 28 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
@@ -120,7 +120,7 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 - **Le système 1 est la référence** : le droit en vigueur, minima et
   majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
   porte un troisième chiffre, plus récent que le reste de ce parcours, et il
-  vaut d'être lu à voix haute : **financé, 2 525 €**, soit 91 % de ce qu'il
+  vaut d'être lu à voix haute : **financé, 2 511 €**, soit 91 % de ce qu'il
   promet. Le reste attend des cotisations que personne n'a versées. La barre
   sous la ligne le montre, et la page Risque le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
@@ -176,9 +176,9 @@ net :
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | 1 301 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 042 € | -19,8 % |
-| 4. La proposition | 1 144 € | -12,1 % |
+| 1. Actuel | 1 295 € | référence |
+| 3. Ce qui a été cotisé, deux parts | 1 042 € | -19,5 % |
+| 4. La proposition | 1 144 € | -11,7 % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € brut
 pour une personne seule dès 65 ans. Sous la proposition, cette carrière part
@@ -214,9 +214,9 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | 2 360 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 552 € | -34,3 % |
-| 4. La proposition | 1 912 € | -19,0 % |
+| 1. Actuel | 2 351 € | référence |
+| 3. Ce qui a été cotisé, deux parts | 1 552 € | -34,0 % |
+| 4. La proposition | 1 912 € | -18,7 % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large

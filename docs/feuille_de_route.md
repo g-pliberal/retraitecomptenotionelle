@@ -5708,14 +5708,13 @@ de l'étape 4 de l'action 142, suite.
 
 **Reprise, au 5 octobre 2026.** Fait : l'étape 1 et son relevé (279 points,
 145 écarts) ; l'étape 15, le minimum contributif daté ; l'étape 16 sauf un
-point — le salaire annuel moyen daté de 1945 à 2004, la table des artisans et
-commerçants, l'assiette de l'AVPF, les colonnes de revalorisation de 1946 à
-2015, l'IGRANTE de 1948 ; l'étape 2, à trois restes près que dit sa dernière
-note. Reste de l'étape 16 : les coefficients de l'Agirc d'avant 1955 et de
-l'Arrco d'avant 1965, dont il faut d'abord trouver les textes de 1947 et de
-1961. Puis les étapes 3 à 14 et 17 à 20, une par session, et les choix de
-l'étape 13. Le registre dit, au chantier de chaque étape (« 138.16 »…), ce
-qu'en fait chaque modèle.
+point (salaire annuel moyen daté, indépendants, AVPF, colonnes, IGRANTE) ;
+l'étape 2, à trois restes près que dit sa dernière note ; l'étape 20, la
+valeur de service du jour. Reste de l'étape 16 : les coefficients de l'Agirc
+d'avant 1955 et de l'Arrco d'avant 1965 (textes de 1947 et de 1961 à
+trouver) ; de l'étape 20, l'Ircantec à dater. Puis les étapes 3 à 14 et 17 à
+19, une par session, et les choix de l'étape 13. Le registre dit, au chantier
+de chaque étape (« 138.16 »…), ce qu'en fait chaque modèle.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais qu'on regarde les modèles de
 simulation qui existent et qu'on les compare à notre projet. Il faut que l'on
@@ -6268,6 +6267,69 @@ leurs années de 2018 à 2025, que la caisse moyenne à part (étape 18) ; les
 années de rachat et les indemnités journalières de maternité au salaire annuel
 moyen ; les trimestres que le motif « éducation d'un enfant » valide avant
 juillet 1972, quand l'AVPF n'existait pas.
+
+**Demande**, le 5 octobre 2026 : l'étape 20, que TRAJECTOiRE a mise au jour,
+dans une session à elle.
+
+**Fait, le 5 octobre 2026 : l'étape 20, la valeur de service du jour.** La
+règle est lue : l'accord du 17 novembre 2017 fait revaloriser la valeur de
+service « au 1er novembre de chaque année » (article 27) et calcule
+l'allocation en multipliant les points « par la valeur de service du point de
+retraite du régime » (article 92), que la circulaire 2020-02-DRJ applique « à
+cette même date » ; avant 2019, l'accord du 30 octobre 2015 a reporté le
+relèvement de l'Agirc et de l'Arrco du 1er avril au 1er novembre (avis
+d'extension de ses avenants au JORF du 6 février 2016 ; COR, séance du 13 avril
+2016). Les dates, elles, sont dans la compilation de la fédération, qui imprime
+chaque valeur dans la colonne de sa date d'effet depuis 1947 : lues par la
+position des mots sur la page, elles retrouvent à un dixième de point
+l'évolution qu'elle publie en regard de chaque valeur de l'Agirc et de
+l'Arrco, et, chaque 31 décembre, la valeur que `valeurs_point.csv` certifie.
+Ce qui change :
+
+- *`regimes/valeurs_service_datees.csv`*, 268 valeurs datées : l'Agirc au
+  1er janvier et au 1er juillet jusqu'en 1989, au 1er janvier jusqu'en 2000, au
+  1er avril jusqu'en 2015, au 1er novembre ensuite ; l'Arrco unifiée au 1er
+  janvier 1999 puis au 1er avril ; l'UNIRS, qui tient lieu de l'Arrco avant
+  1999, aux deux dates que chaque année imprime ; l'Agirc-Arrco au 1er janvier
+  2019, à 1,2588 €, puis chaque 1er novembre, gels compris. Le paquet la porte ;
+- *la liquidation* sert la valeur du jour de sa date d'effet
+  (`ValeursPoint.service_au`, `valeur_du_point`, qui reçoit la date ; leurs
+  jumeaux), et, au-delà de la dernière décision publiée, la valeur du 31
+  décembre de l'année d'avant pour un départ antérieur au 1er novembre
+  (`millesime`) ;
+- *la pension menée* (`PensionServie.coefficient`) lit la valeur du jour aux
+  deux bouts : une pension de février 2022 reçoit à la fin de l'année le
+  relèvement de novembre, qu'elle avait jusqu'ici dès son départ ; le plafond
+  de la majoration pour enfants et la seconde retraite suivent la même date ;
+- *les tests* : la cohérence des deux tables ; la liquidation, la pension
+  menée et l'exemple de la circulaire 2020-02-DRJ (6 000 € de pensions de 2018
+  passés au point unifié sans changer en janvier 2019), au témoin des exemples
+  officiels sous une grandeur nouvelle, `valeurs_de_service_au_jour` ;
+  OpenFisca concorde désormais au jour, et non plus « à une convention près ».
+
+*Les effets.* Au scénario 1, 251 témoins sur 735 baissent, de 0,44 % en
+médiane, jusqu'à −2,18 % : la complémentaire d'un départ de janvier à octobre
+2022 perd 4,87 %, de 2018 0,60 %, de l'UNIRS en août 1974 12,5 % ; tout départ
+futur antérieur au 1er novembre perd la revalorisation projetée de l'année,
+1,72 %. Aucune hausse ; les scénarios 3 et 5 suivent pour qui était parti, les
+2, 4 et 6 ne bougent pas, et la pension d'aujourd'hui de qui est parti non
+plus, qui ne tient qu'à ses points et à la valeur de l'échéance. Au README, la
+trajectoire que le modèle se donne pour le système actuel — le contrôle de la
+dépense du COR depuis l'action 147 — passe de 694 à 692 Md€ en 2070, et le
+solde moyen de la proposition de −0,52 à −0,55 % du PIB ; à l'accueil, −0,6
+point et une dette de 2070 de 37 % au lieu de 35 ; page Méthode, la
+correction de la génération 1920 de +5,5 à +5,6 points ; le parcours de
+présentation suit, et la conservation est refigée. TRAJECTOiRE
+concorde : ses écarts « valeur du jour » sont retirés ; Destinie 2, qui sert
+la valeur du 31 décembre, reçoit les siens (−0,6 % en février 2018, −2,1 %
+avant novembre 2024), au registre et dans `tests/test_destinie.py`. Fiche
+`agirc_arrco_valeur_service`, approchée par la seule date des hausses de
+l'UNIRS, que le document ne donne qu'à ses colonnes.
+
+Restent, nés de l'étape : les autres régimes en points que la table ne date
+pas, l'Ircantec d'abord, relevée au 1er avril à partir de 2009 selon
+OpenFisca ; le texte de l'accord du 30 octobre 2015 ; et, le 14 octobre 2026,
+la décision du 1er novembre, une ligne de plus à la table datée.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 

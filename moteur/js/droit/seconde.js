@@ -284,7 +284,7 @@ function secondeRetraiteComplementaire(moteur, salaires, periode, dateEffet) {
     points += tauxCalcul !== null ? assiette * tauxCalcul / reference
       : assiette * tranche1.taux_cotisation_retraite / (tauxAppel * reference);
   }
-  const valeur = valeurDuPoint(moteur, AGIRC_ARRCO, dateEffet.annee);
+  const valeur = valeurDuPoint(moteur, AGIRC_ARRCO, dateEffet);
   if (points <= 0 || valeur === null) return null;
   const montant = points * valeur[0];
   return new NouvellePension({ regime: AGIRC_ARRCO, dateEffet, trimestres: 0,

@@ -215,12 +215,14 @@ export class PensionServie {
     if (pension.type_calcul === "points" || pension.type_calcul === "mixte") {
       const periode = regime.periode(Math.min(anneeLiquidation, derniereAnneeRegime(regime)));
       const bareme = (periode !== null ? periode.points_de : null) || code;
-      const auDepart = liquider.valeurDuPoint(this.actuel, bareme, anneeLiquidation);
+      const auDepart = liquider.valeurDuPoint(this.actuel, bareme, depart);
       const publiee = derniereValeurPubliee(this.actuel, bareme);
       if (auDepart !== null && auDepart[0] > 0 && publiee !== null) {
         const anneeFin = Number(jusqua.slice(0, 4));
         const ancre = Math.min(anneeFin, publiee);
-        const aLAncre = liquider.valeurDuPoint(this.actuel, bareme, ancre);
+        // La valeur du jour aux deux bouts : à la date d'effet et à l'échéance.
+        const aLAncre = liquider.valeurDuPoint(
+          this.actuel, bareme, anneeFin <= publiee ? jusqua : ancre);
         const [echelle, fiabiliteEchelle] = this.actuel.conversionsPoints.echelle(
           bareme, anneeLiquidation, ancre,
         );

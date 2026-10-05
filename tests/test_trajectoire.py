@@ -40,11 +40,12 @@ Ce que la première exécution a montré, le 5 octobre 2026 :
   majoration pour enfants de l'Arrco ; le RAFP d'une carrière à primes
   constantes ; le salaire annuel moyen du dépôt est celui de la Cnav, au
   millième près, sur chaque départ dont la Cnav publie la colonne.
-* **Contre le dépôt** — la valeur de service de l'Agirc-Arrco : le dépôt sert
-  celle du 31 décembre de l'année de la liquidation (`valeur_du_point`), la
-  caisse et TRAJECTOiRE celle du jour : +0,6 % à un départ de février 2018,
+* **Contre le dépôt** — la valeur de service de l'Agirc-Arrco : le dépôt
+  servait celle du 31 décembre de l'année de la liquidation (`valeur_du_point`),
+  la caisse et TRAJECTOiRE celle du jour : +0,6 % à un départ de février 2018,
   +5,1 % à un départ de janvier 2022, +4,9 % en octobre 2023, +1,6 % en 2024 ;
-  OUVERT, à corriger à part. La bonification du cinquième des super-actifs et
+  corrigé le jour même (action 138, étape 20 : `valeurs_service_datees.csv`),
+  les valeurs du point concordent. La bonification du cinquième des super-actifs et
   la majoration de durée des hospitaliers actifs, absentes (138.17).
   L'arrondi des services de la fonction publique : OUVERT.
 * **Contre TRAJECTOiRE** — sa chaîne de coefficients du salaire annuel moyen
@@ -399,12 +400,6 @@ TRAITEMENT = (
     "(`calculeSalaireReferenceFonc`, table revalo : +1,1 % au 1er janvier 2022, +5,3 % au "
     "1er janvier 2024) ; le dépôt, celui de l'année du départ, ou de la dernière année "
     "travaillée ; l'écart suit la hausse de l'année")
-VALEUR_DU_JOUR = (
-    "OUVERT, contre le dépôt : il sert la valeur de service de l'Agirc-Arrco en vigueur au "
-    "31 décembre de l'année de la liquidation (`valeur_du_point`, valeurs_point.csv), "
-    "quand la caisse — et TRAJECTOiRE — servent celle du jour du départ : 1,2841 € en "
-    "janvier 2022 et non 1,3498 €, relevée au 1er juillet ; 1,3498 € en octobre 2023, "
-    "1,4159 € avant novembre 2024 ; à corriger dans une étape à part")
 VALEURS_PROJETEES = (
     "les paramètres de TRAJECTOiRE sont projetés au-delà de 2023-2024, sur les hypothèses "
     "du COR du programme de stabilité de 2024 (registre) : la valeur de service de "
@@ -553,14 +548,6 @@ ECARTS.update(_ecarts(RAFP_PRIMES + " ; " + RAFP_COEFFICIENT, "rafp", {
 ECARTS.update(_ecarts(VALEURS_PROJETEES + " (0,05215 € au lieu de 0,05378 €) ; "
                       + RAFP_COEFFICIENT + " ; les points du RAFP concordent", "rafp",
                       {"loi_2023_fp_etat": 0.0511}, 0.002))
-ECARTS.update(_ecarts(VALEUR_DU_JOUR, "valeur_point_arrco", {c: 0.0060 for c in (
-    "rg_bas_salaire", "rg_cadre", "rg_mere_trois_enfants", "rg_pere_trois_enfants",
-    "rg_salaire_moyen")}, 0.0003))
-ECARTS.update(_ecarts(VALEUR_DU_JOUR, "valeur_point_agirc", {"rg_cadre": 0.0060}, 0.0003))
-ECARTS.update(_ecarts(VALEUR_DU_JOUR, "valeur_point_agirc_arrco", {
-    "cor_1_1960": 0.0512, "cor_3_1960": 0.0512, "cor_4_1960": 0.0512, "cor_10_1963": 0.0490,
-    "cor_2_1963": 0.0160, "cor_2bis_1963": 0.0160, "loi_2023_salaire_moyen": 0.0160,
-    "rg_ne_en_octobre": 0.0160}, 0.0003))
 ECARTS.update(_ecarts(VALEURS_PROJETEES, "valeur_point_agirc_arrco", {
     "cor_1_1963": -0.0036, "cor_3_1963": -0.0036, "cor_4_1963": -0.0036,
     "cor_10_1964": -0.0036, "cor_2_1964": -0.0191, "cor_2bis_1964": -0.0191}, 0.0003))
@@ -775,8 +762,9 @@ def test_les_points_du_depot_sont_ceux_de_trajectoire_aux_taux_minimaux(temoin, 
 
 def test_la_valeur_du_point_de_trajectoire_est_celle_du_jour(temoin, mesures):
     """La valeur de service que TRAJECTOiRE sert est celle que sa table donne au
-    mois du départ ; celle du dépôt, la valeur du 31 décembre de l'année
-    (VALEUR_DU_JOUR). Les deux tables datent les relèvements au même mois."""
+    mois du départ, comme le dépôt depuis l'étape 138.20 (`valeurs_service_datees.csv`) :
+    les deux tables datent les relèvements au même mois, et la confrontation
+    des valeurs du point ne garde que les valeurs projetées (VALEURS_PROJETEES)."""
     service: dict[str, list[tuple[str, float]]] = {}
     for ligne in temoin["parametres_trajectoire"]["valeur_service"]:
         date, caisse, valeur = ligne.split()

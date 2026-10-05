@@ -192,6 +192,7 @@
    "age_reference_decote_sncf_ratp",
    "age_surcote_sncf_ratp",
    "agirc_arrco_valeur_achat",
+   "agirc_arrco_valeur_service",
    "assiette_minimale_agricole",
    "assiette_minimale_independants",
    "asv_medecins_ajustement",
@@ -520,6 +521,7 @@
    "2026-10-05 | action 138, étape 16 : les assiettes et les séries du régime général",
    "2026-10-05 | action 138, étape 2 : l'ASPA du couple",
    "2026-10-05 | action 138, étape 2 : les prélèvements d'un retraité qui réside hors de France",
+   "2026-10-05 | action 138, étape 20 : la valeur de service du jour de la liquidation",
    "2026-10-05 | action 142 : la délibération de l'ERAFP, et la majoration du RAFP",
    "2026-10-05 | action 142 : le départ anticipé des assurés handicapés, au scénario 1 et sur le site",
    "2026-10-05 | action 142, étape 4 : Destinie 2 exécuté à part, ses sorties en témoins",
@@ -6772,7 +6774,7 @@
    "1. Programme — trois minutes": [
     "4affbd8c4e78027d",
     "679d82b755a3480f",
-    "b769b24d3900e0e7"
+    "e45bb9e6cd69db89"
    ],
    "2. Simuler — six minutes, c'est le cœur": [
     "d745ea9a8aeebb45",
@@ -6780,7 +6782,7 @@
     "8b54fd5e1937e909",
     "0d257cb8ed5931ca",
     "da9d078a811cdd8c",
-    "f5493bd06c077875",
+    "75f88c139d4dd9a8",
     "9e3e659d80b97682",
     "35e77b79a9d702ee",
     "832e64567e3e3c6d"
@@ -6857,13 +6859,13 @@
     "f4bd4f6659915c98",
     "2712fab5d274d643",
     "019a3736392adf66",
-    "898d3f45a396ccf7",
+    "8e58f59420f24e3e",
     "e96e70e1d0dacf78",
     "b638caf9172c7a49",
     "78c469803454345f",
     "5f719a1303f242e0",
     "42fbe0590ab543ae",
-    "63bed4eb4e47d1ea",
+    "c6d47d8a2329646a",
     "790f142cf35cd7c6",
     "efa808bc3c21fb03"
    ]

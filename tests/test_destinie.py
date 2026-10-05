@@ -42,11 +42,13 @@ plus un également. Ce que la première exécution a montré, le 5 octobre 2026 
   trois trimestres de surcote au né d'octobre, avant son âge d'ouverture ; il
   compte la réversion de l'Agirc-Arrco dans les ressources sous le plafond ;
   il lève l'âge de cinquante-cinq ans au régime général pour deux enfants à
-  charge ; sa valeur du point de 2024 est une projection.
+  charge ; sa valeur du point de 2024 est une projection ; il sert la valeur
+  du point du 31 décembre de l'année du départ, et le dépôt celle du jour
+  depuis l'étape 20 de l'action 138 (−0,6 % en février 2018).
 * **Une convention, à trancher** — Destinie acquiert les points de l'Arrco et
   de l'Agirc aux taux contractuels MOYENS des entreprises, le dépôt aux taux
-  minimaux obligatoires : 15 à 26 % de points de plus chez lui. La valeur du
-  point, elle, est la même des deux côtés.
+  minimaux obligatoires : 15 à 26 % de points de plus chez lui. La série des
+  valeurs du point, elle, est la même des deux côtés.
 * **Ouvert** — Destinie reverse la majoration pour enfants de l'Agirc-Arrco du
   défunt avec sa retraite, le dépôt non ; l'accord reste à lire sur ce point.
 """
@@ -90,8 +92,9 @@ POINTS = re.compile(r"([\d,]+(?:\.\d+)?) points × valeur de service")
 #:   au départ par le point d'indice du 1er janvier de cette année-là, Destinie
 #:   par celui de la fin d'année ; un point relevé en février 2017 fait 0,6 %
 #:   entre les deux, pour un départ de 2018.
-#: * La valeur du point de l'Agirc-Arrco, 0,1 % : la même série annuelle des
-#:   deux côtés.
+#: * La valeur du point de l'Agirc-Arrco, 0,1 % : la même série des deux
+#:   côtés, que Destinie lit au 31 décembre et le dépôt au jour du départ
+#:   (VALEUR_DU_JOUR, déclarée cas par cas).
 #: * La réversion du régime général, 0,5 % : 54 % de la même pension, menée au
 #:   décès par des revalorisations voisines (celle de 2020 est une moyenne chez
 #:   Destinie).
@@ -138,6 +141,16 @@ SAM_2024 = ("Destinie décale d'un an la chaîne des coefficients de revalorisat
             "son SAM de 2024 dépasse de 3,75 % la colonne de la Cnav du 1er janvier 2024")
 POINT_2024 = ("la valeur du point de 2024 de Destinie (1,4463 €) est une projection des "
               "hypothèses du COR de 2023, quand la caisse a fixé 1,4386 €")
+VALEUR_DU_JOUR = ("Destinie sert la valeur de service du 31 décembre de l'année du départ, "
+                  "sa série annuelle ; la caisse — et le dépôt depuis l'étape 20 de "
+                  "l'action 138 — celle du jour, « à cette même date » (circulaire "
+                  "Agirc-Arrco 2020-02-DRJ, sur l'article 92 de l'accord du 17 novembre "
+                  "2017) : 1,2513 € et non 1,2588 € à l'Arrco pour un départ de février "
+                  "2018, 0,4352 € et non 0,4378 € à l'Agirc, 1,4159 € avant novembre 2024 ; "
+                  "l'écart est celui de Destinie (registre)")
+REVERSION_DU_JOUR = ("la retraite du défunt, liquidée à la valeur du jour (−0,6 %, "
+                     + VALEUR_DU_JOUR + "), quand sa réversion part de la même valeur "
+                     "des deux côtés, celle de l'année du décès")
 MAJORATION_ARRCO = ("les points de l'Arrco d'avant 1999 valent 10 % au dépôt (accord du 17 "
                     "novembre 2017, art. 94, fiche majoration_enfants_agirc_arrco), 5 % chez "
                     "Destinie, qui sert 5 % à tous les points d'avant 2012")
@@ -151,10 +164,21 @@ ECARTS = {
         "regarder le mois de naissance (`DroitsRetr::DecoteSurcote`) : trois trimestres "
         "pour le né d'octobre parti à 62 ans et 3 mois, qu'aucun trimestre ne suit "
         "(L. 351-1-2 : des trimestres « accomplis après l'âge »)"),
-    ("loi_2023_salaire_moyen", "valeur_point_arrco"): (-0.0056, -0.0050, POINT_2024),
-    ("loi_2023_salaire_moyen", "valeur_point_agirc_arrco"): (-0.0056, -0.0050, POINT_2024),
-    ("rg_ne_en_octobre", "valeur_point_arrco"): (-0.0056, -0.0050, POINT_2024),
-    ("rg_ne_en_octobre", "valeur_point_agirc_arrco"): (-0.0056, -0.0050, POINT_2024),
+    ("loi_2023_salaire_moyen", "valeur_point_arrco"): (
+        -0.0213, -0.0207, POINT_2024 + " ; et " + VALEUR_DU_JOUR),
+    ("loi_2023_salaire_moyen", "valeur_point_agirc_arrco"): (
+        -0.0213, -0.0207, POINT_2024 + " ; et " + VALEUR_DU_JOUR),
+    ("rg_ne_en_octobre", "valeur_point_arrco"): (
+        -0.0213, -0.0207, POINT_2024 + " ; et " + VALEUR_DU_JOUR),
+    ("rg_ne_en_octobre", "valeur_point_agirc_arrco"): (
+        -0.0213, -0.0207, POINT_2024 + " ; et " + VALEUR_DU_JOUR),
+    **{(cas, "valeur_point_arrco"): (-0.0062, -0.0058, VALEUR_DU_JOUR) for cas in (
+        "rg_bas_salaire", "rg_cadre", "rg_mere_trois_enfants", "rg_pere_trois_enfants",
+        "rg_salaire_moyen", "reversion_rg", "reversion_plafond", "reversion_trois_enfants",
+        "reversion_jeune_deux_enfants")},
+    ("rg_cadre", "valeur_point_agirc"): (-0.0062, -0.0058, VALEUR_DU_JOUR),
+    **{(cas, "reversion_complementaires_sur_retraite"): (0.0058, 0.0062, REVERSION_DU_JOUR)
+       for cas in ("reversion_rg", "reversion_plafond", "reversion_jeune_deux_enfants")},
     ("rg_mere_trois_enfants", "majoration_complementaires"): (0.015, 0.030, MAJORATION_ARRCO),
     ("rg_pere_trois_enfants", "majoration_complementaires"): (0.015, 0.030, MAJORATION_ARRCO),
     ("reversion_trois_enfants", "majoration_complementaires"): (0.015, 0.030,

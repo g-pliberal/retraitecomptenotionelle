@@ -1,0 +1,248 @@
+schema_version: 1
+id: agirc_arrco_valeur_service
+intitule: >-
+  La retraite complémentaire du secteur privé se liquide à la valeur de service du point
+  en vigueur à sa date d'effet, non à celle du 31 décembre de l'année, puis suit chacun
+  de ses relèvements : au 1er novembre à l'Agirc-Arrco, comme à l'Agirc et à l'Arrco
+  depuis 2016 ; au 1er avril, au 1er janvier, au 1er juillet ou au 1er octobre avant.
+domaine: points
+regimes: [agirc_arrco, arrco, agirc, unirs]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- la date d'effet de la pension, au mois, et celle de l'échéance qu'on lui fait atteindre
+- les valeurs de service datées au jour de leur effet (regimes/valeurs_service_datees.csv)
+- les valeurs de service du 31 décembre (regimes/valeurs_point.csv), au-delà de la dernière
+  décision datée
+- les coefficients de fusion des points (regimes/conversions_points.csv)
+ecrit:
+- la valeur de service qui sert les points à la liquidation
+- le coefficient qui mène la pension de sa date d'effet à une échéance, relèvement après
+  relèvement
+dates_qui_decident:
+- liquidation.date_effet
+- pension.echeance
+versions:
+- id: avant_le_regime_unifie
+  statut: lue
+  textes:
+  - reference: >-
+      fédération Agirc-Arrco, « Valeurs de service du point et salaires de référence /
+      valeurs d'achat du point — Historique », compilation au 1er novembre 2025 (hors JORF)
+    article: tables « Agirc », « Arrco » et « Unirs », « Valeurs de point et salaires de référence »
+    en_vigueur: 1947-01-01
+    citation: >-
+      Une ou deux valeurs du point par année, chacune dans la colonne de sa date : « au
+      1er janvier », « au 1er avril », « au 1er juillet », « au 1er octobre », « au 1er
+      novembre » ; « Conformément aux dispositions de l'accord signé par les partenaires
+      sociaux le 30 octobre 2015, la valeur des points Arrco et Agirc est désormais fixée
+      au 1er novembre et non au 1er avril. »
+    lu_le: 2026-10-05
+    empreinte: sha256:b1262a855f12906ef5fe8feeef2dab5f6bdccaf9932efadab61d5df0d3308aa1
+  - id: JORFARTI000031983665
+    reference: >-
+      avis relatif à l'extension de l'avenant A-285 à la convention collective nationale
+      du 14 mars 1947 (Agirc), JORF du 6 février 2016
+    citation: >-
+      « dispositions paramétriques du titre 1 de l'accord national interprofessionnel du
+      30 octobre 2015 concernant les modalités de fixation et de revalorisation de la
+      valeur de service du point et du salaire de référence »
+    lu_le: 2026-10-05
+  - id: JORFARTI000031983674
+    reference: >-
+      avis relatif à l'extension de l'avenant n° 136 à l'accord du 8 décembre 1961
+      (Arrco), JORF du 6 février 2016
+    citation: >-
+      « dispositions paramétriques du titre 1 de l'accord national interprofessionnel du
+      30 octobre 2015 concernant les modalités de fixation et de revalorisation de la
+      valeur de service du point et du salaire de référence »
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [null, 2019-01-01]
+  contenu:
+    droit: >-
+      la valeur de service en vigueur à la date d'effet, que la compilation de la
+      fédération date : à l'Agirc, au 1er janvier et au 1er juillet jusqu'en 1989 (au
+      1er octobre en 1948), au 1er janvier de 1990 à 2000, au 1er avril de 2001 à 2015, au
+      1er novembre de 2016 à 2018 ; à l'Arrco unifiée, au 1er janvier 1999 puis au 1er
+      avril jusqu'en 2015 et au 1er novembre de 2016 à 2018 ; à l'UNIRS, qui tient lieu de
+      l'Arrco avant 1999, aux deux dates que chaque année imprime ; puis chaque relèvement
+      suivant, jusqu'à l'échéance
+    parametres: regimes/valeurs_service_datees.csv, lignes agirc, arrco et unirs
+  exemples: aucun trouvé
+- id: regime_unifie
+  statut: lue
+  textes:
+  - reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco, étendu et élargi par l'arrêté du 24 avril 2018 (JORFTEXT000036847920) ;
+      copie de la fédération (hors JORF)
+    article: article 27, « Valeur de service du point »
+    en_vigueur: 2019-01-01
+    citation: >-
+      « La revalorisation de la valeur de service du point prend effet au 1er novembre de
+      chaque année. »
+    lu_le: 2026-10-05
+    empreinte: sha256:b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb
+  - reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco ; copie de la fédération (hors JORF)
+    article: article 92, « Calcul de l'allocation »
+    en_vigueur: 2019-01-01
+    citation: >-
+      « L'allocation est calculée en multipliant le nombre de points inscrits au compte du
+      participant, à la date de la liquidation de ses droits, par la valeur de service du
+      point de retraite du régime » ; « L'allocation est revalorisée chaque année en
+      fonction de l'évolution de la valeur de service du point dans les conditions prévues
+      à l'article 27. »
+    lu_le: 2026-10-05
+    empreinte: sha256:b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb
+  - reference: >-
+      circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, « Régime Agirc-Arrco –
+      Réglementation applicable aux individus » (hors JORF)
+    article: fiche 4, « Calcul des droits à la retraite », I ; fiche 1, I.2
+    en_vigueur: 2019-01-01
+    citation: >-
+      « l'allocation de retraite complémentaire Agirc-Arrco est calculée en multipliant le
+      nombre de points Agirc-Arrco inscrits au compte du participant, à la date de la
+      liquidation de ses droits, par la valeur de service du point de retraite du régime
+      à cette même date » ; « La revalorisation, si elle a lieu, prend effet au 1er
+      novembre de l'année » ; la pension servie avant le 1er janvier 2019 devient des
+      points « en divisant son montant par la valeur de service du point du régime au 1er
+      janvier 2019 »
+    lu_le: 2026-10-05
+    empreinte: sha256:524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae
+  bornes:
+    liquidation.date_effet: [2019-01-01, null]
+  contenu:
+    droit: >-
+      la valeur de service en vigueur à la date d'effet : 1,2588 € au 1er janvier 2019, la
+      valeur de l'Arrco, que le point Agirc converti retrouve (0,4378 €), puis celle que
+      chaque 1er novembre fixe, gel compris ; puis chaque relèvement suivant, jusqu'à
+      l'échéance. Au-delà de la dernière décision publiée, la valeur du 31 décembre d'une
+      année, publiée ou prolongée par les prix (fiche agirc_arrco_valeur_achat), prend
+      effet au 1er novembre de cette année
+    parametres: regimes/valeurs_service_datees.csv, lignes agirc_arrco ; valeurs_point.csv
+  exemples: [agirc_arrco_drj_2020_02_valeur_du_1er_janvier_2019]
+approximations:
+- version: avant_le_regime_unifie
+  regime: unirs
+  ecart: >-
+    L'UNIRS imprime, pour chaque année, la valeur en vigueur à deux dates que le document
+    change d'une période à l'autre (le 1er janvier et le 1er octobre, le 1er avril et le
+    1er octobre, le 1er janvier et le 1er avril…), sans dire le jour d'une hausse
+    survenue entre elles : la table la date à la colonne qui la montre. Le même partage
+    vaut pour l'Arrco d'avant 1999, que l'UNIRS remplace au niveau moyenne.
+  effet: non mesuré ; la valeur du 31 décembre de chaque année est celle que la fédération certifie
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2026-11-15
+  a_relire:
+  - >-
+    La décision du conseil d'administration de la fédération, le 14 octobre 2026, sur la
+    valeur de service au 1er novembre 2026 : une ligne agirc_arrco de plus dans
+    regimes/valeurs_service_datees.csv, et la valeur annuelle de 2026 certifiée dans
+    regimes/valeurs_point.csv, que le test des deux tables refuse l'une sans l'autre.
+  - >-
+    Le texte de l'accord du 30 octobre 2015, dont le JORF ne publie que les avis
+    d'extension : son titre 1 reporte la revalorisation au 1er novembre.
+  lectures:
+  - type: autre
+    reference: >-
+      compilation « Valeurs de service du point et salaires de référence / valeurs d'achat
+      du point — Historique » de la fédération Agirc-Arrco, au 1er novembre 2025 : la
+      date de chaque valeur de service depuis 1947 (copie datée,
+      sha256:b1262a855f12906ef5fe8feeef2dab5f6bdccaf9932efadab61d5df0d3308aa1), lue par la
+      position des mots sur la page ; l'évolution imprimée en regard de chaque valeur de
+      l'Agirc et de l'Arrco, recalculée sur la précédente, concorde à un dixième de point
+    date: 2025-11-01
+    url: https://www.agirc-arrco.fr/storage/2024/10/Compilation_valeurs_de_point_novembre_2025.pdf
+  - type: autre
+    reference: >-
+      base réglementaire de la fédération, barème « Valeur de service du point
+      Agirc-Arrco », lu le 5 octobre 2026 : les mêmes valeurs, « à compter du » 1er
+      novembre de chaque année de 2018 (1,2588 €) à 2025 (1,4386 €)
+    date: 2025-11-01
+    url: https://reglementation.agirc-arrco.fr/home/baremes/listes-area/baremes-1/valeur-de-service-du-point-agirc-arrco.html
+  - type: autre
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017, articles 27 et 92 (copie de
+      la fédération, sha256:b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb)
+    date: 2017-11-17
+    url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
+  - type: autre
+    reference: >-
+      circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, fiches 1 et 4 (copie datée,
+      sha256:524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae)
+    date: 2020-01-20
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2020-02-DRJ_Regime_Agirc-Arrco_Reglementation_applicable_aux_individus.pdf
+  - type: jorf
+    reference: >-
+      avis d'extension des avenants A-285 (Agirc) et n° 136 (Arrco), qui portent le titre 1
+      de l'accord du 30 octobre 2015 (JORFARTI000031983665, JORFARTI000031983674)
+    date: 2016-02-06
+    url: https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000031733805
+  - type: autre
+    reference: >-
+      Conseil d'orientation des retraites, séance du 13 avril 2016, document n° 3 : « la
+      revalorisation des allocations sera reportée au 1er novembre », quand « la valeur de
+      point au 1er avril » se déduisait jusque-là d'une cible annuelle
+    date: 2016-04-13
+    url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-3337.pdf
+code:
+  python: >-
+    scenarios/actuel.py : ValeursPoint.service_au et ValeursPoint.millesime ;
+    droit/liquider.py : valeur_du_point, qui reçoit la date d'effet ; revalorisation.py :
+    PensionServie.coefficient, la valeur du jour aux deux bouts ; droit/completer.py :
+    plafond_majoration ; droit/seconde.py : la seconde retraite
+  javascript: >-
+    moteur/js/regimes.js : ValeursPoint.serviceAu et ValeursPoint.millesime ;
+    moteur/js/droit/liquider.js : valeurDuPoint ; moteur/js/revalorisation.js :
+    PensionServie.coefficient ; moteur/js/droit/completer.js : plafondMajoration ;
+    moteur/js/droit/seconde.js ; le paquet porte valeurs_service_datees
+    (scripts/construire_donnees.py)
+  parametres: >-
+    regimes/valeurs_service_datees.csv : 268 valeurs datées, Agirc 1947-2018, UNIRS et
+    Arrco 1961-2018, Agirc-Arrco 2019-2025 ; regimes/valeurs_point.csv au-delà
+  tests: >-
+    tests/test_revalorisation.py : test_la_liquidation_sert_la_valeur_du_point_du_jour,
+    test_la_pension_menee_recoit_le_relevement_de_novembre,
+    test_les_pensions_de_2018_passent_au_point_unifie_sans_changer ; tests/test_donnees.py :
+    test_la_valeur_datee_du_31_decembre_est_celle_de_l_annee ; tests/test_oracle.py :
+    l'exemple agirc_arrco_drj_2020_02_valeur_du_1er_janvier_2019, et OpenFisca au
+    1er janvier ; tests/test_trajectoire.py et tests/test_destinie.py ; les témoins de
+    simulation, que le portage rejoue
+referents:
+  trajectoire:
+    equivalent: table valeur_service datée au mois (parametres_trajectoire.valeur_service)
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) : il
+      servait déjà la valeur du mois du départ, et le dépôt la sert désormais ; les
+      valeurs du point concordent, hors ses valeurs projetées au-delà de 2023
+  destinie_2:
+    equivalent: série annuelle des valeurs de service (ParamRetrComp)
+    confrontation: >-
+      Destinie sert la valeur du 31 décembre de l'année du départ : 1,2588 € à l'Arrco
+      pour un départ de février 2018, quand la caisse et le dépôt servent 1,2513 € ;
+      l'écart est le sien (tests/test_destinie.py, VALEUR_DU_JOUR)
+  openfisca_france_pension:
+    equivalent: valeur du point lue au 1er janvier de la liquidation
+    confrontation: >-
+      les valeurs de l'Arrco et de l'Agirc qu'il lit au 1er janvier de la liquidation sont
+      celles que le dépôt sert à ce jour-là (tests/test_oracle.py)
+historique:
+- >-
+  Jusqu'au 5 octobre 2026, le scénario 1 servait à la liquidation la valeur de service du
+  31 décembre de l'année, la seule que valeurs_point.csv portait : à tout départ antérieur
+  au relèvement de l'année, le relèvement par avance. TRAJECTOiRE, exécuté à part, l'a
+  montré (action 142, étape 4) ; l'étape 20 de l'action 138 l'a corrigé, dans les deux
+  moteurs, avec la date de chaque valeur depuis 1947.
+effet: >-
+  Tout départ antérieur au relèvement de son année : la complémentaire baisse de 4,87 %
+  pour un départ de janvier à octobre 2022, de 4,67 % avant novembre 2023, de 1,58 % avant
+  novembre 2024, de 0,60 % de janvier à octobre 2018, jusqu'à 12,5 % à l'UNIRS en août
+  1974 ; tout départ futur antérieur au 1er novembre perd la revalorisation projetée de
+  l'année, 1,72 %. Sur 735 témoins de simulation, 251 baissent au scénario 1, de 0,44 % en
+  médiane de la pension totale, de 2,18 % au plus. La pension d'aujourd'hui de qui est
+  déjà parti ne bouge pas : elle ne tient qu'à ses points et à la valeur de l'échéance.

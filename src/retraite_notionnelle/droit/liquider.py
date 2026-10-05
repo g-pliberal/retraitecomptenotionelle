@@ -615,8 +615,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     f"{_sans_zeros_inutiles(valeur_trimestre, 2)} €"
                 )
             elif points:
-                valeur = valeur_du_point(moteur, 
-                    periode.points_de or code, annee_liquidation
+                valeur = valeur_du_point(moteur,
+                    periode.points_de or code, carriere.date_liquidation
                 )
                 if valeur is None and periode.valeur_point_euros is not None:
                     # Valeur de service écrite dans la fiche : le régime
@@ -762,8 +762,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             points_totaux = points
             capital = None
             if periode.capital_seuil_points is not None:
-                valeur = valeur_du_point(moteur, 
-                    periode.points_de or code, annee_liquidation)
+                valeur = valeur_du_point(moteur,
+                    periode.points_de or code, carriere.date_liquidation)
                 if valeur is not None and valeur[0] > 0:
                     points_totaux = montant_brut / valeur[0]
             if (periode.capital_seuil_points is not None
@@ -1725,9 +1725,27 @@ def pension_des_non_salaries_agricoles(
     )
 
 
+def _annee_et_mois(quand: int | DateMois | date) -> tuple[int, int]:
+    """Une année se lit au 31 décembre, une date au 1er de son mois."""
+    if isinstance(quand, int):
+        return quand, 12
+    if isinstance(quand, DateMois):
+        return quand.annee, quand.mois
+    return quand.year, quand.month
+
+
 def valeur_du_point(moteur, code: str,
-                    annee_liquidation: int) -> tuple[float, Fiabilite] | None:
-    """Ce que vaut, à la liquidation, un point acquis dans ``code``.
+                    quand: int | DateMois | date) -> tuple[float, Fiabilite] | None:
+    """Ce que vaut, au jour ``quand``, un point acquis dans ``code``.
+
+    ``quand`` est la date d'effet d'une pension — un :class:`DateMois`, ou une
+    :class:`~datetime.date` lue au 1er de son mois — ou une année, lue au 31
+    décembre. LA LIQUIDATION SERT LA VALEUR DU JOUR : « la valeur de service du
+    point de retraite du régime à cette même date » (circulaire Agirc-Arrco
+    2020-02-DRJ, sur l'article 92 de l'accord du 17 novembre 2017), que
+    :meth:`~retraite_notionnelle.scenarios.actuel.ValeursPoint.service_au`
+    lit. Lire l'année donnait à un départ de janvier 2022 la valeur de
+    novembre, 1,3498 € au lieu de 1,2841 €.
 
     Un régime fermé ne sert plus ses points : ils ont été convertis dans son
     successeur, au coefficient que l'accord de fusion a fixé. La méthode
@@ -1756,8 +1774,11 @@ def valeur_du_point(moteur, code: str,
     les accords projettent la valeur de service au salaire moyen moins
     1,16 %, c'est la convention de « Mon estimation retraite », qui compte les
     points à leur valeur actuelle : la fiche ``agirc_arrco_valeur_achat`` garde
-    les deux lectures.
+    les deux lectures. La valeur prolongée d'une année est celle de son 31
+    décembre : un départ antérieur au relèvement de l'année prend celle de
+    l'année d'avant (:meth:`~retraite_notionnelle.scenarios.actuel.ValeursPoint.millesime`).
     """
+    annee_liquidation, mois = _annee_et_mois(quand)
     conversion = 1.0
     courant = code
     fiabilite = Fiabilite.CERTIFIEE
@@ -1766,7 +1787,7 @@ def valeur_du_point(moteur, code: str,
         if derniere is None:
             return None
         if annee_liquidation <= derniere:
-            valeur = moteur.valeurs_point.service(courant, annee_liquidation)
+            valeur = moteur.valeurs_point.service_au(courant, annee_liquidation, mois)
             if valeur is None:
                 # Liquidation antérieure au premier barème publié. Symétrique
                 # du cas ci-dessous : la première valeur connue est ramenée
@@ -1792,10 +1813,16 @@ def valeur_du_point(moteur, code: str,
             # l'année même donnait à la valeur 2026 du point RCO et de la
             # CNAVPL les +1,75 % de l'hypothèse d'inflation, là où la
             # revalorisation de 2026 est de 0,9 %.
+            millesime = moteur.valeurs_point.millesime(courant, annee_liquidation, mois)
+            if millesime <= derniere:
+                # Avant le relèvement de l'année, la dernière valeur publiée
+                # reste celle du jour.
+                valeur = moteur.valeurs_point.service(courant, millesime)
+                return conversion * valeur[0], min(fiabilite, valeur[1])
             ancienne = moteur.valeurs_point.service(courant, derniere)
             return (
                 conversion * ancienne[0]
-                * moteur.macro.coefficient_prix(derniere - 1, annee_liquidation - 1),
+                * moteur.macro.coefficient_prix(derniere - 1, millesime - 1),
                 min(fiabilite, ancienne[1], Fiabilite.MOYENNE),
             )
 

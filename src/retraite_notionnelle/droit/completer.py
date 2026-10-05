@@ -766,6 +766,9 @@ def plafond_majoration(moteur, code: str, periode: PeriodeRegime,
     modèle ne connaît que l'année de naissance et retient les générations à
     partir de 1952, comme il le fait des autres bornes coupées en cours
     d'année.
+
+    Le plafond publié est celui du 31 décembre de son année ; celui d'une
+    pension, celui de sa date d'effet, comme la valeur du point qu'il suit.
     """
     if periode.plafond_majoration_enfants is None:
         return None
@@ -773,9 +776,9 @@ def plafond_majoration(moteur, code: str, periode: PeriodeRegime,
         return None
     plafond = periode.plafond_majoration_enfants
     annee_reference = periode.plafond_majoration_annee
-    if annee_reference is None or annee_reference == annee_liquidation:
+    if annee_reference is None:
         return plafond
-    servie = liquider.valeur_du_point(moteur, code, annee_liquidation)
+    servie = liquider.valeur_du_point(moteur, code, carriere.date_liquidation)
     publiee = liquider.valeur_du_point(moteur, code, annee_reference)
     if servie is None or publiee is None or publiee[0] <= 0:
         return plafond * moteur.macro.coefficient_prix(
