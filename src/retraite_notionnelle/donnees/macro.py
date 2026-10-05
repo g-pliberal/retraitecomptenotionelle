@@ -447,6 +447,55 @@ class DonneesMacro:
             return coefficient
         return 1.0 / self.coefficient_salaire_moyen(annee_arrivee, annee_depart)
 
+    @cached_property
+    def _traitement_relatif(self) -> tuple[int, dict[int, float]]:
+        """Le traitement indiciaire relatif au salaire moyen, année par année,
+        de l'année de base à la fin du raccord : voir
+        :meth:`traitement_indiciaire_relatif`."""
+        regle = self._hypotheses.get("traitement_indiciaire")
+        if not regle:
+            return 0, {}
+        base = int(regle["annee_base"])
+        nominal, reel, raccord = regle["nominal"], regle["reel"], regle["raccord"]
+        fin = int(raccord["jusqu_a"])
+        relatif = {base: 1.0}
+        indice = 1.0
+        for annee in range(base + 1, fin + 1):
+            salaire = 1.0 + self.salaire_moyen(annee)
+            prix = 1.0 + self.inflation(annee)
+            borne_reelle = (1.0 + float(reel["taux"])) * prix
+            if int(nominal["depuis"]) <= annee <= int(nominal["jusqu_a"]):
+                traitement = 1.0 + float(nominal["taux"])
+            elif int(reel["depuis"]) <= annee <= int(reel["jusqu_a"]):
+                traitement = borne_reelle
+            elif int(raccord["depuis"]) <= annee:
+                duree = fin - int(raccord["depuis"]) + 1
+                part = (annee - int(raccord["depuis"]) + 1) / duree
+                traitement = borne_reelle + (salaire - borne_reelle) * part
+            else:
+                traitement = salaire
+            indice *= traitement / salaire
+            relatif[annee] = indice
+        return base, relatif
+
+    def traitement_indiciaire_relatif(self, annee: int) -> float:
+        """Le traitement indiciaire des fonctionnaires rapporté au salaire
+        moyen, 1 l'année de base (``traitement_indiciaire`` de
+        ``macro/hypotheses_projection.yaml``).
+
+        C'est la convention du COR (annexe méthodologique du rapport de juin
+        2026, note 40) : le traitement croît de 0,1 % en euros courants en
+        2026 et 2027, de 0,1 % en euros constants de 2028 à 2032, puis
+        rejoint en cinq ans le salaire moyen, qu'il suit dès 2038. Il décroche
+        donc du salaire moyen, et la part des primes monte d'autant
+        (:meth:`~retraite_notionnelle.castypes.CasType.construire`). 1 avant
+        l'année de base, la dernière valeur au-delà du raccord.
+        """
+        base, relatif = self._traitement_relatif
+        if not relatif or annee <= base:
+            return 1.0
+        return relatif[min(annee, max(relatif))]
+
     def coefficient_smic(self, annee_depart: int, annee_arrivee: int) -> float:
         """Coefficient de passage par le SMIC, d'une année à l'autre.
 

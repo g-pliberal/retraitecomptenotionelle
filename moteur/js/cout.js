@@ -302,6 +302,48 @@ export const COTES = [COTE_RETRAITES, COTE_COTISANTS];
  */
 export const LIQUIDATIONS = VARIANTES_LIQUIDATION;
 
+/** La part de la pension du scénario 1 que sert chaque régime. */
+function partsRegimes(resultat) {
+  const parts = {};
+  if (resultat.pension_annuelle <= 0) return parts;
+  for (const pension of resultat.pensions_par_regime) {
+    if (pension.montant > 0) {
+      parts[pension.regime] = (parts[pension.regime] ?? 0)
+        + pension.montant / resultat.pension_annuelle;
+    }
+  }
+  return parts;
+}
+
+/**
+ * Ce que vaut en `annee`, en euros constants, un euro de pension du scénario 1
+ * liquidé en `anneeLiquidation` : les prix, sauf ce que sert un régime en
+ * points dont le COR projette la valeur de service. Voir
+ * `coefficient_actuel` dans cout.py.
+ */
+export function coefficientActuel(parts, revalorisation, anneeLiquidation, annee) {
+  let coefficient = 1.0;
+  if (annee <= anneeLiquidation) return coefficient;
+  for (const [regime, part] of parts) {
+    coefficient += part * (
+      revalorisation.coefficientPoints(regime, anneeLiquidation, annee) - 1.0);
+  }
+  return coefficient;
+}
+
+/**
+ * Les parts de `partsRegimes` que sert, au bout de ses fusions, un régime à
+ * valeur de service convenue, rangées sous lui. Voir `parts_convenues`.
+ */
+export function partsConvenues(pensionne, revalorisation) {
+  const parts = new Map();
+  for (const [regime, part] of Object.entries(pensionne.partsRegimes ?? {})) {
+    const convenu = revalorisation.regimeConvenu(regime);
+    if (convenu !== null) parts.set(convenu, (parts.get(convenu) ?? 0) + part);
+  }
+  return parts;
+}
+
 /** Simule la grille et en tire, pour chaque couple, sa pension par système. */
 function pensionnes(simulateur, casTypes, liquidation = "droit") {
   const grille = calculerCasTypes(simulateur, casTypes, generations(), liquidation);
@@ -369,6 +411,7 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
       propre,
       autre,
       bascule: simulateur.parametres.annee_bascule,
+      partsRegimes: partsRegimes(comparaison.actuel),
     });
   }
   const motifs = new Map();
@@ -680,8 +723,10 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     const part = poidsCas[pensionne.code] || 0;
     if (part <= 0) continue;
     let poids = 0;
+    let poidsActuel = 0;
     let poidsRevalorise = 0;
     let poidsRevaloriseProspectif = 0;
+    const convenues = partsConvenues(pensionne, revalorisation);
     // La proposition se somme À PART, cohorte par cohorte : chacune a son
     // volet, sa date de départ — que l'âge légal peut reporter — et sa
     // pension. Voir `_masses` dans cout.py.
@@ -693,6 +738,8 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
       const liquidation = pensionne.anneeLiquidation + decalage;
       if (annee >= liquidation) {
         poids += effectif;
+        poidsActuel += effectif * coefficientActuel(convenues, revalorisation,
+          liquidation, annee);
         // Le poids revalorisé porte la revalorisation des pensions SERVIES, et
         // il faut qu'il soit à part : le coefficient dépend de l'année de
         // liquidation, qui n'est pas la même pour les cinq cohortes.
@@ -737,6 +784,7 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
       let poidsCle = poids;
       if (CLES_PROSPECTIVES.has(cle)) poidsCle = poidsRevaloriseProspectif;
       else if (CLES_REVALORISEES.has(cle)) poidsCle = poidsRevalorise;
+      else if (cle === "actuel") poidsCle = poidsActuel;
       total[cle] += part * poidsCle * pensionne.pensions[cle];
     }
     // Le critère est celui du scénario prospectif lui-même : une carrière

@@ -2216,26 +2216,51 @@ def test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme(sim
     du départ ressortait de 9 % au-dessus de « Mon estimation retraite », dont
     la retraite de base concordait à l'euro (action 142). Le dernier prix publié
     suit désormais le salaire moyen du modèle, avec un an de retard, au même
-    taux d'appel ; la valeur de service, elle, suit les prix.
+    taux d'appel. Dès 2038, il suit, comme la valeur de service, le salaire
+    moyen moins 0,86 point : la convention du COR (rapport de juin 2026,
+    encadré « Le pilotage de l'Agirc-Arrco »), que ``conventions_points``
+    porte ; la valeur de service suit le salaire moyen moins 1,16 point de
+    2027 à 2037, sur l'année en cours.
     """
     scenario = simulateur.scenario_actuel
     macro, valeurs = scenario.macro, scenario.valeurs_point
     derniere = max(a for a in range(2019, 2101)
                    if valeurs.achat("agirc_arrco", a) is not None)
     reference, appel, _ = valeurs.achat("agirc_arrco", derniere)
+
+    def convenu(depuis: int, jusqu_a: int, retard: int, ecarts) -> float:
+        coefficient = 1.0
+        for annee in range(depuis + 1, jusqu_a + 1):
+            ecart = next((e for debut, e in ecarts if annee >= debut), 0.0)
+            coefficient *= (macro.coefficient_salaire_moyen(annee - retard - 1,
+                                                            annee - retard) + ecart)
+        return coefficient
+
     for annee in (derniere + 1, derniere + 4, derniere + 20):
         assert valeurs.achat("agirc_arrco", annee) is None
         prolonge, taux, fiabilite = valeurs.achat_prolonge("agirc_arrco", annee, macro)
         assert taux == appel
-        assert prolonge == pytest.approx(
-            reference * macro.coefficient_salaire_moyen(derniere - 1, annee - 1),
-            rel=1e-12)
+        attendu = convenu(derniere, annee, 1, ((2038, -0.0086),))
+        if annee < 2038:
+            assert attendu == pytest.approx(
+                macro.coefficient_salaire_moyen(derniere - 1, annee - 1), rel=1e-12)
+        assert prolonge == pytest.approx(reference * attendu, rel=1e-12)
         # Plus cher que par les prix, puisque le salaire moyen les devance.
         assert prolonge > reference * macro.coefficient_prix(derniere, annee)
         assert fiabilite == Fiabilite.MOYENNE
     # L'Ircantec n'est pas prolongé : son plan quadriennal revalorise le
     # salaire de référence comme les pensions (test suivant).
     assert valeurs.achat_prolonge("ircantec", derniere + 4, macro) is None
+    # La valeur de service d'une liquidation de décembre suit la convention.
+    from retraite_notionnelle.calendrier import DateMois
+
+    servie = valeurs.derniere_annee_servie("agirc_arrco")
+    base = valeurs.service("agirc_arrco", servie)[0]
+    for annee in (2030, 2045):
+        valeur, _ = liquider.valeur_du_point(scenario, "agirc_arrco", DateMois(annee, 12))
+        assert valeur == pytest.approx(
+            base * convenu(servie, annee, 0, ((2038, -0.0086), (2027, -0.0116))),
+            rel=1e-12)
 
 
 def test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme(simulateur):

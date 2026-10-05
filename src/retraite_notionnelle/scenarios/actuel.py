@@ -2439,6 +2439,9 @@ class ValeursPoint:
 
     #: Les indices qu'un prix d'achat peut suivre au-delà du dernier barème.
     INDICES_DU_PROLONGEMENT = ("salaire_moyen",)
+    #: Ceux qu'une convention de projection peut faire suivre à une valeur du
+    #: point (``conventions_points`` de ``macro/hypotheses_projection.yaml``).
+    INDICES_DES_CONVENTIONS = ("prix", "salaire_moyen")
 
     def __init__(self, racine: Path) -> None:
         self._table: dict[tuple[str, str], dict[int, tuple[float, Fiabilite]]] = {}
@@ -2449,6 +2452,24 @@ class ValeursPoint:
         #: (dates (année, mois), valeurs et fiabilités), dans l'ordre des dates.
         self._datees: dict[str, tuple[list[tuple[int, int]],
                                       list[tuple[float, Fiabilite]]]] = {}
+        #: Ce que le COR suppose d'une valeur du point au-delà du dernier
+        #: barème : (régime, mesure) -> lignes (depuis, indice, écart,
+        #: décalage), dans l'ordre. Voir :meth:`indice_convenu`.
+        self._conventions: dict[tuple[str, str], list[tuple[int, str, float, int]]] = {}
+        hypotheses = racine / "reference" / "macro" / "hypotheses_projection.yaml"
+        if hypotheses.exists():
+            conventions = charger_yaml(hypotheses).get("conventions_points") or {}
+            for regime, mesures in conventions.items():
+                for mesure, lignes in mesures.items():
+                    for ligne in lignes:
+                        if ligne["suit"] not in self.INDICES_DES_CONVENTIONS:
+                            raise ValueError(
+                                f"hypotheses_projection.yaml : la {mesure} de "
+                                f"{regime} suit {ligne['suit']!r}, que le moteur "
+                                f"ne sait pas prolonger")
+                    self._conventions[(regime, mesure)] = sorted(
+                        (int(l["depuis"]), l["suit"], float(l["ecart"]),
+                         int(l["decalage"])) for l in lignes)
         dossier = racine / "reference" / "regimes"
         chemin = dossier / "valeurs_service_datees.csv"
         if chemin.exists():
@@ -2560,13 +2581,52 @@ class ValeursPoint:
         dernier = self.achat(regime, derniere)
         if dernier is None:
             return None
-        _, decalage, fiabilite = regle
+        suit, decalage, fiabilite = regle
         reference, taux_appel, fiabilite_achat = dernier
         return (
-            reference * macro.coefficient_salaire_moyen(derniere - decalage,
-                                                        annee - decalage),
+            reference * self.indice_convenu(regime, "valeur_achat", derniere,
+                                            annee, macro, (suit, decalage)),
             taux_appel, min(fiabilite_achat, fiabilite),
         )
+
+    def indice_convenu(self, regime: str, mesure: str, depuis: int, jusqu_a: int,
+                       macro: DonneesMacro, defaut: tuple[str, int]) -> float:
+        """Ce dont une valeur du point (``valeur_service`` ou ``valeur_achat``)
+        croît de ``depuis`` à ``jusqu_a``, au-delà du dernier barème publié.
+
+        Chaque année prend la ligne de ``conventions_points``
+        (``macro/hypotheses_projection.yaml``) en vigueur — l'indice qu'elle
+        suit, le point qu'elle en retranche, l'année de l'indice —, ou, avant
+        la première, l'indice ``defaut`` (indice, décalage), sans écart : ce
+        que le modèle faisait avant de suivre le COR. Le COR fait suivre à
+        l'Agirc-Arrco le salaire moyen moins 1,16 point de 2027 à 2037, moins
+        0,86 ensuite, pour les deux valeurs dès 2038 (rapport annuel de juin
+        2026, encadré « Le pilotage de l'Agirc-Arrco ») : une hypothèse de
+        projection, et non du droit.
+        """
+        lignes = self._conventions.get((regime, mesure), ())
+        coefficient = 1.0
+        for annee in range(depuis + 1, jusqu_a + 1):
+            suit, decalage = defaut
+            ecart = 0.0
+            for debut, indice, retranche, retard in lignes:
+                if debut <= annee:
+                    suit, ecart, decalage = indice, retranche, retard
+            if suit == "prix":
+                croissance = macro.coefficient_prix(annee - decalage - 1, annee - decalage)
+            else:
+                croissance = macro.coefficient_salaire_moyen(annee - decalage - 1,
+                                                             annee - decalage)
+            coefficient *= croissance + ecart
+        return coefficient
+
+    def regimes_convenus(self, mesure: str) -> tuple[str, ...]:
+        """Les régimes dont le COR suppose la trajectoire de cette valeur."""
+        return tuple(sorted(r for r, m in self._conventions if m == mesure))
+
+    def a_une_convention(self, regime: str, mesure: str) -> bool:
+        """Le COR suppose-t-il une trajectoire à cette valeur du point ?"""
+        return (regime, mesure) in self._conventions
 
     #: Taux contractuel de tranche B auquel la garantie est écrite : « 144
     #: points pour un taux contractuel de 16 % » (accord du 8 décembre 1988,

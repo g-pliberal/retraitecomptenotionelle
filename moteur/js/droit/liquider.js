@@ -1281,10 +1281,13 @@ export function valeurDuPoint(moteur, code, quand) {
         const valeur = moteur.valeursPoint.service(courant, millesime);
         return [conversion * valeur[0], Math.min(fiabilite, valeur[1])];
       }
+      // La convention du COR l'emporte sur les prix pour l'Agirc-Arrco
+      // (`conventions_points`, ValeursPoint.indiceConvenu).
       const ancienne = moteur.valeursPoint.service(courant, derniere);
       return [
         conversion * ancienne[0]
-          * moteur.macro.coefficientPrix(derniere - 1, millesime - 1),
+          * moteur.valeursPoint.indiceConvenu(courant, "valeur_service", derniere,
+            millesime, moteur.macro, ["prix", 1]),
         Math.min(fiabilite, ancienne[1], Fiabilite.MOYENNE),
       ];
     }

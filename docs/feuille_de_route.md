@@ -7253,15 +7253,14 @@ changement dans les moteurs. »
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
 **Reprise, au 5 octobre 2026.** Faites : les étapes 1 (le passé refait),
-2 (la décomposition du COR : les retraités se suivent, la pension moyenne
-relative non, −3,5 % contre −17,2 % en 2070), 2 bis (la dépense du système
-actuel est celle du COR), 3 (la proposition en fourchette, ses rapports
-notionnels multipliés par la dérive, 1,2 en 2070) et 3 bis (les chiffres
-écrits en dur de la page Coût recalculés, la compensation des allègements
-rendue au compte de la retraite). Reste à resserrer la fourchette : suivre
-dans le modèle les deux conventions du COR (rendement de l'Agirc-Arrco,
-primes des fonctionnaires), puis expliquer le reste de l'écart. Commencer par
-la note de l'étape 3, qui dit ce que la première ferait.
+2 (la décomposition du COR), 2 bis (la dépense du système actuel est celle du
+COR), 3 (la proposition en fourchette, ses rapports notionnels multipliés par
+la dérive), 3 bis (les chiffres écrits en dur de la page Coût) et 4 (les deux
+conventions du COR suivies : la dérive de 2070 passe de 1,200 à 1,174, la
+borne basse monte, la dépense de 2070 de la proposition va de 8,4 à 9,9 % du
+PIB). Reste l'essentiel de l'écart, dans l'Agirc-Arrco (×0,850 contre ×0,581
+au COR) et la fonction publique d'État (×0,866 contre ×0,629), la Cnav se
+suivant. Commencer par la note de l'étape 4 et ses pistes.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7481,3 +7480,140 @@ Coût.**
   refait les trois premiers chiffres sur le compte et refuse les formules
   périmées. Restent écrits en dur, et sourcés : les chiffres du non-recours à
   l'ASPA et des récupérations sur succession (`sources.yaml`).
+
+**Étape 4, le 5 octobre 2026 : les deux conventions du COR, suivies.**
+
+- *Ce qui est fait.* Deux hypothèses de projection du COR, lues dans leur
+  source et écrites dans `macro/hypotheses_projection.yaml`, jamais dans le
+  code. `conventions_points` : l'Agirc-Arrco de l'encadré « Le pilotage de
+  l'Agirc-Arrco » (rapport de juin 2026, p. 61), valeur de service au salaire
+  moyen moins 1,16 point de 2027 à 2037, moins 0,86 ensuite, valeur d'achat au
+  salaire moyen moins 0,86 dès 2038 (`ValeursPoint.indice_convenu`, lue par
+  `achat_prolonge` et `valeur_du_point`) ; et les pensions Agirc-Arrco SERVIES,
+  que les masses et l'engagement du scénario 1 revalorisaient sur les prix,
+  suivent la même valeur (`RevalorisationServie.coefficient_points`,
+  `coefficient_actuel`, la part de chaque régime dans `Pensionne`).
+  `traitement_indiciaire` : la note 40 de l'annexe méthodologique, traitement
+  à +0,1 % en euros courants en 2026-2027, en euros constants de 2028 à 2032,
+  raccordé au salaire moyen en 2033-2037 ; il finit à 0,916 du salaire moyen,
+  et la part des primes des cas types de fonctionnaires monte d'autant
+  (`DonneesMacro.traitement_indiciaire_relatif`, `castypes.primes_projetees`).
+  Les deux portées dans le jumeau. La fiche `agirc_arrco_valeur_achat` tranche
+  sa lecture divergente pour le COR, à la demande du propriétaire.
+- *Ce que ça déplace.* La pension moyenne relative de 2070 passe de 0,965 à
+  0,944 (le COR : 0,828) : −0,5 % par la liquidation Agirc-Arrco, −0,45 % par
+  ses pensions servies, −1,2 % par les primes. La dérive de 2070 recule de
+  1,200 à 1,174 ; le rapport de la proposition monte de 0,569 à 0,581. La
+  borne haute ne bouge pas — elle rapporte la masse notionnelle à la dépense
+  du COR, et la masse du système actuel s'y simplifie —, la borne basse monte :
+  dépense de 2070 8,4 à 9,9 % du PIB (8,2 à 9,9), solde moyen −0,73 à −1,46
+  (−0,55 à −1,46), coefficient 1,01 à 0,86 (1,04 à 0,86), dette 47 à 90 %
+  (37 à 90). La fourchette perd un dixième de sa largeur en dépense, un
+  cinquième en solde et en dette. 161 témoins de simulation du scénario 1
+  baissent, −1,20 % en médiane (la convention Agirc-Arrco, pour toute
+  liquidation après 2026) ; les primes ne touchent que les cas types.
+- *Ce qui reste, groupe par groupe* (2025 à 2070, un script de la session,
+  sur les parts de régime des `Pensionne`). Cnav : ×1,000 dans le modèle,
+  ×1,003 au COR, l'écart est nul. Agirc-Arrco : ×0,885 avant, ×0,850 après,
+  ×0,581 au COR. Fonction publique d'État : ×0,942, ×0,866, ×0,629. CNRACL :
+  ×0,955, ×0,877, ×0,789 au COR depuis 2026. Les effectifs se suivent dans
+  chacun. L'écart restant est donc dans les deux régimes que les conventions
+  touchent, et ne s'explique pas par elles : le modèle les suit désormais.
+  Pistes, non mesurées : la composition des retraités de l'Agirc-Arrco (le
+  COR compte chaque retraité du régime, polypensionnés aux petits droits
+  compris ; la grille a peu de cas types et de longues carrières) ; à la
+  FPE, le profil de rémunération par génération que le COR refait depuis 2023
+  et le décrochage du salaire total en 2026-2027, que le modèle ne suit pas ;
+  partout, la dérive du stock que la grille ne vieillit pas comme le COR.
+- *Les tests.* `DECOMPOSITION_PENSION_CLIQUET` de 0,17 à 0,15 (écart 14,0 %) ;
+  la dérive de 2070 sous 1,18 au lieu de 1,3 ; `cout_18_pour_cent` de 1,9 à
+  1,8 dans `MESURES_BLOCAGES` ; le parcours de présentation suit (deux
+  carrières du privé).
+
+Les paragraphes du parcours de présentation que l'étape réécrit, tels qu'ils
+étaient : les deux tableaux des carrières du privé, au SMIC toute sa vie puis
+au salaire moyen, et les passages des pages Programme, Simuler, Cas types et
+Risque dont un chiffre a bougé.
+
+| Système | Pension nette par mois | Écart |
+|---|---|---|
+| 1. Actuel | 1 295 € | référence |
+| 3. Ce qui a été cotisé, deux parts | 1 042 € | -19,5 % |
+| 4. La proposition | 1 144 € | -11,7 % |
+
+| Système | Pension nette par mois | Écart |
+|---|---|---|
+| 1. Actuel | 2 351 € | référence |
+| 3. Ce qui a été cotisé, deux parts | 1 552 € | -34,0 % |
+| 4. La proposition | 1 912 € | -18,7 % |
+
+- Le titre, puis les **quatre grands chiffres** : 1 050 € par mois au
+  minimum pour une personne seule (1 600 € pour un couple) ; 18 % + 5 % de
+  cotisation au lieu de 28 % ; 1 compte en euros ; 100 % de ce qui est cotisé
+  revient.
+- **« Comment ça marche, en trois gestes »** : on inscrit, on revalorise, on
+  divise. C'est la phrase de la section précédente, et c'est tout le modèle.
+- Le tableau **« Le plancher regarde chacun, pas le couple »** : à 300 € et
+  1 500 € de pension dans un couple, l'ASPA ne sert rien, la garantie sert
+  500 € au premier. C'est l'exemple le plus parlant de la page.
+- Le tableau **« Ce que cela change »** : huit lignes, aujourd'hui contre le
+  programme. Deux à lire à voix haute : « Changer de métier : changer de
+  régime, et de règle de calcul → rien, le compte est le même » et « Tenir
+  l'équilibre : une réforme tous les huit ans en moyenne → un chiffre publié
+  chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
+  « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de moins,
+  en médiane ». La première des « Vos questions », « Ma
+  retraite va-t-elle baisser ? », en donne le détail : 23 % pour qui n'est
+  pas encore à la retraite, 13 % s'il place les cinq points rendus, 28 % sur
+  la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
+- Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
+  vers le simulateur : on peut y saisir une date de naissance et un statut et
+  cliquer « Calculer », ça ouvre la page Simuler déjà remplie. Le parcours
+  passe plutôt par l'onglet, pour montrer la page entière.
+
+- **Le système 1 est la référence** : le droit en vigueur, minima et
+  majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
+  porte un troisième chiffre, plus récent que le reste de ce parcours, et il
+  vaut d'être lu à voix haute : **financé, 2 511 €**, soit 91 % de ce qu'il
+  promet. Le reste attend des cotisations que personne n'a versées. La barre
+  sous la ligne le montre, et la page Risque le chiffre.
+- **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
+  contrefactuels : la même carrière recalculée depuis 1941 comme si le compte
+  avait toujours existé, avec la seule part salariale (2), puis les deux parts
+  (3). L'écart entre 2 et 3 mesure exactement une chose : ce que verse
+  l'employeur. Ne pas s'attarder sur le 2.
+- **Le système 4 est la proposition**, et il se lit contre le 3 : même
+  compte jusqu'à 2026, puis 18 % pour tous, 5 % capitalisés par-dessus, 5 %
+  rendus que l'exemple suppose replacés au même endroit, et une garantie
+  vieillesse payée par l'impôt. Son grand nombre est annoncé « retraite
+  jusqu'à » : c'est le seul des quatre qui dépende d'une décision de
+  l'assuré. La ligne sous lui écrit le plancher — répartition plus rente
+  capitalisée obligatoire, touché sans rien ajouter — puis ce que les cinq
+  points rendus ajoutent si on les place, sur un pilier sans risque.
+- **Pourquoi la proposition sert moins que le système actuel sur cet
+  exemple :** parce que le système actuel sert à ce salarié plus que ce qu'il
+  a cotisé — c'est ce que la page Avantages chiffre. Ces pensions sont
+  calculées avant le réglage annuel du système, que la page Cas types
+  explique, et ce réglage ne joue pas en faveur de la proposition : voir plus
+  bas, la question viendra.
+
+- Les deux cartes en tête : la carrière la mieux traitée (militaire non
+  officier, +69 % pour la génération 2000) et la moins bien traitée (carrière
+  interrompue, -34 %), et les 103 points qui les séparent. Dire aussitôt
+  d'où vient le premier : le droit en vigueur laisse ce militaire partir à
+  44 ans, après vingt-cinq ans de services, et la proposition le fait servir
+  jusqu'à 65 ans —
+  une pension mensuelle bien plus forte, servie vingt et un ans plus tard.
+- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -62 %
+  pour la génération 1940 à -7 % pour la génération 1970 : la même règle
+  donne des résultats très éloignés selon ce que l'État a versé à chaque
+  époque, et le compte n'en reçoit que la part que la Cour des comptes
+  rattache à la retraite de l'agent.
+- Le sélecteur « Système affiché » : la grille se réécrit pour le système 2
+  ou le 3, ce qui montre ce que chaque ingrédient déplace.
+
+| | |
+|---|---|
+| Prélevé chaque mois sur un salaire moyen | 940 €, cotisation salariale et patronale réunies |
+| Promis au-delà de ce que ces cotisations financent | 33 % de la pension |
+| Non financé en 2070, sans rien changer | 16 % |

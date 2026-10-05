@@ -13,7 +13,7 @@ interrompue — parce que ce sont eux que la réforme simulée déplace le plus.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from typing import TYPE_CHECKING
 
@@ -109,7 +109,7 @@ class CasType:
             int(generation + self.age_debut + decalage): motif
             for decalage, motif in self.interruptions_relatives
         }
-        return simulateur.carriere_simple(
+        carriere = simulateur.carriere_simple(
             annee_naissance=generation,
             sexe=self.sexe,
             affiliation=self.affiliation,
@@ -122,6 +122,35 @@ class CasType:
             part_primes=self.part_primes,
             identifiant=f"{self.libelle} (génération {generation})",
         )
+        return primes_projetees(carriere, simulateur.macro)
+
+
+def primes_projetees(carriere: Carriere, macro) -> Carriere:
+    """La carrière d'un cas type de fonctionnaire, sa part des primes portée
+    comme le COR la projette.
+
+    Le COR fait décrocher le traitement indiciaire du salaire moyen jusqu'en
+    2037 (annexe méthodologique du rapport de juin 2026, note 40), et monter
+    d'autant la part des primes de ses cas types de fonctionnaires, au fil des
+    générations : à rémunération totale égale, le traitement d'une année vaut
+    ce qu'il valait, fois le traitement relatif
+    (:meth:`~retraite_notionnelle.donnees.macro.DonneesMacro.traitement_indiciaire_relatif`).
+    Le cas type tenait sa part constante, et la pension de la fonction
+    publique, liquidée sur le traitement, en suivait le salaire moyen ; celle
+    des systèmes notionnels, qui cotisent sur la rémunération entière, ne
+    bouge pas. Seuls les cas types la suivent : une personne qui saisit sa
+    part des primes dit la sienne, et le simulateur la garde.
+    """
+    lignes = [
+        replace(ligne, part_primes=1.0 - (1.0 - ligne.part_primes)
+                * macro.traitement_indiciaire_relatif(ligne.annee))
+        if ligne.part_primes > 0.0 and macro.traitement_indiciaire_relatif(ligne.annee) != 1.0
+        else ligne
+        for ligne in carriere.lignes
+    ]
+    if all(nouvelle is ancienne for nouvelle, ancienne in zip(lignes, carriere.lignes)):
+        return carriere
+    return carriere.avec_lignes(lignes)
 
 
 #: Jeu de cas types couvrant les principales configurations du système.

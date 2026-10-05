@@ -13,7 +13,7 @@
  * carrière interrompue — parce que ce sont eux que la réforme déplace le plus.
  */
 
-import { PROFIL_AUTOMATIQUE } from "./carriere.js";
+import { AnneeCarriere, PROFIL_AUTOMATIQUE } from "./carriere.js";
 import { VARIANTES_LIQUIDATION, ageDeDepart } from "./pilote.js";
 
 /** Les deux façons de dater le départ d'un cas type : voir `pilote.js`. */
@@ -256,7 +256,7 @@ export function carriereCasType(cas, simulateur, generation, ageLiquidation) {
       Math.trunc(generation + cas.age_debut + decalage), motif,
     ]),
   );
-  return simulateur.carriereSimple({
+  const carriere = simulateur.carriereSimple({
     annee_naissance: generation,
     sexe: cas.sexe,
     affiliation: cas.affiliation,
@@ -269,6 +269,28 @@ export function carriereCasType(cas, simulateur, generation, ageLiquidation) {
     part_primes: cas.part_primes,
     identifiant: `${cas.libelle} (génération ${generation})`,
   });
+  return primesProjetees(carriere, simulateur.macro);
+}
+
+/**
+ * La carrière d'un cas type de fonctionnaire, sa part des primes portée comme
+ * le COR la projette : le traitement d'une année vaut ce qu'il valait, fois
+ * le traitement indiciaire relatif (`traitementIndiciaireRelatif`). Seuls les
+ * cas types la suivent. Voir castypes.py.
+ */
+export function primesProjetees(carriere, macro) {
+  let change = false;
+  const lignes = carriere.lignes.map((ligne) => {
+    const relatif = macro.traitementIndiciaireRelatif(ligne.annee);
+    if (ligne.part_primes > 0.0 && relatif !== 1.0) {
+      change = true;
+      return new AnneeCarriere({
+        ...ligne, part_primes: 1.0 - (1.0 - ligne.part_primes) * relatif,
+      });
+    }
+    return ligne;
+  });
+  return change ? carriere.avecLignes(lignes) : carriere;
 }
 
 /**

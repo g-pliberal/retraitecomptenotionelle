@@ -163,3 +163,68 @@ variantes_chomage:
 # Le plafond de la Sécurité sociale suit la croissance du salaire moyen, ce qui
 # est la règle en vigueur (article L. 241-3 du code de la sécurité sociale).
 plafond_suit_salaire_moyen: true
+
+# LES CONVENTIONS DU COR POUR LE SCÉNARIO 1 (action 147, étape 4)
+# ----------------------------------------------------------------
+# Deux hypothèses de projection que le COR pose sur le droit en vigueur, et
+# que le modèle suivait mal : ce ne sont pas des règles de droit, mais ce que
+# le COR SUPPOSE des décisions à venir. Elles servent à rapprocher la
+# projection du système actuel de la sienne (docs/limites.md, § 5 ter).
+
+# Le rendement de l'Agirc-Arrco. Source : rapport annuel du COR de juin 2026,
+# partie 1, chapitre 2, encadré « Le pilotage de l'Agirc-Arrco » (p. 61) :
+# « En 2026, [la valeur de service] est indexée sur l'inflation hors tabac
+# estimée par l'Insee pour l'année en cours, diminuée d'un coefficient de
+# soutenabilité de 0,4 point. La valeur d'achat du point, pour sa part,
+# progresse chaque année au 1er janvier en fonction de l'évolution du salaire
+# moyen du secteur privé de l'année précédente. Sur la période 2027-2037, la
+# valeur de service évoluerait comme le salaire moyen, minoré de 1,16 %,
+# tandis que la valeur d'achat continuerait de suivre le salaire moyen. À
+# compter de 2038 [...] la valeur de service et la valeur d'achat du point
+# évolueraient conventionnellement selon la même hypothèse, c'est-à-dire
+# comme l'évolution du salaire moyen du secteur privé minoré de 0,86 % ».
+#
+# Chaque ligne vaut de son année `depuis` à la suivante. `suit` nomme l'indice
+# (prix : l'IPC du modèle, que l'inflation hors tabac ne distingue pas ;
+# salaire_moyen : le salaire moyen par tête de l'ensemble de l'économie, que
+# le secteur privé ne distingue pas), `ecart` le point que le COR en retranche
+# (additif : 1,16 % est 1,16 point), `decalage` l'année de l'indice : 0 pour la
+# valeur de service, relevée au 1er novembre sur l'année en cours ; 1 pour la
+# valeur d'achat, relevée au 1er janvier sur l'année précédente. Une année
+# déjà publiée dans regimes/valeurs_point.csv l'emporte : la convention ne
+# prolonge que ce qui n'est pas publié (scenarios/actuel.py, ValeursPoint).
+conventions_points:
+  agirc_arrco:
+    valeur_service:
+      - {depuis: 2026, suit: prix, ecart: -0.004, decalage: 0}
+      - {depuis: 2027, suit: salaire_moyen, ecart: -0.0116, decalage: 0}
+      - {depuis: 2038, suit: salaire_moyen, ecart: -0.0086, decalage: 0}
+    valeur_achat:
+      - {depuis: 2027, suit: salaire_moyen, ecart: 0.0, decalage: 1}
+      - {depuis: 2038, suit: salaire_moyen, ecart: -0.0086, decalage: 1}
+
+# Le traitement indiciaire des fonctionnaires. Source : annexe méthodologique
+# en ligne du rapport de juin 2026, § « Le profil par âge des rémunérations et
+# la part des primes », note 40 : « En 2026 et 2027, le traitement indiciaire
+# moyen évolue de 0,1 % en euros courants [...]. De 2028 à 2032, [...] la
+# progression du traitement indiciaire moyen est limitée à +0,1 % par an en
+# euros constants. Entre 2033 et 2037, le rythme d'évolution du traitement
+# indiciaire moyen est raccordé en cinq ans à celui de l'ensemble de
+# l'économie puis évolue ensuite au même rythme. La part des primes augmente
+# en conséquence jusqu'en 2037 puis devient stable. »
+#
+# Le modèle en tire le traitement indiciaire RELATIF au salaire moyen, 1 en
+# `annee_base` : chaque année, la croissance que la note donne au traitement,
+# rapportée à celle du salaire moyen. `nominal` et `reel` sont des taux
+# annuels, en euros courants et en euros constants ; `raccord` va, en autant
+# d'années qu'il en compte, du taux réel au salaire moyen, par parts égales.
+# Les cas types de fonctionnaires (castypes.py) gardent leur rémunération
+# totale, et voient leur part des primes monter d'autant : 1 - (1 - part) × le
+# traitement relatif. La note 40 fait aussi décrocher, puis converger, le
+# salaire total des fonctionnaires (« le SMPT total [...] évolue comme
+# l'inflation » en 2026 et 2027) : le modèle ne le suit pas.
+traitement_indiciaire:
+  annee_base: 2025
+  nominal: {depuis: 2026, jusqu_a: 2027, taux: 0.001}
+  reel: {depuis: 2028, jusqu_a: 2032, taux: 0.001}
+  raccord: {depuis: 2033, jusqu_a: 2037}

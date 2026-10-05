@@ -722,6 +722,57 @@ export class RevalorisationServie {
         * macro.coefficientPrix(annee, annee - 1);
       this._index.set(annee, index);
     }
+    // Le scénario 1 n'est pas tout entier sur les prix : la valeur de service
+    // de l'Agirc-Arrco suit la convention du COR (`conventions_points`). Pour
+    // chaque régime qu'elle couvre, sa valeur en euros constants, 1 jusqu'au
+    // dernier barème publié. Voir revalorisation.py.
+    const actuel = simulateur.scenarioActuel;
+    const valeurs = actuel.valeursPoint;
+    this._catalogue = actuel.catalogue;
+    this._points = new Map();
+    for (const regime of valeurs.regimesConvenus("valeur_service")) {
+      const derniere = valeurs.derniereAnneeServie(regime);
+      let reelle = 1.0;
+      const serie = new Map([[this.premiereAnnee, reelle]]);
+      for (let annee = this.premiereAnnee + 1; annee <= this.derniereAnnee; annee += 1) {
+        if (derniere !== null && annee > derniere) {
+          reelle *= valeurs.indiceConvenu(regime, "valeur_service", annee - 1, annee,
+            macro, ["prix", 1]) * macro.coefficientPrix(annee, annee - 1);
+        }
+        serie.set(annee, reelle);
+      }
+      this._points.set(regime, serie);
+    }
+  }
+
+  /**
+   * Le régime qui sert, au bout de ses fusions, les points de `regime`, s'il a
+   * une valeur de service convenue ; null sinon.
+   */
+  regimeConvenu(regime) {
+    let courant = regime;
+    for (let garde = 0; garde < this._catalogue.taille + 1; garde += 1) {
+      if (this._points.has(courant)) return courant;
+      const successeur = this._catalogue.contient(courant)
+        ? this._catalogue.obtenir(courant).integre_dans : null;
+      if (!successeur) return null;
+      courant = successeur;
+    }
+    return null;
+  }
+
+  /**
+   * Ce que vaut en `annee`, en euros constants, un euro de pension servie en
+   * points de `regime` liquidé en `anneeLiquidation` : le rapport des valeurs
+   * de service convenues, déflaté des prix ; 1 sans convention. Voir
+   * revalorisation.py.
+   */
+  coefficientPoints(regime, anneeLiquidation, annee) {
+    const serie = this._points.get(regime);
+    if (serie === undefined || annee <= anneeLiquidation) return 1.0;
+    const valeur = (millesime) => serie.get(
+      Math.min(Math.max(millesime, this.premiereAnnee), this.derniereAnnee));
+    return valeur(annee) / valeur(anneeLiquidation);
   }
 
   _valeur(annee) {

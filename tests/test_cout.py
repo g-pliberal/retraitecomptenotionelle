@@ -734,8 +734,10 @@ def test_la_projection_refait_le_passe(avenir, depenses):
 DECOMPOSITION_TETES = 0.03
 #: Le cliquet de la PENSION MOYENNE RELATIVE à l'horizon : le modèle la fait
 #: reculer de 3,3 % de 2025 à 2070, le COR de 17,2 % ; 16,8 % de trop, le
-#: 5 octobre 2026. Il ne doit que descendre, vers la cible.
-DECOMPOSITION_PENSION_CLIQUET = 0.17
+#: 5 octobre 2026, puis 14,0 % le même jour, une fois suivies les deux
+#: conventions du COR (rendement de l'Agirc-Arrco, primes des fonctionnaires,
+#: action 147, étape 4). Il ne doit que descendre, vers la cible.
+DECOMPOSITION_PENSION_CLIQUET = 0.15
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -770,7 +772,8 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
     Le COR la fait reculer de 17 % de 2025 à 2070 — l'indexation des droits sur
     les prix, la baisse du rendement de l'Agirc-Arrco, la part croissante des
     primes des fonctionnaires, que sa figure 2.7 lit régime par régime ; le
-    modèle, de 3 % seulement. C'est l'écart tout entier : les effectifs, eux,
+    modèle, de 5,6 % seulement, depuis qu'il suit les deux dernières
+    conventions (de 3,5 % avant). C'est l'écart tout entier : les effectifs, eux,
     se suivent (``test_la_projection_compte_les_retraites_du_cor``). Le même
     défaut fait la reconstitution du passé (``test_la_projection_refait_le_passe``) :
     la pension relative du modèle croît de 17,5 % de 2005 à 2025, celle du COR
@@ -810,7 +813,9 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
         attendue = (ligne.base_modele / ligne.base) / (jonction.base_modele / jonction.base)
         assert ligne.derive == pytest.approx(attendue, rel=1e-12), ligne.annee
     horizon = avenir.annee(avenir.derniere_annee)
-    assert 1.1 < horizon.derive < 1.3, horizon.derive
+    # 1,200 jusqu'à l'étape 4 de l'action 147, 1,174 depuis : un cliquet, qui
+    # ne doit que descendre à mesure que l'écart s'explique.
+    assert 1.1 < horizon.derive < 1.18, horizon.derive
 
 
 def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):

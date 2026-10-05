@@ -14764,7 +14764,7 @@ export const MESURES_BLOCAGES = {
   // proposition, solde moyen 2026-2070, en points de PIB : ce que coûtent les
   // 18 %, l'âge légal de 65 ans de la proposition compris — il en rend un
   // demi-point.
-  cout_18_pour_cent: 1.9,
+  cout_18_pour_cent: 1.8,
   // Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
   // l'horizon, en points de PIB, en % du PIB et en valeur. Mesurés avec l'âge
   // légal de 65 ans et SANS TVA à taux unique : la proposition ne réforme plus
@@ -14774,20 +14774,20 @@ export const MESURES_BLOCAGES = {
   // la bascule, que la part « retraite seule » du taux que l'État verse — le
   // défaut depuis le même jour : sous le taux entier, la proposition était à
   // −0,9, 59 % et 0,85, et 1,03 en 2070.
-  solde_moyen_proposition: -0.6,
+  solde_moyen_proposition: -0.7,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 37,
+  dette_2070_proposition: 47,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.89,
-  decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.04,
+  coefficient_minimum: 0.87,
+  decennie_coefficient_minimum: 2050,
+  coefficient_2070: 1.01,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.
   tva_affectee: 0.0,
   // proposition_prospective.py : le solde moyen de la variante qui laisse le
   // stock intact, en points de PIB.
-  solde_moyen_prospectif: -2.8,
+  solde_moyen_prospectif: -3.0,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
   cout_diviseur_age_legal: 0.2,

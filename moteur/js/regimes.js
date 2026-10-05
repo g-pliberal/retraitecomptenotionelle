@@ -2456,6 +2456,52 @@ export class ValeursPoint {
     // [année, mois, valeur, fiabilité], dans l'ordre des dates
     // (`regimes/valeurs_service_datees.csv`).
     this._datees = new Map(Object.entries(paquet.valeurs_service_datees ?? {}));
+    // Ce que le COR suppose d'une valeur du point au-delà du dernier barème :
+    // « régime|mesure » -> lignes [depuis, indice, écart, décalage], dans
+    // l'ordre (`conventions_points` de `macro/hypotheses_projection.yaml`).
+    this._conventions = new Map(Object.entries(paquet.conventions_points ?? {}));
+  }
+
+  /**
+   * Ce dont une valeur du point (`valeur_service` ou `valeur_achat`) croît de
+   * `depuis` à `jusqua`, au-delà du dernier barème publié : chaque année prend
+   * la ligne de convention en vigueur, ou, avant la première, l'indice
+   * `defaut` [indice, décalage], sans écart. Voir scenarios/actuel.py,
+   * ValeursPoint.indice_convenu.
+   */
+  indiceConvenu(regime, mesure, depuis, jusqua, macro, defaut) {
+    const lignes = this._conventions.get(`${regime}|${mesure}`) ?? [];
+    let coefficient = 1.0;
+    for (let annee = depuis + 1; annee <= jusqua; annee += 1) {
+      let [suit, decalage] = defaut;
+      let ecart = 0.0;
+      for (const [debut, indice, retranche, retard] of lignes) {
+        if (debut <= annee) {
+          suit = indice;
+          ecart = retranche;
+          decalage = retard;
+        }
+      }
+      const croissance = suit === "prix"
+        ? macro.coefficientPrix(annee - decalage - 1, annee - decalage)
+        : macro.coefficientSalaireMoyen(annee - decalage - 1, annee - decalage);
+      coefficient *= croissance + ecart;
+    }
+    return coefficient;
+  }
+
+  /** Les régimes dont le COR suppose la trajectoire de cette valeur. */
+  regimesConvenus(mesure) {
+    return [...this._conventions.keys()]
+      .map((cle) => cle.split("|"))
+      .filter(([, m]) => m === mesure)
+      .map(([regime]) => regime)
+      .sort();
+  }
+
+  /** Le COR suppose-t-il une trajectoire à cette valeur du point ? */
+  aUneConvention(regime, mesure) {
+    return this._conventions.has(`${regime}|${mesure}`);
   }
 
   /**
@@ -2523,10 +2569,11 @@ export class ValeursPoint {
     if (dernier === null) {
       return null;
     }
-    const [, decalage, fiabilite] = regle;
+    const [suit, decalage, fiabilite] = regle;
     const [reference, tauxAppel, fiabiliteAchat] = dernier;
     return [
-      reference * macro.coefficientSalaireMoyen(derniere - decalage, annee - decalage),
+      reference * this.indiceConvenu(regime, "valeur_achat", derniere, annee, macro,
+        [suit, decalage]),
       tauxAppel, Math.min(fiabiliteAchat, fiabilite),
     ];
   }

@@ -941,6 +941,57 @@ class RevalorisationServie:
             index *= (1.0 + indexation.taux(annee).taux) / prefinancement * (
                 macro.coefficient_prix(annee, annee - 1))
             self._index[annee] = index
+        #: LE SCÉNARIO 1 N'EST PAS TOUT ENTIER SUR LES PRIX. Sa pension de base
+        #: l'est (L. 161-23-1) ; sa complémentaire suit la valeur de service
+        #: de l'Agirc-Arrco, que le COR projette au salaire moyen moins 1,16
+        #: point de 2027 à 2037, moins 0,86 ensuite (``conventions_points``) :
+        #: un peu sous les prix jusqu'en 2037, un peu au-dessus après. Pour
+        #: chaque régime que la convention couvre, la valeur de service en
+        #: euros constants, 1 jusqu'à son dernier barème publié ; voir
+        #: :meth:`coefficient_points`.
+        actuel = simulateur.scenario_actuel
+        valeurs = actuel.valeurs_point
+        self._catalogue = actuel.catalogue
+        self._points: dict[str, dict[int, float]] = {}
+        for regime in valeurs.regimes_convenus("valeur_service"):
+            derniere = valeurs.derniere_annee_servie(regime)
+            reelle = 1.0
+            serie = {self.premiere_annee: reelle}
+            for annee in range(self.premiere_annee + 1, self.derniere_annee + 1):
+                if derniere is not None and annee > derniere:
+                    reelle *= valeurs.indice_convenu(
+                        regime, "valeur_service", annee - 1, annee, macro,
+                        ("prix", 1)) * macro.coefficient_prix(annee, annee - 1)
+                serie[annee] = reelle
+            self._points[regime] = serie
+
+    def regime_convenu(self, regime: str) -> str | None:
+        """Le régime qui sert, au bout de ses fusions, les points de
+        ``regime``, s'il a une valeur de service convenue ; ``None`` sinon."""
+        courant = regime
+        for _ in range(len(self._catalogue) + 1):
+            if courant in self._points:
+                return courant
+            fiche = self._catalogue[courant] if courant in self._catalogue else None
+            if fiche is None or not fiche.integre_dans:
+                return None
+            courant = fiche.integre_dans
+        return None
+
+    def coefficient_points(self, regime: str, annee_liquidation: int,
+                           annee: int) -> float:
+        """Ce que vaut en ``annee``, en euros constants, un euro de pension
+        servie en points de ``regime`` (au bout de ses fusions) liquidé en
+        ``annee_liquidation`` : le rapport de la valeur de service convenue
+        à celle de la liquidation, déflaté des prix. 1 pour un régime sans
+        convention, et jusqu'au dernier barème publié, que la projection lit
+        en euros constants comme le reste du scénario 1."""
+        serie = self._points.get(regime)
+        if serie is None or annee <= annee_liquidation:
+            return 1.0
+        def valeur(millesime: int) -> float:
+            return serie[min(max(millesime, self.premiere_annee), self.derniere_annee)]
+        return valeur(annee) / valeur(annee_liquidation)
 
     def _valeur(self, annee: int) -> float:
         borne = min(max(annee, self.premiere_annee), self.derniere_annee)

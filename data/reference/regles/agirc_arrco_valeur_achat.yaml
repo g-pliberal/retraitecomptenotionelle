@@ -258,14 +258,21 @@ approximations:
     (article 27), et l'annexe de l'accord du 5 octobre 2023 la projette de 2027 à 2037 au
     « Salaire moyen – 1,16 % », soit 1,29 % par an au scénario de référence, 0,46 point
     sous les prix ; « Mon estimation retraite » compte les points à leur « valeur
-    actuelle ». Le modèle suit la page et sa propre convention : voir les lectures
-    divergentes.
+    actuelle ». Depuis le 5 octobre 2026 (action 147, étape 4), le modèle suit la
+    convention du COR, qui reprend l'annexe jusqu'en 2037 et passe ensuite les deux
+    valeurs au salaire moyen moins 0,86 % (rapport annuel de juin 2026, encadré « Le
+    pilotage de l'Agirc-Arrco », p. 61) : conventions_points de
+    macro/hypotheses_projection.yaml, pour la valeur de service à la liquidation, la
+    valeur d'achat au-delà de 2037 et, dans les masses de la page Coût, la
+    revalorisation des pensions servies. Le salaire moyen est celui du modèle, non celui
+    du secteur privé ; l'inflation, l'IPC du modèle, non l'inflation hors tabac.
   effet: >-
-    non mesuré dans le modèle. Une valeur de service qui suivrait l'annexe plutôt que les
-    prix servirait environ 0,46 % de moins par année de liquidation après 2026 : près de
-    9 % de moins pour une liquidation en 2046, 16 % pour une liquidation en 2064
+    161 témoins de simulation du scénario 1 baissent, −1,20 % en médiane, jusqu'à −4,1 %
+    pour une carrière qui liquide loin dans l'avenir ; la pension moyenne relative du
+    système actuel projeté recule de 0,5 % de plus en 2070 par la liquidation, de 0,45 %
+    par la revalorisation des pensions servies
 sources:
-  lu_le: 2026-10-04
+  lu_le: 2026-10-05
   prochaine_relecture: 2026-10-31
   a_relire:
   - >-
@@ -293,8 +300,12 @@ sources:
     2033 ; « Mon estimation retraite » compte les points à leur « valeur actuelle », ce
     qui revient à une valeur de service qui suit les prix ; le modèle la prolonge par les
     prix. Aucune source ne tranche : le facteur n'est pas encore décidé, et l'annexe est
-    une hypothèse de projection financière, non une règle. Le scénario 1 garde les prix,
-    la convention du simulateur officiel, et le dit (§ 3.3, point 5).
+    une hypothèse de projection financière, non une règle. Le scénario 1 gardait les
+    prix, la convention du simulateur officiel, et le disait (§ 3.3, point 5). Le 5
+    octobre 2026, le propriétaire a demandé que la page Coût soit « indiscutable » et
+    que la projection suive les conventions du COR : le scénario 1 prend désormais
+    celle du COR, que l'annexe de l'accord de 2023 fonde jusqu'en 2037, et qui reste
+    une hypothèse, que la fédération dit « purement conventionnelle ».
   lectures:
   - type: legifrance
     reference: >-
@@ -358,11 +369,13 @@ code:
     ValeursPoint.achat_prolonge, qui lit regimes/prolongement_points.csv ;
     droit/acquerir.py : acquerir, les points de chaque année ; droit/seconde.py :
     _prix_du_point, ceux de la seconde pension, qui suivaient le plafond de la sécurité
-    sociale ; droit/liquider.py : valeur_du_point, la valeur de service prolongée par les
-    prix
+    sociale ; droit/liquider.py : valeur_du_point, la valeur de service prolongée par
+    ValeursPoint.indice_convenu ; revalorisation.py :
+    RevalorisationServie.coefficient_points et cout.py : coefficient_actuel, les pensions
+    servies
   javascript: >-
     moteur/js/macro.js : coefficientSalaireMoyen ; moteur/js/regimes.js :
-    ValeursPoint.achatProlonge ; moteur/js/droit/acquerir.js : acquerir ;
+    ValeursPoint.achatProlonge et indiceConvenu ; moteur/js/droit/acquerir.js : acquerir ;
     moteur/js/droit/seconde.js : prixDuPoint ; le paquet porte prolongement_points
     (scripts/construire_donnees.py)
   parametres: >-
@@ -378,6 +391,11 @@ code:
     test_le_prix_du_point_n_est_pas_prolonge_au_dela_du_publie ; les témoins de simulation,
     que le portage rejoue
 historique:
+- >-
+  2026-10-05 — la convention du COR (action 147, étape 4) : la valeur de service suivait
+  les prix au-delà du dernier barème, avec un an de retard ; elle suit le salaire moyen
+  moins 1,16 point de 2027 à 2037, moins 0,86 ensuite, sur l'année en cours, et la
+  valeur d'achat le salaire moyen moins 0,86 point dès 2038.
 - >-
   Jusqu'au 4 octobre 2026, les cotisations des années postérieures au dernier barème
   publié passaient par le rendement instantané du dernier barème, 5,61 % (fiche

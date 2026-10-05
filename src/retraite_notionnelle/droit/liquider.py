@@ -1770,11 +1770,13 @@ def valeur_du_point(moteur, code: str,
     liquidation par l'indice des prix, pris un an plus tôt comme la
     revalorisation du 1er janvier le prend. C'est une approximation, signalée
     comme telle par la fiabilité renvoyée ; c'est surtout un aveu
-    d'ignorance, préférable à un coefficient inventé. Pour l'Agirc-Arrco, dont
-    les accords projettent la valeur de service au salaire moyen moins
-    1,16 %, c'est la convention de « Mon estimation retraite », qui compte les
-    points à leur valeur actuelle : la fiche ``agirc_arrco_valeur_achat`` garde
-    les deux lectures. La valeur prolongée d'une année est celle de son 31
+    d'ignorance, préférable à un coefficient inventé. L'Agirc-Arrco, dont les
+    accords projettent la valeur de service au salaire moyen moins 1,16 %,
+    suit depuis le 5 octobre 2026 la convention du COR, que
+    ``conventions_points`` porte (action 147, étape 4) ; elle suivait les
+    prix, la convention de « Mon estimation retraite », qui compte les points
+    à leur valeur actuelle : la fiche ``agirc_arrco_valeur_achat`` garde les
+    deux lectures. La valeur prolongée d'une année est celle de son 31
     décembre : un départ antérieur au relèvement de l'année prend celle de
     l'année d'avant (:meth:`~retraite_notionnelle.scenarios.actuel.ValeursPoint.millesime`).
     """
@@ -1819,10 +1821,16 @@ def valeur_du_point(moteur, code: str,
                 # reste celle du jour.
                 valeur = moteur.valeurs_point.service(courant, millesime)
                 return conversion * valeur[0], min(fiabilite, valeur[1])
+            # Ce que le COR suppose de la valeur de l'Agirc-Arrco au-delà du
+            # dernier barème — le salaire moyen moins 1,16 point jusqu'en
+            # 2037, moins 0,86 ensuite — l'emporte sur les prix
+            # (``conventions_points``, ValeursPoint.indice_convenu).
             ancienne = moteur.valeurs_point.service(courant, derniere)
             return (
                 conversion * ancienne[0]
-                * moteur.macro.coefficient_prix(derniere - 1, millesime - 1),
+                * moteur.valeurs_point.indice_convenu(
+                    courant, "valeur_service", derniere, millesime,
+                    moteur.macro, ("prix", 1)),
                 min(fiabilite, ancienne[1], Fiabilite.MOYENNE),
             )
 

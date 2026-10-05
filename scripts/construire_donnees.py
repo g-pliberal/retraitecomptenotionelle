@@ -890,6 +890,16 @@ def _prolongement_points() -> dict:
     }
 
 
+def _conventions_points() -> dict:
+    """Ce que le COR suppose d'une valeur du point au-delà du dernier
+    barème : ``regime|mesure`` -> lignes [depuis, indice, écart, décalage]."""
+    valeurs = ValeursPoint(DONNEES)
+    return {
+        f"{regime}|{mesure}": [list(ligne) for ligne in lignes]
+        for (regime, mesure), lignes in sorted(valeurs._conventions.items())
+    }
+
+
 def _classes_cotisation() -> dict:
     """Grilles de cotisation par classes, régime par régime et par millésime.
 
@@ -1484,6 +1494,7 @@ def _hypotheses() -> dict:
         "trajectoire_emploi_par_defaut": contenu.get(
             "trajectoire_emploi_par_defaut", "constant"),
         "trajectoires_emploi": contenu.get("trajectoires_emploi", {}),
+        "traitement_indiciaire": contenu.get("traitement_indiciaire"),
     }
 
 
@@ -1794,6 +1805,7 @@ def construire(bilan: bytes) -> bytes:
         "valeurs_point": _valeurs_point(),
         "valeurs_service_datees": _valeurs_service_datees(),
         "prolongement_points": _prolongement_points(),
+        "conventions_points": _conventions_points(),
         "rendements_points": _rendements(),
         "conversions_points": _conversions_points(),
         "classes_cotisation": _classes_cotisation(),

@@ -303,6 +303,54 @@ export class DonneesMacro {
    * son texte indexe sur les salaires : la valeur d'achat du point
    * Agirc-Arrco, au-delà du dernier barème publié. Voir donnees/macro.py.
    */
+  /**
+   * Le traitement indiciaire des fonctionnaires rapporté au salaire moyen, 1
+   * l'année de base : la convention du COR (`traitement_indiciaire` de
+   * `macro/hypotheses_projection.yaml`). Voir donnees/macro.py.
+   */
+  traitementIndiciaireRelatif(annee) {
+    if (this._traitementRelatif === undefined) {
+      this._traitementRelatif = this._calculerTraitementRelatif();
+    }
+    const { base, relatif } = this._traitementRelatif;
+    if (relatif.size === 0 || annee <= base) {
+      return 1.0;
+    }
+    return relatif.get(Math.min(annee, Math.max(...relatif.keys())));
+  }
+
+  _calculerTraitementRelatif() {
+    const regle = this.paquet.hypotheses.traitement_indiciaire;
+    if (!regle) {
+      return { base: 0, relatif: new Map() };
+    }
+    const base = Number(regle.annee_base);
+    const { nominal, reel, raccord } = regle;
+    const fin = Number(raccord.jusqu_a);
+    const relatif = new Map([[base, 1.0]]);
+    let indice = 1.0;
+    for (let annee = base + 1; annee <= fin; annee += 1) {
+      const salaire = 1.0 + this.salaire_moyen.valeur(annee);
+      const prix = 1.0 + this.inflation.valeur(annee);
+      const borneReelle = (1.0 + Number(reel.taux)) * prix;
+      let traitement;
+      if (Number(nominal.depuis) <= annee && annee <= Number(nominal.jusqu_a)) {
+        traitement = 1.0 + Number(nominal.taux);
+      } else if (Number(reel.depuis) <= annee && annee <= Number(reel.jusqu_a)) {
+        traitement = borneReelle;
+      } else if (Number(raccord.depuis) <= annee) {
+        const duree = fin - Number(raccord.depuis) + 1;
+        const part = (annee - Number(raccord.depuis) + 1) / duree;
+        traitement = borneReelle + (salaire - borneReelle) * part;
+      } else {
+        traitement = salaire;
+      }
+      indice *= traitement / salaire;
+      relatif.set(annee, indice);
+    }
+    return { base, relatif };
+  }
+
   coefficientSalaireMoyen(depart, arrivee) {
     if (arrivee === depart) {
       return 1.0;
