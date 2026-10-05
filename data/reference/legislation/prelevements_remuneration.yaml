@@ -693,8 +693,8 @@ profils:
 #
 #     exonéré     revenu fiscal de référence ≤ 13 048 €
 #     3,80 %      13 048 € < revenu ≤ 17 057 €
-#     6,60 %      17 057 € < revenu ≤ 26 472 €
-#     8,30 %      revenu > 26 472 €
+#     6,60 %      17 057 € < revenu < 26 472 €   (« inférieurs à », III bis 2°)
+#     8,30 %      revenu ≥ 26 472 €
 #
 # Les seuils du fichier étaient ceux de 2019 — 11 128, 14 548 et 22 580 € —
 # jusqu'au 23 septembre 2026 ; ceux-ci sont lus sur la fiche F2971 de

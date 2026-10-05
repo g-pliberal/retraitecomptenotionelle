@@ -102,6 +102,18 @@ approximations:
 sources:
   lu_le: 2026-10-04
   prochaine_relecture: 2027-01-15
+  lectures_divergentes:
+  - >-
+    La calculette fiscale de l'Agirc-Arrco (2026) majore chaque demi-part au-delà de
+    trois parts de la moitié du montant légal (1 742 € au lieu de 3 484 € au premier
+    seuil), prend le barème de trois parts pour une saisie « 1.0 », et perd le lissage
+    quand le nombre de parts de l'antépénultième année n'est pas saisi. Le dépôt suit
+    L. 136-8 : une majoration entière par demi-part, et la moitié pour un quart de part.
+  - >-
+    La même calculette exonère sous le premier seuil la cotisation de 1,30 % du régime
+    local d'Alsace-Moselle, que le fichier des prélèvements dit due sur toutes les
+    pensions et que le dépôt ne prélève pas : L. 242-13 renvoie ces exonérations au
+    conseil d'administration du régime local, dont la délibération n'est pas lue.
   a_relire:
   - >-
     Les seuils de 2027, revalorisés au 1er janvier sur les prix (III ter), et
@@ -131,6 +143,18 @@ sources:
       CASA et la cotisation maladie aux taux médian et plein
     date: 2026-10-04
     url: https://www.urssaf.fr/accueil/employeur/cotisations/liste-cotisations/revenus-de-remplacement.html
+  - type: autre
+    reference: >-
+      Agirc-Arrco, « calculette de détermination fiscale » de 2026, page autonome dont le
+      calcul est en JavaScript, lue ligne à ligne et rejouée sous node le 5 octobre 2026
+      (empreinte sha256:f194ff13691db644c8dc39dc822840cc942bbb67f5164ae6b96ac3e4350c5970) :
+      les taux (« K2 » 3,8 + 0,5 ; « K3 » 6,6 + 0,5 + 1 + 0,3 ; « K5 » 8,3 + 0,5 + 1 + 0,3),
+      les seuils de la première part et des demi-parts de la métropole, de la
+      Guadeloupe, de la Martinique, de La Réunion et de la Guyane, et le lissage par
+      l'antépénultième année au seul deuxième seuil : à l'euro près ceux du dépôt, et
+      ceux de L. 136-8 revalorisés chaque année au III ter, arrondis à l'euro
+    date: 2026-10-05
+    url: https://www.agirc-arrco.fr/storage/2026-Calculette-determination-fiscale-clients-V3.html
 textes_a_rattacher:
 - reference: L. 131-9 du code de la sécurité sociale, les non-résidents
 - reference: CGI, article 194, le quotient familial
@@ -156,6 +180,10 @@ historique:
 - >-
   2026-10-04 — née avec l'action 138, étape 2 : le dépôt retenait le taux plein pour tout
   le monde ; la tranche du foyer, présumée ou dite, le remplace.
+- >-
+  2026-10-05 — relue à l'action 89 contre la calculette fiscale de l'Agirc-Arrco : mêmes
+  taux, mêmes seuils, même lissage ; le quart de part y vaut une demi-majoration, et les
+  deux moteurs, qui arrondissaient différemment le nombre de demi-parts, la suivent.
 effet: >-
   Tout retraité en mode net : un foyer d'une part sous 13 048 € de revenu fiscal n'est plus
   prélevé ; au salaire moyen, la pension passe du taux plein au taux médian.

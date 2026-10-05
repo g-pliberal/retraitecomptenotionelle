@@ -547,12 +547,11 @@ class PrelevementsPension:
     un taux de CSG propre, que la loi fait dépendre du revenu fiscal de
     référence du foyer.
 
-    **Le dépôt retient le TAUX PLEIN pour tout le monde**, faute de connaître ce
-    revenu — le simulateur ne demande ni la composition du foyer, ni les autres
-    ressources. La convention surestime donc le prélèvement sur les petites
-    pensions, qui seraient exonérées : le fichier de données dit de combien, et
-    ``docs/limites.md`` porte la réserve. ``bareme_csg`` garde les quatre cas
-    pour que la page puisse les montrer.
+    Le taux est celui de la TRANCHE du foyer (:meth:`tranche`) : son revenu
+    fiscal de référence, que la saisie dit ou que le simulateur présume de ses
+    pensions (fiche ``csg_des_pensions_selon_le_revenu``), et ses parts.
+    :attr:`taux_total`, :meth:`net` et :meth:`brut` gardent le taux plein, la
+    borne haute que la page Coût prête à la masse des pensions.
     """
 
     csg_taux_plein: float
@@ -604,10 +603,15 @@ class PrelevementsPension:
 
     def seuil(self, tranche: TrancheCsgPension, parts: float) -> float | None:
         """Le seuil qui borne ``tranche`` pour un foyer de ``parts`` parts :
-        celui de la première part, majoré pour chaque demi-part de plus."""
+        celui de la première part, majoré pour chaque demi-part de plus, et
+        d'une demi-majoration pour un quart de part, comme le fait la calculette
+        fiscale de l'Agirc-Arrco (au demi-euro près, qu'elle arrondit au-dessus).
+        Sans arrondi du nombre de demi-parts : ``round`` arrondit 0,5 à 0, quand
+        ``Math.round`` l'arrondit à 1, et les deux moteurs divergeaient à 1,25
+        part."""
         if tranche.revenu_fiscal_maximum is None:
             return None
-        demi_parts = round(2.0 * (parts - 1.0))
+        demi_parts = 2.0 * (parts - 1.0)
         return (tranche.revenu_fiscal_maximum
                 + (tranche.majoration_demi_part or 0.0) * demi_parts)
 

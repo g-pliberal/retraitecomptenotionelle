@@ -238,10 +238,11 @@ export class ProfilRemuneration {
  *
  * Une pension n'est pas un salaire : aucune cotisation sociale, puisqu'on
  * n'acquiert plus de droits ; aucun abattement pour frais professionnels ; et
- * un taux de CSG propre. **Le dépôt retient le TAUX PLEIN pour tout le monde**,
- * faute de connaître le revenu fiscal du foyer dont la loi le fait dépendre :
- * la convention surestime donc le prélèvement sur les petites pensions, qui
- * seraient exonérées.
+ * un taux de CSG propre. Le taux est celui de la TRANCHE du foyer (`tranche`) :
+ * son revenu fiscal de référence, que la saisie dit ou que le simulateur
+ * présume de ses pensions (fiche `csg_des_pensions_selon_le_revenu`), et ses
+ * parts. `tauxTotal`, `net` et `brut` gardent le taux plein, la borne haute
+ * que la page Coût prête à la masse des pensions.
  */
 export class PrelevementsPension {
   constructor(fiche) {
@@ -277,13 +278,14 @@ export class PrelevementsPension {
 
   /**
    * Le seuil qui borne `tranche` pour un foyer de `parts` parts : celui de la
-   * première part, majoré pour chaque demi-part de plus.
+   * première part, majoré pour chaque demi-part de plus, et d'une
+   * demi-majoration pour un quart de part (jumeau de `seuil` en Python).
    */
   seuil(tranche, parts) {
     if (tranche.revenu_fiscal_maximum === null || tranche.revenu_fiscal_maximum === undefined) {
       return null;
     }
-    const demiParts = Math.round(2 * (parts - 1));
+    const demiParts = 2 * (parts - 1);
     return tranche.revenu_fiscal_maximum + (tranche.majoration_demi_part ?? 0) * demiParts;
   }
 

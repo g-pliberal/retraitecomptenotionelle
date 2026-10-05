@@ -15,6 +15,9 @@ réforme ne change pas ses prélèvements, décidée par le propriétaire le
 from __future__ import annotations
 
 import dataclasses
+import json
+import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -182,6 +185,45 @@ def test_les_seuils_de_la_csg_par_parts(pensions, revenu, parts, tranche):
     demi-part ; les deux premiers comprennent leur seuil (« n'excède pas »,
     « inférieurs ou égaux »), le taux médian non (« inférieurs »)."""
     assert pensions.tranche(float(revenu), float(parts)).libelle == tranche
+
+
+@pytest.mark.parametrize("revenu, parts, tranche", [
+    (14790, 1.25, "exonéré"), (14791, 1.25, "taux réduit"),
+    (30004, 1.25, "taux médian"), (30005, 1.25, "taux plein"),
+])
+def test_un_quart_de_part_vaut_une_demi_majoration(pensions, revenu, parts, tranche):
+    """La calculette fiscale de l'Agirc-Arrco (2026) majore les seuils d'un
+    quart de part de la moitié de la demi-part : 14 790 € et 30 005 € à 1,25
+    part. Le seuil du taux réduit, 19 334,50 €, y est arrondi à 19 335 €."""
+    assert pensions.tranche(float(revenu), float(parts)).libelle == tranche
+
+
+_SEUILS_JS = """
+import { PrelevementsPension } from "./moteur/js/remuneration.js";
+const { fiche, parts } = JSON.parse(process.argv[1]);
+const pensions = new PrelevementsPension(fiche);
+process.stdout.write(JSON.stringify(parts.map((p) =>
+  pensions.bareme_csg.map((tranche) => pensions.seuil(tranche, p)))));
+"""
+
+
+def test_le_portage_javascript_rend_les_memes_seuils_a_toute_part(pensions):
+    """Python arrondissait le nombre de demi-parts par ``round`` (0,5 → 0),
+    JavaScript par ``Math.round`` (0,5 → 1) : à 1,25 et 2,25 parts, les deux
+    moteurs ne mettaient pas le même revenu dans la même tranche."""
+    parts = [1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 3.0, 4.5]
+    attendu = [[pensions.seuil(tranche, p) for tranche in pensions.bareme_csg] for p in parts]
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    with open(RACINE / "data/reference/legislation/prelevements_remuneration.yaml",
+              encoding="utf-8") as flux:
+        fiche = yaml.safe_load(flux)["pensions"]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _SEUILS_JS,
+         json.dumps({"fiche": fiche, "parts": parts}, default=str)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    assert json.loads(execution.stdout) == attendu
 
 
 def test_l_abattement_de_10_pour_cent(pensions):

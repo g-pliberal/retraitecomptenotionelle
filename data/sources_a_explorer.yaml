@@ -360,7 +360,30 @@ sources:
       Elle donne les taux de CSG, CRDS, Casa et l'assiette fiscale des
       pensions complémentaires, lisibles directement dans le source plutôt
       que déduits d'une prose. À lire ligne à ligne, c'est un barème exécutable.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue ligne à ligne et rejouée sous node le 5 octobre 2026 (empreinte
+      sha256:f194ff13691db644c8dc39dc822840cc942bbb67f5164ae6b96ac3e4350c5970).
+      Elle ne porte pas l'assiette fiscale, seulement la part déductible de la CSG
+      (5,9 points sur 8,3, 4,2 sur 6,6, 3,8 en entier). Ses taux, ses seuils de
+      2026 et son lissage sont ceux du dépôt, à l'euro près, et ceux de L. 136-8
+      revalorisés chaque année :
+      data/reference/regles/csg_des_pensions_selon_le_revenu.yaml, en lecture.
+      Elle a fait trouver trois défauts au dépôt, corrigés : le commentaire du
+      barème (data/reference/legislation/prelevements_remuneration.yaml) mettait
+      26 472 € au taux médian, que III bis 2° (« inférieurs à ») met au taux
+      plein, comme la donnée et le code ; la docstring de PrelevementsPension,
+      dans les deux moteurs, disait encore le taux plein pour tout le monde ; et
+      les deux moteurs arrondissaient différemment le nombre de demi-parts (round
+      et Math.round), en désaccord à 1,25 part, que la calculette compte pour une
+      demi-majoration (tests/test_net_pensions.py). Ses propres défauts, en
+      lecture divergente à la fiche : au-delà de trois parts, la moitié de la
+      majoration légale par demi-part ; une saisie « 1.0 » prise pour trois
+      parts ; le lissage perdu sans les parts de l'antépénultième année. Elle
+      exonère sous le premier seuil la cotisation d'Alsace-Moselle (1,30 %, 1,19 %
+      au régime agricole), que le dépôt ne prélève pas. L'orphelin y paie la CSG,
+      la CRDS et la CASA, sans le 1 % maladie.
 
   - id: agirc_arrco_points_obtenus
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/points-de-retraite-comment-sont-ils-obtenus/

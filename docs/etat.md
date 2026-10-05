@@ -28,7 +28,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à vérifier | 1 |
 
 - Confrontées à au moins un exemple officiel : **46 sur 156** (151 exemples : 141 reproduits, 10 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **47 sur 156**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Citées dans le code par leur identifiant : **48 sur 156**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **43 sur 156**, par 2 292 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **48 sur 156**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **49 sur 156**, soit 199 versions, dont 27 supposées ; le partage des versions se contrôle sur chacune.
@@ -247,7 +247,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris
   - 142. Les simulateurs officiels, sans y passer ses journées
   - 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés
-- **Les sources à exploiter** : 117 à explorer sur 320 (73 explorées, 91 épuisées). 11 d'entre elles visent un régime partiel, et pourraient le compléter :
+- **Les sources à exploiter** : 117 à explorer sur 320 (73 explorées, 92 épuisées). 11 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Caisse nationale d'assurance vieillesse des professions libérales, régime de base : 7 source(s) (mon_entreprise_comparaison_ei, cnavpl_wordpress, cavec_wordpress…)
   - Régime des artistes-auteurs professionnels (IRCEC) : 2 source(s) (cnav_arrierees_artiste_auteur, mon_entreprise_artiste_auteur)
   - Complémentaire des agents généraux d'assurance (CAVAMAC) : 1 source(s) (cavamac_wordpress)
