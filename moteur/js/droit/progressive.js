@@ -44,7 +44,8 @@ export const DUREES = [["1988-05-04", 150], ["1993-08-28", 160], ["2006-06-08", 
 /**
  * Les régimes de base où l'assuré qui y travaille à temps partiel peut la
  * demander : ceux de la loi de 1988, puis, le 1er septembre 2023, ceux des
- * décrets n° 2023-751 et 2023-753.
+ * décrets n° 2023-751 et 2023-753, et les IEG (annexe 3 au statut national,
+ * article 21-1).
  */
 export const REGIMES_1988 = new Set([
   "regime_general", "msa_salaries", "cancava", "organic", "rsi", "msa_non_salaries",
@@ -52,6 +53,7 @@ export const REGIMES_1988 = new Set([
 export const FONCTION_PUBLIQUE = new Set(["fonction_publique_etat", "cnracl", "fspoeie"]);
 export const REGIMES_2023 = new Set([
   ...REGIMES_1988, ...FONCTION_PUBLIQUE, "cnavpl", "cnbf", "crpcen", "opera_de_paris", "mines",
+  "ieg",
 ]);
 /**
  * Ceux où elle liquide à titre provisoire avant 2023 : les régimes que nomme

@@ -175,6 +175,8 @@ versions:
      en_vigueur: 2023-09-01}
   - {id: LEGIARTI000047960290, article: "décret n° 2004-1056, article 34 sexies (FSPOEIE)",
      en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047908882, article: "annexe 3 au statut national des IEG, article 21-1",
+     en_vigueur: 2023-09-01}
   nee_de: JORFARTI000047445113
   bornes:
     liquidation.date_effet: [2023-09-01, 2025-09-01]
@@ -253,8 +255,9 @@ approximations:
   effet: non mesuré
 - ecart: >-
     avant 2023, les régimes spéciaux ne liquident rien avec la retraite progressive, et
-    depuis, seuls ceux que les décrets n° 2023-751 et 2023-753 nomment l'ouvrent à qui y
-    travaille ; les autres (SNCF, RATP, IEG, Banque de France, marins) liquident à titre
+    depuis, seuls ceux que les décrets n° 2023-751 et 2023-753 nomment, et les IEG, dont
+    l'annexe 3 au statut rend le code applicable (article 21-1), l'ouvrent à qui y
+    travaille ; les autres (SNCF, RATP, Banque de France, marins) liquident à titre
     provisoire la pension de qui a travaillé chez eux, L. 161-22-1-5 visant tous les
     régimes de base, mais leurs décrets propres ne sont pas relus
   effet: non mesuré

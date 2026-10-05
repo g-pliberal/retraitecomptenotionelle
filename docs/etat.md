@@ -38,8 +38,8 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 427 |
-| sans effet | 58 |
+| rattachées à une version | 428 |
+| sans effet | 57 |
 | à rattacher | 341 |
 | à examiner | 770 |
 | sans statut | 10 021 |

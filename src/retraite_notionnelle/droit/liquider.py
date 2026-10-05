@@ -2360,7 +2360,8 @@ def borne_de_la_duree(moteur, periode: PeriodeRegime, carriere: Carriere,
     alinéa à la RATP, aux IEG, à la CRPCEN, à la Comédie-Française et à
     l'Opéra). La CNIEG l'applique ainsi : Madame D, 165 trimestres requis,
     quatre cotisés depuis l'ouverture de son droit, n'en compte pas plus de
-    onze par la durée (circulaire n° 2024/15, § 4). ``cible`` est la durée
+    onze par la durée (page « Décote » de son site ; la circulaire n° 2024/15,
+    § 4, en donne un autre, à dix-huit). ``cible`` est la durée
     que le 2° oppose, abaissée à la SNCF pour la décote (article 35, II).
     Les trimestres d'après l'ouverture se comptent au mois près, jusqu'à la
     date d'effet de la pension.

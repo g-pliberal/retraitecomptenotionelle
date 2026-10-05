@@ -77,6 +77,12 @@ def test_la_duree_exigee_et_les_regimes_suivent_leurs_textes():
     assert {"cnavpl", "cnbf", "crpcen"} <= progressive.regimes_ouverts(DateMois(2023, 9))
     assert "fonction_publique_etat" not in progressive.regimes_ouverts(DateMois(2023, 8))
     assert "cnracl" in progressive.regimes_ouverts(DateMois(2023, 9))
+    # Les IEG aussi, par leur statut (annexe 3, article 21-1, depuis le
+    # 1er septembre 2023) ; la SNCF et la RATP, dont les décrets ne sont pas
+    # relus, non.
+    assert "ieg" not in progressive.regimes_ouverts(DateMois(2023, 8))
+    assert "ieg" in progressive.regimes_ouverts(DateMois(2023, 9))
+    assert "sncf" not in progressive.regimes_ouverts(DateMois(2023, 9))
     assert progressive.regimes_liquides(DateMois(2023, 9)) is None
 
 

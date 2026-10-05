@@ -22,7 +22,8 @@ La demande est ouverte :
   pensions, article 49 bis du décret n° 2003-1306, article 34 bis du décret
   n° 2004-1056), les libéraux — L. 643-8-1 ne la leur ouvrait que « dans des
   conditions fixées par décret », jamais paru —, les avocats, les clercs de
-  notaire, l'Opéra de Paris et les mines (décrets n° 2023-751 et 2023-753).
+  notaire, l'Opéra de Paris et les mines (décrets n° 2023-751 et 2023-753), et
+  les IEG (annexe 3 au statut national, article 21-1).
   Elle liquide à titre provisoire les régimes que nomme L. 351-15, professions
   libérales comprises, puis, depuis 2023, tous les régimes de base
   (L. 161-22-1-5) ; les complémentaires qui suivent un régime qui la sert
@@ -89,13 +90,14 @@ DUREES = (("1988-05-04", 150), ("1993-08-28", 160), ("2006-06-08", 150))
 
 #: Les régimes de base où l'assuré qui y travaille à temps partiel peut la
 #: demander : ceux de la loi de 1988, puis, le 1er septembre 2023, ceux des
-#: décrets n° 2023-751 et 2023-753.
+#: décrets n° 2023-751 et 2023-753, et les IEG, dont le statut rend la retraite
+#: progressive du code applicable à la même date (annexe 3, article 21-1).
 REGIMES_1988 = frozenset({
     "regime_general", "msa_salaries", "cancava", "organic", "rsi", "msa_non_salaries",
 })
 FONCTION_PUBLIQUE = frozenset({"fonction_publique_etat", "cnracl", "fspoeie"})
 REGIMES_2023 = REGIMES_1988 | FONCTION_PUBLIQUE | {
-    "cnavpl", "cnbf", "crpcen", "opera_de_paris", "mines",
+    "cnavpl", "cnbf", "crpcen", "opera_de_paris", "mines", "ieg",
 }
 #: Ceux où elle liquide à titre provisoire avant 2023 : les régimes que nomme
 #: L. 351-15, les professions libérales comprises. Depuis, tous les régimes

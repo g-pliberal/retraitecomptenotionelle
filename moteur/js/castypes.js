@@ -124,7 +124,7 @@ export const CAS_TYPES = [
     regle_liquidation: "ouverture",
     commentaire: "Régime spécial fermé aux embauches depuis 2023. L'âge "
       + "d'ouverture y est celui du millésime de départ : cinquante-cinq ans "
-      + "jusqu'en 2016, cinquante-neuf à compter de 2027.",
+      + "jusqu'en 2016, cinquante-neuf à compter de 2034.",
   },
   {
     code: "artisan",
