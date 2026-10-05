@@ -2443,7 +2443,7 @@ class ValeursPoint:
     #: point (``conventions_points`` de ``macro/hypotheses_projection.yaml``).
     INDICES_DES_CONVENTIONS = ("prix", "salaire_moyen")
 
-    def __init__(self, racine: Path) -> None:
+    def __init__(self, racine: Path, conventions: bool = False) -> None:
         self._table: dict[tuple[str, str], dict[int, tuple[float, Fiabilite]]] = {}
         #: Ce que suit le prix d'achat au-delà du dernier barème publié :
         #: régime -> (indice, décalage en années, fiabilité du prix prolongé).
@@ -2454,10 +2454,12 @@ class ValeursPoint:
                                       list[tuple[float, Fiabilite]]]] = {}
         #: Ce que le COR suppose d'une valeur du point au-delà du dernier
         #: barème : (régime, mesure) -> lignes (depuis, indice, écart,
-        #: décalage), dans l'ordre. Voir :meth:`indice_convenu`.
+        #: décalage), dans l'ordre. Voir :meth:`indice_convenu`. Vide sans
+        #: ``conventions`` : ce que lit le simulateur individuel
+        #: (``Parametres.conventions_cor``).
         self._conventions: dict[tuple[str, str], list[tuple[int, str, float, int]]] = {}
         hypotheses = racine / "reference" / "macro" / "hypotheses_projection.yaml"
-        if hypotheses.exists():
+        if conventions and hypotheses.exists():
             conventions = charger_yaml(hypotheses).get("conventions_points") or {}
             for regime, mesures in conventions.items():
                 for mesure, lignes in mesures.items():
@@ -2737,7 +2739,8 @@ class ScenarioActuel:
         self.affiliations = affiliations
         self.parametres = parametres
         self.rendements = Rendements(parametres.racine_donnees)
-        self.valeurs_point = ValeursPoint(parametres.racine_donnees)
+        self.valeurs_point = ValeursPoint(parametres.racine_donnees,
+                                          parametres.conventions_cor)
         self.conversions_points = ConversionsPoints(parametres.racine_donnees)
         self.classes = ClassesCotisation(parametres.racine_donnees)
         self.grilles = SalairesForfaitaires(parametres.racine_donnees)

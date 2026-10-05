@@ -1924,6 +1924,10 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                 liquidation: str = "droit",
                 ) -> tuple[list[Pensionne], dict[str, int]]:
     """Simule la grille et en tire, pour chaque couple, sa pension par système."""
+    # La page Coût se lit contre le COR : elle suit ses conventions de
+    # projection (``Parametres.conventions_cor``), que le simulateur
+    # individuel ne suit pas.
+    simulateur = simulateur.pour_la_projection()
     grille = calculer_cas_types(simulateur, cas_types, generations(), liquidation)
     # Ce que le droit en vigueur prélève sur chacune de ces carrières, année par
     # année et sans bascule : le dénominateur du rapport de recettes. Un compte
@@ -3803,8 +3807,9 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     horizon = HORIZON_ENGAGEMENTS
+    # Sous les conventions du COR, comme la grille (:func:`_pensionnes`).
     revalorisation = RevalorisationServie(
-        simulateur,
+        simulateur.pour_la_projection(),
         min((p.annee_liquidation for p in pensionnes), default=horizon) - _DEMI_TRANCHE,
         horizon,
     )
@@ -4020,8 +4025,9 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     # de la page — les années publiées et la projection. Elle part de la plus
     # ancienne liquidation de la grille, parce qu'un coefficient ne se rattrape
     # pas : il se cumule depuis le départ en retraite.
+    # Sous les conventions du COR, comme la grille (:func:`_pensionnes`).
     revalorisation = RevalorisationServie(
-        simulateur,
+        simulateur.pour_la_projection(),
         min((p.annee_liquidation for p in pensionnes), default=HORIZON) - _DEMI_TRANCHE,
         HORIZON,
     )

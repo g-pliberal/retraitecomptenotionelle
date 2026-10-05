@@ -345,7 +345,10 @@ export function partsConvenues(pensionne, revalorisation) {
 }
 
 /** Simule la grille et en tire, pour chaque couple, sa pension par système. */
-function pensionnes(simulateur, casTypes, liquidation = "droit") {
+function pensionnes(simulateurIndividuel, casTypes, liquidation = "droit") {
+  // La page Coût se lit contre le COR : elle suit ses conventions de
+  // projection, que le simulateur individuel ne suit pas.
+  const simulateur = simulateurIndividuel.pourLaProjection();
   const grille = calculerCasTypes(simulateur, casTypes, generations(), liquidation);
   const liste = [];
   for (const [cle, comparaison] of grille.resultats) {
@@ -2738,7 +2741,9 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   const premiereLiquidation = liste.length
     ? Math.min(...liste.map((p) => p.anneeLiquidation)) - DEMI_TRANCHE
     : HORIZON;
-  const revalorisation = new RevalorisationServie(simulateur, premiereLiquidation, HORIZON);
+  // Sous les conventions du COR, comme la grille (`pensionnes`).
+  const revalorisation = new RevalorisationServie(simulateur.pourLaProjection(),
+    premiereLiquidation, HORIZON);
 
   // La garantie vieillesse ne se lit pas sur la grille mais sur la
   // distribution des pensions ; la grille dit seulement de combien cette

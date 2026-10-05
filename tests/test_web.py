@@ -3323,12 +3323,8 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # Deux tableaux sur l'accueil : celui qui oppose les deux systèmes terme à
     # terme, et celui du plancher — l'argument le plus parlant du site, remonté
     # en haut de page par la revue de septembre 2026. Plus l'entrée, deux
-    # lignes et un bouton qui disent que le site est un simulateur. Les
-    # tableaux ont 245 mots, et non 240, depuis le 5 octobre 2026 : l'ordre de
-    # grandeur de la baisse, CALCULÉ (`ordreDeGrandeur`), peut s'écrire en une
-    # fraction ou en deux — « d'un cinquième à un quart » —, et l'étape 4 de
-    # l'action 147 l'a fait passer de l'une à l'autre.
-    "/": (470, 0, 2, 245),
+    # lignes et un bouton qui disent que le site est un simulateur.
+    "/": (470, 0, 2, 240),
     "/simuler": (1500, 0, 0, 0),
     # Partager ne porte que des cartes : leur texte est court par
     # construction — il doit tenir dans une image de 1200 × 675.

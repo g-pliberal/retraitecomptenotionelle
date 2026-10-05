@@ -2440,7 +2440,7 @@ const TAUX_DE_LA_GARANTIE = 0.16;
 
 
 export class ValeursPoint {
-  constructor(paquet) {
+  constructor(paquet, conventions = false) {
     this._table = new Map();
     for (const [cle, valeurs] of Object.entries(paquet.valeurs_point)) {
       const annees = Object.keys(valeurs).map(Number).sort((a, b) => a - b);
@@ -2459,7 +2459,10 @@ export class ValeursPoint {
     // Ce que le COR suppose d'une valeur du point au-delà du dernier barème :
     // « régime|mesure » -> lignes [depuis, indice, écart, décalage], dans
     // l'ordre (`conventions_points` de `macro/hypotheses_projection.yaml`).
-    this._conventions = new Map(Object.entries(paquet.conventions_points ?? {}));
+    // Vide sans `conventions` : ce que lit le simulateur individuel
+    // (`conventions_cor`).
+    this._conventions = new Map(
+      conventions ? Object.entries(paquet.conventions_points ?? {}) : []);
   }
 
   /**

@@ -269,6 +269,7 @@ export function carriereCasType(cas, simulateur, generation, ageLiquidation) {
     part_primes: cas.part_primes,
     identifiant: `${cas.libelle} (génération ${generation})`,
   });
+  if (!simulateur.parametres.conventions_cor) return carriere;
   return primesProjetees(carriere, simulateur.macro);
 }
 

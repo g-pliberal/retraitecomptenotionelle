@@ -4094,6 +4094,67 @@ function arrondisQuiSadditionnent(parts, total) {
  * cotisation maladie de 1 % sur son assiette : les étages nets font ainsi le
  * total net, que la page calcule au taux de la personne.
  */
+/**
+ * Les hypothèses de projection du COR que la page Coût suit et que le
+ * simulateur individuel ne suit pas (`conventions_cor`, config.py) : dites
+ * sous un point d'interrogation, à côté des chiffres qu'elles déplacent.
+ * Décision du propriétaire, le 5 octobre 2026.
+ */
+const HYPOTHESE_AGIRC_ARRCO = "le point de l'Agirc-Arrco suivrait les salaires "
+  + "moins 1,16 % par an jusqu'en 2037, puis moins 0,86 %, une hypothèse que "
+  + "la fédération dit « purement conventionnelle »";
+const HYPOTHESES_DU_COR = `${HYPOTHESE_AGIRC_ARRCO} ; et la part des primes des `
+  + "fonctionnaires monterait jusqu'en 2037, le point d'indice progressant "
+  + "peu, ce qui baisse leur pension, calculée sans les primes";
+
+/** La bulle de la page Coût : sur quelles hypothèses ses chiffres reposent. */
+function bulleHypothesesCout() {
+  return g.bulle(
+    "Sur quelles hypothèses pour l'avenir ?",
+    "Ces chiffres suivent les hypothèses du Conseil d'orientation des "
+    + `retraites pour l'avenir : ${HYPOTHESES_DU_COR}. Ce ne sont pas des `
+    + "règles de droit, mais ce que le COR suppose des décisions à venir ; "
+    + "les suivre, c'est se comparer à lui. Le simulateur, lui, compte vos "
+    + "points à leur valeur d'aujourd'hui, comme « Mon estimation retraite », "
+    + "le simulateur officiel.",
+  );
+}
+
+/**
+ * La bulle du système 1 dans le simulateur, quand la carrière a une
+ * complémentaire Agirc-Arrco liquidée après le dernier barème publié : la
+ * valeur future du point n'est écrite nulle part, et le chiffre suit la
+ * convention du simulateur officiel, non celle du COR que la page Coût suit.
+ */
+function bulleConventionAgircArrco(comparaison, simulateur) {
+  const catalogue = simulateur.catalogue;
+  const valeurs = simulateur.scenarioActuel.valeursPoint;
+  const derniere = valeurs.derniereAnneeServie("agirc_arrco");
+  if (derniere === null || comparaison.carriere.anneeLiquidation <= derniere) return "";
+  const aboutit = (code) => {
+    let courant = code;
+    for (let garde = 0; garde < catalogue.taille + 1 && courant; garde += 1) {
+      if (courant === "agirc_arrco") return true;
+      courant = catalogue.contient(courant) ? catalogue.obtenir(courant).integre_dans : null;
+    }
+    return false;
+  };
+  const complementaire = comparaison.actuel.pensions_par_regime.some(
+    (pension) => pension.montant > 0 && aboutit(pension.regime));
+  if (!complementaire) return "";
+  return g.bulle(
+    "Comment la complémentaire est-elle comptée ?",
+    "Votre complémentaire Agirc-Arrco est comptée à la valeur du point "
+    + "d'aujourd'hui, revalorisée comme les prix jusqu'à votre départ : la "
+    + "convention de « Mon estimation retraite », le simulateur officiel, "
+    + "auquel vous pouvez comparer ce chiffre. La valeur future du point "
+    + "n'est écrite nulle part : les partenaires sociaux la décident chaque "
+    + `année. Le Conseil d'orientation des retraites suppose que ${HYPOTHESE_AGIRC_ARRCO}. `
+    + "La page Coût suit ses hypothèses, et cette part de votre pension y "
+    + "serait un peu plus basse, d'autant plus que votre départ est lointain.",
+  );
+}
+
 function compositionActuelle(comparaison, catalogue, montants, constant) {
   const composition = etagesActuels(comparaison, catalogue, montants.regimesMaladie,
     montants.regimesGeneraux);
@@ -4402,7 +4463,8 @@ function resultats(contexte, saisie, comparaison = contexte.simuler(saisie)) {
 
 
   const bloc = (cle, titre, glose, variation, tauxRemplacement,
-                partCapitalisee = 0.0, partVolontaire = 0.0, composition = "") => {
+                partCapitalisee = 0.0, partVolontaire = 0.0, composition = "",
+                appel = "") => {
     const montant = constants[cle];
     const variationHtml = variation === null
       ? '<span class="discret">référence</span>'
@@ -4495,7 +4557,7 @@ function resultats(contexte, saisie, comparaison = contexte.simuler(saisie)) {
         <span class="categorie">${partVolontaire > 0 ? "retraite jusqu'à"
     : "retraite"}</span>
         <span class="somme">${g.nombre(montants.pension(montant) / 12, 0)}</span>
-        <span class="unite">${montants.unitePension}</span>
+        <span class="unite">${montants.unitePension}</span>${appel}
       </span>${chiffreFinance}
     </span>
   </div>${partage}
@@ -4512,7 +4574,8 @@ function resultats(contexte, saisie, comparaison = contexte.simuler(saisie)) {
     "le droit en vigueur, minima et majorations compris",
     ecarts.actuel, comparaison.tauxRemplacementActuel, 0.0, 0.0,
     compositionActuelle(comparaison, contexte.simulateur(comparaison.parametres).catalogue,
-      montants, constants.actuel))
+      montants, constants.actuel),
+    bulleConventionAgircArrco(comparaison, contexte.simulateur(comparaison.parametres)))
     + bloc("retroactif", "2. Ce que vous avez cotisé, part salariale seule",
       "toute la carrière recalculée depuis 1941, sur la seule part "
       + "salariale — 11,3 % du brut pour un salarié du privé",
@@ -7540,7 +7603,7 @@ function cout(contexte, regards = null) {
 <strong>L'écart va se creuser</strong> : en ${solde.derniereAnnee} il
 manquerait
 ${g.pourcentage(Math.abs(horizon.solde("actuel") / horizon.depense("actuel")), false, 0)}
-de la facture. En comptes notionnels dès ${bascule}, ${retourEquilibre}.`,
+de la facture. En comptes notionnels dès ${bascule}, ${retourEquilibre}.${bulleHypothesesCout()}`,
     bilan,
     `Sources : DREES jusqu'en ${solde.premiereAnnee - 1}, Conseil
 d'orientation des retraites ensuite — c'est lui qui projette, pas nous. En
@@ -8894,7 +8957,7 @@ function coutFourchette(contexte) {
       g.pourcentage(c.detteDerive.horizon(scenario), false, 0)],
   ];
   return `
-<h4>La fourchette que cet écart impose</h4>
+<h4>La fourchette que cet écart impose${bulleHypothesesCout()}</h4>
 <p>Le rapport que la page prend au modèle porte l'écart que le point de
 vigilance décrit, et deux lectures l'encadrent. <strong>Si l'écart est partagé
 par tous les systèmes</strong>, parce que la grille compte mal qui part, quand
@@ -8907,9 +8970,9 @@ le rapport doit grandir d'autant, de ${g.pourcentage(horizon.derive - 1, false, 
 en ${fin}. Le COR attribue la baisse de sa pension moyenne relative à des
 règles du droit en vigueur, qui tirent vers la seconde lecture, et à des effets
 de population, l'âge des retraités ou des carrières françaises courtes, qui
-tirent vers la première. La convention de l'Agirc-Arrco, mesurée, n'explique
-qu'une petite part de l'écart, et la page ne sait pas encore situer la vérité
-entre les deux lectures : c'est la seconde qui borne, par le haut, ce que la
+tirent vers la première. Les deux hypothèses du COR que la page suit, sur
+l'Agirc-Arrco et les primes des fonctionnaires, n'en expliquent qu'une petite
+part, et la page ne sait pas encore situer la vérité entre les deux lectures : c'est la seconde qui borne, par le haut, ce que la
 proposition coûterait.</p>
 ${g.tableau(
     ["La proposition libérale", "Si l'écart est partagé (cette page)",

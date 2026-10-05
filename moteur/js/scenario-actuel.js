@@ -59,7 +59,7 @@ export class ScenarioActuel {
     this.affiliations = affiliations;
     this.parametres = parametres;
     this.rendements = new Rendements(paquet);
-    this.valeursPoint = new ValeursPoint(paquet);
+    this.valeursPoint = new ValeursPoint(paquet, Boolean(parametres.conventions_cor));
     this.conversionsPoints = new ConversionsPoints(paquet);
     this.classes = new ClassesCotisation(paquet);
     this.grilles = new SalairesForfaitaires(paquet);

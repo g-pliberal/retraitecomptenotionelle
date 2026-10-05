@@ -5548,3 +5548,15 @@ journal:
       décrochage du salaire total des fonctionnaires en 2026-2027 (même note 40), que le
       modèle ne suit pas ; l'écart restant à l'Agirc-Arrco et à la fonction publique
       d'État, que les conventions n'expliquent pas.
+  - date: "2026-10-05"
+    session: "action 147, étape 4 bis : les conventions du COR pour la seule page Coût"
+    consulte: >-
+      Rien de nouveau : les sources de l'étape 4 (rapport du COR de juin 2026,
+      encadré « Le pilotage de l'Agirc-Arrco » ; annexe méthodologique, note 40).
+    trouve: >-
+      Aucun texte. Le scénario 1 du simulateur individuel retrouve la convention de
+      « Mon estimation retraite » pour la valeur future du point Agirc-Arrco ; la page
+      Coût garde celle du COR, et une bulle dit laquelle s'applique.
+    reste: >-
+      Ce que l'étape 4 laissait : la décision du conseil d'administration de
+      l'Agirc-Arrco du 14 octobre 2026, et l'écart restant au COR.

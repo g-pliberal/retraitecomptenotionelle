@@ -892,8 +892,10 @@ def _prolongement_points() -> dict:
 
 def _conventions_points() -> dict:
     """Ce que le COR suppose d'une valeur du point au-delà du dernier
-    barème : ``regime|mesure`` -> lignes [depuis, indice, écart, décalage]."""
-    valeurs = ValeursPoint(DONNEES)
+    barème : ``regime|mesure`` -> lignes [depuis, indice, écart, décalage].
+    Le paquet les porte toutes ; le moteur ne les lit que sous
+    ``conventions_cor``."""
+    valeurs = ValeursPoint(DONNEES, conventions=True)
     return {
         f"{regime}|{mesure}": [list(ligne) for ligne in lignes]
         for (regime, mesure), lignes in sorted(valeurs._conventions.items())

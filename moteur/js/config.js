@@ -274,6 +274,10 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: l'espérance de vie résiduelle actualisée au même taux que l'indexation,
   //: les deux se compensant exactement.
   taux_anticipe_conversion: 0.0,
+  //: Les conventions de projection du COR pour le scénario 1 (valeur du
+  //: point de l'Agirc-Arrco, primes des fonctionnaires) : la page Coût les
+  //: suit, le simulateur individuel non. Voir config.py.
+  conventions_cor: false,
   //: Âge de conversion des droits figés à la bascule, dans le scénario
   //: prospectif. ``reference`` fait payer l'anticipation une seconde fois sur
   //: des droits déjà ouverts ; ``liquidation`` rend la conversion neutre.

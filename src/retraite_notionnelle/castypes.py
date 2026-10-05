@@ -122,6 +122,8 @@ class CasType:
             part_primes=self.part_primes,
             identifiant=f"{self.libelle} (génération {generation})",
         )
+        if not simulateur.parametres.conventions_cor:
+            return carriere
         return primes_projetees(carriere, simulateur.macro)
 
 
@@ -138,8 +140,10 @@ def primes_projetees(carriere: Carriere, macro) -> Carriere:
     Le cas type tenait sa part constante, et la pension de la fonction
     publique, liquidée sur le traitement, en suivait le salaire moyen ; celle
     des systèmes notionnels, qui cotisent sur la rémunération entière, ne
-    bouge pas. Seuls les cas types la suivent : une personne qui saisit sa
-    part des primes dit la sienne, et le simulateur la garde.
+    bouge pas. Seuls les cas types la suivent, et sous
+    ``Parametres.conventions_cor`` seulement, que la page Coût allume : une
+    personne qui saisit sa part des primes dit la sienne, et la page Cas types
+    montre le droit des carrières, non une projection du COR.
     """
     lignes = [
         replace(ligne, part_primes=1.0 - (1.0 - ligne.part_primes)

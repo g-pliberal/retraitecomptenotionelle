@@ -2220,9 +2220,20 @@ def test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme(sim
     moyen moins 0,86 point : la convention du COR (rapport de juin 2026,
     encadré « Le pilotage de l'Agirc-Arrco »), que ``conventions_points``
     porte ; la valeur de service suit le salaire moyen moins 1,16 point de
-    2027 à 2037, sur l'année en cours.
+    2027 à 2037, sur l'année en cours. Ces conventions ne valent que pour la
+    page Coût (``Parametres.conventions_cor``) : le simulateur individuel
+    garde le salaire moyen pour le prix d'achat, et les prix pour la valeur de
+    service, comme « Mon estimation retraite ».
     """
-    scenario = simulateur.scenario_actuel
+    individuel = simulateur.scenario_actuel
+    assert not individuel.valeurs_point.regimes_convenus("valeur_service")
+    reference_individuelle = individuel.valeurs_point.achat("agirc_arrco", 2026)[0]
+    prolonge_individuel = individuel.valeurs_point.achat_prolonge(
+        "agirc_arrco", 2046, individuel.macro)[0]
+    assert prolonge_individuel == pytest.approx(
+        reference_individuelle * individuel.macro.coefficient_salaire_moyen(2025, 2045),
+        rel=1e-12)
+    scenario = simulateur.pour_la_projection().scenario_actuel
     macro, valeurs = scenario.macro, scenario.valeurs_point
     derniere = max(a for a in range(2019, 2101)
                    if valeurs.achat("agirc_arrco", a) is not None)

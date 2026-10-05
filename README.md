@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1222<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->6 531<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1224<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->6 536<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -487,7 +487,7 @@ cadre entré à <!--chiffre:mesure(constante?de=construire_tableaux_md&nom=AGE_D
 | 1930 | 1950-1992 | -89,0 % | -87,2 % | +1,8 pt |
 | 1945 | 1965-2007 | -84,7 % | -84,7 % | 0,0 pt |
 | 1958 | 1978-2020 | -80,4 % | -80,9 % | **-0,5 pt** |
-| 1990 | 2010-2052 | -77,7 % | -77,7 % | -0,1 pt |
+| 1990 | 2010-2052 | -77,9 % | -78,0 % | 0,0 pt |
 <!-- generations:fin -->
 
 L'écart change même de signe pour les carrières entièrement postérieures à
@@ -596,7 +596,7 @@ lissage, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=3)-->-82,2<
 
 Et un résultat qui recadre tout le reste : même sous la règle par défaut, la masse
 salariale, le scénario rétroactif reste loin sous le système actuel — de <!--chiffre:mesure(ecart?scenario=2&generation=1990)-->-74<!--/--> % (génération 1990) à <!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-83<!--/--> % (1930) au
-scénario 2, de <!--chiffre:mesure(ecart?scenario=4&generation=1990)-->-36<!--/--> % à <!--chiffre:mesure(ecart?scenario=4&generation=1930)-->-56<!--/--> % avec la cotisation entière au scénario 4. L'indexation explique
+scénario 2, de <!--chiffre:mesure(ecart?scenario=4&generation=1990)-->-37<!--/--> % à <!--chiffre:mesure(ecart?scenario=4&generation=1930)-->-56<!--/--> % avec la cotisation entière au scénario 4. L'indexation explique
 donc une part importante de l'écart, mais pas la totalité : le reste tient à ce
 que le système actuel sert plus qu'un compte strictement contributif.
 

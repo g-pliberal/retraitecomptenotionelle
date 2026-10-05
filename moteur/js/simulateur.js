@@ -780,6 +780,20 @@ export class Simulateur {
    * connaître de la mécanique des régimes ; pour une carrière qui en compte
    * plusieurs, voir {@link carriereParcours}.
    */
+  /**
+   * Le même simulateur, sous les conventions de projection du COR
+   * (`conventions_cor`) : celui de la page Coût. Construit une fois, puis
+   * gardé. Voir simulateur.py.
+   */
+  pourLaProjection() {
+    if (this.parametres.conventions_cor) return this;
+    if (this._projection === undefined) {
+      this._projection = new Simulateur(this.paquet,
+        { ...this.parametres, conventions_cor: true });
+    }
+    return this._projection;
+  }
+
   carriereSimple(options) {
     this._verifierAffiliation(options.affiliation);
     return Carriere.depuisProfil({ ...options, macro: this.macro });

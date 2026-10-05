@@ -1167,6 +1167,20 @@ class Simulateur:
 
     # -- usage ---------------------------------------------------------------
 
+    def pour_la_projection(self) -> "Simulateur":
+        """Le même simulateur, sous les conventions de projection du COR
+        (``Parametres.conventions_cor``) : celui de la page Coût. Construit
+        une fois, puis gardé."""
+        if self.parametres.conventions_cor:
+            return self
+        jumeau = self.__dict__.get("_projection")
+        if jumeau is None:
+            from dataclasses import replace
+
+            jumeau = Simulateur(replace(self.parametres, conventions_cor=True))
+            self.__dict__["_projection"] = jumeau
+        return jumeau
+
     def carriere_simple(self, annee_naissance: int, sexe: str, affiliation: str,
                         age_debut: float, age_liquidation: float, **kwargs) -> Carriere:
         """Construit une carrière d'un seul métier, à partir de cinq informations.

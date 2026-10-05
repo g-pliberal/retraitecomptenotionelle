@@ -647,6 +647,19 @@ class Parametres:
     #: la pension suédoise, à 1,6 %.
     taux_anticipe_conversion: float = 0.0
 
+    #: Les conventions de projection du COR pour le scénario 1 : la valeur du
+    #: point de l'Agirc-Arrco au salaire moyen moins 1,16 point jusqu'en 2037,
+    #: moins 0,86 ensuite, et la part croissante des primes des cas types de
+    #: fonctionnaires (``conventions_points`` et ``traitement_indiciaire`` de
+    #: ``macro/hypotheses_projection.yaml``). La page Coût les suit — c'est
+    #: contre le COR qu'on la lit, et ``calculer_cout`` les allume
+    #: (:meth:`~retraite_notionnelle.simulateur.Simulateur.pour_la_projection`)
+    #: —, le simulateur individuel non : il compte les points à leur valeur
+    #: d'aujourd'hui, revalorisée comme les prix, la convention de « Mon
+    #: estimation retraite », à laquelle un visiteur le compare. Décision du
+    #: propriétaire, le 5 octobre 2026.
+    conventions_cor: bool = False
+
     #: Âge auquel les droits figés à la bascule sont convertis en capital
     #: d'ouverture, dans le scénario prospectif. ``REFERENCE`` applique aux
     #: droits déjà acquis la sanction du départ anticipé ; ``LIQUIDATION`` rend

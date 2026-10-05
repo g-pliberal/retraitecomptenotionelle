@@ -258,19 +258,21 @@ approximations:
     (article 27), et l'annexe de l'accord du 5 octobre 2023 la projette de 2027 à 2037 au
     « Salaire moyen – 1,16 % », soit 1,29 % par an au scénario de référence, 0,46 point
     sous les prix ; « Mon estimation retraite » compte les points à leur « valeur
-    actuelle ». Depuis le 5 octobre 2026 (action 147, étape 4), le modèle suit la
-    convention du COR, qui reprend l'annexe jusqu'en 2037 et passe ensuite les deux
-    valeurs au salaire moyen moins 0,86 % (rapport annuel de juin 2026, encadré « Le
-    pilotage de l'Agirc-Arrco », p. 61) : conventions_points de
-    macro/hypotheses_projection.yaml, pour la valeur de service à la liquidation, la
-    valeur d'achat au-delà de 2037 et, dans les masses de la page Coût, la
-    revalorisation des pensions servies. Le salaire moyen est celui du modèle, non celui
-    du secteur privé ; l'inflation, l'IPC du modèle, non l'inflation hors tabac.
+    actuelle ». Le simulateur individuel suit la page : la valeur de service
+    prolongée par les prix. La page Coût suit, depuis le 5 octobre 2026 (action 147,
+    étapes 4 et 4 bis), la convention du COR, qui reprend l'annexe jusqu'en 2037 et
+    passe ensuite les deux valeurs au salaire moyen moins 0,86 % (rapport annuel de juin
+    2026, encadré « Le pilotage de l'Agirc-Arrco », p. 61) : conventions_points de
+    macro/hypotheses_projection.yaml, sous Parametres.conventions_cor, pour la valeur de
+    service à la liquidation, la valeur d'achat au-delà de 2037 et la revalorisation des
+    pensions servies. Le salaire moyen est celui du modèle, non celui du secteur privé ;
+    l'inflation, l'IPC du modèle, non l'inflation hors tabac.
   effet: >-
-    161 témoins de simulation du scénario 1 baissent, −1,20 % en médiane, jusqu'à −4,1 %
-    pour une carrière qui liquide loin dans l'avenir ; la pension moyenne relative du
+    Aucun sur le simulateur individuel. Sur la page Coût, la pension moyenne relative du
     système actuel projeté recule de 0,5 % de plus en 2070 par la liquidation, de 0,45 %
-    par la revalorisation des pensions servies
+    par la revalorisation des pensions servies ; sous la convention, 161 témoins de
+    simulation du scénario 1 baissaient, −1,20 % en médiane, jusqu'à −4,1 % pour une
+    carrière qui liquide loin dans l'avenir
 sources:
   lu_le: 2026-10-05
   prochaine_relecture: 2026-10-31
@@ -303,9 +305,12 @@ sources:
     une hypothèse de projection financière, non une règle. Le scénario 1 gardait les
     prix, la convention du simulateur officiel, et le disait (§ 3.3, point 5). Le 5
     octobre 2026, le propriétaire a demandé que la page Coût soit « indiscutable » et
-    que la projection suive les conventions du COR : le scénario 1 prend désormais
-    celle du COR, que l'annexe de l'accord de 2023 fonde jusqu'en 2037, et qui reste
-    une hypothèse, que la fédération dit « purement conventionnelle ».
+    que la projection suive les conventions du COR, puis, le même jour, que le
+    simulateur individuel garde celle de « Mon estimation retraite », à laquelle un
+    visiteur le compare : la page Coût prend celle du COR, que l'annexe de l'accord de
+    2023 fonde jusqu'en 2037, et qui reste une hypothèse, que la fédération dit
+    « purement conventionnelle » ; le simulateur garde les prix, et une bulle, sous la
+    pension du système actuel, dit les deux conventions.
   lectures:
   - type: legifrance
     reference: >-
@@ -395,7 +400,9 @@ historique:
   2026-10-05 — la convention du COR (action 147, étape 4) : la valeur de service suivait
   les prix au-delà du dernier barème, avec un an de retard ; elle suit le salaire moyen
   moins 1,16 point de 2027 à 2037, moins 0,86 ensuite, sur l'année en cours, et la
-  valeur d'achat le salaire moyen moins 0,86 point dès 2038.
+  valeur d'achat le salaire moyen moins 0,86 point dès 2038. Le même jour (étape 4
+  bis), à la demande du propriétaire, la convention ne vaut plus que pour la page Coût
+  (Parametres.conventions_cor) ; le simulateur individuel retrouve les prix.
 - >-
   Jusqu'au 4 octobre 2026, les cotisations des années postérieures au dernier barème
   publié passaient par le rendement instantané du dernier barème, 5,61 % (fiche

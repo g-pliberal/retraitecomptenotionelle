@@ -7252,15 +7252,15 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 (le passé refait),
-2 (la décomposition du COR), 2 bis (la dépense du système actuel est celle du
-COR), 3 (la proposition en fourchette, ses rapports notionnels multipliés par
-la dérive), 3 bis (les chiffres écrits en dur de la page Coût) et 4 (les deux
-conventions du COR suivies : la dérive de 2070 passe de 1,200 à 1,174, la
-borne basse monte, la dépense de 2070 de la proposition va de 8,4 à 9,9 % du
-PIB). Reste l'essentiel de l'écart, dans l'Agirc-Arrco (×0,850 contre ×0,581
-au COR) et la fonction publique d'État (×0,866 contre ×0,629), la Cnav se
-suivant. Commencer par la note de l'étape 4 et ses pistes.
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 3 bis (le passé
+refait, la décomposition du COR, sa dépense pour le système actuel, la
+proposition en fourchette), 4 (les deux conventions du COR suivies : dérive de
+2070 de 1,200 à 1,174, dépense de la proposition de 8,4 à 9,9 % du PIB) et
+4 bis (ces conventions pour la seule page Coût, le simulateur gardant celle de
+« Mon estimation retraite », une bulle « ? » le disant à côté des chiffres).
+Reste l'essentiel de l'écart : l'Agirc-Arrco (×0,850 contre ×0,581 au COR) et
+la fonction publique d'État (×0,866 contre ×0,629), la Cnav se suivant.
+Commencer par la note de l'étape 4 et ses pistes.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7530,90 +7530,33 @@ Coût.**
   1,8 dans `MESURES_BLOCAGES` ; le parcours de présentation suit (deux
   carrières du privé).
 
-Les paragraphes du parcours de présentation que l'étape réécrit, tels qu'ils
-étaient : les deux tableaux des carrières du privé, au SMIC toute sa vie puis
-au salaire moyen, et les passages des pages Programme, Simuler, Cas types et
-Risque dont un chiffre a bougé.
+**Étape 4 bis, le 5 octobre 2026 : les conventions du COR pour la seule page
+Coût, et dites à côté des chiffres.**
 
-| Système | Pension nette par mois | Écart |
-|---|---|---|
-| 1. Actuel | 1 295 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 042 € | -19,5 % |
-| 4. La proposition | 1 144 € | -11,7 % |
-
-| Système | Pension nette par mois | Écart |
-|---|---|---|
-| 1. Actuel | 2 351 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 552 € | -34,0 % |
-| 4. La proposition | 1 912 € | -18,7 % |
-
-- Le titre, puis les **quatre grands chiffres** : 1 050 € par mois au
-  minimum pour une personne seule (1 600 € pour un couple) ; 18 % + 5 % de
-  cotisation au lieu de 28 % ; 1 compte en euros ; 100 % de ce qui est cotisé
-  revient.
-- **« Comment ça marche, en trois gestes »** : on inscrit, on revalorise, on
-  divise. C'est la phrase de la section précédente, et c'est tout le modèle.
-- Le tableau **« Le plancher regarde chacun, pas le couple »** : à 300 € et
-  1 500 € de pension dans un couple, l'ASPA ne sert rien, la garantie sert
-  500 € au premier. C'est l'exemple le plus parlant de la page.
-- Le tableau **« Ce que cela change »** : huit lignes, aujourd'hui contre le
-  programme. Deux à lire à voix haute : « Changer de métier : changer de
-  régime, et de règle de calcul → rien, le compte est le même » et « Tenir
-  l'équilibre : une réforme tous les huit ans en moyenne → un chiffre publié
-  chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
-  « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de moins,
-  en médiane ». La première des « Vos questions », « Ma
-  retraite va-t-elle baisser ? », en donne le détail : 23 % pour qui n'est
-  pas encore à la retraite, 13 % s'il place les cinq points rendus, 28 % sur
-  la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
-- Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
-  vers le simulateur : on peut y saisir une date de naissance et un statut et
-  cliquer « Calculer », ça ouvre la page Simuler déjà remplie. Le parcours
-  passe plutôt par l'onglet, pour montrer la page entière.
-
-- **Le système 1 est la référence** : le droit en vigueur, minima et
-  majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
-  porte un troisième chiffre, plus récent que le reste de ce parcours, et il
-  vaut d'être lu à voix haute : **financé, 2 511 €**, soit 91 % de ce qu'il
-  promet. Le reste attend des cotisations que personne n'a versées. La barre
-  sous la ligne le montre, et la page Risque le chiffre.
-- **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
-  contrefactuels : la même carrière recalculée depuis 1941 comme si le compte
-  avait toujours existé, avec la seule part salariale (2), puis les deux parts
-  (3). L'écart entre 2 et 3 mesure exactement une chose : ce que verse
-  l'employeur. Ne pas s'attarder sur le 2.
-- **Le système 4 est la proposition**, et il se lit contre le 3 : même
-  compte jusqu'à 2026, puis 18 % pour tous, 5 % capitalisés par-dessus, 5 %
-  rendus que l'exemple suppose replacés au même endroit, et une garantie
-  vieillesse payée par l'impôt. Son grand nombre est annoncé « retraite
-  jusqu'à » : c'est le seul des quatre qui dépende d'une décision de
-  l'assuré. La ligne sous lui écrit le plancher — répartition plus rente
-  capitalisée obligatoire, touché sans rien ajouter — puis ce que les cinq
-  points rendus ajoutent si on les place, sur un pilier sans risque.
-- **Pourquoi la proposition sert moins que le système actuel sur cet
-  exemple :** parce que le système actuel sert à ce salarié plus que ce qu'il
-  a cotisé — c'est ce que la page Avantages chiffre. Ces pensions sont
-  calculées avant le réglage annuel du système, que la page Cas types
-  explique, et ce réglage ne joue pas en faveur de la proposition : voir plus
-  bas, la question viendra.
-
-- Les deux cartes en tête : la carrière la mieux traitée (militaire non
-  officier, +69 % pour la génération 2000) et la moins bien traitée (carrière
-  interrompue, -34 %), et les 103 points qui les séparent. Dire aussitôt
-  d'où vient le premier : le droit en vigueur laisse ce militaire partir à
-  44 ans, après vingt-cinq ans de services, et la proposition le fait servir
-  jusqu'à 65 ans —
-  une pension mensuelle bien plus forte, servie vingt et un ans plus tard.
-- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -62 %
-  pour la génération 1940 à -7 % pour la génération 1970 : la même règle
-  donne des résultats très éloignés selon ce que l'État a versé à chaque
-  époque, et le compte n'en reçoit que la part que la Cour des comptes
-  rattache à la retraite de l'agent.
-- Le sélecteur « Système affiché » : la grille se réécrit pour le système 2
-  ou le 3, ce qui montre ce que chaque ingrédient déplace.
-
-| | |
-|---|---|
-| Prélevé chaque mois sur un salaire moyen | 940 €, cotisation salariale et patronale réunies |
-| Promis au-delà de ce que ces cotisations financent | 33 % de la pension |
-| Non financé en 2070, sans rien changer | 16 % |
+- *Demande.* Le propriétaire, informé que trois lectures de la valeur future
+  du point Agirc-Arrco coexistent (l'annexe de l'accord de 2023, le COR,
+  « Mon estimation retraite »), a choisi : le COR pour la page Coût, le
+  simulateur officiel pour le simulateur individuel ; et « une explication
+  directement à côté des chiffres sous un (?) ».
+- *Ce qui est fait.* `Parametres.conventions_cor`, faux par défaut, et
+  `Simulateur.pour_la_projection()`, son jumeau qui l'allume, gardé une fois
+  construit ; la grille du coût (`_pensionnes`) et les deux
+  `RevalorisationServie` du coût et de l'engagement le prennent, le reste du
+  calcul garde le simulateur reçu (un simulateur neuf perdait les effectifs
+  qu'un test lui greffe). `ValeursPoint` ne lit `conventions_points` que sous
+  le réglage, `CasType` ne fait monter les primes que sous lui. Les deux
+  moteurs. Trois bulles, par `g.bulle` : sur la carte « La retraite
+  coûte-t-elle plus qu'elle ne rapporte ? » et sur « La fourchette que cet
+  écart impose », les hypothèses du COR que la page suit ; sous la pension du
+  système 1 du simulateur, quand la carrière a une complémentaire
+  Agirc-Arrco liquidée après le dernier barème publié, la convention du
+  simulateur officiel et celle du COR. Vérifiées dans un navigateur.
+- *Ce que ça déplace.* Rien sur la page Coût : la dérive de 2070 reste 1,174,
+  les chiffres de l'étape 4 demeurent. Les 161 témoins de simulation
+  reviennent exactement à leurs valeurs d'avant l'étape 4, la page Cas types
+  et l'accueil aussi (« un quart », 23 %), et avec eux le parcours de
+  présentation et le budget de mots de l'accueil (240). La fiche
+  `agirc_arrco_valeur_achat` et `limites.md` § 5 ter disent la frontière.
+- *Le test.* `test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme`
+  tient les deux : le simulateur individuel sans convention, celui de la
+  projection avec.
