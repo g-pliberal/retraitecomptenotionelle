@@ -84,7 +84,7 @@ class TrimestresEnfant:
     regime: str
     #: Dispositif qui les accorde : ``mda``, ``bonifications``, ou celui d'un
     #: régime spécial qui a sa fiche (``enfants_sncf``, ``enfants_ratp``,
-    #: ``enfants_ieg``).
+    #: ``enfants_ieg``, ``enfants_crpcen``).
     dispositif: str
     #: La fiche et la version appliquées, et le texte qui fait naître celle-ci.
     fiche: str
@@ -574,8 +574,8 @@ def bonification_ouverte(condition: str, naissance: int, recrutement: int,
       un enfant né depuis 2004, ne va qu'à la femme « ayant accouché
       postérieurement à [son] recrutement ».
 
-    Hors la fonction publique, la SNCF, la RATP et les IEG ont leur fiche,
-    qui pose l'une de ces conditions ; les autres régimes spéciaux reçoivent
+    Hors la fonction publique, la SNCF, la RATP, les IEG et la CRPCEN ont
+    leur fiche, qui pose l'une de ces conditions ; les autres régimes spéciaux reçoivent
     celles de la fonction publique avec sa fiche. Une condition que le moteur
     ne connaît pas l'arrête (§ 6.7).
     """

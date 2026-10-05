@@ -99,6 +99,11 @@
 #       article 112, LEGIARTI000006324587) ; AUCUNE pour celui qui atteint
 #       soixante ans en fonctions (article 110, LEGIARTI000006324569). C'est
 #       la seule ligne où `annees_en_fonctions` diffère.
+#   crpcen  Quinze années de versement de cotisations (décret n° 90-1215,
+#       article 84, 1°, LEGIARTI000006775247) ; depuis le 1er juillet 2008,
+#       « le droit à pension est ouvert à partir de soixante ans », sans
+#       durée (article 84, I, LEGIARTI000018129122), puis à l'âge de
+#       L. 161-17-2 : les quinze années ne restent qu'aux départs anticipés.
 #   marins  Aucune : le marin qui n'a droit ni à la pension d'ancienneté ni à
 #       la proportionnelle « a droit à une pension spéciale calculée en
 #       fonction de la durée de ses services » (code des transports,
@@ -113,8 +118,8 @@
 # 1948 — est présumé pouvoir servir une pension dès qu'on y a servi, au niveau
 # `estimee` : aucun de leurs textes n'est dans l'index. Les lignes de 1900
 # prolongent en arrière la plus ancienne version lue (1964 pour l'État, 1946
-# pour les IEG, 1962 pour la SEITA). Les mines, en points, et la CRPCEN, dont
-# la fiche ne déclare pas de bonification, n'entrent pas dans la question.
+# pour les IEG, 1962 pour la SEITA, 1990 pour la CRPCEN). Les mines, en points,
+# n'entrent pas dans la question.
 regime,radiation_depuis,annees,annees_en_fonctions,texte,identifiant,fiabilite
 fonction_publique_etat,1900-01-01,15,,"code des pensions civiles et militaires, L. 4 (1°)",LEGIARTI000006362667,haute
 fonction_publique_etat,2011-01-01,2,,"code des pensions civiles et militaires, L. 4 et R. 4-1",LEGIARTI000023388607,haute
@@ -137,4 +142,6 @@ opera_de_paris,2008-07-01,1,,"décret n° 68-382, art. 6, II",LEGIARTI0000182538
 comedie_francaise,1900-01-01,15,,"décret n° 68-960, art. 6",LEGIARTI000006765429,haute
 comedie_francaise,2008-07-01,0,,"décret n° 68-960, art. 6",LEGIARTI000018253642,haute
 seita,1900-01-01,15,0,"décret n° 62-766, art. 110 et 112",LEGIARTI000006324587,haute
+crpcen,1900-01-01,15,,"décret n° 90-1215, art. 84, 1°",LEGIARTI000006775247,haute
+crpcen,2008-07-01,0,,"décret n° 90-1215, art. 84, I",LEGIARTI000018129122,haute
 marins,1900-01-01,0,,"code des transports, L. 5552-11",LEGIARTI000023079245,haute

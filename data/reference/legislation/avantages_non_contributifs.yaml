@@ -187,24 +187,26 @@ avantages:
         la pondération par effectifs de caisse permet déjà.
 
   - code: trimestres_enfants_regimes_speciaux
-    libelle: Trimestres pour enfants de la SNCF, de la RATP et des IEG
+    libelle: Trimestres pour enfants de la SNCF, de la RATP, des IEG et de la CRPCEN
     famille: droits_familiaux
-    alias: [enfants_sncf, enfants_ratp, enfants_ieg]
+    alias: [enfants_sncf, enfants_ratp, enfants_ieg, enfants_crpcen]
     quoi: >-
       À la SNCF, deux trimestres de durée d'assurance par enfant à la mère qui
       a accouché après son recrutement, pour la décote seulement. À la RATP et
       aux IEG, une année de services par enfant né avant le 1er juillet 2008 —
       deux pour le second d'une fratrie de deux aux IEG —, puis deux
       trimestres de durée pour le premier enfant de la fratrie et quatre pour
-      les suivants. Les congés pris pour élever un enfant comptent en outre
-      comme services, dans les trois régimes.
+      les suivants. À la CRPCEN, quatre trimestres au taux par enfant né avant
+      le 1er juillet 2006, puis deux et quatre trimestres de durée. Les congés
+      pris pour élever un enfant comptent en outre, dans les quatre régimes.
     base_legale: [Décret n° 2008-639 du 30 juin 2008 art. 7 V et 13 III (SNCF),
       Décret n° 2008-637 du 30 juin 2008 art. 20 et 24 III (RATP),
-      Statut national du personnel des IEG annexe 3 art. 12 à 14]
-    fiches: [enfants_sncf, enfants_ratp, enfants_ieg]
-    creation: 2008
+      Statut national du personnel des IEG annexe 3 art. 12 à 14,
+      Décret n° 90-1215 du 20 décembre 1990 art. 92 (CRPCEN)]
+    fiches: [enfants_sncf, enfants_ratp, enfants_ieg, enfants_crpcen]
+    creation: 1990
     fin: null
-    regimes: SNCF, RATP, IEG
+    regimes: SNCF, RATP, IEG, CRPCEN
     etat_modele: chiffre
     ligne_cascade: majoration_duree_assurance
     cout:

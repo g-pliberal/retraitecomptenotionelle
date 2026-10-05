@@ -1157,6 +1157,7 @@ class MajorationsPourEnfants:
         "enfants_sncf": "enfants_sncf",
         "enfants_ratp": "enfants_ratp",
         "enfants_ieg": "enfants_ieg",
+        "enfants_crpcen": "enfants_crpcen",
     }
     #: Les bénéficiaires qu'une version peut désigner.
     BENEFICIAIRES = ("mere",)

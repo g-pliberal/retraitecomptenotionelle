@@ -410,20 +410,23 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   2010, ni si un père fonctionnaire a interrompu son activité les deux mois
   qu'exige la bonification depuis 2003 : dans les deux cas le modèle retient
   l'attribution par défaut, celle de la mère.
-- **Les trimestres des enfants dans les régimes spéciaux.** La SNCF, la RATP
-  et les IEG ont leur fiche, lue article par article (`enfants_sncf`,
-  `enfants_ratp`, `enfants_ieg`). À la SNCF, deux trimestres de durée par
-  enfant né après le recrutement, aucun aux services, et rien avant le
-  1er juillet 2008 ; à la RATP et aux IEG, une année de services par enfant né
-  avant le 1er juillet 2008 — deux pour le second d'une fratrie de deux aux
-  IEG —, puis deux trimestres de durée pour le premier enfant de la fratrie et
-  quatre pour chacun des suivants. Les autres régimes spéciaux suivent encore
-  le calendrier de la fonction publique — un an par enfant né avant 2004, deux
-  trimestres ensuite —, que le COR dément pour les mines et les marins, à qui
-  il n'en connaît aucun (séance du 19 octobre 2023, document n° 2). Les congés
-  pris pour élever un enfant, que ces régimes comptent comme services, ne sont
-  pas portés : la carrière ne les dit pas ; ni l'âge que la bonification des
-  IEG avance pour les parents d'un ou deux enfants.
+- **Les trimestres des enfants dans les régimes spéciaux.** La SNCF, la RATP,
+  les IEG et la CRPCEN ont leur fiche, lue article par article
+  (`enfants_sncf`, `enfants_ratp`, `enfants_ieg`, `enfants_crpcen`). À la
+  SNCF, deux trimestres de durée par enfant né après le recrutement, aucun aux
+  services, et rien avant le 1er juillet 2008 ; à la RATP et aux IEG, une
+  année de services par enfant né avant le 1er juillet 2008 — deux pour le
+  second d'une fratrie de deux aux IEG —, puis deux trimestres de durée pour
+  le premier enfant de la fratrie et quatre pour chacun des suivants ; à la
+  CRPCEN, quatre trimestres au taux par enfant né avant le 1er juillet 2006,
+  puis deux et quatre trimestres de durée pour l'enfant né pendant
+  l'affiliation. Les autres régimes spéciaux suivent encore le calendrier de
+  la fonction publique — un an par enfant né avant 2004, deux trimestres
+  ensuite —, que le COR dément pour les mines et les marins, à qui il n'en
+  connaît aucun (séance du 19 octobre 2023, document n° 2). Les congés pris
+  pour élever un enfant, que ces régimes comptent comme services, ne sont pas
+  portés : la carrière ne les dit pas ; ni l'âge que la bonification des IEG
+  avance pour les parents d'un ou deux enfants.
 - **Majorations pour enfants des non-salariés agricoles.** La MSA sert bien une
   majoration de durée d'assurance à ses non-salariés, mais elle s'y convertit en
   POINTS et non en trimestres, selon une règle qui change au 1er janvier 2026.

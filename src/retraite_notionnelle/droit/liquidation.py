@@ -67,6 +67,7 @@ _LIBELLE_MAJORATION = {
     "enfants_sncf": "Majoration de durée d'assurance de la SNCF",
     "enfants_ratp": "Trimestres pour enfants de la RATP",
     "enfants_ieg": "Trimestres pour enfants des IEG",
+    "enfants_crpcen": "Trimestres pour enfants de la CRPCEN",
 }
 
 

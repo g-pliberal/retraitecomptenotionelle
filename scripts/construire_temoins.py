@@ -1338,6 +1338,12 @@ def _cas() -> list[dict]:
         **enfants, "enfants": "2", "statut": "agent_ieg", "naissance": "1975",
         "naissances": "2006,2007",
     }))
+    # La CRPCEN coupe au 1er juillet 2006 : quatre trimestres au taux avant,
+    # deux puis quatre trimestres de durée ensuite.
+    cas.append(("enfants_crpcen_trois_enfants", {
+        **enfants, "statut": "clerc_de_notaire", "naissance": "1972",
+        "naissances": "2003,2006-09,2009",
+    }))
     # LES BASCULES DES VERSIONS, là où le modèle datait à l'année ce que le
     # droit date au jour : la veille et le lendemain de trois bornes que les
     # fiches du domaine déclarent approchées. Chaque témoin fige ce que le

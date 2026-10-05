@@ -31,6 +31,10 @@ fiches:
   role: >-
     la bonification et la majoration des IEG, que les IEG accordent en priorité aux
     mêmes conditions
+- fiche: enfants_crpcen
+  role: >-
+    les majorations de la CRPCEN, que la CRPCEN accorde en priorité aux mêmes
+    conditions
 - fiche: majoration_duree_assurance_enfants
   role: >-
     la majoration du régime général et des régimes alignés, que le régime général
@@ -53,6 +57,7 @@ regimes:
 - banque_de_france
 - chemins_fer_secondaires
 - comedie_francaise
+- crpcen
 - ieg
 - marins
 - mines

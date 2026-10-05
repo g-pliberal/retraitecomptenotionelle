@@ -59,6 +59,7 @@ PRESOMPTIONS_ENFANTS = {
     "enfants_sncf": (),
     "enfants_ratp": ("interruption_d_activite_par_la_mere",),
     "enfants_ieg": ("interruption_d_activite_par_la_mere",),
+    "enfants_crpcen": ("interruption_d_activite_par_la_mere",),
 }
 
 

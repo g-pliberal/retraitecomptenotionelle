@@ -78,7 +78,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       Loi du 12 juillet 1937, appliquée par le décret n° 90-1215 du
       20 décembre 1990. L'âge de 55 ans est celui de la DÉROGATION qui fait
@@ -119,7 +119,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -170,7 +170,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -221,7 +221,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -272,7 +272,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -323,7 +323,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -374,7 +374,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -425,7 +425,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -476,7 +476,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -527,7 +527,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -578,7 +578,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -629,7 +629,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       Comme 2018 ; seul change le taux de la cotisation salariale
       (décret n° 91-613, article 4).
@@ -654,7 +654,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -705,7 +705,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -756,7 +756,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -807,7 +807,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
       le 18 février 2008 (décret n° 2008-147, LEGIARTI000018129122), la
@@ -860,7 +860,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
     notes: >-
       Loi du 14 avril 2023 : l'âge d'ouverture passe à 64 ans. La fiche
       s'arrêtait à 62 — celui de 2011 —, et servait donc à un clerc

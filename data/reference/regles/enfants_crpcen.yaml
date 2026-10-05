@@ -1,0 +1,246 @@
+schema_version: 1
+id: enfants_crpcen
+intitule: >-
+  Trimestres des enfants à la caisse des clercs et employés de notaires : une année
+  par enfant aux femmes assurées jusqu'en 2006 ; depuis, quatre trimestres par enfant
+  né avant le 1er juillet 2006, aux conditions de L. 12 b du code des pensions, comptés
+  au taux ; pour les enfants nés depuis, aux femmes qui ont accouché pendant leur
+  affiliation, deux trimestres pour le premier enfant et quatre pour les suivants,
+  comptés pour la décote et la surcote seulement depuis le 24 août 2008.
+domaine: enfants
+regimes:
+- crpcen
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- enfant.naissance
+- le rang de l'enfant dans la fratrie
+- le sexe de l'assurée, qui accouche
+- recrutement
+- radiation
+- liquidation.date_effet
+ecrit:
+- les trimestres de chaque enfant, en durée d'assurance et en services, dans le régime
+  que la priorité entre régimes désigne (priorite_majorations_enfants)
+dates_qui_decident:
+- enfant.naissance
+- liquidation.date_effet
+# Les versions forment un partage de ces deux dates (§ 4.1), aux rédactions de
+# l'article 92 du décret n° 90-1215 : celle de 1990, celle du 5 mai 2006, qui coupe
+# au 1er juillet 2006, celle du 1er juillet 2008, qui porte la majoration à deux
+# puis quatre trimestres, et celle du 24 août 2008, qui la réserve à la décote et à
+# l'accouchement pendant l'affiliation. `contenu.parametres` est ce que le moteur
+# lit (MajorationsPourEnfants, dans les deux moteurs) ; les trimestres qui entrent
+# au taux de la caisse sont ses `services`.
+versions:
+- id: avant_1990
+  statut: supposee
+  hypothese: >-
+    le décret n° 51-721, qui précède le décret n° 90-1215, n'a pas été relu sur ce
+    point ; on lui prête l'année par enfant de 1990
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 1990-12-30]
+  contenu:
+    droit: 4 trimestres par enfant, au taux et en durée
+    beneficiaire: la mère
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: faible
+  exemples: aucun trouvé
+- id: annee_par_enfant_1990
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006775256, article: "décret n° 90-1215, article 92", en_vigueur: 1990-12-30}
+  nee_de: LEGIARTI000006775256
+  bornes:
+    liquidation.date_effet: [1990-12-30, 2006-05-05]
+  contenu:
+    droit: >-
+      « une majoration de leur durée d'assurance d'une année pour chacun de leurs
+      enfants », qui n'est pas prise en considération pour l'ouverture du droit
+    beneficiaire: les femmes assurées
+    conditions: tout enfant, sans condition d'interruption
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: l12b_2006
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006775257, article: "décret n° 90-1215, article 92, I", en_vigueur: 2006-05-05}
+  - {id: LEGIARTI000024573575, article: "décret n° 90-1215, article 92, I", en_vigueur: 2011-09-19}
+  - {id: LEGIARTI000054590005, article: "décret n° 90-1215, article 92, I", en_vigueur: 2026-08-01}
+  nee_de: LEGIARTI000006775257
+  bornes:
+    enfant.naissance: [null, 2006-07-01]
+    liquidation.date_effet: [2006-05-05, null]
+  contenu:
+    droit: 4 trimestres par enfant, « dans les conditions prévues à l'article L. 12 b »
+    beneficiaire: >-
+      l'assuré qui a interrompu son activité deux mois de suite dans un congé de
+      maternité, d'adoption, parental ou de présence parentale — ou, depuis le 19
+      septembre 2011, l'a réduite d'autant
+    conditions: tout enfant né ou adopté avant le 1er juillet 2006
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: majoration_2006
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006775257, article: "décret n° 90-1215, article 92, III", en_vigueur: 2006-05-05}
+  nee_de: LEGIARTI000006775257
+  bornes:
+    enfant.naissance: [2006-07-01, null]
+    liquidation.date_effet: [2006-05-05, 2008-07-01]
+  contenu:
+    droit: 2 trimestres par enfant, au taux et en durée
+    beneficiaire: >-
+      les femmes « qui ont accouché postérieurement à leur affiliation à la CRPCEN »
+    conditions: l'enfant naît après l'affiliation
+    parametres:
+      trimestres_par_enfant: 2
+      services_par_enfant: 2
+      beneficiaire: mere
+      condition: accouchement_apres_recrutement
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: majoration_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000018129102, article: "décret n° 90-1215, article 92, III", en_vigueur: 2008-07-01}
+  nee_de: LEGIARTI000018129102
+  bornes:
+    enfant.naissance: [2006-07-01, null]
+    liquidation.date_effet: [2008-07-01, 2008-08-24]
+  contenu:
+    droit: >-
+      2 trimestres pour le premier enfant, 4 pour chacun des suivants, au taux et en
+      durée
+    beneficiaire: >-
+      les femmes « qui ont accouché postérieurement à leur affiliation à la CRPCEN »
+    conditions: l'enfant naît après l'affiliation
+    parametres:
+      trimestres_premier_enfant: 2
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: accouchement_apres_recrutement
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: majoration_decote_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019375479, article: "décret n° 90-1215, article 92, III", en_vigueur: 2008-08-24}
+  - {id: LEGIARTI000046724639, article: "décret n° 90-1215, article 92, III", en_vigueur: 2022-12-12}
+  - {id: LEGIARTI000054590005, article: "décret n° 90-1215, article 92, III", en_vigueur: 2026-08-01}
+  nee_de: LEGIARTI000019375479
+  bornes:
+    enfant.naissance: [2006-07-01, null]
+    liquidation.date_effet: [2008-08-24, null]
+  contenu:
+    droit: >-
+      2 trimestres pour le premier enfant, 4 pour chacun des suivants, « pris en compte
+      que pour l'application de l'article 85-1 » — la décote, et la surcote de la
+      caisse
+    beneficiaire: >-
+      les femmes « qui ont accouché pendant leur durée d'affiliation à la CRPCEN »
+    conditions: l'enfant naît entre l'affiliation et la radiation
+    parametres:
+      trimestres_premier_enfant: 2
+      trimestres_par_enfant: 4
+      services_par_enfant: 0
+      beneficiaire: mere
+      condition: ne_en_service
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [l12b_2006]
+  ecart: >-
+    la majoration va à la mère, dont l'interruption d'activité est présumée par son
+    congé de maternité ; le père qui a pris deux mois de congé n'en reçoit pas
+  effet: non mesuré
+- version: [majoration_2008, majoration_decote_2008]
+  ecart: >-
+    le premier enfant est celui qui naît le premier, enfants nés avant le 1er juillet
+    2006 compris, comme la caisse le dit (« 2 trimestres pour le 1er enfant de la
+    fratrie ») ; des jumeaux premiers-nés comptent chacun pour le premier
+  effet: non mesuré
+- version: [majoration_2006, majoration_2008, majoration_decote_2008]
+  ecart: >-
+    la durée d'assurance que le II accorde pour un temps partiel de droit, un congé
+    parental ou de présence parentale — trois ans par enfant né depuis le 1er juillet
+    2006 —, exclusive de la majoration, n'est pas portée : la carrière ne dit pas ces
+    congés ; l'adoption et la majoration pour enfant handicapé non plus
+  effet: non mesuré
+presomptions:
+  naissance_des_enfants: >-
+    la naissance de chaque enfant dont la date n'est pas déclarée, qui choisit entre la
+    majoration de L. 12 b et celle de l'accouchement, se compare à l'affiliation et
+    fait le rang
+  interruption_d_activite_par_la_mere: >-
+    la condition d'interruption d'activité de la majoration des enfants nés avant le
+    1er juillet 2006, remplie par le congé de maternité
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le décret n° 51-721, qui réglait la caisse avant 1990 : la version avant_1990 lui
+    prête l'année par enfant.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 90-1215, article 92, ses sept rédactions dans l'index LEGI
+      (LEGIARTI000006775256 à LEGIARTI000054590005) : la coupure au 1er juillet 2006
+      (2006), deux puis quatre trimestres (1er juillet 2008), la décote seule et
+      l'accouchement « pendant leur durée d'affiliation » (24 août 2008)
+    date: 2026-08-01
+  - type: autre
+    reference: >-
+      CRPCEN, page « Les droits liés aux enfants », lue le 5 octobre 2026 (sans date) :
+      « 4 trimestres par enfant pour lequel vous remplissez les conditions », né avant
+      le 1er juillet 2006, dans « votre durée d'assurance CRPCEN servant au calcul du
+      taux de votre pension » ; depuis, « 2 trimestres pour le 1er enfant de la fratrie
+      ; 4 trimestres à compter du 2e enfant », à l'accouchement « durant votre
+      affiliation », pour la seule décote et la surcote
+    date: 2026-10-05
+    url: https://www.crpcen.fr/affilies/les-droits-lies-aux-enfants
+  - type: autre
+    reference: >-
+      COR, séance plénière du 19 octobre 2023, document n° 2 « Droits familiaux » : à la
+      CRPCEN, « 4 trimestres maximum » pour les enfants nés avant le 1er juillet 2006,
+      « 2 / 4 trimestres » ensuite
+    date: 2023-10-19
+    url: https://www.cor-retraites.fr/sites/default/files/2023-10/Doc_02_Droits_familiaux_0.pdf
+code:
+  python: >-
+    scenarios/actuel.py : MajorationsPourEnfants, qui lit les versions de cette fiche
+    et le rang de l'enfant ; droit/compter.py : majoration_pour_enfants,
+    bonification_ouverte ; droit/liquider.py : la part de durée seule, ôtée du
+    numérateur d'un régime spécial
+  javascript: >-
+    moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants,
+    bonificationOuverte ; moteur/js/droit/liquider.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_priorite_enfants.py]
+historique:
+- >-
+  2026-10-05 — la fiche naît (action 89) : la CRPCEN ne déclarait aucun trimestre pour
+  enfants, et ses mères recevaient la majoration du régime général, ou rien.
+effet: >-
+  Toute mère clerc ou employée de notaire : quatre trimestres au taux par enfant né
+  avant le 1er juillet 2006 ; pour les enfants nés depuis, deux trimestres de durée pour
+  le premier de la fratrie et quatre pour chacun des suivants, s'ils sont nés pendant
+  l'affiliation.
