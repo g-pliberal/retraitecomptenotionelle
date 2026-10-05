@@ -348,8 +348,20 @@ def cout_annee(**reglages: str) -> float:
 
 
 def part_pib(**reglages: str) -> float:
-    """Coût d'un système une année, en % du PIB de cette année."""
-    return _avenir(reglages).part_pib(_scenario(reglages["scenario"])) * 100
+    """Coût d'un système une année, en % du PIB de cette année ; ``borne=haute``
+    pour la borne haute de la fourchette."""
+    ligne = _avenir(reglages)
+    scenario = _scenario(reglages["scenario"])
+    if _borne_haute(reglages):
+        return ligne.part_pib_derive(scenario) * 100
+    return ligne.part_pib(scenario) * 100
+
+
+def derive_cor(**reglages: str) -> float:
+    """La dérive d'une année projetée, en % : de combien le rapport de chaque
+    système notionnel grandirait si l'écart de la masse du modèle à la dépense
+    du COR tenait tout entier au système actuel (``AvenirAnnuel.derive``)."""
+    return (_avenir(reglages).derive - 1) * 100
 
 
 def trajectoire_propre(**reglages: str) -> float:
@@ -1149,7 +1161,7 @@ def avantages(**reglages: str) -> float:
 
 
 def _solde_annee(reglages: dict[str, str]):
-    solde = _cout_de(reglages).solde
+    solde = _solde_de(reglages)
     annee = int(reglages["annee"]) if "annee" in reglages else solde.derniere_annee
     ligne = solde.annee(annee)
     if ligne is None:
@@ -1183,13 +1195,28 @@ def solde(**reglages: str) -> float:
     return ligne.solde(scenario) * 100
 
 
+def _borne_haute(reglages: dict[str, str]) -> bool:
+    """``borne=haute`` : la borne haute de la fourchette, si l'écart de la masse
+    du modèle à la dépense du COR tenait tout entier au système actuel."""
+    borne = reglages.get("borne", "")
+    if borne not in ("", "haute"):
+        raise ValueError(f"borne attend « haute », reçu « {borne} »")
+    return borne == "haute"
+
+
+def _solde_de(reglages: dict[str, str]):
+    cout = _cout_de(reglages)
+    return cout.solde_derive if _borne_haute(reglages) else cout.solde
+
+
 def solde_moyen(**reglages: str) -> float:
     """Solde moyen d'un système sur les années projetées, en % du PIB.
 
     La fenêtre de la page Coût : de la première année projetée à l'horizon.
     ``en=milliards`` : la même moyenne, au PIB de la dernière année publiée.
+    ``borne=haute`` : la borne haute de la fourchette.
     """
-    solde = _cout_de(reglages).solde
+    solde = _solde_de(reglages)
     moyen = solde.solde_moyen(_scenario(reglages["scenario"]),
                               solde.premiere_annee_projetee, solde.derniere_annee)
     if reglages.get("en") == "milliards":
@@ -1246,8 +1273,10 @@ def dette(**reglages: str) -> float:
     """Le stock que les soldes accumulent, en % du PIB, une année — l'horizon si on l'omet.
 
     ``en=milliards`` : le même stock en Md€, à la règle de ``_milliards_de_part``.
+    ``borne=haute`` : la borne haute de la fourchette.
     """
-    dette = _cout_de(reglages).dette
+    cout = _cout_de(reglages)
+    dette = cout.dette_derive if _borne_haute(reglages) else cout.dette
     annee = int(reglages.get("annee", dette.derniere_annee))
     stock = dette.stock(_scenario(reglages["scenario"]), annee)
     if reglages.get("en") == "milliards":
@@ -1679,6 +1708,7 @@ MESURES = {
     "reconstitution": reconstitution,
     "decomposition": decomposition,
     "trajectoire_propre": trajectoire_propre,
+    "derive_cor": derive_cor,
     "emploi_projete": emploi_projete,
     "composition_revalorisation": composition_revalorisation,
     "age_reference": age_reference,

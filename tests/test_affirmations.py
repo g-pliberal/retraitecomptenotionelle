@@ -2087,6 +2087,28 @@ def _(m: Modele):
         "pension_relative", "ensemble", avenir.premiere_annee_projetee, avenir.derniere_annee)
 
 
+@controle("fourchette_basse_est_la_page")
+def _(m: Modele):
+    # La colonne « écart partagé » est le bilan de la page, sans dérive.
+    for ligne in m.solde.annees:
+        assert ligne.rapports == m.cout.avenir.annee(ligne.annee).rapports
+
+
+@controle("fourchette_haute_derive")
+def _(m: Modele):
+    haut = m.cout.solde_derive
+    for ligne, basse in zip(haut.annees, m.solde.annees):
+        derive = m.cout.avenir.annee(ligne.annee).derive
+        assert _proche(ligne.rapports["notionnel_liberal"],
+                       basse.rapports["notionnel_liberal"] * derive)
+        assert _proche(ligne.solde("actuel"), basse.solde("actuel"))
+    assert m.cout.dette_derive.horizon("notionnel_liberal") > m.cout.dette.horizon(
+        "notionnel_liberal")
+    debut, fin = haut.premiere_annee_projetee, haut.derniere_annee
+    assert haut.solde_moyen("notionnel_liberal", debut, fin) < m.solde.solde_moyen(
+        "notionnel_liberal", debut, fin)
+
+
 @controle("trajectoire_du_cor")
 def _(m: Modele):
     comptes = m.contexte.comptes()

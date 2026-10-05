@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1217<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->6 511<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1219<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->6 519<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -965,6 +965,18 @@ en faisant cotiser tous ceux qu'il fait attendre : `docs/limites.md` dit ce
 qu'il en reste quand une partie seulement travaille. Le scénario accumule en
 2070 une dette de <!--chiffre:mesure(dette?scenario=6)-->37<!--/--> % du PIB, <!--chiffre:mesure(dette?scenario=6&en=milliards)-->1093<!--/--> Md€, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le
 système actuel, <!--chiffre:mesure(dette?scenario=1&en=milliards)-->1 976<!--/--> Md€.
+
+**Ces chiffres de la proposition sont la borne basse d'une fourchette.** Ils
+appliquent à la dépense du COR le rapport de masses du modèle, et ce rapport
+porte l'écart de la trajectoire propre du modèle à celle du COR : sa pension
+moyenne ne recule pas comme celle du COR (`docs/limites.md` § 5 ter). Si cet
+écart est partagé par toutes les règles, le rapport est juste et ce sont les
+chiffres ci-dessus. S'il tient tout entier au système actuel, le rapport de
+chaque système notionnel doit grandir de la dérive de l'année — <!--chiffre:mesure(derive_cor?annee=2070)-->20<!--/--> % en
+2070 —, et la proposition coûte <!--chiffre:mesure(part_pib?scenario=6&annee=2070&borne=haute)-->9,9<!--/--> % du PIB en 2070 au lieu de
+<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/-->, son solde moyen est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−1,46<!--/--> % au lieu de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,55<!--/-->, et sa dette
+de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->90<!--/--> % au lieu de <!--chiffre:mesure(dette?scenario=6)-->37<!--/-->. La vérité est entre les deux, et le dépôt ne sait pas
+encore la situer : la page Coût donne les deux bornes.
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 <!--chiffre:mesure(solde?scenario=1&annee=2025&en=milliards)-->−5,1<!--/--> milliards de solde en 2025. C'est la vérification que le raccord

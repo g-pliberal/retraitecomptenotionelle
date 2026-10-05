@@ -3199,6 +3199,38 @@ sur les prix et valeur d'achat sur les salaires, et tient la part des primes de
 chaque cas type constante d'une génération à l'autre — la variante du COR, non
 son scénario de référence.
 
+**La fourchette, tant que l'écart dure (action 147, étape 3).** La page ne
+prend plus au modèle la dépense du système actuel, mais elle lui prend
+toujours le RAPPORT de masses qui en tire les autres systèmes, et ce rapport
+porte l'écart. Deux lectures l'encadrent. Si l'écart est PARTAGÉ par toutes
+les règles — une grille qui compte mal qui part, quand et avec quelle carrière
+se trompe de la même façon sous chacune —, le rapport est juste : ce sont les
+chiffres de la page. S'il est PROPRE au système actuel — une règle du droit en
+vigueur que la grille sert plus généreusement que le COR —, la masse des
+systèmes notionnels est juste et seule celle du système actuel est trop haute :
+le rapport doit grandir de la dérive de l'année, la croissance de la masse du
+modèle rapportée à celle de la dépense du COR depuis la première année
+projetée, <!--chiffre:mesure(derive_cor?annee=2070)-->20<!--/--> % en 2070 (`rapport_derive`, `Cout.solde_derive`,
+`Cout.dette_derive`). La proposition coûte alors <!--chiffre:mesure(part_pib?scenario=6&annee=2070&borne=haute)-->9,9<!--/--> % du PIB en 2070
+au lieu de <!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/-->, son solde moyen 2026-2070 est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−1,46<!--/--> % au lieu de
+<!--chiffre:mesure(solde_moyen?scenario=6)-->−0,55<!--/-->, son coefficient d'équilibre de <!--chiffre:mesure(coefficient?scenario=6&borne=haute)-->0,86<!--/--> au lieu de <!--chiffre:mesure(coefficient?scenario=6)-->1,04<!--/-->, et sa dette en
+2070 de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->90<!--/--> % du PIB au lieu de <!--chiffre:mesure(dette?scenario=6)-->37<!--/-->. Le système actuel ne bouge dans aucune
+des deux lectures, ni la garantie vieillesse, lue sur la distribution des
+pensions. La page Coût donne les deux bornes, et dit que la seconde est celle
+d'un écart tout entier propre au système actuel.
+
+Ce que le dépôt sait de la part qui revient à chaque lecture est mince, et il
+faut le dire. Le COR attribue la baisse de sa pension moyenne relative à des
+règles du droit en vigueur — l'indexation des droits sur les prix, la baisse
+du rendement de l'Agirc-Arrco, la part des primes des fonctionnaires, une durée
+requise qui s'allonge pour des carrières incomplètes —, qui tirent vers la
+seconde lecture, et à des effets de population — l'âge des retraités, des
+immigrés aux carrières françaises courtes —, qui tirent vers la première
+(rapport de juin 2026, partie 2, chapitre 1). Une mesure de la même session,
+qui n'a rien changé au dépôt et que la feuille de route date (action 147,
+étape 3), situe la convention de l'Agirc-Arrco : la suivre ne fermerait qu'une
+petite part de l'écart.
+
 ## 5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands
 
 Trois travaux français ont simulé le passage des retraites aux comptes

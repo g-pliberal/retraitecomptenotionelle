@@ -1158,6 +1158,34 @@ affirmations:
     etat: verifiee
     controle: projection_s_ecarte_du_cor
 
+  - id: cout.ecart_partage
+    page: /cout
+    extrait: "Si l'écart est partagé par tous les systèmes"
+    porte: >-
+      les chiffres de la page appliquent à la dépense du COR le rapport de
+      masses du modèle tel qu'il est calculé, sans dérive
+    etat: verifiee
+    controle: fourchette_basse_est_la_page
+
+  - id: cout.ecart_propre
+    page: /cout
+    extrait: "S'il tient tout entier au système actuel"
+    porte: >-
+      la borne haute multiplie le rapport de chaque système notionnel par la
+      dérive de son année, la croissance de la masse du modèle rapportée à celle
+      de la dépense du COR, et ne déplace ni le système actuel ni la garantie
+    etat: verifiee
+    controle: fourchette_haute_derive
+
+  - id: cout.borne_basse
+    page: /cout
+    extrait: "Les chiffres de la proposition sont la borne basse d'une fourchette."
+    porte: >-
+      la dette et le solde de la proposition sous la borne haute sont plus
+      lourds que ceux de la page
+    etat: verifiee
+    controle: fourchette_haute_derive
+
   - id: cout.depense_officielle
     page: /cout
     extrait: "celui du Conseil d'orientation des retraites"

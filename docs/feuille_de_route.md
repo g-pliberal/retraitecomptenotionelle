@@ -7252,15 +7252,16 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : l'étape 1 (le passé refait, sous un
-cliquet), l'étape 2 (la décomposition du COR et celle du modèle : les retraités
-se suivent, la pension moyenne relative non, −3 % contre −17 % en 2070) et
-l'étape 2 bis (la trajectoire de la page Coût prend la dépense du COR pour le
-système actuel ; celle du modèle reste un contrôle, `base_modele`). Restent :
-la correction de la dérive par les deux conventions du COR que le modèle ne suit
-pas (rendement de l'Agirc-Arrco, part des primes des fonctionnaires), qui porte
-sur le RAPPORT, puis l'étape 3, la fourchette, pour ce qui restera. Lire les
-notes des étapes 2 et 2 bis ; la demande du 5 octobre est dessous.
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 (le passé refait, sous
+un cliquet), 2 (la décomposition du COR : les retraités se suivent, la pension
+moyenne relative non, −3,5 % contre −17,2 % en 2070), 2 bis (la dépense du système
+actuel est celle du COR) et 3 (la page Coût donne la proposition en
+fourchette : écart partagé, ses chiffres ; écart propre au système actuel, ses
+rapports notionnels multipliés par la dérive, 1,2 en 2070). Reste à resserrer
+la fourchette : suivre dans le modèle les deux conventions du COR (rendement
+de l'Agirc-Arrco, primes des fonctionnaires), puis expliquer le reste de
+l'écart. Commencer par la note de l'étape 3, qui dit ce que la première
+ferait.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7403,3 +7404,49 @@ celle du COR.**
   système actuel moins que le COR, si bien que le rapport de la proposition à
   ce système est, pour sa part propre au système actuel, trop bas. La
   correction des deux conventions, puis la fourchette, en sont le chantier.
+
+**Étape 3, le 5 octobre 2026 : la fourchette, tant que l'écart dure.**
+
+- *Ce qui est fait.* La page Coût prend au modèle le RAPPORT des masses, qui
+  porte l'écart de l'étape 2 ; elle le borne désormais. Borne basse, l'écart
+  partagé par toutes les règles : les chiffres d'avant, inchangés. Borne
+  haute, l'écart propre au système actuel : les rapports des systèmes
+  notionnels multipliés par la dérive de l'année, la croissance de
+  `base_modele / base` depuis la première année projetée (1 en 2025, 1,071 en
+  2040, 1,200 en 2070). `rapport_derive`, `AvenirAnnuel.derive`,
+  `part_pib_derive`, `Cout.solde_derive` et `Cout.dette_derive`, et leurs
+  jumeaux ; le système actuel et la garantie vieillesse n'en bougent pas. Le
+  dépliant des quatre systèmes reçoit « La fourchette que cet écart impose »
+  et son tableau, le coefficient d'équilibre et la dette disent qu'ils sont
+  la borne basse, la liste des limites aussi. README (« Ces chiffres de la
+  proposition sont la borne basse d'une fourchette ») et `limites.md` § 5 ter
+  ancrent les deux bornes sur les sondes, qui prennent `borne=haute`, et
+  `derive_cor`.
+- *Ce que ça donne, pour la proposition libérale.* Dépense de 2070 : 8,2 % du
+  PIB (borne basse), 9,9 % (borne haute) ; solde moyen 2026-2070 : −0,55 et
+  −1,46 % du PIB ; coefficient d'équilibre de 2070 : 1,04 et 0,86 ; dette de
+  2070 : 37 et 90 % du PIB, quand le système actuel en accumule 66. Chiffres
+  pris après l'étape 20 de l'action 138, publiée pendant cette étape-ci.
+- *La convention de l'Agirc-Arrco, mesurée sans rien changer au dépôt.* Les
+  cas types revalorisés comme le COR le suppose (valeur de service à
+  l'inflation moins 0,4 point en 2026, au salaire moyen moins 1,16 point de
+  2027 à 2037, moins 0,86 ensuite ; valeur d'achat au salaire moyen jusqu'en
+  2037, moins 0,86 ensuite), par un script de la session que le dépôt ne garde
+  pas, sur le modèle d'avant l'étape 20 de l'action 138 : la pension moyenne
+  relative du modèle passe de 0,967 à 0,956 en 2070, contre 0,828 au COR, et
+  le rapport de la proposition de 0,571 à 0,577 (après cette étape 20, sans la
+  convention : 0,965 et 0,569).
+  Elle ne ferme qu'une petite part de l'écart, qui reste, pour l'essentiel,
+  inexpliqué ; la part croissante des primes des fonctionnaires n'est pas
+  mesurée.
+- *Les tests.* `test_le_portage_borne_la_fourchette_de_meme`,
+  `test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor`,
+  `test_la_borne_haute_ne_touche_que_les_systemes_notionnels` ; le catalogue
+  des affirmations reçoit les deux lectures et la borne basse, chacune avec son
+  contrôle (`fourchette_basse_est_la_page`, `fourchette_haute_derive`).
+- *Ce qui reste.* Situer la vérité entre les deux bornes : suivre les deux
+  conventions du COR dans le modèle (la seconde demande le profil des primes
+  par versant), puis chercher ce qui fait que la grille ne fait reculer la
+  pension moyenne relative que de 3,5 %, quand le COR la fait reculer de
+  17,2 %.
+  Chaque part expliquée resserre la fourchette.

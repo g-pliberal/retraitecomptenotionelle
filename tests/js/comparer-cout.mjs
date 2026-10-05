@@ -46,6 +46,13 @@ const sortie = {
   ])),
   reconstitution: Object.fromEntries(cout.avenir.reconstitution()),
   decomposition: Object.fromEntries(cout.avenir.decomposition(cout.avenir.premiereAnneeProjetee)),
+  // La borne haute de la fourchette : la dérive de chaque année, les soldes
+  // moyens et la dette à l'horizon si l'écart au COR tenait au système actuel.
+  derive: Object.fromEntries(cout.avenir.annees.map((ligne) => [ligne.annee, ligne.derive])),
+  soldes_moyens_derive: Object.fromEntries(scenarios.map((s) => [
+    s, cout.soldeDerive.soldeMoyen(s, solde.premiereAnneeProjetee, solde.annees.at(-1).annee),
+  ])),
+  dette_derive: Object.fromEntries(scenarios.map((s) => [s, cout.detteDerive.horizon(s)])),
 };
 
 process.stdout.write(JSON.stringify(sortie));

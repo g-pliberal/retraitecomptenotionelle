@@ -678,6 +678,29 @@ def masse_du_scenario(base: float, part_derives: float, rapport: float,
     return directe
 
 
+def rapport_derive(rapports: dict[str, float], scenario: str, derive: float) -> float:
+    """Le rapport d'un système, si l'écart au COR tenait tout entier au système actuel.
+
+    LA BORNE HAUTE DE LA FOURCHETTE (action 147, étape 3). La page prend au
+    modèle un rapport de masses, qu'elle applique à la dépense du COR. Or la
+    masse que le modèle donne au système actuel croît plus vite que la dépense
+    du COR — 17,8 % du PIB en 2070 contre 15,3 —, parce que la pension moyenne
+    de sa grille ne recule pas comme celle du COR. Deux lectures encadrent ce
+    que l'écart fait au rapport. S'il est PARTAGÉ — une grille qui compte mal
+    qui part, et quand, se trompe de la même façon sur toutes les règles —, le
+    rapport est juste, et c'est celui de la page. S'il est PROPRE au système
+    actuel — une règle du droit en vigueur que la grille sert mieux que le COR
+    —, la masse des systèmes notionnels est juste et seule celle du système
+    actuel est trop haute : le rapport doit être multiplié par ``derive``.
+
+    Le système actuel garde son rapport, qui vaut un, et la garantie aussi :
+    elle n'est pas lue sur la grille mais sur la distribution des pensions.
+    """
+    if scenario in ("actuel", COMPOSANTE_GARANTIE):
+        return rapports[scenario]
+    return rapports[scenario] * derive
+
+
 @dataclass
 class AvenirAnnuel:
     """Une année de la trajectoire de la répartition, observée ou projetée.
@@ -745,12 +768,29 @@ class AvenirAnnuel:
     #: Le salaire moyen par tête de l'année, en indice réel — un l'année des
     #: euros constants : le dénominateur de la pension moyenne relative.
     salaire_reel: float = 0.0
+    #: Ce que l'écart au COR ferait au RAPPORT s'il tenait tout entier au
+    #: système actuel : la croissance de la masse que le modèle se donne,
+    #: rapportée à celle de la dépense du COR, depuis la première année
+    #: projetée. Un sur les années publiées, et partout sans compte du COR.
+    #: Voir :func:`rapport_derive`.
+    derive: float = 1.0
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
         return masse_du_scenario(self.base, self.part_derives,
                                  self.rapports[scenario], scenario,
                                  self.reversion_servie, self.reforme_en_vigueur)
+
+    def cout_constants_derive(self, scenario: str) -> float:
+        """Le même coût, si l'écart au COR tenait tout entier au système actuel."""
+        return masse_du_scenario(self.base, self.part_derives,
+                                 rapport_derive(self.rapports, scenario, self.derive),
+                                 scenario, self.reversion_servie, self.reforme_en_vigueur)
+
+    def part_pib_derive(self, scenario: str) -> float:
+        if not self.pib:
+            return 0.0
+        return self.cout_constants_derive(scenario) / self.coefficient_constants / self.pib
 
     def cout(self, scenario: str) -> float:
         """Le même coût, ramené aux euros courants de son année."""
@@ -1798,6 +1838,11 @@ class Cout:
     solde: Solde = field(default_factory=Solde)
     #: Le stock que les soldes projetés accumulent, avec intérêts.
     dette: Dette = field(default_factory=Dette)
+    #: La BORNE HAUTE de la fourchette : le même bilan et la même dette, si
+    #: l'écart de la masse du modèle à la dépense du COR tenait tout entier au
+    #: système actuel (:func:`rapport_derive`). Le système actuel n'y bouge pas.
+    solde_derive: Solde = field(default_factory=Solde)
+    dette_derive: Dette = field(default_factory=Dette)
     #: Année d'expression des euros constants.
     annee_euros: int = 0
     #: Générations effectivement simulées.
@@ -3359,6 +3404,9 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
         pib_projete[annee] = courant
 
     lignes: list[AvenirAnnuel] = []
+    # Le rapport de la masse du modèle à la base, la première année projetée :
+    # la dérive de chaque année suivante se mesure contre lui.
+    jonction: float | None = None
     for annee in range(depenses.premiere_annee_ventilee, HORIZON + 1):
         poids_annee = poids(annee)
         masses, _, tetes = _masses(pensionnes, population, annee, poids_annee,
@@ -3392,6 +3440,11 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             base = comptes.depense(annee) * pib * coefficient
         else:
             base = modele
+        derive = 1.0
+        if projete and base > 0.0:
+            if jonction is None:
+                jonction = modele / base
+            derive = modele / base / jonction
         actifs = population.actifs(annee)
         part_derives = depenses.part_droits_derives(annee)
         projetee = garantie.chiffrer(masses, tetes)
@@ -3419,6 +3472,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             tetes=tetes[TETES_TOUTES],
             salaire_reel=(macro.coefficient_salaire_moyen(annee_euros, annee)
                           / macro.coefficient_prix(annee_euros, annee)),
+            derive=derive,
         ))
     _reprises_successions(lignes, simulateur, garantie)
 
@@ -3438,8 +3492,14 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
            derniere_annee_pib: int, assiette: AssietteActivite | None,
            taux_liberal: float, annee_bascule: int,
            convention: str, depenses: DepensesRetraite,
-           reversion_servie: bool = False, tva_liberal: float = 0.0) -> Solde:
+           reversion_servie: bool = False, tva_liberal: float = 0.0,
+           derive: bool = False) -> Solde:
     """Le bilan, obtenu en croisant le compte du COR et les rapports du modèle.
+
+    ``derive`` donne la BORNE HAUTE de la fourchette : chaque rapport notionnel
+    y est multiplié par la dérive de son année (:func:`rapport_derive`), comme
+    si l'écart de la masse du modèle à la dépense du COR tenait tout entier au
+    système actuel.
 
     Aucune pension n'est resimulée ici : les rapports de masses sont ceux que
     ``_avenir`` a déjà calculés, année par année, et cette fonction ne fait que
@@ -3491,7 +3551,10 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             projete=annee > comptes.derniere_annee_observee,
             ressources=comptes.ressource(annee),
             depenses=comptes.depense(annee),
-            rapports=par_annee[annee].rapports,
+            rapports=({scenario: rapport_derive(par_annee[annee].rapports, scenario,
+                                                par_annee[annee].derive)
+                       for scenario in par_annee[annee].rapports}
+                      if derive else par_annee[annee].rapports),
             pib=par_annee[annee].pib if annee <= derniere_annee_pib else 0.0,
             retrait=comptes.recette_non_acquise(annee),
             rapports_recettes=par_annee[annee].rapports_recettes,
@@ -3938,21 +4001,30 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     # plutôt que passée, pour que tout appelant la reçoive — elle est un terme
     # de la proposition, pas un réglage de page.
     tva = AssietteTva(simulateur.parametres.racine_donnees)
-    solde = _solde(
-        avenir, comptes, depenses.pib.derniere_annee, assiette,
-        simulateur.parametres.taux_cotisation_liberal,
-        simulateur.parametres.annee_bascule, convention_recette,
-        depenses, reversion_servie,
-        tva.recette_supplementaire(simulateur.parametres.taux_tva_liberal),
-    ) if comptes is not None and avenir.annees else Solde()
+    def bilan(derive: bool) -> Solde:
+        return _solde(
+            avenir, comptes, depenses.pib.derniere_annee, assiette,
+            simulateur.parametres.taux_cotisation_liberal,
+            simulateur.parametres.annee_bascule, convention_recette,
+            depenses, reversion_servie,
+            tva.recette_supplementaire(simulateur.parametres.taux_tva_liberal),
+            derive=derive,
+        ) if comptes is not None and avenir.annees else Solde()
+
+    solde = bilan(derive=False)
+    # La borne haute de la fourchette : le même bilan, si l'écart au COR tenait
+    # tout entier au système actuel. Gratuite : aucune pension n'est resimulée.
+    solde_derive = bilan(derive=True)
+    dette_publique = comptes.dette_publique if comptes is not None else None
     return Cout(
         annees=lignes,
         avenir=avenir,
         solde=solde,
-        dette=calculer_dette(
-            solde, avenir, simulateur.courbe_taux,
-            dette_publique=comptes.dette_publique if comptes is not None else None,
-        ),
+        dette=calculer_dette(solde, avenir, simulateur.courbe_taux,
+                             dette_publique=dette_publique),
+        solde_derive=solde_derive,
+        dette_derive=calculer_dette(solde_derive, avenir, simulateur.courbe_taux,
+                                    dette_publique=dette_publique),
         annee_euros=annee_euros,
         generations=generations(),
         echecs=echecs,

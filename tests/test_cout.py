@@ -794,6 +794,44 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
         f"{math.ceil(ecart * 100) / 100:.0%}")
 
 
+def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
+    """La dérive d'une année projetée est la croissance de la masse que le
+    modèle se donne, rapportée à celle de la dépense du COR, depuis la première
+    année projetée : un à cette jonction et sur les années publiées, et plus de
+    un ensuite tant que le modèle ne fait pas reculer sa pension moyenne comme
+    le COR. Elle valait 1,203 en 2070 le 5 octobre 2026.
+    """
+    jonction = avenir.annee(avenir.premiere_annee_projetee)
+    assert jonction.derive == 1.0
+    for ligne in avenir.annees:
+        if not ligne.projete:
+            assert ligne.derive == 1.0, ligne.annee
+            continue
+        attendue = (ligne.base_modele / ligne.base) / (jonction.base_modele / jonction.base)
+        assert ligne.derive == pytest.approx(attendue, rel=1e-12), ligne.annee
+    horizon = avenir.annee(avenir.derniere_annee)
+    assert 1.1 < horizon.derive < 1.3, horizon.derive
+
+
+def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
+    """La fourchette ne déplace ni le système actuel, dont le rapport vaut un,
+    ni la garantie, lue sur la distribution des pensions ; elle alourdit la
+    dépense de chaque système notionnel de la dérive de l'année, et donc la
+    dette de la proposition."""
+    for haute, basse in zip(cout.solde_derive.annees, cout.solde.annees):
+        assert haute.annee == basse.annee
+        assert haute.solde("actuel") == pytest.approx(basse.solde("actuel"), rel=1e-12)
+        assert haute.depense(COMPOSANTE_GARANTIE) == pytest.approx(
+            basse.depense(COMPOSANTE_GARANTIE), rel=1e-12)
+        derive = cout.avenir.annee(haute.annee).derive
+        assert haute.rapports["notionnel_liberal"] == pytest.approx(
+            basse.rapports["notionnel_liberal"] * derive, rel=1e-12)
+    assert cout.dette_derive.horizon("actuel") == pytest.approx(
+        cout.dette.horizon("actuel"), rel=1e-12)
+    assert cout.dette_derive.horizon("notionnel_liberal") > cout.dette.horizon(
+        "notionnel_liberal") + 0.10
+
+
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):
     """Le PIB suit le rythme nominal du COR CORRIGÉ de la population d'âge
     actif, qui recule. Il doit donc croître moins vite que l'hypothèse brute —
@@ -3611,6 +3649,22 @@ def test_le_portage_decompose_la_trajectoire_de_meme(cout_a_mi_emploi,
     for annee, (tetes, pension) in attendue.items():
         assert lue[annee][0] == pytest.approx(tetes, rel=1e-9), annee
         assert lue[annee][1] == pytest.approx(pension, rel=1e-9), annee
+
+
+def test_le_portage_borne_la_fourchette_de_meme(cout_a_mi_emploi, portage_a_mi_emploi):
+    """La borne haute de la fourchette, refaite en JavaScript : la dérive de
+    chaque année, les soldes moyens et la dette à l'horizon."""
+    portage = portage_a_mi_emploi
+    lue = {int(annee): derive for annee, derive in portage["derive"].items()}
+    for ligne in cout_a_mi_emploi.avenir.annees:
+        assert lue[ligne.annee] == pytest.approx(ligne.derive, rel=1e-12), ligne.annee
+    solde = cout_a_mi_emploi.solde_derive
+    for scenario, valeur in portage["soldes_moyens_derive"].items():
+        assert valeur == pytest.approx(solde.solde_moyen(
+            scenario, solde.premiere_annee_projetee, solde.derniere_annee), rel=1e-9)
+    for scenario, valeur in portage["dette_derive"].items():
+        assert valeur == pytest.approx(cout_a_mi_emploi.dette_derive.horizon(scenario),
+                                       rel=1e-9, abs=1e-12), scenario
 
 
 # -- la TVA, que la proposition ne réforme plus -------------------------------

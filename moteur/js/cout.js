@@ -1167,13 +1167,32 @@ class CoutAnnuel {
  * pensions dont le modèle tire ses masses le sont déjà, et mêler les deux
  * reviendrait à déflater deux fois.
  */
+/**
+ * Le rapport d'un système, si l'écart au COR tenait tout entier au système
+ * actuel : la BORNE HAUTE de la fourchette (action 147, étape 3). Le rapport
+ * de chaque système notionnel est multiplié par la dérive de son année — la
+ * croissance de la masse que le modèle se donne, rapportée à celle de la
+ * dépense du COR. Le système actuel et la garantie gardent le leur. Portage de
+ * `rapport_derive` dans `cout.py`, qui dit les deux lectures que la fourchette
+ * encadre.
+ */
+export function rapportDerive(rapportsAnnee, scenario, derive) {
+  if (scenario === "actuel" || scenario === COMPOSANTE_GARANTIE) {
+    return rapportsAnnee[scenario];
+  }
+  return rapportsAnnee[scenario] * derive;
+}
+
 class AvenirAnnuel {
   constructor(annee, projete, base, coefficientConstants, pib, rapportsAnnee,
               dependance, recettes = {}, partDerives = 0.0,
               reversionServie = false, reformeEnVigueur = true, garantie = null,
               pilier = null, partStock = 0.0, facteurAssietteLiberal = 1.0,
-              baseModele = 0.0, tetes = 0.0, salaireReel = 0.0) {
+              baseModele = 0.0, tetes = 0.0, salaireReel = 0.0, derive = 1.0) {
     this.annee = annee;
+    // Ce que l'écart au COR ferait au RAPPORT s'il tenait tout entier au
+    // système actuel : un sur les années publiées. Voir `rapportDerive`.
+    this.derive = derive;
     // Les retraités que le modèle compte cette année-là : les cohortes de la
     // grille parvenues à l'âge de départ de leur cas type, pesées comme dans la
     // masse. Leur RYTHME se confronte à celui des effectifs du COR
@@ -1220,6 +1239,18 @@ class AvenirAnnuel {
     return masseDuScenario(this.base, this.partDerives,
                            this.rapports[scenario], scenario, this.reversionServie,
                            this.reformeEnVigueur);
+  }
+
+  /** Le même coût, si l'écart au COR tenait tout entier au système actuel. */
+  coutConstantsDerive(scenario) {
+    return masseDuScenario(this.base, this.partDerives,
+                           rapportDerive(this.rapports, scenario, this.derive), scenario,
+                           this.reversionServie, this.reformeEnVigueur);
+  }
+
+  partPibDerive(scenario) {
+    return this.pib
+      ? this.coutConstantsDerive(scenario) / this.coefficientConstants / this.pib : 0.0;
   }
 
   /** Le même coût, ramené aux euros courants de son année. */
@@ -2027,10 +2058,16 @@ export function calculerDette(solde, avenir, courbe, ecartTaux = 0.0,
 class Cout {
   constructor(annees, avenir, solde, anneeEuros, generationsRetenues, echecs,
               fiabilite, ponderationRetenue = "effectifs", poids = {},
-              liquidationRetenue = "droit", dette = new Dette(), poidsCotisants = {}) {
+              liquidationRetenue = "droit", dette = new Dette(), poidsCotisants = {},
+              soldeDerive = null, detteDerive = null) {
     this.annees = annees;
     this.avenir = avenir;
     this.solde = solde;
+    // La BORNE HAUTE de la fourchette : le même bilan et la même dette, si
+    // l'écart de la masse du modèle à la dépense du COR tenait tout entier au
+    // système actuel (`rapportDerive`).
+    this.soldeDerive = soldeDerive ?? solde;
+    this.detteDerive = detteDerive ?? dette;
     // Le stock que les soldes projetés accumulent, avec intérêts.
     this.dette = dette;
     this.anneeEuros = anneeEuros;
@@ -2449,6 +2486,9 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
   }
 
   const lignes = [];
+  // Le rapport de la masse du modèle à la base, la première année projetée :
+  // la dérive de chaque année suivante se mesure contre lui.
+  let jonction = null;
   for (let annee = depenses.premiereAnneeVentilee; annee <= HORIZON; annee += 1) {
     const poidsAnnee = poids(annee);
     const { total, tetes } = masses(liste, population, annee, poidsAnnee, revalorisation);
@@ -2486,6 +2526,11 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
     } else {
       base = modele;
     }
+    let derive = 1.0;
+    if (projete && base > 0) {
+      if (jonction === null) jonction = modele / base;
+      derive = modele / base / jonction;
+    }
     const actifs = population.actifs.valeur(annee);
     const partDerives = depenses.partDroitsDerives(annee);
     const projetee = garantie.chiffrer(total, tetes);
@@ -2511,6 +2556,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       modele,
       tetes[TETES_TOUTES],
       macro.coefficientSalaireMoyen(anneeEuros, annee) / macro.coefficientPrix(anneeEuros, annee),
+      derive,
     ));
   }
 
@@ -2538,7 +2584,9 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
  */
 function construireSolde(avenir, comptes, derniereAnneePib, assiette,
                         tauxLiberal, anneeBascule, convention, depenses,
-                        reversionServie = false, tvaLiberal = 0.0) {
+                        reversionServie = false, tvaLiberal = 0.0, derive = false) {
+  // `derive` donne la BORNE HAUTE de la fourchette : chaque rapport notionnel
+  // multiplié par la dérive de son année (`rapportDerive`).
   const parAnnee = new Map(avenir.annees.map((ligne) => [ligne.annee, ligne]));
   // Le taux de prélèvement de l'année, mesuré puis suivi chez le COR. Le
   // NIVEAU est mesuré sur une année où l'assiette est PUBLIÉE, seule chose que
@@ -2561,7 +2609,10 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
       annee > comptes.derniereAnneeObservee,
       comptes.ressource(annee),
       comptes.depense(annee),
-      ligne.rapports,
+      derive
+        ? Object.fromEntries(Object.keys(ligne.rapports).map(
+          (scenario) => [scenario, rapportDerive(ligne.rapports, scenario, ligne.derive)]))
+        : ligne.rapports,
       annee <= derniereAnneePib ? ligne.pib : 0.0,
       comptes.recetteNonAcquise(annee),
       ligne.rapportsRecettes,
@@ -2686,15 +2737,21 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   // plutôt que passée, pour que tout appelant la reçoive — elle est un terme de
   // la proposition, pas un réglage de page.
   const tva = new AssietteTva(simulateur.paquet);
-  const solde = comptes && avenir.annees.length
+  const bilan = (derive) => (comptes && avenir.annees.length
     ? construireSolde(
       avenir, comptes, depenses.pib.derniereAnnee, assiette,
       simulateur.parametres.taux_cotisation_liberal,
       simulateur.parametres.annee_bascule, conventionRecette, depenses,
       reversionServie,
       tva.recetteSupplementaire(simulateur.parametres.taux_tva_liberal),
+      derive,
     )
-    : new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);
+    : new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE));
+  const solde = bilan(false);
+  // La borne haute de la fourchette : le même bilan, si l'écart au COR tenait
+  // tout entier au système actuel. Gratuite : aucune pension n'est resimulée.
+  const soldeDerive = bilan(true);
+  const dettePublique = comptes ? comptes.dettePublique : null;
   return new Cout(
     lignes,
     avenir,
@@ -2706,8 +2763,9 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
     mode,
     poids(depenses.derniereAnnee),
     liquidation,
-    calculerDette(solde, avenir, simulateur.courbeTaux, 0.0,
-                  comptes ? comptes.dettePublique : null),
+    calculerDette(solde, avenir, simulateur.courbeTaux, 0.0, dettePublique),
     poidsCotisants(depenses.derniereAnnee),
+    soldeDerive,
+    calculerDette(soldeDerive, avenir, simulateur.courbeTaux, 0.0, dettePublique),
   );
 }
