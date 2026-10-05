@@ -438,6 +438,14 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   2026. Le régime des exploitants étant déjà le plus approché du catalogue, la
   porter ici donnerait un chiffre plus précis d'apparence et pas davantage de
   vérité.
+- **Le minimum de pension des IEG.** Depuis le 1er juillet 2008, la CNIEG
+  porte au minimum — huit cents, neuf cents ou mille euros de 2008, selon
+  quinze, trente ou trente-cinq ans de services, revalorisés depuis — la
+  pension de qui a peu de ressources (annexe 3 au statut national, article
+  19, II). Mais ce sont celles de l'année qui précède le versement, salaires
+  compris l'année du départ, et le modèle, qui calcule la pension du premier
+  mois, ne sait pas lesquelles retenir : la fiche `minimum_pension_ieg` la
+  dit manquante.
 - **Un ménage, un patrimoine, des ressources.** Le minimum vieillesse est servi
   sous le barème d'une personne seule sans autre ressource — le cas le plus
   favorable — et à tous, alors que la DREES estime le non-recours à la moitié
@@ -2748,7 +2756,10 @@ son taux du système 1. C'est une hypothèse, que la page dit — la réforme ne
 pas les prélèvements —, et le net y garde les rapports du brut. Restent hors du
 calcul la cotisation supplémentaire du régime local d'Alsace-Moselle, et ce que les
 régimes spéciaux, la fonction publique et les indépendants prélèvent par leurs
-propres textes, qui ne sont pas lus. Qui réside hors de France ne doit ni CSG, ni
+propres textes, qui ne sont pas lus — ainsi la cotisation de la CAMIEG, que le
+retraité des IEG qui compte quinze ans de services paie sur sa pension et sa
+réversion, au taux de deux et quart pour cent (page « Prélèvements » de la
+CNIEG, lue le 5 octobre 2026). Qui réside hors de France ne doit ni CSG, ni
 CRDS, ni CASA ; si la France prend en charge ses soins, il doit une cotisation
 maladie sur la base du régime général et sur la complémentaire (fiche
 `cotisation_maladie_des_non_residents`) ; les conventions bilatérales qui

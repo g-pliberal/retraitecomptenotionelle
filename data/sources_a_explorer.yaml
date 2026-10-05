@@ -2590,7 +2590,20 @@ sources:
       sur les 25 meilleures années à compter de 2026 : une réforme RÉCENTE,
       donc une ligne obligatoire dans reformes.yaml et veille.yaml, et un
       changement que le dépôt doit couper à la bonne date.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (page du 27 avril 2026). Les deux étapes de la
+      réforme, le calcul provisoire de 2026 et 2027 révisé « avant le 1er avril
+      2028 » et la forfaitaire de « 325€ /mois » concordent avec
+      data/reference/regimes/msa_non_salaries.yaml (3 905,37 € par an) et la
+      réforme coupée dans data/reference/legislation/reformes.yaml. Sa FAQ, qui
+      garde « majoration et bonification enfants », a fait trouver qu'aucune
+      période ne déclarait la majoration d'un dixième des parents de trois
+      enfants : servie depuis le 1er juillet 1974 (décret n° 55-753, article 37,
+      puis D. 732-38 du code rural, puis L. 351-12 depuis 2026 ;
+      tests/test_simulateur.py, un témoin). La majoration de durée, convertie en
+      points, reste déclarée non portée (docs/limites.md).
 
   # ---- Régimes spéciaux ---------------------------------------------------
 
@@ -2603,7 +2616,13 @@ sources:
       Le calcul des IEG : salaire des six derniers mois, coefficient de 75 %,
       services actifs et insalubres. Le dépôt le modélise ; cette page dit ce
       qu'il simplifie.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : une page d'orientation — le montant dépend du
+      salaire, des trimestres et de la date de départ, quatre trimestres au plus
+      par année —, qui renvoie au simulateur et à la réglementation, lue dans les
+      lignes cnieg_mode_calcul et suivantes ; rien de plus.
 
   - id: cnieg_age_retraite
     url: https://www.cnieg.fr/accueil/actif/age-depart/age-retraite.html
@@ -2613,7 +2632,14 @@ sources:
     a_en_tirer: >-
       Les âges après la réforme de 2023, qui ferme le régime aux nouveaux
       embauchés : le calendrier de convergence, borne par borne.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : renvoie au simulateur et aux âges par génération que
+      l'annexe 3 au statut national fixe, lus dans l'index LEGI (articles 16 et
+      45). Le commentaire du cas type des IEG datait de 2027 l'âge de
+      cinquante-neuf ans des services actifs, que le modèle sert à la génération
+      1975, en 2034 : corrigé, dans les deux moteurs (castypes).
 
   - id: cnieg_retraite_progressive
     url: https://www.cnieg.fr/accueil/actif/age-depart/retraite-progressive.html
@@ -2622,7 +2648,15 @@ sources:
     regimes: [ieg]
     a_en_tirer: >-
       La retraite progressive dans un régime spécial, ouverte récemment.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : soixante ans, 150 trimestres, un temps partiel de 40
+      à 80 %. Elle a fait trouver que les IEG ouvrent la retraite progressive à
+      leurs agents depuis le 1er septembre 2023 — l'annexe 3 au statut national
+      rend le code applicable (article 21-1) —, que le moteur leur refusait :
+      corrigé (fiche data/reference/regles/retraite_progressive.yaml,
+      tests/test_retraite_progressive.py).
 
   - id: cnieg_prelevements
     url: https://www.cnieg.fr/accueil/retraite/prelevements/prelevements-sociaux.html
@@ -2631,7 +2665,13 @@ sources:
     regimes: [ieg]
     a_en_tirer: >-
       Les prélèvements sur les pensions des IEG, dont la CSG à taux particulier.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : la cotisation d'assurance maladie de la CAMIEG,
+      2,25 % des pensions de retraite et de réversion, due dès quinze ans de
+      services dans les IEG. Le net des pensions du modèle ne la prélève pas,
+      faute de son historique : docs/limites.md le dit.
 
   - id: crpratp_ouverture_du_droit
     url: https://www.crpratp.fr/web/actif/preparez-votre-depart-a-la-retraite/ouverture-du-droit
@@ -2777,7 +2817,21 @@ sources:
     a_en_tirer: >-
       Les clercs de notaires : calcul, minimum, et le taux de cotisation
       employeur le plus élevé de France. Fiche `partiel`.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (page du 12 septembre 2023, qui « ne tient pas
+      compte » de la réforme). Le salaire annuel moyen des dix meilleures années,
+      compté pour moitié de trois à sept plafonds, que le modèle prenait sur les
+      six derniers mois sans plafond : corrigé
+      (data/reference/regimes/crpcen.yaml, décret n° 90-1215, articles 89 et 96 ;
+      tests/test_simulateur.py), sept cas types de clercs baissant de 4 à 9 % ; la
+      cotisation salariale de 12,93 %, 12,98 % puis 13,03 % depuis 2018 (décret n°
+      91-613, article 4) ; la réversion de 50 %, portée
+      (data/reference/regles/reversion_crpcen.yaml), et l'orphelin de 10 %, non
+      porté. Restent la surcote parentale, la majoration d'ancienneté et la part
+      de l'employeur, que l'article 4, 1°, fixe à 16,91 % depuis 2026 et que
+      docs/limites.md dit encore introuvable.
 
   - id: cprpf_comprendre_droits
     url: https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/comprendre-vos-droits/
@@ -2807,7 +2861,18 @@ sources:
     a_en_tirer: >-
       Bonifications et majorations pour enfants à la SNCF, matière de
       l'action 43.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : un an par enfant né avant le 1er juillet 2008, trois
+      depuis, au titre des congés pour l'élever ; deux trimestres de majoration à
+      la mère qui a accouché après son recrutement, « ajoutés à la durée
+      d'assurance qui intervient pour le calcul de la décote » ; aucune
+      bonification au taux. Le modèle prêtait à la SNCF la bonification de la
+      fonction publique : corrigé (data/reference/regles/enfants_sncf.yaml, décret
+      n° 2008-639, articles 7, 9 et 13 ; tests/test_priorite_enfants.py), et la
+      même lecture a donné leur fiche à la RATP, aux IEG et à la CRPCEN, et ôté du
+      prorata d'un régime spécial les trimestres de durée seule.
 
   # ---- Artistes-auteurs (Urssaf Limousin) ---------------------------------
 
@@ -4504,7 +4569,14 @@ sources:
       simulateur puisse prendre — on lit la formule au lieu de la deviner en
       balayant —, et c'est le cinquième barème de rachat du chantier, après
       l'ENSAP, la CNRACL, la Cipav et la Cnav.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Déchiffré le 5 octobre 2026 : le barème du classeur — trois options, de
+      vingt à soixante-sept ans, en pourcentage du salaire — est celui des
+      circulaires de la CNIEG n° 2021/02 et 2024/06, sans un écart, et décroît de
+      2,5 % par année au-delà de cinquante-neuf ans, au centième près. Le modèle
+      ne simule pas le rachat : rien à porter.
 
   - id: cnieg_amelioration_retraite
     url: https://www.cnieg.fr/accueil/actif/montant-retraite/amelioration-retraite.html
@@ -4513,7 +4585,12 @@ sources:
     regimes: [ieg]
     a_en_tirer: >-
       Les leviers que le régime reconnaît : rachat, surcote, prolongation.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : prolonger l'activité, racheter jusqu'à douze
+      trimestres d'études, quatre par an, épargner ; renvoie aux pages lues dans
+      les autres lignes ; rien.
 
   - id: cnieg_reglementation
     url: https://www.cnieg.fr/accueil/reglementation/particulier.html
@@ -4523,7 +4600,17 @@ sources:
     a_en_tirer: >-
       La table des matières de la réglementation : c'est d'ici que partent
       toutes les pages qui suivent, et sans doute d'autres.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Déroulée le 5 octobre 2026 : ses pages utiles ont chacune leur ligne, ou ont
+      été lues à leur suite — bonifications pour enfants, décote, minimum,
+      retraite progressive —, avec les circulaires n° 2024/04, 2024/07, 2024/08 et
+      2024/15. Elles ont donné leur fiche aux trimestres pour enfants
+      (data/reference/regles/enfants_ieg.yaml), à la réversion
+      (reversion_ieg.yaml) et au minimum (minimum_pension_ieg.yaml). Défaut : le
+      deuxième exemple de la circulaire n° 2024/15 appelle la même assurée
+      « Madame B » puis « Madame D ».
 
   - id: cnieg_rachat_etudes
     url: https://www.cnieg.fr/accueil/reglementation/particulier/rachat-annees-etudes.html
@@ -4533,7 +4620,13 @@ sources:
     a_en_tirer: >-
       La règle du rachat, à côté du classeur qui la chiffre : options, nombre
       de trimestres, et ce que le rachat ouvre exactement.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : jusqu'à douze trimestres, quatre par an, en trois
+      options, au barème des circulaires n° 2021/02 et 2024/06 (ligne
+      cnieg_simulateur_rachat_xls). Le modèle ne simule pas le rachat : rien à
+      porter.
 
   - id: cnieg_mode_calcul
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/mode-calcul.html
@@ -4543,7 +4636,12 @@ sources:
     a_en_tirer: >-
       La formule du régime, énoncée par son gestionnaire : à confronter à la
       fiche `ieg`, que le dépôt modélise sans source d'application.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : la formule — salaire de calcul, taux, coefficient de
+      décote ou de surcote — que data/reference/regimes/ieg.yaml porte, chacune de
+      ses pièces ayant sa ligne ; rien de plus.
 
   - id: cnieg_salaire_calcul
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/salaire-calcul.html
@@ -4553,7 +4651,14 @@ sources:
     a_en_tirer: >-
       Le salaire de référence : quels éléments de rémunération entrent dans
       l'assiette de liquidation, et sur quelle durée.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : le salaire du coefficient hiérarchique détenu six
+      mois au moins à la cessation des services, au dernier salaire national de
+      base, gratification de fin d'année comprise, à temps plein ;
+      data/reference/regimes/ieg.yaml l'approche par les six derniers mois ; rien
+      de plus.
 
   - id: cnieg_taux_pension
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/taux-pension.html
@@ -4563,7 +4668,14 @@ sources:
     a_en_tirer: >-
       Le taux de la pension et son plafond : les 75 % et ce qui les porte
       au-delà.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : 75 % au plus, quand la durée liquidée atteint la
+      durée requise ; seules les bonifications de campagne le portent jusqu'à
+      80 %. data/reference/regimes/ieg.yaml borne à 75 %, sans taux bonifié, et
+      les bonifications pour enfants désormais portées n'y passent pas ; rien de
+      plus.
 
   - id: cnieg_duree_assurance
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance.html
@@ -4573,7 +4685,15 @@ sources:
     a_en_tirer: >-
       La durée d'assurance dans un régime spécial : ce qu'elle compte et ce
       qu'elle ne compte pas.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : la majoration pour accouchement des enfants nés
+      depuis le 1er juillet 2008, deux trimestres pour le premier et quatre pour
+      les suivants, entrée dans data/reference/regles/enfants_ieg.yaml avec la
+      bonification de l'article 12 de l'annexe 3. L'exemple de Monsieur B (133
+      trimestres liquidés, 149 de durée) n'est pas rejoué : il compte un rachat et
+      la majoration pour enfant handicapé, que le modèle ne porte pas.
 
   - id: cnieg_tableau_duree_assurance
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance/tableau-duree-assurance.html
@@ -4604,7 +4724,15 @@ sources:
     a_en_tirer: >-
       La règle de décote du régime, dont la convergence sur le droit commun
       s'est faite par étapes.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : l'exemple de Madame D, que
+      data/reference/regles/decote_regimes_speciaux.yaml porte, et que
+      src/retraite_notionnelle/droit/liquider.py attribuait à la circulaire n°
+      2024/15, d'où il ne vient pas : la source est corrigée. L'exemple de
+      Monsieur E, sédentaire, reste à rejouer avec les âges des services
+      sédentaires, que la fiche du régime ne porte pas.
 
   - id: cnieg_decote_coefficient
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote/coefficient.html
@@ -4672,7 +4800,13 @@ sources:
     a_en_tirer: >-
       La majoration pour enfants élevés : le barème d'un régime spécial, à
       joindre à l'action 43 et au chiffrage des avantages non contributifs.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : 10 % pour trois enfants élevés neuf ans avant leurs
+      vingt ans, 5 % par enfant au-delà, l'enfant handicapé comptant pour deux —
+      le barème taux_majoration_enfants de data/reference/regimes/ieg.yaml ;
+      l'enfant handicapé n'est pas porté ; rien de plus.
 
   - id: cnieg_minimum_retraite
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/minimum-retraite.html
@@ -4682,7 +4816,17 @@ sources:
     a_en_tirer: >-
       Le minimum de pension du régime, que le dépôt ne porte pour aucun régime
       spécial.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : 1 010,74, 1 137,10 et 1 263,44 euros au 1er janvier
+      2026 pour quinze, trente et trente-cinq ans de services, sous un plafond de
+      ressources de 2 080 SMIC horaires. La règle manquait au modèle sans fiche :
+      elle a la sienne, manquante
+      (data/reference/regles/minimum_pension_ieg.yaml), et docs/limites.md la dit
+      — ce sont les ressources de l'année qui précède le versement. Défaut :
+      l'exemple porte la pension au minimum de 2025, 1 001,73 €, sous le plafond
+      de 2026.
 
   - id: cnieg_baremes_cotisations_sociales
     url: https://www.cnieg.fr/accueil/reglementation/particulier/retraite/cotisations-sociales/baremes.html
@@ -4693,7 +4837,13 @@ sources:
       Les barèmes de CSG, CRDS et Casa sur les pensions, avec leurs seuils :
       énième source sur les prélèvements, et la plus utile pour dire un net
       de pension sans se tromper de tranche.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : les seuils de revenu fiscal de référence de la CSG,
+      de la CRDS et de la CASA, ceux de tous les retraités, que
+      data/reference/legislation/prelevements_remuneration.yaml porte ; la
+      cotisation de la CAMIEG est dans la ligne cnieg_prelevements ; rien de plus.
 
   - id: cnieg_pension_orphelin
     url: https://www.cnieg.fr/accueil/reglementation/particulier/pension-temporaire-orphelin.html
@@ -4703,7 +4853,13 @@ sources:
     a_en_tirer: >-
       La pension temporaire d'orphelin : un droit dérivé que seuls quelques
       régimes servent, et qu'aucun scénario du dépôt ne porte.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : 10 % de la pension, hors majoration pour enfants, à
+      chaque orphelin de moins de vingt et un ans, ou au-delà s'il est handicapé.
+      Non portée, comme les autres : docs/limites.md la nomme avec celles du RAFP,
+      de la CRPCEN et de l'Agirc-Arrco.
 
   - id: cnieg_reprise_activite
     url: https://www.cnieg.fr/accueil/retraite/situation/reprise-activite.html
@@ -4712,7 +4868,13 @@ sources:
     regimes: [ieg]
     a_en_tirer: >-
       Le cumul emploi-retraite dans les IEG, et son écrêtement propre.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : le cumul emploi-retraite, que l'article 21-1 de
+      l'annexe 3 soumet au code de la sécurité sociale, et ses conditions
+      nouvelles pour les départs de 2027, selon l'âge de la reprise ; rien de
+      propre aux IEG à porter.
 
   - id: cnieg_deces
     url: https://www.cnieg.fr/accueil/retraite/deces.html
@@ -4722,7 +4884,12 @@ sources:
     a_en_tirer: >-
       La réversion et le capital décès des IEG, aux conditions du régime
       spécial et non du droit commun.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 : le capital décès, versé une fois aux proches — ni au
+      partenaire de PACS ni au concubin —, et les démarches ; la réversion des IEG
+      a sa fiche (data/reference/regles/reversion_ieg.yaml) ; rien de plus.
 
   # ---- ENIM et CRPCEN, suite ----------------------------------------------
 
@@ -4785,7 +4952,14 @@ sources:
     a_en_tirer: >-
       Le rachat d'années d'études chez les clercs de notaires : sixième barème
       de rachat du chantier, et fiche `partiel`.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (notice du 1er janvier 2025) : trois options, d'un à
+      douze trimestres, au coût d'un barème par âge et d'une valeur de point, avec
+      un abattement jusqu'à l'année des quarante ans, le barème de cinquante-neuf
+      ans diminué de 2,5 % par année au-delà. Le modèle ne simule pas le rachat :
+      rien à porter.
 
   # ---- Les autres modèles, recensés le 1er octobre 2026 ---------------------
   # Ces lignes ne viennent pas des 260 adresses du 22 septembre : elles sont

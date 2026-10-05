@@ -1114,14 +1114,14 @@ borne basse et l'écart une borne haute.
 
 **Reprise, au 5 octobre 2026.** Les 260 adresses se dépouillent par lots.
 Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
-publique de l'État, la CNRACL, la Caisse des dépôts, le RAFP et
-l'Agirc-Arrco (leurs notes, en fin d'action). Les saisies passent par
-`scripts/simulateurs.py`, sur un lot approuvé. Les vingt-trois lignes de la
-CNIEG, de la CRPCEN, de la CPRPF et de la MSA sont `en_cours`, réservées et
-lues le 5 octobre : leurs trouvailles, à vérifier et à porter, sont dans la
-note de l'Agirc-Arrco et la suivante. Restent `a_explorer` : les pages de
-l'Ircantec, la Cnav et service-public, le CLEISS, les modèles publics,
-mon-entreprise, et quinze API publiques.
+publique de l'État, la CNRACL, la Caisse des dépôts, le RAFP, l'Agirc-Arrco
+et les régimes spéciaux — la CNIEG, la CRPCEN, la CPRPF et la MSA (leurs
+notes, en fin d'action). Les saisies passent par `scripts/simulateurs.py`,
+sur un lot approuvé. Restent `a_explorer` : les pages de l'Ircantec, la Cnav
+et service-public, le CLEISS, les modèles publics, mon-entreprise, et quinze
+API publiques. Ce que les régimes spéciaux laissent — le minimum des IEG, la
+CAMIEG, leurs sédentaires, la part employeur de la CRPCEN — est dans leur
+note, la dernière.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
@@ -1811,6 +1811,42 @@ l'article 58, l'orphelin, le partage entre ex-conjoints, la version
 consolidée de l'accord, les deux limites du cumul plafonné que la fiche
 réglementaire de la fédération ne date pas, et le taux de calcul de
 l'Arrco des cultes, que l'action 119 tient.
+
+**Les régimes spéciaux, le 5 octobre 2026.** Les vingt-trois lignes de la
+CNIEG, de la CRPCEN, de la CPRPF et de la MSA, lues par des agents en
+lecture seule, chaque trouvaille revérifiée dans l'index LEGI avant
+d'entrer, chaque correction son commit. *La CRPCEN* liquidait les six
+derniers mois sans plafond : le décret n° 90-1215 dit les dix meilleures
+années, comptées pour moitié de trois à sept plafonds (article 89),
+revalorisées comme au régime général (article 96) — un écrêtement nouveau
+dans les deux moteurs, et sept cas types de clercs de 4 à 9 % plus bas ; ses
+taux salariaux depuis 2018 ; sa réversion (article 113) et ses trimestres
+pour enfants (article 92), qu'elle n'avait pas, avec la durée qui ouvre sa
+pension. *Les trimestres pour enfants* : la SNCF, la RATP et les IEG
+recevaient la bonification de la fonction publique, coupée en 2004. Chacune
+a sa fiche, lue article par article et recoupée par le COR (séance du
+19 octobre 2023, document n° 2) : rien aux services à la SNCF ; un an avant
+juillet 2008, puis deux et quatre trimestres selon le rang dans la fratrie,
+à la RATP et aux IEG, qui doublent le second d'une fratrie de deux ; de même
+à la CRPCEN, coupée en 2006. Et les trimestres de durée seule ne proratisent
+plus la pension d'un régime spécial, ce que le modèle faisait déjà des deux
+trimestres de L. 12 bis. *Les IEG* : leur réversion, la moitié majoration
+comprise (articles 22 à 25) ; la retraite progressive que leur statut ouvre
+depuis 2023 (article 21-1) ; quatre textes faux corrigés, dont l'âge du cas
+type ; le minimum de pension en fiche manquante (`minimum_pension_ieg`) ; la
+CAMIEG dite dans `docs/limites.md`. *La MSA* : la majoration d'un dixième des
+parents de trois enfants, servie depuis 1974 (décret n° 55-753, article 37 ;
+D. 732-38), qu'aucune période ne déclarait. Huit témoins nouveaux font
+passer les deux moteurs par ces chemins, au bit près. *Défauts des sources* :
+l'exemple du minimum de la CNIEG, au montant de 2025 sous le plafond de
+2026 ; la circulaire n° 2024/15, qui nomme la même assurée Madame B puis
+Madame D. *Laissé* : le minimum des IEG, dont il faut décider quelles
+ressources retenir ; la CAMIEG ; la surcote et les âges des sédentaires des
+IEG, avec l'exemple de Monsieur E ; la surcote parentale de la CRPCEN et de
+la SNCF ; la part employeur de la CRPCEN, que le décret n° 91-613 fixe à
+16,91 % depuis 2026 ; les trimestres pour enfants de la Banque de France,
+des mines et des marins, que le COR dit autres que ceux de la fonction
+publique.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 

@@ -1,0 +1,94 @@
+schema_version: 1
+id: minimum_pension_ieg
+intitule: >-
+  Le minimum de pension des industries électriques et gazières (annexe 3 au statut
+  national, article 19, II) : les pensions de vieillesse et de réversion servies depuis
+  le 1er juillet 2008 ne peuvent être inférieures à 800, 900 ou 1 000 euros bruts par
+  mois pour quinze, trente ou trente-cinq ans de services, revalorisés comme les
+  pensions, sous réserve que les ressources de l'année précédente ne dépassent pas le
+  plafond de D. 353-1-1 ; et l'assiette d'une pension au taux plein ne peut descendre
+  sous le coefficient hiérarchique minimal (article 19, I et IV).
+domaine: minima
+regimes:
+- ieg
+etape: completer_tous_regimes
+face: droit
+etat: manquante
+lit:
+- la durée de services de l'agent
+- les ressources de l'année civile qui précède le versement, et celles du conjoint
+- la pension de vieillesse ou de réversion servie
+ecrit:
+- le complément qui porte la pension au minimum
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: assiette_minimale_avant_2008
+  statut: supposee
+  hypothese: >-
+    le minimum mensuel ne vaut que pour les pensions servies à compter du 1er juillet
+    2008 (article 19, II) ; avant, la seule assiette minimale, au coefficient
+    hiérarchique 268,3 que l'article 19, I, donne « jusqu'au 31 décembre 2007 », dont
+    les rédactions d'avant 2008 ne sont pas dans l'index
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    droit: l'assiette minimale seule, sans minimum mensuel
+  exemples: aucun trouvé
+- id: minimum_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019226006, article: "annexe 3 au statut national, article 19", en_vigueur: 2008-06-30}
+  - {id: LEGIARTI000052046924, article: "annexe 3 au statut national, article 19", en_vigueur: 2025-08-06}
+  nee_de: LEGIARTI000019226006
+  bornes:
+    liquidation.date_effet: [2008-07-01, null]
+  contenu:
+    droit: >-
+      un minimum mensuel « de huit cents euros bruts pour une durée de services de
+      quinze ans minimum », neuf cents pour trente ans, mille pour trente-cinq ans,
+      « revalorisé conformément aux dispositions de l'article 20 » : 1 010,74, 1 137,10
+      et 1 263,44 euros au 1er janvier 2026 ; une assiette minimale, au coefficient
+      hiérarchique 271,5 depuis 2016, pour une pension au taux plein
+    conditions: >-
+      des ressources de l'année précédente, minimum non compris, qui ne dépassent pas
+      le plafond de D. 353-1-1 — 2 080 fois le SMIC horaire, 1,6 fois autant pour un
+      couple ; le minimum éteint toute prestation servie pour porter les ressources au
+      niveau de l'ASPA ; partagé entre conjoints comme la réversion
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le minimum se paie sur les ressources de l'ANNÉE QUI PRÉCÈDE son versement : au
+    départ, ce sont encore les salaires, et il ne joue souvent qu'à partir de la
+    deuxième année. Le modèle, qui calcule la pension du premier mois, ne peut le
+    porter qu'avec une convention sur ces ressources, à décider avant de l'écrire.
+  - >-
+    L'exemple de la page de la CNIEG est incohérent : il porte une retraite de 500
+    euros au minimum « de 1 001,73 euros », la valeur de 2025, sous le plafond de
+    ressources de 2026 (25 001,60 euros), quand la même page donne 1 010,74 euros au
+    1er janvier 2026. À ne pas rejouer tel quel.
+  lectures:
+  - type: legifrance
+    reference: >-
+      annexe 3 au statut national des IEG, article 19, I à IV, dans l'index LEGI
+      (LEGIARTI000052046924)
+    date: 2025-08-06
+  - type: autre
+    reference: >-
+      CNIEG, page « Minimum de retraite », lue le 5 octobre 2026 : quinze ans de
+      services, des ressources sous « 2.080 fois le montant horaire du Smic », 1,6 fois
+      pour un couple ; « 1 010,74 euros bruts » pour quinze ans, « 1 137,10 » pour
+      trente, « 1 263,44 » pour trente-cinq (valeur au 1er janvier 2026)
+    date: 2026-10-05
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/minimum-retraite.html
+effet: >-
+  Les petites pensions des IEG — une courte carrière dans la branche, une réversion —
+  sous le plafond de ressources : le modèle ne les relève pas.
+historique:
+- >-
+  2026-10-05 — la fiche naît (action 89), de la page de la CNIEG et de l'article 19
+  lus le même jour ; la règle reste à porter.
