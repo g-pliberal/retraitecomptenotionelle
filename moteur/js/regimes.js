@@ -1114,9 +1114,9 @@ Reversions.FICHES = Object.freeze([
  * Les fiches de l'invalidité et de l'inaptitude (docs/architecture.md, § 11),
  * dont le moteur lit les versions : la substitution de la pension
  * d'invalidité (`substitution`), l'inaptitude au travail (`inaptitude`), la
- * retraite pour invalidité des fonctionnaires (`fonction_publique`). Le paquet
- * les porte préparées (`versions_des_fiches`), avec leurs régimes. Voir
- * `Invalidites` du Python.
+ * retraite pour invalidité des fonctionnaires (`fonction_publique`), le départ
+ * anticipé des assurés handicapés (`handicap`). Le paquet les porte préparées
+ * (`versions_des_fiches`), avec leurs régimes. Voir `Invalidites` du Python.
  */
 export class Invalidites {
   constructor(paquet) {
@@ -1155,6 +1155,18 @@ export class Invalidites {
     }
     return applicable(preparee, { "liquidation.date_effet": dateEffet });
   }
+
+  /**
+   * Les mêmes fiches, celle-ci retirée : ses régimes n'appliquent plus rien de
+   * ses règles. Voir `sans` du Python.
+   */
+  sans(fiche) {
+    const nom = Invalidites.FICHES[fiche];
+    return new Invalidites({
+      versions_des_fiches: Object.fromEntries(
+        Object.entries(this._fiches).filter(([cle]) => cle !== nom)),
+    });
+  }
 }
 
 /** Les fiches, sous le nom que le moteur leur donne. */
@@ -1162,6 +1174,7 @@ Invalidites.FICHES = Object.freeze({
   substitution: "pension_d_invalidite_substituee",
   inaptitude: "inaptitude_au_travail",
   fonction_publique: "retraite_pour_invalidite_fonction_publique",
+  handicap: "retraite_anticipee_handicap",
 });
 
 /**

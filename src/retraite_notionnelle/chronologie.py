@@ -304,9 +304,10 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     avant le départ ; l'``inaptitude``, reconnue à la demande de la pension,
     donc au départ ; la ``radiation`` pour invalidité d'un fonctionnaire, son
     ``age``, compté de même, au plus tard au départ, son ``imputable`` au
-    service et son ``taux`` d'invalidité en pour cent. Deux décisions
-    médicales et une radiation, que :func:`decision_medicale` et
-    :func:`radiation_pour_invalidite` relisent.
+    service et son ``taux`` d'invalidité en pour cent ; le ``handicap``,
+    l'âge depuis lequel l'incapacité permanente atteint 50 %, compté de même,
+    au plus tard au départ. Trois décisions médicales et une radiation, que
+    :func:`decision_medicale` et :func:`radiation_pour_invalidite` relisent.
     ``etranger`` déclare la carrière hors de France : ses ``periodes`` —
     l'État (``pays``), le ``debut`` et la ``fin``, comptés comme un début
     d'activité, au plus tard au départ, et l'``activite`` —, ses ``pensions``
@@ -423,8 +424,9 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
 
 def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -> list[dict]:
     """Les faits de l'invalidité et de l'inaptitude que la saisie déclare (voir
-    :func:`_personne`) : la pension d'invalidité et l'inaptitude, deux
-    décisions médicales, la radiation pour invalidité d'un fonctionnaire."""
+    :func:`_personne`) : la pension d'invalidité, l'inaptitude et
+    l'incapacité permanente, trois décisions médicales, la radiation pour
+    invalidité d'un fonctionnaire."""
     if age_liquidation is None:
         raise ValueError("l'invalidité ou l'inaptitude déclarée suppose un départ")
     naissance = mois_de(assure["debut"])
@@ -456,7 +458,26 @@ def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -
                           attributs={"motif": "invalidite", "age": age,
                                      "imputable": bool(radiation.get("imputable")),
                                      "taux": taux}))
+    if invalidite.get("handicap") is not None:
+        # L'incapacité permanente d'au moins 50 % (fiche
+        # ``retraite_anticipee_handicap``) : depuis le mois que la saisie dit,
+        # qui peut précéder la carrière — un handicap de naissance —, jamais
+        # le départ.
+        age = invalidite["handicap"]
+        debut = naissance.plus_mois(en_mois(age))
+        if debut.rang <= naissance.rang or debut.rang > depart.rang:
+            raise ValueError("une incapacité permanente est reconnue après la naissance et "
+                             "au plus tard au départ")
+        faits.append(fait(f"incapacite_permanente_{ASSURE}", ASSURE, "decision_medicale",
+                          _jour(debut),
+                          attributs={"decision": "incapacite_permanente", "age": age,
+                                     "taux": TAUX_D_INCAPACITE_DECLARE}))
     return faits
+
+
+#: Le taux d'incapacité permanente que la saisie déclare : « au moins 50 % ».
+#: Ce que le droit exige à d'autres dates, 80 % avant 2015, elle ne l'établit pas.
+TAUX_D_INCAPACITE_DECLARE = 50
 
 
 #: La nature d'une activité exercée hors de France : salariée, ou non.
@@ -831,9 +852,9 @@ def demandes_de_pension(chronologie: dict, personne: str) -> list[dict]:
 
 
 def decision_medicale(chronologie: dict, personne: str, decision: str) -> dict | None:
-    """La décision médicale d'une personne, de cette nature — ``pension_d_invalidite``
-    ou ``inaptitude`` de l'assuré, ``invalidite`` de son conjoint —, si elle est
-    dite."""
+    """La décision médicale d'une personne, de cette nature — ``pension_d_invalidite``,
+    ``inaptitude`` ou ``incapacite_permanente`` de l'assuré, ``invalidite`` de son
+    conjoint —, si elle est dite."""
     for f in faits_de(chronologie, personne, "decision_medicale"):
         if f["attributs"].get("decision") == decision:
             return f

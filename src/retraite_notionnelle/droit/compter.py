@@ -32,6 +32,8 @@ from .commun import derniere_annee, ligne_cotisee
 from .etranger import TrimestresEtrangers, compter_les_periodes, famille_des_regimes
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from ..carriere import Carriere
     from ..donnees.regimes import PeriodeRegime
     from ..scenarios.actuel import ScenarioActuel
@@ -193,17 +195,22 @@ class Durees:
         return 0 if self.etranger is None else self.etranger.trimestres(
             self.etranger.famille)
 
-    def cumul_plafonne(self, table: str, membres: tuple[str, ...]) -> int:
+    def cumul_plafonne(self, table: str, membres: tuple[str, ...],
+                       annees: Callable[[int], bool] | None = None) -> int:
         """Les trimestres d'un compte, pour un régime ou un groupe de régimes
         liquidés ensemble : sommés ANNÉE PAR ANNÉE, sans dépasser les
-        trimestres civils de chaque année, plus ce qui ne tient à aucune."""
+        trimestres civils de chaque année, plus ce qui ne tient à aucune.
+        ``annees`` ne garde que les années qu'il accepte, et rien de ce qui ne
+        tient à aucune : la durée accomplie en situation de handicap."""
         sommes: dict[int, int] = {}
         for membre in membres:
             for annee, trimestres in self.par_annee[table].get(membre, {}).items():
-                sommes[annee] = sommes.get(annee, 0) + trimestres
+                if annees is None or annees(annee):
+                    sommes[annee] = sommes.get(annee, 0) + trimestres
         return (sum(min(somme, self.carriere.plafond_trimestres(annee))
                     for annee, somme in sommes.items())
-                + sum(self.hors_annee[table].get(membre, 0) for membre in membres))
+                + (0 if annees is not None else
+                   sum(self.hors_annee[table].get(membre, 0) for membre in membres)))
 
     def donnees(self) -> dict:
         """Les durées, telles que leur schéma les décrit."""

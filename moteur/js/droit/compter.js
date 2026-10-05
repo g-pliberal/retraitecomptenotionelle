@@ -150,16 +150,21 @@ export class Durees {
   /**
    * Les trimestres d'un compte, pour un régime ou un groupe de régimes
    * liquidés ensemble : sommés ANNÉE PAR ANNÉE, sans dépasser les trimestres
-   * civils de chaque année, plus ce qui ne tient à aucune.
+   * civils de chaque année, plus ce qui ne tient à aucune. `annees` ne garde
+   * que les années qu'il accepte, et rien de ce qui ne tient à aucune.
    */
-  cumulPlafonne(table, membres) {
+  cumulPlafonne(table, membres, annees = null) {
     const sommes = new Map();
     let total = 0;
     for (const membre of membres) {
       for (const [annee, trimestres] of this.parAnnee[table].get(membre) ?? []) {
-        sommes.set(annee, (sommes.get(annee) ?? 0) + trimestres);
+        if (annees === null || annees(annee)) {
+          sommes.set(annee, (sommes.get(annee) ?? 0) + trimestres);
+        }
       }
-      total += this.horsAnnee[table].get(membre) ?? 0;
+      if (annees === null) {
+        total += this.horsAnnee[table].get(membre) ?? 0;
+      }
     }
     for (const [annee, somme] of sommes) {
       total += Math.min(somme, this.carriere.plafondTrimestres(annee));

@@ -131,6 +131,12 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   // avantages non contributifs mesure avec le minimum contributif.
   const majorationsDesCultes = contexte === null
     || !contexte.neutralise("avantages_non_contributifs");
+  // Le départ anticipé des assurés handicapés ouvre-t-il cette liquidation ?
+  // Ses régimes la servent alors au taux plein, majorée, et les
+  // complémentaires qui les suivent sans coefficient.
+  const parLeHandicap = ouverture.motif === "handicap";
+  const versionDuHandicap = parLeHandicap ? invalidite.versionDuHandicap(moteur, carriere) : null;
+  const regimesDuHandicap = parLeHandicap ? moteur.invalidites.regimes("handicap") : new Set();
   const codes = droits.codes.filter((code) => regimes === null || regimes.has(code));
   const groupes = releve.groupes;
 
@@ -307,7 +313,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       if (!ignorerPenaliteAge) {
         abattement = abattementPoints(
           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
-          anneeLiquidation, trimestresParRegime.get(code) ?? 0,
+          anneeLiquidation, trimestresParRegime.get(code) ?? 0, parLeHandicap,
         );
         // LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE, même au
         // taux plein : voir le Python. Le coefficient affiché est celui de la
@@ -510,10 +516,15 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       );
       if (tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation)
           || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
-          || pourInvalidite !== null) {
+          || pourInvalidite !== null
+          || regimesDuHandicap.has(code)
+          || (invalidite.sansDecoteDuFonctionnaire(moteur, code, carriere)
+            && ouvrir.droitMilitaire(moteur, periode, carriere) === null)) {
         // Le taux de soixante-cinq ans des femmes d'avant 1983 ; le taux plein
         // de l'inapte, quelle que soit sa durée (L. 351-8, 2°) ; la pension du
-        // fonctionnaire mis à la retraite pour invalidité, sans décote (L. 14, I).
+        // fonctionnaire mis à la retraite pour invalidité, sans décote (L. 14, I) ;
+        // le départ anticipé des assurés handicapés, au taux plein ; le
+        // fonctionnaire handicapé, sans coefficient de minoration (L. 14, I).
         trimestresDecote = 0.0;
       }
       if (decote && trimestresDecote > 0) {
@@ -599,7 +610,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       || periode.avantages_non_contributifs.includes("minimum_contributif"))
       && (trimestres >= requis
         || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
-        || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation));
+        || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
+        || regimesDuHandicap.has(code));
     const fractionCultes = dureesCultes !== null
       ? cultes.fractionDAvant1998(
         moteur, carriere, dureesCultes, proratisation, tauxPleinDuRegime,
@@ -618,6 +630,27 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     if (pourInvalidite !== null) {
       [montant, detailInvalidite] = invalidite.pensionDuFonctionnaireInvalide(
         moteur, carriere, pourInvalidite, montant, salaireReference, anneeLiquidation);
+    }
+    // LA MAJORATION DU DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS (D. 351-1-5, II ;
+    // R. 33 bis), hors de ce que le minimum contributif relève : voir le Python.
+    let majorationHandicap = 0.0;
+    let detailHandicap = "";
+    if (regimesDuHandicap.has(code) && versionDuHandicap !== null) {
+      const fonctionnaire = moteur.catalogue.obtenir(code).famille
+        === invalidite.FONCTION_PUBLIQUE;
+      const enSituation = durees.cumulPlafonne(
+        fonctionnaire ? "services" : "cotises", membres,
+        (annee) => invalidite.anneeEnSituationDeHandicap(carriere, annee));
+      const coefficient = invalidite.coefficientDeMajoration(
+        versionDuHandicap, enSituation, trimestresRegime);
+      if (coefficient > 0) {
+        const entiere = salaireReference * (periode.taux_plein || 0.5);
+        const brute = montant * coefficient;
+        majorationHandicap = Math.max(0.0, Math.min(brute, entiere - montant));
+        montant += majorationHandicap;
+        detailHandicap = `, majoration des assurés handicapés ${formatFixe(coefficient, 2)}`
+          + (brute > majorationHandicap + 1e-9 ? " écrêtée à la pension entière" : "");
+      }
     }
     if (periode.avantages_non_contributifs.includes("minimum_contributif")) {
       // Le minimum ne relève que les régimes de base qui le portent, au
@@ -652,7 +685,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         cotiseeRegime,
         proratisation,
         requis,
-        horsMinimum: fractionCultes === null ? 0.0 : fractionCultes.montant,
+        horsMinimum: (fractionCultes === null ? 0.0 : fractionCultes.montant)
+          + majorationHandicap,
         // Ce que le minimum d'un polypensionné lit depuis 2004, et l'AVPF que
         // le régime général valide.
         dureeTousRegimes: dureeRegime + autresDeBase.reduce(
@@ -704,6 +738,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           : "")
         + (dureeNonMajoree === null ? ""
           : `, ${dureeNonMajoree} trimestres majorés après l'âge du taux plein`)
+        + detailHandicap
         + (anneesAlignees === null ? ""
           : `, ${anneesAlignees[0]} années au plus au salaire annuel moyen (${anneesAlignees[1]})`)
         // La succession est DITE : sans elle, le lecteur cherche la ligne
@@ -1853,10 +1888,15 @@ export function valeurPointFiche(moteur, periode, annee) {
  * le palier se comptent au premier taux. Voir le modèle Python.
  */
 export function abattementRegimeDeBase(moteur, periode, carriere, trimestres, requis, ageLiquidation,
-  anneeLiquidation) {
+  anneeLiquidation, handicap = false) {
   // Le régime en points que la fiche `inaptitude_au_travail` nomme sert
   // l'inapte sans abattement.
   if (invalidite.tauxPleinDeLInapte(moteur, periode.regime, carriere, ageLiquidation)) {
+    return 1.0;
+  }
+  // La complémentaire des indépendants que la fiche `retraite_anticipee_handicap`
+  // nomme, sans abattement au départ anticipé des assurés handicapés.
+  if (handicap && moteur.invalidites.regimes("handicap").has(periode.regime)) {
     return 1.0;
   }
   const [decote, ageAnnulation] = decoteOpposable(moteur, periode, carriere, anneeLiquidation);
@@ -1966,11 +2006,13 @@ export function coefficientPourAge(moteur, periode, carriere, ageLiquidation) {
 }
 
 export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
-  anneeLiquidation, trimestresRegime = 0) {
+  anneeLiquidation, trimestresRegime = 0, handicap = false) {
   // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
   // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
   // lectures. Voir le docstring du modèle Python. `trimestresRegime` est la
   // durée d'affiliation à CE régime, que la CIPAV oppose à sa surcote.
+  // `handicap` : la liquidation ouverte par le départ anticipé des assurés
+  // handicapés, que ces complémentaires servent sans coefficient.
   let abattement;
   if (periode.abattement_points === "agirc_arrco"
     || periode.abattement_points === "ircantec") {
@@ -1986,7 +2028,10 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     const inapte = (!parAgeSeul || periode.abattement_points === "ircantec")
       && invalidite.tauxPleinDeLInapte(
         moteur, invalidite.REGIME_DES_SALARIES, carriere, ageLiquidation);
-    if (inapte || (!parAgeSeul && trimestres >= requis)) {
+    // Le départ anticipé des assurés handicapés, au taux plein du régime
+    // général : l'Agirc-Arrco le suit (article 84, 3), l'Ircantec l'exempte
+    // (article 16, 1°, b).
+    if (inapte || handicap || (!parAgeSeul && trimestres >= requis)) {
       abattement = 1.0;
     } else {
       const parDuree = parAgeSeul
@@ -2003,7 +2048,7 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     );
   } else {
     abattement = abattementRegimeDeBase(
-      moteur, periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
+      moteur, periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation, handicap,
     );
   }
   if (abattement < 1.0 && tauxPleinAnticipe(moteur, periode, carriere, ageLiquidation)) {

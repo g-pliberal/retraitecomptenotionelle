@@ -852,6 +852,39 @@ def _cas() -> list[dict]:
         "naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
         "interruptions": "1975:1982:invalidite",
     }))
+    # LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS (droit/invalidite.py, fiche
+    # retraite_anticipee_handicap). Le salarié né en 1973 qui part à
+    # cinquante-cinq ans avec ses 112 trimestres cotisés en situation de
+    # handicap, au taux plein, majoré, l'Agirc-Arrco sans coefficient ; celui
+    # dont la majoration s'écrête à la pension entière ; la fonctionnaire
+    # hospitalière partie à cinquante-sept ans ; le fonctionnaire de l'État
+    # handicapé, sans décote à son âge légal ; l'incapacité sans la durée, au
+    # taux plein à soixante-deux ans ; le contractuel, que l'Ircantec sert sans
+    # coefficient.
+    cas.append(("handicap_depart_a_55_ans", {
+        "naissance": "1973-06-01", "debut": "2000-04", "liquidation": "2028-06",
+        "handicap": "1995-01",
+    }))
+    cas.append(("handicap_majoration_ecretee", {
+        "naissance": "1973-06-01", "debut": "1992-01", "liquidation": "2032-06",
+        "handicap": "1992-01",
+    }))
+    cas.append(("handicap_hospitaliere_a_57_ans", {
+        "naissance": "1970-06-01", "sexe": "F", "statut": "fonctionnaire_territorial_hospitalier",
+        "debut": "2004-01", "liquidation": "2027-06", "handicap": "2004-01",
+    }))
+    cas.append(("handicap_fonctionnaire_sans_decote", {
+        "naissance": "1966-06-01", "statut": "fonctionnaire_etat", "debut": "2000-01",
+        "liquidation": "2030-06", "handicap": "2020-01",
+    }))
+    cas.append(("handicap_taux_plein_a_62_ans", {
+        "naissance": "1965-06-15", "debut": "2000-09", "liquidation": "2027-07",
+        "handicap": "2020-01",
+    }))
+    cas.append(("handicap_contractuel_ircantec", {
+        "naissance": "1973-06-01", "statut": "contractuel_public", "debut": "2000-04",
+        "liquidation": "2028-06", "handicap": "1995-01",
+    }))
     # LES CARRIÈRES HORS DE FRANCE (droit/etranger.py). Dix ans et demi au
     # Maroc avant la France : la convention de 2007 les fait compter pour le
     # taux, jamais pour la durée ; les mêmes en Algérie, en non-salarié, que
@@ -1487,7 +1520,7 @@ FORMULAIRE_ENTIER = frozenset({
     "simuler", "simuler_saisie_refusee", "simuler_plusieurs_metiers",
     "simuler_releve", "simuler_par_pension", "simuler_revenu_en_multiples",
     "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
-    "simuler_carriere_hors_de_france", "cout", "avantages", "cas_types",
+    "simuler_carriere_hors_de_france", "simuler_handicap", "cout", "avantages", "cas_types",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -1555,6 +1588,13 @@ def _pages() -> dict:
             **BASE, "statut": "fonctionnaire_territorial_hospitalier", "naissance": "1985",
             "debut": "2012-09", "radiation_invalidite": "2019-09", "taux_invalidite": "80",
             "metier2_debut": "2019-09", "metier2_statut": "sans_activite",
+        }),
+        # Le salarié handicapé parti à cinquante-cinq ans (droit/invalidite.py) :
+        # son formulaire, figé entier, montre le dépliant ouvert et l'incapacité
+        # datée ; la page, sa pension au taux plein, majorée.
+        ("simuler_handicap", "/simuler", {
+            **BASE, "naissance": "1973-06-01", "debut": "2000-04", "liquidation": "2028-06",
+            "handicap": "1995-01",
         }),
         # LES CARRIÈRES HORS DE FRANCE (droit/etranger.py) : vingt-cinq ans en
         # Espagne comptent pour le taux, jamais pour la durée qui proratise, et

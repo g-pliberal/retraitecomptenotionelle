@@ -11,11 +11,15 @@
  * d'office au premier jour du mois qui suit (fiche
  * `pension_d_invalidite_substituee`) ; l'invalide qui travaille la garde
  * jusqu'à sa demande, au plus tard à l'âge du taux plein automatique, le
- * demandeur d'emploi indemnisé six mois de plus. Voir le Python.
+ * demandeur d'emploi indemnisé six mois de plus. L'assuré qui a cotisé en
+ * situation de handicap la durée de la fiche `retraite_anticipee_handicap` part
+ * dès cinquante-cinq ans, au taux plein, sa pension majorée ; le fonctionnaire
+ * handicapé n'a pas de coefficient de minoration. Voir le Python.
  */
 
+import { DateMois, enMois } from "../calendrier.js";
 import { formatFixe } from "../format.js";
-import { dateDEffet } from "./commun.js";
+import { dateDEffet, ligneCotisee } from "./commun.js";
 
 /** L'âge d'une version qui le lit à la génération : celui de L. 161-17-2. */
 export const AGE_LEGAL_PAR_GENERATION = "age_legal_par_generation";
@@ -47,9 +51,31 @@ export function ageDeLaFiche(moteur, carriere, valeur) {
   return Number(valeur);
 }
 
-/** L'assuré est-il inapte au sens de L. 351-8, 2° ? */
-export function reconnuInapte(carriere) {
-  return carriere.inaptitude || carriere.pensionDInvalidite !== null;
+/**
+ * L'assuré est-il inapte au sens de L. 351-8, 2° ? Reconnu inapte, ex-invalide,
+ * ou, quand la `version` de la fiche `inaptitude_au_travail` le dit, dont
+ * l'incapacité permanente atteint son taux à la date d'effet. Voir
+ * `reconnu_inapte` du Python.
+ */
+export function reconnuInapte(carriere, version = null) {
+  return carriere.inaptitude || carriere.pensionDInvalidite !== null
+    || incapaciteReconnue(carriere, version, "incapacite_permanente");
+}
+
+/**
+ * L'incapacité permanente que la carrière déclare atteint-elle le taux que
+ * `version` exige sous `cle`, et la date d'effet la trouve-t-elle reconnue ?
+ * Voir `incapacite_reconnue` du Python.
+ */
+export function incapaciteReconnue(carriere, version, cle) {
+  const incapacite = carriere.incapacitePermanente;
+  if (version === null || version === undefined || incapacite === null
+      || carriere.age_liquidation === null || carriere.age_liquidation === undefined) {
+    return false;
+  }
+  const exige = version.parametres[cle];
+  return exige !== undefined && exige !== null && incapacite.taux >= Number(exige)
+    && incapacite.debut.rang <= carriere.dateLiquidation.rang;
 }
 
 /**
@@ -59,12 +85,12 @@ export function reconnuInapte(carriere) {
  * que la carrière n'a pas de départ.
  */
 export function ageDInaptitude(moteur, regime, carriere) {
-  if (!reconnuInapte(carriere) || !moteur.invalidites.regimes("inaptitude").has(regime)) {
+  if (!moteur.invalidites.regimes("inaptitude").has(regime)) {
     return null;
   }
   const date = dateDEffet(carriere);
   const version = date === null ? null : moteur.invalidites.version("inaptitude", date);
-  if (version === null) {
+  if (version === null || !reconnuInapte(carriere, version)) {
     return null;
   }
   return ageDeLaFiche(moteur, carriere, version.parametres.age);
@@ -84,11 +110,11 @@ export function tauxPleinDeLInapte(moteur, regime, carriere, ageLiquidation) {
  * du Python.
  */
 export function ageDeLAspa(moteur, carriere) {
-  if (!reconnuInapte(carriere)) {
-    return AGE_DE_L_ASPA;
-  }
   const date = dateDEffet(carriere);
   const version = date === null ? null : moteur.invalidites.version("inaptitude", date);
+  if (!reconnuInapte(carriere, version)) {
+    return AGE_DE_L_ASPA;
+  }
   const valeur = version === null ? undefined : version.parametres.age_aspa;
   if (valeur === undefined || valeur === null) {
     return AGE_DE_L_ASPA;
@@ -245,4 +271,230 @@ export function substitution(moteur, carriere) {
       plusTardif(date, plusPrecoce(declare, date.plusMois(Number(mois)))), retenue.id, CHOMAGE);
   }
   return new Substitution(date, retenue.id);
+}
+
+// LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS (fiche `retraite_anticipee_handicap`)
+
+/** La famille des régimes du code des pensions. */
+export const FONCTION_PUBLIQUE = "fonction_publique";
+
+/**
+ * La version de la fiche `retraite_anticipee_handicap` pour une pension qui
+ * prend effet à la date de liquidation de `carriere`, ou `null`.
+ */
+export function versionDuHandicap(moteur, carriere) {
+  const date = dateDEffet(carriere);
+  return date === null ? null : moteur.invalidites.version("handicap", date);
+}
+
+/**
+ * L'année civile compte-t-elle en situation de handicap ? Toute l'année de la
+ * reconnaissance et les suivantes ; celle du départ, si l'incapacité précède
+ * l'arrêt du compte. Voir `annee_en_situation_de_handicap` du Python.
+ */
+export function anneeEnSituationDeHandicap(carriere, annee) {
+  const incapacite = carriere.incapacitePermanente;
+  if (incapacite === null || carriere.age_liquidation === null
+      || carriere.age_liquidation === undefined) {
+    return false;
+  }
+  const depart = carriere.dateLiquidation;
+  if (annee < incapacite.debut.annee || annee > depart.annee) {
+    return false;
+  }
+  if (annee < depart.annee) {
+    return true;
+  }
+  const arret = new DateMois(depart.annee, 3 * Math.floor((depart.mois - 1) / 3) + 1);
+  return incapacite.debut.rang < arret.rang;
+}
+
+/**
+ * Les trimestres que la carrière a accomplis en situation de handicap, tous
+ * régimes : les seuls cotisés, ou tous ; `etrangers`, ceux des périodes hors
+ * de France, année par année. Voir `trimestres_en_situation_de_handicap` du
+ * Python.
+ */
+export function trimestresEnSituationDeHandicap(moteur, carriere, cotises = true,
+  etrangers = null) {
+  if (carriere.incapacitePermanente === null || carriere.age_liquidation === null
+      || carriere.age_liquidation === undefined) {
+    return 0;
+  }
+  const lignes = carriere.lignes.filter((ligne) => anneeEnSituationDeHandicap(carriere, ligne.annee)
+    && (!cotises || ligneCotisee(moteur, carriere, ligne)));
+  let total = carriere.trimestresCumules(lignes);
+  if (etrangers) {
+    const entrees = etrangers instanceof Map ? [...etrangers.entries()]
+      : Object.entries(etrangers);
+    for (const [annee, nombre] of entrees) {
+      if (anneeEnSituationDeHandicap(carriere, Number(annee))) {
+        total += nombre;
+      }
+    }
+  }
+  return total;
+}
+
+/**
+ * La durée dont la version retranche les trimestres : la durée requise, ou
+ * celle d'avant la loi du 14 avril 2023 pour les générations que la version
+ * dit, moins ce qu'elle retranche en plus. Voir `_duree_limite` du Python.
+ */
+function dureeLimite(moteur, carriere, parametres, requis) {
+  let limite = requis;
+  const jusquA = parametres.duree_d_avant_2023_jusqu_a;
+  if (jusquA !== undefined && jusquA !== null && carriere.generation < Number(jusquA)) {
+    const avant = moteur.dureesRequisesAvantReforme2023.trimestres(carriere.generation)
+      ?? moteur.dureesRequises.trimestres(carriere.generation);
+    if (avant !== null && avant !== undefined) {
+      limite = avant[0];
+    }
+  }
+  for (const [debut, fin, plus] of parametres.retranches_en_plus ?? []) {
+    if ((debut === null || carriere.generation >= Number(debut))
+        && (fin === null || carriere.generation < Number(fin))) {
+      limite -= Math.trunc(Number(plus));
+    }
+  }
+  return limite;
+}
+
+/**
+ * Ce que la version exige pour partir à `age` au titre du handicap : `[âge
+ * abaissé, durée cotisée, durée validée ou null]`, ou `null`. Voir
+ * `exigences_du_handicap` du Python.
+ */
+export function exigencesDuHandicap(moteur, carriere, requis, age = null) {
+  const version = versionDuHandicap(moteur, carriere);
+  if (version === null || !version.parametres.ages || version.parametres.ages.length === 0) {
+    return null;
+  }
+  const parametres = version.parametres;
+  const depart = age === null ? carriere.age_liquidation : age;
+  const ages = parametres.ages.map(Number);
+  let rang = null;
+  ages.forEach((seuil, i) => {
+    if (enMois(depart) >= enMois(seuil)) {
+      rang = i;
+    }
+  });
+  if (rang === null) {
+    return null;
+  }
+  const limite = dureeLimite(moteur, carriere, parametres, requis);
+  const validees = parametres.validees_retranchees ?? null;
+  return [ages[rang], limite - Math.trunc(Number(parametres.cotisees_retranchees[rang])),
+    validees === null ? null : limite - Math.trunc(Number(validees[rang]))];
+}
+
+/** La demande vise-t-elle un régime de base que la fiche nomme ? */
+function regimesDuHandicap(moteur, regimes) {
+  const nommes = moteur.invalidites.regimes("handicap");
+  return [...regimes].some((code) => nommes.has(code));
+}
+
+/**
+ * L'âge le plus précoce auquel le départ anticipé des assurés handicapés
+ * ouvre CETTE liquidation, ou `null`. `etrangers` : `[cotisés, validés]` hors
+ * de France, année par année. Voir `age_du_handicap` du Python.
+ */
+export function ageDuHandicap(moteur, carriere, requis, regimes, etrangers = null) {
+  if (!regimesDuHandicap(moteur, regimes)) {
+    return null;
+  }
+  const version = versionDuHandicap(moteur, carriere);
+  if (version === null || !incapaciteReconnue(carriere, version, "taux_incapacite")) {
+    return null;
+  }
+  const parametres = version.parametres;
+  const age = carriere.age_liquidation;
+  const limite = dureeLimite(moteur, carriere, parametres, requis);
+  const cotises = trimestresEnSituationDeHandicap(
+    moteur, carriere, true, etrangers === null ? null : etrangers[0]);
+  const validees = parametres.validees_retranchees ?? null;
+  const valides = validees === null ? null : trimestresEnSituationDeHandicap(
+    moteur, carriere, false, etrangers === null ? null : etrangers[1]);
+  const ages = parametres.ages.map(Number);
+  for (let i = 0; i < ages.length; i += 1) {
+    if (enMois(ages[i]) > enMois(age)) {
+      break;
+    }
+    if (cotises < limite - Math.trunc(Number(parametres.cotisees_retranchees[i]))) {
+      continue;
+    }
+    if (validees !== null && valides < limite - Math.trunc(Number(validees[i]))) {
+      continue;
+    }
+    return ages[i];
+  }
+  return null;
+}
+
+/**
+ * L'âge le plus précoce que le départ anticipé des assurés handicapés
+ * ouvrirait à qui continue de cotiser, ou `null`. Voir
+ * `age_propose_du_handicap` du Python.
+ */
+export function ageProposeDuHandicap(moteur, carriere, requis, regimes, etrangers = null) {
+  if (!regimesDuHandicap(moteur, regimes)) {
+    return null;
+  }
+  const version = versionDuHandicap(moteur, carriere);
+  const incapacite = carriere.incapacitePermanente;
+  const exige = version === null ? null : (version.parametres.taux_incapacite ?? null);
+  if (exige === null || incapacite === null || carriere.age_liquidation === null
+      || carriere.age_liquidation === undefined || incapacite.taux < Number(exige)) {
+    return null;
+  }
+  const parametres = version.parametres;
+  const age = carriere.age_liquidation;
+  const depuis = Math.max(age, carriere.ageAu(incapacite.debut));
+  const limite = dureeLimite(moteur, carriere, parametres, requis);
+  const cotises = trimestresEnSituationDeHandicap(
+    moteur, carriere, true, etrangers === null ? null : etrangers[0]);
+  const validees = parametres.validees_retranchees ?? null;
+  const valides = validees === null ? 0 : trimestresEnSituationDeHandicap(
+    moteur, carriere, false, etrangers === null ? null : etrangers[1]);
+  const candidats = [];
+  parametres.ages.map(Number).forEach((seuil, i) => {
+    let atteint = depuis
+      + (limite - Math.trunc(Number(parametres.cotisees_retranchees[i])) - cotises) / 4.0;
+    if (validees !== null) {
+      atteint = Math.max(atteint,
+        depuis + (limite - Math.trunc(Number(validees[i])) - valides) / 4.0);
+    }
+    candidats.push(Math.max(seuil, atteint));
+  });
+  return candidats.length > 0 ? Math.min(...candidats) : null;
+}
+
+/**
+ * Le fonctionnaire handicapé, que le coefficient de minoration n'atteint pas
+ * (L. 14, I, du code des pensions). Voir `sans_decote_du_fonctionnaire` du
+ * Python.
+ */
+export function sansDecoteDuFonctionnaire(moteur, regime, carriere) {
+  if (!moteur.invalidites.regimes("handicap").has(regime)
+      || !moteur.catalogue.contient(regime)
+      || moteur.catalogue.obtenir(regime).famille !== FONCTION_PUBLIQUE) {
+    return false;
+  }
+  const version = versionDuHandicap(moteur, carriere);
+  return version !== null && Boolean(version.parametres.fonctionnaire_sans_decote)
+    && incapaciteReconnue(carriere, version, "taux_incapacite");
+}
+
+/**
+ * Le coefficient de la majoration de pension, arrondi au centième le plus
+ * proche. Voir `coefficient_de_majoration` du Python.
+ */
+export function coefficientDeMajoration(version, enSituation, duree) {
+  const majoration = version.parametres.majoration ?? null;
+  if (!majoration || duree <= 0 || enSituation <= 0) {
+    return 0.0;
+  }
+  const brut = Number(majoration.fraction) * enSituation / duree;
+  const pas = Math.round(1.0 / Number(majoration.arrondi));
+  return Math.floor(brut * pas + 0.5 + 1e-9) / pas;
 }

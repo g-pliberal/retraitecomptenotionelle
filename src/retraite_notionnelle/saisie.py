@@ -657,12 +657,15 @@ class Saisie:
     #: l'inaptitude au travail, reconnue ou que la loi présume ; l'âge de la
     #: radiation des cadres pour invalidité d'un fonctionnaire, en date lui
     #: aussi, son imputabilité au service et le taux d'invalidité reconnu, en
-    #: pour cent. Voir :meth:`invalidite_declaree`.
+    #: pour cent ; l'âge depuis lequel l'incapacité permanente atteint 50 %
+    #: (fiche ``retraite_anticipee_handicap``), en date lui aussi. Voir
+    #: :meth:`invalidite_declaree`.
     invalidite: float | None = None
     inaptitude: bool = False
     radiation_invalidite: float | None = None
     invalidite_imputable: bool = False
     taux_invalidite: int | None = None
+    handicap: float | None = None
     #: Les carrières hors de France (fiches
     #: ``totalisation_des_periodes_etrangeres``, ``pension_proratisee``,
     #: ``minimum_contributif_international`` et
@@ -830,6 +833,8 @@ class Saisie:
             invalidite_imputable=_oui(parametres, "invalidite_imputable"),
             taux_invalidite=(None if parametres.get("taux_invalidite") in (None, "")
                              else _entier(parametres, "taux_invalidite", 0)),
+            handicap=(None if parametres.get("handicap") in (None, "")
+                      else _age_saisi(parametres, "handicap", 0.0, mois_de_naissance)),
             etranger=_periodes_etrangeres_saisies(parametres, mois_de_naissance, tolerante),
             pensions_etrangeres=_pensions_etrangeres_saisies(parametres, mois_de_naissance,
                                                              tolerante),
@@ -1751,8 +1756,11 @@ class Saisie:
         chronologie les reçoit (:func:`chronologie._personne`) : l'âge où la
         ``pension`` d'invalidité a commencé, l'``inaptitude``, et la
         ``radiation`` pour invalidité d'un fonctionnaire — son âge, son
-        imputabilité, son taux en pour cent. ``None`` quand rien n'est dit."""
-        if self.invalidite is None and not self.inaptitude and self.radiation_invalidite is None:
+        imputabilité, son taux en pour cent —, et l'âge depuis lequel
+        l'incapacité permanente atteint 50 % (``handicap``). ``None`` quand rien
+        n'est dit."""
+        if (self.invalidite is None and not self.inaptitude
+                and self.radiation_invalidite is None and self.handicap is None):
             return None
         radiation = None
         if self.radiation_invalidite is not None:
@@ -1760,7 +1768,7 @@ class Saisie:
                          "imputable": self.invalidite_imputable,
                          "taux": self.taux_invalidite}
         return {"pension": self.invalidite, "inaptitude": self.inaptitude,
-                "radiation": radiation}
+                "radiation": radiation, "handicap": self.handicap}
 
     def _verifier_invalidite(self) -> None:
         """La pension d'invalidité commence dans la carrière, avant le départ ;
@@ -1801,6 +1809,19 @@ class Saisie:
             if date.rang > depart.rang:
                 raise ErreurSaisie(
                     f"Radiation pour invalidité en {date} : elle ne suit pas le départ "
+                    f"à la retraite, fixé en {depart}.")
+        if self.handicap is not None:
+            # L'incapacité peut précéder la carrière — un handicap de
+            # naissance ou de l'enfance —, mais ni la naissance ni le départ.
+            date = self.date_de(self.handicap)
+            naissance = self.date_de(0.0)
+            if date.rang <= naissance.rang:
+                raise ErreurSaisie(
+                    f"Incapacité d'au moins 50 % en {date} : elle suit la naissance, "
+                    f"en {naissance}.")
+            if date.rang > depart.rang:
+                raise ErreurSaisie(
+                    f"Incapacité d'au moins 50 % en {date} : elle ne suit pas le départ "
                     f"à la retraite, fixé en {depart}.")
 
     def etranger_declare(self) -> dict | None:
@@ -1993,7 +2014,9 @@ class Saisie:
                 ("radiation_invalidite", None if self.radiation_invalidite is None
                  else self.mois_de(self.radiation_invalidite)),
                 ("invalidite_imputable", OUI if self.invalidite_imputable else None),
-                ("taux_invalidite", self.taux_invalidite)) if valeur is not None},
+                ("taux_invalidite", self.taux_invalidite),
+                ("handicap", None if self.handicap is None
+                 else self.mois_de(self.handicap))) if valeur is not None},
             **({"residence": self.residence} if self.residence else {}),
             **({"mois_en_france": self.mois_en_france}
                if self.mois_en_france is not None else {}),

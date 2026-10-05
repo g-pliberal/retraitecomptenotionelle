@@ -43,7 +43,8 @@ def test_la_saisie_lit_l_invalidite_et_la_rend_a_l_adresse():
     assert saisie.date_de(saisie.radiation_invalidite) == DateMois(2018, 11)
     assert saisie.invalidite_declaree() == {
         "pension": saisie.invalidite, "inaptitude": True,
-        "radiation": {"age": saisie.radiation_invalidite, "imputable": True, "taux": 65}}
+        "radiation": {"age": saisie.radiation_invalidite, "imputable": True, "taux": 65},
+        "handicap": None}
     relue = Saisie.depuis_requete(dict(
         pair.split("=", 1) for pair in saisie.requete().split("&")))
     assert relue.invalidite_declaree() == saisie.invalidite_declaree()
@@ -61,6 +62,8 @@ def test_la_saisie_lit_l_invalidite_et_la_rend_a_l_adresse():
     ({"invalidite": "1986-09"}, "elle suit le début de la carrière"),
     ({"invalidite": "2029-01"}, "elle précède le départ à la retraite"),
     ({"radiation_invalidite": "2029-02"}, "elle ne suit pas le départ"),
+    ({"handicap": "1965-06"}, "Incapacité d'au moins 50 % en juin 1965 : elle suit la naissance"),
+    ({"handicap": "2029-02"}, "Incapacité d'au moins 50 % en février 2029 : elle ne suit pas"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(champs, refus):
     with pytest.raises(ErreurSaisie, match=refus):
@@ -171,6 +174,8 @@ REQUETES = [
     {"naissance": "1975", "statut": "fonctionnaire_territorial_hospitalier",
      "radiation_invalidite": "2012-01", "metier2_debut": "2012-01",
      "metier2_statut": "sans_activite"},
+    {"naissance": "1970-06-01", "debut": "2004-01", "liquidation": "2027-06",
+     "handicap": "1990-03"},
 ]
 
 #: Ce que le portage lit de la carrière que la saisie bâtit.
@@ -201,6 +206,8 @@ const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
     radiation: radiation === null ? null : {
       date: mois(radiation.date), affiliations: [...radiation.affiliations],
       imputable: radiation.imputable, taux: radiation.taux },
+    incapacite: vue.incapacitePermanente === null ? null : {
+      debut: mois(vue.incapacitePermanente.debut), taux: vue.incapacitePermanente.taux },
   };
 });
 process.stdout.write(JSON.stringify(sortie));
@@ -230,6 +237,9 @@ def _lu_par_python(monkeypatch, requete: dict) -> dict:
         "radiation": None if radiation is None else {
             "date": mois(radiation.date), "affiliations": list(radiation.affiliations),
             "imputable": radiation.imputable, "taux": radiation.taux},
+        "incapacite": None if vue.incapacite_permanente is None else {
+            "debut": mois(vue.incapacite_permanente.debut),
+            "taux": vue.incapacite_permanente.taux},
     }
 
 
@@ -257,6 +267,7 @@ def test_le_portage_lit_les_memes_faits(monkeypatch):
     assert attendus[1]["pension"]["presomption"] == "pension_d_invalidite_de_la_periode"
     assert attendus[2]["radiation"]["taux"] == 60
     assert attendus[3]["radiation"]["affiliations"] == ["fonctionnaire_territorial_hospitalier"]
+    assert attendus[4]["incapacite"] == {"debut": "1990-03", "taux": 50}
 
 
 # -- le moteur : le taux plein de l'inapte, la substitution ----------------------
@@ -473,3 +484,153 @@ def test_le_fonctionnaire_radie_puis_salarie_a_deux_departs(contexte):
     assert (premier.date_effet, premier.motif, premier.regimes) == (
         "2020-06-01", "radiation", ("fonction_publique_etat",))
     assert {"regime_general", "rafp"} <= set(second.regimes)
+
+
+# -- le départ anticipé des assurés handicapés -------------------------------------
+
+def test_la_saisie_lit_l_incapacite_meme_avant_la_carriere():
+    """L'incapacité se date comme un début d'activité, et peut précéder la
+    carrière — un handicap de l'enfance — ; l'adresse la rend telle quelle."""
+    saisie = _saisie(handicap="1980-03")
+    assert saisie.date_de(saisie.handicap) == DateMois(1980, 3)
+    assert saisie.invalidite_declaree() == {
+        "pension": None, "inaptitude": False, "radiation": None,
+        "handicap": saisie.handicap}
+    relue = Saisie.depuis_requete(dict(
+        pair.split("=", 1) for pair in saisie.requete().split("&")))
+    assert relue.invalidite_declaree() == saisie.invalidite_declaree()
+    au_depart = _saisie(handicap="2029-01")
+    assert au_depart.date_de(au_depart.handicap) == DateMois(2029, 1)
+
+
+#: Un salarié né le 1er juin 1973, handicapé depuis ses vingt et un ans, qui
+#: part à cinquante-cinq ans en juin 2028 : entré en avril 2000, il a cotisé
+#: 3 + 27 × 4 + 1 = 112 trimestres, la durée requise de sa génération, 172,
+#: moins 60 (D. 351-1-5 du 1er septembre 2026).
+NE_EN_1973 = {"naissance": "1973-06-01", "debut": "2000-04", "liquidation": "2028-06",
+              "handicap": "1995-01"}
+
+
+def test_le_handicap_ouvre_le_depart_des_cinquante_cinq_ans_au_taux_plein(contexte):
+    """La durée cotisée en situation de handicap ouvre le départ à cinquante-
+    cinq ans (L. 351-1-3), au taux plein malgré soixante trimestres manquants
+    (L. 351-8, 4° bis), la pension majorée du tiers du rapport de la durée
+    cotisée en situation de handicap à la durée d'assurance, 112/112/3 = 0,33
+    (D. 351-1-5, II), l'Agirc-Arrco sans coefficient (accord du 17 novembre
+    2017, article 84, 3). Un trimestre de moins, et rien ne s'ouvre."""
+    actuel = _actuel(contexte, **NE_EN_1973)
+    assert actuel.liquidation_ouverte and actuel.motif_ouverture == "handicap"
+    assert actuel.age_ouverture_opposable == 55.0
+    assert (actuel.trimestres_valides, actuel.trimestres_requis) == (112, 172)
+    detail = _pension(actuel, "regime_general").detail
+    assert "taux 50.000%" in detail and "majoration des assurés handicapés 0.33" in detail
+    assert "écrêtée" not in detail
+    assert "coefficient" not in _pension(actuel, "arrco").detail
+    un_de_moins = _actuel(contexte, **{**NE_EN_1973, "debut": "2000-07"})
+    assert un_de_moins.trimestres_valides == 111
+    assert un_de_moins.motif_ouverture == "non_ouverte"
+    assert "majoration des assurés handicapés" not in _pension(
+        un_de_moins, "regime_general").detail
+    sans = _actuel(contexte, **{k: v for k, v in NE_EN_1973.items() if k != "handicap"})
+    assert sans.motif_ouverture == "non_ouverte"
+
+
+def test_la_majoration_est_ecretee_a_la_pension_entiere(contexte):
+    """Cent soixante et un trimestres, tous cotisés en situation de handicap :
+    le coefficient vaut 0,33, mais la pension majorée ne dépasse pas celle
+    d'une durée entière (D. 351-1-5, II ; circulaire Cnav n° 2026-18, 3.3.1),
+    la moitié du salaire annuel moyen."""
+    import re
+
+    actuel = _actuel(contexte, naissance="1973-06-01", debut="1992-01",
+                     liquidation="2032-06", handicap="1992-01")
+    assert actuel.motif_ouverture == "handicap" and actuel.trimestres_valides == 161
+    pension = _pension(actuel, "regime_general")
+    assert "majoration des assurés handicapés 0.33 écrêtée à la pension entière" in (
+        pension.detail)
+    sam = float(re.search(r"SR ([0-9,]+\.\d\d) €", pension.detail).group(1).replace(",", ""))
+    assert pension.montant == pytest.approx(0.5 * sam, abs=0.01)
+
+
+def test_avant_2015_l_incapacite_declaree_n_etablit_pas_les_80_pour_cent(contexte):
+    """Jusqu'au 31 décembre 2014, le taux exigé est celui de la carte
+    d'invalidité, 80 % (D. 351-1-6) : la saisie, qui dit au moins 50 %, ne
+    l'établit pas, et rien ne s'ouvre. Trois ans plus tard, la même carrière
+    d'une autre génération part : 167 − 80 = 87 trimestres cotisés et
+    167 − 60 = 107 validés suffisent à cinquante-sept ans (version de 2015)."""
+    en_2012 = _actuel(contexte, naissance="1955-06-01", debut="1985-01",
+                      liquidation="2012-06", handicap="1985-01")
+    assert en_2012.motif_ouverture == "non_ouverte"
+    en_2015 = _actuel(contexte, naissance="1958-06-01", debut="1988-01",
+                      liquidation="2015-06", handicap="1988-01")
+    assert en_2015.trimestres_valides == 109
+    assert en_2015.motif_ouverture == "handicap" and en_2015.age_ouverture_opposable == 57.0
+
+
+def test_l_incapacite_donne_le_taux_plein_a_soixante_deux_ans(contexte):
+    """Sans la durée du départ anticipé, l'incapacité d'au moins 50 % fait
+    partir à soixante-deux ans au taux plein, comme l'inapte (L. 351-1-5,
+    L. 351-8, 2°, R. 351-24-3), quand l'âge légal de la génération 1965 ne
+    l'ouvre pas encore."""
+    champs = {"naissance": "1965-06-15", "debut": "2000-09", "liquidation": "2027-07"}
+    actuel = _actuel(contexte, **champs, handicap="2020-01")
+    assert actuel.motif_ouverture == "inaptitude" and actuel.age_ouverture_opposable == 62.0
+    assert actuel.trimestres_valides < actuel.trimestres_requis
+    assert "taux 50.000%" in _pension(actuel, "regime_general").detail
+    assert "coefficient" not in _pension(actuel, "arrco").detail
+    assert _actuel(contexte, **champs).motif_ouverture == "non_ouverte"
+
+
+def test_le_depart_des_handicapes_passe_avant_l_inaptitude(contexte):
+    """Entre soixante-deux ans et l'âge légal, les deux portes s'ouvrent ; le
+    départ des assurés handicapés, « entre cinquante-neuf ans et l'âge prévu à
+    l'article L. 161-17-2 » (D. 351-1-5), majore la pension, que l'inaptitude
+    ne majore pas : il l'emporte."""
+    actuel = _actuel(contexte, naissance="1966-06-01", debut="1995-01",
+                     liquidation="2028-06", handicap="1995-01")
+    assert actuel.motif_ouverture == "handicap"
+    assert "majoration des assurés handicapés" in _pension(actuel, "regime_general").detail
+
+
+def test_le_fonctionnaire_handicape_n_a_pas_de_decote(contexte):
+    """« Le coefficient de minoration n'est pas applicable aux fonctionnaires
+    handicapés dont l'incapacité permanente est au moins égale à un taux fixé
+    par décret » (L. 14, I ; D. 14 : 50 %), à tout âge : parti à soixante-
+    quatre ans, trois ans avant l'âge d'annulation, sans la durée du départ
+    anticipé, il garde 75 % quand l'autre perd douze trimestres de décote."""
+    champs = {"naissance": "1966-06-01", "statut": "fonctionnaire_etat",
+              "debut": "2000-01", "liquidation": "2030-06"}
+    handicape = _actuel(contexte, **champs, handicap="2020-01")
+    assert handicape.motif_ouverture == "age_legal"
+    assert "taux 75.000%" in _pension(handicape, "fonction_publique_etat").detail
+    autre = _actuel(contexte, **champs)
+    assert "taux 63.750%" in _pension(autre, "fonction_publique_etat").detail
+
+
+def test_l_ircantec_sert_le_handicape_sans_coefficient(contexte):
+    """« b) Les agents et anciens agents handicapés admis à faire liquider
+    leur retraite au régime général en application de l'article L. 351-1-3 »
+    n'ont pas de coefficient de réduction (arrêté du 30 décembre 1970,
+    article 16)."""
+    actuel = _actuel(contexte, **NE_EN_1973, statut="contractuel_public")
+    assert actuel.motif_ouverture == "handicap"
+    assert "coefficient" not in _pension(actuel, "ircantec").detail
+
+
+def test_l_age_au_plus_tot_compte_le_depart_des_handicapes(simulateur):
+    """L'âge que les cas types et « Mon estimation retraite » lisent : celui
+    où la durée cotisée en situation de handicap est réunie, cinquante-cinq
+    ans pour qui en a 140 à soixante-deux — au taux plein aussi."""
+    from retraite_notionnelle.droit import ouvrir
+
+    def carriere(invalidite=None):
+        return Carriere.depuis_parcours(
+            1973, "H", [Metier("salarie_prive_non_cadre", 26.0 + 10 / 12, 1.0)], 62.0,
+            simulateur.macro, mois_naissance=6, jour_naissance=1, invalidite=invalidite)
+
+    actuel = simulateur.scenario_actuel
+    handicape = carriere({"pension": None, "inaptitude": False, "radiation": None,
+                          "handicap": 21.0 + 7 / 12})
+    assert ouvrir.age_ouverture_droit(actuel, handicape) == pytest.approx(55.0)
+    assert ouvrir.age_taux_plein_droit(actuel, handicape) == pytest.approx(55.0)
+    assert ouvrir.age_ouverture_droit(actuel, carriere()) > 62.0

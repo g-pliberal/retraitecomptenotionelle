@@ -287,12 +287,27 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   TEMPORAIRE, quand le modèle ne calcule qu'une pension annuelle unique.
   L'appliquer à titre permanent créerait une erreur nouvelle, plus grande que
   celle qu'il corrigerait.
-- **Pénibilité, handicap ; l'invalidité et l'inaptitude en partie.** La
-  pénibilité et le handicap sont deux autres portes du départ anticipé, qui
-  demandent des informations médicales ou professionnelles que le modèle ne
-  collecte pas : un assuré qui en relèverait est ici déclaré « non ouvert »
-  alors que le droit l'ouvrirait, et subit une décote dont le droit le
-  dispenserait. L'inaptitude, la pension d'invalidité et la radiation pour
+- **Pénibilité ; le handicap, l'invalidité et l'inaptitude en partie.** La
+  pénibilité est une autre porte du départ anticipé, qui demande des
+  informations professionnelles que le modèle ne collecte pas : un assuré qui
+  en relèverait est ici déclaré « non ouvert » alors que le droit l'ouvrirait,
+  et subit une décote dont le droit le dispenserait. Le handicap se déclare
+  depuis le 5 octobre 2026, par le mois depuis lequel l'incapacité permanente
+  atteint <!--chiffre:valeur(data/reference/regles/retraite_anticipee_handicap.yaml:versions.id=generations_2026.contenu.parametres.taux_incapacite)-->50<!--/--> % : le départ anticipé des assurés handicapés s'ouvre dès
+  cinquante-cinq ans à qui a cotisé depuis la durée que D. 351-1-5 exige, au
+  taux plein, la pension majorée, l'Agirc-Arrco, l'Ircantec et la
+  complémentaire des indépendants sans coefficient ; sans cette durée,
+  l'incapacité fait partir au taux plein à soixante-deux ans, et le
+  fonctionnaire handicapé n'a jamais de décote. Restent dehors les départs
+  d'avant 2015, quand le taux exigé était de <!--chiffre:valeur(data/reference/regles/retraite_anticipee_handicap.yaml:versions.id=travailleurs_handicapes_2011.contenu.parametres.taux_incapacite)-->80<!--/--> %, que la saisie n'établit pas ;
+  la reconnaissance de la qualité de travailleur handicapé, qui compte pour les
+  périodes d'avant 2016 ; la commission qui valide des périodes sans
+  justificatif ; une incapacité interrompue ; les régimes que la fiche
+  `retraite_anticipee_handicap` ne nomme pas — non-salariés agricoles,
+  professions libérales, avocats, cultes, régimes spéciaux — ; la majoration de
+  qui part à l'âge légal sans l'avoir demandée, que la Cnav compare à une
+  retraite anticipée fictive ; et la réversion, que la Cnav calcule sur la
+  pension non majorée. L'inaptitude, la pension d'invalidité et la radiation pour
   invalidité d'un fonctionnaire se déclarent : l'inapte et l'ex-invalide ont le
   taux plein au régime général et dans les régimes alignés, à l'âge que la loi
   leur ouvre, et l'ASPA au même âge ; la pension de vieillesse remplace d'office
@@ -301,7 +316,7 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   de l'allocation aux vieux travailleurs salariés, sans effet sur le montant tant
   que l'ASPA est servie ; l'inaptitude des régimes que la fiche
   `inaptitude_au_travail` ne nomme pas ; les réputés inaptes qui ne se déclarent
-  pas (allocation aux adultes handicapés, incapacité permanente) ; le militaire
+  pas (allocation aux adultes handicapés, carte d'invalidité) ; le militaire
   réformé ; la majoration pour tierce personne. La proposition n'en fait pas
   exception, le propriétaire l'a décidé : le compte de l'inapte, de
   l'ex-invalide et du fonctionnaire radié se liquide à l'âge de tous, leur
@@ -353,9 +368,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   en 1965 se voit opposer <!--chiffre:cellule(data/reference/legislation/duree_requise_avant_soixante_ans.csv:trimestres?regle=l13_iii&annee_ouverture=2017)-->166<!--/--> trimestres, comme le publie la Cour des comptes.
   Le militaire qui peut liquider depuis relève du C du même XXIV : <!--chiffre:cellule(data/reference/legislation/duree_requise_avant_soixante_ans.csv:trimestres?regle=xxiv_c&annee_ouverture=2023.667)-->169<!--/-->
   trimestres, puis un de plus au 1er janvier 2025 et au 1er janvier 2027. Reste
-  dehors le fonctionnaire CIVIL non classé qui liquide avant soixante ans —
-  parent de trois enfants, handicap — : le modèle ne sert ces départs à
-  personne.
+  dehors le fonctionnaire CIVIL non classé qui liquide avant soixante ans :
+  parent de trois enfants, le modèle ne sert pas son départ ; handicapé, il le
+  sert depuis le 5 octobre 2026, mais sur la durée de sa génération.
 - **Ce qui compte en services dans les régimes spéciaux.** La pension des
   dix-huit régimes spéciaux du catalogue se proratise, comme celle de la
   fonction publique, sur des services et non sur une durée d'assurance ; mais
@@ -693,11 +708,10 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   ancré sur la plus proche, et l'approximation ne reprend toute la main
   qu'avant 1930, où elle joue À LA HAUSSE ;
 - **départs anticipés** — la carrière longue est modélisée, et sert à dire si le
-  droit ouvre la liquidation demandée ; l'inaptitude et l'invalidité aussi, au
-  régime général, dans les régimes alignés et dans la fonction publique, à qui
-  les déclare. La pénibilité
-  et le handicap ne le sont pas : ils demandent des informations médicales ou
-  professionnelles que le modèle ne collecte pas ;
+  droit ouvre la liquidation demandée ; l'inaptitude, l'invalidité et le
+  handicap aussi, au régime général, dans les régimes alignés et dans la
+  fonction publique, à qui les déclare. La pénibilité ne l'est pas : elle
+  demande des informations professionnelles que le modèle ne collecte pas ;
 - **polypensionnés** — chaque régime liquide sur ses seules années, à sa
   date, et la durée acquise dans chacun est comptée séparément ; mais un
   régime et celui qui lui succède ne sont pas deux régimes, et liquident
@@ -900,7 +914,7 @@ Quatre bornes à connaître, et elles sont étroites :
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->151<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->178<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -928,6 +942,7 @@ d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
 | Union Retraite, simulateurs anonymes d'info-retraite : carrière longue et réversion saisis à la main le 1er octobre 2026, complétés par Claude le 4 octobre 2026 avec l'âge légal | l'âge légal des nés en 1968, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->63<!--/--> ans et <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->9<!--/--> mois, et des nés en 1969 et après, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->64<!--/--> ans, avec <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->172<!--/--> trimestres ; les quatre portes de la carrière longue ; la réversion à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->54<!--/--> % au régime général et à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->60<!--/--> % à l'Agirc-Arrco, l'âge de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->55<!--/--> ans, le mariage de quatre ans de la fonction publique, que l'enfant commun lève à la CNRACL ; la MSA des salariés ; la moitié au RAFP et à l'Ircantec, et à la complémentaire des indépendants le taux de l'Agirc-Arrco ; l'invalidité, qui lève l'âge à l'Agirc-Arrco et non au régime général | **exact**, une fois deux arrondis de la carrière longue corrigés ; en écart connu pour la condition d'âge de l'Agirc-Arrco, que deux enfants à charge lèvent, pour la réversion du RAFP, que le simulateur refuse quand le mariage ne remplit pas la condition de la pension civile, qu'aucun texte du RAFP ne pose, et pour le plafond de ressources, où c'est le simulateur qui se trompe : il n'a pas revalorisé ses seuils depuis 2024, et refuse ce que D. 353-1-1 accorde |
 | ERAFP, simulateur de prestation : dix saisies par Claude le 4 octobre 2026 | le coefficient de majoration du RAFP au mois — <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->1,03<!--/--> à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->62<!--/--> ans et 9 mois, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->1,10<!--/--> à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->64<!--/--> ans et 6 mois — et <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->1,81<!--/--> à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->75<!--/--> ans, comme la délibération du 5 février 2015 ; l'âge légal qui ouvre le droit ; le capital au coefficient de conversion de l'âge, la rente dès <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5 125<!--/--> points, le capital versé en deux fois de 4 900 à 5 124 | **exact** pour huit ; en écart connu pour deux : le simulateur arrondit au centième le coefficient qu'il interpole, ce qu'aucun texte ne dit, et prête à la génération 1958 l'âge légal de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->64<!--/--> ans |
 | ERAFP, prestations-types des rapports annuels 2015 et 2022, page « Calcul et paiement de votre prestation » | le capital de 2015 au barème de conversion de 2005 (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->24,62<!--/--> à soixante-deux ans), celui de 2022 au barème de 2021 (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->27,11<!--/-->) ; la première fraction de quinze mois de rente, puis de quatre depuis avril 2024 ; le capital versé en une fois quand la retraite de base précède le RAFP de plus de quinze mois ; les rentes de soixante-deux, soixante-quatre et soixante-sept ans | **exact** |
+| Union Retraite, simulateur du départ anticipé des assurés handicapés : vingt-quatre saisies par Claude le 4 octobre 2026 ; circulaire Cnav 2026-18 | la durée cotisée en situation de handicap, de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->60<!--/--> à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->100<!--/--> trimestres sous la durée requise, de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->55<!--/--> à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->59<!--/--> ans, et la durée validée de la double condition de 2015 ; les trimestres retranchés en plus aux nés avant 1973, puis la durée d'avant 2023 de ces générations ; le départ ouvert à l'âge saisi et refusé un trimestre plus tôt ; la majoration de la pension, le tiers du rapport arrondi au centième, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->0,28<!--/--> et <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->0,29<!--/-->, écrêtée à la pension entière | **exact** |
 
 **Ce que la confrontation a trouvé, dans l'ordre.** Le premier exemple lu
 contredisait les tables certifiées du dépôt : non que le récupérateur se soit
@@ -999,7 +1014,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->151<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->178<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.

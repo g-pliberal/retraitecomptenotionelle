@@ -1159,30 +1159,36 @@ avantages:
         minimum contributif, où les deux faces se déplacent séparément.
 
   - code: retraite_anticipee_handicap
+    chiffre_par: scripts/cout_avantages.py
     libelle: Retraite anticipée des travailleurs handicapés
     famille: age_et_bonifications
     quoi: >-
       Départ dès cinquante-cinq ans, au taux plein et sans décote, pour l'assuré
-      justifiant d'une incapacité permanente d'au moins 50 % pendant une durée
-      d'assurance minimale.
-    base_legale: [L. 351-1-3 CSS, D. 351-1-5 CSS, décret n° 2026-344 article 3 C et G]
+      qui a cotisé la durée requise de sa génération diminuée de 60 à 100
+      trimestres alors que son incapacité permanente atteignait 50 % (80 % avant
+      2015).
+    base_legale: [L. 351-1-3 CSS, D. 351-1-5 CSS, L. 351-8 4° bis CSS, L. 24 I 5° CPCMR,
+      R. 37 bis CPCMR, décret n° 2023-435 article 13 II F, décret n° 2026-344 article 3 5°]
     fiches: [retraite_anticipee_handicap]
     creation: 2003
     fin: null
     regimes: tous
-    etat_modele: absent
+    etat_modele: integre
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Demande une information médicale que le modèle ne collecte pas :
-      l'assuré est déclaré non ouvert.
+      Un âge, comme la carrière longue : le modèle le sert depuis le 5 octobre
+      2026 à qui déclare son incapacité, par la fiche retraite_anticipee_handicap
+      et `age_du_handicap`, dans `droit/invalidite.py`.
     sans_chiffre: >-
-      demande un taux d'incapacité que le modèle ne collecte pas ; les comptes
-      n'isolent qu'une majoration voisine, de trente millions
+      aucun cas type de la grille ne déclare d'incapacité : le retrait de la fiche
+      n'y déplace rien ; la majoration a sa ligne, lue dans les comptes
     cout:
-      mesurable_par: aucune
+      mesurable_par: modele
       note: >-
-        Chiffrable si le simulateur gagne un champ « taux d'incapacité ». Le
-        recalcul serait alors celui de la catégorie active.
+        CHIFFRÉE par le retrait de la fiche, et ZÉRO sur la grille : aucun cas type
+        n'y déclare d'incapacité permanente. Son prix est en annuités, comme celui
+        de la carrière longue, et les comptes de la protection sociale n'en ont aucun
+        poste ; la majoration qui l'accompagne a le sien.
 
   - code: inaptitude_invalidite
     libelle: Taux plein par inaptitude ou invalidité
@@ -1345,15 +1351,17 @@ avantages:
       l'assuré parti au titre du handicap. Il s'ajoute au départ anticipé lui-
       même, dont il est distinct : l'un ouvre le droit plus tôt, l'autre
       augmente le montant.
-    base_legale: [L. 351-1-3 CSS]
-    fiches: []
+    base_legale: [L. 351-1-3 CSS, D. 351-1-5 II CSS, R. 33 bis CPCMR]
+    fiches: [retraite_anticipee_handicap]
     creation: 2005
     fin: null
     regimes: tous
-    etat_modele: absent
+    etat_modele: integre
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Demande un taux d'incapacité que le modèle ne collecte pas.
+      Servie depuis le 5 octobre 2026 à qui part au titre du handicap, dans la
+      pension de son régime : la cascade ne l'isole pas, et sa dépense se lit dans
+      les comptes de la protection sociale.
     cout:
       mesurable_par: serie_publiee
       source_id: drees_comptes_protection_sociale

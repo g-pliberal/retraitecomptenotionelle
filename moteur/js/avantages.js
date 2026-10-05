@@ -298,6 +298,13 @@ export const NEUTRALISATIONS = [
       + "porte ne s'ouvre avant l'âge légal",
     par: "table",
   },
+  {
+    code: "retraite_anticipee_handicap",
+    quoi: "la fiche du départ anticipé des assurés handicapés est retirée : ni "
+      + "départ avant l'âge légal à ce titre, ni majoration, ni pension du "
+      + "fonctionnaire handicapé sans décote",
+    par: "table",
+  },
 ];
 
 /**
@@ -375,6 +382,12 @@ export function scenariosNeutralises(simulateur) {
   // prévoit : aucune porte ne s'ouvre plus avant l'âge légal.
   longue.carriereLongue = new CarriereLongue({});
   variantes.carriere_longue = longue;
+
+  // La fiche du départ anticipé des assurés handicapés, retirée : seule une
+  // carrière qui déclare une incapacité y perd quelque chose.
+  const handicap = neuf(simulateur.catalogue);
+  handicap.invalidites = handicap.invalidites.sans("handicap");
+  variantes.retraite_anticipee_handicap = handicap;
   return variantes;
 }
 
@@ -474,9 +487,13 @@ export function recalculer(simulateur, cas, generation, age, reelle, variantes =
     } else {
       const variante = retraits[code];
       if (variante === undefined) continue;
-      const sans = variante.calculer(
-        carriereVariante(simulateur, cas, generation, age),
-      );
+      const carriere = carriereVariante(simulateur, cas, generation, age);
+      // Une carrière qui ne déclare aucune incapacité n'a rien à perdre au
+      // retrait de la fiche du handicap : aucun cas type de la grille n'en déclare.
+      if (code === "retraite_anticipee_handicap" && carriere.incapacitePermanente === null) {
+        continue;
+      }
+      const sans = variante.calculer(carriere);
       if (!DUREE_REQUISE_EST_L_AVANTAGE.has(code)
           && sans.trimestres_requis !== reelle.trimestres_requis) {
         refus[code] = `${cas.code} : le retrait déplace la durée requise, `

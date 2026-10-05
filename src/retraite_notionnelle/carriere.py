@@ -214,6 +214,17 @@ class RadiationPourInvalidite:
 
 
 @dataclass(frozen=True)
+class IncapacitePermanente:
+    """L'incapacité permanente qu'une personne déclare (fiche
+    ``retraite_anticipee_handicap``) : réputée continue jusqu'au départ."""
+
+    #: Le mois depuis lequel elle atteint son taux.
+    debut: DateMois
+    #: Le taux qu'elle atteint au moins, en pour cent.
+    taux: int
+
+
+@dataclass(frozen=True)
 class PeriodeALEtranger:
     """Une période passée hors de France (fiche
     ``totalisation_des_periodes_etrangeres``)."""
@@ -817,6 +828,19 @@ class Carriere:
                                        affiliations=self._affiliations_autour(date),
                                        imputable=bool(attributs.get("imputable")),
                                        taux=attributs.get("taux"))
+
+    @cached_property
+    def incapacite_permanente(self) -> "IncapacitePermanente | None":
+        """L'incapacité permanente que la personne déclare, le mois depuis
+        lequel elle atteint son taux et ce taux (fiche
+        ``retraite_anticipee_handicap``) ; ``None`` sans elle."""
+        fait = (chrono.decision_medicale(self.chronologie, self.personne,
+                                         "incapacite_permanente")
+                if self.chronologie else None)
+        if fait is None:
+            return None
+        return IncapacitePermanente(debut=chrono.mois_de(fait["debut"]),
+                                    taux=int(fait["attributs"].get("taux") or 0))
 
     @cached_property
     def periodes_a_l_etranger(self) -> "tuple[PeriodeALEtranger, ...]":
@@ -1609,10 +1633,10 @@ class Carriere:
         demande sa pension, quand ce n'est pas la date que la présomption
         ``depart_de_chaque_regime`` retient (:attr:`demandes_de_pension`).
 
-        ``invalidite`` déclare la pension d'invalidité, l'inaptitude au travail
-        et la radiation pour invalidité d'un fonctionnaire
-        (:attr:`pension_d_invalidite`, :attr:`inaptitude`,
-        :attr:`radiation_pour_invalidite`).
+        ``invalidite`` déclare la pension d'invalidité, l'inaptitude au travail,
+        la radiation pour invalidité d'un fonctionnaire et l'incapacité
+        permanente (:attr:`pension_d_invalidite`, :attr:`inaptitude`,
+        :attr:`radiation_pour_invalidite`, :attr:`incapacite_permanente`).
 
         ``etranger`` déclare la carrière hors de France : les périodes passées
         hors de France, les pensions étrangères et l'État de résidence après le

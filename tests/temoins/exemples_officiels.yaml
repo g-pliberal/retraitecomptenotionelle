@@ -2294,3 +2294,365 @@ exemples:
       conversion de 64 ans, celui du barème de 2022.
     carriere: {naissance: "1962-06-15", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2026-07", age_debut: 22, points_rafp: 4448, valeur_de_service_rafp: 0.05671}
     attendu: {prestation_rafp: {forme: capital, coefficient: 1.08, conversion: 25.57, capital: 6965.93}}
+
+  # ---- Union Retraite : le simulateur du handicap, saisi par Claude ------------
+  # Les vingt-quatre saisies du 4 octobre 2026, le budget entier, que le registre
+  # des sources relève (union_retraite_handicap). Le simulateur répond pour un
+  # départ à un âge, sans date : chaque exemple prend la seule date d'effet que
+  # sa génération et son âge permettent, et la version de D. 351-1-5 ou de
+  # l'article 25 du décret n° 2003-1306 alors en vigueur. La carrière a juste
+  # la durée qui l'ouvre, toute en situation de handicap : la durée cotisée
+  # annoncée, ou la durée validée que la version de 2015 exige aussi.
+
+  - id: ur_handicap_1961_59
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1961 ; 59 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1961 ; 59 ans"}
+    enonce: >-
+      Saisie « non ; 1961 ; 59 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1961, parti à 59 ans ; la réponse exige 68
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1961, en
+      situation de handicap depuis ses seize ans, qui part en juin 2020 avec 88
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er janvier 2015 au 31
+      août 2023, qui exige encore 88 trimestres validés en situation de handicap.
+    carriere: {naissance: "1961-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2020-06", trimestres_valides: 88, handicap: "1977-06"}
+    attendu: {trimestres_handicap_requis: 68, age_ouverture: 59.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1963_59
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1963 ; 59 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1963 ; 59 ans"}
+    enonce: >-
+      Saisie « non ; 1963 ; 59 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1963, parti à 59 ans ; la réponse exige 68
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1963, en
+      situation de handicap depuis ses seize ans, qui part en juin 2022 avec 88
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er janvier 2015 au 31
+      août 2023, qui exige encore 88 trimestres validés en situation de handicap.
+    carriere: {naissance: "1963-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-06", trimestres_valides: 88, handicap: "1979-06"}
+    attendu: {trimestres_handicap_requis: 68, age_ouverture: 59.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1964_58
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1964 ; 58 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1964 ; 58 ans"}
+    enonce: >-
+      Saisie « non ; 1964 ; 58 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1964, parti à 58 ans ; la réponse exige 79
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1964, en
+      situation de handicap depuis ses seize ans, qui part en juin 2022 avec 99
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er janvier 2015 au 31
+      août 2023, qui exige encore 99 trimestres validés en situation de handicap.
+    carriere: {naissance: "1964-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-06", trimestres_valides: 99, handicap: "1980-06"}
+    attendu: {trimestres_handicap_requis: 79, age_ouverture: 58.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1964_59
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1964 ; 59 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1964 ; 59 ans"}
+    enonce: >-
+      Saisie « non ; 1964 ; 59 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1964, parti à 59 ans ; la réponse exige 69
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er octobre 1964, en
+      situation de handicap depuis ses seize ans, qui part en octobre 2023 avec 69
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er septembre 2023 au
+      31 août 2026.
+    carriere: {naissance: "1964-10-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2023-10", trimestres_valides: 69, handicap: "1980-10"}
+    attendu: {trimestres_handicap_requis: 69, age_ouverture: 59.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1965_57
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1965 ; 57 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1965 ; 57 ans"}
+    enonce: >-
+      Saisie « non ; 1965 ; 57 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1965, parti à 57 ans ; la réponse exige 89
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1965, en
+      situation de handicap depuis ses seize ans, qui part en juin 2022 avec 109
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er janvier 2015 au 31
+      août 2023, qui exige encore 109 trimestres validés en situation de handicap.
+    carriere: {naissance: "1965-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-06", trimestres_valides: 109, handicap: "1981-06"}
+    attendu: {trimestres_handicap_requis: 89, age_ouverture: 57.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1966_56
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1966 ; 56 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1966 ; 56 ans"}
+    enonce: >-
+      Saisie « non ; 1966 ; 56 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1966, parti à 56 ans ; la réponse exige 99
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1966, en
+      situation de handicap depuis ses seize ans, qui part en juin 2022 avec 119
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er janvier 2015 au 31
+      août 2023, qui exige encore 119 trimestres validés en situation de handicap.
+    carriere: {naissance: "1966-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-06", trimestres_valides: 119, handicap: "1982-06"}
+    attendu: {trimestres_handicap_requis: 99, age_ouverture: 56.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1966_59
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1966 ; 59 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1966 ; 59 ans"}
+    enonce: >-
+      Saisie « non ; 1966 ; 59 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1966, parti à 59 ans ; la réponse exige 69
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1966, en
+      situation de handicap depuis ses seize ans, qui part en juin 2025 avec 69
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er septembre 2023 au
+      31 août 2026.
+    carriere: {naissance: "1966-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2025-06", trimestres_valides: 69, handicap: "1982-06"}
+    attendu: {trimestres_handicap_requis: 69, age_ouverture: 59.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1967_55
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1967 ; 55 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1967 ; 55 ans"}
+    enonce: >-
+      Saisie « non ; 1967 ; 55 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1967, parti à 55 ans ; la réponse exige 110
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1967, en
+      situation de handicap depuis ses seize ans, qui part en juin 2022 avec 130
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er janvier 2015 au 31
+      août 2023, qui exige encore 130 trimestres validés en situation de handicap.
+    carriere: {naissance: "1967-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-06", trimestres_valides: 130, handicap: "1983-06"}
+    attendu: {trimestres_handicap_requis: 110, age_ouverture: 55.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1967_59
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1967 ; 59 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1967 ; 59 ans"}
+    enonce: >-
+      Saisie « non ; 1967 ; 59 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1967, parti à 59 ans ; la réponse exige 70
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er octobre 1967, en
+      situation de handicap depuis ses seize ans, qui part en octobre 2026 avec 70
+      trimestres, sous la version de D. 351-1-5 en vigueur depuis le 1er septembre
+      2026.
+    carriere: {naissance: "1967-10-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-10", trimestres_valides: 70, handicap: "1983-10"}
+    attendu: {trimestres_handicap_requis: 70, age_ouverture: 59.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1968_56
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1968 ; 56 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1968 ; 56 ans"}
+    enonce: >-
+      Saisie « non ; 1968 ; 56 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1968, parti à 56 ans ; la réponse exige 100
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1968, en
+      situation de handicap depuis ses seize ans, qui part en juin 2024 avec 100
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er septembre 2023 au
+      31 août 2026.
+    carriere: {naissance: "1968-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-06", trimestres_valides: 100, handicap: "1984-06"}
+    attendu: {trimestres_handicap_requis: 100, age_ouverture: 56.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1969_55
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1969 ; 55 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1969 ; 55 ans"}
+    enonce: >-
+      Saisie « non ; 1969 ; 55 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1969, parti à 55 ans ; la réponse exige 110
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1969, en
+      situation de handicap depuis ses seize ans, qui part en juin 2024 avec 110
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er septembre 2023 au
+      31 août 2026.
+    carriere: {naissance: "1969-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-06", trimestres_valides: 110, handicap: "1985-06"}
+    attendu: {trimestres_handicap_requis: 110, age_ouverture: 55.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1970_55
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1970 ; 55 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1970 ; 55 ans"}
+    enonce: >-
+      Saisie « non ; 1970 ; 55 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1970, parti à 55 ans ; la réponse exige 111
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1970, en
+      situation de handicap depuis ses seize ans, qui part en juin 2025 avec 111
+      trimestres, sous la version de D. 351-1-5 en vigueur du 1er septembre 2023 au
+      31 août 2026.
+    carriere: {naissance: "1970-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2025-06", trimestres_valides: 111, handicap: "1986-06"}
+    attendu: {trimestres_handicap_requis: 111, age_ouverture: 55.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1970_57
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1970 ; 57 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1970 ; 57 ans"}
+    enonce: >-
+      Saisie « non ; 1970 ; 57 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1970, parti à 57 ans ; la réponse exige 91
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1970, en
+      situation de handicap depuis ses seize ans, qui part en juin 2027 avec 91
+      trimestres, sous la version de D. 351-1-5 en vigueur depuis le 1er septembre
+      2026.
+    carriere: {naissance: "1970-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2027-06", trimestres_valides: 91, handicap: "1986-06"}
+    attendu: {trimestres_handicap_requis: 91, age_ouverture: 57.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1971_56
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1971 ; 56 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1971 ; 56 ans"}
+    enonce: >-
+      Saisie « non ; 1971 ; 56 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1971, parti à 56 ans ; la réponse exige 101
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1971, en
+      situation de handicap depuis ses seize ans, qui part en juin 2027 avec 101
+      trimestres, sous la version de D. 351-1-5 en vigueur depuis le 1er septembre
+      2026.
+    carriere: {naissance: "1971-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2027-06", trimestres_valides: 101, handicap: "1987-06"}
+    attendu: {trimestres_handicap_requis: 101, age_ouverture: 56.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1972_58
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1972 ; 58 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1972 ; 58 ans"}
+    enonce: >-
+      Saisie « non ; 1972 ; 58 ans » : ni fonctionnaire territorial ou hospitalier,
+      ni d'un régime spécial, né en 1972, parti à 58 ans ; la réponse exige 81
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un salarié du secteur privé né le 1er juin 1972, en
+      situation de handicap depuis ses seize ans, qui part en juin 2030 avec 81
+      trimestres, sous la version de D. 351-1-5 en vigueur depuis le 1er septembre
+      2026.
+    carriere: {naissance: "1972-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2030-06", trimestres_valides: 81, handicap: "1988-06"}
+    attendu: {trimestres_handicap_requis: 81, age_ouverture: 58.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1973_55
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1973 ou plus tard ; 55 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1973 ou plus tard ; 55 ans"}
+    enonce: >-
+      Saisie « non ; 1973 ou plus tard ; 55 ans » : ni fonctionnaire territorial ou
+      hospitalier, ni d'un régime spécial, né en 1973 ou plus tard, parti à 55 ans ;
+      la réponse exige 112 trimestres cotisés en situation de handicap (relevé au
+      registre des sources). La carrière d'exemple : un salarié du secteur privé né
+      le 1er juin 1973, en situation de handicap depuis ses seize ans, qui part en
+      juin 2028 avec 112 trimestres, sous la version de D. 351-1-5 en vigueur depuis
+      le 1er septembre 2026.
+    carriere: {naissance: "1973-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-06", trimestres_valides: 112, handicap: "1989-06"}
+    attendu: {trimestres_handicap_requis: 112, age_ouverture: 55.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1973_56
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1973 ou plus tard ; 56 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1973 ou plus tard ; 56 ans"}
+    enonce: >-
+      Saisie « non ; 1973 ou plus tard ; 56 ans » : ni fonctionnaire territorial ou
+      hospitalier, ni d'un régime spécial, né en 1973 ou plus tard, parti à 56 ans ;
+      la réponse exige 102 trimestres cotisés en situation de handicap (relevé au
+      registre des sources). La carrière d'exemple : un salarié du secteur privé né
+      le 1er juin 1973, en situation de handicap depuis ses seize ans, qui part en
+      juin 2029 avec 102 trimestres, sous la version de D. 351-1-5 en vigueur depuis
+      le 1er septembre 2026.
+    carriere: {naissance: "1973-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-06", trimestres_valides: 102, handicap: "1989-06"}
+    attendu: {trimestres_handicap_requis: 102, age_ouverture: 56.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1973_57
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1973 ou plus tard ; 57 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1973 ou plus tard ; 57 ans"}
+    enonce: >-
+      Saisie « non ; 1973 ou plus tard ; 57 ans » : ni fonctionnaire territorial ou
+      hospitalier, ni d'un régime spécial, né en 1973 ou plus tard, parti à 57 ans ;
+      la réponse exige 92 trimestres cotisés en situation de handicap (relevé au
+      registre des sources). La carrière d'exemple : un salarié du secteur privé né
+      le 1er juin 1973, en situation de handicap depuis ses seize ans, qui part en
+      juin 2030 avec 92 trimestres, sous la version de D. 351-1-5 en vigueur depuis
+      le 1er septembre 2026.
+    carriere: {naissance: "1973-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2030-06", trimestres_valides: 92, handicap: "1989-06"}
+    attendu: {trimestres_handicap_requis: 92, age_ouverture: 57.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1973_58
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1973 ou plus tard ; 58 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1973 ou plus tard ; 58 ans"}
+    enonce: >-
+      Saisie « non ; 1973 ou plus tard ; 58 ans » : ni fonctionnaire territorial ou
+      hospitalier, ni d'un régime spécial, né en 1973 ou plus tard, parti à 58 ans ;
+      la réponse exige 82 trimestres cotisés en situation de handicap (relevé au
+      registre des sources). La carrière d'exemple : un salarié du secteur privé né
+      le 1er juin 1973, en situation de handicap depuis ses seize ans, qui part en
+      juin 2031 avec 82 trimestres, sous la version de D. 351-1-5 en vigueur depuis
+      le 1er septembre 2026.
+    carriere: {naissance: "1973-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-06", trimestres_valides: 82, handicap: "1989-06"}
+    attendu: {trimestres_handicap_requis: 82, age_ouverture: 58.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1973_59
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « non ; 1973 ou plus tard ; 59 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "non ; 1973 ou plus tard ; 59 ans"}
+    enonce: >-
+      Saisie « non ; 1973 ou plus tard ; 59 ans » : ni fonctionnaire territorial ou
+      hospitalier, ni d'un régime spécial, né en 1973 ou plus tard, parti à 59 ans ;
+      la réponse exige 72 trimestres cotisés en situation de handicap (relevé au
+      registre des sources). La carrière d'exemple : un salarié du secteur privé né
+      le 1er juin 1973, en situation de handicap depuis ses seize ans, qui part en
+      juin 2032 avec 72 trimestres, sous la version de D. 351-1-5 en vigueur depuis
+      le 1er septembre 2026.
+    carriere: {naissance: "1973-06-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2032-06", trimestres_valides: 72, handicap: "1989-06"}
+    attendu: {trimestres_handicap_requis: 72, age_ouverture: 59.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1961_59_fonctionnaire
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « oui ; 1961 ; 59 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "oui ; 1961 ; 59 ans"}
+    enonce: >-
+      Saisie « oui ; 1961 ; 59 ans » : fonctionnaire territorial ou hospitalier, né
+      en 1961, parti à 59 ans ; la réponse exige « un total de 88 trimestres, dont
+      68 cotisés » (relevé au registre des sources). La carrière d'exemple : un
+      fonctionnaire hospitalier né le 1er juin 1961, en situation de handicap depuis
+      ses seize ans, qui part en juin 2020 avec 88 trimestres, sous la version de D.
+      351-1-5 en vigueur du 1er janvier 2015 au 31 août 2023, qui exige encore 88
+      trimestres validés en situation de handicap.
+    carriere: {naissance: "1961-06-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2020-06", trimestres_valides: 88, handicap: "1977-06"}
+    attendu: {trimestres_handicap_requis: 68, trimestres_valides_handicap_requis: 88, age_ouverture: 59.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1966_56_fonctionnaire
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « oui ; 1966 ; 56 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "oui ; 1966 ; 56 ans"}
+    enonce: >-
+      Saisie « oui ; 1966 ; 56 ans » : fonctionnaire territorial ou hospitalier, né
+      en 1966, parti à 56 ans ; la réponse exige 99 trimestres cotisés en situation
+      de handicap (relevé au registre des sources). La carrière d'exemple : un
+      fonctionnaire hospitalier né le 1er juin 1966, en situation de handicap depuis
+      ses seize ans, qui part en juin 2022 avec 119 trimestres, sous la version de
+      D. 351-1-5 en vigueur du 1er janvier 2015 au 31 août 2023, qui exige encore
+      119 trimestres validés en situation de handicap.
+    carriere: {naissance: "1966-06-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2022-06", trimestres_valides: 119, handicap: "1982-06"}
+    attendu: {trimestres_handicap_requis: 99, age_ouverture: 56.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1970_57_fonctionnaire
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « oui ; 1970 ; 57 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "oui ; 1970 ; 57 ans"}
+    enonce: >-
+      Saisie « oui ; 1970 ; 57 ans » : fonctionnaire territorial ou hospitalier, né
+      en 1970, parti à 57 ans ; la réponse exige 91 trimestres cotisés en situation
+      de handicap (relevé au registre des sources). La carrière d'exemple : un
+      fonctionnaire hospitalier né le 1er juin 1970, en situation de handicap depuis
+      ses seize ans, qui part en juin 2027 avec 91 trimestres, sous la version de D.
+      351-1-5 en vigueur depuis le 1er septembre 2026.
+    carriere: {naissance: "1970-06-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2027-06", trimestres_valides: 91, handicap: "1986-06"}
+    attendu: {trimestres_handicap_requis: 91, age_ouverture: 57.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: ur_handicap_1973_55_fonctionnaire
+    source: {editeur: "Union Retraite", reference: "simulateur « Retraite anticipée en situation de handicap », info-retraite.fr, saisie « oui ; 1973 ou plus tard ; 55 ans »", verifie_le: "2026-10-04", simulateur: union_retraite_handicap, saisie: "oui ; 1973 ou plus tard ; 55 ans"}
+    enonce: >-
+      Saisie « oui ; 1973 ou plus tard ; 55 ans » : fonctionnaire territorial ou
+      hospitalier, né en 1973 ou plus tard, parti à 55 ans ; la réponse exige 112
+      trimestres cotisés en situation de handicap (relevé au registre des sources).
+      La carrière d'exemple : un fonctionnaire hospitalier né le 1er juin 1973, en
+      situation de handicap depuis ses seize ans, qui part en juin 2028 avec 112
+      trimestres, sous la version de D. 351-1-5 en vigueur depuis le 1er septembre
+      2026.
+    carriere: {naissance: "1973-06-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2028-06", trimestres_valides: 112, handicap: "1989-06"}
+    attendu: {trimestres_handicap_requis: 112, age_ouverture: 55.0, motif_ouverture: handicap, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  # ---- Cnav : la majoration de la retraite anticipée des assurés handicapés ----
+  # Les exemples de la circulaire Cnav n° 2026-18 du 15 juin 2026 (3.1 à 3.3.1 et
+  # annexe 7) : le coefficient, et l'écrêtement à la retraite entière quand elle
+  # le dit. Leurs revenus annuels moyens ne se reproduisent pas, et ne se
+  # comparent donc pas : la carrière a la durée et la durée cotisée en situation
+  # de handicap de l'exemple, à une date d'effet que sa durée requise permet.
+
+  - id: cnav_2026_18_majoration
+    source: {editeur: "Cnav", reference: "circulaire Cnav n° 2026-18 du 15 juin 2026, 3.1 à 3.3, exemple de l'assuré né en 1962", verifie_le: "2026-10-05"}
+    enonce: >-
+      « Un assuré handicapé, né en 1962, justifie de 160 trimestres au régime de
+      l'Assurance retraite, dont 135 cotisés en étant handicapé. Coefficient de
+      majoration : 135/160 x 1/3 = 0,281 arrondi à 0,28 », sur la durée requise de
+      169 trimestres. La carrière d'exemple : un salarié né le 1er octobre 1962,
+      handicapé depuis 1991, qui part à soixante-deux ans en octobre 2024, avant
+      l'âge légal de sa génération.
+    carriere: {naissance: "1962-10-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-10", trimestres_valides: 160, handicap: "1991-01"}
+    attendu: {trimestres_requis: 169, coefficient_majoration_handicap: 0.28, motif_ouverture: handicap}
+
+  - id: cnav_2026_18_majoration_ecretee
+    source: {editeur: "Cnav", reference: "circulaire Cnav n° 2026-18 du 15 juin 2026, 3.3.1, exemple de l'assuré né en 1962", verifie_le: "2026-10-05"}
+    enonce: >-
+      « Assuré né en 1962. Il réunit 150 trimestres aux régimes Lura dont 130
+      cotisés en étant handicapé » ; « 130/150 x 1/3 = 0,288 arrondi à 0,29 », et la
+      retraite augmentée de la majoration, au-delà de la retraite entière, « est
+      écrêtée à hauteur de ce dernier ». La carrière d'exemple : un salarié né le
+      1er décembre 1962, handicapé depuis 1992, qui part en juillet 2024.
+    carriere: {naissance: "1962-12-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-07", trimestres_valides: 150, handicap: "1992-01"}
+    attendu: {coefficient_majoration_handicap: 0.29, majoration_handicap_ecretee: true}
+
+  - id: cnav_2026_18_annexe_7
+    source: {editeur: "Cnav", reference: "circulaire Cnav n° 2026-18 du 15 juin 2026, annexe 7, exemple de l'assuré né en 1960", verifie_le: "2026-10-05"}
+    enonce: >-
+      « Assuré né en 1960, justifiant de 160 trimestres aux régimes Lura dont 135
+      cotisés en étant handicapé » : coefficient « 0,2812 arrondi à 0,28 », retraite
+      majorée « écrêtée à 7 500 € », la retraite entière, sur la durée requise de
+      167 trimestres. La carrière d'exemple : un salarié né le 1er décembre 1960,
+      handicapé depuis 1989, qui part en octobre 2022, avant l'âge légal de
+      soixante-deux ans.
+    carriere: {naissance: "1960-12-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-10", trimestres_valides: 160, handicap: "1989-01"}
+    attendu: {trimestres_requis: 167, coefficient_majoration_handicap: 0.28, majoration_handicap_ecretee: true}

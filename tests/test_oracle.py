@@ -1582,10 +1582,12 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
                           "activite": periode.get("activite", "salariee")}
                          for periode in c["etranger"]],
             "pensions": [], "residence": c.get("residence")}
-    if any(cle in c for cle in ("inaptitude", "pension_d_invalidite", "radiation_invalidite")):
-        # L'invalidité et l'inaptitude, comme la saisie les déclare : la
-        # pension d'invalidité et la radiation datées comme un début
-        # d'activité, depuis le mois de naissance.
+    if any(cle in c for cle in ("inaptitude", "pension_d_invalidite", "radiation_invalidite",
+                                "handicap")):
+        # L'invalidité, l'inaptitude et l'incapacité permanente, comme la
+        # saisie les déclare : la pension d'invalidité, la radiation et
+        # l'incapacité datées comme un début d'activité, depuis le mois de
+        # naissance.
         communs["invalidite"] = {
             "pension": (age_du_mois(c["pension_d_invalidite"])
                         if "pension_d_invalidite" in c else None),
@@ -1594,6 +1596,7 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
                 "age": age_du_mois(c["radiation_invalidite"]),
                 "imputable": bool(c.get("invalidite_imputable")),
                 "taux": c.get("taux_invalidite")},
+            "handicap": age_du_mois(c["handicap"]) if "handicap" in c else None,
         }
     actuel = simulateur.scenario_actuel
     if "age_debut" in c or "debut" in c:
@@ -1680,6 +1683,25 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
     if cle == "non_ouverte_un_trimestre_plus_tot":
         _, plus_tot = _carriere_exemple(simulateur, exemple, decalage_mois=-3)
         return plus_tot.motif_ouverture == "non_ouverte"
+    if cle in ("trimestres_handicap_requis", "trimestres_valides_handicap_requis"):
+        # La durée cotisée — et validée, quand la version l'exige — que le
+        # départ anticipé des assurés handicapés demande à cette génération,
+        # pour cet âge, à cette date d'effet : ce que le simulateur annonce.
+        exigences = invalidite.exigences_du_handicap(actuel, carriere,
+                                                     resultat.trimestres_requis)
+        if exigences is None:
+            return "aucune exigence à cette date ni à cet âge"
+        return exigences[1] if cle == "trimestres_handicap_requis" else exigences[2]
+    if cle in ("coefficient_majoration_handicap", "majoration_handicap_ecretee"):
+        # La majoration du départ des assurés handicapés au régime général,
+        # telle que la formule affichée l'écrit : son coefficient, et si la
+        # pension entière l'écrête.
+        detail = next(p.detail for p in resultat.pensions_par_regime
+                      if p.regime == "regime_general")
+        lu = re.search(r"majoration des assurés handicapés ([0-9.]+)( écrêtée)?", detail)
+        if cle == "coefficient_majoration_handicap":
+            return float(lu.group(1)) if lu else "aucune majoration servie"
+        return bool(lu and lu.group(2))
     if cle == "annees_du_salaire_annuel_moyen":
         # Le nombre des meilleures années que le salaire annuel moyen du
         # régime général retient, celui de la pension proratisée compris :
@@ -1899,6 +1921,7 @@ TOLERANCES = {
     "plafond_mensuel_du_cumul": {"abs": 0.01},
     "plafonds_des_nouvelles_pensions": {"abs": 0.01},
     "pension_et_rente_d_invalidite_sur_traitement": {"abs": 1e-6},
+    "coefficient_majoration_handicap": {"abs": 1e-9},
 }
 
 

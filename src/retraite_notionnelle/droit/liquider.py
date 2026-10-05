@@ -523,6 +523,14 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     #: des avantages non contributifs mesure avec le minimum contributif.
     majorations_des_cultes = (contexte is None
                               or not contexte.neutralise("avantages_non_contributifs"))
+    #: Le départ anticipé des assurés handicapés ouvre-t-il cette liquidation
+    #: (:func:`~.ouvrir.ouvrir`) ? Ses régimes la servent alors au taux plein,
+    #: majorée, et les complémentaires qui les suivent sans coefficient.
+    par_le_handicap = ouverture.motif == "handicap"
+    version_du_handicap = (invalidite.version_du_handicap(moteur, carriere)
+                           if par_le_handicap else None)
+    regimes_du_handicap = (moteur.invalidites.regimes("handicap")
+                           if par_le_handicap else frozenset())
     codes = [code for code in droits.codes if regimes is None or code in regimes]
     groupes = releve.groupes
 
@@ -716,10 +724,11 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 # lui, la formule affichée ne le retrouve pas — à dix ans
                 # d'anticipation elle en donnait deux fois trop, sans que
                 # rien à l'écran ne dise pourquoi.
-                abattement = abattement_points(moteur, 
+                abattement = abattement_points(moteur,
                     periode, carriere, trimestres, requis_reference,
                     age_liquidation, annee_liquidation,
                     trimestres_par_regime.get(code, 0),
+                    handicap=par_le_handicap,
                 )
                 # LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE.
                 # L'exonération au taux plein ne vaut que « sur les tranches
@@ -956,12 +965,18 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             if (taux_plein_des_femmes(periode, carriere, durees, age_liquidation)
                     or invalidite.taux_plein_de_l_inapte(
                         moteur, code, carriere, age_liquidation)
-                    or pour_invalidite is not None):
+                    or pour_invalidite is not None
+                    or code in regimes_du_handicap
+                    or (invalidite.sans_decote_du_fonctionnaire(moteur, code, carriere)
+                        and ouvrir.droit_militaire(moteur, periode, carriere) is None)):
                 # Le taux de soixante-cinq ans des femmes d'avant 1983 ; le
                 # taux plein de l'inapte, quelle que soit sa durée (L. 351-8,
                 # 2°), le taux de soixante-cinq ans avant 1983 ; la pension du
                 # fonctionnaire mis à la retraite pour invalidité, que « le
-                # coefficient de minoration » n'atteint pas (L. 14, I).
+                # coefficient de minoration » n'atteint pas (L. 14, I) ; le
+                # départ anticipé des assurés handicapés, au taux plein
+                # (L. 351-8, 4° bis ; R. 37 bis) ; le fonctionnaire handicapé,
+                # que le coefficient de minoration n'atteint jamais (L. 14, I).
                 trimestres_decote = 0.0
             if decote and trimestres_decote > 0:
                 # Les régimes sans décote (fonction publique avant 2004,
@@ -1049,7 +1064,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             and (trimestres >= requis
                  or age_liquidation >= ouvrir.age_taux_plein(moteur, periode, carriere)
                  or invalidite.taux_plein_de_l_inapte(
-                     moteur, code, carriere, age_liquidation))
+                     moteur, code, carriere, age_liquidation)
+                 or code in regimes_du_handicap)
         )
         fraction_cultes = (
             cultes.fraction_d_avant_1998(
@@ -1071,6 +1087,35 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             montant, detail_invalidite = invalidite.pension_du_fonctionnaire_invalide(
                 moteur, carriere, pour_invalidite, montant, salaire_reference,
                 annee_liquidation)
+        # LA MAJORATION DU DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS : « la
+        # pension est augmentée à proportion d'un nombre égal au tiers du
+        # quotient » de la durée cotisée en situation de handicap dans le
+        # régime par sa durée d'assurance, limitée au maximum, sans dépasser
+        # la pension d'une durée entière (D. 351-1-5, II) ; au fonctionnaire,
+        # les services accomplis en situation de handicap sur les services et
+        # bonifications admis, sous la pension du pourcentage maximum (R. 33
+        # bis ; décret n° 2003-1306, article 24 bis ; décret n° 2004-1056,
+        # article 20 bis). Le minimum contributif se compare au montant
+        # calculé seul, et la majoration s'y ajoute (circulaire Cnav
+        # n° 2026-18, 3.3.3, règle 3) : elle reste hors de ce qu'il relève.
+        majoration_handicap = 0.0
+        detail_handicap = ""
+        if code in regimes_du_handicap and version_du_handicap is not None:
+            fonctionnaire = moteur.catalogue[code].famille == invalidite.FONCTION_PUBLIQUE
+            en_situation = durees.cumul_plafonne(
+                "services" if fonctionnaire else "cotises", membres,
+                lambda annee: invalidite.annee_en_situation_de_handicap(carriere, annee))
+            coefficient = invalidite.coefficient_de_majoration(
+                version_du_handicap, en_situation, trimestres_regime)
+            if coefficient > 0:
+                entiere = salaire_reference * (periode.taux_plein or 0.5)
+                brute = montant * coefficient
+                majoration_handicap = max(0.0, min(brute, entiere - montant))
+                montant += majoration_handicap
+                detail_handicap = (
+                    f", majoration des assurés handicapés {coefficient:.2f}"
+                    + (" écrêtée à la pension entière"
+                       if brute > majoration_handicap + 1e-9 else ""))
         if "minimum_contributif" in periode.avantages_non_contributifs:
             # Le minimum ne relève que les régimes de base qui le portent,
             # et au prorata de la durée acquise DANS CE régime — durée
@@ -1111,7 +1156,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 cotisee_regime=cotisee_regime,
                 proratisation=proratisation,
                 requis=requis,
-                hors_minimum=0.0 if fraction_cultes is None else fraction_cultes.montant,
+                hors_minimum=((0.0 if fraction_cultes is None else fraction_cultes.montant)
+                              + majoration_handicap),
                 duree_tous_regimes=duree_regime + sum(
                     durees.trimestres_par_regime[autre] for autre in autres_de_base),
                 cotisee_tous_regimes=cotisee_regime + sum(
@@ -1177,6 +1223,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 + ("" if pour_invalidite is None else
                    ", retraite pour invalidité"
                    + (f" : {detail_invalidite}" if detail_invalidite else ""))
+                + detail_handicap
                 + ("" if annees_alignees is None else
                    f", {annees_alignees[0]} années au plus au salaire annuel moyen "
                    f"({annees_alignees[1]})")
@@ -2606,7 +2653,8 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
                        trimestres: int, requis: int,
                        age_liquidation: float,
                        annee_liquidation: int,
-                       trimestres_regime: int = 0) -> float:
+                       trimestres_regime: int = 0,
+                       handicap: bool = False) -> float:
     """Coefficient d'un régime en points : abattu avant le taux plein,
     majoré après.
 
@@ -2614,6 +2662,10 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     :func:`surcote_points`, qui rend la majoration que la fiche écrit
     quand l'abattement est revenu à un. ``trimestres_regime`` est la durée
     d'affiliation à ce régime-là, que la CIPAV oppose à sa surcote.
+    ``handicap`` dit la liquidation ouverte par le départ anticipé des
+    assurés handicapés : le régime général la sert au taux plein (L. 351-8,
+    4° bis), et l'Agirc-Arrco, l'Ircantec et la complémentaire des
+    indépendants le suivent sans coefficient.
 
     « Avant le taux plein » est une condition de DURÉE autant que d'âge :
     une complémentaire est servie sans abattement dès que l'assuré a le
@@ -2667,7 +2719,14 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         inapte = ((not par_age_seul or periode.abattement_points == "ircantec")
                   and invalidite.taux_plein_de_l_inapte(
                       moteur, invalidite.REGIME_DES_SALARIES, carriere, age_liquidation))
-        if inapte or (not par_age_seul and trimestres >= requis):
+        # LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS, au taux plein du régime
+        # général, que l'Agirc-Arrco suit « à l'âge auquel il a obtenu la
+        # pension [...] à taux plein » (accord du 17 novembre 2017, article
+        # 84, 3), et que l'Ircantec exempte de coefficient : « b) Les agents et
+        # anciens agents handicapés admis à faire liquider leur retraite au
+        # régime général en application de l'article L. 351-1-3 » (arrêté du
+        # 30 décembre 1970, article 16).
+        if inapte or handicap or (not par_age_seul and trimestres >= requis):
             abattement = 1.0
         else:
             par_duree = (
@@ -2683,9 +2742,9 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
             age_liquidation, annee_liquidation,
         )
     else:
-        abattement = abattement_regime_de_base(moteur, 
+        abattement = abattement_regime_de_base(moteur,
             periode, carriere, trimestres, requis,
-            age_liquidation, annee_liquidation,
+            age_liquidation, annee_liquidation, handicap,
         )
     if abattement < 1.0 and taux_plein_anticipe(moteur, 
             periode, carriere, age_liquidation):
@@ -2752,7 +2811,8 @@ def taux_plein_anticipe(moteur, periode: PeriodeRegime, carriere: Carriere,
 def abattement_regime_de_base(moteur, periode: PeriodeRegime,
                                carriere: Carriere, trimestres: int,
                                requis: int, age_liquidation: float,
-                               annee_liquidation: int) -> float:
+                               annee_liquidation: int,
+                               handicap: bool = False) -> float:
     """Coefficient qui reprend la décote du régime de base : un taux par
     trimestre manquant, au plus favorable de l'âge et de la durée.
 
@@ -2771,7 +2831,15 @@ def abattement_regime_de_base(moteur, periode: PeriodeRegime,
     """
     if invalidite.taux_plein_de_l_inapte(moteur, periode.regime, carriere, age_liquidation):
         return 1.0
-    decote, age_annulation, _ = decote_opposable(moteur, 
+    # La complémentaire des indépendants que la fiche
+    # ``retraite_anticipee_handicap`` nomme est « liquidée sans aucun
+    # abattement [...] à partir de l'âge fixé aux articles L. 634-3-2 ou
+    # L. 634-3-3 de ce même code si l'assuré remplit les conditions permettant
+    # d'ouvrir droit à la retraite anticipée prévue par ces articles »
+    # (règlement approuvé par l'arrêté du 9 février 2012, article 12).
+    if handicap and periode.regime in moteur.invalidites.regimes("handicap"):
+        return 1.0
+    decote, age_annulation, _ = decote_opposable(moteur,
         periode, carriere, annee_liquidation
     )
     if decote is None:

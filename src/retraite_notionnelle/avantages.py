@@ -431,6 +431,13 @@ NEUTRALISATIONS: tuple[Neutralisation, ...] = (
              "aucune porte ne s'ouvre avant l'âge légal",
         par="table",
     ),
+    Neutralisation(
+        code="retraite_anticipee_handicap",
+        quoi="la fiche du départ anticipé des assurés handicapés est retirée : "
+             "ni départ avant l'âge légal à ce titre, ni majoration, ni pension "
+             "du fonctionnaire handicapé sans décote",
+        par="table",
+    ),
 )
 
 #: Les codes mesurés par un retrait dans la carrière, et le motif par lequel on
@@ -509,6 +516,14 @@ def scenarios_neutralises(simulateur: Simulateur) -> dict[str, ScenarioActuel]:
     # le prévoit : aucune porte ne s'ouvre plus avant l'âge légal.
     longue.carriere_longue = CarriereLongue(Path("barème-vidé-pour-la-mesure"))
     variantes["carriere_longue"] = longue
+
+    handicap = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+                              simulateur.affiliations, simulateur.parametres)
+    # La fiche du départ anticipé des assurés handicapés, retirée : ses régimes
+    # n'ouvrent plus rien à ce titre. Seule une carrière qui déclare une
+    # incapacité y perd quelque chose (:func:`recalculer`).
+    handicap.invalidites = handicap.invalidites.sans("handicap")
+    variantes["retraite_anticipee_handicap"] = handicap
     return variantes
 
 
@@ -624,8 +639,12 @@ def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
             variante = variantes.get(code)
             if variante is None:
                 continue
-            sans = variante.calculer(
-                carriere_variante(simulateur, cas, generation, age))
+            carriere = carriere_variante(simulateur, cas, generation, age)
+            if code == "retraite_anticipee_handicap" and carriere.incapacite_permanente is None:
+                # Une carrière qui ne déclare aucune incapacité n'a rien à
+                # perdre au retrait : aucun cas type de la grille n'en déclare.
+                continue
+            sans = variante.calculer(carriere)
             if (code not in DUREE_REQUISE_EST_L_AVANTAGE
                     and sans.trimestres_requis != reelle.trimestres_requis):
                 refus[code] = (

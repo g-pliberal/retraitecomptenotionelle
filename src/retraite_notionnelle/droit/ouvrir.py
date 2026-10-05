@@ -6,8 +6,9 @@ plus général : l'âge qu'un régime spécial a en propre, celui que la
 catégorie active ou la jouissance militaire ouvrent, et l'âge légal de la
 génération (:func:`age_ouverture`) ; la durée requise suit la génération, le
 calendrier du régime ou l'année d'ouverture des droits
-(:func:`duree_requise`). Quand l'âge demandé précède tous les autres, la
-carrière longue peut encore l'ouvrir.
+(:func:`duree_requise`). Quand l'âge demandé précède l'âge légal, le
+départ anticipé des assurés handicapés peut encore l'ouvrir, et quand il
+précède tous les autres, la carrière longue.
 
 :func:`ouvrir` écrit ce que l'étape dit d'une demande — son schéma est
 ``data/reference/etapes/ouvrir_le_droit.yaml`` ; :func:`age_ouverture_droit`,
@@ -105,8 +106,8 @@ class Ouverture:
     #: dispositifs compris, carrière longue comprise ; ``None`` quand aucun
     #: régime n'en fixe.
     age: float | None
-    #: ``age_legal``, ``invalidite``, ``inaptitude``, ``carriere_longue`` ou
-    #: ``non_ouverte`` (vocabulaire, liste ``ouvertures``).
+    #: ``age_legal``, ``invalidite``, ``inaptitude``, ``handicap``,
+    #: ``carriere_longue`` ou ``non_ouverte`` (vocabulaire, liste ``ouvertures``).
     motif: str
     #: Les trimestres cotisés tous régimes, qui commandent la carrière longue
     #: et la majoration du minimum contributif.
@@ -235,9 +236,13 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
         if ligne_cotisee(moteur, carriere, ligne) and ligne.annee <= annee_liquidation
     )
     etrangers = None
+    #: Les trimestres hors de France cotisés, puis validés, que le départ des
+    #: assurés handicapés compte avec les autres.
+    etrangers_du_handicap = None
     if durees.etranger is not None:
         famille = etranger.famille_des_regimes(moteur, codes)
         etrangers = durees.etranger.cotises[famille]
+        etrangers_du_handicap = (etrangers, durees.etranger.pour_le_taux[famille])
         trimestres_cotises += durees.etranger.trimestres_cotises(famille)
 
     # Le droit ouvre-t-il cette liquidation à cet âge ? La question n'était
@@ -254,7 +259,23 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
             "invalidite" if any(invalidite.radiation_du_regime(moteur, code, carriere)
                                 is not None for code in codes)
             else "inaptitude")
-    if age_ouverture_reference is not None and age_liquidation < age_ouverture_reference:
+    # LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS, avant l'âge légal de droit
+    # commun (L. 351-1-3 ; L. 24, I, 5°, du code des pensions) : il passe
+    # avant l'inaptitude, qui ouvre au même taux plein sans majorer la
+    # pension, et avant la carrière longue, qui l'ouvre à qui a déjà sa durée
+    # entière, que la majoration ne peut donc plus augmenter. La retraite pour
+    # invalidité du fonctionnaire garde ses règles.
+    handicap = (
+        invalidite.age_du_handicap(moteur, carriere, requis_reference, codes,
+                                   etrangers_du_handicap)
+        if (age_sans_invalidite is not None and age_liquidation < age_sans_invalidite
+            and motif_ouverture != "invalidite")
+        else None)
+    if handicap is not None:
+        motif_ouverture = "handicap"
+        age_ouverture_reference = (handicap if age_ouverture_reference is None
+                                   else min(age_ouverture_reference, handicap))
+    elif age_ouverture_reference is not None and age_liquidation < age_ouverture_reference:
         anticipe = moteur.carriere_longue.age_de_depart(
             carriere, annee_liquidation,
             moteur.carriere_longue.cotises_reputes(
@@ -862,10 +883,13 @@ def age_ouverture_droit(moteur, carriere: Carriere) -> float | None:
         return None
     ouverture = min(age_ouverture(moteur, periode, carriere)
                     for _, periode in retenues)
-    anticipe = age_carriere_longue(moteur, 
-        carriere, annuites or periodes_opposant_une_duree(autres))
-    if anticipe is not None and anticipe < ouverture:
-        return anticipe
+    opposent = annuites or periodes_opposant_une_duree(autres)
+    # La carrière longue et le départ des assurés handicapés devancent l'âge
+    # légal, chacun quand il ouvre plus tôt.
+    for anticipe in (age_carriere_longue(moteur, carriere, opposent),
+                     age_handicap_propose(moteur, carriere, opposent)):
+        if anticipe is not None and anticipe < ouverture:
+            ouverture = anticipe
     return ouverture
 
 
@@ -947,6 +971,24 @@ def age_carriere_longue(moteur, carriere: Carriere,
     )
 
 
+def age_handicap_propose(moteur, carriere: Carriere,
+                         periodes: list[tuple[str, PeriodeRegime]]) -> float | None:
+    """L'âge que le départ anticipé des assurés handicapés proposerait à cette
+    carrière, à qui continue de cotiser (:func:`~.invalidite.age_propose_du_handicap`),
+    ou ``None`` : sur les périodes qui opposent une durée, comme
+    :func:`age_carriere_longue`, et la plus longue de leurs durées requises."""
+    if not periodes or carriere.incapacite_permanente is None:
+        return None
+    requis = max(duree_requise(moteur, periode, carriere)[0]
+                 for _, periode in periodes) or 160
+    codes = [code for code, _ in periodes]
+    famille = etranger.famille_des_regimes(moteur, codes)
+    etrangers = etranger.trimestres_etrangers(moteur, carriere)
+    return invalidite.age_propose_du_handicap(
+        moteur, carriere, requis, codes,
+        (etrangers.cotises[famille], etrangers.pour_le_taux[famille]))
+
+
 def age_taux_plein_droit(moteur, carriere: Carriere) -> float | None:
     """L'âge auquel cette carrière obtient le TAUX PLEIN, et non seulement
     le droit de partir.
@@ -1021,9 +1063,12 @@ def age_taux_plein_droit(moteur, carriere: Carriere) -> float | None:
                  default=None)
     if inapte is not None:
         taux_plein = min(taux_plein, max(ouverture, inapte))
-    anticipe = age_carriere_longue(moteur, carriere, opposent)
-    if anticipe is not None and anticipe < taux_plein:
-        return anticipe
+    # La carrière longue et le départ des assurés handicapés ouvrent au taux
+    # plein (L. 351-8, 4° bis et 4° ter).
+    for anticipe in (age_carriere_longue(moteur, carriere, opposent),
+                     age_handicap_propose(moteur, carriere, opposent)):
+        if anticipe is not None and anticipe < taux_plein:
+            taux_plein = anticipe
     return taux_plein
 
 

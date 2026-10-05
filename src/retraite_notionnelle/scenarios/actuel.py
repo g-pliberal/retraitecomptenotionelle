@@ -1232,14 +1232,16 @@ class Invalidites:
     § 11), dont le moteur lit les versions : la pension d'invalidité que la
     pension de vieillesse remplace à l'âge légal (``substitution``),
     l'inaptitude au travail (``inaptitude``), la retraite pour invalidité des
-    fonctionnaires (``fonction_publique``). Chaque fiche dit ses régimes : les
-    autres n'appliquent pas ses règles, et la fiche le dit en approximation.
+    fonctionnaires (``fonction_publique``), le départ anticipé des assurés
+    handicapés (``handicap``). Chaque fiche dit ses régimes : les autres
+    n'appliquent pas ses règles, et la fiche le dit en approximation.
     """
 
     #: Les fiches, sous le nom que le moteur leur donne.
     FICHES = {"substitution": "pension_d_invalidite_substituee",
               "inaptitude": "inaptitude_au_travail",
-              "fonction_publique": "retraite_pour_invalidite_fonction_publique"}
+              "fonction_publique": "retraite_pour_invalidite_fonction_publique",
+              "handicap": "retraite_anticipee_handicap"}
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -1267,6 +1269,15 @@ class Invalidites:
         if preparee is None:
             return None
         return versions.applicable(preparee, {"liquidation.date_effet": date_effet})
+
+    def sans(self, fiche: str) -> Invalidites:
+        """Les mêmes fiches, celle-ci retirée : ses régimes n'appliquent plus
+        rien de ses règles. C'est ce que la page Avantages mesure en la
+        retirant (:mod:`~retraite_notionnelle.avantages`)."""
+        copie = object.__new__(Invalidites)
+        copie._fiches = {nom: preparee for nom, preparee in self._fiches.items()
+                         if nom != self.FICHES[fiche]}
+        return copie
 
 
 class CarrieresHorsDeFrance:

@@ -8,7 +8,8 @@ intitule: >-
   1983, le taux plein à l'âge légal ensuite, à soixante-deux ans depuis le
   1er septembre 2023 quand l'âge légal monte ; l'allocation de solidarité aux personnes
   âgées, au même âge au lieu de soixante-cinq ans. Les bénéficiaires de l'allocation
-  aux adultes handicapés, les ex-invalides et d'autres encore sont réputés inaptes.
+  aux adultes handicapés, les ex-invalides et d'autres encore sont réputés inaptes ;
+  depuis 2015, l'assuré dont l'incapacité permanente atteint 50 % a le même droit.
 domaine: age
 regimes: [regime_general, msa_salaries, cancava, organic, rsi, assurances_sociales]
 etape: ouvrir_le_droit
@@ -16,7 +17,8 @@ face: droit
 etat: approchee
 lit:
 - la reconnaissance de l'inaptitude au travail, ou ce qui la fait présumer (pension
-  d'invalidité substituée, allocation aux adultes handicapés, carte d'invalidité)
+  d'invalidité substituée, allocation aux adultes handicapés, carte d'invalidité,
+  incapacité permanente d'au moins 50 %)
 - l'âge à la date d'effet de la pension, et la génération
 ecrit:
 - l'âge auquel le droit s'ouvre à l'inapte, et le motif de l'ouverture
@@ -110,20 +112,48 @@ versions:
   - {id: LEGIARTI000023030950, article: "L. 351-8 CSS", en_vigueur: 2011-07-01}
   - {id: LEGIARTI000028498855, article: "L. 351-8 CSS", en_vigueur: 2014-01-22}
   - {id: LEGIARTI000024113113, article: "R. 815-1 CSS", en_vigueur: 2011-06-03}
-  - {id: LEGIARTI000030058891, article: "R. 815-1 CSS", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000024111743, article: "R. 351-24-3 CSS", en_vigueur: 2011-06-03}
   nee_de: LEGIARTI000023030950
   bornes:
-    liquidation.date_effet: [2011-07-01, 2023-09-01]
+    liquidation.date_effet: [2011-07-01, 2015-01-01]
   contenu:
     droit: >-
       la version taux_plein_1983, à l'âge de L. 161-17-2 que la loi du 9 novembre 2010
       fait monter de soixante à soixante-deux ans (1951 à 1955) : l'inapte n'a le taux
-      plein qu'à l'âge légal de sa génération ; l'allocation, au même âge (R. 815-1)
+      plein qu'à l'âge légal de sa génération ; l'allocation, au même âge (R. 815-1).
+      L'assuré handicapé a le taux plein à soixante-cinq ans (L. 351-8, 1° ter, de
+      2011), puis à l'âge légal (1° ter, de 2014), quand son incapacité est
+      « supérieure au pourcentage prévu pour l'application de l'article L. 821-2 »
+      (R. 351-24-3) : la saisie, qui dit « au moins 50 % », ne l'établit pas
     parametres:
       age: age_legal_par_generation
       taux: taux_plein
       age_aspa: age_legal_par_generation
   exemples: [cnav_2012_27_inapte]
+- id: incapacite_permanente_2015
+  statut: lue
+  textes:
+  - {id: LEGIARTI000028498855, article: "L. 351-8 CSS", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000030058882, article: "R. 351-24-3 CSS", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000030058891, article: "R. 815-1 CSS", en_vigueur: 2015-01-01}
+  nee_de: LEGIARTI000030058882
+  bornes:
+    liquidation.date_effet: [2015-01-01, 2023-09-01]
+  contenu:
+    droit: >-
+      la version age_legal_2011, et « 1° ter Les assurés justifiant d'une incapacité
+      permanente au moins égale à un taux fixé par décret, qui atteignent l'âge
+      mentionné à l'article L. 161-17-2 » (L. 351-8), ceux « dont l'incapacité
+      permanente est supérieure ou égale au pourcentage prévu pour l'application de
+      l'article L. 821-2 » (R. 351-24-3), 50 % : le taux plein à l'âge légal, comme
+      l'inapte, et l'allocation au même âge, R. 815-1 l'abaissant « pour les personnes
+      mentionnées au 1° ter et aux 2° à 5° de l'article L. 351-8 »
+    parametres:
+      age: age_legal_par_generation
+      taux: taux_plein
+      age_aspa: age_legal_par_generation
+      incapacite_permanente: 50
+  exemples: aucun trouvé
 - id: soixante_deux_ans_2023
   statut: lue
   textes:
@@ -134,6 +164,7 @@ versions:
   - {id: LEGIARTI000051289852, article: "L. 351-8 CSS", en_vigueur: 2025-02-28}
   - {id: LEGIARTI000047633276, article: "R. 815-1 CSS", en_vigueur: 2023-09-01}
   - {id: LEGIARTI000047453128, article: "L. 351-7-1 A CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047633303, article: "R. 351-24-3 CSS", en_vigueur: 2023-09-01}
   nee_de: LEGIARTI000047449233
   bornes:
     liquidation.date_effet: [2023-09-01, null]
@@ -150,11 +181,15 @@ versions:
       la même liste, et les assurés justifiant d'une incapacité permanente d'au moins
       50 % (D. 351-1-14) ; la pension du bénéficiaire de l'allocation aux adultes
       handicapés « est liquidée à la date à laquelle celui-ci atteint l'âge prévu à
-      l'article L. 351-1-5, sauf s'il s'y oppose » (L. 351-7-1 A)
+      l'article L. 351-1-5, sauf s'il s'y oppose » (L. 351-7-1 A). « Bénéficient des
+      dispositions du 2° de l'article L. 351-8 les assurés dont l'incapacité
+      permanente est supérieure ou égale au pourcentage prévu pour l'application de
+      l'article L. 821-2 » (R. 351-24-3), 50 %
     parametres:
       age: 62
       taux: taux_plein
       age_aspa: 62
+      incapacite_permanente: 50
   exemples: aucun trouvé
 approximations:
 - version: [taux_plein_1983]
@@ -173,15 +208,17 @@ approximations:
   effet: >-
     la pension des inaptes de ces régimes, sous-estimée ; non mesuré
 - ecart: >-
-    seuls l'inaptitude déclarée et l'ex-invalide la font reconnaître ; les autres
-    réputés inaptes (allocation aux adultes handicapés, incapacité permanente d'au moins
-    50 %, carte d'invalidité) ne se déclarent pas, et la condition de trente, puis de
-    trente-sept ans et demi d'assurance d'avant 1983 n'est pas contrôlée : la pension
-    s'y proratise à la durée, comme le texte le dit en deçà
+    seuls l'inaptitude déclarée, l'ex-invalide et, depuis le 1er janvier 2015,
+    l'incapacité permanente d'au moins 50 % que la saisie date la font reconnaître ;
+    les autres réputés inaptes (allocation aux adultes handicapés, carte d'invalidité)
+    ne se déclarent pas, et la condition de trente, puis de trente-sept ans et demi
+    d'assurance d'avant 1983 n'est pas contrôlée : la pension s'y proratise à la
+    durée, comme le texte le dit en deçà
   effet: non mesuré
 code:
   python: >-
-    droit/invalidite.py : age_d_inaptitude, taux_plein_de_l_inapte, age_de_l_aspa ;
+    droit/invalidite.py : reconnu_inapte, age_d_inaptitude, taux_plein_de_l_inapte,
+    age_de_l_aspa ;
     scenarios/actuel.py, echeancier.py et revalorisation.py, où l'ASPA s'ouvre ;
     droit/ouvrir.py :
     age_ouverture, ouvrir, age_taux_plein_droit ; droit/liquider.py : la décote, le
@@ -192,12 +229,12 @@ code:
     moteur/js/droit/ouvrir.js ; moteur/js/droit/liquider.js ; moteur/js/regimes.js :
     Invalidites
   parametres: >-
-    contenu.parametres de chaque version : age, taux, age_aspa
+    contenu.parametres de chaque version : age, taux, age_aspa, incapacite_permanente
   tests: >-
     tests/test_invalidite.py ; les témoins inaptitude_* et invalidite_* des
     simulations, dans les deux moteurs
 sources:
-  lu_le: 2026-09-30
+  lu_le: 2026-10-05
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -310,6 +347,13 @@ historique:
 - >-
   2026-10-01 — rejouée par l'exemple de la circulaire Cnav n° 2012/27, à la quatrième
   étape du domaine.
+- >-
+  2026-10-05 — la version age_legal_2011 coupée au 1er janvier 2015 : depuis, l'assuré
+  dont l'incapacité permanente atteint 50 % a le taux plein à l'âge légal (L. 351-8,
+  1° ter ; R. 351-24-3), puis à soixante-deux ans avec l'inapte (2°, depuis le
+  1er septembre 2023), et l'allocation au même âge (R. 815-1) ; la saisie date cette
+  incapacité, avec le départ anticipé des assurés handicapés (action 142, fiche
+  retraite_anticipee_handicap).
 effet: >-
   Les retraités partis au taux plein pour inaptitude : 1,36 million fin 2016 (DREES,
   EIR), et avec les ex-invalides 19 % des nouveaux retraités du régime général en 2024

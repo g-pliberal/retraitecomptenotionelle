@@ -1246,9 +1246,11 @@ function apresLeDepartFormulaire(saisie, contexte, affiliations, echelle) {
  * § 11) : un bloc facultatif, replié tant qu'il est vide. La pension
  * d'invalidité et la radiation des cadres pour invalidité se datent comme un
  * début d'activité ; l'inaptitude, l'imputabilité au service et le taux
- * d'invalidité se disent. La saisie refuse ce qui ne tient pas : une date hors
+ * d'invalidité se disent ; l'incapacité permanente d'au moins 50 % se date
+ * depuis sa reconnaissance, qui peut précéder la carrière (le départ anticipé
+ * des assurés handicapés). La saisie refuse ce qui ne tient pas : une date hors
  * de la carrière, un taux hors de 1 à 100, l'imputabilité ou le taux sans
- * radiation.
+ * radiation, une incapacité avant la naissance ou après le départ.
  */
 function invaliditeFormulaire(saisie) {
   const date = (age) => (age === null ? "" : saisie.jourDe(age));
@@ -1256,6 +1258,14 @@ function invaliditeFormulaire(saisie) {
   const bornes = {
     min: `${String(premier.annee).padStart(4, "0")}-${String(premier.mois).padStart(2, "0")}-01`,
     max: saisie.jourDe(saisie.liquidation, true),
+  };
+  // L'incapacité peut précéder la carrière : elle suit la naissance, et ne
+  // suit pas le départ, ce que la saisie oppose aussi.
+  const apresNaissance = saisie.dateDe(0.0).plusMois(1);
+  const bornesDuHandicap = {
+    min: `${String(apresNaissance.annee).padStart(4, "0")}-`
+      + `${String(apresNaissance.mois).padStart(2, "0")}-01`,
+    max: bornes.max,
   };
   const ouiNon = [["", "non"], [OUI, "oui"]];
   const champs = [
@@ -1284,9 +1294,15 @@ function invaliditeFormulaire(saisie) {
       saisie.taux_invalidite === null ? "" : String(saisie.taux_invalidite),
       "en %", "number", { min: "1", max: "100", step: "1" },
       "À 60 % au moins, la pension ne descend pas sous la moitié du traitement."),
+    g.champDate("handicap", "Incapacité d'au moins 50 %, depuis", date(saisie.handicap),
+      "facultatif : le mois où elle est reconnue", "", bornesDuHandicap,
+      "Avec assez de trimestres cotisés depuis, votre durée requise moins 60 à 100 "
+      + "selon l'âge, le départ s'ouvre dès 55 ans, au taux plein, la pension majorée. "
+      + "Sinon, le taux plein à 62 ans au régime général, sans décote dans la "
+      + "fonction publique."),
   ].join("");
   const ouvert = saisie.invalidite !== null || saisie.inaptitude
-    || saisie.radiation_invalidite !== null;
+    || saisie.radiation_invalidite !== null || saisie.handicap !== null;
   return `
   <details class="options"${ouvert ? " open" : ""}>
     ${g.sommaire("Invalidité et inaptitude")}
@@ -4562,7 +4578,8 @@ function resultats(contexte, saisie, comparaison = contexte.simuler(saisie)) {
       + "</strong> cette liquidation à "
       + `${g.nombre(comparaison.carriere.age_liquidation, 2)} ans${attente}. `
       + "Ni l'âge légal du régime, ni le départ anticipé pour carrière longue "
-      + "ne le permettent. Le montant du système 1 reste calculé, parce qu'il "
+      + "ou pour handicap ne le permettent. Le montant du système 1 reste "
+      + "calculé, parce qu'il "
       + "faut bien comparer les quatre systèmes sur la même carrière, mais il "
       + "ne décrit aucune pension que le système actuel servirait.</span></p>";
   }
@@ -8013,10 +8030,11 @@ complétaient. La courbe remonte ensuite, à partir des années 1980 : les minim
 de pension et les périodes assimilées rattrapent des carrières incomplètes là
 où l'on secourait des carrières absentes.</p>
 <p><strong>Et ce total reste un plancher.</strong> Les bonifications de service
-des militaires et des corps actifs, les départs anticipés pour handicap, la
-majoration de durée au titre du congé parental ne sont ni calculés par le
-modèle ni isolés par les comptes. Le tableau ci-dessus les nomme et dit, pour
-chacun, ce qui manque.</p></p>`,
+des militaires et des corps actifs, la majoration de durée au titre du congé
+parental ne sont ni calculées par le modèle ni isolées par les comptes ; les
+départs anticipés pour handicap, que le modèle sert à qui déclare son
+incapacité, aucun cas type ne les porte. Le tableau ci-dessus les nomme et dit,
+pour chacun, ce qui manque.</p></p>`,
     ),
     `Sources : pour les lignes lues, les comptes de la protection
 sociale de la DREES, sous-postes du risque vieillesse-survie, et son enquête
@@ -8372,8 +8390,8 @@ function avantagesDetailEtats(contexte) {
       + "l'enquête de la DREES auprès des caisses, et c'est le chiffre le plus "
       + "sûr de cette page."],
     ["absent", String(inventaire.compte("absent")),
-      "Ni déclarés ni servis : les bonifications de service, les départs "
-      + "pour handicap, l'allocation veuvage. C'est un écart au "
+      "Ni déclarés ni servis : les bonifications de service, l'allocation "
+      + "veuvage. C'est un écart au "
       + "droit positif, et le dépôt le nomme plutôt que de l'estimer."],
   ];
   const clesRefus = Object.keys(c.refus).sort();

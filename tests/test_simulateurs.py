@@ -77,22 +77,28 @@ def test_le_budget_compte_les_saisies_et_non_les_exemples():
 
 
 def test_une_saisie_sans_exemple_se_decompte_aussi():
-    """Le handicap a été saisi le 4 octobre 2026 sans qu'aucun exemple ne
-    rejoue ses réponses : le registre les déclare, et le budget les décompte
-    comme les autres, sans quoi on pourrait les refaire. Le RAFP, saisi le
-    même jour, ne déclare plus rien : ses dix saisies sont des exemples."""
+    """Le RAFP et le handicap ont été saisis le 4 octobre 2026 sans qu'aucun
+    exemple ne rejoue leurs réponses : le registre les déclarait, et le budget
+    les décomptait comme les autres, sans quoi on aurait pu les refaire. Les
+    dix saisies du RAFP sont devenues des exemples le 5 octobre, avec la
+    délibération de l'ERAFP ; les vingt-quatre du handicap le même jour,
+    quand le modèle a porté ce départ : le registre ne les déclare plus à
+    part, et le budget les compte une fois, par leurs exemples."""
     faites = {"1965": ["a", "b"]}
     assert simulateurs.decomptees({}, faites) == 1
     assert simulateurs.decomptees({"saisies_hors_exemples": 10}, faites) == 11
     lignes = simulateurs.registre()
     etat = {identifiant: (budget, nombre, reste) for identifiant, budget, nombre, reste
             in simulateurs.etat_des_budgets(lignes, simulateurs.exemples())}
-    ligne = lignes["union_retraite_handicap"]
-    assert ligne["saisies_hors_exemples"] > 0
-    assert etat["union_retraite_handicap"][1] >= ligne["saisies_hors_exemples"]
-    assert etat["union_retraite_handicap"][2] >= 0
+    for identifiant, ligne in lignes.items():
+        if not ligne.get("saisies_hors_exemples"):
+            continue
+        assert etat[identifiant][1] >= ligne["saisies_hors_exemples"], identifiant
+        assert etat[identifiant][2] >= 0, identifiant
     assert not lignes["rafp_simulateur_prestation"].get("saisies_hors_exemples")
     assert etat["rafp_simulateur_prestation"] == (10, 10, 0)
+    assert not lignes["union_retraite_handicap"].get("saisies_hors_exemples")
+    assert etat["union_retraite_handicap"] == (24, 24, 0)
 
 
 def test_la_feuille_ne_repropose_rien_et_s_arrete_au_budget():

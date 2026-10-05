@@ -608,6 +608,7 @@ export class Carriere {
     this._demandesDePension = undefined;
     this._pensionDInvalidite = undefined;
     this._radiationPourInvalidite = undefined;
+    this._incapacitePermanente = undefined;
     this._periodesALEtranger = undefined;
     this._pensionsEtrangeres = undefined;
     this._anneesDeclarees = undefined;
@@ -802,6 +803,24 @@ export class Carriere {
       }
     }
     return this._radiationPourInvalidite;
+  }
+
+  /**
+   * L'incapacité permanente que la personne déclare : `{debut, taux}`, le mois
+   * depuis lequel elle atteint son taux et ce taux ; `null` sans elle. Voir
+   * `incapacite_permanente` du Python.
+   */
+  get incapacitePermanente() {
+    if (this._incapacitePermanente === undefined) {
+      const fait = this.chronologie
+        ? chrono.decisionMedicale(this.chronologie, this.personne, "incapacite_permanente")
+        : null;
+      this._incapacitePermanente = fait === null ? null : Object.freeze({
+        debut: chrono.moisDe(fait.debut),
+        taux: Math.trunc(Number(fait.attributs.taux ?? 0)),
+      });
+    }
+    return this._incapacitePermanente;
   }
 
   /**

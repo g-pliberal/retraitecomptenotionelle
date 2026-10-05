@@ -72,7 +72,7 @@ listes:
       coordonner_les_affiliations: rétablissement, interpénétration, successions de régimes, liquidation unique, carrières hors de France
       compter_les_durees: assurance, cotisée, services ; périodes assimilées, enfants, rachats ; plafonds et enveloppes
       acquerir_les_droits: points, salaires portés au compte, cotisations
-      ouvrir_le_droit: âge légal, carrière longue, catégories actives, invalidité, inaptitude ; taux plein
+      ouvrir_le_droit: âge légal, carrière longue, catégories actives, invalidité, inaptitude, handicap ; taux plein
       liquider_chaque_regime: annuités, points, forfait ou capital ; décote, surcote, proratisation
       completer_tous_regimes: minimum contributif et son écrêtement, minimum garanti, majorations pour enfants
       faire_vivre: revalorisations, mesures sur les pensions versées, composantes qui s'éteignent
@@ -181,8 +181,9 @@ listes:
     # (data/reference/etapes/ouvrir_le_droit.yaml).
     valeurs:
       age_legal: l'âge légal de la génération, ou celui qu'un régime ouvre en propre
-      inaptitude: l'inaptitude au travail, reconnue ou celle de l'ex-invalide, quand l'âge demandé précède l'âge légal de la génération (L. 351-1-5)
+      inaptitude: l'inaptitude au travail, reconnue ou celle de l'ex-invalide, ou l'incapacité permanente d'au moins 50 %, quand l'âge demandé précède l'âge légal de la génération (L. 351-1-5)
       invalidite: la radiation des cadres pour invalidité d'un fonctionnaire, qui ouvre sa pension à tout âge (L. 24, I, 2°, du code des pensions)
+      handicap: le départ anticipé des assurés handicapés, dès cinquante-cinq ans, quand l'âge demandé précède l'âge légal de la génération (L. 351-1-3 ; L. 24, I, 5°, du code des pensions)
       carriere_longue: le départ anticipé pour carrière longue, quand l'âge demandé précède tous les autres
       non_ouverte: le droit n'ouvre pas la liquidation à cet âge ; le montant reste calculé, en contrefactuel
 

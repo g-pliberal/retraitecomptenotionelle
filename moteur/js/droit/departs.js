@@ -203,11 +203,31 @@ function ouvertureDe(moteur, carriere, unite) {
     ([, periode]) => ouvrirLeDroit.ageOuverture(moteur, periode, carriere)));
   const opposent = annuites.length > 0
     ? annuites : ouvrirLeDroit.periodesOpposantUneDuree(autres);
-  const longue = carriereLongueAcquise(moteur, carriere, opposent);
-  if (longue !== null && longue < age) {
-    age = longue;
+  for (const anticipe of [carriereLongueAcquise(moteur, carriere, opposent),
+    handicapAcquis(moteur, carriere, opposent)]) {
+    if (anticipe !== null && anticipe < age) {
+      age = anticipe;
+    }
   }
   return carriere.dateDeLAge(age);
+}
+
+/**
+ * L'âge que le départ anticipé des assurés handicapés ouvre aux régimes de
+ * `periodes` sur la durée accomplie au départ déclaré, ou `null`. Voir
+ * `_handicap_acquis`.
+ */
+function handicapAcquis(moteur, carriere, periodes) {
+  if (periodes.length === 0 || carriere.incapacitePermanente === null) {
+    return null;
+  }
+  const requis = Math.max(...periodes.map(
+    ([, periode]) => ouvrirLeDroit.dureeRequise(moteur, periode, carriere)[0])) || 160;
+  const codes = periodes.map(([code]) => code);
+  const famille = etranger.familleDesRegimes(moteur, codes);
+  const etrangers = etranger.trimestresEtrangers(moteur, carriere);
+  return invalidite.ageDuHandicap(moteur, carriere, requis, codes,
+    [etrangers.cotises[famille], etrangers.pourLeTaux[famille]]);
 }
 
 /**

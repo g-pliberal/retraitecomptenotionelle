@@ -1,56 +1,416 @@
 schema_version: 1
 id: retraite_anticipee_handicap
 intitule: >-
-  Départ anticipé des assurés handicapés, de 55 à 59 ans selon la durée et le taux
-  d'incapacité, calendrier propre revu par la suspension.
-etat: pas_encore_modelisee
-effet: >-
-  Demande une information médicale que le modèle ne collecte pas : l'assuré est
-  déclaré non ouvert.
+  L'assuré handicapé part avant l'âge légal, dès cinquante-cinq ans, quand il a cotisé
+  en situation de handicap la durée requise de sa génération diminuée de 60 à 100
+  trimestres selon l'âge (L. 351-1-3, D. 351-1-5) : au taux plein (L. 351-8, 4° bis),
+  sa pension majorée d'un tiers du rapport de cette durée cotisée à sa durée
+  d'assurance, sous la pension entière ; de même le fonctionnaire (L. 24, I, 5°, du
+  code des pensions), que le coefficient de minoration n'atteint jamais (L. 14, I).
+  Le taux d'incapacité exigé est de 80 % jusqu'au 31 décembre 2014, de 50 % depuis.
+domaine: age
+regimes: [regime_general, msa_salaries, cancava, organic, rsi, rci, fonction_publique_etat,
+  cnracl, fspoeie]
+etape: ouvrir_le_droit
+face: droit
+etat: approchee
+lit:
+- le mois depuis lequel l'incapacité permanente atteint 50 %, que la saisie déclare
+- les trimestres cotisés et validés de chaque année civile depuis celle de ce mois, tous
+  régimes, et ceux de chaque régime de la fiche
+- l'âge et la génération à la date d'effet de la pension, la durée requise qu'elle oppose
+ecrit:
+- l'âge auquel le handicap ouvre le droit, et le motif de l'ouverture
+- le taux plein, sans décote ni coefficient d'anticipation des complémentaires qui le
+  suivent
+- la majoration de pension de chaque régime de la fiche
+- la pension du fonctionnaire handicapé sans coefficient de minoration
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1).
+# Paramètres : `taux_incapacite`, le taux exigé, que la saisie, qui dit « au
+# moins 50 % », n'établit qu'à 50 ; `ages`, les âges abaissés ; les trimestres
+# retranchés à la durée requise pour la durée cotisée, et pour la durée validée
+# quand la version l'exige, âge par âge ; `retranches_en_plus`, ce que la
+# version retranche encore par génération, [début, fin), décimales ;
+# `duree_d_avant_2023_jusqu_a`, la génération avant laquelle la durée retranchée
+# est celle de L. 161-17-3 d'avant la loi du 14 avril 2023 ; `majoration`, la
+# fraction du rapport des durées et l'arrondi du coefficient ;
+# `fonctionnaire_sans_decote`, le coefficient de minoration écarté au même taux.
+versions:
+- id: avant_2004
+  statut: lue
+  textes:
+  - reference: >-
+      circulaire Cnav n° 2026-18 du 15 juin 2026, introduction : « Le dispositif a été
+      introduit par l'article 24 de la loi n° 2003-775 du 21 août 2003 [...] et le décret
+      n° 2004-232 du 17 mars 2004 [...]. Il est applicable aux retraites ayant pris effet
+      à compter du 1er juillet 2004 »
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [null, 2004-07-01]
+  contenu:
+    droit: pas de départ anticipé des assurés handicapés
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: decret_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742671, article: "L. 351-1-3 CSS", en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006742672, article: "L. 351-1-3 CSS", en_vigueur: 2005-02-12}
+  - {id: LEGIARTI000006736526, article: "D. 351-1-5 CSS", en_vigueur: 2004-03-18}
+  - {id: LEGIARTI000006736528, article: "D. 351-1-6 CSS", en_vigueur: 2004-03-18}
+  - {id: LEGIARTI000006742633, article: "L. 351-8 CSS", en_vigueur: 2003-08-22}
+  nee_de: LEGIARTI000006736526
+  bornes:
+    liquidation.date_effet: [2004-07-01, 2006-01-01]
+  contenu:
+    droit: >-
+      l'âge « est abaissé, en application de l'article L. 351-1-3 : 1. A cinquante-cinq
+      ans pour les assurés handicapés qui ont accompli [...] alors qu'ils étaient
+      atteints d'une incapacité permanente au moins égale à celle prévue à l'article
+      D. 351-1-6, une durée d'assurance ou de périodes reconnues équivalentes au moins
+      égale à la limite fixée en vertu du deuxième alinéa de l'article L. 351-1 diminuée
+      de 40 trimestres et une durée d'assurance ayant donné lieu à cotisations à leur
+      charge au moins égale à cette même limite diminuée de 60 trimestres », puis 56 à
+      59 ans à 50 et 70, 60 et 80, 70 et 90, 80 et 100 trimestres (D. 351-1-5), pour
+      les pensions prenant effet après le 30 juin 2004 ; le taux est celui de la carte
+      d'invalidité, 80 % (D. 351-1-6) ; le taux plein (L. 351-8, 4° bis)
+    parametres:
+      taux_incapacite: 80
+      ages: [55, 56, 57, 58, 59]
+      cotisees_retranchees: [60, 70, 80, 90, 100]
+      validees_retranchees: [40, 50, 60, 70, 80]
+      majoration: null
+      fonctionnaire_sans_decote: true
+  exemples: aucun trouvé
+- id: majoration_2006
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006736527, article: "D. 351-1-5 CSS", en_vigueur: 2005-12-31}
+  - {id: LEGIARTI000006742672, article: "L. 351-1-3 CSS", en_vigueur: 2005-02-12}
+  nee_de: LEGIARTI000006736527
+  bornes:
+    liquidation.date_effet: [2006-01-01, 2011-01-01]
+  contenu:
+    droit: >-
+      les mêmes conditions ; « la pension est augmentée à proportion d'un nombre égal
+      au tiers du quotient formé par la durée d'assurance dans le régime accomplie
+      alors que l'assuré justifiait du taux d'incapacité permanente [...] et ayant
+      donné lieu à cotisations à sa charge, d'une part, et la durée d'assurance
+      accomplie dans le régime au sens du troisième alinéa de l'article L. 351-1,
+      d'autre part. Ce nombre est arrondi, le cas échéant, au centième le plus proche »,
+      sans dépasser la pension d'une durée égale à la limite, puis portée au minimum
+      (D. 351-1-5, II, pour les pensions prenant effet après le 31 décembre 2005)
+    parametres:
+      taux_incapacite: 80
+      ages: [55, 56, 57, 58, 59]
+      cotisees_retranchees: [60, 70, 80, 90, 100]
+      validees_retranchees: [40, 50, 60, 70, 80]
+      majoration: {fraction: 0.3333333333333333, arrondi: 0.01}
+      fonctionnaire_sans_decote: true
+  exemples: aucun trouvé
+- id: travailleurs_handicapes_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023035065, article: "L. 351-1-3 CSS", en_vigueur: 2010-11-11}
+  - {id: LEGIARTI000023397584, article: "D. 351-1-5 CSS", en_vigueur: 2011-01-01}
+  - {id: LEGIARTI000023397579, article: "D. 351-1-6 CSS", en_vigueur: 2011-01-01}
+  nee_de: LEGIARTI000023397584
+  bornes:
+    liquidation.date_effet: [2011-01-01, 2015-01-01]
+  contenu:
+    droit: >-
+      les mêmes conditions, l'incapacité permanente de 80 % ou la reconnaissance de la
+      qualité de travailleur handicapé (L. 351-1-3, loi n° 2010-1330, article 97 ;
+      D. 351-1-5 et D. 351-1-6)
+    parametres:
+      taux_incapacite: 80
+      ages: [55, 56, 57, 58, 59]
+      cotisees_retranchees: [60, 70, 80, 90, 100]
+      validees_retranchees: [40, 50, 60, 70, 80]
+      majoration: {fraction: 0.3333333333333333, arrondi: 0.01}
+      fonctionnaire_sans_decote: true
+  exemples: aucun trouvé
+- id: cinquante_pour_cent_2015
+  statut: lue
+  textes:
+  - {id: LEGIARTI000028498841, article: "L. 351-1-3 CSS", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000030058836, article: "D. 351-1-5 CSS", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000030058868, article: "D. 351-1-6 CSS", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000028498855, article: "L. 351-8 CSS", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000028498845, article: "L. 24 du code des pensions civiles et militaires",
+     en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000030058902, article: "R. 37 bis du code des pensions civiles et militaires",
+     en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000030188556, article: "R. 33 bis du code des pensions civiles et militaires",
+     en_vigueur: 2015-02-04}
+  - {id: LEGIARTI000030045388, article: "D. 14 du code des pensions civiles et militaires",
+     en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000028498863, article: "L. 14 du code des pensions civiles et militaires",
+     en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000030059003, article: "décret n° 2003-1306, article 25", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000030188628, article: "décret n° 2003-1306, article 24 bis", en_vigueur: 2015-02-04}
+  - {id: LEGIARTI000030058999, article: "décret n° 2003-1306, article 20", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000030059021, article: "décret n° 2004-1056, article 22 bis", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000030188638, article: "décret n° 2004-1056, article 20 bis", en_vigueur: 2015-02-04}
+  - {id: LEGIARTI000030059015, article: "décret n° 2004-1056, article 16", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000054891893, article: "règlement du régime complémentaire des indépendants
+       approuvé par l'arrêté du 9 février 2012, article 12", en_vigueur: 2013-01-01}
+  nee_de: LEGIARTI000030058836
+  bornes:
+    liquidation.date_effet: [2015-01-01, 2023-09-01]
+  contenu:
+    droit: >-
+      les mêmes conditions de durée validée et cotisée, l'incapacité permanente « au
+      moins égale à celle prévue à l'article D. 351-1-6 » — celle de l'allocation aux
+      adultes handicapés, 50 % (D. 821-1) — ou la qualité de travailleur handicapé
+      reconnue avant le 1er janvier 2016, pour les périodes antérieures à cette date ;
+      au fonctionnaire de même, sur le nombre de trimestres de l'article L. 13 (R. 37
+      bis ; décret n° 2003-1306, article 25, II ; décret n° 2004-1056, article 22 bis),
+      sa pension majorée d'« un tiers du quotient obtenu en divisant la durée des
+      services accomplis [...] durant laquelle l'intéressé était atteint d'une
+      incapacité permanente d'un taux au moins égal à 50 %, par la durée de services et
+      bonifications admise en liquidation », sous la pension du pourcentage maximum
+      (R. 33 bis ; article 24 bis ; article 20 bis) ; « Le coefficient de minoration
+      n'est pas applicable aux fonctionnaires handicapés dont l'incapacité permanente
+      est au moins égale à un taux fixé par décret » (L. 14, I), 50 % (D. 14 ;
+      article 20, III ; article 16, III) ; la complémentaire des indépendants est
+      « liquidée sans aucun abattement [...] si l'assuré remplit les conditions
+      permettant d'ouvrir droit à la retraite anticipée » des handicapés (article 12
+      de son règlement)
+    parametres:
+      taux_incapacite: 50
+      ages: [55, 56, 57, 58, 59]
+      cotisees_retranchees: [60, 70, 80, 90, 100]
+      validees_retranchees: [40, 50, 60, 70, 80]
+      majoration: {fraction: 0.3333333333333333, arrondi: 0.01}
+      fonctionnaire_sans_decote: true
+  exemples: [ur_handicap_1961_59_fonctionnaire, ur_handicap_1961_59, ur_handicap_1963_59,
+    ur_handicap_1964_58, ur_handicap_1965_57, ur_handicap_1966_56,
+    ur_handicap_1966_56_fonctionnaire, ur_handicap_1967_55, cnav_2026_18_annexe_7]
+- id: duree_cotisee_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047453110, article: "L. 351-1-3 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047634590, article: "D. 351-1-5 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053355992, article: "D. 351-1-5 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000053355980, article: "D. 351-1-6 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000047452736, article: "L. 351-8 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000051289852, article: "L. 351-8 CSS", en_vigueur: 2025-02-28}
+  - {id: LEGIARTI000047452804, article: "L. 24 du code des pensions civiles et militaires",
+     en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047633325, article: "R. 37 bis du code des pensions civiles et militaires",
+     en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000048844775, article: "L. 14 du code des pensions civiles et militaires",
+     en_vigueur: 2023-12-31}
+  - {id: LEGIARTI000047627260, article: "décret n° 2023-435, article 13", en_vigueur: 2023-06-05}
+  - {id: LEGIARTI000050941689, article: "décret n° 2003-1306, article 25", en_vigueur: 2025-01-02}
+  - {id: LEGIARTI000050941679, article: "décret n° 2003-1306, article 20", en_vigueur: 2025-01-02}
+  - {id: LEGIARTI000050941719, article: "décret n° 2004-1056, article 22 bis", en_vigueur: 2025-01-02}
+  - {id: LEGIARTI000050941740, article: "décret n° 2004-1056, article 16", en_vigueur: 2025-01-02}
+  nee_de: LEGIARTI000047634590
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2026-09-01]
+  contenu:
+    droit: >-
+      la seule durée cotisée en situation de handicap, la durée validée n'étant plus
+      exigée (loi n° 2023-270, article 11), et pour les pensions prenant effet à
+      compter du 1er septembre 2023 : la durée requise diminuée de 60 à 100 trimestres
+      de 55 à 58 ans, et « entre cinquante-neuf ans et l'âge prévu à l'article
+      L. 161-17-2 » ; « I bis.-Les dispositions du I s'appliquent aux assurés nés avant
+      le 1er janvier 1973 sous réserve des adaptations suivantes » : un trimestre de
+      plus retranché pour les nés jusqu'au 31 décembre 1962 et de 1970 à 1972, deux
+      pour les nés en 1963, 1964 et de 1967 à 1969, trois pour les nés en 1965 et 1966
+      (D. 351-1-5, versions du 1er septembre 2023 et du 1er janvier 2026, identiques en
+      leurs I, I bis et II) ; au fonctionnaire, le même barème et les mêmes
+      adaptations (R. 37 bis ; décret n° 2023-435, article 13, II, F)
+    parametres:
+      taux_incapacite: 50
+      ages: [55, 56, 57, 58, 59]
+      cotisees_retranchees: [60, 70, 80, 90, 100]
+      validees_retranchees: null
+      retranches_en_plus:
+      - [null, 1963.0, 1]
+      - [1963.0, 1965.0, 2]
+      - [1965.0, 1967.0, 3]
+      - [1967.0, 1970.0, 2]
+      - [1970.0, 1973.0, 1]
+      majoration: {fraction: 0.3333333333333333, arrondi: 0.01}
+      fonctionnaire_sans_decote: true
+  exemples: [ur_handicap_1964_59, ur_handicap_1966_59, ur_handicap_1968_56,
+    ur_handicap_1969_55, ur_handicap_1970_55, cnav_2026_18_majoration,
+    cnav_2026_18_majoration_ecretee]
+  # La date d'effet de chaque exemple du simulateur est la seule que sa génération
+  # et son âge permettent : 1964 et 1967 nés en octobre, pour que leur départ à
+  # 59 ans tombe sous cette version et sous la suivante.
+- id: generations_2026
+  statut: lue
+  textes:
+  - {id: LEGIARTI000054059626, article: "D. 351-1-5 CSS", en_vigueur: 2026-09-01}
+  - {id: LEGIARTI000054059137, article: "décret n° 2023-435, article 13", en_vigueur: 2026-05-09}
+  nee_de: LEGIARTI000054059626
+  bornes:
+    liquidation.date_effet: [2026-09-01, null]
+  contenu:
+    droit: >-
+      « Pour les assurés nés avant le 1er janvier 1973, la limite mentionnée aux 1 à 5
+      est remplacée par la durée d'assurance prévue à l'article L. 161-17-3 dans sa
+      rédaction antérieure à la loi n° 2023-270 du 14 avril 2023 » : 168 trimestres de
+      1961 à 1963, 169 de 1964 à 1966, 170 de 1967 à 1969, 171 de 1970 à 1972, la
+      durée de la génération ensuite, diminuée de 60 à 100 trimestres (D. 351-1-5,
+      version du décret n° 2026-345, pour les pensions prenant effet à compter du
+      1er septembre 2026) ; au fonctionnaire, la même durée, 167 à 171 trimestres
+      (décret n° 2023-435, article 13, II, F, version du décret n° 2026-344) ;
+      circulaire Cnav n° 2026-18, annexe 3
+    parametres:
+      taux_incapacite: 50
+      ages: [55, 56, 57, 58, 59]
+      cotisees_retranchees: [60, 70, 80, 90, 100]
+      validees_retranchees: null
+      duree_d_avant_2023_jusqu_a: 1973.0
+      majoration: {fraction: 0.3333333333333333, arrondi: 0.01}
+      fonctionnaire_sans_decote: true
+  exemples: [ur_handicap_1967_59, ur_handicap_1970_57, ur_handicap_1970_57_fonctionnaire,
+    ur_handicap_1971_56, ur_handicap_1972_58, ur_handicap_1973_55,
+    ur_handicap_1973_55_fonctionnaire, ur_handicap_1973_56, ur_handicap_1973_57,
+    ur_handicap_1973_58, ur_handicap_1973_59]
+approximations:
+- version: [decret_2004, majoration_2006, travailleurs_handicapes_2011]
+  ecart: >-
+    avant 2015, le taux exigé est de 80 % (la carte d'invalidité) : la saisie, qui dit
+    une incapacité d'au moins 50 %, ne l'établit pas, et le handicap déclaré n'ouvre
+    alors ni le départ anticipé, ni le taux plein, ni la majoration, ni la pension du
+    fonctionnaire sans minoration
+  effet: >-
+    les départs anticipés pour handicap pris de juillet 2004 à décembre 2014, refusés ;
+    non mesuré
+- ecart: >-
+    une seule date, celle depuis laquelle l'incapacité atteint 50 %, et l'incapacité
+    réputée continue jusqu'au départ ; la reconnaissance de la qualité de travailleur
+    handicapé, qui compte pour les périodes antérieures au 1er janvier 2016, ne se
+    déclare pas ; la commission nationale (L. 161-21-1), qui valide jusqu'à 30 % de la
+    durée sans justificatif, n'est pas représentée ; la concomitance se lit année civile
+    par année civile, comme la circulaire Cnav n° 2026-18 (1.1.3.1) la prescrit au
+    régime général, et de même pour les services du fonctionnaire
+  effet: non mesuré
+- ecart: >-
+    les régimes que la fiche ne nomme pas — non-salariés agricoles (L. 732-18-2 du
+    code rural), professions libérales (L. 643-3), avocats, cultes, et les régimes
+    spéciaux des industries électriques et gazières, de la RATP, de la SNCF, des
+    clercs de notaire, de la Banque de France, de la Comédie-Française et de l'Opéra —
+    liquident au même départ sans le taux plein ni la majoration du handicap, leurs
+    textes n'étant pas lus
+  effet: non mesuré
+- ecart: >-
+    la majoration de qui part à l'âge légal ou plus tard sans avoir demandé le départ
+    anticipé — la retraite anticipée fictive que la circulaire Cnav n° 2026-18 (§ 4,
+    après la circulaire n° 2006-51, point 9) compare à la pension servie — n'est pas
+    calculée ; ni la majoration pour tierce personne ; la réversion se calcule sur la
+    pension majorée, quand la circulaire (3.8) la calcule sur la pension non majorée
+  effet: non mesuré
+code:
+  python: >-
+    droit/invalidite.py : incapacite_reconnue, version_du_handicap,
+    trimestres_en_situation_de_handicap, exigences_du_handicap, age_du_handicap,
+    age_propose_du_handicap, sans_decote_du_fonctionnaire, coefficient_de_majoration,
+    annee_en_situation_de_handicap ; droit/ouvrir.py : ouvrir, age_ouverture_droit,
+    age_taux_plein_droit, age_handicap_propose ; droit/departs.py ; droit/liquider.py :
+    la décote, la majoration, le minimum contributif, abattement_points,
+    abattement_regime_de_base ; scenarios/actuel.py : Invalidites ; avantages.py :
+    la neutralisation qui retire la fiche
+  javascript: >-
+    moteur/js/droit/invalidite.js ; moteur/js/droit/ouvrir.js ;
+    moteur/js/droit/departs.js ; moteur/js/droit/liquider.js ; moteur/js/regimes.js :
+    Invalidites ; moteur/js/avantages.js
+  parametres: >-
+    contenu.parametres de chaque version : existe, taux_incapacite, ages,
+    cotisees_retranchees, validees_retranchees, retranches_en_plus,
+    duree_d_avant_2023_jusqu_a, majoration, fonctionnaire_sans_decote
+  tests: >-
+    tests/test_invalidite.py ; les exemples ur_handicap_* et cnav_2026_18_majoration*
+    de tests/temoins/exemples_officiels.yaml ; les témoins handicap_* des simulations,
+    dans les deux moteurs
 sources:
-  lu_le: 2026-10-04
+  lu_le: 2026-10-05
   prochaine_relecture: 2027-09-30
+  a_relire:
+  - >-
+    À lire : les départs anticipés des régimes que la fiche ne nomme pas (L. 732-18-2
+    du code rural, L. 643-3 et L. 653-2 CSS, les décrets des régimes spéciaux), pour
+    les y ajouter ; la circulaire Cnav qui appliquait la version de 2015, pour la
+    concomitance d'alors ; la règle du minimum garanti du fonctionnaire majoré.
+  - >-
+    Le simulateur d'info-retraite répond pour un départ à cet âge, sans date : ses
+    vingt-quatre saisies sont rejouées à la seule date d'effet qu'un âge et une
+    génération permettent, celle de la version alors en vigueur, sur la durée cotisée
+    qu'il annonce ; la durée validée de la version de 2015, qu'il ne dit que pour le
+    fonctionnaire né en 1961, n'est rejouée que là.
   lectures:
   - type: circulaire_cnav
-    reference: 2026-18 du 15 juin 2026
+    reference: >-
+      circulaire Cnav n° 2026-18 du 15 juin 2026, « Retraite anticipée au profit des
+      assurés handicapés à compter du 1er septembre 2026 » : les conditions (1.1), la
+      concomitance de la durée cotisée et du handicap année civile par année civile, et
+      pour l'année du départ avant l'arrêt du compte (1.1.3.1), le taux maximum de 50 %
+      (2.4.2), le minimum (2.4.4), pas de surcote (2.4.6), la majoration (3.1 à 3.3 :
+      « 135/160 x 1/3 = 0,281 arrondi à 0,28 », l'écrêtement à la retraite entière, le
+      minimum comparé au seul montant calculé, la majoration s'y ajoutant), la réversion
+      sur le montant non majoré (3.8), la retraite anticipée fictive (4), les annexes 2
+      et 3 (durées cotisées par génération et par âge) et 7 (exemple chiffré)
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_18_15062026.pdf
     date: 2026-06-15
   - type: legifrance
     reference: >-
-      D. 351-1-5 CSS dans sa rédaction du décret n° 2026-345, pour les pensions
-      prenant effet à compter du 1er septembre 2026 (LEGIARTI000054059626) : une
-      durée d'assurance cotisée en situation de handicap au moins égale à la durée
-      requise moins 60, 70, 80, 90 ou 100 trimestres pour partir à 55, 56, 57, 58,
-      ou de 59 ans à l'âge légal ; pour les nés avant 1973, la durée de L. 161-17-3
-      d'avant la loi du 14 avril 2023 (168 trimestres de 1961 à 1963, 169 de 1964 à
-      1966, 170 de 1967 à 1969, 171 de 1970 à 1972)
-    date: 2026-10-04
-  - type: legifrance
+      L. 351-1-3 CSS dans ses cinq rédactions (2003, 2005, 2010, 2014, 2023) ; D. 351-1-5
+      dans ses sept (2004, 2005, 2011, 2015, 2023, 2026-01, 2026-09) ; D. 351-1-6 dans
+      ses quatre ; L. 351-8 (4° bis depuis 2003 ; 1° ter de 2011 à 2023 ; 2° depuis
+      2023) ; R. 351-24-3 (2011, 2015, 2023) ; R. 815-1 (2015, 2023) ; L. 161-21-1 ;
+      L. 634-2 CSS et L. 742-3 du code rural, qui rendent l'article applicable aux
+      indépendants et aux salariés agricoles ; L. 14, L. 24, D. 14, R. 33 bis et R. 37
+      bis du code des pensions ; décret n° 2003-1306, articles 20, 24 bis et 25 ;
+      décret n° 2004-1056, articles 16, 20 bis et 22 bis ; décret n° 2023-435, article
+      13, II, F, dans ses deux rédactions ; arrêté du 30 décembre 1970, article 16
+      (Ircantec), dans l'index LEGI du dépôt (incréments du 27 septembre 2026)
+    date: 2026-10-05
+  - type: service_public
     reference: >-
-      décret n° 2003-1306, article 25, II, en vigueur depuis le 2 janvier 2025
-      (LEGIARTI000050941689) : pour les fonctionnaires de la CNRACL, la seule durée
-      d'assurance cotisée, « au moins égale au nombre de trimestres fixé à l'article
-      16, diminué de » 60 à 100 trimestres, de 55 à 59 ans — le barème du régime
-      général, sans durée validée
-    date: 2026-10-04
+      fiche F16337, « Retraite anticipée pour handicap du salarié du privé », vérifiée
+      le 21 août 2025 : « à partir de 55 ans », une incapacité permanente d'au moins
+      50 % ou un handicap de niveau comparable, la retraite « calculée au taux plein
+      quel que soit votre nombre de trimestres » ; son tableau des durées s'arrête aux
+      générations de 1958 à 1969, d'avant la suspension
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F16337
+    date: 2025-08-21
   - type: autre
     reference: >-
       simulateur « Retraite anticipée en situation de handicap » d'info-retraite.fr,
-      vingt-quatre saisies le 4 octobre 2026, le budget entier. Vingt-trois suivent le
-      barème ci-dessus : au régime général, 68 trimestres cotisés à 59 ans pour les
-      nés de 1961 à 1963, 69 de 1964 à 1966, 70 en 1967 ; 79 à 58 ans en 1964, 81 en
-      1972, 82 en 1973 ; 89 à 57 ans en 1965, 91 en 1970, 92 en 1973 ; 99 à 56 ans en
-      1966, 100 en 1968, 101 en 1971, 102 en 1973 ; 110 à 55 ans en 1967 et 1969, 111
-      en 1970, 112 en 1973 ; à la CNRACL, 99 (1966, 56 ans), 91 (1970, 57) et 112
-      (1973, 55). Pour un fonctionnaire né en 1961 parti à 59 ans, il demande « un
-      total de 88 trimestres, dont 68 cotisés » : l'ancienne double condition, que
-      l'article 25 n'écrit plus. Il ne propose que 59 ans aux nés de 1961 à 1963, 58
-      et 59 en 1964, 57 à 59 en 1965, 56 à 59 en 1966.
+      vingt-quatre saisies le 4 octobre 2026, le budget entier, rejouées le 5 octobre
+      comme exemples officiels (ur_handicap_*) : au régime général, 68 trimestres
+      cotisés à 59 ans pour les nés de 1961 à 1963, 69 de 1964 à 1966, 70 en 1967 ; 79
+      à 58 ans en 1964, 81 en 1972, 82 en 1973 ; 89 à 57 ans en 1965, 91 en 1970, 92 en
+      1973 ; 99 à 56 ans en 1966, 100 en 1968, 101 en 1971, 102 en 1973 ; 110 à 55 ans en
+      1967 et 1969, 111 en 1970, 112 en 1973 ; à la CNRACL, 99 (1966, 56 ans), 91 (1970,
+      57) et 112 (1973, 55), et pour un fonctionnaire né en 1961 parti à 59 ans « un
+      total de 88 trimestres, dont 68 cotisés »
     url: https://les-simulateurs.info-retraite.fr/situation-handicap
     date: 2026-10-04
-textes_a_rattacher:
-- reference: L. 351-1-3 CSS
-- reference: D. 351-1-5 CSS (décret n° 2026-345)
-- reference: décret n° 2026-344, article 3 C et G
-- reference: décret n° 2003-1306, article 25, II (CNRACL)
 reformes:
 - lfss_2026_suspension
+historique:
+- >-
+  2026-10-04 — les vingt-quatre saisies du simulateur d'info-retraite, toutes
+  concordantes avec D. 351-1-5 sur la durée cotisée ; la fiche disait le départ « pas
+  encore modélisé », l'assuré déclaré non ouvert.
+- >-
+  2026-10-05 — lue dans tous ses textes, coupée en sept versions et lue par le moteur
+  (action 142) : la saisie dit le mois depuis lequel l'incapacité atteint 50 % ; le
+  départ s'ouvre de 55 ans à l'âge légal au taux plein, la pension majorée, le
+  fonctionnaire handicapé sans coefficient de minoration ; l'Agirc-Arrco et l'Ircantec
+  le servent sans coefficient. Le fonctionnaire né en 1961 n'est plus un écart : parti à
+  59 ans, il partait en 2020, sous la double condition de la version de 2015.
+effet: >-
+  Les assurés qui ont cotisé en situation de handicap, depuis 2015 : le modèle leur
+  ouvre ce départ à leur âge, au taux plein, leur pension majorée, et sert le
+  fonctionnaire handicapé sans coefficient de minoration ; leur nombre n'est pas lu.

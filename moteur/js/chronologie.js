@@ -368,9 +368,16 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
 }
 
 /**
+ * Le taux d'incapacité permanente que la saisie déclare : « au moins 50 % ».
+ * Voir `TAUX_D_INCAPACITE_DECLARE` du Python.
+ */
+export const TAUX_D_INCAPACITE_DECLARE = 50;
+
+/**
  * Les faits de l'invalidité et de l'inaptitude que la saisie déclare : la
- * pension d'invalidité et l'inaptitude, deux décisions médicales, la radiation
- * pour invalidité d'un fonctionnaire. Voir `_invalidite` du Python.
+ * pension d'invalidité, l'inaptitude et l'incapacité permanente, trois
+ * décisions médicales, la radiation pour invalidité d'un fonctionnaire. Voir
+ * `_invalidite` du Python.
  */
 function invaliditeDeclaree(assure, ageLiquidation, invalidite) {
   if (ageLiquidation === null || ageLiquidation === undefined) {
@@ -407,6 +414,19 @@ function invaliditeDeclaree(assure, ageLiquidation, invalidite) {
     }
     faits.push(fait(`radiation_pour_invalidite_${ASSURE}`, ASSURE, "radiation", jour(debut),
       null, { motif: "invalidite", age, imputable: Boolean(radiation.imputable), taux }));
+  }
+  if (invalidite.handicap !== null && invalidite.handicap !== undefined) {
+    // L'incapacité permanente d'au moins 50 % : depuis le mois que la saisie
+    // dit, qui peut précéder la carrière, jamais le départ.
+    const age = invalidite.handicap;
+    const debut = naissance.plusMois(enMois(age));
+    if (debut.rang <= naissance.rang || debut.rang > depart.rang) {
+      throw new Error("une incapacité permanente est reconnue après la naissance et au plus "
+        + "tard au départ");
+    }
+    faits.push(fait(`incapacite_permanente_${ASSURE}`, ASSURE, "decision_medicale",
+      jour(debut), null,
+      { decision: "incapacite_permanente", age, taux: TAUX_D_INCAPACITE_DECLARE }));
   }
   return faits;
 }
@@ -824,9 +844,9 @@ export function retraiteProgressive(chronologie, personne) {
  * régime, dans l'ordre de leurs codes.
  */
 /**
- * La décision médicale d'une personne, de cette nature — `pension_d_invalidite`
- * ou `inaptitude` de l'assuré, `invalidite` de son conjoint —, si elle est
- * dite.
+ * La décision médicale d'une personne, de cette nature — `pension_d_invalidite`,
+ * `inaptitude` ou `incapacite_permanente` de l'assuré, `invalidite` de son
+ * conjoint —, si elle est dite.
  */
 export function decisionMedicale(chronologie, personne, decision) {
   return faitsDe(chronologie, personne, "decision_medicale")

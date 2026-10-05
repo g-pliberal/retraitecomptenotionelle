@@ -27,23 +27,35 @@
   2017, le demandeur d'emploi indemnisé la garde six mois de plus
   (D. 341-1). Avant 2010, l'invalide qui travaillait pouvait s'opposer à la
   substitution : le modèle présume l'opposition de qui travaille encore.
+* ``retraite_anticipee_handicap`` : l'assuré qui a cotisé, alors que son
+  incapacité permanente atteignait le taux de la version, la durée requise
+  diminuée de 60 à 100 trimestres part dès cinquante-cinq ans (L. 351-1-3,
+  D. 351-1-5 ; L. 24, I, 5°, et R. 37 bis du code des pensions), au taux
+  plein (L. 351-8, 4° bis), sa pension majorée du tiers du rapport de cette
+  durée à sa durée dans le régime, sous la pension entière ; le
+  fonctionnaire handicapé n'a jamais de coefficient de minoration (L. 14, I).
+  La concomitance se lit année civile par année civile (circulaire Cnav
+  n° 2026-18, 1.1.3.1). Depuis 2015, la même incapacité fait aussi réputer
+  inapte (L. 351-8, 1° ter puis 2° ; R. 351-24-3).
 
-:mod:`.ouvrir` en tire l'âge d'ouverture de l'inapte, :mod:`.liquider` son
-taux plein et celui des complémentaires qui le suivent, :mod:`.departs` la
-date où la pension de vieillesse de l'ex-invalide commence, le scénario 1 et
-l'échéancier l'âge où l'allocation de solidarité aux personnes âgées s'ouvre
-à l'inapte (:func:`age_de_l_aspa`).
+:mod:`.ouvrir` en tire l'âge d'ouverture de l'inapte et celui du handicap,
+:mod:`.liquider` leur taux plein, la majoration du handicap et le taux plein
+des complémentaires qui les suivent, :mod:`.departs` la date où la pension de
+vieillesse de l'ex-invalide commence, le scénario 1 et l'échéancier l'âge où
+l'allocation de solidarité aux personnes âgées s'ouvre à l'inapte
+(:func:`age_de_l_aspa`).
 
 Son jumeau est ``moteur/js/droit/invalidite.js``.
 """
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois
-from .commun import date_d_effet
+from ..calendrier import DateMois, en_mois
+from .commun import date_d_effet, ligne_cotisee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -83,10 +95,27 @@ def age_de_la_fiche(moteur: ScenarioActuel, carriere: Carriere, valeur) -> float
     return float(valeur)
 
 
-def reconnu_inapte(carriere: Carriere) -> bool:
+def reconnu_inapte(carriere: Carriere, version: dict | None = None) -> bool:
     """L'assuré est-il inapte au sens de L. 351-8, 2° ? Reconnu inapte à sa
-    demande, ou ex-invalide, que L. 341-15 range parmi eux."""
-    return carriere.inaptitude or carriere.pension_d_invalidite is not None
+    demande, ou ex-invalide, que L. 341-15 range parmi eux ; ou, quand la
+    ``version`` de la fiche ``inaptitude_au_travail`` le dit
+    (``incapacite_permanente``), l'assuré dont l'incapacité permanente atteint
+    ce taux à la date d'effet : le 1° ter de L. 351-8 de 2015 à 2023, le 2°
+    depuis (R. 351-24-3)."""
+    return (carriere.inaptitude or carriere.pension_d_invalidite is not None
+            or incapacite_reconnue(carriere, version, "incapacite_permanente"))
+
+
+def incapacite_reconnue(carriere: Carriere, version: dict | None, cle: str) -> bool:
+    """L'incapacité permanente que la carrière déclare atteint-elle le taux que
+    ``version`` exige sous ``cle``, et la date d'effet de la pension la
+    trouve-t-elle reconnue ? Faux sans l'une ou l'autre."""
+    incapacite = carriere.incapacite_permanente
+    if version is None or incapacite is None or carriere.age_liquidation is None:
+        return False
+    exige = version["parametres"].get(cle)
+    return (exige is not None and incapacite.taux >= float(exige)
+            and incapacite.debut.rang <= carriere.date_liquidation.rang)
 
 
 def age_d_inaptitude(moteur: ScenarioActuel, regime: str,
@@ -96,11 +125,11 @@ def age_d_inaptitude(moteur: ScenarioActuel, regime: str,
     (fiche ``inaptitude_au_travail``) ; ``None`` quand l'assuré n'est pas
     inapte, que le régime n'applique pas la fiche ou que la carrière n'a pas
     de départ."""
-    if not reconnu_inapte(carriere) or regime not in moteur.invalidites.regimes("inaptitude"):
+    if regime not in moteur.invalidites.regimes("inaptitude"):
         return None
     date = date_d_effet(carriere)
     version = None if date is None else moteur.invalidites.version("inaptitude", date)
-    if version is None:
+    if version is None or not reconnu_inapte(carriere, version):
         return None
     return age_de_la_fiche(moteur, carriere, version["parametres"]["age"])
 
@@ -120,11 +149,13 @@ def age_de_l_aspa(moteur: ScenarioActuel, carriere: Carriere) -> float:
     pour les personnes mentionnées aux 2° à 5° de l'article L. 351-8 »
     (R. 815-1) — l'inapte et l'ex-invalide en sont —, à l'âge légal de 2011 à
     2023, à soixante ans avant : le paramètre ``age_aspa`` de la version de la
-    fiche ``inaptitude_au_travail`` à la date de liquidation."""
-    if not reconnu_inapte(carriere):
-        return AGE_DE_L_ASPA
+    fiche ``inaptitude_au_travail`` à la date de liquidation. Depuis 2015,
+    l'assuré dont l'incapacité permanente atteint 50 % en est aussi (le 1° ter
+    de L. 351-8, puis son 2°)."""
     date = date_d_effet(carriere)
     version = None if date is None else moteur.invalidites.version("inaptitude", date)
+    if not reconnu_inapte(carriere, version):
+        return AGE_DE_L_ASPA
     valeur = None if version is None else version["parametres"].get("age_aspa")
     if valeur is None:
         return AGE_DE_L_ASPA
@@ -264,3 +295,234 @@ def substitution(moteur: ScenarioActuel, carriere: Carriere) -> Substitution | N
         return Substitution(max(date, min(declare, date.plus_mois(int(mois)))),
                             version["id"], CHOMAGE)
     return Substitution(date, version["id"])
+
+
+# LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS (fiche ``retraite_anticipee_handicap``)
+
+#: La famille des régimes du code des pensions, dont le fonctionnaire
+#: handicapé n'a pas de coefficient de minoration (L. 14, I) et dont la
+#: majoration se compte sur les services (R. 33 bis).
+FONCTION_PUBLIQUE = "fonction_publique"
+
+
+def version_du_handicap(moteur: ScenarioActuel, carriere: Carriere) -> dict | None:
+    """La version de la fiche ``retraite_anticipee_handicap`` pour une pension
+    qui prend effet à la date de liquidation de ``carriere``, ou ``None``."""
+    date = date_d_effet(carriere)
+    return None if date is None else moteur.invalidites.version("handicap", date)
+
+
+def annee_en_situation_de_handicap(carriere: Carriere, annee: int) -> bool:
+    """L'année civile compte-t-elle en situation de handicap ? Dès que
+    l'incapacité est justifiée « à un moment quelconque au cours d'une année
+    civile d'assurance, il y a lieu d'admettre la concomitance entre cette
+    situation et chacun des trimestres d'assurance cotisés reportés au compte
+    carrière au titre de l'année en cause », celle de la reconnaissance
+    comprise ; et pour l'année du départ, « la concomitance n'est établie que
+    dans la mesure où la situation de handicap est justifiée pour des périodes
+    situées avant la date d'arrêt du compte » (circulaire Cnav n° 2026-18,
+    1.1.3.1), le dernier jour du trimestre civil qui précède la date d'effet.
+    L'incapacité est réputée continue jusqu'au départ."""
+    incapacite = carriere.incapacite_permanente
+    if incapacite is None or carriere.age_liquidation is None:
+        return False
+    depart = carriere.date_liquidation
+    if annee < incapacite.debut.annee or annee > depart.annee:
+        return False
+    if annee < depart.annee:
+        return True
+    arret = DateMois(depart.annee, 3 * ((depart.mois - 1) // 3) + 1)
+    return incapacite.debut.rang < arret.rang
+
+
+def trimestres_en_situation_de_handicap(moteur: ScenarioActuel, carriere: Carriere,
+                                        cotises: bool = True,
+                                        etrangers: dict[int, int] | None = None) -> int:
+    """Les trimestres que la carrière a accomplis en situation de handicap,
+    tous régimes, quatre au plus par année (D. 171-11-1) : les seuls cotisés —
+    « une durée d'assurance ayant donné lieu à cotisations à leur charge » —,
+    ou tous ceux de la durée d'assurance, que la version de 2015 exige aussi
+    (« une durée d'assurance ou de périodes reconnues équivalentes »).
+    ``etrangers`` sont ceux des périodes hors de France, année par année, que
+    la famille des régimes retient — cotisés, ou pour le taux —, comptés
+    « dans les mêmes conditions » que les autres (annexe 1 de la circulaire)."""
+    if carriere.incapacite_permanente is None or carriere.age_liquidation is None:
+        return 0
+    lignes = (ligne for ligne in carriere.lignes
+              if annee_en_situation_de_handicap(carriere, ligne.annee)
+              and (not cotises or ligne_cotisee(moteur, carriere, ligne)))
+    total = carriere.trimestres_cumules(lignes)
+    if etrangers:
+        total += sum(nombre for annee, nombre in etrangers.items()
+                     if annee_en_situation_de_handicap(carriere, annee))
+    return total
+
+
+def _duree_limite(moteur: ScenarioActuel, carriere: Carriere, parametres: dict,
+                  requis: int) -> int:
+    """La durée dont la version retranche les trimestres : la durée requise de
+    la génération (« la limite fixée en vertu du deuxième alinéa de l'article
+    L. 351-1 », « le nombre de trimestres fixé à l'article L. 13 »), moins ce
+    que la version retranche en plus à certaines générations (I bis de 2023) ;
+    pour les nés avant la génération que ``duree_d_avant_2023_jusqu_a`` dit,
+    « la durée d'assurance prévue à l'article L. 161-17-3 dans sa rédaction
+    antérieure à la loi n° 2023-270 » (D. 351-1-5 de septembre 2026)."""
+    limite = requis
+    jusqu_a = parametres.get("duree_d_avant_2023_jusqu_a")
+    if jusqu_a is not None and carriere.generation < float(jusqu_a):
+        avant = (moteur.durees_requises_avant_reforme_2023.trimestres(carriere.generation)
+                 or moteur.durees_requises.trimestres(carriere.generation))
+        if avant is not None:
+            limite = avant[0]
+    for debut, fin, plus in parametres.get("retranches_en_plus") or ():
+        if ((debut is None or carriere.generation >= float(debut))
+                and (fin is None or carriere.generation < float(fin))):
+            limite -= int(plus)
+    return limite
+
+
+def exigences_du_handicap(moteur: ScenarioActuel, carriere: Carriere, requis: int,
+                          age: float | None = None) -> tuple[float, int, int | None] | None:
+    """Ce que la version de la date d'effet exige pour partir à ``age`` — celui
+    de la liquidation par défaut — au titre du handicap : l'âge abaissé dont
+    l'âge relève, la durée cotisée en situation de handicap et, quand la
+    version l'exige, la durée validée. ``requis`` est la durée requise que
+    l'ouverture oppose. ``None`` sans version, ou sous le premier âge.
+
+    Les âges abaissés sont des seuils : qui part entre cinquante-six et
+    cinquante-sept ans relève de l'âge de cinquante-six ans, et « entre
+    cinquante-neuf ans et l'âge prévu à l'article L. 161-17-2 », de celui de
+    cinquante-neuf."""
+    version = version_du_handicap(moteur, carriere)
+    if version is None or not version["parametres"].get("ages"):
+        return None
+    parametres = version["parametres"]
+    age = carriere.age_liquidation if age is None else age
+    ages = [float(a) for a in parametres["ages"]]
+    rang = None
+    for i, seuil in enumerate(ages):
+        if en_mois(age) >= en_mois(seuil):
+            rang = i
+    if rang is None:
+        return None
+    limite = _duree_limite(moteur, carriere, parametres, requis)
+    validees = parametres.get("validees_retranchees")
+    return (ages[rang], limite - int(parametres["cotisees_retranchees"][rang]),
+            None if validees is None else limite - int(validees[rang]))
+
+
+def _regimes_du_handicap(moteur: ScenarioActuel, regimes) -> bool:
+    """La demande vise-t-elle un régime de base que la fiche nomme ? Les
+    autres n'appliquent pas le départ anticipé, faute d'en avoir lu les
+    textes, et la fiche le dit en approximation."""
+    nommes = moteur.invalidites.regimes("handicap")
+    return any(code in nommes for code in regimes)
+
+
+def age_du_handicap(moteur: ScenarioActuel, carriere: Carriere, requis: int,
+                    regimes, etrangers: tuple[dict[int, int], dict[int, int]] | None = None
+                    ) -> float | None:
+    """L'âge le plus précoce auquel le départ anticipé des assurés handicapés
+    ouvre CETTE liquidation, sur la durée accomplie à sa date d'effet, ou
+    ``None`` : la version n'exige pas un taux que la saisie établit, l'âge
+    précède le premier âge abaissé, la durée cotisée — et la durée validée,
+    quand la version l'exige — manque. ``regimes`` sont les régimes de base
+    que la demande vise ; ``etrangers``, les trimestres hors de France cotisés
+    puis validés, année par année. C'est le plus bas des âges abaissés que la
+    durée accomplie atteint, pourvu qu'il ne suive pas le départ."""
+    if not _regimes_du_handicap(moteur, regimes):
+        return None
+    version = version_du_handicap(moteur, carriere)
+    if version is None or not incapacite_reconnue(carriere, version, "taux_incapacite"):
+        return None
+    parametres = version["parametres"]
+    age = carriere.age_liquidation
+    limite = _duree_limite(moteur, carriere, parametres, requis)
+    cotises = trimestres_en_situation_de_handicap(
+        moteur, carriere, True, None if etrangers is None else etrangers[0])
+    validees = parametres.get("validees_retranchees")
+    valides = (None if validees is None else trimestres_en_situation_de_handicap(
+        moteur, carriere, False, None if etrangers is None else etrangers[1]))
+    for i, seuil in enumerate(float(a) for a in parametres["ages"]):
+        if en_mois(seuil) > en_mois(age):
+            break
+        if cotises < limite - int(parametres["cotisees_retranchees"][i]):
+            continue
+        if validees is not None and valides < limite - int(validees[i]):
+            continue
+        return seuil
+    return None
+
+
+def age_propose_du_handicap(moteur: ScenarioActuel, carriere: Carriere, requis: int,
+                            regimes, etrangers: tuple[dict[int, int], dict[int, int]] | None = None
+                            ) -> float | None:
+    """L'âge le plus précoce que le départ anticipé des assurés handicapés
+    ouvrirait à qui continue de cotiser en situation de handicap, ou ``None`` —
+    la même projection que :meth:`~retraite_notionnelle.scenarios.actuel.CarriereLongue.age_propose` :
+    il manque à chaque âge abaissé ``exigé − accompli`` trimestres, qu'une
+    année de cotisation réduit de quatre, la soustraction étant signée, à
+    compter du départ, ou de la reconnaissance de l'incapacité quand elle le
+    suit. Chaque âge ouvre au plus tardif de lui-même et de l'âge où la durée
+    est réunie ; le plus précoce l'emporte. L'appelant le compare à l'âge
+    légal, qui l'emporte quand il vient plus tôt."""
+    if not _regimes_du_handicap(moteur, regimes):
+        return None
+    version = version_du_handicap(moteur, carriere)
+    incapacite = carriere.incapacite_permanente
+    exige = None if version is None else version["parametres"].get("taux_incapacite")
+    if (exige is None or incapacite is None or carriere.age_liquidation is None
+            or incapacite.taux < float(exige)):
+        return None
+    parametres = version["parametres"]
+    age = carriere.age_liquidation
+    depuis = max(age, carriere.age_au(incapacite.debut))
+    limite = _duree_limite(moteur, carriere, parametres, requis)
+    cotises = trimestres_en_situation_de_handicap(
+        moteur, carriere, True, None if etrangers is None else etrangers[0])
+    validees = parametres.get("validees_retranchees")
+    valides = (0 if validees is None else trimestres_en_situation_de_handicap(
+        moteur, carriere, False, None if etrangers is None else etrangers[1]))
+    candidats = []
+    for i, seuil in enumerate(float(a) for a in parametres["ages"]):
+        atteint = depuis + (limite - int(parametres["cotisees_retranchees"][i]) - cotises) / 4.0
+        if validees is not None:
+            atteint = max(atteint, depuis + (limite - int(validees[i]) - valides) / 4.0)
+        candidats.append(max(seuil, atteint))
+    return min(candidats) if candidats else None
+
+
+def sans_decote_du_fonctionnaire(moteur: ScenarioActuel, regime: str,
+                                 carriere: Carriere) -> bool:
+    """« Le coefficient de minoration n'est pas applicable aux fonctionnaires
+    handicapés dont l'incapacité permanente est au moins égale à un taux fixé
+    par décret » (L. 14, I, du code des pensions ; D. 14 : 50 % ; décret
+    n° 2003-1306, article 20, III ; décret n° 2004-1056, article 16, III), à
+    tout âge : dans les régimes du code des pensions que la fiche nomme, quand
+    la version le dit et que l'incapacité atteint son taux à la date d'effet."""
+    if (regime not in moteur.invalidites.regimes("handicap")
+            or regime not in moteur.catalogue
+            or moteur.catalogue[regime].famille != FONCTION_PUBLIQUE):
+        return False
+    version = version_du_handicap(moteur, carriere)
+    return (version is not None
+            and bool(version["parametres"].get("fonctionnaire_sans_decote"))
+            and incapacite_reconnue(carriere, version, "taux_incapacite"))
+
+
+def coefficient_de_majoration(version: dict, en_situation: int, duree: int) -> float:
+    """Le coefficient de la majoration de pension : « un nombre égal au tiers
+    du quotient formé par la durée d'assurance dans le régime accomplie alors
+    que l'assuré justifiait du taux [...] et ayant donné lieu à cotisations à
+    sa charge, d'une part, et la durée d'assurance accomplie dans le régime
+    [...], d'autre part. Ce nombre est arrondi, le cas échéant, au centième le
+    plus proche » (D. 351-1-5, II) — au centième supérieur dès la troisième
+    décimale à cinq (circulaire Cnav n° 2026-18, 3.1) ; au fonctionnaire, les
+    services accomplis en situation de handicap sur les services et
+    bonifications admis en liquidation (R. 33 bis). Zéro sans majoration."""
+    majoration = version["parametres"].get("majoration")
+    if not majoration or duree <= 0 or en_situation <= 0:
+        return 0.0
+    brut = float(majoration["fraction"]) * en_situation / duree
+    pas = round(1.0 / float(majoration["arrondi"]))
+    return math.floor(brut * pas + 0.5 + 1e-9) / pas

@@ -529,12 +529,14 @@ export const DEFAUTS = Object.freeze({
   //: d'activité, nul sans elle ; l'inaptitude au travail, reconnue ou que la
   //: loi présume ; l'âge de la radiation des cadres pour invalidité d'un
   //: fonctionnaire, en date lui aussi, son imputabilité au service et le taux
-  //: d'invalidité reconnu, en pour cent. Voir `invaliditeDeclaree`.
+  //: d'invalidité reconnu, en pour cent ; l'âge depuis lequel l'incapacité
+  //: permanente atteint 50 %, en date lui aussi. Voir `invaliditeDeclaree`.
   invalidite: null,
   inaptitude: false,
   radiation_invalidite: null,
   invalidite_imputable: false,
   taux_invalidite: null,
+  handicap: null,
   //: Les carrières hors de France : les périodes passées hors de France
   //: — `{pays, debut, fin, activite}`, les âges comptés comme un début
   //: d'activité —, les pensions étrangères — `{pays, montant, debut}` —,
@@ -691,6 +693,8 @@ export class Saisie {
       invalidite_imputable: oui(parametres, "invalidite_imputable"),
       taux_invalidite: [undefined, null, ""].includes(parametres.taux_invalidite)
         ? null : entier(parametres, "taux_invalidite", 0),
+      handicap: [undefined, null, ""].includes(parametres.handicap) ? null
+        : ageSaisi(parametres, "handicap", 0.0, moisDeNaissance),
       etranger: periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       pensions_etrangeres: pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       residence: (parametres.residence || "").trim(),
@@ -1725,10 +1729,13 @@ export class Saisie {
    * L'invalidité et l'inaptitude que la saisie déclare, telles que la
    * chronologie les reçoit : l'âge où la `pension` d'invalidité a commencé,
    * l'`inaptitude`, et la `radiation` pour invalidité d'un fonctionnaire — son
-   * âge, son imputabilité, son taux en pour cent. `null` quand rien n'est dit.
+   * âge, son imputabilité, son taux en pour cent —, et l'âge depuis lequel
+   * l'incapacité permanente atteint 50 % (`handicap`). `null` quand rien n'est
+   * dit.
    */
   invaliditeDeclaree() {
-    if (this.invalidite === null && !this.inaptitude && this.radiation_invalidite === null) {
+    if (this.invalidite === null && !this.inaptitude && this.radiation_invalidite === null
+        && this.handicap === null) {
       return null;
     }
     const radiation = this.radiation_invalidite === null ? null : {
@@ -1736,7 +1743,10 @@ export class Saisie {
       imputable: this.invalidite_imputable,
       taux: this.taux_invalidite,
     };
-    return { pension: this.invalidite, inaptitude: this.inaptitude, radiation };
+    return {
+      pension: this.invalidite, inaptitude: this.inaptitude, radiation,
+      handicap: this.handicap,
+    };
   }
 
   /**
@@ -1789,6 +1799,23 @@ export class Saisie {
       if (date.rang > depart.rang) {
         throw new ErreurSaisie(
           `Radiation pour invalidité en ${date} : elle ne suit pas le départ à la `
+          + `retraite, fixé en ${depart}.`,
+        );
+      }
+    }
+    if (this.handicap !== null) {
+      // L'incapacité peut précéder la carrière, mais ni la naissance ni le départ.
+      const date = this.dateDe(this.handicap);
+      const naissance = this.dateDe(0.0);
+      if (date.rang <= naissance.rang) {
+        throw new ErreurSaisie(
+          `Incapacité d'au moins 50 % en ${date} : elle suit la naissance, `
+          + `en ${naissance}.`,
+        );
+      }
+      if (date.rang > depart.rang) {
+        throw new ErreurSaisie(
+          `Incapacité d'au moins 50 % en ${date} : elle ne suit pas le départ à la `
           + `retraite, fixé en ${depart}.`,
         );
       }
@@ -2045,6 +2072,7 @@ export class Saisie {
           ? null : this.moisDe(this.radiation_invalidite)],
         ["invalidite_imputable", this.invalidite_imputable ? OUI : null],
         ["taux_invalidite", this.taux_invalidite],
+        ["handicap", this.handicap === null ? null : this.moisDe(this.handicap)],
       ].filter(([, valeur]) => valeur !== null)),
       ...(this.residence ? { residence: this.residence } : {}),
       ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),

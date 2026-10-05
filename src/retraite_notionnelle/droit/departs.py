@@ -217,9 +217,10 @@ def _ouverture(moteur: ScenarioActuel, carriere: Carriere,
 
     L'âge que l'étape « ouvrir le droit » oppose à chacun de ses régimes — le
     plus précoce, puisque l'unité liquide d'un tenant —, ou celui de la
-    carrière longue quand la durée COTISÉE au départ déclaré l'ouvre plus tôt.
-    Après ce départ, l'assuré ne cotise plus : la carrière longue ne se
-    projette pas, elle se lit acquise (:meth:`CarriereLongue.age_de_depart`).
+    carrière longue, ou du départ des assurés handicapés, quand la durée
+    COTISÉE au départ déclaré l'ouvre plus tôt. Après ce départ, l'assuré ne
+    cotise plus : ni l'une ni l'autre ne se projette, elles se lisent acquises
+    (:meth:`CarriereLongue.age_de_depart`, :func:`~.invalidite.age_du_handicap`).
     """
     annee = carriere.annee_liquidation
     periodes = [(code, periode) for code in sorted(unite)
@@ -231,10 +232,29 @@ def _ouverture(moteur: ScenarioActuel, carriere: Carriere,
         return carriere.date_liquidation
     age = min(ouvrir.age_ouverture(moteur, periode, carriere) for _, periode in retenues)
     opposent = annuites or ouvrir.periodes_opposant_une_duree(autres)
-    longue = _carriere_longue_acquise(moteur, carriere, opposent)
-    if longue is not None and longue < age:
-        age = longue
+    for anticipe in (_carriere_longue_acquise(moteur, carriere, opposent),
+                     _handicap_acquis(moteur, carriere, opposent)):
+        if anticipe is not None and anticipe < age:
+            age = anticipe
     return carriere.date_de_l_age(age)
+
+
+def _handicap_acquis(moteur: ScenarioActuel, carriere: Carriere,
+                     periodes: list[tuple[str, PeriodeRegime]]) -> float | None:
+    """L'âge que le départ anticipé des assurés handicapés ouvre aux régimes de
+    ``periodes`` sur la durée accomplie au départ déclaré, ou ``None`` : la
+    lecture de :func:`~.ouvrir.ouvrir`, sur la plus longue de leurs durées
+    requises."""
+    if not periodes or carriere.incapacite_permanente is None:
+        return None
+    requis = max(ouvrir.duree_requise(moteur, periode, carriere)[0]
+                 for _, periode in periodes) or 160
+    codes = [code for code, _ in periodes]
+    famille = etranger.famille_des_regimes(moteur, codes)
+    etrangers = etranger.trimestres_etrangers(moteur, carriere)
+    return invalidite.age_du_handicap(
+        moteur, carriere, requis, codes,
+        (etrangers.cotises[famille], etrangers.pour_le_taux[famille]))
 
 
 def _carriere_longue_acquise(moteur: ScenarioActuel, carriere: Carriere,

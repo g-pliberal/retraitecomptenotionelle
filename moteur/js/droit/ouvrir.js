@@ -6,7 +6,8 @@
  * quelle durée la sert-il au taux plein ? L'âge qu'un régime spécial a en
  * propre, celui que la catégorie active ou la jouissance militaire ouvrent,
  * l'âge légal de la génération (`ageOuverture`) ; la durée requise
- * (`dureeRequise`) ; la carrière longue quand l'âge demandé précède tous les
+ * (`dureeRequise`) ; le départ anticipé des assurés handicapés quand l'âge
+ * demandé précède l'âge légal, la carrière longue quand il précède tous les
  * autres. `ouvrir` écrit ce que l'étape dit d'une demande — son schéma est
  * `data/reference/etapes/ouvrir_le_droit.yaml` ; `ageOuvertureDroit`,
  * `ageTauxPleinDroit` et `ageAnnulationDroit` sont ce que le pilote en lit,
@@ -177,9 +178,13 @@ export function ouvrir(moteur, releve, regimes = null) {
     (ligne) => ligneCotisee(moteur, carriere, ligne) && ligne.annee <= anneeLiquidation,
   ));
   let etrangers = null;
+  // Les trimestres hors de France cotisés, puis validés, que le départ des
+  // assurés handicapés compte avec les autres.
+  let etrangersDuHandicap = null;
   if (durees.etranger !== null) {
     const famille = etranger.familleDesRegimes(moteur, codes);
     etrangers = durees.etranger.cotises[famille];
+    etrangersDuHandicap = [etrangers, durees.etranger.pourLeTaux[famille]];
     trimestresCotises += durees.etranger.trimestresCotises(famille);
   }
 
@@ -195,7 +200,17 @@ export function ouvrir(moteur, releve, regimes = null) {
     motifOuverture = codes.some((code) => invalidite.radiationDuRegime(moteur, code, carriere)
       !== null) ? "invalidite" : "inaptitude";
   }
-  if (ageOuvertureReference !== null && ageLiquidation < ageOuvertureReference) {
+  // Le départ anticipé des assurés handicapés, avant l'âge légal de droit
+  // commun : il passe avant l'inaptitude et la carrière longue. Voir le Python.
+  const handicap = (ageSansInvalidite !== null && ageLiquidation < ageSansInvalidite
+    && motifOuverture !== "invalidite")
+    ? invalidite.ageDuHandicap(moteur, carriere, requisReference, codes, etrangersDuHandicap)
+    : null;
+  if (handicap !== null) {
+    motifOuverture = "handicap";
+    ageOuvertureReference = ageOuvertureReference === null ? handicap
+      : Math.min(ageOuvertureReference, handicap);
+  } else if (ageOuvertureReference !== null && ageLiquidation < ageOuvertureReference) {
     const anticipe = moteur.carriereLongue.ageDeDepart(
       carriere, anneeLiquidation,
       moteur.carriereLongue.cotisesReputes(
@@ -756,20 +771,21 @@ export function ageOuvertureDroit(moteur, carriereSaisie) {
   if (retenues.length === 0) {
     return null;
   }
-  const ouverture = Math.min(
+  let ouverture = Math.min(
     ...retenues.map(([, periode]) => ageOuverture(moteur, periode, carriere)),
   );
   // Les deux régimes de base en POINTS ouvrent la carrière longue :
   // L. 732-18-1 du code rural pour les non-salariés agricoles, le II de
   // L. 643-3 du code de la sécurité sociale pour les professions libérales,
   // par renvoi à L. 351-1-1. Les deux règles d'âge la lisent sur la même
-  // liste, sans quoi elles se contrediraient.
-  const anticipe = ageCarriereLongue(
-    moteur, carriere,
-    annuites.length > 0 ? annuites : periodesOpposantUneDuree(autres),
-  );
-  if (anticipe !== null && anticipe < ouverture) {
-    return anticipe;
+  // liste, sans quoi elles se contrediraient. Le départ des assurés
+  // handicapés devance aussi l'âge légal, quand il ouvre plus tôt.
+  const opposent = annuites.length > 0 ? annuites : periodesOpposantUneDuree(autres);
+  for (const anticipe of [ageCarriereLongue(moteur, carriere, opposent),
+    ageHandicapPropose(moteur, carriere, opposent)]) {
+    if (anticipe !== null && anticipe < ouverture) {
+      ouverture = anticipe;
+    }
   }
   return ouverture;
 }
@@ -808,6 +824,25 @@ export function ageCarriereLongue(moteur, carriere, annuites) {
     carriere, anneeLiquidation, cotises, requis, carriere.age_liquidation,
     etrangers.cotises[famille],
   );
+}
+
+/**
+ * L'âge que le départ anticipé des assurés handicapés proposerait à cette
+ * carrière, à qui continue de cotiser, ou `null`. Voir
+ * `age_handicap_propose` du Python.
+ */
+export function ageHandicapPropose(moteur, carriere, periodes) {
+  if (periodes.length === 0 || carriere.incapacitePermanente === null) {
+    return null;
+  }
+  const requis = Math.max(
+    ...periodes.map(([, periode]) => dureeRequise(moteur, periode, carriere)[0]),
+  ) || 160;
+  const codes = periodes.map(([code]) => code);
+  const famille = etranger.familleDesRegimes(moteur, codes);
+  const etrangers = etranger.trimestresEtrangers(moteur, carriere);
+  return invalidite.ageProposeDuHandicap(moteur, carriere, requis, codes,
+    [etrangers.cotises[famille], etrangers.pourLeTaux[famille]]);
 }
 
 /**
@@ -893,10 +928,13 @@ export function ageTauxPleinDroit(moteur, carriereSaisie) {
     tauxPlein = Math.min(tauxPlein, Math.max(ouverture, Math.min(...inaptes)));
   }
   // Le départ anticipé pour carrière longue passe avant les trois termes :
-  // il n'ouvre qu'à qui a sa durée COTISÉE, donc au taux plein.
-  const anticipe = ageCarriereLongue(moteur, carriere, opposent);
-  if (anticipe !== null && anticipe < tauxPlein) {
-    return anticipe;
+  // il n'ouvre qu'à qui a sa durée COTISÉE, donc au taux plein ; celui des
+  // assurés handicapés aussi (L. 351-8, 4° bis).
+  for (const anticipe of [ageCarriereLongue(moteur, carriere, opposent),
+    ageHandicapPropose(moteur, carriere, opposent)]) {
+    if (anticipe !== null && anticipe < tauxPlein) {
+      tauxPlein = anticipe;
+    }
   }
   return tauxPlein;
 }

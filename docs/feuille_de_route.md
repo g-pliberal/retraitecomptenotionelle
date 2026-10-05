@@ -5993,14 +5993,14 @@ décret n° 84-995, dont l'index ne garde que le titre.
 
 **Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 3, le relevé prolongé
 jusqu'au départ, la réversion du RAFP, de la RCI et de l'Ircantec, l'étape 4
-(Destinie 2 exécuté à part, ses sorties en témoins) et la délibération de
-l'ERAFP (barèmes datés, au mois ; dix saisies et neuf calculs en exemples). Le
-propriétaire veut tout le reste (« Le restant »), une étape par session, par
-zones : au modèle, le départ des handicapés ; aux moteurs publics, TRAJECTOiRE,
-sur le modèle de `scripts/fetch/destinie_2.py` ; au site, le net officiel dans
-le bloc (138.2 : le 1 %, puis la CSG, présomption et champ) ; avec lui,
-connecté, le prix d'achat Agirc-Arrco implicite de la page. Détail : en fin
-d'action.
+(Destinie 2 exécuté à part, ses sorties en témoins), la délibération de
+l'ERAFP (barèmes datés, au mois ; dix saisies et neuf calculs en exemples) et
+le départ anticipé des handicapés (vingt-quatre saisies et trois calculs de la
+Cnav en exemples). Le propriétaire veut tout le reste (« Le restant »), une
+étape par session, par zones : aux moteurs publics, TRAJECTOiRE, sur le modèle
+de `scripts/fetch/destinie_2.py` ; au site, le net officiel dans le bloc
+(138.2 : le 1 %, puis la CSG, présomption et champ) ; avec lui, connecté, le
+prix d'achat Agirc-Arrco implicite de la page. Détail : en fin d'action.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de
@@ -6668,6 +6668,69 @@ n'a que les budgets de l'établissement. Lues sur rafp.fr, copies datées dans
   plus dans `tests/test_simulateurs.py`. Carrières fictives.
 - *Restent* : demander à l'ERAFP si ses liquidations arrondissent comme son
   simulateur, et ses délibérations de 2005 et de 2019.
+
+**Le départ anticipé des assurés handicapés, le 5 octobre 2026.** L'étape « au
+modèle » du restant.
+
+- *Lu*, dans l'index LEGI du dépôt (incréments du 27 septembre) : L. 351-1-3
+  dans ses cinq rédactions, D. 351-1-5 dans ses sept, D. 351-1-6 dans ses
+  quatre, L. 351-8 (4° bis ; 1° ter de 2011 à 2023 ; 2° depuis), R. 351-24-3,
+  R. 815-1, L. 161-21-1, L. 634-2 et L. 742-3 du code rural ; au code des
+  pensions L. 14, L. 24, I, 5°, D. 14, R. 33 bis et R. 37 bis ; le décret
+  n° 2003-1306, articles 20, 24 bis et 25, le décret n° 2004-1056, articles 16,
+  20 bis et 22 bis, le décret n° 2023-435, article 13, II, F, dans ses deux
+  rédactions, la seconde par l'article 3, 5°, du décret n° 2026-344 ; l'arrêté
+  du 30 décembre 1970, article 16 (Ircantec) ; le règlement de la RCI,
+  article 12. Et la circulaire Cnav n° 2026-18, qui applique, et la fiche
+  F16337. D. 351-1-7 et D. 351-1-8 ne portent pas sur ce départ : l'enfant
+  handicapé, l'incapacité permanente de L. 351-1-4.
+- *La saisie.* `handicap=AAAA-MM`, « Incapacité d'au moins 50 %, depuis »,
+  dans le dépliant « Invalidité et inaptitude » : le mois depuis lequel
+  l'incapacité permanente atteint 50 %, qui peut précéder la carrière, jamais la
+  naissance ni le départ, ce que la saisie oppose comme le champ ; une décision
+  médicale de la chronologie, dans les deux moteurs.
+- *Le droit, au modèle.* La fiche coupée en sept versions : rien avant juillet
+  2004 ; 80 % jusqu'en 2014, que la saisie n'établit pas ; la double condition
+  de 2015, durées validée et cotisée ; la seule durée cotisée depuis septembre
+  2023, avec les trimestres retranchés en plus aux nés avant 1973 (I bis) ; la
+  durée d'avant 2023 de ces générations depuis septembre 2026. `ouvrir` ouvre
+  le motif `handicap` avant l'âge légal de droit commun, de préférence à
+  l'inaptitude et à la carrière longue, qui ne majorent pas ; la concomitance
+  se lit année civile par année civile (circulaire, 1.1.3.1). Le taux plein ;
+  la majoration, le tiers du rapport arrondi au centième, écrêtée à la pension
+  entière, hors de ce que le minimum contributif relève (circulaire, 3.3.3,
+  règle 3) ; au fonctionnaire, sur ses services (R. 33 bis), et sans
+  coefficient de minoration à tout âge depuis 2015 (L. 14, I). L'Agirc-Arrco,
+  l'Ircantec et la RCI sans coefficient. Depuis 2015, la même incapacité fait
+  réputer inapte : la version `age_legal_2011` de `inaptitude_au_travail` est
+  coupée au 1er janvier 2015. Les âges du pilote et les départs par régime la
+  lisent. Le tout dans `droit/invalidite.py`, `ouvrir.py` et `liquider.py`,
+  puis leurs jumeaux. À l'inventaire des avantages, les deux lignes passent à
+  `integre` : la majoration lue dans les comptes, le départ mesuré par le
+  retrait de sa fiche, nul sur la grille, qu'aucun cas type ne déclare.
+- *Les exemples.* Les vingt-quatre saisies du simulateur deviennent les
+  exemples `ur_handicap_*`, chacune à la seule date d'effet que sa génération
+  et son âge permettent : toutes concordent. Celle du fonctionnaire né en 1961
+  n'est pas un écart : parti à 59 ans, il partait en 2020, sous la double
+  condition de 2015 que le simulateur lui oppose. Et trois de la circulaire
+  2026-18 : les coefficients 0,28 et 0,29, l'écrêtement.
+- *Ce que ça déplace.* Six témoins de simulation naissent (`handicap_*`),
+  calculés sous la WSL ; aucun des autres ne bouge, dans aucun scénario, et le
+  portage en retrouve toujours 93,1 % au bit près. Treize rendus de page
+  changent, et un naît, `simuler_handicap` : le champ, dans les formulaires
+  figés entiers ; le refus d'ouverture, qui nomme le handicap ; les deux pages
+  des avantages.
+- *Tests.* `tests/test_invalidite.py`, neuf de plus, et la parité des deux
+  saisies ; les vingt-sept exemples, par `tests/test_oracle.py`. Carrières
+  fictives.
+- *Restent* : les régimes que la fiche ne nomme pas (non-salariés agricoles,
+  libéraux, avocats, cultes, régimes spéciaux) ; la qualité de travailleur
+  handicapé d'avant 2016 et la commission de L. 161-21-1 ; la retraite
+  anticipée fictive de qui part à l'âge légal ; la réversion sur la pension non
+  majorée ; la durée de L. 13, III, du fonctionnaire qui part avant soixante
+  ans ; le mot « handicap » dans la colonne de l'estimation officielle
+  (`departEnClair`, que la session du net travaille) ; la ligne « handicap :
+  hors modèle » de `docs/architecture.md`, à sa prochaine version.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
