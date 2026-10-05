@@ -71,7 +71,8 @@ versions:
       fractionnement: null
   unites:
     age: années et mois révolus à la date d'effet, entre deux âges entiers au prorata des mois
-  exemples: aucun trouvé
+  exemples: [erafp_ra2012_jean_capital_62_ans, erafp_ra2012_isabelle_rente_62_ans,
+             erafp_ra2012_isabelle_rente_67_ans]
 - id: deliberation_2015
   statut: lue
   textes:
@@ -265,7 +266,7 @@ versions:
              erafp_1966_effet_2029_04_3000_points, erafp_1966_effet_2031_01_3000_points,
              erafp_1970_effet_2034_06_5124_points, erafp_1970_effet_2034_07_5125_points,
              erafp_1958_effet_2026_11_8000_points, erafp_1963_effet_2026_11_5000_points,
-             erafp_page_fraction_depuis_avril_2024]
+             erafp_page_fraction_depuis_avril_2024, erafp_page_capital_64_ans]
 approximations:
 - version: [deliberation_2005, deliberation_2015, fractionnement_2019, fractionnement_2020,
             conversion_2022, fractionnement_2024]
@@ -355,8 +356,9 @@ sources:
     reference: >-
       ERAFP, rapports annuels 2012 (annexes 1 et 2 : barèmes de surcote et de
       conversion d'avant 2015), 2014 et 2015 (le barème de 2015, « au-delà de 62 ans »,
-      au mois) ; les prestations-types des rapports 2015 et 2022, exemples erafp_ra… :
-      le capital au barème de 2005 en 2015, au barème de 2021 en 2022, le
+      au mois) ; les prestations-types des rapports 2012 (page 25), 2015 et 2022,
+      exemples erafp_ra… : la surcote de 2005 à 62 et 67 ans en 2013, le capital au
+      barème de 2005 en 2013 et en 2015, au barème de 2021 en 2022, le
       fractionnement en quinze mois de rente, et le capital en une fois de qui a pris
       sa retraite de base plus de quinze mois avant
     url: https://media.rafp.fr/s3fs-public/2022-12/2012-RAFP-Rapport-Annuel.pdf
@@ -366,7 +368,8 @@ sources:
       ERAFP, « Valeurs des coefficients de majoration » (sans date : « ≥ 75 ans 1,80 »,
       sans mot des mois) et « Valeurs des coefficients de conversion en capital » (au
       mois) ; page « calcul et paiement de votre prestation » (capital fractionné de
-      4 600 puis 4 900 points, exemples à 15 et à 4 mois de rente)
+      4 600 puis 4 900 points, exemples à 15 et à 4 mois de rente ; capital unique de
+      4 448 points à 64 ans, exemple erafp_page_capital_64_ans, relu le 5 octobre 2026)
     url: https://www.rafp.fr/actif/activite/calcul-et-paiement-votre-prestation-rafp
     date: 2026-10-04
   - type: autre
@@ -403,7 +406,7 @@ code:
     fractionnementRafp, prestationRafp, moisApresLeDepart, surcotePoints
   tests: >-
     tests/test_rafp.py ; les exemples erafp_… (grandeur prestation_rafp de
-    tests/test_oracle.py), dix du simulateur et neuf des publications de l'ERAFP ;
+    tests/test_oracle.py), dix du simulateur et treize des publications de l'ERAFP ;
     l'adaptateur PrestationRafp de scripts/simulateurs.py
 historique:
 - >-
@@ -418,6 +421,11 @@ historique:
   2005 au rapport annuel 2012. Le moteur date ses barèmes, calcule au mois sans
   arrondir et dit le capital fractionné ; les dix saisies deviennent des exemples, et
   neuf calculs que l'ERAFP publie aussi.
+- >-
+  2026-10-05 — le barème de 2005 a ses premiers exemples : les trois prestations-types
+  du rapport annuel 2012, à 62 et 67 ans en 2013, concordent, sauf le capital de Jean,
+  imprimé 4 030,38 € pour un produit de 4 030,88 € (écart connu, coquille du rapport) ;
+  et le capital unique de la page « Calcul et paiement », 6 965,93 € à 64 ans en 2026.
 effet: >-
   Tout fonctionnaire qui touche son RAFP hors d'un âge entier, ou avant mars 2015 :
   jusqu'à 5,4 % de plus qu'au barème par âge entier, à 74 ans et 11 mois (1,8017 pour

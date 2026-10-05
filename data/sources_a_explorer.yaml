@@ -615,12 +615,20 @@ sources:
       Les points acquis pour une cotisation donnée, mois par mois et année par
       année depuis 2005 : de quoi recouper les valeurs d'acquisition de
       `valeurs_point.csv` et l'arrondi des points au point supérieur.
-    statut: en_cours
+    statut: a_explorer
     note: >-
-      Ouverte le 23 septembre 2026, pas lancée. Elle part de la cotisation
-      déjà versée, part de l'agent, qu'elle double pour l'employeur, et non
-      des primes : elle ne voit pas le plafond de 20 % du traitement, qui se
-      joue en amont, dans l'assiette. La ligne disait le contraire.
+      Ouverte le 23 septembre 2026, pas lancée. Elle part de la cotisation déjà
+      versée, part de l'agent, qu'elle double pour l'employeur, et non des
+      primes : elle ne voit pas le plafond de 20 % du traitement, qui se joue en
+      amont, dans l'assiette. La ligne disait le contraire. Relue le 5 octobre
+      2026 : le calcul est fait par le serveur (formulaire Drupal soumis en AJAX),
+      le script de la page ne fait que filtrer la saisie ; rien ne se lit sans
+      saisir, et une saisie demande un lot approuvé (docs/architecture.md, § 3.5).
+      La règle qu'elle applique est écrite ailleurs : le rapport de la cotisation
+      totale à la valeur d'acquisition de l'année (décret n° 2004-569, art. 5),
+      « arrondi au point supérieur » selon la page des cotisations (350 € en 2026,
+      239,79 points, 240), un arrondi que le décret ne dit pas et que le modèle ne
+      fait pas, moins d'un point par an.
 
   - id: rafp_cotisations_points
     url: https://www.rafp.fr/actif/activite/calculer-vos-cotisations-et-vos-points-rafp
@@ -655,7 +663,19 @@ sources:
     a_en_tirer: >-
       Liquidation, âge, seuil de versement en capital : la porte d'entrée des
       pages « retraite » du régime, à dérouler.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Déroulée le 5 octobre 2026 : les valeurs du point de 2026 (1,4596 € et
+      0,05671 €), celles que le dépôt certifie
+      (data/reference/regimes/valeurs_point.csv) ; l'âge légal attendu même après
+      une retraite de base anticipée (fiche rafp_age_d_ouverture) ; la
+      régularisation des points déclarés après la liquidation, un capital
+      complémentaire ou la bascule en rente, et aucun point acquis après la
+      liquidation ; le paiement à terme échu, avec la pension principale. Ses
+      pages filles sont les lignes rafp_calcul_paiement_prestation,
+      rafp_reversion, rafp_calculette_points et rafp_cotisations_points ; rien de
+      plus pour le modèle.
 
   - id: rafp_compte_epargne_temps
     url: https://www.rafp.fr/employeur/compte-epargne-temps
@@ -4146,7 +4166,21 @@ sources:
       Le seuil qui sépare la rente du capital, le coefficient de majoration par
       âge et la table de conversion : le dépôt applique ce barème sans l'avoir
       lu chez l'ERAFP.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026, après l'action 142 qui en avait tiré l'exemple du
+      capital fractionné. Les trois natures (capital jusqu'à 4 899 points, capital
+      fractionné de 4 900 à 5 124, rente à partir de 5 125), le coefficient de
+      majoration et le barème de conversion qu'elle publie sont ceux que le modèle
+      applique (data/reference/regles/rafp_majoration_capital.yaml) ; son exemple
+      de capital unique, 4 448 points à 64 ans en 2026, 6 965,93 €, concorde et
+      entre aux exemples (tests/temoins/exemples_officiels.yaml,
+      erafp_page_capital_64_ans). Son exemple d'avant avril 2024 reste écarté : il
+      écrit la valeur de service de 2025 (0,05593 €) et calcule à celle de 2026,
+      368,25 € quand son produit fait 363,18 €. Le dispositif de l'ITR outre-mer
+      (4 000 € garantis, deux exemples à 2024 et 2025) est documenté sans être
+      modélisé (fiche rafp_garantie_outre_mer).
 
   - id: rafp_reversion
     url: https://www.rafp.fr/actif/activite/reversion
@@ -4156,7 +4190,20 @@ sources:
     a_en_tirer: >-
       La réversion du régime additionnel, qui n'a pas les conditions de la
       pension civile.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026, avec les deux barèmes qu'elle publie, « à compter du
+      1er janvier 2022 » : la conversion en capital du conjoint (31 à 110 ans,
+      46,71 à 1,42, l'âge de 31 ans retenu en deçà) et de l'orphelin (0 à 21 ans,
+      18,96 à 0), au mois, chacun avec son exemple, et celui de l'orphelin de 2005
+      au rapport annuel 2012 ; tous dans
+      data/reference/regles/reversion_rafp.yaml, lus et non portés : le modèle
+      montre en rente la réversion qu'un capital paie. Deux lectures divergentes
+      notées à la fiche : l'exemple de la page convertit par 29 à 54 ans, le
+      barème qu'elle publie dit 30,94 ; elle plafonne les orphelins à 50 % quand
+      le décret plafonne le total du conjoint et des orphelins. Le barème des
+      conjoints saute l'âge de 85 ans.
 
   - id: fonction_publique_retraite_progressive
     url: https://www.fonction-publique.gouv.fr/toutes-les-publications/faq-relative-la-retraite-progressive-dans-la-fonction-publique

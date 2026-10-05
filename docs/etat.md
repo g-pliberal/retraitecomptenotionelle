@@ -27,7 +27,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 3 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **46 sur 156** (147 exemples : 138 reproduits, 9 en écart connu, section 2).
+- Confrontées à au moins un exemple officiel : **46 sur 156** (151 exemples : 141 reproduits, 10 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **47 sur 156**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **43 sur 156**, par 2 292 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **48 sur 156**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
@@ -229,6 +229,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `ur_reversion_prive_ressources_plafond_2024` | reversions_mensuelles | regime_general 0, agirc_arrco 420 | regime_general 33,47, agirc_arrco 420 | `reversion` |
 | `erafp_1958_effet_2026_11_8000_points` | prestation_rafp | forme rente, age_legal 64, coefficient 1,3, rente_mensuelle 49,15 | forme rente, age_legal 62, coefficient 1,29667, rente_mensuelle 49,02 | `rafp_majoration_capital` |
 | `erafp_1963_effet_2026_11_5000_points` | prestation_rafp | forme capital_fractionne, age_legal 62,75, coefficient 1,05, premiere_fraction 99,24 | forme capital_fractionne, age_legal 62,75, coefficient 1,05333, premiere_fraction 99,56 | `rafp_majoration_capital` |
+| `erafp_ra2012_jean_capital_62_ans` | prestation_rafp | forme capital, coefficient 1,08, conversion 24,62, capital 4030,38 | forme capital, coefficient 1,08, conversion 24,62, capital 4030,88 | `rafp_majoration_capital` |
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
@@ -246,7 +247,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris
   - 142. Les simulateurs officiels, sans y passer ses journées
   - 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés
-- **Les sources à exploiter** : 139 à explorer sur 320 (73 explorées, 88 épuisées). 14 d'entre elles visent un régime partiel, et pourraient le compléter :
+- **Les sources à exploiter** : 140 à explorer sur 320 (73 explorées, 91 épuisées). 14 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Caisse nationale d'assurance vieillesse des professions libérales, régime de base : 7 source(s) (mon_entreprise_comparaison_ei, cnavpl_wordpress, cavec_wordpress…)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
   - Régime des artistes-auteurs professionnels (IRCEC) : 2 source(s) (cnav_arrierees_artiste_auteur, mon_entreprise_artiste_auteur)

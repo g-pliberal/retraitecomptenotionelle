@@ -1262,14 +1262,14 @@ borne basse et l'écart une borne haute.
 
 **Reprise, au 5 octobre 2026.** Les 260 adresses se dépouillent par lots.
 Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
-publique de l'État, la CNRACL et la Caisse des dépôts ; leurs restes sont sous
-« laisse ouvert » et « Puis le rétablissement ». Trois simulateurs
-d'info-retraite sont saisis (note du 1er octobre, action 142) : la réversion
-Agirc-Arrco avant 55 ans y attend sa lecture. Les saisies passent par
-`scripts/simulateurs.py`, qui tient le budget, sur un lot approuvé. Restent
-les lignes `a_explorer` de `data/sources_a_explorer.yaml` : le RAFP, le CLEISS,
-les modèles publics, mon-entreprise, et quinze API publiques (dernière note).
-D'abord le RAFP, ses lignes réservées par un commit `en_cours` poussé seul.
+publique de l'État, la CNRACL, la Caisse des dépôts et le RAFP (sa note, en
+fin d'action) ; leurs restes sont sous « laisse ouvert » et « Puis le
+rétablissement ». Trois simulateurs d'info-retraite sont saisis (note du
+1er octobre, action 142). Les saisies passent par `scripts/simulateurs.py`, sur
+un lot approuvé. Les seize lignes de l'Agirc-Arrco sont `en_cours` (réservées
+le 5 octobre). Restent `a_explorer` : la CNIEG, les pages de l'Ircantec, la
+Cnav et service-public, le CLEISS, les modèles publics, mon-entreprise, et
+quinze API publiques. Réserver un lot par un commit `en_cours` poussé seul.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
@@ -1906,6 +1906,28 @@ les cinq CSV de la MSA n'y comptent que des retraités par intercommunalité.
 seules), les simulateurs d'info-retraite, la MSA (refus), le SRE et le COR
 (pare-feu), le BOSS, la CNIEG, Juris-CNRACL (un flux RSS d'un seul article, de
 2019) et les WordPress fermés de la CNBF, de l'IRCEC et de la CARPV.
+
+**Le RAFP, le 5 octobre 2026.** Les quatre lignes du régime additionnel,
+réservées puis dépouillées après la note de l'action 142 sur la délibération
+de l'ERAFP, pour ce qu'elle n'avait pas pris. *Quatre exemples de plus*,
+grandeur `prestation_rafp` : les trois prestations-types du rapport annuel
+2012 (page 25), premiers exemples du barème de surcote de 2005, au pivot de
+soixante ans, à 62 et 67 ans en 2013, et le capital unique de la page « Calcul
+et paiement », 4 448 points à 64 ans en 2026, 6 965,93 €. Tous concordent,
+sauf le capital de Jean, que le rapport imprime 4 030,38 € quand son produit,
+3 429 × 0,04421 × 24,62 × 1,08, fait 4 030,88 € : une coquille, en écart
+connu. *La réversion* : les barèmes de conversion en capital du conjoint et de
+l'orphelin, « à compter du 1er janvier 2022 », au mois, et celui de l'orphelin
+de 2005 au rapport annuel 2012, lus dans la fiche `reversion_rafp`, non
+portés — le modèle montre en rente la réversion qu'un capital paie ; celui
+du conjoint d'avant 2022 n'est publié nulle part. Deux lectures divergentes :
+la page convertit par 29 un conjoint de 54 ans, son barème dit 30,94 ; elle
+plafonne les orphelins à 50 %, le décret (article 10) le total du conjoint et
+des orphelins. *La calculette de points* reste `a_explorer` : le serveur
+calcule, rien ne se lit sans saisir. Les points de l'année sont « arrondis au
+point supérieur » selon l'ERAFP, ce que le décret (article 5) ne dit pas ni le
+modèle ne fait, moins d'un point par an. *Laissé* : porter la conversion de la
+réversion au barème de 2022, et l'allocation d'orphelin.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 

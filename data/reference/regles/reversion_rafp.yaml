@@ -73,7 +73,12 @@ versions:
 approximations:
 - ecart: >-
     la réversion de moins de 5 125 points, que l'ERAFP verse en capital, est montrée
-    comme la rente dont ce capital est l'équivalent, comme le droit direct du défunt
+    comme la rente dont ce capital est l'équivalent, comme le droit direct du défunt ;
+    le capital serait cette rente par le coefficient de conversion du conjoint à son
+    âge à la date d'effet, au mois (31 ans au moins), lu au barème que l'ERAFP applique
+    depuis le 1er janvier 2022 — 30,94 à 54 ans, 25,00 à 62 ans, 46,71 à 31 ans — ;
+    celui d'avant 2022 n'est pas publié, le rapport annuel 2012 ne donnant que ceux de
+    l'ouvrant droit et de l'orphelin
   effet: >-
     la forme de la prestation, non son montant annuel ; non mesuré
 - ecart: >-
@@ -108,6 +113,19 @@ sources:
     posent de condition de durée du mariage, et la fiche dit que le conjoint sans
     réversion d'un régime de base de la fonction publique demande celle du RAFP à la
     Caisse des dépôts. Le modèle suit le texte.
+  - >-
+    La page « La réversion » de l'ERAFP illustre la conversion par un conjoint de 54 ans,
+    130 € de rente, « 130 € x 29 = 3 770 € », quand le barème des conjoints qu'elle
+    publie à côté, applicable depuis le 1er janvier 2022, donne 30,94 à 54 ans (4 022,20
+    €) : l'exemple suit un barème plus ancien, que le site ne publie pas, ou se trompe.
+    Le même barème saute l'âge de 85 ans (8,96 à 84 ans, 7,78 à 86).
+  - >-
+    La même page plafonne l'ensemble des prestations d'orphelin à 50 % (« à partir de
+    six orphelins, les prestations d'orphelin sont proratisées » ; huit orphelins :
+    6,25 % chacun), quand l'article 10 du décret ne plafonne que le total du conjoint
+    et des orphelins, à la prestation du défunt, en réduisant celles des orphelins : les
+    deux lectures ne divergent que sans conjoint survivant, à partir de six orphelins.
+    Le modèle ne sert pas la prestation d'orphelin.
   a_relire:
   - >-
     Ouverte le 4 octobre 2026, à l'étape de l'action 142 qui sert la réversion du RAFP,
@@ -136,9 +154,29 @@ sources:
     reference: >-
       ERAFP, page « La réversion » de rafp.fr : 50 % pour un conjoint seul, au prorata
       des unions sinon, 10 % par orphelin, rente ou capital selon le seuil de 5 125
-      points
-    date: 2026-10-04
+      points ; relue le 5 octobre 2026 : l'ensemble des orphelins à 50 % au plus,
+      l'exemple du conjoint de 54 ans converti par 29
+    date: 2026-10-05
     url: https://www.rafp.fr/actif/activite/reversion
+  - type: autre
+    reference: >-
+      ERAFP, « Valeurs des coefficients de conversion en capital pour les conjoints » et
+      « … pour les orphelins », « À compter du 1er janvier 2022 » : par âge à la date
+      d'effet, au prorata des mois — conjoint né le 22/12/1972, effet au 23/01/2014,
+      41 ans et 1 mois, « 40,22 + (39,53 − 40,22) × 1/12 = 40,16 » ; orphelin de 8 ans
+      et 8 mois, « 11,61 » ; le conjoint de 31 ans à 110 ans (46,71 à 1,42), l'âge de
+      31 ans retenu en deçà ; l'orphelin de 0 à 21 ans (18,96 à 0,00). Empreintes
+      sha256:faab61ee90f1808780707b8ba573f7ae52cbf7285a5760e4143cf0c393668170 et
+      sha256:8c0f2bc2fb962561bfada2c9c45e13ffa34a2329c1382c6c211c77998d3b41e7
+    date: 2026-10-05
+    url: https://erafp-prod-internet.oos.cloudgouv-eu-west-1.outscale.com/s3fs-public/2022-02/reversion-coefficient-conversion-conjoints-2022.pdf
+  - type: autre
+    reference: >-
+      ERAFP, rapport annuel 2012, annexe 2 : le barème de conversion « pour l'orphelin,
+      lors de la réversion », de 18,33 à 0 an à 0,99 à 20 ans, celui de 2005 ; aucun
+      barème du conjoint
+    date: 2026-10-05
+    url: https://media.rafp.fr/s3fs-public/2022-12/2012-RAFP-Rapport-Annuel.pdf
 code:
   python: >-
     droit/reversion.py : reversion ; droit/liquider.py et droit/commun.py :
@@ -155,6 +193,11 @@ historique:
   2026-10-04 — née et lue par le moteur à l'étape de l'action 142 qui sert la
   réversion du RAFP, de la RCI et de l'Ircantec : les simulateurs anonymes la
   servaient, le modèle disait « non portée ».
+- >-
+  2026-10-05 — relue à l'action 89 : les barèmes de conversion du conjoint et de
+  l'orphelin de 2022, et celui de l'orphelin de 2005, lus et non portés ; deux lectures
+  divergentes de la page de l'ERAFP, son exemple converti par 29 et le plafond de 50 %
+  des orphelins.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un fonctionnaire de l'État ou d'un agent des
   collectivités et des hôpitaux qui décède. Le modèle la calcule pour le conjoint que
