@@ -397,6 +397,17 @@ def dependance(**reglages: str) -> float:
     return _avenir(reglages).dependance
 
 
+def reconstitution(**reglages: str) -> float:
+    """Écart, en %, de la base que l'ancrage prête au modèle à la dépense
+    observée, une année publiée : la projection du système actuel refaite à
+    rebours (``Avenir.reconstitution``)."""
+    rapports = _cout_de(reglages).avenir.reconstitution()
+    annee = int(reglages["annee"])
+    if annee not in rapports:
+        raise ValueError(f"l'année {annee} n'est pas publiée : {min(rapports)}-{max(rapports)}")
+    return (rapports[annee] - 1) * 100
+
+
 def fusion(**reglages: str) -> float:
     """Un champ du régime unique qui naît à la bascule — ``champ=…``.
 
@@ -1624,6 +1635,7 @@ MESURES = {
     "millieme_salaire": millieme_salaire,
     "poids_trimestre": poids_trimestre,
     "dependance": dependance,
+    "reconstitution": reconstitution,
     "emploi_projete": emploi_projete,
     "composition_revalorisation": composition_revalorisation,
     "age_reference": age_reference,

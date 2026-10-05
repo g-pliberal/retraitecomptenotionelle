@@ -1171,8 +1171,14 @@ class AvenirAnnuel {
   constructor(annee, projete, base, coefficientConstants, pib, rapportsAnnee,
               dependance, recettes = {}, partDerives = 0.0,
               reversionServie = false, reformeEnVigueur = true, garantie = null,
-              pilier = null, partStock = 0.0, facteurAssietteLiberal = 1.0) {
+              pilier = null, partStock = 0.0, facteurAssietteLiberal = 1.0,
+              baseModele = 0.0) {
     this.annee = annee;
+    // Ce que le modèle donne lui-même au système actuel cette année-là, en
+    // millions d'euros constants : sa masse de pensions, mise à l'échelle par
+    // l'ancrage de la dernière année publiée. La base des années projetées ;
+    // sur les années publiées, elle refait le passé (`Avenir.reconstitution`).
+    this.baseModele = baseModele;
     // Part de la masse du système actuel que les scénarios 3 et 5 servent
     // encore selon le droit actuel : un avant la bascule, puis de moins en moins.
     this.partStock = partStock;
@@ -1280,6 +1286,23 @@ class Avenir {
     let somme = 0;
     for (const ligne of this.projetees()) somme += ligne.reprisesConstants();
     return somme;
+  }
+
+  /**
+   * Le passé refait par la mécanique de la projection : pour chaque année
+   * publiée, la base que l'ancrage prête au modèle rapportée à la dépense
+   * observée. Un si la projection, lancée à rebours, retrouve ce qui a été
+   * dépensé. Portage de `Avenir.reconstitution` dans `cout.py`, qui dit ce
+   * que l'ancrage suppose sans le vérifier.
+   */
+  reconstitution() {
+    const rapports = new Map();
+    for (const ligne of this.annees) {
+      if (!ligne.projete && ligne.base > 0) {
+        rapports.set(ligne.annee, ligne.baseModele / ligne.base);
+      }
+    }
+    return rapports;
   }
 }
 
@@ -2404,9 +2427,10 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
         pilier = new PilierAnnuel(annee, rapportsPilier);
       }
     }
-    const base = projete
-      ? ancrage * total.actuel
-      : depenses.repartition(annee) * coefficient;
+    // La base du modèle est calculée chaque année, publiée ou non : la même
+    // formule, appliquée au passé, est ce qui la contrôle.
+    const modele = ancrage * total.actuel;
+    const base = projete ? modele : depenses.repartition(annee) * coefficient;
     const actifs = population.actifs.valeur(annee);
     const partDerives = depenses.partDroitsDerives(annee);
     const projetee = garantie.chiffrer(total, tetes);
@@ -2431,6 +2455,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       pilier,
       total[MASSE_STOCK] / total.actuel,
       facteurAssiette(cotisations, annee, simulateur.parametres.annee_bascule),
+      modele,
     ));
   }
 

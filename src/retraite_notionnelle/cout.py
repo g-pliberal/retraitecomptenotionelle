@@ -730,6 +730,12 @@ class AvenirAnnuel:
     #: encore selon le droit actuel : ``MASSE_STOCK`` sur la masse du système
     #: actuel. Un avant la bascule, puis de moins en moins.
     part_stock: float = 0.0
+    #: Ce que le modèle donne lui-même au système actuel cette année-là, en
+    #: millions d'euros constants : sa masse de pensions, mise à l'échelle par
+    #: l'ancrage de la dernière année publiée. C'est la base des années
+    #: projetées ; sur les années publiées, elle refait le passé par la
+    #: mécanique qui projette l'avenir (:meth:`Avenir.reconstitution`).
+    base_modele: float = 0.0
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
@@ -806,6 +812,22 @@ class Avenir:
     def cumul_reprises(self) -> float:
         """Ce que les successions rendent sur les années projetées, en euros constants."""
         return sum(ligne.reprises_constants() for ligne in self.projetees())
+
+    def reconstitution(self) -> dict[int, float]:
+        """Le passé refait par la mécanique de la projection, année publiée par
+        année publiée.
+
+        Chaque valeur rapporte la base que l'ancrage prête au modèle à la
+        dépense observée : un si la projection, lancée à rebours depuis la
+        dernière année publiée, retrouve ce qui a été dépensé. Elle ne vaut un
+        par construction que cette année-là. Les autres disent ce que l'ancrage
+        suppose sans le vérifier : que l'écart du modèle au réel est le même
+        pour toutes les générations, et que la part de la réversion ne bouge
+        pas. Une mécanique qui ne refait pas le passé n'a pas de raison de
+        prédire l'avenir, et l'écart au COR en 2070 en est le symptôme.
+        """
+        return {ligne.annee: ligne.base_modele / ligne.base
+                for ligne in self.annees if not ligne.projete and ligne.base > 0.0}
 
 
 @dataclass
@@ -3300,10 +3322,10 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
                     for cle in ("frais_versement", "frais_gestion", "encours",
                                 "rentes_brutes", "rentes")
                 })
-        base = (
-            ancrage * masses["actuel"] if projete
-            else depenses.repartition(annee) * coefficient
-        )
+        # La base du modèle est calculée chaque année, publiée ou non : la même
+        # formule, appliquée au passé, est ce qui la contrôle.
+        modele = ancrage * masses["actuel"]
+        base = modele if projete else depenses.repartition(annee) * coefficient
         actifs = population.actifs(annee)
         part_derives = depenses.part_droits_derives(annee)
         projetee = garantie.chiffrer(masses, tetes)
@@ -3327,6 +3349,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
             pilier=pilier,
             part_stock=masses[MASSE_STOCK] / masses["actuel"],
+            base_modele=modele,
         ))
     _reprises_successions(lignes, simulateur, garantie)
 

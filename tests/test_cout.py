@@ -11,6 +11,7 @@ prospective ne déplace rien avant sa bascule.
 from __future__ import annotations
 
 import csv
+import math
 from dataclasses import replace
 
 import pytest
@@ -622,6 +623,62 @@ def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir, compte
     horizon = avenir.annees[-1]
     ecart = horizon.part_pib("actuel") - comptes.depense(horizon.annee)
     assert 0.0 < ecart < 0.035, f"{horizon.annee} : écart au COR {ecart:.2%}"
+
+
+#: Première année que la reconstitution du passé contrôle. Les années 1990,
+#: que la DREES ventile aussi, s'écartent davantage encore (-24,5 % en 1990) :
+#: le cliquet ne les tient pas.
+RECONSTITUTION_DEPUIS = 2000
+#: Le pire écart admis, depuis 2000, entre la base du modèle et la dépense
+#: observée. Un cliquet, qui ne doit que descendre : -19,2 % en 2009, le
+#: 5 octobre 2026.
+RECONSTITUTION_CLIQUET = 0.195
+#: Ce que vise le cliquet : quelques pour cent, chaque année.
+RECONSTITUTION_CIBLE = 0.05
+
+
+def test_la_projection_refait_le_passe(avenir, depenses):
+    """La mécanique qui projette le système actuel doit savoir refaire le passé.
+
+    Au-delà de la dernière année publiée, le coût du système actuel est la
+    masse de pensions des cas types, multipliée par l'ancrage qui la rend égale
+    à la dépense observée cette année-là. La même formule, appliquée aux années
+    publiées, devrait retrouver ce qui a été dépensé
+    (:meth:`Avenir.reconstitution`) : c'est le seul contrôle que la
+    trajectoire puisse recevoir de faits, et non d'une autre projection.
+
+    *Le 5 octobre 2026*, elle ne les retrouve pas : la base du modèle vaut
+    83 % de la dépense observée en 2000, 81 % en 2009, 95 % en 2020, et 75,5 %
+    en 1990. La masse du modèle croît plus vite que la dépense réelle, et
+    l'ancrage reporte cette dérive sur l'avenir : c'est le symptôme le plus
+    direct de l'écart au COR en 2070, que
+    ``test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible`` tient à
+    part. L'ancrage suppose deux choses sans les vérifier : que l'écart du
+    modèle au réel est le même pour toutes les générations, et que la part de
+    la réversion reste celle de l'année d'ancrage.
+
+    Le seuil est donc un CLIQUET, qui ne doit que descendre jusqu'à la cible
+    de quelques pour cent. Un écart qui le dépasse est une régression de la
+    projection, ou la correction d'un défaut qui en compensait un autre : le
+    dire ici avant de toucher au chiffre. Un écart qui passe d'un point sous
+    lui demande de l'abaisser.
+    """
+    reconstitution = avenir.reconstitution()
+    # L'année d'ancrage est refaite par construction : sinon, la formule de
+    # la projection n'est plus celle que la reconstitution applique.
+    assert reconstitution[depenses.derniere_annee] == pytest.approx(1.0, rel=1e-12)
+    ecarts = {annee: rapport - 1.0 for annee, rapport in reconstitution.items()
+              if annee >= RECONSTITUTION_DEPUIS}
+    assert min(ecarts) == RECONSTITUTION_DEPUIS, sorted(ecarts)
+    pire = max(ecarts, key=lambda annee: abs(ecarts[annee]))
+    ecart = abs(ecarts[pire])
+    assert ecart <= RECONSTITUTION_CLIQUET, (
+        f"{pire} : la projection refait le passé à {ecarts[pire]:+.1%}, le "
+        f"cliquet en admet {RECONSTITUTION_CLIQUET:.1%} "
+        f"(cible : {RECONSTITUTION_CIBLE:.0%})")
+    assert ecart > RECONSTITUTION_CLIQUET - 0.01, (
+        f"{pire} : {ecarts[pire]:+.1%}, l'écart a baissé : abaisser le cliquet "
+        f"à {math.ceil(ecart * 200) / 200:.1%}")
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):
@@ -3353,10 +3410,15 @@ def test_la_part_des_reportes_en_emploi_elargit_l_assiette_en_proportion(
     assert moyens == sorted(moyens) and len(set(moyens)) == 3, moyens
 
 
-def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_a_mi_emploi, tmp_path):
-    """Le site n'expose pas la part des reportés en emploi, et aucune page
-    témoin ne la couvre : ``tests/js/comparer-cout.mjs`` refait le coût en
-    JavaScript sous la même part, et chaque solde doit être celui du Python."""
+#: Les années dont ``tests/js/comparer-cout.mjs`` rend le solde.
+ANNEES_PORTAGE = [2025, 2026, 2030, 2040, 2050, 2070]
+
+
+@pytest.fixture(scope="module")
+def portage_a_mi_emploi(tmp_path_factory):
+    """Le coût refait en JavaScript sous la même part de reportés en emploi
+    que ``cout_a_mi_emploi`` : ``tests/js/comparer-cout.mjs`` le calcule une
+    fois, et chaque test en compare un morceau."""
     import json
     import shutil
     import subprocess
@@ -3365,19 +3427,25 @@ def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_a_mi_emploi, tmp_pa
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     racine = Path(__file__).resolve().parents[1]
-    annees = [2025, 2026, 2030, 2040, 2050, 2070]
-    demande = tmp_path / "cout.json"
+    demande = tmp_path_factory.mktemp("portage") / "cout.json"
     demande.write_text(json.dumps({"parametres": {"part_reportes_en_emploi": 0.5},
-                                   "annees": annees}), encoding="utf-8")
+                                   "annees": ANNEES_PORTAGE}), encoding="utf-8")
     calcul = subprocess.run(
         ["node", str(racine / "tests" / "js" / "comparer-cout.mjs"), str(demande)],
         capture_output=True, text=True, encoding="utf-8", cwd=racine, check=False,
     )
     assert calcul.returncode == 0, calcul.stderr[-2000:]
-    portage = json.loads(calcul.stdout)
+    return json.loads(calcul.stdout)
 
+
+def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_a_mi_emploi,
+                                                        portage_a_mi_emploi):
+    """Le site n'expose pas la part des reportés en emploi, et aucune page
+    témoin ne la couvre : ``tests/js/comparer-cout.mjs`` refait le coût en
+    JavaScript sous la même part, et chaque solde doit être celui du Python."""
+    portage = portage_a_mi_emploi
     solde = cout_a_mi_emploi.solde
-    for annee in annees:
+    for annee in ANNEES_PORTAGE:
         ligne = solde.annee(annee)
         lu = portage["annees"][str(annee)]
         assert lu["facteur_assiette"] == pytest.approx(ligne.facteur_assiette, rel=1e-12)
@@ -3387,6 +3455,18 @@ def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_a_mi_emploi, tmp_pa
     for scenario, valeur in portage["soldes_moyens"].items():
         assert valeur == pytest.approx(solde.solde_moyen(
             scenario, solde.premiere_annee_projetee, solde.derniere_annee), rel=1e-9)
+
+
+def test_le_portage_refait_le_meme_passe(cout_a_mi_emploi, portage_a_mi_emploi):
+    """Aucune page ne montre la reconstitution du passé
+    (:meth:`Avenir.reconstitution`) : le comparateur la rend, et chaque année
+    publiée doit être refaite comme le fait le Python."""
+    attendue = cout_a_mi_emploi.avenir.reconstitution()
+    lue = {int(annee): rapport
+           for annee, rapport in portage_a_mi_emploi["reconstitution"].items()}
+    assert lue.keys() == attendue.keys()
+    for annee, rapport in attendue.items():
+        assert lue[annee] == pytest.approx(rapport, rel=1e-9), annee
 
 
 # -- la TVA, que la proposition ne réforme plus -------------------------------

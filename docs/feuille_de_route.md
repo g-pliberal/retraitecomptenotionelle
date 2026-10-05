@@ -6820,3 +6820,70 @@ changement dans les moteurs. »
    (décret n° 79-814), le statut du personnel de la CANSSM, les règlements
    des ports : à lire au fac-similé du Journal officiel ou aux archives, puis
    inscrire ou écarter.
+
+### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
+
+**Reprise, au 5 octobre 2026.** Fait : l'étape 1 — la projection du système
+actuel refaite à rebours sur les années publiées (`Avenir.reconstitution`, et
+son jumeau), et un test qui tient son pire écart depuis 2000 sous un cliquet
+de 19,5 %, à abaisser jusqu'à 5 %. Reste : 2. entrer au dépôt la
+décomposition du COR — nombre de retraités, pension moyenne rapportée au
+revenu d'activité moyen — pour situer l'écart de 2070 année par année ;
+3. tant que l'écart dure, donner la dette de la proposition en fourchette ;
+puis corriger la dérive. Commencer par l'étape 2 ; la note de l'étape 1 dit
+ce que la reconstitution mesure, et ses suspects.
+
+**Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
+faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
+le 1 ».
+
+**Le diagnostic, le 4 octobre 2026.** Le système actuel projeté coûte 17,8 %
+du PIB en 2070, le COR 15,3 %, sous la même démographie (projections de
+l'INSEE de 2026) et les mêmes hypothèses économiques : deux points et demi,
+une centaine de milliards par an, que `limites.md` § 5 ter laisse inexpliqués
+depuis l'action 8. Les deux moitiés de la page Coût en héritent, dans le sens
+qui flatte la proposition. Les économies se mesurent contre les 17,8 % du
+modèle. Le bilan prend la dépense du COR, multipliée par le rapport de masses
+du modèle (`SoldeAnnuel.depense`), calculé contre ces mêmes 17,8 % : la
+proposition y dépense 8,18 % du PIB en 2070, quand la page Coût lui en donne
+9,54. Si l'excès est propre au scénario 1, la dette de 2070 que l'accueil
+cite à 35 % du PIB serait de 57 à 70 % — le haut avec la base de la page
+Coût, le bas en y corrigeant la part de la réversion. Mesuré le même jour : la
+pension moyenne par tête du scénario 1, rapportée au salaire moyen, ne recule
+que de 3 % de 2024 à 2070 ; à effectifs égaux, rejoindre le COR demanderait
+qu'elle finisse environ 16 % plus bas.
+
+**Étape 1, le 5 octobre 2026 : la projection refait le passé, sous un
+cliquet.**
+
+- *Ce qui est fait.* `_avenir` calcule chaque année la base que l'ancrage
+  prête au modèle — la masse du système actuel, multipliée par l'ancrage de
+  la dernière année publiée — et la garde, publiée ou non (`base_modele`) ;
+  `Avenir.reconstitution` la rapporte à la dépense observée des années
+  publiées. Le jumeau la porte (`baseModele`, `reconstitution`), et
+  `tests/js/comparer-cout.mjs` la rend.
+- *Ce que ça mesure.* La base du modèle vaut 75,5 % de la dépense observée en
+  1990, 83 % en 2000, 81 % en 2009 — son pire depuis 2000 —, 95 % en 2020 et
+  102 % en 2023 ; un, par construction, en 2024 seulement. La masse du modèle
+  croît plus vite que la dépense réelle, et l'ancrage reporte la dérive sur
+  l'avenir. Trois suspects, à départager à l'étape 2 : un écart des cas types
+  au réel qui varie d'une génération à l'autre, quand l'ancrage le tient pour
+  uniforme ; la réversion, figée à sa part de 2024 (10,4 % de la masse) quand
+  la série du COR la fait tomber à 5,7 % en 2070 — cinq pour cent de trop sur
+  la base de 2070, en partie compensés par le rattrapage des pensions propres
+  des femmes, que les cas types ignorent ; les effectifs, la grille comptant
+  toute une génération dès le taux plein de son cas type. Un quatrième
+  morceau n'est pas une erreur de projection : les gels et les
+  sous-revalorisations depuis 2013, que les masses ne reprennent pas, creusent
+  l'écart des années d'avant, de quelques points à mesurer.
+- *Les tests.* `test_la_projection_refait_le_passe` (`tests/test_cout.py`) :
+  l'année d'ancrage refaite à l'identique, puis le pire écart depuis 2000 sous
+  un cliquet de 19,5 %, qui échoue si l'écart monte et demande de l'abaisser
+  s'il baisse d'un point ; la cible, 5 %, est dans le message.
+  `test_le_portage_refait_le_meme_passe` : le jumeau, année par année, sur le
+  calcul du comparateur que partage désormais
+  `test_le_portage_suit_la_part_des_reportes_en_emploi`. La sonde
+  `reconstitution` ancre les chiffres de `limites.md` § 5 ter.
+- *Ce que ça déplace.* Rien : aucun témoin, aucun rendu de page ; le site
+  pèse un ou deux kilo-octets de plus.
+- *Restent* : les étapes 2 et 3, puis la correction.

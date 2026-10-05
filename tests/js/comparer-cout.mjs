@@ -5,7 +5,8 @@
  * Reçoit en argument un fichier JSON — ``{parametres, annees}`` : les
  * paramètres qui s'écartent du défaut, et les années à lire — et écrit sur la
  * sortie standard, pour chaque année, le solde de chaque système et le facteur
- * d'assiette de la proposition, puis les soldes moyens de la projection.
+ * d'assiette de la proposition, puis les soldes moyens de la projection, et la
+ * reconstitution du passé par la mécanique de la projection.
  * `tests/test_cout.py` compare le tout au modèle Python.
  *
  * Il existe pour les paramètres que le site n'expose pas, et qu'aucune page
@@ -27,7 +28,8 @@ const paquet = JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf
 const { parametres, annees } = JSON.parse(readFileSync(process.argv[2], "utf8"));
 
 const contexte = new Contexte(paquet, { ...PARAMETRES_DEFAUT, ...parametres });
-const solde = contexte.cout().solde;
+const cout = contexte.cout();
+const solde = cout.solde;
 const scenarios = SCENARIOS.map(([scenario]) => scenario);
 
 const sortie = {
@@ -41,6 +43,7 @@ const sortie = {
   soldes_moyens: Object.fromEntries(scenarios.map((s) => [
     s, solde.soldeMoyen(s, solde.premiereAnneeProjetee, solde.annees.at(-1).annee),
   ])),
+  reconstitution: Object.fromEntries(cout.avenir.reconstitution()),
 };
 
 process.stdout.write(JSON.stringify(sortie));

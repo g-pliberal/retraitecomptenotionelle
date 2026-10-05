@@ -3016,6 +3016,22 @@ d'écart au départ — l'affaire du périmètre, la répartition obligatoire de
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **deux
 points et demi à l'arrivée**.
 
+**Le contrôle interne : refaire le passé.** Au-delà de la dernière année
+publiée, le coût du système actuel est la masse de pensions des cas types, mise
+à l'échelle par l'ancrage qui la rend égale à la dépense de cette année-là. La
+même formule, appliquée aux années publiées, devrait retrouver ce qui a été
+dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−17,0<!--/--> % en 2000, de
+<!--chiffre:mesure(reconstitution?annee=2009)-->−19,2<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−5,3<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−24,5<!--/--> % en 1990. La masse du
+modèle croît donc plus vite que la dépense réelle, et l'ancrage reporte cette
+dérive sur l'avenir : c'est le symptôme le plus direct de l'écart au COR.
+L'ancrage suppose, sans le vérifier, que l'écart des cas types au réel est le
+même pour toutes les générations, et que la réversion garde sa part de
+l'année d'ancrage — quand la série du COR que le dépôt porte la fait passer de
+<!--chiffre:cellule(data/reference/macro/part_droits_derives.csv:part*100?annee=2024)-->10,4<!--/--> % de la masse versée en 2024 à <!--chiffre:cellule(data/reference/macro/part_droits_derives.csv:part*100?annee=2070)-->5,7<!--/--> % en 2070. Un test tient le pire écart
+depuis 2000 sous un cliquet, qui ne doit que descendre jusqu'à quelques pour
+cent (`test_la_projection_refait_le_passe`) ; l'action 147 de la feuille de
+route en est le chantier.
+
 ## 5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands
 
 Trois travaux français ont simulé le passage des retraites aux comptes
