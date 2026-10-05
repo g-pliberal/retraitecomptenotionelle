@@ -5593,3 +5593,25 @@ journal:
       La pension par tête de la FPE (proratisation) et des complémentaires du privé, à
       décider par le propriétaire ; la décision du conseil d'administration de
       l'Agirc-Arrco du 14 octobre 2026.
+  - date: "2026-10-05"
+    session: "action 147, étape 7 : la méthode du COR, relue, et l'écart de 2070 décomposé"
+    consulte: >-
+      La veille du jour (scripts/veille_droit.py), déjà consignée. Le rapport annuel du
+      COR de juin 2026 : annexe méthodologique en ligne et son classeur ; partie 1,
+      chapitres 1 et 2 ; partie 2, chapitre 1 ; partie 3, figures 3.2 à 3.5 ; classeurs
+      Données_RA2026_P2.xlsx (figures 2.2, 2.3, 2.6, 2.7, tableau 2.5) et
+      Données_RA2026_P3_2.xlsx. Les documents 4 et 8 de la séance du COR du 26 janvier
+      2023 (« Effet noria ») ; le classeur des projections par régime, millésime 2024
+      (scripts/fetch/cor_regimes.py).
+    trouve: >-
+      Aucun texte de droit : l'étape ne touche aucune règle. La LFSS 2026 telle que le
+      COR la retient (partie 1, chapitre 2) est celle du dépôt : revalorisation de 0,9 %,
+      suspension de la réforme, vingt-trois ou vingt-quatre meilleures années des mères
+      (décret n° 2026-699, fiche sam_parents_24_23). La dérive de 2070 tient pour 8,8
+      points à la comptabilité (réversion, RAFP, ancrage unique) et pour 9,1 à la
+      croissance des groupes, dont 7,0 à la FPE ; le modèle ne change pas.
+    reste: >-
+      Les trois corrections de comptabilité, puis la FPE et la CNRACL, les points
+      Agirc-Arrco et les carrières, chacun dans une session neuve ; la décision du
+      conseil d'administration de l'Agirc-Arrco du 14 octobre 2026, qui fixera la
+      valeur de service de novembre 2026.

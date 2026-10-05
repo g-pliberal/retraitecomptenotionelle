@@ -7252,15 +7252,15 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 6 (le passé refait,
-la décomposition du COR, sa dépense, la fourchette, ses deux conventions —
-dérive de 2070 1,174, dépense de la proposition 8,4 à 9,9 % du PIB —,
-l'écart groupe par groupe, et la pondération par génération, mesurée et
-écartée : elle rapproche chaque groupe du COR mais porte la dérive à 1,190).
-L'écart de masse de 2070 (+16,5 %) n'est pas de composition mais de pension
-par tête : FPE (+37 %) et complémentaires du privé. Reste, à décider par le
-propriétaire : la proratisation de la FPE (levier (c) de l'étape 5), puis la
-pension complémentaire du privé. Commencer par la note de l'étape 6.
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 7 (le passé refait,
+la décomposition du COR, sa dépense, la fourchette, ses deux conventions,
+l'écart groupe par groupe, la pondération par génération écartée, puis la
+méthode du COR relue : la dérive de 2070, 1,174, tient pour 8,8 points à
+trois écarts de comptabilité — réversion, RAFP, ancrage unique — et pour
+9,1 à la croissance des groupes, dont 7,0 à la FPE). Reste, une session
+neuve par point : les trois corrections de comptabilité (dérive attendue
+1,087), puis la FPE et la CNRACL, les points Agirc-Arrco, les carrières.
+Commencer par le point 1 des « Restent » de la note de l'étape 7.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7675,3 +7675,87 @@ groupe.**
   plus de la masse), et celle des complémentaires du privé, que le COR ne
   publie qu'en groupe. La pondération par génération ne vaut d'être reprise
   qu'avec elles : seule, elle déplace l'écart sans le réduire.
+
+**Demande**, le 5 octobre 2026 : « Regarde dans les rapports du Cor leur
+méthode et voit pourquoi on est en écart sur le coût macro. Il y a sûrement
+un écart de méthode que l'on a manqué » ; puis : « Regarde bien les
+méthodologies du Cor. Il faut trouver toutes les différences. Ce n'est pas
+normal d'avoir un tel écart » ; puis : « Fait ça. On attaquera ensuite les
+changements dans une session neuve ».
+
+**Étape 7, le 5 octobre 2026 : la méthode du COR, relue, et l'écart de 2070
+décomposé.**
+
+- *Ce qui est lu.* Le rapport de juin 2026 (annexe méthodologique en ligne,
+  parties 1 et 2, figures 3.2 à 3.5) et ses classeurs ; les documents 4 et 8
+  de la séance du 26 janvier 2023 ; le classeur par régime de 2024
+  (`scripts/fetch/cor_regimes.py`). Mesures sur le modèle tel quel, par des
+  scripts de la session que le dépôt ne garde pas.
+- *La différence de fond.* Le COR additionne les projections que ses trente
+  régimes font de leurs affiliés et compte les retraités par Trajectoire
+  (annexe, § 1.1 et 1.2) ; ses cas types, monoaffiliés à carrière complète,
+  ne servent qu'aux indicateurs individuels (§ 2.1). Le modèle projette la
+  dépense par les siens.
+- *Comptabilité : 8,8 points* sur 17,4 (dérive de 2070, 1,174). La base du
+  modèle porte ses droits directs à la dépense de 2024, réversion comprise :
+  la réversion y garde sa part de 2024 quand le COR la fait tomber de
+  10,3 % à 5,7 % (`part_droits_derives.csv`), → 1,116 ; la reconstitution
+  du passé en est biaisée de deux points depuis 2010. Le RAFP, hors du champ
+  du COR, est dans la masse (0,15 % en 2025, 0,58 % en 2070), → 1,111. Un
+  seul ancrage, quand le COR part de la dépense de chaque régime, fausse la
+  structure de 2025 (droits directs : LURA 49,6 % contre 43,3, FPE 10,0
+  contre 15,5, régimes spéciaux 2,2 contre 4,3) ; aux poids du COR, → 1,087.
+- *Croissance des groupes : 9,1 points*, en droits directs de 2025 à 2070,
+  le COR sans sa réversion : FPE ×1,13 contre ×0,61, +7,0 ; complémentaires
+  ×1,23 contre ×1,15, +1,7 ; non-salariés de base +1,6 (exploitants : têtes
+  ×1,30 dans la grille, ×0,39 au COR) ; régimes spéciaux +1,0 ; LURA ×1,37
+  contre ×1,41, −1,8 ; CNRACL −0,4. Quatre dixièmes tiennent à la gestion et
+  à l'ASPA, que compte la dépense du COR. Repondérer seul ne déplace le
+  total que d'un point au plus (étapes 5 et 6).
+- *La FPE*, moitié têtes (×1,22 dans la grille, stables au COR), moitié
+  pension par tête. Le COR fait monter la part des primes de génération en
+  génération depuis ses refontes de 2018 et 2023 (26,8 % à l'État en 2023),
+  et ne garde la part constante qu'en variante, qui « conduit à projeter des
+  taux de remplacement quasiment identiques à ceux de la génération
+  précédente » (note 38) ; le modèle la tient à 18 % (CNRACL 22 %) pour
+  toutes, `traitement_indiciaire_relatif` valant 1 avant 2025, quand le
+  point d'indice a perdu 35 % sur le salaire moyen depuis 2000 (le SRE : de
+  2015 à 2021, ses entrants n'ont relevé la pension moyenne que de 0,07 point
+  par an). Un traitement décroché de 10 ou 20 % de 2000 à 2025 porte la
+  dérive à 1,166 ou 1,157, l'écart de pension relative de la CNRACL de
+  +12,4 % à +6,5 ou +1,2 %, celui de la FPE de +37,6 % à +32,3 ou +27,3 %.
+  S'y ajoutent les primes à venir (traitement −9,6 % sur le salaire moyen de
+  2025 à 2037 au COR, −8,4 % ici) et la proratisation. Le cas type B : −9 %
+  de taux de remplacement de la génération 1964 à 2000 au COR, −2 % ici.
+- *L'Agirc-Arrco.* Mêmes conventions (rendement 6,29 % dès 2037), mais à
+  carrière égale, de la génération 1964 à 2000, le COR fait reculer sa part
+  du taux de remplacement de 23 % (non-cadre) et 18 % (cadre), le modèle de
+  16 et 12 % (17 et 9 % aux âges d'entrée du COR) ; pour 1964, cette part
+  est 16 % sous celle du COR, la Cnav à 3 % près. À chercher dans les points
+  acquis : taux contractuels et salaires de référence d'avant 1999, profil.
+- *Les carrières.* Neuf cas types sur treize partent au taux plein, et tous
+  entrent au même âge à chaque génération, quand ceux du COR entrent plus
+  tard (non-cadre 18,25 ans en 1950, 22,5 dès 1975 ; figures A2.2 et A2.5).
+  Les années cotisées de la grille vont de 40,7 à 42,6 de la génération 1960
+  à 2000, la durée validée de la DREES de 39,3 à 37,9 (figure 3.2) : la
+  grille échappe à la proratisation des carrières incomplètes. Manquent
+  aussi les migrants (le solde migratoire relevé à +150 000 a retiré 0,96
+  point de PIB à la dépense de 2070 du COR entre ses rapports de 2025 et
+  2026, tableau 2.5) et les polypensionnés (13,6 % de la grille, 32,6 % de
+  l'EIR ; retraités Agirc-Arrco ×1,65 et Cnav ×1,40 au COR, ×1,28 en tout).
+- *Les hypothèses*, les mêmes : population, emploi, revalorisation de 2026,
+  suspension, 23 ou 24 meilleures années des mères, conventions de
+  l'Agirc-Arrco ; la trajectoire de productivité du COR (RAA, puis 0,7 % en
+  2040) ne change le salaire réel de 2070 que d'un point. Deux écarts de sens
+  contraire, petits : la valeur de service de novembre 2026, gelée ici, et
+  les carrières des femmes, qui s'allongent au COR.
+- *Ce que ça déplace.* Rien que cette note.
+- *Restent*, une session neuve par point : (1) les trois corrections de
+  comptabilité, dans les deux moteurs — la base divisée par un moins la part
+  de réversion de l'année, rapportée à celle de l'ancrage ; le RAFP hors de
+  la base et de l'ancrage ; un ancrage par groupe sur la dépense de la DREES
+  par régime (`depenses_retraite_regimes.csv`) —, avec les cliquets et
+  `limites.md` § 5 ter ; (2) la FPE et la CNRACL : la part des primes
+  (DGAFP), les effectifs du COR, les entrées tardives ; (3) les points
+  Agirc-Arrco, contre les cas types n° 1 et 2 du COR ; (4) les carrières
+  incomplètes et les migrants, avec la population de l'action 136.
