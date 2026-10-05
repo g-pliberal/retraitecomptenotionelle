@@ -5579,3 +5579,17 @@ journal:
       Une pondération des cas types par génération, tirée des cotisants que le COR
       projette, à décider par le propriétaire ; la décision du conseil d'administration
       de l'Agirc-Arrco du 14 octobre 2026.
+  - date: "2026-10-05"
+    session: "action 147, étape 6 : la pondération par génération, mesurée et écartée"
+    consulte: >-
+      La veille du jour (scripts/veille_droit.py), déjà consignée ; les cotisants par
+      caisse du COR (regimes/cotisants.csv, millésime 2024), déjà dans le dépôt.
+    trouve: >-
+      Aucun texte de droit : l'étape ne touche aucune règle. Pondérer les cas types par
+      les cotisants de leur caisse pendant la carrière de chaque génération rapproche
+      chaque groupe du COR mais éloigne l'ensemble (dérive de 2070 1,174 → 1,190) ; le
+      modèle ne change pas.
+    reste: >-
+      La pension par tête de la FPE (proratisation) et des complémentaires du privé, à
+      décider par le propriétaire ; la décision du conseil d'administration de
+      l'Agirc-Arrco du 14 octobre 2026.

@@ -7252,16 +7252,15 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 5 (le passé refait,
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 6 (le passé refait,
 la décomposition du COR, sa dépense, la fourchette, ses deux conventions —
-dérive de 2070 1,174, dépense de la proposition 8,4 à 9,9 % du PIB —, et
-l'écart mesuré groupe par groupe, `Avenir.decomposition_groupes`). L'écart de
-masse de 2070 (+16,5 %) est pour moitié la FPE, puis les complémentaires, les
-non-salariés et les régimes spéciaux, et pour un sixième la structure de la
-grille : des poids de cas types figés aux retraités de 2024, pris par année
-et non par génération. Trois leviers essayés font chacun 1 % au plus. Reste,
-à décider par le propriétaire : une pondération par génération tirée des
-cotisants que le COR projette. Commencer par la note de l'étape 5.
+dérive de 2070 1,174, dépense de la proposition 8,4 à 9,9 % du PIB —,
+l'écart groupe par groupe, et la pondération par génération, mesurée et
+écartée : elle rapproche chaque groupe du COR mais porte la dérive à 1,190).
+L'écart de masse de 2070 (+16,5 %) n'est pas de composition mais de pension
+par tête : FPE (+37 %) et complémentaires du privé. Reste, à décider par le
+propriétaire : la proratisation de la FPE (levier (c) de l'étape 5), puis la
+pension complémentaire du privé. Commencer par la note de l'étape 6.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7632,3 +7631,47 @@ groupe.**
   `test_le_portage_decompose_groupe_par_groupe_de_meme`.
   `DECOMPOSITION_PENSION_CLIQUET` (0,15) et la borne de la dérive (1,18)
   restent : rien n'a bougé.
+
+**Étape 6, le 5 octobre 2026 : la pondération par génération, mesurée et
+écartée.**
+
+- *La conception.* Le poids d'un cas type ne serait plus le même pour toutes
+  les générations d'une année : celui de l'année (retraités de sa caisse,
+  DREES, reconduits après 2024) multiplié par un facteur de génération, le
+  rapport des cotisants de sa caisse (COR, `regimes/cotisants.csv`) pendant
+  la carrière de la génération — moyenne de l'âge de début du cas type à
+  59 ans — à ceux de la première année publiée, puis renormalisé génération
+  par génération, pour que chacune garde son effectif. Avant la série (2010,
+  2015 pour la FPE, 2023 pour la CNRACL), la valeur du bord est reconduite :
+  le dépôt n'a pas de cotisants plus anciens. Les générations d'avant 1965
+  gardent donc leur poids, et le passé ne bouge pas. Une variante prend les
+  cotisants de l'année des 45 ans. Sous `conventions_cor` seulement.
+- *La mesure, hors du dépôt* (base → carrière / 45 ans). Les têtes vont où
+  le COR les met : FPE ×1,22 → ×1,03 de 2025 à 2070, non-salariés de base
+  ×1,34 → ×1,03, régimes spéciaux ×0,67 → ×0,43, LURA ×1,29 → ×1,35. Les
+  écarts de dépense au COR des groupes qui se ferment fondent : régimes
+  spéciaux +81 % → +16 % / −2 %, non-salariés +130 % → +79 % / +64 %, FPE
+  +92 % → +61 % / +55 %, CNRACL −3 % → −14 % / −16 %. Mais l'ensemble
+  s'éloigne : LURA +1,6 % → +6,7 % / +7,7 %, complémentaires +12,0 % →
+  +17,7 % / +18,1 %, pension moyenne relative +14,0 % → +15,7 % / +15,8 %,
+  dérive de 2070 1,174 → 1,190 / 1,189 (la masse de 2070 +1,3 %). La
+  fourchette de la page Coût s'élargit au lieu de se resserrer : 8,4 à 9,9 %
+  du PIB → 8,35 à 9,93 %.
+- *Pourquoi.* La pension relative de chaque groupe ne bouge pas (FPE 0,866 →
+  0,864, complémentaires 0,883 → 0,903) : la pondération change qui touche
+  quoi, pas ce que chacun touche. Les têtes que perdent la FPE et les régimes
+  fermés vont aux carrières du privé, dont la grille garde la pension
+  relative de la Cnav (0,998, comme le COR) et une complémentaire qui baisse
+  moins qu'au COR ; le COR, lui, fait baisser l'ensemble par la pension par
+  tête de la FPE (+37 % d'écart) et de l'Agirc-Arrco (+46 %, en partie un
+  écart de têtes, étape 5). L'écart de composition n'était qu'un écart de
+  groupe à groupe ; l'écart total est un écart de pension par tête.
+- *La décision.* Le modèle ne change pas (point 5 de la demande) : la
+  pondération ferait mieux groupe par groupe et plus mal en tout, sur la
+  grandeur que la page affiche. Aucun cliquet, aucune bulle, aucun témoin ne
+  bouge ; dérive 1,174, fourchette 8,4 à 9,9 %.
+- *Ce qui reste inexpliqué.* La pension par tête : celle de la FPE, que le
+  COR fait baisser par la proratisation (levier (c) de l'étape 5, −1 % au
+  plus de la masse), et celle des complémentaires du privé, que le COR ne
+  publie qu'en groupe. La pondération par génération ne vaut d'être reprise
+  qu'avec elles : seule, elle déplace l'écart sans le réduire.
