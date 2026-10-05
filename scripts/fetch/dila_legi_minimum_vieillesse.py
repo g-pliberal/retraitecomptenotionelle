@@ -41,6 +41,15 @@ qu'elle porte, la transcription garde le reste.
 modèle projette entre deux ancres. Chaque montant daté donne donc une ancre à
 l'année de sa date d'effet, ce qui est déjà la convention des lignes en place —
 2010 y porte le montant du 1er avril 2010, 2018 celui du 1er avril 2018.
+
+**LE B) DE L'ARTICLE, LE COUPLE.** Il fixe le montant servi « lorsque les deux
+conjoints, concubins ou partenaires liés par un pacte civil de solidarité en
+bénéficient », par moitié à chacun, et c'est aussi le plafond de ressources du
+couple : D. 815-2 lui donne le même montant en 2006, et le lui égale depuis
+avril 2009. Le script le lit à part (``serie_couple``), pour
+``minimum_vieillesse_couple.csv`` : six ancres, 2006, 2009, 2014 et 2018 à 2020,
+les autres années venant du barème de la Cnav
+(``scripts/fetch/cnav_minimum_vieillesse.py``).
 """
 
 from __future__ import annotations
@@ -71,11 +80,18 @@ MONTANT_PLAUSIBLE = (3000.0, 25000.0)
 #: Hausse annuelle au-delà de laquelle la lecture est douteuse.
 HAUSSE_MAXIMALE = 0.20
 
-#: Le a) de l'article : le barème d'une PERSONNE SEULE. Le b) porte celui du
-#: couple, que le modèle ne connaît pas — il ne simule qu'un individu.
+#: Le a) de l'article : le barème d'une PERSONNE SEULE, ou d'un couple dont un
+#: seul membre est allocataire. Il s'arrête au b), qu'il ne doit pas lire.
 PERSONNE_SEULE = re.compile(
     r"allocation de solidarit[ée] aux personnes [âa]g[ée]es est fix[ée]\s*:?\s*a\)"
     r"(.{0,1200}?)(?:\bb\)|$)",
+    re.I | re.S)
+
+#: Le b) : le barème d'un COUPLE dont les deux membres sont allocataires, qui
+#: est aussi le plafond de ressources du couple (D. 815-2). Il s'arrête à la
+#: phrase qui le dit « servi par moitié ».
+COUPLE = re.compile(
+    r"\bb\)\s*Lorsque les deux conjoints(.{0,800}?)(?:Dans ce cas|$)",
     re.I | re.S)
 
 #: « 8 507, 49 € par an à compter du 1er avril 2010 » — le Journal officiel aère
@@ -132,12 +148,14 @@ def _nombre(brut: str) -> float:
     return float(re.sub(r"[\s ]", "", brut).replace(",", "."))
 
 
-def montants_dates(textes: list[str]) -> tuple[dict[date, float], list[str]]:
-    """Montant ANNUEL de l'allocation d'une personne seule, par date d'effet."""
+def montants_dates(textes: list[str], motif: re.Pattern = PERSONNE_SEULE
+                   ) -> tuple[dict[date, float], list[str]]:
+    """Montant ANNUEL de l'allocation, par date d'effet : celui d'une personne
+    seule, ou, avec ``motif=COUPLE``, celui d'un couple d'allocataires."""
     par_date: dict[date, float] = {}
     griefs: list[str] = []
     for texte in textes:
-        bloc = PERSONNE_SEULE.search(texte)
+        bloc = motif.search(texte)
         if bloc is None:
             continue
         for valeur, jour, mois, annee in MONTANT_DATE.findall(bloc.group(1)):
@@ -233,35 +251,33 @@ def main(arguments: list[str] | None = None) -> int:
             return 1
         print(f"Source    {source}\n")
     textes = lu
-    par_date, griefs = montants_dates(textes)
-    for grief in griefs:
-        print(f"ÉCHEC   {grief}", file=sys.stderr)
-    if griefs:
-        return 1
-    if not par_date:
-        print(f"ÉCHEC   aucune version de l'article {ARTICLE} lue", file=sys.stderr)
-        return 1
-
-    # L'allocation n'a jamais reculé : un recul signale une lecture de travers,
-    # et un bond de plus d'un cinquième aussi.
-    dates = sorted(par_date)
-    for precedente, courante in zip(dates, dates[1:]):
-        if par_date[courante] < par_date[precedente]:
-            print(f"ÉCHEC   le montant recule du {precedente} au {courante} : "
-                  f"{par_date[precedente]:.2f} € puis {par_date[courante]:.2f} €",
+    lus = {}
+    for nom, motif in (("personne seule", PERSONNE_SEULE), ("couple", COUPLE)):
+        par_date, griefs = montants_dates(textes, motif)
+        griefs += _griefs_de_la_serie(par_date)
+        for grief in griefs:
+            print(f"ÉCHEC   {nom}, {grief}", file=sys.stderr)
+        if griefs:
+            return 1
+        if not par_date:
+            print(f"ÉCHEC   {nom}, aucune version de l'article {ARTICLE} lue",
                   file=sys.stderr)
             return 1
-        if par_date[courante] / par_date[precedente] - 1 > HAUSSE_MAXIMALE:
-            print(f"ÉCHEC   le montant bondit de "
-                  f"{par_date[courante] / par_date[precedente] - 1:.1%} entre "
-                  f"{precedente} et {courante}", file=sys.stderr)
+        for effet in sorted(par_date):
+            print(f"OK      {nom}, {effet} : {par_date[effet]:.2f} € par an, "
+                  f"soit {par_date[effet] / 12:.2f} € par mois")
+        lus[nom] = par_date
+    # Le couple d'allocataires reçoit plus qu'une personne seule, et moins que
+    # deux : c'est tout l'objet du barème.
+    for effet, couple in lus["couple"].items():
+        seule = lus["personne seule"].get(effet)
+        if seule is not None and not seule < couple < 2 * seule:
+            print(f"ÉCHEC   {effet} : le couple à {couple:.2f} € pour une personne "
+                  f"seule à {seule:.2f} €", file=sys.stderr)
             return 1
 
-    table = ancres(par_date)
-    for effet in dates:
-        print(f"OK      {effet} : {par_date[effet]:.2f} € par an, "
-              f"soit {par_date[effet] / 12:.2f} € par mois")
-
+    table = ancres(lus["personne seule"])
+    couple = ancres(lus["couple"])
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
@@ -269,19 +285,41 @@ def main(arguments: list[str] | None = None) -> int:
             "article": f"code de la sécurité sociale, article {ARTICLE}",
             "recupere_le": date.today().isoformat(),
             "versions_lues": len(textes),
-            "dates_lues": [effet.isoformat() for effet in dates],
+            "dates_lues": [effet.isoformat() for effet in sorted(lus["personne seule"])],
+            "dates_lues_couple": [effet.isoformat() for effet in sorted(lus["couple"])],
             "note": "montant ANNUEL de l'allocation de solidarité aux personnes "
-                    "âgées d'une personne seule, une ancre par montant daté. "
-                    "L'article n'est pas réécrit à chaque revalorisation : il "
-                    "s'arrête en 2020 et saute les relèvements de 2013 et de 2015 "
-                    "à 2017. Les ancres que le dépôt tient d'ailleurs comblent ce "
-                    "que l'article tait, au niveau haute.",
+                    "âgées d'une personne seule (a de l'article), et d'un couple "
+                    "dont les deux membres sont allocataires (b, serie_couple), "
+                    "qui est aussi le plafond de ressources du couple (D. 815-2) ; "
+                    "une ancre par montant daté. L'article n'est pas réécrit à "
+                    "chaque revalorisation : il s'arrête en 2020 et saute les "
+                    "relèvements de 2013 et de 2015 à 2017, et, pour le couple, "
+                    "ceux de 2010 à 2013. Les ancres que le dépôt tient d'ailleurs "
+                    "comblent ce que l'article tait, au niveau haute.",
             "serie": {str(annee): valeur for annee, valeur in sorted(table.items())},
+            "serie_couple": {str(annee): valeur for annee, valeur in sorted(couple.items())},
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",
     )
-    print(f"\n{len(textes)} versions lues, {len(table)} ancres écrites dans {SORTIE}")
+    print(f"\n{len(textes)} versions lues, {len(table)} ancres d'une personne seule et "
+          f"{len(couple)} d'un couple écrites dans {SORTIE}")
     return 0
+
+
+def _griefs_de_la_serie(par_date: dict[date, float]) -> list[str]:
+    """L'allocation n'a jamais reculé : un recul signale une lecture de
+    travers, et un bond de plus d'un cinquième aussi."""
+    griefs = []
+    dates = sorted(par_date)
+    for precedente, courante in zip(dates, dates[1:]):
+        if par_date[courante] < par_date[precedente]:
+            griefs.append(f"le montant recule du {precedente} au {courante} : "
+                          f"{par_date[precedente]:.2f} € puis {par_date[courante]:.2f} €")
+        elif par_date[courante] / par_date[precedente] - 1 > HAUSSE_MAXIMALE:
+            griefs.append(f"le montant bondit de "
+                          f"{par_date[courante] / par_date[precedente] - 1:.1%} entre "
+                          f"{precedente} et {courante}")
+    return griefs
 
 
 if __name__ == "__main__":

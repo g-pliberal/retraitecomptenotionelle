@@ -330,6 +330,22 @@ listes:
           demande pas, et la réversion n'est alors écrêtée que si elle dépasse
           le plafond avec celles des autres régimes de base. Une ressource
           déclarée prend la place de la présomption
+      ressources_du_conjoint:
+        dit: le conjoint qui ne déclare pas ses ressources n'en a aucune
+        valeur: 0
+        unite: euros par an
+        appliquee_par: >-
+          foyer_et_net (droit/foyer.py), qui compte au plafond de l'allocation
+          de solidarité aux personnes âgées du couple les ressources que la
+          saisie prête au conjoint, et aucune sinon ; son jumeau JavaScript
+        entrera_a: foyer_et_net
+        raison: >-
+          l'ASPA d'un couple se mesure aux ressources des deux (L. 815-9), sous
+          le plafond du couple ; le formulaire ne demande celles du conjoint qu'à
+          qui veut les dire, et annonce que, sans elles, le modèle n'en compte
+          aucune, comme pour la réversion (ressources_du_survivant) et le revenu
+          fiscal présumé (aucun_autre_revenu_que_ses_pensions). Une ressource
+          déclarée prend la place de la présomption
       domicile_fiscal_au_pays_de_residence:
         dit: qui réside hors de France après son départ n'y a pas son domicile fiscal
         valeur: le pays de résidence que la saisie dit

@@ -12970,7 +12970,8 @@ contributifs que la carrière suffit à déterminer :</p>
   taux de son année d'acquisition : 5 % pour l'Arrco de 1999 à 2011, 8 à 24 %
   selon le nombre d'enfants pour l'Agirc d'avant 2012, 10 % depuis ;</li>
   <li><strong>le minimum vieillesse</strong>, allocation différentielle servie à
-  partir de 65 ans sous le barème d'une personne seule. Ce n'est pas une
+  partir de 65 ans sous le barème d'une personne seule, ou sous celui du couple
+  quand un conjoint est déclaré, ses ressources comptées. Ce n'est pas une
   pension : elle apparaît toujours comme une ligne séparée de la cascade.</li>
 </ul>
 <p>Deux barèmes propres complètent l'ensemble : la décote de la fonction

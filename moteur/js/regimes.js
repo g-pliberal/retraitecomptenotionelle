@@ -932,7 +932,8 @@ export class MinimumVieillesse {
     this.macro = macro;
     this._table = paquet.minimum_vieillesse ?? {};
     this._annees = Object.keys(this._table).map(Number).sort((a, b) => a - b);
-    // Le barème d'un couple d'allocataires : l'accueil seul s'en sert.
+    // Le barème d'un couple d'allocataires, qui est aussi le plafond de
+    // ressources de tout couple : le foyer qui déclare un conjoint, et l'accueil.
     this._tableCouple = paquet.minimum_vieillesse_couple ?? {};
   }
 
@@ -957,7 +958,7 @@ export class MinimumVieillesse {
     return this._enVigueur(this._table, annee);
   }
 
-  /** Montant maximal d'un couple d'allocataires, l'année demandée. */
+  /** Montant maximal d'un couple d'allocataires, et plafond de tout couple, l'année demandée. */
   plafondCouple(annee) {
     return this._enVigueur(this._tableCouple, annee);
   }

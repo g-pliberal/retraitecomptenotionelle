@@ -3072,6 +3072,39 @@ def source_minimum_vieillesse() -> dict[tuple, float]:
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
 
 
+def source_minimum_vieillesse_couple() -> dict[tuple, float]:
+    """Montant de l'ASPA d'un couple dont les deux membres sont allocataires,
+    lu dans le b) de l'article D. 815-1 — c'est aussi le plafond de ressources
+    du couple, que D. 815-2 lui égale.
+
+    Le même article que la personne seule, et le même silence : six montants
+    datés, en 2006, 2009, octobre 2014 et de 2018 à 2020. Le barème de la Cnav
+    comble les autres années, au niveau ``haute``.
+    """
+    serie = _lire_json("dila_legi_minimum_vieillesse.json",
+                       "scripts/fetch/dila_legi_minimum_vieillesse.py")["serie_couple"]
+    return {(annee,): valeur for annee, valeur in sorted(serie.items())}
+
+
+def source_minimum_vieillesse_couple_cnav() -> dict[tuple, float]:
+    """Le montant du couple que la Cnav a servi les années que l'article tait.
+
+    Le barème de la caisse porte chaque revalorisation depuis 2006 ; le
+    récupérateur en tire le montant en vigueur au 31 décembre de chaque année,
+    et a vérifié qu'il redonne au centime les ancres de l'article. Transcription
+    de la caisse : niveau ``haute``, et seulement aux années que la base LEGI
+    ne certifie pas.
+    """
+    serie = _lire_json("cnav_minimum_vieillesse.json",
+                       "scripts/fetch/cnav_minimum_vieillesse.py")["serie_couple"]
+    try:
+        certifiees = set(source_minimum_vieillesse_couple())
+    except SourceAbsente:
+        certifiees = set()
+    return {(annee,): valeur for annee, valeur in sorted(serie.items())
+            if (annee,) not in certifiees}
+
+
 def source_minimum_garanti_reference() -> dict[tuple, float]:
     """Traitement de référence du minimum garanti, par le service qui le sert.
 
@@ -5689,6 +5722,32 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         unite=" €",
+    ),
+    Certification(
+        nom="minimum_vieillesse_couple",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_couple.csv",
+        cles=("annee",),
+        colonne="valeur",
+        source=source_minimum_vieillesse_couple,
+        origine="DILA, base LEGI, code de la sécurité sociale, article D. 815-1, b",
+        decimales=6,
+        tolerance=5e-7,
+        unite=" €",
+    ),
+    Certification(
+        nom="minimum_vieillesse_couple_cnav",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_couple.csv",
+        cles=("annee",),
+        colonne="valeur",
+        source=source_minimum_vieillesse_couple_cnav,
+        origine="Cnav, barèmes « Montant de l'allocation de solidarité aux personnes "
+                "âgées » et « Plafond de ressources pour l'allocation de solidarité "
+                "aux personnes âgées »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+        complementaire=True,
     ),
     Certification(
         nom="plafond_journal_officiel",

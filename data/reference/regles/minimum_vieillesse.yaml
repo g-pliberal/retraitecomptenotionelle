@@ -1,21 +1,50 @@
 schema_version: 1
 id: minimum_vieillesse
 intitule: >-
-  ASPA servie au barème d'une personne seule, différentielle sur les pensions — les
-  françaises, et celles qu'un autre État sert, déclarées —, sans autre ressource, à
-  tous, en ligne séparée. Revalorisée sur les prix : L. 816-2 renvoie au coefficient de
-  L. 161-25, moyenne annuelle des prix hors tabac, plancher à 1.
+  ASPA différentielle sur les pensions — les françaises, et celles qu'un autre État
+  sert, déclarées —, jusqu'au barème du foyer : celui d'une personne seule ; avec un
+  conjoint déclaré, le plafond du couple sur les ressources des deux, la moitié de ce
+  qui manque à chacun de deux allocataires, tout ce qui manque à un seul, au plus le
+  montant d'une personne seule. À tous, en ligne séparée. Revalorisée sur les prix :
+  L. 816-2 renvoie au coefficient de L. 161-25, moyenne annuelle des prix hors tabac,
+  plancher à 1.
 etat: approchee
 etape: foyer_et_net
+presomptions:
+  ressources_du_conjoint: le plafond du couple, quand le conjoint déclaré ne dit pas ses ressources
+exemples:
+- sp_f16871_aspa_deux_allocataires
+- sp_f16871_aspa_un_seul_allocataire
+- sp_f16871_aspa_un_seul_allocataire_au_maximum
 effet: >-
-  Les plus petites pensions ; la condition de ressources hors des pensions et le
-  ménage sont ignorés, ce que limites.md dit. Une pension étrangère déclarée compte :
-  « il est tenu compte, pour l'appréciation des ressources, de tous les avantages
-  d'invalidité et de vieillesse dont bénéficie l'intéressé » (R. 815-22), à son montant
-  brut, revalorisé « dans les mêmes conditions que ceux du régime général ».
+  Les plus petites pensions. L'allocation complète « les ressources personnelles de
+  l'intéressé et du conjoint » jusqu'au plafond de L. 815-9 : celui d'une personne
+  seule, ou celui du couple — marié, concubin ou partenaire d'un pacte civil de
+  solidarité —, que D. 815-2 égale au montant que D. 815-1, b, sert à deux
+  allocataires, par moitié (R. 815-28) ; à un seul, D. 815-1, a, ne sert au plus que
+  le montant d'une personne seule. En 2026, 1 620,18 € par mois pour le couple,
+  1 043,59 € pour une personne seule. Le modèle donne le barème du couple à qui
+  déclare un conjoint, à compter du mariage, et compte les ressources que la saisie
+  lui prête, aucune sinon ; le conjoint est allocataire à 65 ans. Il ignore, ce que
+  limites.md dit : les ressources de l'assuré hors de ses pensions — revenus
+  d'activité et leur abattement, patrimoine — ; l'abattement des revenus d'activité
+  du conjoint (R. 815-29), dont les ressources comptent entières et au même montant
+  chaque année ; l'âge abaissé du conjoint inapte ou ex-invalide, et l'allocation
+  supplémentaire d'invalidité qui lui donnerait le barème du couple (D. 815-1, dernier
+  alinéa) ; l'appréciation sur trois mois, ou sur douze (R. 815-29) ; la demande,
+  l'allocation étant servie à tous. Avant avril 2010, le plafond d'une personne seule
+  dépassait son montant (7 500,53 € contre 7 323,48 € en 2006, D. 815-2) : le modèle
+  prend le montant. Une pension étrangère déclarée compte : « il est tenu compte,
+  pour l'appréciation des ressources, de tous les avantages d'invalidité et de
+  vieillesse dont bénéficie l'intéressé » (R. 815-22), à son montant brut, revalorisé
+  « dans les mêmes conditions que ceux du régime général ».
 sources:
-  lu_le: 2026-10-01
+  lu_le: 2026-10-05
   prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Les montants de 2027, que fixera la circulaire de la Cnav de décembre 2026 :
+    relancer scripts/fetch/cnav_minimum_vieillesse.py.
   lectures:
   - type: service_public
     reference: montants de l'ASPA 2026
@@ -33,6 +62,43 @@ sources:
       depuis le 2007-01-13 : « tous les avantages d'invalidité et de vieillesse dont
       bénéficie l'intéressé »
     date: 2026-10-01
+  - type: legifrance
+    reference: >-
+      D. 815-1 CSS, LEGIARTI000036760292, en vigueur depuis le 2018-04-01, et ses
+      versions du 2007-01-13 (LEGIARTI000006739608), du 2009-04-30
+      (LEGIARTI000020562595) et du 2014-10-23 (LEGIARTI000029619584) : a), « les
+      personnes seules, ou lorsque seul un des conjoints » en bénéficie ; b), les deux,
+      « le montant est servi par moitié à chacun des deux allocataires » ; lues dans
+      l'index LEGI du dépôt
+    date: 2026-10-05
+  - type: legifrance
+    reference: >-
+      D. 815-2 CSS, LEGIARTI000029619577, en vigueur depuis le 2014-10-23, et ses
+      versions du 2007-01-13 (LEGIARTI000006739612 : 7 500,53 € pour une personne
+      seule et 13 137,69 € pour un couple, au 1er janvier 2006) et du 2009-04-30
+      (LEGIARTI000020562591 : 8 309,27 € pour une personne seule au 1er avril 2009) :
+      le plafond du couple égale le montant du b) de D. 815-1 ; R. 815-28 CSS,
+      LEGIARTI000006753729, en vigueur depuis le 2007-01-13 : la réduction « porte pour
+      moitié » sur l'allocation de chacun ; R. 815-29 CSS, LEGIARTI000029968931, en
+      vigueur depuis le 2015-01-01 : trois mois de ressources, ou douze, et
+      l'abattement des revenus professionnels, 0,9 SMIC pour une personne seule, 1,5
+      pour le foyer d'un couple ; lus dans l'index LEGI du dépôt
+    date: 2026-10-05
+  - type: circulaire_cnav
+    reference: >-
+      base législative de la Cnav, barèmes « Montant de l'allocation de solidarité aux
+      personnes âgées » et « Plafond de ressources pour l'allocation de solidarité aux
+      personnes âgées », lus par leur API : vingt-trois dates de 2006 à 2026, chacune
+      avec son texte, du décret n° 2007-57 à la circulaire n° 2025/29 du 22 décembre
+      2025 ; ils redonnent au centime les montants de D. 815-1
+    date: 2026-10-05
+  - type: service_public
+    reference: >-
+      fiche F16871, Allocation de solidarité aux personnes âgées, vérifiée le 23 juin
+      2026 : en couple, 1 043,59 € par mois au plus quand un seul membre la reçoit, sous
+      un plafond de 1 620,18 € ; quand les deux la reçoivent, la différence entre
+      1 620,18 € et les revenus du couple, et un exemple, un couple de 1 000 € par mois
+    date: 2026-10-05
   - type: circulaire_cnav
     reference: >-
       base législative de la Cnav, exposé « Evaluation des ressources - Aspa » : les
@@ -48,3 +114,5 @@ textes_a_rattacher:
 - reference: R. 815-22 CSS
 - reference: L. 816-2 CSS
 - reference: L. 161-25 CSS
+- reference: D. 815-1 et D. 815-2 CSS, les barèmes d'une personne seule et d'un couple
+- reference: R. 815-28 et R. 815-29 CSS, le partage et l'appréciation des ressources

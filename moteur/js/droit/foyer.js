@@ -4,23 +4,44 @@
  * Jumeau de `src/retraite_notionnelle/droit/foyer.py` : ce que le droit sert
  * en regardant toutes les ressources du bénéficiaire, et non une pension —
  * l'ASPA. Elle vient en DERNIER : elle est différentielle, et complète tout le
- * reste, majorations comprises, jusqu'au barème d'une personne seule. Elle
- * s'ouvre à 65 ans, à qui réside en France, et se revoit à chaque échéance.
- * Ce que l'étape écrit, `Foyer`, suit son schéma,
+ * reste, majorations comprises, jusqu'au barème du foyer — d'une personne
+ * seule, ou du couple quand un conjoint est déclaré, ses ressources comptées.
+ * Elle s'ouvre à 65 ans, à qui réside en France, et se revoit à chaque
+ * échéance. Ce que l'étape écrit, `Foyer`, suit son schéma,
  * `data/reference/etapes/foyer_et_net.yaml`.
  */
 
 import { DateMois } from "../calendrier.js";
 import { Fiabilite, nomFiabilite } from "../serie.js";
 import { pensionsEtrangeresServies } from "./etranger.js";
+import { AGE_DE_L_ASPA } from "./invalidite.js";
 
 /** La version du schéma de l'étape. */
 export const SCHEMA_VERSION = 1;
 
+/**
+ * Les trois barèmes de l'allocation : une personne seule ; un couple dont la
+ * personne est seule allocataire, au plus le montant d'une personne seule
+ * (D. 815-1, a) ; un couple dont les deux membres le sont, qui se partagent le
+ * montant du couple par moitié (D. 815-1, b).
+ */
+export const PERSONNE_SEULE = "personne_seule";
+export const COUPLE = "couple";
+export const DEUX_ALLOCATAIRES = "deux_allocataires";
+
+/** Ce que la cascade des avantages dit de chacun. */
+const DETAILS = {
+  [PERSONNE_SEULE]: "allocation différentielle, barème d'une personne seule",
+  [COUPLE]: "allocation différentielle, plafond du couple, au plus le montant "
+    + "d'une personne seule",
+  [DEUX_ALLOCATAIRES]: "allocation différentielle, barème d'un couple "
+    + "d'allocataires, servie par moitié",
+};
+
 /** Ce que l'étape « foyer et net » écrit, à une date. */
 export class Foyer {
   constructor({ personne, date, ressources, minimumVieillesse, plafond, fiabilite,
-    etrangeres = 0.0 }) {
+    etrangeres = 0.0, bareme = PERSONNE_SEULE, ressourcesConjoint = 0.0 }) {
     this.personne = personne;
     this.date = date;
     this.ressources = ressources;
@@ -29,6 +50,10 @@ export class Foyer {
     this.fiabilite = fiabilite;
     /** Celles des ressources qu'un autre État sert, à part des pensions françaises. */
     this.etrangeres = etrangeres;
+    /** Le barème du foyer : `PERSONNE_SEULE`, `COUPLE` ou `DEUX_ALLOCATAIRES`. */
+    this.bareme = bareme;
+    /** Les ressources du conjoint, que le plafond du couple compte avec les siennes. */
+    this.ressourcesConjoint = ressourcesConjoint;
   }
 
   /** L'ASPA, sous la forme où la cascade des avantages la dit. */
@@ -37,15 +62,28 @@ export class Foyer {
       code: "minimum_vieillesse",
       libelle: "Minimum vieillesse (ASPA)",
       montant: this.minimumVieillesse,
-      detail: "allocation différentielle, barème d'une personne seule",
+      detail: DETAILS[this.bareme],
     };
+  }
+
+  /**
+   * Les pensions françaises de la personne et l'allocation, ensemble : le
+   * barème d'une personne seule, moins ce que les pensions étrangères en
+   * remplissent ; dans un couple, ses pensions et sa part de l'allocation.
+   */
+  servieAvec(pensions) {
+    if (this.bareme === PERSONNE_SEULE) {
+      return this.plafond - this.etrangeres;
+    }
+    return pensions + this.minimumVieillesse;
   }
 
   /** Le foyer, tel que le schéma de l'étape le décrit. */
   donnees() {
     return {
       schema_version: SCHEMA_VERSION, personne: this.personne, date: this.date,
-      ressources: this.ressources, etrangeres: this.etrangeres,
+      ressources: this.ressources, etrangeres: this.etrangeres, bareme: this.bareme,
+      ressources_conjoint: this.ressourcesConjoint,
       minimum_vieillesse: this.minimumVieillesse,
       fiabilite: nomFiabilite(this.fiabilite),
     };
@@ -79,12 +117,37 @@ export function conditionDeResidence(moteur, residence, date, moisEnFrance = nul
 }
 
 /**
+ * Le conjoint avec qui la personne vit à cette date, dont les ressources
+ * comptent au plafond du couple : celui que la saisie déclare, une fois le
+ * mariage célébré ; `null` sinon. Voir `conjoint_au_foyer` du Python.
+ */
+export function conjointAuFoyer(carriere, jour) {
+  const conjoint = carriere === null ? null : carriere.conjoint;
+  if (conjoint === null || conjoint.mariage > jour) {
+    return null;
+  }
+  return conjoint;
+}
+
+/**
+ * Si le conjoint peut lui aussi prétendre à l'allocation à cette date : il en
+ * a l'âge, soixante-cinq ans. Voir `conjoint_allocataire` du Python.
+ */
+export function conjointAllocataire(conjoint, jour) {
+  const naissance = conjoint.naissance;
+  const anniversaire = `${String(Number(naissance.slice(0, 4)) + Math.trunc(AGE_DE_L_ASPA))
+    .padStart(4, "0")}${naissance.slice(4)}`;
+  return anniversaire <= jour;
+}
+
+/**
  * L'ASPA qu'appellent `ressources`, les pensions françaises, en `annee`.
  * `ageAtteint` dit si l'âge de l'allocation l'est : à la date d'effet pour une
  * liquidation, dans l'année pour une échéance ; la `carriere`, les pensions
- * qu'un autre État sert à cette date, qui s'ajoutent aux ressources, et l'État
+ * qu'un autre État sert à cette date, qui s'ajoutent aux ressources, l'État
  * où le bénéficiaire réside hors de France, s'il le déclare : elle n'y est pas
- * servie. Voir le Python.
+ * servie, et le conjoint, qui donne au foyer le barème du couple. Voir le
+ * Python.
  */
 export function foyerEtNet(moteur, personne, date, annee, ressources, ageAtteint,
   contexte = null, carriere = null) {
@@ -95,23 +158,41 @@ export function foyerEtNet(moteur, personne, date, annee, ressources, ageAtteint
     moteur.macro, carriere, new DateMois(Number(jour.slice(0, 4)), Number(jour.slice(5, 7))),
     annee);
   const total = ressources + etrangeres;
+  const conjoint = conjointAuFoyer(carriere, jour);
+  const duConjoint = conjoint === null || conjoint.ressources === null
+    || conjoint.ressources === undefined ? 0.0 : Number(conjoint.ressources);
+  let bareme = PERSONNE_SEULE;
+  if (conjoint !== null) {
+    bareme = conjointAllocataire(conjoint, jour) ? DEUX_ALLOCATAIRES : COUPLE;
+  }
   let montant = 0.0;
   let plafond = null;
   let fiabilite = Fiabilite.CERTIFIEE;
   if (ageAtteint && moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
       && conditionDeResidence(moteur, residence, jour, moisEnFrance)
       && !(contexte !== null && contexte.neutralise("avantages_non_contributifs"))) {
-    const bareme = moteur.minimumVieillesse.plafond(annee);
-    if (bareme !== null) {
-      plafond = bareme[0];
-      montant = Math.max(0.0, bareme[0] - total);
+    const seule = moteur.minimumVieillesse.plafond(annee);
+    const couple = bareme === PERSONNE_SEULE
+      ? null : moteur.minimumVieillesse.plafondCouple(annee);
+    if (bareme === PERSONNE_SEULE && seule !== null) {
+      plafond = seule[0];
+      montant = Math.max(0.0, seule[0] - total);
       if (montant > 0) {
-        fiabilite = bareme[1];
+        fiabilite = seule[1];
+      }
+    } else if (seule !== null && couple !== null) {
+      // Ce qui manque au couple pour atteindre son plafond : partagé entre deux
+      // allocataires, borné au montant d'une personne seule pour un seul.
+      plafond = couple[0];
+      const manque = Math.max(0.0, couple[0] - total - duConjoint);
+      montant = bareme === DEUX_ALLOCATAIRES ? manque / 2.0 : Math.min(seule[0], manque);
+      if (montant > 0) {
+        fiabilite = bareme === DEUX_ALLOCATAIRES ? couple[1] : Math.min(couple[1], seule[1]);
       }
     }
   }
   return new Foyer({
     personne, date, ressources: total, minimumVieillesse: montant, plafond, fiabilite,
-    etrangeres,
+    etrangeres, bareme, ressourcesConjoint: duConjoint,
   });
 }

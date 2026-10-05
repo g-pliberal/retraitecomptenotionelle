@@ -483,6 +483,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "plafond_ancien": "macro/plafond_securite_sociale.csv",
         "plafond_journal_officiel": "macro/plafond_securite_sociale.csv",
         "minimum_vieillesse": "legislation/minimum_vieillesse.csv",
+        # Le couple : l'article certifie six années, la Cnav transcrit les autres.
+        "minimum_vieillesse_couple": "legislation/minimum_vieillesse_couple.csv",
+        "minimum_vieillesse_couple_cnav": "legislation/minimum_vieillesse_couple.csv",
         "minimum_garanti_reference": "legislation/minimum_garanti_montants.csv",
         "esperances_vie": "mortalite/esperances_vie.csv",
         "esperance_65_derivee": "mortalite/esperances_vie.csv",

@@ -119,6 +119,12 @@
 #     puis la 2), au centième. L'exemple donne ce salaire, en euros de
 #     l'année, dans `carriere.releve` (année : salaire), que le test porte sur
 #     un relevé de carrière.
+#   minimum_vieillesse_mensuel — l'ASPA que le foyer sert à l'assuré, en euros
+#     par mois, à un demi-centime près : sa part quand son conjoint est aussi
+#     allocataire. L'exemple donne les revenus du couple, non les carrières :
+#     le test prête à l'assuré la pension de
+#     `carriere.pensions_au_foyer_mensuelles`, au conjoint ses ressources
+#     (`ressources_conjoint`), et lit l'allocation à `carriere.date_du_foyer`.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -281,6 +287,42 @@ exemples:
       profil_carriere: plat
       interruptions: {1990: chomage_indemnise}
     attendu: {trimestres_valides: 162, trimestres_requis: 160, taux_liquidation: 0.5, pension_regime_general_mensuelle: 570.04}
+
+  # L'ASPA d'un couple (fiche minimum_vieillesse) : le plafond du couple sur les
+  # ressources des deux (L. 815-9, D. 815-2), servi par moitié à deux
+  # allocataires (D. 815-1, b ; R. 815-28), et au plus le montant d'une
+  # personne seule quand un seul l'est (D. 815-1, a). Le modèle servait à tous
+  # le barème d'une personne seule jusqu'au 5 octobre 2026.
+  - id: sp_f16871_aspa_deux_allocataires
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F16871, Allocation de solidarité aux personnes âgées (Aspa), vous vivez en couple, 2 personnes reçoivent l'Aspa", verifie_le: "2026-06-23"}
+    enonce: >-
+      Un couple dont les revenus sont de 1 000 € par mois, ses deux membres
+      allocataires : la fiche lui sert 1 620,18 € − 1 000 € = 620,18 € par mois,
+      que D. 815-1, b, partage par moitié, soit 310,09 € à l'assuré. Ici,
+      500 € de pension pour lui, 6 000 € de ressources par an pour son
+      conjoint, tous deux de plus de 65 ans en juin 2026.
+    carriere: {naissance: "1955-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2021-02", age_debut: 20, niveau_salaire: 0.3, conjoint: "1956-01", ressources_conjoint: 6000, pensions_au_foyer_mensuelles: 500, date_du_foyer: "2026-06-01"}
+    attendu: {minimum_vieillesse_mensuel: 310.09}
+
+  - id: sp_f16871_aspa_un_seul_allocataire
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F16871, Allocation de solidarité aux personnes âgées (Aspa), vous vivez en couple, 1 personne reçoit l'Aspa", verifie_le: "2026-06-23"}
+    enonce: >-
+      Un seul membre du couple reçoit l'allocation : entre 576,59 € et
+      1 620,18 € de revenus du couple par mois, la fiche lui sert la différence
+      entre 1 620,18 € et ces revenus, soit 620,18 € pour 1 000 €. Le conjoint
+      a 56 ans en juin 2026.
+    carriere: {naissance: "1955-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2021-02", age_debut: 20, niveau_salaire: 0.3, conjoint: "1970-01", ressources_conjoint: 6000, pensions_au_foyer_mensuelles: 500, date_du_foyer: "2026-06-01"}
+    attendu: {minimum_vieillesse_mensuel: 620.18}
+
+  - id: sp_f16871_aspa_un_seul_allocataire_au_maximum
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F16871, Allocation de solidarité aux personnes âgées (Aspa), vous vivez en couple, 1 personne reçoit l'Aspa", verifie_le: "2026-06-23"}
+    enonce: >-
+      Un seul membre du couple reçoit l'allocation : jusqu'à 576,59 € de
+      revenus du couple par mois, la fiche lui sert son montant maximum,
+      1 043,59 €, celui d'une personne seule. Ici, 400 € de pension, et un
+      conjoint de 56 ans sans ressources.
+    carriere: {naissance: "1955-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2021-02", age_debut: 20, niveau_salaire: 0.3, conjoint: "1970-01", ressources_conjoint: 0, pensions_au_foyer_mensuelles: 400, date_du_foyer: "2026-06-01"}
+    attendu: {minimum_vieillesse_mensuel: 1043.59}
 
   # Le cumul emploi-retraite (fiches cumul_emploi_retraite_et_retraite_progressive
   # et cumul_emploi_retraite_fonction_publique) : l'activité exercée après le

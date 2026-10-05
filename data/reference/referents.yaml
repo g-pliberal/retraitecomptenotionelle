@@ -815,7 +815,7 @@ referents:
         preuve: >-
           `minima_sociaux/asi_aspa.py:330-385` (plafond) et `:16-104`
           (ressources), au commit `16b2e69`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il calcule l'impôt sur le revenu des retraités :
@@ -2250,7 +2250,7 @@ referents:
         preuve: >-
           `src/Retraite.cpp:12-30` (« MinVieil2[t]-revenu_men »), au commit
           `4c1d34b`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il importe les variantes démographiques de l'INSEE — fécondité,
@@ -2718,7 +2718,7 @@ referents:
           ne compte que les pensions (`droit/foyer.py:125-128`).
         preuve: >-
           `R/14_minima_pa.R:165-177, 254-266`, au commit `a55816c`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           L'ASPA reste hors de l'assiette de la CSG, de la CRDS et
@@ -5450,7 +5450,7 @@ referents:
           D. 815-1, a et b (LEGIARTI000036760292) ; R. 815-22
           (LEGIARTI000047770487). Son abattement est faux (écart
           ci-dessous). Il ne vaut que pour 2017 et confirme Ines.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il calcule l'impôt des pensions de 2016 et 2017 :

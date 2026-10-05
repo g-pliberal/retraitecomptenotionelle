@@ -1,10 +1,10 @@
 # L'étape « foyer et net » (docs/architecture.md, § 7.4) : ce que le droit
 # sert en regardant toutes les ressources du bénéficiaire, et non une
-# pension. L'ASPA, allocation différentielle jusqu'au barème d'une personne
-# seule, ouverte à 65 ans à qui réside en France, vient après les
-# liquidations du jour et après « faire vivre » : elle complète tout le
-# reste, majorations et pensions étrangères comprises, et se revoit à chaque
-# échéance. Les
+# pension. L'ASPA, allocation différentielle jusqu'au barème du foyer — d'une
+# personne seule, ou du couple quand un conjoint est déclaré —, ouverte à
+# 65 ans à qui réside en France, vient après les liquidations du jour et
+# après « faire vivre » : elle complète tout le reste, majorations et
+# pensions étrangères comprises, et se revoit à chaque échéance. Les
 # prélèvements selon le revenu du foyer n'y sont pas encore : le modèle
 # compare des pensions brutes.
 #
@@ -25,5 +25,7 @@ objets:
       date: {porte: "la date à laquelle les ressources sont lues : l'effet de la liquidation, ou l'échéance", type: date, obligatoire: true}
       ressources: {porte: "toutes les pensions qu'il reçoit, régimes provisionnés, majorations et pensions étrangères compris, en euros annuels de cette date", type: nombre, obligatoire: true}
       etrangeres: {porte: "celles d'entre elles qu'un autre État sert, à part des pensions françaises (R. 815-22)", type: nombre, defaut: 0}
-      minimum_vieillesse: {porte: "l'ASPA : le complément jusqu'au barème, nul quand les ressources l'atteignent, quand l'âge n'est pas atteint, quand le bénéficiaire réside hors de France, ou quand les avantages non contributifs sont neutralisés", type: nombre, obligatoire: true}
+      bareme: {porte: "le barème du foyer : personne_seule ; couple, dont il est seul allocataire, au plus le montant d'une personne seule (D. 815-1, a) ; deux_allocataires, servis par moitié (D. 815-1, b)", type: texte, defaut: personne_seule}
+      ressources_conjoint: {porte: "les ressources de son conjoint, que le plafond du couple compte avec les siennes (L. 815-9) : déclarées, nulles sinon (présomption ressources_du_conjoint) ; nulles sans conjoint", type: nombre, defaut: 0}
+      minimum_vieillesse: {porte: "l'ASPA : le complément jusqu'au barème, nul quand les ressources l'atteignent, quand l'âge n'est pas atteint, quand le bénéficiaire réside hors de France, ou quand les avantages non contributifs sont neutralisés ; dans un couple d'allocataires, sa part", type: nombre, obligatoire: true}
       fiabilite: {porte: "le niveau du barème lu", type: texte, obligatoire: true}

@@ -684,7 +684,8 @@ class Parametres:
     #: successions.
     #:
     #: Elle est donc servie par défaut, sous le barème d'une personne seule
-    #: sans autre ressource — le cas le plus favorable —, et toujours comme une
+    #: sans autre ressource que ses pensions — celui du couple quand un
+    #: conjoint est déclaré, ses ressources comptées —, et toujours comme une
     #: LIGNE SÉPARÉE de la cascade, de sorte qu'on puisse la retrancher d'un
     #: coup d'œil. Mettre ce paramètre à ``False`` la retire du calcul.
     minimum_vieillesse_dans_le_scenario_actuel: bool = True

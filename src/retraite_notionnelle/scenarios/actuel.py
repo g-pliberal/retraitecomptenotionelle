@@ -251,8 +251,8 @@ def resultat_actuel(liquidation: Liquidation, foyer: Foyer) -> ResultatActuel:
     fiabilite = liquidation.fiabilite
     if foyer.minimum_vieillesse > 0:
         # Le barème, moins ce que les pensions étrangères, servies à part, en
-        # remplissent.
-        total = foyer.plafond - foyer.etrangeres
+        # remplissent ; dans un couple, la pension et la part de l'allocation.
+        total = foyer.servie_avec(total)
         fiabilite = min(fiabilite, foyer.fiabilite)
         avantages.append(foyer.avantage())
     return ResultatActuel(
@@ -369,7 +369,7 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
         contexte, carriere=carriere)
     liste = list(avantages.values())
     if foyer.minimum_vieillesse > 0:
-        total = foyer.plafond - foyer.etrangeres
+        total = foyer.servie_avec(total)
         fiabilite = min(fiabilite, foyer.fiabilite)
         liste.append(foyer.avantage())
     return ResultatActuel(
@@ -1631,8 +1631,9 @@ class MinimumVieillesse:
         self._table = self._lire(racine / "reference" / "legislation"
                                  / "minimum_vieillesse.csv")
         self._annees = sorted(self._table)
-        #: Le barème d'un couple dont les deux membres sont allocataires :
-        #: l'accueil seul s'en sert, pour comparer un foyer.
+        #: Le barème d'un couple dont les deux membres sont allocataires, qui
+        #: est aussi le plafond de ressources de tout couple (D. 815-2) : le
+        #: foyer d'un assuré qui déclare un conjoint, et l'accueil.
         self._table_couple = self._lire(racine / "reference" / "legislation"
                                         / "minimum_vieillesse_couple.csv")
 
@@ -1667,7 +1668,8 @@ class MinimumVieillesse:
         return self._en_vigueur(self._table, annee)
 
     def plafond_couple(self, annee: int) -> tuple[float, Fiabilite] | None:
-        """Montant maximal d'un couple d'allocataires, l'année demandée."""
+        """Montant maximal d'un couple d'allocataires, et plafond de ressources
+        de tout couple, l'année demandée."""
         return self._en_vigueur(self._table_couple, annee)
 
 

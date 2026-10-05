@@ -298,8 +298,8 @@ export function resultatActuel(resultat, foyer) {
   let fiabilite = resultat.fiabilite;
   if (foyer.minimumVieillesse > 0) {
     // Le barème, moins ce que les pensions étrangères, servies à part, en
-    // remplissent.
-    total = foyer.plafond - foyer.etrangeres;
+    // remplissent ; dans un couple, la pension et la part de l'allocation.
+    total = foyer.servieAvec(total);
     fiabilite = Math.min(fiabilite, foyer.fiabilite);
     avantages.push(foyer.avantage());
   }
@@ -505,7 +505,7 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     carriere);
   const liste = [...avantages.values()];
   if (foyer.minimumVieillesse > 0) {
-    total = foyer.plafond - foyer.etrangeres;
+    total = foyer.servieAvec(total);
     fiabilite = Math.min(fiabilite, foyer.fiabilite);
     liste.push(foyer.avantage());
   }

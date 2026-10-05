@@ -1048,6 +1048,28 @@ institutions:
     nom: Caisse nationale d'assurance vieillesse
     role: Régime général — paramètres, barèmes, statistiques.
     jeux:
+      - id: cnav_minimum_vieillesse
+        titre: Barèmes du montant et du plafond de ressources de l'ASPA, 2006-2026
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=aspa_montant_bar.aspx
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/legislation/minimum_vieillesse_couple.csv
+        recuperation: scripts/fetch/cnav_minimum_vieillesse.py
+        note: >-
+          Deux barèmes de la base de législation de la Cnav, servis par son API
+          publique : aspa_montant_bar, le montant annuel et mensuel d'un
+          allocataire et de deux à chaque revalorisation depuis le 1er janvier
+          2006, avec le décret ou la circulaire qui fixe chacune ; et
+          aspa_supplementaire_plafond_ressource_bar, le plafond d'une personne
+          seule et d'un couple aux mêmes dates. Ils comblent, au niveau
+          `haute`, les années que l'article D. 815-1 tait — le montant du
+          couple, que le scénario 1 sert quand un conjoint est déclaré, en
+          vigueur au 31 décembre de chaque année. Le récupérateur refuse
+          d'écrire si le barème ne redonne pas au centime les quinze montants de
+          l'article, si le plafond du couple n'est pas son montant (D. 815-2),
+          ou si, depuis avril 2010, celui d'une personne seule n'est pas le
+          sien ; lu le 5 octobre 2026.
+
       - id: cnav_montants_minimum
         titre: Barèmes du minimum contributif et du plafond d'écrêtement, 1983-2026
         url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_personnelle_montant_minimum_bar.aspx
@@ -2765,6 +2787,11 @@ institutions:
           second n'y était pas, faute que le modèle serve un couple. Ajouté le
           23 septembre 2026 pour que l'accueil compare la garantie à l'ASPA
           réellement servie, et non à ses propres montants appliqués au foyer.
+          Depuis le 5 octobre 2026, la série du couple vient de l'article
+          D. 815-1 et du barème de la Cnav (`cnav_minimum_vieillesse`) : la
+          fiche, relue ce jour-là, en confirme les montants de 2026 —
+          12 523,14 € et 19 442,21 € par an — et en donne un exemple, un
+          couple de 1 000 € par mois qui reçoit 620,18 €.
 
       - id: dila_legi_point_indice
         titre: Point d'indice de la fonction publique, 1996-2027
@@ -3503,7 +3530,11 @@ institutions:
           chaque revalorisation. Sa version d'octobre 2014 tient jusqu'en avril
           2018 sur un seul montant alors que l'allocation a monté en 2016 et en
           2017, et il s'arrête en 2020. Le b) de l'article porte le barème du
-          COUPLE, que le modèle ne connaît pas : seul le a) est lu.
+          COUPLE d'allocataires, qui est aussi le plafond de ressources du
+          couple (D. 815-2) : lu depuis le 5 octobre 2026 (`serie_couple`), il
+          certifie six ancres de minimum_vieillesse_couple.csv — 2006, 2009,
+          2014 et 2018 à 2020 —, que le scénario 1 sert quand un conjoint est
+          déclaré.
 
       - id: dila_kali
         titre: KALI — conventions collectives, essayée pour le taux d'appel de l'Agirc

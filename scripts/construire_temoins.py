@@ -815,6 +815,19 @@ def _cas() -> list[dict]:
         "naissance": "1962-03-15", "debut": "2000-09", "liquidation": "2024-04",
         "salaire": "0.5", "inaptitude": "oui",
     }))
+    # L'ASPA d'un couple (L. 815-9, D. 815-1, D. 815-2) : une petite carrière
+    # partie à soixante-cinq ans en 2020, sous le plafond du couple, ses
+    # ressources et celles du conjoint comptées. Un conjoint de cinquante-cinq
+    # ans n'est pas allocataire : l'assuré reçoit tout ce qui manque, au plus
+    # le montant d'une personne seule. Un conjoint de soixante-trois ans ne
+    # l'est pas encore au départ, et l'est aujourd'hui : chacun reçoit la
+    # moitié de ce qui manque au couple.
+    petite_en_couple = {"naissance": "1955-03-15", "debut": "1994-01",
+                        "liquidation": "2020-04", "unite_revenu": "moyen", "salaire": "0.2"}
+    cas.append(("aspa_couple_un_seul_allocataire", {
+        **petite_en_couple, "conjoint": "1965", "ressources_conjoint": "3000"}))
+    cas.append(("aspa_couple_deux_allocataires_aujourd_hui", {
+        **petite_en_couple, "conjoint": "1957", "ressources_conjoint": "6000"}))
     # LA RETRAITE POUR INVALIDITÉ DES FONCTIONNAIRES : à la radiation des
     # cadres, à tout âge, sans décote. L'agent de l'État radié à quarante-cinq
     # ans, invalide à 70 % du fait du service, sa rente viagère et le plafond

@@ -2149,7 +2149,10 @@ def test_la_colonne_aspa_de_l_accueil_sert_le_bareme_de_l_aspa():
     minimum = contexte.simulateur().scenario_actuel.minimum_vieillesse
     seul = minimum.plafond(annee)[0] / 12
     couple = minimum.plafond_couple(annee)[0] / 12
-    assert seul == pytest.approx(1043.59) and couple == pytest.approx(1620.18)
+    # Au centime : le couple porte l'annuel du texte, 19 442,21 €, dont le
+    # mensuel publié, 1 620,18 €, est l'arrondi.
+    assert seul == pytest.approx(1043.59, abs=0.005)
+    assert couple == pytest.approx(1620.18, abs=0.005)
     rendu = pages.tableau_garantie(site().contexte)
     for foyer in pages.FOYERS_GARANTIE:
         plafond = seul if len(foyer) == 1 else couple

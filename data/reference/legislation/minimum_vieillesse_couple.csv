@@ -1,20 +1,60 @@
-# Minimum vieillesse (ASPA) — plafond de ressources et montant maximal d'un COUPLE
-# ----------------------------------------------------------------------------------
-# source_id: service_public_aspa
+# Minimum vieillesse (ASPA) — montant et plafond de ressources d'un COUPLE
+# --------------------------------------------------------------------------
+# source_id: dila_legi_minimum_vieillesse (ancres de l'article),
+#            cnav_minimum_vieillesse (les autres années)
 #
-# `minimum_vieillesse.csv` porte le barème d'une personne seule, le seul que le
-# scénario 1 sert : le modèle ne connaît qu'un individu. Ce fichier porte celui
-# d'un couple dont les deux membres sont allocataires, pour la seule page qui
-# compare un foyer : l'accueil, où la garantie individualisée se lit face à
-# l'ASPA d'aujourd'hui. Le plafond d'un couple n'est pas le double de celui
-# d'une personne seule — 1 620,18 € par mois contre 1 043,59 € en 2026.
+# `minimum_vieillesse.csv` porte le barème d'une personne seule. Celui-ci porte
+# le montant qu'une ASPA sert à un couple dont les deux membres sont
+# allocataires — mariés, concubins ou partenaires d'un pacte civil de
+# solidarité —, par moitié à chacun : le b) de l'article D. 815-1 du code de la
+# sécurité sociale. C'est aussi le plafond de ressources du couple, que l'un ou
+# les deux soient allocataires : D. 815-2 lui donne le même montant en 2006, et
+# le lui égale depuis avril 2009. Il n'est pas le double de celui d'une
+# personne seule — 1 620,18 € par mois contre 1 043,59 € en 2026.
 #
-# Jusqu'au 23 septembre 2026, l'accueil affichait pour l'ASPA les montants de
-# la garantie appliqués au foyer — 1 000 € pour un couple à 300 € et 300 €,
-# 750 € pour une personne seule à 300 € — et cachait ainsi que l'ASPA sert
-# aujourd'hui 1 020 € au premier et 744 € à la seconde.
+# LE SCÉNARIO 1 LE SERT depuis le 5 octobre 2026, quand la saisie déclare un
+# conjoint (droit/foyer.py) : le plafond du couple sur les pensions de l'assuré
+# et les ressources de son conjoint (L. 815-9) ; la moitié de ce qui manque
+# quand le conjoint a lui aussi l'âge de l'allocation (D. 815-1, b ;
+# R. 815-28) ; sinon tout ce qui manque, au plus le montant d'une personne
+# seule (D. 815-1, a). L'accueil s'en sert aussi, pour comparer un foyer à la
+# garantie individualisée.
 #
-# Montants EN EUROS PAR AN (le montant mensuel publié, multiplié par douze),
-# lus sur la fiche F16871 de service-public.fr, mise à jour le 23 juin 2026.
+# D'OÙ VIENNENT CES MONTANTS. Six ancres — 2006, 2009, 2014 et 2018 à 2020 —
+# sont lues dans le b) de l'article D. 815-1, dont la base LEGI garde les
+# versions (`scripts/fetch/dila_legi_minimum_vieillesse.py`) : `certifiee`.
+# L'article n'est pas réécrit à chaque revalorisation : les autres années
+# viennent du barème de la Cnav (`scripts/fetch/cnav_minimum_vieillesse.py`),
+# qui cite pour chaque date le décret ou la circulaire qui la fixe, et qui
+# redonne au centime les quinze montants de l'article : `haute`.
+#
+# UNE ANCRE PAR ANNÉE, EN EUROS PAR AN : le montant ANNUEL que le texte fixe, et
+# non douze fois le mensuel arrondi — 19 442,21 € en 2026, et non 1 620,18 × 12
+# = 19 442,16 € comme ce fichier le portait jusqu'au 5 octobre 2026. Chaque
+# année porte le montant en vigueur à son 31 décembre, celui que le modèle lit
+# à l'échéance : celui du 1er septembre en 2008, du 1er octobre en 2014, du
+# 1er juillet en 2022 ; 2015, que rien n'a revalorisé, garde celui d'octobre
+# 2014. La série d'une personne seule, elle, porte pour 2022 le montant du
+# 1er janvier. Avant 2006, le modèle remonte sur les prix depuis 2006.
 annee,valeur,fiabilite
-2026,19442.160000,haute
+2006,13137.690000,certifiee
+2007,13374.160000,haute
+2008,13629.440000,haute
+2009,13765.730000,certifiee
+2010,13889.620000,haute
+2011,14181.300000,haute
+2012,14479.100000,haute
+2013,14667.320000,haute
+2014,14904.000000,certifiee
+2015,14904.000000,haute
+2016,14918.900000,haute
+2017,14963.650000,haute
+2018,15522.540000,certifiee
+2019,16174.590000,certifiee
+2020,16826.640000,certifiee
+2021,16893.940000,haute
+2022,17762.960000,haute
+2023,17905.060000,haute
+2024,18854.020000,haute
+2025,19268.800000,haute
+2026,19442.210000,haute

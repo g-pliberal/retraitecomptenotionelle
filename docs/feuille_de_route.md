@@ -5710,12 +5710,12 @@ de l'étape 4 de l'action 142, suite.
 145 écarts) ; l'étape 15, le minimum contributif daté ; l'étape 16 sauf un
 point — le salaire annuel moyen daté de 1945 à 2004, la table des artisans et
 commerçants, l'assiette de l'AVPF, les colonnes de revalorisation de 1946 à
-2015, l'IGRANTE de 1948 ; de l'étape 2, le 1 % maladie, la CSG du foyer et les
-non-résidents (leurs notes). Reste de l'étape 16 : les coefficients de l'Agirc
-d'avant 1955 et de l'Arrco d'avant 1965, dont il faut d'abord trouver les
-textes de 1947 et de 1961. Puis la suite de 2, l'ASPA du couple, les étapes 3
-à 14 et 17 à 20, une par session, et les choix de l'étape 13. Le registre dit,
-au chantier de chaque étape (« 138.16 »…), ce qu'en fait chaque modèle.
+2015, l'IGRANTE de 1948 ; l'étape 2, à trois restes près que dit sa dernière
+note. Reste de l'étape 16 : les coefficients de l'Agirc d'avant 1955 et de
+l'Arrco d'avant 1965, dont il faut d'abord trouver les textes de 1947 et de
+1961. Puis les étapes 3 à 14 et 17 à 20, une par session, et les choix de
+l'étape 13. Le registre dit, au chantier de chaque étape (« 138.16 »…), ce
+qu'en fait chaque modèle.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais qu'on regarde les modèles de
 simulation qui existent et qu'on les compare à notre projet. Il faut que l'on
@@ -5870,6 +5870,36 @@ par son chantier (« 138.2 »…) :
    général et 4,20 % sur la complémentaire (L. 131-9 ; D. 242-8). Fiche
    `cotisation_maladie_des_non_residents`. Reste de 2 : l'ASPA du couple,
    dont le plafond n'est au dépôt que pour 2026.
+   *L'ASPA du couple, faite le 5 octobre 2026.* Le scénario 1 sert le
+   barème du foyer : à qui déclare un conjoint, à compter du mariage, le
+   plafond du couple sur les pensions de l'assuré et les ressources du
+   conjoint (L. 815-9 ; D. 815-2, qui l'égale au montant de deux
+   allocataires) ; la moitié de ce qui manque quand le conjoint a lui aussi
+   65 ans, chacun en recevant autant (D. 815-1, b ; R. 815-28) ; tout ce qui
+   manque sinon, au plus le montant d'une personne seule (D. 815-1, a). Un
+   conjoint qui ne dit pas ses ressources n'en a aucune (présomption
+   `ressources_du_conjoint`, comme le formulaire l'annonçait déjà). La
+   série du couple, que le dépôt n'avait que pour 2026, va de 2006 à 2026 :
+   six ancres lues dans le b) de D. 815-1 et certifiées
+   (`dila_legi_minimum_vieillesse.py`), quinze transcrites du barème de la
+   Cnav (`cnav_minimum_vieillesse.py`, qui refuse d'écrire s'il ne redonne
+   pas au centime les quinze montants de l'article) ; une ancre par année,
+   le montant en vigueur au 31 décembre ; 2026 vaut 19 442,21 € par an, non
+   douze fois 1 620,18 €. Les trois cas de la fiche F16871 sont reproduits
+   au centime — un couple de 1 000 € par mois reçoit 620,18 €, 310,09 €
+   chacun —, et deux témoins entrent (`aspa_couple_*`) ; aucune pension des
+   735 autres ne bouge, aucun des quatorze qui déclarent un conjoint ne
+   passant sous le plafond du couple. Fiche `minimum_vieillesse`, relue ;
+   les points d'OpenFisca-France, de Destinie 2, d'Ines et de Saphir sont
+   repris, celui de l'IPP pour le couple seulement.
+   Reste de 2 : la série d'une personne seule — 2008, 2013 et 2015 qui
+   manquent, 2014 au montant d'octobre, 2022 à celui de janvier, douze fois
+   le mensuel depuis 2021 (12 523,08 € au lieu de 12 523,14 €) —, que le
+   même barème donnerait, mais dont le 1 043,59 € affiché passerait à
+   1 043,60 € : à décider ; les ressources de l'assuré hors de ses pensions
+   et l'abattement des revenus d'activité (R. 815-29) ; la relecture des
+   points du registre au chantier 138.2 sur la CSG et le net, encore
+   `a_reprendre` bien que le net du foyer soit fait.
 3. La page Coût décomposée comme le COR : les retraités projetés par régime
    (le classeur du COR), la décomposition dépendance × couverture × pension
    relative confrontée au COR de juin 2026 et à l'Ageing Report de 2024, la

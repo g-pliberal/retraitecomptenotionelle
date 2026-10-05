@@ -1383,6 +1383,64 @@ def test_le_bareme_du_couple_n_est_pas_celui_d_une_personne_seule():
     assert par_date == {datetime.date(2014, 10, 1): 9600.0}
 
 
+def test_le_bareme_du_couple_se_lit_dans_le_b():
+    """Le b) de l'article, un couple dont les deux membres sont allocataires :
+    ses montants datés, sans ceux du a) ni la phrase qui le dit servi par
+    moitié (rédaction du 1er avril 2018, LEGIARTI000036760292)."""
+    module = _aspa()
+    article = (
+        "Le montant maximum servi au titre de l'allocation de solidarité aux "
+        "personnes âgées est fixé : a) Pour les personnes seules, ou lorsque seul "
+        "un des conjoints, concubins ou partenaires liés par un pacte civil de "
+        "solidarité en bénéficie, à 9 998,40 euros par an à compter du 1er avril "
+        "2018 ; b) Lorsque les deux conjoints, concubins ou partenaires liés par "
+        "un pacte civil de solidarité en bénéficient, à 15 522,54 euros par an à "
+        "compter du 1er avril 2018, à 16 174,59 euros par an à compter du "
+        "1er janvier 2019 et à 16 826,64 euros par an à compter du 1er janvier "
+        "2020. Dans ce cas, le montant est servi par moitié à chacun des deux "
+        "allocataires concernés."
+    )
+    par_date, griefs = module.montants_dates([article], module.COUPLE)
+    assert griefs == []
+    assert module.ancres(par_date) == {2018: 15522.54, 2019: 16174.59, 2020: 16826.64}
+
+
+def _aspa_cnav():
+    return _charger_script("cnav_minimum_vieillesse", "scripts", "fetch",
+                           "cnav_minimum_vieillesse.py")
+
+
+def test_l_aspa_du_couple_garde_le_montant_que_l_annee_laisse_en_place():
+    """Une ancre par année, celle du 31 décembre : octobre 2014 l'emporte sur
+    avril, et 2015, sans revalorisation, garde le montant d'octobre 2014."""
+    module = _aspa_cnav()
+    lignes = [{"date": "2014-04-01", "couple": 14755.32},
+              {"date": "2014-10-01", "couple": 14904.00},
+              {"date": "2016-04-01", "couple": 14918.90}]
+    assert module.ancres_annuelles(lignes, "couple") == {
+        2014: 14904.00, 2015: 14904.00, 2016: 14918.90}
+
+
+def test_le_bareme_de_l_aspa_est_refuse_s_il_contredit_l_article():
+    """Le barème de la caisse doit redonner les montants de D. 815-1, et le
+    plafond du couple son montant (D. 815-2) : sinon, rien ne s'écrit."""
+    module = _aspa_cnav()
+
+    def ligne(date, seule, couple):
+        return {"date": date, "seule": seule, "seule_mensuel": round(seule / 12, 2),
+                "couple": couple, "couple_mensuel": round(couple / 12, 2),
+                "reference": "Circulaire Cnav"}
+
+    montants = [ligne("2006-01-01", 7323.48, 13137.69),
+                ligne("2009-04-01", 8125.59, 13765.73)]
+    plafonds = [ligne("2006-01-01", 7500.53, 13137.69),
+                ligne("2009-04-01", 8309.27, 13800.00)]
+    erreurs = module.controler(montants, plafonds)
+    assert any("2009-04-01 : le plafond du couple" in e for e in erreurs), erreurs
+    assert any(e.startswith("couple|2014-10-01 : attendu 14904.00") for e in erreurs), erreurs
+    assert not any("2006-01-01 : le plafond" in e for e in erreurs), erreurs
+
+
 def test_l_aspa_lit_l_annuel_du_texte_et_non_douze_fois_le_mensuel():
     """8 507,49 € par an, et non 708,95 × 12 = 8 507,40 €."""
     module = _aspa()

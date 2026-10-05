@@ -253,7 +253,9 @@
    "duree_requise_ieg",
    "duree_requise_par_generation",
    "duree_requise_sncf_ratp",
+   "enfants_crpcen",
    "enfants_fonction_publique",
+   "enfants_ieg",
    "enfants_ratp",
    "enfants_sncf",
    "fin_de_la_suspension_2028",
@@ -282,6 +284,7 @@
    "minimum_contributif",
    "minimum_contributif_international",
    "minimum_garanti",
+   "minimum_pension_ieg",
    "minimum_vieillesse",
    "minoration_ircec",
    "minoration_racl_2014_2024",
@@ -322,7 +325,9 @@
    "revenu_annuel_moyen_independants",
    "reversion",
    "reversion_agirc_arrco",
+   "reversion_crpcen",
    "reversion_fonction_publique",
+   "reversion_ieg",
    "reversion_ircantec",
    "reversion_rafp",
    "reversion_rci",
@@ -513,12 +518,14 @@
    "2026-10-04 | le musée des horreurs de la retraite, demandé par le propriétaire et seulement documenté : l'action 146 qui en naît, à faire, et son catalogue",
    "2026-10-04 | les sommaires du Journal officiel du 27 septembre au 4 octobre, que l'index de la DILA ne porte pas, parcourus à la demande du propriétaire",
    "2026-10-05 | action 138, étape 16 : les assiettes et les séries du régime général",
+   "2026-10-05 | action 138, étape 2 : l'ASPA du couple",
    "2026-10-05 | action 138, étape 2 : les prélèvements d'un retraité qui réside hors de France",
    "2026-10-05 | action 142 : la délibération de l'ERAFP, et la majoration du RAFP",
    "2026-10-05 | action 142 : le départ anticipé des assurés handicapés, au scénario 1 et sur le site",
    "2026-10-05 | action 142, étape 4 : Destinie 2 exécuté à part, ses sorties en témoins",
    "2026-10-05 | action 89 : les quatre lignes du RAFP au vivier",
-   "2026-10-05 | action 89 : les seize lignes de l'Agirc-Arrco au vivier"
+   "2026-10-05 | action 89 : les seize lignes de l'Agirc-Arrco au vivier",
+   "2026-10-05 | action 89 : les vingt-trois lignes des régimes spéciaux au vivier"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1181,6 +1188,7 @@
    "cnav_baremes",
    "cnav_baremes_rci",
    "cnav_comptes_notionnels_2009",
+   "cnav_minimum_vieillesse",
    "cnav_montants_minimum",
    "cnav_revalorisation_pensions",
    "cnav_revalorisation_salaires",
@@ -6809,7 +6817,7 @@
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
     "d8fe3e7fd9af50b2",
-    "bf6130c9375cc8fe"
+    "8b9d45aa4b1de55b"
    ],
    "Avant de partir": [
     "5d7ed1de7dc7c4d7",

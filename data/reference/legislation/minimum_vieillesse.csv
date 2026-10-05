@@ -19,9 +19,11 @@
 #     aura droit trois ans plus tard.
 #   * les RESSOURCES DU FOYER — l'allocation complète tout ce que perçoit le
 #     ménage, pas seulement les pensions, et le plafond d'un couple n'est pas
-#     le double de celui d'une personne seule. Le modèle ne connaît qu'un
-#     individu et ses pensions : il applique le barème d'une PERSONNE SEULE
-#     sans autre ressource, ce qui est le cas le plus favorable.
+#     le double de celui d'une personne seule. Le modèle ne connaît que les
+#     pensions de l'assuré et, quand la saisie déclare un conjoint, les
+#     ressources qu'elle lui prête : il applique alors le barème du couple
+#     (`minimum_vieillesse_couple.csv`, depuis le 5 octobre 2026), et celui
+#     d'une PERSONNE SEULE sinon, sans autre ressource que les pensions.
 #   * la DEMANDE — l'allocation n'est pas versée d'office, et la DREES estime
 #     le non-recours à la moitié des ayants droit. Le modèle la sert à tous.
 #

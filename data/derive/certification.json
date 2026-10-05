@@ -694,6 +694,28 @@
    "valeurs": 9,
    "verifiee_le": "2026-09-17"
   },
+  "minimum_vieillesse_couple": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "e06b4d27308b086d",
+   "identiques": 6,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale, article D. 815-1, b",
+   "valeurs": 6,
+   "verifiee_le": "2026-10-05"
+  },
+  "minimum_vieillesse_couple_cnav": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "7451dfc950547b1a",
+   "identiques": 15,
+   "niveau": "haute",
+   "source": "Cnav, barèmes « Montant de l'allocation de solidarité aux personnes âgées » et « Plafond de ressources pour l'allocation de solidarité aux personnes âgées »",
+   "valeurs": 15,
+   "verifiee_le": "2026-10-05"
+  },
   "pap_regimes_subventionnes": {
    "ajoutees": 0,
    "colonne": "valeur",

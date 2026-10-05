@@ -1845,6 +1845,17 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
                                     for regime, montant in pensions.items()], carriere, annee)
         return {r.regime: r.montant / 12 for r in servie.regimes}
+    if cle == "minimum_vieillesse_mensuel":
+        # L'exemple donne les revenus du couple, pas les carrières : le test
+        # prête à l'assuré la pension de l'exemple — le conjoint a déjà ses
+        # ressources —, et lit l'allocation du foyer à la date de l'exemple.
+        from retraite_notionnelle.droit.foyer import foyer_et_net
+
+        jour = str(exemple["carriere"]["date_du_foyer"])
+        pension = 12 * float(exemple["carriere"]["pensions_au_foyer_mensuelles"])
+        foyer = foyer_et_net(actuel, carriere.personne, jour, int(jour[:4]), pension, True,
+                             carriere=carriere)
+        return foyer.minimum_vieillesse / 12
     if cle == "plafonds_des_nouvelles_pensions":
         echeancier = Echeancier(simulateur)
         echeancier.parcourir(carriere)
@@ -1974,6 +1985,9 @@ TOLERANCES = {
     "plafonds_des_nouvelles_pensions": {"abs": 0.01},
     "pension_et_rente_d_invalidite_sur_traitement": {"abs": 1e-6},
     "coefficient_majoration_handicap": {"abs": 1e-9},
+    # La fiche publie des mensuels au centime, que l'annuel divisé par douze
+    # dépasse de moins d'un demi-centime : 19 442,21 / 12 = 1 620,184.
+    "minimum_vieillesse_mensuel": {"abs": 0.005},
 }
 
 

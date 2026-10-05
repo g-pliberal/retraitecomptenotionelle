@@ -32,6 +32,7 @@ Ce qui suit est le recensement complet de ses paramètres et de leur état.
 | Minimum garanti, référence | <!--chiffre:cellule(data/reference/legislation/minimum_garanti_montants.csv:valeur/12?annee=2004)-->997,96<!--/--> €/mois au 1er janvier 2004 ; montants servis 2020, 2023-2025 | transcrit ; l'ancre de 2004 est recoupée à chaque exécution au point d'indice certifié — 227 × 52,7558 = <!--chiffre:cellule(data/reference/legislation/minimum_garanti_montants.csv:valeur?annee=2004)-->11 975,57<!--/--> € |
 | Point d'indice de la fonction publique | série datée 1960-2027 | OpenFisca-France, **recontrôlé à chaque exécution** |
 | Minimum vieillesse (ASPA) | montants servis 2007, 2010, 2016-2026 | transcrit des publications |
+| Minimum vieillesse (ASPA) d'un couple, montant et plafond | chaque année de 2006 à 2026, <!--chiffre:cellule(data/reference/legislation/minimum_vieillesse_couple.csv:valeur?annee=2026)-->19 442,21<!--/--> € par an en 2026 | **certifié** aux six ancres de l'article (D. 815-1, b), transcrit du barème de la Cnav entre elles |
 | Décote de la fonction publique | article L. 14, montée en charge 2006-2020 | **certifiée** (loi de 2003, article 66 III) jusqu'à 2019 ; la ligne 2020 est la jonction avec L. 14 |
 | Carrière longue | quatre étapes datées au mois, 2004, novembre 2012, septembre 2023, septembre 2026 ; la borne des vingt ans par génération | **certifiée** pour la règle générale de 2023 (L. 351-1-1, D. 351-1-1) ; les lignes par génération et celles de 2026 transcrites du II de l'article et de la circulaire Cnav 2026-17 |
 | Trimestres accordés au titre des enfants | MDA à <!--chiffre:valeur(data/reference/regles/majoration_duree_assurance_enfants.yaml:versions.id=mda_1972.contenu.parametres.trimestres_par_enfant)-->4<!--/--> puis <!--chiffre:valeur(data/reference/regles/majoration_duree_assurance_enfants.yaml:versions.id=mda_1975.contenu.parametres.trimestres_par_enfant)-->8<!--/--> trimestres par enfant (1972, juillet 1974) ; bonification de la fonction publique à <!--chiffre:valeur(data/reference/regles/enfants_fonction_publique.yaml:versions.id=l12b_1964.contenu.parametres.trimestres_par_enfant)-->4<!--/--> puis <!--chiffre:valeur(data/reference/regles/enfants_fonction_publique.yaml:versions.id=l12bis.contenu.parametres.trimestres_par_enfant)-->2<!--/--> (2004) ; lues dans les versions de leurs fiches, enfant par enfant, à la naissance de chacun | reprise des textes, non recontrôlée |
@@ -447,10 +448,19 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   mois, ne sait pas lesquelles retenir : la fiche `minimum_pension_ieg` la
   dit manquante.
 - **Un ménage, un patrimoine, des ressources.** Le minimum vieillesse est servi
-  sous le barème d'une personne seule sans autre ressource — le cas le plus
-  favorable — et à tous, alors que la DREES estime le non-recours à la moitié
-  des ayants droit. C'est pourquoi il apparaît toujours comme une ligne séparée
-  de la cascade, et pourquoi un paramètre le retire d'un seul geste.
+  sous le barème d'une personne seule, ou sous celui du couple quand la saisie
+  déclare un conjoint — le plafond du couple sur les ressources des deux, la
+  moitié de ce qui manque à chacun quand le conjoint a lui aussi soixante-cinq
+  ans, tout ce qui manque sinon, au plus le montant d'une personne seule
+  (fiche `minimum_vieillesse`). Les ressources de l'assuré ne sont que ses
+  pensions, sans revenu d'activité ni patrimoine ; celles du conjoint sont
+  celles qu'il déclare, comptées entières, sans l'abattement de ses revenus
+  d'activité, et aucune s'il n'en déclare pas (présomption
+  `ressources_du_conjoint`) ; le conjoint inapte, ex-invalide ou allocataire de
+  l'allocation supplémentaire d'invalidité n'y est pas distingué. Et il est
+  servi à tous, alors que la DREES estime le non-recours à la moitié des ayants
+  droit. C'est pourquoi il apparaît toujours comme une ligne séparée de la
+  cascade, et pourquoi un paramètre le retire d'un seul geste.
 
 ## 1. État de certification des données
 
@@ -499,6 +509,8 @@ résumé :
 | Minimum contributif, minimum majoré et plafond | chaque revalorisation entre les ancres, de 1984 à juin 2026 | haute | barèmes de la Cnav, que le récupérateur refuse s'ils ne redonnent pas les ancres du code au centime ; recoupés contre les circulaires que transcrit OpenFisca-France-Pension, jusqu'en 2023, et contre la réponse ministérielle de 2020 |
 | Minimum vieillesse (ASPA) | ancres 2006, 2009-2012, 2014, 2018-2020 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 815-1` |
 | Minimum vieillesse (ASPA) | ancres 2007, 2016, 2017, depuis 2021 | haute / moyenne | publications — l'article n'est pas réécrit à chaque revalorisation |
+| Minimum vieillesse (ASPA) d'un couple | ancres 2006, 2009, 2014, 2018-2020 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 815-1`, b |
+| Minimum vieillesse (ASPA) d'un couple | les quinze autres années, 2007 à 2026 | haute | barèmes de la Cnav, que le récupérateur refuse s'ils ne redonnent pas au centime les montants de l'article |
 | Minimum garanti, traitement de référence | 2004 et année courante | **certifiée** | Service des retraites de l'État, sa page du minimum garanti |
 | Minimum garanti, traitement de référence | ancres intermédiaires | haute | non publiées : la page ne porte que l'ancre et l'année courante |
 | Âge d'ouverture des droits par génération | <!--chiffre:minimum(data/reference/legislation/age_ouverture_requis.csv:generation?fiabilite=certifiee)-->1900<!--/-->-<!--chiffre:maximum(data/reference/legislation/age_ouverture_requis.csv:generation?fiabilite=certifiee)-->1975<!--/--> | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 161-2-1-9` |
@@ -588,7 +600,8 @@ python scripts/fetch/dila_legi_minimum_garanti.py  # barème du minimum garanti 
 python scripts/fetch/erafp_valeurs_point.py    # valeurs du point du RAFP, par l'ERAFP
 python scripts/fetch/jorf_plafond_securite_sociale.py  # plafond ancien, dans ses décrets (index JORF)
 python scripts/fetch/sncf_contribution_employeur.py  # contribution SNCF, dans les deux index
-python scripts/fetch/dila_legi_minimum_vieillesse.py  # montant de l'ASPA, dans le code (index LEGI)
+python scripts/fetch/dila_legi_minimum_vieillesse.py  # montants de l'ASPA, seule et en couple, dans le code (index LEGI)
+python scripts/fetch/cnav_minimum_vieillesse.py  # ASPA du couple entre les ancres, barèmes de la Cnav
 python scripts/fetch/sre_minimum_garanti.py     # référence du minimum garanti, par le service qui la sert
 python scripts/fetch/ined_vallin_mesle.py      # quotients de mortalité d'avant 1986
 python scripts/fetch/insee_projections_mortalite.py  # espérances de vie projetées, jusqu'en 2125
@@ -976,7 +989,7 @@ de durée des hospitaliers actifs, qu'il sert, manquent toujours au dépôt.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->182<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->185<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -1076,7 +1089,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->182<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->185<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.

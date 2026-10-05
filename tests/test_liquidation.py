@@ -112,6 +112,48 @@ def test_chaque_etape_de_la_liquidation_suit_son_schema(simulateur, nom):
     assert [p.regime for p in complements.regimes] == [p.regime for p in pensions.regimes]
 
 
+def test_l_aspa_d_un_couple_suit_le_plafond_du_couple(simulateur):
+    """Le barème du foyer (fiche minimum_vieillesse) : une personne seule a le
+    sien ; qui a épousé le conjoint qu'il déclare a le plafond du couple, sur
+    ses pensions et les ressources du conjoint ; tout ce qui manque, au plus le
+    montant d'une personne seule, quand le conjoint n'a pas 65 ans, la moitié
+    quand il les a. Avant le mariage, le barème d'une personne seule."""
+    actuel = simulateur.scenario_actuel
+    seule = actuel.minimum_vieillesse.plafond(2026)[0]
+    couple = actuel.minimum_vieillesse.plafond_couple(2026)[0]
+
+    def foyer_de(conjoint=None, mariage=None, pension=6000.0, ressources=4000.0):
+        en_couple = None if conjoint is None else {
+            "naissance": conjoint, "sexe": "F", "mariage": mariage,
+            "ressources": ressources, "invalidite": None}
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1955, sexe="H", affiliation="salarie_prive_non_cadre",
+            age_liquidation=66.0, age_debut=20.0, niveau_salaire=0.3, conjoint=en_couple)
+        return foyer.foyer_et_net(actuel, carriere.personne, "2026-06-01", 2026, pension,
+                                  True, carriere=carriere)
+
+    seul = foyer_de()
+    assert (seul.bareme, seul.minimum_vieillesse) == ("personne_seule", seule - 6000.0)
+    assert seul.servie_avec(6000.0) == seul.plafond
+    un = foyer_de("1970")
+    assert un.bareme == "couple" and un.plafond == couple and un.ressources_conjoint == 4000.0
+    assert un.minimum_vieillesse == pytest.approx(min(seule, couple - 10000.0))
+    assert un.servie_avec(6000.0) == pytest.approx(6000.0 + un.minimum_vieillesse)
+    assert foyer_de("1970", ressources=0.0, pension=1000.0).minimum_vieillesse == seule
+    deux = foyer_de("1956")
+    assert deux.bareme == "deux_allocataires"
+    assert deux.minimum_vieillesse == pytest.approx((couple - 10000.0) / 2)
+    assert "par moitié" in deux.avantage().detail
+    # Un mariage après la date : le barème d'une personne seule, sans les
+    # ressources du conjoint.
+    avant = foyer_de("1956", mariage="2026-09")
+    assert (avant.bareme, avant.ressources_conjoint) == ("personne_seule", 0.0)
+    # Le conjoint qui ne dit pas ses ressources n'en a aucune.
+    assert foyer_de("1970", ressources=None).ressources_conjoint == 0.0
+    for foyer_ in (seul, un, deux, avant):
+        assert _erreurs(_etape("foyer_et_net").valider(foyer_.donnees(), "foyer")) == []
+
+
 @pytest.mark.parametrize("nom", sorted(CARRIERES))
 def test_la_liquidation_suit_le_contrat_c6(simulateur, nom):
     """Ses composantes — une pension par régime, puis la majoration pour

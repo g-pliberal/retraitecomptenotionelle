@@ -591,7 +591,7 @@ ligne :
 |---|---|
 | minimum contributif | oui, réservé au taux plein, deux prorata, écrêté |
 | minimum garanti | oui, barème de l'article L. 17 |
-| ASPA | oui, à partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, barème d'une personne seule, ligne séparée |
+| ASPA | oui, à partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, barème d'une personne seule ou du couple quand un conjoint est déclaré, ligne séparée |
 | PMR (retraite agricole) | **non** — voir `docs/limites.md` |
 | majoration pour trois enfants | oui, plafonnée en euros à la complémentaire |
 | majoration de durée d'assurance | oui, attribuée dans un régime |
@@ -1077,7 +1077,11 @@ précédent, et le modèle en prenait deux à l'envers.
    non-cadre née en 1962 et entrée à vingt-deux ans se majore de <!--chiffre:tenu(test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition)-->7,9<!--/--> %
    pour trois enfants, et non de dix pour cent.
 7. **Minimum vieillesse** — allocation différentielle qui complète tout le
-   reste, majorations comprises, jusqu'au barème d'une personne seule. Servie à
+   reste, majorations comprises, jusqu'au barème du foyer : celui d'une
+   personne seule, ou, quand un conjoint est déclaré, le plafond du couple sur
+   les ressources des deux — la moitié de ce qui manque à chacun quand le
+   conjoint a lui aussi l'âge de l'allocation, tout ce qui manque sinon, au
+   plus le montant d'une personne seule (D. 815-1, D. 815-2). Servie à
    partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et toujours affichée comme une ligne séparée : ce n'est pas
    une pension mais une aide sociale, soumise à condition de ressources du
    foyer, à demande, et récupérable sur les successions. Le paramètre
@@ -2146,7 +2150,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->184<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->185<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->39<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 
