@@ -210,154 +210,6 @@ aux cas types, qui naissent en janvier.
 faire naître les cas types un autre jour que le 15 de janvier. Rien n'est
 commencé.
 
-### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `à faire`
-
-**Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
-moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet
-dans notre plan d'action. » Elle naît `à faire` : elle attend que le
-propriétaire la lance.
-
-**Ce qui a été lu, le 1er octobre 2026.** OpenFisca-France-Pension à son
-dernier commit, du 13 mai 2026 (version 0.1.3, qui ne touche que son
-intégration continue) : ses cinq familles de régimes, ses 140 tests de
-formules, sa documentation (`doc/modelisation.md`, `doc/Proposition.md`),
-et l'interface web qu'il tient d'`openfisca-core`. En regard, ce que le
-dépôt dit de lui-même : le tableau de bord, l'architecture, `limites.md`,
-`cout.py`, les témoins de l'oracle, et le budget de calcul, remesuré le même
-jour.
-
-**Ce qu'il ne fait pas mieux, pour situer le reste.** Cinq familles de
-régimes, quand l'inventaire du dépôt en modélise 34 et en approche 40 ; ni
-réversion ni minimum vieillesse, et l'Agirc-Arrco de 2019 n'y est que la
-suite des deux anciens régimes. Ses paramètres s'arrêtent au 1er janvier
-2025, avant la loi du 30 décembre 2025, et l'oracle a trouvé sept erreurs
-chez lui. Il n'a aucun test sur une carrière entière, ce que sa propre note
-dit prioritaire, et le compte notionnel est à son chemin critique sans être
-écrit. Ce qui suit est étroit, mais réel.
-
-**Ce qu'il fait mieux.**
-
-1. **Deux règles du scénario 1, qu'il calcule et que le dépôt ne sert à
-   personne.**
-   - *Le départ anticipé des parents de trois enfants, dans la fonction
-     publique.* OpenFisca le code — trois enfants et quinze ans de services
-     réunis avant 2012, et, selon les dates, la décote de l'année où les
-     conditions l'ont été plutôt que celle de la génération
-     (`depart_anticipe_trois_enfants`,
-     `decote_a_date_depart_anticipe_parent_trois_enfants`, quatre tests).
-     `limites.md` le dit : « le modèle ne sert ces départs à personne », et
-     aucune fiche ne porte la règle ; deux la nomment en passant. Pour un
-     modèle qui veut représenter toutes les personnes vivantes (action 121),
-     le modèle oppose à ces retraités un âge que le droit ne leur opposait
-     pas.
-   - *Le temps partiel des fonctionnaires.* Sa quotité de travail réduit les
-     services sans réduire la durée d'assurance ; chez nous,
-     `temps_partiel_fonction_publique` est `manquante`, et toute année compte
-     à temps plein.
-
-   Ses bonifications du cinquième et de dépaysement n'apportent rien : la
-   première est écrite mais désactivée (`super_actif = False`), la seconde
-   n'est qu'une entrée, sans formule.
-2. **Un oracle qui ne voit que des carrières simples.** Les 48 profils
-   confrontés (10 + 10 + 7 + 10 + 11) sont des carrières continues à salaire
-   nominal constant, sans enfant ni interruption, sédentaires et sans prime
-   dans la fonction publique : la convention l'a voulu, pour que la
-   traduction d'un modèle à l'autre ne devienne pas l'objet du test.
-   OpenFisca calcule pourtant, et le plus souvent teste, bien davantage : la
-   majoration de durée pour enfants, la bonification des enfants nés avant
-   2004, la majoration de 10 %, les points enfants de l'Arrco, la catégorie
-   active, la carrière longue de la fonction publique, le minimum garanti, le
-   minimum contributif, la minoration de l'Arrco, les périodes assimilées
-   année par année, le salaire annuel moyen sur des salaires qui varient. Ces
-   règles n'ont chez nous, au mieux, que des exemples officiels ponctuels ;
-   aucun autre modèle ne les rejoue. Trois fiches sur 130 disent leur
-   correspondance avec un autre modèle (`referents`), et le registre que
-   promet l'architecture (`data/reference/referents.yaml`, § 3.4), avec son
-   cliquet des paramètres pas encore comparés, n'existe pas.
-3. **La trace d'un calcul.** OpenFisca rend, pour toute simulation, chaque
-   variable calculée, sa valeur, les variables et les paramètres qu'elle a
-   lus (`openfisca test -v`, ou `/trace` sur son interface web) ; et toute
-   variable peut s'y donner en entrée, si bien que ses tests isolent chacun
-   une formule. Chez nous, le relevé des droits ne cite la fiche qui l'écrit
-   que sur 733 de ses 22 789 lignes (3 %), et sa version sur 14 ; 40 fiches
-   sur 130 sont citées dans le code. « D'où vient ce chiffre ? » : OpenFisca
-   y répond par construction, le dépôt par une lecture du code.
-4. **Une population, et non treize cas types.** OpenFisca calcule toute une
-   population d'un coup, en vecteurs, et sa documentation dit l'avoir essayé
-   sur les données de Destinie et sur l'EIR 2012, au régime général et à
-   l'Arrco — ce code-là n'est pas publié. La page Coût repose sur 13 cas
-   types à 7 générations, pondérés par les effectifs de leur caisse, et
-   `cout.py` dit ce qui en découle : un effectif de caisse n'est pas un
-   effectif de personnes, le taux d'emploi est supposé constant, et une règle
-   qui ne mord qu'au-delà de 2,5 fois le salaire moyen n'y déplace rien. La
-   vitesse n'est pas l'obstacle : les six scénarios coûtent 29,7 ms par
-   carrière en Python et 4,5 en JavaScript (`scripts/budget_calcul.py`, le
-   1er octobre), une cinquantaine de minutes sur un cœur pour cent mille
-   carrières. L'obstacle est la population : l'EIC ne se lit qu'au CASD, sur
-   habilitation, et le pilote attend encore « des tirages, des couples et des
-   décès simulés » (§ 7.7).
-5. **Un calcul que d'autres appellent, une version qu'ils citent.**
-   `openfisca serve` expose `/calculate`, `/trace`, `/variables`,
-   `/parameters` et une description OpenAPI (`/spec`) ; le paquet se publie
-   sur PyPI en versions numérotées, et son intégration continue refuse un
-   changement fonctionnel sans numéro nouveau ni ligne à son journal des
-   changements. Le dépôt n'expose que les adresses du site (annexe C.9).
-   Aucun résultat ne porte la version du modèle qui l'a calculé — C.9 range
-   des empreintes parmi ce qu'une simulation rend, et aucune n'est
-   calculée —, et les seuls repères git du modèle sont ceux des phases : un
-   chiffre cité ne se retrouve que par l'historique.
-6. **La pension nette, par foyer.** OpenFisca-France, et LexImpact qui s'en
-   sert, calculent la CSG, la CRDS et la CASA selon le revenu fiscal du
-   foyer ; le dépôt retire 9,1 % à tous, ce qui surestime le prélèvement des
-   petites pensions, celles justement des scénarios notionnels
-   (`limites.md`). Le barème est déjà dans `prelevements_remuneration.yaml`.
-
-**Ce qui ne se reprend pas.** Le moteur unique : OpenFisca écrit chaque
-règle une fois, le dépôt deux, et c'est le prix, décidé, d'un site qui
-calcule sans serveur, jusque sur un téléphone (§ 7.1). Son code, ses
-paramètres et ses tests, sous AGPL : on n'en garde que les sorties (§ 3.4).
-
-**Ce qui est à faire**, dans l'ordre, chaque étape valant seule :
-
-1. Le registre des autres modèles, commencé par OpenFisca-France-Pension —
-   sa version, son étendue, ce dont il dépend, ses conditions d'usage, les
-   douze écarts trouvés et qui avait raison —, et le bloc `referents` de
-   chaque fiche : la variable ou le paramètre qui lui répond, ou « aucune ».
-   Aucun résultat ne bouge ; le tableau de bord compte les fiches
-   confrontées.
-2. L'oracle étendu à ce que ce registre désigne, une famille de profils à la
-   fois, chacune avec sa convention de traduction écrite — les nombres
-   d'enfants d'OpenFisca et son unique date de naissance, contre les
-   naissances datées du dépôt, par exemple. Un écart se tranche par la
-   preuve (§ 3.3).
-3. Les deux règles, lues sur Légifrance et dans la circulaire qui les
-   applique, selon la règle du scénario 1, chacune avec sa fiche et ses
-   exemples publiés, puis confrontées à l'oracle : un changement du modèle,
-   dans les deux moteurs.
-4. La trace : chaque ligne du relevé et chaque composante de la liquidation
-   citent leur fiche et sa version, comme l'architecture le prévoyait aux
-   phases 4 et 5 ; puis une simulation rend l'arbre de ce qu'elle a lu, en
-   ligne de commande d'abord, sous le résultat du site ensuite.
-5. Les résultats datés : chaque simulation porte l'empreinte du paquet qui
-   l'a calculée, et chaque commit qui déplace un témoin écrit son résumé
-   (`scripts/resumer_temoins.py`) dans un journal des changements de
-   résultats.
-6. La population : mesurer d'abord ce que les treize cas types déplacent, en
-   repassant la page Coût sur une grille plus large (niveaux de salaire,
-   interruptions, carrières mêlées) ; puis, si l'écart le justifie, une
-   population tirée des distributions publiées (EIR, EACR, projections de
-   l'INSEE), passée par le pilote hors du navigateur, dont la page Coût
-   lirait les agrégats (§ 8).
-
-**Ce que le propriétaire tranche.** L'ordre, et ce qu'il lance. S'il faut
-signaler à OpenFisca les sept erreurs trouvées chez lui : un geste vers
-l'extérieur, qui l'inviterait aussi à relire le dépôt. S'il faut une
-interface d'appel — sans serveur, une commande, ou un JSON à télécharger
-depuis la page — et des versions numérotées, qu'une session ne peut pas
-étiqueter elle-même (HTTP 403, action 130). Pour le net, s'il faut un champ
-de plus — le revenu fiscal du foyer, ou « vit seul, sans autre
-ressource » — ou une présomption déclarée.
-
 ### 143. La même carrière, née une autre année : une page qui compare les générations — `à faire`
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu crées une page avec une
@@ -5483,6 +5335,239 @@ décimale, et `verifier_prose.py --corriger` les deux mesures du bit près : ce
 qu'on y régénère ne se commite toujours pas, la WSL ou HEAD y pourvoient. Puis,
 comme le 4 octobre : les tests du portage que node rejoue ; l'indexation de la
 mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
+
+### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
+
+**Reprise, au 5 octobre 2026.** Fait : l'étape 6, sa première moitié — la
+page Coût refaite sur une grille de 791 carrières ancrée sur l'EIR de 2020 et
+les centiles de l'INSEE (`scripts/grille_large.py`) : l'écart des années
+observées s'y creuse de 4,5 à 8,0 points, le solde moyen de la proposition
+passe de −0,52 à −0,25 point de PIB, et le passé se refait mieux (action 147) ;
+l'écart justifie la population. Reste : retirer de la grille l'ASPA des
+premiers non-salariés, dans les deux moteurs ; la seconde moitié de l'étape 6,
+dont le propriétaire tranche la forme ; les étapes 1 à 5. Commencer par
+l'ASPA. Le détail : « Fait, le 5 octobre 2026 : l'étape 6, la mesure », en fin
+d'action.
+
+**Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
+moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet
+dans notre plan d'action. » Elle naît `à faire` : elle attend que le
+propriétaire la lance.
+
+**Ce qui a été lu, le 1er octobre 2026.** OpenFisca-France-Pension à son
+dernier commit, du 13 mai 2026 (version 0.1.3, qui ne touche que son
+intégration continue) : ses cinq familles de régimes, ses 140 tests de
+formules, sa documentation (`doc/modelisation.md`, `doc/Proposition.md`),
+et l'interface web qu'il tient d'`openfisca-core`. En regard, ce que le
+dépôt dit de lui-même : le tableau de bord, l'architecture, `limites.md`,
+`cout.py`, les témoins de l'oracle, et le budget de calcul, remesuré le même
+jour.
+
+**Ce qu'il ne fait pas mieux, pour situer le reste.** Cinq familles de
+régimes, quand l'inventaire du dépôt en modélise 34 et en approche 40 ; ni
+réversion ni minimum vieillesse, et l'Agirc-Arrco de 2019 n'y est que la
+suite des deux anciens régimes. Ses paramètres s'arrêtent au 1er janvier
+2025, avant la loi du 30 décembre 2025, et l'oracle a trouvé sept erreurs
+chez lui. Il n'a aucun test sur une carrière entière, ce que sa propre note
+dit prioritaire, et le compte notionnel est à son chemin critique sans être
+écrit. Ce qui suit est étroit, mais réel.
+
+**Ce qu'il fait mieux.**
+
+1. **Deux règles du scénario 1, qu'il calcule et que le dépôt ne sert à
+   personne.**
+   - *Le départ anticipé des parents de trois enfants, dans la fonction
+     publique.* OpenFisca le code — trois enfants et quinze ans de services
+     réunis avant 2012, et, selon les dates, la décote de l'année où les
+     conditions l'ont été plutôt que celle de la génération
+     (`depart_anticipe_trois_enfants`,
+     `decote_a_date_depart_anticipe_parent_trois_enfants`, quatre tests).
+     `limites.md` le dit : « le modèle ne sert ces départs à personne », et
+     aucune fiche ne porte la règle ; deux la nomment en passant. Pour un
+     modèle qui veut représenter toutes les personnes vivantes (action 121),
+     le modèle oppose à ces retraités un âge que le droit ne leur opposait
+     pas.
+   - *Le temps partiel des fonctionnaires.* Sa quotité de travail réduit les
+     services sans réduire la durée d'assurance ; chez nous,
+     `temps_partiel_fonction_publique` est `manquante`, et toute année compte
+     à temps plein.
+
+   Ses bonifications du cinquième et de dépaysement n'apportent rien : la
+   première est écrite mais désactivée (`super_actif = False`), la seconde
+   n'est qu'une entrée, sans formule.
+2. **Un oracle qui ne voit que des carrières simples.** Les 48 profils
+   confrontés (10 + 10 + 7 + 10 + 11) sont des carrières continues à salaire
+   nominal constant, sans enfant ni interruption, sédentaires et sans prime
+   dans la fonction publique : la convention l'a voulu, pour que la
+   traduction d'un modèle à l'autre ne devienne pas l'objet du test.
+   OpenFisca calcule pourtant, et le plus souvent teste, bien davantage : la
+   majoration de durée pour enfants, la bonification des enfants nés avant
+   2004, la majoration de 10 %, les points enfants de l'Arrco, la catégorie
+   active, la carrière longue de la fonction publique, le minimum garanti, le
+   minimum contributif, la minoration de l'Arrco, les périodes assimilées
+   année par année, le salaire annuel moyen sur des salaires qui varient. Ces
+   règles n'ont chez nous, au mieux, que des exemples officiels ponctuels ;
+   aucun autre modèle ne les rejoue. Trois fiches sur 130 disent leur
+   correspondance avec un autre modèle (`referents`), et le registre que
+   promet l'architecture (`data/reference/referents.yaml`, § 3.4), avec son
+   cliquet des paramètres pas encore comparés, n'existe pas.
+3. **La trace d'un calcul.** OpenFisca rend, pour toute simulation, chaque
+   variable calculée, sa valeur, les variables et les paramètres qu'elle a
+   lus (`openfisca test -v`, ou `/trace` sur son interface web) ; et toute
+   variable peut s'y donner en entrée, si bien que ses tests isolent chacun
+   une formule. Chez nous, le relevé des droits ne cite la fiche qui l'écrit
+   que sur 733 de ses 22 789 lignes (3 %), et sa version sur 14 ; 40 fiches
+   sur 130 sont citées dans le code. « D'où vient ce chiffre ? » : OpenFisca
+   y répond par construction, le dépôt par une lecture du code.
+4. **Une population, et non treize cas types.** OpenFisca calcule toute une
+   population d'un coup, en vecteurs, et sa documentation dit l'avoir essayé
+   sur les données de Destinie et sur l'EIR 2012, au régime général et à
+   l'Arrco — ce code-là n'est pas publié. La page Coût repose sur 13 cas
+   types à 7 générations, pondérés par les effectifs de leur caisse, et
+   `cout.py` dit ce qui en découle : un effectif de caisse n'est pas un
+   effectif de personnes, le taux d'emploi est supposé constant, et une règle
+   qui ne mord qu'au-delà de 2,5 fois le salaire moyen n'y déplace rien. La
+   vitesse n'est pas l'obstacle : les six scénarios coûtent 29,7 ms par
+   carrière en Python et 4,5 en JavaScript (`scripts/budget_calcul.py`, le
+   1er octobre), une cinquantaine de minutes sur un cœur pour cent mille
+   carrières. L'obstacle est la population : l'EIC ne se lit qu'au CASD, sur
+   habilitation, et le pilote attend encore « des tirages, des couples et des
+   décès simulés » (§ 7.7).
+5. **Un calcul que d'autres appellent, une version qu'ils citent.**
+   `openfisca serve` expose `/calculate`, `/trace`, `/variables`,
+   `/parameters` et une description OpenAPI (`/spec`) ; le paquet se publie
+   sur PyPI en versions numérotées, et son intégration continue refuse un
+   changement fonctionnel sans numéro nouveau ni ligne à son journal des
+   changements. Le dépôt n'expose que les adresses du site (annexe C.9).
+   Aucun résultat ne porte la version du modèle qui l'a calculé — C.9 range
+   des empreintes parmi ce qu'une simulation rend, et aucune n'est
+   calculée —, et les seuls repères git du modèle sont ceux des phases : un
+   chiffre cité ne se retrouve que par l'historique.
+6. **La pension nette, par foyer.** OpenFisca-France, et LexImpact qui s'en
+   sert, calculent la CSG, la CRDS et la CASA selon le revenu fiscal du
+   foyer ; le dépôt retire 9,1 % à tous, ce qui surestime le prélèvement des
+   petites pensions, celles justement des scénarios notionnels
+   (`limites.md`). Le barème est déjà dans `prelevements_remuneration.yaml`.
+
+**Ce qui ne se reprend pas.** Le moteur unique : OpenFisca écrit chaque
+règle une fois, le dépôt deux, et c'est le prix, décidé, d'un site qui
+calcule sans serveur, jusque sur un téléphone (§ 7.1). Son code, ses
+paramètres et ses tests, sous AGPL : on n'en garde que les sorties (§ 3.4).
+
+**Ce qui est à faire**, dans l'ordre, chaque étape valant seule :
+
+1. Le registre des autres modèles, commencé par OpenFisca-France-Pension —
+   sa version, son étendue, ce dont il dépend, ses conditions d'usage, les
+   douze écarts trouvés et qui avait raison —, et le bloc `referents` de
+   chaque fiche : la variable ou le paramètre qui lui répond, ou « aucune ».
+   Aucun résultat ne bouge ; le tableau de bord compte les fiches
+   confrontées.
+2. L'oracle étendu à ce que ce registre désigne, une famille de profils à la
+   fois, chacune avec sa convention de traduction écrite — les nombres
+   d'enfants d'OpenFisca et son unique date de naissance, contre les
+   naissances datées du dépôt, par exemple. Un écart se tranche par la
+   preuve (§ 3.3).
+3. Les deux règles, lues sur Légifrance et dans la circulaire qui les
+   applique, selon la règle du scénario 1, chacune avec sa fiche et ses
+   exemples publiés, puis confrontées à l'oracle : un changement du modèle,
+   dans les deux moteurs.
+4. La trace : chaque ligne du relevé et chaque composante de la liquidation
+   citent leur fiche et sa version, comme l'architecture le prévoyait aux
+   phases 4 et 5 ; puis une simulation rend l'arbre de ce qu'elle a lu, en
+   ligne de commande d'abord, sous le résultat du site ensuite.
+5. Les résultats datés : chaque simulation porte l'empreinte du paquet qui
+   l'a calculée, et chaque commit qui déplace un témoin écrit son résumé
+   (`scripts/resumer_temoins.py`) dans un journal des changements de
+   résultats.
+6. La population : mesurer d'abord ce que les treize cas types déplacent, en
+   repassant la page Coût sur une grille plus large (niveaux de salaire,
+   interruptions, carrières mêlées) ; puis, si l'écart le justifie, une
+   population tirée des distributions publiées (EIR, EACR, projections de
+   l'INSEE), passée par le pilote hors du navigateur, dont la page Coût
+   lirait les agrégats (§ 8).
+
+**Ce que le propriétaire tranche.** L'ordre, et ce qu'il lance. S'il faut
+signaler à OpenFisca les sept erreurs trouvées chez lui : un geste vers
+l'extérieur, qui l'inviterait aussi à relire le dépôt. S'il faut une
+interface d'appel — sans serveur, une commande, ou un JSON à télécharger
+depuis la page — et des versions numérotées, qu'une session ne peut pas
+étiqueter elle-même (HTTP 403, action 130). Pour le net, s'il faut un champ
+de plus — le revenu fiscal du foyer, ou « vit seul, sans autre
+ressource » — ou une présomption déclarée.
+
+**Fait, le 5 octobre 2026 : l'étape 6, la mesure.** Demande du propriétaire :
+« Effectue l'étape 6 de l'action 136 ». La page Coût repassée sur des grilles
+élargies (`scripts/grille_large.py`), sans une ligne de `cout.py` changée :
+chaque déclinaison d'un cas type y reçoit une part de son poids par une
+pseudo-caisse, que `poids_effectifs` lit comme les autres, et la grille du
+dépôt ainsi réécrite redonne la page au chiffre près. Les parts viennent de
+sources certifiées le même jour : trente et un indicateurs de plus de la
+feuille « Quintiles » de l'EIR 2020 — durée cotisée, tranches de durée validée
+avec et sans majorations, mono- et polypensionnés par régime principal, par
+sexe —, et les centiles du salaire du privé de l'INSEE, de 1951 à 2024
+(`dispersion_salaires.csv`, nouvelle source au manifeste).
+
+- *Les grilles.* `personnes` : chaque groupe de régime principal à sa part de
+  retraités dans l'EIR, la Cnav sans les contractuels qu'elle comptait aussi ;
+  `melees` : sur elles, les polypensionnés de chaque groupe qui en a, dix
+  années de salariat d'abord ; `femmes` : la part de femmes de chaque groupe,
+  deux enfants chacune ; `interruptions` : les femmes, puis, hors des régimes
+  statutaires, les cinq tranches de durée validée hors majorations, sexe par
+  sexe, et les périodes assimilées ; `salaires` : les sept centiles, la
+  moyenne de chaque cas type gardée ; `ensemble` : tout à la fois, 791
+  carrières à 28 générations, six minutes et demie sur quatre cœurs.
+- *Ce qu'elle déplace*, la grille entière contre celle du dépôt sans ASPA :
+  l'écart des années observées, −4,55 points au scénario 2 et −8,03 aux
+  scénarios 4 et 6 ; la part du PIB en 2070, +0,36 au système actuel (17,82 %
+  devient 18,18, quand le COR dit 15,3) et +0,11 à la proposition ; le solde
+  moyen de 2026 à 2070, +0,47 au scénario 2, +0,38 au 4, +0,28 à la
+  proposition, dont le déficit passe de −0,52 à −0,25 point de PIB ; la
+  garantie vieillesse en 2070, +0,051 point de PIB, 17 % de plus. Axe par axe,
+  les personnes et les carrières mêlées pèsent de 1,3 à 2,3 points de l'écart
+  passé et deux dixièmes de dépense en 2070 ; les femmes, à elles seules,
+  0,43 point du solde de la proposition, que les carrières courtes ramènent à
+  0,25 en renchérissant la garantie ; les salaires, presque rien au solde.
+- *Le passé refait, pour l'action 147.* La projection lancée à rebours
+  (`Avenir.reconstitution`, arrivé sur `main` pendant la mesure) s'écarte de
+  la dépense observée, au pire depuis 2000, de 19,9 % sur la grille du dépôt
+  sans ASPA et de 12,9 % sur la grille entière ; les interruptions seules la
+  ramènent à 15,0 %. La composition des cas types est donc un bon tiers de la
+  dérive que l'action 147 cherche, le premier de ses suspects ; elle ne
+  rapproche pas pour autant 2070 du COR : elle l'en éloigne de 0,36 point.
+- *La grille et l'enquête.* 53,7 % de femmes (52,8 dans
+  l'EIR) ; 32,9 années validées hors majorations aux femmes et 37,4 aux
+  hommes (32,0 et 39,0) ; 26,9 % des femmes et 8,9 % des hommes sous trente
+  années (33,7 et 11,5) ; 13,6 % de polypensionnés contre 32,6, le régime
+  général ne se déclinant pas, faute que l'EIR dise le second régime de ses
+  polypensionnés.
+- *Trouvé en chemin : l'ASPA des premiers non-salariés.* Le scénario 1 range
+  l'ASPA dans la pension qu'il rend, et la grille du dépôt la déclenche à
+  l'artisan né de 1885 à 1905, au libéral jusqu'en 1915, à l'exploitant
+  agricole jusqu'en 1920, que leurs régimes, nés après la guerre, servaient
+  mal ; les scénarios notionnels ne la servent pas, et la dépense que la page
+  multiplie l'exclut depuis le 23 septembre 2026. L'écart des années observées
+  en est grossi de 0,83 point au scénario 2 et de 1,75 aux scénarios 4 et 6 ;
+  la projection ne bouge pas d'un millième. Le correctif : retirer l'ASPA du
+  scénario 1 de la grille, dans `cout.py` et `cout.js`, comme la grille
+  élargie le fait par `minimum_vieillesse_dans_le_scenario_actuel` ; les
+  témoins et la prose de l'écart passé en bougeront. Un changement du modèle,
+  laissé à une session qui le porte dans les deux moteurs.
+- *Le jugement.* L'écart justifie la seconde moitié : il passe ce que la
+  pondération par caisse avait déplacé (2,9 à 3,6 points de l'écart passé), et
+  il ramène de moitié le déficit moyen de la proposition. La grille élargie
+  n'est pourtant pas la population que l'étape demande — axes indépendants,
+  deux conventions, toutes les générations au profil des retraités de 2020 —,
+  et la population est un chantier d'architecture : tirée des distributions
+  publiées, passée par le pilote hors du navigateur, la page lisant ses
+  agrégats fabriqués (§ 8). Au propriétaire de la lancer, et de trancher ce
+  que deviennent les réglages de la page, qu'elle recalcule aujourd'hui dans
+  le navigateur sur les treize cas types. La grille élargie en est le premier
+  jet.
+- *Ce qui ne bouge pas.* Aucun résultat de la page ni aucun moteur ;
+  `limites.md` dit la mesure et l'ASPA (§ 5). Le point d'OpenFisca au registre
+  (`referents.yaml`, chantier 136.6) reste `a_reprendre` ; il disait la page
+  à 7 générations, celles de la page des cas types : elle en compte 28, et il
+  le dit désormais. Les tests : `tests/test_grille_large.py`.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 

@@ -179,6 +179,11 @@ fichiers:
       - "**Et la part est contrôlée chez un autre producteur.**"
       - "Ce qui reste : la part est très légèrement SURESTIMÉE"
       - "5. **La grille ne monte pas au-delà de 2,5 fois le salaire moyen.**"
+      # Ce que la grille élargie de `scripts/grille_large.py` a mesuré le
+      # 5 octobre 2026, et le minimum vieillesse qu'elle a trouvé dans la
+      # masse du scénario 1 : deux mesures de quelques minutes, faites un jour.
+      - "**Ce que la grille de treize cas types déplace, mesuré le 5 octobre 2026**"
+      - "**La page compte encore le minimum vieillesse des premiers non-salariés**"
       # Le partage des 23 points, tranché le 20 septembre 2026 sur les mesures
       # de `partage_taux_unique.py` : ses quatre lectures à deux SMIC et la
       # hausse du brut sous le partage inverse sont celles de ce jour-là.

@@ -1260,6 +1260,7 @@
    "insee_bdm_productivite",
    "insee_bdm_smpt",
    "insee_deces_mortalite",
+   "insee_dispersion_salaires",
    "insee_ipc_long",
    "insee_ipc_melodi",
    "insee_mortalite_niveau_de_vie",
@@ -6641,7 +6642,9 @@
     "0e0cdc6ebcc5294b",
     "dd6826fdc0054d11",
     "7f24ac8a7988c215",
-    "7bb5229ab9b9cf57"
+    "7bb5229ab9b9cf57",
+    "0e15cd15f67b8e0b",
+    "fc0d0135c9ee7f97"
    ],
    "5 ter. La trajectoire projetée : ce qu'elle suppose, et ce qu'elle vaut": [
     "a65f9485736bf8ce"
@@ -6803,7 +6806,7 @@
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
     "d8fe3e7fd9af50b2",
-    "8108f0cd354123a3"
+    "bf6130c9375cc8fe"
    ],
    "Avant de partir": [
     "5d7ed1de7dc7c4d7",

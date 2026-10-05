@@ -421,6 +421,50 @@ def source_profil_salaire_age() -> dict[tuple, float]:
     return valeurs
 
 
+#: Les centiles du salaire que la série longue publie, sous le nom que le dépôt
+#: leur donne. Les plus anciennes années n'en portent que trois.
+CENTILES_SALAIRE = {"CENTILE_10": "p10", "CENTILE_25": "p25", "CENTILE_50": "p50",
+                    "CENTILE_75": "p75", "CENTILE_90": "p90", "CENTILE_95": "p95",
+                    "CENTILE_99": "p99"}
+
+
+def source_dispersion_salaires() -> dict[tuple, float]:
+    """Les centiles du salaire du privé, rapportés au salaire moyen de l'année.
+
+    Un RAPPORT, comme le profil par âge, et pour la même raison. Il dit ce
+    qu'aucun cas type ne porte : la dispersion des salaires autour de la
+    moyenne — le centile 10 à la moitié de la moyenne, le centile 99 à plus de
+    trois fois et demie en 2024 —, que ``scripts/grille_large.py`` donne à la
+    grille élargie. Une coupe de l'année, à temps complet : plus dispersée
+    qu'un salaire de carrière, qu'une mobilité rapproche de la moyenne.
+    """
+    attendus = {
+        "DERA_MEASURE": "SALAIRE_NET_EQTP_MENSUEL_MOYEN_EUROS_CONSTANTS",
+        "SEX": "_T", "PCS_ESE": "_T", "ACTIVITY": "_T", "AGE": "_T",
+        "WKTIME": "FT",
+    }
+    observations = _charge_profil_salaire("insee_dispersion_salaires.json", attendus)
+    par_annee: dict[int, dict[str, float]] = {}
+    for observation in observations:
+        dimensions = observation["dimensions"]
+        valeur = observation["measures"].get("OBS_VALUE_NIVEAU", {}).get("value")
+        if valeur is None:
+            continue
+        annee = int(dimensions["TIME_PERIOD"])
+        par_annee.setdefault(annee, {})[dimensions["QUANTILE"]] = float(valeur)
+
+    valeurs: dict[tuple, float] = {}
+    for annee in sorted(par_annee):
+        moyenne = par_annee[annee].get("_T")
+        if not moyenne:
+            continue
+        for code, centile in CENTILES_SALAIRE.items():
+            brut = par_annee[annee].get(code)
+            if brut is not None:
+                valeurs[(str(annee), centile)] = brut / moyenne
+    return valeurs
+
+
 def source_profil_salaire_categorie() -> dict[tuple, float]:
     """Profil d'âge INTRA-CATÉGORIE, rapporté à la moyenne de la catégorie.
 
@@ -3845,6 +3889,42 @@ CERTIFICATIONS = (
         ),
     ),
     Certification(
+        nom="dispersion_salaires",
+        chemin=REFERENCE / "macro" / "dispersion_salaires.csv",
+        cles=("annee", "centile"),
+        colonne="salaire_relatif",
+        source=source_dispersion_salaires,
+        origine="INSEE Melodi, DS_DERA_PRIVE_SERIES_LONGUES (centiles)",
+        decimales=4,
+        tolerance=5e-4,
+        entete=(
+            "# Centiles du salaire du privé, rapportés au salaire moyen de l'année",
+            "# source_id: insee_dispersion_salaires",
+            "# unite: rapport sans dimension (1,00 = salaire moyen de l'année)",
+            "# fiabilite:",
+            "#   certifiee : salaire net mensuel en équivalent temps plein, à temps",
+            "#             complet, tous âges, euros constants ; trois centiles",
+            "#             avant 1980, cinq jusqu'en 1994, sept ensuite ;",
+            "#             recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À dire ce que la grille de treize cas types déplace sur la page Coût",
+            "# (scripts/grille_large.py, action 136, étape 6) : un cas type est UN",
+            "# niveau de salaire, quand le centile 10 du privé vaut la moitié de la",
+            "# moyenne et le centile 99 plus de trois fois et demie. Aucun calcul",
+            "# du site ne la lit.",
+            "#",
+            "# CE QU'ELLE N'EST PAS. La dispersion d'un salaire de CARRIÈRE : une",
+            "# coupe de l'année, à temps complet, plus dispersée que la moyenne",
+            "# d'une vie de travail, qu'une mobilité rapproche du centre, et sans",
+            "# le temps partiel, qui étirerait le bas.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
         nom="profil_salaire_categorie",
         chemin=REFERENCE / "macro" / "profil_salaire_categorie.csv",
         cles=("categorie", "tranche"),
@@ -5131,6 +5211,17 @@ CERTIFICATIONS = (
             "# minimum de pension APPORTE à ses bénéficiaires. Le classeur en donne",
             "# la part — 46,5 % des femmes contre 26,1 % des hommes — et non le",
             "# montant. Le retirer creuserait l'écart davantage.",
+            "#",
+            "# CE QUI ANCRE LA GRILLE ÉLARGIE de scripts/grille_large.py (action",
+            "# 136, étape 6) : la durée cotisée et la durée validée hors",
+            "# majorations, les cinq tranches de durée validée, avec et sans les",
+            "# majorations, les monopensionnés et les polypensionnés de deux",
+            "# régimes de base selon leur régime principal — des PERSONNES, là où",
+            "# les effectifs de caisse comptent un polypensionné dans chacune des",
+            "# siennes. Le classeur intitule la durée validée hors majorations",
+            "# « durée cotisée hors majoration » ; scripts/fetch/drees_",
+            "# caracteristiques_retraites.py dit pourquoi c'est l'intitulé qui se",
+            "# trompe.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

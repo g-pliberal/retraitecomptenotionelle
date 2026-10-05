@@ -103,7 +103,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors de la page Coût.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR) : le modèle en calcule une pour une personne (scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle ne calcule pas.
 
-**La feuille de route** compte 148 actions : 127 fait, 14 en cours, 4 à faire, 2 abandonnée, 1 archivée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 148 actions : 127 fait, 15 en cours, 3 à faire, 2 abandonnée, 1 archivée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -234,7 +234,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 14 actions en cours** de la feuille de route :
+- **Les 15 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
@@ -244,6 +244,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger
   - 133. La retraite de base et ses complémentaires, sous le montant du système 1
   - 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats
+  - 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population
   - 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation
   - 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris
   - 142. Les simulateurs officiels, sans y passer ses journées

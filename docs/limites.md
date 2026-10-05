@@ -2972,6 +2972,34 @@ le 19 septembre 2026 :
    vrai déplafonnement apporterait n'est donc pas chiffrée ici, et la dépense
    supplémentaire non plus.
 
+**Ce que la grille de treize cas types déplace, mesuré le 5 octobre 2026**
+(`scripts/grille_large.py`, action 136, étape 6). La page refaite sur une
+grille de 791 carrières au lieu de 13, ancrée sur l'échantillon interrégimes de
+2020 et sur les centiles du salaire du privé de 2024 : les personnes de chaque
+régime principal au lieu des retraités de chaque caisse, les polypensionnés,
+une moitié de femmes avec leurs enfants, les carrières courtes et les périodes
+assimilées que l'enquête dénombre, des salaires jusqu'à neuf fois le salaire
+moyen. L'écart des années observées s'y creuse de 4,5 points au scénario 2 et
+de 8,0 aux scénarios 4 et 6 ; la dépense du système actuel en 2070 monte de
+0,36 point de PIB, et s'éloigne d'autant de celle du COR ; le solde moyen de la
+proposition passe de −0,52 à −0,25 point de PIB, quand sa garantie vieillesse
+coûte 17 % de plus en 2070. Les femmes et les carrières courtes en font
+l'essentiel. La même grille refait mieux le passé : le pire écart, depuis 2000,
+de la projection à rebours à la dépense observée (action 147) y tombe de 20 à
+13 %. Ce n'est pas une population : les axes y sont tenus pour indépendants, et
+deux de ses parts sont des conventions — dix années de salariat avant le régime
+d'un polypensionné, deux enfants par femme.
+
+**La page compte encore le minimum vieillesse des premiers non-salariés**,
+trouvé par la même mesure. L'artisan né de 1885 à 1905, le libéral jusqu'en
+1915, l'exploitant agricole jusqu'en 1920 : leurs régimes, nés après la
+guerre, ne leur servaient que des pensions courtes ou forfaitaires, que le
+scénario 1 complète à l'ASPA ; les scénarios notionnels ne la servent pas, et
+la dépense que la page multiplie l'exclut depuis le 23 septembre 2026. L'écart
+des années observées en est grossi : −78,70 % au lieu de −77,87 au scénario 2,
+−52,13 % au lieu de −50,38 aux scénarios 4 et 6. La projection ne bouge pas
+d'un millième de point.
+
 **Ce qui, en revanche, n'est pas une approximation** : l'égalité des scénarios
 3 et 5 avec le système actuel sur toute la période observée. Elle est EXACTE, et
 au sens strict — le scénario prospectif recopie la pension du scénario actuel

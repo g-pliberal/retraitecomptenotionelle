@@ -1167,8 +1167,12 @@ referents:
           Il calcule une population d'un coup, en vecteurs, et sa
           documentation dit l'avoir essayé sur les données de Destinie et sur
           l'EIR 2012, au régime général et à l'Arrco ; ce code-là n'est pas
-          publié. La page Coût du dépôt repose sur 13 cas types à 7
-          générations, pondérés par les effectifs de leur caisse (`cout.py`).
+          publié. La page Coût du dépôt repose sur 13 cas types à 28
+          générations, pondérés par les effectifs de leur caisse (`cout.py`) ;
+          refaite sur 791 carrières ancrées sur l'EIR 2020, elle creuse
+          l'écart passé de 4 à 8 points et réduit de moitié le déficit
+          moyen de la proposition (`scripts/grille_large.py`, 5 octobre
+          2026).
         preuve: >-
           `doc/Proposition.md:36, 141` (« Sont testés avec EIR 2012 Régime
           général et Arrco »), au commit `1c45423`

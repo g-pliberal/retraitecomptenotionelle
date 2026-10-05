@@ -107,6 +107,112 @@ INDICATEURS: dict[str, str] = {
     # minimum leur apporte. Elle est lue quand même, parce que la page la cite
     # pour dire dans quel sens la mesure est une borne basse.
     "part_minimum_pension": "Part de bénéficiaires du minimum de pension (en %)",
+    # Ce qui suit ancre la grille élargie de `scripts/grille_large.py` (action
+    # 136, étape 6) : ce que treize cas types, à carrière complète, d'un seul
+    # régime et d'hommes pour douze d'entre eux, déplacent sur la page Coût.
+    # La durée COTISÉE, et la durée validée hors majorations : leur écart est
+    # celui des périodes assimilées, la différence avec la durée validée celui
+    # des majorations. Le classeur intitule la seconde « Moyenne de la durée
+    # cotisée hors majoration », mais ses valeurs dépassent la durée cotisée et
+    # les tranches qui la suivent disent « durée validée hors majoration » :
+    # c'est l'intitulé qui se trompe, et le code dit ce que la ligne mesure.
+    # Le début est pris jusqu'à la parenthèse, que la ligne voisine n'a pas.
+    "duree_cotisee": "Moyenne de la durée cotisée (en années)",
+    "duree_validee_hors_majoration": "Moyenne de la durée cotisée hors majoration",
+    # Les cinq tranches de durée validée : la part des carrières courtes.
+    "part_duree_validee_moins_10": (
+        "Proportion d'assurés dont la durée validée est inférieure à 10 ans"
+    ),
+    "part_duree_validee_10_20": (
+        "Proportion d'assurés dont la durée validée est comprise entre 10 et 20 ans"
+    ),
+    "part_duree_validee_20_30": (
+        "Proportion d'assurés dont la durée validée est comprise entre 20 et 30 ans"
+    ),
+    "part_duree_validee_30_40": (
+        "Proportion d'assurés dont la durée validée est comprise entre 30 et 40 ans"
+    ),
+    "part_duree_validee_40_plus": (
+        "Proportion d'assurés dont la durée validée est supérieure ou égale à 40 ans"
+    ),
+    # Les mêmes, hors majorations : ce que la grille cale, le modèle ajoutant
+    # lui-même les trimestres des enfants.
+    "part_duree_validee_hors_majoration_moins_10": (
+        "Proportion d'assurés dont la durée validée hors majoration est inférieure "
+        "à 10 ans"
+    ),
+    "part_duree_validee_hors_majoration_10_20": (
+        "Proportion d'assurés dont la durée validée hors majoration est comprise "
+        "entre 10 et 20 ans"
+    ),
+    "part_duree_validee_hors_majoration_20_30": (
+        "Proportion d'assurés dont la durée validée hors majoration est comprise "
+        "entre 20 et 30 ans"
+    ),
+    "part_duree_validee_hors_majoration_30_40": (
+        "Proportion d'assurés dont la durée validée hors majoration est comprise "
+        "entre 30 et 40 ans"
+    ),
+    "part_duree_validee_hors_majoration_40_plus": (
+        "Proportion d'assurés dont la durée validée hors majoration est supérieure "
+        "ou égale à 40 ans"
+    ),
+    # Les monopensionnés et les polypensionnés de deux régimes de base, selon
+    # leur régime principal : des PERSONNES, là où les effectifs de caisse
+    # comptent un polypensionné dans chacune des siennes.
+    "part_monopensionnes": "Proportion de monopensionnés",
+    "part_mono_regime_general": (
+        "Monopensionnés, anciens salariés : salariés du régime général"
+    ),
+    "part_mono_fonction_publique_etat_civile": (
+        "Monopensionnés, anciens salariés : fonctionnaires civils d’État"
+    ),
+    "part_mono_fonction_publique_etat_militaire": (
+        "Monopensionnés, anciens salariés : fonctionnaires militaires d’État"
+    ),
+    "part_mono_msa_salaries": "Monopensionnés, anciens salariés : MSA salariés",
+    "part_mono_cnracl": "Monopensionnés, anciens salariés : fonctionnaires CNRACL",
+    "part_mono_regimes_speciaux": "Monopensionnés, anciens salariés : régimes spéciaux",
+    "part_mono_msa_non_salaries": (
+        "Monopensionnés, anciens non-salariés : MSA non-salariés"
+    ),
+    "part_mono_professions_liberales": (
+        "Monopensionnés, anciens non-salariés : Professions libérales"
+    ),
+    "part_poly_2_regimes": "Proportion de polypensionnés de 2 régimes de base",
+    "part_poly_regime_general": (
+        "Polypensionnés de 2 régimes de base, anciens salariés : salariés du "
+        "régime général"
+    ),
+    "part_poly_fonction_publique_etat_civile": (
+        "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires "
+        "civils d’État"
+    ),
+    "part_poly_fonction_publique_etat_militaire": (
+        "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires "
+        "militaires d’État"
+    ),
+    "part_poly_msa_salaries": (
+        "Polypensionnés de 2 régimes de base, anciens salariés : MSA salariés"
+    ),
+    "part_poly_cnracl": (
+        "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires "
+        "CNRACL"
+    ),
+    "part_poly_regimes_speciaux": (
+        "Polypensionnés de 2 régimes de base, anciens salariés : régimes spéciaux"
+    ),
+    "part_poly_msa_non_salaries": (
+        "Polypensionnés de 2 régimes de base, anciens non-salariés : MSA "
+        "non-salariés"
+    ),
+    "part_poly_professions_liberales": (
+        "Polypensionnés de 2 régimes de base, anciens non-salariés : "
+        "Professions libérales"
+    ),
+    "part_poly_3_regimes": (
+        "Proportion de polypensionnés d'au moins 3 régimes de base"
+    ),
 }
 
 SEXES = {"Femme": "F", "Homme": "H", "Ensemble": "ensemble"}

@@ -38,9 +38,19 @@ seule année 2024.
 D'où le partage : la forme vient du second, l'évolution dans le temps du
 premier. ``docs/limites.md`` dit ce que cette composition suppose.
 
-Les fichiers produits, ``data/brut/insee_profil_salaire_age.json`` et
-``data/brut/insee_profil_salaire_categorie.json``, sont les documents sources :
-ils ne sont pas lus par le modèle, seulement par ``scripts/verifier_donnees.py``.
+LA DISPERSION, EN PLUS DU PROFIL
+---------------------------------
+La série longue porte aussi les CENTILES du salaire — du dixième au
+quatre-vingt-dix-neuvième, tous âges confondus —, que le profil n'emploie pas.
+``scripts/grille_large.py`` en tire la dispersion des salaires autour de la
+moyenne, qu'aucun des treize cas types n'a : un cas type est UN niveau de
+salaire, quand le centile 99 du privé vaut 3,7 fois la moyenne en 2024 et le
+centile 10 la moitié.
+
+Les fichiers produits, ``data/brut/insee_profil_salaire_age.json``,
+``data/brut/insee_profil_salaire_categorie.json`` et
+``data/brut/insee_dispersion_salaires.json``, sont les documents sources : ils
+ne sont pas lus par le modèle, seulement par ``scripts/verifier_donnees.py``.
 """
 
 from __future__ import annotations
@@ -92,9 +102,18 @@ FILTRES_PUBLIC = {
     "SEX": "_T", "PCS_ESE": "_T", "QUANTILE": "_T", "WKTIME": "FT",
 }
 
+#: Les centiles, tous âges confondus : la dimension ``QUANTILE`` n'est pas
+#: filtrée, et la moyenne (``_T``) vient avec eux.
+FILTRES_DISPERSION = {
+    "DERA_MEASURE": "SALAIRE_NET_EQTP_MENSUEL_MOYEN_EUROS_CONSTANTS",
+    "SEX": "_T", "PCS_ESE": "_T", "ACTIVITY": "_T", "AGE": "_T",
+    "WKTIME": "FT",
+}
+
 SORTIE_SERIES = Path("data/brut/insee_profil_salaire_age.json")
 SORTIE_CATEGORIES = Path("data/brut/insee_profil_salaire_categorie.json")
 SORTIE_PUBLIC = Path("data/brut/insee_profil_salaire_public.json")
+SORTIE_DISPERSION = Path("data/brut/insee_dispersion_salaires.json")
 
 
 def main() -> int:
@@ -102,6 +121,7 @@ def main() -> int:
         (JEU_SERIES, FILTRES_SERIES, SORTIE_SERIES),
         (JEU_CATEGORIES, FILTRES_CATEGORIES, SORTIE_CATEGORIES),
         (JEU_PUBLIC, FILTRES_PUBLIC, SORTIE_PUBLIC),
+        (JEU_SERIES, FILTRES_DISPERSION, SORTIE_DISPERSION),
     ):
         try:
             chemin = telecharger(jeu, filtres, sortie)

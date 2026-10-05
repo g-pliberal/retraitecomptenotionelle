@@ -35,6 +35,17 @@
 # la part — 46,5 % des femmes contre 26,1 % des hommes — et non le
 # montant. Le retirer creuserait l'écart davantage.
 #
+# CE QUI ANCRE LA GRILLE ÉLARGIE de scripts/grille_large.py (action
+# 136, étape 6) : la durée cotisée et la durée validée hors
+# majorations, les cinq tranches de durée validée, avec et sans les
+# majorations, les monopensionnés et les polypensionnés de deux
+# régimes de base selon leur régime principal — des PERSONNES, là où
+# les effectifs de caisse comptent un polypensionné dans chacune des
+# siennes. Le classeur intitule la durée validée hors majorations
+# « durée cotisée hors majoration » ; scripts/fetch/drees_
+# caracteristiques_retraites.py dit pourquoi c'est l'intitulé qui se
+# trompe.
+#
 # Ne pas modifier les valeurs certifiées à la main : elles seraient
 # écrasées au prochain scripts/verifier_donnees.py --appliquer.
 annee,indicateur,sexe,valeur,fiabilite
@@ -47,18 +58,111 @@ annee,indicateur,sexe,valeur,fiabilite
 2020,coefficient_proratisation,F,83.3,certifiee
 2020,coefficient_proratisation,H,90.4,certifiee
 2020,coefficient_proratisation,ensemble,86.9,certifiee
+2020,duree_cotisee,F,28.0,certifiee
+2020,duree_cotisee,H,35.0,certifiee
+2020,duree_cotisee,ensemble,31.0,certifiee
 2020,duree_validee,F,36.0,certifiee
 2020,duree_validee,H,40.0,certifiee
 2020,duree_validee,ensemble,38.0,certifiee
+2020,duree_validee_hors_majoration,F,32.0,certifiee
+2020,duree_validee_hors_majoration,H,39.0,certifiee
+2020,duree_validee_hors_majoration,ensemble,35.0,certifiee
 2020,duree_validee_non_cotisee,F,26.0,certifiee
 2020,duree_validee_non_cotisee,H,10.9,certifiee
 2020,duree_validee_non_cotisee,ensemble,18.9,certifiee
 2020,effectifs,F,8736.0,certifiee
 2020,effectifs,H,7816.0,certifiee
 2020,effectifs,ensemble,16552.0,certifiee
+2020,part_duree_validee_10_20,F,10.3,certifiee
+2020,part_duree_validee_10_20,H,2.7,certifiee
+2020,part_duree_validee_10_20,ensemble,6.7,certifiee
+2020,part_duree_validee_20_30,F,12.1,certifiee
+2020,part_duree_validee_20_30,H,4.5,certifiee
+2020,part_duree_validee_20_30,ensemble,8.5,certifiee
+2020,part_duree_validee_30_40,F,22.4,certifiee
+2020,part_duree_validee_30_40,H,18.2,certifiee
+2020,part_duree_validee_30_40,ensemble,20.4,certifiee
+2020,part_duree_validee_40_plus,F,51.8,certifiee
+2020,part_duree_validee_40_plus,H,72.0,certifiee
+2020,part_duree_validee_40_plus,ensemble,61.4,certifiee
+2020,part_duree_validee_hors_majoration_10_20,F,11.4,certifiee
+2020,part_duree_validee_hors_majoration_10_20,H,3.6,certifiee
+2020,part_duree_validee_hors_majoration_10_20,ensemble,7.7,certifiee
+2020,part_duree_validee_hors_majoration_20_30,F,13.9,certifiee
+2020,part_duree_validee_hors_majoration_20_30,H,5.2,certifiee
+2020,part_duree_validee_hors_majoration_20_30,ensemble,9.8,certifiee
+2020,part_duree_validee_hors_majoration_30_40,F,30.8,certifiee
+2020,part_duree_validee_hors_majoration_30_40,H,22.0,certifiee
+2020,part_duree_validee_hors_majoration_30_40,ensemble,26.7,certifiee
+2020,part_duree_validee_hors_majoration_40_plus,F,35.5,certifiee
+2020,part_duree_validee_hors_majoration_40_plus,H,66.5,certifiee
+2020,part_duree_validee_hors_majoration_40_plus,ensemble,50.1,certifiee
+2020,part_duree_validee_hors_majoration_moins_10,F,8.4,certifiee
+2020,part_duree_validee_hors_majoration_moins_10,H,2.7,certifiee
+2020,part_duree_validee_hors_majoration_moins_10,ensemble,5.7,certifiee
+2020,part_duree_validee_moins_10,F,3.4,certifiee
+2020,part_duree_validee_moins_10,H,2.7,certifiee
+2020,part_duree_validee_moins_10,ensemble,3.0,certifiee
 2020,part_minimum_pension,F,46.5,certifiee
 2020,part_minimum_pension,H,26.1,certifiee
 2020,part_minimum_pension,ensemble,36.9,certifiee
+2020,part_mono_cnracl,F,3.1,certifiee
+2020,part_mono_cnracl,H,0.7,certifiee
+2020,part_mono_cnracl,ensemble,2.0,certifiee
+2020,part_mono_fonction_publique_etat_civile,F,6.2,certifiee
+2020,part_mono_fonction_publique_etat_civile,H,4.3,certifiee
+2020,part_mono_fonction_publique_etat_civile,ensemble,5.3,certifiee
+2020,part_mono_fonction_publique_etat_militaire,F,0.3,certifiee
+2020,part_mono_fonction_publique_etat_militaire,H,2.7,certifiee
+2020,part_mono_fonction_publique_etat_militaire,ensemble,1.4,certifiee
+2020,part_mono_msa_non_salaries,F,1.6,certifiee
+2020,part_mono_msa_non_salaries,H,1.8,certifiee
+2020,part_mono_msa_non_salaries,ensemble,1.7,certifiee
+2020,part_mono_msa_salaries,F,1.1,certifiee
+2020,part_mono_msa_salaries,H,1.8,certifiee
+2020,part_mono_msa_salaries,ensemble,1.5,certifiee
+2020,part_mono_professions_liberales,F,0.1,certifiee
+2020,part_mono_professions_liberales,H,0.3,certifiee
+2020,part_mono_professions_liberales,ensemble,0.2,certifiee
+2020,part_mono_regime_general,F,58.3,certifiee
+2020,part_mono_regime_general,H,47.0,certifiee
+2020,part_mono_regime_general,ensemble,52.9,certifiee
+2020,part_mono_regimes_speciaux,F,0.7,certifiee
+2020,part_mono_regimes_speciaux,H,2.7,certifiee
+2020,part_mono_regimes_speciaux,ensemble,1.6,certifiee
+2020,part_monopensionnes,F,72.0,certifiee
+2020,part_monopensionnes,H,62.3,certifiee
+2020,part_monopensionnes,ensemble,67.4,certifiee
+2020,part_poly_2_regimes,F,27.5,certifiee
+2020,part_poly_2_regimes,H,36.8,certifiee
+2020,part_poly_2_regimes,ensemble,31.9,certifiee
+2020,part_poly_3_regimes,F,0.5,certifiee
+2020,part_poly_3_regimes,H,0.9,certifiee
+2020,part_poly_3_regimes,ensemble,0.7,certifiee
+2020,part_poly_cnracl,F,5.1,certifiee
+2020,part_poly_cnracl,H,3.2,certifiee
+2020,part_poly_cnracl,ensemble,4.2,certifiee
+2020,part_poly_fonction_publique_etat_civile,F,3.8,certifiee
+2020,part_poly_fonction_publique_etat_civile,H,4.1,certifiee
+2020,part_poly_fonction_publique_etat_civile,ensemble,3.9,certifiee
+2020,part_poly_fonction_publique_etat_militaire,F,0.1,certifiee
+2020,part_poly_fonction_publique_etat_militaire,H,1.4,certifiee
+2020,part_poly_fonction_publique_etat_militaire,ensemble,0.7,certifiee
+2020,part_poly_msa_non_salaries,F,2.7,certifiee
+2020,part_poly_msa_non_salaries,H,2.2,certifiee
+2020,part_poly_msa_non_salaries,ensemble,2.5,certifiee
+2020,part_poly_msa_salaries,F,0.9,certifiee
+2020,part_poly_msa_salaries,H,1.8,certifiee
+2020,part_poly_msa_salaries,ensemble,1.3,certifiee
+2020,part_poly_professions_liberales,F,0.6,certifiee
+2020,part_poly_professions_liberales,H,1.2,certifiee
+2020,part_poly_professions_liberales,ensemble,0.9,certifiee
+2020,part_poly_regime_general,F,12.7,certifiee
+2020,part_poly_regime_general,H,16.4,certifiee
+2020,part_poly_regime_general,ensemble,14.5,certifiee
+2020,part_poly_regimes_speciaux,F,0.6,certifiee
+2020,part_poly_regimes_speciaux,H,2.8,certifiee
+2020,part_poly_regimes_speciaux,ensemble,1.6,certifiee
 2020,pension_droit_direct,F,1122.0,certifiee
 2020,pension_droit_direct,H,1784.0,certifiee
 2020,pension_droit_direct,ensemble,1435.0,certifiee

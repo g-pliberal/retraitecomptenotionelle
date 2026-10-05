@@ -238,6 +238,23 @@ institutions:
           ×2,42, sans source. Ne porte que l'année 2024 : sa forme est supposée
           stable dans le temps, ce que docs/limites.md dit.
 
+      - id: insee_dispersion_salaires
+        titre: Centiles du salaire du secteur privé (séries longues)
+        url: https://api.insee.fr/melodi/data/DS_DERA_PRIVE_SERIES_LONGUES
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/dispersion_salaires.csv
+        recuperation: scripts/fetch/insee_profil_salaire_age.py
+        note: >-
+          Le jeu de la série longue, lu par sa dimension QUANTILE : les centiles
+          10, 50 et 90 du salaire net en équivalent temps plein depuis 1951, 25
+          et 75 depuis 1980, 95 et 99 depuis 1995, rapportés à la moyenne de
+          l'année. La forme est stable depuis 1980 — le centile 10 entre 0,46
+          et 0,51 fois la moyenne, le 90 entre 1,60 et 1,64, hors les deux
+          années de l'activité partielle. Aucun calcul du site ne la lit :
+          `scripts/grille_large.py` en donne la dispersion à la grille élargie
+          qui dit ce que les treize cas types de la page Coût déplacent.
+
       - id: insee_profil_salaire_public
         titre: Salaires de la fonction publique par âge, statut et versant
         url: https://api.insee.fr/melodi/data/DS_DERA_PUBLIC_ANNUEL
