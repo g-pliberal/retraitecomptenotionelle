@@ -1154,6 +1154,8 @@ class MajorationsPourEnfants:
     FICHES = {
         "mda": "majoration_duree_assurance_enfants",
         "bonifications": "enfants_fonction_publique",
+        "enfants_sncf": "enfants_sncf",
+        "enfants_ratp": "enfants_ratp",
     }
     #: Les bénéficiaires qu'une version peut désigner.
     BENEFICIAIRES = ("mere",)
@@ -1205,6 +1207,14 @@ class MajorationsPourEnfants:
 
         trimestres = int(parametres["trimestres_par_enfant"])
         services = int(parametres["services_par_enfant"])
+        if (parametres.get("trimestres_premier_enfant") is not None
+                and all(naissance <= jour for jour in naissances)):
+            # Le PREMIER ENFANT DE LA FRATRIE a sa part, les suivants la
+            # leur : deux trimestres, puis quatre, à la RATP (décret
+            # n° 2008-637, article 24 III ; COR, 19 octobre 2023, document 2,
+            # note 15).
+            trimestres = int(parametres["trimestres_premier_enfant"])
+            services = min(services, trimestres)
         if parametres.get("par_annee_d_education"):
             # D. 351-1-7 : un trimestre à la naissance, puis un au terme de
             # chaque année d'éducation, dans la limite de la version.

@@ -1,0 +1,194 @@
+schema_version: 1
+id: enfants_ratp
+intitule: >-
+  Trimestres des enfants au régime spécial de la RATP : une bonification d'une année
+  par enfant né avant le 1er juillet 2008, en services et en durée, à l'assuré qui a
+  interrompu son activité deux mois autour de la naissance ; pour les enfants nés
+  depuis, à la femme qui a accouché après son recrutement, une majoration de durée
+  d'assurance de deux trimestres pour le premier enfant de la fratrie et de quatre pour
+  les suivants, comptée pour la décote et la surcote seulement.
+domaine: enfants
+regimes:
+- ratp
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- enfant.naissance
+- le rang de l'enfant dans la fratrie
+- le sexe de l'assurée, qui accouche
+- recrutement
+- liquidation.date_effet
+ecrit:
+- les trimestres de chaque enfant, en durée d'assurance et en services, dans le régime
+  que la priorité entre régimes désigne (priorite_majorations_enfants)
+dates_qui_decident:
+- enfant.naissance
+- liquidation.date_effet
+# Les versions forment un partage de ces deux dates (§ 4.1) : la date d'effet de la
+# pension sépare l'ancien règlement du décret n° 2008-637, la naissance de l'enfant
+# la bonification de l'article 20 de la majoration de l'article 24. `contenu.parametres`
+# est ce que le moteur lit (MajorationsPourEnfants, dans les deux moteurs) ;
+# `trimestres_premier_enfant` vaut pour l'enfant né le premier.
+versions:
+- id: avant_juillet_2008
+  statut: supposee
+  hypothese: >-
+    le règlement des retraites d'avant le décret n° 2008-637 n'est pas dans l'index ;
+    on lui prête la bonification d'une année par enfant que l'article 20, 3°, maintient
+    pour les enfants nés avant le 1er juillet 2008
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    droit: 4 trimestres par enfant, en services et en durée
+    beneficiaire: la mère
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: faible
+  exemples: aucun trouvé
+- id: bonification_article_20
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019104831, article: "décret n° 2008-637, article 20, 3°", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000047914213, article: "décret n° 2008-637, article 20, 3°", en_vigueur: 2025-01-01}
+  - {id: LEGIARTI000019104813, article: "décret n° 2008-637, article 6, 1°, b (l'interruption d'activité)", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000050710693, article: "décret n° 2008-637, article 23 (les bonifications liquidables)", en_vigueur: 2024-12-04}
+  nee_de: LEGIARTI000019104831
+  bornes:
+    enfant.naissance: [null, 2008-07-01]
+    liquidation.date_effet: [2008-07-01, null]
+  contenu:
+    droit: 4 trimestres par enfant, en services et en durée
+    beneficiaire: >-
+      l'assuré qui a interrompu son activité au moins deux mois de suite, entre la
+      quatrième semaine avant la naissance et la seizième après, dans un congé de
+      maternité, de paternité, d'adoption, parental, de présence parentale ou sans
+      solde ; sans condition s'il n'avait pas d'activité professionnelle
+    conditions: >-
+      tout enfant né, adopté ou recueilli avant le 1er juillet 2008, y compris avant
+      l'embauche
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: majoration_article_24
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019104847, article: "décret n° 2008-637, article 24 III", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000047914227, article: "décret n° 2008-637, article 24 III", en_vigueur: 2025-01-01}
+  nee_de: LEGIARTI000019104847
+  bornes:
+    enfant.naissance: [2008-07-01, null]
+    liquidation.date_effet: [2008-07-01, null]
+  contenu:
+    droit: >-
+      2 trimestres de durée d'assurance pour le premier enfant, 4 pour chacun des
+      autres, aucun en services
+    beneficiaire: >-
+      la femme « ayant accouché postérieurement à [son] recrutement par la régie »
+    conditions: >-
+      l'enfant naît après le recrutement ; la majoration ne se cumule pas avec les
+      périodes du 6° du I de l'article 19 qui l'atteignent
+    parametres:
+      trimestres_premier_enfant: 2
+      trimestres_par_enfant: 4
+      services_par_enfant: 0
+      beneficiaire: mere
+      condition: accouchement_apres_recrutement
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [bonification_article_20]
+  ecart: >-
+    la bonification va à la mère, dont l'interruption d'activité est présumée par son
+    congé de maternité ; le père qui a pris deux mois de congé n'en reçoit pas
+  effet: non mesuré
+- version: [majoration_article_24]
+  ecart: >-
+    le premier enfant de la fratrie est celui qui naît le premier, enfants nés avant le
+    1er juillet 2008 compris (COR, note 15 : « le premier enfant de la fratrie ») ; des
+    jumeaux premiers-nés comptent chacun pour le premier
+  effet: non mesuré
+- version: [majoration_article_24]
+  ecart: >-
+    les périodes de congé parental, de présence parentale ou de temps partiel pour
+    élever un enfant que l'article 19 compte comme services ne sont pas portées : la
+    carrière ne dit pas ces congés ; l'adoption et la majoration pour enfant handicapé
+    non plus
+  effet: non mesuré
+presomptions:
+  naissance_des_enfants: >-
+    la naissance de chaque enfant dont la date n'est pas déclarée, qui choisit entre la
+    bonification et la majoration, se compare au recrutement et fait le rang
+  interruption_d_activite_par_la_mere: >-
+    la condition d'interruption d'activité de la bonification, remplie par le congé de
+    maternité
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le règlement des retraites de la RATP d'avant le 1er juillet 2008, que la version
+    avant_juillet_2008 suppose : sa bonification pour enfants, ses bénéficiaires et ses
+    conditions.
+  - >-
+    Le rang de l'enfant : la caisse dit-elle « premier enfant » de la fratrie entière,
+    comme le COR, ou des seuls enfants nés depuis le 1er juillet 2008 ? Ses pages sont
+    derrière un pare-feu qui refuse la lecture automatique.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-637, articles 6, 20, 23 et 24, dans l'index LEGI : l'article 20,
+      3°, et le III de l'article 24 n'ont pas changé depuis le 1er juillet 2008 (sept
+      rédactions de l'article 24)
+    date: 2025-01-01
+  - type: autre
+    reference: >-
+      COR, séance plénière du 19 octobre 2023, document n° 2 « Droits familiaux »,
+      tableau des majorations de durée : à la RATP, quatre trimestres pour les enfants
+      nés avant le 1er juillet 2008, « 2 / 4 trimestres » pour les suivants ; note 15 :
+      « 2 trimestres sont accordés aux mères pour le premier enfant de la fratrie puis
+      4 trimestres sont accordés pour les suivants »
+    date: 2023-10-19
+    url: https://www.cor-retraites.fr/sites/default/files/2023-10/Doc_02_Droits_familiaux_0.pdf
+  - type: autre
+    reference: >-
+      Union Retraite, « La retraite des agents de la RATP » : « 4 trimestres de
+      majoration de durée d'assurance » pour les enfants nés avant le 1er juillet 2008
+      « pour lesquels l'agent s'est arrêté ou a réduit son activité » ; depuis, « 2
+      trimestres pour 1 enfant ; 4 trimestres pour 2 enfants ou plus »
+    date: 2010-01-01
+    url: https://www.la-retraite-en-clair.fr/parcours-professionnel-regimes-retraite/regimes-speciaux-retraite/retraite-agents-ratp
+  lectures_divergentes:
+  - >-
+    Union Retraite écrit « 1 année d'anticipation de l'âge de départ » pour chaque
+    enfant né avant le 1er juillet 2008, que le décret n'accorde pas sous ce nom : à
+    relire avec la caisse.
+code:
+  python: >-
+    scenarios/actuel.py : MajorationsPourEnfants, qui lit les versions de cette fiche
+    et le rang de l'enfant ; droit/compter.py : majoration_pour_enfants,
+    bonification_ouverte
+  javascript: >-
+    moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants,
+    bonificationOuverte
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_priorite_enfants.py]
+historique:
+- >-
+  2026-10-05 — la fiche naît (action 89) : la RATP recevait les conditions de la
+  fonction publique, coupées au 1er janvier 2004 et non au 1er juillet 2008, deux
+  trimestres par enfant né depuis et non deux puis quatre, et, depuis le 1er septembre
+  2026, un trimestre de services par enfant né depuis 2004, que seuls le code des
+  pensions, la CNRACL et le FSPOEIE accordent (décret n° 2026-699).
+effet: >-
+  Toute mère agente de la RATP : quatre trimestres de services par enfant né avant le
+  1er juillet 2008, et non avant 2004 ; pour les enfants nés depuis, deux trimestres de
+  durée pour le premier, quatre pour chacun des suivants.

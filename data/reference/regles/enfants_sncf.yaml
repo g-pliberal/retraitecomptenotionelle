@@ -1,0 +1,162 @@
+schema_version: 1
+id: enfants_sncf
+intitule: >-
+  Trimestres des enfants au régime spécial de la SNCF : depuis le 1er juillet 2008,
+  deux trimestres de majoration de durée d'assurance par enfant à la femme qui a
+  accouché après son recrutement, comptés pour la décote et la surcote seulement ;
+  aucune bonification n'entre aux services, l'article 9 du décret n° 2008-639 ne
+  connaissant que celles de la conduite et les bénéfices de campagne. Les périodes
+  d'interruption pour élever un enfant (un an par enfant né avant le 1er juillet
+  2008, trois depuis) comptent comme services quand elles ont eu lieu.
+domaine: enfants
+regimes:
+- sncf
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- enfant.naissance
+- le sexe de l'assurée, qui accouche
+- recrutement
+- liquidation.date_effet
+ecrit:
+- les trimestres de chaque enfant en durée d'assurance, dans le régime que la priorité
+  entre régimes désigne (priorite_majorations_enfants)
+dates_qui_decident:
+- enfant.naissance
+- liquidation.date_effet
+# Les versions forment un partage de ces deux dates (§ 4.1) ; `contenu.parametres`
+# est ce que le moteur lit (MajorationsPourEnfants, dans les deux moteurs). Une
+# version à zéro trimestre n'accorde rien : la SNCF n'est alors pas compétente, et
+# le régime général accorde sa majoration (priorite_majorations_enfants).
+versions:
+- id: avant_juillet_2008
+  statut: supposee
+  hypothese: >-
+    le règlement des retraites d'avant le 1er juillet 2008 n'est pas dans l'index ; le
+    décret n° 2008-47 y crée la majoration de deux trimestres à cette date, son
+    article 7 V réserve aux agents qui l'ont payée la validation des congés pour
+    enfant, et le Sénat compte cette validation gratuite parmi les apports de la
+    réforme : on présume que la SNCF n'accordait rien pour les enfants
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    droit: aucun
+    raison: la majoration naît du décret n° 2008-47, au 1er juillet 2008
+    parametres:
+      trimestres_par_enfant: 0
+      services_par_enfant: 0
+      beneficiaire: mere
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: majoration_2008
+  statut: lue
+  textes:
+  - {id: JORFARTI000017881377, article: "décret n° 2008-47, article 1er (article 13-1 III du règlement)", en_vigueur: 2008-07-01}
+  - {id: JORFARTI000017881429, article: "décret n° 2008-47, article 3 (entrée en vigueur au 1er juillet 2008)", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000019108313, article: "décret n° 2008-639, article 13 III", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000054622824, article: "décret n° 2008-639, article 13 III", en_vigueur: 2026-08-07}
+  - {id: LEGIARTI000054622839, article: "décret n° 2008-639, article 9 (les seules bonifications)", en_vigueur: 2026-08-07}
+  nee_de: JORFARTI000017881377
+  bornes:
+    liquidation.date_effet: [2008-07-01, null]
+  contenu:
+    droit: 2 trimestres de durée d'assurance par enfant, aucun en services
+    beneficiaire: >-
+      la femme « ayant accouché postérieurement à [son] recrutement » par la SNCF
+    conditions: >-
+      l'enfant naît après le recrutement ; la majoration ne se cumule pas avec les
+      périodes de l'article 7 V qui atteignent deux trimestres
+    parametres:
+      trimestres_par_enfant: 2
+      services_par_enfant: 0
+      beneficiaire: mere
+      condition: accouchement_apres_recrutement
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [majoration_2008]
+  ecart: >-
+    les périodes de congé parental, de disponibilité ou de temps partiel pour élever un
+    enfant que l'article 7 V compte comme services — un an par enfant né avant le
+    1er juillet 2008, trois depuis — ne sont pas portées : la carrière ne dit pas ces
+    congés, et le modèle tient l'année pour travaillée ou non travaillée
+  effet: non mesuré
+- version: [majoration_2008]
+  ecart: >-
+    la naissance de l'enfant se compare au recrutement à l'année près ; l'adoption et
+    la majoration pour enfant handicapé (un trimestre par trente mois, huit au plus)
+    ne sont pas portées
+  effet: non mesuré
+presomptions:
+  naissance_des_enfants: >-
+    la naissance de chaque enfant dont la date n'est pas déclarée, qui se compare au
+    recrutement
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le règlement des retraites de la SNCF d'avant le 1er juillet 2008 : la version
+    avant_juillet_2008 présume qu'il n'accordait rien pour les enfants. Le texte du
+    dernier alinéa de son article 4, que le décret n° 2008-47 remplace, le dirait.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639, articles 7, 9 et 13 dans leur rédaction du 7 août 2026
+      (LEGIARTI000054622844, LEGIARTI000054622839, LEGIARTI000054622824), et les dix
+      rédactions de l'article 13 depuis le 1er juillet 2008, dans l'index LEGI : le
+      deuxième alinéa du III n'a pas changé de sens
+    date: 2026-08-07
+  - type: jorf
+    reference: >-
+      décret n° 2008-47 du 15 janvier 2008, articles 1er et 3 : la validation gratuite
+      des congés pour enfant, la majoration de deux trimestres, l'entrée en vigueur au
+      1er juillet 2008
+    date: 2008-01-16
+  - type: autre
+    reference: >-
+      CPRPF, page « Mes enfants et ma retraite » du régime spécial, lue le 5 octobre
+      2026 (sans date) : « 1 an par enfant à charge pour les enfants nés ou adoptés
+      avant le 1er juillet 2008 », « 3 ans » depuis, au titre des périodes non
+      travaillées ; « une majoration de durée d'assurance fixée à 2 trimestres pour
+      chacun de leurs enfants », dont les trimestres « sont ajoutés à la durée
+      d'assurance qui intervient pour le calcul de la décote » ; aucune bonification
+      pour enfants au taux
+    date: 2026-10-05
+    url: https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/mes-enfants-et-ma-retraite/
+  - type: autre
+    reference: >-
+      COR, séance plénière du 19 octobre 2023, document n° 2 « Droits familiaux »,
+      tableau des majorations de durée : à la SNCF, deux trimestres pour
+      l'accouchement, ni majoration pour éducation ni bonification
+    date: 2023-10-19
+    url: https://www.cor-retraites.fr/sites/default/files/2023-10/Doc_02_Droits_familiaux_0.pdf
+  - type: autre
+    reference: >-
+      Sénat, rapport d'information n° 732 (2009-2010) de M. Bertrand Auban, « Le régime
+      spécial de retraite de la SNCF : un premier bilan de la réforme de 2008 », déposé
+      le 29 septembre 2010 : la validation gratuite des périodes non travaillées pour
+      élever un enfant compte parmi les apports de la réforme
+    date: 2010-09-29
+    url: https://www.senat.fr/rap/r09-732/r09-7322.html
+code:
+  python: >-
+    scenarios/actuel.py : MajorationsPourEnfants, qui lit les versions de cette fiche
+    ; droit/compter.py : majoration_pour_enfants, bonification_ouverte
+  javascript: >-
+    moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants,
+    bonificationOuverte
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_priorite_enfants.py]
+historique:
+- >-
+  2026-10-05 — la fiche naît (action 89) : la SNCF recevait les conditions de la
+  fonction publique, quatre trimestres de services par enfant né avant 2004 et, depuis
+  le 1er septembre 2026, l'un des deux trimestres des enfants nés depuis — que seuls
+  le code des pensions, la CNRACL et le FSPOEIE accordent (décret n° 2026-699).
+effet: >-
+  Toute mère agente de la SNCF : deux trimestres de durée par enfant né après son
+  recrutement, et plus aucun trimestre de services ; sa pension perd le prorata que
+  la bonification de la fonction publique lui prêtait pour ses enfants nés avant 2004.

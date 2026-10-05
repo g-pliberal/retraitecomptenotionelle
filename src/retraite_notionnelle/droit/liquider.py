@@ -883,16 +883,26 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         # Les membres d'un groupe liquidé ensemble se somment ANNÉE PAR
         # ANNÉE : deux activités cumulées dans deux régimes alignés ne
         # valident pas huit trimestres la même année.
-        trimestres_regime = min(
+        numerateur = (
             durees_cultes.depuis_1998 if durees_cultes is not None
             else cumul_plafonne(
                 "services"
                 if moteur.catalogue[code].famille == "fonction_publique"
                 else "assurance",
                 membres,
-            ),
-            proratisation + bonifications,
+            )
         )
+        if (durees_cultes is None and majoration_enfants is not None
+                and moteur.catalogue[code].famille == "special"):
+            # LA MAJORATION DE DURÉE N'ENTRE PAS AUX SERVICES d'un régime
+            # spécial, qui liquide ses services et ses bonifications : la SNCF
+            # (décret n° 2008-639, articles 12 et 13 III), la RATP (décret
+            # n° 2008-637, articles 23 et 24 III), et les régimes à qui le
+            # modèle prête L. 12 bis. Sa durée dans le régime les portait
+            # toutes ; seules les bonifications y restent.
+            portes = majoration_enfants.par_regime()
+            numerateur -= sum(portes[m][0] - portes[m][1] for m in membres if m in portes)
+        trimestres_regime = min(numerateur, proratisation + bonifications)
         #: Rapport des trimestres liquidables à la durée requise, borné au
         #: taux maximum — 80/75 avec des bonifications, un sans elles.
         rapport_maximum = (periode.taux_maximum_bonifie / periode.taux_plein

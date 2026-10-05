@@ -56,6 +56,8 @@ FICHE_POINTS_GRATUITS = "rco_points_gratuits"
 PRESOMPTIONS_ENFANTS = {
     "mda": ("pas_d_accord_des_parents", "enfant_eleve_neuf_ans"),
     "bonifications": ("interruption_d_activite_par_la_mere",),
+    "enfants_sncf": (),
+    "enfants_ratp": ("interruption_d_activite_par_la_mere",),
 }
 
 

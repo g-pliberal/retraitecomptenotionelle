@@ -19,6 +19,14 @@ fiches:
     la bonification et la majoration de la fonction publique et des régimes spéciaux,
     que le régime spécial accorde en priorité, enfant par enfant, s'il peut servir
     une pension selon ses propres règles et si l'enfant y ouvre le droit
+- fiche: enfants_sncf
+  role: >-
+    la majoration de durée de la SNCF, que la SNCF accorde en priorité aux mêmes
+    conditions
+- fiche: enfants_ratp
+  role: >-
+    la bonification et la majoration de la RATP, que la RATP accorde en priorité aux
+    mêmes conditions
 - fiche: majoration_duree_assurance_enfants
   role: >-
     la majoration du régime général et des régimes alignés, que le régime général

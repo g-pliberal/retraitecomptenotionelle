@@ -48,7 +48,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ratp, categorie_active, majoration_enfants, reversion]
     notes: 50 ans pour les tables de roulement, 55 ans pour les autres agents.
   - debut: 2009
     fin: 2016
@@ -70,7 +70,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     age_surcote_regimes_speciaux: age_surcote_sncf_ratp
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ratp, categorie_active, majoration_enfants, reversion]
     notes: >-
       RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, et elle ne touche pas tout en
       même temps. Le décret n° 2008-637 du 30 juin 2008 crée la décote et
@@ -122,7 +122,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     age_surcote_regimes_speciaux: age_surcote_sncf_ratp
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ratp, categorie_active, majoration_enfants, reversion]
     notes: >-
       LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par
       année de naissance : l'article 51-1 II du décret n° 2008-637
@@ -169,7 +169,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     age_surcote_regimes_speciaux: age_surcote_sncf_ratp
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ratp, categorie_active, majoration_enfants, reversion]
     notes: >-
       LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
       trois mois par année de naissance, aux pensions prenant effet à

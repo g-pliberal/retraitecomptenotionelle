@@ -447,10 +447,21 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     const bonifications = (periode.taux_maximum_bonifie && periode.taux_plein)
       ? membres.reduce((somme, m) => somme + (bonificationsParRegime.get(m) ?? 0), 0)
       : 0;
-    let trimestresRegime = Math.min(
-      dureesCultes !== null ? dureesCultes.depuis1998 : cumulPlafonne(acquisParRegime, membres),
-      proratisation + bonifications,
-    );
+    let numerateur = dureesCultes !== null
+      ? dureesCultes.depuis1998 : cumulPlafonne(acquisParRegime, membres);
+    if (dureesCultes === null && majorationEnfants !== null
+        && moteur.catalogue.obtenir(code).famille === "special") {
+      // La majoration de durée n'entre pas aux services d'un régime spécial,
+      // qui liquide ses services et ses bonifications : voir liquider.py.
+      const portes = majorationEnfants.parRegime();
+      for (const m of membres) {
+        if (portes.has(m)) {
+          const [accordes, services] = portes.get(m);
+          numerateur -= accordes - services;
+        }
+      }
+    }
+    let trimestresRegime = Math.min(numerateur, proratisation + bonifications);
     // Rapport des trimestres liquidables à la durée requise, borné au taux
     // maximum — 80/75 avec des bonifications, un sans elles.
     const rapportMaximum = bonifications

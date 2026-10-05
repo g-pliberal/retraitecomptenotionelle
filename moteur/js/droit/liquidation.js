@@ -28,6 +28,8 @@ export const SCHEMA_VERSION = 1;
 const LIBELLE_MAJORATION = {
   mda: "Majoration de durée d'assurance",
   bonifications: "Bonification pour enfants",
+  enfants_sncf: "Majoration de durée d'assurance de la SNCF",
+  enfants_ratp: "Trimestres pour enfants de la RATP",
 };
 
 /**

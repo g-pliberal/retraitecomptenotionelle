@@ -1065,12 +1065,14 @@ champs_periode:
       dans les scénarios notionnels ; ils ne sont conservés que pour la
       reconstitution du scénario « système actuel ». `mda` et `bonifications`
       se lisent dans les versions des fiches `regles/majoration_duree_assurance_enfants.yaml`
-      et `regles/enfants_fonction_publique.yaml`, enfant par enfant ; une fiche
+      et `regles/enfants_fonction_publique.yaml`, enfant par enfant, et
+      `enfants_sncf` et `enfants_ratp` dans les fiches du même nom ; une fiche
       EN POINTS ne sert que `mda`, qui ne joue que sur la durée d'assurance
       — la CNAVPL depuis 2010 —, une bonification entrant aux services qu'elle
       n'a pas.
     valeurs_usuelles: ["minimum_contributif", "minimum_garanti", "aspa",
                        "majoration_enfants", "mda", "avpf", "bonifications",
+                       "enfants_sncf", "enfants_ratp",
                        "periodes_assimilees", "categorie_active", "reversion"]
 
   notes: "texte libre — précisions, ruptures, renvois aux textes"

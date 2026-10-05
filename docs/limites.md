@@ -410,15 +410,19 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   2010, ni si un père fonctionnaire a interrompu son activité les deux mois
   qu'exige la bonification depuis 2003 : dans les deux cas le modèle retient
   l'attribution par défaut, celle de la mère.
-- **Montée en charge des bonifications dans les régimes spéciaux.** Ils suivent
-  ici le calendrier de la fonction publique — un an par enfant né avant 2004 —
-  quand leurs propres réformes sont de 2008. La documentation de la CNRACL
-  donne, pour la RATP, une bonification d'un an jusqu'aux enfants nés le
-  30 juin 2008 puis deux trimestres, et pour la SNCF deux trimestres depuis le
-  décret du 30 juin 2008 ; pour les IEG, la bascule est en revanche datée de
-  2004 comme dans la fonction publique. Trois calendriers pour trois régimes,
-  qu'aucune source ne donne en série : le modèle retient le seul qui soit
-  documenté article par article, celui de la fonction publique.
+- **Les trimestres des enfants dans les régimes spéciaux.** La SNCF et la RATP
+  ont leur fiche, lue article par article (`enfants_sncf`, `enfants_ratp`). À
+  la SNCF, deux trimestres de durée par enfant né après le recrutement, aucun
+  aux services, et rien avant le 1er juillet 2008 ; à la RATP, une année de
+  services par enfant né avant le 1er juillet 2008, puis deux trimestres de
+  durée pour le premier enfant de la fratrie et quatre pour chacun des
+  suivants. Les autres régimes spéciaux suivent encore le calendrier de la
+  fonction publique — un an par enfant né avant 2004, deux trimestres ensuite
+  —, que le COR dément pour les IEG, dont la bascule est au 1er juillet 2008,
+  et pour les mines et les marins, à qui il n'en connaît aucun (séance du
+  19 octobre 2023, document n° 2). Les congés pris pour élever un enfant, que
+  ces régimes comptent comme services, ne sont pas portés : la carrière ne les
+  dit pas.
 - **Majorations pour enfants des non-salariés agricoles.** La MSA sert bien une
   majoration de durée d'assurance à ses non-salariés, mais elle s'y convertit en
   POINTS et non en trimestres, selon une règle qui change au 1er janvier 2026.

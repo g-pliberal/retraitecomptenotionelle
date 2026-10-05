@@ -1315,6 +1315,20 @@ def _cas() -> list[dict]:
         **enfants, "statut": "fonctionnaire_etat", "naissance": "1975",
         "naissances": "1998",
     }))
+    # LES RÉGIMES SPÉCIAUX QUI ONT LEUR FICHE (action 89) : la SNCF n'accorde
+    # que deux trimestres de durée par enfant né après le recrutement, aucun
+    # aux services ; la RATP une année de services par enfant né avant le
+    # 1er juillet 2008, puis deux trimestres de durée pour le premier enfant de
+    # la fratrie et quatre pour les suivants. Trois enfants de part et d'autre
+    # de juillet 2008, nés après l'entrée au régime.
+    cas.append(("enfants_sncf_trois_enfants", {
+        **enfants, "statut": "agent_sncf", "naissance": "1975",
+        "naissances": "2006,2009,2012",
+    }))
+    cas.append(("enfants_ratp_trois_enfants", {
+        **enfants, "statut": "agent_ratp", "naissance": "1975",
+        "naissances": "2006,2009,2012",
+    }))
     # LES BASCULES DES VERSIONS, là où le modèle datait à l'année ce que le
     # droit date au jour : la veille et le lendemain de trois bornes que les
     # fiches du domaine déclarent approchées. Chaque témoin fige ce que le

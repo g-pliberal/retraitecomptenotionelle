@@ -51,7 +51,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_sncf, categorie_active, majoration_enfants, reversion]
     notes: >-
       Ouverture à 50 ans pour les agents de conduite, 55 ans pour les autres
       agents du cadre permanent. Aucune décote avant 2008 : un départ à
@@ -77,7 +77,7 @@ periodes:
     surcote_par_trimestre: 0.0075
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     age_surcote_regimes_speciaux: age_surcote_sncf_ratp
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_sncf, categorie_active, majoration_enfants, reversion]
     notes: >-
       RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, portée ici par le décret n°
       2008-639 du 30 juin 2008 : décote, durée alignée progressivement. LA
@@ -126,7 +126,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     age_surcote_regimes_speciaux: age_surcote_sncf_ratp
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_sncf, categorie_active, majoration_enfants, reversion]
     notes: >-
       LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par
       année de naissance : l'article 37-1 du décret n° 2008-639
@@ -173,7 +173,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     age_surcote_regimes_speciaux: age_surcote_sncf_ratp
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_sncf, categorie_active, majoration_enfants, reversion]
     notes: >-
       LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
       trois mois par année de naissance, aux pensions prenant effet à

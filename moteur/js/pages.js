@@ -8293,10 +8293,11 @@ function avantagesTableComplete(contexte) {
   const derniere = c.derniere;
   const montants = derniere === null ? {} : derniere.lignes;
 
-  // DEUX DISPOSITIFS PEUVENT PARTAGER UNE LIGNE, et le montant ne doit alors
-  // paraître qu'une fois. La MDA du privé et la bonification pour enfants de la
-  // fonction publique sont le même trimestre gratuit sous deux textes : la
-  // cascade n'en tient qu'une ligne, et l'imprimer deux fois inviterait à
+  // PLUSIEURS DISPOSITIFS PEUVENT PARTAGER UNE LIGNE, et le montant ne doit
+  // alors paraître qu'une fois. La MDA du privé, la bonification pour enfants
+  // de la fonction publique et les trimestres pour enfants de la SNCF et de la
+  // RATP sont le même trimestre gratuit sous plusieurs textes : la cascade
+  // n'en tient qu'une ligne, et l'imprimer deux fois inviterait à
   // l'additionner.
   const vues = new Set();
 
@@ -8307,14 +8308,16 @@ function avantagesTableComplete(contexte) {
       const ligne = avantage.ligne_cascade || avantage.code;
       const montant = montants[ligne];
       if (montant && vues.has(ligne)) {
-        // Deux dispositifs partagent cette ligne : le premier porte le chiffre,
-        // le second dit où il est.
-        const porteur = inventaire.avantages.find(
-          (a) => (a.ligne_cascade || a.code) === ligne).libelle;
+        // Plusieurs dispositifs partagent cette ligne : le premier porte le chiffre,
+        // les suivants disent où il est.
+        const partagent = inventaire.avantages.filter(
+          (a) => (a.ligne_cascade || a.code) === ligne);
+        const combien = ["les deux", "les trois", "les quatre"][partagent.length - 2]
+          ?? `les ${partagent.length}`;
         lignes.push([
           avantage.libelle, "—",
           "le modèle n'en tient qu'une seule ligne, celle de « "
-          + echapper(porteur) + " » : le chiffre ci-dessus les porte toutes les deux",
+          + echapper(partagent[0].libelle) + " » : le chiffre ci-dessus porte " + combien,
         ]);
       } else if (montant) {
         vues.add(ligne);

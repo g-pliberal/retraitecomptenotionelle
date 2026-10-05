@@ -82,7 +82,8 @@ class TrimestresEnfant:
     naissance: str
     #: Code du régime dans lequel le droit attribue ses trimestres.
     regime: str
-    #: Dispositif qui les accorde : ``mda`` ou ``bonifications``.
+    #: Dispositif qui les accorde : ``mda``, ``bonifications``, ou celui d'un
+    #: régime spécial qui a sa fiche (``enfants_sncf``, ``enfants_ratp``).
     dispositif: str
     #: La fiche et la version appliquées, et le texte qui fait naître celle-ci.
     fiche: str

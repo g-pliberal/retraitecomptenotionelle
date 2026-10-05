@@ -184,10 +184,50 @@ def test_la_sncf_quittee_avant_juillet_2008_sans_quinze_ans(simulateur):
     assert _seul(avant.regimes) == "regime_general"
     # La ligne d'avant 2008 vient de la fiche du COR : le résultat le dit.
     assert avant.fiabilite == Fiabilite.MOYENNE
+    # Deux enfants nés à la SNCF : seuls ceux-là y ouvrent un droit (article
+    # 13 III), et c'est elle qui accorde.
     apres = _majoration(simulateur, 1970, [
         ("salarie_prive_non_cadre", 22), ("agent_sncf", 40),
-        ("salarie_prive_non_cadre", 45)], 64)
-    assert (_seul(apres.regimes), _seul(apres.dispositifs)) == ("sncf", "bonifications")
+        ("salarie_prive_non_cadre", 45)], 64, naissances=("2011-03-01", "2013-06-01"))
+    assert (_seul(apres.regimes), _seul(apres.dispositifs)) == ("sncf", "enfants_sncf")
+
+
+def test_la_sncf_n_accorde_que_deux_trimestres_de_duree(simulateur):
+    """Décret n° 2008-639, article 13 III : deux trimestres de durée par enfant
+    à la femme qui a accouché après son recrutement, et rien aux services —
+    l'article 9 ne connaît que la conduite et les bénéfices de campagne. Le
+    modèle lui prêtait la bonification de la fonction publique : quatre
+    trimestres de services par enfant né avant 2004. L'enfant né avant le
+    recrutement n'ouvre rien à la SNCF : le régime général l'accorde."""
+    metiers = [("salarie_prive_non_cadre", 22), ("agent_sncf", 25)]
+    majoration = _majoration(simulateur, 1975, metiers, 64,
+                             naissances=("2002-03-01", "2005-06-01"))
+    assert (_seul(majoration.regimes), _seul(majoration.dispositifs)) == ("sncf", "enfants_sncf")
+    assert (majoration.trimestres, majoration.services) == (4, 0)
+    avant = _majoration(simulateur, 1975, metiers, 64, naissances=("1999-03-01", "2005-06-01"))
+    assert sorted(avant.regimes) == ["regime_general", "sncf"]
+    # Les huit trimestres du régime général comptent aussi dans sa durée, qui
+    # le proratise ; les deux de la SNCF, dans la durée d'assurance seule.
+    assert (avant.trimestres, avant.services) == (8 + 2, 8)
+
+
+def test_la_ratp_coupe_au_1er_juillet_2008_et_compte_le_rang(simulateur):
+    """Décret n° 2008-637 : une année de bonification, en services, pour
+    l'enfant né avant le 1er juillet 2008 (article 20, 3°) ; pour les enfants
+    nés depuis, deux trimestres de durée pour le premier de la fratrie et
+    quatre pour les suivants (article 24 III ; COR, 19 octobre 2023, document
+    n° 2, note 15). Le modèle coupait au 1er janvier 2004, à deux trimestres
+    par enfant."""
+    metiers = [("salarie_prive_non_cadre", 22), ("agent_ratp", 25)]
+    trois = _majoration(simulateur, 1975, metiers, 64, enfants=3,
+                        naissances=("2005-03-01", "2009-06-01", "2012-01-01"))
+    assert (_seul(trois.regimes), _seul(trois.dispositifs)) == ("ratp", "enfants_ratp")
+    # Quatre trimestres de services pour l'aîné, né avant juillet 2008 ; quatre
+    # de durée pour chacun des deux suivants, qui ne sont pas les premiers.
+    assert (trois.trimestres, trois.services) == (4 + 4 + 4, 4)
+    deux = _majoration(simulateur, 1975, metiers, 64,
+                       naissances=("2009-06-01", "2012-01-01"))
+    assert (deux.trimestres, deux.services) == (2 + 4, 0)
 
 
 @pytest.mark.parametrize("fin_seita, regime", [(60, "seita"), (58, "regime_general")])
