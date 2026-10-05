@@ -641,6 +641,9 @@ def _regimes() -> list[dict]:
                     "points_ajustement_par_forfait": p.points_ajustement_par_forfait,
                     "points_ajustement_maximum": p.points_ajustement_maximum,
                     "taux_calcul_points": p.taux_calcul_points,
+                    "ecretement_salaire_reference": (
+                        None if p.ecretement_salaire_reference is None
+                        else list(p.ecretement_salaire_reference)),
                     "capital_seuil_points": p.capital_seuil_points,
                     "bareme_points": p.bareme_points,
                     "points_de": p.points_de,

@@ -2034,6 +2034,16 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                 revenu,
                 moteur.macro.plafond_securite_sociale(annee) * fraction,
             )
+        if periode.ecretement_salaire_reference is not None:
+            # L'ÉCRÊTEMENT de la CRPCEN : « n'est compté que pour moitié pour
+            # la part excédant trois fois le plafond […] ; il n'est pas pris
+            # en compte pour la part excédant sept fois ce plafond »
+            # (décret n° 90-1215, article 89), le plafond proratisé comme
+            # ci-dessus.
+            seuil, part, haut = periode.ecretement_salaire_reference
+            plafond = moteur.macro.plafond_securite_sociale(annee) * fraction
+            revenu = (min(revenu, seuil * plafond)
+                      + part * max(0.0, min(revenu, haut * plafond) - seuil * plafond))
         dernier_brut = (annee, revenu)
         revenus.append(revenu * revaloriser(annee, annee_liquidation))
         annees_des_revenus.append(annee)

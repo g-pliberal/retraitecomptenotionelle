@@ -464,6 +464,11 @@ class PeriodeRegime:
     #: cotisation par le taux d'appel rendait 6,197 %. ``None`` : la
     #: cotisation divisée par le taux d'appel.
     taux_calcul_points: float | None
+    #: L'ÉCRÊTEMENT du salaire de chaque année retenue, en plafonds : entier
+    #: jusqu'au premier nombre, compté pour la part du deuxième au-delà, et
+    #: pour rien au-delà du troisième — la CRPCEN, « pour moitié » de trois à
+    #: sept plafonds (décret n° 90-1215, article 89). ``None`` : aucun.
+    ecretement_salaire_reference: tuple[float, float, float] | None
     #: POINTS D'AJUSTEMENT, qui s'ajoutent aux points par trimestre : leur
     #: nombre vaut ``points_ajustement_par_forfait`` fois la cotisation
     #: proportionnelle divisée par la cotisation forfaitaire, dans la limite
@@ -1659,6 +1664,10 @@ class CatalogueRegimes:
                 taux_calcul_points=(
                     None if p.get("taux_calcul_points") is None
                     else float(p["taux_calcul_points"])
+                ),
+                ecretement_salaire_reference=(
+                    None if p.get("ecretement_salaire_reference") is None
+                    else tuple(float(x) for x in p["ecretement_salaire_reference"])
                 ),
                 bareme_points=p.get("bareme_points"),
                 meilleures_annees_non_salaries=bool(

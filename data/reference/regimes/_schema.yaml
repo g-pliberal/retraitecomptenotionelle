@@ -819,6 +819,18 @@ champs_periode:
       au plus (décret n° 2011-1644, art. 3).
     defaut: null
 
+  ecretement_salaire_reference:
+    description: >-
+      L'ÉCRÊTEMENT du salaire de chaque année retenue pour le salaire de
+      référence, en plafonds de la sécurité sociale : `[seuil, part, plafond]`
+      compte le salaire en entier jusqu'à `seuil` plafonds, pour `part` au-delà,
+      et rien au-delà de `plafond`. C'est la CRPCEN : « n'est compté que pour
+      moitié pour la part excédant trois fois le plafond […] ; il n'est pas pris
+      en compte pour la part excédant sept fois ce plafond » (décret n°
+      90-1215, article 89). `null` : le salaire entier, ou plafonné par
+      l'assiette.
+    defaut: null
+
   taux_calcul_points:
     description: >-
       Le TAUX DE CALCUL DES POINTS, quand le régime le fixe à part de son taux

@@ -29,12 +29,34 @@ inventaire:
     - {reference: "loi du 12 juillet 1937 instituant une caisse de retraite et de prévoyance des clercs et employés de notaires", id: null}
     - {reference: "ordonnance n° 45-2574 du 31 octobre 1945 modifiant la loi du 12 juillet 1937", id: LEGITEXT000045170442}
     - {reference: "décret n° 90-1215 du 20 décembre 1990, article 84 (âge d'ouverture, neuf versions)", id: LEGIARTI000006775247}
+    - {reference: "décret n° 90-1215 du 20 décembre 1990, article 89 (salaire des dix meilleures années, écrêté de trois à sept plafonds)", id: LEGIARTI000019375465}
+    - {reference: "décret n° 90-1215 du 20 décembre 1990, article 96 (coefficients de revalorisation du régime général)", id: LEGIARTI000006775261}
     - {reference: "loi n° 2023-270 du 14 avril 2023, article 1er III (fermeture aux clercs et employés recrutés à compter du 1er septembre 2023)", id: JORFARTI000047445082}
   manque: >-
     Deux âges avant 2008 — soixante ans, ou cinquante-cinq pour l'assurée
     justifiant de vingt-cinq années de cotisations — et le moteur n'en porte
     qu'un : la fiche garde le second. Les décrets de taux (1977, 1979, 1986)
     donnent la cotisation de tous les risques, pas la part vieillesse.
+    Avant le décret de 1990, le salaire des dix meilleures années, écrêté
+    de trois à sept plafonds, est prêté : les textes antérieurs ne sont pas
+    dans l'index.
+# LE SALAIRE DE RÉFÉRENCE, lu le 5 octobre 2026 dans l'index LEGI (action 89)
+# — décret n° 90-1215, article 89, versions de 1990 (LEGIARTI000006775253)
+# et de 2008 (LEGIARTI000019375465) : « le salaire annuel moyen
+# correspondant aux périodes de cotisations versées au cours des dix années
+# civiles d'assurance dont la prise en compte est la plus avantageuse » ;
+# « compté que pour moitié pour la part excédant trois fois le plafond », et
+# pas au-delà de sept ; revalorisé comme au régime général (article 96).
+# La fiche liquidait les six derniers mois, sans plafond. La caisse le dit
+# aussi (page « éléments clés », 16 janvier 2026). Avant 1990, la même règle
+# est prêtée.
+# LA COTISATION SALARIALE, lue le même jour : décret n° 91-613, article 4,
+# 2° — 12,93 % en 2018, 12,98 % en 2019, 13,03 % depuis 2020
+# (LEGIARTI000036467780, LEGIARTI000047908207, LEGIARTI000048852546,
+# LEGIARTI000053302485), que la notice de la caisse au 1er janvier 2026 dit
+# de vieillesse seule. Avant 2018, le même 2° portait aussi la part maladie
+# de l'assuré, ôtée cette année-là (13,68 % prévus, 12,93 % servis) : le
+# 13,60 % d'avant 2018 reste une estimation de la part vieillesse.
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 90-1215, article 94 (LEGIARTI000047909826, et la version
 # de 1990) : 10 % pour les trois premiers enfants et 5 % par enfant
@@ -48,7 +70,8 @@ periodes:
     age_taux_plein: 60
     duree_requise_trimestres: 150
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.11
     perimetre_taux: agent_seul
@@ -86,7 +109,8 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.11
     perimetre_taux: agent_seul
@@ -136,7 +160,8 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
@@ -186,7 +211,8 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
@@ -236,7 +262,8 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
@@ -286,7 +313,8 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
@@ -336,7 +364,8 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
@@ -386,7 +415,8 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
@@ -436,7 +466,8 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
@@ -486,7 +517,8 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1360
     perimetre_taux: agent_seul
@@ -526,7 +558,7 @@ periodes:
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
   - debut: 2018
-    fin: 2019
+    fin: 2018
     type_calcul: annuites
     age_ouverture: 60.67
     age_taux_plein: 65.67
@@ -536,9 +568,10 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
+    taux_cotisation_retraite: 0.1293
     perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
@@ -575,6 +608,31 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
+  - debut: 2019
+    fin: 2019
+    type_calcul: annuites
+    age_ouverture: 60.67
+    age_taux_plein: 65.67
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    age_table: crpcen_2011
+    duree_requise_table: [crpcen_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
+    taux_plein: 0.75
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1298
+    perimetre_taux: agent_seul
+    bareme_decote: decote_regimes_speciaux
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    age_surcote_regimes_speciaux: surcote_regimes_speciaux
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    avantages_non_contributifs: [majoration_enfants, reversion]
+    notes: >-
+      Comme 2018 ; seul change le taux de la cotisation salariale
+      (décret n° 91-613, article 4).
   - debut: 2020
     fin: 2020
     type_calcul: annuites
@@ -586,9 +644,10 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
+    taux_cotisation_retraite: 0.1303
     perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
@@ -636,9 +695,10 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
+    taux_cotisation_retraite: 0.1303
     perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
@@ -686,9 +746,10 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
+    taux_cotisation_retraite: 0.1303
     perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
@@ -736,9 +797,10 @@ periodes:
     duree_requise_table: [crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
+    taux_cotisation_retraite: 0.1303
     perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
@@ -788,9 +850,10 @@ periodes:
     duree_requise_table: [crpcen_2023, crpcen_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
-    salaire_reference: derniers_6_mois
+    salaire_reference: 10_meilleures_annees
+    ecretement_salaire_reference: [3, 0.5, 7]
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
+    taux_cotisation_retraite: 0.1303
     perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125

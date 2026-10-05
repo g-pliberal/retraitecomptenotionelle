@@ -1652,13 +1652,19 @@ inventaire:
         \ 1937", id: LEGITEXT000045170442}
     - {reference: "décret n° 90-1215 du 20 décembre 1990, article 84 (âge d'ouverture,\
         \ neuf versions)", id: LEGIARTI000006775247}
+    - {reference: "décret n° 90-1215 du 20 décembre 1990, article 89 (salaire des dix\
+        \ meilleures années, écrêté de trois à sept plafonds)", id: LEGIARTI000019375465}
+    - {reference: "décret n° 90-1215 du 20 décembre 1990, article 96 (coefficients de\
+        \ revalorisation du régime général)", id: LEGIARTI000006775261}
     - {reference: "loi n° 2023-270 du 14 avril 2023, article 1er III (fermeture aux\
         \ clercs et employés recrutés à compter du 1er septembre 2023)", id: JORFARTI000047445082}
     manque: >-
       Deux âges avant 2008 — soixante ans, ou cinquante-cinq pour l'assurée justifiant
       de vingt-cinq années de cotisations — et le moteur n'en porte qu'un : la fiche
       garde le second. Les décrets de taux (1977, 1979, 1986) donnent la cotisation
-      de tous les risques, pas la part vieillesse.
+      de tous les risques, pas la part vieillesse. Avant le décret de 1990, le salaire
+      des dix meilleures années, écrêté de trois à sept plafonds, est prêté : les textes
+      antérieurs ne sont pas dans l'index.
 
   - code: banque_de_france
     nom: Régime spécial de retraite de la Banque de France

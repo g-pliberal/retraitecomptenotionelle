@@ -1429,6 +1429,15 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
         revenu, moteur.macro.plafond_securite_sociale.valeur(annee) * fraction,
       );
     }
+    const ecretement = periode.ecretement_salaire_reference ?? null;
+    if (ecretement !== null) {
+      // L'écrêtement de la CRPCEN (décret n° 90-1215, article 89) : voir
+      // liquider.py.
+      const [seuil, part, haut] = ecretement;
+      const plafond = moteur.macro.plafond_securite_sociale.valeur(annee) * fraction;
+      revenu = Math.min(revenu, seuil * plafond)
+        + part * Math.max(0.0, Math.min(revenu, haut * plafond) - seuil * plafond);
+    }
     dernierBrut = [annee, revenu];
     revenus.push(revenu * revaloriser(annee, anneeLiquidation));
     anneesDesRevenus.push(annee);

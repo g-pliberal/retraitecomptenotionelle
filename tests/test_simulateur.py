@@ -4303,6 +4303,39 @@ def test_la_crpcen_rend_la_table_de_decote_qu_elle_publie(simulateur):
     assert ouvrir.age_ouverture(scenario, periode, carriere) == pytest.approx(63.0)
 
 
+def test_la_crpcen_liquide_les_dix_meilleures_annees_ecretees(simulateur):
+    """Décret n° 90-1215, article 89 : « le salaire annuel moyen correspondant
+    aux périodes de cotisations versées au cours des dix années civiles
+    d'assurance dont la prise en compte est la plus avantageuse », « compté que
+    pour moitié pour la part excédant trois fois le plafond », et pour rien
+    au-delà de sept. La fiche liquidait les six derniers mois, sans plafond.
+    """
+    from retraite_notionnelle.carriere import Carriere, LigneRelevee
+
+    scenario = simulateur.scenario_actuel
+    macro = simulateur.macro
+
+    def reference(multiples: dict[int, float]) -> float:
+        lignes = [LigneRelevee(annee, "clerc_de_notaire",
+                               k * macro.plafond_securite_sociale(annee))
+                  for annee, k in multiples.items()]
+        carriere = Carriere.depuis_releve(1962, "F", lignes, 62.0, macro)
+        periode = simulateur.catalogue["crpcen"].periode(carriere.annee_liquidation)
+        return liquider.salaire_de_reference(
+            scenario, "crpcen", carriere, periode, carriere.annee_liquidation, False)
+
+    annees = range(1985, 2024)
+    plat = reference({a: 3.0 for a in annees})
+    # Cinq plafonds comptent pour quatre ; neuf, pour cinq.
+    assert reference({a: 5.0 for a in annees}) == pytest.approx(plat * 4 / 3)
+    assert reference({a: 9.0 for a in annees}) == pytest.approx(plat * 5 / 3)
+    # Une dernière année triple ne fait pas le salaire : elle compte pour une
+    # des dix.
+    un = reference({a: 1.0 for a in annees})
+    hausse = reference({a: (3.0 if a == 2023 else 1.0) for a in annees})
+    assert 1.1 < hausse / un < 1.3
+
+
 def test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant(simulateur):
     """Deux règles que la CNIEG applique, et que le moteur ne suivait pas.
 
