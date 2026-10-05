@@ -599,6 +599,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "age_depart_csp": "macro/age_depart_csp.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",
         "cotisants_regimes": "regimes/cotisants.csv",
+        "retraites_regimes": "regimes/retraites_projetes.csv",
         # La part de réversion et la ventilation qui la contrôle : deux
         # producteurs, deux fichiers, la même grandeur.
         "part_droits_derives": "macro/part_droits_derives.csv",

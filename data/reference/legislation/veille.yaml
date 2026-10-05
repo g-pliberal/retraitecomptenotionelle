@@ -5631,3 +5631,26 @@ journal:
       La FPE et la CNRACL, les points Agirc-Arrco et les carrières, chacun dans une
       session neuve ; la décision du conseil d'administration de l'Agirc-Arrco du
       14 octobre 2026.
+  - date: "2026-10-05"
+    session: "action 147, étape 9 : la fonction publique d'État et la CNRACL, leurs retraités et leur traitement suivis du COR"
+    consulte: >-
+      La veille du jour (scripts/veille_droit.py) : rien de paru depuis l'étape 8. Le
+      classeur par régime du COR, millésime 2024 (scripts/fetch/cor_regimes.py), pour
+      les retraités de droit direct de la FPE, civils et militaires, et de la CNRACL ;
+      le classeur Données_RA2026_P1.xlsx, figures 1.14 (traitement indiciaire moyen et
+      revenu moyen d'activité, 2019-2047) et 1.15 (part des primes, 2019-2048) ; les
+      rapports annuels de la DGAFP sur l'état de la fonction publique (éditions 2021
+      à 2023, vues « rémunérations ») et les séries longues de l'INSEE sur les salaires
+      de la fonction publique, sans série longue de la part des primes ; le rapport de
+      la Cour des comptes sur les retraites des fonctionnaires de l'État, dont le
+      serveur a refusé le téléchargement.
+    trouve: >-
+      Aucun texte de droit : l'étape ne touche que deux conventions de la page Coût,
+      la projection des effectifs de la fonction publique et le décrochage déjà fait
+      du traitement indiciaire (1,041 en 2019 rapporté à 2025). Le simulateur
+      individuel et le scénario 1 ne bougent pas. La dérive de 2070 tombe de 1,097 à
+      1,080.
+    reste: >-
+      Le décrochage d'avant 2019, faute de série longue ; les entrées tardives des
+      fonctionnaires, avec les carrières incomplètes ; les points Agirc-Arrco ; la
+      décision du conseil d'administration de l'Agirc-Arrco du 14 octobre 2026.

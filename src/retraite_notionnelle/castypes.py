@@ -137,6 +137,9 @@ def primes_projetees(carriere: Carriere, macro) -> Carriere:
     générations : à rémunération totale égale, le traitement d'une année vaut
     ce qu'il valait, fois le traitement relatif
     (:meth:`~retraite_notionnelle.donnees.macro.DonneesMacro.traitement_indiciaire_relatif`).
+    Avant 2025, le même rapport porte le décrochage déjà fait, de 2019 à 2024 :
+    la part des primes y est plus basse, et la pension des générations parties
+    plus haute (action 147, étape 9).
     Le cas type tenait sa part constante, et la pension de la fonction
     publique, liquidée sur le traitement, en suivait le salaire moyen ; celle
     des systèmes notionnels, qui cotisent sur la rémunération entière, ne

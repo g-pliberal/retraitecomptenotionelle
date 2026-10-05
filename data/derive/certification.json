@@ -178,15 +178,15 @@
    "verifiee_le": "2026-09-21"
   },
   "cotisants_regimes": {
-   "ajoutees": 1148,
+   "ajoutees": 0,
    "colonne": "cotisants",
    "corrigees": 0,
    "empreinte": "bf07f122ad538be6",
-   "identiques": 0,
+   "identiques": 1148,
    "niveau": "haute",
    "source": "COR, compléments du rapport annuel de juin 2024, projections détaillées par régime",
    "valeurs": 1148,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-10-05"
   },
   "courbe_taux_sans_risque": {
    "ajoutees": 30,
@@ -736,7 +736,7 @@
    "niveau": "haute",
    "source": "COR, compléments du rapport annuel de juin 2024, masses de pensions de droit direct et de droit dérivé",
    "valeurs": 61,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-10-05"
   },
   "pensions_droits": {
    "ajoutees": 0,
@@ -980,6 +980,17 @@
    "valeurs": 46,
    "verifiee_le": "2026-09-21"
   },
+  "retraites_regimes": {
+   "ajoutees": 1284,
+   "colonne": "retraites",
+   "corrigees": 0,
+   "empreinte": "4768571bcc1cece7",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "COR, compléments du rapport annuel de juin 2024, projections détaillées par régime",
+   "valeurs": 1284,
+   "verifiee_le": "2026-10-05"
+  },
   "salaire_moyen": {
    "ajoutees": 0,
    "colonne": "variation_nominale",
@@ -1022,7 +1033,7 @@
    "niveau": "haute",
    "source": "COR, compléments du rapport annuel de juin 2024, projections détaillées par régime",
    "valeurs": 930,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-10-05"
   },
   "structure_ressources_retraite": {
    "ajoutees": 0,

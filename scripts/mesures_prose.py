@@ -438,8 +438,9 @@ def decomposition(**reglages: str) -> float:
     chez le modèle (``Avenir.decomposition``) ou, avec ``source=cor``, chez le
     COR (``decomposition_depense_retraite.csv`` et
     ``croissance_depense_retraite.csv``) — pour la pension relative, d'un
-    régime avec ``groupe=cnav``, ``fpe``, ``cnracl`` ou ``agirc_arrco``."""
-    from retraite_notionnelle.donnees.equilibre import ComptesRetraite
+    régime avec ``groupe=cnav``, ``fpe``, ``cnracl`` ou ``agirc_arrco``, chez
+    l'un comme chez l'autre (``Avenir.decomposition_groupes``)."""
+    from retraite_notionnelle.donnees.equilibre import REGIMES_DU_MODELE, ComptesRetraite
 
     facteur = reglages["facteur"]
     if facteur not in ("retraites", "pension_relative"):
@@ -455,6 +456,16 @@ def decomposition(**reglages: str) -> float:
         return (indice - 1) * 100
     if a == de:
         return 0.0
+    groupe = reglages.get("groupe", "ensemble")
+    if groupe != "ensemble":
+        if facteur != "pension_relative" or groupe not in REGIMES_DU_MODELE:
+            raise ValueError(f"groupe {groupe!r} : pension relative de "
+                             f"{sorted(REGIMES_DU_MODELE)} seulement")
+        par_groupe = _cout_de(reglages).avenir.decomposition_groupes(
+            de, {groupe: REGIMES_DU_MODELE[groupe]})[groupe]
+        if a not in par_groupe:
+            raise ValueError(f"l'année {a} n'est pas dans la trajectoire")
+        return (par_groupe[a][1] - 1) * 100
     decompose = _cout_de(reglages).avenir.decomposition(de)
     if a not in decompose:
         raise ValueError(f"l'année {a} n'est pas dans la trajectoire")

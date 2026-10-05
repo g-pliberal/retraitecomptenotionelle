@@ -1989,7 +1989,7 @@ au-delà         base = ancrage × masse actuelle du modèle
 ```
 
 Les deux expressions coïncidaient exactement en 2024, et la trajectoire ne
-sautait pas. Mais elle donnait au système actuel <!--chiffre:mesure(trajectoire_propre?annee=2070)-->16,3<!--/--> % du PIB en 2070 quand le
+sautait pas. Mais elle donnait au système actuel <!--chiffre:mesure(trajectoire_propre?annee=2070)-->16,0<!--/--> % du PIB en 2070 quand le
 COR en projette <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/-->, sous les mêmes hypothèses, parce que la pension moyenne de
 la grille ne recule pas comme celle du COR ; le lecteur qui refaisait le calcul
 ne retrouvait pas le chiffre officiel. Elle est gardée pour ce qu'elle
@@ -2116,7 +2116,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,66<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->40<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,65<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->40<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.

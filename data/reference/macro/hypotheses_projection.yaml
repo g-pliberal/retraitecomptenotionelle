@@ -223,8 +223,25 @@ conventions_points:
 # traitement relatif. La note 40 fait aussi décrocher, puis converger, le
 # salaire total des fonctionnaires (« le SMPT total [...] évolue comme
 # l'inflation » en 2026 et 2027) : le modèle ne le suit pas.
+#
+# `passe` est le décrochage déjà fait (action 147, étape 9). Source : classeur
+# des données de la partie 1 du rapport de juin 2026 (« Données_RA2026_P1 »,
+# feuille « Fig 1.14 », Direction du budget pour le COR) : le traitement
+# indiciaire moyen des fonctionnaires des trois versants (« TI
+# fonctionnaires ») et le revenu moyen d'activité de l'ensemble de l'économie
+# (« RMPT »), en réel, base 100 en 2025, de 2019 à 2024. Leur rapport est le
+# traitement relatif de l'année : 1,041 en 2019, 1,092 en 2020, où le revenu
+# moyen plonge avec l'activité partielle et le salaire moyen du modèle avec
+# lui. La part des primes de l'État y monte de 23,1 % à 27,9 % (figure 1.15).
+# Avant 2019, que la figure ne couvre pas, le premier rapport est reconduit :
+# le point d'indice a perdu le tiers de sa valeur sur le salaire moyen depuis
+# 2000, et le décrochage d'avant est sous-estimé d'autant.
 traitement_indiciaire:
   annee_base: 2025
   nominal: {depuis: 2026, jusqu_a: 2027, taux: 0.001}
   reel: {depuis: 2028, jusqu_a: 2032, taux: 0.001}
   raccord: {depuis: 2033, jusqu_a: 2037}
+  passe:
+    annees: [2019, 2020, 2021, 2022, 2023, 2024]
+    traitement: [104.9859, 105.8025, 104.1480, 101.1954, 101.1904, 99.6608]
+    revenu_moyen: [100.8719, 96.9277, 100.1965, 100.2078, 99.2465, 99.6146]

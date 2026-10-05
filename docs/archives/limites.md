@@ -6352,10 +6352,10 @@ année.
 
 | | Part du PIB en 2021 |
 |---|---|
-| Système actuel, convention du COR | **<!--chiffre:mesure(engagement)-->497<!--/--> %** |
-| — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->197<!--/--> % |
-| — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->300<!--/--> % |
-| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->356<!--/--> % |
+| Système actuel, convention du COR | **<!--chiffre:mesure(engagement)-->494<!--/--> %** |
+| — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->198<!--/--> % |
+| — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->296<!--/--> % |
+| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->354<!--/--> % |
 | Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->160<!--/--> % |
 | Publié par Eurostat, tableau 29 | <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % |
 
@@ -6388,7 +6388,7 @@ que pour cinq des six, et l'étalon serait hors du tableau. Ensuite,
 l'**extrapolation au-delà de 2070** : l'INSEE ne projette pas la pyramide plus
 loin, et les cohortes déjà nées y sont prolongées par la table de mortalité du
 dépôt, la même qui sert de diviseur aux comptes notionnels. Elle ne porte que
-**<!--chiffre:mesure(engagement?quoi=hors_projection)-->26<!--/--> points sur <!--chiffre:mesure(engagement)-->497<!--/-->** : le résultat ne dit donc pas d'abord
+**<!--chiffre:mesure(engagement?quoi=hors_projection)-->25<!--/--> points sur <!--chiffre:mesure(engagement)-->494<!--/-->** : le résultat ne dit donc pas d'abord
 une table de mortalité, et un test borne cette part. Enfin, la table est **figée
 sous les réglages de référence**, comme le reste du bilan, parce que sommer
 quatre-vingts années de flux ne peut pas se faire chez le lecteur.

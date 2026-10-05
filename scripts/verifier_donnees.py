@@ -1664,6 +1664,56 @@ def source_cotisants_regimes() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+#: Les deux blocs du classeur du COR qui portent les retraités de droit direct,
+#: et l'unité que chacun annonce : « en milliers » pour CRPCEN, CRPNPAC et
+#: FSPOEIE, « en millions » ailleurs. La série est rendue en PERSONNES.
+BLOCS_RETRAITES_COR: dict[str, float] = {
+    "Effectifs de retraités de droit direct en millions (tous scénarios)": 1e6,
+    "Effectifs de retraités de droit direct en milliers (tous scénarios)": 1e3,
+}
+#: La fonction publique d'État, seule feuille du classeur qui partage ses
+#: retraités entre civils et militaires : on garde les deux lignes, sous les
+#: codes de caisse de la DREES, plutôt que l'ensemble.
+VERSANTS_FPE_COR: dict[str, str] = {
+    "Civils": "fonction_publique_etat_civile",
+    "Militaires": "fonction_publique_etat_militaire",
+}
+
+
+def source_retraites_regimes() -> dict[tuple, float]:
+    """Les retraités de droit direct de chaque régime, observés puis projetés.
+
+    Le pendant de ``source_cotisants_regimes`` du côté des pensions. La DREES
+    compte les retraités de chaque caisse jusqu'en 2024, et la page « Coût »
+    reconduisait au-delà la répartition de cette année-là : la fonction
+    publique d'État y gardait sa part quand le COR tient ses retraités stables
+    jusqu'en 2070, et la CNRACL la sienne quand il les fait croître de moitié.
+    Le classeur les projette ; c'est le seul à le faire régime par régime
+    (action 147 de la feuille de route, étape 9).
+
+    Seule la ligne « Ensemble » est retenue, sauf pour la fonction publique
+    d'État, dont le classeur publie aussi les civils et les militaires : ce
+    sont eux qui sont gardés, sous les codes de caisse de la DREES, que la
+    grille des cas types emploie. Rien n'est complété : l'année de départ
+    varie d'une feuille à l'autre, comme pour les cotisants.
+    """
+    valeurs: dict[tuple, float] = {}
+    for ligne in _cor_regimes()["valeurs"]:
+        facteur = BLOCS_RETRAITES_COR.get(ligne["bloc"])
+        if facteur is None:
+            continue
+        if ligne["regime"] == "FPE":
+            caisse = VERSANTS_FPE_COR.get(ligne["serie"])
+        elif ligne["serie"] == "Ensemble":
+            caisse = REGIMES_COR.get(ligne["regime"])
+        else:
+            caisse = None
+        if caisse is None:
+            continue
+        valeurs[(str(ligne["annee"]), caisse)] = ligne["valeur"] * facteur
+    return dict(sorted(valeurs.items()))
+
+
 #: Les trois blocs du classeur du COR qui portent la ventilation d'une masse de
 #: pensions. Le troisième sert de FILET : dix des vingt-deux régimes ne publient
 #: pas leur droit dérivé à part, et la différence entre la masse de prestations
@@ -5163,6 +5213,57 @@ CERTIFICATIONS = (
             "#    militaires confondus. Le partage entre les deux cas types qui",
             "#    la réclament est une décision du modèle, écrite dans",
             "#    donnees/cotisants.py.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="retraites_regimes",
+        chemin=REFERENCE / "regimes" / "retraites_projetes.csv",
+        cles=("annee", "caisse"),
+        colonne="retraites",
+        source=source_retraites_regimes,
+        origine="COR, compléments du rapport annuel de juin 2024, "
+                "projections détaillées par régime",
+        decimales=0,
+        tolerance=0.51,
+        unite=" retraités",
+        niveau="haute",
+        entete=(
+            "# Retraités de droit direct de chaque régime, observés puis projetés",
+            "# source_id: cor_regimes",
+            "# unite: personnes",
+            "# fiabilite:",
+            "#   haute (2010-2070) : effectifs publiés par le COR dans les",
+            "#             compléments de son rapport annuel, et recontrôlés par",
+            "#             scripts/verifier_donnees.py contre son classeur.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À PROLONGER la pondération des cas types au-delà de la dernière",
+            "# enquête de la DREES (effectifs_retraites.csv, 2004-2024). La page",
+            "# « Coût » y reconduisait la répartition de 2024 : la fonction",
+            "# publique d'État gardait sa part des retraités jusqu'en 2070, quand",
+            "# le COR tient ses civils en recul et l'ensemble de ses retraités",
+            "# stable, et la CNRACL la sienne, quand il la fait croître de",
+            "# moitié. Les caisses que la grille prolonge ainsi sont nommées dans",
+            "# donnees/effectifs.py (action 147 de la feuille de route, étape 9).",
+            "#",
+            "# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR",
+            "# ------------------------------------------",
+            "# 1. LE MILLÉSIME. Ces effectifs viennent des compléments du rapport",
+            "#    de JUIN 2024, seul millésime publié : ni 2025 ni 2026 ne les",
+            "#    ont reconduits. Le reste du dépôt tourne sur le COR 2026.",
+            "# 2. L'ANNÉE DE DÉPART VARIE d'une caisse à l'autre : 2010 le plus",
+            "#    souvent, 2015 pour la fonction publique d'État, 2019 pour le",
+            "#    RCI, 2023 pour la CNRACL.",
+            "# 3. UN RETRAITÉ DE CAISSE N'EST PAS UNE PERSONNE : un polypensionné",
+            "#    compte dans chacune de ses caisses, et l'Ircantec ou le RCI,",
+            "#    dont les retraités ont presque tous une autre pension, croissent",
+            "#    bien plus vite que les personnes.",
+            "# 4. LA FONCTION PUBLIQUE D'ÉTAT est partagée par le COR lui-même",
+            "#    entre civils et militaires, sous les codes de la DREES.",
             "#",
             "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",

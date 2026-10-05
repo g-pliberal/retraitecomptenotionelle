@@ -14839,9 +14839,9 @@ export const MESURES_BLOCAGES = {
   // la bascule, que la part « retraite seule » du taux que l'État verse — le
   // défaut depuis le même jour : sous le taux entier, la proposition était à
   // −0,9, 59 % et 0,85, et 1,03 en 2070.
-  solde_moyen_proposition: -0.8,
+  solde_moyen_proposition: -0.9,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 54,
+  dette_2070_proposition: 55,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.86,
   decennie_coefficient_minimum: 2050,

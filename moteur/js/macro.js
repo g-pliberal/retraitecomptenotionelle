@@ -306,15 +306,26 @@ export class DonneesMacro {
   /**
    * Le traitement indiciaire des fonctionnaires rapporté au salaire moyen, 1
    * l'année de base : la convention du COR (`traitement_indiciaire` de
-   * `macro/hypotheses_projection.yaml`). Voir donnees/macro.py.
+   * `macro/hypotheses_projection.yaml`), et avant elle le décrochage déjà fait
+   * (`passe`), le premier reconduit. Voir donnees/macro.py.
    */
   traitementIndiciaireRelatif(annee) {
     if (this._traitementRelatif === undefined) {
       this._traitementRelatif = this._calculerTraitementRelatif();
     }
     const { base, relatif } = this._traitementRelatif;
-    if (relatif.size === 0 || annee <= base) {
+    if (relatif.size === 0 || annee === base) {
       return 1.0;
+    }
+    if (annee < base) {
+      const passe = [...relatif.keys()].filter((a) => a < base);
+      if (passe.length === 0) {
+        return 1.0;
+      }
+      if (relatif.has(annee)) {
+        return relatif.get(annee);
+      }
+      return annee < Math.min(...passe) ? relatif.get(Math.min(...passe)) : 1.0;
     }
     return relatif.get(Math.min(annee, Math.max(...relatif.keys())));
   }
@@ -347,6 +358,15 @@ export class DonneesMacro {
       }
       indice *= traitement / salaire;
       relatif.set(annee, indice);
+    }
+    const passe = regle.passe;
+    if (passe) {
+      passe.annees.forEach((annee, rang) => {
+        if (Number(annee) < base) {
+          relatif.set(Number(annee),
+            Number(passe.traitement[rang]) / Number(passe.revenu_moyen[rang]));
+        }
+      });
     }
     return { base, relatif };
   }

@@ -746,9 +746,10 @@ DECOMPOSITION_TETES = 0.03
 #: 5 octobre 2026, puis 14,0 % le même jour, une fois suivies les deux
 #: conventions du COR (rendement de l'Agirc-Arrco, primes des fonctionnaires,
 #: action 147, étape 4), puis 13,1 % (le modèle -6,3 %), les poids calés
-#: groupe par groupe sur la dépense du COR (étape 8). Il ne doit que
-#: descendre, vers la cible.
-DECOMPOSITION_PENSION_CLIQUET = 0.14
+#: groupe par groupe sur la dépense du COR (étape 8), puis 10,4 %, la fonction
+#: publique suivant les retraités et le traitement indiciaire du COR (étape
+#: 9). Il ne doit que descendre, vers la cible.
+DECOMPOSITION_PENSION_CLIQUET = 0.11
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -783,9 +784,10 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
     Le COR la fait reculer de 17 % de 2025 à 2070 — l'indexation des droits sur
     les prix, la baisse du rendement de l'Agirc-Arrco, la part croissante des
     primes des fonctionnaires, que sa figure 2.7 lit régime par régime ; le
-    modèle, de 6,3 % seulement, depuis qu'il suit les deux dernières
-    conventions et que ses poids sont calés sur la dépense des groupes du COR
-    (de 3,5 % avant, puis de 5,6 %). C'est l'écart tout entier : les effectifs, eux,
+    modèle, de 8,6 % seulement, depuis qu'il suit les deux dernières
+    conventions, que ses poids sont calés sur la dépense des groupes du COR et
+    que la fonction publique suit ses retraités et son traitement indiciaire
+    (de 3,5 % avant, puis de 5,6 %, puis de 6,3 %). C'est l'écart tout entier : les effectifs, eux,
     se suivent (``test_la_projection_compte_les_retraites_du_cor``). Le même
     défaut fait la reconstitution du passé (``test_la_projection_refait_le_passe``) :
     la pension relative du modèle croît de 17,5 % de 2005 à 2025, celle du COR
@@ -813,11 +815,13 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: l'horizon, depuis la dernière année observée : l'écart toléré, dans les deux
 #: sens. Mesuré le 5 octobre 2026 (action 147, étape 5) : pension moyenne
 #: relative de la Cnav -0,5 % ; dépense en part de PIB de LURA +1,6 %, de la
-#: CNRACL -3,4 %.
+#: CNRACL -3,4 %. À l'étape 9, LURA passe à +4,2 % : la fonction publique
+#: suivant les retraités que le COR lui projette, le privé pèse plus. La
+#: CNRACL quitte la liste : ses têtes suivent celles du COR, et sa dépense
+#: rend l'écart de sa pension moyenne, que ses têtes trop lentes masquaient.
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
-    ("depense_part_pib", "lura"): 0.04,
-    ("depense_part_pib", "cnracl"): 0.04,
+    ("depense_part_pib", "lura"): 0.05,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
 #: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés
@@ -826,15 +830,22 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: des régimes spéciaux +81,4 %, des complémentaires +12,0 %. Les complémentaires
 #: passent à +13,3 % à l'étape 8 : le calage des poids sur la dépense des
 #: groupes du COR alourdit le cadre, dont l'Agirc croît plus vite ; la
-#: correction d'un défaut qui en masquait un autre.
+#: correction d'un défaut qui en masquait un autre. L'étape 9 fait suivre aux
+#: caisses de la fonction publique les retraités que le COR leur projette, et
+#: au traitement indiciaire son décrochage de 2019 à 2025 : pension relative de
+#: la FPE +16,8 %, de la CNRACL +8,8 % ; dépense de la FPE +38,1 %, de la
+#: CNRACL +11,1 %. La part que l'État perd revient aux autres cas types, dont
+#: l'écart s'en alourdit : non-salariés +133,2 %, régimes spéciaux +84,5 %,
+#: complémentaires +15,3 % — encore un défaut qui en masquait d'autres.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.38,
-    ("pension_relative", "cnracl"): 0.13,
+    ("pension_relative", "fpe"): 0.17,
+    ("pension_relative", "cnracl"): 0.09,
     ("pension_relative", "agirc_arrco"): 0.47,
-    ("depense_part_pib", "fpe"): 0.93,
-    ("depense_part_pib", "non_salaries_base"): 1.30,
-    ("depense_part_pib", "regimes_speciaux"): 0.82,
-    ("depense_part_pib", "complementaires"): 0.14,
+    ("depense_part_pib", "fpe"): 0.39,
+    ("depense_part_pib", "cnracl"): 0.12,
+    ("depense_part_pib", "non_salaries_base"): 1.34,
+    ("depense_part_pib", "regimes_speciaux"): 0.85,
+    ("depense_part_pib", "complementaires"): 0.16,
 }
 
 
@@ -855,6 +866,83 @@ def _ecarts_par_groupe(avenir, comptes) -> dict[tuple[str, str], float]:
             modele = avenir.decomposition_groupes(base, {groupe: regimes})[groupe][horizon][rang]
             ecarts[(grandeur, groupe)] = modele / attendu - 1.0
     return ecarts
+
+
+def test_la_fonction_publique_suit_ses_retraites_et_son_traitement_au_cor():
+    """Les deux corrections de l'étape 9 de l'action 147, et leur jumeau.
+
+    LES RETRAITÉS. Au-delà de la dernière enquête de la DREES, la répartition
+    de 2024 était reconduite : les civils de l'État gardaient leur part des
+    retraités jusqu'en 2070, quand le COR la fait reculer d'un tiers. Les
+    caisses de la fonction publique suivent désormais la croissance que le
+    classeur par régime du COR donne à leurs retraités, rapportée à celle de
+    tous les retraités ; les autres gardent leur effectif de bord.
+
+    LE TRAITEMENT. Le traitement indiciaire relatif valait un avant 2025 ; il
+    porte désormais le décrochage que la figure 1.14 du rapport de juin 2026
+    publie de 2019 à 2024, le premier point reconduit avant lui.
+    """
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    from retraite_notionnelle.donnees.chargement import charger_yaml
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    reconduits = EffectifsRetraites(RACINE_DONNEES, projetees=())
+    chemin = RACINE_DONNEES / "reference" / "regimes" / "retraites_projetes.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        cor: dict[str, dict[int, float]] = {}
+        for ligne in csv.DictReader(l for l in flux if not l.startswith("#")):
+            cor.setdefault(ligne["caisse"], {})[int(ligne["annee"])] = float(ligne["retraites"])
+    personnes = ComptesRetraite(RACINE_DONNEES).decomposition.indice_croissance(
+        "retraites", 2030, 2070)
+    assert personnes is not None and personnes > 1.0
+    for caisse in EffectifsRetraites.CAISSES_PROJETEES:
+        assert effectifs.effectif(caisse, 2024) == reconduits.effectif(caisse, 2024)
+        assert effectifs.fiabilite(caisse, 2070) == Fiabilite.ESTIMEE
+        assert effectifs.effectif(caisse, 2070) / effectifs.effectif(caisse, 2030) \
+            == pytest.approx(cor[caisse][2070] / cor[caisse][2030] / personnes, rel=1e-12)
+    assert effectifs.effectif("cnav", 2070) == reconduits.effectif("cnav", 2070)
+    poids, avant = poids_effectifs(effectifs, 2070), poids_effectifs(reconduits, 2070)
+    assert poids["fonctionnaire_sedentaire"] < 0.7 * avant["fonctionnaire_sedentaire"]
+    assert poids["fonctionnaire_actif"] > avant["fonctionnaire_actif"]
+
+    macro = DonneesMacro(RACINE_DONNEES)
+    passe = charger_yaml(RACINE_DONNEES / "reference" / "macro"
+                         / "hypotheses_projection.yaml")["traitement_indiciaire"]["passe"]
+    attendus = {int(annee): traitement / revenu for annee, traitement, revenu
+                in zip(passe["annees"], passe["traitement"], passe["revenu_moyen"])}
+    premiere = min(attendus)
+    attendus[premiere - 20] = attendus[premiere]
+    for annee, valeur in attendus.items():
+        assert macro.traitement_indiciaire_relatif(annee) == pytest.approx(valeur, rel=1e-12)
+    # Le décrochage déjà fait : 4 % depuis 2019, le revenu moyen de 2020
+    # plongeant avec l'activité partielle.
+    assert 1.03 < attendus[2019] < 1.05 < attendus[2020]
+    assert macro.traitement_indiciaire_relatif(2025) == 1.0
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    annees = sorted(attendus) + [2025, 2030, 2037, 2050]
+    script = """
+import { readFileSync } from "node:fs";
+import { DonneesMacro } from "./moteur/js/macro.js";
+const annees = JSON.parse(process.argv[1]);
+const macro = new DonneesMacro(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+console.log(JSON.stringify(annees.map((annee) => macro.traitementIndiciaireRelatif(annee))));
+"""
+    calcul = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(annees)],
+        capture_output=True, text=True, encoding="utf-8",
+        cwd=Path(__file__).resolve().parents[1], check=False,
+    )
+    assert calcul.returncode == 0, calcul.stderr[-2000:]
+    for annee, valeur in zip(annees, json.loads(calcul.stdout)):
+        assert valeur == pytest.approx(macro.traitement_indiciaire_relatif(annee),
+                                       rel=1e-12), annee
 
 
 def test_la_masse_se_decompose_regime_par_regime(avenir):
@@ -885,8 +973,8 @@ def test_la_projection_suit_le_cor_groupe_par_groupe(avenir, comptes):
     """Groupe de régimes par groupe, ce que la projection suit du COR.
 
     La Cnav garde sa pension moyenne relative, au COR comme dans le modèle ;
-    la dépense de LURA et celle de la CNRACL, rapportées au PIB, se suivent à
-    quelques pour cent. L'écart de la pension moyenne relative de l'ensemble
+    la dépense de LURA, rapportée au PIB, se suit à quelques pour cent. L'écart
+    de la pension moyenne relative de l'ensemble
     (``test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor``) n'est donc
     pas dans le régime général.
     """
@@ -909,9 +997,10 @@ def test_l_ecart_au_cor_groupe_par_groupe(avenir, comptes):
     elle qui dit ce que chaque groupe pèse dans l'écart. Il est dans la
     fonction publique d'État, où le COR fait baisser la pension relative par
     la proratisation (des entrées plus tardives, six ans de services en moins
-    jusqu'à la génération 2000) et les effectifs avec les cotisants, et dans
-    les régimes qui se ferment ou s'éteignent — non-salariés agricoles,
-    régimes spéciaux —, que la grille pèse tous aux effectifs de 2024.
+    jusqu'à la génération 2000) — ses effectifs, la grille les suit depuis
+    l'étape 9 de l'action 147, et le décrochage de son traitement depuis
+    2019 —, et dans les régimes qui se ferment ou s'éteignent — non-salariés
+    agricoles, régimes spéciaux —, que la grille pèse aux effectifs de 2024.
 
     Des CLIQUETS : un écart qui passe d'un point sous le sien demande de
     l'abaisser.
@@ -943,9 +1032,11 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     horizon = avenir.annee(avenir.derniere_annee)
     # 1,200 jusqu'à l'étape 4 de l'action 147, 1,174 jusqu'à l'étape 8, qui
     # corrige deux écarts de comptabilité à la dépense du COR — la part de la
-    # réversion, l'ancrage unique — et la ramène à 1,097 : un cliquet, qui ne
-    # doit que descendre à mesure que l'écart s'explique.
-    assert 1.05 < horizon.derive < 1.10, horizon.derive
+    # réversion, l'ancrage unique — et la ramène à 1,097, puis 1,080 à l'étape
+    # 9, la fonction publique suivant les retraités et le traitement indiciaire
+    # du COR : un cliquet, qui ne doit que descendre à mesure que l'écart
+    # s'explique.
+    assert 1.05 < horizon.derive < 1.09, horizon.derive
 
 
 def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
@@ -1080,12 +1171,14 @@ def test_la_recette_pese_les_cotisants_et_la_depense_les_retraites(cout: Cout):
     assert cout.poids_cotisants != cout.poids
     assert cout.poids_cotisants["agent_sncf_conduite"] < cout.poids["agent_sncf_conduite"]
 
-    # L'ancienne convention, reproduite : les retraités des deux côtés. Sur un
+    # L'ancienne convention, reproduite : les retraités des deux côtés, à la
+    # répartition de la dernière enquête — la fonction publique ne suivait pas
+    # encore ceux que le COR lui projette (action 147, étape 9). Sur un
     # simulateur retouché, que la clé du coût ne décrit pas : le calcul se
     # garde sous la sienne, et retouche lui-même un simulateur neuf.
     def ancienne_convention():
         simulateur = Simulateur(Parametres())
-        simulateur.__dict__["cotisants"] = simulateur.effectifs
+        simulateur.__dict__["cotisants"] = EffectifsRetraites(RACINE_DONNEES, projetees=())
         return calculer_cout(simulateur, DepensesRetraite(RACINE_DONNEES),
                              Population(RACINE_DONNEES), ComptesRetraite(RACINE_DONNEES),
                              convention_recette=CONVENTION_RAPPORT)

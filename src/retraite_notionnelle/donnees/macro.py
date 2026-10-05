@@ -476,6 +476,12 @@ class DonneesMacro:
                 traitement = salaire
             indice *= traitement / salaire
             relatif[annee] = indice
+        passe = regle.get("passe")
+        if passe:
+            for annee, traitement, revenu in zip(passe["annees"], passe["traitement"],
+                                                 passe["revenu_moyen"]):
+                if int(annee) < base:
+                    relatif[int(annee)] = float(traitement) / float(revenu)
         return base, relatif
 
     def traitement_indiciaire_relatif(self, annee: int) -> float:
@@ -488,12 +494,22 @@ class DonneesMacro:
         2026 et 2027, de 0,1 % en euros constants de 2028 à 2032, puis
         rejoint en cinq ans le salaire moyen, qu'il suit dès 2038. Il décroche
         donc du salaire moyen, et la part des primes monte d'autant
-        (:meth:`~retraite_notionnelle.castypes.CasType.construire`). 1 avant
-        l'année de base, la dernière valeur au-delà du raccord.
+        (:meth:`~retraite_notionnelle.castypes.CasType.construire`). La
+        dernière valeur au-delà du raccord.
+
+        Avant l'année de base, le décrochage déjà fait (``passe``) : le
+        traitement moyen rapporté au revenu moyen d'activité, que le COR publie
+        de 2019 à 2024 (figure 1.14 du même rapport), le premier reconduit
+        avant lui ; 1 sans ``passe`` (action 147, étape 9).
         """
         base, relatif = self._traitement_relatif
-        if not relatif or annee <= base:
+        if not relatif or annee == base:
             return 1.0
+        if annee < base:
+            passe = [a for a in relatif if a < base]
+            if not passe:
+                return 1.0
+            return relatif.get(annee, relatif[min(passe)] if annee < min(passe) else 1.0)
         return relatif[min(annee, max(relatif))]
 
     def coefficient_smic(self, annee_depart: int, annee_arrivee: int) -> float:

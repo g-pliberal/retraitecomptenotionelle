@@ -7252,15 +7252,16 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 8 (le passé refait,
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 9 (le passé refait,
 la décomposition du COR, sa dépense, la fourchette, ses deux conventions,
 l'écart groupe par groupe, la pondération par génération écartée, la méthode
-du COR relue, puis sa comptabilité corrigée : la base porte la réversion à la
-part du COR, les poids des cas types sont calés sur la dépense de ses six
-groupes, et la dérive de 2070 tombe de 1,174 à 1,097). Le RAFP n'était pas
-dans la masse. Reste, une session neuve par point : la FPE et la CNRACL, les
-points Agirc-Arrco, les carrières incomplètes. Commencer par le point (2) des
-« Restent » de la note de l'étape 7, et lire la note de l'étape 8.
+du COR relue, sa comptabilité corrigée, puis la fonction publique : ses
+retraités suivent ceux du COR, et son traitement indiciaire le décrochage de
+2019 à 2024 ; la dérive de 2070 tombe de 1,097 à 1,080). Reste, une session
+neuve par point : les points Agirc-Arrco contre les cas types n° 1 et 2 du
+COR (point 3 de l'étape 7), puis les carrières incomplètes, les migrants et
+les entrées tardives des fonctionnaires (point 4). Lire les notes des étapes
+7 et 9.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7799,3 +7800,60 @@ troisième n'avait pas d'objet.
   témoins de page, aucun de simulation.
 - *Restent* les points (2) à (4) de l'étape 7 ; la dérive restante est la
   croissance des groupes, dont la FPE.
+
+**Étape 9, le 5 octobre 2026 : la fonction publique d'État et la CNRACL,
+leurs retraités et leur traitement suivis du COR.** Deux corrections sur les
+trois pistes du point (2) de l'étape 7, dans les deux moteurs ; deux
+conventions de la page Coût, et non du droit du scénario 1 : aucun témoin de
+simulation ne bouge.
+
+- *Remesuré d'abord.* Après le calage de l'étape 8, la FPE faisait encore
+  +7,6 points de l'écart de croissance des groupes (dépense ×1,13 contre
+  ×0,59 au COR), les complémentaires +3,8, les non-salariés +1,8, LURA +1,3,
+  les régimes spéciaux +1,2, la CNRACL −0,2. Têtes de la FPE ×1,22 dans la
+  grille, ×1,00 au COR ; de la CNRACL ×1,20 contre ×1,49.
+- *Les effectifs* (`EffectifsRetraites.CAISSES_PROJETEES`). Au-delà de la
+  dernière enquête de la DREES (2024), les civils et les militaires de l'État
+  et la CNRACL suivent la croissance que le classeur par régime du COR de
+  2024 donne à leurs retraités, rapportée à celle de tous les retraités
+  (tableau 2.1 du rapport de 2026) ; les autres caisses gardent leur effectif
+  de bord. Le classeur est désormais gardé : `retraites_projetes.csv`
+  (certification `retraites_regimes`, 1 284 valeurs, niveau `haute`).
+  Écartés après mesure : toutes les caisses sur leurs droits du COR (dérive
+  1,111), et la Cnav en reste (1,104) — un retraité de la Cnav, de
+  l'Ircantec (×2,56) ou du RCI (×2,31) est un droit, que les polypensionnés
+  multiplient, quand un retraité de la fonction publique est une personne.
+  Seule, la correction porte la dérive à 1,087 ; têtes de la FPE ×1,03,
+  de la CNRACL ×1,43.
+- *Le traitement* (`traitement_indiciaire.passe`). Le traitement relatif
+  valait un avant 2025 ; il porte le rapport du traitement indiciaire moyen
+  au revenu moyen d'activité de la figure 1.14 du rapport de 2026 (Direction
+  du budget), de 2019 à 2024 — 1,041 en 2019, 1,092 en 2020, le revenu moyen
+  plongeant avec l'activité partielle, et le salaire moyen du modèle avec lui
+  —, le premier point reconduit avant. Seule : dérive 1,091, pension relative
+  de la FPE +33,5 %, de la CNRACL +8,8 %. La série longue de la DGAFP n'a
+  pas été trouvée sous une forme lisible (rapports annuels en PDF, une année
+  chacun) : le décrochage d'avant 2019 manque, quand le point d'indice a
+  perdu le tiers de sa valeur sur le salaire moyen depuis 2000.
+- *Les entrées tardives* (piste 3) ne sont pas faites : un âge d'entrée par
+  génération change les cas types de toutes les pages, et va avec les
+  carrières incomplètes du point (4).
+- *Ce que ça déplace.* Dérive de 2070 : 1,097 → 1,080. Trajectoire propre :
+  16,3 → 16,0 % du PIB en 2070. Borne haute : dérive 8 % ; proposition 9,3 %
+  du PIB en 2070 (9,4), solde moyen −1,17 (−1,26), dette 73 % (79). Borne
+  basse : solde moyen −0,86 (−0,85), coefficient 0,988 en 2070 (0,992),
+  dette 55 % (54) ; le scénario 6 n'est plus à l'équilibre qu'en 2028 et
+  2029, et l'accueil cite −0,9 et 55 % (`MESURES_BLOCAGES`). À l'horizon,
+  pension relative de la FPE +16,8 % du COR (+37,6), de la CNRACL +8,8 %
+  (+12,4), de l'ensemble +10,4 % (+13,1) ; dépense de la FPE +38,1 % (+92,4).
+  La CNRACL passe de −3,4 à +11,1 % : ses têtes trop lentes masquaient sa
+  pension ; elle quitte les écarts suivis pour les cliquets. La part que
+  l'État perd revient aux autres : LURA +4,2 % (tolérance relevée à 5 %),
+  non-salariés +133,2 %, régimes spéciaux +84,5 %, complémentaires +15,3 %.
+  La reconstitution du passé ne bouge pas (−17,1 % en 2009). 57 témoins de
+  page ; le parcours de présentation compte 44 295 valeurs sur 119 séries, et
+  la conservation est refigée pour lui.
+- *Restent* les points (3) et (4) de l'étape 7 ; dans la FPE, la pension
+  relative (+16,8 %), qu'expliqueraient le décrochage d'avant 2019 et les
+  entrées tardives ; la croissance des complémentaires (+4,4 points de
+  l'écart), des non-salariés et des régimes spéciaux, désormais devant elle.

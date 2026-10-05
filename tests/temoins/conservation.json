@@ -525,6 +525,12 @@
    "2026-10-05 | action 142 : la délibération de l'ERAFP, et la majoration du RAFP",
    "2026-10-05 | action 142 : le départ anticipé des assurés handicapés, au scénario 1 et sur le site",
    "2026-10-05 | action 142, étape 4 : Destinie 2 exécuté à part, ses sorties en témoins",
+   "2026-10-05 | action 147, étape 4 : les deux conventions du COR, suivies",
+   "2026-10-05 | action 147, étape 4 bis : les conventions du COR pour la seule page Coût",
+   "2026-10-05 | action 147, étape 5 : l'écart au COR, groupe de régimes par groupe",
+   "2026-10-05 | action 147, étape 6 : la pondération par génération, mesurée et écartée",
+   "2026-10-05 | action 147, étape 7 : la méthode du COR, relue, et l'écart de 2070 décomposé",
+   "2026-10-05 | action 147, étape 8 : la comptabilité de la trajectoire propre, corrigée",
    "2026-10-05 | action 89 : les quatre lignes du RAFP au vivier",
    "2026-10-05 | action 89 : les seize lignes de l'Agirc-Arrco au vivier",
    "2026-10-05 | action 89 : les vingt-trois lignes des régimes spéciaux au vivier"
@@ -886,6 +892,7 @@
    "cout.aux_pensions_du_systeme_4",
    "cout.avance_reprise",
    "cout.avances_par_succession",
+   "cout.borne_basse",
    "cout.brute_avant_reprise",
    "cout.brutes_droit_direct",
    "cout.capitalisation_hors_bilan",
@@ -905,12 +912,15 @@
    "cout.cps_ne_ventilent_pas",
    "cout.de_niveau_haut",
    "cout.deficits_additionnes",
+   "cout.depense_officielle",
    "cout.depenser_moins",
    "cout.deplacement_uniforme_borne_basse",
    "cout.dette_publique_observee",
    "cout.deux_corrections",
    "cout.deux_ponderations",
    "cout.dix_huit_pour_cent",
+   "cout.ecart_partage",
+   "cout.ecart_propre",
    "cout.ecart_va_se_creuser",
    "cout.eligible_sur_deux",
    "cout.engagement_du_depot",
@@ -6819,7 +6829,7 @@
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
     "d8fe3e7fd9af50b2",
-    "8b9d45aa4b1de55b"
+    "8da601d39b93e539"
    ],
    "Avant de partir": [
     "5d7ed1de7dc7c4d7",
