@@ -458,6 +458,12 @@ class PeriodeRegime:
     #: la même pour tous —, et c'est pourquoi sa conversion ignore l'assiette.
     #: Le nombre de trimestres, lui, reste celui que le revenu a validés.
     points_par_trimestre_valide: float | None
+    #: Le TAUX DE CALCUL DES POINTS, quand le régime le fixe à part de son taux
+    #: de cotisation : l'Agirc-Arrco calcule les points à 6,20 % et 17 %, et
+    #: appelle 7,87 % et 21,59 %, arrondis de 127 % de ces taux. Diviser la
+    #: cotisation par le taux d'appel rendait 6,197 %. ``None`` : la
+    #: cotisation divisée par le taux d'appel.
+    taux_calcul_points: float | None
     #: POINTS D'AJUSTEMENT, qui s'ajoutent aux points par trimestre : leur
     #: nombre vaut ``points_ajustement_par_forfait`` fois la cotisation
     #: proportionnelle divisée par la cotisation forfaitaire, dans la limite
@@ -1649,6 +1655,10 @@ class CatalogueRegimes:
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None
                     else float(p["points_par_trimestre_valide"])
+                ),
+                taux_calcul_points=(
+                    None if p.get("taux_calcul_points") is None
+                    else float(p["taux_calcul_points"])
                 ),
                 bareme_points=p.get("bareme_points"),
                 meilleures_annees_non_salaries=bool(

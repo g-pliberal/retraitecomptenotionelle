@@ -605,10 +605,18 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                                                 rupture=debut)
                         if nature in ("solidarite", "fne") else None
                     )
-                    if taux_solidarite is None:
-                        points_annee = cotisation / (taux_appel * reference)
-                    else:
+                    if taux_solidarite is not None:
                         points_annee = assiette * taux_solidarite / reference
+                    elif periode.taux_calcul_points is not None:
+                        # LE TAUX DE CALCUL DES POINTS : l'Agirc-Arrco compte
+                        # les points à 6,20 % et 17 % de l'assiette, et appelle
+                        # 7,87 % et 21,59 %, 127 % de ces taux ARRONDIS — « 29 538
+                        # € » de 2023, « 1 831,36 / 18,7669 = 97,58 points »
+                        # (livret n° 3 de la fédération). Diviser la cotisation
+                        # par 1,27 rendait 97,53 : 6,197 % au lieu de 6,20 %.
+                        points_annee = assiette * periode.taux_calcul_points / reference
+                    else:
+                        points_annee = cotisation / (taux_appel * reference)
                     garantie = (None if taux_solidarite is not None
                                 and nature != "fne"
                                 else moteur.valeurs_point.garantie(

@@ -47,6 +47,7 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: tranche_1
     taux_cotisation_retraite: 0.0787
+    taux_calcul_points: 0.062   # accord du 17 novembre 2017 : 6,20 %, appelé à 127 %
     part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
     decote_par_trimestre: null
     surcote_par_trimestre: null
@@ -93,6 +94,7 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: tranche_1
     taux_cotisation_retraite: 0.0787
+    taux_calcul_points: 0.062   # accord du 17 novembre 2017 : 6,20 %, appelé à 127 %
     part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
     decote_par_trimestre: null
     surcote_par_trimestre: null
@@ -123,6 +125,7 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: tranche_2
     taux_cotisation_retraite: 0.2159
+    taux_calcul_points: 0.17    # 17 %, appelé à 127 %
     part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
     decote_par_trimestre: null
     surcote_par_trimestre: null
@@ -150,6 +153,7 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: tranche_2
     taux_cotisation_retraite: 0.2159
+    taux_calcul_points: 0.17    # 17 %, appelé à 127 %
     part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
     decote_par_trimestre: null
     surcote_par_trimestre: null

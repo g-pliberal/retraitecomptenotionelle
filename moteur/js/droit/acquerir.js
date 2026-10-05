@@ -485,9 +485,18 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           // voir acquerir.py.
           const tauxSolidarite = nature === "solidarite" || nature === "fne"
             ? chomage.tauxSolidarite(code, ligne.annee, true, debut) : null;
-          let pointsAnnee = tauxSolidarite === null
-            ? cotisation / (tauxAppel * reference)
-            : assiette * tauxSolidarite / reference;
+          // Le taux de calcul des points, quand le régime le fixe à part de son
+          // taux de cotisation (l'Agirc-Arrco : 6,20 % et 17 %, appelés à 127 %
+          // arrondis) : voir acquerir.py.
+          const tauxCalcul = periode.taux_calcul_points ?? null;
+          let pointsAnnee;
+          if (tauxSolidarite !== null) {
+            pointsAnnee = assiette * tauxSolidarite / reference;
+          } else if (tauxCalcul !== null) {
+            pointsAnnee = assiette * tauxCalcul / reference;
+          } else {
+            pointsAnnee = cotisation / (tauxAppel * reference);
+          }
           const garantie = tauxSolidarite !== null && nature !== "fne" ? null
             : moteur.valeursPoint.garantie(bareme, periode, ligne.annee, part, ligne.quotite,
               tauxSolidarite);

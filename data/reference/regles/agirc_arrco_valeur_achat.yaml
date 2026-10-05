@@ -129,6 +129,31 @@ versions:
       pas modifiée au 1er janvier 2026. »
     lu_le: 2026-10-04
     empreinte: sha256:a97f2c387043cd3ef8dc8506f9b719b0786ad70d8691b41f4241ae103a6f87ff
+  - reference: >-
+      circulaire Agirc-Arrco 2025-15-DT, « Paramètres du régime 2025-2026 » (hors JORF),
+      celle qui applique la décision du conseil d'administration du 17 octobre 2025
+    article: circulaire
+    en_vigueur: 2026-01-01
+    citation: >-
+      « La valeur d'achat du point est également inchangée ; elle demeure fixée à
+      20,1877€ pour l'exercice 2026 » ; « La valeur de service du point est inchangée au
+      1er novembre 2025 ; elle reste fixée à 1,4386€ » ; « Le montant du plafond des
+      majorations pour enfants nés ou élevés reste fixé à 2 367,48 € »
+    lu_le: 2026-10-05
+    empreinte: sha256:2e34ce291edcfa5e9d21bf0b80e7c30d8889f7342ee8b5dae4463801ad04b288
+  - reference: >-
+      accord national interprofessionnel du 17 novembre 2017 et circulaire Agirc-Arrco
+      2025-16-SG-DRJ, « Paramètres 2026 » (hors JORF) : les points se calculent au « taux
+      de calcul » de 6,20 % sur la tranche 1 et de 17 % sur la tranche 2, la cotisation
+      étant appelée à « 127% du taux de calcul » (7,87 % et 21,59 %) ; livret n° 3 de la
+      fédération, « Cotisations et points » (mai 2024), pages 16 à 19
+    article: circulaire et guide
+    citation: >-
+      « 29 538 6,20 % 1 831,36 € » ; « 1 831,36 18,7669 97,58 points Agirc-Arrco » ;
+      « 2 874,82 19,6321 146,43 points Agirc-Arrco » ; « 3 910 19,6321 199,16 points
+      Agirc-Arrco »
+    lu_le: 2026-10-05
+    empreinte: sha256:70923aee80b981a778dabed49a3b510147d6f1c0406cb5f6e46be9af9c11c0da
   bornes:
     revenu.annee: [2023-01-01, 2027-01-01]
   contenu:
@@ -141,12 +166,15 @@ versions:
       1,4386 €. Le gel de 2026 n'applique pas la règle de l'article 5.1 : il est le
       barème, et le modèle le lit.
     parametres:
-      prix_du_point: le salaire de référence publié de l'année, au taux d'appel de 127 %
+      prix_du_point: >-
+        le salaire de référence publié de l'année ; les points valent l'assiette au taux
+        de calcul, 6,20 % et 17 % (taux_calcul_points de la fiche de régime), et non la
+        cotisation appelée, arrondie, divisée par 127 %
       # Le facteur que l'annexe 1 retire au salaire moyen pour projeter la valeur
       # de service de 2027 à 2037 : une hypothèse de projection financière, que
       # le modèle ne suit pas (voir les lectures divergentes).
       soutenabilite_valeur_service_projetee: 0.0116
-  exemples: aucun trouvé
+  exemples: [aa_livret3_points_2023, aa_livret3_points_2024_deux_tranches]
 - id: salaire_moyen_au_dela_du_bareme
   statut: supposee
   nee_de: KALITEXT000048674954
@@ -356,6 +384,11 @@ historique:
   ircantec_valeurs_point) : un prix d'achat et une valeur de service qui suivaient tous
   deux les prix. La confrontation à « Mon estimation retraite » (action 142, étape 2) a
   montré l'écart, et les accords l'ont tranché.
+- >-
+  2026-10-05 — les points au taux de calcul (action 89) : le livret n° 3 de la
+  fédération compte 97,58 points pour 29 538 € en 2023, le modèle en rendait 97,53, la
+  cotisation appelée de 7,87 % divisée par 127 % faisant 6,197 % au lieu de 6,20 % ;
+  deux exemples, sur les deux tranches, concordent.
 effet: >-
   Toute carrière qui cotise à l'Agirc-Arrco après 2026 : ses points de ces années coûtent
   le salaire moyen et non les prix, environ 0,7 % de plus par année d'écart à 2026. Sur

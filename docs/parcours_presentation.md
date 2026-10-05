@@ -178,7 +178,7 @@ net :
 |---|---|---|
 | 1. Actuel | 1 301 € | référence |
 | 3. Ce qui a été cotisé, deux parts | 1 042 € | -19,8 % |
-| 4. La proposition | 1 144 € | -12,0 % |
+| 4. La proposition | 1 144 € | -12,1 % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € brut
 pour une personne seule dès 65 ans. Sous la proposition, cette carrière part

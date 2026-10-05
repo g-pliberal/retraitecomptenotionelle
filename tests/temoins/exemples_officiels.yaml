@@ -114,6 +114,11 @@
 #     près : la caisse publie douze mensualités arrondies au centime, six
 #     centimes d'écart au plus, et la fiche de régime arrondit le partage entre
 #     salarié et employeur au dix-millième.
+#   points_de_l_annee — les points que le salaire de l'année `annee` acquiert,
+#     régime par régime, une valeur par période qui en crédite (la tranche 1,
+#     puis la 2), au centième. L'exemple donne ce salaire, en euros de
+#     l'année, dans `carriere.releve` (année : salaire), que le test porte sur
+#     un relevé de carrière.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -1283,6 +1288,31 @@ exemples:
       votre retraite », majoration « réduite à 0,75 % entre 65 et 70 ans ».
     carriere: {naissance: "1965-05-15", sexe: H, affiliation: medecin_liberal, liquidation: "2035-07", age_debut: 30}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.30, asv_conventionnes: 1.30}}
+
+  # ---- Agirc-Arrco : les points d'un salaire ------------------------------
+  # Le livret n° 3 de la fédération, « Cotisations et points » (mai 2024),
+  # calcule les points de deux salaires au « taux de 6,20 % » et de 17 %, et
+  # non à la cotisation appelée divisée par 127 %, qui en rendait 97,53 et
+  # 146,36 jusqu'au 5 octobre 2026 (`taux_calcul_points`).
+  - id: aa_livret3_points_2023
+    source: {editeur: "Agirc-Arrco", reference: "livret n° 3, « Cotisations et points », mai 2024, pages 16-17", verifie_le: "2026-10-05"}
+    enonce: >-
+      « En 2023, votre salaire annuel était de 29 538 €. » Les cotisations
+      qui ouvrent des points : « 29 538 6,20 % 1 831,36 € » ; à la valeur
+      d'achat de 2023, « 1 831,36 18,7669 97,58 points Agirc-Arrco ».
+    carriere: {naissance: "1990-06", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2054-07", age_debut: 22, releve: {2023: 29538}}
+    attendu: {points_de_l_annee: {annee: 2023, agirc_arrco: [97.58]}}
+
+  - id: aa_livret3_points_2024_deux_tranches
+    source: {editeur: "Agirc-Arrco", reference: "livret n° 3, « Cotisations et points », mai 2024, pages 18-19", verifie_le: "2026-10-05"}
+    enonce: >-
+      « Je suis ingénieure. Mon salaire annuel pour 2024 est fixé à 69 368 €. »
+      Sur la tranche 1, « 46 368 6,20 % 2 874,82 € », soit « 2 874,82 19,6321
+      146,43 points Agirc-Arrco » ; sur la tranche 2, « 23 000 17 % 3 910 € »,
+      soit « 3 910 19,6321 199,16 points Agirc-Arrco » ; au total « 345,59
+      points Agirc-Arrco ».
+    carriere: {naissance: "1985-03", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2049-04", age_debut: 22, releve: {2024: 69368}}
+    attendu: {points_de_l_annee: {annee: 2024, agirc_arrco: [146.43, 199.16]}}
 
   # ---- Agirc-Arrco : la date d'effet de la réversion --------------------
   # La page « La pension de réversion » de la fédération date la réversion

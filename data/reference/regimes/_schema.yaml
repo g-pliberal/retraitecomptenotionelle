@@ -819,6 +819,19 @@ champs_periode:
       au plus (décret n° 2011-1644, art. 3).
     defaut: null
 
+  taux_calcul_points:
+    description: >-
+      Le TAUX DE CALCUL DES POINTS, quand le régime le fixe à part de son taux
+      de cotisation : les points de l'année valent l'assiette par ce taux,
+      divisée par la valeur d'achat, et non la cotisation divisée par le taux
+      d'appel. C'est l'Agirc-Arrco depuis 2019 : 6,20 % sur la tranche 1 et
+      17 % sur la tranche 2, appelés à 127 % — 7,87 % et 21,59 % arrondis, qui
+      divisés par 1,27 donnent 6,197 % (accord du 17 novembre 2017 ;
+      circulaire 2025-16-SG-DRJ ; livret n° 3 de la fédération : « 1 831,36 /
+      18,7669 = 97,58 points » pour 29 538 €). `null` : la cotisation divisée
+      par le taux d'appel, sans écart.
+    defaut: null
+
   points_par_trimestre_valide:
     description: >-
       Points attribués par TRIMESTRE VALIDÉ, sans égard au montant cotisé.

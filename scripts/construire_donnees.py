@@ -640,6 +640,7 @@ def _regimes() -> list[dict]:
                     "points_par_trimestre_valide": p.points_par_trimestre_valide,
                     "points_ajustement_par_forfait": p.points_ajustement_par_forfait,
                     "points_ajustement_maximum": p.points_ajustement_maximum,
+                    "taux_calcul_points": p.taux_calcul_points,
                     "capital_seuil_points": p.capital_seuil_points,
                     "bareme_points": p.bareme_points,
                     "points_de": p.points_de,

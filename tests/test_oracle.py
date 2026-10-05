@@ -1769,6 +1769,30 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # La pension annuelle brute d'un régime nommé : ce que publie un
         # régime dont la pension ne tient ni à un taux ni à un salaire.
         return {p.regime: p.montant for p in resultat.pensions_par_regime}
+    if cle == "points_de_l_annee":
+        # Les points qu'un salaire de l'année acquiert, tels que la fédération
+        # les calcule dans ses guides : l'exemple donne le salaire de l'année
+        # (`releve`, année : salaire), la grandeur les points de chaque régime,
+        # une valeur par période qui en crédite — la tranche 1, puis la 2.
+        from retraite_notionnelle.carriere import Carriere, LigneRelevee
+        from retraite_notionnelle.droit import releve as _releve
+
+        c = exemple["carriere"]
+        annee = int(exemple["attendu"][cle]["annee"])
+        naissance, _ = _naissance(c["naissance"])
+        depart = _mois(c["liquidation"])
+        lignes = [LigneRelevee(int(a), c["affiliation"], float(revenu))
+                  for a, revenu in c["releve"].items()]
+        construite = Carriere.depuis_releve(
+            naissance.annee, c.get("sexe", "H"), lignes,
+            depart.annee - naissance.annee + (depart.mois - naissance.mois) / 12,
+            simulateur.macro, mois_naissance=naissance.mois)
+        mesure: dict = {"annee": annee}
+        for code, a, points, _ in _releve.construire(
+                simulateur.scenario_actuel, construite).droits.points:
+            if a == annee and points > 0:
+                mesure.setdefault(code, []).append(points)
+        return mesure
     if cle == "cotisation_agirc_de_l_annee":
         # La cotisation Agirc d'une année, part de l'assuré et cotisation
         # entière : ce que le droit de l'année prélevait, tel que le compte
@@ -2001,6 +2025,13 @@ def _concorde(cle: str, mesure, valeur) -> bool:
                 attendue, abs=1e-6 if grandeur in ("coefficient", "conversion", "age_legal")
                 else 0.0051)
             for grandeur, attendue in valeur.items() if grandeur != "forme")
+    if cle == "points_de_l_annee":
+        # Au centième, que les guides arrondissent ; chaque période dans
+        # l'ordre où le régime la crédite.
+        return mesure["annee"] == int(valeur["annee"]) and all(
+            len(mesure.get(code, [])) == len(points) and all(
+                m == pytest.approx(p, abs=0.0051) for m, p in zip(mesure[code], points))
+            for code, points in valeur.items() if code != "annee")
     if cle == "cotisation_agirc_de_l_annee":
         return mesure["annee"] == int(valeur["annee"]) and all(
             mesure[part] == pytest.approx(valeur[part], **TOLERANCES[cle])
