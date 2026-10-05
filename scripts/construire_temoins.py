@@ -1457,6 +1457,10 @@ def _cas() -> list[dict]:
     # son article 113 emprunte (action 89).
     cas.append(("reversion_clerc_de_notaire", {
         **reversion, "statut": "clerc_de_notaire"}))
+    # Les IEG, la moitié majoration comprise, sans durée du mariage quand il
+    # précède la liquidation (action 89).
+    cas.append(("reversion_agent_ieg", {
+        **reversion, "statut": "agent_ieg", "liquidation": "57"}))
     cas.append(("reversion_mariage_court_avant_2004", {
         "naissance": "1930", "liquidation": "60", "conjoint": "1935",
         "mariage": "1994-06", "deces": "1995-03"}))

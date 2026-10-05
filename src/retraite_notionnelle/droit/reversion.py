@@ -19,6 +19,10 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
   condition de mariage, que l'article 113 du décret n° 90-1215 emprunte à
   L. 39 depuis 2006, et qu'il posait dans les mêmes termes à la veuve depuis
   1990 ;
+* les IEG (``reversion_ieg``) : la moitié de la pension, majoration pour
+  enfants comprise, sans âge ni ressources ; depuis le 1er juillet 2008, deux
+  ans de mariage au décès quand il suit la liquidation, sauf enfant de
+  l'union (annexe 3 au statut national, articles 22 et 24) ;
 * le RAFP (``reversion_rafp``) : la moitié de la prestation, sans âge, sans
   ressources ni durée du mariage, et rien après un droit direct versé en
   capital — l'échéancier dit lesquels (``en_capital``) ;
@@ -210,6 +214,19 @@ def _mariage_suffit(parametres: dict, conjoint: Conjoint, deces: str, depart: st
             >= parametres["mariage_services_minimum_annees"])
 
 
+def _mariage_ieg(parametres: dict, conjoint: Conjoint, deces: str, depart: str,
+                 enfants: int) -> bool:
+    """La condition de l'article 24 de l'annexe 3 au statut national des IEG :
+    aucune quand le mariage précède la liquidation de la pension — que le
+    modèle tient pour le départ —, sinon deux ans de mariage au décès, « sauf
+    dans les cas où un enfant est né de l'union », que le modèle tient pour
+    tout enfant déclaré. Sans durée dans la version, aucune condition."""
+    minimum = parametres.get("mariage_minimum_annees")
+    if minimum is None or enfants > 0 or conjoint.mariage <= depart:
+        return True
+    return chrono.annees_revolues(conjoint.mariage, deces) >= minimum
+
+
 def _age_ircantec(parametres: dict, sexe: str) -> float:
     """L'âge requis à l'Ircantec : celui du conjoint depuis 2004 ; avant, celui
     de la veuve ou du veuf. Le veuf d'avant 1976, que l'arrêté ne servait pas,
@@ -311,6 +328,19 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             autres_bases += montant
             lignes[regime] = ligne(regime, base, montant, "servie" if servie else "mariage",
                                    fiche, version, taux, lendemain, fiabilite)
+            continue
+        if fiche["id"] == "reversion_ieg":
+            # La moitié de la pension, « majoration pour enfant comprise »
+            # (annexe 3 au statut national des IEG, article 22).
+            servie = _mariage_ieg(parametres, conjoint, deces, depart, enfants)
+            majoration = (float(parametres.get("majoration_reversible") or 0.0)
+                          * (majorations or {}).get(regime, 0.0)) if servie else 0.0
+            montant = taux * base + majoration if servie else 0.0
+            autres_bases += montant
+            lignes[regime] = replace(
+                ligne(regime, base, montant, "servie" if servie else "mariage", fiche,
+                      version, taux, lendemain, fiabilite),
+                majoration=majoration)
             continue
         if fiche["id"] == "reversion_rafp":
             montant = taux * base

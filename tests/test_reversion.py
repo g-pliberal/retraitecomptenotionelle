@@ -196,6 +196,35 @@ def test_la_crpcen_reverse_la_moitie_sous_la_condition_de_mariage(
     assert ligne[2:4] == ((10000.0, "servie") if servie else (0.0, "mariage"))
 
 
+@pytest.mark.parametrize("mariage, deces, servie", [
+    # Marié avant le départ, en 2012 : aucune condition.
+    ("2009-12", "2013-02-10", True),
+    # Marié après, et mort moins de deux ans plus tard : rien.
+    ("2013-05", "2014-02-10", False),
+    # Deux ans de mariage au décès : la moitié.
+    ("2013-05", "2015-06-10", True),
+])
+def test_les_ieg_reversent_la_moitie_sous_la_condition_de_l_article_24(
+        simulateur, mariage, deces, servie):
+    """Annexe 3 au statut national des IEG, articles 22 et 24 : la moitié de
+    la pension, sans âge ni ressources ; le mariage contracté après la
+    liquidation doit avoir duré deux ans au décès, sauf enfant de l'union. Le
+    régime n'avait pas de réversion."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1960", deces, mariage=mariage)
+    ligne, = _lignes(simulateur, carriere, [("ieg", 30000.0)], int(deces[:4]))
+    assert (ligne[0], ligne[4]) == ("ieg", "conjoints_2008")
+    assert ligne[2:4] == ((15000.0, "servie") if servie else (0.0, "mariage"))
+
+
+def test_les_ieg_reversent_la_majoration_pour_enfants_a_moitie(simulateur):
+    """« la moitié, majoration pour enfant comprise » (article 22, I)."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1960", "2015-06-10", mariage="2009-12")
+    resultat = reversion(simulateur.scenario_actuel, [("ieg", 30000.0, HAUTE)], carriere,
+                         2015, majorations={"ieg": 3000.0})
+    ligne, = resultat.regimes
+    assert (ligne.montant, ligne.majoration) == (15000.0 + 1500.0, 1500.0)
+
+
 # -- l'Agirc-Arrco -------------------------------------------------------------------
 
 def test_l_agirc_attend_soixante_ans_avant_2019(simulateur):

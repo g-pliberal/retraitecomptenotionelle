@@ -1,0 +1,139 @@
+schema_version: 1
+id: reversion_ieg
+intitule: >-
+  Pension de réversion du régime spécial des industries électriques et gazières
+  (annexe 3 au statut national, article 22) : la moitié de la pension dont bénéficiait
+  ou aurait bénéficié l'agent, majoration pour enfant comprise, sans condition d'âge
+  ni de ressources ; depuis le 1er juillet 2008, au conjoint dont le mariage précède la
+  liquidation, ou a duré deux ans au décès, ou dont un enfant est né (article 24) ;
+  avant, à la veuve, sans condition de durée du mariage.
+domaine: reversion
+regimes:
+- ieg
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, et la liquidation de la pension de l'agent
+- les enfants nés de l'union
+- la pension du défunt, servie ou qu'il aurait pu obtenir au jour de son décès, et sa
+  majoration pour enfants
+ecrit:
+- la pension de réversion du survivant, aux IEG
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la réversion (§ 4.1) : la
+# rédaction de 1946, seule dans l'index jusqu'au 30 juin 2008, puis l'annexe de la
+# réforme. Le moteur les lit par sa branche propre (droit/reversion.py et son
+# jumeau) : le taux, la part de la majoration pour enfants reversée, et la condition
+# de l'article 24.
+versions:
+- id: veuves_1946
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006632496, article: "annexe 3 au statut national, article 6", en_vigueur: 1946-06-01}
+  nee_de: LEGIARTI000006632496
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    droit: >-
+      « une prestation pension dite de réversibilité égale à 50 % de la prestation
+      pension » dont aurait pu bénéficier ou dont bénéficiait l'agent
+    beneficiaire: la veuve, qui perd tout droit en cas de remariage
+    conditions: aucune durée du mariage
+    parametres:
+      taux: 0.50
+      beneficiaire: veuve
+      mariage_minimum_annees: null
+      majoration_reversible: 0.50
+      age_minimum: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: conjoints_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019226006, article: "annexe 3 au statut national, articles 22 à 25", en_vigueur: 2008-06-30}
+  - {id: LEGIARTI000052046924, article: "annexe 3 au statut national, articles 22 à 25", en_vigueur: 2025-08-06}
+  nee_de: LEGIARTI000019226006
+  bornes:
+    liquidation.date_effet: [2008-07-01, null]
+  contenu:
+    droit: >-
+      « une pension de réversion égale à la moitié, majoration pour enfant comprise,
+      de la pension dont bénéficiait ou aurait bénéficié l'agent au jour de son
+      décès », répartie entre conjoints au prorata de la durée de chaque mariage ; un
+      complément de 4 % de la pension sous condition de ressources (article 23)
+    beneficiaire: >-
+      les conjoints, conjoints séparés de corps et ex-conjoints non remariés avant le
+      décès ; à défaut, les orphelins
+    conditions: >-
+      « au jour du décès de l'agent le mariage [a] duré au moins deux ans si celui-ci
+      a été contracté postérieurement à la liquidation de la pension sauf dans les cas
+      où un enfant est né de l'union » (article 24) ; le remariage suspend le droit
+      (article 25)
+    parametres:
+      taux: 0.50
+      beneficiaire: conjoint
+      mariage_minimum_annees: 2
+      majoration_reversible: 0.50
+      age_minimum: null
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [veuves_1946]
+  ecart: >-
+    la rédaction de 1946, la seule que l'index porte jusqu'au 30 juin 2008, ne sert que
+    la veuve ; le modèle sert le veuf comme elle, et lit « 50 % de la prestation
+    pension » majoration comprise, comme la rédaction de 2008 le précise
+  effet: non mesuré
+- ecart: >-
+    ne sont pas portés : le complément de réversion de 4 %, sous condition de
+    ressources (article 23) ; le capital qui remplace la réversion quand l'agent compte
+    dix trimestres de services au plus (article 22, IV) ; le minimum de soixante
+    trimestres après un accident du travail ; le partage entre conjoints, la
+    suspension au remariage et la pension d'orphelin ; la condition d'antériorité
+    tient le départ pour la liquidation, et tout enfant déclaré pour un enfant né de
+    l'union ; les montants sont ceux de l'année du décès
+  effet: non mesuré
+presomptions:
+  mariage_des_conjoints: >-
+    la condition de l'article 24, quand la date du mariage n'est pas déclarée
+  conjoint_de_l_autre_sexe: >-
+    la veuve, seule bénéficiaire avant le 1er juillet 2008, quand le sexe du conjoint
+    n'est pas dit
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Les modifications du statut entre 1946 et 2008, que l'index ne porte pas : la
+    réversion au veuf, et la règle de l'ex-conjoint remarié que l'article 22, II, date
+    des réversions d'après le 14 juillet 1982.
+  lectures:
+  - type: legifrance
+    reference: >-
+      annexe 3 au statut national du personnel des IEG, dans l'index LEGI : l'article
+      6 de la rédaction de 1946 (LEGIARTI000006632496), et les articles 22 à 25 des
+      rédactions du 30 juin 2008 et du 6 août 2025 (LEGIARTI000052046924)
+    date: 2025-08-06
+code:
+  python: >-
+    scenarios/actuel.py : Reversions, qui lit les versions de cette fiche ;
+    droit/reversion.py : reversion, _mariage_ieg
+  javascript: >-
+    moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
+    mariageIeg
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_reversion.py]
+historique:
+- >-
+  2026-10-05 — la fiche naît (action 89) : les IEG n'avaient pas de réversion, et leur
+  ligne disait « la réversion de ce régime n'est pas encore portée ».
+effet: >-
+  Tout conjoint d'un agent des IEG : la moitié de sa pension, majoration pour enfants
+  comprise, sans âge ni ressources.

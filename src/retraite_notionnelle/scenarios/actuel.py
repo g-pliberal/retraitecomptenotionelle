@@ -1260,7 +1260,7 @@ class Reversions:
     #: Les fiches de la réversion que le moteur lit, dans cet ordre.
     FICHES = ("reversion", "reversion_fonction_publique", "reversion_agirc_arrco",
               "reversion_rafp", "reversion_ircantec", "reversion_rci",
-              "reversion_crpcen")
+              "reversion_crpcen", "reversion_ieg")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

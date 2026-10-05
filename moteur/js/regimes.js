@@ -1172,6 +1172,7 @@ export class Reversions {
 Reversions.FICHES = Object.freeze([
   "reversion", "reversion_fonction_publique", "reversion_agirc_arrco",
   "reversion_rafp", "reversion_ircantec", "reversion_rci", "reversion_crpcen",
+  "reversion_ieg",
 ]);
 
 /**

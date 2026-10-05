@@ -9,8 +9,8 @@
  * vivre » — et applique à chaque régime la version de sa fiche que les dates
  * choisissent : le régime général et les régimes alignés (`reversion`), la
  * fonction publique et la CNRACL (`reversion_fonction_publique`), la CRPCEN
- * (`reversion_crpcen`), l'Agirc-Arrco (`reversion_agirc_arrco`), le RAFP
- * (`reversion_rafp`),
+ * (`reversion_crpcen`), les IEG (`reversion_ieg`), l'Agirc-Arrco
+ * (`reversion_agirc_arrco`), le RAFP (`reversion_rafp`),
  * l'Ircantec (`reversion_ircantec`), la complémentaire des indépendants
  * (`reversion_rci`). Les autres régimes n'ont pas encore de fiche : leur ligne
  * le dit, sans montant. Ce qui n'est pas encore porté, et les montants — ceux
@@ -190,6 +190,18 @@ function mariageSuffit(parametres, conjoint, deces, depart, enfants) {
 }
 
 /**
+ * La condition de l'article 24 de l'annexe 3 au statut national des IEG : voir
+ * `_mariage_ieg` du Python.
+ */
+function mariageIeg(parametres, conjoint, deces, depart, enfants) {
+  const minimum = parametres.mariage_minimum_annees ?? null;
+  if (minimum === null || enfants > 0 || conjoint.mariage <= depart) {
+    return true;
+  }
+  return chrono.anneesRevolues(conjoint.mariage, deces) >= minimum;
+}
+
+/**
  * L'âge requis à l'Ircantec : celui du conjoint depuis 2004 ; avant, celui de
  * la veuve ou du veuf. Le veuf d'avant 1976, que l'arrêté ne servait pas,
  * attend l'âge de la veuve : une approximation que la fiche déclare.
@@ -301,6 +313,19 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       autresBases += montant;
       lignes.set(regime, ligne(regime, base, montant, servie ? "servie" : "mariage",
         fiche, version, taux, lendemain, fiabilite));
+      continue;
+    }
+    if (fiche.id === "reversion_ieg") {
+      // La moitié de la pension, majoration pour enfant comprise : voir le
+      // Python.
+      const servie = mariageIeg(parametres, conjoint, deces, depart, enfants);
+      const majoration = servie
+        ? Number(parametres.majoration_reversible ?? 0.0) * ((majorations ?? {})[regime] ?? 0.0)
+        : 0.0;
+      const montant = servie ? taux * base + majoration : 0.0;
+      autresBases += montant;
+      lignes.set(regime, ligne(regime, base, montant, servie ? "servie" : "mariage",
+        fiche, version, taux, lendemain, fiabilite, majoration));
       continue;
     }
     if (fiche.id === "reversion_rafp") {

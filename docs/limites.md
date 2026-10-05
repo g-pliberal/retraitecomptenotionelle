@@ -75,8 +75,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
 - **La pension de réversion, en partie.** Elle ne concerne pas l'assuré mais
   son conjoint survivant. Le scénario 1 la liquide pour le conjoint que la
   saisie déclare, au décès de l'assuré après son départ : au régime général et
-  dans les régimes alignés, dans la fonction publique et au RAFP, à la CRPCEN,
-  à l'Agirc-Arrco, à l'Ircantec et à la complémentaire des indépendants
+  dans les régimes alignés, dans la fonction publique et au RAFP, à la CRPCEN
+  et aux IEG, à l'Agirc-Arrco, à l'Ircantec et à la complémentaire des
+  indépendants
   (`droit/reversion.py`, le domaine de la réversion), où l'invalidité du
   conjoint, qu'il déclare, lève l'âge requis de l'Agirc-Arrco (le domaine de
   l'invalidité et de l'inaptitude), comme deux enfants de moins de dix-huit ans
