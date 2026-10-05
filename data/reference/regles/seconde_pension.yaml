@@ -68,7 +68,11 @@ versions:
       sans limite « à compter du 1er janvier 2023 », qui ouvrent « une seconde retraite
       complémentaire », sans minoration ni majoration, servie à la cessation de
       l'activité salariée ; aucun point en cumul plafonné (page de l'Agirc-Arrco, lue le
-      30 septembre 2026)
+      30 septembre 2026) ; l'accord du 17 novembre 2017, article 91, dans la rédaction
+      de l'avenant n° 16 (circulaire 2024-04-DRJ, lue le 5 octobre 2026) : « Une deuxième
+      pension issue des activités cotisées en cumul emploi retraite […] prend effet, au
+      plus tôt, le 1er janvier 2024 », et « Les articles 93, 94, 95 et 99 ne sont pas
+      applicables » ; ses points au taux de calcul de 6,20 %
     salaire_de_base: >-
       « le salaire mensuel moyen correspondant aux cotisations versées au cours de
       chaque année civile ayant donné lieu, au titre de la nouvelle pension, à la
@@ -100,8 +104,8 @@ versions:
 approximations:
 - ecart: >-
     le modèle calcule la nouvelle pension du régime général et des salariés agricoles,
-    et la seconde retraite de l'Agirc-Arrco, au mois qui suit la fin de l'activité, au
-    1er septembre 2023 au plus tôt ; celle des libéraux, des avocats, des exploitants
+    au mois qui suit la fin de l'activité, au 1er septembre 2023 au plus tôt, et la
+    seconde retraite de l'Agirc-Arrco au 1er janvier 2024 au plus tôt ; celle des libéraux, des avocats, des exploitants
     agricoles, des fonctionnaires et des régimes spéciaux n'est pas calculée, et le
     résultat nomme leur régime
   effet: non mesuré
@@ -179,6 +183,10 @@ historique:
   2026-09-30 — calculée au régime général, aux salariés agricoles et à
   l'Agirc-Arrco, sur les mois de cumul intégral que le cumul emploi-retraite dit ;
   R. 351-29 (III) lu, et le plafond des premières pensions de 2027 vérifié absent.
+- >-
+  2026-10-05 — la seconde retraite de l'Agirc-Arrco part au 1er janvier 2024 au plus
+  tôt, non au 1er septembre 2023 (avenant n° 16, action 89), et ses points se comptent
+  au taux de calcul.
 effet: >-
   Les retraités en cumul intégral depuis 2023 : leurs cotisations, jusque-là à fonds
   perdus, leur ouvrent une seconde pension, au plus 5 % du plafond de la sécurité

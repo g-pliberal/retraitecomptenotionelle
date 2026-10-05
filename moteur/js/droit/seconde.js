@@ -37,6 +37,9 @@ const rang = (annee, mois) => new DateMois(annee, mois).rang;
 export const PREMIERE_2015 = rang(2015, 1);
 export const DROITS_2023 = rang(2023, 1);
 export const LIQUIDATION_2023 = rang(2023, 9);
+// La seconde retraite de l'Agirc-Arrco « prend effet, au plus tôt, le 1er
+// janvier 2024 » (avenant n° 16 ; voir seconde.py).
+export const LIQUIDATION_AGIRC_ARRCO = rang(2024, 1);
 export const PREMIERE_2027 = rang(2027, 1);
 
 export const TAUX_PLEIN = 0.5;
@@ -206,7 +209,9 @@ export function droits(moteur, carriere, resultat, cumul) {
       if (pension !== null) pensions.push(pension);
     }
     if (regimes.has(AGIRC_ARRCO)) {
-      const pension = secondeRetraiteComplementaire(moteur, salaires, periode, dateEffet);
+      const pension = secondeRetraiteComplementaire(moteur, salaires, periode,
+        dateEffet.rang >= LIQUIDATION_AGIRC_ARRCO ? dateEffet
+          : DateMois.depuisRang(LIQUIDATION_AGIRC_ARRCO));
       if (pension !== null) pensions.push(pension);
     }
   }
@@ -274,7 +279,10 @@ function secondeRetraiteComplementaire(moteur, salaires, periode, dateEffet) {
     if (tranche1 === undefined || prix === null) continue;
     const [reference, tauxAppel] = prix;
     const assiette = Math.min(salaire, plafond * periode.get(annee) / 12.0);
-    points += assiette * tranche1.taux_cotisation_retraite / (tauxAppel * reference);
+    // Au taux de calcul des points, comme la première pension : voir seconde.py.
+    const tauxCalcul = tranche1.taux_calcul_points ?? null;
+    points += tauxCalcul !== null ? assiette * tauxCalcul / reference
+      : assiette * tranche1.taux_cotisation_retraite / (tauxAppel * reference);
   }
   const valeur = valeurDuPoint(moteur, AGIRC_ARRCO, dateEffet.annee);
   if (points <= 0 || valeur === null) return null;

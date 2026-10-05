@@ -15196,7 +15196,7 @@
       ]
      },
      "droits_apres_depart": {
-      "montant": 1480.6889982249718,
+      "montant": 1480.8751815491025,
       "non_calcules": [],
       "pensions": [
        {
@@ -15210,11 +15210,11 @@
         "trimestres": 9
        },
        {
-        "brute": 366.31569022722397,
+        "brute": 366.5018735513547,
         "date_effet": "2025-02-01",
-        "montant": 366.31569022722397,
+        "montant": 366.5018735513547,
         "plafond": null,
-        "points": 254.63345629585982,
+        "points": 254.76287609575607,
         "regime": "agirc_arrco",
         "salaire_mensuel": 0.0,
         "trimestres": 0
@@ -109374,7 +109374,7 @@
       ]
      },
      "droits_apres_depart": {
-      "montant": 678.7720912248647,
+      "montant": 678.8651828869301,
       "non_calcules": [],
       "pensions": [
        {
@@ -109388,11 +109388,11 @@
         "trimestres": 8
        },
        {
-        "brute": 183.15784511361198,
+        "brute": 183.25093677567736,
         "date_effet": "2025-02-01",
-        "montant": 183.15784511361198,
+        "montant": 183.25093677567736,
         "plafond": null,
-        "points": 127.31672814792991,
+        "points": 127.38143804787804,
         "regime": "agirc_arrco",
         "salaire_mensuel": 0.0,
         "trimestres": 0
@@ -110187,7 +110187,7 @@
       ]
      },
      "droits_apres_depart": {
-      "montant": 986.4098993147272,
+      "montant": 986.5212378212956,
       "non_calcules": [],
       "pensions": [
        {
@@ -110201,11 +110201,11 @@
         "trimestres": 5
        },
        {
-        "brute": 219.0585116734016,
+        "brute": 219.16985017997004,
         "date_effet": "2036-02-01",
-        "montant": 219.0585116734016,
+        "montant": 219.16985017997004,
         "plafond": null,
-        "points": 128.01943251560482,
+        "points": 128.08449957152126,
         "regime": "agirc_arrco",
         "salaire_mensuel": 0.0,
         "trimestres": 0
@@ -110883,7 +110883,7 @@
       ]
      },
      "droits_apres_depart": {
-      "montant": 3316.594716637708,
+      "montant": 3317.0291365699254,
       "non_calcules": [],
       "pensions": [
        {
@@ -110897,11 +110897,11 @@
         "trimestres": 20
        },
        {
-        "brute": 854.7212166377078,
+        "brute": 855.1556365699252,
         "date_effet": "2027-02-01",
-        "montant": 854.7212166377078,
+        "montant": 855.1556365699252,
         "plafond": null,
-        "points": 583.915509337127,
+        "points": 584.212289773893,
         "regime": "agirc_arrco",
         "salaire_mensuel": 0.0,
         "trimestres": 0

@@ -346,6 +346,17 @@ def test_le_cumul_integral_ouvre_une_nouvelle_pension(simulateur):
     assert complementaire.montant == pytest.approx(complementaire.points * valeur)
 
 
+def test_la_seconde_retraite_agirc_arrco_attend_le_1er_janvier_2024(simulateur):
+    """Un cumul achevé en 2023 : la nouvelle pension du régime général part au
+    1er septembre 2023 au plus tôt, la seconde retraite de l'Agirc-Arrco au
+    1er janvier 2024 (accord du 17 novembre 2017, article 91, rédaction de
+    l'avenant n° 16), et ses points se comptent au taux de calcul, 6,20 %."""
+    droits, _ = _droits(simulateur, 1960, 62.25, _emploi(63, 63.5, niveau=0.5),
+                        [Metier("salarie_prive_non_cadre", 20.0)])
+    dates = {p.regime: p.date_effet for p in droits.pensions}
+    assert dates == {"regime_general": DateMois(2023, 9), "agirc_arrco": DateMois(2024, 1)}
+
+
 def test_la_nouvelle_pension_ne_depasse_pas_cinq_pour_cent_du_plafond(simulateur):
     """Trois fois le salaire moyen quatre ans durant : la nouvelle pension est
     écrêtée à 5 % du plafond de la sécurité sociale (D. 161-2-22-1)."""

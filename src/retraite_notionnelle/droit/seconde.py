@@ -81,6 +81,10 @@ LFSS_2026 = "lfss_2026"
 PREMIERE_2015 = DateMois(2015, 1)
 DROITS_2023 = DateMois(2023, 1)
 LIQUIDATION_2023 = DateMois(2023, 9)
+#: La seconde retraite de l'Agirc-Arrco « prend effet, au plus tôt, le 1er
+#: janvier 2024 » (accord du 17 novembre 2017, article 91, rédaction de
+#: l'avenant n° 16 ; circulaire 2024-04-DRJ).
+LIQUIDATION_AGIRC_ARRCO = DateMois(2024, 1)
 PREMIERE_2027 = DateMois(2027, 1)
 
 #: La nouvelle pension : le taux plein du régime général, le plafond en part du
@@ -264,8 +268,8 @@ def droits(moteur: ScenarioActuel, carriere: Carriere, resultat: ResultatActuel,
             if pension is not None:
                 pensions.append(pension)
         if AGIRC_ARRCO in regimes:
-            pension = _seconde_retraite_complementaire(moteur, salaires, periode,
-                                                       date_effet)
+            pension = _seconde_retraite_complementaire(
+                moteur, salaires, periode, max(date_effet, LIQUIDATION_AGIRC_ARRCO))
             if pension is not None:
                 pensions.append(pension)
     return DroitsApresDepart(periodes=tuple(periodes), pensions=tuple(pensions),
@@ -336,7 +340,12 @@ def _seconde_retraite_complementaire(moteur: ScenarioActuel, salaires: dict[int,
             continue
         reference, taux_appel = prix
         assiette = min(salaire, plafond * periode[annee] / 12.0)
-        points += assiette * tranche_1.taux_cotisation_retraite / (taux_appel * reference)
+        # Au taux de calcul des points, 6,20 %, comme la première pension
+        # (`PeriodeRegime.taux_calcul_points`), et non à la cotisation appelée
+        # divisée par le taux d'appel.
+        points += (assiette * tranche_1.taux_calcul_points / reference
+                   if tranche_1.taux_calcul_points is not None
+                   else assiette * tranche_1.taux_cotisation_retraite / (taux_appel * reference))
     valeur = _liquider.valeur_du_point(moteur, AGIRC_ARRCO, date_effet.annee)
     if points <= 0 or valeur is None:
         return None
