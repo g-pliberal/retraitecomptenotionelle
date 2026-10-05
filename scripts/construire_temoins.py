@@ -1329,6 +1329,15 @@ def _cas() -> list[dict]:
         **enfants, "statut": "agent_ratp", "naissance": "1975",
         "naissances": "2006,2009,2012",
     }))
+    # Les IEG doublent la bonification du second d'une fratrie de deux.
+    cas.append(("enfants_ieg_trois_enfants", {
+        **enfants, "statut": "agent_ieg", "naissance": "1975",
+        "naissances": "2006,2009,2012",
+    }))
+    cas.append(("enfants_ieg_deux_enfants", {
+        **enfants, "enfants": "2", "statut": "agent_ieg", "naissance": "1975",
+        "naissances": "2006,2007",
+    }))
     # LES BASCULES DES VERSIONS, là où le modèle datait à l'année ce que le
     # droit date au jour : la veille et le lendemain de trois bornes que les
     # fiches du domaine déclarent approchées. Chaque témoin fige ce que le

@@ -186,23 +186,25 @@ avantages:
         dispositif. Les séparer suppose de ventiler la masse par régime, ce que
         la pondération par effectifs de caisse permet déjà.
 
-  - code: trimestres_enfants_sncf_ratp
-    libelle: Trimestres pour enfants de la SNCF et de la RATP
+  - code: trimestres_enfants_regimes_speciaux
+    libelle: Trimestres pour enfants de la SNCF, de la RATP et des IEG
     famille: droits_familiaux
-    alias: [enfants_sncf, enfants_ratp]
+    alias: [enfants_sncf, enfants_ratp, enfants_ieg]
     quoi: >-
       À la SNCF, deux trimestres de durée d'assurance par enfant à la mère qui
-      a accouché après son recrutement, pour la décote seulement. À la RATP,
-      une année de services par enfant né avant le 1er juillet 2008, puis deux
+      a accouché après son recrutement, pour la décote seulement. À la RATP et
+      aux IEG, une année de services par enfant né avant le 1er juillet 2008 —
+      deux pour le second d'une fratrie de deux aux IEG —, puis deux
       trimestres de durée pour le premier enfant de la fratrie et quatre pour
       les suivants. Les congés pris pour élever un enfant comptent en outre
-      comme services, dans les deux régimes.
+      comme services, dans les trois régimes.
     base_legale: [Décret n° 2008-639 du 30 juin 2008 art. 7 V et 13 III (SNCF),
-      Décret n° 2008-637 du 30 juin 2008 art. 20 et 24 III (RATP)]
-    fiches: [enfants_sncf, enfants_ratp]
+      Décret n° 2008-637 du 30 juin 2008 art. 20 et 24 III (RATP),
+      Statut national du personnel des IEG annexe 3 art. 12 à 14]
+    fiches: [enfants_sncf, enfants_ratp, enfants_ieg]
     creation: 2008
     fin: null
-    regimes: SNCF, RATP
+    regimes: SNCF, RATP, IEG
     etat_modele: chiffre
     ligne_cascade: majoration_duree_assurance
     cout:
@@ -210,7 +212,9 @@ avantages:
       note: >-
         Même ligne de cascade que la MDA et la bonification de la fonction
         publique, sous le libellé du dispositif. Les congés pour enfant ne sont
-        pas chiffrés : la carrière ne les dit pas.
+        pas chiffrés : la carrière ne les dit pas. Avant le 1er juillet 2008,
+        la SNCF n'accordait rien, et la RATP et les IEG sont supposées accorder
+        déjà la bonification d'un an.
 
   - code: majoration_enfants
     libelle: Majoration de pension pour trois enfants et plus

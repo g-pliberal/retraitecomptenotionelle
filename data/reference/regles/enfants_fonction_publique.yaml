@@ -17,7 +17,6 @@ regimes:
 - banque_de_france
 - chemins_fer_secondaires
 - comedie_francaise
-- ieg
 - marins
 - mines
 - opera_de_paris
@@ -209,11 +208,9 @@ approximations:
   effet: non mesuré
 - ecart: >-
     les régimes spéciaux sans fiche propre reçoivent les conditions de la fonction
-    publique ; la SNCF et la RATP ont la leur depuis le 5 octobre 2026 (enfants_sncf,
-    enfants_ratp). Le COR (séance du 19 octobre 2023, document n° 2) en prête d'autres
-    aux IEG — un an par enfant né avant le 1er juillet 2008, deux ans pour le deuxième
-    d'une fratrie de deux, puis deux ou quatre trimestres de durée — et n'en connaît
-    aucune aux mines ni aux marins
+    publique ; la SNCF, la RATP et les IEG ont la leur depuis le 5 octobre 2026
+    (enfants_sncf, enfants_ratp, enfants_ieg). Le COR (séance du 19 octobre 2023,
+    document n° 2) n'en connaît aucune aux mines ni aux marins
   effet: non mesuré
 presomptions:
   naissance_des_enfants: >-

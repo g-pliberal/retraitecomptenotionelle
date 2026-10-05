@@ -1070,6 +1070,14 @@ export class MajorationsPourEnfants {
       trimestres = Number(parametres.trimestres_premier_enfant);
       services = Math.min(services, trimestres);
     }
+    if ((parametres.trimestres_second_de_deux ?? null) !== null
+        && naissances.length === 2
+        && naissances.every((jour) => naissance >= jour)
+        && naissances.some((jour) => jour < naissance)) {
+      // Le second d'une fratrie de deux : voir `par_enfant` du Python.
+      trimestres = Number(parametres.trimestres_second_de_deux);
+      services = Number(parametres.services_second_de_deux);
+    }
     if (parametres.par_annee_d_education) {
       // D. 351-1-7 : un trimestre à la naissance, puis un au terme de chaque
       // année d'éducation, dans la limite de la version.
@@ -1107,6 +1115,7 @@ MajorationsPourEnfants.FICHES = Object.freeze({
   bonifications: "enfants_fonction_publique",
   enfants_sncf: "enfants_sncf",
   enfants_ratp: "enfants_ratp",
+  enfants_ieg: "enfants_ieg",
 });
 /** Les bénéficiaires qu'une version peut désigner. */
 MajorationsPourEnfants.BENEFICIAIRES = Object.freeze(["mere"]);

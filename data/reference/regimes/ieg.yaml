@@ -48,7 +48,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
     notes: >-
       Statut national du personnel des IEG (décret du 22 juin 1946).
       Ouverture à 55 ans, 50 ans pour les services actifs et insalubres.
@@ -71,7 +71,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
     notes: >-
       SEPT POUR CENT AU 1ER JANVIER 1984 : le décret n° 84-63 du 27
       janvier 1984 modifie le paragraphe 2 de l'article 24 du statut, et
@@ -100,7 +100,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
     notes: >-
       Décret n° 86-874 du 29 juillet 1986 (LEGIARTI000006769455) : « le taux défini au paragraphe 2 de l'article 24 du décret du 22 juin 1946 est porté à 7,7 p. 100 » pour les rémunérations versées à compter du 1er août 1986.
       Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
@@ -118,7 +118,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
     notes: >-
       Décret n° 87-468 du 30 juin 1987 (LEGIARTI000006770396), relèvement temporaire à 7,9 % du 1er juillet 1987 au 30 juin 1988, puis décret n° 88-792 du 22 juin 1988 (LEGIARTI000006773015) : 7,9 % à compter du 1er juillet 1988.
       Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
@@ -136,7 +136,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
     notes: >-
       Décret n° 88-1221 du 30 décembre 1988 (LEGIARTI000006773684) : 8,9 % pour les rémunérations versées à compter du 1er janvier 1989.
       Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
@@ -154,7 +154,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
     notes: >-
       Décret n° 91-159 du 12 février 1991, article 6 (LEGIARTI000006775720) : « le taux de la participation du personnel prévue au paragraphe 2 de l'article 24 du statut national […] est fixé à 7,85 p. 100 ». C'est le taux que la fiche portait sur toute la période 1946-2008.
       Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
@@ -178,7 +178,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: age_ouverture_ieg_actifs
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
     notes: >-
       RÉFORME DES RÉGIMES SPÉCIAUX DE 2008 : décote, durée alignée. Les
       bornes d'âge, elles, ne bougent qu'à partir de 2017 et par
@@ -229,7 +229,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: age_ouverture_ieg_actifs
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
     notes: >-
       LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par
       année de naissance : l'annexe 3 du statut national, dans sa version
@@ -286,7 +286,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: age_ouverture_ieg_actifs
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
     notes: >-
       L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
       LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023 réécrit

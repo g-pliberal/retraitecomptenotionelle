@@ -1156,6 +1156,7 @@ class MajorationsPourEnfants:
         "bonifications": "enfants_fonction_publique",
         "enfants_sncf": "enfants_sncf",
         "enfants_ratp": "enfants_ratp",
+        "enfants_ieg": "enfants_ieg",
     }
     #: Les bénéficiaires qu'une version peut désigner.
     BENEFICIAIRES = ("mere",)
@@ -1215,6 +1216,15 @@ class MajorationsPourEnfants:
             # note 15).
             trimestres = int(parametres["trimestres_premier_enfant"])
             services = min(services, trimestres)
+        if (parametres.get("trimestres_second_de_deux") is not None
+                and len(naissances) == 2
+                and all(naissance >= jour for jour in naissances)
+                and any(jour < naissance for jour in naissances)):
+            # LE SECOND D'UNE FRATRIE DE DEUX a sa bonification doublée aux
+            # IEG (annexe 3 au statut national, article 12) : la fratrie
+            # compte tous les enfants, quelle que soit leur naissance.
+            trimestres = int(parametres["trimestres_second_de_deux"])
+            services = int(parametres["services_second_de_deux"])
         if parametres.get("par_annee_d_education"):
             # D. 351-1-7 : un trimestre à la naissance, puis un au terme de
             # chaque année d'éducation, dans la limite de la version.

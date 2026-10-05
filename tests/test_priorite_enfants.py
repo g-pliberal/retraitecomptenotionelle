@@ -230,6 +230,28 @@ def test_la_ratp_coupe_au_1er_juillet_2008_et_compte_le_rang(simulateur):
     assert (deux.trimestres, deux.services) == (2 + 4, 0)
 
 
+def test_les_ieg_doublent_le_second_de_deux(simulateur):
+    """Annexe 3 au statut national des IEG : un an de services par enfant né
+    avant le 1er juillet 2008, doublé pour le second d'une fratrie de deux
+    (article 12) ; pour les enfants nés depuis, deux trimestres de durée pour
+    le premier de la fratrie et quatre pour les autres (article 14), la
+    fratrie comptant tous les enfants. Le modèle leur prêtait la coupure de
+    2004 de la fonction publique."""
+    metiers = [("salarie_prive_non_cadre", 22), ("agent_ieg", 25)]
+    deux = _majoration(simulateur, 1975, metiers, 64,
+                       naissances=("2002-03-01", "2005-06-01"))
+    assert (_seul(deux.regimes), _seul(deux.dispositifs)) == ("ieg", "enfants_ieg")
+    assert (deux.trimestres, deux.services) == (4 + 8, 4 + 8)
+    # Trois enfants : plus de doublement ; le troisième, né après juillet
+    # 2008, n'est pas le premier de la fratrie.
+    trois = _majoration(simulateur, 1975, metiers, 64, enfants=3,
+                        naissances=("2002-03-01", "2005-06-01", "2010-01-01"))
+    assert (trois.trimestres, trois.services) == (4 + 4 + 4, 4 + 4)
+    seul = _majoration(simulateur, 1975, metiers, 64, enfants=1,
+                       naissances=("2010-01-01",))
+    assert (seul.trimestres, seul.services) == (2, 0)
+
+
 @pytest.mark.parametrize("fin_seita, regime", [(60, "seita"), (58, "regime_general")])
 def test_la_seita_ne_demande_rien_a_qui_part_en_fonctions(simulateur, fin_seita, regime):
     """Douze ans à la SEITA jusqu'à soixante ans : l'article 110 ouvre la

@@ -1,0 +1,246 @@
+schema_version: 1
+id: enfants_ieg
+intitule: >-
+  Trimestres des enfants au régime spécial des industries électriques et gazières :
+  une bonification de services d'un an par enfant né avant le 1er juillet 2008 — et,
+  depuis le 21 mars 2011, avant la cessation d'activité dans les IEG —, doublée pour
+  le second d'une fratrie de deux, à l'agent qui a interrompu son activité deux mois ;
+  pour les enfants nés depuis, aux agents féminins, une majoration de durée
+  d'assurance de deux trimestres pour le premier enfant de la fratrie et de quatre
+  pour les autres, comptée pour la décote et la surcote seulement.
+domaine: enfants
+regimes:
+- ieg
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- enfant.naissance
+- le rang de l'enfant dans la fratrie, et le nombre d'enfants
+- le sexe de l'assurée, qui accouche
+- radiation
+- liquidation.date_effet
+ecrit:
+- les trimestres de chaque enfant, en durée d'assurance et en services, dans le régime
+  que la priorité entre régimes désigne (priorite_majorations_enfants)
+dates_qui_decident:
+- enfant.naissance
+- liquidation.date_effet
+# Les versions forment un partage de ces deux dates (§ 4.1) : la date d'effet de la
+# pension sépare l'annexe de 1946 de celle de 2008, puis la rédaction du 21 mars 2011,
+# qui borne la bonification à l'enfant né avant la cessation d'activité ; la naissance
+# de l'enfant sépare la bonification (article 12) de la majoration (article 14).
+# `contenu.parametres` est ce que le moteur lit (MajorationsPourEnfants, dans les
+# deux moteurs) : `trimestres_premier_enfant` vaut pour l'enfant né le premier,
+# `trimestres_second_de_deux` pour le second d'une fratrie de deux.
+versions:
+- id: avant_juillet_2008
+  statut: supposee
+  hypothese: >-
+    l'annexe 3 de 1946, seule rédaction de l'index jusqu'au 30 juin 2008, réserve la
+    « bonification d'âge et de service d'une année par enfant » aux « agents mères de
+    famille ayant eu trois enfants » ; la CNIEG décrit au COR (25 mai 2016) les
+    bonifications que la réforme a supprimées pour les enfants nés depuis le 1er
+    juillet 2008 — « 1 an par enfant et 2 ans pour le second enfant de la fratrie de
+    2 enfants » — : on prête aux pensions d'avant juillet 2008 la règle de l'article 12
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    droit: 4 trimestres par enfant, 8 pour le second d'une fratrie de deux, en services et en durée
+    beneficiaire: la mère
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      trimestres_second_de_deux: 8
+      services_second_de_deux: 8
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: faible
+  exemples: aucun trouvé
+- id: bonification_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019226006, article: "annexe 3 au statut national, articles 12 à 14", en_vigueur: 2008-06-30}
+  - {id: LEGIARTI000020085612, article: "annexe 3 au statut national, article 12", en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000019226006
+  bornes:
+    enfant.naissance: [null, 2008-07-01]
+    liquidation.date_effet: [2008-07-01, 2011-03-21]
+  contenu:
+    droit: >-
+      4 trimestres de services par enfant ; 8 pour le second d'une fratrie de deux
+      enfants nés avant la cessation d'activité et avant le 1er juillet 2008
+    beneficiaire: >-
+      l'agent qui a « interrompu totalement » son activité deux mois de suite, de la
+      quatrième semaine avant la naissance au trente-sixième mois après, dans un congé
+      de maternité, de paternité, d'adoption, parental, de présence parentale ou sans
+      solde pour élever un enfant
+    conditions: >-
+      tout enfant né ou adopté avant le 1er juillet 2008 ; la fratrie compte tous les
+      enfants de l'agent, « quelle que soit leur date de naissance »
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      trimestres_second_de_deux: 8
+      services_second_de_deux: 8
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: bonification_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023733902, article: "annexe 3 au statut national, article 12", en_vigueur: 2011-03-21}
+  - {id: LEGIARTI000052046924, article: "annexe 3 au statut national, articles 12 à 14", en_vigueur: 2025-08-06}
+  nee_de: LEGIARTI000023733902
+  bornes:
+    enfant.naissance: [null, 2008-07-01]
+    liquidation.date_effet: [2011-03-21, null]
+  contenu:
+    droit: >-
+      4 trimestres de services par enfant ; 8 pour le second d'une fratrie de deux
+    beneficiaire: >-
+      l'agent qui a « interrompu totalement ou réduit » son activité l'équivalent de deux
+      mois, dans les mêmes congés ou un temps partiel de droit
+    conditions: >-
+      l'enfant naît « avant la cessation d'activité dans les industries électriques et
+      gazières et antérieurement au 1er juillet 2008 »
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      trimestres_second_de_deux: 8
+      services_second_de_deux: 8
+      beneficiaire: mere
+      condition: ne_avant_radiation
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: majoration_article_14
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019226006, article: "annexe 3 au statut national, article 14", en_vigueur: 2008-06-30}
+  - {id: LEGIARTI000052046924, article: "annexe 3 au statut national, article 14", en_vigueur: 2025-08-06}
+  nee_de: LEGIARTI000019226006
+  bornes:
+    enfant.naissance: [2008-07-01, null]
+    liquidation.date_effet: [2008-07-01, null]
+  contenu:
+    droit: >-
+      2 trimestres de durée d'assurance pour le premier enfant de la fratrie, 4 pour
+      chacun des autres, aucun en services
+    beneficiaire: les agents féminins, « au titre de l'accouchement »
+    conditions: >-
+      l'enfant naît à compter du 1er juillet 2008 ; la majoration ne se cumule ni avec
+      la durée validée pour l'élever quand elle l'atteint, ni avec une majoration d'un
+      autre régime pour le même enfant
+    parametres:
+      trimestres_premier_enfant: 2
+      trimestres_par_enfant: 4
+      services_par_enfant: 0
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [avant_juillet_2008, bonification_2008, bonification_2011]
+  ecart: >-
+    la bonification va à la mère, dont l'interruption d'activité est présumée par son
+    congé de maternité ; le père qui a pris deux mois de congé n'en reçoit pas. La
+    bonification avance aussi l'âge d'ouverture des parents d'un ou deux enfants (la
+    « bonification d'âge » : cinquante-sept ans au lieu de soixante pour deux enfants,
+    génération 1956, CNIEG au COR, 25 mai 2016), que le modèle ne porte pas
+  effet: non mesuré
+- version: [bonification_2008, bonification_2011, majoration_article_14, avant_juillet_2008]
+  ecart: >-
+    la fratrie est faite des enfants nés avant la date d'effet de la pension, et le rang
+    se lit à la date de naissance : des jumeaux premiers-nés comptent chacun pour le
+    premier, et deux jumeaux seuls ne font pas de second ; en 2008, le second d'une
+    fratrie de deux né après la cessation d'activité garde son doublement
+  effet: non mesuré
+- version: [majoration_article_14]
+  ecart: >-
+    les périodes d'interruption ou de réduction d'activité pour élever un enfant né
+    depuis le 1er juillet 2008, que l'annexe valide gratuitement, ne sont pas portées :
+    la carrière ne dit pas ces congés ; l'adoption et la majoration pour enfant
+    handicapé non plus
+  effet: non mesuré
+presomptions:
+  naissance_des_enfants: >-
+    la naissance de chaque enfant dont la date n'est pas déclarée, qui choisit entre la
+    bonification et la majoration, se compare à la cessation d'activité et fait le rang
+  interruption_d_activite_par_la_mere: >-
+    la condition d'interruption d'activité de la bonification, remplie par le congé de
+    maternité
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    L'annexe 3 telle que l'appliquait la caisse avant le 1er juillet 2008 : l'index ne
+    porte que la rédaction de 1946, qui réserve la bonification aux mères de trois
+    enfants ; la version avant_juillet_2008 suit la CNIEG, qui la décrit pour tout
+    enfant.
+  lectures:
+  - type: legifrance
+    reference: >-
+      annexe 3 au statut national du personnel des industries électriques et gazières,
+      dans l'index LEGI : rédaction de 1946 (LEGIARTI000006632496), puis les articles
+      12 à 14 de celles du 30 juin 2008, du 1er janvier 2009, du 21 mars 2011 — qui
+      ajoute « avant la cessation d'activité » et la réduction d'activité — et du 6
+      août 2025 (LEGIARTI000052046924)
+    date: 2025-08-06
+  - type: autre
+    reference: >-
+      CNIEG, page « Bonifications au titre des enfants », lue le 5 octobre 2026 (sans
+      date) : « Une bonification d'un an par enfant » né avant le 1er juillet 2008 et
+      avant la cessation d'activité, « doublée pour le deuxième enfant, uniquement s'il
+      s'agit d'une fratrie de deux enfants » ; ses deux exemples, dont la priorité du
+      régime de la mère (R. 173-15)
+    date: 2026-10-05
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/bonifications/enfants.html
+  - type: autre
+    reference: >-
+      CNIEG, page « Durée d'assurance », lue le 5 octobre 2026 : « pour les femmes ayant
+      accouché à compter du 1er juillet 2008, à raison d'une majoration de deux
+      trimestres pour le premier enfant et de quatre trimestres pour le second enfant
+      et au-delà »
+    date: 2026-10-05
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance.html
+  - type: autre
+    reference: >-
+      COR, séance plénière du 25 mai 2016, contribution de la CNIEG : les bonifications
+      pour enfants « (1 an par enfant et 2 ans pour le second enfant de la fratrie de 2
+      enfants) sont supprimées et remplacées par des majorations de durées d'assurance
+      pour les enfants nés à compter du 1er juillet 2008 » ; l'anticipation d'âge des
+      parents d'un ou deux enfants
+    date: 2016-05-25
+    url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-3393.pdf
+  - type: autre
+    reference: >-
+      COR, séance plénière du 19 octobre 2023, document n° 2 « Droits familiaux » : aux
+      IEG, « 4 / 8 trimestres maximum » pour les enfants nés avant le 1er juillet 2008,
+      « 2 / 4 trimestres » ensuite
+    date: 2023-10-19
+    url: https://www.cor-retraites.fr/sites/default/files/2023-10/Doc_02_Droits_familiaux_0.pdf
+code:
+  python: >-
+    scenarios/actuel.py : MajorationsPourEnfants, qui lit les versions de cette fiche,
+    le rang de l'enfant et la taille de la fratrie ; droit/compter.py :
+    majoration_pour_enfants, bonification_ouverte
+  javascript: >-
+    moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants,
+    bonificationOuverte
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_priorite_enfants.py]
+historique:
+- >-
+  2026-10-05 — la fiche naît (action 89) : les IEG recevaient les conditions de la
+  fonction publique, coupées au 1er janvier 2004 et non au 1er juillet 2008, sans le
+  doublement du second de deux, deux trimestres par enfant né depuis et non deux puis
+  quatre, et, depuis le 1er septembre 2026, un trimestre de services que seuls le code
+  des pensions, la CNRACL et le FSPOEIE accordent (décret n° 2026-699).
+effet: >-
+  Toute mère agente des IEG : quatre trimestres de services par enfant né avant le 1er
+  juillet 2008, et non avant 2004, huit pour le second de deux ; pour les enfants nés
+  depuis, deux trimestres de durée pour le premier de la fratrie, quatre pour chacun
+  des suivants.
