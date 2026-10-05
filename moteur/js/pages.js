@@ -4220,11 +4220,19 @@ const ETAGES_ESTIMATION = [
   ["additionnel", "Additionnelle"],
 ];
 
+/**
+ * Ce qui ouvre le premier départ quand ce n'est pas l'âge légal : les deux
+ * départs anticipés que le moteur sert (`motif_ouverture`, droit/ouvrir).
+ */
+const OUVERTURES_EN_CLAIR = {
+  carriere_longue: "carrière longue",
+  handicap: "handicap",
+};
+
 /** Ce qu'est un départ de l'estimation, dit en quelques mots. */
 function departEnClair(depart) {
   if (depart.quoi.includes("legal")) {
-    const tot = depart.motif_ouverture === "carriere_longue"
-      ? "carrière longue" : "âge légal";
+    const tot = OUVERTURES_EN_CLAIR[depart.motif_ouverture] ?? "âge légal";
     return depart.quoi.includes("taux_plein") ? `${tot}, taux plein` : `${tot}, avec décote`;
   }
   return depart.quoi.includes("automatique") ? "taux plein automatique" : "taux plein";

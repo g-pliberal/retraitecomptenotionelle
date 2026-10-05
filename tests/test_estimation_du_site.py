@@ -64,6 +64,9 @@ REQUETES = {
     "releve_ancien": {"naissance": "1966-09-01", "releve": "\n".join(
         f"{annee}:salarie_prive_cadre:{30_000 + 900 * (annee - 1990)}"
         for annee in range(1990, 2019))},
+    # Le départ anticipé des assurés handicapés, une incapacité d'au moins
+    # 50 % depuis le premier emploi : il ouvre le premier départ, au taux plein.
+    "handicap": {"naissance": "1975-01-01", "debut": "1996-01", "handicap": "1996-01"},
     "deux_metiers": {"unite_revenu": "euros_mois", "salaire": "2900",
                      "metier2_debut": "40", "metier2_statut": "artisan",
                      "metier2_salaire": "4200"},
@@ -177,6 +180,16 @@ def test_la_carriere_longue_part_au_taux_plein_avant_l_age_legal(contexte):
     carriere = contexte.carriere(replace(saisie, liquidation=premier.age))
     assert premier.age < min(ouvrir.age_ouverture(actuel, periode, carriere)
                              for _, periode in ouvrir.periodes_parcourues(actuel, carriere)[0])
+
+
+def test_un_depart_anticipe_se_dit_par_ce_qui_l_ouvre(contexte, page):
+    """La carrière longue et le handicap ouvrent le premier départ avant l'âge
+    légal, au taux plein : la rangée le dit, et non « âge légal »."""
+    for nom, mot in (("carriere_longue", "carrière longue"), ("handicap", "handicap")):
+        premier, *_ = _departs(contexte, nom)
+        assert premier.quoi == ("legal", "taux_plein"), nom
+        assert premier.motif_ouverture == nom, nom
+        assert f"{mot}, taux plein" in _bloc(page("/simuler", **REQUETES[nom])), nom
 
 
 @pytest.mark.parametrize("nom", ["parti", "par_pension", "radiation", "metier_tardif"])

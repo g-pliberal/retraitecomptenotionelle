@@ -6732,6 +6732,13 @@ modèle » du restant.
   (`departEnClair`, que la session du net travaille) ; la ligne « handicap :
   hors modèle » de `docs/architecture.md`, à sa prochaine version.
 
+**Le bloc nomme le handicap, le 5 octobre 2026.** Dans « Comme votre
+estimation officielle », le premier départ se disait « âge légal » quand le
+handicap l'ouvrait (`63707568`) : il dit désormais « handicap, taux plein »,
+comme la carrière longue (`OUVERTURES_EN_CLAIR`, `pages.js`). Un cas fictif de
+plus tient les deux moteurs d'accord sur ce départ
+(`tests/test_estimation_du_site.py`) ; un rendu change, `simuler_handicap`.
+
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
 **Reprise, au 4 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à
