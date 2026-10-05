@@ -26,7 +26,7 @@
 import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
   AgesOuverture, AgesRegimes, AgesSurcoteRegimesSpeciaux, AnneesSalaireReference,
-  BaremesTrimestre, CarriereLongue,
+  AnneesRevenuAnnuelMoyenIndependants, BaremesTrimestre, CarriereLongue, FichesDatees,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesAvantSoixanteAns,
   DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
@@ -80,6 +80,9 @@ export class ScenarioActuel {
     this.agesJouissanceMilitaire = new AgesJouissanceMilitaire(paquet);
     this.coefficientsMinoration = new CoefficientsMinoration(paquet);
     this.anneesSalaireReference = new AnneesSalaireReference(paquet);
+    this.anneesRevenuIndependants = new AnneesRevenuAnnuelMoyenIndependants(paquet);
+    // Les règles datées du salaire annuel moyen : voir `FichesDatees`.
+    this.fichesDatees = new FichesDatees(paquet);
     this.minimumContributif = new MinimumContributif(paquet, macro);
     this.decoteFonctionPublique = new DecoteFonctionPublique(paquet);
     this.decoteRegimesSpeciaux = new DecoteRegimesSpeciaux(paquet);

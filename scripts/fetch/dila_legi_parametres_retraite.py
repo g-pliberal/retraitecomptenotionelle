@@ -57,7 +57,12 @@ est une TABLE, écrite en toutes lettres, article par article :
   Abrogé lui aussi au 1er janvier 2026 par le même décret, qui renvoie la
   règle à l'article R. 173-3-2 : la table par génération est celle de sa
   dernière version, et le dépôt porte à part les vingt-quatre et vingt-trois
-  années des parents.
+  années des parents ;
+* `R. 634-1-1` — le même nombre pour les artisans et les commerçants, qui monte
+  deux fois plus lentement : « Onze années pour l'assuré né en 1934 ou 1935 »,
+  vingt pour 1948, vingt-cinq « aux assurés nés après 1952 ». Abrogé pour les
+  pensions prenant effet à compter du 1er janvier 2026 (décret n° 2025-1409,
+  article 2, 42° et II) : sa dernière version est la table.
 
 Il n'y avait donc rien à demander à personne : il fallait lire. La leçon est la
 même que pour la valeur du point agricole et pour le minimum contributif —
@@ -131,6 +136,7 @@ ARTICLES = {
     "R351-9": "sécurité sociale",
     "R351-29-1": "sécurité sociale",
     "R351-45": "sécurité sociale",
+    "R634-1-1": "sécurité sociale",
 }
 
 #: Nombres écrits en lettres, tels que le Journal officiel les emploie pour les
@@ -908,6 +914,50 @@ def annees_salaire_reference(versions: list[tuple[str, str]]) -> dict[int, float
     return table
 
 
+#: « Onze années pour l'assuré né en 1934 ou 1935 » : la table des artisans et
+#: des commerçants nomme deux générations par ligne jusqu'en 1943.
+ANNEES_RETENUES_PAIRES = re.compile(
+    r"([\w-]+(?:\s+et\s+[\w-]+)?)\s+ann[ée]es?\s+pour\s+l['’]assur[ée]\s+n[ée]\s+"
+    r"(?:en\s+(\d{4})(?:\s+ou\s+(\d{4}))?|avant\s+le\s+\d{1,2}e?r?\s+\w+\s+(\d{4}))",
+    re.I)
+
+
+def annees_revenu_annuel_moyen_independants(
+        versions: list[tuple[str, str]]) -> dict[int, float]:
+    """Nombre d'années retenues au revenu annuel moyen des artisans et des
+    commerçants, par génération — R. 634-1-1.
+
+    Dix années avant la génération 1934, une de plus toutes les DEUX
+    générations jusqu'à quinze pour 1942-1943, puis une par génération jusqu'à
+    vingt-quatre pour 1952, et vingt-cinq « aux assurés nés après 1952 ». Le
+    modèle leur appliquait la table du régime général, qui atteint vingt-cinq
+    dès 1948 : un commerçant né en 1948 voyait son revenu moyen pris sur
+    vingt-cinq années au lieu de vingt.
+
+    L'article est abrogé pour les pensions prenant effet à compter du 1er
+    janvier 2026 (décret n° 2025-1409, article 2, 42° et II) : sa dernière
+    version, du 27 avril 2007, est la table.
+    """
+    table: dict[int, float] = {}
+    for _, texte in sorted(versions)[-1:]:
+        for lettres, en_annee, ou_annee, avant_annee in ANNEES_RETENUES_PAIRES.findall(texte):
+            annees = nombre_en_lettres(lettres)
+            if annees is None:
+                continue
+            if avant_annee:
+                table[PREMIERE_GENERATION] = float(annees)
+                continue
+            for generation in (en_annee, ou_annee):
+                if generation:
+                    table[int(generation)] = float(annees)
+        cible = ANNEES_CIBLE.search(texte)
+        if cible is not None:
+            annees = nombre_en_lettres(cible.group(1))
+            if annees is not None:
+                table[int(cible.group(2)) + 1] = float(annees)
+    return table
+
+
 # ---------------------------------------------------------------------------
 # Lecture de l'index
 # ---------------------------------------------------------------------------
@@ -1063,6 +1113,8 @@ def main(arguments: list[str] | None = None) -> int:
         "duree_proratisation": duree_proratisation(versions["R351-6"]),
         "heures_par_trimestre": heures_par_trimestre(versions["R351-9"]),
         "annees_salaire_reference": annees_salaire_reference(versions["R351-29-1"]),
+        "annees_revenu_annuel_moyen_independants":
+            annees_revenu_annuel_moyen_independants(versions["R634-1-1"]),
     }
 
     # Garde-fous : une table lue de travers ne doit pas s'écrire en silence.
@@ -1111,6 +1163,14 @@ def main(arguments: list[str] | None = None) -> int:
         print(f"\nÉCHEC   années du salaire de référence invraisemblables : "
               f"{sorted(set(annees_salaire.values()))}", file=sys.stderr)
         return 1
+    independants = tables["annees_revenu_annuel_moyen_independants"]
+    if not (independants and min(independants.values()) == 10.0
+            and max(independants.values()) == 25.0
+            and independants.get(1935) == 11.0 and independants.get(1948) == 20.0
+            and independants.get(1953) == 25.0):
+        print(f"\nÉCHEC   années du revenu moyen des indépendants invraisemblables : "
+              f"{sorted(independants.items())}", file=sys.stderr)
+        return 1
     heures = tables["heures_par_trimestre"]
     if sorted(heures.items()) != [(1972, 200.0), (2014, 150.0)]:
         print(f"\nÉCHEC   assiette du trimestre invraisemblable : "
@@ -1137,7 +1197,8 @@ def main(arguments: list[str] | None = None) -> int:
                 for nom in ("age_ouverture", "duree_requise",
                             "duree_requise_1993",
                             "coefficient_minoration", "duree_proratisation",
-                            "heures_par_trimestre", "annees_salaire_reference")
+                            "heures_par_trimestre", "annees_salaire_reference",
+                            "annees_revenu_annuel_moyen_independants")
                 for cle, valeur in tables[nom].items()
             },
             "carriere_longue": portes,
@@ -1161,6 +1222,8 @@ def main(arguments: list[str] | None = None) -> int:
           f"trimestres")
     print(f"Années salaire réf.    {len(annees_salaire)} générations, "
           f"{min(annees_salaire.values()):g} -> {max(annees_salaire.values()):g} années")
+    print(f"Années indépendants    {len(independants)} générations, "
+          f"{min(independants.values()):g} -> {max(independants.values()):g} années")
     print(f"Assiette du trimestre  "
           + ", ".join(f"{heure:g} heures depuis {annee}"
                       for annee, heure in sorted(heures.items())))

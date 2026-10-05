@@ -1939,6 +1939,17 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
             perception, arrivee, mois_liquidation
         )
     codes_admis = frozenset(membres) if membres else frozenset((code,))
+    # LA RÈGLE DE LA DATE D'EFFET. Le salaire annuel moyen du régime général
+    # n'a pas toujours été la moyenne annuelle des meilleures années : les dix
+    # DERNIÈRES jusqu'en 1972, rapportées à leurs trimestres jusqu'en juin 1995,
+    # sans les années qui ne valident aucun trimestre depuis 2004. La période
+    # renvoie à la fiche datée qui le dit (`regles_du_salaire_annuel_moyen`).
+    regle = (
+        moteur.fiches_datees.regle(
+            periode.regles_du_salaire_annuel_moyen,
+            f"{annee_liquidation:04d}-{mois_liquidation:02d}-01")
+        if periode.regles_du_salaire_annuel_moyen else None
+    )
     # LE REVENU D'UNE ANNÉE, TOUTES ACTIVITÉS DU RÉGIME RÉUNIES. Deux
     # activités cumulées qui versent au même régime — ou à deux régimes
     # alignés que la liquidation unique réunit — forment un seul revenu
@@ -1946,6 +1957,10 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
     # revenus d'une même année que la LURA écrête (R. 173-4-4-1, 1°).
     # Une année d'une seule activité n'a qu'un terme, et rien ne bouge.
     par_annee: dict[int, list[float]] = {}
+    # Les trimestres de chaque année au régime, cotisés — assurance vieillesse
+    # des parents au foyer comprise — puis assimilés : ce que la moyenne
+    # d'avant juillet 1995 met au dénominateur, et ce qu'elle écarte avant 1973.
+    trimestres: dict[int, list[int]] = {}
     for ligne in carriere.lignes:
         if ligne.annee >= annee_liquidation:
             continue
@@ -1957,14 +1972,19 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                 revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                 plafond=moteur.macro.plafond_securite_sociale(ligne.annee))):
             continue
+        avpf_de_la_ligne = (not ligne.cotise and avpf_ouvert
+                            and ligne.revenu_avpf > 0)
+        if regle is not None:
+            compte = trimestres.setdefault(ligne.annee, [0, 0])
+            compte[0 if ligne.cotise or avpf_de_la_ligne else 1] += ligne.trimestres_valides
         if not ligne.cotise:
             # Assurance vieillesse des parents au foyer : la CNAF cotise
-            # sur une assiette forfaitaire égale au SMIC, et ce salaire est
-            # PORTÉ AU COMPTE. C'est ce qui la distingue d'une période
-            # assimilée, laquelle valide des trimestres sans jamais ajouter
-            # de salaire — et c'est ce que le modèle ne faisait pas, alors
-            # que le cas type « carrière interrompue » l'annonçait.
-            if not (avpf_ouvert and ligne.revenu_avpf > 0):
+            # sur une assiette forfaitaire, et ce salaire est PORTÉ AU
+            # COMPTE. C'est ce qui la distingue d'une période assimilée,
+            # laquelle valide des trimestres sans jamais ajouter de salaire
+            # — et c'est ce que le modèle ne faisait pas, alors que le cas
+            # type « carrière interrompue » l'annonçait.
+            if not avpf_de_la_ligne:
                 continue
             revenu = ligne.revenu_avpf
         else:
@@ -1999,6 +2019,7 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         cumul[1] = max(cumul[1], ligne.fraction_annee)
 
     revenus: list[float] = []
+    annees_des_revenus: list[int] = []
     # Le dernier revenu avant revalorisation, et son année : ce qu'une
     # pension différée revalorise autrement (voir plus bas).
     dernier_brut: tuple[int, float] | None = None
@@ -2015,11 +2036,27 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
             )
         dernier_brut = (annee, revenu)
         revenus.append(revenu * revaloriser(annee, annee_liquidation))
+        annees_des_revenus.append(annee)
 
     if not revenus:
         return 0.0
 
     reference = periode.salaire_reference
+    if regle is not None and reference in ("25_meilleures_annees", "10_meilleures_annees"):
+        # Une année « valide » au sens de R. 351-9 si son salaire, toutes
+        # activités du régime réunies, atteint le seuil d'un trimestre — ou si
+        # le relevé lui en reconnaît un.
+        validantes = {
+            annee for annee in par_annee
+            if trimestres[annee][0] >= 1
+            or moteur.macro.trimestres_valides(par_annee[annee][0], annee) >= 1
+        }
+        return moyenne_selon_la_regle(
+            regle, list(zip(annees_des_revenus, revenus)), trimestres, validantes,
+            annees if annees is not None else nombre_d_annees_retenues(
+                moteur, periode, carriere, generation, enfants_majores),
+            carriere.annee_naissance + AGE_DES_DIX_DERNIERES_ANNEES,
+        )
     if annees is not None:
         retenus = sorted(revenus, reverse=True)[:annees]
     elif reference in ("25_meilleures_annees", "10_meilleures_annees"):
@@ -2088,6 +2125,66 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
     return sum(retenus) / len(retenus)
 
 
+#: Les dix dernières années d'avant 1973 se comptent « avant l'âge de soixante
+#: ans » (ordonnance du 19 octobre 1945, article 71) : avant l'année où il tombe.
+AGE_DES_DIX_DERNIERES_ANNEES = 60
+
+
+def moyenne_selon_la_regle(regle: dict, valeurs: list[tuple[int, float]],
+                           trimestres: dict[int, list[int]], validantes: set[int],
+                           nombre: int, annee_soixante_ans: int) -> float:
+    """Le salaire annuel moyen que la version de la date d'effet forme.
+
+    ``valeurs`` porte, année par année et dans leur ordre, le salaire du régime
+    revalorisé ; ``trimestres``, ses trimestres cotisés puis assimilés ;
+    ``validantes``, les années dont le salaire valide au moins un trimestre.
+    La fiche ``salaire_annuel_moyen`` dit d'où vient chaque paramètre :
+
+    * ``annees_sans_trimestre: exclues`` — depuis 2004, une année qui ne valide
+      aucun trimestre n'entre plus dans la moyenne (R. 351-29) ;
+    * ``annees_assimilees_exclues`` — avant 1973, pas d'année qui compte deux
+      trimestres assimilés ou plus (article 74 du décret du 29 décembre 1945) ;
+    * ``selection: dernieres`` — avant 1973, les ``nombre`` dernières années
+      d'avant l'année des soixante ans, et, depuis juillet 1948
+      (``avant_la_liquidation``), celles d'avant l'effet si leur moyenne est
+      plus avantageuse ; ``meilleures`` sinon, sur les salaires revalorisés ;
+    * ``calcul: trimestriel`` — jusqu'au 30 juin 1995, la somme des salaires
+      retenus rapportée à leurs trimestres, multipliée par quatre (circulaire
+      Cnav 1/73), assimilés compris depuis 1973 ; ``annuel`` ensuite, la somme
+      rapportée au nombre d'années (circulaire Cnav 95/94).
+
+    Les sommes se font dans l'ordre où le moteur les faisait — les meilleures
+    années de la plus forte à la plus faible —, si bien qu'une carrière que la
+    règle ne touche pas garde son salaire moyen au bit près.
+    """
+    candidates = valeurs
+    if regle["annees_sans_trimestre"] == "exclues":
+        candidates = [(annee, valeur) for annee, valeur in candidates if annee in validantes]
+    if regle["annees_assimilees_exclues"]:
+        candidates = [(annee, valeur) for annee, valeur in candidates
+                      if trimestres[annee][1] < 2]
+    avec_assimiles = regle["trimestres_comptes"] == "cotises_et_assimiles"
+
+    def moyenne(retenues: list[tuple[int, float]]) -> float:
+        if not retenues:
+            return 0.0
+        somme = sum(valeur for _, valeur in retenues)
+        if regle["calcul"] == "trimestriel":
+            denominateur = sum(
+                min(4, trimestres[annee][0] + (trimestres[annee][1] if avec_assimiles else 0))
+                for annee, _ in retenues)
+            if denominateur > 0:
+                return somme * 4.0 / denominateur
+        return somme / len(retenues)
+
+    if regle["selection"] == "dernieres":
+        choix = [[c for c in candidates if c[0] < annee_soixante_ans][-nombre:]]
+        if regle["avant_la_liquidation"]:
+            choix.append(candidates[-nombre:])
+        return max(moyenne(retenues) for retenues in choix)
+    return moyenne(sorted(candidates, key=lambda c: c[1], reverse=True)[:nombre])
+
+
 def nombre_d_annees_retenues(moteur, periode: PeriodeRegime, carriere: Carriere,
                              generation: int | None,
                              enfants_majores: int = 0) -> int:
@@ -2095,11 +2192,22 @@ def nombre_d_annees_retenues(moteur, periode: PeriodeRegime, carriere: Carriere,
 
     Vingt-cinq, ou dix, selon la période ; lu à la génération quand la
     période le dit — la loi du 22 juillet 1993 le fait passer de dix à
-    vingt-cinq à raison d'une année par génération.
+    vingt-cinq à raison d'une année par génération, deux fois plus lentement
+    pour les artisans et les commerçants (R. 634-1-1), dont la table vaut
+    jusqu'aux pensions prenant effet en 2025 : la version de la date d'effet
+    le dit (fiche ``revenu_annuel_moyen_independants``).
     """
     annees = 10 if periode.salaire_reference == "10_meilleures_annees" else 25
     if periode.salaire_reference_par_generation and generation is not None:
-        par_generation = moteur.annees_salaire_reference.annees(generation)
+        table = moteur.annees_salaire_reference
+        if periode.salaire_reference_par_generation == "independants":
+            date_effet = date_d_effet(carriere)
+            regle = (None if date_effet is None else moteur.fiches_datees.regle(
+                periode.regles_du_salaire_annuel_moyen
+                or "revenu_annuel_moyen_independants", date_effet))
+            if regle is None or regle.get("table") == "independants":
+                table = moteur.annees_revenu_independants
+        par_generation = table.annees(generation)
         if par_generation is not None:
             annees = par_generation[0]
         # LES PARENTS : vingt-quatre années pour qui bénéficie d'une

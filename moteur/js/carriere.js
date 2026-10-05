@@ -491,10 +491,11 @@ function ligneAnnuelle({
     part_primes: partPrimes,
     quotite: cotise ? quotite : 1.0,
     // Assurance vieillesse des parents au foyer : la CNAF cotise au régime
-    // général sur une assiette forfaitaire égale au SMIC — 1 820 heures, soit
-    // le SMIC mensuel multiplié par douze.
+    // général sur une assiette forfaitaire de 169 heures par mois du SMIC du
+    // 1er juillet de l'année précédente (R. 381-3), que la Cnav publie date par
+    // date depuis juillet 1972. Voir le Python.
     revenu_avpf: (!cotise && ouvreAvpf)
-      ? 1820.0 * macro.smic_horaire.valeur(annee) * part
+      ? macro.revenuAvpf(annee) * part
       : 0.0,
     services_fonction_publique: ouvreServices,
     services_plafond_trimestres_par_enfant: plafondServices,

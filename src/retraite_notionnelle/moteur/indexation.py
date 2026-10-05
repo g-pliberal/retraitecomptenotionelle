@@ -157,15 +157,17 @@ class Indexation:
         elif mode is ModeIndexation.MASSE_SALARIALE:
             candidats = {"masse_salariale": self.macro.masse_salariale(annee)}
         elif mode is ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE:
-            # Le taux annuel des arrêtés, lu comme le scénario 1 le lit : le
-            # rapport de deux années consécutives dans la colonne publiée. Le
-            # produit de ces taux annuels dérive de 0,04 % sur 1941-2025 par
-            # rapport au coefficient lu directement de bout en bout — la caisse
-            # arrondit ses colonnes à trois décimales. C'est le prix de
-            # l'uniformité : ce mode se compose comme tous les autres.
+            # Le taux annuel des arrêtés : le rapport de deux années
+            # consécutives dans une colonne récente, publiée. Le produit de ces
+            # taux annuels dérive de 0,04 % sur 1941-2025 par rapport au
+            # coefficient lu directement de bout en bout — la caisse arrondit
+            # ses colonnes à trois décimales. C'est le prix de l'uniformité : ce
+            # mode se compose comme tous les autres. Les colonnes d'avant 2017,
+            # que le scénario 1 lit à leur date, n'y entrent pas : celles
+            # d'avant 1952 ne sont pas multiplicatives.
             candidats = {
                 "revalorisation_legale":
-                    self.macro.coefficient_revalorisation_portee_au_compte(
+                    self.macro.coefficient_revalorisation_par_rapport(
                         annee - 1, annee
                     ) - 1,
             }

@@ -2728,7 +2728,7 @@ def test_la_correction_des_trois_generations_se_retrouve():
     assert "un salarié du privé non cadre" in corps, (
         "la page doit dire sur quelle carrière ces points sont mesurés"
     )
-    for generation, attendu in ((1920, 5.0), (1945, 0.0), (1958, -0.5)):
+    for generation, attendu in ((1920, 5.5), (1945, 0.0), (1958, -0.5)):
         mesure = correction(generation)
         assert round(mesure, 1) == attendu, (
             f"génération {generation} : la page annonce {attendu:+.1f} point(s), "

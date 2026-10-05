@@ -1041,6 +1041,25 @@ institutions:
           7,9 % trop haut, et les montants de 2025, recopiés de la circulaire
           2024/40 (minimum à 747,69 €, plafond à 1 394,86 €), sont ceux que la
           circulaire 2025/8 a corrigés (747,47 € et 1 394,44 €).
+      - id: cnav_assiette_avpf
+        titre: Assiette forfaitaire mensuelle de l'assurance vieillesse des parents au foyer, 1972-2026
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=cotisation_salaire_avpf_bar.aspx
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/legislation/assiette_avpf.csv
+        recuperation: scripts/fetch/cnav_assiette_avpf.py
+        note: >-
+          Le barème « Assurance vieillesse des parents au foyer (AVPF) » de la
+          base de législation de la Cnav, servi par son API publique :
+          l'assiette mensuelle et le taux à chaque date, du 1er juillet 1972,
+          où l'AVPF naît, au 1er janvier 2026, avec la circulaire qui fixe
+          chacune depuis 2014. C'est le salaire porté au compte du parent : 169
+          heures par mois du SMIC du 1er juillet précédent (R. 381-3), que le
+          barème suit année par année, sauf en 2026, où la circulaire 2025/33
+          prend le SMIC de janvier. Le modèle portait 1 820 heures du SMIC de
+          janvier de l'année, 9 à 10 % de trop peu. Métropole seule : jusqu'en
+          1996, le barème donne aux Antilles, à la Guyane et à La Réunion une
+          assiette plus basse. Fiabilité `haute`.
       - id: cnav_baremes_rci
         titre: Prix et valeur du point RCI, 2024-2026, dans la base de législation
         url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=rci_valeur_point_bar.aspx
@@ -1106,7 +1125,37 @@ institutions:
           postérieures à la dernière colonne — le modèle ancre sur la borne
           connue et prolonge par son approximation. Avant 2017, aucune
           circulaire n'est accessible en ligne : la dérive de la reconstruction
-          y est invérifiable.
+          y est invérifiable. (Depuis le 5 octobre 2026, les colonnes d'avant
+          octobre 2017 sont lues ailleurs : `cnav_revalorisation_salaires_anciennes`.)
+
+      - id: cnav_revalorisation_salaires_anciennes
+        titre: Coefficients de revalorisation des salaires portés au compte, quatre-vingt-huit colonnes 1946-2015
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=revalorisation_coefficient_revalorisation_salaire_cotisation_bar.aspx
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/legislation/revalorisation_salaires_anciennes.csv
+        recuperation: scripts/fetch/cnav_revalorisation_salaires_anciennes.py
+        note: >-
+          Les colonnes que les circulaires lues depuis octobre 2017 ne portent
+          pas, et que `docs/limites.md` croyait introuvables : la page
+          « Coefficients de revalorisation des salaires et cotisations » d'avant
+          le 1er avril 2013, dont le barème actuel garde le lien et dont le
+          script de déclaration porte quatre-vingt-six dates d'effet, de l'arrêté
+          du 14 mai 1946 à la circulaire 2012/35, chacune avec son arrêté, sa loi
+          ou sa circulaire ; et les barèmes des retraites attribuées du 1er avril
+          2013 au 30 septembre 2015 et du 1er octobre 2015 au 30 septembre 2017,
+          par l'API publique. Salaires seulement, depuis 1947 : pour 1930 à 1946,
+          la caisse publie des coefficients de cotisations. Le modèle sert à une
+          liquidation la colonne en vigueur à sa date d'effet, jamais un rapport
+          de deux valeurs — avant 1952, l'arrêté fixait un coefficient par année
+          de perception, et jusqu'en 1993 la revalorisation de janvier ne
+          touchait pas encore le salaire de l'année close. Le récupérateur
+          corrige la date d'une colonne (« 01/04/1958 », celle de l'arrêté du
+          18 avril 1957) et deux valeurs écrites avec un point décimal, refuse
+          d'écrire si une colonne d'après 1952 s'écarte de plus de 1 % de la
+          multiplicativité, et se recoupe sur des repères recopiés à la main ;
+          la colonne d'octobre 2015 se raccorde à celle d'octobre 2017 à
+          l'arrondi près. Fiabilité `haute`, comme les circulaires.
 
       - id: cnav_revalorisation_pensions
         titre: Coefficients de revalorisation des pensions servies, date d'effet par date d'effet, 1949-2026

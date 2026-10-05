@@ -496,6 +496,51 @@ export class AnneesSalaireReference extends TableParGeneration {
 }
 
 /**
+ * Nombre d'années retenues au revenu annuel moyen des artisans et des
+ * commerçants, par génération (R. 634-1-1). Voir le Python.
+ */
+export class AnneesRevenuAnnuelMoyenIndependants extends TableParGeneration {
+  constructor(paquet) {
+    super(paquet.annees_revenu_annuel_moyen_independants);
+  }
+
+  /** @returns {[number, number] | null} nombre d'années et fiabilité. */
+  annees(generation) {
+    return this.valeur(generation);
+  }
+}
+
+/**
+ * Les fiches dont le moteur lit, à la date d'effet d'une pension, les paramètres
+ * de la version qui vaut : le salaire annuel moyen du régime général et le
+ * revenu annuel moyen des artisans et des commerçants. Voir `FichesDatees` du
+ * Python.
+ */
+export class FichesDatees {
+  constructor(paquet) {
+    this._fiches = paquet.fiches_datees ?? {};
+  }
+
+  /** Les fiches préparées, telles que le paquet les porte. */
+  fiches() {
+    return this._fiches;
+  }
+
+  /**
+   * Les paramètres de la version de `nom` qui vaut pour une pension prenant
+   * effet à `dateEffet` (AAAA-MM-JJ) ; `null` sans fiche ou sans version.
+   */
+  regle(nom, dateEffet) {
+    const fiche = this._fiches[nom] ?? null;
+    if (fiche === null) {
+      return null;
+    }
+    const version = applicable(fiche, { "liquidation.date_effet": dateEffet });
+    return version === null ? null : { ...version.parametres };
+  }
+}
+
+/**
  * La règle du minimum contributif quand la fiche manque : celle du droit en
  * vigueur (version `avpf_et_ava_2023` de la fiche `minimum_contributif`).
  */

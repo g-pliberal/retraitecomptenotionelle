@@ -86,8 +86,10 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     AgesJouissanceMilitaire,
     AgesOuverture,
     AgesSurcoteRegimesSpeciaux,
+    AnneesRevenuAnnuelMoyenIndependants,
     AnneesSalaireReference,
     CarrieresHorsDeFrance,
+    FichesDatees,
     CoefficientsMinoration,
     DureesProratisation,
     DureesRequises,
@@ -671,6 +673,10 @@ def _regimes() -> list[dict]:
                     # JavaScript le lit nul.
                     **({"trimestres_retenus_maximum": p.trimestres_retenus_maximum}
                        if p.trimestres_retenus_maximum is not None else {}),
+                    # La fiche datée du salaire annuel moyen, aux seules
+                    # périodes qui y renvoient : absente, la moyenne annuelle.
+                    **({"regles_du_salaire_annuel_moyen": p.regles_du_salaire_annuel_moyen}
+                       if p.regles_du_salaire_annuel_moyen else {}),
                     **_regles_d_avant_1983(p),
                     **_duree_majoree(p),
                     **_points_abattus(p),
@@ -918,22 +924,33 @@ def _rendements() -> list:
 
 
 
-def _revalorisation_salaires() -> list:
-    """Colonnes de revalorisation publiées par la Cnav, par date d'effet.
+def _revalorisation_salaires(anciennes: bool = False) -> list:
+    """Colonnes de revalorisation publiées par la Cnav, par date d'effet :
+    celles des circulaires depuis octobre 2017, ou, ``anciennes``, celles de
+    1946 à octobre 2015, que le moteur ne lit qu'à leur date.
 
-    Une colonne : année de la date d'effet, drapeau « au 1er janvier », première
-    année de perception, puis les coefficients d'affilée — ils courent sans trou,
-    si bien qu'un tableau suffit et que le paquet n'a pas à répéter 876 fois une
-    clé.
+    Une colonne : année de la date d'effet, mois de cette date, première année
+    de perception, puis les coefficients d'affilée — ils courent sans trou, si
+    bien qu'un tableau suffit et que le paquet n'a pas à répéter des milliers de
+    fois une clé.
     """
     from retraite_notionnelle.donnees.macro import DonneesMacro
 
+    macro = DonneesMacro(DONNEES)
     return [
         [annee, mois, min(table),
          [table[a] for a in range(min(table), max(table) + 1)]]
         for annee, mois, table
-        in DonneesMacro(DONNEES).revalorisation_portee_au_compte
+        in (macro.revalorisation_portee_au_compte_anciennes if anciennes
+            else macro.revalorisation_portee_au_compte)
     ]
+
+
+def _assiette_avpf() -> list:
+    """L'assiette mensuelle de l'AVPF à chaque date du barème de la Cnav."""
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+
+    return [[jour, valeur] for jour, valeur in DonneesMacro(DONNEES).assiette_avpf]
 
 
 def _revalorisation_pensions() -> dict:
@@ -1733,6 +1750,7 @@ def construire(bilan: bytes) -> bytes:
         "version": VERSION,
         "series": _series(),
         "smic_horaire_releve": _smic_horaire_releve(),
+        "assiette_avpf": _assiette_avpf(),
         "hypotheses": _hypotheses(),
         "courbe_taux_sans_risque": _courbe_taux_sans_risque(),
         "frais_epargne_retraite": _frais_epargne_retraite(),
@@ -1760,6 +1778,7 @@ def construire(bilan: bytes) -> bytes:
         "calendriers_duree_requise": _calendriers_duree_requise(),
         "durees_proratisation": _table_par_generation(DureesProratisation),
         "revalorisation_salaires": _revalorisation_salaires(),
+        "revalorisation_salaires_anciennes": _revalorisation_salaires(anciennes=True),
         "revalorisation_pensions": _revalorisation_pensions(),
         "ages_ouverture": _table_par_generation(AgesOuverture),
         "ages_surcote_regimes_speciaux": _table_par_generation(AgesSurcoteRegimesSpeciaux),
@@ -1770,6 +1789,9 @@ def construire(bilan: bytes) -> bytes:
         "ages_jouissance_militaire": _table_par_generation(AgesJouissanceMilitaire),
         "coefficients_minoration": _table_par_generation(CoefficientsMinoration),
         "annees_salaire_reference": _table_par_generation(AnneesSalaireReference),
+        "annees_revenu_annuel_moyen_independants": _table_par_generation(
+            AnneesRevenuAnnuelMoyenIndependants),
+        "fiches_datees": FichesDatees(DONNEES).fiches(),
         "periodes_non_travaillees": _periodes_non_travaillees(),
         "chomage_complementaires": _chomage_complementaires(),
         "assiette_minimale_independants": _assiette_minimale_independants(),

@@ -12852,7 +12852,7 @@ jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, plutôt qu
 « Indexation sur les prix », qui neutralise la question de l'indexation quand on
 veut isoler l'effet propre des comptes notionnels. Sur une carrière
 (un salarié du privé non cadre au salaire moyen, entré à 20 ans et parti
-à 62), la correction reste modeste : +5,0 points pour la génération 1920,
+à 62), la correction reste modeste : +5,5 points pour la génération 1920,
 +0,0 pour 1945, -0,5 pour 1958. Les cotisations se concentrent sur les dernières années, là où
 les deux règles coïncident.</p>
 

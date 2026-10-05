@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from bisect import bisect_right
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
@@ -16,6 +17,15 @@ from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle, charge
 #: un choix de modélisation : elle est isolée ici pour être lisible d'un coup
 #: d'œil et déplaçable d'un seul geste si la source venait à la préciser.
 ANNEE_REVALORISATION_SUR_LES_PRIX = 1987
+
+#: L'assurance vieillesse des parents au foyer naît le 1er juillet 1972 (loi
+#: n° 72-8 du 3 janvier 1972) : aucune assiette avant.
+ANNEE_CREATION_AVPF = 1972
+
+#: Heures de SMIC de l'assiette MENSUELLE de l'AVPF, « 169 fois le salaire
+#: horaire minimum de croissance en vigueur au 1er juillet de l'année civile
+#: précédente » (R. 381-3, rédactions de 2002 et de 2023).
+HEURES_AVPF_PAR_MOIS = 169
 
 
 def lire_smic_releve(racine: Path, annee: int) -> tuple[int, float] | None:
@@ -267,6 +277,76 @@ class DonneesMacro:
         return lire_smic_releve(self.racine, annee)
 
     @cached_property
+    def _smic_publie(self) -> tuple[int, tuple[int, float] | None]:
+        """La dernière année du barème du SMIC, et son dernier relèvement."""
+        serie = charger_serie_annuelle(
+            self.racine / "reference" / "macro" / "smic_horaire.csv",
+            colonne_valeur="smic_horaire",
+            nom="smic_horaire",
+        )
+        return serie.derniere_annee, self.smic_horaire_releve(serie.derniere_annee)
+
+    def smic_horaire_au_1er_juillet(self, annee: int) -> float:
+        """Le SMIC horaire en vigueur le 1er juillet de cette année.
+
+        Le barème de janvier, ou, la dernière année publiée, le relèvement
+        d'avant juillet qui l'a remplacé (``smic_horaire_releves.csv``) — le
+        portage n'en connaît pas d'autre, et le Python s'aligne sur lui.
+        """
+        derniere, releve = self._smic_publie
+        if annee == derniere and releve is not None and releve[0] <= 7:
+            return releve[1]
+        return self.smic_horaire(annee)
+
+    @cached_property
+    def assiette_avpf(self) -> tuple[tuple[str, float], ...]:
+        """L'assiette forfaitaire MENSUELLE de l'assurance vieillesse des
+        parents au foyer, à chaque date du barème de la Cnav, du 1er juillet
+        1972 au dernier publié (``legislation/assiette_avpf.csv``)."""
+        import csv
+
+        chemin = self.racine / "reference" / "legislation" / "assiette_avpf.csv"
+        if not chemin.exists():
+            return ()
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            return tuple(sorted((ligne["date_effet"], float(ligne["assiette_mensuelle"]))
+                                for ligne in csv.DictReader(lignes)))
+
+    @cached_property
+    def _revenus_avpf(self) -> dict[int, float]:
+        return {}
+
+    def revenu_avpf(self, annee: int) -> float:
+        """Le salaire qu'une année ENTIÈRE d'assurance vieillesse des parents
+        au foyer porte au compte, en euros de cette année.
+
+        La somme des assiettes mensuelles de ses douze mois, telles que la Cnav
+        les a fixées : rien avant le 1er juillet 1972, où l'AVPF naît (loi du
+        3 janvier 1972). Au-delà du barème, la règle de l'article R. 381-3 :
+        169 heures par mois du SMIC en vigueur au 1er juillet de l'année
+        précédente. Le modèle portait 1 820 heures du SMIC de janvier de
+        l'année, 9 à 10 % de trop peu depuis 1982, 12,5 % avant.
+        """
+        connu = self._revenus_avpf.get(annee)
+        if connu is not None:
+            return connu
+        datees = self.assiette_avpf
+        if datees and annee <= int(datees[-1][0][:4]):
+            total = 0.0
+            for mois in range(1, 13):
+                rang = bisect_right(datees, (f"{annee:04d}-{mois:02d}-01", float("inf")))
+                if rang:
+                    total += datees[rang - 1][1]
+        elif annee < ANNEE_CREATION_AVPF:
+            total = 0.0
+        else:
+            total = (12 * HEURES_AVPF_PAR_MOIS
+                     * self.smic_horaire_au_1er_juillet(annee - 1))
+        self._revenus_avpf[annee] = total
+        return total
+
+    @cached_property
     def heures_par_trimestre(self) -> SerieAnnuelle:
         """Heures de SMIC à cotiser pour valider un trimestre, par année.
 
@@ -401,10 +481,30 @@ class DonneesMacro:
         année de la précédente, si bien que reconstruire une colonne depuis une
         autre dérive avec la distance — 0,02 % à deux ans, 0,16 % à sept.
         """
+        return self._colonnes_de_revalorisation("revalorisation_salaires.csv")
+
+    @cached_property
+    def revalorisation_portee_au_compte_anciennes(
+            self) -> list[tuple[int, int, dict[int, float]]]:
+        """Les colonnes de la Cnav d'AVANT octobre 2017, par date d'effet.
+
+        Quatre-vingt-huit, de l'arrêté du 14 mai 1946 à la colonne d'octobre
+        2015 (``revalorisation_salaires_anciennes.csv``). Elles ne servent qu'à
+        la date où elles sont en vigueur
+        (:meth:`colonne_de_revalorisation_en_vigueur`), jamais par rapport de
+        deux de leurs valeurs : avant 1952, l'arrêté fixait un coefficient par
+        année de perception, et ce rapport n'y vaut pas revalorisation.
+        Jusqu'au 5 octobre 2026, le modèle reconstruisait toute liquidation
+        d'avant 2017 depuis la colonne d'octobre 2017, et ``docs/limites.md``
+        disait la dérive « invérifiable ».
+        """
+        return self._colonnes_de_revalorisation("revalorisation_salaires_anciennes.csv")
+
+    def _colonnes_de_revalorisation(self, fichier: str
+                                    ) -> list[tuple[int, int, dict[int, float]]]:
         import csv
 
-        chemin = (self.racine / "reference" / "legislation"
-                  / "revalorisation_salaires.csv")
+        chemin = self.racine / "reference" / "legislation" / fichier
         if not chemin.exists():
             return []
         colonnes: dict[str, dict[int, float]] = {}
@@ -419,6 +519,36 @@ class DonneesMacro:
             for effet, table in colonnes.items()
         )
 
+    @cached_property
+    def _colonnes_en_vigueur(self) -> tuple[list[tuple[int, int]],
+                                            list[tuple[dict[int, float], int]]]:
+        """Toutes les colonnes publiées, anciennes et récentes, triées par date
+        d'effet : leurs dates, et chacune avec sa dernière année de perception."""
+        toutes = sorted(self.revalorisation_portee_au_compte_anciennes
+                        + self.revalorisation_portee_au_compte,
+                        key=lambda colonne: (colonne[0], colonne[1]))
+        return ([(annee, mois) for annee, mois, _ in toutes],
+                [(table, max(table)) for _, _, table in toutes])
+
+    def colonne_de_revalorisation_en_vigueur(
+            self, annee: int, mois: int = 1) -> tuple[dict[int, float], int] | None:
+        """La colonne que la caisse oppose à une liquidation du premier jour de
+        ce mois, et sa dernière année de perception.
+
+        La plus récente dont la date d'effet ne lui est pas postérieure : une
+        colonne vaut jusqu'à la suivante — celle d'avril 1953 jusqu'en mars
+        1955, celle d'octobre 2017 jusqu'à la fin de 2018. ``None`` avant la
+        première, et après l'année de la dernière, qui ne dit rien des
+        revalorisations suivantes.
+        """
+        dates, colonnes = self._colonnes_en_vigueur
+        rang = bisect_right(dates, (annee, mois)) - 1
+        if rang < 0:
+            return None
+        if rang == len(dates) - 1 and annee > dates[rang][0]:
+            return None
+        return colonnes[rang]
+
     def coefficient_revalorisation_portee_au_compte(self, annee_depart: int,
                                                     annee_arrivee: int,
                                                     mois_arrivee: int = 1) -> float:
@@ -432,28 +562,63 @@ class DonneesMacro:
         prix depuis », ce qui SUR-revalorisait les salaires anciens de 12 % sur
         quarante ans.
 
+        Le coefficient est d'abord celui de la colonne EN VIGUEUR à la date de
+        liquidation (:meth:`colonne_de_revalorisation_en_vigueur`), que la
+        caisse oppose sans calcul ; depuis que le dépôt lit toutes ses
+        colonnes, de 1946 à 2026, c'est le cas de toute liquidation de ces
+        années-là. C'est le mois qui désigne la colonne : un départ du
+        1er août 2022 relève de la circulaire du 1er juillet, un départ du
+        1er mars 2022 de celle du 1er janvier, et les deux diffèrent de 3,9 %.
+        Un salaire plus récent que la colonne n'a encore reçu aucune
+        revalorisation : coefficient 1.
+
+        Sinon — un salaire d'avant 1947, que les colonnes anciennes ne portent
+        pas, ou une liquidation postérieure à la dernière colonne —, le rapport
+        de deux valeurs de la colonne récente la plus proche
+        (:meth:`coefficient_revalorisation_par_rapport`). ``docs/limites.md``
+        dit ce que chacun coûte.
+        """
+        if annee_arrivee == annee_depart:
+            return 1.0
+        if annee_arrivee < annee_depart:
+            return 1.0 / self.coefficient_revalorisation_portee_au_compte(
+                annee_arrivee, annee_depart
+            )
+        en_vigueur = self.colonne_de_revalorisation_en_vigueur(annee_arrivee, mois_arrivee)
+        if en_vigueur is not None:
+            table, derniere = en_vigueur
+            if annee_depart in table:
+                return table[annee_depart]
+            if annee_depart > derniere:
+                return 1.0
+        return self.coefficient_revalorisation_par_rapport(
+            annee_depart, annee_arrivee, mois_arrivee)
+
+    def coefficient_revalorisation_par_rapport(self, annee_depart: int,
+                                               annee_arrivee: int,
+                                               mois_arrivee: int = 1) -> float:
+        """La revalorisation de ``annee_depart`` à ``annee_arrivee``, lue par
+        RAPPORT de deux valeurs d'une colonne récente, de 2017 ou après.
+
         Trois chemins, du plus sûr au moins sûr :
 
-        1. la colonne PUBLIÉE en vigueur À LA DATE DE LIQUIDATION — la plus
-           récente dont la date d'effet ne lui est pas postérieure, dans son
-           année. Le coefficient est alors celui que la caisse oppose, sans
-           calcul. C'est le mois qui désigne la colonne : un départ du
-           1er août 2022 relève de la circulaire du 1er juillet, un départ du
-           1er mars 2022 de celle du 1er janvier, et les deux diffèrent de
-           3,9 % ;
-        2. sinon la colonne publiée la PLUS PROCHE, par rapport de deux de ses
+        1. la colonne récente de l'année d'arrivée, en vigueur à son mois ;
+        2. sinon la colonne récente la PLUS PROCHE, par rapport de deux de ses
            valeurs. Ancrer sur la plus proche plutôt que sur la plus récente
            réduit la dérive que les arrondis de la caisse accumulent, beaucoup
            en moyenne, deux fois au pire ;
         3. hors de toute colonne, l'ancienne approximation, ancrée sur la borne
            connue quand il y en a une.
 
-        ``docs/limites.md`` dit ce que chacun coûte.
+        C'est aussi le taux annuel que lit le mode d'indexation
+        ``revalorisation_portee_au_compte`` : le rapport de deux années
+        consécutives. Il ne lit que les colonnes récentes, qui sont
+        multiplicatives ; les anciennes ne servent qu'en vigueur.
         """
         if annee_arrivee == annee_depart:
             return 1.0
         if annee_arrivee < annee_depart:
-            return 1.0 / self.coefficient_revalorisation_portee_au_compte(
+            return 1.0 / self.coefficient_revalorisation_par_rapport(
                 annee_arrivee, annee_depart
             )
         colonnes = self.revalorisation_portee_au_compte

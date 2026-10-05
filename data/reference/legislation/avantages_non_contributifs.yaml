@@ -229,6 +229,11 @@ avantages:
     regimes: régime général, régimes alignés
     etat_modele: chiffre
     ligne_cascade: avpf
+    sans_chiffre: >-
+      le seul cas type qui la porte, la carrière interrompue, compte plus de
+      vingt-cinq années payées au-dessus du SMIC : ses années d'AVPF n'entrent
+      pas au salaire annuel moyen, et ce que valent leurs trimestres est compté
+      aux périodes assimilées
     cout:
       mesurable_par: modele
       source_id: dss_ccss_transferts_retraite

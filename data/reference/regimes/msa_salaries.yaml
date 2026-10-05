@@ -31,6 +31,7 @@ periodes:
     duree_requise_trimestres: 120
     taux_plein: 0.4
     salaire_reference: '10_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.086
     part_salariale: 0.3488
@@ -71,6 +72,7 @@ periodes:
     taux_plein: 0.5
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1119
     part_salariale: 0.3343
@@ -100,6 +102,7 @@ periodes:
     taux_plein: 0.5
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1119
     part_salariale: 0.3343
@@ -121,6 +124,7 @@ periodes:
     taux_plein: 0.5
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1119
     part_salariale: 0.3343
@@ -141,6 +145,7 @@ periodes:
     taux_plein: 0.5
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1119
     part_salariale: 0.3343
@@ -162,6 +167,7 @@ periodes:
     taux_plein: 0.5
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1119
     part_salariale: 0.3343
@@ -188,6 +194,7 @@ periodes:
     taux_plein: 0.5
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1119
     part_salariale: 0.3343
@@ -213,6 +220,7 @@ periodes:
     taux_plein: 0.5
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1461
     taux_cotisation_deplafonnee: 0.0044
@@ -238,6 +246,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1475
     taux_cotisation_deplafonnee: 0.016
@@ -263,6 +272,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1487
     taux_cotisation_deplafonnee: 0.017
@@ -290,6 +300,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1495
     taux_cotisation_deplafonnee: 0.017
@@ -317,6 +328,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1533
     taux_cotisation_deplafonnee: 0.021
@@ -344,6 +356,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: 'plafonnee'
     taux_cotisation_retraite: 0.1545
     taux_cotisation_deplafonnee: 0.0241

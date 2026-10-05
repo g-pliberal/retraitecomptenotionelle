@@ -1,0 +1,94 @@
+# Assiette forfaitaire mensuelle de l'assurance vieillesse des parents au foyer
+# -----------------------------------------------------------------------------
+# source_id: cnav_assiette_avpf
+#
+# Fichier écrit par scripts/fetch/cnav_assiette_avpf.py : ne pas modifier à la
+# main.
+#
+# La caisse d'allocations familiales cotise au régime général pour le parent au
+# foyer sur cette assiette, et c'est elle que le compte de l'assuré reçoit comme
+# salaire : elle entre dans son salaire annuel moyen (R. 351-29). L'article
+# R. 381-3 la fixe, par mois, à 169 fois le SMIC horaire en vigueur au 1er
+# juillet de l'année civile précédente — de 1985 à 2002, au SMIC multiplié par
+# les cinquante-deux douzièmes de la durée hebdomadaire légale, à la même date.
+# Le dépôt portait jusqu'au 5 octobre 2026 1 820 heures du SMIC de janvier de
+# l'année : 9 à 10 % de trop peu, 12,5 % avant 1982.
+#
+# UNE LIGNE PAR DATE DU BARÈME de la Cnav (« Assurance vieillesse des parents au
+# foyer (AVPF) »), y compris celles où seul le taux change : l'assiette d'une
+# ligne vaut à partir de sa date, et le salaire d'une année est la somme des
+# assiettes de ses mois. L'AVPF naît le 1er juillet 1972 : rien avant. Au-delà
+# de la dernière ligne, le modèle applique le texte, 169 heures du SMIC du
+# 1er juillet précédent.
+#
+# Métropole seulement : jusqu'en 1996, le barème donne aux Antilles, à la Guyane
+# et à La Réunion une assiette plus basse, que le dépôt ne distingue pas.
+#
+# En 2026, la circulaire 2025/33 fixe 2 031,38 € : 169 fois le SMIC du
+# 1er janvier 2026 (12,02 €), et non celui du 1er juillet 2025 (11,88 €) que
+# R. 381-3 désigne. Le modèle suit la caisse, qui porte ce montant au compte.
+#
+# fiabilite : `haute`. La caisse transcrit ce que sa circulaire fixe ; le texte
+# ne donne que la règle.
+date_effet,assiette_mensuelle,fiabilite
+1972-07-01,101.732278,haute
+1973-01-01,113.623302,haute
+1974-01-01,137.405348,haute
+1975-01-01,169.113219,haute
+1976-01-01,199.500882,haute
+1976-10-01,199.500882,haute
+1977-01-01,226.717605,haute
+1978-01-01,253.141593,haute
+1979-01-01,286.700195,haute
+1980-01-01,321.050008,haute
+1981-01-01,369.935834,haute
+1982-01-01,441.807923,haute
+1983-01-01,506.002680,haute
+1984-01-01,563.971419,haute
+1985-01-01,614.210992,haute
+1986-01-01,670.891537,haute
+1986-08-01,670.891537,haute
+1987-01-01,693.563755,haute
+1987-07-01,693.563755,haute
+1988-01-01,717.266528,haute
+1989-01-01,740.969301,haute
+1990-01-01,770.597768,haute
+1991-01-01,805.894289,haute
+1991-02-01,805.894289,haute
+1992-01-01,841.448449,haute
+1993-01-01,877.517886,haute
+1994-01-01,897.356077,haute
+1995-01-01,916.163712,haute
+1996-01-01,952.748427,haute
+1997-01-01,976.708839,haute
+1998-01-01,1015.869943,haute
+1999-01-01,1036.223411,haute
+2000-01-01,1049.105353,haute
+2001-01-01,1082.598402,haute
+2002-01-01,1127.230000,haute
+2003-01-01,1154.270000,haute
+2004-01-01,1215.110000,haute
+2004-07-01,1215.110000,haute
+2005-01-01,1286.090000,haute
+2006-01-01,1357.070000,haute
+2007-01-01,1397.630000,haute
+2008-01-01,1426.360000,haute
+2009-01-01,1471.990000,haute
+2010-01-01,1490.580000,haute
+2011-01-01,1497.340000,haute
+2012-01-01,1521.000000,haute
+2012-11-01,1521.000000,haute
+2013-01-01,1588.600000,haute
+2014-01-01,1593.670000,haute
+2015-01-01,1610.570000,haute
+2016-01-01,1624.090000,haute
+2017-01-01,1634.230000,haute
+2018-01-01,1649.440000,haute
+2019-01-01,1669.720000,haute
+2020-01-01,1695.070000,haute
+2021-01-01,1715.350000,haute
+2022-01-01,1732.250000,haute
+2023-01-01,1833.650000,haute
+2024-01-01,1946.880000,haute
+2025-01-01,1968.850000,haute
+2026-01-01,2031.380000,haute

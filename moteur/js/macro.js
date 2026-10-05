@@ -18,6 +18,12 @@ import { Fiabilite, SerieAnnuelle } from "./serie.js";
  */
 export const ANNEE_REVALORISATION_SUR_LES_PRIX = 1987;
 
+/** L'assurance vieillesse des parents au foyer naît le 1er juillet 1972. */
+export const ANNEE_CREATION_AVPF = 1972;
+
+/** Heures de SMIC de l'assiette MENSUELLE de l'AVPF (R. 381-3). */
+export const HEURES_AVPF_PAR_MOIS = 169;
+
 export class DonneesMacro {
   constructor(paquet, scenarioProjection = null, trajectoireEmploi = null) {
     this.paquet = paquet;
@@ -73,7 +79,15 @@ export class DonneesMacro {
     this.plafond_securite_sociale = this._plafond(serie("pass"), hypotheses);
     this.smic_horaire = this._prolongeParSalaire(serie("smic_horaire"), "smic_horaire",
                                                  paquet.smic_horaire_releve ?? null);
+    /** La dernière année du barème du SMIC, et son dernier relèvement. */
+    this._smicPublie = [serie("smic_horaire").derniereAnnee, paquet.smic_horaire_releve ?? null];
     this.heures_par_trimestre = serie("heures_par_trimestre");
+    /**
+     * L'assiette forfaitaire MENSUELLE de l'AVPF à chaque date du barème de la
+     * Cnav, `[[AAAA-MM-JJ, euros], …]`, du 1er juillet 1972 au dernier publié.
+     */
+    this.assietteAvpf = paquet.assiette_avpf ?? [];
+    this._revenusAvpf = new Map();
 
     this._coefficientsPrix = new Map();
     this._coefficientsSalaires = new Map();
@@ -82,13 +96,25 @@ export class DonneesMacro {
      * d'effet : `{ annee, mois, coefficients }`, où `coefficients`
      * associe une année de perception à son coefficient.
      */
-    this.revalorisationPorteeAuCompte = (paquet.revalorisation_salaires || []).map(
+    const colonnes = (cle) => (paquet[cle] || []).map(
       ([annee, mois, premiere, valeurs]) => ({
         annee,
         mois,
         coefficients: new Map(valeurs.map((v, rang) => [premiere + rang, v])),
+        derniere: premiere + valeurs.length - 1,
       }),
     );
+    this.revalorisationPorteeAuCompte = colonnes("revalorisation_salaires");
+    /**
+     * Les colonnes d'AVANT octobre 2017, de l'arrêté du 14 mai 1946 à celle
+     * d'octobre 2015 : servies seulement à la date où elles sont en vigueur,
+     * jamais par rapport de deux de leurs valeurs. Voir le Python.
+     */
+    this.revalorisationPorteeAuCompteAnciennes = colonnes("revalorisation_salaires_anciennes");
+    /** Toutes les colonnes, anciennes et récentes, triées par date d'effet. */
+    this._colonnesEnVigueur = [
+      ...this.revalorisationPorteeAuCompteAnciennes, ...this.revalorisationPorteeAuCompte,
+    ].sort((a, b) => a.annee - b.annee || a.mois - b.mois);
     /** Dernière année de liquidation que les circulaires publiées couvrent. */
     this.derniereLiquidationRevalorisee = this.revalorisationPorteeAuCompte.length
       ? this.revalorisationPorteeAuCompte[
@@ -305,6 +331,82 @@ export class DonneesMacro {
   }
 
   /**
+   * Le SMIC horaire en vigueur le 1er juillet de cette année : le barème de
+   * janvier, ou, la dernière année publiée, le relèvement d'avant juillet qui
+   * l'a remplacé. Voir le Python.
+   */
+  smicHoraireAu1erJuillet(annee) {
+    const [derniere, releve] = this._smicPublie;
+    if (annee === derniere && releve !== null && releve[0] <= 7) {
+      return releve[1];
+    }
+    return this.smic_horaire.valeur(annee);
+  }
+
+  /**
+   * Le salaire qu'une année ENTIÈRE d'assurance vieillesse des parents au foyer
+   * porte au compte : la somme des assiettes mensuelles de la Cnav sur ses douze
+   * mois, rien avant juillet 1972 ; au-delà du barème, 169 heures par mois du
+   * SMIC du 1er juillet précédent (R. 381-3). Voir le Python.
+   */
+  revenuAvpf(annee) {
+    const connu = this._revenusAvpf.get(annee);
+    if (connu !== undefined) {
+      return connu;
+    }
+    const datees = this.assietteAvpf;
+    let total;
+    if (datees.length > 0 && annee <= Number(datees[datees.length - 1][0].slice(0, 4))) {
+      total = 0.0;
+      for (let mois = 1; mois <= 12; mois += 1) {
+        const jour = `${String(annee).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
+        let rang = 0;
+        while (rang < datees.length && datees[rang][0] <= jour) {
+          rang += 1;
+        }
+        if (rang > 0) {
+          total += datees[rang - 1][1];
+        }
+      }
+    } else if (annee < ANNEE_CREATION_AVPF) {
+      total = 0.0;
+    } else {
+      total = 12 * HEURES_AVPF_PAR_MOIS * this.smicHoraireAu1erJuillet(annee - 1);
+    }
+    this._revenusAvpf.set(annee, total);
+    return total;
+  }
+
+  /**
+   * La colonne que la caisse oppose à une liquidation du premier jour de ce
+   * mois : la plus récente dont la date d'effet ne lui est pas postérieure, qui
+   * vaut jusqu'à la suivante. `null` avant la première, et après l'année de la
+   * dernière. Voir le Python.
+   */
+  colonneDeRevalorisationEnVigueur(annee, mois = 1) {
+    const colonnes = this._colonnesEnVigueur;
+    let bas = 0;
+    let haut = colonnes.length;
+    while (bas < haut) {
+      const milieu = (bas + haut) >> 1;
+      const colonne = colonnes[milieu];
+      if (colonne.annee < annee || (colonne.annee === annee && colonne.mois <= mois)) {
+        bas = milieu + 1;
+      } else {
+        haut = milieu;
+      }
+    }
+    const rang = bas - 1;
+    if (rang < 0) {
+      return null;
+    }
+    if (rang === colonnes.length - 1 && annee > colonnes[rang].annee) {
+      return null;
+    }
+    return colonnes[rang];
+  }
+
+  /**
    * Revalorisation d'un salaire PORTÉ AU COMPTE, telle que l'arrêté la fixe.
    *
    * C'est la grandeur qui commande le salaire annuel moyen : la moyenne porte
@@ -314,12 +416,10 @@ export class DonneesMacro {
    * l'approchait par « les salaires jusqu'en 1986, les prix depuis », ce qui
    * SUR-revalorisait les salaires anciens de 12 % sur quarante ans.
    *
-   * Trois chemins, du plus sûr au moins sûr : la colonne PUBLIÉE pour cette
-   * année de liquidation quand la Cnav l'a publiée au 1er janvier ; sinon la
-   * colonne publiée la PLUS PROCHE, par rapport de deux de ses valeurs — ce qui
-   * divise la dérive par dix ; hors de toute colonne, l'ancienne approximation,
-   * ancrée sur la borne connue quand il y en a une. `docs/limites.md` dit ce que
-   * chacun coûte.
+   * D'abord la colonne EN VIGUEUR à la date de liquidation, que la caisse
+   * oppose sans calcul — un salaire plus récent qu'elle n'a encore rien reçu ;
+   * sinon le rapport de deux valeurs de la colonne récente la plus proche
+   * (`coefficientRevalorisationParRapport`). Voir le Python.
    */
   coefficientRevalorisationPorteeAuCompte(depart, arrivee, moisArrivee = 1) {
     if (arrivee === depart) {
@@ -327,6 +427,33 @@ export class DonneesMacro {
     }
     if (arrivee < depart) {
       return 1.0 / this.coefficientRevalorisationPorteeAuCompte(arrivee, depart);
+    }
+    const enVigueur = this.colonneDeRevalorisationEnVigueur(arrivee, moisArrivee);
+    if (enVigueur !== null) {
+      if (enVigueur.coefficients.has(depart)) {
+        return enVigueur.coefficients.get(depart);
+      }
+      if (depart > enVigueur.derniere) {
+        return 1.0;
+      }
+    }
+    return this.coefficientRevalorisationParRapport(depart, arrivee, moisArrivee);
+  }
+
+  /**
+   * La revalorisation par RAPPORT de deux valeurs d'une colonne récente : la
+   * colonne de l'année d'arrivée en vigueur à son mois, sinon la PLUS PROCHE —
+   * ce qui divise la dérive par dix —, hors de toute colonne l'ancienne
+   * approximation, ancrée sur la borne connue quand il y en a une. C'est le
+   * taux annuel du mode d'indexation `revalorisation_portee_au_compte`. Voir le
+   * Python.
+   */
+  coefficientRevalorisationParRapport(depart, arrivee, moisArrivee = 1) {
+    if (arrivee === depart) {
+      return 1.0;
+    }
+    if (arrivee < depart) {
+      return 1.0 / this.coefficientRevalorisationParRapport(arrivee, depart);
     }
     const colonnes = this.revalorisationPorteeAuCompte;
     if (colonnes.length === 0) {

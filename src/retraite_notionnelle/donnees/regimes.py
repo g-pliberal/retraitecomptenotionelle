@@ -218,8 +218,15 @@ class PeriodeRegime:
     #: régimes spéciaux ont la leur, calendaire, non modélisée.
     duree_proratisation_par_generation: bool
     #: Le nombre d'années retenues au salaire de référence suit-il la
-    #: génération ? Vrai depuis la loi Balladur (dix à vingt-cinq années).
-    salaire_reference_par_generation: bool
+    #: génération ? Vrai depuis la loi Balladur (dix à vingt-cinq années) ;
+    #: ``"independants"`` pour les artisans et les commerçants, dont la table
+    #: monte deux fois plus lentement (R. 634-1-1).
+    salaire_reference_par_generation: bool | str
+    #: La fiche datée qui dit, à la date d'effet, comment se forme le salaire
+    #: annuel moyen (``salaire_annuel_moyen``, ``revenu_annuel_moyen_independants``) ;
+    #: ``None`` : la moyenne annuelle des meilleures années, toute année de
+    #: revenu comprise.
+    regles_du_salaire_annuel_moyen: str | None
     #: Âge en deçà duquel la durée liquidable est PLAFONNÉE, et ce plafond en
     #: trimestres. Les marins sont seuls à porter cette règle : l'article R. 13
     #: de leur code fixe « le maximum des annuités liquidables dans les pensions
@@ -1223,6 +1230,7 @@ INTERRUPTEURS: dict[str, object] = {
     "decote_par_generation": False,
     "duree_proratisation_par_generation": False,
     "salaire_reference_par_generation": False,
+    "regles_du_salaire_annuel_moyen": None,
     "decote_annulee_par_la_duree": True,
     "majoration_d_ajournement": False,
     "ajournement_par_annee_d_assurance": False,
@@ -1444,9 +1452,10 @@ class CatalogueRegimes:
                 duree_proratisation_par_generation=bool(
                     p.get("duree_proratisation_par_generation", False)
                 ),
-                salaire_reference_par_generation=bool(
-                    p.get("salaire_reference_par_generation", False)
+                salaire_reference_par_generation=(
+                    p.get("salaire_reference_par_generation") or False
                 ),
+                regles_du_salaire_annuel_moyen=p.get("regles_du_salaire_annuel_moyen"),
                 duree_maximum_avant_age=(
                     None if p.get("duree_maximum_avant_age") is None
                     else float(p["duree_maximum_avant_age"])
@@ -1959,6 +1968,9 @@ DRAPEAUX_PAR_GENERATION = (
     # porte lit le taux de chaque trimestre de surcote à sa date, et absorbe
     # donc les changements de taux sans coupure.
     "surcote_bareme",
+    # De même la fiche datée du salaire annuel moyen : une période qui y
+    # renvoie lit la version de la date d'effet de chaque pension.
+    "regles_du_salaire_annuel_moyen",
 )
 
 

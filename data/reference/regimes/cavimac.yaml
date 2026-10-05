@@ -44,6 +44,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 2028
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -88,6 +89,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 2028
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -126,6 +128,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 2028
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -164,6 +167,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 2028
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -208,6 +212,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -246,6 +251,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -288,6 +294,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -326,6 +333,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -370,6 +378,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -402,6 +411,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
@@ -434,6 +444,7 @@ periodes:
     decote_par_generation: decote_regime_general
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen

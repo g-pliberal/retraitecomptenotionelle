@@ -5554,16 +5554,16 @@ de l'étape 4 de l'action 142, suite.
 
 ### 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris — `en cours`
 
-**Reprise, au 5 octobre 2026.** Fait : l'étape 1 et son relevé repris sur
-les 69 modèles (279 points au registre, 145 écarts) ; l'étape 15, le minimum
-contributif daté — chaque revalorisation depuis 1983, la règle en huit
-versions, la proratisation tous régimes des polypensionnés —, dont les cinq
-points du registre sont `repris` ; de l'étape 2, le 1 % maladie, la CSG du
-foyer et les non-résidents (leurs notes). Reste : les étapes 2 à 14 et 16 à 19, une par
-session, et les choix de l'étape 13. Commencer par l'étape 16, les assiettes
-et les séries du régime général, que l'API des barèmes de la Cnav tranche
-presque toutes ; puis la suite de 2. Le registre dit, au chantier de chaque
-étape (« 138.16 »…), ce que chaque modèle en fait et où le lire.
+**Reprise, au 5 octobre 2026.** Fait : l'étape 1 et son relevé (279 points,
+145 écarts) ; l'étape 15, le minimum contributif daté ; l'étape 16 sauf un
+point — le salaire annuel moyen daté de 1945 à 2004, la table des artisans et
+commerçants, l'assiette de l'AVPF, les colonnes de revalorisation de 1946 à
+2015, l'IGRANTE de 1948 ; de l'étape 2, le 1 % maladie, la CSG du foyer et les
+non-résidents (leurs notes). Reste de l'étape 16 : les coefficients de l'Agirc
+d'avant 1955 et de l'Arrco d'avant 1965, dont il faut d'abord trouver les
+textes de 1947 et de 1961. Puis la suite de 2, l'ASPA du couple, les étapes 3
+à 14 et 17 à 20, une par session, et les choix de l'étape 13. Le registre dit,
+au chantier de chaque étape (« 138.16 »…), ce qu'en fait chaque modèle.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais qu'on regarde les modèles de
 simulation qui existent et qu'on les compare à notre projet. Il faut que l'on
@@ -6009,6 +6009,83 @@ décret n° 84-995, dont l'index ne garde que le titre.
     2023. Lire la règle dans l'accord du 17 novembre 2017 ; dater la valeur au
     mois dans les deux moteurs ; les témoins de simulation bougeront, et
     l'écart déclaré de `tests/test_trajectoire.py` tombera.
+
+**Demande**, le 4 octobre 2026 : « passe à l'étape 16 dans une nouvelle
+session ».
+
+**Fait, le 5 octobre 2026 : l'étape 16, les assiettes et les séries du régime
+général, sauf un point.** Chaque point du relevé a été relu au texte, dans les
+index LEGI et JORF du dépôt — R. 351-29 dans toutes ses rédactions, R. 634-1
+et R. 634-1-1, R. 173-3-2, R. 381-3, les décrets n° 72-1229, 2004-144 et
+2025-1409, l'annexe de l'arrêté du 17 février 1960 —, puis chez la caisse,
+par l'API de sa base de législation : l'ordonnance de 1945, quatre circulaires
+ministérielles de 1946 à 1961, les circulaires Cnav 1/73, 95/94, 2004/27 et
+2025/33, deux exposés, cinq barèmes. Les modèles avaient raison partout où ils
+disaient le dépôt en défaut, sauf EDIFIS sur les taux de cotisation, que le
+dépôt portait année par année depuis le 14 septembre. Ce qui change :
+
+- *le salaire annuel moyen daté*, en cinq versions de la fiche
+  `salaire_annuel_moyen`, que le moteur lit à la date d'effet : les dix
+  dernières années d'assurance avant soixante ans, et, de juillet 1948 à 1972,
+  avant l'entrée en jouissance si c'est mieux ; les dix meilleures depuis
+  1973 ; la somme des salaires rapportée aux trimestres, assimilés compris, et
+  multipliée par quatre jusqu'au 30 juin 1995 ; sans les années qui ne valident
+  aucun trimestre depuis 2004. Les salariés agricoles et les cultes suivent
+  (L. 742-3 du code rural, L. 382-27) ;
+- *les artisans et les commerçants* : leur table du nombre d'années, deux fois
+  plus lente, certifiée sur R. 634-1-1, jusqu'aux pensions de 2025, la règle
+  commune de R. 173-3-2 ensuite, et les années validantes depuis 2004 (fiche
+  `revenu_annuel_moyen_independants`) ;
+- *l'assiette de l'AVPF*, le barème de la Cnav de juillet 1972 à 2026 — 169
+  heures par mois du SMIC du 1er juillet précédent, rien avant juillet 1972 ;
+  en 2026, la caisse prend le SMIC de janvier, et le modèle la suit ;
+- *les colonnes de revalorisation d'avant 2017*, que `limites.md` croyait
+  introuvables : quatre-vingt-huit, de l'arrêté du 14 mai 1946 à octobre 2015,
+  lues sur la page des coefficients d'avant 2013 de la caisse (son script de
+  déclaration) et dans deux barèmes. Une liquidation lit la colonne en vigueur
+  à sa date d'effet, et non plus le rapport de deux valeurs de la colonne de
+  2017 ; le mode d'indexation du compte qui lit le taux annuel des arrêtés
+  garde ce rapport. Le récupérateur corrige une date — la colonne « 1958 » est
+  celle de l'arrêté d'avril 1957 — et deux valeurs mal ponctuées ;
+- *le salaire de référence de 1948 de l'IPACTE et de l'IGRANTE* : 37 anciens
+  francs, 0,056406 €, et non 0,56 €.
+
+*Les effets.* Au scénario 1, 116 témoins sur 727 bougent ; les scénarios 2, 4
+et 6, aucun. De −26,4 % pour une assurée née en 1910, partie en 1970 — les dix
+dernières années lui retirent 16 % de son salaire moyen, la colonne en vigueur
+18 % — à +3,1 % pour un commerçant né en 1945, dont le revenu moyen porte sur
+dix-sept années au lieu de vingt-deux. La plus lourde des causes est la colonne
+en vigueur : jusqu'en 1993, la revalorisation de janvier ne touchait pas
+encore le salaire de l'année close, et le rapport des colonnes de 2017 la lui
+ajoutait, de 4 % pour un départ de 1989 à 9 % pour 1979 et 16 % pour 1973. Au
+README, le cumul passé du système 2 passe de 2 874 à 2 932 Md€ : +42,9 pour
+la colonne en vigueur, +13,8 pour les règles datées, +2,4 pour l'AVPF, −0,8
+pour la table des indépendants, chaque cause neutralisée à son tour sur le
+`main` du matin (de 2 876 à 2 935) ; celui du système actuel, calé sur la
+dépense observée, ne bouge pas, et l'avenir à peine (moins d'un milliard en
+2070). Sous WSL, les 608 témoins que l'étape ne touche pas sont sortis
+identiques au bit près à `main`.
+
+*Ce que la suite a appris.* L'oracle d'OpenFisca voulait l'artisan et le
+commerçant égaux au salarié : c'est faux en droit pour les générations 1935 à
+1952 parties avant 2026, dont le revenu moyen retient moins d'années ; à qui
+l'on prête la table du régime général, ils le redeviennent au centime sur les
+dix profils. L'effet mesuré de l'AVPF tombe à zéro sur la grille : il venait
+tout entier des générations 1920 et 1925, à qui le modèle portait une AVPF de
+1949 à 1958, avant qu'elle n'existe, et sa ligne dit maintenant pourquoi elle
+est vide. La correction de la page Méthode passe de +5,0 à +5,5 points pour
+la génération 1920 ; à l'accueil, la baisse médiane de la pension d'un
+retraité d'aujourd'hui, de 27 à 28 %.
+
+Reste de l'étape 16 : les coefficients d'anticipation et d'ajournement de
+l'Agirc d'avant 1955 et de l'Arrco d'avant 1965, dont les textes de 1947 et
+de 1961 restent à trouver (le point des barèmes de l'IPP, toujours
+`a_reprendre`). Nés de la lecture : le calcul trimestriel du revenu moyen des
+indépendants que la Cnav range dans ses anciennes dispositions, à dater, et
+leurs années de 2018 à 2025, que la caisse moyenne à part (étape 18) ; les
+années de rachat et les indemnités journalières de maternité au salaire annuel
+moyen ; les trimestres que le motif « éducation d'un enfant » valide avant
+juillet 1972, quand l'AVPF n'existait pas.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 

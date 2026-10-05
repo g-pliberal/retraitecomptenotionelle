@@ -370,14 +370,15 @@ ANNEE_PARTAGEE = (
     "entre le privé et la fonction publique y valide quatre trimestres au régime général, "
     "pour un mois de privé (cas type 10), quatre et un au chômage (cas type 3), au-delà "
     "des quatre que R. 351-5 permet (fiche un_statut_par_annee) ; le relevé du dépôt n'en "
-    "porte qu'une ligne")
+    "porte qu'une ligne, et l'année d'un mois de privé qui ouvre la carrière du cas type "
+    "10, sans trimestre au dépôt, sort de son salaire annuel moyen depuis 2004 (R. 351-29, "
+    "fiche salaire_annuel_moyen), quand TRAJECTOiRE l'y garde")
 AVPF_PAR_DOUZE = (
     "l'AVPF du cas type 4 : le script des cas types de TRAJECTOiRE la vaut douze fois "
     "l'assiette annuelle (`montantAvpf = dureeEnMois * smicAVPF`, smicAVPF étant déjà "
     "annuel), que le plafond borne : ses années d'AVPF entrent au salaire annuel moyen "
-    "au plafond ; le dépôt, de son côté, la vaut 1 820 heures de SMIC de l'année, quand "
-    "R. 381-3 dit 169 heures par mois au SMIC du 1er juillet précédent (registre, "
-    "138.16) ; aucun des deux n'a raison")
+    "au plafond ; le dépôt la vaut au barème de la Cnav, 169 heures par mois au SMIC du "
+    "1er juillet précédent (R. 381-3, fiche avpf) ; l'écart est le sien")
 CHOMAGE_HORS_PRORATA = (
     "le chômage du cas type 3 : TRAJECTOiRE range ses trimestres dans une caisse « "
     "Chômage » qui n'entre pas dans la durée du régime général, dont le coefficient de "
@@ -482,11 +483,11 @@ ECARTS.update(_ecarts(ANNEE_PARTAGEE, "trimestres", {"cor_10_1970": -2.0, "cor_3
 ECARTS.update(_ecarts(ANNEE_PARTAGEE, "carriere_longue", {"cor_10_1970": -1.0}, 1e-6))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE, "taux", {"cor_10_1970": -0.025}, 1e-6))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE + " ; et " + CHAINE_SAM, "regime_general", {
-    "cor_10_1955": 0.0209, "cor_10_1960": -0.0429, "cor_10_1963": -0.0242,
-    "cor_10_1964": -0.0934}, 0.002))
+    "cor_10_1955": 0.0923, "cor_10_1960": -0.0429, "cor_10_1963": -0.0242,
+    "cor_10_1964": -0.0323}, 0.002))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE + " ; et " + CHAINE_SAM, "salaire_annuel_moyen", {
-    "cor_10_1955": 0.0209, "cor_10_1960": 0.0254, "cor_10_1963": -0.0242,
-    "cor_10_1964": -0.0934}, 0.002))
+    "cor_10_1955": 0.0923, "cor_10_1960": 0.0254, "cor_10_1963": -0.0242,
+    "cor_10_1964": -0.0323}, 0.002))
 ECARTS.update(_ecarts(AVPF_PAR_DOUZE + " ; et " + CHAINE_SAM, "regime_general", {
     "cor_4_1955": -0.0618, "cor_4_1960": -0.0967, "cor_4_1963": -0.1091}, 0.002))
 ECARTS.update(_ecarts(AVPF_PAR_DOUZE + " ; et " + CHAINE_SAM, "salaire_annuel_moyen", {

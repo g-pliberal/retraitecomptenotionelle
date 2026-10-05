@@ -172,6 +172,15 @@ SUBSTITUTIONS = {"arrco": ("unirs", 1999)}
 #:   1960 (LEGIARTI000006381707). OpenFisca-France-Pension porte 0,130 € sur
 #:   la série IPACTE — la seule des quatre-vingt-dix-huit clés où elle diverge
 #:   de la série IGRANTE, qui dit 0,113. 74 F ÷ 6,55957 ÷ 10 = 0,112812 €.
+#: * Le salaire de référence de l'IPACTE et de l'IGRANTE pour 1948 : « 37 »
+#:   anciens francs, colonne « Salaire de référence » de l'annexe de l'arrêté
+#:   du 17 février 1960 (LEGIARTI000006381707), qui donne 26 pour 1947 et 42
+#:   pour 1949. OpenFisca-France-Pension porte 0,56 € pour 1948 sur les deux
+#:   séries, dix fois trop, quand ses valeurs de 1947 et de 1949 (0,040 et
+#:   0,064) sont justes : une décimale glissée dans la conversion, que les
+#:   barèmes de l'IPP, d'où elle vient, n'ont pas (0,37 F). 37 F ÷ 100 ÷
+#:   6,55957 = 0,056406 € : les points acquis en 1948 sortaient dix fois trop
+#:   peu nombreux.
 #: * Le taux d'appel de l'IPACTE et de l'IGRANTE, 1951-1970. Les décrets
 #:   51-1445 (art. 7) et 59-1569 (art. 2) fixent des taux CONTRACTUELS — la
 #:   réduction des cotisations « n'affecte pas le calcul des points » — sans
@@ -185,12 +194,15 @@ COMPLEMENTS = {
     "agirc_arrco|2019|taux_appel": 1.27,
     "ipacte|1955|salaire_reference": 0.112812,
     "igrante|1955|salaire_reference": 0.112812,
+    "ipacte|1948|salaire_reference": 0.056406,
+    "igrante|1948|salaire_reference": 0.056406,
 }
 ORIGINE_COMPLEMENTS = (
     "Valeurs saisies dans le texte : accord national interprofessionnel du "
     "17 novembre 2017, article 3 (taux d'appel de 127 %) ; arrêté du 12 décembre "
     "1951, article 8, et annexe de l'arrêté du 17 février 1960 (salaire de "
-    "référence 1955 : 74 F)"
+    "référence 1955 : 74 F) ; annexe de l'arrêté du 17 février 1960 (salaire de "
+    "référence 1948 : 37 F)"
 )
 #: Prolongements assumés, sans texte : niveau `estimee`.
 COMPLEMENTS_ESTIMES = {

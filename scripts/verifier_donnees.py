@@ -2602,6 +2602,18 @@ def source_annees_salaire_reference() -> dict[tuple, float]:
     return _table_legi("annees_salaire_reference")
 
 
+def source_annees_revenu_annuel_moyen_independants() -> dict[tuple, float]:
+    """Années retenues au revenu annuel moyen des artisans et des commerçants,
+    par génération — R. 634-1-1.
+
+    Dix années jusqu'à la génération 1933, une de plus toutes les deux
+    générations jusqu'à quinze pour 1942-1943, puis une par génération jusqu'à
+    vingt-cinq pour les assurés nés après 1952 : deux fois plus lentement que
+    pour les salariés, à qui le modèle les alignait.
+    """
+    return _table_legi("annees_revenu_annuel_moyen_independants")
+
+
 def source_heures_par_trimestre() -> dict[tuple, float]:
     """Heures de SMIC à cotiser pour valider un trimestre — R. 351-9.
 
@@ -5641,7 +5653,8 @@ CERTIFICATIONS = (
         colonne="valeur",
         source=source_valeurs_point_texte,
         origine="Valeurs saisies dans le texte : ANI du 17 novembre 2017, art. 3 ; "
-                "arrêté du 12 décembre 1951, art. 8 (LEGIARTI000006381673)",
+                "arrêté du 12 décembre 1951, art. 8 (LEGIARTI000006381673) ; "
+                "annexe de l'arrêté du 17 février 1960 (LEGIARTI000006381707)",
         decimales=6,
         tolerance=5e-7,
         niveau="moyenne",
@@ -5754,6 +5767,17 @@ CERTIFICATIONS = (
         decimales=0,
         tolerance=0.5,
         unite=" trimestres",
+    ),
+    Certification(
+        nom="annees_revenu_annuel_moyen_independants",
+        chemin=REFERENCE / "legislation" / "annees_revenu_annuel_moyen_independants.csv",
+        cles=("generation",),
+        colonne="annees",
+        source=source_annees_revenu_annuel_moyen_independants,
+        origine="DILA, base LEGI, code de la sécurité sociale R. 634-1-1",
+        decimales=0,
+        tolerance=0.5,
+        unite=" années",
     ),
     Certification(
         nom="annees_salaire_reference",

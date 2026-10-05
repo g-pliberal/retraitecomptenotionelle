@@ -272,11 +272,28 @@ champs_periode:
   salaire_reference_par_generation:
     description: >-
       Le nombre d'années retenues au salaire annuel moyen se lit-il à l'ANNÉE
-      DE NAISSANCE, dans `legislation/annees_salaire_reference.csv` ? Ne vaut
-      que pour un `salaire_reference` en meilleures années.
+      DE NAISSANCE ? `true` dans `legislation/annees_salaire_reference.csv`, la
+      table des salariés ; `independants` dans
+      `legislation/annees_revenu_annuel_moyen_independants.csv`, celle des
+      artisans et des commerçants (R. 634-1-1), tant que la version de la
+      fiche `revenu_annuel_moyen_independants` le dit. Ne vaut que pour un
+      `salaire_reference` en meilleures années.
     renvoi: true
-    valeurs: [true]
+    valeurs: [true, independants]
     defaut: false
+
+  regles_du_salaire_annuel_moyen:
+    description: >-
+      La fiche datée dont le moteur lit, à la date d'effet de la pension,
+      comment se forme le salaire annuel moyen : les dix dernières années ou
+      les meilleures, la moyenne par année ou par trimestre, les années
+      écartées. `salaire_annuel_moyen` pour le régime général et ceux qui en
+      suivent les règles (R. 351-29), `revenu_annuel_moyen_independants` pour
+      les artisans et les commerçants (R. 634-1). Absent, la moyenne annuelle
+      des meilleures années, toute année de revenu comprise.
+    renvoi: true
+    valeurs: [salaire_annuel_moyen, revenu_annuel_moyen_independants]
+    defaut: null
 
   taux_plein: "taux de liquidation maximal (0.50 = 50 %)"
 

@@ -1,16 +1,47 @@
 schema_version: 1
 id: avpf
 intitule: >-
-  Assurance vieillesse des parents au foyer : salaire au SMIC porté au compte pendant
-  l'interruption pour enfant.
+  Assurance vieillesse des parents au foyer : pendant l'interruption pour enfant, depuis
+  le 1er juillet 1972, un salaire porté au compte du régime général sur une assiette
+  forfaitaire de 169 heures par mois du SMIC du 1er juillet de l'année précédente.
 etat: transcrite
-effet: Carrières interrompues pour enfant.
+effet: >-
+  Carrières interrompues pour enfant. L'assiette est celle que la Cnav publie, date par
+  date, de juillet 1972 à 2026 ; le modèle portait 1 820 heures du SMIC de janvier de
+  l'année, 9 à 10 % de trop peu depuis 1982, 12,5 % avant, et une assiette avant 1972,
+  quand l'AVPF n'existait pas.
 sources:
-  lu_le: 2026-09-17
-  prochaine_relecture: 2027-06-30
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Relire l'assiette de chaque 1er janvier (circulaire Cnav « Revalorisation du Smic »,
+    cnav_assiette_avpf.py). En 2026, la circulaire 2025/33 fixe 2 031,38 € par mois, 169
+    fois le SMIC de janvier 2026 et non celui de juillet 2025 que R. 381-3 désigne :
+    voir si la caisse s'en explique.
   lectures:
   - type: legifrance
     reference: L. 381-1 CSS
     date: 2023-09-01
+  - type: legifrance
+    reference: >-
+      R. 381-3 CSS, rédactions de 1985 à 2002 (LEGIARTI000006750080 à 006750083 : le SMIC
+      multiplié par les cinquante-deux douzièmes de la durée hebdomadaire légale, au 1er
+      juillet de l'année précédente), d'octobre 2002 (LEGIARTI000006750084) et de
+      septembre 2023 (LEGIARTI000047961951) : « 169 fois le salaire horaire minimum de
+      croissance en vigueur au 1er juillet de l'année civile précédente »
+    date: 2026-10-05
+  - type: circulaire_cnav
+    reference: >-
+      barème « Assurance vieillesse des parents au foyer (AVPF) » de la base de
+      législation, par son API : l'assiette mensuelle du 1er juillet 1972 (667,32 F) au
+      1er janvier 2026 (2 031,38 €) ; circulaire 2025/33, point 2.7
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=cotisation_salaire_avpf_bar.aspx
+    date: 2026-10-05
+  - type: jorf
+    reference: loi n° 72-8 du 3 janvier 1972, « allocation de la mère au foyer » (JORFTEXT000000509305)
+    date: 1972-01-05
 textes_a_rattacher:
 - reference: L. 381-1 CSS
+- id: LEGIARTI000047961951
+  reference: R. 381-3 CSS, l'assiette forfaitaire

@@ -369,7 +369,7 @@ referents:
           l'« ABROGATION DE L'ART. L343 » et fixe l'« ENTREE EN
           VIGUEUR : 01-01-1973 ». Le changement date donc de 1973,
           pas de 1972 (écart E10).
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           Avant 1972, un trimestre se validait par un montant. De
@@ -444,7 +444,13 @@ referents:
           API de barèmes les tables d'avril 2013 et d'octobre 2015
           (revalorisation_coefficient_revalorisation_salaire_cotisation_04_2013_bar
           et …_10_2015_bar), que limites.md:822 croit inaccessibles.
-        etat: a_reprendre
+          Et toutes les autres : la page de ses coefficients d'avant
+          avril 2013 porte quatre-vingt-six colonnes, de l'arrêté du
+          14 mai 1946 à la circulaire 2012/35, lues le 5 octobre 2026
+          (cnav_revalorisation_salaires_anciennes.py) ; la colonne de
+          janvier 1994 y donne la table de l'arrêté du 24 janvier
+          1994.
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           L'IPP a la série complète du minimum contributif : chaque
@@ -499,7 +505,7 @@ referents:
           52/12 de la durée hebdomadaire légale. Barème Cnav
           cotisation_salaire_avpf_bar : 1 715,35 € en 2021, 2 031,38
           € en 2026.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           Pour les artisans et commerçants, le revenu annuel moyen
@@ -519,7 +525,7 @@ referents:
           au 1er janvier 2026) : « Onze années pour l'assuré né en
           1934 ou 1935 ; … Vingt années pour l'assuré né en 1948 ; …
           Vingt-quatre années pour l'assuré né en 1952 »
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           L'IPP a la majoration pour conjoint à charge de 1948 à
@@ -584,7 +590,11 @@ referents:
           : 0,0396 € en 1947, 0,0564 € en 1948, 0,064 € en 1949.
           L'erreur vient de la conversion faite par
           OpenFisca-France-Pension, pas de l'original de l'IPP.
-        etat: a_reprendre
+          Lu le 5 octobre 2026 au texte : annexe de l'arrêté du
+          17 février 1960 (LEGIARTI000006381707), colonne « Salaire
+          de référence », « 37 » [anciens francs] pour 1948, 26
+          pour 1947, 42 pour 1949.
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           L'IPP a le minimum de réversion de 1964 à 2021 et le
@@ -1279,7 +1289,7 @@ referents:
           définies par l'article R. 351-9 » ; absent de la rédaction
           de 1985 (LEGIARTI000006750038). CFDT Retraités et la
           presse spécialisée le redisent.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           Il porte le minimum de réversion du régime général de 1964
@@ -1741,7 +1751,7 @@ referents:
         verification: >-
           article R. 381-3 (LEGIARTI000047961951) : 169 fois le SMIC
           du 1er juillet de l'année précédente, par mois
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
     bilan: >-
       Til-Pension couvre le régime général, le RSI, la fonction
@@ -2373,7 +2383,7 @@ referents:
           au 1er juillet de l'année civile précédente » ; circulaire
           Cnav n° 2025-33, point 2.7 : « 2 031,38 euros » par mois
           en 2026.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           Il ouvre la liquidation anticipée du fonctionnaire parent
@@ -3484,7 +3494,7 @@ referents:
         verification: >-
           R. 351-29 CSS (LEGIARTI000006750042) ; voir
           calcul_pension.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
     bilan: >-
       Ce qu'il fait de mieux tient à la population et aux chroniques :
@@ -3629,7 +3639,7 @@ referents:
           prennent effet à compter du 1er janvier 2004 ». Sa
           trimestrialisation des salaires de la MSA et du RSI avant
           2017 (:1628) n'a pas été vérifiée.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           Il porte déjà, figées en janvier 2023, les règles de
@@ -3734,7 +3744,7 @@ referents:
           nombre d'années correspondant » (circulaire Cnav 95/94 du
           29 décembre 1994). La date exacte, 1er janvier ou 1er
           juillet 1995, se lit dans la circulaire.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           Il exclut du SAM, depuis 2004, les années qui ne valident
@@ -3746,7 +3756,7 @@ referents:
           [...] prises en compte dans le calcul du salaire de
           référence »)
         verification: R. 351-29 CSS (LEGIARTI000006750042).
-        etat: a_reprendre
+        etat: repris
         chantier: "138.16"
     bilan: >-
       Son code est désormais calcul_pension : CALIPER ne compte plus que
@@ -4060,8 +4070,16 @@ referents:
           D. 242-4 : LEGIARTI000029924557 (2015, 2016, dès 2017),
           LEGIARTI000048852488 (2,02 % dès 2024),
           LEGIARTI000053302465 (2,11 % en 2026) ; ses valeurs sont
-          celles du code.
-        etat: a_reprendre
+          celles du code. Le dépôt les portait déjà, année par année et
+          certifiés sur D. 242-4, depuis le 14 septembre 2026
+          (regimes/taux_cotisation_annuels.csv, que le chargeur des
+          fiches substitue aux moyennes de période) : le relevé a lu
+          les moyennes de la fiche, qui ne servent plus qu'au contrôle
+          de vraisemblance. Vérifié le
+          5 octobre 2026 : 15,45 % et 2,30 % de 2017 à 2023, 2,42 %
+          en 2024 et 2025, 2,51 % en 2026, au scénario 1 comme au
+          compte notionnel.
+        etat: repris
         chantier: "138.16"
       - quoi: >-
           Il calcule le revenu disponible d'un ménage type d'actifs

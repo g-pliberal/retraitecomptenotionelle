@@ -1341,12 +1341,23 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
       }
       return moteur.macro.coefficientRevalorisationSalaires(depart, arrivee);
     };
+  // LA RÈGLE DE LA DATE D'EFFET : les dix dernières années jusqu'en 1972, la
+  // moyenne par trimestre jusqu'en juin 1995, les années sans trimestre
+  // écartées depuis 2004. Voir le Python.
+  const regle = periode.regles_du_salaire_annuel_moyen
+    ? moteur.fichesDatees.regle(
+      periode.regles_du_salaire_annuel_moyen,
+      `${String(anneeLiquidation).padStart(4, "0")}-${String(moisLiquidation).padStart(2, "0")}-01`)
+    : null;
   // LE REVENU D'UNE ANNÉE, TOUTES ACTIVITÉS DU RÉGIME RÉUNIES : deux
   // activités qui versent au même régime, ou à deux régimes alignés que la
   // liquidation unique réunit, forment un seul revenu annuel, écrêté UNE fois
   // au plafond (R. 173-4-4-1, 1°). Une année d'une seule activité n'a qu'un
   // terme, et rien ne bouge.
   const parAnnee = new Map();
+  // Les trimestres de chaque année au régime, cotisés (AVPF comprise) puis
+  // assimilés : le dénominateur d'avant juillet 1995. Voir le Python.
+  const trimestres = new Map();
   for (const ligne of carriere.lignes) {
     if (ligne.annee >= anneeLiquidation) {
       continue;
@@ -1354,20 +1365,26 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     if (depuis !== null && ligne.annee < depuis) {
       continue;
     }
-    if (!coordonner.regimesDe(moteur, 
+    if (!coordonner.regimesDe(moteur,
       ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
       ligne.cotise ? ligne.revenu : ligne.revenu_reference,
       moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
     ).some((c) => codesAdmis.has(c))) {
       continue;
     }
+    const avpfDeLaLigne = !ligne.cotise && avpfOuvert && ligne.revenu_avpf > 0;
+    if (regle !== null) {
+      const compte = trimestres.get(ligne.annee) ?? [0, 0];
+      compte[ligne.cotise || avpfDeLaLigne ? 0 : 1] += ligne.trimestres_valides;
+      trimestres.set(ligne.annee, compte);
+    }
     let revenu;
     if (!ligne.cotise) {
       // Assurance vieillesse des parents au foyer : la CNAF cotise sur une
-      // assiette forfaitaire égale au SMIC, et ce salaire est PORTÉ AU
-      // COMPTE. C'est ce qui la distingue d'une période assimilée, laquelle
-      // valide des trimestres sans jamais ajouter de salaire.
-      if (!(avpfOuvert && ligne.revenu_avpf > 0)) {
+      // assiette forfaitaire, et ce salaire est PORTÉ AU COMPTE. C'est ce qui
+      // la distingue d'une période assimilée, laquelle valide des trimestres
+      // sans jamais ajouter de salaire.
+      if (!avpfDeLaLigne) {
         continue;
       }
       revenu = ligne.revenu_avpf;
@@ -1399,6 +1416,7 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
   }
 
   const revenus = [];
+  const anneesDesRevenus = [];
   // Le dernier revenu avant revalorisation, et son année : ce qu'une pension
   // différée revalorise autrement (voir plus bas).
   let dernierBrut = null;
@@ -1413,6 +1431,7 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     }
     dernierBrut = [annee, revenu];
     revenus.push(revenu * revaloriser(annee, anneeLiquidation));
+    anneesDesRevenus.push(annee);
   }
 
   if (revenus.length === 0) {
@@ -1420,6 +1439,25 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
   }
 
   const reference = periode.salaire_reference;
+  if (regle !== null
+      && (reference === "25_meilleures_annees" || reference === "10_meilleures_annees")) {
+    // Une année « valide » si son salaire, toutes activités du régime
+    // réunies, atteint le seuil d'un trimestre — ou si le relevé lui en
+    // reconnaît un. Voir le Python.
+    const validantes = new Set();
+    for (const [annee, [somme]] of parAnnee) {
+      if (trimestres.get(annee)[0] >= 1 || moteur.macro.trimestresValides(somme, annee) >= 1) {
+        validantes.add(annee);
+      }
+    }
+    return moyenneSelonLaRegle(
+      regle, anneesDesRevenus.map((annee, rang) => [annee, revenus[rang]]),
+      trimestres, validantes,
+      anneesRetenues !== null ? anneesRetenues : nombreDAnneesRetenues(
+        moteur, periode, carriere, generation, enfantsMajores),
+      carriere.annee_naissance + AGE_DES_DIX_DERNIERES_ANNEES,
+    );
+  }
   let retenus;
   if (anneesRetenues !== null) {
     retenus = [...revenus].sort((a, b) => b - a).slice(0, anneesRetenues);
@@ -1478,16 +1516,73 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
   return retenus.reduce((total, valeur) => total + valeur, 0.0) / retenus.length;
 }
 
+/** Les dix dernières années d'avant 1973 se comptent avant soixante ans. */
+export const AGE_DES_DIX_DERNIERES_ANNEES = 60;
+
+/**
+ * Le salaire annuel moyen que la version de la date d'effet forme : les années
+ * sans trimestre écartées depuis 2004, celles de deux trimestres assimilés
+ * avant 1973 ; les dix dernières avant 1973, les meilleures ensuite ; la somme
+ * rapportée aux trimestres jusqu'en juin 1995, au nombre d'années ensuite.
+ * Les sommes se font dans l'ordre du Python. Voir `moyenne_selon_la_regle`.
+ */
+export function moyenneSelonLaRegle(regle, valeurs, trimestres, validantes, nombre,
+  anneeSoixanteAns) {
+  let candidates = valeurs;
+  if (regle.annees_sans_trimestre === "exclues") {
+    candidates = candidates.filter(([annee]) => validantes.has(annee));
+  }
+  if (regle.annees_assimilees_exclues) {
+    candidates = candidates.filter(([annee]) => trimestres.get(annee)[1] < 2);
+  }
+  const avecAssimiles = regle.trimestres_comptes === "cotises_et_assimiles";
+  const moyenne = (retenues) => {
+    if (retenues.length === 0) {
+      return 0.0;
+    }
+    const somme = retenues.reduce((total, [, valeur]) => total + valeur, 0);
+    if (regle.calcul === "trimestriel") {
+      const denominateur = retenues.reduce((total, [annee]) => {
+        const [cotises, assimiles] = trimestres.get(annee);
+        return total + Math.min(4, cotises + (avecAssimiles ? assimiles : 0));
+      }, 0);
+      if (denominateur > 0) {
+        return somme * 4.0 / denominateur;
+      }
+    }
+    return somme / retenues.length;
+  };
+  if (regle.selection === "dernieres") {
+    const avantSoixante = candidates.filter(([annee]) => annee < anneeSoixanteAns);
+    const choix = [avantSoixante.slice(Math.max(0, avantSoixante.length - nombre))];
+    if (regle.avant_la_liquidation) {
+      choix.push(candidates.slice(Math.max(0, candidates.length - nombre)));
+    }
+    return Math.max(...choix.map(moyenne));
+  }
+  return moyenne([...candidates].sort((a, b) => b[1] - a[1]).slice(0, nombre));
+}
+
 /**
  * Le nombre des meilleures années que retient le salaire annuel moyen :
  * vingt-cinq, ou dix, selon la période, lu à la génération quand la période
- * le dit. Voir le Python.
+ * le dit — dans la table des artisans et des commerçants tant que la version
+ * de la date d'effet le dit. Voir le Python.
  */
 export function nombreDAnneesRetenues(moteur, periode, carriere, generation,
   enfantsMajores = 0) {
   let annees = periode.salaire_reference === "10_meilleures_annees" ? 10 : 25;
   if (periode.salaire_reference_par_generation && generation !== null) {
-    const parGeneration = moteur.anneesSalaireReference.annees(generation);
+    let table = moteur.anneesSalaireReference;
+    if (periode.salaire_reference_par_generation === "independants") {
+      const date = dateDEffet(carriere);
+      const regle = date === null ? null : moteur.fichesDatees.regle(
+        periode.regles_du_salaire_annuel_moyen || "revenu_annuel_moyen_independants", date);
+      if (regle === null || regle.table === "independants") {
+        table = moteur.anneesRevenuIndependants;
+      }
+    }
+    const parGeneration = table.annees(generation);
     if (parGeneration !== null) {
       annees = parGeneration[0];
     }

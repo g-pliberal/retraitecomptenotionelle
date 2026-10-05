@@ -1414,7 +1414,7 @@ def test_la_msa_des_salaries_agricoles_reproduit_le_regime_general(
 
 
 def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
-        oracle, simulateur):
+        oracle, simulateur, monkeypatch):
     """L'artisan et le commerçant rendent la pension du régime général.
 
     Ils relèvent d'un régime aligné, eux aussi : leur pension doit donc, à
@@ -1428,23 +1428,50 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
 
     Le moteur liquide maintenant ensemble un régime d'annuités et celui qui
     lui succède, sous les règles de la caisse qui aurait le dossier : un seul
-    salaire de référence, une seule proratisation, une seule ligne. Sur les
-    dix profils de l'oracle, l'artisan et le commerçant rendent exactement la
-    pension du régime général, comme la MSA — et donc, à la tolérance près,
-    celle d'OpenFisca.
+    salaire de référence, une seule proratisation, une seule ligne.
+
+    Un seul écart reste, et il est dans la loi : le revenu annuel moyen des
+    artisans et des commerçants nés de 1935 à 1952, pour les pensions prenant
+    effet avant 2026, porte sur moins d'années que le salaire annuel moyen
+    (R. 634-1-1 : vingt et une pour la génération 1949, au lieu de
+    vingt-cinq), donc sur de meilleures. Avec leur table, cinq profils de
+    l'oracle partent plus haut que le salarié — ceux de ces générations dont
+    la carrière compte plus d'années que la table n'en retient —, aucun plus
+    bas. Leur prête-t-on celle du régime général, l'artisan et le commerçant
+    rendent exactement la pension du salarié sur les dix profils, comme la
+    MSA — et donc, à la tolérance près, celle d'OpenFisca : la table est le
+    seul écart.
     """
+    plus_hauts = set()
     for code, entree in oracle["profils"].items():
         profil = entree["profil"]
         reference = _notre_calcul(simulateur, profil)
         for affiliation in ("artisan", "commercant"):
             nous = _notre_pension_alignee(simulateur, profil, affiliation)
             assert nous["morceaux"] == 1, (code, affiliation)
-            assert nous["montant"] == pytest.approx(
-                reference["pension_brute"], rel=1e-9), (code, affiliation)
+            assert nous["montant"] >= reference["pension_brute"] * (1 - 1e-9), (
+                code, affiliation)
+            if nous["montant"] > reference["pension_brute"] * (1 + 1e-9):
+                plus_hauts.add(code)
             assert nous["trimestres"] == reference["duree_assurance"], (code, affiliation)
             assert nous["taux_de_liquidation"] == pytest.approx(
                 entree["openfisca"]["taux_de_liquidation"],
                 abs=TOLERANCE_EXACTE), (code, affiliation)
+    assert plus_hauts == {
+        "carriere_incomplete_1945", "bas_salaire_1947", "carriere_complete_1948",
+        "depart_tardif_1949", "carriere_complete_1950",
+    }
+
+    actuel = simulateur.scenario_actuel
+    monkeypatch.setattr(actuel, "annees_revenu_independants",
+                        actuel.annees_salaire_reference)
+    for code, entree in oracle["profils"].items():
+        profil = entree["profil"]
+        reference = _notre_calcul(simulateur, profil)
+        for affiliation in ("artisan", "commercant"):
+            nous = _notre_pension_alignee(simulateur, profil, affiliation)
+            assert nous["montant"] == pytest.approx(
+                reference["pension_brute"], rel=1e-9), (code, affiliation)
             assert nous["montant"] == pytest.approx(
                 entree["openfisca"]["pension_brute"], rel=TOLERANCE_SALAIRE
             ), (code, affiliation)
@@ -1455,14 +1482,15 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
 
     À ``liquider_successions=False``, chaque nom de caisse est liquidé sur ses
     seules années, comme avant. La césure joue dans les deux sens — les
-    vingt-cinq meilleures années de chaque morceau peuvent être meilleures que
-    celles de la carrière entière — et l'écart va de −7,5 % à +6,7 % contre
-    OpenFisca. Le haut de la fourchette vient du barème DATÉ de la surcote :
-    coupé, le morceau CANCAVA d'un artisan parti tard servait la surcote au
-    taux plat de sa fiche de 2006 (0,75 %) à des trimestres accomplis de 2011
-    à 2015, qui valent 1,25 % — la césure cumulait deux erreurs, et l'une
-    compensait l'autre. C'est la mesure que `limites.md` §3 cite ; si elle
-    bouge, c'est la phrase qu'il faut changer.
+    meilleures années de chaque morceau peuvent être meilleures que celles de
+    la carrière entière — et l'écart va de −7,1 % à +9,4 % contre OpenFisca.
+    Le haut de la fourchette vient du barème DATÉ de la surcote : coupé, le
+    morceau CANCAVA d'un artisan parti tard servait la surcote au taux plat
+    de sa fiche de 2006 (0,75 %) à des trimestres accomplis de 2011 à 2015,
+    qui valent 1,25 % — la césure cumulait deux erreurs, et l'une compensait
+    l'autre. Il vient aussi de la table des indépendants (R. 634-1-1), que le
+    morceau aligné d'un assuré né en 1949 applique à ses seules années :
+    vingt et une retenues, au lieu de vingt-cinq.
     """
     coupes, ecarts = 0, []
     for code, entree in oracle["profils"].items():
@@ -1476,7 +1504,7 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
             ecarts.append(nous["montant"] / entree["openfisca"]["pension_brute"])
     assert coupes == 20
     assert 0.925 < min(ecarts) < 0.930, min(ecarts)
-    assert 1.060 < max(ecarts) < 1.070, max(ecarts)
+    assert 1.090 < max(ecarts) < 1.100, max(ecarts)
 
 
 # ---------------------------------------------------------------------------

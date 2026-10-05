@@ -50,6 +50,7 @@ periodes:
     duree_requise_trimestres: 120
     taux_plein: 0.40
     salaire_reference: 10_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.0860   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
     part_salariale: 0.3488   # du taux plafonné
@@ -99,6 +100,7 @@ periodes:
     duree_requise_trimestres: 120
     taux_plein: 0.40
     salaire_reference: 10_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.0860   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
     part_salariale: 0.3488   # du taux plafonné
@@ -125,6 +127,7 @@ periodes:
     taux_plein: 0.50
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
     part_salariale: 0.3343   # du taux plafonné
@@ -167,6 +170,7 @@ periodes:
     taux_plein: 0.50
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
     part_salariale: 0.3343   # du taux plafonné
@@ -191,6 +195,7 @@ periodes:
     taux_plein: 0.50
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
     part_salariale: 0.3343   # du taux plafonné
@@ -214,6 +219,7 @@ periodes:
     taux_plein: 0.50
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
     part_salariale: 0.3343   # du taux plafonné
@@ -240,6 +246,7 @@ periodes:
     taux_plein: 0.50
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
     part_salariale: 0.3343   # du taux plafonné
@@ -269,6 +276,7 @@ periodes:
     taux_plein: 0.50
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
     part_salariale: 0.3343   # du taux plafonné
@@ -299,6 +307,7 @@ periodes:
     age_taux_plein_par_generation: age_annulation_decote
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1461   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
     taux_cotisation_deplafonnee: 0.0044   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
@@ -330,6 +339,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1475   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
     taux_cotisation_deplafonnee: 0.0160   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
@@ -362,6 +372,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1487   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
     taux_cotisation_deplafonnee: 0.0170   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
@@ -393,6 +404,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1495   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
     taux_cotisation_deplafonnee: 0.0170   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
@@ -425,6 +437,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1533   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
     taux_cotisation_deplafonnee: 0.0210   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
@@ -457,6 +470,7 @@ periodes:
     salaire_reference_par_generation: salaire_annuel_moyen
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
     assiette: plafonnee
     taux_cotisation_retraite: 0.1545   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
     taux_cotisation_deplafonnee: 0.0241   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit

@@ -1,0 +1,49 @@
+# Nombre d'années retenues au revenu annuel moyen des ARTISANS ET COMMERÇANTS,
+# PAR GÉNÉRATION
+# ----------------------------------------------------------------------------
+# source_id: dila_legi_parametres_retraite, legifrance_textes
+#
+# Le revenu annuel moyen des artisans et des commerçants passe de dix à
+# vingt-cinq années DEUX FOIS PLUS LENTEMENT que le salaire annuel moyen du
+# régime général : onze années pour les assurés nés en 1934 ou 1935, douze pour
+# 1936 ou 1937, … quinze pour 1942 ou 1943, puis une par génération jusqu'à
+# vingt-quatre pour 1952, et vingt-cinq « aux assurés nés après 1952 » (article
+# R. 634-1-1 du code de la sécurité sociale, rédaction du 27 avril 2007,
+# LEGIARTI000006751727 ; les mêmes valeurs depuis la rédaction de 1993). Le
+# modèle leur appliquait la table du régime général, qui atteint vingt-cinq dès
+# 1948 : un commerçant né en 1948 avait son revenu moyen pris sur vingt-cinq
+# années au lieu de vingt.
+#
+# L'article est abrogé pour les pensions prenant effet à compter du 1er janvier
+# 2026 (décret n° 2025-1409, article 2, 42° et II) : l'article R. 173-3-2 fixe
+# alors vingt-cinq années, et pour les assurés nés avant 1948 le nombre de la
+# table du régime général. La fiche `revenu_annuel_moyen_independants` dit
+# laquelle des deux tables vaut à la date d'effet.
+#
+# D'OÙ VIENNENT CES VALEURS. De l'article R. 634-1-1, LU dans la base LEGI de la
+# DILA par `scripts/fetch/dila_legi_parametres_retraite.py`, qui refuse d'écrire
+# si la table n'a pas ses bornes (dix, vingt-cinq, onze pour 1935, vingt pour
+# 1948). L'exposé « Nombre d'années retenues » de la Cnav (circulaire RSI
+# 2007/033) donne la même table, génération par génération.
+generation,annees,fiabilite
+1900,10,certifiee
+1934,11,certifiee
+1935,11,certifiee
+1936,12,certifiee
+1937,12,certifiee
+1938,13,certifiee
+1939,13,certifiee
+1940,14,certifiee
+1941,14,certifiee
+1942,15,certifiee
+1943,15,certifiee
+1944,16,certifiee
+1945,17,certifiee
+1946,18,certifiee
+1947,19,certifiee
+1948,20,certifiee
+1949,21,certifiee
+1950,22,certifiee
+1951,23,certifiee
+1952,24,certifiee
+1953,25,certifiee

@@ -631,8 +631,9 @@ def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir, compte
 RECONSTITUTION_DEPUIS = 2000
 #: Le pire écart admis, depuis 2000, entre la base du modèle et la dépense
 #: observée. Un cliquet, qui ne doit que descendre : -19,2 % en 2009, le
-#: 5 octobre 2026.
-RECONSTITUTION_CLIQUET = 0.195
+#: 5 octobre 2026 ; -19,8 % le même jour, l'étape 138.16 ayant corrigé un
+#: défaut qui en compensait un autre (voir le test).
+RECONSTITUTION_CLIQUET = 0.20
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -648,8 +649,8 @@ def test_la_projection_refait_le_passe(avenir, depenses):
     trajectoire puisse recevoir de faits, et non d'une autre projection.
 
     *Le 5 octobre 2026*, elle ne les retrouve pas : la base du modèle vaut
-    83 % de la dépense observée en 2000, 81 % en 2009, 95 % en 2020, et 75,5 %
-    en 1990. La masse du modèle croît plus vite que la dépense réelle, et
+    81,5 % de la dépense observée en 2000, 80 % en 2009, 95 % en 2020, et
+    72,6 % en 1990. La masse du modèle croît plus vite que la dépense réelle, et
     l'ancrage reporte cette dérive sur l'avenir : c'est le symptôme le plus
     direct de l'écart au COR en 2070, que
     ``test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible`` tient à
@@ -662,6 +663,17 @@ def test_la_projection_refait_le_passe(avenir, depenses):
     projection, ou la correction d'un défaut qui en compensait un autre : le
     dire ici avant de toucher au chiffre. Un écart qui passe d'un point sous
     lui demande de l'abaisser.
+
+    *Le même jour*, l'étape 138.16 le relève de -19,2 % à -19,8 % en 2009,
+    et c'est le second cas. Elle sert à chaque liquidation la colonne de
+    revalorisation en vigueur à sa date, et non plus le rapport de deux
+    valeurs de la colonne de 2017, qui ajoutait aux départs d'avant 1993 une
+    revalorisation de janvier que la caisse ne leur servait pas, de 4 à 16 %.
+    Les pensions anciennes du modèle baissent, sa masse de 2009 avec elles,
+    et l'ancrage de 2024 n'en reporte que mieux la dérive : neutralisée
+    seule, la colonne rend 0,54 point des 0,62, les autres causes de
+    l'étape le reste. Le défaut corrigé masquait une part de celui que ce
+    test mesure.
     """
     reconstitution = avenir.reconstitution()
     # L'année d'ancrage est refaite par construction : sinon, la formule de

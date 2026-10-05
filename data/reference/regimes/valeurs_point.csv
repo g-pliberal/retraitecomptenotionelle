@@ -523,7 +523,7 @@ cnbf_complementaire,2025,valeur_service,1.011100,certifiee
 cnbf_complementaire,2026,salaire_reference,12.522900,certifiee
 cnbf_complementaire,2026,valeur_service,1.026200,certifiee
 igrante,1947,salaire_reference,0.040000,haute
-igrante,1948,salaire_reference,0.560000,haute
+igrante,1948,salaire_reference,0.056406,moyenne
 igrante,1949,salaire_reference,0.064000,haute
 igrante,1949,valeur_service,0.009150,haute
 igrante,1950,salaire_reference,0.079000,haute
@@ -645,7 +645,7 @@ igrante,2024,valeur_service,0.543570,haute
 igrante,2025,valeur_service,0.555530,haute
 igrante,2026,valeur_service,0.560530,haute
 ipacte,1947,salaire_reference,0.040000,haute
-ipacte,1948,salaire_reference,0.560000,haute
+ipacte,1948,salaire_reference,0.056406,moyenne
 ipacte,1949,salaire_reference,0.064000,haute
 ipacte,1949,valeur_service,0.009150,haute
 ipacte,1950,salaire_reference,0.079000,haute

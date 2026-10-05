@@ -488,6 +488,7 @@ résumé :
 | Durée maximale prise en compte par la proratisation | avant 1944 à 1947 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-6` II |
 | Heures de SMIC à cotiser pour valider un trimestre | 1972 et 2014 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-9` |
 | Années retenues au salaire annuel moyen, par génération | avant 1934 à 1948 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-29-1` |
+| Années retenues au revenu annuel moyen des artisans et commerçants, par génération | avant 1934 à 1953 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 634-1-1` |
 | Décote de la fonction publique, coefficient et âge d'annulation | <!--chiffre:minimum(data/reference/legislation/decote_fonction_publique.csv:annee?fiabilite=certifiee)-->2006<!--/-->-<!--chiffre:maximum(data/reference/legislation/decote_fonction_publique.csv:annee?fiabilite=certifiee)-->2019<!--/--> | **certifiée** | DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 III |
 | Barème du minimum garanti, montée en charge | <!--chiffre:minimum(data/reference/legislation/minimum_garanti.csv:annee?fiabilite=certifiee)-->2004<!--/-->-<!--chiffre:maximum(data/reference/legislation/minimum_garanti.csv:annee?fiabilite=certifiee)-->2013<!--/--> | **certifiée** | DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V |
 | Âge d'annulation de la décote, régime général | 1930-1955 | haute | calculé — l'âge d'ouverture certifié majoré de cinq ans, comme l'écrit `L. 351-8` ; recontrôlé à chaque exécution, et recoupé contre la table transcrite d'OpenFisca-France-Pension |
@@ -755,7 +756,11 @@ l'Arrco d'avant 2019, l'Agirc des cadres et l'Ircantec des agents non
 titulaires — <!--chiffre:mesure(profils_oracle)-->48<!--/--> profils en tout. Les régimes alignés — MSA des
 salariés agricoles, artisans, commerçants — n'ont chez lui aucun module, et
 n'en ont pas besoin : la loi les calcule comme le régime général, et c'est à
-l'oracle du régime général qu'ils se confrontent. Restent hors de portée le
+l'oracle du régime général qu'ils se confrontent — à une table près : le
+revenu annuel moyen des artisans et des commerçants nés de 1935 à 1952,
+partis avant 2026, retient moins d'années que le salaire annuel moyen
+(`R. 634-1-1`), et le test leur prête la table du régime général pour les
+y opposer. Restent hors de portée le
 régime unifié Agirc-Arrco, dont son code lève une exception, et tout ce qui
 n'est ni salarié ni fonctionnaire : les régimes spéciaux, les libéraux, les
 exploitants agricoles, que personne d'autre ne modélise. Les exploitants sont
@@ -765,7 +770,7 @@ est MIXTE, une retraite forfaitaire plus une proportionnelle en points, sans
 équivalent au régime général auquel l'opposer.
 
 Le résultat, sur dix profils — et les régimes alignés le partagent, puisque
-leur pension est celle du régime général :
+leur pension est, à table égale, celle du régime général :
 
 | Grandeur | Accord |
 |---|---|
@@ -773,7 +778,7 @@ leur pension est celle du régime général :
 | Trimestres de décote | **exacts** sur les dix |
 | Taux de liquidation | **exact** sur les dix |
 | Coefficient de proratisation | **exact** sur les dix |
-| Salaire annuel moyen | jusqu'à <!--chiffre:mesure(ecart_openfisca)-->2,40<!--/--> %, **et c'est OpenFisca qui s'écarte de la source** |
+| Salaire annuel moyen | jusqu'à <!--chiffre:mesure(ecart_openfisca)-->2,52<!--/--> %, **et c'est OpenFisca qui s'écarte de la source** |
 | Pension de base | l'écart du salaire annuel moyen, et rien d'autre |
 
 Le décompte des trimestres de décote est le contrôle le plus exigeant du lot :
@@ -808,7 +813,7 @@ celle du 9 janvier 2023, la table d'OpenFisca s'en écarte :
 - de **−17 % à +10 %**, sans régularité, sur les années 1949-1962.
 
 Le modèle lit donc la circulaire, et le désaccord résiduel avec OpenFisca —
-jusqu'à <!--chiffre:mesure(ecart_openfisca)-->2,40<!--/--> %, toujours dans le même sens — n'est plus le nôtre.
+jusqu'à <!--chiffre:mesure(ecart_openfisca)-->2,52<!--/--> %, toujours dans le même sens — n'est plus le nôtre.
 
 **Le coefficient se lit dans une colonne, par rapport de deux de ses valeurs.**
 L'arrêté annuel applique un coefficient unique à tous les salaires déjà portés
@@ -851,11 +856,20 @@ d'OpenFisca : ce sont ses incohérences qu'elle mesurait, pas celles du droit.
 
 Ce que cela ne referme pas, et les trois bornes sont différentes.
 
-- **Avant 2017**, aucune circulaire n'est accessible en ligne : les liquidations
-  antérieures sont reconstruites depuis la colonne d'octobre 2017, la plus
-  proche, et la dérive y est **invérifiable**. Extrapolée depuis le profil
-  mesuré ci-dessus, elle croît d'environ trois centièmes de pour cent par année
-  d'écart.
+- **Avant octobre 2017**, la caisse publie aussi ses colonnes :
+  <!--chiffre:distinctes(data/reference/legislation/revalorisation_salaires_anciennes.csv:date_effet)-->88<!--/-->
+  dates d'effet, de l'arrêté du 14 mai 1946 à la colonne d'octobre 2015, sur la
+  page de ses coefficients d'avant avril 2013 et dans ses barèmes d'avril 2013
+  et d'octobre 2015 (`revalorisation_salaires_anciennes.csv`). Le modèle sert à
+  toute liquidation de ces années la colonne **en vigueur à sa date d'effet**,
+  telle quelle, sans rapport de deux valeurs : avant 1952, l'arrêté fixait un
+  coefficient par année de perception, et jusqu'en 1993 la revalorisation de
+  janvier ne touchait pas encore le salaire de l'année tout juste close —
+  aucune colonne ne s'y reconstruit depuis une autre. Restent les salaires
+  d'avant 1947, que ces colonnes ne portent qu'en cotisations, revalorisés par
+  le rapport de la colonne récente la plus proche ; et deux cellules de la
+  colonne de juillet 1990, qui s'écartent de la chaîne des autres, gardées
+  telles que la caisse les publie.
 - **Après 2026**, le coefficient est ancré sur la dernière colonne et
   l'approximation ne couvre que les dernières années ; avant 1930, il n'y a rien
   sur quoi ancrer et elle reprend toute la main, à la hausse.
@@ -1654,7 +1668,7 @@ Ce que ce choix déplace est considérable. Sous le taux entier, la fonctionnair
 de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+41,6<!--/--> % d'écart au système
 actuel dans le scénario 4 ; sous la part de la Cour, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->−3,6<!--/--> %. Dans la
 proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+41,5<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−5,6<!--/--> %, et le solde moyen de la proposition
-passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,95<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,53<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−28<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−16<!--/--> milliards
+passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,95<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,52<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−28<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−16<!--/--> milliards
 d'euros par an, parce que les droits qu'elle reprend à la bascule étaient
 gonflés de ce qui payait d'autres pensions. Le privé, la CNRACL, le scénario 1
 et la part salariale ne bougent pas, ni les années d'avant 1995, où le compte
@@ -1822,9 +1836,9 @@ sont celles de ce mélange (`VoletLiberal.melange`). Il ne joue que sur la page
 Coût ; le simulateur prolonge la situation de chacun.
 
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
-solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,53<!--/--> point de PIB quand
+solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,52<!--/--> point de PIB quand
 tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,69<!--/--> quand la moitié le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−0,86<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,04<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−0,86<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,03<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
@@ -1998,7 +2012,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
   niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/--> en 2070 pour le scénario 3 ne se lit donc
-  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->42<!--/--> % : il se lit comme la marge dont ce système
+  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->41<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
 - **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas
@@ -2837,8 +2851,8 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−56,6<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,0<!--/--> % — et faux du
-   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−76,2<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,1<!--/--> % : la pondération donne aux
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−56,3<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> % — et faux du
+   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−76,0<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,7<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
    l'autre.
@@ -3034,7 +3048,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->17,84<!--/--> %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->17,82<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **deux
 points et demi à l'arrivée**.
@@ -3043,8 +3057,8 @@ points et demi à l'arrivée**.
 publiée, le coût du système actuel est la masse de pensions des cas types, mise
 à l'échelle par l'ancrage qui la rend égale à la dépense de cette année-là. La
 même formule, appliquée aux années publiées, devrait retrouver ce qui a été
-dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−17,0<!--/--> % en 2000, de
-<!--chiffre:mesure(reconstitution?annee=2009)-->−19,2<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−5,3<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−24,4<!--/--> % en 1990. La masse du
+dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−18,5<!--/--> % en 2000, de
+<!--chiffre:mesure(reconstitution?annee=2009)-->−19,8<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−5,3<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−27,4<!--/--> % en 1990. La masse du
 modèle croît donc plus vite que la dépense réelle, et l'ancrage reporte cette
 dérive sur l'avenir : c'est le symptôme le plus direct de l'écart au COR.
 L'ancrage suppose, sans le vérifier, que l'écart des cas types au réel est le

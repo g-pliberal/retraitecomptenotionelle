@@ -168,8 +168,8 @@ que le droit en vigueur a accordé ?**
 Ce que la correction déplace est modeste, et le dire fait partie de la
 correction : les cotisations se concentrent sur les dernières années d'une
 carrière, où les deux règles coïncident. La ligne de référence du scénario
-rétroactif passe de <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=prix)-->-91,2<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=revalorisation_portee_au_compte)-->-86,2<!--/--> % pour la génération 1920, de
-<!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=prix)-->-89,3<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=revalorisation_portee_au_compte)-->-87,5<!--/--> % pour 1930, ne bouge pas pour 1945
+rétroactif passe de <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=prix)-->-90,3<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=revalorisation_portee_au_compte)-->-84,9<!--/--> % pour la génération 1920, de
+<!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=prix)-->-89,0<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=revalorisation_portee_au_compte)-->-87,2<!--/--> % pour 1930, ne bouge pas pour 1945
 (<!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=prix)-->-84,8<!--/--> % contre <!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=revalorisation_portee_au_compte)-->-84,8<!--/--> %), et l'écart s'inverse pour
 les carrières entièrement postérieures à 1987 (<!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=prix)-->-80,4<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=revalorisation_portee_au_compte)-->-80,9<!--/--> % pour
 1958) : depuis 1990, les arrêtés revalorisent un peu moins vite que les prix
@@ -308,7 +308,7 @@ la fenêtre, ce qui gonfle le coefficient d'une vingtaine de pour cent à cinq a
 ×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&de=1940&a=2025)-->3 442,3<!--/--> à ×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&lissage=5&de=1940&a=2025)-->4 152,7<!--/--> dans le tableau plus haut, alors qu'il croît *moins* vite
 que la masse salariale (×<!--chiffre:mesure(cumul_indexation?regle=masse_salariale&de=1940&a=2025)-->3 685,1<!--/-->). Sur une carrière, l'écart entre lissé et non
 lissé retombe à un ou deux points : règle par défaut, génération 1930,
-<!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-83,8<!--/--> % sans lissage, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=3)-->-82,7<!--/--> % à trois ans, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=5)-->-81,8<!--/--> % à cinq.
+<!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-83,4<!--/--> % sans lissage, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=3)-->-82,3<!--/--> % à trois ans, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=5)-->-81,4<!--/--> % à cinq.
 
 Aucun plancher n'est appliqué par défaut : le taux peut être négatif, ce qui est
 la conséquence logique de la règle (`plancher_indexation`).
@@ -2097,7 +2097,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->42<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.
@@ -2131,7 +2131,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->181<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->183<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->39<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 

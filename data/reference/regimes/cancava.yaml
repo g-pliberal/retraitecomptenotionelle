@@ -157,9 +157,10 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.5
     decote_par_generation: decote_regime_general
-    salaire_reference_par_generation: salaire_annuel_moyen
+    salaire_reference_par_generation: revenu_annuel_moyen_independants
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: revenu_annuel_moyen_independants
     assiette: plafonnee
     taux_cotisation_retraite: 0.1635
     decote_par_trimestre: 0.0125
@@ -192,9 +193,10 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.5
     decote_par_generation: decote_regime_general
-    salaire_reference_par_generation: salaire_annuel_moyen
+    salaire_reference_par_generation: revenu_annuel_moyen_independants
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
+    regles_du_salaire_annuel_moyen: revenu_annuel_moyen_independants
     assiette: plafonnee
     taux_cotisation_retraite: 0.1652
     decote_par_trimestre: 0.0125

@@ -116,11 +116,11 @@ export class Indexation {
     } else if (mode === ModeIndexation.MASSE_SALARIALE) {
       candidats = [["masse_salariale", this.macro.masse_salariale.valeur(annee)]];
     } else if (mode === ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE) {
-      // Le taux annuel des arrêtés, lu comme le scénario 1 le lit : le rapport
-      // de deux années consécutives dans la colonne publiée.
+      // Le taux annuel des arrêtés : le rapport de deux années consécutives
+      // dans une colonne récente, publiée. Voir le Python.
       candidats = [[
         "revalorisation_legale",
-        this.macro.coefficientRevalorisationPorteeAuCompte(annee - 1, annee) - 1,
+        this.macro.coefficientRevalorisationParRapport(annee - 1, annee) - 1,
       ]];
     } else if (mode === ModeIndexation.PRIX) {
       candidats = [["inflation", inflation]];

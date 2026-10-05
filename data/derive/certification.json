@@ -45,6 +45,17 @@
    "valeurs": 79,
    "verifiee_le": "2026-09-17"
   },
+  "annees_revenu_annuel_moyen_independants": {
+   "ajoutees": 0,
+   "colonne": "annees",
+   "corrigees": 0,
+   "empreinte": "83b7accde0e25626",
+   "identiques": 21,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale R. 634-1-1",
+   "valeurs": 21,
+   "verifiee_le": "2026-10-05"
+  },
   "annees_salaire_reference": {
    "ajoutees": 0,
    "colonne": "annees",
@@ -1071,12 +1082,12 @@
   "valeurs_point": {
    "ajoutees": 0,
    "colonne": "valeur",
-   "corrigees": 9,
-   "empreinte": "ea66cbaeedb437f5",
-   "identiques": 292,
+   "corrigees": 0,
+   "empreinte": "b33c217a6e4229a3",
+   "identiques": 299,
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, paramètres des régimes en points",
-   "valeurs": 301,
+   "valeurs": 299,
    "verifiee_le": "2026-10-05"
   },
   "valeurs_point_agirc_arrco": {
@@ -1215,11 +1226,11 @@
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "152ea1eec2cea59d",
-   "identiques": 3,
+   "empreinte": "797526995e651de2",
+   "identiques": 5,
    "niveau": "moyenne",
-   "source": "Valeurs saisies dans le texte : ANI du 17 novembre 2017, art. 3 ; arrêté du 12 décembre 1951, art. 8 (LEGIARTI000006381673)",
-   "valeurs": 3,
+   "source": "Valeurs saisies dans le texte : ANI du 17 novembre 2017, art. 3 ; arrêté du 12 décembre 1951, art. 8 (LEGIARTI000006381673) ; annexe de l'arrêté du 17 février 1960 (LEGIARTI000006381707)",
+   "valeurs": 5,
    "verifiee_le": "2026-10-05"
   },
   "valeurs_point_unirs": {

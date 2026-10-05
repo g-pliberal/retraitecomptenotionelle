@@ -169,9 +169,12 @@ def test_la_mediane_depasse_les_prix_quand_la_moyenne_reste_dessous(macro):
 def test_revalorisation_portee_au_compte_sert_les_coefficients_des_arretes(macro):
     """Le mode lit les arrêtés, il ne les approche pas.
 
-    Année par année, le taux est le rapport de deux années consécutives dans la
-    colonne publiée par la caisse — la grandeur même dont le scénario 1 se sert
-    pour revaloriser les salaires de son salaire de référence.
+    Année par année, le taux est le rapport de deux années consécutives dans une
+    colonne récente publiée par la caisse. Ce n'est plus tout à fait la grandeur
+    du salaire annuel moyen, qui lit depuis le 5 octobre 2026 la colonne EN
+    VIGUEUR à la date d'effet : pour une liquidation de janvier 1955, le salaire
+    de 1954 n'avait encore reçu aucune revalorisation, quand le taux de 1955 est
+    celle d'avril.
     """
     indexation = Indexation(
         macro,
@@ -179,9 +182,10 @@ def test_revalorisation_portee_au_compte_sert_les_coefficients_des_arretes(macro
     )
     for annee in (1955, 1975, 1986, 1987, 2000, 2024, 2025):
         taux = indexation.taux(annee)
-        attendu = macro.coefficient_revalorisation_portee_au_compte(annee - 1, annee) - 1
+        attendu = macro.coefficient_revalorisation_par_rapport(annee - 1, annee) - 1
         assert taux.taux == pytest.approx(attendu)
         assert taux.terme_retenu == "revalorisation_legale"
+    assert macro.coefficient_revalorisation_portee_au_compte(1954, 1955) == 1.0
 
 
 def test_la_composition_annuelle_ne_derive_pas_des_colonnes_publiees(macro):

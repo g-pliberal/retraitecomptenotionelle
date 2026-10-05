@@ -1066,6 +1066,51 @@ class AnneesSalaireReference(TableParGeneration):
         return None if valeur is None else (int(valeur[0]), valeur[1])
 
 
+class AnneesRevenuAnnuelMoyenIndependants(AnneesSalaireReference):
+    """Nombre d'années retenues au revenu annuel moyen des artisans et des
+    commerçants, par génération (R. 634-1-1) : deux fois plus lent que celui
+    des salariés, vingt-cinq années pour les assurés nés après 1952."""
+
+    def __init__(self, racine: Path) -> None:
+        TableParGeneration.__init__(
+            self, racine, "annees_revenu_annuel_moyen_independants.csv", "annees")
+
+
+class FichesDatees:
+    """Les fiches de ``data/reference/regles/`` dont le moteur lit, à la date
+    d'effet d'une pension, les paramètres de la version qui vaut.
+
+    Le salaire annuel moyen du régime général (``salaire_annuel_moyen``) et le
+    revenu annuel moyen des artisans et des commerçants
+    (``revenu_annuel_moyen_independants``) : quelles années, comment les
+    moyenner, lesquelles écarter, et, pour les seconds, quelle table du nombre
+    d'années. Une période y renvoie par ``regles_du_salaire_annuel_moyen``.
+    """
+
+    NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants")
+
+    def __init__(self, racine: Path) -> None:
+        self._fiches: dict[str, dict] = {}
+        for nom in self.NOMS:
+            chemin = racine / "reference" / "regles" / f"{nom}.yaml"
+            if chemin.exists():
+                self._fiches[nom] = versions.preparer(charger_yaml(chemin))
+
+    def fiches(self) -> dict[str, dict]:
+        """Les fiches préparées : ce que le paquet du site porte."""
+        return self._fiches
+
+    def regle(self, nom: str, date_effet: str) -> dict | None:
+        """Les paramètres de la version de ``nom`` qui vaut pour une pension
+        prenant effet à ``date_effet`` (AAAA-MM-JJ) ; ``None`` sans fiche ou
+        sans version à cette date."""
+        fiche = self._fiches.get(nom)
+        if fiche is None:
+            return None
+        version = versions.applicable(fiche, {"liquidation.date_effet": date_effet})
+        return None if version is None else dict(version["parametres"])
+
+
 @dataclass(frozen=True)
 class TrimestresAccordes:
     """Ce qu'une version de fiche accorde pour UN enfant, et ce qu'elle exige.
@@ -2575,6 +2620,10 @@ class ScenarioActuel:
         )
         self.coefficients_minoration = CoefficientsMinoration(parametres.racine_donnees)
         self.annees_salaire_reference = AnneesSalaireReference(parametres.racine_donnees)
+        self.annees_revenu_independants = AnneesRevenuAnnuelMoyenIndependants(
+            parametres.racine_donnees)
+        #: Les règles datées du salaire annuel moyen : voir :class:`FichesDatees`.
+        self.fiches_datees = FichesDatees(parametres.racine_donnees)
         self.majorations_enfants = MajorationsPourEnfants(parametres.racine_donnees)
         self.reversions = Reversions(parametres.racine_donnees)
         self.invalidites = Invalidites(parametres.racine_donnees)

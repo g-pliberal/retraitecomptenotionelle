@@ -88,8 +88,8 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de moins,
   en médiane ». La première des « Vos questions », « Ma
-  retraite va-t-elle baisser ? », en donne le détail : 23 % pour qui n'est
-  pas encore à la retraite, 12 % s'il place les cinq points rendus, 27 % sur
+  retraite va-t-elle baisser ? », en donne le détail : 24 % pour qui n'est
+  pas encore à la retraite, 13 % s'il place les cinq points rendus, 28 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -353,8 +353,8 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
-croire sur parole. » 42 494 valeurs recontrôlées automatiquement contre le
-fichier de l'institution qui les produit, sur 114 séries ; 108 régimes
+croire sur parole. » 42 515 valeurs recontrôlées automatiquement contre le
+fichier de l'institution qui les produit, sur 115 séries ; 108 régimes
 recensés dont 74 calculés ; 39 institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples

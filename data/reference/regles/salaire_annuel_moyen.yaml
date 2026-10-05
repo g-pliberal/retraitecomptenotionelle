@@ -1,22 +1,235 @@
 schema_version: 1
 id: salaire_annuel_moyen
 intitule: >-
-  Vingt-cinq meilleures années (dix à vingt-cinq par génération de 1934 à 1948),
-  salaires revalorisés par les coefficients de la circulaire annuelle, année du
-  départ exclue, plafond proratisé.
-etat: conforme
+  Le salaire annuel moyen du régime général et des régimes qui en suivent les règles : les
+  dix dernières années d'assurance avant soixante ans, ou avant l'entrée en jouissance
+  quand c'est plus avantageux, jusqu'en 1972 ; les dix meilleures années depuis 1973,
+  vingt-cinq par génération de 1934 à 1948 ; rapportées à leurs trimestres jusqu'en juin
+  1995, à leur nombre ensuite ; sans les années qui ne valident aucun trimestre depuis
+  2004 ; salaires revalorisés par la colonne de la Cnav en vigueur à la date d'effet,
+  année du départ exclue, plafond proratisé.
+domaine: salaire_de_reference
+regimes: [regime_general, msa_salaries, cavimac]
 etape: liquider_chaque_regime
-effet: >-
-  Toute pension en annuités du privé. Le polypensionné du régime général, des salariés
-  agricoles et des artisans et commerçants que la liquidation unique ne réunit pas — né
-  avant 1953, ou parti avant le 1er juillet 2017 — retient depuis 2004 dans chaque
-  régime la part des années que leurs durées lui donnent (R. 173-4-3), que le moteur
-  porte depuis le 28 septembre 2026 : il lui en donnait autant qu'un assuré d'un seul
-  régime, et sous-estimait son salaire moyen. Les deux exemples de la circulaire Cnav n°
-  2004/29 sont rendus. Les durées que le texte arrête au dernier jour du trimestre
-  civil précédant l'effet sont celles de la date d'effet.
+face: droit
+etat: approchee
+lit:
+- les salaires portés au compte du régime chaque année civile avant celle de l'effet,
+  assiette de l'assurance vieillesse des parents au foyer comprise, écrêtés au plafond de
+  l'année proratisé sur ses mois
+- les trimestres que chaque année valide au régime, cotisés et assimilés
+- la colonne de revalorisation de la Cnav en vigueur à la date d'effet
+  (legislation/revalorisation_salaires.csv et revalorisation_salaires_anciennes.csv)
+- l'année de naissance, pour le nombre d'années retenues
+  (legislation/annees_salaire_reference.csv) et, avant 1973, pour l'année des soixante ans
+ecrit:
+- le salaire annuel moyen du régime, en euros de l'année de l'effet
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: dix_dernieres_annees_avant_soixante_ans
+  statut: lue
+  textes:
+  - reference: >-
+      ordonnance n° 45-2454 du 19 octobre 1945, article 71, § 1er, telle que la base de
+      législation de la Cnav la donne (ORD_452454_19101945) : « le salaire annuel moyen
+      correspondant aux cotisations versées au cours des dix dernières années d'assurance
+      accomplies avant l'âge de soixante ans »
+    lu_le: 2026-10-05
+  - reference: >-
+      circulaire ministérielle n° 151 du 5 août 1946 (CR_MIN_151_05081946) : « en tenant
+      compte seulement des cotisations des dix dernières années d'assurance avant 60 ans »
+    lu_le: 2026-10-05
+  - reference: >-
+      circulaire ministérielle n° 143 SS du 29 juin 1949 (CR_MIN_143SS_29061949), 3° :
+      pas de salaire des années « qui comportent deux trimestres ou plus de périodes
+      assimilées » (article 74, § 7, du décret du 29 décembre 1945) ; avec un seul, « le
+      salaire perçu pendant trois trimestres est retenu comme salaire annuel » ; « le
+      dénominateur de la formule [...] peut se trouver ramené à un nombre inférieur à 40 »
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [null, 1948-07-01]
+  contenu:
+    droit: >-
+      la moyenne des salaires des quarante trimestres d'assurance valables qui précèdent
+      les soixante ans, rapportée à ces trimestres ; sans les années qui comptent deux
+      trimestres assimilés ou plus
+    parametres:
+      selection: dernieres
+      avant_la_liquidation: false
+      calcul: trimestriel
+      trimestres_comptes: cotises
+      annees_assimilees_exclues: true
+      annees_sans_trimestre: retenues
+  exemples: aucun trouvé
+- id: dix_dernieres_annees_1948
+  statut: lue
+  textes:
+  - reference: >-
+      circulaire ministérielle n° 143 SS du 29 juin 1949 (CR_MIN_143SS_29061949), 2° : la
+      loi du 23 août 1948 « prévoit que ledit salaire peut aussi être calculé d'après les
+      cotisations versées au cours des dix dernières années d'assurance accomplies avant
+      l'âge servant de base à la liquidation si ce mode de calcul est plus avantageux » ;
+      « ce sont les quarante trimestres d'assurance valables précédant la date retenue pour
+      l'entrée en jouissance », pour une « entrée en jouissance [...] fixée au 1er juillet
+      1948 ou à une date postérieure »
+    lu_le: 2026-10-05
+  - reference: >-
+      circulaire ministérielle n° 211 SS du 27 décembre 1950 (CR_MIN_211SS_27121950),
+      point 13, et n° 20 SS du 6 février 1961 (CR_MIN_20SS_06021961) : « la moyenne des
+      dix dernières années avant la liquidation »
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [1948-07-01, 1973-01-01]
+  contenu:
+    droit: >-
+      la plus avantageuse de deux moyennes trimestrielles : celle des quarante trimestres
+      d'avant les soixante ans, celle des quarante trimestres d'avant l'entrée en
+      jouissance
+    parametres:
+      selection: dernieres
+      avant_la_liquidation: true
+      calcul: trimestriel
+      trimestres_comptes: cotises
+      annees_assimilees_exclues: true
+      annees_sans_trimestre: retenues
+  exemples: aucun trouvé
+- id: dix_meilleures_annees_1973
+  statut: lue
+  nee_de: JORFTEXT000000693828
+  textes:
+  - id: JORFTEXT000000693828
+    reference: >-
+      décret n° 72-1229 du 29 décembre 1972, lu dans la base de législation de la Cnav
+      (DEC_721229_29121972) : l'article 343 du code est abrogé ; « le salaire annuel moyen
+      correspondant aux cotisations versées au cours des dix années civiles d'assurance
+      accomplies postérieurement au 31 décembre 1947 dont la prise en considération est la
+      plus avantageuse pour l'assuré » (article 2) ; « aux pensions prenant effet à compter
+      du 1er janvier 1973 » (article 5)
+    publie_le: 1972-12-30
+    lu_le: 2026-10-05
+  - id: LEGIARTI000006750038
+    article: R. 351-29 CSS
+    en_vigueur: 1985-12-21
+    lu_le: 2026-10-05
+  - reference: >-
+      circulaire Cnav n° 1/73 du 3 janvier 1973 (CR_CN_173_03011973) : l'année civile
+      d'assurance est « toute année civile au cours de laquelle l'assuré a cotisé même si
+      le montant du salaire correspondant est inférieur au minimum prévu pour valider un
+      trimestre et même si l'année civile comporte un ou plusieurs trimestres assimilés »,
+      celles qui n'ont que des périodes assimilées « doivent être négligées » ; le salaire
+      annuel moyen « est ensuite calculé sur la base des salaires revalorisés et du nombre
+      de trimestres correspondants (y compris les trimestres assimilés) »
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [1973-01-01, 1995-07-01]
+  contenu:
+    droit: >-
+      les dix meilleures années après 1947, vingt-cinq par génération depuis 1994, choisies
+      sur leurs salaires revalorisés ; la somme de leurs salaires rapportée à leurs
+      trimestres, assimilés compris, et multipliée par quatre ; une année dont le salaire
+      ne valide aucun trimestre compte, sans trimestre
+    parametres:
+      selection: meilleures
+      avant_la_liquidation: false
+      calcul: trimestriel
+      trimestres_comptes: cotises_et_assimiles
+      annees_assimilees_exclues: false
+      annees_sans_trimestre: retenues
+  exemples: aucun trouvé
+- id: moyenne_des_salaires_annuels_1995
+  statut: lue
+  textes:
+  - reference: >-
+      circulaire Cnav n° 95/94 du 29 décembre 1994 (CR_CN_9594_29121994) : « le salaire
+      annuel moyen est égal à la somme des salaires retenus divisée par le nombre d'années
+      considérées », pour corriger une méthode qui, rapportant les salaires aux trimestres,
+      « aboutit à des résultats non conformes à la notion de salaire annuel moyen » ;
+      « applicables aux pensions dont la date d'effet est postérieure au 30 juin 1995 »
+    lu_le: 2026-10-05
+  - id: LEGIARTI000006750041
+    article: R. 351-29 CSS
+    en_vigueur: 1993-08-28
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [1995-07-01, 2004-01-01]
+  contenu:
+    droit: >-
+      la moyenne des salaires annuels revalorisés des meilleures années, une année qui ne
+      valide aucun trimestre comprise
+    parametres:
+      selection: meilleures
+      avant_la_liquidation: false
+      calcul: annuel
+      trimestres_comptes: cotises_et_assimiles
+      annees_assimilees_exclues: false
+      annees_sans_trimestre: retenues
+  exemples: aucun trouvé
+- id: annees_validantes_2004
+  statut: lue
+  nee_de: JORFARTI000001474532
+  textes:
+  - id: JORFARTI000001474532
+    reference: >-
+      décret n° 2004-144 du 13 février 2004, article 8 : « Les dispositions du présent
+      décret s'appliquent aux pensions prenant effet postérieurement au 31 décembre 2003 »
+    publie_le: 2004-02-15
+    lu_le: 2026-10-05
+  - id: LEGIARTI000006750042
+    article: R. 351-29 CSS
+    en_vigueur: 2004-02-15
+    citation: >-
+      « le salaire annuel moyen correspondant aux cotisations permettant la validation
+      d'au moins un trimestre d'assurance selon les règles définies par l'article R. 351-9
+      »
+    lu_le: 2026-10-05
+  - id: LEGIARTI000053335651
+    article: R. 351-29 CSS
+    en_vigueur: 2026-01-01
+    lu_le: 2026-10-05
+  - reference: >-
+      circulaire Cnav n° 2004/27 du 24 juin 2004 (CR_CN_2004027_24062004) : « L'année
+      civile comportant un salaire qui ne valide pas un trimestre d'assurance n'est pas
+      retenue pour le calcul du salaire annuel moyen », pour les pensions prenant effet
+      depuis le 1er janvier 2004 ; exposés « Revenu annuel moyen » et « Nombre d'années
+      retenues » de la base de législation (ancienne disposition « Avant le 01/01/2004 »)
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+  contenu:
+    droit: >-
+      la moyenne des salaires annuels revalorisés des meilleures années, parmi celles dont
+      le salaire valide au moins un trimestre au sens de R. 351-9
+    parametres:
+      selection: meilleures
+      avant_la_liquidation: false
+      calcul: annuel
+      trimestres_comptes: cotises_et_assimiles
+      annees_assimilees_exclues: false
+      annees_sans_trimestre: exclues
+  exemples:
+  - sp_f21552_taux_plein_170
+approximations:
+- version: [dix_dernieres_annees_avant_soixante_ans, dix_dernieres_annees_1948]
+  ecart: >-
+    des années civiles, et non les quarante trimestres qui précèdent les soixante ans ou
+    l'entrée en jouissance : les dix dernières années de salaire d'avant l'année des
+    soixante ans, et d'avant l'année de l'effet ; une année d'un seul trimestre assimilé
+    compte ses trimestres cotisés, sans reconstituer le salaire de trois trimestres
+  effet: non mesuré
+- ecart: >-
+    les trimestres sont ceux que le modèle valide : quatre par année travaillée avant 1972,
+    quel qu'en soit le salaire (étape 138.6), et au plus ce que les mois de la ligne
+    permettent ; les années d'avant 1948 se classent avec les autres, quand le texte ne les
+    prend qu'à défaut de dix années postérieures, en remontant depuis 1947
+  effet: non mesuré
+- ecart: >-
+    ni les années de rachat (R. 351-29, I, C, 1°), ni les indemnités journalières de
+    maternité, portées au compte depuis 2012 et au forfait pour celles d'avant depuis
+    septembre 2023 (I, B, IV et V), que le modèle ne connaît pas
+  effet: non mesuré
 sources:
-  lu_le: 2026-09-28
+  lu_le: 2026-10-05
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -54,8 +267,23 @@ sources:
       1943, qui n'a que trois années civiles au régime général et en retient trois
     url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=CR_CN_2004029_30062004.aspx
     date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      R. 351-29 CSS, toutes ses rédactions dans l'index LEGI du dépôt, de 1985
+      (LEGIARTI000006750038) à 2026 (LEGIARTI000053335651) : les dix années jusqu'en 1993,
+      vingt-cinq ensuite ; la condition d'un trimestre validé à compter de la rédaction du
+      15 février 2004 (LEGIARTI000006750042) ; article 8 du décret n° 2004-144
+      (JORFARTI000001474532), notice du décret n° 72-1229 (JORFTEXT000000693828)
+    date: 2026-10-05
+  - type: circulaire_cnav
+    reference: >-
+      base de législation de la Cnav, par son API : ordonnance n° 45-2454 (article 71),
+      décret n° 72-1229, circulaires ministérielles n° 151 de 1946, 143 SS de 1949, 211 SS
+      de 1950 et 20 SS de 1961, circulaires Cnav 1/73, 95/94 et 2004/27, exposés « Revenu
+      annuel moyen » et « Nombre d'années retenues »
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_personnelle_salaire_annuel_moyen_salaire_annuel_moyen_ex.aspx
+    date: 2026-10-05
 textes_a_rattacher:
-- reference: R. 351-29 CSS
 - reference: R. 173-3-2 CSS (nombre d'années, depuis le décret n° 2025-1409)
 - reference: R. 351-29-1 CSS (générations d'avant 1948)
 - id: LEGIARTI000006747869
@@ -68,14 +296,27 @@ textes_a_rattacher:
   reference: code de la sécurité sociale, R. 173-4-3, rédaction du 8 mai 2010
 - id: LEGIARTI000038790394
   reference: code de la sécurité sociale, R. 173-4-3, rédaction du 8 juillet 2019
-exemples:
-- sp_f21552_taux_plein_170
 code:
   interrupteurs:
     salaire_reference_par_generation: true
+    regles_du_salaire_annuel_moyen: salaire_annuel_moyen
+  python: >-
+    scenarios/actuel.py : FicheDatee (salaire_annuel_moyen) ; droit/liquider.py :
+    salaire_de_reference, moyenne_selon_la_regle, nombre_d_annees_retenues ;
+    donnees/macro.py : colonne_de_revalorisation_en_vigueur
+  javascript: >-
+    moteur/js/regimes.js : FicheDatee ; moteur/js/droit/liquider.js : salaireDeReference,
+    moyenneSelonLaRegle, nombreDAnneesRetenues ; moteur/js/macro.js :
+    colonneDeRevalorisationEnVigueur
+  parametres: contenu.parametres de chaque version
+  tests: >-
+    tests/test_simulateur.py et tests/js/moteur.test.js : chaque version rejouée sur une
+    carrière à la main, dans les deux moteurs
   moteur: >-
-    `salaire_reference_par_generation` : le nombre d'années retenues au salaire annuel
-    moyen est lu dans `legislation/annees_salaire_reference.csv` à l'ANNÉE DE NAISSANCE
+    `regles_du_salaire_annuel_moyen` : le moteur lit la version de la date d'effet — quelles
+    années, comment les moyenner, lesquelles écarter — et l'applique aux salaires
+    revalorisés de chaque année. `salaire_reference_par_generation` : le nombre d'années
+    retenues est lu dans `legislation/annees_salaire_reference.csv` à l'ANNÉE DE NAISSANCE
     : dix à vingt-cinq années, une par génération, de 1934 à 1948 (loi du 22 juillet 1993).
     Ne vaut que pour un `salaire_reference` en meilleures années.
     `liquider.annees_des_regimes_alignes` (`anneesDesRegimesAlignes`) partage ce nombre
@@ -86,6 +327,10 @@ code:
     alignés (R. 173-3-2, fiche pension_non_salaries_agricoles_2026). Le détail de la
     pension dit le nombre retenu et l'article.
 referents:
+  openfisca_france_pension: >-
+    écarte depuis 2004 les années qui ne valident aucun trimestre, comme R. 351-29 ; ne
+    rapporte jamais les salaires aux trimestres
+  calcul_pension: écarte les années sans trimestre cotisé depuis 2004, comme R. 351-29
   trajectoire:
     equivalent: >-
       calculeSam (R/fonctionsCalculsPensions.R:2038-2135), la série revaloSam enchaînée
@@ -96,3 +341,27 @@ referents:
       colonnes de la Cnav, au millième près, celui de TRAJECTOiRE celui de sa série
       revaloSam, au millionième ; leur écart, de +1,3 % pour un départ de 2015 à −4,5 %
       en 2026, n'est que la chaîne des coefficients, que TRAJECTOiRE a fausse (registre)
+  caliper: >-
+    rapporte les salaires aux trimestres jusqu'en 1994, comme la Cnav le faisait jusqu'au
+    30 juin 1995 (circulaire 95/94)
+  baremes_ipp: les dix dernières années avant 1973, comme l'ordonnance de 1945
+historique:
+- >-
+  2026-10-05 — datée, à l'étape 138.16 : cinq versions, des dix dernières années de 1945
+  aux années validantes de 2004 ; les salaires rapportés aux trimestres jusqu'en juin
+  1995 ; la colonne de revalorisation en vigueur à la date d'effet, lue de 1946 à 2026.
+  Elle se disait conforme et ne retenait que les dix ou vingt-cinq meilleures années,
+  toutes années de salaire comprises, en moyenne annuelle.
+exemples: []
+reformes: [sam_avant_la_liquidation_1948, sam_dix_meilleures_annees_1973,
+           sam_moyenne_annuelle_1995, sam_annees_validantes_2004]
+effet: >-
+  Toute pension en annuités du régime général et des salariés agricoles. Depuis 2004, une
+  année de petit salaire qui ne valide aucun trimestre ne tire plus vers le bas la
+  moyenne de qui a moins d'années que le nombre retenu ; avant juillet 1995, une année
+  incomplète compte pour ses trimestres et non pour une année entière ; avant 1973, la
+  moyenne est celle des dix dernières années, non des dix meilleures. Le polypensionné du
+  régime général, des salariés agricoles et des artisans et commerçants que la
+  liquidation unique ne réunit pas — né avant 1953, ou parti avant le 1er juillet 2017 —
+  retient depuis 2004 dans chaque régime la part des années que leurs durées lui donnent
+  (R. 173-4-3). Les deux exemples de la circulaire Cnav n° 2004/29 sont rendus.

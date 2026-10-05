@@ -2737,12 +2737,32 @@ def test_le_coefficient_de_revalorisation_est_le_rapport_de_deux_valeurs(simulat
     derniere, _, recente = colonnes[-1]
     assert lu(1970, derniere) == pytest.approx(recente[1970])
 
-    # Une année de liquidation sans colonne publiée passe par la PLUS PROCHE,
-    # et non par la plus récente : c'est ce qui réduit la dérive des arrondis,
-    # que le test précédent mesure.
+    # Une liquidation d'avant 2017 lit la colonne ANCIENNE en vigueur à sa
+    # date, telle quelle : celle du 1er janvier 1990 pour un départ de mars,
+    # celle du 1er juillet pour un départ d'août. Le rapport des colonnes
+    # récentes surestimait de 3,8 % le salaire de 1970 d'un départ de janvier
+    # 1990 : la revalorisation de janvier ne touchait pas encore le salaire de
+    # l'année tout juste close, et la caisse l'appliquait aux autres.
+    anciennes = macro.revalorisation_portee_au_compte_anciennes
+    janvier = next(t for a, m, t in anciennes if (a, m) == (1990, 1))
+    juillet = next(t for a, m, t in anciennes if (a, m) == (1990, 7))
+    assert lu(1970, 1990, 3) == janvier[1970]
+    assert lu(1970, 1990, 8) == juillet[1970]
+    # Une colonne vaut jusqu'à la suivante, d'une année sur l'autre : celle
+    # d'avril 1953 jusqu'en mars 1955. Un salaire plus récent qu'elle n'a
+    # encore rien reçu.
+    avril_1953 = next(t for a, m, t in anciennes if (a, m) == (1953, 4))
+    assert lu(1950, 1955, 2) == avril_1953[1950]
+    assert lu(1954, 1955, 2) == 1.0
+
+    # Le rapport de deux valeurs ne sert plus qu'hors de toute colonne et au
+    # mode d'indexation : par la PLUS PROCHE des colonnes récentes, et non par
+    # la plus récente — ce qui réduit la dérive des arrondis, que le test
+    # précédent mesure.
+    par_rapport = macro.coefficient_revalorisation_par_rapport
     proche = min(colonnes, key=lambda c: abs(c[0] - 1990))[2]
-    assert lu(1970, 1990) == pytest.approx(proche[1970] / proche[1990])
-    assert lu(1970, 1990) != pytest.approx(recente[1970] / recente[1990])
+    assert par_rapport(1970, 1990) == pytest.approx(proche[1970] / proche[1990])
+    assert par_rapport(1970, 1990) != pytest.approx(recente[1970] / recente[1990])
 
     assert lu(2000, 2000) == 1.0
     assert lu(2018, 1970) == pytest.approx(1.0 / lu(1970, 2018))
@@ -4669,11 +4689,14 @@ def test_les_regimes_alignes_hors_liquidation_unique_se_partagent_les_annees(sim
                 simulateur.scenario_actuel.calculer(carriere).pensions_par_regime}
 
     # Né en 1944, parti en 2008 : 128 trimestres au régime général et 48 chez
-    # les artisans, quinze années et six.
+    # les artisans, quinze années et quatre. Le nombre que chaque régime
+    # multiplie est le sien : vingt et un au régime général (R. 351-29-1),
+    # seize chez les artisans (R. 634-1-1), soit 16 × 48 / 176 = 4,4 ; le
+    # modèle leur prêtait celui des salariés, et en retenait six.
     artisan = details(1944, "artisan", 52, 64)
     assert artisan["regime_general"].endswith(
         "15 années au plus au salaire annuel moyen (R. 173-4-3)")
-    assert "6 années au plus au salaire annuel moyen (R. 173-4-3)" in artisan["rsi"]
+    assert "4 années au plus au salaire annuel moyen (R. 173-4-3)" in artisan["rsi"]
     # Né en 1960, parti en 2022 : la liquidation unique ne fait qu'un régime.
     assert "R. 173-4-3" not in " ".join(details(1960, "artisan", 45, 62).values())
     # Parti en 2003 : la règle n'est pas encore née.
@@ -4862,9 +4885,12 @@ def test_l_avpf_porte_un_salaire_au_compte(simulateur):
     )
     interrompues = [l for l in carriere.lignes if l.revenu_avpf > 0]
     assert len(interrompues) == 5
-    # L'assiette est le SMIC annuel : 1 820 heures au SMIC horaire de l'année.
-    attendu = 1820.0 * simulateur.macro.smic_horaire(2014)
-    assert interrompues[0].revenu_avpf == pytest.approx(attendu)
+    # L'assiette est de 169 heures par mois au SMIC du 1er juillet de l'année
+    # précédente (R. 381-3) : 1 593,67 € par mois en 2014, 169 × 9,43 €, que
+    # le barème de la Cnav publie. Le modèle portait 1 820 heures au SMIC de
+    # janvier de l'année, 9,3 % de moins.
+    assert interrompues[0].revenu_avpf == pytest.approx(12 * 169 * 9.43)
+    assert interrompues[0].revenu_avpf == pytest.approx(12 * 1_593.67)
 
     # Sur une carrière de moins de vingt-cinq années portées au compte, ces
     # années au SMIC entrent dans la moyenne au lieu de la remplacer : le

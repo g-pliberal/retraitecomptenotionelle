@@ -507,6 +507,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "carriere_longue": "legislation/carriere_longue.csv",
         "duree_proratisation": "legislation/duree_proratisation.csv",
         "annees_salaire_reference": "legislation/annees_salaire_reference.csv",
+        "annees_revenu_annuel_moyen_independants":
+            "legislation/annees_revenu_annuel_moyen_independants.csv",
         "validation_trimestres": "legislation/validation_trimestres.csv",
         "smic_horaire": "macro/smic_horaire.csv",
         "decote_fonction_publique_coefficient":
@@ -957,6 +959,7 @@ def test_l_inventaire_est_la_vue_des_fichiers_de_regimes():
 def test_le_chargeur_refuse_une_ligne_d_inventaire_qui_ment(tmp_path):
     """Un régime calculé porte des périodes, un régime qui ne l'est pas n'en
     porte pas ; un champ inconnu dans la ligne serait perdu sans bruit."""
+    import os
     import shutil
 
     import yaml
@@ -970,13 +973,19 @@ def test_le_chargeur_refuse_une_ligne_d_inventaire_qui_ment(tmp_path):
         shutil.copy(source / nom, dossier / nom)
     assert [c.stem for c, _ in fichiers_de_regimes(tmp_path)] == ["avts", "ortf"]
     ortf = yaml.safe_load((source / "ortf.yaml").read_text(encoding="utf-8"))
-    for ecart, message in (
+    for rang, (ecart, message) in enumerate((
         ({"periodes": []}, "porte des périodes"),
         ({"inventaire": {**ortf["inventaire"], "couverture": "partiel"}}, "sans période"),
         ({"inventaire": {**ortf["inventaire"], "manques": "x"}}, "champs inconnus"),
-    ):
-        (dossier / "ortf.yaml").write_text(
+    )):
+        chemin = dossier / "ortf.yaml"
+        chemin.write_text(
             yaml.safe_dump({**ortf, **ecart}, allow_unicode=True), encoding="utf-8")
+        # `charger_yaml` reconnaît un fichier à sa date et à sa taille : le
+        # premier et le troisième font la même, et, écrits dans le même tic
+        # d'horloge de Windows, passeraient pour un seul fichier.
+        etat = chemin.stat()
+        os.utime(chemin, ns=(etat.st_atime_ns, etat.st_mtime_ns + rang * 10**9))
         with pytest.raises(ValueError, match=message):
             fichiers_de_regimes(tmp_path)
 

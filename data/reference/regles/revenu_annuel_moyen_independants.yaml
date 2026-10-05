@@ -1,0 +1,207 @@
+schema_version: 1
+id: revenu_annuel_moyen_independants
+intitule: >-
+  Le revenu annuel moyen des artisans et des commerçants : dix meilleures années depuis
+  1973, puis une de plus toutes les deux générations à partir de 1934, une par génération
+  à partir de 1944, vingt-cinq pour les assurés nés après 1952 ; sans les années dont les
+  cotisations ne valident aucun trimestre depuis 2004 ; la règle commune de R. 173-3-2
+  pour les pensions prenant effet depuis 2026.
+domaine: salaire_de_reference
+regimes: [organic, cancava, rsi]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les revenus portés au compte du régime chaque année civile avant celle de l'effet,
+  écrêtés au plafond de l'année, et l'assiette minimale sur laquelle la cotisation a été
+  appelée
+- les trimestres que chaque année valide au régime
+- l'année de naissance, pour le nombre d'années retenues
+  (legislation/annees_revenu_annuel_moyen_independants.csv, et, depuis 2026,
+  legislation/annees_salaire_reference.csv)
+ecrit:
+- le revenu annuel moyen du régime, en euros de l'année de l'effet
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: table_des_independants_1994
+  statut: lue
+  textes:
+  - id: LEGIARTI000006751725
+    article: R. 634-1-1 CSS
+    en_vigueur: 1993-08-28
+    citation: >-
+      « Onze années pour l'assuré né en 1934 ou 1935 ; Douze années pour l'assuré né en
+      1936 ou 1937 ; […] Vingt-quatre années pour l'assuré né en 1952 »
+    lu_le: 2026-10-05
+  - id: LEGIARTI000006751723
+    article: R. 634-1 CSS
+    en_vigueur: 1993-08-28
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [null, 2004-01-01]
+  contenu:
+    droit: >-
+      la moyenne des revenus revalorisés des meilleures années après 1972, leur nombre lu
+      à la génération dans la table propre aux artisans et aux commerçants
+    parametres:
+      table: independants
+      selection: meilleures
+      avant_la_liquidation: false
+      calcul: annuel
+      trimestres_comptes: cotises_et_assimiles
+      annees_assimilees_exclues: false
+      annees_sans_trimestre: retenues
+  exemples: aucun trouvé
+- id: annees_validantes_2004
+  statut: lue
+  nee_de: JORFARTI000001474532
+  textes:
+  - id: LEGIARTI000006751724
+    article: R. 634-1 CSS
+    en_vigueur: 2004-02-15
+    citation: >-
+      « l'ensemble des cotisations permettant la validation d'au moins un trimestre
+      d'assurance selon les règles définies par le sixième alinéa de l'article R. 351-9 »
+    lu_le: 2026-10-05
+  - id: JORFARTI000001474532
+    reference: >-
+      décret n° 2004-144 du 13 février 2004, relatif aux pensions du régime général et des
+      régimes des salariés agricoles et des professions artisanales, industrielles et
+      commerciales, article 8 : « aux pensions prenant effet postérieurement au 31
+      décembre 2003 »
+    publie_le: 2004-02-15
+    lu_le: 2026-10-05
+  - id: LEGIARTI000006751727
+    article: R. 634-1-1 CSS
+    en_vigueur: 2007-04-27
+    lu_le: 2026-10-05
+  - reference: >-
+      Cnav, exposé « Nombre d'années retenues », table des travailleurs indépendants
+      (circulaire RSI 2007/033 ; R. 173-4-3) : les mêmes valeurs, génération par
+      génération
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2026-01-01]
+  contenu:
+    droit: >-
+      la même moyenne, parmi les seules années dont les cotisations valident au moins un
+      trimestre
+    parametres:
+      table: independants
+      selection: meilleures
+      avant_la_liquidation: false
+      calcul: annuel
+      trimestres_comptes: cotises_et_assimiles
+      annees_assimilees_exclues: false
+      annees_sans_trimestre: exclues
+  exemples: aucun trouvé
+- id: regle_commune_2026
+  statut: lue
+  nee_de: JORFARTI000053227542
+  textes:
+  - id: JORFARTI000053227542
+    reference: >-
+      décret n° 2025-1409 du 30 décembre 2025, article 2 : « 42° Les articles R. 634-1 et
+      R. 634-1-1 sont abrogés » ; « II.-Les […] 42° du I du présent article s'appliquent
+      aux pensions prenant effet à compter du 1er janvier 2026 »
+    publie_le: 2025-12-31
+    lu_le: 2026-10-05
+  - id: LEGIARTI000053327958
+    article: R. 173-3-2 CSS
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Le nombre d'années retenu dans les régimes mentionnés à l'article L. 173-1-2 […]
+      est égal à vingt-cinq » ; « pour les assurés nés avant le 1er janvier 1948, à celui
+      mentionné à l'article R. 351-29-1 dans sa rédaction antérieure »
+    lu_le: 2026-10-05
+  bornes:
+    liquidation.date_effet: [2026-01-01, null]
+  contenu:
+    droit: >-
+      vingt-cinq années, ou, pour les assurés nés avant 1948, le nombre de la table du
+      régime général ; les années qui ne valident aucun trimestre restent écartées
+      (R. 351-29)
+    parametres:
+      table: salaries
+      selection: meilleures
+      avant_la_liquidation: false
+      calcul: annuel
+      trimestres_comptes: cotises_et_assimiles
+      annees_assimilees_exclues: false
+      annees_sans_trimestre: exclues
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    le revenu moyen est la moyenne des revenus annuels ; la Cnav décrit, dans les
+    anciennes dispositions de son exposé « Revenu annuel moyen », un calcul trimestriel
+    pour les travailleurs indépendants — les revenus des meilleures années, multipliés
+    par quatre, rapportés aux trimestres cotisés et assimilés —, que ni R. 634-1 ni R.
+    634-1-1 ne portent et dont la date reste à lire (étape 138.18)
+  effet: non mesuré
+- ecart: >-
+    après l'intégration des indépendants au régime général, de 2018 à 2025, le modèle
+    liquide leurs années avec celles du régime général, sur la table des salariés, quand
+    la Cnav calcule leur revenu moyen à part pour qui est né avant 1953 (étape 138.18)
+  effet: non mesuré
+- ecart: >-
+    ni la neutralisation des années défavorables (D. 634-4, alinéa 2), ni le revenu
+    partagé du conjoint collaborateur (R. 742-40), que la Cnav décrit avant juillet 2017
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Dater le calcul trimestriel du revenu annuel moyen des indépendants que l'exposé de la
+    Cnav range dans ses anciennes dispositions, et lire le texte qui le fonde (étape
+    138.18).
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 634-1 (1985, 1993, 2004, 2011-2023) et R. 634-1-1 (1993, 2004, 2007) dans l'index
+      LEGI du dépôt ; article 2 du décret n° 2025-1409 au Journal officiel
+    date: 2026-10-05
+  - type: circulaire_cnav
+    reference: >-
+      exposés « Revenu annuel moyen » et « Nombre d'années retenues » de la base de
+      législation de la Cnav, par son API
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_personnelle_salaire_annuel_moyen_nombre_annee_retenue_ex.aspx
+    date: 2026-10-05
+code:
+  interrupteurs:
+    salaire_reference_par_generation: independants
+    regles_du_salaire_annuel_moyen: revenu_annuel_moyen_independants
+  python: >-
+    scenarios/actuel.py : FicheDatee (revenu_annuel_moyen_independants),
+    AnneesRevenuAnnuelMoyenIndependants ; droit/liquider.py : salaire_de_reference,
+    nombre_d_annees_retenues
+  javascript: >-
+    moteur/js/regimes.js : FicheDatee, AnneesRevenuAnnuelMoyenIndependants ;
+    moteur/js/droit/liquider.js : salaireDeReference, nombreDAnneesRetenues
+  parametres: >-
+    contenu.parametres de chaque version ;
+    data/reference/legislation/annees_revenu_annuel_moyen_independants.csv
+  tests: tests/test_simulateur.py et tests/js/moteur.test.js
+  moteur: >-
+    `salaire_reference_par_generation` vaut `independants` : le nombre d'années se lit
+    dans la table des artisans et des commerçants tant que la version de la date d'effet
+    dit `table: independants`, dans celle du régime général ensuite.
+    `regles_du_salaire_annuel_moyen` nomme cette fiche : le moteur y lit, à la date
+    d'effet, quelles années écarter.
+referents:
+  baremes_ipp: >-
+    porte la table de R. 634-1-1 (retraites/independants/ram.yaml), que le dépôt
+    remplaçait par celle des salariés
+historique:
+- >-
+  2026-10-05 — née à l'étape 138.16 : le modèle appliquait aux artisans et aux
+  commerçants la table du régime général, qui atteint vingt-cinq années dès 1948, et
+  gardait les années sans trimestre après 2004.
+exemples: []
+reformes: [sam_annees_validantes_2004]
+effet: >-
+  Artisans et commerçants nés de 1935 à 1952, partis avant 2026 : leur revenu moyen
+  porte sur une à cinq meilleures années de moins que celui d'un salarié, onze au lieu
+  de douze pour 1935, quinze au lieu de vingt pour 1943, vingt au lieu de vingt-cinq
+  pour 1948.

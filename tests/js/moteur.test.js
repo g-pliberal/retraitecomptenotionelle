@@ -24,7 +24,9 @@ import {
   complementMinimum, majorationOuverte, plancherDuRegime, selonLaRegle,
 } from "../../moteur/js/droit/completer.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
+import { moyenneSelonLaRegle } from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
+import { DonneesMacro } from "../../moteur/js/macro.js";
 import { AnneeCarriere, limiterChomageNonIndemnise } from "../../moteur/js/carriere.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
 import { Fiabilite, SerieAnnuelle } from "../../moteur/js/serie.js";
@@ -685,4 +687,58 @@ test("le préfinancement du diviseur se rend sur la pension servie", () => {
       `${liquidation} → ${annee} : ${avec.coefficient(liquidation, annee)} contre ${attendu}`);
   }
   assert.equal(avec.coefficient(2010, 2010), 1);
+});
+
+/**
+ * Le portage de `test_la_moyenne_suit_la_version_de_la_date_d_effet`
+ * (tests/test_salaire_annuel_moyen.py) : chaque version de la fiche
+ * `salaire_annuel_moyen`, sur les mêmes quatre années.
+ */
+test("le salaire annuel moyen suit la version de sa date d'effet", () => {
+  const valeurs = [[1960, 1000.0], [1961, 4000.0], [1962, 3000.0], [1963, 500.0]];
+  const trimestres = new Map([[1960, [4, 0]], [1961, [2, 2]], [1962, [4, 0]], [1963, [0, 0]]]);
+  const validantes = new Set([1960, 1961, 1962]);
+  const regle = (parametres = {}) => ({
+    selection: "meilleures", avant_la_liquidation: false, calcul: "annuel",
+    trimestres_comptes: "cotises_et_assimiles", annees_assimilees_exclues: false,
+    annees_sans_trimestre: "retenues", ...parametres,
+  });
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu - attendu) < 1e-9,
+    `${obtenu} contre ${attendu}`);
+  proche(moyenneSelonLaRegle(regle({ annees_sans_trimestre: "exclues" }), valeurs,
+    trimestres, validantes, 10, 9999), 8000 / 3);
+  proche(moyenneSelonLaRegle(regle(), valeurs, trimestres, validantes, 10, 9999), 8500 / 4);
+  assert.equal(moyenneSelonLaRegle(regle(), valeurs, trimestres, validantes, 2, 9999), 3500);
+  proche(moyenneSelonLaRegle(regle({ calcul: "trimestriel" }), valeurs, trimestres,
+    validantes, 10, 9999), 8500 * 4 / 12);
+  const avant1948 = regle({
+    selection: "dernieres", calcul: "trimestriel", trimestres_comptes: "cotises",
+    annees_assimilees_exclues: true,
+  });
+  proche(moyenneSelonLaRegle(avant1948, valeurs, trimestres, validantes, 2, 1963), 2000);
+  proche(moyenneSelonLaRegle({ ...avant1948, avant_la_liquidation: true }, valeurs,
+    trimestres, validantes, 2, 1963), 3500);
+});
+
+/**
+ * Le portage de `test_l_assiette_de_l_avpf_est_celle_de_la_cnav` et de
+ * `test_la_colonne_de_revalorisation_est_celle_de_la_date_d_effet`
+ * (tests/test_salaire_annuel_moyen.py).
+ */
+test("l'assiette de l'AVPF et la colonne de revalorisation sont celles de la Cnav", () => {
+  const macro = new DonneesMacro(paquet);
+  // Relatif : l'assiette s'écrit à six décimales dans le fichier de la Cnav.
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu / attendu - 1) < 1e-8,
+    `${obtenu} contre ${attendu}`);
+  assert.equal(macro.revenuAvpf(1971), 0);
+  proche(macro.revenuAvpf(1972), 6 * 667.32 / 6.55957);
+  proche(macro.revenuAvpf(2021), 12 * 1715.35);
+  proche(macro.revenuAvpf(2026), 12 * 2031.38);
+  proche(macro.revenuAvpf(2027), 2028 * 12.31);
+  const lu = (depart, arrivee, mois) => macro.coefficientRevalorisationPorteeAuCompte(
+    depart, arrivee, mois);
+  proche(lu(1970, 1990, 1), 5.629);
+  proche(lu(1947, 1949, 6), 1.6);
+  proche(lu(1990, 2013, 5), 1.431);
+  assert.equal(lu(1954, 1955, 2), 1);
 });
