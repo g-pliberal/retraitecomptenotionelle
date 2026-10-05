@@ -247,9 +247,8 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris
   - 142. Les simulateurs officiels, sans y passer ses journées
   - 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés
-- **Les sources à exploiter** : 140 à explorer sur 320 (73 explorées, 91 épuisées). 14 d'entre elles visent un régime partiel, et pourraient le compléter :
+- **Les sources à exploiter** : 117 à explorer sur 320 (73 explorées, 91 épuisées). 11 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Caisse nationale d'assurance vieillesse des professions libérales, régime de base : 7 source(s) (mon_entreprise_comparaison_ei, cnavpl_wordpress, cavec_wordpress…)
-  - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
   - Régime des artistes-auteurs professionnels (IRCEC) : 2 source(s) (cnav_arrierees_artiste_auteur, mon_entreprise_artiste_auteur)
   - Complémentaire des agents généraux d'assurance (CAVAMAC) : 1 source(s) (cavamac_wordpress)
   - Complémentaire des officiers ministériels (CAVOM) : 1 source(s) (cavom_wordpress)
@@ -259,7 +258,6 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Pensions civiles et militaires de retraite (Service des retraites de l'État) : 1 source(s) (sre_cubes_pensions)
   - Régime des auteurs et compositeurs dramatiques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - Régime des auteurs et compositeurs lyriques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
-  - Assurance vieillesse des non-salariés agricoles (MSA) : 1 source(s) (msa_reforme_25_meilleures_annees)
   - et 59 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 69 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 23 non public(s). 11 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, Destinie 2, TRAJECTOiRE, ANCETRE, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), modele-ti, modele-social), et 150 écarts y ont été trouvés. 15 sont à confronter au scénario 1 en premier, parce que leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du registre ; dans l'ordre du registre, qui range les administrations d'abord : `ines`, `legiretraite`, `edifis`, `saphir`, `modele_as`, `catala`, et 9 autres.
 - **Ce que les autres modèles font mieux** (action 138) : 280 points, lus chez 65 modèles : 218 à reprendre, 43 à trancher par le propriétaire (des choix du programme), 9 repris, 10 écartés. Les points à reprendre, par chantier de la feuille de route : 136.2 (1), 136.3 (2), 136.4 (5), 136.5 (1), 136.6 (1), 138.2 (22), 138.3 (29), 138.4 (6), 138.5 (7), 138.6 (8), 138.7 (18), 138.8 (3), 138.9 (13), 138.10 (9), 138.11 (16), 138.12 (12), 138.14 (14), 138.16 (14), 138.17 (13), 138.18 (17), 138.19 (7).

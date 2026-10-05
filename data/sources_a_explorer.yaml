@@ -2384,7 +2384,7 @@ sources:
       sur les 25 meilleures années à compter de 2026 : une réforme RÉCENTE,
       donc une ligne obligatoire dans reformes.yaml et veille.yaml, et un
       changement que le dépôt doit couper à la bonne date.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- Régimes spéciaux ---------------------------------------------------
 
@@ -2397,7 +2397,7 @@ sources:
       Le calcul des IEG : salaire des six derniers mois, coefficient de 75 %,
       services actifs et insalubres. Le dépôt le modélise ; cette page dit ce
       qu'il simplifie.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_age_retraite
     url: https://www.cnieg.fr/accueil/actif/age-depart/age-retraite.html
@@ -2407,7 +2407,7 @@ sources:
     a_en_tirer: >-
       Les âges après la réforme de 2023, qui ferme le régime aux nouveaux
       embauchés : le calendrier de convergence, borne par borne.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_retraite_progressive
     url: https://www.cnieg.fr/accueil/actif/age-depart/retraite-progressive.html
@@ -2416,7 +2416,7 @@ sources:
     regimes: [ieg]
     a_en_tirer: >-
       La retraite progressive dans un régime spécial, ouverte récemment.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_prelevements
     url: https://www.cnieg.fr/accueil/retraite/prelevements/prelevements-sociaux.html
@@ -2425,7 +2425,7 @@ sources:
     regimes: [ieg]
     a_en_tirer: >-
       Les prélèvements sur les pensions des IEG, dont la CSG à taux particulier.
-    statut: a_explorer
+    statut: en_cours
 
   - id: crpratp_ouverture_du_droit
     url: https://www.crpratp.fr/web/actif/preparez-votre-depart-a-la-retraite/ouverture-du-droit
@@ -2571,7 +2571,7 @@ sources:
     a_en_tirer: >-
       Les clercs de notaires : calcul, minimum, et le taux de cotisation
       employeur le plus élevé de France. Fiche `partiel`.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cprpf_comprendre_droits
     url: https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/comprendre-vos-droits/
@@ -2601,7 +2601,7 @@ sources:
     a_en_tirer: >-
       Bonifications et majorations pour enfants à la SNCF, matière de
       l'action 43.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- Artistes-auteurs (Urssaf Limousin) ---------------------------------
 
@@ -4298,7 +4298,7 @@ sources:
       simulateur puisse prendre — on lit la formule au lieu de la deviner en
       balayant —, et c'est le cinquième barème de rachat du chantier, après
       l'ENSAP, la CNRACL, la Cipav et la Cnav.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_amelioration_retraite
     url: https://www.cnieg.fr/accueil/actif/montant-retraite/amelioration-retraite.html
@@ -4307,7 +4307,7 @@ sources:
     regimes: [ieg]
     a_en_tirer: >-
       Les leviers que le régime reconnaît : rachat, surcote, prolongation.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_reglementation
     url: https://www.cnieg.fr/accueil/reglementation/particulier.html
@@ -4317,7 +4317,7 @@ sources:
     a_en_tirer: >-
       La table des matières de la réglementation : c'est d'ici que partent
       toutes les pages qui suivent, et sans doute d'autres.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_rachat_etudes
     url: https://www.cnieg.fr/accueil/reglementation/particulier/rachat-annees-etudes.html
@@ -4327,7 +4327,7 @@ sources:
     a_en_tirer: >-
       La règle du rachat, à côté du classeur qui la chiffre : options, nombre
       de trimestres, et ce que le rachat ouvre exactement.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_mode_calcul
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/mode-calcul.html
@@ -4337,7 +4337,7 @@ sources:
     a_en_tirer: >-
       La formule du régime, énoncée par son gestionnaire : à confronter à la
       fiche `ieg`, que le dépôt modélise sans source d'application.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_salaire_calcul
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/salaire-calcul.html
@@ -4347,7 +4347,7 @@ sources:
     a_en_tirer: >-
       Le salaire de référence : quels éléments de rémunération entrent dans
       l'assiette de liquidation, et sur quelle durée.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_taux_pension
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/taux-pension.html
@@ -4357,7 +4357,7 @@ sources:
     a_en_tirer: >-
       Le taux de la pension et son plafond : les 75 % et ce qui les porte
       au-delà.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_duree_assurance
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance.html
@@ -4367,7 +4367,7 @@ sources:
     a_en_tirer: >-
       La durée d'assurance dans un régime spécial : ce qu'elle compte et ce
       qu'elle ne compte pas.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_tableau_duree_assurance
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance/tableau-duree-assurance.html
@@ -4398,7 +4398,7 @@ sources:
     a_en_tirer: >-
       La règle de décote du régime, dont la convergence sur le droit commun
       s'est faite par étapes.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_decote_coefficient
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote/coefficient.html
@@ -4466,7 +4466,7 @@ sources:
     a_en_tirer: >-
       La majoration pour enfants élevés : le barème d'un régime spécial, à
       joindre à l'action 43 et au chiffrage des avantages non contributifs.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_minimum_retraite
     url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/minimum-retraite.html
@@ -4476,7 +4476,7 @@ sources:
     a_en_tirer: >-
       Le minimum de pension du régime, que le dépôt ne porte pour aucun régime
       spécial.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_baremes_cotisations_sociales
     url: https://www.cnieg.fr/accueil/reglementation/particulier/retraite/cotisations-sociales/baremes.html
@@ -4487,7 +4487,7 @@ sources:
       Les barèmes de CSG, CRDS et Casa sur les pensions, avec leurs seuils :
       énième source sur les prélèvements, et la plus utile pour dire un net
       de pension sans se tromper de tranche.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_pension_orphelin
     url: https://www.cnieg.fr/accueil/reglementation/particulier/pension-temporaire-orphelin.html
@@ -4497,7 +4497,7 @@ sources:
     a_en_tirer: >-
       La pension temporaire d'orphelin : un droit dérivé que seuls quelques
       régimes servent, et qu'aucun scénario du dépôt ne porte.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_reprise_activite
     url: https://www.cnieg.fr/accueil/retraite/situation/reprise-activite.html
@@ -4506,7 +4506,7 @@ sources:
     regimes: [ieg]
     a_en_tirer: >-
       Le cumul emploi-retraite dans les IEG, et son écrêtement propre.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnieg_deces
     url: https://www.cnieg.fr/accueil/retraite/deces.html
@@ -4516,7 +4516,7 @@ sources:
     a_en_tirer: >-
       La réversion et le capital décès des IEG, aux conditions du régime
       spécial et non du droit commun.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- ENIM et CRPCEN, suite ----------------------------------------------
 
@@ -4579,7 +4579,7 @@ sources:
     a_en_tirer: >-
       Le rachat d'années d'études chez les clercs de notaires : sixième barème
       de rachat du chantier, et fiche `partiel`.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- Les autres modèles, recensés le 1er octobre 2026 ---------------------
   # Ces lignes ne viennent pas des 260 adresses du 22 septembre : elles sont
