@@ -428,11 +428,15 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   pour élever un enfant, que ces régimes comptent comme services, ne sont pas
   portés : la carrière ne les dit pas ; ni l'âge que la bonification des IEG
   avance pour les parents d'un ou deux enfants.
-- **Majorations pour enfants des non-salariés agricoles.** La MSA sert bien une
-  majoration de durée d'assurance à ses non-salariés, mais elle s'y convertit en
-  POINTS et non en trimestres, selon une règle qui change au 1er janvier 2026.
-  Le régime des exploitants étant déjà le plus approché du catalogue, la porter
-  ici donnerait un chiffre plus précis d'apparence et pas davantage de vérité.
+- **Majorations pour enfants des non-salariés agricoles.** La majoration d'un
+  dixième des parents de trois enfants est servie depuis le 1er juillet 1974
+  (décret n° 55-753, article 37, puis D. 732-38 du code rural, puis L. 351-12
+  depuis 2026) ; aucune période ne la déclarait avant le 5 octobre 2026. La
+  MSA sert aussi une majoration de durée d'assurance, mais elle s'y convertit
+  en POINTS et non en trimestres, selon une règle qui change au 1er janvier
+  2026. Le régime des exploitants étant déjà le plus approché du catalogue, la
+  porter ici donnerait un chiffre plus précis d'apparence et pas davantage de
+  vérité.
 - **Un ménage, un patrimoine, des ressources.** Le minimum vieillesse est servi
   sous le barème d'une personne seule sans autre ressource — le cas le plus
   favorable — et à tous, alors que la DREES estime le non-recours à la moitié

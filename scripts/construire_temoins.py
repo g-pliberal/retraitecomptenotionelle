@@ -1294,6 +1294,11 @@ def _cas() -> list[dict]:
     cas.append(("enfants_regime_aligne", {
         **enfants, "statut": "artisan", "naissance": "1950",
     }))
+    # L'exploitante agricole de trois enfants : la bonification d'un dixième
+    # que le code rural sert depuis le 1er juillet 1974 (action 89).
+    cas.append(("enfants_exploitante_agricole", {
+        **enfants, "statut": "exploitant_agricole", "naissance": "1960",
+    }))
     # CHAQUE ENFANT COMPTE À SA DATE (le domaine « les dates des enfants »,
     # docs/architecture.md, § 11). Une fonctionnaire dont un enfant naît avant
     # 2004 et deux après reçoit, enfant par enfant, la bonification de L. 12 b

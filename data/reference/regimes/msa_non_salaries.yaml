@@ -26,9 +26,20 @@ inventaire:
     Le barème en points d'avant 1990 n'est pas lu, et ses années entrent dans
     la moyenne de la réforme de 2026 par les points que vaut leur rendement ;
     conjoints et aides familiaux sont sous-estimés.
+# LA MAJORATION POUR TROIS ENFANTS, lue le 5 octobre 2026 dans l'index LEGI
+# (action 89) : « à compter du 1er juillet 1974 », les avantages de
+# vieillesse « sont augmentés d'une bonification d'un dixième pour tout
+# bénéficiaire de l'un ou de l'autre sexe ayant eu au moins trois enfants »,
+# ou en ayant élevé trois neuf ans avant leurs seize ans (décret n° 55-753,
+# article 37, LEGIARTI000006763657) ; codifiée à D. 732-38 du code rural le
+# 22 avril 2005 (LEGIARTI000006597504) ; abrogée au 1er janvier 2026 par le
+# décret n° 2025-1409, qui renvoie à L. 351-12 pour les pensions prenant
+# effet depuis. Le guide de la MSA le dit aussi : « au moins 3 enfants, le
+# montant de votre retraite est majoré de 10 % ». Aucune période ne la
+# déclarait ; la période de 1952 est coupée en 1974.
 periodes:
   - debut: 1952
-    fin: 1985
+    fin: 1973
     type_calcul: mixte
     age_ouverture: 65
     age_taux_plein: 65
@@ -42,6 +53,25 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      Voir la période 1974-1985, dont celle-ci ne diffère que par la
+      bonification d'un dixième des parents de trois enfants, servie à
+      compter du 1er juillet 1974 (décret n° 55-753, article 37).
+  - debut: 1974
+    fin: 1985
+    type_calcul: mixte
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    pension_forfaitaire_annuelle: 3628.98
+    pension_forfaitaire_annee: 2023
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
     notes: >-
       Loi du 10 juillet 1952 créant l'assurance vieillesse agricole (AVA).
       Retraite en deux parts : FORFAITAIRE, indépendante du revenu, et
@@ -79,7 +109,7 @@ periodes:
     decote_par_trimestre: 0.025
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
     notes: >-
       SOIXANTE ANS DEPUIS LE 1ER JANVIER 1986 : la loi n° 86-19 du
       6 janvier 1986 « relative à l'abaissement à soixante ans de l'âge de
@@ -114,7 +144,7 @@ periodes:
     decote_par_trimestre: 0.025
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
     notes: >-
       « À compter du 1er janvier 1990 » (R. 732-70), la cotisation ouvre un
       nombre de points qui dépend du revenu par un escalier à quatre marches
@@ -150,7 +180,7 @@ periodes:
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, pension_majoree_reference, reversion]
+      [majoration_enfants, minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
       Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
       des non-salariés agricoles, en points. Cette fiche ne porte plus que
@@ -212,7 +242,7 @@ periodes:
     surcote_par_trimestre: 0.0075
     surcote_points: surcote_regime_general
     avantages_non_contributifs:
-      [minimum_vieillesse, pension_majoree_reference, reversion]
+      [majoration_enfants, minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
       Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
       des non-salariés agricoles, en points. Cette fiche ne porte plus que
@@ -286,7 +316,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_regime_general
     avantages_non_contributifs:
-      [minimum_vieillesse, pension_majoree_reference, reversion]
+      [majoration_enfants, minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
       Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
       des non-salariés agricoles, en points. Cette fiche ne porte plus que
@@ -356,7 +386,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_regime_general
     avantages_non_contributifs:
-      [minimum_vieillesse, pension_majoree_reference, reversion]
+      [majoration_enfants, minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
       Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
       des non-salariés agricoles, en points. Cette fiche ne porte plus que
@@ -435,7 +465,7 @@ periodes:
     meilleures_annees_non_salaries: pension_non_salaries_agricoles_2026
     calcul_provisoire_non_salaries: pension_non_salaries_agricoles_2026
     avantages_non_contributifs:
-      [minimum_vieillesse, pension_majoree_reference, reversion]
+      [majoration_enfants, minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
       LES PENSIONS DE 2026 ET DE 2027 SONT LIQUIDÉES DEUX FOIS. D'abord par
       les dispositions de l'ancienne section du code rural, « dans leur
@@ -484,7 +514,7 @@ periodes:
     surcote_points: surcote_regime_general
     meilleures_annees_non_salaries: pension_non_salaries_agricoles_2026
     avantages_non_contributifs:
-      [minimum_vieillesse, pension_majoree_reference, reversion]
+      [majoration_enfants, minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
       L. 732-24 DANS SA RÉDACTION DE 2026 (loi n° 2025-199, article 87), pour
       les pensions prenant effet depuis le 1er janvier 2028 — et, par le

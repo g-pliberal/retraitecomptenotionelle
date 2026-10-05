@@ -1651,6 +1651,28 @@ def test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition(simulateur):
         majoration.montant)
 
 
+def test_les_exploitants_agricoles_ont_la_majoration_de_trois_enfants(simulateur):
+    """« À compter du 1er juillet 1974 », la retraite des non-salariés
+    agricoles est « augmentée d'une bonification d'un dixième » pour les
+    parents de trois enfants (décret n° 55-753, article 37 ; D. 732-38 du code
+    rural ; L. 351-12 depuis 2026). Aucune période de la fiche ne la déclarait :
+    l'exploitante de trois enfants partie en 2024 n'en recevait rien."""
+    def majoration(naissance, depart):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="F", affiliation="exploitant_agricole",
+            age_debut=20, age_liquidation=depart, nombre_enfants=3)
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        pensions = {p.regime: p.montant for p in resultat.pensions_par_regime}
+        majorations = [a for a in resultat.avantages_appliques
+                       if a.code == "majoration_enfants"]
+        parts = dict(majorations[0].par_regime) if majorations else {}
+        return parts.get("msa_non_salaries", 0.0) / pensions["msa_non_salaries"]
+
+    assert majoration(1960, 64) == pytest.approx(0.10)
+    # Partie en 1973, avant la bonification : rien.
+    assert majoration(1908, 65) == 0.0
+
+
 def test_la_fonction_publique_majore_de_cinq_points_par_enfant_au_dela_de_trois():
     """10 % à trois enfants, puis 5 % par enfant supplémentaire.
 

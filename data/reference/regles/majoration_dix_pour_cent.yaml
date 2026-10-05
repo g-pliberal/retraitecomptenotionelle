@@ -2,8 +2,9 @@ schema_version: 1
 id: majoration_dix_pour_cent
 intitule: >-
   Majoration de 10 % pour trois enfants au régime général, sur la retraite telle
-  que calculée ; plafonnée en euros à l'Agirc-Arrco, dont les taux sont ceux de
-  la ligne `majoration_enfants_agirc_arrco`.
+  que calculée, et chez les non-salariés agricoles depuis le 1er juillet 1974 ;
+  plafonnée en euros à l'Agirc-Arrco, dont les taux sont ceux de la ligne
+  `majoration_enfants_agirc_arrco`.
 etat: conforme
 etape: completer_tous_regimes
 effet: Parents de trois enfants.
@@ -28,6 +29,21 @@ sources:
   - type: service_public
     reference: fiche F16336, majoration de 10 % pour trois enfants au régime général
     date: 2026-08-14
+  - type: legifrance
+    reference: >-
+      non-salariés agricoles : décret n° 55-753, article 37 (LEGIARTI000006763657 et
+      LEGIARTI000006763658), « une bonification d'un dixième » à compter du 1er
+      juillet 1974 ; D. 732-38 du code rural (LEGIARTI000006597504), du 22 avril 2005
+      au 31 décembre 2025 ; L. 351-12 depuis, par le décret n° 2025-1409
+    date: 2025-12-31
+  - type: autre
+    reference: >-
+      MSA, guide « Comprendre sa retraite de non-salarié agricole » : « au moins 3
+      enfants, le montant de votre retraite est majoré de 10 % » ; CLEISS, le régime
+      des non-salariés agricoles (2026) : les majorations pour enfants « sur la durée
+      d'assurance ou le montant de la retraite »
+    date: 2026-10-05
+    url: https://ain-rhone.msa.fr/lfp/documents/98785/2512733/Guide+-+Comprendre+sa+retraite+de+non+salari%C3%A9+agricole
 textes_a_rattacher:
 - reference: L. 351-12 CSS
 - reference: accord national interprofessionnel Agirc-Arrco
