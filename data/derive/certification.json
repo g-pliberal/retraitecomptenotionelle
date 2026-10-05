@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-04",
+ "dernier_passage_le": "2026-10-05",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -505,7 +505,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-09-24"
+   "verifiee_le": "2026-10-05"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -1000,7 +1000,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-09-24"
+   "verifiee_le": "2026-10-05"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1071,13 +1071,13 @@
   "valeurs_point": {
    "ajoutees": 0,
    "colonne": "valeur",
-   "corrigees": 0,
-   "empreinte": "1bcaeeeded1c4acf",
-   "identiques": 301,
+   "corrigees": 9,
+   "empreinte": "ea66cbaeedb437f5",
+   "identiques": 292,
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, paramètres des régimes en points",
    "valeurs": 301,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_agirc_arrco": {
    "ajoutees": 0,
@@ -1088,7 +1088,7 @@
    "niveau": "certifiee",
    "source": "Fédération Agirc-Arrco, compilation des valeurs de point (régime unifié, Agirc, Arrco et UNIRS)",
    "valeurs": 275,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_agirc_arrco_en_cours": {
    "ajoutees": 0,
@@ -1099,7 +1099,7 @@
    "niveau": "haute",
    "source": "Fédération Agirc-Arrco, valeur en vigueur dans l'année en cours",
    "valeurs": 1,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_cnavpl": {
    "ajoutees": 0,
@@ -1124,26 +1124,26 @@
    "verifiee_le": "2026-09-22"
   },
   "valeurs_point_estimees": {
-   "ajoutees": 40,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "91ac7e9cfe4737e5",
-   "identiques": 0,
+   "identiques": 40,
    "niveau": "estimee",
    "source": "Taux d'appel de l'Ircantec 1971 prolongé sur l'IPACTE et l'IGRANTE (décret 70-1277, art. 7, LEGIARTI000006368121)",
    "valeurs": 40,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_gmp": {
-   "ajoutees": 29,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "3afedd6c509965db",
-   "identiques": 0,
+   "identiques": 29,
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-02"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1165,7 +1165,7 @@
    "niveau": "certifiee",
    "source": "Caisse des dépôts, barèmes Ircantec (IRC_BAR_01 et IRC_BAR_02)",
    "valeurs": 153,
-   "verifiee_le": "2026-09-22"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_ircantec_publiees": {
    "ajoutees": 0,
@@ -1176,7 +1176,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-09-24"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,
@@ -1198,7 +1198,7 @@
    "niveau": "certifiee",
    "source": "ERAFP, évolution des valeurs du point depuis la création du RAFP",
    "valeurs": 44,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_rci_cnav": {
    "ajoutees": 0,
@@ -1209,29 +1209,29 @@
    "niveau": "haute",
    "source": "Cnav, base de législation : barèmes du point RCI (circulaires Cnav 2023/33, 2024/36 et 2025/31)",
    "valeurs": 6,
-   "verifiee_le": "2026-09-22"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_texte": {
    "ajoutees": 0,
    "colonne": "valeur",
-   "corrigees": 2,
+   "corrigees": 0,
    "empreinte": "152ea1eec2cea59d",
-   "identiques": 1,
+   "identiques": 3,
    "niveau": "moyenne",
    "source": "Valeurs saisies dans le texte : ANI du 17 novembre 2017, art. 3 ; arrêté du 12 décembre 1951, art. 8 (LEGIARTI000006381673)",
    "valeurs": 3,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_point_unirs": {
    "ajoutees": 0,
    "colonne": "valeur",
-   "corrigees": 0,
-   "empreinte": "f456045e1b51f980",
-   "identiques": 123,
+   "corrigees": 9,
+   "empreinte": "87a69f6bafc82068",
+   "identiques": 114,
    "niveau": "moyenne",
    "source": "UNIRS tenant lieu de point Arrco avant 1999 — barème de la fédération Agirc-Arrco, substitution du dépôt",
    "valeurs": 123,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-05"
   },
   "valeurs_service_cnavpl": {
    "ajoutees": 18,

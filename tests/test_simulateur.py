@@ -3005,11 +3005,11 @@ def test_l_abattement_de_la_complementaire_n_est_pas_celui_de_la_base(simulateur
 
 
 def test_la_majoration_pour_enfants_de_la_complementaire_est_plafonnee(simulateur):
-    """10 % à la base, mais au plus 2 367 € par an à l'Agirc-Arrco.
+    """10 % à la base, mais au plus 2 367,48 € par an à l'Agirc-Arrco.
 
     Sans ce plafond, les familles très nombreuses de salariés du privé étaient
     surestimées : le cadre qui touche 30 000 € de complémentaire s'en voyait
-    majorer de 3 000 € au lieu des 2 367 € que le régime sert au maximum.
+    majorer de 3 000 € au lieu des 2 367,48 € que le régime sert au maximum.
     """
     carriere = simulateur.carriere_simple(
         annee_naissance=1965, sexe="F", affiliation="salarie_prive_cadre",
@@ -3028,13 +3028,15 @@ def test_la_majoration_pour_enfants_de_la_complementaire_est_plafonnee(simulateu
         complementaire + sum(p.montant for p in resultat.pensions_par_regime
                              if p.regime == "regime_general")
     )
-    # ET LE PLAFOND EST LE BON, au centime : 2 367 € pour les pensions servies
-    # depuis le 1er novembre 2025, revalorisés comme la valeur de service du
+    # ET LE PLAFOND EST LE BON, au centime : 2 367,48 € pour les pensions
+    # servies depuis le 1er novembre 2024, gelés en 2025 (circulaires
+    # 2024-12-DT et 2025-16-SG-DRJ), revalorisés comme la valeur de service du
     # point jusqu'à l'année de liquidation. L'inégalité seule passait un
-    # plafond multiplié par 0,01 comme par 1,2 jusqu'au 23 septembre 2026.
+    # plafond multiplié par 0,01 comme par 1,2 jusqu'au 23 septembre 2026 ; le
+    # dépôt l'arrondissait à 2 367 € jusqu'au 5 octobre 2026.
     annee = carriere.annee_liquidation
     actuel = simulateur.scenario_actuel
-    plafond = (2367.0 * liquider.valeur_du_point(actuel, "agirc_arrco", annee)[0]
+    plafond = (2367.48 * liquider.valeur_du_point(actuel, "agirc_arrco", annee)[0]
                / liquider.valeur_du_point(actuel, "agirc_arrco", 2025)[0])
     par_regime = dict(majoration.par_regime)
     base = next(p.montant for p in resultat.pensions_par_regime

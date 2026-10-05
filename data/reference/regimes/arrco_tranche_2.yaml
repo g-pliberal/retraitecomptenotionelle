@@ -40,7 +40,7 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -91,7 +91,7 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -116,7 +116,7 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -142,7 +142,7 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -165,7 +165,7 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -188,7 +188,7 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -213,7 +213,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -247,7 +247,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -273,7 +273,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -299,7 +299,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -325,7 +325,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -352,7 +352,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -381,7 +381,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -407,7 +407,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -433,7 +433,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -461,7 +461,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -491,7 +491,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -517,7 +517,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -544,7 +544,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -572,7 +572,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -601,7 +601,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
@@ -629,7 +629,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco

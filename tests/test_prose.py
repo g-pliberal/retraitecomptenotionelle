@@ -450,7 +450,7 @@ def test_partout_refuse_une_valeur_qui_ne_l_est_plus():
     fiches = ("data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml"
               " + data/reference/regimes/unirs.yaml")
     assert verifier_prose.sonde_partout(
-        f"{fiches}:periodes.*.plafond_majoration_enfants") == 2367
+        f"{fiches}:periodes.*.plafond_majoration_enfants") == 2367.48
     with pytest.raises(ValueError):
         verifier_prose.sonde_partout(f"{fiches}:periodes.*.debut")
 

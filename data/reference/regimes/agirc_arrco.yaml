@@ -42,7 +42,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_1
@@ -66,7 +66,8 @@ periodes:
       d'anticipation) — et retient la plus avantageuse ; l'âge du taux
       plein et la durée sont lus à la génération, ce qui porte la loi du
       14 avril 2023. La majoration pour enfants est PLAFONNÉE en euros : 2
-      367 € par an pour les pensions servies depuis le 1er novembre 2025,
+      367,48 € par an pour les pensions servies depuis le 1er novembre 2024,
+      inchangés au 1er novembre 2025 (circulaires 2024-12-DT et 2025-16),
       revalorisés comme la valeur de service du point, opposables aux
       seuls assurés nés à compter du 2 août 1951. COEFFICIENTS DE
       SOLIDARITÉ (ANI du 30 octobre 2015, JORFARTI000031602387) : malus de
@@ -87,7 +88,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_1
@@ -117,7 +118,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2
@@ -144,7 +145,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367
+    plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
     assiette: tranche_2

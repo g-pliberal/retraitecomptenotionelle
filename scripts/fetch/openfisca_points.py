@@ -140,6 +140,22 @@ SOURCES: dict[str, dict[str, tuple[str, str | None]]] = {
     },
 }
 
+#: Ce qu'OpenFisca porte « en euros » et qui est en FRANCS. Le salaire de
+#: référence de l'UNIRS, de 1949 à 1957, n'y est pas converti : 1,07 pour
+#: 1957, quand 1958 vaut 0,182939 € (1,20 F ÷ 6,55957), un point six fois et
+#: demie plus cher d'une année sur l'autre. Sa série nominale, dans le même
+#: fichier, dit 1,065 F pour 1957 et 1,20 F pour 1958 : ces années-là se lisent
+#: donc en francs, convertis au taux de l'euro, jusqu'à l'année de bascule
+#: exclue. Relevé le 5 octobre 2026 (action 89, lot de l'Agirc-Arrco).
+NOMINAUX_EN_FRANCS = {
+    "unirs": {
+        "salaire_reference": (
+            f"{PENSION}/secteur_prive/regimes_complementaires/unirs/salaire_de_reference.yaml",
+            "salaire_reference_en_nominal", 1958),
+    },
+}
+FRANCS_PAR_EURO = 6.55957
+
 #: Régimes dont le point prolonge celui d'un autre, avec l'année de bascule.
 #: L'UNIRS n'est pas « arrco », mais c'est la caisse dont le point a servi de
 #: référence avant l'unification de 1999 : ses valeurs comblent 1957-1998.
@@ -244,6 +260,19 @@ def main() -> int:
                 return 1
         couvertures = {g: len(v) for g, v in brut[regime].items()}
         print(f"OK      {regime:<14} {couvertures}")
+
+    # Les années qu'OpenFisca n'a pas converties : sa série nominale, en francs.
+    for regime, grandeurs in NOMINAUX_EN_FRANCS.items():
+        for grandeur, (url, cle, bascule) in grandeurs.items():
+            try:
+                nominal = _annualiser(_valeurs(url, cle))
+            except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
+                print(f"ÉCHEC   {regime}/{grandeur} nominal : {erreur}", file=sys.stderr)
+                return 1
+            convertis = {a: v / FRANCS_PAR_EURO for a, v in nominal.items() if a < bascule}
+            brut[regime][grandeur] = {**brut[regime][grandeur], **convertis}
+            print(f"        {regime}/{grandeur} : {len(convertis)} années lues en francs "
+                  f"avant {bascule}")
 
     # Substitution : l'UNIRS comble l'Arrco avant l'unification du point.
     for cible, (remplacant, bascule) in SUBSTITUTIONS.items():

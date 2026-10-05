@@ -756,8 +756,8 @@ def plafond_majoration(moteur, code: str, periode: PeriodeRegime,
     """Plafond en euros de la majoration pour enfants, ou ``None``.
 
     Les régimes de base servent 10 % sans plafond ; l'Agirc-Arrco, elle,
-    borne la majoration en euros — 2 367 € par an pour les pensions servies
-    depuis le 1er novembre 2025 — et le plafond est revalorisé comme la
+    borne la majoration en euros — 2 367,48 € par an pour les pensions servies
+    depuis le 1er novembre 2024, gelés en 2025 — et le plafond est revalorisé comme la
     valeur de service du point, à laquelle il est donc rapporté ici. Sans
     lui, les familles très nombreuses de salariés du privé étaient
     surestimées.

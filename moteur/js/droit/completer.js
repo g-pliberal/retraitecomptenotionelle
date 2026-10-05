@@ -658,7 +658,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
  * Plafond en euros de la majoration pour enfants, ou ``null``.
  *
  * Les régimes de base servent 10 % sans plafond ; l'Agirc-Arrco borne la
- * majoration en euros — 2 367 € par an depuis le 1er novembre 2025 — et le
+ * majoration en euros — 2 367,48 € par an depuis le 1er novembre 2024 — et le
  * plafond suit la valeur de service du point. Il ne s'oppose qu'aux assurés
  * nés à compter du 2 août 1951 ; le modèle ne connaît que l'année de
  * naissance et retient les générations à partir de 1952.

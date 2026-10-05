@@ -47,7 +47,7 @@ Ce qui suit est le recensement complet de ses paramètres et de leur état.
 | Coefficient de minoration par génération | table 1900-1975, <!--chiffre:maximum(data/reference/legislation/coefficient_minoration.csv:coefficient*100)-->2,5<!--/--> → <!--chiffre:minimum(data/reference/legislation/coefficient_minoration.csv:coefficient*100)-->1,25<!--/--> % | **certifié** (R. 351-27 II), recoupé à la DREES |
 | Années retenues au salaire de référence | table 1934-1948, <!--chiffre:minimum(data/reference/legislation/annees_salaire_reference.csv:annees)-->10<!--/--> → <!--chiffre:maximum(data/reference/legislation/annees_salaire_reference.csv:annees)-->25<!--/--> années | **certifiée** (R. 351-29-1) |
 | Coefficients d'anticipation Agirc-Arrco | deux tables, 1 → 0,78 et 1 → 0,43 | barème publié par la caisse, saisi |
-| Plafond de la majoration familiale Agirc-Arrco | <!--chiffre:partout(data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml + data/reference/regimes/unirs.yaml:periodes.*.plafond_majoration_enfants)-->2 367<!--/--> €/an (novembre 2025) | publié par la caisse, saisi |
+| Plafond de la majoration familiale Agirc-Arrco | <!--chiffre:partout(data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml + data/reference/regimes/unirs.yaml:periodes.*.plafond_majoration_enfants)-->2 367,48<!--/--> €/an (depuis novembre 2024, gelé en 2025) | publié par la caisse, saisi |
 | Garantie minimale de points de l'Agirc | 1989-2018 : les points qu'achète la cotisation forfaitaire publiée de l'année, au prix du point — un objectif de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1989;assiette=tranche_b.points_minimum_annuels)-->144<!--/--> points par an jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1997;assiette=tranche_b.points_minimum_annuels)-->120<!--/--> ensuite, pour un taux contractuel de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=ValeursPoint.TAUX_DE_LA_GARANTIE&echelle=100)-->16<!--/--> % —, proratisés sur le taux de l'entreprise, que le modèle prend au minimum (la moitié des points jusqu'en 1993), sur la durée de présence et le temps partiel, et pour une année de chômage indemnisé comme pour une année travaillée, l'Unédic en versant la cotisation ; la cotisation portée au compte notionnel | accord du 8 décembre 1988 (copie du Medef), convention du 14 mars 1947 (article 6 ; annexe I, articles 8 et 8 bis), accords du 9 février 1994 (articles 10 et 11), du 25 avril 1996 (articles 7 et 11) et du 17 novembre 2017 (article 155), protocole du 2 janvier 2004 sur le chômage (article 3) et circulaire Agirc-Arrco 2019-1-DRJ (la suppression), lus ; le guide réglementaire Agirc-Arrco de 2016 (titres V et VII : le prorata, le chômage, la maladie), lu dans ses captures par Common Crawl, son site n'étant plus en ligne ; forfaits de 1989 à 2018 transcrits du barème IPP ; les circulaires de l'Agirc de 2003 à 2008 et de l'Agirc-Arrco de 2016 et 2017, la fiche d'Audiens de 2018 et les mensualités de 1999 à 2002 que relaient les Actualités sociales hebdomadaires, rejouées ; l'avenant du 13 juin 1991, l'avenant A-145, les circulaires de l'Agirc de 1989 à 1998 et le texte de la décision du 10 mars 1997 sur les chômeurs âgés, introuvables en ligne |
 | Assiette de l'AVPF | SMIC annuel, <!--chiffre:tenu(test_l_avpf_porte_un_salaire_au_compte)-->1 820<!--/--> heures | principe sourcé, assiette déduite du SMIC |
 | Droits ouverts par motif d'interruption | <!--chiffre:lignes_csv(data/reference/legislation/periodes_non_travaillees.csv)-->11<!--/--> motifs | principe sourcé, fractions non recontrôlées |
@@ -281,12 +281,18 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   partiellement sourcées. Ajouter la PMR sur ce socle donnerait un chiffre plus
   précis d'apparence et pas davantage de vérité.
 - **Coefficients de solidarité et majorants de l'Agirc-Arrco.** Le malus de
-  <!--chiffre:illustration()-->10<!--/--> % pendant trois ans, et le bonus de <!--chiffre:illustration()-->10<!--/-->, <!--chiffre:illustration()-->20<!--/--> ou <!--chiffre:illustration()-->30<!--/--> % pendant un an, ne
-  s'appliquent qu'aux pensions prenant effet entre le 1er janvier 2019 et le
-  30 novembre 2023 : le dispositif est éteint. Surtout, leur effet est
-  TEMPORAIRE, quand le modèle ne calcule qu'une pension annuelle unique.
-  L'appliquer à titre permanent créerait une erreur nouvelle, plus grande que
-  celle qu'il corrigerait.
+  <!--chiffre:illustration()-->10<!--/--> % pendant trois ans (article 98 de l'accord du 17 novembre 2017) ne
+  frappe aucune pension prenant effet depuis le 1er décembre 2023, et cesse sur
+  les allocations dues depuis le 1er avril 2024 de celles qu'il frappait (accord
+  du 5 octobre 2023, article 2). Le bonus de <!--chiffre:illustration()-->10<!--/-->, <!--chiffre:illustration()-->20<!--/--> ou <!--chiffre:illustration()-->30<!--/--> % pendant un an
+  (article 99), lui, n'est pas éteint : il ne vaut plus pour les assurés nés
+  depuis le 1er septembre 1961 dont la pension de base prend effet depuis le
+  1er décembre 2023, mais continue pour ceux qui remplissaient les conditions
+  du taux plein avant cette date (avenant n° 17). La page « Conditions
+  d'ouverture de mes droits » de la fédération écrit <!--chiffre:illustration()-->10<!--/-->, <!--chiffre:illustration()-->15<!--/--> et <!--chiffre:illustration()-->20<!--/--> % : l'accord
+  dit 1,10, 1,20 et 1,30. Surtout, leur effet est TEMPORAIRE, quand le modèle
+  ne calcule qu'une pension annuelle unique. L'appliquer à titre permanent
+  créerait une erreur nouvelle, plus grande que celle qu'il corrigerait.
 - **Pénibilité ; le handicap, l'invalidité et l'inaptitude en partie.** La
   pénibilité est une autre porte du départ anticipé, qui demande des
   informations professionnelles que le modèle ne collecte pas : un assuré qui
@@ -1731,7 +1737,7 @@ Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/
 <!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,47<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
 bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,30<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->12<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,3<!--/--> millions —, soit
 <!--chiffre:mesure(cumul_avenir?scenario=garantie)-->576<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 441<!--/--> depuis 1959. Ces chiffres
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 442<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 
