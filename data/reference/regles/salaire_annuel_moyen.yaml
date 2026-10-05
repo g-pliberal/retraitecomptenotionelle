@@ -85,3 +85,14 @@ code:
     avec les exploitants agricoles, puis, pour qui est né avant 1953, entre régimes
     alignés (R. 173-3-2, fiche pension_non_salaries_agricoles_2026). Le détail de la
     pension dit le nombre retenu et l'article.
+referents:
+  trajectoire:
+    equivalent: >-
+      calculeSam (R/fonctionsCalculsPensions.R:2038-2135), la série revaloSam enchaînée
+      jusqu'à l'année de la liquidation comprise
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) : refait
+      sur les années de chaque cas, le salaire annuel moyen du dépôt est celui des
+      colonnes de la Cnav, au millième près, celui de TRAJECTOiRE celui de sa série
+      revaloSam, au millionième ; leur écart, de +1,3 % pour un départ de 2015 à −4,5 %
+      en 2026, n'est que la chaîne des coefficients, que TRAJECTOiRE a fausse (registre)

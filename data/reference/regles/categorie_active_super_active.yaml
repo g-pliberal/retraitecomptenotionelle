@@ -23,3 +23,15 @@ textes_a_rattacher:
 reformes:
 - reforme_2023
 - lfss_2026_suspension
+referents:
+  trajectoire:
+    equivalent: >-
+      ageDuree.csv, catégories « Superactif » et « Actif fonction publique » ;
+      bonifDeterministes (R/fonctionsCalculsDivers.R) pour la bonification du cinquième
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) :
+      TRAJECTOiRE ouvre encore à 50 ans le policier né en 1963 et en 1964 (51 ans et 2
+      mois, 51 ans et 7 mois au dépôt), à 51 ans et 3 mois celui né en 1970 (52 ans au
+      dépôt) : l'écart est le sien (registre) ; il sert la bonification du cinquième,
+      que le dépôt n'a pas (138.17) ; l'âge de l'actif né en 1970 diffère de la
+      suspension

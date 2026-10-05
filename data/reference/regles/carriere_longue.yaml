@@ -50,3 +50,14 @@ exemples:
 reformes:
 - reforme_2023
 - lfss_2026_suspension
+referents:
+  trajectoire:
+    equivalent: >-
+      carrieresLongues (R/fonctionsCalculsPensions.R), conditionRacl.csv : la première
+      date de départ anticipé (dtIdRacl)
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) : le
+      départ anticipé concorde ; les cas types 1, 2, 2 bis, 5 et 10 du COR des
+      générations 1955 à 1964 partent au même mois, au titre de la carrière longue des
+      deux côtés ; le cas type 10 né en 1970 en sort au dépôt, faute des deux trimestres
+      de son année partagée que TRAJECTOiRE compte en trop (registre)

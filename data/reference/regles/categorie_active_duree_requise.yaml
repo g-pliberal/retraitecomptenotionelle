@@ -118,3 +118,12 @@ exemples:
 - cdc_2026_tab20_active_1968
 reformes:
 - lfss_2026_suspension
+referents:
+  trajectoire:
+    equivalent: >-
+      ageDuree.csv, durée des catégories actives
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) :
+      TRAJECTOiRE demande au policier né en 1955 162 trimestres, 166 à celui né en 1960,
+      quand le dépôt demande 154 et 162, la durée de l'année où le droit s'ouvre :
+      l'écart est le sien (registre) ; l'actif né en 1970 diffère de la suspension

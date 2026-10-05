@@ -44,3 +44,13 @@ textes_a_rattacher:
 - reference: L. 13 CPCMR
 - reference: décret n° 2003-1306, article 15 III (CNRACL)
 - reference: décret n° 2004-1056, article 12 II (FSPOEIE)
+referents:
+  trajectoire:
+    equivalent: >-
+      calculeProrat (R/fonctionsCalculsPensions.R) : la proratisation bornée à 1,
+      bonifications comprises
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) :
+      TRAJECTOiRE ne porte pas les 80 % ; la mère fonctionnaire de deux enfants nés
+      avant 2004 a 166/166, 168/166 au dépôt et chez Destinie ; l'écart est le sien
+      (registre)

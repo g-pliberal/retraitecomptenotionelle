@@ -5460,8 +5460,8 @@ France) ; sa relecture, pour ce que chaque modèle fait mieux que le dépôt, à
 l'action 138, qui a lu le code de Destinie 2, d'Ines, de `legiretraite` et
 d'EDIFIS, et refait les diviseurs suédois, norvégien, finlandais, italien et
 polonais : ce qu'elle en tire est au registre, en `fait_mieux` et en
-`ecarts` ; Destinie 2 exécuté à part, ses sorties en témoins (action 142,
-étape 4, sa note). Reste ici : les cas types du COR par TRAJECTOiRE, puis
+`ecarts` ; Destinie 2 puis TRAJECTOiRE (les cas types du COR) exécutés à
+part, leurs sorties en témoins (action 142, étape 4, leurs notes). Reste ici :
 Ines, sur ce modèle ; relire la page de la DREES sur CALIPER, quand son
 serveur répondra ; les pistes non vérifiées (le moteur réel de M@rel, l'usage
 d'Oscar) ; les `referents` des fiches, à leur relecture.
@@ -5543,6 +5543,14 @@ sorties figées (`tests/temoins/destinie_2.json`) et rejouées dans le scénario
 (`destinie_2`, compté désormais parmi les modèles confrontés) et dans la note
 de l'étape 4 de l'action 142 ; les trois fiches qui l'attendaient ont leur
 réponse.
+
+**TRAJECTOiRE, exécuté à part, le 5 octobre 2026.** Le second : soixante-quatre
+cas types du COR, construits par son propre script, et les onze droits directs
+de Destinie 2, ses sorties figées (`tests/temoins/trajectoire.json`) et
+rejouées par `tests/test_trajectoire.py`, sans R. Le registre (`trajectoire`)
+reçoit huit écarts qui sont les siens et un point qu'il fait mieux, la valeur
+de service du jour ; neuf fiches ont sa ligne de `referents`. Détail : la note
+de l'étape 4 de l'action 142, suite.
 
 ### 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris — `en cours`
 
@@ -5989,16 +5997,29 @@ fonction publique valide au titre de l'AVPF (D. 351-2-2, III) ; au-delà de
 juin 2026, le plafond projeté sur le SMIC annuel. Et à lire : le texte du
 décret n° 84-995, dont l'index ne garde que le titre.
 
+**Le 5 octobre 2026, une étape nouvelle, que TRAJECTOiRE révèle** (action 142,
+étape 4, suite ; registre, `trajectoire`, 138.20) :
+
+20. La valeur de service du jour de la liquidation. Le scénario 1 sert à
+    l'Agirc-Arrco — et à l'Arrco, à l'Agirc d'avant 2019 — la valeur du point
+    du 31 décembre de l'année de la liquidation (`valeur_du_point`,
+    `valeurs_point.csv`), quand la caisse sert celle du jour : la retraite
+    complémentaire d'un départ antérieur au relèvement de l'année en sort
+    trop haute de ce relèvement, +5,1 % en janvier 2022, +4,9 % en octobre
+    2023. Lire la règle dans l'accord du 17 novembre 2017 ; dater la valeur au
+    mois dans les deux moteurs ; les témoins de simulation bougeront, et
+    l'écart déclaré de `tests/test_trajectoire.py` tombera.
+
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
 **Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 3, le relevé prolongé
 jusqu'au départ, la réversion du RAFP, de la RCI et de l'Ircantec, l'étape 4
-(Destinie 2 exécuté à part, ses sorties en témoins), la délibération de
-l'ERAFP (barèmes datés, au mois ; dix saisies et neuf calculs en exemples) et
-le départ anticipé des handicapés (vingt-quatre saisies et trois calculs de la
-Cnav en exemples). Le propriétaire veut tout le reste (« Le restant »), une
-étape par session, par zones : aux moteurs publics, TRAJECTOiRE, sur le modèle
-de `scripts/fetch/destinie_2.py` ; au site, le net officiel dans le bloc
+(Destinie 2 puis TRAJECTOiRE exécutés à part, leurs sorties en témoins ; la
+valeur de service du jour, erreur du dépôt, va en 138.20), la délibération de
+l'ERAFP (dix saisies et neuf calculs en exemples) et le départ anticipé des
+handicapés (vingt-quatre saisies et trois calculs de la Cnav en exemples). Le
+propriétaire veut tout le reste (« Le restant »), une étape par session, par
+zones : aux moteurs publics, Ines ; au site, le net officiel dans le bloc
 (138.2 : le 1 %, puis la CSG, présomption et champ) ; avec lui, connecté, le
 prix d'achat Agirc-Arrco implicite de la page. Détail : en fin d'action.
 
@@ -6738,6 +6759,87 @@ handicap l'ouvrait (`63707568`) : il dit désormais « handicap, taux plein »,
 comme la carrière longue (`OUVERTURES_EN_CLAIR`, `pages.js`). Un cas fictif de
 plus tient les deux moteurs d'accord sur ce départ
 (`tests/test_estimation_du_site.py`) ; un rendu change, `simuler_handicap`.
+
+**Étape 4, suite, le 5 octobre 2026 : TRAJECTOiRE exécuté à part, les cas
+types du COR en témoins.** Avec l'action 137 ; les étapes 4 et 9 de l'action
+138 y trouvent leur mesure.
+
+- *L'installation, hors du dépôt.* Dans la distribution Ubuntu de la WSL :
+  l'archive du commit `0963b57` (« trajectoire v1.1.2 », 4 avril 2025 ; son
+  DESCRIPTION dit 1.1.1), prise sous Windows par l'API du GitLab de la DREES —
+  le réseau de la WSL coupe les connexions —, dans `~/modeles/trajectoire`,
+  puis `R CMD INSTALL` dans la bibliothèque de l'utilisateur. Ce qu'Ubuntu
+  n'avait pas, téléchargé sous Windows depuis le CRAN : data.table 1.18.6.1,
+  logger 0.4.3, icarus 0.3.3, RApiSerialize, assertthat, arrow 25.0.1 et sa
+  bibliothèque C++ précompilée du projet Apache Arrow (somme SHA-512 de celle
+  que le paquet livre) ; qs 0.27.3, retiré du CRAN, et stringfish 0.18.0,
+  pris dans ses archives (la 0.19 voudrait un RcppParallel que seul cmake
+  construit). arrow se lie à libcurl et à OpenSSL sans leurs paquets de
+  développement : trois liens symboliques, dans `~/modeles/liens`, servent à
+  sa seule édition de liens. Aucune installation système, aucune donnée
+  confidentielle ; le code de TRAJECTOiRE n'entre pas au dépôt.
+- *L'exécution.* `scripts/fetch/trajectoire.R` évalue le script des cas types
+  que le paquet livre (`casTypesCOR.R`) tel quel, à trois substitutions près —
+  les générations 1955, 1960, 1963, 1964 et 1970, une seule hypothèse de SMPT
+  (1 %), ni rapport ni classeur — et garde le premier âge au taux plein de
+  chaque cas type : soixante-quatre cas (le cas type 4 né en 1970 n'en a pas).
+  Il calcule aussi les onze droits directs de Destinie 2 par
+  `calculePension()`. `trajectoire.py` réécrit chaque cas type en requête du
+  simulateur : naissance au 1er du mois, une ligne par année, les trimestres
+  de la fonction publique au temps, le salaire de référence du chômage, une
+  part de primes pour la carrière. Un piège, dit dans le script : TRAJECTOiRE
+  veut le revenu ANNUEL de l'année du départ et le coupe lui-même ; le lui
+  donner coupé le coupe deux fois.
+- *Le témoin.* `tests/temoins/trajectoire.json` : version, commit, date,
+  législation (sa table des âges et des durées), licence, les sorties de
+  chaque cas, ses années et ses points, et ses paramètres (revaloSam,
+  plafond, taux d'acquisition moyens et minimaux, valeurs d'achat et de
+  service). `tests/test_trajectoire.py` (niveau contrôle) confronte quinze
+  grandeurs, chaque écart déclaré avec sa cause et sa borne ; trois
+  mécanismes y sont refaits : son salaire annuel moyen sur ses paramètres,
+  au millionième, et l'écart du dépôt, qui n'est que la chaîne des
+  coefficients, au millième ; les points du dépôt, ceux de TRAJECTOiRE aux
+  taux minimaux, à 0,1 % ; sa valeur de service, celle du mois du départ.
+  `TRAJECTOIRE=Ubuntu` le rejoue, à l'identique (22 secondes).
+- *Ce qui concorde.* Les durées, au tiers de trimestre de la fonction
+  publique ; la majoration de durée d'assurance (24 et 16 trimestres) ; la
+  durée requise et l'âge d'ouverture, hors suspension ; la carrière longue
+  (cas types 1, 2, 2 bis, 5 et 10) ; le taux plein ; le minimum contributif,
+  à dix centimes par an près ; les majorations de 10 % et le taux de celle de
+  l'Arrco, là où Destinie différait ; le RAFP d'une carrière à primes
+  constantes.
+- *Contre le dépôt.* La valeur de service de l'Agirc-Arrco : le dépôt (et
+  Destinie) sert celle du 31 décembre de l'année de la liquidation,
+  TRAJECTOiRE et la caisse celle du jour : +0,6 % en février 2018, +5,1 % en
+  janvier 2022, +4,9 % en octobre 2023, +1,6 % en 2024 — le reste de
+  l'étape 4 tranché, à corriger à part (étape 20 de l'action 138). La
+  bonification du cinquième et la majoration des hospitaliers actifs,
+  absentes (138.17) : vingt et quinze trimestres, une décote de 5,6 à 21 % à
+  l'aide-soignante. Ouverts : l'arrondi des services de la fonction publique
+  (un tiers de trimestre manquant fait une décote au dépôt, pas chez lui) ;
+  le minimum garanti de la CNRACL du cas type 10 (1,4 à 2 % plus haut au
+  dépôt) ; au relevé, le chômage indemnisé ne vaut de points que si sa ligne
+  porte le salaire de référence, quand un relevé réel porte zéro.
+- *Contre TRAJECTOiRE* (registre, huit écarts nouveaux, et trois anciens que
+  l'exécution chiffre) : sa chaîne revaloSam (de −11 % à +5,8 % selon l'année
+  du salaire ; 4,75 % sur 2022 pour un départ de janvier 2022) ; les années
+  partagées de ses cas types (un revenu entier par état, compté jusqu'à seize
+  fois : 232 541 € au régime général en 1986 au cadre du cas type 1 ; quatre
+  trimestres pour un mois de privé) ; l'AVPF multipliée par douze ; le
+  chômage hors de la proratisation (0,86) ; les âges et les durées des
+  super-actifs ; le traitement de référence revalorisé comme les pensions ; la
+  proratisation bornée à 1 malgré les bonifications (L. 12) ; le RAFP en rente
+  sous 5 125 points ; et, déjà au registre, la suspension qu'il n'a pas, ses
+  paramètres projetés depuis 2024 et la minoration temporaire de
+  l'Agirc-Arrco qu'il garde aux départs de 2024 à 2035.
+- *À trancher, au propriétaire.* Les taux d'acquisition des points :
+  TRAJECTOiRE, comme Destinie, aux taux contractuels moyens (le dépôt en a
+  6 à 29 % de moins) ; refaits, ils sont toute la différence (138.13). La
+  convention de projection des départs futurs (1964, 1970), dont les montants
+  ne se confrontent pas.
+- *Restent* : Ines, sur ce modèle ; les indicateurs de cycle de vie (138.9),
+  que le témoin garde sans les lire ; le RAFP année par année, qu'une requête
+  ne sait pas dire.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 

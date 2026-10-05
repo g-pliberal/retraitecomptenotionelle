@@ -433,3 +433,13 @@ effet: >-
   mars 2015 (1,08 pour 1,00). À 75 ans, 1,81 au lieu de 1,80. Le capital d'avant 2022
   baisse de 9 % (24,62 pour 27,11 à 62 ans) ; celui de 4 900 à 5 124 points se dit en
   deux fois.
+referents:
+  trajectoire:
+    equivalent: >-
+      calculeVfu (R/fonctionsCalculsPensions.R:3261-3350) ne vise que l'Agirc-Arrco et
+      l'Ircantec
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) :
+      TRAJECTOiRE sert le RAFP en rente sous 5 125 points (le policier né en 1955, 1 845
+      points ; l'aide-soignante née en 1955 et en 1960 ; le cas type 10 né en 1955), le
+      dépôt verse le capital : l'écart est le sien (registre)

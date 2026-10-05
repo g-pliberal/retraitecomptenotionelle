@@ -2883,21 +2883,42 @@ referents:
       MSA. Droits directs seulement, ni réversion ni ASPA ; générations 1942
       et suivantes ; la réforme de 2023, sans la loi du 30 décembre 2025.
     depend_de: [baremes_ipp, calcul_pension, caliper]
+    version: "1.1.1 (paquet), commit 0963b57 (« trajectoire v1.1.2 »)"
     confrontation: >-
-      Un calcul rejoué, à part, sans les données du CASD : le mode cas types
-      s'en passe, et `lancerCasTypesCor()` refait les treize cas types du COR,
-      dont le dépôt lit déjà des résultats.
+      Un calcul rejoué, fait le 5 octobre 2026 : exécuté à part dans R (la
+      WSL Ubuntu du poste), sans les données du CASD, sous sa législation la
+      plus récente (la loi du 14 avril 2023), sur soixante-quatre cas types
+      du COR que son propre script construit (générations 1955, 1960, 1963,
+      1964 et 1970, au premier âge du taux plein) et sur les onze droits
+      directs de Destinie 2 (`scripts/fetch/trajectoire.py`,
+      `trajectoire.R`) ; ses sorties et ses paramètres sont figés dans
+      `tests/temoins/trajectoire.json`, et `tests/test_trajectoire.py` y
+      confronte le scénario 1 sans R, chaque écart déclaré avec sa cause.
+      Concordent : les durées, la majoration de durée d'assurance, la durée
+      requise et l'âge d'ouverture hors suspension, la carrière longue, le
+      taux plein, le minimum contributif à dix centimes par an près, les
+      majorations de 10 %
+      et le taux de celle de l'Arrco, le RAFP d'une carrière à primes
+      constantes. Refaits : son salaire annuel moyen sur ses paramètres, et
+      l'écart du dépôt, qui n'est que la chaîne des coefficients ; les
+      points du dépôt, ceux de TRAJECTOiRE aux taux minimaux. Le reste est
+      aux écarts et aux points ci-dessous.
     ecarts:
       - constat: >-
           Sans la loi du 30 décembre 2025, il ouvre les droits de la
           génération 1964 à 63 ans et lui demande 171 trimestres
           (`inst/extdata/trajectoire/ageDuree.csv:144-148, 515-516`).
+          Exécuté : huit cas types de 1964 partent un trimestre plus tard
+          qu'au dépôt, où la fonction publique compte déjà un trimestre de
+          surcote ; l'emploi actif né en 1970 ouvre à 58 ans et 3 mois avec
+          172 trimestres, à 57 ans et 9 mois et 170 au dépôt.
         tranche: >-
           la loi du 30 décembre 2025, que le dépôt certifie : 62 ans et 9
           mois, 170 trimestres ; l'écart est celui de la version publique
         preuve: >-
           data/reference/legislation/age_ouverture_requis.csv (l. 139) et
-          duree_assurance_requise.csv (l. 129)
+          duree_assurance_requise.csv (l. 129) ; categorie_active.csv ;
+          tests/temoins/trajectoire.json, legislation et cas cor_*_1964
       - constat: >-
           Il garde le versement forfaitaire unique de la Cnav et des
           salariés agricoles après 2016, sans condition de date
@@ -2922,7 +2943,10 @@ referents:
       - constat: >-
           Ses coefficients temporaires de l'Agirc-Arrco valent pour
           toute liquidation depuis 2019, projections comprises, sans
-          fin (R/fonctionsCalculsPensions.R:3222, 3236-3249).
+          fin (R/fonctionsCalculsPensions.R:3222, 3236-3249). Exécuté :
+          dix-huit départs au premier âge du taux plein, de 2024 à
+          2035, reçoivent la minoration de 10 % (5 % au taux réduit de
+          CSG) pendant trente-six mois.
         tranche: >-
           Coefficient supprimé pour les retraites prenant effet
           depuis le 1er décembre 2023, levé le 1er avril 2024 pour
@@ -2930,7 +2954,10 @@ referents:
           ses projections.
         preuve: >-
           service-public.fr, actualité A15237 ;
-          docs/limites.md:278-284 (le dispositif est éteint)
+          docs/limites.md:278-284 (le dispositif est éteint) ;
+          tests/temoins/trajectoire.json, modulations ;
+          tests/test_trajectoire.py,
+          test_trajectoire_garde_le_coefficient_de_solidarite_au_dela_de_2023
       - constat: >-
           Sa revalorisation de 2020 (revaloSpeciale2020,
           R/fonctionsCalculsPensions.R:3647-3664) ignore la zone de
@@ -2974,7 +3001,10 @@ referents:
           revalorisation des pensions de +2,6 % en janvier 2025 et
           +1,7 % en janvier 2026, valeur de service Agirc-Arrco de
           1,44377 en 2024 et 1,46658 en 2025, salaire de référence
-          de 20,2084 en 2025.
+          de 20,2084 en 2025. Exécuté : la valeur de service d'un
+          départ d'octobre 2025 en sort 0,36 % trop haute, celle d'un
+          départ de 2026 1,9 % ; la valeur du point du RAFP de 2024,
+          0,05215 €, 3 % trop basse.
         tranche: >-
           Circulaires Cnav 2024/39 et 2025/29 : +2,2 % et +0,9 % ;
           valeur de service de 1,4386 en 2024 et en 2025, salaire de
@@ -2985,7 +3015,8 @@ referents:
           Revalo_RB et AGIRC-ARRCO ;
           data/reference/legislation/revalorisation_pensions.csv (l.
           130-131) ; data/reference/regimes/valeurs_point.csv (l.
-          299-302)
+          299-302) ; tests/temoins/trajectoire.json,
+          parametres_trajectoire.valeur_service
       - constat: >-
           Sa garantie minimale de points de l'Agirc vient de la
           série IPP, 144 points dès 1947 et 120 dès 1997
@@ -3002,6 +3033,124 @@ referents:
         preuve: >-
           data/reference/regles/garantie_minimale_points_agirc.yaml
           (l. 3-9, 91-92)
+      - constat: >-
+          Sa chaîne de coefficients du salaire annuel moyen (série
+          revaloSam, en pour cent par an) ne suit pas les colonnes de
+          la Cnav, et va jusqu'à l'année de la liquidation comprise
+          (`calculeSam`, R/fonctionsCalculsPensions.R:2042-2078) : de
+          −11 % sur un salaire de 1980 à +5,8 % sur un salaire de 2016 ;
+          4,75 % sur 2022, hausse de juillet comprise, pour un départ de
+          janvier 2022. Exécuté : le salaire annuel moyen de 1,3 % trop
+          bas pour un départ de 2015, de 3,4 % trop haut en janvier
+          2022, de 3,6 à 4,5 % de 2024 à 2026 ; refait sur ses
+          paramètres, au millionième.
+        tranche: >-
+          les coefficients que la Cnav publie, colonne par date d'effet,
+          que le dépôt sert : pour un départ du 1er janvier 2022, le
+          salaire de 2021 vaut 1,011 ; l'écart est le sien
+        preuve: >-
+          data/reference/legislation/revalorisation_salaires.csv (colonne
+          2022-01-01) ; tests/temoins/trajectoire.json,
+          parametres_trajectoire.annuels ; tests/test_trajectoire.py,
+          test_l_ecart_du_salaire_annuel_moyen_est_celui_des_coefficients
+      - constat: >-
+          Le script de ses cas types (inst/scripts/casTypesCOR.R) donne à
+          chacun des deux états d'une année partagée le revenu de
+          l'année entière (« le COR fournit des salaires relatifs déjà
+          proratisés »), et son moteur compte une année partagée dans un
+          même régime jusqu'à seize fois (`passageFormatIdAnCaisse`,
+          jointures de dtIdAnMoisCaisse). Exécuté : 232 541 € portés au
+          régime général et 412 points Agirc-Arrco en 1986 au cadre du cas
+          type 1 né en 1960, 14 534 € gagnés ; quatre trimestres au régime
+          général pour un mois de privé (cas type 10), cinq trimestres une
+          année de chômage (cas type 3).
+        tranche: >-
+          R. 351-5 : pas plus de quatre trimestres par année civile (fiche
+          un_statut_par_annee) ; une année partagée n'a qu'un revenu ;
+          l'écart est le sien
+        preuve: >-
+          tests/temoins/trajectoire.json, cas cor_1_1960 (annees,
+          points_annuels), cor_10_1960, cor_3_1964
+      - constat: >-
+          Le même script vaut l'AVPF du cas type 4 à douze fois son
+          assiette annuelle (`montantAvpf = dureeEnMois * smicAVPF`,
+          smicAVPF étant annuel) : ses années d'AVPF entrent au salaire
+          annuel moyen au plafond. Exécuté : le salaire annuel moyen du
+          cas type 4 né en 1960 de 24 258 €, 21 911 € au dépôt.
+        tranche: >-
+          R. 381-3 : 169 heures par mois au SMIC du 1er juillet
+          précédent, ce que smicAVPF porte ; l'écart est le sien (le
+          dépôt a le sien, 1 820 heures du SMIC de l'année, au registre
+          sous calcul_pension et au chantier 138.16)
+        preuve: >-
+          tests/temoins/trajectoire.json, cas cor_4_1960 (annees,
+          parametres_trajectoire.annuels smicAVPF)
+      - constat: >-
+          Le même script range le chômage du cas type 3 dans une caisse
+          « Chômage » hors de la durée du régime général : le coefficient
+          de proratisation de sa pension tombe à 0,86 (144 trimestres sur
+          167 pour la génération 1960), quand l'assuré en valide 172. Il
+          ne lui sert non plus aucun point Agirc-Arrco de chômage.
+        tranche: >-
+          R. 351-12 compte le chômage indemnisé comme période
+          d'assurance du régime général (fiches chomage_non_indemnise,
+          taux_plein_et_proratisation), et l'Agirc-Arrco le dote de
+          points (fiche chomage_retraite_complementaire) ; l'écart est le
+          sien : 10 à 12 % de pension de base en moins
+        preuve: >-
+          tests/temoins/trajectoire.json, cas cor_3_1955, cor_3_1960,
+          cor_3_1963 (bases.Cnav.prorat)
+      - constat: >-
+          Les emplois super-actifs : il ouvre encore à 50 ans les
+          générations 1963 et 1964, à 51 ans et 3 mois la génération
+          1970, et leur demande une durée qui n'est pas celle de l'année
+          d'ouverture (162 trimestres au policier né en 1955).
+        tranche: >-
+          l'âge de 50 ans relevé à 52 pour les générations du second
+          semestre 1961 à 1965 (categorie_active.csv, fiche
+          categorie_active_super_active) ; la durée des fonctionnaires
+          qui ont soixante ans l'année où le droit s'ouvre, 154
+          trimestres (fiche categorie_active_duree_requise, conforme) ;
+          l'écart est le sien
+        preuve: >-
+          tests/temoins/trajectoire.json, cas cor_8_1955 à cor_8_1970
+      - constat: >-
+          Il prend pour traitement de référence de la pension civile le
+          traitement de la dernière année complète, revalorisé jusqu'au
+          départ comme les pensions de la caisse
+          (`calculeSalaireReferenceFonc`, R/fonctionsCalculsPensions.R:25-69,
+          table revalo) : +5,3 % au 1er janvier 2024.
+        tranche: >-
+          le traitement détenu au départ (L. 15) ne suit pas la
+          revalorisation des pensions ; l'écart, de −2,5 à +2,9 % selon la
+          hausse de l'année, est le sien
+        preuve: >-
+          tests/temoins/trajectoire.json, cas loi_2023_fp_etat,
+          parametres_trajectoire.revalorisation_fonction_publique
+      - constat: >-
+          Il borne à 1 la proratisation de la pension civile même avec la
+          bonification pour enfants. Exécuté : la mère fonctionnaire de
+          deux enfants nés avant 2004 a 166/166, 168/166 au dépôt et chez
+          Destinie.
+        tranche: >-
+          L. 12 CPCMR : « Le pourcentage maximum fixé à l'article L 13
+          peut-être augmenté de cinq points du chef des bonifications »
+          (fiche taux_maximum_fonction_publique, conforme) ; l'écart est
+          le sien
+        preuve: >-
+          LEGIARTI000053280361 ; tests/temoins/trajectoire.json, cas
+          fp_mere_deux_enfants
+      - constat: >-
+          Il sert le RAFP en rente sous 5 125 points. Exécuté : le
+          policier né en 1955 (1 845 points), l'aide-soignante, le cas
+          type 10 né en 1955.
+        tranche: >-
+          décret n° 2004-569, article 9 : « servie sous forme de capital
+          lorsque le nombre de points acquis est inférieur à 5 125 »
+          (fiche rafp_majoration_capital) ; l'écart est le sien
+        preuve: >-
+          tests/temoins/trajectoire.json, cas cor_8_1955, cor_8_1960,
+          cor_9_1955, cor_9_1960, cor_10_1955
     fait_mieux:
       - quoi: >-
           Il calcule, par cas type et génération, les taux de récupération, de
@@ -3024,11 +3173,37 @@ referents:
           Il refait les treize cas types du COR sans les données du CASD. Le
           dépôt n'en lit que des résultats publiés ; exécuté à part (EUPL),
           sorties seules, il en donnerait des témoins, pour les générations
-          nées avant 1964 ou après 1968.
+          nées avant 1964 ou après 1968. Repris le 5 octobre 2026 :
+          soixante-quatre cas types de cinq générations en témoins
+          (tests/temoins/trajectoire.json), que tests/test_trajectoire.py
+          confronte au scénario 1.
         preuve: >-
-          `R/lancerCasTypesCor.R`, au commit `0963b57`
-        etat: a_reprendre
+          `R/lancerCasTypesCor.R`, au commit `0963b57` ;
+          scripts/fetch/trajectoire.R
+        etat: repris
         chantier: "138.4"
+      - quoi: >-
+          Il sert à la liquidation la valeur de service de l'Agirc-Arrco
+          en vigueur au mois du départ, comme la caisse ; le dépôt sert
+          celle du 31 décembre de l'année de la liquidation
+          (`droit/liquider.py`, valeur_du_point ; valeurs_point.csv, «
+          valeur en vigueur au 31 décembre de l'année ») : +5,1 % de
+          retraite complémentaire à un départ de janvier 2022 (1,3498 €
+          au lieu de 1,2841 €, relevée au 1er juillet), +4,9 % en
+          octobre 2023, +1,6 % avant novembre 2024, +0,6 % en février
+          2018. Destinie fait comme le dépôt.
+        preuve: >-
+          tests/temoins/trajectoire.json (parametres_trajectoire.valeur_service
+          ; cas cor_1_1960, cor_10_1963, loi_2023_salaire_moyen) ;
+          tests/test_trajectoire.py,
+          test_la_valeur_du_point_de_trajectoire_est_celle_du_jour
+        verification: >-
+          Les deux tables datent les relèvements au même mois (le 1er
+          novembre, le 1er juillet en 2022) ; le dépôt lit la sienne à
+          l'année. La règle de l'accord du 17 novembre 2017 reste à
+          citer à la reprise.
+        etat: a_reprendre
+        chantier: "138.20"
       - quoi: >-
           Il lit les variantes de fécondité et d'espérance de vie de l'INSEE ;
           le dépôt ne reprend que le scénario central
@@ -3322,12 +3497,17 @@ referents:
       décrets d'août 2023, non de la loi du 30 décembre 2025 ; ses
       valeurs sont réelles jusqu'en 2024 et projetées ensuite, son
       coefficient de solidarité et son VFU de la Cnav ne s'éteignent
-      jamais.
+      jamais. Exécuté sur les cas types du COR, il confirme les durées,
+      la carrière longue et le minimum contributif du dépôt, lui montre
+      la valeur de service du jour, et montre ses propres torts : la
+      chaîne du salaire annuel moyen, les années partagées, l'AVPF et le
+      chômage de ses cas types, les emplois super-actifs.
     manifeste: [cor_pouvoir_achat_retraite]
     sas: [drees_trajectoire]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-05
     lu_dans:
       - https://git.drees.fr/drees_code_public/modeles/trajectoire
+      - https://drees_code_public.pages.drees.fr/modeles/trajectoire/premiers-pas.html
       - https://www.cor-retraites.fr/sites/default/files/2026-07/RA_2026_def.pdf
     note: >-
       Version 1.1.2 du 4 avril 2025, ouverte en 2024. Le rapport du COR de
@@ -3336,7 +3516,8 @@ referents:
       la suspension de 2025, que la version publique ne contient pas : la
       version interne est en avance. Une copie personnelle est sur GitHub
       (`awarnery/trajectoire`).
-      Comparé au dépôt le 1er octobre 2026 au commit `0963b57`. La comparaison
+      Comparé au dépôt le 1er octobre 2026 au commit `0963b57`, exécuté le 5
+      octobre au même commit (son fichier DESCRIPTION dit 1.1.1). La comparaison
       y trouve aussi, sans texte qui les tranche, le versement forfaitaire
       unique de la Cnav gardé après 2016 (« Il a temporairement été décidé de
       conserver le dispositif de VFU pour l'ensemble des assurés »,

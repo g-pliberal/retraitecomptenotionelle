@@ -499,6 +499,9 @@ historique:
   1983, au lieu de six ancres reliées par les prix ; huit versions, de l'absence de
   minimum avant avril 1983 à l'AVPF de 2023 ; la proratisation tous régimes des
   polypensionnés, que le relevé n'avait pas vue.
+- >-
+  2026-10-05 — confrontée à TRAJECTOiRE (action 142, étape 4) : la pension au minimum
+  contributif concorde, à dix centimes par an près.
 exemples:
 - cnav_2005_30_minimum_majore_monopensionne
 - sp_a15703_minimum_contributif_2026
@@ -509,3 +512,16 @@ effet: >-
   polypensionné au-delà de la durée requise recevait son minimum au prorata de la durée
   de proratisation et non de sa durée tous régimes ; l'AVPF n'entrait pas dans la
   majoration depuis septembre 2023.
+referents:
+  trajectoire:
+    equivalent: >-
+      calculeMinimum et ecreteMico (R/fonctionsCalculsPensions.R), mico.csv,
+      revaloMico.csv, reglePourMicoMajore.csv
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) : la
+      pension de base portée au minimum contributif concorde, à dix centimes par an
+      près — le bas salaire de Destinie parti en février 2018 (8 322,13 € au dépôt,
+      8 322,18 € chez TRAJECTOiRE), le cas type 2 bis du COR né en 1955 et en 1963 ; le
+      complément
+      diffère avec le salaire annuel moyen, dont TRAJECTOiRE a la chaîne de coefficients
+      fausse (registre)

@@ -311,6 +311,18 @@ referents:
       bonification de huit trimestres de la mère de deux enfants porte la pension civile
       à 168/166 des deux côtés ; la majoration de 10 % du père de trois enfants
       concorde, à l'écart de 0,6 % de la pension près
+  trajectoire:
+    equivalent: >-
+      MDAenfantPourTaux et MDAenfantPourProrat (calculerMajoration,
+      R/fonctionsCalculsDivers.R) : quatre trimestres par enfant né avant 2004 à la mère
+      fonctionnaire, deux depuis
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) : huit
+      trimestres à la mère de deux enfants, comme le dépôt et Destinie, mais une
+      proratisation bornée à 1 (166/166), quand le dépôt et Destinie portent 168/166 ;
+      L. 12 porte le maximum de cinq points du chef des bonifications (fiche
+      taux_maximum_fonction_publique) : l'écart est le sien ; la majoration de 10 % du
+      père de trois enfants concorde à 0,2 %
 historique:
 - >-
   La fonction publique recevait la majoration du régime général, huit trimestres par
@@ -334,6 +346,9 @@ historique:
 - >-
   2026-10-05 — confrontée à Destinie 2, exécuté à part (action 142, étape 4) : la
   bonification, qui compte à la liquidation, et la majoration de 10 % concordent.
+- >-
+  2026-10-05 — confrontée à TRAJECTOiRE (action 142, étape 4) : la bonification
+  concorde en trimestres ; TRAJECTOiRE la borne au plafond de 75 %, à tort.
 effet: >-
   Toute mère fonctionnaire ou agente d'un régime spécial : quatre trimestres par enfant
   né avant 2004, en services, donc au prorata de la pension ; deux par enfant né depuis,

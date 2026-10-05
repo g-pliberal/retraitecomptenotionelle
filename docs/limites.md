@@ -917,6 +917,21 @@ Quatre bornes à connaître, et elles sont étroites :
   reprises tronque la carrière en silence, trop lève une exception : la fenêtre
   est étroite des deux côtés.
 
+**TRAJECTOiRE**, le modèle de la DREES dont un module calcule les cas types du
+COR, s'exécute à part, sa licence à réciprocité (EUPL) le tenant hors du dépôt :
+`scripts/fetch/trajectoire.py` fige ses sorties, sur les cas types du COR et sur
+les carrières de Destinie 2, et `tests/test_trajectoire.py` y confronte le
+scénario 1 sans R. Il confirme les durées, la carrière longue et le minimum
+contributif ; refaits sur ses propres paramètres, ses écarts de salaire annuel
+moyen ne sont que sa chaîne de coefficients, et ses écarts de points la
+convention des taux d'acquisition, que le propriétaire tranchera. Il montre au
+dépôt une erreur, qui reste à corriger : **la valeur de service de l'Agirc-Arrco
+est celle du 31 décembre de l'année de la liquidation**, quand la caisse sert
+celle du jour du départ ; la retraite complémentaire d'un départ antérieur au
+relèvement de l'année en sort trop haute, du montant de ce relèvement (action
+138, étape 20). La bonification du cinquième des super-actifs et la majoration
+de durée des hospitaliers actifs, qu'il sert, manquent toujours au dépôt.
+
 ### Ce que disent les exemples publiés par les caisses
 
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —

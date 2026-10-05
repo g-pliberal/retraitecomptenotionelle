@@ -347,6 +347,14 @@ referents:
       le 5 octobre 2026, Destinie exécuté à part (tests/test_destinie.py) : vingt-quatre
       trimestres à la mère de trois enfants, qui lui donnent le taux plein à 62 ans,
       rien au père, des deux côtés ; concordant au trimestre
+  trajectoire:
+    equivalent: >-
+      calculeTrimMDAEnfant et calculerMajoration (R/fonctionsCalculsDivers.R) : huit
+      trimestres par enfant à la mère, dans la caisse compétente de sa dernière année
+    confrontation: >-
+      le 5 octobre 2026, TRAJECTOiRE exécuté à part (tests/test_trajectoire.py) :
+      vingt-quatre trimestres à la mère de trois enfants (les droits directs de Destinie
+      2), seize à la mère du cas type 4 du COR, rien au père ; concordant au trimestre
 historique:
 - >-
   Le scénario « système actuel » ajoutait huit trimestres par enfant à tout assuré
@@ -379,6 +387,9 @@ historique:
 - >-
   2026-10-05 — confrontée à Destinie 2, exécuté à part (action 142, étape 4) : la
   majoration de la mère et l'absence de celle du père concordent.
+- >-
+  2026-10-05 — confrontée à TRAJECTOiRE, exécuté à part (action 142, étape 4) : la
+  majoration de la mère concorde.
 reformes:
 - parents_2026
 effet: >-
