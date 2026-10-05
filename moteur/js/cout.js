@@ -1013,6 +1013,42 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
 }
 
 /**
+ * La masse du scénario 1 et ses têtes, régime par régime — chacun au bout de
+ * ses fusions —, une année. Portage de `_masses_regimes` dans `cout.py`.
+ */
+function massesRegimes(liste, population, annee, poidsCas, revalorisation) {
+  const massesRegime = new Map();
+  const tetesRegime = new Map();
+  for (const pensionne of liste) {
+    const part = poidsCas[pensionne.code] || 0;
+    const entrees = Object.entries(pensionne.partsRegimes ?? {});
+    if (part <= 0 || entrees.length === 0) continue;
+    const regroupees = new Map();
+    for (const [regime, partRegime] of entrees) {
+      const tete = revalorisation.regimeDeTete(regime);
+      if (!regroupees.has(tete)) regroupees.set(tete, []);
+      regroupees.get(tete).push([revalorisation.regimeConvenu(regime) ?? regime, partRegime]);
+    }
+    for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
+      const liquidation = pensionne.anneeLiquidation + decalage;
+      if (annee < liquidation) continue;
+      const effectif = part * population.effectif(
+        annee - pensionne.generation - decalage, annee);
+      for (const [tete, parts] of regroupees) {
+        let somme = 0;
+        for (const [convenu, partRegime] of parts) {
+          somme += partRegime * revalorisation.coefficientPoints(convenu, liquidation, annee);
+        }
+        tetesRegime.set(tete, (tetesRegime.get(tete) ?? 0) + effectif);
+        massesRegime.set(tete, (massesRegime.get(tete) ?? 0)
+          + effectif * pensionne.pensions.actuel * somme);
+      }
+    }
+  }
+  return { massesRegime, tetesRegime };
+}
+
+/**
  * Ce que les COTISANTS versent une année donnée, sous les deux barèmes.
  *
  * Le pendant de `masses`, du côté de la recette, et bâti sur la même grille.
@@ -1239,8 +1275,13 @@ class AvenirAnnuel {
               dependance, recettes = {}, partDerives = 0.0,
               reversionServie = false, reformeEnVigueur = true, garantie = null,
               pilier = null, partStock = 0.0, facteurAssietteLiberal = 1.0,
-              baseModele = 0.0, tetes = 0.0, salaireReel = 0.0, derive = 1.0) {
+              baseModele = 0.0, tetes = 0.0, salaireReel = 0.0, derive = 1.0,
+              massesRegimes = new Map(), tetesRegimes = new Map()) {
     this.annee = annee;
+    // La base du modèle régime par régime, et ses têtes : ce que
+    // `Avenir.decompositionGroupes` confronte au COR groupe par groupe.
+    this.massesRegimes = massesRegimes;
+    this.tetesRegimes = tetesRegimes;
     // Ce que l'écart au COR ferait au RAPPORT s'il tenait tout entier au
     // système actuel : un sur les années publiées. Voir `rapportDerive`.
     this.derive = derive;
@@ -1399,6 +1440,43 @@ class Avenir {
         rendu.set(ligne.annee, [ligne.tetes / reference.tetes,
           pensionRelative(ligne) / depart]);
       }
+    }
+    return rendu;
+  }
+
+  /**
+   * La décomposition de `decomposition`, groupe de régimes par groupe : pour
+   * chaque groupe de `groupes` ({groupe: [régimes du modèle]}), et chaque
+   * année, l'indice de ses têtes, de sa pension moyenne relative et de sa
+   * masse rapportée au PIB, un l'année `depuis`. Portage de
+   * `Avenir.decomposition_groupes` dans `cout.py` (action 147, étape 5).
+   */
+  decompositionGroupes(depuis, groupes) {
+    const rendu = new Map();
+    const reference = this.annee(depuis);
+    if (reference === null || reference.salaireReel <= 0 || reference.pib <= 0) {
+      return rendu;
+    }
+    const mesure = (ligne, regimes) => {
+      let masse = 0;
+      let tetes = 0;
+      for (const regime of regimes) {
+        masse += ligne.massesRegimes.get(regime) ?? 0;
+        tetes += ligne.tetesRegimes.get(regime) ?? 0;
+      }
+      const relative = tetes > 0 ? masse / tetes / ligne.salaireReel : 0;
+      return [tetes, relative, masse / (ligne.pib * ligne.coefficientConstants)];
+    };
+    for (const [groupe, regimes] of Object.entries(groupes)) {
+      const [tetes, relative, part] = mesure(reference, regimes);
+      if (tetes <= 0 || relative <= 0) continue;
+      const serie = new Map();
+      for (const ligne of this.annees) {
+        if (ligne.salaireReel <= 0 || ligne.pib <= 0) continue;
+        const [t, r, p] = mesure(ligne, regimes);
+        serie.set(ligne.annee, [t / tetes, r / relative, p / part]);
+      }
+      rendu.set(groupe, serie);
     }
     return rendu;
   }
@@ -2563,6 +2641,8 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
     // La base du modèle est calculée chaque année, publiée ou non : la même
     // formule, appliquée au passé, est ce qui la contrôle.
     const modele = ancrage * total.actuel;
+    const { massesRegime, tetesRegime } = massesRegimes(
+      liste, population, annee, poidsAnnee, revalorisation);
     const pib = pibProjete.has(annee)
       ? pibProjete.get(annee)
       : depenses.pib.valeur(Math.min(annee, dernierePib));
@@ -2608,6 +2688,8 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       tetes[TETES_TOUTES],
       macro.coefficientSalaireMoyen(anneeEuros, annee) / macro.coefficientPrix(anneeEuros, annee),
       derive,
+      new Map([...massesRegime].map(([regime, masse]) => [regime, ancrage * masse])),
+      tetesRegime,
     ));
   }
 

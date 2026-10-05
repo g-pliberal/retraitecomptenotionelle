@@ -5560,3 +5560,22 @@ journal:
     reste: >-
       Ce que l'étape 4 laissait : la décision du conseil d'administration de
       l'Agirc-Arrco du 14 octobre 2026, et l'écart restant au COR.
+  - date: "2026-10-05"
+    session: "action 147, étape 5 : l'écart au COR, groupe de régimes par groupe"
+    consulte: >-
+      La veille du jour (scripts/veille_droit.py), déjà consignée. Le rapport annuel du
+      COR de juin 2026 : partie 2, chapitre 1 (RA_Part2_Chap1.pdf), p. 74-77, figures
+      2.6 et 2.7 et note 69 ; ses classeurs de données (Données_RA2026_P1.xlsx, figures
+      1.13 à 1.15 ; Données_RA2026_P2.xlsx, figure 2.7 ; Données_RA2026_Annexe
+      méthodologique.xlsx, figures A2.5 à A2.8).
+    trouve: >-
+      Aucun texte de droit : l'étape ne touche aucune règle. Le COR attribue la baisse de
+      la dépense de la fonction publique d'État à sa pension relative, par la
+      proratisation (des entrées plus tardives, six ans de services en moins jusqu'à la
+      génération 2000), son rapport cotisants/retraités restant stable ; il fait reculer
+      les cotisants de la FPE de 12 % d'ici 2070. Rien n'en est écrit dans les données :
+      la note de l'étape le mesure, sans hypothèse nouvelle.
+    reste: >-
+      Une pondération des cas types par génération, tirée des cotisants que le COR
+      projette, à décider par le propriétaire ; la décision du conseil d'administration
+      de l'Agirc-Arrco du 14 octobre 2026.

@@ -778,6 +778,13 @@ class AvenirAnnuel:
     #: projetée. Un sur les années publiées, et partout sans compte du COR.
     #: Voir :func:`rapport_derive`.
     derive: float = 1.0
+    #: La même base du modèle, régime par régime — chacun au bout de ses
+    #: fusions, comme le COR le compte — et ses têtes : un polypensionné
+    #: compte dans chacun des siens. Ce que
+    #: :meth:`Avenir.decomposition_groupes` confronte au COR groupe par
+    #: groupe (action 147, étape 5).
+    masses_regimes: dict[str, float] = field(default_factory=dict)
+    tetes_regimes: dict[str, float] = field(default_factory=dict)
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
@@ -897,6 +904,45 @@ class Avenir:
             for ligne in self.annees
             if ligne.tetes > 0.0 and ligne.salaire_reel > 0.0
         }
+
+    def decomposition_groupes(self, depuis: int,
+                              groupes: dict[str, tuple[str, ...]]
+                              ) -> dict[str, dict[int, tuple[float, float, float]]]:
+        """La décomposition de :meth:`decomposition`, groupe de régimes par
+        groupe de régimes, chaque groupe réunissant les régimes du modèle que
+        ``groupes`` lui donne (``REGIMES_DU_MODELE``, ``GROUPES_DU_MODELE``).
+
+        Chaque année rend trois indices, un l'année ``depuis`` : les têtes du
+        groupe, sa pension moyenne relative, et sa masse rapportée au PIB. Les
+        deux premiers se confrontent à la figure 2.7 du COR, le troisième à sa
+        figure 2.6. C'est le troisième qui dit ce que le groupe pèse dans
+        l'écart : un retraité de régime n'est pas une personne, et le COR et
+        la grille ne comptent pas les polypensionnés de la même façon — une
+        pension moyenne d'un régime peut s'écarter sans que sa masse le fasse.
+        Un groupe sans tête l'année ``depuis`` est absent.
+        """
+        resultat: dict[str, dict[int, tuple[float, float, float]]] = {}
+        reference = self.annee(depuis)
+        if reference is None or reference.salaire_reel <= 0.0 or reference.pib <= 0.0:
+            return resultat
+
+        def mesure(ligne: AvenirAnnuel, regimes: tuple[str, ...]) -> tuple[float, float, float]:
+            masse = sum(ligne.masses_regimes.get(regime, 0.0) for regime in regimes)
+            tetes = sum(ligne.tetes_regimes.get(regime, 0.0) for regime in regimes)
+            relative = masse / tetes / ligne.salaire_reel if tetes > 0.0 else 0.0
+            return tetes, relative, masse / (ligne.pib * ligne.coefficient_constants)
+
+        for groupe, regimes in groupes.items():
+            tetes, relative, part = mesure(reference, regimes)
+            if tetes <= 0.0 or relative <= 0.0:
+                continue
+            resultat[groupe] = {}
+            for ligne in self.annees:
+                if ligne.salaire_reel <= 0.0 or ligne.pib <= 0.0:
+                    continue
+                t, r, p = mesure(ligne, regimes)
+                resultat[groupe][ligne.annee] = (t / tetes, r / relative, p / part)
+        return resultat
 
     def reconstitution(self) -> dict[int, float]:
         """Le passé refait par la mécanique de la projection, année publiée par
@@ -2735,6 +2781,42 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
     )
 
 
+def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: int,
+                    poids_cas: dict[str, float], revalorisation: RevalorisationServie
+                    ) -> tuple[dict[str, float], dict[str, float]]:
+    """La masse du scénario 1 et ses têtes, régime par régime, une année.
+
+    Le régime est pris au bout de ses fusions, comme le COR le compte ; la
+    masse de chacun est sa part de la pension (:attr:`Pensionne.parts_regimes`),
+    revalorisée comme la masse la revalorise (:func:`coefficient_actuel`) : leur
+    somme est la masse ``actuel`` de :func:`_masses`. Une tête compte dans
+    chacun des régimes qui la servent.
+    """
+    masses: dict[str, float] = {}
+    tetes: dict[str, float] = {}
+    for pensionne in pensionnes:
+        part = poids_cas.get(pensionne.code, 0.0)
+        if part <= 0.0 or not pensionne.parts_regimes:
+            continue
+        regroupees: dict[str, list[tuple[str, float]]] = {}
+        for regime, part_regime in pensionne.parts_regimes.items():
+            regroupees.setdefault(revalorisation.regime_de_tete(regime), []).append(
+                (revalorisation.regime_convenu(regime) or regime, part_regime))
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+            liquidation = pensionne.annee_liquidation + decalage
+            if annee < liquidation:
+                continue
+            effectif = part * population.effectif(
+                annee - pensionne.generation - decalage, annee)
+            for tete, parts in regroupees.items():
+                tetes[tete] = tetes.get(tete, 0.0) + effectif
+                masses[tete] = masses.get(tete, 0.0) + effectif * pensionne.pensions["actuel"] * sum(
+                    part_regime * revalorisation.coefficient_points(
+                        convenu, liquidation, annee)
+                    for convenu, part_regime in parts)
+    return masses, tetes
+
+
 def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
                         annee: int, poids_cas: dict[str, float]) -> dict[str, float]:
     """Ce que les COTISANTS versent une année donnée, sous les deux barèmes.
@@ -3496,6 +3578,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
         # La base du modèle est calculée chaque année, publiée ou non : la même
         # formule, appliquée au passé, est ce qui la contrôle.
         modele = ancrage * masses["actuel"]
+        masses_regimes, tetes_regimes = _masses_regimes(
+            pensionnes, population, annee, poids_annee, revalorisation)
         pib = pib_projete.get(annee, depenses.pib(min(annee, derniere_pib)))
         if not projete:
             base = depenses.repartition(annee) * coefficient
@@ -3539,6 +3623,9 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             salaire_reel=(macro.coefficient_salaire_moyen(annee_euros, annee)
                           / macro.coefficient_prix(annee_euros, annee)),
             derive=derive,
+            masses_regimes={regime: ancrage * masse
+                            for regime, masse in masses_regimes.items()},
+            tetes_regimes=tetes_regimes,
         ))
     _reprises_successions(lignes, simulateur, garantie)
 

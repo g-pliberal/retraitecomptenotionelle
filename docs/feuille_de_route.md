@@ -7252,15 +7252,16 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 3 bis (le passé
-refait, la décomposition du COR, sa dépense pour le système actuel, la
-proposition en fourchette), 4 (les deux conventions du COR suivies : dérive de
-2070 de 1,200 à 1,174, dépense de la proposition de 8,4 à 9,9 % du PIB) et
-4 bis (ces conventions pour la seule page Coût, le simulateur gardant celle de
-« Mon estimation retraite », une bulle « ? » le disant à côté des chiffres).
-Reste l'essentiel de l'écart : l'Agirc-Arrco (×0,850 contre ×0,581 au COR) et
-la fonction publique d'État (×0,866 contre ×0,629), la Cnav se suivant.
-Commencer par la note de l'étape 4 et ses pistes.
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 5 (le passé refait,
+la décomposition du COR, sa dépense, la fourchette, ses deux conventions —
+dérive de 2070 1,174, dépense de la proposition 8,4 à 9,9 % du PIB —, et
+l'écart mesuré groupe par groupe, `Avenir.decomposition_groupes`). L'écart de
+masse de 2070 (+16,5 %) est pour moitié la FPE, puis les complémentaires, les
+non-salariés et les régimes spéciaux, et pour un sixième la structure de la
+grille : des poids de cas types figés aux retraités de 2024, pris par année
+et non par génération. Trois leviers essayés font chacun 1 % au plus. Reste,
+à décider par le propriétaire : une pondération par génération tirée des
+cotisants que le COR projette. Commencer par la note de l'étape 5.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7560,3 +7561,74 @@ Coût, et dites à côté des chiffres.**
 - *Le test.* `test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme`
   tient les deux : le simulateur individuel sans convention, celui de la
   projection avec.
+
+**Étape 5, le 5 octobre 2026 : l'écart au COR, groupe de régimes par
+groupe.**
+
+- *Ce qui est fait.* La mesure par groupe vit dans le dépôt. Chaque
+  `AvenirAnnuel` porte la base du modèle et ses têtes régime par régime,
+  chacun au bout de ses fusions (`masses_regimes`, `tetes_regimes`,
+  `RevalorisationServie.regime_de_tete`) ; `Avenir.decomposition_groupes` les
+  réunit comme le COR — ses quatre régimes de la figure 2.7
+  (`REGIMES_DU_MODELE`), ses six groupes de dépense de la figure 2.6
+  (`GROUPES_DU_MODELE` : les complémentaires de sa note 74, le RAFP hors de
+  tous) — en trois indices : têtes, pension moyenne relative, masse en part
+  de PIB. Le jumeau aussi, tenu par le test de portage.
+- *Ce que la mesure dit, d'abord : la pension moyenne d'un régime trompe.*
+  Un retraité de régime n'est pas une personne. Le COR, par ses cotisants et
+  son rapport cotisants/retraités, fait croître d'ici 2070 les retraités de
+  l'Agirc-Arrco d'un tiers de plus que ceux de la Cnav ; la grille, dont
+  chaque carrière du privé a les deux régimes, les fait croître ensemble.
+  L'écart de la pension moyenne de l'Agirc-Arrco (×0,850 contre ×0,581,
+  +46 %) est donc surtout un écart de têtes : en masse rapportée au PIB, les
+  complémentaires ne s'écartent que de +12 %. Les mesures en masse (2025 à
+  2070) : LURA +1,6 %, CNRACL −3,4 %, complémentaires +12,0 %, régimes
+  spéciaux +81 %, FPE +92 %, non-salariés de base +130 % ; en pension
+  relative, Cnav −0,5 %, CNRACL +12 % (depuis 2026), FPE +38 %.
+- *Ce qui explique l'écart, et de combien.* De 2026 à 2070, la masse du
+  modèle rapportée au PIB fait ×1,262, la dépense du COR ×1,083 (+16,5 %).
+  Décomposé exactement, aux poids du COR de 2026 : la croissance propre de
+  chaque groupe fait +0,148 — FPE +0,085, complémentaires +0,027,
+  non-salariés de base +0,018, régimes spéciaux +0,012, LURA +0,007, CNRACL
+  0 — et la structure +0,031 : la grille donne en 2026 la moitié de la
+  masse à LURA (COR : 43 %), 9,5 % à la FPE (15 %), 2,1 % aux régimes
+  spéciaux (4,4 %). Le fil commun est la pondération : les cas types pèsent
+  les retraités de leur caisse en 2024 (DREES), reconduits au-delà, et le
+  même poids vaut pour toutes les générations d'une année. La FPE, les
+  exploitants agricoles et les régimes fermés gardent donc en 2070 leur part
+  de 2024, quand le COR les fait reculer. À la FPE, le COR dit lui-même
+  (rapport de juin 2026, p. 74-77 et note 69) que sa dépense baisse par la
+  pension relative — la proratisation, des entrées plus tardives, six ans de
+  services en moins jusqu'à la génération 2000 —, son rapport
+  cotisants/retraités restant stable : ses retraités suivent ses cotisants
+  (figure 1.13 : −12 % d'ici 2070). La grille fait entrer tous ses
+  fonctionnaires d'État à 22 ans, et en compte ×1,22 en 2070.
+- *Ce qui a été essayé, hors du dépôt, et pourquoi le modèle ne change
+  pas.* Trois leviers, sur la masse de 2070. (a) Projeter au-delà de 2024 les
+  retraités de la FPE et de la CNRACL selon le COR (ses cotisants divisés par
+  son rapport cotisants/retraités), les autres caisses suivant l'ensemble :
+  −0,2 %. La masse de la FPE passe de ×1,164 à ×0,834, mais les poids
+  normalisés reportent sur les autres cas types les retraités qu'elle perd —
+  ce que le COR fait aussi en partie, ses contractuels allant à LURA et à
+  l'Ircantec. (b) Recaler la structure de 2026 sur celle du COR : −1,1 %.
+  (c) La proratisation de la FPE, de zéro à six ans de services en moins des
+  générations 1962 à 2000 : −1,0 % au plus, avant de rendre la pension des
+  années passées hors de la FPE. Un point chacun au plus, sur seize et demi :
+  aucun ne justifie seul une hypothèse de plus, et (a) comme (b) changent ce
+  que pèse un cas type, ce qui revient au propriétaire. La dérive de 2070
+  reste 1,174, la fourchette de la page Coût ne bouge pas, et aucun témoin.
+- *Ce qu'on ne sait toujours pas expliquer.* Pourquoi les leviers, un à un,
+  ne rendent pas la croissance des groupes : un poids qui baisse se reporte
+  sur les autres, quand le COR suit des générations. La piste qui reste est
+  une pondération PAR GÉNÉRATION, tirée des cotisants de chaque caisse que le
+  COR projette (`regimes/cotisants.csv`, millésime 2024), sous
+  `conventions_cor` — une étape à elle seule. Ni la part de l'Agirc-Arrco
+  dans l'écart des complémentaires, que le COR ne publie qu'en groupe, ni
+  celui des non-salariés ne sont expliqués plus avant.
+- *Les tests.* `test_la_masse_se_decompose_regime_par_regime` ;
+  `test_la_projection_suit_le_cor_groupe_par_groupe` (Cnav, LURA, CNRACL, à
+  4 %) ; `test_l_ecart_au_cor_groupe_par_groupe`, un cliquet par groupe
+  (`DECOMPOSITION_GROUPES_CLIQUETS`) ;
+  `test_le_portage_decompose_groupe_par_groupe_de_meme`.
+  `DECOMPOSITION_PENSION_CLIQUET` (0,15) et la borne de la dérive (1,18)
+  restent : rien n'a bougé.

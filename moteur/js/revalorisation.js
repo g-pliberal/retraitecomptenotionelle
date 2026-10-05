@@ -749,6 +749,18 @@ export class RevalorisationServie {
    * Le régime qui sert, au bout de ses fusions, les points de `regime`, s'il a
    * une valeur de service convenue ; null sinon.
    */
+  /** Portage de `RevalorisationServie.regime_de_tete`. */
+  regimeDeTete(regime) {
+    let courant = regime;
+    for (let garde = 0; garde < this._catalogue.taille + 1; garde += 1) {
+      const successeur = this._catalogue.contient(courant)
+        ? this._catalogue.obtenir(courant).integre_dans : null;
+      if (!successeur) return courant;
+      courant = successeur;
+    }
+    return courant;
+  }
+
   regimeConvenu(regime) {
     let courant = regime;
     for (let garde = 0; garde < this._catalogue.taille + 1; garde += 1) {

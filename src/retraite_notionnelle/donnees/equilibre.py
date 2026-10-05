@@ -433,6 +433,32 @@ REGIMES_DECOMPOSITION = ("cnav", "fpe", "cnracl", "agirc_arrco")
 GROUPES_DECOMPOSITION = ("lura", "fpe", "cnracl", "non_salaries_base",
                          "regimes_speciaux", "complementaires")
 
+#: Ce que chaque régime et chaque groupe du COR réunit des régimes du modèle,
+#: chacun pris au bout de ses fusions (:meth:`RevalorisationServie.regime_de_tete`) :
+#: c'est par eux que la trajectoire du modèle se confronte au COR groupe par
+#: groupe (:meth:`~retraite_notionnelle.cout.Avenir.decomposition_groupes`,
+#: action 147, étape 5). Les complémentaires sont celles de la note 74 du
+#: rapport de juin 2026 ; LURA, la Cnav et les indépendants que la liquidation
+#: unique sert avec elle. Le RAFP n'est dans aucun groupe : la note 74 ne
+#: le compte pas parmi les complémentaires.
+REGIMES_DU_MODELE: dict[str, tuple[str, ...]] = {
+    "cnav": ("regime_general",),
+    "fpe": ("fonction_publique_etat",),
+    "cnracl": ("cnracl",),
+    "agirc_arrco": ("agirc_arrco",),
+}
+GROUPES_DU_MODELE: dict[str, tuple[str, ...]] = {
+    "lura": ("regime_general", "msa_salaries"),
+    "fpe": ("fonction_publique_etat",),
+    "cnracl": ("cnracl",),
+    "non_salaries_base": ("msa_non_salaries", "cnavpl", "cnbf"),
+    "regimes_speciaux": ("sncf", "ieg", "ratp", "crpcen", "banque_de_france",
+                         "fspoeie"),
+    "complementaires": ("agirc_arrco", "ircantec", "crpnpac", "cipav_complementaire",
+                        "cnbf_complementaire", "msa_rco", "rci"),
+}
+REGIMES_HORS_GROUPES = ("rafp",)
+
 
 class DecompositionDepense:
     """Ce qui fait la dépense du système de retraite, chez le COR.

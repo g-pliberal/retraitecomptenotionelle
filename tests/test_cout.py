@@ -73,9 +73,12 @@ from retraite_notionnelle.donnees.equilibre import (
     CODES_POSTES,
     CODES_TRANSFERTS,
     GROUPES,
+    GROUPES_DU_MODELE,
     ORGANISMES,
     POSTES,
     POSTES_TRANSFERTS,
+    REGIMES_DU_MODELE,
+    REGIMES_HORS_GROUPES,
     VARIANTE_REFERENCE,
     ComptesRetraite,
     depense_maximale_toutes_variantes,
@@ -795,6 +798,115 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
     assert ecart > DECOMPOSITION_PENSION_CLIQUET - 0.01, (
         f"{ecart:+.1%} : l'écart a baissé, abaisser le cliquet à "
         f"{math.ceil(ecart * 100) / 100:.0%}")
+
+
+#: Groupe par groupe de régimes, ce que la projection SUIT du COR, à
+#: l'horizon, depuis la dernière année observée : l'écart toléré, dans les deux
+#: sens. Mesuré le 5 octobre 2026 (action 147, étape 5) : pension moyenne
+#: relative de la Cnav -0,5 % ; dépense en part de PIB de LURA +1,6 %, de la
+#: CNRACL -3,4 %.
+DECOMPOSITION_GROUPES_SUIVIS = {
+    ("pension_relative", "cnav"): 0.04,
+    ("depense_part_pib", "lura"): 0.04,
+    ("depense_part_pib", "cnracl"): 0.04,
+}
+#: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
+#: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés
+#: le même jour : pension relative de la FPE +37,6 %, de la CNRACL +12,3 %, de
+#: l'Agirc-Arrco +46,3 % ; dépense de la FPE +92,4 %, des non-salariés +129,7 %,
+#: des régimes spéciaux +81,4 %, des complémentaires +12,0 %.
+DECOMPOSITION_GROUPES_CLIQUETS = {
+    ("pension_relative", "fpe"): 0.38,
+    ("pension_relative", "cnracl"): 0.13,
+    ("pension_relative", "agirc_arrco"): 0.47,
+    ("depense_part_pib", "fpe"): 0.93,
+    ("depense_part_pib", "non_salaries_base"): 1.30,
+    ("depense_part_pib", "regimes_speciaux"): 0.82,
+    ("depense_part_pib", "complementaires"): 0.12,
+}
+
+
+def _ecarts_par_groupe(avenir, comptes) -> dict[tuple[str, str], float]:
+    """L'écart du modèle au COR à l'horizon, grandeur par grandeur et groupe
+    par groupe, chacun depuis la dernière année observée — ou la suivante,
+    quand le COR ne publie le groupe qu'à partir d'elle (la CNRACL)."""
+    depuis = comptes.derniere_annee_observee
+    horizon = avenir.derniere_annee
+    cor = comptes.decomposition
+    ecarts: dict[tuple[str, str], float] = {}
+    for grandeur, groupes, rang in (("pension_relative", REGIMES_DU_MODELE, 1),
+                                    ("depense_part_pib", GROUPES_DU_MODELE, 2)):
+        for groupe, regimes in groupes.items():
+            base = depuis if cor.valeur(grandeur, groupe, depuis) is not None else depuis + 1
+            attendu = cor.indice(grandeur, groupe, base, horizon)
+            assert attendu is not None, (grandeur, groupe)
+            modele = avenir.decomposition_groupes(base, {groupe: regimes})[groupe][horizon][rang]
+            ecarts[(grandeur, groupe)] = modele / attendu - 1.0
+    return ecarts
+
+
+def test_la_masse_se_decompose_regime_par_regime(avenir):
+    """Les masses par régime de :attr:`AvenirAnnuel.masses_regimes` refont la
+    base du modèle, et chaque régime qui sert une pension projetée est dans un
+    groupe du COR, ou déclaré hors de tous.
+
+    Une part de pension qui tomberait hors des groupes fausserait leur
+    confrontation au COR sans bruit : c'est ce que ce test empêche.
+    """
+    dans_un_groupe = {regime for regimes in GROUPES_DU_MODELE.values() for regime in regimes}
+    for ligne in avenir.projetees():
+        assert set(ligne.masses_regimes) <= dans_un_groupe | set(REGIMES_HORS_GROUPES), (
+            ligne.annee, sorted(set(ligne.masses_regimes) - dans_un_groupe))
+        somme = sum(masse for regime, masse in ligne.masses_regimes.items()
+                    if regime in dans_un_groupe)
+        # Au cent-millième : les non-salariés des premières générations ont
+        # une part de pension servie par des régimes disparus que la grille ne
+        # détaille pas — 3 millionièmes de la masse en 2025, rien après.
+        assert somme == pytest.approx(ligne.base_modele, rel=1e-5), ligne.annee
+
+
+def test_la_projection_suit_le_cor_groupe_par_groupe(avenir, comptes):
+    """Groupe de régimes par groupe, ce que la projection suit du COR.
+
+    La Cnav garde sa pension moyenne relative, au COR comme dans le modèle ;
+    la dépense de LURA et celle de la CNRACL, rapportées au PIB, se suivent à
+    quelques pour cent. L'écart de la pension moyenne relative de l'ensemble
+    (``test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor``) n'est donc
+    pas dans le régime général.
+    """
+    ecarts = _ecarts_par_groupe(avenir, comptes)
+    for cle, tolerance in DECOMPOSITION_GROUPES_SUIVIS.items():
+        assert abs(ecarts[cle]) <= tolerance, (
+            f"{cle} : {ecarts[cle]:+.1%} du COR à l'horizon, tolérance {tolerance:.0%}")
+
+
+def test_l_ecart_au_cor_groupe_par_groupe(avenir, comptes):
+    """Ce que la projection ne suit pas encore du COR, groupe par groupe.
+
+    Deux mesures, qui ne disent pas la même chose. La PENSION MOYENNE RELATIVE
+    d'un régime (figure 2.7 du COR) divise sa masse par ses retraités, et un
+    retraité de régime n'est pas une personne : le COR fait croître ceux de
+    l'Agirc-Arrco d'un tiers de plus que ceux de la Cnav, ce que la grille,
+    dont chaque carrière du privé a les deux, ne peut pas faire ; l'écart de
+    sa pension moyenne (+46 %) est donc pour l'essentiel un écart de têtes.
+    La DÉPENSE EN PART DE PIB (figure 2.6) ne dépend pas de ce compte : c'est
+    elle qui dit ce que chaque groupe pèse dans l'écart. Il est dans la
+    fonction publique d'État, où le COR fait baisser la pension relative par
+    la proratisation (des entrées plus tardives, six ans de services en moins
+    jusqu'à la génération 2000) et les effectifs avec les cotisants, et dans
+    les régimes qui se ferment ou s'éteignent — non-salariés agricoles,
+    régimes spéciaux —, que la grille pèse tous aux effectifs de 2024.
+
+    Des CLIQUETS : un écart qui passe d'un point sous le sien demande de
+    l'abaisser.
+    """
+    ecarts = _ecarts_par_groupe(avenir, comptes)
+    for cle, cliquet in DECOMPOSITION_GROUPES_CLIQUETS.items():
+        assert ecarts[cle] <= cliquet, (
+            f"{cle} : {ecarts[cle]:+.1%} du COR à l'horizon, cliquet {cliquet:.0%}")
+        assert ecarts[cle] > cliquet - 0.01, (
+            f"{cle} : {ecarts[cle]:+.1%}, l'écart a baissé : abaisser le cliquet "
+            f"à {math.ceil(ecarts[cle] * 100) / 100:.2f}")
 
 
 def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
@@ -3602,7 +3714,8 @@ def portage_a_mi_emploi(tmp_path_factory):
     racine = Path(__file__).resolve().parents[1]
     demande = tmp_path_factory.mktemp("portage") / "cout.json"
     demande.write_text(json.dumps({"parametres": {"part_reportes_en_emploi": 0.5},
-                                   "annees": ANNEES_PORTAGE}), encoding="utf-8")
+                                   "annees": ANNEES_PORTAGE,
+                                   "groupes": GROUPES_DU_MODELE}), encoding="utf-8")
     calcul = subprocess.run(
         ["node", str(racine / "tests" / "js" / "comparer-cout.mjs"), str(demande)],
         capture_output=True, text=True, encoding="utf-8", cwd=racine, check=False,
@@ -3654,6 +3767,21 @@ def test_le_portage_decompose_la_trajectoire_de_meme(cout_a_mi_emploi,
     for annee, (tetes, pension) in attendue.items():
         assert lue[annee][0] == pytest.approx(tetes, rel=1e-9), annee
         assert lue[annee][1] == pytest.approx(pension, rel=1e-9), annee
+
+
+def test_le_portage_decompose_groupe_par_groupe_de_meme(cout_a_mi_emploi,
+                                                        portage_a_mi_emploi):
+    """La décomposition par groupe de régimes
+    (:meth:`Avenir.decomposition_groupes`), refaite en JavaScript."""
+    avenir = cout_a_mi_emploi.avenir
+    attendue = avenir.decomposition_groupes(avenir.premiere_annee_projetee,
+                                            GROUPES_DU_MODELE)
+    lue = portage_a_mi_emploi["decomposition_groupes"]
+    assert attendue and lue.keys() == attendue.keys()
+    for groupe, serie in attendue.items():
+        assert {int(annee) for annee in lue[groupe]} == serie.keys(), groupe
+        for annee, valeurs in serie.items():
+            assert lue[groupe][str(annee)] == pytest.approx(valeurs, rel=1e-9), (groupe, annee)
 
 
 def test_le_portage_borne_la_fourchette_de_meme(cout_a_mi_emploi, portage_a_mi_emploi):

@@ -978,6 +978,19 @@ class RevalorisationServie:
             courant = fiche.integre_dans
         return None
 
+    def regime_de_tete(self, regime: str) -> str:
+        """Le régime qui sert, au bout de ses fusions, les droits de
+        ``regime`` : celui sous lequel le COR le compte (l'Arrco et l'Agirc
+        sous l'Agirc-Arrco, les pensions civiles de 1853 sous la fonction
+        publique d'État)."""
+        courant = regime
+        for _ in range(len(self._catalogue) + 1):
+            fiche = self._catalogue[courant] if courant in self._catalogue else None
+            if fiche is None or not fiche.integre_dans:
+                return courant
+            courant = fiche.integre_dans
+        return courant
+
     def coefficient_points(self, regime: str, annee_liquidation: int,
                            annee: int) -> float:
         """Ce que vaut en ``annee``, en euros constants, un euro de pension

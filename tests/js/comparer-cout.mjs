@@ -26,7 +26,7 @@ import { Contexte } from "../../moteur/js/contexte.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const paquet = JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8"));
-const { parametres, annees } = JSON.parse(readFileSync(process.argv[2], "utf8"));
+const { parametres, annees, groupes = {} } = JSON.parse(readFileSync(process.argv[2], "utf8"));
 
 const contexte = new Contexte(paquet, { ...PARAMETRES_DEFAUT, ...parametres });
 const cout = contexte.cout();
@@ -46,6 +46,11 @@ const sortie = {
   ])),
   reconstitution: Object.fromEntries(cout.avenir.reconstitution()),
   decomposition: Object.fromEntries(cout.avenir.decomposition(cout.avenir.premiereAnneeProjetee)),
+  // La même, groupe de régimes par groupe : les groupes viennent de la
+  // demande, que le Python tire de `equilibre.py`.
+  decomposition_groupes: Object.fromEntries(
+    [...cout.avenir.decompositionGroupes(cout.avenir.premiereAnneeProjetee, groupes)]
+      .map(([groupe, serie]) => [groupe, Object.fromEntries(serie)])),
   // La borne haute de la fourchette : la dérive de chaque année, les soldes
   // moyens et la dette à l'horizon si l'écart au COR tenait au système actuel.
   derive: Object.fromEntries(cout.avenir.annees.map((ligne) => [ligne.annee, ligne.derive])),
