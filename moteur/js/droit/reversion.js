@@ -48,7 +48,7 @@ export class ReversionRegime {
    * l'âge requis.
    */
   constructor({ regime, base, montant, motif, fiche = null, version = null, texte = null,
-    taux = 0.0, date_effet = null, fiabilite = Fiabilite.ESTIMEE }) {
+    taux = 0.0, date_effet = null, fiabilite = Fiabilite.ESTIMEE, majoration = 0.0 }) {
     this.regime = regime;
     this.base = base;
     this.montant = montant;
@@ -59,6 +59,9 @@ export class ReversionRegime {
     this.taux = taux;
     this.date_effet = date_effet;
     this.fiabilite = fiabilite;
+    // La part du montant qui reverse la majoration pour enfants du défunt,
+    // hors du taux : l'Agirc-Arrco la reverse en entier depuis 2019.
+    this.majoration = majoration;
     Object.freeze(this);
   }
 
@@ -67,6 +70,7 @@ export class ReversionRegime {
       regime: this.regime, base: this.base, taux: this.taux, montant: this.montant,
       motif: this.motif, date_effet: this.date_effet, fiche: this.fiche,
       version: this.version, texte: this.texte, fiabilite: nomFiabilite(this.fiabilite),
+      majoration: this.majoration,
     };
   }
 }
@@ -232,7 +236,7 @@ function enfantsDeMoinsDe(carriere, deces, ans) {
  * suppose, quand la chronologie n'en dit pas. Voir `reversion` du Python.
  */
 export function reversion(moteur, pensions, carriere, annee, decesSuppose = null,
-  enCapital = new Set()) {
+  enCapital = new Set(), majorations = null) {
   const conjoint = carriere.conjoint;
   const deces = decesSuppose === null ? carriere.deces : decesSuppose;
   if (deces === null || conjoint === null) {
@@ -249,10 +253,11 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   const servies = pensions.filter(([, base]) => base > 0);
 
   const ligne = (regime, base, montant, motif, fiche, version, taux, dateEffet,
-    fiabilite) => new ReversionRegime({
+    fiabilite, majoration = 0.0) => new ReversionRegime({
     regime, base, montant, motif, fiche: fiche.id, version: version.id,
     texte: version.texte, taux, date_effet: dateEffet,
     fiabilite: Math.min(fiabilite, fiabiliteDepuisTexte(version.parametres.fiabilite)),
+    majoration,
   });
 
   const lignes = new Map();
@@ -326,8 +331,20 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         dateEffet = plusTot;
       }
     }
-    lignes.set(regime, ligne(regime, base, taux * base, "servie", fiche, version, taux,
-      dateEffet, fiabilite));
+    const enfantsACharge = parametres.deux_enfants_a_charge_moins_de_ans;
+    if (enfantsACharge !== null && enfantsACharge !== undefined
+        && enfantsDeMoinsDe(carriere, deces, Math.trunc(Number(enfantsACharge))) >= 2) {
+      // Deux enfants à charge du survivant au décès lèvent l'âge (article
+      // 110), et la réversion reste servie quand ils cessent de l'être
+      // (article 111) : elle part au mois qui suit le décès.
+      dateEffet = lendemain;
+    }
+    // La majoration pour enfants du défunt « réversible au taux de 100 % »
+    // (article 109) : en plus des 60 %, qui ne la comptent pas.
+    const majoration = Number(parametres.majoration_reversible ?? 0.0)
+      * ((majorations ?? {})[regime] ?? 0.0);
+    lignes.set(regime, ligne(regime, base, taux * base + majoration, "servie", fiche,
+      version, taux, dateEffet, fiabilite, majoration));
   }
 
   // Le plafond de ressources est un : les réversions des régimes alignés se

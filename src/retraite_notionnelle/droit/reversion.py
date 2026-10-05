@@ -12,7 +12,9 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
   moitié de la pension, sans âge ni ressources, sous la condition
   d'antériorité ou de durée du mariage de L. 39 ;
 * l'Agirc-Arrco (``reversion_agirc_arrco``) : 60 % de la retraite, à l'âge que
-  la date du décès choisit, ou dès l'invalidité du survivant ;
+  la date du décès choisit, ou dès l'invalidité du survivant ou deux enfants à
+  sa charge au décès ; depuis 2019, la majoration pour enfants du défunt en
+  plus, reversée en entier (accord du 17 novembre 2017, articles 109 à 111) ;
 * le RAFP (``reversion_rafp``) : la moitié de la prestation, sans âge, sans
   ressources ni durée du mariage, et rien après un droit direct versé en
   capital — l'échéancier dit lesquels (``en_capital``) ;
@@ -52,7 +54,7 @@ Ce qu'elle écrit, :class:`Reversion`, se porte au journal. Son jumeau est
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
 from .. import chronologie as chrono
@@ -98,13 +100,17 @@ class ReversionRegime:
     #: décès, ou qui suit l'âge requis.
     date_effet: str | None = None
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
+    #: La part du montant qui reverse la majoration pour enfants du défunt,
+    #: hors du taux : l'Agirc-Arrco la reverse en entier depuis 2019.
+    majoration: float = 0.0
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "base": self.base, "taux": self.taux,
                 "montant": self.montant, "motif": self.motif,
                 "date_effet": self.date_effet, "fiche": self.fiche,
                 "version": self.version, "texte": self.texte,
-                "fiabilite": self.fiabilite.name.lower()}
+                "fiabilite": self.fiabilite.name.lower(),
+                "majoration": self.majoration}
 
 
 @dataclass(frozen=True)
@@ -235,7 +241,8 @@ def _enfants_de_moins_de(carriere: Carriere, deces: str, ans: int) -> int:
 def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite]],
               carriere: Carriere, annee: int,
               deces_suppose: str | None = None,
-              en_capital: frozenset[str] = frozenset()) -> Reversion | None:
+              en_capital: frozenset[str] = frozenset(),
+              majorations: dict[str, float] | None = None) -> Reversion | None:
     """La réversion que le décès de la personne de ``carriere`` ouvre à son
     conjoint, régime par régime ; ``None`` sans décès ou sans conjoint.
 
@@ -245,7 +252,9 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     celui qui lui a versé son droit en capital, quand la fiche le dit :
     ``en_capital`` nomme ces régimes. ``deces_suppose`` date le décès que la
     présomption ``deces_apres_le_depart`` suppose, quand la chronologie n'en
-    dit pas.
+    dit pas. ``majorations`` donne, régime par régime, la majoration pour
+    enfants du défunt aux mêmes euros que sa pension, hors d'elle : la version
+    qui la dit réversible (``majoration_reversible``) en ajoute cette part.
     """
     conjoint = carriere.conjoint
     deces = carriere.deces if deces_suppose is None else deces_suppose
@@ -322,8 +331,21 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             # L'invalidité du survivant, au décès ou plus tard, lève l'âge :
             # la réversion part au premier jour du mois qui la suit.
             date_effet = min(date_effet, max(lendemain, mois_suivant(conjoint.invalidite)))
-        lignes[regime] = ligne(regime, base, taux * base, "servie", fiche, version, taux,
-                               date_effet, fiabilite)
+        enfants_a_charge = parametres.get("deux_enfants_a_charge_moins_de_ans")
+        if (enfants_a_charge is not None
+                and _enfants_de_moins_de(carriere, deces, int(enfants_a_charge)) >= 2):
+            # Deux enfants à charge du survivant au décès lèvent l'âge
+            # (article 110), et la réversion reste servie quand ils cessent de
+            # l'être (article 111) : elle part au mois qui suit le décès.
+            date_effet = lendemain
+        # La majoration pour enfants du défunt « réversible au taux de 100 % »
+        # (article 109) : en plus des 60 %, qui ne la comptent pas.
+        majoration = (float(parametres.get("majoration_reversible") or 0.0)
+                      * (majorations or {}).get(regime, 0.0))
+        lignes[regime] = replace(
+            ligne(regime, base, taux * base + majoration, "servie", fiche, version, taux,
+                  date_effet, fiabilite),
+            majoration=majoration)
 
     # Le plafond de ressources est un : les réversions des régimes alignés se
     # l'imputent l'une après l'autre, dans l'ordre de la liquidation.

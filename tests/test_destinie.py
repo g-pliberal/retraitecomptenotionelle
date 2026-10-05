@@ -187,15 +187,12 @@ ECARTS = {
         "Destinie sert la réversion du régime général à 48 ans pour deux enfants à "
         "charge ; R. 353-1 attend cinquante-cinq ans, et le dépôt aussi : l'écart est "
         "celui de Destinie (registre)"),
-    ("reversion_jeune_deux_enfants", "reversion_complementaires_sur_retraite"): (
-        -1.0, -1.0,
-        "l'Agirc-Arrco sert la réversion dès le décès au survivant de deux enfants à "
-        "charge ; le dépôt attend cinquante-cinq ans, écart que sa fiche "
-        "reversion_agirc_arrco déclare"),
     ("reversion_trois_enfants", "reversion_complementaires_sur_retraite"): (
-        -0.065, -0.045,
-        "OUVERT : Destinie reverse la majoration pour enfants du défunt avec sa retraite "
-        "Agirc-Arrco, le dépôt ne reverse que la retraite ; l'accord reste à lire"),
+        0.065, 0.085,
+        "Destinie reverse la majoration pour enfants du défunt avec sa retraite "
+        "Agirc-Arrco, au taux de 60 % ; l'accord du 17 novembre 2017 la dit "
+        "« réversible au taux de 100% » (article 109), et le dépôt le suit depuis le "
+        "5 octobre 2026 : l'écart est celui de Destinie (registre)"),
 }
 
 

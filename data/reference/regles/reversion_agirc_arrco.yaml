@@ -55,6 +55,7 @@ versions:
       age_minimum_minore: null
       perte_au_remariage: true
       invalidite_sans_age: true
+      deux_enfants_a_charge_moins_de_ans: 18
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: veufs_1990
@@ -78,6 +79,7 @@ versions:
       age_minimum_minore: null
       perte_au_remariage: true
       invalidite_sans_age: true
+      deux_enfants_a_charge_moins_de_ans: 18
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: agirc_1994
@@ -91,9 +93,9 @@ versions:
     conjoint.deces: [1994-03-01, 1996-07-01]
   contenu:
     droit: >-
-      60 % des points ; à l'Agirc, à soixante ans, ou dès cinquante-cinq ans avec une
-      minoration de 52 % à 58,4 %, sauf si le survivant obtient la réversion du régime
-      de base
+      60 % des points ; à l'Agirc, à soixante ans, ou dès cinquante-cinq ans au taux
+      minoré de 52 % à 55 ans, 53,6, 55,2 et 56,8 % ensuite, 58,4 % à 59 ans, au lieu
+      de 60 %, sauf si le survivant obtient la réversion du régime de base
     parametres:
       taux: 0.60
       age_minimum_arrco: 50
@@ -101,6 +103,7 @@ versions:
       age_minimum_minore: 55
       perte_au_remariage: true
       invalidite_sans_age: true
+      deux_enfants_a_charge_moins_de_ans: 18
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: arrco_1996
@@ -123,17 +126,31 @@ versions:
       age_minimum_minore: 55
       perte_au_remariage: true
       invalidite_sans_age: true
+      deux_enfants_a_charge_moins_de_ans: 18
       fiabilite: haute
   exemples: aucun trouvé
 - id: accord_2017
-  statut: supposee
-  hypothese: >-
-    lue sur le site de la fédération Agirc-Arrco (« La pension de réversion »), faute
-    d'avoir pu relire depuis cette session le texte de l'accord et des règlements
-    antérieurs sur Légifrance, que protège une vérification du navigateur
-  fiabilite: haute
+  statut: lue
   textes:
   - {reference: "accord national interprofessionnel du 17 novembre 2017, étendu par l'arrêté du 24 avril 2018 (JORFTEXT000036847920)", en_vigueur: 2019-01-01}
+  - reference: >-
+      accord national interprofessionnel du 17 novembre 2017, « applicable au 1er
+      janvier 2019 », annexé à la circulaire Agirc-Arrco 2018-09-DC (hors JORF)
+    article: articles 93, 109, 110, 111 et 112
+    citation: >-
+      « bénéficie, à partir de 55 ans, à condition de n'être pas remarié, d'une
+      allocation de réversion calculée sur la base de 60 % des droits du participant
+      décédé » ; « Les majorations pour enfants nés ou élevés applicables aux droits du
+      participant décédé sont réversibles au taux de 100% » ; « La condition d'âge […]
+      ne s'applique pas si le conjoint a au moins deux enfants à charge à la date du
+      décès du participant, ou s'il est invalide » ; « lorsque le droit à l'allocation
+      de réversion a été ouvert du fait de l'existence de deux enfants à charge, le
+      service de l'allocation reste maintenu même si la condition justifiant
+      l'ouverture de ce droit n'est plus remplie » ; à charge, l'enfant « âgé de moins
+      de 18 ans », de 18 à 25 ans « s'il est étudiant, apprenti ou demandeur d'emploi
+      non indemnisé », invalide avant 21 ans
+    lu_le: 2026-10-05
+    empreinte: sha256:b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb
   bornes:
     conjoint.deces: [2019-01-01, null]
   contenu:
@@ -146,14 +163,18 @@ versions:
       cinquante-cinq ans, ou aucun âge avec deux enfants à charge ou en invalidité ;
       entre conjoint et ex-conjoints, un partage au prorata de la durée des mariages ;
       l'ex-conjoint seul reçoit la part de la durée de son mariage dans la durée
-      d'assurance du défunt, plafonnée à 169 trimestres depuis décembre 2023, 170 depuis
-      octobre 2025
+      d'assurance du défunt, plafonnée à 172 trimestres par l'article 112 dans sa
+      rédaction de 2019, à 169 trimestres depuis décembre 2023, 170 depuis octobre 2025,
+      171 dès avril 2028 et 172 dès avril 2029 selon la fédération ; la majoration pour
+      enfants du défunt reversée en entier
     parametres:
       taux: 0.60
       age_minimum: 55
       age_minimum_minore: null
       perte_au_remariage: true
       invalidite_sans_age: true
+      deux_enfants_a_charge_moins_de_ans: 18
+      majoration_reversible: 1.0
       fiabilite: haute
   exemples: [aa_reversion_leila, aa_reversion_kim, aa_reversion_annie, aa_reversion_eric,
              aa_reversion_francois, aa_reversion_david, aa_reversion_simone,
@@ -186,15 +207,22 @@ approximations:
     la réversion commence un à dix mois trop tôt pour le survivant d'une petite
     retraite ; trois exemples de la fédération le montrent, en écart connu
 - ecart: >-
-    la condition d'âge n'est pas levée par deux enfants à charge ; le partage entre
-    ex-conjoints et la perte au remariage ne sont pas portés ; les régimes absorbés —
-    l'UNIRS, les régimes professionnels intégrés — suivent les âges de l'Arrco ; les
-    montants sont ceux de l'année du décès
+    les enfants à charge du survivant sont ceux du défunt que la chronologie porte, et
+    seuls comptent ceux de moins de dix-huit ans au décès : ni l'étudiant, l'apprenti
+    ou le demandeur d'emploi non indemnisé de dix-huit à vingt-cinq ans, ni l'enfant
+    invalide, ni l'enfant du seul survivant ; le partage entre ex-conjoints et la perte
+    au remariage ne sont pas portés ; les régimes absorbés — l'UNIRS, les régimes
+    professionnels intégrés — suivent les âges de l'Arrco ; les montants sont ceux de
+    l'année du décès
+  effet: non mesuré
+- version: [avant_1990, veufs_1990, agirc_1994, arrco_1996]
+  ecart: >-
+    pour un décès d'avant 2019, la majoration pour enfants du défunt n'est pas
+    reversée : la fédération la dit réversible, à 60 % « en règle générale » à l'Agirc,
+    et les accords d'alors ne sont pas lus
   effet: >-
-    mesuré pour les enfants à charge : la veuve de 50 ans qui en a deux touche sa
-    réversion complémentaire au décès, le modèle la lui sert à 55 ans, quatre ans et
-    sept mois trop tard (exemple ur_reversion_prive_50_ans_deux_enfants, en écart
-    connu) ; le reste non mesuré
+    la réversion du conjoint d'un parent de trois enfants est sous-estimée de la
+    majoration qu'elle reverse ; non mesuré
 - ecart: >-
     l'invalidité du survivant lève l'âge depuis le mois qui suit sa reconnaissance, et
     pour toujours : la fédération interrompt la réversion quand l'invalidité cesse,
@@ -219,20 +247,33 @@ sources:
     Ouverte le 28 septembre 2026 avec le domaine de la réversion (docs/architecture.md,
     § 11). Le moteur la lit depuis la deuxième étape du domaine, le même jour.
   - >-
-    À LIRE AU TEXTE : l'accord national interprofessionnel du 17 novembre 2017, ses
-    articles sur les droits des conjoints survivants, sur Légifrance (base KALI, où ses
-    articles portent des identifiants KALIARTI) ; depuis cette session, la page
-    répond par une vérification du navigateur. Et les règlements de l'Arrco et de
-    l'Agirc d'avant 2019 pour les versions antérieures.
+    Les règlements de l'Arrco et de l'Agirc d'avant 2019 pour les versions antérieures
+    (l'accord de 2017 est lu depuis le 5 octobre 2026, dans sa version applicable au
+    1er janvier 2019, annexée à la circulaire 2018-09-DC). Et sa version consolidée,
+    que la fédération publie sur Calaméo : l'avenant n° 19 a récrit les articles 109,
+    112 et 113 pour les décès d'actifs d'avant 2019, sans objet pour le modèle, qui ne
+    liquide la réversion que d'un défunt parti ; le plafond de l'article 112 y est
+    peut-être celui que la fédération applique, de 169 à 172 trimestres.
   - >-
     Les exemples datés du site sont aux exemples officiels depuis la troisième étape du
     domaine : Leïla, Kim, Annie et Eric concordent ; François, David et Simone, dont
     le défunt était payé par trimestre ou par an, sont en écart connu ; Claude, devenu
     invalide, l'était aussi, et concorde depuis le 1er octobre 2026 (domaine de
-    l'invalidité et de l'inaptitude). Max, qui a deux enfants à charge et dont l'âge
-    n'est pas dit, et Léo, qui demande sa réversion dix-huit mois après le décès, n'y
-    sont pas.
+    l'invalidité et de l'inaptitude) ; Max, qui a deux enfants à charge, concorde
+    depuis le 5 octobre 2026. Léo, qui demande sa réversion dix-huit mois après le
+    décès, n'y est pas : le modèle ne date pas la demande.
   lectures:
+  - type: autre
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017, version « applicable au
+      1er janvier 2019 » (circulaire 2018-09-DC), articles 93, 109 à 115 ; circulaire
+      2020-02-DRJ, fiche 6 : « Le service de l'allocation de réversion est maintenu si
+      les enfants cessent d'être à charge même si l'ayant droit n'a pas encore atteint
+      l'âge de 55 ans » ; circulaire 2024-05-DRJ et avenant n° 19 (décès d'actifs
+      d'avant 2019 : les seules règles de l'Arrco, 55 ans et 60 % pour un décès du 1er
+      juillet 1996 au 31 décembre 2018, 50 ans avant)
+    date: 2026-10-05
+    url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
   - type: autre
     reference: >-
       fédération Agirc-Arrco, « La pension de réversion » : les conditions d'âge par date
@@ -262,7 +303,9 @@ code:
     moteur/js/regimes.js : Reversions
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, age_minimum_arrco,
-    age_minimum_agirc, age_minimum_veuve, age_minimum_veuf, invalidite_sans_age
+    age_minimum_agirc, age_minimum_veuve, age_minimum_veuf, invalidite_sans_age,
+    deux_enfants_a_charge_moins_de_ans, majoration_reversible ; la majoration de chaque
+    régime du défunt, que l'échéancier lui passe (echeancier.py : _pensions_au_deces)
   tests: tests/test_reversion.py ; les témoins reversion_* des simulations
 historique:
 - >-
@@ -274,6 +317,11 @@ historique:
   2026-10-01 — l'invalidité du survivant lève la condition d'âge, au mois qui suit sa
   reconnaissance, à la quatrième étape du domaine de l'invalidité et de l'inaptitude :
   l'exemple de Claude concorde.
+- >-
+  2026-10-05 — lue au texte de l'accord du 17 novembre 2017 (action 89) : deux enfants
+  à charge du survivant au décès lèvent l'âge, pour toujours, et la majoration pour
+  enfants du défunt est reversée en entier, que le modèle ne reversait pas du tout.
+  L'exemple ur_reversion_prive_50_ans_deux_enfants concorde ; celui de Max entre.
 effet: >-
   Tout conjoint, ou ex-conjoint marié, d'un salarié ou ancien salarié du privé qui
   décède. Le modèle la calcule pour le conjoint que la saisie déclare, sur la

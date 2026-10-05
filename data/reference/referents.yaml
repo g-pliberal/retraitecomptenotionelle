@@ -2107,6 +2107,18 @@ referents:
         preuve: >-
           tests/temoins/destinie_2.json, cas reversion_trois_enfants
       - constat: >-
+          Il reverse la majoration pour enfants du défunt à l'Agirc-Arrco
+          avec la retraite qu'elle majore, au taux de la réversion, 60 %.
+        tranche: >-
+          accord national interprofessionnel du 17 novembre 2017, article
+          109 : « Les majorations pour enfants nés ou élevés applicables aux
+          droits du participant décédé sont réversibles au taux de 100% » ;
+          le dépôt la reverse en entier depuis le 5 octobre 2026 ; l'écart
+          est le sien
+        preuve: >-
+          data/reference/regles/reversion_agirc_arrco.yaml ;
+          tests/temoins/destinie_2.json, cas reversion_trois_enfants
+      - constat: >-
           Sa valeur de service de l'Agirc-Arrco de 2024, 1,4463 €, est
           la projection des hypothèses du COR de 2023.
         tranche: >-

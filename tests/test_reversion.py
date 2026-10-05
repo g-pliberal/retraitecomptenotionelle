@@ -212,6 +212,53 @@ def test_l_invalidite_du_survivant_leve_l_age_de_l_agirc_arrco(simulateur):
         "2012-04-01"]
 
 
+
+@pytest.mark.parametrize("naissances, attendu", [
+    (("2008-03", "2011-07"), "2024-05-01"),
+    # L'aîné a dix-huit ans au décès : un seul enfant à charge, l'âge revient.
+    (("2006-03", "2011-07"), "2027-06-01"),
+])
+def test_deux_enfants_a_charge_levent_l_age_de_l_agirc_arrco(simulateur, naissances, attendu):
+    """Accord du 17 novembre 2017, article 110 : l'âge de cinquante-cinq ans
+    « ne s'applique pas si le conjoint a au moins deux enfants à charge à la
+    date du décès », de moins de dix-huit ans (article 93) ; et la réversion
+    reste servie quand ils cessent de l'être (article 111)."""
+    carriere = _carriere(simulateur, 1961, 62.0, "1972-05-10", "2024-04-25",
+                         enfants=2, naissances=naissances)
+    ligne, = _lignes(simulateur, carriere, [("agirc_arrco", 5000.0)], 2024)
+    assert ligne[5] == attendu
+
+
+def test_la_majoration_pour_enfants_du_defunt_est_reversee_en_entier(simulateur):
+    """Article 109 : « Les majorations pour enfants nés ou élevés applicables
+    aux droits du participant décédé sont réversibles au taux de 100% » :
+    60 % de la retraite, et la majoration en plus. Avant 2019, le moteur ne la
+    reverse pas, ce que la fiche déclare."""
+    depuis = _carriere(simulateur, 1955, 62.0, "1957-03-10", "2020-06-15")
+    ligne, = reversion(simulateur.scenario_actuel, [("agirc_arrco", 10000.0, HAUTE)],
+                       depuis, 2020, majorations={"agirc_arrco": 1000.0}).regimes
+    assert (ligne.montant, ligne.majoration) == (pytest.approx(7000.0), 1000.0)
+    avant = _carriere(simulateur, 1945, 62.0, "1947-03-10", "2015-06-15")
+    ligne, = reversion(simulateur.scenario_actuel, [("arrco", 10000.0, HAUTE)],
+                       avant, 2015, majorations={"arrco": 1000.0}).regimes
+    assert (ligne.montant, ligne.majoration) == (pytest.approx(6000.0), 0.0)
+
+
+def test_l_echeancier_reverse_la_majoration_de_l_agirc_arrco(contexte):
+    """La même carrière, avec trois enfants et sans : le régime général ne
+    reverse pas la majoration du défunt, l'Agirc-Arrco la reverse en entier."""
+    def lignes(enfants):
+        sortie = contexte.simuler(Saisie.depuis_requete({
+            "naissance": "1958", "liquidation": "62", "conjoint": "1960",
+            "deces": "2023-05", "enfants": enfants})).dictionnaire()["reversion"]
+        return {l["regime"]: l for l in sortie["regimes"]}
+    sans, avec = lignes("0"), lignes("3")
+    assert avec["regime_general"]["montant"] == pytest.approx(sans["regime_general"]["montant"])
+    for regime in ("arrco", "agirc_arrco"):
+        assert avec[regime]["majoration"] > 0
+        assert avec[regime]["montant"] == pytest.approx(
+            sans[regime]["montant"] + avec[regime]["majoration"])
+
 # -- le RAFP --------------------------------------------------------------------------
 
 def test_le_rafp_reverse_la_moitie_sans_age_ni_duree_du_mariage(simulateur):

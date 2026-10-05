@@ -1291,9 +1291,11 @@ exemples:
   # un ex-conjoint y est déclaré conjoint, la date n'en dépendant pas. Quatre
   # exemples tiennent au paiement trimestriel ou annuel de la retraite du
   # défunt, ou à l'invalidité du survivant, que le modèle ne porte pas : ils
-  # entrent en écart connu. Deux n'entrent pas : l'âge de Max, qui a deux
-  # enfants à charge, n'est pas dit, et Léo demande sa réversion dix-huit mois
-  # après le décès, quand le modèle présume une demande dans l'année.
+  # entrent en écart connu. L'âge de Max, qui a deux enfants à charge, n'est
+  # pas dit : le témoin lui en prête un sous cinquante-cinq ans, où ce sont
+  # les enfants qui datent sa réversion. Léo n'entre pas : il demande sa
+  # réversion dix-huit mois après le décès, quand le modèle présume une
+  # demande dans l'année.
   - id: aa_reversion_leila
     source: {editeur: "Agirc-Arrco", reference: "« La pension de réversion », exemple de Paul et Leïla", verifie_le: "2026-09-28"}
     enonce: >-
@@ -1302,6 +1304,16 @@ exemples:
       compter du 1er août 2024.
     carriere: {naissance: "1946-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2008-04", age_debut: 20, conjoint: "1949-01", deces: "2024-07-12"}
     attendu: {dates_d_effet_de_la_reversion: {arrco: "2024-08-01"}}
+
+  - id: aa_reversion_max
+    source: {editeur: "Agirc-Arrco", reference: "« La pension de réversion », exemple de Julia et Max", verifie_le: "2026-10-05"}
+    enonce: >-
+      Julia est décédée le 25 avril 2024. À cette date, Max, son conjoint, a
+      deux enfants à charge. La pension de réversion Agirc-Arrco de Max prend
+      effet à compter du 1er mai 2024. Max a, dans le témoin, cinquante et un
+      ans ; ses deux enfants, quinze et douze.
+    carriere: {naissance: "1961-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2023-02", age_debut: 20, nombre_enfants: 2, naissances_enfants: ["2008-03", "2011-07"], conjoint: "1972-05-10", conjoint_sexe: H, deces: "2024-04-25"}
+    attendu: {dates_d_effet_de_la_reversion: {arrco: "2024-05-01", agirc_arrco: "2024-05-01"}}
 
   - id: aa_reversion_kim
     source: {editeur: "Agirc-Arrco", reference: "« La pension de réversion », exemple d'Anne et Kim", verifie_le: "2026-09-28"}
@@ -1766,16 +1778,6 @@ exemples:
       l'Agirc-Arrco, le mois qui suit les 55 ans pour le régime général.
     carriere: {naissance: "1960-06-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2022-07", age_debut: 20, nombre_enfants: 2, naissances_enfants: ["2012-05", "2015-09"], conjoint: "1976-03-15", conjoint_sexe: F, mariage: "2008-06-14", deces: "2026-08-15", pensions_du_defunt_mensuelles: {agirc_arrco: 700}}
     attendu: {dates_d_effet_de_la_reversion: {agirc_arrco: "2026-09-01", arrco: "2026-09-01", regime_general: "2031-04-01"}, reversions_mensuelles: {agirc_arrco: 420}}
-    ecart_connu:
-      modele: {dates_d_effet_de_la_reversion: {agirc_arrco: "2031-04-01", arrco: "2031-04-01", regime_general: "2031-04-01"}}
-      explication: >-
-        Deux enfants à charge au décès lèvent, à l'Agirc-Arrco, la condition
-        d'âge de 55 ans. Le modèle ne porte pas cette exception et sert la
-        réversion complémentaire à 55 ans, comme celle du régime général. Il
-        faudrait lire le texte de l'accord, et ce que devient la réversion
-        quand les enfants cessent d'être à charge, que le simulateur ne dit pas.
-      fiche: reversion_agirc_arrco
-      depuis: "2026-10-01"
 
   - id: ur_reversion_etat_mariage_3_ans_et_demi
     source: {editeur: "Union Retraite", reference: "simulateur « Droit à la réversion », info-retraite.fr, défunt fonctionnaire de l'État", verifie_le: "2026-10-01", simulateur: union_retraite_reversion, saisie: "défunt fonctionnaire de l'État, 2 000 € nets ; mariage de 3 ans et demi, sans enfant"}

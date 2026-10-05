@@ -79,8 +79,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   l'Agirc-Arrco, à l'Ircantec et à la complémentaire des indépendants
   (`droit/reversion.py`, le domaine de la réversion), où l'invalidité du
   conjoint, qu'il déclare, lève l'âge requis de l'Agirc-Arrco (le domaine de
-  l'invalidité et de l'inaptitude), et deux enfants de moins de vingt et un ans
-  celui de l'Ircantec. Restent dehors le minimum
+  l'invalidité et de l'inaptitude), comme deux enfants de moins de dix-huit ans
+  au décès, et deux enfants de moins de vingt et un ans celui de l'Ircantec ;
+  depuis 2019, l'Agirc-Arrco reverse en entier la majoration pour enfants du
+  défunt (accord du 17 novembre 2017, articles 109 à 111). Restent dehors le minimum
   et les majorations du régime général, le complément de la fonction publique,
   le partage entre ex-conjoints et le remariage, la réversion d'un assuré mort
   avant son départ, celle des complémentaires des artisans et des commerçants
@@ -920,7 +922,7 @@ Quatre bornes à connaître, et elles sont étroites :
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->178<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->179<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -1020,7 +1022,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->178<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->179<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
@@ -3027,7 +3029,7 @@ publiée, le coût du système actuel est la masse de pensions des cas types, mi
 à l'échelle par l'ancrage qui la rend égale à la dépense de cette année-là. La
 même formule, appliquée aux années publiées, devrait retrouver ce qui a été
 dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−17,0<!--/--> % en 2000, de
-<!--chiffre:mesure(reconstitution?annee=2009)-->−19,2<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−5,3<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−24,5<!--/--> % en 1990. La masse du
+<!--chiffre:mesure(reconstitution?annee=2009)-->−19,2<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−5,3<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−24,4<!--/--> % en 1990. La masse du
 modèle croît donc plus vite que la dépense réelle, et l'ancrage reporte cette
 dérive sur l'avenir : c'est le symptôme le plus direct de l'écart au COR.
 L'ancrage suppose, sans le vérifier, que l'écart des cas types au réel est le

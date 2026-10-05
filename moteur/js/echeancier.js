@@ -298,8 +298,10 @@ export class Echeancier {
       personnes: [carriere.personne], vise: {}, sorte: "deces",
     });
     this._inscrire(deces, deces.id, "evenement", deces, deces.date);
-    const [annee, pensions, enCapital] = this._pensionsAuDeces(carriere, carriere.deces);
-    this.reversion = reversion(this.moteur, pensions, carriere, annee, null, enCapital);
+    const [annee, pensions, enCapital, majorations] = this._pensionsAuDeces(
+      carriere, carriere.deces);
+    this.reversion = reversion(this.moteur, pensions, carriere, annee, null, enCapital,
+      majorations);
     const survivant = carriere.conjoint.personne;
     const evenement = new Evenement({
       id: `reversion_${survivant}`, date: moisSuivant(carriere.deces),
@@ -322,14 +324,16 @@ export class Echeancier {
       + `${String(liquidation.mois).padStart(2, "0")}-01`;
     const courante = `${String(this.simulateur.parametres.annee_courante).padStart(4, "0")}-01-01`;
     const deces = depart > courante ? depart : courante;
-    const [annee, pensions, enCapital] = this._pensionsAuDeces(carriere, deces);
-    this.reversion = reversion(this.moteur, pensions, carriere, annee, deces, enCapital);
+    const [annee, pensions, enCapital, majorations] = this._pensionsAuDeces(carriere, deces);
+    this.reversion = reversion(this.moteur, pensions, carriere, annee, deces, enCapital,
+      majorations);
   }
 
   /**
    * Les pensions du défunt menées à l'année du décès — l'année courante pour
-   * un décès à venir, jamais avant le départ —, cette année, et les régimes qui
-   * lui ont versé leur droit en capital avant son décès.
+   * un décès à venir, jamais avant le départ —, cette année, les régimes qui
+   * lui ont versé leur droit en capital avant son décès, et sa majoration pour
+   * enfants, régime par régime, menée comme la pension qui la porte.
    */
   _pensionsAuDeces(carriere, deces) {
     const annee = Math.max(carriere.anneeLiquidation, Math.min(
@@ -345,9 +349,33 @@ export class Echeancier {
     const enCapital = new Set(this.auDepart.pensions_par_regime
       .filter((p) => p.capital !== undefined && p.capital !== null && vues.has(p.regime))
       .map((p) => p.regime));
+    // La majoration pour enfants est hors des pensions de régime : sa part dans
+    // chaque régime (`par_regime`), en euros du départ, suit le rapport de la
+    // pension servie à celle du départ.
+    const parts = new Map();
+    for (const avantage of this.auDepart.avantages_appliques) {
+      if (avantage.code === "majoration_enfants") {
+        for (const [code, part] of avantage.par_regime ?? []) {
+          parts.set(code, (parts.get(code) ?? 0.0) + part);
+        }
+      }
+    }
+    const auDepart = new Map(this.auDepart.pensions_par_regime.map((p) => [p.regime, p.montant]));
+    const majorations = {};
+    for (const r of vivante.regimes) {
+      if (parts.get(r.regime) && auDepart.get(r.regime)) {
+        majorations[r.regime] = parts.get(r.regime) * r.au_depart * r.coefficient
+          / auDepart.get(r.regime);
+      }
+    }
+    for (const p of this.auDepart.pensions_par_regime) {
+      if (!vues.has(p.regime) && parts.get(p.regime)) {
+        majorations[p.regime] = parts.get(p.regime);
+      }
+    }
     return [annee, [...servies, ...this.auDepart.pensions_par_regime
       .filter((p) => !vues.has(p.regime))
-      .map((p) => [p.regime, p.montant, p.fiabilite])], enCapital];
+      .map((p) => [p.regime, p.montant, p.fiabilite])], enCapital, majorations];
   }
 
   /**
