@@ -8,8 +8,9 @@
  * liquidation du défunt — son départ, mené jusqu'à son décès par « faire
  * vivre » — et applique à chaque régime la version de sa fiche que les dates
  * choisissent : le régime général et les régimes alignés (`reversion`), la
- * fonction publique et la CNRACL (`reversion_fonction_publique`),
- * l'Agirc-Arrco (`reversion_agirc_arrco`), le RAFP (`reversion_rafp`),
+ * fonction publique et la CNRACL (`reversion_fonction_publique`), la CRPCEN
+ * (`reversion_crpcen`), l'Agirc-Arrco (`reversion_agirc_arrco`), le RAFP
+ * (`reversion_rafp`),
  * l'Ircantec (`reversion_ircantec`), la complémentaire des indépendants
  * (`reversion_rci`). Les autres régimes n'ont pas encore de fiche : leur ligne
  * le dit, sans montant. Ce qui n'est pas encore porté, et les montants — ceux
@@ -39,6 +40,14 @@ export const MOTIFS = Object.freeze({
  * les régimes alignés, puis la complémentaire des indépendants.
  */
 export const APRES_LES_BASES = Object.freeze(["reversion", "reversion_rci"]);
+
+/**
+ * Les fiches qui servent la moitié de la pension sans âge ni ressources, sous la
+ * condition de mariage de L. 39 : voir le Python.
+ */
+export const MOITIE_SOUS_CONDITION_DE_MARIAGE = Object.freeze([
+  "reversion_fonction_publique", "reversion_crpcen",
+]);
 
 /** La réversion d'un régime du défunt. */
 export class ReversionRegime {
@@ -286,7 +295,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       continue;
     }
     const taux = Number(parametres.taux);
-    if (fiche.id === "reversion_fonction_publique") {
+    if (MOITIE_SOUS_CONDITION_DE_MARIAGE.includes(fiche.id)) {
       const servie = mariageSuffit(parametres, conjoint, deces, depart, enfants);
       const montant = servie ? taux * base : 0.0;
       autresBases += montant;

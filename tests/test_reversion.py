@@ -176,6 +176,26 @@ def test_l_anteriorite_du_mariage_de_la_fonction_publique(
     assert ligne[2:4] == ((15000.0, "servie") if servie else (0.0, "mariage"))
 
 
+@pytest.mark.parametrize("mariage, deces, version, servie", [
+    ("2013-05", "2015-02-10", "conjoints_2006", False),
+    ("2009-12", "2015-02-10", "conjoints_2006", True),
+    ("2013-05", "2017-06-10", "conjoints_2006", True),
+    ("2003-05", "2005-02-10", "veuves_1990", False),
+    ("1999-12", "2005-02-10", "veuves_1990", True),
+])
+def test_la_crpcen_reverse_la_moitie_sous_la_condition_de_mariage(
+        simulateur, mariage, deces, version, servie):
+    """Décret n° 90-1215, article 113 : la moitié de la pension, sans âge ni
+    ressources, sous la condition de L. 39 depuis le 5 mai 2006 ; avant, à la
+    veuve d'un pensionné, aux mêmes conditions de mariage. La caisse n'avait
+    pas de réversion."""
+    carriere = _carriere(simulateur, 1940 if deces < "2006" else 1950, 62.0, "1945"
+                         if deces < "2006" else "1960", deces, mariage=mariage)
+    ligne, = _lignes(simulateur, carriere, [("crpcen", 20000.0)], int(deces[:4]))
+    assert ligne[0] == "crpcen" and ligne[4] == version
+    assert ligne[2:4] == ((10000.0, "servie") if servie else (0.0, "mariage"))
+
+
 # -- l'Agirc-Arrco -------------------------------------------------------------------
 
 def test_l_agirc_attend_soixante_ans_avant_2019(simulateur):

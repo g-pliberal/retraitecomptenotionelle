@@ -15,6 +15,10 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
   la date du décès choisit, ou dès l'invalidité du survivant ou deux enfants à
   sa charge au décès ; depuis 2019, la majoration pour enfants du défunt en
   plus, reversée en entier (accord du 17 novembre 2017, articles 109 à 111) ;
+* la CRPCEN (``reversion_crpcen``) : la moitié de la pension, sous la même
+  condition de mariage, que l'article 113 du décret n° 90-1215 emprunte à
+  L. 39 depuis 2006, et qu'il posait dans les mêmes termes à la veuve depuis
+  1990 ;
 * le RAFP (``reversion_rafp``) : la moitié de la prestation, sans âge, sans
   ressources ni durée du mariage, et rien après un droit direct versé en
   capital — l'échéancier dit lesquels (``en_capital``) ;
@@ -81,6 +85,12 @@ MOTIFS = {
 #: celles des autres régimes de base comptent à leurs ressources : le régime
 #: général et les régimes alignés, puis la complémentaire des indépendants.
 APRES_LES_BASES = ("reversion", "reversion_rci")
+
+#: Les fiches qui servent la moitié de la pension sans âge ni ressources, sous
+#: la condition de mariage de L. 39 : la fonction publique, et la CRPCEN, dont
+#: l'article 113 du décret n° 90-1215 rend L. 39 applicable depuis 2006, après
+#: une condition de 1990 qui avait les mêmes termes.
+MOITIE_SOUS_CONDITION_DE_MARIAGE = ("reversion_fonction_publique", "reversion_crpcen")
 
 
 @dataclass(frozen=True)
@@ -295,7 +305,7 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             # ligne ne s'écrit pas, comme celle d'un régime qui ne sert rien.
             continue
         taux = float(parametres["taux"])
-        if fiche["id"] == "reversion_fonction_publique":
+        if fiche["id"] in MOITIE_SOUS_CONDITION_DE_MARIAGE:
             servie = _mariage_suffit(parametres, conjoint, deces, depart, enfants)
             montant = taux * base if servie else 0.0
             autres_bases += montant

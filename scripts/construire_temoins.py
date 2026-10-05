@@ -1448,6 +1448,10 @@ def _cas() -> list[dict]:
     cas.append(("reversion_conjoint_invalide", {
         **reversion, "conjoint": "1975", "deces": "2021-06",
         "conjoint_invalidite": "2024-02"}))
+    # La CRPCEN reverse la moitié, sous la condition de mariage de L. 39 que
+    # son article 113 emprunte (action 89).
+    cas.append(("reversion_clerc_de_notaire", {
+        **reversion, "statut": "clerc_de_notaire"}))
     cas.append(("reversion_mariage_court_avant_2004", {
         "naissance": "1930", "liquidation": "60", "conjoint": "1935",
         "mariage": "1994-06", "deces": "1995-03"}))

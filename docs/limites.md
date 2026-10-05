@@ -75,8 +75,8 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
 - **La pension de réversion, en partie.** Elle ne concerne pas l'assuré mais
   son conjoint survivant. Le scénario 1 la liquide pour le conjoint que la
   saisie déclare, au décès de l'assuré après son départ : au régime général et
-  dans les régimes alignés, dans la fonction publique et au RAFP, à
-  l'Agirc-Arrco, à l'Ircantec et à la complémentaire des indépendants
+  dans les régimes alignés, dans la fonction publique et au RAFP, à la CRPCEN,
+  à l'Agirc-Arrco, à l'Ircantec et à la complémentaire des indépendants
   (`droit/reversion.py`, le domaine de la réversion), où l'invalidité du
   conjoint, qu'il déclare, lève l'âge requis de l'Agirc-Arrco (le domaine de
   l'invalidité et de l'inaptitude), comme deux enfants de moins de dix-huit ans
@@ -87,7 +87,8 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   le partage entre ex-conjoints et le remariage, les pensions d'orphelin — à
   l'Agirc-Arrco, la moitié des droits du parent pour l'orphelin de père et de
   mère de moins de vingt et un ans, ou de vingt-cinq à charge (articles 114 et
-  115 de l'accord de 2017) ; au RAFP et aux IEG, un dixième par orphelin —, la
+  115 de l'accord de 2017) ; au RAFP, aux IEG et à la CRPCEN, un dixième par
+  orphelin —, la
   réversion d'un assuré mort avant son départ, celle des complémentaires des artisans et des commerçants
   pour un décès d'avant leur fusion, et celle des autres régimes, dont la ligne
   le dit ; les approximations de chaque fiche sont déclarées. Le formulaire demande le

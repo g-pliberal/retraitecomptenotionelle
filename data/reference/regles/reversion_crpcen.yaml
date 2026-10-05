@@ -1,0 +1,161 @@
+schema_version: 1
+id: reversion_crpcen
+intitule: >-
+  Pension de réversion de la caisse des clercs et employés de notaires (décret n°
+  90-1215, article 113) : 50 % de la pension obtenue par l'assuré ou qu'il aurait pu
+  obtenir au jour de son décès, sans condition d'âge ni de ressources, sous la
+  condition d'antériorité ou de durée du mariage de L. 39 du code des pensions, que
+  l'article rend applicable avec L. 43 à L. 46 depuis le 5 mai 2006 ; avant, la moitié
+  de la pension du mari pensionné, à la veuve, aux mêmes conditions de mariage.
+domaine: reversion
+regimes:
+- crpcen
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, et la cessation d'activité de l'assuré, pour la
+  condition d'antériorité
+- les enfants issus du mariage
+- la pension du défunt, servie ou qu'il aurait pu obtenir au jour de son décès
+ecrit:
+- la pension de réversion du survivant, à la CRPCEN
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la réversion (§ 4.1) : la
+# veuve seule jusqu'au 4 mai 2006, le conjoint depuis. Le moteur les lit par la
+# branche de la fonction publique (MOITIE_SOUS_CONDITION_DE_MARIAGE, dans
+# droit/reversion.py et son jumeau) : le taux, et la condition de mariage.
+versions:
+- id: avant_1990
+  statut: supposee
+  hypothese: >-
+    le décret n° 51-721, qui réglait la caisse avant le décret n° 90-1215, n'a pas été
+    relu sur ce point ; on lui prête la règle de 1990
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1990-12-30]
+  contenu:
+    droit: la moitié de la pension du mari
+    beneficiaire: la veuve
+    parametres:
+      taux: 0.50
+      beneficiaire: veuve
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: veuves_1990
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006775282, article: "décret n° 90-1215, article 113", en_vigueur: 1990-12-30}
+  nee_de: LEGIARTI000006775282
+  bornes:
+    liquidation.date_effet: [1990-12-30, 2006-05-05]
+  contenu:
+    droit: >-
+      « une pension de réversion égale à la moitié de celle dont jouissait son mari »,
+      au décès d'un clerc ou employé « titulaire d'une pension de vieillesse »
+    beneficiaire: la conjointe survivante
+    conditions: >-
+      un enfant issu du mariage, ou un mariage contracté deux ans au moins avant la
+      cessation d'activité du mari, ou un mariage de quatre ans au décès — la pension
+      n'étant servie, dans ce dernier cas, qu'à soixante ans
+    parametres:
+      taux: 0.50
+      beneficiaire: veuve
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: conjoints_2006
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006775283, article: "décret n° 90-1215, article 113", en_vigueur: 2006-05-05}
+  - {id: LEGIARTI000047909809, article: "décret n° 90-1215, article 113", en_vigueur: 2023-07-31}
+  nee_de: LEGIARTI000006775283
+  bornes:
+    liquidation.date_effet: [2006-05-05, null]
+  contenu:
+    droit: >-
+      « une pension de réversion égale à 50 % de la pension obtenue par le clerc ou
+      employé de notaire ou qu'il aurait pu obtenir au jour de son décès »
+    beneficiaire: le conjoint survivant ; les conjoints divorcés, par L. 43 à L. 46
+    conditions: >-
+      celles de L. 39 : un enfant issu du mariage, deux ans de mariage avant la
+      cessation d'activité, ou quatre ans de mariage ; le partage entre conjoints et la
+      perte au remariage de L. 43 à L. 46
+    parametres:
+      taux: 0.50
+      beneficiaire: conjoint
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      perte_au_remariage: true
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [avant_1990, veuves_1990]
+  ecart: >-
+    la veuve dont le seul titre est un mariage de quatre ans au décès reçoit la
+    réversion dès le décès, et non à soixante ans ; le veuf la reçoit comme la veuve
+  effet: non mesuré
+- ecart: >-
+    la condition de mariage tient le départ pour la cessation d'activité, et tout
+    enfant déclaré pour un enfant issu du mariage ; le partage entre conjoints, la perte
+    au remariage, la pension d'orphelin (L. 40, rendu applicable par l'article 113) et
+    la réversion d'un assuré mort en activité ne sont pas portés ; les montants sont
+    ceux de l'année du décès
+  effet: non mesuré
+presomptions:
+  mariage_des_conjoints: >-
+    la condition d'antériorité du mariage, quand sa date n'est pas déclarée
+  conjoint_de_l_autre_sexe: >-
+    la veuve, seule bénéficiaire avant le 5 mai 2006, quand le sexe du conjoint n'est
+    pas dit
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-10-05
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le décret n° 51-721, qui réglait la caisse avant 1990 : la version avant_1990 lui
+    prête la règle de 1990.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 90-1215, article 113, ses trois rédactions dans l'index LEGI
+      (LEGIARTI000006775282, LEGIARTI000006775283, LEGIARTI000047909809) : la veuve
+      d'un pensionné jusqu'au 4 mai 2006, puis le conjoint survivant, L. 39 et L. 43 à
+      L. 46 ; L. 40 (les orphelins) passe à la phrase suivante le 31 juillet 2023
+    date: 2023-07-31
+  - type: autre
+    reference: >-
+      CRPCEN, page « Les pensions de réversion et d'orphelin », lue le 5 octobre 2026
+      (sans date) : « égale à 50 % de la pension de retraite CRPCEN dont bénéficiait
+      le défunt » ; un enfant commun, deux ans de mariage avant la cessation
+      d'activité ou quatre ans de mariage ; plus de droit en cas de nouvelle vie de
+      couple ; l'orphelin à « 10 % », « jusqu'au 21e anniversaire »
+    date: 2026-10-05
+    url: https://www.crpcen.fr/affilies/les-pensions-de-reversion-et-dorphelin
+code:
+  python: >-
+    scenarios/actuel.py : Reversions, qui lit les versions de cette fiche ;
+    droit/reversion.py : reversion, MOITIE_SOUS_CONDITION_DE_MARIAGE, _mariage_suffit
+  javascript: >-
+    moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
+    MOITIE_SOUS_CONDITION_DE_MARIAGE, mariageSuffit
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_reversion.py]
+historique:
+- >-
+  2026-10-05 — la fiche naît (action 89) : la CRPCEN n'avait pas de réversion, et sa
+  ligne disait « la réversion de ce régime n'est pas encore portée ».
+effet: >-
+  Tout conjoint d'un clerc ou employé de notaire : la moitié de sa pension, sans âge ni
+  ressources, dès que le mariage remplit la condition de L. 39.
