@@ -1134,6 +1134,20 @@ exemples:
     carriere: {naissance: "1962-01", sexe: H, affiliation: salarie_prive_cadre, liquidation: "2025-12", trimestres_valides: 153, niveau_salaire: 6, profil_carriere: plat}
     attendu: {trimestres_requis: 169, liquidation_ouverte: true, coefficients_des_regimes: {agirc: 0.8675, arrco: 0.8675, agirc_arrco: 0.8675}}
 
+  - id: aa_livret4_minoration_64_ans_6_mois
+    source: {editeur: "Agirc-Arrco", reference: "livret n° 4, « Demande et calcul de la retraite », avril 2024, pages 32-33, et ses tables des coefficients de minoration, pages 18-19", verifie_le: "2026-10-05"}
+    enonce: >-
+      « Je suis née le 28 décembre 1959. Je souhaite prendre ma retraite à
+      effet du 1er juillet 2024. J'ai été cadre toute ma carrière » ; « il vous
+      manquera 16 trimestres par rapport au nombre prévu pour votre
+      génération, soit 167. Le coefficient pour carrière courte qui
+      s'appliquerait à votre situation est de 0,83. Le coefficient de
+      minoration correspondant à l'âge que vous aurez atteint au 1er juillet
+      2024, soit 64 ans et six mois, est de 0,90. C'est ce coefficient qui sera
+      appliqué » ; « 12 308 0,90 1,4159 15 684,21 € ».
+    carriere: {naissance: "1959-12-28", sexe: F, affiliation: salarie_prive_cadre, liquidation: "2024-07", trimestres_valides: 151, niveau_salaire: 2, profil_carriere: plat}
+    attendu: {trimestres_requis: 167, liquidation_ouverte: true, coefficients_des_regimes: {agirc: 0.90, arrco: 0.90, agirc_arrco: 0.90}}
+
   # ---- Audiens Retraite Agirc, fiche « La GMP », 2018 ------------------
   # La fiche pratique d'une caisse de l'Agirc, lue le 2 octobre 2026 : la
   # cotisation forfaitaire de la garantie minimale de points, que le compte

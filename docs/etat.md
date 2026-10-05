@@ -27,7 +27,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 3 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **48 sur 157** (181 exemples : 172 reproduits, 9 en écart connu, section 2).
+- Confrontées à au moins un exemple officiel : **48 sur 157** (182 exemples : 173 reproduits, 9 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **50 sur 157**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **44 sur 157**, par 2 337 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **51 sur 157**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
@@ -249,7 +249,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 142. Les simulateurs officiels, sans y passer ses journées
   - 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés
   - 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR
-- **Les sources à exploiter** : 117 à explorer sur 320 (73 explorées, 92 épuisées). 11 d'entre elles visent un régime partiel, et pourraient le compléter :
+- **Les sources à exploiter** : 117 à explorer sur 320 (80 explorées, 100 épuisées). 11 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Caisse nationale d'assurance vieillesse des professions libérales, régime de base : 7 source(s) (mon_entreprise_comparaison_ei, cnavpl_wordpress, cavec_wordpress…)
   - Régime des artistes-auteurs professionnels (IRCEC) : 2 source(s) (cnav_arrierees_artiste_auteur, mon_entreprise_artiste_auteur)
   - Complémentaire des agents généraux d'assurance (CAVAMAC) : 1 source(s) (cavamac_wordpress)

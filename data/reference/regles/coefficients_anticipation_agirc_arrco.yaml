@@ -341,6 +341,7 @@ textes_a_rattacher:
     l'âge de référence de 2011 à 2018
 exemples:
 - agirc_arrco_tranche_c_63_ans_11_mois
+- aa_livret4_minoration_64_ans_6_mois
 code:
   interrupteurs:
     abattement_points: agirc_arrco

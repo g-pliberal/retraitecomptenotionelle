@@ -1262,14 +1262,14 @@ borne basse et l'écart une borne haute.
 
 **Reprise, au 5 octobre 2026.** Les 260 adresses se dépouillent par lots.
 Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
-publique de l'État, la CNRACL, la Caisse des dépôts et le RAFP (sa note, en
-fin d'action) ; leurs restes sont sous « laisse ouvert » et « Puis le
-rétablissement ». Trois simulateurs d'info-retraite sont saisis (note du
-1er octobre, action 142). Les saisies passent par `scripts/simulateurs.py`, sur
-un lot approuvé. Les seize lignes de l'Agirc-Arrco sont `en_cours` (réservées
-le 5 octobre). Restent `a_explorer` : la CNIEG, les pages de l'Ircantec, la
-Cnav et service-public, le CLEISS, les modèles publics, mon-entreprise, et
-quinze API publiques. Réserver un lot par un commit `en_cours` poussé seul.
+publique de l'État, la CNRACL, la Caisse des dépôts, le RAFP et
+l'Agirc-Arrco (leurs notes, en fin d'action). Les saisies passent par
+`scripts/simulateurs.py`, sur un lot approuvé. Les vingt-trois lignes de la
+CNIEG, de la CRPCEN, de la CPRPF et de la MSA sont `en_cours`, réservées et
+lues le 5 octobre : leurs trouvailles, à vérifier et à porter, sont dans la
+note de l'Agirc-Arrco et la suivante. Restent `a_explorer` : les pages de
+l'Ircantec, la Cnav et service-public, le CLEISS, les modèles publics,
+mon-entreprise, et quinze API publiques.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
@@ -1928,6 +1928,37 @@ calcule, rien ne se lit sans saisir. Les points de l'année sont « arrondis au
 point supérieur » selon l'ERAFP, ce que le décret (article 5) ne dit pas ni le
 modèle ne fait, moins d'un point par an. *Laissé* : porter la conversion de la
 réversion au barème de 2022, et l'allocation d'orphelin.
+
+**L'Agirc-Arrco, le 5 octobre 2026.** Les seize lignes du régime, lues par
+quatre agents en lecture seule — les pages, l'accord du 17 novembre 2017
+dans sa version de 2019 et ses avenants n° 16, 17 et 19, les circulaires
+de 2017 à 2026, la compilation des valeurs, les livrets —, chaque chiffre
+revérifié sur le texte avant d'entrer. Six corrections, chacune son commit.
+*La réversion* : deux enfants à charge du survivant au décès lèvent l'âge,
+pour toujours (articles 110 et 111), et la majoration pour enfants du
+défunt, que le modèle ne reversait pas du tout, l'est en entier (article
+109) ; l'écart connu des deux enfants se retire, Max entre, et Destinie,
+qui reverse cette majoration à 60 %, porte l'écart. *Les points* se
+comptent au taux de calcul, 6,20 % et 17 %, et non à la cotisation appelée,
+arrondie à 7,87 %, divisée par 127 % : 0,05 % de points de tranche 1 en plus
+depuis 2019, deux exemples du livret n° 3 par une grandeur nouvelle,
+`points_de_l_annee`. *La seconde retraite* du cumul part au 1er janvier
+2024 au plus tôt (avenant n° 16), et non en septembre 2023. *L'UNIRS* de
+1949 à 1957 restait en francs chez OpenFisca : le point de 1957 coûtait six
+fois et demie trop cher ; le récupérateur lit ces années dans sa série
+nominale. *Le plafond* de la majoration vaut 2 367,48 € depuis novembre
+2024, non 2 367 € de 2025. *La calculette fiscale* concorde au dernier euro
+et fait corriger un commentaire (26 472 € au taux plein), une docstring
+périmée et l'arrondi du quart de part, qui séparait les deux moteurs.
+`docs/limites.md` disait le bonus d'un an éteint : il survit pour qui avait
+le taux plein avant décembre 2023. Un exemple de plus, la minoration de
+0,90 à 64 ans et 6 mois du livret n° 4. *Laissé*, dans les notes du vivier :
+le coefficient temporaire de la retraite progressive (article 88, barème de
+la circulaire 2026-1, exemple du livret n° 4), les points de maladie de
+l'article 58, l'orphelin, le partage entre ex-conjoints, la version
+consolidée de l'accord, les deux limites du cumul plafonné que la fiche
+réglementaire de la fédération ne date pas, et le taux de calcul de
+l'Arrco des cultes, que l'action 119 tient.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 

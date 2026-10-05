@@ -401,7 +401,18 @@ sources:
       telle que le régime l'énonce, à confronter aux valeurs de
       data/reference/regimes/valeurs_point.csv, qui viennent d'OpenFisca —
       source secondaire plafonnée au niveau `haute`.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 19 mars 2026). « 7,87 % = 6,20 % x
+      127 % », « 21,59 % = 17 % x 127 % » : les points se comptent au taux de
+      calcul, et le modèle, qui divisait la cotisation appelée par 1,27, en
+      comptait 0,05 % de moins sur la tranche 1 ; corrigé (taux_calcul_points de
+      data/reference/regimes/agirc_arrco.yaml, fiche agirc_arrco_valeur_achat),
+      avec deux exemples du livret n° 3 (tests/temoins/exemples_officiels.yaml,
+      aa_livret3_points_*). Prix d'achat de 2026, 20,1877 €, et valeur de service,
+      1,4386 €, ceux que le dépôt certifie. Défaut : la page date du « 05 novembre
+      2023 » l'accord du 5 octobre.
 
   - id: agirc_arrco_points_carriere
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/points-de-retraite-et-evenements-de-la-carriere/
@@ -412,7 +423,22 @@ sources:
       Les points attribués sans cotisation : chômage, maladie, invalidité,
       temps partiel. C'est exactement la frontière que docs/frontiere_contributive.md
       arbitre, et l'un des postes que l'action 81 a chiffrés à 17,9 milliards.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 19 mars 2026). Le chômage indemnisé
+      (« 3 % du salaire journalier de référence », points au taux de calcul, ni
+      carence ni différé) concorde avec
+      data/reference/legislation/chomage_complementaires.yaml et la fiche
+      chomage_retraite_complementaire. La maladie, la maternité et l'accident du
+      travail ouvrent des points au-delà de « 60 jours consécutifs », sur la
+      moyenne journalière des points de l'année précédente, plafonnée (accord de
+      2017, articles 57 et 58) : le modèle prend le salaire de la période, qui en
+      est proche sur une année entière ; non déclaré ailleurs que dans cette note.
+      L'activité partielle au-delà de 60 heures n'est pas portée (fiche
+      chomage_retraite_complementaire). Trois exemples du livret n° 6 et de la
+      page (25,25 points, 100,81 puis 230, 3,84) ne se rejouent pas : le modèle
+      compte par année.
 
   - id: agirc_arrco_points_vie
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/points-de-retraite-et-evenements-de-la-vie/
@@ -422,7 +448,15 @@ sources:
     a_en_tirer: >-
       Les points liés aux événements familiaux, et la majoration pour enfants :
       matière de l'action 43, qui montre ce que chaque système sert à une mère.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 5 mars 2026). Le congé parental et le
+      congé de proche aidant n'ouvrent des points que si un accord d'entreprise
+      fait cotiser : ce que
+      data/reference/legislation/periodes_non_travaillees.csv dit (l'éducation
+      d'un enfant, sans point complémentaire). La majoration pour enfants renvoie
+      à la ligne agirc_arrco_majorations_enfants. Rien de plus pour le modèle.
 
   - id: agirc_arrco_etranger
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/travailler-a-letranger/
@@ -432,7 +466,17 @@ sources:
     a_en_tirer: >-
       Ce que devient la complémentaire pendant une expatriation, à croiser
       avec le parcours expatriation du GIP.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 13 janvier 2026). Le détachement de
+      vingt-quatre mois dans l'Espace économique européen et en Suisse garde
+      l'affiliation ; l'expatrié n'est pas assujetti, et cotise s'il le veut, par
+      son employeur ou « à titre individuel auprès de Malakoff Humanis
+      international Agirc-Arrco », la Caisse des Français de l'étranger tenant la
+      base. L'adhésion volontaire n'est pas portée ; la totalisation des périodes
+      étrangères l'est pour la base (docs/limites.md). Défaut : la liste « EEE »
+      de la page compte le Royaume-Uni et la Suisse.
 
   - id: agirc_arrco_ouverture_droits
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/conditions-douverture-de-mes-droits/
@@ -443,7 +487,20 @@ sources:
       Conditions d'ouverture et coefficient de solidarité (le « malus » de
       10 % pendant trois ans), supprimé pour les liquidations récentes :
       vérifier la date d'extinction que le dépôt applique.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 27 juillet 2026), avec l'accord du 5
+      octobre 2023 (article 2) et l'avenant n° 17. Le malus de 10 % ne frappe
+      aucune pension prenant effet depuis le 1er décembre 2023 et cesse au 1er
+      avril 2024 pour les autres ; le bonus d'un an survit pour qui avait le taux
+      plein avant le 1er décembre 2023 : docs/limites.md, qui le disait éteint,
+      est corrigé. La page écrit 10, 15 et 20 % pour ce bonus, l'accord de 2015
+      (article 12-1-3) 1,10, 1,20 et 1,30. Coefficients d'anticipation et âges :
+      ceux du dépôt (fiche coefficients_anticipation_agirc_arrco), où l'exemple du
+      livret n° 4 entre (aa_livret4_minoration_64_ans_6_mois, 0,90 plutôt que
+      0,83). Défauts : deux bornes de génération se chevauchent au 1er septembre
+      1961 ; « 0,5 % » et « 0,43 % » au lieu de coefficients.
 
   - id: agirc_arrco_majorations_enfants
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/majorations-pour-enfants/
@@ -454,7 +511,19 @@ sources:
       Majoration de 10 % pour trois enfants, majoration pour enfant à charge,
       leur plafond, et leur histoire Agirc/Arrco avant 2012 — le dépôt doit
       dire laquelle il applique année par année.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 20 mars 2026), avec les circulaires
+      2024-12-DT et 2025-15-DT : le plafond vaut 2 367,48 € depuis le 1er novembre
+      2024, gelé en 2025, que le dépôt arrondissait à 2 367 € daté de 2025
+      (data/reference/regimes/agirc_arrco.yaml et les sept fiches des régimes
+      absorbés ;
+      test_la_majoration_pour_enfants_de_la_complementaire_est_plafonnee). Le
+      barème par période d'acquisition et le non-cumul concordent (fiche
+      majoration_enfants_agirc_arrco) ; les 5 % par enfant à charge restent
+      déclarés non portés. Défaut : la case Agirc 1999-2011 de la page est vide,
+      le PDF la remplit.
 
   - id: agirc_arrco_retraite_progressive
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/retraite-progressive/
@@ -464,7 +533,18 @@ sources:
     a_en_tirer: >-
       La retraite progressive vue par la complémentaire, à joindre au parcours
       du GIP pour chiffrer ce que le dispositif vaut.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 27 juillet 2026), avec les circulaires
+      2025-14 et 2026-1 et l'article 88 de l'accord de 2017. La fraction suit
+      celle du régime de base, et le droit se recalcule à la cessation (fiche
+      retraite_progressive, qui concorde). Reste à porter le « coefficient
+      d'anticipation spécifique temporaire » de l'article 88, dont la circulaire
+      2026-1 donne le barème (née en 1963, 62 ans, 150 trimestres : 0,731), avec
+      l'exemple du livret n° 4 : 40 %, 159 trimestres, 0,80, « 7 853 0,40 0,80
+      1,4159 3 558,10 € ». Le majorant ne s'y applique pas. Défaut : un « (lien
+      vers la page) CTA. » oublié dans le texte.
 
   - id: agirc_arrco_reversion
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/
@@ -474,7 +554,24 @@ sources:
     a_en_tirer: >-
       Taux de 60 %, âge, condition de non-remariage, absence de condition de
       ressources : la réversion complémentaire, que le dépôt ne modélise pas.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 6 août 2026), avec l'accord du 17
+      novembre 2017, articles 93 et 109 à 113, la circulaire 2020-02-DRJ (fiche 6)
+      et l'avenant n° 19. Deux enfants à charge du survivant au décès lèvent l'âge
+      de 55 ans, et la réversion reste servie quand ils cessent de l'être ; la
+      majoration pour enfants du défunt est reversée en entier, que le modèle ne
+      reversait pas : les deux sont portés
+      (data/reference/regles/reversion_agirc_arrco.yaml, statut lue ;
+      tests/test_reversion.py), l'exemple des deux enfants d'info-retraite
+      concorde et celui de Max entre (tests/temoins/exemples_officiels.yaml). Le
+      « taux de minoration » de 52 % à 58,4 % de l'Agirc avant 60 ans est un taux
+      de réversion. Le plafond du partage entre ex-conjoints : 172 trimestres à
+      l'article 112, 169 à 172 selon la date sur la page. Défaut : l'enfant
+      « élevé pendant au moins 9 ans » avant 16 ans, que la circulaire n'exige pas
+      pour un enfant à charge. Léo, qui demande dix-huit mois après le décès,
+      n'entre pas.
 
   - id: agirc_arrco_reversion_orphelin
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion-de-lorphelin/
@@ -484,7 +581,15 @@ sources:
     a_en_tirer: >-
       La réversion d'orphelin, propre à la complémentaire : 50 % des points,
       conditions d'âge. Un droit dont aucun régime de base n'a l'équivalent.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 16 mars 2026), avec les articles 114 et
+      115 de l'accord de 2017 et l'avenant n° 6 : l'orphelin de père et de mère,
+      de moins de 21 ans, de moins de 25 ans à charge ou invalide avant 21 ans,
+      reçoit 50 % des droits du parent, majorations à 100 % ; avant 2019, 30 % à
+      l'Agirc. Non porté : docs/limites.md le dit désormais, avec les orphelins du
+      RAFP et des IEG.
 
   - id: agirc_arrco_cumul_emploi_retraite
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/vivre-ma-retraite/cumul-emploi-retraite/
@@ -495,7 +600,19 @@ sources:
       Le cumul emploi-retraite et les droits nouveaux qu'il ouvre depuis 2023 :
       dispositif que la proposition notionnelle rend sans objet, et qu'il faut
       donc savoir décrire pour dire ce qu'elle simplifie.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (modifiée le 10 juin 2026), avec l'article 89 de
+      l'accord de 2017 (trois limites du cumul plafonné : 160 % du SMIC, le
+      dernier salaire, le salaire moyen des dix dernières années, que le modèle
+      applique) et l'avenant n° 16 (circulaire 2024-04-DRJ). La seconde retraite
+      « prend effet, au plus tôt, le 1er janvier 2024 » : le modèle la servait dès
+      septembre 2023, et en comptait les points à 7,87 % sur 1,27 ; corrigé
+      (src/retraite_notionnelle/droit/seconde.py, fiche
+      data/reference/regles/seconde_pension.yaml, tests/test_emploi_retraite.py).
+      La fiche réglementaire de la fédération ne cite plus que deux limites, sans
+      dire depuis quand : à relire avec la règle de 2027 que la page annonce.
 
   - id: agirc_arrco_circulaire_2025_16
     url: https://www.agirc-arrco.fr/storage/CirculaireAgircArrco2025-16sg-drj.pdf
@@ -505,7 +622,17 @@ sources:
     a_en_tirer: >-
       Une circulaire précise, à lire pour ce qu'elle fixe et pour ses exemples
       chiffrés, que test_oracle.py sait rejouer.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026 (30 octobre 2025, « Paramètres 2026 », empreinte
+      sha256:f56b122da648a425d56077a6a91f02ed5857eb06b3f8101d149a5daca2cb4daf) :
+      tranche 1 jusqu'à 4 005 € par mois, tranche 2 jusqu'à 32 040 € ; taux de
+      calcul 6,20 % et 17 %, appelés à « 127% du taux de calcul » (7,87 % et
+      21,59 %) ; CEG 2,15 % et 2,70 % ; CET 0,35 % ; valeur d'achat 20,1877 € ;
+      valeur de service 1,4386 € ; plafond de la majoration 2 367,48 €. Tout
+      concorde avec data/reference/regimes/, et c'est elle qui a fait corriger le
+      taux de calcul des points. Aucun exemple chiffré.
 
   - id: agirc_arrco_textes_de_reference
     url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/textes-de-reference/
@@ -515,7 +642,20 @@ sources:
     a_en_tirer: >-
       L'accord national interprofessionnel et ses avenants : le TEXTE du
       régime, là où la fiche grand public n'en est que le résumé.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Déroulée le 5 octobre 2026. L'accord du 17 novembre 2017 dans sa version
+      « applicable au 1er janvier 2019 » (circulaire 2018-09-DC,
+      sha256:b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb), lu
+      pour la réversion, l'orphelin, les majorations, les coefficients, le cumul
+      et la retraite progressive ; l'accord du 5 octobre 2023 ; les avenants n°
+      16, 17 et 19 par leurs circulaires. Ce qu'ils ont donné est dans
+      data/reference/regles/ (reversion_agirc_arrco, seconde_pension,
+      agirc_arrco_valeur_achat) et docs/limites.md. Reste la version consolidée,
+      servie par Calaméo, que le proxy refuse : le plafond du partage entre
+      ex-conjoints (172 trimestres à l'article 112 en 2019, 169 à 172 selon la
+      fédération) s'y tranchera.
 
   - id: agirc_arrco_circulaires
     url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/circulaires-agirc-arrco/
@@ -525,7 +665,18 @@ sources:
     a_en_tirer: >-
       Toutes les circulaires, pas seulement la 2025-16 : à dérouler, année par
       année, pour dater les changements de paramètres.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Déroulée le 5 octobre 2026 : 154 circulaires de 2017 à 2026, dont la liste
+      datée est restée dans le dossier de travail de la session ; l'index ne les
+      date pas, et son lien « 2023-01-DRJ » ouvre la 2022-16. Ont servi :
+      2018-09-DC (l'accord), 2020-02-DRJ (fiches d'application), 2023-10-DT,
+      2024-12-DT et 2025-15-DT (valeurs et plafond), 2024-04-DRJ (seconde
+      retraite), 2024-05-DRJ (avenant n° 19), 2025-16-SG-DRJ (paramètres 2026),
+      2026-1 (retraite progressive) ; leurs apports sont dans
+      data/reference/regles/. Trois PDF refusés par le pare-feu du site
+      (2021-06-DT, l'accord du 10 mai 2019, 2025-23).
 
   - id: agirc_arrco_parametres_statistiques
     url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/parametres-et-donnees-statistiques/
@@ -537,7 +688,19 @@ sources:
       de service, taux d'appel, rendement — de quoi CERTIFIER valeurs_point.csv
       au lieu de la tenir d'OpenFisca. Et les effectifs, qui pèsent les cas
       types depuis l'action 1.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-05
+    note: >-
+      Lue le 5 octobre 2026. La compilation des valeurs de point (novembre 2025) :
+      ses 273 valeurs concordent avec data/reference/regimes/valeurs_point.csv.
+      Elle a fait trouver le salaire de référence de l'UNIRS de 1949 à 1957, resté
+      en francs chez OpenFisca (1,07 « € » pour 1957, 0,182939 € en 1958) :
+      corrigé par le récupérateur, qui lit ces années dans la série nominale
+      (scripts/fetch/openfisca_points.py), et le rendement de l'UNIRS de 1957 à
+      1961 passe de 11,36 % à 13,91 %. Chiffres clés 2025 : 20 059 700 cotisants
+      fin 2024, quand la série du COR que le dépôt suit en compte 20 196 422
+      (−0,7 %, une autre définition) ; 13 906 600 retraités ; pensions moyennes de
+      6 624 € (droit direct) et 4 404 € (réversion), sans emploi au dépôt.
 
   - id: agirc_arrco_guides
     url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-pratique/guides-dinformation-retraite/
@@ -547,7 +710,21 @@ sources:
     a_en_tirer: >-
       Les guides d'information : c'est là que les exemples chiffrés complets
       se trouvent, carrière et résultat.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-05
+    note: >-
+      Déroulée le 5 octobre 2026 : quatorze guides sur Calaméo, dont seuls les
+      livrets n° 3, 4, 6, 7 et 8 portent des exemples chiffrés, tous recalculés.
+      Entrés aux exemples (tests/temoins/exemples_officiels.yaml) : les points
+      d'un salaire, sur une et deux tranches (livret n° 3), qui ont fait corriger
+      le taux de calcul, et la minoration de 0,90 à 64 ans et 6 mois (livret n°
+      4). Restent : la retraite progressive de 3 558,10 € (livret n° 4), en
+      attente du coefficient temporaire ; les points de maladie et de maternité
+      (livret n° 6) et de chômage (livret n° 7), que le modèle compte par année ;
+      les réversions partagées entre ex-conjoints (livret n° 8), non portées.
+      Défauts : le livret n° 7 écrit 13,98 points pour 13,99 (282,37 / 20,1877),
+      et 39,34 pour 39,35 ; le livret n° 1 écrit un plafond de 43 638 € pour 46
+      368 €.
 
   # ---- Ircantec ---------------------------------------------------------
 

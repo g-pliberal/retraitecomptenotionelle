@@ -84,8 +84,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   depuis 2019, l'Agirc-Arrco reverse en entier la majoration pour enfants du
   défunt (accord du 17 novembre 2017, articles 109 à 111). Restent dehors le minimum
   et les majorations du régime général, le complément de la fonction publique,
-  le partage entre ex-conjoints et le remariage, la réversion d'un assuré mort
-  avant son départ, celle des complémentaires des artisans et des commerçants
+  le partage entre ex-conjoints et le remariage, les pensions d'orphelin — à
+  l'Agirc-Arrco, la moitié des droits du parent pour l'orphelin de père et de
+  mère de moins de vingt et un ans, ou de vingt-cinq à charge (articles 114 et
+  115 de l'accord de 2017) ; au RAFP et aux IEG, un dixième par orphelin —, la
+  réversion d'un assuré mort avant son départ, celle des complémentaires des artisans et des commerçants
   pour un décès d'avant leur fusion, et celle des autres régimes, dont la ligne
   le dit ; les approximations de chaque fiche sont déclarées. Le formulaire demande le
   conjoint dans un bloc facultatif, et la page montre sa réversion pour un
@@ -951,7 +954,7 @@ de durée des hospitaliers actifs, qu'il sert, manquent toujours au dépôt.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->181<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->182<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -1051,7 +1054,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->181<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->182<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
