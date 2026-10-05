@@ -7252,16 +7252,16 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 (le passé refait, sous
-un cliquet), 2 (la décomposition du COR : les retraités se suivent, la pension
-moyenne relative non, −3,5 % contre −17,2 % en 2070), 2 bis (la dépense du système
-actuel est celle du COR) et 3 (la page Coût donne la proposition en
-fourchette : écart partagé, ses chiffres ; écart propre au système actuel, ses
-rapports notionnels multipliés par la dérive, 1,2 en 2070). Reste à resserrer
-la fourchette : suivre dans le modèle les deux conventions du COR (rendement
-de l'Agirc-Arrco, primes des fonctionnaires), puis expliquer le reste de
-l'écart. Commencer par la note de l'étape 3, qui dit ce que la première
-ferait.
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 (le passé refait),
+2 (la décomposition du COR : les retraités se suivent, la pension moyenne
+relative non, −3,5 % contre −17,2 % en 2070), 2 bis (la dépense du système
+actuel est celle du COR), 3 (la proposition en fourchette, ses rapports
+notionnels multipliés par la dérive, 1,2 en 2070) et 3 bis (les chiffres
+écrits en dur de la page Coût recalculés, la compensation des allègements
+rendue au compte de la retraite). Reste à resserrer la fourchette : suivre
+dans le modèle les deux conventions du COR (rendement de l'Agirc-Arrco,
+primes des fonctionnaires), puis expliquer le reste de l'écart. Commencer par
+la note de l'étape 3, qui dit ce que la première ferait.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7450,3 +7450,34 @@ celle du COR.**
   pension moyenne relative que de 3,5 %, quand le COR la fait reculer de
   17,2 %.
   Chaque part expliquée resserre la fourchette.
+
+**Étape 3 bis, le 5 octobre 2026 : les chiffres écrits en dur de la page
+Coût.**
+
+- *Ce qui est fait.* Un relevé des nombres que la page rend et que la source
+  écrit en toutes lettres en a trouvé sept qui ne se recalculaient pas. Cinq
+  se calculent désormais sur les données : la part des impôts affectés que
+  prend le fonds de solidarité vieillesse (« 38 % », lu pour 2024 dans les
+  recettes du fonds ; ses versements aux régimes en font 34 % en 2024 et
+  32 % en 2025, et la carte « Qui paie ? » disait « plus du tiers ») ; les
+  trois postes que la proposition ne reconduit pas (« 27 % des ressources en
+  2024 », quand le compte en donne 27,5 ; 29 % en 2025, dernière structure
+  publiée) ; la dépense du COR, au lieu des « quelque 420 milliards que l'on
+  cite d'ordinaire » ; le taux de la contribution d'équilibre de l'État
+  (74,28 % de 2024, quand la table certifiée porte 82,28 % en 2026) ; et, à
+  côté du taux de prélèvement de la page (32,8 % en 2025), celui que le COR
+  publie (32,1 %), dont elle ne prend que le profil.
+- *Une erreur de fond, aussi.* La glose des impôts affectés et la note « Dix-
+  huit pour cent de quoi ? » disaient que la compensation des allègements
+  généraux passe par la TVA de la branche maladie et n'apparaît pas au compte
+  de la retraite. Le tableau 2.2 du rapport du COR de 2026 dit le contraire :
+  ses impôts sur les revenus d'activité et sur la consommation, TVA reversée
+  à l'Agirc-Arrco comprise, portent cette compensation. La page le dit, et
+  ajoute la TVA à la liste du poste ; la docstring de `cout.py` qui fondait
+  l'erreur garde l'histoire et la corrige. Rien ne bouge dans les calculs :
+  la proposition ne reconduit aucun impôt affecté, compensation comprise, et
+  ses 18 % portent sur l'assiette entière.
+- *Le test.* `test_les_parts_de_l_impot_et_la_depense_du_cor_se_calculent`
+  refait les trois premiers chiffres sur le compte et refuse les formules
+  périmées. Restent écrits en dur, et sourcés : les chiffres du non-recours à
+  l'ASPA et des récupérations sur succession (`sources.yaml`).

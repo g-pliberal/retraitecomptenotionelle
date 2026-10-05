@@ -3564,6 +3564,51 @@ def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent():
     assert "et le système 2" in texte
 
 
+def test_les_parts_de_l_impot_et_la_depense_du_cor_se_calculent(contexte):
+    """Trois chiffres de la page Coût étaient écrits en dur, et deux avaient
+    vieilli : « 38 % » des impôts affectés pour le fonds de solidarité
+    vieillesse, lu pour 2024 dans les recettes du fonds, quand ses versements
+    de 2025 en font moins du tiers ; « 27 % » des ressources de 2024 pour les
+    trois postes que la proposition ne reconduit pas, quand le compte en donne
+    28 ; « quelque 420 milliards » pour la dépense du COR. Ils se calculent sur
+    le compte, et la page écrit ce qu'il dit. Elle ne dit plus que la
+    compensation des allègements n'apparaît pas au compte de la retraite : le
+    COR l'y range (rapport annuel de 2026, tableau 2.2).
+    """
+    from retraite_notionnelle.donnees.equilibre import POSTES_TRANSFERTS
+
+    def plat(texte):
+        return " ".join(html.unescape(texte).split())
+
+    comptes = contexte.comptes()
+    texte = plat(re.sub(r"<[^>]+>", " ", rendre("/cout", {})[1]))
+
+    ventilee = comptes.annees_ventilees()[-1]
+    fin = min([ventilee] + [comptes.transferts[poste.code].derniere_annee
+                            for poste in POSTES_TRANSFERTS
+                            if poste.organisme == "solidarite"])
+    part = (comptes.transfert_part_ressources("solidarite", fin)
+            / comptes.part("impots_et_taxes", fin))
+    phrase = plat(f"En {fin}, ce que ce fonds verse aux régimes en vaut "
+                  f"{g.pourcentage(part, decimales=0)}.")
+    # Deux fois : sous le tableau des postes, et dans la carte « Qui paie ? ».
+    assert texte.count(phrase) == 2, phrase
+
+    trois = sum(comptes.part(code, ventilee) for code in (
+        "contribution_equilibre_etat", "subventions_equilibre", "impots_et_taxes"))
+    assert plat(f"Trois postes : {g.pourcentage(trois, decimales=0)} des "
+                f"ressources en {ventilee}") in texte
+
+    derniere = contexte.depenses().derniere_annee
+    cor = comptes.depense(derniere) * comptes.pib(derniere)
+    assert plat(f"publie le Conseil d'orientation des retraites, "
+                f"{pages.milliards(cor, 1)} la même année") in texte
+
+    for perime in ("38 % en financent", "plus du tiers finance",
+                   "quelque 420 milliards", "n'apparaît pas au compte de la retraite"):
+        assert perime not in texte, perime
+
+
 def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert():
     """Le temps du lecteur n'est pas gratuit, et cette page le dépensait.
 

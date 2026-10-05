@@ -22,7 +22,9 @@ import {
 import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
 import { repartition } from "./capitalisation.js";
 import { CourbeTauxSansRisque } from "./taux.js";
-import { FAMILLES_STATUT, MinimumVieillesse, formaterBorne } from "./regimes.js";
+import {
+  ContributionsEmployeurPubliques, FAMILLES_STATUT, MinimumVieillesse, formaterBorne,
+} from "./regimes.js";
 import {
   CAS_TYPES, GENERATIONS, ageLiquidationPour, calculerCasTypes,
 } from "./castypes.js";
@@ -7557,7 +7559,8 @@ ${g.pourcentage(partImpotsDebut, false, 0)} en ${premiereVentilee},
 ${g.pourcentage(partImpotsFin, false, 0)} en ${derniereVentilee}.`,
     provenance + g.depliant(
       "Ce que contient chaque part",
-      g.gloses(GROUPES.map((groupe) => [groupe.libelle, groupe.explication])),
+      g.gloses(GROUPES.map((groupe) => [groupe.libelle, groupe.code === "impots"
+        ? `${groupe.explication} ${phraseFsv(comptes)}` : groupe.explication])),
     ),
     `Source : Conseil d'orientation des retraites. Ce détail n'est publié
 que de ${premiereVentilee} à ${derniereVentilee}.`,
@@ -8475,6 +8478,7 @@ dans la base LEGI, version par version. ${reserveLegale}</p>`,
 
 function coutDetailDepense(contexte) {
   const depenses = contexte.depenses();
+  const comptes = contexte.comptes();
   const c = contexte.cout();
   const euros = c.anneeEuros;
   const derniere = depenses.derniereAnnee;
@@ -8609,8 +8613,10 @@ dit d'où vient chaque montant et pourquoi une case reste vide.</p>
 <strong>vieillesse-survie tout entier</strong> : les pensions, mais aussi le
 minimum vieillesse, l'aide sociale aux personnes âgées et la retraite
 supplémentaire par capitalisation. La <strong>répartition obligatoire</strong>
-seule en fait ${milliards(repartition, 1)} : c'est cette grandeur-là qu'il faut
-rapprocher des quelque 420 milliards que l'on cite d'ordinaire. Le reste est
+seule en fait ${milliards(repartition, 1)} : c'est elle qu'il faut rapprocher de
+la dépense que publie le Conseil d'orientation des retraites,
+${milliards(comptes.depense(derniere) * comptes.pib.valeur(derniere), 1)} la
+même année, sur un champ qui compte aussi le fonds de solidarité vieillesse. Le reste est
 ${milliards(autres.aide_sociale_locale, 1)} de dépendance,
 ${milliards(autres.supplementaire, 1)} de capitalisation et
 ${milliards(autres.solidarite_etat, 1)} de solidarité de l'État.</p>
@@ -8658,6 +8664,37 @@ ${nonCotise}`, "cout-depenses");
 }
 
 /** La ventilation des ressources au découpage du COR, poste par poste. */
+/**
+ * Ce que le fonds de solidarité vieillesse prend aux impôts affectés : ses
+ * versements aux régimes rapportés au poste, la dernière année où le fonds
+ * existe et où le COR ventile les ressources. Écrite en dur, la part
+ * vieillissait sans bruit : « 38 % », lu pour 2024 dans les recettes du fonds,
+ * quand ses versements de 2025 en font moins du tiers.
+ */
+function phraseFsv(comptes) {
+  const ventilees = comptes.anneesVentilees();
+  const annee = Math.min(ventilees[ventilees.length - 1], ...POSTES_TRANSFERTS
+    .filter((poste) => poste.organisme === "solidarite")
+    .map((poste) => comptes.transferts.get(poste.code).derniereAnnee));
+  const part = comptes.transfertPartRessources("solidarite", annee)
+    / comptes.part("impots_et_taxes", annee);
+  return `En ${annee}, ce que ce fonds verse aux régimes en vaut `
+    + `${g.pourcentage(part, false, 0)}.`;
+}
+
+/**
+ * Le taux de la contribution d'équilibre que l'État verse pour ses civils, la
+ * dernière année que la table certifiée porte : écrit en dur, il disait encore
+ * celui de 2024 quand l'État en appelait un autre.
+ */
+function phraseTauxEtat(contexte) {
+  const employeurs = new ContributionsEmployeurPubliques(contexte.paquet);
+  const [, derniere] = employeurs.couverture("fonction_publique_etat");
+  const [taux] = employeurs.taux("fonction_publique_etat", derniere);
+  return `Pour ses civils, ce taux est de ${g.pourcentage(taux, false, 2)} des `
+    + `traitements en ${derniere}.`;
+}
+
 function coutDetailRessources(contexte) {
   const comptes = contexte.comptes();
   const ventilees = comptes.anneesVentilees();
@@ -8681,7 +8718,10 @@ ${g.tableau(
     `Structure des ressources du système de retraite, ${premiere} et ${derniere}`,
     true,
   )}
-${g.gloses(POSTES.map((poste) => [poste.libelle, poste.glose]))}
+${g.gloses(POSTES.map((poste) => [poste.libelle, `${poste.glose}${{
+    contribution_equilibre_etat: ` ${phraseTauxEtat(contexte)}`,
+    impots_et_taxes: ` ${phraseFsv(comptes)}`,
+  }[poste.code] ?? ""}`]))}
 <p class="discret">La colonne « cotisée » dit si le poste est un prélèvement
 assis sur un revenu d'activité — la seule ressource qu'un compte notionnel
 sache porter au crédit de quelqu'un. ${g.pourcentage(partCotisee, false, 0)}
@@ -9738,12 +9778,15 @@ ${milliards(assiette.montant(anneeAssiette), 0)} en ${anneeAssiette},
 ${g.pourcentage(assiette.partPib(anneeAssiette), false, 1)} du PIB. Le
 système de retraite y prélève
 ${g.pourcentage(observe.tauxPrelevement, false, 1)} de ressources en tout en
-${obs}, et ${g.pourcentage(horizon.tauxPrelevement, false, 1)} en
+${obs} (le COR publie ${g.pourcentage(comptes.tauxPrelevement.valeur(obs), false, 1)},
+rapporté à des revenus d'activité définis un peu autrement ; la page n'emprunte
+à son taux que le profil), et ${g.pourcentage(horizon.tauxPrelevement, false, 1)} en
 ${solde.derniereAnnee} là où le COR projette son propre taux ; la proposition en
 prélèverait 18 : c'est le rapport de ces deux nombres, année par année, qui fait
 sa recette. Elle ne touche aucune compensation d'allègement, n'en accordant
-aucun, et cela ne lui retire rien ici : cette compensation passe par la TVA, qui
-finance la branche maladie et n'apparaît pas au compte de la retraite.</div>
+aucun, et cela ne lui retire rien : le COR range cette compensation dans les
+impôts et taxes affectés, que la proposition ne reconduit pas, et ses 18 %
+portent sur l'assiette entière.</div>
 
 <div class="note"><strong>L'autre lecture, plus généreuse d'un point de
 PIB.</strong> Le modèle sait aussi appliquer aux 18 % la DÉPERDITION du système
@@ -10277,6 +10320,10 @@ function coutDetailPostes(contexte) {
   const totalRecettes = Object.fromEntries(systemes.map((s) => [s, ligne.ressourcesDe(s)]));
   const totalDepenses = Object.fromEntries(systemes.map((s) => [s, ligne.depense(s)]));
   const { garantieMeur, capitalise } = bilan;
+  // Les trois postes que la proposition ne reconduit pas, dans la dernière
+  // structure publiée, que le compte reconduit ensuite.
+  const nonReconduits = ["contribution_equilibre_etat", "subventions_equilibre",
+    "impots_et_taxes"].reduce((somme, code) => somme + comptes.part(code, derniereVentilee), 0);
 
   // L'âge légal de la proposition ÉLARGIT l'assiette : qui partait avant
   // 65 ans cotise jusque-là. Le facteur est celui du bilan, lu sur la grille ;
@@ -10443,7 +10490,9 @@ ressources d'aujourd'hui. Elle suit enfin le principe, et pour le seul
 système 4 : un compte notionnel ne crédite que ce qui est assis sur un revenu
 d'activité, et ce système ne reconduit donc aucune des trois ressources qui
 n'acquièrent de droits à personne, celles que la note du dessus nomme. Trois
-postes : 27 % des ressources en 2024, 29 % en 2070. Les cinq autres systèmes
+postes : ${g.pourcentage(nonReconduits, false, 0)} des ressources en
+${derniereVentilee}, dernière année que le COR ventile, et autant ensuite, le
+compte reconduisant cette structure. Les cinq autres systèmes
 les encaissent tous, faute qu'aucun programme dise ce qu'il en ferait.${suitLEmploi}</div>
 
 ${coutNoteTva(contexte, annee, ligne, pib, anneePib)}

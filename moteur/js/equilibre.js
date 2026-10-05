@@ -47,22 +47,23 @@ export const POSTES = [
   {
     code: "contribution_equilibre_etat",
     libelle: "Contribution d'équilibre de l'État",
-    glose: "Ce que l'État verse au régime de ses propres fonctionnaires, au "
-      + "taux qui équilibre ce régime — 74,28 % des traitements en 2024. C'est "
-      + "une cotisation d'employeur par son assiette, un solde par son taux : "
-      + "le modèle la porte au compte du système 3, et elle est comptée "
-      + "ici comme contributive pour cette raison.",
+    glose: "Ce que l'État verse au régime de ses propres fonctionnaires. "
+      + "C'est une cotisation d'employeur par son assiette, un solde par son "
+      + "taux, fixé pour équilibrer le régime : le modèle la porte au compte "
+      + "du système 3, et elle est comptée ici comme contributive pour cette "
+      + "raison.",
     contributive: true,
   },
   {
     code: "impots_et_taxes",
     libelle: "Impôts et taxes affectés",
-    glose: "CSG, taxe sur les salaires, forfait social, contribution sociale "
-      + "de solidarité des sociétés, taxes des régimes agricoles. "
-      + "38 % en financent le fonds de solidarité vieillesse. Ce n'est PAS la "
-      + "compensation des allègements généraux de cotisations patronales : "
-      + "celle-là passe par la TVA, qui finance la branche maladie, et le "
-      + "compte de la Cnav n'en porte aucune ligne.",
+    glose: "CSG, taxe sur les salaires, forfait social, TVA reversée à "
+      + "l'Agirc-Arrco, contribution sociale de solidarité des sociétés, "
+      + "taxes des régimes agricoles. Le COR y range la compensation des "
+      + "allègements généraux de cotisations patronales, que portent les "
+      + "impôts sur les revenus d'activité et sur la consommation (rapport "
+      + "annuel de 2026, tableau 2.2), et la CSG qui finance le fonds de "
+      + "solidarité vieillesse.",
     contributive: false,
   },
   {
@@ -116,9 +117,10 @@ export const GROUPES = [
   {
     code: "impots",
     libelle: "Impôts",
-    explication: "CSG, taxe sur les salaires, forfait social. Des recettes "
-      + "fiscales affectées à la retraite, qui n'ouvrent de droit à personne : "
-      + "plus du tiers finance le fonds de solidarité vieillesse.",
+    explication: "CSG, taxe sur les salaires, forfait social, TVA. Des "
+      + "recettes fiscales affectées à la retraite, qui n'ouvrent de droit à "
+      + "personne : une part compense les allègements de cotisations "
+      + "patronales, une autre finance le fonds de solidarité vieillesse.",
     postes: ["impots_et_taxes"],
     couleur: "var(--serie-6)",
   },
@@ -245,8 +247,8 @@ export const ORGANISMES = [
       + "garantie vieillesse qui remplace le second étant financée à part, "
       + "hors du compte des cotisants. Ce fonds échappait à la règle parce "
       + "que sa recette n'arrive pas par un transfert mais par l'impôt : elle "
-      + "est dans le poste « impôts et taxes affectés », dont elle fait 38 % "
-      + "en 2024. Il est supprimé au 1er janvier 2026, ses missions et son "
+      + "est dans le poste « impôts et taxes affectés », dont elle fait le "
+      + "tiers environ. Il est supprimé au 1er janvier 2026, ses missions et son "
       + "financement passant à la CNAV ; la série s'arrête donc à 2025, et la "
       + "part constante prend le relais, ce qui est exact puisque les "
       + "missions, elles, continuent.",

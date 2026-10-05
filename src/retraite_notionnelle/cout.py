@@ -1125,13 +1125,16 @@ class SoldeAnnuel:
         septembre 2026, et il faut dire par quel argument elle NE passe PAS :
         on avait cru un temps que ce poste compensait les allègements généraux
         de cotisations patronales, qu'un système sans exonération ne consent
-        pas. C'est faux, et le dépôt l'a établi le 19 septembre 2026 : la TVA
-        qui compense ces allègements finance la branche maladie, et le compte
-        de la CNAV n'en porte aucune ligne. L'argument qui vaut est celui qui
-        vaut pour les 18 % : **un compte notionnel ne crédite que ce qui est
-        assis sur un revenu d'activité.** Un impôt affecté n'acquiert de droits
-        à personne ; le porter au crédit d'un système qui ne rend que ce qui a
-        été cotisé, c'est lui prêter une recette sans contrepartie.
+        pas, puis, le 19 septembre 2026, qu'il n'en portait rien, le compte de
+        la CNAV n'ayant aucune ligne de TVA. Le COR dit le contraire pour le
+        système entier (rapport annuel de 2026, tableau 2.2) : les impôts sur
+        les revenus d'activité et sur la consommation, TVA reversée à
+        l'Agirc-Arrco comprise, portent cette compensation. Ni l'une ni
+        l'autre lecture ne fonde la décision, et l'argument qui vaut est celui
+        qui vaut pour les 18 % : **un compte notionnel ne crédite que ce qui
+        est assis sur un revenu d'activité.** Un impôt affecté n'acquiert de
+        droits à personne ; le porter au crédit d'un système qui ne rend que ce
+        qui a été cotisé, c'est lui prêter une recette sans contrepartie.
 
         LA TVA À TAUX UNIQUE Y RENTRE, et elle seule. Décision du Parti
         libéral, 23 septembre 2026 : ce qu'un taux unique de TVA rapporte de
