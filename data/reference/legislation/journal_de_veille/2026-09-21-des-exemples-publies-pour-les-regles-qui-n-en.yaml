@@ -1,0 +1,66 @@
+date: "2026-09-21"
+session: "des exemples publiés pour les règles qui n'en avaient pas"
+consulte: >-
+  Base documentaire de la Cnav (legislation.lassuranceretraite.fr), quatre
+  circulaires lues en entier dans leur PDF : 2022-26 du 14 octobre 2022
+  (Majoration pour enfants), 2026-07 du 5 mars 2026 (Âge légal et durée
+  d'assurance), 2026-17 du 12 juin 2026 et 2026-29 du 4 septembre 2026
+  (Retraite anticipée pour carrière longue), plus les fiches 6.2b et 6.3 de
+  la circulaire carrière 2017-01. Fiches service-public F16336 (retraite du
+  salarié et enfants, vérifiée le 14 août 2026) et F37311 (retraite de
+  l'agent public et enfants, vérifiée le 1er septembre 2026). Index LEGI du
+  dépôt, remis à jour au 20 septembre 2026 : article L. 161-17-2 du code de
+  la sécurité sociale, ses cinq versions, et le texte intégral de celle en
+  vigueur (LEGIARTI000053280889, 31 décembre 2025).
+trouve: >-
+  SIX EXEMPLES DE PLUS, ET DEUX RÈGLES QUI N'AVAIENT AUCUN TÉMOIN. Les
+  enfants n'en avaient pas, faute de forme : aucune caisse ne publie une
+  carrière entière dont elle donne la durée d'assurance. Ce qu'elle publie,
+  c'est le nombre de trimestres ajoutés PAR ENFANT et le taux de la
+  majoration. Deux grandeurs neuves le mesurent sans rien recalculer du
+  modèle — l'écart avec la même carrière sans enfant, et le rapport de la
+  majoration servie à la somme des pensions. Les six tombent justes :
+  16 trimestres pour deux enfants au régime général, 24 pour trois, 8 pour
+  deux enfants nés avant 2004 dans la fonction publique, 4 pour deux nés
+  depuis ; et 10 % exactement sur une carrière surcotée à 58,125 %, au taux
+  plein, et minorée à 41,25 %. Ce dernier point est ce que la circulaire
+  2022-26 tient à dire et que le modèle aurait pu manquer : « la surcote
+  majore la retraite et fait partie intégrante de l'avantage de base », donc
+  la majoration pour enfants « est calculée sur la base du montant annuel de
+  la retraite, majorée par la surcote » — son exemple le chiffre,
+  10 % × (600 + 22,50) = 62,25. C'est un ordre d'opérations : appliquer les
+  10 % à la pension d'avant la surcote rendrait 9,52 % de celle d'après, et
+  le témoin le verrait. UNE CIRCULAIRE ANNULÉE NE CERTIFIE PLUS RIEN : les
+  six témoins de carrière longue citaient la 2026-17, que la 2026-29 du
+  4 septembre annule et remplace ; ses âges et ses durées ont été relus
+  ligne à ligne, aucun n'a bougé, et les témoins citent désormais celle qui
+  fait foi. UNE ALERTE LEVÉE, ENFIN : la fiche F16336 écrit que « l'âge
+  minimum à partir duquel vous pouvez partir à la retraite est abaissé d'un
+  an si vous êtes né à partir du 1er avril 1965 et si vous bénéficiez d'au
+  moins 1 trimestre de majoration d'assurance maternité, adoption ou
+  d'éducation ». Le texte a été lu : L. 161-17-2 en vigueur ne porte aucun
+  abaissement de ce genre, et son échelle par génération est exactement
+  celle du dépôt — 62 ans et 9 mois jusqu'au 31 mars 1965, 63 ans du
+  1er avril au 31 décembre 1965, 64 ans à compter de 1969 —, que la
+  circulaire 2026-07 reprend à l'identique. La phrase de la fiche vulgarise
+  l'effet des trimestres d'enfants sur la CARRIÈRE LONGUE, que le dépôt
+  porte déjà sous `carriere_longue_enfants_reputes_cotises`. Le texte
+  l'emporte sur la fiche, et rien n'a été modifié.
+reste: >-
+  Les trois exemples de réputés cotisés du point 1.2 de la circulaire
+  2026-29 ne se rejouent pas en l'état : ils arbitrent entre des périodes
+  assimilées de nature différente — maladie, chômage, service national,
+  invalidité, maternité —, que le modèle ne distingue pas dans une carrière
+  qu'il synthétise. L'entrée `carriere_longue_reputes_cotises_autres` le
+  dit désormais : l'exemple servira de témoin APRÈS le portage, pas pour le
+  guider. Restent sans exemple publié que le dépôt ait trouvé : les
+  vingt-quatre et vingt-trois meilleures années des parents (la circulaire
+  d'application n'est pas parue), la durée requise propre aux catégories
+  actives, la liquidation unique des régimes alignés, le minimum garanti de
+  la fonction publique — aucune fiche de calcul du Service des retraites de
+  l'État n'a été trouvée qui en porte un — et la surcote parentale, dont
+  les fiches donnent le barème sans cas résolu. La majoration pour enfants
+  passe de `transcrit` à `conforme` ; la majoration de durée d'assurance
+  reste `a_verifier`, les quatre témoins fixant le nombre de trimestres
+  servis et non le sort du décret n° 2026-699 ni celui du père.
+prochaine_veille: "2026-11-30"

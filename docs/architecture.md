@@ -1560,9 +1560,18 @@ qu'on a corrigé.
 - **L'état** : `docs/methodologie.md` (ce que le moteur calcule, étape par
   étape) et le tableau de bord (§ 9.1).
 - **Les archives** : `docs/archives/`, gelées et conservées intégralement : le
-  journal et les actions faites de la feuille de route, les récits de
-  `limites.md`, l'histoire git de `CLAUDE.md`, le journal de veille.
-- **La feuille de route** : ce que la carte ne sait pas dire (§ 9.1).
+  journal et les actions faites de la feuille de route, avec, depuis l'action
+  148, le dossier de leurs notes, les récits de `limites.md`, l'histoire git
+  de `CLAUDE.md`, le récit de la veille (`veille_droit.md`).
+- **La feuille de route** : ce que la carte ne sait pas dire (§ 9.1). Chaque
+  action ouverte y tient son titre et son bloc « Reprise » ; ses notes, une
+  par fichier depuis l'action 148, sont dans
+  `docs/feuille_de_route/<action>/`, et passent avec l'action close sous
+  `docs/archives/feuille_de_route/` (`python scripts/reprise.py` imprime les
+  blocs).
+- **Le journal de veille** : une entrée par fichier, dans
+  `data/reference/legislation/journal_de_veille/`, depuis l'action 148 ;
+  `veille.yaml` ne garde que les sources à consulter (`docs/veille_droit.md`).
 - **`CLAUDE.md`** : une page, qui renvoie ici. Si un autre outil pilote un jour
   les sessions, un fichier d'entrée à son nom renvoie à la même page.
 
@@ -2190,7 +2199,7 @@ Ce que les deux fiches montrent :
 |---|---|
 | `CLAUDE.md` | une page qui renvoie ici ; l'histoire git en archive |
 | `README.md` | inchangé : c'est le texte de la proposition, sa référence (§ 3) |
-| `docs/feuille_de_route.md` | ce que la carte ne sait pas dire (l'outillage, le site, les décisions) ; les actions faites et le journal en archive ; ce qui touche une règle, recopié dans sa fiche |
+| `docs/feuille_de_route.md` | ce que la carte ne sait pas dire (l'outillage, le site, les décisions) ; les actions faites et le journal en archive ; ce qui touche une règle, recopié dans sa fiche ; depuis l'action 148, les notes des actions ouvertes, une par fichier, dans `docs/feuille_de_route/<action>/` |
 | `docs/limites.md` | les sections d'état : les limites du tableau de bord, fabriquées ; les récits : en archive, et recopiés dans les fiches concernées |
 | `docs/methodologie.md` | l'état du moteur, réorganisé par étapes |
 | (nouveau) `docs/etat.md` | le tableau de bord, fabriqué à chaque changement (§ 9.1) |
@@ -2205,7 +2214,7 @@ Ce que les deux fiches montrent :
 
 | Aujourd'hui | Demain |
 |---|---|
-| `data/reference/legislation/veille.yaml` | ses entrées dans les fiches ; son journal en archive ; ses sources à consulter dans la procédure |
+| `data/reference/legislation/veille.yaml` | ses entrées dans les fiches ; son journal, une entrée par fichier dans `journal_de_veille/` depuis l'action 148 ; ses sources à consulter, seules dans le registre |
 | `data/reference/legislation/frontiere_contributive.yaml` | ses bascules dans les versions et les faces des fiches ; le fichier devient une vue |
 | `data/reference/legislation/*.csv` | les tables datées, inchangées, avec deux colonnes facultatives de plus : la date de publication, la dernière valeur connue valable ; les fiches y renvoient. Une table qui ne dit que les versions d'une règle passe dans la fiche, que le moteur lit alors (§ 4.1) : `majoration_duree_assurance.csv`, au premier domaine, dans `majoration_duree_assurance_enfants` et `enfants_fonction_publique` |
 | `data/reference/legislation/reformes.yaml`, `data/reference/regimes/pivots.yaml` | inchangés, reliés aux versions |
@@ -2479,6 +2488,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.36**, 6 octobre 2026 : plusieurs sessions sans se marcher dessus (action 148), à la demande du propriétaire, qui veut mener en parallèle les étapes d'une même action. Les fichiers fabriqués et la suite complète passent à GitHub, qui les refait et les commite après chaque envoi, `pousser.sh` gardant la version de `main` d'un conflit qui ne porte que sur eux (§ 10, étape 1). Les journaux s'écrivent un fichier par note ou par entrée (§ 9.3, annexe B, étape 2) : les notes de la feuille de route dans `docs/feuille_de_route/<action>/`, avec, quand les étapes d'une action vont en parallèle, un bloc « Reprise » par étape, et le journal de veille dans `journal_de_veille/`, où ses entrées ont été déplacées à l'identique ; `scripts/reprise.py` imprime les blocs.
 
 - **5.35**, 4 octobre 2026 : la deuxième voie des simulateurs officiels s'ouvre à Claude (§ 3.5), à la demande du propriétaire, que les saisies à la main retardaient : Claude saisit à sa place, dans le budget de chaque simulateur, dans les seuls simulateurs anonymes sans captcha, chaque lot approuvé avant la première saisie ; la troisième lui laisse lire la page de « Mon estimation retraite » que le propriétaire a ouverte, connecté lui-même ; la quatrième devient « jamais de robot sans surveillance ». `scripts/simulateurs.py` tient le budget au registre des sources, écrit la feuille de saisie avec la prédiction du modèle, et transcrit les réponses en exemples officiels qu'il rejoue aussitôt.
 

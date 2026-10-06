@@ -25,7 +25,9 @@ début de la réorganisation, réécritures légitimes comprises.
 ``tests/temoins/conservation.json``, ne tient que ce qui ne doit plus bouger :
 les paragraphes des RÉCITS (``data/reference/prose/zones.yaml``), des notes de
 décision et des archives — hors les actions de la feuille de route encore en
-cours, qui vivent, et les tableaux que ``scripts/chiffrage_plf.py`` réécrit —,
+cours, qui vivent, comme leurs notes (``docs/feuille_de_route/<action>/``,
+gelées avec l'action close sous ``docs/archives/``), et les tableaux que
+``scripts/chiffrage_plf.py`` réécrit —,
 et l'identifiant de chaque entrée des registres. Un récit est gelé : s'il
 manque, il a été perdu ou réécrit. Une section d'état, elle, change avec le
 dépôt, et l'historique git garde ses versions. La référence ne se fige pas par
@@ -89,10 +91,14 @@ ARCHIVES_DES_REGISTRES: dict[str, list[str]] = {}
 #: registre porte la section, c'est elle qu'on lit.
 VUES_DES_REGISTRES = {
     ("data/reference/legislation/veille.yaml", "entrees"): "veille_depuis_la_carte",
+    ("data/reference/legislation/veille.yaml", "journal"): "journal_de_veille",
 }
 
 #: La carte : une fiche par dispositif.
 CARTE = "data/reference/regles"
+
+#: Le journal de veille, une entrée par fichier depuis l'action 148.
+JOURNAL_DE_VEILLE = "data/reference/legislation/journal_de_veille"
 
 #: Les états d'une ligne de veille, sous le nom que le vocabulaire des fiches
 #: leur a donné.
@@ -328,6 +334,14 @@ def veille_depuis_la_carte(arbre: Arbre) -> list[dict]:
     return lignes
 
 
+def journal_de_veille(arbre: Arbre) -> list[dict]:
+    """Les entrées du journal de veille, sorties de ``veille.yaml`` le
+    6 octobre 2026 (action 148) : une par fichier, chacune à l'identique,
+    sous la même clé, la date et la session."""
+    return [yaml.safe_load(arbre.lire(chemin) or "") or {}
+            for chemin in arbre.fichiers(JOURNAL_DE_VEILLE) if chemin.endswith(".yaml")]
+
+
 def _empreinte_d_entree(valeur) -> str:
     return hashlib.sha1(json.dumps(
         valeur, sort_keys=True, ensure_ascii=False, default=str
@@ -453,8 +467,10 @@ def main() -> int:
                   "--accepter-les-pertes et dire pourquoi dans le commit")
             return 1
         reference = figer()
+        # En LF, même sous Windows, où write_text écrirait des CRLF.
         REFERENCE.write_text(json.dumps(reference, ensure_ascii=False, indent=1,
-                                        sort_keys=True) + "\n", encoding="utf-8")
+                                        sort_keys=True) + "\n", encoding="utf-8",
+                             newline="\n")
         n = somme_ordonnee(len(e) for s in reference["paragraphes"].values() for e in s.values())
         m = somme_ordonnee(len(c) for c in reference["entrees"].values())
         print(f"référence figée : {n} paragraphes gelés, {m} entrées de registres")

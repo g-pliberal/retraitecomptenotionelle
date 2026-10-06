@@ -1,0 +1,19 @@
+date: "2026-10-04"
+session: "action 119, le barème de l'Ircantec pour enfants"
+consulte: >-
+  veille_droit.py ; l'index LEGI du dépôt, à jour au 27 septembre 2026, les incréments
+  de la DILA toujours refusés : les articles 15 et 15 bis de l'arrêté du 30 décembre 1970
+  dans toutes leurs rédactions, le décret n° 70-1277 (articles 1er à 13) ; la page de
+  l'Ircantec « Le nombre d'enfants ».
+trouve: >-
+  L'article 15, une seule rédaction depuis 1971, majore « le total des points de
+  retraite » de 10 % pour trois enfants, 15 % pour quatre, 20 % pour cinq, 25 % pour
+  six et 30 % pour sept et au-delà, sans plafond ; la page de l'Ircantec le redit, avec
+  un exemple de sept enfants et 2 500 points. Le modèle servait 10 % à tous : chaque
+  période de la fiche porte désormais le barème (fiche `ircantec_majoration_enfants`),
+  et l'exemple entre aux exemples officiels.
+reste: >-
+  La bonification de l'article 15 bis — des points gratuits par enfant élevé, au
+  prorata de l'interruption d'activité dans la limite d'une année —, que le modèle, qui
+  ne connaît pas ces interruptions, ne sert pas ; les règlements de l'IPACTE et de
+  l'IGRANTE, pour une pension prise avant 1971.

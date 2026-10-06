@@ -17,8 +17,9 @@ chaque chiffre, ni `regimes.md`, journal de la campagne sur les régimes.
 **Comment le tenir.** Une action a un état — `à faire`, `en cours`, `fait` — et
 une ligne « ce que ça a déplacé » quand elle est faite, comme les tranches de
 `regimes.md`. Toute session qui touche au scénario 1 commence par
-`python scripts/veille_droit.py` et finit par une entrée au journal de
-`data/reference/legislation/veille.yaml` : voir `docs/veille_droit.md`. Une action qu'on abandonne ne disparaît pas : elle passe en bas,
+`python scripts/veille_droit.py` et finit par une entrée au journal de veille,
+un fichier à elle sous `data/reference/legislation/journal_de_veille/` : voir
+`docs/veille_droit.md`. Une action qu'on abandonne ne disparaît pas : elle passe en bas,
 avec la raison, et l'action elle-même dans l'archive. Une découverte faite en chemin qui mérite un chantier se note
 ici, pas dans un commentaire de code.
 
@@ -51,6 +52,17 @@ ne garde que ce qui vit : ce qui est délibérément en bas, les actions
 `à faire`, et les actions `en cours`, à la fin, où les sessions ouvrent les
 leurs. Une action qui se clôt passe, telle quelle, à la fin de l'archive ; un
 test refuse une action close ici, ou ouverte là-bas.
+
+**Les notes, une par fichier.** Depuis le 6 octobre 2026 (action 148), une
+session n'écrit plus sa note ici : elle l'écrit dans un fichier à elle,
+`docs/feuille_de_route/<action>/<AAAA-MM-JJ>-<sujet>.md`, qui s'ouvre sur son
+titre. Ce fichier ne garde, de chaque action ouverte, que son titre, son bloc
+« Reprise », sa demande, son plan, et les notes écrites avant cette date.
+Quand les étapes d'une action se mènent en parallèle, son bloc le dit, et
+chaque étape inachevée tient le sien sous le titre de sa note : deux sessions
+n'écrivent jamais dans le même fichier. `python scripts/reprise.py` imprime
+tous ces blocs. Une action close emporte le dossier de ses notes sous
+`docs/archives/feuille_de_route/`, où elles sont gelées.
 
 ---
 
@@ -5706,15 +5718,16 @@ de l'étape 4 de l'action 142, suite.
 
 ### 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris — `en cours`
 
-**Reprise, au 5 octobre 2026.** Fait : l'étape 1 et son relevé (279 points,
-145 écarts) ; l'étape 15, le minimum contributif daté ; l'étape 16 sauf un
-point (salaire annuel moyen daté, indépendants, AVPF, colonnes, IGRANTE) ;
-l'étape 2, à trois restes près que dit sa dernière note ; l'étape 20, la
-valeur de service du jour. Reste de l'étape 16 : les coefficients de l'Agirc
-d'avant 1955 et de l'Arrco d'avant 1965 (textes de 1947 et de 1961 à
-trouver) ; de l'étape 20, l'Ircantec à dater. Puis les étapes 3 à 14 et 17 à
-19, une par session, et les choix de l'étape 13. Le registre dit, au chantier
-de chaque étape (« 138.16 »…), ce qu'en fait chaque modèle.
+**Reprise, au 6 octobre 2026.** Fait : l'étape 1 et son relevé (279 points,
+145 écarts) ; l'étape 15 ; l'étape 16, sauf les coefficients de l'Agirc d'avant
+1955 et de l'Arrco d'avant 1965 (textes de 1947 et de 1961 à trouver) ;
+l'étape 2, à trois restes près que dit sa dernière note ; l'étape 20, sauf
+l'Ircantec à dater. Restent les étapes 3 à 14 et 17 à 19, et les choix de
+l'étape 13. Elles se mènent en parallèle, une session chacune (action 148) :
+ce bloc ne se récrit plus ; chaque étape écrit sa note, et son propre bloc tant
+qu'elle n'est pas finie, sous `docs/feuille_de_route/138/` (`python
+scripts/reprise.py 138`). Le registre dit, au chantier de chaque étape
+(« 138.16 »…), ce qu'en fait chaque modèle.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais qu'on regarde les modèles de
 simulation qui existent et qu'on les compare à notre projet. Il faut que l'on
@@ -8359,15 +8372,15 @@ avait relevé, le cas type au SMIC écrit 0,55 fois le salaire moyen.
 
 ### 148. Plusieurs sessions sans se marcher dessus : la fabrique à GitHub, les journaux séparés — `en cours`
 
-**Reprise, au 6 octobre 2026.** Faite : l'étape 1 — les fichiers fabriqués
-et la suite complète passent à GitHub (`tests.yml`, `publier_fabrique.sh`),
-`pousser.sh` règle seul les conflits qui ne portent que sur eux, et le code
-additionne de gauche à droite sous tout Python ; première course verte, et
-son commit fabriqué. Reste l'étape 2 (les journaux
-en fichiers séparés), puis l'étape 3 (la prose et ses chiffres ancrés), une
-session neuve chacune ; commencer par mesurer, sur `git log`, quels fichiers
-écrits à la main deux sessions d'une même action touchent encore en commun.
-Lire la note de l'étape 1.
+**Reprise, au 6 octobre 2026.** Faites : l'étape 1, la fabrique et la suite
+complète à GitHub ; l'étape 2, les journaux en fichiers séparés — une note de
+feuille de route par fichier, un bloc « Reprise » par étape quand elles vont
+en parallèle (l'action 138 la première), le journal de veille en un fichier
+par entrée, `scripts/reprise.py`. Reste l'étape 3, dans une session neuve : la
+prose et ses chiffres ancrés, et `tests/temoins/conservation.json`, que deux
+sessions refigent au même endroit ; commencer par mesurer la part des commits
+du README et de `limites.md` qui ne déplace que des ancres. Lire la note de
+l'étape 2, `docs/feuille_de_route/148/2026-10-06-etape-2.md`.
 
 **Demande**, le 6 octobre 2026 : « j'aimerais faire plusieurs points de cette
 liste sans que les différentes discussions ne se marchent dessus […] quand je
@@ -8404,12 +8417,15 @@ boucles « conflit → rebasage → régénération → suite complète ».
    fichier, un bloc « Reprise » par étape quand les étapes d'une action se
    mènent en parallèle, une entrée du journal de veille par fichier ; les
    scripts et les tests qui les lisent, adaptés ; `conservation.py --depuis
-   HEAD` avant le commit, puis `--figer`.
+   HEAD` avant le commit, puis `--figer`. Faite.
 3. *La prose et ses chiffres ancrés* : mesurer quelle part des commits du
    README et de `docs/limites.md` ne fait que déplacer des chiffres ancrés ;
    les laisser à GitHub, et faire résoudre par `pousser.sh` un conflit qui ne
    porte que sur eux. À la fin, mesurer le temps d'une étape type, avant et
-   après l'action.
+   après l'action. Avec eux, la référence de la conservation, que `--figer`
+   récrit chaque fois que le parcours suit ses pages : deux sessions qui la
+   refigent le même jour y ajoutent leurs lignes côte à côte (mesure de
+   l'étape 2).
 
 Hors de l'action, à reprendre peut-être : une mémoire des calculs
 (`.cache/calculs/`) que GitHub publierait, et que les sessions récupéreraient

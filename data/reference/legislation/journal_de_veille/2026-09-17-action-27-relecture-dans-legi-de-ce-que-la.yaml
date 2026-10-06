@@ -1,0 +1,30 @@
+date: "2026-09-17"
+session: "action 27, relecture dans LEGI de ce que la suspension a réécrit"
+consulte: >-
+  Index LEGI du dépôt mis à jour des incréments DILA jusqu'au
+  16 septembre 2026 : toutes les versions de L. 161-17-2, D. 161-2-1-9,
+  L. 161-17-3, D. 351-1-1, R. 351-27, R. 351-6, R. 351-9, R. 351-29-1 ;
+  index JORF : décrets n° 2025-1409 et 2025-1410 du 30 décembre 2025
+  (JORFTEXT000053227462, JORFTEXT000053227603), n° 2026-344 et 2026-345
+  du 7 mai 2026.
+trouve: >-
+  La loi n° 2025-1403 a mis la table des âges dans L. 161-17-2 lui-même
+  (version du 31 décembre 2025, applicable au 1er septembre 2026) sans
+  réécrire D. 161-2-1-9 ; L. 161-17-3 réécrit de même ; D. 351-1-1 en
+  trois versions (2023, janvier 2026 sans changement de valeur,
+  septembre 2026). Le récupérateur les lit toutes, à leur date d'effet et
+  au mois près : 79 âges, 20 durées, 28 portes de carrière longue,
+  IDENTIQUES aux lignes transcrites de la loi et des circulaires
+  2026-07 et 2026-17 — plus une ligne « moyenne » ni « haute » sur ces
+  tables depuis 2023. Aucune version de L. 161-17-2 ni de L. 161-17-3
+  postérieure au 30 décembre 2025. Le décret n° 2025-1409 a abrogé au
+  1er janvier 2026 le II de R. 351-27 (coefficient par génération), le
+  II de R. 351-6 (proratisation par génération) et R. 351-29-1 (années du
+  SAM, passées à R. 173-3-2) : textes morts pour les générations qu'ils
+  nommaient, sans effet sur le modèle, documenté dans les tables.
+reste: >-
+  Portes de carrière longue de 2004 et 2012 (versions abrogées, forme
+  différente) ; les autres récupérateurs dila_legi_* lisent encore le
+  dump global de juillet 2025 ; catégories actives : le décret
+  n° 2026-344 modifie l'article 10 XXIV de la loi de 2023, non codifié,
+  que seul l'index JORF porte — lues à la main, niveau haute.

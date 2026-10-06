@@ -1,0 +1,25 @@
+date: "2026-10-05"
+session: "action 147, étape 10 : les points de l'Agirc-Arrco au taux moyen des entreprises, comme les cas types du COR"
+consulte: >-
+  La veille du jour (scripts/veille_droit.py) : rien de paru depuis l'étape 9. Le
+  rapport du COR de juin 2026, partie 3, chapitre 1 (notes des figures 3.3 et 3.4 :
+  « les cotisations sont supposées prélevées au taux moyen ») et son classeur de
+  données (figures 3.1, 3.3 et 3.4) ; l'annexe méthodologique en ligne, § 2.1 et
+  2.2, et son classeur (figures A2.2 à A2.4 : âges d'entrée, passage cadre,
+  profils de salaire des cas types n° 1 et 2) ; le modèle Trajectoire de la DREES,
+  version 1.1.2 (commit 0963b57), ses paramètres de cotisation (paramCotis.csv) et
+  son calcul des points (R/3-points.R), et le paquet calcul_pension (classeur
+  hypo_taux_cotisation_et_legislation_2020_drees.xlsx, même empreinte).
+trouve: >-
+  Aucun texte de droit : les fiches de l'Arrco et de l'Agirc portent le taux
+  contractuel minimal de l'accord, que la caisse oppose à toute entreprise ; les
+  cas types du COR cotisent au taux moyen des entreprises, que Trajectoire publie
+  année par année (5,42 % sur la tranche 1 jusqu'en 1993, vers 13,9 % sur la
+  tranche B). La page Coût le suit désormais, sous ses conventions ; le simulateur
+  individuel et le scénario 1 ne bougent pas. La dérive de 2070 tombe de 1,080 à
+  1,039.
+reste: >-
+  Le taux du simulateur individuel, minimal ou moyen, au propriétaire (registre,
+  138.13) ; les carrières incomplètes, les migrants et les entrées tardives des
+  fonctionnaires ; la décision du conseil d'administration de l'Agirc-Arrco du
+  14 octobre 2026.

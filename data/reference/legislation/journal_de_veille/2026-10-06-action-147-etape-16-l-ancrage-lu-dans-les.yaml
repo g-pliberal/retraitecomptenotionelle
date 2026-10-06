@@ -1,0 +1,18 @@
+date: "2026-10-06"
+session: "action 147, étape 16 : l'ancrage lu dans les données, le cas type au SMIC payé au SMIC"
+consulte: >-
+  INSEE, banque de données macroéconomiques : salaires et traitements bruts (idbank
+  011785411), emploi salarié intérieur (011793486), SMIC horaire brut mensuel
+  (000822484) et mensuel pour 35 heures (000879877) ; INSEE, « Séries longues sur les
+  salaires (1950-2010) », tableaux SM01 et SM02 (insee.fr/fr/statistiques/2122816) ;
+  scripts/veille_droit.py, dont la dernière entrée du journal date du jour.
+trouve: >-
+  Aucun texte de droit, aucune règle touchée. Le salaire moyen de 2024 vaut 40 897,00
+  euros ; le SMIC d'une année à temps complet 21 272,77 euros, 0,52 fois le salaire
+  moyen (0,40 en 1970, 0,56 en 1951 et en 1999). L'INSEE compte la durée légale à
+  173,33 heures par mois jusqu'en 1981, 169 ensuite, 151,67 depuis 2000 ; les barèmes
+  mensuels de la BDM refont son annuel au centime de 2001 à 2012.
+reste: >-
+  La garantie mensuelle de rémunération de 2000 à 2005 ; le privé au milieu de la
+  période ; le passé ; la FPE et les régimes spéciaux ; la décision du conseil
+  d'administration de l'Agirc-Arrco du 14 octobre 2026.

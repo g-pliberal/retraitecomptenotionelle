@@ -1,0 +1,40 @@
+date: "2026-09-23"
+session: "action 89, dernières sections libérales (CNAVPL, Cipav, CAVAMAC, CAVEC)"
+consulte: >-
+  `scripts/veille_droit.py` ; index LEGI et JORF, sans incrément depuis
+  ceux du 22 et du 23 septembre. Au Journal officiel : les statuts de la
+  CAVAMAC (arrêtés du 23 juin 2011 et du 4 août 2023 ; titres seuls avant),
+  ceux de la CAVEC (arrêté du 22 février 2008 et ses modifications
+  jusqu'au 4 juillet 2025, arrêté du 10 juillet 2026), le décret
+  n° 99-913 et le décret n° 2026-418, articles 8, 13, 20 et 21. Dans
+  LEGI : L. 643-1-1 dans ses versions de 2009 et de 2023, L. 643-3,
+  D. 643-1 de 2004 et 2005, D. 642-3 et D. 642-4. Côté caisses : les
+  vingt-trois adresses du lot — pages de la CNAVPL et son guide 2026 en
+  trois parties, recueils statistiques 2021 à 2025 ; pages, fiches
+  pratiques et documents de la Cipav, de la CAVAMAC (dont son document
+  d'exemples de décote et de surcote) et de la CAVEC (dont sa calculette
+  de cotisations et le livre de ses soixante-dix ans) ; le simulateur
+  Cipav de mon-entreprise, par ses deux modèles publicodes.
+trouve: >-
+  Cinq règles du scénario 1 que les fiches ne suivaient pas : la
+  minoration par l'âge seul de la CAVAMAC et de la CAVEC, que la durée
+  annulait ; la surcote de la CAVAMAC, par années pleines, cotisées
+  depuis 2024 ; la majoration de 10 % pour trois enfants de la CAVAMAC, de
+  la Cipav et de la CAVEC ; la majoration de durée d'assurance des
+  libérales depuis 2010 et leur surcote parentale depuis 2023. La valeur
+  de service de la CNAVPL est certifiée de 2004 à 2026, et celle de 2022
+  corrigée ; un revenu tombant pile sur le seuil d'un trimestre le valide
+  à nouveau. Lignes `cavamac_minoration_age_seul`,
+  `cavec_minoration_age_seul`, `sections_liberales_majoration_enfants`,
+  `cnavpl_majoration_duree_assurance` et `cnavpl_valeur_service` ; la
+  ligne `decret_2026_418_liberaux` est close. Trois exemples de la
+  CAVAMAC entrent aux témoins officiels.
+reste: >-
+  Les statuts de la CAVAMAC d'avant 2011 et de la CAVEC d'avant 2008, au
+  Bulletin officiel ; le taux de l'abattement de la CAVEC d'avant 2008 ;
+  la liquidation des carrières longues à 15 % de la CAVAMAC ; la
+  condition de trente années d'affiliation de la surcote de la Cipav ; les
+  cent points par trimestre d'accouchement de D. 643-1 ; les capitaux
+  uniques des petites pensions ; la majoration de durée d'assurance et la
+  surcote parentale des avocats, que L. 653-3 leur ouvre comme L. 643-1-1
+  aux libéraux.

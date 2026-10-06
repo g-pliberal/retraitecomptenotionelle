@@ -1,0 +1,32 @@
+date: "2026-09-23"
+session: "la pension d'aujourd'hui d'un retraité"
+consulte: >-
+  `scripts/veille_droit.py` ; la base de législation de la Cnav, barème
+  « Coefficients de revalorisation des retraites » (toutes les dates
+  d'effet depuis 1949, et les cinq tranches de 2020) ; la circulaire Cnav
+  2025/29 ; dans l'index JORF, l'article 68 de la loi n° 2018-1203,
+  l'article 81 de la loi n° 2019-1446 et la décision n° 2019-795 DC, les
+  décrets n° 2003-1304, 2005-166, 2006-316 et 2007-60, l'article 6 de la
+  loi n° 2008-1330 ; dans l'index LEGI, l'article L. 16 du code des
+  pensions civiles et militaires dans ses trois rédactions. Le rapport
+  annuel du COR de juin 2026, figure 3.14, et son annexe méthodologique,
+  § 3.3.
+trouve: >-
+  Le simulateur montrait à un retraité sa pension de départ ramenée par
+  les prix ; il lui montre celle qu'il touche, chaque régime revalorisé
+  par son texte. Le barème de la Cnav et les décrets de la fonction
+  publique entrent dans le dépôt (`revalorisation_pensions.csv`,
+  `revalorisation_pensions_fonction_publique.csv`). L'article 81 de la
+  LFSS 2020 choisit la tranche sur la retraite totale « reçue […] le mois
+  précédent » : nulle pour une pension prise en janvier 2020, ce que le
+  modèle applique à la lettre. Le COR est retrouvé à moins de trois
+  centièmes de point pour le non-cadre en 2026, à 0,35 point pour le
+  cadre ; ligne `revalorisation_des_pensions`.
+reste: >-
+  Aucun texte lu ne redit, sous L. 161-23-1, que la fonction publique sert
+  la revalorisation du jour même du départ, comme les décrets de 2004 à
+  2007 l'écrivaient : le modèle le suppose depuis 2009. Aucune circulaire
+  lue ne dit comment la tranche de 2020 a été appliquée aux pensions de la
+  fonction publique prenant effet le 1er janvier 2020. La péréquation
+  d'avant 2004 au-delà du point d'indice ; les revalorisations des régimes
+  spéciaux avant 2009 ; l'écart du cadre du COR en 2026.

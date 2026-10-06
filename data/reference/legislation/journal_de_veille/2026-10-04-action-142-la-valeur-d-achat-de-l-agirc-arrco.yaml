@@ -1,0 +1,24 @@
+date: "2026-10-04"
+session: "action 142 : la valeur d'achat de l'Agirc-Arrco, projetée sur le salaire moyen"
+consulte: >-
+  veille_droit.py (la dernière veille consignée est du jour) ; sur Légifrance, l'accord
+  national interprofessionnel du 17 novembre 2017 instituant le régime Agirc-Arrco
+  (KALITEXT000036731682, articles 25 à 29) et celui du 5 octobre 2023
+  (KALITEXT000048674954, articles 4, 5 et 10, annexe 1) ; l'accord du 10 mai 2019, sur le
+  site de la fédération (articles 1er, 2 et 6, annexe 1) ; le communiqué du conseil
+  d'administration de l'Agirc-Arrco du 17 octobre 2025 ; la presse spécialisée de
+  septembre 2026 sur la revalorisation de novembre et l'accord de 2027 à 2030.
+trouve: >-
+  La valeur d'achat évolue « comme le salaire annuel moyen des ressortissants du régime
+  tel qu'estimé pour l'exercice précédent » (accords de 2019 et de 2023), et l'accord sans
+  terme de 2017 la détermine « en fonction » de ce salaire, « éventuellement corrigé d'un
+  facteur de soutenabilité » : le dépôt la prolonge désormais au-delà de 2026 sur le
+  salaire moyen du modèle, et non plus sur les prix (fiche agirc_arrco_valeur_achat). Le
+  conseil d'administration l'a laissée inchangée au 1er janvier 2026, comme la valeur de
+  service au 1er novembre 2025, faute d'accord ; aucun accord ne couvre encore 2027.
+reste: >-
+  La décision du conseil d'administration du 14 octobre 2026 (valeur de service de
+  novembre, valeur d'achat de 2027) et l'accord de 2027 à 2030, à verser dès leur
+  publication ; la valeur de service au-delà de 2026, que l'annexe de l'accord de 2023
+  projette au salaire moyen moins 1,16 % et que le modèle prolonge par les prix (lecture
+  divergente de la fiche) ; le texte qui indexe le salaire de référence de l'Ircantec.

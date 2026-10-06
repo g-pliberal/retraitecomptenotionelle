@@ -1,0 +1,29 @@
+date: "2026-10-04"
+session: "action 138, le relevé repris modèle par modèle sur les soixante-neuf modèles"
+consulte: >-
+  L'index LEGI et JORF du dépôt, à jour au 27 septembre 2026 : D. 351-2-1, D. 351-2-2,
+  L. 351-10, L. 173-2, R. 351-9, R. 351-29, R. 381-3, R. 634-1-1, L. 136-8, L. 136-1-2,
+  D. 242-8, D. 242-9, D. 815-1, R. 815-29, L. 815-1, L. 816-1, D. 353-1, L. 351-8,
+  L. 351-13, L. 18 du code des pensions civiles, D. 633-3, D. 635-7, D. 136-5, D. 643-1,
+  L. 613-11, les articles 158 et 197 du CGI, la loi n° 2014-40 (art. 44), la loi
+  n° 2023-270 (art. 18), la loi n° 2025-1403 (art. 105) ; les fiches F2971, F16871, F415,
+  F11677 et l'actualité A15237 de service-public ; les circulaires Cnav 2024-39, 2025-29
+  et 2025-33 ; l'API des barèmes de la Cnav ; le rapport annuel du COR de juin 2026 ; le
+  code ou les publications des soixante-neuf modèles du registre. La veille des
+  sommaires du Journal officiel est celle de l'entrée précédente, du même jour.
+trouve: >-
+  Quatre erreurs du scénario 1, retrouvées dans le code du dépôt : le minimum
+  contributif (montants projetés sur les prix entre des ancres, majoration servie avant
+  2004, seuil de 120 trimestres opposé avant avril 2009, écrêtement avant 2012,
+  proratisation sur la durée cotisée avant juillet 2005) ; le salaire annuel moyen (les
+  années qui ne valident aucun trimestre, que R. 351-29 exclut depuis 2004 ; le calcul
+  trimestriel d'avant 1995 ; les dix dernières années d'avant 1973) ; l'assiette de
+  l'AVPF (R. 381-3 : 169 heures par mois au SMIC du 1er juillet précédent, quand le
+  dépôt porte 1 820 heures du SMIC de l'année) ; le revenu moyen des artisans et des
+  commerçants (R. 634-1-1). Chacune est au registre des autres modèles, avec sa
+  vérification et son étape (138.15 à 138.18).
+reste: >-
+  Rien n'est corrigé dans les moteurs, à la demande du propriétaire : chaque étape
+  relira son texte au moment d'écrire la règle, l'API des barèmes de la Cnav d'abord.
+  Les montants du décret n° 2023-754 (majoration exceptionnelle de 2023), absents de
+  l'index, sont à lire au Journal officiel.

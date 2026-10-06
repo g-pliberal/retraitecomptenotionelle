@@ -1,0 +1,22 @@
+date: "2026-10-05"
+session: "action 147, étape 4 : les deux conventions du COR, suivies"
+consulte: >-
+  veille_droit.py (dernière veille du jour même). Le rapport annuel du COR de juin
+  2026, partie 1, chapitre 2 (RA_Part1_Chap2.pdf), encadré « Le pilotage de
+  l'Agirc-Arrco », p. 61 ; son annexe méthodologique en ligne
+  (Annexe_méthodo_en_ligne_2026.pdf), § « Le profil par âge des rémunérations et la
+  part des primes », note 40 et figures A2.6 et A2.7.
+trouve: >-
+  Deux hypothèses de projection, non du droit : la valeur de service de
+  l'Agirc-Arrco au salaire moyen moins 1,16 % de 2027 à 2037, les deux valeurs au
+  salaire moyen moins 0,86 % dès 2038, « purement conventionnelles » selon la
+  fédération ; le traitement indiciaire moyen à +0,1 % en euros courants en 2026 et
+  2027, en euros constants de 2028 à 2032, raccordé au salaire moyen de 2033 à 2037.
+  Écrites dans macro/hypotheses_projection.yaml et suivies par les deux moteurs ; la
+  fiche agirc_arrco_valeur_achat tranche pour le COR.
+reste: >-
+  Aucun texte nouveau cherché au JORF : l'étape ne touche aucune règle de droit. La
+  décision du conseil d'administration de l'Agirc-Arrco du 14 octobre 2026 ; le
+  décrochage du salaire total des fonctionnaires en 2026-2027 (même note 40), que le
+  modèle ne suit pas ; l'écart restant à l'Agirc-Arrco et à la fonction publique
+  d'État, que les conventions n'expliquent pas.

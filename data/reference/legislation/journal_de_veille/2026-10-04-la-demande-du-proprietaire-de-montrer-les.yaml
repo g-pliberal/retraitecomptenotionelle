@@ -1,0 +1,20 @@
+date: "2026-10-04"
+session: >-
+  la demande du propriétaire de montrer les propositions des candidats à la
+  présidentielle au simulateur et à la page Coût, documentée sans être construite :
+  l'action 144 qui en naît, à faire
+consulte: >-
+  Aucun texte de droit ni aucune source de campagne : le code et les documents du
+  dépôt seuls — les univers et les couches (§ 4.8, `noyau/univers.py`,
+  `scenarios/univers.py`), les réglages du site, la page Coût, la surface publique
+  (annexe C.9) et la fiche `fin_de_la_suspension_2028`.
+trouve: >-
+  Une proposition de candidat est un univers posé sur le droit réel, mais le moteur
+  ne calcule aujourd'hui que des univers qui ajoutent le compte notionnel, et la page
+  Coût six systèmes en liste fermée. L'action prévoit un fichier par candidat, des
+  leviers qui réécrivent les tables du paquet, et une option `candidats`, affichée
+  par défaut.
+reste: >-
+  Ce que le propriétaire tranche avant l'étape 1 : qui figure, le calendrier qu'un
+  candidat ne donne pas, le chiffrage partiel, les corrections, la relecture
+  juridique. Aucun candidat n'est saisi, aucune source de campagne lue.

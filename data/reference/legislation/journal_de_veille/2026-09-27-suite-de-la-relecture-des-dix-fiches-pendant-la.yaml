@@ -1,0 +1,70 @@
+date: "2026-09-27"
+session: >-
+  suite de la relecture des dix fiches, pendant la phase 8 : les exemples
+  publiés, et les textes que les index ne portaient pas
+consulte: >-
+  veille_droit.py : quatre fiches à relire, et la dernière veille du jour
+  même ; les index LEGI et JORF, à jour depuis le matin. Les exemples que
+  la relecture avait trouvés : la page « Décote » et la circulaire n°
+  2024/15 de la CNIEG, la page « La décote » de la CRPCEN, le dépliant «
+  Décrypter la retraite Agirc tranche C » et la table des coefficients de
+  septembre 2026 d'Agirc-Arrco, le guide « Préparez votre retraite en
+  temps choisi » de la CARMF (juin 2026), la page de la MSA sur la réforme
+  des exploitants. Dans l'index LEGI, l'article 9-1 de l'annexe 3 du
+  statut des IEG, rédaction par rédaction, et D. 161-2-1-9. Sur Gallica,
+  le Journal officiel de 1945, 1948, 1949, 1951 et 1953 : l'ordonnance n°
+  45-2454, les lois n° 48-1306 et 51-374, les décrets n° 45-0179, 49-328,
+  51-727 et 53-506. Dans la base de la Cnav, les circulaires n° 93 SS de
+  1951, 20 SS de 1961, 2/72 et 22/83. Sur les sites des caisses, les
+  statuts de la CARMF, de la Cipav et de la CAVEC, les guides de la Cipav
+  de 2019 et 2022, les grilles de la CAVEC de 2022 à 2025, les circulaires
+  Agirc-Arrco 2020-02-DRJ et 2023-01-DRJ, l'accord du 18 mars 2011 et la
+  convention de 1947 à jour de 2018.
+trouve: >-
+  Cinq exemples publiés entrent dans exemples_officiels.yaml, et le modèle
+  les rend tous : la décote de Madame D (CNIEG), le coefficient de 0,8675
+  à 63 ans et 11 mois (Agirc-Arrco), les majorations de 5, 15 et 30 %
+  d'un médecin né en mai 1965 (CARMF) ; cinq autres restent de côté,
+  chacun avec sa raison dans sa fiche. Un écart que rien ne déclarait :
+  aux IEG, du 1er juillet 2019 au 31 décembre 2024, l'agent qui peut
+  partir avant soixante ans doit la durée de la génération qui atteint
+  soixante ans l'année où son droit s'ouvre (article 9-1 de l'annexe 3),
+  167 trimestres pour un agent actif né en décembre 1964 selon la CNIEG,
+  quand le modèle lui en demande 169 ; regimes_speciaux_par_generation
+  passe de conforme à approchee. Le droit de 1945 à 1972 est lu : 20 % à
+  soixante ans, majorés de 4 points par année d'assurance après cet âge
+  jusqu'en 1950, puis par année d'âge, que la caisse comptait au
+  trimestre ; 25 % et 1,25 point par trimestre dès le 1er janvier 1972, et
+  non 1973 ; au-delà de soixante-cinq ans, un taux qui croît sans limite
+  jusqu'au 31 mars 1983. Le comptage au trimestre du moteur est donc celui
+  de la caisse ; deux écarts s'ajoutent, avant 1951 et chez les salariés
+  agricoles de 1951. La circulaire n° 2/72 borne à 128, 136 et 144 les
+  trimestres retenus en 1972, 1973 et 1974, quand le moteur en retient 150
+  : la fiche trimestres_retenus_1972_1974 naît, manquante. Les bornes de
+  revenu des classes libérales, aucun texte du Journal officiel ne les
+  fixe : le conseil d'administration de chaque caisse les arrête chaque
+  année, et les grilles publiées contredisent celles du moteur (en 2022,
+  la classe A de la CAVEC va jusqu'à 16 190 € et coûte 670 €, le moteur
+  dit 12 770 € et 769 €). La borne « de 1 à 5 ans » de la surcote de la
+  Cipav précède 2022, et le report courait de soixante-cinq ans jusqu'en
+  2021 ; l'article 32 des statuts de la CARMF est lu dans les statuts que
+  publie la caisse. Les âges de la rédaction de L. 351-8 que l'Agirc-Arrco
+  a figée en 2011 sont lus dans D. 161-2-1-9 : une déduction devient une
+  lecture. Le cliquet des rédactions sans statut descend à 10 439.
+reste: >-
+  Les corrections, toutes « Après la phase 8 : » dans leurs fiches, et les
+  notes des fichiers de régimes qu'elles citent, qui passent dans le
+  paquet du site : la phase 8 court, et doit garder ses témoins au bit
+  près. L'exemple de la circulaire Cnav n° 22/83 (55 % acquis au 31 mars
+  1983), à porter en écart connu ; celui de Maria (CRPCEN), quand une
+  fiche déclarera l'âge et la durée de la CRPCEN ; celui de la Cipav de
+  2022 (27 000 €, classe B, 3 055 €), faute d'une grandeur qui compare une
+  cotisation. Ce qui reste introuvable : la loi n° 71-1132 et le décret n°
+  72-78, l'ancien article L. 331, les textes des artisans et commerçants
+  d'avant 1984, les décrets de la CAVEC de 1955 à 1974, les statuts
+  publiés au Bulletin officiel, l'accord du 4 février 1983 et les
+  circulaires Agirc-Arrco de 2011. Et ce que les entrées précédentes
+  laissaient : l'assiette minimale des indépendants dans le compte,
+  l'article 16 du règlement de la CAVP, les articles 9-7 et suivants du
+  règlement des indépendants, les cinq fiches à relire, la rédaction
+  nouvelle de R. 382-24, les rédactions sans statut.

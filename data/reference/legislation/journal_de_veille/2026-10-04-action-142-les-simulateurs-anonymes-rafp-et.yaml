@@ -1,0 +1,15 @@
+date: "2026-10-04"
+session: "action 142 : les simulateurs anonymes, RAFP et carrière longue"
+consulte: >-
+  Le simulateur de prestation de l'ERAFP (dix saisies) et son barème publié des
+  coefficients de majoration ; sur LEGI, le décret n° 2004-569, articles 8
+  (LEGIARTI000037483754) et 9 (LEGIARTI000037483756) ; le simulateur de carrière longue
+  d'info-retraite (deux saisies, génération 1970).
+trouve: >-
+  Le simulateur de l'ERAFP interpole la majoration au mois et donne 1,81 à 75 ans ; le
+  barème publié va par âge entier et s'arrête à 1,80 ; le décret renvoie le barème, et le
+  seuil du capital fractionné sous 5 125 points, au conseil d'administration. La
+  carrière longue de 1970 concorde (58 et 60 ans, 172 trimestres).
+reste: >-
+  La délibération du conseil d'administration de l'ERAFP sur le barème et le capital
+  fractionné, avant toute retouche du moteur (fiche rafp_majoration_capital).

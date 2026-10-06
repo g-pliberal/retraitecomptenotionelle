@@ -6,9 +6,10 @@ le livrable est le site statique (`README.md`). L'architecture est dans
 tableau de bord `docs/etat.md`, que `python scripts/tableau_de_bord.py`
 fabrique ; les chantiers ouverts, dans `docs/feuille_de_route.md` : une
 session qui cherche quoi faire n'y lit que le bloc « Reprise » qui ouvre
-chacune de ses actions `en cours`, et y note ce qu'elle a fait. Ce fichier ne
-garde que les règles : l'histoire de chacune, et l'incident qui l'a fait
-naître, sont dans `docs/archives/conventions.md`.
+chacune de ses actions `en cours` (`python scripts/reprise.py`), et note ce
+qu'elle a fait dans un fichier à elle, sous `docs/feuille_de_route/`. Ce
+fichier ne garde que les règles : l'histoire de chacune, et l'incident qui
+l'a fait naître, sont dans `docs/archives/conventions.md`.
 
 ## Git : tout va sur `main`
 
@@ -54,10 +55,15 @@ divergé, et il faut comprendre pourquoi avant d'insister.
 **Plusieurs sessions en parallèle**, chacune dans son conteneur, se partagent
 le dépôt par zones : une sur le modèle et son portage, une sur les données et
 la certification, une sur le site — jamais deux sur les pages en même temps.
-Commiter petit, pousser souvent. Écrire dans la feuille de route — une note
-par étape, voir « La documentation, au plus court » —, et dans le `journal` de
-`veille.yaml`, au dernier commit, juste avant de pousser ; une action qui se
-clôt passe, telle quelle, à la fin de `docs/archives/feuille_de_route.md`.
+Commiter petit, pousser souvent. Chaque session écrit ses journaux dans des
+fichiers à elle (action 148), au dernier commit, juste avant de pousser : sa
+note de feuille de route, voir « La documentation, au plus court », et son
+entrée du journal de veille,
+`data/reference/legislation/journal_de_veille/<AAAA-MM-JJ>-<sujet>.yaml`.
+Deux sessions sur deux étapes d'une même action n'écrivent ainsi dans aucun
+journal commun. Une action qui se clôt passe, telle quelle, à la fin de
+`docs/archives/feuille_de_route.md`, et le dossier de ses notes sous
+`docs/archives/feuille_de_route/`.
 
 **Les fichiers fabriqués et la suite complète sont à GitHub** (action 148).
 À chaque envoi sur `main`, `tests.yml` repart du dernier `main`, lance
@@ -85,9 +91,14 @@ qu'elle dure. D'où cinq règles.
 - **Au démarrage, le bloc « Reprise » seul.** Chaque action `en cours` de la
   feuille de route s'ouvre, sous son titre, sur un paragraphe
   `**Reprise, au <date>.**` de dix lignes au plus : où elle en est, ce qui
-  reste, par quoi commencer, et la note à lire pour le détail. La session qui
-  avance l'action le récrit, daté du jour, au commit de sa note ; c'est le
-  seul paragraphe d'une action qui se récrit.
+  reste, par quoi commencer, et la note à lire pour le détail ;
+  `python scripts/reprise.py`, ou `reprise.py 138` pour une seule action, les
+  imprime avec la liste des notes de chacune. La session qui avance l'action
+  le récrit, daté du jour, au commit de sa note ; c'est le seul paragraphe
+  d'une action qui se récrit. Quand les étapes d'une action se mènent en
+  parallèle, son bloc le dit, et aucune session ne le récrit plus : chaque
+  étape inachevée tient le sien, sous le titre de sa note, et l'ôte en
+  finissant.
 - **Chercher avant de lire.** `grep -n` d'abord, puis la seule fenêtre utile
   (`Read` avec `offset` et `limit`, ou `sed -n`). Ne se lisent jamais en
   entier : `moteur/js/pages.js`, `docs/feuille_de_route.md` et les archives,
@@ -163,8 +174,12 @@ qu'elle dure. D'où cinq règles.
   --corriger`. Les tableaux de `docs/chiffrage_plf.md` s'écrivent par
   `python scripts/chiffrage_plf.py`, jamais à la main.
 - **La documentation, au plus court** : une note de feuille de route par
-  étape, au commit qui la clôt, et non une par sous-partie ; une session qui
-  s'arrête en cours d'étape dit seulement où, dans le bloc « Reprise ». Une
+  étape, au commit qui la clôt, et non une par sous-partie, dans un fichier à
+  elle : `docs/feuille_de_route/<action>/<AAAA-MM-JJ>-<sujet>.md`
+  (`148/2026-10-06-etape-2.md`), qui s'ouvre sur son titre ; les notes
+  écrites avant le 6 octobre 2026 restent dans la feuille de route. Une
+  session qui s'arrête en cours d'étape dit seulement où, dans le bloc
+  « Reprise ». Une
   version de l'architecture par domaine, à sa clôture, ou par décision hors
   domaine. Les fiches et
   `limites.md` une fois, à la fin de l'étape, sauf ce qu'un test exige plus
@@ -205,9 +220,11 @@ qu'elle dure. D'où cinq règles.
 
 ## Listes de contrôle
 
-- **Au début d'une étape** : lire le bloc « Reprise » de son action, puis
+- **Au début d'une étape** : lire le bloc « Reprise » de son action, et celui
+  de son étape s'il en a un (`python scripts/reprise.py <action>`), puis
   relever, par `grep -n` de son numéro ou de son domaine, ce que la feuille de
-  route et les fiches lui renvoient, avant d'écrire la moindre ligne.
+  route, ses notes et les fiches lui renvoient, avant d'écrire la moindre
+  ligne.
 - **Une retouche de `moteur/js/pages.js`** : le budget de mots du formulaire
   vierge (`test_le_simulateur_tient_en_peu_de_mots`) ; toute phrase en gras
   d'une page figée au catalogue `data/reference/site/affirmations.yaml`, avec
@@ -239,10 +256,12 @@ pension, tel que la caisse l'applique. D'où trois obligations, décrites dans
   et sa fiche dans `data/reference/regles/`, avec la date de lecture et
   l'état. Une déduction n'est pas une lecture ; une mémoire n'est pas une
   source ; une table certifiée l'est à une date.
-- **À la fin**, consigner dans le `journal` de
-  `data/reference/legislation/veille.yaml` ce qui a été consulté, trouvé et
-  laissé. Un test refuse toute réforme du calendrier datée de 2023 ou après
-  sans la fiche qui la couvre.
+- **À la fin**, consigner ce qui a été consulté, trouvé et laissé dans une
+  entrée du journal de veille : un fichier neuf de
+  `data/reference/legislation/journal_de_veille/`, nommé de la date et du
+  sujet de la session (`2026-10-06-action-148-etape-2.yaml`). Un test refuse
+  toute réforme du calendrier datée de 2023 ou après sans la fiche qui la
+  couvre.
 
 ## Chercher dans le JORF ou LEGI
 

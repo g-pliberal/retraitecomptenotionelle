@@ -1,0 +1,23 @@
+date: "2026-09-23"
+session: "audit des formules, lot 2 (suite) : la majoration pour enfants"
+consulte: >-
+  Accord national interprofessionnel du 17 novembre 2017, articles 94 et
+  95, sur Légifrance ; dépliant de l'Agirc-Arrco « Décrypter la majoration
+  pour enfants » (mars 2025) ; dans l'index LEGI, les articles de
+  majoration pour enfants des règlements de la SNCF, de la RATP, des IEG
+  (depuis 1946), de la CRPCEN, du SEITA, de l'Opéra, de la
+  Comédie-Française, de la Banque de France et des mines ; décret
+  n° 59-601 du CESE, qui n'en dit rien.
+trouve: >-
+  La majoration de l'Agirc-Arrco dépend de l'année d'acquisition de chaque
+  point, que le modèle ignorait ; les régimes spéciaux ajoutent 5 % par
+  enfant au-delà du troisième, la Banque de France 4,25 % sur une base de
+  8,5 % ; trois régimes — mines, Opéra, Comédie-Française — la servent et
+  leur fiche ne la déclarait pas. Lignes `majoration_enfants_agirc_arrco`
+  et `majoration_enfants_regimes_speciaux`. Le témoin officiel de la Cnav
+  rapportait la majoration de tous les régimes à toutes les pensions : il
+  la rapporte désormais au seul régime de base.
+reste: >-
+  La caisse Arrco d'avant 1999, que le modèle ne connaît pas ; la
+  majoration pour enfants à charge de l'Agirc-Arrco ; les règlements des
+  régimes spéciaux d'avant les textes lus ; le CESE et les assemblées.

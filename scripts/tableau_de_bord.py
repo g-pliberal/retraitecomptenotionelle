@@ -114,9 +114,10 @@ ETAPES_LIQUIDATION = [
     ("foyer_et_net", "droit/foyer.py", "l'ASPA, au départ puis à chaque échéance"),
 ]
 
-#: Les quatre fichiers que presque tout changement du moteur touche.
-LOURDS = ["docs/feuille_de_route.md", "docs/limites.md",
-          "data/reference/legislation/veille.yaml", "README.md"]
+#: Les fichiers que presque tout changement du moteur touche. Le registre de
+#: veille n'en est plus depuis que son journal tient un fichier par entrée
+#: (action 148).
+LOURDS = ["docs/feuille_de_route.md", "docs/limites.md", "README.md"]
 
 
 # --------------------------------------------------------------------------
@@ -670,9 +671,12 @@ def page() -> str:
 
 
 def a_la_main(fichier: str) -> bool:
-    """De la prose, un registre ou une fiche de la carte, écrits à la main."""
+    """De la prose, un registre, une fiche de la carte ou une entrée du journal
+    de veille, écrits à la main."""
     return (fichier.endswith(".md") and fichier != "docs/chiffrage_plf.md"
-            or fichier in REGISTRES or fichier.startswith("data/reference/regles/"))
+            or fichier in REGISTRES
+            or fichier.startswith(("data/reference/regles/",
+                                   "data/reference/legislation/journal_de_veille/")))
 
 
 def cout(n: int = 400) -> str:

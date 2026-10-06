@@ -1,0 +1,44 @@
+date: "2026-09-23"
+session: "rapport de la Cour des comptes sur les retraites des fonctionnaires de l'État (action 120)"
+consulte: >-
+  Le rapport de la Cour des comptes « Les retraites des fonctionnaires de
+  l'État » (communication à la commission des finances de l'Assemblée
+  nationale, 22 septembre 2026), lu en entier, et les données de ses
+  vingt-six graphiques. Dans l'index LEGI : L. 13 du code des pensions
+  civiles et militaires dans ses quatre versions depuis 2004 ; l'article 5
+  de la loi n° 2003-775, version du 11 novembre 2010 ; son article 66 ;
+  l'article 10 de la loi n° 2023-270, version en vigueur, XXIV, A à C ;
+  L. 161-17-3 CSS, versions de 2014 et de 2025 ; l'article 2 du décret
+  n° 2004-569 dans toutes ses versions. Le barème de la Cnav du plafond du
+  minimum contributif, par son interface ; la note 3 du tableau des taux
+  du jaune pensions 2026.
+trouve: >-
+  Une règle du scénario 1 que le modèle n'appliquait pas. La durée requise
+  d'un droit ouvert avant soixante ans — emploi classé né avant les marches
+  de 2023, militaire — est celle de la génération qui a soixante ans
+  l'année de l'ouverture (L. 13, III ; article 5, VI), et non celle de
+  l'agent : le tableau n° 20 de la Cour le montre génération par
+  génération, et démentait la lecture du 22 septembre ; le militaire qui
+  peut liquider depuis le 1er septembre 2023 relève du XXIV, C. Lignes
+  `categorie_active_duree_requise` (corrigée) et `militaires_duree_requise`.
+  Le rapport rappelle aussi le plafond de 20 % de l'assiette de la RAFP,
+  que la ligne `rafp_assiette_plafond` porte depuis le même jour, d'une
+  autre session. Confirmés par le rapport : minimum garanti et
+  minimum contributif majoré de 2026, point d'indice, retenue et taux
+  employeur de l'État de 2006 à 2026. Le 58,47 % que la Cour donne pour
+  2009 est la moyenne d'une année dont décembre était à 40,14 % ; son
+  1 410,89 € est le plafond du minimum contributif de janvier 2026, le
+  dépôt portant celui de juin.
+reste: >-
+  La durée des fonctionnaires civils non classés qui peuvent liquider avant
+  soixante ans (XXIV, C), que le modèle ne fait pas partir. La même règle
+  « avant l'âge de soixante ans […] l'année à compter de laquelle la
+  liquidation peut intervenir » est écrite dans l'annexe 3 du statut des
+  IEG, le règlement de la RATP, le décret de la SNCF (à cinquante-cinq
+  ans), les régimes de la Banque de France, de l'Opéra et de la
+  Comédie-Française : à confronter aux tables que l'action 89 a données le
+  même jour à la SNCF, à la RATP et aux IEG. Le plafond du
+  minimum contributif de 2025 : 1 394,44 € au barème de la Cnav, 1 394,86 €
+  au dépôt. L'annonce du 14 juillet 2026 d'une part des primes des
+  militaires dans leur pension à compter de 2027 : rien au Journal
+  officiel à cette date.

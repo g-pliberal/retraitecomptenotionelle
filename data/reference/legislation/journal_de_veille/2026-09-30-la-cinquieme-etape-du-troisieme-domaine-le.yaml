@@ -1,0 +1,21 @@
+date: "2026-09-30"
+session: >-
+  la cinquième étape du troisième domaine : le formulaire, la date que l'assuré
+  demande pour chaque pension, puis la clôture du domaine
+consulte: >-
+  `python scripts/veille_droit.py` ; les index LEGI et JORF du dépôt, mis à jour de
+  leurs incréments du 30 septembre 2026 : L. 161-17-2 et L. 161-17-3, dont aucune
+  version ne suit celle du 31 décembre 2025 ; les textes du Journal officiel parus
+  depuis le 25 septembre qui touchent à la retraite ; les arrêtés du 21 septembre
+  2026 qui modifient ceux du 10 juillet (CARMF, CAVP, CARCDSF).
+trouve: >-
+  Rien qui touche au domaine : des admissions à la retraite, individuelles, et des
+  délégations de signature ; les arrêtés du 21 septembre ne disent rien du cumul
+  emploi-retraite. La date où l'assuré demande chaque pension est une lecture déjà
+  faite (L. 161-17-2, L. 25 du code des pensions, fiche
+  liquidation_regime_par_regime) : l'étape l'applique, sans texte nouveau.
+reste: >-
+  Ce que les fiches du domaine déclarent à relire : la circulaire Cnav de la
+  nouvelle pension, le décret du seuil de 2027, le cumul des avocats et des
+  exploitants agricoles, un exemple publié de retraite progressive et de départs
+  échelonnés.

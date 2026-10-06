@@ -1,0 +1,21 @@
+date: "2026-09-23"
+session: "audit des formules, lot 2 (fin) : quatre valeurs datées à tort"
+consulte: >-
+  Index LEGI : L. 161-17-3 CSS dans ses versions de 2023 et de 2025 ;
+  D. 732-166 du code rural et le décret n° 2026-78 (valeur du point RCO de
+  2025, fixée en février 2026) ; D. 635-7 CSS de 2013 à 2024. Circulaire
+  Cnav 2026-07, point 2.1 ; fiche RCI du COR (juillet 2024) ; page
+  « Minimum garanti » de la CNRACL.
+trouve: >-
+  Les durées de la suspension ne valent que pour les pensions de
+  septembre 2026 et après ; le minimum garanti de 2023 et le plafond du
+  minimum contributif de 2024 étaient ceux d'une autre partie de l'année ;
+  les valeurs de point non publiées se prolongeaient par les prix de
+  l'année même, non de l'année écoulée. Lignes
+  `duree_requise_par_generation`, `minimum_garanti`,
+  `minimum_contributif` et `rci_seuil_premiere_tranche`.
+reste: >-
+  La série des seuils de la première tranche du RCI de 2014 à 2023 ; le
+  montant du minimum garanti de 2023 en toutes lettres dans une
+  publication ; la valeur 2026 du point RCO et de la CNAVPL, quand elles
+  seront fixées.

@@ -1,0 +1,34 @@
+date: "2026-09-22"
+session: "une année de chômage fermait un départ que le droit ouvre"
+consulte: >-
+  Index LEGI du dépôt : article D. 351-1-2 du code de la sécurité sociale,
+  version LEGIARTI000053356011 du 1er janvier 2026, lu en entier ; article
+  R. 351-12, version LEGIARTI000054425288, lu en entier pour la
+  correspondance de ses renvois ; article D. 351-1-3, version
+  LEGIARTI000053356007, pour la condition de début d'activité ; article
+  D. 351-1-2-1, version LEGIARTI000054589209, relu pour vérifier que les
+  deux trimestres d'enfants s'ajoutent bien à cette liste et ne s'y
+  substituent pas. Tentative infructueuse de joindre legislation.cnav.fr,
+  qui porte la circulaire 2026-29 : le réseau d'une session du dépôt ne
+  l'atteint pas.
+trouve: >-
+  LA LISTE DES PÉRIODES RÉPUTÉES COTISÉES ÉTAIT ENTIÈREMENT ABSENTE DU
+  MODÈLE, qui ne comptait que les trimestres réellement cotisés. Une seule
+  année de chômage indemnisé fermait donc un départ en carrière longue que
+  le droit ouvre. Six enveloppes sont désormais en table. Deux lectures
+  décident de tout : le 2° vise l'INCAPACITÉ TEMPORAIRE, si bien que
+  maladie et accident du travail tiennent ensemble dans quatre trimestres ;
+  et le 3° ne cite que les b et c du 4° de R. 351-12, jamais le d, qui est
+  le chômage NON indemnisé — seule période assimilée que le décret ne
+  reprenne jamais, quand la maternité est la seule qu'il n'écrête pas.
+reste: >-
+  DEUX CAS SUR SEPT restent dehors, et `docs/limites.md` les porte : le 6°
+  du I, majoration de durée d'assurance du compte professionnel de
+  prévention, que le modèle ne calcule pas, et la part du 7° qui vise les
+  fonctionnaires affiliés à un régime spécial, qu'il ne distingue pas.
+  UNE LECTURE MANQUE : D. 351-1-3 pose la condition de DÉBUT d'activité sur
+  une « durée d'assurance d'au moins cinq trimestres », là où le modèle ne
+  compte que les trimestres cotisés de ces années-là. Le texte est plus
+  large que le modèle ; la condition reste en l'état, plus dure que sa
+  lettre, en attendant la circulaire qui l'applique.
+prochaine_veille: "2027-03-31"

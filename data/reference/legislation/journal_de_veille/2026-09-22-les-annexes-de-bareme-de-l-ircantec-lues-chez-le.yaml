@@ -1,0 +1,31 @@
+date: 2026-09-22
+session: les annexes de barème de l'Ircantec, lues chez le gestionnaire
+consulte: >-
+  Base documentaire du régime (`baseircantec.retraites.fr`), trois annexes
+  lues dans leur PDF avec le lecteur du dépôt : « Évolution des taux de
+  cotisations » (annexe 4-4, taux théoriques et taux appelés, part de
+  l'agent et part de l'employeur, à chaque date d'effet depuis 1925),
+  « Évolution des taux théoriques et du salaire de référence » (annexe 8-1,
+  depuis 1935, version du 14 décembre 2023) et « Retraite à taux réduit —
+  taux de minoration » (tableaux 2023, onze générations). Relancé
+  `scripts/fetch/cdc_ircantec.py`, qui couvre toujours 1971-2021.
+trouve: >-
+  DEUX CHOSES, ET LA SECONDE ÉTAIT UNE ERREUR. La répartition
+  salarié/employeur que la fiche reportait par convention sur toute la
+  série est publiée : juste sur la tranche A, qui vaut 40 % de l'agent d'un
+  bout à l'autre, fausse sur la tranche B, où l'agent portait 34 % de 1971
+  à 2010 et non 35,64 %, la part ne montant que par paliers annuels de 2011
+  à 2017. Les quatorze périodes de tranche B sont corrigées, et le témoin
+  du contractuel déplace quinze euros par an de l'agent vers l'employeur.
+  Et la table de minoration de la caisse confirme, ligne à ligne, l'escalier
+  que le dépôt avait tiré du texte le 18 septembre : 0,43 à dix ans
+  d'anticipation, trois marches de 0,017 5, 0,012 5 et 0,01. Elle ajoute ce
+  que le texte ne disait pas — les ancrages sont des âges fixes, les mêmes
+  pour toutes les générations.
+reste: >-
+  Le salaire de référence de 2023 (5,329 €) et de 2024 (5,611 €) est dans
+  l'annexe 8-1, et les deux CSV de la Caisse des dépôts s'arrêtent à 2021 :
+  le dépôt les porte donc au niveau `haute`, d'OpenFisca, jusqu'à ce qu'un
+  récupérateur lise ce PDF et que le recontrôle de
+  `scripts/verifier_donnees.py` les certifie. L'annexe 8-1 confirme au
+  passage la valeur 2022 déjà portée (5,083 €).

@@ -80,7 +80,10 @@ fichiers:
   # ------------------------------------------------------------------------
   # La feuille de route est un journal : ses actions décrivent ce qu'on VOULAIT
   # faire le jour où on l'a écrit, et ses bilans ce qu'on a mesuré ce jour-là.
-  # Seul le préambule parle du dépôt d'aujourd'hui.
+  # Seul le préambule parle du dépôt d'aujourd'hui. Ses notes, une par fichier
+  # depuis l'action 148, sous docs/feuille_de_route/<action>/, sont des récits
+  # hors du contrôle, comme les notes de décision : vivantes tant que leur
+  # action est ouverte, gelées sous docs/archives/ quand elle se clôt.
   # ------------------------------------------------------------------------
   docs/feuille_de_route.md:
     defaut: recit

@@ -1,0 +1,31 @@
+date: "2026-09-23"
+session: "audit des formules, lot 2 : cinq règles du scénario 1 écartées du texte"
+consulte: >-
+  `scripts/veille_droit.py` ; index LEGI à jour de l'incrément du
+  22 septembre, sans incrément plus récent : L. 161-17-2 et L. 161-17-3
+  sans version postérieure au 31 décembre 2025. L. 12 CPCMR
+  (LEGIARTI000053280361), décret n° 2003-1306 article 15, décret
+  n° 2004-1056 article 12 ; D. 351-2-1 CSS dans ses six versions et le
+  décret n° 2008-1509 (articles 6 et 8) ; R. 351-12 CSS dans ses
+  dix-sept versions et le décret n° 2011-934 (article 2) ; L. 351-1-2-1
+  CSS dans ses deux versions. Circulaires Cnav 2018-04 (points 3.4 et
+  3.5) et 2026-07 ; fiche F19643 de service-public ; page « La formule
+  de calcul » du Service des retraites de l'État ; pages de l'Ircantec
+  sur la valeur du point.
+trouve: >-
+  Cinq écarts au texte, corrigés dans les deux moteurs : le pourcentage
+  maximum de la pension civile, que les bonifications portent jusqu'à
+  80 % ; la surcote qui s'ajoute au minimum contributif au lieu de le
+  multiplier ; les limites du chômage non indemnisé, que le modèle
+  ignorait, datées par la période et non par la pension ; la fenêtre de
+  la surcote parentale, qui est l'année précédant l'âge légal et compte
+  les trimestres au-delà de la durée ; les valeurs du point Ircantec de
+  2022 à 2026. Lignes `taux_maximum_fonction_publique`,
+  `minimum_contributif`, `chomage_non_indemnise`, `surcote_parentale` et
+  `ircantec_valeurs_point`.
+reste: >-
+  La majoration pour enfants de l'Agirc-Arrco par période d'acquisition
+  des points, et celle des régimes spéciaux par enfant au-delà du
+  troisième ; la date d'effet des durées de la loi de financement pour
+  2026 ; le minimum garanti de 2023 et le plafond du minimum contributif
+  de 2024 ; la circulaire d'application de la surcote parentale.

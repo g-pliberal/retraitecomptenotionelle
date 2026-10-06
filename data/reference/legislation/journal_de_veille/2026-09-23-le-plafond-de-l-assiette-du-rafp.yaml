@@ -1,0 +1,23 @@
+date: "2026-09-23"
+session: "le plafond de l'assiette du RAFP"
+consulte: >-
+  `scripts/veille_droit.py` ; index LEGI mis à jour par ses incréments du
+  21 et du 22 septembre. Dans LEGI : l'article 2 du décret n° 2004-569
+  dans ses six versions (LEGIARTI000006453300, …036070837, …037457096,
+  …039240968, …047751473, …049424057), ses articles 4 et 11, et
+  l'article 76 de la loi n° 2003-775 dans sa première version et dans
+  celle en vigueur depuis le 1er septembre 2024. Côté caisse : les pages
+  de l'ERAFP sur le calcul des cotisations et des points, et sa
+  calculette de points.
+trouve: >-
+  La limite de 20 % du traitement indiciaire brut, dans toutes les
+  versions de l'article 2 depuis 2004 et en tête de la page de l'ERAFP :
+  la fiche la citait, aucun des deux moteurs ne l'appliquait. Elle l'est,
+  par un champ de période, `plafond_primes_traitement`. Les valeurs
+  d'acquisition et de service de 2025 et de 2026 que publie l'ERAFP sont
+  celles que le dépôt certifie. Ligne `rafp_assiette_plafond`.
+reste: >-
+  La GIPA, cotisée sans plafond ; les jours de compte épargne-temps
+  convertis en points ; la cotisation volontaire des agents de l'État
+  outre-mer depuis avril 2024. Et les ouvriers de l'État, que l'article 76
+  n'admet pas au régime et que le modèle y affilie depuis 2005.

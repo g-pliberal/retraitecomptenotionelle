@@ -1,0 +1,15 @@
+date: "2026-10-06"
+session: "action 148, étape 2 : les journaux en fichiers séparés"
+consulte: >-
+  Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle.
+  L'historique de main, les 200 derniers commits, pour mesurer quels fichiers écrits
+  à la main les étapes d'une même action touchent en commun.
+trouve: >-
+  Aucun texte de droit. Toutes les étapes d'une action ajoutaient leur note à la fin
+  de son action dans la feuille de route, récrivaient son bloc « Reprise » et
+  ajoutaient leur entrée à la fin de ce journal. Le journal tient désormais une
+  entrée par fichier, dont celle-ci, la première écrite ainsi ; ses 191 entrées
+  passées y ont été déplacées à l'identique.
+reste: >-
+  L'étape 3 de l'action 148 ; la décision du conseil d'administration de
+  l'Agirc-Arrco du 14 octobre 2026.

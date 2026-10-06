@@ -1,0 +1,46 @@
+date: "2026-10-05"
+session: "action 138, étape 16 : les assiettes et les séries du régime général"
+consulte: >-
+  veille_droit.py (dernière veille consignée : 4 octobre). Les circulaires de la Cnav
+  parues depuis la 2026/16, de la 2026/17 à la 2026/31 : carrière longue et handicap
+  au 1er septembre 2026, sapeurs-pompiers volontaires, plafond de 2025 et de 2026,
+  Mayotte, congé supplémentaire de naissance ; la 2026/23 redit le taux vieillesse de
+  17,96 % en 2026. Dans l'index LEGI du dépôt (incrément du 27 septembre 2026) :
+  R. 351-29 de 1985 à 2026, R. 634-1 de 1985 à 2023, R. 634-1-1 (1993, 2004, 2007),
+  R. 173-3-2 (2026), R. 381-3 de 1985 à 2023, R. 381-3-1, L. 742-3 du code rural. Au
+  Journal officiel : les décrets n° 72-1229 (notice), n° 2004-144 (article 8) et
+  n° 2025-1409 (article 2), la loi n° 72-8, l'arrêté du 12 décembre 1951 (article 8)
+  et l'annexe de l'arrêté du 17 février 1960. À la Cnav, par l'API de sa base de
+  législation : l'ordonnance n° 45-2454 (article 71), le décret n° 72-1229, les
+  circulaires ministérielles n° 151 de 1946, 143 SS de 1949, 211 SS de 1950 et 20 SS
+  de 1961, les circulaires Cnav 1/73, 95/94, 2004/27 et 2025/33, les exposés « Revenu
+  annuel moyen » et « Nombre d'années retenues », les barèmes de l'AVPF, du SMIC
+  horaire et des coefficients de revalorisation d'avril 2013, d'octobre 2015 et
+  d'octobre 2017, et la page des coefficients d'avant avril 2013.
+trouve: >-
+  Les modèles avaient raison partout où ils disaient le dépôt en défaut, sauf sur les
+  taux de cotisation, que le dépôt portait année par année depuis le 14 septembre. Le
+  salaire annuel moyen : les dix dernières années d'assurance avant soixante ans
+  (ordonnance de 1945, article 71), avant l'entrée en jouissance si c'est mieux pour
+  les pensions de juillet 1948 à 1972 (loi du 23 août 1948, circulaire 143 SS) ; les
+  dix meilleures pour les pensions de 1973 (décret n° 72-1229, article 5) ; la somme
+  des salaires rapportée aux trimestres, assimilés compris, jusqu'aux pensions du 30
+  juin 1995 (circulaires 1/73 et 95/94) ; sans les années qui ne valident aucun
+  trimestre depuis 2004 (R. 351-29 et R. 634-1, décret n° 2004-144). Les artisans et
+  commerçants ont leur table, deux fois plus lente, jusqu'aux pensions de 2025 (R.
+  634-1-1, abrogé par le décret n° 2025-1409 pour les pensions de 2026). L'assiette de
+  l'AVPF est de 169 heures par mois du SMIC du 1er juillet précédent (R. 381-3) depuis
+  juillet 1972 ; en 2026, la circulaire 2025/33 prend celui de janvier (2 031,38 €
+  au lieu de 2 007,72 €). La Cnav publie toutes ses colonnes de revalorisation depuis
+  1946, sur la page de ses coefficients d'avant 2013 : avant 1952 l'arrêté fixait un
+  coefficient par année, et jusqu'en 1993 la revalorisation de janvier ne touchait pas
+  encore le salaire de l'année close — ce que le rapport des colonnes de 2017 ajoutait.
+  Le salaire de référence de 1948 de l'IPACTE et de l'IGRANTE est de 37 anciens
+  francs.
+reste: >-
+  Les coefficients d'anticipation et d'ajournement de l'Agirc d'avant 1955 et de
+  l'Arrco d'avant 1965 (textes de 1947 et de 1961, introuvables ce jour) ; le calcul
+  trimestriel du revenu moyen des indépendants que l'exposé de la Cnav range dans ses
+  anciennes dispositions, à dater (étape 138.18) ; les années de rachat et les
+  indemnités journalières de maternité au salaire annuel moyen ; la circulaire
+  2026/28, sur le congé supplémentaire de naissance, à lire avec l'étape 138.17.

@@ -1,0 +1,20 @@
+date: "2026-10-04"
+session: "action 142 : les simulateurs de réversion et de handicap"
+consulte: >-
+  Le simulateur de réversion d'info-retraite (six saisies) et celui du départ
+  anticipé des assurés handicapés (dix) ; sur LEGI, R. 353-1 (LEGIARTI000038790257),
+  D. 353-1-1 (LEGIARTI000006736552) et D. 351-1-5 dans sa rédaction du 1er septembre
+  2026 (LEGIARTI000054059626, décret n° 2026-345) ; la circulaire Cnav 2025-33 du 23
+  décembre 2025 sur le SMIC de 2026, et la 2025-29 du 22 décembre 2025 sur les
+  revalorisations du 1er janvier 2026.
+trouve: >-
+  Le plafond de ressources de la réversion vaut en 2026 25 001,60 euros par an et
+  6 250,40 euros par trimestre (2 080 SMIC horaires de 12,02 euros) ; le simulateur
+  de réversion garde ceux de 2024 et refuse à tort entre les deux (écart déclaré à
+  l'exemple ur_reversion_prive_ressources_plafond_2024). R. 353-1 abat de 30 % les
+  revenus d'activité du survivant de 55 ans ou plus. Le barème du handicap que le
+  simulateur applique est celui de D. 351-1-5 du 1er septembre 2026, aux dix
+  saisies.
+reste: >-
+  La réversion du RAFP, de la RCI et de l'Ircantec, que le modèle ne sert pas ; le
+  départ anticipé des assurés handicapés, que le modèle ne traite pas ; le remariage.

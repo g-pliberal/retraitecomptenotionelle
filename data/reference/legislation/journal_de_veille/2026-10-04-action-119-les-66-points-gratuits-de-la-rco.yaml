@@ -1,0 +1,20 @@
+date: "2026-10-04"
+session: "action 119 : les 66 points gratuits de la RCO agricole"
+consulte: >-
+  Dans l'index LEGI : L. 732-56 du code rural, ses sept rédactions ; D. 732-151,
+  D. 732-151-1, D. 732-154-1, -2 et -3, dans toutes leurs rédactions. Dans l'index
+  JORF : l'article 34 de la loi n° 2014-40 et l'article 2 du décret n° 2014-494. La
+  page de la MSA sur les non-salariés agricoles, son guide de septembre 2023 et sa
+  synthèse statistique de décembre 2018 sur la RCO.
+trouve: >-
+  Depuis le 1er février 2014, 66 points par an, dix-sept annuités au plus, pour les
+  années d'avant 2011 d'aide familial, de conjoint ou de collaborateur et celles
+  d'avant 2003 du chef sans ses dix-sept ans et demi, à qui a dix-sept ans et demi
+  d'activité non salariée agricole ; la durée tous régimes jusqu'au 31 août 2023,
+  le taux plein ensuite, les majorations de durée comptées depuis 2026. La MSA
+  compte 448 000 bénéficiaires en 2017 et 377 € par an pour une aide familiale :
+  dix-sept annuités à la valeur de 2017, au centime près. Fiche
+  `rco_points_gratuits_66`, non modélisée : le simulateur ne connaît que le chef.
+reste: >-
+  Un exemple chiffré d'assuré ; la réversion de ces points (L. 732-62) ; le statut
+  de conjoint, d'aide familial ou de collaborateur, que le simulateur ne demande pas.

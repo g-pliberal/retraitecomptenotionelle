@@ -1,0 +1,16 @@
+date: "2026-10-04"
+session: "action 142 : la naissance tirée du numéro de sécurité sociale du relevé"
+consulte: >-
+  Aucun texte de droit. La forme du numéro de sécurité sociale sur le relevé de
+  carrière du propriétaire, chiffres masqués : treize chiffres groupés un, deux, deux,
+  deux, trois, trois, séparés d'espaces, sans clé ; la présomption
+  `jour_de_naissance` du vocabulaire, que la saisie applique déjà à une naissance
+  donnée sans son jour.
+trouve: >-
+  Le numéro donne l'année sans son siècle et le mois de naissance, jamais le jour.
+  Les deux lectures jumelles les reprennent, le siècle tiré de la première année
+  travaillée ; le site remplit le calendrier au jour présumé et le dit ;
+  l'estimation officielle confronte au mois la date recopiée. Sur le relevé réel, le
+  mois se trouve et le siècle est plausible, sans que rien n'en soit imprimé.
+reste: >-
+  Rien de ce côté : le jour se saisit à la main.

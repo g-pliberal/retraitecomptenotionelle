@@ -2953,6 +2953,14 @@ def _registre_de_veille() -> dict:
     return yaml.safe_load(chemin.read_text(encoding="utf-8"))
 
 
+def _journal_de_veille() -> dict[str, dict]:
+    import yaml
+
+    dossier = RACINE_DONNEES / "reference" / "legislation" / "journal_de_veille"
+    return {chemin.name: yaml.safe_load(chemin.read_text(encoding="utf-8"))
+            for chemin in sorted(dossier.iterdir())}
+
+
 def test_le_journal_de_veille_est_tenu():
     """Chaque veille consigne ce qu'elle a consulté, trouvé et laissé.
 
@@ -2960,24 +2968,42 @@ def test_le_journal_de_veille_est_tenu():
     dump LEGI antérieur à la loi qui les avait changés, et rien ne le disait.
     Le registre de veille a été la réponse. Ses règles sont devenues les
     fiches de la carte (``tests/test_carte.py`` en tient la forme) ; il garde
-    les sources à consulter à chaque session et le journal des veilles, dont
+    les sources à consulter à chaque session, et le journal des veilles, dont
     ce test impose la forme. `scripts/veille_droit.py` dit ce qui a vieilli ;
     `docs/veille_droit.md` dit la règle.
+
+    Le journal est sorti du registre le 6 octobre 2026 (action 148) : une
+    entrée par fichier, nommé de sa date et de son sujet. Dans le registre,
+    deux sessions qui consignaient leur veille le même jour écrivaient à la
+    même place ; le conflit mettait en commun leur ligne `- date:`, et le
+    résoudre à la hâte collait la seconde entrée sous la première, que YAML
+    effaçait sans erreur.
     """
     import re
 
     registre = _registre_de_veille()
-    assert set(registre) == {"sources_a_consulter", "journal"}, sorted(registre)
-    date = re.compile(r"\d{4}-\d{2}-\d{2}")
+    assert set(registre) == {"sources_a_consulter"}, sorted(registre)
     assert registre["sources_a_consulter"], "aucune source à consulter"
     for source in registre["sources_a_consulter"]:
         assert len(str(source["nom"]).split()) >= 2, source
         assert len(str(source["quoi"]).split()) >= 6, source["nom"]
-    assert registre["journal"], "journal vide"
-    for consigne in registre["journal"]:
-        assert date.fullmatch(str(consigne["date"])), consigne
+    nom = re.compile(r"(\d{4}-\d{2}-\d{2})-[a-z0-9]+(?:-[a-z0-9]+)*\.yaml")
+    champs = {"date", "session", "consulte", "trouve", "reste", "prochaine_veille"}
+    journal = _journal_de_veille()
+    assert journal, "journal vide"
+    vues = set()
+    for fichier, consigne in journal.items():
+        forme = nom.fullmatch(fichier)
+        assert forme, f"{fichier} : AAAA-MM-JJ-sujet.yaml, sans majuscule ni accent"
+        assert isinstance(consigne, dict) and set(consigne) <= champs, (
+            f"{fichier} : des champs hors de {sorted(champs)}")
+        assert str(consigne["date"]) == forme.group(1), (
+            f"{fichier} : le nom ne porte pas la date de l'entrée")
         for champ in ("session", "consulte", "trouve", "reste"):
-            assert len(str(consigne[champ]).split()) >= 3, (consigne["date"], champ)
+            assert len(str(consigne[champ]).split()) >= 3, (fichier, champ)
+        cle = (str(consigne["date"]), consigne["session"])
+        assert cle not in vues, f"{fichier} : une autre entrée a sa date et sa session"
+        vues.add(cle)
 
 
 def test_la_structure_de_financement_dit_qui_paie_chaque_regime():

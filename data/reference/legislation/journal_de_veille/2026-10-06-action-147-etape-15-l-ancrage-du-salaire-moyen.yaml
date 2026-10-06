@@ -1,0 +1,18 @@
+date: "2026-10-06"
+session: "action 147, étape 15 : l'ancrage du salaire moyen, recensé chez les autres modèles, rien de changé"
+consulte: >-
+  Le témoin de Destinie 2 (paramètres du COR de 2023, SMPT de 1970 à 2025) ; le
+  code public de PENSIPP (github.com/abozio/pensipp, Modele/Outils/OutilsParam/
+  Baremes.R et le fichier de paramètres de Destinie qu'il lit) ; le classeur
+  d'hypothèses du COR que TRAJECTOiRE embarque (étape 12).
+trouve: >-
+  Aucun texte de droit. Destinie 2 retrouve la série du modèle à 0,07 % près en
+  2024 (40 925 euros contre 40 897) : le même SMPT de l'INSEE. Le « SMPT » des cas
+  types du COR (42 791 euros) est un revenu d'activité, non-salariés compris ; celui
+  de PENSIPP, un ancien millésime. L'arrondi à 40 000 euros place les cas types 2,2 %
+  trop bas face au plafond et aux minima.
+reste: >-
+  La décision du propriétaire sur l'ancrage (40 897 euros recommandés, lus dans les
+  données) ; le privé au milieu de la période ; le passé ; la FPE et les régimes
+  spéciaux ; la décision du conseil d'administration de l'Agirc-Arrco du 14 octobre
+  2026.

@@ -1,0 +1,27 @@
+date: 2026-09-22
+session: la revalorisation de 2026, lue là où elle s'applique
+consulte: >-
+  `python scripts/fetch/dila_index.py legi --mettre-a-jour` : un incrément,
+  celui du 21 septembre 2026. Index LEGI : L. 161-17-2 et L. 161-17-3,
+  toutes versions ; L. 161-25 ; L. 161-23-1 dans sa version en vigueur au
+  1er janvier 2026 (LEGIARTI000051289722) ; l'annexe de la loi n° 2025-1403
+  et les articles qui la citent, cherchés sans trouver de dérogation pour
+  2026. Circulaire Cnav 2025/29 du 22 décembre 2025, lue dans son PDF avec
+  le lecteur du dépôt.
+trouve: >-
+  LA SUSPENSION TIENT : la version du 31 décembre 2025 de L. 161-17-2 et de
+  L. 161-17-3 est toujours la dernière, sans date de fin. ET LA
+  REVALORISATION DE 2026 EST CELLE DE LA RÈGLE ORDINAIRE : la circulaire
+  Cnav applique L. 161-25 sans dérogation — coefficient 1,009, soit 0,9 %,
+  fixé par l'instruction interministérielle n° DSS/3A/DB/6BRS/2025/174 du
+  15 décembre 2025 —, et ce taux tombe à quatre centièmes de point de
+  l'inflation 2025 que le dépôt porte, certifiée INSEE : 0,943 %. Les
+  trajectoires de la page Coût revalorisant les pensions servies sur les
+  prix, le modèle et le droit disent la même chose pour 2026. La ligne
+  passe de `a_verifier` à `conforme`.
+reste: >-
+  Ce qui se verrait mal : un GEL ou une sous-indexation décidés par une loi
+  de financement ne laisseraient aucune trace dans la série des prix, et
+  c'est ce qui a séparé plusieurs fois depuis 2014 le montant servi de ce
+  que les prix auraient donné. La ligne est donc à relire à chaque loi de
+  financement, et pas seulement au 1er janvier.

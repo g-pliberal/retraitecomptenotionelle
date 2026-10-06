@@ -1,0 +1,27 @@
+date: "2026-09-22"
+session: "action 89, lot de l'ENIM : les six pages du régime des marins"
+consulte: >-
+  Les six adresses de l'ENIM que `data/sources_a_explorer.yaml` recense —
+  mode de calcul, salaires forfaitaires, conditions d'attribution,
+  réversion, préretraite amiante, cumul —, ouvertes dans Chromium, le site
+  servant une page anti-robots à `curl`. Dans l'index LEGI, le code des
+  pensions de retraite des marins (R. 2, R. 3, R. 5, R. 11 à R. 15, R. 31)
+  et les articles L. 5552-1 à L. 5552-45 du code des transports ; dans
+  l'index JORF, tout texte depuis 2008 qui toucherait aux âges du régime.
+trouve: >-
+  DEUX RÈGLES QUE LE MODÈLE N'APPLIQUAIT PAS, écrites dans le texte et
+  décrites par la caisse. L'ouverture à cinquante ans pour vingt-cinq ans
+  de services (R. 2) : la fiche prenait pour âge d'ouverture les
+  cinquante-cinq ans qui ne bornent que la jouissance de qui continue à
+  naviguer. La bonification pour enfants de R. 14, dès deux enfants. Les
+  deux sont portées, Python et JavaScript, avec l'exception des
+  cinquante-deux ans et demi au plafond de vingt-cinq annuités, et deux
+  exemples de l'ENIM les rejouent. La grille des salaires forfaitaires de
+  2026 est recoupée au centime. Aucun texte n'a relevé les âges depuis
+  1968.
+reste: >-
+  La pension spéciale à soixante ans sans autre pension (R. 5), la
+  catégorie moyenne de trente-six mois (R. 11), le décompte au semestre
+  (R. 12), le taux de 1 % de la petite pêche outre-mer, le partage des
+  droits du conjoint collaborateur, la C3A des marins exposés à l'amiante
+  et la réversion à 54 % : écrits dans `docs/limites.md`, non modélisés.

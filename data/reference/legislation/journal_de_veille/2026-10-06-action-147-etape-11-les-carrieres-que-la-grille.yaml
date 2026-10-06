@@ -1,0 +1,26 @@
+date: "2026-10-06"
+session: "action 147, étape 11 : les carrières que la grille ne connaît pas, les arrivées tardives et l'entrée tardive des fonctionnaires"
+consulte: >-
+  La veille du jour (scripts/veille_droit.py) : rien de paru qui touche l'étape,
+  qui ne change pas le droit du scénario 1 ; les cinq règles qu'elle donne à relire
+  sont celles d'hier. Le rapport du COR de juin 2026, partie 2, chapitre 1
+  (pension moyenne relative, note 69 sur la durée de proratisation de la FPE), et
+  ses classeurs (parties 1 à 3 : figures 1.2 et 1.7, 2.7, 2.20, tableau 2.5,
+  figures 3.2, 3.3, 3.4 et 3.22) ; l'annexe méthodologique en ligne et son classeur
+  (figures A2.2 à A2.8) ; le classeur du scénario central des projections de
+  population 2026 de l'INSEE (onglets population, deces, solde_migratoire,
+  ajustement) ; l'EIR 2020 de la DREES (feuille Naissance-Résidence) ; le témoin
+  de TRAJECTOiRE (cas types n° 1 et 2 du COR).
+trouve: >-
+  Aucun texte de droit. Deux conventions de la page Coût : la masse de chaque
+  génération porte ses arrivées après 21 ans, tirées du classeur de l'INSEE
+  (arrivees_tardives.csv), et le fonctionnaire de l'État entre dans son régime deux
+  ans après le début de sa carrière, huit pour la génération 2000. La dérive de
+  2070 tombe de 1,039 à 1,008. Le rapport des parts du cadre (0,88 à 0,97 au COR)
+  tenait au salaire moyen de la reconstruction, non au droit : sur les relevés de
+  TRAJECTOiRE, le modèle rend les deux parts à 4 % près.
+reste: >-
+  Les carrières incomplètes des natifs, mesurées et non portées ; le salaire moyen
+  du modèle (son ancrage de 2024 et sa croissance depuis 2000), contre celui de
+  TRAJECTOiRE ; les non-salariés et les régimes spéciaux ; la décision du conseil
+  d'administration de l'Agirc-Arrco du 14 octobre 2026.

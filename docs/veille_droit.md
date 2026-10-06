@@ -42,8 +42,11 @@ la veille y lit :
 
 Les fiches ont repris le 26 septembre 2026 les lignes du registre de veille,
 sous le même identifiant. Le registre, `data/reference/legislation/veille.yaml`,
-garde les **sources à consulter** à chaque session, et le **journal** où chaque
-session consigne ce qu'elle a consulté, trouvé et laissé.
+garde les **sources à consulter** à chaque session. Le **journal**, où chaque
+session consigne ce qu'elle a consulté, trouvé et laissé, tient une entrée par
+fichier, dans `data/reference/legislation/journal_de_veille/` : depuis le
+6 octobre 2026 (action 148), deux sessions qui consignent leur veille le même
+jour n'écrivent plus au même endroit.
 
 **Le script** : `python scripts/veille_droit.py`, une vue de la carte. Il
 imprime les fiches à relire — état `a_verifier` ou `manquante`, lecture de
@@ -94,10 +97,13 @@ lignes intermédiaires suivent le même pas »), citer un texte de mémoire,
 appliquer une règle à une population que le texte ne nomme pas, et laisser
 une table certifiée sans date.
 
-**À la fin.** Ajouter une entrée au `journal` : la date, ce qui a été
-consulté, ce qui a été trouvé, ce qui reste. Mettre à jour `sources.lu_le`
-et `sources.prochaine_relecture` des fiches relues. Régénérer les témoins,
-lancer la suite, commiter sur `main`.
+**À la fin.** Écrire l'entrée du journal, dans un fichier neuf de
+`journal_de_veille/` nommé de la date et du sujet de la session
+(`2026-10-06-action-148-etape-2.yaml`) : `date`, `session`, ce qui a été
+consulté (`consulte`), ce qui a été trouvé (`trouve`), ce qui reste
+(`reste`). Mettre à jour `sources.lu_le` et `sources.prochaine_relecture` des
+fiches relues. Lancer `python -m pytest -m rapide` et les tests de sa zone,
+commiter sur `main` : GitHub refait les témoins et joue la suite complète.
 
 Une fiche `transcrite` attend son exemple. Une fiche `manquante` ou
 `approchee` est mesurée dans `limites.md`. Une fiche `a_verifier` est ce que

@@ -1,0 +1,27 @@
+date: "2026-10-03"
+session: >-
+  la suite de l'action 141, close, à la demande du propriétaire : « Met à jour le
+  moteur », pour porter dans les deux moteurs les écarts que la relecture avait
+  laissés déclarés
+consulte: >-
+  l'index LEGI : R. 351-12 du code de la sécurité sociale, version en vigueur
+  (LEGIARTI000054167657), dont le 4°, c vise l'allocation spéciale du FNE ; L. 5421-4
+  du code du travail, rédactions de 2008 à celle en vigueur (LEGIARTI000051289909), et
+  l'ancien L. 351-19, rédactions de 1984, 1992 et 1995 ; R. 322-7 de 1973 et les décrets
+  n° 84-295 (art. 5) et n° 87-270 (art. 6) sur l'allocation spéciale du FNE ; les pages
+  de l'Unédic (1er avril 2025) et de France Travail sur l'approche de la retraite.
+trouve: >-
+  Le revenu de remplacement cesse d'être versé à qui a l'âge légal et la durée requise,
+  et à qui atteint l'âge d'annulation de la décote, depuis le 1er avril 1984, avec
+  soixante-cinq ans dans le texte depuis le 4 janvier 1992 ; l'allocation spéciale du
+  FNE de même ; l'allocation complémentaire de l'État à qui n'avait pas cent cinquante
+  trimestres dans ses régimes de base n'ouvrait pas de droits à pension. Le modèle
+  coupe désormais l'indemnisation au taux plein (fiche `fin_indemnisation_chomage`),
+  distingue la préretraite du FNE de l'ASS — garantie minimale de points à sa
+  proportion, deux plafonds depuis 1998 —, ne valide le chômage du salarié agricole
+  qu'à compter du 1er avril 1974, et lit la durée minimale de trente jours d'avant
+  1974. Un témoin bouge, `invalidite_demandeur_d_emploi`.
+reste: >-
+  La règle de l'allocation d'assurance d'avant le 1er avril 1984 ; le premier jour des
+  départements d'outre-mer, que le modèle ne sait pas porter ; la date de la convention
+  de l'allocation spéciale du FNE, que le modèle prend à l'année.

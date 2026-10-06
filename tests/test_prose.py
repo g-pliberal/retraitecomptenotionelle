@@ -633,3 +633,96 @@ def test_une_action_close_passe_a_l_archive_de_la_feuille_de_route():
     rouvertes = [f"{n}. {t}" for n, t, etat in closes if etat not in etats_clos]
     assert not rouvertes, f"{rouvertes} : une action ouverte n'est pas dans l'archive"
     assert not {(n, t) for n, t, _ in vivantes} & {(n, t) for n, t, _ in closes}
+
+
+def _script(nom: str):
+    if nom in sys.modules:
+        return sys.modules[nom]
+    chemin = RACINE / "scripts" / f"{nom}.py"
+    specification = importlib.util.spec_from_file_location(nom, chemin)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[nom] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise():
+    """Une session qui cherche quoi faire ne lit que les blocs « Reprise »
+    (CLAUDE.md, « Économiser le contexte ») : chaque action `en cours`
+    s'ouvre, sous son titre, sur le sien, de dix lignes au plus. Quand les
+    étapes d'une action se mènent en parallèle, chacune tient le sien, en
+    tête de sa note, tant qu'elle n'est pas finie (action 148) : deux
+    sessions ne récrivent pas le même. `scripts/reprise.py` les met bout à
+    bout."""
+    reprise = _script("reprise")
+    ouvre = re.compile(r"\*\*Reprise, au [^*]+\.\*\*")
+    texte = (RACINE / reprise.FEUILLE).read_text(encoding="utf-8")
+    en_cours = [a for a in reprise.actions(texte) if a.etat == "en cours"]
+    assert en_cours, "aucune action en cours"
+    fautes = []
+    for action in en_cours:
+        bloc = action.ouverture
+        if not bloc or not ouvre.match(bloc[0]):
+            fautes.append(f"l'action {action.numero} ne s'ouvre pas sur "
+                          "« **Reprise, au <date>.** »")
+        elif len(bloc) > 10:
+            fautes.append(f"l'action {action.numero} : {len(bloc)} lignes de reprise")
+        for chemin in reprise.notes(action.numero):
+            paragraphes = re.split(r"\n\s*\n", chemin.read_text(encoding="utf-8"))
+            for rang, paragraphe in enumerate(paragraphes):
+                if not paragraphe.startswith("**Reprise"):
+                    continue
+                if rang != 1 or not ouvre.match(paragraphe):
+                    fautes.append(f"{chemin.name} : le bloc « **Reprise, au <date>.** » "
+                                  "se place sous le titre de la note")
+                elif paragraphe.count("\n") + 1 > 10:
+                    fautes.append(f"{chemin.name} : plus de dix lignes de reprise")
+    assert not fautes, fautes
+
+
+def test_les_notes_de_la_feuille_de_route_se_rangent_par_action():
+    """Une note de la feuille de route par fichier (action 148) : deux
+    sessions sur deux étapes d'une même action n'écrivent plus au même
+    endroit. Le dossier d'une action ouverte est sous
+    `docs/feuille_de_route/`, et passe avec elle, close, sous
+    `docs/archives/feuille_de_route/`, où ses notes sont gelées. Chaque note
+    se nomme de sa date et de son sujet, et s'ouvre sur son titre ; aucune ne
+    porte de titre d'action, qui ne se déclare que dans la feuille de route
+    ou son archive, dont le tableau de bord tire ses comptes."""
+    reprise = _script("reprise")
+    clos = {"fait", "abandonnée", "archivée"}
+
+    def numeros(chemin: str, garder) -> set[str]:
+        texte = (RACINE / chemin).read_text(encoding="utf-8")
+        return {n for n, _, etat in reprise.TITRE_D_ACTION.findall(texte) if garder(etat)}
+
+    rangements = (
+        (reprise.NOTES, numeros(reprise.FEUILLE, lambda e: e not in clos),
+         "ouverte de la feuille de route"),
+        (reprise.ARCHIVE_DES_NOTES,
+         numeros("docs/archives/feuille_de_route.md", lambda e: e in clos),
+         "close de l'archive"),
+    )
+    fautes, vues = [], 0
+    for dossier, attendues, quelle in rangements:
+        base = RACINE / dossier
+        if not base.is_dir():
+            continue
+        for action in sorted(base.iterdir()):
+            if not action.is_dir() or action.name not in attendues:
+                fautes.append(f"{dossier}/{action.name} : pas le dossier d'une action {quelle}")
+                continue
+            for note in sorted(action.iterdir()):
+                vues += 1
+                if not reprise.NOM_DE_NOTE.fullmatch(note.name):
+                    fautes.append(f"{dossier}/{action.name}/{note.name} : AAAA-MM-JJ-sujet.md, "
+                                  "sans majuscule ni accent")
+                    continue
+                texte = note.read_text(encoding="utf-8")
+                if not texte.startswith("# "):
+                    fautes.append(f"{note.name} : une note s'ouvre sur son titre")
+                if reprise.TITRE_D_ACTION.search(texte):
+                    fautes.append(f"{note.name} : un titre d'action, qui ne se déclare que "
+                                  "dans la feuille de route")
+    assert vues, "aucune note rangée : le dossier des notes a disparu"
+    assert not fautes, fautes

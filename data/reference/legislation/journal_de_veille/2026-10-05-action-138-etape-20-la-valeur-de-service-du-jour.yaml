@@ -1,0 +1,22 @@
+date: "2026-10-05"
+session: "action 138, étape 20 : la valeur de service du jour de la liquidation"
+consulte: >-
+  veille_droit.py (dernière veille du jour même). Hors JORF, chez la fédération
+  Agirc-Arrco : l'accord national interprofessionnel du 17 novembre 2017, articles 27
+  et 92 ; la circulaire 2020-02-DRJ du 20 janvier 2020, fiches 1 et 4 ; la
+  compilation des valeurs de point au 1er novembre 2025, toutes ses tables (Agirc,
+  Arrco, UNIRS, régime unifié), lue par la position des mots ; le barème « Valeur de
+  service du point Agirc-Arrco » de sa base réglementaire. L'index JORF : l'arrêté du
+  29 décembre 2015 et les avis d'extension des avenants A-285 et n° 136, qui portent
+  l'accord du 30 octobre 2015. Le COR, séance du 13 avril 2016, document n° 3.
+trouve: >-
+  La pension se liquide à la valeur de service « à cette même date » (circulaire
+  2020-02-DRJ, sur l'article 92), relevée au 1er novembre depuis 2016 (accord du 30
+  octobre 2015, article 27 de celui de 2017), au 1er avril, au 1er janvier, au 1er
+  juillet ou au 1er octobre avant ; le modèle servait celle du 31 décembre. Porté
+  dans les deux moteurs, avec la date de chaque valeur depuis 1947 ; aucune décision
+  nouvelle depuis le gel du 1er novembre 2025.
+reste: >-
+  La décision du 14 octobre 2026 sur le 1er novembre 2026 ; le texte de l'accord du
+  30 octobre 2015 ; les régimes en points que la table ne date pas, l'Ircantec
+  d'abord, relevée au 1er avril à partir de 2009 selon OpenFisca.

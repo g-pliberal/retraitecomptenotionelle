@@ -1,0 +1,23 @@
+date: "2026-10-06"
+session: "action 147, étape 13 : le défaut du privé de 2030 à 2055, les régimes qui se ferment et la réversion des groupes"
+consulte: >-
+  La veille du jour (scripts/veille_droit.py) : rien de paru depuis l'étape 12 ; les
+  cinq règles qu'elle donne à relire sont les mêmes. Le classeur par régime du COR
+  de juin 2024 (scripts/fetch/cor_regimes.py) : masses de droits directs et de droits
+  dérivés, effectifs par sexe, âges de départ et pension relative de l'Agirc-Arrco,
+  de la Cnav, de l'Ircantec, du RCI, de la MSA, de la FPE et de la CNRACL ; les
+  figures 2.6 et 2.7 du rapport de juin 2026 que le dépôt garde.
+trouve: >-
+  Aucun texte de droit : l'étape ne touche ni le scénario 1 ni le simulateur. Le
+  défaut du privé tenait à la pondération de la page Coût : les exploitants
+  agricoles, la SNCF et les IEG gardaient jusqu'en 2070 leur part des retraités de
+  2024, quand le COR la divise par deux ou trois, et en privaient le salariat privé ;
+  la comparaison des groupes, elle, mettait les droits directs du modèle en face
+  d'une dépense du COR réversion comprise. La grille par pas de cinq générations
+  place mal les changements d'âge de la réforme de 2023, dont 2024 et 2025, années
+  de l'ancrage et du calage : du bruit d'un point et demi, non une cause.
+reste: >-
+  Les carrières incomplètes des natifs ; les complémentaires, cinq points sous le
+  COR au milieu de la période (les polypensionnés) ; la FPE, les régimes spéciaux à
+  l'horizon, la CNRACL ; l'ancrage du salaire moyen, au propriétaire ; la décision du
+  conseil d'administration de l'Agirc-Arrco du 14 octobre 2026.

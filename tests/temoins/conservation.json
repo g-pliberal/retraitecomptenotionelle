@@ -540,7 +540,10 @@
    "2026-10-06 | action 147, étape 12 : le salaire moyen du modèle contre celui de TRAJECTOiRE, ni son ancrage ni sa croissance",
    "2026-10-06 | action 147, étape 13 : le défaut du privé de 2030 à 2055, les régimes qui se ferment et la réversion des groupes",
    "2026-10-06 | action 147, étape 14 : les carrières incomplètes des natifs, de la durée d'assurance par génération du COR",
-   "2026-10-06 | action 147, étape 15 : l'ancrage du salaire moyen, recensé chez les autres modèles, rien de changé"
+   "2026-10-06 | action 147, étape 15 : l'ancrage du salaire moyen, recensé chez les autres modèles, rien de changé",
+   "2026-10-06 | action 147, étape 16 : l'ancrage lu dans les données, le cas type au SMIC payé au SMIC",
+   "2026-10-06 | action 148, étape 1 : main vert, les fichiers fabriqués à la charge de GitHub",
+   "2026-10-06 | action 148, étape 2 : les journaux en fichiers séparés"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1700,6 +1703,7 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "663449a8760d9d7c",
     "3946953eb00dc8e3",
     "05c647c1e85ce64d",
     "73a09df3f60cf209",

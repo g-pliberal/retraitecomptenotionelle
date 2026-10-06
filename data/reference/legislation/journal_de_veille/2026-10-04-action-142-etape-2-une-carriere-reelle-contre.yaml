@@ -1,0 +1,23 @@
+date: "2026-10-04"
+session: "action 142, étape 2 : une carrière réelle contre « Mon estimation retraite »"
+consulte: >-
+  veille_droit.py (la dernière veille consignée est du jour : aucun texte paru
+  depuis) ; « Mon estimation retraite », estimation rapide, ouverte par le
+  propriétaire connecté lui-même (simulateur 27.50.5, moteur 10.0.0-rc6 du 18 août
+  2026, qui « prend en compte la suspension de la réforme des retraites votée par le
+  Parlement ») ; l'accord national interprofessionnel Agirc-Arrco du 10 mai 2019, sur
+  le site de l'Agirc-Arrco (article 2, « Valeur d'achat du point », et son annexe).
+trouve: >-
+  Sur la carrière du propriétaire, trois âges : les trimestres, la durée requise, la
+  décote, la surcote et la proratisation du régime général concordent, comme le
+  coefficient de l'Agirc-Arrco ; la retraite de base concorde à l'euro quand la
+  carrière à venir suit les prix plus 1,0 % par an, la croissance que la page
+  applique. La complémentaire projetée ne concorde pas : au-delà du dernier barème,
+  le dépôt garde le rendement de 2026, quand l'accord fait évoluer la valeur d'achat
+  du point « comme le salaire annuel moyen des ressortissants du régime ».
+reste: >-
+  L'accord du 5 octobre 2023 et les décisions du conseil d'administration depuis, à
+  lire avant de corriger la projection de l'Agirc-Arrco ; la lecture du relevé tous
+  régimes de 2026 (texte à l'envers, paie comptée deux fois, note « plafonné »
+  fausse, années Ircantec), et le versement unique de l'Ircantec sous 300 points,
+  que la page sert en capital et que le modèle ne voit pas.

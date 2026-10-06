@@ -1,0 +1,37 @@
+date: "2026-10-03"
+session: >-
+  deux points sur les salariés de Nouvelle-Calédonie, relevés pendant l'action 141
+  hors de son champ, à la demande du propriétaire : la date d'affiliation à l'Arrco,
+  et le chômage calédonien aux complémentaires ; Saint-Pierre-et-Miquelon avec lui
+consulte: >-
+  l'accord interprofessionnel territorial du 29 août 1994, ses avenants de 1995 et ses
+  arrêtés d'extension (n° 3809-T, n° 1745-T, n° 735-T et 725-T), dans la copie de la
+  direction du travail et de l'emploi de Nouvelle-Calédonie (empreinte sha256
+  844f90f1…) ; le guide réglementaire Agirc-Arrco de 2016, titres II, IV et VII, dans
+  leurs captures Common Crawl (sha256 64b2702d…, 853180d1…, aa8e7d7b…) ; l'accord du
+  17 novembre 2017, art. 8, 13, 15, 59 à 67 et 79 ; la fiche du CLEISS sur les
+  salariés calédoniens ; l'index JORF (arrêtés du 21 juin 1988, conventions
+  d'assurance chômage de 1993, 1994, 2006, 2009 et 2014) et LEGI (code du travail,
+  L. 351-21 de 2008 ; décret n° 89-110, art. 11 ; décret n° 2019-797) ; les
+  incréments de la DILA, refusés ; veille_droit.py.
+trouve: >-
+  L'Arrco n'est obligatoire en Nouvelle-Calédonie que depuis le 1er janvier 1995
+  (accord, art. 2) ; les années d'avant que la CAFAT reconnaît sont des services
+  passés, validés « gratuitement » (art. 6) selon les règles des opérations
+  supplémentaires d'avant 1992 — à 100 % pour les actifs dont l'âge moyen ne passe
+  pas cinquante-deux ans, selon une pesée pour les radiés et les retraités. Le modèle
+  les routait dès 1961 comme des années cotisées : le compte notionnel portait
+  trente-quatre ans de cotisations jamais versées, et une pension prise avant 1995
+  avait une Arrco qui n'existait pas. Le chômage calédonien, que la CAFAT indemnise,
+  n'est validé par aucun texte de l'Agirc-Arrco, qui ne connaît que l'Unédic, l'État
+  et les organismes auto-assurés du code du travail. Saint-Pierre-et-Miquelon relève
+  de l'Unédic, dont la convention y « s'applique » ; l'Arrco y est étendue au 1er
+  janvier 1988, et 1987 en est un service passé. Le modèle porte désormais les
+  services passés (`services_passes` des périodes d'affiliation) et le chômage sans
+  validation (`sans_validation`) ; fiche `services_passes_outre_mer`.
+reste: >-
+  Le calcul des droits des services passés calédoniens (délibérations des commissions
+  paritaires des 15 et 28 juin 1994, chapitre 7 de la délibération 6B, introuvables) ;
+  la délibération n° 290 du Congrès du 14 janvier 1992, non lue ; le régime
+  complémentaire créé à Saint-Pierre-et-Miquelon par l'accord du 18 février 1983 ; la
+  validation du chômage par la CAFAT pour sa propre retraite.

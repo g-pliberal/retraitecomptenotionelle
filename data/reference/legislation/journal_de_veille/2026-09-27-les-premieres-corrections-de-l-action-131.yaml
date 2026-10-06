@@ -1,0 +1,43 @@
+date: "2026-09-27"
+session: >-
+  les premières corrections de l'action 131, préparées pendant la phase 8
+  sur une branche à part et publiées la phase close : la complémentaire
+  agricole, les IEG
+consulte: >-
+  veille_droit.py au début de la session et avant de publier ; les index
+  LEGI et JORF mis à jour, un incrément chacun, du 27 septembre à 20 h 49,
+  parus après la veille qui a clos la phase 8 ; L. 161-17-2 et
+  L. 161-17-3 dans l'index LEGI. Relus pour les corrections : la
+  circulaire CNIEG n° 2024/15, § 3, 3.1, 5 et 6 ; l'annexe 3 du statut des
+  IEG, articles 9-1 et 45, II et I ter, dans l'index LEGI, dont la
+  rédaction du 6 août 2025 (LEGIARTI000052046924) reste la dernière ; pour
+  la complémentaire agricole, D. 732-155, dont la rédaction du 7 juillet
+  2024 reste la dernière, et les décrets que sa fiche cite.
+trouve: >-
+  L. 161-17-2 et L. 161-17-3 n'ont pas de rédaction postérieure au 31
+  décembre 2025 : la suspension court toujours. Au Journal officiel, aucun
+  texte de retraite depuis le décret n° 2026-897, déjà lu, hors les
+  admissions individuelles à la retraite. La CNIEG écrit la règle de
+  l'article 9-1 en toutes lettres : la durée se lit « en fonction de la
+  date d'ouverture au plus tôt du droit à pension si ce dernier est
+  antérieur au 60ème anniversaire de l'agent » (§ 3.1), et sa table remonte
+  ainsi jusqu'en 2010. Monsieur A, son exemple 1, part le 1er décembre 2021
+  et non en 2024 : les huit trimestres de décote du § 5 sont ceux que le
+  modèle rend désormais, le § 6 en reprenant quatre. Publiés, chacun avec
+  le diff de ses témoins : la complémentaire agricole et le plancher de la
+  base (cinq témoins), les IEG (deux), et le filet de conservation, qui
+  gelait les tableaux produits de docs/chiffrage_plf.md.
+reste: >-
+  De l'action 131 : cotisation_par_classes_liberales, decote_avant_1983,
+  decote_regimes_speciaux (la CRPCEN depuis 2025, la borne par la durée, la
+  lecture au mois des pas de 2010 à 2024), coefficients_anticipation_agirc_arrco,
+  surcote_par_age_seul, minoration_racl_2014_2024, les autres écarts de
+  retraite_proportionnelle_msa, surcote_ircantec, decote_opera_de_paris,
+  trimestres_retenus_1972_1974, et les notes de carmf_complementaire,
+  cavec_complementaire, ircec_racl et opera_de_paris. Aux IEG, ce que la
+  CNIEG applique après 2024 aux agents actifs, et si la SNCF et la RATP
+  ont une règle comme l'article 9-1. Et ce que les entrées précédentes
+  laissaient : l'assiette minimale des indépendants dans le compte,
+  l'article 16 du règlement de la CAVP, les articles 9-7 et suivants du
+  règlement des indépendants, les fiches à relire, la rédaction nouvelle de
+  R. 382-24, les rédactions sans statut.

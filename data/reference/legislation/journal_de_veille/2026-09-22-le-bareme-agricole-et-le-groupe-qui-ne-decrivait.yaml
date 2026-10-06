@@ -1,0 +1,36 @@
+date: 2026-09-22
+session: "le barème agricole, et le groupe qui ne décrivait pas le libéral"
+consulte: >-
+  Index LEGI du dépôt, interrogé directement en SQL plutôt que par
+  `dila_cherche.py` : les 262 articles D732/R732 du code rural, puis les 43
+  qui contiennent « minoration ». R. 732-61 (huit versions), R. 732-68
+  (deux), R. 351-27 et R. 351-27-1, D. 732-40 et D. 732-41. Et hors LEGI,
+  le recueil statistique 2025 de la CNAVPL, déposé par
+  `scripts/fetch/cnavpl_recueils.py` et lu par `lecture_pdf.py`.
+trouve: >-
+  LE BARÈME AGRICOLE EST GÉNÉRATIONNEL, et c'est celui du régime général.
+  R. 732-61 dans sa version de 2017 donne onze coefficients, de 2,5 % pour
+  les nés avant 1944 à 1,25 % après 1952 — les mêmes, génération par
+  génération, que le II de R. 351-27 que `coefficient_minoration.csv`
+  porte déjà. La fiche `msa_non_salaries` ayant `decote_par_generation`,
+  le modèle les applique depuis toujours : la transcription est confirmée,
+  et rien ne bouge. Depuis le 1er janvier 2026, R. 732-68 rend l'alignement
+  explicite. L'article n'était pas introuvable : la recherche plein texte
+  ne le rendait pas, la requête SQL sur le titre du code, si.
+  ET LE RECUEIL DE LA CNAVPL A DÉMENTI UNE PHRASE ÉCRITE LA VEILLE. Le
+  dépôt disait « la DREES observe les professions libérales partir à
+  62,6 ans » : c'est le groupe 3 de la nomenclature, dominé par les cadres
+  SALARIÉS. La caisse des libéraux publie l'âge de ses propres titulaires —
+  64,81 ans en 2018, 66,11 en 2025 — et l'âge moyen à l'immatriculation,
+  32,58 ans en 2025, qui dit à lui seul qu'un libéral a dix ans de carrière
+  ailleurs avant de s'installer. Confronté à sa caisse, le cas type part
+  1,24 an trop TÔT là où son groupe le disait 0,66 an trop tard : le signe
+  s'inverse. Il est sorti du champ de la confrontation par catégorie.
+reste: >-
+  Le plafond de vingt trimestres n'est explicite que chez les libéraux
+  (R. 643-7) ; ni R. 351-27 2° ni R. 732-61 n'en portent, et le modèle en
+  applique un partout. Il ne mord que sur un départ de plus de cinq ans
+  avant l'âge d'annulation, où la décote ne s'applique pas, mais c'est à
+  trancher sur texte. Et le cas type libéral n'a toujours aucune carrière
+  antérieure : la structure `CasType` ne porte qu'une affiliation, et lui
+  en donner deux est un chantier, non une retouche.

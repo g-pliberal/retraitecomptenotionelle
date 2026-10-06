@@ -12,11 +12,12 @@ dernière lecture et de la prochaine, les exemples publiés qui la rejouent,
 l'état. Ce script en est une vue, et ne décide rien : il dit quelles fiches
 sont ``a_verifier`` ou ``manquante``, lesquelles n'ont pas été relues depuis
 plus de ``--jours`` jours ou dont la date de relecture est passée, et quelles
-sources consulter avant de toucher au scénario 1. Les sources à consulter et
-le journal de chaque veille sont dans ``data/reference/legislation/veille.yaml``.
+sources consulter avant de toucher au scénario 1. Les sources à consulter
+sont dans ``data/reference/legislation/veille.yaml`` ; le journal de chaque
+veille, une entrée par fichier, dans ``journal_de_veille/``, à côté.
 
 C'est le premier geste d'une session qui touche au scénario 1, et le dernier :
-au début pour savoir quoi relire, à la fin pour ajouter au ``journal`` ce qui
+au début pour savoir quoi relire, à la fin pour ajouter au journal ce qui
 a été consulté, trouvé, et laissé. ``tests/test_carte.py`` tient la forme des
 fiches ; ``docs/veille_droit.md`` dit la procédure.
 """
@@ -35,11 +36,21 @@ from retraite_notionnelle.noyau import carte
 
 RACINE = Path(__file__).resolve().parents[1]
 REGISTRE = RACINE / "data" / "reference" / "legislation" / "veille.yaml"
+#: Le journal, une entrée par fichier (action 148) : deux sessions qui
+#: consignent leur veille le même jour n'écrivent pas dans le même fichier.
+JOURNAL = REGISTRE.parent / "journal_de_veille"
 
 
 def charger() -> dict:
-    """Les sources à consulter et le journal de la veille."""
+    """Les sources à consulter."""
     return yaml.safe_load(REGISTRE.read_text(encoding="utf-8"))
+
+
+def journal(dossier: Path = JOURNAL) -> dict[str, dict]:
+    """Les entrées du journal, par nom de fichier, dans l'ordre des noms :
+    celui des dates."""
+    return {chemin.name: yaml.safe_load(chemin.read_text(encoding="utf-8"))
+            for chemin in sorted(dossier.glob("*.yaml"))}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -55,8 +66,7 @@ def main(argv: list[str] | None = None) -> int:
     etats = carte.etats()
     fiches = sorted(carte.fiches().values(), key=lambda f: (etats.index(f["etat"]), f["id"]))
     par_etat = collections.Counter(f["etat"] for f in fiches)
-    journal = registre.get("journal") or []
-    derniere = max((str(j["date"]) for j in journal), default="jamais")
+    derniere = max((str(j["date"]) for j in journal().values()), default="jamais")
 
     print(f"Carte des règles : {len(fiches)} fiches — "
           + ", ".join(f"{etat} {par_etat[etat]}" for etat in etats if par_etat[etat])
@@ -85,7 +95,9 @@ def main(argv: list[str] | None = None) -> int:
     print("Sources à consulter avant de toucher au scénario 1 :")
     for source in registre.get("sources_a_consulter", []):
         print(f"  - {source['nom']} — {source.get('url', '')}")
-    print("\nPuis : ajouter au `journal` de veille.yaml ce qui a été consulté, trouvé et laissé.")
+    print("\nPuis : consigner ce qui a été consulté, trouvé et laissé, dans un fichier "
+          "neuf du journal,\ndata/reference/legislation/journal_de_veille/"
+          f"{aujourd_hui.isoformat()}-action-N-etape-E.yaml.")
     return 1 if (args.strict and revoir) else 0
 
 

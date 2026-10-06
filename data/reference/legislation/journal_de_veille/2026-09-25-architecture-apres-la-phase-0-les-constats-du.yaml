@@ -1,0 +1,40 @@
+date: "2026-09-25"
+session: "architecture, après la phase 0 : les constats du scénario 1 que la note 0001 avait laissés"
+consulte: >-
+  veille_droit.py, et la mise à jour de l'index LEGI : cinq incréments
+  jusqu'au 25 septembre 2026, L. 161-17-2 et L. 161-17-3 sans version
+  postérieure au 31 décembre 2025. Dans l'index LEGI : les quatorze
+  rédactions de L. 351-4 du code de la sécurité sociale depuis 1985, les
+  deux de D. 351-1-7, les huit de L. 12 et les six de R. 13 du code des
+  pensions civiles et militaires, la loi n° 75-3 du 3 janvier 1975
+  (LEGITEXT000006068508), ses articles 11 et 21, et le décret n° 75-109
+  du 24 février 1975. Dans l'index JORF, récupéré le même jour : la loi
+  et son décret, dont il n'a que les titres. Les pages de l'INSEE et de la
+  DREES qui publient le code de Destinie 2 et de TRAJECTOiRE. Les effets
+  des vingt-quatre règles déjà approchées au registre.
+trouve: >-
+  Les six constats de docs/decisions/0001/phase_0.md, tous confirmés au
+  texte. De fin 2003 à 2010, D. 351-1-7 accorde les trimestres d'enfants
+  un par un, à la naissance puis à chaque anniversaire, huit au plus, et
+  le modèle en sert huit d'un coup. L'index date la loi n° 75-3 du
+  1er juillet 1974, son article 21 l'applique à cette date hors son
+  titre II, et l'article 20 de son décret applique aux avantages prenant
+  effet après le 30 juin 1974 l'article 16, sur la majoration des mères ;
+  le modèle fait partir en 1975 les huit trimestres par enfant. Cinq rédactions de L. 351-4 changent le droit depuis 2013
+  sans être découpées en versions. Au premier semestre 2011, R. 13 admet
+  la réduction d'activité que L. 12 b ne nomme qu'à partir des pensions
+  du 1er juillet. La ligne majoration_duree_assurance_enfants passe de
+  conforme à approximation, et le dit. La feuille de route, action 26,
+  disait TRAJECTOiRE et Destinie « pas publiés » : leur code l'est,
+  Destinie 2 sur GitHub (InseeFr/Destinie-2), TRAJECTOiRE à la DREES sous
+  licence EUPL. Et dix-sept des vingt-quatre règles déjà approchées racontent
+  l'erreur corrigée sans dire ce qui reste : le tableau de bord le compte.
+reste: >-
+  Aucun constat n'est corrigé dans le modèle : la version de 2003 et son
+  décret, la borne de 1974, les cinq rédactions de L. 351-4, la question
+  de R. 13 au premier semestre 2011. Les effets des règles approchées sont
+  à réécrire au présent, un par un, à la lecture de chaque règle. Aucun
+  exemple publié pour ces fenêtres. Le Journal officiel du 4 janvier 1975
+  est à lire pour la structure de la loi n° 75-3, que l'index JORF ne
+  donne pas : c'est lui qui dira si la majoration des mères est hors du
+  titre II, et donc due dès le 1er juillet 1974.
