@@ -432,7 +432,7 @@ prend un diviseur plus élevé, donc un capital d'ouverture plus gros, et le
 cadeau va tout entier aux générations de transition. Le défaut suit l'âge légal
 de départ de la proposition, <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans : moins que les <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_reference)-->67<!--/--> ans du
 cliquet, et les deux scénarios prospectifs dépensent donc davantage qu'avec
-lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,55<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,07<!--/--> % du
+lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,57<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,09<!--/--> % du
 PIB, contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système actuel.
 
 ### Variantes
@@ -1995,7 +1995,7 @@ pension moyenne de la grille ne reculait pas comme la sienne ; le lecteur qui
 refaisait le calcul ne retrouvait pas le chiffre officiel. Elle est gardée pour
 ce qu'elle contrôle — la reconstitution du passé et la décomposition de
 l'écart (`docs/limites.md`, § 5 ter) — et n'est plus affichée comme une
-projection : elle donne aujourd'hui <!--chiffre:mesure(trajectoire_propre?annee=2070)-->14,9<!--/--> % du PIB en 2070, quand le COR
+projection : elle donne aujourd'hui <!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,2<!--/--> % du PIB en 2070, quand le COR
 en projette <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/-->.
 
 Deux précisions d'unité, parce qu'elles sont la source d'erreur la plus facile.
@@ -2118,7 +2118,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,66<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->40<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,68<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.

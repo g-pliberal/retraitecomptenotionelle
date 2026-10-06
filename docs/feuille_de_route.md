@@ -7252,16 +7252,17 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 12 (le passé refait,
+**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 13 (le passé refait,
 la décomposition du COR, ses conventions, la fonction publique, l'Agirc-Arrco
-au taux moyen, les arrivées tardives : dérive de 2070 1,008, sous un de 2031 à
-2067 ; puis le salaire moyen, écarté : ni son ancrage ni sa croissance).
-Reste, une session neuve par point : le défaut du privé de 2030 à 2055, à
-chercher dans les complémentaires d'abord, avant de porter les carrières
-incomplètes des natifs ; les non-salariés et les régimes spéciaux ; la CNRACL.
-Fabriquer et tester sous Python 3.11, celui de la CI. Au propriétaire, le taux
-du simulateur individuel (registre, 138.13) et l'ancrage du salaire moyen.
-Lire les notes des étapes 11 et 12.
+au taux moyen, les arrivées tardives, le salaire moyen écarté ; puis le défaut
+du privé : les régimes qui se ferment suivent le COR, et la dépense des
+groupes se compare réversion comprise — dérive de 2070 1,028, sous un de 2031
+à 2058). Reste, une session neuve par point : les carrières incomplètes des
+natifs (étape 11, « mesurées, non portées ») ; les complémentaires, −5 % au
+milieu de la période (les polypensionnés) ; la FPE, les régimes spéciaux à
+l'horizon, la CNRACL. Fabriquer et tester sous Python 3.11, celui de la CI. Au
+propriétaire, le taux du simulateur individuel (registre, 138.13) et l'ancrage
+du salaire moyen. Lire les notes des étapes 11 et 13.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -8097,3 +8098,86 @@ moteurs et dans `methodologie.md`.
   plus grand, d'abord —, avant de porter les carrières incomplètes des natifs ;
   les non-salariés et les régimes spéciaux ; la CNRACL ; la dépense de la FPE.
   Au propriétaire, l'ancrage : 40 000 € ou le niveau de sa série.
+
+**Demande**, le 6 octobre 2026 : « Trouver ce qui fait la pension relative du
+privé trop basse de 2030 à 2055, en commençant par les complémentaires
+(dépense −7 % en 2050, l'écart le plus grand). Ensuite seulement, prendre en
+compte les carrières incomplètes des natifs. » L'ancrage du salaire moyen :
+chercher ce qu'utilisent les autres modèles, sans rien y changer.
+
+**Étape 13, le 6 octobre 2026 : le défaut du privé — les régimes qui se
+ferment gardaient leur part de 2024.** Une convention de la page Coût et une
+mesure, dans les deux moteurs ; aucun témoin de simulation ne bouge.
+
+- *Mesuré d'abord : trois causes, une seule de fond.* (1) *La mesure.* La
+  dépense d'un groupe du COR compte sa réversion ; les masses par régime du
+  modèle n'avaient que les droits directs. La réversion reculant (10,3 % de la
+  dépense en 2025, 8,2 % en 2050, 5,7 % en 2070), l'écart réel du privé était
+  plus grand que mesuré : complémentaires −9,0 % en 2050 et non −7,0, LURA
+  −5,6 et non −3,1, et en 2070 −7,1 et −2,6 au lieu de −2,0 et +2,2. Le
+  classeur par régime de 2024 (`scripts/fetch/cor_regimes.py`, non gardé)
+  donne la part de chaque groupe : celle de LURA et des complémentaires suit
+  celle de l'ensemble à trois dixièmes près. (2) *La grille par pas de cinq
+  générations.* Chaque génération de la grille liquide ses cinq cohortes au
+  même âge : aux changements d'âge de la réforme de 2023, un cas type gagne
+  ou perd une cohorte certaines années (±5 %), et 2024 (ancrage), 2025 (calage
+  des groupes, référence des écarts) en sont — le cadre +5,5 % en 2025. Une
+  grille annuelle (`PAS_GENERATIONS = 1`) a ses propres creux, ailleurs (le
+  smic et le cadre en 2025, l'arrondi annuel de 62 ans et 3 mois à 63) : sur
+  une référence lissée (2023-2027), les deux ne diffèrent que de 1,3 point sur
+  les complémentaires en 2050, pour un calcul quatre fois plus long (21 s →
+  90 s, et autant au navigateur). Du bruit, non une cause ; la grille reste à
+  cinq ans. Le saut de l'écart de 2031 à 2034 en est : les têtes de la grille
+  croissent de 5,1 % de 2025 à 2029, celles du COR de 2,1 %. (3) *La
+  composition, la cause de fond.* En droits directs et sur la référence
+  lissée, le privé finissait 5 à 10 % sous le COR de 2045 à 2065 (LURA −6,0 %
+  en 2050, complémentaires −8,8 %), quand les non-salariés le dépassaient de
+  88 %, les régimes spéciaux de 50 %, la FPE de 10 %. Au-delà de 2024, chaque
+  caisse gardait sa part des retraités, hormis celles de la fonction publique
+  (étape 9) : les exploitants agricoles (1,05 M de retraités en 2024, 0,54 M
+  en 2050 au COR), la SNCF (×0,67) et les IEG (×0,85) gardaient la leur, et
+  la normalisation des poids en privait le privé.
+- *Ce qui est fait.* (a) `EffectifsRetraites.CAISSES_PROJETEES` prend
+  `msa_exploitants`, `sncf` et `cnieg`. (b) Au-delà de la dernière enquête, le
+  total des caisses de la grille (`CAISSES_DE_LA_GRILLE`, tenue par un test
+  contre `CAS_TYPES`) reste celui du bord : ce que perdent les caisses
+  projetées, les reconduites se le partagent au prorata de leur effectif de
+  2024 (`_partager`, dans les séries mêmes : le paquet les porte, le portage
+  n'a rien à refaire, la grille élargie en hérite). Sans ce partage, la FPE
+  prenait aussi la part des caisses qui se ferment (+14,7 % en 2050 au lieu de
+  +11,5 %). (c) `decomposition_groupes` porte la masse de chaque groupe à la
+  part de réversion de l'ensemble (`facteur_reversion`), comme la base, dans
+  les deux moteurs. Écartées après mesure : la CNAVPL (×2,3 au COR d'ici
+  2050 : des micro-entrepreneurs aux petites pensions ; projetée, elle
+  gonflait les non-salariés), et la Cnav, l'Ircantec, le RCI, des droits que
+  les polypensionnés multiplient (étape 9).
+- *Ce que ça déplace.* Écarts au COR, dépense réversion comprise, en 2035,
+  2050 et 2060 : LURA −1,5, −0,4, +1,1 % ; complémentaires −3,0, −5,2, −5,1 % ;
+  non-salariés +7,6, +9,7, +2,4 % ; régimes spéciaux −4,1, −1,2, −3,5 % ; FPE
+  +4,6, +8,7, +15,0 % ; pension relative de l'ensemble −1,8, −0,5, +0,5 %
+  (−2,8, −2,3, −1,6 avant). À l'horizon : LURA +3,4 %, complémentaires −1,7 %,
+  non-salariés +0,2 % (qui passent aux groupes suivis), régimes spéciaux
+  −32,7 %, FPE +19,1 %, CNRACL +4,8 % ; pension relative de l'ensemble +5,3 %
+  (+3,1) : le cliquet monte de 4 à 6 %, la dérive de 2070 de 1,008 à 1,028,
+  sous un de 2031 à 2058, au plus bas 0,985 en 2034. Trajectoire propre :
+  14,9 → 15,2 % du PIB en 2070 (COR 15,3). Reconstitution : −14,0 → −14,1 % en
+  2009. La proposition : solde moyen −0,75 %, dette de 2070 49 %, coefficient
+  1,007 → 1,015 ; la seconde lecture la rejoint (8,6 % du PIB en 2070, solde
+  moyen −0,75 %, dette 48 %) : elle l'allège au milieu de la période et
+  l'alourdit à la fin ; la prose le dit. Engagement du système actuel 479 →
+  483 %. 54 rendus de page sur 74.
+- *Ce qui reste.* Les complémentaires, −5 % de 2045 à 2060. Contre le
+  classeur de 2024, groupe pour groupe : l'Agirc-Arrco −1,6 point en 2050,
+  l'Ircantec −0,9 (le COR en multiplie les retraités par 1,8, les
+  contractuels du public, que la grille ne fait pas croître), le CRPNPAC,
+  absent de la grille, −0,7, quand la complémentaire des libéraux en ajoute
+  +3,3 — les polypensionnés, qu'une grille de carrières à un seul régime ne
+  représente pas. La pension par tête de la Cnav, −3 % de 2035 à 2050 : une
+  tête de la Cnav n'est pas une personne, et LURA, qui suit le COR, dit la
+  dépense. Après 2058, la dérive repasse au-dessus d'un : c'est là que les
+  carrières incomplètes des natifs, plus courtes à chaque génération, doivent
+  peser. Les régimes spéciaux à l'horizon, la FPE (+19 %), la CNRACL.
+- *Reproduire.* Les mesures lisent `memoire.cout(Parametres(), assiette=False,
+  convention_recette=CONVENTION_RAPPORT)` et `Avenir.decomposition_groupes` ;
+  la grille annuelle remplace `cout.PAS_GENERATIONS` et `cout._DEMI_TRANCHE`
+  sous `memoire.modele_modifie()`.

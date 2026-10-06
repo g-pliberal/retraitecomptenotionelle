@@ -1588,8 +1588,10 @@ class Avenir {
    * La décomposition de `decomposition`, groupe de régimes par groupe : pour
    * chaque groupe de `groupes` ({groupe: [régimes du modèle]}), et chaque
    * année, l'indice de ses têtes, de sa pension moyenne relative et de sa
-   * masse rapportée au PIB, un l'année `depuis`. Portage de
-   * `Avenir.decomposition_groupes` dans `cout.py` (action 147, étape 5).
+   * dépense rapportée au PIB, un l'année `depuis`. Portage de
+   * `Avenir.decomposition_groupes` dans `cout.py` (action 147, étape 5) : la
+   * dépense porte la masse de droits directs à la part de réversion que le
+   * COR projette pour l'ensemble, comme celle de ses groupes (étape 13).
    */
   decompositionGroupes(depuis, groupes) {
     const rendu = new Map();
@@ -1605,7 +1607,8 @@ class Avenir {
         tetes += ligne.tetesRegimes.get(regime) ?? 0;
       }
       const relative = tetes > 0 ? masse / tetes / ligne.salaireReel : 0;
-      return [tetes, relative, masse / (ligne.pib * ligne.coefficientConstants)];
+      return [tetes, relative,
+        (masse * ligne.facteurReversion) / (ligne.pib * ligne.coefficientConstants)];
     };
     for (const [groupe, regimes] of Object.entries(groupes)) {
       const [tetes, relative, part] = mesure(reference, regimes);

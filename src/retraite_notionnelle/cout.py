@@ -947,13 +947,23 @@ class Avenir:
         ``groupes`` lui donne (``REGIMES_DU_MODELE``, ``GROUPES_DU_MODELE``).
 
         Chaque année rend trois indices, un l'année ``depuis`` : les têtes du
-        groupe, sa pension moyenne relative, et sa masse rapportée au PIB. Les
+        groupe, sa pension moyenne relative, et sa dépense rapportée au PIB. Les
         deux premiers se confrontent à la figure 2.7 du COR, le troisième à sa
         figure 2.6. C'est le troisième qui dit ce que le groupe pèse dans
         l'écart : un retraité de régime n'est pas une personne, et le COR et
         la grille ne comptent pas les polypensionnés de la même façon — une
         pension moyenne d'un régime peut s'écarter sans que sa masse le fasse.
         Un groupe sans tête l'année ``depuis`` est absent.
+
+        La dépense d'un groupe du COR compte sa réversion, et les masses par
+        régime n'ont que les droits directs : le troisième indice porte la
+        masse à la part de réversion que le COR projette pour l'ensemble
+        (:attr:`AvenirAnnuel.facteur_reversion`), comme la base du modèle. La
+        réversion reculant de 10,3 à 5,7 % de la dépense d'ici 2070, la
+        comparer en droits directs prêtait au modèle deux points de plus en
+        2050, cinq en 2070 (action 147, étape 13) ; la part de chaque groupe,
+        que le classeur par régime de 2024 publie, suit celle de l'ensemble à
+        trois dixièmes près pour LURA et les complémentaires.
         """
         resultat: dict[str, dict[int, tuple[float, float, float]]] = {}
         reference = self.annee(depuis)
@@ -964,7 +974,8 @@ class Avenir:
             masse = sum(ligne.masses_regimes.get(regime, 0.0) for regime in regimes)
             tetes = sum(ligne.tetes_regimes.get(regime, 0.0) for regime in regimes)
             relative = masse / tetes / ligne.salaire_reel if tetes > 0.0 else 0.0
-            return tetes, relative, masse / (ligne.pib * ligne.coefficient_constants)
+            return tetes, relative, (masse * ligne.facteur_reversion
+                                     / (ligne.pib * ligne.coefficient_constants))
 
         for groupe, regimes in groupes.items():
             tetes, relative, part = mesure(reference, regimes)

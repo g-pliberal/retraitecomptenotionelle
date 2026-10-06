@@ -27,12 +27,17 @@ de celui de l'ancienne convention, et il est beaucoup plus petit.
 
 AU-DELÀ DE LA DERNIÈRE ENQUÊTE
 ------------------------------
-La répartition du bord est reconduite, sauf pour les caisses de la fonction
-publique (:attr:`EffectifsRetraites.CAISSES_PROJETEES`) : le COR tient les
-retraités de l'État stables jusqu'en 2070, ceux de ses civils en recul, et fait
-croître de moitié ceux de la CNRACL, quand la population des retraités croît
-d'un quart. Reconduire leur part de 2024 faisait croître les têtes de l'État de
-22 % dans la grille (action 147, étape 9).
+La répartition du bord est reconduite, sauf pour les caisses dont un retraité
+est une personne (:attr:`EffectifsRetraites.CAISSES_PROJETEES`) : celles de la
+fonction publique, où le COR tient les retraités de l'État stables jusqu'en
+2070, ceux de ses civils en recul, et fait croître de moitié ceux de la CNRACL,
+quand la population des retraités croît d'un quart — reconduire leur part de
+2024 faisait croître les têtes de l'État de 22 % dans la grille (action 147,
+étape 9) — ; et celles qui se ferment, les exploitants agricoles, la SNCF et
+les IEG, dont le COR divise les retraités par deux ou trois d'ici 2070, et dont
+la part de 2024 gardée privait d'autant le salariat privé (étape 13). Ce
+qu'elles perdent ou gagnent, les caisses reconduites de la grille se le
+partagent au prorata de leur effectif de bord (:data:`CAISSES_DE_LA_GRILLE`).
 """
 
 from __future__ import annotations
@@ -58,17 +63,38 @@ class EffectifsRetraites:
 
     #: Les caisses que la grille prolonge au-delà de la dernière enquête par
     #: les retraités que le COR leur projette (``retraites_projetes.csv``),
-    #: et non par leur effectif de bord. Ce sont celles de la fonction
-    #: publique, où le compte du COR suit les recrutements de fonctionnaires :
-    #: le recul des civils de l'État, la croissance de la CNRACL. Ailleurs, les
-    #: retraités qu'il compte croissent bien plus vite que les personnes, à
-    #: mesure que les polypensionnés se multiplient — ceux de la Cnav de 40 %
-    #: jusqu'en 2070, ceux de l'Ircantec de 160 %, les personnes de 28 % — :
+    #: et non par leur effectif de bord. Ce sont celles dont le retraité est
+    #: une personne plus qu'un droit. Celles de la fonction publique, où le
+    #: compte du COR suit les recrutements de fonctionnaires : le recul des
+    #: civils de l'État, la croissance de la CNRACL (action 147, étape 9). Et
+    #: celles qui se ferment (étape 13) : les exploitants agricoles, dont le
+    #: COR divise les retraités par deux d'ici 2050, la SNCF, fermée aux
+    #: recrutements depuis 2020, et les IEG, depuis septembre 2023 — leur part
+    #: de 2024, reconduite, gardait aux non-salariés une dépense qui doublait
+    #: celle du COR en 2050, et aux régimes spéciaux une dépense moitié plus
+    #: haute, au détriment du privé. Ailleurs, les retraités qu'il compte
+    #: croissent bien plus vite que les personnes, à mesure que les
+    #: polypensionnés se multiplient — ceux de la Cnav de 40 % jusqu'en 2070,
+    #: de l'Ircantec de 160 %, de la CNAVPL de 200 %, les personnes de 28 % — :
     #: les prolonger ainsi pèserait plus de carrières qu'il n'y a de retraités
     #: (la dérive de 2070 passait de 1,097 à 1,111), et les autres caisses
-    #: gardent leur répartition de 2024.
+    #: gardent leur répartition de 2024, à ce qu'elles se partagent près.
     CAISSES_PROJETEES = ("fonction_publique_etat_civile",
-                         "fonction_publique_etat_militaire", "cnracl")
+                         "fonction_publique_etat_militaire", "cnracl",
+                         "msa_exploitants", "sncf", "cnieg")
+
+    #: Les caisses que les cas types de la grille pèsent
+    #: (``castypes.CAS_TYPES``, dont un test garde l'accord). Leur total est
+    #: celui que les poids normalisent : au-delà de la dernière enquête, il
+    #: reste celui du bord, et ce que les caisses projetées perdent, les
+    #: caisses reconduites se le partagent au prorata de leur effectif de bord
+    #: (action 147, étape 13). Sans quoi la part que perdent les caisses qui
+    #: se ferment irait aussi, à la normalisation, à celles que le COR
+    #: prolonge, et la fonction publique dépasserait la part qu'il lui donne.
+    CAISSES_DE_LA_GRILLE = ("cnav", "fonction_publique_etat_civile", "cnracl",
+                            "fonction_publique_etat_militaire", "sncf", "cnieg",
+                            "rci_complementaire", "msa_exploitants", "cnavpl",
+                            "ircantec")
 
     def __init__(self, racine: Path,
                  projetees: tuple[str, ...] = CAISSES_PROJETEES) -> None:
@@ -87,7 +113,10 @@ class EffectifsRetraites:
                 )
         if not valeurs:
             raise ValueError(f"aucune ligne exploitable dans {chemin}")
-        _prolonger(valeurs, racine, projetees)
+        #: Les caisses que le COR prolonge vraiment, celles de ``projetees``
+        #: dont il publie les retraités.
+        self.projetees: tuple[str, ...] = _prolonger(valeurs, racine, projetees)
+        _partager(valeurs, self.CAISSES_DE_LA_GRILLE, self.projetees)
         # PONCTUELLE, et non escalier : c'est une ENQUÊTE annuelle, où une
         # année absente est une année non mesurée et non une année sans
         # changement. La DREES ne publie pas la coordination RATP en 2022 —
@@ -127,7 +156,7 @@ class EffectifsRetraites:
 
 
 def _prolonger(valeurs: dict[str, dict[int, ValeurAnnuelle]], racine: Path,
-               caisses: tuple[str, ...]) -> None:
+               caisses: tuple[str, ...]) -> tuple[str, ...]:
     """Prolonge chaque caisse de ``caisses`` au-delà de sa dernière enquête,
     par la croissance que le COR donne à ses retraités, RAPPORTÉE à celle de
     tous les retraités.
@@ -141,12 +170,14 @@ def _prolonger(valeurs: dict[str, dict[int, ValeurAnnuelle]], racine: Path,
     ``croissance_depense_retraite.csv``) : deux millésimes, que rien d'autre
     ne permet d'apparier. La valeur prolongée est ``estimee``, comme celle que
     la reconduction donnait ; au-delà du classeur, la dernière est reconduite.
+    Rend les caisses prolongées.
     """
     projetes = _lire_projetes(racine / "reference" / "regimes" / "retraites_projetes.csv")
     personnes = _taux_personnes(racine / "reference" / "macro"
                                 / "croissance_depense_retraite.csv")
     if not projetes or not personnes:
-        return
+        return ()
+    prolongees: list[str] = []
     for caisse in caisses:
         points, cor = valeurs.get(caisse), projetes.get(caisse)
         if not points or not cor:
@@ -154,6 +185,7 @@ def _prolonger(valeurs: dict[str, dict[int, ValeurAnnuelle]], racine: Path,
         bord = max(points)
         if bord not in cor:
             continue
+        prolongees.append(caisse)
         indice = 1.0
         for annee in range(bord + 1, max(cor) + 1):
             taux = next((t for (debut, fin), t in personnes.items()
@@ -166,6 +198,49 @@ def _prolonger(valeurs: dict[str, dict[int, ValeurAnnuelle]], racine: Path,
                 valeur=points[bord].valeur * cor[annee] / cor[bord] / indice,
                 fiabilite=Fiabilite.ESTIMEE,
             )
+    return tuple(prolongees)
+
+
+def _partager(valeurs: dict[str, dict[int, ValeurAnnuelle]],
+              grille: tuple[str, ...], projetees: tuple[str, ...]) -> None:
+    """Au-delà de la dernière enquête, tient le total des caisses de la grille
+    à celui du bord : ce que les caisses projetées perdent ou gagnent sur leur
+    effectif de bord, les caisses reconduites de la grille se le partagent au
+    prorata du leur. Une caisse projetée garde ainsi, une fois les poids
+    normalisés, la part des retraités que le COR lui donne ; les autres, entre
+    elles, celles du bord. Les valeurs ajoutées sont ``estimee``, comme la
+    reconduction qu'elles remplacent ; au-delà de la dernière année projetée,
+    la série reconduit la sienne.
+    """
+    presentes = [caisse for caisse in grille if valeurs.get(caisse)]
+    prolongees = [caisse for caisse in presentes if caisse in projetees]
+    reconduites = [caisse for caisse in presentes if caisse not in projetees]
+    if not prolongees or not reconduites:
+        return
+    bord = max(max(valeurs[caisse]) for caisse in reconduites)
+    fin = max(max(valeurs[caisse]) for caisse in prolongees)
+
+    def valeur(caisse: str, annee: int) -> float:
+        points = valeurs[caisse]
+        return points[max(a for a in points if a <= annee)].valeur
+
+    base_reconduites = 0.0
+    for caisse in reconduites:
+        base_reconduites += valeur(caisse, bord)
+    base_prolongees = 0.0
+    for caisse in prolongees:
+        base_prolongees += valeur(caisse, bord)
+    if base_reconduites <= 0.0:
+        return
+    for annee in range(bord + 1, fin + 1):
+        prolongees_annee = 0.0
+        for caisse in prolongees:
+            prolongees_annee += valeur(caisse, annee)
+        partage = (base_reconduites + base_prolongees - prolongees_annee) / base_reconduites
+        for caisse in reconduites:
+            valeurs[caisse][annee] = ValeurAnnuelle(
+                annee=annee, valeur=valeur(caisse, bord) * partage,
+                fiabilite=Fiabilite.ESTIMEE)
 
 
 def _lire_projetes(chemin: Path) -> dict[str, dict[int, float]]:

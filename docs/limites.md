@@ -1808,10 +1808,10 @@ indexée sur les prix depuis 1941.
 appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
-Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,01<!--/--> en 2070. La garantie coûte
-<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,47<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->15<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
-bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,34<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->13<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,6<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->617<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,03<!--/--> en 2070. La garantie coûte
+<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,47<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,33<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->13<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,5<!--/--> millions —, soit
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->604<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
 déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 385<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
@@ -1882,18 +1882,18 @@ Coût ; le simulateur prolonge la situation de chacun.
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
 solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,75<!--/--> point de PIB quand
 tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,90<!--/--> quand la moitié le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−1,04<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,25<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−1,05<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,26<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
 et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->49<!--/--> % du
 PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->59<!--/--> % quand la moitié le font,
-de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->69<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->86<!--/--> % pour
+de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->70<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->87<!--/--> % pour
 la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
 tient donc à ce que les reportés travaillent ; qu'elle en ait un n'en dépend
 plus, depuis que le compte d'un fonctionnaire d'État ne reçoit que la part
 « retraite » du taux de l'État — sous le taux entier, la dette atteindrait
-<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->108<!--/--> % si aucun ne travaillait. La part reste à lire dans
+<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->109<!--/--> % si aucun ne travaillait. La part reste à lire dans
 les évaluations de la réforme de 2010, qui a reculé l'âge légal de deux ans :
 elles ont suivi ce que sont devenus ceux qu'elle a fait attendre.
 
@@ -2055,8 +2055,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,66<!--/--> en 2070 pour le scénario 3 ne se lit donc
-  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->40<!--/--> % : il se lit comme la marge dont ce système
+  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,68<!--/--> en 2070 pour le scénario 3 ne se lit donc
+  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->41<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
 - **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas
@@ -2892,7 +2892,7 @@ le 19 septembre 2026 :
    caisses de retraite dénombre les retraités caisse par caisse et année par
    année depuis 2004. Chaque cas type porte désormais l'effectif de sa caisse ;
    l'agent de conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,5<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->7,7<!--/--> %, et les quatre carrières du
-   privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->56<!--/--> % à elles quatre.
+   privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->55<!--/--> % à elles quatre.
 
    Ce que l'ancienne convention valait est donc mesuré plutôt qu'argumenté, et
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
@@ -3127,13 +3127,14 @@ un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
 FSV, hors RAFP »). Le modèle, laissé à lui-même — sa masse de pensions mise à
-l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->14,88<!--/--> %**. Trois dixièmes de point
+l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,18<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et
-**quatre dixièmes à l'arrivée, du même côté** : depuis l'étape 11 de l'action
-147, la trajectoire propre croît à peu près comme celle du COR, et passe sous
-elle entre les deux. Elle finissait un point au-dessus jusqu'à l'étape 10,
-deux et demi jusqu'à l'étape 8. C'est pourquoi, depuis le 5 octobre 2026, la page
+**un dixième à l'arrivée, du même côté** : depuis l'étape 13 de l'action
+147, la trajectoire propre croît à peu près comme celle du COR, moins vite au
+milieu de la période, un peu plus vite ensuite. Elle finissait quatre dixièmes
+sous lui à l'étape 11, un point au-dessus jusqu'à l'étape 10, deux et demi
+jusqu'à l'étape 8. C'est pourquoi, depuis le 5 octobre 2026, la page
 ne prend plus au modèle la dépense du système actuel projetée : elle prend celle
 du COR, année par année, et n'emprunte au modèle que le rapport de masses qui
 en tire les autres systèmes (action 147). Le chiffre que le lecteur retrouve
@@ -3144,8 +3145,8 @@ demeure dans le rapport, et les deux contrôles qui suivent le mesurent.
 publiée, le coût du système actuel est la masse de pensions des cas types, mise
 à l'échelle par l'ancrage qui la rend égale à la dépense de cette année-là. La
 même formule, appliquée aux années publiées, devrait retrouver ce qui a été
-dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−11,2<!--/--> % en 2000, de
-<!--chiffre:mesure(reconstitution?annee=2009)-->−14,0<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−3,1<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−19,8<!--/--> % en 1990. La masse du
+dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−11,4<!--/--> % en 2000, de
+<!--chiffre:mesure(reconstitution?annee=2009)-->−14,1<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−3,2<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−19,8<!--/--> % en 1990. La masse du
 modèle croît donc plus vite que la dépense réelle, et l'ancrage reporte cette
 dérive sur l'avenir : c'est le symptôme le plus direct de l'écart au COR.
 L'ancrage suppose, sans le vérifier, que l'écart des cas types au réel est le
@@ -3175,15 +3176,15 @@ le 5 octobre 2026 dans `decomposition_depense_retraite.csv` et
 (`Avenir.decomposition`). De 2025 à 2070, le COR compte
 <!--chiffre:mesure(decomposition?facteur=retraites&de=2025&a=2070&source=cor)-->27,6<!--/--> % de
 retraités de plus, le modèle
-<!--chiffre:mesure(decomposition?facteur=retraites&de=2025&a=2070)-->26,5<!--/--> % : ce n'est pas par
+<!--chiffre:mesure(decomposition?facteur=retraites&de=2025&a=2070)-->26,2<!--/--> % : ce n'est pas par
 les têtes que la trajectoire s'écarte. La pension moyenne relative, elle, recule
 de <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070&source=cor)-->−17,2<!--/--> %
 chez le COR et de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−14,6<!--/--> % seulement
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−12,7<!--/--> % seulement
 dans le modèle ; et sur le passé, de 2005 à 2025, elle a crû de
 <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025&source=cor)-->8,9<!--/--> %
 quand le modèle la fait croître de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025)-->11,4<!--/--> %. L'écart
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025)-->11,8<!--/--> %. L'écart
 de 2070 et celui de la reconstitution sont donc un seul et même défaut : la
 pension que la grille sert à chaque retraité progresse, d'une génération à
 l'autre, plus vite que la pension moyenne réelle. Deux tests le tiennent,
@@ -3274,14 +3275,43 @@ l'État, le régime général et l'Ircantec, au même âge de départ
 deux corrections ne portent pas : les carrières incomplètes des natifs, entrés
 plus tard dans la vie active sous une durée requise qui s'allonge. La durée
 validée de la DREES (figure 3.2 du même rapport) les mesure ; portées à la
-masse, elles feraient passer la trajectoire propre nettement sous celle du COR
-au milieu de la période, où la grille sert déjà au privé une pension relative
-sous la sienne. Elles attendent ce qui fait ce défaut-là (feuille de route,
-action 147, étape 11). Ce n'est pas le salaire moyen du modèle (étape 12) :
+masse, elles faisaient passer la trajectoire propre nettement sous celle du
+COR au milieu de la période, où la grille servait au privé une dépense sous la
+sienne. Elles attendaient ce qui faisait ce défaut-là (feuille de route,
+action 147, étape 11). Ce n'était pas le salaire moyen du modèle (étape 12) :
 celui des cas types du COR est un revenu par tête, non-salariés compris, qui
 croît moins vite depuis 2000 ; en rendre la croissance aux salaires anciens
 creuserait l'écart au lieu de le combler, le stock des retraités d'aujourd'hui
 en profitant plus que les départs à venir.
+
+**Les régimes qui se ferment (action 147, étape 13).** C'était la
+composition. Au-delà de la dernière enquête de la DREES, chaque caisse
+gardait sa part des retraités de 2024, hormis celles de la fonction publique :
+les exploitants agricoles, dont le COR divise les retraités par deux d'ici
+2050, la SNCF, fermée aux recrutements depuis 2020, et les IEG, depuis
+septembre 2023, gardaient la leur jusqu'en 2070, et les poids, normalisés, en
+privaient le salariat privé. Ces trois caisses suivent désormais, comme
+celles de la fonction publique, les retraités que le COR leur projette, et ce
+qu'elles perdent, les autres caisses de la grille se le partagent au prorata
+de leur effectif de 2024 (`EffectifsRetraites.CAISSES_PROJETEES`,
+`CAISSES_DE_LA_GRILLE`) : LURA suit le COR à deux points près jusqu'en 2060, et
+les non-salariés, qui doublaient sa dépense, ne s'en écartent plus que d'un
+dixième au plus. Pas la Cnav, l'Ircantec, le RCI ni la CNAVPL, dont le COR
+multiplie les retraités plus vite que les personnes, à mesure que les
+polypensionnés se multiplient. La même étape compare la dépense de chaque
+groupe réversion comprise des deux côtés : le modèle n'en comptait que les
+droits directs, quand la réversion recule dans la dépense du COR, ce qui lui
+prêtait deux points de plus en 2050. Il reste aux complémentaires quelques
+points de dépense sous le COR au milieu de la période : les polypensionnés,
+qu'une grille de carrières à un seul régime ne représente pas — le
+fonctionnaire ou l'indépendant passé par le privé, le contractuel de la
+fonction publique, dont le COR fait croître les retraités de l'Ircantec bien
+plus vite que les personnes —, quand la complémentaire des libéraux croît,
+elle, plus vite que la sienne. La grille par pas de cinq générations, enfin,
+place mal les changements d'âge de la réforme de 2023, et les années de
+l'ancrage et du calage en font partie : une grille annuelle, qui a ses propres
+creux, ne déplace l'écart que d'un point et demi en 2050, pour quatre fois
+plus de calcul ; la grille reste à cinq ans.
 
 **La fourchette, tant que l'écart dure (action 147, étape 3).** La page ne
 prend plus au modèle la dépense du système actuel, mais elle lui prend
@@ -3294,16 +3324,16 @@ vigueur que la grille sert autrement que le COR —, la masse des systèmes
 notionnels est juste et seule celle du système actuel est fausse : le rapport
 doit être multiplié par la dérive de l'année, la croissance de la masse du
 modèle rapportée à celle de la dépense du COR depuis la première année
-projetée, <!--chiffre:mesure(derive_cor?annee=2070)-->1<!--/--> % de plus en 2070, un peu moins au milieu de la période
-(`rapport_derive`, `Cout.solde_derive`, `Cout.dette_derive`). La proposition coûte alors <!--chiffre:mesure(part_pib?scenario=6&annee=2070&borne=haute)-->8,5<!--/--> % du PIB en 2070
-au lieu de <!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,4<!--/-->, son solde moyen 2026-2070 est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−0,63<!--/--> % au lieu de
-<!--chiffre:mesure(solde_moyen?scenario=6)-->−0,75<!--/-->, son coefficient d'équilibre de <!--chiffre:mesure(coefficient?scenario=6&borne=haute)-->1,00<!--/--> au lieu de <!--chiffre:mesure(coefficient?scenario=6)-->1,01<!--/-->, et sa dette en
-2070 de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->41<!--/--> % du PIB au lieu de <!--chiffre:mesure(dette?scenario=6)-->49<!--/-->. Le système actuel ne bouge dans aucune
+projetée, <!--chiffre:mesure(derive_cor?annee=2070)-->3<!--/--> % de plus en 2070, un peu moins au milieu de la période
+(`rapport_derive`, `Cout.solde_derive`, `Cout.dette_derive`). La proposition coûte alors <!--chiffre:mesure(part_pib?scenario=6&annee=2070&borne=haute)-->8,6<!--/--> % du PIB en 2070
+(<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,4<!--/--> dans la première lecture), son solde moyen 2026-2070 est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−0,75<!--/--> %
+(<!--chiffre:mesure(solde_moyen?scenario=6)-->−0,75<!--/-->), son coefficient d'équilibre de <!--chiffre:mesure(coefficient?scenario=6&borne=haute)-->0,99<!--/--> (<!--chiffre:mesure(coefficient?scenario=6)-->1,02<!--/-->), et sa dette en
+2070 de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->48<!--/--> % du PIB (<!--chiffre:mesure(dette?scenario=6)-->49<!--/-->). Le système actuel ne bouge dans aucune
 des deux lectures, ni la garantie vieillesse, lue sur la distribution des
 pensions. La page Coût donne les deux lectures côte à côte. La seconde a été la
 borne haute de la proposition jusqu'à l'étape 11 de l'action 147 ; la dérive
-passant sous un au milieu de la période, elle la place désormais un peu plus
-bas, et la fourchette est étroite.
+passant sous un au milieu de la période et au-dessus à la fin, elle l'allège
+au milieu et l'alourdit à l'horizon, et la fourchette est étroite.
 
 Ce que le dépôt sait de la part qui revient à chaque lecture est mince, et il
 faut le dire. Le COR attribue la baisse de sa pension moyenne relative à des

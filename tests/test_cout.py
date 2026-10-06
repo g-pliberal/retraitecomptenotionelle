@@ -763,9 +763,13 @@ DECOMPOSITION_TETES = 0.03
 #: 9), puis 6,2 % (le modèle -12,0 %), l'Agirc-Arrco au taux moyen des
 #: entreprises (étape 10), puis 3,1 % (le modèle -14,6 %), la masse de chaque
 #: génération portant ses arrivées tardives et le fonctionnaire de l'État
-#: entrant tard dans son régime (étape 11). Il ne doit que descendre, vers la
-#: cible.
-DECOMPOSITION_PENSION_CLIQUET = 0.04
+#: entrant tard dans son régime (étape 11). L'étape 13 le relève à 5,3 % (le
+#: modèle -12,7 %) : les exploitants agricoles, la SNCF et les IEG suivent les
+#: retraités du COR, et leurs têtes vont aux carrières du privé, mieux payées
+#: que celles des exploitants — la correction d'un défaut qui en masquait un
+#: autre, l'écart passant de -2,3 à -0,4 % en 2050. Il ne doit que descendre,
+#: vers la cible.
+DECOMPOSITION_PENSION_CLIQUET = 0.06
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -839,11 +843,15 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: CNRACL quitte la liste : ses têtes suivent celles du COR, et sa dépense
 #: rend l'écart de sa pension moyenne, que ses têtes trop lentes masquaient.
 #: À l'étape 10, les complémentaires y entrent, à -0,1 % : l'Agirc-Arrco
-#: compte ses points au taux moyen des entreprises.
+#: compte ses points au taux moyen des entreprises. À l'étape 13, la dépense
+#: du modèle porte sa réversion comme celle du COR (LURA +3,4 %, complémentaires
+#: -1,7 %), et les non-salariés y entrent, à +0,2 % : les exploitants
+#: agricoles suivent les retraités que le COR leur projette.
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,
     ("depense_part_pib", "complementaires"): 0.03,
+    ("depense_part_pib", "non_salaries_base"): 0.03,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
 #: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés
@@ -868,14 +876,21 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: génération ses arrivées tardives : pension relative de la FPE +3,8 %, de la
 #: CNRACL +6,1 %, de l'Agirc-Arrco +20,4 % ; dépense de la FPE +23,1 %, de la
 #: CNRACL +8,4 %, des non-salariés +128,4 %, des régimes spéciaux +80,0 %.
+#: L'étape 13 compare la dépense du modèle réversion comprise, comme celle du
+#: COR, et fait suivre aux exploitants agricoles, à la SNCF et aux IEG les
+#: retraités qu'il leur projette, ce qu'ils perdent allant aux caisses
+#: reconduites : dépense de la FPE +19,1 %, de la CNRACL +4,8 % ; les régimes
+#: spéciaux passent sous le COR, à -32,7 %, la grille n'ayant que la SNCF et
+#: les IEG, qui se ferment plus vite que la RATP, les notaires ou la Banque de
+#: France ; les non-salariés passent aux groupes suivis. Le cliquet porte sur
+#: l'écart en valeur absolue.
 DECOMPOSITION_GROUPES_CLIQUETS = {
     ("pension_relative", "fpe"): 0.04,
     ("pension_relative", "cnracl"): 0.07,
     ("pension_relative", "agirc_arrco"): 0.21,
-    ("depense_part_pib", "fpe"): 0.24,
-    ("depense_part_pib", "cnracl"): 0.09,
-    ("depense_part_pib", "non_salaries_base"): 1.29,
-    ("depense_part_pib", "regimes_speciaux"): 0.81,
+    ("depense_part_pib", "fpe"): 0.20,
+    ("depense_part_pib", "cnracl"): 0.05,
+    ("depense_part_pib", "regimes_speciaux"): 0.33,
 }
 
 
@@ -906,7 +921,9 @@ def test_la_fonction_publique_suit_ses_retraites_et_son_traitement_au_cor():
     retraités jusqu'en 2070, quand le COR la fait reculer d'un tiers. Les
     caisses de la fonction publique suivent désormais la croissance que le
     classeur par régime du COR donne à leurs retraités, rapportée à celle de
-    tous les retraités ; les autres gardent leur effectif de bord.
+    tous les retraités ; les autres gardent leur effectif de bord, à ce
+    qu'elles se partagent près depuis l'étape 13
+    (``test_les_caisses_qui_se_ferment_rendent_leur_part_au_prive``).
 
     LE TRAITEMENT. Le traitement indiciaire relatif valait un avant 2025 ; il
     porte désormais le décrochage que la figure 1.14 du rapport de juin 2026
@@ -935,7 +952,7 @@ def test_la_fonction_publique_suit_ses_retraites_et_son_traitement_au_cor():
         assert effectifs.fiabilite(caisse, 2070) == Fiabilite.ESTIMEE
         assert effectifs.effectif(caisse, 2070) / effectifs.effectif(caisse, 2030) \
             == pytest.approx(cor[caisse][2070] / cor[caisse][2030] / personnes, rel=1e-12)
-    assert effectifs.effectif("cnav", 2070) == reconduits.effectif("cnav", 2070)
+    assert effectifs.effectif("cnav", 2024) == reconduits.effectif("cnav", 2024)
     poids, avant = poids_effectifs(effectifs, 2070), poids_effectifs(reconduits, 2070)
     assert poids["fonctionnaire_sedentaire"] < 0.7 * avant["fonctionnaire_sedentaire"]
     assert poids["fonctionnaire_actif"] > avant["fonctionnaire_actif"]
@@ -1103,6 +1120,45 @@ console.log(JSON.stringify(generations.map((g) => [
         assert completude == arrivees.completude(generation), generation
 
 
+def test_les_caisses_qui_se_ferment_rendent_leur_part_au_prive():
+    """L'étape 13 de l'action 147 : les exploitants agricoles, la SNCF et les
+    IEG suivent, comme la fonction publique, les retraités que le COR leur
+    projette ; ce que les caisses projetées perdent, les caisses reconduites
+    de la grille se le partagent au prorata de leur effectif de bord, si bien
+    que le total que les poids normalisent reste celui de la dernière enquête.
+
+    Leur part de 2024, reconduite, gardait aux non-salariés une dépense qui
+    doublait celle du COR en 2050, aux régimes spéciaux une dépense moitié plus
+    haute, et en privait le salariat privé : la dépense des complémentaires
+    finissait 7 % sous celle du COR en 2050, celle de LURA 3 % — un défaut qui
+    en compensait un autre (``test_l_ecart_au_cor_groupe_par_groupe``).
+    """
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    grille = EffectifsRetraites.CAISSES_DE_LA_GRILLE
+    assert set(grille) == {caisse for cas in CAS_TYPES for caisse in cas.caisses}
+    assert {"msa_exploitants", "sncf", "cnieg"} <= set(effectifs.projetees)
+    # La dernière année de l'enquête : au-delà, tout est estimé.
+    bord = max(annee for annee in range(2000, 2071)
+               if effectifs.fiabilite("cnav", annee) != Fiabilite.ESTIMEE)
+    assert bord >= 2024
+
+    def total(annee: int) -> float:
+        return sum(effectifs.effectif(caisse, annee) for caisse in grille)
+
+    for annee in (2025, 2040, 2070, 2080):
+        assert total(annee) == pytest.approx(total(bord), rel=1e-12), annee
+    reconduites = [caisse for caisse in grille if caisse not in effectifs.projetees]
+    for annee in (2040, 2070):
+        partages = [effectifs.effectif(caisse, annee) / effectifs.effectif(caisse, bord)
+                    for caisse in reconduites]
+        assert max(partages) == pytest.approx(min(partages), rel=1e-12), annee
+        assert min(partages) > 1.0, annee
+    poids_bord, poids_2070 = poids_effectifs(effectifs, bord), poids_effectifs(effectifs, 2070)
+    assert poids_2070["exploitant_agricole"] < 0.5 * poids_bord["exploitant_agricole"]
+    assert poids_2070["agent_sncf_conduite"] < 0.5 * poids_bord["agent_sncf_conduite"]
+    assert poids_2070["salaire_moyen"] > poids_bord["salaire_moyen"]
+
+
 def test_la_masse_se_decompose_regime_par_regime(avenir):
     """Les masses par régime de :attr:`AvenirAnnuel.masses_regimes` refont la
     base du modèle, et chaque régime qui sert une pension projetée est dans un
@@ -1170,11 +1226,11 @@ def test_l_ecart_au_cor_groupe_par_groupe(avenir, comptes):
     """
     ecarts = _ecarts_par_groupe(avenir, comptes)
     for cle, cliquet in DECOMPOSITION_GROUPES_CLIQUETS.items():
-        assert ecarts[cle] <= cliquet, (
+        assert abs(ecarts[cle]) <= cliquet, (
             f"{cle} : {ecarts[cle]:+.1%} du COR à l'horizon, cliquet {cliquet:.0%}")
-        assert ecarts[cle] > cliquet - 0.01, (
+        assert abs(ecarts[cle]) > cliquet - 0.01, (
             f"{cle} : {ecarts[cle]:+.1%}, l'écart a baissé : abaisser le cliquet "
-            f"à {math.ceil(ecarts[cle] * 100) / 100:.2f}")
+            f"à {math.ceil(abs(ecarts[cle]) * 100) / 100:.2f}")
 
 
 def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
@@ -1183,7 +1239,8 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     année projetée : un à cette jonction et sur les années publiées. Elle
     valait 1,203 en 2070 le 5 octobre 2026, le modèle ne faisant pas reculer sa
     pension moyenne comme le COR ; elle passe sous un, de peu, de 2031 à 2067
-    depuis le 6 octobre (action 147, étape 11).
+    depuis le 6 octobre (action 147, étape 11), de 2031 à 2058 depuis que les
+    régimes qui se ferment rendent leur part au privé (étape 13).
     """
     jonction = avenir.annee(avenir.premiere_annee_projetee)
     assert jonction.derive == 1.0
@@ -1200,13 +1257,17 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     # 9, la fonction publique suivant les retraités et le traitement indiciaire
     # du COR, puis 1,039 à l'étape 10, l'Agirc-Arrco comptant ses points au taux
     # moyen des entreprises, puis 1,008 à l'étape 11, la masse de chaque
-    # génération portant ses arrivées tardives : un cliquet, qui ne doit que
-    # descendre à mesure que l'écart s'explique.
-    assert 1.0 < horizon.derive < 1.02, horizon.derive
-    # Les arrivées tardives pèsent dès 2035, quand la grille sert encore au
-    # privé une pension relative 3 à 4 % sous celle du COR : la dérive passe
-    # sous un, et au plus bas à 0,977 en 2054. Une dérive qui s'en écarterait
-    # de plus de 3 % dirait un défaut, non un écart d'hypothèses.
+    # génération portant ses arrivées tardives, puis 1,028 à l'étape 13, les
+    # exploitants agricoles, la SNCF et les IEG rendant au privé, mieux payé,
+    # la part que le COR leur retire — ce que les carrières incomplètes des
+    # natifs, plus courtes à chaque génération, doivent reprendre : un cliquet,
+    # qui ne doit que descendre à mesure que l'écart s'explique.
+    assert 1.0 < horizon.derive < 1.03, horizon.derive
+    # Les arrivées tardives pèsent dès 2035 : la dérive passe sous un, au plus
+    # bas à 0,985 en 2034, à 0,977 en 2054 avant l'étape 13, quand les régimes
+    # qui se ferment privaient encore le privé de leur part. Une dérive qui
+    # s'en écarterait de plus de 3 % dirait un défaut, non un écart
+    # d'hypothèses.
     for ligne in avenir.projetees():
         assert 0.97 < ligne.derive < 1.03, (ligne.annee, ligne.derive)
 
@@ -1228,12 +1289,13 @@ def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
         cout.dette.horizon("actuel"), rel=1e-12)
     # Dix points de PIB de plus jusqu'à l'étape 10 de l'action 147, un et demi
     # jusqu'à l'étape 11, la dérive de 2070 y tombant de 8 à 4 %. Depuis, la
-    # dérive passe sous un de 2031 à 2067, et la seconde lecture ALLÈGE la
-    # dette de la proposition, de huit points : les deux lectures encadrent
-    # encore la vérité, mais la seconde n'est plus la borne haute.
+    # dérive passe sous un au milieu de la période, et la seconde lecture
+    # ALLÈGE la dette de la proposition : de huit points jusqu'à l'étape 12,
+    # d'un depuis l'étape 13, la dérive repassant au-dessus d'un après 2058. Les
+    # deux lectures encadrent encore la vérité, de près.
     ecart = cout.dette_derive.horizon("notionnel_liberal") - cout.dette.horizon(
         "notionnel_liberal")
-    assert -0.10 < ecart < -0.05, ecart
+    assert -0.03 < ecart < 0.0, ecart
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):

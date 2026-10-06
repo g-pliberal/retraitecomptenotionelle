@@ -14868,7 +14868,7 @@ export const MESURES_BLOCAGES = {
   dette_2070_actuel: 66,
   coefficient_minimum: 0.86,
   decennie_coefficient_minimum: 2050,
-  coefficient_2070: 1.01,
+  coefficient_2070: 1.02,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.
