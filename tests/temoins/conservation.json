@@ -544,7 +544,8 @@
    "2026-10-06 | action 147, étape 16 : l'ancrage lu dans les données, le cas type au SMIC payé au SMIC",
    "2026-10-06 | action 148, étape 1 : main vert, les fichiers fabriqués à la charge de GitHub",
    "2026-10-06 | action 148, étape 2 : les journaux en fichiers séparés",
-   "2026-10-06 | action 148, étape 3 : la prose et ses chiffres ancrés"
+   "2026-10-06 | action 148, étape 3 : la prose et ses chiffres ancrés",
+   "2026-10-06 | action 149 : une version de l'architecture par fichier"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1704,6 +1705,7 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "6a9f780ceea30959",
     "17da47cf0e408f72",
     "663449a8760d9d7c",
     "3946953eb00dc8e3",
@@ -1736,6 +1738,12 @@
     "a41a70a4b81ec01a",
     "d461793fde8da074",
     "8c472892f7610eb2"
+   ]
+  },
+  "docs/architecture/versions/2026-10-06-une-version-par-fichier.md": {
+   "Version du 6 octobre 2026 : une version par fichier": [
+    "b4cc7c10df2634f1",
+    "c671ae73a3ee8bad"
    ]
   },
   "docs/archives/conventions.md": {

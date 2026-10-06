@@ -107,3 +107,30 @@ def test_le_filet_voit_un_recit_perdu_et_le_retrouve_archive(tmp_path):
     (tmp_path / "docs" / "archives" / "journal.md").write_text(
         "# Journal, archivé\n\nLe 3 mars, on a trouvé une erreur.\n", encoding="utf-8")
     assert conservation.verifier(reference, arbre) == []
+
+
+def test_une_version_de_l_architecture_est_gelee_des_son_fichier_ecrit(tmp_path):
+    """Depuis l'action 149, une version de l'architecture a son fichier : un
+    récit, que le filet gèle sans que `zones.yaml` le déclare — chaque
+    version l'y déclarerait, et deux sessions y écriraient de nouveau au même
+    endroit. Une note de la feuille de route, elle, vit tant que son action
+    est ouverte."""
+    (tmp_path / "data" / "reference" / "prose").mkdir(parents=True)
+    (tmp_path / conservation.ZONES).write_text("fichiers: {}\n", encoding="utf-8")
+    version = tmp_path / conservation.VERSIONS / "2026-10-06-un-sujet.md"
+    version.parent.mkdir(parents=True)
+    version.write_text("# Version du 6 octobre 2026 : un sujet\n\nCe qui change.\n",
+                       encoding="utf-8")
+    note = tmp_path / "docs" / "feuille_de_route" / "149" / "2026-10-06-etape.md"
+    note.parent.mkdir(parents=True)
+    note.write_text("# Action 149 : une étape\n\nVivante.\n", encoding="utf-8")
+    arbre = conservation.Arbre(racine=tmp_path)
+    reference = conservation.figer(arbre)
+    assert reference["paragraphes"] == {
+        f"{conservation.VERSIONS}/2026-10-06-un-sujet.md": {
+            "Version du 6 octobre 2026 : un sujet": [
+                conservation.empreinte("# Version du 6 octobre 2026 : un sujet"),
+                conservation.empreinte("Ce qui change.")]}}
+    version.write_text(version.read_text(encoding="utf-8").replace("change", "changeait"),
+                       encoding="utf-8")
+    assert conservation.verifier(reference, arbre)

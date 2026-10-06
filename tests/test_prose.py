@@ -726,3 +726,49 @@ def test_les_notes_de_la_feuille_de_route_se_rangent_par_action():
                                   "dans la feuille de route")
     assert vues, "aucune note rangée : le dossier des notes a disparu"
     assert not fautes, fautes
+
+
+#: Les mois d'une date écrite, pour lire celle d'un titre de version.
+MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
+        "septembre", "octobre", "novembre", "décembre")
+
+
+def test_les_versions_de_l_architecture_se_rangent_une_par_fichier():
+    """Deux sessions qui ajoutent chacune une version de l'architecture
+    n'écrivent plus au même endroit (action 149). Jusqu'à la 5.37, chaque
+    version s'ajoutait en tête de la liste et récrivait la ligne d'en-tête :
+    rejoués deux à deux comme menés en parallèle, les 33 couples de versions
+    successives entraient tous en conflit, et auraient pris le même numéro.
+    Une version a désormais son fichier, sous `docs/architecture/versions/`,
+    nommé de sa date et de son sujet, qui s'ouvre sur « # Version du <date> :
+    <sujet> » ; elle ne porte pas de numéro, l'en-tête du document n'en nomme
+    aucun, et la liste numérotée, close à la 5.37, ne s'allonge plus."""
+    conservation = _script("conservation")
+    texte = (RACINE / "docs" / "architecture.md").read_text(encoding="utf-8")
+    en_tete = texte[: texte.index("\n## ")]
+    liste = texte[texte.index("\n## Les versions\n"):]
+    fautes = []
+    if re.search(r"\b[Vv]ersion \d+\.\d+", en_tete):
+        fautes.append("l'en-tête de docs/architecture.md nomme une version : "
+                      "il n'en nomme aucune, chacune a son fichier")
+    numeros = sorted(re.findall(r"^- \*\*5\.(\d+)\*\*", liste, re.M), key=int)
+    if numeros != [str(n) for n in range(1, 38)]:
+        fautes.append(f"« Les versions » porte {len(numeros)} versions numérotées : "
+                      "la liste est close à la 5.37, une version neuve a son fichier")
+    nom = re.compile(r"(\d{4})-(\d{2})-(\d{2})-[a-z0-9]+(?:-[a-z0-9]+)*\.md")
+    dossier = RACINE / conservation.VERSIONS
+    versions = sorted(dossier.iterdir()) if dossier.is_dir() else []
+    assert versions, f"{conservation.VERSIONS} : aucune version rangée"
+    for chemin in versions:
+        forme = nom.fullmatch(chemin.name)
+        if not forme:
+            fautes.append(f"{chemin.name} : AAAA-MM-JJ-sujet.md, sans majuscule ni accent")
+            continue
+        annee, mois, jour = (int(morceau) for morceau in forme.groups())
+        date = f"{'1er' if jour == 1 else jour} {MOIS[mois - 1]} {annee}"
+        titre = chemin.read_text(encoding="utf-8").split("\n", 1)[0]
+        if not titre.startswith(f"# Version du {date} : "):
+            fautes.append(f"{chemin.name} : s'ouvre sur « # Version du {date} : <sujet> »")
+        elif re.search(r"\d+\.\d+", titre):
+            fautes.append(f"{chemin.name} : une version ne porte pas de numéro")
+    assert not fautes, fautes

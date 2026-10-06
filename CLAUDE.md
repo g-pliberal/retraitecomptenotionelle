@@ -186,7 +186,12 @@ qu'elle dure. D'où cinq règles.
   session qui s'arrête en cours d'étape dit seulement où, dans le bloc
   « Reprise ». Une
   version de l'architecture par domaine, à sa clôture, ou par décision hors
-  domaine. Les fiches et
+  domaine, dans un fichier à elle :
+  `docs/architecture/versions/<AAAA-MM-JJ>-<sujet>.md`, qui s'ouvre sur
+  « # Version du <date> : <sujet> » (action 149). Elle ne porte pas de
+  numéro, que deux sessions prendraient ensemble, et se cite par sa date et
+  son sujet ; ni l'en-tête du document ni sa liste, close à la 5.37, ne se
+  touchent. Les fiches et
   `limites.md` une fois, à la fin de l'étape, sauf ce qu'un test exige plus
   tôt. Un message de commit de cinq lignes au plus sous son titre, le détail
   allant à la feuille de route. Le journal de veille garde sa règle.

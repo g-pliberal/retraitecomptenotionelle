@@ -8369,3 +8369,25 @@ avait relevé, le cas type au SMIC écrit 0,55 fois le salaire moyen.
   côté, par chance. `Echelle.euros_dans_les_bornes` (et son jumeau) pousse
   l'euro d'un cran vers l'intérieur aux bords, pour la bascule comme pour le
   message : de 356 à 35 533 € bruts par mois.
+
+### 149. Une version de l'architecture par fichier : deux sessions n'écrivent plus au même endroit — `en cours`
+
+**Reprise, au 6 octobre 2026.** Faite en une étape : chaque version de
+l'architecture a son fichier, sous `docs/architecture/versions/`, sans
+numéro, et l'en-tête du document n'en nomme plus aucune. Reste à clore
+l'action et à l'archiver avec sa note, la seule, du 6 octobre.
+
+**Demande**, le 6 octobre 2026 : « est-ce que cela va aider ? si oui, je
+veux bien », puis « donne moi le prompt et je lance ça moi-même », après un
+avis réservé : le gain serait faible, et les numéros des versions sont un
+compteur commun. L'action 148, close le même jour, laissait hors d'elle la
+liste « Les versions » de `docs/architecture.md` et sa ligne d'en-tête, que
+chaque version récrit au même endroit.
+
+**Le plan**, une étape : mesurer sur l'historique de `main` ce que le
+changement évite ; ranger les versions pour que deux sessions qui en ajoutent
+une chacune n'écrivent plus au même endroit, sans toucher aux numéros passés,
+que la feuille de route et les notes citent ; adapter les scripts et les
+tests qui lisent la liste ou l'en-tête, et un test qui tienne le rangement ;
+`CLAUDE.md` et l'architecture (§ 9.3, annexe B) disent la règle ; rien de
+perdu (`conservation.py --depuis HEAD`, puis `--figer`).

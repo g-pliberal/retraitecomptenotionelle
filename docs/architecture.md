@@ -1,16 +1,18 @@
 # Architecture du dépôt
 
-*Version 5.37, du 6 octobre 2026 ; l'architecture a été décidée par le
-propriétaire le 25 septembre 2026. Ce document dit son état : il reste
-vrai tant qu'aucune décision ne le change, et la liste de ses changements,
-un par domaine clos ou par décision, est en bas (« Les versions »). Il est
-tiré de la note de décision
+*L'architecture a été décidée par le propriétaire le 25 septembre 2026. Ce
+document dit son état : il reste vrai tant qu'aucune décision ne le change,
+et ses changements, un par domaine clos ou par décision, sont ses versions,
+chacune dans son fichier, sous
+[`docs/architecture/versions/`](architecture/versions/), nommé de sa date et
+de son sujet ; les premières, numérotées de 5.1 à 5.37, sont en bas
+(« Les versions »). Il est tiré de la note de décision
 [`docs/decisions/0001-architecture.md`](decisions/0001-architecture.md), la
 « note 0001 », gelée, qui garde en plus ses récits : pourquoi cette
 architecture (son § 1), et comment elle a été éprouvée (son § 14). La
-numérotation est la sienne. Les chiffres datés qu'elle donne sont ici des
-ancres, qu'une sonde recalcule, ou des renvois à elle ou au tableau de bord
-(§ 9.3).*
+numérotation des sections est la sienne. Les chiffres datés qu'elle donne
+sont ici des ancres, qu'une sonde recalcule, ou des renvois à elle ou au
+tableau de bord (§ 9.3).*
 
 *Comment le lire.* Une session courte lit L'essentiel, le § 13 et l'annexe C.
 Où en est le dépôt, ce qui ne va pas encore et ce qui reste à faire ne
@@ -1550,8 +1552,17 @@ qu'on a corrigé.
 
 ### 9.3 Les documents
 
-- **`docs/architecture.md`** : ce document, l'état de l'architecture, avec son
-  numéro de version et la liste de ses changements.
+- **`docs/architecture.md`** : ce document, l'état de l'architecture. Ses
+  changements, un par domaine clos ou par décision, sont ses versions, chacune
+  dans son fichier depuis l'action 149 : `docs/architecture/versions/`,
+  nommé de sa date et de son sujet (`2026-10-06-une-version-par-fichier.md`),
+  qui s'ouvre sur « # Version du <date> : <sujet> ». Deux sessions qui en
+  ajoutent une chacune n'écrivent donc plus au même endroit. Une version ne
+  porte pas de numéro, compteur que deux sessions prendraient ensemble
+  (§ 13.3), et l'en-tête du document n'en nomme aucune ; les premières,
+  numérotées de 5.1 à 5.37, restent à sa fin, telles qu'elles ont été
+  écrites. Récit, une version est gelée dès son fichier écrit
+  (`scripts/conservation.py`) ; `tests/test_prose.py` tient le rangement.
 - **Les décisions** : `docs/decisions/`, une note courte par choix. La
   première, `0001-architecture.md`, est l'architecture telle qu'elle a été
   décidée, gelée, avec ses récits : pourquoi cette architecture, et comment
@@ -1783,7 +1794,9 @@ dates nommées. Elles vivent dans des fichiers de vocabulaire,
     migration ;
   - un script qui convertit tout l'existant d'un coup ;
   - des témoins identiques.
-- Ce document porte un numéro de version et la liste de ses changements.
+- Ce document porte la liste de ses changements, une version par fichier,
+  nommée de sa date et de son sujet (§ 9.3) : après la 5.37, pas plus que la
+  carte, il n'a de numéro qui monte.
 - **La carte a une empreinte**, calculée sur ses fichiers. Son journal est
   fabriqué à partir des historiques des fiches : un test exige, pour chaque
   changement, sa ligne d'historique, avec les périodes et les résultats
@@ -2206,6 +2219,7 @@ Ce que les deux fiches montrent :
 |---|---|
 | `CLAUDE.md` | une page qui renvoie ici ; l'histoire git en archive |
 | `README.md` | inchangé : c'est le texte de la proposition, sa référence (§ 3) |
+| (nouveau) `docs/architecture.md` | l'état de l'architecture, tiré de la note 0001 ; ses versions, depuis l'action 149, une par fichier, sans numéro, dans `docs/architecture/versions/`, et les premières, de 5.1 à 5.37, à sa fin (§ 9.3) |
 | `docs/feuille_de_route.md` | ce que la carte ne sait pas dire (l'outillage, le site, les décisions) ; les actions faites et le journal en archive ; ce qui touche une règle, recopié dans sa fiche ; depuis l'action 148, les notes des actions ouvertes, une par fichier, dans `docs/feuille_de_route/<action>/` |
 | `docs/limites.md` | les sections d'état : les limites du tableau de bord, fabriquées ; les récits : en archive, et recopiés dans les fiches concernées |
 | `docs/methodologie.md` | l'état du moteur, réorganisé par étapes |
@@ -2495,6 +2509,12 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+Depuis le 6 octobre 2026 (action 149), une version ne s'écrit plus ici :
+chacune a son fichier, sous
+[`docs/architecture/versions/`](architecture/versions/), nommé de sa date et
+de son sujet, et ne porte plus de numéro. Celles qui suivent, de 5.37 à 5.1,
+restent telles qu'elles ont été écrites, la plus récente en tête.
 
 - **5.37**, 6 octobre 2026 : la prose et la référence de la conservation ne mettent plus deux sessions en conflit (action 148, étape 3). Ce que les scripts écrivent dans la prose, les chiffres ancrés et les blocs produits, GitHub le refait après chaque envoi ; un conflit de rebasage qui ne porte que sur eux garde la valeur de `main`, et la référence de la conservation, faite de listes, se fusionne par ensembles : deux pilotes de fusion, `scripts/fusionner.py`, que `pousser.sh` déclare à git (§ 10, § 12). Ce qui s'écrit à la main reste un conflit.
 

@@ -1,0 +1,16 @@
+date: "2026-10-06"
+session: "action 149 : une version de l'architecture par fichier"
+consulte: >-
+  Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle.
+  L'historique de main, les 62 commits de docs/architecture.md, pour mesurer ce que
+  l'ajout d'une version y met en conflit.
+trouve: >-
+  Aucun texte de droit. Les 34 commits qui touchent la liste des versions ou son
+  en-tête y ajoutent chacun une version ; rejoués deux à deux comme menés en
+  parallèle, les 33 couples entrent en conflit, et prendraient le même numéro. Une
+  version par fichier, sans numéro, et un en-tête qui n'en nomme aucune en évitent 19 ;
+  les 14 autres tiennent au corps du document.
+reste: >-
+  Les conflits du corps de docs/architecture.md, de la prose écrite à la main, dont
+  le tableau du périmètre (§ 2) ; la décision du conseil d'administration de
+  l'Agirc-Arrco du 14 octobre 2026.

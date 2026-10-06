@@ -24,17 +24,18 @@ début de la réorganisation, réécritures légitimes comprises.
 **Le filet, que le test joue à chaque envoi.** La référence figée,
 ``tests/temoins/conservation.json``, ne tient que ce qui ne doit plus bouger :
 les paragraphes des RÉCITS (``data/reference/prose/zones.yaml``), des notes de
-décision et des archives — hors les actions de la feuille de route encore en
-cours, qui vivent, comme leurs notes (``docs/feuille_de_route/<action>/``,
-gelées avec l'action close sous ``docs/archives/``), et les tableaux que
-``scripts/chiffrage_plf.py`` réécrit —,
-et l'identifiant de chaque entrée des registres. Un récit est gelé : s'il
-manque, il a été perdu ou réécrit. Une section d'état, elle, change avec le
-dépôt, et l'historique git garde ses versions. La référence ne se fige pas par
-dessus une perte : ``--figer`` refuse tant que le filet n'est pas vert. Elle se
-refige à la fin de chaque domaine, pour tenir à leur tour les récits nés
-depuis : ce qui n'est pas encore dans la référence n'est protégé que par
-``--depuis``, quand on le lance.
+décision, des versions de l'architecture (``docs/architecture/versions/``,
+gelées dès leur fichier écrit) et des archives — hors les actions de la
+feuille de route encore en cours, qui vivent, comme leurs notes
+(``docs/feuille_de_route/<action>/``, gelées avec l'action close sous
+``docs/archives/``), et les tableaux que ``scripts/chiffrage_plf.py``
+réécrit —, et l'identifiant de chaque entrée des registres. Un récit est
+gelé : s'il manque, il a été perdu ou réécrit. Une section d'état, elle,
+change avec le dépôt, et l'historique git garde ses versions. La référence ne
+se fige pas par dessus une perte : ``--figer`` refuse tant que le filet n'est
+pas vert. Elle se refige à la fin de chaque domaine, pour tenir à leur tour
+les récits nés depuis : ce qui n'est pas encore dans la référence n'est
+protégé que par ``--depuis``, quand on le lance.
 
 Deux paragraphes sont les mêmes s'ils ne diffèrent que par les blancs, les
 dièses d'un titre, ou la valeur d'un chiffre ancré, que
@@ -99,6 +100,15 @@ CARTE = "data/reference/regles"
 
 #: Le journal de veille, une entrée par fichier depuis l'action 148.
 JOURNAL_DE_VEILLE = "data/reference/legislation/journal_de_veille"
+
+#: Les versions de l'architecture, une par fichier depuis l'action 149
+#: (docs/architecture.md, § 9.3) : des récits, gelés dès leur fichier écrit,
+#: sans déclaration dans zones.yaml, que chaque version récrirait sinon au
+#: même endroit.
+VERSIONS = "docs/architecture/versions"
+
+#: Les dossiers gelés en entier, que zones.yaml les déclare ou non.
+TOUT_GELES = ("docs/decisions/", "docs/archives/", VERSIONS + "/")
 
 #: Les états d'une ligne de veille, sous le nom que le vocabulaire des fiches
 #: leur a donné.
@@ -229,8 +239,9 @@ def _vivantes(texte: str) -> set[int]:
 def geles(arbre: Arbre) -> dict[str, dict[str, list[str]]]:
     """Les paragraphes qui ne doivent plus bouger, par document et par section.
 
-    Ceux des récits, des notes de décision (``docs/decisions/``) et des
-    archives (``docs/archives/``), hors les actions vivantes de la feuille de
+    Ceux des récits, des notes de décision (``docs/decisions/``), des
+    versions de l'architecture (``VERSIONS``) et des archives
+    (``docs/archives/``), hors les actions vivantes de la feuille de
     route et ce qu'un script écrit : les tableaux, et tout bloc que
     ``zones.yaml`` déclare produit (``blocs_produits``), repères compris. Un
     tableau collé à son repère ``<!-- nom:debut -->`` ne commence pas par une
@@ -243,7 +254,7 @@ def geles(arbre: Arbre) -> dict[str, dict[str, list[str]]]:
         texte = arbre.lire(chemin)
         if texte is None:
             continue
-        tout_gele = chemin.startswith(("docs/decisions/", "docs/archives/"))
+        tout_gele = chemin.startswith(TOUT_GELES)
         if not tout_gele and chemin not in zonage.fichiers:
             continue
         lignes = texte.split("\n")

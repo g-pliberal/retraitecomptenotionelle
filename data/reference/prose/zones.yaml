@@ -70,7 +70,10 @@ fichiers:
   # naissances, le prélèvement sur les pensions — ou des renvois à la note,
   # qui les garde à leur date : le temps de calcul, les comptes de rédactions,
   # le recensement des autres modèles. La note elle-même, gelée, est sous
-  # `docs/decisions/`, hors du contrôle.
+  # `docs/decisions/`, hors du contrôle. La liste des versions, close à la
+  # 5.37 : depuis l'action 149, chaque version a son fichier sous
+  # `docs/architecture/versions/`, un récit hors du contrôle, comme les notes,
+  # que `scripts/conservation.py` gèle dès qu'il est écrit.
   # ------------------------------------------------------------------------
   docs/architecture.md:
     defaut: etat
