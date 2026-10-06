@@ -8362,7 +8362,8 @@ avait relevé, le cas type au SMIC écrit 0,55 fois le salaire moyen.
 **Reprise, au 6 octobre 2026.** Faite : l'étape 1 — les fichiers fabriqués
 et la suite complète passent à GitHub (`tests.yml`, `publier_fabrique.sh`),
 `pousser.sh` règle seul les conflits qui ne portent que sur eux, et le code
-additionne de gauche à droite sous tout Python. Reste l'étape 2 (les journaux
+additionne de gauche à droite sous tout Python ; première course verte, et
+son commit fabriqué. Reste l'étape 2 (les journaux
 en fichiers séparés), puis l'étape 3 (la prose et ses chiffres ancrés), une
 session neuve chacune ; commencer par mesurer, sur `git log`, quels fichiers
 écrits à la main deux sessions d'une même action touchent encore en commun.
@@ -8457,3 +8458,8 @@ Hors de l'action, à reprendre peut-être : une mémoire des calculs
   `donnees.json` comme `equilibre.json` sont ceux de `main`.
   `publier_fabrique.sh`, joué sur le même dépôt : une course verte pousse son
   commit, une course dont la branche a bougé ne pousse rien.
+- *La première course réelle*, sur dcda00a : verte, en 10 min 28 (8 à 9 min
+  avant, sans la régénération) ; le robot a poussé 204cec9, `docs/etat.md`
+  refait (le nombre de tests avait changé, laissé exprès à GitHub) et le
+  verdict. Le jeton du workflow peut pousser : aucun réglage à changer. Sous
+  3.13, le tableau de bord qu'il a fabriqué est à jour.
