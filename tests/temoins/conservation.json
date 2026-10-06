@@ -543,7 +543,8 @@
    "2026-10-06 | action 147, étape 15 : l'ancrage du salaire moyen, recensé chez les autres modèles, rien de changé",
    "2026-10-06 | action 147, étape 16 : l'ancrage lu dans les données, le cas type au SMIC payé au SMIC",
    "2026-10-06 | action 148, étape 1 : main vert, les fichiers fabriqués à la charge de GitHub",
-   "2026-10-06 | action 148, étape 2 : les journaux en fichiers séparés"
+   "2026-10-06 | action 148, étape 2 : les journaux en fichiers séparés",
+   "2026-10-06 | action 148, étape 3 : la prose et ses chiffres ancrés"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1703,6 +1704,7 @@
   "docs/architecture.md": {
    "Les versions": [
     "be8be90a103bfe59",
+    "17da47cf0e408f72",
     "663449a8760d9d7c",
     "3946953eb00dc8e3",
     "05c647c1e85ce64d",
@@ -2282,6 +2284,16 @@
     "5adce77d28b377ac",
     "a133715a7a372541",
     "611c5051b7799907"
+   ],
+   "148. Plusieurs sessions sans se marcher dessus : la fabrique à GitHub, les journaux séparés — `fait`": [
+    "5f7bde9b72da780a",
+    "5796d9096e3bb009",
+    "7fab4e9e26fe9776",
+    "688efc52b9697a96",
+    "8623852b50b137e1",
+    "4d8915445f761358",
+    "395c318f870809ab",
+    "651c81397a71c418"
    ],
    "15. Rendre les pages longues parcourables — `fait`": [
     "ea6c4ffd35b0e2ee",
@@ -3827,6 +3839,20 @@
    ],
    "Second rang — réel, mais plus cher ou plus étroit": [
     "286f88be8d4d211f"
+   ]
+  },
+  "docs/archives/feuille_de_route/148/2026-10-06-etape-2.md": {
+   "Action 148, étape 2 : les journaux en fichiers séparés": [
+    "a46bb9aa48c67961",
+    "61d2fcc15c06d84c",
+    "13ed1a684e2782e2"
+   ]
+  },
+  "docs/archives/feuille_de_route/148/2026-10-06-etape-3.md": {
+   "Action 148, étape 3 : la prose et la conservation, réglées au rebasage": [
+    "0cfd2a74713d3c5e",
+    "7f16cd5d627d719a",
+    "095c79a0e4529fac"
    ]
   },
   "docs/archives/limites.md": {
