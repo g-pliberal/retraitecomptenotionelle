@@ -536,7 +536,10 @@
    "2026-10-05 | action 89 : les quatre lignes du RAFP au vivier",
    "2026-10-05 | action 89 : les seize lignes de l'Agirc-Arrco au vivier",
    "2026-10-05 | action 89 : les vingt-trois lignes des régimes spéciaux au vivier",
-   "2026-10-06 | action 147, étape 11 : les carrières que la grille ne connaît pas, les arrivées tardives et l'entrée tardive des fonctionnaires"
+   "2026-10-06 | action 147, étape 11 : les carrières que la grille ne connaît pas, les arrivées tardives et l'entrée tardive des fonctionnaires",
+   "2026-10-06 | action 147, étape 12 : le salaire moyen du modèle contre celui de TRAJECTOiRE, ni son ancrage ni sa croissance",
+   "2026-10-06 | action 147, étape 13 : le défaut du privé de 2030 à 2055, les régimes qui se ferment et la réversion des groupes",
+   "2026-10-06 | action 147, étape 14 : les carrières incomplètes des natifs, de la durée d'assurance par génération du COR"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -6833,7 +6836,7 @@
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
     "d8fe3e7fd9af50b2",
-    "4f9ad4e83a1317cb"
+    "c2bb9e7adb12d67d"
    ],
    "Avant de partir": [
     "5d7ed1de7dc7c4d7",

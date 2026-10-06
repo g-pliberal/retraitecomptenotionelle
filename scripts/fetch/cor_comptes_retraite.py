@@ -64,6 +64,14 @@ rapporterait : elle est ici, et c'est le TAUX qui baisse, de 32,14 % à 30,05 %,
 l'assiette restant à peu près stable en part de PIB. Le dépôt supposait
 l'inverse.
 
+Et une septième, depuis le 6 octobre 2026 : la DURÉE D'ASSURANCE moyenne des
+retraités de droit direct résidant en France, femmes et hommes, génération par
+génération de 1940 à 2000 (figure « Durée moyenne d'assurance des femmes et des
+hommes, en trimestres »). L'EIR de 2020 pour les générations qu'il observe, les
+évolutions de TRAJECTOiRE au-delà. La grille fait partir chacune de ses
+carrières au taux plein, avec la durée requise : cette figure dit ce qui manque
+aux carrières réelles, natifs compris (action 147, étape 14).
+
 POURQUOI LE SCRIPT CHERCHE LE RAPPORT AU LIEU DE L'ADRESSER
 ------------------------------------------------------------
 Le COR republie son rapport chaque année, sous une adresse neuve et des noms de
@@ -186,6 +194,13 @@ SERIES_ENSEMBLE: tuple[tuple[str, str], ...] = (
     ("pension_relative", "pension moyenne de l"),
     ("cotisants_par_retraite", "rapport entre le nombre de cotisants"),
 )
+
+#: La figure des durées d'assurance par génération, et ses deux lignes.
+TITRE_DUREES = "duree moyenne d'assurance des femmes et des hommes"
+SEXES_DUREES: tuple[tuple[str, str], ...] = (("hommes", "hommes"), ("femmes", "femmes"))
+
+#: Bornes du contrôle de vraisemblance des générations lues en en-tête.
+PREMIERE_GENERATION_PLAUSIBLE, DERNIERE_GENERATION_PLAUSIBLE = 1900, 2020
 
 #: Une sous-période du tableau des taux de croissance : « 2002-2025 ».
 PERIODE = re.compile(r"^\s*(\d{4})\s*-\s*(\d{4})\s*$")
@@ -751,6 +766,63 @@ def decomposition(adresses: list[str]) -> dict:
     return trouves
 
 
+def lire_durees(grille: dict) -> dict[str, dict[int, float]]:
+    """Les trimestres de chaque sexe, génération par génération.
+
+    Les valeurs se rattachent à la ligne des générations PAR COLONNE : la
+    figure laisse des cellules vides (1941, 1943, 1945 en 2026), et les lire
+    dans l'ordre décalerait toutes les suivantes.
+    """
+    lignes: dict[int, dict[int, object]] = {}
+    for (ligne, colonne), valeur in grille.items():
+        lignes.setdefault(ligne, {})[colonne] = valeur
+    entete: dict[int, int] = {}
+    for ligne in sorted(lignes):
+        generations = {
+            colonne: int(valeur) for colonne, valeur in lignes[ligne].items()
+            if isinstance(valeur, (int, float)) and float(valeur).is_integer()
+            and PREMIERE_GENERATION_PLAUSIBLE <= valeur <= DERNIERE_GENERATION_PLAUSIBLE
+        }
+        if len(generations) >= 10:
+            entete = generations
+            break
+    if not entete:
+        raise LookupError("figure des durées d'assurance sans ligne de générations")
+    durees: dict[str, dict[int, float]] = {}
+    for ligne in sorted(lignes):
+        libelles = [valeur for _, valeur in sorted(lignes[ligne].items())
+                    if isinstance(valeur, str)]
+        if not libelles:
+            continue
+        plie = _sans_accents(libelles[0])
+        for cle, attendu in SEXES_DUREES:
+            if plie == attendu:
+                durees[cle] = {
+                    entete[colonne]: float(valeur)
+                    for colonne, valeur in lignes[ligne].items()
+                    if colonne in entete and isinstance(valeur, (int, float))
+                }
+    manquants = [cle for cle, _ in SEXES_DUREES if not durees.get(cle)]
+    if manquants:
+        raise LookupError("figure des durées d'assurance sans ligne : " + ", ".join(manquants))
+    return durees
+
+
+def durees_assurance(adresses: list[str]) -> dict[str, dict[int, float]]:
+    """La figure des durées d'assurance par génération, cherchée par son titre."""
+    for adresse in adresses:
+        try:
+            classeur = _classeur(adresse)
+        except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
+            continue
+        for grille in classeur.values():
+            titre = grille.get((0, 0)) or grille.get((0, 1)) or ""
+            if isinstance(titre, str) and TITRE_DUREES in _sans_accents(titre):
+                return lire_durees(grille)
+    raise LookupError("figure des durées d'assurance par génération introuvable "
+                      "dans les classeurs du rapport")
+
+
 def pages_annuelles() -> list[str]:
     """Les pages des rapports annuels, du plus récent au plus ancien.
 
@@ -840,6 +912,7 @@ def main() -> int:
         eec = bloc_eec(adresses)
         sensibilite = sensibilites(adresses)
         decompose = decomposition(adresses)
+        durees = durees_assurance(adresses)
         ventilation = ventilations(pages_annuelles())
     except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
         print(f"COR indisponible : {erreur}", file=sys.stderr)
@@ -883,6 +956,9 @@ def main() -> int:
         # croissances par sous-période. Rien n'y est calculé : c'est le
         # contrôle de la trajectoire du modèle. Voir DECOMPOSITION.
         "decomposition": decompose,
+        # En TRIMESTRES, génération par génération : la durée d'assurance des
+        # retraités de droit direct résidant en France. Voir TITRE_DUREES.
+        "durees_assurance": durees,
         # En MILLIONS d'euros, contrairement au reste : c'est un contrôle de la
         # série des rapports à la CCSS, qui sont écrits dans cette unité.
         "ventilation_transferts": ventilation,
@@ -905,6 +981,9 @@ def main() -> int:
         print(f"Sensibilité {dimension} : {', '.join(variantes)}")
     for cle, contenu in sorted(decompose.items()):
         print(f"Décomposition {cle} : {', '.join(sorted(contenu))}")
+    for sexe, serie in sorted(durees.items()):
+        print(f"Durées d'assurance, {sexe} : générations {min(serie)}-{max(serie)}, "
+              f"{len(serie)} valeurs")
     return 0
 
 

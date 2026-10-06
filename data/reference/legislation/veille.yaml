@@ -5753,3 +5753,24 @@ journal:
       COR au milieu de la période (les polypensionnés) ; la FPE, les régimes spéciaux à
       l'horizon, la CNRACL ; l'ancrage du salaire moyen, au propriétaire ; la décision du
       conseil d'administration de l'Agirc-Arrco du 14 octobre 2026.
+  - date: "2026-10-06"
+    session: "action 147, étape 14 : les carrières incomplètes des natifs, de la durée d'assurance par génération du COR"
+    consulte: >-
+      Les six classeurs de données du rapport du COR de juin 2026 (parties 1 à 4,
+      synthèse, annexe méthodologique), relus par scripts/fetch/cor_comptes_retraite.py :
+      la figure 3.2 (durée de carrière par génération, résidents en France et à
+      l'étranger) et la figure 3.22 (durée moyenne d'assurance des femmes et des hommes,
+      résidents en France, EIR 2020 et TRAJECTOiRE).
+    trouve: >-
+      Aucun texte de droit : l'étape ne touche ni le scénario 1 ni le simulateur. La
+      durée validée des retraités résidant en France, rapportée à la durée requise de
+      leur génération, passe de 0,94 (1940) à 0,985 (1955) puis à 0,91 (2000) ; les
+      arrivées tardives en expliquent la moitié du manque pour la génération 1940, les
+      deux tiers pour celle de 2000, et les natifs des générations 1950 à 1965
+      dépassent la durée requise. La figure 3.2, qui compte les résidents à
+      l'étranger, donne le même profil.
+    reste: >-
+      Le privé sous le COR au milieu de la période (les polypensionnés) ; le passé ;
+      la FPE et les régimes spéciaux à l'horizon ; l'ancrage du salaire moyen, au
+      propriétaire ; la décision du conseil d'administration de l'Agirc-Arrco du 14
+      octobre 2026.

@@ -676,8 +676,10 @@ RECONSTITUTION_DEPUIS = 2000
 #: défaut qui en compensait un autre (voir le test) ; -17,1 % le même jour,
 #: l'étape 8 de l'action 147 ayant corrigé la comptabilité de la base ;
 #: -14,3 % le même jour, l'étape 10 comptant l'Agirc-Arrco au taux moyen des
-#: entreprises.
-RECONSTITUTION_CLIQUET = 0.145
+#: entreprises ; -16,1 % le 6 octobre, l'étape 14 pesant chaque génération de
+#: sa durée validée : les carrières plus courtes des femmes nées avant 1945
+#: abaissent le passé, que d'autres défauts tenaient déjà trop bas.
+RECONSTITUTION_CLIQUET = 0.165
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -767,9 +769,11 @@ DECOMPOSITION_TETES = 0.03
 #: modèle -12,7 %) : les exploitants agricoles, la SNCF et les IEG suivent les
 #: retraités du COR, et leurs têtes vont aux carrières du privé, mieux payées
 #: que celles des exploitants — la correction d'un défaut qui en masquait un
-#: autre, l'écart passant de -2,3 à -0,4 % en 2050. Il ne doit que descendre,
-#: vers la cible.
-DECOMPOSITION_PENSION_CLIQUET = 0.06
+#: autre, l'écart passant de -2,3 à -0,4 % en 2050. L'étape 14 le ramène à
+#: 2,4 % (le modèle -15,2 %), à la cible : la complétude de chaque génération
+#: porte les carrières incomplètes des natifs, plus courtes à chaque
+#: génération après 1965. Il ne doit que descendre.
+DECOMPOSITION_PENSION_CLIQUET = 0.03
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -846,11 +850,14 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: compte ses points au taux moyen des entreprises. À l'étape 13, la dépense
 #: du modèle porte sa réversion comme celle du COR (LURA +3,4 %, complémentaires
 #: -1,7 %), et les non-salariés y entrent, à +0,2 % : les exploitants
-#: agricoles suivent les retraités que le COR leur projette.
+#: agricoles suivent les retraités que le COR leur projette. À l'étape 14,
+#: les carrières incomplètes des natifs portées : LURA +0,5 %, Cnav +0,2 %,
+#: non-salariés -2,7 %, complémentaires -4,4 %, que les polypensionnés,
+#: absents de la grille, laissent sous le COR (tolérance relevée à 5 %).
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,
-    ("depense_part_pib", "complementaires"): 0.03,
+    ("depense_part_pib", "complementaires"): 0.05,
     ("depense_part_pib", "non_salaries_base"): 0.03,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
@@ -883,14 +890,17 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: spéciaux passent sous le COR, à -32,7 %, la grille n'ayant que la SNCF et
 #: les IEG, qui se ferment plus vite que la RATP, les notaires ou la Banque de
 #: France ; les non-salariés passent aux groupes suivis. Le cliquet porte sur
-#: l'écart en valeur absolue.
+#: l'écart en valeur absolue. L'étape 14 pèse chaque génération de sa durée
+#: validée : pension relative de la FPE +1,0 %, de la CNRACL +3,2 %, de
+#: l'Agirc-Arrco +17,1 % ; dépense de la FPE +15,8 %, de la CNRACL +1,9 %, des
+#: régimes spéciaux -34,4 %.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.04,
-    ("pension_relative", "cnracl"): 0.07,
-    ("pension_relative", "agirc_arrco"): 0.21,
-    ("depense_part_pib", "fpe"): 0.20,
-    ("depense_part_pib", "cnracl"): 0.05,
-    ("depense_part_pib", "regimes_speciaux"): 0.33,
+    ("pension_relative", "fpe"): 0.01,
+    ("pension_relative", "cnracl"): 0.04,
+    ("pension_relative", "agirc_arrco"): 0.18,
+    ("depense_part_pib", "fpe"): 0.16,
+    ("depense_part_pib", "cnracl"): 0.02,
+    ("depense_part_pib", "regimes_speciaux"): 0.35,
 }
 
 
@@ -1012,6 +1022,58 @@ def test_les_arrivees_tardives_se_lisent_dans_la_pyramide():
     assert arrivees.completude(2015) == arrivees.completude(2005)
 
 
+def test_les_carrieres_incompletes_des_natifs():
+    """Action 147, étape 14 : la grille fait partir chacune de ses carrières
+    au taux plein, avec la durée requise de sa génération ; les retraités
+    d'une génération résidant en France en ont validé, en moyenne, ce que
+    publie le COR (figure 3.22 du rapport de juin 2026). La complétude d'une
+    génération est cette durée, moyenne des deux sexes, rapportée à sa durée
+    requise : elle porte déjà les arrivées tardives, et le facteur des natifs
+    en est le reste.
+
+    Le profil est celui que la DREES et TRAJECTOiRE décrivent : les natifs
+    nés vers 1940 — les femmes surtout, 133 trimestres pour la génération
+    1940 — touchent moins que la grille, ceux de 1950 à 1965 un peu plus,
+    leurs carrières dépassant la durée requise, et ceux nés après 1975 de
+    moins en moins, entrés plus tard dans la vie active sous une durée requise
+    qui s'allonge."""
+    from retraite_notionnelle.donnees.chargement import (charger_table_par_generation,
+                                                         valeur_par_generation)
+    from retraite_notionnelle.donnees.population import CarrieresIncompletes
+
+    carrieres = CarrieresIncompletes(RACINE_DONNEES)
+    assert (carrieres.premiere_generation, carrieres.derniere_generation) == (1940, 2005)
+    with (RACINE_DONNEES / "reference" / "macro"
+          / "duree_assurance_generations.csv").open(encoding="utf-8") as flux:
+        durees: dict[int, dict[str, float]] = {}
+        for ligne in csv.DictReader(l for l in flux if not l.startswith("#")):
+            durees.setdefault(int(ligne["generation"]), {})[ligne["sexe"]] = float(
+                ligne["trimestres"])
+    assert min(durees) == 1940 and max(durees) == 2000
+    assert durees[1940]["femmes"] < durees[1940]["hommes"] - 25
+    requises, generations = charger_table_par_generation(
+        RACINE_DONNEES / "reference" / "legislation" / "duree_assurance_requise.csv",
+        "trimestres")
+    for generation, sexes in durees.items():
+        moyenne = (sexes["femmes"] + sexes["hommes"]) / 2
+        requise = valeur_par_generation(requises, generations, generation)[0]
+        assert carrieres.completude(generation) == pytest.approx(moyenne / requise,
+                                                                 rel=1e-12), generation
+        assert carrieres.completude(generation) == pytest.approx(
+            carrieres.arrivees.completude(generation) * carrieres.natifs(generation),
+            rel=1e-15), generation
+    # Une génération que la figure laisse vide prend la moyenne de ses voisines.
+    assert 1941 not in durees and 1943 not in durees
+    assert durees[1942]["hommes"] != durees[1940]["hommes"]
+    assert all(carrieres.completude(g) < 1.0 for g in range(1900, 2016))
+    natifs = {g: carrieres.natifs(g) for g in range(1940, 2001)}
+    assert max(natifs, key=natifs.get) in range(1950, 1966)
+    assert natifs[1940] < 0.98 and all(natifs[g] < 0.99 for g in range(1980, 2001))
+    assert all(natifs[g] > 1.0 for g in range(1953, 1964))
+    assert carrieres.natifs(1900) == carrieres.natifs(1940)
+    assert carrieres.natifs(2015) == carrieres.natifs(2000)
+
+
 def test_les_arrivees_tardives_pesent_les_masses_et_non_les_tetes(population):
     """La complétude d'une cohorte pèse sa masse de pensions, dans tous les
     systèmes et dans chaque régime, et non ses têtes : un arrivé tard est un
@@ -1098,13 +1160,13 @@ def test_le_fonctionnaire_de_l_etat_entre_tard_dans_son_regime():
     script = """
 import { readFileSync } from "node:fs";
 import { DonneesMacro } from "./moteur/js/macro.js";
-import { ArriveesTardives } from "./moteur/js/population.js";
+import { CarrieresIncompletes } from "./moteur/js/population.js";
 const generations = JSON.parse(process.argv[1]);
 const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
 const macro = new DonneesMacro(paquet);
-const arrivees = new ArriveesTardives(paquet);
+const carrieres = new CarrieresIncompletes(paquet);
 console.log(JSON.stringify(generations.map((g) => [
-  macro.delaiEntreeFonctionPublique(g), arrivees.completude(g)])));
+  macro.delaiEntreeFonctionPublique(g), carrieres.completude(g)])));
 """
     calcul = subprocess.run(
         ["node", "--input-type=module", "-e", script, json.dumps(generations)],
@@ -1112,12 +1174,12 @@ console.log(JSON.stringify(generations.map((g) => [
         cwd=Path(__file__).resolve().parents[1], check=False,
     )
     assert calcul.returncode == 0, calcul.stderr[-2000:]
-    from retraite_notionnelle.donnees.population import ArriveesTardives
+    from retraite_notionnelle.donnees.population import CarrieresIncompletes
 
-    arrivees = ArriveesTardives(RACINE_DONNEES)
+    carrieres = CarrieresIncompletes(RACINE_DONNEES)
     for generation, (delai, completude) in zip(generations, json.loads(calcul.stdout)):
         assert delai == macro.delai_entree_fonction_publique(generation), generation
-        assert completude == arrivees.completude(generation), generation
+        assert completude == carrieres.completude(generation), generation
 
 
 def test_les_caisses_qui_se_ferment_rendent_leur_part_au_prive():
@@ -1240,7 +1302,8 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     valait 1,203 en 2070 le 5 octobre 2026, le modèle ne faisant pas reculer sa
     pension moyenne comme le COR ; elle passe sous un, de peu, de 2031 à 2067
     depuis le 6 octobre (action 147, étape 11), de 2031 à 2058 depuis que les
-    régimes qui se ferment rendent leur part au privé (étape 13).
+    régimes qui se ferment rendent leur part au privé (étape 13), de 2031 à
+    l'horizon depuis que chaque génération pèse sa durée validée (étape 14).
     """
     jonction = avenir.annee(avenir.premiere_annee_projetee)
     assert jonction.derive == 1.0
@@ -1260,14 +1323,15 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     # génération portant ses arrivées tardives, puis 1,028 à l'étape 13, les
     # exploitants agricoles, la SNCF et les IEG rendant au privé, mieux payé,
     # la part que le COR leur retire — ce que les carrières incomplètes des
-    # natifs, plus courtes à chaque génération, doivent reprendre : un cliquet,
-    # qui ne doit que descendre à mesure que l'écart s'explique.
-    assert 1.0 < horizon.derive < 1.03, horizon.derive
-    # Les arrivées tardives pèsent dès 2035 : la dérive passe sous un, au plus
-    # bas à 0,985 en 2034, à 0,977 en 2054 avant l'étape 13, quand les régimes
-    # qui se ferment privaient encore le privé de leur part. Une dérive qui
-    # s'en écarterait de plus de 3 % dirait un défaut, non un écart
-    # d'hypothèses.
+    # natifs, plus courtes à chaque génération, doivent reprendre — et
+    # reprennent à l'étape 14 : 0,999. Un écart à un de plus d'un point dirait
+    # qu'un défaut est revenu.
+    assert 0.99 < horizon.derive < 1.01, horizon.derive
+    # Les arrivées tardives et les carrières incomplètes des natifs pèsent dès
+    # 2035 : la dérive passe sous un, au plus bas à 0,975 en 2054 (0,977 avant
+    # l'étape 13, quand les régimes qui se ferment privaient le privé de leur
+    # part, et 0,985 en 2034 avant l'étape 14). Une dérive qui s'en écarterait
+    # de plus de 3 % dirait un défaut, non un écart d'hypothèses.
     for ligne in avenir.projetees():
         assert 0.97 < ligne.derive < 1.03, (ligne.annee, ligne.derive)
 
@@ -1291,11 +1355,12 @@ def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
     # jusqu'à l'étape 11, la dérive de 2070 y tombant de 8 à 4 %. Depuis, la
     # dérive passe sous un au milieu de la période, et la seconde lecture
     # ALLÈGE la dette de la proposition : de huit points jusqu'à l'étape 12,
-    # d'un depuis l'étape 13, la dérive repassant au-dessus d'un après 2058. Les
-    # deux lectures encadrent encore la vérité, de près.
+    # d'un à l'étape 13, la dérive repassant au-dessus d'un après 2058, de sept
+    # depuis l'étape 14, qui la tient sous un de 2031 à l'horizon. Les deux
+    # lectures encadrent encore la vérité.
     ecart = cout.dette_derive.horizon("notionnel_liberal") - cout.dette.horizon(
         "notionnel_liberal")
-    assert -0.03 < ecart < 0.0, ecart
+    assert -0.10 < ecart < -0.05, ecart
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):

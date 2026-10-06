@@ -1401,6 +1401,39 @@ def _decomposition(marqueur: str) -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+#: La dernière génération que l'EIR de 2020 observe dans la figure des durées
+#: d'assurance : celle qui avait 67 ans en 2020, l'âge où tous ont liquidé. Le
+#: COR y écrit des trimestres entiers ; au-delà, des évolutions de TRAJECTOiRE.
+DERNIERE_GENERATION_EIR_DUREES = 1953
+
+
+def _durees_assurance(observees: bool) -> dict[tuple, float]:
+    """La durée d'assurance moyenne des retraités de droit direct résidant en
+    France, par génération et par sexe, en trimestres : observée par l'EIR de
+    2020, puis projetée."""
+    durees = _cor_comptes().get("durees_assurance")
+    if durees is None:
+        raise SourceAbsente(
+            "data/brut/cor_comptes_retraite.json sans durées d'assurance (relancer "
+            "scripts/fetch/cor_comptes_retraite.py)")
+    valeurs: dict[tuple, float] = {}
+    for sexe, serie in durees.items():
+        for generation, trimestres in serie.items():
+            if (int(generation) <= DERNIERE_GENERATION_EIR_DUREES) == observees:
+                valeurs[(str(int(generation)), sexe)] = trimestres
+    return dict(sorted(valeurs.items()))
+
+
+def source_durees_assurance() -> dict[tuple, float]:
+    """Les durées d'assurance des générations que l'EIR de 2020 observe."""
+    return _durees_assurance(True)
+
+
+def source_durees_assurance_projetees() -> dict[tuple, float]:
+    """Les mêmes, des générations que le COR projette."""
+    return _durees_assurance(False)
+
+
 def source_decomposition() -> dict[tuple, float]:
     """La décomposition observée : l'ensemble des régimes, jusqu'à l'« Obs »."""
     return _decomposition("observe")
@@ -4949,6 +4982,71 @@ CERTIFICATIONS = (
         origine="COR, rapport annuel, scénario de référence",
         decimales=7,
         tolerance=5.1e-8,
+        niveau="projetee",
+    ),
+    Certification(
+        nom="duree_assurance_generations",
+        chemin=REFERENCE / "macro" / "duree_assurance_generations.csv",
+        cles=("generation", "sexe"),
+        colonne="trimestres",
+        source=source_durees_assurance,
+        origine="COR, rapport annuel, durée moyenne d'assurance par génération (EIR 2020)",
+        decimales=4,
+        tolerance=5.1e-5,
+        niveau="haute",
+        entete=(
+            "# Durée d'assurance moyenne des retraités de droit direct résidant en France,",
+            "# par génération et par sexe",
+            "# source_id: cor_comptes_systeme_retraite",
+            "# unite: trimestres validés tous régimes, majorations de durée comprises",
+            "# fiabilite:",
+            "#   haute    (1940-1953) : l'EIR de 2020 de la DREES, que le COR publie",
+            "#             (figure 3.22 du rapport de juin 2026) : les générations",
+            "#             qui avaient 67 ans en 2020 ; recontrôlé par",
+            "#             scripts/verifier_donnees.py contre son classeur.",
+            "#   projetee (1954-2000) : le même EIR, prolongé par les évolutions que",
+            "#             le modèle TRAJECTOiRE projette, sous les hypothèses du COR",
+            "#             de juin 2026.",
+            "#",
+            "# À QUOI CE FICHIER SERT",
+            "# ------------------------",
+            "# À dire ce qui manque aux carrières réelles. La grille fait partir",
+            "# chacune de ses carrières au taux plein, avec la durée requise de sa",
+            "# génération ; les retraités d'une génération en ont validé, en",
+            "# moyenne, ce que ce fichier dit. La page Coût en tire la complétude de",
+            "# chaque génération — sa durée moyenne, rapportée à sa durée requise —,",
+            "# qui pèse ses masses de pensions et non ses têtes, sous les",
+            "# conventions de projection du COR (donnees/population.py,",
+            "# CarrieresIncompletes ; action 147, étape 14). Elle porte les",
+            "# carrières courtes des femmes des générations 1940 à 1950, les",
+            "# arrivées tardives et l'entrée plus tardive dans la vie active des",
+            "# générations récentes, sous une durée requise qui s'allonge.",
+            "#",
+            "# CE QU'IL FAUT SAVOIR AVANT DE LE LIRE",
+            "# --------------------------------------",
+            "# 1. Le champ est celui des RÉSIDENTS en France, comme la pyramide du",
+            "#    modèle. La figure 3.2 du même rapport, qui compte aussi les",
+            "#    retraités résidant à l'étranger, donne des durées plus courtes",
+            "#    d'un an et demi, et le même profil d'une génération à l'autre.",
+            "# 2. La figure laisse vides les générations 1941, 1943 et 1945 : elles",
+            "#    ne sont pas inventées ici, et le modèle les interpole.",
+            "# 3. Les majorations de durée — pour enfants surtout — y sont : elles",
+            "#    relèvent la durée des femmes au-dessus de celle des hommes dès la",
+            "#    génération 1953.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="duree_assurance_generations_projetee",
+        chemin=REFERENCE / "macro" / "duree_assurance_generations.csv",
+        cles=("generation", "sexe"),
+        colonne="trimestres",
+        source=source_durees_assurance_projetees,
+        origine="COR, rapport annuel, durée moyenne d'assurance par génération (TRAJECTOiRE)",
+        decimales=4,
+        tolerance=5.1e-5,
         niveau="projetee",
     ),
     Certification(

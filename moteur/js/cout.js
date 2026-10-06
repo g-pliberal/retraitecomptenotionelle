@@ -49,7 +49,7 @@ import { Fiabilite } from "./serie.js";
 import { GROUPES_DU_MODELE, ORGANISMES, POSTES } from "./equilibre.js";
 import { RevalorisationServie } from "./revalorisation.js";
 import { AssietteTva } from "./tva.js";
-import { ArriveesTardives } from "./population.js";
+import { CarrieresIncompletes } from "./population.js";
 
 // La règle des pensions servies est née ici, pour la page Coût ; le
 // simulateur s'en sert aussi, pour dire ce qu'un retraité touche aujourd'hui,
@@ -351,11 +351,11 @@ function pensionnes(simulateurIndividuel, casTypes, liquidation = "droit") {
   // projection, que le simulateur individuel ne suit pas.
   const simulateur = simulateurIndividuel.pourLaProjection();
   const grille = calculerCasTypes(simulateur, casTypes, generations(), liquidation);
-  // Les arrivées après 21 ans, que la pyramide compte et que la grille
-  // paierait en carrière complète : une convention de projection. Voir
-  // `_pensionnes` dans cout.py.
-  const arrivees = simulateur.parametres.conventions_cor
-    ? new ArriveesTardives(simulateur.paquet) : null;
+  // Les arrivées après 21 ans, que la pyramide compte, et les carrières
+  // incomplètes des natifs, que la grille paierait au taux plein : une
+  // convention de projection. Voir `_pensionnes` dans cout.py.
+  const carrieres = simulateur.parametres.conventions_cor
+    ? new CarrieresIncompletes(simulateur.paquet) : null;
   const liste = [];
   for (const [cle, comparaison] of grille.resultats) {
     const pensions = {};
@@ -421,7 +421,7 @@ function pensionnes(simulateurIndividuel, casTypes, liquidation = "droit") {
       autre,
       bascule: simulateur.parametres.annee_bascule,
       partsRegimes: partsRegimes(comparaison.actuel),
-      completudes: arrivees === null ? [] : completudesDe(arrivees,
+      completudes: carrieres === null ? [] : completudesDe(carrieres,
         Number(cle.slice(cle.indexOf("|") + 1))),
     });
   }
@@ -433,10 +433,10 @@ function pensionnes(simulateurIndividuel, casTypes, liquidation = "droit") {
 }
 
 /** Les complétudes des cinq cohortes d'une génération de la grille. */
-function completudesDe(arrivees, generation) {
+function completudesDe(carrieres, generation) {
   const completudes = [];
   for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
-    completudes.push(arrivees.completude(generation + decalage));
+    completudes.push(carrieres.completude(generation + decalage));
   }
   return completudes;
 }

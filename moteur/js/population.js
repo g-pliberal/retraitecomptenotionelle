@@ -102,16 +102,17 @@ export class Population {
 }
 
 /**
- * Ce que les arrivées après 21 ans retirent à la pension d'une génération :
- * la part de la pension d'une carrière française complète que la génération
- * touche, en moyenne (action 147, étape 11). La page Coût en pèse les MASSES de
+ * Ce que les arrivées après 21 ans et les carrières incomplètes des natifs
+ * retirent à la pension d'une génération : la part de la pension d'une
+ * carrière de la grille, partie au taux plein, que la génération touche, en
+ * moyenne (action 147, étapes 11 et 14). La page Coût en pèse les MASSES de
  * chaque cohorte, et non ses têtes. En deçà et au-delà des générations que le
- * paquet porte, la valeur du bord. Voir `ArriveesTardives` dans
- * donnees/population.py.
+ * paquet porte, la valeur du bord. Le Python la calcule (`CarrieresIncompletes`
+ * dans donnees/population.py), le paquet la porte.
  */
-export class ArriveesTardives {
+export class CarrieresIncompletes {
   constructor(paquet) {
-    const brut = paquet.population.arrivees;
+    const brut = paquet.population.completudes;
     this.premiereGeneration = brut.premiere_generation;
     this._completudes = brut.completudes;
     this.derniereGeneration = this.premiereGeneration + this._completudes.length - 1;

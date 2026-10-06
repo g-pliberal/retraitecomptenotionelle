@@ -1,0 +1,158 @@
+# Durée d'assurance moyenne des retraités de droit direct résidant en France,
+# par génération et par sexe
+# source_id: cor_comptes_systeme_retraite
+# unite: trimestres validés tous régimes, majorations de durée comprises
+# fiabilite:
+#   haute    (1940-1953) : l'EIR de 2020 de la DREES, que le COR publie
+#             (figure 3.22 du rapport de juin 2026) : les générations
+#             qui avaient 67 ans en 2020 ; recontrôlé par
+#             scripts/verifier_donnees.py contre son classeur.
+#   projetee (1954-2000) : le même EIR, prolongé par les évolutions que
+#             le modèle TRAJECTOiRE projette, sous les hypothèses du COR
+#             de juin 2026.
+#
+# À QUOI CE FICHIER SERT
+# ------------------------
+# À dire ce qui manque aux carrières réelles. La grille fait partir
+# chacune de ses carrières au taux plein, avec la durée requise de sa
+# génération ; les retraités d'une génération en ont validé, en
+# moyenne, ce que ce fichier dit. La page Coût en tire la complétude de
+# chaque génération — sa durée moyenne, rapportée à sa durée requise —,
+# qui pèse ses masses de pensions et non ses têtes, sous les
+# conventions de projection du COR (donnees/population.py,
+# CarrieresIncompletes ; action 147, étape 14). Elle porte les
+# carrières courtes des femmes des générations 1940 à 1950, les
+# arrivées tardives et l'entrée plus tardive dans la vie active des
+# générations récentes, sous une durée requise qui s'allonge.
+#
+# CE QU'IL FAUT SAVOIR AVANT DE LE LIRE
+# --------------------------------------
+# 1. Le champ est celui des RÉSIDENTS en France, comme la pyramide du
+#    modèle. La figure 3.2 du même rapport, qui compte aussi les
+#    retraités résidant à l'étranger, donne des durées plus courtes
+#    d'un an et demi, et le même profil d'une génération à l'autre.
+# 2. La figure laisse vides les générations 1941, 1943 et 1945 : elles
+#    ne sont pas inventées ici, et le modèle les interpole.
+# 3. Les majorations de durée — pour enfants surtout — y sont : elles
+#    relèvent la durée des femmes au-dessus de celle des hommes dès la
+#    génération 1953.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+generation,sexe,trimestres,fiabilite
+1940,femmes,133.0000,haute
+1940,hommes,162.0000,haute
+1942,femmes,137.0000,haute
+1942,hommes,161.0000,haute
+1944,femmes,141.0000,haute
+1944,hommes,162.0000,haute
+1946,femmes,145.0000,haute
+1946,hommes,164.0000,haute
+1947,femmes,148.0000,haute
+1947,hommes,163.0000,haute
+1948,femmes,149.0000,haute
+1948,hommes,163.0000,haute
+1949,femmes,151.0000,haute
+1949,hommes,163.0000,haute
+1950,femmes,152.0000,haute
+1950,hommes,162.0000,haute
+1951,femmes,155.0000,haute
+1951,hommes,162.0000,haute
+1952,femmes,157.0000,haute
+1952,hommes,163.0000,haute
+1953,femmes,158.0000,haute
+1953,hommes,163.0000,haute
+1954,femmes,161.8068,projetee
+1954,hommes,164.0282,projetee
+1955,femmes,162.7617,projetee
+1955,hommes,164.2407,projetee
+1956,femmes,164.5516,projetee
+1956,hommes,163.1248,projetee
+1957,femmes,164.4260,projetee
+1957,hommes,162.9056,projetee
+1958,femmes,164.8336,projetee
+1958,hommes,162.9179,projetee
+1959,femmes,165.3874,projetee
+1959,hommes,162.2455,projetee
+1960,femmes,163.7919,projetee
+1960,hommes,161.1367,projetee
+1961,femmes,164.0881,projetee
+1961,hommes,161.2752,projetee
+1962,femmes,165.6957,projetee
+1962,hommes,161.8496,projetee
+1963,femmes,165.4076,projetee
+1963,hommes,163.1762,projetee
+1964,femmes,164.0561,projetee
+1964,hommes,160.2035,projetee
+1965,femmes,165.7115,projetee
+1965,hommes,159.8059,projetee
+1966,femmes,164.1910,projetee
+1966,hommes,159.7759,projetee
+1967,femmes,164.7147,projetee
+1967,hommes,160.0973,projetee
+1968,femmes,164.4946,projetee
+1968,hommes,158.9685,projetee
+1969,femmes,164.5669,projetee
+1969,hommes,158.6785,projetee
+1970,femmes,165.1378,projetee
+1970,hommes,158.5281,projetee
+1971,femmes,165.5358,projetee
+1971,hommes,158.6117,projetee
+1972,femmes,163.7038,projetee
+1972,hommes,156.8946,projetee
+1973,femmes,163.7611,projetee
+1973,hommes,157.0179,projetee
+1974,femmes,161.9491,projetee
+1974,hommes,156.4373,projetee
+1975,femmes,161.8402,projetee
+1975,hommes,155.9460,projetee
+1976,femmes,162.3359,projetee
+1976,hommes,155.3829,projetee
+1977,femmes,161.3936,projetee
+1977,hommes,155.5495,projetee
+1978,femmes,162.7287,projetee
+1978,hommes,155.2056,projetee
+1979,femmes,163.0149,projetee
+1979,hommes,155.2683,projetee
+1980,femmes,163.1598,projetee
+1980,hommes,154.2787,projetee
+1981,femmes,163.9584,projetee
+1981,hommes,154.1862,projetee
+1982,femmes,163.4682,projetee
+1982,hommes,154.2747,projetee
+1983,femmes,162.2661,projetee
+1983,hommes,154.2958,projetee
+1984,femmes,161.5439,projetee
+1984,hommes,153.5243,projetee
+1985,femmes,162.0596,projetee
+1985,hommes,154.8108,projetee
+1986,femmes,162.0308,projetee
+1986,hommes,153.4875,projetee
+1987,femmes,161.4794,projetee
+1987,hommes,153.9449,projetee
+1988,femmes,160.9939,projetee
+1988,hommes,153.6196,projetee
+1989,femmes,159.5064,projetee
+1989,hommes,154.2788,projetee
+1990,femmes,159.7207,projetee
+1990,hommes,154.0947,projetee
+1991,femmes,159.4990,projetee
+1991,hommes,153.5129,projetee
+1992,femmes,160.8321,projetee
+1992,hommes,153.6718,projetee
+1993,femmes,159.4153,projetee
+1993,hommes,153.3464,projetee
+1994,femmes,159.7305,projetee
+1994,hommes,154.2405,projetee
+1995,femmes,159.0189,projetee
+1995,hommes,153.9029,projetee
+1996,femmes,159.8568,projetee
+1996,hommes,154.4568,projetee
+1997,femmes,158.9822,projetee
+1997,hommes,153.7133,projetee
+1998,femmes,158.5589,projetee
+1998,hommes,154.0648,projetee
+1999,femmes,158.7073,projetee
+1999,hommes,155.4889,projetee
+2000,femmes,158.5294,projetee
+2000,hommes,155.2286,projetee

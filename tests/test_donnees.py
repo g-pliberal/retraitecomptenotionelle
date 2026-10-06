@@ -468,6 +468,17 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Les mêmes ressources sous l'autre convention du COR : un fichier à
         # elles, et tout entier projeté.
         "ressources_eec_retraite": "macro/ressources_eec_retraite.csv",
+        # Ce qui fait la dépense chez le COR, et ses taux de croissance par
+        # sous-période : observés et projetés, chacun dans son fichier.
+        "decomposition_depense_retraite": "macro/decomposition_depense_retraite.csv",
+        "decomposition_depense_retraite_projetee":
+            "macro/decomposition_depense_retraite.csv",
+        "croissance_depense_retraite": "macro/croissance_depense_retraite.csv",
+        "croissance_depense_retraite_projetee": "macro/croissance_depense_retraite.csv",
+        # La durée d'assurance par génération : l'EIR de 2020, puis TRAJECTOiRE
+        # (action 147, étape 14).
+        "duree_assurance_generations": "macro/duree_assurance_generations.csv",
+        "duree_assurance_generations_projetee": "macro/duree_assurance_generations.csv",
         # Le stock, à côté des flux : le tableau supplémentaire du SEC 2010,
         # transmis tous les trois ans.
         "engagements_retraite": "macro/engagements_retraite.csv",

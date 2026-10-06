@@ -75,7 +75,7 @@ from retraite_notionnelle.noyau import univers as univers_de_droit  # noqa: E402
 from retraite_notionnelle.noyau import vocabulaire  # noqa: E402
 from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
 from retraite_notionnelle.restitution import POSTES_REMUNERATION  # noqa: E402
-from retraite_notionnelle.donnees.population import ArriveesTardives, Population  # noqa: E402
+from retraite_notionnelle.donnees.population import CarrieresIncompletes, Population  # noqa: E402
 from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     CatalogueRegimes,
@@ -507,8 +507,8 @@ def _population() -> dict:
     population = Population(DONNEES)
     annees = population.annees()
     ages = list(range(50, population.age_maximal + 1))
-    arrivees = ArriveesTardives(DONNEES)
-    generations = range(arrivees.premiere_generation, arrivees.derniere_generation + 1)
+    carrieres = CarrieresIncompletes(DONNEES)
+    generations = range(carrieres.premiere_generation, carrieres.derniere_generation + 1)
     return {
         "annees": annees,
         "ages": ages,
@@ -517,11 +517,12 @@ def _population() -> dict:
         ],
         "fiabilites": [int(population.fiabilite(annee)) for annee in annees],
         "actifs": _serie(population.actifs),
-        # Les arrivées tardives : la complétude de chaque génération, de la
-        # première à la dernière que le fichier mesure (action 147, étape 11).
-        "arrivees": {
-            "premiere_generation": arrivees.premiere_generation,
-            "completudes": [arrivees.completude(generation) for generation in generations],
+        # La complétude de chaque génération — ses arrivées tardives et les
+        # carrières incomplètes de ses natifs —, de la première à la dernière
+        # que les deux fichiers mesurent (action 147, étapes 11 et 14).
+        "completudes": {
+            "premiere_generation": carrieres.premiere_generation,
+            "completudes": [carrieres.completude(generation) for generation in generations],
         },
     }
 

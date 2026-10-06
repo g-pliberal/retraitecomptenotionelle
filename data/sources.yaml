@@ -636,7 +636,8 @@ institutions:
           data/reference/macro/structure_ressources_retraite.csv,
           data/reference/macro/taux_prelevement_retraite.csv,
           data/reference/macro/decomposition_depense_retraite.csv,
-          data/reference/macro/croissance_depense_retraite.csv
+          data/reference/macro/croissance_depense_retraite.csv,
+          data/reference/macro/duree_assurance_generations.csv
         millesime: juin 2026
         note: >-
           Le seul compte français où DÉPENSES ET RESSOURCES de la retraite
@@ -687,6 +688,15 @@ institutions:
           lignes du milieu portent la compensation des allègements généraux de
           cotisations patronales. La page Coût le cite, et ne dit plus que
           cette compensation échappe au compte de la retraite.
+          SIXIÈME CIBLE depuis le 6 octobre 2026 : la DURÉE D'ASSURANCE moyenne
+          des retraités de droit direct résidant en France, femmes et hommes,
+          par génération de 1940 à 2000 (figure 3.22 du rapport de 2026) —
+          l'EIR de 2020 jusqu'à la génération 1953, les évolutions de
+          TRAJECTOiRE au-delà. La grille fait partir chaque carrière au taux
+          plein ; la page Coût en tire la complétude de chaque génération, sa
+          durée rapportée à sa durée requise, qui pèse ses masses (action 147,
+          étape 14). Le COR en est le diffuseur, la DREES le producteur : le
+          niveau `haute` pour l'observé, `projetee` au-delà.
       - id: cor_cas_types
         titre: Cas types du COR (carrières de référence)
         url: https://www.cor-retraites.fr/simulateurs

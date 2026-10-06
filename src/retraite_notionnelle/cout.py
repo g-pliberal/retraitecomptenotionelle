@@ -158,7 +158,7 @@ from .donnees.equilibre import (
     DecompositionDepense,
 )
 from .donnees.tva import AssietteTva
-from .donnees.population import ArriveesTardives, Population
+from .donnees.population import CarrieresIncompletes, Population
 from .garantie import (
     CoutGarantie,
     _manque_moyen,
@@ -411,17 +411,18 @@ class Pensionne:
     #: valeur de service ne suit pas les prix (:func:`coefficient_actuel`).
     parts_regimes: dict[str, float] = field(default_factory=dict)
     #: Ce que touche chacune de ses cinq cohortes, en part de la pension
-    #: d'une carrière française complète, du ``-_DEMI_TRANCHE`` au
-    #: ``+_DEMI_TRANCHE`` : les arrivées après 21 ans la raccourcissent
-    #: (:class:`~retraite_notionnelle.donnees.population.ArriveesTardives`,
-    #: action 147, étape 11). Vide, la cohorte touche la pension entière.
+    #: de la carrière de la grille, partie au taux plein, du
+    #: ``-_DEMI_TRANCHE`` au ``+_DEMI_TRANCHE`` : les arrivées après 21 ans et
+    #: les carrières incomplètes des natifs la raccourcissent
+    #: (:class:`~retraite_notionnelle.donnees.population.CarrieresIncompletes`,
+    #: action 147, étapes 11 et 14). Vide, la cohorte touche la pension entière.
     completudes: tuple[float, ...] = ()
 
     def completude(self, decalage: int) -> float:
         """La part de la pension de la grille que touche, en moyenne, la
         cohorte née ``decalage`` ans après la génération de la grille. Elle
-        pèse les MASSES de cette cohorte, et non ses têtes : un arrivé tard est
-        un retraité, à la pension plus courte."""
+        pèse les MASSES de cette cohorte, et non ses têtes : un arrivé tard, une
+        carrière incomplète, sont des retraités, à la pension plus courte."""
         if not self.completudes:
             return 1.0
         return self.completudes[decalage + _DEMI_TRANCHE]
@@ -2036,11 +2037,11 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     bascule = simulateur.parametres.annee_bascule
-    # Les arrivées après 21 ans, que la pyramide compte et que la grille
-    # paierait en carrière complète : une convention de projection, comme
-    # celles du COR que la page suit.
-    arrivees = (ArriveesTardives(simulateur.parametres.racine_donnees)
-                if simulateur.parametres.conventions_cor else None)
+    # Les arrivées après 21 ans, que la pyramide compte, et les carrières
+    # incomplètes des natifs, que la grille paierait au taux plein : une
+    # convention de projection, comme celles du COR que la page suit.
+    carrieres = (CarrieresIncompletes(simulateur.parametres.racine_donnees)
+                 if simulateur.parametres.conventions_cor else None)
     pensionnes = []
     for (code, generation), comparaison in grille.resultats.items():
         propre = _volet(comparaison.carriere_de("notionnel_liberal"),
@@ -2088,8 +2089,8 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
             autre=autre,
             bascule=bascule,
             parts_regimes=_parts_regimes(comparaison.actuel),
-            completudes=() if arrivees is None else tuple(
-                arrivees.completude(generation + decalage)
+            completudes=() if carrieres is None else tuple(
+                carrieres.completude(generation + decalage)
                 for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)),
             cotisations={
                 # Le dénominateur ne peut pas être le compte du scénario 4.

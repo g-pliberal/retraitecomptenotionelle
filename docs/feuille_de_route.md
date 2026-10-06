@@ -7252,17 +7252,18 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 13 (le passé refait,
+**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 14 (le passé refait,
 la décomposition du COR, ses conventions, la fonction publique, l'Agirc-Arrco
-au taux moyen, les arrivées tardives, le salaire moyen écarté ; puis le défaut
-du privé : les régimes qui se ferment suivent le COR, et la dépense des
-groupes se compare réversion comprise — dérive de 2070 1,028, sous un de 2031
-à 2058). Reste, une session neuve par point : les carrières incomplètes des
-natifs (étape 11, « mesurées, non portées ») ; les complémentaires, −5 % au
-milieu de la période (les polypensionnés) ; la FPE, les régimes spéciaux à
-l'horizon, la CNRACL. Fabriquer et tester sous Python 3.11, celui de la CI. Au
-propriétaire, le taux du simulateur individuel (registre, 138.13) et l'ancrage
-du salaire moyen. Lire les notes des étapes 11 et 13.
+au taux moyen, les arrivées tardives, le salaire moyen écarté ; le défaut du
+privé : les régimes qui se ferment suivent le COR, la dépense des groupes se
+compare réversion comprise ; puis les carrières incomplètes des natifs, de la
+figure 3.22 du COR — dérive de 2070 0,999, sous un de 2031 à l'horizon,
+0,977 en 2050). Reste, une session neuve par point : le privé, encore sous le
+COR au milieu de la période (complémentaires −6 % en 2050 : les
+polypensionnés) ; le passé (reconstitution −16 % en 2009) ; la FPE, les
+régimes spéciaux à l'horizon. Fabriquer et tester sous Python 3.11, celui de
+la CI. Au propriétaire, le taux du simulateur individuel (registre, 138.13) et
+l'ancrage du salaire moyen. Lire les notes des étapes 13 et 14.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -8181,3 +8182,59 @@ mesure, dans les deux moteurs ; aucun témoin de simulation ne bouge.
   convention_recette=CONVENTION_RAPPORT)` et `Avenir.decomposition_groupes` ;
   la grille annuelle remplace `cout.PAS_GENERATIONS` et `cout._DEMI_TRANCHE`
   sous `memoire.modele_modifie()`.
+
+**Étape 14, le 6 octobre 2026 : les carrières incomplètes des natifs.** La
+seconde demande du jour. Une convention de la page Coût, dans les deux
+moteurs, et une série de plus ; aucun témoin de simulation ne bouge.
+
+- *La source.* La figure 3.22 du rapport de juin 2026 : la durée d'assurance
+  moyenne des retraités de droit direct résidant en France, femmes et hommes,
+  génération par génération de 1940 à 2000 — l'EIR de 2020 jusqu'à la
+  génération 1953, la dernière qui avait 67 ans en 2020 (des trimestres
+  entiers), les évolutions de TRAJECTOiRE au-delà. Les femmes de 1940 : 133
+  trimestres, 162 pour les hommes ; de 1955 à 1968, les femmes dépassent les
+  hommes, majorations pour enfants comprises ; pour la génération 2000, 155
+  et 158,5. La figure laisse vides 1941, 1943 et 1945, que le modèle
+  interpole. `scripts/fetch/cor_comptes_retraite.py` la lit par son titre,
+  aligne les valeurs sur les générations par colonne (la lecture dans
+  l'ordre décalait tout après 1941), et `verifier_donnees.py` la certifie
+  (`duree_assurance_generations`, 22 valeurs `haute`, 94 `projetee`),
+  sixième cible de la source `cor_comptes_systeme_retraite`.
+- *La convention.* La grille fait partir chaque carrière au taux plein, avec
+  la durée requise (172 trimestres sur 172 pour le salarié moyen de 1970, 188
+  pour la carrière interrompue, majorations comprises). La complétude de
+  chaque génération (`CarrieresIncompletes`, qui remplace `ArriveesTardives`
+  dans `_pensionnes` et au portage) est sa durée moyenne, deux sexes à parts
+  égales, rapportée à sa durée requise : 0,940 pour 1940, 0,985 pour 1955,
+  0,941 pour 1970, 0,912 pour 2000. Elle contient les arrivées tardives ; le
+  reste, `natifs`, vaut 0,968 pour 1940, 1,020 pour 1955, 0,966 pour 2000.
+  Comme celle des arrivées, elle pèse les masses et non les têtes, la pension
+  supposée proportionnelle à la durée. Le paquet porte la complétude
+  (`population.completudes`), le portage n'a rien à recalculer. Sensibilité :
+  la figure 3.2, qui compte aussi les résidents à l'étranger (39,5 ans pour
+  1955, 37,9 pour 2000), donne le même profil et les mêmes écarts à trois
+  dixièmes près.
+- *Ce que ça déplace.* Dérive de 2070 : 1,028 → 0,999, sous un de 2031 à
+  l'horizon, au plus bas 0,975 en 2054 (0,990 → 0,977 en 2050). Trajectoire
+  propre : 15,2 → 14,8 % du PIB en 2070 (COR 15,3). Pension relative de
+  l'ensemble à l'horizon : +5,3 → +2,4 % du COR, la cible (cliquet 6 → 3 %) ;
+  en 2050, −0,5 → −1,8 %. À l'horizon : LURA +3,4 → +0,5 %, complémentaires
+  −1,7 → −4,4 % (tolérance relevée à 5 %), non-salariés +0,2 → −2,7 %, FPE
+  +19,1 → +15,8 %, CNRACL +4,8 → +1,9 %, régimes spéciaux −32,7 → −34,4 % ;
+  pension relative de la Cnav +3,1 → +0,2 %, de la FPE +3,9 → +1,0 %, de la
+  CNRACL +6,1 → +3,2 %, de l'Agirc-Arrco +20,4 → +17,1 %. En 2050 : LURA −0,4
+  → −1,8 %, complémentaires −5,2 → −6,4 %. Reconstitution : −14,1 → −16,1 % en
+  2009, −11,4 → −14,0 % en 2000 — le passé, où vivaient les générations aux
+  carrières les plus courtes, recule (cliquet 14,5 → 16,5 %). La proposition :
+  solde moyen −0,76 %, dette de 2070 49 % (1 480 Md€), coefficient 1,014 ;
+  la seconde lecture l'allège de nouveau (solde moyen −0,65 %, dette 43 %) ;
+  l'accueil cite 1,01. Engagement du système actuel 483 → 481 %. 55 rendus
+  de page sur 74. Le journal de certification consigne six séries de plus —
+  les durées, et la décomposition du COR, qu'aucun passage n'y avait écrite
+  depuis l'étape 2 — : le parcours compte 45 424 valeurs sur 127 séries, et la
+  conservation est refigée pour lui.
+- *Ce qui reste.* Au milieu de la période, le privé sous le COR : dérive
+  −2,3 % en 2050, complémentaires −6 % — les polypensionnés (étape 13) ; la
+  proportionnalité, qui sous-estime ce que coûte une carrière courte au
+  régime de base (décote, départ retardé) ; le passé, que la reconstitution
+  tient 16 % trop bas en 2009 ; la FPE et les régimes spéciaux à l'horizon.

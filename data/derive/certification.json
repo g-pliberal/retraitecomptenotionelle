@@ -164,7 +164,7 @@
    "niveau": "haute",
    "source": "COR, rapport annuel, comptes du système de retraite (rapports à la CCSS consolidés)",
    "valeurs": 48,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-10-06"
   },
   "comptes_retraite_projetes": {
    "ajoutees": 0,
@@ -175,18 +175,18 @@
    "niveau": "projetee",
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 90,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-10-06"
   },
   "comptes_retraite_variantes": {
-   "ajoutees": 360,
+   "ajoutees": 0,
    "colonne": "part_pib",
    "corrigees": 0,
    "empreinte": "ed23ee3fc046c6cb",
-   "identiques": 0,
+   "identiques": 360,
    "niveau": "projetee",
    "source": "COR, rapport annuel, figures de sensibilité de la dépense et du solde aux hypothèses de productivité et de chômage",
    "valeurs": 360,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-10-06"
   },
   "cotisants_regimes": {
    "ajoutees": 0,
@@ -209,6 +209,50 @@
    "source": "BCE, portail de données, jeu YC (souverains AAA, Svensson)",
    "valeurs": 30,
    "verifiee_le": "2026-09-18"
+  },
+  "croissance_depense_retraite": {
+   "ajoutees": 0,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "4715f91b974ac899",
+   "identiques": 4,
+   "niveau": "haute",
+   "source": "COR, rapport annuel, taux de croissance par sous-période",
+   "valeurs": 4,
+   "verifiee_le": "2026-10-06"
+  },
+  "croissance_depense_retraite_projetee": {
+   "ajoutees": 0,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "bab88cd75625fa15",
+   "identiques": 12,
+   "niveau": "projetee",
+   "source": "COR, rapport annuel, scénario de référence",
+   "valeurs": 12,
+   "verifiee_le": "2026-10-06"
+  },
+  "decomposition_depense_retraite": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "ebb3642fe5d1b3aa",
+   "identiques": 44,
+   "niveau": "haute",
+   "source": "COR, rapport annuel, déterminants de la masse des pensions",
+   "valeurs": 44,
+   "verifiee_le": "2026-10-06"
+  },
+  "decomposition_depense_retraite_projetee": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "384f5a3575f81bb6",
+   "identiques": 733,
+   "niveau": "projetee",
+   "source": "COR, rapport annuel, scénario de référence",
+   "valeurs": 733,
+   "verifiee_le": "2026-10-06"
   },
   "decote_fonction_publique_coefficient": {
    "ajoutees": 0,
@@ -297,6 +341,28 @@
    "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
    "valeurs": 305,
    "verifiee_le": "2026-09-20"
+  },
+  "duree_assurance_generations": {
+   "ajoutees": 22,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "12c48b3f9f58d71f",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "COR, rapport annuel, durée moyenne d'assurance par génération (EIR 2020)",
+   "valeurs": 22,
+   "verifiee_le": "2026-10-06"
+  },
+  "duree_assurance_generations_projetee": {
+   "ajoutees": 94,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "70922e5f34d73667",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "COR, rapport annuel, durée moyenne d'assurance par génération (TRAJECTOiRE)",
+   "valeurs": 94,
+   "verifiee_le": "2026-10-06"
   },
   "duree_assurance_requise": {
    "ajoutees": 0,
@@ -538,7 +604,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-05"
+   "verifiee_le": "2026-10-06"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -989,7 +1055,7 @@
    "niveau": "projetee",
    "source": "COR, rapport annuel, ressources du système de retraite, données complémentaires sous convention EEC",
    "valeurs": 46,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-10-06"
   },
   "retraites_regimes": {
    "ajoutees": 1284,
@@ -1055,7 +1121,7 @@
    "niveau": "haute",
    "source": "COR, rapport annuel, structure des ressources du système de retraite",
    "valeurs": 132,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-10-06"
   },
   "taux_cotisation_alignes": {
    "ajoutees": 0,
@@ -1066,7 +1132,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-05"
+   "verifiee_le": "2026-10-06"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1121,7 +1187,7 @@
    "niveau": "haute",
    "source": "COR, rapport annuel, déterminants de l'évolution des ressources du système de retraite",
    "valeurs": 24,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-10-06"
   },
   "taux_prelevement_retraite_projete": {
    "ajoutees": 0,
@@ -1132,7 +1198,7 @@
    "niveau": "projetee",
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 45,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-10-06"
   },
   "transferts_retraite": {
    "ajoutees": 30,
@@ -1220,7 +1286,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-05"
+   "verifiee_le": "2026-10-06"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1253,7 +1319,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-05"
+   "verifiee_le": "2026-10-06"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,

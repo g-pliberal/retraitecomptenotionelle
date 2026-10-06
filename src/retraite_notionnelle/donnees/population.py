@@ -29,7 +29,8 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
+from .chargement import (Fiabilite, SerieAnnuelle, charger_serie_annuelle,
+                         charger_table_par_generation, valeur_par_generation)
 
 #: Âge plancher de la série, et donc âge en deçà duquel ``effectif`` rend zéro.
 #: Le cas type qui liquide le plus tôt part à 52 ans.
@@ -180,3 +181,82 @@ class ArriveesTardives:
         moyenne, la génération ``generation``."""
         bornee = min(max(generation, self.premiere_generation), self.derniere_generation)
         return 1.0 - self._manques[bornee]
+
+
+class CarrieresIncompletes:
+    """La part de la pension d'une carrière de la grille que touche, en
+    moyenne, une génération : ses arrivées tardives et les carrières
+    incomplètes de ses natifs (action 147, étapes 11 et 14).
+
+    La grille fait partir chacune de ses carrières au taux plein, avec la durée
+    requise de sa génération (``duree_assurance_requise.csv``). Les retraités
+    de droit direct d'une génération résidant en France en ont validé, en
+    moyenne, ce que publie le COR (figure 3.22 du rapport de juin 2026,
+    ``duree_assurance_generations.csv``, moyenne des deux sexes, une
+    génération que la figure laisse vide prenant la moyenne de ses voisines) :
+    la complétude de la génération est cette durée rapportée à sa durée
+    requise. Elle porte déjà les arrivées tardives, que la pyramide compte et
+    que :class:`ArriveesTardives` mesure ; le reste, :meth:`natifs`, est la
+    part des carrières des natifs — courtes chez les femmes nées vers 1940,
+    plus longues que la durée requise de 1950 à 1965, de plus en plus courtes
+    ensuite, entrées plus tard dans la vie active sous une durée requise qui
+    s'allonge.
+
+    Comme celle des arrivées, la complétude pèse les MASSES de chaque
+    génération, non ses têtes, et suppose la pension proportionnelle à la
+    durée : une borne, la décote coûtant davantage, la complémentaire juste
+    autant. En deçà de la première génération que publie le COR et au-delà de
+    la dernière, le facteur des natifs est celui du bord ; celui des arrivées
+    garde le sien.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        chemin = racine / "reference" / "macro" / "duree_assurance_generations.csv"
+        par_sexe: dict[str, dict[int, float]] = {}
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                par_sexe.setdefault(ligne["sexe"], {})[int(ligne["generation"])] = float(
+                    ligne["trimestres"])
+        if sorted(par_sexe) != ["femmes", "hommes"]:
+            raise ValueError(f"{chemin} : les durées des femmes et des hommes, attendues")
+        requises, generations_requises = charger_table_par_generation(
+            racine / "reference" / "legislation" / "duree_assurance_requise.csv",
+            "trimestres")
+        self.arrivees = ArriveesTardives(racine)
+        premiere = max(min(serie) for serie in par_sexe.values())
+        derniere = min(max(serie) for serie in par_sexe.values())
+        #: Le facteur des natifs, génération par génération, sur celles que
+        #: le COR publie.
+        self._natifs: dict[int, float] = {}
+        for generation in range(premiere, derniere + 1):
+            duree = sum(_interpolee(serie, generation) for serie in par_sexe.values()) / 2
+            requise = valeur_par_generation(requises, generations_requises, generation)
+            if requise is None:
+                raise ValueError(f"aucune durée requise pour la génération {generation}")
+            self._natifs[generation] = (
+                duree / requise[0] / self.arrivees.completude(generation))
+        self.premiere_generation = min(premiere, self.arrivees.premiere_generation)
+        self.derniere_generation = max(derniere, self.arrivees.derniere_generation)
+
+    def natifs(self, generation: int) -> float:
+        """La durée validée des natifs de la génération, rapportée à sa durée
+        requise : le facteur que les carrières incomplètes des natifs
+        ajoutent à celui des arrivées."""
+        bornee = min(max(generation, min(self._natifs)), max(self._natifs))
+        return self._natifs[bornee]
+
+    def completude(self, generation: int) -> float:
+        """La part de la pension d'une carrière de la grille que touche, en
+        moyenne, la génération ``generation``."""
+        return self.arrivees.completude(generation) * self.natifs(generation)
+
+
+def _interpolee(serie: dict[int, float], generation: int) -> float:
+    """La valeur de la génération, ou, quand la série la laisse vide, celle que
+    donne la droite entre ses deux voisines."""
+    if generation in serie:
+        return serie[generation]
+    avant = max(g for g in serie if g < generation)
+    apres = min(g for g in serie if g > generation)
+    return serie[avant] + (serie[apres] - serie[avant]) * (generation - avant) / (apres - avant)
