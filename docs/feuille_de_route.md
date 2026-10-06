@@ -7252,18 +7252,15 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 14 (le passé refait,
-la décomposition du COR, ses conventions, la fonction publique, l'Agirc-Arrco
-au taux moyen, les arrivées tardives, le salaire moyen écarté ; le défaut du
-privé : les régimes qui se ferment suivent le COR, la dépense des groupes se
-compare réversion comprise ; puis les carrières incomplètes des natifs, de la
-figure 3.22 du COR — dérive de 2070 0,999, sous un de 2031 à l'horizon,
-0,977 en 2050). Reste, une session neuve par point : le privé, encore sous le
-COR au milieu de la période (complémentaires −6 % en 2050 : les
-polypensionnés) ; le passé (reconstitution −16 % en 2009) ; la FPE, les
-régimes spéciaux à l'horizon. Fabriquer et tester sous Python 3.11, celui de
-la CI. Au propriétaire, le taux du simulateur individuel (registre, 138.13) et
-l'ancrage du salaire moyen. Lire les notes des étapes 13 et 14.
+**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 15 — le passé, le COR
+et ses conventions (1 à 12) ; les régimes qui se ferment suivent le COR, les
+groupes se comparent réversion comprise (13) ; les carrières incomplètes des
+natifs (14 : dérive de 2070 0,999, 0,977 en 2050) ; l'ancrage du salaire moyen
+recensé, rien de changé (15). Reste, une session neuve par point : le privé
+sous le COR au milieu de la période (complémentaires −6 % en 2050, les
+polypensionnés) ; le passé (−16 % en 2009) ; la FPE et les régimes spéciaux à
+l'horizon. Python 3.11, celui de la CI. Au propriétaire : le taux du simulateur
+individuel (138.13) ; l'ancrage, 40 897 € recommandés. Lire les notes 13 à 15.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -8238,3 +8235,53 @@ moteurs, et une série de plus ; aucun témoin de simulation ne bouge.
   proportionnalité, qui sous-estime ce que coûte une carrière courte au
   régime de base (décote, départ retardé) ; le passé, que la reconstitution
   tient 16 % trop bas en 2009 ; la FPE et les régimes spéciaux à l'horizon.
+
+**Étape 15, le 6 octobre 2026 : l'ancrage du salaire moyen, recensé chez les
+autres modèles — rien n'est changé.** La troisième demande du jour : chercher
+ce qu'utilisent les autres modèles, et ce qui convient le mieux, sans toucher
+à l'ancrage tant qu'on n'est pas sûr. Aucun fichier du modèle ne bouge.
+
+- *Ce que l'ancrage fait.* `ANCRAGE_SALAIRE_MOYEN` (40 000 € bruts en 2024,
+  `carriere.py` et `carriere.js`) donne son niveau à une série dont le dépôt
+  ne garde que les croissances (`salaire_moyen.csv` : le SMPT de l'INSEE,
+  salaires et traitements bruts D11 sur l'emploi salarié en personnes
+  physiques, base 2020). Il convertit en euros les multiples du salaire moyen
+  des cas types et des témoins, et place donc chaque carrière face aux seuils
+  qui ne le suivent pas : le plafond (46 368 € en 2024, 1,16 fois l'ancrage,
+  1,13 fois la série), le SMIC des seuils de validation, les minima. C'est par
+  eux seuls qu'il touche la page Coût.
+- *Ce qu'utilisent les autres modèles*, pour 2024, en euros bruts annuels.
+  Destinie 2 (INSEE), sous les paramètres du COR de 2023
+  (`tests/temoins/destinie_2.json`) : un SMPT de 40 925 €, la série du modèle
+  à 0,07 % près, à 1 % près depuis 2015 — 3 % plus haut en 2010, 5 % en 1999,
+  une base des comptes plus ancienne : le même concept. TRAJECTOiRE (DREES),
+  pour les cas types du COR (classeur d'hypothèses de 2024, étape 12) : un
+  « SMPT » de 42 791 €, qui est un revenu d'activité moyen, revenu mixte des
+  non-salariés compris, sur l'emploi total, en base 2010 — un autre concept,
+  celui dans lequel le COR écrit les profils de ses cas types. PENSIPP (IPP,
+  `github.com/abozio/pensipp`, lu le 6 octobre) : le SMPT de l'ancien fichier
+  de paramètres de Destinie (`ParamEco.csv`), 26 373 € pour 2000 quand la
+  série du modèle en donne 23 205 (+14 %), 33 542 € pour 2010 (+9 %), projeté
+  au-delà de 2012 : un ancien concept et un ancien millésime. OpenFisca-France
+  n'a ni cas types ni salaire de référence.
+- *Ce que chaque option déplace*, mesuré en mémoire, sous les réglages de la
+  page. À 40 897 €, le niveau de la série : dette de la proposition en 2070
+  49,5 → 50,2 % du PIB, solde moyen −0,762 → −0,774 %, coefficient de 2070
+  1,014 → 1,012 ; dérive, reconstitution, au dixième. À 42 791 €, le SMPT du
+  COR : 51,2 %, −0,790 %, 1,010. Plus, mécaniquement, les 737 témoins de
+  simulation, écrits en multiples du salaire moyen (+2,2 % ou +7,0 % en
+  euros), la page Cas types, le repère du site (« 1 = 40 000 € ») et
+  l'affirmation `ancrage_du_salaire_moyen` (`test_affirmations.py`), la
+  phrase de la page Méthode (`pages.js`) et la méthodologie, qui l'ancre.
+- *Recommandation, au propriétaire.* Le niveau de la série elle-même, 40 897
+  € : le même concept que ses croissances, que Destinie 2 retrouve à 0,07 %
+  près, quand l'arrondi place les cas types 2,2 % trop bas face au plafond et
+  aux minima et allège d'autant la dette de la proposition (−0,8 point de PIB
+  en 2070). Mieux encore : le lire dans les données — les niveaux de D11 et de
+  l'emploi salarié que `scripts/fetch/insee_bdm.py` va déjà chercher —,
+  certifié, plutôt qu'écrit en dur. Pas le SMPT du COR : un autre concept, qui
+  ne sert qu'à refaire ses cas types, en convertissant ses profils relatifs, et
+  dont la croissance, rendue aux salaires anciens, creuserait l'écart au COR
+  (étape 12). Le changement se fait en une session, après décision : la
+  constante dans les deux moteurs, l'affirmation et son contrôle,
+  `regenerer.py`, la prose.
