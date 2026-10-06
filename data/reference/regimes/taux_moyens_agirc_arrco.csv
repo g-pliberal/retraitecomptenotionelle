@@ -1,0 +1,132 @@
+# Taux contractuel MOYEN de l'Agirc-Arrco, tranche par tranche
+# source_id: drees_trajectoire_taux_moyens
+# unite: taux contractuel, salarié et employeur, HORS taux d'appel
+# fiabilite:
+#   haute : paramètres du modèle Trajectoire de la DREES, qui calcule
+#           les cas types du COR, recontrôlés par
+#           scripts/verifier_donnees.py ; la tranche 1 de 1990 à
+#           2025 l'est aussi contre la figure 3.1 du rapport du COR
+#           de juin 2026 (tests/test_taux_moyens.py).
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# Les fiches de l'Arrco et de l'Agirc portent le taux MINIMAL que
+# l'accord imposait : 4 % sur la tranche 1 jusqu'en 1995, 8 % sur la
+# tranche B jusqu'en 1993. Les entreprises cotisaient le plus souvent
+# au-dessus, et leurs salariés acquéraient des points à leur taux :
+# 5,42 % et 13,9 % en moyenne. Les cas types du COR cotisent au taux
+# moyen (rapport de juin 2026, notes des figures 3.3 et 3.4) ; la page
+# Coût, qui se lit contre lui, aussi : sous les conventions du COR
+# (Parametres.conventions_cor), le chargeur des fiches redate leurs
+# périodes au taux moyen, cotisation et points ensemble
+# (donnees/regimes.py, dater_les_taux_moyens ; action 147 de la
+# feuille de route, étape 10). Le simulateur individuel garde le taux
+# minimal, que la caisse applique à l'entreprise qui s'y tient.
+#
+# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
+# ------------------------------------------
+# 1. UNE LIGNE PAR CHANGEMENT, comme un barème : la première année de
+#    la fiche, puis chaque année où le taux change. Le taux d'une
+#    année est le dernier écrit à cette année ou avant ; la dernière
+#    ligne vaut au-delà.
+# 2. HORS TAUX D'APPEL : la cotisation est ce taux multiplié par le
+#    taux d'appel de l'année (valeurs_point.csv), les points ce taux
+#    rapporté au salaire de référence.
+# 3. UNE MOYENNE DE MODÉLISATEUR : 5,42 % de 1955 à 1993 sur la
+#    tranche 1, sans variation ; la tranche B varie chaque année.
+#    Depuis 2019, la tranche 1 garde 6,61 % au lieu de 6,20 % : les
+#    taux supérieurs des entreprises qui les appliquaient.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+regime,assiette,annee,taux,fiabilite
+agirc,tranche_b,1948,0.101000,haute
+agirc,tranche_b,1949,0.103000,haute
+agirc,tranche_b,1950,0.103600,haute
+agirc,tranche_b,1951,0.103700,haute
+agirc,tranche_b,1952,0.115500,haute
+agirc,tranche_b,1953,0.121500,haute
+agirc,tranche_b,1954,0.122100,haute
+agirc,tranche_b,1955,0.122600,haute
+agirc,tranche_b,1956,0.122500,haute
+agirc,tranche_b,1957,0.128600,haute
+agirc,tranche_b,1958,0.131100,haute
+agirc,tranche_b,1959,0.130900,haute
+agirc,tranche_b,1960,0.130200,haute
+agirc,tranche_b,1961,0.130900,haute
+agirc,tranche_b,1962,0.135000,haute
+agirc,tranche_b,1963,0.138100,haute
+agirc,tranche_b,1964,0.137300,haute
+agirc,tranche_b,1965,0.136600,haute
+agirc,tranche_b,1966,0.135300,haute
+agirc,tranche_b,1967,0.141200,haute
+agirc,tranche_b,1968,0.141600,haute
+agirc,tranche_b,1969,0.141800,haute
+agirc,tranche_b,1970,0.141000,haute
+agirc,tranche_b,1971,0.140700,haute
+agirc,tranche_b,1972,0.138700,haute
+agirc,tranche_b,1973,0.143300,haute
+agirc,tranche_b,1974,0.142400,haute
+agirc,tranche_b,1975,0.140300,haute
+agirc,tranche_b,1976,0.139400,haute
+agirc,tranche_b,1977,0.139800,haute
+agirc,tranche_b,1978,0.140300,haute
+agirc,tranche_b,1979,0.139100,haute
+agirc,tranche_b,1980,0.139400,haute
+agirc,tranche_b,1981,0.138500,haute
+agirc,tranche_b,1982,0.138100,haute
+agirc,tranche_b,1983,0.138800,haute
+agirc,tranche_b,1984,0.138400,haute
+agirc,tranche_b,1985,0.138500,haute
+agirc,tranche_b,1986,0.138900,haute
+agirc,tranche_b,1988,0.139000,haute
+agirc,tranche_b,1990,0.138700,haute
+agirc,tranche_b,1991,0.141500,haute
+agirc,tranche_b,1992,0.142500,haute
+agirc,tranche_b,1993,0.144000,haute
+agirc,tranche_b,1994,0.146500,haute
+agirc,tranche_b,1995,0.148600,haute
+agirc,tranche_b,1996,0.151600,haute
+agirc,tranche_b,1997,0.154200,haute
+agirc,tranche_b,1998,0.156900,haute
+agirc,tranche_b,1999,0.160000,haute
+agirc,tranche_b,2006,0.162400,haute
+agirc,tranche_b,2014,0.163400,haute
+agirc,tranche_b,2015,0.164400,haute
+agirc,tranche_b,2016,0.164400,haute
+agirc,tranche_c,1991,0.133500,haute
+agirc,tranche_c,1992,0.136200,haute
+agirc,tranche_c,1993,0.138900,haute
+agirc,tranche_c,1994,0.142000,haute
+agirc,tranche_c,1995,0.145000,haute
+agirc,tranche_c,1996,0.147000,haute
+agirc,tranche_c,1997,0.151500,haute
+agirc,tranche_c,1998,0.156000,haute
+agirc,tranche_c,1999,0.160000,haute
+agirc,tranche_c,2006,0.162400,haute
+agirc,tranche_c,2014,0.163400,haute
+agirc,tranche_c,2015,0.164400,haute
+agirc,tranche_c,2016,0.164400,haute
+agirc_arrco,tranche_1,2019,0.066100,haute
+arrco,tranche_1,1961,0.054157,haute
+arrco,tranche_1,1994,0.055792,haute
+arrco,tranche_1,1995,0.055996,haute
+arrco,tranche_1,1996,0.057937,haute
+arrco,tranche_1,1997,0.060286,haute
+arrco,tranche_1,1998,0.062635,haute
+arrco,tranche_1,1999,0.064770,haute
+arrco,tranche_1,2000,0.064868,haute
+arrco,tranche_1,2002,0.064692,haute
+arrco,tranche_1,2004,0.064532,haute
+arrco,tranche_1,2005,0.064500,haute
+arrco,tranche_1,2014,0.065300,haute
+arrco,tranche_1,2015,0.066100,haute
+arrco_tranche_2,tranche_2_arrco,1961,0.080000,haute
+arrco_tranche_2,tranche_2_arrco,1999,0.090000,haute
+arrco_tranche_2,tranche_2_arrco,2000,0.105000,haute
+arrco_tranche_2,tranche_2_arrco,2002,0.125000,haute
+arrco_tranche_2,tranche_2_arrco,2004,0.145000,haute
+arrco_tranche_2,tranche_2_arrco,2005,0.160000,haute
+arrco_tranche_2,tranche_2_arrco,2014,0.161000,haute
+arrco_tranche_2,tranche_2_arrco,2015,0.162000,haute
+unirs,tranche_1,1957,0.054157,haute

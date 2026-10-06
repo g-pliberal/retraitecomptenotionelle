@@ -2572,8 +2572,12 @@ referents:
         raison: >-
           une convention de cas type, non l'erreur de l'un ou de
           l'autre : le taux minimal est le seul opposable à tout
-          salarié, le taux moyen décrit mieux la carrière moyenne ; au
-          propriétaire de choisir l'un, ou de montrer les deux.
+          salarié, le taux moyen décrit mieux la carrière moyenne. La
+          page Coût suit le taux moyen depuis le 5 octobre 2026, comme
+          les cas types du COR (taux_moyens_agirc_arrco.csv, de
+          TRAJECTOiRE ; action 147, étape 10) ; le simulateur
+          individuel garde le minimal : au propriétaire de le changer,
+          ou de montrer les deux.
     bilan: >-
       Au-delà de la réversion et de l'ASPA du ménage, il fait mieux par
       ses séries annuelles longues (minimum contributif depuis 1984,
@@ -3536,7 +3540,7 @@ referents:
       la valeur de service du jour, et montre ses propres torts : la
       chaîne du salaire annuel moyen, les années partagées, l'AVPF et le
       chômage de ses cas types, les emplois super-actifs.
-    manifeste: [cor_pouvoir_achat_retraite]
+    manifeste: [cor_pouvoir_achat_retraite, drees_trajectoire_taux_moyens]
     sas: [drees_trajectoire]
     lu_le: 2026-10-05
     lu_dans:

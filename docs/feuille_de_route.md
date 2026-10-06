@@ -7252,16 +7252,16 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 9 (le passé refait,
+**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 10 (le passé refait,
 la décomposition du COR, sa dépense, la fourchette, ses deux conventions,
 l'écart groupe par groupe, la pondération par génération écartée, la méthode
-du COR relue, sa comptabilité corrigée, puis la fonction publique : ses
-retraités suivent ceux du COR, et son traitement indiciaire le décrochage de
-2019 à 2024 ; la dérive de 2070 tombe de 1,097 à 1,080). Reste, une session
-neuve par point : les points Agirc-Arrco contre les cas types n° 1 et 2 du
-COR (point 3 de l'étape 7), puis les carrières incomplètes, les migrants et
-les entrées tardives des fonctionnaires (point 4). Lire les notes des étapes
-7 et 9.
+du COR relue, sa comptabilité corrigée, la fonction publique, puis
+l'Agirc-Arrco au taux moyen des entreprises, comme les cas types du COR : la
+dérive de 2070 tombe de 1,080 à 1,039, et la dépense des complémentaires suit
+celle du COR). Reste, en une session neuve : les carrières incomplètes, les
+migrants et les entrées tardives des fonctionnaires (point 4 de l'étape 7).
+Au propriétaire, le taux du simulateur individuel (registre, 138.13). Lire
+les notes des étapes 7 et 10.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7857,3 +7857,72 @@ simulation ne bouge.
   relative (+16,8 %), qu'expliqueraient le décrochage d'avant 2019 et les
   entrées tardives ; la croissance des complémentaires (+4,4 points de
   l'écart), des non-salariés et des régimes spéciaux, désormais devant elle.
+
+**Étape 10, le 5 octobre 2026 : les points de l'Agirc-Arrco au taux moyen des
+entreprises, comme les cas types du COR.** Le point (3) de l'étape 7. Une
+convention de la page Coût, comme celles des étapes 4 et 9 : aucun témoin de
+simulation ne bouge.
+
+- *Mesuré d'abord.* Les cas types n° 1 (cadre) et n° 2 (non-cadre) du COR,
+  refaits dans le modèle sur ses relevés : profils de salaire relatifs au
+  SMPT, âges d'entrée par génération et âge du passage cadre de l'annexe
+  méthodologique de juin 2026 (figures A2.2 à A2.4), départ au taux plein,
+  conventions du COR. Le rapport de la part Agirc-Arrco à la part Cnav du
+  taux de remplacement, modèle sur COR (figures 3.3 et 3.4) : non-cadre 0,83
+  pour la génération 1950, 0,92 pour 1964, 0,96 pour 1980, 0,995 pour 2000 ;
+  cadre 0,72, 0,85, 0,91, 0,95. L'écart se resserre de génération en
+  génération : il est dans les années cotisées avant 1999, ni dans le profil,
+  que la mesure reprend au COR, ni dans les salaires de référence, qui
+  laisseraient la pente des générations récentes.
+- *La cause.* « Pour l'Agirc-Arrco, les cotisations sont supposées prélevées
+  au taux moyen » (notes des figures 3.3 et 3.4) ; les fiches portent le taux
+  contractuel MINIMAL de l'accord. Le module de Trajectoire qui calcule les cas
+  types du COR (version 1.1.2, `paramCotis.csv`, licence EUPL) acquiert les
+  points à 5,42 % sur la tranche 1 de l'Arrco de 1955 à 1993 (4 % au
+  minimum), 6,45 % de 2005 à 2013 (6 %), 6,61 % depuis 2015 (6,20 %) ; vers
+  13,9 % sur la tranche B de l'Agirc jusqu'en 1993 (8 %) ; 8 % sur la tranche
+  2 de l'Arrco jusqu'en 1998 (4 %). La figure 3.1 du rapport de 2026, qui
+  trace les deux taux d'un non-cadre de 1990 à 2025, rend leur écart sur la
+  tranche 1 à six millièmes de point près. Au taux moyen, le rapport devient
+  1,03, 1,04, 1,02 et 1,06 pour le non-cadre ; 0,88, 0,90, 0,93 et 0,97 pour
+  le cadre. Destinie l'avait relevé le matin même (registre, 138.13).
+- *Ce qui est fait.* La série, certifiée au niveau `haute` contre Trajectoire
+  (`taux_moyens_agirc_arrco.csv`, 90 valeurs, `scripts/fetch/drees_taux_moyens.py`,
+  source `drees_trajectoire_taux_moyens`) ; le témoin de la figure 3.1
+  (`tests/temoins/cor_taux_cotisation.json`, `tests/test_taux_moyens.py`).
+  Sous `conventions_cor`, le chargeur des fiches redate les périodes de
+  l'UNIRS, de l'Arrco, de l'Agirc et de l'Agirc-Arrco au taux moyen, appel
+  compris — depuis 2019, le taux de calcul des points aussi —
+  (`CatalogueRegimes(taux_moyens=True)`, `dater_les_taux_moyens`), et le
+  portage de même (`daterLesTauxMoyens`, la table au paquet), à l'identique
+  période par période. Cotisation et points ensemble, comme le COR : le compte
+  notionnel prélève ce que la pension a acheté, et le régime fusionné de la
+  page Coût porte la tranche 1 au taux moyen (taux unique de l'accueil : 26,4 %
+  au lieu de 25,8 % ; `solde_fusion.py` lit le catalogue de projection). Le
+  simulateur individuel garde le taux minimal, le seul que la caisse oppose à
+  toute entreprise ; la bulle des hypothèses de la page Coût le dit. Ce choix
+  reste au propriétaire (138.13, raison récrite) ; le manifeste de TRAJECTOiRE
+  nomme la série.
+- *Ce que ça déplace.* Dérive de 2070 : 1,080 → 1,039. Trajectoire propre :
+  16,0 → 15,3 % du PIB en 2070, celle du COR, mais partie un demi-point sous
+  lui (dépense de la DREES, sans gestion ni minimum vieillesse) et crue plus
+  vite (+13 % contre +8 %) : la note de vigilance de la page Coût compare
+  désormais les croissances, et l'affirmation `cout.vigilance_cor` avec elle.
+  Reconstitution du passé : −17,1 → −14,3 % en 2009, −14,8 → −11,5 % en 2000,
+  −22,9 → −20,0 % en 1990. Pension relative de l'ensemble à l'horizon : +10,4 →
+  +6,2 % du COR (le modèle −12,0 %, le COR −17,2 %) ; de l'Agirc-Arrco +46,3 →
+  +23,9 %, écart de têtes ; dépense des complémentaires +15,3 → −0,1 %, qui
+  passent aux groupes suivis ; non-salariés +133,2 → +134,7 % (le calage des
+  poids). Borne haute : proposition 9,3 → 8,8 % du PIB en 2070, solde moyen
+  −1,17 → −0,78, coefficient 0,91 → 0,97, dette 73 → 49 %. Borne basse :
+  proposition 8,6 → 8,5 %, solde moyen −0,86 → −0,74, coefficient 0,988 →
+  1,005, dette 55 → 48 %, quatre années à l'équilibre au lieu de deux ;
+  l'accueil cite −0,7, 48 %, 1,00, un coût des 18 % de 2,0 points, une
+  variante prospective à −3,0 et un diviseur de l'âge à 0,2 point. Cinq
+  cliquets resserrés ; 57 rendus de page sur 74 ; le parcours compte 44 385
+  valeurs sur 120 séries, et la conservation est refigée pour lui.
+- *Restent* le point (4) de l'étape 7 : carrières incomplètes, migrants,
+  entrées tardives des fonctionnaires ; pour le cadre, un rapport de 0,88 à
+  0,97 que le taux moyen ne ferme pas, où sa part Cnav paraît dépasser celle
+  du COR (le plafond rapporté au salaire moyen, à vérifier) ; la pension
+  relative de la FPE (+16,8 %), les non-salariés et les régimes spéciaux.

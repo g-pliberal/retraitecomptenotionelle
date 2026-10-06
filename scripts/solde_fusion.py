@@ -476,7 +476,10 @@ def main(argv: list[str] | None = None) -> int:
     conventions = CONVENTIONS if arguments.convention == "les-deux" else (arguments.convention,)
 
     parametres = Parametres()
-    toutes = hypotheses(Simulateur(parametres).catalogue, parametres.annee_bascule)
+    # Les barèmes de la page Coût, sous ses conventions : l'Agirc-Arrco y cotise
+    # au taux moyen des entreprises (``Simulateur.pour_la_projection``).
+    toutes = hypotheses(Simulateur(parametres).pour_la_projection().catalogue,
+                        parametres.annee_bascule)
 
     resultats = []
     for lettre in arguments.hypotheses:

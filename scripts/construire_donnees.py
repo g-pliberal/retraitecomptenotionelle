@@ -80,6 +80,7 @@ from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     CatalogueRegimes,
     charger_inventaire,
+    charger_taux_moyens,
 )
 from retraite_notionnelle.scenarios.univers import calcul_notionnel  # noqa: E402
 from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
@@ -887,6 +888,16 @@ def _prolongement_points() -> dict:
     return {
         regime: [suit, decalage, int(fiabilite)]
         for regime, (suit, decalage, fiabilite) in sorted(valeurs._prolongements.items())
+    }
+
+
+def _taux_moyens() -> dict:
+    """Le taux contractuel moyen de l'Agirc-Arrco : ``regime|assiette`` ->
+    {année : taux}. Le paquet le porte ; le portage ne redate les périodes
+    que sous ``conventions_cor`` (``CatalogueRegimes``, ``tauxMoyens``)."""
+    return {
+        f"{regime}|{assiette}": {str(annee): taux for annee, taux in sorted(serie.items())}
+        for (regime, assiette), serie in sorted(charger_taux_moyens(DONNEES).items())
     }
 
 
@@ -1808,6 +1819,7 @@ def construire(bilan: bytes) -> bytes:
         "valeurs_service_datees": _valeurs_service_datees(),
         "prolongement_points": _prolongement_points(),
         "conventions_points": _conventions_points(),
+        "taux_moyens": _taux_moyens(),
         "rendements_points": _rendements(),
         "conversions_points": _conversions_points(),
         "classes_cotisation": _classes_cotisation(),

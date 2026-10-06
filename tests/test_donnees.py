@@ -600,6 +600,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "structure_financement_regimes": "regimes/structure_financement.csv",
         "cotisants_regimes": "regimes/cotisants.csv",
         "retraites_regimes": "regimes/retraites_projetes.csv",
+        # Le taux moyen des entreprises, que la page Coût substitue au taux
+        # minimal des fiches de l'Agirc-Arrco.
+        "taux_moyens_agirc_arrco": "regimes/taux_moyens_agirc_arrco.csv",
         # La part de réversion et la ventilation qui la contrôle : deux
         # producteurs, deux fichiers, la même grandeur.
         "part_droits_derives": "macro/part_droits_derives.csv",

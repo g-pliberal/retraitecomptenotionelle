@@ -2424,6 +2424,49 @@ def source_valeurs_point_agirc_arrco_en_cours() -> dict[tuple, float]:
     }
 
 
+#: Les séries de taux moyens que la page Coût reprend de Trajectoire : le
+#: régime et l'assiette de la fiche qu'elles redatent, la colonne de
+#: ``paramCotis.csv``, et les années de la fiche. L'UNIRS et l'Arrco se
+#: partagent la tranche 1, l'Agirc-Arrco la reprend en 2019 ; sa tranche 2,
+#: 17 % au minimum comme en moyenne, n'a rien à redater.
+TAUX_MOYENS_TRAJECTOIRE = (
+    ("unirs", "tranche_1", "txCotARRCOsalempl_t1", 1957, 1961),
+    ("arrco", "tranche_1", "txCotARRCOsalempl_t1", 1961, 2018),
+    ("arrco_tranche_2", "tranche_2_arrco", "txCotARRCOsalempl_t2", 1961, 2018),
+    ("agirc", "tranche_b", "txCotAGIRCsalempl_TB", 1948, 2018),
+    ("agirc", "tranche_c", "txCotAGIRCsalempl_TC", 1991, 2018),
+    ("agirc_arrco", "tranche_1", "txCotARRCOsalempl_t1", 2019, 2019),
+)
+
+
+def source_taux_moyens_agirc_arrco() -> dict[tuple, float]:
+    """Le taux contractuel MOYEN de l'Agirc-Arrco, tranche par tranche.
+
+    Les fiches portent le taux MINIMAL que l'accord imposait, et les cas types
+    du COR le taux moyen des entreprises : 5,42 % au lieu de 4 % sur la
+    tranche 1 de l'Arrco jusqu'en 1993, 13,9 % au lieu de 8 % sur la tranche B
+    de l'Agirc. La série est celle du modèle Trajectoire de la DREES, qui
+    calcule les cas types du COR (``scripts/fetch/drees_taux_moyens.py``) ;
+    une transcription de modélisateur, qui ne va donc pas au-delà de ``haute``.
+
+    Une ligne par CHANGEMENT de taux, comme un barème : la première année de
+    la fiche, puis chaque année où le taux diffère de la précédente. Le taux
+    d'une année est le dernier écrit à cette année ou avant.
+    """
+    charge = _lire_json("drees_taux_moyens.json", "scripts/fetch/drees_taux_moyens.py")
+    valeurs: dict[tuple, float] = {}
+    for regime, assiette, colonne, debut, fin in TAUX_MOYENS_TRAJECTOIRE:
+        serie = {int(annee): taux for annee, taux in charge["valeurs"][colonne].items()}
+        precedent = None
+        for annee in range(debut, fin + 1):
+            taux = serie.get(annee)
+            if taux is None or taux == precedent:
+                continue
+            valeurs[(regime, assiette, str(annee))] = taux
+            precedent = taux
+    return dict(sorted(valeurs.items()))
+
+
 def source_valeurs_point_erafp() -> dict[tuple, float]:
     """Valeurs du point du RAFP, publiées par l'ERAFP qui les fixe.
 
@@ -5968,6 +6011,61 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         niveau="haute",
+    ),
+    Certification(
+        nom="taux_moyens_agirc_arrco",
+        chemin=REFERENCE / "regimes" / "taux_moyens_agirc_arrco.csv",
+        cles=("regime", "assiette", "annee"),
+        colonne="taux",
+        source=source_taux_moyens_agirc_arrco,
+        origine="DREES, modèle Trajectoire 1.1.2, paramètres de cotisation "
+                "(paramCotis.csv)",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="haute",
+        entete=(
+            "# Taux contractuel MOYEN de l'Agirc-Arrco, tranche par tranche",
+            "# source_id: drees_trajectoire_taux_moyens",
+            "# unite: taux contractuel, salarié et employeur, HORS taux d'appel",
+            "# fiabilite:",
+            "#   haute : paramètres du modèle Trajectoire de la DREES, qui calcule",
+            "#           les cas types du COR, recontrôlés par",
+            "#           scripts/verifier_donnees.py ; la tranche 1 de 1990 à",
+            "#           2025 l'est aussi contre la figure 3.1 du rapport du COR",
+            "#           de juin 2026 (tests/test_taux_moyens.py).",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Les fiches de l'Arrco et de l'Agirc portent le taux MINIMAL que",
+            "# l'accord imposait : 4 % sur la tranche 1 jusqu'en 1995, 8 % sur la",
+            "# tranche B jusqu'en 1993. Les entreprises cotisaient le plus souvent",
+            "# au-dessus, et leurs salariés acquéraient des points à leur taux :",
+            "# 5,42 % et 13,9 % en moyenne. Les cas types du COR cotisent au taux",
+            "# moyen (rapport de juin 2026, notes des figures 3.3 et 3.4) ; la page",
+            "# Coût, qui se lit contre lui, aussi : sous les conventions du COR",
+            "# (Parametres.conventions_cor), le chargeur des fiches redate leurs",
+            "# périodes au taux moyen, cotisation et points ensemble",
+            "# (donnees/regimes.py, dater_les_taux_moyens ; action 147 de la",
+            "# feuille de route, étape 10). Le simulateur individuel garde le taux",
+            "# minimal, que la caisse applique à l'entreprise qui s'y tient.",
+            "#",
+            "# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR",
+            "# ------------------------------------------",
+            "# 1. UNE LIGNE PAR CHANGEMENT, comme un barème : la première année de",
+            "#    la fiche, puis chaque année où le taux change. Le taux d'une",
+            "#    année est le dernier écrit à cette année ou avant ; la dernière",
+            "#    ligne vaut au-delà.",
+            "# 2. HORS TAUX D'APPEL : la cotisation est ce taux multiplié par le",
+            "#    taux d'appel de l'année (valeurs_point.csv), les points ce taux",
+            "#    rapporté au salaire de référence.",
+            "# 3. UNE MOYENNE DE MODÉLISATEUR : 5,42 % de 1955 à 1993 sur la",
+            "#    tranche 1, sans variation ; la tranche B varie chaque année.",
+            "#    Depuis 2019, la tranche 1 garde 6,61 % au lieu de 6,20 % : les",
+            "#    taux supérieurs des entreprises qui les appliquaient.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
     ),
     Certification(
         nom="valeurs_point_rafp",

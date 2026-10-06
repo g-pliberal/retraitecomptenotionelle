@@ -4114,9 +4114,10 @@ function bulleHypothesesCout() {
     "Ces chiffres suivent les hypothèses du Conseil d'orientation des "
     + `retraites pour l'avenir : ${HYPOTHESES_DU_COR}. Ce ne sont pas des `
     + "règles de droit, mais ce que le COR suppose des décisions à venir ; "
-    + "les suivre, c'est se comparer à lui. Le simulateur, lui, compte vos "
-    + "points à leur valeur d'aujourd'hui, comme « Mon estimation retraite », "
-    + "le simulateur officiel.",
+    + "les suivre, c'est se comparer à lui. Comme lui, ils comptent les points "
+    + "de l'Agirc-Arrco au taux moyen des entreprises. Le simulateur, lui, "
+    + "retient le taux minimal de l'accord, et compte vos points à leur valeur "
+    + "d'aujourd'hui, comme « Mon estimation retraite », le simulateur officiel.",
   );
 }
 
@@ -9158,13 +9159,19 @@ function coutDetailScenarios(contexte) {
   // euros constants comme la trajectoire les tient.
   const garantieFin = horizon.coutConstants(COMPOSANTE_GARANTIE);
   const totalFin = horizon.coutConstants("notionnel_liberal") + garantieFin;
-  // Ce que le modèle donnerait LUI-MÊME au système actuel à l'horizon — sa
-  // masse, à l'échelle de la dernière année publiée —, et que la page ne
-  // prend plus pour une projection : le contrôle que le COR lui oppose.
-  const modelePart = horizon.baseModele / horizon.coefficientConstants / horizon.pib;
+  // Ce que le modèle donnerait LUI-MÊME au système actuel — sa masse, à
+  // l'échelle de la dernière année publiée —, et que la page ne prend plus
+  // pour une projection : le contrôle que le COR lui oppose. Depuis le
+  // 5 octobre 2026, les deux parts se rejoignent à l'horizon ; la masse du
+  // modèle part d'une dépense plus étroite que celle du COR, sans gestion ni
+  // minimum vieillesse, et croît plus vite : c'est la croissance qui se
+  // compare, et son rapport est la dérive.
+  const premiereProjetee = avenir.premiereAnneeProjetee;
+  const partModele = (ligne) => ligne.baseModele / ligne.coefficientConstants / ligne.pib;
+  const croissanceModele = partModele(horizon) / partModele(avenir.annee(premiereProjetee));
+  const croissanceCor = corHorizon / comptes.depense(premiereProjetee);
   const corFin = corHorizon * horizon.pib * horizon.coefficientConstants;
   const decomposee = avenir.decomposition(avenir.premiereAnneeProjetee);
-  const premiereProjetee = avenir.premiereAnneeProjetee;
   const [tetesModele, pensionModele] = decomposee.get(avenir.derniereAnnee) ?? [1, 1];
   const decomposition = comptes.decomposition;
   const tetesCor = decomposition.indiceCroissance("retraites", premiereProjetee,
@@ -9243,18 +9250,19 @@ cartes du haut : la page ne porte qu'une dépense pour le système actuel, et
 c'est la dépense officielle.</p>
 <div class="note vigilance"><strong>Point de vigilance : le modèle ne refait
 pas lui-même la projection du COR.</strong> Mise à l'échelle de la dépense
-de ${derniere}, sa propre masse de pensions donnerait au système actuel
-${g.pourcentage(modelePart, false, 1)} du PIB en ${avenir.derniereAnnee}, quand le
-COR en projette ${g.pourcentage(corHorizon, false, 1)}. Le nombre de retraités,
-le modèle le suit : de ${premiereProjetee} à ${avenir.derniereAnnee}, il en
+de ${derniere}, sa propre masse de pensions ferait croître la part du système
+actuel dans le PIB de ${g.pourcentage(croissanceModele - 1, false, 0)} de
+${premiereProjetee} à ${avenir.derniereAnnee}, quand le COR la fait croître de
+${g.pourcentage(croissanceCor - 1, false, 0)}. Le nombre de retraités,
+le modèle le suit : sur ces années, il en
 compte ${g.pourcentage(tetesModele - 1, false, 0)} de plus, le COR
 ${tetesCor === null ? "—" : g.pourcentage(tetesCor - 1, false, 0)}. La pension
 moyenne rapportée au revenu d'activité moyen, il la suit mal : elle recule de
 ${pensionCor === null ? "—" : g.pourcentage(1 - pensionCor, false, 0)} chez le
 COR et de ${g.pourcentage(1 - pensionModele, false, 0)} seulement dans le modèle,
-dont les treize carrières types gardent un ${g.terme("taux de remplacement")}
-que le COR fait reculer, par la baisse du rendement de l'Agirc-Arrco et la part
-croissante des primes des fonctionnaires qu'il projette. C'est pourquoi aucune
+dont les treize carrières types, commencées au même âge à chaque génération
+et le plus souvent complètes, gardent un ${g.terme("taux de remplacement")} que
+le COR fait reculer davantage. C'est pourquoi aucune
 dépense du système actuel n'est prise au modèle sur cette page ; le rapport qu'on lui prend, lui, porte encore cet
 écart, et <a href="${g.DEPOT}/blob/main/docs/limites.md">le § 5 ter des
 limites</a> dit ce qu'il déplace.</div>
@@ -14824,12 +14832,12 @@ contienne, et elle n'est pas petite.</p>`;
  */
 export const MESURES_BLOCAGES = {
   // solde_fusion.py, hypothèse A : le taux du régime unique du modèle, en %.
-  taux_regime_unique: 25.8,
+  taux_regime_unique: 26.4,
   // Le scénario 4 du modèle (`notionnel_retroactif_employeur`) sous A moins la
   // proposition, solde moyen 2026-2070, en points de PIB : ce que coûtent les
   // 18 %, l'âge légal de 65 ans de la proposition compris — il en rend un
   // demi-point.
-  cout_18_pour_cent: 1.8,
+  cout_18_pour_cent: 2.0,
   // Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
   // l'horizon, en points de PIB, en % du PIB et en valeur. Mesurés avec l'âge
   // légal de 65 ans et SANS TVA à taux unique : la proposition ne réforme plus
@@ -14839,23 +14847,23 @@ export const MESURES_BLOCAGES = {
   // la bascule, que la part « retraite seule » du taux que l'État verse — le
   // défaut depuis le même jour : sous le taux entier, la proposition était à
   // −0,9, 59 % et 0,85, et 1,03 en 2070.
-  solde_moyen_proposition: -0.9,
+  solde_moyen_proposition: -0.7,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 55,
+  dette_2070_proposition: 48,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.86,
   decennie_coefficient_minimum: 2050,
-  coefficient_2070: 0.99,
+  coefficient_2070: 1.0,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.
   tva_affectee: 0.0,
   // proposition_prospective.py : le solde moyen de la variante qui laisse le
   // stock intact, en points de PIB.
-  solde_moyen_prospectif: -3.1,
+  solde_moyen_prospectif: -3.0,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
-  cout_diviseur_age_legal: 0.1,
+  cout_diviseur_age_legal: 0.2,
 };
 
 /**

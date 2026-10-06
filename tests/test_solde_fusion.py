@@ -26,7 +26,8 @@ def reference():
 
 @pytest.fixture(scope="module")
 def hypotheses():
-    simulateur = Simulateur(Parametres())
+    """Les barèmes du simulateur de la page Coût, sous ses conventions."""
+    simulateur = Simulateur(Parametres()).pour_la_projection()
     return simulateur, solde_fusion.hypotheses(simulateur.catalogue, 2026)
 
 

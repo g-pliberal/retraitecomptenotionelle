@@ -332,7 +332,7 @@ const MOTIFS_NEUTRALISES = {
  * forfaitaire achetait ses points, et elle n'est plus un avantage non
  * contributif. Voir avantages.py.
  */
-function catalogueSans(paquet, code = null) {
+function catalogueSans(paquet, code = null, options = {}) {
   const regimes = paquet.regimes.map((fiche) => ({
     ...fiche,
     periodes: fiche.periodes.map((periode) => {
@@ -344,7 +344,7 @@ function catalogueSans(paquet, code = null) {
       return copie;
     }),
   }));
-  return new CatalogueRegimes({ ...paquet, regimes });
+  return new CatalogueRegimes({ ...paquet, regimes }, options);
 }
 
 /**
@@ -367,7 +367,8 @@ export function scenariosNeutralises(simulateur) {
   // Le classement de l'emploi et la jouissance militaire partagent leur
   // déclaration : un seul catalogue les neutralise, et c'est l'affiliation de
   // la carrière qui dit laquelle des deux lignes l'écart renseigne.
-  const sansClassement = neuf(catalogueSans(paquet, "categorie_active"));
+  const sansClassement = neuf(catalogueSans(
+    paquet, "categorie_active", { tauxMoyens: simulateur.catalogue.tauxMoyens }));
   variantes.categorie_active = sansClassement;
   variantes.age_jouissance_militaire = sansClassement;
 

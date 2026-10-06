@@ -202,6 +202,15 @@ conventions_points:
     valeur_achat:
       - {depuis: 2027, suit: salaire_moyen, ecart: 0.0, decalage: 1}
       - {depuis: 2038, suit: salaire_moyen, ecart: -0.0086, decalage: 1}
+#
+# Une autre convention du COR sur l'Agirc-Arrco, du passé autant que de
+# l'avenir, n'est pas ici : ses cas types cotisent au TAUX MOYEN des
+# entreprises (« pour l'Agirc-Arrco, les cotisations sont supposées prélevées
+# au taux moyen », notes des figures 3.3 et 3.4), et non au taux minimal des
+# fiches. La série est regimes/taux_moyens_agirc_arrco.csv, celle du modèle
+# Trajectoire de la DREES ; sous les mêmes conventions, le chargeur des fiches
+# en redate les périodes (donnees/regimes.py, dater_les_taux_moyens ; action
+# 147, étape 10).
 
 # Le traitement indiciaire des fonctionnaires. Source : annexe méthodologique
 # en ligne du rapport de juin 2026, § « Le profil par âge des rémunérations et

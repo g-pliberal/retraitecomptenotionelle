@@ -1090,6 +1090,17 @@
    "valeurs": 368,
    "verifiee_le": "2026-09-15"
   },
+  "taux_moyens_agirc_arrco": {
+   "ajoutees": 90,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "c0e356d7ff169a26",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "DREES, modèle Trajectoire 1.1.2, paramètres de cotisation (paramCotis.csv)",
+   "valeurs": 90,
+   "verifiee_le": "2026-10-05"
+  },
   "taux_prelevement_retraite": {
    "ajoutees": 0,
    "colonne": "taux",

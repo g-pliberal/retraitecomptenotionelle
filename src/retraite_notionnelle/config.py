@@ -651,13 +651,17 @@ class Parametres:
     #: point de l'Agirc-Arrco au salaire moyen moins 1,16 point jusqu'en 2037,
     #: moins 0,86 ensuite, et la part croissante des primes des cas types de
     #: fonctionnaires (``conventions_points`` et ``traitement_indiciaire`` de
-    #: ``macro/hypotheses_projection.yaml``). La page Coût les suit — c'est
+    #: ``macro/hypotheses_projection.yaml``) ; et, comme ses cas types,
+    #: l'Agirc-Arrco au taux moyen des entreprises, cotisation et points, et
+    #: non au taux minimal de ses fiches (``regimes/taux_moyens_agirc_arrco.csv``,
+    #: action 147, étape 10). La page Coût les suit — c'est
     #: contre le COR qu'on la lit, et ``calculer_cout`` les allume
     #: (:meth:`~retraite_notionnelle.simulateur.Simulateur.pour_la_projection`)
     #: —, le simulateur individuel non : il compte les points à leur valeur
     #: d'aujourd'hui, revalorisée comme les prix, la convention de « Mon
     #: estimation retraite », à laquelle un visiteur le compare. Décision du
-    #: propriétaire, le 5 octobre 2026.
+    #: propriétaire, le 5 octobre 2026 ; le taux moyen y est rangé le même
+    #: jour, le taux du simulateur restant à trancher (registre, 138.13).
     conventions_cor: bool = False
 
     #: Âge auquel les droits figés à la bascule sont convertis en capital

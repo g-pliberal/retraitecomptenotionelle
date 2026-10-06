@@ -2074,11 +2074,21 @@ def _(m: Modele):
     # rapport de juin 2026. Depuis le 5 octobre 2026, la trajectoire affichée
     # est celle du COR ; l'écart se lit dans celle que le modèle se donne
     # lui-même, et sa décomposition le met dans la pension, non dans les têtes.
+    # Les deux parts se rejoignent à l'horizon depuis l'étape 10 de l'action
+    # 147 : la masse du modèle part d'une dépense plus étroite et croît plus
+    # vite. C'est la croissance que la page compare, et son rapport est la
+    # dérive de la borne haute.
     avenir = m.cout.avenir
-    horizon = avenir.annee(avenir.derniere_annee)
-    cor = m.contexte.comptes().depense(avenir.derniere_annee)
-    propre = horizon.base_modele / horizon.coefficient_constants / horizon.pib
-    assert abs(propre - cor) > 0.005
+    debut, fin = avenir.premiere_annee_projetee, avenir.derniere_annee
+    comptes = m.contexte.comptes()
+
+    def part(ligne):
+        return ligne.base_modele / ligne.coefficient_constants / ligne.pib
+
+    ecart = (part(avenir.annee(fin)) / part(avenir.annee(debut))
+             / (comptes.depense(fin) / comptes.depense(debut)))
+    assert ecart > 1.02
+    assert _proche(ecart, avenir.annee(fin).derive)
     tetes, pension = avenir.decomposition(avenir.premiere_annee_projetee)[avenir.derniere_annee]
     decomposition = m.contexte.comptes().decomposition
     assert abs(tetes / decomposition.indice_croissance(

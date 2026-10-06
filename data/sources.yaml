@@ -1043,6 +1043,31 @@ institutions:
           — pensions de droit direct, de droit dérivé — ne sont publiés que
           depuis 2020 : ils servent à dire ce que contient le total, pas à le
           remplacer.
+      - id: drees_trajectoire_taux_moyens
+        titre: >-
+          Modèle Trajectoire, paramètres de cotisation (paramCotis.csv) : taux
+          contractuels moyens de l'Arrco et de l'Agirc
+        url: https://git.drees.fr/drees_code_public/modeles/trajectoire
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/drees_taux_moyens.py
+        cible: data/reference/regimes/taux_moyens_agirc_arrco.csv
+        millesime: version 1.1.2 (avril 2025)
+        note: >-
+          Le modèle de microsimulation de la DREES, publié sous licence EUPL
+          1.2, dont un module calcule les cas types du COR. Ses paramètres de
+          cotisation portent, année par année, le taux contractuel MOYEN des
+          entreprises sur les tranches 1 et 2 de l'Arrco et B et C de
+          l'Agirc, hors taux d'appel, à côté du minimum que l'accord imposait
+          (colonnes TxCotMIN_* du classeur de 2020 dont le fichier descend,
+          même empreinte dans la version 1.1.2) : 5,42 % au lieu de 4 % sur
+          la tranche 1 jusqu'en 1993, 13,9 % au lieu de 8 % sur la tranche B.
+          La page Coût en compte les cotisations et les points de l'Agirc-Arrco
+          (action 147, étape 10). Un modélisateur et non le producteur : les
+          valeurs entrent au niveau `haute`. La tranche 1 de 1990 à 2025 est
+          contrôlée contre la figure 3.1 du rapport du COR de juin 2026, qui
+          trace les deux taux d'un non-cadre (tests/temoins/cor_taux_cotisation.json).
+          Lu au commit 0963b57 : la version 1.1.2 n'a pas d'étiquette.
       - id: drees_eic
         titre: Échantillon interrégimes de cotisants (EIC)
         url: https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/lechantillon-interregimes-de-cotisants-eic

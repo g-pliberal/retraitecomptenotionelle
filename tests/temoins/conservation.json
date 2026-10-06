@@ -525,12 +525,14 @@
    "2026-10-05 | action 142 : la délibération de l'ERAFP, et la majoration du RAFP",
    "2026-10-05 | action 142 : le départ anticipé des assurés handicapés, au scénario 1 et sur le site",
    "2026-10-05 | action 142, étape 4 : Destinie 2 exécuté à part, ses sorties en témoins",
+   "2026-10-05 | action 147, étape 10 : les points de l'Agirc-Arrco au taux moyen des entreprises, comme les cas types du COR",
    "2026-10-05 | action 147, étape 4 : les deux conventions du COR, suivies",
    "2026-10-05 | action 147, étape 4 bis : les conventions du COR pour la seule page Coût",
    "2026-10-05 | action 147, étape 5 : l'écart au COR, groupe de régimes par groupe",
    "2026-10-05 | action 147, étape 6 : la pondération par génération, mesurée et écartée",
    "2026-10-05 | action 147, étape 7 : la méthode du COR, relue, et l'écart de 2070 décomposé",
    "2026-10-05 | action 147, étape 8 : la comptabilité de la trajectoire propre, corrigée",
+   "2026-10-05 | action 147, étape 9 : la fonction publique d'État et la CNRACL, leurs retraités et leur traitement suivis du COR",
    "2026-10-05 | action 89 : les quatre lignes du RAFP au vivier",
    "2026-10-05 | action 89 : les seize lignes de l'Agirc-Arrco au vivier",
    "2026-10-05 | action 89 : les vingt-trois lignes des régimes spéciaux au vivier"
@@ -1256,6 +1258,7 @@
    "drees_non_recours_minimum_vieillesse",
    "drees_open_data",
    "drees_panorama_retraites",
+   "drees_trajectoire_taux_moyens",
    "dss_ccss_impots_retraite",
    "dss_ccss_transferts_retraite",
    "dss_comptes_secu",
@@ -6829,7 +6832,7 @@
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
     "d8fe3e7fd9af50b2",
-    "8da601d39b93e539"
+    "90b19ceff5952bad"
    ],
    "Avant de partir": [
     "5d7ed1de7dc7c4d7",

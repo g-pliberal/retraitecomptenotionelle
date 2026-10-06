@@ -580,7 +580,10 @@ export class Simulateur {
     this.macro = new DonneesMacro(
       paquet, parametres.scenario_projection, parametres.trajectoire_emploi);
     this.mortalite = new DonneesMortalite(paquet);
-    this.catalogue = new CatalogueRegimes(paquet);
+    // Sous les conventions du COR, l'Agirc-Arrco cotise et acquiert ses
+    // points au taux moyen des entreprises, comme ses cas types.
+    this.catalogue = new CatalogueRegimes(
+      paquet, { tauxMoyens: Boolean(parametres.conventions_cor) });
     this.affiliations = new Affiliations(paquet);
     // Aucune pension n'en dépend : les effectifs de retraités par caisse ne
     // servent qu'aux AGRÉGATS, où ils disent ce que chaque cas type pèse.

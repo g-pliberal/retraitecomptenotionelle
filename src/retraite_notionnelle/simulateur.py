@@ -844,7 +844,10 @@ class Simulateur:
 
     @cached_property
     def catalogue(self) -> CatalogueRegimes:
-        return CatalogueRegimes(self.parametres.racine_donnees)
+        # Sous les conventions du COR, l'Agirc-Arrco cotise et acquiert ses
+        # points au taux moyen des entreprises, comme ses cas types.
+        return CatalogueRegimes(self.parametres.racine_donnees,
+                                taux_moyens=self.parametres.conventions_cor)
 
     @cached_property
     def effectifs(self) -> EffectifsRetraites:

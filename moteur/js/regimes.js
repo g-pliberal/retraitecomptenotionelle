@@ -1886,11 +1886,97 @@ export class Regime {
   }
 }
 
+/** La dernière valeur d'un barème `{année: valeur}` écrite à `annee` ou avant. */
+function enVigueur(bareme, annee) {
+  let retenue = null;
+  let valeur = null;
+  for (const [cle, v] of Object.entries(bareme)) {
+    const millesime = Number(cle);
+    if (millesime <= annee && (retenue === null || millesime > retenue)) {
+      retenue = millesime;
+      valeur = v;
+    }
+  }
+  return valeur;
+}
+
+function memesChamps(a, b) {
+  const cles = Object.keys(a);
+  return cles.length === Object.keys(b).length && cles.every((cle) => a[cle] === b[cle]);
+}
+
+/**
+ * Les périodes de l'Agirc-Arrco au taux MOYEN des entreprises, et non au taux
+ * minimal de leur fiche : la convention de la page Coût, sous
+ * `conventions_cor`. Le taux de cotisation devient le taux moyen multiplié par
+ * le taux d'appel de l'année ; depuis 2019, le taux de calcul des points
+ * devient le taux moyen. Voir donnees/regimes.py, dater_les_taux_moyens.
+ */
+export function daterLesTauxMoyens(code, periodes, moyens, appels) {
+  const resultat = [];
+  for (const periode of periodes) {
+    const serie = moyens[`${code}|${periode.assiette}`];
+    if (!serie) {
+      resultat.push(periode);
+      continue;
+    }
+    const appelDuBareme = appels.get(periode.points_de || code) ?? {};
+    const derniere = Math.max(...Object.keys(serie).map(Number));
+    const fin = periode.fin === null ? Math.max(periode.debut, derniere) : periode.fin;
+    const tranches = [];
+    for (let annee = periode.debut; annee <= fin; annee += 1) {
+      const moyen = enVigueur(serie, annee);
+      let champs = {};
+      if (moyen !== null && periode.taux_calcul_points) {
+        champs = {
+          taux_calcul_points: moyen,
+          taux_cotisation_retraite: moyen * periode.taux_cotisation_retraite
+            / periode.taux_calcul_points,
+        };
+      } else if (moyen !== null) {
+        const appel = enVigueur(appelDuBareme, annee);
+        champs = { taux_cotisation_retraite: moyen * (appel === null ? 1.0 : appel) };
+      }
+      const precedente = tranches.at(-1);
+      if (precedente && memesChamps(precedente[2], champs)) {
+        precedente[1] = annee;
+      } else {
+        tranches.push([annee, annee, champs]);
+      }
+    }
+    tranches.forEach(([debut, finTranche, champs], rang) => {
+      const derniereTranche = rang === tranches.length - 1;
+      resultat.push({
+        ...periode, debut, fin: derniereTranche ? periode.fin : finTranche, ...champs,
+      });
+    });
+  }
+  return resultat;
+}
+
 export class CatalogueRegimes {
-  constructor(paquet) {
+  /**
+   * `tauxMoyens` redate les périodes de l'Agirc-Arrco au taux moyen des
+   * entreprises (`daterLesTauxMoyens`) : la convention de la page Coût, que
+   * le simulateur allume sous `conventions_cor`.
+   */
+  constructor(paquet, { tauxMoyens = false } = {}) {
+    this.tauxMoyens = tauxMoyens;
+    const moyens = tauxMoyens ? (paquet.taux_moyens ?? {}) : {};
+    const appels = new Map();
+    for (const [cle, valeurs] of Object.entries(tauxMoyens ? paquet.valeurs_point : {})) {
+      const [regime, mesure] = cle.split("|");
+      if (mesure === "taux_appel") {
+        appels.set(regime, Object.fromEntries(
+          Object.entries(valeurs).map(([annee, [valeur]]) => [annee, valeur])));
+      }
+    }
+    const redates = new Set(Object.keys(moyens).map((cle) => cle.split("|")[0]));
     this._regimes = new Map();
     for (const fiche of paquet.regimes) {
-      this._regimes.set(fiche.code, new Regime(fiche));
+      this._regimes.set(fiche.code, new Regime(redates.has(fiche.code)
+        ? { ...fiche, periodes: daterLesTauxMoyens(fiche.code, fiche.periodes, moyens, appels) }
+        : fiche));
     }
     if (this._regimes.size === 0) {
       throw new Error("aucun régime chargé");

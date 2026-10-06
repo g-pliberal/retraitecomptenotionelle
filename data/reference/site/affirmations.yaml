@@ -1152,9 +1152,10 @@ affirmations:
     page: /cout
     extrait: "Point de vigilance : le modèle ne refait pas lui-même la projection du COR."
     porte: >-
-      la part de PIB que le modèle donne lui-même au système actuel à l'horizon,
-      sa masse à l'échelle de la dernière année publiée, diffère de celle du COR,
-      et l'écart tient à la pension moyenne relative, non aux effectifs
+      la part de PIB que le modèle donne lui-même au système actuel, sa masse à
+      l'échelle de la dernière année publiée, croît d'ici l'horizon plus vite que
+      celle du COR, et l'écart tient à la pension moyenne relative, non aux
+      effectifs
     etat: verifiee
     controle: projection_s_ecarte_du_cor
 

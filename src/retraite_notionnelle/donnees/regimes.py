@@ -1215,6 +1215,93 @@ def dater_les_taux(periodes: tuple[PeriodeRegime, ...],
     return tuple(resultat)
 
 
+def _bareme(chemin: Path, colonnes: tuple[str, ...], valeur: str,
+            filtre=None) -> dict[tuple[str, ...] | str, dict[int, float]]:
+    """Un barème CSV : clé -> année -> valeur, commentaires sautés."""
+    table: dict = {}
+    if not chemin.exists():
+        return table
+    with chemin.open(encoding="utf-8") as flux:
+        for ligne in csv.DictReader(l for l in flux if not l.lstrip().startswith("#")):
+            if filtre is not None and not filtre(ligne):
+                continue
+            cle = tuple(ligne[c] for c in colonnes) if len(colonnes) > 1 else ligne[colonnes[0]]
+            table.setdefault(cle, {})[int(ligne["annee"])] = float(ligne[valeur])
+    return table
+
+
+def charger_taux_moyens(racine: Path) -> dict[tuple[str, str], dict[int, float]]:
+    """``taux_moyens_agirc_arrco.csv`` : (régime, assiette) -> année -> taux
+    contractuel moyen, hors taux d'appel. Absent, rien ne se redate."""
+    return _bareme(racine / "reference" / "regimes" / "taux_moyens_agirc_arrco.csv",
+                   ("regime", "assiette"), "taux")
+
+
+def charger_taux_appel(racine: Path) -> dict[str, dict[int, float]]:
+    """Les taux d'appel de ``valeurs_point.csv`` : barème -> année -> taux."""
+    return _bareme(racine / "reference" / "regimes" / "valeurs_point.csv",
+                   ("regime",), "valeur", lambda ligne: ligne["mesure"] == "taux_appel")
+
+
+def _en_vigueur(bareme: dict[int, float], annee: int) -> float | None:
+    """La dernière valeur écrite à ``annee`` ou avant, ``None`` avant la première."""
+    anterieures = [a for a in bareme if a <= annee]
+    return bareme[max(anterieures)] if anterieures else None
+
+
+def dater_les_taux_moyens(code: str, periodes: tuple[PeriodeRegime, ...],
+                          moyens: dict[tuple[str, str], dict[int, float]],
+                          appels: dict[str, dict[int, float]],
+                          ) -> tuple[PeriodeRegime, ...]:
+    """Les périodes de l'Agirc-Arrco au taux MOYEN des entreprises.
+
+    Une fiche porte le taux contractuel MINIMAL de l'accord — 4 % sur la
+    tranche 1 de l'Arrco jusqu'en 1995, 8 % sur la tranche B de l'Agirc
+    jusqu'en 1993 —, quand les entreprises cotisaient presque toutes au-dessus
+    et que leurs salariés acquéraient des points à leur taux. Les cas types du
+    COR cotisent au taux moyen ; la page Coût, sous ses conventions
+    (``Parametres.conventions_cor``), aussi : chaque période dont l'assiette a
+    une série dans ``taux_moyens_agirc_arrco.csv`` est réécrite année par
+    année, le taux de cotisation devenant le taux moyen multiplié par le taux
+    d'appel de l'année, et, depuis 2019, le taux de calcul des points devenant
+    le taux moyen lui-même. La cotisation et les points changent ENSEMBLE : le
+    compte notionnel prélève ce que la pension a acheté. Une année d'avant la
+    série garde la fiche ; les années identiques se refondent, et la dernière
+    garde la borne de la fiche, comme :func:`dater_les_taux`.
+    """
+    resultat: list[PeriodeRegime] = []
+    for periode in periodes:
+        serie = moyens.get((code, periode.assiette))
+        if not serie:
+            resultat.append(periode)
+            continue
+        appel_du_bareme = appels.get(periode.points_de or code, {})
+        fin = max(periode.debut, max(serie)) if periode.fin is None else periode.fin
+        tranches: list[tuple[int, int, dict[str, float]]] = []
+        for annee in range(periode.debut, fin + 1):
+            moyen = _en_vigueur(serie, annee)
+            champs: dict[str, float] = {}
+            if moyen is not None and periode.taux_calcul_points:
+                champs = {"taux_calcul_points": moyen,
+                          "taux_cotisation_retraite": moyen * periode.taux_cotisation_retraite
+                          / periode.taux_calcul_points}
+            elif moyen is not None:
+                appel = _en_vigueur(appel_du_bareme, annee)
+                champs = {"taux_cotisation_retraite": moyen * (1.0 if appel is None else appel)}
+            if tranches and tranches[-1][2] == champs:
+                tranches[-1] = (tranches[-1][0], annee, champs)
+            else:
+                tranches.append((annee, annee, champs))
+        for rang, (debut, fin_tranche, champs) in enumerate(tranches):
+            derniere = rang == len(tranches) - 1
+            resultat.append(replace(
+                periode, debut=debut,
+                fin=periode.fin if derniere else fin_tranche,
+                **champs,
+            ))
+    return tuple(resultat)
+
+
 #: Les fichiers YAML du dossier des régimes qui ne sont pas des régimes : tout
 #: autre fichier ``*.yaml`` en est un, hors ceux dont le nom commence par
 #: « _ » (le schéma).
@@ -1388,10 +1475,16 @@ class CatalogueRegimes:
     `taux_cotisation_annuels.csv` couvre sont datés année par année au
     chargement : voir :func:`dater_les_taux`. Le portage JavaScript reçoit les
     périodes ainsi découpées dans le paquet de données, et n'a rien à refaire.
+
+    ``taux_moyens`` redate en outre les périodes de l'Agirc-Arrco au taux
+    moyen des entreprises (:func:`dater_les_taux_moyens`) : la convention de
+    la page Coût (``Parametres.conventions_cor``), que le paquet porte en
+    table et que le portage applique lui-même.
     """
 
-    def __init__(self, racine: Path) -> None:
+    def __init__(self, racine: Path, taux_moyens: bool = False) -> None:
         self.racine = racine
+        self.taux_moyens = taux_moyens
         self._regimes: dict[str, Regime] = {}
         self.taux_annuels = charger_taux_annuels(racine)
         dossier = racine / "reference" / "regimes"
@@ -1410,6 +1503,19 @@ class CatalogueRegimes:
                 "taux_cotisation_annuels.csv nomme des régimes sans fiche : "
                 + ", ".join(sorted(inconnus))
             )
+        moyens = charger_taux_moyens(racine)
+        inconnus = {code for code, _ in moyens} - set(self._regimes)
+        if inconnus:
+            raise ValueError(
+                "taux_moyens_agirc_arrco.csv nomme des régimes sans fiche : "
+                + ", ".join(sorted(inconnus))
+            )
+        if taux_moyens and moyens:
+            appels = charger_taux_appel(racine)
+            for code in sorted({code for code, _ in moyens}):
+                self._regimes[code] = replace(
+                    self._regimes[code], periodes=dater_les_taux_moyens(
+                        code, self._regimes[code].periodes, moyens, appels))
 
     @staticmethod
     def _construire(fiche: dict, chemin: Path, racine: Path,

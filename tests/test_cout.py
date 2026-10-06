@@ -670,8 +670,10 @@ RECONSTITUTION_DEPUIS = 2000
 #: observée. Un cliquet, qui ne doit que descendre : -19,2 % en 2009, le
 #: 5 octobre 2026 ; -19,8 % le même jour, l'étape 138.16 ayant corrigé un
 #: défaut qui en compensait un autre (voir le test) ; -17,1 % le même jour,
-#: l'étape 8 de l'action 147 ayant corrigé la comptabilité de la base.
-RECONSTITUTION_CLIQUET = 0.18
+#: l'étape 8 de l'action 147 ayant corrigé la comptabilité de la base ;
+#: -14,3 % le même jour, l'étape 10 comptant l'Agirc-Arrco au taux moyen des
+#: entreprises.
+RECONSTITUTION_CLIQUET = 0.145
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -717,6 +719,12 @@ def test_la_projection_refait_le_passe(avenir, depenses):
     (-14,9 % en 2000, -4,4 % en 2020, -23,1 % en 1990) : la base porte la
     réversion à la part de chaque année, et les poids des cas types sont
     calés sur la dépense de chaque groupe du COR.
+
+    *Le même jour*, l'étape 10 le ramène à -14,3 % en 2009 (-11,5 % en 2000,
+    -3,3 % en 2020, -20,0 % en 1990) : l'Agirc-Arrco compte ses points au taux
+    moyen des entreprises, et non au minimum de l'accord, plus haut d'un tiers
+    avant 1999 ; les pensions des générations anciennes remontent, et la
+    masse du passé avec elles.
     """
     reconstitution = avenir.reconstitution()
     # L'année d'ancrage est refaite par construction : sinon, la formule de
@@ -748,8 +756,9 @@ DECOMPOSITION_TETES = 0.03
 #: action 147, étape 4), puis 13,1 % (le modèle -6,3 %), les poids calés
 #: groupe par groupe sur la dépense du COR (étape 8), puis 10,4 %, la fonction
 #: publique suivant les retraités et le traitement indiciaire du COR (étape
-#: 9). Il ne doit que descendre, vers la cible.
-DECOMPOSITION_PENSION_CLIQUET = 0.11
+#: 9), puis 6,2 % (le modèle -12,0 %), l'Agirc-Arrco au taux moyen des
+#: entreprises (étape 10). Il ne doit que descendre, vers la cible.
+DECOMPOSITION_PENSION_CLIQUET = 0.07
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -784,14 +793,15 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
     Le COR la fait reculer de 17 % de 2025 à 2070 — l'indexation des droits sur
     les prix, la baisse du rendement de l'Agirc-Arrco, la part croissante des
     primes des fonctionnaires, que sa figure 2.7 lit régime par régime ; le
-    modèle, de 8,6 % seulement, depuis qu'il suit les deux dernières
-    conventions, que ses poids sont calés sur la dépense des groupes du COR et
+    modèle, de 12,0 % seulement, depuis qu'il suit les deux dernières
+    conventions, que ses poids sont calés sur la dépense des groupes du COR,
     que la fonction publique suit ses retraités et son traitement indiciaire
-    (de 3,5 % avant, puis de 5,6 %, puis de 6,3 %). C'est l'écart tout entier : les effectifs, eux,
+    et que l'Agirc-Arrco compte ses points au taux moyen des entreprises (de
+    3,5 % avant, puis de 5,6 %, de 6,3 %, de 8,6 %). C'est l'écart tout entier : les effectifs, eux,
     se suivent (``test_la_projection_compte_les_retraites_du_cor``). Le même
     défaut fait la reconstitution du passé (``test_la_projection_refait_le_passe``) :
-    la pension relative du modèle croît de 17,5 % de 2005 à 2025, celle du COR
-    de 8,9 %.
+    la pension relative du modèle croît de 11,8 % de 2005 à 2025 (17,5 % avant
+    l'étape 10), celle du COR de 8,9 %.
 
     Le seuil est un CLIQUET, comme celui de la reconstitution : il ne doit que
     descendre, et un écart qui passe d'un point sous lui demande de l'abaisser.
@@ -819,9 +829,12 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: suivant les retraités que le COR lui projette, le privé pèse plus. La
 #: CNRACL quitte la liste : ses têtes suivent celles du COR, et sa dépense
 #: rend l'écart de sa pension moyenne, que ses têtes trop lentes masquaient.
+#: À l'étape 10, les complémentaires y entrent, à -0,1 % : l'Agirc-Arrco
+#: compte ses points au taux moyen des entreprises.
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,
+    ("depense_part_pib", "complementaires"): 0.03,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
 #: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés
@@ -837,15 +850,18 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: CNRACL +11,1 %. La part que l'État perd revient aux autres cas types, dont
 #: l'écart s'en alourdit : non-salariés +133,2 %, régimes spéciaux +84,5 %,
 #: complémentaires +15,3 % — encore un défaut qui en masquait d'autres.
+#: L'étape 10 compte l'Agirc-Arrco au taux moyen des entreprises : pension
+#: relative de l'Agirc-Arrco +23,9 %, dépense des complémentaires -0,1 %, qui
+#: passent aux groupes suivis ; le calage des poids sur la dépense des groupes
+#: en reporte un peu sur les non-salariés, +134,7 %.
 DECOMPOSITION_GROUPES_CLIQUETS = {
     ("pension_relative", "fpe"): 0.17,
     ("pension_relative", "cnracl"): 0.09,
-    ("pension_relative", "agirc_arrco"): 0.47,
+    ("pension_relative", "agirc_arrco"): 0.24,
     ("depense_part_pib", "fpe"): 0.39,
     ("depense_part_pib", "cnracl"): 0.12,
-    ("depense_part_pib", "non_salaries_base"): 1.34,
+    ("depense_part_pib", "non_salaries_base"): 1.35,
     ("depense_part_pib", "regimes_speciaux"): 0.85,
-    ("depense_part_pib", "complementaires"): 0.16,
 }
 
 
@@ -973,10 +989,12 @@ def test_la_projection_suit_le_cor_groupe_par_groupe(avenir, comptes):
     """Groupe de régimes par groupe, ce que la projection suit du COR.
 
     La Cnav garde sa pension moyenne relative, au COR comme dans le modèle ;
-    la dépense de LURA, rapportée au PIB, se suit à quelques pour cent. L'écart
-    de la pension moyenne relative de l'ensemble
+    la dépense de LURA, rapportée au PIB, se suit à quelques pour cent, et
+    celle des complémentaires depuis que l'Agirc-Arrco compte ses points au
+    taux moyen des entreprises (action 147, étape 10). L'écart de la pension
+    moyenne relative de l'ensemble
     (``test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor``) n'est donc
-    pas dans le régime général.
+    ni dans le régime général ni dans les complémentaires du privé.
     """
     ecarts = _ecarts_par_groupe(avenir, comptes)
     for cle, tolerance in DECOMPOSITION_GROUPES_SUIVIS.items():
@@ -992,7 +1010,8 @@ def test_l_ecart_au_cor_groupe_par_groupe(avenir, comptes):
     retraité de régime n'est pas une personne : le COR fait croître ceux de
     l'Agirc-Arrco d'un tiers de plus que ceux de la Cnav, ce que la grille,
     dont chaque carrière du privé a les deux, ne peut pas faire ; l'écart de
-    sa pension moyenne (+46 %) est donc pour l'essentiel un écart de têtes.
+    sa pension moyenne (+46 %, +24 % depuis l'étape 10, qui compte ses points
+    au taux moyen des entreprises) est donc pour l'essentiel un écart de têtes.
     La DÉPENSE EN PART DE PIB (figure 2.6) ne dépend pas de ce compte : c'est
     elle qui dit ce que chaque groupe pèse dans l'écart. Il est dans la
     fonction publique d'État, où le COR fait baisser la pension relative par
@@ -1034,9 +1053,10 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     # corrige deux écarts de comptabilité à la dépense du COR — la part de la
     # réversion, l'ancrage unique — et la ramène à 1,097, puis 1,080 à l'étape
     # 9, la fonction publique suivant les retraités et le traitement indiciaire
-    # du COR : un cliquet, qui ne doit que descendre à mesure que l'écart
-    # s'explique.
-    assert 1.05 < horizon.derive < 1.09, horizon.derive
+    # du COR, puis 1,039 à l'étape 10, l'Agirc-Arrco comptant ses points au taux
+    # moyen des entreprises : un cliquet, qui ne doit que descendre à mesure
+    # que l'écart s'explique.
+    assert 1.02 < horizon.derive < 1.05, horizon.derive
 
 
 def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
@@ -1054,8 +1074,10 @@ def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
             basse.rapports["notionnel_liberal"] * derive, rel=1e-12)
     assert cout.dette_derive.horizon("actuel") == pytest.approx(
         cout.dette.horizon("actuel"), rel=1e-12)
+    # Dix points de PIB de plus jusqu'à l'étape 10 de l'action 147, un et demi
+    # depuis : la dérive de 2070 y tombe de 8 à 4 %.
     assert cout.dette_derive.horizon("notionnel_liberal") > cout.dette.horizon(
-        "notionnel_liberal") + 0.10
+        "notionnel_liberal") + 0.01
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):
