@@ -1,0 +1,16 @@
+date: "2026-10-06"
+session: "action 148, étape 3 : la prose et ses chiffres ancrés"
+consulte: >-
+  Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle.
+  L'historique de main, les 200 derniers commits, pour mesurer ce que les commits de
+  la prose y déplacent, et les courses de tests.yml sur GitHub, pour leur durée.
+trouve: >-
+  Aucun texte de droit. Le README est touché par 108 des 200 commits, dont 93 n'y
+  déplacent que ce que les scripts écrivent ; rejoués deux à deux comme menés en
+  parallèle, 95 couples sur 107 entraient en conflit, dont 94 sur cela seul. La
+  référence de la conservation : 21 couples sur 26. pousser.sh les règle désormais
+  par deux pilotes de fusion (scripts/fusionner.py).
+reste: >-
+  La liste des versions de docs/architecture.md, que chaque version récrit au même
+  endroit ; la décision du conseil d'administration de l'Agirc-Arrco du
+  14 octobre 2026.

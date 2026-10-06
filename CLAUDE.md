@@ -68,16 +68,21 @@ journal commun. Une action qui se clôt passe, telle quelle, à la fin de
 **Les fichiers fabriqués et la suite complète sont à GitHub** (action 148).
 À chaque envoi sur `main`, `tests.yml` repart du dernier `main`, lance
 `regenerer.py` puis la suite complète, et commite sous `github-actions[bot]`
-les fichiers refaits et le verdict, `.github/etat_suite.yaml`, que le hook
-`SessionStart` affiche à l'ouverture : une suite rouge se répare avant tout.
-Une session lance `python -m pytest -m rapide` et les fichiers de tests de sa
-zone avant chaque envoi, pas la suite complète ; elle peut régénérer pour voir
-ce que son changement déplace, sans y être tenue. Un conflit de rebasage qui
-ne porte que sur des fichiers marqués `-merge` dans `.gitattributes`,
-`pousser.sh` le règle seul, en gardant la version de `main`. Un conflit de
-prose qui ne porte que sur des chiffres ancrés (`<!--chiffre:…-->`) : garder
-UN côté, jamais les deux, puis `python scripts/verifier_prose.py --corriger`.
-Jamais `git checkout --theirs` sur un fichier de prose : il reprend le fichier
+les fichiers refaits, chiffres ancrés et blocs produits de la prose compris,
+et le verdict, `.github/etat_suite.yaml`, que le hook `SessionStart` affiche
+à l'ouverture : une suite rouge se répare avant tout. Une session lance
+`python -m pytest -m rapide` et les fichiers de tests de sa zone avant chaque
+envoi, pas la suite complète ; elle peut régénérer pour voir ce que son
+changement déplace, sans y être tenue, pas plus qu'à récrire les chiffres
+ancrés qu'il déplace. `pousser.sh` règle seul, au rebasage, ce que les scripts
+écrivent : un fichier marqué `-merge` dans `.gitattributes` garde la version
+de `main` ; un conflit de prose qui ne porte que sur des chiffres ancrés
+(`<!--chiffre:…-->`) ou des blocs produits garde la valeur de `main` ; la
+référence de la conservation se fusionne par ensembles (`scripts/fusionner.py`,
+action 148, étape 3). Un conflit sur ce qui s'écrit à la main reste à
+résoudre ; à la main, un conflit d'ancres garde UN côté, jamais les deux,
+puis `python scripts/verifier_prose.py --corriger`. Jamais
+`git checkout --theirs` sur un fichier de prose : il reprend le fichier
 entier d'un côté, et efface ce que l'autre session y a écrit.
 
 ## Économiser le contexte

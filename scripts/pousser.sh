@@ -16,6 +16,7 @@
 
 set -uo pipefail
 
+ici=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 racine=$(git rev-parse --show-toplevel 2>/dev/null) || {
     echo "pousser: pas dans un dépôt git" >&2; exit 1; }
 cd "$racine" || exit 1
@@ -36,11 +37,42 @@ avec_reprises() {
     done
 }
 
+# Les deux fusions que git confie à scripts/fusionner.py, le temps du rebasage
+# (action 148, étape 3) : `ancres`, la prose dont seuls divergent les chiffres
+# ancrés et les blocs produits, qui gardent la valeur de main, puisque GitHub
+# les refait ; `ensembles`, la référence de la conservation, dont chaque liste
+# se fusionne comme un ensemble. `.gitattributes` dit quel fichier relève de
+# laquelle ; git ne les connaît que par ces options : un rebasage à la main
+# fusionne ces fichiers comme du texte. Le pilote est copié hors du répertoire
+# de travail, que le rebasage récrit, et seulement s'il faut rebaser. Sans
+# Python, pas de pilote, et rien ne change.
+fusions=()
+pilote=""
+declarer_les_pilotes() {
+    [ -f "$ici/fusionner.py" ] || return 0
+    local python mode
+    for python in python3 python; do
+        "$python" -c 'import difflib, json' >/dev/null 2>&1 || continue
+        pilote="$(git rev-parse --absolute-git-dir)/fusionner-$$.py"
+        cp "$ici/fusionner.py" "$pilote" 2>/dev/null || return 0
+        trap 'rm -f "$pilote"' EXIT
+        for mode in ancres ensembles; do
+            fusions+=(-c "merge.$mode.name=scripts/fusionner.py $mode"
+                      -c "merge.$mode.driver=$python \"$pilote\" $mode %O %A %B %L")
+        done
+        return 0
+    done
+}
+avec_fusions() {
+    git ${fusions[@]+"${fusions[@]}"} "$@"
+}
+
 # Rebaser sur origin/main. Un conflit qui ne porte QUE sur des fichiers
 # fabriqués (ceux que .gitattributes marque `-merge`) se règle seul : on garde
 # la version de main, sans régénérer, puisque GitHub refait tout après chaque
 # envoi (tests.yml, action 148). Un commit qui ne portait que des fichiers
-# fabriqués devient vide : on le saute. Un conflit sur une source refuse.
+# fabriqués devient vide : on le saute. Un conflit sur une source refuse —
+# sauf ce que les deux pilotes ci-dessus ont déjà réglé pendant la fusion.
 fabrique() {
     git check-attr merge -- "$1" | grep -q ': merge: unset$'
 }
@@ -49,7 +81,8 @@ rebase_en_cours() {
         || [ -d "$(git rev-parse --git-path rebase-apply)" ]
 }
 rebaser() {
-    git rebase --quiet origin/main >/dev/null 2>&1 && return 0
+    declarer_les_pilotes
+    avec_fusions rebase --quiet origin/main >/dev/null 2>&1 && return 0
     local tours=0 conflits fichier
     while rebase_en_cours; do
         tours=$(( tours + 1 ))
@@ -69,9 +102,9 @@ rebaser() {
             fi
         done <<< "$conflits"
         if git diff --cached --quiet; then
-            GIT_EDITOR=true git rebase --skip >/dev/null 2>&1 && return 0
+            GIT_EDITOR=true avec_fusions rebase --skip >/dev/null 2>&1 && return 0
         else
-            GIT_EDITOR=true git rebase --continue >/dev/null 2>&1 && return 0
+            GIT_EDITOR=true avec_fusions rebase --continue >/dev/null 2>&1 && return 0
         fi
     done
     ! rebase_en_cours

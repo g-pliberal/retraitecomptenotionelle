@@ -92,9 +92,10 @@ CONTROLES = {
     # Les registres.
     "test_frontiere_contributive.py", "test_sources_a_explorer.py",
     "test_source_locale.py", "test_referents.py",
-    # L'outillage du dépôt : l'index de la DILA, la publication sur main, ce
-    # partage-ci, et le filet des déplacements (docs/architecture.md, § 12).
-    "test_dila_index.py", "test_pousser.py", "test_niveaux.py",
+    # L'outillage du dépôt : l'index de la DILA, la publication sur main et
+    # ses pilotes de fusion, ce partage-ci, et le filet des déplacements
+    # (docs/architecture.md, § 12).
+    "test_dila_index.py", "test_pousser.py", "test_fusionner.py", "test_niveaux.py",
     "test_conservation.py", "test_outillage.py",
     # La saisie outillée des simulateurs officiels, et la confrontation d'une
     # carrière réelle à « Mon estimation retraite » (docs/architecture.md, § 3.5).
@@ -185,8 +186,9 @@ ISOLES: dict[str, tuple[str, ...]] = {
     # Le script de publication, sur des dépôts montés dans un dossier
     # temporaire. Sous Windows, la machine chargée, un git coûte près d'une
     # seconde : ses onze cas tenaient le cinquième de la suite chaude, le
-    # 4 octobre 2026.
-    "test_pousser.py": ("scripts/pousser.sh",),
+    # 4 octobre 2026. Ses pilotes de fusion, que le script donne à git
+    # (action 148, étape 3), sont de ce qu'il lit.
+    "test_pousser.py": ("scripts/pousser.sh", "scripts/fusionner.py"),
 }
 #: Les outils qu'un fichier isolé lance : leur version et leur configuration
 #: entrent dans son empreinte.

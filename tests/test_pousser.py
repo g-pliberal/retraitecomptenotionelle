@@ -373,3 +373,100 @@ def test_l_adresse_du_robot_de_github_passe(atelier):
     acheve = pousser(session)
     assert acheve.returncode == 0, acheve.stderr
     assert tete_distante(distant, "main") == tete
+
+
+# -- la prose et la référence de la conservation, que deux pilotes fusionnent
+# (scripts/fusionner.py, action 148, étape 3) ----------------------------------
+
+REFERENCE = "tests/temoins/conservation.json"
+
+
+def ecrire(depot: Path, nom: str, texte: str) -> None:
+    chemin = depot / nom
+    chemin.parent.mkdir(parents=True, exist_ok=True)
+    chemin.write_bytes(texte.encode("utf-8"))
+
+
+def paquet(valeur: str, phrase: str = "Le paquet pèse") -> str:
+    return (f"# Le site\n\n{phrase} <!--chiffre:poids(moteur/donnees.json)-->{valeur}"
+            "<!--/--> Ko.\n\nUne autre phrase.\n")
+
+
+def journal(*cles: str) -> str:
+    """La référence de la conservation, écrite comme ``--figer`` l'écrit."""
+    lignes = ",\n".join(f'   "{cle}"' for cle in cles)
+    return f'{{\n "entrees": {{\n  "journal": [\n{lignes}\n  ]\n }}\n}}\n'
+
+
+def _poser_les_pilotes(atelier, tmp_path):
+    """Pose sur main le ``.gitattributes`` du dépôt pour la prose et la
+    référence, un README à chiffre ancré et une référence ; rend le second
+    clone, l'autre session."""
+    distant, session = atelier
+    autre = tmp_path / "autre"
+    subprocess.run(["git", "clone", "--quiet", str(distant), str(autre)], check=True)
+    git(autre, "config", "user.email", "autre@exemple.fr")
+    git(autre, "config", "user.name", "Autre")
+    ecrire(autre, ".gitattributes", f"*.md merge=ancres\n{REFERENCE} merge=ensembles\n")
+    ecrire(autre, "README.md", paquet("100"))
+    ecrire(autre, REFERENCE, journal("2026-10-06 | a"))
+    git(autre, "add", "-A")
+    git(autre, "commit", "--quiet", "-m", "les pilotes")
+    git(autre, "push", "--quiet", "origin", "main")
+    git(session, "pull", "--quiet", "--rebase", "origin", "main")
+    return distant, session, autre
+
+
+def _envoyer(depot: Path, message: str, fichiers: dict[str, str]) -> str:
+    for nom, texte in fichiers.items():
+        ecrire(depot, nom, texte)
+    git(depot, "add", "-A")
+    git(depot, "commit", "--quiet", "-m", message)
+    return git(depot, "rev-parse", "HEAD")
+
+
+def test_un_conflit_sur_les_seuls_chiffres_ancres_garde_ceux_de_main(atelier, tmp_path):
+    """Deux sessions changent le modèle et récrivent la même ancre, chacune à sa
+    valeur : la seconde passe, avec la valeur de main, que GitHub refera."""
+    distant, session, autre = _poser_les_pilotes(atelier, tmp_path)
+    _envoyer(session, "le modèle change", {"source.py": "ma règle\n", "README.md": paquet("120")})
+    _envoyer(autre, "le modèle change autrement", {"README.md": paquet("110")})
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    tete = tete_distante(distant, "main")
+    assert tete == git(session, "rev-parse", "HEAD")
+    assert git(session, "show", f"{tete}:README.md") == paquet("110").strip()
+    assert git(session, "show", f"{tete}:source.py") == "ma règle"
+    assert git(session, "status", "--porcelain") == ""
+
+
+def test_un_conflit_de_prose_refuse_toujours(atelier, tmp_path):
+    """Ce qui s'écrit à la main ne se devine pas : le conflit reste un conflit."""
+    distant, session, autre = _poser_les_pilotes(atelier, tmp_path)
+    _envoyer(session, "ma phrase", {"README.md": paquet("120", "Le paquet du site pèse")})
+    attendu = _envoyer(autre, "sa phrase",
+                       {"README.md": paquet("110", "Le paquet compressé pèse")})
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "conflit" in acheve.stderr
+    assert tete_distante(distant, "main") == attendu, "rien poussé"
+    assert git(session, "status", "--porcelain") == "", "le rebasage a été abandonné"
+
+
+def test_deux_refigements_de_la_conservation_se_fusionnent(atelier, tmp_path):
+    """Deux sessions refigent la référence le même jour, et y ajoutent chacune
+    son entrée du journal au même endroit : les deux restent."""
+    distant, session, autre = _poser_les_pilotes(atelier, tmp_path)
+    _envoyer(session, "ma veille", {REFERENCE: journal("2026-10-06 | a", "2026-10-06 | b")})
+    _envoyer(autre, "sa veille", {REFERENCE: journal("2026-10-06 | a", "2026-10-06 | c")})
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    tete = tete_distante(distant, "main")
+    assert git(session, "show", f"{tete}:{REFERENCE}") == journal(
+        "2026-10-06 | a", "2026-10-06 | b", "2026-10-06 | c").strip()

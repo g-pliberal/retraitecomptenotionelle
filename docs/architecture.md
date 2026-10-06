@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.35, du 4 octobre 2026 ; l'architecture a été décidée par le
+*Version 5.37, du 6 octobre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements,
 un par domaine clos ou par décision, est en bas (« Les versions »). Il est
@@ -1607,6 +1607,12 @@ les chiffres ancrés et les témoins, sont découpés (leur durée, à sa date :
 note 0001, § 10). Les témoins se découpent par domaine et par étape. Les vues
 et les fichiers fabriqués se régénèrent ; ils ne se fusionnent jamais à la
 main, et `scripts/pousser.sh` garde, en cas de conflit, la version de `main`.
+Ce que les scripts écrivent dans la prose, les chiffres ancrés et les blocs
+produits, se règle de même : un conflit qui ne porte que sur eux garde la
+valeur de `main`, et la référence de la conservation se fusionne par
+ensembles (§ 12). Ce sont deux pilotes de fusion, `scripts/fusionner.py`, que
+`.gitattributes` assigne et que `pousser.sh` déclare à git le temps de son
+rebasage ; ce qui s'écrit à la main reste un conflit.
 Ils sont les mêmes octets sous tout Python : le code additionne par
 `somme_ordonnee`, de gauche à droite, non par `sum()`, qui compense depuis
 Python 3.12.
@@ -1714,7 +1720,8 @@ clos le même jour, la proposition n'en faisant pas exception non plus.
   refige à la fin de chaque domaine (`python scripts/conservation.py
   --figer`), pour tenir à leur tour les récits nés depuis. Elle ne se fige
   pas par-dessus une perte, sauf à l'accepter (`--accepter-les-pertes`) et
-  à dire pourquoi dans le commit.
+  à dire pourquoi dans le commit. Deux sessions qui la refigent chacune de
+  son côté ne se gênent pas : `pousser.sh` la fusionne par ensembles (§ 10).
 - L'historique git garde le reste.
 
 ---
@@ -2488,6 +2495,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.37**, 6 octobre 2026 : la prose et la référence de la conservation ne mettent plus deux sessions en conflit (action 148, étape 3). Ce que les scripts écrivent dans la prose, les chiffres ancrés et les blocs produits, GitHub le refait après chaque envoi ; un conflit de rebasage qui ne porte que sur eux garde la valeur de `main`, et la référence de la conservation, faite de listes, se fusionne par ensembles : deux pilotes de fusion, `scripts/fusionner.py`, que `pousser.sh` déclare à git (§ 10, § 12). Ce qui s'écrit à la main reste un conflit.
 
 - **5.36**, 6 octobre 2026 : plusieurs sessions sans se marcher dessus (action 148), à la demande du propriétaire, qui veut mener en parallèle les étapes d'une même action. Les fichiers fabriqués et la suite complète passent à GitHub, qui les refait et les commite après chaque envoi, `pousser.sh` gardant la version de `main` d'un conflit qui ne porte que sur eux (§ 10, étape 1). Les journaux s'écrivent un fichier par note ou par entrée (§ 9.3, annexe B, étape 2) : les notes de la feuille de route dans `docs/feuille_de_route/<action>/`, avec, quand les étapes d'une action vont en parallèle, un bloc « Reprise » par étape, et le journal de veille dans `journal_de_veille/`, où ses entrées ont été déplacées à l'identique ; `scripts/reprise.py` imprime les blocs.
 

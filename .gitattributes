@@ -15,6 +15,24 @@
 # fichiers que git reconnaît comme binaires ne sont pas touchés.
 * text=auto eol=lf
 
+# La prose et la référence de la conservation se fusionnent par les deux
+# pilotes de `scripts/fusionner.py`, que `scripts/pousser.sh` déclare à git le
+# temps de son rebasage (action 148, étape 3). Un git lancé à la main ne les
+# connaît pas, et fusionne ces fichiers comme du texte, comme avant.
+#
+# `ancres` : un conflit qui ne porte que sur ce que les scripts écrivent dans
+# la prose — le contenu d'un chiffre ancré que `verifier_prose.py --corriger`
+# recalcule, un bloc produit entre `<!-- nom:debut -->` et `<!-- nom:fin -->`
+# — se règle en gardant la valeur de main, que GitHub refait après l'envoi.
+# Un conflit sur ce qui s'écrit à la main reste un conflit.
+#
+# `ensembles` : la référence de la conservation est faite de listes
+# d'empreintes et de clés, et deux sessions qui la refigent le même jour y
+# ajoutent leurs lignes au même endroit. Chaque liste s'y fusionne comme un
+# ensemble : ce que chaque côté ajoute reste, ce que chaque côté retire part.
+*.md                            merge=ancres
+tests/temoins/conservation.json merge=ensembles
+
 # Les fichiers fabriqués par un script ne se fusionnent pas ligne à ligne.
 #
 # `pages.json`, `simulations.json` et `donnees.json` — plusieurs mégaoctets
