@@ -92,6 +92,7 @@ from ..droit import seconde as _seconde
 from ..droit.commun import AvantageApplique, PensionRegime  # noqa: F401
 from ..noyau import versions
 from ..revalorisation import RevalorisationsPensions, mener_au_mois
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..droit.foyer import Foyer
@@ -330,8 +331,8 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
         regimes = list(liquidation.regimes)
         facteurs = _ramener(moteur, depart, declare, regimes)
         par_regime = {p.regime: f for p, f in zip(regimes, facteurs)}
-        nues = sum(p.montant for p in regimes)
-        moyen = (sum(p.montant * f for p, f in zip(regimes, facteurs)) / nues
+        nues = somme_ordonnee(p.montant for p in regimes)
+        moyen = (somme_ordonnee(p.montant * f for p, f in zip(regimes, facteurs)) / nues
                  if nues else (facteurs[0] if facteurs else 1.0))
         for pension, facteur in zip(regimes, facteurs):
             ramene = pension.montant * facteur
@@ -345,7 +346,7 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
         for avantage in liquidation.avantages:
             parts = tuple((code, part * par_regime.get(code, moyen))
                           for code, part in avantage.par_regime)
-            montant = (sum(part for _, part in parts) if parts
+            montant = (somme_ordonnee(part for _, part in parts) if parts
                        else avantage.montant * moyen)
             if avantage.code == "majoration_enfants":
                 majoration += montant
@@ -358,7 +359,7 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
                     deja, montant=deja.montant + montant,
                     detail=" ; ".join(dict.fromkeys(details)),
                     par_regime=deja.par_regime + parts)
-        servi = sum(p.montant * f for p, f in zip(regimes, facteurs)) + majoration
+        servi = somme_ordonnee(p.montant * f for p, f in zip(regimes, facteurs)) + majoration
         total += servi
         total_contributif += liquidation.total_contributif * moyen
         fiabilite = min(fiabilite, liquidation.fiabilite)
@@ -409,7 +410,7 @@ def etat_du_depart(moteur, carriere: Carriere, plancher: tuple | None,
 
 def _departs_servi(depart, liquidation, servi: float) -> DepartServi:
     """Ce qu'un départ ajoute à la pension, dans les deux euros."""
-    a_l_effet = sum(p.montant for p in liquidation.regimes) + sum(
+    a_l_effet = somme_ordonnee(p.montant for p in liquidation.regimes) + somme_ordonnee(
         a.montant for a in liquidation.complements.avantages if a.code == "majoration_enfants")
     return DepartServi(
         date_effet=depart.date_effet, motif=depart.motif,
@@ -1239,7 +1240,7 @@ class MajorationsPourEnfants:
                              f"{beneficiaire!r}")
         if beneficiaire == "mere" and sexe != "F":
             return None
-        if sum(1 for jour in naissances if eleve(jour)) < int(parametres.get("enfants_minimum", 1)):
+        if somme_ordonnee(1 for jour in naissances if eleve(jour)) < int(parametres.get("enfants_minimum", 1)):
             return None
         return TrimestresAccordes(
             fiche=fiche["id"], version=version["id"], texte=version["texte"],
@@ -1865,7 +1866,7 @@ class CarriereLongue:
         for annee, trimestres in (etrangers or {}).items():
             if annee <= carriere.annee_naissance + age_max and annee < annee_liquidation:
                 par_annee[annee] = par_annee.get(annee, 0) + trimestres
-        acquis = sum(min(4, trimestres) for trimestres in par_annee.values())
+        acquis = somme_ordonnee(min(4, trimestres) for trimestres in par_annee.values())
         return acquis >= trimestres_debut
 
     def cotises_reputes(self, carriere: Carriere, trimestres_cotises: int,

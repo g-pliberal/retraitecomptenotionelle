@@ -69,6 +69,7 @@ from __future__ import annotations
 
 import argparse
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.carriere import Affiliations
 from retraite_notionnelle.donnees.macro import DonneesMacro
@@ -120,11 +121,11 @@ def bloc_propose(parametres: Parametres, part_salariale: float,
 
 
 def _csg(fiche) -> float:
-    return sum(ligne.salarie for ligne in fiche.lignes if ligne.code == "csg_crds")
+    return somme_ordonnee(ligne.salarie for ligne in fiche.lignes if ligne.code == "csg_crds")
 
 
 def _autres_patronales(fiche) -> float:
-    return sum(ligne.employeur for ligne in fiche.lignes if not ligne.retraite)
+    return somme_ordonnee(ligne.employeur for ligne in fiche.lignes if not ligne.retraite)
 
 
 def _retraite(fiche) -> float:
@@ -192,8 +193,8 @@ def main() -> None:
 
     for nom, part, part_cap in partages:
         bloc = bloc_propose(parametres, part, part_cap)
-        salarie_pts = sum(s.taux for c in bloc.composantes for s in c.salarie) * 100
-        employeur_pts = sum(s.taux for c in bloc.composantes for s in c.employeur) * 100
+        salarie_pts = somme_ordonnee(s.taux for c in bloc.composantes for s in c.salarie) * 100
+        employeur_pts = somme_ordonnee(s.taux for c in bloc.composantes for s in c.employeur) * 100
         print(f"=== {nom} — salarié {salarie_pts:.2f} pts, employeur {employeur_pts:.2f} pts")
         print(f"  {'SMIC':>5} {'brut':>6} {'net':>6} | {'J1 Δnet':>8} {'J1 Δcoût':>9} | "
               f"{'LT Δbrut':>9} {'LT Δnet':>8} | {'crédit J1':>9} {'crédit LT':>9}")

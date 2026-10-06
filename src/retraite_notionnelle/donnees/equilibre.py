@@ -83,6 +83,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
+from ..somme import somme_ordonnee
 
 
 @dataclass(frozen=True)
@@ -840,13 +841,13 @@ class ComptesRetraite:
 
     def part_contributive(self, annee: int) -> float:
         """Part des ressources qui est une cotisation sur un revenu d'activité."""
-        return sum(self.part(poste.code, annee)
+        return somme_ordonnee(self.part(poste.code, annee)
                    for poste in POSTES if poste.contributive)
 
     def part_groupe(self, code: str, annee: int) -> float:
         """Part d'un groupe de postes dans les ressources de l'année."""
         groupe = next(g for g in GROUPES if g.code == code)
-        return sum(self.part(poste, annee) for poste in groupe.postes)
+        return somme_ordonnee(self.part(poste, annee) for poste in groupe.postes)
 
     def ressource_groupe(self, code: str, annee: int) -> float:
         """Ce qu'un groupe rapporte, en part du PIB.
@@ -885,7 +886,7 @@ class ComptesRetraite:
 
     def transfert_organisme(self, organisme: str, annee: int) -> float:
         """Ce qu'un organisme a versé, en millions d'euros."""
-        return sum(self.transfert(poste.code, annee)
+        return somme_ordonnee(self.transfert(poste.code, annee)
                    for poste in POSTES_TRANSFERTS if poste.organisme == organisme)
 
     def transfert_part_pib(self, organisme: str, annee: int) -> float:
@@ -921,7 +922,7 @@ class ComptesRetraite:
         et « dont assurance chômage » sur la ligne des transferts, comme le
         COR le fait dans le sien.
         """
-        return sum(self.transfert_part_pib(payeur.code, annee)
+        return somme_ordonnee(self.transfert_part_pib(payeur.code, annee)
                    for payeur in ORGANISMES
                    if payeur.droit_supprime
                    and (par_impot is None or payeur.recette_par_impot is par_impot)

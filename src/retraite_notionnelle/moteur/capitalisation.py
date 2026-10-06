@@ -106,6 +106,7 @@ from ..donnees.chargement import Fiabilite
 from ..donnees.mortalite import DonneesMortalite
 from ..donnees.taux import CourbeTauxSansRisque
 from .conversion import CoefficientConversion, Convertisseur
+from ..somme import somme_ordonnee
 
 #: Plus longue maturité achetable : le bout de la courbe publiée, trente ans à
 #: la BCE. Au-delà, plus rien n'est coté — le taux y est prolongé à plat et
@@ -307,19 +308,19 @@ class Capitalisation:
     @property
     def versements(self) -> float:
         """Somme des versements bruts, en euros courants, sans revalorisation."""
-        return sum(a.versement_brut for a in self.annees)
+        return somme_ordonnee(a.versement_brut for a in self.annees)
 
     @property
     def frais_versement(self) -> float:
-        return sum(a.frais_versement for a in self.annees)
+        return somme_ordonnee(a.frais_versement for a in self.annees)
 
     @property
     def frais_gestion(self) -> float:
-        return sum(a.frais_gestion for a in self.annees)
+        return somme_ordonnee(a.frais_gestion for a in self.annees)
 
     @property
     def interets(self) -> float:
-        return sum(a.interets for a in self.annees)
+        return somme_ordonnee(a.interets for a in self.annees)
 
     @property
     def frais_preleves(self) -> float:
@@ -337,7 +338,7 @@ class Capitalisation:
 
     @property
     def annees_cotisees(self) -> int:
-        return sum(1 for a in self.annees if a.versement_brut > 0)
+        return somme_ordonnee(1 for a in self.annees if a.versement_brut > 0)
 
     @property
     def rendement_cumule(self) -> float:
@@ -372,7 +373,7 @@ def _taux_interne(versements: list[tuple[int, float]], annee_finale: int,
         return 0.0
 
     def valeur(taux: float) -> float:
-        return sum(
+        return somme_ordonnee(
             montant * (1.0 + taux) ** (annee_finale - annee)
             for annee, montant in versements
         ) - capital
@@ -475,7 +476,7 @@ class ConstructeurCapitalisation:
         annees: list[AnneeCapitalisation] = []
 
         for annee in range(annee_ouverture, annee_liquidation + 1):
-            ouverture = sum(l.montant for l in lignes)
+            ouverture = somme_ordonnee(l.montant for l in lignes)
             frais_versement = frais("versement", annee)
             frais_neuf = frais("gestion", annee)
 
@@ -488,14 +489,14 @@ class ConstructeurCapitalisation:
             # 1. Intérêts de l'année, ligne par ligne, au taux bloqué le jour
             #    du placement. C'est ce que « porter jusqu'à l'échéance » veut
             #    dire : le taux d'une ligne ne change plus.
-            interets = sum(l.montant * l.taux for l in lignes)
+            interets = somme_ordonnee(l.montant * l.taux for l in lignes)
             for ligne in lignes:
                 ligne.montant *= 1.0 + ligne.taux
 
             # 2. Frais de gestion, prélevés sur l'encours de fin d'année, ligne
             #    par ligne au tarif de sa cohorte. Le versement de l'année n'y
             #    est pas encore : il n'a pas passé l'année dans l'enveloppe.
-            prelevement = sum(l.montant * l.frais_gestion for l in lignes)
+            prelevement = somme_ordonnee(l.montant * l.frais_gestion for l in lignes)
             for ligne in lignes:
                 ligne.montant *= 1.0 - ligne.frais_gestion
             assiette_frais = ouverture + interets
@@ -519,7 +520,7 @@ class ConstructeurCapitalisation:
             net = brut - frais_v
             placements = self.placer(net, annee, annee_liquidation, lignes, frais_neuf)
 
-            encours = sum(l.montant for l in lignes)
+            encours = somme_ordonnee(l.montant for l in lignes)
             annees.append(AnneeCapitalisation(
                 annee=annee,
                 age=annee - annee_naissance,
@@ -591,8 +592,8 @@ class ConstructeurCapitalisation:
             age_liquidation, float(annee_liquidation), sexe,
             self.parametres.table_generation, population,
         )
-        sans = sum(courbe)
-        avec = sum(p / (1.0 - frais) ** t for t, p in enumerate(courbe))
+        sans = somme_ordonnee(courbe)
+        avec = somme_ordonnee(p / (1.0 - frais) ** t for t, p in enumerate(courbe))
         return sans / avec if avec > 0 else 1.0
 
     # -- assemblage ----------------------------------------------------------

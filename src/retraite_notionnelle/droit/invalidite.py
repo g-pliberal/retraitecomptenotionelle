@@ -56,6 +56,7 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois, en_mois
 from .commun import date_d_effet, ligne_cotisee
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -353,7 +354,7 @@ def trimestres_en_situation_de_handicap(moteur: ScenarioActuel, carriere: Carrie
               and (not cotises or ligne_cotisee(moteur, carriere, ligne)))
     total = carriere.trimestres_cumules(lignes)
     if etrangers:
-        total += sum(nombre for annee, nombre in etrangers.items()
+        total += somme_ordonnee(nombre for annee, nombre in etrangers.items()
                      if annee_en_situation_de_handicap(carriere, annee))
     return total
 

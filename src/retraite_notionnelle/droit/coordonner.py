@@ -27,6 +27,7 @@ from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from .commun import derniere_annee
 from .etranger import coordonner_les_periodes
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import AnneeCarriere, Carriere
@@ -241,7 +242,7 @@ def droit_a_pension(moteur: ScenarioActuel, code: str, carriere: Carriere,
         exigees = 0.0
     return DroitPension(
         regimes=frozenset(regimes), lignes=lignes,
-        servies=sum(ligne.fraction_annee for ligne in lignes),
+        servies=somme_ordonnee(ligne.fraction_annee for ligne in lignes),
         exigees=exigees, fiabilite=fiabilite, radiation=radiation,
     )
 

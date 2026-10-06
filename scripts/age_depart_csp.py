@@ -62,6 +62,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, poids_effectifs  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
@@ -111,7 +112,7 @@ def ages_par_groupe() -> tuple[tuple[int, ...], dict[str, dict[int, float]]]:
 
 
 def _moyenne(valeurs: list[float]) -> float:
-    return sum(valeurs) / len(valeurs)
+    return somme_ordonnee(valeurs) / len(valeurs)
 
 
 def confronter(simulateur: Simulateur) -> tuple[list[Confrontation], dict[str, str]]:
@@ -175,7 +176,7 @@ def confronter(simulateur: Simulateur) -> tuple[list[Confrontation], dict[str, s
     bruts = {ligne.code: _moyenne([poids_effectifs(simulateur.effectifs, annee)
                                    .get(ligne.code, 0.0) for annee in annees])
              for ligne in confrontations}
-    total = sum(bruts.values())
+    total = somme_ordonnee(bruts.values())
     for ligne in confrontations:
         ligne.poids = round(bruts[ligne.code] / total, 4) if total > 0 else 0.0
 
@@ -212,8 +213,8 @@ def imprimer(confrontations: list[Confrontation], hors_champ: dict[str, str],
         print(f"Le plus loin : {pire.code}, {pire.ecart:+.2f} an.")
 
     # Ce que la concordance d'ensemble cachait : les écarts se COMPENSENT.
-    signe = sum(ligne.poids * ligne.ecart for ligne in confrontations)
-    absolu = sum(ligne.poids * abs(ligne.ecart) for ligne in confrontations)
+    signe = somme_ordonnee(ligne.poids * ligne.ecart for ligne in confrontations)
+    absolu = somme_ordonnee(ligne.poids * abs(ligne.ecart) for ligne in confrontations)
     print(f"Pesés comme sur la page « Coût » : écart moyen {signe:+.2f} an, "
           f"écart moyen EN VALEUR ABSOLUE {absolu:.2f} an.")
     print("Le second est ce que le tous régimes ne voyait pas.")

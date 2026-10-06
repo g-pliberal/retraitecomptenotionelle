@@ -41,6 +41,7 @@ from .compter import trimestres_de_la_ligne_entre
 from .commun import PensionRegime, date_d_effet, derniere_annee
 from .etranger import famille_du_regime
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -877,7 +878,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         # services et bonifications ensemble à la durée requise, et servait
         # 75 % à une mère de trois enfants à qui le droit en doit près de 80.
         bonifications = (
-            sum(bonifications_par_regime.get(m, 0) for m in membres)
+            somme_ordonnee(bonifications_par_regime.get(m, 0) for m in membres)
             if periode.taux_maximum_bonifie and periode.taux_plein else 0
         )
         # Les membres d'un groupe liquidé ensemble se somment ANNÉE PAR
@@ -901,7 +902,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # modèle prête L. 12 bis. Sa durée dans le régime les portait
             # toutes ; seules les bonifications y restent.
             portes = majoration_enfants.par_regime()
-            numerateur -= sum(portes[m][0] - portes[m][1] for m in membres if m in portes)
+            numerateur -= somme_ordonnee(portes[m][0] - portes[m][1] for m in membres if m in portes)
         trimestres_regime = min(numerateur, proratisation + bonifications)
         #: Rapport des trimestres liquidables à la durée requise, borné au
         #: taux maximum — 80/75 avec des bonifications, un sans elles.
@@ -1168,9 +1169,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 requis=requis,
                 hors_minimum=((0.0 if fraction_cultes is None else fraction_cultes.montant)
                               + majoration_handicap),
-                duree_tous_regimes=duree_regime + sum(
+                duree_tous_regimes=duree_regime + somme_ordonnee(
                     durees.trimestres_par_regime[autre] for autre in autres_de_base),
-                cotisee_tous_regimes=cotisee_regime + sum(
+                cotisee_tous_regimes=cotisee_regime + somme_ordonnee(
                     cumul_plafonne("cotises", (autre,)) for autre in autres_de_base),
                 porte_avpf="regime_general" in membres,
             ))
@@ -1288,7 +1289,7 @@ def repartir_les_annees(nombre: int, durees: dict[str, int],
     """
     minimums = minimums or {}
     presentes = {cle: duree for cle, duree in durees.items() if duree > 0}
-    total = sum(presentes.values())
+    total = somme_ordonnee(presentes.values())
     if total <= 0 or nombre <= 0:
         return {}
     parts = {
@@ -1297,7 +1298,7 @@ def repartir_les_annees(nombre: int, durees: dict[str, int],
         for cle, duree in presentes.items()
     }
     rang = {cle: i for i, cle in enumerate(priorite)}
-    excedent = sum(parts.values()) - nombre
+    excedent = somme_ordonnee(parts.values()) - nombre
     for cle in sorted(presentes,
                       key=lambda c: (-presentes[c], rang.get(c, len(rang)))):
         if excedent <= 0:
@@ -1320,9 +1321,9 @@ def durees_des_non_salaries(carriere: Carriere, durees,
     """
     coupure = ANNEE_DES_REVENUS_AGRICOLES
     par_annee = durees.par_annee["assurance"].get(code, {})
-    avant = sum(min(n, carriere.plafond_trimestres(annee))
+    avant = somme_ordonnee(min(n, carriere.plafond_trimestres(annee))
                 for annee, n in par_annee.items() if annee < coupure)
-    apres = sum(min(n, carriere.plafond_trimestres(annee))
+    apres = somme_ordonnee(min(n, carriere.plafond_trimestres(annee))
                 for annee, n in par_annee.items() if annee >= coupure)
     enfants = durees.hors_annee["assurance"].get(code, 0)
     return (apres + enfants if apres > 0 else 0,
@@ -1371,9 +1372,9 @@ def duree_du_regime_aligne(carriere: Carriere, durees,
                     and annee < coordonner.ALIGNEMENT_DES_ARTISANS_ET_COMMERCANTS):
                 continue
             sommes[annee] = sommes.get(annee, 0) + n
-    return (sum(min(somme, carriere.plafond_trimestres(annee))
+    return (somme_ordonnee(min(somme, carriere.plafond_trimestres(annee))
                 for annee, somme in sommes.items())
-            + sum(durees.hors_annee["assurance"].get(membre, 0) for membre in membres))
+            + somme_ordonnee(durees.hors_annee["assurance"].get(membre, 0) for membre in membres))
 
 
 def annees_au_prorata(total: int, duree: int, somme: int) -> int:
@@ -1496,7 +1497,7 @@ def annees_des_regimes_alignes(moteur, carriere: Carriere, releve: Releve,
                     priorite=("regime_general", "msa_salaries"),
                 )[propre], "R. 173-3-2")
             return (annees_au_prorata(part, durees_des_groupes[propre],
-                                      sum(durees_des_groupes.values()) + etrangers),
+                                      somme_ordonnee(durees_des_groupes.values()) + etrangers),
                     "R. 173-4-3, périodes étrangères comprises" if etrangers
                     else "R. 173-4-3")
     return None if article is None else (part, article)
@@ -1512,7 +1513,7 @@ def moyenne_des_meilleures_annees(valeurs: list[float], annees: int) -> int:
     meilleures = sorted(valeurs, reverse=True)[:max(0, annees)]
     if not meilleures:
         return 0
-    return math.floor(sum(meilleures) / len(meilleures) + 0.5 + 1e-9)
+    return math.floor(somme_ordonnee(meilleures) / len(meilleures) + 0.5 + 1e-9)
 
 
 def pension_des_non_salaries_agricoles(
@@ -1691,7 +1692,7 @@ def pension_des_non_salaries_agricoles(
         # durée, et les points d'après 2016 un à un.
         retenue = min(durees.trimestres_par_regime.get(code, 0), proratisation)
         forfait_total = forfait * retenue / proratisation if proratisation > 0 else 0.0
-        points_provisoires = points_b + sum(
+        points_provisoires = points_b + somme_ordonnee(
             points for annee, points in points_par_annee.items() if annee >= coupure)
         termes_provisoires = []
         if points_provisoires > 0:
@@ -2177,7 +2178,7 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         retenus = revenus
     else:
         retenus = revenus
-    return sum(retenus) / len(retenus)
+    return somme_ordonnee(retenus) / len(retenus)
 
 
 #: Les dix dernières années d'avant 1973 se comptent « avant l'âge de soixante
@@ -2223,9 +2224,9 @@ def moyenne_selon_la_regle(regle: dict, valeurs: list[tuple[int, float]],
     def moyenne(retenues: list[tuple[int, float]]) -> float:
         if not retenues:
             return 0.0
-        somme = sum(valeur for _, valeur in retenues)
+        somme = somme_ordonnee(valeur for _, valeur in retenues)
         if regle["calcul"] == "trimestriel":
-            denominateur = sum(
+            denominateur = somme_ordonnee(
                 min(4, trimestres[annee][0] + (trimestres[annee][1] if avec_assimiles else 0))
                 for annee, _ in retenues)
             if denominateur > 0:
@@ -2771,7 +2772,7 @@ def duree_majoree_apres_taux_plein(moteur, periode: PeriodeRegime, carriere: Car
         if code in moteur.catalogue
         and moteur.catalogue[code].etage in ("base", "integre") and nombre > 0
     }
-    hors_regime = sum(nombre for code, nombre in durees_de_base.items()
+    hors_regime = somme_ordonnee(nombre for code, nombre in durees_de_base.items()
                       if code not in membres)
     if periode.duree_majoree_tous_regimes and trimestres_regime + hors_regime >= limite:
         return trimestres_regime
@@ -2783,8 +2784,8 @@ def duree_majoree_apres_taux_plein(moteur, periode: PeriodeRegime, carriere: Car
                    if code in coordonner.REGIMES_ALIGNES}
         if (any(code not in membres for code in alignes)
                 and majores + hors_regime > limite):
-            total_alignes = sum(alignes.values()) + (
-                trimestres_regime - sum(alignes.get(code, 0) for code in membres))
+            total_alignes = somme_ordonnee(alignes.values()) + (
+                trimestres_regime - somme_ordonnee(alignes.get(code, 0) for code in membres))
             numerateur = (limite - total_alignes) * trimestres_regime
             part = (2 * numerateur + total_alignes) // (2 * total_alignes)
             majores = min(majores, trimestres_regime + max(0, part))
@@ -3171,7 +3172,7 @@ def coefficient_surcote_datee(moteur, periode: PeriodeRegime, carriere: Carriere
         ligne for ligne in carriere.lignes
         if ligne.cotise and ligne.annee <= annee_liquidation
     )
-    acquis = trimestres - sum(par_annee.values())
+    acquis = trimestres - somme_ordonnee(par_annee.values())
     debut_duree = None
     if acquis >= requis:
         debut_duree = moteur.SURCOTE_DEPUIS
@@ -3376,7 +3377,7 @@ def age_de_la_duree_atteinte(moteur, periode: PeriodeRegime, carriere: Carriere,
         debut = carriere.date_de_l_age(age)
         if debut.rang >= fin.rang:
             return None
-        depuis = sum(trimestres_de_la_ligne_entre(carriere, ligne, debut, fin)
+        depuis = somme_ordonnee(trimestres_de_la_ligne_entre(carriere, ligne, debut, fin)
                      for ligne in carriere.lignes)
         if trimestres - depuis + 1e-9 >= requis:
             return age
@@ -3457,10 +3458,10 @@ def _fenetre_ircantec(carriere: Carriere, trimestres: int, age_bas: float,
     def compte(total: float) -> int:
         return int(math.ceil(total - 1e-9)) if fermee else int(total + 1e-9)
 
-    cotises = compte(sum(trimestres_de_la_ligne_entre(carriere, ligne, debut, haut)
+    cotises = compte(somme_ordonnee(trimestres_de_la_ligne_entre(carriere, ligne, debut, haut)
                          for ligne in carriere.lignes if ligne.cotise))
     origine = DateMois(carriere.annee_naissance, 1)
-    avant = compte(sum(trimestres_de_la_ligne_entre(carriere, ligne, origine, haut)
+    avant = compte(somme_ordonnee(trimestres_de_la_ligne_entre(carriere, ligne, origine, haut)
                        for ligne in carriere.lignes))
     return cotises, min(trimestres, avant)
 

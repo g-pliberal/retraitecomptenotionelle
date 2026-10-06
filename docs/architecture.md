@@ -1586,16 +1586,21 @@ de la prose ; un script les affiche à la demande :
    déclaré (§ 9.2).
 
 Tout tourne sur GitHub à chaque envoi sur `main`, par
-`.github/workflows/tests.yml`, dont le verdict se lit dans l'onglet Actions ;
-en local, le premier niveau se lance seul, par `python -m pytest -m rapide`.
+`.github/workflows/tests.yml`, qui repart du dernier `main`, refait les
+fichiers fabriqués, joue la suite et commite les uns et le verdict
+(`.github/etat_suite.yaml`, que chaque session lit à son ouverture) : depuis
+l'action 148, une session ne passe avant d'envoyer que le premier niveau,
+`python -m pytest -m rapide`, et les tests de sa zone.
 `tests/conftest.py` range chaque fichier de tests dans son niveau ; un fichier
 qu'il ne nomme pas est rapide, puisque c'est d'ordinaire celui d'une règle.
-`python -m pytest`, sans rien choisir, joue les trois : c'est le défaut, la
-suite qu'on passe avant d'envoyer sur `main`. Les deux tests les plus longs,
+`python -m pytest`, sans rien choisir, joue les trois. Les deux tests les plus longs,
 les chiffres ancrés et les témoins, sont découpés (leur durée, à sa date : la
 note 0001, § 10). Les témoins se découpent par domaine et par étape. Les vues
 et les fichiers fabriqués se régénèrent ; ils ne se fusionnent jamais à la
-main.
+main, et `scripts/pousser.sh` garde, en cas de conflit, la version de `main`.
+Ils sont les mêmes octets sous tout Python : le code additionne par
+`somme_ordonnee`, de gauche à droite, non par `sum()`, qui compense depuis
+Python 3.12.
 
 ---
 

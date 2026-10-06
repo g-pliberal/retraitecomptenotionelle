@@ -41,6 +41,7 @@ from enum import Enum
 
 from ..donnees.chargement import Fiabilite
 from ..donnees.regimes import CatalogueRegimes, PeriodeRegime, Regime
+from ..somme import somme_ordonnee
 
 #: Ordre des assiettes de salaire de référence, du plus avantageux pour
 #: l'assuré au moins avantageux. La carrière entière est la moins avantageuse :
@@ -115,7 +116,7 @@ def _part_salariale_moyenne(candidats) -> float:
     Sert aux critères de taux qui retiennent UN taux — le plus élevé, le plus
     faible — et n'héritent donc d'aucune répartition en propre.
     """
-    return sum(p.part_salariale for _, p in candidats) / len(candidats)
+    return somme_ordonnee(p.part_salariale for _, p in candidats) / len(candidats)
 
 
 def _taux_total(periode: PeriodeRegime) -> float:
@@ -213,8 +214,8 @@ def fusionner(catalogue: CatalogueRegimes, annee: int,
         taux, origine_taux = extremum(_taux_total, min)
         salarie = taux * _part_salariale_moyenne(candidats)
     else:
-        taux = sum(_taux_total(p) for _, p in candidats) / len(candidats)
-        salarie = sum(_taux_salarie_total(p) for _, p in candidats) / len(candidats)
+        taux = somme_ordonnee(_taux_total(p) for _, p in candidats) / len(candidats)
+        salarie = somme_ordonnee(_taux_salarie_total(p) for _, p in candidats) / len(candidats)
         origine_taux = "moyenne des régimes"
 
     fiabilite = min(regime.fiabilite for regime, _ in candidats)

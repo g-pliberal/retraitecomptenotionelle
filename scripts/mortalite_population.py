@@ -78,6 +78,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Simulateur  # noqa: E402
@@ -195,8 +196,8 @@ def _deficit(mortalite, depuis: int | None = None) -> int:
         commune = mortalite.courbe(age, float(pensionne.annee_liquidation), None, True)
         propre = mortalite.courbe(age, float(pensionne.annee_liquidation), None, True,
                                   vingtiles[pensionne.code, pensionne.generation])
-        e_commune = sum(0.5 * (commune[k] + commune[k + 1]) for k in range(len(commune) - 1))
-        e_propre = sum(0.5 * (propre[k] + propre[k + 1]) for k in range(len(propre) - 1))
+        e_commune = somme_ordonnee(0.5 * (commune[k] + commune[k + 1]) for k in range(len(commune) - 1))
+        e_propre = somme_ordonnee(0.5 * (propre[k] + propre[k + 1]) for k in range(len(propre) - 1))
         couples.append((pensionne, e_commune / e_propre, commune, propre))
 
     def masses(annee: int, avec_actuel: bool = False) -> dict[str, dict[str, float]]:
@@ -274,8 +275,8 @@ def _deficit(mortalite, depuis: int | None = None) -> int:
             if annee in (2030, 2050, 2070):
                 print(f"| {libelles[s].format(bascule=simulateur.parametres.annee_bascule)} | "
                       f"{annee} | {vraie:.1%} | {page:.1%} | {avant:+.2%} | {apres:+.2%} |")
-        moyen_avant = sum(l[3] for l in cumul[s]) / len(cumul[s])
-        moyen_apres = sum(l[4] for l in cumul[s]) / len(cumul[s])
+        moyen_avant = somme_ordonnee(l[3] for l in cumul[s]) / len(cumul[s])
+        moyen_apres = somme_ordonnee(l[4] for l in cumul[s]) / len(cumul[s])
         print(f"| {libelles[s].format(bascule=simulateur.parametres.annee_bascule)} | "
               f"moyenne {cumul[s][0][0]}-{cumul[s][-1][0]} | | | {moyen_avant:+.2%} | {moyen_apres:+.2%} |")
     pib = next((l.pib for l in reversed(cout.solde.annees) if l.pib > 0), 0.0)

@@ -41,6 +41,7 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
+from retraite_notionnelle.somme import somme_ordonnee  # noqa: E402
 
 #: Les scénarios par leur numéro, celui que la prose emploie partout.
 SCENARIOS = {
@@ -548,7 +549,7 @@ def parametre(**reglages: str) -> float:
     la prose l'écrit.
     """
     if "+" in reglages["nom"]:
-        return sum(parametre(**{**reglages, "nom": nom})
+        return somme_ordonnee(parametre(**{**reglages, "nom": nom})
                    for nom in reglages["nom"].split("+"))
     parametres = _parametres()
     nom, *rangs = reglages["nom"].split(".")
@@ -802,7 +803,7 @@ def derive_revalorisation(**reglages: str) -> float:
         if stat == "max":
             return max(ecarts) * 100
         if stat == "moyenne":
-            return sum(ecarts) / len(ecarts) * 100
+            return somme_ordonnee(ecarts) / len(ecarts) * 100
         if stat == "mediane":
             return median(ecarts) * 100
         raise ValueError(f"stat inconnue « {stat} »")
@@ -910,7 +911,7 @@ def part_pensions_sous(**reglages: str) -> float:
                   if l["annee"] == reglages["annee"] and l["sexe"] == "ensemble"]
     if not lignes:
         raise ValueError(f"pas de distribution pour {reglages['annee']}")
-    return sum(float(l["part_pct"]) for l in lignes
+    return somme_ordonnee(float(l["part_pct"]) for l in lignes
                if float(l["borne_mensuelle"]) < float(reglages["borne"]))
 
 
@@ -1058,7 +1059,7 @@ def depense(**reglages: str) -> float:
     if quoi == "part_pib":
         return depenses.part_pib(annee) * 100
     if quoi in ("part_pib_repartition", "ecart_cor", "cor", "ecart_cor_milliards"):
-        repartition = sum(depenses.depense_systeme(s.code, annee) for s in SYSTEMES
+        repartition = somme_ordonnee(depenses.depense_systeme(s.code, annee) for s in SYSTEMES
                           if s.repartition) / depenses.pib(annee) * 100
         if quoi == "part_pib_repartition":
             return repartition
@@ -1071,7 +1072,7 @@ def depense(**reglages: str) -> float:
         return cor * 100 - repartition
     if quoi in ("repartition", "hors_repartition"):
         voulu = quoi == "repartition"
-        return sum(depenses.depense_systeme(s.code, annee) for s in SYSTEMES
+        return somme_ordonnee(depenses.depense_systeme(s.code, annee) for s in SYSTEMES
                    if s.repartition == voulu) / 1000
     raise ValueError(f"quoi inconnu « {quoi} »")
 
@@ -1112,7 +1113,7 @@ def poids(**reglages: str) -> float:
     inconnus = [c for c in codes if c not in cout.poids]
     if inconnus:
         raise ValueError(f"cas types inconnus : {', '.join(inconnus)}")
-    return sum(cout.poids[c] for c in codes) * 100
+    return somme_ordonnee(cout.poids[c] for c in codes) * 100
 
 
 def grille(**reglages: str) -> float:
@@ -1181,7 +1182,7 @@ def avantages(**reglages: str) -> float:
             raise ValueError(f"l'année {reglages['annee']} n'est pas dans la série")
     else:
         ligne = cout.derniere
-    lues = sum(v for k, v in ligne.lignes.items() if k in LIGNES_LUES)
+    lues = somme_ordonnee(v for k, v in ligne.lignes.items() if k in LIGNES_LUES)
     quoi = reglages.get("quoi", "total")
     if quoi == "ligne":
         if reglages["cle"] not in ligne.lignes:
@@ -1285,7 +1286,7 @@ def coefficient(**reglages: str) -> float:
 def annees_equilibrees(**reglages: str) -> float:
     """Combien d'années projetées un système finit à l'équilibre ou en excédent."""
     scenario = _scenario(reglages["scenario"])
-    return sum(1 for l in _cout_de(reglages).solde.projetees() if l.solde(scenario) >= 0)
+    return somme_ordonnee(1 for l in _cout_de(reglages).solde.projetees() if l.solde(scenario) >= 0)
 
 
 def tva_requise(**reglages: str) -> float:
@@ -1347,7 +1348,7 @@ def recette(**reglages: str) -> float:
     en_milliards = reglages.get("en") == "milliards"
     if quoi in ("retrait", "versement"):
         retires = {o.code for o in ORGANISMES if o.droit_supprime}
-        retrait = ligne.retrait if quoi == "retrait" else sum(ligne.versements.values())
+        retrait = ligne.retrait if quoi == "retrait" else somme_ordonnee(ligne.versements.values())
         if "payeurs" in reglages:
             payeurs = reglages["payeurs"].split("|")
             inconnus = [p for p in payeurs if p not in ligne.versements]
@@ -1359,7 +1360,7 @@ def recette(**reglages: str) -> float:
                 if ignores:
                     raise ValueError(f"rien n'est retiré de {', '.join(ignores)} : "
                                      "écrire quoi=versement")
-            retrait = sum(ligne.versements[p] for p in payeurs)
+            retrait = somme_ordonnee(ligne.versements[p] for p in payeurs)
         if reglages.get("sur") == "ressources":
             return retrait / ligne.ressources * 100
         if en_milliards:
@@ -1413,8 +1414,8 @@ def somme_postes(**reglages: str) -> float:
     if trouves != postes:
         raise ValueError(f"{serie} n'a pas {', '.join(sorted(postes - trouves))} en {annee}")
     if "part" in lignes[0]:
-        return sum(float(l["part"]) for l in lignes) * 100
-    return sum(float(l["montant_meur"]) for l in lignes) / 1000
+        return somme_ordonnee(float(l["part"]) for l in lignes) * 100
+    return somme_ordonnee(float(l["montant_meur"]) for l in lignes) / 1000
 
 
 def restitution(**reglages: str) -> float:
@@ -1477,7 +1478,7 @@ def profils_oracle(**_: str) -> float:
     """Le nombre de profils rejoués par OpenFisca-France-Pension, toutes familles."""
     import json
 
-    return sum(len(json.loads(chemin.read_text(encoding="utf-8"))["profils"])
+    return somme_ordonnee(len(json.loads(chemin.read_text(encoding="utf-8"))["profils"])
                for chemin in (RACINE / "tests" / "temoins").glob("openfisca_*.json"))
 
 
@@ -1561,12 +1562,12 @@ def garantie_foyer(**reglages: str) -> float:
         raise ValueError("un foyer compte une ou deux personnes")
     situation = "seul" if len(pensions) == 1 else "couple"
     garanties = [_garantie_mensuelle(p, situation) for p in pensions]
-    plancher = sum(g.plancher_annuel for g in garanties) / 12
+    plancher = somme_ordonnee(g.plancher_annuel for g in garanties) / 12
     if reglages.get("quoi") == "plancher":
         return plancher
     if reglages.get("base") == "foyer":
-        return max(0.0, plancher - sum(pensions))
-    return sum(g.complement for g in garanties) / 12
+        return max(0.0, plancher - somme_ordonnee(pensions))
+    return somme_ordonnee(g.complement for g in garanties) / 12
 
 
 def frais_reserve(**reglages: str) -> float:

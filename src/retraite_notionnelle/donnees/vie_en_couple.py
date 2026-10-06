@@ -24,6 +24,7 @@ import csv
 from pathlib import Path
 
 from .chargement import Fiabilite
+from ..somme import somme_ordonnee
 
 
 class VieEnCouple:
@@ -68,10 +69,10 @@ class VieEnCouple:
         vécues — une avance se constitue tant que le bénéficiaire vit —, et
         non sur les têtes de départ.
         """
-        total = sum(exposition)
+        total = somme_ordonnee(exposition)
         if total <= 0.0:
             return 0.0
-        return sum(
+        return somme_ordonnee(
             poids * self.part(age_debut + rang, sexe, mode)
             for rang, poids in enumerate(exposition)
         ) / total

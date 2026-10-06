@@ -67,6 +67,7 @@ from typing import TYPE_CHECKING
 
 from .. import chronologie as chrono
 from ..donnees.chargement import Fiabilite
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere, Conjoint
@@ -147,7 +148,7 @@ class Reversion:
 
     @property
     def total(self) -> float:
-        return sum(r.montant for r in self.regimes)
+        return somme_ordonnee(r.montant for r in self.regimes)
 
     def donnees(self) -> dict:
         return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
@@ -261,7 +262,7 @@ def _enfants_de_moins_de(carriere: Carriere, deces: str, ans: int) -> int:
     """Les enfants nés au décès qui n'ont pas encore ``ans`` ans : ceux que la
     chronologie porte, déclarés ou présumés, et que le modèle tient pour à la
     charge du survivant."""
-    return sum(1 for _, naissance in carriere.naissances_des_enfants
+    return somme_ordonnee(1 for _, naissance in carriere.naissances_des_enfants
                if naissance <= deces < chrono._plus_ans(naissance, ans))
 
 
@@ -441,7 +442,7 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         parametres = independantes[0][4]["parametres"]
         plafond_annuel = (float(parametres["plafond_pass"])
                           * moteur.macro.plafond_securite_sociale(annee))
-        brut = sum(float(version["parametres"]["taux"]) * base
+        brut = somme_ordonnee(float(version["parametres"]["taux"]) * base
                    for _, base, _, _, version in independantes)
         depassement = max(0.0, ressources + autres_bases + brut - plafond_annuel)
         for regime, base, fiabilite, fiche, version in independantes:

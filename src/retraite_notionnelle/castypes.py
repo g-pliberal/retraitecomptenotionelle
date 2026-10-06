@@ -22,6 +22,7 @@ from .donnees.chargement import dans_un_instantane
 from .simulateur import Comparaison, Simulateur
 from . import pilote
 from .pilote import VARIANTES_LIQUIDATION
+from .somme import somme_ordonnee
 
 if TYPE_CHECKING:  # pragma: no cover - annotation seulement
     from .donnees.effectifs import EffectifsRetraites
@@ -428,13 +429,13 @@ def poids_effectifs(effectifs: "EffectifsRetraites", annee: int,
             reclamants[caisse] = reclamants.get(caisse, 0) + 1
 
     bruts = {
-        cas.code: sum(
+        cas.code: somme_ordonnee(
             effectifs.effectif(caisse, annee) / reclamants[caisse]
             for caisse in cas.caisses
         )
         for cas in cas_types
     }
-    total = sum(bruts.values())
+    total = somme_ordonnee(bruts.values())
     if total <= 0:
         raise ValueError(f"aucun effectif connu en {annee} pour pondérer les cas types")
     return {code: poids / total for code, poids in bruts.items()}

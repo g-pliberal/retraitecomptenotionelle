@@ -50,6 +50,7 @@ import sys
 from pathlib import Path
 
 import yaml
+from retraite_notionnelle.somme import somme_ordonnee
 
 RACINE = Path(__file__).resolve().parents[1]
 REFERENCE = RACINE / "tests" / "temoins" / "conservation.json"
@@ -454,8 +455,8 @@ def main() -> int:
         reference = figer()
         REFERENCE.write_text(json.dumps(reference, ensure_ascii=False, indent=1,
                                         sort_keys=True) + "\n", encoding="utf-8")
-        n = sum(len(e) for s in reference["paragraphes"].values() for e in s.values())
-        m = sum(len(c) for c in reference["entrees"].values())
+        n = somme_ordonnee(len(e) for s in reference["paragraphes"].values() for e in s.values())
+        m = somme_ordonnee(len(c) for c in reference["entrees"].values())
         print(f"référence figée : {n} paragraphes gelés, {m} entrées de registres")
         return 0
 

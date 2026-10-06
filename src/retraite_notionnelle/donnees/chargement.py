@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Callable, Iterator, TypeVar
 
 import yaml
+from ..somme import somme_ordonnee
 
 T = TypeVar("T")
 
@@ -880,7 +881,7 @@ class ChomageComplementaires:
             taux_des_mois.append(taux)
         if len(set(taux_des_mois)) == 1:
             return taux_des_mois[0]
-        return sum(taux_des_mois) / 12
+        return somme_ordonnee(taux_des_mois) / 12
 
 
 _CHOMAGE_COMPLEMENTAIRES: dict[tuple[str, int, int], ChomageComplementaires] = {}

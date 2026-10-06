@@ -64,6 +64,7 @@ from pathlib import Path
 from .chargement import (
     Fiabilite, charger_serie_annuelle, charger_table_csv,
 )
+from ..somme import somme_ordonnee
 
 
 class AssietteTva:
@@ -102,11 +103,11 @@ class AssietteTva:
 
     def montant(self, nette: bool = True) -> float:
         """L'assiette de tous les taux, en millions d'euros de ``annee``."""
-        return sum(self.assiettes(nette).values())
+        return somme_ordonnee(self.assiettes(nette).values())
 
     def recette(self, nette: bool = True) -> float:
         """Ce que les taux d'aujourd'hui en tirent, en millions d'euros."""
-        return sum(taux * assiette for taux, assiette in self.assiettes(nette).items())
+        return somme_ordonnee(taux * assiette for taux, assiette in self.assiettes(nette).items())
 
     def taux_moyen(self, nette: bool = True) -> float:
         """Le taux unique qui rapporterait exactement ce que rapportent les quatre."""

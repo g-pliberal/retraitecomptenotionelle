@@ -5810,3 +5810,15 @@ journal:
       La garantie mensuelle de rémunération de 2000 à 2005 ; le privé au milieu de la
       période ; le passé ; la FPE et les régimes spéciaux ; la décision du conseil
       d'administration de l'Agirc-Arrco du 14 octobre 2026.
+  - date: "2026-10-06"
+    session: "action 148, étape 1 : main vert, les fichiers fabriqués à la charge de GitHub"
+    consulte: >-
+      Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle. Les
+      courses de tests.yml sur GitHub (d2e0d6b, 19bb40c, 31716ad), et le changement de
+      sum() des flottants dans Python 3.12.
+    trouve: >-
+      Aucun texte de droit. Main n'était pas rouge sur GitHub : la fabrication dépendait
+      du Python, sum() additionnant autrement depuis 3.12.
+    reste: >-
+      Les étapes 2 et 3 de l'action 148 ; la décision du conseil d'administration de
+      l'Agirc-Arrco du 14 octobre 2026.

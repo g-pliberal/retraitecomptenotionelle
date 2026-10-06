@@ -64,6 +64,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.calendrier import MOIS_PAR_AN  # noqa: E402
 from retraite_notionnelle.carriere import salaire_moyen_annuel  # noqa: E402
 from retraite_notionnelle.contexte import Contexte  # noqa: E402
@@ -357,7 +358,7 @@ def _depart(brut: dict, nom: str, catalogue) -> Depart:
     vus = [code for ligne in regimes for code in ligne.codes]
     if len(vus) != len(set(vus)):
         raise Refus(f"{nom} : un régime du modèle couvert par deux lignes.")
-    somme = sum(ligne.brut for ligne in regimes)
+    somme = somme_ordonnee(ligne.brut for ligne in regimes)
     total = (somme if brut.get("total_brut") is None
              else _montant(brut.get("total_brut"), f"{nom}, total_brut"))
     # La page arrondit chaque ligne à l'euro : un euro par ligne au plus.
@@ -612,20 +613,20 @@ def tableau(depart: Depart, servi_: Servi, catalogue) -> list[str]:
                       "aucune pension servie.")
     rangees, couverts = [], set()
     for ligne in depart.regimes:
-        modele = sum(servi_.par_regime.get(code, 0.0) for code in ligne.codes)
+        modele = somme_ordonnee(servi_.par_regime.get(code, 0.0) for code in ligne.codes)
         couverts.update(ligne.codes)
         rangees.append((f"  {ligne.libelle}", ligne.brut, modele))
     for code, montant in sorted(servi_.par_regime.items()):
         if code not in couverts and round(montant) != 0:
             rangees.append((f"  {catalogue[code].nom} (absent de la page)", 0.0, montant))
     for etage, libelle in ETAGES:
-        caisse = sum(ligne.brut for ligne in depart.regimes
+        caisse = somme_ordonnee(ligne.brut for ligne in depart.regimes
                      if catalogue[ligne.codes[0]].etage == etage)
-        modele = sum(montant for code, montant in servi_.par_regime.items()
+        modele = somme_ordonnee(montant for code, montant in servi_.par_regime.items()
                      if catalogue[code].etage == etage)
         if round(caisse) or round(modele):
             rangees.append((f"  = {libelle}", caisse, modele))
-    rangees.append(("  = total", depart.total_brut, sum(servi_.par_regime.values())))
+    rangees.append(("  = total", depart.total_brut, somme_ordonnee(servi_.par_regime.values())))
     largeur = max(len(libelle) for libelle, _, _ in rangees)
     sortie.append(f"{'':{largeur}} {'caisse':>8} {'modèle':>8} {'écart':>8}")
     sortie += [f"{libelle:{largeur}} {euros(caisse):>8} {euros(modele):>8} "

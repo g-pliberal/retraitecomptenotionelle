@@ -52,6 +52,7 @@ from ..calendrier import DateMois
 from . import departs as _departs
 from . import liquider as _liquider
 from .cumul import FONCTION_PUBLIQUE, Cumul, fonction_publique_quittee, jour
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -170,7 +171,7 @@ class DroitsApresDepart:
 
     @property
     def montant(self) -> float:
-        return sum(p.montant for p in self.pensions)
+        return somme_ordonnee(p.montant for p in self.pensions)
 
     def donnees(self) -> dict:
         return {"periodes": [p.donnees() for p in self.periodes],

@@ -40,6 +40,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
+from ..somme import somme_ordonnee
 
 #: Mortalité « accidentelle », indépendante de l'âge (terme de Makeham).
 MORTALITE_ACCIDENTELLE = 0.0005
@@ -374,7 +375,7 @@ class DonneesMortalite:
         if ensemble is None:
             return annee, valeur
         generale = self._courbe_brute(65.0, float(annee), sexe, False, 1.0)
-        e65 = sum(0.5 * (generale[t] + generale[t + 1]) for t in range(len(generale) - 1))
+        e65 = somme_ordonnee(0.5 * (generale[t] + generale[t + 1]) for t in range(len(generale) - 1))
         return annee, valeur * e65 / ensemble
 
     def population_niveau_de_vie(self, rapport_au_moyen: float) -> str | None:
@@ -391,7 +392,7 @@ class DonneesMortalite:
         """
         if not self._niveaux_de_vie:
             return None
-        moyen = sum(self._niveaux_de_vie.values()) / len(self._niveaux_de_vie)
+        moyen = somme_ordonnee(self._niveaux_de_vie.values()) / len(self._niveaux_de_vie)
         return self.population_niveau_de_vie_euros(rapport_au_moyen * moyen)
 
     def facteur_population(self, population: str, sexe: str) -> float:
@@ -415,7 +416,7 @@ class DonneesMortalite:
 
         def esperance(facteur: float) -> float:
             courbe = self._courbe_brute(65.0, float(annee), sexe, False, facteur)
-            return sum(0.5 * (courbe[t] + courbe[t + 1]) for t in range(len(courbe) - 1))
+            return somme_ordonnee(0.5 * (courbe[t] + courbe[t + 1]) for t in range(len(courbe) - 1))
 
         bas, haut = 0.05, 8.0
         for _ in range(60):
@@ -703,7 +704,7 @@ class DonneesMortalite:
                              population: str | None = None) -> float:
         """Espérance de vie résiduelle en années, table de génération par défaut."""
         courbe = self.courbe(age, annee, sexe, generation, population)
-        return sum(0.5 * (courbe[t] + courbe[t + 1]) for t in range(len(courbe) - 1))
+        return somme_ordonnee(0.5 * (courbe[t] + courbe[t + 1]) for t in range(len(courbe) - 1))
 
     def fiabilite(self, annee: float) -> Fiabilite:
         millesime = int(math.floor(annee))

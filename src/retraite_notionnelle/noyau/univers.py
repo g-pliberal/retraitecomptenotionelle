@@ -45,6 +45,7 @@ from pathlib import Path
 from ..config import RACINE_DONNEES, RACINE_PROJET, Parametres
 from ..donnees.chargement import charger_yaml
 from . import carte, contrats, vocabulaire
+from ..somme import somme_ordonnee
 
 UNIVERS = RACINE_DONNEES / "reference" / "univers"
 COUCHES = RACINE_DONNEES / "reference" / "couches"
@@ -352,7 +353,7 @@ def _erreurs_de_couche(couche: Couche, droit_reel: dict, proposition: dict) -> l
                            "paramètre et une valeur")
         if couche.d_un_calcul and operation.operation != "neutraliser":
             erreurs.append(f"{operation} : une couche d'un seul calcul ne fait que neutraliser")
-    if sum(o.operation == "ajouter_une_transition" for o in couche.operations) > 1:
+    if somme_ordonnee(o.operation == "ajouter_une_transition" for o in couche.operations) > 1:
         erreurs.append("une couche porte une transition au plus")
     if couche.transition and couche.d_un_calcul:
         erreurs.append("une transition vaut pour l'univers, pas pour un calcul")

@@ -49,6 +49,7 @@ from pathlib import Path
 
 import yaml
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.donnees.regimes import INTERRUPTEURS, fiches_de_regimes
 from retraite_notionnelle.noyau import carte, textes, vocabulaire
 from retraite_notionnelle.noyau import univers as univers_de_droit
@@ -198,8 +199,8 @@ def releves_des_cas_types() -> tuple[int, int, int, int, int]:
                 continue
             releves += 1
             lignes += len(contenu)
-            citant += sum(1 for ligne in contenu if ligne.get("fiche"))
-            versionnees += sum(1 for ligne in contenu if ligne.get("version"))
+            citant += somme_ordonnee(1 for ligne in contenu if ligne.get("fiche"))
+            versionnees += somme_ordonnee(1 for ligne in contenu if ligne.get("version"))
     return len(CAS_TYPES), releves, lignes, citant, versionnees
 
 
@@ -243,17 +244,17 @@ def page() -> str:
     for c in MELEES:
         poids["mêlée"] += eff.get(c, 0)
     non_rattachees = sorted(set(eff) - rattachees - MELEES - {"tous_regimes"})
-    total_caisses = sum(poids.values())
+    total_caisses = somme_ordonnee(poids.values())
 
     etat = collections.Counter(r["etat"] for r in veille)
-    avec_exemple = sum(1 for r in veille if carte.exemples_de(r))
+    avec_exemple = somme_ordonnee(1 for r in veille if carte.exemples_de(r))
     # Un exemple que le modèle ne reproduit pas entre quand même, en écart
     # connu (docs/architecture.md, § 9.2).
     ecarts_connus = [e for e in exemples if e.get("ecart_connu")]
     code_source = "\n".join(
         p.read_text(encoding="utf-8", errors="ignore")
         for motif in ("src/**/*.py", "moteur/js/**/*.js") for p in sorted(RACINE.glob(motif)))
-    citees = sum(1 for r in veille if r["id"] in code_source)
+    citees = somme_ordonnee(1 for r in veille if r["id"] in code_source)
     # Les fiches que désignent les interrupteurs des périodes de régime (phase 6) :
     # chacune déclare la valeur que le moteur lit.
     renvois = collections.Counter(
@@ -286,7 +287,7 @@ def page() -> str:
 
     # ---- 2. les limites
     partiels = sorted(
-        ((sum(eff.get(c, 0) for c in cs), par_code[code])
+        ((somme_ordonnee(eff.get(c, 0) for c in cs), par_code[code])
          for code, cs in caisses.items() if par_code[code]["couverture"] == "partiel"),
         key=lambda x: -x[0])
     partiels_sans_effectif = [r for r in inventaire
@@ -313,7 +314,7 @@ def page() -> str:
         for reg in s.get("regimes") or []:
             if couverture_de.get(reg) == "partiel":
                 utiles[reg].append(s["id"])
-    sans_regime = sum(1 for s in a_explorer if not s.get("regimes"))
+    sans_regime = somme_ordonnee(1 for s in a_explorer if not s.get("regimes"))
     n_utiles = len({i for ids in utiles.values() for i in ids})
     # Les autres modèles (§ 3.4) : ceux que le dépôt a déjà confrontés ou dont
     # il tire des valeurs, et par quoi commencer — un code ouvert, jamais
@@ -324,12 +325,12 @@ def page() -> str:
     premiers = [r for r in referents
                 if r["publication"] == "ouvert" and not r.get("depend_de")
                 and r not in tires and "scenario_1" in r["confronte"]]
-    n_ecarts = sum(len(r.get("ecarts", [])) for r in referents)
+    n_ecarts = somme_ordonnee(len(r.get("ecarts", [])) for r in referents)
     # Ce que les autres modèles font mieux (action 138) : le propriétaire veut
     # le dépôt « meilleur en tous points », et ces points sont ce qui reste.
     mieux = [p for r in referents for p in r.get("fait_mieux", [])]
     etats_mieux = collections.Counter(p["etat"] for p in mieux)
-    modeles_mieux = sum(1 for r in referents if r.get("fait_mieux"))
+    modeles_mieux = somme_ordonnee(1 for r in referents if r.get("fait_mieux"))
     chantiers = collections.Counter(p["chantier"] for p in mieux
                                     if p["etat"] == "a_reprendre")
     en_cours = [(n, t) for n, t, s in actions if s == "en cours"]
@@ -389,7 +390,7 @@ def page() -> str:
     w(f"- Citées dans le code par leur identifiant : **{citees} sur {len(veille)}**. "
       "Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.")
     w(f"- Désignées par les interrupteurs des périodes de régime : **{len(renvois)} sur "
-      f"{len(veille)}**, par {milliers(sum(renvois.values()))} renvois ; chacune déclare la "
+      f"{len(veille)}**, par {milliers(somme_ordonnee(renvois.values()))} renvois ; chacune déclare la "
       "valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.")
     w(f"- Mûres, sans rien qui manque à leur contrat : **{len(mures)} sur {len(veille)}**. "
       "Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape "
@@ -619,7 +620,7 @@ def page() -> str:
         if propres:
             w(f"  - `{cle}` n'en décide pas non plus : "
               + ", ".join(f"`{f}`" for f in propres) + ".")
-    w(f"- **Faire mûrir la carte** : {sum(len(m) for m in manques.values())} champs "
+    w(f"- **Faire mûrir la carte** : {somme_ordonnee(len(m) for m in manques.values())} champs "
       f"obligatoires manquent, à {len(manques)} fiches. Par champ :")
     w("")
     w("  | Champ | Fiches à qui il manque |")
@@ -699,15 +700,15 @@ def cout(n: int = 400) -> str:
       "fichiers ;")
     if moteur:
         med = statistics.median(len(c) for c in moteur)
-        main = virgule(statistics.mean(sum(1 for f in c if a_la_main(f)) for c in moteur))
+        main = virgule(statistics.mean(somme_ordonnee(1 for f in c if a_la_main(f)) for c in moteur))
         w(f"- un commit qui change le moteur du scénario 1 en touche {med:.0f} en médiane, "
           f"dont {main} de prose ou de registres écrits à la main (moyenne, sur "
           f"{len(moteur)} commits) ;")
     for f in LOURDS[:2]:
-        touches = sum(1 for c in changes if f in c)
+        touches = somme_ordonnee(1 for c in changes if f in c)
         w(f"- `{f}` est modifié dans {pct(touches, len(changes))} des commits ;")
     presents = [f for f in LOURDS if (RACINE / f).exists()]
-    poids = sum((RACINE / f).stat().st_size for f in presents)
+    poids = somme_ordonnee((RACINE / f).stat().st_size for f in presents)
     w(f"- les {len(presents)} fichiers que presque tout changement du moteur touche "
       f"({', '.join('`' + f + '`' for f in presents)}) pèsent ensemble "
       f"{virgule(poids / 1e6)} Mo : aucune session ne peut les lire en entier.")

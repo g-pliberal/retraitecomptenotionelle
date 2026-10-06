@@ -41,6 +41,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .donnees.distribution import DistributionPensions
+from .somme import somme_ordonnee
 
 
 @dataclass(frozen=True)
@@ -167,7 +168,7 @@ def pension_moyenne(distribution: DistributionPensions) -> float:
     :func:`facteurs_par_sexe`, et repousser la tranche ouverte de 4 500 à
     6 500 € le déplace de 0,641 à 0,624.
     """
-    return sum(
+    return somme_ordonnee(
         tranche.part * (
             tranche.borne_inferieure if tranche.borne_superieure is None
             else 0.5 * (tranche.borne_inferieure + tranche.borne_superieure)

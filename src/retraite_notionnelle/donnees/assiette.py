@@ -62,6 +62,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
+from ..somme import somme_ordonnee
 
 #: Les deux postes du fichier, dans l'ordre d'affichage.
 POSTES_ASSIETTE: tuple[tuple[str, str], ...] = (
@@ -108,7 +109,7 @@ class AssietteActivite:
 
     def montant(self, annee: int) -> float:
         """L'assiette entière, en millions d'euros courants."""
-        return sum(serie(annee) for serie in self.postes.values())
+        return somme_ordonnee(serie(annee) for serie in self.postes.values())
 
     def part_pib(self, annee: int) -> float:
         """L'assiette rapportée au PIB de la même année."""

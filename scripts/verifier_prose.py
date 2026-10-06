@@ -85,6 +85,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
+from retraite_notionnelle.somme import somme_ordonnee
 
 RACINE = Path(__file__).resolve().parents[1]
 ZONES = RACINE / "data" / "reference" / "prose" / "zones.yaml"
@@ -126,7 +127,7 @@ def _fichiers(motif: str) -> list[Path]:
 
 def sonde_lignes(motif: str) -> float:
     """Nombre de lignes du fichier, ou somme sur les fichiers du motif."""
-    return sum(len(f.read_text(encoding="utf-8").splitlines()) for f in _fichiers(motif))
+    return somme_ordonnee(len(f.read_text(encoding="utf-8").splitlines()) for f in _fichiers(motif))
 
 
 def sonde_fichiers(motif: str) -> float:
@@ -136,7 +137,7 @@ def sonde_fichiers(motif: str) -> float:
 
 def sonde_poids(motif: str) -> float:
     """Poids en kilo-octets (1024), somme sur les fichiers du motif."""
-    return sum(f.stat().st_size for f in _fichiers(motif)) / 1024
+    return somme_ordonnee(f.stat().st_size for f in _fichiers(motif)) / 1024
 
 
 def sonde_poids_comprime(motif: str) -> float:
@@ -146,7 +147,7 @@ def sonde_poids_comprime(motif: str) -> float:
     c'est ce que le navigateur télécharge. Compresser leur concaténation
     donnerait un chiffre plus flatteur que la réalité.
     """
-    return sum(len(gzip.compress(f.read_bytes())) for f in _fichiers(motif)) / 1024
+    return somme_ordonnee(len(gzip.compress(f.read_bytes())) for f in _fichiers(motif)) / 1024
 
 
 def _lignes_csv(chemin: str) -> list[dict]:
@@ -418,7 +419,7 @@ def sonde_entrees(argument: str) -> float:
         return len(entrees)
     champ, valeurs = filtre
     suite = entrees.values() if isinstance(entrees, dict) else entrees
-    return sum(1 for e in suite if str(e.get(champ)) in valeurs)
+    return somme_ordonnee(1 for e in suite if str(e.get(champ)) in valeurs)
 
 
 def sonde_valeur(argument: str) -> float:
@@ -981,7 +982,7 @@ def controler_cliquet(zonage: Zonage) -> list[Anomalie]:
     """
     return (
         _cliquet("sections_a_declarer",
-                 sum(len(t) for t in inventorier(zonage).values()),
+                 somme_ordonnee(len(t) for t in inventorier(zonage).values()),
                  zonage.cliquet.get("sections_a_declarer"),
                  "sections ne sont pas déclarées",
                  "les déclarer dans zones.yaml (--inventaire les liste)")
@@ -1023,7 +1024,7 @@ def main() -> int:
             print(f"\n{fichier} — {len(titres)} sections à déclarer")
             for titre in titres:
                 print(f"    {titre}")
-        total = sum(len(t) for t in reste.values())
+        total = somme_ordonnee(len(t) for t in reste.values())
         print(f"\n{total} sections au total ; cliquet posé à "
               f"{zonage.cliquet.get('sections_a_declarer', '—')}")
         return 0

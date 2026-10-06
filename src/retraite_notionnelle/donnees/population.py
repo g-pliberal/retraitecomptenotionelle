@@ -31,6 +31,7 @@ from pathlib import Path
 
 from .chargement import (Fiabilite, SerieAnnuelle, charger_serie_annuelle,
                          charger_table_par_generation, valeur_par_generation)
+from ..somme import somme_ordonnee
 
 #: Âge plancher de la série, et donc âge en deçà duquel ``effectif`` rend zéro.
 #: Le cas type qui liquide le plus tôt part à 52 ans.
@@ -127,7 +128,7 @@ class Population:
     def effectif_tranche(self, age_debut: int, age_fin: int, annee: int) -> float:
         """Effectif cumulé d'une tranche d'âges, bornes comprises."""
         effectifs = self._effectifs[self._annee_bornee(annee)]
-        return sum(
+        return somme_ordonnee(
             effectifs.get(age, 0.0) for age in range(age_debut, age_fin + 1)
         )
 
@@ -230,7 +231,7 @@ class CarrieresIncompletes:
         #: le COR publie.
         self._natifs: dict[int, float] = {}
         for generation in range(premiere, derniere + 1):
-            duree = sum(_interpolee(serie, generation) for serie in par_sexe.values()) / 2
+            duree = somme_ordonnee(_interpolee(serie, generation) for serie in par_sexe.values()) / 2
             requise = valeur_par_generation(requises, generations_requises, generation)
             if requise is None:
                 raise ValueError(f"aucune durée requise pour la génération {generation}")

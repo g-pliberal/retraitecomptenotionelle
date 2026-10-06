@@ -29,6 +29,7 @@ from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, trimestres_civils
 from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
 from . import compter, coordonner, etranger, invalidite
 from .commun import date_d_effet, derniere_annee, ligne_cotisee
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -1130,7 +1131,7 @@ def fin_indemnisation(moteur, carriere: Carriere) -> DateMois | None:
         lignes = [ligne for ligne in carriere.lignes if ligne.annee <= annee_liquidation]
         par_annee = carriere.trimestres_par_annee(lignes)
         majoration = compter.majoration_pour_enfants(
-            moteur, carriere, {code: sum(par_annee.values()) for code, _ in opposent},
+            moteur, carriere, {code: somme_ordonnee(par_annee.values()) for code, _ in opposent},
             annee_liquidation)
         manque = requis - (majoration.trimestres if majoration is not None else 0)
         atteinte = None

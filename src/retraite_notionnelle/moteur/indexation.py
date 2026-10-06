@@ -41,6 +41,7 @@ from functools import cached_property
 from ..config import ModeIndexation, Parametres
 from ..donnees.chargement import Fiabilite
 from ..donnees.macro import DonneesMacro
+from ..somme import somme_ordonnee
 
 
 #: Modes qui comparent les trois taux tels qu'ils sont publiés — deux nominaux,
@@ -186,7 +187,7 @@ class Indexation:
             # La moyenne n'est le taux d'aucun des trois : elle n'a pas de terme
             # retenu, et c'est ce que le libellé dit.
             terme = "moyenne"
-            taux = sum(candidats.values()) / len(candidats)
+            taux = somme_ordonnee(candidats.values()) / len(candidats)
         elif mode is ModeIndexation.MEDIANE_TROIS_TAUX:
             # Nombre impair de candidats (trois, ou un) : la médiane est un
             # candidat, pas une interpolation, et le terme du milieu est nommé.

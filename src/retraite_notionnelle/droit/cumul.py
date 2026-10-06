@@ -74,6 +74,7 @@ from typing import TYPE_CHECKING, Callable
 
 from ..calendrier import DateMois
 from . import departs as _departs
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -297,7 +298,7 @@ class TrancheDeCumul:
     @property
     def reduction(self) -> float:
         """Ce qui n'est pas servi, par mois."""
-        return sum(p.reduction for p in self.par_regime)
+        return somme_ordonnee(p.reduction for p in self.par_regime)
 
     @property
     def principale(self) -> PensionEnCumul | None:
@@ -339,7 +340,7 @@ class Cumul:
     def non_servi(self) -> float:
         """Ce que l'activité fait perdre de pension, en tout, en euros de
         chaque année."""
-        return sum(t.reduction * t.mois for t in self.tranches)
+        return somme_ordonnee(t.reduction * t.mois for t in self.tranches)
 
     def donnees(self) -> dict:
         return {"debut": jour(self.debut), "fin": jour(self.fin),
@@ -436,7 +437,7 @@ class _Calcul:
         annee = max(l.annee for l in emplois)
         derniere = [l for l in emplois if l.annee == annee]
         mois = max(1, round(max(l.fraction_annee for l in derniere) * 12))
-        brut = sum(l.revenu / (l.quotite if 0 < l.quotite < 1 else 1.0) for l in derniere)
+        brut = somme_ordonnee(l.revenu / (l.quotite if 0 < l.quotite < 1 else 1.0) for l in derniere)
         return brut / mois, annee
 
     def _salaire_moyen(self) -> tuple[float, int] | None:
@@ -452,7 +453,7 @@ class _Calcul:
         total = mois = 0.0
         for annee in annees:
             lignes = [l for l in emplois if l.annee == annee]
-            total += sum(l.revenu for l in lignes) * macro.coefficient_prix(
+            total += somme_ordonnee(l.revenu for l in lignes) * macro.coefficient_prix(
                 annee, self.declare.annee)
             mois += max(l.fraction_annee for l in lignes) * 12
         return (total / mois if mois else 0.0), self.declare.annee
@@ -466,7 +467,7 @@ class _Calcul:
                 prix = self.moteur.macro.coefficient_prix(self.ancre, annee)
                 pensions = {regime: montant * prix for regime, montant in pensions.items()}
                 majoration *= prix
-            mois = sum(1 for rang in range(self.debut.rang, self.fin.rang)
+            mois = somme_ordonnee(1 for rang in range(self.debut.rang, self.fin.rang)
                        if DateMois.depuis_rang(rang).annee == annee)
             macro = self.moteur.macro
             reference = self.moteur.minimum_garanti.reference(annee)
@@ -569,12 +570,12 @@ class _Calcul:
                    if date_effet <= mois and annee.pensions.get(regime, 0.0) > 0]
         montants = {regime: annee.pensions.get(regime, 0.0) / 12.0
                     for regime, _, _ in servies}
-        total = sum(montants.values()) + (annee.majoration / 12.0 if servies else 0.0)
+        total = somme_ordonnee(montants.values()) + (annee.majoration / 12.0 if servies else 0.0)
         integral = self.integral(mois)
         resultats: list[PensionEnCumul] = []
         # La règle de 2027 réunit les pensions de base : la réduction des
         # revenus s'y répartit au prorata.
-        base_2027 = sum(montants[regime] for regime, _, groupe in servies
+        base_2027 = somme_ordonnee(montants[regime] for regime, _, groupe in servies
                         if groupe in GROUPES_DE_BASE)
         for regime, date_effet, groupe in servies:
             montant = montants[regime]
@@ -688,7 +689,7 @@ class _Calcul:
             return PLAFONNEE, regle, "sous_le_plafond", 0.0, seuil
         if regle != REDUCTION_2015:
             return SUSPENDUE, regle, "depassement", montant, seuil
-        du_groupe = sum(montants[code] for code, _, g in servies if self._concerne(code, g))
+        du_groupe = somme_ordonnee(montants[code] for code, _, g in servies if self._concerne(code, g))
         part = montant / du_groupe if du_groupe > 0 else 0.0
         return REDUITE, regle, "depassement", depassement * part, seuil
 
@@ -731,7 +732,7 @@ class _Calcul:
                 if DateMois.depuis_rang(rang).annee == annee_civile]
         couverts = [m for m in mois if not (m >= LOI_2009 and self.integral(m))]
         annuelle = annee.pensions.get(regime, 0.0)
-        servis = sum(1 for m in range(1, 13)
+        servis = somme_ordonnee(1 for m in range(1, 13)
                      if DateMois(annee_civile, m) >= date_effet)
         pension_de_l_annee = annuelle * servis / 12.0
         plafond = (PART_DE_LA_PENSION * pension_de_l_annee
@@ -786,7 +787,7 @@ def cumuler(moteur: ScenarioActuel, carriere: Carriere, resultat: ResultatActuel
             integral_depuis = mois
         par_regime, plafond = calcul.mois(mois)
         annee = calcul.annee(mois.annee)
-        pensions = (sum(p.montant for p in par_regime)
+        pensions = (somme_ordonnee(p.montant for p in par_regime)
                     + (annee.majoration / 12.0 if par_regime else 0.0))
         cle = (mois.annee, tuple((p.regime, p.statut, p.regle, p.motif, p.reduction,
                                   p.plafond) for p in par_regime))

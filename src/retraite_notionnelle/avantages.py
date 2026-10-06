@@ -60,6 +60,7 @@ from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
 from .scenarios.actuel import CarriereLongue, ScenarioActuel
 from .simulateur import Simulateur
+from .somme import somme_ordonnee
 
 #: Les quatre états possibles du modèle à l'égard d'un avantage. Vocabulaire
 #: fermé : un cinquième état inventé au fil de l'eau rendrait l'inventaire
@@ -241,7 +242,7 @@ class Inventaire:
         return tuple(a for a in self.avantages if a.famille == code)
 
     def compte(self, etat: str) -> int:
-        return sum(1 for a in self.avantages if a.etat_modele == etat)
+        return somme_ordonnee(1 for a in self.avantages if a.etat_modele == etat)
 
     @property
     def chiffres(self) -> tuple[Avantage, ...]:
@@ -600,7 +601,7 @@ def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
     refus: dict[str, str] = {}
     if variantes is None:
         variantes = scenarios_neutralises(simulateur)
-    avpf = sum(a.montant for a in reelle.avantages_appliques if a.code == "avpf")
+    avpf = somme_ordonnee(a.montant for a in reelle.avantages_appliques if a.code == "avpf")
     reelles = {
         int(generation + cas.age_debut + decalage): motif
         for decalage, motif in cas.interruptions_relatives
@@ -715,15 +716,15 @@ class AnneeAvantages:
 
     @property
     def gratuit(self) -> float:
-        return sum(self.lignes.values())
+        return somme_ordonnee(self.lignes.values())
 
     @property
     def gratuit_modele(self) -> float:
-        return sum(self.modele.values())
+        return somme_ordonnee(self.modele.values())
 
     @property
     def anticipee(self) -> float:
-        return sum(self.anticipees.values())
+        return somme_ordonnee(self.anticipees.values())
 
 
 @dataclass
@@ -863,7 +864,7 @@ def masses_anticipees(pensionnes: list[Pensionne], simulateur: Simulateur,
         part_cas = poids_cas.get(pensionne.code, 0.0)
         if part_cas <= 0.0:
             continue
-        pension = sum(pensionne.parts.values())
+        pension = somme_ordonnee(pensionne.parts.values())
         # L'ÂGE LÉGAL EST CELUI DE LA GÉNÉRATION DE LA GRILLE, et il est lu une
         # seule fois — non celui de chacune des cinq cohortes que la tranche
         # représente. La nuance n'est pas un raffinement.
@@ -912,7 +913,7 @@ def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
     for annee in depenses.annees():
         poids_annee = poids(annee)
         parts = masses(pensionnes, population, annee, poids_annee)
-        totale = sum(parts.values())
+        totale = somme_ordonnee(parts.values())
         if totale <= 0.0:
             continue
         observee = depenses.depense(annee)
@@ -948,7 +949,7 @@ def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
             montants = [depenses.prestation(poste, annee) for poste in postes]
             if all(montant is None for montant in montants):
                 continue
-            lignes[ligne] = sum(montant or 0.0 for montant in montants)
+            lignes[ligne] = somme_ordonnee(montant or 0.0 for montant in montants)
         annees.append(AnneeAvantages(
             annee=annee,
             observee=observee,

@@ -170,6 +170,7 @@ from .garantie import (
 from .noyau import univers as univers_de_droit
 from .revalorisation import RevalorisationServie
 from .simulateur import Simulateur
+from .somme import somme_ordonnee
 
 #: Les six systèmes, dans l'ordre du tableau de comparaison. Ce sont les
 #: attributs de ``Comparaison`` ; « actuel » est l'étalon et le dénominateur.
@@ -889,7 +890,7 @@ class Avenir:
         mélanger dans un même total ferait un chiffre que personne ne saurait
         lire.
         """
-        return sum(ligne.cout_constants(scenario) for ligne in self.projetees())
+        return somme_ordonnee(ligne.cout_constants(scenario) for ligne in self.projetees())
 
     def annee(self, millesime: int) -> AvenirAnnuel | None:
         for ligne in self.annees:
@@ -903,7 +904,7 @@ class Avenir:
 
     def cumul_reprises(self) -> float:
         """Ce que les successions rendent sur les années projetées, en euros constants."""
-        return sum(ligne.reprises_constants() for ligne in self.projetees())
+        return somme_ordonnee(ligne.reprises_constants() for ligne in self.projetees())
 
     def decomposition(self, depuis: int) -> dict[int, tuple[float, float]]:
         """La trajectoire du système actuel en ses deux facteurs, comme le COR.
@@ -972,8 +973,8 @@ class Avenir:
             return resultat
 
         def mesure(ligne: AvenirAnnuel, regimes: tuple[str, ...]) -> tuple[float, float, float]:
-            masse = sum(ligne.masses_regimes.get(regime, 0.0) for regime in regimes)
-            tetes = sum(ligne.tetes_regimes.get(regime, 0.0) for regime in regimes)
+            masse = somme_ordonnee(ligne.masses_regimes.get(regime, 0.0) for regime in regimes)
+            tetes = somme_ordonnee(ligne.tetes_regimes.get(regime, 0.0) for regime in regimes)
             relative = masse / tetes / ligne.salaire_reel if tetes > 0.0 else 0.0
             return tetes, relative, (masse * ligne.facteur_reversion
                                      / (ligne.pib * ligne.coefficient_constants))
@@ -1517,7 +1518,7 @@ class Solde:
         lignes = [l for l in self.annees if debut <= l.annee <= fin]
         if not lignes:
             return 0.0
-        return sum(ligne.solde(scenario) for ligne in lignes) / len(lignes)
+        return somme_ordonnee(ligne.solde(scenario) for ligne in lignes) / len(lignes)
 
     def premiere_annee_equilibree(self, scenario: str) -> int | None:
         """Première année PROJETÉE où le système cesse d'être en déficit.
@@ -1828,11 +1829,11 @@ class Dette:
         C'est le stock qu'on aurait à taux égal à la croissance, et la
         différence avec ``horizon`` est ce que l'effet boule de neige ajoute.
         """
-        return -sum(ligne.solde(scenario) for ligne in self.annees)
+        return -somme_ordonnee(ligne.solde(scenario) for ligne in self.annees)
 
     def cumul_interets(self, scenario: str) -> float:
         """Les intérêts cumulés sur la période, en points de PIB."""
-        return sum(ligne.interet(scenario) for ligne in self.annees)
+        return somme_ordonnee(ligne.interet(scenario) for ligne in self.annees)
 
     def pic(self, scenario: str) -> DetteAnnuelle | None:
         """L'année où le stock est le plus haut, ``None`` s'il n'est jamais positif."""
@@ -1981,10 +1982,10 @@ class Cout:
         premiers valent une vingtaine de fois les seconds. Le cumul est donc
         celui des montants ramenés à une même unité.
         """
-        return sum(annee.cout_constants(scenario) for annee in self.annees)
+        return somme_ordonnee(annee.cout_constants(scenario) for annee in self.annees)
 
     def cumul_observe(self) -> float:
-        return sum(annee.observee_constants for annee in self.annees)
+        return somme_ordonnee(annee.observee_constants for annee in self.annees)
 
     def confondus_avec_actuel(self) -> tuple[str, ...]:
         """Scénarios dont le coût ne s'écarte JAMAIS de celui du système actuel.
@@ -2880,7 +2881,7 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
             pese = effectif * pensionne.completude(decalage)
             for tete, parts in regroupees.items():
                 tetes[tete] = tetes.get(tete, 0.0) + effectif
-                masses[tete] = masses.get(tete, 0.0) + pese * pensionne.pensions["actuel"] * sum(
+                masses[tete] = masses.get(tete, 0.0) + pese * pensionne.pensions["actuel"] * somme_ordonnee(
                     part_regime * revalorisation.coefficient_points(
                         convenu, liquidation, annee)
                     for convenu, part_regime in parts)
@@ -3152,9 +3153,9 @@ def _poids_par_groupe(poids: Callable[[int], dict[str, float]],
             continue
         regimes, _ = _masses_regimes(pensionnes, population, annee, {code: part},
                                      revalorisation)
-        groupes = {groupe: sum(regimes.get(regime, 0.0) for regime in membres)
+        groupes = {groupe: somme_ordonnee(regimes.get(regime, 0.0) for regime in membres)
                    for groupe, membres in GROUPES_DU_MODELE.items()}
-        if sum(groupes.values()) > 0.0:
+        if somme_ordonnee(groupes.values()) > 0.0:
             masses[code] = groupes
     # Les groupes que la grille sert : une grille réduite n'en a pas six, et
     # la dépense des autres ne se répartit pas sur les siens.
@@ -3164,19 +3165,19 @@ def _poids_par_groupe(poids: Callable[[int], dict[str, float]],
         return poids
     cibles = {groupe: decomposition.valeur("depense_part_pib", groupe, annee)
               for groupe in servis}
-    total_cible = sum(cibles.values())
+    total_cible = somme_ordonnee(cibles.values())
     coefficients = {code: 1.0 for code in masses}
     for _ in range(PASSES_CALAGE):
-        par_groupe = {groupe: sum(coefficients[code] * masses[code][groupe]
+        par_groupe = {groupe: somme_ordonnee(coefficients[code] * masses[code][groupe]
                                   for code in masses)
                       for groupe in servis}
-        total = sum(par_groupe.values())
+        total = somme_ordonnee(par_groupe.values())
         corrections = {groupe: (cibles[groupe] / total_cible) / (par_groupe[groupe] / total)
                        for groupe in servis}
         for code, groupes in masses.items():
             coefficients[code] *= (
-                sum(groupes[groupe] * corrections[groupe] for groupe in servis)
-                / sum(groupes[groupe] for groupe in servis)
+                somme_ordonnee(groupes[groupe] * corrections[groupe] for groupe in servis)
+                / somme_ordonnee(groupes[groupe] for groupe in servis)
             )
     memoire: dict[int, dict[str, float]] = {}
 
@@ -3185,8 +3186,8 @@ def _poids_par_groupe(poids: Callable[[int], dict[str, float]],
             bruts = poids(millesime)
             recales = {code: part * coefficients.get(code, 1.0)
                        for code, part in bruts.items()}
-            somme = sum(recales.values())
-            echelle = sum(bruts.values()) / somme if somme > 0.0 else 1.0
+            somme = somme_ordonnee(recales.values())
+            echelle = somme_ordonnee(bruts.values()) / somme if somme > 0.0 else 1.0
             memoire[millesime] = {code: part * echelle for code, part in recales.items()}
         return memoire[millesime]
 
@@ -3428,7 +3429,7 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         inflation = (macro.coefficient_prix(annee - 1, annee_euros)
                      / macro.coefficient_prix(annee, annee_euros) - 1.0)
         taux_reels[annee] = (1.0 + nominal) / (1.0 + inflation) - 1.0
-    taux_moyen = sum(taux_reels.values()) / len(taux_reels)
+    taux_moyen = somme_ordonnee(taux_reels.values()) / len(taux_reels)
 
     # 2. Les bénéficiaires, tranche par tranche, à l'année de l'enquête : leur
     # poids, leur complément annuel en euros constants, leur pension dans les
@@ -3488,7 +3489,7 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
                 # patrimoine n'est pas publié par sexe.
                 distribution.part_sous(milieu),
             ))
-    poids_total = sum(poids for poids, _, _, _ in tranches)
+    poids_total = somme_ordonnee(poids for poids, _, _, _ in tranches)
 
     # 3. La mortalité des bénéficiaires : le vingtile de niveau de vie que le
     # calage a retenu, celui-là même qui a pesé les années vécues pour dire
@@ -3505,7 +3506,7 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         # ignorer que l'enquête publie sa propre composition.
         for sexe, facteur_sexe in (("F", facteur_f), ("H", facteur_h)):
             seule = 0.0 if calage.part_seule is None else calage.part_seule[sexe]
-            sous_plancher[sexe] = sum(
+            sous_plancher[sexe] = somme_ordonnee(
                 poids_plancher * cout_garantie(
                     par_sexe[sexe], 1.0, plancher, facteur_sexe).part_beneficiaires
                 for plancher, poids_plancher in (
@@ -3526,7 +3527,7 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
     ]
     if not survie:
         return
-    total_survie = sum(survie)
+    total_survie = somme_ordonnee(survie)
     deces = [survie[k] - (survie[k + 1] if k + 1 < len(survie) else 0.0)
              for k in range(len(survie))]
 
@@ -3538,7 +3539,7 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         parts_sexe = {"F": part_femmes, "H": 1.0 - part_femmes}
         expositions = {"F": courbe_f, "H": courbe_h}
         conjoint = {"F": "H", "H": "F"}
-        avances_par_succession += sum(
+        avances_par_succession += somme_ordonnee(
             parts_sexe[sexe]
             * couple.part_moyenne(sexe, list(expositions[sexe]))
             * sous_plancher[conjoint[sexe]]

@@ -41,6 +41,7 @@ SIMULATIONS = "tests/temoins/simulations.json"
 PAGES = "tests/temoins/pages.json"
 
 sys.path.insert(0, str(RACINE / "src"))
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.cout import SCENARIOS  # noqa: E402
 
 #: En deçà, une pension ne bouge pas : c'est le bruit d'un calcul flottant.
@@ -68,12 +69,12 @@ class Mouvement:
 
     @property
     def hausses(self) -> int:
-        return sum(1 for e in self.ecarts.values() if e > 0)
+        return somme_ordonnee(1 for e in self.ecarts.values() if e > 0)
 
     @property
     def fortes_baisses(self) -> int:
         """Les baisses de plus de 1 %."""
-        return sum(1 for e in self.ecarts.values() if e < -0.01)
+        return somme_ordonnee(1 for e in self.ecarts.values() if e < -0.01)
 
     def extremes(self, n: int) -> tuple[list[tuple[str, float]], list[tuple[str, float]]]:
         """Les ``n`` plus fortes baisses et les ``n`` plus fortes hausses."""
@@ -118,7 +119,7 @@ def resumer(avant: dict, apres: dict, pages_avant: dict | None = None,
     pages_avant, pages_apres = pages_avant or {}, pages_apres or {}
     return Resume(
         temoins=len(apres),
-        bougent=sum(1 for nom in communs if avant[nom] != apres[nom]),
+        bougent=somme_ordonnee(1 for nom in communs if avant[nom] != apres[nom]),
         nouveaux=sorted(set(apres) - set(avant)),
         disparus=sorted(set(avant) - set(apres)),
         mouvements=mouvements,

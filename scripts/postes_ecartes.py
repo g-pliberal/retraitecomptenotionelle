@@ -73,6 +73,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import cout as C  # noqa: E402
 from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
@@ -140,7 +141,7 @@ def chiffrer(solde: C.Solde, cle: str, libelle: str,
     projetees = [l for l in solde.projetees() if l.annee <= C.HORIZON]
     total = 0.0
     for ligne in projetees:
-        rendu = sum(montant(ligne, poste) for poste in postes)
+        rendu = somme_ordonnee(montant(ligne, poste) for poste in postes)
         ressources = ligne.ressources_de(LIBERAL) + rendu
         depense = ligne.depense(LIBERAL)
         resultat.soldes[ligne.annee] = ressources - depense

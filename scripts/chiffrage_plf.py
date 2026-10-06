@@ -55,6 +55,7 @@ sys.path.insert(0, str(RACINE / "scripts"))
 
 import proposition_prospective  # noqa: E402
 from proposition_prospective import PropositionProspective  # noqa: E402
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import cout as C  # noqa: E402
 from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
@@ -132,14 +133,14 @@ class Chiffrage:
             # projette lui-même, plus haute de trois points de PIB en 2070 :
             # cumuler sur elle surestimait l'économie d'environ neuf pour cent,
             # jusqu'au 23 septembre 2026.
-            self.cumul_depense = sum(self.pensions_constants(a, LIBERAL)
+            self.cumul_depense = somme_ordonnee(self.pensions_constants(a, LIBERAL)
                                      for a in self.annees)
-            self.cumul_depense_actuel = sum(self.pensions_constants(a, "actuel")
+            self.cumul_depense_actuel = somme_ordonnee(self.pensions_constants(a, "actuel")
                                             for a in self.annees)
-            self.cumul_garantie = sum(
+            self.cumul_garantie = somme_ordonnee(
                 self.avenir[a].cout_constants(C.COMPOSANTE_GARANTIE)
                 for a in self.annees)
-            self.cumul_reprises = sum(self.avenir[a].reprises_constants()
+            self.cumul_reprises = somme_ordonnee(self.avenir[a].reprises_constants()
                                       for a in self.annees)
             self.annee_euros = cout.annee_euros
         finally:

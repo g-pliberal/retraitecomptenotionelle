@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import MOIS_PAR_AN, DateMois, mois_travailles, trimestres_civils
 from .commun import date_d_effet
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere, PensionEtrangere, PeriodeALEtranger
@@ -231,7 +232,7 @@ class TrimestresEtrangers:
         """Les trimestres que la durée du taux de cette famille retient — de
         sa pension nationale, avec ``nationale``."""
         table = self.nationaux if nationale else self.pour_le_taux
-        return sum((table.get(famille) or {}).values())
+        return somme_ordonnee((table.get(famille) or {}).values())
 
     def compare(self, famille: str | None) -> bool:
         """Un accord compare-t-il, pour cette famille, une pension nationale
@@ -240,12 +241,12 @@ class TrimestresEtrangers:
 
     def trimestres_cotises(self, famille: str | None) -> int:
         """Ceux d'entre eux qui comptent comme cotisés."""
-        return sum((self.cotises.get(famille) or {}).values())
+        return somme_ordonnee((self.cotises.get(famille) or {}).values())
 
     def trimestres_au_salaire_moyen(self, famille: str | None) -> int:
         """Ceux d'entre eux qui réduisent les années du salaire annuel moyen
         de la pension proratisée."""
-        return sum((self.au_salaire_moyen.get(famille) or {}).values())
+        return somme_ordonnee((self.au_salaire_moyen.get(famille) or {}).values())
 
     def donnees(self) -> dict:
         return {
@@ -333,7 +334,7 @@ def compter_les_periodes(carriere: Carriere, periodes: tuple[PeriodeCoordonnee, 
     for retenante in FAMILLES:
         # Le premier des accords qui en apportent le plus, dans l'ordre des
         # périodes.
-        meilleur = max(calculs, key=lambda calcul: sum(calcul[0][retenante].values()))
+        meilleur = max(calculs, key=lambda calcul: somme_ordonnee(calcul[0][retenante].values()))
         for table, retenue in zip(retenus, meilleur):
             table[retenante] = retenue[retenante]
     return TrimestresEtrangers(retenus[0], retenus[1], periodes, famille, retenus[2],
@@ -508,5 +509,5 @@ def pensions_etrangeres_servies(macro, carriere: Carriere, mois: DateMois,
     les retraites obligatoires. Rien pour qui n'en déclare pas (présomption
     ``pas_de_pension_etrangere``)."""
     annee = mois.annee if annee is None else annee
-    return sum(pension_etrangere_annuelle(macro, pension, annee)
+    return somme_ordonnee(pension_etrangere_annuelle(macro, pension, annee)
                for pension in carriere.pensions_etrangeres if pension.debut.rang <= mois.rang)

@@ -66,6 +66,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import (  # noqa: E402
     CAS_TYPES, CasType, calculer_cas_types, poids_effectifs,
@@ -168,10 +169,10 @@ def mesurer(simulateur: Simulateur,
                 for code, points in departs.items()}
         retenus = {code: poids.get(code, 0.0) for code, age in ages.items()
                    if age is not None and poids.get(code, 0.0) > 0}
-        total = sum(retenus.values())
+        total = somme_ordonnee(retenus.values())
         if total <= 0:
             continue
-        grille = sum(part * ages[code] for code, part in retenus.items()) / total
+        grille = somme_ordonnee(part * ages[code] for code, part in retenus.items()) / total
         mesures.append(Annee(
             annee=annee,
             drees=publie[annee],
@@ -196,7 +197,7 @@ def imprimer(mesures: list[Annee]) -> None:
         print(f"{ligne.annee:>6} {ligne.drees:>7.2f} {ligne.grille:>7.2f} "
               f"{ligne.ecart:>+7.2f}  {ligne.cas_types}/{len(CAS_TYPES)}")
     ecarts = [ligne.ecart for ligne in mesures]
-    moyen = sum(ecarts) / len(ecarts)
+    moyen = somme_ordonnee(ecarts) / len(ecarts)
     pire = max(ecarts, key=abs)
     print(f"\nÉcart moyen {moyen:+.2f} an, le plus fort {pire:+.2f} an "
           f"({next(l.annee for l in mesures if l.ecart == pire)}).")

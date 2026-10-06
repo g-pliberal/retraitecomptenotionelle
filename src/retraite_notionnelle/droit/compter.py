@@ -30,6 +30,7 @@ from ..donnees.chargement import Fiabilite
 from . import coordonner
 from .commun import derniere_annee, ligne_cotisee
 from .etranger import TrimestresEtrangers, compter_les_periodes, famille_des_regimes
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -116,12 +117,12 @@ class MajorationEnfants:
     @property
     def trimestres(self) -> int:
         """Trimestres accordés au total, tous enfants confondus."""
-        return sum(enfant.trimestres for enfant in self.enfants)
+        return somme_ordonnee(enfant.trimestres for enfant in self.enfants)
 
     @property
     def services(self) -> int:
         """Ceux d'entre eux qui entrent aux services, tous enfants confondus."""
-        return sum(enfant.services for enfant in self.enfants)
+        return somme_ordonnee(enfant.services for enfant in self.enfants)
 
     @property
     def fiabilite(self) -> Fiabilite:
@@ -209,10 +210,10 @@ class Durees:
             for annee, trimestres in self.par_annee[table].get(membre, {}).items():
                 if annees is None or annees(annee):
                     sommes[annee] = sommes.get(annee, 0) + trimestres
-        return (sum(min(somme, self.carriere.plafond_trimestres(annee))
+        return (somme_ordonnee(min(somme, self.carriere.plafond_trimestres(annee))
                     for annee, somme in sommes.items())
                 + (0 if annees is not None else
-                   sum(self.hors_annee[table].get(membre, 0) for membre in membres)))
+                   somme_ordonnee(self.hors_annee[table].get(membre, 0) for membre in membres)))
 
     def donnees(self) -> dict:
         """Les durées, telles que leur schéma les décrit."""

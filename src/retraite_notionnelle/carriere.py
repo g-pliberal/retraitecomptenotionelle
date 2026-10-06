@@ -42,6 +42,7 @@ from .donnees.chargement import (
 from .donnees.macro import DonneesMacro
 from . import chronologie as chrono
 from .droit.preparer import preparer
+from .somme import somme_ordonnee
 
 #: Le profil que le modèle résout lui-même sur l'affiliation. C'est le défaut,
 #: et le seul que le site propose : les autres noms restent pour la grille de
@@ -1084,7 +1085,7 @@ class Carriere:
         l'entrée dans la vie active, l'année de liquidation — comptent pour ce
         qu'elles couvrent, comme partout ailleurs dans le modèle.
         """
-        return sum(ligne.fraction_annee
+        return somme_ordonnee(ligne.fraction_annee
                    for ligne in self._lignes_de_service(affiliations, jusqu_a))
 
     def bornes_de_service(self, affiliations: Iterable[str],
@@ -1194,7 +1195,7 @@ class Carriere:
 
     def trimestres_cumules(self, lignes: Iterable[AnneeCarriere]) -> int:
         """Somme de :meth:`trimestres_par_annee` : une durée, tous régimes."""
-        return sum(self.trimestres_par_annee(lignes).values())
+        return somme_ordonnee(self.trimestres_par_annee(lignes).values())
 
     @cached_property
     def _plafonds_trimestres(self) -> dict[int, int]:
@@ -1952,7 +1953,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
         mois_par_metier = [mois_travailles(annee, ouverture, cloture)
                            for _, ouverture, cloture in principaux]
         quotite = _quotite_de_l_annee(annee, debut, fin, progressive)
-        revenu = sum(
+        revenu = somme_ordonnee(
             revenu_annuel(macro, metier, age_annee, annee, salaire_moyen_reference)
             * (mois / MOIS_PAR_AN)
             for (metier, _, _), mois in zip(principaux, mois_par_metier)
@@ -2213,7 +2214,7 @@ def _facteur_secteur(racine: Path, affiliation: str) -> float:
         secteur, ensemble = pente(section, vague), pente(SECTION_ENSEMBLE, vague)
         if secteur and ensemble:
             facteurs.append(secteur / ensemble)
-    return sum(facteurs) / len(facteurs) if facteurs else 1.0
+    return somme_ordonnee(facteurs) / len(facteurs) if facteurs else 1.0
 
 
 def profil_de_l_affiliation(affiliation: str) -> str:

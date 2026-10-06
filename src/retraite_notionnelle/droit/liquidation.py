@@ -44,6 +44,7 @@ from . import liquider as _liquider
 from . import ouvrir as _ouvrir
 from . import releve as _releve
 from .commun import AvantageApplique, PensionRegime, date_d_effet
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -151,7 +152,7 @@ class Etat:
     @property
     def total_servi(self) -> float:
         """Ce que les pensions déjà servies valent, par an, à la date d'effet."""
-        return sum(servie.montant for servie in self.servies)
+        return somme_ordonnee(servie.montant for servie in self.servies)
 
 
 @dataclass(frozen=True)
@@ -326,7 +327,7 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
                   if etranger is not None and etranger.compare(_etranger.GENERALE) else None)
     pensions = list(liquidees.regimes)
 
-    total = sum(p.montant for p in pensions)
+    total = somme_ordonnee(p.montant for p in pensions)
 
     # CE QUI N'EST PAS DE LA RÉPARTITION EST SERVI À PART. Le RAFP et les
     # anciennes assurances sociales sont des régimes PROVISIONNÉS : leur
@@ -341,7 +342,7 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
     # comme le fait le droit. Seul le total rendu est celui de la
     # répartition, et la part écartée est rendue à côté.
     hors_repartition = (
-        sum(p.montant for p in pensions
+        somme_ordonnee(p.montant for p in pensions
             if moteur.catalogue[p.regime].hors_repartition)
         if moteur.parametres.isoler_capitalisation else 0.0
     )
@@ -421,7 +422,7 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
         effet_gratuits = total_contributif - sans_gratuits.total_contributif
         total_contributif = sans_gratuits.total_contributif
         if abs(effet_gratuits) > 1e-9:
-            points_cites = sum(p for p, _ in gratuits_attribues.values())
+            points_cites = somme_ordonnee(p for p, _ in gratuits_attribues.values())
             avant = min(a for _, a in gratuits_attribues.values())
             avantages.insert(0, AvantageApplique(
                 code="points_gratuits_rco",

@@ -30,6 +30,7 @@ from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
                               SalairesForfaitaires)
 from .fusion import RegimeFusionne
 from .indexation import Indexation
+from ..somme import somme_ordonnee
 
 
 #: Le seul régime dont la contribution employeur est un taux d'équilibre.
@@ -94,11 +95,11 @@ class CompteNotionnel:
     @property
     def cotisations_versees(self) -> float:
         """Somme des cotisations en euros courants, sans revalorisation."""
-        return sum(c.cotisation for c in self.cotisations)
+        return somme_ordonnee(c.cotisation for c in self.cotisations)
 
     @property
     def annees_cotisees(self) -> int:
-        return sum(1 for c in self.cotisations if not c.nulle)
+        return somme_ordonnee(1 for c in self.cotisations if not c.nulle)
 
     @property
     def rendement_cumule(self) -> float:
@@ -109,7 +110,7 @@ class CompteNotionnel:
     @property
     def cotisations_employeur(self) -> float:
         """Part des cotisations versée par l'employeur, en euros courants."""
-        return sum(c.part_employeur for c in self.cotisations)
+        return somme_ordonnee(c.part_employeur for c in self.cotisations)
 
     @property
     def annees_part_employeur(self) -> dict[str, int]:
@@ -543,8 +544,8 @@ class ConstructeurCompte:
             )
         details = [self._cotisation_ligne(carriere, ligne, annee, regime_fusionne)
                    for ligne in lignes]
-        revenu = sum(d.revenu for d in details)
-        cotisation = sum(d.cotisation for d in details)
+        revenu = somme_ordonnee(d.revenu for d in details)
+        cotisation = somme_ordonnee(d.cotisation for d in details)
         origines = [d.origine_part_employeur for d in details
                     if d.origine_part_employeur]
         par_regime: dict[str, float] = {}
@@ -554,17 +555,17 @@ class ConstructeurCompte:
         return CotisationAnnuelle(
             annee=annee,
             revenu=revenu,
-            assiette_retenue=sum(d.assiette_retenue for d in details),
+            assiette_retenue=somme_ordonnee(d.assiette_retenue for d in details),
             cotisation=cotisation,
             regimes=tuple(dict.fromkeys(
                 code for d in details for code in d.regimes)),
             taux_effectif=cotisation / revenu if revenu else 0.0,
-            hors_repartition=sum(d.hors_repartition for d in details),
+            hors_repartition=somme_ordonnee(d.hors_repartition for d in details),
             fiabilite=min(d.fiabilite for d in details),
             origine_part_employeur=(
                 "repli" if "repli" in origines else (origines[0] if origines else "")
             ),
-            part_employeur=sum(d.part_employeur for d in details),
+            part_employeur=somme_ordonnee(d.part_employeur for d in details),
             par_regime=tuple(par_regime.items()),
         )
 
@@ -979,12 +980,12 @@ class ConstructeurCompte:
         participation = (chomage.taux_participation(annee) * base_ligne
                          if nature == "assurance" else 0.0)
         if salariale:
-            poids = sum(cumul[0] for cumul in travaillee.values())
+            poids = somme_ordonnee(cumul[0] for cumul in travaillee.values())
             if participation <= 0 or poids <= 0:
                 return 0.0, {}, 0.0
             par_regime = {code: participation * cumul[0] / poids
                           for code, cumul in travaillee.items()}
-            return sum(par_regime.values()), par_regime, 0.0
+            return somme_ordonnee(par_regime.values()), par_regime, 0.0
         par_regime = {}
         for code, (montant, assiette, appel, garantie) in travaillee.items():
             if nature == "assurance":
@@ -996,7 +997,7 @@ class ConstructeurCompte:
                 verse = chomage.solidarite_versement * (
                     montant if taux is None else base * taux * appel)
             par_regime[code] = verse
-        cotisation = sum(par_regime.values())
+        cotisation = somme_ordonnee(par_regime.values())
         return cotisation, par_regime, max(0.0, cotisation - participation)
 
     # -- accumulation --------------------------------------------------------

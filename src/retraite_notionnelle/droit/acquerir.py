@@ -37,6 +37,7 @@ from ..donnees.chargement import (
 from . import compter
 from .commun import derniere_annee
 from . import liquider, ouvrir
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -165,7 +166,7 @@ def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
         return 0.0, None
 
     def valides(code: str, avant: int | None = None) -> int:
-        return sum(min(nombre, carriere.plafond_trimestres(annee))
+        return somme_ordonnee(min(nombre, carriere.plafond_trimestres(annee))
                    for annee, nombre in assurance.get(code, {}).items()
                    if avant is None or annee < avant)
 

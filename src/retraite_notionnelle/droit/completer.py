@@ -33,6 +33,7 @@ from . import liquider, ouvrir
 from .commun import (AvantageApplique, PensionRegime, date_d_effet, derniere_annee,
                      ligne_cotisee)
 from .compter import trimestres_de_la_ligne_entre as _trimestres_de_la_ligne_entre
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -201,15 +202,15 @@ def limiter_le_cumul(complements: dict[int, float], pensions, eligibles,
     portes = [e for e in eligibles if e.indice in complements]
     if len(portes) < 2:
         return complements
-    total = sum(pensions[e.indice].montant + complements[e.indice] for e in portes)
+    total = somme_ordonnee(pensions[e.indice].montant + complements[e.indice] for e in portes)
     if total <= montant_base:
         return complements
     premier = max(portes, key=lambda e: (e.duree_regime, e.indice))
     autres = [e for e in portes if e is not premier]
     marge = max(0.0, montant_base - pensions[premier.indice].montant
                 - complements[premier.indice]
-                - sum(pensions[e.indice].montant for e in autres))
-    duree = sum(e.duree_regime for e in autres)
+                - somme_ordonnee(pensions[e.indice].montant for e in autres))
+    duree = somme_ordonnee(e.duree_regime for e in autres)
     limites = dict(complements)
     for e in autres:
         limites[e.indice] = (min(complements[e.indice], marge * e.duree_regime / duree)
@@ -351,7 +352,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     pensions = list(liquidees.regimes)
     eligibles_minimum = liquidees.minimum
     eligibles_garanti = liquidees.garanti
-    total = sum(p.montant for p in pensions)
+    total = somme_ordonnee(p.montant for p in pensions)
     avantages: list[AvantageApplique] = []
     fiabilite_globale = Fiabilite.CERTIFIEE
     minimum_applique = False
@@ -457,8 +458,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         if regle["cumul_des_minima"]:
             complements = limiter_le_cumul(complements, pensions, eligibles_minimum,
                                            montant_base)
-        total = sum(p.montant for p in pensions)
-        releve_minimum = sum(complements.values())
+        total = somme_ordonnee(p.montant for p in pensions)
+        releve_minimum = somme_ordonnee(complements.values())
         if releve_minimum > 0 and regle["ecretement"]:
             # Écrêtement de l'article L. 173-2, pour les pensions qui prennent
             # effet depuis le 1er janvier 2012 : le complément est rogné de

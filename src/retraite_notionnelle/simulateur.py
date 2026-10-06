@@ -61,6 +61,7 @@ from .noyau import univers as univers_de_droit
 from .scenarios.actuel import ResultatActuel, ScenarioActuel
 from .scenarios.notionnel import ResultatNotionnel, ScenarioNotionnel
 from .scenarios.univers import CalculNotionnel, calcul_notionnel
+from .somme import somme_ordonnee
 
 
 #: Les cinq scénarios notionnels, dans l'ordre où ils s'affichent, avec le
@@ -125,7 +126,7 @@ class ContributionEmployeur:
 
     @property
     def annees_trouvees(self) -> int:
-        return sum(nombre for origine, nombre in self.annees_par_origine.items()
+        return somme_ordonnee(nombre for origine, nombre in self.annees_par_origine.items()
                    if origine != "repli")
 
     @property
@@ -768,7 +769,7 @@ def _dernier_revenu_annualise(carriere: Carriere, macro: DonneesMacro) -> float:
     # Toutes les activités de la dernière année cotisée : c'est le revenu
     # d'activité que la pension remplace, et non celui d'une seule d'entre elles.
     annee = derniers[-1].annee
-    revenu = sum(l.revenu_annualise for l in derniers if l.annee == annee)
+    revenu = somme_ordonnee(l.revenu_annualise for l in derniers if l.annee == annee)
     reference = salaire_moyen_annuel(macro, annee)
     if reference <= 0:
         return revenu

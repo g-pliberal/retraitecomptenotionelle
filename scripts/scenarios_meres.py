@@ -75,6 +75,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import Parametres  # noqa: E402
 from retraite_notionnelle.carriere import salaire_moyen_annuel  # noqa: E402
 from retraite_notionnelle.droit import ouvrir  # noqa: E402
@@ -299,7 +300,7 @@ class Grille:
         annee_liquidation = avec.carriere_de(LIBERAL).annee_liquidation
         aides = {annee: self.aide_par_enfant(annee)
                  for annee in self.annees_de_naissance(situation)}
-        capital_aides = sum(
+        capital_aides = somme_ordonnee(
             montant * self.simulateur.indexation.coefficient(annee, annee_liquidation)
             for annee, montant in aides.items()
         )
@@ -323,7 +324,7 @@ class Grille:
                 for a in avec.actuel.avantages_appliques
             ),
             annees_pension=conversion.esperance_residuelle,
-            aide_recue=sum(montant * macro.coefficient_prix(annee, ANNEE_EUROS)
+            aide_recue=somme_ordonnee(montant * macro.coefficient_prix(annee, ANNEE_EUROS)
                            for annee, montant in aides.items()),
             aide_en_pension=self._mensuel(avec, capital_aides / conversion.diviseur,
                                           LIBERAL),

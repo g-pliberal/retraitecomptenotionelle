@@ -229,6 +229,7 @@ from pathlib import Path
 from .donnees.chargement import Fiabilite, charger_yaml
 from .donnees.regimes import ContributionsEmployeurPubliques, PartRetraiteSeuleEtat
 from .restitution import points_csg_rendus
+from .somme import somme_ordonnee
 
 #: Heures d'un temps plein sur une année : 35 heures sur 52 semaines. Sert à
 #: convertir le SMIC horaire — la seule forme que le dépôt publie — en SMIC
@@ -452,7 +453,7 @@ class ReductionGenerale:
     @property
     def taux_retraite_inclus(self) -> float:
         """Points de cotisation retraite patronale compris dans le coefficient."""
-        return sum(self.composantes[code] for code in self.composantes_retraite)
+        return somme_ordonnee(self.composantes[code] for code in self.composantes_retraite)
 
     def coefficient_maximal_avec(self, taux_retraite_employeur: float) -> float:
         """Le coefficient maximal quand la retraite patronale change de taux.
@@ -664,10 +665,10 @@ def assiette_maladie(regimes: frozenset[str], actuel,
     ``assietteMaladie``, dans ``moteur/js/remuneration.js``.
     """
     if aujourd_hui is not None:
-        return (sum(r.aujourd_hui for r in aujourd_hui.regimes
+        return (somme_ordonnee(r.aujourd_hui for r in aujourd_hui.regimes
                     if r.regime in regimes),
                 aujourd_hui.pension_annuelle)
-    return (sum(p.montant for p in actuel.pensions_par_regime
+    return (somme_ordonnee(p.montant for p in actuel.pensions_par_regime
                 if p.regime in regimes),
             actuel.pension_annuelle)
 
@@ -833,7 +834,7 @@ class ComposanteRetraite:
         plafonnée, 4,72 % d'Agirc-Arrco. C'est cette grandeur qu'un scénario
         déplace, et c'est donc elle qu'on additionne ici.
         """
-        return sum(segment.taux for segment in self.employeur
+        return somme_ordonnee(segment.taux for segment in self.employeur
                    if segment.bas_en_plafonds < 1.0)
 
 
@@ -874,11 +875,11 @@ class BlocRetraite:
         return self.patronal(brut, plafond_annuel) / brut if brut else 0.0
 
     def salarial(self, brut: float, plafond_annuel: float) -> float:
-        return sum(_montant(c.salarie, brut, plafond_annuel)
+        return somme_ordonnee(_montant(c.salarie, brut, plafond_annuel)
                    for c in self.composantes)
 
     def patronal(self, brut: float, plafond_annuel: float) -> float:
-        return sum(_montant(c.employeur, brut, plafond_annuel)
+        return somme_ordonnee(_montant(c.employeur, brut, plafond_annuel)
                    for c in self.composantes)
 
     def taux_employeur_dans_la_reduction(self, profil: ProfilRemuneration) -> float:
@@ -889,12 +890,12 @@ class BlocRetraite:
         ce que le décret additionne aujourd'hui, et exactement ce qu'il
         additionnerait demain.
         """
-        total = sum(c.taux_employeur_premiere_tranche()
+        total = somme_ordonnee(c.taux_employeur_premiere_tranche()
                     for c in self.composantes if c.dans_la_reduction_generale)
         if not self.remplace_les_contributions_d_equilibre:
             for poste in profil.postes:
                 if poste.retraite and poste.dans_la_reduction_generale:
-                    total += sum(segment.taux for segment in poste.employeur
+                    total += somme_ordonnee(segment.taux for segment in poste.employeur
                                  if segment.bas_en_plafonds < 1.0)
         return total
 
@@ -943,11 +944,11 @@ class FicheDePaie:
 
     @property
     def retraite_salarie(self) -> float:
-        return sum(ligne.salarie for ligne in self.lignes if ligne.retraite)
+        return somme_ordonnee(ligne.salarie for ligne in self.lignes if ligne.retraite)
 
     @property
     def retraite_employeur(self) -> float:
-        return sum(ligne.employeur for ligne in self.lignes if ligne.retraite)
+        return somme_ordonnee(ligne.employeur for ligne in self.lignes if ligne.retraite)
 
     @property
     def retraite_totale(self) -> float:
@@ -1043,7 +1044,7 @@ class ConstructeurFiche:
     def _perimetre_reduction(self, bloc: BlocRetraite, brut: float,
                              plafond: float, cadre: bool) -> float:
         """Cotisations patronales que la réduction générale peut effacer."""
-        total = sum(
+        total = somme_ordonnee(
             _montant(composante.employeur, brut, plafond)
             for composante in bloc.composantes
             if composante.dans_la_reduction_generale
@@ -1084,8 +1085,8 @@ class ConstructeurFiche:
         """La fiche de paie d'une année, à revenu brut donné."""
         lignes = self._lignes(bloc, brut, plafond_annuel, cadre)
         reduction = self._reduction(bloc, brut, plafond_annuel, smic_annuel, cadre)
-        salariales = sum(ligne.salarie for ligne in lignes)
-        patronales = sum(ligne.employeur for ligne in lignes)
+        salariales = somme_ordonnee(ligne.salarie for ligne in lignes)
+        patronales = somme_ordonnee(ligne.employeur for ligne in lignes)
         part_retraite = 0.0
         if self.profil.reduction_generale is not None:
             taux_retraite = bloc.taux_employeur_dans_la_reduction(self.profil)
@@ -1564,7 +1565,7 @@ class AnneeComparee:
         Seule la cotisation OBLIGATOIRE y est : c'est la seule que la fiche
         prélève. Les cinq points volontaires sont :attr:`epargne_volontaire`.
         """
-        return sum(ligne.salarie + ligne.employeur
+        return somme_ordonnee(ligne.salarie + ligne.employeur
                    for ligne in self.proposition.lignes
                    if ligne.code == self.CODE_CAPITALISATION)
 
@@ -1667,12 +1668,12 @@ class RemunerationActif:
     @property
     def gain_net_cumule(self) -> float:
         """Somme des gains jusqu'au départ, en euros constants de la référence."""
-        return sum(annee.gain_net_constant for annee in self.annees)
+        return somme_ordonnee(annee.gain_net_constant for annee in self.annees)
 
     @property
     def epargne_cumulee(self) -> float:
         """Ce que le pilier capitalisé imposé aura prélevé, en euros constants."""
-        return sum(annee.epargne_a_votre_nom * annee.coefficient_euros_constants
+        return somme_ordonnee(annee.epargne_a_votre_nom * annee.coefficient_euros_constants
                    for annee in self.annees)
 
     @property
@@ -1683,7 +1684,7 @@ class RemunerationActif:
     @property
     def epargne_volontaire_cumulee(self) -> float:
         """Ce que les seuls points rendus auront placé, en euros constants."""
-        return sum(annee.epargne_volontaire * annee.coefficient_euros_constants
+        return somme_ordonnee(annee.epargne_volontaire * annee.coefficient_euros_constants
                    for annee in self.annees)
 
     @property

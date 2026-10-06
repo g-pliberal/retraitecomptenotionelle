@@ -35,13 +35,15 @@ import verifier_prose  # noqa: E402
 def test_chaque_fichier_fabrique_a_son_etape():
     """Les fichiers que ``.gitattributes`` déclare fabriqués — ceux qui ne se
     fusionnent pas et se relancent — ont chacun l'étape qui les écrit : la
-    liste et le script ne peuvent pas diverger."""
+    liste et le script ne peuvent pas diverger. Le verdict de la suite, que
+    GitHub écrit après elle, a pour étape ``scripts/publier_fabrique.sh``."""
     fabriques = [ligne.split()[0]
                  for ligne in (RACINE / ".gitattributes").read_text(encoding="utf-8")
                  .splitlines()
                  if ligne.strip() and not ligne.startswith("#")
                  and ligne.split()[-1] == "-merge"]
     ecrits = " ".join(etape.ecrit for etape in regenerer.etapes())
+    ecrits += (RACINE / "scripts" / "publier_fabrique.sh").read_text(encoding="utf-8")
     assert fabriques
     assert [f for f in fabriques if f not in ecrits] == []
 

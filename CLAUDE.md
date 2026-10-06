@@ -21,12 +21,12 @@ pousse sur `main`, et ne finit jamais en laissant son travail sur la branche.
 Le script rattrape `origin/main` en avance rapide, rebase au besoin les
 commits de la session qu'une autre session a devancés, pousse `HEAD` sur
 `main`, puis fait suivre la branche de la session. Il refuse, sans rien
-pousser : un conflit, plus de vingt commits d'écart, des modifications non
+pousser : un conflit sur une source, plus de vingt commits d'écart, des modifications non
 commitées quand il doit rebaser, aucun ancêtre commun avec `main` (le cas
 grave), un commit signé d'une adresse nominative. En avance sur `main`, il
 pousse tout ce qui est commité, même si d'autres modifications attendent :
-ne commiter qu'une fois la suite complète passée, puisque le hook publie à
-chaque fin de tour. À la main, la recette reste
+ne commiter qu'une fois ses tests passés, puisque le hook publie à chaque fin
+de tour. À la main, la recette reste
 `git fetch origin`, `git merge --ff-only origin/main`,
 `git push origin HEAD:main` ; si l'avance rapide est refusée, la session a
 divergé, et il faut comprendre pourquoi avant d'insister.
@@ -59,23 +59,19 @@ par étape, voir « La documentation, au plus court » —, et dans le `journal`
 `veille.yaml`, au dernier commit, juste avant de pousser ; une action qui se
 clôt passe, telle quelle, à la fin de `docs/archives/feuille_de_route.md`.
 
-**Un conflit sur un fichier fabriqué ne s'arbitre pas, il se relance.**
-`.gitattributes` marque `-merge` les fichiers qu'un script écrit : git y
-déclare le conflit sans fusionner, la version de la branche courante reste,
-et l'on réécrit depuis les sources rebasées.
-
-```bash
-git rebase origin/main          # pousser.sh l'a refusé, on le reprend à la main
-python scripts/regenerer.py     # tout ce qu'un script fabrique, dans l'ordre
-git add -A && git rebase --continue
-python -m pytest && bash scripts/pousser.sh
-```
-
-Si plusieurs commits touchent aux témoins, régénérer à chaque arrêt du
-rebasage. Un conflit de prose qui ne porte que sur des chiffres ancrés
-(`<!--chiffre:…-->`) : garder UN côté, jamais les deux, puis
-`python scripts/verifier_prose.py --corriger`. Jamais
-`git checkout --theirs` sur un fichier de prose : il reprend le fichier
+**Les fichiers fabriqués et la suite complète sont à GitHub** (action 148).
+À chaque envoi sur `main`, `tests.yml` repart du dernier `main`, lance
+`regenerer.py` puis la suite complète, et commite sous `github-actions[bot]`
+les fichiers refaits et le verdict, `.github/etat_suite.yaml`, que le hook
+`SessionStart` affiche à l'ouverture : une suite rouge se répare avant tout.
+Une session lance `python -m pytest -m rapide` et les fichiers de tests de sa
+zone avant chaque envoi, pas la suite complète ; elle peut régénérer pour voir
+ce que son changement déplace, sans y être tenue. Un conflit de rebasage qui
+ne porte que sur des fichiers marqués `-merge` dans `.gitattributes`,
+`pousser.sh` le règle seul, en gardant la version de `main`. Un conflit de
+prose qui ne porte que sur des chiffres ancrés (`<!--chiffre:…-->`) : garder
+UN côté, jamais les deux, puis `python scripts/verifier_prose.py --corriger`.
+Jamais `git checkout --theirs` sur un fichier de prose : il reprend le fichier
 entier d'un côté, et efface ce que l'autre session y a écrit.
 
 ## Économiser le contexte
@@ -119,9 +115,8 @@ qu'elle dure. D'où cinq règles.
 - **Les tests** : `python -m pytest -m rapide` en travaillant, les règles et
   les étapes, sous deux minutes ; `python -m pytest -m site` après une
   retouche du site ou de la saisie, en une minute ; `python -m pytest`, la
-  suite complète, une fois par commit, avant tout envoi sur `main`, lancée au
-  premier plan et non en tâche de fond qu'on surveille ; GitHub la rejoue
-  ensuite (onglet Actions). La suite se répartit sur les cœurs, et un fichier
+  suite complète, c'est GitHub qui la lance après chaque envoi (voir « Les
+  fichiers fabriqués et la suite complète sont à GitHub »). La suite se répartit sur les cœurs, et un fichier
   visé aussi quand il est lourd (`POIDS_REPARTI`, dans `pytest_parallele.py`) ;
   un cas précis ou un fichier léger reste en série, `PYTEST_SANS_XDIST=1`
   force la série. `tests/conftest.py` range chaque fichier dans son niveau :
@@ -224,8 +219,8 @@ qu'elle dure. D'où cinq règles.
   deux contextes ; la chronologie s'il porte un fait ; un témoin de
   simulation, et de page si la page change ; `python -m pytest -m site`.
 - **Un changement du modèle** : le Python d'abord, puis son jumeau ;
-  `python scripts/regenerer.py`, puis `python scripts/resumer_temoins.py` ; la
-  suite complète une fois, au premier plan, puis le commit.
+  `python scripts/regenerer.py`, puis `python scripts/resumer_temoins.py`, pour
+  voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le commit.
 
 ## Le scénario 1 est le droit applicable, et rien d'autre
 

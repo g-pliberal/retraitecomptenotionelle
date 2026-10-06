@@ -69,6 +69,7 @@ sys.path.insert(0, str(RACINE / "src"))
 
 import yaml  # noqa: E402
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import Parametres  # noqa: E402
 from retraite_notionnelle.avantages import (  # noqa: E402
     CONTRIBUTIF, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, calculer_avantages,
@@ -206,7 +207,7 @@ def _table_annuelle(lignes, noms, pas: int) -> None:
     for annee, observee, parts in lignes:
         if annee % pas and annee != lignes[-1][0]:
             continue
-        gratuit = sum(euros for cle, (_, euros) in parts.items() if cle != CONTRIBUTIF)
+        gratuit = somme_ordonnee(euros for cle, (_, euros) in parts.items() if cle != CONTRIBUTIF)
         cellules = "".join(
             f"{parts.get(cle, (0.0, 0.0))[1] / 1000:>15.1f}G" for cle in cles
         )
@@ -302,7 +303,7 @@ def main() -> int:
             if totale <= 0.0:
                 continue
             observee = depenses.depense(annee)
-            anticipee = sum(par_motif.values())
+            anticipee = somme_ordonnee(par_motif.values())
             cellules = "".join(
                 f"{observee * par_motif[motif] / totale / 1000:>14.1f}G"
                 for motif in MOTIFS

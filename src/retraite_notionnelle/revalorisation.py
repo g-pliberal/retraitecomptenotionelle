@@ -67,6 +67,7 @@ from .donnees.chargement import Fiabilite
 from .droit import invalidite, liquider
 from .droit.etranger import pensions_a_l_ecretement, pensions_etrangeres_servies
 from .droit.foyer import Foyer, condition_de_residence, foyer_et_net
+from .somme import somme_ordonnee
 
 
 # -- ce que le droit a servi depuis la liquidation ---------------------------
@@ -363,13 +364,13 @@ class ActuelAujourdhui:
     @property
     def pension_annuelle(self) -> float:
         """La répartition, comme :attr:`ResultatActuel.pension_annuelle`."""
-        return (sum(r.aujourd_hui for r in self.regimes if not r.hors_repartition)
+        return (somme_ordonnee(r.aujourd_hui for r in self.regimes if not r.hors_repartition)
                 + self.majoration_enfants * self.coefficient_majoration
                 + self.minimum_vieillesse)
 
     @property
     def pension_hors_repartition(self) -> float:
-        return sum(r.aujourd_hui for r in self.regimes if r.hors_repartition)
+        return somme_ordonnee(r.aujourd_hui for r in self.regimes if r.hors_repartition)
 
 
 @dataclass(frozen=True)
@@ -559,7 +560,7 @@ def mener_au_mois(moteur, pensions, depart, jusqu_a) -> list[float]:
             if debut <= MOIS_DES_TRANCHES else 0.0
             for p in pensions
         ]
-        mensuel_2019 = sum(p.montant * c for p, c in zip(pensions, jusqu_2019)) / 12.0
+        mensuel_2019 = somme_ordonnee(p.montant * c for p, c in zip(pensions, jusqu_2019)) / 12.0
     return [p.montant * servie.coefficient(p, depart.annee, debut, fin, mensuel_2019)[0]
             for p in pensions]
 
@@ -603,7 +604,7 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
     a_l_effet = {p.regime: (p.montant_a_l_effet / p.montant
                             if p.date_effet is not None and p.montant else 1.0)
                  for p in resultat.pensions_par_regime}
-    majoration = sum(a.montant for a in resultat.avantages_appliques
+    majoration = somme_ordonnee(a.montant for a in resultat.avantages_appliques
                      if a.code == "majoration_enfants")
 
     #: La part de chaque régime dans la majoration pour enfants, plafond
@@ -614,21 +615,21 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
     def coefficient_moyen(coefficients: list[float]) -> float:
         repartition = [(p.montant, c) for p, c in zip(pensions, coefficients)
                        if not (isoler and simulateur.catalogue[p.regime].hors_repartition)]
-        masse = sum(montant for montant, _ in repartition)
+        masse = somme_ordonnee(montant for montant, _ in repartition)
         if masse <= 0:
             return 1.0
-        return sum(montant * c for montant, c in repartition) / masse
+        return somme_ordonnee(montant * c for montant, c in repartition) / masse
 
     def coefficient_de_la_majoration(coefficients: list[float]) -> float:
         """Chaque part suit le régime qui la porte : la base ses coefficients,
         la complémentaire la valeur de son point — comme son plafond, que le
         scénario 1 revalorise ainsi. Sans parts, la moyenne des régimes."""
-        masse = sum(part for _, part in parts_majoration)
+        masse = somme_ordonnee(part for _, part in parts_majoration)
         if masse <= 0:
             return coefficient_moyen(coefficients)
         par_regime = {p.regime: c for p, c in zip(pensions, coefficients)}
         par_regime |= {code: 0.0 for code in a_venir}
-        return sum(part * a_l_effet.get(code, 1.0) * par_regime.get(code, 1.0)
+        return somme_ordonnee(part * a_l_effet.get(code, 1.0) * par_regime.get(code, 1.0)
                    for code, part in parts_majoration) / masse
 
     # LA TRANCHE DE 2020 se choisit sur le montant total de décembre 2019 :
@@ -647,7 +648,7 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
             for p, a, debut, _ in datees
         ]
         mensuel_2019 = (
-            sum(montant * c for (_, _, _, montant), c in zip(datees, jusqu_2019))
+            somme_ordonnee(montant * c for (_, _, _, montant), c in zip(datees, jusqu_2019))
             + majoration * coefficient_de_la_majoration(jusqu_2019)
         ) / 12.0
 
@@ -702,12 +703,12 @@ def reviser_le_minimum(moteur, carriere, resultat,
     coefficients = {r.regime: r.coefficient for r in regimes}
     parts = [(code, part, coefficients[code]) for code, part in ecrete.par_regime
              if code in coefficients]
-    servi = sum(part * coefficient for _, part, coefficient in parts)
+    servi = somme_ordonnee(part * coefficient for _, part, coefficient in parts)
     if nouvelles <= 0 or servi <= 0:
         return regimes
     # Le coefficient du minimum, celui de ses régimes à proportion de leur
     # part : le plafond et la marge le suivent.
-    mene = servi / sum(part for _, part, _ in parts)
+    mene = servi / somme_ordonnee(part for _, part, _ in parts)
     revise = max(0.0, min(ecrete.avant_ecretement * mene,
                           ecrete.marge * mene - nouvelles))
     baisse = max(0.0, servi - revise)
@@ -724,7 +725,7 @@ def foyer_a_l_echeance(simulateur, carriere, vivante: Revalorisee) -> Foyer:
     pensions — le RAFP compris —, et à 65 ans révolus dans l'année, à l'âge
     de l'inapte pour lui (:func:`~.droit.invalidite.age_de_l_aspa`). Qui est
     parti à 62 ans l'a peut-être gagnée depuis."""
-    ressources = (sum(r.aujourd_hui for r in vivante.regimes)
+    ressources = (somme_ordonnee(r.aujourd_hui for r in vivante.regimes)
                   + vivante.majoration_enfants * vivante.coefficient_majoration)
     return foyer_et_net(
         simulateur.scenario_actuel, carriere.personne, f"{vivante.annee:04d}-12-31",
@@ -741,7 +742,7 @@ def aujourd_hui(vivante: Revalorisee, foyer: Foyer, resultat) -> ActuelAujourdhu
         regimes=vivante.regimes,
         majoration_enfants=vivante.majoration_enfants,
         coefficient_majoration=vivante.coefficient_majoration,
-        minimum_vieillesse_au_depart=sum(a.montant for a in resultat.avantages_appliques
+        minimum_vieillesse_au_depart=somme_ordonnee(a.montant for a in resultat.avantages_appliques
                                          if a.code == "minimum_vieillesse"),
         minimum_vieillesse=foyer.minimum_vieillesse,
         mensuel_decembre_2019=vivante.mensuel_decembre_2019,

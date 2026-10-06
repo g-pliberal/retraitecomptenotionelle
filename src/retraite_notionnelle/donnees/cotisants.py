@@ -42,6 +42,7 @@ import csv
 from pathlib import Path
 
 from .chargement import Fiabilite, SerieAnnuelle, ValeurAnnuelle
+from ..somme import somme_ordonnee
 
 #: La ligne du classeur que deux cas types se partagent.
 FONCTION_PUBLIQUE_ETAT = "fonction_publique_etat"
@@ -58,7 +59,7 @@ COTISANTS_ETAT_2024: dict[str, float] = {
 
 def partage_fonction_publique_etat() -> dict[str, float]:
     """La part de chaque versant dans les cotisants de l'État, somme un."""
-    total = sum(COTISANTS_ETAT_2024.values())
+    total = somme_ordonnee(COTISANTS_ETAT_2024.values())
     return {caisse: valeur / total for caisse, valeur in COTISANTS_ETAT_2024.items()}
 
 

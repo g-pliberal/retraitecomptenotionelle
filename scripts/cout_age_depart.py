@@ -67,6 +67,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import cout as C  # noqa: E402
 from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, CasType  # noqa: E402
@@ -145,7 +146,7 @@ def _depart_moyen(simulateur: Simulateur, cas: CasType,
     ages = [age_interpole(points, annee) for annee in annees]
     if any(age is None for age in ages):
         return None
-    return sum(ages) / len(ages)
+    return somme_ordonnee(ages) / len(ages)
 
 
 def chercher_decalages(simulateur: Simulateur) -> list[Decalage]:
@@ -158,7 +159,7 @@ def chercher_decalages(simulateur: Simulateur) -> list[Decalage]:
         if "groupes" not in fiche:
             continue
         cas = fiches[fiche["code"]]
-        moyennes = [sum(par_groupe[groupe][annee] for annee in annees) / len(annees)
+        moyennes = [somme_ordonnee(par_groupe[groupe][annee] for annee in annees) / len(annees)
                     for groupe in fiche["groupes"]]
         basse, haute = min(moyennes), max(moyennes)
 
@@ -253,7 +254,7 @@ def concordance(simulateur: Simulateur,
     leur somme à rester où elle était. On le mesure plutôt que d'en décider.
     """
     lignes = mesurer(simulateur, cas_types)
-    return sum(ligne.ecart for ligne in lignes) / len(lignes)
+    return somme_ordonnee(ligne.ecart for ligne in lignes) / len(lignes)
 
 
 def concordance_du_depot(parametres: Parametres, cas_types: tuple[CasType, ...]) -> float:
@@ -281,7 +282,7 @@ def imprimer(decalages: list[Decalage], reference: dict[str, float],
 
     touches = [d for d in decalages if d.entree_contrefactuelle != d.entree_fiche]
     print(f"\n{len(touches)} cas types déplacés sur {len(decalages)} comparables ; "
-          f"{sum(1 for d in decalages if d.insensible)} insensibles à leur âge "
+          f"{somme_ordonnee(1 for d in decalages if d.insensible)} insensibles à leur âge "
           f"d'entrée.")
 
     print(f"\nPart du PIB en {horizon}, par système\n")

@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import csv
 from pathlib import Path
+from ..somme import somme_ordonnee
 
 #: Les deux postes par lesquels l'ÉTAT verse directement au régime. Les impôts
 #: et taxes affectés n'en sont pas : une recette fiscale affectée n'est ni ce
@@ -91,7 +92,7 @@ class StructureFinancement:
     def part_etat(self, regime: str, annee: int) -> float:
         """Ce que l'État verse directement : contribution et subvention d'équilibre."""
         ventilation = self.ventilation(regime, annee)
-        return sum(ventilation.get(poste, 0.0) for poste in POSTES_ETAT)
+        return somme_ordonnee(ventilation.get(poste, 0.0) for poste in POSTES_ETAT)
 
     def part_decouvert(self, regime: str, annee: int) -> float:
         """Ce que personne ne finance, et qu'il faudrait donc emprunter."""
@@ -103,4 +104,4 @@ class StructureFinancement:
         À consulter avant de tirer une conclusion d'une ventilation : le
         classeur du COR ne boucle pas partout, et on ne l'a pas corrigé.
         """
-        return sum(self.ventilation(regime, annee).values())
+        return somme_ordonnee(self.ventilation(regime, annee).values())

@@ -75,6 +75,7 @@ from pathlib import Path
 from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
 from .donnees.equilibre import ComptesRetraite
+from .somme import somme_ordonnee
 
 #: Les deux impôts du poste qui sont assis sur une rémunération, et que la
 #: proposition supprime. Voir le docstring : c'est le droit qui les désigne,
@@ -142,7 +143,7 @@ class Restitution:
 
     def montant_remuneration(self, annee: int) -> float:
         """Taxe sur les salaires et forfait social, en millions d'euros courants."""
-        return sum(serie(annee) for serie in self.postes.values())
+        return somme_ordonnee(serie(annee) for serie in self.postes.values())
 
     def poste_abandonne(self, annee: int) -> float:
         """Les impôts et taxes que la proposition n'encaisse plus, en part de PIB."""

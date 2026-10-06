@@ -52,6 +52,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 from typing import Callable
+from retraite_notionnelle.somme import somme_ordonnee
 
 RACINE = Path(__file__).resolve().parents[1]
 DONNEES = RACINE / "data"
@@ -2855,7 +2856,7 @@ def source_smic_annuel() -> dict[tuple, float]:
         mois = [mensuel.get(f"{annee}-{rang:02d}") for rang in range(1, 13)]
         if annee < ANNEE_SMIC_EN_EUROS or None in mois:
             continue
-        annuel = round(HEURES_ANNUELLES_35_HEURES * sum(mois) / 12, 2)
+        annuel = round(HEURES_ANNUELLES_35_HEURES * somme_ordonnee(mois) / 12, 2)
         if annee <= derniere_sls:
             if abs(annuel - valeurs[annee]) > 0.005:
                 raise ValueError(
@@ -7337,7 +7338,7 @@ def controle_coherence_interne() -> list[str]:
                 messages.append(
                     f"SUSPECT {nom} {ligne['annee']} : {valeur:.3%} hors plage plausible"
                 )
-        certifiees = sum(1 for l in lignes if l["fiabilite"] == "certifiee")
+        certifiees = somme_ordonnee(1 for l in lignes if l["fiabilite"] == "certifiee")
         messages.append(
             f"OK      {nom} : {len(lignes)} années, {min(annees)}-{max(annees)}, "
             f"{certifiees} certifiées"
@@ -7362,7 +7363,7 @@ def controle_coherence_interne() -> list[str]:
         par_mesure.setdefault(ligne["mesure"], []).append(annee)
         table.setdefault((annee, sexe), {})[ligne["mesure"]] = float(ligne["valeur"])
     for mesure, annees in sorted(par_mesure.items()):
-        certifiees = sum(1 for l in esperances
+        certifiees = somme_ordonnee(1 for l in esperances
                          if l["mesure"] == mesure and l["fiabilite"] == "certifiee")
         messages.append(
             f"OK      esperances_vie {mesure} : {len(annees)} lignes, "
@@ -7696,7 +7697,7 @@ def controle_transferts_retraite() -> list[str]:
         for organisme, postes in sommes.items():
             if any(poste not in ecrit[annee] for poste in postes):
                 continue
-            lu = sum(ecrit[annee][poste] for poste in postes)
+            lu = somme_ordonnee(ecrit[annee][poste] for poste in postes)
             publie = cor[str(annee)][organisme]
             if abs(lu - publie) > marges[organisme] * publie:
                 ecarts += 1
@@ -7969,8 +7970,8 @@ def controle_vraisemblance_cotisations() -> list[str]:
         # sens contraire qui se compensent, et qui ne portent pourtant pas sur
         # la même assiette.
         def _moyenne(*cles: str) -> float:
-            return sum(
-                sum(serie[str(a)][cle] for cle in cles) for a in annees
+            return somme_ordonnee(
+                somme_ordonnee(serie[str(a)][cle] for cle in cles) for a in annees
             ) / len(annees)
 
         for libelle, cles, champ in (
@@ -8003,13 +8004,13 @@ def controle_vraisemblance_cotisations() -> list[str]:
              "part_salariale_deplafonnee"),
         ):
             parts = [
-                serie[str(a)][part_cle] / sum(serie[str(a)][cle] for cle in total_cles)
+                serie[str(a)][part_cle] / somme_ordonnee(serie[str(a)][cle] for cle in total_cles)
                 for a in annees
-                if sum(serie[str(a)][cle] for cle in total_cles) > 0
+                if somme_ordonnee(serie[str(a)][cle] for cle in total_cles) > 0
             ]
             if not parts or periode.get(champ) is None:
                 continue
-            publiee = sum(parts) / len(parts)
+            publiee = somme_ordonnee(parts) / len(parts)
             saisie = float(periode[champ])
             if abs(publiee - saisie) > 0.01:
                 anomalies.append(
@@ -8084,7 +8085,7 @@ def controle_vraisemblance_cotisations() -> list[str]:
             if not annees:
                 continue
             complementaires += 1
-            publie = sum(annuel[str(a)][tranche] for a in annees) / len(annees)
+            publie = somme_ordonnee(annuel[str(a)][tranche] for a in annees) / len(annees)
             saisi = float(periode["taux_cotisation_retraite"])
             # DEPUIS LA TRANCHE B3, LES PÉRIODES SONT EXACTES : une par valeur
             # de « contractuel × appel », si bien que le seuil descend d'un
@@ -8107,7 +8108,7 @@ def controle_vraisemblance_cotisations() -> list[str]:
                 parts = [next(iter(parts_regime[str(a)].values())) for a in annees
                          if str(a) in parts_regime and parts_regime[str(a)]]
             if parts and periode.get("part_salariale") is not None:
-                publiee = sum(parts) / len(parts)
+                publiee = somme_ordonnee(parts) / len(parts)
                 saisie = float(periode["part_salariale"])
                 # Même seuil que pour le régime général : un centième. La
                 # série salarié d'OpenFisca reste parfois en retard d'une
@@ -8151,7 +8152,7 @@ def controle_vraisemblance_cotisations() -> list[str]:
             if not annees:
                 continue
             publics_et_independants += 1
-            publie = sum(sum(t[str(a)] for t in tables) for a in annees) / len(annees)
+            publie = somme_ordonnee(somme_ordonnee(t[str(a)] for t in tables) for a in annees) / len(annees)
             saisi = float(periode.get(champ) or 0.0)
             if abs(publie - saisi) > 0.002:
                 libelle = "cotisation déplafonnée" if "deplafonnee" in champ else "cotisations"
@@ -8452,7 +8453,7 @@ def controle_vraisemblance_rendements() -> list[str]:
         if not publies:
             continue
         comparees += 1
-        calcule = sum(publies) / len(publies)
+        calcule = somme_ordonnee(publies) / len(publies)
         saisi = float(ligne["rendement"])
         if abs(calcule - saisi) > 0.005:
             ecarts.append(

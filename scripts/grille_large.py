@@ -112,6 +112,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import cout as C  # noqa: E402
 from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.carriere import Metier  # noqa: E402
@@ -284,7 +285,7 @@ class EffectifsRepartis:
 
     def effectif(self, caisse: str, annee: int) -> float:
         if caisse in self.parts:
-            return sum(self.base.effectif(reelle, annee) * part
+            return somme_ordonnee(self.base.effectif(reelle, annee) * part
                        for reelle, part in self.parts[caisse])
         return self.base.effectif(caisse, annee)
 
@@ -319,14 +320,14 @@ def centiles(racine: Path) -> tuple[int, dict[str, float]]:
 def multiplicateurs(valeurs: dict[str, float]) -> tuple[tuple[str, float, float], ...]:
     """Chaque centile, sa part, et son multiplicateur : la moyenne pondérée des
     sept vaut un, et chaque cas type garde son niveau moyen."""
-    moyenne = sum(valeurs[nom] * part for nom, part in CENTILES)
+    moyenne = somme_ordonnee(valeurs[nom] * part for nom, part in CENTILES)
     return tuple((nom, part, valeurs[nom] / moyenne) for nom, part in CENTILES)
 
 
 def _part_eir(source: CaracteristiquesRetraites, groupe: str, sexe: str) -> float:
     """La part des retraités de ce sexe dont le régime principal est celui du
     groupe : monopensionnés et polypensionnés de deux régimes de base."""
-    return sum(source.valeur(f"part_{statut}_{indicateur}", sexe)
+    return somme_ordonnee(source.valeur(f"part_{statut}_{indicateur}", sexe)
                for indicateur in GROUPES[groupe][0] for statut in ("mono", "poly"))
 
 
@@ -335,7 +336,7 @@ def parts_personnes(source: CaracteristiquesRetraites) -> dict[str, float]:
     groupes : le reste — trois régimes et plus, régimes que l'EIR ne nomme
     pas — se répartit au prorata."""
     brutes = {groupe: _part_eir(source, groupe, "ensemble") for groupe in GROUPES}
-    total = sum(brutes.values())
+    total = somme_ordonnee(brutes.values())
     return {groupe: part / total for groupe, part in brutes.items()}
 
 
@@ -343,7 +344,7 @@ def parts_poly(source: CaracteristiquesRetraites) -> dict[str, float]:
     """La part des polypensionnés parmi les retraités de chaque groupe."""
     sortie = {}
     for groupe in GROUPES_MELES:
-        poly = sum(source.valeur(f"part_poly_{i}", "ensemble") for i in GROUPES[groupe][0])
+        poly = somme_ordonnee(source.valeur(f"part_poly_{i}", "ensemble") for i in GROUPES[groupe][0])
         sortie[groupe] = poly / _part_eir(source, groupe, "ensemble")
     return sortie
 
@@ -364,7 +365,7 @@ def parts_tranches(source: CaracteristiquesRetraites, sexe: str) -> dict[str, fl
     """La part de chaque tranche de durée validée hors majorations, normalisée."""
     brutes = {nom: source.valeur(f"part_duree_validee_hors_majoration_{nom}", sexe)
               for nom, _ in TRANCHES}
-    total = sum(brutes.values())
+    total = somme_ordonnee(brutes.values())
     return {nom: part / total for nom, part in brutes.items()}
 
 
@@ -401,7 +402,7 @@ def reference() -> list[Variante]:
 
 
 def poids_retraites(variantes: list[Variante], effectifs, annee: int) -> list[float]:
-    return [sum(effectifs.effectif(caisse, annee) * part for caisse, part in v.retraites)
+    return [somme_ordonnee(effectifs.effectif(caisse, annee) * part for caisse, part in v.retraites)
             for v in variantes]
 
 
@@ -412,14 +413,14 @@ def personnes(variantes: list[Variante], effectifs, source: CaracteristiquesRetr
     années suivent l'évolution des caisses, le rapport de l'enquête gardé."""
     retirees = []
     for v in variantes:
-        cnav = sum(part for caisse, part in v.retraites if caisse == "cnav")
+        cnav = somme_ordonnee(part for caisse, part in v.retraites if caisse == "cnav")
         if cnav:
             v = replace(v, retraites=v.retraites + tuple(
                 (caisse, -cnav) for caisse in CAISSES_DANS_LA_CNAV))
         retirees.append(v)
     annee = source.millesime
     poids = poids_retraites(retirees, effectifs, annee)
-    total = sum(poids)
+    total = somme_ordonnee(poids)
     par_groupe: dict[str, float] = {}
     for v, p in zip(retirees, poids):
         par_groupe[v.groupe] = par_groupe.get(v.groupe, 0.0) + p / total
@@ -641,7 +642,7 @@ def indicateurs(cout) -> dict:
     """Ce que la page Coût affiche, système par système."""
     solde, avenir = cout.solde, cout.avenir
     horizon = avenir.annee(avenir.derniere_annee)
-    sortie = {"echecs": sum(cout.echecs.values()), "annee_horizon": avenir.derniere_annee}
+    sortie = {"echecs": somme_ordonnee(cout.echecs.values()), "annee_horizon": avenir.derniere_annee}
     for scenario, _ in C.SCENARIOS:
         sortie[scenario] = {
             "ecart_passe": (cout.cumul(scenario) / cout.cumul("actuel") - 1) * 100,
@@ -666,20 +667,20 @@ def composition(variantes: list[Variante], effectifs, source: CaracteristiquesRe
     regard de ce que l'EIR en publie."""
     annee = source.millesime
     poids = poids_retraites(variantes, effectifs, annee)
-    total = sum(poids)
-    femmes = sum(p for v, p in zip(variantes, poids) if v.cas.sexe == "F") / total
-    poly = sum(p for v, p in zip(variantes, poids) if v.poly) / total
+    total = somme_ordonnee(poids)
+    femmes = somme_ordonnee(p for v, p in zip(variantes, poids) if v.cas.sexe == "F") / total
+    poly = somme_ordonnee(p for v, p in zip(variantes, poids) if v.poly) / total
     duree = {}
     courtes = {}
     for sexe in ("F", "H"):
         lot = [(v, p) for v, p in zip(variantes, poids) if v.cas.sexe == sexe]
-        masse = sum(p for _, p in lot)
+        masse = somme_ordonnee(p for _, p in lot)
         if not masse:
             continue
-        duree[sexe] = sum(p * (v.duree if v.duree is not None
+        duree[sexe] = somme_ordonnee(p * (v.duree if v.duree is not None
                                else v.cas.age_liquidation - v.cas.age_debut)
                           for v, p in lot) / masse
-        courtes[sexe] = sum(p for v, p in lot if v.duree is not None and v.duree < 30) / masse
+        courtes[sexe] = somme_ordonnee(p for v, p in lot if v.duree is not None and v.duree < 30) / masse
     groupes = {}
     for v, p in zip(variantes, poids):
         groupes[v.groupe] = groupes.get(v.groupe, 0.0) + p / total
@@ -692,7 +693,7 @@ def composition_eir(source: CaracteristiquesRetraites) -> dict:
     poly = (source.valeur("part_poly_2_regimes", "ensemble")
             + source.valeur("part_poly_3_regimes", "ensemble")) / 100
     duree = {s: source.valeur("duree_validee_hors_majoration", s) for s in ("F", "H")}
-    courtes = {s: sum(source.valeur(f"part_duree_validee_hors_majoration_{t}", s)
+    courtes = {s: somme_ordonnee(source.valeur(f"part_duree_validee_hors_majoration_{t}", s)
                       for t in ("moins_10", "10_20", "20_30")) / 100 for s in ("F", "H")}
     return {"femmes": femmes, "polypensionnes": poly, "duree_validee": duree,
             "moins_de_30_ans": courtes, "groupes": parts_personnes(source)}

@@ -36,6 +36,7 @@ from collections import Counter
 from pathlib import Path
 
 import yaml
+from retraite_notionnelle.somme import somme_ordonnee
 
 RACINE = Path(__file__).resolve().parent.parent
 CHEMIN = RACINE / "data" / "reference" / "legislation" / "frontiere_contributive.yaml"
@@ -304,7 +305,7 @@ def main(arguments: list[str] | None = None) -> int:
                 print(f"  - {ecart}")
             return 1
         legale = donnees["liste_legale"]
-        total = (sum(1 for b in donnees["bascules"]
+        total = (somme_ordonnee(1 for b in donnees["bascules"]
                      for c in ("version", "version_precedente") if b.get(c))
                  + 1 + len(legale.get("lectures") or ()))
         print(f"{total} versions d'article vérifiées dans l'index LEGI, aucun écart.")

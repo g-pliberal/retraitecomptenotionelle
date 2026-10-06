@@ -24,6 +24,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
 from retraite_notionnelle.donnees.regimes import charger_inventaire  # noqa: E402
 
@@ -82,7 +83,7 @@ def _cellule(texte: str) -> str:
 
 
 def compte(lignes) -> str:
-    nombres = {cle: sum(1 for l in lignes if l.couverture == cle) for cle in COUVERTURES}
+    nombres = {cle: somme_ordonnee(1 for l in lignes if l.couverture == cle) for cle in COUVERTURES}
     reste = (f"{nombres['a_modeliser']} à modéliser" if nombres["a_modeliser"]
              else "et plus aucune ligne à modéliser")
     return (

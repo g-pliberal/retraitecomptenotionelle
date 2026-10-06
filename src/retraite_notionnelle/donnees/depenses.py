@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
+from ..somme import somme_ordonnee
 
 
 #: Les deux catégories de la ventilation d'une masse de pensions, du vocabulaire
@@ -300,7 +301,7 @@ class DepensesRetraite:
         somme les retranche — et n'est donc disponible que sur les années
         ventilées.
         """
-        return sum(
+        return somme_ordonnee(
             self.systemes[systeme.code](annee)
             for systeme in SYSTEMES if systeme.repartition
         )

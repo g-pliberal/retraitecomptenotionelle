@@ -21,6 +21,7 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 
 from .chargement import Fiabilite
+from ..somme import somme_ordonnee
 
 #: Les quantiles que la DREES publie de la pension de droit direct, sous le
 #: code du fichier de résidence et leur rang.
@@ -90,7 +91,7 @@ class ResidenceRetraites:
         points = [0.0] + [self.valeur("etranger", code, sexe) * echelle
                           for code, _ in QUANTILES_PUBLIES]
         rangs = [0.0] + [rang for _, rang in QUANTILES_PUBLIES]
-        fixe = sum((rangs[i + 1] - rangs[i]) * (points[i] + points[i + 1]) / 2.0
+        fixe = somme_ordonnee((rangs[i + 1] - rangs[i]) * (points[i] + points[i + 1]) / 2.0
                    for i in range(len(points) - 1))
         haut = 2.0 * (moyenne - fixe) / (1.0 - rangs[-1]) - points[-1]
         if haut <= points[-1]:
@@ -211,7 +212,7 @@ class DistributionPensions:
                     else _rang(points, rangs, tranche.borne_superieure))
             partis = etranger * (haut - _rang(points, rangs, tranche.borne_inferieure))
             comptes.append(max(0.0, tranche.part * tous - partis))
-        total = sum(comptes)
+        total = somme_ordonnee(comptes)
         self.tranches = tuple(replace(tranche, part=compte / total)
                               for tranche, compte in zip(self.tranches, comptes))
         self.part_residents = residence.valeur("france", "effectifs", sexe) / tous
@@ -252,7 +253,7 @@ class DistributionPensions:
         redresser les parts reviendrait à inventer une précision que la source
         ne donne pas — et il est trop petit pour peser sur quoi que ce soit.
         """
-        return sum(tranche.part for tranche in self.tranches)
+        return somme_ordonnee(tranche.part for tranche in self.tranches)
 
 
 def part_femmes(racine: Path, millesime: int | None = None,
@@ -301,9 +302,9 @@ def part_femmes(racine: Path, millesime: int | None = None,
             "les trois colonnes de la distribution n'ont pas le même découpage"
         )
     # Moindres carrés sur le seul inconnu : le poids qui mélange les deux sexes.
-    numerateur = sum((e - h) * (f - h)
+    numerateur = somme_ordonnee((e - h) * (f - h)
                      for e, f, h in zip(ensemble, femmes, hommes))
-    denominateur = sum((f - h) ** 2 for f, h in zip(femmes, hommes))
+    denominateur = somme_ordonnee((f - h) ** 2 for f, h in zip(femmes, hommes))
     if denominateur <= 0.0:
         raise ValueError(
             "les distributions des deux sexes sont identiques : aucun poids "

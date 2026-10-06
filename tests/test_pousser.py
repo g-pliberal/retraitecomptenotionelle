@@ -284,3 +284,92 @@ def test_la_reference_de_suivi_vivante_est_conservee_et_suit(atelier):
     assert tete_distante(distant, branche) == tete, "la branche suit ce que main porte"
     assert git(session, "rev-list", "--count",
                f"refs/remotes/origin/{branche}..HEAD") == "0"
+
+
+# -- les fichiers fabriqués, que GitHub refait (action 148) --------------------
+
+
+def _marquer_fabrique(distant: Path, tmp_path: Path) -> Path:
+    """Pose, sur main, un ``.gitattributes`` qui marque ``fabrique.json``
+    ``-merge``, comme le dépôt marque ses fichiers fabriqués ; rend un second
+    clone, l'autre session."""
+    autre = tmp_path / "autre"
+    subprocess.run(["git", "clone", "--quiet", str(distant), str(autre)], check=True)
+    git(autre, "config", "user.email", "autre@exemple.fr")
+    git(autre, "config", "user.name", "Autre")
+    commiter(autre, ".gitattributes", "fabrique.json -merge\n")
+    commiter(autre, "fabrique.json", "{}\n")
+    git(autre, "push", "--quiet", "origin", "main")
+    return autre
+
+
+def _preparer(atelier, tmp_path):
+    distant, session = atelier
+    autre = _marquer_fabrique(distant, tmp_path)
+    git(session, "pull", "--quiet", "--rebase", "origin", "main")
+    return distant, session, autre
+
+
+def test_un_conflit_sur_un_fichier_fabrique_garde_la_version_de_main(atelier, tmp_path):
+    """Deux sessions changent le modèle et refabriquent : la seconde passe,
+    avec la version de main ; GitHub refera le fichier."""
+    distant, session, autre = _preparer(atelier, tmp_path)
+    (session / "source.py").write_text("ma règle\n", encoding="utf-8")
+    (session / "fabrique.json").write_text('{"session": 1}\n', encoding="utf-8")
+    git(session, "add", "-A")
+    git(session, "commit", "--quiet", "-m", "le modèle change, refabriqué")
+    commiter(autre, "fabrique.json", '{"autre": 1}\n')
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    tete = tete_distante(distant, "main")
+    assert tete == git(session, "rev-parse", "HEAD")
+    assert git(session, "show", f"{tete}:fabrique.json") == '{"autre": 1}'
+    assert git(session, "show", f"{tete}:source.py") == "ma règle"
+    assert git(session, "status", "--porcelain") == ""
+
+
+def test_un_commit_qui_ne_portait_que_du_fabrique_disparait(atelier, tmp_path):
+    distant, session, autre = _preparer(atelier, tmp_path)
+    commiter(session, "source.py", "ma règle\n")
+    commiter(session, "fabrique.json", '{"session": 1}\n')
+    attendu = commiter(autre, "fabrique.json", '{"autre": 1}\n')
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert git(session, "rev-parse", "HEAD~1") == attendu, "le commit vide est sauté"
+    assert git(session, "show", "HEAD:fabrique.json") == '{"autre": 1}'
+
+
+def test_un_conflit_sur_une_source_refuse_meme_avec_du_fabrique(atelier, tmp_path):
+    distant, session, autre = _preparer(atelier, tmp_path)
+    (session / "source.py").write_text("ma règle\n", encoding="utf-8")
+    (session / "fabrique.json").write_text('{"session": 1}\n', encoding="utf-8")
+    git(session, "add", "-A")
+    git(session, "commit", "--quiet", "-m", "le modèle change")
+    (autre / "source.py").write_text("sa règle\n", encoding="utf-8")
+    (autre / "fabrique.json").write_text('{"autre": 1}\n', encoding="utf-8")
+    git(autre, "add", "-A")
+    git(autre, "commit", "--quiet", "-m", "le modèle change autrement")
+    attendu = git(autre, "rev-parse", "HEAD")
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "conflit" in acheve.stderr
+    assert tete_distante(distant, "main") == attendu, "rien poussé"
+    assert git(session, "status", "--porcelain") == "", "le rebasage a été abandonné"
+
+
+def test_l_adresse_du_robot_de_github_passe(atelier):
+    """Le commit fabriqué par GitHub (tests.yml) signe de l'adresse noreply de
+    son robot : elle ne désigne personne."""
+    distant, session = atelier
+    git(session, "config", "user.email",
+        "41898282+github-actions[bot]@users.noreply.github.com")
+    tete = commiter(session, "fabrique.txt")
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert tete_distante(distant, "main") == tete

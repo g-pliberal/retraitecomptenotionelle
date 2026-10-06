@@ -36,6 +36,47 @@ avec_reprises() {
     done
 }
 
+# Rebaser sur origin/main. Un conflit qui ne porte QUE sur des fichiers
+# fabriqués (ceux que .gitattributes marque `-merge`) se règle seul : on garde
+# la version de main, sans régénérer, puisque GitHub refait tout après chaque
+# envoi (tests.yml, action 148). Un commit qui ne portait que des fichiers
+# fabriqués devient vide : on le saute. Un conflit sur une source refuse.
+fabrique() {
+    git check-attr merge -- "$1" | grep -q ': merge: unset$'
+}
+rebase_en_cours() {
+    [ -d "$(git rev-parse --git-path rebase-merge)" ] \
+        || [ -d "$(git rev-parse --git-path rebase-apply)" ]
+}
+rebaser() {
+    git rebase --quiet origin/main >/dev/null 2>&1 && return 0
+    local tours=0 conflits fichier
+    while rebase_en_cours; do
+        tours=$(( tours + 1 ))
+        [ "$tours" -gt 100 ] && return 1
+        conflits=$(git diff --name-only --diff-filter=U)
+        [ -z "$conflits" ] && return 1
+        while IFS= read -r fichier; do
+            fabrique "$fichier" || return 1
+        done <<< "$conflits"
+        while IFS= read -r fichier; do
+            # « ours », au rebasage, est main (et nos commits déjà rejoués).
+            if git checkout --ours -- "$fichier" 2>/dev/null; then
+                git add -- "$fichier"
+            else
+                git rm --quiet --cached -- "$fichier" >/dev/null 2>&1
+                rm -f -- "$fichier"
+            fi
+        done <<< "$conflits"
+        if git diff --cached --quiet; then
+            GIT_EDITOR=true git rebase --skip >/dev/null 2>&1 && return 0
+        else
+            GIT_EDITOR=true git rebase --continue >/dev/null 2>&1 && return 0
+        fi
+    done
+    ! rebase_en_cours
+}
+
 avec_reprises git fetch --quiet origin main || {
     echo "pousser: fetch origin main impossible après 5 essais" >&2; exit 1; }
 
@@ -68,7 +109,7 @@ else
         echo "pousser: origin/main a avancé et des modifications ne sont pas commitées, rien poussé — commiter, puis relancer" >&2
         exit 1
     fi
-    if ! git rebase --quiet origin/main >/dev/null 2>&1; then
+    if ! rebaser; then
         git rebase --abort >/dev/null 2>&1 || true
         echo "pousser: le rebasage sur origin/main bute sur un conflit, rien poussé — le résoudre à la main (git rebase origin/main)" >&2
         exit 1

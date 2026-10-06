@@ -99,6 +99,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
@@ -140,7 +141,7 @@ def _moyenne(distribution: DistributionPensions) -> float:
     seul le RAPPORT des deux moyennes entre dans la contrainte, et repousser
     la tranche ouverte de 4 500 à 6 500 € le fait passer de 0,641 à 0,624.
     """
-    return sum(
+    return somme_ordonnee(
         tranche.part * (
             tranche.borne_inferieure if tranche.borne_superieure is None
             else 0.5 * (tranche.borne_inferieure + tranche.borne_superieure)
@@ -287,7 +288,7 @@ def minima(parametres: Parametres | None = None) -> list[Minima]:
     ligne = next((a for a in avantages.annees if a.annee == millesime), None)
     if ligne is None:
         raise RuntimeError(f"le chiffrage des avantages ne couvre pas {millesime}")
-    masse = sum(ligne.lignes.get(cle, 0.0)
+    masse = somme_ordonnee(ligne.lignes.get(cle, 0.0)
                 for cle in ("minimum_contributif", "minimum_garanti"))
     lectures: list[Minima] = []
     for champ, principal in (("régime principal", True), ("tous régimes", False)):

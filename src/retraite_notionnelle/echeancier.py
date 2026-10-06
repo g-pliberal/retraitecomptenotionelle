@@ -53,6 +53,7 @@ from .noyau import vocabulaire
 from .revalorisation import aujourd_hui, faire_vivre, foyer_a_l_echeance
 from .scenarios.actuel import (etat_du_depart, progressive_servie, resultat_actuel,
                                resultat_des_departs)
+from .somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from .carriere import Carriere
@@ -442,7 +443,7 @@ class Echeancier:
             self.moteur, carriere, departs, liquidations, contexte)
         foyer = _foyer.foyer_et_net(
             self.moteur, carriere.personne, declare.date, carriere.annee_liquidation,
-            sum(p.montant for p in self.au_depart.pensions_par_regime) + sum(
+            somme_ordonnee(p.montant for p in self.au_depart.pensions_par_regime) + somme_ordonnee(
                 a.montant for a in self.au_depart.avantages_appliques
                 if a.code == "majoration_enfants"),
             (carriere.age_liquidation or 0.0)

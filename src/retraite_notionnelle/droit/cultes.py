@@ -36,6 +36,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..donnees.chargement import Fiabilite
+from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -113,10 +114,10 @@ def durees(releve_durees: Durees, membres: tuple[str, ...],
             for annee, trimestres in releve_durees.par_annee[table].get(membre, {}).items():
                 if (depuis is None or annee >= depuis) and (avant is None or annee < avant):
                     sommes[annee] = sommes.get(annee, 0) + trimestres
-        return sum(min(somme, carriere.plafond_trimestres(annee))
+        return somme_ordonnee(min(somme, carriere.plafond_trimestres(annee))
                    for annee, somme in sommes.items())
 
-    hors_annee = (sum(releve_durees.hors_annee["assurance"].get(membre, 0)
+    hors_annee = (somme_ordonnee(releve_durees.hors_annee["assurance"].get(membre, 0)
                       for membre in membres) if enfants else 0)
     return DureesDesCultes(
         avant_1979=somme("assurance", None, CREATION),

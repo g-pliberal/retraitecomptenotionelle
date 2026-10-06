@@ -43,6 +43,7 @@ from ..donnees.chargement import Fiabilite
 from ..donnees.distribution import DistributionPensions
 from ..donnees.macro import DonneesMacro
 from ..donnees.mortalite import DonneesMortalite
+from ..somme import somme_ordonnee
 
 
 def niveau_relatif(carriere: Carriere, macro: DonneesMacro) -> float:
@@ -63,7 +64,7 @@ def niveau_relatif(carriere: Carriere, macro: DonneesMacro) -> float:
         revenus += ligne.revenu
         fractions[ligne.annee] = max(fractions.get(ligne.annee, 0.0),
                                      ligne.fraction_annee)
-    references = sum(salaire_moyen_annuel(macro, annee) * fraction
+    references = somme_ordonnee(salaire_moyen_annuel(macro, annee) * fraction
                      for annee, fraction in fractions.items())
     return revenus / references if references > 0.0 else 1.0
 
@@ -240,7 +241,7 @@ class Convertisseur:
                 "âge de liquidation hors des bornes de la table"
             )
 
-        esperance = sum(
+        esperance = somme_ordonnee(
             0.5 * (courbe[t] + courbe[t + 1]) for t in range(len(courbe) - 1)
         )
         return CoefficientConversion(

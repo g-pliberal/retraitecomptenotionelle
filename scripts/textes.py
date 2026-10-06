@@ -40,6 +40,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
 
+from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.noyau import carte, textes  # noqa: E402
 
 DOSSIER = textes.TEXTES
@@ -196,8 +197,8 @@ def etat(sans_statut_de: str | None) -> int:
     cliquet = (textes.perimetre().get("cliquet") or {}).get("redactions_sans_statut")
     print(f"Le cliquet admet {cliquet} rédactions sans statut.\n")
     titres = textes.titres()
-    for cle, compte in sorted(par_texte.items(), key=lambda x: -sum(x[1].values())):
-        print(f"  {cle:<22} {sum(compte.values()):>5}  "
+    for cle, compte in sorted(par_texte.items(), key=lambda x: -somme_ordonnee(x[1].values())):
+        print(f"  {cle:<22} {somme_ordonnee(compte.values()):>5}  "
               + ", ".join(f"{s} {compte[s]}" for s in ordre if compte[s])
               + f"  — {titres.get(cle, '?')[:70]}")
     if sans_statut_de:

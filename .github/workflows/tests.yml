@@ -1,20 +1,27 @@
-# La suite complète des tests, à chaque envoi sur main (docs/architecture.md,
-# § 10 : « Tout tourne sur GitHub à chaque envoi sur `main` »).
+# La fabrique et la suite complète, à chaque envoi sur main (action 148,
+# étape 1 ; docs/architecture.md, § 10 : « Tout tourne sur GitHub à chaque
+# envoi sur `main` »).
 #
-# Le dépôt pousse directement sur main, sans pull request (CLAUDE.md) : ce
-# workflow ne bloque rien. Il dit après coup si un envoi a cassé quelque
-# chose, et quel test : le verdict se lit dans l'onglet Actions, et sur la
-# page du commit, à côté de son message.
+# Le dépôt pousse directement sur main, sans pull request (CLAUDE.md). Les
+# sessions ne régénèrent plus les fichiers fabriqués avant d'envoyer, ni ne
+# lancent la suite complète : c'est ici que tout se refait, sur le DERNIER
+# main — non sur le commit qui a lancé la course —, dans cet ordre :
 #
-# C'est la suite COMPLÈTE, celle que `python -m pytest` lance : les témoins
-# joués par les deux moteurs, les pages, la prose, le chiffrage. Elle se
-# répartit d'elle-même sur les cœurs du runner (le greffon
-# `retraite_notionnelle.pytest_parallele`), et `node` y rejoue le portage
-# JavaScript. Chaque envoi a son exécution : deux envois rapprochés tournent
-# côte à côte, et aucun n'annule l'autre.
+# 1. `scripts/regenerer.py` refait le paquet, les témoins, le chiffrage, les
+#    tableaux, le tableau de bord et les chiffres ancrés de la prose ;
+# 2. la suite complète, `python -m pytest`, les joue ;
+# 3. `scripts/publier_fabrique.sh` commite, sous l'identité noreply du robot,
+#    le verdict (`.github/etat_suite.yaml`, que le hook SessionStart affiche à
+#    l'ouverture de chaque session) et, si la suite est verte, les fichiers
+#    refaits ; puis il pousse sans jamais forcer. Si main a bougé pendant la
+#    course, il ne pousse rien : la course que ce nouvel envoi a lancée refait
+#    tout. Une poussée du jeton du workflow ne relance pas de course.
+#
+# Les courses se suivent une à une (`concurrency`) : celle qui attend est
+# remplacée par la plus récente, qui part de toute façon du dernier main.
 #
 # Il se lance aussi à la main, sur n'importe quelle branche (onglet Actions,
-# « Run workflow »).
+# « Run workflow ») : il y fabrique et pousse de même, sur cette branche.
 
 name: Tests
 
@@ -24,7 +31,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: tests-${{ github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   suite:
@@ -32,6 +43,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
 
       - uses: actions/setup-python@v7
         with:
@@ -46,5 +59,27 @@ jobs:
       - name: Installer le paquet et ses outils de test
         run: pip install -e '.[dev]'
 
+      - name: Fabriquer
+        id: fabriquer
+        continue-on-error: true
+        run: python scripts/regenerer.py
+
       - name: La suite complète
-        run: python -m pytest
+        id: suite
+        if: steps.fabriquer.outcome == 'success'
+        continue-on-error: true
+        run: python -m pytest -rfE 2>&1 | tee "$RUNNER_TEMP/suite.txt"
+
+      - name: Publier le verdict et les fichiers fabriqués
+        env:
+          FABRICATION: ${{ steps.fabriquer.outcome }}
+          SUITE: ${{ steps.suite.outcome }}
+          SORTIE_SUITE: ${{ runner.temp }}/suite.txt
+          COURSE: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash scripts/publier_fabrique.sh
+
+      - name: Le verdict
+        if: steps.fabriquer.outcome != 'success' || steps.suite.outcome != 'success'
+        run: |
+          echo "::error::Suite rouge : voir l'étape « La suite complète », ou « Fabriquer »."
+          exit 1
